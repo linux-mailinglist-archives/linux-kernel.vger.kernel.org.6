@@ -1,226 +1,223 @@
-Return-Path: <linux-kernel+bounces-214072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7463A907F15
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:41:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A832907F18
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:42:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 776881C225D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:41:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDA24B22C7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9D214EC45;
-	Thu, 13 Jun 2024 22:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A764114D439;
+	Thu, 13 Jun 2024 22:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sfkfPoff"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ol47/nWk"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E646614A4D0;
-	Thu, 13 Jun 2024 22:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FB91411C3;
+	Thu, 13 Jun 2024 22:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718318488; cv=none; b=rcHL8hR88vWkxBfT9dyGnjA2KeALP8qQw5PrZ4+GQ7792baMETHkU6zq5BKZDowsrRT/YCJP4AnE45m12grlPQP366LDqz0L+1MHgcm5bgciuT9EyVvunL8Ufj5yoL692QFeENrVXIzZEDHfOFtjGzu5Hn1frrOwSFixHwMBc/U=
+	t=1718318529; cv=none; b=eFn6cwq2ZMxQISue5Xi95q/+dBcObtpqyChzIQ+/OtU7VwSObZCdUHWNTDo+zgwNAt0vmxjirc30yxtGbQwwT/OfJ6DhHAsDr3ahVCBZr4NZ19W4RvJdsh0Dl+tGCn+7HR5wt5uTPpkeZvac5ZFZpDz0UVgNiBpbpFjAZJoGYPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718318488; c=relaxed/simple;
-	bh=I9Ug++9hFjoSfnXDvmv1adlwtek43vk/5jLycz5Z9s4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=OhMzlzc6q3p400dtFvv3sExCtTpQjsCC7THJEYivY18XnWgfMDj9NFjXPBUTIKrlty2qNBMsj7lv1bk2VyVhgDlukDe9nA7qymObMXEuz2CvpDzwF0j0u0k3oCc4a+w+q6nlhom+UYPdcmkkWm2yq6jLXyObTNsitFqtkUwtL5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sfkfPoff; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3075EC32786;
-	Thu, 13 Jun 2024 22:41:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718318487;
-	bh=I9Ug++9hFjoSfnXDvmv1adlwtek43vk/5jLycz5Z9s4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=sfkfPoffiVHqdWcnrOgfR3Fp1oRr2Ge3fQT3kAvUdcirOKe1QiILb7dCjYWtbMMOg
-	 odrPT8DYYPb/W2K2aSqoiheqNNc7d8kMUWFHxcVrbIspWF2aWzG/Eh7hbQEvEYrXUU
-	 w2Onpm3oDuR//mLnErFbRwecYmvnsP/shc53Tok0v4/wDBlY2humHotEujw+DRIfh6
-	 boFRKx0ntz0uXir8MqUuaUoSCtTdJn7oFjZ+zI01MrUwhi5g3zSFaGfU7zs8UA5ySi
-	 j/cRBn9WR+Yd5Va6kSWeSIEaOQDmjfXy4iXdz5ROlMjI/sVETcRKMi85rUGvrcRA3f
-	 Wg5zW3T7p7DfA==
-Date: Thu, 13 Jun 2024 17:41:25 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	devicetree@vger.kernel.org, Will Deacon <will@kernel.org>,
-	Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH v5 08/12] PCI: imx6: Config look up table(LUT) to support
- MSI ITS and IOMMU for i.MX95
-Message-ID: <20240613224125.GA1087289@bhelgaas>
+	s=arc-20240116; t=1718318529; c=relaxed/simple;
+	bh=pKzimYJu+TJnM9P7Pi4ugxJsWmzS155PJzX5WrUuVZI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=USiTqHjoR4aDOk1Wz4Y/dJIxO2KLZkOMsBa+6yGnR2R6rMTHV8dXxFf7DjXkMUhek0bJmygCmW0Do1VYS67V3zR8qdYFssq9OJoXrWtP8G6h+BzoSGovUtWZdADmbUoASOcTQeWH74z6KBh1ca1jlTpAzpikTKlNq15fhiqgHok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ol47/nWk; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b06bb80d7dso8638896d6.0;
+        Thu, 13 Jun 2024 15:42:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718318527; x=1718923327; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RADoyJ/UBTliEUUfZ92D6TpXqH7TNpUCBsNp/aY0Wgk=;
+        b=Ol47/nWkXLwkabnCh9m1lSXCBEoUuhtJ/HRGUpWgIvBXIJN3xrFfVoG1BYFddSO9Yx
+         tRtYlYceFzPS5AnCBgB5fZNsLlh9nf0cSLEVWPvW/0WFf4daPsO2nK0LXBvIum/3KIJ3
+         QKU4KqOujEEF1AT/8NGAhwhyOqnNFD2a9HiizNmj56E/wD3ofD60/rktsPfWoIyZ7q5m
+         MCF1oGgjmY1KoSF8cHDJgtXuWxLIkgDvYyUkfuDuc/Gt1ODpp4rwELZsIDzVn2ipkSCt
+         YlAownAY8x/ojv4OrWLtUXavYTyUn96XK9EOYi1HYmOPDmRxG3El3t6JiUG+ddfHR6Fq
+         JN9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718318527; x=1718923327;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RADoyJ/UBTliEUUfZ92D6TpXqH7TNpUCBsNp/aY0Wgk=;
+        b=XapcH9XO2QnLH5255wAXWeYtchEgwnNsg9/AWhVKgDuNekUkFofnc+4Gb038c4beow
+         7njsWd/VJsJaZTNroGVbYal/Q9kYz8F2eQLPgloq7Yzx1y9D5RRrYAA4efvo5xvQbRoq
+         iLvISfQ3SexOab5NQ+7l8rnXfvox4YhPdz9F1Q1Zj3ddOTCppV6pQDOlWHfVylvPH2Nx
+         aFprAX8LwqeEbeJR5LvvXBE3PIOflERODZJqSvcsIH4Gxx8jnaXL95vtbYiQHO1hhILj
+         8hrB6UEQkYqPnVbPeN9f9XGGiIUc8C2zAATiywEuALTFZQRtrGsirbVacrWLhrYTniBV
+         alUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEKlGSTiOM2wBp9lpeibv5W7yXWHS7ky0Zt5hyqhwhBBgQ7bUTMjMEnlTjS+kBaiyxgiO4yfrHdhOF4uzUaeuigs8MH/0E/5yGOutEKq39kropdAc32ZNu3AAkVXHJZfmh0c0Gd7Fd/CFIrcbtjVL0b5KPAmafrIIh7vpylxj9zyyR
+X-Gm-Message-State: AOJu0YysQnz6xHpZpPNcLQKoeMMyI/EYve8pfALLGnyEM5EcWojo8VZ3
+	pgWqM+0+rZ0RE8WFX780tSqSUvGoUEoVElDZE9vs54Q6eyG0iP2q
+X-Google-Smtp-Source: AGHT+IEvJUkiUU6NyCdMVTVPHtaHLCBaU2pS7oRvikAM5BVjCQa8Q1BlYvtY0VSCZbpQCjXJft2Kwg==
+X-Received: by 2002:ad4:580b:0:b0:6b0:86ab:feaf with SMTP id 6a1803df08f44-6b2afd5b8b3mr9686656d6.48.1718318527218;
+        Thu, 13 Jun 2024 15:42:07 -0700 (PDT)
+Received: from sheun-Legion-5-15IAH7H.phub.net.cable.rogers.com ([2607:fea8:bad7:5400:c491:4bd0:7cc:377d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5c1064dsm11488326d6.31.2024.06.13.15.42.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 15:42:06 -0700 (PDT)
+From: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+To: rafael@kernel.org,
+	daniel.lezcano@linaro.org,
+	rui.zhang@intel.com,
+	lukasz.luba@arm.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	javier.carrasco.cruz@gmail.com
+Subject: [PATCH] dt-bindings: thermal: convert hisilicon-thermal.txt to dt-schema
+Date: Thu, 13 Jun 2024 18:42:03 -0400
+Message-ID: <20240613224204.185844-1-abdulrasaqolawani@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmIa8dIahUdstpLo@lizhi-Precision-Tower-5810>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 06, 2024 at 04:24:17PM -0400, Frank Li wrote:
-> On Mon, Jun 03, 2024 at 04:07:55PM -0400, Frank Li wrote:
-> > On Mon, Jun 03, 2024 at 01:56:27PM -0500, Bjorn Helgaas wrote:
-> > > On Mon, Jun 03, 2024 at 02:42:45PM -0400, Frank Li wrote:
-> > > > On Mon, Jun 03, 2024 at 12:19:21PM -0500, Bjorn Helgaas wrote:
-> > > > > On Fri, May 31, 2024 at 03:58:49PM +0100, Robin Murphy wrote:
-> > > > > > On 2024-05-31 12:08 am, Bjorn Helgaas wrote:
-> > > > > > > [+cc IOMMU and pcie-apple.c folks for comment]
-> > > > > > > 
-> > > > > > > On Tue, May 28, 2024 at 03:39:21PM -0400, Frank Li wrote:
-> > > > > > > > For the i.MX95, configuration of a LUT is necessary to convert Bus Device
-> > > > > > > > Function (BDF) to stream IDs, which are utilized by both IOMMU and ITS.
-> > > > > > > > This involves examining the msi-map and smmu-map to ensure consistent
-> > > > > > > > mapping of PCI BDF to the same stream IDs. Subsequently, LUT-related
-> > > > > > > > registers are configured. In the absence of an msi-map, the built-in MSI
-> > > > > > > > controller is utilized as a fallback.
-> > > > > > > > 
-> > > > > > > > Additionally, register a PCI bus notifier to trigger imx_pcie_add_device()
-> > > > > > > > upon the appearance of a new PCI device and when the bus is an iMX6 PCI
-> > > > > > > > controller. This function configures the correct LUT based on Device Tree
-> > > > > > > > Settings (DTS).
-> > > > > > > 
-> > > > > > > This scheme is pretty similar to apple_pcie_bus_notifier().  If we
-> > > > > > > have to do this, I wish it were *more* similar, i.e., copy the
-> > > > > > > function names, bitmap tracking, code structure, etc.
-> > > > > > > 
-> > > > > > > I don't really know how stream IDs work, but I assume they are used on
-> > > > > > > most or all arm64 platforms, so I'm a little surprised that of all the
-> > > > > > > PCI host drivers used on arm64, only pcie-apple.c and pci-imx6.c need
-> > > > > > > this notifier.
-> > > > > > 
-> > > > > > This is one of those things that's mostly at the mercy of the PCIe root
-> > > > > > complex implementation. Typically the SMMU StreamID and/or GIC ITS DeviceID
-> > > > > > is derived directly from the PCI RID, sometimes with additional high-order
-> > > > > > bits hard-wired to disambiguate PCI segments. I believe this RID-translation
-> > > > > > LUT is a particular feature of the the Synopsys IP - I know there's also one
-> > > > > > on the NXP Layerscape platforms, but on those it's programmed by the
-> > > > > > bootloader, which also generates the appropriate "msi-map" and "iommu-map"
-> > > > > > properties to match. Ideally that's what i.MX should do as well, but hey.
-> > > > > 
-> > > > > Maybe this RID-translation is a feature of i.MX, not of Synopsys?  I
-> > > > > see that the LUT CSR accesses use IMX95_* definitions.
-> > > > 
-> > > > Yes, it convert 16bit RID to 6bit stream id.
-> > > 
-> > > IIUC, you're saying this is not a Synopsys feature, it's an i.MX
-> > > feature.
-> > 
-> > Yes, it is i.MX feature. But I think other vendor should have similar
-> > situation if use old arm smmu.
-> > 
-> > > 
-> > > > > > If it's really necessary to do this programming from Linux, then there's
-> > > > > > still no point in it being dynamic - the mappings cannot ever change, since
-> > > > > > the rest of the kernel believes that what the DT said at boot time was
-> > > > > > already a property of the hardware. It would be a lot more logical, and
-> > > > > > likely simpler, for the driver to just read the relevant map property and
-> > > > > > program the entire LUT to match, all in one go at controller probe time.
-> > > > > > Rather like what's already commonly done with the parsing of "dma-ranges" to
-> > > > > > program address-translation LUTs for inbound windows.
-> > > > > > 
-> > > > > > Plus that would also give a chance of safely dealing with bad DTs specifying
-> > > > > > invalid ID mappings (by refusing to probe at all). As it is, returning an
-> > > > > > error from a child's BUS_NOTIFY_ADD_DEVICE does nothing except prevent any
-> > > > > > further notifiers from running at that point - the device will still be
-> > > > > > added, allowed to bind a driver, and able to start sending DMA/MSI traffic
-> > > > > > without the controller being correctly programmed, which at best won't work
-> > > > > > and at worst may break the whole system.
-> > > > > 
-> > > > > Frank, could the imx LUT be programmed once at boot-time instead of at
-> > > > > device-add time?  I'm guessing maybe not because apparently there is a
-> > > > > risk of running out of LUT entries?
-> > > > 
-> > > > It is not good idea to depend on boot loader so much.
-> > > 
-> > > I meant "could this be programmed once when the Linux imx host
-> > > controller driver is probed?"  But from the below, it sounds like
-> > > that's not possible in general because you don't have enough stream
-> > > IDs to do that.
-> > 
-> > Oh! sorry miss understand what your means. It is possible like what I did
-> > at v3 version. But I think it is not good enough. 
-> > 
-> > > 
-> > > > Some hot plug devics
-> > > > (SD7.0) may plug after system boot. Two PCIe instances shared one set
-> > > > of 6bits stream id (total 64). Assume total 16 assign to two PCIe
-> > > > controllers. each have 8 stream id. If use uboot assign it static, each
-> > > > PCIe controller have below 8 devices.  It will be failrue one controller
-> > > > connect 7, another connect 9. but if dynamtic alloc when devices add, both
-> > > > controller can work.
-> > > > 
-> > > > Although we have not so much devices now,  this way give us possility to
-> > > > improve it in future.
-> > > > 
-> > > > > It sounds like the consequences of running out of LUT entries are
-> > > > > catastrophic, e.g., memory corruption from mis-directed DMA?  If
-> > > > > that's possible, I think we need to figure out how to prevent the
-> > > > > device from being used, not just dev_warn() about it.
-> > > > 
-> > > > Yes, but so far, we have not met such problem now. We can improve it when
-> > > > we really face such problem.
-> > > 
-> > > If this controller can only support DMA from a limited number of
-> > > endpoints below it, I think we should figure out how to enforce that
-> > > directly.  Maybe we can prevent drivers from enabling bus mastering or
-> > > something.  I'm not happy with the idea of waiting for and debugging a
-> > > report of data corruption.
-> > 
-> > It may add a pre-add hook function to pci bridge. let me do more research.
-> 
-> Hi Bjorn:
-> 
-> int pci_setup_device(struct pci_dev *dev)
-> {
-> 	dev->error_state = pci_channel_io_normal;
-> 	...
-> 	pci_fixup_device(pci_fixup_early, dev);
-> 
-> 	^^^ I can add fixup hook for pci_fixup_early. If not resource, 
-> I can set dev->error_state to pci_channel_io_frozen or
-> pci_channel_io_perm_failure
-> 	
-> 	And add below check here after call hook function.
-> 
-> 	if (dev->error_state != pci_channel_io_normal)
-> 		return -EIO;
-> 		
-> }
-> 
-> How do you think this method? If you agree, I can continue search device
-> remove hook up.
+Convert the hisilicon SoCs tsensor txt bindings to dt-schema
 
-I think this would mean the device would not appear to be enumerated
-at all, right?  I.e., it wouldn't show up in lspci?  And we couldn't
-use even a pure programmed IO driver with no DMA or MSI?
+Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+---
+Validated with dtschema and tested against `hi3660-hikey960.dts`
 
-I wonder if we should have a function pointer in struct
-pci_host_bridge, kind of like the existing ->map_irq(), where we could
-do host bridge-specific setup when enumerating a PCI device.
+ .../bindings/thermal/hisilicon-thermal.txt    | 32 ---------
+ .../bindings/thermal/hisilicon-thermal.yaml   | 71 +++++++++++++++++++
+ 2 files changed, 71 insertions(+), 32 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/thermal/hisilicon-thermal.txt
+ create mode 100644 Documentation/devicetree/bindings/thermal/hisilicon-thermal.yaml
 
-We'd still have to solve the issue of preventing DMA, but a hook like
-that might avoid the need for a quirk or the bus notifier approach.
+diff --git a/Documentation/devicetree/bindings/thermal/hisilicon-thermal.txt b/Documentation/devicetree/bindings/thermal/hisilicon-thermal.txt
+deleted file mode 100644
+index 4b19d80e6558..000000000000
+--- a/Documentation/devicetree/bindings/thermal/hisilicon-thermal.txt
++++ /dev/null
+@@ -1,32 +0,0 @@
+-* Temperature Sensor on hisilicon SoCs
+-
+-** Required properties :
+-
+-- compatible: "hisilicon,tsensor".
+-- reg: physical base address of thermal sensor and length of memory mapped
+-  region.
+-- interrupt: The interrupt number to the cpu. Defines the interrupt used
+-  by /SOCTHERM/tsensor.
+-- clock-names: Input clock name, should be 'thermal_clk'.
+-- clocks: phandles for clock specified in "clock-names" property.
+-- #thermal-sensor-cells: Should be 1. See Documentation/devicetree/bindings/thermal/thermal-sensor.yaml for a description.
+-
+-Example :
+-
+-for Hi6220:
+-	tsensor: tsensor@0,f7030700 {
+-		compatible = "hisilicon,tsensor";
+-		reg = <0x0 0xf7030700 0x0 0x1000>;
+-		interrupts = <0 7 0x4>;
+-		clocks = <&sys_ctrl HI6220_TSENSOR_CLK>;
+-		clock-names = "thermal_clk";
+-		#thermal-sensor-cells = <1>;
+-	}
+-
+-for Hi3660:
+-	tsensor: tsensor@fff30000 {
+-		compatible = "hisilicon,hi3660-tsensor";
+-		reg = <0x0 0xfff30000 0x0 0x1000>;
+-		interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
+-		#thermal-sensor-cells = <1>;
+-	};
+diff --git a/Documentation/devicetree/bindings/thermal/hisilicon-thermal.yaml b/Documentation/devicetree/bindings/thermal/hisilicon-thermal.yaml
+new file mode 100644
+index 000000000000..56ded6ebe1b2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/thermal/hisilicon-thermal.yaml
+@@ -0,0 +1,71 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/thermal/hisilicon-thermal.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Temperature Sensor on hisilicon SoCs
++
++maintainers:
++  - Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - hisilicon,tsensor
++          - hisilicon,hi3660-tsensor
++
++  reg:
++    description: physical base address of thermal sensor and length of memory mapped region.
++    minItems: 1
++    maxItems: 2
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: thermal_clk
++
++  interrupts:
++    description:
++      The interrupt number to the cpu. Defines the interrupt used
++      by /SOCTHERM/tsensor.
++    maxItems: 1
++
++  # See Documentation/devicetree/bindings/thermal/thermal-sensor.yaml for details
++  '#thermal-sensor-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - '#thermal-sensor-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/hi6220-clock.h>
++
++     // for Hi6220:
++     tsensor: tsensor@0,f7030700 {
++     compatible = "hisilicon,tsensor";
++     reg = <0x0 0xf7030700 0x0 0x1000>;
++     interrupts = <0 7 0x4>;
++     clocks = <&sys_ctrl HI6220_TSENSOR_CLK>;
++     clock-names = "thermal_clk";
++     #thermal-sensor-cells = <1>;
++     };
++
++     // for Hi3660:
++     tsensor1: tsensor@fff30000 {
++     compatible = "hisilicon,hi3660-tsensor";
++     reg = <0x0 0xfff30000 0x0 0x1000>;
++     interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
++     #thermal-sensor-cells = <1>;
++     };
++
+-- 
+2.43.0
 
-Bjorn
 
