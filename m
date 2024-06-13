@@ -1,297 +1,136 @@
-Return-Path: <linux-kernel+bounces-213595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27FED907764
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F312090776C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:48:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9A161F24BBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:48:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2E641F24F81
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A376149E03;
-	Thu, 13 Jun 2024 15:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD10A14A4F8;
+	Thu, 13 Jun 2024 15:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tPbmQmFA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LNJUEzSR"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB73CA23;
-	Thu, 13 Jun 2024 15:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B455912DDA5;
+	Thu, 13 Jun 2024 15:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718293287; cv=none; b=I8/KcZxvJQ+mhsuxt1uM8Aa+51bhGcaOteyNxki6hFr6/1coZRiMcFyYvGzp/dud6fJbETGuG1fSFH48dffsNP28jMicktDZqKgh3lZYJ5enEVs7hbFT5cS3/PmNAsPVKI5q15a2WJyPXvPkLDA+WLjG/K6O1/dt6pAaZsqR+oE=
+	t=1718293406; cv=none; b=I1kun8vfRtM1dN54STzywkmqJVTLBDXqr5fwL22p+lPYAfD6Nn6BcGkRQNE48FjLkoMSO+NufQ85Gl/M/r+C/cY0mzCWvBu3+LSP3GGR35E/8/U7JiZJhu6koXjPbkA0R77FKCNS2i++C6+3ir+BkPL5XYnr/P94Mvf/v5A76iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718293287; c=relaxed/simple;
-	bh=YcjcybhFmJnsqfSE8eTPWvKYNxPhZQkQFO3sAufAsCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M9VgAEKd92G8jgDM4EHxvlkVEwYoVJUmL/1l5kruUcqP9ooFOhTn6kzrh8xCb0OfvspjdhcfJ+nULyR0WYsRt8DNu3b4qTrzL5PPyPgQI75P4cEBh/qBaTXTyiGls/J3Ffd79QXDFWVtc2Z+vt0K9breE/Lhh0S9vUieJ9qeTYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tPbmQmFA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A868C2BBFC;
-	Thu, 13 Jun 2024 15:41:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718293286;
-	bh=YcjcybhFmJnsqfSE8eTPWvKYNxPhZQkQFO3sAufAsCE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tPbmQmFAiDkaErzTfrPfQyv0v0h+Aju08yNx0TX2Oj0eDPOAbj3HOMM8eJzvKfy3N
-	 KWfmMToLD60jHg4tk1+NcbaO2T4zelJUWPevh9CQJEat8XGgfw90fEGOhYBWSTHNYm
-	 9pVXqO1x9bDE27jDHUzf54sW8CO8/dxBI2BngtdCxHdEC60K7154qZMJXobxL2rgAB
-	 eiIPHHphQtgniei+AIK+4ZtMyDte9luGROpnanL5dKiRd6ZU5TMZ1c2QgRs2pAXrc4
-	 vYkm0LBvs5s4AcSczdHJNWXlzlt1i83kG2bWIw2qVTON4H4goBlq5qm5Ceo8scQS1z
-	 aEmNwaEv9rwOA==
-Date: Thu, 13 Jun 2024 09:41:25 -0600
-From: Rob Herring <robh@kernel.org>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Sagar Cheluvegowda <quic_scheluve@quicinc.com>,
-	Abhishek Chauhan <quic_abchauha@quicinc.com>,
-	Andrew Halaney <ahalaney@redhat.com>,
-	Jiawen Wu <jiawenwu@trustnetic.com>,
-	Mengyuan Lou <mengyuanlou@net-swift.com>,
-	Tomer Maimon <tmaimon77@gmail.com>, openbmc@lists.ozlabs.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 06/10] dt-bindings: net: Add Synopsys DW xPCS
- bindings
-Message-ID: <20240613154125.GA1877114-robh@kernel.org>
-References: <20240602143636.5839-1-fancer.lancer@gmail.com>
- <20240602143636.5839-7-fancer.lancer@gmail.com>
- <20240605232916.GA3400992-robh@kernel.org>
- <d57e77t4cz434qfdnuq7qek6zxcaehxmzlqtb3ezloh74ihclb@wn7gbfd6wbw7>
- <20240610214916.GA3120860-robh@kernel.org>
- <hx5pcbxao3ozymwh5pe4m3aje65lhxh5fzqynvphphfmpmnopk@2akvqrpxyg2v>
+	s=arc-20240116; t=1718293406; c=relaxed/simple;
+	bh=wuuRkupuSyLIHDwx1qrL9wK/w/CgUGVdFcSsUcJNGkQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Lpet4EW6gdfIFQDk7vDydkS6wG6HfoviHnNEII1htcWrJsMVgytC1+E6eMN78Ha/6a90qglw6ReppMKV70iWRIYcsrxk7w1hKPKyng4ufP+vmYS+tdoi45/aeGhf4jHMlWI63dm4bZ5cC6+Q9VeOp6e4yizfko1yXNpFZ9zWmow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LNJUEzSR; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718293354; x=1718898154; i=markus.elfring@web.de;
+	bh=7fcDu+jAjKTUeYUTcm6nT/VKOpL7/vLs7dIgrQeJffo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=LNJUEzSRtJ4s9iQHbH54cTGy1ouN6On874yZ2npBiEOFY80pZZFA5tks18EqHG01
+	 wpyeWVebam83eYtPIbbhzsqU4M0oxyPeFJgk3wHCrlejS+gA5I4d2Y1i7sfV5o10V
+	 XlYRG4zqLm9rdcnQK9P2axqomSmoMu+D/zj3o0yfGLp8ILJ+ZbAOdzdwK4C9ZGuL2
+	 AtqncLRaSFxzliD9iTwV3tyZw+nwz6jOO07W//sYkqmT45mSJ+ZMQMIo6a8u5zfrX
+	 GdMOYSuWxiB7YGYH1AFdkvXoTVJwk1dZFNHi3fpgV5CwxEf+O0E1Nvpz/00sChr6y
+	 KvUj8oSD0htlRKLcfQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MlbHE-1shnjs0jC6-00gPUD; Thu, 13
+ Jun 2024 17:42:34 +0200
+Message-ID: <531fdbbb-486d-4207-b9a9-3db23935d583@web.de>
+Date: Thu, 13 Jun 2024 17:42:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <hx5pcbxao3ozymwh5pe4m3aje65lhxh5fzqynvphphfmpmnopk@2akvqrpxyg2v>
+User-Agent: Mozilla Thunderbird
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ linux-pci@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, mhi@lists.linux.dev, Bjorn Helgaas
+ <bhelgaas@google.com>, Fabio Estevam <festevam@gmail.com>,
+ Jesper Nilsson <jesper.nilsson@axis.com>, Jingoo Han <jingoohan1@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Lucas Stach <l.stach@pengutronix.de>,
+ Marek Vasut <marek.vasut+renesas@gmail.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Minghuan Lian
+ <minghuan.Lian@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
+ Niklas Cassel <cassel@kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>,
+ Rob Herring <robh@kernel.org>, Roy Zang <roy.zang@nxp.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Srikanth Thokala <srikanth.thokala@intel.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel@pengutronix.de
+References: <20240606-pci-deinit-v1-2-4395534520dc@linaro.org>
+Subject: Re: [PATCH 2/5] PCI: endpoint: Introduce 'epc_deinit' event and
+ notify the EPF drivers
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240606-pci-deinit-v1-2-4395534520dc@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:jXSJJJkAI8hN72kU1CJg3ufojWOHI1sFKaf7Q+GXWoK5SHvixA/
+ yrxpcO7iG26yVIJ6a+gDgi7IQ7X4UOlJm7doH6z6KQ09CoTZ4UXvjGVgP4qYQDw1TnsDnm+
+ QVgctN2V24QtpAjdxg0dM1CAxHvdlatDjFFXPjenuaogsqXyOG9yQTvPPKq9AalAtAN4qQW
+ hD6x4vYrIAaZEEVGxiS5w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:PH53anvoYOY=;1/zV0cxQ7tZhIjrtlZ44ElZLM8Q
+ i/dBiizYx2JrGEKiG8sYkKHnGA384j5aU9TmG7r2D/cFkSPs/yZ0hmPDsuuelZSGCyHWZiRN/
+ oNO+wiyJAPxbMYILm8U3DhPAYJNZL7tChzi/zsp8B0Ib4ehYO2iwpmrdONugRbU5TIwAWBAtt
+ O9Cd1boR1HzXoKsuicQTXIRq42M0q+eeFrw4gHvF7+yVAWOODfM1RkDrMF04xo8/hIKWasMLk
+ GLOKEfJgm5NxvmR+h5J9rmAG2o7PdDilFFAtM4F5qG6niMNgdlmc8tMSNXWrTs5X7cNbolLND
+ GdfeoqXQhgszfzzgCYEC62hZsCKBPBLGFLk9gcEhQVWbhP/v2X6XcVwAwDTXagzQG1eRcaHvn
+ XWChBhxQIPWZJTDfcqUXc/ReGClUJqfuh9a3fj2HR3cYwKXHsMAM/0++GKDTGB3YK076k1DP0
+ 016ihg2akVY+zAqRjQdKi3POQKULjiiULpUCYLnenqi1xkm9viAf2ME6hMmoNZdCrIW2eUD/L
+ rEUUeKzuOB8gGXnQRywfc80Ounpdk42bjy4Spto3HpGg4b7ifudicAAzYTyfh+SXJQCUvKj2t
+ a7wk5vPHw5S0wj9yOnCqxHesNBoirF69BTsUr66isiVPFDNjClzWomn1oCL303/nqyRZNFdnv
+ UgbgIsRlXrUrB/UeMXpqN7c5K00XBixFRFBL5uLnpnFMlrZhtjCrFqooazZL0Of9zEvxbrkj3
+ vDLGyltl4po3ybGUSKAFLDQ4jpbUG/r51SqZRAar3YCVovQArVWZ6ze02zV+bOiJXSkPd5VUW
+ WMUlYtj68L5PQjuICaBMLKaGnwzPX9n/SgmiEdAohcyH0=
 
-On Tue, Jun 11, 2024 at 01:45:16PM +0300, Serge Semin wrote:
-> Hi Rob
-> 
-> On Mon, Jun 10, 2024 at 03:49:16PM -0600, Rob Herring wrote:
-> > On Thu, Jun 06, 2024 at 12:54:33PM +0300, Serge Semin wrote:
-> > > On Wed, Jun 05, 2024 at 05:29:16PM -0600, Rob Herring wrote:
-> > > > On Sun, Jun 02, 2024 at 05:36:20PM +0300, Serge Semin wrote:
-> > > > > Synopsys DesignWare XPCS IP-core is a Physical Coding Sublayer (PCS) layer
-> > > > > providing an interface between the Media Access Control (MAC) and Physical
-> > > > > Medium Attachment Sublayer (PMA) through a Media independent interface.
-> > > > > >From software point of view it exposes IEEE std. Clause 45 CSR space and
-> > > > > can be accessible either by MDIO or MCI/APB3 bus interfaces. In the former
-> > > > > case the PCS device is supposed to be defined under the respective MDIO
-> > > > > bus DT-node. In the later case the DW xPCS will be just a normal IO
-> > > > > memory-mapped device.
-> > > > > 
-> > > > > Besides of that DW XPCS DT-nodes can have an interrupt signal and clock
-> > > > > source properties specified. The former one indicates the Clause 73/37
-> > > > > auto-negotiation events like: negotiation page received, AN is completed
-> > > > > or incompatible link partner. The clock DT-properties can describe up to
-> > > > > three clock sources: peripheral bus clock source, internal reference clock
-> > > > > and the externally connected reference clock.
-> > > > > 
-> > > > > Finally the DW XPCS IP-core can be optionally synthesized with a
-> > > > > vendor-specific interface connected to the Synopsys PMA (also called
-> > > > > DesignWare Consumer/Enterprise PHY). Alas that isn't auto-detectable in a
-> > > > > portable way. So if the DW XPCS device has the respective PMA attached
-> > > > > then it should be reflected in the DT-node compatible string so the driver
-> > > > > would be aware of the PMA-specific device capabilities (mainly connected
-> > > > > with CSRs available for the fine-tunings).
-> > > > > 
-> > > > > Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-> > > > > 
-> > > > > ---
-> > > > > 
-> > > > > Changelog v2:
-> > > > > - Drop the Management Interface DT-node bindings. DW xPCS with MCI/APB3
-> > > > >   interface is just a normal memory-mapped device.
-> > > > > ---
-> > > > >  .../bindings/net/pcs/snps,dw-xpcs.yaml        | 133 ++++++++++++++++++
-> > > > >  1 file changed, 133 insertions(+)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml
-> > > > > 
-> > > > > diff --git a/Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml b/Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml
-> > > > > new file mode 100644
-> > > > > index 000000000000..7927bceefbf3
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml
-> > > > > @@ -0,0 +1,133 @@
-> > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > > +%YAML 1.2
-> > > > > +---
-> > > > > +$id: http://devicetree.org/schemas/net/pcs/snps,dw-xpcs.yaml#
-> > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > +
-> > > > > +title: Synopsys DesignWare Ethernet PCS
-> > > > > +
-> > > > > +maintainers:
-> > > > > +  - Serge Semin <fancer.lancer@gmail.com>
-> > > > > +
-> > > > > +description:
-> > > > > +  Synopsys DesignWare Ethernet Physical Coding Sublayer provides an interface
-> > > > > +  between Media Access Control and Physical Medium Attachment Sublayer through
-> > > > > +  the Media Independent Interface (XGMII, USXGMII, XLGMII, GMII, etc)
-> > > > > +  controlled by means of the IEEE std. Clause 45 registers set. The PCS can be
-> > > > > +  optionally synthesized with a vendor-specific interface connected to
-> > > > > +  Synopsys PMA (also called DesignWare Consumer/Enterprise PHY) although in
-> > > > > +  general it can be used to communicate with any compatible PHY.
-> > > > > +
-> > > > > +  The PCS CSRs can be accessible either over the Ethernet MDIO bus or directly
-> > > > > +  by means of the APB3/MCI interfaces. In the later case the XPCS can be mapped
-> > > > > +  right to the system IO memory space.
-> > > > > +
-> > > > > +properties:
-> > > > > +  compatible:
-> > > > > +    oneOf:
-> > > > > +      - description: Synopsys DesignWare XPCS with none or unknown PMA
-> > > > > +        const: snps,dw-xpcs
-> > > > > +      - description: Synopsys DesignWare XPCS with Consumer Gen1 3G PMA
-> > > > > +        const: snps,dw-xpcs-gen1-3g
-> > > > > +      - description: Synopsys DesignWare XPCS with Consumer Gen2 3G PMA
-> > > > > +        const: snps,dw-xpcs-gen2-3g
-> > > > > +      - description: Synopsys DesignWare XPCS with Consumer Gen2 6G PMA
-> > > > > +        const: snps,dw-xpcs-gen2-6g
-> > > > > +      - description: Synopsys DesignWare XPCS with Consumer Gen4 3G PMA
-> > > > > +        const: snps,dw-xpcs-gen4-3g
-> > > > > +      - description: Synopsys DesignWare XPCS with Consumer Gen4 6G PMA
-> > > > > +        const: snps,dw-xpcs-gen4-6g
-> > > > > +      - description: Synopsys DesignWare XPCS with Consumer Gen5 10G PMA
-> > > > > +        const: snps,dw-xpcs-gen5-10g
-> > > > > +      - description: Synopsys DesignWare XPCS with Consumer Gen5 12G PMA
-> > > > > +        const: snps,dw-xpcs-gen5-12g
-> > > > > +
-> > > > > +  reg:
-> > > > > +    items:
-> > > > > +      - description:
-> > > > > +          In case of the MDIO management interface this just a 5-bits ID
-> > > > > +          of the MDIO bus device. If DW XPCS CSRs space is accessed over the
-> > > > > +          MCI or APB3 management interfaces, then the space mapping can be
-> > > > > +          either 'direct' or 'indirect'. In the former case all Clause 45
-> > > > > +          registers are contiguously mapped within the address space
-> > > > > +          MMD '[20:16]', Reg '[15:0]'. In the later case the space is divided
-> > > > > +          to the multiple 256 register sets. There is a special viewport CSR
-> > > > > +          which is responsible for the set selection. The upper part of
-> > > > > +          the CSR address MMD+REG[20:8] is supposed to be written in there
-> > > > > +          so the corresponding subset would be mapped to the lowest 255 CSRs.
-> > > > > +
-> > > > > +  reg-names:
-> > > > > +    items:
-> > > > > +      - enum: [ direct, indirect ]
-> > > > > +
-> > > > > +  reg-io-width:
-> > > > > +    description:
-> > > > > +      The way the CSRs are mapped to the memory is platform depended. Since
-> > > > > +      each Clause 45 CSR is of 16-bits wide the access instructions must be
-> > > > > +      two bytes aligned at least.
-> > > > > +    default: 2
-> > > > > +    enum: [ 2, 4 ]
-> > > > > +
-> > > > > +  interrupts:
-> > > > > +    description:
-> > > > > +      System interface interrupt output (sbd_intr_o) indicating Clause 73/37
-> > > > > +      auto-negotiation events':' Page received, AN is completed or incompatible
-> > > > > +      link partner.
-> > > > > +    maxItems: 1
-> > > > > +
-> > > > > +  clocks:
-> > > > > +    description:
-> > > > > +      Both MCI and APB3 interfaces are supposed to be equipped with a clock
-> > > > > +      source connected via the clk_csr_i line.
-> > > > > +
-> > > > > +      PCS/PMA layer can be clocked by an internal reference clock source
-> > > > > +      (phyN_core_refclk) or by an externally connected (phyN_pad_refclk) clock
-> > > > > +      generator. Both clocks can be supplied at a time.
-> > > > > +    minItems: 1
-> > > > > +    maxItems: 3
-> > > > > +
-> > > > > +  clock-names:
-> > > > > +    minItems: 1
-> > > > > +    maxItems: 3
-> > > > > +    anyOf:
-> > > > > +      - items:
-> > > > > +          enum: [ core, pad ]
-> > > > 
-> > > 
-> > > > This has no effect. If it is true, then the 2nd entry is too.
-> > > 
-> > > Yeah, from the anyOf logic it's redundant indeed. But the idea was to
-> > > signify that the DT-node may have one the next clock-names
-> > > combination:
-> > >    clock-names = "pad";
-> > > or clock-names = "core";
-> > > or clock-names = "core", "pad";
-> > > or clock-names = "pclk";
-> > > or clock-names = "pclk", "core";
-> > > or clock-names = "pclk", "pad";
-> > > or clock-names = "pclk", "core", "pad";
-> > 
-> > That would be:
-> > 
-> > oneOf:
-> >   - minItems: 1
-> >     items:
-> >       - enum: [core, pad]
-> >       - const: pad
-> >   - minItems: 1
-> >     items:
-> >       - const: pclk
-> >       - enum: [core, pad]
-> >       - const: pad
-> > 
-> > *-names is enforced to be 'uniqueItems: true', so we don't have to worry 
-> > about repeated entries.
-> > 
-> > This also nicely splits between MMIO and MDIO.
-> 
-> I had such approach in mind, but it seemed to me more complicated and
-> weakly scaleable (should we need to add some more clocks). Isn't the
-> next constraint look more readable:
+=E2=80=A6
+> +++ b/drivers/pci/endpoint/pci-epc-core.c
+=E2=80=A6
+> +void pci_epc_deinit_notify(struct pci_epc *epc)
+> +{
+=E2=80=A6
+> +	mutex_lock(&epc->list_lock);
+> +	list_for_each_entry(epf, &epc->pci_epf, list) {
+> +		mutex_lock(&epf->lock);
+> +		if (epf->event_ops && epf->event_ops->epc_deinit)
+> +			epf->event_ops->epc_deinit(epf);
+> +		mutex_unlock(&epf->lock);
+> +	}
+> +	epc->init_complete =3D false;
+> +	mutex_unlock(&epc->list_lock);
+> +}
+=E2=80=A6
 
-Hardware is magically growing more clocks?
+Would you become interested to apply lock guards?
+https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/mutex.h#L1=
+96
 
- 
-> anyOf:
->   - description: DW XPCS accessible over MDIO-bus
->     minItems: 1
->     maxItems: 2
->     items:
->       enum: [core, pad]
->   - description: DW XPCS with the MCI/APB3 CSRs IO interface
->     minItems: 1
->     maxItems: 3
->     items:
->       enum: [pclk, core, pad]
->     contains:
->       const: pclk
-> ?
-
-I don't see how that is much better in simplicity or scaleability. I 
-would just do this over the above:
-
-minItems: 1
-maxItems: 3
-items:
-  enum: [pclk, core, pad]
-
-Either you define the order or you don't. The former is strongly 
-preferred. The latter is done when it's too much a mess or we just don't 
-care to discuss it any more.
-
-Rob
+Regards,
+Markus
 
