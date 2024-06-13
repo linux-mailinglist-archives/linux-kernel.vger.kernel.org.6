@@ -1,131 +1,108 @@
-Return-Path: <linux-kernel+bounces-213518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF022907657
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:16:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D4A3907664
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:17:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 580C7286F18
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:16:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABAF428246A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8526E149C46;
-	Thu, 13 Jun 2024 15:15:30 +0000 (UTC)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8450B1494C2;
+	Thu, 13 Jun 2024 15:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bIIpcRjs"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B1F1474CE;
-	Thu, 13 Jun 2024 15:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6C9144312
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718291730; cv=none; b=CFUcGkdcW7MDO1EKoX/YZM78YLEomKR5Q1PT9geiXaGbAst/oVq/1QtXBH3Dse+6u6RabnuaJ6/WLQpamkSa0jadAHx+tjCMXZE6WtGztbQlG/OmuQGr6BUAA8Go0PdeIvSF/d/ZeABTMU5cZlic7fo3pvoi+stucZTZH6UqLbY=
+	t=1718291855; cv=none; b=GtihUtqIOewwUM5hZBewHx2BNBoCqJl93qCIVI6Jwje3Ti0n+Y8bNkHlrZ7m1pNUS5xFnJYfOV6VDKDT4TCYS6jw3dYDHYMhN2B0ojeJAUDFpVimVJIBTtAWLh3IIYoSQgC5OVtp56k3FpanTbaWNCJ3uxlxmd0gQ1OOhbiuO+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718291730; c=relaxed/simple;
-	bh=upw3YZFDSMosNFgE94Z/c8GKTYTwKdjYG5hj/Ti18sQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XWlEMVv+M90SJq8v9Npe7mQmRoqP1OTYYmMBObQq4fifYwVODCRYtvfcPFBfsHKfkOwPq4Sdb3eDf8P/yhGKkL/sC6PudTEZ2FTtGhg8iGxBGRzcXK8IWb2R/Z6gxZOKEapoT0TeW7QLngK2ZFx39LuOESGD125RJU2gTcn3nN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1718291855; c=relaxed/simple;
+	bh=kJFBG9EnhnvVx5BtGyWc4wfBumRieRFADNoy3amDwa4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z50r03pmJrsOy1x6/7VXBj8yqxvvTS428ZKRogb3PYBzqbuZ//eNDfnDeUqBXuUFuytpn9RumpaKy+CNeQDu+uwy+VGbrS9JZZPmnA7rcwpq+isOsiqLv4+Rw2e3AiVU806sfF7D/pGn5M5J5IsMute7zU/YugY2FO2OEipD/eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bIIpcRjs; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-63152a07830so6923307b3.3;
-        Thu, 13 Jun 2024 08:15:27 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52961b77655so1245787e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:17:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718291852; x=1718896652; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zWZ9jwhxEyNAmvATs50sdCbv0Ojx6ZhooJEx919ELJM=;
+        b=bIIpcRjsu2tuM2pF6N4XBUas0/OhiwRX0DtnTkPnxUzD8JiSHebaLtAXamzTzohkpy
+         7g4cOJ0RVm4LBR3UaTpF45haDe2mL7Fy98seF8nI5OKkHm+JctPseiH31NYxJHMgD1lW
+         PN4p5i0bAigAlrjIaMGDOiQA1Z+GbhsLiK5xhnbi+Qf7nuKwQ4qkIRe7iRhyvS3s2aWy
+         SDVDalO+dM4NwOtm954u+Lji4Dk/tqqlD9eC8xsyTqah+IScsijMeWw08+4DUF2upo4k
+         +WKCrhKDV+YiPXw3SUeF0qcPF94Gb0JR4SOw2CvnrJ5TZBH9vmoGoWy/NA2g/p6s6ZDC
+         xekA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718291726; x=1718896526;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3USazagu6cS/+37Hogg/qABAlJZ7SMpYxKFouZ1jhuA=;
-        b=hyaV1QG5xEG+hdcEXr7FWnuZyYbnxCCej4a8XYDqXeBZBbynST+IsD4Fq+ALy+hBO4
-         K/Oo1+BoLKu1YCYL4p84RvtjT2+mlBoQiwAScb2cQSS5qxFFRJnubihW4qJGaMRt5h6D
-         EdJbAjQQb1C0b40Ieo+wW6Vnr7NKA5AWzFEkWsPrPI/5NM9Njlz+Dg5ygyq2iSyrFyz1
-         H84fqxPXkxx2fnF3HvmUbaYciqdXy5QBmKiyp8XqJUPkwHSFqbf7NcyxVVeZnV9Oyb/E
-         6W7uBchuf+cQzEAzs2MaptbN3nJWiwcjGazDaNOAE7OsDNhVK/m5EFZ0mQ98dLb8xurs
-         OevQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVb+I9sfE2o073qznscslnh0mfXT9U+4FoQBKcoYtyqUft1KRiOB4PPAEi1RRi08T02ThKLNRmOtDj+Pwj5a/SzIYZgxzEj86oF4qMJP9b3JiwnjTdie3ZEp8EHpNgTthCsFfdmw90KMxYqu50m3cwpIWDQa/CLOSYbH8aE6eLPIwdgMeIegXOjiwHhZpJMxRiqJJI87+N58YidWMINFoWQAjW6Ece
-X-Gm-Message-State: AOJu0YzHW5NikyqhS2HZ/6ACEjE9qABVyRwtdpFLe8U57GmuCPJNDtPn
-	IsvXgSIzpE8nM8SKWfuiXIApAbZWsEgEsUbjwHCZNHggXlDw8r64/A2F8y/5
-X-Google-Smtp-Source: AGHT+IGagWeXE+WryF70K5ZP2Dq4uP0EZSxpfr05it96YSS/9QVMlIYbu2RV8nmgBgub9iGPg8sICw==
-X-Received: by 2002:a0d:c645:0:b0:615:35e1:e512 with SMTP id 00721157ae682-62fb79c2c01mr48079267b3.0.1718291724927;
-        Thu, 13 Jun 2024 08:15:24 -0700 (PDT)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-631183d7842sm1951217b3.24.2024.06.13.08.15.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 08:15:24 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6312dc531d3so8495417b3.0;
-        Thu, 13 Jun 2024 08:15:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWsu8KdoT17RdRLYMieCZAFg+Dz3q244Nc3S7j5QYuA1JpUjRcaHAl8FaR2G9PKkqqq2ubEL5rwkZkyOHpxOUmbOkXTXHMZ5uO/e+Ce5EZibb5sGLh1GqMVAaVy38tIjAaa4sDToTWv/mbuF2XulG9sd93oML0TuvVjH7KWwhRHOgcYOzUrtZjw00BfXy6zUVX270eTrlyQnmbMIZVgaP1eb+/j4Gim
-X-Received: by 2002:a0d:df17:0:b0:62c:f90d:3797 with SMTP id
- 00721157ae682-62fbc5d7d86mr45329167b3.37.1718291724474; Thu, 13 Jun 2024
- 08:15:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718291852; x=1718896652;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zWZ9jwhxEyNAmvATs50sdCbv0Ojx6ZhooJEx919ELJM=;
+        b=IjhS1FYl9DZGi2vNbZY2E9ifi2q6bMLfMMqxbx0BVxI7fEueoqd/DiwcsN2rfsf4l1
+         sWTfGQEVFoOWl0k4TVO0qMxiMdR0+P5/Lp6C/DNxjZEmx23QhnmHS4YrBMGgBRGwLaec
+         Se+BsNp9NthGNHLEiLW8xWFovZ2LAeIMqsjNWdn3uVpvDZZeODPXd5yYUcoCvnMDSh69
+         Wr95MsK8rD+lZwwPyFnt4BWS5vqj2EJI7W7TFuSjw4SP7ShkGXxFzOcl4BiYKm61WmfE
+         HcUdZeLihrOs7Rccz7Pp6zJlh2BL0h9KltIwjN/FPzxuLMjpGbSAnQjOKRHaq2N2BZMz
+         dVTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFwPaUtnKy2hOJqzIHt4rUnlpLIzV3wh8vNaTaIqBJYK3ze+YRveVEOUavs1UFknWFS1D3VGjNMif5ONH36x8WnDvhv4aLTfBSE1Yx
+X-Gm-Message-State: AOJu0YzsjyRSh+wcXtPcDD+t9HCHRAJsDBPGU0+yHTFqh4I/B5ZqBCxt
+	QKCxVc/iq0WurLVPQAHRNcK2XTu2R5CXgz0aHQLHlM1TzGdt/AeJt9hN1zV42+E=
+X-Google-Smtp-Source: AGHT+IHuZh1G+bIi5eoLswQ+gWxOBBBqkEkfB8P5li66QJlx752XejcutCtA5HmkAxyskmhTlXe7vw==
+X-Received: by 2002:a05:6512:4806:b0:52b:8455:a9df with SMTP id 2adb3069b0e04-52ca6e6dc25mr31340e87.34.1718291852188;
+        Thu, 13 Jun 2024 08:17:32 -0700 (PDT)
+Received: from localhost.localdomain ([31.120.167.14])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36076515a80sm1856978f8f.76.2024.06.13.08.17.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 08:17:31 -0700 (PDT)
+From: Teddy Engel <engel.teddy@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Teddy Engel <engel.teddy@gmail.com>
+Subject: [PATCH 0/6] staging: rtl8192e: Cleanup multiple issues
+Date: Thu, 13 Jun 2024 16:16:31 +0100
+Message-Id: <cover.1718291024.git.engel.teddy@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240610233221.242749-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <6b3fe242-3733-4f16-b727-494dc1d82002@kernel.org> <CA+V-a8vp0qHKqUMvyfy9hQjKyk8Cs0bDTnYh-ChvPi150r5i2g@mail.gmail.com>
- <3d0a7a82-6262-40e6-be25-4a1c4d8df2fe@kernel.org>
-In-Reply-To: <3d0a7a82-6262-40e6-be25-4a1c4d8df2fe@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Jun 2024 17:15:12 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUvtUWdEfN_=gNJWY+qfE6Yw9KdenQ2OkLc=HvmRnB6pw@mail.gmail.com>
-Message-ID: <CAMuHMdUvtUWdEfN_=gNJWY+qfE6Yw9KdenQ2OkLc=HvmRnB6pw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 2/4] dt-bindings: clock: Add R9A09G057 core clocks
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
+Remove some unused constants, macros, and structs. 
+Capitalize a constant.
 
-On Thu, Jun 13, 2024 at 2:56=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
-> On 13/06/2024 11:57, Lad, Prabhakar wrote:
-> >>> of section 4.4.2 which cannot be controlled by CLKON register.
-> >>> ---
-> >>>  include/dt-bindings/clock/r9a09g057-cpg.h | 21 +++++++++++++++++++++
-> >>>  1 file changed, 21 insertions(+)
-> >>>  create mode 100644 include/dt-bindings/clock/r9a09g057-cpg.h
-> >>
-> >> Missing vendor prefix.
-> >>
-> > OK, Is this just for new includes being added, or do you want me to
-> > rename the existing Renesas specific includes in here which dont have
-> > vendor prefix?
->
-> Didn't we discuss it?
->
-> I commented only about this binding.
+No specific patch order required.
 
-Yes we did, in the context of the R-Car V4M DT binding definitions,
-which became include/dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h
-But Prabhakar was not involved there.
+Teddy Engel (6):
+  staging: rtl8192e: Remove unused constant IC_VersionCut_E
+  staging: rtl8192e: Remove unused struct phy_ofdm_rx_status_rxsc
+  staging: rtl8192e: Remove unused constant WA_IOT_TH_VAL
+  staging: rtl8192e: Capitalize constant RegC38_TH
+  staging: rtl8192e: Remove unused macro dm_tx_bb_gain_idx_to_amplify
+  staging: rtl8192e: Remove unnecessary pre-declaration of struct
+    net_device
 
-Note that I also asked to include the vendor prefix, see
-https://lore.kernel.org/linux-renesas-soc/CAMuHMdU7+O-+v=3D2V83AjQmTWyGy_a-=
-AHgU_nPMDHnVUtYt89iQ@mail.gmail.com/
+ drivers/staging/rtl8192e/rtl8192e/r8190P_def.h | 8 --------
+ drivers/staging/rtl8192e/rtl8192e/rtl_cam.h    | 1 -
+ drivers/staging/rtl8192e/rtl8192e/rtl_dm.c     | 4 ++--
+ drivers/staging/rtl8192e/rtl8192e/rtl_dm.h     | 6 +-----
+ drivers/staging/rtl8192e/rtl8192e/rtl_pci.h    | 1 -
+ 5 files changed, 3 insertions(+), 17 deletions(-)
 
-Gr{oetje,eeting}s,
+-- 
+2.39.2
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
