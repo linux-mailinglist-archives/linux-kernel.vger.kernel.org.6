@@ -1,122 +1,132 @@
-Return-Path: <linux-kernel+bounces-214036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04157907E46
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:40:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 333F6907E4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 762B61F22C59
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:40:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A652BB22B37
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2404E1474CC;
-	Thu, 13 Jun 2024 21:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECD414B064;
+	Thu, 13 Jun 2024 21:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="msosOGth"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="D1dsGlfO"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FC671747;
-	Thu, 13 Jun 2024 21:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39865136E3B;
+	Thu, 13 Jun 2024 21:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718314822; cv=none; b=PRhp1bElNsqkVcP/LY/BqOgnV5zu+JndiuWTVZyK4LyfbtKZnYUjPgTPmyb9Np90CsoN0E3QpvSop3vgCHrY5zFIB8W3T/jGeWkTvjhvXHpOUOtcO3AHXf84oijfxMQ5QoDum0ZK1yGSwJ2nyh4lKadhY4R/u62hCPQ4gNoWIqI=
+	t=1718315329; cv=none; b=A3e44RbTzcPMx+nSD2L//kPq4UPIXRRzTUBt4nDcJ5XaX97roA4c7QkepXPPuHgJBMt7j/drDshFsDVi2l0NdCxosxaCqywhceL9z7Mbtn4c1XIG2YF5FGqNWGMPzaus7GXq8JBJ8aGMUTTWWbsWJ0XSHz8JBNMB9Mh2m/UMAqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718314822; c=relaxed/simple;
-	bh=q+yRfUm4ZJKgJ+oDFldXAPnhT6dMYw/cyPge3ciy1sA=;
+	s=arc-20240116; t=1718315329; c=relaxed/simple;
+	bh=0E5aK+rK+8mWd3EYjuWk54URc/yrnOGrMi4oOy/HQyI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X4d0/ZD9w5W3tgN77WdZvEPpQXRSu1T0XjAFe2eQMgG7EY/AF/Tj/pfysC8MvSRhhLJoT185xihIfeEsXD8Zd1cmCaqMJ0+BSAbawwLW0mIlf2ldAGeJKTR0FDDR0bEpOffQ1CPnJyuh9kdcgEvmhbMowsVVzmMIT6gcWk9ek+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=msosOGth; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF892C2BBFC;
-	Thu, 13 Jun 2024 21:40:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718314821;
-	bh=q+yRfUm4ZJKgJ+oDFldXAPnhT6dMYw/cyPge3ciy1sA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=dq/NwuFobqsKpyFIREnBpQ/7B/+4LbHkCh1R+ZWd29Re/7FbtnXYAA/X2U5y/oqrfOJhG8hKx6GMyNkVpZOw7Ou3Q0ppyU7LhIHaJhgf3xAelmqX7Nx0EPFt+iPfKuqdWSrP+DNntu05vhr0VcAD3Pu8OsVoMJUIdsfSzSdNGj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=D1dsGlfO; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718315326;
+	bh=0E5aK+rK+8mWd3EYjuWk54URc/yrnOGrMi4oOy/HQyI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=msosOGthX/ZaxkCU22Nz753vSrVuiW7w78ubG6pAKgYeXt1kVsu1JffstQexv9gNq
-	 5Qs3VMb7mn6OKy7u8RabikVuxcGm1dpon7/GBLOtpmxkjZubbqFbTovl0wkoZRCIJD
-	 +MadUFrtUqqzYhUm+g2ayXeNu1G74rlYmBGJbL9ICE3zk3huB1n8PxrjdiPhpHwVe7
-	 FEC1SmB0awSdGPUkOk8+zIyhSYzeq+hRDrCLN3YgMItDDz4y2Xv6pB6k0T6HVlXYB1
-	 R8P7syBsUuVfl+qfZuGQ0uNcUPj2MbTxDaxAZ6XuvHj2FsvfnKRzF0XrlYYobW5P7F
-	 s7kNUQIabsOeg==
-Date: Thu, 13 Jun 2024 14:40:19 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: dwarves@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	bpf@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>,
-	Jiri Olsa <jolsa@kernel.org>, Jan Engelhardt <jengelh@inai.de>,
-	Matthias Schwarzott <zzam@gentoo.org>,
-	Viktor Malik <vmalik@redhat.com>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Jan Alexander Steffens <heftig@archlinux.org>,
-	Domenico Andreoli <cavok@debian.org>,
-	Dominique Leuenberger <dimstar@opensuse.org>,
-	Daniel Xu <dxu@dxuuu.xyz>, Yonghong Song <yonghong.song@linux.dev>,
-	llvm@lists.linux.dev
-Subject: Re: ANNOUNCE: pahole v1.27 (reproducible builds, BTF kfuncs)
-Message-ID: <20240613214019.GA1423015@thelio-3990X>
-References: <ZmjBHWw-Q5hKBiwA@x1>
+	b=D1dsGlfOsQMs9j42IllEL504XJcPhi+v4uVHVFUDh9dkLitaQA92h9SgvyHWm9Jy7
+	 CYBkT/f5cvRmgi45ATQGnmHpqoGyiOhn0ObacdtPpyVKklC8r1RAfWsajgT+L4dJ0G
+	 dqD605+2loqPTusv5fDX6nfFTc9uA0yVsnrD+IiZ9AcaCGKQl5moXMv21yes06rTtt
+	 KY72REId3auGznJNeBm6Nde92mF8qEHlAQ4B3h2a4RVqi9FskzzgqaD1UI5IY9OFpO
+	 v9qhbcgeV6KgXt9oTRO4QgDMwwb/rFnBmOBnog6tiYiFKBCl2Okp0QHypUIpOzyOx6
+	 8R7ButkRiVz+A==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3F5FB37820CD;
+	Thu, 13 Jun 2024 21:48:46 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id A9EA010608F7; Thu, 13 Jun 2024 23:48:45 +0200 (CEST)
+Date: Thu, 13 Jun 2024 23:48:45 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Oded Gabbay <ogabbay@kernel.org>, Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH 5/9] arm64: dts: rockchip: Enable the NPU on quartzpro64
+Message-ID: <mq5clkj2io6vzkawm7s6wvzb6rlk74oyy5lylgivosvyavojms@fppwpj5m3qqw>
+References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
+ <20240612-6-10-rocket-v1-5-060e48eea250@tomeuvizoso.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vlxe36ggc7o455an"
+Content-Disposition: inline
+In-Reply-To: <20240612-6-10-rocket-v1-5-060e48eea250@tomeuvizoso.net>
+
+
+--vlxe36ggc7o455an
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZmjBHWw-Q5hKBiwA@x1>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Arnaldo,
+Hi,
 
-On Tue, Jun 11, 2024 at 06:26:53PM -0300, Arnaldo Carvalho de Melo wrote:
-> 	The v1.27 release of pahole and its friends is out, supporting
-> parallel reproducible builds and encoding kernel kfuncs in BTF, allowing
-> tools such as bpftrace to enumerate the available kfuncs and obtain its
-> function signatures and return types.
+On Wed, Jun 12, 2024 at 03:52:58PM GMT, Tomeu Vizoso wrote:
+> Enable the nodes added in a previous commit to the rk3588s device tree.
+>=20
+> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> ---
 
-After commit f632e75 ("dwarf_loader: Add the cu to the cus list early,
-remove on LSK_DELETE"), I (and others[1]) notice a crash when running
-pahole on modules built with Clang when CONFIG_LTO_CLANG is enabled:
+There is a separate regulator for the NPU. For QuartzPro64, which is
+basically the same as EVB1, it should look like this (obviously the
+"npu-supply" and "sram-supply" need to become part of the binding):
 
-  $ curl -LSso .config https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/raw/main/config
+&rknn {
+	npu-supply =3D <&vdd_npu_s0>;
+	sram-supply =3D <&vdd_npu_mem_s0>;
+};
 
-  $ scripts/config -d LTO_NONE -e LTO_CLANG_THIN
+Also the references are supposed to be done alphabetically in the
+DT file (so &rknn should not be added before &i2c).
 
-  $ make -skj"$(nproc)" ARCH=x86_64 LLVM=1 olddefconfig vmlinux crypto/cast_common.ko
-  make[3]: *** [scripts/Makefile.modfinal:59: crypto/cast_common.ko] Error 139
+Greetings,
 
-I've isolated this to the following commands using the files available
-at [2] (these were built with LLVM 18 but I could reproduce it with LLVM
-17 and LLVM 19, so it appears to impact a number of versions):
+-- Sebastian
 
-  $ tar -tf clang-lto-pahole-1.27-crash.tar.zst
-  clang-lto-pahole-1.27-crash/
-  clang-lto-pahole-1.27-crash/cast_common.mod.o
-  clang-lto-pahole-1.27-crash/module.lds
-  clang-lto-pahole-1.27-crash/cast_common.o
-  clang-lto-pahole-1.27-crash/cast_common.ko.bak
-  clang-lto-pahole-1.27-crash/vmlinux
-  clang-lto-pahole-1.27-crash/cast_common.ko
+--vlxe36ggc7o455an
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  $ tar -axf clang-lto-pahole-1.27-crash.tar.zst
+-----BEGIN PGP SIGNATURE-----
 
-  $ cd clang-lto-pahole-1.27-crash
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZraToACgkQ2O7X88g7
++ppnfQ/+JqtXPucUyRx8LXjWs85ElMTUelkoio7nG3hMKa+kIhgFzXsAklBUmELg
+SeopwGrOOSJCb478Eb3uL3M7BBA31blIKAdDnlpFB4R1iimlnGf6gqTkcQumGc2M
+zkgt/YqBdQ4W5HhLCb21fL87PkHZDTgP0SNQlVg4z9xo2KBVuHZe7gfM0/t5MRhC
+P6euSXEhkSUGHb+gq0LBf0MZnoHF6KWcMSsEXm7u/Sv2ftVrC6SyBDUtAAK7WOce
+DHyytzRfGFjoW8/rkxrkdNnw8eQCLd3LZkWhloahInps1t1o4Npk5/o8zEBjHZyY
+Jk7ocIrRnoiMy47QH0zAwr4VtHl6fhRnaZS/0xwBA7jlIGW96U6bNNJkgw1Wj1b1
+capv5ZDibYnlT0JB2NVs+OocykO4MskKtvn6gng3Bu22sGxQ2zWAT41TtrTzklS1
+WRbcIdHwpvtUSvxbWsfpjVuPCfuaVDPKP3ERnWdSTozQ6rZFTY+JN9/FT+wO/b2h
+V0vPx5d6KvskXRd8nOEdd56gTisxnjBEx2njFoQ3fST/blAJs1N37sYHkxeFQnom
+gvk/hVj1zCZV3h5tC+nYJnPM2s2WD49T4R+TgNrCqwLSr+CydHChFnQsm8h+GaXW
+dRZ3RCqZvDopo0LEKn0BLxGfwFzMU/FUPM37m7o3NQo0xfawtBU=
+=SaHD
+-----END PGP SIGNATURE-----
 
-  $ LLVM_OBJCOPY="llvm-objcopy" pahole-1.26 -J -j --btf_features=encode_force,var,float,enum64,decl_tag,type_tag,optimized_func,consistent_func --lang_exclude=rust --btf_base vmlinux cast_common.ko
-
-  $ cp cast_common.ko{.bak,}
-
-  $ LLVM_OBJCOPY="llvm-objcopy" pahole-1.27 -J -j --btf_features=encode_force,var,float,enum64,decl_tag,type_tag,optimized_func,consistent_func --lang_exclude=rust --btf_base vmlinux cast_common.ko
-  fish: Job 1, '...' terminated by signal SIGSEGV (Address boundary error)
-
-If there is any more information I can provide or patches I can test, I
-am more than happy to do so.
-
-[1]: https://gitlab.archlinux.org/archlinux/packaging/packages/pahole/-/issues/1
-[2]: https://1drv.ms/u/s!AsQNYeB-IEbqqC2F28JuLy__Q7Vd?e=KsraMU
-
-Cheers,
-Nathan
+--vlxe36ggc7o455an--
 
