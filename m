@@ -1,172 +1,206 @@
-Return-Path: <linux-kernel+bounces-213926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75228907CA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:31:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF14E907CA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04111284DD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:31:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F4E1F2425F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8479149E0A;
-	Thu, 13 Jun 2024 19:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989D414B091;
+	Thu, 13 Jun 2024 19:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fm6LvKOq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="J+jPP3kU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="E56+plvU"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D2A1EA87;
-	Thu, 13 Jun 2024 19:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AE92F50;
+	Thu, 13 Jun 2024 19:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718307096; cv=none; b=CK/6hGJQybOzDQ5txNXJ4B9o7pmB/pXoQ0raEiKMC5rakHIjcEeoWWFA1Y+/Zy9DOf2T1EmC9rBqD2NNFQrzjxDujea44zvsFzo9DVJH1sNVqLZ1D8VpFv0v46FG8o/GmYoBQb1K7AL/GQhzZOOVqtJ77NZOYoyy90qIj07FgEI=
+	t=1718307128; cv=none; b=R+uZHpMWqn9h4tA32ZNCfpe/yWXfQWQveB7BtsDBFkSwUESQRa8BenAGhdwoRqW5IkxCwi/xg0y0w6sVCVC0orVnQjkWhvPjHN/h8F67wHlJU9b3t49KP7oRu4Yz0gNPqMw4zFe1iQ2yM9rmRaf9oXxHotnlGKL1s6/+vNDs5XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718307096; c=relaxed/simple;
-	bh=Msrty0CWghk7EgHSD1Enom1a+uVe/GJvqQt78XwijVc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TH4sX8MWCO3BJJ8vr5dyMkkRtuzCElVfd2+enHi8a45B2xRBiLRPZJ9MkGRWxSe9lUzEoRvzaUrr1iRvBRxDfZ4G5qhbSzQTXZxco9vDk1oLw9+FamZUs1Bs6o4A+SdEdPgW9xkww52t3HO4Rq0PiVrcv36jyAe5M4FmXLl2M9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fm6LvKOq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B88C3277B;
-	Thu, 13 Jun 2024 19:31:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718307095;
-	bh=Msrty0CWghk7EgHSD1Enom1a+uVe/GJvqQt78XwijVc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fm6LvKOq8LnCkBKudRaefpRrC9T/XZx9lMSs+kmy3GilS6OOTjYz0bbmhro7CPW+z
-	 JIJOSCprtyehKRXBJif3Je62s5h884wbeaMM+rh64Z+XdWxbwHFaVojIngZ1oMp6Bc
-	 UiGSrmploDvU1bCi0dAsnnZIY269KCwJy5LlKlhxlZobY4Zc2Y2k75m+obusE1zBEE
-	 50tnPmceVKM/u1IJmK/TMLwUDiN45ZvidKgUQ3wYtkW4LDBrT982XxT3dBKj04EjAm
-	 3Ngmnh+M0MOJT4KrPdubtUZMLdd0aFs7XdYYIfKsFJjWZ6S9PKLO0OcFAohEvNOzvk
-	 jOogEuJ6APleQ==
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5bad97708efso76639eaf.1;
-        Thu, 13 Jun 2024 12:31:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXqhMFnW2/iSDSXVG1dTV42Ew566CqkYl+5FeugrTXvzrK/t9wbTG/CCyTgwF9w+PRkw7jqeajqTqgWOUBKGQJmyqYRsXCotXzBhHyUE3Xzk+FWdIE29uqC9twL3u84uB6bunAXn4o9Tw==
-X-Gm-Message-State: AOJu0YzjOcWyA86xrLC+4/oKiwKQYtvGiR0NbwfT9Fw9VGYauGIN4JaX
-	nWR1A8hueh/8OHtxoKp1M1wT40Wox+XD7H6mi8Q3BZ9v4iaHuITgg3yrJJc6a09+liSpipf32r0
-	4yepfPRl8/ELd6FDfbVo7q2sHMgo=
-X-Google-Smtp-Source: AGHT+IHRs3zSxlvThk3H+BGoZJ70j/dsSZLDQhgr/sGb0RpjaRB8rMEr1itwIj3NvzD+SyS9OPhnuPBWM0fXin64EV4=
-X-Received: by 2002:a05:6820:287:b0:5ba:ca8a:6598 with SMTP id
- 006d021491bc7-5bdad9f3131mr667709eaf.0.1718307095066; Thu, 13 Jun 2024
- 12:31:35 -0700 (PDT)
+	s=arc-20240116; t=1718307128; c=relaxed/simple;
+	bh=7SxxRthBao7cElNlUWiApM5FlMLnMOaKyIDs5ynswf0=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=pIDkRr5wChR1bk9jQpJSnKmjdLZlfbd2ywIOz/6wI9RyGaOdLacf07DqLazF8+q8nc04wpECWO6KN6e6lWrmadi97CF04Xsq3AHt+J82CwEhevh0RrBVGkKEf4NvQ4MhxLlepSRXWDg6q89N/OG0KZLMj/F4O2pSjRjASyVg6k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=J+jPP3kU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=E56+plvU; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 1CB9A13800BB;
+	Thu, 13 Jun 2024 15:32:06 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Thu, 13 Jun 2024 15:32:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1718307126;
+	 x=1718393526; bh=Qtdq9rJNyFwVn/RbNhPVjnJth7o/5tp1gNYGUREYPVw=; b=
+	J+jPP3kUiQB+p0OzFv69I7crLebKK0KJTmOseeQZrgu83Emb5ApmO0mXKG42ULu7
+	PlAj4D2UAM4ZD4cV6ulNdlZ7hph+1v4A6Ie+fATkwBjH3TkrHpZl6l41yqM/eBkW
+	K5XoaqW2m75lCmVn289jO8lcP7QPOccSVRGnVW3cy41f7t3cIDyC5L0B7HnohqYw
+	Gcvo8bOeb/tbdi37m7XNMZdBRGVupsFRatCaX48DWeFA/c/1+2AbhgDCBHhdQFOe
+	/ev1H+KAISfBwRKX+X8GAXRCrll6eD1c5RRknwzllVDlRGO8+ZezkawtTsOl/7/a
+	nJMRILl6UDrcqkikMX7+OQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718307126; x=
+	1718393526; bh=Qtdq9rJNyFwVn/RbNhPVjnJth7o/5tp1gNYGUREYPVw=; b=E
+	56+plvUJ27Zj8HPv789bSPdsiRumPzds6J54ktB4SNqqK23v61XPKVOmDYHZpFrG
+	ujZhP5zWC9Ytn87SMVL+FgwFtFi0h9R6bY2Ytt/0/Ots5B+PD+AdUuJtfRzHd+TZ
+	ajcbSN3FyppWNR/T/JYcgiYtj3MyVWGClXXPS7kqPAuvMwD1PzVCq1fY0oaaRx8k
+	iyLXF1z7uXpkgUCzhoHaMSkhgTrfo660nb/8kqsdeIAvjDJHj4qws08GiJdm9uYM
+	8tGxZFXmOP6rDUL+uFMzeY8AgXjQGJqXyScyitSBZtVTUjnJXKOLOz4e7TVQXJiq
+	HiHFJmAvkf0fS78fj3GTg==
+X-ME-Sender: <xms:NUlrZmwu8udUXVB1tpCehjs1rbV0hfLeND86JgU-6bcZaYNnXuorUQ>
+    <xme:NUlrZiToWBOKkzlGX9jaK5Tg5sYg-rZNI0GhUdG1e7h0KnLFtO6FPL5XL3xjJjvGn
+    B8A-iA-XntPtIK7t-8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedujedgudefhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
+    lfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtg
+    homheqnecuggftrfgrthhtvghrnhepjedutdeuhfdvjeevgfehudeitdehiefgveelheff
+    uddulefhkeeihfehudehgfevnecuffhomhgrihhnpeguvghvihgtvghtrhgvvgdrohhrgh
+    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgr
+    gihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:NUlrZoWH-01odsK7Zl-L6Cyvx_7KHhGAMpMqUu0kmkxPq10C3H2XaQ>
+    <xmx:NUlrZsidWbnC40N5cHcOCMChghCfZJzdvacF8q5YgIadXzHkgjVOTA>
+    <xmx:NUlrZoCijY_ait4cLZBkx0mJQnDaj-t1eSJBSFbr4FjclinJ6njgoA>
+    <xmx:NUlrZtLMM65QDsmKhc_AzoNvF3o5pcb7GYJtmtf7wQdsMe-Xvm0auQ>
+    <xmx:NklrZk1b30NEU0lDy1VRCU1ixKoSHJgHzjKqattoKeOeg2UR4cRAUsD1>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 7992036A0076; Thu, 13 Jun 2024 15:32:05 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-515-g87b2bad5a-fm-20240604.001-g87b2bad5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240609-acpi-sbs-sysfs-group-v1-1-7f0bf95523e7@weissschuh.net>
-In-Reply-To: <20240609-acpi-sbs-sysfs-group-v1-1-7f0bf95523e7@weissschuh.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 13 Jun 2024 21:31:23 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0im2ThDaMyV3bEtYsQYWJH0Y9sYVjpJJ0Zb-wBk_wZr0Q@mail.gmail.com>
-Message-ID: <CAJZ5v0im2ThDaMyV3bEtYsQYWJH0Y9sYVjpJJ0Zb-wBk_wZr0Q@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: SBS: manage alarm sysfs attribute through psy core
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <bbbd52c2-aaf2-4777-bee4-855d805923b5@app.fastmail.com>
+In-Reply-To: <20240613190429.GA2309072-robh@kernel.org>
+References: <20240612-boston-syscon-v2-0-9f8e1a07fa63@flygoat.com>
+ <20240612-boston-syscon-v2-6-9f8e1a07fa63@flygoat.com>
+ <20240613190429.GA2309072-robh@kernel.org>
+Date: Thu, 13 Jun 2024 20:31:46 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Rob Herring" <robh@kernel.org>
+Cc: "Lee Jones" <lee@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "paulburton@kernel.org" <paulburton@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Subject: Re: [PATCH v2 6/8] dt-bindings: mfd: Add img,boston-platform-regs
+Content-Type: text/plain;charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 9, 2024 at 1:13=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisssc=
-huh.net> wrote:
->
-> Let the power supply core register the attribute.
-> This ensures that the attribute is created before the device is
-> announced to userspace, avoiding a race condition.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> ---
-> Only compile-tested.
->
-> This is the SBS equivalent of
-> "ACPI: battery: create alarm sysfs attribute atomically" [0]
->
-> [0] https://lore.kernel.org/lkml/20240609-acpi-battery-cleanup-v1-5-34451=
-7bdca73@weisss
-> ---
->  drivers/acpi/sbs.c | 23 ++++++++++++-----------
->  1 file changed, 12 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c
-> index dc8164b182dc..442c5905d43b 100644
-> --- a/drivers/acpi/sbs.c
-> +++ b/drivers/acpi/sbs.c
-> @@ -77,7 +77,6 @@ struct acpi_battery {
->         u16 spec;
->         u8 id;
->         u8 present:1;
-> -       u8 have_sysfs_alarm:1;
->  };
->
->  #define to_acpi_battery(x) power_supply_get_drvdata(x)
-> @@ -462,12 +461,18 @@ static ssize_t acpi_battery_alarm_store(struct devi=
-ce *dev,
->         return count;
->  }
->
-> -static const struct device_attribute alarm_attr =3D {
-> +static struct device_attribute alarm_attr =3D {
->         .attr =3D {.name =3D "alarm", .mode =3D 0644},
->         .show =3D acpi_battery_alarm_show,
->         .store =3D acpi_battery_alarm_store,
->  };
->
-> +static struct attribute *acpi_battery_attrs[] =3D {
-> +       &alarm_attr.attr,
-> +       NULL
-> +};
-> +ATTRIBUTE_GROUPS(acpi_battery);
-> +
->  /* ---------------------------------------------------------------------=
------
->                                   Driver Interface
->     ---------------------------------------------------------------------=
------ */
-> @@ -518,7 +523,10 @@ static int acpi_battery_read(struct acpi_battery *ba=
-ttery)
->  static int acpi_battery_add(struct acpi_sbs *sbs, int id)
->  {
->         struct acpi_battery *battery =3D &sbs->battery[id];
-> -       struct power_supply_config psy_cfg =3D { .drv_data =3D battery, }=
-;
-> +       struct power_supply_config psy_cfg =3D {
-> +               .drv_data =3D battery,
-> +               .attr_grp =3D acpi_battery_groups,
-> +       };
->         int result;
->
->         battery->id =3D id;
-> @@ -548,10 +556,6 @@ static int acpi_battery_add(struct acpi_sbs *sbs, in=
-t id)
->                 goto end;
->         }
->
-> -       result =3D device_create_file(&battery->bat->dev, &alarm_attr);
-> -       if (result)
-> -               goto end;
-> -       battery->have_sysfs_alarm =3D 1;
->        end:
->         pr_info("%s [%s]: Battery Slot [%s] (battery %s)\n",
->                ACPI_SBS_DEVICE_NAME, acpi_device_bid(sbs->device),
-> @@ -563,11 +567,8 @@ static void acpi_battery_remove(struct acpi_sbs *sbs=
-, int id)
->  {
->         struct acpi_battery *battery =3D &sbs->battery[id];
->
-> -       if (battery->bat) {
-> -               if (battery->have_sysfs_alarm)
-> -                       device_remove_file(&battery->bat->dev, &alarm_att=
-r);
-> +       if (battery->bat)
->                 power_supply_unregister(battery->bat);
-> -       }
->  }
->
->  static int acpi_charger_add(struct acpi_sbs *sbs)
->
-> ---
 
-Applied as 6.11 material, thanks!
+
+=E5=9C=A82024=E5=B9=B46=E6=9C=8813=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=E5=
+=8D=888:04=EF=BC=8CRob Herring=E5=86=99=E9=81=93=EF=BC=9A
+> On Wed, Jun 12, 2024 at 12:56:25PM +0100, Jiaxun Yang wrote:
+>> This compatible has been used in arch/mips/boot/dts/img/boston.dts
+>> for a while but never documented properly.
+>>=20
+>> Write a new binding for this device.
+>> This also covers old img,boston-clock binding so remove that binding.
+>>=20
+>> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+>> ---
+>>  .../devicetree/bindings/clock/img,boston-clock.txt | 31 ---------
+>>  .../bindings/mfd/img,boston-platform-regs.yaml     | 74 ++++++++++++=
+++++++++++
+>>  2 files changed, 74 insertions(+), 31 deletions(-)
+>>=20
+>> diff --git a/Documentation/devicetree/bindings/clock/img,boston-clock=
+.txt b/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+>> deleted file mode 100644
+>> index 7bc5e9ffb624..000000000000
+>> --- a/Documentation/devicetree/bindings/clock/img,boston-clock.txt
+>> +++ /dev/null
+>> @@ -1,31 +0,0 @@
+>> -Binding for Imagination Technologies MIPS Boston clock sources.
+>> -
+>> -This binding uses the common clock binding[1].
+>> -
+>> -[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+>> -
+>> -The device node must be a child node of the syscon node correspondin=
+g to the
+>> -Boston system's platform registers.
+>> -
+>> -Required properties:
+>> -- compatible : Should be "img,boston-clock".
+>> -- #clock-cells : Should be set to 1.
+>> -  Values available for clock consumers can be found in the header fi=
+le:
+>> -    <dt-bindings/clock/boston-clock.h>
+>> -
+>> -Example:
+>> -
+>> -	system-controller@17ffd000 {
+>> -		compatible =3D "img,boston-platform-regs", "syscon";
+>> -		reg =3D <0x17ffd000 0x1000>;
+>> -
+>> -		clk_boston: clock {
+>> -			compatible =3D "img,boston-clock";
+>> -			#clock-cells =3D <1>;
+>> -		};
+>> -	};
+>> -
+>> -	uart0: uart@17ffe000 {
+>> -		/* ... */
+>> -		clocks =3D <&clk_boston BOSTON_CLK_SYS>;
+>> -	};
+>> diff --git a/Documentation/devicetree/bindings/mfd/img,boston-platfor=
+m-regs.yaml b/Documentation/devicetree/bindings/mfd/img,boston-platform-=
+regs.yaml
+>> new file mode 100644
+>> index 000000000000..bf94de38a89f
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/img,boston-platform-regs.=
+yaml
+>> @@ -0,0 +1,74 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/mfd/img,boston-platform-regs.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Imagination Technologies Boston Platform Registers
+>> +
+>> +maintainers:
+>> +  - Jiaxun Yang <jiaxun.yang@flygoat.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - const: img,boston-platform-regs
+>> +      - const: syscon
+>> +      - const: simple-mfd
+>
+> Why did you add 'simple-mfd'? That's not what is in use.
+>
+
+U-Boot needs this to probe sub-nodes such as reboot and clock :-(
+
+I had updated dts in an earlier patch of this series.
+
+Thanks
+>>
+
+--=20
+- Jiaxun
 
