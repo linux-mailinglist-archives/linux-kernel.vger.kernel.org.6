@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-213071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D6A906AAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:04:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 349B1906AAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 166C42862DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:04:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEB0C1F2371C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5BA142E7A;
-	Thu, 13 Jun 2024 11:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B70142E7A;
+	Thu, 13 Jun 2024 11:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w4xBmUY1"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="FWVLNwpR"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C621142E73
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12712143747
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718276693; cv=none; b=nI4xQPWUxSh0C6VvVAxCZ73Bd8tsZ01SqJIJxOGgz/924zahg29J7/uhoZGsSY7htywY0jFisgttVH2e9f6XymoCB6ctlfai6h4i9Uxz3C+1pY8v9+jZhafZNWlo6cNUtA1jaIovemowxS2DSha938nOTH5jXsuN7zkLFtPCQ14=
+	t=1718276698; cv=none; b=ubm5UFZytAFGpui+DSsPOXE6eriWKIj6f7csS0yjhpadb7fxagfnSEWIEJq70iWNuXxblD7CL8v+z/MronPhQ1W+8Eb4EsTXURR8UTrBLhmci3rfSmLaMKWEXEdhDLdIVlXvoqh4p12BjkWAa3nxQK+bJj+zWYa3DnCLGYEz4Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718276693; c=relaxed/simple;
-	bh=tAcSgvKXqfnSUFX2CtxDigGjnUYTBy78IoinGdlH2fw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dImnQ4PF3LivxERjGdIyN6iszZ/pI/Pv8VWinie1rERJEvjpL1il21uA8BlSOdhgo/AV5w2ozhUZkyTxziIM9JTPK+bWEQhmKQ899OnOny9vuFBfxfqkIwuX93rp+pwe55bvlaSPfL/jVIzxAkc/L8QyEvV4GKOfB8i049fWyo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w4xBmUY1; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57a44c2ce80so878523a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 04:04:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718276690; x=1718881490; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r05GSGoeixdTdrkrNQk/uUV5myauBem2SPDkvyRDYgc=;
-        b=w4xBmUY1ZJlIjBu16PzN8sZaXgkMZqijgAdXFvQWwFJBZ2towBcf+TEUgIUNrLAD4U
-         1cvWhBKoj8wd7QY3XyPGjA+HmL2OUzXk2np8ayObVlZw8UKfOptdXsVmnIVxmi+kOOhv
-         KEAPweB709bz/I/N6lVo8b6fiwDS+Xi+HYL3fqwXRTOPtjmJlndtIm+UoyFSjUzdRoAS
-         HPs3nVNcc4hFM3K8qv9r62e5AqK35r7HquKA20Tqh8Ey97mRsMmgdvsyHWkRUly3AbRA
-         WvMCd61dPGvXp6IttJsP2Tn+NMa5TKqSE5W6rJPVXBlo5VQmtMzd7sCZGfpwvHjxjIvi
-         PWeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718276690; x=1718881490;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r05GSGoeixdTdrkrNQk/uUV5myauBem2SPDkvyRDYgc=;
-        b=uUgNbe4xdV/EU8OQNaGna0kMAk8K7pFF9Hu400Odl4pl8fo+ErtD900K8NLBKGtHyn
-         /JSDc6DnktBmUGAY2R+A/UkvmqkO6i4a96UJ68aLE0KIqLKCP1gzJMup3YEwBKRI9SbC
-         IWzfRdlu3eTsIZfkO5x4JncAGrnltIVLZTPa8y3fEml/3wCgBrT/jKfh6bRqB1V1pJ8G
-         B0zUQoKNqUlIolbiZS9HME0BQYpzJXMB4awkQWRy8ogEJvSCh8DGM/LAVmJ+SOt2JKZT
-         NL93jC8YW4FjYi0V8cZnimXrjmJ3vffG5P11NPGPs83yyx7hc0ge/xNsdkB0LYfq2kek
-         r6vg==
-X-Forwarded-Encrypted: i=1; AJvYcCVI2H09biHCHtNNlOoj8KapujnCFnAGdy1tm3h3EReOhEB0Lp05Ay7LDxahkl28+AG3piZpPonmajPIyX0SopJUO4IaRlE+iATU+RAF
-X-Gm-Message-State: AOJu0YwYfv2DX08xtPIw4ncMuTiChy3uPbEo9vD/xeP6t4jO4U8ldxBQ
-	xLUtvAPOUZt0z6FhH/x1zKoLTG7BedujsoDQ3nTkpIlYhpXQ2ezfMuhj8wwPdPs=
-X-Google-Smtp-Source: AGHT+IFZMCZjqTdFJ+VphErIaK9g4laFVqVLl8sNw4G7xzHX0fkq7AQsk5RVkxZ0AbcMTIBCZQzPyg==
-X-Received: by 2002:a50:d7d9:0:b0:57c:5f22:f9c1 with SMTP id 4fb4d7f45d1cf-57ca976a4e8mr3004561a12.21.1718276689646;
-        Thu, 13 Jun 2024 04:04:49 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72da37csm768974a12.27.2024.06.13.04.04.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 04:04:49 -0700 (PDT)
-Message-ID: <93b2de4e-dc2d-4781-9c1b-d6ad6d888eb2@linaro.org>
-Date: Thu, 13 Jun 2024 12:04:48 +0100
+	s=arc-20240116; t=1718276698; c=relaxed/simple;
+	bh=QSVxZIE5HRdX2PZ65tmi5cZl1eXGEGpB1NH67xGpsZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KEs+Cm/cCpQZG7RyR8cqL9YW3RLibfNcl7k9lc52Y3bo0Rc8t4EKwBriWubwefT7KguqEm89lqEEbnHg20ZyOP0laanZwEJvSr1BqSiduc5CC4OiU6sPnMAqXz3wERpp4YXK8vVYZAXGO7fGIxjDCZCg/bk6qEWnfj2NpL5dONM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=FWVLNwpR; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 6CDE91C009C; Thu, 13 Jun 2024 13:04:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1718276694;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JPFN6Dd+Rb4MFGhC14cx0oFBxuxBrErNFRFfqvuYr6Y=;
+	b=FWVLNwpRYJz6JPKdKp05j+vw9IFSV46i5t7cDqge8Gm+jo/bHVQwN/+/HpTq6oWpkMc9Bl
+	3zVPTNBd/i7setkhVqPdBZW4+lHKlX4E25W9tfN4+8N4dTj9CGumwDQNL1sg25+dJxDM79
+	WY0qpEnvpew5YRwCke7bmyoDqKKvrbQ=
+Date: Thu, 13 Jun 2024 13:04:53 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: David Wang <00107082@163.com>, regressions@lists.linux.dev
+Cc: sivanich@hpe.com, kevin.tian@intel.com, baolu.lu@linux.intel.co,
+	jroedel@suse.de, linux-kernel@vger.kernel.org
+Subject: Re: [Regression] 6.10-rc1: Fail to resurrect from suspend.
+Message-ID: <ZmrSVax+fzXNKyiq@duo.ucw.cz>
+References: <20240530114907.4836-1-00107082@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] ASoC: codec: lpass-rx-macro: add support for 2.5
- codec version
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Banajit Goswami <bgoswami@quicinc.com>
-Cc: neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <20240612-lpass-codec-v25-v4-0-f63d3676dbc4@linaro.org>
- <20240612-lpass-codec-v25-v4-3-f63d3676dbc4@linaro.org>
- <a6793126-ba1c-4679-a2c2-eabad4f5a506@linaro.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <a6793126-ba1c-4679-a2c2-eabad4f5a506@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zPE+q47d1Rs+wmMB"
+Content-Disposition: inline
+In-Reply-To: <20240530114907.4836-1-00107082@163.com>
 
 
+--zPE+q47d1Rs+wmMB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 13/06/2024 12:00, Krzysztof Kozlowski wrote:
-> On 13/06/2024 12:49, Srinivas Kandagatla wrote:
->> LPASS Codec v2.5 has significant changes in the rx register strides.
->> Due to this headset playback on SM8550, SM8650, x1e80100 and all SoCs
->> after SM8450 have only Left working.
->>
->> This patch adjusts the registers to accomdate 2.5 changes. With this
->> fixed now L and R are functional on Headset playback.
-> 
-> I was just about to respond, are you sure this is suitable for sm8450? I
-> looked now at registers and sm8450 (which should have codec v2.5) has
-> old style register layout.
-> 
-from 2.5 the layout has changed, I have verified it on SM8450, with and 
-without this patch, This fixes the issue one speaker issue.
+Hi!
 
+> My system fails to resurrect after `systemctl suspend` with 6.10-rc1,
+> when pressing power button, the machine "sounds" starting(fans roaring),
+> but my keyboard/mouse/monitor is not powered, and I have nothing to
+> do but powering cycle the system.
+>=20
+> I run a bisect session, and narrows it down to following commit:
+>=20
+> 	commit d74169ceb0d2e32438946a2f1f9fc8c803304bd6
+> 	Author: Dimitri Sivanich <sivanich@hpe.com>
+> 	Date:   Wed Apr 24 15:16:29 2024 +0800
+>=20
+> 	    iommu/vt-d: Allocate DMAR fault interrupts locally
+> 	   =20
+> 	    The Intel IOMMU code currently tries to allocate all DMAR fault inte=
+rrupt
+> 	    vectors on the boot cpu.  On large systems with high DMAR counts this
+> 	    results in vector exhaustion, and most of the vectors are not initia=
+lly
+> 	    allocated socket local.
+> 	   =20
+> 	    Instead, have a cpu on each node do the vector allocation for the DM=
+ARs on
+> 	    that node.  The boot cpu still does the allocation for its node duri=
+ng its
+> 	    boot sequence.
+> 	   =20
+> 	    Signed-off-by: Dimitri Sivanich <sivanich@hpe.com>
+> 	    Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> 	    Link: https://lore.kernel.org/r/Zfydpp2Hm+as16TY@hpe.com
+> 	    Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> 	    Signed-off-by: Joerg Roedel <jroedel@suse.de>
+> =20
+> And I have confirmed that reverting this commit can fix my problem.
 
---srini
-> 
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> Tested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> I tested earlier version of patchset on SM8550 and X1E80100.
-> Best regards,
-> Krzysztof
-> 
+Bisected regression. Should we simply revert the patch?
+
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--zPE+q47d1Rs+wmMB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZmrSVQAKCRAw5/Bqldv6
+8ki+AJ9/bBY1k8ENQVWi+6+PKUSm2tkMyQCgoBbM80fLpif/6CObXI7quPCcmd0=
+=i6Pf
+-----END PGP SIGNATURE-----
+
+--zPE+q47d1Rs+wmMB--
 
