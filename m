@@ -1,70 +1,111 @@
-Return-Path: <linux-kernel+bounces-213718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 990FC907976
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:11:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACFB907977
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B6961F24A53
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:11:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 952EF1C23EDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0103149E01;
-	Thu, 13 Jun 2024 17:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OiUx7Vkz"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAF9149E01;
+	Thu, 13 Jun 2024 17:12:16 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A844E4C6B;
-	Thu, 13 Jun 2024 17:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618C5149C57;
+	Thu, 13 Jun 2024 17:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718298706; cv=none; b=DWVALZPs2DjC2B2W1QkhTfAAwolAih2IwgVEUyWvxc6q3aBNRtOKtrqbMgueFAMs2hPR16E8qvGVFLUKdhTNTAM0kxZ6cZ029MGjHQ3vIXAtLZC2FG4dzyf3YXvszWYWNpu7BlPxUMsUFqVRlP17VTZvGmyZiMB8mvXV2/GG6Y0=
+	t=1718298736; cv=none; b=j/A8YIRSxTqHbnmlDUMItpap3Qp843FluXf4yyqZRJ/mfYXDxsTQ1aX25U+IffeCoxQ56+Q8rmkqyW5AfDO2vDpP79DEMBWesLfKTn+8EoXamR21oXOI/r6AHB0xuXR8L0+9niQggIN7+KdSc4pZVnAF8ga82OLZNNkxytHXWaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718298706; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OOIhQlvvfDhvaj8VSajQOCPhBTq7i49glJXkxSMQXAVFZPa4p0KCT/U7jZHiy5h5QWs4TZ/KhVJwj8LAxilGNSDB1LFLAiQiHDOOJ6zPDvSJ2XcJqmnmOBavYlTMfencvOfD96BUTk2M/HvAqpgGnmHwuwCZMeDw5Y81VXvxoqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OiUx7Vkz; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=OiUx7Vkze1gNFA2Oqpthb42cdX
-	gNE1C8VABuJ/4ZXOTq8s1QwWxYN3OrpaLIhpPgKfzHxURqowEkLYol+yq2ASrq1iNFHJ1r0sEalti
-	E2HatZORf70bQkh1jTFGXwdw7iU40qzEdxdGIJag1SEcvkgF9fkDM6Q1R9jTQQiYXaTCmLDdBqFXB
-	ht5zYVPzkhMHYOOYxWEaca7Kvc6bQ8pV78+B+cOWxyS+/9DtzwmLhVfbNr0YKhBbzgtlc/GrNRDpH
-	59E4oiX8VuPUOyR+puu5tikLkcl22pflqYG+GsRKhvHmizQZ69jFpPUQ+y6cnaTmhEG7e7ZQSraju
-	Yz+rsHaw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sHnz8-0000000HTUX-3ZmG;
-	Thu, 13 Jun 2024 17:11:38 +0000
-Date: Thu, 13 Jun 2024 10:11:38 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Cyril Hrubis <chrubis@suse.cz>
-Cc: Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v2] loop: Disable fallocate() zero and discard if not
- supported
-Message-ID: <ZmsoSg74tzJ7SgoF@infradead.org>
-References: <20240613163817.22640-1-chrubis@suse.cz>
+	s=arc-20240116; t=1718298736; c=relaxed/simple;
+	bh=KGtnCWDjLtvwaHEWBWIoE/+mE2S0vSVzAVfnzRK/d/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H9GMxy7Zf/gbeNNcHnifvFQgoS0WsD4t8zSfjd/OL4EvbkbWmnaGAapmx/Kqa09I/xYBgcQdqwgUDl7zJnFLXf/sNeGGXbrW9pv4Ci01bX5yGHFTwLb8xvDMTSHgiZV6TQz2kYvpciqAhqJ7J7qyTocRVGNCibD87EEyl36gDFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6E4EC3277B;
+	Thu, 13 Jun 2024 17:12:13 +0000 (UTC)
+Date: Thu, 13 Jun 2024 13:12:12 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Alexander Graf <graf@amazon.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Vincent Donnefort
+ <vdonnefort@google.com>, Joel Fernandes <joel@joelfernandes.org>, "Daniel
+ Bristot de Oliveira" <bristot@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, <suleiman@google.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Vineeth Pillai <vineeth@bitbyteword.org>,
+ Youssef Esmat <youssefesmat@google.com>, Beau Belgrave
+ <beaub@linux.microsoft.com>, "Baoquan He" <bhe@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, "Paul E. McKenney" <paulmck@kernel.org>, David Howells
+ <dhowells@redhat.com>, Mike Rapoport <rppt@kernel.org>
+Subject: Re: [PATCH v6 0/2] mm/memblock: Add "reserve_mem" to reserved named
+ memory at boot up
+Message-ID: <20240613131212.7d1a7ffa@rorschach.local.home>
+In-Reply-To: <b0ed328f-c4e5-4e9b-ae4e-5c60703ab376@amazon.com>
+References: <20240613155506.811013916@goodmis.org>
+	<b0ed328f-c4e5-4e9b-ae4e-5c60703ab376@amazon.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613163817.22640-1-chrubis@suse.cz>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Looks good:
+On Thu, 13 Jun 2024 18:54:12 +0200
+Alexander Graf <graf@amazon.com> wrote:
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+> 
+> Do you have a "real" pstore on these systems that you could store 
+> non-volatile variables in, such as persistent UEFI variables? If so, you 
+> could create an actually persistent mapping for your trace pstore even 
+> across kernel version updates as a general mechanism to create reserved 
+> memblocks at fixed offsets.
+
+After implementing all this, I don't think I can use pstore for my
+purpose. pstore is a generic interface for persistent storage, and
+requires an interface to access it. From what I understand, it's not
+the place to just ask for an area of RAM.
+
+For this, I have a single patch that allows the tracing instance to use
+an area reserved by reserve_mem.
+
+  reserve_mem=12M:4096:trace trace_instance=boot_mapped@trace
+
+I've already tested this on qemu and a couple of chromebooks. It works
+well.
+
+> 
+> 
+> > Requirement:
+> >
+> > Need a way to reserve memory that will be at a consistent location for
+> > every boot, if the kernel and system are the same. Does not need to work
+> > if rebooting to a different kernel, or if the system can change the
+> > memory layout between boots.
+> >
+> > The reserved memory can not be an hard coded address, as the same kernel /
+> > command line needs to run on several different machines. The picked memory
+> > reservation just needs to be the same for a given machine, but may be  
+> 
+> 
+> With KASLR is enabled, doesn't this approach break too often to be 
+> reliable enough for the data you want to extract?
+> 
+> Picking up the idea above, with a persistent variable we could even make 
+> KASLR avoid that reserved pstore region in its search for a viable KASLR 
+> offset.
+
+I think I was hit by it once in all my testing. For our use case, the
+few times it fails to map is not going to affect what we need this for
+at all.
+
+-- Steve
 
