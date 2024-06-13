@@ -1,130 +1,159 @@
-Return-Path: <linux-kernel+bounces-213511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4540A907642
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:13:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 152AA907645
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 514271C21F85
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:13:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA2A6287404
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FC51494CC;
-	Thu, 13 Jun 2024 15:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2AD1494C5;
+	Thu, 13 Jun 2024 15:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rhhb8UeS"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N6Z2kT5R"
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6AF145FE2;
-	Thu, 13 Jun 2024 15:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8B41494B5
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718291605; cv=none; b=BQcWvnNjK5YHgxw0wlAPJqCRBEEubD5Za9z3SuVLH/PZt1gVGTUiLk79NXbRJuI1oJ/4rtpiVRAvxWpSqH/uvY+xVlgMg2CbTxR/aUxJfXQtd8F8tLlon+1K+nQxuc5+wMmRTMi32nyXvhkUC1baunhN/jaUTjh2NbP119BSnHw=
+	t=1718291636; cv=none; b=BGufS9N5kOE47VU/sUbE8ZyHThda5Q6MC7kxw8uP8tXpnyutPTPf0kmMrUfnJgMsVAbAdG43t3KWR+ZAJrvAKm6Np5msvTxldz+HwH291oQw3pYo2cMOj+HoLxoRHmlO7q+JNw3vx6ECrGxj7Vxivb22SCaiVnFBWr5ui87EgWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718291605; c=relaxed/simple;
-	bh=9H+YgTYmKGS5O+3bHXS0T2zCyE2mUBQG7mMq+T/+KDY=;
+	s=arc-20240116; t=1718291636; c=relaxed/simple;
+	bh=14Z/QPjhD+7BffP2eGAJ+9YQJulua94nuc8mbHlPwaE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SD3ksbtNgy/4agKDefjYJXJ7HVnlNzMhzNsyJM/roiOZhY8/DebP8pcCwaXfh6CEQgqDE2OJM2sIUQAEVNnAftVn6+yb5NTDWJN7GoDSSDdqk1QEylvvOAGQw8+sIlumgEdmiKseKG6Hs5wQyaxxYNC6ZANch+gvvCJ782B8nUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rhhb8UeS; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b08d661dbaso20559466d6.0;
-        Thu, 13 Jun 2024 08:13:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=NY7mSRcU4c/d8qaVTSj80Q5ygsqB4QZoSu3XX4i50TKVtTTZbYhECLxHH5nXJf1zYO+dmKaimiHfIUcYL10rRj3MnJvvQCsktkH39TdODS+Dt7BLocIuRCtz/8icM+7mWC/410b7FMpGMus9Ky3Pyiafvz1lxHrBagsT6HdlTkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N6Z2kT5R; arc=none smtp.client-ip=209.85.222.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-80b58104615so334401241.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:13:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718291603; x=1718896403; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tD51o0Y1ksGPreKO2RCSDyc0HAD564QL05nYWkEYiaE=;
-        b=Rhhb8UeS/F8142gK3yBwxQS3q8EKL5XBH4pZLTtMPdRAnuCHOg6qLEyGwOB1n+vp3R
-         o67CjEGKc7Czmyn/m6rFmgxHpnMXM8Nv3JrxSk1G8BROf6T75BG4EmnyI3CJPCJ9ix1u
-         9umLF1h38iJCvg9H3w19YBsR/OJEXrrQE2Vl76Fbpufr85BKukBnVC7Z6+cI5p5i768i
-         7nEfp+ye0b5OHnB3FiJZglqG9nyxoM9u16wUz9OP/O86LMuluHO+b7dWQQ2bplTxvVvq
-         N2u7dFvwBcwE4AX5nakZ8QAxZyvi7Wg4EgsFDh30Sy+E2vFdngC56zXAMsME7eRybzHs
-         HFRA==
+        d=linaro.org; s=google; t=1718291633; x=1718896433; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YrxYBwFmJZ2ShtzXRL4Y2grRkz6qOWp2v7p/c2wyXj0=;
+        b=N6Z2kT5RuXj/Meim/CCyrYJX41k/FWONmJcxc5dAF1lNhYbtPsg7bQGgM4Md6JEYE4
+         unbpr0/6Y4VLyZXsF5XozdYmYCEnZtdyZ/FjIYXUyag2OnQtlQwtViXnT2GqjKK2DYvg
+         2C2XI9cxxfvaDZzndaL2WX2ZKBLTt00UL97ZUHGkaAZB4AImGFa3oRwvlYIqjfbcQ622
+         4ZneCaF59d9e9XjhfhRUTfnMiAtaI7ySxFeGkXlaKyslCB4z4JtUQO5nDpEuTgUirNCe
+         iCttsdSgPjcAAPDCvCN3s3JIxN32IJfGg+Gpag+nXDoYMpqG34TGB2SRMmJ+mvM5/xDc
+         TzzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718291603; x=1718896403;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tD51o0Y1ksGPreKO2RCSDyc0HAD564QL05nYWkEYiaE=;
-        b=ffVtc4YA7sRle42qgQU9rAl4TseL8dfIQJX9VH+rE17u9t2rZHPJKDv/fOhNSZoAmb
-         0N3VATVYud2UJ9BrGewCOpGMbyD7hgOJtCacmqi5/kIBnZO4trkpxDMA/VwpU/ZUxyIy
-         K6sbkCqHaHfh6cCsnNwCNkvuTX+N7LwUJHgmMDLlem9N3SuPFPtTiJpn9hqmFQ6Nms16
-         sOaftPAw+O7HCgn+K5EoCkIqU8qlXkA2JJHeSWhqBiHi9P6fjWvlCWmLfTpg4DgSkIjo
-         AqoC+c5NO/ty0P+LuHiVkEbri9dIZEklQpJT18YNUlJqVuu0huG3MjYe4hNgmgXfFX6d
-         RPEg==
-X-Forwarded-Encrypted: i=1; AJvYcCV543eJq4InAz1QgzjWnVya7LKOygmnQFgDPOS7u1KYivcz0c5fkwDGAya7MgkTP8XDZI90QQUh+29f343Laa4j6yYtGDgzPyVb+St13fQHnpN44Hew0MGufKDXgAmWQmeAr3oz2iuy
-X-Gm-Message-State: AOJu0Yy1CAvvmRYSJ6oTWGAhCOHKEVWkagSExr+gPaeawE7yWqM40P31
-	ZnF0iCNOqQIQBEsE+xUJN7Oq4d6Iz/i1z/UBj9LgYUPZ+a9DB8dB8Br0LZCKaEIKB8mHyaF4lN9
-	woRMNffiUNWoMIhikNbOFSowMO0U=
-X-Google-Smtp-Source: AGHT+IGW6rnw+BQabFawV0pm/2GpvLPrBzbXMkIgKzqD4lNHr4ky/rvWXSuj65jR7lHLZQPMM59NAef8eQa9ZzeUTRI=
-X-Received: by 2002:a05:6214:130d:b0:6ad:753d:45cb with SMTP id
- 6a1803df08f44-6b2a343d2b7mr49824026d6.20.1718291603122; Thu, 13 Jun 2024
- 08:13:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718291633; x=1718896433;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YrxYBwFmJZ2ShtzXRL4Y2grRkz6qOWp2v7p/c2wyXj0=;
+        b=W1vrv3m46fCBX2BoUzKgMNLtLcxrr5GhcjwV36TCmuptWLmLysutNuOOPZuSHgbF6R
+         +INBmLY6EUjX+iAzJc+uI0t/RD+e+H7HV1XVwVPkdnKQ2win0Yj434g1wnZ1yAsZ3xG4
+         O9zRzNLs4XUeLwr/kvAEID9YDoPiF77NNZIuwXjn1XEs+LTzsHYlVmr8+JBq9baFm0xq
+         cM6HivlXMZc6GnD++kw0AS3LytOwH2cEV0Q1p5FSHvB/fvwLkRjZFPtAbOIjx5INEXTU
+         GcaoWVeYmKq8IOOBB3neBjjaoBRZEE2hLR1+zJPMqvbv5SMVIBd0PCwka7VG82RNU21d
+         YEqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXe1C+LD5+EUS5Plj4/2e9o3s0JKgEC7x3tYF+qlLP32CVIrQO4cV5qE9MER6PjwLtjhYwwY1y38HZXe7SaffJAShWk70EC29c+aBf4
+X-Gm-Message-State: AOJu0YxS0F9XHx531KvEfXkcBUiAaEYedgezrT7JAf6oSSgOQPXw6QBB
+	f4Hw4yqDAw08MnRk9sBPBrv6cG2KmZPLLnyMJld0kRk/iTWGSHzTxGEMqP1V7qIs+8vRPDaH5Ii
+	TxE3/gh+YTecbRt/HoRrpaEKmM5Fml6CSKFtUmw==
+X-Google-Smtp-Source: AGHT+IEN/IxLFSZi+7ySH7Yli8WEc2cF1WYEl0a+Gfrx6rp5ZdvnxPevY6/6w7U4zj4C97saSZZh8hfOmFU6AZ7IZKI=
+X-Received: by 2002:a05:6122:c9f:b0:4ed:80:bd85 with SMTP id
+ 71dfb90a1353d-4ee3df992c1mr183882e0c.5.1718291633421; Thu, 13 Jun 2024
+ 08:13:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608155316.451600-1-flintglass@gmail.com> <20240608155316.451600-4-flintglass@gmail.com>
-In-Reply-To: <20240608155316.451600-4-flintglass@gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 13 Jun 2024 08:13:11 -0700
-Message-ID: <CAKEwX=M4pKhWs_d9ZGvvG7N3g2RFggFj5DEidyzjHe2pivr5UA@mail.gmail.com>
-Subject: Re: [PATCH v1 3/3] mm: zswap: proactive shrinking before pool size
- limit is hit
-To: Takero Funaki <flintglass@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240613113247.525431100@linuxfoundation.org>
+In-Reply-To: <20240613113247.525431100@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 13 Jun 2024 20:43:41 +0530
+Message-ID: <CA+G9fYvnVJi1RFhO5f6ZH2mpagZ6jcEdoQAxnSBxWPHsEVQwYg@mail.gmail.com>
+Subject: Re: [PATCH 5.10 000/317] 5.10.219-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, Anders Roxell <anders.roxell@linaro.org>, 
+	Guo Ren <guoren@linux.alibaba.com>, Guo Ren <guoren@kernel.org>, 
+	Palmer Dabbelt <palmer@rivosinc.com>, clang-built-linux <llvm@lists.linux.dev>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 8, 2024 at 8:53=E2=80=AFAM Takero Funaki <flintglass@gmail.com>=
- wrote:
+On Thu, 13 Jun 2024 at 17:43, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> This patch implements proactive shrinking of zswap pool before the max
-> pool size limit is reached. This also changes zswap to accept new pages
-> while the shrinker is running.
+> This is the start of the stable review cycle for the 5.10.219 release.
+> There are 317 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> To prevent zswap from rejecting new pages and incurring latency when
-> zswap is full, this patch queues the global shrinker by a pool usage
-> threshold between 100% and accept_thr_percent, instead of the max pool
-> size.  The pool size will be controlled between 90% to 91% for the
-> default accept_thr_percent=3D90.  Since the current global shrinker
-> continues to shrink until accept_thr_percent, we do not need to maintain
-> the hysteresis variable tracking the pool limit overage in
-> zswap_store().
+> Responses should be made by Sat, 15 Jun 2024 11:31:50 +0000.
+> Anything received after that time might be too late.
 >
-> Before this patch, zswap rejected pages while the shrinker is running
-> without incrementing zswap_pool_limit_hit counter. It could be a reason
-> why zswap writethrough new pages before writeback old pages.  With this
-> patch, zswap accepts new pages while shrinking, and zswap increments
-> the counter when and only when zswap rejects pages by the max pool size.
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.219-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
 >
-> Now, reclaims smaller than the proactive shrinking amount finish
-> instantly and trigger background shrinking.  Admins can check if new
-> pages are buffered by zswap by monitoring the pool_limit_hit counter.
+> thanks,
 >
-> The name of sysfs tunable accept_thr_percent is unchanged as it is still
-> the stop condition of the shrinker.
-> The respective documentation is updated to describe the new behavior.
->
-> Signed-off-by: Takero Funaki <flintglass@gmail.com>
+> greg k-h
 
-Taking a step back, could you benchmark and include relevant
-userspace-visible metrics to show:
 
-a) This is a problem happening in realistic-ish workloads.
-b) The solution shows improvements over the status quo.
+The following build errors are noticed on riscv with clang-18 toolchain
+but gcc-12 builds pass.
 
-before we justify any extra complexity? This goes for pretty much the
-whole series (i.e why are we fixing this), but for this patch
-specifically, since we are optimizing things.
+However, compared with older releases this is a build regression on
+stable-rc 5.10.
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+riscv:
+ defconfig - gcc-12 - PASS
+ defconfig - clang-18 - FAILED
+
+Build error:
+------
+arch/riscv/kernel/stacktrace.c:75:52: error: incompatible pointer to
+integer conversion passing 'void *' to parameter of type 'unsigned
+long' [-Wint-conversion]
+   75 |                                 if
+(unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
+      |
+                ^~~
+include/linux/compiler.h:78:42: note: expanded from macro 'unlikely'
+   78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
+      |                                             ^
+arch/riscv/kernel/stacktrace.c:75:57: error: incompatible integer to
+pointer conversion passing 'unsigned long' to parameter of type 'void
+*' [-Wint-conversion]
+   75 |                                 if
+(unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
+      |
+                     ^~
+include/linux/compiler.h:78:42: note: expanded from macro 'unlikely'
+   78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
+      |                                             ^
+2 errors generated.
+make[3]: *** [scripts/Makefile.build:286:
+arch/riscv/kernel/stacktrace.o] Error 1
+
+
+Links:
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10.218-318-g853b71b570fb/testrun/24322227/suite/build/test/clang-18-defconfig/details/
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10.218-318-g853b71b570fb/testrun/24322227/suite/build/test/clang-18-defconfig/history/
+ - https://storage.tuxsuite.com/public/linaro/lkft/builds/2hp7bDTOjqzNr8hqqSWyMf943W8/
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
