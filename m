@@ -1,202 +1,119 @@
-Return-Path: <linux-kernel+bounces-212910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E51490681C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:06:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E386F906818
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96A20B27DB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:04:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 914961F21DDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71AB513F45B;
-	Thu, 13 Jun 2024 09:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3814E140391;
+	Thu, 13 Jun 2024 09:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="cpo8W4V9"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="mFkTo+oa";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZZpYo5X+"
+Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C21C3209;
-	Thu, 13 Jun 2024 09:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42F614036E
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718269426; cv=none; b=j6Nbu5+/CXPIXLqI+A7KO3aF4aR3ASqBT9KrLQbnDX9dT5mOv8JJrktK4oK+lXSVZES59j45iRmtQ/XAzipPyRBlXfCzxJf0RwBfJ5sho9R+Dvrdzw7cHiS/O+dbE+8l4QwiBiD37Ak34sHYn+1LBUe+4WfPeQkueCvrWdglU10=
+	t=1718269432; cv=none; b=XsAxQPwjbGYiuhPUKY2KAvXCZuTjXUUwiBjSU75ACyHKq7t9iDKBIoQhDD9OVhNwSE+KdzoehbKpOz+wXydwrB+UJd6q4PKbvbWKhOv+7GI2SWw1c3gBf/p3+ggIoFePiL7vqecq9V2FoK8qvK4x0UmDBDdPlyIHCl6JycucYcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718269426; c=relaxed/simple;
-	bh=nJx/IylAvAXPsNdrYNHuTbnSL6QhGxG2eIRgTDJNKLE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PIywvmuJ6+NkWxgUrMrrMJACmxAdPGArGoJyvpfsRvvxyLQXdksYAajHD2lHnPliu7yomFzITUmc6IB5F50ZOyk+GLSk3xva2FrG21m2fN+r88bIeJI9RW6VRjhOdHXWmwSfmfqjv5W/LyUxqs2Fp356yEn6oDXLWaWfgB51cwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=cpo8W4V9; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id E9AB4120009;
-	Thu, 13 Jun 2024 12:03:30 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru E9AB4120009
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1718269410;
-	bh=0eA1sXoPzlJDy1NTJKWN6Wp5FWbVIxxhC+wH9/qzD2Q=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=cpo8W4V9eXHR1J54kiJTCFakcjoI/TafsZULXAXcMd0VmwTu1Hne/wsLpD/7yVkif
-	 LvKsDHvXeMr8r7rQ8MbEqnUkCGw6uzg031t8bDLuJuqEBSjt0hN7QyhDSJ+d0zK1RL
-	 tExrNFiZ79tlNrC3+DBg5MlZdR9sUpma/oxNA/o+euZqWHsQzzZjONoOpkryxgD6og
-	 er6btO9JCk8gvtU8QlX5z+lrQWZjiZtH3QoklomuEUMaHdiVaGqpcnppplsaX3HsiH
-	 ftq+iobNrEP/KnfNG26umtlD/FjWu1f+pBm2fFT68KGId4LnieUI1rxvSWGyAES59S
-	 PuocWvpneQf2A==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 13 Jun 2024 12:03:30 +0300 (MSK)
-Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
- (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Thu, 13 Jun
- 2024 12:03:30 +0300
-Date: Thu, 13 Jun 2024 12:03:30 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-CC: <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
-	<kernel@sberdevices.ru>, <rockosov@gmail.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 6/7] dt-bindings: clock: meson: add A1 CPU clock
- controller bindings
-Message-ID: <20240611210007.bzm5vawqgdhh2g5s@CAB-WSD-L081021>
-References: <20240515185103.20256-1-ddrokosov@salutedevices.com>
- <20240515185103.20256-7-ddrokosov@salutedevices.com>
- <1jtti1p10m.fsf@starbuckisacylon.baylibre.com>
- <20240610111826.im3mz64hjfkxrxhr@CAB-WSD-L081021>
- <1j7cexow91.fsf@starbuckisacylon.baylibre.com>
- <20240610124842.mpy4rtlwtwasqf7h@CAB-WSD-L081021>
+	s=arc-20240116; t=1718269432; c=relaxed/simple;
+	bh=yOUzonXXL0yYyl7r/id+llT6wbNCnJmkSrYPDSPH4Z4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kWo+07eCLw8wTLB0hMCCSNWBFxo/Gjpl8kl3X8jOI7ZYDfqfK1wBYOVTv6lTgLvHKi+eLSIEmwnjHZbTzmhrzgE0iY2pnKwFHjYtGqxlkcGexOjTV5If+YLFu2GWuhBYcZ23e2UTJdLpZjhPuPrZjoeANo9ELsO+LLZI7/yAxKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=mFkTo+oa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZZpYo5X+; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id B0069114020C;
+	Thu, 13 Jun 2024 05:03:48 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Thu, 13 Jun 2024 05:03:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm1; t=1718269428; x=1718355828; bh=mopuKCNsFY
+	MpSlhKsvvqFov2Ij5rcVHAmkj2/47ed3Y=; b=mFkTo+oa0dTbfbI27ZZCRMCMmY
+	6Cs33Hse4lLVSiyQ7CaVAVpmWR1+kjsyk6JS6041sWtzOvIhovUVv4wyLupawdX+
+	BaXO2z2KpfIH4V698ACQXXqOvOvPWGeGWlNQSvZZhsE3ENbGTJGcoLSgtBR4542T
+	Hi7IcKJOBPMGPT0P2AFdhjn/P6sEy7Gxs9rbb8SuunbeMslEI6Sa4ajDzCpFI0t5
+	1kz1e0JpWrdxfia0ggHuLBYS1hgowgF92vbmrQloeN/uHGXcOIrnMIBoWFdkibA6
+	1gcg0LEpRuVlAALk/H1esX3RA5BiwCCzVCzplpcLg9A3WZG+Uy99bJdM2s8w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1718269428; x=1718355828; bh=mopuKCNsFYMpSlhKsvvqFov2Ij5r
+	cVHAmkj2/47ed3Y=; b=ZZpYo5X+NGVOUgYFi1ZUiogvzOSFKNVgZc91s0qppJPM
+	nzxECnMa9bo2cwnKRUH/0emS2Qmp2wsFwh8Q2u9+bSTygsBhFFpqbDPZyPKkD9WP
+	jS5ZQntPOAKz72m7O+fXvr+4ZW1yw51HpQPHYACpiQVA6MUB5D/9vt7cm9NOdcaj
+	N2a3GS2XoWVmScwnk8fVZahNBJINhD+O4LJ3oyuqRzQDquRtvPZKO+ULzLh5fVqj
+	yOdtrGRXH544WYPSdb50mvBsmprp3uG3wqRoqeTHQK4Iktd4WPJ6PWs21j9987/m
+	NHq+MGXLwcuNC9fyHHAbA7Qd2+wGFsfoV7k5cyexCA==
+X-ME-Sender: <xms:9LVqZpyrN2AmdFEzGJ77NpV3YxG19aReixOypg5plVblhgLacWiXvQ>
+    <xme:9LVqZpRVqL_UNmAsJvKqcOUl9-zCZegfuXPAKZXVlHxqdD75QoXmzPcxOU5BOMLjv
+    JeW5CPd5hC2WdMAoxU>
+X-ME-Received: <xmr:9LVqZjXAXwtGEu8Ra3uNt2-CWAxhr1vs7Zy_d7wAUJI8yMWyb5aXTif33BK2RzhXws800_lXx8KhulF7Cw2ErB0AfTNkDzGb212-e4QGTPiJaw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedujedgtdelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertd
+    ertddtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghs
+    hhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeeggfehleehje
+    eileehveefkefhtdeffedtfeeghfekffetudevjeegkeevhfdvueenucffohhmrghinhep
+    khgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjph
+X-ME-Proxy: <xmx:9LVqZrjgM0qsGC829wSewW5q3hUMJT2mkn6IWVMrNftgHz6Q2wJh0A>
+    <xmx:9LVqZrDC3ymUa1AHAs1V1l1ULKjwuHiT7aUsYjo7m6MwdSQw6xsPhA>
+    <xmx:9LVqZkKhVniFXhxjfRMiuRzmU2amZMynvmYIr2FcyBgsqIcjXWoMeg>
+    <xmx:9LVqZqCGOWmtRa0XiSrICpgMlt6WhRc-Oxg6cz_lxFKsSbzozZoBEg>
+    <xmx:9LVqZuN1_o9iQcgy2JYhS7bMbqiHASSRybavaijwo6RGD6sGxsevrMxp>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 13 Jun 2024 05:03:47 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] firewire: fix website URL in Kconfig
+Date: Thu, 13 Jun 2024 18:03:43 +0900
+Message-ID: <20240613090343.416198-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240610124842.mpy4rtlwtwasqf7h@CAB-WSD-L081021>
-User-Agent: NeoMutt/20220415
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185894 [Jun 13 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;devicetree.org:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;127.0.0.199:7.1.2;100.64.160.123:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/06/13 08:11:00
-X-KSMG-LinksScanning: Clean, bases: 2024/06/13 08:10:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/06/13 06:22:00 #25590998
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 10, 2024 at 03:48:42PM +0300, Dmitry Rokosov wrote:
-> On Mon, Jun 10, 2024 at 01:47:06PM +0200, Jerome Brunet wrote:
-> > On Mon 10 Jun 2024 at 14:18, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
-> > 
-> > > Hello Jerome,
-> > >
-> > > Thank you for the review!
-> > >
-> > > On Mon, Jun 10, 2024 at 12:04:09PM +0200, Jerome Brunet wrote:
-> > >> On Wed 15 May 2024 at 21:47, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
-> > >> 
-> > >> > Add the documentation and dt bindings for Amlogic A1 CPU clock
-> > >> > controller.
-> > >> >
-> > >> > This controller consists of the general 'cpu_clk' and two main parents:
-> > >> > 'cpu fixed clock' and 'syspll'. The 'cpu fixed clock' is an internal
-> > >> > fixed clock, while the 'syspll' serves as an external input from the A1
-> > >> > PLL clock controller.
-> > >> >
-> > >> > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
-> > >> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > >> > ---
-> > >> >  .../bindings/clock/amlogic,a1-cpu-clkc.yaml   | 64 +++++++++++++++++++
-> > >> >  .../dt-bindings/clock/amlogic,a1-cpu-clkc.h   | 19 ++++++
-> > >> >  2 files changed, 83 insertions(+)
-> > >> >  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
-> > >> >  create mode 100644 include/dt-bindings/clock/amlogic,a1-cpu-clkc.h
-> > >> >
-> > >> > diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
-> > >> > new file mode 100644
-> > >> > index 000000000000..f4958b315ed4
-> > >> > --- /dev/null
-> > >> > +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
-> > >> > @@ -0,0 +1,64 @@
-> > >> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > >> > +%YAML 1.2
-> > >> > +---
-> > >> > +$id: http://devicetree.org/schemas/clock/amlogic,a1-cpu-clkc.yaml#
-> > >> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > >> > +
-> > >> > +title: Amlogic A1 CPU Clock Control Unit
-> > >> > +
-> > >> > +maintainers:
-> > >> > +  - Neil Armstrong <neil.armstrong@linaro.org>
-> > >> > +  - Jerome Brunet <jbrunet@baylibre.com>
-> > >> > +  - Dmitry Rokosov <ddrokosov@salutedevices.com>
-> > >> > +
-> > >> > +properties:
-> > >> > +  compatible:
-> > >> > +    const: amlogic,a1-cpu-clkc
-> > >> > +
-> > >> > +  '#clock-cells':
-> > >> > +    const: 1
-> > >> > +
-> > >> > +  reg:
-> > >> > +    maxItems: 1
-> > >> > +
-> > >> > +  clocks:
-> > >> > +    items:
-> > >> > +      - description: input fixed pll div2
-> > >> > +      - description: input fixed pll div3
-> > >> > +      - description: input sys pll
-> > >> > +      - description: input oscillator (usually at 24MHz)
-> > >> 
-> > >> According to the documentation, fdiv5 is also an input of the CPU clock
-> > >> tree.
-> > >> 
-> > >> That is typically the kind of things we'd prefer to get right from the
-> > >> beginning to avoid modifying the bindings later.
-> > >> 
-> > >
-> > > Could you please share which documentation you are referencing? I have
-> > > the A113L documentation, and there is no mention of the CPU clock IP.
-> > 
-> > You should get in touch with Amlogic.
-> > 
-> 
-> Okay, I will double check with Amlogic and back with accurate
-> information.
-> 
+The wiki in kernel.org is no longer updated. This commit replaces the
+website URL with the latest one.
 
-According to a statement from an Amlogic FAE, there is an error in the
-datasheet's CPU clock controller figure. The FAE clarified the
-following:
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+---
+ drivers/firewire/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-"""
-The d5/d7 clock source inside the A1 chip is not supplied to CPU_CLK and
-is instead used by other peripherals. Therefore, you can connect a fixed
-frequency divider (div5/div7) to peripherals in A1. The CPU control only
-supports fclk_div2/div3.
-"""
-
-[...]
-
+diff --git a/drivers/firewire/Kconfig b/drivers/firewire/Kconfig
+index 869598b20e3a..5268b3f0a25a 100644
+--- a/drivers/firewire/Kconfig
++++ b/drivers/firewire/Kconfig
+@@ -11,7 +11,7 @@ config FIREWIRE
+ 	  This is the new-generation IEEE 1394 (FireWire) driver stack
+ 	  a.k.a. Juju, a new implementation designed for robustness and
+ 	  simplicity.
+-	  See http://ieee1394.wiki.kernel.org/index.php/Juju_Migration
++	  See http://ieee1394.docs.kernel.org/en/latest/migration.html
+ 	  for information about migration from the older Linux 1394 stack
+ 	  to the new driver stack.
+ 
 -- 
-Thank you,
-Dmitry
+2.43.0
+
 
