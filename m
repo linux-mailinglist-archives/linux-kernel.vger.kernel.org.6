@@ -1,122 +1,195 @@
-Return-Path: <linux-kernel+bounces-214033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C86907E3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:37:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C3A907E42
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C8501C23C14
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:37:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46D391F25255
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7C9143C5A;
-	Thu, 13 Jun 2024 21:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C764E1494BC;
+	Thu, 13 Jun 2024 21:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kPP+T7yX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="3U5j0THM"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB2A71747;
-	Thu, 13 Jun 2024 21:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9401F13D246;
+	Thu, 13 Jun 2024 21:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718314631; cv=none; b=YQmgXkk5MoiOqLg0giVLzR1VNs1wkonirLcuHLyZ8+XrGVXFT2s285DEeVO/Uv5cSfxzAkBVPz7Zb/9WxMQjonNxf4yZW1u0TK/7GoDtUBslimwPongxe61hp4YNdqJFJ43oSMgZ8eSrBloRzftLA52EPRnO1OOXUhs0LeLnOl4=
+	t=1718314689; cv=none; b=fgGA6JWGEWZB8va4KXwgPNyqMIqjq2CFwMGSSZNYLIwhGPbErTt8Rq1jaCk+WVdWQPMdG3effF6J9jSOFZj6N7/qQamxCk5b9tYjlM22WPWmrnFM7elSWDv6mdHuF5dHJtH8+0E7Rh1955H/RX3SqrzDv+1mS55EeoBEdKgEifc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718314631; c=relaxed/simple;
-	bh=JbhWnVRwHYOcKn4OzP0YKh1BkZLEBKqwpyE6zStyX7A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=OT2aXXoGEAcFR4QZjkv0EyfKkwqj/U0PFQ52s+p+wQ4xScLZ1lTzvKs9Otu0aEkGBPVbnLIzl9cQhxiIM3QPyLtOdXquGpsGnTkebq38KTfTFo13P8/vXl2WRNRDQd6j9LhryRqJJLzVJO9tlu2xj8rWVsHdIm5sXIxhXo+F5b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kPP+T7yX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DJGMae008079;
-	Thu, 13 Jun 2024 21:36:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=zxFlDvDS2ZXrOAEi2ahNLT
-	O+mwXjt++ZBBrq5JCsaWU=; b=kPP+T7yX3hVGnuOdblPk0qLewQqfV36U2sY1rJ
-	xdPT5sZE105V2oDkW8Frzy7iIio7Q3X4uE4HsqIYE6NjsMLEUlD/zJimWzaopVtu
-	S8YbR2LCFCcHwaDRzat4vbvO14CHLTg9WiWSx/RQwwlzhoF/JoiF1xOukDod+KZs
-	PxATKxLkpBRixTtOqy//gXlf/KeByNRAAiz4ml5/etP5qlvkhFtWvZref4RlYVgY
-	5XzvS2qtxW+mmkJWt1OCOSaN4PFj9h1sI1vLnF1JZL0+tjtiEA+gPuIXWBT47Ovx
-	mLawhPcvFcJ9stQzJFyqYc8UsceTRvGB0ik1c0uXKobVgZwQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yr6q58brg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 21:36:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45DLaMhv007667
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 21:36:22 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
- 2024 14:36:22 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 13 Jun 2024 14:36:21 -0700
-Subject: [PATCH] EDAC: layerscape: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1718314689; c=relaxed/simple;
+	bh=wQRJ+B8dKBMEN9aK4yJ8U5SXpzhbb+OTGleMQUKuqZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RAq81ykO64xqv/IVCaAtAS6vWxanKrlfZU2V7PB1WZ5N8CTuB2+m2901MfDS4zXu6+VzuNklPLanGwyeIfh/QvrM+i0Q0uqoYSidzQ+V+8kIOZuRTntOKlB27kb8mFJn7c0wIZE3w0DMtY3HULowkSUQa32/3pgDkr04xePnEmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=3U5j0THM; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718314684;
+	bh=wQRJ+B8dKBMEN9aK4yJ8U5SXpzhbb+OTGleMQUKuqZU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=3U5j0THMUJ8g3TXgXNLOldlc/L+6S0af1DsD+nf4VruKtFSMI9zfD7UEWckCp6Oe8
+	 xZdSCfQlC3YXT8JdgSZ5UO18t5lpRAfiYVksp8zxTVVRSL429X3chvDThh6rWSF664
+	 O/FDXk+Ieg9s1fDnggez30MDPHvzEN5q6zgAcB0PCbplAgyNUyjqH1gOrfIC4ODqj3
+	 Im14L91ZzI2t/oSZ8T1c5L/GGpCrWjyFEqLuH1NKJl+2qdFQwyZN2HSFjCERToNIuJ
+	 5fRECQaz9HWZAIhveINAE+sdcQ9LjAo4W8RDFS3P57rk06CEq1r8xF8g8qkfkuUnnQ
+	 vigHnKwXkfKYQ==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8A2AB37820CD;
+	Thu, 13 Jun 2024 21:38:04 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id 046AC10608F7; Thu, 13 Jun 2024 23:38:04 +0200 (CEST)
+Date: Thu, 13 Jun 2024 23:38:03 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Oded Gabbay <ogabbay@kernel.org>, Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH 2/9] iommu/rockchip: Attach multiple power domains
+Message-ID: <vmgk4wmlxbsb7lphq2ep3xnxx3mbv6e6lecihtftxoyp5lidvy@mectcwirrlek>
+References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
+ <20240612-6-10-rocket-v1-2-060e48eea250@tomeuvizoso.net>
+ <ffviz6ak6qsn2reg5y35aerzy7wxfx6fzix6xjyminbhfcguus@clszdjakdcjd>
+ <CAAObsKCx+r5UuESnrPem1Rb1-BF4i8FVwu6uozWhABOWoq+M4Q@mail.gmail.com>
+ <CAAObsKChaBZ2C5ezWsiZ_LoN6R2HFhFA9=UNSRYB6cyeo-jreg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240613-md-arm64-drivers-edac-v1-1-149a4f0f61bb@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAFRma2YC/x3MwQrCMAyA4VcZORvo2jrBVxEPWZu5gK2SzDEYe
- 3erx+/w/zsYq7DBtdtBeRWTV23oTx2kmeqDUXIzeOejG/qAJSNpGSJmlZXVkDMl9BNFH0J0+XK
- G1r6VJ9n+39u9eSRjHJVqmn+3p9TPhoVsYYXj+AK0GddVhgAAAA==
-To: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
-        "James
- Morse" <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Robert Richter <rric@kernel.org>
-CC: <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: qx5vZ_mOmP87_TktJgIINlt4i4zrSx3W
-X-Proofpoint-ORIG-GUID: qx5vZ_mOmP87_TktJgIINlt4i4zrSx3W
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_13,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- mlxscore=0 clxscore=1011 bulkscore=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 suspectscore=0 priorityscore=1501 adultscore=0
- mlxlogscore=989 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130155
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3uic2ihq2a6l3k3w"
+Content-Disposition: inline
+In-Reply-To: <CAAObsKChaBZ2C5ezWsiZ_LoN6R2HFhFA9=UNSRYB6cyeo-jreg@mail.gmail.com>
 
-With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/edac/layerscape_edac_mod.o
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+--3uic2ihq2a6l3k3w
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/edac/layerscape_edac.c | 1 +
- 1 file changed, 1 insertion(+)
+Hi,
 
-diff --git a/drivers/edac/layerscape_edac.c b/drivers/edac/layerscape_edac.c
-index d2f895033280..b70d5d258fcb 100644
---- a/drivers/edac/layerscape_edac.c
-+++ b/drivers/edac/layerscape_edac.c
-@@ -69,6 +69,7 @@ static void __exit fsl_ddr_mc_exit(void)
- 
- module_exit(fsl_ddr_mc_exit);
- 
-+MODULE_DESCRIPTION("Freescale Layerscape EDAC module");
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("NXP Semiconductor");
- module_param(edac_op_state, int, 0444);
+On Thu, Jun 13, 2024 at 11:34:02AM GMT, Tomeu Vizoso wrote:
+> On Thu, Jun 13, 2024 at 11:24=E2=80=AFAM Tomeu Vizoso <tomeu@tomeuvizoso.=
+net> wrote:
+> > On Thu, Jun 13, 2024 at 2:05=E2=80=AFAM Sebastian Reichel
+> > <sebastian.reichel@collabora.com> wrote:
+> > > On Wed, Jun 12, 2024 at 03:52:55PM GMT, Tomeu Vizoso wrote:
+> > > > IOMMUs with multiple base addresses can also have multiple power
+> > > > domains.
+> > > >
+> > > > The base framework only takes care of a single power domain, as some
+> > > > devices will need for these power domains to be powered on in a spe=
+cific
+> > > > order.
+> > > >
+> > > > Use a helper function to stablish links in the order in which they =
+are
+> > > > in the DT.
+> > > >
+> > > > This is needed by the IOMMU used by the NPU in the RK3588.
+> > > >
+> > > > Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> > > > ---
+> > >
+> > > To me it looks like this is multiple IOMMUs, which should each get
+> > > their own node. I don't see a good reason for merging these
+> > > together.
+> >
+> > I have made quite a few attempts at splitting the IOMMUs and also the
+> > cores, but I wasn't able to get things working stably. The TRM is
+> > really scant about how the 4 IOMMU instances relate to each other, and
+> > what the fourth one is for.
+> >
+> > Given that the vendor driver treats them as a single IOMMU with four
+> > instances and we don't have any information on them, I resigned myself
+> > to just have them as a single device.
+> >
+> > I would love to be proved wrong though and find a way fo getting
+> > things stably as different devices so they can be powered on and off
+> > as needed. We could save quite some code as well.
+>=20
+> FWIW, here a few ways how I tried to structure the DT nodes, none of
+> these worked reliably:
+>=20
+> https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-de=
+vices-power/arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=3Dheads#L1163
+> https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-schema-subn=
+odes//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=3Dheads#L1162
+> https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-de=
+vices//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=3Dheads#L1163
+> https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-io=
+mmus//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=3Dheads#L2669
+>=20
+> I can very well imagine I missed some way of getting this to work, but
+> for every attempt, the domains, iommus and cores were resumed in
+> different orders that presumably caused problems during concurrent
+> execution fo workloads.
+>=20
+> So I fell back to what the vendor driver does, which works reliably
+> (but all cores have to be powered on at the same time).
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240613-md-arm64-drivers-edac-2fa423340d75
+Mh. The "6.10-rocket-multiple-iommus" branch seems wrong. There is
+only one iommu node in that. I would have expected a test with
 
+rknn {
+    // combined device
+
+    iommus =3D <&iommu1>, <&iommu2>, ...;
+};
+
+Otherwise I think I would go with the schema-subnodes variant. The
+driver can initially walk through the sub-nodes and collect the
+resources into the main device, so on the driver side nothing would
+really change. But that has a couple of advantages:
+
+1. DT and DT binding are easier to read
+2. It's similar to e.g. CPU cores each having their own node
+3. Easy to extend to more cores in the future
+4. The kernel can easily switch to proper per-core device model when
+   the problem has been identified
+
+-- Sebastian
+
+--3uic2ihq2a6l3k3w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZrZrgACgkQ2O7X88g7
++pqvVQ//cIZokM7uuQmsxYEnzeSuLFKCBJ+oWnWgh4a++M1EuS1b/w0P6VZVbhIW
+iEJSHCfTPBss/DPmCD1r7EbFZNZAV4YUo+rk8mwj+BXs2UqekcEFIsyaHoMKvqGo
+i8NJGn2b2vqDx0UJg7vyjE84lETeT1d5MbVF6wPoP8JaUztKLIx4fl80aT88LTdS
+i8gbGH7lSQzRcGm15LRYo63i8jlD5uB+nCoeZ0cVWgCBO0pTFAZd4rcrfl3YubT2
+qozKnZYjsOnsWuoul/3CAqoXSci6wmvnkEQAo3CnIWAjHBW6/ym9qE4WhHM/TTVs
+yeSaIOV6tBrSGM4JOrHRGv3yPNHG+ZitS2Kbu3W8Am0wtKcyzff52LoOvaM8wgVV
+UBxrpXaFg7wuVU9t2wdb8vCwrl6N8zHk/hVUBA2pR+NI64eQ7oCCakzet3ZecegK
+npkoGWt7nX+fihR62gS04M36rL1KPEuvPgp6BpFklhndvXeOxgRlaGI0fDxooHXM
+KIzNF6cHZSDspUenm7oYNGzw5hRfOvy64fuyRXzOTOiNMrNZKS69I76SDqEuC3fw
+k3Y3O9GHR0DwIH7N9OoW0b7YDkUXerqTrghj88+VsEQPU7ObVS/NO+HHWbVAuv40
+weMFQJ5Ceqsm4+9tAMmJKZpoOPubYnRaYD+u8yxwoNVdPb3DEIo=
+=08Xd
+-----END PGP SIGNATURE-----
+
+--3uic2ihq2a6l3k3w--
 
