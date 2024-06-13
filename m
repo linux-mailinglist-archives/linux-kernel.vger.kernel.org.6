@@ -1,120 +1,126 @@
-Return-Path: <linux-kernel+bounces-213825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 104E5907B38
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:23:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBA2A907B43
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1BEEB24A09
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:23:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E0F21F222BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BDB14B097;
-	Thu, 13 Jun 2024 18:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B889614B081;
+	Thu, 13 Jun 2024 18:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MrMqolDU"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z7EE0vuV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAAB144D0C
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1E414B061
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718303012; cv=none; b=arUfXRaTv9ChDTdXZ2sYq0Bbb12wIt0qMxCdogbu9DB3pqvSH21uMsCX5Cz4O4dcnuWl+IXdICxJJH5izZj0oGiZDpSAsiZODu0wqBBP9G4BmyY4cgKP6AfOudh5udWR8B/uTJZk6TUvpW5OWC+LNI89zQ2ppaKmbeF1whqwkVM=
+	t=1718303290; cv=none; b=cNKOcl+CuTNLyChzqImlVwRw2OJzIfPgxkeOv2Z1MJHBLuoayMoPMWbU4baEZNfTOhhKAV3+sOQ/kCmgGSh/yYlv0eS2xO/9W1By8mnbvEYqOqGBXwVbAg+CgiH8R6mQTlP8tpBTjFt7O6vbpzayjpYgoIs/CEGmparAeQjA2zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718303012; c=relaxed/simple;
-	bh=krCnTrtnkHB1D6bVOwKkRyMFqhSVLnQUJePCdLAPTDQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ti4uT2uo+/WnEaFqmarCb/aU7T4NRAVD5CaBY8oeEcH2I9X4pAkCs8N/240N+29/ai30v0nUeVS+QK3hCwcaRxJFvYPhm9Gzfh5R1BzPWeLb0QB4UYSX4seQXdGuFtqqNFTcafEDTHmleAcRenGAKQsfHJ6DnquZ0DHALSzvwsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MrMqolDU; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dfdff9771f8so1527058276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:23:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718303010; x=1718907810; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G7FnJEUeHYST8KdquXXOOwJt3IXf3k8psfyOLW+siSs=;
-        b=MrMqolDUAlzO/IwTF/IGKX2UT5qyxUTNn9DCi10W5dPT07/AkjTeQUapfuL+zOuWnG
-         dBS7kyFdbOpfHtC0oZqGrrymabTVe1iQnNtN7Ftsfw+kZX9ZLIYUWNYyZDhjYzw149uG
-         sal4RQFSAfd+AnOShUxqyWj5VOrVCw6Rt3XMvjk05zUOu0SEbUkwvdckXx5VLwfAFgZ9
-         B2bzl48OgAetQRpB/iQsTY2vMnLj4xpYx1sip/7brXX0H1J5jzJHppAAal0yOFz4wnSJ
-         oigpWpaJGgc0fyEuSLg+2WjG4f5uq5AdVdb+YX2bUgOZWRHpnWQr/DmhRT90KqgEQfbb
-         AXzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718303010; x=1718907810;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G7FnJEUeHYST8KdquXXOOwJt3IXf3k8psfyOLW+siSs=;
-        b=u5v3mXfQkl1qDDCxlU7ammkj3kcYnbLOf5AKP8b03toe17a4K2k6cV9jPJGMq7QOoi
-         Hia1y9mjLj29Mn8XEdW1BN05ZG+orZfqSKh2g2gf9LgWPlPiEF/bMAdGDikd4s4RA6Lz
-         SjD5s8WfioPnrwPszfjVg6wLXPILa0rAOmlT4c/mxLYW+PIiEFluXZbwZMH6oOgpBNfW
-         AhX9JfXTMiceeTWqjCwBCSxLlWTMDsui/jwMv7jte8XGYYSTLfUhGXbKeezdyxEoJSG+
-         ILP55lnTTXS72k0oJwS2LepQOwuVtrNujd7riYNIzuyXG++D5KI3xzKX7gbkQ9p0lWOy
-         HPMg==
-X-Gm-Message-State: AOJu0YzNjkBiNtIMFfTlIHHlF0Kxgscu0rdpUcTSyf0Mv28iaM4axsN2
-	e+Zqzfx0muRceT0mLOXIP02UQs+E5XItuRUGJl1/Gb1PAmD1PD9Y9miP8+iz8CP3V9dtC2HSvih
-	jBWCtg+KoIBCAKQrFntszYMSXeS9f2GXh+eEH
-X-Google-Smtp-Source: AGHT+IE4Ltjey1yaGfz53sQ/9WLShdZ82+JIBb7XxCn7Eqt0EFUMoYYVjqNU2UFmX1J77aFxmDQczyuNhRm+3bZd5xw=
-X-Received: by 2002:a25:dbcb:0:b0:dfa:584e:c661 with SMTP id
- 3f1490d57ef6-dff153c3883mr320940276.34.1718303009863; Thu, 13 Jun 2024
- 11:23:29 -0700 (PDT)
+	s=arc-20240116; t=1718303290; c=relaxed/simple;
+	bh=4Pm7lRVeDxAxTTAE1RjwSM52yXCD4XEqdMVtN4NZ2wc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BzdI8pvVmlK6rzKS7JTknGFkM+O+dN4g3qO0bhMe7681BYg3Z9l9U7afYHBYrNF0y4gzIVCjVWM52oGJr5E3dFzahh/OAIJKJR8mqjTm6X3FZ1akYMnDQWZmsMgw4+HbnjJPQynK1DtulIDKSsqRc1fFtBbFWdVwqh7xpZRZzKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z7EE0vuV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718303287;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Pt7JMdv2zQuXXKN4eq/m/SVF3iNPHye0V9QpcQS+Yf0=;
+	b=Z7EE0vuVIb8PrR/WHTekExUYSBiZjH92nvKaHfUxZ0vMHPQN/Rm9aEOXNxum2g6rmjy5Wr
+	q+MLw/XEyfz0fUcS1LE+8mXoTjySB3lXF61yKslpxaaH031hvrH+9bX7MdPqVe0IAk4KMQ
+	dymP3sDqZ0tDK9varRXheLQwmDo68lQ=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-317-a9ivuM1jPDeAsFZDy-CvfQ-1; Thu,
+ 13 Jun 2024 14:28:04 -0400
+X-MC-Unique: a9ivuM1jPDeAsFZDy-CvfQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1D69A1956095;
+	Thu, 13 Jun 2024 18:28:02 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.22.16.90])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A192B1956058;
+	Thu, 13 Jun 2024 18:27:58 +0000 (UTC)
+From: Joel Slebodnick <jslebodn@redhat.com>
+To: linux-scsi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	alim.akhtar@samsung.com,
+	avri.altman@wdc.com,
+	bvanassche@acm.org,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	peter.wang@mediatek.com,
+	manivannan.sadhasivam@linaro.org,
+	ahalaney@redhat.com,
+	beanhuo@micron.com,
+	Joel Slebodnick <jslebodn@redhat.com>
+Subject: [PATCH] scsi: ufs: core: Free memory allocated for model before reinit
+Date: Thu, 13 Jun 2024 14:27:28 -0400
+Message-Id: <20240613182728.2521951-1-jslebodn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYvWXuWyd3NiX3WwRyorRiDRbxGmRW_7aVnBVKUVA_TaGg@mail.gmail.com>
- <CAHC9VhSeNGo4fPY0H5eM_fFsPSQ18xWUYMvyHBChEysXk-+00Q@mail.gmail.com>
-In-Reply-To: <CAHC9VhSeNGo4fPY0H5eM_fFsPSQ18xWUYMvyHBChEysXk-+00Q@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 13 Jun 2024 14:23:19 -0400
-Message-ID: <CAHC9VhRg3efo2J5VsxxskFW0ntotwswvLmn7cWEMmSTkEC4QFg@mail.gmail.com>
-Subject: Re: security: ima_policy.c:427:17: error: too many arguments to
- function 'ima_filter_rule_init'
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, John Johansen <john.johansen@canonical.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Thu, Jun 13, 2024 at 1:36=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Thu, Jun 13, 2024 at 8:43=E2=80=AFAM Naresh Kamboju
-> <naresh.kamboju@linaro.org> wrote:
-> >
-> > The arm and arm64 kselftests builds started failing on Linux next-20240=
-613 tag.
-> > Please find the build log and related links below.
-> >
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->
-> Thank you, the same error was reported by the kernel test robot
-> overnight.  I'm going to look at it today, I suspect it is a conflict
-> between the LSM and IMA/EVM branches.  FWIW, I compiled and booted a
-> kernel using the LSM changes yesterday without problem.
+Under the conditions that a device is to be reinitialized within
+ufshcd_probe_hba, the device must first be fully reset.
 
-Nevermind, it turns out the patch is bad :( ... more on the LSM list shortl=
-y.
+Resetting the device should include freeing U8 model (member of
+dev_info)  but does not, and this causes a memory leak.
+ufs_put_device_desc is responsible for freeing model.
 
-> > Build error:
-> > --------
-> > security/integrity/ima/ima_policy.c: In function 'ima_lsm_copy_rule':
-> > security/integrity/ima/ima_policy.c:427:17: error: too many arguments
-> > to function 'ima_filter_rule_init'
-> >   427 |                 ima_filter_rule_init(nentry->lsm[i].type, Audit=
-_equal,
-> >       |                 ^~~~~~~~~~~~~~~~~~~~
+unreferenced object 0xffff3f63008bee60 (size 32):
+  comm "kworker/u33:1", pid 60, jiffies 4294892642
+  hex dump (first 32 bytes):
+    54 48 47 4a 46 47 54 30 54 32 35 42 41 5a 5a 41  THGJFGT0T25BAZZA
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc ed7ff1a9):
+    [<ffffb86705f1243c>] kmemleak_alloc+0x34/0x40
+    [<ffffb8670511cee4>] __kmalloc_noprof+0x1e4/0x2fc
+    [<ffffb86705c247fc>] ufshcd_read_string_desc+0x94/0x190
+    [<ffffb86705c26854>] ufshcd_device_init+0x480/0xdf8
+    [<ffffb86705c27b68>] ufshcd_probe_hba+0x3c/0x404
+    [<ffffb86705c29264>] ufshcd_async_scan+0x40/0x370
+    [<ffffb86704f43e9c>] async_run_entry_fn+0x34/0xe0
+    [<ffffb86704f34638>] process_one_work+0x154/0x298
+    [<ffffb86704f34a74>] worker_thread+0x2f8/0x408
+    [<ffffb86704f3cfa4>] kthread+0x114/0x118
+    [<ffffb86704e955a0>] ret_from_fork+0x10/0x20
 
---=20
-paul-moore.com
+Signed-off-by: Joel Slebodnick <jslebodn@redhat.com>
+---
+ drivers/ufs/core/ufshcd.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 0cf07194bbe8..a0407b9213ca 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -8787,6 +8787,7 @@ static int ufshcd_probe_hba(struct ufs_hba *hba, bool init_dev_params)
+ 	    (hba->quirks & UFSHCD_QUIRK_REINIT_AFTER_MAX_GEAR_SWITCH)) {
+ 		/* Reset the device and controller before doing reinit */
+ 		ufshcd_device_reset(hba);
++		ufs_put_device_desc(hba);
+ 		ufshcd_hba_stop(hba);
+ 		ufshcd_vops_reinit_notify(hba);
+ 		ret = ufshcd_hba_enable(hba);
+-- 
+2.40.1
+
 
