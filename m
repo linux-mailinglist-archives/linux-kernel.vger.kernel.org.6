@@ -1,135 +1,88 @@
-Return-Path: <linux-kernel+bounces-213398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE089074A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:07:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B37C49074C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:12:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7CF328195D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:07:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E73D285283
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3456D14535D;
-	Thu, 13 Jun 2024 14:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2308146A72;
+	Thu, 13 Jun 2024 14:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2Gh31x0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V2+F/1YC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CA810F9;
-	Thu, 13 Jun 2024 14:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6B0146A63;
+	Thu, 13 Jun 2024 14:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718287667; cv=none; b=IpM2cqsJrArEEKeVbm8AV/df6yeg9itC/98rJrJBQqcTSA6xxFNGZeALNMG/uppsQhB+aB64ko/cUem2lyObJKzzgKVr8u1SQGP7KtA8nJmx/p/sjugdmK9KutKxGqqGElLsKVV5EZrsw2o2+lUp9/CPieRgleCfoNZ6bT9NGk4=
+	t=1718287906; cv=none; b=JG0MU4eCIyO2w/KRmoDd/C5xf82lYIBX1FDRubn4ZTzChJznngwCi0vOM7tObQXxuW+08EYL/L1KsK3kJRF2l87avXwB9sBvdGoa+t3ws7GQiCslZxPQT2e9sRR0nGi9XM0+rtGnBh3y56+/DZUwPtcOg4dQef3GlyiAMwpbA+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718287667; c=relaxed/simple;
-	bh=odfp1TpgeErbFjJ61Se8vEzIbx/qU6+JD3DTGwxuJtk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To; b=t3e+5wnHk8mTrXx9c0c7TokYWPkWmd+C4PHjyFctTr/5KUxeBZoBWBPTu+Z0lh6IjA1WzKkEag1fAS+7u0/gBzcrnaYU4lPCLVGV/nzBhSd9Fn6lW0f3q7lWLFXxpnze9AfvWP00Cz60swQ6mIKf+5sBMxoJtTfsttJ+4TaI/u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q2Gh31x0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 830FEC2BBFC;
-	Thu, 13 Jun 2024 14:07:46 +0000 (UTC)
+	s=arc-20240116; t=1718287906; c=relaxed/simple;
+	bh=g3mPo55/Gt1FBgk79gnSHReqipxiT916wmvC5/CqQlk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qM37Z9TyHePq3o4oBi3CetGr3OZbliRXK0ET7lUxDFP3AkEOc7Nl4eMVnzP741wYPKe9Qo/kGAduwGRiKewPTjbz7ncshqKGDbvUGUInVyEgWTvv0ZwTItS+bUkAZZe+bm+3gHWij57sxI/SYDAbrpaEQktPyAMkRG2Hf54A+5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V2+F/1YC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A1F4C2BBFC;
+	Thu, 13 Jun 2024 14:11:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718287667;
-	bh=odfp1TpgeErbFjJ61Se8vEzIbx/qU6+JD3DTGwxuJtk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:From;
-	b=Q2Gh31x0D8g+FDWZnBJ4HAyMYMjVk7RRlq9uO/0AyrM13tWmr2HVLbcigsBbvVBBW
-	 1VjNa589ejVuxOYtWXUj0IKD9Xfx977Gg8zRrx9cv7+bNbGExDAVOcpBQqpj4aJ+Z1
-	 MD4HjSxYbfUSAttpDVRdLUHUO5KY0VY8WbYlm7pcoBYWQ4x8Ww+ztMuR/h/9i+wXxx
-	 ZT86AZO+IFS2ELHnLt2kAqh/IdrAENiicumNSjxi7SdBL1qL9HX7i2Stlq1HD1uyAh
-	 5frETOxA7lkrf/IZuHk13SkQwy6m8fRZiVJLZ5qn8sZIZAOwdeSpTQHuxUKItzKTDW
-	 0rycJZY4fktsA==
-From: SeongJae Park <sj@kernel.org>
-To: Honggyu Kim <honggyu.kim@sk.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Gregory Price <gregory.price@memverge.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	42.hyeyoo@gmail.com,
-	art.jeongseob@gmail.com,
-	kernel_team@skhynix.com
-Subject: Re: [PATCH v5 8/8] Docs/.../mm/damon: add more damos actions
-Date: Thu, 13 Jun 2024 07:07:29 -0700
-Message-Id: <20240613140729.27177-1-sj@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240613132056.608-9-honggyu.kim@sk.com>
+	s=k20201202; t=1718287906;
+	bh=g3mPo55/Gt1FBgk79gnSHReqipxiT916wmvC5/CqQlk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=V2+F/1YC3QM+UAga0rqtKPdNgFHTPaW2EKtXOWvRtmwd32p6O2alJ9fzG3HBTegtY
+	 pN9CthUgAaV7LkRjBHpadqfziegxidT6KX5+JyJB+FH3Ht/u+xI9eKDy+uzUJrcGnt
+	 CiQWRGrPytaQyEueoX7BKOtUstryK7qczuZudIx9BJKoJHNEpk3xAkBScApk4qUWTJ
+	 MZeQXYQKjF4bhdAKdRsT0gItmsN51557UxnqivtuzF+yE9d4zULLMX6byvVzHvNpLB
+	 jbHu6tk4XhtQBkZv4sFcUszjl85vJbJM+4BHU9deVo1s+qtSYZQ+nRFDOPE6hcWg5u
+	 w80fLFhGgSH/g==
+Date: Thu, 13 Jun 2024 17:09:36 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>, Jan Beulich <jbeulich@suse.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Narasimhan V <Narasimhan.V@amd.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>, stable@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] memblock:fix validation of NUMA coverage
+Message-ID: <Zmr9oBecxdufMTeP@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Honggyu,
+Hi Linus,
 
-On Thu, 13 Jun 2024 22:20:55 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-> This patch adds damon description for "migrate_hot" and "migrate_cold"
-> actions for both usage and design documents as long as a new
-> "target_nid" knob to set the migration target node.
-> 
-> Signed-off-by: Honggyu Kim <honggyu.kim@sk.com>
-> ---
->  Documentation/admin-guide/mm/damon/usage.rst | 8 +++++++-
->  Documentation/mm/damon/design.rst            | 4 ++++
->  2 files changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/admin-guide/mm/damon/usage.rst b/Documentation/admin-guide/mm/damon/usage.rst
-> index 7bff54963975..84d62d16c9f9 100644
-> --- a/Documentation/admin-guide/mm/damon/usage.rst
-> +++ b/Documentation/admin-guide/mm/damon/usage.rst
-> @@ -300,6 +300,10 @@ from the file and their meaning are same to those of the list on
->  The ``apply_interval_us`` file is for setting and getting the scheme's
->  :ref:`apply_interval <damon_design_damos>` in microseconds.
->  
-> +The ``target_nid`` file is for setting the migration target node, which is
-> +only meaningful when the ``action`` is either ``migrate_hot`` or
-> +``migrate_cold``.
-> +
->  .. _sysfs_access_pattern:
->  
->  schemes/<N>/access_pattern/
-> @@ -759,7 +763,9 @@ list on :ref:`design doc <damon_design_damos_action>`.
->   - 4: ``nohugepage``
->   - 5: ``lru_prio``
->   - 6: ``lru_deprio``
-> - - 7: ``stat``
-> + - 7: ``migrate_hot``
-> + - 8: ``migrate_cold``
-> + - 9: ``stat``
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
-This section is for DAMON debugfs interface.  And to my understanding, this
-patchset is not adding support of migrate_{hot,cold} DAMOS actions on DAMON
-debugfs interface.  So I think this part should be removed.
+are available in the Git repository at:
 
->  
->  Quota
->  ~~~~~
-> diff --git a/Documentation/mm/damon/design.rst b/Documentation/mm/damon/design.rst
-> index 3df387249937..3f12c884eb3a 100644
-> --- a/Documentation/mm/damon/design.rst
-> +++ b/Documentation/mm/damon/design.rst
-> @@ -325,6 +325,10 @@ that supports each action are as below.
->     Supported by ``paddr`` operations set.
->   - ``lru_deprio``: Deprioritize the region on its LRU lists.
->     Supported by ``paddr`` operations set.
-> + - ``migrate_hot``: Migrate the regions prioritizing warmer regions.
-> +   Supported by ``paddr`` operations set.
-> + - ``migrate_cold``: Migrate the regions prioritizing colder regions.
-> +   Supported by ``paddr`` operations set.
->   - ``stat``: Do nothing but count the statistics.
->     Supported by all operations sets.
+  https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock 
 
-Except the DAMON debugfs interface section, this patch looks good to me.
+for you to fetch changes up to 3ac36aa7307363b7247ccb6f6a804e11496b2b36:
 
+  x86/mm/numa: Use NUMA_NO_NODE when calling memblock_set_node() (2024-06-06 22:20:39 +0300)
 
-Thanks,
-SJ
+----------------------------------------------------------------
+Jan Beulich (2):
+      memblock: make memblock_set_node() also warn about use of MAX_NUMNODES
+      x86/mm/numa: Use NUMA_NO_NODE when calling memblock_set_node()
 
-[...]
+ arch/x86/mm/numa.c | 6 +++---
+ mm/memblock.c      | 4 ++++
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+-- 
+Sincerely yours,
+Mike.
 
