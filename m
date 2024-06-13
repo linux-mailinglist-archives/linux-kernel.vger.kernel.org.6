@@ -1,96 +1,150 @@
-Return-Path: <linux-kernel+bounces-213327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6467F9073C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:34:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21FEE9073DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F41DBB2143A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:34:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BFE31C2254B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02F61448DC;
-	Thu, 13 Jun 2024 13:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="WnZ97HAT"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1B3145B1D;
+	Thu, 13 Jun 2024 13:36:46 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5451E49B;
-	Thu, 13 Jun 2024 13:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3B4A94D;
+	Thu, 13 Jun 2024 13:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718285646; cv=none; b=pJB2U3Tz3zVbAsch/6wVGyXM0RziYLiufkeaJkUuF3teamwf5Nw9vc2gRix9LRAcXTz3gRvOmNl8Uk4ZE8l3J8Qvi0umza9jO+0p7n3SKWIhWRMRWsBqhtImnqGwczX86FcJ/iGGJ/FANqQSZbkiDyCr2rSIJ1ZwVL146HeJtv0=
+	t=1718285806; cv=none; b=qWca11L3i0hc5iDQgJWA843OgQJtFTSG8l1OrJR/BXGYocIECiWA8nG1UykL4KU3mYKbrzWSv9HFuco/aaWhtGHVnMFfW+qtPynJvSZR+TW9yOhyj/4b82LuhyzzG1b785nDADBSnkYZzatzlU+ESKg/rQJMEdfWKp6XKGU6W3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718285646; c=relaxed/simple;
-	bh=hSnxi1yCAEFbEdOATXUDF4lzPF7LOP3u53tk5+lHDx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ISyYGI0wLklVHCqkgYSEOYwlrLH2rOmGXZgqlfAKHzDd6yPDMK2LJt4spoz23SbnA+hokIh2IooSHGNchjW8H7sTje3X0wp4YW+bRL/KBlRSoPP8ySwSjYItMCKVWn60nw6eHQtzEJghLveGupx8PV1RTJvDSk/RakNwi6GhZLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=WnZ97HAT; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=S1RuFp0vlLAyeY1qWapt9cro6Y3Ttv10wLLV6eWht0Y=; b=WnZ97HATOH2e8wV28w4HHoeKFS
-	2uQgBkOkxlWJMQuvHacBpyXvMzqzqfsI4mIBYmLsPROFEDXxgeBAVBwYVOe/o0eRYHIQ+xO16yvrU
-	Fn28I5tmt9j346HZqiasu5F1ppBG7jZSpjTtlI61kQa5f736Ix241HkfmAaf2xRqn+ZY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sHkaM-00HZFj-2B; Thu, 13 Jun 2024 15:33:50 +0200
-Date: Thu, 13 Jun 2024 15:33:50 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: SkyLake Huang =?utf-8?B?KOm7g+WVn+a+pCk=?= <SkyLake.Huang@mediatek.com>
-Cc: "daniel@makrotopia.org" <daniel@makrotopia.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"dqfext@gmail.com" <dqfext@gmail.com>,
-	Steven Liu =?utf-8?B?KOWKieS6uuixqik=?= <steven.liu@mediatek.com>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH net-next v6 5/5] net: phy: add driver for built-in 2.5G
- ethernet PHY on MT7988
-Message-ID: <b68146c6-e59d-4be8-9b57-c2747c175126@lunn.ch>
-References: <Zl3ELbG8c8y0/4DN@shell.armlinux.org.uk>
- <Zl3Fwoiv1bJlGaQZ@makrotopia.org>
- <Zl3IGN5ZHCQfQfmt@shell.armlinux.org.uk>
- <Zl3Yo3dwQlXEfP3i@makrotopia.org>
- <Zl3lkIDqnt4JD//u@shell.armlinux.org.uk>
- <Zl32waW34yTiuF9u@makrotopia.org>
- <Zl4LvKlhty/9o38y@shell.armlinux.org.uk>
- <864a09b213169bc20f33af2f35239c6154ca81e3.camel@mediatek.com>
- <Zl8bjNzdB7g1fRyn@makrotopia.org>
- <a6c79128dca5b99951e95527bd2b51a4ae7b42fd.camel@mediatek.com>
+	s=arc-20240116; t=1718285806; c=relaxed/simple;
+	bh=crdyNwsLpflDPQo0G+t76e/7LQbMlKLEt8GfxsQJhn0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=abE3eOByPbZnbAL6OmE3SeGCSusIanC0Vx/zsOMyihMCMc0J+Byj+tJFf2yjmQ5LBa3JnrmPDli/bHpKuLA0s/yguGn2xMDZpR4+j7BhNnglypCKA4WQEP/2PldfYgEn+UU0Phes7Gi2FdX5J1KRfkYXBUT+aseSZc1Sex5oSgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W0Ncw5QKGzwTS8;
+	Thu, 13 Jun 2024 21:32:32 +0800 (CST)
+Received: from dggpeml500012.china.huawei.com (unknown [7.185.36.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0E8DA180069;
+	Thu, 13 Jun 2024 21:36:40 +0800 (CST)
+Received: from localhost.localdomain (10.67.175.61) by
+ dggpeml500012.china.huawei.com (7.185.36.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 13 Jun 2024 21:36:39 +0800
+From: Zheng Yejian <zhengyejian1@huawei.com>
+To: <rostedt@goodmis.org>, <mhiramat@kernel.org>, <mark.rutland@arm.com>,
+	<mpe@ellerman.id.au>, <npiggin@gmail.com>, <christophe.leroy@csgroup.eu>,
+	<naveen.n.rao@linux.ibm.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <x86@kernel.org>,
+	<hpa@zytor.com>, <mcgrof@kernel.org>, <mathieu.desnoyers@efficios.com>,
+	<masahiroy@kernel.org>, <nathan@kernel.org>, <nicolas@fjasle.eu>,
+	<kees@kernel.org>, <james.clark@arm.com>, <kent.overstreet@linux.dev>,
+	<yhs@fb.com>, <jpoimboe@kernel.org>, <peterz@infradead.org>
+CC: <zhengyejian1@huawei.com>, <linux-kernel@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-modules@vger.kernel.org>, <linux-kbuild@vger.kernel.org>,
+	<bpf@vger.kernel.org>
+Subject: [PATCH 0/6] kallsyms: Emit symbol for holes in text and fix weak function issue
+Date: Thu, 13 Jun 2024 21:37:05 +0800
+Message-ID: <20240613133711.2867745-1-zhengyejian1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a6c79128dca5b99951e95527bd2b51a4ae7b42fd.camel@mediatek.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500012.china.huawei.com (7.185.36.15)
 
-> Since I found out that there's phy-mode="gmii" in mt7981-rfb.dts on
-> openWRT, I thought maybe we need gmii&internal for mt7981's built-in
-> GbE and xgmii&internal for mt7988's built-in 2.5GbE.
+ftrace_location() was changed to not only return the __fentry__ location
+when called for the __fentry__ location, but also when called for the
+sym+0 location after commit aebfd12521d9 ("x86/ibt,ftrace: Search for
+__fentry__ location"). That is, if sym+0 location is not __fentry__,
+ftrace_location() would find one over the entire size of the sym.
 
-Just because openwrt is using it, does not mean it is correct. We do
-not break in tree DT files, but out of tree DT can be ignored.
-Hopefully if mt7981-rfb.dts is ever submitted for mainline, the
-problem will be fixed. And when OpenWRT updates to a newer kernel they
-are likely to fix it.
+However, there is case that more than one __fentry__ exist in the sym
+range (described below) and ftrace_location() would find wrong __fentry__
+location by binary searching, which would cause its users like livepatch/
+kprobe/bpf to not work properly on this sym!
 
-    Andrew
+The case is that, based on current compiler behavior, suppose:
+ - function A is followed by weak function B1 in same binary file;
+ - weak function B1 is overridden by function B2;
+Then in the final binary file:
+ - symbol B1 will be removed from symbol table while its instructions are
+   not removed;
+ - __fentry__ of B1 will be still in __mcount_loc table;
+ - function size of A is computed by substracting the symbol address of
+   A from its next symbol address (see kallsyms_lookup_size_offset()),
+   but because symbol info of B1 is removed, the next symbol of A is
+   originally the next symbol of B1. See following example, function
+   sizeof A will be (symbol_address_C - symbol_address_A):
+
+     symbol_address_A
+     symbol_address_B1 (Not in symbol table)
+     symbol_address_C
+
+The weak function issue has been discovered in commit b39181f7c690
+("ftrace: Add FTRACE_MCOUNT_MAX_OFFSET to avoid adding weak function")
+but it didn't resolve the issue in ftrace_location().
+
+Peter suggested to use entry size for FUNC type objects to find holes in
+the text and fill them with a symbol, then check the mcount locations
+against the symbol table and for every one that falls in a hole [1] [2].
+
+What the patch set does is described as follows:
+
+- Patch 1: Do an optimization for scripts/kallsym.c about memory allocation
+  when read symbols from file. This patch has little to do with the above
+  issue, but since I changed this script, so it also can be reviewed here;
+
+- Patch 2: Change scripts/kallsyms.c to emit a symbol where there is a hole
+  in the text, the symbol name is temporarily named "__hole_symbol_XXXXX";
+
+- Patch 3: When lookup symbols in module, use entry size info to determine
+  the exact boundaries of a function symbol;
+
+- Patch 4: Holes in text have been found in previous patches, now check
+  __fentry__ in mcount table and skip those locate in the holes;
+
+- Patch 5: Accidentally found a out-of-bound issue when all __fentry__
+  are skipped, so fix it;
+
+- Patch 6: Revert Steve's patch about the FTRACE_MCOUNT_MAX_OFFSET
+  solution, also two related definition for powerpc.
+
+[1] https://lore.kernel.org/all/20240607150228.GR8774@noisy.programming.kicks-ass.net/
+[2] https://lore.kernel.org/all/20240611092157.GU40213@noisy.programming.kicks-ass.net/
+
+Zheng Yejian (6):
+  kallsyms: Optimize multiple times of realloc() to one time of malloc()
+  kallsyms: Emit symbol at the holes in the text
+  module: kallsyms: Determine exact function size
+  ftrace: Skip invalid __fentry__ in ftrace_process_locs()
+  ftrace: Fix possible out-of-bound issue in ftrace_process_locs()
+  ftrace: Revert the FTRACE_MCOUNT_MAX_OFFSET workaround
+
+ arch/powerpc/include/asm/ftrace.h |   7 --
+ arch/x86/include/asm/ftrace.h     |   7 --
+ include/linux/kallsyms.h          |  13 +++
+ include/linux/module.h            |  14 +++
+ kernel/module/kallsyms.c          |  42 ++++++--
+ kernel/trace/ftrace.c             | 174 ++++++------------------------
+ scripts/kallsyms.c                | 134 ++++++++++++++++++++---
+ scripts/link-vmlinux.sh           |   4 +-
+ scripts/mksysmap                  |   2 +-
+ 9 files changed, 216 insertions(+), 181 deletions(-)
+
+-- 
+2.25.1
+
 
