@@ -1,101 +1,109 @@
-Return-Path: <linux-kernel+bounces-213808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4550C907AF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F466907B11
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D74BF1F2168C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:18:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17E781F21CE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDDA14AD38;
-	Thu, 13 Jun 2024 18:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CE914AD22;
+	Thu, 13 Jun 2024 18:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="F5mNSRSj"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="K5Tq4sbm"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862FD145B2F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB17A14A617;
+	Thu, 13 Jun 2024 18:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718302695; cv=none; b=p8mmdFFRP+pd8mA6FXqcmzXNDCutDwm4BIZ1nLgPG4uwxxZLHr8YM3N59PeJg1SGO3DDkb0JxHlSOmQip5jdnWO4J2N89XSiDvgttLu0SA+YybcYg47zruerx3L3uS4gb+PY6h5oMVwwIypEd4QD3NXP3apy9ZF4psn5y/zy08w=
+	t=1718302815; cv=none; b=uWR6fGAhhQUNIuMt/UsuYC97beaSsUYXSZUhV5yDpoPmZzIT8iKudDMNEQJDD7r2+feX93Rcp0ywZ5w/S7j3h0ZOO9ta69shpIpepCQwBIY1i+0h2TI3jroYWFqpVDRDFKlyh3UCvBrxYPhwf21YEn6lzu05VN+0X5vTKQTg0aY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718302695; c=relaxed/simple;
-	bh=VmpvWSzugIB9sHC+Poxu1Uf7slG8yypxWRCwzH/6k54=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=moor+z6VwYQKHZJ7wIX43BuzfGL6XhWgphhMW+tD64n3PsuQdk9lvt56xg8S7ZD+4ZTAaHOXfgBwKSs8EkM5UeJhdO0mvLgGrEfTOpwGKKDYrA2O5IppZw15jxFvZcHU/pBO0co4yqVRbSXXjuV6raK1dllhPP793Bk102nTqgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=F5mNSRSj; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57cbc2a2496so794053a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:18:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718302692; x=1718907492; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=U32F52trfP/t5Glv8Me8l9/yxhLD4fCfQobPR+5mCxw=;
-        b=F5mNSRSjAu52CLrx04TXMLC4Vhr4g9h8VsX19HDB5jPpAZ5frUAdDnlT7Jp1I9Rd2s
-         V3p002ahCms1yULelSRlJyYF3MJqvzZkgP25Ib+EDbIekl3PKqNJt7KzLAv+0R6UgJD5
-         nlGEHYGDzAIdQS9QQEynfzEckMv2X668eGF2U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718302692; x=1718907492;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U32F52trfP/t5Glv8Me8l9/yxhLD4fCfQobPR+5mCxw=;
-        b=sZo7Hbnpt5Slk+uClCB0WcX3lF3lumWkm9uZdCjkoXTtR48PGbtUWJa0iH1K/Xcdw5
-         1Fv5GeqeG/zJVOHjpG078GDhEsvyQzkvlvS7pDuz8wb884DUi66IG7IB7uYp6a4cff1v
-         TyaAGHfMUfnI+l3PJZbB9czq7JM6N3+ZvsuhzovlziACGeDNgJ9eLtvLe109xXUrQ5pV
-         6CW0bawkVa/dqCFk4XTeHJ2OtVpsLMov1U6eu+zjPXtqrTXxYI9Sui0fQeEdgFJLcSGA
-         nOob3zVAh9Fxw3TpQdiKG5ibRbpPUj/zBc6N2mb+SngOsZk0+opKf299XHJvkIz430fJ
-         sUUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXA6pUXDOeVPO1xCkfqkL8fSeb7/sYeSmnrqWwstAoCyixVb3+JGC2AFDoRvE5pIP6TRTSwoccanH4+6IJwz6s9c9LC2IZxM+TeXjBq
-X-Gm-Message-State: AOJu0YzUF9SItGjX2sFU+VZtgknQeoT7EbKqFudee3E0ehyNC+1wJygR
-	vIoBaYx3aBVb6gHGrPbMKLNLNOjbDzuwKrLkQymZL7kB4XqUeYY12Hua4vdiecge/EyQkO6yP6m
-	rjn7SDQ==
-X-Google-Smtp-Source: AGHT+IHCfEc8rvXtauCpCyx2G5lhN19QKh70C5zGQlst7Z8Jkm4whvjC6sizZcN56nMW722UuVnR7A==
-X-Received: by 2002:a17:907:76d3:b0:a6f:4ae3:5327 with SMTP id a640c23a62f3a-a6f60d17044mr42360266b.15.1718302691118;
-        Thu, 13 Jun 2024 11:18:11 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ed3658sm96704766b.133.2024.06.13.11.18.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 11:18:09 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57cbc2a2496so793979a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:18:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW/tqvaIyOQjIisfwjmZFD+BQGriHz1ypjssGLbaYkBV9Ymt9P7LHnGrDVHLUXZrj0sa3W/j+//W07JnW0tlxk3kUoEZQVSZVjkWOdi
-X-Received: by 2002:a50:96c3:0:b0:57c:9c5d:d18e with SMTP id
- 4fb4d7f45d1cf-57cbd6a85e1mr446474a12.36.1718302689163; Thu, 13 Jun 2024
- 11:18:09 -0700 (PDT)
+	s=arc-20240116; t=1718302815; c=relaxed/simple;
+	bh=TOatw6k1CBHe6gpw+mH/HeqeppZsp3vmIJFGZFpVvXw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Sp0mWKY52Mt3lfOdVo9bsmFRABV1EMLuJk+pPyBCUNoj37YKxUX+VlRYPaTRrf6hMYjgJ21p3CtOdN8QdGDZm4j8wQihp92LlGiocMW6qh2HoVjj67ZrQZJJiG26azoCDhj9Rr26HhxPLMOpUQaK546hrYsxODkGjH21CK5PlQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=K5Tq4sbm; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=MFcS3b+KeKQkV59PFBLNqWqobt/CiM0335GMv/JZlvo=; b=K5Tq4sbm0tlVf4ZuqWLDIzEa0C
+	EzfP2Ai6ZiPZeNKXwoUeBMPn8vLVNc0eZDJz7ZSasFRD9iY86GSJehBQaVEaAWRF3vuGMvFnUWC0R
+	7GaQdTKJC+7Smw7nMnofWsPx9oDV5Adw5wjU56kqvuQuUqy+XdQRgeFk8S0P3zHiQMZmWKXGxSODI
+	kEDcFEWd/tgtbCNH1IvL1TzrViB03FvBLl1zwvcF88m5UFU4BldfYu4H5TPLHN6ThAWZ58OlUzFPS
+	wx8/gNpCtJ5l7ZV7qdanx3T+BGxGDsBQ2FyypyozxYdJAikkJl/lp7RxnTBcNoFQ9epayhX5Kbp9g
+	jc+O7m6w==;
+Received: from [191.205.188.103] (helo=[192.168.1.60])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1sHp3K-002pj6-Bc; Thu, 13 Jun 2024 20:20:02 +0200
+Message-ID: <6a6bd674-48ca-f7fc-d572-51e52e6899d9@igalia.com>
+Date: Thu, 13 Jun 2024 15:19:50 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613163542.130374-1-kuba@kernel.org>
-In-Reply-To: <20240613163542.130374-1-kuba@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 13 Jun 2024 11:17:52 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiNgwEpfTpz0c9NXvZvLFPVs15LeFfmhAUO_XhQTXfahQ@mail.gmail.com>
-Message-ID: <CAHk-=wiNgwEpfTpz0c9NXvZvLFPVs15LeFfmhAUO_XhQTXfahQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Networking for v6.10-rc4
-To: Jakub Kicinski <kuba@kernel.org>, Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v6 2/2] pstore/ramoops: Add ramoops.mem_name= command line
+ option
+To: Steven Rostedt <rostedt@goodmis.org>, Mike Rapoport <rppt@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Vincent Donnefort <vdonnefort@google.com>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ suleiman@google.com, Thomas Gleixner <tglx@linutronix.de>,
+ Vineeth Pillai <vineeth@bitbyteword.org>,
+ Youssef Esmat <youssefesmat@google.com>,
+ Beau Belgrave <beaub@linux.microsoft.com>, Alexander Graf <graf@amazon.com>,
+ Baoquan He <bhe@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>, David Howells <dhowells@redhat.com>
+References: <20240613155506.811013916@goodmis.org>
+ <20240613155527.591647061@goodmis.org>
+Content-Language: en-US
+From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <20240613155527.591647061@goodmis.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 13 Jun 2024 at 09:35, Jakub Kicinski <kuba@kernel.org> wrote:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.10-rc4
+Thanks Steve, re-tested in my VM and it's working fine.
+Just a minor below...
 
-Your key had expired, and the kernel.org repo doesn't have the updated key.
 
-But for once, the key servers actually did update and a refresh fixed
-it for me.  Whee! Is the pgp key infrastructure starting to work
-again?
+On 13/06/2024 12:55, Steven Rostedt wrote:
+> [...]
+> + D. Using a region of memory reserved via ``reserve_mem`` command line
+> +    parameter. The address and size will be defined by the ``reserve_mem``
+> +    parameter. Note, that ``reserve_mem`` may not always allocate memory
+> +    in the same location, and cannot be relied upon. Testing will need
+> +    to be done, and it may not work on every machine, nor every kernel.
+> +    Consider this a "best effort" approach. The ``reserve_mem`` option
+> +    takes a size, alignment and name as arguments. The name is used
+> +    to map the memory to a label that can be retrieved by ramoops.
+> +
+> +	reserver_mem=2M:4096:oops  ramoops.mem_name=oops
+> +
 
-                            Linus
+Likely this could be fixed on merge, to avoid another version, but...
+
+s/reserver_mem/reserve_mem
+
+
+Cheers!
 
