@@ -1,284 +1,145 @@
-Return-Path: <linux-kernel+bounces-213848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A79A907B99
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:38:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 022C1907B9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89F33B242B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:38:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D53F51C243F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C82157E9B;
-	Thu, 13 Jun 2024 18:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1443A158213;
+	Thu, 13 Jun 2024 18:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uTVcaRah"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nueE7lgG"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C5B157A67;
-	Thu, 13 Jun 2024 18:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA371581EE
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718303689; cv=none; b=tSgEHs7jWnoLcoqy6lbSsHt/Dy62vvCLTl3PhOGga82bMFYR7xpofMNbYLTUGppKaOFeIPSmAvYligBnzjg1LXyv3NddUVwEDce1X1godHZdB2jJLfSm4jTrjhXl/96NFljybCnDvhGEi2xsVKgv+4qVyiKGK76pqGts9jaOEvo=
+	t=1718303692; cv=none; b=FO0sXej0NxnqJGmEuMXu2TWO7G8DXf1KB4zrKhE7WY+Y17yGnjY+YbJuPtl9LiP2xCXIk+RMuNqKV5m8IIIpXayGL9OpnuDH/xly9lFv5cFH3z7Tt5gZXEq0KWXbgw7rUbCSaefU2/bfDgFs6MtcSufwMGbqpeLJjRiuVnqiMIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718303689; c=relaxed/simple;
-	bh=oX0aSIaCfteVOGpAmr3SzPKXQ5QA4Z30qQIYP9WNXxc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bi/euwN1CdSgBaoz70o83o2fx5zruw7UKAZcFer8tfkqO8KWFJXeUzUenNEhl2EgMN8dWRmxe3sxJWYY7DNcYoYl/RPbkCkeev4JyCRdT4RQUWX2FCH7Zf3s3pvlzoUu5KoKfMYsxMSfYsGB4TmUOxtQdPQ+ezJ9C5lNZD2AygM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uTVcaRah; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DB0EC32786;
-	Thu, 13 Jun 2024 18:34:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718303688;
-	bh=oX0aSIaCfteVOGpAmr3SzPKXQ5QA4Z30qQIYP9WNXxc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=uTVcaRahEg2tE9VBEHrzfwpmILUjcrDidXqhkiJkGfCCnyxFPbGdRo/s7Jp+31dCw
-	 Wv5K691gHOhrWTv9VGJBuqIXgU324AqTndTtg/DNoPIIjAWKvXh7Gb6cif1JPDew+y
-	 I5x8yzfNaH8hpdb/kBHJjIJYwQcXWoU+UtxbftFFSbAfRChbly4apvnXn9nNiLv7om
-	 noFEIT5Z54pTtthRB6kFXODiDFh5xQH4agM+1Fh792WlbjU/+ittFzT91+6AvyMofX
-	 vh4cK69SSGQaHLHP6CoMV4aAsptxpcEhhjsTI0Zt1+ww/opE/STQFYkwLpLY9Yeizi
-	 xmt8TBheSABVA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 13 Jun 2024 14:34:34 -0400
-Subject: [PATCH v3 5/5] nfsd: new netlink ops to get/set server pool_mode
+	s=arc-20240116; t=1718303692; c=relaxed/simple;
+	bh=HzYejYuOAn5iwkrueS+PiiRJuMEgvDnHU5MUoSEiTXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KQ3ET2dnrcSPTZI8FDV181oFRYix9O/LPn443R65NNBvfrDhTgWKaMq2C7GA9Gs1bV38JdT7wGMzCNMDqa2eNtAYZrMz1cb1mxyEopAaTZd1R56cwyBbAD9+tUCTMF5ydKx59hgjOkh8lljk+iEgHypp4PADyxasDOYTwgHedAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nueE7lgG; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-421820fc26dso11825085e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:34:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718303689; x=1718908489; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+98BqI659caT5fQyMNy5nW5CXfFil4jPP9JHzeqpioA=;
+        b=nueE7lgG/naHoaPFwMMQmTbMK+2/EAH6ktB36ICcvkmhc2yVGAyH3y5E53CJgTwyF6
+         dn+lrqcmtsufzy16Ul/EwLmaqTxX+YzxHyvixZKk+6lgapD+eQvNFHe01rNlivdLf/sj
+         cLDPP7G51iuCnM0XpakbceOu8xN9cVJ5WsuEtC4qXMbYqPoTlYieZMHzREpEUBN952pA
+         nOFdKlU0CGmofu2PHDd5cWmv9WplcAdVkyk5tOjH8cZuKXXwG0fiKDhmi+XPhhLBkCGh
+         6Tx8M0dRq7rIzDrUkn3m+s6+1EPR+A4n0UqVjkPioFqnHJQ0Hc7ZDN5G7mq/y0IQAd+h
+         +Tmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718303689; x=1718908489;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+98BqI659caT5fQyMNy5nW5CXfFil4jPP9JHzeqpioA=;
+        b=H4GFJoW1H2xYQfsz/L8tRED5A0hJXPOE7cjtI7wl4wFhiInULDqig0TbDjCy11ZZR/
+         0azdTtmeWLbkwW4fsRsCsrN5qXbtWqWChbrpFUmHDYAs8gw14sCOOcn4Z4plRz1iAW8r
+         krU7hBi02r9ooVsRXFBwykg6BEjqKTWAcFVG5sATPXQMzu9EAjNxgV+Rcwo/vbz1AoOl
+         5LwcvGay0ujChzYO/cdfPFMSCtE3AHKdhNMgfHBUobji+Qyv/vj6mlqr9Bf4yuKMWSE1
+         iRLDKT4uSu8kPbDW6lKzl4H6vwUGcdR0gk7md+GNCjiucD+WoLxv3iSq2oGMIPsePSxM
+         ebDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHZl6QebH11T2+45gTwAarNisNwS45Lm99CzPi3EOHbiQsAsVI5NvExqOMrmVXfwaGRLbWveo3ga6gKP/NhWjsPow5CQfRVqkDaG2w
+X-Gm-Message-State: AOJu0Yw1nNq8W5xtlbAM9FBDFABZ01hLZCfTwzHBD8Hz6hCN2Tzwign9
+	Gmm3iqfDmpwCZ82GsQwAfIMT9OKa6I8YRCl5N1KM+LcVpENnRE97zozjH6lzSaVdnM4NaFPUdUi
+	1
+X-Google-Smtp-Source: AGHT+IH+s7hcDwfwjXdg6cobQ343oD9A/3tP8Z+Ip47trN4be35NWLP4NUKC3Qmn1FTyx++7yP9BQg==
+X-Received: by 2002:a05:600c:4c9a:b0:421:7ac9:460c with SMTP id 5b1f17b1804b1-4230484cfc5mr4462905e9.39.1718303688813;
+        Thu, 13 Jun 2024 11:34:48 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6320b11sm33706145e9.29.2024.06.13.11.34.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 11:34:48 -0700 (PDT)
+Date: Thu, 13 Jun 2024 21:34:44 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ben Walsh <ben@jubnut.com>
+Cc: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in
+ cros_ec_lpc_mec_read_bytes()
+Message-ID: <68f1d8df-69d2-4246-8c64-4c7cc975feb1@moroto.mountain>
+References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
+ <87sexgrdk4.fsf@jubnut.com>
+ <3226cba0-82c5-47a3-89da-01ffa935a9dc@moroto.mountain>
+ <87sexgaemn.fsf@jubnut.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240613-nfsd-next-v3-5-3b51c3c2fc59@kernel.org>
-References: <20240613-nfsd-next-v3-0-3b51c3c2fc59@kernel.org>
-In-Reply-To: <20240613-nfsd-next-v3-0-3b51c3c2fc59@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>, 
- Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5880; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=oX0aSIaCfteVOGpAmr3SzPKXQ5QA4Z30qQIYP9WNXxc=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmazu/MC2tOxfyvdCSWTHgtLgWwt3ZXJAKwPWiu
- fh/wg6t3qqJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZms7vwAKCRAADmhBGVaC
- FSrTEACH81IKDS1zk4sOr9sRw+nvBJg55vz8c/7lQ71MBOLBWhU3zIfM/Ih9OQvV3u+HhtOxg/u
- gx5i8DhbD8Gz6PEWCvOM7SGpMcHEtxCEZXdsocD1RxryA1BkbCvWiYZEIfMvmDtB2suS28NCEfA
- WHPLwNiB7zRTuJdlAED4RCHvwMCOJEUzrVjS5g/JWhjsjaVHaiPTc8yAbGalM877viqWsn6/lH8
- SX1YuDBMo+Xm7MTrf+T3l0Sb1X0ra2408pVaS4LWNiGXZAVhCIsa6jPkHG7VXq83+Y0MMLINN/y
- 9TrP6nbNymqS9tI7SvypJUBOea6AoG1cOesKr8Lr+zJi/92vecm+W/cIbTYDcMfN046cKI3mVqO
- bpp7cfs/Tl9tRaUcK3BtNtOlv2pGM6FMYn7TjtSmtDuziLu5VC7MwlCbC3/3iFI+Srye7wgfrG0
- JdHQrpWMFqLX/w0KIWzYgIMZXf7nV68rPWwDSSdijuKecmwVkgdryYWpPgKMnplS6QoQsIIy7vj
- ra8KUuWE+y3AO/czKwFWDh+obuejsQCQjAVEml/tRhwUae9P01lZcfx9JZ16OFDOLiT8jO6tURI
- EjOP5knWdcSVi13+oVCDU9Laa7z+6pD2tC8bHXBeB3AiPFPvtQu5/w710/flfQAPpAFr10Tekww
- VVfP6AvUpWzoMRQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sexgaemn.fsf@jubnut.com>
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- Documentation/netlink/specs/nfsd.yaml | 27 ++++++++++++++++
- fs/nfsd/netlink.c                     | 17 ++++++++++
- fs/nfsd/netlink.h                     |  2 ++
- fs/nfsd/nfsctl.c                      | 58 +++++++++++++++++++++++++++++++++++
- include/uapi/linux/nfsd_netlink.h     | 10 ++++++
- 5 files changed, 114 insertions(+)
+On Thu, Jun 13, 2024 at 07:20:32PM +0100, Ben Walsh wrote:
+> 
+> Dan Carpenter <dan.carpenter@linaro.org> writes:
+> 
+> > On Thu, Jun 13, 2024 at 05:51:39PM +0100, Ben Walsh wrote:
+> >> 
+> >> Thanks for fixing this! Unfortunately `in_range` returns -EINVAL if
+> >> length == 0 (see the definition of `fwk_ec_lpc_mec_in_range`). I'm sure
+> >> this broke something in my testing, but I can't find what it was now.
+> >
+> > I don't think fwk_ec_lpc_mec_in_range() is upstream.  This email is the
+> > only reference I can find to it on the internet.
+> 
+> Sorry, I mean cros_ec_lpc_mec_in_range().
+> 
+> >  int cros_ec_lpc_mec_in_range(unsigned int offset, unsigned int length)
+> >  {
+> >  	if (length == 0)
+> > -		return -EINVAL;
+> > +		return 0;
+> >  
+> >  	if (WARN_ON(mec_emi_base == 0 || mec_emi_end == 0))
+> >  		return -EINVAL;
+> >
+> > But I don't like how subtle that is.  Probably adding a check for
+> > for if (length == 0) to the  to cros_ec_lpc_mec_read_bytes() seems
+> > like the best option.  I guess option 2 is the best option.
+> 
+> Thanks. I'll check out Tzung-Bi's suggestions as well before we decide.
 
-diff --git a/Documentation/netlink/specs/nfsd.yaml b/Documentation/netlink/specs/nfsd.yaml
-index d21234097167..5a98e5a06c68 100644
---- a/Documentation/netlink/specs/nfsd.yaml
-+++ b/Documentation/netlink/specs/nfsd.yaml
-@@ -115,6 +115,15 @@ attribute-sets:
-         type: nest
-         nested-attributes: sock
-         multi-attr: true
-+  -
-+    name: pool-mode
-+    attributes:
-+      -
-+        name: mode
-+        type: string
-+      -
-+        name: npools
-+        type: u32
- 
- operations:
-   list:
-@@ -197,3 +206,21 @@ operations:
-         reply:
-           attributes:
-             - addr
-+    -
-+      name: pool-mode-set
-+      doc: set the current server pool-mode
-+      attribute-set: pool-mode
-+      flags: [ admin-perm ]
-+      do:
-+        request:
-+          attributes:
-+            - mode
-+    -
-+      name: pool-mode-get
-+      doc: get info about server pool-mode
-+      attribute-set: pool-mode
-+      do:
-+        reply:
-+          attributes:
-+            - mode
-+            - npools
-diff --git a/fs/nfsd/netlink.c b/fs/nfsd/netlink.c
-index 62d2586d9902..137701153c9e 100644
---- a/fs/nfsd/netlink.c
-+++ b/fs/nfsd/netlink.c
-@@ -40,6 +40,11 @@ static const struct nla_policy nfsd_listener_set_nl_policy[NFSD_A_SERVER_SOCK_AD
- 	[NFSD_A_SERVER_SOCK_ADDR] = NLA_POLICY_NESTED(nfsd_sock_nl_policy),
- };
- 
-+/* NFSD_CMD_POOL_MODE_SET - do */
-+static const struct nla_policy nfsd_pool_mode_set_nl_policy[NFSD_A_POOL_MODE_MODE + 1] = {
-+	[NFSD_A_POOL_MODE_MODE] = { .type = NLA_NUL_STRING, },
-+};
-+
- /* Ops table for nfsd */
- static const struct genl_split_ops nfsd_nl_ops[] = {
- 	{
-@@ -85,6 +90,18 @@ static const struct genl_split_ops nfsd_nl_ops[] = {
- 		.doit	= nfsd_nl_listener_get_doit,
- 		.flags	= GENL_CMD_CAP_DO,
- 	},
-+	{
-+		.cmd		= NFSD_CMD_POOL_MODE_SET,
-+		.doit		= nfsd_nl_pool_mode_set_doit,
-+		.policy		= nfsd_pool_mode_set_nl_policy,
-+		.maxattr	= NFSD_A_POOL_MODE_MODE,
-+		.flags		= GENL_ADMIN_PERM | GENL_CMD_CAP_DO,
-+	},
-+	{
-+		.cmd	= NFSD_CMD_POOL_MODE_GET,
-+		.doit	= nfsd_nl_pool_mode_get_doit,
-+		.flags	= GENL_CMD_CAP_DO,
-+	},
- };
- 
- struct genl_family nfsd_nl_family __ro_after_init = {
-diff --git a/fs/nfsd/netlink.h b/fs/nfsd/netlink.h
-index e3724637d64d..9459547de04e 100644
---- a/fs/nfsd/netlink.h
-+++ b/fs/nfsd/netlink.h
-@@ -26,6 +26,8 @@ int nfsd_nl_version_set_doit(struct sk_buff *skb, struct genl_info *info);
- int nfsd_nl_version_get_doit(struct sk_buff *skb, struct genl_info *info);
- int nfsd_nl_listener_set_doit(struct sk_buff *skb, struct genl_info *info);
- int nfsd_nl_listener_get_doit(struct sk_buff *skb, struct genl_info *info);
-+int nfsd_nl_pool_mode_set_doit(struct sk_buff *skb, struct genl_info *info);
-+int nfsd_nl_pool_mode_get_doit(struct sk_buff *skb, struct genl_info *info);
- 
- extern struct genl_family nfsd_nl_family;
- 
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index dde42aad5582..187e9be77b78 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -2182,6 +2182,64 @@ int nfsd_nl_listener_get_doit(struct sk_buff *skb, struct genl_info *info)
- 	return err;
- }
- 
-+/**
-+ * nfsd_nl_pool_mode_set_doit - set the number of running threads
-+ * @skb: reply buffer
-+ * @info: netlink metadata and command arguments
-+ *
-+ * Return 0 on success or a negative errno.
-+ */
-+int nfsd_nl_pool_mode_set_doit(struct sk_buff *skb, struct genl_info *info)
-+{
-+	const struct nlattr *attr;
-+
-+	if (GENL_REQ_ATTR_CHECK(info, NFSD_A_POOL_MODE_MODE))
-+		return -EINVAL;
-+
-+	attr = info->attrs[NFSD_A_POOL_MODE_MODE];
-+	return sunrpc_set_pool_mode(nla_data(attr));
-+}
-+
-+/**
-+ * nfsd_nl_pool_mode_get_doit - get info about pool_mode
-+ * @skb: reply buffer
-+ * @info: netlink metadata and command arguments
-+ *
-+ * Return 0 on success or a negative errno.
-+ */
-+int nfsd_nl_pool_mode_get_doit(struct sk_buff *skb, struct genl_info *info)
-+{
-+	struct net *net = genl_info_net(info);
-+	char buf[16];
-+	void *hdr;
-+	int err;
-+
-+	skb = genlmsg_new(GENLMSG_DEFAULT_SIZE, GFP_KERNEL);
-+	if (!skb)
-+		return -ENOMEM;
-+
-+	err = -EMSGSIZE;
-+	hdr = genlmsg_iput(skb, info);
-+	if (!hdr)
-+		goto err_free_msg;
-+
-+	err = -ERANGE;
-+	if (sunrpc_get_pool_mode(buf, ARRAY_SIZE(buf)) >= ARRAY_SIZE(buf))
-+		goto err_free_msg;
-+
-+	err = nla_put_string(skb, NFSD_A_POOL_MODE_MODE, buf) ||
-+	      nla_put_u32(skb, NFSD_A_POOL_MODE_NPOOLS, nfsd_nrpools(net));
-+	if (err)
-+		goto err_free_msg;
-+
-+	genlmsg_end(skb, hdr);
-+	return genlmsg_reply(skb, info);
-+
-+err_free_msg:
-+	nlmsg_free(skb);
-+	return err;
-+}
-+
- /**
-  * nfsd_net_init - Prepare the nfsd_net portion of a new net namespace
-  * @net: a freshly-created network namespace
-diff --git a/include/uapi/linux/nfsd_netlink.h b/include/uapi/linux/nfsd_netlink.h
-index 24c86dbc7ed5..887cbd12b695 100644
---- a/include/uapi/linux/nfsd_netlink.h
-+++ b/include/uapi/linux/nfsd_netlink.h
-@@ -70,6 +70,14 @@ enum {
- 	NFSD_A_SERVER_SOCK_MAX = (__NFSD_A_SERVER_SOCK_MAX - 1)
- };
- 
-+enum {
-+	NFSD_A_POOL_MODE_MODE = 1,
-+	NFSD_A_POOL_MODE_NPOOLS,
-+
-+	__NFSD_A_POOL_MODE_MAX,
-+	NFSD_A_POOL_MODE_MAX = (__NFSD_A_POOL_MODE_MAX - 1)
-+};
-+
- enum {
- 	NFSD_CMD_RPC_STATUS_GET = 1,
- 	NFSD_CMD_THREADS_SET,
-@@ -78,6 +86,8 @@ enum {
- 	NFSD_CMD_VERSION_GET,
- 	NFSD_CMD_LISTENER_SET,
- 	NFSD_CMD_LISTENER_GET,
-+	NFSD_CMD_POOL_MODE_SET,
-+	NFSD_CMD_POOL_MODE_GET,
- 
- 	__NFSD_CMD_MAX,
- 	NFSD_CMD_MAX = (__NFSD_CMD_MAX - 1)
+Writing length 0 bytes to cros_ec_lpc_io_bytes_mec() changes the
+function to basically this:
 
--- 
-2.45.2
+	cros_ec_lpc_mec_lock();
+	/* Initialize I/O at desired address */
+	cros_ec_lpc_mec_emi_write_address(offset, access);
+	cros_ec_lpc_mec_unlock();
+
+	return 0;
+
+I was a little concerned about the cros_ec_lpc_mec_emi_write_address()
+But I don't know this subsystem at all so it might be fine.
+
+Perhaps the cleanest thing is to delete the length == 0 check in
+cros_ec_lpc_mec_in_range() and add one to the start of
+cros_ec_lpc_io_bytes_mec().
+
+I think that's a good solution.
+
+regards,
+dan carpenter
 
 
