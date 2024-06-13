@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-212623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC8F5906401
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:23:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B32906409
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6709A1F22F89
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:23:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB0F1B22A8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B35136E28;
-	Thu, 13 Jun 2024 06:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QR7/j50+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020FE13698D;
-	Thu, 13 Jun 2024 06:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15A6136E0F;
+	Thu, 13 Jun 2024 06:28:54 +0000 (UTC)
+Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D286425632;
+	Thu, 13 Jun 2024 06:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718259823; cv=none; b=Wnk2uEjM7ACcqrMvAXh6JuxUUV0S37w6TQHVWHh8cFx4YJbjNZZO+Z25a0fydv0Rcb9P47sstvqEp9CCfJUCcpBHIpVLcRjmNNFe1zvvXyRzkkiwhyLJCUGeukkDwZDwZBrz9KzfRL6YBX+LgjVfejvKiOX8qQXNCmQksyWgfqw=
+	t=1718260134; cv=none; b=L9lQDB1TtDjBRNSABIAylAbihFMNZurF+XKaTvmpRtLRQk1jA8ejkKTHbY+v8qATLp//W8p4Iky2zEnaaLTIcQOj4zn5RmqKwNyHaQvxhQ8/5o7LURFgWG9zbNyYjCOXpSYuWH6hr4LYG69Qg9sjqC2jU3qGHRC2Orsb3FlXWXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718259823; c=relaxed/simple;
-	bh=26I/IHveqqAHAsqcwe1W7jBQ0Cszpg6G1JOITnnQpjc=;
+	s=arc-20240116; t=1718260134; c=relaxed/simple;
+	bh=sElRb+gr2z38VzPOs6tSW0eRkwueqHTVt4PboxtTrbI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M0i7C5NFqm36nBiJ+eBM4GkDTRsYq+XfboICFhz2uYW3Kj+zNJDMr88iC9UGr3oJ+u4pJlH/8qBAX9cLewLyKI1hkuGvhA/HsnE+6Ke83R+ZAOrU9sCFHqbxLVZgJd01CByfM2SDrp1JAbMyPMbwH7MNhvbPLiCiGJHQl7GTSVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QR7/j50+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F894C2BBFC;
-	Thu, 13 Jun 2024 06:23:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718259822;
-	bh=26I/IHveqqAHAsqcwe1W7jBQ0Cszpg6G1JOITnnQpjc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QR7/j50+mYWkvtxnF6rH2kkur8xbaE9biOThPGrAnGO01uTM7L7v68qReZzftceUs
-	 MzzirLXR7AhVa8feQ6OYtzhScXj6m07/41XIp5UTmkI854YujXp4nCl8DcuHxP88L9
-	 T/8x5dEMbOc4m7xvwLBesuH2k5GXGHZ2JQudFNTFzib1LLEoEmK/8+eWsBUwtKJg2X
-	 geBSVkel3kF+blvrmGYAvJobLX4dlJuv6z8El5olCla7MHdBzCLezW7vQevKoSayWp
-	 qMMmeHqXTdMIotylZcWwbefkWlwSkFC5lR8SQ+DZyhKNHvpmJEKukOuBWjWwrnlCUU
-	 F03IR/LHA8aYg==
-Message-ID: <e85c4437-ef9d-4b00-8f77-b9cdb8282571@kernel.org>
-Date: Thu, 13 Jun 2024 08:23:34 +0200
+	 In-Reply-To:Content-Type; b=J4QJG/5GIz+8thDCGvY7sdFIMJroh6KQkRbgV9Y5znTuFtll/El2uirRQpV/wt9taHJLk1kP5YFJwstkbLwu5qMKbHtI4sB2AZ7ca5XU8ucrwBUYOlX8yvFZ8Bp4DLHt/5x+BKOhAMKRyawlUTOZWOZC/rVIbMllf/g84q2mgNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=206.189.79.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.50])
+	by app1 (Coremail) with SMTP id HgEQrAAHD4NckWpm8sXMBw--.61145S2;
+	Thu, 13 Jun 2024 14:27:40 +0800 (CST)
+Received: from [10.12.169.238] (unknown [10.12.169.238])
+	by gateway (Coremail) with SMTP id _____wBnoU5akWpmKZgeAA--.32816S2;
+	Thu, 13 Jun 2024 14:27:39 +0800 (CST)
+Message-ID: <c6da52be-087a-4f28-8a8c-d61196922cb7@hust.edu.cn>
+Date: Thu, 13 Jun 2024 14:27:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,86 +41,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/5] media: dt-bindings: rk3568-vepu: Add RK3588
- VEPU121
-To: Sebastian Reichel <sebastian.reichel@collabora.com>,
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- devicetree@vger.kernel.org, Nicolas Dufresne
- <nicolas.dufresne@collabora.com>, Jianfeng Liu <liujianfeng1994@gmail.com>,
- linux-rockchip@lists.infradead.org,
- Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
- Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>, kernel@collabora.com,
- Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- Philipp Zabel <p.zabel@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>
-References: <20240612173213.42827-1-sebastian.reichel@collabora.com>
- <20240612173213.42827-2-sebastian.reichel@collabora.com>
- <171821679246.3419351.9732124883795406633.robh@kernel.org>
- <t5yyanxuweou6edj3subsbtndow6nwwexcgkhctfx3mdkoi7dl@zjtqmvklwzz4>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <t5yyanxuweou6edj3subsbtndow6nwwexcgkhctfx3mdkoi7dl@zjtqmvklwzz4>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v2] docs/zh_CN: add process/researcher-guidelines Chinese
+ translation
+To: Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>,
+ Yanteng Si <siyanteng@loongson.cn>,
+ Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240612021845.12036-1-dzm91@hust.edu.cn>
+ <87tthxoo3u.fsf@trenco.lwn.net>
+From: Dongliang Mu <dzm91@hust.edu.cn>
+In-Reply-To: <87tthxoo3u.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:HgEQrAAHD4NckWpm8sXMBw--.61145S2
+Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvJXoWxAr47WryUuFWxWr4fWryfWFg_yoW5GrWfpF
+	y8KF93Ka1xJw1UC3yxur1jgF1fJ3Z7Ca9xtw12qw1Sqrn0yrn2qr9xtrZ8Kas3WrW8Za4U
+	Xr4YgrWUur17Z3DanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUm0b7Iv0xC_Cr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
+	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
+	1Y6r17M2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
+	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
+	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVWxJVW8Jr1l
+	Ox8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI7VAKI48JMxAIw28IcV
+	Cjz48v1sIEY20_GFW3Jr1UJwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWU
+	XVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
+	kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY
+	6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0x
+	vEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVj
+	vjDU0xZFpf9x07j6VbkUUUUU=
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-On 13/06/2024 00:20, Sebastian Reichel wrote:
-> oops. That's on me for not doing another test and doing something
-> stupid. I obviously wanted this and didn't recheck the bindings
-> after dropping the fallback compatible.
-> 
-> enum:
->   - rockchip,rk3568-vepu
->   - rockchip,rk3588-vepu121
-> 
-> I will change it in v6 if people are fine with this solution.
 
-Ack
+On 2024/6/13 05:19, Jonathan Corbet wrote:
+> Dongliang Mu <dzm91@hust.edu.cn> writes:
+>
+>> Finish the translation of researcher-guidelines and add it to the
+>> index file.
+>>
+>> Update to commit 27103dddc2da ("Documentation: update mailing list
+>> addresses")
+>>
+>> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+>> ---
+>> v1->v2: Revise description suggested by Alex Shi
+>>          Add a commit id to keep track of the translation status
+>>          Add a new line at the end of researcher-guidelines.rst
+>>   .../translations/zh_CN/process/index.rst      |   2 +-
+>>   .../zh_CN/process/researcher-guidelines.rst   | 129 ++++++++++++++++++
+>>   2 files changed, 130 insertions(+), 1 deletion(-)
+>>   create mode 100644 Documentation/translations/zh_CN/process/researcher-guidelines.rst
+>>
+>> diff --git a/Documentation/translations/zh_CN/process/index.rst b/Documentation/translations/zh_CN/process/index.rst
+>> index 5c6c8ccdd50d..5a5cd7c01c62 100644
+>> --- a/Documentation/translations/zh_CN/process/index.rst
+>> +++ b/Documentation/translations/zh_CN/process/index.rst
+>> @@ -64,6 +64,7 @@ TODOLIST:
+>>      management-style
+>>      stable-kernel-rules
+>>      submit-checklist
+>> +   researcher-guidelines
+>>   
+>>   TODOLIST:
+>>   
+>> @@ -71,7 +72,6 @@ TODOLIST:
+>>   * kernel-docs
+>>   * deprecated
+>>   * maintainers
+>> -* researcher-guidelines
+>>   * contribution-maturity-model
+>>   
+>>   
+>> diff --git a/Documentation/translations/zh_CN/process/researcher-guidelines.rst b/Documentation/translations/zh_CN/process/researcher-guidelines.rst
+>> new file mode 100644
+>> index 000000000000..66e4840f208a
+>> --- /dev/null
+>> +++ b/Documentation/translations/zh_CN/process/researcher-guidelines.rst
+>> @@ -0,0 +1,129 @@
+>> +.. SPDX-License-Identifier: GPL-2.0-or-later
+>> +
+>> +.. include:: ../disclaimer-zh_CN.rst
+>> +
+>> +.. _cn_submittingpatches:
+> This label here ^^^ adds a new warning to the docs build:
+>
+>> Documentation/translations/zh_CN/process/researcher-guidelines.rst:7: WARNING: duplicate label cn_submittingpatches, other instance in Documentation/translations/zh_CN/process/submitting-patches.rst
+> This is a fairly obvious error, and one you should have seen when you
+> did your own docs build.  Please be a bit more careful.
 
-Best regards,
-Krzysztof
+
+Sorry about this. I did build documents(make htmldocs) in my local 
+environment. It seems that this warning slipped out of my eyes :(
+
+I will be more careful about kernel commits in the future. Will send a 
+v3 patch today or tomorrow.
+
+Dongliang Mu
+
+
+>
+> jon
 
 
