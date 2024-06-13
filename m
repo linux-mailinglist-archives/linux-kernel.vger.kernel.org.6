@@ -1,185 +1,138 @@
-Return-Path: <linux-kernel+bounces-213301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60939907389
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:24:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1907E907384
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:23:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FD621C2436D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:24:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB649286D67
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0B714830F;
-	Thu, 13 Jun 2024 13:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="rJ6gwIT2"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2058.outbound.protection.outlook.com [40.107.22.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D89E146A81;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF7A146A72;
+	Thu, 13 Jun 2024 13:21:23 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6071465BB;
 	Thu, 13 Jun 2024 13:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718284883; cv=fail; b=Oq6WZGHdJUHFPiKId4BrCJmcNpyXvfoIYqRd0KEz/ALQGKxohoFn9SQNzvhNqkiCpO43QvkRsgOHm2edqWVSvPOG50boVNyHDRo2SAD6zjMVdFG1Lac50VbYjHk/Ifr3VwNKG1ejZiLzmDw3mdKspZg1rZpnYyLWUB+cwqiLQUY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718284883; c=relaxed/simple;
-	bh=cwMzZ2m1dn0C9rY/2h0EsG+79CnYazYIlygrMQT/FSA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fNRCmXnUdZRktibrmHlj0ZJc2gx2Z0QTVZR6Gs9x6jctNB9FBywixSkcc/angBGM6uTllEmHUMACuOmkkR1HDddqO+S99vRJI4o2irzrU5KmBER+swkD3nEtsX9X00KaAydUgG9OkNKywUpNp8LK8+i0+zYawj6XVsBRud7KdIk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=2n.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=rJ6gwIT2; arc=fail smtp.client-ip=40.107.22.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=2n.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eeErG+fI3D1SXMfrrdG7DM/Cxv4HvXgvXZE5p5sGXS6IUVhGfB1X2eABLsFWTT2GmQz1W2POkucTBf42EroVv0x/wQYsGrRhoihXm3EkKvfwSsGlOuTZNk/PW6bERT7zzDmrgu75NTLYoxPz+BQ3tVjj1VXHKun8o2hz88Xu7Iwh8/XDDqXOaPntiizbqbXleUsoEyu1nNP0t6tMers9W7hf1VM1BE/NTCy+X2MpcOpvBpndCSz/RKCoK6gQlF6lG99DipJsdDAPe0SX16k2OZdCEJ15YD7oesJuv1wrrvuskkFNc/5SpI8mpZiQLco1rZSZhaguVM7pwQupOQg0Tg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sN2dOLLQhedQOncCwIWhdfCtJiOCA4UAEPCcB7/T4m4=;
- b=DY1eO6EmujMepzBJYnNIqFxtunoaMKmPxyw460dkKM8ArqM73d1XwAIaTjjQmhXu8GpyFiSkfU9Ik/TkF6/f2bPLvv8VDmf+iPjDFlitChDVfjAANaQEwpjye2mBJuhNTkyYoxFRF41DLPKORwcBMCIbW74bVkOn2BrBlPojuQ/1OGK/iIS+4/jcrScN0Tg//Hj9gud9k1e2cCllR/KtCkph3cUY/lmrhPvkoFlgKrLLFi/U40sbt8IdaMJWvAGxGNejBYv+s01TrCPqwv85NAadW+N6YcWlwmxLvsXJSkXZl5R5Gx2tFodi1CIZmkys/CIxXuhKXMFFbV6v8gbyiw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=broadcom.com smtp.mailfrom=2n.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=axis.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sN2dOLLQhedQOncCwIWhdfCtJiOCA4UAEPCcB7/T4m4=;
- b=rJ6gwIT2U+mTSsZJvwn3+vUPdX2dz0Wj/ZGPJyk8DQZ9wkSs2jF+xJriuvuxSMfJr2gsxSoHQfbix1KWjAT0KPOsY8idPADvlcsfq0OY82i01ylIv0unAmxHSEXok6I+n0FceS5M7yz99olk81t+l8VAaM9tz2YgIoiGLGJ6pzw=
-Received: from DU7P195CA0011.EURP195.PROD.OUTLOOK.COM (2603:10a6:10:54d::14)
- by AS2PR02MB9262.eurprd02.prod.outlook.com (2603:10a6:20b:5fc::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Thu, 13 Jun
- 2024 13:21:18 +0000
-Received: from DU2PEPF0001E9C5.eurprd03.prod.outlook.com
- (2603:10a6:10:54d:cafe::75) by DU7P195CA0011.outlook.office365.com
- (2603:10a6:10:54d::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.20 via Frontend
- Transport; Thu, 13 Jun 2024 13:21:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=2n.com; dkim=none (message not signed) header.d=none;dmarc=fail
- action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of 2n.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- DU2PEPF0001E9C5.mail.protection.outlook.com (10.167.8.74) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Thu, 13 Jun 2024 13:21:17 +0000
-Received: from pcczc3457tyd.2n.cz.axis.com (10.0.5.60) by se-mail01w.axis.com
- (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Jun
- 2024 15:21:16 +0200
-From: =?UTF-8?q?Kamil=20Hor=C3=A1k=20-=202N?= <kamilh@axis.com>
-To: <florian.fainelli@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>,
-	<andrew@lunn.ch>, <hkallweit1@gmail.com>
-CC: <kamilh@axis.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 3/4] dt-bindings: ethernet-phy: add optional brr-mode flag
-Date: Thu, 13 Jun 2024 15:20:54 +0200
-Message-ID: <20240613132055.49207-4-kamilh@axis.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240613132055.49207-1-kamilh@axis.com>
-References: <20240613132055.49207-1-kamilh@axis.com>
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718284882; cv=none; b=tJ31ZOSkIkdizCeTCwIw/MYuv5Xtvmmkpp9ynG9f0EuuYew4MNkzuSB0405A78dQbfD+V6PzBUJLDHjjpqIl2dpgeo2X7eTQJDKRdx7o5cN7NfThcMQe+sCHMx/lbpBxxnQwMvlVKL/bx2VWmvhoTH45Ocd18+bPUW0k/h93U6k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718284882; c=relaxed/simple;
+	bh=EQ20HpMAIER6Uw/xHoQiBTRUedahaArff+OtmAqGPP0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QBoVCk8xTYLxF9KEHTQ2r1mbWrLnPcaTpgScQmTHMtJPDlmPeAdrVnzSSHKzrj5bB1hTqKGPy6JH5egzZ2edTrU0jlxEXoy3d0BLnmkzMig7m//n0+uJ571KDO64406GzCOpeZHu/d1YcpPdqKhaXwEpkCwgX2shfDMelPSRwek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-d6dff70000001748-5b-666af24d0095
+From: Honggyu Kim <honggyu.kim@sk.com>
+To: SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Gregory Price <gregory.price@memverge.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	42.hyeyoo@gmail.com,
+	art.jeongseob@gmail.com,
+	kernel_team@skhynix.com,
+	Honggyu Kim <honggyu.kim@sk.com>
+Subject: [PATCH v5 8/8] Docs/.../mm/damon: add more damos actions
+Date: Thu, 13 Jun 2024 22:20:55 +0900
+Message-ID: <20240613132056.608-9-honggyu.kim@sk.com>
+X-Mailer: git-send-email 2.43.0.windows.1
+In-Reply-To: <20240613132056.608-1-honggyu.kim@sk.com>
+References: <20240613132056.608-1-honggyu.kim@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: se-mail01w.axis.com (10.20.40.7) To se-mail01w.axis.com
- (10.20.40.7)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PEPF0001E9C5:EE_|AS2PR02MB9262:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7b31a580-fd2d-4c38-4f9a-08dc8babb571
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230035|36860700008|82310400021|1800799019|376009;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZlhqYlRqTGdQbzlsTDZhUTR0WC9rUHFvb1hObWt3ckJhKytwamJMTnd2dDBr?=
- =?utf-8?B?MnpBYnVBakZjVU9BWDNmSk8xRTloRzhJS214MmJVVmhmQ0N4RUZ2ZzJIQUQ1?=
- =?utf-8?B?aloyeEVzaGp4WEtnOTltbkVqMlMzNS94NzlWQUZUUStGcVQ3MXJ1UkVnd1NB?=
- =?utf-8?B?c2V0ZzRNWkRIbEFLVUcvejljdVRXYVVVVmpWdGVsOTZuZmlMQ29ycDE1cHQ3?=
- =?utf-8?B?Um1BVDY2ajQxYVBPQ0xadkFJdFAvWlBsaHg4UnlEc0p4WlQ5UDQ0S3pwazJE?=
- =?utf-8?B?Rk1iRVlQeEtuWk5ibWMySUI5a2RubCsrUHVIWjlydUM3L0YrZnhJdkQyLzhx?=
- =?utf-8?B?NE9kb2ZhR3ROZG1PTWcrakdxNDU2QkZ1eHA0dFFMajAxc3N3bTFpVm92NUhO?=
- =?utf-8?B?b2FuVUxNMTAwcEN4RjlmU3ZwbHREUXh3d2gwNXBhZmd1R0F3VThSeWhlbE5Y?=
- =?utf-8?B?UURSZGV4d0xTZmNhZnd2VG9NQWFIRzZlcDFvbUUvMHVyM0QwVEVFeExPUkU4?=
- =?utf-8?B?aW9UbTQ5bkhOMWJISktsVUpBejBmbGMrWC9xWmJJVm1BYXc0WEhTN3p0Vm16?=
- =?utf-8?B?YzV6QUEzbHAyTm9WakNiWlBQbEM2NjhSYTVEVWF3eFZIeEZ1eEZTbDZmVUJ1?=
- =?utf-8?B?dC9zTEJ5dTVjdml4M0UyOXExL2FWeHdpWkFROXpZQmU3Tjh2aDFFMzVhclJw?=
- =?utf-8?B?Y3JxcVFsQ0s0bmhoakF4VjhqSG11UElKVmRNb1BnWVlZaEJJb3I2Mnk0M1pV?=
- =?utf-8?B?TnNjYkxVbEpkc01xWWN2VE9xSWJxeWM2SHVrdm1DWTdrbGh6TWNZalZDL2pp?=
- =?utf-8?B?cXc5VVEzUWEwSVBGRFpSVStYSDEwNEgyRGZqSHFjRXEvSTFVSlowWjdIWUlH?=
- =?utf-8?B?SkJWRWZKdTFTd1B3VW16MjRWSFRTNzR2TWExbytUOEdBY1VIUHB4bml1ZDRD?=
- =?utf-8?B?Z0tKRW51NVVGMDFHbFZyRFU5NDlKZFJzNTUwdDJKZnBuZXBXVzFwOXVHWngw?=
- =?utf-8?B?ZVVMdU5lSHp5bFhNVnorYVErSFI4SGpsYi95RW8zR3FyR2NOazZtR1JROFk2?=
- =?utf-8?B?NkM1Y21WKytGS1pabDBoS3NyVVQ0ejlYWHlnY0lNclJ0OFN2M1pabDQrbnor?=
- =?utf-8?B?d005N1l5eDJLSkU1M1JQVVlLcE9BVVBCLzJ5Z1JHbkIvaEFaOGcxY3hhdXZO?=
- =?utf-8?B?NmZRc1FvT2xrbkloaXVBa0V1ejU1c0xOK1U0NFMrdUhMZ1hKVHdaM0FzY3la?=
- =?utf-8?B?K1VVanorL0ZETXpQZHZuU3ozYndsaUk1QWNubVptblZxOUlMdk1KNVhYdity?=
- =?utf-8?B?djRWaExNZ3orSVN3UE5KMEpLdm8xZ2s0azNETkE1eHcrZDE5M2ZVR2tUNGVz?=
- =?utf-8?B?Yno5eHhnUXpjQjAzNzZKdkZsdThBMk1aay9jTlVtWHc4c2hwMGhXZ1lxU0ZT?=
- =?utf-8?B?c3IrU2hCdlpUajhZNXM4N0YxQncvNnZZbTY2ZHVFbkxOb2JmWEVJQjVVcERD?=
- =?utf-8?B?UVZacUp6M05OYzFRRllBZDMzWStiemhSZTQ1MmUyT3VWMXRVWmNPZ2thWUpD?=
- =?utf-8?B?MS9oTXcrV1FFb0l1ODF5SlE2YW1JMlM5T1RQYWx5RDFsbVBMcUxZeE1LMnVh?=
- =?utf-8?B?UGg0SE1zOHBLa1pRRndMZGJmUjE0UFZGNzdXTDZFT0E5N3l3RTJ4NWRnZHJm?=
- =?utf-8?B?TDh1TnRRZUcyZmU5RFF4ZjhnYjlnRS9jWVI1MUpkQjB2SDdNMmRrM1MxdS9X?=
- =?utf-8?B?Ry9FMWFzUTFyK1FQQnpsRUl4U1Q4STVoR01iTTlETUgrcW5pdHFQR1AvZW5Q?=
- =?utf-8?B?WG9DRlVWN2I2VFd5cVJBTjJneHg3YlFHVHpPTjZCNU16ZEJHbFYzYnBtbWl2?=
- =?utf-8?B?TTlUT05NZHRPd21LNmI2QVNKZXpESjhkZG5CWFdHa2M4RFE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230035)(36860700008)(82310400021)(1800799019)(376009);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2024 13:21:17.8757
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b31a580-fd2d-4c38-4f9a-08dc8babb571
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU2PEPF0001E9C5.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR02MB9262
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFLMWRmVeSWpSXmKPExsXC9ZZnoa7vp6w0g7OPeCwm9hhYzFm/hs3i
+	/oPX7BZP/v9mtWhoesRicXnXHDaLe2v+s1ocWX+WxWLz2TPMFouXq1ns63jAZHH46xsmBx6P
+	paffsHnsnHWX3aNl3y12j02rOtk8Nn2axO5xYsZvFo8Xm2cyemz8+J/d4/MmuQDOKC6blNSc
+	zLLUIn27BK6M0x0vWAtOClQsmDqBrYHxJW8XIyeHhICJxPyGN4ww9sWv05lBbDYBNYkrLycx
+	dTFycIgIWElM2xHbxcjFwSywgVli0rkXTCA1wgKOEqc3rGEFqWERUJWY+jkFJMwrYCqxtncV
+	K8RITYnH23+yg9icAmYSj+a+YgOxhYBqZvy4ygxRLyhxcuYTFhCbWUBeonnrbGaQXRICr9kk
+	3uw4BnWbpMTBFTdYJjDyz0LSMwtJzwJGplWMQpl5ZbmJmTkmehmVeZkVesn5uZsYgTGwrPZP
+	9A7GTxeCDzEKcDAq8fB6PMtKE2JNLCuuzD3EKMHBrCTCO2shUIg3JbGyKrUoP76oNCe1+BCj
+	NAeLkjiv0bfyFCGB9MSS1OzU1ILUIpgsEwenVAOj0fam+8qzuFZNer+9bO/OFGn+hzb/9xvz
+	iFUwsq24V7dSS9F6lfChXFnJeWmG9ftKnh2XKw49sSU74vQLXtd3PwP2uETmvq47oP/GztX0
+	uVuvjtL11SoL6tRrc6ZsXXj48N0ayfebT212f384ViD54duccsmpX/cuiVUJmnMr+faDc6u8
+	F175qcRSnJFoqMVcVJwIAAeMmpp9AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFLMWRmVeSWpSXmKPExsXCNUNLT9fnU1aawdnV1hYTewws5qxfw2Zx
+	/8Frdosn/3+zWjQ0PWKx+PzsNbPF4bknWS0u75rDZnFvzX9WiyPrz7JYbD57htli8XI1i30d
+	D5gsDn99w+TA57H09Bs2j52z7rJ7tOy7xe6xaVUnm8emT5PYPU7M+M3i8WLzTEaPjR//s3t8
+	u+3hsfjFByaPz5vkArijuGxSUnMyy1KL9O0SuDJOd7xgLTgpULFg6gS2BsaXvF2MnBwSAiYS
+	F79OZwax2QTUJK68nMTUxcjBISJgJTFtR2wXIxcHs8AGZolJ514wgdQICzhKnN6whhWkhkVA
+	VWLq5xSQMK+AqcTa3lWsECM1JR5v/8kOYnMKmEk8mvuKDcQWAqqZ8eMqM0S9oMTJmU9YQGxm
+	AXmJ5q2zmScw8sxCkpqFJLWAkWkVo0hmXlluYmaOqV5xdkZlXmaFXnJ+7iZGYIgvq/0zcQfj
+	l8vuhxgFOBiVeHg9nmWlCbEmlhVX5h5ilOBgVhLhnbUQKMSbklhZlVqUH19UmpNafIhRmoNF
+	SZzXKzw1QUggPbEkNTs1tSC1CCbLxMEp1cDIbDTHJ0jbZN9aqVmV3QyfpgS29XWfWWQzd0n5
+	QR15v97A/FW/dL6GtW7WrKx44KSzRn7aqx4LoUfvL5//tet6zeETCyrTbkzImOj2ry88vV/4
+	9eKTulN2fuLnOc27tkeyPq9Lxfh8EFfaasuPKle47/855DunbrHpjm98//ifHrzXHvxC//xn
+	JZbijERDLeai4kQAaQY8EG0CAAA=
+X-CFilter-Loop: Reflected
 
-There is a group of PHY chips supporting BroadR-Reach link modes in
-a manner allowing for more or less identical register usage as standard
-Clause 22 PHY.
-These chips support standard Ethernet link modes as well, however, the
-circuitry is mutually exclusive and cannot be auto-detected.
-The link modes in question are 100Base-T1 as defined in IEEE802.3bw,
-based on Broadcom's 1BR-100 link mode, and newly defined 10Base-T1BRR
-(1BR-10 in Broadcom documents).
+This patch adds damon description for "migrate_hot" and "migrate_cold"
+actions for both usage and design documents as long as a new
+"target_nid" knob to set the migration target node.
 
-Add optional brr-mode flag to switch the PHY to BroadR-Reach mode.
-
-Signed-off-by: Kamil Horák - 2N <kamilh@axis.com>
+Signed-off-by: Honggyu Kim <honggyu.kim@sk.com>
 ---
- Documentation/devicetree/bindings/net/ethernet-phy.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+ Documentation/admin-guide/mm/damon/usage.rst | 8 +++++++-
+ Documentation/mm/damon/design.rst            | 4 ++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-index 8fb2a6ee7e5b..0353ef98f2e1 100644
---- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-+++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-@@ -93,6 +93,13 @@ properties:
-       the turn around line low at end of the control phase of the
-       MDIO transaction.
+diff --git a/Documentation/admin-guide/mm/damon/usage.rst b/Documentation/admin-guide/mm/damon/usage.rst
+index 7bff54963975..84d62d16c9f9 100644
+--- a/Documentation/admin-guide/mm/damon/usage.rst
++++ b/Documentation/admin-guide/mm/damon/usage.rst
+@@ -300,6 +300,10 @@ from the file and their meaning are same to those of the list on
+ The ``apply_interval_us`` file is for setting and getting the scheme's
+ :ref:`apply_interval <damon_design_damos>` in microseconds.
  
-+  brr-mode:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      Request the PHY to operate in BroadR-Reach mode. This means the
-+      PHY will use the BroadR-Reach protocol to communicate with the other
-+      end of the link, including LDS auto-negotiation if applicable.
++The ``target_nid`` file is for setting the migration target node, which is
++only meaningful when the ``action`` is either ``migrate_hot`` or
++``migrate_cold``.
 +
-   clocks:
-     maxItems: 1
-     description:
+ .. _sysfs_access_pattern:
+ 
+ schemes/<N>/access_pattern/
+@@ -759,7 +763,9 @@ list on :ref:`design doc <damon_design_damos_action>`.
+  - 4: ``nohugepage``
+  - 5: ``lru_prio``
+  - 6: ``lru_deprio``
+- - 7: ``stat``
++ - 7: ``migrate_hot``
++ - 8: ``migrate_cold``
++ - 9: ``stat``
+ 
+ Quota
+ ~~~~~
+diff --git a/Documentation/mm/damon/design.rst b/Documentation/mm/damon/design.rst
+index 3df387249937..3f12c884eb3a 100644
+--- a/Documentation/mm/damon/design.rst
++++ b/Documentation/mm/damon/design.rst
+@@ -325,6 +325,10 @@ that supports each action are as below.
+    Supported by ``paddr`` operations set.
+  - ``lru_deprio``: Deprioritize the region on its LRU lists.
+    Supported by ``paddr`` operations set.
++ - ``migrate_hot``: Migrate the regions prioritizing warmer regions.
++   Supported by ``paddr`` operations set.
++ - ``migrate_cold``: Migrate the regions prioritizing colder regions.
++   Supported by ``paddr`` operations set.
+  - ``stat``: Do nothing but count the statistics.
+    Supported by all operations sets.
+ 
 -- 
-2.39.2
+2.34.1
 
 
