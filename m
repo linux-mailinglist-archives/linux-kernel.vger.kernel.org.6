@@ -1,120 +1,163 @@
-Return-Path: <linux-kernel+bounces-212639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E20B0906429
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:37:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18366906433
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D12C91C2187B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:37:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B673A1F24478
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A7D137762;
-	Thu, 13 Jun 2024 06:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E6F137911;
+	Thu, 13 Jun 2024 06:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aonl2V74"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AXEuLiE/"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C02DDB1;
-	Thu, 13 Jun 2024 06:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38364137761
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 06:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718260618; cv=none; b=t3ZA8mPMq7CQfv3W1vFKqI/Y+GfYOkyaAFhlpVg3XK5q87f+/JLSC38wlMVNODIdtDXknoOzYtEzbshXCvO7DVvt2DcRd2rg3924iZFae+QbqmVcrpIxQpJIN/j9Ra6kYZQPZPMajcwnudFQEYgGTVeztsl6y/KOYUWBxC0/JRM=
+	t=1718260683; cv=none; b=Xvw6QOK0hRdaB5puknuAb69Oqrn75xwI6521AexZA0a6jNZ47LGWuSIt53dqUFksgn5n4xgpK45FAjav1nvJwLWeCqvS+enIvkTfi63yjHXa31/y51hVuUbnkdEgoAoQTCJsi3b+wdrhoMbkpKqs38yDh/iGi2TjZDITUojFZVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718260618; c=relaxed/simple;
-	bh=GVyagABn9ByRTItZXOq01td+hwbzLhiwDbfz9ovKlIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eQM0NswlCfo+jTY14FktrK1K1l4CXyW3xTydgGZdY6mayC8jUdf6MR3qQ3PxE8KAHnG9VSt2ig8p0YnC+HiYk01sO0EtIm5PvyCDD+q9XSrhNNHQnBSTLW9znufLXkTEb3l42arpMO2dbMJqPMq82EkWeVhhRqyXj1pX7Rhvk/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aonl2V74; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68681C2BBFC;
-	Thu, 13 Jun 2024 06:36:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718260618;
-	bh=GVyagABn9ByRTItZXOq01td+hwbzLhiwDbfz9ovKlIs=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Aonl2V74iR8tRB6WdHVeSabqYVbpJvsI+zUNFq3yxskjmPacfz1u9fU7Y5zoFmCbn
-	 OhNXArfl+vk1OBHOdEG98E7Q/zi/pvIufRBrQTHRzqXzfdjo/YwZ3azTVCynWntxVt
-	 0/K6bESuWXRSz8r+e1o5xHN0jRRsJRCfnzjOJ2ZtcUtbVpZpPRMTmWxpM70G7DALsf
-	 8gEoLomh9C9kVLo6uAGniW2bcm8Lgmlaw5lNgkFBGzqaTnAZMvTxPkAC3ODKWGW4qB
-	 pOH8qBId+hjSMjVfSOG+I3YBZnGcc00RMYQnxEo6BPBTYnZB9U9CblMis6ff9CoCYI
-	 QsTtJ8NbR55+A==
-Message-ID: <2e9d3e6f-ddb3-4dcf-944f-3ea1b4cec694@kernel.org>
-Date: Thu, 13 Jun 2024 08:36:52 +0200
+	s=arc-20240116; t=1718260683; c=relaxed/simple;
+	bh=D4H9WEaybswir/ij5ZUvHUvZ3BrEX8LaPweXhA6txCQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tFIpw5vm16mcwMOnx71KVs4uPggZ8nNNqyCmiChtHurLwdxxEBaEYrk599HajvEW5B8HetvtLrtPHPPt/P3l5HQVnCVbEE9mgGh+uchM3ChmBwro/aAZzDF+DJH54/IHSwKcXQuCirA+1Ar3JUeMKghDb1jNYiPc79XOJ8OKuw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AXEuLiE/; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6efe62f583so59914466b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 23:38:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718260680; x=1718865480; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nSxaLeoUF2GB1Ynl8GPq9r0Ie6ml6kc6+0f2KJsgPRI=;
+        b=AXEuLiE/uoqR6/G8TRtZ7Fthaw3ew+CCyLh8U8snXL54+PPjXidFKllyGOk7zlkgZv
+         Haxg+yCqc3teH9EoVzDJ4UO8uo0NqPtiml+p7ejaZwi4HfAXFWlCUwXIk38Ff/bbbQfe
+         8Lvi91ngAvc941Ec8M2eHQGb0wQPivU7s1rT/uXMbXeGDoJk4QMiYWynOk5bsCUHedrK
+         RSD2ANuTVd8505LC25cyLVVKv65xOKW9GFm+sQ5J8TNsSHV97HZOyziPVx8CqjDAMvg2
+         zrbzDWCRuFDRaYKR47rbc20qvsC22ZAfdWsGEDYZHzyy1RVo3fTtOPcdjoH74/IsGHkq
+         9LWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718260680; x=1718865480;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nSxaLeoUF2GB1Ynl8GPq9r0Ie6ml6kc6+0f2KJsgPRI=;
+        b=orVEyijL0i62ZRWtqdAr586yURzg1Fd+ccv1fV5ThUrWj9VqR3iSw0etMjmsqiuXq9
+         Oto8ZNPHfG6M7Tff6iRrvGkn7hfaKOOYwAhFF7TlVcW6HN6DE1KKBC2PDxunvyfpwqPu
+         n7JFmECgrwM/Imwq2/CIMxDNHNA77MiazQ23+WF5gG2uYY65JO90RIN55nTJEqJLrNmb
+         CNu3QE7ZEHpEeDdeovDzPIsOShyIrReBwJ7mQB2l5QkTjPARcv8RsaUda2BS1jPnUWXw
+         AJ59pPFNZixtqyM7BmpmcONWuSQMbqzwAIKWbnHfesM6wtRg58oIqMyIuScuFPQsxcte
+         zVDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCLL4D6yN9QLRdiVZR0FUEp5SxTd2e0P8MwYcFFMPsRwiHsAwTwodgIdh0/2ndcXl8r5y/amUjpwHoolBP3pDXhU32B154PfrnF9Bt
+X-Gm-Message-State: AOJu0YynvHOa2WAlvlaLzdR2P/9CHWeFD54qbutlW8lQKK9NZzjBwvyd
+	Ls6sHcabw1CmBjGvb2Op8+oryC4qBBm+6YNTnJtJJZeZDz09Q8N3dDALDjHbZiUOQl160x1NmR+
+	+a2nPiuCxPLhgu6jBOcHW9bJK4neisadWEzU4
+X-Google-Smtp-Source: AGHT+IEqcKmqMMras1IdQ4mwQeBPhF+tSokCQR7CyHJU0B0QtGnxu+D8T/n28pxb8A+jM+mpThteZ/Rdl1GC9K4JyBE=
+X-Received: by 2002:a17:907:e91:b0:a68:fb0c:b294 with SMTP id
+ a640c23a62f3a-a6f47d622d0mr247392466b.77.1718260680210; Wed, 12 Jun 2024
+ 23:38:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] dt-bindings: mfd: twl: Fix example
-To: Andreas Kemnade <andreas@kemnade.info>, lee@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, broonie@kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240612134039.1089839-1-andreas@kemnade.info>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240612134039.1089839-1-andreas@kemnade.info>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240612180554.1328409-1-joychakr@google.com> <f0dbf963-bfd9-4a0b-8284-d141999da184@moroto.mountain>
+In-Reply-To: <f0dbf963-bfd9-4a0b-8284-d141999da184@moroto.mountain>
+From: Joy Chakraborty <joychakr@google.com>
+Date: Thu, 13 Jun 2024 12:07:46 +0530
+Message-ID: <CAOSNQF1AiD5rcpJr=c8Dov=j-g4=xOZXViX+Xibu_kBA=2rzgA@mail.gmail.com>
+Subject: Re: [PATCH] rtc: abx80x: Fix return value of nvmem callback on read
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Sean Anderson <sean.anderson@seco.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-rtc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/06/2024 15:40, Andreas Kemnade wrote:
-> Fix example to also conform to rules specified in the separate
-> not-included gpadc binding.
-> 
-> Fixes: 62e4f3396197 ("dt-bindings: regulator: twl-regulator: convert to yaml")
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  Documentation/devicetree/bindings/mfd/ti,twl.yaml | 1 +
+On Thu, Jun 13, 2024 at 11:48=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
+>
+> On Wed, Jun 12, 2024 at 06:05:54PM +0000, Joy Chakraborty wrote:
+> > Read callbacks registered with nvmem core expect 0 to be returned on
+> > success and a negative value to be returned on failure.
+> >
+> > abx80x_nvmem_xfer() on read calls i2c_smbus_read_i2c_block_data() which
+> > returns the number of bytes read on success as per its api description,
+> > this return value is handled as an error and returned to nvmem even on
+> > success.
+> >
+> > Fix to handle all possible values that would be returned by
+> > i2c_smbus_read_i2c_block_data().
+> >
+> > Fixes: e90ff8ede777 ("rtc: abx80x: Add nvmem support")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Joy Chakraborty <joychakr@google.com>
+> > ---
+> >  drivers/rtc/rtc-abx80x.c | 9 ++++++++-
+> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/rtc/rtc-abx80x.c b/drivers/rtc/rtc-abx80x.c
+> > index fde2b8054c2e..0f5847d1ca2a 100644
+> > --- a/drivers/rtc/rtc-abx80x.c
+> > +++ b/drivers/rtc/rtc-abx80x.c
+> > @@ -711,9 +711,16 @@ static int abx80x_nvmem_xfer(struct abx80x_priv *p=
+riv, unsigned int offset,
+> >               else
+> >                       ret =3D i2c_smbus_read_i2c_block_data(priv->clien=
+t, reg,
+> >                                                           len, val);
+> > -             if (ret)
+> > +             if (ret < 0)
+> >                       return ret;
+> >
+> > +             if (!write) {
+> > +                     if (ret)
+> > +                             len =3D ret;
+> > +                     else
+> > +                             return -EIO;
+> > +             }
+>
+> I guess this is the conservative approach.  Ie.  Don't break things
+> which aren't already broken.  But I suspect the correct approach is to
+> say:
+>
+>         if (ret !=3D len)
+>                 return -EIO;
+>
+> Ah well.  Being conservative is good.  It probably doesn't ever happen
+> in real life so it probably doesn't matter either way.
+>
+> I don't really like the if (write) follow by and if (!write)...  It
+> would add more lines, but improve readability if we just duplicate the
+> code a big:
+>
+>         if (write) {
+>                 ret =3D write();
+>                 if (ret)
+>                         return ret;
+>         } else {
+>                 ret =3D read();
+>                 if (ret <=3D 0)
+>                         return ret ?: -EIO;
+>                 len =3D ret;
+>         }
+>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Sure, I'll do this in a follow up patch.
 
-Best regards,
-Krzysztof
-
+Thanks
+Joy
+> regards,
+> dan carpenter
+>
 
