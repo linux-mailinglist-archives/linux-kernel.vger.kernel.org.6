@@ -1,196 +1,225 @@
-Return-Path: <linux-kernel+bounces-213194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C61C90700F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:25:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27C96907068
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:27:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB493289463
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:25:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CCA31C23DDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E022B146D6E;
-	Thu, 13 Jun 2024 12:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hZAaElmB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Zjv5w1BF";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hZAaElmB";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Zjv5w1BF"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981C8143884;
+	Thu, 13 Jun 2024 12:27:04 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EAE145A03
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498A28614D;
+	Thu, 13 Jun 2024 12:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718281388; cv=none; b=sSZisvuxeToqEEA+ejdvvHGbHU1V17diShKIkwTSMxG+r/sgbR/X3B+b4d5BzYreihPprt3r3kJ4mAeQKAj9rBaydYzTmb3UYK3ALFUXhsu1JdhCD5WIo590d4JNDrJdBscwzLxjCV68yxdTCcHKIvqHViAwFSUrko2LvjLJ8Pk=
+	t=1718281624; cv=none; b=lqKzcnstgPCFossL0tirT042CGxsZfQe7XDYZAOl2Dc1L1SnYECwfyvCHWduY3USRaHJCzaYds5t8N+dLgMOOz9iE+CRArva+im41C/qUafi5v9WdqBKfyS94Xb9dDtBVrjZnFzde0g/M4iNX41kpdndKgzt8pySk7N23dDumUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718281388; c=relaxed/simple;
-	bh=axK0BDnhqirFCUDdXgvVo3g+EGvLaM0cBzN0tLj2pzk=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kDxnr0J8/WplUctCv4qEIRINKjNBzMUdf7XRRTs4iwX8LqyZ4xkxMGNm6mAX8fAaIico3SfwpwHKiqj5OEnUtkWndndWHmKrLQwnSOUuO/t+7p/GXAbEGCCitS59Dcj/l39Rgo8lu/wsUTy+yd7Kpc1xbT6bjVL49fC0AGpl0l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hZAaElmB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Zjv5w1BF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hZAaElmB; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Zjv5w1BF; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 43C025D322;
-	Thu, 13 Jun 2024 12:23:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718281384; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wZUNWmSgXT4ylcdc8OI7ZtHGdqliabURi29bSW7LwGc=;
-	b=hZAaElmB5lred2TmOfQIoi1Gv4+Kp1y8jwfj4IMSu+jVQpE3X7S5b7KxQo857dQE47rZvn
-	7Jd2bsOSMw45xxW0KdO0iOyieDjInedOrzEZ8ZJX+DosD13TPwPQtSkU8Rx+KgpWigC9iJ
-	utKzXMyJm/Qtbc6JS0vpmKOX0Iei//4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718281384;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wZUNWmSgXT4ylcdc8OI7ZtHGdqliabURi29bSW7LwGc=;
-	b=Zjv5w1BF2BM+A5WeGZGJxiGvEZD/xv/pwHibSHqCdSemFnKVgXTi4PbdE7k5xNoHAfDCOO
-	bSmbgasiVHXbsIDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=hZAaElmB;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Zjv5w1BF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718281384; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wZUNWmSgXT4ylcdc8OI7ZtHGdqliabURi29bSW7LwGc=;
-	b=hZAaElmB5lred2TmOfQIoi1Gv4+Kp1y8jwfj4IMSu+jVQpE3X7S5b7KxQo857dQE47rZvn
-	7Jd2bsOSMw45xxW0KdO0iOyieDjInedOrzEZ8ZJX+DosD13TPwPQtSkU8Rx+KgpWigC9iJ
-	utKzXMyJm/Qtbc6JS0vpmKOX0Iei//4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718281384;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wZUNWmSgXT4ylcdc8OI7ZtHGdqliabURi29bSW7LwGc=;
-	b=Zjv5w1BF2BM+A5WeGZGJxiGvEZD/xv/pwHibSHqCdSemFnKVgXTi4PbdE7k5xNoHAfDCOO
-	bSmbgasiVHXbsIDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B236C13A7F;
-	Thu, 13 Jun 2024 12:23:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id O+/FKafkamZjJgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 13 Jun 2024 12:23:03 +0000
-Date: Thu, 13 Jun 2024 14:23:27 +0200
-Message-ID: <877cetni9s.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Baojun Xu <baojun.xu@ti.com>
-Cc: <robh+dt@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>,
-	<lgirdwood@gmail.com>,
-	<perex@perex.cz>,
-	<pierre-louis.bossart@linux.intel.com>,
-	<kevin-lu@ti.com>,
-	<shenghao-ding@ti.com>,
-	<navada@ti.com>,
-	<13916275206@139.com>,
-	<v-hampiholi@ti.com>,
-	<v-po@ti.com>,
-	<niranjan.hy@ti.com>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<liam.r.girdwood@intel.com>,
-	<yung-chuan.liao@linux.intel.com>,
-	<broonie@kernel.org>,
-	<soyer@irl.hu>
-Subject: Re: [PATCH v7 0/1] Add tas2781 driver for SPI.
-In-Reply-To: <20240613082633.388-1-baojun.xu@ti.com>
-References: <20240613082633.388-1-baojun.xu@ti.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1718281624; c=relaxed/simple;
+	bh=k40logFNctHXCPnugxk1gzt+GlipdYDeIqsYCbDatnc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r9GrisOvk0hNi78h0Aa4wT2R1+hzyWFlWBm0JucFV48CmEU7aEryvGB88xds0kuh0mPi90nPsW4Vk/hw8jlhqD5/fSC9R8hidcB6ZeMZHeN2WS5fUM28PN4Ea56T/aP7VF69INLM2lLLJeaW8dFNtSmuANO3mNBHaDfcsLDTqRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4W0M5G71WxzPrN9;
+	Thu, 13 Jun 2024 20:23:30 +0800 (CST)
+Received: from dggpemd100001.china.huawei.com (unknown [7.185.36.94])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3C12314011F;
+	Thu, 13 Jun 2024 20:26:57 +0800 (CST)
+Received: from localhost.localdomain (10.50.165.33) by
+ dggpemd100001.china.huawei.com (7.185.36.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 13 Jun 2024 20:26:56 +0800
+From: Xingui Yang <yangxingui@huawei.com>
+To: <john.g.garry@oracle.com>, <yanaijie@huawei.com>, <jejb@linux.ibm.com>,
+	<martin.petersen@oracle.com>, <damien.lemoal@opensource.wdc.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <prime.zeng@hisilicon.com>,
+	<chenxiang66@hisilicon.com>, <kangfenglong@huawei.com>
+Subject: [PATCH v3] scsi: libsas: Fix exp-attached end device cannot be scanned in again after probe failed
+Date: Thu, 13 Jun 2024 12:23:55 +0000
+Message-ID: <20240613122355.7797-1-yangxingui@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 43C025D322
-X-Spam-Score: -4.01
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[139.com,gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,gmail.com,perex.cz,ti.com,139.com,alsa-project.org,vger.kernel.org,intel.com,irl.hu];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[dt];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,ti.com:email]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+MIME-Version: 1.0
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemd100001.china.huawei.com (7.185.36.94)
 
-On Thu, 13 Jun 2024 10:26:32 +0200,
-Baojun Xu wrote:
-> 
-> This patch was used to add TAS2781 devices on SPI support in sound/pci/hda.
-> It use ACPI node descript about parameters of TAS2781 on SPI, it like:
->     Scope (_SB.PC00.SPI0)
->     {
->         Device (GSPK)
->         {
->             Name (_HID, "TXNW2781")  // _HID: Hardware ID
->             Method (_CRS, 0, NotSerialized)
->             {
->                 Name (RBUF, ResourceTemplate ()
->                 {
->                     SpiSerialBusV2 (...)
->                     SpiSerialBusV2 (...)
->                 }
->             }
->         }
->     }
-> 
-> And in platform/x86/serial-multi-instantiate.c, those spi devices will be
-> added into system as a single SPI device, so TAS2781 SPI driver will
-> probe twice for every single SPI device. And driver will also parser
-> mono DSP firmware binary and RCA binary for itself.
-> 
-> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
-> 
-> Baojun Xu (1):
->   ALSA: hda/tas2781: Add tas2781 hda driver based on SPI
+We found that it is judged as broadcast flutter when the exp-attached end
+device reconnects after probe failed, as follows:
 
-Since you're sending only one patch, we need no cover letter, and all
-needed stuff should be documented in the patch description itself.
-That is, The texts like above should go there, too.
+[78779.654026] sas: broadcast received: 0
+[78779.654037] sas: REVALIDATING DOMAIN on port 0, pid:10
+[78779.654680] sas: ex 500e004aaaaaaa1f phy05 change count has changed
+[78779.662977] sas: ex 500e004aaaaaaa1f phy05 originated BROADCAST(CHANGE)
+[78779.662986] sas: ex 500e004aaaaaaa1f phy05 new device attached
+[78779.663079] sas: ex 500e004aaaaaaa1f phy05:U:8 attached: 500e004aaaaaaa05 (stp)
+[78779.693542] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] found
+[78779.701155] sas: done REVALIDATING DOMAIN on port 0, pid:10, res 0x0
+[78779.707864] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
+...
+[78835.161307] sas: --- Exit sas_scsi_recover_host: busy: 0 failed: 0 tries: 1
+[78835.171344] sas: sas_probe_sata: for exp-attached device 500e004aaaaaaa05 returned -19
+[78835.180879] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] is gone
+[78835.187487] sas: broadcast received: 0
+[78835.187504] sas: REVALIDATING DOMAIN on port 0, pid:10
+[78835.188263] sas: ex 500e004aaaaaaa1f phy05 change count has changed
+[78835.195870] sas: ex 500e004aaaaaaa1f phy05 originated BROADCAST(CHANGE)
+[78835.195875] sas: ex 500e004aaaaaaa1f rediscovering phy05
+[78835.196022] sas: ex 500e004aaaaaaa1f phy05:U:A attached: 500e004aaaaaaa05 (stp)
+[78835.196026] sas: ex 500e004aaaaaaa1f phy05 broadcast flutter
+[78835.197615] sas: done REVALIDATING DOMAIN on port 0, pid:10, res 0x0
 
+The cause of the problem is that the related ex_phy's attached_sas_addr was
+not cleared after the end device probe failed. In order to solve the above
+problem, a function sas_ex_unregister_end_dev() is defined to clear the
+ex_phy information and unregister the end device after the exp-attached end
+device probe failed.
 
-thanks,
+As devices may probe failed after done REVALIDATING DOMAIN when call
+sas_probe_devices(). Then after its port is added to the sas_port_del_list,
+the port will not be deleted until the end of the next REVALIDATING DOMAIN
+and sas_destruct_ports() is called. A warning about creating a duplicate
+port will occur in the new REVALIDATING DOMAIN when the end device
+reconnects. Therefore, the previous destroy_list and sas_port_del_list
+should be handled after devices probe failed.
 
-Takashi
+Signed-off-by: Xingui Yang <yangxingui@huawei.com>
+---
+Changes since v2:
+- Add a helper for calling sas_destruct_devices() and sas_destruct_ports(),
+  and put the new call at the end of sas_probe_devices() based on John's
+  suggestion.
+
+Changes since v1:
+- Simplify the process of getting ex_phy id based on Jason's suggestion.
+- Update commit information.
+---
+ drivers/scsi/libsas/sas_discover.c | 32 +++++++++++++++++++-----------
+ drivers/scsi/libsas/sas_expander.c |  8 ++++++++
+ drivers/scsi/libsas/sas_internal.h |  6 +++++-
+ 3 files changed, 33 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
+index 8fb7c41c0962..8c517e47d2b9 100644
+--- a/drivers/scsi/libsas/sas_discover.c
++++ b/drivers/scsi/libsas/sas_discover.c
+@@ -17,6 +17,22 @@
+ #include <scsi/sas_ata.h>
+ #include "scsi_sas_internal.h"
+ 
++static void sas_destruct_ports(struct asd_sas_port *port)
++{
++	struct sas_port *sas_port, *p;
++
++	list_for_each_entry_safe(sas_port, p, &port->sas_port_del_list, del_list) {
++		list_del_init(&sas_port->del_list);
++		sas_port_delete(sas_port);
++	}
++}
++
++static void sas_destruct_devices_and_ports(struct asd_sas_port *port)
++{
++	sas_destruct_devices(port);
++	sas_destruct_ports(port);
++}
++
+ /* ---------- Basic task processing for discovery purposes ---------- */
+ 
+ void sas_init_dev(struct domain_device *dev)
+@@ -226,6 +242,9 @@ static void sas_probe_devices(struct asd_sas_port *port)
+ 		else
+ 			list_del_init(&dev->disco_list_node);
+ 	}
++
++	/* destruct devices and ports after probe failed */
++	sas_destruct_devices_and_ports(port);
+ }
+ 
+ static void sas_suspend_devices(struct work_struct *work)
+@@ -350,16 +369,6 @@ void sas_destruct_devices(struct asd_sas_port *port)
+ 	}
+ }
+ 
+-static void sas_destruct_ports(struct asd_sas_port *port)
+-{
+-	struct sas_port *sas_port, *p;
+-
+-	list_for_each_entry_safe(sas_port, p, &port->sas_port_del_list, del_list) {
+-		list_del_init(&sas_port->del_list);
+-		sas_port_delete(sas_port);
+-	}
+-}
+-
+ static bool sas_abort_cmd(struct request *req, void *data)
+ {
+ 	struct scsi_cmnd *cmd = blk_mq_rq_to_pdu(req);
+@@ -538,8 +547,7 @@ static void sas_revalidate_domain(struct work_struct *work)
+  out:
+ 	mutex_unlock(&ha->disco_mutex);
+ 
+-	sas_destruct_devices(port);
+-	sas_destruct_ports(port);
++	sas_destruct_devices_and_ports(port);
+ 	sas_probe_devices(port);
+ }
+ 
+diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
+index 4e6bb3d0f163..09be69ea09a2 100644
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -1878,6 +1878,14 @@ static void sas_unregister_devs_sas_addr(struct domain_device *parent,
+ 	}
+ }
+ 
++void sas_ex_unregister_end_dev(struct domain_device *dev)
++{
++	struct domain_device *parent = dev->parent;
++	struct sas_phy *phy = dev->phy;
++
++	sas_unregister_devs_sas_addr(parent, phy->number, true);
++}
++
+ static int sas_discover_bfs_by_root_level(struct domain_device *root,
+ 					  const int level)
+ {
+diff --git a/drivers/scsi/libsas/sas_internal.h b/drivers/scsi/libsas/sas_internal.h
+index 85948963fb97..caeda847c919 100644
+--- a/drivers/scsi/libsas/sas_internal.h
++++ b/drivers/scsi/libsas/sas_internal.h
+@@ -50,6 +50,7 @@ void sas_discover_event(struct asd_sas_port *port, enum discover_event ev);
+ 
+ void sas_init_dev(struct domain_device *dev);
+ void sas_unregister_dev(struct asd_sas_port *port, struct domain_device *dev);
++void sas_ex_unregister_end_dev(struct domain_device *dev);
+ 
+ void sas_scsi_recover_host(struct Scsi_Host *shost);
+ 
+@@ -145,7 +146,10 @@ static inline void sas_fail_probe(struct domain_device *dev, const char *func, i
+ 		func, dev->parent ? "exp-attached" :
+ 		"direct-attached",
+ 		SAS_ADDR(dev->sas_addr), err);
+-	sas_unregister_dev(dev->port, dev);
++	if (dev->parent && !dev_is_expander(dev->dev_type))
++		sas_ex_unregister_end_dev(dev);
++	else
++		sas_unregister_dev(dev->port, dev);
+ }
+ 
+ static inline void sas_fill_in_rphy(struct domain_device *dev,
+-- 
+2.17.1
+
 
