@@ -1,120 +1,152 @@
-Return-Path: <linux-kernel+bounces-213347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4648907410
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:42:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB96907412
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14E0A28D582
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:41:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAA751C22D33
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A18A144D36;
-	Thu, 13 Jun 2024 13:41:51 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11DD1448FA;
+	Thu, 13 Jun 2024 13:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7FWSrgI"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1703514430E;
-	Thu, 13 Jun 2024 13:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CEE1448E8;
+	Thu, 13 Jun 2024 13:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718286110; cv=none; b=BKYj/UbfUWnAvSiNOS92LniR+QoemAUC6vvOklu6qD0RSU9xc837j+ycFliX0wkYKrxg+IZTulpsLR2FfjYzooa2+z+ZQvhonNn+e3XllDNqMuTVU+5FZVyhZjzlaZkPHiJTdk7xFRRT7yTjcPrVuZVK/9wi4XVehbthWg5btZ4=
+	t=1718286131; cv=none; b=uEVbYxFCRV1J7OUFpmwO+M5k171Rwu1giMcqzjjQzXMTtmGQK/8k3Eg9ShRD/3cjZhFbr6ZpdeYjXe4EkmBv0HwQOvoS0dnTndRtkTSaL0Rz6vQB5FkpwlAuYHreB0oDiOV2BQEHsoswEpirowHpQ8dlv2/enX6Fk3+pE2vr1ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718286110; c=relaxed/simple;
-	bh=jx457/uaxGwpvhxN2pJJYKqD9qofPcPGeZgog7s2H6M=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rINwL9mlYe5jBGKnr1lE4Y8LEpurw63yH0NF/9uoC3oqfkBEgscENewdKKWyfjgYDO1L/OYJmM8O1X6Ti6RzrhBQ0VXXe9L+RpGZJJ92lhWYVftEcLjFvLzb2xu39ge1NmNyZEInganAyDC2uA1FX/cZXiML6sE6lqZ4awdTtX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W0Nny0XJCz6H8Cr;
-	Thu, 13 Jun 2024 21:40:22 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id E5241140B2A;
-	Thu, 13 Jun 2024 21:41:44 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Jun
- 2024 14:41:44 +0100
-Date: Thu, 13 Jun 2024 14:41:43 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-CC: Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>, "Lorenzo
- Pieralisi" <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Thierry Reding
-	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "Robert
- Richter" <rric@kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/3] PCI: Use resource_set_{range,size}() helpers
-Message-ID: <20240613144143.00003ec9@Huawei.com>
-In-Reply-To: <20240612085629.5015-3-ilpo.jarvinen@linux.intel.com>
-References: <20240612085629.5015-1-ilpo.jarvinen@linux.intel.com>
-	<20240612085629.5015-3-ilpo.jarvinen@linux.intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1718286131; c=relaxed/simple;
+	bh=+z1xN1OTCuBZhemyLLfzhdSbywBRDNkNMUnB3Ii0GhY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sHw6cXYIlrKXFugNx18ZdcplJkTC7GMEEdHwTNY+kmfxdtyheFpXjzE/jc/0BP+Od0LYhAajWfPWwcy2KDyGqCfjYHfazSx1qevaOPtoZNcJNZFJtpuMtSx2xY7vAdk0OU2Id1pEpNkE2wr/OZCck5cEoI+sqNDrMdtREOU5/IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h7FWSrgI; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42172ed3597so6816805e9.0;
+        Thu, 13 Jun 2024 06:42:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718286128; x=1718890928; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lubbqAl7HTS/g4vv056FMCQ1RskN3TIsl6kZl33uIes=;
+        b=h7FWSrgIy3fJLTt9aVCU/IXjSNaF8051yHKUXrjDg3Gqz5da+bGsmGSnbCG6M1a3aZ
+         pCsvyqu1FucByrpSSjHECTuZvdiY85jwuJmdfSTe+Eq0lrLiZdgERbmvDqiJv11jbZj4
+         pSRO9WSCz5u+Dp0cmVtc/XRV+mwDkA3iwCzk+ssJSl6p57yak98YeSIP/X/nBMtS4W4i
+         wc7K7Kr6R+LFC3qWhDXHB8/3lFVwcFnSpEMUNCDU10ofLwfd4sqcOpocVJjeiiIH/bkb
+         oMBX+EoQVCWGY/Eqb4mRrMUXW2TaNtGxhCiDZf4jk3TZcK8XGGxapQC0zu3UzZ3/k+1/
+         7tWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718286128; x=1718890928;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lubbqAl7HTS/g4vv056FMCQ1RskN3TIsl6kZl33uIes=;
+        b=U0+TOjEBvTRCssXz906lDIgJigqnqath3BsbYVi+E8vFMvNO9SYrFrF0RWRhHZHzHF
+         sOJ6KvNnc+0bK/yAfRQu95zPOIlc6/oH6kcrGfAOftek9u1e6DJuJd7sa883oUyy/rOe
+         yc8A4bVEKk1NG6BL8ZgAFt3aSwjcC4dheFy3pDtGbvLTFxA5GSexibGeBzXRH9Oa2KKr
+         BVcRrhPPO17hq5XEwKi6glrmcFD/vbTjBMBD3Sps0d1fnRulXG/AnJYQRUYtqHhiaAPC
+         ePnGLzabevEb4KcFqT7bH9iZn/LW2qh0/uaIxuCM/jIs9KdTcs/vddxJx/YxXUhOYHff
+         uSqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSOqfl2xre0nz0AACO7stYnjxN+wxBGTGpWGbrQIQJYKwRo81C9LhFfrQHvg3PrHToY5IZACf8j+fxwoV1H8Cxr+8L1mSvHjZb4F4XOHE1mTNLpmFsdkXNlsyYx7pOIQPxyKWUKJ7UXA==
+X-Gm-Message-State: AOJu0Yxjw8LliIirKqfIGWN5Xqi+V9UHUTXQO+VEZSXFGvzvp1PJBAue
+	xiqfC1ajaZCNfz0PeyvIy5gzCQnTWBN8WzhdIn5GMhtdi93DAEjj
+X-Google-Smtp-Source: AGHT+IGIY6ndnCADtxtse3SR/xy0iRVIQrBFXYYemePOyTtkI45JeF87lLvJm1bcyxDFEq0ydLiMKw==
+X-Received: by 2002:a05:600c:4f81:b0:422:1446:378 with SMTP id 5b1f17b1804b1-422b6dc80cdmr28634765e9.2.1718286127564;
+        Thu, 13 Jun 2024 06:42:07 -0700 (PDT)
+Received: from vitor-nb.. ([2001:8a0:e622:f700:d16e:d9b2:b631:537a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874e73b1sm63852415e9.45.2024.06.13.06.42.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 06:42:07 -0700 (PDT)
+From: Vitor Soares <ivitro@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Vitor Soares <vitor.soares@toradex.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	ivitro@gmail.com
+Subject: [PATCH v1] arm64: dts: imx8mm-verdin: add TPM device
+Date: Thu, 13 Jun 2024 14:41:50 +0100
+Message-Id: <20240613134150.318755-1-ivitro@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 8bit
 
-On Wed, 12 Jun 2024 11:56:28 +0300
-Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
+From: Vitor Soares <vitor.soares@toradex.com>
 
-> Convert open-coded resource size calculations to use
-> resource_set_{range,size}() helpers.
->=20
-> While at it, use SZ_* for size parameter where appropriate which makes
-> the intent of code more obvious.
->=20
-> Also, cast sizes to resource_size_t, not u64.
->=20
-> Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+Add TPM device found on Verdin iMX8M Mini PID4 0090 variant.
 
-LGTM - one comment inline.
+Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
+---
+ arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-
-
-> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-> index 909e6a7c3cc3..004405edf290 100644
-> --- a/drivers/pci/setup-bus.c
-> +++ b/drivers/pci/setup-bus.c
-
-> @@ -1948,15 +1943,15 @@ static void pci_bus_distribute_available_resource=
-s(struct pci_bus *bus,
-
-> =20
->  		res =3D &dev->resource[PCI_BRIDGE_PREF_MEM_WINDOW];
->  		align =3D pci_resource_alignment(dev, res);
-> -		mmio_pref.end =3D align ? mmio_pref.start +
-> -					ALIGN_DOWN(mmio_pref_per_b, align) - 1
-> -				      : mmio_pref.start + mmio_pref_per_b - 1;
-> +		resource_set_size(&mmio_pref,
-> +				  align ? ALIGN_DOWN(mmio_pref_per_b, align)
-> +					: mmio_pref_per_b);
-
-I wonder.  Maybe it's worth defining an ALIGN_DOWN_IF_NON_ZERO() as locally
-at least this pattern is annoying common and we can't just change
-pci_resource_alignment() to return 1 in those cases because we want a
-clean way to check it's not set in a lot of places.
-
-Bikeshedding that name might take longer than it's worth though.
-
-
-
-
->  		mmio_pref.start -=3D resource_size(res);
-> =20
->  		pci_bus_distribute_available_resources(b, add_list, io, mmio,
-
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
+index 4768b05fd765..c9ae5f0bb526 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
+@@ -227,15 +227,16 @@ &ecspi2 {
+ 	pinctrl-0 = <&pinctrl_ecspi2>;
+ };
+ 
+-/* Verdin CAN_1 (On-module) */
++/* On-module SPI */
+ &ecspi3 {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
+-	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>;
++	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>, <&gpio4 19 GPIO_ACTIVE_LOW>;
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_ecspi3>;
++	pinctrl-0 = <&pinctrl_ecspi3>, <&pinctrl_pmic_tpm_ena>;
+ 	status = "okay";
+ 
++	/* Verdin CAN_1 */
+ 	can1: can@0 {
+ 		compatible = "microchip,mcp251xfd";
+ 		clocks = <&clk40m>;
+@@ -245,6 +246,12 @@ can1: can@0 {
+ 		reg = <0>;
+ 		spi-max-frequency = <8500000>;
+ 	};
++
++	verdin_som_tpm: tpm@1 {
++		compatible = "atmel,attpm20p", "tcg,tpm_tis-spi";
++		reg = <0x1>;
++		spi-max-frequency = <36000000>;
++	};
+ };
+ 
+ /* Verdin ETH_1 (On-module PHY) */
+@@ -807,8 +814,7 @@ &iomuxc {
+ 	pinctrl-0 = <&pinctrl_gpio1>, <&pinctrl_gpio2>,
+ 		    <&pinctrl_gpio3>, <&pinctrl_gpio4>,
+ 		    <&pinctrl_gpio7>, <&pinctrl_gpio8>,
+-		    <&pinctrl_gpio_hog1>, <&pinctrl_gpio_hog2>, <&pinctrl_gpio_hog3>,
+-		    <&pinctrl_pmic_tpm_ena>;
++		    <&pinctrl_gpio_hog1>, <&pinctrl_gpio_hog2>, <&pinctrl_gpio_hog3>;
+ 
+ 	pinctrl_can1_int: can1intgrp {
+ 		fsl,pins =
+-- 
+2.34.1
 
 
