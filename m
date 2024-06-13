@@ -1,51 +1,58 @@
-Return-Path: <linux-kernel+bounces-213325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04DF19073C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:32:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1BBD9073C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD2C21F21A2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:32:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6053A1C202E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5AD143C7A;
-	Thu, 13 Jun 2024 13:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0B41448DC;
+	Thu, 13 Jun 2024 13:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ApsU5p51"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732D1399;
-	Thu, 13 Jun 2024 13:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E7A1422AB;
+	Thu, 13 Jun 2024 13:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718285558; cv=none; b=tAeCfkdAwMzaYsq9ll3VbRjcEfbTj6y0td6WrN6ooOknIe/2uCDVGuTwbT/fVcL1no/ArwD3/2k4gZPP5GFqZLRT6UA4CB2QkZy9yX+jeco/Flm3zg5BUfKXZpCGMZccUjdA0jdorhWVEDC5pN1RZE6PeJs4IJGk8PuyVW/WEyM=
+	t=1718285601; cv=none; b=WVXlEwmqQP8poItjILnrUEUX1rxjj+NrZuVv7VMcdIi1qfLEUmQc5EVcKjsOq8ncuM5XToMvlMxtHuz7e3P/rDY0kwELQCvHZh7C73AENjDtVvfyYRUhqvZoQpTjSQg7CqC3NSehfH8YpRzxCCrnPGIxtBEB5RcFzTvXpD+8qHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718285558; c=relaxed/simple;
-	bh=FKt7+UU1VxhuIQoLvrL+gX4n/vvRN0L8KoESVkjihRE=;
+	s=arc-20240116; t=1718285601; c=relaxed/simple;
+	bh=ZvFoWGAWvnBf//F4o18dRrfkf3eHoTbQgj16D114TlA=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kcgdQi7gTKVfdDgFyYUAkUY41BDPClXfZ9qdDUJ8G4mG/4tAYuvpqE7ndT/2KbglH5q+yNqzaYFmjzy8STLA09bGAHB0zLuVoE6CTG6AckR7P7ER7S4vydW7wdDYhiIawhZHo7hmeGXmP2IeDOvuKG3SufjDYpHVOhzOhGaSa+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EF3BC2BBFC;
-	Thu, 13 Jun 2024 13:32:35 +0000 (UTC)
-Date: Thu, 13 Jun 2024 09:32:33 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Andy Chiu <andy.chiu@sifive.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti
- <alexghiti@rivosinc.com>, Zong Li <zong.li@sifive.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Nathan
- Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Puranjay Mohan <puranjay@kernel.org>, Palmer Dabbelt <palmer@rivosinc.com>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH 2/8] tracing: do not trace kernel_text_address()
-Message-ID: <20240613093233.0b349ed0@rorschach.local.home>
-In-Reply-To: <20240613-dev-andyc-dyn-ftrace-v4-v1-2-1a538e12c01e@sifive.com>
-References: <20240613-dev-andyc-dyn-ftrace-v4-v1-0-1a538e12c01e@sifive.com>
-	<20240613-dev-andyc-dyn-ftrace-v4-v1-2-1a538e12c01e@sifive.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=EFPPmXaDfZuXZC5YnbG22IFKs5f6Hj4yayLZRXsjh0XLfFiG9uv4vDuKIQjpoB9lNerOmSuL6UciDDja0JDbJp2bJsHei7RbGC4adF1izFQ3YEe5eqgmIs91EoOppm5SdLr1KB7gcMy0Phl2NyJ4BnHVg5V2SRz6oYSWxA4nvtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ApsU5p51; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E752C2BBFC;
+	Thu, 13 Jun 2024 13:33:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718285600;
+	bh=ZvFoWGAWvnBf//F4o18dRrfkf3eHoTbQgj16D114TlA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ApsU5p51nIKLxGpr9Ycft2yFdlECZGSYzS89weDI2ljDyoprlXnq1ztB1tYynQqz+
+	 /tjQMogocTS7SnffnjX81pMS66ECSzL4tI4dUm7dqAMUxY9H6g0XQt/osler8fGk66
+	 9b/urJfpQUZ7CcySRisivDhN0pRiDhQBD0NA5KzV6reKw1QZVdz5V0mNR+afgjyJLr
+	 bAhjfkVvH6GiLpl+hSCMUddG/EkIy1Kgx4JxecZTwTDC8Z/WBkGK3WwsKZKgPvro7C
+	 ZbqpEiG6dCiaKl5OsibHcffyQc4MT/I6MixXTqgVL5e9BK4/8GWAb4vANI/DP4Kd6L
+	 zV01wbC4nf51A==
+Date: Thu, 13 Jun 2024 06:33:19 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Bharat Bhushan <bbhushan2@marvell.com>
+Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <sgoutham@marvell.com>, <gakula@marvell.com>, <sbhatta@marvell.com>,
+ <hkelam@marvell.com>, <davem@davemloft.net>, <edumazet@google.com>,
+ <pabeni@redhat.com>, <jerinj@marvell.com>, <lcherian@marvell.com>,
+ <richardcochran@gmail.com>
+Subject: Re: [net-next,v5 0/8] cn10k-ipsec: Add outbound inline ipsec
+ support
+Message-ID: <20240613063319.2870214b@kernel.org>
+In-Reply-To: <20240613071955.2280099-1-bbhushan2@marvell.com>
+References: <20240613071955.2280099-1-bbhushan2@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,23 +62,20 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 13 Jun 2024 15:11:07 +0800
-Andy Chiu <andy.chiu@sifive.com> wrote:
+On Thu, 13 Jun 2024 12:49:47 +0530 Bharat Bhushan wrote:
+> This patch series adds outbound inline ipsec support on Marvell
+> cn10k series of platform. One crypto hardware logical function
+> (cpt-lf) per netdev is required for inline ipsec outbound
+> functionality. Software prepare and submit crypto hardware
+> (CPT) instruction for outbound inline ipsec crypto mode offload.
+> The CPT instruction have details for encryption and authentication
+> Crypto hardware encrypt, authenticate and provide the ESP packet
+> to network hardware logic to transmit ipsec packet.
 
-> kernel_text_address() and __kernel_text_address() are called in
-> arch_stack_walk() of riscv. This results in excess amount of un-related
-> traces when the kernel is compiled with CONFIG_TRACE_IRQFLAGS. The
-> situation worsens when function_graph is active, as it calls
-> local_irq_save/restore in each function's entry/exit. This patch adds
-> both functions to notrace, so they won't show up on the trace records.
-
-I rather not add notrace just because something is noisy.
-
-You can always just add:
-
- echo '*kernel_text_address' > /sys/kernel/tracing/set_ftrace_notrace
-
-and achieve the same result.
-
--- Steve
+Read the rules, please:
+https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#tl-dr
+We're drowning in patches right now. 
+I'm tossing this, come back next week.
+-- 
+pv-bot: 24h
 
