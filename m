@@ -1,99 +1,174 @@
-Return-Path: <linux-kernel+bounces-214127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A64B9907FEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:50:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4100907FED
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E313B21D71
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:50:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAE361C215C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0306F154455;
-	Thu, 13 Jun 2024 23:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3340A15533C;
+	Thu, 13 Jun 2024 23:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lleNsJm7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TUtAKIc6"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3044280624;
-	Thu, 13 Jun 2024 23:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6E814E2F2
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 23:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718322631; cv=none; b=kC5MMyqIdw9Dbb4BIm5ZF/fVeChHiM4zw/chcK62f8CI9HfwALJNMdd1dBWcfyPKc4a73uDV3jvabQu49D41DFudVB28wiZIs8cnI1waf6c0TqP6CWSJoLj3X9ZDEDjNy5Ph8t7nrHuKgtPnu75i6oGmzbnY6yyoxeR5FX9ETiY=
+	t=1718322652; cv=none; b=Ei6ohaewfhB1jI4FjL3oX02y7FrZ9P1tsLL2DLLEpzIPpYXHYPjHx4jubWgvZhB0RgW8gmJfZf2ysftdPCjy9dbO791CIqopjWzXKRAqVquKAQcNDk4Db9vLNyavxU21toi768dCJ9aj2Ny7qbo/hSWGFGsG0PkQKkg9InBeKqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718322631; c=relaxed/simple;
-	bh=9Rwb9V89e521vCos4JoUPsTmonIgE7LjwTwvWYKkfsY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=R6JL3T32dpiRhBsyFHCYh9e9gcZrvsNuvxo4GwXNhWw5gD5Kb6gycXBtEtNpKYWfAtXKmz3dbtRQY2bRbqFZw0EdI5MWch+RcuZpw3j+EC+ZpKmnRd+0ix6Jm5AdCef9NzU8lXvLriiXEMJZHOSGy4/d99Ipo+4hjIiMz62+WJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lleNsJm7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B3915C4AF1A;
-	Thu, 13 Jun 2024 23:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718322630;
-	bh=9Rwb9V89e521vCos4JoUPsTmonIgE7LjwTwvWYKkfsY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=lleNsJm722b8c7cL9urUpRTpFkcGroOwytrJTkgBdm84yhj46kL+T5x34yiqb9TnE
-	 IMhgD4yYgG0sj92nJLm+yw8qVz0BpN+Gd0xK3IOVbkAai3Cc+JlRS+/+l+4gwOugJs
-	 M3tGLjmn9l4etsHDK1cqTF3UZkM82FUxYZDiSaHdZDl/dxFz1BlpkfJFKnFAwVrsYr
-	 DSWJojpLt5kvOEnXsB4n11naVBPQO4T3sryCYVxF7hU7+ejdEzR4/JXh7oAw81ix3l
-	 yQc1QQaKP99M3mAMGzcCQuE1Kosn4n/aaDYvv8M3unyVxKyT1z4L6X6XyzVI1F11zu
-	 Yg7s1fviSoxsw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A27F5C43619;
-	Thu, 13 Jun 2024 23:50:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718322652; c=relaxed/simple;
+	bh=ahRoGy5moLopddVlGfclLvv26he0ry7BCYTrh8QCNpc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=f1U2+lV+hH59+gAVyuwI+EQ8ismym3eiZPFHbDX5/hdWPlp2FNVM3wr+zWCGivKF8Jc/vHTm+743CL/xQXjaBIqtzBMQ8p885tmS8L3WgNDtW17jE+EeRDuRdGYOX8R7ErJX9i3CWFxsR2t4ZHqplEM9JLhHoiy+W2OgXsbVTMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TUtAKIc6; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dfab38b7f6bso2446735276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:50:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718322650; x=1718927450; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q/2GD2P1P7CEf4LO1djLMe1zjWvI2Hkpb11N2GxkTnU=;
+        b=TUtAKIc6Q/bwQn/MFPoxJzZfU0sMRrTfbZBgwm1+0ctTj7WUUus7DO9LlNjo8jScjQ
+         fQ2SAwV0XEc4UeY5tsE0NTVJYB7OFEIgKwsYNAPuVbw+kZwczIrqy8sEXJa/DVZeHblc
+         pFbfbmpuh+UlkcFikqnTrrpmHVZCU1u8k5JGR1Ua4F9Thl+1UyzeGSLaZiwe6DUeXAXn
+         T3xCiO5kwqdzuVuTIZIipyEGvKfmvn0P4DPNtP9rSQ6vRXmKkRwvKG4FWD0KmUFxL4lO
+         OZVqbngfJMLqv7gNEYRxciCmiVcLm4W5QCRFKwNEm/5oZEnJH/ri8xlgSIOPBrpgXPRJ
+         8YBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718322650; x=1718927450;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q/2GD2P1P7CEf4LO1djLMe1zjWvI2Hkpb11N2GxkTnU=;
+        b=F490qGUe38VwSr7A6+OlUJBKUJDvheq6ljkGa/UdFautBQBWc5t//Qq2m1Z2ezuA3B
+         8KOY/zvX1pOR09iMunMeYkzIQKotY1F+PvCdrnl7nWqItKM3Z4M8Zkv7q6h1gKS0Floc
+         fwDAhUAb706cMaL/FiVaYCcMqo2TAGxR27FElOTohJpHgqEJ3/1Zv5Gs3omYoUB4KqVQ
+         BEL3XQI9rGeTbDEsN75wNJw2ZF3RTya++Wmln9M5c9qxKKi9FBjY7qD6YTjW6jWmJqEF
+         75DKVSEUYPK9EHJOWQq++s7LvLkIn5XjSJ7j7lYkzBUB8tHCquslCaJM3hBjiSsI7ZMP
+         FdvA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8Hdp2DEMhuUd1j7d+I0rjZkOeglkzjUMrXM5qspuJHdODF4KjJeZIt1GvLIznjlfAmAHPC7mZsVjFKf+uOPah359vPawSrOoGBVo6
+X-Gm-Message-State: AOJu0Yyk9eMBpiq52hnmT03Gpyujldh+AEfnz9yMaEfY+p69kbu/EHRw
+	om72xc4MhLoK+Fe5EbiATvawoUlkJlvwYBCb20NORPxMwgMjGfAaxIBUVFwfetG4Cn7eMreTzcP
+	4pw==
+X-Google-Smtp-Source: AGHT+IGdwT4otzma8gQNBf9ykyP8JCZXHjwasEwBqEvekHLX0RYn2KS31UOPwPFM3LcoNrjyVrWpomgD6Og=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:2e13:b0:dfb:bf0:59cd with SMTP id
+ 3f1490d57ef6-dff153b2e10mr184365276.7.1718322649837; Thu, 13 Jun 2024
+ 16:50:49 -0700 (PDT)
+Date: Thu, 13 Jun 2024 16:50:48 -0700
+In-Reply-To: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v4] net: mana: Allow variable size indirection table
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171832263066.32226.1051481550894111174.git-patchwork-notify@kernel.org>
-Date: Thu, 13 Jun 2024 23:50:30 +0000
-References: <1718015319-9609-1-git-send-email-shradhagupta@linux.microsoft.com>
-In-Reply-To: <1718015319-9609-1-git-send-email-shradhagupta@linux.microsoft.com>
-To: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Cc: linux-hardening@vger.kernel.org, netdev@vger.kernel.org,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, colin.i.king@gmail.com, ahmed.zaki@intel.com,
- pavan.chebbi@broadcom.com, schakrabarti@linux.microsoft.com,
- kotaranov@microsoft.com, keescook@chromium.org, pabeni@redhat.com,
- kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
- decui@microsoft.com, wei.liu@kernel.org, haiyangz@microsoft.com,
- kys@microsoft.com, leon@kernel.org, jgg@ziepe.ca, longli@microsoft.com,
- shradhagupta@microsoft.com
+Mime-Version: 1.0
+References: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
+Message-ID: <ZmuF2PsVot33fS1x@google.com>
+Subject: Re: [PATCH] KVM: fix an error code in kvm_create_vm()
+From: Sean Christopherson <seanjc@google.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Yi Wang <foxywang@tencent.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Leon Romanovsky <leon@kernel.org>:
-
-On Mon, 10 Jun 2024 03:28:39 -0700 you wrote:
-> Allow variable size indirection table allocation in MANA instead
-> of using a constant value MANA_INDIRECT_TABLE_SIZE.
-> The size is now derived from the MANA_QUERY_VPORT_CONFIG and the
-> indirection table is allocated dynamically.
+On Thu, Jun 13, 2024, Dan Carpenter wrote:
+> This error path used to return -ENOMEM from the where r is initialized
+> at the top of the function.  But a new "r = kvm_init_irq_routing(kvm);"
+> was introduced in the middle of the function so now the error code is
+> not set and it eventually leads to a NULL dereference.  Set the error
+> code back to -ENOMEM.
 > 
-> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-> Reviewed-by: Dexuan Cui <decui@microsoft.com>
-> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> Fixes: fbe4a7e881d4 ("KVM: Setup empty IRQ routing when creating a VM")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  virt/kvm/kvm_main.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> [...]
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 07ec9b67a202..ea7e32d722c9 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -1212,8 +1212,10 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+>  	for (i = 0; i < KVM_NR_BUSES; i++) {
+>  		rcu_assign_pointer(kvm->buses[i],
+>  			kzalloc(sizeof(struct kvm_io_bus), GFP_KERNEL_ACCOUNT));
+> -		if (!kvm->buses[i])
+> +		if (!kvm->buses[i]) {
+> +			r = -ENOMEM;
+>  			goto out_err_no_arch_destroy_vm;
+> +		}
+>  	}
 
-Here is the summary with links:
-  - [net-next,v4] net: mana: Allow variable size indirection table
-    https://git.kernel.org/netdev/net-next/c/7fc45cb68696
+Drat.  Any objection to tweaking this slightly to guard against similar bugs in
+the future?  If not, I'll apply+push the below.
 
-You are awesome, thank you!
+Thanks!
+
+--
+From: Dan Carpenter <dan.carpenter@linaro.org>
+Date: Thu, 13 Jun 2024 17:33:16 +0300
+Subject: [PATCH] KVM: fix an error code in kvm_create_vm()
+
+This error path used to return -ENOMEM from the where r is initialized
+at the top of the function.  But a new "r = kvm_init_irq_routing(kvm);"
+was introduced in the middle of the function so now the error code is
+not set and it eventually leads to a NULL dereference.  Set the error
+code back to -ENOMEM.
+
+Opportunistically tweak the logic to pre-set "r = -ENOMEM" immediately
+before the flows that can fail due to memory allocation failure to make
+it less likely that the bug recurs in the future.
+
+Fixes: fbe4a7e881d4 ("KVM: Setup empty IRQ routing when creating a VM")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Link: https://lore.kernel.org/r/02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain
+[sean: tweak all of the "r = -ENOMEM" sites]
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ virt/kvm/kvm_main.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index b60186b9c1d3..436ca41f61e5 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1143,8 +1143,7 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+ {
+ 	struct kvm *kvm = kvm_arch_alloc_vm();
+ 	struct kvm_memslots *slots;
+-	int r = -ENOMEM;
+-	int i, j;
++	int r, i, j;
+ 
+ 	if (!kvm)
+ 		return ERR_PTR(-ENOMEM);
+@@ -1181,6 +1180,7 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+ 	snprintf(kvm->stats_id, sizeof(kvm->stats_id), "kvm-%d",
+ 		 task_pid_nr(current));
+ 
++	r = -ENOMEM;
+ 	if (init_srcu_struct(&kvm->srcu))
+ 		goto out_err_no_srcu;
+ 	if (init_srcu_struct(&kvm->irq_srcu))
+@@ -1209,6 +1209,7 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+ 		rcu_assign_pointer(kvm->memslots[i], &kvm->__memslots[i][0]);
+ 	}
+ 
++	r = -ENOMEM;
+ 	for (i = 0; i < KVM_NR_BUSES; i++) {
+ 		rcu_assign_pointer(kvm->buses[i],
+ 			kzalloc(sizeof(struct kvm_io_bus), GFP_KERNEL_ACCOUNT));
+
+base-commit: 3dee3b187499b317a6587e2b8e9bf3d5050e5288
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
 
