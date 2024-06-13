@@ -1,193 +1,160 @@
-Return-Path: <linux-kernel+bounces-213118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B583906C45
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:49:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C7E2906CB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:52:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F7CA1C21D22
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:49:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5061C21E60
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51E4145B1E;
-	Thu, 13 Jun 2024 11:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EE5146A89;
+	Thu, 13 Jun 2024 11:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hjeVHFqO"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lGpdVmCY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801BF143C67
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9038D146019;
+	Thu, 13 Jun 2024 11:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718279232; cv=none; b=RhhTt+4BoiQW18wdJc7JbOHuCu0vqoSjQCD6RoScbc1XJJhrVu4vxMm62sMdInhjUyq+lOmaS6c1jnOKXxitlD9mgELmQrJJhS/x4FkASNxpZL4YZDzVrTvSbrY8gQNtpXyXlGduZSZDSGz7bMa+dlm6QezldCfh5UcggX+Ikew=
+	t=1718279402; cv=none; b=MAc1zyYd+eMDgn+Twq1qtMsa+km+Kvi4KQu02PEMs9c9AU2AAGwwZ4iFAl/k3MzhOQc6fsZOakpAx/QYr1VFEK1bZa2+hus6OKe6HnVEzfKwqu6SywbHPvF9GnyicmmMeZVQeLUbMaYtt4SLRm5R93r2akRAxQfhgmd47W7VNsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718279232; c=relaxed/simple;
-	bh=u8uqNXfneUxeojJqX6uW43gawvkWd/SVV0l8sqbDYiQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tVRA332SkSf7yxypItFrUJDeTl9ay5UQNx7cDtiaQSVNLxLNJGANxy3rMoYnrWnMP0XobMYnuKt1D2fl6Y0jiVdRoFoL6DUSJvRSnn6i8z3zmQ5rn6BTbEUXE7CGm4CRjN0yjV4zTdKpo9lacRNz2PnV6NKsAtV8DQ6B9MOx4+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hjeVHFqO; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dfe1aa7cce2so1041151276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 04:47:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718279229; x=1718884029; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+LOKAxIeKteFuhp7/Gqn9TPI7GSn3AjIAgrQwVRNEFU=;
-        b=hjeVHFqOks17mJr5ZOK3MfW+jrYXcZYEDqkvr5Cp+D6iEZmVOwIjLMVwcCJhE434Im
-         myUPaK2lB7bPK14p+MVgCMvoZMQEpJ+aRuO3SNDE729WXwxjQ/jk33RPjeuS8k8jcZq2
-         xufjyQeOl/dTSN5mjnJJoyo9cjJHu06XHIDJ0lYtOx9584059S1sYeDvV1F5m90PcZnW
-         9oQNfwtYojMh2ubIVFrehDoErOZlXKoHG6CsNKmsL7a7iRDcGFJjnR3OGnhor5BqV3Ab
-         c/mwm7AKeDXITNkjX8cjSV8p3H2MctJZSyapjdXWxxLI+sdOwzFJbrKmluJpjJlmb1+A
-         sJpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718279229; x=1718884029;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+LOKAxIeKteFuhp7/Gqn9TPI7GSn3AjIAgrQwVRNEFU=;
-        b=n2k8pN8sRU5LCveF8lj1WYHgaOQhLfe9BOpPRtATsYbIpfJZp0zxR4yJkEoKHmlH9Z
-         rEf8Fu5nIy72Yk4IeosSqTBG2qT82/DuYxhHtD6do/gw/cxcw0HN3rOt44v/ZXmue2YQ
-         TLF03X0J/zGkeO890PLwDb9igD58Z9H4COHX/1VDUI0MpuIqHadRV41XeybU++O0rcpi
-         wdMs/H95BecPLSm1AE9YU43Fj2mSvNo9ejRsoNVbnHdamY9SUVAV9XMNsqeJ4s6cKiLS
-         etkdjZ9/3QvZV+10b2ahG2ajl00EpcjfclTfZ3p2mC0cpbVXGLS59QCcaXTG4vpPXan3
-         Grsw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFkRYNdtFsiyOrMynejxikBdxoKlpnkDg2sq8O+YZy9phg7yAXm4771lKv1OeFwdqV3cfIAD9yFFd9KpZF/PAXbVyR4gBtD/fcciFU
-X-Gm-Message-State: AOJu0YxbSOcYcqm2+2KQH4OyLiR0YKxEyB0hYlR+pfJH33t8Gk5znOAE
-	8KHooul1Kc+uPSLK6pyRSXkkv+8p/VOlFo11/nm08V+Kr6RljQL39FHGOhNDEV8OOK2qLYgQdnN
-	4/Jv+VI377SP3EzYn47I2EUyPkAoFClnOXgJWGw==
-X-Google-Smtp-Source: AGHT+IHFpink+Q293EhYr5U3tq2VDPbFBHBjghBbhVxgaG4IqWejDV0X1BOwqLDyC7goxOFASWf1sJs6gdyGUmv2tSI=
-X-Received: by 2002:a25:aca8:0:b0:dfb:25ba:4390 with SMTP id
- 3f1490d57ef6-dfe66d5a5e0mr4339265276.36.1718279229482; Thu, 13 Jun 2024
- 04:47:09 -0700 (PDT)
+	s=arc-20240116; t=1718279402; c=relaxed/simple;
+	bh=HwivC1YSyiPpQ5PwufJY8pxz6NX1ZCCTtPty8vus00c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hIcqwDYWiybZOnovlp22H3WvimLLnWEnTESvfVmdSmUecepqLUUyMEQbE2RYDN8cQspTyPXDWsL7GcQRBh2HcsbTPmBm20gqZAUAfb4KCsoIP3leqq8yT0+4/LJi6bqbmOP8IWxzqCeTW5X/SuCrt6UdY3ufa1PYPibO8H3+JSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lGpdVmCY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1D109C32786;
+	Thu, 13 Jun 2024 11:50:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718279402;
+	bh=HwivC1YSyiPpQ5PwufJY8pxz6NX1ZCCTtPty8vus00c=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=lGpdVmCYExX99Xc46Lj/TebVuYnjjvN6k+MkH16R9gJhbuHFvdG3DcCYFwnqtaP+5
+	 uDa3xnEDHcb++oY7i1MhpY4J+Vwg4M45uy8ugUdQwWQU6ECJCj/5AG1hRH5PDqgKdA
+	 +Hb1jSEO++5PjvuFQKZtxN0kTijWWqiiQjRc/JLNUws63Cxt21dTq4HK3n0MFMEYPd
+	 yPSlhnu/rbingchOBGgiiOIxPm7bngCzC3QlywAWP6nw0V9ReN7dI2qX5c/d6hN8yG
+	 lNL0FcU7+K0xXgrL9juykFLJlQ++6/iC9mBmxvct8nauLhY8MavOrL49Gk5HMboD3g
+	 A/IyiYdr7yUUQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05653C27C4F;
+	Thu, 13 Jun 2024 11:50:02 +0000 (UTC)
+From: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>
+Subject: [PATCH v9 0/2] Add support for Loongson1 APB DMA
+Date: Thu, 13 Jun 2024 19:48:06 +0800
+Message-Id: <20240613-loongson1-dma-v9-0-6181f2c7dece@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAMSo37U3Pree8XbHNBOzNXhFAiPss+8FQms1bLy06xeMeWfTcg@mail.gmail.com>
- <20240613095901.508753-1-jtornosm@redhat.com>
-In-Reply-To: <20240613095901.508753-1-jtornosm@redhat.com>
-From: Yongqin Liu <yongqin.liu@linaro.org>
-Date: Thu, 13 Jun 2024 19:46:57 +0800
-Message-ID: <CAMSo37UzU9WrQOQVo=Bb-LfOwS=GJrsSLMgGAwLY7JoGQ9ap7g@mail.gmail.com>
-Subject: Re: [PATCH] net: usb: ax88179_178a: fix link status when link is set
- to down/up
-To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-Cc: amit.pundir@linaro.org, davem@davemloft.net, edumazet@google.com, 
-	inventor500@vivaldi.net, jstultz@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, stable@vger.kernel.org, 
-	sumit.semwal@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHbcamYC/12Oy07DMBBFf6XyGkfjcf1ixX8gFm48SSyaGNklA
+ qr8O3YXEGV5F+fcc2eFcqTCnk93lmmNJaalDvd0Yv3kl5F4DHUzBJRCIPBrSstY0iJ4mD0XWvq
+ BlAF7cawyH5mG+PXwvb7VPeQ089uUyf9ZwKEVKJySncKzBssFf6fxs551P+3yZZx9vHZ9mptxi
+ uWW8vcjcNXN2yxnkEIfWlbNgTsIhL3s+/qyE7WW1exodEfaVFqacFG2NgVSR9r+0xrMkbaVHpx
+ zGFAZVLCnt237BX4MalxoAQAA
+To: Keguang Zhang <keguang.zhang@gmail.com>, Vinod Koul <vkoul@kernel.org>, 
+ Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-mips@vger.kernel.org, dmaengine@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718279399; l=2719;
+ i=keguang.zhang@gmail.com; s=20231129; h=from:subject:message-id;
+ bh=HwivC1YSyiPpQ5PwufJY8pxz6NX1ZCCTtPty8vus00c=;
+ b=d0BjInj6FisyYPLtdiANsNixRagpX8lGqMJQCHH+96dGLwb3mFSSR7vPIKXovo7K6hRhP1y8c
+ kaSOXPA+GndDe9P/kUlhGU7G0QUx/YG0D7DiHhLFp9xNvZme6mGSMYr
+X-Developer-Key: i=keguang.zhang@gmail.com; a=ed25519;
+ pk=FMKGj/JgKll/MgClpNZ3frIIogsh5e5r8CeW2mr+WLs=
+X-Endpoint-Received: by B4 Relay for keguang.zhang@gmail.com/20231129 with
+ auth_id=102
+X-Original-From: Keguang Zhang <keguang.zhang@gmail.com>
+Reply-To: keguang.zhang@gmail.com
 
-Hi, Jose
+Add the driver and dt-binding document for Loongson1 APB DMA.
 
-On Thu, 13 Jun 2024 at 17:59, Jose Ignacio Tornos Martinez
-<jtornosm@redhat.com> wrote:
->
-> Hello again,
->
-> There was a problem copying the patch, sorry, here the good one:
+---
+Changes in v9:
+- Fix all the errors and warnings when building with W=1 and C=1
+- Link to v8: https://lore.kernel.org/r/20240607-loongson1-dma-v8-0-f9992d257250@gmail.com
 
-Thanks very much for the work!
+Changes in v8:
+- Change 'interrupts' property to an items list
+- Link to v7: https://lore.kernel.org/r/20240329-loongson1-dma-v7-0-37db58608de5@gmail.com
 
-I will test it tomorrow, and let you know the result then.
+Changes in v7:
+- Change the comptible to 'loongson,ls1*-apbdma' (suggested by Huacai Chen)
+- Update the title and description part accordingly
+- Rename the file to loongson,ls1b-apbdma.yaml
+- Add a compatible string for LS1A
+- Delete minItems of 'interrupts'
+- Change patterns of 'interrupt-names' to const
+- Rename the file to loongson1-apb-dma.c to keep the consistency
+- Update Kconfig and Makefile accordingly
+- Link to v6: https://lore.kernel.org/r/20240316-loongson1-dma-v6-0-90de2c3cc928@gmail.com
+
+Changes in v6:
+- Change the compatible to the fallback
+- Implement .device_prep_dma_cyclic for Loongson1 sound driver,
+- as well as .device_pause and .device_resume.
+- Set the limitation LS1X_DMA_MAX_DESC and put all descriptors
+- into one page to save memory
+- Move dma_pool_zalloc() into ls1x_dma_alloc_desc()
+- Drop dma_slave_config structure
+- Use .remove_new instead of .remove
+- Use KBUILD_MODNAME for the driver name
+- Improve the debug information
+- Some minor fixes
+
+Changes in v5:
+- Add the dt-binding document
+- Add DT support
+- Use DT information instead of platform data
+- Use chan_id of struct dma_chan instead of own id
+- Use of_dma_xlate_by_chan_id() instead of ls1x_dma_filter()
+- Update the author information to my official name
+
+Changes in v4:
+- Use dma_slave_map to find the proper channel.
+- Explicitly call devm_request_irq() and tasklet_kill().
+- Fix namespace issue.
+- Some minor fixes and cleanups.
+
+Changes in v3:
+- Rename ls1x_dma_filter_fn to ls1x_dma_filter.
+
+Changes in v2:
+- Change the config from 'DMA_LOONGSON1' to 'LOONGSON1_DMA',
+- and rearrange it in alphabetical order in Kconfig and Makefile.
+- Fix comment style.
+
+---
+Keguang Zhang (2):
+      dt-bindings: dma: Add Loongson-1 APB DMA
+      dmaengine: Loongson1: Add Loongson-1 APB DMA driver
+
+ .../bindings/dma/loongson,ls1b-apbdma.yaml         |  67 +++
+ drivers/dma/Kconfig                                |   9 +
+ drivers/dma/Makefile                               |   1 +
+ drivers/dma/loongson1-apb-dma.c                    | 665 +++++++++++++++++++++
+ 4 files changed, 742 insertions(+)
+---
+base-commit: d35b2284e966c0bef3e2182a5c5ea02177dd32e4
+change-id: 20231120-loongson1-dma-163afe5708b9
 
 Best regards,
-Yongqin Liu
->
-> $ git diff drivers/net/usb/ax88179_178a.c
-> diff --git a/drivers/net/usb/ax88179_178a.c b/drivers/net/usb/ax88179_178=
-a.c
-> index 51c295e1e823..60357796be99 100644
-> --- a/drivers/net/usb/ax88179_178a.c
-> +++ b/drivers/net/usb/ax88179_178a.c
-> @@ -174,7 +174,6 @@ struct ax88179_data {
->         u32 wol_supported;
->         u32 wolopts;
->         u8 disconnecting;
-> -       u8 initialized;
->  };
->
->  struct ax88179_int_data {
-> @@ -327,7 +326,8 @@ static void ax88179_status(struct usbnet *dev, struct=
- urb *urb)
->
->         if (netif_carrier_ok(dev->net) !=3D link) {
->                 usbnet_link_change(dev, link, 1);
-> -               netdev_info(dev->net, "ax88179 - Link status is: %d\n", l=
-ink);
-> +               if (!link)
-> +                       netdev_info(dev->net, "ax88179 - Link status is: =
-%d\n", link);
->         }
->  }
->
-> @@ -1543,6 +1543,7 @@ static int ax88179_link_reset(struct usbnet *dev)
->                          GMII_PHY_PHYSR, 2, &tmp16);
->
->         if (!(tmp16 & GMII_PHY_PHYSR_LINK)) {
-> +               netdev_info(dev->net, "ax88179 - Link status is: 0\n");
->                 return 0;
->         } else if (GMII_PHY_PHYSR_GIGA =3D=3D (tmp16 & GMII_PHY_PHYSR_SMA=
-SK)) {
->                 mode |=3D AX_MEDIUM_GIGAMODE | AX_MEDIUM_EN_125MHZ;
-> @@ -1580,6 +1581,8 @@ static int ax88179_link_reset(struct usbnet *dev)
->
->         netif_carrier_on(dev->net);
->
-> +       netdev_info(dev->net, "ax88179 - Link status is: 1\n");
-> +
->         return 0;
->  }
->
-> @@ -1678,12 +1681,21 @@ static int ax88179_reset(struct usbnet *dev)
->
->  static int ax88179_net_reset(struct usbnet *dev)
->  {
-> -       struct ax88179_data *ax179_data =3D dev->driver_priv;
-> +       u16 tmp16;
->
-> -       if (ax179_data->initialized)
-> +       ax88179_read_cmd(dev, AX_ACCESS_PHY, AX88179_PHY_ID, GMII_PHY_PHY=
-SR,
-> +                        2, &tmp16);
-> +       if (tmp16) {
-> +               ax88179_read_cmd(dev, AX_ACCESS_MAC, AX_MEDIUM_STATUS_MOD=
-E,
-> +                                2, 2, &tmp16);
-> +               if (!(tmp16 & AX_MEDIUM_RECEIVE_EN)) {
-> +                       tmp16 |=3D AX_MEDIUM_RECEIVE_EN;
-> +                       ax88179_write_cmd(dev, AX_ACCESS_MAC, AX_MEDIUM_S=
-TATUS_MODE,
-> +                                         2, 2, &tmp16);
-> +               }
-> +       } else {
->                 ax88179_reset(dev);
-> -       else
-> -               ax179_data->initialized =3D 1;
-> +       }
->
->         return 0;
->  }
->
-> Best regards
-> Jos=C3=A9 Ignacio
->
+-- 
+Keguang Zhang <keguang.zhang@gmail.com>
 
 
---=20
-Best Regards,
-Yongqin Liu
----------------------------------------------------------------
-#mailing list
-linaro-android@lists.linaro.org
-http://lists.linaro.org/mailman/listinfo/linaro-android
 
