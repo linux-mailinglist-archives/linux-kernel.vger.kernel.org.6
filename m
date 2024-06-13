@@ -1,168 +1,159 @@
-Return-Path: <linux-kernel+bounces-212867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A2F906762
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C6F906761
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:47:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 951461F2426C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:47:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C50A1F23471
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA43C13D60D;
-	Thu, 13 Jun 2024 08:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A3213D517;
+	Thu, 13 Jun 2024 08:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XUMPWRji"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mvYu7vM1"
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F5643144
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2438277118
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718268410; cv=none; b=lhlzMAGm0umtcL3Gxz+bD9xG41r95YVqRHC0Y3NcFXDn1++DEZTiBudOQZVCybDG3o5N0D06LvcUuYmFk3vNUjsVUBG3hpZAxwHOsq6+Joxqw0ugkfhXZ9HnTOQGO2+DAfHu9d0o+T76dsNBEmlcb6kgOH+QsSeZRlakyCYNBBY=
+	t=1718268386; cv=none; b=W458OlR/muQgbHuhiS+Z5RbVi1UAKsPr5sOVVUqSMPtXEU1kODg+tlrrecNpodBxomq3NEaQVok2jEZYOJHvsjzMwhrU0sPiRxmEVmpwwe8DpLe+sGIkMUewsH9OtYGPcZb5tHI/dMeo99rb2jToSlQkVd0TPitS55mk2pFGI5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718268410; c=relaxed/simple;
-	bh=L5QCts6tXvo2hw9a5IOSbauCsSdE8cMhd6RkYG/c7Wo=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=mRFXSoDjDOpAOoq8UM+A7wQTOIFolYpANxexTCBPjKMmIcvD/j8pnvdn82HNHxAv8WN23ZW+9rDy/MwcQe1tzBSeb3ME20Hd3cKHzAckAot7In1tQDah67gccUgkBp/HJ7kybp/8bOqqVR8abWf8IlZ7gUdba9wdu7rxg8WB654=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XUMPWRji; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718268409; x=1749804409;
-  h=date:from:to:cc:subject:message-id;
-  bh=L5QCts6tXvo2hw9a5IOSbauCsSdE8cMhd6RkYG/c7Wo=;
-  b=XUMPWRjic/iN8+WQw2LW16hTWeo6olemkxYskRR/6aPQmkJXmia0BguG
-   VaBz66GKUYTbWbpMcZPFfojSz3t3ipBJyxOBHx/aukbqpJB8fiIMhwmvJ
-   TT0a9ltpK9z7xjIV9oPF5j1LqCkucWJS/y1PixbJbzr1qpPzoyiMYi+00
-   AK/K2i6MDVpiCmFW8pCrJ5lOhK9CegryBGZ4tz80g9qixF8tJHusdTNup
-   dfYkjVT9vyFcu1nrSG2bVUwAQCETyWCUyPDFIkVU11/0HJm8z4rPndrFk
-   TuxDWkZBo6LJ3QrGM1R0Bjj64S6EJz9zww6SFG70YvGvOdVllwDTkwFty
-   g==;
-X-CSE-ConnectionGUID: CFCyPAYOTjmteT/RpI8Asw==
-X-CSE-MsgGUID: WD1AwJFJRnOQBY5fx3RRPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="14796876"
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="14796876"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 01:46:48 -0700
-X-CSE-ConnectionGUID: danvbdAxTt+ZbOa0qVqhEw==
-X-CSE-MsgGUID: k7OvUXzUS7OiZPa300e51g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="71275537"
-Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 13 Jun 2024 01:46:47 -0700
-Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sHg6X-0002QM-0T;
-	Thu, 13 Jun 2024 08:46:45 +0000
-Date: Thu, 13 Jun 2024 16:46:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/WFAMNAE-next20240611-CbC] BUILD SUCCESS
- 1dd5c99c4ba37e547bca929f39a507a8a0223caa
-Message-ID: <202406131609.JmOeIM8m-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1718268386; c=relaxed/simple;
+	bh=c+6YGHZAWPgDR516eTVeoCk8cdewYFFE5+cBxZDjJ40=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dp19NeufcNsvNv39ZAmGfxZsBGVb3ZwUd4Io96sSGnLGCjX0rvtggPKEW/jzJwo9ZgfhmsoI0ysVTqN0IMVBq4+qtb5QDkDo8jhQISfDFnaeMnkvH/graCiIbaXlUpDoq/okMo1rxYkVm/d1eG/cVxMbau7Wil1w9ygRgePqj08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mvYu7vM1; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4ed128ac278so245601e0c.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:46:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718268384; x=1718873184; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bNrMBohAlmbgJn1GzoPBttUeTFyiVjJwM4dKwfpEPEo=;
+        b=mvYu7vM1Q1YA7K9XknXf3YIk4B6Fhd7zAbtQD9KvjHNmFoNGI+/Vj3fimFen/bMr0R
+         EYAfPr2m/AvQ7LqKmYJPaiytnF0ZQiG3MfoM7dvpaJDI53/oDbrf+EmyjI6Z5n2brPkP
+         FtnEfWIUI9PU/kAvrRkb5AHF71J1kWJCNrFyLbW+71zNvTS/jqedV6t717DxI0OMKZ3y
+         7Y2EK5BHbarCY1NyZZs5e4HFdrHZqV6b4AeG0X6ZsKiV3rmzdn2Q5t3ZP2mY2LxVmHJE
+         Oose971hEeBARn7jGM7qqnufgnPcp32eaj8j9X/PdfRQPt/8qFSn2ZFTz6lBWcCYfWJn
+         DCTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718268384; x=1718873184;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bNrMBohAlmbgJn1GzoPBttUeTFyiVjJwM4dKwfpEPEo=;
+        b=J7OJgcJitGkRlFm1PeogB/FdubnJW3nT8bI0Bdvf7pJ1bmwO1eMBjMRZ8nRqL8IlIj
+         nD6loeRMtrg1xLNSUqJ+Qt1ywbktYbttaLBXUwdPekQUSmUWwfn5QZtVDUSuUEwnmIHm
+         B0v1vEMsKqFZnBDh9dmR0vLx2Im1AmLq6ucEy/0pAx0px8B2QDu1i6B2ALZ1g9OXMHUB
+         M9Wg0hHq6a6qr23laKIRMKFx9xYCHXAvK/bi51VgcgXSbGElcMnjxP4mTMyU39jdqCCU
+         3dPS0WcNvhuQlHaYRqqE0AW2za6cTGaxmyC6t9v1FpQpRz5J1hvSKAySOQOxZSEySNXu
+         a1wA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3AUxwR18LgvXqb3yDF3Lk2V5S7cXlIZVteC8N7VEFQJsWGeQrsakPGCG2H+NQYGXu3T6PDU/6J0tZYFZM7fYkBFId9dtTV7C+Xpkg
+X-Gm-Message-State: AOJu0YyAnyxbGDpzLu0n8EZzRHK2m1e003T4uBykg7AzloLAbh1WzTB+
+	AOGbskhZqZAFQ22GuCS+7/lqWbedPMEKnGZHtriYmoML7KoVYOCMIkUYNOP9/VvnZTa6hRZGqYo
+	2mg523RKtuJS5IbPD9UNKRWROfbE=
+X-Google-Smtp-Source: AGHT+IFEK+ug0/3N2rQ2IpnKhQO82VHIZlOazodcSIaMISCry/y0HSqCVg6aI6xdR52+yrmh0qpBfJL54MD+9pD6KJg=
+X-Received: by 2002:a05:6122:361a:b0:4d4:21cc:5f4f with SMTP id
+ 71dfb90a1353d-4ed07bcd848mr3740162e0c.11.1718268383993; Thu, 13 Jun 2024
+ 01:46:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240613000721.23093-1-21cnbao@gmail.com> <20240613000721.23093-4-21cnbao@gmail.com>
+In-Reply-To: <20240613000721.23093-4-21cnbao@gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 13 Jun 2024 20:46:13 +1200
+Message-ID: <CAGsJ_4zx3Rp9ye=LFhzEN+JypAq1zb_gLQZgyiRvYJZTMpLCHA@mail.gmail.com>
+Subject: Re: [PATCH RFC 3/3] mm: remove folio_test_anon(folio)==false path in __folio_add_anon_rmap()
+To: david@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org
+Cc: chrisl@kernel.org, linux-kernel@vger.kernel.org, mhocko@suse.com, 
+	ryan.roberts@arm.com, baolin.wang@linux.alibaba.com, yosryahmed@google.com, 
+	shy828301@gmail.com, surenb@google.com, v-songbaohua@oppo.com, 
+	willy@infradead.org, ying.huang@intel.com, yuzhao@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/WFAMNAE-next20240611-CbC
-branch HEAD: 1dd5c99c4ba37e547bca929f39a507a8a0223caa  treewide_some: fix multiple -Wfamnae warnings that must be audited separately
+On Thu, Jun 13, 2024 at 12:08=E2=80=AFPM Barry Song <21cnbao@gmail.com> wro=
+te:
+>
+> From: Barry Song <v-songbaohua@oppo.com>
+>
+> The folio_test_anon(folio)=3D=3Dfalse case within do_swap_page() has been
+> relocated to folio_add_new_anon_rmap(). Additionally, two other callers
+> consistently pass anonymous folios.
+>
+> stack 1:
+> remove_migration_pmd
+>    -> folio_add_anon_rmap_pmd
+>      -> __folio_add_anon_rmap
+>
+> stack 2:
+> __split_huge_pmd_locked
+>    -> folio_add_anon_rmap_ptes
+>       -> __folio_add_anon_rmap
+>
+> __folio_add_anon_rmap() only needs to handle the cases
+> folio_test_anon(folio)=3D=3Dtrue now.
 
-elapsed time: 2381m
+My team reported a case where swapoff() is calling
+folio_add_anon_rmap_pte *not* folio_add_anon_rmap_ptes
+with one new anon  (!folio_test_anon(folio)).
 
-configs tested: 76
-configs skipped: 3
+I will double check all folio_add_anon_rmap_pte() cases.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                            allyesconfig   gcc-13.2.0
-alpha                               defconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arm                               allnoconfig   clang-19
-arm                                 defconfig   clang-14
-arm64                             allnoconfig   gcc-13.2.0
-arm64                               defconfig   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                                defconfig   gcc-13.2.0
-hexagon                          allmodconfig   clang-19
-hexagon                           allnoconfig   clang-19
-hexagon                          allyesconfig   clang-19
-hexagon                             defconfig   clang-19
-i386                             allmodconfig   gcc-13
-i386                              allnoconfig   gcc-13
-i386                             allyesconfig   gcc-13
-i386                                defconfig   clang-18
-loongarch                        allmodconfig   gcc-13.2.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                           defconfig   gcc-13.2.0
-m68k                             allmodconfig   gcc-13.2.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                             allyesconfig   gcc-13.2.0
-m68k                                defconfig   gcc-13.2.0
-microblaze                       allmodconfig   gcc-13.2.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                       allyesconfig   gcc-13.2.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                             allyesconfig   gcc-13.2.0
-nios2                            allmodconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                            allyesconfig   gcc-13.2.0
-nios2                               defconfig   gcc-13.2.0
-openrisc                          allnoconfig   gcc-13.2.0
-openrisc                         allyesconfig   gcc-13.2.0
-openrisc                            defconfig   gcc-13.2.0
-parisc                           allmodconfig   gcc-13.2.0
-parisc                            allnoconfig   gcc-13.2.0
-parisc                           allyesconfig   gcc-13.2.0
-parisc                              defconfig   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-13.2.0
-powerpc                           allnoconfig   gcc-13.2.0
-powerpc                          allyesconfig   clang-19
-riscv                            allmodconfig   clang-19
-riscv                             allnoconfig   gcc-13.2.0
-riscv                            allyesconfig   clang-19
-riscv                               defconfig   clang-19
-s390                             allmodconfig   clang-19
-s390                              allnoconfig   clang-19
-s390                             allyesconfig   gcc-13.2.0
-s390                                defconfig   clang-19
-sh                               allmodconfig   gcc-13.2.0
-sh                                allnoconfig   gcc-13.2.0
-sh                               allyesconfig   gcc-13.2.0
-sh                                  defconfig   gcc-13.2.0
-sparc                            allmodconfig   gcc-13.2.0
-sparc                             allnoconfig   gcc-13.2.0
-sparc                               defconfig   gcc-13.2.0
-sparc64                          allmodconfig   gcc-13.2.0
-sparc64                          allyesconfig   gcc-13.2.0
-sparc64                             defconfig   gcc-13.2.0
-um                               allmodconfig   clang-19
-um                                allnoconfig   clang-17
-um                               allyesconfig   gcc-13
-um                                  defconfig   clang-19
-um                             i386_defconfig   gcc-13
-um                           x86_64_defconfig   clang-15
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64                              defconfig   gcc-13
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> ---
+>  mm/rmap.c | 17 +++--------------
+>  1 file changed, 3 insertions(+), 14 deletions(-)
+>
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index e612d999811a..e84c706c8241 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -1299,21 +1299,10 @@ static __always_inline void __folio_add_anon_rmap=
+(struct folio *folio,
+>
+>         nr =3D __folio_add_rmap(folio, page, nr_pages, level, &nr_pmdmapp=
+ed);
+>
+> -       if (unlikely(!folio_test_anon(folio))) {
+> -               VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
+> -               /*
+> -                * For a PTE-mapped large folio, we only know that the si=
+ngle
+> -                * PTE is exclusive. Further, __folio_set_anon() might no=
+t get
+> -                * folio->index right when not given the address of the h=
+ead
+> -                * page.
+> -                */
+> -               VM_WARN_ON_FOLIO(folio_test_large(folio) &&
+> -                                level !=3D RMAP_LEVEL_PMD, folio);
+> -               __folio_set_anon(folio, vma, address,
+> -                                !!(flags & RMAP_EXCLUSIVE));
+> -       } else if (likely(!folio_test_ksm(folio))) {
+> +       VM_WARN_ON_FOLIO(!folio_test_anon(folio), folio);
+> +
+> +       if (likely(!folio_test_ksm(folio)))
+>                 __page_check_anon_rmap(folio, page, vma, address);
+> -       }
+>
+>         __folio_mod_stat(folio, nr, nr_pmdmapped);
+>
+> --
+> 2.34.1
+>
 
