@@ -1,121 +1,131 @@
-Return-Path: <linux-kernel+bounces-213911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83B41907C80
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:23:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D079907C81
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C8F6B265C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:23:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C2AA1C2579D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0F315533C;
-	Thu, 13 Jun 2024 19:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB92014D701;
+	Thu, 13 Jun 2024 19:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1BosQHa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b="VQKmOphU"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EBCC14D29B;
-	Thu, 13 Jun 2024 19:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B3214D29B;
+	Thu, 13 Jun 2024 19:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718306340; cv=none; b=Lwm0PFJA56/PDnQ9YtwF4YRr3aUzxo8+QceC9Rt3/8MmFU4UstU7EO3ShZ7Kh2TwTfUjM5NnKJtWaV78ZE26CWzmkcNBbfSOZmGrqicjlzaYN34+JimQMuiv0JBPwpFjQNAjLl0HJmGswIYOhPN+eQsp5JbfQSrUUoRK/cnyNgc=
+	t=1718306406; cv=none; b=AP+yaDqglvHmI2Q7ogYZUyxDC6fBALi81PfsS7HRmRoWBj0v+rVntTUjWM5GfRdcMEjDPUhcPnyLGMNuGI0QBWFXpjyTO8MeSwbcPJPRegBwLui0sN1t5yJceNdxjwFBnuRCYYXbKddUrFFMu2AqU5AObLk1ExrUyQJE+E/UEeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718306340; c=relaxed/simple;
-	bh=ay6UQtlKFWBDuxIwmYNg3cJJuKswWcYHFlUK5oXmK44=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GodODo72kTARL8HlhAOoFJuhepgPfcd50CeLuwpAhlGobI2N8sBg92eC5TI/nzP3AYOoXIn8b2DJuZAg3uHXGbLE4DkUwRyganxUvCNVODdwGa3EbdTPag1peJYhFSNP4SyT66UIVxD99dXolTILacp6vDpU0+rbmKlJZUdmwHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L1BosQHa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2019FC2BBFC;
-	Thu, 13 Jun 2024 19:19:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718306340;
-	bh=ay6UQtlKFWBDuxIwmYNg3cJJuKswWcYHFlUK5oXmK44=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=L1BosQHaKT3yUcBeF2YFAasNNr4433f9Vxk9AU567opQ99YxAW6KHKPO30H4O2MOc
-	 9AYkCIsEOyTioXqx0S0/8lDml0MklLqs2ZcYTtlmvmGFVHSU6s3+yVILnmOSzr8/SV
-	 1XlNE/zLA4xcDaKVcCCAJVJ4UDuwUO/qMAJfMzcVzmpNEvI6cHHHojf8yaEWecH5Rr
-	 rrd/foMxzPJHf0UPlPHv5zwFYgaugQaozt5ZDxpd9n4EsYXeyklTskdJN3krlX+Flp
-	 jEI0X8PLxRh6ibD7cVqJHcdEA7h0DS3ci9bQdvPpcHrOPn4YszM1YT+f/CPqxWdZT3
-	 sddcXxvRc4Ymg==
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3d1b8bacf67so208690b6e.2;
-        Thu, 13 Jun 2024 12:19:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVz+Ac0K18Zk36tn39Oljybc/wSPB9z+LDmNN+Kqohxbn1d94Pw+XOXNGk6Lwq/EsY8xQ/NDrfIDrhmccPskyKqvgMvnBJGm2glT7MnMY4XQvO1e+YDI6ob7e8i1vJRzaC81p0jlZhLFg==
-X-Gm-Message-State: AOJu0YwPo5TMbhIRcphcfV/X7innvmgGzk2Qm44n5LQvQnNTUfhU73Fa
-	cQnmi0wK1+J894u/ueIPtvw4+NlCWHuSkMyn8zlVhiEpsaqAGqJPW6P52q9f8ypFtE96+t8X4Gg
-	0b14xis/FSqCTjtZ9D8GY4gTsQag=
-X-Google-Smtp-Source: AGHT+IFypBwee/3o3ZPXmp27CBQk3kxaqCh0xqesZ8ebhhA1CzmQO2FleW9pSvsQUQPdklQ0fl3qauN0WAhBRYs2H5U=
-X-Received: by 2002:a05:6870:472c:b0:254:abd6:1a3d with SMTP id
- 586e51a60fabf-25842c4d336mr487236fac.4.1718306339414; Thu, 13 Jun 2024
- 12:18:59 -0700 (PDT)
+	s=arc-20240116; t=1718306406; c=relaxed/simple;
+	bh=EyQ3hgLz0Dnk7ppR5oBQHpeY1aBrderyGlDfH/wRJIs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qJp+Ykx5lQcqJv+j9Ip5d8P8UYEoyTPFolfmN1sZAEuCKsL9CV6rW037ebKxElmvC/P70oqoPNuwNWYHUzrpBoNjZU46Z4n1AnQ/hEiChOz2YKd4Z6NTfJuq0jZo4hEe80ugXa2jEU4lIgkjRXsXfWz22eAYQb3P0N7FIxZofro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com; spf=pass smtp.mailfrom=jubnut.com; dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b=VQKmOphU; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jubnut.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4W0XKs1C50z9sRg;
+	Thu, 13 Jun 2024 21:20:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jubnut.com; s=MBO0001;
+	t=1718306401;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SzxVulY0TZcuW2PwYcIj3BXHYxEJ9lYYWUWQX+mmOOk=;
+	b=VQKmOphU5q/qHxoGuXx5eJ+VkLPGjLUcXaWxSrzkfwQfkRgSdU2LoE7zC5eiQX0uA6XO0Q
+	UOVBq3O8vvCEKVPFcbI6MyEtVlaDaQ9opyLHEPOS7FZFkG2N8Y50AIE1sMpkwxi02tD4CF
+	IEXpb/ihxt2B0vRrDrPic0GPb4M1Vdfe39AzmPJ3LE/hWpq2xxRn97AH0vEFPmXM53e7Sc
+	Lxj2omMcIE/zxGVnw/n2bZxn3b3YujgUSVfsZKw3wn5kOEReHcFN0+dX4ePNiebvOjVdkc
+	ICKKr9oOj3uB+dJKu8kMkdCguKh9J0OcQqxWxCZlkpCfoKqGUrm+93qx5zuerA==
+From: Ben Walsh <ben@jubnut.com>
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Benson Leung
+ <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in
+ cros_ec_lpc_mec_read_bytes()
+In-Reply-To: <ZmsvHBrYSpwYLyxx@google.com>
+References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
+ <87sexgrdk4.fsf@jubnut.com> <ZmsvHBrYSpwYLyxx@google.com>
+Date: Thu, 13 Jun 2024 20:19:58 +0100
+Message-ID: <87jzisabvl.fsf@jubnut.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606185200.1596-3-thorsten.blum@toblux.com>
-In-Reply-To: <20240606185200.1596-3-thorsten.blum@toblux.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 13 Jun 2024 21:18:48 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jqWL8Ao6TCk71QWfEb4msPp8QYFac1LPytJj5K6_0Aag@mail.gmail.com>
-Message-ID: <CAJZ5v0jqWL8Ao6TCk71QWfEb4msPp8QYFac1LPytJj5K6_0Aag@mail.gmail.com>
-Subject: Re: [PATCH] ACPI/NUMA: Consolidate header includes
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Thu, Jun 6, 2024 at 8:53=E2=80=AFPM Thorsten Blum <thorsten.blum@toblux.=
-com> wrote:
->
-> The header file acpi/acpi_numa.h is included whether CONFIG_ACPI is
-> defined or not.
->
-> Include it only once before the #ifdef/#else/#endif preprocessor
-> directives and fix the following make includecheck warning:
->
->         acpi/acpi_numa.h is included more than once
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> ---
->  include/linux/acpi.h | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index 28c3fb2bef0d..bb18e7bf8826 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -24,6 +24,7 @@ struct irq_domain_ops;
->  #define _LINUX
->  #endif
->  #include <acpi/acpi.h>
-> +#include <acpi/acpi_numa.h>
->
->  #ifdef CONFIG_ACPI
->
-> @@ -35,7 +36,6 @@ struct irq_domain_ops;
->
->  #include <acpi/acpi_bus.h>
->  #include <acpi/acpi_drivers.h>
-> -#include <acpi/acpi_numa.h>
->  #include <acpi/acpi_io.h>
->  #include <asm/acpi.h>
->
-> @@ -777,8 +777,6 @@ const char *acpi_get_subsystem_id(acpi_handle handle)=
-;
->  #define acpi_dev_uid_match(adev, uid2)                 (adev && false)
->  #define acpi_dev_hid_uid_match(adev, hid2, uid2)       (adev && false)
->
-> -#include <acpi/acpi_numa.h>
-> -
->  struct fwnode_handle;
->
->  static inline bool acpi_dev_found(const char *hid)
-> --
 
-Applied as 6.11 material, thanks!
+Tzung-Bi Shih <tzungbi@kernel.org> writes:
+
+> Somewhere like [1] could accidentally get the -EINVAL.
+>
+> [1]: https://elixir.bootlin.com/linux/v6.9/source/drivers/platform/chrome/cros_ec_lpc.c#L232
+
+Sorry, it happens at:
+
+cros_ec_query_all -> cros_ec_proto_info -> ... -> cros_ec_pkt_xfer_lpc
+
+        /* Read response and process checksum */
+        ret = fwk_ec_lpc_ops.read(EC_LPC_ADDR_HOST_PACKET +
+                                   sizeof(response), response.data_len,
+                                                     ^^^^^^^^^^^^^^^^^
+                                   msg->data);
+
+>>
+>> Dan Carpenter <dan.carpenter@linaro.org> writes:
+>> 
+>> > We changed these functions to returning negative error codes, but this
+>> > first error path was accidentally overlooked.  It leads to a Smatch
+>> > warning:
+>> >
+>> >     drivers/platform/chrome/cros_ec_lpc.c:181 ec_response_timed_out()
+>> >     error: uninitialized symbol 'data'.
+>> >
+>> > Fix this by returning the error code instead of success.
+>> >
+>> > Fixes: 68dbac0a58ef ("platform/chrome: cros_ec_lpc: MEC access can return error code")
+>> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>> > ---
+>> >  drivers/platform/chrome/cros_ec_lpc.c | 4 ++--
+>> >  1 file changed, 2 insertions(+), 2 deletions(-)
+>> >
+>> > diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+>> > index ebe9fb143840..f0470248b109 100644
+>> > --- a/drivers/platform/chrome/cros_ec_lpc.c
+>> > +++ b/drivers/platform/chrome/cros_ec_lpc.c
+>> > @@ -139,7 +139,7 @@ static int cros_ec_lpc_mec_read_bytes(unsigned int offset, unsigned int length,
+>> >  	int in_range = cros_ec_lpc_mec_in_range(offset, length);
+>> >  
+>> >  	if (in_range < 0)
+>> > -		return 0;
+>> > +		return in_range;
+>> >  
+>> >  	return in_range ?
+>> >  		cros_ec_lpc_io_bytes_mec(MEC_IO_READ,
+>> > @@ -158,7 +158,7 @@ static int cros_ec_lpc_mec_write_bytes(unsigned int offset, unsigned int length,
+>> >  	int in_range = cros_ec_lpc_mec_in_range(offset, length);
+>> >  
+>> >  	if (in_range < 0)
+>> > -		return 0;
+>> > +		return in_range;
+>> >  
+>> >  	return in_range ?
+>> >  		cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE,
+>> > -- 
+>> > 2.43.0
+>> 
 
