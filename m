@@ -1,49 +1,63 @@
-Return-Path: <linux-kernel+bounces-213939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01AE3907CD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:41:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7B88907CD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAB4728414F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:41:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20288B22A71
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B3814E2C2;
-	Thu, 13 Jun 2024 19:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829BA14C583;
+	Thu, 13 Jun 2024 19:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJzO2Xor"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="H8n2FqwP"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313AB134407;
-	Thu, 13 Jun 2024 19:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA435134407
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 19:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718307657; cv=none; b=uk9Suzjth/HuA9E5W7loB9yTpx1Gt73t5zpKSS/v2pY7aDkBRkELL8nFNGOorZTqozy8ptXlPA2Wk7/EtxZoYqgzzAKwg/44vG5EvU7WrkIwqcLVduJoJ/QWf2QQLStVe0m6iPVasG0F59u0pRSHRCH+Gg+PHVaNz3V2M1FW1Z0=
+	t=1718307719; cv=none; b=j3FCeRwlPgUazE7dd5rDsF6IdidLXu02pJoFXlrK3e1UeDy0d9hU/JrGIljfHzoeyvaex61nK5F/aiQHU42GvBCs08kbydLGIGAQ0jFunj//r3mX65Dme3a72zYE85P4avGTkq6bR8iWSizl0QitOAACffixgBxH2JwpfRFnnoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718307657; c=relaxed/simple;
-	bh=+pt3nA76A/CU9CVxOD1K9yvc7TS7w1gsF6YdwNas9W8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Dn/s+bUtdvl68tPew7vzPo2wp0ttvQsYBvVBsDWgMT/yIAhki1fXiQSwP9OwsjyyVt1Kp6hz1Zqfo5/730HnoCJvkPlVlGJYYlVN32rIWxgQo9HAEuASi2RayUkyP3nxC3+suhGEv8eGBe7JTWQ6NE4jbcJF9xfTFWlzJeYtqjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJzO2Xor; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C196BC4AF1D;
-	Thu, 13 Jun 2024 19:40:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718307655;
-	bh=+pt3nA76A/CU9CVxOD1K9yvc7TS7w1gsF6YdwNas9W8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=YJzO2XorndLtZiDUH4fyhOEvo9bIfO8LUXvlloB2QKtbeaFllmV8PqFBGkU+NOXSl
-	 BTfCEzPemIwpQ2vbJdHgkEBcbIi+zG/QaLif4yxtfgtPtPlCGW2KIN/FgYTgEdjEqO
-	 EQm+SyYt0fOGnlfkvkv8c78xOsDLATFMAjp6FQsOC53EyGlYqPAomngmWDbRY8Xt+5
-	 4+rruY4bhXZR96ET5d71aCx0DJjtTjsOPqI0YIm+XsEWMUOlvhjmn+6N2qDAABT2im
-	 p9oy4LmYjPya789KLbGVWSht73WIcM/Pbz4D3oAvxDt57aGYZQf5A7/79G56WokXB1
-	 U5Br5KEhhVrAA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AF4B7C43619;
-	Thu, 13 Jun 2024 19:40:55 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718307719; c=relaxed/simple;
+	bh=XAZMt9N0NCglaqew8dSYutoepiDFHTvY9wdHf9ybtaM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EHifgB5vT6kN4PIbNnWfz64PFoN3UtabgXUafXDkLtokrzc5XueEyoxXHct1cGCed/DpqG4TJFPBYK9dJmh0ccxONKxAz2issHpEkJGMwZc/rGRtlRu5IrNVXB5ndCRP/9dixR3/c8uaLgNCh3VO40bICw2zcYzEAEI04xgsNOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=H8n2FqwP; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from Monstersaurus.local (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B82CF4CF;
+	Thu, 13 Jun 2024 21:41:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718307700;
+	bh=XAZMt9N0NCglaqew8dSYutoepiDFHTvY9wdHf9ybtaM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=H8n2FqwPsn9XaUAxAi9ViKjzn9H+1Tkzuk/1K3gSDTwc6yMFsT1158JD9PRUBOYRr
+	 Y/dH1FDyJsknVhZrgFl14dWZcxuZdpYGQcs6jm234HLZK05ZeADGcVq+/VgCaJmfLv
+	 nsb1V5NLPlAgYYg99kkhmzjrb4ijc+POsIHLxAR4=
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+To: Umang Jain <umang.jain@ideasonboard.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	linux-rpi-kernel@lists.infradead.org
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.org>,
+	detule <ogjoneski@gmail.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
+	linux-staging@lists.linux.dev (open list:STAGING SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] staging: vc04_services: vchiq_arm: Fix initialisation check
+Date: Thu, 13 Jun 2024 20:41:45 +0100
+Message-Id: <20240613194150.2915202-1-kieran.bingham@ideasonboard.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,40 +65,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [GIT PULL] Networking for v6.10-rc4
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171830765571.27125.610944644558784530.git-patchwork-notify@kernel.org>
-Date: Thu, 13 Jun 2024 19:40:55 +0000
-References: <20240613163542.130374-1-kuba@kernel.org>
-In-Reply-To: <20240613163542.130374-1-kuba@kernel.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: torvalds@linux-foundation.org, davem@davemloft.net,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com
 
-Hello:
+The vchiq_state used to be obtained through an accessor
+which would validate that the VCHIQ had been initialised
+correctly with the remote.
 
-This pull request was applied to netdev/net.git (main)
-by Linus Torvalds <torvalds@linux-foundation.org>:
+In commit 42a2f6664e18 ("staging: vc04_services: Move global g_state to
+vchiq_state") the global state was moved to the vchiq_mgnt structures
+stored as a vchiq instance specific context. This conversion removed the
+helpers and instead replaced users of this helper with the assumption
+that the state is always available and the remote connected.
 
-On Thu, 13 Jun 2024 09:35:42 -0700 you wrote:
-> Hi Linus!
-> 
-> Slim pickings this time, probably a combination of summer, DevConf.cz,
-> and the end of first half of the year at corporations.
-> 
-> The following changes since commit d30d0e49da71de8df10bf3ff1b3de880653af562:
-> 
-> [...]
+Fix this broken assumption by re-introducing the logic that was lost
+during the conversion.
 
-Here is the summary with links:
-  - [GIT,PULL] Networking for v6.10-rc4
-    https://git.kernel.org/netdev/net/c/d20f6b3d747c
+Fixes: 42a2f6664e18 ("staging: vc04_services: Move global g_state to vchiq_state")
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+---
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_arm.c  | 4 ++--
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_core.h | 5 +++++
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_dev.c  | 7 ++++++-
+ 3 files changed, 13 insertions(+), 3 deletions(-)
 
-You are awesome, thank you!
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 54467be8c371..67d853f5f2a0 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -804,7 +804,7 @@ int vchiq_initialise(struct vchiq_state *state, struct vchiq_instance **instance
+ 	 * block forever.
+ 	 */
+ 	for (i = 0; i < VCHIQ_INIT_RETRIES; i++) {
+-		if (state)
++		if (vchiq_remote_initialised(state))
+ 			break;
+ 		usleep_range(500, 600);
+ 	}
+@@ -1299,7 +1299,7 @@ void vchiq_dump_platform_instances(struct vchiq_state *state, struct seq_file *f
+ {
+ 	int i;
+ 
+-	if (!state)
++	if (!vchiq_remote_initialised(state))
+ 		return;
+ 
+ 	/*
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+index 8af209e34fb2..382ec08f6a14 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+@@ -413,6 +413,11 @@ struct vchiq_state {
+ 	struct opaque_platform_state *platform_state;
+ };
+ 
++static inline bool vchiq_remote_initialised(const struct vchiq_state *state)
++{
++	return state->remote && state->remote->initialised;
++}
++
+ struct bulk_waiter {
+ 	struct vchiq_bulk *bulk;
+ 	struct completion event;
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+index 3c63347d2d08..8c4830df1070 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+@@ -1170,6 +1170,11 @@ static int vchiq_open(struct inode *inode, struct file *file)
+ 
+ 	dev_dbg(state->dev, "arm: vchiq open\n");
+ 
++	if (!vchiq_remote_initialised(state)) {
++		dev_err(state->dev, "arm: vchiq has no connection to VideoCore\n");
++		return -ENOTCONN;
++	}
++
+ 	instance = kzalloc(sizeof(*instance), GFP_KERNEL);
+ 	if (!instance)
+ 		return -ENOMEM;
+@@ -1200,7 +1205,7 @@ static int vchiq_release(struct inode *inode, struct file *file)
+ 
+ 	dev_dbg(state->dev, "arm: instance=%p\n", instance);
+ 
+-	if (!state) {
++	if (!vchiq_remote_initialised(state)) {
+ 		ret = -EPERM;
+ 		goto out;
+ 	}
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
 
