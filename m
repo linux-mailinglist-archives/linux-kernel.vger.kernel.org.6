@@ -1,230 +1,101 @@
-Return-Path: <linux-kernel+bounces-212753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A3D99065B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:52:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06AAF9065B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AF131C236F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:52:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD80C1F26954
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6EB13C8FF;
-	Thu, 13 Jun 2024 07:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C94913C9BD;
+	Thu, 13 Jun 2024 07:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V/1nRjC1"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="J6hNF/eB"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B112580039
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 07:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E9D13C8E8;
+	Thu, 13 Jun 2024 07:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718265139; cv=none; b=QaXEGrHOBvXBnBWYfQNBu33ZhsDqTUyI/8ayF43ppVmmxxmrxYmy8C+HGb1weRR5EYAmgpFkN+Tmi43GZRXy1RHDXz5imO5J/JU7U+CzwKUXj9VMeNzjsNdL25UQDR2jbQ+kZyWquHA9sgw/7MpunN7iskWI7J+Ks2OtkA+T3Sw=
+	t=1718265301; cv=none; b=MpsdkSgVnukQWvkhIUAMEPWr8FcIIjVrob+Dg/X+rtcytfIFLcW+o88VfedUiinnZ/D4dsKZtZboadUhAsn36ncucCkAcTJeMwNmWjKuWWr7mkMkg0b59KfWmQbP6sk+sfvrRNSzdUghHulw22+ymjk6edQxd0h0ozUNHKSOl+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718265139; c=relaxed/simple;
-	bh=UBW84QNzhviZ1YYYQHOy+kjynP3pIZcQ2FC6mJcA0rE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OTVy7dUG+tPnCxAyrPNjQYd5OdVMlhifjC2tCA464T5WYFFyy8wJRB0yvuZVR6J88HddcSb9Si2dnZBaC0AO6unGPoKAum8qadTMpAJBd+Bva6+l6xREqyIpcwfG5915u5tMRrBhQPAEyJku1ChS+05+6WBXjC3/5KpxBL8JViE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V/1nRjC1; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4ecf2fff1cdso203731e0c.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 00:52:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718265136; x=1718869936; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RVAot2rBlUp/5AtT89Dnk6Db/qhauHUEK+I0Utm4dKY=;
-        b=V/1nRjC1fOf7TI4uyyIXeCNAmJHM9k/mmZF8tU216dfpQYtD/xW2uPB7+8msZjLkSW
-         3/xmHF+Rc2uhqMf84Dh80kKdxoQ/1rT2UQrAZyjh26hi78e4USxN2hnyj3AKkuioPNdx
-         ML0ymUg6Gb039myxh4Wz8TxIloQFaVbzvK0Zhk2BHCmSs2QfLFcWdkH8VEZqIKxXwFxM
-         jfcSgKIWY+aAXeuWCUrcOshB5H6ohv+aaJodVUjvCaWIFGRisopokilgB5QsQek5HZeD
-         ZqGaRnJ3QRZiwojdZqYXmf77JtWcezrNo4kc9ICqJt2I/e3twNZN+ejf5NVLQZk1tU2D
-         FspQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718265136; x=1718869936;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RVAot2rBlUp/5AtT89Dnk6Db/qhauHUEK+I0Utm4dKY=;
-        b=rzdSGFr/aJqPejz3viIgQBMs4tKgL6m69XcXEMDbDF5b/hqjNkECS1AHrZv6gk4M43
-         t/hmCPoyH6Lvd37kndzXOJbnQFpCSIV9a2xsZ+JYJMEB3IOYD3DEnz0Z6399UQ66CjyV
-         w83PlOwLqHz64H5AzOXkU2JzYFHoOrYP6Zmsfp8M8VCPqRSjTKmERnk9Y/i2Fib46Dun
-         2x2X9HK3W/dyE8S7rFWPLxtM9W2e5sKuyB6hHPQIppLr3UNnGxQpYiqHGbbj+HFuAHSM
-         0qn0wllCdGFgSWqqQXW9FjJISDeAXASGfEALHwQfpAvUBoVM7WOxHWprbngIU06Eq2ze
-         MKDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6XD8bH6aHs/bBDFwaqkdBlm0UhF5Wj7qRRyvgv1BzHwKAkDJvbJe7ubQ8qo4Kqm/HD52pbHDVf0LFjziG3AIH50w8vhNUmFFTtwnZ
-X-Gm-Message-State: AOJu0YwwRKFbGa89dYHI39gQejxbFpYwxdTInAWNXq8IiofTCYGnAcCT
-	fBErJkqNth5pSPbMla8c/BojJlcaLnshRTPVbAjvPF0uQURMHuvcMySDtZ++OpKCZAWazHoMAMh
-	77pPlIVu11pBy+ZfHQIKlkoyp1Rw=
-X-Google-Smtp-Source: AGHT+IFARuBVRgH5ZSETF1WprKkZ2/+FliDRYgvLKglKhTBw1qpD0mkDTG4ohLO6I+cFd7Bsicjz+ynPNNOvZNHUcG0=
-X-Received: by 2002:a05:6122:2a4d:b0:4ec:f4ea:6495 with SMTP id
- 71dfb90a1353d-4ed07bb5f97mr4810171e0c.11.1718265136370; Thu, 13 Jun 2024
- 00:52:16 -0700 (PDT)
+	s=arc-20240116; t=1718265301; c=relaxed/simple;
+	bh=IlUPSgkK7p1HuO+/td3WBezslkq7GVsamNMvlKZWO84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rOsu18TW0SB8JsTr6aJlu6WIVZx/u/hG57G8OxD6nFBM0TrTiAqFucMYKf/JHPvAJ3LTfruE4F3yT6YmdfoAXa8OkM9MSLftROVPBMStqSqENHhAIlpM/b5jAR0fzZ98SvZNqhvH9CRD3Cp0C4bgMBXkHZ/xGUJAtq9OG9seE/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=J6hNF/eB; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=B3aRTXsDCKGjz5H0M1vcgLuL/l8L7HFeO7Ru892md5A=; b=J6hNF/eBSwlcxxvuHLCJgTtrpY
+	VE86/JVsrj51j2BA9f3Q4uaN/XWazpq8ZzELbOdqz2ygRpj3LrrxuVbaNBkHw45JuXSqSeh07BIHO
+	vBCANAwXYGDM7oGTkeEIpBiRRHLvusdB3X78kVNEswRnJNgbDQvp+3A1KaG5/WZhf0VgR5j2QnsnN
+	NyU7NTDBhbjeE+96uTGuxwErtdGC7BLkjMC5LyNIjqqQvIitc5evuimHOShtJVec4Zuw7dvcYaTAY
+	P4jgm7Ii9BGBxtoXpHTOz0tVPqVo3TlC4YuvqUujJeMECXwZn924osFQ/hccOOO98q+iQWvjUP9T7
+	Vq58hLGQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50602)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sHfI8-0005jK-18;
+	Thu, 13 Jun 2024 08:54:40 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sHfI7-000145-31; Thu, 13 Jun 2024 08:54:39 +0100
+Date: Thu, 13 Jun 2024 08:54:38 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Luo Jie <quic_luoj@quicinc.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+	corbet@lwn.net, vladimir.oltean@nxp.com, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next 1/2] net: phy: introduce core support for
+ phy-mode = "10g-qxgmii"
+Message-ID: <Zmqlvn2gOlxoy5Gm@shell.armlinux.org.uk>
+References: <20240612095317.1261855-1-quic_luoj@quicinc.com>
+ <20240612095317.1261855-2-quic_luoj@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610120209.66311-1-ioworker0@gmail.com> <20240610120209.66311-2-ioworker0@gmail.com>
-In-Reply-To: <20240610120209.66311-2-ioworker0@gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 13 Jun 2024 19:52:04 +1200
-Message-ID: <CAGsJ_4y4sKXbq4_ra9tTD-LWgB-x-HECyouxm_9r_N7Kw2We4g@mail.gmail.com>
-Subject: Re: [PATCH v7 1/4] mm/rmap: remove duplicated exit code in pagewalk loop
-To: Lance Yang <ioworker0@gmail.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
-	baolin.wang@linux.alibaba.com, maskray@google.com, ziy@nvidia.com, 
-	ryan.roberts@arm.com, david@redhat.com, mhocko@suse.com, 
-	fengwei.yin@intel.com, zokeefe@google.com, shy828301@gmail.com, 
-	xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com, 
-	songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612095317.1261855-2-quic_luoj@quicinc.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, Jun 11, 2024 at 12:02=E2=80=AFAM Lance Yang <ioworker0@gmail.com> w=
-rote:
->
-> Introduce the labels walk_done and walk_done_err as exit points to
-> eliminate duplicated exit code in the pagewalk loop.
->
-> Reviewed-by: Zi Yan <ziy@nvidia.com>
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Lance Yang <ioworker0@gmail.com>
+On Wed, Jun 12, 2024 at 05:53:16PM +0800, Luo Jie wrote:
+> @@ -1865,7 +1872,8 @@ static int phylink_validate_phy(struct phylink *pl, struct phy_device *phy,
+>  	if (phy->is_c45 && state->rate_matching == RATE_MATCH_NONE &&
+>  	    state->interface != PHY_INTERFACE_MODE_RXAUI &&
+>  	    state->interface != PHY_INTERFACE_MODE_XAUI &&
+> -	    state->interface != PHY_INTERFACE_MODE_USXGMII)
+> +	    state->interface != PHY_INTERFACE_MODE_USXGMII &&
+> +	    state->interface != PHY_INTERFACE_MODE_10G_QXGMII)
+>  		state->interface = PHY_INTERFACE_MODE_NA;
 
-I don't think "return false" necessarily indicates an error, so
-"walk_done_err" doesn't seem like an appropriate name.
-However, this is a minor issue.
+It would be better, rather than extending this workaround, instead to
+have the PHY driver set phy->possible_interfaces in its .config_init
+method. phy->possible_interfaces should be the set of interfaces that
+the PHY _will_ use given its configuration for the different media
+speeds. I think that means just PHY_INTERFACE_MODE_10G_QXGMII for
+your configuration.
 
-Reviewed-by: Barry Song <baohua@kernel.org>
+Thanks.
 
-> ---
->  mm/rmap.c | 40 +++++++++++++++-------------------------
->  1 file changed, 15 insertions(+), 25 deletions(-)
->
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index e8fc5ecb59b2..ddffa30c79fb 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1679,9 +1679,7 @@ static bool try_to_unmap_one(struct folio *folio, s=
-truct vm_area_struct *vma,
->                         /* Restore the mlock which got missed */
->                         if (!folio_test_large(folio))
->                                 mlock_vma_folio(folio, vma);
-> -                       page_vma_mapped_walk_done(&pvmw);
-> -                       ret =3D false;
-> -                       break;
-> +                       goto walk_done_err;
->                 }
->
->                 pfn =3D pte_pfn(ptep_get(pvmw.pte));
-> @@ -1719,11 +1717,8 @@ static bool try_to_unmap_one(struct folio *folio, =
-struct vm_area_struct *vma,
->                          */
->                         if (!anon) {
->                                 VM_BUG_ON(!(flags & TTU_RMAP_LOCKED));
-> -                               if (!hugetlb_vma_trylock_write(vma)) {
-> -                                       page_vma_mapped_walk_done(&pvmw);
-> -                                       ret =3D false;
-> -                                       break;
-> -                               }
-> +                               if (!hugetlb_vma_trylock_write(vma))
-> +                                       goto walk_done_err;
->                                 if (huge_pmd_unshare(mm, vma, address, pv=
-mw.pte)) {
->                                         hugetlb_vma_unlock_write(vma);
->                                         flush_tlb_range(vma,
-> @@ -1738,8 +1733,7 @@ static bool try_to_unmap_one(struct folio *folio, s=
-truct vm_area_struct *vma,
->                                          * actual page and drop map count
->                                          * to zero.
->                                          */
-> -                                       page_vma_mapped_walk_done(&pvmw);
-> -                                       break;
-> +                                       goto walk_done;
->                                 }
->                                 hugetlb_vma_unlock_write(vma);
->                         }
-> @@ -1811,9 +1805,7 @@ static bool try_to_unmap_one(struct folio *folio, s=
-truct vm_area_struct *vma,
->                         if (unlikely(folio_test_swapbacked(folio) !=3D
->                                         folio_test_swapcache(folio))) {
->                                 WARN_ON_ONCE(1);
-> -                               ret =3D false;
-> -                               page_vma_mapped_walk_done(&pvmw);
-> -                               break;
-> +                               goto walk_done_err;
->                         }
->
->                         /* MADV_FREE page check */
-> @@ -1852,23 +1844,17 @@ static bool try_to_unmap_one(struct folio *folio,=
- struct vm_area_struct *vma,
->                                  */
->                                 set_pte_at(mm, address, pvmw.pte, pteval)=
-;
->                                 folio_set_swapbacked(folio);
-> -                               ret =3D false;
-> -                               page_vma_mapped_walk_done(&pvmw);
-> -                               break;
-> +                               goto walk_done_err;
->                         }
->
->                         if (swap_duplicate(entry) < 0) {
->                                 set_pte_at(mm, address, pvmw.pte, pteval)=
-;
-> -                               ret =3D false;
-> -                               page_vma_mapped_walk_done(&pvmw);
-> -                               break;
-> +                               goto walk_done_err;
->                         }
->                         if (arch_unmap_one(mm, vma, address, pteval) < 0)=
- {
->                                 swap_free(entry);
->                                 set_pte_at(mm, address, pvmw.pte, pteval)=
-;
-> -                               ret =3D false;
-> -                               page_vma_mapped_walk_done(&pvmw);
-> -                               break;
-> +                               goto walk_done_err;
->                         }
->
->                         /* See folio_try_share_anon_rmap(): clear PTE fir=
-st. */
-> @@ -1876,9 +1862,7 @@ static bool try_to_unmap_one(struct folio *folio, s=
-truct vm_area_struct *vma,
->                             folio_try_share_anon_rmap_pte(folio, subpage)=
-) {
->                                 swap_free(entry);
->                                 set_pte_at(mm, address, pvmw.pte, pteval)=
-;
-> -                               ret =3D false;
-> -                               page_vma_mapped_walk_done(&pvmw);
-> -                               break;
-> +                               goto walk_done_err;
->                         }
->                         if (list_empty(&mm->mmlist)) {
->                                 spin_lock(&mmlist_lock);
-> @@ -1918,6 +1902,12 @@ static bool try_to_unmap_one(struct folio *folio, =
-struct vm_area_struct *vma,
->                 if (vma->vm_flags & VM_LOCKED)
->                         mlock_drain_local();
->                 folio_put(folio);
-> +               continue;
-> +walk_done_err:
-> +               ret =3D false;
-> +walk_done:
-> +               page_vma_mapped_walk_done(&pvmw);
-> +               break;
->         }
->
->         mmu_notifier_invalidate_range_end(&range);
-> --
-> 2.33.1
->
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
