@@ -1,99 +1,89 @@
-Return-Path: <linux-kernel+bounces-213217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65ABF907188
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:38:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3399390719B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2C81F26B6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:38:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3576A1C24293
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307A71448DE;
-	Thu, 13 Jun 2024 12:37:35 +0000 (UTC)
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29BC1442EF;
+	Thu, 13 Jun 2024 12:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dWNBZiOK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66598142654;
-	Thu, 13 Jun 2024 12:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.224.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C59814386B;
+	Thu, 13 Jun 2024 12:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718282254; cv=none; b=XaDMs/wWeY+CvFjaFV0agy5K+co3fOvku6/EEde7w9g8BPYWLzHB7wQsvVochbfoOzCz08wqwuN8vr4Rg8F9tmBSbRsS0uVAYzPXlEEgdk4gaxFYhxG8tgldeCguHzv6XM/hWgNFLs3HQJj/b+10wcy8xnB0y1W5o9zORQ6+PX8=
+	t=1718282297; cv=none; b=s9lase2b28BwhYL1vdEjNS2HyEPzosEB869vRhWtyuPkAYAdKXwuBQibqk0QKPoXuqiHzvw73FMNM1sCrV+sO9jV9rggh2vFNyRhy0qI6asf4DS5jfiRRLE74xoNGI3axnoNDxiQfAW6HhAqHRgbYiluwtc1KUEUisl63W5vXm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718282254; c=relaxed/simple;
-	bh=j/mjhU1X2GxfRi8fOLaRUoOXPbNo3HzwBNVoqGZBIZo=;
-	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
-	 References:Message-ID; b=poLKYadMk0RFkmz9DUcmdhboHmxb8xv0pRsWXSh5kWpxQmWlRANM6nbU/eVDmjHUTWi1Efjfz47NFK1R4Wi4e7zp4qm9kzhsJVZ8WajJnn3wEwSISyWtstCOlR+yMzGxfy2PNKJBduQSb7NOvpWqIbXp/VX81I/7u2PXjVWbBFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=91.198.224.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [127.0.0.1] (helo=localhost)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=99085fba10=ms@dev.tdt.de>)
-	id 1sHjhq-003Fy7-5c; Thu, 13 Jun 2024 14:37:30 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ms@dev.tdt.de>)
-	id 1sHjhp-003EDT-KM; Thu, 13 Jun 2024 14:37:29 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id 49844240053;
-	Thu, 13 Jun 2024 14:37:29 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id D0B67240050;
-	Thu, 13 Jun 2024 14:37:28 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-	by mail.dev.tdt.de (Postfix) with ESMTP id 8C2543852A;
-	Thu, 13 Jun 2024 14:37:28 +0200 (CEST)
+	s=arc-20240116; t=1718282297; c=relaxed/simple;
+	bh=+Ps/m5LPCrr12cKf+1TsG+NGfRkskSxaIu7J2ih4u9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dMTlg8P+4+IN08D2dOJtkDQrDOKst6VCFpEMEzUrYsRaADz6COMqEQ1YaRZogljMge6TNBphe05XAekH9bLz+PrB/pJkhHcdXyJGjsKvnKCAnnUo73LMmmcOdNbTg+aJY6TlO2tHwkdM2YUN7V8f9Aj5DtjzDlRAzo/IHFuJrLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dWNBZiOK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ED15C4AF1A;
+	Thu, 13 Jun 2024 12:38:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718282296;
+	bh=+Ps/m5LPCrr12cKf+1TsG+NGfRkskSxaIu7J2ih4u9M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dWNBZiOK0WNhGJx5cvEsKkOoqN3c89QhYzBrfgIaR8sqDH6md4bbGOMuXhxszIYcD
+	 yG3tnrBxi0Eat5n7E3yCGm/gqH2yVXKAVbFfSh6v021Yt4k5wJFsd45XqYbWX2U4Fr
+	 Pgt4r5bvQnojgSpjHvd09IFfRA8hZUPpB7jgfyJwPen1Wpzm5FpY+9Tz8rxsxaMywD
+	 9vHUeTXA6gMGerIiV+NSXUshO2uAmz8rH+nbrek8yYKZhbkk4qs5R0/0ZpU1EDlLOy
+	 RNIg8DXGeD4nK/zFj255Oxt7DrIK41x1415r46zWv3bQVDKC1HpOE9dHP7d8sql8QD
+	 Y3MtnY2fENwCw==
+Message-ID: <e0a5690a-2c88-4154-9bec-441d22197468@kernel.org>
+Date: Thu, 13 Jun 2024 15:38:09 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/7] soc: mediatek: Add MediaTek DVFS Resource
+ Collector (DVFSRC) driver
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
+ keescook@chromium.org, gustavoars@kernel.org, henryc.chen@mediatek.com,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, kernel@collabora.com,
+ wenst@chromium.org, amergnat@baylibre.com,
+ Dawei Chien <dawei.chien@mediatek.com>
+References: <20240610085735.147134-1-angelogioacchino.delregno@collabora.com>
+ <20240610085735.147134-5-angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+From: Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <20240610085735.147134-5-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Date: Thu, 13 Jun 2024 14:37:28 +0200
-From: Martin Schiller <ms@dev.tdt.de>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
- f.fainelli@gmail.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 11/12] net: dsa: lantiq_gswip: Update comments
- in gswip_port_vlan_filtering()
-Organization: TDT AG
-In-Reply-To: <20240613120218.yem27x7sf3yld3bv@skbuf>
-References: <20240611135434.3180973-1-ms@dev.tdt.de>
- <20240611135434.3180973-12-ms@dev.tdt.de>
- <20240613120218.yem27x7sf3yld3bv@skbuf>
-Message-ID: <0deceb09e3b38f3e95bfc6f9e69a6392@dev.tdt.de>
-X-Sender: ms@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-X-purgate-type: clean
-X-purgate-ID: 151534::1718282250-34A72D11-E88E9E77/0/0
-X-purgate: clean
 
-On 2024-06-13 14:02, Vladimir Oltean wrote:
-> On Tue, Jun 11, 2024 at 03:54:33PM +0200, Martin Schiller wrote:
->> From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->> 
->> Update the comments in gswip_port_vlan_filtering() so it's clear that
->> there are two separate cases, one for "tag based VLAN" and another one
->> for "port based VLAN".
->> 
->> Suggested-by: Martin Schiller <ms@dev.tdt.de>
->> Signed-off-by: Martin Blumenstingl 
->> <martin.blumenstingl@googlemail.com>
->> Acked-by: Hauke Mehrtens <hauke@hauke-m.de>
->> ---
+On 10.06.24 11:57, AngeloGioacchino Del Regno wrote:
+> The Dynamic Voltage and Frequency Scaling Resource Collector (DVFSRC) is a
+> Hardware module used to collect all the requests from both software and the
+> various remote processors embedded into the SoC and decide about a minimum
+> operating voltage and a minimum DRAM frequency to fulfill those requests in
+> an effort to provide the best achievable performance per watt.
 > 
-> Needs your sign off.
+> This hardware IP is capable of transparently performing direct register R/W
+> on all of the DVFSRC-controlled regulators and SoC bandwidth knobs.
 > 
-> Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+> This driver includes support for MT8183, MT8192 and MT8195.
+> 
+> Co-Developed-by: Dawei Chien <dawei.chien@mediatek.com>
+> [Angelo: Partial refactoring and cleanups]
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+Reviewed-by: Georgi Djakov <djakov@kerenl.org>
+
 
