@@ -1,135 +1,104 @@
-Return-Path: <linux-kernel+bounces-213382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06CF990746F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:56:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0895907471
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 149831C247BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:56:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 935C21F24634
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55431145A02;
-	Thu, 13 Jun 2024 13:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689D1144D28;
+	Thu, 13 Jun 2024 13:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fpwTG4bq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0b1XjhM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D32143C7E;
-	Thu, 13 Jun 2024 13:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2579C8C7;
+	Thu, 13 Jun 2024 13:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718286952; cv=none; b=NmBcAzHW5yM+vZJYz1T43r6Zo7nNfPoVP2q8UU8p9BsIs0lLDQ7GlW6VFhFG/vcSRR0t0nWzpZTftLkMf1JK0qgPeFBzcx9KY7Hi5Y7gyW1Rz/gpJEp4sXsg2aN7jrpeUqU4R56oNcwGojFvcbT2fgUv12tmQD6gb95j6RVbqQg=
+	t=1718287030; cv=none; b=s1YrFMJLburTTKcC5Ga4au9up11V1ALPnmQ4JVS6C4QmE/Gazx13+3G7OOugGG99qpTr+GREAyDJ6gm0mFxsN2w9xnwp0H6Nr/5ceI3D/UQRSG+o+s+rx18Xd7Nja0ov1GxJvHPhbOp+ggb1+6LHHDSAZgL/hQfydmQb3uutXDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718286952; c=relaxed/simple;
-	bh=ruBhMiNrl6DWKM+LJobAh8HCSYRSg0kc1KeRJYgKkuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OibjCcJKA92p+UPyEdQRJWch6zbe5rswRKNEB/eKNlQ2VdFRvfouw/m7KYCbacUQgQYQ/v1B90w7PoZ5Sc6crZvo/JwBopE259kHjItW+zZRiP7njwAY8gceYHMfTbBOtI/f0K4a9PEOdYbNwfYxMaBnKM/2wGhYFI6OkuVeEOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fpwTG4bq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB8A3C32786;
-	Thu, 13 Jun 2024 13:55:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718286952;
-	bh=ruBhMiNrl6DWKM+LJobAh8HCSYRSg0kc1KeRJYgKkuA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fpwTG4bqx7o8i7zCV8Z519l65VnUMnC63A8fjcvNMdC9ev1OhZFvYQV7AFG5chf9s
-	 i0uCDRith0rsmrgNttnoD6OUJioB80fqaxUTsFDyQT5ahajhvlJY3WznC2jzLJPsch
-	 OxWZjXNU1XAcGNxDE3Y2Yv8X0FecobYFOHZkluJ0=
-Date: Thu, 13 Jun 2024 15:55:49 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: Gao Xiang <hsiangkao@linux.alibaba.com>, cve@kernel.org,
-	linux-kernel@vger.kernel.org, linux-cve-announce@vger.kernel.org,
-	Baokun Li <libaokun@huaweicloud.com>,
-	=?utf-8?B?5p2o5LqM5Z2k?= <yangerkun@huawei.com>
-Subject: Re: CVE-2024-36966: erofs: reliably distinguish block based and
- fscache mode
-Message-ID: <2024061323-ibuprofen-dreamy-ae0b@gregkh>
-References: <2024060804-CVE-2024-36966-8bbb@gregkh>
- <686626cd-7dcd-4931-bf55-108522b9bfeb@linux.alibaba.com>
- <362b1e1b-dcdb-4801-a9fc-18d019e7c775@huawei.com>
+	s=arc-20240116; t=1718287030; c=relaxed/simple;
+	bh=ObQi8NQBz2Y2ivnMx8cOhGMCyJoPmV4ZTrlIbXTx9Tk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To; b=DQtBCPko9EdQ+eEg8zQWnd80BvVHwTYpGnuEOTYqNdicrCoeg6mFiCcqIAqWMijTyEZ5FjCGytwNc7J5kK30KtQiKy7F7TRuKgvMOIWIAd89NYkEMkG/KLiNbttG0fwNwzLIq8xU784m6p5v/NZ2aSd027dswkzUwtxbsNWI7nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0b1XjhM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2862C32786;
+	Thu, 13 Jun 2024 13:57:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718287030;
+	bh=ObQi8NQBz2Y2ivnMx8cOhGMCyJoPmV4ZTrlIbXTx9Tk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:From;
+	b=a0b1XjhMsfH4Sqk6NUmSEhBElTllzhWkO6RxuD2Xx5kDWbfnL+BwAMOc5tYgTN0fk
+	 cYM6R110WMdmH9pcG6X7bjdanPK1g9NAAnTplpB9AocDh5qervqUNf6ofnrCgrFolI
+	 HIFqQPvBgeaRUzUtU6gyzUnLpEtlN/gzREeo+f3ZNArOm2l6Jxr54LXSCxew7+4Jc9
+	 Rr+3vnFfRSf5CrxmlW4ATJibSy1WE8zRc4BhaBjrZQ993yZTyijs6NZT7vuwRffkYz
+	 r5eQgHxIbDCXAB8Y3FJb96vVpvdSwJ7CWsvk+mO8tsDaXRNZCBZdh1l2gsHW05364M
+	 lYf+sflfW8bpw==
+From: SeongJae Park <sj@kernel.org>
+To: Honggyu Kim <honggyu.kim@sk.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Gregory Price <gregory.price@memverge.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	42.hyeyoo@gmail.com,
+	art.jeongseob@gmail.com,
+	kernel_team@skhynix.com,
+	Hyeongtak Ji <hyeongtak.ji@sk.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	Yunjeong Mun <yunjeong.mun@sk.com>,
+	damon@lists.linux.dev
+Subject: Re: [PATCH 0/8] DAMON based tiered memory management for CXL memory
+Date: Thu, 13 Jun 2024 06:56:49 -0700
+Message-Id: <20240613135649.26707-1-sj@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20240613132730.650-1-honggyu.kim@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <362b1e1b-dcdb-4801-a9fc-18d019e7c775@huawei.com>
 
-On Thu, Jun 13, 2024 at 07:21:14PM +0800, Baokun Li wrote:
-> On 2024/6/13 17:38, Gao Xiang wrote:
-> > Hi,
-> > 
-> > (+Cc Baokun Li)
-> > 
-> > On 2024/6/8 20:53, Greg Kroah-Hartman wrote:
-> > > Description
-> > > ===========
-> > > 
-> > > In the Linux kernel, the following vulnerability has been resolved:
-> > > 
-> > > erofs: reliably distinguish block based and fscache mode
-> > > 
-> > > When erofs_kill_sb() is called in block dev based mode, s_bdev may not
-> > > have been initialised yet, and if CONFIG_EROFS_FS_ONDEMAND is enabled,
-> > > it will be mistaken for fscache mode, and then attempt to free an
-> > > anon_dev
-> > > that has never been allocated, triggering the following warning:
-> > > 
-> > > ============================================
-> > > ida_free called for id=0 which is not allocated.
-> > > WARNING: CPU: 14 PID: 926 at lib/idr.c:525 ida_free+0x134/0x140
-> > > Modules linked in:
-> > > CPU: 14 PID: 926 Comm: mount Not tainted 6.9.0-rc3-dirty #630
-> > > RIP: 0010:ida_free+0x134/0x140
-> > > Call Trace:
-> > >   <TASK>
-> > >   erofs_kill_sb+0x81/0x90
-> > >   deactivate_locked_super+0x35/0x80
-> > >   get_tree_bdev+0x136/0x1e0
-> > >   vfs_get_tree+0x2c/0xf0
-> > >   do_new_mount+0x190/0x2f0
-> > >   [...]
-> > > ============================================
-> > > 
-> > > Now when erofs_kill_sb() is called, erofs_sb_info must have been
-> > > initialised, so use sbi->fsid to distinguish between the two modes.
-> > > 
-> > > The Linux kernel CVE team has assigned CVE-2024-36966 to this issue.
-> > > 
-> > > 
-> > > Affected and fixed versions
-> > > ===========================
-> > > 
-> > >     Fixed in 6.6.32 with commit f9b877a7ee31
-> > >     Fixed in 6.8.11 with commit dcdd49701e42
-> > >     Fixed in 6.9 with commit 7af2ae1b1531
-> > 
-> > For reference, this issue doesn't affect Linux kernel below 6.6.
-> > 
-> > This behavior ("s_bdev may not be initialized in erofs_kill_sb()")
-> > is introduced due to commit aca740cecbe5 ("fs: open block device after
-> > superblock creation").
-> > 
-> > In other words, previously .kill_sb() was called only after
-> > fill_super failed and problematic erofs_kill_sb() called due to
-> > setup_bdev_super() failure can only happen since Linux 6.6.
-> > 
-> > Thanks,
-> > Gao Xiang
+On Thu, 13 Jun 2024 22:27:26 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
+
+> On Thu, 13 Jun 2024 22:17:31 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
+> > There was an RFC IDEA "DAMOS-based Tiered-Memory Management" previously
+> > posted at [1].
+> >
+> > It says there is no implementation of the demote/promote DAMOS action
+> > are made.  This patch series is about its implementation for physical
+> > address space so that this scheme can be applied in system wide level.
+> >
+> > Changes from RFC v4:
+> > https://lore.kernel.org/20240512175447.75943-1-sj@kernel.org
+> >   1. Add usage and design documents
+> >   2. Rename alloc_demote_folio to alloc_migrate_folio
+> >   3. Add evaluation results with "demotion_enabled" true
+> >   4. Rebase based on v6.10-rc3
 > 
-> Exactly! I'm so sorry I forgot to add the Fixes tag.
+> Sorry for making confusion, I didn't add "PATCH v5" tag for this patch
+> series so please ignore and see the resent one.
 
-No worries.  I've updated the CVE database with this information and the
-json file and web site will show the new information soon when it gets
-propagated.
+Thank you for clarifying this.
 
-thanks,
+Nonetheless, I don't mine resetting the version number of a patchset after
+dropping RFC.  Actually, I personally rather prefer resetting the version
+number.  Anyway, I don't care that much.  Please use any way that you feel more
+comfortable :)  Please just keep the number monotonically increase.
 
-greg k-h
+
+Thanks,
+SJ
+
+> 
+> Honggyu
 
