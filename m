@@ -1,163 +1,82 @@
-Return-Path: <linux-kernel+bounces-212508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B1DF906236
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:57:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42FE590622D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EEB31C215BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:57:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67B291C213BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52AF12CD8E;
-	Thu, 13 Jun 2024 02:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693CA12CD8F;
+	Thu, 13 Jun 2024 02:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="BXBg2aSC"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="mAcO7s4G"
+Received: from mail-43166.protonmail.ch (mail-43166.protonmail.ch [185.70.43.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BE6126F1D;
-	Thu, 13 Jun 2024 02:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1388779C0;
+	Thu, 13 Jun 2024 02:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718247464; cv=none; b=lklrBU9lAx6okyrqawuBdJmYLoo1gMLC3WiGtEK/QjPnk7D9H5fqtLfk0frVEKtmWco/xpZHRCQnPv0/fLR7QAz4cZGCGEK8Kn6PL17Ek3/UcOmnsqeCJV9DQiWd9uRGvCBf+zsf64+zmwROxwTZGxRKJr32iRy2SgTtxiCRCWo=
+	t=1718247413; cv=none; b=Fr2F62uwU6NTyAATlrIkqtDvk0CF+1hB4/iEvDHfLzraQ6ta/WRuIjEDbm0u5OnOybumhmTtPuUQBvwDu0cQZ7Wm2tutEpSWDlmzivIotbmGO8o6luVHdEC1lBMtYmD5HyCTECKSOybg3B8u/PVgX8/4fAINToPOdlW0Zz66Ww0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718247464; c=relaxed/simple;
-	bh=TLL7Vi4AXjbV0h+Rp+oTDPJbtBaUErrOe9Swh52bSwo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R+R4jv2xqZjKxZbpVjqpS0aM0CpjU5EBuvQRTY/rSgvgsoH05pM0VH/1SfwNMR7CwSkBSl1mOV0t6wKpq5t2Pe06A8ksq4RXziE6I1wab94qtIrV9AEW6rUbiIhkCkvroANG3jY7EI0Nqhm0alJ/2HYvV135c5XuL4i7XkmglAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=BXBg2aSC; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [0.0.0.0] ([134.134.137.76])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45D2uYQl3987160
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 12 Jun 2024 19:56:35 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45D2uYQl3987160
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024051501; t=1718247397;
-	bh=vQd3vUyfsayygHgkM5vM2MNlvWp19CaBHld+FXf7POM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BXBg2aSCEhzk2RvuSnVO0dJBYl4slJiiWnlYi4TuGGDOoze45N+zfoscff9daak2V
-	 DfThAqiqZwkTySyJ4/LN9SQYQVXgL7MkIYPzNUllsL629ysmcVZBvZfiX7bYQUanp2
-	 Ku9nxoPOLH8u5Zpp9zej6hpAQNKsZASwXvOMNVOdr7GzUJuFYZDPan14Ad/YF2DgeQ
-	 vadXv3MSroQfyBFL2QHM3nQ3QZBeLNYY4TLJLTGQhvvrZtyILLD9vHNfcDp586q4zB
-	 KObZ0/Xq4iiFpiN8Cwq26xUJu4LNTnlkddHfhPtC4Mpq9TYhzYORGujpPUmeAK8j50
-	 5UIGU/oHdxDdQ==
-Message-ID: <7bf64b12-ea59-470c-ac31-8226be4eb496@zytor.com>
-Date: Wed, 12 Jun 2024 19:56:28 -0700
+	s=arc-20240116; t=1718247413; c=relaxed/simple;
+	bh=v6EHWvK61kiveLsS+vOvVRR1JYgbPNmon5wekWK080M=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IgW/CVh07ZbFT/sHSWDziLB9z30/jfIbiXCn0IRwkpxDkoLl3V16qs7mC8xzAY9oQJKF8aXYhPUOudOeQViV7YWsjamPhkOXy7BnS3h68Svnhd0ayusQ45uSVF0dfrvfjTukEjEh9J8/sidbdnlNMewLVKy//Qan359Ix5GbnSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=mAcO7s4G; arc=none smtp.client-ip=185.70.43.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1718247410; x=1718506610;
+	bh=/WF9YMVVkLWBKK5C0uFSZxjSXeVeRPdRrY1i4Gk6e8s=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=mAcO7s4GJqRKPZfRU7za40B6etNmBxqHs0GSDJQlrXG9LFbjCBIm6X1cZUElmKx+p
+	 CjCKqORxTDz3+xb0Oq8zCWINyVIeq+GZoGk/s/lDVAOhtH99uDLrDV6+4ratdijE36
+	 yc+zwCqgErcyLErTapoc4lG0JLswsNCPPyctLi04PPjcmtN7Ihn6Hm6JyzmNkYr2E3
+	 zOJw87/ktTscHh9TU7j+dU1sBluMzI/YM8dh7YKctCsVocK8/MXj5BGBxQ9h3s8ZQM
+	 iY/VNRe1jfLskJYTQMkQMXWrhjBsBfT9oeXkEwe514mPJ0yWF4Q1rfnWwzAXGbisS1
+	 GBTidlnPmqKBg==
+Date: Thu, 13 Jun 2024 02:56:46 +0000
+To: linux-kernel@vger.kernel.org
+From: Raymond Hackley <raymondhackley@protonmail.com>
+Cc: Markuss Broks <markuss.broks@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, Nikita Travkin <nikita@trvn.ru>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: [PATCH v2 0/3] Add support for Imagis IST3038 and clarify the usage of protocol_b
+Message-ID: <20240613025631.5425-1-raymondhackley@protonmail.com>
+Feedback-ID: 49437091:user:proton
+X-Pm-Message-ID: 29b1f6575173bd119d3055ab5b1e3baec68ba92b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND v1 1/3] x86/cpufeatures: Add {required,disabled} feature
- configs
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, will@kernel.org, peterz@infradead.org,
-        akpm@linux-foundation.org, acme@kernel.org, namhyung@kernel.org
-References: <20240509205340.275568-1-xin@zytor.com>
- <20240509205340.275568-2-xin@zytor.com>
- <20240612133340.GBZmmjtD40dzhsWVyg@fat_crate.local>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20240612133340.GBZmmjtD40dzhsWVyg@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 6/12/2024 6:33 AM, Borislav Petkov wrote:
-> On Thu, May 09, 2024 at 01:53:38PM -0700, Xin Li (Intel) wrote:
->> diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
->> index 2a7279d80460..719302d37053 100644
->> --- a/arch/x86/Kconfig.cpu
->> +++ b/arch/x86/Kconfig.cpu
->> @@ -358,6 +358,10 @@ config X86_P6_NOP
->>   	depends on X86_64
->>   	depends on (MCORE2 || MPENTIUM4 || MPSC)
->>   
->> +config X86_REQUIRED_FEATURE_NOPL
-> 
-> Can we keep the X86_{REQUIRED,DISABLED}_ prefixes solely in
-> arch/x86/Kconfig.cpufeatures and not spill them out into the rest of the tree?
+Imagis IST3038 is another variant of Imagis IST3038 IC, which has
+a different register interface from IST3038C (possibly firmware defined).
 
-Good point, let me try.
+Unlike IST3038C/IST3032C, IST3038 has different registers for commands,
+which means IST3038 doesn't use protocol B.
+Similar to IST3032C and maybe the other variants, IST3038 has touch keys
+support, which provides KEY_APPSELECT and KEY_BACK.
 
-> 
-> This way there will be no confusion between X86_FEATURE_, X86_REQUIRED_FEATURE_,
-> X86_DISABLED_FEATURE_ and so on, and which one I am supposed to use where...
+Add support for IST3038 with touch keys.
 
-Currently X86_DISABLED_FEATURE_ macros are defined only in:
-arch/x86/Kconfig.cpufeatures. But X86_REQUIRED_FEATURE_ macros are not.
+protocol_b is a property, which tells Imagis panel to use a different
+format for coordinates.
 
+IST30XXC series is known for using protocol B, while the other series
+aren't. Note this could be confusing, unlike the model name implies.
 
->> diff --git a/arch/x86/Kconfig.cpufeatures b/arch/x86/Kconfig.cpufeatures
->> new file mode 100644
->> index 000000000000..326a8410ff06
->> --- /dev/null
->> +++ b/arch/x86/Kconfig.cpufeatures
->> @@ -0,0 +1,153 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +#
->> +# x86 feature bits (see arch/x86/include/asm/cpufeatures.h) that are
->> +# either REQUIRED to be enabled, or DISABLED (always ignored) for this
->> +# particular compile-time configuration.  The tests for these features
->> +# are turned into compile-time constants via the generated
->> +# <asm/featuremasks.h>.
->> +#
->> +# The naming of these variables *must* match asm/cpufeatures.h.
-> 
-> I presume they must match X86_FEATURE_<name>?
+Adjust the usage of protocol_b to avoid confusion.
 
-Right, let me add this.
-
-> 
-> And REQUIRED and DISABLED is manipulated in by the script?
-> 
-> I guess I'll see later.
-
-Yep!
-
-Thanks!
-     Xin
+---
+v2: Sort the compatible enties in alphabetical order.
+    Document the binding before using in the driver.
 
 
