@@ -1,36 +1,36 @@
-Return-Path: <linux-kernel+bounces-213254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E5BD907326
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:08:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BCEF907327
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C29285DD2
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE4D7285EB5
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B93614430E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB20144313;
 	Thu, 13 Jun 2024 13:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aSWnI0GJ"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RKrtvdq0"
 Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9CA14374F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90217142E81
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718284074; cv=none; b=OuL2pc2HDb77l+hYgecyu6WtKkJnaYLG5bBfdtPth1Rk2OJxaoXpn4j8W/SDSLw7j6t7nHselWn3nLZbMx6WKrPnm7TlDHsvF0enDouzfnA9fNhNJbNtL3b8YA7i6s3hayZagtelKWMZ0d+FGaAksZv+dVF44/TRuOuH+zRgzpw=
+	t=1718284074; cv=none; b=sfvg0UdjOgREanvSgkdY33POrC78vl9BKDGNrHqjeooM6i4MXv8GOj5vZnMieHKbrXd3SDQHMFWhu8drqtyjKuz9AOw0zw3XfYsk6vat+D54jE41e+aKNfaC7MjcoEPYE8LlsTG72U5CfTkNU6Uss3WWFhH557KGN8emQFGdHt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718284074; c=relaxed/simple;
-	bh=5v3OteQ+iPtQtwsfpvDZgQXYC34uG2KmvqnZtL5tCmw=;
+	bh=KoeKOC9BxNbULIOx5THehrA2LvyMrmoh0J2kqk1uxqk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MmNIV4UhfRhVepwn6c8+OwPqcUaTy7KAEqXaSuqMFfpGRCv4uwuv4vK1CDvWMFKVZXejj3b5setvfp4pR0DBwUNzfhmxjXC20Prn3IgHGEHY4dlACbCq3Y6XVcjJrgg8jOTVGA8MjEffo7FeG6kiAp+8p1gA4xUlOJ7krsOmguE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aSWnI0GJ; arc=none smtp.client-ip=217.70.183.193
+	 In-Reply-To:To:Cc; b=NqSLDmqbb2s4XQGuGCRyvF5iw+4BCXiw3MOWvSGkX8hLy25SL8Lht3eqmZsmoCBro9U5ndwfMMQiga0iE49xGvgZe+ZcXWNNgwgGQAYSRBGgx+ushZD/tQJxt/X2gG+9gPxoDxoBfa+VFyFHs9v4HA44BREENVpPJKyls82nxns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RKrtvdq0; arc=none smtp.client-ip=217.70.183.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3045D240010;
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 852C0240003;
 	Thu, 13 Jun 2024 13:07:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
 	t=1718284064;
@@ -38,15 +38,15 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qpfOLD3dQlg2lQGCyJu7ICX5/KRhRcQjupadFQHV4Ko=;
-	b=aSWnI0GJT5OsyF4/x3DUYccXEeeAlC76BYGQ9IDwjYWAWj/Mh3xZlIJpJg8QW4MshbepBP
-	HnXAYNGeJ3Ol3fWYG3RiNPjrLJOw30KwetwhZOYoWe3VtkLsQYI/2n2d89+XGsNhqDaYfa
-	S38cw8F3QLbqk/pDR3HuagxBGqZ4oB1jFFbhzfzWTMbVnq527E2s6bjSGjg2AtP39bRMvZ
-	Mf6dPd2YiHfkN3GR6rsAhwQBDGA4xYE6bb0RmKKXx5uqpQUIVVEjpyZJtBBVnTNTvIaXIc
-	+wzO+eNYrcQePdOgIN8tLRFA1ZT69BxDsbAA5wm98QuskdBBW8bi5TpX8QxXVA==
+	bh=jPqUbSf1Qdf1yloJtVBeCvPFg+XlI7QIXeQdbRho+l4=;
+	b=RKrtvdq0hC2/jVYPZXrCIbBpbVPtezi8Xmq7AsBucCN/8VRQ01OeU+YJRYGXQFCu70cAoi
+	gWo5WU2D20OwWRl8/jG7xhubDQeDJjH2l9MvjPn24E3qluWIvKiqPOsPFgsFaOXeDpFs/a
+	ZfxJ20Hp1qY3w5fjqcthFwpFAi9CNqMUDhtiobwkGUMPVUZXY+Jz2QBMaDjHDDM9zBWE+1
+	KLC46yShOdEA9/G+xuq10QmEQDqIipoFEX2res29SxNOYrQRsQtB4WtZjEVKw1/YjCvDQ8
+	+UTcYTTpXkfxUEUzXCYc3jcT97+k+EoOtn/VwPR1S3wFtgiMvOM5k+lWhsbsdA==
 From: Thomas Richard <thomas.richard@bootlin.com>
-Date: Thu, 13 Jun 2024 15:07:30 +0200
-Subject: [PATCH 1/2] mux: add mux_chip_resume() function
+Date: Thu, 13 Jun 2024 15:07:31 +0200
+Subject: [PATCH 2/2] mux: mmio: add resume support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,8 +54,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240613-mux-mmio-resume-support-v1-1-4525bf56024a@bootlin.com>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240613-mux-mmio-resume-support-v1-2-4525bf56024a@bootlin.com>
 References: <20240613-mux-mmio-resume-support-v1-0-4525bf56024a@bootlin.com>
 In-Reply-To: <20240613-mux-mmio-resume-support-v1-0-4525bf56024a@bootlin.com>
 To: Peter Rosin <peda@axentia.se>
@@ -65,67 +65,49 @@ Cc: linux-kernel@vger.kernel.org, gregory.clement@bootlin.com,
 X-Mailer: b4 0.12.0
 X-GND-Sasl: thomas.richard@bootlin.com
 
-The mux_chip_resume() function restores a mux_chip using the cached state
-of each mux.
+From: Théo Lebrun <theo.lebrun@bootlin.com>
 
+No need to save something during the suspend stage, as the mux core has an
+internal cache to store the state of muxes.
+
+This cache is used by mux_chip_resume() to restore all muxes.
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
 ---
- drivers/mux/core.c         | 29 +++++++++++++++++++++++++++++
- include/linux/mux/driver.h |  1 +
- 2 files changed, 30 insertions(+)
+ drivers/mux/mmio.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/mux/core.c b/drivers/mux/core.c
-index 78c0022697ec..0858cacae845 100644
---- a/drivers/mux/core.c
-+++ b/drivers/mux/core.c
-@@ -215,6 +215,35 @@ void mux_chip_free(struct mux_chip *mux_chip)
+diff --git a/drivers/mux/mmio.c b/drivers/mux/mmio.c
+index 30a952c34365..00405abe3ce3 100644
+--- a/drivers/mux/mmio.c
++++ b/drivers/mux/mmio.c
+@@ -130,13 +130,25 @@ static int mux_mmio_probe(struct platform_device *pdev)
+ 
+ 	mux_chip->ops = &mux_mmio_ops;
+ 
++	dev_set_drvdata(dev, mux_chip);
++
+ 	return devm_mux_chip_register(dev, mux_chip);
  }
- EXPORT_SYMBOL_GPL(mux_chip_free);
  
-+/**
-+ * mux_chip_resume() - restores the mux-chip state
-+ * @mux_chip: The mux-chip to resume.
-+ *
-+ * Restores the mux-chip state.
-+ *
-+ * Return: Zero on success or a negative errno on error.
-+ */
-+int mux_chip_resume(struct mux_chip *mux_chip)
++static int mux_mmio_resume_noirq(struct device *dev)
 +{
-+	int ret, i;
++	struct mux_chip *mux_chip = dev_get_drvdata(dev);
 +
-+	for (i = 0; i < mux_chip->controllers; ++i) {
-+		struct mux_control *mux = &mux_chip->mux[i];
-+
-+		if (mux->cached_state == MUX_CACHE_UNKNOWN)
-+			continue;
-+
-+		ret = mux_control_set(mux, mux->cached_state);
-+		if (ret < 0) {
-+			dev_err(&mux_chip->dev, "unable to restore state\n");
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
++	return mux_chip_resume(mux_chip);
 +}
-+EXPORT_SYMBOL_GPL(mux_chip_resume);
 +
- static void devm_mux_chip_release(struct device *dev, void *res)
- {
- 	struct mux_chip *mux_chip = *(struct mux_chip **)res;
-diff --git a/include/linux/mux/driver.h b/include/linux/mux/driver.h
-index 18824064f8c0..2a7e5ec5d540 100644
---- a/include/linux/mux/driver.h
-+++ b/include/linux/mux/driver.h
-@@ -88,6 +88,7 @@ struct mux_chip *mux_chip_alloc(struct device *dev,
- int mux_chip_register(struct mux_chip *mux_chip);
- void mux_chip_unregister(struct mux_chip *mux_chip);
- void mux_chip_free(struct mux_chip *mux_chip);
-+int mux_chip_resume(struct mux_chip *mux_chip);
- 
- struct mux_chip *devm_mux_chip_alloc(struct device *dev,
- 				     unsigned int controllers,
++static DEFINE_NOIRQ_DEV_PM_OPS(mux_mmio_pm_ops, NULL, mux_mmio_resume_noirq);
++
+ static struct platform_driver mux_mmio_driver = {
+ 	.driver = {
+ 		.name = "mmio-mux",
+ 		.of_match_table	= mux_mmio_dt_ids,
++		.pm = pm_sleep_ptr(&mux_mmio_pm_ops),
+ 	},
+ 	.probe = mux_mmio_probe,
+ };
 
 -- 
 2.39.2
