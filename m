@@ -1,156 +1,133 @@
-Return-Path: <linux-kernel+bounces-213864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F301A907BC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:55:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAD42907BCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E654C1C23AAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:55:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B915B1C2484A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC1414B950;
-	Thu, 13 Jun 2024 18:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6B214BF92;
+	Thu, 13 Jun 2024 18:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="GHZjS+eH"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e6TxCS+O"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442B014AD22
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA1514B061;
+	Thu, 13 Jun 2024 18:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718304906; cv=none; b=lzZ5zIHRSlA7yovd/UqaaeNVCIyrkPHL1RnpsJU88m5ZfOoOX8GgdBGoYbU25ZAX1Ay6mNtFga1/B3yfI7DfHyXXLm90/rilyqUOx0p8uUKqX/omIpl8Zue/DZr4iaWmlUw7ghujJKWyPcejhxKgm2gKtolunqrD7aKCMY0hRUY=
+	t=1718304953; cv=none; b=gtBlvSyj6UI1LC+aVRZsr9GarQJCIMPoIi7Un0DwYpjgMv3DblqppKuMMQJuvx4wnDc+lbE0eSvlySxY+BkrNyfjglCiu1edWSPNc5Uk6sf9vwY4VVA7FuXiDxuJ40OSmFTXc2/JB32C25DGbXgOEahXOVEi02iKhZCN5LHJSFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718304906; c=relaxed/simple;
-	bh=Gt1evT2ZipUP3A+a89FXb11fe3WcAOPmqcd8GjtBsjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nfDuot6atkzUPl5MM4pJHgH29jYkrYxCvFK7/1QqgHccTz+ndAsFuUoqYuBSkottKwWU02FMWUVz51RhLBdI84GCDdLIrzyCfOlLNmpU5LitIYa6dnWRAVMSSxJYXYKgcnbJ7KiFCO937+dYqmXVKwhub5Sd7pGn+wvpHXIrIUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=GHZjS+eH; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d21b3da741so733672b6e.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:55:05 -0700 (PDT)
+	s=arc-20240116; t=1718304953; c=relaxed/simple;
+	bh=PB2nojLhZzae5rx9ilIWiCyCUZzKIumHsScsPI9lg9I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HzDEbaJfk3yq/twglG5sHNgwwWo7CsZ8QJlbSlzNZcf+VGMPGTXKYILtqVY+eT9s8HkFImuXTwZkeGDx6BG14fxwQ6vqIXosCToqp5VfnJagNwgo48T+GOKnQcVfU7D+CtDwVu3fCEwS0sF4jWMuVE1lBgKb9AzFz0OfD1j908Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e6TxCS+O; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-4e7eadf3668so522239e0c.0;
+        Thu, 13 Jun 2024 11:55:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1718304904; x=1718909704; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ir7jlQ3ukg3Y+MOa/f3FfJkxsyDu68agk9z7RN1WCrk=;
-        b=GHZjS+eH2ab+5fRa8RnB/gVniYwqF38mGtfVcdNdXjMxOiwjJbeUjTdq0yo8QiGM8T
-         1wD53lyZjtcC/wk8kQ3GZUqt3i9Z398+kGkQOXEsJDPgZfdK1omf9anEirt4s7zIvJLW
-         t1cFiIoBRw/ZFUWuhcwVL7eo1LSIlLXWZqnSxUk83FFSKA+GmKFYmVK/6ObNjyy2Yltg
-         fbiVvuCWm/HZJ+J3jGoyODugYbSu4HQTegphG1gotabXLFMbmMkuE26S36Znh+UW59il
-         QN94taaag0B5C7Xpl8QzgHjsLohwNlZkgVSux+PfSkKj+AnYXJeoM9pErWeYKIc92mT+
-         OX5g==
+        d=gmail.com; s=20230601; t=1718304951; x=1718909751; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A8rHVmgvSmGrxOP2jWFGDRV2w5cu6w7bmnQNCKQ1muA=;
+        b=e6TxCS+O9aQfngFVhOYQ1VtJzbOYuRTkNOIAOoyHsr6VsKxS2OUDTqItRzRf1Tsec5
+         n6i1gZTFU0hNGNSqzJM6xuZPgK4ITRWpPP8GhDnn6EXkpnN83dZyClJgP6LbZZh9E0KZ
+         K9AeHRhklbCFceEmczksHsFBdPCrvX9S9wmd6sloo7mKBOcYBHvlHzm5utE/zsfwacGu
+         A7OzF7PL9MK8xeof5hSzyaEMoqAsyU5wJ0DC4UUn8f78JF8+sNrhBOB+dtGdW6NPXh0n
+         JLkjHR5lBhbe4StEGXqYvqJqGDCajErnCPDx4lUB9cADjSTJDJh6woirz58i6q7jtQ79
+         b2fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718304904; x=1718909704;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ir7jlQ3ukg3Y+MOa/f3FfJkxsyDu68agk9z7RN1WCrk=;
-        b=JpHPP6fhved7Ko0JTKtkOETcHdDlz8Jdbc1m56ZAo60wQxXc5TlWaQ5rPosSakDF/A
-         fbITCRM7Xm9d8QRcxqopkRGjuqLURtJ7StCdvI5g/9nRlsfFXum708JJZHB5W71ITZdS
-         FaFrt2KGcw1ioYT92+vZQur0HsP6HOO0DV69WWsCju6pF8NmwKo1PUXagK54F0sIiF5z
-         0kpJk/8N6pdUozaashdQwapoXwXaJG1Oda9SAihFY7CmgMyFfVyuoVjMkf8sDLYJNMFB
-         eDUdUWDNQ0ZVHMknJ9Kx84pFMEQZQn2q2xhokbk9aKU6VDRgR+CKEWGnGsKR6UVRn+AO
-         bB4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXYkPXAnlMks7yYktq1vKaYgeKoEBpQ4XzyO/Pi3V31hVfE+hhRKkE9gitB3s3CRgOLTUegMgs6NDTslJ9tpf12BFjqZK9zdY+5EffY
-X-Gm-Message-State: AOJu0Yzz0hudXnGrBmA7g5NosUuWWOl7A6DLEtUcJ1mR/rS4avgEhU7l
-	f0NzyGwbB2gHRGovheJdF+N8cmUlTnPKrJNgXg/1uAa50vRgzdyIFr8aADKKYPA=
-X-Google-Smtp-Source: AGHT+IG9MnlA72bZ18aF5rYF5wl0pr5uFRNrPbLUoHQMtyYlzNhExUV24HDmhv5A6kYfu5h17G7Atw==
-X-Received: by 2002:a05:6808:10d2:b0:3d2:14b5:adf8 with SMTP id 5614622812f47-3d24e8a7ac9mr606995b6e.5.1718304904174;
-        Thu, 13 Jun 2024 11:55:04 -0700 (PDT)
-Received: from mail.minyard.net ([2001:470:b8f6:1b:f695:486a:b518:fdb])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d2476bb5aesm282578b6e.38.2024.06.13.11.55.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 11:55:03 -0700 (PDT)
-Date: Thu, 13 Jun 2024 13:55:01 -0500
-From: Corey Minyard <corey@minyard.net>
-To: Rob Herring <robh@kernel.org>
-Cc: Potin Lai <potin.lai.pt@gmail.com>, Corey Minyard <minyard@acm.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	openipmi-developer@lists.sourceforge.net,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Patrick Williams <patrick@stwcx.xyz>,
-	Cosmo Chou <cosmo.chou@quantatw.com>,
-	Potin Lai <potin.lai@quantatw.com>
-Subject: Re: [PATCH 1/2] bindings: ipmi: Add property for skipping SBMR boot
- progress response
-Message-ID: <ZmtAhcviSUKoFLsz@mail.minyard.net>
-Reply-To: corey@minyard.net
-References: <20240612043255.1849007-1-potin.lai.pt@gmail.com>
- <20240612043255.1849007-2-potin.lai.pt@gmail.com>
- <20240613175946.GA2085029-robh@kernel.org>
+        d=1e100.net; s=20230601; t=1718304951; x=1718909751;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A8rHVmgvSmGrxOP2jWFGDRV2w5cu6w7bmnQNCKQ1muA=;
+        b=M9PWBVfdEnylx+2KuDfK6il10FMbrGSa8SGJ4ixmWyfnNjxN8fwkDRy01LJFpNeO+o
+         e7zy05zuDWhub62FRyRxRriF6uZi/htbvKPIAKm3E/wBqm5BTHgJftWxmQuCwxKPLHdH
+         pXvFGSESB28cZOX5Ux0HZkNfLZHztVFwlQ7GE9DUD/Pt6wMz2EFYxMOERP2b/m7blLoo
+         rEYr8hOUYUzA+sjDdn8SkO5C8aMMcssQG5fgBC4mYvzD81KrNN3YHT1mMVqDqW3Q7ajS
+         MlLfmG6Z55YBM3XzoNWkVvfsuTvi5aWqQ+FBr0KUmKwB8nqCuASP8pVB8PKd5+SwNpcg
+         pBCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWldhYnrIXjXT5EG3GHlToDc6au+n5QrWu6CQOrgv2oeynwatrLa9TVdye4FtvfDEqBa+ed3UfKhFz6tx8gKviHg8QIXRaVrASxoidSkZOgoaG/Vf/JMWexB6aJIR7hl3/b+gfOny7FnnxDjQGHr6+iZUVvJJ2PK0SBWtSMlXWHkQS3vM3WL1YYifPBFeJIQ7meeht0osryujgdMwjsVBK8k/Q0+D8Z
+X-Gm-Message-State: AOJu0Yxzd6p/4CtMJrFw24Yo20OAmyjGLDLTCenzYilTm6wwg933LIna
+	8u5KT2KoOC5X3Bk9B4/wsbmDtFVUu7X53X7Tg2OTkkBrPwYcuoose0FFJG96ZssxyKP7s8evOzi
+	xYn9rEllVZLRUi+xHtEec5e42XEU=
+X-Google-Smtp-Source: AGHT+IHcW9OQetK9tkbITect2sTp6OO3zxB/F1M+lzzi8s7lswUbebD05U4oMiYA9j3TDmHYe5iR/6Ccln61ys/yBoI=
+X-Received: by 2002:a05:6122:c9f:b0:4ec:fc20:a51a with SMTP id
+ 71dfb90a1353d-4ee3e980ac8mr802618e0c.9.1718304949331; Thu, 13 Jun 2024
+ 11:55:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240613175946.GA2085029-robh@kernel.org>
+References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240610233221.242749-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <6b3fe242-3733-4f16-b727-494dc1d82002@kernel.org> <CA+V-a8vp0qHKqUMvyfy9hQjKyk8Cs0bDTnYh-ChvPi150r5i2g@mail.gmail.com>
+ <3d0a7a82-6262-40e6-be25-4a1c4d8df2fe@kernel.org> <CAMuHMdUvtUWdEfN_=gNJWY+qfE6Yw9KdenQ2OkLc=HvmRnB6pw@mail.gmail.com>
+In-Reply-To: <CAMuHMdUvtUWdEfN_=gNJWY+qfE6Yw9KdenQ2OkLc=HvmRnB6pw@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 13 Jun 2024 19:55:18 +0100
+Message-ID: <CA+V-a8svpo8FYanyV9gKqmp=tCm+Po5cAi8VPmgFBnyDJyJQWg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/4] dt-bindings: clock: Add R9A09G057 core clocks
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 11:59:46AM -0600, Rob Herring wrote:
-> On Wed, Jun 12, 2024 at 12:32:54PM +0800, Potin Lai wrote:
-> > In ARM Server Base Manageability Requirements (SBMR) document, Callers can
-> > choose to not read back Response Data after sending the command "Send Boot
-> > Progress Code".
-> 
-> Got a link to that document?
-> 
-> > Define "arm-sbmr,skip-bootprogress-response" property for skipping the
-> > response of "Send Boot Progress Code" from userspace.
-> 
-> I don't understand why this would be conditional? How can you define in 
-> the BMC what the host behavior is? Doesn't the host side decide 
-> that? So don't you always have to support no response?
+Hi Geert,
 
-Yeah, this doesn't make any sense for two reasons:
+On Thu, Jun 13, 2024 at 4:15=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Krzysztof,
+>
+> On Thu, Jun 13, 2024 at 2:56=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.=
+org> wrote:
+> > On 13/06/2024 11:57, Lad, Prabhakar wrote:
+> > >>> of section 4.4.2 which cannot be controlled by CLKON register.
+> > >>> ---
+> > >>>  include/dt-bindings/clock/r9a09g057-cpg.h | 21 +++++++++++++++++++=
+++
+> > >>>  1 file changed, 21 insertions(+)
+> > >>>  create mode 100644 include/dt-bindings/clock/r9a09g057-cpg.h
+> > >>
+> > >> Missing vendor prefix.
+> > >>
+> > > OK, Is this just for new includes being added, or do you want me to
+> > > rename the existing Renesas specific includes in here which dont have
+> > > vendor prefix?
+> >
+> > Didn't we discuss it?
+> >
+> > I commented only about this binding.
+>
+> Yes we did, in the context of the R-Car V4M DT binding definitions,
+> which became include/dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h
+> But Prabhakar was not involved there.
+>
+> Note that I also asked to include the vendor prefix, see
+> https://lore.kernel.org/linux-renesas-soc/CAMuHMdU7+O-+v=3D2V83AjQmTWyGy_=
+a-AHgU_nPMDHnVUtYt89iQ@mail.gmail.com/
+>
+Oops I missed that review comment.
 
-What if the host wanted to read back the response?  You make no
-provision for that, as I believe Rob said above.
-
-The BMC should be able to start a new transaction without the previous
-response being read.  So this should be pointless.  If that's not
-happening, it's a bug and should be fixed.  Otherwise an untimely reset
-could hang the SSIF interface.
-
--corey
-
-> 
-> > 
-> > Signed-off-by: Potin Lai <potin.lai.pt@gmail.com>
-> > ---
-> >  Documentation/devicetree/bindings/ipmi/ssif-bmc.yaml | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/ipmi/ssif-bmc.yaml b/Documentation/devicetree/bindings/ipmi/ssif-bmc.yaml
-> > index 02b662d780bbb..b21e958efc184 100644
-> > --- a/Documentation/devicetree/bindings/ipmi/ssif-bmc.yaml
-> > +++ b/Documentation/devicetree/bindings/ipmi/ssif-bmc.yaml
-> > @@ -19,6 +19,11 @@ properties:
-> >    reg:
-> >      maxItems: 1
-> >  
-> > +  arm-sbmr,skip-bootprogress-response:
-> 
-> Form is vendor,property-name where vendor is defined in 
-> vendor-prefixes.yaml. 'arm-sbmr' is not a vendor.
-> 
-> > +    type: boolean
-> > +    description:
-> > +      Skipping ARM SBMR “Send Boot Progress Code” response.
-> > +
-> >  required:
-> >    - compatible
-> >    - reg
-> > -- 
-> > 2.31.1
-> > 
+Cheers,
+Prabhakar
 
