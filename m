@@ -1,109 +1,197 @@
-Return-Path: <linux-kernel+bounces-212567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD9C5906355
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:14:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5028490635D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BCB71F235D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 05:14:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C847B23284
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 05:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B71B135A53;
-	Thu, 13 Jun 2024 05:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EC4135A69;
+	Thu, 13 Jun 2024 05:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YU9mD4LL"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZSqQmfR3"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AEC65F;
-	Thu, 13 Jun 2024 05:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779EE86246
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 05:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718255634; cv=none; b=BNGEhOOBRPH00d/YN3ABA9Ajw3EA6FmR4KNMkfvplSSRvwQ+SJEGuIcDSW9R9FRhts5UWIB8OrXq1s9fSYa+9XgB9YfV/W3aC2NP3FSKqhYwZw0M6nuai6TTXGv+SGZ7yzB7qCE2NzoXYBawA/uSbVm8HFJyamniUq/hVQX+124=
+	t=1718255765; cv=none; b=mNzPrdsQz8qGuuKTkef82uUUwcjU124hIrpZhf82+UrUPrSEEvtywX5D8Irm7Xbhl6MUAri5F0WsjWm9qqt03gLxv8Rw9/89H0df0AGJtwIWc7XbsQPjQ+8JP2QVwOownuOHNyzWVPQ1T4TeqodeZFjIHV8gmbiT2znrZ2o8DsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718255634; c=relaxed/simple;
-	bh=Yz59tQWkv01hPFKbE+8vks+JGjl0tcpj9w+w7TTxogs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z0TcoLay26tiXVqAyiwTld09JeLR8Qzd65WFMXH3ymTCk3/vuR6yfjSVJhDJFKaouVMrPc/OJOMJclHyGW5QwDrcPdKH70dw5R3yJ5CiVctX48JflHPu1pVq6yqHzr4dnGZYPg2kj5Oc473miB/OQj6AWpKXCcRTwFTb2CLSrZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YU9mD4LL; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b060f0f48aso3197876d6.1;
-        Wed, 12 Jun 2024 22:13:53 -0700 (PDT)
+	s=arc-20240116; t=1718255765; c=relaxed/simple;
+	bh=QUdxVsVlxJfG4mzBixKpG9z8qTNGFWMGeRu4fJuo5gs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=YNKY1BdOzsuEsQzL4CTsuubd9XeFVyjNEOK0XX1L7t+C8lJeW9Eb/syZCt5Li0H6QgLxzEQYNuQhgTINOlyNtpMRo5hb/Qg0e3WNE6b7V9d/pvwhiQ6vjw3/hx+sLsJ8w8GGQ36htUkZLfp4wDHOAhBHxO2ijox80SP23BQvl1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZSqQmfR3; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-35f23f3da44so705538f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 22:16:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718255632; x=1718860432; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yz59tQWkv01hPFKbE+8vks+JGjl0tcpj9w+w7TTxogs=;
-        b=YU9mD4LLt6UIUM1lxf5T6eYhLWuIZBFi0MG5HODfbmCFB2Ts5UbJdT6OxhN1uoLaZA
-         DXhvMhH01ST5YS0UWlCRyuBymgvNfInBBdyGkSKaqgGeNaNFA0locz0blJ7v8ChUmwjd
-         5d+3pn4n1iIAYIeRwqGASXUzj0r6iTRXbHgf7+urTc+q6197wun0ak2rzO5i8UV1LZFu
-         vjYAIGqs5oFqldbKUXsSTFwgxzCuQdp8a8jb3ldVGOxH+4Qq3sDUOQVjrKYCPSYrPaUs
-         QbJrhJbyQSg4JmsVQfOnhNwX4Yq+4LAe480gMQF9GgdcXVPg3fYDygvFBpWpw1zgCRPn
-         RVbA==
+        d=linaro.org; s=google; t=1718255762; x=1718860562; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EtfUUHuwzr569t6VOnXEXdZrMXfWjbd0r5DYKCbZN/4=;
+        b=ZSqQmfR31d7anHMztU6KBYny0Fp3Ie0GO7VTDVNg7vQfZ4AQ38/9iU2FkqodujOqn+
+         9AQi6CDg0JDy4mog1JvECamvHtnTWgq3c20Yj3v5gDMa7XPV5GKMzHKKZJ7w8uHH+AHj
+         aBikZ1cffFr+T9hJuxVvmwcYyY/OETH/aA5uIeWRNTiUU+suyvLqZzVclf0g+Y3mJDTV
+         8X7B0J//bGiNfVwuTz+rs9OY8PzMJjrlHyrmw4P7KLhK3gRH+mGv6aoyvtcvswbB0JOs
+         9pdapVwX4mETnWtyNqjy+4jvL9GlE8+4HdB0bLG3xfBWaFhEXL2hgUmc3+5KL4aNId1H
+         d3+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718255632; x=1718860432;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yz59tQWkv01hPFKbE+8vks+JGjl0tcpj9w+w7TTxogs=;
-        b=NZlZsvF8vtVGcAXrgzh5B1Mao6DyDTLsgWmYGt2Wprgx9HdwFjKBTqp9hs1/I52+sD
-         OKmFnAIyd70vXS9rKTaWyUsjBDl9CC+mpd9/YzklPRI7eJcniEOL4tgubJaXuSleGrHb
-         sjzjDCotTfOpOT36GM9GDMQ5krFaFyw3j9P79MObZKPWXD+Q/dfnTbuJg+YMzTML4ZH3
-         gCOySu/AShraJJyPiUYoMrOxxF/Epw0mG1A7i5VyTke30QSizs4nRE+3DOruSmdBmo22
-         vnKaQad1PSNsFgwQBrSg1xUzfaGRB1d04suhhFLXidz5/PLoSwmbyYF/RH2TltmpwXJD
-         GrDg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2s0jOtA6WSLpfdKedPEtPSCPFVP/l4pK0u+AlwamaxujizCFWl1kKFr/uljGx8WSnSMtsuTjoww73el6QK9SsJ+vHjWeIgH3wYEi8UYGdYiHae69rarZ/U63WGlIHirL+1tZU2E2VjsHpTJqYdSFNUftzWnBKvTKlcGqRGgxuqZocGSGQiw==
-X-Gm-Message-State: AOJu0YwfwviU4GBlyrs4nQ1huUjNgtQ4zsgxIFldbOhvJWbQv/MXbxq1
-	SMqhqDSDHt81bxXCEJGnhNG411pqLmmEzrpLdV56KQcH3YngF3Ecsx6fD+zEq9Iu4DsCLjcX4vP
-	SakbedZ/a1OATORBBPbpkoYLa/uGz+KNA87Yimg==
-X-Google-Smtp-Source: AGHT+IGA/60BeVBcSGOZs2ZPs2s0isSjEHC6dloesC4nDItXtIqTS5fn0q30oP5yguqs2uRGIDtioTO6gpNUkOcindI=
-X-Received: by 2002:a05:6214:4688:b0:6b0:6d9c:8eb6 with SMTP id
- 6a1803df08f44-6b1b5c0afedmr48758286d6.58.1718255632046; Wed, 12 Jun 2024
- 22:13:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718255762; x=1718860562;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EtfUUHuwzr569t6VOnXEXdZrMXfWjbd0r5DYKCbZN/4=;
+        b=bKAogNBbitHyMvrNJzKcQ4eNhWQSiv7pqITungqWmJo6f8wHwD4STznWH5OzB4Fsdb
+         KESjt0fjqHdjX6TdwiurKXeT7SdElHMDG0hRHNriFsLo4V2aZs4Nldn26Is6pcrABqg9
+         4xiihRhIXj23WqG0i7+F+OLjHBTjaZpM9rqQBDNQmtndy5TWlsomRvaQKYERN7aHO/rR
+         CwCo5p6BFYcvHqQ9e5CLpHrlnfyehPsoYdZJpPcMmg7YMrNeamgOSYLlaqiM/+W7oFKW
+         GWGj42hVWW9u5T5esoZd3TOWuZNNKfvA9BuGIuK9dtXlOvQPNzB7Vn0uOiG6fuUbAfXG
+         Ohnw==
+X-Forwarded-Encrypted: i=1; AJvYcCWXj4WAaTtJAfGFm5dc7wgtXPj9/uWbhxx2UladZpykVVbXmHm6puuZlsC8erLSmuFTB+M1WypZpRL5bZDf63OM3yVr2TMfuIOpsuGR
+X-Gm-Message-State: AOJu0YzYFkfmitQTfnuSiGDaYkJXk9nSFVbl/8kXoRgkfAvSIX3SeJQR
+	8Qc1uu3aE+rB+aH89Tydq+PMiH/F4lT8eUkYK3DGoeosbPBZ/zXAlysWgquiFUw=
+X-Google-Smtp-Source: AGHT+IGmrXsYGyUzIsflUwKvz92KSSMyEjsRe5mE41CKjjBa7BPtXLLftWzXvMVSbKd6KFtd/vOLIg==
+X-Received: by 2002:a5d:45c1:0:b0:360:73f4:7937 with SMTP id ffacd0b85a97d-36073f479bdmr610203f8f.6.1718255761516;
+        Wed, 12 Jun 2024 22:16:01 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075104c17sm573903f8f.106.2024.06.12.22.16.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 22:16:01 -0700 (PDT)
+Date: Thu, 13 Jun 2024 08:15:53 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev,
+	Martin Oliveira <martin.oliveira@eideticom.com>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tejun Heo <tj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Martin Oliveira <martin.oliveira@eideticom.com>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Shiraz Saleem <shiraz.saleem@intel.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Artemy Kovalyov <artemyko@nvidia.com>
+Subject: Re: [PATCH v2 1/4] kernfs: remove page_mkwrite() from
+ vm_operations_struct
+Message-ID: <11acf031-a778-4ed9-8ece-c6d9aa0bce3f@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612153847.52647-2-kanakshilledar@gmail.com>
-In-Reply-To: <20240612153847.52647-2-kanakshilledar@gmail.com>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Thu, 13 Jun 2024 09:13:40 +0400
-Message-ID: <CABjd4YxqDkrcZw2_mp6sXkhXndRcODHoA2tCLLqP0ernojV6GQ@mail.gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: serial: vt8500-uart: convert to json-schema
-To: Kanak Shilledar <kanakshilledar@gmail.com>
-Cc: kanakshilledar111@protonmail.com, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240611182732.360317-2-martin.oliveira@eideticom.com>
 
-Hi Kanak,
+Hi Martin,
 
-Thank you for reworking this one.
+kernel test robot noticed the following build warnings:
 
-On Wed, Jun 12, 2024 at 7:39=E2=80=AFPM Kanak Shilledar
-<kanakshilledar@gmail.com> wrote:
->
-> Convert the VIA VT8500 and WonderMedia WM8xxx UART Controller to
-> newer DT schema. Created DT schema based on the .txt file which had
-> `compatible`, `reg`, `interrupts` and `clocks` as required properties.
->
-> Additions to the original binding
-> - changed the file name from vt8500-uart to via,vt8500-uart.yaml
-> - removed unnecessary alias from the example.
->
-> Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Martin-Oliveira/kernfs-remove-page_mkwrite-from-vm_operations_struct/20240612-023130
+base:   83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+patch link:    https://lore.kernel.org/r/20240611182732.360317-2-martin.oliveira%40eideticom.com
+patch subject: [PATCH v2 1/4] kernfs: remove page_mkwrite() from vm_operations_struct
+config: i386-randconfig-141-20240612 (https://download.01.org/0day-ci/archive/20240613/202406130357.6NmgCbMP-lkp@intel.com/config)
+compiler: gcc-12 (Ubuntu 12.3.0-9ubuntu2) 12.3.0
 
-Acked-by: Alexey Charkov <alchark@gmail.com>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202406130357.6NmgCbMP-lkp@intel.com/
 
-Best regards,
-Alexey
+smatch warnings:
+fs/kernfs/file.c:462 kernfs_fop_mmap() error: we previously assumed 'vma->vm_ops' could be null (see line 459)
+
+vim +462 fs/kernfs/file.c
+
+c637b8acbe079e Tejun Heo           2013-12-11  416  static int kernfs_fop_mmap(struct file *file, struct vm_area_struct *vma)
+414985ae23c031 Tejun Heo           2013-11-28  417  {
+c525aaddc366df Tejun Heo           2013-12-11  418  	struct kernfs_open_file *of = kernfs_of(file);
+414985ae23c031 Tejun Heo           2013-11-28  419  	const struct kernfs_ops *ops;
+414985ae23c031 Tejun Heo           2013-11-28  420  	int rc;
+414985ae23c031 Tejun Heo           2013-11-28  421  
+9b2db6e1894577 Tejun Heo           2013-12-10  422  	/*
+9b2db6e1894577 Tejun Heo           2013-12-10  423  	 * mmap path and of->mutex are prone to triggering spurious lockdep
+9b2db6e1894577 Tejun Heo           2013-12-10  424  	 * warnings and we don't want to add spurious locking dependency
+9b2db6e1894577 Tejun Heo           2013-12-10  425  	 * between the two.  Check whether mmap is actually implemented
+9b2db6e1894577 Tejun Heo           2013-12-10  426  	 * without grabbing @of->mutex by testing HAS_MMAP flag.  See the
+c810729fe6471a Ahelenia Ziemiańska 2023-12-21  427  	 * comment in kernfs_fop_open() for more details.
+9b2db6e1894577 Tejun Heo           2013-12-10  428  	 */
+df23fc39bce03b Tejun Heo           2013-12-11  429  	if (!(of->kn->flags & KERNFS_HAS_MMAP))
+9b2db6e1894577 Tejun Heo           2013-12-10  430  		return -ENODEV;
+9b2db6e1894577 Tejun Heo           2013-12-10  431  
+414985ae23c031 Tejun Heo           2013-11-28  432  	mutex_lock(&of->mutex);
+414985ae23c031 Tejun Heo           2013-11-28  433  
+414985ae23c031 Tejun Heo           2013-11-28  434  	rc = -ENODEV;
+c637b8acbe079e Tejun Heo           2013-12-11  435  	if (!kernfs_get_active(of->kn))
+414985ae23c031 Tejun Heo           2013-11-28  436  		goto out_unlock;
+414985ae23c031 Tejun Heo           2013-11-28  437  
+324a56e16e44ba Tejun Heo           2013-12-11  438  	ops = kernfs_ops(of->kn);
+414985ae23c031 Tejun Heo           2013-11-28  439  	rc = ops->mmap(of, vma);
+b44b2140265ddf Tejun Heo           2014-04-20  440  	if (rc)
+b44b2140265ddf Tejun Heo           2014-04-20  441  		goto out_put;
+414985ae23c031 Tejun Heo           2013-11-28  442  
+414985ae23c031 Tejun Heo           2013-11-28  443  	/*
+414985ae23c031 Tejun Heo           2013-11-28  444  	 * PowerPC's pci_mmap of legacy_mem uses shmem_zero_setup()
+414985ae23c031 Tejun Heo           2013-11-28  445  	 * to satisfy versions of X which crash if the mmap fails: that
+414985ae23c031 Tejun Heo           2013-11-28  446  	 * substitutes a new vm_file, and we don't then want bin_vm_ops.
+414985ae23c031 Tejun Heo           2013-11-28  447  	 */
+414985ae23c031 Tejun Heo           2013-11-28  448  	if (vma->vm_file != file)
+414985ae23c031 Tejun Heo           2013-11-28  449  		goto out_put;
+414985ae23c031 Tejun Heo           2013-11-28  450  
+414985ae23c031 Tejun Heo           2013-11-28  451  	rc = -EINVAL;
+414985ae23c031 Tejun Heo           2013-11-28  452  	if (of->mmapped && of->vm_ops != vma->vm_ops)
+414985ae23c031 Tejun Heo           2013-11-28  453  		goto out_put;
+414985ae23c031 Tejun Heo           2013-11-28  454  
+414985ae23c031 Tejun Heo           2013-11-28  455  	/*
+414985ae23c031 Tejun Heo           2013-11-28  456  	 * It is not possible to successfully wrap close.
+414985ae23c031 Tejun Heo           2013-11-28  457  	 * So error if someone is trying to use close.
+414985ae23c031 Tejun Heo           2013-11-28  458  	 */
+414985ae23c031 Tejun Heo           2013-11-28 @459  	if (vma->vm_ops && vma->vm_ops->close)
+                                                            ^^^^^^^^^^^
+If ->vm_ops is NULL
+
+414985ae23c031 Tejun Heo           2013-11-28  460  		goto out_put;
+414985ae23c031 Tejun Heo           2013-11-28  461  
+927bb8d619fea4 Martin Oliveira     2024-06-11 @462  	if (vma->vm_ops->page_mkwrite)
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+then we're in trouble
+
+927bb8d619fea4 Martin Oliveira     2024-06-11  463  		goto out_put;
+927bb8d619fea4 Martin Oliveira     2024-06-11  464  
+414985ae23c031 Tejun Heo           2013-11-28  465  	rc = 0;
+05d8f255867e31 Neel Natu           2024-01-27  466  	if (!of->mmapped) {
+a1d82aff5df760 Tejun Heo           2016-12-27  467  		of->mmapped = true;
+bdb2fd7fc56e19 Tejun Heo           2022-08-27  468  		of_on(of)->nr_mmapped++;
+414985ae23c031 Tejun Heo           2013-11-28  469  		of->vm_ops = vma->vm_ops;
+05d8f255867e31 Neel Natu           2024-01-27  470  	}
+414985ae23c031 Tejun Heo           2013-11-28  471  	vma->vm_ops = &kernfs_vm_ops;
+414985ae23c031 Tejun Heo           2013-11-28  472  out_put:
+c637b8acbe079e Tejun Heo           2013-12-11  473  	kernfs_put_active(of->kn);
+414985ae23c031 Tejun Heo           2013-11-28  474  out_unlock:
+414985ae23c031 Tejun Heo           2013-11-28  475  	mutex_unlock(&of->mutex);
+414985ae23c031 Tejun Heo           2013-11-28  476  
+414985ae23c031 Tejun Heo           2013-11-28  477  	return rc;
+414985ae23c031 Tejun Heo           2013-11-28  478  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
