@@ -1,83 +1,64 @@
-Return-Path: <linux-kernel+bounces-214065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB421907EE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:32:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93BFF907EE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 654C81F235B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:32:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A9301C2228B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C2F14C59A;
-	Thu, 13 Jun 2024 22:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DF414C5A7;
+	Thu, 13 Jun 2024 22:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCKChL0a"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZJFn8FF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9152F2F50;
-	Thu, 13 Jun 2024 22:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990351411C3;
+	Thu, 13 Jun 2024 22:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718317927; cv=none; b=UZUR9YoB6Sr+qrvjERA1h9Y7SH9o2vyCwVLGL9x0Oo6sIOm+nOkfhfBwwD+7uxuvClbdR1WUQkxBRaQfg+Dm992z/YNaf2vWweT5DmF9f69/K+jJEXucmyWNXX8EmoIhvXnzfaN1o7vPc+73HKEEJHLWUX6+6l0jJiiAwhmiH4Y=
+	t=1718318126; cv=none; b=gdG6L4k8uyGnlBvYXHxTdAAvkmBI/4fH4LQ3UgOYHf+xPJ5Yz4y2Ox9GTDLaxpEQstBLT3BzBYjQ5XjhcOXx4czrKpW0Peg/+dpDjbd8r4j9o37RI+UYM8rDWiJFv+zXBLwrVqyPXtwmGJ3ZZTtdikbY+PkuxwU1E0rNsSeUg3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718317927; c=relaxed/simple;
-	bh=qPSXquU6U27MoLTDYbXSvkIqxPRvwgayXwThhzfL44Q=;
+	s=arc-20240116; t=1718318126; c=relaxed/simple;
+	bh=p+VwQhv5G5CYvaf+I9sazjD4wTWlRzKTz9+GDqPyq38=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rzR3wiWNsmyVscD2lbQYaP8Aa1AU1ml4umy/iMCU7FDtxWjcJLK/V3Cer/k8XxCQuRU6BYHGoOWef+l0J7Wk88ikWIR7dqNPadGsjO5T9VR7n5DcdiIVanB26MWDZJm3+0NWq855ot6cXHUfAiBGloUjR1Nk0NMVAerGZNhG4cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jCKChL0a; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70436ac8882so1249962b3a.2;
-        Thu, 13 Jun 2024 15:32:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718317926; x=1718922726; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mdBrPdC03uBfyp4h0UDLcnfRIq5hLrsMUcQxR+uWGTY=;
-        b=jCKChL0az7IqMz9I1v6YwIpNeom8QE/14gKEqL+2ghNqIIgHMT7haco7QjmhBCE59P
-         BBln8th0catKdZOUcnKrbqs6nXF4G4007bwn7d8CnBbI+cBlVe+a2MZPRIiQUfxVvIDv
-         VpruTiFXg6uZmavcOEuCZWXwefWgh60pE2Sh0ukMH0+W17GfmmFNkJon1ORYfnQTlE9z
-         v0CZtFU4tyjFe3Pq6BkJmf4QPS2lVYm6xctqFKnG2UGa1deM/edH7I58rf6aB8EdtttX
-         d/u4fFjMRCXcPqwWt3A8L76rViYd5IfyabPE29oJKZvydpaigVpRN0YUg1DGvWUKapYy
-         OhXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718317926; x=1718922726;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mdBrPdC03uBfyp4h0UDLcnfRIq5hLrsMUcQxR+uWGTY=;
-        b=v6tP+aaQ1AcHqbKEZXpNeJ88R54wb2SL8o9mMx+Mc1z4eoKftRpubJVrTDowRWyiUx
-         WvkMuI5VUiA566rL2JTFb7llFFarjP+eFNDUyXvLNCqKe5ZrbSIejTsyBPQNJPjBPWYK
-         alpZZal5wh/djPe/nbfsssWyTjKrpX43IbcWXjSrcRfB6VwDkjPOV7VrPbVDjLLqJDJP
-         gD0IR4jF53lNSu33pCA1AueBn9Dis3JLF2seh4n08nMUAljx4EH0+iyEa5oXKMrq8ZVt
-         g4c7tFzEvBneOJy++cTXyzbUSYQhht9h/wJJVvLwZlVv6EMNgB6uWvHgp6RIqi7uAOHQ
-         rv/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWS178zbxd3Kiuob3olvGfDUfbDEgddJI6T/BFCivzwOKKMKeMKHeKGfW51wFUXuHIDhOWeUqkgMs8nESSENOc06stdHkHHm1H37n4dqOt5CmHQPKCCpxRv2dsMz8r5NTPsVyenxSoolaZpdEhmYw5qlyK5SUVu+WzkuvyKaw3/CQLC
-X-Gm-Message-State: AOJu0YyD4KetVp+Gr9pTFTyiNV2JqZn5bPGlbJqWpBBqOIwicHxHR3/F
-	6nqVA7a9fCbRBMWgnl9vbmS3/VpS2RmIL8Ysu+Io8hgM1N0HlqDMFQP6yw==
-X-Google-Smtp-Source: AGHT+IHtcFkCRzKVUWoWnuA8d2ZTx4W7xmzb6xaoYGxgWDDH+MegbR44iI4dxtg/vsMxIbAMcFnCVg==
-X-Received: by 2002:a62:be08:0:b0:705:a669:8acf with SMTP id d2e1a72fcca58-705d71d1277mr922095b3a.26.1718317925718;
-        Thu, 13 Jun 2024 15:32:05 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb3bf00sm1846190b3a.135.2024.06.13.15.32.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 15:32:05 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Thu, 13 Jun 2024 12:32:04 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: josef@toxicpanda.com, axboe@kernel.dk, cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH -next 2/2] blk-throttle: fix lower control under super
- low iops limit
-Message-ID: <ZmtzZKW1m6JpdfWx@slm.duckdns.org>
-References: <20240513120848.2828797-1-yukuai1@huaweicloud.com>
- <20240513120848.2828797-3-yukuai1@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CVCvSs7u/hYGEdUn59sWDzX6CuaKRooQZsNAO2RS1uh+gi0pWW+FPB2cFp5kgt/NAXN4RLaJND/YWmN/TORH9avAob2WivLHKoZPWL6eRVZlcXQKxip6AzxuI3L2Si4r47RLFRY3tgrHOFZzXtdULOe8MExXHAMuMyIYuoQuuIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZJFn8FF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1322C2BBFC;
+	Thu, 13 Jun 2024 22:35:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718318126;
+	bh=p+VwQhv5G5CYvaf+I9sazjD4wTWlRzKTz9+GDqPyq38=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TZJFn8FFLtDllkEQfxJ9kmP6cm2LJADJXIuh4dWKR2L6D1gmcq535DcLm4ILeSoMK
+	 j3T+KyxIUCa1o1IBySiyVxushNMc+7F3+72NyFG1bE0bKS3hNqDyKGFuoIzABi03he
+	 nX5LMBLtIqjTb3td27LRsRQAs0KnDjwiRlvtU5X7lq+l8C7hY2MFbxJ2n51zvBRDiU
+	 IGBWaxfQbmekfiZLftmONNSVRaKIKhcXjPoa9KcInwDj2rnEjxA0AThLm1ktqZuv8j
+	 9YKIYpWy+EL54RiNB75HCp0BTx+5XXq0f/8N8LX0TvS6HGAwmYZuc+dljPLorULz3Q
+	 utC1PoKU7hXhQ==
+Date: Thu, 13 Jun 2024 15:35:23 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Guo Ren <guoren@linux.alibaba.com>, Guo Ren <guoren@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	clang-built-linux <llvm@lists.linux.dev>
+Subject: Re: [PATCH 5.10 000/317] 5.10.219-rc1 review
+Message-ID: <20240613223523.GB1849801@thelio-3990X>
+References: <20240613113247.525431100@linuxfoundation.org>
+ <CA+G9fYvnVJi1RFhO5f6ZH2mpagZ6jcEdoQAxnSBxWPHsEVQwYg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,33 +67,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240513120848.2828797-3-yukuai1@huaweicloud.com>
+In-Reply-To: <CA+G9fYvnVJi1RFhO5f6ZH2mpagZ6jcEdoQAxnSBxWPHsEVQwYg@mail.gmail.com>
 
-Hello,
-
-On Mon, May 13, 2024 at 08:08:48PM +0800, Yu Kuai wrote:
-...
-> However, if limit is quite low, the result can be 0, then
-> allowed IO in the slice is 0, this will cause missing dispatch and
-> control will be lower than limit.
+On Thu, Jun 13, 2024 at 08:43:41PM +0530, Naresh Kamboju wrote:
+> On Thu, 13 Jun 2024 at 17:43, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 5.10.219 release.
+> > There are 317 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Sat, 15 Jun 2024 11:31:50 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.219-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
 > 
-> For example, set iops_limit to 5 with HD disk, and test will found that
-> iops will be 3.
+> 
+> The following build errors are noticed on riscv with clang-18 toolchain
+> but gcc-12 builds pass.
+> 
+> However, compared with older releases this is a build regression on
+> stable-rc 5.10.
+> 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> riscv:
+>  defconfig - gcc-12 - PASS
+>  defconfig - clang-18 - FAILED
+> 
+> Build error:
+> ------
+> arch/riscv/kernel/stacktrace.c:75:52: error: incompatible pointer to
+> integer conversion passing 'void *' to parameter of type 'unsigned
+> long' [-Wint-conversion]
+>    75 |                                 if
+> (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
+>       |
+>                 ^~~
+> include/linux/compiler.h:78:42: note: expanded from macro 'unlikely'
+>    78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
+>       |                                             ^
+> arch/riscv/kernel/stacktrace.c:75:57: error: incompatible integer to
+> pointer conversion passing 'unsigned long' to parameter of type 'void
+> *' [-Wint-conversion]
+>    75 |                                 if
+> (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
+>       |
+>                      ^~
+> include/linux/compiler.h:78:42: note: expanded from macro 'unlikely'
+>    78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
+>       |                                             ^
+> 2 errors generated.
+> make[3]: *** [scripts/Makefile.build:286:
+> arch/riscv/kernel/stacktrace.o] Error 1
 
-Hmm... can't this be solved by starting the next slice with the right
-credit?
+It looks like either commit 9dd97064e21f ("riscv: Make stack walk
+callback consistent with generic code") should be applied with the
+straight from upstream copy of commit 7ecdadf7f8c6 ("riscv: stacktrace:
+Make walk_stackframe cross pt_regs frame") or the latter commit's 5.10
+backport should be modified to match the linux-5.10.y order of the
+arguments:
 
->  static unsigned int tg_throtl_slice(struct throtl_grp *tg, int rw)
->  {
-> +	if (tg->throtl_slice[rw])
-> +		return tg->throtl_slice[rw];
->  	return tg->td->throtl_slice;
+diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrace.c
+index c38b20caad7c..010e4c881c8b 100644
+--- a/arch/riscv/kernel/stacktrace.c
++++ b/arch/riscv/kernel/stacktrace.c
+@@ -72,7 +72,7 @@ void notrace walk_stackframe(struct task_struct *task, struct pt_regs *regs,
+ 			pc = ftrace_graph_ret_addr(current, NULL, frame->ra,
+ 						   &frame->ra);
+ 			if (pc == (unsigned long)ret_from_exception) {
+-				if (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
++				if (unlikely(!__kernel_text_address(pc) || !fn(pc, arg)))
+ 					break;
+ 
+ 				pc = ((struct pt_regs *)sp)->epc;
 
-Because this is a bit nasty. If we want to use difference throttling slices
-for different cgroups, we might as well do it universally.
-
-Thanks.
-
--- 
-tejun
+Cheers,
+Nathan
 
