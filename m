@@ -1,185 +1,259 @@
-Return-Path: <linux-kernel+bounces-213212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF92590715D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:36:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2226490717E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 650E51F24AF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:36:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C33BB2825B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EDA2F5A;
-	Thu, 13 Jun 2024 12:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B920F143878;
+	Thu, 13 Jun 2024 12:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fq/BtvHX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kNhNRnGy";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PrPVfGbD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="q2LD2wmz"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TT64gkUy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC80F441D
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD41020ED;
+	Thu, 13 Jun 2024 12:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718282175; cv=none; b=t+RPdaPaIOhb+hi33bzCCDOBjDYkkCoReDTOH5J6+TVChX2ycN7E7x9thvb/xBs51rLboXL5duxb6JK4j/9C2x+XKifTQGiVKiNA3/4LFax5Pa3KysoPQyV/t43mjk0bR4jQChMFuMrZNf2o6Mh6YyjdnX4Lo+A4NulPu0Lx/lo=
+	t=1718282241; cv=none; b=Ikl9kuIZ+SnlzbgtuafMLlrgHooc6/FdEQcP4h6yzKda5/Dv0QD4C1F5en4RhX1sTQBhrdrODeFNAcvmsvyZguFCZqILaHWVLmA/dxYkSRMrobNzvH4J0lPF55v4ugVSfUDTs5gHiXRB+kRyEnoJPpsnoq7k+lZCFmWtfXDcI4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718282175; c=relaxed/simple;
-	bh=sFnumGq0FcH5zMjWPpjF2N6XyYSbcjK42uJL+OPfYEE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uRhxyILxLspGguOrjQdieFxoxFhuQCdQpk+3IZzky71Mw9M7wPHGlOHhS6gvkxAGbxZchOpW69RyqecBdE2ylxypEVTbXO131/7uwfat0fxHTHiOEAvI/uWBVXDzOGBtCIqscZbu8yeGaccM4jjfAdJoIQrAJ/hWPj28gtrM8EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fq/BtvHX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kNhNRnGy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PrPVfGbD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=q2LD2wmz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 887D63716C;
-	Thu, 13 Jun 2024 12:36:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718282171; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8U3dMXngmkBtVM3jPXHQhakytYCFzeNC5q9L/Q2hlTk=;
-	b=fq/BtvHXeWeaW2fBbFu1piuFVL91QUYziFWuovljmLtXSM1wARITzV4v5hAb3p0T9GtdMu
-	cbeOVfgawaLNfVttoQI/+NSIR3ESDe4Zr4WaTvl4Zsk9gB1tgIixMksoN+cdWio4EOD5Ss
-	8PsDmEoThwxFs3MzuYYqObfUyyslZeo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718282171;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8U3dMXngmkBtVM3jPXHQhakytYCFzeNC5q9L/Q2hlTk=;
-	b=kNhNRnGy30F54VQ3nBLBAzWP4P8m/vJBknWX6qm4tTHBcbwR6NZ0WViLKejL8prK8uH2zG
-	iMu6+AlwXmqKuwCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718282170; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8U3dMXngmkBtVM3jPXHQhakytYCFzeNC5q9L/Q2hlTk=;
-	b=PrPVfGbD05wbWXCgHVx7uzlNJQzPaR7ERYV5ZDP7KSmFm8k3hUBNWCNXT9eM7/9bN0OiDX
-	W/gcnCYXMDxEZ9YT8hRcrb2ujpU5MyfYQLNnudMkt6lOsQrvbzU8uw/00K/hk+z9ccsmSr
-	kurw9B1+M+Ft3LaoVA5YM1srJzjAJjc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718282170;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8U3dMXngmkBtVM3jPXHQhakytYCFzeNC5q9L/Q2hlTk=;
-	b=q2LD2wmz1GNmgPoLxza3WPYPcaD+ta5OXdqDbnEG2wYT7MxmmLATMHRZE24PmTm0OVQ/Fb
-	rRY/4DC77Eb4DVBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 16B2E13A7F;
-	Thu, 13 Jun 2024 12:36:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LbD0A7rnamaQKgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 13 Jun 2024 12:36:10 +0000
-Date: Thu, 13 Jun 2024 14:36:33 +0200
-Message-ID: <875xudnhny.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Baojun Xu <baojun.xu@ti.com>
-Cc: <robh+dt@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>,
-	<lgirdwood@gmail.com>,
-	<perex@perex.cz>,
-	<pierre-louis.bossart@linux.intel.com>,
-	<kevin-lu@ti.com>,
-	<shenghao-ding@ti.com>,
-	<navada@ti.com>,
-	<13916275206@139.com>,
-	<v-hampiholi@ti.com>,
-	<v-po@ti.com>,
-	<niranjan.hy@ti.com>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<liam.r.girdwood@intel.com>,
-	<yung-chuan.liao@linux.intel.com>,
-	<broonie@kernel.org>,
-	<soyer@irl.hu>
-Subject: Re: [PATCH v7 1/1] ALSA: hda/tas2781: Add tas2781 hda driver based on SPI
-In-Reply-To: <20240613082633.388-2-baojun.xu@ti.com>
-References: <20240613082633.388-1-baojun.xu@ti.com>
-	<20240613082633.388-2-baojun.xu@ti.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1718282241; c=relaxed/simple;
+	bh=VDJefMT8xEQw6dtn2VOdumNzxAyhkyOn6nPBaW3ZJiI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mjfk6G0Jb4fzxKY5NPHBXzkRGLd6KWqplgc0S4RevfveQlZBZwIUXRAlfJylry0/eiEiEDfUIiBsVuBG57f56irAif0W5mcD+r4PVxoWfvEF5mTGcLLU4PpMQ2nquoo+mi2ALEwbxCfXKqVGIqItzm+O5u6MMHm45bjKXks5ryA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TT64gkUy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D807C4AF53;
+	Thu, 13 Jun 2024 12:37:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718282241;
+	bh=VDJefMT8xEQw6dtn2VOdumNzxAyhkyOn6nPBaW3ZJiI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TT64gkUypWGpN57uf31YfLVd6Oqds94a3mJKRp0vfTVwexIHa2PHxnUkuIolWZg5Q
+	 zVI5g/L1svui4NPbN8DWXstFNwDSpy6G7ik0uXNbyE2WyloZt3tFMSJ4aHJz/qJyN5
+	 icnSJVk83GVjDCHJ8NsvbNcX8uUbi2cXzeo2fn/FHf4VmphJpN+ec5/hbI1mDCAXXA
+	 5mEI89vMLBYjxmHMHtbIduJQqnjjQZN0Zctylwv4P+qf3Pp59Y0kJwosGLdC65EPAe
+	 t7bK+FyJOxueWeJd22ryfPioTdnFg4CmFga9wgsl/UQekLcdwZ1mkJW6qit5znbWcy
+	 NZ3O8G/4+Dodg==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5bad7941dcfso37758eaf.3;
+        Thu, 13 Jun 2024 05:37:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUy+8V/HgYUKkNrKs+M52VcDniDcbjXbBsC9x0BxHLpI933OpFO9AW4MZmUL1qxGxFldm6aP/f3Nd+9nU/L65jGetUWGmYYtxwOsnzWf0q/QwaXt59qX4GgO/7jt9hPQDRbJ3Ysx6+GpumMJDtsLoC+Cn9I8hUoohegC6nOxN7dcu3Akawc
+X-Gm-Message-State: AOJu0Yx+8Q/sHUNxDhYyeCTZL04xHT1Is73lc5fiz20o+9ehu1WWAbzA
+	Kl0+jg2VTRKEG+NkFovnvra6qOq9nj5N2Czbrj9FIjdaZkwsPgum3vVg9jyHvjBf15Q/Js2xm1K
+	7h+JTUh4HC/89Lbuoy5ufR5E3gEc=
+X-Google-Smtp-Source: AGHT+IF3D9bX2FCgBxRWF3J91JRycIDlipicsuGKj32M8JQW0MoP4JJyINqoxlncsVsvD3FsRtlEpauxLEFmyLYNnDU=
+X-Received: by 2002:a4a:e9f6:0:b0:5bd:87a0:66d with SMTP id
+ 006d021491bc7-5bdabe6f5a3mr189994eaf.1.1718282240455; Thu, 13 Jun 2024
+ 05:37:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -1.80
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[dt];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[139.com,gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,gmail.com,perex.cz,ti.com,139.com,alsa-project.org,vger.kernel.org,intel.com,irl.hu];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+MIME-Version: 1.0
+References: <ZmmT56Cyvb2FCyav@kekkonen.localdomain> <CAJZ5v0hOBggQR_=uA3VuhruQnZihVxHHovpTz4=qfcbiSunsYw@mail.gmail.com>
+ <ZmmY3he9vfWVWU3I@kekkonen.localdomain> <CAJZ5v0j7HTfg1wY+B+7vhE6tBKPVHMuu_MsFHjaLK70VS_cNEw@mail.gmail.com>
+ <ZmnnFueL-Cgw5Eqp@kekkonen.localdomain> <CAJZ5v0gtK9yusimCOVV2dGkQWDwQ6=r=vfbgC-eE60Cg-5wk_Q@mail.gmail.com>
+ <ZmnrtIEla9R24egi@kekkonen.localdomain> <CAJZ5v0hXU62QiXxWfkbiovciNNEk0h49kRdScmz5qONTMDA+4A@mail.gmail.com>
+ <20240612200012.GP28989@pendragon.ideasonboard.com> <CAJZ5v0hF+6_RCyP-Rr+ajNNEKe0YenFR8x6wX3dG1Pq+vguTwg@mail.gmail.com>
+ <20240612204114.GV28989@pendragon.ideasonboard.com>
+In-Reply-To: <20240612204114.GV28989@pendragon.ideasonboard.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 13 Jun 2024 14:37:09 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0geGXHM-yHR-CWN8JremnbnSNFkWJEB+8ZZ=jPbUNy6kA@mail.gmail.com>
+Message-ID: <CAJZ5v0geGXHM-yHR-CWN8JremnbnSNFkWJEB+8ZZ=jPbUNy6kA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] ACPI: scan: Ignore Dell XPS 9320 camera graph port nodes
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Hans de Goede <hdegoede@redhat.com>, Genes Lists <lists@sapience.com>, linux-kernel@vger.kernel.org, 
+	mchehab@kernel.org, hverkuil-cisco@xs4all.nl, wentong.wu@intel.com, 
+	linux-media@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	"regressions@lists.linux.dev" <regressions@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 13 Jun 2024 10:26:33 +0200,
-Baojun Xu wrote:
-> --- a/sound/pci/hda/Makefile
-> +++ b/sound/pci/hda/Makefile
-> @@ -70,6 +70,8 @@ obj-$(CONFIG_SND_HDA_SCODEC_CS35L56_SPI) += snd-hda-scodec-cs35l56-spi.o
->  obj-$(CONFIG_SND_HDA_CS_DSP_CONTROLS) += snd-hda-cs-dsp-ctls.o
->  obj-$(CONFIG_SND_HDA_SCODEC_COMPONENT) += snd-hda-scodec-component.o
->  obj-$(CONFIG_SND_HDA_SCODEC_TAS2781_I2C) += snd-hda-scodec-tas2781-i2c.o
-> +obj-$(CONFIG_SND_HDA_SCODEC_TAS2781_SPI) += snd-hda-scodec-tas2781-spi.o
-> +snd-hda-scodec-tas2781-spi-y :=	tas2781_hda_spi.o tas2781_spi_fwlib.o
+On Wed, Jun 12, 2024 at 10:41=E2=80=AFPM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> On Wed, Jun 12, 2024 at 10:31:06PM +0200, Rafael J. Wysocki wrote:
+> > On Wed, Jun 12, 2024 at 10:00=E2=80=AFPM Laurent Pinchart
+> > <laurent.pinchart@ideasonboard.com> wrote:
+> > >
+> > > On Wed, Jun 12, 2024 at 08:50:57PM +0200, Rafael J. Wysocki wrote:
+> > > > On Wed, Jun 12, 2024 at 8:41=E2=80=AFPM Sakari Ailus wrote:
+> > > > > On Wed, Jun 12, 2024 at 08:29:21PM +0200, Rafael J. Wysocki wrote=
+:
+> > > > > > On Wed, Jun 12, 2024 at 8:21=E2=80=AFPM Sakari Ailus wrote:
+> > > > > > > On Wed, Jun 12, 2024 at 03:06:53PM +0200, Rafael J. Wysocki w=
+rote:
+> > > > > > > > On Wed, Jun 12, 2024 at 2:47=E2=80=AFPM Sakari Ailus wrote:
+> > > > > > > > > On Wed, Jun 12, 2024 at 02:32:26PM +0200, Rafael J. Wysoc=
+ki wrote:
+> > > > > > > > > > > > > > I just hit the same problem on another Dell lap=
+top. It seems that
+> > > > > > > > > > > > > > all Dell laptops with IPU6 camera from the Tige=
+r Lake, Alder Lake
+> > > > > > > > > > > > > > and Raptor Lake generations suffer from this pr=
+oblem.
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > So instead of playing whack a mole with DMI mat=
+ches we should
+> > > > > > > > > > > > > > simply disable ACPI MIPI DISCO support on all D=
+ell laptops
+> > > > > > > > > > > > > > with those CPUs. I'm preparing a fix for this t=
+o replace
+> > > > > > > > > > > > > > the DMI matching now.
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > DisCo for Imaging support shouldn't be dropped on=
+ these systems, and this
+> > > > > > > > > > > > > isn't what your patch does either. Instead the AC=
+PI graph port nodes (as
+> > > > > > > > > > > > > per Linux specific definitions) are simply droppe=
+d, i.e. this isn't related
+> > > > > > > > > > > > > to DisCo for Imaging at all.
+> > > > > > > > > > > >
+> > > > > > > > > > > > So it looks like the changelog of that patch could =
+be improved, right?
+> > > > > > > > > > >
+> > > > > > > > > > > Well, yes. The reason the function is in the file is =
+that nearly all camera
+> > > > > > > > > > > related parsing is located there, not that it would b=
+e related to DisCo for
+> > > > > > > > > > > Imaging as such.
+> > > > > > > > > >
+> > > > > > > > > > So IIUC the camera graph port nodes are created by defa=
+ult with the
+> > > > > > > > > > help of the firmware-supplied information, but if that =
+is defective a
+> > > > > > > > > > quirk can be added to skip the creation of those ports =
+in which case
+> > > > > > > > > > they will be created elsewhere.
+> > > > > > > > > >
+> > > > > > > > > > Is this correct?
+> > > > > > > > >
+> > > > > > > > > Yes.
+> > > > > > > >
+> > > > > > > > So it would be good to add a comment to this effect to
+> > > > > > > > acpi_nondev_subnode_extract() where acpi_graph_ignore_port(=
+) is
+> > > > > > > > called.
+> > > > > > > >
+> > > > > > > > And there is a somewhat tangential question that occurred t=
+o me: If
+> > > > > > > > the nodes are created elsewhere when acpi_graph_ignore_port=
+() is true,
+> > > > > > > > why is it necessary to consult the platform firmware for th=
+e
+> > > > > > > > information on them at all?  Wouldn't it be better to simpl=
+y always
+> > > > > > > > create them elsewhere?
+> > > > > > >
+> > > > > > > Simple answer: for the same reason why in general system spec=
+ific
+> > > > > > > information comes from ACPI and not from platform data compil=
+ed into the
+> > > > > > > kernel.
+> > > > > > >
+> > > > > > > Of course this is technically possible but it does not scale.
+> > > > > >
+> > > > > > While I agree in general, in this particular case the platform =
+data
+> > > > > > compiled into the kernel needs to be present anyway, at least
+> > > > > > apparently, in case the data coming from the platform firmware =
+is
+> > > > > > invalid.
+> > > > > >
+> > > > > > So we need to do 3 things: compile in the platform data into th=
+e
+> > > > > > kernel and expect the platform firmware to provide the necessar=
+y
+> > > > > > information, and add quirks for the systems where it is known i=
+nvalid.
+> > > > > >
+> > > > > > Isn't this a bit too much?
+> > > > >
+> > > > > Isn't this pretty much how ACPI works currently?
+> > > >
+> > > > No, we don't need to put platform data into the kernel for every bi=
+t
+> > > > of information that can be retrieved from the platform firmware via
+> > > > ACPI.
+> > > >
+> > > > The vast majority of information in the ACPI tables is actually
+> > > > correct and if quirks are needed, they usually are limited in scope=
+.
+> > > >
+> > > > Where it breaks is when the ACPI tables are not sufficiently valida=
+ted
+> > > > by OEMs which mostly happens when the data in question are not need=
+ed
+> > > > to pass some sort of certification or admission tests.
+> > >
+> > > We have to be careful here. Part of the job of the ACPI methods for
+> > > camera objects is to control the camera sensor PMIC and set up the ri=
+ght
+> > > voltages (many PMICs have programmable output levels). In many cases
+> > > we've seen with the IPU3, broken ACPI support means the methods will =
+try
+> > > to do something completely bogus, like accessing a PMIC at an incorre=
+ct
+> > > I2C address. That's mostly fine, it will result in the camera not bei=
+ng
+> > > detected. We could however have broken ACPI implementation that would
+> > > program the PMIC to output voltages that would damage the sensor. Use=
+rs
+> > > won't be happy.
+> >
+> > My point is basically that if that data were also used by Windows,
+> > then chances are that breakage of this sort would be caught during
+> > Windows validation before shipping the machines and so it wouldn't
+> > affect Linux as well.
+> >
+> > However, if OEMs have no vehicle to validate their systems against,
+> > bad things can happen indeed.
+> >
+> > Also, if an OEM has no incentive to carry out the requisite checks,
+> > the result is likely to be invalid data in the platform firmware.
+>
+> We're exactly on the same page. The only solution [*] I can see for this
+> problem is to get the Windows drivers to use the same ACPI data as the
+> Linux drivers.
 
-Try to put *-y addition to the right place.  There are the section
-defining snd-hda-codec-*-y.
+That is long-term, however, and in the meantime something needs to be
+done about it too.
 
-> +#define TASDEVICE_REG(book, page, reg)	(((book & GENMASK(7, 0)) << 16) + \
-> +					 ((page & GENMASK(7, 0)) << 8) + \
-> +					  ((reg & GENMASK(6, 0)) << 1))
+Sakari is telling me that the warning on boot triggered by firmware
+issues was in a new driver and it has been addressed in 6.10-rc3
+already.
 
-Usually bits are combined with '|', not '+'.
+This is good, as we don't need to worry about people reporting a
+regression because of it any more.
 
-> +/* Firmware block Checksum */
-> +#define TASDEVICE_Checksum		TASDEVICE_REG(0x0, 0x0, 0x7e)
+Still, IIUC, the driver simply fails to probe if it doesn't get
+correct information from the platform firmware and a quirk needs to be
+added to the ACPI enumeration code for the driver to use a different
+source of information.
 
-Use capital letters.
+I'm wondering if the driver could be modified to switch over to the
+different source of information automatically if the firmware-provided
+data don't make any sense to it, after logging an FW_BUG message.  It
+could even use the other source of information to sanity-check the
+firmware-provided data in principle.  It's all software, so it should
+be doable.
 
+> * Another solution would be for OEMs to stop caring about Windows and
+> testing their machines with Linux only, essentially reversing the
+> current situation. Chances of this happening however seem even tinier
+> :-)
 
-... and at this point, I noticed that the patch doesn't contain the
-code for sound/pci/hda/tas2781_spi_fwlib.c at all.  The patch must be
-utterly broken.
-
-*PLEASE* try to apply and build the patch to submit beforehand from
-the clean state and verify it really works.
-
-
-thanks,
-
-Takashi
-
+Seriously though, we could create a Linux-based utility that would
+retrieve all of the relevant information from the firmware using the
+existing kernel code and they say "this is what I would do to the
+hardware based on this information".  That could help people to do
+basic checks if they cared.
 
