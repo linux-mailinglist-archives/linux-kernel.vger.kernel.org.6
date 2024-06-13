@@ -1,59 +1,46 @@
-Return-Path: <linux-kernel+bounces-212779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F65C906633
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:08:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09BF4906637
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 133D01C22E34
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:08:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8B521F22873
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA8713D25B;
-	Thu, 13 Jun 2024 08:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FaHvTBms"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7DC13D252;
+	Thu, 13 Jun 2024 08:10:24 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6FB2119;
-	Thu, 13 Jun 2024 08:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F2513CAA7;
+	Thu, 13 Jun 2024 08:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718266078; cv=none; b=D8oZ1wKR16X42Jf/lQDRD2vGwFAqNDKmiz1V8FMkLZIc+uCn6IhhWs+Kx43TRazkGL9DZeQLSVgxH3KfCQHsNudlYZUN3RlXAu+5wlqaruuRUk7NwjFDg0uLwesSboZPUW3l94Pmwo9jVZUA4zI2DwhtdQcIIIfY9JefcGGCjRg=
+	t=1718266224; cv=none; b=ulsTYWzP2c4VsBNS/W9dX8SVuLFzcjZrtioOQVj4g9XwsdEBT6xs6tyr05LoEiD3WT8vBKNxQ/Fk6lnJUbVwqpjqD70PGIb6r/DxKiRUioZF0KD88gmat1X5kLzsP012BdvCQ9ophW2fznUgh7ct3wRKUmrowOzP0xXM1OMxWkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718266078; c=relaxed/simple;
-	bh=SmsNy15uyD/TzUDtWIhCgHtRNEFA5w6AYmsB1+aVIdc=;
+	s=arc-20240116; t=1718266224; c=relaxed/simple;
+	bh=kuCRy/dvwvgH5lryVQtV60zwp/KBdbHgxITSfmkLE3Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fFWwXKj3DX+FYjCF6FVZenyS6kNacoX1mMmT9/6+1ccbpVu7OR3an0KVX1RwNi6AAZ7PLXHExd2s4MJGHOCk9lHPzZ+TcKtv9O+9YfDfvAO2S7MgGaHL/gRT9fFiB3yRtl6DPYGmID6Pz+WiFW+2U3pkjBkgDMEFfj3VKYKp9qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FaHvTBms; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=r5xQob93awwH8AHPQnk1aPKPoTke8Y/tJve0giiYzgk=; b=FaHvTBmsMRohvGi7Ehm7hs98ym
-	6We1O6sdIiZomj19tkfeIxL21W8cxoP0TnTFn5V/uwBnVnBlsZCoG/k+ZiIf9uy2I7vXydklQct5g
-	rcJwTEi/too8DQF84dLKmRd4u6Ni+eEFi2Cr7oNd5qV3yDMK9qOcX+5pfthzOISLd19strlI71wDr
-	cDcuFZEN4ZN/SxTU+HlN9rh7HZBFz7rrltyF+key+ylHEPp9kAXldXk84HtMw8hQ1VE0mOCal6TZc
-	kg5aK3UhAiW6HWq7fejp8cPKM+PlXPtIzgxSOqySk05Tr9wV8fWCBGkhWLZatKGK21QWRcQ/ANqSc
-	MddvaFuQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sHfUw-0000000Fce0-1PzS;
-	Thu, 13 Jun 2024 08:07:54 +0000
-Date: Thu, 13 Jun 2024 01:07:54 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@infradead.org>, hexue <xue01.he@samsung.com>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] block: Avoid polling configuration errors
-Message-ID: <Zmqo2iAHlAwANA40@infradead.org>
-References: <CGME20240531091021epcas5p48fdbd6302bec7a91ff66272c600b0dab@epcas5p4.samsung.com>
- <20240531091015.2636025-1-xue01.he@samsung.com>
- <ZlrQCaR6xEaghWdQ@infradead.org>
- <f092f5b5-68c8-4e76-9ea1-f319bcf20444@kernel.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BfIZncIYiBmpui/bXL/BZ8yaBDINm3u5hNiB0mf+7uJOc3Wqj5ycFfLu4EvU/r8Q+DLMcpyT94uw4qsZWHoegh0pRhJIllJGiRCXd46wejdSnSlaQLV6S/c35HwvPdw4Y5IGejYe+K5bv0l7uRnKSfSw7xTaJ883D9okiWG3hB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id E4E6268AFE; Thu, 13 Jun 2024 10:10:16 +0200 (CEST)
+Date: Thu, 13 Jun 2024 10:10:16 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Nilay Shroff <nilay@linux.ibm.com>
+Cc: Keith Busch <kbusch@meta.com>, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	hch@lst.de, sagi@grimberg.me, paulmck@kernel.org,
+	davidgow@google.com, akpm@linux-foundation.org,
+	venkat88@linux.vnet.ibm.com, Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCH 1/2] list: introduce a new cutting helper
+Message-ID: <20240613081016.GA21500@lst.de>
+References: <20240612155135.3060667-1-kbusch@meta.com> <f0e4c51c-8227-4f5c-876f-38fbb4a0e1bf@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,22 +49,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f092f5b5-68c8-4e76-9ea1-f319bcf20444@kernel.dk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <f0e4c51c-8227-4f5c-876f-38fbb4a0e1bf@linux.ibm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, Jun 12, 2024 at 02:53:27PM -0600, Jens Axboe wrote:
-> > So we need to ensure REQ_POLLED doesn't even get set for any
-> > other I/O.
-> 
-> We happily allow polled IO for async polled IO, even if the destination
-> queue isn't polled (or it doesn't exist). This is different than the old
-> sync polled support.
+On Thu, Jun 13, 2024 at 10:26:11AM +0530, Nilay Shroff wrote:
+> I am wondering whether we really need the _rcu version of list_cut here?
+> I think that @head could point to an _rcu protected list and that's true 
+> for this patch. So there might be concurrent readers accessing @head using
+> _rcu list-traversal primitives, such as list_for_each_entry_rcu().
 
-Yes, and for that to work we can't start returning -EOPNOTSUPP as in
-this patch, as BLK_QC_T_NONE an be cleared for all kinds of reasons.
+Yes, I can't see how this works for a RCU lists without very careful
+memory ordering.
 
-So if we want some kind of error handling that people don't even
-bother to poll for devices where it is not supported we need that
-check much earlier (probably in io_uring).
+Btw, another thing - the old vs new list ordering is reversed vs
+list_splice*, which is a bit confusing (as are the parameter names
+both for list_splice* and this new helper).  Can you switch them
+around to match?
 
 
