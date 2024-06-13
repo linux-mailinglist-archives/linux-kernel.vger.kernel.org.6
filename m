@@ -1,128 +1,114 @@
-Return-Path: <linux-kernel+bounces-213478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0A649075D9
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 424D59075D8
 	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 644B11F24E3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:57:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF7EB1F24EB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0AD14882E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A14148858;
 	Thu, 13 Jun 2024 14:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ja3zVbuE"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hoLv6s6P"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8747F14883C;
-	Thu, 13 Jun 2024 14:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592CC1487E4
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 14:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718290646; cv=none; b=GytmrOLUwwZF460L7F0JMRj/T89RyM2rIMP83uf4fkmyX3EsZzMVdGRFdFG7qxEkG8TzTD5K/DOJY3witxcHHrJH595Xbc6fobYPDuJquuoq4bal6VjoskrRvWMToclg8Pzu5kW0Wi2Zd4Rf6pX8TRpZ90bHVNJf/krcYhO8Utk=
+	t=1718290646; cv=none; b=ee0FKU83tQTzH+RuJ+sAtt2S7bpTmXP9EISkiJ+XRI11GP3Tbd3HKVWsBMDHcLeaG4UVqoldX2Tp4zP71pSNai36Hq4xEgeLgoMveMGsjx/vbPkeAdqvaBCYUJr3jTGjVK56SngFsrnaXD98459VC+FWoNloOcwNQuBRUWP2lGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718290646; c=relaxed/simple;
-	bh=nGI5SQtPbmjFzz0oS2g0Vv0q9MObkyinZcCMmyUMgc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fh26RsvfRPL+SrXga36708VA17mccW5gd+F5Pq3skatVx/v55HSoq2MYu85mVZHrMXnmBvg/pclW6IapnTOyXas5lPF5LsSRSRQXH+VmdeaE84FXhHZbPaypk0cBxVbe0y9i9CpreP7PwTd1O2mt040NogFYc+zilw+csosbARo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ja3zVbuE; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 371AB40E00C9;
-	Thu, 13 Jun 2024 14:57:14 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id VxFUwAUY_gPk; Thu, 13 Jun 2024 14:57:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718290629; bh=4PpkPfFOmQteTZnPUEGfiyHPxl3RB0xgm8bItFqnfk8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ja3zVbuEKXRUlqooI8H7OOrG10geSsCj9PBH5w2Id4s1ieQGglEfA7XJoKDFTF9JX
-	 epVhd/OSmSar4OcKkNykGLcf6rMfDeLqA2tharfM0zkRXHajeBWf4w7K+StiHBaYy+
-	 UmDqQGt6Gj6JW1RRmZEYjjYb9ugcch3i4wkay5YCl94poFAL1newXDTzG4cEGkoLWv
-	 NFTAg/aE+yDOGGuge2S6Ph8C9MIGPr1cm1iHz/TOedm1P4nH3dzgcwu7Oq6QCyNBwk
-	 QYqYkNMfTqbbiiMnckCwDq3Z5e6kt+LlkdDk1O4x9qCwldl17tWmfZ2BUKjgNxXRbB
-	 2/ckNhH1LU+HhGZC8VmO3+KkBDwJ8D7mUE2I63WKZGNOlnQdQt1ZalHutsPPm9fnfa
-	 iiRJCFaTfi8wE5Zdz7IPFHXJpdKwMeCYplQvoz0iM+RgxPC9lN1fMVR9b3Ih9nGfd2
-	 tHvDFD2YFDfqZ4+ljm6uk/Z4rpLfmpRIevGB+ZBZS5tJ12HYHcKp+jttN8SVc+N/uO
-	 lNQqFpWTSFrXj2kUWtXUw/aAhSIR0kw7wNt9hBDphnTPZeQDgkW48SqxzTM10A7j0b
-	 yquOA/Sp4tsEXR60IN3GhEe0pX6itv6tdbmM/O81pLhEwP+hGqkFA2xUtwPTWTTM8k
-	 x1TfveMz3kITMZ845FfSr1YE=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BC90040E0031;
-	Thu, 13 Jun 2024 14:56:41 +0000 (UTC)
-Date: Thu, 13 Jun 2024 16:56:36 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	Jun Nakajima <jun.nakajima@intel.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	"Kalra, Ashish" <ashish.kalra@amd.com>,
-	Sean Christopherson <seanjc@google.com>,
-	"Huang, Kai" <kai.huang@intel.com>,
-	Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>, kexec@lists.infradead.org,
-	linux-hyperv@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Tao Liu <ltao@redhat.com>
-Subject: Re: [PATCHv11 18/19] x86/acpi: Add support for CPU offlining for
- ACPI MADT wakeup method
-Message-ID: <20240613145636.GGZmsIpHn16R04QlaN@fat_crate.local>
-References: <20240528095522.509667-19-kirill.shutemov@linux.intel.com>
- <20240603083930.GNZl2BQk2lQ8WtcE4o@fat_crate.local>
- <icu4yecqfwhmbexupo4zzei4lbe5sgavsfkm27jd6t6gyjynul@c2wap3jhtik7>
- <20240610134020.GCZmcCRFxuObyv1W_d@fat_crate.local>
- <hidvykk3yan5rtlhum6go7j3lwgrcfcgxlwyjug3osfakw2x6f@4ohvo23zaesv>
- <nh7cihzlsjtoddtec6m62biqdn62k3ka5svs6m64qekhpebu5z@dkplwad2urgp>
- <20240611194653.GGZmiprSNzK0JSJL17@fat_crate.local>
- <2kc27uzrsvpevtvos2harqj3bgfkizi5dhhxkigswlylpnogr5@lk6fi2okv53i>
- <20240612092943.GCZmlqh7O662JB-yGu@fat_crate.local>
- <w6ohbffl5wwmralg255ec7nozxksge4z4nnkmwncthxzhuv46d@qq46r2wrjlog>
+	bh=ztEBEYUvN8W9C3s9grN7UDSArbz1+K1DMUkWy5CfjbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gUKjI0JeLGH+kkn2hiIweNzK2oowB1C5eMOL7yaOmRuxhuhRGe7BTs4NwpbdwQqCfLbwcjXtuCYG3QmhBNQPK9ERD97b1aQGZIf8a7i3YTQkiBhfveLo/DRAsvvdVUkeXbpcRjitdAhHmwvyDZ62R22VyVDNt2du00i1PQmlWHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hoLv6s6P; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-35f24fabb81so1080454f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 07:57:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718290642; x=1718895442; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mdtYNgy1Eoag48EtdY4innsDV2xuYmsi6ZNPkKm7vAw=;
+        b=hoLv6s6PJVpwASjzG4WSBgdCwIfaZN0ywWvQkSUxHhBQJM+I/3ifz5NvyHmFZaQrKC
+         6pdDe7sPaZhXG9D+cCR32EoqJfc/wWcayrqiuapgCiSVv30AhbnA2jcnCjcEPj9Qp4Dd
+         arcIzCNP63daohCvrqxhPkc5/7RRvE7cWmzSeWt+YWwCZ1voT1TbxfB18qu0ysGoEnqz
+         NOy4as2tLbVnlmMgd/493HgUF07eo1VrHbKunv42lE2iPtLDnm3JGj9yjfi5NJcOrwga
+         uBHggJiMcgKk0MNkkXP2Y4kqBuZMvyL6R2MlE2GfhvVDAn77RMPhYGpu5RBwVTUDOu17
+         PoKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718290642; x=1718895442;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mdtYNgy1Eoag48EtdY4innsDV2xuYmsi6ZNPkKm7vAw=;
+        b=a/V6Edpby0xebF4jXq+FbtHUhOQ2wuy+VAfKTfxlqzWjm1HC/2iKCmP5nPsqDqry/D
+         oR7dJh1hlvf4CwlqJZ1KNLRHWr3/tSljC9KevaU+tCOo4kCdmoRVYOMrjiQkA1+sz4PT
+         JSHZr6YPAxqrvzzEo4b4W5rgClxJD2DlyyGLUmzCxMFOTv2YF+UuOEE3WzoOswJkVQxH
+         Ip9aUYPrMd+jLpB34WdDghA4yYBdtd336iF6okiviui4vYBudSfdwcORmjTipHqRjeuQ
+         YzVTTHllABxjm/zc3l+JZydOPcAVc4TMfjb3+rUvDml1gMQcd4S7QvgRmTfAAk87Uuqg
+         1ktA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMaDRVflEOzO4BuaxRiByTK6T8tmC01V1883havdggg/oqaSE7uCacnHSDt7Wt7Oe6q/qx1ZTCcZQ2BzgwEU80nnbt44gIHpVyvWq9
+X-Gm-Message-State: AOJu0Yx7RV1G/czBw1wgEZk+I1GyiMT5XkqLeP99TZSi9I3yVRrXGK/5
+	+sL0j/dQP2GVaRLAuNXw84IvpH9GfnblAbyLIzBRClbbU8cTdEY9w3JIo1o9YO9W5uRtEloG3Wp
+	Q
+X-Google-Smtp-Source: AGHT+IGMM5bbKSiWJ9MgOPUnHS7fxvtm6uc1tX3KL/EFOXy9L0LkLo2crOP/bMRoJVvj1JYSHaoMAQ==
+X-Received: by 2002:a5d:6248:0:b0:35f:122d:a589 with SMTP id ffacd0b85a97d-35fe1c0a0acmr3372578f8f.40.1718290642153;
+        Thu, 13 Jun 2024 07:57:22 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6127d78sm28715485e9.25.2024.06.13.07.57.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 07:57:21 -0700 (PDT)
+Date: Thu, 13 Jun 2024 17:57:18 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Peng Fan <peng.fan@nxp.com>, Sibi Sankar <quic_sibis@quicinc.com>,
+	Pierre Gondois <pierre.gondois@arm.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] MAINTAINERS: Add mailing list for SCMI drivers
+Message-ID: <a9706e17-09ad-4304-828d-c0987befc8f7@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <w6ohbffl5wwmralg255ec7nozxksge4z4nnkmwncthxzhuv46d@qq46r2wrjlog>
+X-Mailer: git-send-email haha only kidding
 
-On Thu, Jun 13, 2024 at 04:41:00PM +0300, Kirill A. Shutemov wrote:
-> It is easy enough to do. See the patch below.
+We have created a new mailing list specific to SCMI. Add it to the
+MAINTAINERS file.
 
-Thanks, will have a look.
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+Sudeep, this would normally go through your tree I believe?
 
-> But I am not sure if I can justify it properly. If someone doesn't really
-> need 5-level paging, disabling it at compile-time would save ~34K of
-> kernel code with the configuration.
-> 
-> Is it worth saving ~100 lines of code?
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-Well, it goes both ways: is it worth saving ~34K kernel text and for that make
-the code a lot less conditional, more readable, contain less ugly ifdeffery,
-...?
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e04f583780c5..71301cd51359 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -21885,6 +21885,7 @@ F:	drivers/mfd/syscon.c
+ SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE (SCPI/SCMI) Message Protocol drivers
+ M:	Sudeep Holla <sudeep.holla@arm.com>
+ R:	Cristian Marussi <cristian.marussi@arm.com>
++L:	arm-scmi@vger.kernel.org
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/firmware/arm,sc[mp]i.yaml
 -- 
-Regards/Gruss,
-    Boris.
+2.43.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
