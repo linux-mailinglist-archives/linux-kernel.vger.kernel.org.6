@@ -1,297 +1,157 @@
-Return-Path: <linux-kernel+bounces-212811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A529066B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:29:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AEA89066B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 872FB1C202ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:29:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CD261F20F62
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64AF013FD9B;
-	Thu, 13 Jun 2024 08:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B884E140386;
+	Thu, 13 Jun 2024 08:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DGyjKQdt"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FxD0L54+"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D5513D889
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7DD13FD62
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718267211; cv=none; b=WC3rF4EE06xSoJ5QazWhl3a81DHlN/7Aq6g9TG3hgA2d1ltuSQ0ifnAQ79uOmJce8y299/f+j4xKljsUUf3a4nC7MR+NATyZ6oG1CVgQfonT4Nd3EuumZH1V+vMuMLAiDjyu9lnpaWDo+4ETB8FBflUfYLs+SsNhqgAmLhxT8uo=
+	t=1718267214; cv=none; b=DL0At8eivFI3vpUkERgpDQcUiHmJzwyzTZkx84vNl/I2Ee/MqBM5NdeU2SJcKu7knC1Pk1zDsGY9X/3vkFYRjJBqBkeH066lKgkAWkCfEPtqj+O2f4xUNv49VtU0ftL47IIIRQEN5yfAxrzo4ICKwxjQDnU5MOUCPwejqLQJ5fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718267211; c=relaxed/simple;
-	bh=+/Cd54M7taimSwzXrHgDVYRSG+71hfapAIJPbLSt9Hs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MZxaThjhzjyKJo4RwuQ7aJuL1tSzZeG+q4crEp2uyEMb/IXXS6CkRqGLJuky5lj7AVNftyZvwGdGBHG6pjsMuvS3olAzEgSn06UNz2MGSdRionLpQIMaUduJZQd3XgA3xU2gykDtuk8fS6n2IkP8ZwyJ10XhQnS3OfQrKLfIrIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DGyjKQdt; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6301aa3a89eso8331627b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:26:49 -0700 (PDT)
+	s=arc-20240116; t=1718267214; c=relaxed/simple;
+	bh=D5vLAFT/UKZRUuFFIFhE24D1SKV46kwIgaeP1UBJTnw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZiBx8jY3aGIPF66w3204i4ZJi46u1xiq+DnP7KztlqXlATwhqlOpSRjaVEkVyjgyeLskij6zY7qlmoxhDgrB6inyCqjcJPHXu5n9IlXcaZLHY1PTJoUtIvdEdc4WOLiTmrKs8Syc3ZU7bqsdWoEX3AvbPV/SJ7q2JeNetVzlLQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FxD0L54+; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-35f0d6255bdso739888f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:26:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718267208; x=1718872008; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j2Im9dGKZIt0RrtNSRiS+mo63+EnUh986UQ1mB7bgEE=;
-        b=DGyjKQdtRPt725gon6zKX0CDMb/4SvXXbz+a8ucF6xToOi9oHXx0jfJB0kLzln8ZHy
-         foujg175BB+uqQqzck0FOaofgxOmwiFmLBpsBsHilK9lAjLAqxGA/wlOIfbc68OAmzry
-         XzntPyUrT66JoS8Sgm6mn0BJsFE9OiqBxqgDwam76TR0IYX5biAJbXBf/F3EudhUJ3jV
-         jwZk9eiJFBPjMxd7eBpS4abwutKnug+p8yyDXDIyBVWaeigeej/uv97fjGx+xgCEkt/O
-         UODESD3/L4nVVUFpu1J1AQCIq+ZGa/VBIlHUVhr3xD742PvMvp1w1BNCmWuODGAhchgU
-         lC3w==
+        d=gmail.com; s=20230601; t=1718267210; x=1718872010; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=12pt0uydV7PfO4lc7iBWvrcrHxVdMObVPcnNLZgNxF0=;
+        b=FxD0L54+fQlzLRCyJcND5IGnijGIZwEWJKaklrDxAhGib0+mF0gP21sQ/kqjyph0lH
+         UsDkP3sXFOR3qhqH+uzRiJPDxCBsosk6cRpWMJo0KkXnbeotOPc1yliFS29p2DJnPKxb
+         VuXMG/X3NeqrJzaqxpzgUgIXzKRfBq0zQZeA3SHEyTKxJvGtden4rqIg+wyfeeNO2+Kj
+         lubG4eYxcbmjzZ0qQ5lCINiJuH76kLZb6vKx93Sb9wYjc4FEcxx46rwuhcsUae8JwXht
+         RxKQ/Iz/DyBBFnqMgJPBV1nCyijtoeUzrcb2bf6kv4D9rQnhP2IIRhyub1mkIpBjS5Ni
+         rxbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718267208; x=1718872008;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j2Im9dGKZIt0RrtNSRiS+mo63+EnUh986UQ1mB7bgEE=;
-        b=U9qma37pYrJpBY9naBaTbEEdnnUuqP8lBmJM684fTbBuSLkv2lL/MEE9nApsPJBX5p
-         W15taFV/REJrp3DzICrO/riXpJaN//iJS9fEca9gJ6bQGkBPTXRjZHmXMvkeGhlvIbX9
-         hid3SNO/0/9fs5A3hKwAjo8Y8WQp68H5uwIIoTDle04FkbR6LtPiUPZsUorFhFhUlS99
-         Vq/5hNO9j3iw9MV76QFt8M4BGPLaQZ819lS5vLwb5/5bnv5gyna0AjVKoWyPZG+bYIqO
-         asBvVmqB/9kpWq104MB3/okyT3uVYAsUPVqM5KVcX1KKzbXy1MIywb/0UvDmOIt/SF+p
-         eAVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPpNVfnS5n6Bgbb2KgAxOeS9O5xWZiHHrc1MIUSN+JUcJyJXe8MK3TJDUtBtfhi4T41iIuexS7s6lHwHW8/AW5zq2NLHZgBt7TitT/
-X-Gm-Message-State: AOJu0YzA5v3Tzen0W+T2ODcT9M7gtJUuwcghiBoAObWR5fLTn31w3m2X
-	F5KxzoaygRcYtunGquvr3KCukC8INisybg6JlGnSRfozdOqQgUAdmebYqEiJuC7w1IG0udk3a8Y
-	emQ3VEtuca4HHS2BxKRabt/FOP339tUSMJe1g/g==
-X-Google-Smtp-Source: AGHT+IHynYXydLpvtfOmPpRsO5mf9ev0xqivYqbFIR+VnCUnBShW3FDhzEU1UZGYrqeqwOfV4ZIl0+6KVHd1YV43qv8=
-X-Received: by 2002:a0d:e6cf:0:b0:62c:e62d:561d with SMTP id
- 00721157ae682-62fbb7f5e6fmr40080067b3.1.1718267208393; Thu, 13 Jun 2024
- 01:26:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718267210; x=1718872010;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=12pt0uydV7PfO4lc7iBWvrcrHxVdMObVPcnNLZgNxF0=;
+        b=WRjT37xiuQmSOS4uo+qrEgqQTQ30lYxghqw7FHERBx6jI4rUGFTxq7jkRRI6/OnzbT
+         9dFrlkBLyqdBNBAgfZeSWGUvQFFvKOlbFum7hHrL8O0lCsMAjBTZu/r/XDHzKBO49rSn
+         h6bbLOr1eMXCu5bRvK8MTTiwrO+QbhEmuR2qwJNUkeyF1rOYUFmhTBFL9n1xlrKHSjLq
+         r1idWwj34pF16oQK8i9QZImwI8X8ta5neqikeBb/izIMHBgD5odG0+eEAgk//ailnfgS
+         0y++QxZVSplBZaeFZOWYWhgDkOzNF/jErV9hPFaGnQotLN3+EW+/IFb6gnKcxzsHI6tq
+         H4Fw==
+X-Gm-Message-State: AOJu0YwOswQSVyYpkqrS7h/8UujSaEDx3fKzq+5BGnJe1qRtI+IqD7ae
+	ODP64ajQQUir4PUGXmyCOlNUkaEBYPnjguI1mVXFV790YG28ryNYO1RTag==
+X-Google-Smtp-Source: AGHT+IHAhd0MhIHxSYnYmOs3QvR47WmveBcY7duawIDRhtH6pYeHO/WCF2Z+xJeM8P9gZGHB4n2Qew==
+X-Received: by 2002:a5d:6e12:0:b0:360:7809:ff16 with SMTP id ffacd0b85a97d-360780a0043mr539327f8f.7.1718267209683;
+        Thu, 13 Jun 2024 01:26:49 -0700 (PDT)
+Received: from f.. (cst-prg-65-249.cust.vodafone.cz. [46.135.65.249])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075c6fa4esm845727f8f.67.2024.06.13.01.26.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 01:26:48 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: bp@alien8.de
+Cc: linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] x86/CPU/AMD: inline amd_clear_divider
+Date: Thu, 13 Jun 2024 10:26:37 +0200
+Message-ID: <20240613082637.659133-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612-yoga-ec-driver-v6-0-8e76ba060439@linaro.org>
- <20240612-yoga-ec-driver-v6-3-8e76ba060439@linaro.org> <c8c81617-4391-2c4c-1009-4a8a667a14dc@linux.intel.com>
-In-Reply-To: <c8c81617-4391-2c4c-1009-4a8a667a14dc@linux.intel.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 13 Jun 2024 11:26:37 +0300
-Message-ID: <CAA8EJpqONpegTa-svxhF-2YW8eabCBoiQo5aKEzBC-SxPxSEEQ@mail.gmail.com>
-Subject: Re: [PATCH v6 3/6] usb: typec: ucsi: add Lenovo Yoga C630 glue driver
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Nikita Travkin <nikita@trvn.ru>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 13 Jun 2024 at 10:30, Ilpo J=C3=A4rvinen
-<ilpo.jarvinen@linux.intel.com> wrote:
->
-> On Wed, 12 Jun 2024, Dmitry Baryshkov wrote:
->
-> > The Lenovo Yoga C630 WOS laptop provides implements UCSI interface in
-> > the onboard EC. Add glue driver to interface the platform's UCSI
-> > implementation.
-> >
-> > Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> > Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
->
-> > +static int yoga_c630_ucsi_read(struct ucsi *ucsi, unsigned int offset,
-> > +                            void *val, size_t val_len)
-> > +{
-> > +     struct yoga_c630_ucsi *uec =3D ucsi_get_drvdata(ucsi);
-> > +     u8 buf[YOGA_C630_UCSI_READ_SIZE];
-> > +     int ret;
-> > +
-> > +     ret =3D yoga_c630_ec_ucsi_read(uec->ec, buf);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     if (offset =3D=3D UCSI_VERSION) {
-> > +             memcpy(val, &uec->version, min(val_len, sizeof(uec->versi=
-on)));
-> > +             return 0;
-> > +     }
-> > +
-> > +     if (offset =3D=3D UCSI_CCI)
-> > +             memcpy(val, buf, min(val_len, YOGA_C630_UCSI_CCI_SIZE));
-> > +     else if (offset =3D=3D UCSI_MESSAGE_IN)
-> > +             memcpy(val, buf + YOGA_C630_UCSI_CCI_SIZE,
-> > +                    min(val_len, YOGA_C630_UCSI_DATA_SIZE));
-> > +     else
-> > +             return -EINVAL;
-> > +
-> > +     return 0;
->
-> Hmm, the inconsistency when to do return 0 is a bit odd. Also, using
-> switch (offset) would probably be better here anyway to replace all the
-> ifs.
+The routine is used on syscall exit and on non-AMD CPUs is guaranteed to
+be empty.
 
-I'll see if I can improve this bit.
+It probably does not need to be a func call even on CPUs which do need
+the mitigation.
 
->
-> > +}
-> > +
-> > +static int yoga_c630_ucsi_async_write(struct ucsi *ucsi, unsigned int =
-offset,
-> > +                                   const void *val, size_t val_len)
-> > +{
-> > +     struct yoga_c630_ucsi *uec =3D ucsi_get_drvdata(ucsi);
-> > +
-> > +     if (offset !=3D UCSI_CONTROL ||
-> > +         val_len !=3D YOGA_C630_UCSI_WRITE_SIZE)
-> > +             return -EINVAL;
-> > +
-> > +     return yoga_c630_ec_ucsi_write(uec->ec, val);
-> > +}
-> > +
-> > +static int yoga_c630_ucsi_sync_write(struct ucsi *ucsi, unsigned int o=
-ffset,
-> > +                                  const void *val, size_t val_len)
-> > +{
-> > +     struct yoga_c630_ucsi *uec =3D ucsi_get_drvdata(ucsi);
-> > +     bool ack =3D UCSI_COMMAND(*(u64 *)val) =3D=3D UCSI_ACK_CC_CI;
-> > +     int ret;
-> > +
-> > +     if (ack)
-> > +             set_bit(UCSI_C630_ACK_PENDING, &uec->flags);
-> > +     else
-> > +             set_bit(UCSI_C630_COMMAND_PENDING, &uec->flags);
-> > +
-> > +     reinit_completion(&uec->complete);
-> > +
-> > +     ret =3D yoga_c630_ucsi_async_write(ucsi, offset, val, val_len);
-> > +     if (ret)
-> > +             goto out_clear_bit;
-> > +
-> > +     if (!wait_for_completion_timeout(&uec->complete, 5 * HZ))
-> > +             ret =3D -ETIMEDOUT;
-> > +
-> > +out_clear_bit:
-> > +     if (ack)
-> > +             clear_bit(UCSI_C630_ACK_PENDING, &uec->flags);
-> > +     else
-> > +             clear_bit(UCSI_C630_COMMAND_PENDING, &uec->flags);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +const struct ucsi_operations yoga_c630_ucsi_ops =3D {
-> > +     .read =3D yoga_c630_ucsi_read,
-> > +     .sync_write =3D yoga_c630_ucsi_sync_write,
-> > +     .async_write =3D yoga_c630_ucsi_async_write,
-> > +};
-> > +
-> > +static void yoga_c630_ucsi_notify_ucsi(struct yoga_c630_ucsi *uec, u32=
- cci)
-> > +{
-> > +     if (UCSI_CCI_CONNECTOR(cci))
-> > +             ucsi_connector_change(uec->ucsi, UCSI_CCI_CONNECTOR(cci))=
-;
-> > +
-> > +     if (cci & UCSI_CCI_ACK_COMPLETE &&
-> > +         test_bit(UCSI_C630_ACK_PENDING, &uec->flags))
-> > +             complete(&uec->complete);
-> > +
-> > +     if (cci & UCSI_CCI_COMMAND_COMPLETE &&
-> > +         test_bit(UCSI_C630_COMMAND_PENDING, &uec->flags))
-> > +             complete(&uec->complete);
->
-> Is this racy? Can another command start after an ACK in between these two
-> ifs and complete() is called prematurely for the new command? (Or will
-> different value in cci protect against that?)
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-No, there is no race. The UCSI is locked for the duration of the command.
+This is a random tidbit I spotted at the bottom of the profile while
+looking at something else, I did not bother benchmarking the change --
+not sneaking in a func call to syscall exit should not require a
+justification. :)
 
->
-> > +}
-> > +
-> > +static int yoga_c630_ucsi_notify(struct notifier_block *nb,
-> > +                              unsigned long action, void *data)
-> > +{
-> > +     struct yoga_c630_ucsi *uec =3D container_of(nb, struct yoga_c630_=
-ucsi, nb);
-> > +     u32 cci;
-> > +     int ret;
-> > +
-> > +     switch (action) {
-> > +     case LENOVO_EC_EVENT_USB:
-> > +     case LENOVO_EC_EVENT_HPD:
-> > +             ucsi_connector_change(uec->ucsi, 1);
-> > +             return NOTIFY_OK;
-> > +
-> > +     case LENOVO_EC_EVENT_UCSI:
-> > +             ret =3D uec->ucsi->ops->read(uec->ucsi, UCSI_CCI, &cci, s=
-izeof(cci));
-> > +             if (ret)
-> > +                     return NOTIFY_DONE;
-> > +
-> > +             yoga_c630_ucsi_notify_ucsi(uec, cci);
-> > +
-> > +             return NOTIFY_OK;
-> > +
-> > +     default:
-> > +             return NOTIFY_DONE;
-> > +     }
-> > +}
-> > +
-> > +static int yoga_c630_ucsi_probe(struct auxiliary_device *adev,
-> > +                             const struct auxiliary_device_id *id)
-> > +{
-> > +     struct yoga_c630_ec *ec =3D adev->dev.platform_data;
-> > +     struct yoga_c630_ucsi *uec;
-> > +     int ret;
-> > +
-> > +     uec =3D devm_kzalloc(&adev->dev, sizeof(*uec), GFP_KERNEL);
-> > +     if (!uec)
-> > +             return -ENOMEM;
-> > +
-> > +     uec->ec =3D ec;
-> > +     init_completion(&uec->complete);
-> > +     uec->nb.notifier_call =3D yoga_c630_ucsi_notify;
-> > +
-> > +     uec->ucsi =3D ucsi_create(&adev->dev, &yoga_c630_ucsi_ops);
-> > +     if (IS_ERR(uec->ucsi))
-> > +             return PTR_ERR(uec->ucsi);
-> > +
-> > +     ucsi_set_drvdata(uec->ucsi, uec);
-> > +
-> > +     uec->version =3D yoga_c630_ec_ucsi_get_version(uec->ec);
-> > +
-> > +     auxiliary_set_drvdata(adev, uec);
-> > +
-> > +     ret =3D yoga_c630_ec_register_notify(ec, &uec->nb);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     return ucsi_register(uec->ucsi);
-> > +}
-> > +
-> > +static void yoga_c630_ucsi_remove(struct auxiliary_device *adev)
-> > +{
-> > +     struct yoga_c630_ucsi *uec =3D auxiliary_get_drvdata(adev);
-> > +
-> > +     yoga_c630_ec_unregister_notify(uec->ec, &uec->nb);
-> > +     ucsi_unregister(uec->ucsi);
->
-> Usually, the remove should tear down in reverse order than the probe side=
-.
-> Is the divergence from that here intentional?
+I am assuming the ALTERNATIVE mechanism does work fine for inlined
+routines.
 
-Yes, it's intentional, so that the driver doesn't get a notification
-while UCSI is being torn down. Consider it to be paired with
-ucsi_create().
+I am not going to argue for the change. If you don't want it altogether
+that's it.
 
---=20
-With best wishes
-Dmitry
+If there are cosmetic touch ups you want done here I would appreciate if
+you just did them yourself, I merely copied a chunk elsewhere.
+
+cheers
+
+ arch/x86/include/asm/processor.h | 12 +++++++++++-
+ arch/x86/kernel/cpu/amd.c        | 11 -----------
+ 2 files changed, 11 insertions(+), 12 deletions(-)
+
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index cb4f6c513c48..7a1f741df8f1 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -692,7 +692,17 @@ static inline u32 per_cpu_l2c_id(unsigned int cpu)
+ 
+ #ifdef CONFIG_CPU_SUP_AMD
+ extern u32 amd_get_highest_perf(void);
+-extern void amd_clear_divider(void);
++
++/*
++ * Issue a DIV 0/1 insn to clear any division data from previous DIV
++ * operations.
++ */
++static inline void amd_clear_divider(void)
++{
++	asm volatile(ALTERNATIVE("", "div %2\n\t", X86_BUG_DIV0)
++		     :: "a" (0), "d" (0), "r" (1));
++}
++
+ extern void amd_check_microcode(void);
+ #else
+ static inline u32 amd_get_highest_perf(void)		{ return 0; }
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 44df3f11e731..be5889bded49 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -1220,14 +1220,3 @@ void amd_check_microcode(void)
+ 
+ 	on_each_cpu(zenbleed_check_cpu, NULL, 1);
+ }
+-
+-/*
+- * Issue a DIV 0/1 insn to clear any division data from previous DIV
+- * operations.
+- */
+-void noinstr amd_clear_divider(void)
+-{
+-	asm volatile(ALTERNATIVE("", "div %2\n\t", X86_BUG_DIV0)
+-		     :: "a" (0), "d" (0), "r" (1));
+-}
+-EXPORT_SYMBOL_GPL(amd_clear_divider);
+-- 
+2.43.0
+
 
