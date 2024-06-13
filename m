@@ -1,209 +1,135 @@
-Return-Path: <linux-kernel+bounces-214070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BCC7907F0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:38:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BEC1907F11
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBF6D1F230F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:38:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3DBF28237A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C68C14D2AC;
-	Thu, 13 Jun 2024 22:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA8B14D281;
+	Thu, 13 Jun 2024 22:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KTuwUo/g"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="l4FAwlRB"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D6914B965
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 22:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F5C13B5AD
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 22:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718318297; cv=none; b=ul7YtW5EF9/bC4acTqZ2guWbYjPfnPGbxMQZWpR7tFiTLAiHxIrHVAPNWOnBdoPoS1D3M5oUeWXpeBCPd+HOfNb/2Zn00o/i+7myvCE/QOC/yLyenewgqE5mPnXXcCcXJpbtYopol2ZLdTQeR3p/XxXpHuiLEY0U8tNU87iNkX4=
+	t=1718318481; cv=none; b=sspgdyfkots6MZWU73ZawhFaofglMgNM1TNogfz1IqOtpQMjtFLPsrsFbJt1+txjlOT0oHp4gPIokr2KmXvlP757r+v/E0SV3rc+9NtOp9BDKHENlQFcIJCpeyAndFf4Yl5MXXMYD1kmgjoeWG31/QgVKLxHO+9fUPlPWJf3sks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718318297; c=relaxed/simple;
-	bh=2u1VP7eGoXAMtgev4KjobLhkIzKXvMU3NlBQ+3wtuyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jzhB76h4DDZoQkJxSJEDpTinQy032KVJ757yGygmH5moNXIdFOOYDW3in/VQK9zpmAb6AOlMfRm4iqNHmhQcqknEXcR6DhSwUSL4xwFKoNC8SCrmB3dCUKXivXVJaZLxGOUG+6FSHPYOT+LP+Ppq64Ae9e3zVColHhuDpNNMf90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KTuwUo/g; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718318294;
+	s=arc-20240116; t=1718318481; c=relaxed/simple;
+	bh=vKi8gbaNhSZ/mamp916rK3s03rXlqy17Sk3LVQ6HuPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qeb/B48w77fTl+44IQX8HpotkBzPMb/qYFJ4sRuKH8zLokn6f6+Glb6I8FHLLD+J6Gj8nEv4F6pHGdY6DEogen3+3VPSCAQRi0TLwkv1kDF3uEMrAKAPJZL3ZV6sl4UYQPJI+Aey6GRBYgznYnOW8I5w4NExJNtR8/LNG+9qTiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=l4FAwlRB; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: yosryahmed@google.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718318476;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=he5Yx1jWujWUE+IXddJY2r++ndCMDeeVF1A9UEVm79M=;
-	b=KTuwUo/g6yXgoUxSAGC49yhGU0eLxAeJZc2zVxruS/qyGqkuVXTFUES54UWOtVpqPk9vAj
-	7wRNlbCzuBYqIlUurCIbfheAhaBvVrLaEC/iyYotzRnsluvoVlOnCSccPIIDddMTmkN8iW
-	P3l6hqtPfx0ZNOrwbTemVWBACDPn4Ug=
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
- [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-132-0wfwX-idNaqfkczlvHchOg-1; Thu, 13 Jun 2024 18:38:13 -0400
-X-MC-Unique: 0wfwX-idNaqfkczlvHchOg-1
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7eb21854dcdso123337139f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:38:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718318293; x=1718923093;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=he5Yx1jWujWUE+IXddJY2r++ndCMDeeVF1A9UEVm79M=;
-        b=hGQhhgKd/s2YF5xokQJcvkPkqcbhBB0BxnFNxFRsP6I2RtVHGszq0OfQyx9WRqheFz
-         AtYmT8JWfRE5s6Tux+DP1Y3AkYQCJ5UGMknFihlaDiY8MutFfH7fKAMivH6C7uPZZhz3
-         Rth1oJbMMvW0/WrGTmB824OVpTrNs/NafkW4EMj7A1jt9kY14SVhR7lOhbBSVBK/HloU
-         ByC2wIupb47ANtaCebzqMI+kM5rknFvz5ew3kmqtICla4ctfsAKKQdt2RSClpR0NxKyq
-         H/MZUUqUnAroFRkL5dZwIOAOjXRLl/v1ncZgcn7Juhzd/2vgaL+p1o9x9i+PxUHtr7Ua
-         Tvqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDPlSIltSa4Tl7ka8Oy5D83nQ24aHkM9ziYtFnq8QBYVYzrA0w7thLhIOferZXA6zjUxVNja2iMqwbkrRxG0KaF1Kpc5VkfX7i9CFa
-X-Gm-Message-State: AOJu0YwN4nmb896+w9lxVisRVyLktEaeDpXYEon+vw/uMb7JN6WV9M4F
-	N9huAhD0hZjyZyz6/7SUvBC5KT5qgUIi0GQFts5q0lewjFi3305zBkgpXO6p90hxaWlmKDICLAw
-	Ul2b8L2WB9ybeEXpEUfh1Tlu2CVKaY22p1Oy9GKxv3wvmZsJ9dFm8KcNXKxyt5w==
-X-Received: by 2002:a5d:878f:0:b0:7eb:7c78:9bac with SMTP id ca18e2360f4ac-7ebd8eeeacbmr291420339f.7.1718318292765;
-        Thu, 13 Jun 2024 15:38:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHC5Q3qOf+xsCvCjrf11Bh2sb1u4xb0WsNH89tM/d7UXwv+XdN3cXQh9lfpTz/dBnTH+uebWQ==
-X-Received: by 2002:a5d:878f:0:b0:7eb:7c78:9bac with SMTP id ca18e2360f4ac-7ebd8eeeacbmr291418039f.7.1718318292355;
-        Thu, 13 Jun 2024 15:38:12 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b956a4e7b9sm567073173.156.2024.06.13.15.38.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 15:38:11 -0700 (PDT)
-Date: Thu, 13 Jun 2024 16:38:09 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Vidya Sagar <vidyas@nvidia.com>,
- "corbet@lwn.net" <corbet@lwn.net>, "bhelgaas@google.com"
- <bhelgaas@google.com>, Gal Shalom <galshalom@nvidia.com>, Leon Romanovsky
- <leonro@nvidia.com>, Thierry Reding <treding@nvidia.com>, Jon Hunter
- <jonathanh@nvidia.com>, Masoud Moshref Javadi <mmoshrefjava@nvidia.com>,
- Shahaf Shuler <shahafs@nvidia.com>, Vikram Sethi <vsethi@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Jiandi An <jan@nvidia.com>,
- Tushar Dave <tdave@nvidia.com>, "linux-doc@vger.kernel.org"
- <linux-doc@vger.kernel.org>, "linux-pci@vger.kernel.org"
- <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, Krishna Thota <kthota@nvidia.com>,
- Manikanta Maddireddy <mmaddireddy@nvidia.com>, "sagar.tv@gmail.com"
- <sagar.tv@gmail.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
- <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>
-Subject: Re: [PATCH V3] PCI: Extend ACS configurability
-Message-ID: <20240613163809.12f0334b.alex.williamson@redhat.com>
-In-Reply-To: <20240612232301.GB19897@nvidia.com>
-References: <20240610113849.GO19897@nvidia.com>
-	<20240612212903.GA1037897@bhelgaas>
-	<20240612232301.GB19897@nvidia.com>
-Organization: Red Hat
+	bh=axMkgrlRNzbazn3gKxpjsc5NsZWIHblTZHRj4tETIAI=;
+	b=l4FAwlRBM34rKqh9pvULsxJDfbGyY49ey30g82j5czLphMHWWYOvEx8+63TFPEa4Kagd9+
+	8FSwfqQ0sKWjXYdyZ9yCQnRZnbovTskFfjE6UmX5bBO7cBG4cpj2G4UxDyafUeha+V5cDq
+	bhpP9XDLntFqjrVc3NjJfq1mAA8SS2g=
+X-Envelope-To: usamaarif642@gmail.com
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: david@redhat.com
+X-Envelope-To: ying.huang@intel.com
+X-Envelope-To: hughd@google.com
+X-Envelope-To: willy@infradead.org
+X-Envelope-To: nphamcs@gmail.com
+X-Envelope-To: chengming.zhou@linux.dev
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: kernel-team@meta.com
+X-Envelope-To: minchan@kernel.org
+X-Envelope-To: senozhatsky@chromium.org
+Date: Thu, 13 Jun 2024 15:41:10 -0700
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org, 
+	hannes@cmpxchg.org, david@redhat.com, ying.huang@intel.com, hughd@google.com, 
+	willy@infradead.org, nphamcs@gmail.com, chengming.zhou@linux.dev, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com, Minchan Kim <minchan@kernel.org>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v3 0/2] mm: store zero pages to be swapped out in a bitmap
+Message-ID: <etjzs45r7derztzgrb5b4tub4c72vobo6esc3ndksyke6kpiov@qj3ar7xwh6ee>
+References: <20240610121820.328876-1-usamaarif642@gmail.com>
+ <CAJD7tkZdx7xJiDcvayH1aRW9Q6GQaZnF58UhspEOe=GQMBqFiQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJD7tkZdx7xJiDcvayH1aRW9Q6GQaZnF58UhspEOe=GQMBqFiQ@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 12 Jun 2024 20:23:01 -0300
-Jason Gunthorpe <jgg@nvidia.com> wrote:
+On Thu, Jun 13, 2024 at 02:50:31PM GMT, Yosry Ahmed wrote:
+> On Mon, Jun 10, 2024 at 5:18 AM Usama Arif <usamaarif642@gmail.com> wrote:
+> >
+> > Going back to the v1 implementation of the patchseries. The main reason
+> > is that a correct version of v2 implementation requires another rmap
+> > walk in shrink_folio_list to change the ptes from swap entry to zero pages to
+> > work (i.e. more CPU used) [1], is more complex to implement compared to v1
+> > and is harder to verify correctness compared to v1, where everything is
+> > handled by swap.
+> >
+> > ---
+> > As shown in the patchseries that introduced the zswap same-filled
+> > optimization [2], 10-20% of the pages stored in zswap are same-filled.
+> > This is also observed across Meta's server fleet.
+> > By using VM counters in swap_writepage (not included in this
+> > patchseries) it was found that less than 1% of the same-filled
+> > pages to be swapped out are non-zero pages.
+> >
+> > For conventional swap setup (without zswap), rather than reading/writing
+> > these pages to flash resulting in increased I/O and flash wear, a bitmap
+> > can be used to mark these pages as zero at write time, and the pages can
+> > be filled at read time if the bit corresponding to the page is set.
+> >
+> > When using zswap with swap, this also means that a zswap_entry does not
+> > need to be allocated for zero filled pages resulting in memory savings
+> > which would offset the memory used for the bitmap.
+> >
+> > A similar attempt was made earlier in [3] where zswap would only track
+> > zero-filled pages instead of same-filled.
+> > This patchseries adds zero-filled pages optimization to swap
+> > (hence it can be used even if zswap is disabled) and removes the
+> > same-filled code from zswap (as only 1% of the same-filled pages are
+> > non-zero), simplifying code.
+> 
+> There is also code to handle same-filled pages in zram, should we
+> remove this as well? It is worth noting that the handling in zram was
+> initially for zero-filled pages only, but it was extended to cover
+> same-filled pages as well by commit 8e19d540d107 ("zram: extend zero
+> pages to same element pages"). Apparently in a test on Android, about
+> 2.5% of the swapped out pages were non-zero same-filled pages.
+> 
+> However, the leap from handling zero-filled pages to handling all
+> same-filled pages in zram wasn't a stretch. But now that zero-filled
+> pages handling in zram is redundant with this series, I wonder if it's
+> still worth keeping the same-filled pages handling.
 
-> On Wed, Jun 12, 2024 at 04:29:03PM -0500, Bjorn Helgaas wrote:
-> > [+cc Alex since VFIO entered the conversation; thread at
-> > https://lore.kernel.org/r/20240523063528.199908-1-vidyas@nvidia.com]
-> > 
-> > On Mon, Jun 10, 2024 at 08:38:49AM -0300, Jason Gunthorpe wrote:  
-> > > On Fri, Jun 07, 2024 at 02:30:55PM -0500, Bjorn Helgaas wrote:  
-> > > > "Correctly" is not quite the right word here; it's just a fact that
-> > > > the ACS settings determined at boot time result in certain IOMMU
-> > > > groups.  If the user desires different groups, it's not that something
-> > > > is "incorrect"; it's just that the user may have to accept less
-> > > > isolation to get the desired IOMMU groups.  
-> > > 
-> > > That is not quite accurate.. There are HW configurations where ACS
-> > > needs to be a certain way for the HW to work with P2P at all. It isn't
-> > > just an optimization or the user accepts something, if they want P2P
-> > > at all they must get a ACS configuration appropriate for their system.  
-> > 
-> > The current wording of "For iommu_groups to form correctly, the ACS
-> > settings in the PCIe fabric need to be setup early" suggests that the
-> > way we currently configure ACS is incorrect in general, regardless of
-> > P2PDMA.  
-> 
-> Yes, I'd agree with this. We don't have enough information to
-> configurate it properly in the kernel in an automatic way. We don't
-> know if pairs of devices even have SW enablement to do P2P in the
-> kernel and we don't accurately know what issues the root complex
-> has. All of this information goes into choosing the right ACS bits.
-> 
-> > But my impression is that there's a trade-off between isolation and
-> > the ability to do P2PDMA, and users have different requirements, and
-> > the preference for less isolation/more P2PDMA is no more "correct"
-> > than a preference for more isolation/less P2PDMA.  
-> 
-> Sure, that makes sense
->  
-> > Maybe something like this:
-> > 
-> >   PCIe ACS settings determine how devices are put into iommu_groups.
-> >   The iommu_groups in turn determine which devices can be passed
-> >   through to VMs and whether P2PDMA between them is possible.  The
-> >   iommu_groups are built at enumeration-time and are currently static.  
-> 
-> Not quite, the iommu_groups don't have alot to do with the P2P. Even
-> devices in the same kernel group can still have non working P2P.
-> 
-> Maybe:
-> 
->  PCIe ACS settings control the level of isolation and the possible P2P
->  paths between devices. With greater isolation the kernel will create
->  smaller iommu_groups and with less isolation there is more HW that
->  can achieve P2P transfers. From a virtualization perspective all
->  devices in the same iommu_group must be assigned to the same VM as
->  they lack security isolation.
-> 
->  There is no way for the kernel to automatically know the correct
->  ACS settings for any given system and workload. Existing command line
->  options allow only for large scale change, disabling all
->  isolation, but this is not sufficient for more complex cases.
-> 
->  Add a kernel command-line option to directly control all the ACS bits
->  for specific devices, which allows the operator to setup the right
->  level of isolation to achieve the desired P2P configuration. The
->  definition is future proof, when new ACS bits are added to the spec
->  the open syntax can be extended.
-> 
->  ACS needs to be setup early in the kernel boot as the ACS settings
->  effect how iommu_groups are formed. iommu_group formation is a one
->  time event during initial device discovery, changing ACS bits after
->  kernel boot can result in an inaccurate view of the iommu_groups
->  compared to the current isolation configuration.
->  
->  ACS applies to PCIe Downstream Ports and multi-function devices.
->  The default ACS settings are strict and deny any direct traffic
->  between two functions. This results in the smallest iommu_group the
->  HW can support. Frequently these values result in slow or
->  non-working P2PDMA.
-> 
->  ACS offers a range of security choices controlling how traffic is
->  allowed to go directly between two devices. Some popular choices:
->    - Full prevention
->    - Translated requests can be direct, with various options
->    - Asymetric direct traffic, A can reach B but not the reverse
->    - All traffic can be direct
->  Along with some other less common ones for special topologies.
-> 
->  The intention is that this option would be used with expert knowledge
->  of the HW capability and workload to achieve the desired
->  configuration.
-
-FWIW, this sounds good to me too.  There certainly needed to be some
-clarification that this controls the isolation of devices and IOMMU
-groups are determined by aspects of that isolation rather than this
-option directly and exclusively being used to configure grouping.  I
-think this does that.  Thanks,
-
-Alex
-
+Please correct me if I am wrong but zram same-filled page handling is
+not just limited to swap-on-zram use-case and any zram as block device
+user can benefit from it. Also zram might not see any simplification
+similar to zswap in this patch series. I would say motivation behind
+zswap changes seems quite different from possible zram changes. I would
+recommed to evaluate these cases independently.
 
