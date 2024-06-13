@@ -1,133 +1,83 @@
-Return-Path: <linux-kernel+bounces-213865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD42907BCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:56:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24EE6907BCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B915B1C2484A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:56:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7E9D285CE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6B214BF92;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7EC114C5B3;
 	Thu, 13 Jun 2024 18:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e6TxCS+O"
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TRV4oeXJ"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA1514B061;
-	Thu, 13 Jun 2024 18:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB8584A48;
+	Thu, 13 Jun 2024 18:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718304953; cv=none; b=gtBlvSyj6UI1LC+aVRZsr9GarQJCIMPoIi7Un0DwYpjgMv3DblqppKuMMQJuvx4wnDc+lbE0eSvlySxY+BkrNyfjglCiu1edWSPNc5Uk6sf9vwY4VVA7FuXiDxuJ40OSmFTXc2/JB32C25DGbXgOEahXOVEi02iKhZCN5LHJSFU=
+	t=1718304953; cv=none; b=Ox7+A7wzfJtMF3qchNxRvd8XO8fPvvyFgUvdZfHWr7PreicDxlIvXmT5QuL7wBvAiVU0TZDKdOEoG+Jh6SMu96HcLHHgsNs2VlWdXzqwJDg2tHfsdSfNNKMVQzJ3Ybs0sby6Nb1kiOIb0Ca+vPzqK132Q3/VXGFVyzQZVIm+L88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718304953; c=relaxed/simple;
-	bh=PB2nojLhZzae5rx9ilIWiCyCUZzKIumHsScsPI9lg9I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HzDEbaJfk3yq/twglG5sHNgwwWo7CsZ8QJlbSlzNZcf+VGMPGTXKYILtqVY+eT9s8HkFImuXTwZkeGDx6BG14fxwQ6vqIXosCToqp5VfnJagNwgo48T+GOKnQcVfU7D+CtDwVu3fCEwS0sF4jWMuVE1lBgKb9AzFz0OfD1j908Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e6TxCS+O; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-4e7eadf3668so522239e0c.0;
-        Thu, 13 Jun 2024 11:55:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718304951; x=1718909751; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A8rHVmgvSmGrxOP2jWFGDRV2w5cu6w7bmnQNCKQ1muA=;
-        b=e6TxCS+O9aQfngFVhOYQ1VtJzbOYuRTkNOIAOoyHsr6VsKxS2OUDTqItRzRf1Tsec5
-         n6i1gZTFU0hNGNSqzJM6xuZPgK4ITRWpPP8GhDnn6EXkpnN83dZyClJgP6LbZZh9E0KZ
-         K9AeHRhklbCFceEmczksHsFBdPCrvX9S9wmd6sloo7mKBOcYBHvlHzm5utE/zsfwacGu
-         A7OzF7PL9MK8xeof5hSzyaEMoqAsyU5wJ0DC4UUn8f78JF8+sNrhBOB+dtGdW6NPXh0n
-         JLkjHR5lBhbe4StEGXqYvqJqGDCajErnCPDx4lUB9cADjSTJDJh6woirz58i6q7jtQ79
-         b2fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718304951; x=1718909751;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A8rHVmgvSmGrxOP2jWFGDRV2w5cu6w7bmnQNCKQ1muA=;
-        b=M9PWBVfdEnylx+2KuDfK6il10FMbrGSa8SGJ4ixmWyfnNjxN8fwkDRy01LJFpNeO+o
-         e7zy05zuDWhub62FRyRxRriF6uZi/htbvKPIAKm3E/wBqm5BTHgJftWxmQuCwxKPLHdH
-         pXvFGSESB28cZOX5Ux0HZkNfLZHztVFwlQ7GE9DUD/Pt6wMz2EFYxMOERP2b/m7blLoo
-         rEYr8hOUYUzA+sjDdn8SkO5C8aMMcssQG5fgBC4mYvzD81KrNN3YHT1mMVqDqW3Q7ajS
-         MlLfmG6Z55YBM3XzoNWkVvfsuTvi5aWqQ+FBr0KUmKwB8nqCuASP8pVB8PKd5+SwNpcg
-         pBCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWldhYnrIXjXT5EG3GHlToDc6au+n5QrWu6CQOrgv2oeynwatrLa9TVdye4FtvfDEqBa+ed3UfKhFz6tx8gKviHg8QIXRaVrASxoidSkZOgoaG/Vf/JMWexB6aJIR7hl3/b+gfOny7FnnxDjQGHr6+iZUVvJJ2PK0SBWtSMlXWHkQS3vM3WL1YYifPBFeJIQ7meeht0osryujgdMwjsVBK8k/Q0+D8Z
-X-Gm-Message-State: AOJu0Yxzd6p/4CtMJrFw24Yo20OAmyjGLDLTCenzYilTm6wwg933LIna
-	8u5KT2KoOC5X3Bk9B4/wsbmDtFVUu7X53X7Tg2OTkkBrPwYcuoose0FFJG96ZssxyKP7s8evOzi
-	xYn9rEllVZLRUi+xHtEec5e42XEU=
-X-Google-Smtp-Source: AGHT+IHcW9OQetK9tkbITect2sTp6OO3zxB/F1M+lzzi8s7lswUbebD05U4oMiYA9j3TDmHYe5iR/6Ccln61ys/yBoI=
-X-Received: by 2002:a05:6122:c9f:b0:4ec:fc20:a51a with SMTP id
- 71dfb90a1353d-4ee3e980ac8mr802618e0c.9.1718304949331; Thu, 13 Jun 2024
- 11:55:49 -0700 (PDT)
+	bh=63ugLzPkZISDkE/R2ja4qO6bJ89KfrEGKAD4KlJR1D8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Et1CEzyt9lqbwZjFLr9YEO38VFEktfS5t74bC69U07sYgjULgGF62cWUIJaQJuKr3N5RCWWPfs9sSToGFgHOJeOaAUUEG5F+ZP8clKZpICdSmEkegIMMIs0oiHC1V5KHBp42RDzNGjm+KF5co0kPhNZcB77zUVXrZM/dJcZNT0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=TRV4oeXJ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=AY43+HBOJx3kLbSrEpkOfh/9TQVZmcpW+OF54BWBDDQ=; b=TRV4oeXJcTNJAIbe6ATskhY2ag
+	C8V5GUmUSmL8RPcf+68GRFJbhJgOwqhTkDQ+PIESxdG5atvY47szMRa/KEID9XEVHKcrGO9QCtK+D
+	1eg+90U83W2ORq0rqJyKKeHMKBcGbcnWOGWdFy6LusE8sGW0vZaFy+zLOkBH/Rm8errXpNAyh+JHr
+	rDex33PIa/Gq6orzytnoXse3Jrjq5rslmD+Hhocsb2JyuuvVbp+MDX5Ua2M/zHjBVUFlhEdQVo4DY
+	k7dXy2F7xSRwEjEjhE8xkjyLeLG2lHRICSRKHn/0VyoNRL7nkCH/IGcO2vVLqUklF+bgRQI75nizR
+	v3pehW9Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1sHpbt-00336k-0s;
+	Thu, 13 Jun 2024 18:55:45 +0000
+Date: Thu, 13 Jun 2024 19:55:45 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>,
+	Christian Brauner <brauner@kernel.org>, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] lockref: speculatively spin waiting for the lock to
+ be released
+Message-ID: <20240613185545.GI1629371@ZenIV>
+References: <20240613001215.648829-1-mjguzik@gmail.com>
+ <20240613001215.648829-2-mjguzik@gmail.com>
+ <CAHk-=wgX9UZXWkrhnjcctM8UpDGQqWyt3r=KZunKV3+00cbF9A@mail.gmail.com>
+ <CAHk-=wgPgGwPexW_ffc97Z8O23J=G=3kcV-dGFBKbLJR-6TWpQ@mail.gmail.com>
+ <5cixyyivolodhsru23y5gf5f6w6ov2zs5rbkxleljeu6qvc4gu@ivawdfkvus3p>
+ <20240613-pumpen-durst-fdc20c301a08@brauner>
+ <CAHk-=wj0cmLKJZipHy-OcwKADygUgd19yU1rmBaB6X3Wb5jU3Q@mail.gmail.com>
+ <CAGudoHHWL_CftUXyeZNU96qHsi5DT_OTL5ZLOWoCGiB45HvzVA@mail.gmail.com>
+ <CAHk-=wi4xCJKiCRzmDDpva+VhsrBuZfawGFb9vY6QXV2-_bELw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240610233221.242749-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <6b3fe242-3733-4f16-b727-494dc1d82002@kernel.org> <CA+V-a8vp0qHKqUMvyfy9hQjKyk8Cs0bDTnYh-ChvPi150r5i2g@mail.gmail.com>
- <3d0a7a82-6262-40e6-be25-4a1c4d8df2fe@kernel.org> <CAMuHMdUvtUWdEfN_=gNJWY+qfE6Yw9KdenQ2OkLc=HvmRnB6pw@mail.gmail.com>
-In-Reply-To: <CAMuHMdUvtUWdEfN_=gNJWY+qfE6Yw9KdenQ2OkLc=HvmRnB6pw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 13 Jun 2024 19:55:18 +0100
-Message-ID: <CA+V-a8svpo8FYanyV9gKqmp=tCm+Po5cAi8VPmgFBnyDJyJQWg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 2/4] dt-bindings: clock: Add R9A09G057 core clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wi4xCJKiCRzmDDpva+VhsrBuZfawGFb9vY6QXV2-_bELw@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hi Geert,
+On Thu, Jun 13, 2024 at 11:43:05AM -0700, Linus Torvalds wrote:
 
-On Thu, Jun 13, 2024 at 4:15=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Krzysztof,
->
-> On Thu, Jun 13, 2024 at 2:56=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.=
-org> wrote:
-> > On 13/06/2024 11:57, Lad, Prabhakar wrote:
-> > >>> of section 4.4.2 which cannot be controlled by CLKON register.
-> > >>> ---
-> > >>>  include/dt-bindings/clock/r9a09g057-cpg.h | 21 +++++++++++++++++++=
-++
-> > >>>  1 file changed, 21 insertions(+)
-> > >>>  create mode 100644 include/dt-bindings/clock/r9a09g057-cpg.h
-> > >>
-> > >> Missing vendor prefix.
-> > >>
-> > > OK, Is this just for new includes being added, or do you want me to
-> > > rename the existing Renesas specific includes in here which dont have
-> > > vendor prefix?
-> >
-> > Didn't we discuss it?
-> >
-> > I commented only about this binding.
->
-> Yes we did, in the context of the R-Car V4M DT binding definitions,
-> which became include/dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h
-> But Prabhakar was not involved there.
->
-> Note that I also asked to include the vendor prefix, see
-> https://lore.kernel.org/linux-renesas-soc/CAMuHMdU7+O-+v=3D2V83AjQmTWyGy_=
-a-AHgU_nPMDHnVUtYt89iQ@mail.gmail.com/
->
-Oops I missed that review comment.
+>        seqcount_spinlock_t        d_seq;
+> 
+> because seqcount_spinlock_t has been entirely broken and went from
+> being 4 bytes back when, to now being 64 bytes.
 
-Cheers,
-Prabhakar
+1ca7d67cf5d5 "seqcount: Add lockdep functionality to seqcount/seqlock structures"
 
