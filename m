@@ -1,164 +1,198 @@
-Return-Path: <linux-kernel+bounces-212452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 389DE906134
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:44:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A97C906137
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4C641F2269C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:44:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C60F283708
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7706184A40;
-	Thu, 13 Jun 2024 01:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546D712BF1B;
+	Thu, 13 Jun 2024 01:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="V462TnBh"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WI//pNXf"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2720183CBB;
-	Thu, 13 Jun 2024 01:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAF0129A99;
+	Thu, 13 Jun 2024 01:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718242971; cv=none; b=o7qSKmxLaniq6VUrh6IsIFTd7bTbRzhiz1xYIbt3UJhWwQQy6MdZ/MR+RdkTkT0C+NhJPRskQOfyRPEwiuAFtR3f1iSZAtf03E+6hkF7Qgl1ZpvxJjDvMo+WvAGr8lCM1rhWJfp+l2ASe742GTqyERofOAMVmkqOdJon/Vudj7s=
+	t=1718242982; cv=none; b=WND5akb/bjrj9odLpvIFbNG0vx9yKaqDL3DDAsfnpcIyTiGc2z1ZOOr4Ae3Zq1Ui9FaC6yiZ2Xps08X+3tZdazmI2Oa5yjvtPs8g8BBRJmn5S9+gqFZOnYtnzsraus384Df6SwCnkam5ol4Ii2DUg/0hb2ILEd5A2R1mFD5ImEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718242971; c=relaxed/simple;
-	bh=5/+IrkgrhOmaGeVPdZOFOumO83cbV9KbZWwfFB9s9f0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hmdP1oHn6OkHA3pbT/zQ9FOSosCrMYREqohlxPBLVw1XdAlIZE+Vd3KkF8LhGguF2jtTubzvrS36xlxt+1TCUtPKCgptbBRXDxkxvWQ4xxsO8uLGE04l6kPoyqyrCc2Xs0TA+PJXk1nnByD7lA/T6Z5/q1TXrQIcm1Z31uUSCbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=V462TnBh; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1718242966;
-	bh=qZu3S/2G+ssclBYZDuHdoHCD0A2B/XeDXD0CZyUPl/c=;
-	h=Date:From:To:Cc:Subject:From;
-	b=V462TnBhJ8uYTQKYyo2kspIokgluYpFHyYbznX1xHUBwPr7RiGXijqmMrGVnTas9J
-	 aZOv45OTPUSsvI5SiKXechIkoWvn4wpcXzMbfU/VS5/5f8D6NqZgPdyRcZ/5ich/lb
-	 EnrcCaX0pDrZrjzO8YC4a+MnbN7iRiLzzPXauw6Bw1KzdQnvlV1Xa1XxLYQEX7aTdG
-	 UwUTEwcJQPGwX9AYs7IVHfkd1ovK25LiEzVQRMc/uab2Bl0Q5beGKSQrMAiyD5HWCR
-	 tsjOH8T9/wkWYP8q9ru1icF3L3TmauQ4ze/FUFAR9XH7zJKjp+x2gOiP72udDhnjOK
-	 4ocBL1J+5zWOw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4W04sx3P9Fz4wb1;
-	Thu, 13 Jun 2024 11:42:44 +1000 (AEST)
-Date: Thu, 13 Jun 2024 11:42:43 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Christian Brauner <brauner@kernel.org>
-Cc: Christian =?UTF-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>, Jiri Olsa
- <jolsa@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the ftrace tree with the vfs-brauner
- tree
-Message-ID: <20240613114243.2a50059b@canb.auug.org.au>
+	s=arc-20240116; t=1718242982; c=relaxed/simple;
+	bh=7abbWRIx27AytNTH4OXZO2H/ozQ/vLZ5aUHwu9tKvFk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kB50X5i8HHwnAwA5DM5v6fPtM/bAb8m54pk5KFZc3kJRU6CZDWRvY7f4NlDqegTP++Bz63ApiVnk476O/PlH0JIZpWyTch/JXP28CeJC/2lRKFb0nG/zQmZs8s1mXmVuHBQuQoR0jesfvHKmA0/D2OgnR1lfJzK59g74H3Dghc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WI//pNXf; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-6f9fbec4fd9so283220a34.2;
+        Wed, 12 Jun 2024 18:43:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718242980; x=1718847780; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/mEnEjULKQXk4yYyl4mjE8uROEMCabgqsBL99/Efhs4=;
+        b=WI//pNXfCPt8Bl+53e4Q68otktL6KMEjIJY43Yfu/oP9gm8YoAJDLMeDAgb0CyhFkD
+         j8KMuCBCiy4LAn4OUQGKL3GvrIF0t/Z8MyQ1xe2rBCL8JvX+0BfHQEiww/eckyq/yHHu
+         1WMA6bO/BoTS6P87gxU2dw77YKQA2zobvriYXI7sYCnsUrxLxyQye2SIbLmHN/Kog7yY
+         gwDh1cKn+4cqmz64mu/8yu45HNZjCLv3nmWoTUmFnq5G96NbRpNousNLFcOMX1oAfwU2
+         EZALKtMhTpDolozqBC9LmWG3bRA+KRxGCSfdllWeF+f+IYKYoX+Z/qWVRuLLTwYjQxXj
+         e6kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718242980; x=1718847780;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/mEnEjULKQXk4yYyl4mjE8uROEMCabgqsBL99/Efhs4=;
+        b=HLzHT22dhSOAsSlwrMwRehtZmmzcTT1ruC6XGzaAXRrrBm43Y5vUARAsivmc/E8w4m
+         4RjUT7hN1xpKi0Sa02zSYcoo92nBzYy4K1+vXxs/SmYGh4wtJf0rKvUaaLA3o/yh4g8f
+         vK2tVRptbyPg71P64hG8rhrIyhAiEp3xHBWPBmZccOE66/A/ge61JX9PNa9YffYn+Sa+
+         4m5FVBEdtqCX3YVBruKmVqpiNugkRItOiLbZD7UqCYH5qqfshJn2AZbP95WK66Ly2YUe
+         udiw4L/ABp2g63G3gmfy5hRWGSqMoYQ2CByCgjEhjNJyri/MlcCuKkM8bHereiVHHu7z
+         uC7A==
+X-Forwarded-Encrypted: i=1; AJvYcCW+hXlV+74H+G6k+V7XD2HoiXovBDlzIeWqnLZN+umh/eClLxcHGM6MFqmAdpqmPct8TTsFA6jzMOk5K8JI2ZpBRd8quEXVpLlP0Y5WepKvHW9OZyylGpCp8g5rOFzweEe1ISneGZxQC6IqUZkHEsnmDS4Kww5OvsrwrSGc5xXIRii2GQ==
+X-Gm-Message-State: AOJu0YwMW9/FqXb2qYQTN/hnlO0XwDI73huzWwwbU0qGZH9A4lBAcpZ/
+	SQLzIHfAF17RB21Nw4S9jB5GhOHnAoqk97UnbKAFzRV/YmiUQHtK
+X-Google-Smtp-Source: AGHT+IH4rU9kj/OV/RIpQ8nZ2pKMrO1e3JSgSCb/lr/90ul/n7aHhOdX2QpKamzVPNeXcaH0mEH5EA==
+X-Received: by 2002:a05:6830:205a:b0:6f9:72ca:fdc8 with SMTP id 46e09a7af769-6fa1c43ba6amr3001227a34.37.1718242979977;
+        Wed, 12 Jun 2024 18:42:59 -0700 (PDT)
+Received: from localhost.localdomain ([122.8.183.87])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5bd6292da28sm46575eaf.47.2024.06.12.18.42.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 18:42:59 -0700 (PDT)
+From: Chen Wang <unicornxw@gmail.com>
+To: adrian.hunter@intel.com,
+	aou@eecs.berkeley.edu,
+	conor+dt@kernel.org,
+	guoren@kernel.org,
+	inochiama@outlook.com,
+	jszhang@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	robh@kernel.org,
+	ulf.hansson@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	chao.wei@sophgo.com,
+	haijiao.liu@sophgo.com,
+	xiaoguang.xing@sophgo.com,
+	tingzhu.wang@sophgo.com
+Cc: Chen Wang <unicorn_wang@outlook.com>
+Subject: [PATCH v3 2/4] mmc: sdhci-of-dwcmshc: unify the naming of soc helper functions
+Date: Thu, 13 Jun 2024 09:42:52 +0800
+Message-Id: <91adce8d020faa22a97719e8774dda01a58333e7.1718241495.git.unicorn_wang@outlook.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1718241495.git.unicorn_wang@outlook.com>
+References: <cover.1718241495.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/xF37dqulSIjQfCC/XcTfBBj";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/xF37dqulSIjQfCC/XcTfBBj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Chen Wang <unicorn_wang@outlook.com>
 
-Hi all,
+Continue another patch: "mmc: sdhci-of-dwcmshc: adjust positions
+of helper routines".
 
-Today's linux-next merge of the ftrace tree got conflicts in:
+The helper functions at the dwcmshc level are all prefixed with
+"dwcmshc_", which is easier to identify, while the functions at
+the soc level are more confusing. Now they are uniformly prefixed
+with the soc type string, such as "rk35xx_", "th1520_", etc.
 
-  arch/x86/entry/syscalls/syscall_64.tbl
-  include/uapi/asm-generic/unistd.h
+Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+---
+ drivers/mmc/host/sdhci-of-dwcmshc.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-between commit:
+diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+index a68818f53786..346d2d323a05 100644
+--- a/drivers/mmc/host/sdhci-of-dwcmshc.c
++++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+@@ -193,7 +193,7 @@
+ 					 SDHCI_TRNS_BLK_CNT_EN | \
+ 					 SDHCI_TRNS_DMA)
+ 
+-enum dwcmshc_rk_type {
++enum rk35xx_type {
+ 	DWCMSHC_RK3568,
+ 	DWCMSHC_RK3588,
+ };
+@@ -202,7 +202,7 @@ struct rk35xx_priv {
+ 	/* Rockchip specified optional clocks */
+ 	struct clk_bulk_data rockchip_clks[RK35xx_MAX_CLKS];
+ 	struct reset_control *reset;
+-	enum dwcmshc_rk_type devtype;
++	enum rk35xx_type devtype;
+ 	u8 txclk_tapnum;
+ };
+ 
+@@ -621,7 +621,7 @@ static unsigned int rk35xx_get_max_clock(struct sdhci_host *host)
+ 	return clk_round_rate(pltfm_host->clk, ULONG_MAX);
+ }
+ 
+-static void dwcmshc_rk3568_set_clock(struct sdhci_host *host, unsigned int clock)
++static void rk3568_set_clock(struct sdhci_host *host, unsigned int clock)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct dwcmshc_priv *dwc_priv = sdhci_pltfm_priv(pltfm_host);
+@@ -749,7 +749,7 @@ static void rk35xx_sdhci_reset(struct sdhci_host *host, u8 mask)
+ 	sdhci_reset(host, mask);
+ }
+ 
+-static int dwcmshc_rk35xx_init(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
++static int rk35xx_init(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
+ {
+ 	int err;
+ 	struct rk35xx_priv *priv = dwc_priv->priv;
+@@ -790,7 +790,7 @@ static int dwcmshc_rk35xx_init(struct sdhci_host *host, struct dwcmshc_priv *dwc
+ 	return 0;
+ }
+ 
+-static void dwcmshc_rk35xx_postinit(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
++static void rk35xx_postinit(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
+ {
+ 	/*
+ 	 * Don't support highspeed bus mode with low clk speed as we
+@@ -1062,7 +1062,7 @@ static const struct sdhci_ops sdhci_dwcmshc_ops = {
+ };
+ 
+ static const struct sdhci_ops sdhci_dwcmshc_rk35xx_ops = {
+-	.set_clock		= dwcmshc_rk3568_set_clock,
++	.set_clock		= rk3568_set_clock,
+ 	.set_bus_width		= sdhci_set_bus_width,
+ 	.set_uhs_signaling	= dwcmshc_set_uhs_signaling,
+ 	.get_max_clock		= rk35xx_get_max_clock,
+@@ -1243,7 +1243,7 @@ static int dwcmshc_probe(struct platform_device *pdev)
+ 
+ 		priv->priv = rk_priv;
+ 
+-		err = dwcmshc_rk35xx_init(host, priv);
++		err = rk35xx_init(host, priv);
+ 		if (err)
+ 			goto err_clk;
+ 	}
+@@ -1300,7 +1300,7 @@ static int dwcmshc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	if (rk_priv)
+-		dwcmshc_rk35xx_postinit(host, priv);
++		rk35xx_postinit(host, priv);
+ 
+ 	err = __sdhci_add_host(host);
+ 	if (err)
+-- 
+2.25.1
 
-  e6873349f700 ("fs/xattr: add *at family syscalls")
-
-from the vfs-brauner tree and commit:
-
-  190fec72df4a ("uprobe: Wire up uretprobe system call")
-
-from the ftrace tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/x86/entry/syscalls/syscall_64.tbl
-index 26af003921d2,6452c2ec469a..000000000000
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@@ -385,10 -384,7 +385,11 @@@
-  460	common	lsm_set_self_attr	sys_lsm_set_self_attr
-  461	common	lsm_list_modules	sys_lsm_list_modules
-  462 	common  mseal			sys_mseal
- -463	64	uretprobe		sys_uretprobe
- +463	common	setxattrat		sys_setxattrat
- +464	common	getxattrat		sys_getxattrat
- +465	common	listxattrat		sys_listxattrat
- +466	common	removexattrat		sys_removexattrat
-++467	64	uretprobe		sys_uretprobe
- =20
-  #
-  # Due to a historical design error, certain syscalls are numbered differe=
-ntly
-diff --cc include/uapi/asm-generic/unistd.h
-index 5b8dab0b934e,2378f88d5ad4..000000000000
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@@ -845,17 -845,11 +845,20 @@@ __SYSCALL(__NR_lsm_list_modules, sys_ls
-  #define __NR_mseal 462
-  __SYSCALL(__NR_mseal, sys_mseal)
- =20
- -#define __NR_uretprobe 463
- +#define __NR_setxattrat 463
- +__SYSCALL(__NR_setxattrat, sys_setxattrat)
- +#define __NR_getxattrat 464
- +__SYSCALL(__NR_getxattrat, sys_getxattrat)
- +#define __NR_listxattrat 465
- +__SYSCALL(__NR_listxattrat, sys_listxattrat)
- +#define __NR_removexattrat 466
- +__SYSCALL(__NR_removexattrat, sys_removexattrat)
- +
-++#define __NR_uretprobe 467
-+ __SYSCALL(__NR_uretprobe, sys_uretprobe)
-+=20
-  #undef __NR_syscalls
-- #define __NR_syscalls 467
- -#define __NR_syscalls 464
-++#define __NR_syscalls 468
- =20
-  /*
-   * 32 bit systems traditionally used different
-
---Sig_/xF37dqulSIjQfCC/XcTfBBj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZqTpMACgkQAVBC80lX
-0Gyxugf+OyoGzMPb40i+163XGdy4bk47x//dbm0++u5gjsfFmZto4qBgjQ8rGTB0
-JCo/lp8T9JM9r9rI400qSijsFAaCWtoFzykWCyHFIaVhpO0+YK87NMeWUcRSt1qF
-4NKgQr4wyGhpGLlNbsgvo9d7ybHVuQp3byOLo3zZ7xG0n0R+EcYXYaZDsNlk8T8o
-6nP5gH7iquDmj9btE6qwaZPqnpGpaj7/Fhgd6sUddA5G+ZKt6ewSY0XY0LcQ33+0
-lZ4Mr/4KHUF3r01dw0d6R3eGatbKyK3siv8y01duGCwPH7O2J06XIC4L4sR+AhNy
-3pZuoW4qGYkpkJ+dGlfmNb7IeEavxg==
-=8NEG
------END PGP SIGNATURE-----
-
---Sig_/xF37dqulSIjQfCC/XcTfBBj--
 
