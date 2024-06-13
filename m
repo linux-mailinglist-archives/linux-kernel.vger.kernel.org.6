@@ -1,109 +1,99 @@
-Return-Path: <linux-kernel+bounces-212857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB56906747
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:44:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5FE8906749
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CADA7B28C2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:44:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 057DF1C22DD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B92E1419AD;
-	Thu, 13 Jun 2024 08:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D91F1420D4;
+	Thu, 13 Jun 2024 08:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GsEmIpuS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O5EmflpY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA7543144;
-	Thu, 13 Jun 2024 08:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CEF013DDBA;
+	Thu, 13 Jun 2024 08:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718268136; cv=none; b=nuU0oXaSJzxnwC62DrfZoPCSa1VHvwQToI+7Aj/B9Gc+HiwKL9TwXy9RFJc44PdvIT1VCbAoom13jV4CJX5ZhPq++Lj9FplUxP5aaGw7Ce/+kaILO23CbZ0JxRZePHk10o9moSyc5KY6F4xw9xrKhVEvTLVtRL+dgdxlvW6gxBQ=
+	t=1718268157; cv=none; b=e1iyTJZi5WxfpCvgT2Y9ngKJdVmkEtRQP61MUzdeEPRX9xbC6fROWJUNW9A10sZsUklSD/KQcukaOBwCwIo5NA5eD+CzEa+lrAuoMfHU4zdjrUA4LjeI4ETgoF2wPC0+AA1jXE6g/z0qfi1e1hlrp/a9h/1kXMmR6MvUFoHOgVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718268136; c=relaxed/simple;
-	bh=4DwpPwkA6d/p4ccA/BSLWy4Hrj0gghbBTVqHDH0Z++Q=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wg0gu7hN0JAJlPfGBhyXM5l6Bur5zQjSJXltYs8lAt4pkzJKUbx0S+RjM4mSAuAsnjgo7SJ6HrZjNKpjj56FBR468Xdwc27aTQqEE7WYUM14LXIrML0nbIBiKrx6JXj1Ovj+yH0PkPmN/GyanZrDXWdqZ0dC0Rpt87P4rBuiG94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GsEmIpuS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 078A6C2BBFC;
-	Thu, 13 Jun 2024 08:42:16 +0000 (UTC)
+	s=arc-20240116; t=1718268157; c=relaxed/simple;
+	bh=oi5/9POK1vEMCK0p3ow/Sp1STduZ+j0IpQ4ogJhDSuE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=TQn8JGL4JFs2Vvpfk4R54C5Qa9X+Ky8xX7e2+vINl2EYCw7Gj8sqjLNVVd/NN+QKRsktZ6922lJW7JwjRlJNc/UG8MwgjFtlXpArmJK72/CAyEs7KVbmy97HBLAy0znFknbcXZ1YF3ejksnjb+yE+7LO1o6Z0xDhYMcaphiYolg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O5EmflpY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6A7BC4AF1A;
+	Thu, 13 Jun 2024 08:42:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718268136;
-	bh=4DwpPwkA6d/p4ccA/BSLWy4Hrj0gghbBTVqHDH0Z++Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GsEmIpuSpzvHxJjmq/ZuB0OjgbYPlf+U7Auma22lPgAsd1ViTHQZIa3XYkeUqURrM
-	 f2LnudOXXDNv15BFUFdWeXjgxjptS7NWx0lP5MslfZ1WxK+KBpJ1SoKovz1EiP0QSe
-	 4FbcVEsd+CQCaoKjx1CuneKkQJ/xrpeDh/5JEgxwac2T2srqM+RqGP8X1693Sp41Z+
-	 1phlJf5D/vj2EU8DFCSSthmofK+r9Q8aEw8Ggy+o8apNcovNvBNi7r17+EQ4EwQTNI
-	 Ez+YB2pwNDIpAaQSwczIZLkk4jWD+/pyblk2Wa3ZIOkIqi9oHA1jorvObl3f3dUdOv
-	 Vtp/IMZfd4LPA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sHg29-003Tbn-Hm;
-	Thu, 13 Jun 2024 09:42:13 +0100
-Date: Thu, 13 Jun 2024 09:42:13 +0100
-Message-ID: <86zfrpjkt6.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Shaoqin Huang <shahuang@redhat.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	kvmarm@lists.linux.dev,
-	Eric Auger <eauger@redhat.com>,
-	Sebastian Ott <sebott@redhat.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	James Morse
- <james.morse@arm.com>,
-	kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [RFC PATCH v1 0/2] KVM: arm64: Making BT Field in ID_AA64PFR1_EL1 writable
-In-Reply-To: <7f1ca739-42f5-4e3a-a0c9-b1eac4522a97@redhat.com>
-References: <20240612023553.127813-1-shahuang@redhat.com>
-	<Zmkyi39Pz6Wqll-7@linux.dev>
-	<8634pilbja.wl-maz@kernel.org>
-	<7f1ca739-42f5-4e3a-a0c9-b1eac4522a97@redhat.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1718268157;
+	bh=oi5/9POK1vEMCK0p3ow/Sp1STduZ+j0IpQ4ogJhDSuE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=O5EmflpYmfNeZF0mhO8ZHCRMrTMseABNxdFZVc6x0PPZlvXSWwEQJ3Y4GylcKUGNi
+	 JatpxUFH62QeacYlRQXMLn7C3wbIr4OhDqXswGqQYp5AlpehNO8TjWlro1ePs26Nrl
+	 VGNXL8yWNSRhAjsojS83PXOP214FItOhLtm/NozVjwdRQtm4dnI3/7JItP10Y9kePl
+	 KTMS5FMuYJ59PWisKx3ud8SP0o0LW7i+xm3JSQVEIaV7O5KcUOoIwCH9pBE1noSyXb
+	 UA/D85hiABWwgWhIj+hJxudbTE16pLJDzfsVBeYxgCQBS6bJPE1K2BrF9mMek2Lloc
+	 FlmR/6f2QSzIQ==
+From: Mark Brown <broonie@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Sunny Luo <sunny.luo@amlogic.com>
+In-Reply-To: <20240612-spi_lbc-v1-1-d52e8c8011bd@amlogic.com>
+References: <20240612-spi_lbc-v1-1-d52e8c8011bd@amlogic.com>
+Subject: Re: [PATCH] spi: meson-spicc: add spicc loopback mode
+Message-Id: <171826815548.249668.9109171570822609949.b4-ty@kernel.org>
+Date: Thu, 13 Jun 2024 09:42:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: shahuang@redhat.com, oliver.upton@linux.dev, kvmarm@lists.linux.dev, eauger@redhat.com, sebott@redhat.com, cohuck@redhat.com, catalin.marinas@arm.com, james.morse@arm.com, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, pbonzini@redhat.com, shuah@kernel.org, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-4c370
 
-On Thu, 13 Jun 2024 09:31:45 +0100,
-Shaoqin Huang <shahuang@redhat.com> wrote:
+On Wed, 12 Jun 2024 17:44:50 +0800, Xianwei Zhao wrote:
+> Add spicc loopback mode for debugging convenience.
 > 
-> If we don't care about the FEAT_CNTSC right now. Could I fix the
-> compile issue and respin this again without the background of enabling
-> migration between MtCollins and AmpereOne, and just keep the
-> information of the different BT field between different machine?
+> 
 
-As I said, I think this patch is valuable. But maybe you should
-consider tackling the full register, rather than only addressing a
-single field.
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] spi: meson-spicc: add spicc loopback mode
+      commit: 313d2c9d1252185721cad4f8c57099840d6c9958
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
+Mark
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
 
