@@ -1,145 +1,156 @@
-Return-Path: <linux-kernel+bounces-213489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569EC9075FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:04:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E5D9075FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:05:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0330289363
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:04:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E98071C22965
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3811494A2;
-	Thu, 13 Jun 2024 15:04:33 +0000 (UTC)
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA0214901C;
+	Thu, 13 Jun 2024 15:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ak7SMJ9v"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DA653E31;
-	Thu, 13 Jun 2024 15:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB026148FFF;
+	Thu, 13 Jun 2024 15:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718291072; cv=none; b=ma8RUc6ZG2hyayOMh4LHWVJ2wMe5jJNNdBvS1dZJ8MGYbTVcbD1w0yl7I2ySWaDxXoS+LtJtmi1AMAM+j0t1rNfvmaphK6qSFRhh6BCP85BJc8E8dN1BwI2+rNwzqVx1anBP/RLGhrHKwTANKJuJFM1zBUmgpy8ZRyxEN4HpRDQ=
+	t=1718291093; cv=none; b=LHQCnG+XnzuqcgA3stEnjb5F4p4603umDtFttuMCrlopn1j1BTeyOIRkjbJvEWxfHkmWEi9p4odZHIgqPBU3W5oxGPEKA7VzjEjtV4evG1xoqpzteNVXxM8DWU1RzUmoWOYqnSPentZP2sDJy5A9rpj/T8OrjLEKMZFP9apJ4OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718291072; c=relaxed/simple;
-	bh=WmKERP9tj4pLULI6MBL8WzHes7imyUshvMK7Cdmy788=;
+	s=arc-20240116; t=1718291093; c=relaxed/simple;
+	bh=VuyCLVw5xrGKJGG2faecvFsFbDGJjg+31wyzeWw+FRw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ueO6Kw0n5+TvuuVQkcQgXJduk5aaF9OkhFbmzSPHNqyyAqWPTvpP/WMsQog8WXebNmZftrIN1BvDQDipahnbyExRKVXoGumMXCVigpnJ0aUnN8+iLOf/SYR3p1S91c0whXhUQLMmj6FpUuWFJYGPNishTsgWNSWokFD0EAzOdo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=YfY8vq9i0XHoF+AcpMrt6Dew31bueMycLOeTPa/tfvDWlXeJtP8TjlFS/5WJ6JLlthuZBKgCJTjKM0AjOPNSfL5TC1Bt5s3aNfXdRyznBrnFF3xdsyoYIt+k3fd+BDeCX647iMawlCiDAYRPDPVp0mElS98cKEsnvXYwGyiNTGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ak7SMJ9v; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-25545664f37so493369fac.1;
-        Thu, 13 Jun 2024 08:04:30 -0700 (PDT)
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b05c9db85fso6217626d6.2;
+        Thu, 13 Jun 2024 08:04:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718291091; x=1718895891; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=APrVAMfdz5UzlM6te+OQj7RDwISoPjhwoAJLzTA+Yb4=;
+        b=ak7SMJ9v54LvlVgk3VVCwc2aFxcHFmeVu5Pcpk53CKyhctgHcOO31suS8fgYqkK06q
+         Fyj5nNIiHzBmkQI4m73us1I+lhbkEDVzqdpxDckLALqfzvmeUNZNqoLexvFt2X+Ufqzx
+         PRugmZHFoTbumj55ktS6cFCsHrLlM6/YLzw69jqGlj/RbMwUwpyw7vJ4CZ4N4vPCXYIm
+         LAkzURDAt6d1+1fgXYd4bsa716gBwia7crDb3QZQIJ5lOemxw+VBmhWoJDbAZJpqwjEk
+         DpZj3CctcyGJ9r9nTvP3wduiG1V6yzumjbq4++6Hi6XcamBCO9L0d29qzp4dipOqaaSf
+         wNOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718291069; x=1718895869;
+        d=1e100.net; s=20230601; t=1718291091; x=1718895891;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZbNjy99xrdFjhXXMSO2YCV4k0Oh2gSCP2Gd7J/d4sfs=;
-        b=akE2HzUlVTeijBfuG4nCDUjCInxqAt0k4sBDY7xIQKjkTGDsdv8qfSEJ10uBdUPNeD
-         tmqQawgSsZtC8MJSJXocyy9mX49Cbdk6+L5CbXfv3Mtpdd8fFOgv+KPkuwehhmsi0YJC
-         fW9oNwufb0pbJ0gMmKKMxp+0j0vz5nQwEDaxy9AEB6UWvFCEowO5zBM5tPytiWivYEEP
-         0BVgWeNeGWc7UXmMjwtXRcPlJGGibqtx4qYvBl8KKcBlp960c+Hzc41w6/l6htwijyrn
-         aV/jdMadlbzVJU2L7wzmJWD+983/RaHobpuEGVGW89FmloIZiCO7b0VfU23Cv/pp4gIS
-         lyRA==
-X-Forwarded-Encrypted: i=1; AJvYcCXq/XpbGUTuJkf0Wajsn+Cy1nyimbqtjn7h7DCFP+DbiK/+QRmT7eCQUaZWOCJmJzM3nYj7G1Y73V52dlowpko+fQl5Fl6Jvu9aOAodTusY4H0PlgFk0sJGsIV4B/UqCZoMiP4LwxX/F/OgywZaYahIz/jYK10/LNdxLTjtj2RbBFFWEv2r0K/mqK7j4M5UVH0aN0YF3AHPpnUKMdPSWsp9WT3Ly1bW
-X-Gm-Message-State: AOJu0Yy7zDKTzgy8JvquO90H+ueddQUOD/qUEkjnNj0ErgGURv9LnQhJ
-	tB4Ex/qiJXzf9UC0xL5nOwwcfcCHsLJPCQprSyFFm6nX9BSx7l4T6ExWjmMd
-X-Google-Smtp-Source: AGHT+IFKM5qMMASl10rmXKrcUmwgeXTv62z5DjrFnDyPUs5g9dLQFpi2z/xFC6eh3855WITdwr6/KA==
-X-Received: by 2002:a05:6870:40c7:b0:254:8c7a:6c97 with SMTP id 586e51a60fabf-25514d23f24mr6164361fac.30.1718291069162;
-        Thu, 13 Jun 2024 08:04:29 -0700 (PDT)
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com. [209.85.167.182])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2567aa141d6sm431807fac.24.2024.06.13.08.04.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 08:04:28 -0700 (PDT)
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d22802674cso546758b6e.2;
-        Thu, 13 Jun 2024 08:04:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU8Dow31EtxT7P7pEoMQIZDShQ1ihERNO3RVGJ76vyDULNXMdKytN6foPMgIdDFkNArrsp2GjgNJC5DKO4Sc8CPO2VtvYlCyJs/pM1BwEWDepm2u0FiaLSMIPEUmEgV9BqmHJ4zaD4Mi1QuhShF89sDwRKcsTVZVCj68KQFh19JFhmtur1nHnpaYt2s1ZZeAILDLJZA6qF+Hi/fDP87tm0Yi8QUsDNf
-X-Received: by 2002:a05:6808:228f:b0:3d2:2f52:c635 with SMTP id
- 5614622812f47-3d23dfe7db9mr6804347b6e.22.1718291068517; Thu, 13 Jun 2024
- 08:04:28 -0700 (PDT)
+        bh=APrVAMfdz5UzlM6te+OQj7RDwISoPjhwoAJLzTA+Yb4=;
+        b=rGeDf4Nw1GXvKSQRxUkjTikkS6xSf3vEAU54I3TJ3fe8m6UelXsk4896MgRpHD2Vr+
+         BHg0NuROffkiSZS0HFIT4LUnjc1Y8EYun6bo+zHYI9XRzmLVpaklFMthV5z2Nh4HlJrk
+         hcyezBaGH6JadOjE+sb/umG6Z1umL6xaRQ2QA25B+7HmQ9FHnaDVCaA96gqcwBrK9+/V
+         GZAArEpqtygI/gAxVydzfvCs4VsDXGgGdKDQUI08JjR06aEtEPlgSn+7JXaapOtpmMwk
+         RL3/K3u72b7q7e9h8lxUgm3egXBjYcqEQlq0xfZQHwkOVfLjix8zc/rtqZOm/8XYroPV
+         PLlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmHDM+eAkc29er0yFdKq4Gl4TjfYQKY39lMTz8YMzhrYHEqyvp8hK/YMkawtdQilBclu0aqqWI5bBiWlI119zrwZGOX1xdG01Mc3chEGnDrbgQu0N01rYYxa2vbgbEhLTwgEzaSiTA
+X-Gm-Message-State: AOJu0YyKn9lgdLu+viq9sSDFuSEf9mMxvTOLQ2xXRAHJQohPb3i6+Q3r
+	VgUBgH5L8/icfCFLSIJ9fEYOG4MLO/snIGlhIvoLvx+K1LqM7tBNZ75Aph+Xdzm912b4OXLQCGh
+	j613j4tJNbgY969GiqS/4Kz2u6Tc=
+X-Google-Smtp-Source: AGHT+IGU/QEpuTi/kwbsmlS2WdrVWU0zL2Qu2R/VLvOWuGqq4KLKtnVAdbBgWWeLmr1OLqdFCN9jK78F3SRfXTZlqgw=
+X-Received: by 2002:a05:6214:311d:b0:6b0:80f4:4505 with SMTP id
+ 6a1803df08f44-6b1a64907d8mr51601676d6.33.1718291090593; Thu, 13 Jun 2024
+ 08:04:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610112700.80819-1-wsa+renesas@sang-engineering.com>
- <20240610112700.80819-2-wsa+renesas@sang-engineering.com> <CAMRc=MfZ11U+kAh1+K=DxtJ=QL+cY7Q_sBN4sQDF-RNgjpV0QA@mail.gmail.com>
- <jvnvx7a4pn6evrp5ehfrt4qsiuprq6ogvrue2a3uupwtydmgcm@2rvat7ibvgb4>
- <CAMRc=Mc4__0zzJZG3BPnmbua88SLuEbX=Wk=EZnKH5HQvB+JPg@mail.gmail.com>
- <CACRpkda==5S75Bw6F3ZLUmf7kwgi_JkByiizR=m-61nrMDWuvQ@mail.gmail.com> <ce1d8150-c595-44d5-b19a-040920481709@app.fastmail.com>
-In-Reply-To: <ce1d8150-c595-44d5-b19a-040920481709@app.fastmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Jun 2024 17:04:15 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXmtXcOQ1SibKFh3M+X-syEyEHfxjvSmtDoDNqU40MPVg@mail.gmail.com>
-Message-ID: <CAMuHMdXmtXcOQ1SibKFh3M+X-syEyEHfxjvSmtDoDNqU40MPVg@mail.gmail.com>
-Subject: Re: [PATCH v9 1/1] gpio: add sloppy logic analyzer using polling
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Kent Gibson <warthog618@gmail.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+References: <20240608155316.451600-1-flintglass@gmail.com> <20240608155316.451600-2-flintglass@gmail.com>
+ <CAKEwX=P1Ojb71AEJ2gzQTrfWidFPcJZmoNxEwji7TceBN-szCg@mail.gmail.com>
+ <CAPpoddeigM44jhTA8Ua=+J4MC1MikouBZVoPrCW2LZF+9r5YeA@mail.gmail.com>
+ <CAJD7tkYp3GbuXV9G5bAZ1DetMmepV5ynciA+ukae7CKuxpXDJQ@mail.gmail.com>
+ <CAPpoddfj1EdfXfTUT8bLaNxat0hYiE4X9=qG38gPgRgmmVOjcw@mail.gmail.com>
+ <CAJD7tkZTSGz1bpo-pMNP_=11O-7RrhubWonqhUJwrt+TB=Ougg@mail.gmail.com>
+ <CAPpoddcp9rVvg77WapsuiMdMzFrV0UioJ+VbQuJbKNY7-=nvVw@mail.gmail.com> <CAJD7tkY0=0yKSmEz=E5dL7GLRsO8r6ESWyzF+HdgK0wnMpzLKg@mail.gmail.com>
+In-Reply-To: <CAJD7tkY0=0yKSmEz=E5dL7GLRsO8r6ESWyzF+HdgK0wnMpzLKg@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Thu, 13 Jun 2024 08:04:39 -0700
+Message-ID: <CAKEwX=PF=a2+pUBM3xEHBMu6VJY2Q64eTmVwo7vb4YmJQpK_DA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] mm: zswap: fix global shrinker memcg iteration
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Takero Funaki <flintglass@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Shakeel Butt <shakeel.butt@linux.dev>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Arnd,
-
-On Thu, Jun 13, 2024 at 10:54=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrot=
-e:
-> On Thu, Jun 13, 2024, at 10:27, Linus Walleij wrote:
-> > On Thu, Jun 13, 2024 at 10:17=E2=80=AFAM Bartosz Golaszewski <brgl@bgde=
-v.pl> wrote:
-> >
-> >> On second thought
-> >> though: are you sure drivers/gpio/ is the right place for it?
-> >
-> > Actually that is something I requested.
-> >
-> > I think it fits in drivers/gpio as it is such a clear cut usage of GPIO
-> > lines, and it doesn't really fit into any other subsystem.
-> >
-> >> May I suggest moving it over to drivers/misc/?
-> >
-> > Misc is a bit...
-> > messy. I remember Arnd being very sceptical about putting stuff there
-> > rather than creating new subsystems, so since I've tried to avoid it,
-> > albeit recently more and more stuff gets merged there again :/
+On Wed, Jun 12, 2024 at 7:58=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com>=
+ wrote:
 >
-> Right, and that is mostly to avoid having code in there because
-> there is no other place for it. Some parts of drivers/misc should
-> have been a separate subsystem, some should have use an existing
-> subsystem, and other parts should have never been merged.
+> On Wed, Jun 12, 2024 at 7:36=E2=80=AFPM Takero Funaki <flintglass@gmail.c=
+om> wrote:
+> >
+> > 2024=E5=B9=B46=E6=9C=8813=E6=97=A5(=E6=9C=A8) 11:18 Yosry Ahmed <yosrya=
+hmed@google.com>:
+> >
+> > > > The corrected version of the cleaner should be:
+> > > > ```c
+> > > > void zswap_memcg_offline_cleanup(struct mem_cgroup *memcg)
+> > > > {
+> > > >         /* lock out zswap shrinker walking memcg tree */
+> > > >         spin_lock(&zswap_shrink_lock);
+> > > >         if (zswap_next_shrink =3D=3D memcg) {
+> > > >                 do {
+> > > >                         zswap_next_shrink =3D mem_cgroup_iter(NULL,
+> > > >                                         zswap_next_shrink, NULL);
+> > > >                         spin_unlock(&zswap_shrink_lock);
+> > > >                         spin_lock(&zswap_shrink_lock);
+> > > >                         if (!zswap_next_shrink)
+> > > >                                 break;
+> > > >                 } while (!mem_cgroup_online(zswap_next_shrink));
+> > > >         }
+> > > >         spin_unlock(&zswap_shrink_lock);
+> > > > }
+> > > > ```
+> > >
+> > > Is the idea here to avoid moving the iterator to another offline memc=
+g
+> > > that zswap_memcg_offline_cleanup() was already called for, to avoid
+> > > holding a ref on that memcg until the next run of zswap shrinking?
+> > >
+> > > If yes, I think it's probably worth doing. But why do we need to
+> > > release and reacquire the lock in the loop above?
+> >
+> > Yes, the existing cleaner might leave the offline, already-cleaned memc=
+g.
+> >
+> > The reacquiring lock is to not loop inside the critical section.
+> > In shrink_worker of v0 patch, the loop was restarted on offline memcg
+> > without releasing the lock. Nhat pointed out that we should drop the
+> > lock after every mem_cgroup_iter() call. v1 was changed to reacquire
+> > once per iteration like the cleaner code above.
 >
-> The parts of drivers/misc that make the most sense to me are
-> those that expose a one-of-a-kind piece of hardware as a
-> single character device.
+> I am not sure how often we'll run into a situation where we'll be
+> holding the lock for too long tbh. It should be unlikely to keep
+> encountering offline memcgs for a long time.
 >
-> This one would probably fit into drivers/misc/ better than
-> some other drivers we have in there, but leaving it in
-> drivers/gpio/ also seems fine.
->
-> I could also imagine the functionality being exposed
-> through drivers/iio/ in a way that is similar to an
-> adc, but I don't know if that would work in practice or
-> how much of a rewrite that would be.
+> Nhat, do you think this could cause a problem in practice?
 
-Hmm, I like the iio idea.
-Sorry, Wolfram ;-)
+I don't remember prescribing anything to be honest :) I think I was
+just asking why can't we just drop the lock, then "continue;". This is
+mostly for simplicity's sake.
 
-Gr{oetje,eeting}s,
+https://lore.kernel.org/linux-mm/CAKEwX=3DMwrRc43iM2050v5u-TPUK4Yn+a4G7+h6i=
+eKhpQ7WtQ=3DA@mail.gmail.com/
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+But I think as Takero pointed out, it would still skip over the memcg
+that was (concurrently) updated to zswap_next_shrink by the memcg
+offline callback.
 
