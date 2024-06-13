@@ -1,92 +1,83 @@
-Return-Path: <linux-kernel+bounces-212424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E02906040
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:04:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ADEF906043
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9843F284522
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:04:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1867CB21B12
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDEAD535;
-	Thu, 13 Jun 2024 01:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F381A269;
+	Thu, 13 Jun 2024 01:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Sezacqbl"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hkjYSL7a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C67A8BEC;
-	Thu, 13 Jun 2024 01:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B9D8BEC;
+	Thu, 13 Jun 2024 01:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718240645; cv=none; b=Y13sNSYhde5gyOMgKV8d30p+nbw3K5a2j8H+Dpd+siXPPkRYibq4j0cu3ADnVhMWSprTcJfB1zhbF/sjzYZNJe87eHZCjPt5yYKg5Kdf3qARzoU1KIrpPk8l8H2JgLT5QnK/ueQaLqxLlef5fczmAXjm08bE8mhjAUJIzI65VZE=
+	t=1718240661; cv=none; b=CWgXmpgSf3+olKsFm/juT4Z8Sfe6YHSdCOWnm47yf34tUWKmx5Kxlm9rH3Tq0Lv8p0Nsf3CZ55C4rEU39BLUcmgPkh5IfR4YFoJOV0zpVg9M4eBqJVFvp8v2UonRBq4FxCUeD6ssfIsHkD82nxUum+duJF1rCkZOMhpltIAn0z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718240645; c=relaxed/simple;
-	bh=eI6fr6y6BDbBbC7J2/cwrajhoyoAgMBifMm8zEHNPTY=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=kE9Y2jkgDXpx3JJoimkwsI7hUqH8lFsg+JL+Sli65EwlmxgUJluq+TzpspRxYdFdp4982hiQJwA7K6qEhCJBz8Qi2lnl5uBB5OE+ab74Ec8Xw4SINqJXSqNP0mabgLbma4phpo88BHJi69CmocJlbDQU2Veel290mEgr3atNJmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Sezacqbl; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2EDAE4D0;
-	Thu, 13 Jun 2024 03:03:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1718240629;
-	bh=eI6fr6y6BDbBbC7J2/cwrajhoyoAgMBifMm8zEHNPTY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=SezacqblUV0M+VvWatCgzsFjZb251HxTCOoD/48aQu+qMllu8XtUlJUqK8cFbeM9L
-	 RWEFSLHzVInRCdjcwYaCMKDXfkljSg+9Njn6UU6DRdHv2zVqTjkRwmz7u2ilO7rgPP
-	 4K9DhjFaQxGup9aQiNwG07pJ/77NW9IupBnYjJs0=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718240661; c=relaxed/simple;
+	bh=mUqdzlE2YgruqKLE1C3H5e4Ue5/0C4g77p2kLBoVhBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iS7BC7Kk99nc7G29RIPeEP9J/9hw8zXGTBF5W60w8orkMeKAKJHxdY6WwB8277nZ8ycYByehnSvwTbpXKyl98lvA/SArBO0GfRN6elGKrX9qVVLQzuYBAPPTIpdX/YcbUtLGPuZMHtvFgj1/HYw4vQK698wsS8kO+/S1sB8rA68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hkjYSL7a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF86DC116B1;
+	Thu, 13 Jun 2024 01:04:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718240660;
+	bh=mUqdzlE2YgruqKLE1C3H5e4Ue5/0C4g77p2kLBoVhBQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hkjYSL7aymQsKlAzq6Yed36s96sUhKIrGVugQoUZuBakuqy5MAFwMb9wDNXMy/8dk
+	 ACR/+jWtdDJu4jjEWklpD+2sovBrpkY5/eODSIi6kfyWz1nli+JOxE6wnCctmEFWeO
+	 P7AxEm7W6DW2X0F/fKIMb42o3P8ng7mledOqjOSE9uAdgtmBhgDnZQ/mVfkXuAGfVZ
+	 o3ufs+N3LwP7cUHVV4ENoAMn2SUtlp8fj0337DU8SoDxfUaBEq5y0Svneg2g95ypda
+	 4H7PQ/LRp3qqwbI/9f+7YKLgSJnCF65JdchVhtlas32NqbtfdnUW3dNtHpbEWdCkWV
+	 lT7lmYIFOYLig==
+Date: Wed, 12 Jun 2024 18:04:19 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: =?UTF-8?B?QXNiasO4cm4=?= Sloth =?UTF-8?B?VMO4bm5lc2Vu?=
+ <ast@fiberby.net>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Edward Cree
+ <ecree.xilinx@gmail.com>, Martin Habets <habetsm.xilinx@gmail.com>,
+ linux-net-drivers@amd.com, Saeed Mahameed <saeedm@nvidia.com>, Leon
+ Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+ linux-rdma@vger.kernel.org, Jesse Brandeburg <jesse.brandeburg@intel.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>, intel-wired-lan@lists.osuosl.org,
+ Louis Peens <louis.peens@corigine.com>, oss-drivers@corigine.com,
+ linux-kernel@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+ i.maximets@ovn.org
+Subject: Re: [PATCH net-next 0/5] net: flower: validate encapsulation
+ control flags
+Message-ID: <20240612180419.391f584d@kernel.org>
+In-Reply-To: <20240609173358.193178-1-ast@fiberby.net>
+References: <20240609173358.193178-1-ast@fiberby.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240612-md-drivers-media-common-v1-1-b5603c85f629@quicinc.com>
-References: <20240612-md-drivers-media-common-v1-1-b5603c85f629@quicinc.com>
-Subject: Re: [PATCH] usb: uvc: add missing MODULE_DESCRIPTION() macro
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jeff Johnson <quic_jjohnson@quicinc.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Date: Thu, 13 Jun 2024 02:04:00 +0100
-Message-ID: <171824064052.2248009.2434759914694160537@ping.linuxembedded.co.uk>
-User-Agent: alot/0.10
 
-Quoting Jeff Johnson (2024-06-13 00:58:59)
-> With ARCH=3Darm64, make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/common/uv=
-c.o
->=20
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->=20
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+On Sun,  9 Jun 2024 17:33:50 +0000 Asbj=C3=B8rn Sloth T=C3=B8nnesen wrote:
+> Now that all drivers properly rejects unsupported flower control flags
+> used with FLOW_DISSECTOR_KEY_CONTROL, then time has come to add similar
+> checks to the drivers supporting FLOW_DISSECTOR_KEY_ENC_CONTROL.
 
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-
-> ---
->  drivers/media/common/uvc.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/media/common/uvc.c b/drivers/media/common/uvc.c
-> index 9c0ba7a6c185..c54c2268fee6 100644
-> --- a/drivers/media/common/uvc.c
-> +++ b/drivers/media/common/uvc.c
-> @@ -180,4 +180,5 @@ const struct uvc_format_desc *uvc_format_by_guid(cons=
-t u8 guid[16])
->  }
->  EXPORT_SYMBOL_GPL(uvc_format_by_guid);
-> =20
-> +MODULE_DESCRIPTION("USB Video Class common code");
->  MODULE_LICENSE("GPL");
->=20
-> ---
-> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> change-id: 20240612-md-drivers-media-common-01f67d64768a
->
+Thanks for doing this work!
+Do you have any more of such series left? Could we perhaps consider
+recording the driver support somewhere in struct net_device and do=20
+the rejecting in the core? That's much easier to extend when adding
+new flags than updating all the drivers.
+This series I think may not be a great first candidate as IIUC all
+drivers would reject so the flag would be half-dead...
 
