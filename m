@@ -1,141 +1,118 @@
-Return-Path: <linux-kernel+bounces-213683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5AD29078B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:51:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ABB39078BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A4261F229F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:51:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BF72282CCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B16414A088;
-	Thu, 13 Jun 2024 16:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C601487DF;
+	Thu, 13 Jun 2024 16:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVTL9/aY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Avz9gaPj"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B4817FD;
-	Thu, 13 Jun 2024 16:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C98E12EBE6
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718297451; cv=none; b=ootZ8MZOEYtomji/NQfHgDx5IdzBLOExjHorgA4mnsuBDQKH4e3cQLlNELQA3sesfLdowIVvkFTWYPevOdL6FCkazIBVjUsQ7szVzUWSIL8x816hE55ey4Cumyl0s5SO2Lefx4tCNYlxBFcsj7JzB4YTYbO7QTBPDnjrTdBnNfg=
+	t=1718297495; cv=none; b=L1KFNkfei/uqvKYnOGvBXYenN1ZzpQxutfgjw6YvcQfqeSmYQEQExKelIH/o1kwaWPCN4ASoeLhuaVT6ei9mx7X0Cl/aYH/kSMiW0esAjYnl1g/z+xos9iizLaHePV3WdYgB8m39kM5VA/BoZuo+5x8tUQW6Sz4S/kApH6KMHZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718297451; c=relaxed/simple;
-	bh=dMNz9Y8NNsAx8VvRHwF0owWDBLLe2owtWpv0KXJS/oc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Bojy52KnYBg5xncZhWpyWepXe/Kw9WMbu9ijxyqkhXn09bkCawz0pDcjxDe5V68gnCtPIUF1Q8+mVNLr9hX1aEzAXSMy9pdgLP3t/CQMOcoZ4pheDiKkQz934K1fQiFxaVVe/cKEujgedxZDb1pRGyzVHGwUG4/UTWEXGHGSRiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVTL9/aY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75DB9C2BBFC;
-	Thu, 13 Jun 2024 16:50:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718297451;
-	bh=dMNz9Y8NNsAx8VvRHwF0owWDBLLe2owtWpv0KXJS/oc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cVTL9/aY0yTpLPpLmi52OjRocytiJ5MVfEPOz5Oz2ArYhYqnXMrbplJODQfFgocsK
-	 KWzKurmATtrg71AJ2hXun0mBt5JoG+5eqsfYMIlk5PbmXtfL4gyVeasHYWYNAOu7CG
-	 nWeDlj8uKBHwX9zp05pGXYH/I52VJ3RAWwK4/hGujbLeMQqTTuptf4xNcIKG9BsHxD
-	 fd+wTCdFGdgYuRVM5xcfPMVUnNhb3p0AKi3hiTepEFu0WnU4qtWBFvsw/kEzMNxqzW
-	 y1PTnwSGtEMfu75DVXE7qSRF2JG46wwpP4OEUo7rWRXRWr2r1eyenvyzz33ePRxp3q
-	 8jFdPRQ3FLBlg==
-From: SeongJae Park <sj@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org,
-	damon@lists.linux.dev
-Subject: Re: [PATCH 6.6 000/137] 6.6.34-rc1 review
-Date: Thu, 13 Jun 2024 09:50:47 -0700
-Message-Id: <20240613165047.84916-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240613113223.281378087@linuxfoundation.org>
-References: 
+	s=arc-20240116; t=1718297495; c=relaxed/simple;
+	bh=3Uv9P687Co6Bcq3L3Ugq2lwsGwOHTvKyqnIbkSW0VR8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=XK6F1Q39DCjEGh871ADFh9x0EpvnXgkOzr//2Eta30+mdQ8uwW7mjwIxcTGfzqJu5qu17e1BA/M63cL/sDc+vWZl7w7qI7uYaENHCx+D9aflBrZnO5wbCO4j4Pk/Ef9NtV3YzRnIwSLvo8xdKNHeKMBmJsH/QghbZ26k7+Ff82I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Avz9gaPj; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718297466; x=1718902266; i=markus.elfring@web.de;
+	bh=YFkSc9CKpSbzYGObHg7hLaAew0BY2AKB2tveQbaNtko=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Avz9gaPjA/Y2T47/8yA0Siun4DlzrI6JqJegC30JnDj6y1v8gGHgOhc1eLceNiA0
+	 1euNryqXV9Hym03STUBFXVQNkH+yPMa+Mjs1tlRMcWNy6tpiOIU+xkstcDCm66koj
+	 IYcF0Htvhjg6ThpmPzPMeDSMDKnMEGGjdMJL896jeQXhiO87DEn8cW7OpFxTuS4PZ
+	 n4E7EanKgMtpi6Lt3u1lmE3GQSTu1I0E9uKYwxPzUFvIw/Y3wcdVjBAH4cH+5oCxr
+	 ve7ezPwMIASVd6EU2QlP9Av1cu6wLrrZ5mho/qDSr1aLdSYieyCUnV5kZo2WqfeOm
+	 Fn2ezAIJLOKjrNlKUQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MYcll-1rv1Za45Mh-00OyyV; Thu, 13
+ Jun 2024 18:51:06 +0200
+Message-ID: <7daafcb7-2c80-4c2a-bf25-7202634f79f0@web.de>
+Date: Thu, 13 Jun 2024 18:50:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Carlos Llamas <cmllamas@google.com>, kernel-team@android.com,
+ Alice Ryhl <aliceryhl@google.com>, =?UTF-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?=
+ <arve@android.com>, Christian Brauner <brauner@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Joel Fernandes <joel@joelfernandes.org>, Martijn Coenen <maco@android.com>,
+ Suren Baghdasaryan <surenb@google.com>, Todd Kjos <tkjos@android.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+ John Stultz <jstultz@google.com>, Nick Chen <chenjia3@oppo.com>,
+ Steven Moreland <smoreland@google.com>, Tim Murray <timmurray@google.com>
+References: <20240612042535.1556708-1-cmllamas@google.com>
+Subject: Re: [PATCH v5] binder: use bitmap for faster descriptor lookup
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240612042535.1556708-1-cmllamas@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:rZTOq3c5bVF59YHL+9ew+vmZxgNyinmAaSyUpX/VJDnVFelxcNf
+ mUfbLSWYvWwiDB5qnnCyZbUvWxFG70ahzq+KWDkPGBBc48KuFxwgx3d3Qj2STg+B0aVPwon
+ wfwEugmlXJWLZW430aktHk+fboJ+C1wAdnnQrKT/DLwrWO1ghcKOQiG6NokPtlM0kX5APp3
+ KL47bhaysyH2RxI1jHFJw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Ps1ZIzQZw6s=;eoLeI042XTr8v7Hvc0IRxGMCnVo
+ xtnfjtg9K0X0F/viALADXrvHgybzVI4vsM+YSzyg6eig4G6Ma9Pv9PYxEBPnbpKIb4QBx9fJY
+ /2N9eul0qyyHaIrjGNTko8+DBQCsBrS4njO23YoeNcG5QGXAPjvogNtzxEx1OAXdcPa9ehacf
+ Fs2lkXEXv9DLquw4O5ffOnRZNXHAnOTpCpGEf5Lnrv0mTbYzvKF0Y02I2HX2gkykV1ndJHFDq
+ FEtaytScecxrJ2eYiphZIYrBpu00AIWix8mb+hfNfMzQHidPgZ5FPnA45KePa0UtQYxmVhj92
+ SqUJeBWYWqA4WHhkWkm3sXnsfWQUQUvsHCJE/g4kjAjWDXaMHqoBEviFZfmqfTHyuAmBdji7g
+ zYgDswXZ5dfJQS5rw7U/QoSzvfYkM1u5jxj0qzgASHvUy5tl4lEeBK7yCH/QBEg08UKEps0Rz
+ lWhmQRVP+tIsk339HwBOv2BMR2en/KaY35FS42H/4axv7fK3RXBeL2PqzGfQcNICPZ2IDwhrV
+ Nwnqj8LIdvm1Fuy3XDq6HyW8XRzGyYJTV654HzkKFqlh1UKWkAXAsUk55fGN27IexAvLlx7Em
+ YYdihkD2kcNNLbrsdHPcVRlQG67X9DMSw+/NirMtpVYPY+CPiBnSMNRsebg44SXdKljXphx91
+ KDk3QnP9BJzrLqLx45Dr+nKPpxkDRJUIH2k+RRbDRVdYe7hmgSezFgWNCwbM4atvCix0Q3ueI
+ SjgLd41vcxJ0rPtSrUKqCvNqbL21aST2ocDPSOZIwOmrbnWA3eowxMP14uD7owsAleKgDCLAt
+ CDaGl/uthLLybqOVnHOmMc0Ia0fD4P++5xDLq4MJujPJ0=
 
-Hello,
+=E2=80=A6
+> +++ b/drivers/android/binder.c
+=E2=80=A6
+> +static void try_shrink_dmap(struct binder_proc *proc)
+> +{
+=E2=80=A6
+> +	binder_proc_lock(proc);
+> +	nbits =3D dbitmap_shrink_nbits(&proc->dmap);
+> +	binder_proc_unlock(proc);
+=E2=80=A6
+> +	new =3D bitmap_zalloc(nbits, GFP_KERNEL);
+> +	binder_proc_lock(proc);
+> +	dbitmap_shrink(&proc->dmap, new, nbits);
+> +	binder_proc_unlock(proc);
+> +}
+=E2=80=A6
 
-On Thu, 13 Jun 2024 13:33:00 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+Would you become interested to apply lock guards?
+https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/cleanup.h#=
+L124
 
-> This is the start of the stable review cycle for the 6.6.34 release.
-> There are 137 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 15 Jun 2024 11:31:50 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.34-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-
-This rc kernel passes DAMON functionality test[1] on my test machine.
-Attaching the test results summary below.  Please note that I retrieved the
-kernel from linux-stable-rc tree[2].
-
-Tested-by: SeongJae Park <sj@kernel.org>
-
-[1] https://github.com/awslabs/damon-tests/tree/next/corr
-[2] 7d633761ea98 ("Linux 6.6.34-rc1")
-
-Thanks,
-SJ
-
-[...]
-
----
-
-ok 1 selftests: damon: debugfs_attrs.sh
-ok 2 selftests: damon: debugfs_schemes.sh
-ok 3 selftests: damon: debugfs_target_ids.sh
-ok 4 selftests: damon: debugfs_empty_targets.sh
-ok 5 selftests: damon: debugfs_huge_count_read_write.sh
-ok 6 selftests: damon: debugfs_duplicate_context_creation.sh
-ok 7 selftests: damon: debugfs_rm_non_contexts.sh
-ok 8 selftests: damon: sysfs.sh
-ok 9 selftests: damon: sysfs_update_removed_scheme_dir.sh
-ok 10 selftests: damon: reclaim.sh
-ok 11 selftests: damon: lru_sort.sh
-ok 1 selftests: damon-tests: kunit.sh
-ok 2 selftests: damon-tests: huge_count_read_write.sh
-ok 3 selftests: damon-tests: buffer_overflow.sh
-ok 4 selftests: damon-tests: rm_contexts.sh
-ok 5 selftests: damon-tests: record_null_deref.sh
-ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
-ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
-ok 8 selftests: damon-tests: damo_tests.sh
-ok 9 selftests: damon-tests: masim-record.sh
-ok 10 selftests: damon-tests: build_i386.sh
-ok 11 selftests: damon-tests: build_arm64.sh
-ok 12 selftests: damon-tests: build_m68k.sh
-ok 13 selftests: damon-tests: build_i386_idle_flag.sh
-ok 14 selftests: damon-tests: build_i386_highpte.sh
-ok 15 selftests: damon-tests: build_nomemcg.sh
- [33m
- [92mPASS [39m
+Regards,
+Markus
 
