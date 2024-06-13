@@ -1,134 +1,148 @@
-Return-Path: <linux-kernel+bounces-212404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6492D905FBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:32:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A09C905FBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 782191C21400
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:32:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37AF01C21182
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FD9D535;
-	Thu, 13 Jun 2024 00:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D0AAD2F;
+	Thu, 13 Jun 2024 00:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RP3f3zHl"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eF1VsvRJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD54BE7F
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 00:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA15C652;
+	Thu, 13 Jun 2024 00:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718238724; cv=none; b=F5UJqyVm//sDDUe6d7Faj3Q3p6K5dGILY7dHg6Ag64olBtNr7MqWxU9FUaef9yRf9q9qzyUPRH4TE9TKt6NaATstDIJLn+JXOGuD8qWzLWibvsmjgMRx3fML6QWWyPYBIWs0ECFBKwaPS1f6krC1wUlD3a44DuhlWzLmxFqM3Sc=
+	t=1718238723; cv=none; b=kz9IZJ9RGCIZLnXXGS6F/hkIPFo0YG7XXGqdkRhoh61r72EGJLJozUcb4hR1sRD47Uq0BQeFESSWH45fbtz465gmzMWcnSItmUK84AI4gn0ghPzgcu5J/Vc2MnA8FGHDvYMNONreYzWtk9uSWZPzNBdquN1fC6Glp7CVYF4ah80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718238724; c=relaxed/simple;
-	bh=CzUcaUEwid9QP2s+ip8EXYQc/owNHwh0AeSROulmsmQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RYAbzm9OOxNh172sfo+WouRtBc4kI7/wll1wDCTiRH1O7AVIZzj4xLdUsTZvnNLvAULdE7YaRn4jNS4+w8i2S+3qp1lhpZJ9vk/9Ew/xiNef/2jckDlieH1OQ3l3hzhaS9H/2tKNzm5dh0hJ4TeSfNG+GsxEGmS/5U+qzou51xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RP3f3zHl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D945DC4AF1D;
-	Thu, 13 Jun 2024 00:32:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718238723;
-	bh=CzUcaUEwid9QP2s+ip8EXYQc/owNHwh0AeSROulmsmQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=RP3f3zHljgB69meR2mgyyG8IzWJoRo8SVqkFr5jfvu+xVTg/9RN/q30+sHnDWuMxl
-	 cOlOAXD7rIeLJKCCvtMVWLt31QrLWRSCcAch7K95GAH7Mnc8G3A4wMkATg977X20iB
-	 B+MLf8f0KbV/kqBoxlbbN6+gSMztY/CT1fFGniRjB+HV6/iIiM38HY0y0dxQJDP2Tn
-	 HCsE9Pp9aryZMOnBs/QgAmmtmWj72asyKJPsBCxG8LAtAv8LJPLxo5rrd0QtPjJBR0
-	 RlRcvvz+zp5UFD2kSU2GUzfqgLdpXX3xs/Egop2Q/h6r7oizsqbu7GbHCqiuDGHOFA
-	 3QXMDfaZ6ZFNg==
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64/lib: copy_page: s/stnp/stp
-Date: Thu, 13 Jun 2024 08:18:12 +0800
-Message-ID: <20240613001812.2141-1-jszhang@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1718238723; c=relaxed/simple;
+	bh=+UbqprezWqxEbhKmSRaDsTwuur4mIfjSb1NUN/fCVbQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K4dh9MDL+JHFhrN4K326PI0WduhfcrP0KhZ1vsSROdINZ2B3ogPVKOXnB1Uo+H6O0BytOPqf++V2LhEY9pWfWM0ZnHgVJz2s55AWHMeKQlVmJQpe5brMpR3xllEF7YQuuU8s60sUHVwGOlPGsfkvyKPqZdAOSthwo7h2J7Y9lRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=eF1VsvRJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45E47C116B1;
+	Thu, 13 Jun 2024 00:32:00 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eF1VsvRJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1718238717;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GLUb85oLbjyoG+FcfWhggv8KT8bN6SBWkCY+yvZAHV8=;
+	b=eF1VsvRJdSDlt+jjhJiKZ5eDDi+CCrqpbP2qILiWHB7HfEnI5D10gtd4TmY1udoArULYFC
+	3p47U2iNEXteOz8cl56PqFBBedrFExfiroU7FcnCZmp/raJumk5hGsmXBZe7KI+jDx3FRz
+	mt6afVKn9JVqLJRPjTB0wjVVNYzZzWI=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 0c052d48 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Thu, 13 Jun 2024 00:31:57 +0000 (UTC)
+Date: Thu, 13 Jun 2024 02:31:53 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+	linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	bridge@lists.linux.dev, linux-trace-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
+	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
+	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <Zmo9-YGraiCj5-MI@zx2c4.com>
+References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
+ <20240612143305.451abf58@kernel.org>
+ <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
+ <Zmov7ZaL-54T9GiM@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zmov7ZaL-54T9GiM@zx2c4.com>
 
-stnp performs non-temporal store, give a hints to the memory system
-that caching is not useful for this data. But the scenario where
-copy_page() used may not have this implication, although I must admit
-there's such case where stnp helps performance(good). In this good
-case, we can rely on the HW write streaming mechanism in some
-implementations such as cortex-a55 to detect the case and take actions.
+On Thu, Jun 13, 2024 at 01:31:57AM +0200, Jason A. Donenfeld wrote:
+> On Wed, Jun 12, 2024 at 03:37:55PM -0700, Paul E. McKenney wrote:
+> > On Wed, Jun 12, 2024 at 02:33:05PM -0700, Jakub Kicinski wrote:
+> > > On Sun,  9 Jun 2024 10:27:12 +0200 Julia Lawall wrote:
+> > > > Since SLOB was removed, it is not necessary to use call_rcu
+> > > > when the callback only performs kmem_cache_free. Use
+> > > > kfree_rcu() directly.
+> > > > 
+> > > > The changes were done using the following Coccinelle semantic patch.
+> > > > This semantic patch is designed to ignore cases where the callback
+> > > > function is used in another way.
+> > > 
+> > > How does the discussion on:
+> > >   [PATCH] Revert "batman-adv: prefer kfree_rcu() over call_rcu() with free-only callbacks"
+> > >   https://lore.kernel.org/all/20240612133357.2596-1-linus.luessing@c0d3.blue/
+> > > reflect on this series? IIUC we should hold off..
+> > 
+> > We do need to hold off for the ones in kernel modules (such as 07/14)
+> > where the kmem_cache is destroyed during module unload.
+> > 
+> > OK, I might as well go through them...
+> > 
+> > [PATCH 01/14] wireguard: allowedips: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+> > 	Needs to wait, see wg_allowedips_slab_uninit().
+> 
+> Right, this has exactly the same pattern as the batman-adv issue:
+> 
+>     void wg_allowedips_slab_uninit(void)
+>     {
+>             rcu_barrier();
+>             kmem_cache_destroy(node_cache);
+>     }
+> 
+> I'll hold off on sending that up until this matter is resolved.
 
-testing with https://github.com/apinski-cavium/copy_page_benchmark
-this patch can reduce the time by about 3% on cortex-a55 platforms.
+BTW, I think this whole thing might be caused by:
 
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
----
- arch/arm64/lib/copy_page.S | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+    a35d16905efc ("rcu: Add basic support for kfree_rcu() batching")
 
-diff --git a/arch/arm64/lib/copy_page.S b/arch/arm64/lib/copy_page.S
-index 6a56d7cf309d..4c74fe2d8bd6 100644
---- a/arch/arm64/lib/copy_page.S
-+++ b/arch/arm64/lib/copy_page.S
-@@ -32,21 +32,21 @@ SYM_FUNC_START(__pi_copy_page)
- 1:
- 	tst	x0, #(PAGE_SIZE - 1)
- 
--	stnp	x2, x3, [x0, #-256]
-+	stp	x2, x3, [x0, #-256]
- 	ldp	x2, x3, [x1]
--	stnp	x4, x5, [x0, #16 - 256]
-+	stp	x4, x5, [x0, #16 - 256]
- 	ldp	x4, x5, [x1, #16]
--	stnp	x6, x7, [x0, #32 - 256]
-+	stp	x6, x7, [x0, #32 - 256]
- 	ldp	x6, x7, [x1, #32]
--	stnp	x8, x9, [x0, #48 - 256]
-+	stp	x8, x9, [x0, #48 - 256]
- 	ldp	x8, x9, [x1, #48]
--	stnp	x10, x11, [x0, #64 - 256]
-+	stp	x10, x11, [x0, #64 - 256]
- 	ldp	x10, x11, [x1, #64]
--	stnp	x12, x13, [x0, #80 - 256]
-+	stp	x12, x13, [x0, #80 - 256]
- 	ldp	x12, x13, [x1, #80]
--	stnp	x14, x15, [x0, #96 - 256]
-+	stp	x14, x15, [x0, #96 - 256]
- 	ldp	x14, x15, [x1, #96]
--	stnp	x16, x17, [x0, #112 - 256]
-+	stp	x16, x17, [x0, #112 - 256]
- 	ldp	x16, x17, [x1, #112]
- 
- 	add	x0, x0, #128
-@@ -54,14 +54,14 @@ SYM_FUNC_START(__pi_copy_page)
- 
- 	b.ne	1b
- 
--	stnp	x2, x3, [x0, #-256]
--	stnp	x4, x5, [x0, #16 - 256]
--	stnp	x6, x7, [x0, #32 - 256]
--	stnp	x8, x9, [x0, #48 - 256]
--	stnp	x10, x11, [x0, #64 - 256]
--	stnp	x12, x13, [x0, #80 - 256]
--	stnp	x14, x15, [x0, #96 - 256]
--	stnp	x16, x17, [x0, #112 - 256]
-+	stp	x2, x3, [x0, #-256]
-+	stp	x4, x5, [x0, #16 - 256]
-+	stp	x6, x7, [x0, #32 - 256]
-+	stp	x8, x9, [x0, #48 - 256]
-+	stp	x10, x11, [x0, #64 - 256]
-+	stp	x12, x13, [x0, #80 - 256]
-+	stp	x14, x15, [x0, #96 - 256]
-+	stp	x16, x17, [x0, #112 - 256]
- 
- 	ret
- SYM_FUNC_END(__pi_copy_page)
--- 
-2.43.0
+The commit message there mentions:
 
+    There is an implication with rcu_barrier() with this patch. Since the
+    kfree_rcu() calls can be batched, and may not be handed yet to the RCU
+    machinery in fact, the monitor may not have even run yet to do the
+    queue_rcu_work(), there seems no easy way of implementing rcu_barrier()
+    to wait for those kfree_rcu()s that are already made. So this means a
+    kfree_rcu() followed by an rcu_barrier() does not imply that memory will
+    be freed once rcu_barrier() returns.
+
+Before that, a kfree_rcu() used to just add a normal call_rcu() into the
+list, but with the function offset < 4096 as a special marker. So the
+kfree_rcu() calls would be treated alongside the other call_rcu() ones
+and thus affected by rcu_barrier(). Looks like that behavior is no more
+since this commit.
+
+Rather than getting rid of the batching, which seems good for
+efficiency, I wonder if the right fix to this would be adding a
+`should_destroy` boolean to kmem_cache, which kmem_cache_destroy() sets
+to true. And then right after it checks `if (number_of_allocations == 0)
+actually_destroy()`, and likewise on each kmem_cache_free(), it could
+check `if (should_destroy && number_of_allocations == 0)
+actually_destroy()`. This way, the work is delayed until it's safe to do
+so. This might also mitigate other lurking bugs of bad code that calls
+kmem_cache_destroy() before kmem_cache_free().
+
+Jason
 
