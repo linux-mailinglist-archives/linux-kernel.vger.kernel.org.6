@@ -1,102 +1,139 @@
-Return-Path: <linux-kernel+bounces-212544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E12F9062E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 05:57:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 784499062EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4B011F22DDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:57:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D50F1F22BE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB797132103;
-	Thu, 13 Jun 2024 03:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831D513211F;
+	Thu, 13 Jun 2024 04:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="YLtY4jl3"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="gP61wLFZ"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4EA12EBE9;
-	Thu, 13 Jun 2024 03:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F6F391
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 04:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718251044; cv=none; b=rHleMCtI079IM4ksaxEkjbamluEF3xxWTbRxY9z4ZKxIFLRdEQzXXWlDCLNz3FVz6PzmSDCHeDZL1VCztyEgUBLx78Z9GMYoxYZITcT+m0DN842wGAdGEsvkwKTmpkGIJhrtpuT4Jlfsy/lcTB0ySCuqsx/GKGTz4ZiV/vURrLk=
+	t=1718251322; cv=none; b=J9hXsYJ7wl3jtOXHKhTBlLeFNUSsD4ebd1h+X9kDCXozdK+AeWTbMJ4sa3St//lqb8sSOlh+20Euk/+Daplk1tD1+anVQpGoHbxrln91uSmO6V34Kw4SGWz01+uFASJqGT/uEZQK/wmexipFCxDqmBigey9BIwHoOMNqebJS68g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718251044; c=relaxed/simple;
-	bh=Z+LgvOUc59Gim16Zn7vezBws0OOuIFE03isIuxruS+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZV7QyJ8922HMGE9wje/IK3A2ntmARXCtadK57ICPoR6taZuk/JR++OLEDS4A6IHTQ8kliHYA0CtxuTMSCEy4/qSeZi0bW+cj70ZwZ8z4vWzCuge3tGEe4sikW+MEFCjR0T+FVv6s+OU8mIHzoU4EOrFvME1mTIt0TM02edNQPHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=YLtY4jl3; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=vm4GMiqmWdF5BUuXmosjQIp8baqxfdAQbkE641yS/yw=; b=YLtY4jl30fUeBh5dEKcOsWnAdt
-	j8YOXyu1lWA2CYTLfaEXvkegedznRggQ/3cOTBjDF6JNaTgLXqJ10WRyDszcFknQXQboknM9NO+6N
-	PLtV6qQUDaK02eH0w4OHiegGtlLmsaqTIL95J9AGrUCZBn5vmgJVkWA6jdJN//AX4m1Fu61ESycpJ
-	jlkQIGJeILy88A18wgCcW7LkDH6CkOEsDVsh9pJG/QjJz5W5a1oE+/PWJbG7ZfzJIAEMw6m59M6UY
-	wmb/DWKEUX1mnNh6FYgJZO8WgoHurlAje3iuXbe1Ve9meHpDL7dnR2v1mVDtq+R2tRw9UTHs+7ozH
-	8LTH2pnQ==;
-Received: from [2001:9e8:9f0:d301:3235:adff:fed0:37e6] (port=52066 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1sHbaB-006lkT-VZ;
-	Thu, 13 Jun 2024 05:57:04 +0200
-Date: Thu, 13 Jun 2024 05:57:00 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Nathan Chancellor <nathan@kernel.org>, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] kbuild: remove PROVIDE() for kallsyms symbols
-Message-ID: <20240613-monumental-basilisk-of-temperance-7dda6e@lindesnes>
-References: <20240610112657.602958-1-masahiroy@kernel.org>
- <20240610112657.602958-3-masahiroy@kernel.org>
+	s=arc-20240116; t=1718251322; c=relaxed/simple;
+	bh=k+JzPZOLsvElrN1Nr9OpEpVz541f+4V1elWm7203adw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MXE8J4QXC6G7zlysbJTM/j/wZ3aFFhUtaKEIpI2jGTCVqGdxHmIgh6DGBVV0yfVjIMen4CDpyjq0LrBLL81gMrq/340XaiG2EjAhhd0RCrbzSZhPhqwCoTBiXyeSCg7zaAs/t4OhHUhYqTwL0JoS7h4NE77vIdJV7uoNLt8Zin0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=gP61wLFZ; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7041ed475acso405009b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 21:02:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shopee.com; s=shopee.com; t=1718251321; x=1718856121; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4U2F+y3t7r8GSooXgl/s46Avo9/HJoeXnWDx2qZA7jc=;
+        b=gP61wLFZfVUXZPT+tj79NKf6YOK+ZqTj3FMNOR86WD0fs5dJ5GW5vsK9ulyMkg3BXQ
+         +KKZyRahyk7zHkvkTz5elH7TleXhe5bnK4VsGdMowyoSuffWbeYvvKjdUwC/ipH5C7/+
+         7OEMhZGd+qPFATt7GAe9Ht24V31SfN1YxJ+Upr2veg5LhXiLtZnvQjRl3ROsnVBAatMP
+         +jswSzGlHNv5REe/BtUbjiz2sp92rM/XOez1ynG+7kPODxBQrvs+u4yDZSZkjubty57e
+         KkV3fWy/QNEbL3Ar4sNVosoUDtLod6hf7ITniuyAYMkF57nF8jfnW/mvpK7X6XtT4QHs
+         8Z7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718251321; x=1718856121;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4U2F+y3t7r8GSooXgl/s46Avo9/HJoeXnWDx2qZA7jc=;
+        b=Sysp0h7bUDIHrXepwvM+ocmk6xEw2PfJPsBW7WNU1bp74n1fwf3qxMx4lD7KcEfeaP
+         F0hVI4eEc+hCi79VDCWHNDYLXcSfTw80PZG3KdiJ+57rFydUbKlHTDvn2HbS2oHi3sCR
+         GcrJ4QtAElhmdyrve3NO/9gvMeOPXwp5Kziwa5HXOIr4jA76FruFd40KA66eAa5I+ngP
+         F47Ir/zEof1X3Ij6q2Eg0p8lMt+z1cWMMNhjAlC6NsxHeUVhf4I999QkAECZDzeKuOW9
+         mpMQGLsWBA1K04r5qfQE80RPoU7KSx5buNPk6jty5VUtVecDlSsGhgORkN3KzNiGMxyr
+         kfyg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8e9UwLtuR+kD/jCBN51+x5nCiEx5x5fVdihMAhVYNOiv568nP7zrBNaR5vL+5SrOwTkP8v7Lmv16sYlcLj5hpHzAmTEdS7FRXptB6
+X-Gm-Message-State: AOJu0YxvumKmonLSE/lNggBhjO8hDEwQwmmFS/bZjyABVpR7sTrRNXXR
+	Jjl2uatyA/UvnLG6rNRGuvYwzXI/T64+ac9yOzRiVzKvLF2E1pqU7t6OCdL83nQdPz1cnf0umO1
+	N
+X-Google-Smtp-Source: AGHT+IH+x6StIHK8RC7YOTjzt5vJi3lwi/2nPcPHm+xa6UNRHbldU0DapWAqKmdOuvSl3txiZTnMUA==
+X-Received: by 2002:a05:6a00:2e26:b0:704:35a3:f838 with SMTP id d2e1a72fcca58-705bcee9950mr4285489b3a.24.1718251320592;
+        Wed, 12 Jun 2024 21:02:00 -0700 (PDT)
+Received: from seacloud.vm ([143.92.64.18])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb3d188sm365867b3a.99.2024.06.12.21.01.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 21:02:00 -0700 (PDT)
+From: Haifeng Xu <haifeng.xu@shopee.com>
+To: miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haifeng Xu <haifeng.xu@shopee.com>
+Subject: [RFC] fuse: do not generate interrupt requests for fatal signals
+Date: Thu, 13 Jun 2024 12:01:47 +0800
+Message-Id: <20240613040147.329220-1-haifeng.xu@shopee.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240610112657.602958-3-masahiroy@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 10, 2024 at 08:25:17PM +0900, Masahiro Yamada wrote:
-> This reimplements commit 951bcae6c5a0 ("kallsyms: Avoid weak references
-> for kallsyms symbols") because I am not a big fan of PROVIDE().
-> 
-> As an alternative solution, this commit prepends one more kallsyms step.
-> 
->     KSYMS   .tmp_vmlinux.kallsyms0.S          # added
->     AS      .tmp_vmlinux.kallsyms0.o          # added
->     LD      .tmp_vmlinux.btf
->     BTF     .btf.vmlinux.bin.o
->     LD      .tmp_vmlinux.kallsyms1
->     NM      .tmp_vmlinux.kallsyms1.syms
->     KSYMS   .tmp_vmlinux.kallsyms1.S
->     AS      .tmp_vmlinux.kallsyms1.o
->     LD      .tmp_vmlinux.kallsyms2
->     NM      .tmp_vmlinux.kallsyms2.syms
->     KSYMS   .tmp_vmlinux.kallsyms2.S
->     AS      .tmp_vmlinux.kallsyms2.o
->     LD      vmlinux
-> 
-> Step 0 takes /dev/null as input, and generates .tmp_vmlinux.kallsyms0.o,
-> which has a valid kallsyms format with the empty symbol list, and can be
-> linked to vmlinux. Since it is really small, the added compile-time cost
-> is negligible.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> Acked-by: Ard Biesheuvel <ardb@kernel.org>
-> ---
+When the child reaper of a pid namespace exits, it invokes
+zap_pid_ns_processes() to send SIGKILL to all processes in the
+namespace and wait them exit. But one of the child processes get
+stuck and its call trace like this:
 
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+[<0>] request_wait_answer+0x132/0x210 [fuse]
+[<0>] fuse_simple_request+0x1a8/0x2e0 [fuse]
+[<0>] fuse_flush+0x193/0x1d0 [fuse]
+[<0>] filp_close+0x34/0x70
+[<0>] close_fd+0x38/0x50
+[<0>] __x64_sys_close+0x12/0x40
+[<0>] do_syscall_64+0x59/0xc0
+[<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+The flags of fuse request is (FR_ISREPLY | FR_FORCE | FR_WAITING
+| FR_INTERRUPTED | FR_SENT). For interrupt requests, fuse_dev_do_write()
+doesn't invoke fuse_request_end() to wake the client thread, so it will
+get stuck forever and the child reaper can't exit.
+
+In order to write reply to the client thread and make it exit the
+namespace, so do not generate interrupt requests for fatal signals.
+
+Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
+---
+ fs/fuse/dev.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 9eb191b5c4de..5fb830ad860d 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -374,11 +374,14 @@ static void request_wait_answer(struct fuse_req *req)
+ 		if (!err)
+ 			return;
+ 
+-		set_bit(FR_INTERRUPTED, &req->flags);
+-		/* matches barrier in fuse_dev_do_read() */
+-		smp_mb__after_atomic();
+-		if (test_bit(FR_SENT, &req->flags))
+-			queue_interrupt(req);
++		/* Any signal except fatal can generate an interrupt request */
++		if (!__fatal_signal_pending(current)) {
++			set_bit(FR_INTERRUPTED, &req->flags);
++			/* matches barrier in fuse_dev_do_read() */
++			smp_mb__after_atomic();
++			if (test_bit(FR_SENT, &req->flags))
++				queue_interrupt(req);
++		}
+ 	}
+ 
+ 	if (!test_bit(FR_FORCE, &req->flags)) {
+-- 
+2.25.1
+
 
