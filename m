@@ -1,128 +1,174 @@
-Return-Path: <linux-kernel+bounces-213045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A31CC906A4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:45:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40004906A50
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50AE81F21E44
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:45:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDAF0B233E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37799142910;
-	Thu, 13 Jun 2024 10:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBEE142909;
+	Thu, 13 Jun 2024 10:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SFFaswTd"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TFxjG76h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33ED1428F0;
-	Thu, 13 Jun 2024 10:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0141428F7;
+	Thu, 13 Jun 2024 10:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718275478; cv=none; b=FdAfWO1ljxmzRt9R34fMuXfZU47jppvF/3Jmt2XcLWwnQVQaWeFN3Wc80J5fuoUtNhSEaZBOA9TP2jIl0qqLKDKbtn1UCEJ/g1z43JErFBG2R3phSMp11TrU/QzyKwgXOXbb9ohG1QVzfY41pjO8NrXmy0vUFEQYLMrcOSsEORo=
+	t=1718275479; cv=none; b=h9vybopRTvuF+S8Hwrw23X9U3fIvHArbBzp48GCWrAwNIGI3PkkPdB/focXEd0Sn4VId4wCAldQeNV+v6szVQwd+cAjbAuCDTiJ5PMqSlS6KYi8MmUWMyb/hTVgnN/yaFxivTxuDOHp2MLH8lxSemo87rfFzBcBJamSRpaIe7p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718275478; c=relaxed/simple;
-	bh=KETQz0HyeS4By8DZMxlCIfM4b04lhUdibaoc0Fm4HuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AUCp4Njd3kvN9oVER+1QBDH8xMMcEkOhT7Cjfxwls5C3CCO97/vQkqBv7KxiGjR3u97k/o6WNLINP78ji9/jaUSuTlJXXwiwS1KBNAgegJaE2mKtGSl1yEKSyzdr3JGy7NYm+2vBvyItXgWkHvrta4262/HyHB/0bdW3/SPZSOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SFFaswTd; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718275474;
-	bh=KETQz0HyeS4By8DZMxlCIfM4b04lhUdibaoc0Fm4HuU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SFFaswTd6pHuemvGJL2EMC7gN1m4bgZ6247ZOJCTYL7SSdejhqNu9hkISJ8wOkRdY
-	 3P1cqfz7RRFl6SGjl2uRL3+4inlL3w5xkBDdI7v1EmaReycafsi44LfDqEmKN8H3Y6
-	 tAdJCLeK3H93AQyZsXVHDGOK+M3MxCmykkpn+zzdmL1isQF6gxx0vlmbU5Pp+0u+Gb
-	 71sJyEoZIrzvkTZGMqrJ9q0D54STIqGhsqsSxNmNlITL2R84kBBxLSYuMXlZQd9Dea
-	 puwhFTnIumsJuLnfDvBWbYkyLGsIcXmJg/AI+vq4zUiUYjI/oqpzgDC0w3Q85cDsO0
-	 iRmkrw2BNywsA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 38883378216D;
-	Thu, 13 Jun 2024 10:44:34 +0000 (UTC)
-Message-ID: <b6f22891-4e5f-4df0-8234-eadab9619cb2@collabora.com>
-Date: Thu, 13 Jun 2024 12:44:33 +0200
+	s=arc-20240116; t=1718275479; c=relaxed/simple;
+	bh=W3+ttgDIdBTkKzgo2dVVa4/yBGEx95jS9AbN62ug2yQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DWlpxtyELTN7G7H2CLoYx70Zb0vT/9T+Z+r1oxgNzI1UcGnIyoPmdSfzDOLUhrjv4qufs+xP+kyFsiChdq8Eb0SyvyBv/pWwzJzVHCzlyc+X7jG1nBHbjR8X/z1e0iFVbYdUcKD3Gm3IaEoXpANhTOYrBQxIlOR06SXFnYNjeXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TFxjG76h; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718275478; x=1749811478;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=W3+ttgDIdBTkKzgo2dVVa4/yBGEx95jS9AbN62ug2yQ=;
+  b=TFxjG76hS0fnzlOPH6AHoqSvpJ6CGK1vzwfBGJkINGWFmjnAC42VTSOS
+   fGU1hd8OI8LDh6ZQI6M1LYZM2cqi1oK3/9GJg4eP2d+g2o30fd9JjrJX1
+   fpQgQQgPj+NETeoNeNUowS47iIDl807WNlJXO/Hb55fzQ+VhAkjVBjvHL
+   4WT7EoMr2l683Q7PoTYIpprXjH7gyg7UDW/yte3NXAu1qt8D/rOIypPf1
+   cZtaK/eusevyPZ220Xx6nvquefjlxd1A3xje6YoRdMm4j3kmDLj1P7q06
+   Xh3TwLk1TRlQYZkEMW4ZJe1XcaJ38soNGeyI3qgAWiBtP6LqzQIrK5whL
+   Q==;
+X-CSE-ConnectionGUID: bFSaHCXxT3+0nnnLtHjpTg==
+X-CSE-MsgGUID: u65If41HQfOCgCEHusugMw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="15212925"
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="15212925"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 03:44:37 -0700
+X-CSE-ConnectionGUID: MSJrrvwrR6iuPIQgX7QQNA==
+X-CSE-MsgGUID: eA9bH91KSbKf3OF5CWMfOg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="40585831"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by orviesa006.jf.intel.com with SMTP; 13 Jun 2024 03:44:35 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 13 Jun 2024 13:44:33 +0300
+Date: Thu, 13 Jun 2024 13:44:33 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+Cc: gregkh@linuxfoundation.org, stable@vger.kernel.org,
+	dmitry.baryshkov@linaro.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v2] usb: ucsi: stm32: fix command completion handling
+Message-ID: <ZmrNkTXkOQIcbwGa@kuha.fi.intel.com>
+References: <20240612124656.2305603-1-fabrice.gasnier@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: Fix the value of `dlg,jack-det-rate` mismatch
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-References: <20240613-jack-rate-v1-1-62ee0259e204@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240613-jack-rate-v1-1-62ee0259e204@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612124656.2305603-1-fabrice.gasnier@foss.st.com>
 
-Il 13/06/24 12:19, Hsin-Te Yuan ha scritto:
-> According to Documentation/devicetree/bindings/sound/dialog,da7219.yaml,
-> the value of `dlg,jack-det-rate` property should be '32_64' instead of
-> '32ms_64ms'.
+On Wed, Jun 12, 2024 at 02:46:56PM +0200, Fabrice Gasnier wrote:
+> Sometimes errors are seen, when doing DR swap, like:
+> [   24.672481] ucsi-stm32g0-i2c 0-0035: UCSI_GET_PDOS failed (-5)
+> [   24.720188] ucsi-stm32g0-i2c 0-0035: ucsi_handle_connector_change:
+>  GET_CONNECTOR_STATUS failed (-5)
 > 
-> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+> There may be some race, which lead to read CCI, before the command complete
+> flag is set, hence returning -EIO. Similar fix has been done also in
+> ucsi_acpi [1].
+> 
+> In case of a spurious or otherwise delayed notification it is
+> possible that CCI still reports the previous completion. The
+> UCSI spec is aware of this and provides two completion bits in
+> CCI, one for normal commands and one for acks. As acks and commands
+> alternate the notification handler can determine if the completion
+> bit is from the current command.
+> 
+> To fix this add the ACK_PENDING bit for ucsi_stm32g0 and only complete
+> commands if the completion bit matches.
+> 
+> [1] https://lore.kernel.org/lkml/20240121204123.275441-3-lk@c--e.de/
+> 
+> Fixes: 72849d4fcee7 ("usb: typec: ucsi: stm32g0: add support for stm32g0 controller")
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
 
-Please, two separated commits, one for RockChip, one for MediaTek and
-also please add the relevant Fixes tags, so that this can be backported.
-
-arm64: dts: rockchip: rk3399-gru: .....
-arm64: dts: mediatek: mt8183-kukui: ....
-
-Thanks,
-Angelo
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
 > ---
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-audio-da7219.dtsi | 2 +-
->   arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi                | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-audio-da7219.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui-audio-da7219.dtsi
-> index 8b57706ac814..586eee79c73c 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-audio-da7219.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-audio-da7219.dtsi
-> @@ -27,7 +27,7 @@ da7219_aad {
->   			dlg,btn-cfg = <50>;
->   			dlg,mic-det-thr = <500>;
->   			dlg,jack-ins-deb = <20>;
-> -			dlg,jack-det-rate = "32ms_64ms";
-> +			dlg,jack-det-rate = "32_64";
->   			dlg,jack-rem-deb = <1>;
->   
->   			dlg,a-d-btn-thr = <0xa>;
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-> index 789fd0dcc88b..3cd63d1e8f15 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
-> @@ -450,7 +450,7 @@ da7219_aad {
->   			dlg,btn-cfg = <50>;
->   			dlg,mic-det-thr = <500>;
->   			dlg,jack-ins-deb = <20>;
-> -			dlg,jack-det-rate = "32ms_64ms";
-> +			dlg,jack-det-rate = "32_64";
->   			dlg,jack-rem-deb = <1>;
->   
->   			dlg,a-d-btn-thr = <0xa>;
-> 
+> Changes in v2: rebase and define ACK_PENDING as commented by Dmitry.
 > ---
-> base-commit: cea2a26553ace13ee36b56dc09ad548b5e6907df
-> change-id: 20240613-jack-rate-c478fa76ce19
+>  drivers/usb/typec/ucsi/ucsi_stm32g0.c | 19 +++++++++++++++----
+>  1 file changed, 15 insertions(+), 4 deletions(-)
 > 
-> Best regards,
+> diff --git a/drivers/usb/typec/ucsi/ucsi_stm32g0.c b/drivers/usb/typec/ucsi/ucsi_stm32g0.c
+> index ac48b7763114..ac69288e8bb0 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_stm32g0.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_stm32g0.c
+> @@ -65,6 +65,7 @@ struct ucsi_stm32g0 {
+>  	struct device *dev;
+>  	unsigned long flags;
+>  #define COMMAND_PENDING	1
+> +#define ACK_PENDING	2
+>  	const char *fw_name;
+>  	struct ucsi *ucsi;
+>  	bool suspended;
+> @@ -396,9 +397,13 @@ static int ucsi_stm32g0_sync_write(struct ucsi *ucsi, unsigned int offset, const
+>  				   size_t len)
+>  {
+>  	struct ucsi_stm32g0 *g0 = ucsi_get_drvdata(ucsi);
+> +	bool ack = UCSI_COMMAND(*(u64 *)val) == UCSI_ACK_CC_CI;
+>  	int ret;
+>  
+> -	set_bit(COMMAND_PENDING, &g0->flags);
+> +	if (ack)
+> +		set_bit(ACK_PENDING, &g0->flags);
+> +	else
+> +		set_bit(COMMAND_PENDING, &g0->flags);
+>  
+>  	ret = ucsi_stm32g0_async_write(ucsi, offset, val, len);
+>  	if (ret)
+> @@ -406,9 +411,14 @@ static int ucsi_stm32g0_sync_write(struct ucsi *ucsi, unsigned int offset, const
+>  
+>  	if (!wait_for_completion_timeout(&g0->complete, msecs_to_jiffies(5000)))
+>  		ret = -ETIMEDOUT;
+> +	else
+> +		return 0;
+>  
+>  out_clear_bit:
+> -	clear_bit(COMMAND_PENDING, &g0->flags);
+> +	if (ack)
+> +		clear_bit(ACK_PENDING, &g0->flags);
+> +	else
+> +		clear_bit(COMMAND_PENDING, &g0->flags);
+>  
+>  	return ret;
+>  }
+> @@ -429,8 +439,9 @@ static irqreturn_t ucsi_stm32g0_irq_handler(int irq, void *data)
+>  	if (UCSI_CCI_CONNECTOR(cci))
+>  		ucsi_connector_change(g0->ucsi, UCSI_CCI_CONNECTOR(cci));
+>  
+> -	if (test_bit(COMMAND_PENDING, &g0->flags) &&
+> -	    cci & (UCSI_CCI_ACK_COMPLETE | UCSI_CCI_COMMAND_COMPLETE))
+> +	if (cci & UCSI_CCI_ACK_COMPLETE && test_and_clear_bit(ACK_PENDING, &g0->flags))
+> +		complete(&g0->complete);
+> +	if (cci & UCSI_CCI_COMMAND_COMPLETE && test_and_clear_bit(COMMAND_PENDING, &g0->flags))
+>  		complete(&g0->complete);
+>  
+>  	return IRQ_HANDLED;
+> -- 
+> 2.25.1
 
+-- 
+heikki
 
