@@ -1,222 +1,696 @@
-Return-Path: <linux-kernel+bounces-213638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C749907831
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:21:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3142A907804
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96AE0281755
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:21:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C91BB23342
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A641474B5;
-	Thu, 13 Jun 2024 16:21:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512F6145B03;
+	Thu, 13 Jun 2024 16:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CJSwJKi2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ol3MwQIB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93085149DF4
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718295675; cv=fail; b=q2hyHJJKNI72c2wAa1J5k21o/UZR0ybhkIBGsoS/vmToNQhrg/bw4e3t+Iok6dknQrNv/O8gnMaZkNPXgti8NYPmZdIXCOtVZUnlbbmXa3NckFVa1sST2iUXwAx5hQgp1W/g0BC7ciXondk9Vv0tBFdqrmrfoUBfv011d3md8HQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718295675; c=relaxed/simple;
-	bh=aOn58chPagjuvMdSTQphV5b5hNqHWkTz7u/4jOW0wPY=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=AqOtLZrhRdO42HEIwQhBrW5HgNTTZDiEHH639aIV7HFsSdGU5YZuZ8WkT4GSS+BGiXlLpycVut+6ca7DWe2JHzeTcMKwbsIsgf0pwrW45V/xB615ogkQWZhXsiRCpFwdSY/80rMQD50OLmB3HvkQ3u2kT4v9aDjKbqznrwTpqwE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CJSwJKi2; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718295674; x=1749831674;
-  h=from:to:subject:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version;
-  bh=aOn58chPagjuvMdSTQphV5b5hNqHWkTz7u/4jOW0wPY=;
-  b=CJSwJKi2Y0JvE4Kez7Nnx7t/n+ivokVKNCsqYLsCwhtaT2n1ZoiHK15x
-   +xiwl/Kvxpfd2+fe6SJ4FlqrhUaOY3MPxnW68PbA2O1rkeY4HGvnFh4q5
-   xPOOFgFHLdupehG0UKmlkSzBf2PMD3QlOQVAibh0InIIM98+o/0BVXf3U
-   K7ShzN+imEcDj3HpbfKVOdTBt+9lCrq9HCZCpTctBfJBmpWq8wI7gXVaz
-   1cFnLHRa6wqAyshgUim0itFYk+BHnXGdaqJxrEV8SjXf5jwCtyGs8kxBi
-   PwN1WR9Abo/u2pOWzZhJ7i0f4SAvu1BjdA9GtAbRPR4ozH3LfJAki1Kgo
-   g==;
-X-CSE-ConnectionGUID: aqDHd785Qom5dSTvusBRfw==
-X-CSE-MsgGUID: 9NGqaqNKQ7K83uXcEfY7fw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="25715146"
-X-IronPort-AV: E=Sophos;i="6.08,235,1712646000"; 
-   d="scan'208";a="25715146"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 09:14:01 -0700
-X-CSE-ConnectionGUID: S5tByiwKRhWx5t25yi7U4A==
-X-CSE-MsgGUID: Bb39DMf4QK+HaPhf5tllDw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,235,1712646000"; 
-   d="scan'208";a="70986510"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Jun 2024 09:14:00 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 13 Jun 2024 09:13:59 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 13 Jun 2024 09:13:59 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.46) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 13 Jun 2024 09:13:59 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=G7Xw8vhndlL/jdm2EnPlSfyrGbEtbe5AYy6KD1cz2yEfUPEnX41iYfXcemwC8i5OxS7EIA86f3nzkXaXqJfNptxz4KNVgw8hEL3kDEvOsd4J6caHI5I7tQVULks/RF7ByIwMgjBbPcY/fz7+rPIu6wLXj80oNWcdngTTL0F6cKBu2sQJWqrYu7FWLbRJckQGG08cgJbcXbVuSH8UXb3noAeSwR8lod8Yd1tazjGnF436awIZiDVIgG3u3RVs4jhV6sYf1bSU/q5vNClkYh9EWiIZV8vKwpwkb0stLt/ACNwouh6Xk63YmhH5FwGieRDGDNA0YNoDUNis+P2aQFPmLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aOn58chPagjuvMdSTQphV5b5hNqHWkTz7u/4jOW0wPY=;
- b=VpBmcSypzVsK0edR/u28tHCidVqtioAEA4Iq9wyke6zk71jUUIz5E5A6Xo+tzC3KQXr1PycP+6eE79W0V817v6zHjlwtYyanWN9OoTJUGdNkaw0qEGtGKsF0IMwXZpmkQ+/i3yeJoqH6XOgPVIAdz6eBsHfxTaKLNtQ4VqFB3VsuvkJZDfWGSmtmAT1Xzsq9lStHsaB3DoBXoDnyTQ/doPOGjiRJg+GeqNG5wL4pcG8weQDe9+HlK3Fuh03DQfnc1tSx7GaIw25Fnb5oCvvPEZ49i2WOOL0Zi7EQfpDtRDR0SAYfx74CM5HjLxmFjNXQVC9SCGRyelp2nuC/l4dZrA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from LV2PR11MB5976.namprd11.prod.outlook.com (2603:10b6:408:17c::13)
- by SN7PR11MB7491.namprd11.prod.outlook.com (2603:10b6:806:349::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.25; Thu, 13 Jun
- 2024 16:13:57 +0000
-Received: from LV2PR11MB5976.namprd11.prod.outlook.com
- ([fe80::d099:e70d:142b:c07d]) by LV2PR11MB5976.namprd11.prod.outlook.com
- ([fe80::d099:e70d:142b:c07d%3]) with mapi id 15.20.7633.021; Thu, 13 Jun 2024
- 16:13:57 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "Hansen, Dave"
-	<dave.hansen@intel.com>, "lirongqing@baidu.com" <lirongqing@baidu.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
-	<x86@kernel.org>
-Subject: Re: [PATCH] virt: tdx-guest: Fix the decrypted failure memory free
-Thread-Topic: [PATCH] virt: tdx-guest: Fix the decrypted failure memory free
-Thread-Index: AQHavawihwGjZ7/u30eHuKhcq8lQN7HF3gkA
-Date: Thu, 13 Jun 2024 16:13:56 +0000
-Message-ID: <5e059a683582799f8676b77052aeab2597f97e60.camel@intel.com>
-References: <20240613111931.43123-1-lirongqing@baidu.com>
-	 <32eddae1-14bf-42dd-afdd-7dca8bc8a131@intel.com>
-In-Reply-To: <32eddae1-14bf-42dd-afdd-7dca8bc8a131@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV2PR11MB5976:EE_|SN7PR11MB7491:EE_
-x-ms-office365-filtering-correlation-id: 62ff3d81-fb17-43c4-32b7-08dc8bc3d3e7
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230035|376009|1800799019|366011|38070700013;
-x-microsoft-antispam-message-info: =?utf-8?B?Z1JNOXhDbWtpQUF5cTNuaWlJejZITkRwb3JOOFlrbVYvdnBORHgzRUtMbWFa?=
- =?utf-8?B?c2dmeW9laE1OTkt0eXdSTGdMNlJpZEhndzExSnQ0ZmlTTDdXeFdpQ1ZYelVs?=
- =?utf-8?B?cTJtMG02bEdJdFllQ0xjOFhvcjdCSjF4V3hBTUZxYWYxRDlLMGtpTnJlQnlF?=
- =?utf-8?B?am1SdEJmVEdVV1VKemNVTWhpd1BSbzZSSnViOHZGaU92UWFzd29UVnFBdCtW?=
- =?utf-8?B?LzB1SHdFSUVNdFRCYTVHZ080SnZBcktHVUlmQ3p1YjE3NGp3Sm56UWFmWnkr?=
- =?utf-8?B?MUlpeXZqWlM3T0FqaDJLK1lXakI3VVZrSVpEeWFkdmd2dVJaUEdzSEQzeEYy?=
- =?utf-8?B?WGdJeW1tY3g1UGR4bms5bUx2bGZZSTZtaEY2bS9GU25XaWtrejlQY3BoeE8x?=
- =?utf-8?B?RkEwQzR3QWlKeHpuNjZyNXVtQW1xMG42OHB1RWhpUnNzMTlYc0dadnQ0Mkgz?=
- =?utf-8?B?RjdBbVYwSERZTnFnVSs1aE1KNDJCd2JqcTdsU2RQdTVLZUhzbEN5a3d1QnN5?=
- =?utf-8?B?VkNMTFlJTEFDNmZ1TDlQdm4rS3FIMndnODZ6b0JnL252YkhTMlF2bDJBdlFs?=
- =?utf-8?B?S3hoVVJuOGFNQm5VZ3pLbDY4Qy9IMzgrNm9id3lLYTJpWFVld3BSRS9RMGhz?=
- =?utf-8?B?RUEzYTNxc0NPYUFIQldsVDZOS1NBVndOTnV2cWRFMmk2S1JoWHRYVkRHb0Vx?=
- =?utf-8?B?ZWJCeks3RHZDNjR3MkFPcENlZnZvMW1wVG93VDBVTC9pQmpQZmJBMkVsVm9x?=
- =?utf-8?B?eDN1RXI0M2NvRVhJaEdrc0Y1SWZXQ1dqVnBVODF3dG5ycTZXRFZibEc1dHRZ?=
- =?utf-8?B?aTBUQkhHLzNnZFhwdFY3a2pHVEc4TzNrYkt2M05UYXpIQkp0UXhVbmtGYk02?=
- =?utf-8?B?Zlp3WWMwM29hYVdUZG43U1pDZUlCNE5hdVA4UW4zanNoT0IrNFZmWlQ0RlJl?=
- =?utf-8?B?Q2sxeTFRU2h4WVo4YTVMckFTam1MMkc4cmkrSXh6eENoZnNrQWIyNXBlbXI3?=
- =?utf-8?B?QnhDeHVSUXFacVhvKzRYZG0ycnNFN0FtaXhKZlZiMEhSdjNjeHB6YzhTdHRN?=
- =?utf-8?B?SlhSRFk2LzlQdW95aXlvUWFQZzloR1hnc3hGOFhudU1QMEZTcEJCLzBVYWdk?=
- =?utf-8?B?V0s3VmRlVldSNlY3azBxcHVMSkVtQ1Q2bE5RMWx2MUVVSVZZNXRFT0hTaFRU?=
- =?utf-8?B?eTZoaDlFbnlzMDB3VFRiM1V0R1F6ZGErazE4RTRFYnB0Tytmam53NytyNmxu?=
- =?utf-8?B?SjlxSDdTTnhueFhGbmIxNkZtZGFPWTNKL2lEVnZJenAxWTVlbzZNeU5GQnJ4?=
- =?utf-8?B?aFJOWnhGdWxnckZYdDl6dE9JWGd3Q1krYXZ4RjY0R0JXNFNqbGVWSEs5aWZC?=
- =?utf-8?B?b1RHS2RBTEpKMXNiQlI0Um5qd0JjdE0zeHRlS3JwVlFxMUJldk9pejV2Wklz?=
- =?utf-8?B?YzFUam9oWklGRjhoNU5kUURweGJLNElNajJpLzU0a2NPK2xnZGNoaCtHd2xq?=
- =?utf-8?B?R2xZREtZeDhMazRPYWdBSkxpS1NKMXBsVkNmUVVhMGVuOHVCSndQcUN2L3cw?=
- =?utf-8?B?ZVBnRHpIQVZJeEtwQUYyVTNtdmNRaTlOOExMMUt6SVBrWjBZZ05Id29lTUhq?=
- =?utf-8?B?UUtNWFNnOEhzcG51aTV4WHRGWVByeG5XUmlKVEhZZmNwVEw4dTVCM3JpNVBy?=
- =?utf-8?B?SHJqVElZVEdpVzdWelZQTXBsSU1uQ0M2bXM5a3RESmpiVUhNdUU0SFFMbEFt?=
- =?utf-8?B?K3pSRVBoZ1NpQ2JxZVJCdFFLcWdKQStxRlN1WjV0RWc5NGJ1S0pXOTYxT2lV?=
- =?utf-8?Q?wmi4e9eY6zyf/YnvGW3vKDetxjbsf3/g6a8LQ=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR11MB5976.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230035)(376009)(1800799019)(366011)(38070700013);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?SzUrcHdzc0o4MjZob2thKzhiTkxRZFJuandqM1dnb1k2UnRyc1ZlZnBmK1Bk?=
- =?utf-8?B?MlNTbmNWOWVBdVdEb3YvSHZyOS9vajc1NVl0c212UlhBT29UQVpSKzh1U1ZR?=
- =?utf-8?B?QVZaaUE4MUV3QXRLK04vb3FIcDhJdlJ1R2JyakFQbVRWRUxjZThhVzRIbEl4?=
- =?utf-8?B?aUd6UXZxWndkNlBHNGQwdFFqVXBpZzRUWURBSXJscWM4dkNXWkZsMVhleEY1?=
- =?utf-8?B?UlRDdit1a3dUWnc3dFhva0xHMjRGNTVDTlFJZHNNSXlJL3MwY3Z4dExpZ0F0?=
- =?utf-8?B?YTZCbW8zZDZ2eWwzVlhzWXVzcHpPeTdMQnpPSVRTL3FxcU1pUFg4MHFHUk81?=
- =?utf-8?B?VnFwRGtzTkRldTFKMmhHVVA1Z2J5QUUyZUZMaTk4cXFrR1RkUy9oUDJvTkNz?=
- =?utf-8?B?YWZlWGh0MjB3Ri9vVHM4Szh2RkNRaFBwNyt3MkxucVVlcUkxQnNjbis2V2pX?=
- =?utf-8?B?Q1NualMwWUFoZnFmMWNsalVRbFkxOTFNVTBQVEZzazg4Z1cySVRuTDFJRmFs?=
- =?utf-8?B?R2xURDFjNzd0WnZCcENjdHIxcVg0QkpIM1ZONE0yQ2ZReVorSHZ0TUFOT3dt?=
- =?utf-8?B?ZklXbVd3S0NnMkszQk9qYnoycDFRUENhaEJmQnh4OCtiUkFKeEhHUUtmUmV0?=
- =?utf-8?B?b25BUkE5R0UyYWxGb3Nma2hpSFQwVUwzY3phOVh5TXNNVk5Vd0syMVA1bS96?=
- =?utf-8?B?eG9BeUx5b2wwa2xwcXpUQXo1QWJkUTR0YUtmMHRSZ2ZpOHFzaisxRmN1aVVP?=
- =?utf-8?B?VUZtQ0wzc3phWWMvdkhKejFvQTdsRnNpVDFaSUxPSUo3R2RoM2wrdDJraDdt?=
- =?utf-8?B?T0hoM1F1bXFlSDhjeEJOYXBLSFN3bHNQRWRYMjJ6cHdqdjdZNFBOU0xlZ0l5?=
- =?utf-8?B?RFRoanZMTHpOdC8xaEVyQi9oT2dua2ozWEJ0WVMzVXBXOHZrNmJiS0ZjSnhm?=
- =?utf-8?B?Q0hEMk9yV1liQ2tHQTExbTl0NEtDVUY2MDR0VmU2L01CcmhKZk8xTi9Zekxs?=
- =?utf-8?B?U1VOLytMR3FkNXdSZU1UQW1sT2k4OVVyTDVPNVBDZ1VyTjFDd2tVZEw1bjBl?=
- =?utf-8?B?YUFFeDVRaDQ4UWlEUTN5azlndXgrMlZVNGZSL2F0ei9vR2t0dGQ2bWRNcmFH?=
- =?utf-8?B?R0VVYnovNTR6bTdjN3lFdUgxRUYrS3IxU25hNk9rWGg2aUFGS1NPQ3M5NXdV?=
- =?utf-8?B?OThOaStjVzE5VXFnbWFLMUYrbmsvT3lvcHFyVGRrT1kwcTQ4T0t2aWNETUVL?=
- =?utf-8?B?QkVKZm1zK3F3WWExMnFJQjU4d3JXVm1JM0g3UmNrUjdLRmRGOTBYaS9WYWJ1?=
- =?utf-8?B?Zk94YzVUZVp2R2xITlhrSXFJZjdQcDFTN2FyWEhrem9qTFBXMlY3dFl0Z2ts?=
- =?utf-8?B?dGVNbkR1Y3pMaEQ5MVMxUkZsakViNkN2RGVMWElDVFlYaDF3d081eFh0RTdR?=
- =?utf-8?B?emZyeG1FS0pSS0YvT0p1MmFVSDNDM3BPeFdHYjkrNURQNjdHbFVETi8zWG9k?=
- =?utf-8?B?dmp1SkZFdHJXUnNUemtwa3JvREVVWloyR21uY0RVVW1mMW1zZkxHMFl4aEJn?=
- =?utf-8?B?UFpITSt4dTZQR3EyVUJxdDlHVW9TTGZuOE83M1BiYU9TWlFZU3NMcHJuVHhE?=
- =?utf-8?B?dlZNRk1ZTjFBM2RCU2FOY1E3ZStFRko3d0VvRFJ1czFDUkZEN0FWQVJibm4v?=
- =?utf-8?B?T2U5Vy9mVE5BS0V2eW90M2IwaGhpTmc2Rm5idGF1M1E5MDd0TmMzOXd1MXdO?=
- =?utf-8?B?VWFDdmUzUTc2SjhBVUkzLzdyVHpBeHlBQW91TWpIckFuUXhwbEY1OWhmMENp?=
- =?utf-8?B?ZzN4T3h5dThBRjY3b3daMVdTU3BSSmdiUHh2SkVpditkSFhjVnFBZTNja2g3?=
- =?utf-8?B?allVRUhUYmp3WGF6UEVQNVJJME9Sb3AwUnBDamxDWlp1bHltQmloY0xNWVpC?=
- =?utf-8?B?OEovNlJGRUpFakdHVzVjdXZHZkdRck1qWXNmeEttNFUxdGxDSENSYWZmZDRK?=
- =?utf-8?B?NHdsY25BWkVQZTVIU3BMc1RoTm5OQnVEY3I3dTQzTnFCWDluSmxPaFdJMWl0?=
- =?utf-8?B?N01LdkNMUmw4UnZlTEVVanI5QndNUGFOakNoZXBVVExoODRkNWQ2b0ltS1V2?=
- =?utf-8?B?OXFLTTBod0ZvZ1YzVnl0Sno5M3ZaVE1xckhWYXc0R29KS1paSXBMbVFQTy9x?=
- =?utf-8?Q?E/8GV0j8KqLTbuhSj9Kg7oM=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1125BD7A6CC5AE40B049E7C53CA4230B@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A972D12D741;
+	Thu, 13 Jun 2024 16:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718295314; cv=none; b=py6Fkfb0D+EBCs8JdTJqYRKb5dLMWkJv/r45+vUDvo9unWgqJYxmrocQaz+LdJX3+goswJML1psQR2bzpRWizR9/g2WGQbhW0c+3idWYB0rVxR4XeK4vsMIJatoI6IjaeRgFurphz1Z/1kVh7g9rn/vB8QP8grevEamPctwciYY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718295314; c=relaxed/simple;
+	bh=mxz72ufUHZ7fkgp+FBvJTAgCm9Q5dZMzzKC07YccjzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fznpt1Zd92w+0XbFcFw7QD5fx6ag5n3UW0Tp9DJB/r0guXEQDQ67b0Y7mpT1rsKJZFBob/IMY6TxbL24OwxJbMIu/EadG6NwgUgCWjGkNuWHWlZ2GQjmv+K1ms20z7eQ2pzx1i17AsGKZ45bsBvKpdDDYRordIW1VbcvsA/BxeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ol3MwQIB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62216C2BBFC;
+	Thu, 13 Jun 2024 16:15:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718295314;
+	bh=mxz72ufUHZ7fkgp+FBvJTAgCm9Q5dZMzzKC07YccjzQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ol3MwQIBIMHv1m+vszYfgXKaULZ7ZaEcFm8LSZAHE2qCIvYtIjQuxavxL9t9+Mdfl
+	 hDqnB7qjY+RC4FJJdMl8/PbV0+H+wbkETl4G9WxgIUoqlG5rqI1ITW90TsGL01ZxlI
+	 9cXIVnHDkrzY729tFIYf5QZZkoNrHwE3aatPOsIxcnIzjQpLcnJMDEuWXWfSREJIdP
+	 hzbvFU/WqCVrN21tDaLutuxBG6t00zIRvAsHTuY4iIXCYOQZZ0G7mDR9iyiyGNhYda
+	 /ZR7cb0JCI1YqV2AmgZNdx0p09yFgPVZfgDELK8dlJN5oOqQiVnmZn7P+uBEp3rr96
+	 0wkdYSjXJRKBQ==
+Date: Thu, 13 Jun 2024 17:15:08 +0100
+From: Lee Jones <lee@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Thomas Gleixner <tglx@linutronix.de>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v3 03/10] mfd: support ROHM BD96801 PMIC core
+Message-ID: <20240613161508.GM2561462@google.com>
+References: <cover.1717486682.git.mazziesaccount@gmail.com>
+ <97cd372d4502597bf051f0ff52f718eab9b186aa.1717486682.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR11MB5976.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 62ff3d81-fb17-43c4-32b7-08dc8bc3d3e7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2024 16:13:56.9746
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: lQyIbUzuWgW5omeMA3Az756r67dZuymDfa99cpHqLmSsFe1TQ0SxcvKgmV7Cjb5y/iH8Fhv4IipFov8TGAlyzAtwBI66bluFl4LlAiwcJNw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7491
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <97cd372d4502597bf051f0ff52f718eab9b186aa.1717486682.git.mazziesaccount@gmail.com>
 
-T24gVGh1LCAyMDI0LTA2LTEzIGF0IDA5OjA3IC0wNzAwLCBEYXZlIEhhbnNlbiB3cm90ZToNCj4g
-U2Vjb25kLCBSaWNrIHdhcyBsb29raW5nIGluIHRoaXMgYXJlYSwgYnV0IEknbSBub3Qgc3VyZSB3
-ZSBldmVyIGFwcGxpZWQNCj4gaGlzIHBhdGNoZXMuwqAgVGhlIGlkZWEgd2FzIHRvIG5ldmVyIGxl
-YWsgbWVtb3J5IHNpbGVudGx5IGluIHRoZXNlDQo+IGZhaWx1cmVzLsKgIERvZXNuJ3QgdGhpcyBz
-aWxlbnRseSBsZWFrIG1lbW9yeT8NCg0KVGhleSBkaWQgZ2V0IGFwcGxpZWQgYWN0dWFsbHkuIEFm
-dGVyIGEgZmFpciBhbW91bnQgb2YgZGlzY3Vzc2lvbiB0aGUgc29sdXRpb24NCndhcyB0byBhbHdh
-eXMgbGVhayB0aGUgcGFnZXMsIGFuZCByZWx5IG9uIHRoZSBXQVJOIHRoYXQgaGFwcGVucyBpbiBz
-ZXRfbWVtb3J5KCkNCnRvIG1ha2Ugbm9pc2UgYWJvdXQgaXQuDQoNCkl0IGxvb2tzIGxpa2UgdGhp
-cyBpbnN0YW5jZSBwb3BwZWQgdXAgYWZ0ZXIgdGhlIHN3ZWVwIHRocm91Z2ggdGhlIGNvZGUgd2Fz
-IGRvbmUuDQooYXQgbGVhc3QgaW4gbXkgbG9jYWwgYnJhbmNoIHdpdGggdGhlIHBhdGNoZXMgZm9y
-IHRoZSBmaXhlcywgdGhpcyBjb2RlIHdhcyBub3QNCm1lcmdlZCB5ZXQpDQo=
+On Tue, 04 Jun 2024, Matti Vaittinen wrote:
+
+> The ROHM BD96801 PMIC is highly customizable automotive grade PMIC
+> which integrates regulator and watchdog funtionalities.
+> 
+> Provide INTB IRQ and register accesses for regulator/watchdog drivers.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
+> ---
+> Changelog:
+> v2 =>:
+> - No changes
+> 
+> v1 => v2:
+> - Drop unused enum
+> - Improve error prints
+> - improve comments
+> 
+>  RFCv2 => v1:
+> - drop ERRB interrupts (for now)
+> - bd96801: Unlock registers in core driver
+> 
+> Changelog: RFCv1 => RFCv2
+> - Work-around the IRQ domain name conflict
+> - Add watchdog IRQ
+> - Various styling fixes based on review by Lee
+> ---
+>  drivers/mfd/Kconfig              |  13 ++
+>  drivers/mfd/Makefile             |   1 +
+>  drivers/mfd/rohm-bd96801.c       | 273 +++++++++++++++++++++++++++++++
+>  include/linux/mfd/rohm-bd96801.h | 215 ++++++++++++++++++++++++
+>  include/linux/mfd/rohm-generic.h |   1 +
+>  5 files changed, 503 insertions(+)
+>  create mode 100644 drivers/mfd/rohm-bd96801.c
+>  create mode 100644 include/linux/mfd/rohm-bd96801.h
+
+Pretty nice.  Uses generic interfaces.  Just a couple of nits.
+
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 266b4f54af60..68cc7af9ef97 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -2089,6 +2089,19 @@ config MFD_ROHM_BD957XMUF
+>  	  BD9573MUF Power Management ICs. BD9576 and BD9573 are primarily
+>  	  designed to be used to power R-Car series processors.
+>  
+> +config MFD_ROHM_BD96801
+> +	tristate "ROHM BD96801 Power Management IC"
+> +	depends on I2C=y
+> +	depends on OF
+> +	select REGMAP_I2C
+> +	select REGMAP_IRQ
+> +	select MFD_CORE
+> +	help
+> +	  Select this option to get support for the ROHM BD96801 Power
+> +	  Management IC. The ROHM BD96801 is a highly scalable Power Management
+> +	  IC for industrial and automotive use. The BD96801 can be used as a
+> +	  master PMIC in a chained PMIC solution with suitable companion PMICs.
+> +
+>  config MFD_STM32_LPTIMER
+>  	tristate "Support for STM32 Low-Power Timer"
+>  	depends on (ARCH_STM32 && OF) || COMPILE_TEST
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index c66f07edcd0e..e792892d4a8b 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -264,6 +264,7 @@ obj-$(CONFIG_RAVE_SP_CORE)	+= rave-sp.o
+>  obj-$(CONFIG_MFD_ROHM_BD71828)	+= rohm-bd71828.o
+>  obj-$(CONFIG_MFD_ROHM_BD718XX)	+= rohm-bd718x7.o
+>  obj-$(CONFIG_MFD_ROHM_BD957XMUF)	+= rohm-bd9576.o
+> +obj-$(CONFIG_MFD_ROHM_BD96801)	+= rohm-bd96801.o
+>  obj-$(CONFIG_MFD_STMFX) 	+= stmfx.o
+>  obj-$(CONFIG_MFD_KHADAS_MCU) 	+= khadas-mcu.o
+>  obj-$(CONFIG_MFD_ACER_A500_EC)	+= acer-ec-a500.o
+> diff --git a/drivers/mfd/rohm-bd96801.c b/drivers/mfd/rohm-bd96801.c
+> new file mode 100644
+> index 000000000000..1c2a9591be7b
+> --- /dev/null
+> +++ b/drivers/mfd/rohm-bd96801.c
+> @@ -0,0 +1,273 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright (C) 2024 ROHM Semiconductors
+> + *
+> + * ROHM BD96801 PMIC driver
+> + *
+> + * This version of the "BD86801 scalable PMIC"'s driver supports only very
+> + * basic set of the PMIC features. Most notably, there is no support for
+> + * the ERRB interrupt and the configurations which should be done when the
+> + * PMIC is in STBY mode.
+> + *
+> + * Supporting the ERRB interrupt would require dropping the regmap-IRQ
+> + * usage or working around (or accepting a presense of) a naming conflict
+> + * in debugFS IRQs.
+> + *
+> + * Being able to reliably do the configurations like changing the
+> + * regulator safety limits (like limits for the over/under -voltages, over
+> + * current, thermal protection) would require the configuring driver to be
+> + * synchronized with entity causing the PMIC state transitions. Eg, one
+> + * should be able to ensure the PMIC is in STBY state when the
+> + * configurations are applied to the hardware. How and when the PMIC state
+> + * transitions are to be done is likely to be very system specific, as will
+> + * be the need to configure these safety limits. Hence it's not simple to
+> + * come up with a generic solution.
+> + *
+> + * Users who require the ERRB handling and STBY state configurations can
+> + * have a look at the original RFC:
+> + * https://lore.kernel.org/all/cover.1712920132.git.mazziesaccount@gmail.com/
+> + * which implements a workaround to debugFS naming conflict and some of
+> + * the safety limit configurations - but leaves the state change handling
+> + * and synchronization to be implemented.
+> + *
+> + * It would be great to hear (and receive a patch!) if you implement the
+> + * STBY configuration support or a proper fix to the debugFS naming
+> + * conflict in your downstream driver ;)
+> + */
+> +
+> +#include <linux/i2c.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/module.h>
+> +#include <linux/property.h>
+> +#include <linux/regmap.h>
+> +#include <linux/types.h>
+> +
+> +#include <linux/mfd/rohm-bd96801.h>
+> +#include <linux/mfd/rohm-generic.h>
+
+Nit: '\n'
+
+> +static const struct resource regulator_intb_irqs[] = {
+> +	DEFINE_RES_IRQ_NAMED(BD96801_TW_STAT, "bd96801-core-thermal"),
+> +
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_OCPH_STAT, "bd96801-buck1-overcurr-h"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_OCPL_STAT, "bd96801-buck1-overcurr-l"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_OCPN_STAT, "bd96801-buck1-overcurr-n"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_OVD_STAT, "bd96801-buck1-overvolt"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_UVD_STAT, "bd96801-buck1-undervolt"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_TW_CH_STAT, "bd96801-buck1-thermal"),
+> +
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK2_OCPH_STAT, "bd96801-buck2-overcurr-h"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK2_OCPL_STAT, "bd96801-buck2-overcurr-l"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK2_OCPN_STAT, "bd96801-buck2-overcurr-n"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK2_OVD_STAT, "bd96801-buck2-overvolt"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK2_UVD_STAT, "bd96801-buck2-undervolt"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK2_TW_CH_STAT, "bd96801-buck2-thermal"),
+> +
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK3_OCPH_STAT, "bd96801-buck3-overcurr-h"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK3_OCPL_STAT, "bd96801-buck3-overcurr-l"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK3_OCPN_STAT, "bd96801-buck3-overcurr-n"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK3_OVD_STAT, "bd96801-buck3-overvolt"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK3_UVD_STAT, "bd96801-buck3-undervolt"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK3_TW_CH_STAT, "bd96801-buck3-thermal"),
+> +
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK4_OCPH_STAT, "bd96801-buck4-overcurr-h"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK4_OCPL_STAT, "bd96801-buck4-overcurr-l"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK4_OCPN_STAT, "bd96801-buck4-overcurr-n"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK4_OVD_STAT, "bd96801-buck4-overvolt"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK4_UVD_STAT, "bd96801-buck4-undervolt"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_BUCK4_TW_CH_STAT, "bd96801-buck4-thermal"),
+> +
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO5_OCPH_STAT, "bd96801-ldo5-overcurr"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO5_OVD_STAT, "bd96801-ldo5-overvolt"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO5_UVD_STAT, "bd96801-ldo5-undervolt"),
+> +
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO6_OCPH_STAT, "bd96801-ldo6-overcurr"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO6_OVD_STAT, "bd96801-ldo6-overvolt"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO6_UVD_STAT, "bd96801-ldo6-undervolt"),
+> +
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO7_OCPH_STAT, "bd96801-ldo7-overcurr"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO7_OVD_STAT, "bd96801-ldo7-overvolt"),
+> +	DEFINE_RES_IRQ_NAMED(BD96801_LDO7_UVD_STAT, "bd96801-ldo7-undervolt"),
+> +};
+> +
+> +static const struct resource wdg_intb_irqs[] = {
+> +	DEFINE_RES_IRQ_NAMED(BD96801_WDT_ERR_STAT, "bd96801-wdg"),
+> +};
+> +
+> +static struct mfd_cell bd96801_mfd_cells[] = {
+
+This is an MFD driver, you can drop the 'mfd_' part.
+
+> +	{
+> +		.name = "bd96801-wdt",
+> +		.resources = wdg_intb_irqs,
+> +		.num_resources = ARRAY_SIZE(wdg_intb_irqs),
+> +	}, {
+> +		.name = "bd96801-pmic",
+
+I thought this was the PMIC?
+
+What is this device?  Regulators?
+
+"bd96801-regulator"?
+
+> +		.resources = regulator_intb_irqs,
+> +		.num_resources = ARRAY_SIZE(regulator_intb_irqs),
+> +	},
+> +};
+> +
+> +static const struct regmap_range bd96801_volatile_ranges[] = {
+> +	/* Status registers */
+> +	regmap_reg_range(BD96801_REG_WD_FEED, BD96801_REG_WD_FAILCOUNT),
+> +	regmap_reg_range(BD96801_REG_WD_ASK, BD96801_REG_WD_ASK),
+> +	regmap_reg_range(BD96801_REG_WD_STATUS, BD96801_REG_WD_STATUS),
+> +	regmap_reg_range(BD96801_REG_PMIC_STATE, BD96801_REG_INT_LDO7_INTB),
+> +	/* Registers which do not update value unless PMIC is in STBY */
+> +	regmap_reg_range(BD96801_REG_SSCG_CTRL, BD96801_REG_SHD_INTB),
+> +	regmap_reg_range(BD96801_REG_BUCK_OVP, BD96801_REG_BOOT_OVERTIME),
+> +	/*
+> +	 * LDO control registers have single bit (LDO MODE) which does not
+> +	 * change when we write it unless PMIC is in STBY. It's safer to not
+> +	 * cache it.
+> +	 */
+> +	regmap_reg_range(BD96801_LDO5_VOL_LVL_REG, BD96801_LDO7_VOL_LVL_REG),
+> +};
+> +
+> +static const struct regmap_access_table volatile_regs = {
+> +	.yes_ranges = bd96801_volatile_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(bd96801_volatile_ranges),
+> +};
+> +
+> +static const struct regmap_irq bd96801_intb_irqs[] = {
+> +	/* STATUS SYSTEM INTB */
+> +	REGMAP_IRQ_REG(BD96801_TW_STAT, 0, BD96801_TW_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_WDT_ERR_STAT, 0, BD96801_WDT_ERR_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_I2C_ERR_STAT, 0, BD96801_I2C_ERR_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_CHIP_IF_ERR_STAT, 0, BD96801_CHIP_IF_ERR_STAT_MASK),
+> +	/* STATUS BUCK1 INTB */
+> +	REGMAP_IRQ_REG(BD96801_BUCK1_OCPH_STAT, 1, BD96801_BUCK_OCPH_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK1_OCPL_STAT, 1, BD96801_BUCK_OCPL_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK1_OCPN_STAT, 1, BD96801_BUCK_OCPN_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK1_OVD_STAT, 1, BD96801_BUCK_OVD_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK1_UVD_STAT, 1, BD96801_BUCK_UVD_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK1_TW_CH_STAT, 1, BD96801_BUCK_TW_CH_STAT_MASK),
+> +	/* BUCK 2 INTB */
+> +	REGMAP_IRQ_REG(BD96801_BUCK2_OCPH_STAT, 2, BD96801_BUCK_OCPH_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK2_OCPL_STAT, 2, BD96801_BUCK_OCPL_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK2_OCPN_STAT, 2, BD96801_BUCK_OCPN_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK2_OVD_STAT, 2, BD96801_BUCK_OVD_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK2_UVD_STAT, 2, BD96801_BUCK_UVD_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK2_TW_CH_STAT, 2, BD96801_BUCK_TW_CH_STAT_MASK),
+> +	/* BUCK 3 INTB */
+> +	REGMAP_IRQ_REG(BD96801_BUCK3_OCPH_STAT, 3, BD96801_BUCK_OCPH_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK3_OCPL_STAT, 3, BD96801_BUCK_OCPL_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK3_OCPN_STAT, 3, BD96801_BUCK_OCPN_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK3_OVD_STAT, 3, BD96801_BUCK_OVD_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK3_UVD_STAT, 3, BD96801_BUCK_UVD_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK3_TW_CH_STAT, 3, BD96801_BUCK_TW_CH_STAT_MASK),
+> +	/* BUCK 4 INTB */
+> +	REGMAP_IRQ_REG(BD96801_BUCK4_OCPH_STAT, 4, BD96801_BUCK_OCPH_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK4_OCPL_STAT, 4, BD96801_BUCK_OCPL_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK4_OCPN_STAT, 4, BD96801_BUCK_OCPN_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK4_OVD_STAT, 4, BD96801_BUCK_OVD_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK4_UVD_STAT, 4, BD96801_BUCK_UVD_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_BUCK4_TW_CH_STAT, 4, BD96801_BUCK_TW_CH_STAT_MASK),
+> +	/* LDO5 INTB */
+> +	REGMAP_IRQ_REG(BD96801_LDO5_OCPH_STAT, 5, BD96801_LDO_OCPH_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_LDO5_OVD_STAT, 5, BD96801_LDO_OVD_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_LDO5_UVD_STAT, 5, BD96801_LDO_UVD_STAT_MASK),
+> +	/* LDO6 INTB */
+> +	REGMAP_IRQ_REG(BD96801_LDO6_OCPH_STAT, 6, BD96801_LDO_OCPH_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_LDO6_OVD_STAT, 6, BD96801_LDO_OVD_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_LDO6_UVD_STAT, 6, BD96801_LDO_UVD_STAT_MASK),
+> +	/* LDO7 INTB */
+> +	REGMAP_IRQ_REG(BD96801_LDO7_OCPH_STAT, 7, BD96801_LDO_OCPH_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_LDO7_OVD_STAT, 7, BD96801_LDO_OVD_STAT_MASK),
+> +	REGMAP_IRQ_REG(BD96801_LDO7_UVD_STAT, 7, BD96801_LDO_UVD_STAT_MASK),
+> +};
+> +
+> +static struct regmap_irq_chip bd96801_irq_chip_intb = {
+> +	.name = "bd96801-irq-intb",
+> +	.main_status = BD96801_REG_INT_MAIN,
+> +	.num_main_regs = 1,
+> +	.irqs = &bd96801_intb_irqs[0],
+> +	.num_irqs = ARRAY_SIZE(bd96801_intb_irqs),
+> +	.status_base = BD96801_REG_INT_SYS_INTB,
+> +	.mask_base = BD96801_REG_MASK_SYS_INTB,
+> +	.ack_base = BD96801_REG_INT_SYS_INTB,
+> +	.init_ack_masked = true,
+> +	.num_regs = 8,
+> +	.irq_reg_stride = 1,
+> +};
+> +
+> +static const struct regmap_config bd96801_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.volatile_table = &volatile_regs,
+> +	.cache_type = REGCACHE_RBTREE,
+> +};
+> +
+> +static int bd96801_i2c_probe(struct i2c_client *i2c)
+> +{
+> +	struct regmap_irq_chip_data *intb_irq_data;
+> +	const struct fwnode_handle *fwnode;
+> +	struct irq_domain *intb_domain;
+> +	struct regmap *regmap;
+> +	int ret, intb_irq;
+> +
+> +	fwnode = dev_fwnode(&i2c->dev);
+> +	if (!fwnode)
+> +		return dev_err_probe(&i2c->dev, -EINVAL, "Failed to find fwnode\n");
+> +
+> +	intb_irq = fwnode_irq_get_byname(fwnode, "intb");
+> +	if (intb_irq < 0)
+> +		return dev_err_probe(&i2c->dev, intb_irq, "INTB IRQ not configured\n");
+> +
+> +	regmap = devm_regmap_init_i2c(i2c, &bd96801_regmap_config);
+> +	if (IS_ERR(regmap))
+> +		return dev_err_probe(&i2c->dev, PTR_ERR(regmap),
+> +				    "Regmap initialization failed\n");
+> +
+> +	ret = regmap_write(regmap, BD96801_LOCK_REG, BD96801_UNLOCK);
+> +	if (ret)
+> +		return dev_err_probe(&i2c->dev, ret, "Failed to unlock PMIC\n");
+> +
+> +	ret = devm_regmap_add_irq_chip(&i2c->dev, regmap, intb_irq,
+> +				       IRQF_ONESHOT, 0, &bd96801_irq_chip_intb,
+> +				       &intb_irq_data);
+> +	if (ret)
+> +		return dev_err_probe(&i2c->dev, ret, "Failed to add INTB IRQ chip\n");
+> +
+> +	intb_domain = regmap_irq_get_domain(intb_irq_data);
+> +
+> +	ret = devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO,
+> +				   bd96801_mfd_cells,
+> +				   ARRAY_SIZE(bd96801_mfd_cells), NULL, 0,
+> +				   intb_domain);
+> +
+
+Remove this line.
+
+> +	if (ret)
+> +		dev_err(&i2c->dev, "Failed to create subdevices\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct of_device_id bd96801_of_match[] = {
+> +	{ .compatible = "rohm,bd96801",	},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, bd96801_of_match);
+> +
+> +static struct i2c_driver bd96801_i2c_driver = {
+> +	.driver = {
+> +		.name = "rohm-bd96801",
+> +		.of_match_table = bd96801_of_match,
+> +	},
+> +	.probe = bd96801_i2c_probe,
+> +};
+> +
+> +static int __init bd96801_i2c_init(void)
+> +{
+> +	return i2c_add_driver(&bd96801_i2c_driver);
+> +}
+> +
+> +/* Initialise early so consumer devices can complete system boot */
+> +subsys_initcall(bd96801_i2c_init);
+> +
+> +static void __exit bd96801_i2c_exit(void)
+> +{
+> +	i2c_del_driver(&bd96801_i2c_driver);
+> +}
+> +module_exit(bd96801_i2c_exit);
+> +
+> +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+> +MODULE_DESCRIPTION("ROHM BD96801 Power Management IC driver");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/mfd/rohm-bd96801.h b/include/linux/mfd/rohm-bd96801.h
+> new file mode 100644
+> index 000000000000..e2d9e10b6364
+> --- /dev/null
+> +++ b/include/linux/mfd/rohm-bd96801.h
+> @@ -0,0 +1,215 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/* Copyright (C) 2024 ROHM Semiconductors */
+> +
+> +#ifndef __MFD_BD96801_H__
+> +#define __MFD_BD96801_H__
+> +
+> +#define BD96801_REG_SSCG_CTRL		0x09
+> +#define BD96801_REG_SHD_INTB            0x20
+> +#define BD96801_LDO5_VOL_LVL_REG	0x2c
+> +#define BD96801_LDO6_VOL_LVL_REG	0x2d
+> +#define BD96801_LDO7_VOL_LVL_REG	0x2e
+> +#define BD96801_REG_BUCK_OVP		0x30
+> +#define BD96801_REG_BUCK_OVD		0x35
+> +#define BD96801_REG_LDO_OVP		0x31
+> +#define BD96801_REG_LDO_OVD		0x36
+> +#define BD96801_REG_BOOT_OVERTIME	0x3a
+> +#define BD96801_REG_WD_TMO		0x40
+> +#define BD96801_REG_WD_CONF		0x41
+> +#define BD96801_REG_WD_FEED		0x42
+> +#define BD96801_REG_WD_FAILCOUNT	0x43
+> +#define BD96801_REG_WD_ASK		0x46
+> +#define BD96801_REG_WD_STATUS		0x4a
+> +#define BD96801_REG_PMIC_STATE		0x4f
+> +#define BD96801_REG_EXT_STATE		0x50
+> +
+> +#define BD96801_STATE_STBY		0x09
+> +
+> +#define BD96801_LOCK_REG		0x04
+> +#define BD96801_UNLOCK			0x9d
+> +#define BD96801_LOCK			0x00
+> +
+> +/* IRQ register area */
+> +#define BD96801_REG_INT_MAIN		0x51
+> +
+> +/*
+> + * The BD96801 has two physical IRQ lines, INTB and ERRB.
+> + *
+> + * The 'main status register' is located at 0x51.
+> + * The ERRB status registers are located at 0x52 ... 0x5B
+> + * INTB status registers are at range 0x5c ... 0x63
+> + */
+> +#define BD96801_REG_INT_SYS_ERRB1	0x52
+> +#define BD96801_REG_INT_SYS_INTB	0x5c
+> +#define BD96801_REG_INT_LDO7_INTB	0x63
+> +
+> +/* MASK registers */
+> +#define BD96801_REG_MASK_SYS_INTB	0x73
+> +#define BD96801_REG_MASK_SYS_ERRB	0x69
+> +
+> +#define BD96801_MAX_REGISTER		0x7a
+> +
+> +#define BD96801_OTP_ERR_MASK		BIT(0)
+> +#define BD96801_DBIST_ERR_MASK		BIT(1)
+> +#define BD96801_EEP_ERR_MASK		BIT(2)
+> +#define BD96801_ABIST_ERR_MASK		BIT(3)
+> +#define BD96801_PRSTB_ERR_MASK		BIT(4)
+> +#define BD96801_DRMOS1_ERR_MASK		BIT(5)
+> +#define BD96801_DRMOS2_ERR_MASK		BIT(6)
+> +#define BD96801_SLAVE_ERR_MASK		BIT(7)
+> +#define BD96801_VREF_ERR_MASK		BIT(0)
+> +#define BD96801_TSD_ERR_MASK		BIT(1)
+> +#define BD96801_UVLO_ERR_MASK		BIT(2)
+> +#define BD96801_OVLO_ERR_MASK		BIT(3)
+> +#define BD96801_OSC_ERR_MASK		BIT(4)
+> +#define BD96801_PON_ERR_MASK		BIT(5)
+> +#define BD96801_POFF_ERR_MASK		BIT(6)
+> +#define BD96801_CMD_SHDN_ERR_MASK	BIT(7)
+> +#define BD96801_INT_PRSTB_WDT_ERR_MASK	BIT(0)
+> +#define BD96801_INT_CHIP_IF_ERR_MASK	BIT(3)
+> +#define BD96801_INT_SHDN_ERR_MASK	BIT(7)
+> +#define BD96801_OUT_PVIN_ERR_MASK	BIT(0)
+> +#define BD96801_OUT_OVP_ERR_MASK	BIT(1)
+> +#define BD96801_OUT_UVP_ERR_MASK	BIT(2)
+> +#define BD96801_OUT_SHDN_ERR_MASK	BIT(7)
+> +
+> +/* ERRB IRQs */
+> +enum {
+> +	/* Reg 0x52, 0x53, 0x54 - ERRB system IRQs */
+> +	BD96801_OTP_ERR_STAT,
+> +	BD96801_DBIST_ERR_STAT,
+> +	BD96801_EEP_ERR_STAT,
+> +	BD96801_ABIST_ERR_STAT,
+> +	BD96801_PRSTB_ERR_STAT,
+> +	BD96801_DRMOS1_ERR_STAT,
+> +	BD96801_DRMOS2_ERR_STAT,
+> +	BD96801_SLAVE_ERR_STAT,
+> +	BD96801_VREF_ERR_STAT,
+> +	BD96801_TSD_ERR_STAT,
+> +	BD96801_UVLO_ERR_STAT,
+> +	BD96801_OVLO_ERR_STAT,
+> +	BD96801_OSC_ERR_STAT,
+> +	BD96801_PON_ERR_STAT,
+> +	BD96801_POFF_ERR_STAT,
+> +	BD96801_CMD_SHDN_ERR_STAT,
+> +	BD96801_INT_PRSTB_WDT_ERR,
+> +	BD96801_INT_CHIP_IF_ERR,
+> +	BD96801_INT_SHDN_ERR_STAT,
+> +
+> +	/* Reg 0x55 BUCK1 ERR IRQs */
+> +	BD96801_BUCK1_PVIN_ERR_STAT,
+> +	BD96801_BUCK1_OVP_ERR_STAT,
+> +	BD96801_BUCK1_UVP_ERR_STAT,
+> +	BD96801_BUCK1_SHDN_ERR_STAT,
+> +
+> +	/* Reg 0x56 BUCK2 ERR IRQs */
+> +	BD96801_BUCK2_PVIN_ERR_STAT,
+> +	BD96801_BUCK2_OVP_ERR_STAT,
+> +	BD96801_BUCK2_UVP_ERR_STAT,
+> +	BD96801_BUCK2_SHDN_ERR_STAT,
+> +
+> +	/* Reg 0x57 BUCK3 ERR IRQs */
+> +	BD96801_BUCK3_PVIN_ERR_STAT,
+> +	BD96801_BUCK3_OVP_ERR_STAT,
+> +	BD96801_BUCK3_UVP_ERR_STAT,
+> +	BD96801_BUCK3_SHDN_ERR_STAT,
+> +
+> +	/* Reg 0x58 BUCK4 ERR IRQs */
+> +	BD96801_BUCK4_PVIN_ERR_STAT,
+> +	BD96801_BUCK4_OVP_ERR_STAT,
+> +	BD96801_BUCK4_UVP_ERR_STAT,
+> +	BD96801_BUCK4_SHDN_ERR_STAT,
+> +
+> +	/* Reg 0x59 LDO5 ERR IRQs */
+> +	BD96801_LDO5_PVIN_ERR_STAT,
+> +	BD96801_LDO5_OVP_ERR_STAT,
+> +	BD96801_LDO5_UVP_ERR_STAT,
+> +	BD96801_LDO5_SHDN_ERR_STAT,
+> +
+> +	/* Reg 0x5a LDO6 ERR IRQs */
+> +	BD96801_LDO6_PVIN_ERR_STAT,
+> +	BD96801_LDO6_OVP_ERR_STAT,
+> +	BD96801_LDO6_UVP_ERR_STAT,
+> +	BD96801_LDO6_SHDN_ERR_STAT,
+> +
+> +	/* Reg 0x5b LDO7 ERR IRQs */
+> +	BD96801_LDO7_PVIN_ERR_STAT,
+> +	BD96801_LDO7_OVP_ERR_STAT,
+> +	BD96801_LDO7_UVP_ERR_STAT,
+> +	BD96801_LDO7_SHDN_ERR_STAT,
+> +};
+> +
+> +/* INTB IRQs */
+> +enum {
+> +	/* Reg 0x5c (System INTB) */
+> +	BD96801_TW_STAT,
+> +	BD96801_WDT_ERR_STAT,
+> +	BD96801_I2C_ERR_STAT,
+> +	BD96801_CHIP_IF_ERR_STAT,
+> +
+> +	/* Reg 0x5d (BUCK1 INTB) */
+> +	BD96801_BUCK1_OCPH_STAT,
+> +	BD96801_BUCK1_OCPL_STAT,
+> +	BD96801_BUCK1_OCPN_STAT,
+> +	BD96801_BUCK1_OVD_STAT,
+> +	BD96801_BUCK1_UVD_STAT,
+> +	BD96801_BUCK1_TW_CH_STAT,
+> +
+> +	/* Reg 0x5e (BUCK2 INTB) */
+> +	BD96801_BUCK2_OCPH_STAT,
+> +	BD96801_BUCK2_OCPL_STAT,
+> +	BD96801_BUCK2_OCPN_STAT,
+> +	BD96801_BUCK2_OVD_STAT,
+> +	BD96801_BUCK2_UVD_STAT,
+> +	BD96801_BUCK2_TW_CH_STAT,
+> +
+> +	/* Reg 0x5f (BUCK3 INTB)*/
+> +	BD96801_BUCK3_OCPH_STAT,
+> +	BD96801_BUCK3_OCPL_STAT,
+> +	BD96801_BUCK3_OCPN_STAT,
+> +	BD96801_BUCK3_OVD_STAT,
+> +	BD96801_BUCK3_UVD_STAT,
+> +	BD96801_BUCK3_TW_CH_STAT,
+> +
+> +	/* Reg 0x60 (BUCK4 INTB)*/
+> +	BD96801_BUCK4_OCPH_STAT,
+> +	BD96801_BUCK4_OCPL_STAT,
+> +	BD96801_BUCK4_OCPN_STAT,
+> +	BD96801_BUCK4_OVD_STAT,
+> +	BD96801_BUCK4_UVD_STAT,
+> +	BD96801_BUCK4_TW_CH_STAT,
+> +
+> +	/* Reg 0x61 (LDO5 INTB) */
+> +	BD96801_LDO5_OCPH_STAT, /* bit [0] */
+> +	BD96801_LDO5_OVD_STAT,	/* bit [3] */
+> +	BD96801_LDO5_UVD_STAT,  /* bit [4] */
+> +
+> +	/* Reg 0x62 (LDO6 INTB) */
+> +	BD96801_LDO6_OCPH_STAT, /* bit [0] */
+> +	BD96801_LDO6_OVD_STAT,	/* bit [3] */
+> +	BD96801_LDO6_UVD_STAT,  /* bit [4] */
+> +
+> +	/* Reg 0x63 (LDO7 INTB) */
+> +	BD96801_LDO7_OCPH_STAT, /* bit [0] */
+> +	BD96801_LDO7_OVD_STAT,	/* bit [3] */
+> +	BD96801_LDO7_UVD_STAT,  /* bit [4] */
+> +};
+> +
+> +/* IRQ MASKs */
+> +#define BD96801_TW_STAT_MASK		BIT(0)
+> +#define BD96801_WDT_ERR_STAT_MASK	BIT(1)
+> +#define BD96801_I2C_ERR_STAT_MASK	BIT(2)
+> +#define BD96801_CHIP_IF_ERR_STAT_MASK	BIT(3)
+> +
+> +#define BD96801_BUCK_OCPH_STAT_MASK	BIT(0)
+> +#define BD96801_BUCK_OCPL_STAT_MASK	BIT(1)
+> +#define BD96801_BUCK_OCPN_STAT_MASK	BIT(2)
+> +#define BD96801_BUCK_OVD_STAT_MASK	BIT(3)
+> +#define BD96801_BUCK_UVD_STAT_MASK	BIT(4)
+> +#define BD96801_BUCK_TW_CH_STAT_MASK	BIT(5)
+> +
+> +#define BD96801_LDO_OCPH_STAT_MASK	BIT(0)
+> +#define BD96801_LDO_OVD_STAT_MASK	BIT(3)
+> +#define BD96801_LDO_UVD_STAT_MASK	BIT(4)
+> +
+> +#endif
+> diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-generic.h
+> index 4eeb22876bad..e7d4e6afe388 100644
+> --- a/include/linux/mfd/rohm-generic.h
+> +++ b/include/linux/mfd/rohm-generic.h
+> @@ -16,6 +16,7 @@ enum rohm_chip_type {
+>  	ROHM_CHIP_TYPE_BD71828,
+>  	ROHM_CHIP_TYPE_BD71837,
+>  	ROHM_CHIP_TYPE_BD71847,
+> +	ROHM_CHIP_TYPE_BD96801,
+>  	ROHM_CHIP_TYPE_AMOUNT
+>  };
+>  
+> -- 
+> 2.45.1
+> 
+> 
+> -- 
+> Matti Vaittinen, Linux device drivers
+> ROHM Semiconductors, Finland SWDC
+> Kiviharjunlenkki 1E
+> 90220 OULU
+> FINLAND
+> 
+> ~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+> Simon says - in Latin please.
+> ~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+> Thanks to Simon Glass for the translation =] 
+
+
+
+-- 
+Lee Jones [李琼斯]
 
