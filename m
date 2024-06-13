@@ -1,95 +1,131 @@
-Return-Path: <linux-kernel+bounces-213990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D47CD907D69
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:21:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23FDA907D6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BC04B28DCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:21:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A01B21F2564B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8992313A86D;
-	Thu, 13 Jun 2024 20:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14FC13A863;
+	Thu, 13 Jun 2024 20:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EnKeyJvu"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XTte/A1u"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731EE824A4;
-	Thu, 13 Jun 2024 20:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47A983A12;
+	Thu, 13 Jun 2024 20:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718309999; cv=none; b=bVqcGVYq2otPJgKlDLZevQqUg/a7mLv92xtGNUCphRZlIdO1UNA0YF1+0/7kX6m4N7GTqaDtJGvxjCkaXERJYYBysRWwHabfzumwuLka5VzIDTQ8cmUp/Dlq/tSjRUVKkS/T6BeEx4uhm/ciDGhQxtL5LAFew2AUnVtYh+/8Bwk=
+	t=1718310337; cv=none; b=Nra0SlQRLm1e2JUncEVMW4wPtSjv3hos5mGWgw2oOlsOv+tq6QNxIC9UJrRfCDUTLIa9omgLzPbphPE0m2iNS+3CXYyVYbuVbi2GdpTuhD3ro4wW7rbH91Z5moBP1Jj32nZeW7ecP3WhFIiSnqefiB4ADmHndcmSwb9LAmNSWsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718309999; c=relaxed/simple;
-	bh=V/ohRnl28oyDkoRIfL5uvZjED2GpbSlnYYCHYbUE/xE=;
+	s=arc-20240116; t=1718310337; c=relaxed/simple;
+	bh=XZMnBPtlkifS5Fdca+gG4KAFlQ4eMVf6o5s14uxWoGY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QrJOlD6nqyxzWFyo0UHvsaiEseRKz1+ARzWwuFhOFebFSmwImYmWBL0vCk5w4KD/cJvXCgEcmTC5VL1ql620oFRJJfYTDFzI9aLLpPPjHzZWRjY+vnDJAN0pT280mh74v4n/a9INRVR0+wChQ4dHDjh2pFvWj4N9+0oUvrESaic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EnKeyJvu; arc=none smtp.client-ip=209.85.167.47
+	 Content-Type:Content-Disposition:In-Reply-To; b=nMIz51rIJsW1wc842ilQC2XWhtzODoMVdemf9+96S9VzGFxz3jBTF+/U5t/sNNuWjQi+U5zd4C6onGsQ5Kw3Vc1euuh3ZvRD9BjTWBluopRw+IAbX33oVbYlvtcxx4HDpSu0PGpu07wbviLFmuwT5wK8zw91NhOdkLZUejd78EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XTte/A1u; arc=none smtp.client-ip=209.85.222.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52bd48cf36bso1829857e87.3;
-        Thu, 13 Jun 2024 13:19:57 -0700 (PDT)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7955c585af0so101523585a.2;
+        Thu, 13 Jun 2024 13:25:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718309995; x=1718914795; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718310335; x=1718915135; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=thBf8i7EEHE/1IDtEKHUzXgXRMaKSMoMlRxJ2tobSiA=;
-        b=EnKeyJvuDzve9iAANq8wB986Sz2hlTPe8LtYKRFTto1VzZHmA1sdhxtJfWL+QzOKFf
-         GzNSvfrAiipw930qyLgSDmOgPf+ri+OETTr059LXPdPBKG3RmQl06fKEUHtMfK9rksYD
-         PvjZYOcx73YdYKAZmrYMtFwrlJrrbcoMAtAzefCfxW4E4RewDLvzJq5bMydir+jyzi9V
-         Q5gXvPI+CodVFJD2ErpC5Xo6NnrzWbSTBjGCKMIuXYYvtakjidYuxSl8mmHGIZ8drk/s
-         eTqkS5y8VuPaA/z908pN2NSgSadUyqKyECEr7MTEYHkq1TJ0Jq59fNc7dVOHxIeH5OSh
-         Qqzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718309995; x=1718914795;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=thBf8i7EEHE/1IDtEKHUzXgXRMaKSMoMlRxJ2tobSiA=;
-        b=I0Q/5x8mblRJnGh4ZhZYcIH/jgLNd+5zcfbiy708kG7H92h2NcAQuZfFGhetmDBFnL
-         7ps02Q4ZGRVE6HkH84bPSyw07Dmk/lGoXmE91qFmPXeh39BwwyyyTnR4ncpb2VSWTgfC
-         sByyL+GpQp8Lgn+Xi5GQNLSTHa4cMkIldHZAbTa3CtislcZztP9jGa92oBZP8m2AvIZy
-         PhGHI8NXMUCtNngxIQpMVBmxL2+VdnkA1sZovb6Nt9wZSf8jDuX4ixfuJJkRerVWS6ge
-         IlPDkd75OIX6FpDxeL0EeZ75Kb8yTGiUqPOBh6LyrcdT5CQbmlT+xS3cJPeCF+im1X7h
-         hjpw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9ImbRat8dcmsx39I33SlhCf4VS8OneWQqTelyqD8dhq92Lkxj7WCFhNp23EW9e3yuM6ez2VIj5m7wywtnJ47Rd/TDAsblroeusiI1yJ/qf/ii6F2olIVHY4EcD0UorxWIoep6mM24UCCQzZDsPmpeBJoivbsI3R2KDdyJt8RlFg==
-X-Gm-Message-State: AOJu0Yzwr1NvURsgILLb4Vo4TFJ8U35BTtopEmvV/iuEZAgWZx3Bd3ev
-	KcodqUh/unecxP5fxP0Zj68rlO2eqmYs010GJabnJGQPzbTEj7vo
-X-Google-Smtp-Source: AGHT+IHKdhL4ZZ221gRS/nvpLVeZ1jNMizZz1RZ/oM1RZofw526OCquol3tzA3iwaEcNDIMdoaInkA==
-X-Received: by 2002:a19:f816:0:b0:52c:99cc:eef4 with SMTP id 2adb3069b0e04-52ca6e564afmr594244e87.4.1718309995045;
-        Thu, 13 Jun 2024 13:19:55 -0700 (PDT)
-Received: from mobilestation ([176.213.10.53])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282567bsm332884e87.54.2024.06.13.13.19.53
+        bh=EMz0ZFRHVHUChYlldLB+9O1uGefbqiAdPKIID9/kO3c=;
+        b=XTte/A1ur7U4yPV8CpLWuoJfbuWjv0eH6hAe0zuYkJjv+CQXcsMliBV+kzJFAjm4eO
+         6VdP6RjtHe1R2k80KPxR5xr3+9tXGDIxq/+IzSlyI7tWt/tLDJgDUT7Gb763ITIauxdn
+         7kt0lyklucCd4jq5MV9JH7hiaepKdTGihH25qxPHmbU8XKsU3CvAJNV/cJcyJKPUbvLo
+         DieUdtL1qet2oPhA/qG+KxCwBf4INgVKkG/Ar9FqAIgpiQVbCkQGDyXK9kS18fkIzIui
+         ZJT0X8+I/tE30PCWdtHseqd6ikbtamxzWWdIX2BpcHjHKVYxTxcMvo/KOchmEY2BgBgQ
+         ePMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718310335; x=1718915135;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EMz0ZFRHVHUChYlldLB+9O1uGefbqiAdPKIID9/kO3c=;
+        b=u7M+8EIVt+lxWSA6xdopu1lkKdXVE4eMXrUpvRu6oCYtRCr17GSPhecI8CiGRqLv42
+         JdiNioVuUNgSXqa5Yf1hhLkxtJNs/xf6SmjL9mbaP3s5pG3ZqJbwWmaXCCHPcsVKB4N5
+         n66jWjZfDjAF2rWL12hpFFa5mxUKOC+/mBzwS2V1DPK8AdTonPvCNVKFTQqHVdYeXziM
+         qwg67QbrW4YMM4/Jum4juJ43BnyJT7e+kRSOmbi5+Ko1rwsN+UOU4gJ7k9qxcqb4vc39
+         k76LMa6zAoIfOA7eFTk1DI5frfo2V0Z3O33W3+UP4JevKkACfrv4sLCrlYLdjKBXeG7/
+         1rpA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhnf80OBNqZ/7DpRPleaLAVxJr5IDeIYgldyzxKwV1/rJap1Dc+RWHLGczKmG6MO5nxLSdsqXGA+WgQrtxq/mSgSJnXWDPKu3HlbSw1acyBH52u27Co1nTCix4p42s1Q5uy45cuCaluJ4p/OmqWlqrE0im8NxxJ539CHlO5skPYfyhH7mIFrg=
+X-Gm-Message-State: AOJu0YwTH0Io9hr5Ir4dOnURrL777JdJzoMVc4heUjKgXkhVp0qmYLj8
+	fLpiWz5z43Rr5Nxog3OuJXd0X07u2laGrgQja7UrXEd5GkJOchCf
+X-Google-Smtp-Source: AGHT+IGpSoIULcvWez99JK7JK+Up8HU1l/s1FINDWZs8LC9tBJeQ3hxxZVJWnFEHKbk+02gDLzMs0Q==
+X-Received: by 2002:a05:620a:4007:b0:797:e9f7:e924 with SMTP id af79cd13be357-798d26af852mr68059885a.65.1718310334648;
+        Thu, 13 Jun 2024 13:25:34 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-441f2fcc468sm9379261cf.70.2024.06.13.13.25.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 13:19:54 -0700 (PDT)
-Date: Thu, 13 Jun 2024 23:19:52 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Jose Abreu <Jose.Abreu@synopsys.com>, 
-	Vladimir Oltean <olteanv@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, 
-	Maxime Chevallier <maxime.chevallier@bootlin.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Sagar Cheluvegowda <quic_scheluve@quicinc.com>, 
-	Abhishek Chauhan <quic_abchauha@quicinc.com>, Andrew Halaney <ahalaney@redhat.com>, 
-	Jiawen Wu <jiawenwu@trustnetic.com>, Mengyuan Lou <mengyuanlou@net-swift.com>, 
-	Tomer Maimon <tmaimon77@gmail.com>, openbmc@lists.ozlabs.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 06/10] dt-bindings: net: Add Synopsys DW xPCS
- bindings
-Message-ID: <kxb23k56nwtp6744r2nghgqecjw3aex5v56dk2bgkri3hwj3p5@awcsno3xbjkk>
-References: <20240602143636.5839-1-fancer.lancer@gmail.com>
- <20240602143636.5839-7-fancer.lancer@gmail.com>
- <20240605232916.GA3400992-robh@kernel.org>
- <d57e77t4cz434qfdnuq7qek6zxcaehxmzlqtb3ezloh74ihclb@wn7gbfd6wbw7>
- <20240610214916.GA3120860-robh@kernel.org>
- <hx5pcbxao3ozymwh5pe4m3aje65lhxh5fzqynvphphfmpmnopk@2akvqrpxyg2v>
- <20240613154125.GA1877114-robh@kernel.org>
+        Thu, 13 Jun 2024 13:25:34 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 283391200069;
+	Thu, 13 Jun 2024 16:25:33 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Thu, 13 Jun 2024 16:25:33 -0400
+X-ME-Sender: <xms:vFVrZgtyFF8uQGfrwFobOorS3vOPl_--u_9m9T3AhsbuxVq2xi72zw>
+    <xme:vFVrZteMRM4PasZI_VHT9e2_LY__Y8z3ZnNYO3RfHb23AFY2Z913Tln8h8msbAnfB
+    eYMqpyIJIRn0-XRBg>
+X-ME-Received: <xmr:vFVrZrx5Tan5t4KnPFuuL5T2vPasCz-gKubfZx0xAmf_NUnPbp19npTIFsk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedujedgudegiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveei
+    udffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedt
+    ieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfh
+    higihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:vVVrZjMpjzd4Kew3lRZR2cVcvzPaSrroXMn4v74PLBzfBsascPkW1Q>
+    <xmx:vVVrZg8hQLget4rip9IgUQthGkKPjBxRow_6r2bsiNtYh8W7qBADYQ>
+    <xmx:vVVrZrUpvA1qg1wcNJfzvK9OScd1f1tINnwbxniD6g1bzVvlFGZ-_w>
+    <xmx:vVVrZpfxD8JRupYWW-fTnuQwYYUeIqAPuEbyfo7uRA5cNm_a5wxaeg>
+    <xmx:vVVrZidUvKWatd8WUPO9_xQZFbBUTxfkOpnCNTkVq6SSFMg-qIW2TX_D>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 13 Jun 2024 16:25:32 -0400 (EDT)
+Date: Thu, 13 Jun 2024 13:25:02 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, llvm@lists.linux.dev
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
+ linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
+ Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com
+Subject: Re: [RFC 2/2] rust: sync: Add atomic support
+Message-ID: <ZmtVngqKZ0arLzL-@boqun-archlinux>
+References: <20240612223025.1158537-1-boqun.feng@gmail.com>
+ <20240612223025.1158537-3-boqun.feng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,232 +134,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240613154125.GA1877114-robh@kernel.org>
+In-Reply-To: <20240612223025.1158537-3-boqun.feng@gmail.com>
 
-On Thu, Jun 13, 2024 at 09:41:25AM -0600, Rob Herring wrote:
-> On Tue, Jun 11, 2024 at 01:45:16PM +0300, Serge Semin wrote:
-> > Hi Rob
-> > 
-> > On Mon, Jun 10, 2024 at 03:49:16PM -0600, Rob Herring wrote:
-> > > On Thu, Jun 06, 2024 at 12:54:33PM +0300, Serge Semin wrote:
-> > > > On Wed, Jun 05, 2024 at 05:29:16PM -0600, Rob Herring wrote:
-> > > > > On Sun, Jun 02, 2024 at 05:36:20PM +0300, Serge Semin wrote:
-> > > > > > Synopsys DesignWare XPCS IP-core is a Physical Coding Sublayer (PCS) layer
-> > > > > > providing an interface between the Media Access Control (MAC) and Physical
-> > > > > > Medium Attachment Sublayer (PMA) through a Media independent interface.
-> > > > > > >From software point of view it exposes IEEE std. Clause 45 CSR space and
-> > > > > > can be accessible either by MDIO or MCI/APB3 bus interfaces. In the former
-> > > > > > case the PCS device is supposed to be defined under the respective MDIO
-> > > > > > bus DT-node. In the later case the DW xPCS will be just a normal IO
-> > > > > > memory-mapped device.
-> > > > > > 
-> > > > > > Besides of that DW XPCS DT-nodes can have an interrupt signal and clock
-> > > > > > source properties specified. The former one indicates the Clause 73/37
-> > > > > > auto-negotiation events like: negotiation page received, AN is completed
-> > > > > > or incompatible link partner. The clock DT-properties can describe up to
-> > > > > > three clock sources: peripheral bus clock source, internal reference clock
-> > > > > > and the externally connected reference clock.
-> > > > > > 
-> > > > > > Finally the DW XPCS IP-core can be optionally synthesized with a
-> > > > > > vendor-specific interface connected to the Synopsys PMA (also called
-> > > > > > DesignWare Consumer/Enterprise PHY). Alas that isn't auto-detectable in a
-> > > > > > portable way. So if the DW XPCS device has the respective PMA attached
-> > > > > > then it should be reflected in the DT-node compatible string so the driver
-> > > > > > would be aware of the PMA-specific device capabilities (mainly connected
-> > > > > > with CSRs available for the fine-tunings).
-> > > > > > 
-> > > > > > Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-> > > > > > 
-> > > > > > ---
-> > > > > > 
-> > > > > > Changelog v2:
-> > > > > > - Drop the Management Interface DT-node bindings. DW xPCS with MCI/APB3
-> > > > > >   interface is just a normal memory-mapped device.
-> > > > > > ---
-> > > > > >  .../bindings/net/pcs/snps,dw-xpcs.yaml        | 133 ++++++++++++++++++
-> > > > > >  1 file changed, 133 insertions(+)
-> > > > > >  create mode 100644 Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml
-> > > > > > 
-> > > > > > diff --git a/Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml b/Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml
-> > > > > > new file mode 100644
-> > > > > > index 000000000000..7927bceefbf3
-> > > > > > --- /dev/null
-> > > > > > +++ b/Documentation/devicetree/bindings/net/pcs/snps,dw-xpcs.yaml
-> > > > > > @@ -0,0 +1,133 @@
-> > > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > > > +%YAML 1.2
-> > > > > > +---
-> > > > > > +$id: http://devicetree.org/schemas/net/pcs/snps,dw-xpcs.yaml#
-> > > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > > +
-> > > > > > +title: Synopsys DesignWare Ethernet PCS
-> > > > > > +
-> > > > > > +maintainers:
-> > > > > > +  - Serge Semin <fancer.lancer@gmail.com>
-> > > > > > +
-> > > > > > +description:
-> > > > > > +  Synopsys DesignWare Ethernet Physical Coding Sublayer provides an interface
-> > > > > > +  between Media Access Control and Physical Medium Attachment Sublayer through
-> > > > > > +  the Media Independent Interface (XGMII, USXGMII, XLGMII, GMII, etc)
-> > > > > > +  controlled by means of the IEEE std. Clause 45 registers set. The PCS can be
-> > > > > > +  optionally synthesized with a vendor-specific interface connected to
-> > > > > > +  Synopsys PMA (also called DesignWare Consumer/Enterprise PHY) although in
-> > > > > > +  general it can be used to communicate with any compatible PHY.
-> > > > > > +
-> > > > > > +  The PCS CSRs can be accessible either over the Ethernet MDIO bus or directly
-> > > > > > +  by means of the APB3/MCI interfaces. In the later case the XPCS can be mapped
-> > > > > > +  right to the system IO memory space.
-> > > > > > +
-> > > > > > +properties:
-> > > > > > +  compatible:
-> > > > > > +    oneOf:
-> > > > > > +      - description: Synopsys DesignWare XPCS with none or unknown PMA
-> > > > > > +        const: snps,dw-xpcs
-> > > > > > +      - description: Synopsys DesignWare XPCS with Consumer Gen1 3G PMA
-> > > > > > +        const: snps,dw-xpcs-gen1-3g
-> > > > > > +      - description: Synopsys DesignWare XPCS with Consumer Gen2 3G PMA
-> > > > > > +        const: snps,dw-xpcs-gen2-3g
-> > > > > > +      - description: Synopsys DesignWare XPCS with Consumer Gen2 6G PMA
-> > > > > > +        const: snps,dw-xpcs-gen2-6g
-> > > > > > +      - description: Synopsys DesignWare XPCS with Consumer Gen4 3G PMA
-> > > > > > +        const: snps,dw-xpcs-gen4-3g
-> > > > > > +      - description: Synopsys DesignWare XPCS with Consumer Gen4 6G PMA
-> > > > > > +        const: snps,dw-xpcs-gen4-6g
-> > > > > > +      - description: Synopsys DesignWare XPCS with Consumer Gen5 10G PMA
-> > > > > > +        const: snps,dw-xpcs-gen5-10g
-> > > > > > +      - description: Synopsys DesignWare XPCS with Consumer Gen5 12G PMA
-> > > > > > +        const: snps,dw-xpcs-gen5-12g
-> > > > > > +
-> > > > > > +  reg:
-> > > > > > +    items:
-> > > > > > +      - description:
-> > > > > > +          In case of the MDIO management interface this just a 5-bits ID
-> > > > > > +          of the MDIO bus device. If DW XPCS CSRs space is accessed over the
-> > > > > > +          MCI or APB3 management interfaces, then the space mapping can be
-> > > > > > +          either 'direct' or 'indirect'. In the former case all Clause 45
-> > > > > > +          registers are contiguously mapped within the address space
-> > > > > > +          MMD '[20:16]', Reg '[15:0]'. In the later case the space is divided
-> > > > > > +          to the multiple 256 register sets. There is a special viewport CSR
-> > > > > > +          which is responsible for the set selection. The upper part of
-> > > > > > +          the CSR address MMD+REG[20:8] is supposed to be written in there
-> > > > > > +          so the corresponding subset would be mapped to the lowest 255 CSRs.
-> > > > > > +
-> > > > > > +  reg-names:
-> > > > > > +    items:
-> > > > > > +      - enum: [ direct, indirect ]
-> > > > > > +
-> > > > > > +  reg-io-width:
-> > > > > > +    description:
-> > > > > > +      The way the CSRs are mapped to the memory is platform depended. Since
-> > > > > > +      each Clause 45 CSR is of 16-bits wide the access instructions must be
-> > > > > > +      two bytes aligned at least.
-> > > > > > +    default: 2
-> > > > > > +    enum: [ 2, 4 ]
-> > > > > > +
-> > > > > > +  interrupts:
-> > > > > > +    description:
-> > > > > > +      System interface interrupt output (sbd_intr_o) indicating Clause 73/37
-> > > > > > +      auto-negotiation events':' Page received, AN is completed or incompatible
-> > > > > > +      link partner.
-> > > > > > +    maxItems: 1
-> > > > > > +
-> > > > > > +  clocks:
-> > > > > > +    description:
-> > > > > > +      Both MCI and APB3 interfaces are supposed to be equipped with a clock
-> > > > > > +      source connected via the clk_csr_i line.
-> > > > > > +
-> > > > > > +      PCS/PMA layer can be clocked by an internal reference clock source
-> > > > > > +      (phyN_core_refclk) or by an externally connected (phyN_pad_refclk) clock
-> > > > > > +      generator. Both clocks can be supplied at a time.
-> > > > > > +    minItems: 1
-> > > > > > +    maxItems: 3
-> > > > > > +
-> > > > > > +  clock-names:
-> > > > > > +    minItems: 1
-> > > > > > +    maxItems: 3
-> > > > > > +    anyOf:
-> > > > > > +      - items:
-> > > > > > +          enum: [ core, pad ]
-> > > > > 
-> > > > 
-> > > > > This has no effect. If it is true, then the 2nd entry is too.
-> > > > 
-> > > > Yeah, from the anyOf logic it's redundant indeed. But the idea was to
-> > > > signify that the DT-node may have one the next clock-names
-> > > > combination:
-> > > >    clock-names = "pad";
-> > > > or clock-names = "core";
-> > > > or clock-names = "core", "pad";
-> > > > or clock-names = "pclk";
-> > > > or clock-names = "pclk", "core";
-> > > > or clock-names = "pclk", "pad";
-> > > > or clock-names = "pclk", "core", "pad";
-> > > 
-> > > That would be:
-> > > 
-> > > oneOf:
-> > >   - minItems: 1
-> > >     items:
-> > >       - enum: [core, pad]
-> > >       - const: pad
-> > >   - minItems: 1
-> > >     items:
-> > >       - const: pclk
-> > >       - enum: [core, pad]
-> > >       - const: pad
-> > > 
-> > > *-names is enforced to be 'uniqueItems: true', so we don't have to worry 
-> > > about repeated entries.
-> > > 
-> > > This also nicely splits between MMIO and MDIO.
-> > 
-> > I had such approach in mind, but it seemed to me more complicated and
-> > weakly scaleable (should we need to add some more clocks). Isn't the
-> > next constraint look more readable:
-> 
-> Hardware is magically growing more clocks?
-
-There is a non-zero probability I could have missed some additional
-clocks defined in the DW XPCS IP-core databooks or there are some
-vendor-specific clock sources we can't predict. Moreover the new
-IP-core releases may have the clock sources list extended. So the
-magic may happen.)
-
-> 
+On Wed, Jun 12, 2024 at 03:30:25PM -0700, Boqun Feng wrote:
+[...]
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 48e7029f1054..99e6e2b2867f 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -1601,6 +1601,8 @@ static bool
+>  has_cpuid_feature(const struct arm64_cpu_capabilities *entry, int scope)
+>  {
+>  	u64 val = read_scoped_sysreg(entry, scope);
+> +	if (entry->capability == ARM64_HAS_LSE_ATOMICS)
+> +		return false;
+>  	return feature_matches(val, entry);
+>  }
 >  
-> > anyOf:
-> >   - description: DW XPCS accessible over MDIO-bus
-> >     minItems: 1
-> >     maxItems: 2
-> >     items:
-> >       enum: [core, pad]
-> >   - description: DW XPCS with the MCI/APB3 CSRs IO interface
-> >     minItems: 1
-> >     maxItems: 3
-> >     items:
-> >       enum: [pclk, core, pad]
-> >     contains:
-> >       const: pclk
-> > ?
-> 
-> I don't see how that is much better in simplicity or scaleability. I 
-> would just do this over the above:
-> 
-> minItems: 1
-> maxItems: 3
-> items:
->   enum: [pclk, core, pad]
-> 
-> Either you define the order or you don't. The former is strongly 
-> preferred. The latter is done when it's too much a mess or we just don't 
-> care to discuss it any more.
 
-Ok. Since the order-based constraint is strongly preferable, then
-there is nothing to discuss. I'll make sure the order is defined.
-Thanks for review.
+Yeah, this part was mis-committed, will remove it in the next version.
 
--Serge(y)
+Regards,
+Boqun
 
-> 
-> Rob
+[...]
 
