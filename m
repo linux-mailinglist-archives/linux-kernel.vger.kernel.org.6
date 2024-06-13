@@ -1,117 +1,284 @@
-Return-Path: <linux-kernel+bounces-213646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5615F90784A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:30:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0137B90784E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D20283285
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:30:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19A8F1C235A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A5B1448DA;
-	Thu, 13 Jun 2024 16:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE34149002;
+	Thu, 13 Jun 2024 16:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHFU+Us8"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="egRfCbv3"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2997C130AFF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C262C80;
+	Thu, 13 Jun 2024 16:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718296228; cv=none; b=ZfwLCFiTLEEpiyGhxwCgzdmMRU08BKhDf+joJ8T5IhyQ+s+BCN1x3lrSjpxTrWHFeMBgqMbi7ij2Z2lyPx9GxueJsTDaaZ57U7dBPFMbiDwTCFWYbadBrY6JLBxBV9TiByYTQxdYUSXONE1WUimC96ucK+1QDNYk/4hCbINWr3o=
+	t=1718296262; cv=none; b=nDsesyjxBQGo3XU3toUv7AALEythwS05DMuvatc2NDfBX1h4dTGdCXj6ke4twvlHMSiY9MeAMjReXxX1acZVyEF6d1CziSZwidQqaKxULZ1co/sAPUfBTtEft+WDDOu8+zQqBourR/UioTXnGqRT5CXnZxS9SKH7o7P3+iZUzE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718296228; c=relaxed/simple;
-	bh=ljLIwAKIaCu2K87aK/wh1nbzUGaK0MbJvtQTnuTlktI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HSPWBCHgEFFH3lKQXNhB1CGJa1isHAEW8e7GMEX0WYX0QDg+OCe+C/0C+ySVbORG2y/T2cIFK3/fgnYztVcgEwDyb3evtX50mIkumSz+pHfuCWY/9mtVWjdylSycEGmjMc8C7Dqbi+qJ31FPom9o4j0e4ZTqQydaQJ4Yq41JWtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fHFU+Us8; arc=none smtp.client-ip=209.85.216.45
+	s=arc-20240116; t=1718296262; c=relaxed/simple;
+	bh=IqOshH+3NtW6LgDbCLrcCvzFRZD6Ag+RJPv0ggdyq2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WLxEa8KN1RecaNK0mSjISHhR+bWnuosvIdNwETCDlms3Xznw1nAQpoBkS8fO/vHY/E7rSOwfd4s3q2bYijPRn92pNXPXcKo68NXJOQeLR3wRCwMPEbr7+9IgZBUPXIccX/BxvXBM+It9ddkXQ81KP1994U3VcV78dPxRzAyfc0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=egRfCbv3; arc=none smtp.client-ip=209.85.210.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2c327a0d4c9so1760950a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:30:22 -0700 (PDT)
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-6f9b5bc97baso703547a34.0;
+        Thu, 13 Jun 2024 09:31:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718296222; x=1718901022; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1718296259; x=1718901059; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ljLIwAKIaCu2K87aK/wh1nbzUGaK0MbJvtQTnuTlktI=;
-        b=fHFU+Us8bh9/AZivtskM9j9zW8RXaF3jXhKlB8a8ZE1hOHGfLb8He0BUBCeKxYk6mR
-         ItC6EjnSGx8FstH9pXvRJnfbxHPLXVcD0U1+57XJ+CqQbauhvYk6Pckj1h2RHh04S0zJ
-         OQ7GTNIitu3lbsPMBLfZx/9SOmE6rRuftWhSWyAkRx5aezSO6lVP3uhDhMRGPJLG2EyV
-         qugXEbflHK/+G2lXdno6nMHaj0Z0pG4qeUfMt5AsxO8SoE1gxNdmaTkT6i0/b7AzxZ8T
-         b/icyTWiypm/fDtTF5V7JAAs4GJunOs+/PuDDRp9H1wy7onKPgig2SW8TyqVmm1PHZVs
-         3fyw==
+        bh=S/xQDUQkQkXZSewCHGCYidY7ntUnzyPAgvU909rXsNE=;
+        b=egRfCbv3D7EK1GrVHXlw5zNQndyygNvnJ9E3HQNALWDLrItk23Avab5kF+VNVlNUx+
+         rOEZjBgvfdktV9P0pb2xmEACvp68HXWWbCbRx9XHzXWo1sFEItkzDCDf6wh4PVTllWU1
+         s/TswBA90n67xtYaH6n9armlVmidU+OHRFHDHextbaPVIdAt5iRSX0V6V3xOmtpylphn
+         T/tZOf/O6Ys3uQRAJG/Sk3D7hZwoc4TvtLgfFf8cxD5Iozzofd6Ay2tEC2RClS/YmHMY
+         GFB+P+BhM0TUnNxaDqfuKW1dmA9r1ONOPr5Di1JLjsJpt6sU8M4n1pSSybYB+F9LVjEl
+         /vpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718296222; x=1718901022;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718296259; x=1718901059;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ljLIwAKIaCu2K87aK/wh1nbzUGaK0MbJvtQTnuTlktI=;
-        b=Yk+nsdaODGNZFUM4HhyBp5h64bOMF7DpTcnqkwTPqVYYfDQprPuxGOzGGO5vRbgaVU
-         Bb1iN14LgGJ9Qax7Ctq8ejRBm85N7OJmBbz+Y8QJbrgEiTmYGw3fYNoxkg5s95DBSq+i
-         TAGwjdADNrSuAhVIvjcIFDWUz6koGOxGvZxPGUDVaR95Fr72qtpeVV8SM0ueb7hvA/6S
-         gHpOj1QQg3riu97hW0Nt+gNT4ekbeP83S2QPlqcslfVn5xgTbDABSeXmohw9G/iJ+MIg
-         /KaKNzSBf5iMJfo9wE0MRYc4ouUD8lfXJP7fI9Ugo+OawGTNS3X+uwxlE74babn20D0s
-         I1HA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRcWoWrIiLMGxb7N+ugv8lrJudAz4yTDdDwGTxoRHoRqNtlsh+lXEL0lxpxU/B6Af7v1mnDptUIDkIGhyF//v7eWAm7ZD/9BXhNURV
-X-Gm-Message-State: AOJu0Yzj2tLwt8JLBVCACnz5pglpBrmRCAvwp37OGGYdEH7RXNnvbuxW
-	HolCkbufYMBEcGtq7aYVJlwn+RHqgaeRTYz892rSmg13lhXIn3RU
-X-Google-Smtp-Source: AGHT+IFec+p7vxH6T9f20tm7W+m1gJvHG0TWdSGyf00ZquKyJJVQRoo/2HjfwLn4STVbqpXz24gxpA==
-X-Received: by 2002:a17:90b:108:b0:2c4:c2a9:3171 with SMTP id 98e67ed59e1d1-2c4c2a93b29mr4016667a91.5.1718296222369;
-        Thu, 13 Jun 2024 09:30:22 -0700 (PDT)
-Received: from dev0.. ([49.43.162.104])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4c45f8690sm1931868a91.33.2024.06.13.09.30.18
+        bh=S/xQDUQkQkXZSewCHGCYidY7ntUnzyPAgvU909rXsNE=;
+        b=sgE8Q7nrrK0x/wrIWQ9HPNH/GNAplXgRbv+22aBTNbCBQf4H/uxYhclNLNcISIyM2U
+         MUHoFP9RA8j3yanC8zJjhnxanvDyY7IOrzn6nTyZqXOOEsgaSkCuqTfBRUkIaIjMoTpP
+         1S1JS97J9tUaoKQUmIIVPn4LpoK4K6cLj/wnnkD3ZcWaccdgbzIKfq+Wxx7/Fsg5fo2m
+         RzE2ai++6cU8Ag4cg+/2T0EcAMpyLCaGzHsbJ9nntpnmyJpZnzd9AyhSkSM/m7F8GgXQ
+         wiTZM8f0WuIozA22yDiirJlaqq4/B8ii5nOq7Qv5XzPSNZ7azM6e2MRVlmyJ1DadntHv
+         qXfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXP+nKi2kGapUDegNuAQve3kFlBX+TGJqEVLYCU2PZ8tjZj6qn56WOnSueSSJE2CFCGpnAGNtoDjp6Igt+ypayCKciPBVligvXePSFVBGDipoIgPtrLjQs/IQGeX9W8ampvVGEM9/s+7XaMb/Yd/g+x8tIPhXRDx56ZZo0U5ilGqpM5t68oGkE=
+X-Gm-Message-State: AOJu0Yw0JykziiPJZJpT89VftUnz7JNNl/NhRSa5n7qym96jPTTpBRtl
+	ACGwCYI8CJ6JPKgb8RpagGyQYPfEkSknQPbrgHwPiMtrXJ6BHAr3
+X-Google-Smtp-Source: AGHT+IHwFVJixei88Rxkp/sFGEHh3v1G3Dr0Ysp8cDcd+fUGWk//eWkUZmoRtez0cWgxv3IlizQUJg==
+X-Received: by 2002:a05:6830:2018:b0:6f9:89dd:edd7 with SMTP id 46e09a7af769-6fb93b0ee7bmr230805a34.36.1718296258768;
+        Thu, 13 Jun 2024 09:30:58 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-798aacc5267sm65463685a.18.2024.06.13.09.30.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 09:30:21 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: bmarzins@redhat.com
-Cc: agk@redhat.com,
-	dm-devel@lists.linux.dev,
-	jain.abhinav177@gmail.com,
-	javier.carrasco.cruz@gmail.com,
-	linux-kernel@vger.kernel.org,
-	mpatocka@redhat.com,
-	skhan@linuxfoundation.org,
-	snitzer@kernel.org
-Subject: Re: [PATCH] dm: Add support for escaped characters in str_field_delimit()
-Date: Thu, 13 Jun 2024 16:30:15 +0000
-Message-Id: <20240613163015.38097-1-jain.abhinav177@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <Zmc3vrfFglYISw1P@redhat.com>
-References: <Zmc3vrfFglYISw1P@redhat.com>
+        Thu, 13 Jun 2024 09:30:58 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 177071200043;
+	Thu, 13 Jun 2024 12:30:57 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Thu, 13 Jun 2024 12:30:57 -0400
+X-ME-Sender: <xms:wB5rZlQDP15NYqqa2GCA3T1oyIrN0TeOvBx9ypN8ZpQO1NaCUNtIOg>
+    <xme:wB5rZuz-N--h2ec81KEXlyv7MX9rUerjjSoaGBv1GlMujS0W3C6Rcu-qOE5SRXJrl
+    CagXw_tQ7fYxreufg>
+X-ME-Received: <xmr:wB5rZq3qz8o4YMkFgo70BP6jwqmYfDPReAocx3eVJFLAM9jtM3GrEjYBkgI8TQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedujedgleekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtrodttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpefhfefhfeelieffveetfffggeffhfeluddvtedtgedufefgteetiefgjeev
+    ieehvdenucffohhmrghinhepughotghsrdhrshenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghr
+    shhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvg
+    hngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:wB5rZtDFvclFjf_8MJgIyO2ZGEg6qkBtejoRSVRWpJMsSYmeU4F5LQ>
+    <xmx:wB5rZujdiV1kzawIFX9nZXwIq2rnaI5JKWuSUveuKBGMiJM4eZKEGQ>
+    <xmx:wB5rZhqI2PPPNfOG6kheYMIP-Mi3wEGLJZeZQ8IR5UFdBT5KMRmF5g>
+    <xmx:wB5rZpjgDtSNqbsLSg56TaGEk6UZhugXYXxCJxyvCj5jkCteR_bepw>
+    <xmx:wR5rZpT97owrzRnWgiAN44FGPS9ePdSHjWTKIzugoHbT_OXktczmG2ti>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 13 Jun 2024 12:30:56 -0400 (EDT)
+Date: Thu, 13 Jun 2024 09:30:26 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Gary Guo <gary@garyguo.net>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, llvm@lists.linux.dev,
+	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
+ linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
+ Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com
+Subject: Re: [RFC 2/2] rust: sync: Add atomic support
+Message-ID: <ZmseosxVQXdsQjNB@boqun-archlinux>
+References: <20240612223025.1158537-1-boqun.feng@gmail.com>
+ <20240612223025.1158537-3-boqun.feng@gmail.com>
+ <20240613144432.77711a3a@eugeo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240613144432.77711a3a@eugeo>
 
-On Mon, Jun 10, 2024 at 01:11:40PM -0400, Benjamin Marzinski wrote:
-> This doesn't do anything to the escape character. Presumably you want to
-> pass the field containing a separator down to dm_eary_create(). But you
-> don't want to pass the escape character itself.
->
-> To work correctly, this code needs to remove all those escape characters
-> that come before separators. It probably needs to do something like:
->
-> 1. Find a next non-escaped separator and change it to NULL, so you have
-> your field string.
->
-> 2. Find all the escaped separators in the field string, and shift the
-> rest of the string over to overwrite the escape character with the rest
-> of the string.
->
-> -Ben
+On Thu, Jun 13, 2024 at 02:44:32PM +0100, Gary Guo wrote:
+> On Wed, 12 Jun 2024 15:30:25 -0700
+> Boqun Feng <boqun.feng@gmail.com> wrote:
+> 
+> > Provide two atomic types: AtomicI32 and AtomicI64 with the existing
+> > implemenation of C atomics. These atomics have the same semantics of the
+> > corresponding LKMM C atomics, and using one memory (ordering) model
+> > certainly reduces the reasoning difficulty and potential bugs from the
+> > interaction of two different memory models.
+> > 
+> > Also bump my role to the maintainer of ATOMIC INFRASTRUCTURE to reflect
+> > my responsiblity on these Rust APIs.
+> > 
+> > Note that `Atomic*::new()`s are implemented vi open coding on struct
+> > atomic*_t. This allows `new()` being a `const` function, so that it can
+> > be used in constant contexts.
+> > 
+> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > ---
+> >  MAINTAINERS                       |    4 +-
+> >  arch/arm64/kernel/cpufeature.c    |    2 +
+> >  rust/kernel/sync.rs               |    1 +
+> >  rust/kernel/sync/atomic.rs        |   63 ++
+> >  rust/kernel/sync/atomic/impl.rs   | 1375 +++++++++++++++++++++++++++++
+> >  scripts/atomic/gen-atomics.sh     |    1 +
+> >  scripts/atomic/gen-rust-atomic.sh |  136 +++
+> >  7 files changed, 1581 insertions(+), 1 deletion(-)
+> >  create mode 100644 rust/kernel/sync/atomic.rs
+> >  create mode 100644 rust/kernel/sync/atomic/impl.rs
+> >  create mode 100755 scripts/atomic/gen-rust-atomic.sh
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index d6c90161c7bf..a8528d27b260 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -3458,7 +3458,7 @@ F:	drivers/input/touchscreen/atmel_mxt_ts.c
+> >  ATOMIC INFRASTRUCTURE
+> >  M:	Will Deacon <will@kernel.org>
+> >  M:	Peter Zijlstra <peterz@infradead.org>
+> > -R:	Boqun Feng <boqun.feng@gmail.com>
+> > +M:	Boqun Feng <boqun.feng@gmail.com>
+> >  R:	Mark Rutland <mark.rutland@arm.com>
+> >  L:	linux-kernel@vger.kernel.org
+> >  S:	Maintained
+> > @@ -3467,6 +3467,8 @@ F:	arch/*/include/asm/atomic*.h
+> >  F:	include/*/atomic*.h
+> >  F:	include/linux/refcount.h
+> >  F:	scripts/atomic/
+> > +F:	rust/kernel/sync/atomic.rs
+> > +F:	rust/kernel/sync/atomic/
+> >  
+> >  ATTO EXPRESSSAS SAS/SATA RAID SCSI DRIVER
+> >  M:	Bradley Grove <linuxdrivers@attotech.com>
+> > diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> > index 48e7029f1054..99e6e2b2867f 100644
+> > --- a/arch/arm64/kernel/cpufeature.c
+> > +++ b/arch/arm64/kernel/cpufeature.c
+> > @@ -1601,6 +1601,8 @@ static bool
+> >  has_cpuid_feature(const struct arm64_cpu_capabilities *entry, int scope)
+> >  {
+> >  	u64 val = read_scoped_sysreg(entry, scope);
+> > +	if (entry->capability == ARM64_HAS_LSE_ATOMICS)
+> > +		return false;
+> >  	return feature_matches(val, entry);
+> >  }
+> >  
+> > diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
+> > index 0ab20975a3b5..66ac3752ca71 100644
+> > --- a/rust/kernel/sync.rs
+> > +++ b/rust/kernel/sync.rs
+> > @@ -8,6 +8,7 @@
+> >  use crate::types::Opaque;
+> >  
+> >  mod arc;
+> > +pub mod atomic;
+> >  mod condvar;
+> >  pub mod lock;
+> >  mod locked_by;
+> > diff --git a/rust/kernel/sync/atomic.rs b/rust/kernel/sync/atomic.rs
+> > new file mode 100644
+> > index 000000000000..b0f852cf1741
+> > --- /dev/null
+> > +++ b/rust/kernel/sync/atomic.rs
+> > @@ -0,0 +1,63 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +//! Atomic primitives.
+> > +//!
+> > +//! These primitives have the same semantics as their C counterparts, for precise definitions of
+> > +//! the semantics, please refer to tools/memory-model. Note that Linux Kernel Memory (Consistency)
+> > +//! Model is the only model for Rust development in kernel right now, please avoid to use Rust's
+> > +//! own atomics.
+> > +
+> > +use crate::bindings::{atomic64_t, atomic_t};
+> > +use crate::types::Opaque;
+> > +
+> > +mod r#impl;
+> > +
+> > +/// Atomic 32bit signed integers.
+> > +pub struct AtomicI32(Opaque<atomic_t>);
+> > +
+> > +/// Atomic 64bit signed integers.
+> > +pub struct AtomicI64(Opaque<atomic64_t>);
+> 
+> 
+> Can we avoid two types and use a generic `Atomic<T>` and then implement
+> on `Atomic<i32>` and `Atomic<i64>` instead? Like the recent
+> generic NonZero in Rust standard library or the atomic crate
+> (https://docs.rs/atomic/).
+> 
 
-Hi Ben,
+We can always add a layer on top of what we have here to provide the
+generic `Atomic<T>`. However, I personally don't think generic
+`Atomic<T>` is a good idea, for a few reasons:
 
-I realised I should have done better testing after processing your feedback.
-I have accordingly modified the code and shared a v2:
-https://lore.kernel.org/all/20240613162632.38065-1-jain.abhinav177@gmail.com/
+*	I'm not sure it will bring benefits to users, the current atomic
+	users in kernel are pretty specific on the size of atomic they
+	use, so they want to directly use AtomicI32 or AtomicI64 in
+	their type definitions rather than use a `Atomic<T>` where their
+	users can provide type later.
 
-Please help review and provide feedback again. Thanks.
+*	I can also see the future where we have different APIs on
+	different types of atomics, for example, we could have a:
+
+		impl AtomicI64 {
+		    pub fn split(&self) -> (&AtomicI32, &AtomicI32)
+		}
+
+	which doesn't exist for AtomicI32. Note this is not a UB because
+	we write our atomic implementation in asm, so it's perfectly
+	fine for mix-sized atomics.
+
+So let's start with some basic and simple until we really have a need
+for generic `Atomic<T>`. Thoughts?
+
+Regards,
+Boqun
+
+> I think this is better for ergonomics. The impl do need some extra
+> casting though.
+> 
+> Best,
+> Gary
 
