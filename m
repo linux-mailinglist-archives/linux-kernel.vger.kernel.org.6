@@ -1,162 +1,131 @@
-Return-Path: <linux-kernel+bounces-212992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ECB2906981
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:59:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89CF7906989
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D41092830C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:59:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F302AB27A63
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC871411F4;
-	Thu, 13 Jun 2024 09:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45DE1411E0;
+	Thu, 13 Jun 2024 10:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VDSuFkkB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h5h1xFfn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3301411C0
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B6E13E3E4;
+	Thu, 13 Jun 2024 10:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718272760; cv=none; b=L/CRjogGkQ4HQ5ntPRIeirQxPewN058/SkcMIBNqQQ45lOXWxF6xclcAt9A+t6yJzSZluNnGI9u8rzD9TlxLEuVtgLgB3Nw2DMLvp0avRsZznRJ45zOSA5brvLdNzz14RKEVWmlVDklnG1Rae4fNblbHNHpzSU4BqEbgwmgPd0k=
+	t=1718272935; cv=none; b=EgTkNKJRe1iGwKIeBynIgayfOwUvhqNU8oXG7NVHWhqedC/Y2+8cAi5ScHDPD7Aac/WbKZ+s2by+vQ7Hy25Enr/c5iKjV9+yBAHcDHLKve7UUarsVFnAPWcK5fNMWefEBkCy8/F05MriNlGhVPqbD/gHz+ekPCDEdRTAR2icTD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718272760; c=relaxed/simple;
-	bh=jCiq080FY8/GLZ3f85CnJwt8lnALYICND+Kr+0wWgCE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XeqEWj6eyddZ0r1oSP5HTnpC/QEzsK9BNfPsM92Qq4u+rgQgpzEG4WBEjM8YF1VnWZTRdI53Tuy5nJE8YO3h8jXKxfpeyOd0FUATw/ZsaMP7/YRxbbozzCfUJy6fzrzRwWrVr2Gya1Tlgv5oa6PSgb7HYhZ4yBL2qDIadFTrfLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VDSuFkkB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718272757;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V8U7PlezzDV+xaQgoC4Cin990sme5WLS2JK3q11wSEk=;
-	b=VDSuFkkBbd5EVen6sP7gfCOBXtuE3sCAaWIEcBaEsdJql7Z6+r5rbadP3KEqQ1shu8PQ28
-	RYWrBqalsOAsNcow4qjMDCUMgrJCYM3VW+yOU9uqe9t8MJeWkV5jdH50R1z1PkIvHpaHME
-	uQHK6hL6/r+EVsewBuB9sqpI7Lp7Ehw=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-463-0TgEbf4qMsuYAn4dE498RQ-1; Thu,
- 13 Jun 2024 05:59:11 -0400
-X-MC-Unique: 0TgEbf4qMsuYAn4dE498RQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5510019560B5;
-	Thu, 13 Jun 2024 09:59:09 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.157])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E389A19560AA;
-	Thu, 13 Jun 2024 09:59:02 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: yongqin.liu@linaro.org
-Cc: amit.pundir@linaro.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	inventor500@vivaldi.net,
-	jstultz@google.com,
-	jtornosm@redhat.com,
-	kuba@kernel.org,
+	s=arc-20240116; t=1718272935; c=relaxed/simple;
+	bh=iCniW7uaePOA1dtXDeiFM/T5PxkRK0/PIhc03+M6UJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VDhTR4oaz8gqiXjrQsR/EI9LJg5vWBI7RBpVk6X/O72HR6Ri2ZE79x4RcUG1fnrjnEFShisCyGaS0QhhnM8JnIa8IZwojrVr73B3135VtFXsSF9iys7zm43TxlPNhpIlUEkN7DlBwkpiGKnL7SuQDwXL/qhE3zSbJq8Pk9cODMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h5h1xFfn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04449C2BBFC;
+	Thu, 13 Jun 2024 10:02:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718272934;
+	bh=iCniW7uaePOA1dtXDeiFM/T5PxkRK0/PIhc03+M6UJs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h5h1xFfnpqdoYAX5OMp1h61xokPvKyrgu5pu422puTTxN2YhTSI2v0Shv/Y3+4wV6
+	 Dj0U91kSaCPvN1AkbmJ/GyOlCUAXr6NkuHeIH+ZjKfYJfPFa19cMTv3qbLK7f6jb4W
+	 ePTXHeELzSZk+Dr7orn5UDGZN3vOC/FfRJOAE4sk=
+Date: Thu, 13 Jun 2024 12:02:11 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	stable@vger.kernel.org,
-	sumit.semwal@linaro.org
-Subject: Re: [PATCH] net: usb: ax88179_178a: fix link status when link is set to down/up
-Date: Thu, 13 Jun 2024 11:59:00 +0200
-Message-ID: <20240613095901.508753-1-jtornosm@redhat.com>
-In-Reply-To: <CAMSo37U3Pree8XbHNBOzNXhFAiPss+8FQms1bLy06xeMeWfTcg@mail.gmail.com>
-References: <CAMSo37U3Pree8XbHNBOzNXhFAiPss+8FQms1bLy06xeMeWfTcg@mail.gmail.com>
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v8 2/2] misc: gpio-virtuser: new virtual testing driver
+ for the GPIO API
+Message-ID: <2024061356-uptake-ideology-e57b@gregkh>
+References: <20240613092830.15761-1-brgl@bgdev.pl>
+ <20240613092830.15761-3-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240613092830.15761-3-brgl@bgdev.pl>
 
-Hello again,
+On Thu, Jun 13, 2024 at 11:28:30AM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> The GPIO subsystem used to have a serious problem with undefined behavior
+> and use-after-free bugs on hot-unplug of GPIO chips. This can be
+> considered a corner-case by some as most GPIO controllers are enabled
+> early in the boot process and live until the system goes down but most
+> GPIO drivers do allow unbind over sysfs, many are loadable modules that
+> can be (force) unloaded and there are also GPIO devices that can be
+> dynamically detached, for instance CP2112 which is a USB GPIO expender.
+> 
+> Bugs can be triggered both from user-space as well as by in-kernel users.
+> We have the means of testing it from user-space via the character device
+> but the issues manifest themselves differently in the kernel.
+> 
+> This is a proposition of adding a new virtual driver - a configurable
+> GPIO consumer that can be configured over configfs (similarly to
+> gpio-sim) or described on the device-tree.
+> 
+> This driver is aimed as a helper in spotting any regressions in
+> hot-unplug handling in GPIOLIB.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  .../admin-guide/gpio/gpio-virtuser.rst        |  176 ++
+>  Documentation/admin-guide/gpio/index.rst      |    1 +
 
-There was a problem copying the patch, sorry, here the good one:
+sysfs documentation needs to go in Documentation/ABI/ not in a random
+.rst file where the tools that check this will not catch it.
 
-$ git diff drivers/net/usb/ax88179_178a.c
-diff --git a/drivers/net/usb/ax88179_178a.c b/drivers/net/usb/ax88179_178a.c
-index 51c295e1e823..60357796be99 100644
---- a/drivers/net/usb/ax88179_178a.c
-+++ b/drivers/net/usb/ax88179_178a.c
-@@ -174,7 +174,6 @@ struct ax88179_data {
-        u32 wol_supported;
-        u32 wolopts;
-        u8 disconnecting;
--       u8 initialized;
- };
- 
- struct ax88179_int_data {
-@@ -327,7 +326,8 @@ static void ax88179_status(struct usbnet *dev, struct urb *urb)
- 
-        if (netif_carrier_ok(dev->net) != link) {
-                usbnet_link_change(dev, link, 1);
--               netdev_info(dev->net, "ax88179 - Link status is: %d\n", link);
-+               if (!link)
-+                       netdev_info(dev->net, "ax88179 - Link status is: %d\n", link);
-        }
- }
- 
-@@ -1543,6 +1543,7 @@ static int ax88179_link_reset(struct usbnet *dev)
-                         GMII_PHY_PHYSR, 2, &tmp16);
- 
-        if (!(tmp16 & GMII_PHY_PHYSR_LINK)) {
-+               netdev_info(dev->net, "ax88179 - Link status is: 0\n");
-                return 0;
-        } else if (GMII_PHY_PHYSR_GIGA == (tmp16 & GMII_PHY_PHYSR_SMASK)) {
-                mode |= AX_MEDIUM_GIGAMODE | AX_MEDIUM_EN_125MHZ;
-@@ -1580,6 +1581,8 @@ static int ax88179_link_reset(struct usbnet *dev)
- 
-        netif_carrier_on(dev->net);
- 
-+       netdev_info(dev->net, "ax88179 - Link status is: 1\n");
-+
-        return 0;
- }
- 
-@@ -1678,12 +1681,21 @@ static int ax88179_reset(struct usbnet *dev)
- 
- static int ax88179_net_reset(struct usbnet *dev)
- {
--       struct ax88179_data *ax179_data = dev->driver_priv;
-+       u16 tmp16;
- 
--       if (ax179_data->initialized)
-+       ax88179_read_cmd(dev, AX_ACCESS_PHY, AX88179_PHY_ID, GMII_PHY_PHYSR,
-+                        2, &tmp16);
-+       if (tmp16) {
-+               ax88179_read_cmd(dev, AX_ACCESS_MAC, AX_MEDIUM_STATUS_MODE,
-+                                2, 2, &tmp16);
-+               if (!(tmp16 & AX_MEDIUM_RECEIVE_EN)) {
-+                       tmp16 |= AX_MEDIUM_RECEIVE_EN;
-+                       ax88179_write_cmd(dev, AX_ACCESS_MAC, AX_MEDIUM_STATUS_MODE,
-+                                         2, 2, &tmp16);
-+               }
-+       } else {
-                ax88179_reset(dev);
--       else
--               ax179_data->initialized = 1;
-+       }
- 
-        return 0;
- }
+>  MAINTAINERS                                   |    8 +
+>  drivers/misc/Kconfig                          |    8 +
+>  drivers/misc/Makefile                         |    1 +
+>  drivers/misc/gpio-virtuser.c                  | 1790 +++++++++++++++++
 
-Best regards
-José Ignacio
+Why not put this in drivers/gpio/?  Why misc?
 
+> +Both attributes allow to read and set arrays of GPIO values. User must pass
+> +exactly the number of values that the array contains in the form of a string
+> +containing zeroes and ones representing inactive and active GPIO states
+> +respectively. In this example: ``echo 11 > values``.
+
+sysfs is "one value per file", so why are there multiple values here?
+
+If you want to just use this for testing, and want to put whatever you
+want in the files, just use debugfs, that's what it is there for, not
+sysfs.
+
+> +config GPIO_VIRTUSER
+> +	tristate "GPIO Virtual User Testing Module"
+> +	select CONFIGFS_FS
+> +	select IRQ_WORK
+> +	help
+> +	  This enables the configurable, configfs-based virtual GPIO consumer
+> +	  testing driver.
+> +
+
+module name?
+
+And you need more documentation here, I have no idea what this means
+when it shows up in a Kconfig help entry :(
+
+thanks,
+
+greg k-h
 
