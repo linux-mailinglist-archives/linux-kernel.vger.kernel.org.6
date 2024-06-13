@@ -1,139 +1,195 @@
-Return-Path: <linux-kernel+bounces-213767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5AA9907A21
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:44:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D35907A2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F122FB223C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:44:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B883B22A66
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0A814A4CF;
-	Thu, 13 Jun 2024 17:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FC214A630;
+	Thu, 13 Jun 2024 17:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XKChHbCS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qEbQkQ+U"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B03E441D;
-	Thu, 13 Jun 2024 17:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2B012E1C2;
+	Thu, 13 Jun 2024 17:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718300671; cv=none; b=b3rkbGFTTg39SUMYv/p3L4roZvgkLNbacpvtA4sbs7KymzWyzfy2RlT6zFfkPEODvu4gA3woBK8t6URTuHkjMSZngQavqShomAaKK7FyTniav2Oqt7Yf01nASe6Nb/UVcEya5VN+rGKgELdD3+99+8WUz5wzXyumRrE5+3+RWzQ=
+	t=1718300760; cv=none; b=UB08yYcIZVentnpOaBWyh2bfZ7fsLqPRNNAkblzooQmiEOBEBuptW9xm7XjwTbjoS4zq0BYjCyBXhaZb8EQdiks2CzJPz8d1zwtd8PrqF2xE1ycfsW0zMkPBtDivwJg9qG7yO96FcAI7L9ha1Xz+y/hfFPtN84wFJMuWb6h81TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718300671; c=relaxed/simple;
-	bh=6ApbTuiYjW+p/zfFUWaeoQanCLRt7mrUEvmeVLsb/rk=;
+	s=arc-20240116; t=1718300760; c=relaxed/simple;
+	bh=8wZftwNb/k7uIh9XSIxuBqvpXG6ZPovdvQIUEmPnupc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rV60okjT8/F2JEpJGaDwhk3s0Hxowze/G0E9vvj+8zdA/5CkPB15CbE7Bggy3YA7JuIbhmFF5l121FuUxr7uOy/CpAhHUXNKXFN7uTFxLH8P4v1mYQSW/n6U3P64rOTkU3ymZGU65X7BtU68jN9bHsa1AelkR9msT2VcSWdU+V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XKChHbCS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE759C3277B;
-	Thu, 13 Jun 2024 17:44:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oqpxmmFxF5elukSMKgC07Z7W8QEQ4IrUV61i3jR3ixiy4ekA2mnNSQUPLwTjqDKldGJJOU25CAPpGhroCKob95nt4CWORTREI7zzpl2F4kdHGhyfAuveoA9qo5p9iYDU3gUfJB5HGRPDet8fs1tmuzLM37yeoHpBqMcBGscFZ1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qEbQkQ+U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80014C2BBFC;
+	Thu, 13 Jun 2024 17:45:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718300671;
-	bh=6ApbTuiYjW+p/zfFUWaeoQanCLRt7mrUEvmeVLsb/rk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XKChHbCS7wUWsaL5Ru5xevc/3sDXVrO8o/9VY+yqP7gmnDhU3Jl+78tJKwJNKJix0
-	 Is6yexTc1H3ln0KnL+GvCJZOaN2qHPVq723nrug14KdyNZjx6wlZDE1EEEhdaVugKr
-	 qjITTxvJz6l5EBr3L5ye9xvA2DVIovFM5sK83bNuk0H4pxuAM48ft7IxWtr5WQrgcE
-	 YY4d0BB6UpEB7+bboYzHnzTLV/fsyWVlKJSlcmInrM5SXw1NkAV07RuGgBPHMEcWoH
-	 F/Y9lCaNG2ong5OjCD6LeW11qYYlRiyr8+F5Tu7r7HjbQW7J2E0iHfvoFz8/gl/pzk
-	 AwvqprBRhKMxg==
-Date: Thu, 13 Jun 2024 18:44:25 +0100
-From: Lee Jones <lee@kernel.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Das Srinagesh <quic_gurus@quicinc.com>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 00/12] arm64: dts: qcom: sc8280xp-x13s: enable pm8008
- camera pmic
-Message-ID: <20240613174425.GV2561462@google.com>
-References: <20240608155526.12996-1-johan+linaro@kernel.org>
+	s=k20201202; t=1718300759;
+	bh=8wZftwNb/k7uIh9XSIxuBqvpXG6ZPovdvQIUEmPnupc=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=qEbQkQ+UG3cqDCkPWEZuFpKomUQZ2djBRGbA7EzDh2d7JKykflV9684BKaUVP0poZ
+	 hIEOKqV4RjAZCZqUFtq/Fzd33aTZIQbfH/JE50LEMZ8hGgtLdw/EB23V+3xw2VOuIZ
+	 qrAuLp7I8tYjJ+AZnEs09c6345tne5dWCGQ0B1jge1o9wIjFoU4Bu/a0z60D/IBXXt
+	 FW0yk+gUMaKr4/T8D989Jx8E9iDtm5SJrjQvu3TKBPP59LiSiEIwvrD8NCIgFF8WDp
+	 OV4LtOCrBe6gjqoKjnWhQG17bVbuiIJF363t8yR29EgEH+KPBsHqEqQ/VAvl20tLVU
+	 6zqe3onttfsfg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 290BCCE0760; Thu, 13 Jun 2024 10:45:59 -0700 (PDT)
+Date: Thu, 13 Jun 2024 10:45:59 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
+	linux-trace-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
+	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
+	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <cb51bc57-47b8-456a-9ac0-f8aa0931b144@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
+ <20240612143305.451abf58@kernel.org>
+ <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
+ <ZmrfA1p2zSVIaYam@zx2c4.com>
+ <80e03b02-7e24-4342-af0b-ba5117b19828@paulmck-laptop>
+ <Zmru7hhz8kPDPsyz@pc636>
+ <7efde25f-6af5-4a67-abea-b26732a8aca1@paulmck-laptop>
+ <Zmsuswo8OPIhY5KJ@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240608155526.12996-1-johan+linaro@kernel.org>
+In-Reply-To: <Zmsuswo8OPIhY5KJ@pc636>
 
-On Sat, 08 Jun 2024, Johan Hovold wrote:
+On Thu, Jun 13, 2024 at 07:38:59PM +0200, Uladzislau Rezki wrote:
+> On Thu, Jun 13, 2024 at 08:06:30AM -0700, Paul E. McKenney wrote:
+> > On Thu, Jun 13, 2024 at 03:06:54PM +0200, Uladzislau Rezki wrote:
+> > > On Thu, Jun 13, 2024 at 05:47:08AM -0700, Paul E. McKenney wrote:
+> > > > On Thu, Jun 13, 2024 at 01:58:59PM +0200, Jason A. Donenfeld wrote:
+> > > > > On Wed, Jun 12, 2024 at 03:37:55PM -0700, Paul E. McKenney wrote:
+> > > > > > On Wed, Jun 12, 2024 at 02:33:05PM -0700, Jakub Kicinski wrote:
+> > > > > > > On Sun,  9 Jun 2024 10:27:12 +0200 Julia Lawall wrote:
+> > > > > > > > Since SLOB was removed, it is not necessary to use call_rcu
+> > > > > > > > when the callback only performs kmem_cache_free. Use
+> > > > > > > > kfree_rcu() directly.
+> > > > > > > > 
+> > > > > > > > The changes were done using the following Coccinelle semantic patch.
+> > > > > > > > This semantic patch is designed to ignore cases where the callback
+> > > > > > > > function is used in another way.
+> > > > > > > 
+> > > > > > > How does the discussion on:
+> > > > > > >   [PATCH] Revert "batman-adv: prefer kfree_rcu() over call_rcu() with free-only callbacks"
+> > > > > > >   https://lore.kernel.org/all/20240612133357.2596-1-linus.luessing@c0d3.blue/
+> > > > > > > reflect on this series? IIUC we should hold off..
+> > > > > > 
+> > > > > > We do need to hold off for the ones in kernel modules (such as 07/14)
+> > > > > > where the kmem_cache is destroyed during module unload.
+> > > > > > 
+> > > > > > OK, I might as well go through them...
+> > > > > > 
+> > > > > > [PATCH 01/14] wireguard: allowedips: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+> > > > > > 	Needs to wait, see wg_allowedips_slab_uninit().
+> > > > > 
+> > > > > Also, notably, this patch needs additionally:
+> > > > > 
+> > > > > diff --git a/drivers/net/wireguard/allowedips.c b/drivers/net/wireguard/allowedips.c
+> > > > > index e4e1638fce1b..c95f6937c3f1 100644
+> > > > > --- a/drivers/net/wireguard/allowedips.c
+> > > > > +++ b/drivers/net/wireguard/allowedips.c
+> > > > > @@ -377,7 +377,6 @@ int __init wg_allowedips_slab_init(void)
+> > > > > 
+> > > > >  void wg_allowedips_slab_uninit(void)
+> > > > >  {
+> > > > > -	rcu_barrier();
+> > > > >  	kmem_cache_destroy(node_cache);
+> > > > >  }
+> > > > > 
+> > > > > Once kmem_cache_destroy has been fixed to be deferrable.
+> > > > > 
+> > > > > I assume the other patches are similar -- an rcu_barrier() can be
+> > > > > removed. So some manual meddling of these might be in order.
+> > > > 
+> > > > Assuming that the deferrable kmem_cache_destroy() is the option chosen,
+> > > > agreed.
+> > > >
+> > > <snip>
+> > > void kmem_cache_destroy(struct kmem_cache *s)
+> > > {
+> > > 	int err = -EBUSY;
+> > > 	bool rcu_set;
+> > > 
+> > > 	if (unlikely(!s) || !kasan_check_byte(s))
+> > > 		return;
+> > > 
+> > > 	cpus_read_lock();
+> > > 	mutex_lock(&slab_mutex);
+> > > 
+> > > 	rcu_set = s->flags & SLAB_TYPESAFE_BY_RCU;
+> > > 
+> > > 	s->refcount--;
+> > > 	if (s->refcount)
+> > > 		goto out_unlock;
+> > > 
+> > > 	err = shutdown_cache(s);
+> > > 	WARN(err, "%s %s: Slab cache still has objects when called from %pS",
+> > > 	     __func__, s->name, (void *)_RET_IP_);
+> > > ...
+> > > 	cpus_read_unlock();
+> > > 	if (!err && !rcu_set)
+> > > 		kmem_cache_release(s);
+> > > }
+> > > <snip>
+> > > 
+> > > so we have SLAB_TYPESAFE_BY_RCU flag that defers freeing slab-pages
+> > > and a cache by a grace period. Similar flag can be added, like
+> > > SLAB_DESTROY_ONCE_FULLY_FREED, in this case a worker rearm itself
+> > > if there are still objects which should be freed.
+> > > 
+> > > Any thoughts here?
+> > 
+> > Wouldn't we also need some additional code to later check for all objects
+> > being freed to the slab, whether or not that code is  initiated from
+> > kmem_cache_destroy()?
+> >
+> Same away as SLAB_TYPESAFE_BY_RCU is handled from the kmem_cache_destroy() function.
+> It checks that flag and if it is true and extra worker is scheduled to perform a
+> deferred(instead of right away) destroy after rcu_barrier() finishes.
 
-> The Qualcomm PM8008 PMIC is a so called QPNP PMIC with seven LDO
-> regulators, a temperature alarm block and two GPIO pins (which are also
-> used for interrupt signalling and reset).
+Like this?
 
-[...]
+	SLAB_DESTROY_ONCE_FULLY_FREED
 
-> Johan
-> 
-> [1] https://lore.kernel.org/all/1655200111-18357-1-git-send-email-quic_c_skakit@quicinc.com
-> [2] https://lore.kernel.org/lkml/20231003152927.15000-3-johan+linaro@kernel.org
-> [3] https://lore.kernel.org/r/20220828132648.3624126-3-bryan.odonoghue@linaro.org
-> 
-> 
-> Changes in v3
->  - capitalise MFD commit summaries
->  - drop pinctrl patches which have been applied for 6.10
->  - amend binding commit message to clarify that the binding is unused
->  - move pinctrl subschema under pinctrl node in binding
-> 
-> Changes in v2
->  - use IRQ_TYPE_SENSE_MASK in regmap_irq table
->  - add post-reset delay
->  - reorder pinctrl binding and driver update
->  - split out binding cleanups
->  - use platform_device_id matching
->  - replace underscore in supply names with dash
->  - use more fine-grained includes in regulator driver
->  - rework regulator driver and update authorship
-> 
-> 
-> Johan Hovold (12):
->   dt-bindings: mfd: pm8008: Add reset gpio
->   mfd: pm8008: Fix regmap irq chip initialisation
->   mfd: pm8008: Deassert reset on probe
->   mfd: pm8008: Mark regmap structures as const
->   mfd: pm8008: Use lower case hex notation
->   mfd: pm8008: Rename irq chip
->   mfd: pm8008: Drop unused driver data
->   dt-bindings: mfd: pm8008: Drop redundant descriptions
->   dt-bindings: mfd: pm8008: Rework binding
->   mfd: pm8008: Rework to match new DT binding
->   regulator: add pm8008 pmic regulator driver
->   arm64: dts: qcom: sc8280xp-x13s: enable pm8008 camera pmic
-> 
->  .../devicetree/bindings/mfd/qcom,pm8008.yaml  | 144 +++++++------
->  .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    | 123 +++++++++++
->  drivers/mfd/Kconfig                           |   1 +
->  drivers/mfd/qcom-pm8008.c                     | 169 ++++++++++-----
->  drivers/regulator/Kconfig                     |   7 +
->  drivers/regulator/Makefile                    |   1 +
->  drivers/regulator/qcom-pm8008-regulator.c     | 198 ++++++++++++++++++
->  include/dt-bindings/mfd/qcom-pm8008.h         |  19 --
->  8 files changed, 532 insertions(+), 130 deletions(-)
->  create mode 100644 drivers/regulator/qcom-pm8008-regulator.c
->  delete mode 100644 include/dt-bindings/mfd/qcom-pm8008.h
+	Instead of adding a new kmem_cache_destroy_rcu()
+	or kmem_cache_destroy_wait() API member, instead add a
+	SLAB_DESTROY_ONCE_FULLY_FREED flag that can be passed to the
+	existing kmem_cache_destroy() function.� Use of this flag would
+	suppress any warnings that would otherwise be issued if there
+	was still slab memory yet to be freed, and it would also spawn
+	workqueues (or timers or whatever) to do any needed cleanup work.
 
-Applied patches 1-11 and submitted for build testing.
-
-Once complete, I'll get the pull-request out for Mark.
-
--- 
-Lee Jones [李琼斯]
+							Thanx, Paul
 
