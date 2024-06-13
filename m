@@ -1,126 +1,105 @@
-Return-Path: <linux-kernel+bounces-213636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1A5C90782E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:21:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB51907830
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A9CA1F21C85
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:21:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FE001C24925
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF5C146D41;
-	Thu, 13 Jun 2024 16:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FdVquD6g"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74919149C5A;
+	Thu, 13 Jun 2024 16:21:12 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A735212FB0B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0102A1494CB;
+	Thu, 13 Jun 2024 16:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718295668; cv=none; b=Msau8S9L9ivCTiK+aGVTcQIBgqgyXRz4ZE3p9SJ9+ftJcUh0qcMveEawt2bFfgPeiyprffNR0SDFd37QuzVqzBXZ2JzPYB4xk7fovESRS60OQwr2ilvcvMMgP4hjGcURyBnp4HUzE9ujwHkdwwCttLcaH2/jVKNc6FviBemuKOQ=
+	t=1718295672; cv=none; b=i3AnjcufR2HHzNAZhtKGkifSThaJzFEySgM1CZmgs2eVTRXTisHkHUAvjTcYk+gNeIG8R/sOSblZ1fSsuPR1hnTDyQhoJE5xPjMzNP7KVsCNuOKV4aslwtqq/ELJWcuvQPe+kJWc3pPMgrnhjFo+ipXRDBSisWeasT0RxuABpxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718295668; c=relaxed/simple;
-	bh=7RNjx97Es6Px6fI1XW8Y1JgBcCTpBzveKL8xtiQsFFI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=E3/zNLfcPkYtVrEwVB+Om1lEQLFTkILdXDU+Lo1i7LQCKRfC6symVgvKWVxMgv7ngDmA+utJy/b/x/U6aG3el7lFw0EDPfqJlwC9Bl21fBsQOWh0Kr4REmAs5C8hnhzd6VCPyrlAF3d0MSPsmficrFxqsU3moItYr7hBTR/Gy04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FdVquD6g; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718295665;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=C6E639UIwAtkQNEr9kBB2jPUHGaI+pSB3aws83mC+K4=;
-	b=FdVquD6gLt+m79XYP5xqQUsftS7Lds+F0rMmT9fbehfq1SAt15jnDmth2J9l20l0CUAjm7
-	7Ho0OAWiBt3QQte3iQDBUAdH2DPVUzZAy04sKQ9bJV4Nia1bd1b3bdBGlZQmzgsYAshCxx
-	PGuGNndufnvOq7VW7nQvAwiA5OmDHxA=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-491-LJN3tRSLPLa-rlbG8gSRcg-1; Thu,
- 13 Jun 2024 12:21:02 -0400
-X-MC-Unique: LJN3tRSLPLa-rlbG8gSRcg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B924F1955F2C;
-	Thu, 13 Jun 2024 16:21:00 +0000 (UTC)
-Received: from llong.com (unknown [10.22.16.195])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C3FF419560AD;
-	Thu, 13 Jun 2024 16:20:58 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: linux-efi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH] arm64/efi: Fix kmemleak false positive in arm64_efi_rt_init()
-Date: Thu, 13 Jun 2024 12:20:31 -0400
-Message-Id: <20240613162031.142224-1-longman@redhat.com>
+	s=arc-20240116; t=1718295672; c=relaxed/simple;
+	bh=KhG6p1G/vl180lQCXn0UUW5xYEylfaMDqhz/mseFLpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M255Z5ALTJadfFvbZ0AlBHjS9+dbToW/Z2lRlwQbarFZbY+nEDdpCHyEKRZZMDwsHh6a15rOMwRh3SN1dKRn+f9GYgPewpIfVnSMkvItnywU7B8KUK2s/+jK7GSZUfuZuY2GE+K+fuobRLOi/SWS858si/eZEZ3j6z+ubK9Gix4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA525C32786;
+	Thu, 13 Jun 2024 16:21:08 +0000 (UTC)
+Date: Thu, 13 Jun 2024 12:21:07 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Alexander Potapenko
+ <glider@google.com>, Andrew Morton <akpm@linux-foundation.org>, Christoph
+ Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Heiko
+ Carstens <hca@linux.ibm.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Marco
+ Elver <elver@google.com>, Masami Hiramatsu <mhiramat@kernel.org>, Pekka
+ Enberg <penberg@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>, Vlastimil
+ Babka <vbabka@suse.cz>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Dmitry Vyukov <dvyukov@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+ kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-s390@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Sven Schnelle
+ <svens@linux.ibm.com>
+Subject: Re: [PATCH v4 01/35] ftrace: Unpoison ftrace_regs in
+ ftrace_ops_list_func()
+Message-ID: <20240613122107.6e9299eb@rorschach.local.home>
+In-Reply-To: <20240613153924.961511-2-iii@linux.ibm.com>
+References: <20240613153924.961511-1-iii@linux.ibm.com>
+	<20240613153924.961511-2-iii@linux.ibm.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The kmemleak code sometimes complains about the following leak:
+On Thu, 13 Jun 2024 17:34:03 +0200
+Ilya Leoshkevich <iii@linux.ibm.com> wrote:
 
-unreferenced object 0xffff8000102e0000 (size 32768):
-  comm "swapper/0", pid 1, jiffies 4294937323 (age 71.240s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<00000000db9a88a3>] __vmalloc_node_range+0x324/0x450
-    [<00000000ff8903a4>] __vmalloc_node+0x90/0xd0
-    [<000000001a06634f>] arm64_efi_rt_init+0x64/0xdc
-    [<0000000007826a8d>] do_one_initcall+0x178/0xac0
-    [<0000000054a87017>] do_initcalls+0x190/0x1d0
-    [<00000000308092d0>] kernel_init_freeable+0x2c0/0x2f0
-    [<000000003e7b99e0>] kernel_init+0x28/0x14c
-    [<000000002246af5b>] ret_from_fork+0x10/0x20
+> Architectures use assembly code to initialize ftrace_regs and call
+> ftrace_ops_list_func(). Therefore, from the KMSAN's point of view,
+> ftrace_regs is poisoned on ftrace_ops_list_func entry(). This causes
+> KMSAN warnings when running the ftrace testsuite.
+> 
+> Fix by trusting the architecture-specific assembly code and always
+> unpoisoning ftrace_regs in ftrace_ops_list_func.
+> 
+> The issue was not encountered on x86_64 so far only by accident:
+> assembly-allocated ftrace_regs was overlapping a stale partially
+> unpoisoned stack frame. Poisoning stack frames before returns [1]
+> makes the issue appear on x86_64 as well.
+> 
+> [1] https://github.com/iii-i/llvm-project/commits/msan-poison-allocas-before-returning-2024-06-12/
+> 
+> Reviewed-by: Alexander Potapenko <glider@google.com>
+> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+> ---
 
-The memory object in this case is for efi_rt_stack_top and is allocated
-in an initcall. So this is certainly a false positive. Mark the object
-as not a leak to quash it.
+Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- arch/arm64/kernel/efi.c | 2 ++
- 1 file changed, 2 insertions(+)
+-- Steve
 
-diff --git a/arch/arm64/kernel/efi.c b/arch/arm64/kernel/efi.c
-index 4a92096db34e..712718aed5dd 100644
---- a/arch/arm64/kernel/efi.c
-+++ b/arch/arm64/kernel/efi.c
-@@ -9,6 +9,7 @@
- 
- #include <linux/efi.h>
- #include <linux/init.h>
-+#include <linux/kmemleak.h>
- #include <linux/screen_info.h>
- #include <linux/vmalloc.h>
- 
-@@ -213,6 +214,7 @@ l:	if (!p) {
- 		return -ENOMEM;
- 	}
- 
-+	kmemleak_not_leak(p);
- 	efi_rt_stack_top = p + THREAD_SIZE;
- 	return 0;
- }
--- 
-2.39.3
+>  kernel/trace/ftrace.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index 65208d3b5ed9..c35ad4362d71 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -7407,6 +7407,7 @@ __ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
+>  void arch_ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
+>  			       struct ftrace_ops *op, struct ftrace_regs *fregs)
+>  {
+> +	kmsan_unpoison_memory(fregs, sizeof(*fregs));
+>  	__ftrace_ops_list_func(ip, parent_ip, NULL, fregs);
+>  }
+>  #else
 
 
