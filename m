@@ -1,105 +1,164 @@
-Return-Path: <linux-kernel+bounces-213599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28439907770
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:49:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58265907778
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E8241C243A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:49:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5935289706
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295BC130A66;
-	Thu, 13 Jun 2024 15:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36A114C5BA;
+	Thu, 13 Jun 2024 15:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oW0y9V7o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Os/UdFdc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4FF1420BC;
-	Thu, 13 Jun 2024 15:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6116214C5A9
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718293507; cv=none; b=VYvV+jz/D1p7XTGHqYOvN9qpN06WTcP93+Zm24d8/gkna3j6ORrN1bfGhuNAGj6rRtjwSIkS4q2n1jnsBpQlNN7dShobwF2UtOPF6AxVm+eFFXP3+cwP7GJ6hc8cJwiW6kL6hYoSA3kfJsKR5a1SLyRzq7YluD9QfdpURo+QiBs=
+	t=1718293643; cv=none; b=u6leZJXlBO/W19H+Al633j55F4tUYyjco6IWd+WwbENt87j1jaUjd4ITl3VKn9pQHHdmyXbogTBTdvvDvQC4g1W0LHWNlwDpsxImJwxgIImsvpMWIsLBr0XNg9LenwkV75RmFQbXEw6AZWQkULg66KcbC1SuR0kmyqG+SxSVeKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718293507; c=relaxed/simple;
-	bh=U9qVg6ZJBN28D55q6SGvvtPai72j88kMw2EojUSMvos=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PKLMosuf0zV6FbGSKFvZikCv4eoN6tpRSjgU8C/uFBbpAxRLaMUh008OISe41ehP12YquTeHj8wM48Pyy/MNY3/f8M5JJgu/TIL5MXdqCagEkb9Qilhb0cL/ubsfxU+cOqWAx5QbwUwpUILchHhUXE/IMDiaC+r5vlcjwnLjLO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oW0y9V7o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01906C2BBFC;
-	Thu, 13 Jun 2024 15:45:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718293507;
-	bh=U9qVg6ZJBN28D55q6SGvvtPai72j88kMw2EojUSMvos=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=oW0y9V7o7Azoq2ZB8VEw9X7r6Ey19nTFYpIVHHMFMEavxl91nqPVygekzKS0SvMeK
-	 cIS9k5qgYTcJiNLOP5qb//D71iauKi+iBkhEcL2v3g+eD4jLw8Ncnwxoz+Hs2K8TZ3
-	 N4+VQ7BNZ8W5yoW3wcRC/Kobzj3qrHJ3WPS5CcpAVKoj/Ato+icnuGguSoKAaIc8ZB
-	 e+877fpodufMAyHE5WNBlpRNhvUuOZiKDhWF93cEkDB+dA0//vj/IsmBInR/UCerxA
-	 9jTaXPbamtIbmJLNx6wAPpI41RXt7h37lOf6L1k2GDtAiWDadssrKAjsLEkpkvcS5q
-	 /FTjYblUjkKTg==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52bbdb15dd5so1516419e87.3;
-        Thu, 13 Jun 2024 08:45:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVYYRKHC4YCLJVa1UWrdO2beovQtuk/sF0SdjJ8Fn+lWwIfiUzJz5RPlRNfwrSwL/YTdf3Ej6RoaOHoYgIC3V96iaczBJqyRFz2HVclg0o6QjMoRM49ZQ0ogqDyIRffaVXIKAiqhX2Tdw==
-X-Gm-Message-State: AOJu0YyRubk+4Ei99cvxUDA9fhyFioveZE9EaHGvnrHEzNzj8BWwkrJ1
-	wl5+ij2i8JlAWwUOySlNSqqWRBJx3UgYmxKsL4KU9wx2NRkS3CZopZXNCodjZ3e4T/0b81f4J7i
-	I60ock/9ez0NPOrYRSK5GMIr4fQ==
-X-Google-Smtp-Source: AGHT+IEDZenob3DLme+dvcEfaG2iU+9qiwaD7cyt2kVksiFNPxI8W5qjeSbPsJJAsGJkPEmpdJ7KOcELGumm7mO8hFg=
-X-Received: by 2002:a05:6512:3b89:b0:52c:80bc:9dae with SMTP id
- 2adb3069b0e04-52ca6e55affmr139085e87.9.1718293505351; Thu, 13 Jun 2024
- 08:45:05 -0700 (PDT)
+	s=arc-20240116; t=1718293643; c=relaxed/simple;
+	bh=o+I79bi8dSxZ6o2hO2AQzLoGNXTTs/sPN/lJIpluxTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K+lMYcIQ4zGD5G1bUAD0jhGwI++CpIkK/kQqX5MmY3F8c1jBpU3CR1bOEx5Fz7b1c4fwBL+RlEGxL3iyQ15vqjy/8ZpbdNSI9vAT6z0ZXBEsOraV4phbqG8I2hnkG3+q3VPYBfBUKJSl2KWONRYPkFl2T/gi5qFjpkXKx7wFWGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Os/UdFdc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718293640;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kl4Wqt51Hao3icJ/N+kSJzGNSoJFEPA+Q8HEWG3GloE=;
+	b=Os/UdFdcL46JfqxYDS+KGcsAWhiOQOo1Bl0yv4HBGkEu5mgjSQ4r0rYwZOFp3q32Vy9ngI
+	x0jvvDU1tNZs/dG0STBwrvnU9T9SQDBLtClmxg2cwzL4yl4qegP8nNyqKecC0ft/jyvwqf
+	l5XQeWK8nB1SFSH0/n2FoeRFh7eVF7o=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-357-zZICEuUYPY2Eo3mzVkyGGA-1; Thu,
+ 13 Jun 2024 11:47:16 -0400
+X-MC-Unique: zZICEuUYPY2Eo3mzVkyGGA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 99A3E19560B3;
+	Thu, 13 Jun 2024 15:47:15 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.233])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B738F1956050;
+	Thu, 13 Jun 2024 15:47:13 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 13 Jun 2024 17:45:45 +0200 (CEST)
+Date: Thu, 13 Jun 2024 17:45:42 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/1] exit: kill signal_struct->quick_threads
+Message-ID: <20240613154541.GD18218@redhat.com>
+References: <20240609142342.GA11165@redhat.com>
+ <87r0d5t2nt.fsf@email.froward.int.ebiederm.org>
+ <20240610152902.GC20640@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613150134.66329-1-gychoi.dev@gmail.com>
-In-Reply-To: <20240613150134.66329-1-gychoi.dev@gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 13 Jun 2024 09:44:52 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+UQ+Epe=_UyR-nkTWsbT6Q9HeEqX6__9nb+Uv1vzZCmA@mail.gmail.com>
-Message-ID: <CAL_Jsq+UQ+Epe=_UyR-nkTWsbT6Q9HeEqX6__9nb+Uv1vzZCmA@mail.gmail.com>
-Subject: Re: [PATCH] drivers:of: Add null check for bus in of_match_bus
-To: Gyeonggeon Choi <gychoi.dev@gmail.com>
-Cc: saravanak@google.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240610152902.GC20640@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Thu, Jun 13, 2024 at 9:02=E2=80=AFAM Gyeonggeon Choi <gychoi.dev@gmail.c=
-om> wrote:
->
-> Added a null check for the bus variable after calling of_match_bus.
-> This prevents potential null pointer dereference errors in subsequent
-> code, where bus->count_cells could cause a crash if bus is NULL.
+So...
 
-Go read of_match_bus(). It never returns NULL and if somehow it did,
-we'll BUG() first.
+Eric, do you agree with this patch or not?
 
+Tejun, sorry for delay, I'll try to send the patch which cleanups
+(at least in my opinion) the ->dying_tasks logic as soon as I have
+time. But just in case... no, cgroup_exit() can't rely on group_exit
+passed from the caller, I was wrong ;)
+
+
+On 06/10, Oleg Nesterov wrote:
 >
-> Signed-off-by: Gyeonggeon Choi <gychoi.dev@gmail.com>
-> ---
->  drivers/of/address.c | 2 ++
->  1 file changed, 2 insertions(+)
+> Hi Eric, thanks for looking at this.
 >
-> diff --git a/drivers/of/address.c b/drivers/of/address.c
-> index d669ce25b5f9..85f986d25870 100644
-> --- a/drivers/of/address.c
-> +++ b/drivers/of/address.c
-> @@ -504,6 +504,8 @@ static u64 __of_translate_address(struct device_node =
-*node,
->         if (parent =3D=3D NULL)
->                 return OF_BAD_ADDR;
->         bus =3D of_match_bus(parent);
-> +       if (bus =3D=3D NULL)
-> +               return OF_BAD_ADDR;
+> Let me answer your questions out-of-order. But, before anything else,
+> do you see anything wrong in 1/1 ?
 >
->         /* Count address cells & copy address locally */
->         bus->count_cells(dev, &na, &ns);
-> --
-> 2.39.3 (Apple Git-146)
+> On 06/10, Eric W. Biederman wrote:
+> >
+> > May I ask which direction you are coming at this from?  Are you trying
+> > to reduce the cost of do_exit?  Are you interested in untangling the
+> > mess that is exiting threads in a process?
 >
+> I am trying to understand why do we need another counter.
+>
+> And, I'd like to cleanup the usage of task->signal->live, I think it
+> should be avoided (if possible) when task != current. IIRC, we even
+> discussed this some time ago but I can't find any reference.
+>
+> See also another thread about css_task_iter_advance().
+>
+> > > Eric, I can't understand why the commit ("signal: Guarantee that
+> > > SIGNAL_GROUP_EXIT is set on process exit") added the new
+> > > quick_threads counter. And why, if we forget about --quick_threads,
+> > > synchronize_group_exit() has to take siglock unconditionally.
+> > > Did I miss something obvious?
+> >
+> > At a minimum it is the exact same locking as everywhere else that sets
+> > signal->flags, signal->group_exit_code, and signal->group_stop_count
+> > uses.
+> >
+> > So it would probably require some significant reason to not use
+> > the same locking and complicate reasoning about the code.  I suspect
+> > setting those values without siglock held is likely to lead to
+> > interesting races.
+>
+> I guess I was not clear. Of course, SIGNAL_GROUP_EXIT must be always
+> set under ->siglock. But I think synchronize_group_exit() can just
+> return if SIGNAL_GROUP_EXIT is already set? If nothing else, this is
+> what do_group_exit() does.
+>
+> Or I misunderstood you?
+>
+> > That is where signal->quick_threads comes from.  In the work it is a
+> > part of I wind up moving the decrement up much sooner to the point where
+> > individual threads decide to exit.  The decrement of signal->live comes
+> > much too late to be useful in that context.
+>
+> And that is why this patch moves the decrement of signal->live to the
+> start of do_exit().
+>
+> > It is also part of me wanting to be able to uniformly use
+> > SIGNAL_GROUP_EXIT and signal->group_exit_code when talking about the
+> > process state, and p->exit_code when talking about the per task state.
+>
+> Agreed,
+>
+> > At the moment I am staring at wait_task_zombie and trying to understand
+> > how:
+> >
+> > 	status = (p->signal->flags & SIGNAL_GROUP_EXIT)
+> > 		? p->signal->group_exit_code : p->exit_code;
+> >
+> > works without any locks or barriers.
+>
+> Agreed, at first glance this looks worrying without siglock... I'll try
+> to take a look, perhaps we can simply kill the SIGNAL_GROUP_EXIT check,
+> not sure.
+>
+> But this patch should not make any difference ?
+>
+> Oleg.
+
 
