@@ -1,162 +1,139 @@
-Return-Path: <linux-kernel+bounces-213860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B45907BBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:48:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C868A907BC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EB96B21CAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:48:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63E6FB21C80
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C3114B960;
-	Thu, 13 Jun 2024 18:48:22 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83CD14B09C;
+	Thu, 13 Jun 2024 18:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BexmCDAv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E068149E01
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E56139CFE;
+	Thu, 13 Jun 2024 18:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718304502; cv=none; b=nuYhwKxzaxWHzJTYBv72GNV91+FrqyvmXs9XLUvoOzAA8DE6ymWSB0bCRgcb7ZVpYHTb4LAVaIIYJt/IvbMJtRZXhD4G161nLv463AcmxOL9zPLKIeeOEKefA7BO9Ccv2lYpTelXl419McNb3HitRPofFuQsLg30wvzKbxaT5FA=
+	t=1718304566; cv=none; b=dIm8QPOKk2hqItcnhV+wzOxacbk2dRRJpMf3EAywlcsGE7dQ2WUvPKvtKCn+PxVEwMJ57VX60AsV1E6uhPvsIZ4BtwlPxScwPmoIIusjxbpLJxEm6yRA/dcB7UZEUIiKyyS0t2TUQOji7a16hF0qBjiywno3pQsz6JMROm1XPhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718304502; c=relaxed/simple;
-	bh=wx3k+i3agiHH4+ORkqU7DyofWGzMTOiicsO35nuhukc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LkxCn8jqQO7ZS6EGt+o9Dt6hWAOlYKFOs8rv3f4QIf+HZRIjgypF90HcZH/fqAiK7IScr6Wu2IseVd4YiddoDR8Vo90NkPlYG310RsLa2CzJ3gojP3aZZ/QvOqjyNBMknOcEFgOeAozoZf0AFLQkbtLO567pt1KpCtXOig7/6Wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-375a26a094dso12828425ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:48:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718304500; x=1718909300;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DvpztZBo2tX9vOs/pwnVvpMkIdjcMdrXY9Ek/ytdwpY=;
-        b=rNvZM/ejjiPkOWpKoHhx3xftKEDyNHOBOQDtbqoipx3+VD41gUo6AS+laseGz3GtzS
-         b/LOQFdXR3x3R590MXVaF0UJ5d1MoHWbweM1I8ds8mH+3Aa0o1zehuO3tV7V1YxnHAc+
-         kpb+2CoXYqKfwTspgSHmwTx/zjSRIL7mZBn+mtgPcCnO0ABqU2OyWm3OuSyll2eQFtsy
-         rOmWSmCtu+Td8xfkVQUFG2UzA4n0nDv01Cu1mITgMP7y7ge3g4LzSjxzuCJUAhVdS6jK
-         CmOrBLCxVr/XGGwkiD1gnHu7ySdfm2Gfo03KolEiWzUF1PMSp0jqyaafQr75vb3vHamq
-         ghLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWHRr8hcZen3DtcHHCmdHO50+Uf7lvQ43ieH2rC2W8D7XMbRU1bZ8PxP6lW1fweEHIqyOim+gfi6aTVAaHIZcMa2GBn/JrBvvVTmm0S
-X-Gm-Message-State: AOJu0Yy82UP21cqrAICWkEw5XM4g4Dl9lQpdmkpDSYCPucSuaEmYm1LD
-	WCbGebDn0p1Q4taTBp2Cca3fYKfR/LpYCmHPEI54EqKcAIAknOmVIZMRm2shKlebBa/9Y5QNZBt
-	X3tacJnmt2oT0f50uirG/cTvwDb+jAJgbZtoXogWw/F2tMzRY3v5IVQQ=
-X-Google-Smtp-Source: AGHT+IFbHtnRQArLIorwEZreB5TSpsVZE9Cz+SF/xb1dkqf8JeuT4e67I4k7yavL8KXqI9nRmCNQ2XoSLEbwcqk6XIjp8Z3IRhaL
+	s=arc-20240116; t=1718304566; c=relaxed/simple;
+	bh=2ik+Qo/zt+8LDrO1DIrupts/0wjBHoGmG3SQ2ZnUMPE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OyY5q9SRDwi0MmLuciWdmGSOZqamRxr5qsWIEyZR4KNL/JjCP6p76+0SxVMF73JUGK2Tq+DsH+OMDwJDO06qQBy5ASJwJlljTXaffkntjEzxQxqSMCIXGaR/AusJOHxZstpJJFrFZ/k4x3KxAnkwJQU2PVs+u2ywJ69OV0vHJu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BexmCDAv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1658C2BBFC;
+	Thu, 13 Jun 2024 18:49:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718304565;
+	bh=2ik+Qo/zt+8LDrO1DIrupts/0wjBHoGmG3SQ2ZnUMPE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BexmCDAvSVztnWtbz+Hq45Tl24kb7DVWbuZSyn0W4Nd7c7N1VlfrOu/bLYwK25kOA
+	 NKoXoIkRmcoL/Farwe38kFs/Txuf+ZLDyOrhvuHylJT+36XI9/tyfg7nJCrAx+2lVD
+	 ZZaZa3/oLlm4pI2ZYcwKhgL08jmzNhJdYuJsFYMhAzGumPgQnWsc+xwWmwz5JPzrdX
+	 hPBNmkG7+5ZShiDekJ4EfW2+j1oZdEld/Jl9RPm5NtBwIPWT1Ns8HIFUXTWb+VAgmM
+	 icKLuOa1Ol/lf7mXwIS2yOpGeTeHPMHUDWqkfzLo88zV/HnkXnMNYUgjL8ezHspbPc
+	 aN68Ziv7IDMkw==
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5baf76164fbso79666eaf.1;
+        Thu, 13 Jun 2024 11:49:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWewWgfF9lovCs30gjw8LYG+AVHHZQR7SVm7ialVS9DRim0n++0blltoCxMoZBaWqxtDgl8Fhd1JBDbuC6vuNuBLcSFWYmoXFq4g8IYt5j7SrrAGGWiN0syxQ7jx/ZTm8TI2oL5vIRg0A==
+X-Gm-Message-State: AOJu0YyMX5nu9GVpCvNQlP3gse4yfgEfkcxx8wucYDWkfYl3C4QMSw+3
+	sxGGBZN4BfexeTyAD/CJs99mv0xSzZr8jUkiYg5ikdextW2n0QpdHLUzzjK2GIl42vShevaQhRM
+	t2K6As4Z+rghYvB6YfzgTqRTbH/8=
+X-Google-Smtp-Source: AGHT+IG+y1NnFsf9CL5HTejz+JcY60pm4OiJTuauWfmWi2ByDCXBhv1Q765cmL9PMKVMH44b9X/MQGmoZJqncbi7gOo=
+X-Received: by 2002:a4a:d6cd:0:b0:5bd:af39:c9d9 with SMTP id
+ 006d021491bc7-5bdaf39caa2mr120946eaf.0.1718304565026; Thu, 13 Jun 2024
+ 11:49:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164e:b0:375:a40f:97d1 with SMTP id
- e9e14a558f8ab-375e0ec20dcmr310605ab.4.1718304499749; Thu, 13 Jun 2024
- 11:48:19 -0700 (PDT)
-Date: Thu, 13 Jun 2024 11:48:19 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000052e5c5061ac9f158@google.com>
-Subject: [syzbot] [net?] INFO: task hung in devinet_ioctl (5)
-From: syzbot <syzbot+78761e13e81f4bfbb554@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+References: <20240609210908.4470-1-W_Armin@gmx.de>
+In-Reply-To: <20240609210908.4470-1-W_Armin@gmx.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 13 Jun 2024 20:49:14 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ikNSWKsy6Z_WPX8SkBt2mKb0HH6WuWhs4ZUFeO245E4Q@mail.gmail.com>
+Message-ID: <CAJZ5v0ikNSWKsy6Z_WPX8SkBt2mKb0HH6WuWhs4ZUFeO245E4Q@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: acpi_pad: Still evaluate _OST when _PUR evaluation fails
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sun, Jun 9, 2024 at 11:09=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrote:
+>
+> The ACPI specification says that if no action was performed when
+> processing the _PUR object, _OST should still be evaluated, albeit
+> with a different status code.
+>
+> Evaluate _OST even when evaluating _PUR fails, to signal the firmware
+> that no action was performed.
+>
+> Compile-tested only.
+>
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>  drivers/acpi/acpi_pad.c | 19 +++++++++++++++----
+>  1 file changed, 15 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/acpi/acpi_pad.c b/drivers/acpi/acpi_pad.c
+> index bd1ad07f0290..350d3a892889 100644
+> --- a/drivers/acpi/acpi_pad.c
+> +++ b/drivers/acpi/acpi_pad.c
+> @@ -25,6 +25,10 @@
+>  #define ACPI_PROCESSOR_AGGREGATOR_CLASS        "acpi_pad"
+>  #define ACPI_PROCESSOR_AGGREGATOR_DEVICE_NAME "Processor Aggregator"
+>  #define ACPI_PROCESSOR_AGGREGATOR_NOTIFY 0x80
+> +
+> +#define ACPI_PROCESSOR_AGGREGATOR_STATUS_SUCCESS       0
+> +#define ACPI_PROCESSOR_AGGREGATOR_STATUS_NO_ACTION     1
+> +
+>  static DEFINE_MUTEX(isolated_cpus_lock);
+>  static DEFINE_MUTEX(round_robin_lock);
+>
+> @@ -382,16 +386,23 @@ static void acpi_pad_handle_notify(acpi_handle hand=
+le)
+>                 .length =3D 4,
+>                 .pointer =3D (void *)&idle_cpus,
+>         };
+> +       u32 status;
+>
+>         mutex_lock(&isolated_cpus_lock);
+>         num_cpus =3D acpi_pad_pur(handle);
+>         if (num_cpus < 0) {
+> -               mutex_unlock(&isolated_cpus_lock);
+> -               return;
+> +               /* The ACPI specification says that if no action was perf=
+ormed when
+> +                * processing the _PUR object, _OST should still be evalu=
+ated, albeit
+> +                * with a different status code.
+> +                */
+> +               status =3D ACPI_PROCESSOR_AGGREGATOR_STATUS_NO_ACTION;
+> +       } else {
+> +               status =3D ACPI_PROCESSOR_AGGREGATOR_STATUS_SUCCESS;
+> +               acpi_pad_idle_cpus(num_cpus);
+>         }
+> -       acpi_pad_idle_cpus(num_cpus);
+> +
+>         idle_cpus =3D acpi_pad_idle_cpus_num();
+> -       acpi_evaluate_ost(handle, ACPI_PROCESSOR_AGGREGATOR_NOTIFY, 0, &p=
+aram);
+> +       acpi_evaluate_ost(handle, ACPI_PROCESSOR_AGGREGATOR_NOTIFY, statu=
+s, &param);
+>         mutex_unlock(&isolated_cpus_lock);
+>  }
+>
+> --
 
-syzbot found the following issue on:
-
-HEAD commit:    83a7eefedc9b Linux 6.10-rc3
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17e752e2980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c79815c08cc14227
-dashboard link: https://syzkaller.appspot.com/bug?extid=78761e13e81f4bfbb554
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3e8762812d56/disk-83a7eefe.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/29ef4962890d/vmlinux-83a7eefe.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1a5e4d91d135/bzImage-83a7eefe.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+78761e13e81f4bfbb554@syzkaller.appspotmail.com
-
-INFO: task dhcpcd:4751 blocked for more than 143 seconds.
-      Not tainted 6.10.0-rc3-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:dhcpcd          state:D stack:20384 pid:4751  tgid:4751  ppid:4750   flags:0x00004002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
- __schedule_loop kernel/sched/core.c:6822 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6837
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
- devinet_ioctl+0x2ce/0x1bc0 net/ipv4/devinet.c:1101
- inet_ioctl+0x3d7/0x4f0 net/ipv4/af_inet.c:1003
- sock_do_ioctl+0x158/0x460 net/socket.c:1222
- sock_ioctl+0x629/0x8e0 net/socket.c:1341
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f583bfd7d49
-RSP: 002b:00007ffe78ed73c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f583bf096c0 RCX: 00007f583bfd7d49
-RDX: 00007ffe78ee75b8 RSI: 0000000000008914 RDI: 0000000000000018
-RBP: 00007ffe78ef7778 R08: 00007ffe78ee7578 R09: 00007ffe78ee7528
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffe78ee75b8 R14: 0000000000000028 R15: 0000000000008914
- </TASK>
-INFO: task kworker/0:5:5155 blocked for more than 143 seconds.
-      Not tainted 6.10.0-rc3-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/0:5     state:D stack:22384 pid:5155  tgid:5155  ppid:2      flags:0x00004000
-Workqueue: events linkwatch_event
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
- __schedule_loop kernel/sched/core.c:6822 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6837
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
- linkwatch_event+0xe/0x60 net/core/link_watch.c:276
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Applied as 6.11 material, thanks!
 
