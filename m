@@ -1,254 +1,175 @@
-Return-Path: <linux-kernel+bounces-212590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F66C9063BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:06:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1195C9063C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A62E0B220EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:06:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BE33281D9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C28F37C;
-	Thu, 13 Jun 2024 06:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD6B1369B6;
+	Thu, 13 Jun 2024 06:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VZ77nGfI"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i4SbOM1v"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB17F132104
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 06:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD7937C;
+	Thu, 13 Jun 2024 06:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718258801; cv=none; b=B4+dQEv9y3zkmwOB/ocTSvJ5gPKiFakBdt7A0SvQkPCxXyraOREo9flGrV2gWRyVxH56zUOcnjW4xE34W7BZ2Ch7OJFDnlcCW1nxEAwfukhU1Dj8Dxdg1aM5xfsa2z5sEywWINa97WNLR0DT+0oyEL4CMKoy3P/d7cXl1eohLCI=
+	t=1718258902; cv=none; b=WiTexwUls+7+FusSgc0MxPZVtW026/A0jlMuR9ZIMo2JccvPcerBeirxzjwL7wJON1lLR9rz4UWiSEVd6QlZcem69bJncBCxnV2EUK0+2EwFpitO6JKpvH7jnqyszMvrOq+fnoJcAM1+Ndpfvz3P3Jw4bt9yxH0tL4E/H9Fx72Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718258801; c=relaxed/simple;
-	bh=4g07QZieUxmsDqIl1YNP1f5lYgtIe9M1543QyG+q1+w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JHPpxtSwwNZB6aoM39u+v4MvPNZtffWE2sEB+Oqz7nie7Z47v0iYNFNEd2fKeSO7cupMkkTfdCq0paQFwz1fKUazgXX+VvH4v9w7vsVbsLF+IQg+QGUsToQUw0YaRIPU5/fPVBrZpwLa2kRKOxvrO7R/ccXYeoAakrCqVohQ5ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VZ77nGfI; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ead2c6b50bso5774791fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 23:06:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718258798; x=1718863598; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fSH0DjDhwB3L1CLHpcobJ5fXoLIXqFfrAAYmwFu4jJo=;
-        b=VZ77nGfIuVS7KpqX9unH4WvpmouGmH15epoANpn3eSJBNR8Yk6CMSSlgKY8aHq72sT
-         65LG1HZE2e+/0SgUtmTG9mZOSbix2uNKh2qP8JeBulgd59lQowoY0/05Gj2E0l5NzFUc
-         iUIBoqP1y8mbfvFv+6wf1M8Bt55DBrSlQqf4c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718258798; x=1718863598;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fSH0DjDhwB3L1CLHpcobJ5fXoLIXqFfrAAYmwFu4jJo=;
-        b=FLqsRPj3TgJL9w7YzVqPF5Xf2EmLC4Dfba3w7IQkJryYgbJYNQ9QFzJ6joWno7+pVA
-         ABDZF5rZcrv4JTbqZa5hyQMlAcfMtk81o83Q0Ru2JW9OHGKXQpVHpho94IqyXLQYqNw7
-         Pk1rquLLU8QQlacdUNdppsABT41a15M6m10PVQ6bLQf4bs7IQOutGKTxHWR4WOfBrNoO
-         9iBCNdACi5MZSmGTPLHUJ68WXnUiL6ROqm8FIdPo8rA+oub4WQYNJh9iYYW00QDp79QA
-         x8I61O1WXX6w4yKRQZ/Zz/JNh/nO8oU292lWwBShdZVamQhDgPfI2Y6UW98FWPLKtjDP
-         esGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgFvuCY4M7iGpv8c35GBAEVgz1JG3paNkRz/RYN2XXpfZ45OyqxxmHg3yN95AffQvctD/DhWrRhnFqtwkUrjLnV1fdCm3Kcr4YZy8b
-X-Gm-Message-State: AOJu0YzY1HqysR7Z79V3BpdNf6Hcq7J1acm33bt7XebFO3kwCEQ2G0Gq
-	tek3y2xduvtfk0DCLSyYvImN6k62jOkfaI+XWO/5Bsww1/sf5s0sbo6+c6ZuTwNMhXGyGh6KDUm
-	06e8EwleAUOhoHk15KLBfUnTut9Qtw0P7WFo3
-X-Google-Smtp-Source: AGHT+IFzq9XuAIM2Q2ahpj3Sd3BXnntejul4oBikhxZEOqFO5hUX59O0xTtJhBGjgP/s2o6c8hCCxKlKJXnzarOUzM8=
-X-Received: by 2002:a05:6512:23a9:b0:52c:9e25:978d with SMTP id
- 2adb3069b0e04-52c9e259f8emr2257164e87.45.1718258797636; Wed, 12 Jun 2024
- 23:06:37 -0700 (PDT)
+	s=arc-20240116; t=1718258902; c=relaxed/simple;
+	bh=Cp2n1ms44VPV1wVnQ2RgsVSScJkfyl43lwf7fGOejlU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jFKomUGw+jeuPaghMZ0G4duJakmAKx7KGpQkj2CXMwL1khs5CCl2GnKRl4XHzE4KkzxSEj5T678Pwo3IdjvGkFL0ZI92L+a+7mQcpY4Px0tTCxf5HbGv1oxhlxYVavZvG0OPKtjvtAHGkJ02Bsh5/q4YNDtJ8/2qK1KVqjJCLUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i4SbOM1v; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718258901; x=1749794901;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Cp2n1ms44VPV1wVnQ2RgsVSScJkfyl43lwf7fGOejlU=;
+  b=i4SbOM1v3hysVYmjaQ7AalTPqusdPZr/0n0wuZePFwyZEuCYDr4bS+oJ
+   hgIDs386KNq0oDqTTJNMhLXe4vfdPm/JAq3RVQ0mNeWJ4ZRPYdKNl91sA
+   CIQszs8TB3qLdjqr0WqSziN3DcPk2fdR2YOJlEQ7FhkbkIGBEBVw20Fcb
+   iUDunILxGLVIV0WHJLbYGDrDzwDs3TE5/+eFNWsi4WNRIAW1KERipUMaQ
+   zIQLkG2n5TTaIPnoKDEqb6eeb967ALhOdEuvDzvoxpQDwGLOE0il7BgG7
+   KXIN/MyffX222tzGOrGH//nGHnSb8GqTWpGFN3mITuTvk42RA7Q7d68Ds
+   A==;
+X-CSE-ConnectionGUID: uq+wPOI5TrWL6VKYK2cwgQ==
+X-CSE-MsgGUID: EdiijhlLRfeh5GRUXPGUrw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="15022224"
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="15022224"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 23:08:20 -0700
+X-CSE-ConnectionGUID: 5/3wytczQAulHmbtaadTCw==
+X-CSE-MsgGUID: e0n0+TiqTPii1AzGUhxCEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="39952987"
+Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 23:08:17 -0700
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com
+Cc: rick.p.edgecombe@intel.com,
+	kai.huang@intel.com,
+	isaku.yamahata@intel.com,
+	dmatlack@google.com,
+	sagis@google.com,
+	erdemaktas@google.com,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH 0/5] Introduce a quirk to control memslot zap behavior
+Date: Thu, 13 Jun 2024 14:06:59 +0800
+Message-ID: <20240613060708.11761-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605094843.4141730-1-wenst@chromium.org> <CAK7LNAQrPfpScYKKg_Mwoj2RyWe5_e_xn6YZRm+t_w2X4+3kYw@mail.gmail.com>
-In-Reply-To: <CAK7LNAQrPfpScYKKg_Mwoj2RyWe5_e_xn6YZRm+t_w2X4+3kYw@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 13 Jun 2024 14:06:25 +0800
-Message-ID: <CAGXv+5E1UsHyxier94=ah0P_g5QfdwLgNzc915QjdtXQqTN8ow@mail.gmail.com>
-Subject: Re: [PATCH] scripts/make_fit: Support decomposing DTBs
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Simon Glass <sjg@chromium.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 11, 2024 at 10:33=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
->
-> On Wed, Jun 5, 2024 at 6:48=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> =
-wrote:
-> >
-> > The kernel tree builds some "composite" DTBs, where the final DTB is th=
-e
-> > result of applying one or more DTB overlays on top of a base DTB with
-> > fdtoverlay.
-> >
-> > The FIT image specification already supports configurations having one
-> > base DTB and overlays applied on top. It is then up to the bootloader t=
-o
-> > apply said overlays and either use or pass on the final result. This
-> > allows the FIT image builder to reuse the same FDT images for multiple
-> > configurations, if such cases exist.
-> >
-> > The decomposition function depends on the kernel build system, reading
-> > back the .cmd files for the to-be-packaged DTB files to check for the
-> > fdtoverlay command being called. This will not work outside the kernel
-> > tree. The function is off by default to keep compatibility with possibl=
-e
-> > existing users.
-> >
-> > To facilitate the decomposition and keep the code clean, the model and
-> > compatitble string extraction have been moved out of the output_dtb
-> > function. The FDT image description is replaced with the base file name
-> > of the included image.
-> >
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > ---
-> > This is a feature I alluded to in my replies to Simon's original
-> > submission of the make_fit.py script [1].
-> >
-> > This is again made a runtime argument as not all firmware out there
-> > that boot FIT images support applying overlays. Like my previous
-> > submission for disabling compression for included FDT images, the
-> > bootloader found in RK3399 and MT8173 Chromebooks do not support
-> > applying overlays. Another case of this is U-boot shipped by developmen=
-t
-> > board vendors in binary form (without upstream) in an image or in
-> > SPI flash on the board that were built with OF_LIBFDT_OVERLAY=3Dn.
-> > These would fail to boot FIT images with DT overlays. One such
-> > example is my Hummingboard Pulse. In these cases the firmware is
-> > either not upgradable or very hard to upgrade.
-> >
-> > I believe there is value in supporting these cases. A common script
-> > shipped with the kernel source that can be shared by distros means
-> > the distro people don't have to reimplement this in their downstream
-> > repos or meta-packages. For ChromeOS this means reducing the amount
-> > of package code we have in shell script.
-> >
-> > [1] https://lore.kernel.org/linux-kbuild/20231207142723.GA3187877@googl=
-e.com/
-> > [2]
-> >
-> >  scripts/Makefile.lib |  1 +
-> >  scripts/make_fit.py  | 70 ++++++++++++++++++++++++++++++--------------
-> >  2 files changed, 49 insertions(+), 22 deletions(-)
-> >
-> > diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> > index 9f06f6aaf7fc..d78b5d38beaa 100644
-> > --- a/scripts/Makefile.lib
-> > +++ b/scripts/Makefile.lib
-> > @@ -522,6 +522,7 @@ quiet_cmd_fit =3D FIT     $@
-> >        cmd_fit =3D $(MAKE_FIT) -o $@ --arch $(UIMAGE_ARCH) --os linux \
-> >                 --name '$(UIMAGE_NAME)' \
-> >                 $(if $(findstring 1,$(KBUILD_VERBOSE)),-v) \
-> > +               $(if $(FIT_DECOMPOSE_DTBS),--decompose-dtbs) \
-> >                 --compress $(FIT_COMPRESSION) -k $< @$(word 2,$^)
-> >
-> >  # XZ
-> > diff --git a/scripts/make_fit.py b/scripts/make_fit.py
-> > index 263147df80a4..120f13e1323c 100755
-> > --- a/scripts/make_fit.py
-> > +++ b/scripts/make_fit.py
-> > @@ -22,6 +22,11 @@ the entire FIT.
-> >  Use -c to compress the data, using bzip2, gzip, lz4, lzma, lzo and
-> >  zstd algorithms.
-> >
-> > +Use -d to decompose "composite" DTBs into their base components and
-> > +deduplicate the resulting base DTBs and DTB overlays. This requires th=
-e
-> > +DTBs to be sourced from the kernel build directory, as the implementat=
-ion
-> > +looks at the .cmd files produced by the kernel build.
-> > +
-> >  The resulting FIT can be booted by bootloaders which support FIT, such
-> >  as U-Boot, Linuxboot, Tianocore, etc.
-> >
-> > @@ -64,6 +69,8 @@ def parse_args():
-> >            help=3D'Specifies the architecture')
-> >      parser.add_argument('-c', '--compress', type=3Dstr, default=3D'non=
-e',
-> >            help=3D'Specifies the compression')
-> > +    parser.add_argument('-d', '--decompose-dtbs', action=3D'store_true=
-',
-> > +          help=3D'Decompose composite DTBs into base DTB and overlays'=
-)
-> >      parser.add_argument('-E', '--external', action=3D'store_true',
-> >            help=3D'Convert the FIT to use external data')
-> >      parser.add_argument('-n', '--name', type=3Dstr, required=3DTrue,
-> > @@ -140,12 +147,12 @@ def finish_fit(fsw, entries):
-> >      fsw.end_node()
-> >      seq =3D 0
-> >      with fsw.add_node('configurations'):
-> > -        for model, compat in entries:
-> > +        for model, compat, files in entries:
-> >              seq +=3D 1
-> >              with fsw.add_node(f'conf-{seq}'):
-> >                  fsw.property('compatible', bytes(compat))
-> >                  fsw.property_string('description', model)
-> > -                fsw.property_string('fdt', f'fdt-{seq}')
-> > +                fsw.property('fdt', b''.join([b'fdt-%d\x00' % x for x =
-in files]))
-> >                  fsw.property_string('kernel', 'kernel')
-> >      fsw.end_node()
-> >
-> > @@ -193,21 +200,9 @@ def output_dtb(fsw, seq, fname, arch, compress):
-> >          fname (str): Filename containing the DTB
-> >          arch: FIT architecture, e.g. 'arm64'
-> >          compress (str): Compressed algorithm, e.g. 'gzip'
-> > -
-> > -    Returns:
-> > -        tuple:
-> > -            str: Model name
-> > -            bytes: Compatible stringlist
-> >      """
-> >      with fsw.add_node(f'fdt-{seq}'):
-> > -        # Get the compatible / model information
-> > -        with open(fname, 'rb') as inf:
-> > -            data =3D inf.read()
-> > -        fdt =3D libfdt.FdtRo(data)
-> > -        model =3D fdt.getprop(0, 'model').as_str()
-> > -        compat =3D fdt.getprop(0, 'compatible')
-> > -
-> > -        fsw.property_string('description', model)
-> > +        fsw.property_string('description', os.path.basename(fname))
-> >          fsw.property_string('type', 'flat_dt')
-> >          fsw.property_string('arch', arch)
-> >          fsw.property_string('compression', compress)
-> > @@ -215,7 +210,6 @@ def output_dtb(fsw, seq, fname, arch, compress):
-> >          with open(fname, 'rb') as inf:
-> >              compressed =3D compress_data(inf, compress)
-> >          fsw.property('data', compressed)
-> > -    return model, compat
-> >
-> >
-> >  def build_fit(args):
-> > @@ -235,6 +229,7 @@ def build_fit(args):
-> >      fsw =3D libfdt.FdtSw()
-> >      setup_fit(fsw, args.name)
-> >      entries =3D []
-> > +    fdts =3D collections.OrderedDict()
->
->
-> I am fine with this patch.
->
-> Just a nit.
->
-> Is there any reason why you used OrderedDict() instead of
-> the normal dictionary, "fdts =3D {}" ?
+Today "zapping only memslot leaf SPTEs" on moving/deleting a memslot is not
+done. Instead, KVM opts to invalidate all page tables and generate fresh
+new ones based on the new memslot layout (referred to as "zap all" for
+short). This "zap all" behavior is of low overhead for most use cases, and
+is adopted primarily due to a bug which caused VM instability when a VM is
+with Nvidia Geforce GPU assigned (see link in patch 1).
 
-I had wanted to use it as the main list of entries; using OrderedDict()
-preserves the order that the DTBs were given. That didn't pan out.
+However, the "zap all" behavior is not desired for certain specific
+scenarios. e.g.
+- It's not viable for TDX,
+  a) TDX requires root page of private page table remains unaltered
+     throughout the TD life cycle.
+  b) TDX mandates that leaf entries in private page table must be zapped
+     prior to non-leaf entries.
+  c) TDX requires re-accepting of private pages after page dropping.
+- It's not performant for scenarios involving frequent deletion and
+  re-adding of numerous small memslots.
 
-I'll replace it with the standard dictionary.
+This series therefore introduces the KVM_X86_QUIRK_SLOT_ZAP_ALL quirk,
+enabling users to control the behavior of memslot zapping when a memslot is
+moved/deleted.
+
+The quirk is turned on by default, leading to invalidation/zapping to all
+SPTEs when a memslot is moved/deleted.
+
+Users have the option to turn off the quirk. Doing so will limit the
+zapping to only leaf SPTEs within the range of memslot being moved/deleted.
+
+This series has been tested with
+- Normal VMs
+  w/ and w/o device assignment, and kvm selftests
+
+- TDX guests.
+  Memslot deletion typically does not occur without device assignment for a
+  TD. Therefore, it is tested with shared device assignment.
+
+Note: For TDX integration, the quirk is currently disabled via TDX code in
+      QEMU rather than being automatically disabled based on VM type in
+      KVM, which is not safe. A malfunctioning QEMU that fails to disable
+      the quirk could result in the shared EPT being invalidated while the
+      private EPT remains unaffected, as kvm_mmu_zap_all_fast() only
+      targets the shared EPT.      
+
+      However, current kvm->arch.disabled_quirks is entirely
+      user-controlled, and there is no mechanism for users to verify if a
+      quirk has been disabled by the kernel.
+      We are therefore wondering which below options are better for TDX:
+
+      a) Add a condition for TDX VM type in kvm_arch_flush_shadow_memslot()
+         besides the testing of kvm_check_has_quirk(). It is similar to
+         "all new VM types have the quirk disabled". e.g.
+
+         static inline bool kvm_memslot_flush_zap_all(struct kvm *kvm)                    
+         {                                                                                
+              return kvm->arch.vm_type != KVM_X86_TDX_VM &&                               
+                     kvm_check_has_quirk(kvm, KVM_X86_QUIRK_SLOT_ZAP_ALL);                
+         }
+         
+      b) Init the disabled_quirks based on VM type in kernel, extend
+         disabled_quirk querying/setting interface to enforce the quirk to
+         be disabled for TDX.
+
+Patch 1:   KVM changes.
+Patch 2-5: Selftests updates. Verify memslot move/deletion functionality
+           with the quirk enabled/disabled.
 
 
-ChenYu
+Yan Zhao (5):
+  KVM: x86/mmu: Introduce a quirk to control memslot zap behavior
+  KVM: selftests: Test slot move/delete with slot zap quirk
+    enabled/disabled
+  KVM: selftests: Allow slot modification stress test with quirk
+    disabled
+  KVM: selftests: Test memslot move in memslot_perf_test with quirk
+    disabled
+  KVM: selftests: Test private access to deleted memslot with quirk
+    disabled
+
+ Documentation/virt/kvm/api.rst                |  6 ++++
+ arch/x86/include/asm/kvm_host.h               |  3 +-
+ arch/x86/include/uapi/asm/kvm.h               |  1 +
+ arch/x86/kvm/mmu/mmu.c                        | 36 ++++++++++++++++++-
+ .../kvm/memslot_modification_stress_test.c    | 19 ++++++++--
+ .../testing/selftests/kvm/memslot_perf_test.c | 12 ++++++-
+ .../selftests/kvm/set_memory_region_test.c    | 29 ++++++++++-----
+ .../kvm/x86_64/private_mem_kvm_exits_test.c   | 11 ++++--
+ 8 files changed, 102 insertions(+), 15 deletions(-)
+
+base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
+-- 
+2.43.2
 
