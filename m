@@ -1,99 +1,204 @@
-Return-Path: <linux-kernel+bounces-213466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 178769075A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:49:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F41C9075B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE001F2244A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:49:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FD751C237E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81EF37E76D;
-	Thu, 13 Jun 2024 14:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FE9146A67;
+	Thu, 13 Jun 2024 14:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="N+i5Cizh"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="d/dpeof8"
+Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51971474AE;
-	Thu, 13 Jun 2024 14:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF52012C526
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 14:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718290133; cv=none; b=NMfYX0pCG6RFZMjl3xbp5eoCDOKxann2oSJRgGar5pY6Dw2yPRAgsmIzHL/2hItVRKZRs8cV1rKinDh6MxEOn9y+fi4kIpDGOdw8LiraKH5BFydJselPOtRm4YsA0H8KY50Xiq2r+fBiYzYfYAyon5NKGICn676tOwIMhBfZKw0=
+	t=1718290154; cv=none; b=onAj6CFjHAqpNhkN8k4c2mjGlJUQF9yfieWi0M6BD5vMVHYpEz0N/ePsL3phf7MU7X3KcsX7W2/IcYp/8JsXasO6lcRydFASFQo7xR2z83O0smAEa/fY3J8XMISVS9eqJ/Bmu9sI//q8KrFvxVhDisL5pqjMl31CPs8/zO6E6DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718290133; c=relaxed/simple;
-	bh=MA4hVdM8atN+j9fTv+dOnzF4lW0zwLF6ZQX3fFVdEoY=;
+	s=arc-20240116; t=1718290154; c=relaxed/simple;
+	bh=jl6jRSsRorbqeGrAfCD1Mg5hCP+HaCGsXUQF0b59Tvc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EEZoO2vgRPo0ac5m87WtsSXRnZvkt6Jm6iLTcSru8LXyXjlpGt4tD+KgWkR3xJkwOvJ70uZdquzKdg99zMuo84yU35DkCSb25j1jCXsd1eOSisYk9KeGk28+zuxxnSLqR+srCbLkhhbkHZf5jhwQ6/I+QOcp9wNexfCopbwQx5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=N+i5Cizh; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1718290122;
-	bh=MA4hVdM8atN+j9fTv+dOnzF4lW0zwLF6ZQX3fFVdEoY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N+i5CizhFa78NONukRepZGRBPa6iITSIJLCaE6M3M9auIqYe4ceXgiNuaoGCYd7lA
-	 vSoXizT3mJiSqwvdeHv3tIZWeyaBo6I89ycdTLdGNAqZ30jEZiHyBk1kOYQYPmzWNp
-	 8kj/dJY9kj+beGlmxYvIytCy3ogUjK2c9KvRR+pc=
-Date: Thu, 13 Jun 2024 16:48:41 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Lee Jones <lee@kernel.org>
-Cc: Dustin Howett <dustin@howett.net>, Pavel Machek <pavel@ucw.cz>, 
-	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
-	Tzung-Bi Shih <tzungbi@kernel.org>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v2 0/5] ChromeOS Embedded Controller LED driver
-Message-ID: <d0189349-8101-414c-bed7-94573f66b40d@t-8ch.de>
-References: <20240531-cros_ec-led-v2-0-6cc34408b40d@weissschuh.net>
- <CA+BfgNJf1Av7fRVUjpU3r6aRw6DWTHfkCuOYXP2ykhPzGTVzfw@mail.gmail.com>
- <264dd508-93c5-48d6-ac69-27458acd29c5@t-8ch.de>
- <20240613144137.GG2561462@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XMSMeFZn/BKLSKrYFvtSBNTYWWWnclpfg/0PUvqdQ8+sdSuAXVj2vqsxEmvXmUzpsrgXdRbOMkEqFN06bO8Jm170Z/EuuPoju2jAs7lGrKd8LXW2JNeuGgdN6bbfDNlKJdFhN7yKer4FOY4gErbE3C/Jktg0ulrQloEmqTEp/mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=d/dpeof8; arc=none smtp.client-ip=209.85.221.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-35f06861ae6so1071196f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 07:49:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1718290151; x=1718894951; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wShLhYnuISf+2hpf/eQPXGR1lsTej2ilkcqXvyes8eo=;
+        b=d/dpeof8td5XzvztpFG8HZFwLWzJDT89k4trnSjSsL9PIlfG3IrHB92DqsiZQA4MAi
+         aY1IUmb3dMSmYXvFiUt7czmTGlqaJrtf4D91mY53dIe/oeDboy5ZMFfDxC2qBLXrG1JC
+         1j4ob+xWTJBSzSXCYl8YOVgVHcm4OzZVGUqSwOmZ7kAiU7SyoIcLXPCFpWo8XaZd9grN
+         89Vii7lB23LcVFAaPEx0F+rK6EwUNCFsFZkTw7Z9BLRQdA3SLY6sw3v7i4ioPqIRf7Yv
+         RuJgAu+FQh/Pr6l/+9hvrLyf9XDAPXuId3LhMPxL59Ss2Szo2KFqVAiqa/7chqQOi5/z
+         oZZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718290151; x=1718894951;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wShLhYnuISf+2hpf/eQPXGR1lsTej2ilkcqXvyes8eo=;
+        b=bIJG7rQIB1WtwlfmBOw6xQMJoIhHHK3sktyn9LaeO0cTOOaiz6xrbcwE1eWaohuw6N
+         vxp2FWwLzTXPOjlGCfbCxOPWaphw+Ajeq8ky3WWmSDQ+9TqsJgP4jl/8k8s3wW3Rjsug
+         1BJqkmCZJzjhnOQajYSKkCt0XYqnmSSZSdrXZAm5jI+VWuzV1fQ+jchGq6GpP4XXIi96
+         V+AfRE9iD6Bo3+U7VcSy0QxQ/uqZa8iqNHpsUJSIh2q9j0rJbdIPMSbhSmzd2uv/TjUY
+         SDKLuZEe09cZPL/OrnloPNs3TUrNj+UKe412QfpCdiiS2Dr+63ZzwUSIw3kR7YkseZAe
+         KAIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMBWrnVf+OU2oah7lqHBSUxFRWm3R5hB6kGQ7QpyKG8IPblFvrdbyKcds2v01IqdvNOBGUrNSoHTAQO9tX0ZQkryD+105a4wZ1i9nx
+X-Gm-Message-State: AOJu0Yy3CZK/OGdIZe/lrR89HhU5WlVS6CzK6BU1OinYidyB+pG1uDhQ
+	kgoT1znWvJ7FSB7SdIBChPgH0Z6Wiu2bLmkLLjJPx7KI0J+6V+nbQX2Sy4HAsYQ=
+X-Google-Smtp-Source: AGHT+IG9qCPzOg3WirqPZDwbhAXKL6Yb6zrCLWQTcYobNNvr0Q7AYb3xE9mlM13c1KuhNPOrCXygng==
+X-Received: by 2002:adf:db47:0:b0:360:71df:b157 with SMTP id ffacd0b85a97d-36071dfb2f1mr1921045f8f.56.1718290151141;
+        Thu, 13 Jun 2024 07:49:11 -0700 (PDT)
+Received: from localhost ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3607509c8acsm1916907f8f.48.2024.06.13.07.49.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 07:49:10 -0700 (PDT)
+Date: Thu, 13 Jun 2024 16:49:07 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Denis Arefev <arefev@swemel.ru>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH v2] net: missing check virtio
+Message-ID: <ZmsG41ezsAfok_fs@nanopsycho.orion>
+References: <20240613095448.27118-1-arefev@swemel.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240613144137.GG2561462@google.com>
+In-Reply-To: <20240613095448.27118-1-arefev@swemel.ru>
 
-On 2024-06-13 15:41:37+0000, Lee Jones wrote:
-> On Mon, 03 Jun 2024, Thomas Weißschuh wrote:
+Thu, Jun 13, 2024 at 11:54:48AM CEST, arefev@swemel.ru wrote:
+>Two missing check in virtio_net_hdr_to_skb() allowed syzbot
+>to crash kernels again
+>
+>1. After the skb_segment function the buffer may become non-linear
+>(nr_frags != 0), but since the SKBTX_SHARED_FRAG flag is not set anywhere
+>the __skb_linearize function will not be executed, then the buffer will
+>remain non-linear. Then the condition (offset >= skb_headlen(skb))
+>becomes true, which causes WARN_ON_ONCE in skb_checksum_help.
+>
+>2. The struct sk_buff and struct virtio_net_hdr members must be
+>mathematically related.
+>(gso_size) must be greater than (needed) otherwise WARN_ON_ONCE.
+>(remainder) must be greater than (needed) otherwise WARN_ON_ONCE.
+>(remainder) may be 0 if division is without remainder.
+>
+>offset+2 (4191) > skb_headlen() (1116)
+>WARNING: CPU: 1 PID: 5084 at net/core/dev.c:3303 skb_checksum_help+0x5e2/0x740 net/core/dev.c:3303
+>Modules linked in:
+>CPU: 1 PID: 5084 Comm: syz-executor336 Not tainted 6.7.0-rc3-syzkaller-00014-gdf60cee26a2e #0
+>Hardware name: Google Compute Engine/Google Compute Engine, BIOS Google 11/10/2023
+>RIP: 0010:skb_checksum_help+0x5e2/0x740 net/core/dev.c:3303
+>Code: 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 52 01 00 00 44 89 e2 2b 53 74 4c 89 ee 48 c7 c7 40 57 e9 8b e8 af 8f dd f8 90 <0f> 0b 90 90 e9 87 fe ff ff e8 40 0f 6e f9 e9 4b fa ff ff 48 89 ef
+>RSP: 0018:ffffc90003a9f338 EFLAGS: 00010286
+>RAX: 0000000000000000 RBX: ffff888025125780 RCX: ffffffff814db209
+>RDX: ffff888015393b80 RSI: ffffffff814db216 RDI: 0000000000000001
+>RBP: ffff8880251257f4 R08: 0000000000000001 R09: 0000000000000000
+>R10: 0000000000000000 R11: 0000000000000001 R12: 000000000000045c
+>R13: 000000000000105f R14: ffff8880251257f0 R15: 000000000000105d
+>FS:  0000555555c24380(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+>CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>CR2: 000000002000f000 CR3: 0000000023151000 CR4: 00000000003506f0
+>DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>Call Trace:
+> <TASK>
+> ip_do_fragment+0xa1b/0x18b0 net/ipv4/ip_output.c:777
+> ip_fragment.constprop.0+0x161/0x230 net/ipv4/ip_output.c:584
+> ip_finish_output_gso net/ipv4/ip_output.c:286 [inline]
+> __ip_finish_output net/ipv4/ip_output.c:308 [inline]
+> __ip_finish_output+0x49c/0x650 net/ipv4/ip_output.c:295
+> ip_finish_output+0x31/0x310 net/ipv4/ip_output.c:323
+> NF_HOOK_COND include/linux/netfilter.h:303 [inline]
+> ip_output+0x13b/0x2a0 net/ipv4/ip_output.c:433
+> dst_output include/net/dst.h:451 [inline]
+> ip_local_out+0xaf/0x1a0 net/ipv4/ip_output.c:129
+> iptunnel_xmit+0x5b4/0x9b0 net/ipv4/ip_tunnel_core.c:82
+> ipip6_tunnel_xmit net/ipv6/sit.c:1034 [inline]
+> sit_tunnel_xmit+0xed2/0x28f0 net/ipv6/sit.c:1076
+> __netdev_start_xmit include/linux/netdevice.h:4940 [inline]
+> netdev_start_xmit include/linux/netdevice.h:4954 [inline]
+> xmit_one net/core/dev.c:3545 [inline]
+> dev_hard_start_xmit+0x13d/0x6d0 net/core/dev.c:3561
+> __dev_queue_xmit+0x7c1/0x3d60 net/core/dev.c:4346
+> dev_queue_xmit include/linux/netdevice.h:3134 [inline]
+> packet_xmit+0x257/0x380 net/packet/af_packet.c:276
+> packet_snd net/packet/af_packet.c:3087 [inline]
+> packet_sendmsg+0x24ca/0x5240 net/packet/af_packet.c:3119
+> sock_sendmsg_nosec net/socket.c:730 [inline]
+> __sock_sendmsg+0xd5/0x180 net/socket.c:745
+> __sys_sendto+0x255/0x340 net/socket.c:2190
+> __do_sys_sendto net/socket.c:2202 [inline]
+> __se_sys_sendto net/socket.c:2198 [inline]
+> __x64_sys_sendto+0xe0/0x1b0 net/socket.c:2198
+> do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+> do_syscall_64+0x40/0x110 arch/x86/entry/common.c:82
+> entry_SYSCALL_64_after_hwframe+0x63/0x6b
+>
+>Found by Linux Verification Center (linuxtesting.org) with Syzkaller
+>
+>Signed-off-by: Denis Arefev <arefev@swemel.ru>
+
+Could you please provide "Fixes" blaming the commit which itroduced the
+bug?
+
+
+>---
+> V1 -> V2: incorrect type in argument 2
+> include/linux/virtio_net.h | 11 +++++++++++
+> 1 file changed, 11 insertions(+)
+>
+>diff --git a/include/linux/virtio_net.h b/include/linux/virtio_net.h
+>index 4dfa9b69ca8d..d1d7825318c3 100644
+>--- a/include/linux/virtio_net.h
+>+++ b/include/linux/virtio_net.h
+>@@ -56,6 +56,7 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
+> 	unsigned int thlen = 0;
+> 	unsigned int p_off = 0;
+> 	unsigned int ip_proto;
+>+	u64 ret, remainder, gso_size;
 > 
-> > On 2024-06-02 18:30:06+0000, Dustin Howett wrote:
-> > > On Fri, May 31, 2024 at 11:33 AM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > > >
-> > > > Add a LED driver that supports the LED devices exposed by the
-> > > > ChromeOS Embedded Controller.
-> > > 
-> > > I've tested this out on the Framework Laptop 13, 11th gen intel core
-> > > and AMD Ryzen 7040 editions.
-> > > 
-> > > It works fairly well! I found a couple minor issues in day-to-day use:
-> > 
-> > Thanks!
-> > 
-> > > - Restoring the trigger to chromeos-auto does not always put the EC
-> > > back in control, e.g. the side lights no longer return to reporting
-> > > charge status.
-> > >   I believe this happens when you move from any trigger except "none"
-> > > to chromeos-auto, without first setting "none".
-> > 
-> > Thanks for the report, I'll investigate that.
+> 	if (hdr->gso_type != VIRTIO_NET_HDR_GSO_NONE) {
+> 		switch (hdr->gso_type & ~VIRTIO_NET_HDR_GSO_ECN) {
+>@@ -98,6 +99,16 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
+> 		u32 off = __virtio16_to_cpu(little_endian, hdr->csum_offset);
+> 		u32 needed = start + max_t(u32, thlen, off + sizeof(__sum16));
 > 
-> So am I reviewing this set or waiting for the next version?
-
-This specific bug is fixed by [0], which should be in your inbox.
-
-I just sent v3 of the series, with only two tiny changes.
-One more cosmetic and one for the coming revert to avoid the LED
-hardware trigger deadlock.
-
-Thanks for the review!
-
-[0] https://lore.kernel.org/lkml/20240603-led-trigger-flush-v1-1-c904c6e2fb34@weissschuh.net/
+>+		if (hdr->gso_size) {
+>+			gso_size = __virtio16_to_cpu(little_endian, hdr->gso_size);
+>+			ret = div64_u64_rem(skb->len, gso_size, &remainder);
+>+			if (!(ret && (hdr->gso_size > needed) &&
+>+						((remainder > needed) || (remainder == 0)))) {
+>+				return -EINVAL;
+>+			}
+>+			skb_shinfo(skb)->tx_flags |= SKBFL_SHARED_FRAG;
+>+		}
+>+
+> 		if (!pskb_may_pull(skb, needed))
+> 			return -EINVAL;
+> 
+>-- 
+>2.25.1
+>
+>
 
