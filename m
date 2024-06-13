@@ -1,160 +1,214 @@
-Return-Path: <linux-kernel+bounces-214078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B90907F26
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:00:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14C8A907F27
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C972B23E4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:00:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18A1C1C22837
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E4D14B090;
-	Thu, 13 Jun 2024 23:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3D914B090;
+	Thu, 13 Jun 2024 23:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HiNqqARd"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BU16xhib"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F45D757E0
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 23:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019B3757E0
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 23:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718319636; cv=none; b=P7NBmrUfeDD0xppFQnuGff0BlNqDdxp1V1JcBNQeoJ5Syj2oGKnglkD+gjDzoF43ZLRteELjzWdETzKZjwcpSnUSxBUaUb8wSkBTK/PQrdDgi2Q7TaN/myYVcJsIhhTDa/SAlxfPhhnk9XaSJe/sFbsWlXLL1f7H0SIff8LJ1Hs=
+	t=1718319686; cv=none; b=FQ3iKSR19aSzbjTwbOU7OVQcvAB77ZoLqZLqNCRpAFzVU9Von5SRtxrESon0eEetUhxOusdv5P+ZoL/QbulBdmNKyhyExmHQiEisDuIJyDcFWWFU2IYIbpQL9Dsq+xd/b4T9EAe7bq+TOHoIaRZaUIH4+xyMdTyuTahwWcrqOzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718319636; c=relaxed/simple;
-	bh=in7bSM65Hqq2fx5cz/q8ttOiOGDO4K8TaJEiNCokU7s=;
+	s=arc-20240116; t=1718319686; c=relaxed/simple;
+	bh=7qRzL3/rFlFAHnkTccB47kfalUYR0QQRNpd2AEffK4M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HXGGjs78+6M05WOlANzNpiriwrpFZF5VwiA8nVP23BK6kX9NgpDN7mLGW3LlBY39Nf1EVayz+EO8few0wQTeCgskCJZeBjRPiY302trwfzSOlL9bp2om6YWb4KvgW0NfmQHZrdttlHcY9pM1Ws3ZUlyGP4hslSkkTDBIlkHw0Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HiNqqARd; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6266ffdba8so185195966b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:00:33 -0700 (PDT)
+	 To:Cc:Content-Type; b=N06G2mWDkiaHfwTmTDAYKCFbFXJqzpX7Mv9TjbcP+yRQFJpz/u3cKONpB9SOKvyyzKczF2VU9aVYYBMy/AKRCPF/MPeEOuOR5dpjxgmTfW+oZyBGe9c8Rwb8kRr2x6qyOoIKQw+a9rGnTulpCFr6vu29YxRtwjR6vYSEmAhI8kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BU16xhib; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-35f22d3abf1so1470143f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:01:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718319632; x=1718924432; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718319683; x=1718924483; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=in7bSM65Hqq2fx5cz/q8ttOiOGDO4K8TaJEiNCokU7s=;
-        b=HiNqqARdRjOl03pwgfkA35UmohkIBAKAVEHatp5Um8zQN2T5DKypzvRM2qoqorfgAU
-         eFMDdRWu9IHuq8xsUEod6HUet7IiYRnjz7EBtFGVxlVYWSHkQ9hl4NPg0rIOyixJ0iy8
-         1+81e6AGx7KR03om1kJUynAVwRQfG/5/yXTqXx/m/gPbmdFug4Wj0ACo0Mo/f+8gphP0
-         NRwwinaf76gFctZw7wjoJ3SVNyvWLqb97tyhHK4TIwTAezyw7eJW9fb3LZx57OuonrwL
-         nqL7tERN5byxTvaJFGtzePRSTqY3s5T4VebqDs6RiYuKrio1K/WSrLJb//OCamBpC0Nt
-         hswA==
+        bh=UsgR3vbidd/cU/+kmzVj8gsTc1SpNyhRUL8VQVP8ayc=;
+        b=BU16xhibzDx0PThP9HNY6Xcv/5Jotlg7avttzxa0Gud9o248hOt8H9nTqSA5oM2i84
+         0rOoTz5bHCTdB+E7aXxTjtef4tggZJm727VoX7Kf2BX048mlJZhEyTY34IpOKNkOLqw3
+         /CZZUFmy7qP3ml9ycMSOVuHQsndWt5SZ4m6HA1cKGvMZao/fmwc6kbISSkatxrI7KhQk
+         1Z6hUPBKNT+7XIEsiSoqijNrN9FrJPOyh8ZjLGiLi9/JUULOn8g3OIpzk+EFvobK3ZpV
+         0tj7XiK/kIVmBNXLDDyRw8czeewydr35yY+2Om50CRAP3zS/PA1hAmvbmputLqd2qn2A
+         CkEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718319632; x=1718924432;
+        d=1e100.net; s=20230601; t=1718319683; x=1718924483;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=in7bSM65Hqq2fx5cz/q8ttOiOGDO4K8TaJEiNCokU7s=;
-        b=PzPWUupzr8hF2UDYWNeisz9esxThVSvZ1bDwRt5oDPqYvhXdJ14RlyRpNCOFGGy2P7
-         GgSQ+3G/UgDUcP2uwhI8E9iUK/oRAZ/DzcUwZxyb6bDkX84v9JV+I1mMbOyd6wNnomt4
-         2GlFIMYSc+EfhHuopyR9v7IQ2s1aoB9qCtbsRz+rFyLXev/O0vKGc/dArDYNXCBZE5Yk
-         shZiECMlzb3PRzUDvoQoVHQR8qfGjuGPoLxkxRxOyjN0LMa0WtQpvN3UWTn1FZTiOSHE
-         MO1/pVUFPmoOB94tDmGfdpoc6LVl2ai256+BqRIWZOMNn9nhCHg59x6tPhN1Bo2kVHZ+
-         n36Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWs4RjVJSo1Rc+KqCVOc/7KwcK8043Sos+otPutFxJf9SPqMONt260Jd0BuAXvNtvOHSKReZug3kfiFr+Bl6AMEyAtbhJK0NorUdVe6
-X-Gm-Message-State: AOJu0YwhhCfnuYwa/c4ZXEcwNis6DDd7Z+kUVZpMc731QpKG0IuHUGjV
-	5q6A3kcD5LShOZgpGer7dTrGVtzLEr5u6YrxjU8BfksEJbj8RNgZrt0apmgPgugu9AFmjVFBamB
-	1uZKpoCmtvgrWQbTAceS7EpXAcLIRCdE/9lxr
-X-Google-Smtp-Source: AGHT+IHv7YL+HgKxexUNIHykjwDr8ejWioEP6isoX94I1D3v366vVcM8A1dCYbCSKG9kzplS+yckur5HwAksdvVaPoo=
-X-Received: by 2002:a17:906:d8b2:b0:a6f:11f8:c21e with SMTP id
- a640c23a62f3a-a6f60dc2017mr69033566b.58.1718319632180; Thu, 13 Jun 2024
- 16:00:32 -0700 (PDT)
+        bh=UsgR3vbidd/cU/+kmzVj8gsTc1SpNyhRUL8VQVP8ayc=;
+        b=EEKM/3iTYeZNKRSG7TiPZ2spX/klpTAWGwUyn7CCLuEC7YE4RwGFyOeff3KNrRh0s0
+         bwhbs8MIQhiFlGP7ZySCHSLhr1EoiaXEakDQijJM1Au2CP+nkRfDsQKgdk/DI6k1Dtxf
+         7hfFLf+Zwt8EEIQQBIMEb3lYI75UMR02Qc6jpuIFm+W0ltMwgD87Whinomdu+G0YszVn
+         B2Sdy9iFzi3+ydi8OZF7ifQ1RnbW4PpB6QsFmot55Y8UlNNFhAhe0nvwkzHS/I3mTAPy
+         9DNqQstMq2m3Ws52MXinSpacPaIKYV+PWIu1UfzYtKX8APvedfI4N6G6TLSG6go6yFhk
+         74zw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmShe5HC/iht3RdDBcIiH+ZvviuJT4l/IGn+G2HbuAIdW/Cq265hcfCbnnN6u8P3B1fOjK985X4ofcswVC2RHWlYukTuytQ1mOP/NS
+X-Gm-Message-State: AOJu0Yw/prznlTnsyoSnAYN3oHzo9gRlwZP8xRKiawSBulDapRuz9lQQ
+	0Hg9/aUmfcsxn7V3unXmNiwyfIP2Nv7SFk+C8V+ASzYjzwMj9KFrO1ljPOI4rLZXI0XZ9jHrEnR
+	6V4anMDg3UK6mvOuBaDhQRbWE1jw=
+X-Google-Smtp-Source: AGHT+IErZ5mciFEMUbeoJjX/bfOy8YtG8MNSE8yqTLj4b1zZjgUuCWWM0PivCg0lABSvKxOLjiqJ68dje/TpjTAht/4=
+X-Received: by 2002:a05:6000:1a86:b0:35f:3189:ddd2 with SMTP id
+ ffacd0b85a97d-3607a7687f8mr1097172f8f.35.1718319683296; Thu, 13 Jun 2024
+ 16:01:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610121820.328876-1-usamaarif642@gmail.com>
- <CAJD7tkZdx7xJiDcvayH1aRW9Q6GQaZnF58UhspEOe=GQMBqFiQ@mail.gmail.com> <etjzs45r7derztzgrb5b4tub4c72vobo6esc3ndksyke6kpiov@qj3ar7xwh6ee>
-In-Reply-To: <etjzs45r7derztzgrb5b4tub4c72vobo6esc3ndksyke6kpiov@qj3ar7xwh6ee>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 13 Jun 2024 15:59:53 -0700
-Message-ID: <CAJD7tkYCr1cUf7jeUPiXQk+bQBzYCB-yHTm-8Ns9SJJB5QgCpQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] mm: store zero pages to be swapped out in a bitmap
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org, hannes@cmpxchg.org, 
-	david@redhat.com, ying.huang@intel.com, hughd@google.com, willy@infradead.org, 
-	nphamcs@gmail.com, chengming.zhou@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com, 
-	Minchan Kim <minchan@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>
+References: <cover.1718092070.git.dvyukov@google.com> <7662127c97e29da1a748ad1c1539dd7b65b737b2.1718092070.git.dvyukov@google.com>
+In-Reply-To: <7662127c97e29da1a748ad1c1539dd7b65b737b2.1718092070.git.dvyukov@google.com>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Fri, 14 Jun 2024 01:01:12 +0200
+Message-ID: <CA+fCnZfddD4T9xGmePPHiPZaGbiK10PO-NT98n3Q7-2n-Pjccw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] kcov: add interrupt handling self test
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller@googlegroups.com, elver@google.com, glider@google.com, 
+	nogikh@google.com, tarasmadan@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 3:41=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
+On Tue, Jun 11, 2024 at 9:50=E2=80=AFAM 'Dmitry Vyukov' via syzkaller
+<syzkaller@googlegroups.com> wrote:
 >
-> On Thu, Jun 13, 2024 at 02:50:31PM GMT, Yosry Ahmed wrote:
-> > On Mon, Jun 10, 2024 at 5:18=E2=80=AFAM Usama Arif <usamaarif642@gmail.=
-com> wrote:
-> > >
-> > > Going back to the v1 implementation of the patchseries. The main reas=
-on
-> > > is that a correct version of v2 implementation requires another rmap
-> > > walk in shrink_folio_list to change the ptes from swap entry to zero =
-pages to
-> > > work (i.e. more CPU used) [1], is more complex to implement compared =
-to v1
-> > > and is harder to verify correctness compared to v1, where everything =
-is
-> > > handled by swap.
-> > >
-> > > ---
-> > > As shown in the patchseries that introduced the zswap same-filled
-> > > optimization [2], 10-20% of the pages stored in zswap are same-filled=
-.
-> > > This is also observed across Meta's server fleet.
-> > > By using VM counters in swap_writepage (not included in this
-> > > patchseries) it was found that less than 1% of the same-filled
-> > > pages to be swapped out are non-zero pages.
-> > >
-> > > For conventional swap setup (without zswap), rather than reading/writ=
-ing
-> > > these pages to flash resulting in increased I/O and flash wear, a bit=
-map
-> > > can be used to mark these pages as zero at write time, and the pages =
-can
-> > > be filled at read time if the bit corresponding to the page is set.
-> > >
-> > > When using zswap with swap, this also means that a zswap_entry does n=
-ot
-> > > need to be allocated for zero filled pages resulting in memory saving=
-s
-> > > which would offset the memory used for the bitmap.
-> > >
-> > > A similar attempt was made earlier in [3] where zswap would only trac=
-k
-> > > zero-filled pages instead of same-filled.
-> > > This patchseries adds zero-filled pages optimization to swap
-> > > (hence it can be used even if zswap is disabled) and removes the
-> > > same-filled code from zswap (as only 1% of the same-filled pages are
-> > > non-zero), simplifying code.
-> >
-> > There is also code to handle same-filled pages in zram, should we
-> > remove this as well? It is worth noting that the handling in zram was
-> > initially for zero-filled pages only, but it was extended to cover
-> > same-filled pages as well by commit 8e19d540d107 ("zram: extend zero
-> > pages to same element pages"). Apparently in a test on Android, about
-> > 2.5% of the swapped out pages were non-zero same-filled pages.
-> >
-> > However, the leap from handling zero-filled pages to handling all
-> > same-filled pages in zram wasn't a stretch. But now that zero-filled
-> > pages handling in zram is redundant with this series, I wonder if it's
-> > still worth keeping the same-filled pages handling.
+> Add a boot self test that can catch sprious coverage from interrupts.
+> The coverage callback filters out interrupt code, but only after the
+> handler updates preempt count. Some code periodically leaks out
+> of that section and leads to spurious coverage.
+> Add a best-effort (but simple) test that is likely to catch such bugs.
+> If the test is enabled on CI systems that use KCOV, they should catch
+> any issues fast.
 >
-> Please correct me if I am wrong but zram same-filled page handling is
-> not just limited to swap-on-zram use-case and any zram as block device
-> user can benefit from it. Also zram might not see any simplification
-> similar to zswap in this patch series. I would say motivation behind
-> zswap changes seems quite different from possible zram changes. I would
-> recommed to evaluate these cases independently.
+> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+> Reviewed-by: Alexander Potapenko <glider@google.com>
+> Cc: x86@kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: syzkaller@googlegroups.com
+>
+> ---
+>
+> Changed since v1:
+>  - renamed KCOV_TEST to KCOV_SELFTEST
+>  - improved the config description
+>  - loop for exactly 300ms in the test
+>
+> In my local testing w/o the previous fix,
+> it immidiatly produced the following splat:
+>
+> kcov: running selftest
+> BUG: TASK stack guard page was hit at ffffc90000147ff8
+> Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN PTI
+> ...
+>  kvm_set_cpu_l1tf_flush_l1d+0x5/0x20
+>  sysvec_call_function+0x15/0xb0
+>  asm_sysvec_call_function+0x1a/0x20
+>  kcov_init+0xe4/0x130
+>  do_one_initcall+0xbc/0x470
+>  kernel_init_freeable+0x4fc/0x930
+>  kernel_init+0x1c/0x2b0
+> ---
+>  kernel/kcov.c     | 31 +++++++++++++++++++++++++++++++
+>  lib/Kconfig.debug |  8 ++++++++
+>  2 files changed, 39 insertions(+)
+>
+> diff --git a/kernel/kcov.c b/kernel/kcov.c
+> index c3124f6d5536..72a5bf55107f 100644
+> --- a/kernel/kcov.c
+> +++ b/kernel/kcov.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/fs.h>
+>  #include <linux/hashtable.h>
+>  #include <linux/init.h>
+> +#include <linux/jiffies.h>
+>  #include <linux/kmsan-checks.h>
+>  #include <linux/mm.h>
+>  #include <linux/preempt.h>
+> @@ -1057,6 +1058,32 @@ u64 kcov_common_handle(void)
+>  }
+>  EXPORT_SYMBOL(kcov_common_handle);
+>
+> +#ifdef CONFIG_KCOV_SELFTEST
+> +static void __init selftest(void)
+> +{
+> +       unsigned long start;
+> +
+> +       pr_err("running self test\n");
+> +       /*
+> +        * Test that interrupts don't produce spurious coverage.
+> +        * The coverage callback filters out interrupt code, but only
+> +        * after the handler updates preempt count. Some code periodicall=
+y
+> +        * leaks out of that section and leads to spurious coverage.
+> +        * It's hard to call the actual interrupt handler directly,
+> +        * so we just loop here for a bit waiting for a timer interrupt.
+> +        * We set kcov_mode to enable tracing, but don't setup the area,
+> +        * so any attempt to trace will crash. Note: we must not call any
+> +        * potentially traced functions in this region.
+> +        */
+> +       start =3D jiffies;
+> +       current->kcov_mode =3D KCOV_MODE_TRACE_PC;
+> +       while ((jiffies - start) * MSEC_PER_SEC / HZ < 300)
+> +               ;
+> +       current->kcov_mode =3D 0;
+> +       pr_err("done running self test\n");
+> +}
+> +#endif
+> +
+>  static int __init kcov_init(void)
+>  {
+>         int cpu;
+> @@ -1076,6 +1103,10 @@ static int __init kcov_init(void)
+>          */
+>         debugfs_create_file_unsafe("kcov", 0600, NULL, NULL, &kcov_fops);
+>
+> +#ifdef CONFIG_KCOV_SELFTEST
+> +       selftest();
+> +#endif
+> +
+>         return 0;
+>  }
+>
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 59b6765d86b8..695a437a52d9 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -2171,6 +2171,14 @@ config KCOV_IRQ_AREA_SIZE
+>           soft interrupts. This specifies the size of those areas in the
+>           number of unsigned long words.
+>
+> +config KCOV_SELFTEST
+> +       bool "Perform short selftests on boot"
+> +       depends on KCOV
+> +       help
+> +         Run short KCOV coverage collection selftests on boot.
+> +         On test failure, causes the kernel to panic. Recommended to be
 
-Uh yes. I keep forgetting that zram is used for other use cases than
-swap. Please dismiss my comments then (unless it's uncommon to have
-zero-filled / same-filled pages in other use cases).
+Nit: "causes the kernel to panic" =3D> "causes a kernel panic" or "panic
+the kernel"
+
+> +         enabled, ensuring critical functionality works as intended.
+> +
+>  menuconfig RUNTIME_TESTING_MENU
+>         bool "Runtime Testing"
+>         default y
+> --
+> 2.45.2.505.gda0bf45e8d-goog
+
+Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
 
