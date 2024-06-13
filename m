@@ -1,122 +1,248 @@
-Return-Path: <linux-kernel+bounces-214018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A7E5907E03
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:19:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CECBF907E06
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C6A61C221BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:19:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C254C1C22549
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E858713E03E;
-	Thu, 13 Jun 2024 21:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC1D143C53;
+	Thu, 13 Jun 2024 21:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ep933FWh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HLhHhgo7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18035F876;
-	Thu, 13 Jun 2024 21:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D3113B7BD;
+	Thu, 13 Jun 2024 21:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718313573; cv=none; b=uWHBhYFIM8aqGIt6zCNhWVvVC6h6Fmfm+KKzI1rnlVYSfIc6hYAGiOJjjKxuKOaXSHDJUfOYcd44DMCBXy5bCREPPJI9VFbM3r9rDmNz6ISuowSzWa53jSmiBZyYidCl10yEmBhxbYeF/38dihbc4iUBWCwj1l3gtZSFMZs61Wc=
+	t=1718313588; cv=none; b=TJgKq33eFA6aRX/1TNC9OnuWU+Q8dGddUMCHipJq63Mh0r1UGsfDwjz8IiLLvyf57ClryPys7A0pAAjLRrPBKaDBUFkK/Nb/dIqfLUfEIt7mIvU9x/WO+XNRRYXAZdlN6IE+YKaCE50ePFuw6jwMF33RvAnh1Edk3tmXipLREXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718313573; c=relaxed/simple;
-	bh=1SjFag+zblxVHVX2U4wOAQCkKSe/t8YFaC7nNewXyj8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=A7e5kInD+AjH1U2isEUWbKASCBa4yA/3Cg9MclHYBs+MQR5sj7hN7VYZSimNJa7DMX9T0v+y06jzOUwQ4dvT/4zXlAwwTKdipVKmHlE2ndZ4cuBzhSE7B+5begTo+Ch/NOsmd4XTGNQ7XWMPLKT9Dy3Ck+th3Sn2gdyzAqc4KpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ep933FWh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DJGNgJ010871;
-	Thu, 13 Jun 2024 21:19:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=MK/AxgMbP+eMIJlBexs0+I
-	4jPh8964rdSbmmx5rrIpk=; b=ep933FWhfRl/K+6mQ6jfOPHftW9edK/ulwbNxr
-	+/Bmy+iMkD9yZAAvTxzWLrZ9TCaITNuwRg2i7YkNZ2HDCKE5LmfsnhXZ2tyPTypk
-	kmG7DU8al9jwOHQYA+1EgQJjy+3mDSBitQ9yEZR7XalRlVLC/t+E2+KV4uI/XNaI
-	8wk+sFQZVigIaFLX4IK5gM7jAFbwu0cyWmImWpEamsiJTw21N8EkcicuzNWvOlFy
-	dL1NBYdorxPDOkxAL04GQfXQ42K35UyPfe6EVC+tb4bJ5qwbM/3r3S+RExyoqVm7
-	OnQLApdj89XpmNTg1z78cduAw3++93ohIm3ADPBj5x1cNKvw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yr6q3gax3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 21:19:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45DLJOom027563
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 21:19:24 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
- 2024 14:19:24 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 13 Jun 2024 14:18:48 -0700
-Subject: [PATCH] firmware: meson_sm: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1718313588; c=relaxed/simple;
+	bh=TzIfeQElLeC1iCsomI6qo1dQv7VLHdFCJPC7CXZC8H0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rUh5FofDDhCHttRFPpmjrCjdhhND/B1Lj5JzRTLVdQdQLjllWSq06iuCR/t3bHXuz09OgsEYQLNwfNBatvvoyT1C2e0brmgMYLjyU08ZzsnHac6GVzgMqGI+qoHRz3RJc94JiC8ioP7DSQoPyzZ0wCrJYeJGy+OBqUS4YadQRKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HLhHhgo7; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718313586; x=1749849586;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=TzIfeQElLeC1iCsomI6qo1dQv7VLHdFCJPC7CXZC8H0=;
+  b=HLhHhgo7tdZ5QkZRuM1RqxpZgaRZWLCAojmYzRbmc9x825AQQ7oc7Ast
+   P/w1Zif25TslR2172IYeZoXEHjpGqASBoNHA4EQ/Bwl4aWKPlcbJrq6rA
+   17P2ZwpPorlnDuqPgCeANHGkyiUD6jytyX+w7nkhIMGGmhXbM69oqkM9n
+   Yrj866DpNSaLPr33W6i8jmQyCvgE0p7V7pyGEGQ4N5XJbu3koOpcMy/Mm
+   xd6CshEYEzDoLv75E26j/OimQ5SbmGUhLAqI6Kpr4zjs6+kqrtDoPpoNX
+   NovX6TJwpnCwhIjdGC7FtiCYe7H6Wbtyvj/APpTpKZbEJcLLohFNJa1k6
+   w==;
+X-CSE-ConnectionGUID: oZ7eAmQBQhOWyT7DY45d7w==
+X-CSE-MsgGUID: GPLqgeCgS5CPFjV1k6zx/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="18958381"
+X-IronPort-AV: E=Sophos;i="6.08,236,1712646000"; 
+   d="scan'208";a="18958381"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 14:19:45 -0700
+X-CSE-ConnectionGUID: hHqzUJMmSaqHzTm8Qxa8Zw==
+X-CSE-MsgGUID: R6xbkzjvStmUisn2kMKNbg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,236,1712646000"; 
+   d="scan'208";a="40408987"
+Received: from patelni-desk.amr.corp.intel.com (HELO localhost) ([10.2.132.135])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 14:19:45 -0700
+Date: Thu, 13 Jun 2024 14:19:43 -0700
+From: Nirmal Patel <nirmal.patel@linux.intel.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+ <kw@linux.com>, Rob Herring <robh@kernel.org>, Bjorn Helgaas
+ <bhelgaas@google.com>, Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Will Deacon <will@kernel.org>, Joyce Ooi
+ <joyce.ooi@intel.com>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Marc
+ Zyngier <maz@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, Jianjun Wang
+ <jianjun.wang@mediatek.com>, Sergio Paracuellos
+ <sergio.paracuellos@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jonathan Derrick <jonathan.derrick@linux.dev>, <linux-pci@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-mediatek@lists.infradead.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] PCI: controller: add missing MODULE_DESCRIPTION()
+ macros
+Message-ID: <20240613141943.00006cf5@linux.intel.com>
+In-Reply-To: <20240610-md-drivers-pci-controller-v1-1-b998c242df55@quicinc.com>
+References: <20240610-md-drivers-pci-controller-v1-1-b998c242df55@quicinc.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240613-md-arm64-drivers-firmware-meson-v1-1-28e4138a8597@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIADdia2YC/x3NQQ6CQAxG4auQrm0CIyHBqxgXhfmRJs5gWkUSw
- t0dXX6b93ZymMLpUu1kWNV1yQXNqaJxlnwHayymUIe27pozp8hiqWs5mq4w50ktfcTACb5kDiN
- CK730ET2VytMw6fY/XG/Fgzh4MMnj/Os+NL83TuIvGB3HFy3Xr3qQAAAA
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman
-	<khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        "Martin
- Blumenstingl" <martin.blumenstingl@googlemail.com>
-CC: <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Cdmlw0QgDzQIQJmTYdZi4gfsRnr1XSk0
-X-Proofpoint-ORIG-GUID: Cdmlw0QgDzQIQJmTYdZi4gfsRnr1XSk0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_13,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 impostorscore=0 bulkscore=0 phishscore=0 suspectscore=0
- malwarescore=0 mlxlogscore=999 mlxscore=0 lowpriorityscore=0 clxscore=1015
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130153
 
-With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/meson/meson_sm.o
+On Mon, 10 Jun 2024 18:04:34 -0700
+Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> When ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in
+> drivers/pci/controller/dwc/pci-exynos.o WARNING: modpost: missing
+> MODULE_DESCRIPTION() in drivers/pci/controller/pci-host-generic.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in
+> drivers/pci/controller/pcie-altera.o WARNING: modpost: missing
+> MODULE_DESCRIPTION() in drivers/pci/controller/pcie-altera-msi.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in
+> drivers/pci/controller/pcie-mediatek.o WARNING: modpost: missing
+> MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mediatek-gen3.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in
+> drivers/pci/controller/vmd.o WARNING: modpost: missing
+> MODULE_DESCRIPTION() in drivers/pci/controller/pcie-apple.o WARNING:
+> modpost: missing MODULE_DESCRIPTION() in
+> drivers/pci/controller/pcie-mt7621.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> Corrections to these descriptions are welcomed. I'm not an expert in
+> this code so in most cases I've taken these descriptions directly from
+> code comments, Kconfig descriptions, or git logs.  History has shown
+> that in some cases these are originally wrong due to cut-n-paste
+> errors, and in other cases the drivers have evolved such that the
+> original information is no longer accurate.
+> 
+> Also let me know if any individual changes need to be split into a
+> separate patch to go through a separate maintainer tree.
+> ---
+>  drivers/pci/controller/dwc/pci-exynos.c     | 1 +
+>  drivers/pci/controller/pci-host-common.c    | 1 +
+>  drivers/pci/controller/pci-host-generic.c   | 1 +
+>  drivers/pci/controller/pcie-altera-msi.c    | 1 +
+>  drivers/pci/controller/pcie-altera.c        | 1 +
+>  drivers/pci/controller/pcie-apple.c         | 1 +
+>  drivers/pci/controller/pcie-mediatek-gen3.c | 1 +
+>  drivers/pci/controller/pcie-mediatek.c      | 1 +
+>  drivers/pci/controller/pcie-mt7621.c        | 1 +
+>  drivers/pci/controller/vmd.c                | 1 +
+>  10 files changed, 10 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-exynos.c
+> b/drivers/pci/controller/dwc/pci-exynos.c index
+> a33fa98a252e..79d83fe85d3b 100644 ---
+> a/drivers/pci/controller/dwc/pci-exynos.c +++
+> b/drivers/pci/controller/dwc/pci-exynos.c @@ -437,5 +437,6 @@ static
+> struct platform_driver exynos_pcie_driver = { },
+>  };
+>  module_platform_driver(exynos_pcie_driver);
+> +MODULE_DESCRIPTION("PCIe host controller driver for Samsung Exynos
+> SoCs"); MODULE_LICENSE("GPL v2");
+>  MODULE_DEVICE_TABLE(of, exynos_pcie_of_match);
+> diff --git a/drivers/pci/controller/pci-host-common.c
+> b/drivers/pci/controller/pci-host-common.c index
+> 45b71806182d..60f5e328314e 100644 ---
+> a/drivers/pci/controller/pci-host-common.c +++
+> b/drivers/pci/controller/pci-host-common.c @@ -96,4 +96,5 @@ void
+> pci_host_common_remove(struct platform_device *pdev) }
+>  EXPORT_SYMBOL_GPL(pci_host_common_remove);
+>  
+> +MODULE_DESCRIPTION("Generic PCI host driver common code");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/pci/controller/pci-host-generic.c
+> b/drivers/pci/controller/pci-host-generic.c index
+> 41cb6a057f6e..cb911863a3cb 100644 ---
+> a/drivers/pci/controller/pci-host-generic.c +++
+> b/drivers/pci/controller/pci-host-generic.c @@ -86,4 +86,5 @@ static
+> struct platform_driver gen_pci_driver = { };
+>  module_platform_driver(gen_pci_driver);
+>  
+> +MODULE_DESCRIPTION("Simple, generic PCI host controller driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/pci/controller/pcie-altera-msi.c
+> b/drivers/pci/controller/pcie-altera-msi.c index
+> 6ad5427490b5..25ad1717f1d8 100644 ---
+> a/drivers/pci/controller/pcie-altera-msi.c +++
+> b/drivers/pci/controller/pcie-altera-msi.c @@ -290,4 +290,5 @@ static
+> void __exit altera_msi_exit(void) subsys_initcall(altera_msi_init);
+>  MODULE_DEVICE_TABLE(of, altera_msi_of_match);
+>  module_exit(altera_msi_exit);
+> +MODULE_DESCRIPTION("Altera PCIe MSI support");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/pci/controller/pcie-altera.c
+> b/drivers/pci/controller/pcie-altera.c index
+> a9536dc4bf96..ef73baefaeb9 100644 ---
+> a/drivers/pci/controller/pcie-altera.c +++
+> b/drivers/pci/controller/pcie-altera.c @@ -826,4 +826,5 @@ static
+> struct platform_driver altera_pcie_driver = { 
+>  MODULE_DEVICE_TABLE(of, altera_pcie_of_match);
+>  module_platform_driver(altera_pcie_driver);
+> +MODULE_DESCRIPTION("Altera PCIe host controller driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/pci/controller/pcie-apple.c
+> b/drivers/pci/controller/pcie-apple.c index
+> f7a248393a8f..5850bc84d58d 100644 ---
+> a/drivers/pci/controller/pcie-apple.c +++
+> b/drivers/pci/controller/pcie-apple.c @@ -839,4 +839,5 @@ static
+> struct platform_driver apple_pcie_driver = { };
+>  module_platform_driver(apple_pcie_driver);
+>  
+> +MODULE_DESCRIPTION("PCIe host bridge driver for Apple
+> system-on-chips"); MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c
+> b/drivers/pci/controller/pcie-mediatek-gen3.c index
+> 975b3024fb08..b7e8e24f6a40 100644 ---
+> a/drivers/pci/controller/pcie-mediatek-gen3.c +++
+> b/drivers/pci/controller/pcie-mediatek-gen3.c @@ -1091,4 +1091,5 @@
+> static struct platform_driver mtk_pcie_driver = { };
+>  
+>  module_platform_driver(mtk_pcie_driver);
+> +MODULE_DESCRIPTION("MediaTek Gen3 PCIe host controller driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/pci/controller/pcie-mediatek.c
+> b/drivers/pci/controller/pcie-mediatek.c index
+> 48372013f26d..7fc0d7709b7f 100644 ---
+> a/drivers/pci/controller/pcie-mediatek.c +++
+> b/drivers/pci/controller/pcie-mediatek.c @@ -1252,4 +1252,5 @@ static
+> struct platform_driver mtk_pcie_driver = { },
+>  };
+>  module_platform_driver(mtk_pcie_driver);
+> +MODULE_DESCRIPTION("MediaTek PCIe host controller driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/pci/controller/pcie-mt7621.c
+> b/drivers/pci/controller/pcie-mt7621.c index
+> d97b956e6e57..9989e5e614b9 100644 ---
+> a/drivers/pci/controller/pcie-mt7621.c +++
+> b/drivers/pci/controller/pcie-mt7621.c @@ -549,4 +549,5 @@ static
+> struct platform_driver mt7621_pcie_driver = { };
+>  builtin_platform_driver(mt7621_pcie_driver);
+>  
+> +MODULE_DESCRIPTION("MediaTek MT7621 PCIe controller");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/pci/controller/vmd.c
+> b/drivers/pci/controller/vmd.c index 87b7856f375a..e4d6ae7241fe 100644
+> --- a/drivers/pci/controller/vmd.c
+> +++ b/drivers/pci/controller/vmd.c
+> @@ -1128,5 +1128,6 @@ static struct pci_driver vmd_drv = {
+>  module_pci_driver(vmd_drv);
+>  
+>  MODULE_AUTHOR("Intel Corporation");
+> +MODULE_DESCRIPTION("Volume Management Device driver");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_VERSION("0.6");
+> 
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240610-md-drivers-pci-controller-8de8948a2b92
+> 
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/firmware/meson/meson_sm.c | 1 +
- 1 file changed, 1 insertion(+)
+For VMD
 
-diff --git a/drivers/firmware/meson/meson_sm.c b/drivers/firmware/meson/meson_sm.c
-index 5d7f62fe1d5f..f25a9746249b 100644
---- a/drivers/firmware/meson/meson_sm.c
-+++ b/drivers/firmware/meson/meson_sm.c
-@@ -340,4 +340,5 @@ static struct platform_driver meson_sm_driver = {
- 	},
- };
- module_platform_driver_probe(meson_sm_driver, meson_sm_probe);
-+MODULE_DESCRIPTION("Amlogic Secure Monitor driver");
- MODULE_LICENSE("GPL v2");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240613-md-arm64-drivers-firmware-meson-2ce24a9a9de9
-
+Acked-by: Nirmal Patel <nirmal.patel@linux.intel.com>
 
