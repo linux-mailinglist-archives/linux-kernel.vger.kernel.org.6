@@ -1,123 +1,130 @@
-Return-Path: <linux-kernel+bounces-213214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4E1907179
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:37:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E76E3907180
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 825CC1F26083
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:37:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 700ED1F26731
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494F714199C;
-	Thu, 13 Jun 2024 12:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D101E49B;
+	Thu, 13 Jun 2024 12:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="if3XD65s"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yJ/rhK5L"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E690F20ED
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB004143C46
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718282236; cv=none; b=dT6NzH7OGeLNeXuxx8rbtU+XVSlYlw/aIiy9gguZ0ai9+jS5IW7SqYaiGB8WPR3y2jAWuO0vPIqqJ0JojOPvHWsdZYzjwgvo9HgwJNabuyEJ4w+MUe8FnohUdbM/pWomzBDYHZX0toX5D9sF55lKv4V4zIBZrJzQMI40IdGhNwA=
+	t=1718282246; cv=none; b=FO7CRXXq3WJwmonQZ3yP8aEBJSzVrsaQ+YopCo2SBubpI5AfB9fvSAWm+3XbMNfYwrSZzABVAft0xoXV0XV3gIBL9gEC+yVt1QROoph2FFbmGM/C8bq8dnVDKmSBmmj7Uo5K6a7EbdCjtlbjDSch640Fsy4HsXJLnEjGlT9lo/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718282236; c=relaxed/simple;
-	bh=/13ngaRTyPeB4vBu9MQ8WJijEgAX5lH/Z0IZ+QKcV+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KXVFGGAMJ+jNxSwoS9Leh1e4lnfCxmfOEvEp+pNPP6Bsa8PvO7LGKpN+lm+mreKP9y3hlhKSJoy52yabHmvH5AdMY8v0g9McHqJ/wCaPfaWOXLKcZgH/uBLOFkE2TsS/GfWapBoQchyxmfsQc361UZgksBkoDWK+1RKSHrT2NHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=if3XD65s; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso15649a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 05:37:14 -0700 (PDT)
+	s=arc-20240116; t=1718282246; c=relaxed/simple;
+	bh=HO+x80vOL45DfnbGDH+HE4l2kGlmP8xcQBK47SIOSDk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WHAJGHj6xkulN0b3GE1zr+Qs8X+n+AzHK7YSgcI077VaxH/kC6fgLya24joDLY4Pl5G5VQHpR8GicPc9U3fTCjaL9ExfXToN6fK4OHrEf1/KqRJmxo9BT5RoiffVR+udZiYLRhDzsg6yQJFzyT2Ucee0IgiXu9lJX7SnnaMun1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yJ/rhK5L; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6316253dc52so4046897b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 05:37:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718282233; x=1718887033; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MznSC12yYzkye/+ENgqiPXuQSrlPFjsWMKgcvI0Z2PU=;
-        b=if3XD65s+cw5yGk+YkOEH9hfN6QWVFfV+HKtdiUNN3QPgCIW1KaBs5+SkfeWFlM9m4
-         RrbWiBkeM5mBPi49f5NUouwYgHR/j5cvivHnWNDxVFj+5VV2jy5uouh1vy64Pw9Y8J5b
-         UYrCqqYiZIkFQcktjkeVBR2b+1Z/GRrmRsf9JUImYYOo38S3ZB3YbhfQ4/JFxk+AMZKz
-         tyPswwxCNRgci/xIOc6lAt9wrdBsIouUsOiR3LdihNqnW2dFPEs8W2N6yVPhu7f027Xr
-         qZuWD3OCqrMtJ/+2j+o21/z/Tk3A910iRv8QN4Yrmvz9nXLccwbKeZ3gyVcDRxLqmIHR
-         cmcQ==
+        d=linaro.org; s=google; t=1718282244; x=1718887044; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lK324ZHK2UbYkaord9YynZkPLQSYfxb5dYuVjUssGuM=;
+        b=yJ/rhK5Lg+rkWw8pq9YggxvBlPh8A/DOkCsY3uA/ktzMZgZYq+Yr/0NWUahCQMP55y
+         A41T+7/FLd5ADX08KV5D2c+XpBCfcH2zIojMMrU1rfH1EuPJBej6dvln/02u84kpGc4Y
+         RSJ8AGk5gJFAdRWE7vWEkN49G0p9CUUaAha0v5UlWEF02DAJtg3ETnq3Nz4o22RH4fou
+         AiXMaIEnKrl3zgNsdYIjul6ybY5XEC+8VKCPApSvCtwaLJR0Bz6y/ftradFMQO4fQ9C2
+         6f71NU6+8wmxDTe38KKrKwEGtfNHOCSAgdbnd2jzn5RlUOhv3R5MEkOiNbTqXbTVjlI3
+         41Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718282233; x=1718887033;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MznSC12yYzkye/+ENgqiPXuQSrlPFjsWMKgcvI0Z2PU=;
-        b=Srp60DGAfp3mTe0heIge1sweDbL0AlbsTe5ekB8JBjL0EO8NRNuw0uiVEFX1wJOb+y
-         9AzsRnmJ4n1u7gAVlEEzDXBQelnU3Wqr7wbsPRbwTrWCtBUeKEQchjBvxnJcCpDMbEg4
-         8api0AHFRmO9OwqXEQqqPNJwXbN6uncnkz8zn19UR4bsexJ/nnP8eiDRrH94hLnbMt6m
-         N0DW11H95jy8Ncs1pwi/ddc61BT8ZB8K8gghrVKuSK2DObQzMT6w6MaBx2G1r55JuuWU
-         JrRgp3y6LV98kNCWtXp1ig7DJVwoYxbYL/aPHikBui2fN9vNoZTWkYMlePjIgW6gDQyR
-         JkuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVEIW6lehv9GRzSQd+fSwtR0sie7at19o096kZKTcaxbMkMeA/HX+7ZNorDzzeoxArznjF9DO1Bp9L3gGOzxUb/AzlRyIiK4Ba7kBm
-X-Gm-Message-State: AOJu0YwL3iSXSlgwccbSDxXgBIRpqDRKAtcnLyAMontDSF8t5E9oWVru
-	oWe2NeqHPAOa2CBYISZbkMUfZU9IxUe/RSHa2FLun5J8+HSjcQToeusXhWOnjg==
-X-Google-Smtp-Source: AGHT+IFP8djsGWBB5M7AJLJBWEREHC1E9615rPjaCU+riDmr7PzZ+qpZx22Wb8eUXNrKQ7Be+vXNdg==
-X-Received: by 2002:a05:6402:524f:b0:57c:b799:2527 with SMTP id 4fb4d7f45d1cf-57cb7992890mr126050a12.7.1718282232985;
-        Thu, 13 Jun 2024 05:37:12 -0700 (PDT)
-Received: from google.com (216.131.76.34.bc.googleusercontent.com. [34.76.131.216])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3607509c890sm1628667f8f.28.2024.06.13.05.37.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 05:37:12 -0700 (PDT)
-Date: Thu, 13 Jun 2024 12:37:10 +0000
-From: Sebastian Ene <sebastianene@google.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: catalin.marinas@arm.com, james.morse@arm.com, jean-philippe@linaro.org,
-	maz@kernel.org, oliver.upton@linux.dev, qperret@google.com,
-	qwandor@google.com, suzuki.poulose@arm.com, tabba@google.com,
-	will@kernel.org, yuzenghui@huawei.com, lpieralisi@kernel.org,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v2 3/4] KVM: arm64: Fix the identification range for the
- FF-A smcs
-Message-ID: <Zmrn9u8pJ0nduxfQ@google.com>
-References: <20240515172258.1680881-1-sebastianene@google.com>
- <20240515172258.1680881-4-sebastianene@google.com>
- <Zmmy4pmgLFZNhXqp@bogus>
+        d=1e100.net; s=20230601; t=1718282244; x=1718887044;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lK324ZHK2UbYkaord9YynZkPLQSYfxb5dYuVjUssGuM=;
+        b=vvqmb7muqCetIlqDq7opBR4kaerVBOVNmYNxA8lFr+Th7MjYY56QBKpw1m5M+f07Jf
+         AbqyLbQkVnc5VgxFLRBs6FUuNcZQYG7/HGDtk8V+MLCvL5Qax2mTc4QGTFEFHv50YzZv
+         /iNtaM8yUgD1vv0l08YWEzA/suXQVpsjMp+0nFRhX3e9t4jIGBaB4uUGumi/erQ4t03V
+         MdcMEF9F+AWcWIgHLzaHMYw5eTkltpY5OVLlm90KKoYbJuk8CU4g/OBl1hI4CXvGb0OZ
+         pC75i8WPFSlIkH9AORkD1dSqy6zWkbE0OCqDsFhoFIRG9RoUleJ5vIJJPIZ3iv6I0SRF
+         ufkA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcbFbNNvF9UyLPJiSX5KCV9IbukXFAwmZ/pSa6UltwXvVazkkVpIXpLAGTWGuoaabW7ZCqCKdvCrNy5+mwZaaGLxnRzJlXVitmZf6S
+X-Gm-Message-State: AOJu0YwhP30I4aovY7m2jAgyNSHuhxU9Tj8ag7/kLNRwewfx9DrXIapU
+	Vz3PS65wvYm/REXmtlG7WFkR7BlmcxnHmMPPBLvMJkHaeGMFfD1D4whFHEKWBLvZTgwnuF3+VO3
+	qS7cC71+RU8Fljox7e33PRHI5duByNp7cp5dqd3tC8tbs70lp5+8KGQ==
+X-Google-Smtp-Source: AGHT+IHZvUBnLsMhW62XBAnxIb34bbF6VpwyWCJv6bXVbMOYQVTTwWrwK1vnVsv5FrvtFe2dwrIEhVqsavWTdlA/pfI=
+X-Received: by 2002:a81:8a42:0:b0:62f:9e2d:3e5d with SMTP id
+ 00721157ae682-62fbdba5388mr40959977b3.43.1718282243851; Thu, 13 Jun 2024
+ 05:37:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zmmy4pmgLFZNhXqp@bogus>
+References: <20240613-q6apm-fixes-v1-1-d88953675ab3@linaro.org>
+In-Reply-To: <20240613-q6apm-fixes-v1-1-d88953675ab3@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 13 Jun 2024 15:37:11 +0300
+Message-ID: <CAA8EJpq7SN5J8Ye8nGfbJdKAC5Ws61iKMu6QO9ebnRV6q3EVNQ@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: q6apm-lpass-dai: close graph on prepare errors
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org, 
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"open list:DRM DRIVER FOR MSM ADRENO GPU" <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jun 12, 2024 at 03:38:26PM +0100, Sudeep Holla wrote:
-> On Wed, May 15, 2024 at 05:22:57PM +0000, Sebastian Ene wrote:
-> > The FF-A spec 1.2 reserves the following ranges for identifying FF-A
-> > calls:
-> > 0x84000060-0x840000FF: FF-A 32-bit calls
-> > 0xC4000060-0xC40000FF: FF-A 64-bit calls.
-> >
-> > Use the range identification according to the spec and allow calls that
-> > are currently out of the range(eg. FFA_MSG_SEND_DIRECT_REQ2) to be
-> > identified correctly.
-> >
-> 
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> 
-> Not sure if this needs to be fixes though. With addition of notifications
-> in the FF-A driver(since v6.7), host can send FF-A messages beyond 0x7F.
-> But since the pKVM FF-A proxy support is not yet updated to v1.1, so I
-> don't think it needs to be tagged as fix. Just thought I will mention it
-> here anyways.
+On Thu, 13 Jun 2024 at 15:13, Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> wrote:
+>
+> There is an issue around with error handling and graph management with
+> the exising code, none of the error paths close the graph, which result in
+> leaving the loaded graph in dsp, however the driver thinks otherwise.
+>
+> This can have a nasty side effect specially when we try to load the same
+> graph to dsp, dsp returns error which leaves the board with no sound and
+> requires restart.
+>
+> Fix this by properly closing the graph when we hit errors between
+> open and close.
+>
+> Fixes: 30ad723b93ad ("ASoC: qdsp6: audioreach: add q6apm lpass dai support")
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Yes, good point. I will rewrite the title of the commit to remove the
-fixes tag.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # X13s
 
-> 
+> ---
+>  sound/soc/qcom/qdsp6/q6apm-lpass-dais.c | 32 ++++++++++++++++++++------------
+>  1 file changed, 20 insertions(+), 12 deletions(-)
+
+[...]
+
+> ---
+> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+
+Note: this didn't go to linux-arm-msm, probably because of the use of
+an outdated tree for submission. This commit is v6.10-rc1, it probably
+should have been Mark's tree instead or linux-next.
+
+> change-id: 20240613-q6apm-fixes-6a9c84852713
+>
+> Best regards,
 > --
-> Regards,
-> Sudeep
+> Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>
 
-Thanks,
-Seb
+
+-- 
+With best wishes
+Dmitry
 
