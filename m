@@ -1,142 +1,229 @@
-Return-Path: <linux-kernel+bounces-213763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC0C907A17
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:40:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E171907A1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA1561F2516A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:40:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71E17B23AD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004B114A0B8;
-	Thu, 13 Jun 2024 17:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0CC14A0A8;
+	Thu, 13 Jun 2024 17:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUDpZODq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a+9T+l6z"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE31433A4;
-	Thu, 13 Jun 2024 17:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627AB14A4D0;
+	Thu, 13 Jun 2024 17:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718300448; cv=none; b=Us2wHuKZUgybTulPZeAmv5hsE5KL1ldG/d8dAndFcgyUqkfc7Kv6YXOFj6O3YjA0MhqZATSVn+6OO3MA1KiYwcT2bm08ce7Fp2hjlVvIjo2V+5xl7EPy9kbyD8hsHU2BqZPOqYbgdElbxqivcAUl4oXTHYG0HwvUq64NNMD7aiA=
+	t=1718300522; cv=none; b=tgpZr0haTOWBXhKl0IPkBba9x3NnRlUaizIg03G53jX+iAQKJB45z+t/2/ZGvpW1pEPrcPu2+2nQYnU6hL4YmfmBdn4OA7aKYY8tRRtinbL+YGsd8Dtz4PtBxZXccfaV8V360ggXBqCzyktwyB6BmMn3qHa1J9iNIr5ZX3BioLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718300448; c=relaxed/simple;
-	bh=hAaUF5T3I8vPmUwK3zZqtOarg9gWX4lSB2Jkwl0QztI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r957IN5oQLQR3WlrFEBBS35pVNWlFDCU+gUBxBl8qwmuzikEfACNy+fFnu1Anr+BuKAmmbc3QlpVhCqqb0WgydJGtpb/cylwH1GdsM/NY0gWP7ir0roW0BOtDUcGW8l1l6S48bvA/KJLkimOqeT0zyo7if76T4GNWFy43ny/Cvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUDpZODq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4623C2BBFC;
-	Thu, 13 Jun 2024 17:40:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718300448;
-	bh=hAaUF5T3I8vPmUwK3zZqtOarg9gWX4lSB2Jkwl0QztI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nUDpZODqOALDsA0WnL0MlT3i25SQ+VBoFilOYcAKYeeaW6blfDjGpuXgM08f5KSNj
-	 iQ3f4Pc4WZOP5cJGUAtSrby5Ov9f3s4yeUUbwo9QvxIsXp14xeY+Al1csaIEHk09WX
-	 5EKbaGZ03jem49NbCcXrGnTRAmRRG2hHd+Wr5oWE3rYTDQrZs7KRljUW5rsxeLeFGy
-	 eprG1yzRsgUb3P0+grLsdkz8Hq+vEbVZRThH9ZdKDgq31y3kzXJuvzFd9v2na6N7j4
-	 oI+4yzM7NLWQsVLKABUTyGWP/CULUzJYgc7gDzBjAvlmieRbloE740LhulTJ9cDF2q
-	 i336UZmTjM/8Q==
-Date: Thu, 13 Jun 2024 17:40:44 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Ben Walsh <ben@jubnut.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in
- cros_ec_lpc_mec_read_bytes()
-Message-ID: <ZmsvHBrYSpwYLyxx@google.com>
-References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
- <87sexgrdk4.fsf@jubnut.com>
+	s=arc-20240116; t=1718300522; c=relaxed/simple;
+	bh=15oNmKcf+eMB9AWJk5uvNRYz+3HQHUvhgiNTNRzCBlc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WreVtjkyt3ZmdGKHGL8nupO5UHq81KkwMUeU1mCkoi8VpYZJGaXbkFOmPy44SCdcUdC9OEgGKdzqVN9apMut47b9B7wHoYdpm8KwX0DuJajyYgGmy77kGgFiP4S5pIJlccq80uwU8ZXBUwsC0yL4+RRlBEmle+j+AOps0vvNEa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a+9T+l6z; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DF21ws001048;
+	Thu, 13 Jun 2024 17:41:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	CtViMt9I6uYaJqMZuxBTafqEYu5i9JpWAcqr8s6qEWY=; b=a+9T+l6zuzYW5XMe
+	2w4GzW8yxA0VQcHMg9w6kRQ2KskcYZoOw24rDjcYvZk2o6KCwtFMMufYaSWCPn4z
+	XeCUsxEIbG2NPGRb3h4/4KChjTD2eowjoKLwbhSXA1ChxyPrUO4OS4nY8uRgphL0
+	0orDHhs+WjFmrZvQ3sxA7q7qakmdIdp7Lg9xmiNPtd26Auw2WUKMh0EbUqfzVdQc
+	z2nOPbWAlWPr9YXQiO0ogSKSOImzQ2MPL1NdO0YVXyty2nBfbxydBQ5fwMHnSb/X
+	T5TZstjSYxfDl3I5TALY5OycufI3MLAtJqtgNES8dTI+ECDvbARFaPtpmcxpqm4f
+	gZgZvw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yqukc9swf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 17:41:34 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45DHfIQs026271
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 17:41:18 GMT
+Received: from [10.216.38.28] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
+ 2024 10:41:13 -0700
+Message-ID: <3c5034e9-d834-4ebe-a03d-1a222f8f22ac@quicinc.com>
+Date: Thu, 13 Jun 2024 23:10:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87sexgrdk4.fsf@jubnut.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15.y] iommu/dma: Trace bounce buffer usage when mapping
+ buffers
+To: Greg KH <greg@kroah.com>
+CC: "Isaac J. Manjarres" <isaacmanjarres@google.com>, <stable@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon
+	<will@kernel.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>, Tom Murphy
+	<murphyt7@tcd.ie>,
+        Saravana Kannan <saravanak@google.com>,
+        Joerg Roedel
+	<jroedel@suse.de>, <kernel-team@android.com>,
+        <iommu@lists.linux-foundation.org>, <iommu@lists.linux.dev>,
+        <linux-kernel@vger.kernel.org>
+References: <2024012226-unmanned-marshy-5819@gregkh>
+ <20240122203758.1435127-1-isaacmanjarres@google.com>
+ <ZmrKZYJ0+z3mRZXx@hu-bibekkum-hyd.qualcomm.com>
+ <2024061311-washable-ranch-abc5@gregkh>
+Content-Language: en-US
+From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+In-Reply-To: <2024061311-washable-ranch-abc5@gregkh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: CMqfYVX403d87cHwMaaH4NqU0EGDcSLP
+X-Proofpoint-ORIG-GUID: CMqfYVX403d87cHwMaaH4NqU0EGDcSLP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-13_11,2024-06-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 phishscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0
+ spamscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999 clxscore=1011
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406130127
 
-On Thu, Jun 13, 2024 at 05:51:39PM +0100, Ben Walsh wrote:
-> 
-> Thanks for fixing this! Unfortunately `in_range` returns -EINVAL if
-> length == 0 (see the definition of `fwk_ec_lpc_mec_in_range`). I'm sure
-> this broke something in my testing, but I can't find what it was now.
 
-Somewhere like [1] could accidentally get the -EINVAL.
 
-[1]: https://elixir.bootlin.com/linux/v6.9/source/drivers/platform/chrome/cros_ec_lpc.c#L232
+On 6/13/2024 4:45 PM, Greg KH wrote:
+> On Thu, Jun 13, 2024 at 04:01:01PM +0530, Bibek Kumar Patro wrote:
+>> On Mon, Jan 22, 2024 at 12:37:54PM -0800, Isaac J. Manjarres wrote:
+>>> When commit 82612d66d51d ("iommu: Allow the dma-iommu api to
+>>> use bounce buffers") was introduced, it did not add the logic
+>>> for tracing the bounce buffer usage from iommu_dma_map_page().
+>>>
+>>> All of the users of swiotlb_tbl_map_single() trace their bounce
+>>> buffer usage, except iommu_dma_map_page(). This makes it difficult
+>>> to track SWIOTLB usage from that function. Thus, trace bounce buffer
+>>> usage from iommu_dma_map_page().
+>>>
+>>> Fixes: 82612d66d51d ("iommu: Allow the dma-iommu api to use bounce buffers")
+>>> Cc: stable@vger.kernel.org # v5.15+
+>>> Cc: Tom Murphy <murphyt7@tcd.ie>
+>>> Cc: Lu Baolu <baolu.lu@linux.intel.com>
+>>> Cc: Saravana Kannan <saravanak@google.com>
+>>> Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
+>>> Link: https://lore.kernel.org/r/20231208234141.2356157-1-isaacmanjarres@google.com
+>>> Signed-off-by: Joerg Roedel <jroedel@suse.de>
+>>> (cherry picked from commit a63c357b9fd56ad5fe64616f5b22835252c6a76a)
+>>> Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
+>>> ---
+>>>   drivers/iommu/dma-iommu.c | 3 +++
+>>>   1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+>>> index 48c6f7ff4aef..8cd63e6ccd2c 100644
+>>> --- a/drivers/iommu/dma-iommu.c
+>>> +++ b/drivers/iommu/dma-iommu.c
+>>> @@ -25,6 +25,7 @@
+>>>   #include <linux/vmalloc.h>
+>>>   #include <linux/crash_dump.h>
+>>>   #include <linux/dma-direct.h>
+>>> +#include <trace/events/swiotlb.h>
+>>>   
+>>>   struct iommu_dma_msi_page {
+>>>   	struct list_head	list;
+>>> @@ -817,6 +818,8 @@ static dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
+>>>   		void *padding_start;
+>>>   		size_t padding_size, aligned_size;
+>>>   
+>>> +		trace_swiotlb_bounced(dev, phys, size, swiotlb_force);
+>>> +
+>>
+>> Hi, this backported patch trying to access swiotlb_force variable is
+>> causing a build conflict where CONFIG_SWIOTLB is not enabled.
+>>
+>> In file included from kernel/drivers/iommu/dma-iommu.c:28:
+>> kernel/include/trace/events/swiotlb.h:15:9: error: declaration of 'enum SWIOTLB_NO_FORCE' will not be visible outside of this function [-Werror,-Wvisibility]
+>>                   enum swiotlb_force swiotlb_force),
+>>                        ^
+>> kernel/include/linux/swiotlb.h:143:23: note: expanded from macro 'swiotlb_force'
+>> #define swiotlb_force SWIOTLB_NO_FORCE
+>>                        ^
+>> In file included from kernel/drivers/iommu/dma-iommu.c:28:
+>> kernel/include/trace/events/swiotlb.h:15:9: error: declaration of 'enum SWIOTLB_NO_FORCE' will not be visible outside of this function [-Werror,-Wvisibility]
+>> kernel/include/linux/swiotlb.h:143:23: note: expanded from macro 'swiotlb_force'
+>> #define swiotlb_force SWIOTLB_NO_FORCE
+>>                        ^
+>> In file included from kernel/drivers/iommu/dma-iommu.c:28:
+>> kernel/include/trace/events/swiotlb.h:15:9: error: declaration of 'enum SWIOTLB_NO_FORCE' will not be visible outside of this function [-Werror,-Wvisibility]
+>> kernel/include/linux/swiotlb.h:143:23: note: expanded from macro 'swiotlb_force'
+>> #define swiotlb_force SWIOTLB_NO_FORCE
+>>                        ^
+>> In file included from kernel/drivers/iommu/dma-iommu.c:28:
+>> kernel/include/trace/events/swiotlb.h:15:9: error: declaration of 'enum SWIOTLB_NO_FORCE' will not be visible outside of this function [-Werror,-Wvisibility]
+>> kernel/include/linux/swiotlb.h:143:23: note: expanded from macro 'swiotlb_force'
+>> #define swiotlb_force SWIOTLB_NO_FORCE
+>>                        ^
+>> kernel/drivers/iommu/dma-iommu.c:865:42: error: argument type 'enum SWIOTLB_NO_FORCE' is incomplete
+>>                                         trace_swiotlb_bounced(dev, phys, size, swiotlb_force);
+>>                                                                                ^~~~~~~~~~~~~
+>> kernel/include/linux/swiotlb.h:143:23: note: expanded from macro 'swiotlb_force'
+>> #define swiotlb_force SWIOTLB_NO_FORCE
+>>                        ^~~~~~~~~~~~~~~~
+>> kernel/include/trace/events/swiotlb.h:15:9: note: forward declaration of 'enum SWIOTLB_NO_FORCE'
+>> enum swiotlb_force swiotlb_force),
+>>       ^
+>> kernel/include/linux/swiotlb.h:143:23: note: expanded from macro 'swiotlb_force'
+>> #define swiotlb_force SWIOTLB_NO_FORCE
+>>
+>> --------------------------------------------------------------------------------------------------------------------------------------------------
+>>
+>> I have a simple proposed fix which can resolve this compile time conflict when CONFIG_SWIOTLB is disabled.
+>>
+>> --- a/include/trace/events/swiotlb.h
+>> +++ b/include/trace/events/swiotlb.h
+>> @@ -7,6 +7,7 @@
+>>
+>>   #include <linux/tracepoint.h>
+>>
+>> +#ifdef CONFIG_SWIOTLB
+>>   TRACE_EVENT(swiotlb_bounced,
+>>
+>>          TP_PROTO(struct device *dev,
+>> @@ -43,6 +44,9 @@ TRACE_EVENT(swiotlb_bounced,
+>>                          { SWIOTLB_FORCE,        "FORCE" },
+>>                          { SWIOTLB_NO_FORCE,     "NO_FORCE" }))
+>>   );
+>> +#else
+>> +#define trace_swiotlb_bounced(dev, phys, size, swiotlb_force)
+>> +#endif /* CONFIG_SWIOTLB */
+>>
+>>   #endif /*  _TRACE_SWIOTLB_H */
+>>
+>>
 > 
-> My original suggestion was to add a test for "length == 0" before the
-> "in_range" test, then do the test as you have done. But we decided to
-> defer this to a later, separate patch.
+> Why not just take whatever change upstream fixes this instead of a
+> one-off change?
 > 
-> There's also a similar "in_range" test in `fwk_ec_lpc_mec_write_bytes`.
-> 
-> We could:
-> 
->   1. Revert this and change the `data & EC_LPC_STATUS_BUSY_MASK` to
->   `res & EC_LPC_STATUS_BUSY_MASK`. This is the same logic as before the
->   negative error code change.
-> 
->   or 2. Put in a check for length == 0.
-> 
->   or 3. Change the logic in `fwk_ec_lpc_mec_in_range`. Although I'm not
->   sure what the correct answer is to "zero length is in range?"
-> 
-> I prefer option 2. What do you think?
 
-How about drop the length check at [2]?
+I am currently checking the history on swiotlb_force and how it's
+removed in latest kernel versions. If those changes are applicable on
+this stable branch can we explore backporting those instead of this one-
+off change ?
 
-[2]: https://elixir.bootlin.com/linux/v6.9/source/drivers/platform/chrome/cros_ec_lpc_mec.c#L44
+Thanks & regards,
+Bibek
 
+> thanks
 > 
-> Dan Carpenter <dan.carpenter@linaro.org> writes:
-> 
-> > We changed these functions to returning negative error codes, but this
-> > first error path was accidentally overlooked.  It leads to a Smatch
-> > warning:
-> >
-> >     drivers/platform/chrome/cros_ec_lpc.c:181 ec_response_timed_out()
-> >     error: uninitialized symbol 'data'.
-> >
-> > Fix this by returning the error code instead of success.
-> >
-> > Fixes: 68dbac0a58ef ("platform/chrome: cros_ec_lpc: MEC access can return error code")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  drivers/platform/chrome/cros_ec_lpc.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-> > index ebe9fb143840..f0470248b109 100644
-> > --- a/drivers/platform/chrome/cros_ec_lpc.c
-> > +++ b/drivers/platform/chrome/cros_ec_lpc.c
-> > @@ -139,7 +139,7 @@ static int cros_ec_lpc_mec_read_bytes(unsigned int offset, unsigned int length,
-> >  	int in_range = cros_ec_lpc_mec_in_range(offset, length);
-> >  
-> >  	if (in_range < 0)
-> > -		return 0;
-> > +		return in_range;
-> >  
-> >  	return in_range ?
-> >  		cros_ec_lpc_io_bytes_mec(MEC_IO_READ,
-> > @@ -158,7 +158,7 @@ static int cros_ec_lpc_mec_write_bytes(unsigned int offset, unsigned int length,
-> >  	int in_range = cros_ec_lpc_mec_in_range(offset, length);
-> >  
-> >  	if (in_range < 0)
-> > -		return 0;
-> > +		return in_range;
-> >  
-> >  	return in_range ?
-> >  		cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE,
-> > -- 
-> > 2.43.0
-> 
+> greg k-h
 
