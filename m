@@ -1,318 +1,110 @@
-Return-Path: <linux-kernel+bounces-213080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE2E906AD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:17:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 114DD906ADB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B885B284FBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:17:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B3972855F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A47143733;
-	Thu, 13 Jun 2024 11:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BE9143733;
+	Thu, 13 Jun 2024 11:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qclio1o2"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="NVPA4wvU"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99779132135
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A402C13D28D
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718277439; cv=none; b=jQzAKYnwbGmS7VOCaKGctTyTGCO/sZ0XSwWRLRX8+6V7iY6sMlNxua5bNTPjw/BK2yi9ZRCbCnJB6YYXpbZv+h7qlN6gLU+5gF9jAUxpGTq4sfPH+XuebHHhrJf4ohbYmbZY/x2NKNJ38e4t3PuxwGxxWHs1PqbFcTle5rH/qK8=
+	t=1718277506; cv=none; b=bqb6PhwFcDiLpDC2525Va+BB5pdMTFICG5OfTDut+6ywfmpqj9PkwSBpIE5s4QVOJDz3nNyH+nISez/MPF2evMq1xpLU96Y2r8Av1pFyZ2Wc/KIU7mWoNsolxU/yLFT6wFICYndVtNtr6k+ilx1G5HuXRBmDAmzNwsDenPlBE1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718277439; c=relaxed/simple;
-	bh=zaLnXtjhSfMjwxXHUXTz+nqXne4h6uGPzcAAHGpZsK0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Xw/aKFHyjoOa49kDmIBVutfW2I4THP7Ec8XsCwd+5wEptPkTAyKgbEfrmdEnU+QIOqGAtYMPBcw282fzPHj3fsPlblxiHVgolUxAdQDkAmdHeEiDZ9snlYtHGqskYWjF1+g8S0r3CxXSBguRAwVe0ZRMVRdeJFWMggILQ4L6qDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qclio1o2; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ebe3bac675so8364941fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 04:17:16 -0700 (PDT)
+	s=arc-20240116; t=1718277506; c=relaxed/simple;
+	bh=HBFcO3MnDbEgvd9n1zufKisPAvQ+5EkOfA3eyt/cemA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=futBZ/jnR6kC/y8qADuQRB8pnCorPWpCBzQO0dqV+kL8E9mAuh0untooR9Q96q/iwGod/HS9kjlmhIfHgdR2PX+njHe7B1HFI29DoeUTgUxzuaNFn50Tg9IMUBgVw8OttmxdJ7Y/tsTvKnajMFXTbP0nNhVzABN5kbJ7/z9Wkdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=NVPA4wvU; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52c815e8e9eso1028180e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 04:18:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718277435; x=1718882235; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lRg9QU9KEyvIM7hg+h8JQRq1rNS69OHbVb2oGuE/2Vw=;
-        b=Qclio1o2C9JP1GeDOzy9FRaZSRHsYoK3vJdPLQYKRdrdgKoxguaClz9At4WcGnLYUb
-         m+0ilw3etZgd0YPJPFqt5/xRXzoxQvn8FAj4DpjopRsACgwJWGmAHGphNXctjq1qHYRt
-         ZZhUhQO3jn0PWF1QG1JFR3J414HHpFVsc0e/RxN5wxjlv1GwszBuFF+g++qvg9YmeKs6
-         oRublDQsw6NZhKHQeKEMwD871R3JV4tkIuTAcOzp4XtNE4JadbD8Aoa79mwDQ0lPpb4n
-         VgeJoepzhprig2/xA6HwTbSdhLvBxm5usnxtSYKvqKo4a0eHV0N/gI3Hv8IIem5WMx6d
-         WZiw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718277503; x=1718882303; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HBFcO3MnDbEgvd9n1zufKisPAvQ+5EkOfA3eyt/cemA=;
+        b=NVPA4wvUQ6PZGYycD7ersd3mzlNbhyMnJuiEascfPCY+WdRa+vGieO2XPZITu4iTnA
+         ic+xnl9MqTgGnyAxu70Fnt1UMVo+G98EwhMh5raKtjuHVN9grDRiSFEKiqVmGc+BS6yI
+         EeJkQwZynWdNqFx3JVScoMiPn2ZqkipMRy/wd4CGi1jBr4G9hV27PMNUU15L0Bn4lszK
+         MiwuiDqqHDDlbZWHT4+xG0flTt8DvddWTXaiJTj4/rG2EI/uJz13Hk8mr7xDecZg+gVE
+         BrQqEuVN7daXlkOTSCPrsnMuu/clBxl1e3PcYjtc1cRvcnxPtPqFF7yKRBsbY8Wkny1s
+         gV7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718277435; x=1718882235;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lRg9QU9KEyvIM7hg+h8JQRq1rNS69OHbVb2oGuE/2Vw=;
-        b=Lr+11Iooa2Kz0nP/4V7hoyo6lV8Q0UcOFxWCA0BmSn9xqQqkEylKYZYmHkQB4NXYht
-         KT6GXE9clicA9MNUaAtNuFVM2SvX+Aqh+Cqv7NPGwJbxZNPCUJlwKHhBnlft/KQRLAhr
-         4mK1iz7NScY15E8fk5gVq1RHK2rjfj3Z5Axcu6v3HYbEdO8mr7ZnKsH7EF7IRj6hzeoN
-         LexkOQbpqSIbPOtsCRy/0JWkc/ZOJ8iQe0bvFb+UhttZ747zSYZ+IRDLDTPxVVuxQksK
-         HVs+npAj9v0qPRhGqj+HdQWZ9uaCUWPAcWm4JDwhSVIiBYAs6FAAc9dfiVE04VoIbacS
-         CMeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqAH/8HM6CbHKOybYel4PjX49IRfKvditFQ2D4pjJr5pR9A6JPc5cTChiivon2Ib0OgtREepZO91OIv9rv6WWRCmVFqWfGcz9QEZ+Z
-X-Gm-Message-State: AOJu0Yzrbz7u0S4lvMxpjk1WJBRWSvND7a+0iVdsRxFXgOXEaOE7+D0R
-	obBbDbqUALCCzeIjn7fnbZyElwNLmQy7+lSPkHy2BNkoUQxrP72QkWopZaAFsu0=
-X-Google-Smtp-Source: AGHT+IH4B65GpoKnV2+iqbQRge/DOF9VS0xG4DmrQy0bcpXk4rksSN3R9r+SKa/I+WNnGRzCuubh3A==
-X-Received: by 2002:a2e:2e18:0:b0:2ea:8d49:c063 with SMTP id 38308e7fff4ca-2ec02b833a9mr7435201fa.13.1718277434685;
-        Thu, 13 Jun 2024 04:17:14 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c8ad55sm1777841fa.127.2024.06.13.04.17.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 04:17:14 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 13 Jun 2024 14:17:10 +0300
-Subject: [PATCH RFC v2] drm/msm/dpu: Configure DP INTF/PHY selector
+        d=1e100.net; s=20230601; t=1718277503; x=1718882303;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HBFcO3MnDbEgvd9n1zufKisPAvQ+5EkOfA3eyt/cemA=;
+        b=HjrtRXh3i6oNlJzdVzlRP4UMEPRTRuCBk67ud5MBVWdBS3eb8xdqoolkvtwPD6IrLO
+         rcD0kGDsdEWLCUWhLkw07w1EyEUylHrTFWRpalFEtO3AH6TfmK+kSxLjOadTNzeNId9n
+         9DFOpQJbgAxNNa9oBFvKoZ105zY4NGEZHePiNHSmp9m0xHhqaGZs8UlNoztFBbo5ZQeR
+         JSeFhWCIToztXbJNlthndGHH7L+SLXMP+rTXx1rXCAgS+ymCOAtPYDQjv/W2f6K/icvy
+         MHhiCXO9m1NrzHOkyEx7yGniawDReYrKuz7KEG1n9y1lD8TKkFhlm8GgNPCPEeBkB7Wh
+         3eWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxkr8LOAEy+SaOz2N4DNmb+TNcfb6ed7KaigPUB6dzGSeuVgo+OLaX2M4NNSkozbM7OlesrBaZGpWhXFXYZO6K+MfxWro6iF691JCt
+X-Gm-Message-State: AOJu0YyBZorpdwKspIx4fE/O3N5Pfgk+ifKsXH5qNfY1G2KF4pA7nnLc
+	7++J/tpJC8zjjVz2HdeYdfBKMLPvBHd37+gb0GmkowenM2PWtAmmdUWodjDe+6AWpI78BEb/iSC
+	Jx5Z/yXoKK/H3+XZWTpNBbLgLJLFE3jWJfLDr6g==
+X-Google-Smtp-Source: AGHT+IH+kLDQa0quCXRnsDwlpEst6OqWiTKg4mLICk/r9wtgXQ3OKkeStQzc8ULsG04CJKTsmjwSqQNEA4SjszvNw2Q=
+X-Received: by 2002:a05:6512:3ca4:b0:52c:a465:c61f with SMTP id
+ 2adb3069b0e04-52ca465c7d1mr482771e87.56.1718277502785; Thu, 13 Jun 2024
+ 04:18:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240613-dp-phy-sel-v2-1-99af348c9bae@linaro.org>
-X-B4-Tracking: v=1; b=H4sIADXVamYC/x2NwQ6CMBBEf4Xs2SVtIQU9mZj4AV4NMdCuskZbb
- JVICP9u5fhmMm9miBSYIuyyGQKNHNm7BGqTgelbdyNkmxiUUKXQskA74NBPGOmBshPamrImWxW
- QBkOgK39X2RlOxwM0Kew5vn2Y1oNRrlVyFcmllJKirHJZ17oSW5T4+rC5dHcfWmdp/yd2Jjf+C
- c2yLD/JjptWrAAAAA==
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7931;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=hMo4/f/X4bTvPKBSY1eiPzqCzsv0HlfgBHiWpPsAB+A=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmatU5p8Vmt1ZBzaa2WuGh6VVAHU4Zc48m3ZwjO
- X5UV1r1hW6JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZmrVOQAKCRCLPIo+Aiko
- 1ahOCACMePI9NdSjS7z9SGdbjxqBdBYT6C5PN6TLg2aam5taE06jX+6+I87P8FQucTTyHcz03eu
- /3orohBbVWvzPl0lDT08/7Cq3GPnJxSyOYAm+plYxE8BHiMixTqgnu4/J06gn3vM5XdoLPgZVeI
- tp16EvEcTBvP5tkSIs8CoVCx5figzwRMDibOVcUcYSLv9wMRUDvhhgJx3UkNy2t7eNvr8YCkmKW
- 1GLD1VgoCvuquVCBJR+UGPjc/QB7k1LZ8m9XF5sZzqx5U6xiQqdVRIX5tD5xrWKdQUBUBpQPyub
- WQWyI+kLD+22VArXFBfqSTDVNf2h8Dgj84iBO+L35btfv6kb
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+References: <20240613092830.15761-1-brgl@bgdev.pl> <20240613092830.15761-2-brgl@bgdev.pl>
+ <2024061330-clarinet-favorable-02da@gregkh>
+In-Reply-To: <2024061330-clarinet-favorable-02da@gregkh>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 13 Jun 2024 13:18:11 +0200
+Message-ID: <CAMRc=MfzVxucpLBn4fdOghBvLQFazc28Q8Zt+wzuKbrkrnzW4w@mail.gmail.com>
+Subject: Re: [PATCH v8 1/2] drivers: export to_ext_attr()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Bjorn Andersson <andersson@kernel.org>
+On Thu, Jun 13, 2024 at 12:02=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Jun 13, 2024 at 11:28:29AM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Make to_ext_attr() available to code that wants to reuse struct
+> > dev_ext_attribute. While at it: make it into a static inline function.
+>
+> Please don't use this, why is it needed?
+>
+> thanks,
+>
+> greg k-h
 
-Some platforms provides a mechanism for configuring the mapping between
-(one or two) DisplayPort intfs and their PHYs.
+I had a struct in the gpio-virtuser module that consisted of a
+device_attribute and a void pointer. Andy suggested reusing struct
+dev_ext_attribute for that but I need this macro to access it when
+only having the embedded struct device_attribute address.
 
-In particular SC8180X provides this functionality, without a default
-configuration, resulting in no connection between its two external
-DisplayPort controllers and any PHYs.
-
-The change implements the logic for optionally configuring which PHY
-each of the DP INTFs should be connected to and marks the SC8180X DPU to
-program 2 entries.
-
-For now the request is simply to program the mapping 1:1, any support
-for alternative mappings is left until the use case arrise.
-
-Note that e.g. msm-4.14 unconditionally maps INTF 0 to PHY 0 on all
-rlatforms, so perhaps this is needed in order to get DisplayPort working
-on some other platforms as well.
-
-Signed-off-by: Bjorn Andersson <andersson@kernel.org>
-Co-developed-by: Bjorn Andersson <andersson@kernel.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
-Changes in v2:
-- Removed entry from the catalog.
-- Reworked the interface of dpu_hw_dp_phy_intf_sel(). Pass two entries
-  for the PHYs instead of three entries.
-- It seems the register isn't present on sdm845, enabled the callback
-  only for DPU >= 5.x
-- Added a comment regarding the data being platform-specific.
-- Link to v1: https://lore.kernel.org/r/20230612221047.1886709-1-quic_bjorande@quicinc.com
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c | 39 +++++++++++++++++++++++++++---
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h | 18 ++++++++++++--
- drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h   |  7 ++++++
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c    | 11 ++++++++-
- 4 files changed, 69 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
-index 05e48cf4ec1d..a11fdbefc8d2 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
-@@ -231,8 +231,38 @@ static void dpu_hw_intf_audio_select(struct dpu_hw_mdp *mdp)
- 	DPU_REG_WRITE(c, HDMI_DP_CORE_SELECT, 0x1);
- }
- 
-+static void dpu_hw_dp_phy_intf_sel(struct dpu_hw_mdp *mdp,
-+				   enum dpu_dp_phy_sel phys[2])
-+{
-+	struct dpu_hw_blk_reg_map *c = &mdp->hw;
-+	unsigned int intf;
-+	u32 sel = 0;
-+
-+	sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_INTF0, phys[0]);
-+	sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_INTF1, phys[1]);
-+
-+	for (intf = 0; intf < 2; intf++) {
-+		switch (phys[intf]) {
-+		case DPU_DP_PHY_0:
-+			sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_PHY0, intf + 1);
-+			break;
-+		case DPU_DP_PHY_1:
-+			sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_PHY1, intf + 1);
-+			break;
-+		case DPU_DP_PHY_2:
-+			sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_PHY2, intf + 1);
-+			break;
-+		default:
-+			/* ignore */
-+			break;
-+		}
-+	}
-+
-+	DPU_REG_WRITE(c, MDP_DP_PHY_INTF_SEL, sel);
-+}
-+
- static void _setup_mdp_ops(struct dpu_hw_mdp_ops *ops,
--		unsigned long cap)
-+		unsigned long cap, const struct dpu_mdss_version *mdss_rev)
- {
- 	ops->setup_split_pipe = dpu_hw_setup_split_pipe;
- 	ops->setup_clk_force_ctrl = dpu_hw_setup_clk_force_ctrl;
-@@ -245,6 +275,9 @@ static void _setup_mdp_ops(struct dpu_hw_mdp_ops *ops,
- 
- 	ops->get_safe_status = dpu_hw_get_safe_status;
- 
-+	if (mdss_rev->core_major_ver >= 5)
-+		ops->dp_phy_intf_sel = dpu_hw_dp_phy_intf_sel;
-+
- 	if (cap & BIT(DPU_MDP_AUDIO_SELECT))
- 		ops->intf_audio_select = dpu_hw_intf_audio_select;
- }
-@@ -252,7 +285,7 @@ static void _setup_mdp_ops(struct dpu_hw_mdp_ops *ops,
- struct dpu_hw_mdp *dpu_hw_mdptop_init(struct drm_device *dev,
- 				      const struct dpu_mdp_cfg *cfg,
- 				      void __iomem *addr,
--				      const struct dpu_mdss_cfg *m)
-+				      const struct dpu_mdss_version *mdss_rev)
- {
- 	struct dpu_hw_mdp *mdp;
- 
-@@ -270,7 +303,7 @@ struct dpu_hw_mdp *dpu_hw_mdptop_init(struct drm_device *dev,
- 	 * Assign ops
- 	 */
- 	mdp->caps = cfg;
--	_setup_mdp_ops(&mdp->ops, mdp->caps->features);
-+	_setup_mdp_ops(&mdp->ops, mdp->caps->features, mdss_rev);
- 
- 	return mdp;
- }
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h
-index 6f3dc98087df..3a17e63b851c 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h
-@@ -67,6 +67,13 @@ struct dpu_vsync_source_cfg {
- 	u32 vsync_source;
- };
- 
-+enum dpu_dp_phy_sel {
-+	DPU_DP_PHY_NONE,
-+	DPU_DP_PHY_0,
-+	DPU_DP_PHY_1,
-+	DPU_DP_PHY_2,
-+};
-+
- /**
-  * struct dpu_hw_mdp_ops - interface to the MDP TOP Hw driver functions
-  * Assumption is these functions will be called after clocks are enabled.
-@@ -125,6 +132,13 @@ struct dpu_hw_mdp_ops {
- 	void (*get_safe_status)(struct dpu_hw_mdp *mdp,
- 			struct dpu_danger_safe_status *status);
- 
-+	/**
-+	 * dp_phy_intf_sel - configure intf to phy mapping
-+	 * @mdp: mdp top context driver
-+	 * @phys: list of phys the DP interfaces should be connected to. 0 disables the INTF.
-+	 */
-+	void (*dp_phy_intf_sel)(struct dpu_hw_mdp *mdp, enum dpu_dp_phy_sel phys[2]);
-+
- 	/**
- 	 * intf_audio_select - select the external interface for audio
- 	 * @mdp: mdp top context driver
-@@ -148,12 +162,12 @@ struct dpu_hw_mdp {
-  * @dev:  Corresponding device for devres management
-  * @cfg:  MDP TOP configuration from catalog
-  * @addr: Mapped register io address of MDP
-- * @m:    Pointer to mdss catalog data
-+ * @mdss_rev: dpu core's major and minor versions
-  */
- struct dpu_hw_mdp *dpu_hw_mdptop_init(struct drm_device *dev,
- 				      const struct dpu_mdp_cfg *cfg,
- 				      void __iomem *addr,
--				      const struct dpu_mdss_cfg *m);
-+				      const struct dpu_mdss_version *mdss_rev);
- 
- void dpu_hw_mdp_destroy(struct dpu_hw_mdp *mdp);
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h
-index 5acd5683d25a..f1acc04089af 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h
-@@ -60,6 +60,13 @@
- #define MDP_WD_TIMER_4_LOAD_VALUE       0x448
- #define DCE_SEL                         0x450
- 
-+#define MDP_DP_PHY_INTF_SEL             0x460
-+#define MDP_DP_PHY_INTF_SEL_INTF0		GENMASK(3, 0)
-+#define MDP_DP_PHY_INTF_SEL_INTF1		GENMASK(6, 3)
-+#define MDP_DP_PHY_INTF_SEL_PHY0		GENMASK(9, 6)
-+#define MDP_DP_PHY_INTF_SEL_PHY1		GENMASK(12, 9)
-+#define MDP_DP_PHY_INTF_SEL_PHY2		GENMASK(15, 12)
-+
- #define MDP_PERIPH_TOP0			MDP_WD_TIMER_0_CTL
- #define MDP_PERIPH_TOP0_END		CLK_CTRL3
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-index 1955848b1b78..9db5a784c92f 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -1102,7 +1102,7 @@ static int dpu_kms_hw_init(struct msm_kms *kms)
- 	dpu_kms->hw_mdp = dpu_hw_mdptop_init(dev,
- 					     dpu_kms->catalog->mdp,
- 					     dpu_kms->mmio,
--					     dpu_kms->catalog);
-+					     dpu_kms->catalog->mdss_ver);
- 	if (IS_ERR(dpu_kms->hw_mdp)) {
- 		rc = PTR_ERR(dpu_kms->hw_mdp);
- 		DPU_ERROR("failed to get hw_mdp: %d\n", rc);
-@@ -1137,6 +1137,15 @@ static int dpu_kms_hw_init(struct msm_kms *kms)
- 		goto err_pm_put;
- 	}
- 
-+	/*
-+	 * We need to program DP <-> PHY relationship only for SC8180X.  If any
-+	 * other platform requires the same kind of programming, or if the INTF
-+	 * <->DP relationship isn't static anymore, this needs to be configured
-+	 * through the DT.
-+	 */
-+	if (of_device_is_compatible(dpu_kms->pdev->dev.of_node, "qcom,sc8180x-dpu"))
-+		dpu_kms->hw_mdp->ops.dp_phy_intf_sel(dpu_kms->hw_mdp, (unsigned int[]){ 1, 2, });
-+
- 	dpu_kms->hw_intr = dpu_hw_intr_init(dev, dpu_kms->mmio, dpu_kms->catalog);
- 	if (IS_ERR(dpu_kms->hw_intr)) {
- 		rc = PTR_ERR(dpu_kms->hw_intr);
-
----
-base-commit: 03d44168cbd7fc57d5de56a3730427db758fc7f6
-change-id: 20240613-dp-phy-sel-1b06dc48ed73
-
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+Bart
 
