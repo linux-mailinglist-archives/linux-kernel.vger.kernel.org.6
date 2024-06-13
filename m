@@ -1,182 +1,126 @@
-Return-Path: <linux-kernel+bounces-213635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFBAB907825
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:20:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1A5C90782E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30DE81F22D6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:20:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A9CA1F21C85
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C47149C62;
-	Thu, 13 Jun 2024 16:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF5C146D41;
+	Thu, 13 Jun 2024 16:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="AuHSE0wX";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z7KN7GMd"
-Received: from flow2-smtp.messagingengine.com (flow2-smtp.messagingengine.com [103.168.172.137])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FdVquD6g"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505E6145B34;
-	Thu, 13 Jun 2024 16:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A735212FB0B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718295594; cv=none; b=ns/iAVPaT+LnY3Yy+MoPaouIg2BHZ4O9aHWxF5m9IuKfCQA3yIYoHdmiSYTwSJKQ4qPJNYu206NsuAznMzP1zcGIwQaqBR0gnKLAFp6PuUg1FSvkHeg6vzPxxCKPcvzQjLig0cWRXIOhLwD02GyqNEwfTvJhExUR2vKwP3WSNGA=
+	t=1718295668; cv=none; b=Msau8S9L9ivCTiK+aGVTcQIBgqgyXRz4ZE3p9SJ9+ftJcUh0qcMveEawt2bFfgPeiyprffNR0SDFd37QuzVqzBXZ2JzPYB4xk7fovESRS60OQwr2ilvcvMMgP4hjGcURyBnp4HUzE9ujwHkdwwCttLcaH2/jVKNc6FviBemuKOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718295594; c=relaxed/simple;
-	bh=d3SufosQ8LT0bZ8SGHYXs1ztJ5ewWIW0QjqdtzH28Jk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m0M9U12lshMO1Br8DdwG9wA6EAE9UPuKGnStfyXu0ZoKGC3geUnN0GO2ibyMzD/1ctTG87SyPvI7RPp5dI0Tp02yL5GwDfflRBsi3W0MRI5i+W3Wx3QdoF1Ung+EVa9uzoPwXM5sJjYiT1DkgXp4MmKeJr39QUFgxsNzR/25VKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=AuHSE0wX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Z7KN7GMd; arc=none smtp.client-ip=103.168.172.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 5029720025B;
-	Thu, 13 Jun 2024 12:19:52 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Thu, 13 Jun 2024 12:19:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1718295592; x=
-	1718302792; bh=VXllBy0OPIEM37txsmqZHMLIf8msa/NYcue55B8lNbE=; b=A
-	uHSE0wXiX7haWc1A6vaFcNkyAjimPaYSf53X0tie9Y275Rz0d5Nx10awqhxJmzwo
-	DxKbag8tNUHdGZem1IoaDe4mtPncOJOdhbNbD3bh0Cge6NUw2e0Di+OD0ACX7uv+
-	f84k1tubNdkX5tC5tjxWBPg7sIx+kPNFUmt5PX33XhMBKqBxUIye0QhqNcAl82mn
-	R90uCtDg7hbSt2IYwW0+9q9qFjazKieOPjZ+plO9KDtXPTG9snXpTpcK53wGbWr4
-	eJqrKJbjW86AY4mZkd4hJbcnZIwIMepZkJCsrDmxvmt1rQgkV40YZUuCAi+YksRW
-	yPs/KOH+U0dERGZCjNwPQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718295592; x=
-	1718302792; bh=VXllBy0OPIEM37txsmqZHMLIf8msa/NYcue55B8lNbE=; b=Z
-	7KN7GMdgJzoqn7hDkLHdIbni4eqPA/T8LvJRFaP2iFOTwYTgZ1CnwkIbc2f8Efhb
-	nyE7PEoG7leOoc5PlLlB0sbf4QipU/X7GGlvWeMAE/7rQNpronxznL3vvpiXDW0J
-	04uTIhVyltrgWxQoBmMa8r/30z1Ik/RCSP+Nh/WhOJJyF08sl/+y7pJYqiy7R9pZ
-	DETsLd61HoM8hv18wKOD73YkulU6xWFJf4IRQUsSw9qPOXW+9xIiz1pOXNIcrTHz
-	AjOdHKi3YbY3eQbvXOJBIWJgrBFHgOscde63jSJGmEaMtxkBBTyvgYOsPubsMvhn
-	7Hx7YAzXtonMi6LmKC6ow==
-X-ME-Sender: <xms:KBxrZggc88fBx22-jszG00wm5wFrVH4vJV93g6NFxVuoLb9QWc1AaA>
-    <xme:KBxrZpA7CJ2YNfhWdgjL4MLEHO8NpdSZwlNNr3NCy3A7X3ft_cF0xfe9K3TfFAtMT
-    zY6QY70ve5Nyevg-g>
-X-ME-Received: <xmr:KBxrZoEUJQIVdRRU5rk2AqGoN15-LOY7PFALzqAX9MYZhAyyVoQZM63f30_SF0c_6AA4IsEznKKvKKSdDgY-o12lonwsuTg6xHkhLjN3>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedujedgleejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucgfrhhlucfvnfffucdlvdefmdenucfjughrpefhvf
-    evufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeffrghnihgvlhcuighuuceo
-    ugiguhesugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnhepleeiudehhfetffeiud
-    dtjefguddtkeduleeuleevkeejiedtfeeuuedtleehvdefnecuffhomhgrihhnpehkvghr
-    nhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpegugihusegugihuuhhurdighiii
-X-ME-Proxy: <xmx:KBxrZhQNBUQ_aaBCBymQJmlTHn8di6vZBkihe38Ru6j-fq-h4Wv3Ig>
-    <xmx:KBxrZtxNmiKykVhSo_NykiI-moc9_mgSQARPqKxOPU047p4-c5oMtw>
-    <xmx:KBxrZv5qXW0lmwUzgyH3j5FloabEpRJkbcuDP8P6bdv7tT2Di6GT0A>
-    <xmx:KBxrZqxTrNdmmhAB-EAJ2DXYtRtMMwa-5qliN-Nxp-5peju9IlBOSQ>
-    <xmx:KBxrZkjaDo_yWGyXKfIsQNbRMXWzwMPJA_vr7bE0anIsxyClBShIM8L_>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 13 Jun 2024 12:19:50 -0400 (EDT)
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: daniel@iogearbox.net,
-	andrii@kernel.org,
-	shuah@kernel.org,
-	ast@kernel.org,
-	nathan@kernel.org,
-	dxu@dxuuu.xyz,
-	eddyz87@gmail.com
-Cc: martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
-	haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
-	ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	"sfr@canb.auug.org.aukernel-team"@meta.com,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH bpf-next 2/2] bpf: selftests: Do not use generated kfunc prototypes for arena progs
-Date: Thu, 13 Jun 2024 10:19:26 -0600
-Message-ID: <fc59a617439ceea9ad8dfbb4786843c2169496ae.1718295425.git.dxu@dxuuu.xyz>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1718295425.git.dxu@dxuuu.xyz>
-References: <cover.1718295425.git.dxu@dxuuu.xyz>
+	s=arc-20240116; t=1718295668; c=relaxed/simple;
+	bh=7RNjx97Es6Px6fI1XW8Y1JgBcCTpBzveKL8xtiQsFFI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=E3/zNLfcPkYtVrEwVB+Om1lEQLFTkILdXDU+Lo1i7LQCKRfC6symVgvKWVxMgv7ngDmA+utJy/b/x/U6aG3el7lFw0EDPfqJlwC9Bl21fBsQOWh0Kr4REmAs5C8hnhzd6VCPyrlAF3d0MSPsmficrFxqsU3moItYr7hBTR/Gy04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FdVquD6g; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718295665;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=C6E639UIwAtkQNEr9kBB2jPUHGaI+pSB3aws83mC+K4=;
+	b=FdVquD6gLt+m79XYP5xqQUsftS7Lds+F0rMmT9fbehfq1SAt15jnDmth2J9l20l0CUAjm7
+	7Ho0OAWiBt3QQte3iQDBUAdH2DPVUzZAy04sKQ9bJV4Nia1bd1b3bdBGlZQmzgsYAshCxx
+	PGuGNndufnvOq7VW7nQvAwiA5OmDHxA=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-491-LJN3tRSLPLa-rlbG8gSRcg-1; Thu,
+ 13 Jun 2024 12:21:02 -0400
+X-MC-Unique: LJN3tRSLPLa-rlbG8gSRcg-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B924F1955F2C;
+	Thu, 13 Jun 2024 16:21:00 +0000 (UTC)
+Received: from llong.com (unknown [10.22.16.195])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C3FF419560AD;
+	Thu, 13 Jun 2024 16:20:58 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: linux-efi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH] arm64/efi: Fix kmemleak false positive in arm64_efi_rt_init()
+Date: Thu, 13 Jun 2024 12:20:31 -0400
+Message-Id: <20240613162031.142224-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-When selftests are built with a new enough clang, the arena selftests
-opt-in to use LLVM address_space attribute annotations for arena
-pointers.
+The kmemleak code sometimes complains about the following leak:
 
-These annotations are not emitted by kfunc prototype generation. This
-causes compilation errors when clang sees conflicting prototypes.
+unreferenced object 0xffff8000102e0000 (size 32768):
+  comm "swapper/0", pid 1, jiffies 4294937323 (age 71.240s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000db9a88a3>] __vmalloc_node_range+0x324/0x450
+    [<00000000ff8903a4>] __vmalloc_node+0x90/0xd0
+    [<000000001a06634f>] arm64_efi_rt_init+0x64/0xdc
+    [<0000000007826a8d>] do_one_initcall+0x178/0xac0
+    [<0000000054a87017>] do_initcalls+0x190/0x1d0
+    [<00000000308092d0>] kernel_init_freeable+0x2c0/0x2f0
+    [<000000003e7b99e0>] kernel_init+0x28/0x14c
+    [<000000002246af5b>] ret_from_fork+0x10/0x20
 
-Fix by opting arena selftests out of using generated kfunc prototypes.
+The memory object in this case is for efi_rt_stack_top and is allocated
+in an initcall. So this is certainly a false positive. Mark the object
+as not a leak to quash it.
 
-Fixes: 770abbb5a25a ("bpftool: Support dumping kfunc prototypes from BTF")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202406131810.c1B8hTm8-lkp@intel.com/
-Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- tools/testing/selftests/bpf/progs/arena_htab.c           | 1 +
- tools/testing/selftests/bpf/progs/arena_list.c           | 1 +
- tools/testing/selftests/bpf/progs/verifier_arena.c       | 1 +
- tools/testing/selftests/bpf/progs/verifier_arena_large.c | 1 +
- 4 files changed, 4 insertions(+)
+ arch/arm64/kernel/efi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/testing/selftests/bpf/progs/arena_htab.c b/tools/testing/selftests/bpf/progs/arena_htab.c
-index 1e6ac187a6a0..cf938cf8c11e 100644
---- a/tools/testing/selftests/bpf/progs/arena_htab.c
-+++ b/tools/testing/selftests/bpf/progs/arena_htab.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+#define BPF_NO_KFUNC_PROTOTYPES
- #include <vmlinux.h>
- #include <bpf/bpf_helpers.h>
- #include <bpf/bpf_tracing.h>
-diff --git a/tools/testing/selftests/bpf/progs/arena_list.c b/tools/testing/selftests/bpf/progs/arena_list.c
-index 93bd0600eba0..3a2ddcacbea6 100644
---- a/tools/testing/selftests/bpf/progs/arena_list.c
-+++ b/tools/testing/selftests/bpf/progs/arena_list.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+#define BPF_NO_KFUNC_PROTOTYPES
- #include <vmlinux.h>
- #include <bpf/bpf_helpers.h>
- #include <bpf/bpf_tracing.h>
-diff --git a/tools/testing/selftests/bpf/progs/verifier_arena.c b/tools/testing/selftests/bpf/progs/verifier_arena.c
-index 93144ae6df74..67509c5d3982 100644
---- a/tools/testing/selftests/bpf/progs/verifier_arena.c
-+++ b/tools/testing/selftests/bpf/progs/verifier_arena.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
+diff --git a/arch/arm64/kernel/efi.c b/arch/arm64/kernel/efi.c
+index 4a92096db34e..712718aed5dd 100644
+--- a/arch/arm64/kernel/efi.c
++++ b/arch/arm64/kernel/efi.c
+@@ -9,6 +9,7 @@
  
-+#define BPF_NO_KFUNC_PROTOTYPES
- #include <vmlinux.h>
- #include <bpf/bpf_helpers.h>
- #include <bpf/bpf_tracing.h>
-diff --git a/tools/testing/selftests/bpf/progs/verifier_arena_large.c b/tools/testing/selftests/bpf/progs/verifier_arena_large.c
-index ef66ea460264..6065f862d964 100644
---- a/tools/testing/selftests/bpf/progs/verifier_arena_large.c
-+++ b/tools/testing/selftests/bpf/progs/verifier_arena_large.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
+ #include <linux/efi.h>
+ #include <linux/init.h>
++#include <linux/kmemleak.h>
+ #include <linux/screen_info.h>
+ #include <linux/vmalloc.h>
  
-+#define BPF_NO_KFUNC_PROTOTYPES
- #include <vmlinux.h>
- #include <bpf/bpf_helpers.h>
- #include <bpf/bpf_tracing.h>
+@@ -213,6 +214,7 @@ l:	if (!p) {
+ 		return -ENOMEM;
+ 	}
+ 
++	kmemleak_not_leak(p);
+ 	efi_rt_stack_top = p + THREAD_SIZE;
+ 	return 0;
+ }
 -- 
-2.44.0
+2.39.3
 
 
