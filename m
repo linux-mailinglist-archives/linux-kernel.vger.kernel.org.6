@@ -1,114 +1,137 @@
-Return-Path: <linux-kernel+bounces-213453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80076907588
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:45:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D38890758A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 361401F22E68
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:45:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2160B1F2326E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4DC84A41;
-	Thu, 13 Jun 2024 14:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717FA1369B0;
+	Thu, 13 Jun 2024 14:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTLGRq+m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bt43k9+b"
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDF1B664
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 14:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483F3266A7
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 14:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718289938; cv=none; b=sWWlFV3S8nkwq+kAzQ025zRiJD0sRKCJPehOa6eF8LZE4qmQNpSQGNZeVRue0fwRB4nYwz4ovgccAWSgHHsM81qbteJHnmpPOCeNv3jY37q0c2BlMDno2wwzAu8RINCydN2GyNWIAoRzyvY4W8tZUm0md1uk8+sUnXDfLCjB7mM=
+	t=1718289974; cv=none; b=ESdM/KYHIO2nNK8nSKJgtBrM9rw66UytMbrtQCqx6Wg1zgxS4Lg2KrlNWKk3xrxen6zOI/EzBhJ1xMPEyeIgMjqk4CbZLEjgWI5BomE4oi3yHZeDFPJHgsFO89W89zypS3TDO4sEvvH68R9tSdS/02FxFkvCnDluR3FyHSyn+S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718289938; c=relaxed/simple;
-	bh=InMkkQqrp6LohnfMJCBwnWlQ6oAWATxmLwHmBrNPrGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tye4m9r/EXEZQJiXP7mjTTXP+6cuR5UD6VhQ/49zAU7v7hY+H5oC6cYy4Mp3NhRGu0Ndi8JRp/U2REwoIsVsXgqOBHgt2orJOmhh+jemNa2TL0fcziysHlT6rQIC+RaGWU4Vknbln6X/Ks/QX+RR1N3M9EhJ8O0fm470Dgw/jdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTLGRq+m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA901C2BBFC;
-	Thu, 13 Jun 2024 14:45:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718289937;
-	bh=InMkkQqrp6LohnfMJCBwnWlQ6oAWATxmLwHmBrNPrGg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gTLGRq+msZPdiljWIIbChj7j0CTeKCfawgg6iDL6MqP+rFNN2aVjWpy0CmJVOAgKy
-	 g6Kxc2TC8WMraFODKBYKhl8xXxsYE0OPT4Tv3T6MMsHj4u1AsnXyrCTTIKsnJx/OCA
-	 EO/2gCT546u3YMbHbMIl8k4emxuNzqPS9oaOX8V47ftb7y4jMt3hmwV/9mupn94ozr
-	 23giyNwjsiASb5BhFIpfiyLCKc9dvUqATFYa7z1vKRiyIw2Bkee0Q8VKnOjUNQ5Dy/
-	 xRgPWZrxRYHts2EkCOyjvn+Zr827udCCaeOTbY9NLNEDlKAyJv2VkbfgJ8SVerevQO
-	 tSZKfByHAP+sQ==
-Date: Thu, 13 Jun 2024 15:45:33 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Evan Green <evan@rivosinc.com>, Andy Chiu <andy.chiu@sifive.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] riscv: Separate vendor extensions from standard
- extensions
-Message-ID: <20240613-deepness-refried-c6dea811f6f6@spud>
-References: <20240609-support_vendor_extensions-v2-0-9a43f1fdcbb9@rivosinc.com>
+	s=arc-20240116; t=1718289974; c=relaxed/simple;
+	bh=xiHUK0Hl49OuL+qGWj5fc6IwTuTt+eReSxMzlJBq9LQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LptF4jIOYsKVSIfyTxCPhaL4ci3+9yizKwJYfRdyTFwYOBRxU0koBPcRpMYE/cCCcOBBvL/ly9rXXhkFG9ih37BIy60/HoZ/SAKXbeQdPOi66Ovky3+IpBDEgab+CVZENH4QctayzQPLJNVb5VOAMNG1GOrE8LS2/Kf4D3c+Cqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bt43k9+b; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-80b8d0d19e8so309502241.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 07:46:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718289972; x=1718894772; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rvoqFktMtHUyhGkKds1q+Wy+a/Ekxv2ikOOyTUk3yNk=;
+        b=bt43k9+by8HKj5Uzz4MHnK90vf4BjbpzZ0wSEr9slMKsd6VpB9GRtQGK961Vuhwuay
+         ymhGs5+8Rftyg2q6eIpyIqZEFdaH8nTlExVjUHPyjbOK1zNIv1hZeGeJaddDtjdQQLp6
+         nE3TPfgaJjvMuof97I3LHzdNAV/7VGxwlXlL2CjG5ZVDYZRXlEt4/ub3D8aFakZj//YQ
+         5jJP5WFHCDlNJlSttJfC4iMx73ByY9PXjgyJg8fGXMhY17RmtKvsNPQkMMUIX81RNsdK
+         0oCs7ZCVgM3VEsGb3ZwfKmkUkWbYiDwE2AjcIyyD75H/cWOEycto2GfUmrZeYdQAf0DI
+         uNxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718289972; x=1718894772;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rvoqFktMtHUyhGkKds1q+Wy+a/Ekxv2ikOOyTUk3yNk=;
+        b=XbqHY2YnZgas6JBUbfkTn+10pZHgXWpMiSVrE1JUOZbD2s9rpID0bPjiiO66FhNcDZ
+         k90MvjVhUodfmUGAsJpw+eA0NWu4mWyW7bYKw9oZSjDu3nvI9RZmpXCNAqppu5/nBt8j
+         NVNPJ8luXXVE33J+B7mMRUa46WQzia6BeqnEcNaMH/RfRR9YtXsx8jg3X700KNABWYVG
+         Qb4cj9Q8Sj+9H/JXB5x1IP6nm56xcEiEYa32UZvVqUKpCe6L2gB4es529UQNsSNBcHGN
+         Stcql6wr6+2KOyP2Ks/TfzZTj6LjKZ4BsZM4vnsfHpmDXQ+ItGfmyLsuK3/3AJ+GbB8k
+         4dnA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaJOSdhag0pswVWBUE5xli+bO+EFYqjZv1FxarK2rV3NCfDPJQKLvgwCUHLOc6IF//26AzuuV7PucmcVsBKt/GhCmUWgqZLvqWgi4C
+X-Gm-Message-State: AOJu0YwuPPwkEdquq49LIG2FyvnueEfn1DXf/dM66yElZ/Dpm7owbqqW
+	9MPIDtNkTtlGNhjdq5JIeL7kDlgs9tile7VdPZWuK0W6uUfm5ivWXttTbyV7arWZI2LRWe/npxp
+	VvDCWDcerqJ1PdFnj61I7ZvuflwmdcKqQeSdKKA==
+X-Google-Smtp-Source: AGHT+IH38Aaw8rZu9RWd7Y+SDv6K4CnE1Hl3fG5nWdWaMlQqDlbOxbQUuo/F9YbFyeIsxIWTnw6Q7JRYBqIgCDcz8/o=
+X-Received: by 2002:a05:6122:2012:b0:4e4:ea24:4c53 with SMTP id
+ 71dfb90a1353d-4ee3db819e4mr70580e0c.3.1718289971414; Thu, 13 Jun 2024
+ 07:46:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ICFdcertGdMCTx5g"
-Content-Disposition: inline
-In-Reply-To: <20240609-support_vendor_extensions-v2-0-9a43f1fdcbb9@rivosinc.com>
+References: <20240613113223.281378087@linuxfoundation.org>
+In-Reply-To: <20240613113223.281378087@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 13 Jun 2024 20:15:59 +0530
+Message-ID: <CA+G9fYtEkcPasc62FH170nPyJTS83jfdAtHUfgwG+QDuQP060g@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/137] 6.6.34-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, Puranjay Mohan <puranjay@kernel.org>, 
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+
+On Thu, 13 Jun 2024 at 17:35, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.34 release.
+> There are 137 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 15 Jun 2024 11:31:50 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.34-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+
+The powerpc defconfig builds failed on stable-rc 6.6 branch due to below
+build errors with gcc-13, gcc-8 and clang.
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+Build log:
+----
+arch/powerpc/net/bpf_jit_comp64.c: In function 'bpf_jit_build_body':
+arch/powerpc/net/bpf_jit_comp64.c:1010:73: error: 'fimage' undeclared
+(first use in this function); did you mean 'image'?
+ 1010 |                                 ret =
+bpf_jit_emit_func_call_hlp(image, fimage, ctx, func_addr);
+      |
+         ^~~~~~
+      |
+         image
+arch/powerpc/net/bpf_jit_comp64.c:1010:73: note: each undeclared
+identifier is reported only once for each function it appears in
 
 
---ICFdcertGdMCTx5g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Links:
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.32-876-g8429fc3308da/testrun/24327571/suite/build/test/gcc-13-defconfig/log
 
-On Sun, Jun 09, 2024 at 09:34:13PM -0700, Charlie Jenkins wrote:
-> All extensions, both standard and vendor, live in one struct
-> "riscv_isa_ext". There is currently one vendor extension, xandespmu, but
-> it is likely that more vendor extensions will be added to the kernel in
-> the future. As more vendor extensions (and standard extensions) are
-> added, riscv_isa_ext will become more bloated with a mix of vendor and
-> standard extensions.
->=20
-> This also allows each vendor to be conditionally enabled through
-> Kconfig.
->=20
-> ---
-> This has been split out from the previous series that contained the
-> addition of xtheadvector due to lack of reviews. The xtheadvector
-> support will be posted again separately from this.
-
-I think that's a good call.
-
-> The reviewed-bys on "riscv: Extend cpufeature.c to detect vendor extensio=
-ns"
-> and "riscv: Introduce vendor variants of extension helpers" have been
-> dropped in this series. The majority of the code is the same in these
-> patches, but thead-specific code is swapped out with andes-specific
-> code. The changes are minimal, but I decided to drop the reviews in case
-> I inadvertently introduced issues.
-
-Actually, you only completely did that on the first of the two patches
-you mention, but I don't mind.
-
---ICFdcertGdMCTx5g
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmsGDQAKCRB4tDGHoIJi
-0pYSAP9rvZJvNB06EdO0fsFWf+ZcA3sSaIFnn6FuW9XS1h/5IgEAzSlVcU4SmJ4X
-iE60uHO4zub2um02J5KOxOg+yrHU8Q0=
-=sR76
------END PGP SIGNATURE-----
-
---ICFdcertGdMCTx5g--
+--
+Linaro LKFT
+https://lkft.linaro.org
 
