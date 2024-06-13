@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-212478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F8490618B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:08:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8624C906190
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:08:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3062E28461A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:08:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC9791C215AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8341C381B0;
-	Thu, 13 Jun 2024 02:08:03 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22AD51004;
+	Thu, 13 Jun 2024 02:08:06 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D212A1D1;
-	Thu, 13 Jun 2024 02:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3E838397;
+	Thu, 13 Jun 2024 02:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718244483; cv=none; b=DmbLiIp79cCBkcZBY0B2E54F3FeYzXCsjEkB/D5wupBWvYdy++Um5TjA6CW/pcpU5u89SqYTuQpaoWlHTzJwqBtSWxIbLrrLHz/fYDyVoMCWYNPJ6Jr8UbJrrGIR2s5uNoC8FkqmCIfnFSohptXuGW+JIrL4T+lLYzXcHjQ8q/c=
+	t=1718244486; cv=none; b=QZpk87ANZB8yHS/TS/mFudns3JxzyVRbXCnbgfhmGMleKWXZXMbOCxdxHM02rhbiS0ubL+8RrFGq/WhpyEnwFDKsIu4cxq/sMV53crPssy0A9wrrAQSAwn70QKJ9j+68EZ6nXPKqIaeBlMgYHtMZCCwN5w0ZsM9y+3RprIVq620=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718244483; c=relaxed/simple;
-	bh=ChQvBI+Er4xZh0kIrCud60Pm6ajfJzZQKAnf67VYDCg=;
-	h=From:To:Subject:Date:Message-Id; b=RaT2lqdxTIYrOhAbjHrWC+a23eOc+preU8/KZLS2DnZx8XtXLlh8O9q3tT6Oq+W0lSQVJlEB8PyRo5J2ACMBNBIvAALvd+OmSXun2MfE4RMe5eqfibbd8bjxan0CTnQvvhqoM8kCjTv69pIjQww2GSKp0+dFCWt/lQqqJov/b/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+	s=arc-20240116; t=1718244486; c=relaxed/simple;
+	bh=vwhl2TItuSUrCzO5vdVWYedHOQAkUkhYVgTV88cG0tI=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=n8GzzgdWmiBTHKMSqR/szizt+UZQIA85/zdDrHIiRwEvrpu63oxqiOLmes5B2y1/Dr++sSWxmwcc1mfSpjyPPMEXn/WhJ/kyDiTiBRl8A2zVWOJyPGAmsRB+hpkGLU/w7Hjm5gchIdT1qYCCqlWFKUlp+cYE+7Eif5lR5kSDwx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id AAAA7200A5D;
-	Thu, 13 Jun 2024 04:07:59 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D217D1A152F;
+	Thu, 13 Jun 2024 04:08:01 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 550DA20012D;
-	Thu, 13 Jun 2024 04:07:59 +0200 (CEST)
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8418D1A1501;
+	Thu, 13 Jun 2024 04:08:01 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 7F9D71820F76;
-	Thu, 13 Jun 2024 10:07:57 +0800 (+08)
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 1F690180222A;
+	Thu, 13 Jun 2024 10:07:59 +0800 (+08)
 From: Shengjiu Wang <shengjiu.wang@nxp.com>
 To: p.zabel@pengutronix.de,
 	abelvesa@kernel.org,
@@ -56,10 +56,12 @@ To: p.zabel@pengutronix.de,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	shengjiu.wang@gmail.com
-Subject: [PATCH v7 0/5] clk: imx: clk-audiomix: Improvement for audiomix
-Date: Thu, 13 Jun 2024 09:51:17 +0800
-Message-Id: <1718243482-18552-1-git-send-email-shengjiu.wang@nxp.com>
+Subject: [PATCH v7 1/5] dt-bindings: clock: imx8mp: Add #reset-cells property
+Date: Thu, 13 Jun 2024 09:51:18 +0800
+Message-Id: <1718243482-18552-2-git-send-email-shengjiu.wang@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1718243482-18552-1-git-send-email-shengjiu.wang@nxp.com>
+References: <1718243482-18552-1-git-send-email-shengjiu.wang@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -67,54 +69,34 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-Some improvement for audiomix driver:
-Add CLK_SET_RATE_PARENT flags for clocks
-Correct parent clock for earc_phy and audpll clocks.
-Add reset controller for EARC function, use the auxiliary device
-framework:
-https://lore.kernel.org/lkml/b86c83a520f0c45a60249468fa92b1de.sboyd@kernel.org/
+The Audio Block Control contains clock distribution and gating
+controls, as well as reset handling to several of the AUDIOMIX
+peripherals. Especially the reset controls for Enhanced Audio
+Return Channel (EARC) PHY and Controller.
 
-changes in v7:
-- add property "#reset-cells" exist check
-- change the reset driver to be specific for 8MP-audiomix
-  remove the design for general usage.
+So make Audio Block Control a reset provider for EARC, which
+is one of modules in this audio subsystem.
 
-changes in v6:
-- fix type for "correct"
-- fix coding style for " * adev"
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-changes in v5:
-- fix miss header issue reported by kernel test robot
-- use scoped free
-
-changes in v4:
-- use auxiliary device framework for reset controller driver.
-- drop syscon and simple-mfd related changes in v3
-
-changes in v3:
-- separate reset driver to driver/reset/
-- add binding doc for reset driver.
-- modify imx8mp.dtsi accordingly
-
-changes in v2:
-- add more info in commit messages
-
-Shengjiu Wang (5):
-  dt-bindings: clock: imx8mp: Add #reset-cells property
-  clk: imx: clk-audiomix: Add reset controller
-  reset: imx8mp-audiomix: Add AudioMix Block Control reset driver
-  clk: imx: clk-audiomix: Add CLK_SET_RATE_PARENT flags for clocks
-  clk: imx: clk-audiomix: Correct parent clock for earc_phy and audpll
-
- .../bindings/clock/imx8mp-audiomix.yaml       |   3 +
- drivers/clk/imx/Kconfig                       |   1 +
- drivers/clk/imx/clk-imx8mp-audiomix.c         |  86 ++++++++++++++-
- drivers/reset/Kconfig                         |   8 ++
- drivers/reset/Makefile                        |   1 +
- drivers/reset/reset-imx8mp-audiomix.c         | 103 ++++++++++++++++++
- 6 files changed, 196 insertions(+), 6 deletions(-)
- create mode 100644 drivers/reset/reset-imx8mp-audiomix.c
-
+diff --git a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+index 0a6dc1a6e122..6588a17a7d9a 100644
+--- a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
++++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+@@ -44,6 +44,9 @@ properties:
+       ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8mp-clock.h
+       for the full list of i.MX8MP IMX8MP_CLK_AUDIOMIX_ clock IDs.
+ 
++  '#reset-cells':
++    const: 1
++
+ required:
+   - compatible
+   - reg
 -- 
 2.34.1
 
