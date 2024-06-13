@@ -1,139 +1,96 @@
-Return-Path: <linux-kernel+bounces-213631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF768907819
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:18:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 211CD90781C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 805081F2271B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:18:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF2361F216FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3CA5146585;
-	Thu, 13 Jun 2024 16:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7044A146A7B;
+	Thu, 13 Jun 2024 16:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="DZClKZ3z"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="2wCXN2VC"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0911448E6
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6282926AE4;
+	Thu, 13 Jun 2024 16:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718295513; cv=none; b=WdysXtqDGsxXw2RGskzm35wZO4H0SdmZ9GuIQSB7bNsPuv0uVFPLMWtwEF9YVli2R5sFtqSbJOA/5CgMs3tFzc1GRuM9HKshDIbu8p2PeEuacCqPXlLucCN22VJDxSU2+oyLrJiXxZmFWRHUHa+L4eSGAfWxZjcPR2Q4/2PW0y4=
+	t=1718295563; cv=none; b=GmWjfnjJX11saRIqUxb+UMIfr67hzlhG1uvfP9BjEQPqMwbMQT22EzR+0PoT3tktFE+xvgxrWAdVlUXtuY+qzSF0GJaoaTRrWijHM6iSTQJ7QaiFwwQDfcwhsXsevT7GzbrympPGSijBtXPM+LWbUi9NuucMlws7rqImbp2q6+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718295513; c=relaxed/simple;
-	bh=KZCa6znuMKXC8bkLoWWIPiVEbKqZN3WV5EwnSOH8WJ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e90KlCJ3wLStDZYowyc0CrMheXaTNDlOdWam7qbaxnAkos9fm2W6VjpjCHVXGTT2p3ESSve3xYJjeAHQfSpLLuSP1gA3Ynb0EaZ2BRyqyKCNuq0Zse+8y1T9cc1nG0fVTUi6EaBO7qApGNi5RElczEjLNByKCvnggVukgyrcAxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=DZClKZ3z; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dfe1aa7cce2so1449176276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:18:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1718295510; x=1718900310; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GZBbzPtIS9puZD9LsDe5Aioc6E2UGfepOTkRRP9sOes=;
-        b=DZClKZ3z+ATu1lMzTx7GBSAZidBtv/LCC3jJkRPgnpDPiug7a4XCXp9RRKvC9m+0tN
-         ZKSjuXW91JL65khSw+o9Xzd/JLdCRQzdfPyEGWOqy3Dte8XpcvX2h/OiZQLZCyEpvoYb
-         kUV+hHBPeM8YXvH5uMzlBwL+qCjcM8ncg2LWQAujcg23mYs2He5bubyrGUbn9R7v5IJb
-         yuZCkD2Gzb4q1GuRWC1zMmKGxq1mhHnrsc8Vh+vsjsizrRaQBcC4iHGj9cypIlm02mCX
-         jA5RoxYLSG6ZMBoVFtH8Y8Jx2+79JCM3w3ji14bRwnyRb+6wSL82HEHsKkQ+dezXh0/l
-         6SuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718295510; x=1718900310;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GZBbzPtIS9puZD9LsDe5Aioc6E2UGfepOTkRRP9sOes=;
-        b=VU7GTsZAfy1RhU+kautloil5bLbl27B2pfXTSC9yryiN0EwABse8pLivPsfyZEevyY
-         Wvm/84lnEq8Eu6gCdnCSXunRRtfv3slHXYds6ieRpuQTNsHUX02VtUtL2riBAeuWS3bJ
-         RaYec3yQSHn6JPZyfLRV+rMJQ/3QmgiCjXF8j8ygWcUuOkK79GdYW++HHPxgfZZ4l/vr
-         EoJyrYM9GgWPw0FMMJwqNUY5XFUPjSQc7PnUoEofkBbT0e7+Nf33pXZ/tNTZZ+ndHP6Y
-         ZbI4A07vkNzFbZMTN+Pj83mRZUtv49N9gc8SFCx9O+Y7peSy/d5NqMM+laFeZD0Xn9qR
-         cy3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWr5vmt1WDFqGqdQxqVYAOJnOVcahZbDaaBQg9uzNaTp2qXCy7SbpRRqNy8BDN5nmuOfX4toqUYKTqyYs4cvcFUG6NnwdFRfSS2wgJv
-X-Gm-Message-State: AOJu0YwRo0iHq/E4QxPi0w7MQVJKaktzjwd1JVtx9m5GVF8+dg1I+UVd
-	Cz/xeKvDCfXC7oABD69Kh2yEJioaLz7VdsXEPZl0wuAEZtChIxaWV+DCFiXyUai/OiKfcZIF1n0
-	AxtmfMAN4omU+xux2dzf8+5DjVViLCYzMWGx9RL2zSbdASlYp
-X-Google-Smtp-Source: AGHT+IEZkQCpgQWnHPnqmV72SlpJSSYgy+aR2OvtQyA4oEofTAHLBz7bN09buIDJU6nT5s+qaUGywS58qIOzm6CBeeA=
-X-Received: by 2002:a25:18a:0:b0:dfa:c4b8:630e with SMTP id
- 3f1490d57ef6-dfe66a6574dmr4785136276.33.1718295510404; Thu, 13 Jun 2024
- 09:18:30 -0700 (PDT)
+	s=arc-20240116; t=1718295563; c=relaxed/simple;
+	bh=WpIiOcbHwANqWVqIm5ExegY6R8ZGDJCuGoZEPhc3ft4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ix/NO2cM8wlZCPKVYkJ8+8X0FAZR591MkFE+BGAOZyuZWf4J/sIZ2kYI6IDeSXoJmWMVAsDKrMZU7xvZZQv8xlDVM+3kmZyyQQ0aumGWfZ0jZXOXIRwUBXAk5r3OmvpUUrMRWyzAn3g6vtWGomY3Dc+3llKdR7uK6OE+Zm7PINQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=2wCXN2VC; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4W0SKP5xgrz6Cnk9V;
+	Thu, 13 Jun 2024 16:19:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1718295559; x=1720887560; bh=EqUKSXP8U8eHmlIVt2N2fY/w
+	HbGNwccAvAZ1mcqBVuk=; b=2wCXN2VCrLeXob49GZxpU4hKceCTerxYyRVIGhxU
+	ZieUosDarLgSXfoyldgJ/5EH+1IC9OVlwfGNB1ZGjUglJDLj9m8TJpVxcd1aKNhi
+	VyQuh6SET0wRIE9VmNoSpQMEj9Ftl6mtl+XtUZ15DISzW1U8nTQxg/gMfuQO2u2N
+	J7g8ThqhX1B6ZafBPokbmmck4jd5rIZbpT35wxlZWc9vfGO1LR9L+wubE1K7kfgc
+	SPczzpJYsnIBM1UxhEHgbEf2t3gHmrDod40tsLuG0CiGgv22q0kO6Bl81EI39KST
+	U9asvy4lp2FYbQhv28/1LHHOcNBwb3PbCl7h8vlqO+mtMQ==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id RgN825rfIE8z; Thu, 13 Jun 2024 16:19:19 +0000 (UTC)
+Received: from [IPV6:2620:0:1000:5e10:c543:208b:8ce4:f55a] (unknown [104.132.0.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4W0SKK6mj8z6Cnk9Y;
+	Thu, 13 Jun 2024 16:19:17 +0000 (UTC)
+Message-ID: <132dedc1-ee11-44d8-b684-0ffbf994d164@acm.org>
+Date: Thu, 13 Jun 2024 09:19:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612105232.400361-1-abdulrasaqolawani@gmail.com>
-In-Reply-To: <20240612105232.400361-1-abdulrasaqolawani@gmail.com>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Thu, 13 Jun 2024 17:18:13 +0100
-Message-ID: <CAPY8ntDcSRbJL9q+RuVXU_CAw3QXLAqYrdN4D+V-B2Bdz4VRKA@mail.gmail.com>
-Subject: Re: [PATCH v2] media: i2c: ov5647: replacing of_node_put with __free(device_node)
-To: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
-Cc: sakari.ailus@linux.intel.com, jacopo@jmondi.org, mchehab@kernel.org, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com, 
-	julia.lawall@inria.fr
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: ufs: qcom: add missing MODULE_DESCRIPTION() macro
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Can Guo <quic_cang@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20240612-md-drivers-ufs-host-v1-1-df35924685b8@quicinc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240612-md-drivers-ufs-host-v1-1-df35924685b8@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 12 Jun 2024 at 11:53, Abdulrasaq Lawani
-<abdulrasaqolawani@gmail.com> wrote:
->
-> Replace instance of of_node_put with __free(device_node)
-> to protect against any memory leaks due to future changes
-> in control flow.
->
-> Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+On 6/12/24 9:46 PM, Jeff Johnson wrote:
+> +MODULE_DESCRIPTION("QCOM specific hooks to UFS controller platform driver");
+>   MODULE_LICENSE("GPL v2");
 
-Conditional ack had already been given on v1.
-I don't know this new __free well enough to give an R-b, but it looks sane.
+That sounds weird to me. I think we are better of with no module
+description than with the above description.
 
-Acked-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+How about the following description?
 
-> ---
->  drivers/media/i2c/ov5647.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
-> index 7e1ecdf2485f..0fb4d7bff9d1 100644
-> --- a/drivers/media/i2c/ov5647.c
-> +++ b/drivers/media/i2c/ov5647.c
-> @@ -1360,24 +1360,21 @@ static int ov5647_parse_dt(struct ov5647 *sensor, struct device_node *np)
->         struct v4l2_fwnode_endpoint bus_cfg = {
->                 .bus_type = V4L2_MBUS_CSI2_DPHY,
->         };
-> -       struct device_node *ep;
-> +       struct device_node *ep __free(device_node) =
-> +               of_graph_get_endpoint_by_regs(np, 0, -1);
->         int ret;
->
-> -       ep = of_graph_get_endpoint_by_regs(np, 0, -1);
->         if (!ep)
->                 return -EINVAL;
->
->         ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(ep), &bus_cfg);
->         if (ret)
-> -               goto out;
-> +               return ret;
->
->         sensor->clock_ncont = bus_cfg.bus.mipi_csi2.flags &
->                               V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK;
->
-> -out:
-> -       of_node_put(ep);
-> -
-> -       return ret;
-> +       return 0;
->  }
->
->  static int ov5647_probe(struct i2c_client *client)
-> --
-> 2.43.0
->
+"Qualcomm UFS host controller driver".
+
+Thanks,
+
+Bart.
 
