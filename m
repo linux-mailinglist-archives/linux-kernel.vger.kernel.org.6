@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-212952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 922D99068C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:32:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F409068C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F1521C2410D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:32:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6E3E1C2415F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E7213F451;
-	Thu, 13 Jun 2024 09:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7570D84D03;
+	Thu, 13 Jun 2024 09:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPBAMWh4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="iD6YySQ3"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07FA381C4;
-	Thu, 13 Jun 2024 09:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EB2381C4
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718271133; cv=none; b=S0w1KgX/ONAVUokQgR2hq8QIgcoiEycCp21Enqk2VQOCU9hdL32JeBsUdnEE//5Vi94/VQD2qTrL2C28+V5b6PzipUMQa6sMS78T0wKhqkF4GEw3bCIK3gimloLl+zSnmtcPtj36Y9OB21kAQRScf9HBsA1wpY2sKz4fWZh8ojg=
+	t=1718271159; cv=none; b=VXJg5xHtBsPFIlUA2mmgYRZLI5S5pS8k0OPHTFQO8AsB5900kly3T/hTE2QWQmQfysubcb3mfa+bfE8h6UMPdRrwgh1n7D+d1cyvTAVlH0QOtvfwNA612NrPSDCLGk19BthGirDNsq0J6cyxG+gOqMN3qckSiKEnCq3g4Jvdov4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718271133; c=relaxed/simple;
-	bh=PaV1/aUONukaNRB9HswUe/iOgOw9sgxe6pBxT6j1JEM=;
+	s=arc-20240116; t=1718271159; c=relaxed/simple;
+	bh=8daAuNTWkQPXp9NVB+V4Lx6lezYM/eZE2pCm1YvCXcA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u6P2vM7J2ZLiZIt7l9RxAoDGSU1titFVPZbAgEryr/jnkopoRRY46Ec8vyuOmM+E/vc/fogwhQwYKkcbhfXQHFWHB2NE3rVqOeDVXK/x2dWsfHZ1AVMZ8ult2r6qWMMO5DzJYD4Is6vhHqJeGbaepZ7zRKKwlRnyRZ4muo1OmDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPBAMWh4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8250C2BBFC;
-	Thu, 13 Jun 2024 09:32:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718271133;
-	bh=PaV1/aUONukaNRB9HswUe/iOgOw9sgxe6pBxT6j1JEM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CPBAMWh4wx4yh2ijw91fOQa1Qa7DO5KZr04gK4yZXcfrsYwhZrDqB5LZ/4LGzK/g2
-	 glNJRJ1LGahPnku4c1XwqEuSPsVxQ2gNJ1NHSO3nQ7xXjiEp57Bl5HQW3AXcMz/Yjq
-	 OF0Ana6IjFXKWdmF2PotAve4fUJ3VtXVTMOgpk2hl/MedLoslbeyTZxTZybbkHzxGg
-	 moNxltM0cNdl5sk2kw13tB1uMo4736riZT3cYaWRmyqlVEZW7wakWMfe1lXg6SkjXj
-	 rITQm8sLla1mc2XHgimlAI1ZgHigx4wDJJ1pvHFOwF67iNPSF2CCbvGwemPuoCG5aJ
-	 qPLopIEp/KfHw==
-Message-ID: <74985816-3a3a-490e-b8f0-49f795ab2f07@kernel.org>
-Date: Thu, 13 Jun 2024 11:32:04 +0200
+	 In-Reply-To:Content-Type; b=ZBK4NSaafwudyZqe5jeox0kHE15qwtTXMKMQBvqC6M/nJClgJjmeqtxTivSaAUlC5oW46W66P/dpmZRG+JLAgtVxjrTyyDnkOWGA5JrSu47XD3/gs6D+Frs8lZVTJGCx4M/l56n/vliQYcvKaSBMUDtT5tsRjnSFDVgxTfyoxaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=iD6YySQ3; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f64a3e5d6fso564115ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:32:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1718271156; x=1718875956; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/ST1cCivPhMFN53Rm65k70JPSTUTIoB61iuRO5jRUrI=;
+        b=iD6YySQ3VTOlQZZva/L0Um1zsPW0NdHEyt0mFx+HKNfgNg9QXTC/T17qe2jI1Z3B6/
+         SiTv377GXqMaWEZ0oWrCKCT1Mq12Y/u5QVef7BDbRn9NDeGCtkrtDsOviQ2XuF4YqW/u
+         QpGt7SWlKqFX10m9SKhB3HsbUAEOETBqySCeNRg9VXxHrJjxmUNCkjmMuKJbZjRFqcue
+         ukTAiTMmNsZKREzBJssiKmtGjRwxoYgtTG8F75IEWiSMPAdshIEioDRJ1z/i2P2+fgKI
+         ViKOb94E+UUmt/asW97UUgxLpNJ/ueiHygXQbF2PpLPxw8w4Xqz/0nYcm7um2RUr4OGe
+         sNyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718271156; x=1718875956;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ST1cCivPhMFN53Rm65k70JPSTUTIoB61iuRO5jRUrI=;
+        b=wlxRP8OOvk2+Lx8uLs77ZGbqjyOguGMn2iYkex7fYVNW6kg9h1MojIloHhqZaptXTx
+         j2Due8N8C1Zy5+krInrtj7iqacVoa8rDaMDosroYOCzLicxAnWK7CTHqRE3+FgtmIhAi
+         upnSEmjN/6wWLpx81c8YOjF9NXrDGxJ/xzNPFF7l5r+AlGlaeOOpu3UhheUDhxykSwUC
+         qzRbiacCUXm906SIhoFj+Qpy4GXT+4/lsPouR7yPaB+q5nJnXypdFlCve1DSMXM/m1ph
+         StljaYcX29kfHi0Q8+oQBAo1ggO3t3Z0ZIRCv0BURqXbc3A9Fw+FK3CqZ66raA1YWSP1
+         Ufgg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmbmHnHKEpMAxh/qR+0qMt0MxqaMW5vGmurjzkUYPVCaRx3ER+gOWR/pHgOxoeX6XFj9nfMts+H+Yne9oQ2wsAwWjNmdprbIuD1+El
+X-Gm-Message-State: AOJu0YyZq93kGKITLSSVEeHdx5ELEjYmLm3ViLU/oeA36GSSkwLSvnQO
+	jfOMekaQFnh4RV9kdzfJibMSJhsK4bDQj4qWqAY/s0xWSRG2YncGiTA+Cfh3RqQ=
+X-Google-Smtp-Source: AGHT+IHNgM8CZ35kGrHdPnwg9elcRUwx1Uix+OiDO+zmRbp69PP6whHf/TrJP9NaKX2VA1DFmQYGyw==
+X-Received: by 2002:a05:6a20:dd9e:b0:1b5:ae2c:c730 with SMTP id adf61e73a8af0-1b8a9c5107cmr3926222637.3.1718271156437;
+        Thu, 13 Jun 2024 02:32:36 -0700 (PDT)
+Received: from [10.84.144.49] ([203.208.167.150])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fedcf36b93sm731870a12.18.2024.06.13.02.32.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 02:32:36 -0700 (PDT)
+Message-ID: <efac94f6-2fb3-4682-a894-7c8ffac18d20@bytedance.com>
+Date: Thu, 13 Jun 2024 17:32:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,218 +75,139 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 net-next 14/15] net: Reference bpf_redirect_info via
- task_struct on PREEMPT_RT.
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Daniel Bristot de Oliveira <bristot@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>,
- Eric Dumazet <edumazet@google.com>, Frederic Weisbecker
- <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
- Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@google.com>,
- =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
- Yonghong Song <yonghong.song@linux.dev>, bpf@vger.kernel.org
-References: <20240612170303.3896084-1-bigeasy@linutronix.de>
- <20240612170303.3896084-15-bigeasy@linutronix.de>
+Subject: Re: [RFC PATCH 0/3] asynchronously scan and free empty user PTE pages
 Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <20240612170303.3896084-15-bigeasy@linutronix.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: hughd@google.com, willy@infradead.org, mgorman@suse.de,
+ muchun.song@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1718267194.git.zhengqi.arch@bytedance.com>
+ <02f8cbd0-8b2b-4c2d-ad96-f854d25bf3c2@redhat.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <02f8cbd0-8b2b-4c2d-ad96-f854d25bf3c2@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Hi David,
 
+Thanks for such a quick reply!
 
-On 12/06/2024 18.44, Sebastian Andrzej Siewior wrote:
-> The XDP redirect process is two staged:
-> - bpf_prog_run_xdp() is invoked to run a eBPF program which inspects the
->    packet and makes decisions. While doing that, the per-CPU variable
->    bpf_redirect_info is used.
-> 
-> - Afterwards xdp_do_redirect() is invoked and accesses bpf_redirect_info
->    and it may also access other per-CPU variables like xskmap_flush_list.
-> 
-> At the very end of the NAPI callback, xdp_do_flush() is invoked which
-> does not access bpf_redirect_info but will touch the individual per-CPU
-> lists.
-> 
-> The per-CPU variables are only used in the NAPI callback hence disabling
-> bottom halves is the only protection mechanism. Users from preemptible
-> context (like cpu_map_kthread_run()) explicitly disable bottom halves
-> for protections reasons.
-> Without locking in local_bh_disable() on PREEMPT_RT this data structure
-> requires explicit locking.
-> 
-> PREEMPT_RT has forced-threaded interrupts enabled and every
-> NAPI-callback runs in a thread. If each thread has its own data
-> structure then locking can be avoided.
-> 
-> Create a struct bpf_net_context which contains struct bpf_redirect_info.
-> Define the variable on stack, use bpf_net_ctx_set() to save a pointer to
-> it, bpf_net_ctx_clear() removes it again.
-> The bpf_net_ctx_set() may nest. For instance a function can be used from
-> within NET_RX_SOFTIRQ/ net_rx_action which uses bpf_net_ctx_set() and
-> NET_TX_SOFTIRQ which does not. Therefore only the first invocations
-> updates the pointer.
-> Use bpf_net_ctx_get_ri() as a wrapper to retrieve the current struct
-> bpf_redirect_info. The returned data structure is zero initialized to
-> ensure nothing is leaked from stack. This is done on first usage of the
-> struct. bpf_net_ctx_set() sets bpf_redirect_info::kern_flags  to 0 to
-> note that initialisation is required. First invocation of
-> bpf_net_ctx_get_ri() will memset() the data structure and update
-> bpf_redirect_info::kern_flags.
-> bpf_redirect_info::nh  is excluded from memset because it is only used
-> once BPF_F_NEIGH is set which also sets the nh member. The kern_flags is
-> moved past nh to exclude it from memset.
-> 
-> The pointer to bpf_net_context is saved task's task_struct. Using
-> always the bpf_net_context approach has the advantage that there is
-> almost zero differences between PREEMPT_RT and non-PREEMPT_RT builds.
-> 
-> Cc: Alexei Starovoitov<ast@kernel.org>
-> Cc: Andrii Nakryiko<andrii@kernel.org>
-> Cc: Eduard Zingerman<eddyz87@gmail.com>
-> Cc: Hao Luo<haoluo@google.com>
-> Cc: Jesper Dangaard Brouer<hawk@kernel.org>
-> Cc: Jiri Olsa<jolsa@kernel.org>
-> Cc: John Fastabend<john.fastabend@gmail.com>
-> Cc: KP Singh<kpsingh@kernel.org>
-> Cc: Martin KaFai Lau<martin.lau@linux.dev>
-> Cc: Song Liu<song@kernel.org>
-> Cc: Stanislav Fomichev<sdf@google.com>
-> Cc: Toke Høiland-Jørgensen<toke@redhat.com>
-> Cc: Yonghong Song<yonghong.song@linux.dev>
-> Cc:bpf@vger.kernel.org
-> Acked-by: Alexei Starovoitov<ast@kernel.org>
-> Reviewed-by: Toke Høiland-Jørgensen<toke@redhat.com>
-> Signed-off-by: Sebastian Andrzej Siewior<bigeasy@linutronix.de>
-> ---
->   include/linux/filter.h | 56 ++++++++++++++++++++++++++++++++++--------
->   include/linux/sched.h  |  3 +++
->   kernel/bpf/cpumap.c    |  3 +++
->   kernel/bpf/devmap.c    |  9 ++++++-
->   kernel/fork.c          |  1 +
->   net/bpf/test_run.c     | 11 ++++++++-
->   net/core/dev.c         | 26 +++++++++++++++++++-
->   net/core/filter.c      | 44 +++++++++------------------------
->   net/core/lwt_bpf.c     |  3 +++
->   9 files changed, 111 insertions(+), 45 deletions(-)
-> 
+On 2024/6/13 17:04, David Hildenbrand wrote:
+> On 13.06.24 10:38, Qi Zheng wrote:
+>> Hi all,
 
-I like it :-)
+[...]
 
-Acked-by: Jesper Dangaard Brouer <hawk@kernel.org>
+> 
+> 
+>> 3. Implementation
+>> =================
+>>
+>> For empty user PTE pages, we don't actually need to free it 
+>> immediately, nor do
+>> we need to free all of it.
+>>
+>> Therefore, in this patchset, we register a task_work for the user 
+>> tasks to
+>> asyncronously scan and free empty PTE pages when they return to user 
+>> space.
+>> (The scanning time interval and address space size can be adjusted.)
+> 
+> The question is, if we really have to scan asynchronously, or if would 
+> be reasonable for most use cases to trigger a madvise(MADV_PT_RECLAIM) 
+> every now and then. For virtio-mem, and likely most memory allocators, 
+> that might be feasible, and valuable independent of system-wide 
+> automatic scanning.
 
+Agree, I also think it is possible to add always && madvise modes
+simliar to THP.
 
-> diff --git a/include/linux/filter.h b/include/linux/filter.h
-> index b02aea291b7e8..0a7f6e4a00b60 100644
-> --- a/include/linux/filter.h
-> +++ b/include/linux/filter.h
-> @@ -733,21 +733,59 @@ struct bpf_nh_params {
->   	};
->   };
->   
-> +/* flags for bpf_redirect_info kern_flags */
-> +#define BPF_RI_F_RF_NO_DIRECT	BIT(0)	/* no napi_direct on return_frame */
-> +#define BPF_RI_F_RI_INIT	BIT(1)
-> +
->   struct bpf_redirect_info {
->   	u64 tgt_index;
->   	void *tgt_value;
->   	struct bpf_map *map;
->   	u32 flags;
-> -	u32 kern_flags;
->   	u32 map_id;
->   	enum bpf_map_type map_type;
->   	struct bpf_nh_params nh;
-> +	u32 kern_flags;
->   };
->   
-> -DECLARE_PER_CPU(struct bpf_redirect_info, bpf_redirect_info);
-> +struct bpf_net_context {
-> +	struct bpf_redirect_info ri;
-> +};
->   
-> -/* flags for bpf_redirect_info kern_flags */
-> -#define BPF_RI_F_RF_NO_DIRECT	BIT(0)	/* no napi_direct on return_frame */
-> +static inline struct bpf_net_context *bpf_net_ctx_set(struct bpf_net_context *bpf_net_ctx)
-> +{
-> +	struct task_struct *tsk = current;
-> +
-> +	if (tsk->bpf_net_context != NULL)
-> +		return NULL;
-> +	bpf_net_ctx->ri.kern_flags = 0;
-> +
-> +	tsk->bpf_net_context = bpf_net_ctx;
-> +	return bpf_net_ctx;
-> +}
-> +
-> +static inline void bpf_net_ctx_clear(struct bpf_net_context *bpf_net_ctx)
-> +{
-> +	if (bpf_net_ctx)
-> +		current->bpf_net_context = NULL;
-> +}
-> +
-> +static inline struct bpf_net_context *bpf_net_ctx_get(void)
-> +{
-> +	return current->bpf_net_context;
-> +}
-> +
-> +static inline struct bpf_redirect_info *bpf_net_ctx_get_ri(void)
-> +{
-> +	struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
-> +
-> +	if (!(bpf_net_ctx->ri.kern_flags & BPF_RI_F_RI_INIT)) {
-> +		memset(&bpf_net_ctx->ri, 0, offsetof(struct bpf_net_context, ri.nh));
-> +		bpf_net_ctx->ri.kern_flags |= BPF_RI_F_RI_INIT;
-> +	}
-> +
-> +	return &bpf_net_ctx->ri;
-> +}
->   
->   /* Compute the linear packet data range [data, data_end) which
->    * will be accessed by various program types (cls_bpf, act_bpf,
-> @@ -1018,25 +1056,23 @@ struct bpf_prog *bpf_patch_insn_single(struct bpf_prog *prog, u32 off,
->   				       const struct bpf_insn *patch, u32 len);
->   int bpf_remove_insns(struct bpf_prog *prog, u32 off, u32 cnt);
->   
-> -void bpf_clear_redirect_map(struct bpf_map *map);
-> -
->   static inline bool xdp_return_frame_no_direct(void)
->   {
-> -	struct bpf_redirect_info *ri = this_cpu_ptr(&bpf_redirect_info);
-> +	struct bpf_redirect_info *ri = bpf_net_ctx_get_ri();
->   
->   	return ri->kern_flags & BPF_RI_F_RF_NO_DIRECT;
->   }
->   
->   static inline void xdp_set_return_frame_no_direct(void)
->   {
-> -	struct bpf_redirect_info *ri = this_cpu_ptr(&bpf_redirect_info);
-> +	struct bpf_redirect_info *ri = bpf_net_ctx_get_ri();
->   
->   	ri->kern_flags |= BPF_RI_F_RF_NO_DIRECT;
->   }
->   
->   static inline void xdp_clear_return_frame_no_direct(void)
->   {
-> -	struct bpf_redirect_info *ri = this_cpu_ptr(&bpf_redirect_info);
-> +	struct bpf_redirect_info *ri = bpf_net_ctx_get_ri();
->   
->   	ri->kern_flags &= ~BPF_RI_F_RF_NO_DIRECT;
->   }
-> @@ -1592,7 +1628,7 @@ static __always_inline long __bpf_xdp_redirect_map(struct bpf_map *map, u64 inde
->   						   u64 flags, const u64 flag_mask,
->   						   void *lookup_elem(struct bpf_map *map, u32 key))
->   {
-> -	struct bpf_redirect_info *ri = this_cpu_ptr(&bpf_redirect_info);
-> +	struct bpf_redirect_info *ri = bpf_net_ctx_get_ri();
->   	const u64 action_mask = XDP_ABORTED | XDP_DROP | XDP_PASS | XDP_TX;
+> 
+>>
+>> When scanning, we can filter out some unsuitable vmas:
+>>
+>>      - VM_HUGETLB vma
+>>      - VM_UFFD_WP vma
+> 
+> Why is UFFD_WP unsuitable? It should be suitable as long as you make 
+> sure to really only remove page tables that are all pte_none().
+
+Got it, I mistakenly thought pte_none() covered pte marker case until
+I saw pte_none_mostly().
+
+> 
+>>      - etc
+>> And for some PTE pages that spans multiple vmas, we can also skip.
+>>
+>> For locking:
+>>
+>>      - use the mmap read lock to traverse the vma tree and pgtable
+>>      - use pmd lock for clearing pmd entry
+>>      - use pte lock for checking empty PTE page, and release it after 
+>> clearing
+>>        pmd entry, then we can capture the changed pmd in 
+>> pte_offset_map_lock()
+>>        etc after holding this pte lock. Thanks to this, we don't need 
+>> to hold the
+>>        rmap-related locks.
+>>      - users of pte_offset_map_lock() etc all expect the PTE page to 
+>> be stable by
+>>        using rcu lock, so use pte_free_defer() to free PTE pages.
+> 
+> I once had a protoype that would scan similar to GUP-fast, using the 
+> mmap lock in read mode and disabling local IRQs and then walking the 
+> page table locklessly (no PTLs). Only when identifying an empty page and 
+> ripping out the page table, it would have to do more heavy locking (back 
+> when we required the mmap lock in write mode and other things).
+
+Maybe mmap write lock is not necessary, we can protect it using pmd lock
+&& pte lock as above.
+
+> 
+> I can try digging up that patch if you're interested.
+
+Yes, that would be better, maybe it can provide more inspiration!
+
+> 
+> We'll have to double check whether all anon memory cases can *properly* 
+> handle pte_offset_map_lock() failing (not just handling it, but doing 
+> the right thing; most of that anon-only code didn't ever run into that 
+> issue so far, so these code paths were likely never triggered).
+
+Yeah, I'll keep checking this out too.
+
+> 
+> 
+>> For the path that will also free PTE pages in THP, we need to recheck 
+>> whether the
+>> content of pmd entry is valid after holding pmd lock or pte lock.
+>>
+>> 4. TODO
+>> =======
+>>
+>> Some applications may be concerned about the overhead of scanning and 
+>> rebuilding
+>> page tables, so the following features are considered for 
+>> implementation in the
+>> future:
+>>
+>>      - add per-process switch (via prctl)
+>>      - add a madvise option (like THP)
+>>      - add MM_PGTABLE_SCAN_DELAY/MM_PGTABLE_SCAN_SIZE control (via 
+>> procfs file)
+>> Perhaps we can add the refcount to PTE pages in the future as well, 
+>> which would
+>> help improve the scanning speed.
+> 
+> I didn't like the added complexity last time, and the problem of 
+> handling situations where we squeeze multiple page tables into a single 
+> "struct page".
+
+OK, except for refcount, do you think the other three todos above are 
+still worth doing?
+
+Thanks,
+Qi
+
+> 
 
