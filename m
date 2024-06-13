@@ -1,154 +1,103 @@
-Return-Path: <linux-kernel+bounces-213890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FBAB907C15
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:14:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3B7907C1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B22B11F23688
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:14:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC5012846A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CFF14A616;
-	Thu, 13 Jun 2024 19:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A426C14D432;
+	Thu, 13 Jun 2024 19:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b="L4RxlyWP"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="qQioH8/K"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DF1149E1A;
-	Thu, 13 Jun 2024 19:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA202F50;
+	Thu, 13 Jun 2024 19:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718306069; cv=none; b=GqCZgXHjcNehXRKLyL90cfpFY2dXui0pe9woeLOa7cGasi6cvb8rANnXB1X5PYZe0TKqOB9pEigySmOvnJutUKEMdC66iLPwQOvU05D+wt5zs1h/vPAF1nupaP7XV0thd1E8robgjdIjmbLudguJYfvDRnn605DogAZJjlZgRGQ=
+	t=1718306147; cv=none; b=i95OW8wzvflyvLhRC93I+JfDk2YGcIJydlWyE8wDEKAZ4UuMA6Tvgq0WW6QgCpaQGyGBKdR0lX+YGAI+58DhDxbdy01nPvuWplt6L3bQEgABGRFwHeAWUSxZHPvrb6SpHJ+jYTd2Q2x/eyXCLrbhajbx30rTsRo4+O7ulizZ49E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718306069; c=relaxed/simple;
-	bh=SInef4o5M1AK1ysJCyquEWbuWWbqBrt9x4MkjqwsuwI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AXGEc5a5QEqpYGcAZ1DtXDW2jsqWamHiZzZUyHNykw+mycbFEmSz8ASBq/mXaw3rkJoKeTTPqZqOe/Z3RmVl95lqL2azrkKqaSrwWv5b07szaiPZaxgpzMn+ws4qqCWqqJgSAO9t6YJJz2z6DUW2xniZe0VaXWQspPEpFdTPe6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com; spf=pass smtp.mailfrom=jubnut.com; dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b=L4RxlyWP; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jubnut.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	s=arc-20240116; t=1718306147; c=relaxed/simple;
+	bh=2hYJ1+rDlXCuBR0CUzbbS2iEQjVVQVKf91ppyer216k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T1/O/qU95psSvSqYYzIoRq+JqJYnXsOt7rrg4UR1TJDA4fwEep5RvS2Zw+LVpQNixyX0uLPxijJfwI9U4pTf85PTMqWMX1KyAy48u8bRRuc+0/iraUjWc51+/hkW9tRnFo6w1If7xoMJ2SRxhThbsZZ9z0dUCNkbqiMKtENOL3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=qQioH8/K; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4W0XDq3Y9WzlgMVW;
+	Thu, 13 Jun 2024 19:15:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1718306136; x=1720898137; bh=p7GSh5AJbu1HIUJECGqYLdu+
+	1gbsYjlaIo0jC08KkBw=; b=qQioH8/K5NkFNarm8vJpHj+GK7kRyPZX3b104AMj
+	mbsc6DDCg8i0Cn9oBzrU4fkhU+jc6gAPmWMz59G/exyiwPBxMjScTPjKTFHEPnV7
+	5eB7HT5YwCgGdkZCEByxcxM3B5e0Ek00dHYbHBtAONpWsQUkry9+k2DSmqKv1dNO
+	e1d/y86AlL8hgsqWo82x4sM86F3nOBCEceiL/+XoS4Hn/2j8pmULR1pfI6i0VeUC
+	r3SdoJZj1lUKyUegQmgIS1GjiO3G1xC2d7nnzvooytXLqAs6wUPBtXVCEZecMMvc
+	2Eu8EDLQ/uAfu1ScdgZeSCTjTpXCBmiKNyaBy3LbWqz/Tg==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id wZM3m8HDnaEw; Thu, 13 Jun 2024 19:15:36 +0000 (UTC)
+Received: from [100.96.154.26] (unknown [104.132.0.90])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4W0XCF1gwBz9sxf;
-	Thu, 13 Jun 2024 21:14:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jubnut.com; s=MBO0001;
-	t=1718306057;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1Y2fqfo34jYOSwwgMfXN35xvUGJse2iPb8SuE0d9SRI=;
-	b=L4RxlyWPdRZoDVbvUgoWt2/kWCnKJ7oAPnbO+v1RwHWV3LF2hCxNYY9N8vjMGTXuouXGBK
-	iphm4wecR/ExSX/HS+R1hFOudMbV8ifHxVucEX5U5phwek+q6L4NNKO0Cjk2P6dY54Mv0S
-	8exe4k+Waxw2CB0qK5agl+NEZG/pxZJSGRDjpw5lhIZSFSvRthHjbKnDhqjN8kJML2r9jT
-	ws2jnB4NgmRYtSCK1gONy5RMpoIEHKYvQU4j60oGZa9wXaUZ9hkdJAzJiwOd5c9ekE64Gr
-	ayP9w+14JxfuicqdivAQiuPAAHOrxbULdqg4p/bM9mSMlv+jYNe75tnrx/SQzw==
-From: Ben Walsh <ben@jubnut.com>
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, Benson Leung
- <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
- chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in
- cros_ec_lpc_mec_read_bytes()
-In-Reply-To: <ZmsvHBrYSpwYLyxx@google.com>
-References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
- <87sexgrdk4.fsf@jubnut.com> <ZmsvHBrYSpwYLyxx@google.com>
-Date: Thu, 13 Jun 2024 20:14:14 +0100
-Message-ID: <87o784ac55.fsf@jubnut.com>
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4W0XDl38K1zlgMVV;
+	Thu, 13 Jun 2024 19:15:35 +0000 (UTC)
+Message-ID: <812c519a-1a00-4ace-a0f7-d8c587f7e59f@acm.org>
+Date: Thu, 13 Jun 2024 12:15:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: 4W0XCF1gwBz9sxf
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: ufs: core: Free memory allocated for model before
+ reinit
+To: Joel Slebodnick <jslebodn@redhat.com>, linux-scsi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com, peter.wang@mediatek.com,
+ manivannan.sadhasivam@linaro.org, ahalaney@redhat.com, beanhuo@micron.com
+References: <20240613182728.2521951-1-jslebodn@redhat.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240613182728.2521951-1-jslebodn@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Tzung-Bi Shih <tzungbi@kernel.org> writes:
+On 6/13/24 11:27 AM, Joel Slebodnick wrote:
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index 0cf07194bbe8..a0407b9213ca 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -8787,6 +8787,7 @@ static int ufshcd_probe_hba(struct ufs_hba *hba, bool init_dev_params)
+>   	    (hba->quirks & UFSHCD_QUIRK_REINIT_AFTER_MAX_GEAR_SWITCH)) {
+>   		/* Reset the device and controller before doing reinit */
+>   		ufshcd_device_reset(hba);
+> +		ufs_put_device_desc(hba);
+>   		ufshcd_hba_stop(hba);
+>   		ufshcd_vops_reinit_notify(hba);
+>   		ret = ufshcd_hba_enable(hba);
 
-> On Thu, Jun 13, 2024 at 05:51:39PM +0100, Ben Walsh wrote:
->> 
->> Thanks for fixing this! Unfortunately `in_range` returns -EINVAL if
->> length == 0 (see the definition of `fwk_ec_lpc_mec_in_range`). I'm sure
->> this broke something in my testing, but I can't find what it was now.
->
-> Somewhere like [1] could accidentally get the -EINVAL.
->
-> [1]: https://elixir.bootlin.com/linux/v6.9/source/drivers/platform/chrome/cros_ec_lpc.c#L232
+Please add Fixes: and Cc: stable tags. Otherwise this patch looks good to me.
+Hence:
 
-Yes. It turns out I'm getting it in:
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
-cros_ec_query_all -> cros_ec_proto_info -> ... -> cros_ec_pkt_xfer_lpc
+Thanks,
 
-          /* Read response and update checksum */
-          ret = cros_ec_lpc_ops.read(EC_LPC_ADDR_HOST_PARAM, args.data_size,
-                                                             ^^^^^^^^^^^^^^^
-                                     msg->data);
-
-(as Dan suggested in his email).
-
->>   or 2. Put in a check for length == 0.
->> 
->>   or 3. Change the logic in `fwk_ec_lpc_mec_in_range`. Although I'm not
->>   sure what the correct answer is to "zero length is in range?"
->> 
->> I prefer option 2. What do you think?
->
-> How about drop the length check at [2]?
->
-> [2]: https://elixir.bootlin.com/linux/v6.9/source/drivers/platform/chrome/cros_ec_lpc_mec.c#L44
->
-
-This works, but we still end up calling cros_ec_lpc_io_bytes_mec() with
-zero length. Although this seems to work fine, we could put a length
-check at the top of cros_ec_lpc_read_bytes() to avoid it.
-
->>
->> Dan Carpenter <dan.carpenter@linaro.org> writes:
->> 
->> > We changed these functions to returning negative error codes, but this
->> > first error path was accidentally overlooked.  It leads to a Smatch
->> > warning:
->> >
->> >     drivers/platform/chrome/cros_ec_lpc.c:181 ec_response_timed_out()
->> >     error: uninitialized symbol 'data'.
->> >
->> > Fix this by returning the error code instead of success.
->> >
->> > Fixes: 68dbac0a58ef ("platform/chrome: cros_ec_lpc: MEC access can return error code")
->> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->> > ---
->> >  drivers/platform/chrome/cros_ec_lpc.c | 4 ++--
->> >  1 file changed, 2 insertions(+), 2 deletions(-)
->> >
->> > diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
->> > index ebe9fb143840..f0470248b109 100644
->> > --- a/drivers/platform/chrome/cros_ec_lpc.c
->> > +++ b/drivers/platform/chrome/cros_ec_lpc.c
->> > @@ -139,7 +139,7 @@ static int cros_ec_lpc_mec_read_bytes(unsigned int offset, unsigned int length,
->> >  	int in_range = cros_ec_lpc_mec_in_range(offset, length);
->> >  
->> >  	if (in_range < 0)
->> > -		return 0;
->> > +		return in_range;
->> >  
->> >  	return in_range ?
->> >  		cros_ec_lpc_io_bytes_mec(MEC_IO_READ,
->> > @@ -158,7 +158,7 @@ static int cros_ec_lpc_mec_write_bytes(unsigned int offset, unsigned int length,
->> >  	int in_range = cros_ec_lpc_mec_in_range(offset, length);
->> >  
->> >  	if (in_range < 0)
->> > -		return 0;
->> > +		return in_range;
->> >  
->> >  	return in_range ?
->> >  		cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE,
->> > -- 
->> > 2.43.0
->> 
+Bart.
 
