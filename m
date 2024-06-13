@@ -1,342 +1,217 @@
-Return-Path: <linux-kernel+bounces-213298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A92F907381
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:23:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B782C90738C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BBDE1C24797
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:23:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 397CB1F24ECA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748B8146A90;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51D51487E4;
+	Thu, 13 Jun 2024 13:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="alLavymb"
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04on2061.outbound.protection.outlook.com [40.107.8.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A09146D51;
 	Thu, 13 Jun 2024 13:21:21 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44021143C5D;
-	Thu, 13 Jun 2024 13:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718284880; cv=none; b=Aq0iG+VFJgfJNEa/VBOb538O5BvctYajYY6LIqgz0os6fRCEnjJXWIW1QwE3vJr0/w8nw27OjrJ9f9SzX8cT71Kd/qoDn14vb9WsFx7qtLgK0IopSXHHMiT/5PONovTjntF5drPZv9pUgmrTbd+JsgCqdLAsZMH4HyTtv9c+dtE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718284880; c=relaxed/simple;
-	bh=gK7IYwCVAC/BaeHUelw2TAZSnFTHiuHeoYJ/b8GUzHc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qHIoTq8r0JA/fTJ0VlFLi/syAb00oebAIu59wUaPTBIVF5YAfxgERat1A9rxYnU5VxgPqOCEwOIQx9lxdwilgw4lyJ2RR36m2/G0MMoP1SY1oICwHM05xsC+Sqno62xE4BBBjk0D85nzAtGoVXS4ShAP2PnFMcaa5v9GqYbCEMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-4d-666af24a63ba
-From: Honggyu Kim <honggyu.kim@sk.com>
-To: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Gregory Price <gregory.price@memverge.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	42.hyeyoo@gmail.com,
-	art.jeongseob@gmail.com,
-	kernel_team@skhynix.com,
-	Honggyu Kim <honggyu.kim@sk.com>,
-	Hyeongtak Ji <hyeongtak.ji@sk.com>
-Subject: [PATCH v5 5/8] mm/damon/paddr: introduce DAMOS_MIGRATE_COLD action for demotion
-Date: Thu, 13 Jun 2024 22:20:52 +0900
-Message-ID: <20240613132056.608-6-honggyu.kim@sk.com>
-X-Mailer: git-send-email 2.43.0.windows.1
-In-Reply-To: <20240613132056.608-1-honggyu.kim@sk.com>
-References: <20240613132056.608-1-honggyu.kim@sk.com>
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.8.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718284884; cv=fail; b=sy6L4GFC0IrdzqfX9ebuxQ+fGrzdKoTSrqmcUlocb7IbFnFY3me1k8yH8d7OPWT+1HxgW1qj6kgmsEB/Z8lxfFNoYrgdHbDkQg9XfZKYS3xoR2f4XaZlKDK4w0Sd/rDBRR99vSDHt3IanR/x37GlhpzmHpNXJvANKNMiZXNIjSI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718284884; c=relaxed/simple;
+	bh=AZ06KBNE2fF/6w81AnnwMxflls9XuUXNo+5aPZow2DE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M6Ac1AGy2fP2g5rCDmLMeWw5o/z3aLoDMe8PR3/ev7SEvIVUW+AHniYsJ4+Lk8uU0adfQm/SHX9ryb5UTmW11p6GqyLebAKRYbhMvoE7CElRn5pS3sGKct3IA9btQDRPhHV8noZlDVZdYi0ktyrsMB7beT7iu+n66NDCsJMo7v4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=2n.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=alLavymb; arc=fail smtp.client-ip=40.107.8.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=2n.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=em0MsV48FH5f5xPf7zURAKqekSmUXf+KVjNJDGT8+cDvSQ4GPD6eZEmYHqtknjFluOLBu/eb1CNczZoX7BpZRN/Cszh8YugaoRaoXGYNSNalj9FtbNo3pXCVEoVpZdLOTPouF6oxXCt0uzW15y+8upS+cv0Z07FwJAH2xi30MFQeA38YVmA8RGLgWObpUGnJBCi4sgFTxcHdF+dto5Qry2kcQ4jg9k5f8s4udqMmTW3y7pRlG+543UQVjueNfH9g8RvYeIyUHRT7hs0DT7tYNE1KIsnA1wVsBptv4w3chIn3wi+YPGSwSq9v75YZo+DQ/QxfyVG7rgGAwqIEJ1KEEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4Qk5HkWquX5hnH4oz0TZDo8Tx+l3Dq48d2ORsvVXy1U=;
+ b=f0R4XWeEtwmi/+9H4Y1rl5C86WbGoTblUC81ost+MiTv36PukIBi8ZimVj/L4RKh3m/kcYR/MpReEQ1SqmBdjdFFq9HjWxfZ8NRyqaOHLs9H1lr8WZaSB3paRTccl6854O7QRkQpgK4lcdGQ06PA7kXdu1Nv1HF6Czv5lpT3dNeDcyAZYOLkd0/Z2YjMNZtXvjSPWqSH2pj3YwDb7lHXRRrqlDbuUgTX16IZ8vT2KDKit8aVR2HJ7pSk/TLW/24LtnS/0Yjv3gBkxGqtGdUamV6THs6VxK2qzRtWjQF+t+ICdXvbqIQ6Je5RBiI/O4Vt6kz6DtGzbzrm34RRe1NUnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=broadcom.com smtp.mailfrom=2n.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4Qk5HkWquX5hnH4oz0TZDo8Tx+l3Dq48d2ORsvVXy1U=;
+ b=alLavymbZ0n4GZp7t3axX6qfRU79IQSfHilEMrsHTxQd8rrdMfsvvw8WaIWwWtuvb86fzLOG2HwEHaEmPJlgODd9+pB0V5+Z/EVo0++qcwkBjNrJobUlpIqZ5VKNm9eBISdvTV6nlCjSS5fxw0J6XuPo+eTT2JTzjxMhPbqRysQ=
+Received: from DU7P195CA0007.EURP195.PROD.OUTLOOK.COM (2603:10a6:10:54d::26)
+ by PA4PR02MB6927.eurprd02.prod.outlook.com (2603:10a6:102:108::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.24; Thu, 13 Jun
+ 2024 13:21:17 +0000
+Received: from DU2PEPF0001E9C5.eurprd03.prod.outlook.com
+ (2603:10a6:10:54d:cafe::93) by DU7P195CA0007.outlook.office365.com
+ (2603:10a6:10:54d::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.24 via Frontend
+ Transport; Thu, 13 Jun 2024 13:21:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=2n.com; dkim=none (message not signed) header.d=none;dmarc=fail
+ action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of 2n.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ DU2PEPF0001E9C5.mail.protection.outlook.com (10.167.8.74) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Thu, 13 Jun 2024 13:21:17 +0000
+Received: from pcczc3457tyd.2n.cz.axis.com (10.0.5.60) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Jun
+ 2024 15:21:16 +0200
+From: =?UTF-8?q?Kamil=20Hor=C3=A1k=20-=202N?= <kamilh@axis.com>
+To: <florian.fainelli@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>,
+	<andrew@lunn.ch>, <hkallweit1@gmail.com>
+CC: <kamilh@axis.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 1/4] net: phy: bcm54811: New link mode for BroadR-Reach
+Date: Thu, 13 Jun 2024 15:20:52 +0200
+Message-ID: <20240613132055.49207-2-kamilh@axis.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240613132055.49207-1-kamilh@axis.com>
+References: <20240613132055.49207-1-kamilh@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsXC9ZZnoa7Xp6w0g9WfxCwm9hhYzFm/hs3i
-	/oPX7BZP/v9mtWhoesRicXnXHDaLe2v+s1ocWX+WxWLz2TPMFouXq1ns63jAZHH46xsmBx6P
-	paffsHnsnHWX3aNl3y12j02rOtk8Nn2axO5xYsZvFo8Xm2cyemz8+J/d4/MmuQDOKC6blNSc
-	zLLUIn27BK6M94efshRssq5Y+3s1ewPjUoMuRg4OCQETiZfXU2HMEyuNuhg5OdgE1CSuvJzE
-	BBIWEbCSmLYjtouRi4NZ4BqzxPLmRUwgNcICERK7f/1lAbFZBFQl/t2aDmbzCphKnD/SyAxi
-	SwhoSjze/pMdxOYUMJN4NPcVG4gtBFQz48dVZoh6QYmTM5+A9TILyEs0b53NDLJMQuA9m8Ts
-	F99YIQZJShxccYNlAiP/LCQ9s5D0LGBkWsUolJlXlpuYmWOil1GZl1mhl5yfu4kRGAHLav9E
-	72D8dCH4EKMAB6MSD6/Hs6w0IdbEsuLK3EOMEhzMSiK8sxYChXhTEiurUovy44tKc1KLDzFK
-	c7AoifMafStPERJITyxJzU5NLUgtgskycXBKNTA6CXCEBNY2zxd9Vew3Q1Uqg0eb8V7q6msz
-	l8fduzJP89mnfXUWa6bNDpjM9SpPtf2K1pk1KhbWa3NLNpSeUTM/8VdM7+cbE73uVXaPWLPK
-	3H6wLjurcnPJS0d/7VSG+ouOx9Nn6jXUtuldSU51lE7K4BazaPj+7sRlE8WYN5yHFsVMrVU9
-	zavEUpyRaKjFXFScCADDsl2MfAIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsXCNUNLT9frU1aawddGXouJPQYWc9avYbO4
-	/+A1u8WT/79ZLRqaHrFYfH72mtmi88l3RovDc0+yWlzeNYfN4t6a/6wWR9afZbHYfPYMs8Xi
-	5WoW+zoeMFkc/vqGyYHfY+npN2weO2fdZfdo2XeL3WPTqk42j02fJrF7nJjxm8XjxeaZjB4b
-	P/5n9/h228Nj8YsPTB6fN8kFcEdx2aSk5mSWpRbp2yVwZbw//JSlYJN1xdrfq9kbGJcadDFy
-	cEgImEicWGnUxcjJwSagJnHl5SQmkLCIgJXEtB2xXYxcHMwC15glljcvYgKpERaIkNj96y8L
-	iM0ioCrx79Z0MJtXwFTi/JFGZhBbQkBT4vH2n+wgNqeAmcSjua/YQGwhoJoZP64yQ9QLSpyc
-	+QSsl1lAXqJ562zmCYw8s5CkZiFJLWBkWsUokplXlpuYmWOqV5ydUZmXWaGXnJ+7iREY7Mtq
-	/0zcwfjlsvshRgEORiUeXo9nWWlCrIllxZW5hxglOJiVRHhnLQQK8aYkVlalFuXHF5XmpBYf
-	YpTmYFES5/UKT00QEkhPLEnNTk0tSC2CyTJxcEo1MNrFKhds5j2huJMp/Eg0w1TbV99WN7kw
-	3pI9Pd+p71F64O/Gt31y1gpzFcMvB95pLhVdf1tC5Vt7tXz8pk5rm/6iSemfatYJtklpsnn5
-	776x09HsjoWF4T/Z+bJr8uu33Kx3qJB4fiRcou+X7KHodRxVAstaOM4Uldef+KyWLnhal4Fz
-	dXe3EktxRqKhFnNRcSIAPAtf0nICAAA=
-X-CFilter-Loop: Reflected
+X-ClientProxiedBy: se-mail01w.axis.com (10.20.40.7) To se-mail01w.axis.com
+ (10.20.40.7)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PEPF0001E9C5:EE_|PA4PR02MB6927:EE_
+X-MS-Office365-Filtering-Correlation-Id: f2576ad7-7aa4-48b7-410c-08dc8babb501
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230035|36860700008|82310400021|1800799019|376009;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SUVMbXk2OTZuZncwT0hLY2t2Z0gzWW1CN214Y2krandVdlFXRm9Ya3poTXFi?=
+ =?utf-8?B?WU41SkpsNDFXNldnT0swRU1MVUFsbTdGLys2aEl3MWo3ZkM2T3pWZGYyYVE1?=
+ =?utf-8?B?c2VqcFVoMEs4VU8rR3R0Ylp0NE8rbGRGZjN2YUNYc3hwaG5QOFNzMysyWGdq?=
+ =?utf-8?B?VkRibzVMYk8zZ2QzNjNhNXFYano5OXpwTW55RkcvT3hDbVRmUUVGK2FnMThT?=
+ =?utf-8?B?S29FTVRqaWhPSHowZ3BYR2lOUVR0ZDdsbGJaRGp2WlNTOW9mR2ZqOXE4NG96?=
+ =?utf-8?B?UFpsa21xd1lPSlVqdG41R2xHSGM0b29TUUNmV2doSUVKNzI3ZHlXRVZIRTEv?=
+ =?utf-8?B?czZ4VkMzL0xtMENkRDRTQkxUajZ4b3FDQ3BVS3cvR2ExeDE4M2pnNXNJaFZY?=
+ =?utf-8?B?Skk2ZUFkbXM1M0hQZVVxcGY4b1BNZUpsYlFiWWZxSnYzSkVVTngxQXdMSXd6?=
+ =?utf-8?B?QkR5Y3lRbUdxeis4dUZWZVlQeDNVdGFDSlJzNHZoTml4bkc4RGxEak95MmtN?=
+ =?utf-8?B?LzdXN2ZWTC9LSzcrWTRXZ1VUV1N3Ym5lNkxZb3RvVnJTeUF2R2ZQWVoyYnVE?=
+ =?utf-8?B?QXhVSnNyc0FNRGpLaEgrdkJjRVF6MTRRdy9nUm9oQ200Ny9vZnFNUFBzWWNo?=
+ =?utf-8?B?N2VtRm9hME8wYmNpbTJJeTQ2azdXdmQxaEZmeUNiN2kvdVQ2U052SmpQSUJq?=
+ =?utf-8?B?ZUF4NkZSbHB1ZThVZGdXVEROOHdlZ2YydDZDclpoZ2dyekZWaHhDbS9Bcmlj?=
+ =?utf-8?B?NTRCWFV6cmpUL3ByeTRMdGp2SGdYZnVuT29JVFZzK2VmVmxmYWw2bFNqRG80?=
+ =?utf-8?B?L3IzTzJDWWxGdEtrRjRndnB6MzlMNEtLa3RITjdWTC9HTXR1dHNxQ3c5cXVE?=
+ =?utf-8?B?b1BsNnJhK1pQUjczSnFMbVM3MFU5MnJXaDlOdHJ3MUlNc1EyWjFmOUpxbGpH?=
+ =?utf-8?B?V2xjNThveWJ3ajk1QW5pNGMvcmZWNjJ1bURnT3k3OGdxSnluUU0zYXFOT3Vr?=
+ =?utf-8?B?S2JGZFVBOHYzOG9DaE9QNUgxNVlXUFFTNys2cExleW9wL01hT09WQXRQc3Bj?=
+ =?utf-8?B?QnFEV1VMUHQ5NmxhTVRzd2NkNkdNUUN4Mmh4ZTJpKzZZbUJaVndjdmlnQUxn?=
+ =?utf-8?B?YlMrK01zMmRsOXpmdFFrUkFDU1ZtTUhWZUNSbUZjM1ZvTjZtZ2hDNDJFS1dM?=
+ =?utf-8?B?TDFYRXZuK1RrRHFNdGozakU1TkE0bHY5b05iSmlJWENwVnNnck9XSmZJWmxl?=
+ =?utf-8?B?eSszWldVQ3o5MzRuM3BoMDFoOWt3azl5Q3VzRURRSFpIdkl2d3REUlZQMnZ1?=
+ =?utf-8?B?dml0U3JEZEtNczR2d0N6VTQ5NWhJZ0JFTjA3OSs1V0YreUhya3JjYXFUbkRt?=
+ =?utf-8?B?MmV5R1d1ckpReVRlVWpKSEdkbEI4Y2pKN0lDWUdMc1Z1S08wZWdSdmNDM3R0?=
+ =?utf-8?B?YjV4Z2dJc0M5UnMxLzVOYlhCcUVjZ3MxSXBwdDhUc0tLaXNxaUI2elB5cHNh?=
+ =?utf-8?B?Tm5tWXNiMnZyUjZhb1AwNzBtWVJhMHVzRHI4VnVjYzhjcVpzeHRkMTFqZUF3?=
+ =?utf-8?B?ZjlSVmhMTkQvSFYvd1p5YWNOZlhxdVc2SGpjajBPWUoyUWJJWG9iZk1SR0gv?=
+ =?utf-8?B?VDBMcER1dHpzR0hqOTFKZThOaGI1L2xxQkYwK3IvQWZveGJPeFFoVW8wUjZK?=
+ =?utf-8?B?aHkyZ0JvbGZidTJGSk43VHlFWis1THFXU09FN0VwcG1EZlA2bTNPUkVZb05j?=
+ =?utf-8?B?Z09TZ2lWaUZjU0JZaFVJTXhiNkFNWU1WMHlMZlZ5aG5KODZMNmwxMThsbms0?=
+ =?utf-8?B?QjN6bVV6MWJyenVZTUhKRkNJTk5VaXhvbU02TVc5LzFRNkl0T0F4ZkJnREZl?=
+ =?utf-8?B?dW1WWmN4SDV1TnVXRUZCMzVaT0pBRFduL2xkNDBkajErdVE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230035)(36860700008)(82310400021)(1800799019)(376009);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2024 13:21:17.1413
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2576ad7-7aa4-48b7-410c-08dc8babb501
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU2PEPF0001E9C5.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR02MB6927
 
-This patch introduces DAMOS_MIGRATE_COLD action, which is similar to
-DAMOS_PAGEOUT, but migrate folios to the given 'target_nid' in the sysfs
-instead of swapping them out.
+Introduce a new link mode necessary for 10 MBit single-pair
+connection in BroadR-Reach mode on bcm5481x PHY by Broadcom.
+This new link mode, 10baseT1BRR, is known as 1BR10 in the Broadcom
+terminology. Another link mode to be used is 1BR100 and it is already
+present as 100baseT1, because Broadcom's 1BR100 became 100baseT1
+(IEEE 802.3bw).
 
-The 'target_nid' sysfs knob informs the migration target node ID.
-
-Here is one of the example usage of this 'migrate_cold' action.
-
-  $ cd /sys/kernel/mm/damon/admin/kdamonds/<N>
-  $ cat contexts/<N>/schemes/<N>/action
-  migrate_cold
-  $ echo 2 > contexts/<N>/schemes/<N>/target_nid
-  $ echo commit > state
-  $ numactl -p 0 ./hot_cold 500M 600M &
-  $ numastat -c -p hot_cold
-
-  Per-node process memory usage (in MBs)
-  PID             Node 0 Node 1 Node 2 Total
-  --------------  ------ ------ ------ -----
-  701 (hot_cold)     501      0    601  1101
-
-Since there are some common routines with pageout, many functions have
-similar logics between pageout and migrate cold.
-
-damon_pa_migrate_folio_list() is a minimized version of
-shrink_folio_list().
-
-Signed-off-by: Honggyu Kim <honggyu.kim@sk.com>
-Signed-off-by: Hyeongtak Ji <hyeongtak.ji@sk.com>
-Signed-off-by: SeongJae Park <sj@kernel.org>
+Signed-off-by: Kamil Horák - 2N <kamilh@axis.com>
 ---
- include/linux/damon.h    |   2 +
- mm/damon/paddr.c         | 154 +++++++++++++++++++++++++++++++++++++++
- mm/damon/sysfs-schemes.c |   1 +
- 3 files changed, 157 insertions(+)
+ drivers/net/phy/phy-core.c   | 1 +
+ include/uapi/linux/ethtool.h | 1 +
+ net/ethtool/common.c         | 3 +++
+ 3 files changed, 5 insertions(+)
 
-diff --git a/include/linux/damon.h b/include/linux/damon.h
-index 21d6b69a015c..56714b6eb0d7 100644
---- a/include/linux/damon.h
-+++ b/include/linux/damon.h
-@@ -105,6 +105,7 @@ struct damon_target {
-  * @DAMOS_NOHUGEPAGE:	Call ``madvise()`` for the region with MADV_NOHUGEPAGE.
-  * @DAMOS_LRU_PRIO:	Prioritize the region on its LRU lists.
-  * @DAMOS_LRU_DEPRIO:	Deprioritize the region on its LRU lists.
-+ * @DAMOS_MIGRATE_COLD:	Migrate the regions prioritizing colder regions.
-  * @DAMOS_STAT:		Do nothing but count the stat.
-  * @NR_DAMOS_ACTIONS:	Total number of DAMOS actions
-  *
-@@ -122,6 +123,7 @@ enum damos_action {
- 	DAMOS_NOHUGEPAGE,
- 	DAMOS_LRU_PRIO,
- 	DAMOS_LRU_DEPRIO,
-+	DAMOS_MIGRATE_COLD,
- 	DAMOS_STAT,		/* Do nothing but only record the stat */
- 	NR_DAMOS_ACTIONS,
+diff --git a/drivers/net/phy/phy-core.c b/drivers/net/phy/phy-core.c
+index 15f349e5995a..4a1972e94107 100644
+--- a/drivers/net/phy/phy-core.c
++++ b/drivers/net/phy/phy-core.c
+@@ -265,6 +265,7 @@ static const struct phy_setting settings[] = {
+ 	PHY_SETTING(     10, FULL,     10baseT1S_Full		),
+ 	PHY_SETTING(     10, HALF,     10baseT1S_Half		),
+ 	PHY_SETTING(     10, HALF,     10baseT1S_P2MP_Half	),
++	PHY_SETTING(     10, FULL,     10baseT1BRR_Full		),
  };
-diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
-index 18797c1b419b..882ae54af829 100644
---- a/mm/damon/paddr.c
-+++ b/mm/damon/paddr.c
-@@ -12,6 +12,9 @@
- #include <linux/pagemap.h>
- #include <linux/rmap.h>
- #include <linux/swap.h>
-+#include <linux/memory-tiers.h>
-+#include <linux/migrate.h>
-+#include <linux/mm_inline.h>
+ #undef PHY_SETTING
  
- #include "../internal.h"
- #include "ops-common.h"
-@@ -325,6 +328,153 @@ static unsigned long damon_pa_deactivate_pages(struct damon_region *r,
- 	return damon_pa_mark_accessed_or_deactivate(r, s, false);
- }
+diff --git a/include/uapi/linux/ethtool.h b/include/uapi/linux/ethtool.h
+index 8733a3117902..76813ca5cb1d 100644
+--- a/include/uapi/linux/ethtool.h
++++ b/include/uapi/linux/ethtool.h
+@@ -1845,6 +1845,7 @@ enum ethtool_link_mode_bit_indices {
+ 	ETHTOOL_LINK_MODE_10baseT1S_Full_BIT		 = 99,
+ 	ETHTOOL_LINK_MODE_10baseT1S_Half_BIT		 = 100,
+ 	ETHTOOL_LINK_MODE_10baseT1S_P2MP_Half_BIT	 = 101,
++	ETHTOOL_LINK_MODE_10baseT1BRR_Full_BIT		 = 102,
  
-+static unsigned int __damon_pa_migrate_folio_list(
-+		struct list_head *migrate_folios, struct pglist_data *pgdat,
-+		int target_nid)
-+{
-+	unsigned int nr_succeeded;
-+	nodemask_t allowed_mask = NODE_MASK_NONE;
-+	struct migration_target_control mtc = {
-+		/*
-+		 * Allocate from 'node', or fail quickly and quietly.
-+		 * When this happens, 'page' will likely just be discarded
-+		 * instead of migrated.
-+		 */
-+		.gfp_mask = (GFP_HIGHUSER_MOVABLE & ~__GFP_RECLAIM) |
-+			__GFP_NOWARN | __GFP_NOMEMALLOC | GFP_NOWAIT,
-+		.nid = target_nid,
-+		.nmask = &allowed_mask
-+	};
-+
-+	if (pgdat->node_id == target_nid || target_nid == NUMA_NO_NODE)
-+		return 0;
-+
-+	if (list_empty(migrate_folios))
-+		return 0;
-+
-+	/* Migration ignores all cpuset and mempolicy settings */
-+	migrate_pages(migrate_folios, alloc_migrate_folio, NULL,
-+		      (unsigned long)&mtc, MIGRATE_ASYNC, MR_DAMON,
-+		      &nr_succeeded);
-+
-+	return nr_succeeded;
-+}
-+
-+static unsigned int damon_pa_migrate_folio_list(struct list_head *folio_list,
-+						struct pglist_data *pgdat,
-+						int target_nid)
-+{
-+	unsigned int nr_migrated = 0;
-+	struct folio *folio;
-+	LIST_HEAD(ret_folios);
-+	LIST_HEAD(migrate_folios);
-+
-+	while (!list_empty(folio_list)) {
-+		struct folio *folio;
-+
-+		cond_resched();
-+
-+		folio = lru_to_folio(folio_list);
-+		list_del(&folio->lru);
-+
-+		if (!folio_trylock(folio))
-+			goto keep;
-+
-+		/* Relocate its contents to another node. */
-+		list_add(&folio->lru, &migrate_folios);
-+		folio_unlock(folio);
-+		continue;
-+keep:
-+		list_add(&folio->lru, &ret_folios);
-+	}
-+	/* 'folio_list' is always empty here */
-+
-+	/* Migrate folios selected for migration */
-+	nr_migrated += __damon_pa_migrate_folio_list(
-+			&migrate_folios, pgdat, target_nid);
-+	/*
-+	 * Folios that could not be migrated are still in @migrate_folios.  Add
-+	 * those back on @folio_list
-+	 */
-+	if (!list_empty(&migrate_folios))
-+		list_splice_init(&migrate_folios, folio_list);
-+
-+	try_to_unmap_flush();
-+
-+	list_splice(&ret_folios, folio_list);
-+
-+	while (!list_empty(folio_list)) {
-+		folio = lru_to_folio(folio_list);
-+		list_del(&folio->lru);
-+		folio_putback_lru(folio);
-+	}
-+
-+	return nr_migrated;
-+}
-+
-+static unsigned long damon_pa_migrate_pages(struct list_head *folio_list,
-+					    int target_nid)
-+{
-+	int nid;
-+	unsigned long nr_migrated = 0;
-+	LIST_HEAD(node_folio_list);
-+	unsigned int noreclaim_flag;
-+
-+	if (list_empty(folio_list))
-+		return nr_migrated;
-+
-+	noreclaim_flag = memalloc_noreclaim_save();
-+
-+	nid = folio_nid(lru_to_folio(folio_list));
-+	do {
-+		struct folio *folio = lru_to_folio(folio_list);
-+
-+		if (nid == folio_nid(folio)) {
-+			list_move(&folio->lru, &node_folio_list);
-+			continue;
-+		}
-+
-+		nr_migrated += damon_pa_migrate_folio_list(&node_folio_list,
-+							   NODE_DATA(nid),
-+							   target_nid);
-+		nid = folio_nid(lru_to_folio(folio_list));
-+	} while (!list_empty(folio_list));
-+
-+	nr_migrated += damon_pa_migrate_folio_list(&node_folio_list,
-+						   NODE_DATA(nid),
-+						   target_nid);
-+
-+	memalloc_noreclaim_restore(noreclaim_flag);
-+
-+	return nr_migrated;
-+}
-+
-+static unsigned long damon_pa_migrate(struct damon_region *r, struct damos *s)
-+{
-+	unsigned long addr, applied;
-+	LIST_HEAD(folio_list);
-+
-+	for (addr = r->ar.start; addr < r->ar.end; addr += PAGE_SIZE) {
-+		struct folio *folio = damon_get_folio(PHYS_PFN(addr));
-+
-+		if (!folio)
-+			continue;
-+
-+		if (damos_pa_filter_out(s, folio))
-+			goto put_folio;
-+
-+		if (!folio_isolate_lru(folio))
-+			goto put_folio;
-+		list_add(&folio->lru, &folio_list);
-+put_folio:
-+		folio_put(folio);
-+	}
-+	applied = damon_pa_migrate_pages(&folio_list, s->target_nid);
-+	cond_resched();
-+	return applied * PAGE_SIZE;
-+}
-+
-+
- static unsigned long damon_pa_apply_scheme(struct damon_ctx *ctx,
- 		struct damon_target *t, struct damon_region *r,
- 		struct damos *scheme)
-@@ -336,6 +486,8 @@ static unsigned long damon_pa_apply_scheme(struct damon_ctx *ctx,
- 		return damon_pa_mark_accessed(r, scheme);
- 	case DAMOS_LRU_DEPRIO:
- 		return damon_pa_deactivate_pages(r, scheme);
-+	case DAMOS_MIGRATE_COLD:
-+		return damon_pa_migrate(r, scheme);
- 	case DAMOS_STAT:
- 		break;
- 	default:
-@@ -356,6 +508,8 @@ static int damon_pa_scheme_score(struct damon_ctx *context,
- 		return damon_hot_score(context, r, scheme);
- 	case DAMOS_LRU_DEPRIO:
- 		return damon_cold_score(context, r, scheme);
-+	case DAMOS_MIGRATE_COLD:
-+		return damon_cold_score(context, r, scheme);
- 	default:
- 		break;
- 	}
-diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
-index 0632d28b67f8..880015d5b5ea 100644
---- a/mm/damon/sysfs-schemes.c
-+++ b/mm/damon/sysfs-schemes.c
-@@ -1458,6 +1458,7 @@ static const char * const damon_sysfs_damos_action_strs[] = {
- 	"nohugepage",
- 	"lru_prio",
- 	"lru_deprio",
-+	"migrate_cold",
- 	"stat",
+ 	/* must be last entry */
+ 	__ETHTOOL_LINK_MODE_MASK_NBITS
+diff --git a/net/ethtool/common.c b/net/ethtool/common.c
+index 6b2a360dcdf0..82ba2ca98d4c 100644
+--- a/net/ethtool/common.c
++++ b/net/ethtool/common.c
+@@ -211,6 +211,7 @@ const char link_mode_names[][ETH_GSTRING_LEN] = {
+ 	__DEFINE_LINK_MODE_NAME(10, T1S, Full),
+ 	__DEFINE_LINK_MODE_NAME(10, T1S, Half),
+ 	__DEFINE_LINK_MODE_NAME(10, T1S_P2MP, Half),
++	__DEFINE_LINK_MODE_NAME(10, T1BRR, Full),
  };
+ static_assert(ARRAY_SIZE(link_mode_names) == __ETHTOOL_LINK_MODE_MASK_NBITS);
+ 
+@@ -251,6 +252,7 @@ static_assert(ARRAY_SIZE(link_mode_names) == __ETHTOOL_LINK_MODE_MASK_NBITS);
+ #define __LINK_MODE_LANES_T1S_P2MP	1
+ #define __LINK_MODE_LANES_VR8		8
+ #define __LINK_MODE_LANES_DR8_2		8
++#define __LINK_MODE_LANES_T1BRR		1
+ 
+ #define __DEFINE_LINK_MODE_PARAMS(_speed, _type, _duplex)	\
+ 	[ETHTOOL_LINK_MODE(_speed, _type, _duplex)] = {		\
+@@ -374,6 +376,7 @@ const struct link_mode_info link_mode_params[] = {
+ 	__DEFINE_LINK_MODE_PARAMS(10, T1S, Full),
+ 	__DEFINE_LINK_MODE_PARAMS(10, T1S, Half),
+ 	__DEFINE_LINK_MODE_PARAMS(10, T1S_P2MP, Half),
++	__DEFINE_LINK_MODE_PARAMS(10, T1BRR, Full),
+ };
+ static_assert(ARRAY_SIZE(link_mode_params) == __ETHTOOL_LINK_MODE_MASK_NBITS);
  
 -- 
-2.34.1
+2.39.2
 
 
