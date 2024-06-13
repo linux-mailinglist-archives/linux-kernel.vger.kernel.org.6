@@ -1,80 +1,84 @@
-Return-Path: <linux-kernel+bounces-212845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4882C906730
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:41:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A9B79066FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56C121C20AFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:41:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CFF71F234A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D98B1422B7;
-	Thu, 13 Jun 2024 08:39:14 +0000 (UTC)
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.62.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA02D13DBAA;
+	Thu, 13 Jun 2024 08:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RmUUNPxE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF6026AE4;
-	Thu, 13 Jun 2024 08:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.62.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D4813D88D;
+	Thu, 13 Jun 2024 08:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718267953; cv=none; b=JCAYbnrdSJZ7045VVSYcQFav0nJWUZw6P5Fvs+bHP/tLHtTofIgLmn5D0lEVD2I4ShumgKuHN0SrTumJzHcSd5RhH4gp6XwdfgkPZlfoavBPY8VpRyqThwVU1N857CdhZCHTT0/sQFc87pFdsD/ea7ZS701Q+z9pd57qixt+T+Y=
+	t=1718267736; cv=none; b=PtmelGW/rY/2pLUbZrZKyKR6bnC9wWkk+c3/Mhm8EIBT7wmTgmHztKyHoh2R2y2LzizIRzTNAt323ESTO+34MWhYuxO0uBpy+ppzHqJndxx8cQogpRWS964O+40pDPXYgBJYrOGqoxina14DcUZsc6mfL7Da3IB18zJrDuGbUwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718267953; c=relaxed/simple;
-	bh=xWH1FslbBwCpFpoPQMjOi0tZqpH79HAY3uCalUU1SGc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=uN0esdAMA4Sc/MOiddeI6+uH3gPyW7WlkuD+FOUkl3vzYGlbjHC0FTG6CjAl/dSEmIUOHrkcMYrRbwev46VDLR1QwomE0oP2npx2d/G/g8uxDk52wJjBNoAqwWsikrr678MLW9SRkXQ53UFzWLnyc+crreDucro0mKrblq+79LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=none smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=114.132.62.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chenxiaosong.com
-X-QQ-mid: bizesmtp87t1718267734to2hnf8o
-X-QQ-Originating-IP: vOO0L+he9GGs+Med8jGz1/0GUF6Uuzff+tDBEEZ7Nko=
-Received: from [192.168.3.231] ( [116.128.244.171])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 13 Jun 2024 16:35:32 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7174577849898629138
-Message-ID: <BA2DED4720A37AFC+88e58d9e-6117-476d-8e06-1d1a62037d6d@chenxiaosong.com>
-Date: Thu, 13 Jun 2024 16:35:32 +0800
+	s=arc-20240116; t=1718267736; c=relaxed/simple;
+	bh=N5DdWMPrASkdOuejzNT9p5ae0XXAvRm5RgjLS6GQ1/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HtbqSd07cy7IAY94H76KTdofcu17KnROvT5eScQN08xgR2FcLx8AXmSWVnQ+FNa00tBzhSIMUonzsL/MbFqAq0P26czPnFYPxGARws6ehPsFzqO9nPsjtO69fvMKmyMouYEM0VyfFz7aiQHjh0CzShh4uPR+F29LOqR3eUVGhAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RmUUNPxE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39E9CC2BBFC;
+	Thu, 13 Jun 2024 08:35:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718267735;
+	bh=N5DdWMPrASkdOuejzNT9p5ae0XXAvRm5RgjLS6GQ1/g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RmUUNPxEkfMAMxFwjy0Y6fXcIbGtO92rxcHlhVIAunOykVeMfVPwqXfnNCA6XVSe4
+	 25ssDEZnPmkcejrd0VmfoKvrtvVEcm6e3zWC/87cy2pJFii4LmURm3ak0J5xtwBQTc
+	 YTeR9feZSVNmG2MfQSsV1tuSOHop9NmwKvyYJy0w=
+Date: Thu, 13 Jun 2024 10:35:33 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ismael Luceno <ismael@iodev.co.uk>
+Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Intel e1000e driver bug on stable (6.9.x)
+Message-ID: <2024061323-unhappily-mauve-b7ea@gregkh>
+References: <ZmfcJsyCB6M3wr84@pirotess>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: trond.myklebust@hammerspace.com, anna@kernel.org, bcodding@redhat.com,
- kolga@netapp.com, josef@toxicpanda.com, jlayton@kernel.org
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- liuzhengyuan@kylinos.cn, huhai@kylinos.cn, chenxiaosong@kylinos.cn
-From: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
-Subject: Question about pNFS documentation
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmfcJsyCB6M3wr84@pirotess>
 
-Greetings,
+On Wed, Jun 12, 2024 at 10:33:19PM +0200, Ismael Luceno wrote:
+> Hi,
+> 
+> I noticed that the NIC started to fail on a couple of notebooks [0]
+> [1] after upgrading to 6.9.1.
+> 
+> I tracked down the problem to commit 861e8086029e ("e1000e: move force
+> SMBUS from enable ulp function to avoid PHY loss issue", 2024-03-03),
+> included in all 6.9.x releases.
+> 
+> The fix is in commit bfd546a552e1 ("e1000e: move force SMBUS near
+> the end of enable_ulp function", 2024-05-28) from mainline.
+> 
+> The NIC fails right after boot on both systems I tried; I mention
+> because the description is a bit unclear about that on the fix, maybe
+> other systems are affected differently.
+> 
+> Best regards.
+> 
+> 
+> [0] HP ZBook 17 Gen 1 (D5D93AV) [8086:153a (rev 04)]
+> [1] Lenovo Thinkpad P15 Gen 1 [8086:0d4c]
+> 
 
-I am very interested in Parallel NFS (pNFS) and want to setup a testing 
-and debugging environment for pNFS. I found some pNFS documentation [1] 
-[2] [3], but I still don't know how to setup Linux environment about 
-file layout, block layout, object layout, and flexible file layout. Some 
-documentation like spNFS(simple pNFS) is unmaintained and was dropped. 
-Can you recommend some other detailed documentation(how to use pNFS in 
-Linux)?
+Now queued up, thanks.
 
-Thanks,
-ChenXiaoSong.
-
-[1] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/admin-guide/nfs/pnfs-block-server.rst
-
-[2] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/admin-guide/nfs/pnfs-scsi-server.rst
-
-[3] https://linux-nfs.org/wiki/index.php/PNFS_Development
-
+greg k-h
 
