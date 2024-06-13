@@ -1,247 +1,113 @@
-Return-Path: <linux-kernel+bounces-213707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A790907909
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:00:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5EBB907914
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C07A1C227C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:00:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A26DC1C22B57
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B053A1494D6;
-	Thu, 13 Jun 2024 17:00:12 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33C8149C4A;
+	Thu, 13 Jun 2024 17:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="I1yXkfwx"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D474512EBC7;
-	Thu, 13 Jun 2024 17:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938F012FF71
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 17:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718298012; cv=none; b=fBkEORougChd1PHdCd2NF1cf3nnytWdAldi/hR89foDM6tqsIabZ4zHCbU+kJlquGB5VJFrriQ08wxHqHCpArFgnDIijoNSAf7+KLvaHphLcAhlYc0PwSeeu6QC7x/KNQKIECFIZtN6ZEiEA0AqDMddW2rTTDpF9aM7t6CcgaHk=
+	t=1718298046; cv=none; b=ZFoG4lEYs3d8eFMhaToZvGF3cNRVun+aod8Fo22jRXhyltR9IGy1P6TLiQKh55nlG8z6SEoWqHxxlytx2y0/XZeRDs1kY1xcWsP71NRu0WxetJcN72IhY9+FEPYqu3inVR6of0eZQN8dUlPMT2SVrZGI+WpHzPZIeaNjz7OwXpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718298012; c=relaxed/simple;
-	bh=r2FXAgMa0jD+t3ToDPQWNEY6z4v9oqO4oDHY5ah3aU8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CyMDX/pSYOwNaC+ycEe1h7osCl1xGdgMfmsWDGmFZh2ti1EcJ8iTWHawXLWb4TuOivI0osj2hrVtCk8uxABKo20v7KY2dMgxg+RccGtLUifrpI1ChWSIRAdK817/lkyfGGnIBIRNFB4fh4Z+QIbTfZUG/MLhDSF/DCpIV2qz4u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W0TDP2ZPMz6K6VF;
-	Fri, 14 Jun 2024 01:00:05 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5405C140A87;
-	Fri, 14 Jun 2024 01:00:07 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Jun
- 2024 18:00:06 +0100
-Date: Thu, 13 Jun 2024 18:00:05 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: "Paller, Kim Seer" <KimSeer.Paller@analog.com>
-CC: Jonathan Cameron <jic23@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, David Lechner <dlechner@baylibre.com>,
-	Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, "Hennerich, Michael"
-	<Michael.Hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
-	<noname.nuno@gmail.com>
-Subject: Re: [PATCH v3 1/5] iio: ABI: Generalize ABI documentation for DAC
-Message-ID: <20240613180005.0000480e@Huawei.com>
-In-Reply-To: <PH0PR03MB71416493AB2788638599CAE4F9C02@PH0PR03MB7141.namprd03.prod.outlook.com>
-References: <20240603012200.16589-1-kimseer.paller@analog.com>
-	<20240603012200.16589-2-kimseer.paller@analog.com>
-	<20240608154053.1cf1097e@jic23-huawei>
-	<PH0PR03MB71416493AB2788638599CAE4F9C02@PH0PR03MB7141.namprd03.prod.outlook.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1718298046; c=relaxed/simple;
+	bh=Ly4tuRHzyObqMrdCQcVHBM/dbQM2HfWbfZxG9ysL5rY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QWNB0cQiaHomZX86eknnQVUEh7IAC/PXNSKWJXrbQ+feJLRKbQ1pzKVH4gerRELJe3hsdCRyFRpnycOmFPTI72pyL2IUbBrqEMWUYI96iLdz2vpHnbRH1MFuHaeUzg++lrdnPqPWE89VTiAZ4ha249l7iNVuIAi/dvGktos//Og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=I1yXkfwx; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a6cb130027aso87148166b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:00:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1718298038; x=1718902838; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YYzQevevyPFe2MJKTCzM3k91AB1OA/O0y28PpzZxNT0=;
+        b=I1yXkfwxdcXoEsuf8a/7GV7027ElOzXhYb0se+uTVelxHOYaeOf++OxVmF5eoh2Bpx
+         roYLqZWa6BHDSRvu0Y4cf3KBCCtUfQE0Exrn0NpXmhoK90cKhM+rPLoMv0iMbqbX6SNW
+         mQnz88BYitVVR+heZtD4lCPrfAcs+lpWoJzws=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718298038; x=1718902838;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YYzQevevyPFe2MJKTCzM3k91AB1OA/O0y28PpzZxNT0=;
+        b=ldfWwbOi6C3LGMShAp9DsLiX+PuxMQ7vjP7se0xBV/rzYphLmnqScaXl1DjQtGd3jh
+         Ahi/aR3lhyOh0mQPX1waVGinzLiwxyG0yJ8dWKJmTvhK9ZA7Oam0RSeOzMzWcSzsrRDB
+         gk/X10yZdlgPl5x0DwvL0kPelDewg2MDmzAQ3FJ0tu9eKb+wgFNy2N0gonMqNqEbajxO
+         8eDk0+vnZ94CIGUCh4tqkmSVwYko84BxzV3HHc6u3k62kmNV13x0zhqZJPATaTUWXioO
+         4dTH4A8w7jqTn4KWrZTG22h30kY6fskDkt/jR8iuvg6N9L0g13wQVl3Gw731p9ii/+Pv
+         UbtA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2Tr0CgEMBLDRIsx8+BoTSmO37A+YUOHH4HlDHpVKlUlzLpOgrFSMbIJA4Eeyr8Kl2+8IJklCF+FeO4+vSgNoP4lOEcZEnItgx2rjP
+X-Gm-Message-State: AOJu0Ywc15lFTrMrvOZvCF1rbF8t4CrwhdOdYuDCbcppLHN1JZ+DQP74
+	SSdJpPOymOITIFzU4P0nh72KLVdqHOJaRlsDyIOb+sk1qP0VrWUEH6TzDyODIGtRhqYvIIwcScE
+	UEGHYBA==
+X-Google-Smtp-Source: AGHT+IF9cPnemXrBgOPoQxN91YGL9KumwaE3mqAeMlmqMJgfzkE0AjtPUpM9f6LKK//l+z2X7cKgKA==
+X-Received: by 2002:a50:9b4d:0:b0:57c:7826:1dc with SMTP id 4fb4d7f45d1cf-57cbd6778f6mr332347a12.8.1718298038388;
+        Thu, 13 Jun 2024 10:00:38 -0700 (PDT)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb741e725sm1093715a12.69.2024.06.13.10.00.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 10:00:37 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6cb130027aso87146166b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:00:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXlhVQahshdrXfnrj/f5+w+Vz0kJBh2w9wawM+OmaH91XVHn9ivWuPjB13QmsP7fFO0D0ySpe/0ErDKFspG7VHm5gFEfm50tgY1V6BS
+X-Received: by 2002:a50:d797:0:b0:57c:60fe:96dc with SMTP id
+ 4fb4d7f45d1cf-57cbd68e58emr414547a12.19.1718298037280; Thu, 13 Jun 2024
+ 10:00:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+References: <20240613001215.648829-1-mjguzik@gmail.com> <20240613001215.648829-2-mjguzik@gmail.com>
+ <CAHk-=wgX9UZXWkrhnjcctM8UpDGQqWyt3r=KZunKV3+00cbF9A@mail.gmail.com>
+ <CAHk-=wgPgGwPexW_ffc97Z8O23J=G=3kcV-dGFBKbLJR-6TWpQ@mail.gmail.com>
+ <5cixyyivolodhsru23y5gf5f6w6ov2zs5rbkxleljeu6qvc4gu@ivawdfkvus3p> <20240613-pumpen-durst-fdc20c301a08@brauner>
+In-Reply-To: <20240613-pumpen-durst-fdc20c301a08@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 13 Jun 2024 10:00:20 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj0cmLKJZipHy-OcwKADygUgd19yU1rmBaB6X3Wb5jU3Q@mail.gmail.com>
+Message-ID: <CAHk-=wj0cmLKJZipHy-OcwKADygUgd19yU1rmBaB6X3Wb5jU3Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] lockref: speculatively spin waiting for the lock to
+ be released
+To: Christian Brauner <brauner@kernel.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 12 Jun 2024 10:57:42 +0000
-"Paller, Kim Seer" <KimSeer.Paller@analog.com> wrote:
+On Thu, 13 Jun 2024 at 06:46, Christian Brauner <brauner@kernel.org> wrote:
+>
+> I've picked Linus patch and your for testing into the vfs.inode.rcu branch.
 
-> > -----Original Message-----
-> > From: Jonathan Cameron <jic23@kernel.org>
-> > Sent: Saturday, June 8, 2024 10:41 PM
-> > To: Paller, Kim Seer <KimSeer.Paller@analog.com>
-> > Cc: linux-kernel@vger.kernel.org; linux-iio@vger.kernel.org;
-> > devicetree@vger.kernel.org; David Lechner <dlechner@baylibre.com>; Lars-
-> > Peter Clausen <lars@metafoo.de>; Liam Girdwood <lgirdwood@gmail.com>;
-> > Mark Brown <broonie@kernel.org>; Dimitri Fedrau <dima.fedrau@gmail.com>;
-> > Krzysztof Kozlowski <krzk+dt@kernel.org>; Rob Herring <robh@kernel.org>;
-> > Conor Dooley <conor+dt@kernel.org>; Hennerich, Michael
-> > <Michael.Hennerich@analog.com>; Nuno S=E1 <noname.nuno@gmail.com>
-> > Subject: Re: [PATCH v3 1/5] iio: ABI: Generalize ABI documentation for =
-DAC
-> >=20
-> > [External]
-> >=20
-> > On Mon, 3 Jun 2024 09:21:56 +0800
-> > Kim Seer Paller <kimseer.paller@analog.com> wrote:
-> >  =20
-> > > Introduces a more generalized ABI documentation for DAC. Instead of
-> > > having separate ABI files for each DAC, we now have a single ABI file
-> > > that covers the common sysfs interface for all DAC.
-> > >
-> > > Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
-> > > Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-> > > Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com> =20
-> >=20
-> > A few comments inline.
-> >=20
-> > I wondered if it made sense to combine voltage and current entries of e=
-ach
-> > type
-> > in single block, but I think the docs would become too complicated with=
- lots
-> > of wild cards etc.  Hence I think the duplication is fine.
-> >=20
-> > Jonathan
-> >  =20
-> > > ---
-> > >  Documentation/ABI/testing/sysfs-bus-iio-dac   | 61 +++++++++++++++++=
-++
-> > >  .../ABI/testing/sysfs-bus-iio-dac-ltc2688     | 31 ----------
-> > >  2 files changed, 61 insertions(+), 31 deletions(-)
-> > >  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-dac
-> > >
-> > > diff --git a/Documentation/ABI/testing/sysfs-bus-iio-dac =20
-> > b/Documentation/ABI/testing/sysfs-bus-iio-dac =20
-> > > new file mode 100644
-> > > index 000000000000..36d316bb75f6
-> > > --- /dev/null
-> > > +++ b/Documentation/ABI/testing/sysfs-bus-iio-dac
-> > > @@ -0,0 +1,61 @@
-> > > +What: =20
-> > 	/sys/bus/iio/devices/iio:deviceX/out_currentY_toggle_en =20
-> > > +KernelVersion:	5.18
-> > > +Contact:	linux-iio@vger.kernel.org
-> > > +Description:
-> > > +       		Toggle enable. Write 1 to enable toggle or 0 to disable it.=
- This =20
-> > Tab vs space issue - see below.
-> >  =20
-> > > +		is useful when one wants to change the DAC output codes. The =20
-> > way =20
-> > > +		it should be done is:
-> > > +
-> > > +        	- disable toggle operation;
-> > > +        	- change out_currentY_rawN, where N is the integer value of=
- the =20
-> > symbol; =20
-> > > +        	- enable toggle operation. =20
-> > Same question as below on whether this is accurate - Maybe it just need=
-s to
-> > mention
-> > this scheme needs to be used for autonomous toggling (out of software
-> > control).
-> > It works for software toggling but may be overkill!
-> >  =20
-> > > +
-> > > +What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_rawN
-> > > +KernelVersion:	5.18
-> > > +Contact:	linux-iio@vger.kernel.org
-> > > +Description:
-> > > +		This attribute has the same meaning as out_currentY_raw. It is
-> > > +		specific to toggle enabled channels and refers to the DAC =20
-> > output =20
-> > > +		code in INPUT_N (_rawN), where N is the integer value of the =20
-> > symbol. =20
-> > > +		The same scale and offset as in out_currentY_raw applies.
-> > > +
-> > > +What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_symbol
-> > > +KernelVersion:	5.18
-> > > +Contact:	linux-iio@vger.kernel.org
-> > > +Description:
-> > > +		Performs a SW switch to a predefined output symbol. This =20
-> > attribute =20
-> > > +		is specific to toggle enabled channels and allows switching =20
-> > between =20
-> > > +		multiple predefined symbols. Each symbol corresponds to a =20
-> > different =20
-> > > +		output, denoted as out_currentY_rawN, where N is the integer =20
-> > value =20
-> > > +		of the symbol. Writing an integer value N will select =20
-> > out_currentY_rawN. =20
-> > > +
-> > > +What: =20
-> > 	/sys/bus/iio/devices/iio:deviceX/out_voltageY_toggle_en =20
-> > > +KernelVersion:	5.18
-> > > +Contact:	linux-iio@vger.kernel.org
-> > > +Description:
-> > > +       		Toggle enable. Write 1 to enable toggle or 0 to disable it.=
- This =20
-> >=20
-> > Mix of spacing and tabs is inconsistent. Hence the odd indent in this r=
-eply
-> > version.
-> >  =20
-> > > +		is useful when one wants to change the DAC output codes. The =20
-> > way =20
-> > > +		it should be done is: =20
-> >=20
-> > Hmm. Is this true?  If we are doing autonomous toggling on a clock or s=
-imilar
-> > than agreed.
-> > If we are using the out_current_symbol software control it would be com=
-mon
-> > to switch
-> > to A, modify B, switch to B, modify A etc.
-> >=20
-> > I think our interface has probably evolved and so this might need an up=
-date. =20
->=20
-> I agree that the description could be clear about the differences between=
-=20
-> autonomous and software toggling. If we were to change the description, w=
-ould=20
-> this suffice?
->=20
-> Description:
->         Toggle enable. Write 1 to enable toggle or 0 to disable it. This
->         is useful when one wants to change the DAC output codes. For auto=
-nomous toggling, the way
->         it should be done is:
->=20
->         - disable toggle operation;
->         - change out_currentY_rawN, where N is the integer value of the s=
-ymbol;
->         - enable toggle operation.
+Btw, if you added [patch 2/2] too, I think the exact byte counts in
+the comments are a bit misleading.
 
-To here is good as focuses on the use case.
+The actual cacheline details will very much depend on 32-bit vs 64-bit
+builds, but also on things like the slab allocator debug settings.
 
->=20
-> For software toggling, one can switch to A, modify B, switch to B, modify=
- A, etc.
+I think the important part is to keep the d_lockref - that is often
+dirty and exclusive in the cache - away from the mostly RO parts of
+the dentry that can be shared across CPU's in the cache.
 
-I'd not mention this part (not sure if you were intending to though given t=
-he formatting!)
+So rather than talk about exact byte offsets, maybe just state that
+overall rule?
 
-Jonathan
-
-
-> >  =20
-> > > +
-> > > +        	- disable toggle operation;
-> > > +        	- change out_voltageY_rawN, where N is the integer value of=
- the =20
-> > symbol; =20
-> > > +        	- enable toggle operation. =20
->=20
->=20
-
+              Linus
 
