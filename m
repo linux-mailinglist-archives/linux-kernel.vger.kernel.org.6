@@ -1,106 +1,121 @@
-Return-Path: <linux-kernel+bounces-212955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5BF39068E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:33:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A8F9068E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:34:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F6AD1F26A21
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:33:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BCC6284A5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B60F13F452;
-	Thu, 13 Jun 2024 09:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CB613F45E;
+	Thu, 13 Jun 2024 09:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hhVPUx1a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="NDoSpHHB"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA99C381C4;
-	Thu, 13 Jun 2024 09:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E802913D891;
+	Thu, 13 Jun 2024 09:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718271203; cv=none; b=AHQqVIaBUVOduacvCW8vd1bFzFkJf2FeZ/kVZnXkvuIrWPs4my+d+BBZBBb2LGDAAwN1bt4pmcQTCVtLlQZtIX47kyuxFxVD8cI26Dr9mkWiZ7OrfT8GsUrFEc1nLO65BgGS5bohuOCzJD3qkMdtjQJj7QK9WZGHzHhxrOsSEKY=
+	t=1718271250; cv=none; b=dEOoiF+HwGQbJbGfheuRkOax/HrW097A9mX7GSJH+B4WROQYJvihGLgEVLlrQTVfxBAFGsRIB5LAJu0YOdjNOBmrSLfXzUCIM8pH1jsM72lCZonpPxcLUb5kzdILDxgks/SGZzlEgjdwJZ0bRoj+3N8pi/2MtPOXpKJ1zwJY6w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718271203; c=relaxed/simple;
-	bh=FWl6WVfBlpItvEzqF3u++D6qEfqM0dklJ5gklTNJdEQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SfjDEx6vNTbsVM8FuUj/eaqtwNQO1UcLrh96UenkvjahPivSvzS3N/wjufijcvpvQEEnFUkWwM/jhpfnIEFF4aBLTcaKhyg6SG0gPA+zmzHDktkDSrE4V2oetX0JieX71LAj0LZqLdtPC76KK1X8er4HtliNP6lNMErIfvoox0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hhVPUx1a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23D98C2BBFC;
-	Thu, 13 Jun 2024 09:33:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718271202;
-	bh=FWl6WVfBlpItvEzqF3u++D6qEfqM0dklJ5gklTNJdEQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hhVPUx1aTpkibvfD8f5rMYGoHBBZazMbx62UeXCIfOcCEBK2nUvKbduGu97uQP9Ir
-	 G35Ew/uYrKje4//JhHIXXqjTiAS5mEeZtXApx1ZoEODg2usu0x9CpWQtmLVv9G3UBa
-	 4SZzLj75cjVy7p+1hUVn6FSNsrGN+/ZYxdy20Yp3fRlK3ECN3XnrsnLIYqhdmNlIOh
-	 bYAuXxSovtTnDMPnNMj/5Z6mNVt8yiTW9nXilynB8rbFzy40tPwSGiF872vnhPKCRz
-	 9zo/9vBE+Zpmb58fRvsxbIuN18z3wnRfF9M+Eg0jE1T8Q+xM2kZjDchiVMLrhRhmCN
-	 JhKJo381qFn6Q==
-Message-ID: <4d79cd91-50dc-402e-a4f5-785093341efc@kernel.org>
-Date: Thu, 13 Jun 2024 11:33:13 +0200
+	s=arc-20240116; t=1718271250; c=relaxed/simple;
+	bh=a+cbWQvvYbCHyU10BIV7kSt3CraTWeso0Dxz5NmyJxg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l/1XCNgd4EBfD4dn+sUdt/aPqqOiJ4J1Sfw8gXu+BTDhWau1LECU4DhjSRuSzyKNPg7Ycbj6E49lpQg7WydZv2JubAA29XIgZ6utsmbPpxFbDj++4wgr5O8ySles6YyB1uFpE2CBKZTbcR0gti91xBBYqm2iaiFZtLmTQ6h6KE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=NDoSpHHB; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 115e1d46296811efa22eafcdcd04c131-20240613
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=vPX1AHD54ZweMud2CAGeNnwrJ7C9fon4sYTRXKnYsD8=;
+	b=NDoSpHHBM/n23oYXmezy28QrTPQbox3OJBdQUFg7uYJqqb4IwBaU0wUd6KUXF49I+4OwaVNHKy28L3uZ1nJ9pfpLsB+I9+8SL/MBdBXnX3yvgF1SaT1sg7txWOL4cSvd+TX4DzMOQhk/qc6CBRhwMCRFVYVPlNv3yhBsADpOUmw=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:71b0c558-c9a9-4369-ad16-40f3507c8c0f,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:393d96e,CLOUDID:7ef28a88-8d4f-477b-89d2-1e3bdbef96d1,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 115e1d46296811efa22eafcdcd04c131-20240613
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
+	(envelope-from <yunfei.dong@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1758424830; Thu, 13 Jun 2024 17:34:01 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 13 Jun 2024 17:34:00 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 13 Jun 2024 17:33:59 +0800
+From: Yunfei Dong <yunfei.dong@mediatek.com>
+To: =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?=
+	<nfraprado@collabora.com>, Sebastian Fricke <sebastian.fricke@collabora.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Benjamin Gaignard
+	<benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>,
+	Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+CC: Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>,
+	Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>, Yunfei
+ Dong <yunfei.dong@mediatek.com>, <linux-media@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v2 0/3] media: mediatek: vcodec: fix vcodec smatch warning
+Date: Thu, 13 Jun 2024 17:33:54 +0800
+Message-ID: <20240613093357.583-1-yunfei.dong@mediatek.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 net-next 15/15] net: Move per-CPU flush-lists to
- bpf_net_context on PREEMPT_RT.
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Daniel Bristot de Oliveira <bristot@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>,
- Eric Dumazet <edumazet@google.com>, Frederic Weisbecker
- <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
- =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- Jonathan Lemon <jonathan.lemon@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
- Magnus Karlsson <magnus.karlsson@intel.com>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vu?=
- =?UTF-8?Q?sen?= <toke@redhat.com>, Yonghong Song <yonghong.song@linux.dev>,
- bpf@vger.kernel.org
-References: <20240612170303.3896084-1-bigeasy@linutronix.de>
- <20240612170303.3896084-16-bigeasy@linutronix.de>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <20240612170303.3896084-16-bigeasy@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
+Fix below smatch static checker warning from [bug report]:
 
+The patch 397edc703a10: "media: mediatek: vcodec: add h264 decoder
+driver for mt8186" from May 12, 2022 (linux-next), leads to the
+following (in development) Smatch static checker warning:
 
-On 12/06/2024 18.44, Sebastian Andrzej Siewior wrote:
-> The per-CPU flush lists, which are accessed from within the NAPI callback
-> (xdp_do_flush() for instance), are per-CPU. There are subject to the
-> same problem as struct bpf_redirect_info.
-> 
-> Add the per-CPU lists cpu_map_flush_list, dev_map_flush_list and
-> xskmap_map_flush_list to struct bpf_net_context. Add wrappers for the
-> access. The lists initialized on first usage (similar to
-> bpf_net_ctx_get_ri()).
-> 
-[...]
-> Reviewed-by: Toke Høiland-Jørgensen<toke@redhat.com>
-> Signed-off-by: Sebastian Andrzej Siewior<bigeasy@linutronix.de>
-> ---
->   include/linux/filter.h | 42 ++++++++++++++++++++++++++++++++++++++++++
->   kernel/bpf/cpumap.c    | 19 +++----------------
->   kernel/bpf/devmap.c    | 11 +++--------
->   net/xdp/xsk.c          | 12 ++++--------
->   4 files changed, 52 insertions(+), 32 deletions(-)
+drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_if.c:351
+vdec_h264_slice_decode() potential NULL container_of 'fb'
 
-Acked-by: Jesper Dangaard Brouer <hawk@kernel.org>
+drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp8_req_if.c:337
+vdec_vp8_slice_decode() potential NULL container_of 'fb'
+
+drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_h264_req_multi_if.c:728
+vdec_h264_slice_single_decode() potential NULL container_of 'fb'
+
+---
+Changed with v1:
+- Change the return value from -EBUSY to -ENOMEM when the driver can't get
+  frame buffer.
+---
+Yunfei Dong (3):
+  media: mediatek: vcodec: fix h264 multi statless decoder smatch
+    warning
+  media: mediatek: vcodec: fix vp8 stateless decoder smatch warning
+  media: mediatek: vcodec: fix h264 stateless decoder smatch warning
+
+ .../mediatek/vcodec/decoder/vdec/vdec_h264_req_if.c    |  9 +++++++--
+ .../vcodec/decoder/vdec/vdec_h264_req_multi_if.c       |  9 +++++++--
+ .../mediatek/vcodec/decoder/vdec/vdec_vp8_req_if.c     | 10 +++++++---
+ 3 files changed, 21 insertions(+), 7 deletions(-)
+
+-- 
+2.18.0
+
 
