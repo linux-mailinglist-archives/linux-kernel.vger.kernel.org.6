@@ -1,126 +1,93 @@
-Return-Path: <linux-kernel+bounces-213914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93217907C85
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:23:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 955D7907C87
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16B61B269A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:23:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B4D41F23ABD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A658C14F10B;
-	Thu, 13 Jun 2024 19:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86A8156C70;
+	Thu, 13 Jun 2024 19:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GWpdvu2d"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sjEhG/TX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DABA14BF92
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 19:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0024C14BF92;
+	Thu, 13 Jun 2024 19:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718306522; cv=none; b=Xt8r/JOURUeXlA9YgfbXdFxRRZ4RhNBO3dPAyQ62sN+EkESgYl9I5Q1E3HnflPYw33Y6jPN80oY9Wqfg6js/NV/RsaDSpPborcYtvCcRju/XqbaVGqUGNjpnYS9O+7D3oPlWVDrKlR1ElQDWUAlUA2aJSzHwgNjCVpkHSJ1u4yY=
+	t=1718306528; cv=none; b=r6MMP0YqTSN1OKZHLkvWDiIV5PwXY3NmS5NK7xOLKK0ZWiKKJI5kXctyEJyg2Pq5y/eivAh4uEJ0+YRR3iZ1wRFlcyPJCFKsbJl+RoA8fH/uw+F1wM1uzuoyOFVacM/NhLPNbVn1pw47+qFELG30rN2Kl9c5+9XCqLPkXt6+x2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718306522; c=relaxed/simple;
-	bh=DtpVjB5sWQlCVYIqC72LrS433BYoesAm2RPCyqhlDqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B2s9rtJ4cMFbkzZXj0tfQcnytBw5aWoV0eCmEQO1ynoxfvM4/RBDnNUd+n3t6hhQll3dTd8XHfEZyyvlzFqMixxxMgcnvJ1tixfJbhLPCcGky3YQLW0RkvP/43+OuKOPPTdMf9tvBQLFjm8qdBCc+x4o49u4PDPWFLctmmb1GiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GWpdvu2d; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42172ed3487so11039985e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:21:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718306518; x=1718911318; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=n7FkFcl3NcUnPjJ/3i8zWPfRNnb33v+XbwikQNsK1NA=;
-        b=GWpdvu2dLDUgacvbCz9MR74DHXp373fA2TA6K6drvCMyedFQI1fWvlDd3A1S+n6Mlz
-         zj5TrsJzg4uNQzkZvfzTVEZB2UPrFa9m6pwJclK+tJ4kbajcS02gZgrpHWOGEVKFm+26
-         Jehz29RQoV/hIGSvYXOEKqtF0/wA3g8XCn0vdAsJ3aSGig9WhSHN4/UmDS5COp2yc/nZ
-         KwrjdqntGKx4KZ7SuWP/U/PTeyKtRhz9QzgDQarqUqWEcFMTq6WuEKiGKPN1jr+QRQI3
-         X8C2yOW9Q52A4C+ZK8UWmHq+LbunqA9uMcXS0+m3eTBsE2qGEB7wgP8cZVnMAK4KAhiX
-         hE0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718306518; x=1718911318;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n7FkFcl3NcUnPjJ/3i8zWPfRNnb33v+XbwikQNsK1NA=;
-        b=rjjpnjhw/Ozt5w3o/BAKacihIcClRt3i/HMhpSMpGbZtZOoCIzC3KuSSUE/vuq8qfi
-         hWfKPq231cl9rD9Wyasa4J1PiiIH4CAatDtV4IWXecEp3FdJWKWDhylXPoWatiBPtTLl
-         MHtLPiKLjBypcRsSGOd3ObAyVf6PCy4RziXPeAOzBZwXhXEjDNNhcH5SIeDysbVJe9S4
-         pgfPXP7pCus2qurwyZFGNLFsIEoKNVxns+ocNKkLW56YM1Ff59Ph1qATPZuDGvHkHWkp
-         eQz9Rlm24w431A4kI51Jhz21qa6Rg1t/3RA3BQIJjNlluEwVWnrQkLhJgacn4aFiz8x+
-         X68A==
-X-Forwarded-Encrypted: i=1; AJvYcCWXS+6XzOigBBKTjW5ASFZ14RcftdnlFdItMyhIlnRd4qPtC33dOdO0ktg2qQ79LF2h8GUVzOIFU3hB0lU0lZlpMnaMT5naaDjQzGm9
-X-Gm-Message-State: AOJu0YxTJdzGqoiAHM0G3dIZDVwOeTfO6M6l/Z+mEZtfyHwi/myej0jB
-	BK7gI+NNKRQD2AGpDAUp0tu+KJ3Pki6SUqYYgjQH+sXdHdyYCRoyb7po7KDsqrG7+duRqp6lfz3
-	z
-X-Google-Smtp-Source: AGHT+IGX6SQaOm6gsbMfRyp/T0mtjG1ZhlSQ10k4BzkF3I/QyjnCIlOiS+4+o4+r50rTnJ/QZr1CdA==
-X-Received: by 2002:a05:600c:2d8c:b0:422:140:f440 with SMTP id 5b1f17b1804b1-4230484adc9mr6269195e9.36.1718306517743;
-        Thu, 13 Jun 2024 12:21:57 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f602e802sm34335595e9.11.2024.06.13.12.21.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 12:21:57 -0700 (PDT)
-Date: Thu, 13 Jun 2024 22:21:49 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Cc: Teddy Engel <engel.teddy@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] staging: rtl8192e: Cleanup multiple issues
-Message-ID: <c0f2bca8-a7e6-4874-b5fc-98911a7c09d8@moroto.mountain>
-References: <cover.1718291024.git.engel.teddy@gmail.com>
- <ee01dbd2-fe83-46cf-9ceb-279a06ce9aad@gmail.com>
+	s=arc-20240116; t=1718306528; c=relaxed/simple;
+	bh=WunVx8UIln3kgFEhVvAZCi7y9BEcxfNzwmdzAtyElU8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lHWegixMp/7YJde5DRl+YdV//VGKcwyldUkYhdIps92d8pCvMamYRtoace4ASlJim6K3CTZt7HiZAATC+omdPCuWSwVBvIdLq7a4thL7YolVbFml4Lq6fcjUinB88ei5jZVtv1YMwmxQv8xHjj5Qp16ibFZcbDSjoMfiuF9bAN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sjEhG/TX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8154EC3277B;
+	Thu, 13 Jun 2024 19:22:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718306527;
+	bh=WunVx8UIln3kgFEhVvAZCi7y9BEcxfNzwmdzAtyElU8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sjEhG/TXAP4A+FBZU3s37UZhMEuj7iV8C08VDnIOvi/Z3OcPwrk3NMDdnuSqTLUvT
+	 +INzqbYrIaiFBzz9W93oWV1EilejwOVfSj8y2ArVAGyF9yCBzXEdFSsz1GlXY6wvOC
+	 ldb5ZE5CrtkVbCxl3jAwQbIYKY3D7dyXyDgEyU8lIjWR0Yh1g+xzL608F/7D55oqBh
+	 1MAorj5n7Lf4N5L95fwB4Hf46g/lgj9fHR2Ci/ZPHlI4cdBQ65EA8XnVfAHesCsHNe
+	 9fGLM5uxhn8LUs1F7RVeegENJgoonG0ox/E8T76PRCCPqLVqtLBCc+IsB0zbcv92zy
+	 1DewC20rulbmA==
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5bafec9ad2eso70827eaf.0;
+        Thu, 13 Jun 2024 12:22:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXRIi5wJpsdQZJUhAKOiF0CHtut9vr8DbwVAiHVG8NuRutc+PittE0tFr0LrHf7mUbMYTDGwmM8GDN+fNQL7czu6x6s5CLS2VUIozazXZPYuRxuKXeRrQAirPlXGJ0LjkHNCOynXbpuww==
+X-Gm-Message-State: AOJu0Yxlp/34RDTDyHX4Ahr1d3kGmVKCQpQvUbfpxwsCyQNFKx8Xp/f3
+	w3d3OUx28MDNNIKf53cpO2SoqHGc1XmnERvYj3oJhS2X/0lePougWpLpmvN3VUxJa7h1fb7VlR1
+	8hHv3besVOi9iCVM9YqRSh+Nqq5w=
+X-Google-Smtp-Source: AGHT+IHjO4Zw6aLSf61D+OQbRz46vtDs69ireUI/2TTxEeJBQxANKpy6BcTwr8LZ2cNEP1FqGvAu/XydowFHn/NoBLQ=
+X-Received: by 2002:a4a:b1c1:0:b0:5bb:815d:e2ab with SMTP id
+ 006d021491bc7-5bdadbff7demr610924eaf.1.1718306526766; Thu, 13 Jun 2024
+ 12:22:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ee01dbd2-fe83-46cf-9ceb-279a06ce9aad@gmail.com>
+References: <20240606205712.3187675-1-andriy.shevchenko@linux.intel.com> <179d5111-5cc8-4a17-b735-84f02e0144f5@redhat.com>
+In-Reply-To: <179d5111-5cc8-4a17-b735-84f02e0144f5@redhat.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 13 Jun 2024 21:21:55 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hG3FB0YiXkyx8hRruB9JGk5vH92zNA43+yCmpKYj0=wg@mail.gmail.com>
+Message-ID: <CAJZ5v0hG3FB0YiXkyx8hRruB9JGk5vH92zNA43+yCmpKYj0=wg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] ACPI: PMIC: a small refactoring
+To: Hans de Goede <hdegoede@redhat.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Len Brown <lenb@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 09:05:03PM +0200, Philipp Hortmann wrote:
-> On 6/13/24 17:16, Teddy Engel wrote:
-> > Remove some unused constants, macros, and structs.
-> > Capitalize a constant.
-> > 
-> > No specific patch order required.
-> > 
-> > Teddy Engel (6):
-> >    staging: rtl8192e: Remove unused constant IC_VersionCut_E
-> >    staging: rtl8192e: Remove unused struct phy_ofdm_rx_status_rxsc
-> >    staging: rtl8192e: Remove unused constant WA_IOT_TH_VAL
-> >    staging: rtl8192e: Capitalize constant RegC38_TH
-> >    staging: rtl8192e: Remove unused macro dm_tx_bb_gain_idx_to_amplify
-> >    staging: rtl8192e: Remove unnecessary pre-declaration of struct
-> >      net_device
-> > 
-> >   drivers/staging/rtl8192e/rtl8192e/r8190P_def.h | 8 --------
-> >   drivers/staging/rtl8192e/rtl8192e/rtl_cam.h    | 1 -
-> >   drivers/staging/rtl8192e/rtl8192e/rtl_dm.c     | 4 ++--
-> >   drivers/staging/rtl8192e/rtl8192e/rtl_dm.h     | 6 +-----
-> >   drivers/staging/rtl8192e/rtl8192e/rtl_pci.h    | 1 -
-> >   5 files changed, 3 insertions(+), 17 deletions(-)
-> > 
-> 
-> 
-> Hi Teddy,
-> 
-> please combine patch 1 and 3 (Remove unused constant ...) . You can change
-> more than one item in a patch. But it has to be of the same kind.
-> 
+On Fri, Jun 7, 2024 at 11:05=E2=80=AFAM Hans de Goede <hdegoede@redhat.com>=
+ wrote:
+>
+> Hi,
+>
+> On 6/6/24 10:54 PM, Andy Shevchenko wrote:
+> > Use sizeof(), dev_err()/dev_warn(), and regmap bulk read
+> > where it makes sense.
+> >
+> > In v4:
+> > - dropped controversial changes (Hans)
+>
+> Thanks, the whole series looks good to me:
+>
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+>
+> for the series.
 
-Could you combine that with the earlier patch that deleted
-IC_VersionCut_C as well?  (Unless that has already been merged).
-
-regards,
-dan carpenter
-
+All of the patches in the series applied as 6.11 material, thanks!
 
