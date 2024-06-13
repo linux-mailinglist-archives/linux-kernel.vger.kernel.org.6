@@ -1,134 +1,186 @@
-Return-Path: <linux-kernel+bounces-212876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE43906771
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:50:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 499C890679A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA159B259FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:50:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E81DB2882A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0AF13F449;
-	Thu, 13 Jun 2024 08:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367E3142918;
+	Thu, 13 Jun 2024 08:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="b7bAbsYD"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Et6t43EI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1FC13DDDC;
-	Thu, 13 Jun 2024 08:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E391420C6
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718268502; cv=none; b=b3F8qJHaD0pxmJ+M4jMy+ARenodTcXhV1KplXEpD7MTkY2tRSaq8d4TzHJDsdenfJsyDwqHznInEe6JtOlKp28OS4V381TP2aU81pIOksB6mFcDS4MSy/hwf2PDH5lbY90LWBaNSAZ08GqA7WiaM03zPflC8kUvX+V+1BJflMqA=
+	t=1718268550; cv=none; b=uqZ7ognciY1TdOw+kqvhpNk45bLoeDE505BQmAQcDIh6j8EBtYKx/t079T5hYlDcVwkc/NLXE/gwlbuN3esTPVdIPK/sry2wUT8Ip8ksTvjCRqhyG0MsBYaiaCSQrmx9c40E8lJemX93M4ld+51ral21s+4TJBnilGNQaTJRw88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718268502; c=relaxed/simple;
-	bh=FAmGzD3t6TRqM7xMa1IQOFMD+3VCjtakuHap2yhphMk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=myiOydOtPvz0JxeJkdL1Ezf7dgxSjh+6sTJNvAN78pZLcW+cXftde7FzhHtE0o+8KdWppOQYjnMBpWualaxBAWeAvM0MchgV8EBaD/syGxa3VlMFf5XYkC8sed1t4BjsRYGN4MnWnqVGDhHtLZQ55HsiyQQ8W+f28VFyjgYmoFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=b7bAbsYD; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45D8mExF025371;
-	Thu, 13 Jun 2024 03:48:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718268494;
-	bh=rijIbF+MLCfoGpALyFiglb4qu5p2oJO5G70j6C7Trn0=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=b7bAbsYDxIfH/nSsgHqeXW98WywAI66VbIPWDr3NSZ9QCVQGUOuJdFkF90EjsWidh
-	 Kj7/ZlVdHuJp9GILbVOiC7mDJBoEB0fTHwBixhWA40S1j1E5Nci6p8wqtLyD5cQZDw
-	 LzumlB775UhBMykD0biSB86itRntyqNuPl22GlnE=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45D8mEjG100486
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 13 Jun 2024 03:48:14 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 13
- Jun 2024 03:48:14 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 13 Jun 2024 03:48:14 -0500
-Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45D8mA45087048;
-	Thu, 13 Jun 2024 03:48:10 -0500
-From: Vignesh Raghavendra <vigneshr@ti.com>
-To: Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Tero Kristo
-	<kristo@kernel.org>,
-        Nishanth Menon <nm@ti.com>, <s-vadapalli@ti.com>, <danishanwar@ti.com>,
-        <r-gunasekaran@ti.com>, <srk@ti.com>,
-        Chintan Vankar
-	<c-vankar@ti.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v7 0/5] Add CPSW2G and CPSW9G nodes for J784S4
-Date: Thu, 13 Jun 2024 14:18:07 +0530
-Message-ID: <171826022268.240984.16809992484526751856.b4-ty@ti.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240502091002.3659435-1-c-vankar@ti.com>
-References: <20240502091002.3659435-1-c-vankar@ti.com>
+	s=arc-20240116; t=1718268550; c=relaxed/simple;
+	bh=HzKz4mOdi31xaOkjCx7z1KAm79ndQ9wlviA1d7c37pk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X0jutYSF1wQv7nHglCKwUPSxg3YZbGP8/YlBmeUDUpwQ7Qs10/mmJfVJN9W/plZ6L2vWjXHlVpb2R8frVfhQ5L6+iS3CXRjgxdKbwiVxI1vJob735sWio2dIVcAsG9CRCCnyNMpMfo/jr6miTaF5uruj/o3hyB1rcPw5fWE5fgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Et6t43EI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718268548;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=RS6J5KVthkxaXdiN8zOh9Jm9h30XS9QZ8/1gEQNIBB8=;
+	b=Et6t43EIArvzpFXt9UYYBFmLGzVDQriES1r8thDfumqmrxJYAJ2jrifAwggGzwG+4B9uVI
+	O8hSz5RVeUtegUVKcu0qq2ZudNUpOjgkHWhfhaLTUmpjNYVgVKIa+jUfuclC/l3uEKSzkP
+	cToMxy4ClR3kH6eBJxNkGpspAqfZEA8=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-284-ntRDT1tuMhm8cdW8G2Ch_g-1; Thu, 13 Jun 2024 04:49:04 -0400
+X-MC-Unique: ntRDT1tuMhm8cdW8G2Ch_g-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ebeef33f21so5455421fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:49:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718268543; x=1718873343;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RS6J5KVthkxaXdiN8zOh9Jm9h30XS9QZ8/1gEQNIBB8=;
+        b=gf0UyOhle5Cx+ubjKGMGrReersUtNaI0nOKPGoJ4koPFHeueteuLzLlkkFt8SvLDrh
+         3Lqr4w8IbDoGIc27je9gXaalt8iGKCUeS6iz8xObIA++8qTqH5oN2TdWMTOXQo5iNXR6
+         djt6lLixZvYCSwKIvqiv1Yh/4XexTsvifUzeFTlijztv4fBq7t5de6XVoiRLbZY3Jvou
+         SrcTfjY4MRrS4loE1gOgtC3T4oj38TVrxmtEloILIgISXe5hs/amSEHFUu/HITVJC2N7
+         4RDabMxrr0k0fr56dA0Cc2DirW3K8lu2KuoiOQPVa88HRuBjl1luKzlTRkPt3iVv6T2G
+         VeDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBNPjLPBaufKPzv+beYdLPB05l5yBLHRWMlG8THtylibeN10OiVrir+YxW7rS6xxgHLMortht47xrNaCjz+WSWWbPvpzNgjf4nSQ03
+X-Gm-Message-State: AOJu0YwusccoZvoIk8NMIcz1zTGmuasA24rBJjJezzgmRuoFoI1/UI6o
+	DoXzXVUxcJwd6hcTll0pR02mhupHKL2sLQ1O5izYQcckHDAgGdqSgRMyjtjnGGvyMFCVHgqDrW/
+	/jBlcT5IOSuf08j+OGVzOxong3NshEAdsHrkAhqELLbQ1hhSiirtrU0S/JhkDMA3BN/awQw==
+X-Received: by 2002:a2e:b5ac:0:b0:2eb:e266:f9ba with SMTP id 38308e7fff4ca-2ebfc9bf1d0mr30399621fa.23.1718268543140;
+        Thu, 13 Jun 2024 01:49:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEQrOECpZJiDC6UibcycHJLnTZes27jrpaCziueHA/tENV8SzOy4iwATn/1UI/gv+kqf1DsMg==
+X-Received: by 2002:a2e:b5ac:0:b0:2eb:e266:f9ba with SMTP id 38308e7fff4ca-2ebfc9bf1d0mr30399431fa.23.1718268542648;
+        Thu, 13 Jun 2024 01:49:02 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c703:fe00:10fe:298:6bf1:d163? (p200300cbc703fe0010fe02986bf1d163.dip0.t-ipconnect.de. [2003:cb:c703:fe00:10fe:298:6bf1:d163])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-423034f4129sm7677795e9.14.2024.06.13.01.49.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 01:49:02 -0700 (PDT)
+Message-ID: <b0b4a134-1d40-4eef-94f3-5c4593b55e78@redhat.com>
+Date: Thu, 13 Jun 2024 10:49:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 3/3] mm: remove folio_test_anon(folio)==false path in
+ __folio_add_anon_rmap()
+To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org
+Cc: chrisl@kernel.org, linux-kernel@vger.kernel.org, mhocko@suse.com,
+ ryan.roberts@arm.com, baolin.wang@linux.alibaba.com, yosryahmed@google.com,
+ shy828301@gmail.com, surenb@google.com, v-songbaohua@oppo.com,
+ willy@infradead.org, ying.huang@intel.com, yuzhao@google.com
+References: <20240613000721.23093-1-21cnbao@gmail.com>
+ <20240613000721.23093-4-21cnbao@gmail.com>
+ <CAGsJ_4zx3Rp9ye=LFhzEN+JypAq1zb_gLQZgyiRvYJZTMpLCHA@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAGsJ_4zx3Rp9ye=LFhzEN+JypAq1zb_gLQZgyiRvYJZTMpLCHA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Chintan Vankar,
-
-On Thu, 02 May 2024 14:39:57 +0530, Chintan Vankar wrote:
-> This series adds device-tree nodes for CPSW2G and CPSW9G instance
-> of the CPSW Ethernet Switch on TI's J784S4 SoC. Additionally,
-> two device-tree overlays are also added:
-> 1. QSGMII mode with the CPSW9G instance via the ENET EXPANSION 1
->    connector.
-> 2. USXGMII mode with MAC Ports 1 and 2 of the CPSW9G instance via
->    ENET EXPANSION 1 and 2 connectors, configured in fixed-link
->    mode of operation at 5Gbps link speed.
+On 13.06.24 10:46, Barry Song wrote:
+> On Thu, Jun 13, 2024 at 12:08 PM Barry Song <21cnbao@gmail.com> wrote:
+>>
+>> From: Barry Song <v-songbaohua@oppo.com>
+>>
+>> The folio_test_anon(folio)==false case within do_swap_page() has been
+>> relocated to folio_add_new_anon_rmap(). Additionally, two other callers
+>> consistently pass anonymous folios.
+>>
+>> stack 1:
+>> remove_migration_pmd
+>>     -> folio_add_anon_rmap_pmd
+>>       -> __folio_add_anon_rmap
+>>
+>> stack 2:
+>> __split_huge_pmd_locked
+>>     -> folio_add_anon_rmap_ptes
+>>        -> __folio_add_anon_rmap
+>>
+>> __folio_add_anon_rmap() only needs to handle the cases
+>> folio_test_anon(folio)==true now.
 > 
-> [...]
+> My team reported a case where swapoff() is calling
+> folio_add_anon_rmap_pte *not* folio_add_anon_rmap_ptes
+> with one new anon  (!folio_test_anon(folio)).
+> 
+> I will double check all folio_add_anon_rmap_pte() cases.
 
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
+Right, swapoff() path is a bit special (e.g., we don't do any kind of 
+batching on the swapoff() path).
 
-[1/5] arm64: dts: ti: k3-j784s4-evm: Add alias for MCU CPSW2G
-      commit: 674a20618b0de1afb62622b5051a5371117a1bfd
-[2/5] arm64: dts: ti: k3-j784s4-main: Add CPSW2G and CPSW9G nodes
-      commit: 01bd39357b70ed41fb52b26c7e5b42de328fcdd4
-[3/5] arm64: dts: ti: k3-j784s4-evm: Enable Main CPSW2G node and add aliases for it
-      commit: c2834656bb6d434bf0df0de7710210fbfe7ff927
-[4/5] arm64: dts: ti: k3-j784s4: Add overlay to enable QSGMII mode with CPSW9G
-      commit: 4ad0beeb7ae69ae11ec53c897d0b1af1df60454c
-[5/5] arm64: dts: ti: k3-j784s4: Add overlay for dual port USXGMII mode
-      commit: 838ceca36b2188899a0100461799f179c53de550
+But we should never get a new large anon folio there, or could that now 
+happen?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+-- 
+Cheers,
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
---
-Vignesh
+David / dhildenb
 
 
