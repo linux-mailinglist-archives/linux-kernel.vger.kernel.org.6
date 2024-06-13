@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-212457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19EF6906145
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:48:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F607906148
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2BD02832DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:48:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D4451C21686
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4122C861;
-	Thu, 13 Jun 2024 01:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF1E71B51;
+	Thu, 13 Jun 2024 01:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="my7QeV7b"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aN4DpRTV"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478852A1CF
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818134084E
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718243275; cv=none; b=hwgWQXQrJyrd6ABc73IA8R9KQb8tsJkIUCqAkBPXIfOkaN9hlcDiggSFywdZO7siRl85ni4FkToAGe3TQVaKmyD7XiXOqUNCHtiTQTJbed2Y86+N+9CMJQLNhbWLECnRedW9KfuiImm6We9CfG5k8Q75Q79LHmjV8suR6XXDQz4=
+	t=1718243279; cv=none; b=BLK2Dg8n84mRL9ChzWK+qOFPuyffmsdh7/GCl/qZH+PYYvTsXLMS1uFp3VTeWPCDi+D95ExIfxLQ/oiZvWOvM+gvACOVbUVBvTZ5v73J1YKKIZHA9A6XRiPF8UxfvAVxgpkJ7+6gP2+p9+I6hUP1x4WWdHgscuJzMMCtoFv4kSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718243275; c=relaxed/simple;
-	bh=gfQtaaj0HZXo7hMlFPf/fqEeASqbj9LDKgF87U6g+OU=;
+	s=arc-20240116; t=1718243279; c=relaxed/simple;
+	bh=yEPlCVvZ6TpXWIZr3A2pqoXGTUazPLwyOx5qYXljysU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kxI2XbLKkXlWJIkLf+9DrS8iuPXkniY4sxxRVhuvnNy/VpOe13uB6s+48i1HUlRmwzrbXbWSHFAt1169IgBEpw/DpdD7SivS5JuCb57jZMMf/+bzvppa2m63HmLwGjOD2XJZmQSfsR1vH6SjIvclLngv2orD5qQG+ouicOyaEyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ziweixiao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=my7QeV7b; arc=none smtp.client-ip=209.85.219.202
+	 To:Cc:Content-Type; b=MrfMMROXVhy1DBraUDlwhK51ULniqx4bdYXguNvcBN27UgN2qpIN7+gVAvtgrsVCkct1XVX3o5rVPGj/iAEdjcYmGH+pCouzDf2xCMQhMB91JXfKqxEtUGdJspqDPZamq+o8MsQe5QiX9Hwh6fvhvOMx9qpnWJe1V9G8Kl1an8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ziweixiao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aN4DpRTV; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ziweixiao.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dfa79b84623so806886276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 18:47:54 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dfe148f1549so586966276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 18:47:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718243273; x=1718848073; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1718243276; x=1718848076; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9vumCWMKtNGhqpjBYPo4gphn32wvxgC3E6VCZk/kLxc=;
-        b=my7QeV7b0sVv5U3xmbv1GECDKcqHSDctuBsAuvnCDGL91KeqLk6n7Zt16+f0GqQXam
-         1Uev48nGju1yw5IkWFz7PaYieOKVu0P28RR7qC53WSlhyd7EjrqkgOLqvxfZSMnNM2cP
-         AmHc4A8EK6aKArwEfps8V0wZYSV/8YL61G6yoUWPZDAVafg7lyS2LEBSk50WvCGDf4x1
-         q3u5WR8k7Id/p8CZvwoPAr68HrytmUuKOW4ChezSMrwR93oETsj5DLGpCrsB4TFo9DIH
-         GQ29WEhjtt0FDG+DnC+zP7Y45yHDfXCisIJRx7Udy7DdEUSvA/vqwvZWzzvDAcniQtnD
-         Em8A==
+        bh=msKTwCYRL4cMuPaWEm93vo3RuOQA0J5NZychvQnocak=;
+        b=aN4DpRTVabwoefFcHBz4sU9Jpt3l8xGmh3GoPtpQg1eRIe0jivRuB2QgCL57wdANTv
+         yjd7mlS9F7c101KVCl+HLqJ2LPMr4iwLJSqW9DLE4+lJqh/Zx6uVlDJ8j/oBZ2t7yRZq
+         Ml9IZTRUsNICb9YSNRzN6Qd/Y+SBv3n9+Lb48E0ijT9oMuTgVFMbV0MsLWv/0QioKNAL
+         2UJ77vBmS5TGm+CIEdbLT524ctT6XPf0UFw0aBaA2DDREOisExDDvK+btmZ1eDfCoP29
+         63ZrqdiKGcb74351rvLIwlhhpViuxlGAkLKobAp+3KE+BSranepPECx/FHI7/L4KfJM8
+         4p1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718243273; x=1718848073;
+        d=1e100.net; s=20230601; t=1718243276; x=1718848076;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9vumCWMKtNGhqpjBYPo4gphn32wvxgC3E6VCZk/kLxc=;
-        b=oEV/vALnALP+LecZ8sOzsjYFBlb2Q5sw3d2MamMD03lKMailFh7trkz4FrHmGrnsqf
-         TNDk3AgraRGgPrmPfgSUJOIEhHEMBKIgDNsk4HxrhEy+tQZna8BYT26KbavvgRf613LP
-         Q2Bh+LdeoJ97dzFzd/jYVZVJs0cTuvcyyhy697X70q4UdlGDhWLf5Qwpch+J8FUKVZ6s
-         KyKIUdYByHfvm609qxpYbVavsPUt36R/cEiLgm+F1PwKcV3gpCPq3t2DZ5qSFg8I72sE
-         MlllzcHZ/8a3uP8c3S2LUXZjp63YEQBlgYg5ouXbE41AzlJa4jYld+JJBk6vgTPIAdzy
-         /bjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbGN6ehUV2lVkJmrRfj1z2ToSLl62lXhSRV2evH5uEmJrsGtGjcT+v7FmMigNO8Prxp/wyM6unb66p5Wq+TAZUiep7VfanqCNCVrxT
-X-Gm-Message-State: AOJu0Yx/xVaciWSHujTeHzu7nO72ML+qOGvu3te6vXLcvvX8pdlc9bWp
-	/nGPVQV7PR6BcgpzyIooF7WPHS37GiDcKrXSlcB4ZabMaerOyiJq0WkHKwWjlFR+lVZs5r/TKkt
-	KQ928QPjI3UO/1w==
-X-Google-Smtp-Source: AGHT+IFvEpeulKMnslBayi/qNovxpeMCLNZenp9tdPIPtmsoPk60eHw+DWo7dlqz4FmcD5zH55ADo4JWesNC+Ac=
+        bh=msKTwCYRL4cMuPaWEm93vo3RuOQA0J5NZychvQnocak=;
+        b=cK2CNP5n389j0Oms1mZ5EoXluqNn8zBFB/Bszv0FHyMEo5nYj/lDu9EfkT4rlFCOxj
+         Q+9c9Yu6ja5/6PCAbqAuFvfLxRSPeE1QV+QTDwEebTqw0ov78lG/Tgz+lTAVqpoiWxy/
+         ez5w0RWIlBa9s6oO88UpSYp7mmHjV6QxztZ2wTLhiu9MomCLfEebDdZawRlIrLBHyciu
+         6OtQCGiYdS2o2hDF7n1t8WQ7UvgV5wRSfWXFIr2WN2cSfjlhCpUKKTryW8i1HfF98kjT
+         Yu2yaJ9LckVBhl0Sjyhr3hkKmWfCJ0oG+eCnr4vq+WhMjY505UzwfI/+Kzhc+dA6jZe0
+         X37g==
+X-Forwarded-Encrypted: i=1; AJvYcCXZzkigySmohGjkgjYBwgUijNRMA7sqvDYTHgFdnlS14U2RV19Zpp4tnZjOuh6m6GtsnDXvfSVCjwHHr9+EpLZPyQa4rAh0a4dDTyFH
+X-Gm-Message-State: AOJu0Yw737CDWvaCbnwfqdpZc7yQikx0aMK2sRHat02WkrWsmma9IjNY
+	8M+yXSqJlxR2PDkLkFqXV8zii9Z3N2OUFO3peZmlmUTB2x8wLOHxigZOs9d+hMRlwzKk9Mzyfms
+	u9Bm2NrgJQC01JQ==
+X-Google-Smtp-Source: AGHT+IEAXOWjf5nbwCbyBuHzMmR1OaooC/zMfCv3GgBS9IwLHRxNElIeth3U2qdcZtYFS1IwcGfpkcAPR4bbvmY=
 X-Received: from ziwei-gti.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:9b0])
- (user=ziweixiao job=sendgmr) by 2002:a05:6902:1001:b0:dfa:dec3:7480 with SMTP
- id 3f1490d57ef6-dfe69005926mr304509276.12.1718243273400; Wed, 12 Jun 2024
- 18:47:53 -0700 (PDT)
-Date: Thu, 13 Jun 2024 01:47:40 +0000
+ (user=ziweixiao job=sendgmr) by 2002:a25:ab04:0:b0:dfa:6ea5:c8d5 with SMTP id
+ 3f1490d57ef6-dfe6803c9ccmr576709276.10.1718243276383; Wed, 12 Jun 2024
+ 18:47:56 -0700 (PDT)
+Date: Thu, 13 Jun 2024 01:47:41 +0000
 In-Reply-To: <20240613014744.1370943-1-ziweixiao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240613014744.1370943-1-ziweixiao@google.com>
 X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
-Message-ID: <20240613014744.1370943-2-ziweixiao@google.com>
-Subject: [PATCH net-next v2 1/5] gve: Add adminq mutex lock
+Message-ID: <20240613014744.1370943-3-ziweixiao@google.com>
+Subject: [PATCH net-next v2 2/5] gve: Add adminq extended command
 From: Ziwei Xiao <ziweixiao@google.com>
 To: netdev@vger.kernel.org
 Cc: jeroendb@google.com, pkaligineedi@google.com, shailend@google.com, 
@@ -83,86 +83,121 @@ Cc: jeroendb@google.com, pkaligineedi@google.com, shailend@google.com,
 	rushilg@google.com, horms@kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-We were depending on the rtnl_lock to make sure there is only one adminq
-command running at a time. But some commands may take too long to hold
-the rtnl_lock, such as the upcoming flow steering operations. For such
-situations, it can temporarily drop the rtnl_lock, and replace it for
-these operations with a new adminq lock, which can ensure the adminq
-command execution to be thread-safe.
+From: Jeroen de Borst <jeroendb@google.com>
 
+The adminq command is limited to 64 bytes per entry and it's 56 bytes
+for the command itself at maximum. To support larger commands, we need
+to dma_alloc a separate memory to put the command in that memory and
+send the dma memory address instead of the actual command.
+
+Introduce an extended adminq command to wrap the real command with the
+inner opcode and the allocated dma memory address specified. Once the
+device receives it, it can get the real command from the given dma
+memory address. As designed with the device, all the extended commands
+will use inner opcode larger than 0xFF.
+
+Signed-off-by: Jeroen de Borst <jeroendb@google.com>
+Co-developed-by: Ziwei Xiao <ziweixiao@google.com>
 Signed-off-by: Ziwei Xiao <ziweixiao@google.com>
 Reviewed-by: Praveen Kaligineedi <pkaligineedi@google.com>
 Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
 Reviewed-by: Willem de Bruijn <willemb@google.com>
 ---
- drivers/net/ethernet/google/gve/gve.h        |  1 +
- drivers/net/ethernet/google/gve/gve_adminq.c | 22 +++++++++++---------
- 2 files changed, 13 insertions(+), 10 deletions(-)
+Changes in v2:
+	- Update the commit message to use imperative mood 
+	- Add the __maybe_unused attribute for the unused function of
+	  gve_adminq_execute_extended_cmd
 
-diff --git a/drivers/net/ethernet/google/gve/gve.h b/drivers/net/ethernet/google/gve/gve.h
-index ae1e21c9b0a5..ca7fce17f2c0 100644
---- a/drivers/net/ethernet/google/gve/gve.h
-+++ b/drivers/net/ethernet/google/gve/gve.h
-@@ -724,6 +724,7 @@ struct gve_priv {
- 	union gve_adminq_command *adminq;
- 	dma_addr_t adminq_bus_addr;
- 	struct dma_pool *adminq_pool;
-+	struct mutex adminq_lock; /* Protects adminq command execution */
- 	u32 adminq_mask; /* masks prod_cnt to adminq size */
- 	u32 adminq_prod_cnt; /* free-running count of AQ cmds executed */
- 	u32 adminq_cmd_fail; /* free-running count of AQ cmds failed */
+ drivers/net/ethernet/google/gve/gve_adminq.c | 31 ++++++++++++++++++++
+ drivers/net/ethernet/google/gve/gve_adminq.h | 12 ++++++++
+ 2 files changed, 43 insertions(+)
+
 diff --git a/drivers/net/ethernet/google/gve/gve_adminq.c b/drivers/net/ethernet/google/gve/gve_adminq.c
-index 8ca0def176ef..2e0c1eb87b11 100644
+index 2e0c1eb87b11..5b54ce369eb2 100644
 --- a/drivers/net/ethernet/google/gve/gve_adminq.c
 +++ b/drivers/net/ethernet/google/gve/gve_adminq.c
-@@ -284,6 +284,7 @@ int gve_adminq_alloc(struct device *dev, struct gve_priv *priv)
- 			    &priv->reg_bar0->adminq_base_address_lo);
- 		iowrite32be(GVE_DRIVER_STATUS_RUN_MASK, &priv->reg_bar0->driver_status);
- 	}
-+	mutex_init(&priv->adminq_lock);
- 	gve_set_admin_queue_ok(priv);
- 	return 0;
+@@ -461,6 +461,8 @@ static int gve_adminq_issue_cmd(struct gve_priv *priv,
+ 
+ 	memcpy(cmd, cmd_orig, sizeof(*cmd_orig));
+ 	opcode = be32_to_cpu(READ_ONCE(cmd->opcode));
++	if (opcode == GVE_ADMINQ_EXTENDED_COMMAND)
++		opcode = be32_to_cpu(cmd->extended_command.inner_opcode);
+ 
+ 	switch (opcode) {
+ 	case GVE_ADMINQ_DESCRIBE_DEVICE:
+@@ -537,6 +539,35 @@ static int gve_adminq_execute_cmd(struct gve_priv *priv,
+ 	return err;
  }
-@@ -511,28 +512,29 @@ static int gve_adminq_issue_cmd(struct gve_priv *priv,
- 	return 0;
- }
  
--/* This function is not threadsafe - the caller is responsible for any
-- * necessary locks.
-- * The caller is also responsible for making sure there are no commands
-- * waiting to be executed.
-- */
- static int gve_adminq_execute_cmd(struct gve_priv *priv,
- 				  union gve_adminq_command *cmd_orig)
- {
- 	u32 tail, head;
- 	int err;
- 
-+	mutex_lock(&priv->adminq_lock);
- 	tail = ioread32be(&priv->reg_bar0->adminq_event_counter);
- 	head = priv->adminq_prod_cnt;
--	if (tail != head)
--		// This is not a valid path
--		return -EINVAL;
-+	if (tail != head) {
-+		err = -EINVAL;
-+		goto out;
-+	}
- 
- 	err = gve_adminq_issue_cmd(priv, cmd_orig);
- 	if (err)
--		return err;
-+		goto out;
- 
--	return gve_adminq_kick_and_wait(priv);
-+	err = gve_adminq_kick_and_wait(priv);
++static int __maybe_unused gve_adminq_execute_extended_cmd(struct gve_priv *priv, u32 opcode,
++							  size_t cmd_size, void *cmd_orig)
++{
++	union gve_adminq_command cmd;
++	dma_addr_t inner_cmd_bus;
++	void *inner_cmd;
++	int err;
 +
-+out:
-+	mutex_unlock(&priv->adminq_lock);
++	inner_cmd = dma_alloc_coherent(&priv->pdev->dev, cmd_size,
++				       &inner_cmd_bus, GFP_KERNEL);
++	if (!inner_cmd)
++		return -ENOMEM;
++
++	memcpy(inner_cmd, cmd_orig, cmd_size);
++
++	memset(&cmd, 0, sizeof(cmd));
++	cmd.opcode = cpu_to_be32(GVE_ADMINQ_EXTENDED_COMMAND);
++	cmd.extended_command = (struct gve_adminq_extended_command) {
++		.inner_opcode = cpu_to_be32(opcode),
++		.inner_length = cpu_to_be32(cmd_size),
++		.inner_command_addr = cpu_to_be64(inner_cmd_bus),
++	};
++
++	err = gve_adminq_execute_cmd(priv, &cmd);
++
++	dma_free_coherent(&priv->pdev->dev, cmd_size, inner_cmd, inner_cmd_bus);
 +	return err;
- }
- 
++}
++
  /* The device specifies that the management vector can either be the first irq
+  * or the last irq. ntfy_blk_msix_base_idx indicates the first irq assigned to
+  * the ntfy blks. It if is 0 then the management vector is last, if it is 1 then
+diff --git a/drivers/net/ethernet/google/gve/gve_adminq.h b/drivers/net/ethernet/google/gve/gve_adminq.h
+index e64f0dbe744d..e0370ace8397 100644
+--- a/drivers/net/ethernet/google/gve/gve_adminq.h
++++ b/drivers/net/ethernet/google/gve/gve_adminq.h
+@@ -25,6 +25,9 @@ enum gve_adminq_opcodes {
+ 	GVE_ADMINQ_REPORT_LINK_SPEED		= 0xD,
+ 	GVE_ADMINQ_GET_PTYPE_MAP		= 0xE,
+ 	GVE_ADMINQ_VERIFY_DRIVER_COMPATIBILITY	= 0xF,
++
++	/* For commands that are larger than 56 bytes */
++	GVE_ADMINQ_EXTENDED_COMMAND		= 0xFF,
+ };
+ 
+ /* Admin queue status codes */
+@@ -208,6 +211,14 @@ enum gve_driver_capbility {
+ #define GVE_DRIVER_CAPABILITY_FLAGS3 0x0
+ #define GVE_DRIVER_CAPABILITY_FLAGS4 0x0
+ 
++struct gve_adminq_extended_command {
++	__be32 inner_opcode;
++	__be32 inner_length;
++	__be64 inner_command_addr;
++};
++
++static_assert(sizeof(struct gve_adminq_extended_command) == 16);
++
+ struct gve_driver_info {
+ 	u8 os_type;	/* 0x01 = Linux */
+ 	u8 driver_major;
+@@ -432,6 +443,7 @@ union gve_adminq_command {
+ 			struct gve_adminq_get_ptype_map get_ptype_map;
+ 			struct gve_adminq_verify_driver_compatibility
+ 						verify_driver_compatibility;
++			struct gve_adminq_extended_command extended_command;
+ 		};
+ 	};
+ 	u8 reserved[64];
 -- 
 2.45.2.627.g7a2c4fd464-goog
 
