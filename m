@@ -1,352 +1,121 @@
-Return-Path: <linux-kernel+bounces-212738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1739B906581
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:45:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF27906584
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EA32B24072
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:45:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09FD7B247A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83F4137931;
-	Thu, 13 Jun 2024 07:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E4D13BC39;
+	Thu, 13 Jun 2024 07:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aRGa2+TB"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jSA6HefQ"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2811130E44
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 07:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0588561674;
+	Thu, 13 Jun 2024 07:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718264744; cv=none; b=PEGdPjui7GveHQbqtvYrTk1buZ/iRmFY1FhJCujOoE9P6b3o0WXv6tuKLnww8jbxcHoF7bAhKzM5tDaMCV774vLwC6/fZSwLldVzqrpPbfcLd9WUipSZGwJWobIZIXYUcicMfpWXgCVf78gfTaJc3MLHrhu4ySV/3gbwgCvrP+g=
+	t=1718264755; cv=none; b=ArVi531kMdJu6/mLFXNoHo2YjQx8SxGLOv9lSzELpQD0FB7VZqrJUpIuMVHNjmyifYY0bYVrOlp/YKEJICZXji8HOXK/WKmtAhHjf+DPX9ue+nd/AN06UXKtttQw7Zw0IquwFGiwPp43dl7wXbfY8u41isKkTHT2uF6ZLIZwKuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718264744; c=relaxed/simple;
-	bh=zpSZlBDNL9kD22wlVaHzbNHGdJH3kmVNXx0DVn3Zo3Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CRKDjl7+oFAAmCEf0RaZ3nmauFi+SQSK2R5RB2Sm3zF+ftuWCnYb4VuWiHDhJyTXNmmT36eaRTprsZN4DtGuV8Lg7atBAILw9nLHCn53/3ZI4BhNLcxdssDuEukqo+0V61hkAHEN3e6UZglp8Hy1fjuNaOihvq4haLJbCuRO9SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aRGa2+TB; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52bd48cf36bso961730e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 00:45:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718264741; x=1718869541; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DoUfCuEwCpKD3p7FxzACAXcXvlyOy49T5PY4S52/dYw=;
-        b=aRGa2+TBRGzI+whXmimQkuuMNYQr8dyJReIpnNWOBBv0gNAv+2fXbp1xxXQB8KDsoH
-         Ozi10JJ825H465GsTQBw3Lnnin/HjjI+hce+aag5+IvNoS6hTQ6Oa6EKpxBiKW24vp3Z
-         RFAe/boN0YYb+vzjz9zZjFWnDRI/dfpZkUklw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718264741; x=1718869541;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DoUfCuEwCpKD3p7FxzACAXcXvlyOy49T5PY4S52/dYw=;
-        b=pQkm1hADdDovx33LmW4kvi2jdetyFboIdgZEwwAvtKALmLmItT6nK6rEuiY1vUyd3m
-         il6ysRc6WyWQrapLwpeBLRdp0tzGfeQm8ImP+3CD4MZhusapHxowsTy+831ODtLlJ98I
-         KcaYTvEjqSviYT24eXWKhdmSNPQXXBKW2Blb4XYTog4Rdo0wQG1ga7ZI9KTca2fvASvv
-         YOjctwfovvuv+k/9W5KwC6cn49ysfZA2g3VTBqz6saHjm7H8Ksmqd1TsAYMwcSJRLtxO
-         E9SNJE4qv3N9lIWoaQQPJNNmyIxfR/Z0bwamWdSN3J0Kt204Y2dM21h9SkHr7/X5J0aZ
-         sdtA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1h0b+2j/NTBxAix7YFv0kFb7rfKnls4p010Oc1Xcd3uGOZQPz2/9JQfx3+f6zF2J0WwQlQMHCfdHHlwEDgvJKzOnr5yRgXduvdqIK
-X-Gm-Message-State: AOJu0YyAwUDySg+GduGp7nZbJYRpSUoN+WIStV2/WI/z4ggPpI8wG9qB
-	NULOFqdhwovbAIqe0lyBtqq7+2/mWn9d0UWHbwDL5SAYN5R0W1cOvNcpl4EI38m6Sd8CmF/s0sK
-	/pqmIh+ySEdEEN6pF7zCxXzebyjW5TyUpEAGk
-X-Google-Smtp-Source: AGHT+IFohhnbj+ujWXuBp7B872HT1zslnjHk74kghMDGpyR2SNGGhCGzrpwImSaQn0vZ4TVmJ50FK8HjmRPKO23dV4c=
-X-Received: by 2002:a05:6512:3687:b0:52c:983f:8ad with SMTP id
- 2adb3069b0e04-52c9a3fd4camr2542032e87.47.1718264740824; Thu, 13 Jun 2024
- 00:45:40 -0700 (PDT)
+	s=arc-20240116; t=1718264755; c=relaxed/simple;
+	bh=b0nwDmk85Th+Ea9Hzl6X6r7Ux7VNBJoTY2env1nbsvs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s03IzYo9pVYfkOLlcTxe0l7jYZxXZV/P9+dV+3vGJ4d5SHXpWYiRUivfvfLGbCgfhZz7o10lUrXCftx5Xv5M1SGiMSTXMhDid5DUk6hmTD5BfHXOhLo2LoB7FG5eZkmB7C4F3wOloqqgkyH8G0caX5H3VvgLuVbBaEEgHOW6si4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jSA6HefQ; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45D7jhNG087821;
+	Thu, 13 Jun 2024 02:45:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718264743;
+	bh=HcCz8yqlqo54hv8N+FW7nqgKgZ+aOt5M+8+4ovoUPuY=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=jSA6HefQyTEiY9V30j6DS1KzUK1tiB3zIR4wVgRpD7+Cb1E2bYxHpvn4WcHtYBLrM
+	 mYiGt37wmhT2+N1yekvJv2nSuVXOzeWxgxk+tu8YFfRRmqeT8YuKH49q2PIcJluCmu
+	 TVXfKsQOLh1J0cGZyUcBFD9mpz0QjyGdwOierIRI=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45D7jht8013059
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 13 Jun 2024 02:45:43 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 13
+ Jun 2024 02:45:43 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 13 Jun 2024 02:45:43 -0500
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45D7jdHI111881;
+	Thu, 13 Jun 2024 02:45:40 -0500
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Josua Mayer <josua@solid-run.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am642-hummingboard-t: correct rs485 rts polarity
+Date: Thu, 13 Jun 2024 13:15:36 +0530
+Message-ID: <171826022271.240984.15893653753162141926.b4-ty@ti.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240504-ti-rs485-rts-v1-1-e88ef1c96f34@solid-run.com>
+References: <20240504-ti-rs485-rts-v1-1-e88ef1c96f34@solid-run.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605094843.4141730-1-wenst@chromium.org> <CAFLszTiZ8PUvxHx4kfLZf18RqSczRwxCmCxZ_y6J2rpu03pA=w@mail.gmail.com>
-In-Reply-To: <CAFLszTiZ8PUvxHx4kfLZf18RqSczRwxCmCxZ_y6J2rpu03pA=w@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 13 Jun 2024 15:45:29 +0800
-Message-ID: <CAGXv+5EWqzj3w=KaKBfviBXPms0baKx28S0n+bGZcLc3=fGK+g@mail.gmail.com>
-Subject: Re: [PATCH] scripts/make_fit: Support decomposing DTBs
-To: Simon Glass <sjg@chromium.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed, Jun 12, 2024 at 4:01=E2=80=AFAM Simon Glass <sjg@chromium.org> wrot=
-e:
->
-> Hi Chen-Yu,
->
-> On Wed, 5 Jun 2024 at 03:48, Chen-Yu Tsai <wenst@chromium.org> wrote:
-> >
-> > The kernel tree builds some "composite" DTBs, where the final DTB is th=
-e
-> > result of applying one or more DTB overlays on top of a base DTB with
-> > fdtoverlay.
-> >
-> > The FIT image specification already supports configurations having one
-> > base DTB and overlays applied on top. It is then up to the bootloader t=
-o
-> > apply said overlays and either use or pass on the final result. This
-> > allows the FIT image builder to reuse the same FDT images for multiple
-> > configurations, if such cases exist.
-> >
-> > The decomposition function depends on the kernel build system, reading
-> > back the .cmd files for the to-be-packaged DTB files to check for the
-> > fdtoverlay command being called. This will not work outside the kernel
-> > tree. The function is off by default to keep compatibility with possibl=
-e
-> > existing users.
-> >
-> > To facilitate the decomposition and keep the code clean, the model and
-> > compatitble string extraction have been moved out of the output_dtb
-> > function. The FDT image description is replaced with the base file name
-> > of the included image.
-> >
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > ---
-> > This is a feature I alluded to in my replies to Simon's original
-> > submission of the make_fit.py script [1].
-> >
-> > This is again made a runtime argument as not all firmware out there
-> > that boot FIT images support applying overlays. Like my previous
-> > submission for disabling compression for included FDT images, the
-> > bootloader found in RK3399 and MT8173 Chromebooks do not support
-> > applying overlays. Another case of this is U-boot shipped by developmen=
-t
-> > board vendors in binary form (without upstream) in an image or in
-> > SPI flash on the board that were built with OF_LIBFDT_OVERLAY=3Dn.
-> > These would fail to boot FIT images with DT overlays. One such
-> > example is my Hummingboard Pulse. In these cases the firmware is
-> > either not upgradable or very hard to upgrade.
-> >
-> > I believe there is value in supporting these cases. A common script
-> > shipped with the kernel source that can be shared by distros means
-> > the distro people don't have to reimplement this in their downstream
-> > repos or meta-packages. For ChromeOS this means reducing the amount
-> > of package code we have in shell script.
-> >
-> > [1] https://lore.kernel.org/linux-kbuild/20231207142723.GA3187877@googl=
-e.com/
-> > [2]
-> >
-> >  scripts/Makefile.lib |  1 +
-> >  scripts/make_fit.py  | 70 ++++++++++++++++++++++++++++++--------------
-> >  2 files changed, 49 insertions(+), 22 deletions(-)
->
-> Reviewed-by: Simon Glass <sjg@chromium.org>
->
-> Some possible nits / changes below
->
-> >
-> > diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> > index 9f06f6aaf7fc..d78b5d38beaa 100644
-> > --- a/scripts/Makefile.lib
-> > +++ b/scripts/Makefile.lib
-> > @@ -522,6 +522,7 @@ quiet_cmd_fit =3D FIT     $@
-> >        cmd_fit =3D $(MAKE_FIT) -o $@ --arch $(UIMAGE_ARCH) --os linux \
-> >                 --name '$(UIMAGE_NAME)' \
-> >                 $(if $(findstring 1,$(KBUILD_VERBOSE)),-v) \
-> > +               $(if $(FIT_DECOMPOSE_DTBS),--decompose-dtbs) \
-> >                 --compress $(FIT_COMPRESSION) -k $< @$(word 2,$^)
-> >
-> >  # XZ
-> > diff --git a/scripts/make_fit.py b/scripts/make_fit.py
-> > index 263147df80a4..120f13e1323c 100755
-> > --- a/scripts/make_fit.py
-> > +++ b/scripts/make_fit.py
-> > @@ -22,6 +22,11 @@ the entire FIT.
-> >  Use -c to compress the data, using bzip2, gzip, lz4, lzma, lzo and
-> >  zstd algorithms.
-> >
-> > +Use -d to decompose "composite" DTBs into their base components and
-> > +deduplicate the resulting base DTBs and DTB overlays. This requires th=
-e
-> > +DTBs to be sourced from the kernel build directory, as the implementat=
-ion
-> > +looks at the .cmd files produced by the kernel build.
-> > +
-> >  The resulting FIT can be booted by bootloaders which support FIT, such
-> >  as U-Boot, Linuxboot, Tianocore, etc.
-> >
-> > @@ -64,6 +69,8 @@ def parse_args():
-> >            help=3D'Specifies the architecture')
-> >      parser.add_argument('-c', '--compress', type=3Dstr, default=3D'non=
-e',
-> >            help=3D'Specifies the compression')
-> > +    parser.add_argument('-d', '--decompose-dtbs', action=3D'store_true=
-',
-> > +          help=3D'Decompose composite DTBs into base DTB and overlays'=
-)
->
-> I wonder if we should reserve -d for --debug? I don't have a strong
-> opinion though.
+Hi Josua Mayer,
 
-Seems reasonable. I'll make it use the capital -D then.
+On Sat, 04 May 2024 13:35:54 +0200, Josua Mayer wrote:
+> The RS485 transceiver RE (Receiver enable) and DE (Driver enable) are
+> shorted and connected to both RTS/CTS of the SoC UART.
+> RE is active-low, DE is active-high.
+> 
+> Remove the "rs485-rts-active-low" flag to match RTS polarity with DE,
+> and fix communication in both transmit and receive directions.
+> 
+> [...]
 
-> >      parser.add_argument('-E', '--external', action=3D'store_true',
-> >            help=3D'Convert the FIT to use external data')
-> >      parser.add_argument('-n', '--name', type=3Dstr, required=3DTrue,
-> > @@ -140,12 +147,12 @@ def finish_fit(fsw, entries):
-> >      fsw.end_node()
-> >      seq =3D 0
-> >      with fsw.add_node('configurations'):
-> > -        for model, compat in entries:
-> > +        for model, compat, files in entries:
-> >              seq +=3D 1
-> >              with fsw.add_node(f'conf-{seq}'):
-> >                  fsw.property('compatible', bytes(compat))
-> >                  fsw.property_string('description', model)
-> > -                fsw.property_string('fdt', f'fdt-{seq}')
-> > +                fsw.property('fdt', b''.join([b'fdt-%d\x00' % x for x =
-in files]))
->
-> This looks right to me. It would be nice to use an f string but I
-> don't know how to do that with bytes.
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-Me neither. Switching the format to an f string doesn't work:
+[1/1] arm64: dts: ti: k3-am642-hummingboard-t: correct rs485 rts polarity
+      commit: 9dcc0e1065f3c40d0b2ad79a858bb4ebaba33167
 
-  File "/ssd1/wenst/linux/src/scripts/make_fit.py", line 324, in <module>
-    sys.exit(run_make_fit())
-             ^^^^^^^^^^^^^^
-  File "/ssd1/wenst/linux/src/scripts/make_fit.py", line 298, in run_make_f=
-it
-    out_data, count, size =3D build_fit(args)
-                            ^^^^^^^^^^^^^^^
-  File "/ssd1/wenst/linux/src/scripts/make_fit.py", line 288, in build_fit
-    finish_fit(fsw, entries)
-  File "/ssd1/wenst/linux/src/scripts/make_fit.py", line 161, in finish_fit
-    fsw.property('fdt', b''.join([f'fdt-%d\x00' % x for x in files]))
-                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-TypeError: sequence item 0: expected a bytes-like object, str found
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-> But do you need the inner [] ?
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Nope. Will remove.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
->
-> >                  fsw.property_string('kernel', 'kernel')
-> >      fsw.end_node()
-> >
-> > @@ -193,21 +200,9 @@ def output_dtb(fsw, seq, fname, arch, compress):
-> >          fname (str): Filename containing the DTB
-> >          arch: FIT architecture, e.g. 'arm64'
-> >          compress (str): Compressed algorithm, e.g. 'gzip'
-> > -
-> > -    Returns:
-> > -        tuple:
-> > -            str: Model name
-> > -            bytes: Compatible stringlist
-> >      """
-> >      with fsw.add_node(f'fdt-{seq}'):
-> > -        # Get the compatible / model information
-> > -        with open(fname, 'rb') as inf:
-> > -            data =3D inf.read()
-> > -        fdt =3D libfdt.FdtRo(data)
-> > -        model =3D fdt.getprop(0, 'model').as_str()
-> > -        compat =3D fdt.getprop(0, 'compatible')
-> > -
-> > -        fsw.property_string('description', model)
-> > +        fsw.property_string('description', os.path.basename(fname))
-> >          fsw.property_string('type', 'flat_dt')
-> >          fsw.property_string('arch', arch)
-> >          fsw.property_string('compression', compress)
-> > @@ -215,7 +210,6 @@ def output_dtb(fsw, seq, fname, arch, compress):
-> >          with open(fname, 'rb') as inf:
-> >              compressed =3D compress_data(inf, compress)
-> >          fsw.property('data', compressed)
-> > -    return model, compat
-> >
-> >
-> >  def build_fit(args):
-> > @@ -235,6 +229,7 @@ def build_fit(args):
-> >      fsw =3D libfdt.FdtSw()
-> >      setup_fit(fsw, args.name)
-> >      entries =3D []
-> > +    fdts =3D collections.OrderedDict()
-> >
-> >      # Handle the kernel
-> >      with open(args.kernel, 'rb') as inf:
-> > @@ -243,12 +238,43 @@ def build_fit(args):
-> >      write_kernel(fsw, comp_data, args)
-> >
-> >      for fname in args.dtbs:
-> > -        # Ignore overlay (.dtbo) files
-> > -        if os.path.splitext(fname)[1] =3D=3D '.dtb':
-> > -            seq +=3D 1
-> > -            size +=3D os.path.getsize(fname)
-> > -            model, compat =3D output_dtb(fsw, seq, fname, args.arch, a=
-rgs.compress)
-> > -            entries.append([model, compat])
-> > +        # Ignore non-DTB (*.dtb) files
-> > +        if os.path.splitext(fname)[1] !=3D '.dtb':
-> > +            continue
-> > +
-> > +        # Get the compatible / model information
-> > +        with open(fname, 'rb') as inf:
-> > +            data =3D inf.read()
-> > +        fdt =3D libfdt.FdtRo(data)
-> > +        model =3D fdt.getprop(0, 'model').as_str()
-> > +        compat =3D fdt.getprop(0, 'compatible')
-> > +
-> > +        if args.decompose_dtbs:
-> > +            # Check if the DTB needs to be decomposed
-> > +            path, basename =3D os.path.split(fname)
-> > +            cmd_fname =3D os.path.join(path, f'.{basename}.cmd')
-> > +            with open(cmd_fname, 'r', encoding=3D'ascii') as inf:
-> > +                cmd =3D inf.read()
-> > +
-> > +            if 'scripts/dtc/fdtoverlay' in cmd:
-> > +                # This depends on the structure of the composite DTB c=
-ommand
-> > +                files =3D cmd.split()
-> > +                files =3D files[files.index('-i')+1:]
->
-> spaces around +
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Will fix.
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
 
-> > +            else:
-> > +                files =3D [fname]
-> > +        else:
-> > +            files =3D [fname]
->
-> I do wonder if the code from '# Get the compatible' to here would be
-> better in a separate, documented function, to keep things easier to
-> understand?
-
-I'll see what I can do. In that case I'll drop your Reviewed-by.
-
-
-Thanks
-ChenYu
-
-> > +
-> > +        for fn in files:
-> > +            if fn not in fdts:
-> > +                seq +=3D 1
-> > +                size +=3D os.path.getsize(fn)
-> > +                output_dtb(fsw, seq, fn, args.arch, args.compress)
-> > +                fdts[fn] =3D seq
-> > +
-> > +        files_seq =3D [fdts[fn] for fn in files]
-> > +
-> > +        entries.append([model, compat, files_seq])
-> >
-> >      finish_fit(fsw, entries)
-> >
-> > --
-> > 2.45.1.288.g0e0cd299f1-goog
-> >
->
-> Regards,
-> Simon
 
