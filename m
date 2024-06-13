@@ -1,103 +1,142 @@
-Return-Path: <linux-kernel+bounces-213955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9491907CFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:56:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F310E907D01
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92D901F23F63
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:56:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D7121F23DC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D507E796;
-	Thu, 13 Jun 2024 19:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B153D7EEE7;
+	Thu, 13 Jun 2024 19:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="JBKk/n8k"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CxPKWcuz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB1E6E5ED
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 19:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2A76F073;
+	Thu, 13 Jun 2024 19:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718308552; cv=none; b=HETviKYuaUINyEVBJMVcrWHzJyfqx+Ln7G7pMzW1dG4n4f9AzX+l0dAgN6CgC5jBqRFE/4MnCdOyqobx+WVHxC19oe/Hk0+csfIu3zOpTQV9Gk7Ltwi8jsuKO4GdGPUHHI4yednVqeQTXZt99wpj6vlHK2RFpDJolhXVAOpP7Pg=
+	t=1718308591; cv=none; b=HQW8s8GthebJ+NDkaZhwd3PRSCaO7sBWeZuKzRn3vl/XEIpvzyKpmN3XzPzkoO6lpZEpdThopRt4lIAMRr4VNZIzdcrC8KYzcXMu6fP2sW/MwGPs7Uf+mjxt2yOnF1Ivj1ABXHnLOJ7Pkvk+YhFhPLjunxfR7dnHQgaZZcYCkbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718308552; c=relaxed/simple;
-	bh=w4UUvhxuIZN7XzLEYUmcj8CjOdcJzT8ROLuZGNCEQXY=;
+	s=arc-20240116; t=1718308591; c=relaxed/simple;
+	bh=2CIXLJ7qsPS8dd8m3DCzcakUf78MBjuyDU5bR//RUC8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RpOeS5CpQmIqCc2wyW7pTUUZM24TF4DgeI6mx0lT3D+BHhtn0Z7QhIC1wvfo4jAyoKnrVmIFnGs3cog3ZWbf6pknESvEgTewHibsEM5fq9664vpQVXkgN5jh0PyDVoZeiYMOAVHTwZgKs/wBINIUjRhROCaadyEeNlaz3GrrkwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=JBKk/n8k; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=w4UU
-	vhxuIZN7XzLEYUmcj8CjOdcJzT8ROLuZGNCEQXY=; b=JBKk/n8ki5F430MRvZif
-	8WjKb5AO4vPTGFEmQEd6NBqwCyA7h2CbHpjnJ/oKhHA4GnmhHwi6j/h/4utlS4gl
-	BTk0/39YMEGFzpfOZikiBVlZrW9vRyD0znMGgi6CvczZc0weX14Qc1MdSq9ZNjtv
-	ZvQcNHNTOwedQ31YllyQxUYoJ8bhUb3PJxG8QCtTa6g9qw/IeV30aC0dr77kuK/M
-	BKcODr475nLLVrRISgI0C8jkt4GH6e0GHpTLDHA3cCJYDSdCG/Wnw/by15d/BHkl
-	JqjXI54mud1AU9rDl17ToP1CdBqqMx3OHMzQTuz3lTWrYHMtRjSuxP4Tfk7YgQZR
-	eA==
-Received: (qmail 1285977 invoked from network); 13 Jun 2024 21:55:48 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Jun 2024 21:55:48 +0200
-X-UD-Smtp-Session: l3s3148p1@Z26h4soalpNehh9j
-Date: Thu, 13 Jun 2024 21:55:47 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: Easwar Hariharan <eahariha@linux.microsoft.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] docs: i2c: summary: document 'local' and 'remote'
- targets
-Message-ID: <tldnefwvpkjd55xln2j3g26cgt243vruilz4e4susdqbbpfj4z@rd3nmpb6zk6w>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-i2c@vger.kernel.org, Easwar Hariharan <eahariha@linux.microsoft.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240610081023.8118-1-wsa+renesas@sang-engineering.com>
- <20240610081023.8118-6-wsa+renesas@sang-engineering.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kfASEtfvUaHz3E2/RQhFi3DZ4uVFOsq33p7SH79QqzBtt4cbR2zYE5FoT5rMGUNWMEhWdpjh173hipO/ZIne3khrq1/QVJq8iWByRPC5ujwlHntk5mVPrmuA+ZSGUCQhCMRTNbI5Fza9jYfdjuAZQIXuRgmKg9Wve8+iMqjlIlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CxPKWcuz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B51AC2BBFC;
+	Thu, 13 Jun 2024 19:56:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718308590;
+	bh=2CIXLJ7qsPS8dd8m3DCzcakUf78MBjuyDU5bR//RUC8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CxPKWcuzwRPjJYc2rwTtmY2L71hz8x9jYNOMTX0r/OhGv2iRbMohECPUsF3o/U7Yz
+	 BTF0PlBqx9mWImPoss+TwiIvob2I0pryGGxO4faeAu6bqGMlpuFVTPJd/+gMVjgDY5
+	 eQFzm/PZ8WjoREBuhg4XfjWkByJDBxa2wzAH/KYz8yQ883jm8d1gz4Zv6pvlzPKxL7
+	 Zmq3Cmas/uaWJYIXl0jr6Dd4aHoBpJOPtgytUU9/4dTCiHn866Rcj1UtPoPwZrL7RN
+	 JebrM8S8tw/dn8wBfSsaskVwFj4iZveY/GVYLzSvn6DtPhnThQkamaPgdbgUw1M8NK
+	 IRz32tDc//pGQ==
+Date: Thu, 13 Jun 2024 13:56:29 -0600
+From: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Johan Jonker <jbx6244@yandex.com>,
+	Shresth Prasad <shresthprasad7@gmail.com>, vkoul@kernel.org,
+	kishon@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	heiko@sntech.de, sebastian.reichel@collabora.com,
+	s.hauer@pengutronix.de, cristian.ciocaltea@collabora.com,
+	andy.yan@rock-chips.com, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
+Subject: Re: [PATCH v3] dt-bindings: phy: rockchip-emmc-phy: Convert to
+ dtschema
+Message-ID: <20240613195629.GA2359753-robh@kernel.org>
+References: <20240613085812.4020-2-shresthprasad7@gmail.com>
+ <cc66cca1-33db-4f30-afcf-d256a959896b@yandex.com>
+ <9ce15b81-a8bd-4833-b15e-3e6f240dcf03@kernel.org>
+ <495e50aa-6819-457d-8503-00440abc97e3@yandex.com>
+ <58e85008-a268-4555-bafb-f948ade16a63@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3ygpdmoxg77rq2vu"
-Content-Disposition: inline
-In-Reply-To: <20240610081023.8118-6-wsa+renesas@sang-engineering.com>
-
-
---3ygpdmoxg77rq2vu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <58e85008-a268-4555-bafb-f948ade16a63@kernel.org>
 
+On Thu, Jun 13, 2024 at 02:52:46PM +0200, Krzysztof Kozlowski wrote:
+> On 13/06/2024 12:33, Johan Jonker wrote:
+> > 
+> > 
+> > On 6/13/24 12:12, Krzysztof Kozlowski wrote:
+> >> On 13/06/2024 11:44, Johan Jonker wrote:
+> >>>> ---
+> >>>
+> >>> Add ack request from phy maintainer here.
+> >>
+> > 
+> >> Why? What do you mean for that? Why phy maintainer needs to ack patches
+> >> he is going to take?
+> > 
+> > See my text below:
+> > From my past converting phy documents experience asking was needed to smooths things up ...
+> > Let me know if things have improved.
+> > 
+> > grf.yaml can be busy at times. Let Heiko take care of the merge order.
+> > Ask for an ack from the phy maintainers in your commit message below a "---"
+> > 
+> >>
+> >>>
+> >>>> Changes in v3:
+> >>>>     - fix `reg` in example being too long
+> >>>>
+> >>>> Tested against `rockchip/rk3399-firefly.dtb`, `rockchip/rk3399-orangepi.dtb`
+> >>>> and `rockchip/rk3399-pinebook-pro.dtb`.
+> >>>>
+> >>>>  .../bindings/phy/rockchip,emmc-phy.yaml       | 79 +++++++++++++++++++
+> >>>>  .../bindings/phy/rockchip-emmc-phy.txt        | 43 ----------
+> >>>>  .../devicetree/bindings/soc/rockchip/grf.yaml |  2 +-
+> >>>>  3 files changed, 80 insertions(+), 44 deletions(-)
+> >>>>  create mode 100644 Documentation/devicetree/bindings/phy/rockchip,emmc-phy.yaml
+> >>>>  delete mode 100644 Documentation/devicetree/bindings/phy/rockchip-emmc-phy.txt
+> >>>>
+> >>>> diff --git a/Documentation/devicetree/bindings/phy/rockchip,emmc-phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,emmc-phy.yaml
+> >>>> new file mode 100644
+> >>>> index 000000000000..85d74b343991
+> >>>> --- /dev/null
+> >>>> +++ b/Documentation/devicetree/bindings/phy/rockchip,emmc-phy.yaml
+> >>>> @@ -0,0 +1,79 @@
+> >>>
+> >>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> >>>
+> >>> You are converting an existing document, so GPL 2 only.
+> >>
+> > 
+> >> Which copyrightable part was copied? This comment is not correct in
+> >> general, because conversions are dual-licensed (there are exceptions,
+> >> but that's the generic rule).
+> > 
+> > Was told to do so in the past by the maintainers(Rob??) for text 
+> > documents conversions.(Can't find exactly were in lore, must be in one my first conversion patches)
+> > If someone was submitting as GPL2 long time ago then the derived/converted work still hold the same license.
+> > Let me know if the consensus has changed.
+> 
+> Consensus did not change but I am no sure if you got it right. It was
+> about copied copyrightable text. Which part was copied here?
 
-> -``drivers/media/gpio/`` for GPIO expanders and ``drivers/media/i2c/`` for
+It is derived from the text binding, so strictly speaking that's derived 
+work. Are descriptions (because that's really all we take) enough to be 
+copyrightable? That's another question...
 
-Heh, for four years, nobody (including me) noticed that there is no
-'drivers/media/gpio' directory...
+I don't know so I err on the side of keep GPL-2.0-only *only*.
 
+Will anyone ever care? Not likely.
 
---3ygpdmoxg77rq2vu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZrTsMACgkQFA3kzBSg
-KbYBpQ/+LQfftPgGlBz6A++zGEfeluX0vcG/Z0HHAa/zFgO+6z2sIcg0AkhRnskp
-/5wZpc7lTkuLQtsqmh9mh0a0NyVMmrwtsrP/GAHCc8XfMxX3JORcFWddt6leIHAB
-BzeX1TucgqSx7/60pn/OblvEgWS5Q1E+eaZNeRhQvOCdnQPT6M52tPWIYIMqBD1C
-qL9t6hqmNzILwr2snEiPHHrYuEz8NYKO87GyilBMD7mDpZNnJFMpoCNcLEcDjbcl
-FNtFn9i6ShgVctGa6xhDloIWJKUxuM9qIN5VI8I/hAYljAo40lfKv0Pt137DB69C
-R2yKOx3tTEr/cLOk+4c9X45b7iI7grc+9w2HmsEjE6nEYuM5EUg4wXKVu9rzexS0
-2pSxHbGqTI3ZZ6kOhWSe9TgIapZkhF1Qd1MRiNqG/J4+AlvoaTi2ipWuOuvUV5RI
-foO42y0dCwSKptpmKSdm7up+Y8Whvfm8EWgIDJzjF4aQCVqd/McWwfYRhpcXRLW9
-uNVPHMXc/0bgXyiR7rme+ixkHURPfl9FED0AOowvHkPMohj8HGO2vsdTwt7LxxUY
-6yYcUWEmI2ND3h6T8IT0X9wuRxwnX96GEaBqdtT9piuIXUSbq0zev7C3lluxn4zd
-f0QG9ktGdQ3X8r5c12rWSyTHjx2A2UODo52G7wJF9j7aedDmJzU=
-=pAga
------END PGP SIGNATURE-----
-
---3ygpdmoxg77rq2vu--
+Rob
 
