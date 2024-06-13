@@ -1,128 +1,114 @@
-Return-Path: <linux-kernel+bounces-213756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88D439079F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:35:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25F559079FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C51A1F23921
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:35:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C48291F23143
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF45914A0BD;
-	Thu, 13 Jun 2024 17:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBB114A0B6;
+	Thu, 13 Jun 2024 17:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="srvTU2Cw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Qcx6dxXR"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F33149E06;
-	Thu, 13 Jun 2024 17:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE8314A0B5
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 17:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718300141; cv=none; b=rc5w9oQT57hC06DLrl+e1brVr3P87PwB88hvmsk2Y4viVax3/2y9yGiwNqSG4mRb+RYdqDA9lKnDpFufK0LpAARYM5rBFyjiznH0Q1rzKgkOlK4VQ5WxupqAyEfBq9GEtDPmNJn1VAX36UbMlaCyxaLfCWrcxf2x8JzmQ25i/g0=
+	t=1718300180; cv=none; b=CNOTW1r1HmgZ3Zg/kftAf9p5Kf6htuxyQya/7u9Ta8oelLtSzNpQh+jH0nC+Ns89VJi9aIXV/kr78E+T/zKlJerVYhMDfigE2SJIS85dwWd43WRAh4kw5NQUq3Kepv50Hxf8ESnhBzriEpsXjfIH2z+WJc5pmOv+NpWcssJnx3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718300141; c=relaxed/simple;
-	bh=dqedMryWpbzl0sexd5pEVn7GsbPtPLflViufTU17X2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FYgJCWu4QtMKUiMwmq1BZTuyVlI7C3X6TPeyacIq+dLwIGWYbNWcL/GZxIXd4CBeQ7c2X7kA6438w7aJpxmqzaNOVyLcxlT0egphLr1phhPnfEkmdlC2DAatEERnSDmeyljHin5tXDuhcW/16rDoevXiqkByRyXT5lVuhEhF/BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=srvTU2Cw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED7CC2BBFC;
-	Thu, 13 Jun 2024 17:35:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718300140;
-	bh=dqedMryWpbzl0sexd5pEVn7GsbPtPLflViufTU17X2o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=srvTU2CwwxSfnEgA+OEIWVKvmvAZzBfMTfliMCDbBnbax16Ci4Uya6fkokhEoQCjQ
-	 80u5y6cK3vN/UD92pSZceNgfXW5mcFtsd7LRqKxTKlkmwkTk2x1BPUnChwHm3zHNJ5
-	 MRJPyAbq8UmDq4j+6fVcpIxVgTnRJuI6N7Djfm2mSELEkzey5+3Lv4Zahp5KLv0hsO
-	 ucYOgLSaV2jHyU2zh68B9lypdYsuk0csfaFTTbxYN9HCFOsnreNvWgkzj7huab+Smn
-	 jsEaZV9wkPDXNfrkUzxH81V9dSpaRo4P1qCEpfZLhboJ+RzmryTKXOUC6bPNnqLq0r
-	 rLum7QWy4xzKw==
-Date: Thu, 13 Jun 2024 11:35:39 -0600
-From: Rob Herring <robh@kernel.org>
-To: Elliot Berman <quic_eberman@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-	Melody Olvera <quic_molvera@quicinc.com>,
-	Shivendra Pratap <quic_spratap@quicinc.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] dt-bindings: power: reset: Convert mode-.*
- properties to array
-Message-ID: <20240613173539.GA2038101-robh@kernel.org>
-References: <20240611-arm-psci-system_reset2-vendor-reboots-v4-0-98f55aa74ae8@quicinc.com>
- <20240611-arm-psci-system_reset2-vendor-reboots-v4-1-98f55aa74ae8@quicinc.com>
- <20240611204001.GA3026541-robh@kernel.org>
- <20240611160619020-0700.eberman@hu-eberman-lv.qualcomm.com>
+	s=arc-20240116; t=1718300180; c=relaxed/simple;
+	bh=wpYAeO3qLDmEbVwjk+bLqgGvh+uERDkZc9Q/nNwO7LM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y1i/kEEm+FZ33E0ghXoWzSTEjUXMmVupcaZFvqrbioc3mEHLvpKN4y6fsJRYn8B0L4QqfJGNAELZSMONFCril6RXIqLIkWkJBS8uB6MKfiCyTwcTabriQAQ/dOHmgIRT7mvYRKAtu0hTnq87p5KTP/D2mqjLvl5rQZM2lwu8Aho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Qcx6dxXR; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dff06b3f413so922989276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:36:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1718300177; x=1718904977; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GErvgxd9rMF9jDiySOwKqOC0vAMN90Lf+q/hWMcRinA=;
+        b=Qcx6dxXR7cTRqw4bTrXKAE9KIAZDV7W2/9M3fk92BTGuLOGbURN+ts6xyNb5MpBtOu
+         GnbfZa5FbTpeiYdAwaqMN+cXcuDRDCpZ7Cy2uNbrag4NY83LdHrTEpqz1FPgixmS8y0p
+         YRAMK1wyls5lHikDrJRsKRJeFuDQI1Q8BaO2LXQ39KeYUHlrykmx9WYiEw9f3DRMq0Eb
+         lLcVQXrXw6/2Uoy0kP76NZrQ2Bz2q9QuyTsccNlV3Qe7wW0btrzNsBsEq578UJ5yCPTk
+         Z5i9cZ2J8LLwpEXxH5D3MLklVBV/6VbjyB3RYmClkxCf4qdyBPWFF2AHchWdy+XU6n73
+         d4nQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718300177; x=1718904977;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GErvgxd9rMF9jDiySOwKqOC0vAMN90Lf+q/hWMcRinA=;
+        b=BaiohNp6A0Gyw4qaZqpyqB0aKU8OIvUI/bYpaWP/IOEk8UHeVpN9tlf6Ubr3HkgtaL
+         v2DvXWJAE2W6L5X8BcT1whoG2PX55zAmPnQ+iPwsj3ISlRQREMEcAAHIlcuvw6Yr5Hhv
+         MSgYh8CL6QIQ5xWGNx0GSDYkpVFUWXbtd0mxjC2VDGG/EL+gukZK0ITqwN1QZ0eUgdq6
+         ggJE98QCefStpWjgCROyVWVIGxMiNoplXrjk6qzh3rI1rZ22PRwSxwq9LGKeE8yfmpfc
+         dF4qdqujieGvK30K7QouL6HCzjD2Y8CscLl4N+EtXobG6DqWwwozWMZtVM+QVYZQB8YM
+         g+0g==
+X-Gm-Message-State: AOJu0Yz5OkDM1dwi2QZ7oT8CMbui83A8qdkkRLEgBXMdM15W8hMeBRSn
+	bPdIx46yiUAXFLb7X1xMZlDMdz1Y7xCz/740NbOZUB9nmH4zW+zaD/FTnqe9iqQIg/nwOPnYHWB
+	bzc68EqK3LuusCBU3CgRKApnb8iSP/fvMT7nn
+X-Google-Smtp-Source: AGHT+IFHmbiArDsXZWAVYs3rjmdh3ys4tk76bUfvWftcy8jvKjto9zOVodRX/SH/AwXV4pGdCMt5fhvB8xha1GEmN7I=
+X-Received: by 2002:a25:260b:0:b0:dfb:d69:5657 with SMTP id
+ 3f1490d57ef6-dff1534f118mr168388276.9.1718300177648; Thu, 13 Jun 2024
+ 10:36:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611160619020-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <CA+G9fYvWXuWyd3NiX3WwRyorRiDRbxGmRW_7aVnBVKUVA_TaGg@mail.gmail.com>
+In-Reply-To: <CA+G9fYvWXuWyd3NiX3WwRyorRiDRbxGmRW_7aVnBVKUVA_TaGg@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 13 Jun 2024 13:36:06 -0400
+Message-ID: <CAHC9VhSeNGo4fPY0H5eM_fFsPSQ18xWUYMvyHBChEysXk-+00Q@mail.gmail.com>
+Subject: Re: security: ima_policy.c:427:17: error: too many arguments to
+ function 'ima_filter_rule_init'
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: open list <linux-kernel@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, GUO Zihua <guozihua@huawei.com>, 
+	John Johansen <john.johansen@canonical.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 04:23:00PM -0700, Elliot Berman wrote:
-> On Tue, Jun 11, 2024 at 02:40:01PM -0600, Rob Herring wrote:
-> > On Tue, Jun 11, 2024 at 08:35:13AM -0700, Elliot Berman wrote:
-> > > PSCI reboot mode will map a mode name to multiple magic values instead
-> > > of just one. Convert the mode-.* property to an array. Users of the
-> > > reboot-mode schema will need to specify the maxItems of the mode-.*
-> > > properties. Existing users will all be 1.
-> > > 
-> > > Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
-> > > ---
-> > >  .../devicetree/bindings/power/reset/nvmem-reboot-mode.yaml        | 5 +++++
-> > >  Documentation/devicetree/bindings/power/reset/qcom,pon.yaml       | 8 ++++++++
-> > >  Documentation/devicetree/bindings/power/reset/reboot-mode.yaml    | 4 ++--
-> > >  .../devicetree/bindings/power/reset/syscon-reboot-mode.yaml       | 5 +++++
-> > >  4 files changed, 20 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.yaml b/Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.yaml
-> > > index 627f8a6078c2..9b9bbc0f29e7 100644
-> > > --- a/Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.yaml
-> > > +++ b/Documentation/devicetree/bindings/power/reset/nvmem-reboot-mode.yaml
-> > > @@ -31,6 +31,11 @@ properties:
-> > >  allOf:
-> > >    - $ref: reboot-mode.yaml#
-> > >  
-> > > +patternProperties:
-> > > +  "^mode-.*$":
-> > > +    items:
-> > > +      maxItems: 1
-> > 
-> > Drop 'items'. Otherwise, you are defining constraints of a matrix.
-> > 
-> 
-> If I do this, I also have to add $ref: .../uint32-array as well so
-> the property can be picked up as an array type. Let me know if this isn't
-> right, otherwise I'll send out a fixed version in a few days.
+On Thu, Jun 13, 2024 at 8:43=E2=80=AFAM Naresh Kamboju
+<naresh.kamboju@linaro.org> wrote:
+>
+> The arm and arm64 kselftests builds started failing on Linux next-2024061=
+3 tag.
+> Please find the build log and related links below.
+>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Ah, I suppose the tools get confused with what to do here. That's an 
-issue I'm working on addressing. The issue is everything is a matrix 
-because without other information for a property we don't know how to 
-decode them. But with the schemas being fairly complete now and the move 
-away from DTB->YAML decoding, we can decode properties to the right 
-type. One issue to switch over is places where this 'everything is a 
-matrix' crept into schemas. I've been fixing these. The above is an 
-example of this.
+Thank you, the same error was reported by the kernel test robot
+overnight.  I'm going to look at it today, I suspect it is a conflict
+between the LSM and IMA/EVM branches.  FWIW, I compiled and booted a
+kernel using the LSM changes yesterday without problem.
 
-So for now, just drop 'items'. It won't enforce anything, but once we 
-switch over it will.
+> Build error:
+> --------
+> security/integrity/ima/ima_policy.c: In function 'ima_lsm_copy_rule':
+> security/integrity/ima/ima_policy.c:427:17: error: too many arguments
+> to function 'ima_filter_rule_init'
+>   427 |                 ima_filter_rule_init(nentry->lsm[i].type, Audit_e=
+qual,
+>       |                 ^~~~~~~~~~~~~~~~~~~~
 
-Rob
+--=20
+paul-moore.com
 
