@@ -1,128 +1,110 @@
-Return-Path: <linux-kernel+bounces-212675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F999064B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:15:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 709CC9064BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9428B242C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:15:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F3661C22C63
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3969E5A4D5;
-	Thu, 13 Jun 2024 07:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC68A6E5ED;
+	Thu, 13 Jun 2024 07:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YEUb6Lxt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="E0c/uV8r"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704F37FB;
-	Thu, 13 Jun 2024 07:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5515E7FB;
+	Thu, 13 Jun 2024 07:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718262932; cv=none; b=sMtzO2OLpShFMswgOcPh5Az5F/61HS0p90UlmKUQKXv8G2lBA+Eeojo9VwbO6NMMfOE8ofBzR3CWKiloZPUk7Ii+VhU+pa22wlJBTBvl/w8eKUSj5gICLZBs3kIEZkbf+jw7cFtvpevjTQE4DQp44CO4ndVInzp0G1/0qPVtXyU=
+	t=1718262940; cv=none; b=Lur5lD1AUWVqgiMkKGy/31NNlwfe2wH539RRWj1D9QC5Fc6psT44moaNKxdBAkt2b5c5nieAA+yM++rLhLNfjUCGEVURiW6LxQ9fCf3oOkI8Z6RPIxfZME5CkrjbxaZ5G4xNraQdxlHSeteDvUwlKI+9uXCTvSRbI6ycdPWFlDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718262932; c=relaxed/simple;
-	bh=Tmo/BuogahgR5M93Y4MvIAIRnQBajprod5rkLlc7vm4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aTZS62a/Tq6BIxTcS5ufw156HJPfXrtLiOyd3W5NHc+f+ncgp2o9p4dFGblqWhKyfIbjyj8prB3Izjrfb/HIoSSou/sMpNPD9HoABlc0G9MWIygXVz2DRPL1dvVzyI8YpTmYSktQMZe48jdXmpV1K/VonoIvV7EJ2qq8cpenTck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YEUb6Lxt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 125A3C32789;
-	Thu, 13 Jun 2024 07:15:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718262932;
-	bh=Tmo/BuogahgR5M93Y4MvIAIRnQBajprod5rkLlc7vm4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YEUb6LxtH77IDUSV5/8g5JA73JmVYjf5AH9ec4P/xY1ZJFv4k1n0y3CRuzYpmskMS
-	 /BSPVBqQfdiyc0DTpZo8uP3cxQHFGHt3RmPcWxwzlYjTCN6hXnXQJZDyt+HulROKDR
-	 poDhM7eg867xaITURqO0eIrPiAmqRjHqUoKm+wsJtbRPxjcqLErXLZV8eq0KFPSIvO
-	 wZViSBss9HKV6iJmkyIKhvw3QbL0vuMRkxVtKaPFeugJG7FD5AL0C+AI5lTlVN+pPO
-	 Q8t3mHkj6y5FRtgNd+Kf1KK1pYxpYVK5M27SxqctUpM2SvsSNZwykrYkCNjtS48+JC
-	 kmVb+hn0hmGew==
-Message-ID: <e10eda85-68cf-4f66-ba34-3e746d286fa2@kernel.org>
-Date: Thu, 13 Jun 2024 09:15:26 +0200
+	s=arc-20240116; t=1718262940; c=relaxed/simple;
+	bh=0KZDVCHU1ke+scOPribbRJfLeKAfVbhgKdVtbbMs45Y=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C7NACx2y+9sLtKzdonlYRUljO0sHsDAODf2HldBwSjK99MgfbxyB7E6C4HRtFOdniuFPdQe765AOcD9MjNDRZ09pql2j/Wh0E2MQ3JMWSfEQOL90IyZPox2pOVzdRIEKq9LdgMw7AXt2OKo7u/gXsqKC47WbUuATYvCf1fw/raE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=E0c/uV8r; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1718262937; x=1749798937;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0KZDVCHU1ke+scOPribbRJfLeKAfVbhgKdVtbbMs45Y=;
+  b=E0c/uV8rG2fVwqevqlQ2vJvou9G55tDTxD9RGM41aUJ37kKFIoWfwimV
+   goTTs7jQ/SsVJOHDs79M6MuEy4zy+eAgdTv1NtZbHU91ZTdixWeVydiGY
+   xU6hGcRLh+aywN50FmaMiRadaVEQZ+JtLvABS6HPzN7kh67fWakjCvzDW
+   rJ3NXnfji8LRwtdWo4eKcv64YWnIbNTQX9fiu992syaJvBNMUygDr72ik
+   61p0SJecZQp9WRNWqF8sVrz6S24YqLxMABFMWcRGl9ja8sFxcLh9oI448
+   FmkvGvP/j7eOLTXz6q8xD9OotOJDtmEkuG4hQh0eHtZKMunDsPE0giT/H
+   A==;
+X-CSE-ConnectionGUID: z6dg9MMNQnuqOU7D85zK+g==
+X-CSE-MsgGUID: h+nuc1/cQb2smCe4kcwaVw==
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="27356386"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Jun 2024 00:15:35 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 13 Jun 2024 00:15:33 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Thu, 13 Jun 2024 00:15:33 -0700
+Date: Thu, 13 Jun 2024 09:15:32 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+CC: <netdev@vger.kernel.org>, <davem@davemloft.net>, <kuba@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <bryan.whitehead@microchip.com>,
+	<andrew@lunn.ch>, <linux@armlinux.org.uk>, <sbauer@blackbox.su>,
+	<hmehrtens@maxlinear.com>, <lxu@maxlinear.com>, <hkallweit1@gmail.com>,
+	<edumazet@google.com>, <pabeni@redhat.com>, <wojciech.drewek@intel.com>,
+	<UNGLinuxDriver@microchip.com>, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH net V4 2/3] net: lan743x: Support WOL at both the PHY and
+ MAC appropriately
+Message-ID: <20240613071532.tx376cehgvqjgyqx@DEN-DL-M31836.microchip.com>
+References: <20240612172539.28565-1-Raju.Lakkaraju@microchip.com>
+ <20240612172539.28565-3-Raju.Lakkaraju@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: qcom: Add SM4250 pinctrl
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240612-sm4250-lpi-v1-0-f19c33e1cc6e@linaro.org>
- <20240612-sm4250-lpi-v1-1-f19c33e1cc6e@linaro.org>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240612-sm4250-lpi-v1-1-f19c33e1cc6e@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20240612172539.28565-3-Raju.Lakkaraju@microchip.com>
 
-On 12/06/2024 13:55, Srinivas Kandagatla wrote:
-> +
-> +description:
-> +  Top Level Mode Multiplexer pin controller in the Low Power Audio SubSystem
-> +  (LPASS) Low Power Island (LPI) of Qualcomm SM4250 SoC.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sm4250-lpass-lpi-pinctrl
-> +
-> +  reg:
-> +    maxItems: 2
+The 06/12/2024 22:55, Raju Lakkaraju wrote:
 
-Nothing changed.
+Hi Raju,
 
-Best regards,
-Krzysztof
+> Prevent options not supported by the PHY from being requested to it by the MAC
+> Whenever a WOL option is supported by both, the PHY is given priority
+> since that usually leads to better power savings.
+> 
+> Fixes: e9e13b6adc338 ("lan743x: fix for potential NULL pointer dereference with bare card")
 
+I am not sure if you run checkpatch.pl, but this gives you a warning.
+The sha has too many chars.
+
+> Signed-off-by: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+> Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202406052200.w3zuc32H-lkp@intel.com/
+
+I still don't think you should add the 'Reported-by' and 'Closes' tags
+here because you introduced the issue in first V3 of this patch series.
+Because the intel robot says: "If you fix the issue in a separate
+patch/commit (i.e. not just a new version of the same patch/commit),
+kindly add following tags".
+
+-- 
+/Horatiu
 
