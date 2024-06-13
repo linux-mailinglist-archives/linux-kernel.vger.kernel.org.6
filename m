@@ -1,257 +1,165 @@
-Return-Path: <linux-kernel+bounces-212785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C219906652
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:15:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31AC2906653
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D3981C23F88
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:15:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE022283ED5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC97B13D29F;
-	Thu, 13 Jun 2024 08:15:27 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6106B13D295;
+	Thu, 13 Jun 2024 08:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kQbszUB3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B355C13C9D2
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C115557C8A;
+	Thu, 13 Jun 2024 08:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718266527; cv=none; b=KyB4BPOU24cqCzD5JzurjGmnMo3xnRfz/jJ05ezUJ6SAha3a0ZjXk0BR2a1b4ncj8ZOk+BkxoSLj6op2sGHXdizE33igimFxA2iwq+ONbodviEnTJgWqrtSuRFkU20q0gEHjMGd+eWcK4RxrvE20vn2SMfZ3ZSYqaBYiEIIFzik=
+	t=1718266540; cv=none; b=ptYLTWhr72GqpZTDrO9l25DKbeanPcKtBPqVSXD+c+kN/Gf6hGeG+XPk79AIW4Gnn66f4E/p5izKr6Exb4NeXXrLlV/lEd4os4KUm6jsIoi394/S713NYHjtZOBJxFT7+0zyR7DB30NEk1JJO2JyEWqc3uCo1A069VlxpMrtlMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718266527; c=relaxed/simple;
-	bh=rXEKRMvId4ve84z8AItG3uwUw0AENm9bXkidn6KfjDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ka9efXrdRsTUIwz+W+DluI+UUprDQQXGO/NfYMycvj3Dl4LtW35cKKYe0R1HhD0dsddGHUcKqqi+hpw3pmAToQ2BBFLxibUtBE8tOJEB5fq5jKiIonNVkAub8XxMAaez8PQzbYV0DXie7MLoUZcZhI0r4b9f151WthbxLZvdbQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sHfbn-00036N-8G; Thu, 13 Jun 2024 10:14:59 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sHfbm-001yyc-B2; Thu, 13 Jun 2024 10:14:58 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sHfbm-008PUZ-0m;
-	Thu, 13 Jun 2024 10:14:58 +0200
-Date: Thu, 13 Jun 2024 10:14:58 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: p.zabel@pengutronix.de, abelvesa@kernel.org, peng.fan@nxp.com,
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com
-Subject: Re: [PATCH v7 3/5] reset: imx8mp-audiomix: Add AudioMix Block
- Control reset driver
-Message-ID: <20240613081458.idnrarxjwoau2eoa@pengutronix.de>
-References: <1718243482-18552-1-git-send-email-shengjiu.wang@nxp.com>
- <1718243482-18552-4-git-send-email-shengjiu.wang@nxp.com>
+	s=arc-20240116; t=1718266540; c=relaxed/simple;
+	bh=UMjVs06sJwT6Ygcoh+wejcNTxXAeh2E2nNUlc3p70fA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ivFwOvEVeFZZjzX8P7IFjhajBk9Me6qagbGswUIjgHXQv4io19JigVyRmVzQbQTJhZ84dtSWsY41CVNbmdWEf+tKbqRoPca4IyhPREN3mhU0fxILTGdJstI5OUfHCTvB1X2HrBRuokhUxczhoFt+kuGAq/mY/zs/wlL3x/E+xlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kQbszUB3; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718266538; x=1749802538;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=UMjVs06sJwT6Ygcoh+wejcNTxXAeh2E2nNUlc3p70fA=;
+  b=kQbszUB3rCi6WBIUQP0FjGhvX8665wPALlPVEdXGFT/16gdFXIPCC5wW
+   PoYPl3Ch4K9RNXg01MnlK7JdR7sQ0Y+c7l+2ZHubGK87hw/feaSqjEYvH
+   tre8q38b6jQpyWsyOrML0oKY46VhBa1Ac20qe5XAeeVlpDhKMts5XUIVt
+   7HOprIXmtPjmXLQtkNeCYVgGY3DbyXJXjwSQ3HWUw11/UvOfUdcW7Jfe8
+   lZqMBXRG2hf7b+k69Eldp99Vw+XZtCRdfsZ3squHVEtaGofINOiV2VhW5
+   vzrP/+ZWcsZNrMPC9av4FignfU7u5jPoztgWHykHLKnXmGed3D2mb2cxs
+   w==;
+X-CSE-ConnectionGUID: llk/+rGkQ9qzVvdNBXCC+g==
+X-CSE-MsgGUID: wnT0j980Q+mPjB111Pk3wA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="32611569"
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="32611569"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 01:15:37 -0700
+X-CSE-ConnectionGUID: 1AfnX+tyQFiO0NT59KF07g==
+X-CSE-MsgGUID: MV6X4M17TJyK3VRtJ1pu7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="44974488"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 01:15:32 -0700
+Message-ID: <395cfff7-9692-4123-96b6-353752007f46@intel.com>
+Date: Thu, 13 Jun 2024 11:15:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1718243482-18552-4-git-send-email-shengjiu.wang@nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] perf: disasm: prefer symsrc_filename for filename
+To: Changbin Du <changbin.du@huawei.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Nathan Chancellor <nathan@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20240613063510.348692-1-changbin.du@huawei.com>
+ <20240613063510.348692-3-changbin.du@huawei.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240613063510.348692-3-changbin.du@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 13/06/24 09:35, Changbin Du wrote:
+> If we already found a debugging version when loading symbols for that dso,
+> then use the same file for disasm instead of looking up in buildid-cache.
 
-On 24-06-13, Shengjiu Wang wrote:
-> Add support for the resets on i.MX8MP Audio Block Control module,
-> which includes the EARC PHY software reset and EARC controller
-> software reset. The reset controller is created using the auxiliary
-> device framework and set up in the clock driver.
+In the past, there have been cases where the debugging version has not
+worked for reading object code.  I don't remember the details, but the
+symbols and debugging information was OK while the object code was not.
 
-thanks a lot for converting it to the single purpose driver.
+In general, using anything other than the file that was actually executed
+for reading object code seems like a bad idea.
 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> 
+> Signed-off-by: Changbin Du <changbin.du@huawei.com>
 > ---
->  drivers/reset/Kconfig                 |   8 ++
->  drivers/reset/Makefile                |   1 +
->  drivers/reset/reset-imx8mp-audiomix.c | 103 ++++++++++++++++++++++++++
->  3 files changed, 112 insertions(+)
->  create mode 100644 drivers/reset/reset-imx8mp-audiomix.c
+>  tools/perf/util/disasm.c |  5 +++++
+>  tools/perf/util/symbol.c | 12 ++++++++----
+>  2 files changed, 13 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 7112f5932609..b3c0e528d08c 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -91,6 +91,14 @@ config RESET_IMX7
->  	help
->  	  This enables the reset controller driver for i.MX7 SoCs.
+> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+> index 72aec8f61b94..75cfc6fbd11d 100644
+> --- a/tools/perf/util/disasm.c
+> +++ b/tools/perf/util/disasm.c
+> @@ -1103,6 +1103,11 @@ static int dso__disassemble_filename(struct dso *dso, char *filename, size_t fil
+>  	    !dso__is_kcore(dso))
+>  		return SYMBOL_ANNOTATE_ERRNO__NO_VMLINUX;
 >  
-> +config RESET_IMX8MP_AUDIOMIX
-> +	tristate "i.MX8MP AudioMix Reset Driver"
-> +	depends on CLK_IMX8MP
-> +	select AUXILIARY_BUS
-> +	default CLK_IMX8MP
-> +	help
-> +	  This enables the reset controller driver for i.MX8MP AudioMix
+> +	if (dso__symsrc_filename(dso)) {
+> +		strlcpy(filename, dso__symsrc_filename(dso), filename_size);
+> +		return 0;
+> +	}
 > +
->  config RESET_INTEL_GW
->  	bool "Intel Reset Controller Driver"
->  	depends on X86 || COMPILE_TEST
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index fd8b49fa46fc..a6796e83900b 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_BRCMSTB_RESCAL) += reset-brcmstb-rescal.o
->  obj-$(CONFIG_RESET_GPIO) += reset-gpio.o
->  obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
->  obj-$(CONFIG_RESET_IMX7) += reset-imx7.o
-> +obj-$(CONFIG_RESET_IMX8MP_AUDIOMIX) += reset-imx8mp-audiomix.o
->  obj-$(CONFIG_RESET_INTEL_GW) += reset-intel-gw.o
->  obj-$(CONFIG_RESET_K210) += reset-k210.o
->  obj-$(CONFIG_RESET_LANTIQ) += reset-lantiq.o
-> diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-imx8mp-audiomix.c
-> new file mode 100644
-> index 000000000000..f3f9f5420c14
-> --- /dev/null
-> +++ b/drivers/reset/reset-imx8mp-audiomix.c
-> @@ -0,0 +1,103 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright 2024 NXP
-> + */
+>  	build_id_filename = dso__build_id_filename(dso, NULL, 0, false);
+>  	if (build_id_filename) {
+>  		__symbol__join_symfs(filename, filename_size, build_id_filename);
+> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+> index 8d040039a7ce..a90c647d37e1 100644
+> --- a/tools/perf/util/symbol.c
+> +++ b/tools/perf/util/symbol.c
+> @@ -2025,12 +2025,14 @@ int dso__load_vmlinux(struct dso *dso, struct map *map,
+>  		dso__set_binary_type(dso, DSO_BINARY_TYPE__VMLINUX);
+>  
+>  	err = dso__load_sym(dso, map, &ss, &ss, 0);
+> -	symsrc__destroy(&ss);
+> -
+>  	if (err > 0) {
+>  		dso__set_loaded(dso);
+>  		pr_debug("Using %s for symbols\n", symfs_vmlinux);
 > +
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/device.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
+> +		if (symsrc__has_symtab(&ss) && !dso__symsrc_filename(dso))
+> +			dso__set_symsrc_filename(dso, strdup(symfs_vmlinux));
+>  	}
+> +	symsrc__destroy(&ss);
+>  
+>  	return err;
+>  }
+> @@ -2395,12 +2397,14 @@ static int dso__load_vdso(struct dso *dso, struct map *map,
+>  	dso__set_binary_type(dso, DSO_BINARY_TYPE__SYSTEM_PATH_DSO);
+>  
+>  	err = dso__load_sym(dso, map, &ss, &ss, 0);
+> -	symsrc__destroy(&ss);
+> -
+>  	if (err > 0) {
+>  		dso__set_loaded(dso);
+>  		pr_debug("Using %s for %s symbols\n", symfs_vdso, dso__short_name(dso));
 > +
-> +#define EARC			0x200
-> +#define EARC_RESET_MASK		0x3
-> +
-> +struct imx8mp_audiomix_reset_priv {
-				^
-Nit: the _priv can be dropped.
+> +		if (symsrc__has_symtab(&ss) && !dso__symsrc_filename(dso))
+> +			dso__set_symsrc_filename(dso, strdup(symfs_vdso));
+>  	}
+> +	symsrc__destroy(&ss);
+>  
+>  	return err;
+>  }
 
-> +	struct reset_controller_dev rcdev;
-> +	void __iomem *base;
-> +};
-> +
-> +static int imx8mp_audiomix_reset_assert(struct reset_controller_dev *rcdev,
-> +					unsigned long id)
-> +{
-> +	struct imx8mp_audiomix_reset_priv *priv = container_of(rcdev,
-> +					struct imx8mp_audiomix_reset_priv, rcdev);
-
-Nit:
-
-static struct imx8mp_audiomix_reset *to_imx8mp_audiomix_reset(struct  reset_controller_dev *rcdev)
-{
-	return container_of(rcdev, struct imx8mp_audiomix_reset, rcdev);
-}
-
-	struct imx8mp_audiomix_reset *priv = to_imx8mp_audiomix_reset(rcdev);
-
-Since both nits are cosmetic feel free to add my:
-
-Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
-
-Regards,
-  Marco
-
-> +	void __iomem *reg_addr = priv->base;
-> +	unsigned int mask, reg;
-> +
-> +	if (id >= fls(EARC_RESET_MASK))
-> +		return -EINVAL;
-> +
-> +	mask = BIT(id);
-> +	reg = readl(reg_addr + EARC);
-> +	writel(reg & ~mask, reg_addr + EARC);
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx8mp_audiomix_reset_deassert(struct reset_controller_dev *rcdev,
-> +					  unsigned long id)
-> +{
-> +	struct imx8mp_audiomix_reset_priv *priv = container_of(rcdev,
-> +					struct imx8mp_audiomix_reset_priv, rcdev);
-> +	void __iomem *reg_addr = priv->base;
-> +	unsigned int mask, reg;
-> +
-> +	if (id >= fls(EARC_RESET_MASK))
-> +		return -EINVAL;
-> +
-> +	mask = BIT(id);
-> +	reg = readl(reg_addr + EARC);
-> +	writel(reg | mask, reg_addr + EARC);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct reset_control_ops imx8mp_audiomix_reset_ops = {
-> +	.assert   = imx8mp_audiomix_reset_assert,
-> +	.deassert = imx8mp_audiomix_reset_deassert,
-> +};
-> +
-> +static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
-> +				       const struct auxiliary_device_id *id)
-> +{
-> +	struct imx8mp_audiomix_reset_priv *priv;
-> +	struct device *dev = &adev->dev;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->rcdev.owner     = THIS_MODULE;
-> +	priv->rcdev.nr_resets = fls(EARC_RESET_MASK);
-> +	priv->rcdev.ops       = &imx8mp_audiomix_reset_ops;
-> +	priv->rcdev.of_node   = dev->parent->of_node;
-> +	priv->rcdev.dev	      = dev;
-> +	priv->rcdev.of_reset_n_cells = 1;
-> +	priv->base            = of_iomap(dev->parent->of_node, 0);
-> +
-> +	return devm_reset_controller_register(dev, &priv->rcdev);
-> +}
-> +
-> +static const struct auxiliary_device_id imx8mp_audiomix_reset_ids[] = {
-> +	{
-> +		.name = "clk_imx8mp_audiomix.reset",
-> +	},
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(auxiliary, imx8mp_audiomix_reset_ids);
-> +
-> +static struct auxiliary_driver imx8mp_audiomix_reset_driver = {
-> +	.probe		= imx8mp_audiomix_reset_probe,
-> +	.id_table	= imx8mp_audiomix_reset_ids,
-> +};
-> +
-> +module_auxiliary_driver(imx8mp_audiomix_reset_driver);
-> +
-> +MODULE_AUTHOR("Shengjiu Wang <shengjiu.wang@nxp.com>");
-> +MODULE_DESCRIPTION("Freescale i.MX8MP Audio Block Controller reset driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.34.1
-> 
-> 
-> 
 
