@@ -1,129 +1,155 @@
-Return-Path: <linux-kernel+bounces-213671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EE37907890
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:45:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6883907896
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDAD0B2253A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:45:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D02DB21354
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261A6149C62;
-	Thu, 13 Jun 2024 16:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A291369B0;
+	Thu, 13 Jun 2024 16:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UpXgMwNi"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SdG3oHth"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEFB12F386;
-	Thu, 13 Jun 2024 16:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E512912D775;
+	Thu, 13 Jun 2024 16:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718297092; cv=none; b=ckpawPa113kicHXl5PisOa3RxK+/h2AtV6HYfwMWlvqfagOtwXcdVbKkVO4hIXc78YVLuVrNmzukn0Ov9iMarKGgOR7NFj2TBBLmrmt9slSU3TKa74vOOVjtcShmbw/cFhlSP7v6NeyvUoQyawoW9aJ+olCtsJzWBVWQWBKOf+s=
+	t=1718297138; cv=none; b=GM9/BSX0V6awjPhpCFhxP8EQWuF6GQyJXUyYoTCjUjRGLOwja7Znoq2Uhme3Ja+JNqCiaQ1KgeKhF3DK6v8oQn9B4Tl0bcV13jYqOL7NERIh8TWjqJWHr1P4Z4ui+Ab+7/FxwcoOutMuG3G5BY6AN2gLDuX4ItMeXNGRlSv1Kvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718297092; c=relaxed/simple;
-	bh=XritPzwaYxeYxC5f9JxbIYb9KuNoPNbdU//mOZmejCg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UvvxEVouE5pfG8nMGFxZ41H2QQH7Sx3dPMsaUo/QUp4D2jlmO2w4Vb5i1PO7uMCv2Y1SpTpPS2T0XfslZH92NJYtIqxYAyuRcnWWE0A+d9LiEtTdUmPhhLsBvzijPXyY6BTa7FCYEod1vdWl9QZhpYkGR6jdzH2mGJ3cdhCUoWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UpXgMwNi; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52bc3130ae6so1460709e87.3;
-        Thu, 13 Jun 2024 09:44:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718297089; x=1718901889; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XritPzwaYxeYxC5f9JxbIYb9KuNoPNbdU//mOZmejCg=;
-        b=UpXgMwNi5Tcq1RXZfh2MVAI6Fom9W8o5Pl1q5hUolYlioscklMkTvzJ2NhNUara67E
-         hzIYIwPhZ/q9E2/cURN0q58uEr+99pQnHLdGhG2fD2f0SX4eflhWJQS9d1FNNug3pRcX
-         etOJZw2VWvY2hiGdfNp3IxF6f9cfrQHfmu071xXiR3JHdvSAL6FTWQSVF1StZ8lkPtLe
-         Im1ptO82XRq6ylP5yQNw4PBUmKOX1I1sCXrd2sa0B6RAWoAwawsKkfkx4Is+qfJr9PE3
-         pV//F18hATbKhBTrGExrsQcIJEKqBP5M/H/Q3MJgsvUj2F1t4HY5xDmRRfArAeVVSGOd
-         cIkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718297089; x=1718901889;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XritPzwaYxeYxC5f9JxbIYb9KuNoPNbdU//mOZmejCg=;
-        b=ClxgIv/4AekjHo5th7OZpy/+RplnVbEwNa2To+Fv32Gzlq3Osa8/t2FnaKb0UxbICI
-         Sopl5412L/g9aj+6Lkb1YESli3GKGyfBR24VNvsbU1LZCMQNtLXTqcp+dO6h6T8XoMC0
-         2KHUtLMz95fuFlp+W2IgFYZpfFNpDE5HKViafNOnoVhXpzRS1j0o7tIydDcUhCEW8Vg2
-         KBcoaBl7bUU5GtFw1XSkG0LXH838l1blZ72MTQrOXOq6PBbeNs0/iVJ7Pkv+8KwL9k7X
-         pW2j2jeSqlQURrI9+oflBBRD/xpuw6IM4PWk8372zgRwC2FwRfWa+3uHUPIWGvBp+gSO
-         4EQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVB+rXnMk/5VRGQ7XxYEuXTy1fgjUiR8o1Ofk9S5BpL4Bszqirlc1XRrZ70CL4wVbTcVx2s+YG0Eg9swCZgThWRJCqYYGMauHajcqvX
-X-Gm-Message-State: AOJu0Yybbyg1DmxAiCn+0YXaH9trjIAxDdmurAdzmPsWilSTmuJHndDB
-	EHunfoh42QS8P1ibArsK0MW+zH9qr/e2ZaHwowbYk4BtNkCR4mi/i3Y43urGcBHuquzAgZb5dkk
-	PR0ADFRoB7AKJdnMzRm3c8WdpbDc=
-X-Google-Smtp-Source: AGHT+IFVgmbe/tBoklkDRijH/gjK5r0xcpaKid7FUWjBb3PNSWjsBdpQo56ITJorAjETY0Jlv/aBMuV2ngbUe2rSAq8=
-X-Received: by 2002:a2e:9e59:0:b0:2ea:e26d:c9b9 with SMTP id
- 38308e7fff4ca-2ec0e5b5142mr2856361fa.10.1718297088682; Thu, 13 Jun 2024
- 09:44:48 -0700 (PDT)
+	s=arc-20240116; t=1718297138; c=relaxed/simple;
+	bh=tiljCiNLvQGlJmjyR9Odqrxtift+JD+Stzcu183Qx4I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QISi4Y29dU15O5LrjBhV+xX9s8KKEs5Es5HLCNs2p86Fihe402edbmgvrzn9Cfnxc2BWaTovXgU0IvrM2b4knMElxYqQXTVoCzZ2wUnqUOchXn60fEaJL9/xn+zAo/zR1i+LkE2E33ZdpSui3InYkgVTRg7HmtG0NmEemHNagMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SdG3oHth; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DEXQc6001018;
+	Thu, 13 Jun 2024 16:45:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=PRE9Shmd/Dulfe9+6Jgtbb
+	tk2F/LuqPjSOhBVuWT80I=; b=SdG3oHthUbhE6UaFags5CYfb0Ok1n59r8WuBd+
+	eJzInV70JwhK+0EV2oADFp6grZZWhyr5JYsn+o+lfaXJ2i5qndrwET1cmATuwwzD
+	Py3Q/lmGVQi9LkwVAcLIR75WUNZBu9hML+GV3FW5p5jMpX7ogKieZUuYxtiMvDdq
+	JKeC4AweSDVoMfB8Dbpkc0I+VmoWYX1ucpBp5rG6sb1u965f3tTsKnMCe5sg23HJ
+	JNDQv4ClQ4hyJBIshmC11yBwYkGFZP4FGFdAupyoqd/4hsSjudFfGQ5RDamC1Bp4
+	6GIUav/7qhg9Ai1NZBlVWDEergM4lRU+YzkExBoj8BnFlJJg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yqukc9nec-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 16:45:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45DGjRGR006196
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 16:45:27 GMT
+Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 13 Jun 2024 09:45:23 -0700
+From: Sibi Sankar <quic_sibis@quicinc.com>
+To: <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <thara.gopinath@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
+        <quic_sibis@quicinc.com>, <abel.vesa@linaro.org>
+Subject: [PATCH] soc: qcom: icc-bwmon: Fix refcount imbalance seen during bwmon_remove
+Date: Thu, 13 Jun 2024 22:15:06 +0530
+Message-ID: <20240613164506.982068-1-quic_sibis@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613082449.197397-1-ubizjak@gmail.com> <20240613155134.GA1062951@bhelgaas>
-In-Reply-To: <20240613155134.GA1062951@bhelgaas>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Thu, 13 Jun 2024 18:44:36 +0200
-Message-ID: <CAFULd4YmckrG1RBzSnhtNCWmmLmU4JhXOxwBGOLdrOu=FWLOuA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: hotplug: Use atomic_{fetch_}andnot() where appropriate
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Tk_GMHvcatbzUhbysq0mQ6TfHl9eutXt
+X-Proofpoint-ORIG-GUID: Tk_GMHvcatbzUhbysq0mQ6TfHl9eutXt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-13_11,2024-06-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 phishscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0
+ spamscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999 clxscore=1011
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406130118
 
-On Thu, Jun 13, 2024 at 5:51=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> =
-wrote:
->
-> [+cc Lukas, Ilpo]
->
-> On Thu, Jun 13, 2024 at 10:24:24AM +0200, Uros Bizjak wrote:
-> > Use atomic_{fetch_}andnot(i, v) instead of atomic_{fetch_}and(~i, v).
->
-> If the purpose is to improve readability, let's mention that here.
-> Since this only touches pciehp, make the subject line "PCI: pciehp:
-> ..." as was done in the past.
->
-> It looks like every use of atomic_and() uses a ~value and is hence a
-> candidate for a similar change, but I'm not sure that converting to
-> "andnot" and removing the explicit bitwise NOT is really a readability
-> benefit.
->
-> If it were named something like "atomic_clear_bits", I'd be totally in
-> favor since that's a little higher-level description, but that ship
-> has long since sailed.
+The following warning is seen during bwmon_remove due to refcount
+imbalance, fix this by releasing the OPPs after use.
 
-FYI, the set of atomic primitives and their corresponding names have
-quite a long history. These are based on IA-64 psABI [1, section 7.4]
-when this particular primitive was named
-__sync_nand_and_fetch/__sync_fetch_and_nand. Even GCC got the and-not
-part wrong (it implemented it as not-and in some ancient version), so
-luckily the kernel named it atomic_{fetch_}andnot.
+Logs:
+WARNING: at drivers/opp/core.c:1640 _opp_table_kref_release+0x150/0x158
+Hardware name: Qualcomm Technologies, Inc. X1E80100 CRD (DT)
+...
+Call trace:
+_opp_table_kref_release+0x150/0x158
+dev_pm_opp_remove_table+0x100/0x1b4
+devm_pm_opp_of_table_release+0x10/0x1c
+devm_action_release+0x14/0x20
+devres_release_all+0xa4/0x104
+device_unbind_cleanup+0x18/0x60
+device_release_driver_internal+0x1ec/0x228
+driver_detach+0x50/0x98
+bus_remove_driver+0x6c/0xbc
+driver_unregister+0x30/0x60
+platform_driver_unregister+0x14/0x20
+bwmon_driver_exit+0x18/0x524 [icc_bwmon]
+__arm64_sys_delete_module+0x184/0x264
+invoke_syscall+0x48/0x118
+el0_svc_common.constprop.0+0xc8/0xe8
+do_el0_svc+0x20/0x2c
+el0_svc+0x34/0xdc
+el0t_64_sync_handler+0x13c/0x158
+el0t_64_sync+0x190/0x194
+--[ end trace 0000000000000000 ]---
 
-As far as the patch is concerned, some architectures emit atomic
-andnot instruction. In the proposed patch, we have a constant argument
-to atomic_and, and the compiler is smart enough to apply the bitwise
-not to the argument and emits an inverted constant argument. So, in
-reality, the same code is produced.
+Fixes: 0276f69f13e2 ("soc: qcom: icc-bwmon: Set default thresholds dynamically")
+Fixes: b9c2ae6cac40 ("soc: qcom: icc-bwmon: Add bandwidth monitoring driver")
+Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+---
+ drivers/soc/qcom/icc-bwmon.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-x86 with BMI1 ISA extension provides ANDN instruction, but it can't be
-used with LOCK prefix.
+diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
+index fb323b3364db..ecddb60bd665 100644
+--- a/drivers/soc/qcom/icc-bwmon.c
++++ b/drivers/soc/qcom/icc-bwmon.c
+@@ -565,7 +565,7 @@ static void bwmon_start(struct icc_bwmon *bwmon)
+ 	int window;
+ 
+ 	/* No need to check for errors, as this must have succeeded before. */
+-	dev_pm_opp_find_bw_ceil(bwmon->dev, &bw_low, 0);
++	dev_pm_opp_put(dev_pm_opp_find_bw_ceil(bwmon->dev, &bw_low, 0));
+ 
+ 	bwmon_clear_counters(bwmon, true);
+ 
+@@ -772,11 +772,13 @@ static int bwmon_probe(struct platform_device *pdev)
+ 	opp = dev_pm_opp_find_bw_floor(dev, &bwmon->max_bw_kbps, 0);
+ 	if (IS_ERR(opp))
+ 		return dev_err_probe(dev, PTR_ERR(opp), "failed to find max peak bandwidth\n");
++	dev_pm_opp_put(opp);
+ 
+ 	bwmon->min_bw_kbps = 0;
+ 	opp = dev_pm_opp_find_bw_ceil(dev, &bwmon->min_bw_kbps, 0);
+ 	if (IS_ERR(opp))
+ 		return dev_err_probe(dev, PTR_ERR(opp), "failed to find min peak bandwidth\n");
++	dev_pm_opp_put(opp);
+ 
+ 	bwmon->dev = dev;
+ 
+-- 
+2.34.1
 
-So, if there is no readability benefit, it is OK with me to drop the patch.
-
-[1] https://refspecs.linuxfoundation.org/elf/IA64-SysV-psABI.pdf
-
-Thanks,
-Uros.
 
