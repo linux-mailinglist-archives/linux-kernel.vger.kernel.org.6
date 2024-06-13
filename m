@@ -1,166 +1,139 @@
-Return-Path: <linux-kernel+bounces-213766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92BA9907A1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:43:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5AA9907A21
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:44:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B47561C24A39
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:43:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F122FB223C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0573E14A0B8;
-	Thu, 13 Jun 2024 17:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0A814A4CF;
+	Thu, 13 Jun 2024 17:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SqZ7Tmgf"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XKChHbCS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE41D149C4E;
-	Thu, 13 Jun 2024 17:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B03E441D;
+	Thu, 13 Jun 2024 17:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718300622; cv=none; b=Yy2fkqMUh+CW2l0BZIfEqeorM3xkaYdDDZES3tIUtkNUt+Xrpuvh7REYdY38rNfwC/ulCBZrBbClGkgjCOXxd55r9jVoiEH8mqYCsLHNk/9+AZ5GMH9Lk3y0KylD5+aAnS7CbcdypwGIEOifiqwJxj18/lSJuyCmN9lad1Kep2M=
+	t=1718300671; cv=none; b=b3rkbGFTTg39SUMYv/p3L4roZvgkLNbacpvtA4sbs7KymzWyzfy2RlT6zFfkPEODvu4gA3woBK8t6URTuHkjMSZngQavqShomAaKK7FyTniav2Oqt7Yf01nASe6Nb/UVcEya5VN+rGKgELdD3+99+8WUz5wzXyumRrE5+3+RWzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718300622; c=relaxed/simple;
-	bh=oJc6RqXJkpllEQ5QfdtX04+JH0ioJodrz/+ru6anz5k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hfmVhFGZJ8JoxWtUy1DHlQQqlfH/9dfM8AHClIGpnyO/GzcX9gZ6RZwQWRE04DwBSTY1XYX/tz4ua4fbpxv0028iA/ME+m0fEPBCvT2S1xxLwDnMq0XM46SDmn84UhoSv+6tX/PvTBqmMOp6GJigYubJIJOJ5NT0mrudlmxNUxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SqZ7Tmgf; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6f8ec7e054dso881109b3a.2;
-        Thu, 13 Jun 2024 10:43:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718300620; x=1718905420; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=5GXpkLq5U0ZDN6zOo/rFkGYU0R0N51a8wZr4VXH97Wk=;
-        b=SqZ7TmgfJOa3KE+FLlEhys4K/Yj/99Zdsq2xeP3Nwsu3FCx+go4d33qZCKK0fR+Pse
-         ugH4ZFfvs74bLMLSOCHXx6qbUz3b+WWngUYgp3eRLIkKpKxBseDSYhRpGUH8og10C4dA
-         JBd/W8fjhMsPtLvCJsXj9xehemJwWg+KbK9liZ3DfFVHdV2LfJhXKoGDxu50qGoKLRxk
-         sFCXqUNOq7Ncp+59vEeaICD8L/Cog3a82DA7kFzNL4lXf7yhwtRgXzw1+QztJQulnGUT
-         cklSPYUPknM0abN/0KQl7onRcrR80B4mGeJKRd/nqPMEWzv7ianeL5VjjzJxQfycStN+
-         XCsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718300620; x=1718905420;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5GXpkLq5U0ZDN6zOo/rFkGYU0R0N51a8wZr4VXH97Wk=;
-        b=Q29s3ZZvPOF65du1M1LFk5JjOdPmYEOTWap/YPeReh1Blx47O+XFxlFnwOdZ5Su+XX
-         9AyQ1/5TexJefbzw4r2ywkygOet2DC7FYeQO8DYSSYPdyeOS2MemqMJl+vtwD7gfiv2l
-         jn0DdirDjrm78FaPjxP4EMUrJeWJ5qdW3IdBOj+ySqOzUWYvZeTDr9NRWnx2MDjZmHws
-         uylJjaXE31OUM6lyztZJTbYU+W8vqdquGxRIgZzIEtB3N0H/FyIQR9mJsZnEyYL52N2C
-         kKXKqHke/bu94TkcCb1+F7E+pXDWdBL5nV8X5Xe8SE1ADwdi6rCujgc8KYQbFesdMjI2
-         x0Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCXr4OPOwpgf8DW7PEHggWy8KP8nYyic/sBItvBV6o/D7yihWf/zzDk1RDw+47GsPrPI/JakzCsTKJXLbrIhWDLAP9VUrYnIXHnQ/DbBftHKzwXcwSfGH4MOfF4ggaDtTHqfXUJ8
-X-Gm-Message-State: AOJu0Yy6iIiD7X5FlB+89WKWqBOuUP2i5KT1gPVkk9N4DA+D51p/E70o
-	nnzaBecoVQqFviDAcmuPW1mJljG7sXEjD45WDltSNiU829LQfr7e
-X-Google-Smtp-Source: AGHT+IEzkiZX/V0Plabg3p8J0GSYSag74JI/JM4Alivj2g7gceAHl2KnK5nNvTQWNay2o0uNyg5D7g==
-X-Received: by 2002:a05:6a20:748f:b0:1b6:ed32:4622 with SMTP id adf61e73a8af0-1bae7d8548bmr761537637.2.1718300620156;
-        Thu, 13 Jun 2024 10:43:40 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fee3013f51sm1355103a12.61.2024.06.13.10.43.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 10:43:39 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <ddc06737-e271-400d-bf9e-c78537e0e8db@roeck-us.net>
-Date: Thu, 13 Jun 2024 10:43:37 -0700
+	s=arc-20240116; t=1718300671; c=relaxed/simple;
+	bh=6ApbTuiYjW+p/zfFUWaeoQanCLRt7mrUEvmeVLsb/rk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rV60okjT8/F2JEpJGaDwhk3s0Hxowze/G0E9vvj+8zdA/5CkPB15CbE7Bggy3YA7JuIbhmFF5l121FuUxr7uOy/CpAhHUXNKXFN7uTFxLH8P4v1mYQSW/n6U3P64rOTkU3ymZGU65X7BtU68jN9bHsa1AelkR9msT2VcSWdU+V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XKChHbCS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE759C3277B;
+	Thu, 13 Jun 2024 17:44:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718300671;
+	bh=6ApbTuiYjW+p/zfFUWaeoQanCLRt7mrUEvmeVLsb/rk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XKChHbCS7wUWsaL5Ru5xevc/3sDXVrO8o/9VY+yqP7gmnDhU3Jl+78tJKwJNKJix0
+	 Is6yexTc1H3ln0KnL+GvCJZOaN2qHPVq723nrug14KdyNZjx6wlZDE1EEEhdaVugKr
+	 qjITTxvJz6l5EBr3L5ye9xvA2DVIovFM5sK83bNuk0H4pxuAM48ft7IxWtr5WQrgcE
+	 YY4d0BB6UpEB7+bboYzHnzTLV/fsyWVlKJSlcmInrM5SXw1NkAV07RuGgBPHMEcWoH
+	 F/Y9lCaNG2ong5OjCD6LeW11qYYlRiyr8+F5Tu7r7HjbQW7J2E0iHfvoFz8/gl/pzk
+	 AwvqprBRhKMxg==
+Date: Thu, 13 Jun 2024 18:44:25 +0100
+From: Lee Jones <lee@kernel.org>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/12] arm64: dts: qcom: sc8280xp-x13s: enable pm8008
+ camera pmic
+Message-ID: <20240613174425.GV2561462@google.com>
+References: <20240608155526.12996-1-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 00/85] 6.1.94-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- allen.lkml@gmail.com, broonie@kernel.org
-References: <20240613113214.134806994@linuxfoundation.org>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240613113214.134806994@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240608155526.12996-1-johan+linaro@kernel.org>
 
-On 6/13/24 04:34, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.94 release.
-> There are 85 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Sat, 08 Jun 2024, Johan Hovold wrote:
+
+> The Qualcomm PM8008 PMIC is a so called QPNP PMIC with seven LDO
+> regulators, a temperature alarm block and two GPIO pins (which are also
+> used for interrupt signalling and reset).
+
+[...]
+
+> Johan
 > 
-> Responses should be made by Sat, 15 Jun 2024 11:31:50 +0000.
-> Anything received after that time might be too late.
+> [1] https://lore.kernel.org/all/1655200111-18357-1-git-send-email-quic_c_skakit@quicinc.com
+> [2] https://lore.kernel.org/lkml/20231003152927.15000-3-johan+linaro@kernel.org
+> [3] https://lore.kernel.org/r/20220828132648.3624126-3-bryan.odonoghue@linaro.org
 > 
+> 
+> Changes in v3
+>  - capitalise MFD commit summaries
+>  - drop pinctrl patches which have been applied for 6.10
+>  - amend binding commit message to clarify that the binding is unused
+>  - move pinctrl subschema under pinctrl node in binding
+> 
+> Changes in v2
+>  - use IRQ_TYPE_SENSE_MASK in regmap_irq table
+>  - add post-reset delay
+>  - reorder pinctrl binding and driver update
+>  - split out binding cleanups
+>  - use platform_device_id matching
+>  - replace underscore in supply names with dash
+>  - use more fine-grained includes in regulator driver
+>  - rework regulator driver and update authorship
+> 
+> 
+> Johan Hovold (12):
+>   dt-bindings: mfd: pm8008: Add reset gpio
+>   mfd: pm8008: Fix regmap irq chip initialisation
+>   mfd: pm8008: Deassert reset on probe
+>   mfd: pm8008: Mark regmap structures as const
+>   mfd: pm8008: Use lower case hex notation
+>   mfd: pm8008: Rename irq chip
+>   mfd: pm8008: Drop unused driver data
+>   dt-bindings: mfd: pm8008: Drop redundant descriptions
+>   dt-bindings: mfd: pm8008: Rework binding
+>   mfd: pm8008: Rework to match new DT binding
+>   regulator: add pm8008 pmic regulator driver
+>   arm64: dts: qcom: sc8280xp-x13s: enable pm8008 camera pmic
+> 
+>  .../devicetree/bindings/mfd/qcom,pm8008.yaml  | 144 +++++++------
+>  .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    | 123 +++++++++++
+>  drivers/mfd/Kconfig                           |   1 +
+>  drivers/mfd/qcom-pm8008.c                     | 169 ++++++++++-----
+>  drivers/regulator/Kconfig                     |   7 +
+>  drivers/regulator/Makefile                    |   1 +
+>  drivers/regulator/qcom-pm8008-regulator.c     | 198 ++++++++++++++++++
+>  include/dt-bindings/mfd/qcom-pm8008.h         |  19 --
+>  8 files changed, 532 insertions(+), 130 deletions(-)
+>  create mode 100644 drivers/regulator/qcom-pm8008-regulator.c
+>  delete mode 100644 include/dt-bindings/mfd/qcom-pm8008.h
 
-Introduced in 6.1.93:
+Applied patches 1-11 and submitted for build testing.
 
-Building csky:allmodconfig ... failed
-Building m68k:allmodconfig ... failed
-Building xtensa:allmodconfig ... failed
---------------
-Error log:
-In file included from kernel/sched/build_utility.c:105:
-kernel/sched/isolation.c: In function 'housekeeping_setup':
-kernel/sched/isolation.c:134:53: error: 'setup_max_cpus' undeclared
+Once complete, I'll get the pull-request out for Mark.
 
-The same problem also affects v6.6.y, starting with v6.6.33.
-
-Commit 3c2f8859ae1c ("smp: Provide 'setup_max_cpus' definition on UP too")
-fixes the (build) problem in both branches.
-
-Guenter
-
+-- 
+Lee Jones [李琼斯]
 
