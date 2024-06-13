@@ -1,116 +1,285 @@
-Return-Path: <linux-kernel+bounces-213932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03246907CB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:35:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D1D907CAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C43CF1C202F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:35:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38A9AB27AF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3ED214A4C1;
-	Thu, 13 Jun 2024 19:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IW0NQsVR"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCEE14B976;
+	Thu, 13 Jun 2024 19:34:05 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB4B14A4EA
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 19:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB782F34;
+	Thu, 13 Jun 2024 19:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718307261; cv=none; b=Ngi8k0W+CIngraMlUndydeFAjvaHR3yKYqSaytPipSJZo5dM9o58K+nZ4vM1agNoBfBYlyL7jj2tthVdVU4FH5uvqZN2jVYVo7FMOErgQ+qXQbgsaOQh3+Vmsc/3Q5UGEK3K6gGhIleqXSkkYMQGYoUz+6Akq0DtIQsX9rKZUzI=
+	t=1718307245; cv=none; b=q6tP0ychUBmKHzCipco5HjOXlTNdO/Oln6VCOtWe+BjmkV+6rjprQnZiidbrWHm8lX4f6/m8zOLjkoWQ+D5BAGY968eDiytfX3IR7ldSFFMSnW276DlmFpYvl5je0cGPPNErgZuDeKdls90YuGsMF1U0ssFX3g9K0oaknmgTFmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718307261; c=relaxed/simple;
-	bh=Lwk7smutNQj9Ma2l6ms8QeeuTagK4tf2FFnHtSPVUfU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HHEbEowI2RaHP8oLOhuqXQgY03cV7EdKXNXBJZixy+D/M/TBCi/HhAOhk1ZOSDDzrg6zGwYaFUFEQdcRXZSEjfp/8PuiEYXJaTQm0VonTQaEnNb/kkjBtFWd2QVzgI5jqebbtZTRJELywZHJWQEizeYlQWfqvQtCiY1UnNTJCl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IW0NQsVR; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57a30dbdb7fso2041051a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:34:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718307257; x=1718912057; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BZg0hrY0cl/sTszXcVnYwhyU3X3/PKHb3J+JILn3ksY=;
-        b=IW0NQsVRX3Wf9NS48HWHJMiflIPZgwaLXPZm7Y8ivxdlBbR05Up0IQLkY7k58de6gJ
-         faCCH/nASJG30RZcVoA+/4ErLh9YWlP4QCOQYpPqKGngTlKn00lBqRQcTseQI2OJeoQS
-         Wanz8ICQM0pUsi/ikf+HpMgUVUa8P9LNjuXnA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718307257; x=1718912057;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BZg0hrY0cl/sTszXcVnYwhyU3X3/PKHb3J+JILn3ksY=;
-        b=ZwmZFEGivwgimLjLmGDRonIvoX+SRHEfC/1eiTRs7BnWgG3r3Fk582UnJ0XsiCnokO
-         ERWOLoxSoVx6iXsP5p4gvMRd3QHtBn0Bf//WViZLCSxk6jJhwKIH/fRbAE/qmV/lasCs
-         BDMMEnW0o8YHHtLUvn2raO3A7NH/rnWL2rIDoCKRVWFs5bU2QlKq/nNgxHdbOQ3VCxwP
-         gbwlw2f0siuT+5VcwNWwnZVSDpDTqJe4f3LiAwyX4UzDJh6JABKAzZJmzCgYFVYXIL36
-         McPnj+QKov/r9NBYPBrl/irQVJ3pEEbe0ScrmxfXmwUpT8m9fIl8krBKf4Y3IqBhhiwx
-         D+oA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8WHREnnucpeEvHtU54lPHfM+3y/c+k7/ukx6Ud3K3cjm2i0QJAtBWFvM3iaC9bg4FWRpgAOEbcqbPRMSgg7cx1dICWMm0DK63LxJW
-X-Gm-Message-State: AOJu0YwkjDjKC6Nm+HULZI11aSA7t4xKQpU5ivaIQEpYZNXqEKJvSqPJ
-	PfQGYhmiYxPtw/utc774u9QFO4LldglF3vCEQD2doJKPrcsNYK6gEkPBhI+fVjXWdx4EgICN/wv
-	o7ExpqA==
-X-Google-Smtp-Source: AGHT+IFM3hJiUS1fJT6N/yGjn6oBIqxqgZ2tZSBwAeZ08NUOg12nkffoHLM5JajXkfljajTzO8v6Og==
-X-Received: by 2002:a17:906:b7da:b0:a6f:4b5b:4ba7 with SMTP id a640c23a62f3a-a6f60de2641mr44359366b.67.1718307257410;
-        Thu, 13 Jun 2024 12:34:17 -0700 (PDT)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f42ddfsm103139766b.171.2024.06.13.12.34.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 12:34:16 -0700 (PDT)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a62ef52e837so195614966b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:34:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV1xlyHmOYhsbZFejKJGq+M67HoaUj4JCJWTgzmMvvrJHHeoB2o5PYN5mWSVMJA25jJebundGSW1PEaiA41FkLBiVAPVv/OvzGX66vi
-X-Received: by 2002:a17:906:f105:b0:a6f:586b:6c2 with SMTP id
- a640c23a62f3a-a6f60dc4faemr43433766b.60.1718307256510; Thu, 13 Jun 2024
- 12:34:16 -0700 (PDT)
+	s=arc-20240116; t=1718307245; c=relaxed/simple;
+	bh=wQgy/X/ZKA/Ff/1MORDRSuKE/dgil05TxOFG6mU+pjA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u6o/xWIR6Fbo+zDXC0d+KzeHTBnwxG4eI0jCtWhz2ofDWgZaj6ApsKbm7EbDWE+auiNGSqwgpRx31Cnu0euYl+krb3s8FV9nA71K1N+3f9yJ82ADbdotBgFOAklESIGeO6bCJsEje8OOcPRq1iY/K1+nAAZlMuIdbhUz02Dpky0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13E94C2BBFC;
+	Thu, 13 Jun 2024 19:34:03 +0000 (UTC)
+Date: Thu, 13 Jun 2024 15:34:02 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] linux++: delete some forward declarations
+Message-ID: <20240613153402.3b067d4b@rorschach.local.home>
+In-Reply-To: <5ad5556c-7c32-45b7-89cf-f723c9d7332b@p183>
+References: <5ad5556c-7c32-45b7-89cf-f723c9d7332b@p183>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613001215.648829-1-mjguzik@gmail.com> <20240613001215.648829-2-mjguzik@gmail.com>
- <CAHk-=wgX9UZXWkrhnjcctM8UpDGQqWyt3r=KZunKV3+00cbF9A@mail.gmail.com>
- <CAHk-=wgPgGwPexW_ffc97Z8O23J=G=3kcV-dGFBKbLJR-6TWpQ@mail.gmail.com>
- <5cixyyivolodhsru23y5gf5f6w6ov2zs5rbkxleljeu6qvc4gu@ivawdfkvus3p>
- <20240613-pumpen-durst-fdc20c301a08@brauner> <CAHk-=wj0cmLKJZipHy-OcwKADygUgd19yU1rmBaB6X3Wb5jU3Q@mail.gmail.com>
- <CAGudoHHWL_CftUXyeZNU96qHsi5DT_OTL5ZLOWoCGiB45HvzVA@mail.gmail.com>
- <CAHk-=wi4xCJKiCRzmDDpva+VhsrBuZfawGFb9vY6QXV2-_bELw@mail.gmail.com>
- <CAGudoHGdWQYH8pRu1B5NLRa_6EKPR6hm5vOf+fyjvUzm1po8VQ@mail.gmail.com> <CAHk-=whjwqO+HSv8P4zvOyX=WNKjcXsiquT=DOaj_fQiidb3rQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whjwqO+HSv8P4zvOyX=WNKjcXsiquT=DOaj_fQiidb3rQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 13 Jun 2024 12:33:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whtoqTSCcAvV-X-KPqoDWxS4vxmWpuKLB+Vv8=FtUd5vA@mail.gmail.com>
-Message-ID: <CAHk-=whtoqTSCcAvV-X-KPqoDWxS4vxmWpuKLB+Vv8=FtUd5vA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] lockref: speculatively spin waiting for the lock to
- be released
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 13 Jun 2024 at 11:56, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> I didn't *think* anything in the dentry struct should care about
-> debugging, but clearly that sequence number thing did.
+On Thu, 13 Jun 2024 22:22:18 +0300
+Alexey Dobriyan <adobriyan@gmail.com> wrote:
 
-Looking at the 32-bit build, it looks like out current 'struct dentry'
-is 136 bytes in size, not 128.
+> g++ doesn't like forward enum declarations:
+>=20
+> 	error: use of enum =E2=80=98E=E2=80=99 without previous declaration
+> 	   64 | enum E;
 
-Looks like DNAME_INLINE_LEN should be reduced to 36 on 32-bit.
+But we don't care about g++. Do we?
 
-And moving d_lockref to after d_fsdata works there too.
+I would make that a separate patch.
 
-Not that anybody really cares, but let's make sure it's actually
-properly done when this is changed. Christian?
+>=20
+> Delete those which aren't used.
+>=20
+> Delete some unused/unnecessary forward struct declarations for a change.
 
-              Linus
+This is a clean up, but should have a better change log. Just something
+simple like:
+
+  Delete unnecessary forward struct declarations.
+
+Thanks,
+
+-- Steve
+
+
+>=20
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+> ---
+>=20
+>  fs/ramfs/inode.c         |    1 -
+>  include/linux/console.h  |    2 --
+>  include/linux/device.h   |    3 ---
+>  include/linux/ftrace.h   |    4 ----
+>  include/linux/security.h |    6 ------
+>  include/linux/signal.h   |    2 --
+>  include/linux/syscalls.h |    7 -------
+>  include/linux/sysfs.h    |    2 --
+>  mm/internal.h            |    4 ----
+>  mm/shmem.c               |    1 -
+>  10 files changed, 32 deletions(-)
+>=20
+> --- a/fs/ramfs/inode.c
+> +++ b/fs/ramfs/inode.c
+> @@ -51,7 +51,6 @@ struct ramfs_fs_info {
+> =20
+>  #define RAMFS_DEFAULT_MODE	0755
+> =20
+> -static const struct super_operations ramfs_ops;
+>  static const struct inode_operations ramfs_dir_inode_operations;
+> =20
+>  struct inode *ramfs_get_inode(struct super_block *sb,
+> --- a/include/linux/console.h
+> +++ b/include/linux/console.h
+> @@ -21,10 +21,8 @@
+>  #include <linux/vesa.h>
+> =20
+>  struct vc_data;
+> -struct console_font_op;
+>  struct console_font;
+>  struct module;
+> -struct tty_struct;
+>  struct notifier_block;
+> =20
+>  enum con_scroll {
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -36,10 +36,7 @@
+>  struct device;
+>  struct device_private;
+>  struct device_driver;
+> -struct driver_private;
+>  struct module;
+> -struct class;
+> -struct subsys_private;
+>  struct device_node;
+>  struct fwnode_handle;
+>  struct iommu_group;
+> --- a/include/linux/ftrace.h
+> +++ b/include/linux/ftrace.h
+> @@ -531,8 +531,6 @@ extern const void *ftrace_expected;
+> =20
+>  void ftrace_bug(int err, struct dyn_ftrace *rec);
+> =20
+> -struct seq_file;
+> -
+>  extern int ftrace_text_reserved(const void *start, const void *end);
+> =20
+>  struct ftrace_ops *ftrace_ops_trampoline(unsigned long addr);
+> @@ -1147,8 +1145,6 @@ static inline void unpause_graph_tracing(void) { }
+>  #endif /* CONFIG_FUNCTION_GRAPH_TRACER */
+> =20
+>  #ifdef CONFIG_TRACING
+> -enum ftrace_dump_mode;
+> -
+>  #define MAX_TRACER_SIZE		100
+>  extern char ftrace_dump_on_oops[];
+>  extern int ftrace_dump_on_oops_enabled(void);
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -41,7 +41,6 @@ struct rlimit;
+>  struct kernel_siginfo;
+>  struct sembuf;
+>  struct kern_ipc_perm;
+> -struct audit_context;
+>  struct super_block;
+>  struct inode;
+>  struct dentry;
+> @@ -59,8 +58,6 @@ struct xfrm_sec_ctx;
+>  struct mm_struct;
+>  struct fs_context;
+>  struct fs_parameter;
+> -enum fs_value_type;
+> -struct watch;
+>  struct watch_notification;
+>  struct lsm_ctx;
+> =20
+> @@ -183,8 +180,6 @@ struct sock;
+>  struct sockaddr;
+>  struct socket;
+>  struct flowi_common;
+> -struct dst_entry;
+> -struct xfrm_selector;
+>  struct xfrm_policy;
+>  struct xfrm_state;
+>  struct xfrm_user_sec_ctx;
+> @@ -219,7 +214,6 @@ extern unsigned long dac_mmap_min_addr;
+>  #define LSM_PRLIMIT_WRITE 2
+> =20
+>  /* forward declares to avoid warnings */
+> -struct sched_param;
+>  struct request_sock;
+> =20
+>  /* bprm->unsafe reasons */
+> --- a/include/linux/signal.h
+> +++ b/include/linux/signal.h
+> @@ -274,8 +274,6 @@ static inline int valid_signal(unsigned long sig)
+>  	return sig <=3D _NSIG ? 1 : 0;
+>  }
+> =20
+> -struct timespec;
+> -struct pt_regs;
+>  enum pid_type;
+> =20
+>  extern int next_signal(struct sigpending *pending, sigset_t *mask);
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -11,8 +11,6 @@
+> =20
+>  struct __aio_sigset;
+>  struct epoll_event;
+> -struct iattr;
+> -struct inode;
+>  struct iocb;
+>  struct io_event;
+>  struct iovec;
+> @@ -20,14 +18,12 @@ struct __kernel_old_itimerval;
+>  struct kexec_segment;
+>  struct linux_dirent;
+>  struct linux_dirent64;
+> -struct list_head;
+>  struct mmap_arg_struct;
+>  struct msgbuf;
+>  struct user_msghdr;
+>  struct mmsghdr;
+>  struct msqid_ds;
+>  struct new_utsname;
+> -struct nfsctl_arg;
+>  struct __old_kernel_stat;
+>  struct oldold_utsname;
+>  struct old_utsname;
+> @@ -38,7 +34,6 @@ struct rusage;
+>  struct sched_param;
+>  struct sched_attr;
+>  struct sel_arg_struct;
+> -struct semaphore;
+>  struct sembuf;
+>  struct shmid_ds;
+>  struct sockaddr;
+> @@ -48,14 +43,12 @@ struct statfs;
+>  struct statfs64;
+>  struct statx;
+>  struct sysinfo;
+> -struct timespec;
+>  struct __kernel_old_timeval;
+>  struct __kernel_timex;
+>  struct timezone;
+>  struct tms;
+>  struct utimbuf;
+>  struct mq_attr;
+> -struct compat_stat;
+>  struct old_timeval32;
+>  struct robust_list_head;
+>  struct futex_waitv;
+> --- a/include/linux/sysfs.h
+> +++ b/include/linux/sysfs.h
+> @@ -23,9 +23,7 @@
+>  #include <linux/atomic.h>
+> =20
+>  struct kobject;
+> -struct module;
+>  struct bin_attribute;
+> -enum kobj_ns_type;
+> =20
+>  struct attribute {
+>  	const char		*name;
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -1095,10 +1095,6 @@ unsigned int reclaim_clean_pages_from_list(struct =
+zone *zone,
+>  /* Flags that allow allocations below the min watermark. */
+>  #define ALLOC_RESERVES (ALLOC_NON_BLOCK|ALLOC_MIN_RESERVE|ALLOC_HIGHATOM=
+IC|ALLOC_OOM)
+> =20
+> -enum ttu_flags;
+> -struct tlbflush_unmap_batch;
+> -
+> -
+>  /*
+>   * only for MM internal work items which do not depend on
+>   * any allocations or locks which might depend on allocations
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -261,7 +261,6 @@ static const struct inode_operations shmem_dir_inode_=
+operations;
+>  static const struct inode_operations shmem_special_inode_operations;
+>  static const struct vm_operations_struct shmem_vm_ops;
+>  static const struct vm_operations_struct shmem_anon_vm_ops;
+> -static struct file_system_type shmem_fs_type;
+> =20
+>  bool shmem_mapping(struct address_space *mapping)
+>  {
+
 
