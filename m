@@ -1,70 +1,62 @@
-Return-Path: <linux-kernel+bounces-212784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AF4690664B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:13:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C219906652
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4CD6281D41
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:13:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D3981C23F88
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4F913D276;
-	Thu, 13 Jun 2024 08:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="STjcwns+"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC97B13D29F;
+	Thu, 13 Jun 2024 08:15:27 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E69213D259;
-	Thu, 13 Jun 2024 08:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B355C13C9D2
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718266413; cv=none; b=pdpHoqWqvpYjfljLR1SrAj1m41waf+phzYpHhHEYv2AZ3TY7+gKMyEOJ7O2+/zhxolRd9ypLo7m//zvY0X+lRnch97Q3DYEdLd4yUj+s9wDOsW0z2LpgKk2MgOsIw96Sd3UNrsBvt5nRt571nuz79cDf2KzX71GMnDqle9Bedqs=
+	t=1718266527; cv=none; b=KyB4BPOU24cqCzD5JzurjGmnMo3xnRfz/jJ05ezUJ6SAha3a0ZjXk0BR2a1b4ncj8ZOk+BkxoSLj6op2sGHXdizE33igimFxA2iwq+ONbodviEnTJgWqrtSuRFkU20q0gEHjMGd+eWcK4RxrvE20vn2SMfZ3ZSYqaBYiEIIFzik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718266413; c=relaxed/simple;
-	bh=bVzbWx8oclR9J4LHR055JqNiEL6Gv26xOOc1+qAaEgU=;
+	s=arc-20240116; t=1718266527; c=relaxed/simple;
+	bh=rXEKRMvId4ve84z8AItG3uwUw0AENm9bXkidn6KfjDk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uXEBP19VVcEmVGUn7yQ+k+K0df5dAR+Tz6hiSLhRLEWM+S9mHWhse+v+1YoavDSCQma06LbMWcUSq/YbzANImTBTf61cyJuUjZO8O/Kf6GLzGhWDKTe/TxbuvtSgta4ZkOAaC0wccAPk5Pq1mpAGVI5nr3WDqar+wn5/pfsmPMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=STjcwns+; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=4tDm3WgVInHNS/5kjhxvZFPWNjbm8XCD62VosdI0ZqA=; b=STjcwns+MX7WwUCdz1orWSM+Oj
-	MUeT6jui1SDjdDuqrURypebhDqwJ6MHl5cPNgkhTystt12Ki3pzS9YNSwjojRp283glskdoCp0weI
-	shnQ30LJJ9r2GvGAMVL76bISmjFRxokLlIMzj7kYvGtalND19sljJCVCYpb+oK8hBKIQ1F7s5wxQB
-	xMJn61quhpGFEbCg51p1+WP++ulC67UsqdQiarG6+jB9yhNQGyw2FsQc/IQZX0Q7v7v6wI3xo3fMg
-	tJSOwzsezRp8vr209sbjUexBdi8O0Q87zzQHdqSAveDjMo6N0O0gHWNlR/DWIkGJdOBVixOK6ApcG
-	p7WyiSXQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sHfaE-0000000FdVc-3F1j;
-	Thu, 13 Jun 2024 08:13:22 +0000
-Date: Thu, 13 Jun 2024 01:13:22 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
-	yang@os.amperecomputing.com, linmiaohe@huawei.com,
-	muchun.song@linux.dev, osalvador@suse.de,
-	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
-	brauner@kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org,
-	hare@suse.de, linux-kernel@vger.kernel.org,
-	Zi Yan <zi.yan@sent.com>, linux-xfs@vger.kernel.org,
-	p.raghav@samsung.com, linux-fsdevel@vger.kernel.org, hch@lst.de,
-	gost.dev@samsung.com, cl@os.amperecomputing.com,
-	john.g.garry@oracle.com
-Subject: Re: [PATCH v7 06/11] filemap: cap PTE range to be created to allowed
- zero fill in folio_map_range()
-Message-ID: <ZmqqIrv4Fms-Vi6E@bombadil.infradead.org>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-7-kernel@pankajraghav.com>
- <ZmnyH_ozCxr_NN_Z@casper.infradead.org>
- <ZmqmWrzmL5Wx2DoF@bombadil.infradead.org>
- <818f69fa-9dc7-4ca0-b3ab-a667cd1fb16d@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ka9efXrdRsTUIwz+W+DluI+UUprDQQXGO/NfYMycvj3Dl4LtW35cKKYe0R1HhD0dsddGHUcKqqi+hpw3pmAToQ2BBFLxibUtBE8tOJEB5fq5jKiIonNVkAub8XxMAaez8PQzbYV0DXie7MLoUZcZhI0r4b9f151WthbxLZvdbQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sHfbn-00036N-8G; Thu, 13 Jun 2024 10:14:59 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sHfbm-001yyc-B2; Thu, 13 Jun 2024 10:14:58 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sHfbm-008PUZ-0m;
+	Thu, 13 Jun 2024 10:14:58 +0200
+Date: Thu, 13 Jun 2024 10:14:58 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: p.zabel@pengutronix.de, abelvesa@kernel.org, peng.fan@nxp.com,
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com
+Subject: Re: [PATCH v7 3/5] reset: imx8mp-audiomix: Add AudioMix Block
+ Control reset driver
+Message-ID: <20240613081458.idnrarxjwoau2eoa@pengutronix.de>
+References: <1718243482-18552-1-git-send-email-shengjiu.wang@nxp.com>
+ <1718243482-18552-4-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,55 +65,193 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <818f69fa-9dc7-4ca0-b3ab-a667cd1fb16d@redhat.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <1718243482-18552-4-git-send-email-shengjiu.wang@nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2024 at 10:07:15AM +0200, David Hildenbrand wrote:
-> On 13.06.24 09:57, Luis Chamberlain wrote:
-> > On Wed, Jun 12, 2024 at 08:08:15PM +0100, Matthew Wilcox wrote:
-> > > On Fri, Jun 07, 2024 at 02:58:57PM +0000, Pankaj Raghav (Samsung) wrote:
-> > > > From: Pankaj Raghav <p.raghav@samsung.com>
-> > > > 
-> > > > Usually the page cache does not extend beyond the size of the inode,
-> > > > therefore, no PTEs are created for folios that extend beyond the size.
-> > > > 
-> > > > But with LBS support, we might extend page cache beyond the size of the
-> > > > inode as we need to guarantee folios of minimum order. Cap the PTE range
-> > > > to be created for the page cache up to the max allowed zero-fill file
-> > > > end, which is aligned to the PAGE_SIZE.
-> > > 
-> > > I think this is slightly misleading because we might well zero-fill
-> > > to the end of the folio.  The issue is that we're supposed to SIGBUS
-> > > if userspace accesses pages which lie entirely beyond the end of this
-> > > file.  Can you rephrase this?
-> > > 
-> > > (from mmap(2))
-> > >         SIGBUS Attempted access to a page of the buffer that lies beyond the end
-> > >                of the mapped file.  For an explanation of the treatment  of  the
-> > >                bytes  in  the  page that corresponds to the end of a mapped file
-> > >                that is not a multiple of the page size, see NOTES.
-> > > 
-> > > 
-> > > The code is good though.
-> > > 
-> > > Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > 
-> > Since I've been curating the respective fstests test to test for this
-> > POSIX corner case [0] I wanted to enable the test for tmpfs instead of
-> > skipping it as I originally had it, and that meant also realizing mmap(2)
-> > specifically says this now:
-> > 
-> > Huge page (Huge TLB) mappings
+Hi,
+
+On 24-06-13, Shengjiu Wang wrote:
+> Add support for the resets on i.MX8MP Audio Block Control module,
+> which includes the EARC PHY software reset and EARC controller
+> software reset. The reset controller is created using the auxiliary
+> device framework and set up in the clock driver.
+
+thanks a lot for converting it to the single purpose driver.
+
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> ---
+>  drivers/reset/Kconfig                 |   8 ++
+>  drivers/reset/Makefile                |   1 +
+>  drivers/reset/reset-imx8mp-audiomix.c | 103 ++++++++++++++++++++++++++
+>  3 files changed, 112 insertions(+)
+>  create mode 100644 drivers/reset/reset-imx8mp-audiomix.c
 > 
-> Confusion alert: this likely talks about hugetlb (MAP_HUGETLB), not THP and
-> friends.
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 7112f5932609..b3c0e528d08c 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -91,6 +91,14 @@ config RESET_IMX7
+>  	help
+>  	  This enables the reset controller driver for i.MX7 SoCs.
+>  
+> +config RESET_IMX8MP_AUDIOMIX
+> +	tristate "i.MX8MP AudioMix Reset Driver"
+> +	depends on CLK_IMX8MP
+> +	select AUXILIARY_BUS
+> +	default CLK_IMX8MP
+> +	help
+> +	  This enables the reset controller driver for i.MX8MP AudioMix
+> +
+>  config RESET_INTEL_GW
+>  	bool "Intel Reset Controller Driver"
+>  	depends on X86 || COMPILE_TEST
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index fd8b49fa46fc..a6796e83900b 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_BRCMSTB_RESCAL) += reset-brcmstb-rescal.o
+>  obj-$(CONFIG_RESET_GPIO) += reset-gpio.o
+>  obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
+>  obj-$(CONFIG_RESET_IMX7) += reset-imx7.o
+> +obj-$(CONFIG_RESET_IMX8MP_AUDIOMIX) += reset-imx8mp-audiomix.o
+>  obj-$(CONFIG_RESET_INTEL_GW) += reset-intel-gw.o
+>  obj-$(CONFIG_RESET_K210) += reset-k210.o
+>  obj-$(CONFIG_RESET_LANTIQ) += reset-lantiq.o
+> diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-imx8mp-audiomix.c
+> new file mode 100644
+> index 000000000000..f3f9f5420c14
+> --- /dev/null
+> +++ b/drivers/reset/reset-imx8mp-audiomix.c
+> @@ -0,0 +1,103 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright 2024 NXP
+> + */
+> +
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/device.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset-controller.h>
+> +
+> +#define EARC			0x200
+> +#define EARC_RESET_MASK		0x3
+> +
+> +struct imx8mp_audiomix_reset_priv {
+				^
+Nit: the _priv can be dropped.
+
+> +	struct reset_controller_dev rcdev;
+> +	void __iomem *base;
+> +};
+> +
+> +static int imx8mp_audiomix_reset_assert(struct reset_controller_dev *rcdev,
+> +					unsigned long id)
+> +{
+> +	struct imx8mp_audiomix_reset_priv *priv = container_of(rcdev,
+> +					struct imx8mp_audiomix_reset_priv, rcdev);
+
+Nit:
+
+static struct imx8mp_audiomix_reset *to_imx8mp_audiomix_reset(struct  reset_controller_dev *rcdev)
+{
+	return container_of(rcdev, struct imx8mp_audiomix_reset, rcdev);
+}
+
+	struct imx8mp_audiomix_reset *priv = to_imx8mp_audiomix_reset(rcdev);
+
+Since both nits are cosmetic feel free to add my:
+
+Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
+
+Regards,
+  Marco
+
+> +	void __iomem *reg_addr = priv->base;
+> +	unsigned int mask, reg;
+> +
+> +	if (id >= fls(EARC_RESET_MASK))
+> +		return -EINVAL;
+> +
+> +	mask = BIT(id);
+> +	reg = readl(reg_addr + EARC);
+> +	writel(reg & ~mask, reg_addr + EARC);
+> +
+> +	return 0;
+> +}
+> +
+> +static int imx8mp_audiomix_reset_deassert(struct reset_controller_dev *rcdev,
+> +					  unsigned long id)
+> +{
+> +	struct imx8mp_audiomix_reset_priv *priv = container_of(rcdev,
+> +					struct imx8mp_audiomix_reset_priv, rcdev);
+> +	void __iomem *reg_addr = priv->base;
+> +	unsigned int mask, reg;
+> +
+> +	if (id >= fls(EARC_RESET_MASK))
+> +		return -EINVAL;
+> +
+> +	mask = BIT(id);
+> +	reg = readl(reg_addr + EARC);
+> +	writel(reg | mask, reg_addr + EARC);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct reset_control_ops imx8mp_audiomix_reset_ops = {
+> +	.assert   = imx8mp_audiomix_reset_assert,
+> +	.deassert = imx8mp_audiomix_reset_deassert,
+> +};
+> +
+> +static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
+> +				       const struct auxiliary_device_id *id)
+> +{
+> +	struct imx8mp_audiomix_reset_priv *priv;
+> +	struct device *dev = &adev->dev;
+> +
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->rcdev.owner     = THIS_MODULE;
+> +	priv->rcdev.nr_resets = fls(EARC_RESET_MASK);
+> +	priv->rcdev.ops       = &imx8mp_audiomix_reset_ops;
+> +	priv->rcdev.of_node   = dev->parent->of_node;
+> +	priv->rcdev.dev	      = dev;
+> +	priv->rcdev.of_reset_n_cells = 1;
+> +	priv->base            = of_iomap(dev->parent->of_node, 0);
+> +
+> +	return devm_reset_controller_register(dev, &priv->rcdev);
+> +}
+> +
+> +static const struct auxiliary_device_id imx8mp_audiomix_reset_ids[] = {
+> +	{
+> +		.name = "clk_imx8mp_audiomix.reset",
+> +	},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(auxiliary, imx8mp_audiomix_reset_ids);
+> +
+> +static struct auxiliary_driver imx8mp_audiomix_reset_driver = {
+> +	.probe		= imx8mp_audiomix_reset_probe,
+> +	.id_table	= imx8mp_audiomix_reset_ids,
+> +};
+> +
+> +module_auxiliary_driver(imx8mp_audiomix_reset_driver);
+> +
+> +MODULE_AUTHOR("Shengjiu Wang <shengjiu.wang@nxp.com>");
+> +MODULE_DESCRIPTION("Freescale i.MX8MP Audio Block Controller reset driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.34.1
 > 
-> So it might not be required for below changes.
-
-Thanks, I had to ask as we're dusting off this little obscure corner of
-the universe. Reason I ask, is the test fails for tmpfs with huge pages,
-and this patch fixes it, but it got me wondering the above applies also
-to tmpfs with huge pages.
-
-  Luis
+> 
+> 
 
