@@ -1,126 +1,147 @@
-Return-Path: <linux-kernel+bounces-214051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCDB0907E9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:12:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAEC9907EA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF54428120C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:12:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D60481C21C57
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA1614BF91;
-	Thu, 13 Jun 2024 22:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF3C14B965;
+	Thu, 13 Jun 2024 22:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="t1ItnqDt"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L+gvKFl4"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF256139597
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 22:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CAF13B580
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 22:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718316726; cv=none; b=b8uZle87ouLmcE8Igw7Eqj4yAZ+lw60pNGDrH76YtZSiOfqgvxYUjFbmTYRWUcTpLlQrEEpXObzQhB6T7uwBPfuf/PTamFOwDIQyjNiXHBlbkM/cCLnLT6frJWe0NkkIWL+utS94A9uuL5yKpsRO9JBbPD1yPLhKcazcUoNaA9U=
+	t=1718316757; cv=none; b=cs1XMzkebK3lzLRMaaAc28NFcvtx51m4KZbCheVDHj2Nn2GAsUWIxYFUuM3CG7iyYPBtp4zO3qthD4L3ZQnwrsK7T0VzEw/rFWrgenSvYUH7fSyBZWJq4AlQj8EyntUC1rSZU/D6zlSN+NXsxHYitw4J+Ae0E3nIUXBEHGJCo4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718316726; c=relaxed/simple;
-	bh=ZbeYYg9Yb+PWLgJcPoeqspm3fTvQiE0OL7WdGxjUaeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QKciBr8i7I/AfAusG34QfJtgivmojJ9sqv2hFRpB07Ti3N7jaDx83ob1S5aGR1tSf8SSkTQ/bjU+eBGG37fLR6fAZyFo89IC8BYbLdeslw2QObD2Zd9TFf1/7ZMyPkO/MiMFXv3q92QO3SC18PKa4ZAQVvfj2U9LbsduJQJN9sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=t1ItnqDt; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5b970a97e8eso813829eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:12:04 -0700 (PDT)
+	s=arc-20240116; t=1718316757; c=relaxed/simple;
+	bh=7TE2RcI6NDwB3o1gLJvgqM50bbcK/0FP4+7QNN0zd6w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SgZ+cWpVUx1OINbgiOtV0Cv+p7wpsA4gYQYeFsF6kvp7iCRfI4wsRGzhwHDozlHxCdCID0tQuZNkzccM4HgZ9yKBvCEHRQ6sNssZWQH7ZY4/3ZXuk3aIul8V4vh09bWgFGk+VGmLVjurReoX6mTMEtZe2LzEI2MI/5X0CH36/BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L+gvKFl4; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42172ab4b60so15612895e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:12:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1718316724; x=1718921524; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T8aaukLJIwFlsN0imklBHYYukOSpHGK2753nAdx6l5c=;
-        b=t1ItnqDtX3GKBE588Bh+j+YNqPMHtjKEkCJh9RHs118IRuc/5Co+Wse6+GylERj+4G
-         BPkVUYX6C8MRFZoY6eRTjNgwecQYGzXJJ+OZKcI38yygOARQXLum+FEbRojDX1H2Be8z
-         OPyOVFfKAx4jwcUyRn68hPvxhorqf9nmw/SuA=
+        d=gmail.com; s=20230601; t=1718316754; x=1718921554; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=me4cz2sH6K4XsN9xxV5NWaQHOePrLe/rCqne2IhtkQI=;
+        b=L+gvKFl4WdN3Vpb137l8MiWKwAQvtsSxE8jei3VvRbOJtYxIuz35GtymRNjG5dti2U
+         Hw8UDS5ceSleX6cYvkpnpGjkdLIpYkkpJB5ZDpuXbptBlctLb1FSBfKVHPyPwU09T5t7
+         d6imum7Uuivpa8kd8Tsu8u+a1R4UTGmJqNP1XZHbzPUcyum5iG1bBQxECvctzDgOpQ4K
+         z1vt6fsas+fK5JDtKHLbQxZz1ebBjMLYkV55K11omG0AarG2BzL1Lr2dCWoztRmuQGHE
+         2H+6m2MwVHTzrwSYfyCJ0hW8/cecAd1yBVUrxFhGjRs39ALJ/9EeoYEdpw3Sk5FDCIs4
+         XkTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718316724; x=1718921524;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T8aaukLJIwFlsN0imklBHYYukOSpHGK2753nAdx6l5c=;
-        b=Riczh4GEJIQxRBP6vcB6m/eTI+x6a/J8v/3ZEvBXkoncEmjrtaQc5zNnyXJnfkLgKd
-         ktSJVX6X9k2knI199UjD3SF2OOo/EFrYoIIcfvhgSldT3EqXHOXJAytu6eX8GkcDlxs8
-         O5hRureeKjrwU6Uhq8RNLeSV5knFLQNC/uDt93m6eAb2hkXee3IeDxCwbL3UZ//D0jQ2
-         Fsu2o+KasHbqz/P7ZusqvK4jZcLzYLZHeY/JLO5Thcn19k0OEzH/tiBvsztV2hY/Zyoe
-         ZVAj/5DdGZ/Jb/oWjnE1WMn2TFgAaoqQ5PYRGlCK1MDJCOKIxsyjOQEiaWtfTf7pfDlu
-         yJyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWriHm10XlF3PsDN4bYnjru4AVGT2WXF2pFO0squY222gQTO7Ms1CwpMJG8OfA8y3Vbu8gFeuGYtsW1vASMhVWMwH8IJ5uPT0EUEVBg
-X-Gm-Message-State: AOJu0Yz4SI053eNcbJa9cyXUtHi9y/SEGKWxDAV6VGmGN3k5NxtEAe7U
-	gdjpErLTLoBhVbxvwHbMSt1YU5SPRNzHS2opAG0VRFyZKWIEuELaSJwiZhKWOT4=
-X-Google-Smtp-Source: AGHT+IGxwqv5ZLM3BKYkdZcKNyZQfMc0l1HwDn/+qM3n2LPEalG1dk/xF9XaxIPEESTy/A2IjbKb2A==
-X-Received: by 2002:a05:6358:5918:b0:19f:3ee1:d1c1 with SMTP id e5c5f4694b2df-19fc46e0187mr104458255d.31.1718316723942;
-        Thu, 13 Jun 2024 15:12:03 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fede16a598sm1562424a12.24.2024.06.13.15.12.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 15:12:03 -0700 (PDT)
-Date: Thu, 13 Jun 2024 15:12:00 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Tariq Toukan <ttoukan.linux@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, nalramli@fastly.com,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>
-Subject: Re: [net-next v5 2/2] net/mlx5e: Add per queue netdev-genl stats
-Message-ID: <ZmtusKxkPzSTkMxo@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Tariq Toukan <ttoukan.linux@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, nalramli@fastly.com,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>
-References: <20240612200900.246492-1-jdamato@fastly.com>
- <20240612200900.246492-3-jdamato@fastly.com>
- <0a38f58a-2b1e-4d78-90e1-eb8539f65306@gmail.com>
- <20240613145817.32992753@kernel.org>
+        d=1e100.net; s=20230601; t=1718316754; x=1718921554;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=me4cz2sH6K4XsN9xxV5NWaQHOePrLe/rCqne2IhtkQI=;
+        b=Lo3ySp1SNXn+YimZlNsFV0scR5RWCENFVRVowdshodRXeQWiPiGx2uJ0XG8+c3YWSx
+         7+IqzvVFQF6x6JLj+S8YhQKZrQwHOWUXHKqRYmyuTDZRCHISnEjEtGXlPelfOmBBdfvk
+         OpeEZD264Y2sb2ZIlYmHSG5zEguF36JWGBOXdIEyydvKgqDFZbZOXKHYSC+d0ZEXfSbz
+         LZ1ODvmy7HoDEmR81keoToqqbfCFhUZvoH7qXT3w/+ARhxf5KNu3tBXsMcTIruHvoLP0
+         fAjhZHB+yjx7sz9Ejw9j8USX357xg6+pQya+GBtr5rRQqUGim7AFLinDcJOH3pl1PXKc
+         FaEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwKny3BMkGpzJFc57xHfHZNp9bFevi7SXewyIbfh7WoaT6opnx3u2oRBu5bkktBcxeD8I3wN2tQlIxWSzVIpuRqPKbobccHzrHxb7B
+X-Gm-Message-State: AOJu0YwbW4ot4tALOgm7vA7737EOXjWogpJ1bQ053RaeI2PqjNNXwcf2
+	VKoT1zbxmwRzf0+a2TSpZ008eD++yp6tFsGxmZxT34S7E62wJ1PY3T2JBfNlzyxMf9Yh9AP3Pb0
+	IBiRGh9Hx5OBvTJajML/zwM2LVC8=
+X-Google-Smtp-Source: AGHT+IE+Uk2WrNVT5+gp+iYvKvosecaQGwaoTNEJBig8JFvhJIr6WDheaL5aPHNoBMZLLyEtg3mfIodrfAI4qLKbjsI=
+X-Received: by 2002:a05:600c:3d86:b0:421:9fc4:7973 with SMTP id
+ 5b1f17b1804b1-423048272c9mr8941605e9.15.1718316754107; Thu, 13 Jun 2024
+ 15:12:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613145817.32992753@kernel.org>
+References: <20240611133229.527822-1-nogikh@google.com>
+In-Reply-To: <20240611133229.527822-1-nogikh@google.com>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Fri, 14 Jun 2024 00:12:23 +0200
+Message-ID: <CA+fCnZcDE4YyfRNM236duuk6kmOhCrOnpW0XvwMHY+vgVaqbkg@mail.gmail.com>
+Subject: Re: [PATCH] kcov: don't lose track of remote references during softirqs
+To: Aleksandr Nogikh <nogikh@google.com>
+Cc: dvyukov@google.com, arnd@arndb.de, akpm@linux-foundation.org, 
+	elver@google.com, glider@google.com, syzkaller@googlegroups.com, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 02:58:17PM -0700, Jakub Kicinski wrote:
-> On Thu, 13 Jun 2024 23:25:12 +0300 Tariq Toukan wrote:
-> > > +		for (i = priv->channels.params.num_channels; i < priv->stats_nch; i++) {  
-> > 
-> > IIUC, per the current kernel implementation, the lower parts won't be 
-> > completed in a loop over [0..real_num_rx_queues-1], as that loop is 
-> > conditional, happening only if the queues are active.
-> 
-> Could you rephrase this? Is priv->channels.params.num_channels
-> non-zero also when device is closed? I'm just guessing from 
-> the code, TBH, I can't parse your reply :(
+On Tue, Jun 11, 2024 at 3:32=E2=80=AFPM Aleksandr Nogikh <nogikh@google.com=
+> wrote:
+>
+> In kcov_remote_start()/kcov_remote_stop(), we swap the previous KCOV
+> metadata of the current task into a per-CPU variable. However, the
+> kcov_mode_enabled(mode) check is not sufficient in the case of remote
+> KCOV coverage: current->kcov_mode always remains KCOV_MODE_DISABLED
+> for remote KCOV objects.
+>
+> If the original task that has invoked the KCOV_REMOTE_ENABLE ioctl
+> happens to get interrupted and kcov_remote_start() is called, it
+> ultimately leads to kcov_remote_stop() NOT restoring the original
+> KCOV reference. So when the task exits, all registered remote KCOV
+> handles remain active forever.
+>
+> Fix it by introducing a special kcov_mode that is assigned to the
+> task that owns a KCOV remote object. It makes kcov_mode_enabled()
+> return true and yet does not trigger coverage collection in
+> __sanitizer_cov_trace_pc() and write_comp_data().
+>
+> Signed-off-by: Aleksandr Nogikh <nogikh@google.com>
+> Fixes: 5ff3b30ab57d ("kcov: collect coverage from interrupts")
+> ---
+>  include/linux/kcov.h | 2 ++
+>  kernel/kcov.c        | 1 +
+>  2 files changed, 3 insertions(+)
+>
+> diff --git a/include/linux/kcov.h b/include/linux/kcov.h
+> index b851ba415e03..3b479a3d235a 100644
+> --- a/include/linux/kcov.h
+> +++ b/include/linux/kcov.h
+> @@ -21,6 +21,8 @@ enum kcov_mode {
+>         KCOV_MODE_TRACE_PC =3D 2,
+>         /* Collecting comparison operands mode. */
+>         KCOV_MODE_TRACE_CMP =3D 3,
+> +       /* The process owns a KCOV remote reference. */
+> +       KCOV_MODE_REMOTE =3D 4,
+>  };
+>
+>  #define KCOV_IN_CTXSW  (1 << 30)
+> diff --git a/kernel/kcov.c b/kernel/kcov.c
+> index c3124f6d5536..5371d3f7b5c3 100644
+> --- a/kernel/kcov.c
+> +++ b/kernel/kcov.c
+> @@ -632,6 +632,7 @@ static int kcov_ioctl_locked(struct kcov *kcov, unsig=
+ned int cmd,
+>                         return -EINVAL;
+>                 kcov->mode =3D mode;
+>                 t->kcov =3D kcov;
+> +               WRITE_ONCE(t->kcov_mode, KCOV_MODE_REMOTE);
+>                 kcov->t =3D t;
+>                 kcov->remote =3D true;
+>                 kcov->remote_size =3D remote_arg->area_size;
+> --
+> 2.45.2.505.gda0bf45e8d-goog
+>
 
-I don't mean to speak for Tariq (so my apologies Tariq), but I
-suspect it may not be clear in which cases IFF_UP is checked and in
-which cases get_base is called.
+Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
+Tested-by: Andrey Konovalov <andreyknvl@gmail.com>
 
-I tried to clear it up in my longer response with examples from
-code.
-
-If you have a moment could you take a look and let me know if I've
-gotten it wrong in my explanation/walk through?
+Thank you for fixing this!
 
