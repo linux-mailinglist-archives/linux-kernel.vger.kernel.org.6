@@ -1,189 +1,145 @@
-Return-Path: <linux-kernel+bounces-213488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04E329075F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:03:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 569EC9075FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67AF21F25253
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:03:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0330289363
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6006F1494CE;
-	Thu, 13 Jun 2024 15:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="JPfDaIow"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3811494A2;
+	Thu, 13 Jun 2024 15:04:33 +0000 (UTC)
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF911494AC;
-	Thu, 13 Jun 2024 15:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DA653E31;
+	Thu, 13 Jun 2024 15:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718290993; cv=none; b=QMEz3oBe4XTLG9hRE/P7W6RRJ6y0KJDnn01b+hemDNMTfvjdMwNTtXBkQ4VCDlEdq2FFIGaOTNFtkA2olpI0ZqlAqQNuF3ip82xzD1LvAbZIEu4VvIdub+aU10OF+LJhLRpz0rljrWVwtIdRY8EqR9aC5oYBdBzFYETeUQvO2PQ=
+	t=1718291072; cv=none; b=ma8RUc6ZG2hyayOMh4LHWVJ2wMe5jJNNdBvS1dZJ8MGYbTVcbD1w0yl7I2ySWaDxXoS+LtJtmi1AMAM+j0t1rNfvmaphK6qSFRhh6BCP85BJc8E8dN1BwI2+rNwzqVx1anBP/RLGhrHKwTANKJuJFM1zBUmgpy8ZRyxEN4HpRDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718290993; c=relaxed/simple;
-	bh=eDRUosPcVn8FXq3BOkao9YxZoLEVPNhNTeJ3UYuka3g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=awHNaEv/lw2a7/okZC1M09Ti2u4k4ec/V+n2y8+prH7mN08TK9tL6JlC8QKRTH5NWMWvACfUxZzG4A2NaAvvmjHbPJTVuEFdtP2zDR6RFMMjdYMzN2HSVrEIufEZPRtl5nxB8coqz76sYzodDtw2blsRpnCp+r5KocsUUzkzAbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=JPfDaIow; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id D44E6120005;
-	Thu, 13 Jun 2024 18:03:04 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru D44E6120005
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1718290984;
-	bh=TZO5FKnfdLf3+BDNI9OpSudEvUr/3a4vwS8jvLm/wHw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=JPfDaIowoydrSjpWIZUsYTBJZoD+H3UC63kb9INCtqFCwLD/2fG8vKCv4Ul8n5+TZ
-	 w+oyneTsRRJrF64wB1yPgXVV9Py+X6jXDOyttM6XykIkqzGMUW3RSPu7wTctb+FNDF
-	 /wkQMowWVBx693zPZ83h8qnRaOwxMcWph3fwgIWVgjdOCvjA8KYWYqvy/bEO4KZJWr
-	 KlKDNwLg/umhIVnPedtPufM618gRgaNd1OAbH36EaM+nFTL81ngggGarc18YuocV94
-	 PdkXyyngwpjYYEZnASF2FakZFmRh2ARmdYg8e6fKWE5i6rFHqMArwwTwqX1/ZLcjbU
-	 jH6I57gRtsJMA==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 13 Jun 2024 18:03:04 +0300 (MSK)
-Received: from [192.168.1.143] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 13 Jun 2024 18:03:04 +0300
-Message-ID: <ddc470fe-6d7d-4c5c-8de6-15cfd35d74cb@salutedevices.com>
-Date: Thu, 13 Jun 2024 18:03:03 +0300
+	s=arc-20240116; t=1718291072; c=relaxed/simple;
+	bh=WmKERP9tj4pLULI6MBL8WzHes7imyUshvMK7Cdmy788=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ueO6Kw0n5+TvuuVQkcQgXJduk5aaF9OkhFbmzSPHNqyyAqWPTvpP/WMsQog8WXebNmZftrIN1BvDQDipahnbyExRKVXoGumMXCVigpnJ0aUnN8+iLOf/SYR3p1S91c0whXhUQLMmj6FpUuWFJYGPNishTsgWNSWokFD0EAzOdo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-25545664f37so493369fac.1;
+        Thu, 13 Jun 2024 08:04:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718291069; x=1718895869;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZbNjy99xrdFjhXXMSO2YCV4k0Oh2gSCP2Gd7J/d4sfs=;
+        b=akE2HzUlVTeijBfuG4nCDUjCInxqAt0k4sBDY7xIQKjkTGDsdv8qfSEJ10uBdUPNeD
+         tmqQawgSsZtC8MJSJXocyy9mX49Cbdk6+L5CbXfv3Mtpdd8fFOgv+KPkuwehhmsi0YJC
+         fW9oNwufb0pbJ0gMmKKMxp+0j0vz5nQwEDaxy9AEB6UWvFCEowO5zBM5tPytiWivYEEP
+         0BVgWeNeGWc7UXmMjwtXRcPlJGGibqtx4qYvBl8KKcBlp960c+Hzc41w6/l6htwijyrn
+         aV/jdMadlbzVJU2L7wzmJWD+983/RaHobpuEGVGW89FmloIZiCO7b0VfU23Cv/pp4gIS
+         lyRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXq/XpbGUTuJkf0Wajsn+Cy1nyimbqtjn7h7DCFP+DbiK/+QRmT7eCQUaZWOCJmJzM3nYj7G1Y73V52dlowpko+fQl5Fl6Jvu9aOAodTusY4H0PlgFk0sJGsIV4B/UqCZoMiP4LwxX/F/OgywZaYahIz/jYK10/LNdxLTjtj2RbBFFWEv2r0K/mqK7j4M5UVH0aN0YF3AHPpnUKMdPSWsp9WT3Ly1bW
+X-Gm-Message-State: AOJu0Yy7zDKTzgy8JvquO90H+ueddQUOD/qUEkjnNj0ErgGURv9LnQhJ
+	tB4Ex/qiJXzf9UC0xL5nOwwcfcCHsLJPCQprSyFFm6nX9BSx7l4T6ExWjmMd
+X-Google-Smtp-Source: AGHT+IFKM5qMMASl10rmXKrcUmwgeXTv62z5DjrFnDyPUs5g9dLQFpi2z/xFC6eh3855WITdwr6/KA==
+X-Received: by 2002:a05:6870:40c7:b0:254:8c7a:6c97 with SMTP id 586e51a60fabf-25514d23f24mr6164361fac.30.1718291069162;
+        Thu, 13 Jun 2024 08:04:29 -0700 (PDT)
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com. [209.85.167.182])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2567aa141d6sm431807fac.24.2024.06.13.08.04.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 08:04:28 -0700 (PDT)
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d22802674cso546758b6e.2;
+        Thu, 13 Jun 2024 08:04:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU8Dow31EtxT7P7pEoMQIZDShQ1ihERNO3RVGJ76vyDULNXMdKytN6foPMgIdDFkNArrsp2GjgNJC5DKO4Sc8CPO2VtvYlCyJs/pM1BwEWDepm2u0FiaLSMIPEUmEgV9BqmHJ4zaD4Mi1QuhShF89sDwRKcsTVZVCj68KQFh19JFhmtur1nHnpaYt2s1ZZeAILDLJZA6qF+Hi/fDP87tm0Yi8QUsDNf
+X-Received: by 2002:a05:6808:228f:b0:3d2:2f52:c635 with SMTP id
+ 5614622812f47-3d23dfe7db9mr6804347b6e.22.1718291068517; Thu, 13 Jun 2024
+ 08:04:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [DMARC error][DKIM error] [PATCH v8 1/2] pwm: meson: Add support
- for Amlogic S4 PWM
-To: <kelvin.zhang@amlogic.com>
-CC: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	=?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Jerome
- Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Conor
- Dooley <conor+dt@kernel.org>, <linux-pwm@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Junyi Zhao
-	<junyi.zhao@amlogic.com>, Rob Herring <robh@kernel.org>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>
-References: <20240613-s4-pwm-v8-0-b5bd0a768282@amlogic.com>
- <20240613-s4-pwm-v8-1-b5bd0a768282@amlogic.com>
-Content-Language: en-US
-From: George Stark <gnstark@salutedevices.com>
-In-Reply-To: <20240613-s4-pwm-v8-1-b5bd0a768282@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185904 [Jun 13 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/06/13 10:31:00 #25588438
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <20240610112700.80819-1-wsa+renesas@sang-engineering.com>
+ <20240610112700.80819-2-wsa+renesas@sang-engineering.com> <CAMRc=MfZ11U+kAh1+K=DxtJ=QL+cY7Q_sBN4sQDF-RNgjpV0QA@mail.gmail.com>
+ <jvnvx7a4pn6evrp5ehfrt4qsiuprq6ogvrue2a3uupwtydmgcm@2rvat7ibvgb4>
+ <CAMRc=Mc4__0zzJZG3BPnmbua88SLuEbX=Wk=EZnKH5HQvB+JPg@mail.gmail.com>
+ <CACRpkda==5S75Bw6F3ZLUmf7kwgi_JkByiizR=m-61nrMDWuvQ@mail.gmail.com> <ce1d8150-c595-44d5-b19a-040920481709@app.fastmail.com>
+In-Reply-To: <ce1d8150-c595-44d5-b19a-040920481709@app.fastmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Jun 2024 17:04:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXmtXcOQ1SibKFh3M+X-syEyEHfxjvSmtDoDNqU40MPVg@mail.gmail.com>
+Message-ID: <CAMuHMdXmtXcOQ1SibKFh3M+X-syEyEHfxjvSmtDoDNqU40MPVg@mail.gmail.com>
+Subject: Re: [PATCH v9 1/1] gpio: add sloppy logic analyzer using polling
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Kent Gibson <warthog618@gmail.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If there's another series you can fix log messages and start it from 
-low-case letter as in the rest of the file.
+Hi Arnd,
 
-Either way
-Reviewed-by: George Stark <gnstark@salutedevices.com>
+On Thu, Jun 13, 2024 at 10:54=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrot=
+e:
+> On Thu, Jun 13, 2024, at 10:27, Linus Walleij wrote:
+> > On Thu, Jun 13, 2024 at 10:17=E2=80=AFAM Bartosz Golaszewski <brgl@bgde=
+v.pl> wrote:
+> >
+> >> On second thought
+> >> though: are you sure drivers/gpio/ is the right place for it?
+> >
+> > Actually that is something I requested.
+> >
+> > I think it fits in drivers/gpio as it is such a clear cut usage of GPIO
+> > lines, and it doesn't really fit into any other subsystem.
+> >
+> >> May I suggest moving it over to drivers/misc/?
+> >
+> > Misc is a bit...
+> > messy. I remember Arnd being very sceptical about putting stuff there
+> > rather than creating new subsystems, so since I've tried to avoid it,
+> > albeit recently more and more stuff gets merged there again :/
+>
+> Right, and that is mostly to avoid having code in there because
+> there is no other place for it. Some parts of drivers/misc should
+> have been a separate subsystem, some should have use an existing
+> subsystem, and other parts should have never been merged.
+>
+> The parts of drivers/misc that make the most sense to me are
+> those that expose a one-of-a-kind piece of hardware as a
+> single character device.
+>
+> This one would probably fit into drivers/misc/ better than
+> some other drivers we have in there, but leaving it in
+> drivers/gpio/ also seems fine.
+>
+> I could also imagine the functionality being exposed
+> through drivers/iio/ in a way that is similar to an
+> adc, but I don't know if that would work in practice or
+> how much of a rewrite that would be.
 
-On 6/13/24 14:46, Kelvin Zhang via B4 Relay wrote:
-> From: Junyi Zhao <junyi.zhao@amlogic.com>
-> 
-> Add support for Amlogic S4 PWM.
-> 
-> Signed-off-by: Junyi Zhao <junyi.zhao@amlogic.com>
-> Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
-> ---
->   drivers/pwm/pwm-meson.c | 39 +++++++++++++++++++++++++++++++++++++++
->   1 file changed, 39 insertions(+)
-> 
-> diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
-> index b2f97dfb01bb..98e6c1533312 100644
-> --- a/drivers/pwm/pwm-meson.c
-> +++ b/drivers/pwm/pwm-meson.c
-> @@ -460,6 +460,37 @@ static int meson_pwm_init_channels_meson8b_v2(struct pwm_chip *chip)
->   	return meson_pwm_init_clocks_meson8b(chip, mux_parent_data);
->   }
->   
-> +static void meson_pwm_s4_put_clk(void *data)
-> +{
-> +	struct clk *clk = data;
-> +
-> +	clk_put(clk);
-> +}
-> +
-> +static int meson_pwm_init_channels_s4(struct pwm_chip *chip)
-> +{
-> +	struct device *dev = pwmchip_parent(chip);
-> +	struct device_node *np = dev->of_node;
-> +	struct meson_pwm *meson = to_meson_pwm(chip);
-> +	int i, ret;
-> +
-> +	for (i = 0; i < MESON_NUM_PWMS; i++) {
-> +		meson->channels[i].clk = of_clk_get(np, i);
-> +		if (IS_ERR(meson->channels[i].clk))
-> +			return dev_err_probe(dev,
-> +					     PTR_ERR(meson->channels[i].clk),
-> +					     "Failed to get clk\n");
-> +
-> +		ret = devm_add_action_or_reset(dev, meson_pwm_s4_put_clk,
-> +					       meson->channels[i].clk);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret,
-> +					     "Failed to add clk_put action\n");
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   static const struct meson_pwm_data pwm_meson8b_data = {
->   	.parent_names = { "xtal", NULL, "fclk_div4", "fclk_div3" },
->   	.channels_init = meson_pwm_init_channels_meson8b_legacy,
-> @@ -498,6 +529,10 @@ static const struct meson_pwm_data pwm_meson8_v2_data = {
->   	.channels_init = meson_pwm_init_channels_meson8b_v2,
->   };
->   
-> +static const struct meson_pwm_data pwm_s4_data = {
-> +	.channels_init = meson_pwm_init_channels_s4,
-> +};
-> +
->   static const struct of_device_id meson_pwm_matches[] = {
->   	{
->   		.compatible = "amlogic,meson8-pwm-v2",
-> @@ -536,6 +571,10 @@ static const struct of_device_id meson_pwm_matches[] = {
->   		.compatible = "amlogic,meson-g12a-ao-pwm-cd",
->   		.data = &pwm_g12a_ao_cd_data
->   	},
-> +	{
-> +		.compatible = "amlogic,meson-s4-pwm",
-> +		.data = &pwm_s4_data
-> +	},
->   	{},
->   };
->   MODULE_DEVICE_TABLE(of, meson_pwm_matches);
-> 
+Hmm, I like the iio idea.
+Sorry, Wolfram ;-)
 
--- 
-Best regards
-George
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
