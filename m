@@ -1,180 +1,114 @@
-Return-Path: <linux-kernel+bounces-213935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34ECE907CBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:38:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B1D0907CC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 21:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CE641C24989
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:38:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F471F24D30
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3236414E2C2;
-	Thu, 13 Jun 2024 19:38:29 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A91C14C5A7;
+	Thu, 13 Jun 2024 19:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gHN1FKo/"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1763F14D2B9
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 19:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BF4134407;
+	Thu, 13 Jun 2024 19:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718307508; cv=none; b=QzOYRFtsk+oALx/NB47NWnNbypAVtLlV1CGEYBn93LldcphX0PO0z6LVRwhmFhEu7wx6khq+10MUa13ONdZ6Ved1ZkxdwUWCBiIbNhJpjbIYJOnZ4WUtkcxDJ6fNFgMbaZQgC08MyQGa+MPRJrUxZq9Ib5KvGjEKojTrrXv7egc=
+	t=1718307585; cv=none; b=SNXuk1ToW0MRQ36ooHIruuLhMR+2c5wllG5DeINUnBJEmGMB0eS2jzkZ/nvC0xw6k94Y3brbtlfpwi0T3KohrJLOfj/TBhL/tcs2qUwOQXAMzGwrbauR7hF32xV2ZIJ1N+tnmNIY5xk/3xjW6uU7EHGGbauJbMa0bFh2mR8VEKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718307508; c=relaxed/simple;
-	bh=6aypa/TFn6vR7GekpQf4/xcU4O9K8Fca3MiDire0XIs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=D2SiMesXxjzvHELZ8BcyjeAhnFiBWBmSJKl3gjByXCsWrGkYC+4udDBC5I6qeZjZtTIjvhtkCzRED2l17Q5pthCzXg2llBieK9lLoiYlfi5X0+iA0IcpKGqM3EaMLJgebl7A/4Sxrh3BruG54wJLJqfMsMNOFv5tNuDerPd2E2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7eb9bf4d07aso140484739f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:38:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718307506; x=1718912306;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MLJJOWCX65rxIwkhEm2uOMKY3r7EFZtqKAwAdHzJM9g=;
-        b=O6MiDOqsXHpNEzdqYMNzFaxDYtcfjJLeJkm+nwg57zo5ENPwqN5G73KZf/3s8U4jvp
-         aiH8iXcj3JtltrgUPnfERShBO40ybOWNvx0mo9GmW6sAKYOnyrQjm13Fzr7nUJffqP+b
-         3bhIl9oU0WyN79Rk/gqhGl6+NOVAHu+drMLWMbvK9YzuPFtUng0eRaERZKL0qpbWa3lC
-         jK7TL5sTH4hhKBkJyLySCElp+BBV/kVA5SD51AoQ/GJY8v3YPp7F+VJHssD06t9qEBcs
-         JYPpyy3dLweNe4TC6O57FMSmlo0raK1GUjt+PkVdHOe6vWYc5vi2nxfbnLkYyUHMcnxg
-         /xZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQILLi+vq2+19MMRFuguE1FSG3sZHv6NBzq8M8cXpJV1qr+gaqGFZ1uN92KCoaU0F8IWmCJpAjgSMudIQQa7/0OXtTxkaVXIAba9e2
-X-Gm-Message-State: AOJu0YwUaB0YpCJxcVIczjoblNKnpyvM3YTZcS188duB1pYsEIi+qlzt
-	OgfYFfDaLkzH8eWOrXUVJ6X90lVHAPyayqXR4yjTwsotUZ8nQKx4Boi54IvSIjYYM1plXGRNeV6
-	+kmhwFf9yov3GDCfUBxr9RdSHN+AQALxQR7g03Sn2HKc0WL8MQPxIxpg=
-X-Google-Smtp-Source: AGHT+IHzIrUbSrbDOTpr6qQydzMSs7GCZvTCI9PQnIbCAKH2f2LdyUAT50wUuyIqvD2skpvH/Siu5CXVvClMaLe1skIHINU42xbE
+	s=arc-20240116; t=1718307585; c=relaxed/simple;
+	bh=Xr1ZR0w4u2FAgkjvH5Mi9hxZ/0C28Zy328vRfJN5fEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=trwiVtIlSETbW0ZB0i1GG12Ghot+K7Zeynwg+JVpOE1lGWIUE0iAvWwzh5QEE1Go2SmghVRImHhPKgyz2js6wkJoh2EoAW4kiju4XXoRJxDeeryvFxCB7RYD+07bWsnzryFiXdoI0edeuv/du+/ieBPcwPzefJVBtGPvghY8DOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gHN1FKo/; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=zszsi0/aB2A5gS3nj8dtgFtDV/ZCUUoBmBVvRLy5hi4=; b=gHN1FKo/gLkrKUqlWBHqnu5ICW
+	tW5aD/4ifvUlVBvAHVylwxXEpvpguH59nQIX5H6WkFRNAcj6aR6TGR85v0cTHzvT2KQLdtR+GK0qP
+	fRmgw6YLsUmThl/Kj9O8bJ9c9WkikVf2myaGQ0AC+cbud5Kas7Rt2Zk23eOZRFygikkg32gTOx+QJ
+	xDbOzuShVX9VaDl6R7wJcm7vk5BygjkwJ7F5F48D0/KBW0pW3PE4W5wJ0FDsLUXA3MMZrLGY+7OVE
+	bOYGVzvlISO1vrDkKgNhrnErMIfjOL9QiGpY9qESwtpkw4aFLKPBBohz8/DBdxlQdUoGyPo7c4OqL
+	8iHdTHtg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sHqIG-00000000IvW-0Jyf;
+	Thu, 13 Jun 2024 19:39:32 +0000
+Date: Thu, 13 Jun 2024 12:39:32 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>,
+	yang@os.amperecomputing.com, linmiaohe@huawei.com,
+	muchun.song@linux.dev, osalvador@suse.de,
+	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
+	brauner@kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org,
+	hare@suse.de, linux-kernel@vger.kernel.org,
+	Zi Yan <zi.yan@sent.com>, linux-xfs@vger.kernel.org,
+	p.raghav@samsung.com, linux-fsdevel@vger.kernel.org, hch@lst.de,
+	gost.dev@samsung.com, cl@os.amperecomputing.com,
+	john.g.garry@oracle.com
+Subject: Re: [PATCH v7 06/11] filemap: cap PTE range to be created to allowed
+ zero fill in folio_map_range()
+Message-ID: <ZmtK9NcsITV0aoL8@bombadil.infradead.org>
+References: <20240607145902.1137853-7-kernel@pankajraghav.com>
+ <ZmnyH_ozCxr_NN_Z@casper.infradead.org>
+ <ZmqmWrzmL5Wx2DoF@bombadil.infradead.org>
+ <818f69fa-9dc7-4ca0-b3ab-a667cd1fb16d@redhat.com>
+ <ZmqqIrv4Fms-Vi6E@bombadil.infradead.org>
+ <b3fef638-4f4a-4688-8a39-8dfa4ae88836@redhat.com>
+ <ZmsP36zmg2-hgtak@bombadil.infradead.org>
+ <ZmsRC8YF-JEc_dQ0@casper.infradead.org>
+ <ZmsSZzIGCfOXPKjj@bombadil.infradead.org>
+ <ZmsS7JipzuBxJm92@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:841f:b0:4b7:ca3d:c0dd with SMTP id
- 8926c6da1cb9f-4b96417f130mr5610173.6.1718307506165; Thu, 13 Jun 2024 12:38:26
- -0700 (PDT)
-Date: Thu, 13 Jun 2024 12:38:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000852fce061acaa456@google.com>
-Subject: [syzbot] [io-uring?] KMSAN: uninit-value in io_req_cqe_overflow (3)
-From: syzbot <syzbot+e6616d0dc8ded5dc56d6@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmsS7JipzuBxJm92@casper.infradead.org>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-Hello,
+On Thu, Jun 13, 2024 at 04:40:28PM +0100, Matthew Wilcox wrote:
+> On Thu, Jun 13, 2024 at 08:38:15AM -0700, Luis Chamberlain wrote:
+> > On Thu, Jun 13, 2024 at 04:32:27PM +0100, Matthew Wilcox wrote:
+> > > On Thu, Jun 13, 2024 at 08:27:27AM -0700, Luis Chamberlain wrote:
+> > > > The case I tested that failed the test was tmpfs with huge pages (not
+> > > > large folios). So should we then have this:
+> > > 
+> > > No.
+> > 
+> > OK so this does have a change for tmpfs with huge pages enabled, do we
+> > take the position then this is a fix for that?
+> 
+> You literally said it was a fix just a few messages up thread?
+> 
+> Besides, the behaviour changes (currently) depending on whether
+> you specify "within_size" or "always".  This patch makes it consistent.
 
-syzbot found the following issue on:
+The quoted mmap(2) text made me doubt it, and I was looking for
+clarification. It seems clear now based on feedback the text does
+not apply to tmpfs with huge pages, and so we'll just annotate it
+as a fix for tmpfs with huge pages.
 
-HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=12980e41980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
-dashboard link: https://syzkaller.appspot.com/bug?extid=e6616d0dc8ded5dc56d6
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13526ca2980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=144e5256980000
+It makes sense to not apply, I mean, why *would* you assume you will
+have an extended range zeroed out range to muck around with beyond
+PAGE_SIZE just because huge pages were used when the rest of all other
+filesystem APIs count on the mmap(2) PAGE_SIZE boundary.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
+Thanks!
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e6616d0dc8ded5dc56d6@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in io_req_cqe_overflow+0x193/0x1c0 io_uring/io_uring.c:810
- io_req_cqe_overflow+0x193/0x1c0 io_uring/io_uring.c:810
- __io_submit_flush_completions+0x7eb/0x1be0 io_uring/io_uring.c:1464
- io_submit_flush_completions io_uring/io_uring.h:148 [inline]
- ctx_flush_and_put+0x16c/0x360 io_uring/io_uring.c:1055
- io_handle_tw_list+0x58b/0x5c0 io_uring/io_uring.c:1095
- tctx_task_work_run+0xf8/0x3d0 io_uring/io_uring.c:1155
- tctx_task_work+0x6d/0xc0 io_uring/io_uring.c:1173
- task_work_run+0x268/0x310 kernel/task_work.c:180
- ptrace_notify+0x304/0x320 kernel/signal.c:2404
- ptrace_report_syscall include/linux/ptrace.h:415 [inline]
- ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
- syscall_exit_work+0x14e/0x3e0 kernel/entry/common.c:173
- syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
- syscall_exit_to_user_mode+0x135/0x160 kernel/entry/common.c:218
- do_syscall_64+0xdc/0x1e0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- io_req_set_res io_uring/io_uring.h:215 [inline]
- io_recv_finish+0xf10/0x1560 io_uring/net.c:861
- io_recv+0x12ec/0x1ea0 io_uring/net.c:1175
- io_issue_sqe+0x429/0x22c0 io_uring/io_uring.c:1751
- io_poll_issue+0x32/0x40 io_uring/io_uring.c:1782
- io_poll_check_events io_uring/poll.c:331 [inline]
- io_poll_task_func+0x5f9/0x14d0 io_uring/poll.c:357
- io_handle_tw_list+0x23a/0x5c0 io_uring/io_uring.c:1083
- tctx_task_work_run+0xf8/0x3d0 io_uring/io_uring.c:1155
- tctx_task_work+0x6d/0xc0 io_uring/io_uring.c:1173
- task_work_run+0x268/0x310 kernel/task_work.c:180
- ptrace_notify+0x304/0x320 kernel/signal.c:2404
- ptrace_report_syscall include/linux/ptrace.h:415 [inline]
- ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
- syscall_exit_work+0x14e/0x3e0 kernel/entry/common.c:173
- syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
- syscall_exit_to_user_mode+0x135/0x160 kernel/entry/common.c:218
- do_syscall_64+0xdc/0x1e0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3877 [inline]
- slab_alloc_node mm/slub.c:3918 [inline]
- __do_kmalloc_node mm/slub.c:4038 [inline]
- __kmalloc+0x6e4/0x1060 mm/slub.c:4052
- kmalloc include/linux/slab.h:632 [inline]
- io_alloc_async_data+0xc0/0x220 io_uring/io_uring.c:1662
- io_msg_alloc_async io_uring/net.c:166 [inline]
- io_recvmsg_prep_setup io_uring/net.c:725 [inline]
- io_recvmsg_prep+0xbe8/0x1a20 io_uring/net.c:806
- io_init_req io_uring/io_uring.c:2135 [inline]
- io_submit_sqe io_uring/io_uring.c:2182 [inline]
- io_submit_sqes+0x1135/0x2f10 io_uring/io_uring.c:2335
- __do_sys_io_uring_enter io_uring/io_uring.c:3246 [inline]
- __se_sys_io_uring_enter+0x40f/0x3c80 io_uring/io_uring.c:3183
- __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3183
- x64_sys_call+0x2c0/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:427
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 PID: 5049 Comm: syz-executor107 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+  Luis
 
