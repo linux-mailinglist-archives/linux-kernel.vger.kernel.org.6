@@ -1,239 +1,155 @@
-Return-Path: <linux-kernel+bounces-212969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0F7906919
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF84C90691C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22225B22596
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:39:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8BADB23599
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0934414036A;
-	Thu, 13 Jun 2024 09:39:39 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC15514036F;
+	Thu, 13 Jun 2024 09:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lcSy/Oml"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D735A13F449
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FE513D529;
+	Thu, 13 Jun 2024 09:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718271578; cv=none; b=uQ+C383UnPgNZkJBXwmf6fqDSkMVF+4l+HlNorsQmMHCF+Es+aJp5RPkOLzmbIQ+n27Rz5avD+qOaLFjox59+15nuwZI79q+V/HSc8oi3dC0rDhD9Sdk1ppKDYB+rJ4+enoNmVu/poJ3TiQmvN3Rpj9Of6D1QrdKbo8v0XHe9iI=
+	t=1718271622; cv=none; b=tFJWmbAMwVaIO4eEFtOCNUD39l1/idpgMk95PAWVE1E5YEXjcUnBS0eIgmGvVGHoWNxqSaa38rnuZBUhPEjxJvLudqj3j3v8pQdYAmn/flK3tjRt+jn/wyJPevXpjstpOJ+ty8R08X8eBadmudHTsCmh1VdDBwnbe7SRqQUi8+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718271578; c=relaxed/simple;
-	bh=iLQX6wuI1C08F/UQlPVe2qnRK6e+oxmbatREJ02+xTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RtWdufP69PbSlGGS4VsZmK7mZqngTI/feWurp9QwmEBYz0XpKHxbBrPLpoh7AKkmXKVztY2I4rqpT+7ACLUHnnNmmuEatTyTzZ8wjZPSOBMANivGn8IRNU4Xio+vzXoeKmCFCz+7QH5RTXDMdttQafgkVdmRBvQcp2/egKuamo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sHgvD-0002DT-Gy; Thu, 13 Jun 2024 11:39:07 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sHgvC-001zsF-Uc; Thu, 13 Jun 2024 11:39:06 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sHgvC-008SNC-2h;
-	Thu, 13 Jun 2024 11:39:06 +0200
-Date: Thu, 13 Jun 2024 11:39:06 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, p.zabel@pengutronix.de,
-	abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, marex@denx.de,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/5] clk: imx: clk-audiomix: Add reset controller
-Message-ID: <20240613093906.trc2rahodmhqd4lt@pengutronix.de>
-References: <1718243482-18552-1-git-send-email-shengjiu.wang@nxp.com>
- <1718243482-18552-3-git-send-email-shengjiu.wang@nxp.com>
- <20240613081949.yty3hznopp3u2qwq@pengutronix.de>
- <CAA+D8AMc9=bzHKNXyMH5LLerr2kgmKTxacP=1LhocTHgP9Thfw@mail.gmail.com>
+	s=arc-20240116; t=1718271622; c=relaxed/simple;
+	bh=vMaFPwlw0HLYH4RGrie7jpHqjxtGpMU+nm3oIZ2lvow=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=BecGR2TYdpE44NGugZOtEYLDhBX3LJto+ktGF9q+wKw+oJK1svYHNB0ZeeRN2tOdLeQJnLcF4QZkSa2PY4FclfUssJB7/S5siTnsHL2xY9NBXhQx39wZN880vXJL2kE6npIqSbQaxtIyG8Uai15DotmpIFf836deqmLeqo8ds/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lcSy/Oml; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718271618;
+	bh=vMaFPwlw0HLYH4RGrie7jpHqjxtGpMU+nm3oIZ2lvow=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=lcSy/OmlmhheqOSRTid2O6w+F/ISxNDi3TeEZG6QZLOnLb9n06ULi7foDiNaym8Oz
+	 2evCFFkIasc5tSwR8LYfT7jl6GTtZIQP8qi51e4lvBcVc23SrlZC7lNK56NLX3gSQl
+	 Z6ieimKTy5EC3QKCECZ6rdahc0JMZzTsBoHEiIRZgpz4GZLbCJ8X9OIQwAlwZfciIw
+	 83wlfix2vMrQc1QXqs0GP8yhjw7wPFQZQoHFMl8IEM5zDsGlbz/R93//THwKEaUhir
+	 H5sH+lxNDkUCYK7wt4CZnAsE9a3hgwwTEuDlA2SMj/8LQJkFsZbd7VoZzer+EeqU/4
+	 f5+jbkuwO/6AA==
+Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id DC4943781139;
+	Thu, 13 Jun 2024 09:40:15 +0000 (UTC)
+Message-ID: <ade2de8f-8f63-45fb-a01a-096d048dd971@collabora.com>
+Date: Thu, 13 Jun 2024 14:40:52 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAA+D8AMc9=bzHKNXyMH5LLerr2kgmKTxacP=1LhocTHgP9Thfw@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ Anup Patel <anup@brainfault.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>, kernel@collabora.com,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] selftests: kvm: replace exit() with
+ ksft_exit_fail_msg()
+To: Sean Christopherson <seanjc@google.com>
+References: <20240612104500.425012-1-usama.anjum@collabora.com>
+ <20240612104500.425012-2-usama.anjum@collabora.com>
+ <Zmnwhx0Y0qh0x03J@google.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <Zmnwhx0Y0qh0x03J@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 24-06-13, Shengjiu Wang wrote:
-> On Thu, Jun 13, 2024 at 4:20 PM Marco Felsch <m.felsch@pengutronix.de> wrote:
-> >
-> > On 24-06-13, Shengjiu Wang wrote:
-> > > Audiomix block control can be a reset controller for
-> > > Enhanced Audio Return Channel (EARC), which is one of
-> > > modules in this audiomix subsystem.
-> > >
-> > > The reset controller is supported by the auxiliary device
-> > > framework.
-> > >
-> > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > >  drivers/clk/imx/Kconfig               |  1 +
-> > >  drivers/clk/imx/clk-imx8mp-audiomix.c | 63 +++++++++++++++++++++++++++
-> > >  2 files changed, 64 insertions(+)
-> > >
-> > > diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-> > > index 6da0fba68225..9edfb030bea9 100644
-> > > --- a/drivers/clk/imx/Kconfig
-> > > +++ b/drivers/clk/imx/Kconfig
-> > > @@ -81,6 +81,7 @@ config CLK_IMX8MP
-> > >       tristate "IMX8MP CCM Clock Driver"
-> > >       depends on ARCH_MXC || COMPILE_TEST
-> > >       select MXC_CLK
-> > > +     select AUXILIARY_BUS
-> >
-> >         select AUXILIARY_BUS if RESET_CONTROLLER
-> 
-> Do we really need this change?
-> 
-> I checked other drivers like MCHP_CLK_MPFS, but they don't have
-> this condition also.
+Hi Sean,
 
-Since you made the whole reset optional I would like to pull reset
-dependency optional as well e.g. pulling it only if you really use it.
-In the end the RESET_CONTROLLER is enabled most the time.
+Thank you for replying in detail. I wasn't aware of true origin of these tests.
 
-> > >       help
-> > >           Build the driver for i.MX8MP CCM Clock Driver
-> > >
-> > > diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > index b381d6f784c8..517b1f88661b 100644
-> > > --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > @@ -5,6 +5,7 @@
-> > >   * Copyright (C) 2022 Marek Vasut <marex@denx.de>
-> > >   */
-> > >
-> > > +#include <linux/auxiliary_bus.h>
-> > >  #include <linux/clk-provider.h>
-> > >  #include <linux/device.h>
-> > >  #include <linux/io.h>
-> > > @@ -13,6 +14,7 @@
-> > >  #include <linux/of.h>
-> > >  #include <linux/platform_device.h>
-> > >  #include <linux/pm_runtime.h>
-> > > +#include <linux/slab.h>
-> >                 ^
-> > This is an unrelated change.
+On 6/13/24 12:01 AM, Sean Christopherson wrote:
+> On Wed, Jun 12, 2024, Muhammad Usama Anjum wrote:
+>> The KSFT_FAIL, exit code must be used instead of exit(254).
 > 
-> This is for the fix of this issue
-> 
-> https://lore.kernel.org/oe-kbuild-all/202405201844.zf7UkDmq-lkp@intel.com/
+> This needs more justification.  KVM selftests have worked just fine for 6+ years
+> using exit(254), so stating they "must" use KSFT_FAIL is obviously not true.
+The selftests scripts read the exit code and mark the test status
+pass/fail. Maybe selftests run_tests target isn't being used or this code
+path wasn't being triggered.
 
-Thanks for the link.
-
-Regards,
-  Marco
-
-> Best regards
-> Shengjiu wang
 > 
-> >
-> > Regards,
-> >   Marco
-> >
-> > >
-> > >  #include <dt-bindings/clock/imx8mp-clock.h>
-> > >
-> > > @@ -217,6 +219,63 @@ struct clk_imx8mp_audiomix_priv {
-> > >       struct clk_hw_onecell_data clk_data;
-> > >  };
-> > >
-> > > +#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
-> > > +
-> > > +static void clk_imx8mp_audiomix_reset_unregister_adev(void *_adev)
-> > > +{
-> > > +     struct auxiliary_device *adev = _adev;
-> > > +
-> > > +     auxiliary_device_delete(adev);
-> > > +     auxiliary_device_uninit(adev);
-> > > +}
-> > > +
-> > > +static void clk_imx8mp_audiomix_reset_adev_release(struct device *dev)
-> > > +{
-> > > +     struct auxiliary_device *adev = to_auxiliary_dev(dev);
-> > > +
-> > > +     kfree(adev);
-> > > +}
-> > > +
-> > > +static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev,
-> > > +                                                      struct clk_imx8mp_audiomix_priv *priv)
-> > > +{
-> > > +     struct auxiliary_device *adev __free(kfree) = NULL;
-> > > +     int ret;
-> > > +
-> > > +     if (!of_property_present(dev->of_node, "#reset-cells"))
-> > > +             return 0;
-> > > +
-> > > +     adev = kzalloc(sizeof(*adev), GFP_KERNEL);
-> > > +     if (!adev)
-> > > +             return -ENOMEM;
-> > > +
-> > > +     adev->name = "reset";
-> > > +     adev->dev.parent = dev;
-> > > +     adev->dev.release = clk_imx8mp_audiomix_reset_adev_release;
-> > > +
-> > > +     ret = auxiliary_device_init(adev);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     ret = auxiliary_device_add(adev);
-> > > +     if (ret) {
-> > > +             auxiliary_device_uninit(adev);
-> > > +             return ret;
-> > > +     }
-> > > +
-> > > +     return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_unregister_adev,
-> > > +                                     no_free_ptr(adev));
-> > > +}
-> > > +
-> > > +#else /* !CONFIG_RESET_CONTROLLER */
-> > > +
-> > > +static int clk_imx8mp_audiomix_reset_controller_register(struct clk_imx8mp_audiomix_priv *priv)
-> > > +{
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +#endif /* !CONFIG_RESET_CONTROLLER */
-> > > +
-> > >  static void clk_imx8mp_audiomix_save_restore(struct device *dev, bool save)
-> > >  {
-> > >       struct clk_imx8mp_audiomix_priv *priv = dev_get_drvdata(dev);
-> > > @@ -337,6 +396,10 @@ static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
-> > >       if (ret)
-> > >               goto err_clk_register;
-> > >
-> > > +     ret = clk_imx8mp_audiomix_reset_controller_register(dev, priv);
-> > > +     if (ret)
-> > > +             goto err_clk_register;
-> > > +
-> > >       pm_runtime_put_sync(dev);
-> > >       return 0;
-> > >
-> > > --
-> > > 2.34.1
-> > >
-> > >
-> > >
+> I'm not personally opposed to switching to KSFT_FAIL, but it is a potentially
+> breaking change.  E.g. some of Google's internal test infrastructure explicitly
+> relies on the exit code being 254.  I don't _think_ that infrastructure interacts
+> with KVM selftests, nor do I think that forcing upstream KVM selftests to sacrifice
+> TAP compliance just to play nice with someone's crusty test infrastructure is a
+> good tradeoff, but this and all of the TAP compliance work needs to be done with
+> more thought and care.
+You have given your perspective from KVM selftest suite perspective. I've
+been thinking from kselftests subsystem perspective that how TAP compliance
+and exit codes help the entire subsystem. It is understandable from KVM
+suite's perspective as not all the suites are compliant and work the same.
+
 > 
+>> The 254 code here seems like anciant relic.
+> 
+> As above, AFAICT it comes from Google's internal test infrastructure (KVM selftests
+> came from Google).
+> 
+>> Its even better if we use ksft_exit_fail_msg() which will print out "Bail
+>> out" meaning the test exited without completing. This string is TAP protocol
+>> specific.
+> 
+> This is debatable and not obviously correct.  The documentation says:
+> 
+>   Bail out!
+>   As an emergency measure a test script can decide that further tests are
+>   useless (e.g. missing dependencies) and testing should stop immediately. In
+>   that case the test script prints the magic words
+> 
+> which suggests that a test should only emit "Bail out!" if it wants to stop
+> entirely.  We definitely don't want KVM selftests to bail out if a TEST_ASSERT()
+> fails in one testcase.
+But KVM tests are bailing out if assert fails, exit(254) is being called
+which stops the further execution of the test cases. It is same as
+ksft_exit_fail_msg() behavior.
+
+> 
+>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>> ---
+>>  tools/testing/selftests/kvm/lib/assert.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/tools/testing/selftests/kvm/lib/assert.c b/tools/testing/selftests/kvm/lib/assert.c
+>> index 33651f5b3a7fd..db648a7ac429b 100644
+>> --- a/tools/testing/selftests/kvm/lib/assert.c
+>> +++ b/tools/testing/selftests/kvm/lib/assert.c
+>> @@ -87,7 +87,7 @@ test_assert(bool exp, const char *exp_str,
+>>  
+>>  		if (errno == EACCES)
+>>  			ksft_exit_skip("Access denied - Exiting\n");
+>> -		exit(254);
+>> +		ksft_exit_fail_msg("\n");
+>>  	}
+>>  
+>>  	return;
+>> -- 
+>> 2.39.2
+>>
+> 
+
+-- 
+BR,
+Muhammad Usama Anjum
 
