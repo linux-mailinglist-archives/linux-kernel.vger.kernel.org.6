@@ -1,92 +1,76 @@
-Return-Path: <linux-kernel+bounces-213742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 782BE9079C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:24:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0AD19079C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 789711C24E0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:24:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51EF7285197
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F60014A098;
-	Thu, 13 Jun 2024 17:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE8214A0A4;
+	Thu, 13 Jun 2024 17:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1QRJO1G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Gm20mQi3"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16C31494D1;
-	Thu, 13 Jun 2024 17:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2873149C4E;
+	Thu, 13 Jun 2024 17:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718299433; cv=none; b=Vm47R162DGkKZzt+uikhX9NHP1vurO8cSLvlCINJiNtepn54gLjfm7Pb4msU5kw375sCXgQ4rsWyQ+Bq0GrXpHnYmWiWBEfL1hoGk4vlOCGz4mqSf1/26Ti1urG2Lz8BrHlN8emmJCCGrcTHpTI7rS3SdxYUuvlHd/8qb/iVQ2E=
+	t=1718299623; cv=none; b=s28eVgazIEAPYh8gDYFl1hz2yUExx6F75Sw4eKvSe/+fwojEGmMDJGkxlzYBrvC7VUKiWvtBh+fQ/+9+AEAnKb9+qsT3V6zpKA6ba/gWbX8QLqmaDsXP3tDjcZb4YvCJg7cYth4rejhgjRIKIIDFBaWmvfXs+9ib5lwfoNTnpwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718299433; c=relaxed/simple;
-	bh=O4ZPjgzbK20CgU+5FqcqMSQLxlhtt5724JpuFdd2XeI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bhu15MpFaM/Vu8PC3pR6tydw9VbOYY2NKnjyC12d5WWlVhJ+lNf8uaZdNlDW9eapt7OQDcrpk/Xv15/Hw8bqQLYBJYombQrQDuQiN93+Ah21YWj9EAOWXOICL912sFeahTIxiQyqshqruW7KBLpdca6niSqrVFKCEx35QQSDvnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N1QRJO1G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 760EAC2BBFC;
-	Thu, 13 Jun 2024 17:23:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718299433;
-	bh=O4ZPjgzbK20CgU+5FqcqMSQLxlhtt5724JpuFdd2XeI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=N1QRJO1GntK/qeUS7BD0up/CJNZigDlEkid5DUwOa6vhEIgj0pvUfkVub1erNZaYr
-	 W9F9aikeaqGd/CpCuX1oiBbHh99snxpBWfUHJF3VphW34mDb/jDsJ/yy2HkPlZ+4nI
-	 eJh/Fu1sA8AK1Us06pHQZRK3SVc1Wrsp9ZVdlBdXM9IIkWEcyiBysXgAJbOO8nxU05
-	 UYzyF3FW0KiqEcrAlglebMjMzBs9TCAmxdmU0CyTujeXCK4M0GWFUzheoVwwxK0ZPr
-	 y417G8akl6lgkZP7p2AJpAT32H7lYip6TwmZqm2SxO9ONVSu6FxjptPiHvscZpmUcw
-	 2KG5MCnbL3OuQ==
-From: SeongJae Park <sj@kernel.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: Honggyu Kim <honggyu.kim@sk.com>,
-	damon@lists.linux.dev,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Gregory Price <gregory.price@memverge.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	42.hyeyoo@gmail.com,
-	art.jeongseob@gmail.com,
-	kernel_team@skhynix.com
-Subject: Re: [PATCH v5 8/8] Docs/.../mm/damon: add more damos actions
-Date: Thu, 13 Jun 2024 10:23:49 -0700
-Message-Id: <20240613172350.63407-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240613140729.27177-1-sj@kernel.org>
-References: 
+	s=arc-20240116; t=1718299623; c=relaxed/simple;
+	bh=nddNo4pVZQKRxkA99bQpiH6XyMZVAKFtSQBZLXdSTg8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a5fiYHyR9bFYg2x2epxQjRaRm/5FSsF0DDbrCH0FG5zQ+N71r7CI2mgcvdOnQ00A09gO546do5rt4DV1YPfrSEd+SXqe16lRiRYfl1pAcTdhYVk9XUaM0CTh/sXCeoBs1pa2VBO5tpeOpZH3PRE6H0uwdSYF2L75A6R7D7tYYU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Gm20mQi3; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=YkoTlrKk96JiysjilnH2KkZACVtc7BHMMJmEGj/9+tA=; b=Gm20mQi3cu58Pik6MaCIi1cc2U
+	aDLtCB4QyoArahZOsNhudBhMIh4N9VlDN3YMCJdsTB2j7FUDqwuH7mO1J+G7S0gDy6GGhZI9Y+dUI
+	e2UpiLGEBNMkT7xLUvyVvElGgPgyT/VyZUXff7d23dtktJHrgVopBFLmIO4EH6uqpXl0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sHoDt-00HabD-G9; Thu, 13 Jun 2024 19:26:53 +0200
+Date: Thu, 13 Jun 2024 19:26:53 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: =?iso-8859-1?Q?Jo=E3o?= Rodrigues <jrodrigues@ubimet.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"open list:ETHERNET PHY LIBRARY" <netdev@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 0/3] net: phy: dp83867: add cable diag support
+Message-ID: <a0690702-9781-47c9-b7a7-06ab52707c40@lunn.ch>
+References: <20240613145153.2345826-1-jrodrigues@ubimet.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240613145153.2345826-1-jrodrigues@ubimet.com>
 
-On Thu, 13 Jun 2024 07:07:29 -0700 SeongJae Park <sj@kernel.org> wrote:
+> The TDR reporting in PD83867 is divided into segments (from which a
+> cable length can be extracted). Because the reported lengths do not come
+> in regular intervals, when doing cable-test-tdr from ethtool, the value
+> of the reflection is reported, but not the length at which occurred
+> (even though the PHY reports it).
 
-> Hi Honggyu,
-> 
-> On Thu, 13 Jun 2024 22:20:55 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
-> 
-> > This patch adds damon description for "migrate_hot" and "migrate_cold"
-> > actions for both usage and design documents as long as a new
-> > "target_nid" knob to set the migration target node.
-[...]
-> Except the DAMON debugfs interface section, this patch looks good to me.
+So what does the output look like?
 
-One more thing.  I'd prefer making the subject more specific.  What about,
-"Docs/damon: document damos_migrate_{hot,cold}"?
-
-
-Thanks,
-SJ
-
-[...]
+   Andrew
 
