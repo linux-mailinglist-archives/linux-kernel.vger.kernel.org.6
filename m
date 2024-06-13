@@ -1,168 +1,204 @@
-Return-Path: <linux-kernel+bounces-213178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB129906F0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:15:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81DBA906F51
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:18:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B57E51C23020
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:15:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05AFDB28C46
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F21A14600E;
-	Thu, 13 Jun 2024 12:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940DE1465BA;
+	Thu, 13 Jun 2024 12:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cQDMXgFw"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D1csXwly"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E4B145B14;
-	Thu, 13 Jun 2024 12:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EAA1465AC
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718280781; cv=none; b=cXH1Xto+wdrFoBJaO/K4XY7+E1pQDobsmuYfl2wu9Gil0jUEpdf98IJmE/h0o//R0ecAlKcmWlgXqFCjR74KmTx1v9Co1+f921hkR9cXmyJiKzcC5Wq+FGKdCOA7WgYfpSgmvHwVqLShDm70F979ZN6FHcwFjfnh6yhPqj3mSD8=
+	t=1718280800; cv=none; b=cw1wj+aYvVWLvsmXtti8X4A2QafGzuw8oYYUWMjuzKkLovJlKgCqI3Cz243onolmXhI9T7XYl3YlPZEGXzQ0zOrJTqRv2gbdlIqnTi0L9iFyOQO5qjlSh0M5Q9Yx7VUfHQRCpDQenyuuu9sz9UeE3DxW/pWaoTqs+iROOLjWN8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718280781; c=relaxed/simple;
-	bh=N7P+gU/s94nGXBEJRTvcdalH1eFK202F8UvHoBOWizI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Gx5PjhfNyl07zdL0JL+Q3bAvdUauBILwZIFQn16b+HSWWaQd+T4NNYOcwtrENz1LeeKMhUlPr0PsHX4iwvAidr1H3S4L24WV7WQoNBW/JxTy4W1mrFRjtFToPfNQ4VWmM2ce3oyRsRsWhO62Y9m/t4sbLWLXecWaJ7qf7m9QjMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cQDMXgFw; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DBtWjJ026221;
-	Thu, 13 Jun 2024 12:12:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:mime-version:content-type
-	:content-transfer-encoding; s=corp-2023-11-20; bh=Mv2EgAb/+V5uww
-	BsfpmmMkCgcePGI7KBIXi9vy+7NC4=; b=cQDMXgFwEZ7CfpKwcJCPs6DYe/gAEg
-	o7XoJO1txYo0NLSC7rh72GHnsp+ipj0pu9IQnk+8LoZinJYiP+jt5IzxArea/HP5
-	Q8aGB3Mts/xwCJ4Bdz2WPmJD1t1hXob1MPq/YD+7EphtaIQLAWXfFyhyug36l0UB
-	h4zWHgn/f5djvs4iFO9x6hexYGzHYN9RURHT1xZFDri9LkPyBgLx08NEvHiwNaGi
-	dlm2BONMoBE8XEHaYoSL+SWlnB4gJ1T7hxQomdd94ZkNn6T8+Bul5o+6fl+c0Nko
-	3rkx8vNMAu2b1UqKEhXpsz4Suew3cG7bsdslClRVY2nk8BTcBzCd6ojA==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ymh7fs99f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Jun 2024 12:12:58 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45DBDeYW027293;
-	Thu, 13 Jun 2024 12:12:57 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3yncdw4ymf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Jun 2024 12:12:57 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 45DC3vvG023155;
-	Thu, 13 Jun 2024 12:12:57 GMT
-Received: from aakhoje-ol.in.oracle.com (dhcp-10-191-238-148.vpn.oracle.com [10.191.238.148])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3yncdw4yj1-1;
-	Thu, 13 Jun 2024 12:12:56 +0000
-From: Anand Khoje <anand.a.khoje@oracle.com>
-To: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc: anand.a.khoje@oracle.com, rama.nichanamatlu@oracle.com,
-        manjunath.b.patil@oracle.com
-Subject: [PATCH v2] RDMA/mlx5 : Reclaim max 50K pages at once
-Date: Thu, 13 Jun 2024 17:42:52 +0530
-Message-ID: <20240613121252.93315-1-anand.a.khoje@oracle.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1718280800; c=relaxed/simple;
+	bh=1yK9eI1MQbvCCxjWD8QAM9mmf5vjMBn5EqEjdIFsiv8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QOFxvv2+iPMWYHVATIiV139bF0H+mlca5B5sEbgtEd7eRnBXzm/5OJRdlgkZcI/sE1Tc/MTOa63M/IMQiTHrPEYJOvlYwGXwJUxtpcfYfQ7K2vpEMSSj1oEtdRgLzAQj+RYL2xnmMNHkC0DtDASjYXF6YExEVWpDc/wwejs8bYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D1csXwly; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6f253a06caso120498566b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 05:13:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718280797; x=1718885597; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pXbNy8kHfEp0b79ontwosVP2eSf4cO0jv7KHuOVa8LI=;
+        b=D1csXwly7pP8tkXQOw4mcFUV3gYh5cbUb62Dl1TlKMrD7LBgKbcDcoWEDHk7Wsg2I5
+         Syco5/IFU3uTCwVZh0pIGwjjpXZn0kTNf5q2Sm/8aIiPVV3h6b/0rRPsxCdVZKWL3zE5
+         KAoiNuJjRtoYqkiXrzyxohOKqkUW9jyQzpcUn8Ni2jX3v3g7g6ySZdFWXswsMgE87RK5
+         a36egJh7mvmE4UHsXLbVYIa/0QhI0Vf0YCve8AQKiCydGJAxIQRg30ItmkdDI2tKdQ8b
+         dRLKZ/S8u2LVno6S+kFzMqIQJlcGpW85zqvW4jpleGF0OTd7LqtQPGT+j1s0HWsppuWe
+         jhSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718280797; x=1718885597;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pXbNy8kHfEp0b79ontwosVP2eSf4cO0jv7KHuOVa8LI=;
+        b=rnox6G8KPTBDI4nBzTPgTtay4p2bWOPvXgEaqYeijSQVt1Fk27iFWl0NCmW41U0HAh
+         tXDjnIuVLaYMlf37f3bzJM1DUJH8rnpBsja0PO+a7wVW6c6aLno1mgG8wvRJdtMX2Lvp
+         88Ez9JYPyUW/quU7gYDm6OLkV05kiL2e/09EyIK4Z1EOMQtOW1c828EqtU9FbacW8cXe
+         1bg/brTU1BGESfgI7zhLilOcaK7CvleoMrxwqqFoWO4hy56wZr+hMfWI7u3gASDDhUUf
+         oPtAbmS1ijwhKc3Ga9Ro5zqEingfaj15fwq2adcHB5zSi01j47p8o1zip20+3AMKRGcI
+         Skuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPL2UcNecNHLU8zHUN47JBut3fq2f7VgfgdfT1jPS90LyXydRGVadKqhQ78d+FQJIgv5UvB5gCJul8mfc1/Oewsort0+4hHnzHdOIN
+X-Gm-Message-State: AOJu0YyFa9RT4+fzBzjDiPZtj0HOdbUZgsQit9IGNLu+cHpi7O7vnF4B
+	vsRonpsbASwTodPeqhmWOukSgquKokuNg8AnKlKeSrSDxGDLwNCkY+p41KERRok=
+X-Google-Smtp-Source: AGHT+IFabj44+6/AUOqc3ytd5ytWDpFi1xvXmXHvZaxmZgT9uxNGhLzwBao1fjRJml9g9YwbWcn8Ew==
+X-Received: by 2002:a17:906:fe0b:b0:a6f:4f26:fe80 with SMTP id a640c23a62f3a-a6f4f270012mr298512566b.41.1718280797113;
+        Thu, 13 Jun 2024 05:13:17 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f985dfsm65535166b.192.2024.06.13.05.13.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 05:13:16 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Thu, 13 Jun 2024 13:13:05 +0100
+Subject: [PATCH] ASoC: q6apm-lpass-dai: close graph on prepare errors
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_04,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
- mlxlogscore=999 bulkscore=0 suspectscore=0 spamscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2406130088
-X-Proofpoint-GUID: 7IGtM-HDp_eZ3waPK8O67jg24v2i6zYO
-X-Proofpoint-ORIG-GUID: 7IGtM-HDp_eZ3waPK8O67jg24v2i6zYO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240613-q6apm-fixes-v1-1-d88953675ab3@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAFDiamYC/x3LQQ6DMAxE0asgr2uJBJrSXgWxMKkBL0ipjRAS4
+ u4NXf4ZvQOMVdjgVRygvInJJ+VwtwLiRGlklHdu8KWvy+Aq/AZaZhxkZ8NAz9jUzd0/XAVZ9GS
+ MvVKK02VmspX1Ohblv8hr253nD2nhM3d2AAAA
+To: Banajit Goswami <bgoswami@quicinc.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: dmitry.baryshkov@linaro.org, alsa-devel@alsa-project.org, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3465;
+ i=srinivas.kandagatla@linaro.org; h=from:subject:message-id;
+ bh=1yK9eI1MQbvCCxjWD8QAM9mmf5vjMBn5EqEjdIFsiv8=;
+ b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBmauJbajWD5SFP302Qlyf+2BL5UONgysacwGM99
+ PIDRaDoYVyJATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZmriWwAKCRB6of1ZxzRV
+ N9MBB/0ZfAaWAL/u+zAa+VrxVkvWJ9/5N7h4ERWABTmonxDvhxOdcMDe1kqqMax9yr1KI5YZzJ0
+ p9Vl1Q5YVVATNzkCPaKZpOlHVJ5Zo40dNt+9gtiegZaM4NHj9uCiAtdRxdCyvSBkUCnLJnFRraP
+ yylqeBw8Yv2FPVHzHtfhx4yMj9pzLtcTp7AN1Hn3DHzF4xxe+omC1syBWtAAcr8MaxAehTLxscp
+ 5XwuHxd5Z+PcbxWHhTOw/0WmMrt7/Zqxzr1O2zzHbzdXTsczNUoWpgBSCpgWISQu2pEhthogUmz
+ oGJRMEWpuh3RxZsuf51owwT6sOkHgrDgvKZ7CQvGYLZSUXLV
+X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp;
+ fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
 
-In non FLR context, at times CX-5 requests release of ~8 million FW pages.
-This needs humongous number of cmd mailboxes, which to be released once
-the pages are reclaimed. Release of humongous number of cmd mailboxes is
-consuming cpu time running into many seconds. Which with non preemptible
-kernels is leading to critical process starving on that cpu’s RQ.
-To alleviate this, this change restricts the total number of pages
-a worker will try to reclaim maximum 50K pages in one go.
-The limit 50K is aligned with the current firmware capacity/limit of
-releasing 50K pages at once per MLX5_CMD_OP_MANAGE_PAGES + MLX5_PAGES_TAKE
-device command.
+There is an issue around with error handling and graph management with
+the exising code, none of the error paths close the graph, which result in
+leaving the loaded graph in dsp, however the driver thinks otherwise.
 
-Our tests have shown significant benefit of this change in terms of
-time consumed by dma_pool_free().
-During a test where an event was raised by HCA
-to release 1.3 Million pages, following observations were made:
+This can have a nasty side effect specially when we try to load the same
+graph to dsp, dsp returns error which leaves the board with no sound and
+requires restart.
 
-- Without this change:
-Number of mailbox messages allocated was around 20K, to accommodate
-the DMA addresses of 1.3 million pages.
-The average time spent by dma_pool_free() to free the DMA pool is between
-16 usec to 32 usec.
-           value  ------------- Distribution ------------- count
-             256 |                                         0
-             512 |@                                        287
-            1024 |@@@                                      1332
-            2048 |@                                        656
-            4096 |@@@@@                                    2599
-            8192 |@@@@@@@@@@                               4755
-           16384 |@@@@@@@@@@@@@@@                          7545
-           32768 |@@@@@                                    2501
-           65536 |                                         0
+Fix this by properly closing the graph when we hit errors between
+open and close.
 
-- With this change:
-Number of mailbox messages allocated was around 800; this was to
-accommodate DMA addresses of only 50K pages.
-The average time spent by dma_pool_free() to free the DMA pool in this case
-lies between 1 usec to 2 usec.
-           value  ------------- Distribution ------------- count
-             256 |                                         0
-             512 |@@@@@@@@@@@@@@@@@@                       346
-            1024 |@@@@@@@@@@@@@@@@@@@@@@                   435
-            2048 |                                         0
-            4096 |                                         0
-            8192 |                                         1
-           16384 |                                         0
-
-Signed-off-by: Anand Khoje <anand.a.khoje@oracle.com>
+Fixes: 30ad723b93ad ("ASoC: qdsp6: audioreach: add q6apm lpass dai support")
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
-Changes in v2:
- - In v1, CPUs were yielded if more than 2 msec are spent in
-   mlx5_free_cmd_msg(). The approach to limit the time spent is changed
-   in this version.
----
- drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ sound/soc/qcom/qdsp6/q6apm-lpass-dais.c | 32 ++++++++++++++++++++------------
+ 1 file changed, 20 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-index 1b38397..b1cf97d 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-@@ -482,12 +482,16 @@ static int reclaim_pages(struct mlx5_core_dev *dev, u32 func_id, int npages,
- 	return err;
+diff --git a/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c b/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
+index 68a38f63a2db..66b911b49e3f 100644
+--- a/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
++++ b/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
+@@ -141,14 +141,17 @@ static void q6apm_lpass_dai_shutdown(struct snd_pcm_substream *substream, struct
+ 	struct q6apm_lpass_dai_data *dai_data = dev_get_drvdata(dai->dev);
+ 	int rc;
+ 
+-	if (!dai_data->is_port_started[dai->id])
+-		return;
+-	rc = q6apm_graph_stop(dai_data->graph[dai->id]);
+-	if (rc < 0)
+-		dev_err(dai->dev, "fail to close APM port (%d)\n", rc);
++	if (dai_data->is_port_started[dai->id]) {
++		rc = q6apm_graph_stop(dai_data->graph[dai->id]);
++		dai_data->is_port_started[dai->id] = false;
++		if (rc < 0)
++			dev_err(dai->dev, "fail to close APM port (%d)\n", rc);
++	}
+ 
+-	q6apm_graph_close(dai_data->graph[dai->id]);
+-	dai_data->is_port_started[dai->id] = false;
++	if (dai_data->graph[dai->id]) {
++		q6apm_graph_close(dai_data->graph[dai->id]);
++		dai_data->graph[dai->id] = NULL;
++	}
  }
  
-+#define MAX_RECLAIM_NPAGES -50000
- static void pages_work_handler(struct work_struct *work)
- {
- 	struct mlx5_pages_req *req = container_of(work, struct mlx5_pages_req, work);
- 	struct mlx5_core_dev *dev = req->dev;
- 	int err = 0;
+ static int q6apm_lpass_dai_prepare(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
+@@ -163,8 +166,10 @@ static int q6apm_lpass_dai_prepare(struct snd_pcm_substream *substream, struct s
+ 		q6apm_graph_stop(dai_data->graph[dai->id]);
+ 		dai_data->is_port_started[dai->id] = false;
  
-+	if (req->npages < MAX_RECLAIM_NPAGES)
-+		req->npages = MAX_RECLAIM_NPAGES;
-+
- 	if (req->release_all)
- 		release_all_pages(dev, req->func_id, req->ec_function);
- 	else if (req->npages < 0)
+-		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
++		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+ 			q6apm_graph_close(dai_data->graph[dai->id]);
++			dai_data->graph[dai->id] = NULL;
++		}
+ 	}
+ 
+ 	/**
+@@ -183,26 +188,29 @@ static int q6apm_lpass_dai_prepare(struct snd_pcm_substream *substream, struct s
+ 
+ 	cfg->direction = substream->stream;
+ 	rc = q6apm_graph_media_format_pcm(dai_data->graph[dai->id], cfg);
+-
+ 	if (rc) {
+ 		dev_err(dai->dev, "Failed to set media format %d\n", rc);
+-		return rc;
++		goto err;
+ 	}
+ 
+ 	rc = q6apm_graph_prepare(dai_data->graph[dai->id]);
+ 	if (rc) {
+ 		dev_err(dai->dev, "Failed to prepare Graph %d\n", rc);
+-		return rc;
++		goto err;
+ 	}
+ 
+ 	rc = q6apm_graph_start(dai_data->graph[dai->id]);
+ 	if (rc < 0) {
+ 		dev_err(dai->dev, "fail to start APM port %x\n", dai->id);
+-		return rc;
++		goto err;
+ 	}
+ 	dai_data->is_port_started[dai->id] = true;
+ 
+ 	return 0;
++err:
++	q6apm_graph_close(dai_data->graph[dai->id]);
++	dai_data->graph[dai->id] = NULL;
++	return rc;
+ }
+ 
+ static int q6apm_lpass_dai_startup(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
+
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240613-q6apm-fixes-6a9c84852713
+
+Best regards,
 -- 
-1.8.3.1
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
 
