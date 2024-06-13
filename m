@@ -1,130 +1,193 @@
-Return-Path: <linux-kernel+bounces-213643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15229907841
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:26:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E49FF907843
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26F781C23D3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:26:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEAC61C2420D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA801474A8;
-	Thu, 13 Jun 2024 16:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794BE12D757;
+	Thu, 13 Jun 2024 16:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K6qjxhOj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fcPvUC5W"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AC2381B0;
-	Thu, 13 Jun 2024 16:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4401428EF
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718295960; cv=none; b=X+tatzKgEhchV18uOMCYVU+rVk3tNgFSYYXrNVS2OEe6U9s6wdLSkhsVLjPj2WxX8aFavhTs0FlOGNjihfRElzNzHpW3oOYgqfzXhF1D7xh+KM8uGns+EuHUnNTjyqh5SJsqOXS+S5K+PDhUq5F0sB9pUSrfkYxtYUXqf5XkqT0=
+	t=1718296004; cv=none; b=cbyDZ1PxiQL9aQw4v+oPlgmALrjxMhxMZ1r7cSNv8/4lJkZuEJ18ukHfCswnjYZ5DlJg1ITGZEFPavj/88eIC34Cxfig9fo6RZRXR8F5Rq0J6o21lD4s9e5F+4tfgfqLlz+ExOzkMyaLriJvDOrJuQJl43NH3xg+eZxbx5yH/mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718295960; c=relaxed/simple;
-	bh=PGv+Yopc7XLHNBcbDN2+JMRLeaSqYKy5SzRpJAxLlsc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nTl3CHMmKwYF4F3zup8RoH7eOPNvHuSrwRR4qRLHIZcTPnUxkc0A9ha/Eqym60OOJgOA4kA4kSnp63qawvHz0IHydS3a8s1EmYStLFsXzGEBkgQXqmNVurR68uiLWpZt0/yo6TK1UcxmEeTvPCLqoS1RVpsRd383/sLPMn7lRe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K6qjxhOj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF20CC4AF1D;
-	Thu, 13 Jun 2024 16:25:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718295959;
-	bh=PGv+Yopc7XLHNBcbDN2+JMRLeaSqYKy5SzRpJAxLlsc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=K6qjxhOjkSoyi6cghmlsIyEt4KaCiv81iGTSX7mA/Yjv0gtZe7JU1P9Oi8QUB5yNK
-	 DfxOPyKSdZrvFUyMwkzTAQt2ucgVjqkavXFfpuOW2Ks5cujJGA4qy7HEvtASD30DSm
-	 DPfgsJA3BvUOxr7ZqTKyfO9Gs01B8DglvYqbd0zt/y4RJIbsriNNP0MT18hrxBsGxc
-	 uR5rzbl1jurwk2Aqa34eo4a99YGUNv8eTJ7xEINTnHOlXHHtgPgE9n1WTnFVBjpxpq
-	 8Wj0O9LMGPlnHE9XM9DMNV3Nh2ZJRYw0+Qv3FetQHMwzr1qvMSv80WNtRLl263xaq9
-	 OtT8OgK/6TUmw==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ebeefb9a7fso12275951fa.0;
-        Thu, 13 Jun 2024 09:25:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUVRe+3d6WG533EEQSUipemDpxPV/1gSYZLwKKbFTRzpj71i6ifIezeridwvk5cWLa1xdLD0rWhCvBdP973XegBWh0D93uRyEZ6SJh5kJw5cYvT80TWGQDKAf+Dpgn3BuXdjjF5pYH8
-X-Gm-Message-State: AOJu0Yw27sZJ/mLlY6dz91EVilNwQ4ZjSvQin4MJS2c3/p1loLCEqKpf
-	lYXJqFnKtF/JaYxvKTRHdy4l8THiZEz8r5qGnLNRQCzQFX/xV6EPfifFOTjbpsCEOiUloWLrQ7I
-	DQcYWRv30M3P0CNLNGG81cxMlDoU=
-X-Google-Smtp-Source: AGHT+IFD8ZmkKw599RVKsqzV6/cQ1wsO8bqVKWGn3VFu4rQwLis1kNid+1+GB4cwCB7YQ7l5w2smXcjLC+iQVu7EeQU=
-X-Received: by 2002:a2e:9056:0:b0:2ea:eaf1:a18 with SMTP id
- 38308e7fff4ca-2ec0e60e0ebmr1915861fa.47.1718295958152; Thu, 13 Jun 2024
- 09:25:58 -0700 (PDT)
+	s=arc-20240116; t=1718296004; c=relaxed/simple;
+	bh=SLAMqQrPfN9uJV7ziyrWbCdtmQk1fwT2/ftGRh6ehlo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KTSkIwTyhAwQgchEsbjNhBG6bcqef+2mi4SBUvNaqmS9JYNSFQVFaVgfFnsww9tw5FOcHtXyhljGIfwSoa7IRYcNMm6lEIwir/jDGNmf+yo3VITYQ0rzyXVkT3ZqHQrDEwQFBM8ZqhW3NYT8BhtK4R5CUVCtokT6HbQmytrpb1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fcPvUC5W; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f44b45d6abso10122735ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:26:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718296003; x=1718900803; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jpfupifUWRjEWXSRFkPnEzWD919BOKz8LYHjIiDIHpU=;
+        b=fcPvUC5WjcTtw1jH6MyT1t1XJHvuPP7BA5WP71fZ1iyq81OysjFD2NxOXkUMp2llXp
+         JVglwGatpItzDA+GNv6pEycEH9nC9b0CpUNeXT/hCy1wwnF/zqrT5cKk/cRgZ2ffynXu
+         sT2QIqv9yjHx2/1vEqAViuj5zw40hpfb7/gdhC7x+7T9tsmtUOucxMa5oo2CIpoPNyoP
+         OMf3F2/0kKEDcsrVjob+ULdC+bcE3YP+K3bYkYNYf29ldlm6dYprbTI4pWL09+dvi/uf
+         h+wl9scXvqxOE0kwoDdrY41yn6mFntvaXVwgYkF+Sv+ix6hNjrt+Jx5IwDO9LtIwPcDV
+         ADjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718296003; x=1718900803;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jpfupifUWRjEWXSRFkPnEzWD919BOKz8LYHjIiDIHpU=;
+        b=Ed+u0TM/Voczw7wmLBUC0aNcNuRHSJcnTOuGNVzzN8pqYUuEfoDqJ5AhfhOx0ab2dc
+         Y9mg6k+zZS/Gp2Xxa0TFDEGxmoqCQantM6Z6GcMebFoexX+s6mhg0vA/CSMthWI4+NhR
+         dBPNx3dPKrszeqBAUOUpYIcd6zMIZjB8E8gePQmIfNHvB0XRXTIbarHx9IbqGTm2tYQp
+         fjJ7r2ZJiR3bOd9DW8ndNOIBvcSj2lhA11tzb6u/CkNMo+Zc4Gq5oue9gYJeglMTYSmL
+         McDRGnTvHnCYYyj2/yaQDVUWddUbXDJP4COC3khpge1tuQix4+UwDiulOwM7oblpZSDl
+         eL5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWAA8Ul4ZEpa59vlMbGqEokdiv0pGB6scQPYOiQatTd09oWBt0aXPBA2lbOrRoCHQV1brzCNltwUf0halxRsPNr7kKeigL8rD7XXsk2
+X-Gm-Message-State: AOJu0YxGTpfxB96079tzd9yqWrVWtsMjdy7CHk2k3GQzVetn4piXIfza
+	qUN/fSZ6n2IhIVgEZsKQoEiYJpH8KnqYH2eX3IS9POj/UShE7n8SPbRI7EGw
+X-Google-Smtp-Source: AGHT+IFQZ7TreFX+MuHWfU3c8/pJOKTSk15d6PXmnzSSxZ4nnGjnuU1csrJaNr4+eDxIUFfcasMYwA==
+X-Received: by 2002:a17:902:f54f:b0:1f7:42e6:ada2 with SMTP id d9443c01a7336-1f8627cab2amr1685545ad.41.1718296002522;
+        Thu, 13 Jun 2024 09:26:42 -0700 (PDT)
+Received: from dev0.. ([49.43.162.104])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855ee81bfsm15848995ad.137.2024.06.13.09.26.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 09:26:42 -0700 (PDT)
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+To: agk@redhat.com,
+	snitzer@kernel.org,
+	mpatocka@redhat.com,
+	dm-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: bmarzins@redhat.com,
+	skhan@linuxfoundation.org,
+	javier.carrasco.cruz@gmail.com,
+	jain.abhinav177@gmail.com
+Subject: [PATCH v2] dm: Add support for escaped characters in str_field_delimit()
+Date: Thu, 13 Jun 2024 16:26:32 +0000
+Message-Id: <20240613162632.38065-1-jain.abhinav177@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613162031.142224-1-longman@redhat.com>
-In-Reply-To: <20240613162031.142224-1-longman@redhat.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 13 Jun 2024 18:25:46 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGpbgrHo98RcpfVLc1zKE7D+isL5wmvTLA5cDvNQhHc=Q@mail.gmail.com>
-Message-ID: <CAMj1kXGpbgrHo98RcpfVLc1zKE7D+isL5wmvTLA5cDvNQhHc=Q@mail.gmail.com>
-Subject: Re: [PATCH] arm64/efi: Fix kmemleak false positive in arm64_efi_rt_init()
-To: Waiman Long <longman@redhat.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, linux-efi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 13 Jun 2024 at 18:21, Waiman Long <longman@redhat.com> wrote:
->
-> The kmemleak code sometimes complains about the following leak:
->
-> unreferenced object 0xffff8000102e0000 (size 32768):
->   comm "swapper/0", pid 1, jiffies 4294937323 (age 71.240s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<00000000db9a88a3>] __vmalloc_node_range+0x324/0x450
->     [<00000000ff8903a4>] __vmalloc_node+0x90/0xd0
->     [<000000001a06634f>] arm64_efi_rt_init+0x64/0xdc
->     [<0000000007826a8d>] do_one_initcall+0x178/0xac0
->     [<0000000054a87017>] do_initcalls+0x190/0x1d0
->     [<00000000308092d0>] kernel_init_freeable+0x2c0/0x2f0
->     [<000000003e7b99e0>] kernel_init+0x28/0x14c
->     [<000000002246af5b>] ret_from_fork+0x10/0x20
->
-> The memory object in this case is for efi_rt_stack_top and is allocated
-> in an initcall. So this is certainly a false positive. Mark the object
-> as not a leak to quash it.
->
-> Signed-off-by: Waiman Long <longman@redhat.com>
+Remove all the escape characters that come before separator.
+Tested this code by writing a dummy program containing the two
+functions and testing it on below input, sharing results:
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+Original string: "field1\,with\,commas,field2\,with\,more\,commas"
+Field: "field1"
+Field: "with"
+Field: "commas"
+Field: "field2"
+Field: "with"
+Field: "more"
+Field: "commas"
 
-I'll take this as a fix via the EFI tree.
+Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+---
+PATCH v1:
+https://lore.kernel.org/all/20240609141721.52344-1-jain.abhinav177@gmail.com/
 
-Thanks,
+Changes since v1:
+ - Modified the str_field_delimit function as per shared feedback
+ - Added remove_escaped_characters function
+---
+---
+ drivers/md/dm-init.c | 53 +++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 47 insertions(+), 6 deletions(-)
 
-> ---
->  arch/arm64/kernel/efi.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/arch/arm64/kernel/efi.c b/arch/arm64/kernel/efi.c
-> index 4a92096db34e..712718aed5dd 100644
-> --- a/arch/arm64/kernel/efi.c
-> +++ b/arch/arm64/kernel/efi.c
-> @@ -9,6 +9,7 @@
->
->  #include <linux/efi.h>
->  #include <linux/init.h>
-> +#include <linux/kmemleak.h>
->  #include <linux/screen_info.h>
->  #include <linux/vmalloc.h>
->
-> @@ -213,6 +214,7 @@ l:  if (!p) {
->                 return -ENOMEM;
->         }
->
-> +       kmemleak_not_leak(p);
->         efi_rt_stack_top = p + THREAD_SIZE;
->         return 0;
->  }
-> --
-> 2.39.3
->
->
+diff --git a/drivers/md/dm-init.c b/drivers/md/dm-init.c
+index 2a71bcdba92d..0e31ecf1b48e 100644
+--- a/drivers/md/dm-init.c
++++ b/drivers/md/dm-init.c
+@@ -76,6 +76,24 @@ static void __init dm_setup_cleanup(struct list_head *devices)
+ 	}
+ }
+ 
++/* Remove escape characters from a given field string. */
++static void __init remove_escape_characters(char *field)
++{
++	char *src = field;
++	char *dest = field;
++
++	while (*src) {
++		if (*src == '\\') {
++			src++;
++			if (*src)
++				*dest++ = *src++;
++		} else {
++			*dest++ = *src++;
++		}
++	}
++	*dest = '\0';
++}
++
+ /**
+  * str_field_delimit - delimit a string based on a separator char.
+  * @str: the pointer to the string to delimit.
+@@ -87,16 +105,39 @@ static void __init dm_setup_cleanup(struct list_head *devices)
+  */
+ static char __init *str_field_delimit(char **str, char separator)
+ {
+-	char *s;
++	char *s, *escaped, *field;
+ 
+-	/* TODO: add support for escaped characters */
+ 	*str = skip_spaces(*str);
+ 	s = strchr(*str, separator);
+-	/* Delimit the field and remove trailing spaces */
+-	if (s)
++
++	/* Check for escaped character */
++	escaped = strchr(*str, '\\');
++	while (escaped && (s == NULL || escaped < s)) {
++		/*
++		 * Move the separator search ahead if escaped
++		 * character comes before.
++		 */
++		s = strchr(escaped + 1, separator);
++		escaped = strchr(escaped + 1, '\\');
++	}
++
++	/* If we found a separator, we need to handle escape characters */
++	if (s) {
++		*s = '\0';
++
++		remove_escape_characters(*str);
++		field = *str;
++		*str = s + 1;
++	} else {
++		/* Handle the last field when no separator is present */
++		s = *str + strlen(*str);
+ 		*s = '\0';
+-	*str = strim(*str);
+-	return s ? ++s : NULL;
++
++		remove_escape_characters(*str);
++		field = *str;
++		*str = s;
++	}
++	return field;
+ }
+ 
+ /**
+-- 
+2.34.1
+
 
