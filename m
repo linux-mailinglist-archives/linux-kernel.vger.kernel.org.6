@@ -1,252 +1,154 @@
-Return-Path: <linux-kernel+bounces-213654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 657F3907866
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:35:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A81D90786A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC57B1F232FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:35:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CD22840BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679E31487DF;
-	Thu, 13 Jun 2024 16:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78FB12D757;
+	Thu, 13 Jun 2024 16:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DjeV1G81"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Fj1LW9AI"
+Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8689E1304B0;
-	Thu, 13 Jun 2024 16:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F21E1369B0;
+	Thu, 13 Jun 2024 16:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718296543; cv=none; b=Oruhp8Hyoat6HjLuScb8XJdW7i3lapdUmLu7ASylsmQwv/lWJOou8R+trNQfQ97pFaHxeqAG3obP6+0HArBxLpvu02DetKBdD2BgfHP2hJtDaVDXdQdV4knEPN/8sVD1rfdFME1oiRLbKXr6WADFG7qp8j6jTcaxETIuLRxUTPk=
+	t=1718296641; cv=none; b=lRZH5NKlRFhKVvMbc0VuSjsWH8X6mdNZqH127CZcuaVzFipZEhb//CvHeR5b/I1hbseDQcSmhUsmq7ztLQz1zRb9Ticj1SkeRbHFvEhO2uBATVj/hu8iQrYOweGIgmzvrzLJra9CpqQt5gO+QyTbHCizCaeAMDUEIrvsQal4c4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718296543; c=relaxed/simple;
-	bh=H8o7A9IqWk+q974QU4xPjvp4+wJhcqbNDuTa4aaL6L8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NC0gexDE5YRY8O/Waupb3oTTYHyr05Hg5Lohr91meDMqAzHwAB6Exn/5+5ZAPAiC66g3EH+x3I8anKF4KDOwHT6eNrC+Xx6zT8pp/lvfPA8zvugq2YrT0LrwxNJVGW9gMHaFH1XFT7yn2EiIGJq5ZC6wKM776JFOHipW2SoXbB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DjeV1G81; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6C07C2BBFC;
-	Thu, 13 Jun 2024 16:35:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718296543;
-	bh=H8o7A9IqWk+q974QU4xPjvp4+wJhcqbNDuTa4aaL6L8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DjeV1G81ciCrQUdJHKS1fHNjnwqmy2/JMhf67PgwkzWqpNDaIHszgbdI10Tr0/jdw
-	 BL0hGjJGODUN2TW21+quaj1ecoRe/p+l4xT2CAB8N2DUpeo4ugHLgPl+8aMT28Z2tS
-	 eIAIKEoykTHeTbwhwFvA936fEQRKDwgUudmW0xbt4Q6FkJwJb3pvsfT1XQ8KMcozzD
-	 BRvgwrM2l6vj3Q2IZ3mcOjxFlPu0YFs+/teaG7m4Jj29EpwmFaT6bppz7WoM3C9QXU
-	 mJY/0Gl7r1D444qIHBFBEAxiHQiXiVefTU/BsGJ5cjCHrqx/vjBIjottNSDI1CIwVX
-	 8m2t5lkZ8ByEw==
-From: Jakub Kicinski <kuba@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pabeni@redhat.com
-Subject: [GIT PULL] Networking for v6.10-rc4
-Date: Thu, 13 Jun 2024 09:35:42 -0700
-Message-ID: <20240613163542.130374-1-kuba@kernel.org>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1718296641; c=relaxed/simple;
+	bh=fjSpmKa07H/QcZPAV0gPjxEiKdXTobzP28qvtb4jRN0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hJVb6q5HSrYlg55uAbcggssaTyx6ydVBVkHPVCkKe8qnE1/gDZkq2aTR9ni80pl8ulaNjkhi8/xr8+nSyL483+ZLFjxZEpVUVujCCYcFkl5PYGAnlPloMOUPr1UiIKm2d0UlTcyuoeMsTbG5I1TVCG9AVtFjR3MjT1CQ5fWDneA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Fj1LW9AI; arc=none smtp.client-ip=99.78.197.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1718296640; x=1749832640;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=fjSpmKa07H/QcZPAV0gPjxEiKdXTobzP28qvtb4jRN0=;
+  b=Fj1LW9AIeiOyJo9tu4JVXJ0tomh3kU+EfIBwWVgP+wjWWkJTWcGzuJ7Q
+   h2UWsOebk932wqv3f9zJ9a56PRzUPLZuEpH+3I8il74oPp1wocYwoa6SC
+   dX6MbPqV26Vd9kDBzMCxkQS7MSBjTz+0q0YJ2X47lGxhTRKR4Z2aixjGz
+   U=;
+X-IronPort-AV: E=Sophos;i="6.08,235,1712620800"; 
+   d="scan'208";a="303217457"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 16:37:16 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:38744]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.37.96:2525] with esmtp (Farcaster)
+ id f9ce92c6-cab6-4561-b075-5f2a84a17fba; Thu, 13 Jun 2024 16:37:15 +0000 (UTC)
+X-Farcaster-Flow-ID: f9ce92c6-cab6-4561-b075-5f2a84a17fba
+Received: from EX19D020UWC004.ant.amazon.com (10.13.138.149) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 13 Jun 2024 16:37:15 +0000
+Received: from [0.0.0.0] (10.253.83.51) by EX19D020UWC004.ant.amazon.com
+ (10.13.138.149) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 13 Jun
+ 2024 16:37:11 +0000
+Message-ID: <01d2b24c-a9d2-4be0-8fa0-35d9937eceb4@amazon.com>
+Date: Thu, 13 Jun 2024 18:37:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] Re: [PATCH] Revert "vmgenid: emit uevent when
+ VMGENID updates"
+To: Lennart Poettering <mzxreary@0pointer.de>, "Jason A. Donenfeld"
+	<Jason@zx2c4.com>
+CC: <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, Linus Torvalds
+	<torvalds@linux-foundation.org>, Babis Chalios <bchalios@amazon.es>,
+	"Theodore Ts'o" <tytso@mit.edu>, "Cali, Marco" <xmarcalx@amazon.co.uk>, Arnd
+ Bergmann <arnd@arndb.de>, "rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"Christian Brauner" <brauner@kernel.org>, <linux@leemhuis.info>,
+	<regressions@lists.linux.dev>, Paolo Bonzini <pbonzini@redhat.com>, "Michael
+ Kelley (LINUX)" <mikelley@microsoft.com>, Sean Christopherson
+	<seanjc@google.com>
+References: <20240418114814.24601-1-Jason@zx2c4.com>
+ <e09ce9fd-14cb-47aa-a22d-d295e466fbb4@amazon.com>
+ <CAHmME9qKFraYWmzD9zKCd4oaMg6FyQGP5pL9bzZP4QuqV1O_Qw@mail.gmail.com>
+ <ZieoRxn-On0gD-H2@gardel-login>
+ <b819717c-74ea-4556-8577-ccd90e9199e9@amazon.com>
+ <Ziujox51oPzZmwzA@zx2c4.com> <Zi9ilaX3254KL3Pp@gardel-login>
+Content-Language: en-US
+From: Alexander Graf <graf@amazon.com>
+In-Reply-To: <Zi9ilaX3254KL3Pp@gardel-login>
+X-ClientProxiedBy: EX19D043UWA002.ant.amazon.com (10.13.139.53) To
+ EX19D020UWC004.ant.amazon.com (10.13.138.149)
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: base64
 
-Hi Linus!
+SGV5IEphc29uLAoKT24gMjkuMDQuMjQgMTE6MDQsIExlbm5hcnQgUG9ldHRlcmluZyB3cm90ZToK
+PiBPbiBGciwgMjYuMDQuMjQgMTQ6NTIsIEphc29uIEEuIERvbmVuZmVsZCAoSmFzb25AengyYzQu
+Y29tKSB3cm90ZToKPgo+PiBJIGRvbid0IHRoaW5rIGFkZGluZyBVQVBJIHRvIGFuIGluZGl2aWR1
+YWwgZGV2aWNlIGRyaXZlciBsaWtlIHRoaXMKPiBEb2VzIHZtZ2VuaWQgcmVhbGx5IHF1YWxpZnkg
+YXMgImFuIGluZGl2aWR1YWwgZGV2aWNlIGRyaXZlciI/IEl0J3MgYQo+IHByZXR0eSBnZW5lcmlj
+IHNvZnR3YXJlIGludGVyZmFjZSwgaW1wbGVtZW50ZWQgYnkgdmFyaW91cyBkaWZmZXJlbnQKPiBW
+TU1zIHRoZXNlIGRheXMuIEl0IGlzIGFsc28gdGhlIG9ubHkgaW50ZXJmYWNlIEkgYW0gYXdhcmUg
+b2YgdGhhdAo+IGFjdHVhbGx5IGV4aXN0cyBhbmQgd291bGQgcHJvdmlkZSB0aGUgY29uY2VwdCBy
+aWdodCBub3c/Cj4KPiBpZiB0aGlzIHdhcyByZWFsbHkgaHlwZXJ2IHNwZWNpZmljLCB0aGVuIEkn
+ZCBhZ3JlZSBpdCdzIGp1c3QgYW4KPiAiaW5kaXZpZHVhbCBkZXZpY2UgZHJpdmVyIi4gQnV0IGl0
+J3Mgd2lkZWx5IGltcGxlbWVudGVkLCBmb3IgZXhhbXBsZSBhCj4gdHJpdmlhbCBjb21tYW5kIGxp
+bmUgc3dpdGNoIGluIHFlbXUuCj4KPiBIZW5jZSwgZm9yIHNvbWV0aGluZyB0aGlzIGdlbmVyaWMs
+IGFuZCB3aWRlbHkgZGVwbG95ZWQgd2l0aCBtdWx0aXBsZQo+IGJhY2tlbmQgaW1wbGVtZW50YXRp
+b25zIEkgdGhpbmsgd2UgY2FuIHNheSBpdCdzIGtpbmRhIG1vcmUgb2YgYQo+IHN1YnN5c3RlbSBh
+bmQgbGVzcyBvZiBhbiBpbmRpdmlkdWFsIGRyaXZlciwgbm8/Cj4KPj4gaXMgYSBnb29kIGFwcHJv
+YWNoIGVzcGVjaWFsbHkgY29uc2lkZXJpbmcgdGhhdCB0aGUgdmlydGlvIGNoYW5nZXMgd2UKPj4g
+ZGlzY3Vzc2VkIHNvbWUgdGltZSBhZ28gd2lsbCBsaWtlbHkgYXVnbWVudCB0aGlzIGFuZCBjcmVh
+dGUgYW5vdGhlcgo+PiBtZWFucyBvZiBhIHNpbWlsYXIgbm90aWZpY2F0aW9uLiBBbmQgZ2l2ZW4g
+dGhhdCB0aGlzIGludGVyc2VjdHMgd2l0aAo+PiBvdGhlciB1c2Vyc3BhY2Utb3JpZW50ZWQgd29y
+ayBJIGhvcGUgdG8gZ2V0IGJhY2sgdG8gcHJldHR5IHNvb24sIEkKPj4gdGhpbmsgaW50cm9kdWNp
+bmcgc29tZSBhZGhvYyBtZWNoYW5pc20gbGlrZSB0aGlzIGFkZHMgY2x1dHRlciBhbmQKPj4gaXNu
+J3QgdGhlIGlkZWFsIHdheSBmb3J3YXJkLgo+IElmIG9uZSBkYXkgYSB2aXJ0aW8tYmFzZWQgZXF1
+aXZhbGVudCBzaG93cyB1cCwgdGhlbiBJJ2QgYmUgZW50aXJlbHkKPiBmaW5lIHdpdGggc3VwcG9y
+dGluZyB0aGlzIGluIHVzZXJzcGFjZSBkaXJlY3RseSB0b28gLCBiZWNhdXNlIHZpcnRpbwo+IHRv
+byBpcyBhIGdlbmVyaWMgdGhpbmcgdHlwaWNhbGx5IGltcGxlbWVudGVkIGJ5IG11bHRpcGxlIFZN
+TQo+IGJhY2tlbmRzLiBGcm9tIG15IHVzZXJzcGFjZSBwZXJzcGVjdGl2ZSBJIHNlZSBsaXR0bGUg
+YmVuZWZpdCBpbiB0aGUKPiBrZXJuZWwgYWJzdHJhY3Rpbmcgb3ZlciB2bWdlbmlkIGFuZCB2aXJ0
+aW8tZ2VuaWQgKGlmIHRoYXQgZXZlcgo+IG1hdGVyaWFsaXplcyksIGFzIGEgc3lzdGVtZCBwZXJz
+b24gSSBhbSBub3QgYXNraW5nIGZvciB0aGlzIGtpbmQgb2YKPiBhYnN0cmFjdGlvbiAoaW4gY2Fz
+ZSBhbnlvbmUgd29uZGVycykuIEEgZ2VuZXJpYyBBQ1BJIGRldmljZSBzdWNoIGFzCj4gdm1nZW5p
+ZCBpcyBlbnRpcmVseSBlbm91Z2ggb2YgImdlbmVyaWMiIGZvciBtZS4KPgo+IFRoZSB3YXkgd2Ug
+d291bGQgcHJvY2VzcyB0aGUgZXZlbnQgaW4gdXNlcnNwYWNlIGluIHN5c3RlbWQgKGZyb20gYQo+
+IHVkZXYgcnVsZSkgaXMgc28gZ2VuZXJpYyB0aGF0IGl0J3MgdHJpdmlhbCB0byBtYXRjaCBhZ2Fp
+bnN0IHR3bwo+IGdlbmVyaWMgaW50ZXJmYWNlcywgaW5zdGVhZCBvZiBqdXN0IG9uZS4KPgo+IEFu
+ZCBldmVuIGlmIHRoZXJlJ3MgdmFsdWUgaW4gYSBnZW5lcmljIGFic3RyYWN0aW9uIHByb3ZpZGVk
+IGJ5IHRoZQo+IGtlcm5lbCBvdmVyIGJvdGggdm1nZW5pZCBhbmQgYSBmdXR1cmUgdmlydGlvLWJh
+c2VkIHRoaW5nOiB0aGUga2VybmVsCj4gcGF0Y2ggaW4gcXVlc3Rpb24gd2FzIGEgKnNpbmdsZSog
+bGluZSwgYW5kIG91ciBob29rdXAgaW4gdXNlcnNwYWNlCj4gY291bGQgZWFzaWx5IGJlIG1vdmVk
+IG92ZXIgd2hlbiB0aGUgZGF5IGNvbWVzLCBiZWNhdXNlIGl0J3MgcmVhbGx5IG5vdAo+IGEgcm9j
+a2V0IHNjaWVuY2UgbGV2ZWwgaW50ZXJmYWNlLiBJdCdzIGEgc2luZ2xlIHBhcmFtZXRlcmxlc3Mg
+ZXZlbnQsCj4gaG93IG11Y2ggZWFzaWVyIGNvdWxkIHRoaW5ncyBnZXQ/Cj4KPiBJIHVuZGVyc3Rh
+bmQgdGhhdCBob3cgdGhpcyBhbGwgaGFwcGVuZWQgd2Fzbid0IHRvIGV2ZXJ5b25lcyB3aXNoZXMs
+Cj4gYnV0IGRvIHdlIHJlYWxseSBoYXZlIHRvIG1ha2UgYWxsIG9mIHRoaXMgc28gY29tcGxleCBp
+ZiBpdCBjb3VsZCBqdXN0Cj4gYmUgc28gc2ltcGxlPyBXaHkgZGVsYXkgdGhpcyBmdXJ0aGVyLCB3
+aHkgZ28gYmFjayBhZ2FpbiBnaXZlbiB0aGUKPiBldmVudCwgdGhlIGludGVyZmFjZSBpdHNlbGYg
+aXMgc3VjaCBhbiB1dHRlciB0cml2aWFsaXR5PyBEbyB3ZSByZWFsbHkKPiBtYWtlIHN1Y2ggYSB0
+aHJlYXRyZSBhcm91bmQgYSBzaW5nbGUgbGluZSBjaGFuZ2UsIGEgc2luZ2xlIGFkZGl0aW9uYWwK
+PiB1ZXZlbnQsIGp1c3QgYmVjYXVzZSBvZiBwb2xpdGljcz8KCgpGcmllbmRseSBwaW5nIGFnYWlu
+LiBXZSB3b3VsZCByZWFsbHkgbGlrZSB0byBoYXZlIGEgY29uc3RydWN0aXZlIAp0ZWNobmljYWwg
+Y29udmVyc2F0aW9uIGFuZCBjb2xsYWJvcmF0aW9uIG9uIGhvdyB0byBtYWtlIGZvcndhcmQgcHJv
+Z3Jlc3MgCndpdGggVk0gY2xvbmUgbm90aWZpY2F0aW9ucyBmb3IgdXNlciBzcGFjZSBhcHBsaWNh
+dGlvbnMgdGhhdCBob2xkIHVuaXF1ZSAKZGF0YSBhbmQgaGVuY2UgbmVlZCB0byBsZWFybiBhYm91
+dCBWTSBjbG9uZSBldmVudHMsIG91dHNpZGUgb2YgYW55IApyYW5kb21uZXNzIHNlbWFudGljcy4K
+CgpUaGFua3MsCgpBbGV4CgoKCgoKQW1hem9uIFdlYiBTZXJ2aWNlcyBEZXZlbG9wbWVudCBDZW50
+ZXIgR2VybWFueSBHbWJICktyYXVzZW5zdHIuIDM4CjEwMTE3IEJlcmxpbgpHZXNjaGFlZnRzZnVl
+aHJ1bmc6IENocmlzdGlhbiBTY2hsYWVnZXIsIEpvbmF0aGFuIFdlaXNzCkVpbmdldHJhZ2VuIGFt
+IEFtdHNnZXJpY2h0IENoYXJsb3R0ZW5idXJnIHVudGVyIEhSQiAyNTc3NjQgQgpTaXR6OiBCZXJs
+aW4KVXN0LUlEOiBERSAzNjUgNTM4IDU5Nwo=
 
-Slim pickings this time, probably a combination of summer, DevConf.cz,
-and the end of first half of the year at corporations.
-
-The following changes since commit d30d0e49da71de8df10bf3ff1b3de880653af562:
-
-  Merge tag 'net-6.10-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-06-06 09:55:27 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.10-rc4
-
-for you to fetch changes up to a9b9741854a9fe9df948af49ca5514e0ed0429df:
-
-  bnxt_en: Adjust logging of firmware messages in case of released token in __hwrm_send() (2024-06-13 08:05:46 -0700)
-
-----------------------------------------------------------------
-Including fixes from bluetooth and netfilter.
-
-Current release - regressions:
-
- - Revert "igc: fix a log entry using uninitialized netdev",
-   it traded lack of netdev name in a printk() for a crash
-
-Previous releases - regressions:
-
- - Bluetooth: L2CAP: fix rejecting L2CAP_CONN_PARAM_UPDATE_REQ
-
- - geneve: fix incorrectly setting lengths of inner headers in the skb,
-   confusing the drivers and causing mangled packets
-
- - sched: initialize noop_qdisc owner to avoid false-positive recursion
-   detection (recursing on CPU 0), which bubbles up to user space as
-   a sendmsg() error, while noop_qdisc should silently drop
-
- - netdevsim: fix backwards compatibility in nsim_get_iflink()
-
-Previous releases - always broken:
-
- - netfilter: ipset: fix race between namespace cleanup and gc
-   in the list:set type
-
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-
-----------------------------------------------------------------
-Aleksandr Mishin (2):
-      liquidio: Adjust a NULL pointer handling path in lio_vf_rep_copy_packet
-      bnxt_en: Adjust logging of firmware messages in case of released token in __hwrm_send()
-
-Andy Shevchenko (1):
-      net dsa: qca8k: fix usages of device_get_named_child_node()
-
-Csókás, Bence (1):
-      net: sfp: Always call `sfp_sm_mod_remove()` on remove
-
-David S. Miller (2):
-      Merge branch 'hns3-fixes'
-      Merge branch 'geneve-fixes'
-
-David Wei (1):
-      netdevsim: fix backwards compatibility in nsim_get_iflink()
-
-Davide Ornaghi (1):
-      netfilter: nft_inner: validate mandatory meta and payload
-
-Eric Dumazet (2):
-      tcp: fix race in tcp_v6_syn_recv_sock()
-      tcp: use signed arithmetic in tcp_rtx_probe0_timed_out()
-
-Florian Westphal (1):
-      netfilter: Use flowlabel flow key when re-routing mangled packets
-
-Gal Pressman (2):
-      geneve: Fix incorrect inner network header offset when innerprotoinherit is set
-      net/mlx5e: Fix features validation check for tunneled UDP (non-VXLAN) packets
-
-Geliang Tang (1):
-      mailmap: map Geliang's new email address
-
-Jakub Kicinski (4):
-      Merge branch 'mptcp-various-fixes'
-      Merge tag 'for-net-2024-06-10' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
-      Merge tag 'nf-24-06-11' of git://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf
-      Merge branch 'net-bridge-mst-fix-suspicious-rcu-usage-warning'
-
-Jie Wang (1):
-      net: hns3: add cond_resched() to hns3 ring buffer init process
-
-Johannes Berg (1):
-      net/sched: initialize noop_qdisc owner
-
-Joshua Washington (1):
-      gve: ignore nonrelevant GSO type bits when processing TSO headers
-
-Jozsef Kadlecsik (1):
-      netfilter: ipset: Fix race between namespace cleanup and gc in the list:set type
-
-Kory Maincent (1):
-      net: pse-pd: Use EOPNOTSUPP error code instead of ENOTSUPP
-
-Luiz Augusto von Dentz (2):
-      Bluetooth: hci_sync: Fix not using correct handle
-      Bluetooth: L2CAP: Fix rejecting L2CAP_CONN_PARAM_UPDATE_REQ
-
-Michael Chan (1):
-      bnxt_en: Cap the size of HWRM_PORT_PHY_QCFG forwarded response
-
-Nikolay Aleksandrov (2):
-      net: bridge: mst: pass vlan group directly to br_mst_vlan_set_state
-      net: bridge: mst: fix suspicious rcu usage in br_mst_set_state
-
-Paolo Abeni (1):
-      mptcp: ensure snd_una is properly initialized on connect
-
-Pauli Virtanen (1):
-      Bluetooth: fix connection setup in l2cap_connect
-
-Petr Pavlu (1):
-      net/ipv6: Fix the RT cache flush via sysctl using a previous delay
-
-Rao Shoaib (1):
-      af_unix: Read with MSG_PEEK loops if the first unread byte is OOB
-
-Sagar Cheluvegowda (1):
-      net: stmmac: dwmac-qcom-ethqos: Configure host DMA width
-
-Sasha Neftin (1):
-      Revert "igc: fix a log entry using uninitialized netdev"
-
-Taehee Yoo (1):
-      ionic: fix use after netif_napi_del()
-
-Udit Kumar (1):
-      dt-bindings: net: dp8386x: Add MIT license along with GPL-2.0
-
-Xiaolei Wang (1):
-      net: stmmac: replace priv->speed with the portTransmitRate from the tc-cbs parameters
-
-Yonglong Liu (1):
-      net: hns3: fix kernel crash problem in concurrent scenario
-
-YonglongLi (2):
-      mptcp: pm: inc RmAddr MIB counter once per RM_ADDR ID
-      mptcp: pm: update add_addr counters after connect
-
-Ziwei Xiao (1):
-      gve: Clear napi->skb before dev_kfree_skb_any()
-
- .mailmap                                           |  1 +
- drivers/net/dsa/qca/qca8k-leds.c                   | 12 ++-
- drivers/net/ethernet/broadcom/bnxt/bnxt.h          | 51 ++++++++++++
- drivers/net/ethernet/broadcom/bnxt/bnxt_hwrm.c     |  2 +-
- drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c    | 12 ++-
- drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c  | 11 ++-
- drivers/net/ethernet/google/gve/gve_rx_dqo.c       |  8 +-
- drivers/net/ethernet/google/gve/gve_tx_dqo.c       | 20 ++---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  4 +
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |  2 +
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 21 +++--
- drivers/net/ethernet/intel/igc/igc_main.c          |  5 +-
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c  |  3 +-
- drivers/net/ethernet/pensando/ionic/ionic_lif.c    |  4 +-
- .../ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c    |  4 +
- drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c    | 25 +++---
- drivers/net/geneve.c                               | 10 ++-
- drivers/net/netdevsim/netdev.c                     |  3 +-
- drivers/net/phy/sfp.c                              |  3 +-
- include/dt-bindings/net/ti-dp83867.h               |  4 +-
- include/dt-bindings/net/ti-dp83869.h               |  4 +-
- include/linux/pse-pd/pse.h                         |  4 +-
- include/net/bluetooth/hci_core.h                   | 36 ++++++++-
- include/net/ip_tunnels.h                           |  5 +-
- net/bluetooth/hci_sync.c                           |  2 +-
- net/bluetooth/l2cap_core.c                         | 12 +--
- net/bridge/br_mst.c                                | 13 ++-
- net/ipv4/tcp_timer.c                               |  6 +-
- net/ipv6/netfilter.c                               |  1 +
- net/ipv6/route.c                                   |  4 +-
- net/ipv6/tcp_ipv6.c                                |  3 +-
- net/mptcp/pm_netlink.c                             | 21 +++--
- net/mptcp/protocol.c                               |  1 +
- net/netfilter/ipset/ip_set_core.c                  | 93 ++++++++++++----------
- net/netfilter/ipset/ip_set_list_set.c              | 30 ++++---
- net/netfilter/nft_meta.c                           |  3 +
- net/netfilter/nft_payload.c                        |  4 +
- net/sched/sch_generic.c                            |  1 +
- net/unix/af_unix.c                                 | 18 ++---
- tools/testing/selftests/net/mptcp/mptcp_join.sh    |  5 +-
- 40 files changed, 300 insertions(+), 171 deletions(-)
 
