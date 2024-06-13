@@ -1,159 +1,90 @@
-Return-Path: <linux-kernel+bounces-212411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3191A905FCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:42:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 685CF905FCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EF4A1C21030
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:42:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83C651C20F29
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13B88BFA;
-	Thu, 13 Jun 2024 00:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2B68F54;
+	Thu, 13 Jun 2024 00:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G7PqMDXy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUOLdfmc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D164811;
-	Thu, 13 Jun 2024 00:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A1F8BEC;
+	Thu, 13 Jun 2024 00:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718239320; cv=none; b=DgMf6Ws4e92QvuzaFSPqaYQtrpfGZUWusz4q9qDZl5AJiabavinlGDGe5xjkATmsogBYjVb55/x1Zd3hdfv3hxgOUTomWvD3oQgPLLb9pWTFMAmDDvPXmh1h+aipEC4YEwDx1zl7m7NgjP6Zh579lF69qNcAL2RvXHD98BBak1I=
+	t=1718239393; cv=none; b=MhlpinD17eUEJAs50bAIUCFJL8eGs4Dne7Lo4TCDmK9qixZT7MM2NWOjs9EnUzdu3jMVyEm0pdZ95h6e0pP8SfCRnwqAWHZaGXAK8S4fi88e0M05aikWRv8DRnG23b3NltZhv0bHfVrmEpAyezA4A44jX0eNLmFG4NZozHxErvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718239320; c=relaxed/simple;
-	bh=VuVVGamM9xYmkROyduLx/PBHwQBhtgnEoNQrgKFoeYY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nQFOHlzHxCiP7n7sxerSaiSQgQjszKJ/snNQM1kgXX6E2kyATLtqkhK+S4VDcS0hFeBsIHpnt287vvOqtKEfregCy/CfRMdMaYXjespPfrBN/yVIkzweqX2lS8KAxgca0/McSBPwFZD2w+l0hhPF3pBqQXFAPrGGe/xDdZ20DDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G7PqMDXy; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718239319; x=1749775319;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=VuVVGamM9xYmkROyduLx/PBHwQBhtgnEoNQrgKFoeYY=;
-  b=G7PqMDXyfvQqjwncNOTtxz7g9RMy/iq3Uq9ZYgHJIqYJ2MpOXkfpN4zs
-   ntX8oQFIfXk4FMMH0RbCsNgB3nre8LMCZ8c10QYxAoIUPxtRm0WO/hmoc
-   AclyUU7YM3WjyYATG2oylJ0Ek17cC0OZJVf8l+BSvjWKCxZh/a2R17O5f
-   ruM55z9G5XiuJWzJ+S+9ySBKURJlHqiDIvutgj7TNQsgyKaXp8+iCeUHX
-   Mm2Ge3vRynEvyoDyUFyNMtqY1mP7OFBDmT4c7r/5kVWgkq5ygZh31GRwH
-   ZrKSe3W2hl2a3OEt62ILpKZ/c4xg1K5H4hN7XDlKc6A1CRMNATnpWsBLy
-   w==;
-X-CSE-ConnectionGUID: 0XP2AmY+RsCG3zVLfWfWVQ==
-X-CSE-MsgGUID: FaY6gc8xQW+dXTDgy4RJBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="18889055"
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="18889055"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 17:41:58 -0700
-X-CSE-ConnectionGUID: x9YBITAETDKsiL1EKQAmMA==
-X-CSE-MsgGUID: WHQ7xxEqR/+mf9K2RSm1og==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
-   d="scan'208";a="40060628"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 17:41:55 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,  <linux-cxl@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  Andrew Morton
- <akpm@linux-foundation.org>,  Jonathan Cameron
- <Jonathan.Cameron@huawei.com>,  Dave Jiang <dave.jiang@intel.com>,
-  Bharata B Rao <bharata@amd.com>,  Alistair Popple <apopple@nvidia.com>,
-  "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-Subject: Re: [PATCH -V2] cxl/region: Support to calculate memory tier
- abstract distance
-In-Reply-To: <Zmnc/bIkAQp6dpxQ@aschofie-mobl2> (Alison Schofield's message of
-	"Wed, 12 Jun 2024 10:38:05 -0700")
-References: <20240611055423.470574-1-ying.huang@intel.com>
-	<ZmjBfcaosIlOODFR@aschofie-mobl2>
-	<87sexi7vzp.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<Zmnc/bIkAQp6dpxQ@aschofie-mobl2>
-Date: Thu, 13 Jun 2024 08:40:04 +0800
-Message-ID: <87ikyd7k0r.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1718239393; c=relaxed/simple;
+	bh=7N3EQc3+IGIhNfJtXalwM67sSrGSvDvKQ/XagDYR96Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JISNiu6MmUmG75QmaZFTuVt2EwUo+LyzVT8U3mE6T33R0R5m8nzISTfnUn+UenNAJOkHL+91uxpEvNA+eKV1C5TUekzxFrvu35LoeSKG343Kp0aYk0vCTwjS6Ljz6O39P/uTtl32TrByIqK+AV88p3UYnHdOKPED3yJTuNV1Ous=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUOLdfmc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B8FBC116B1;
+	Thu, 13 Jun 2024 00:43:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718239392;
+	bh=7N3EQc3+IGIhNfJtXalwM67sSrGSvDvKQ/XagDYR96Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eUOLdfmcf5juairra4nesr18UCpgKbxbrVPS/aBOiFOzc0/+1XOaD470PUT7Uh5cy
+	 a7Po70oDqI9GxqAJLGxxEtJwiS6f6398Buf6Kjm6YoYg1eiknoliDCB1yorfr4ObBL
+	 +A1BLBUvnxSZvqH0HxRDNQStSd2zyYi49eTFRnH48UKYIYOx/NRhlyOT/Spn6HPSiW
+	 NZBGOFS7Zyo87mN5gDpDHqXvXGJfE7M2ZIgKDrvkXpmR60UCZnbjobkZ/IBofz6bbM
+	 fUu2FCc5GZLktHKnMXDLqT7GoeI5Xpea4BqbMNQbyE7YG0nbIFDhIH/yZQ+vMfiChV
+	 IOO/3cibLEbBw==
+Date: Wed, 12 Jun 2024 17:43:11 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, <andrew@lunn.ch>,
+ <jiri@resnulli.us>, <horms@kernel.org>, <rkannoth@marvell.com>,
+ <pkshih@realtek.com>, <larry.chiu@realtek.com>
+Subject: Re: [PATCH net-next v20 07/13] rtase: Implement a function to
+ receive packets
+Message-ID: <20240612174311.7bd028e1@kernel.org>
+In-Reply-To: <20240607084321.7254-8-justinlai0215@realtek.com>
+References: <20240607084321.7254-1-justinlai0215@realtek.com>
+	<20240607084321.7254-8-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Alison Schofield <alison.schofield@intel.com> writes:
+On Fri, 7 Jun 2024 16:43:15 +0800 Justin Lai wrote:
+> +static int rx_handler(struct rtase_ring *ring, int budget)
+> +{
+> +	const struct rtase_private *tp = ring->ivec->tp;
+> +	union rtase_rx_desc *desc_base = ring->desc;
+> +	u32 pkt_size, cur_rx, delta, entry, status;
+> +	struct net_device *dev = tp->dev;
+> +	union rtase_rx_desc *desc;
+> +	struct sk_buff *skb;
+> +	int workdone = 0;
+> +
+> +	cur_rx = ring->cur_idx;
+> +	entry = cur_rx % RTASE_NUM_DESC;
+> +	desc = &desc_base[entry];
+> +
+> +	do {
+> +		/* make sure discriptor has been updated */
+> +		rmb();
 
-> On Wed, Jun 12, 2024 at 10:09:14AM +0800, Ying Huang wrote:
->
-> snip
->
->> >> ---
->> >>  drivers/cxl/core/region.c | 40 +++++++++++++++++++++++++++++++++++----
->> >>  drivers/cxl/cxl.h         |  2 ++
->> >>  2 files changed, 38 insertions(+), 4 deletions(-)
->> >> 
->> >> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
->> >> index 3c2b6144be23..81d0910c0a02 100644
->> >> --- a/drivers/cxl/core/region.c
->> >> +++ b/drivers/cxl/core/region.c
->> >> @@ -9,6 +9,7 @@
->> >>  #include <linux/uuid.h>
->> >>  #include <linux/sort.h>
->> >>  #include <linux/idr.h>
->> >> +#include <linux/memory-tiers.h>
->> >>  #include <cxlmem.h>
->> >>  #include <cxl.h>
->> >>  #include "core.h"
->> >> @@ -2304,14 +2305,20 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
->> >>  	return true;
->> >>  }
->> >>  
->> >> +static int cxl_region_nid(struct cxl_region *cxlr)
->> >> +{
->> >> +	struct cxl_region_params *p = &cxlr->params;
->> >> +	struct cxl_endpoint_decoder *cxled = p->targets[0];
->> >> +	struct cxl_decoder *cxld = &cxled->cxld;
->> >> +
->> >> +	return phys_to_target_node(cxld->hpa_range.start);
->> >> +}
->> >> +
->> >
->> > I believe it's OK to send a resource_size_t to phys_to_target_node()
->> > like this:
->> >
->> > --- a/drivers/cxl/core/region.c
->> > +++ b/drivers/cxl/core/region.c
->> > @@ -2308,10 +2308,8 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
->> >  static int cxl_region_nid(struct cxl_region *cxlr)
->> >  {
->> >         struct cxl_region_params *p = &cxlr->params;
->> > -       struct cxl_endpoint_decoder *cxled = p->targets[0];
->> > -       struct cxl_decoder *cxld = &cxled->cxld;
->> >
->> > -       return phys_to_target_node(cxld->hpa_range.start);
->> > +       return phys_to_target_node(p->res->start);
->> >  }
->> >
->> 
->> I believe this works.  But the original implementation is just a
->> mechanical code movement from cxl_region_perf_attrs_callback().  So, I
->> prefer to keep it stupid. Then, further optimization can be done on top
->> of it.  Is it good for you?
->
-> I prefer to do it now while we are thinking about it.
->
-> How about a precursor patch:
-> Patch 1/2: cxl/region: Add a region to node id helper
->
-> --and then in that commit log you can say it's a simplified lookup 
-> and is being done in preparation for adding another caller.
+Barriers are between things. What is this barrier between?
 
-This works.  Will do it.
-
---
-Best Regards,
-Huang, Ying
+> +		status = le32_to_cpu(desc->desc_status.opts1);
+> +
+> +		if (status & RTASE_DESC_OWN)
+> +			break;
 
