@@ -1,227 +1,124 @@
-Return-Path: <linux-kernel+bounces-214123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34760907FDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:46:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E309907FDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA546287C2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:46:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E05CB287FC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282481534E7;
-	Thu, 13 Jun 2024 23:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34B6155C92;
+	Thu, 13 Jun 2024 23:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mRoEpD07"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYT6UgPn"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96221369A5;
-	Thu, 13 Jun 2024 23:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DE1155A5C;
+	Thu, 13 Jun 2024 23:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718322314; cv=none; b=L+x3iJx9eAxlEuFP1SpBPaT/w96TvTuIkXMMXaCqsk7iQsaUMg09oSNMo0hMCiRjX7lj+DvnNn9kCLpPvSa1HSW3ZZpTBYi22Jc1TXBsqB1NgwEgpUWhORvBlFKPlnkfzqoYlnqTYqgtJ15oyOslXcrCUCBQwXcYOrbdjmoRO50=
+	t=1718322319; cv=none; b=mlUh5ngN5gRDSwUbvB70Mig9i2K1rCJKEf9kdInZUx2dQml0JdYMWYS7swvzYu3onp0Odlj/s91qOOpRahA6qh5GVbzNs1NbXWgtrL552qSu0dx1X3Ekbex4nR0uB5+ZAAS8fyeIVCW9k0eJoeumEH1Kc0e/yVRyY4Vy++30CYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718322314; c=relaxed/simple;
-	bh=PaSlr40QJse6dHNYFDgd5wEKX7Bqje7vtvx/rk8HyNw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uhonki/FoBaTAXTKZvghHY0R7aQXVDXB1nw7/u+p2FYqe4j7qVqC2UiruBMxBCPDdQP8dHDI4oCPOE5R0Ya4iBkRU0dWFSVXtpIQfO9UCYs/9Ik3M6RirwEi3OWHBYrP082d+AfKlJdBzayNFywaPqeGvkNX+XEfEfc+ww95XKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mRoEpD07; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DNSkeK022003;
-	Thu, 13 Jun 2024 23:44:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	Noz5pwMBvsmGR387X0Jg77Dw0n+SZY9A1aVzP4jEPgA=; b=mRoEpD07Uz4yHmAB
-	ljEEsA0x1Hos8hQIWkTwTgPpcsSGZSAO2Cw/r1HP/WycSTdd1SA141q+Y4EyIA/z
-	HNbKBrL+WF8r1m6khtN+1zEAiYgZaOVqc9nrXiFiqy7wjdV+CsQM266Myei4R1A5
-	grCuOIfurEcyeSNMbEILdhMYJKYDadbJxfGb33/mr8f45e3ELR1r6gWk5Q6JFaXb
-	VcV9EpDjYTvrpDcTDmv2wJAEZr8t0ZRqLJHYVe5edjtjIVqb7Ebz9/TAhjFasf8M
-	KQqI+hJQXQjRUh5OAP7Hjz6ZDBVEyilukaoWnUXHHCC6Hu4cd+0dSqiSANLMRJ+J
-	I6DX0w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yrafg80vh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 23:44:48 +0000 (GMT)
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45DNiloE015324;
-	Thu, 13 Jun 2024 23:44:47 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yrafg80vc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 23:44:47 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45DMDGBr028710;
-	Thu, 13 Jun 2024 23:44:46 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yn1muvqwm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 23:44:46 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45DNiflA47513912
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Jun 2024 23:44:43 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0F78120043;
-	Thu, 13 Jun 2024 23:44:41 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A100A20040;
-	Thu, 13 Jun 2024 23:44:39 +0000 (GMT)
-Received: from [127.0.0.1] (unknown [9.152.108.100])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 13 Jun 2024 23:44:39 +0000 (GMT)
-Message-ID: <5a8a3c85760c19be66965630418e09a820f79277.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 12/35] kmsan: Support SLAB_POISON
-From: Ilya Leoshkevich <iii@linux.ibm.com>
-To: SeongJae Park <sj@kernel.org>, Alexander Potapenko <glider@google.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
-        Andrew Morton
- <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        David
- Rientjes <rientjes@google.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Joonsoo
- Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>,
-        Masami
- Hiramatsu <mhiramat@kernel.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        Steven
- Rostedt <rostedt@goodmis.org>,
-        Vasily Gorbik <gor@linux.ibm.com>, Vlastimil
- Babka <vbabka@suse.cz>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Sven Schnelle
- <svens@linux.ibm.com>
-Date: Fri, 14 Jun 2024 01:44:39 +0200
-In-Reply-To: <20240613233044.117000-1-sj@kernel.org>
-References: <20240613233044.117000-1-sj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: R8Ge89LT8ke23MedEmj8fyVcr9NYVe3c
-X-Proofpoint-GUID: xkSosI_V3EwHip4n10hyZ_Dwths6J4Ly
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1718322319; c=relaxed/simple;
+	bh=CsY0CCnDSEPM59W6XG1p9zg9ix32GuyUmtg/6k5/slk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mr3mbax1G4fh4lJKrLyUsLmbXvXw05WsSv4kwmGrOOGfHzuBWJSYZ6/cQBC4zWgWXTkBhDSRRcTVwzEQTdoqogvLVJxW8ac/e+jvW8PE1W1WF1iFjdOKSBQQLgIw08ZOP0Gn4c9FPNvnkVNILiRfA46nUAoVBYSnSfWIyDVezI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XYT6UgPn; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-6eab07ae82bso1215812a12.3;
+        Thu, 13 Jun 2024 16:45:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718322317; x=1718927117; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/mtm9eDYG2cZAmP6Ju1HVX7nfYH9H/K2+MAXdlH/+PI=;
+        b=XYT6UgPndWpTcYLW5I3al59t2p2qZbJN5ohEEC9/FQ+GGgl8ky8BzgDluMBPQfguvY
+         qy/QhEzDxJavG7AkYj8xb7wAF9N4Tz6JyQUD9UunPvKNMc2+5cVlZQz3QyacaxexWJNS
+         T47tCaW7BKJDY9IZ2iW8sZd4IbmjuX2EApwKnf3FeM55fxraqNsHiIlOT30LiJ9ARqxl
+         /kv//xEHL58QDnrSGNkhTumEYHEHEavI2mEMIUBaVNzUel1WtHicOphoIcU2JTZl9zXA
+         iOlWDtZfEhuno0CH2zHfS95uhRsGOB8kGCm8fq5A8UFYFBqqpS/6fUXQxnELFnP4+N+b
+         jFbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718322317; x=1718927117;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/mtm9eDYG2cZAmP6Ju1HVX7nfYH9H/K2+MAXdlH/+PI=;
+        b=nSkQxZW64t6nyABF6oH8y7S6OxXx3jWQI8exgsJRkrvL2mUgT7E15ng2BkITbPmWhx
+         3GjjbulsPMB9wv58nns97ysZ+pPQPVhOCt4XE5DQnhPFioHvrTtMsFdnIJw8pJwKTENp
+         XSTRq31WekqLiV1rYKApQtyiw1CUsHPlfVRwv56TNIIthBJui6jejsguWQoscvT5Ifqn
+         0qgjb29ra+gRnem79VwQR2pnQ95KNontG9HEYD1oUJtg3Y5DDxVttNsD+DUE75i32cyG
+         mjwDjGV5ZO29DaLUcMBBXAbB+anl8Qcgp993Av8uqPQ+yiCKJK8/sAkZr3jRVFUjVnTx
+         gJiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnjkJ9xK6qrQtZADqp/IKJ0DaOGpwHo7MHazLJRfSfBS6miBC1B1bMv+zCWJ3QyBurZh5e6ZaCr4CMD10mrSxpcenn83i9inHbP+iJFDNQyq1JwVTJ9YSKpMZXCLluCfdeo+ILhkAEtNc=
+X-Gm-Message-State: AOJu0YxgMcpOz9ugU1NP3YxCmCnDGKLSqtuMI85/vXqr3YYZvmDnGN4a
+	Bjb0QUEhCYiPoPDHDK7p546QR+NHRPfGFIxuFepBr2OdnsrgzJfx
+X-Google-Smtp-Source: AGHT+IHK9n7bd54p6UPI0S7aGHF+8jh2ZeLELs+jkQGeXdDy7F+SCOzceR5WIEisrcKhQYULXM0Nzw==
+X-Received: by 2002:a17:902:e549:b0:1f6:87c:6f with SMTP id d9443c01a7336-1f862a0d057mr14278975ad.62.1718322316518;
+        Thu, 13 Jun 2024 16:45:16 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e7ca78sm19877575ad.106.2024.06.13.16.45.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 16:45:16 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 13 Jun 2024 16:45:14 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (core) Make hwmon_class const
+Message-ID: <447f8544-43e7-4907-bb76-0a805d3e7a20@roeck-us.net>
+References: <20240614-class-const-hwmon-v1-1-27b910d06a90@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_13,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 clxscore=1011 mlxscore=0 mlxlogscore=999 lowpriorityscore=0
- malwarescore=0 adultscore=0 bulkscore=0 priorityscore=1501 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130167
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240614-class-const-hwmon-v1-1-27b910d06a90@weissschuh.net>
 
-On Thu, 2024-06-13 at 16:30 -0700, SeongJae Park wrote:
-> Hi Ilya,
->=20
-> On Thu, 13 Jun 2024 17:34:14 +0200 Ilya Leoshkevich
-> <iii@linux.ibm.com> wrote:
->=20
-> > Avoid false KMSAN negatives with SLUB_DEBUG by allowing
-> > kmsan_slab_free() to poison the freed memory, and by preventing
-> > init_object() from unpoisoning new allocations by using __memset().
-> >=20
-> > There are two alternatives to this approach. First, init_object()
-> > can be marked with __no_sanitize_memory. This annotation should be
-> > used
-> > with great care, because it drops all instrumentation from the
-> > function, and any shadow writes will be lost. Even though this is
-> > not a
-> > concern with the current init_object() implementation, this may
-> > change
-> > in the future.
-> >=20
-> > Second, kmsan_poison_memory() calls may be added after memset()
-> > calls.
-> > The downside is that init_object() is called from
-> > free_debug_processing(), in which case poisoning will erase the
-> > distinction between simply uninitialized memory and UAF.
-> >=20
-> > Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
-> > ---
-> > =C2=A0mm/kmsan/hooks.c |=C2=A0 2 +-
-> > =C2=A0mm/slub.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 13 ++++++++=
-+----
-> > =C2=A02 files changed, 10 insertions(+), 5 deletions(-)
-> >=20
-> [...]
-> > --- a/mm/slub.c
-> > +++ b/mm/slub.c
-> > @@ -1139,7 +1139,12 @@ static void init_object(struct kmem_cache
-> > *s, void *object, u8 val)
-> > =C2=A0	unsigned int poison_size =3D s->object_size;
-> > =C2=A0
-> > =C2=A0	if (s->flags & SLAB_RED_ZONE) {
-> > -		memset(p - s->red_left_pad, val, s->red_left_pad);
-> > +		/*
-> > +		 * Use __memset() here and below in order to avoid
-> > overwriting
-> > +		 * the KMSAN shadow. Keeping the shadow makes it
-> > possible to
-> > +		 * distinguish uninit-value from use-after-free.
-> > +		 */
-> > +		__memset(p - s->red_left_pad, val, s-
-> > >red_left_pad);
->=20
-> I found my build test[1] fails with below error on latest mm-unstable
-> branch.
-> 'git bisect' points me this patch.
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CC=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mm/slub.o
-> =C2=A0=C2=A0=C2=A0 /mm/slub.c: In function 'init_object':
-> =C2=A0=C2=A0=C2=A0 /mm/slub.c:1147:17: error: implicit declaration of fun=
-ction
-> '__memset'; did you mean 'memset'? [-Werror=3Dimplicit-function-
-> declaration]
-> =C2=A0=C2=A0=C2=A0=C2=A0 1147 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __memset(p - s->red_=
-left_pad, val, s-
-> >red_left_pad);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 ^~~~~~~~
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 memset
-> =C2=A0=C2=A0=C2=A0 cc1: some warnings being treated as errors
->=20
-> I haven't looked in deep, but reporting first.=C2=A0 Do you have any idea?
->=20
-> [1]
-> https://github.com/awslabs/damon-tests/blob/next/corr/tests/build_m68k.sh
->=20
->=20
-> Thanks,
-> SJ
->=20
-> [...]
+On Fri, Jun 14, 2024 at 01:01:42AM +0200, Thomas Weiﬂschuh wrote:
+> Now that the driver core allows for struct class to be in read-only
+> memory, mark hwmon_class as const.
+> 
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
 
-Thanks for the report.
+Applied.
 
-Apparently not all architectures have=C2=A0__memset(). We should probably go
-back to memset_no_sanitize_memory() [1], but this time mark it with
-noinline __maybe_unused __no_sanitize_memory, like it's done in, e.g.,
-32/35.
+Thanks,
+Guenter
 
-Alexander, what do you think?
-
-[1]
-https://lore.kernel.org/lkml/20231121220155.1217090-14-iii@linux.ibm.com/
+> ---
+>  drivers/hwmon/hwmon.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> 
+> ---
+> base-commit: d20f6b3d747c36889b7ce75ee369182af3decb6b
+> change-id: 20240614-class-const-hwmon-556014c02b70
+> 
+> Best regards,
+> 
+> diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+> index 3b259c425ab7..1d1451dd239d 100644
+> --- a/drivers/hwmon/hwmon.c
+> +++ b/drivers/hwmon/hwmon.c
+> @@ -136,7 +136,7 @@ static void hwmon_dev_release(struct device *dev)
+>  	kfree(hwdev);
+>  }
+>  
+> -static struct class hwmon_class = {
+> +static const struct class hwmon_class = {
+>  	.name = "hwmon",
+>  	.dev_groups = hwmon_dev_attr_groups,
+>  	.dev_release = hwmon_dev_release,
 
