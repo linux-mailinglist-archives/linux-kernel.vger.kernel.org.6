@@ -1,120 +1,121 @@
-Return-Path: <linux-kernel+bounces-212719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 196C3906541
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:35:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B68A3906543
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5B47289F70
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:35:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D9A41F20FE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D2F13C669;
-	Thu, 13 Jun 2024 07:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FAB13CABC;
+	Thu, 13 Jun 2024 07:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4cBLzcg"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A5Vvo0jz"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A495B13C660;
-	Thu, 13 Jun 2024 07:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E903713C8FF;
+	Thu, 13 Jun 2024 07:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718264074; cv=none; b=pkEWiDIsI3Ud0/2YwFcQitl/EgNoTf0HWGKa4c8YPkGPQFE/9ZqA+1iGmaDvrbu7yPnXFU4ZSY/nEG0Ftr0UEKOHXGvyLyjkluXeXWnmU8FA7hbOTGRwxt02oRanAo5IMThjaiVDyTHIq7GxiysnMp+PsCszBKCQnOd3PW3PwcA=
+	t=1718264092; cv=none; b=N9nVR+TeVJZcZhguVZtYPzf8iZI52ErJ8V5BtIC1OJWc+zMx6957Zlfu7My6cnX69ZcBjXJiB1JAdXNeHgqFmUgLM4XqzuAUDtdmahUw3JHLzU0d75bFa00J3Q24vilvPfauvTvbpJu8LUL8O4ZpiZGa1/kG3FxaHwEnrgyMiII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718264074; c=relaxed/simple;
-	bh=BgGPUA4CJHBAi6sstPxqPZGkojFNDXKzqwrZiGnPZHQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Ao2Du3jDFCmeUd6tx0QMLcAjZezzimeCa+GX7MxVeT5ockW0Ad2Df8aPeYzUybeLDLkLnn/YA2vhW2MEfgPlfrIfBtrch/kQzxtLrOz1knFmGRvlmJdl1U53P8k3aHX1chQ9DmqFskvYHGf3uP26vw6bMQTzPoalbd3Ut8rpDUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z4cBLzcg; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1718264092; c=relaxed/simple;
+	bh=jgULLhu5IvBh4a9OytyFlWTFX5Otdlwllt0KSe8RJV8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=APOKUqQ+bxCaORHWFxURwJbR0EHqI/fhfOKEZ7nEVeKbd1afgwWNLh/wOx7fvRRVdVYFHP0XbV6zsHQXsHqUgMUr/K24ISDndenkbFxRN50X5u5t3QCoe4L/s1vAdxpJ1cfJBbHFKVZUn6hMLww/M785+oXv3n6fYiE0th2P8qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A5Vvo0jz; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42189d3c7efso8516715e9.2;
-        Thu, 13 Jun 2024 00:34:32 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7024d571d8eso563826b3a.0;
+        Thu, 13 Jun 2024 00:34:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718264071; x=1718868871; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718264090; x=1718868890; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MSHRYQpgTDWbDhn+hhtstnXRqbhO24DfQNz+E/HyPBU=;
-        b=Z4cBLzcgRHjbW21WaW2xRi64ZiXmV/Gwhzs/xo/g1Q8frvnEcfQ6+kh6Um0Qh0YJ24
-         p8e6whW27/S7k2zKjHI8hJtMQSI/BQkRSKpB1XRIpc78BpSc/EdtHT8onVk3QlpZPphV
-         /panKcM6Lg1xkm2gyADwa/wCMakSdK7ANOoMsUrzguTwcuZLm4gFfDUGdy6QAoDLVOL5
-         SIbGvWLs4j1M7THeP30HBcrAR1rfWKLbdQkZEdeQyGV3a40RmULs/Hzt4HgYGTKM4tVh
-         RJ/ez12Am7sUeZgqGAg66SOgMi64E7Ikd+niF9RlYpHHA+ExqWalDnjJMCynzzO0KNNR
-         kPKw==
+        bh=vEo7Qa1RSYsG3o+jOD/UVcH9RHS8MXsBnArA3BE9OsE=;
+        b=A5Vvo0jzXm9v6JJr7OQf0fw0GXhKicnnPsBm0ale7iqHIN/HPz342WlDCpfocev89V
+         q32r9WHzjobAchM4LwoGRkxH1BywY0V1sxPjboaBSgPr84rHSRZp3RLkBYKTPHX5ZE8w
+         81tHopr8PyaxmUYuijNFZinw9A+P2+IbnQvj4uO2Q/0WJSv8xNYMNj21bk5e7Aq4aMDL
+         lw0moTvyWHF1rSCTo9/+LmK4oBD1Sax7vLP5XWabv4X8GrYds+A71FMh9CUy++oT6k8b
+         uRE5m+U82kcpJ2n3rZt399aD/crFpXvqPmm+nlh9J//yKlSXDcEYMAdLoyu9cdjtFck6
+         exqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718264071; x=1718868871;
+        d=1e100.net; s=20230601; t=1718264090; x=1718868890;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MSHRYQpgTDWbDhn+hhtstnXRqbhO24DfQNz+E/HyPBU=;
-        b=RmewW2eMOG9wBzY/FC4f1RnMGfaJ4nlJCw5MIEkx21rkp76zmrSDcGv6OJ/O7ncxas
-         zaj08UED+T/eA/IJFax9ZkeH/sLWWljivsOceqacraepP3PQlHa95DnEDLmM2soVEA2Q
-         n7zWPW9qCAZUPW1M1l3/N/1RRP4LDMbh0KFWZOQTXtniwsJtkD1SUL8rLpRKgkVRjcv+
-         o3qDlohXzcpl2OQ4/OlnBCtq54aHHyI7DETXeRTiq+TsvP42PRRQByE+c1bVmbCtTcvp
-         xuOV7shHfp0vaNv0SFlO1yqRSMzhDLT6oK+ogSpeRLnLCMgwoUSnwfGzAISFfW+X317O
-         12yg==
-X-Forwarded-Encrypted: i=1; AJvYcCUteEbYt+n0Zgmb6EZ0gC9VoJr+yFQIR2kRv/I8GWQL+LImhAdGPxk4GvPUzEkDAxYQcfxlMaLcnn7+S8pFRCaDF8xdKxtVjHfSdkIWy6LNXC0DDZUlUj8c3LRStZLjnu0/IsUHUzAT663DD8PU
-X-Gm-Message-State: AOJu0YxlWkXxVcqdfV3XajNLdvkxgymXuBIHXFGw7ZRs3T/rRKCRE7BW
-	Y8EI5WX/Z2Ckj/f5tga0YmhI2OzDfe6/6LUjz6KHaBWvgyZFpxA0ywmUDg==
-X-Google-Smtp-Source: AGHT+IE5HZjrLoCnNxLVajnotnkeImtDf2cI0u88h47cCjcg16Llc86SnlptsYF62rR065Ce2k3SMw==
-X-Received: by 2002:a05:600c:314d:b0:421:7c1e:5d5d with SMTP id 5b1f17b1804b1-422867bf846mr47056455e9.35.1718264070779;
-        Thu, 13 Jun 2024 00:34:30 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286eef70csm51236815e9.3.2024.06.13.00.34.30
+        bh=vEo7Qa1RSYsG3o+jOD/UVcH9RHS8MXsBnArA3BE9OsE=;
+        b=Cwe0Cvi/0BvIe67JwVHQZVZ5a+Us/TkT6PvJxqMtoca2GmLx4xEDmJlmwAJz0ikqYk
+         fmBaaCOcmlh+/k2FQijFZvw0Wkv4nnRwjvFitaKG+lfdKGoJ51Tl3JIPpk8aYx+0Sq7v
+         y8ZX7TN9Kr9o3xdhlIbd9GKRsVwkGCqrikQjl6b1P6kqGrT/jSSA5+IXzzbfBrUifBKl
+         c3kwdqHrVX02Z2lqS6crBcqsWobvT85UAySBsi7QrmVO0BIoPzauDHmXy3uwMvU4hN4+
+         raNuyNWNkavsxMjbLKE+Z5Ze+JBwMYei7Wpgf4KaZuJNbHE3xdeFcoAjvPx5O6LKac+j
+         OSvA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8lm/gnweiV/olHFCfTWCKbvc1zjRBA6rqlmaz5ppk5zv4yPJVx7kDUfMBhBAiyGUipQGoSNQ+awCrylKzudJTupnlVLJ0S6YPctrJF1H/29CrjjESJsu64m1K5PE3gtSCASKQ
+X-Gm-Message-State: AOJu0YyY/dZ/YqySiJjsD91VwMZAN3MjmYe5BBSO/+moRjVFcFbZhpX7
+	TGjc98A7xQigKxMVsW8k3lkBvPcCanxDjOzU6LzGcvy3lVXF11xa
+X-Google-Smtp-Source: AGHT+IFiB1U1E5uL9h1zCG8GC9z83TgIRPvwD9xgOPuooCxmaMDIsE/QwJPXdpjQ/lewn55vZzz2yA==
+X-Received: by 2002:a05:6a00:2d25:b0:704:3aca:7833 with SMTP id d2e1a72fcca58-705bcf09c2cmr4617248b3a.31.1718264090067;
+        Thu, 13 Jun 2024 00:34:50 -0700 (PDT)
+Received: from gmail.com ([2a09:bac5:80c9:183c::26a:4f])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb3d19esm715562b3a.122.2024.06.13.00.34.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 00:34:30 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
+        Thu, 13 Jun 2024 00:34:49 -0700 (PDT)
+From: Qingfang Deng <dqfext@gmail.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] kselftest/arm64: Fix a couple of spelling mistakes
-Date: Thu, 13 Jun 2024 08:34:29 +0100
-Message-Id: <20240613073429.1797451-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+Cc: Joe Perches <joe@perches.com>,
+	Qingfang Deng <qingfang.deng@siflower.com.cn>
+Subject: [PATCH net-next] etherdevice: Optimize is_broadcast_ether_addr
+Date: Thu, 13 Jun 2024 15:34:41 +0800
+Message-Id: <20240613073441.781919-1-dqfext@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There are two spelling mistakes in some error messages. Fix them.
+From: Qingfang Deng <qingfang.deng@siflower.com.cn>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Like is_zero_ether_addr, is_broadcast_ether_addr can also be optimized
+by using a 32-bit load if CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS is set.
+Sign extension is used to populate the upper 16-bit of the 16-bit load.
+
+Signed-off-by: Qingfang Deng <qingfang.deng@siflower.com.cn>
 ---
- tools/testing/selftests/arm64/fp/kernel-test.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/etherdevice.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/tools/testing/selftests/arm64/fp/kernel-test.c b/tools/testing/selftests/arm64/fp/kernel-test.c
-index 50db26a3ed79..e8da3b4cbd23 100644
---- a/tools/testing/selftests/arm64/fp/kernel-test.c
-+++ b/tools/testing/selftests/arm64/fp/kernel-test.c
-@@ -233,7 +233,7 @@ static bool compute_digest(void *buf)
- reread:
- 	ret = recv(sock, buf, digest_len, 0);
- 	if (ret == 0) {
--		printf("No disgest returned\n");
-+		printf("No digest returned\n");
- 		return false;
- 	}
- 	if (ret != digest_len) {
-@@ -308,7 +308,7 @@ int main(void)
+diff --git a/include/linux/etherdevice.h b/include/linux/etherdevice.h
+index 2ad1ffa4ccb9..23b9cc5e299d 100644
+--- a/include/linux/etherdevice.h
++++ b/include/linux/etherdevice.h
+@@ -174,9 +174,14 @@ static inline bool is_local_ether_addr(const u8 *addr)
+  */
+ static inline bool is_broadcast_ether_addr(const u8 *addr)
+ {
++#if defined(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS)
++	return (*(const s32 *)(addr + 0) &
++		*(const s16 *)(addr + 4)) == (s32)0xffffffff;
++#else
+ 	return (*(const u16 *)(addr + 0) &
+ 		*(const u16 *)(addr + 2) &
+ 		*(const u16 *)(addr + 4)) == 0xffff;
++#endif
+ }
  
- 	while (true) {
- 		if (!compute_digest(digest)) {
--			printf("Failed to coempute digest, iter=%d\n", iter);
-+			printf("Failed to compute digest, iter=%d\n", iter);
- 			return EXIT_FAILURE;
- 		}
- 
+ /**
 -- 
-2.39.2
+2.34.1
 
 
