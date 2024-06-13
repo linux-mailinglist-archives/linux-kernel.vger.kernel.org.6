@@ -1,136 +1,135 @@
-Return-Path: <linux-kernel+bounces-213696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF389078DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:55:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D299078DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0403A28632E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:55:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2E3A1C235BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD76149C5B;
-	Thu, 13 Jun 2024 16:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11E714A081;
+	Thu, 13 Jun 2024 16:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a+7sFHAQ"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lPSXC9he"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0511613EFE3
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA94D26AF0
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718297731; cv=none; b=mbnnV/f5DpWpGSwonxRYR1QRS+o0ElC2ff5JP0RSHaPXib1HpL/KK805IMK0diHcw/1cbEOU3Lyd5ZH66iCCc4Yd7f4c6m4x43BzN6D1Zu9gjAGz2tqE4D6El1bao5v85XovEvJTpDuHUi/mvgjD5WavOkRr0k3VSpzi6cjQUXc=
+	t=1718297744; cv=none; b=HNWQ4vCjEoI3UjX/FvZ/BvEhxvOO2BH7Ty/CSHE0KJJLTSST488/i8x1KaqETdLWJPMv10F4xa2pCYuvypNYTf2WRHm8FOOtCY6Ivv6nsVU1EpBPsi8T2uiAIPzVbea65b4Ekm6JA4akPlxUpNnkGyH+i7whWYEOVtHxGgMuEDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718297731; c=relaxed/simple;
-	bh=gWJSlhXJZjDMSCMnTQA00bSbjWncOwR7ylrZc7+pEaA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=onMNqx6FeAMjpYjfK6CP6AooNnfugmpGoXlHk8wzP3BNtjL3ap/SE7PjMcrNscTLbphYjx3pStaT0Ff4k4CsOwG3qGYeCklKkFIh4thAXdrU/6GMUDAiihr0cs38gqVQF4O3B50xCIRht841nn+AUWHcktkd8E4oZ+kFM0kCNBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a+7sFHAQ; arc=none smtp.client-ip=209.85.166.176
+	s=arc-20240116; t=1718297744; c=relaxed/simple;
+	bh=JBcO41UleHNq3lhHasPs977C4yzTa+av52awcjkovk0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=pjMnFZf228kcvm1NcXmL7qLoYy1HBV6+dlXEJRBhG228pNmn4haV43JsJx7+YDkxXP6kdWR5dlQW7Rgpv8Iamnw86bV4csj7lKOowh8BzLhz+wloZoutrca8OhKQoabMFwNyY3yHqSaCIeJjg7TauBBa8CFaEODu/u9s55zfCGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lPSXC9he; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-375acf90c58so1195ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:55:29 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dfefc2c8569so2389813276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:55:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718297729; x=1718902529; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gWJSlhXJZjDMSCMnTQA00bSbjWncOwR7ylrZc7+pEaA=;
-        b=a+7sFHAQC6BxlkC/FLvXzSfHGQWV9f3dO45WncwWzrqJ8Wt82v+YWXTAaTou56zTey
-         NAf4jxOWxKvEDuWZUtEdUusU8iut/VTxTgtnc5rLZXfjt2fFs7+kxyVumjfmgi2PzVKq
-         +lWcpZI0elX8sWgH16QEUv6x0MZFQJ4G5NOIDmQj5EbkSgCnFXA4RBKB8NaxeDxNnzMG
-         OTaYompsV+5MeXQIH58S1PUSdlhHYuPUoqtYgOBLztN2NFydHaaf0XddiAiy21tg27DG
-         YFq0xQSfdjAMGzmZTlMByVssT/+HLjTqzz4aEYv+ZJxlxJZCOv66Gc/+I4Yh7CZIYytg
-         PsNw==
+        d=google.com; s=20230601; t=1718297741; x=1718902541; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=f9CYt9bUQNxiXkzpZqytzyg53ZWv58TJdgtMwrRPm6U=;
+        b=lPSXC9heprNeF8vL2j4xpLJh3aiTpXy9XicaYRrOPgkQlY8jqYcB26meROjBBxof19
+         aKypBhw7bwuWFGZP5z3t/bWSVqHFDQHwXTVXEZRvdMU8mkGtXPIjG4r/NNYSsOp8Hqj2
+         oIrIEZMQ4d2UfQ5Rgperkj9Zb9KmyDQ33LAsFYNunEI0P3ZqpWfKtx1hKOFfe7zdyUgx
+         Dw45r6nR9vOREuYDYzDAxYchjT/tKPWhUwLk89rmY2MDGcCg/mPG+jeo8z3ncHn5DQhS
+         tZAgHZUL8/PpBWlGwB+2X2ePpqD86UTrpYVE/lVKZr8ZY8ORn783y2l4M79pozTSrQ00
+         34IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718297729; x=1718902529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gWJSlhXJZjDMSCMnTQA00bSbjWncOwR7ylrZc7+pEaA=;
-        b=HMPpBfSaB6+1Ofl6GtAY4kscSqe8GTvx74pHCWOX/snUo7UlaSYXG1/vPui744uRjf
-         1YKISFfkRcPZTiADlnvO3MwIHqEBjNVwxVFFB9MckvFQAyCsT1Ba6Z2CNNO4Bp5nJd6c
-         aWLZbYlizOWTUDXq9Qdwww5u2kXN6r0RX3pusXDoSQ7aUxzBLE9eNRDFYStt95D6dJaK
-         M90VAI32D6J3co26/AOvmQHXD+kVo1IkxP9Q7MaEl6f0s7FcMhTA9ufaPRqCzwEl2eCT
-         T6l8iZhHaE3lLXa61ZeD601Njty6P/QTKtDD4RIK6iBQwC7mjC1/X0WUZuEPeeZX0GtW
-         AShQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmddHoWN4VwZT+f+QWEsYCzmuo3rwqcmcyeDT6FOj0cK49pJwk++YMzVUad4HyErEWj1qodmX3L3osAOZD6LOoRAn2QJiBCdzYhUG9
-X-Gm-Message-State: AOJu0YxCplSndvuAFhCxJrUsNuf7VjDtX90ENmhUuJwuuwOTYZEXbjTf
-	TThs+Gnb5m8Vo3MM2B/ABERmNz++4liIXRxsbR5wxysS0kLtOE1iuOlPBwakq72roZLDRpROsln
-	+sAm0ezYXAbASD07vd/VfcZNoKagUj0R0F1dD
-X-Google-Smtp-Source: AGHT+IEbV5W9YTxiRK3k2IN1ZbR6jqHOarV+ilqCrXqD33J5SW1vK2cChNhC77IN9rseAhu6xuSDZG9NUZAelZRNrZU=
-X-Received: by 2002:a05:6e02:2689:b0:375:bb49:930d with SMTP id
- e9e14a558f8ab-375d73f700fmr2575015ab.23.1718297729092; Thu, 13 Jun 2024
- 09:55:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718297741; x=1718902541;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f9CYt9bUQNxiXkzpZqytzyg53ZWv58TJdgtMwrRPm6U=;
+        b=Z5RKLec/ryRFIIqkD+5RBfS1eMlpLYnHTyzlWf4ZyXZjWabNoMRgBACNp5mSufv6oo
+         k4jsoPycJoxJeVghPHN0zachxahJLTJ8pIBGmnFLXJXdsEO98LsuzH32qJ2kA8gk6v4j
+         ZrhFmk4mDvtHEFxuSJkGyBM7NM2WqFIsJ8AWV4FjwoyEn+gNS3di6t9Tc1c5fUAB4o4/
+         4ghUYGFt2GBm+wyibI/sCwJrta8BrOVigdVMRUwFKA581QHDrLZaMlzaUzDcKlcyObGp
+         PPTXM4xMuvLMSgl+GahedjDBjoHECmgerN4eXjni4q8O0duPBPRUl9mkBr6voj6lCTCC
+         pgGQ==
+X-Gm-Message-State: AOJu0Yx2hi3A3dVEYeTY3oFRvDSA0otugJs04l6GG8qmROCU5sNAY0ni
+	d6tRQUnZObtNqFJLp7qImPuTiBaL48P6puCQrWii4rLNHEB3m7uikMIO/In6/tseeIm5WzZUYkg
+	tmw==
+X-Google-Smtp-Source: AGHT+IHCQlTH8aUKVHWrREgqElX3I3HQvj6sWaaSxtbwu4nlawWKgv1Yel798rbyLMa4rUaGweqDKSAm9QU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:100f:b0:dfd:d6ec:4e3b with SMTP id
+ 3f1490d57ef6-dff15399367mr1866276.7.1718297740902; Thu, 13 Jun 2024 09:55:40
+ -0700 (PDT)
+Date: Thu, 13 Jun 2024 09:55:39 -0700
+In-Reply-To: <20240207172646.3981-12-xin3.li@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240612183205.3120248-1-irogers@google.com> <bdf1ab6e-b887-4182-a0ae-7653bd835907@arm.com>
- <Zmr_CfhYsvKePZFt@x1> <9814866a-8f9d-4d82-ad2d-4b36203aa196@arm.com>
-In-Reply-To: <9814866a-8f9d-4d82-ad2d-4b36203aa196@arm.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 13 Jun 2024 09:55:17 -0700
-Message-ID: <CAP-5=fV9DW0X+BD0qZEkHJg4-JrLD+yttqQm1mw2NKAY19rPZA@mail.gmail.com>
-Subject: Re: [PATCH v1 0/7] Refactor perf python module build
-To: James Clark <james.clark@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Nick Terrell <terrelln@fb.com>, 
-	Ravi Bangoria <ravi.bangoria@amd.com>, Kees Cook <keescook@chromium.org>, 
-	Andrei Vagin <avagin@google.com>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, Ze Gao <zegao2021@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, coresight@lists.linaro.org, 
-	rust-for-linux@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20240207172646.3981-1-xin3.li@intel.com> <20240207172646.3981-12-xin3.li@intel.com>
+Message-ID: <Zmski7ixgWOE7Snl@google.com>
+Subject: Re: [PATCH v2 11/25] KVM: x86: Add kvm_is_fred_enabled()
+From: Sean Christopherson <seanjc@google.com>
+To: Xin Li <xin3.li@intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	shuah@kernel.org, vkuznets@redhat.com, peterz@infradead.org, 
+	ravi.v.shankar@intel.com, xin@zytor.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Jun 13, 2024 at 8:10=E2=80=AFAM James Clark <james.clark@arm.com> w=
-rote:
-[...]
-> >> Reviewed-by: James Clark <james.clark@arm.com>
-> >>
-> >> It does require a clean build to avoid some -fPIC errors presumably
-> >> because not everything that requires it gets rebuilt, for anyone who
-> >> gets stuck on that.
-> >
-> > We need to find a way to avoid requiring the 'make clean' :-/
-> >
-> > - Arnaldo
-> >
->
-> Do we need to make it so that if any of the Makefiles are touched it
-> does a clean? I'm assuming that was the cause of the issue I experienced
-> here and that the Makefile and/or Build files aren't mentioned as
-> dependencies of any target.
+On Wed, Feb 07, 2024, Xin Li wrote:
+> Add kvm_is_fred_enabled() to get if FRED is enabled on a vCPU.
+> 
+> Signed-off-by: Xin Li <xin3.li@intel.com>
+> Tested-by: Shan Kang <shan.kang@intel.com>
+> ---
+> 
+> Change since v1:
+> * Explain why it is ok to only check CR4.FRED (Chao Gao).
+> ---
+>  arch/x86/kvm/kvm_cache_regs.h | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/arch/x86/kvm/kvm_cache_regs.h b/arch/x86/kvm/kvm_cache_regs.h
+> index 75eae9c4998a..1d431c703fdf 100644
+> --- a/arch/x86/kvm/kvm_cache_regs.h
+> +++ b/arch/x86/kvm/kvm_cache_regs.h
+> @@ -187,6 +187,23 @@ static __always_inline bool kvm_is_cr4_bit_set(struct kvm_vcpu *vcpu,
+>  	return !!kvm_read_cr4_bits(vcpu, cr4_bit);
+>  }
+>  
+> +/*
+> + * It's enough to check just CR4.FRED (X86_CR4_FRED) to tell if
+> + * a vCPU is running with FRED enabled, because:
+> + * 1) CR4.FRED can be set to 1 only _after_ IA32_EFER.LMA = 1.
+> + * 2) To leave IA-32e mode, CR4.FRED must be cleared first.
+> + *
+> + * More details at FRED Spec 6.0 Section 4.2 Enabling in CR4.
 
-Perhaps we can do something with the FEATURE_DUMP. It'd be nice to
-detect build argument changes and rebuild when that occurs. I'm used
-to doing lots of `make clean` due to sanitizer builds, something we
-should probably capture through features and/or `perf version
---build-options`. Anyway, out-of-scope for these patches.
+Please don't reference specific sections/tables/fields in comments.  They always
+become stale.  And the code+comments always reflect the current state, i.e. don't
+need to worry about spec revisions and whatnot.  If there is a spec change, then
+there darn well needs to be a way for software to differentiate old vs. new, at
+which point there will be accompanying code to capture the difference.
 
-I need to cut a v2 due to failing to add the new `.a` files to the clean ta=
-rget.
+Even in changelogs, references specific specs by section number is usually
+discouraged.  Again, it shouldn't matter if its FRED spec 6.0 vs. spec 5.0,
+because if there is a difference between those two, then the code better be
+different too.
 
-Thanks for the review,
-Ian
+Instead, for the changelog, if it's really necessary/helpful, reference the section
+by name and/or keyword, as those are much less likely to become stale.
+
+> + */
+> +static __always_inline bool kvm_is_fred_enabled(struct kvm_vcpu *vcpu)
+
+This doesn't need to be __always_inline, it's not used from a noinstr section.
+kvm_is_cr4_bit_set() is  __always_inline so that @cr4_bit is guaranteed to be a
+compile-time constant, otherwise the BUILD_BUG_ON() would fail.
 
