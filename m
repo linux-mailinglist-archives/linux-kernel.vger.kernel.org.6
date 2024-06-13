@@ -1,304 +1,148 @@
-Return-Path: <linux-kernel+bounces-213281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4647F90736D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:18:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7997C907367
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEAB51F221CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:18:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CE5A285F82
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23AFE14430D;
-	Thu, 13 Jun 2024 13:18:15 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E62D143C60;
-	Thu, 13 Jun 2024 13:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADCC013C3F5;
+	Thu, 13 Jun 2024 13:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrJNonci"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BB11428E2;
+	Thu, 13 Jun 2024 13:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718284694; cv=none; b=C5iNf0e76fgNQWWvU0je3iWv6WBWaNj5y8K6+5pk9ugNHjj+YNcug7Lk/3PT0N0Lt2O7rZn7F39C/SKDYsK6MGW052W0aTNt+iB8NMGEVZdzoSe0obBqCCsIF62W2NejvPVaSwOyBiDeWqrDgalTJ70jotKLMNKMRw1bTep4Hdg=
+	t=1718284660; cv=none; b=sVV65y4vKcS+OpE7ajyEbObCyIfQvn/9TJTTBgp0IYQedPMI0T2M2dFDwF+PciC8Rmo7F67ZohG42FSpHTVl2Cfk18ODg93oU7fI9R8poWEOos3BAbjj849QKq5gX+3vVDmd/2VYWaG82mgJL6gx9E9yUquHrA3RH+vuDdmiodw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718284694; c=relaxed/simple;
-	bh=PBLigDFeoVj/3sesODDma7eu2K0yE9gUuHQjzZnRg4I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FFqUD62Nb7spxDnV9z7xxfFibZP1WYf1jNy76qzIN9tgvbnSk95u1gaQaaszgSZuLyy6UakhCunlcbQBONfMZ6W88DGiI3yRNXWYH8u/niTJmMtjep58C3er+v1HA9gRPcnRAPHmrUzGqSYfhuMov0seSe7yHZuayUYDKZkJidU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-34-666af18e204d
-From: Honggyu Kim <honggyu.kim@sk.com>
-To: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Gregory Price <gregory.price@memverge.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	42.hyeyoo@gmail.com,
-	art.jeongseob@gmail.com,
-	kernel_team@skhynix.com,
-	Hyeongtak Ji <hyeongtak.ji@sk.com>,
-	Honggyu Kim <honggyu.kim@sk.com>
-Subject: [PATCH 3/8] mm/damon/sysfs-schemes: add target_nid on sysfs-schemes
-Date: Thu, 13 Jun 2024 22:17:34 +0900
-Message-ID: <20240613131741.513-4-honggyu.kim@sk.com>
-X-Mailer: git-send-email 2.43.0.windows.1
-In-Reply-To: <20240613131741.513-1-honggyu.kim@sk.com>
-References: <20240613131741.513-1-honggyu.kim@sk.com>
+	s=arc-20240116; t=1718284660; c=relaxed/simple;
+	bh=MNEPDLoK2PpSr3mXs73h/X1IsDVoNn91Thnl+e7QMOk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XUF+VKx672bniCJ80BRvr8A9FuHycsvIfAXvC7Vc4n7w8jbaahH4uvSuKUGZB/ryAzDpNn2gw6TlOv1NoyD7RKVBi1dcydpjYHRijWLAFe1FRxGQKK9wQUyx8Z0EuKDWWbNpnybmH3BH3UGMyTIBBsGkCVQSDxwxtlhGG5PPmZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrJNonci; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9840FC2BBFC;
+	Thu, 13 Jun 2024 13:17:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718284659;
+	bh=MNEPDLoK2PpSr3mXs73h/X1IsDVoNn91Thnl+e7QMOk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PrJNoncip6Fskk6khSzwVkZcP4VV4lL66FNijKu7vU7Sa2sDJxXcnY6X8XmLSQiA2
+	 4cB4hS1wXzFghXFB3J5yFAKY+IKpZgNy8qW0HPZhuZmz5DjP3vXmvgxzO4aWxQ43wP
+	 taLyw7OM6XqoXVoZdLh1xaql+VFaOhDe83nvyqml33dQwUsZNR5W8SNp+SZsHj+V0E
+	 ZevF626b65m9P7cUAMT3nA2qCvZnSTH1IIFeUSRQBfSEFqmhuFsLDjo/xbGSfh5iza
+	 OrbJgcAnTw7Yn4fFtj9AXgzmZt0aGT5SoaVsRV5proKczNLZZS+fl8ca4Uw1+Mr13q
+	 G7DB+bZAFs3cA==
+Message-ID: <c108719b-992f-4aa6-aa9d-c0276a0ec646@kernel.org>
+Date: Thu, 13 Jun 2024 15:17:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsXC9ZZnkW7fx6w0g49rJS0m9hhYzFm/hs3i
-	/oPX7BZP/v9mtWhoesRicXnXHDaLe2v+s1ocWX+WxWLz2TPMFouXq1ns63jAZHH46xsmBx6P
-	paffsHnsnHWX3aNl3y12j02rOtk8Nn2axO5xYsZvFo8Xm2cyemz8+J/d4/MmuQDOKC6blNSc
-	zLLUIn27BK6M4+vbWAouW1U82vGIsYFxo0EXIyeHhICJxI8n+1hg7Juf5jOD2GwCahJXXk5i
-	6mLk4BARsJKYtiO2i5GLg1ngGrPE7u6TYDXCAj4S969MZgOpYRFQlWi5GgFi8gqYSmyZngAx
-	UVPi8faf7CA2p4CZxLpv9xlBbCGgko7/z8Cm8AoISpyc+QTsAmYBeYnmrbOZQVZJCLxnk9g4
-	fQHUaZISB1fcYJnAyD8LSc8sJD0LGJlWMQpl5pXlJmbmmOhlVOZlVugl5+duYgRGwLLaP9E7
-	GD9dCD7EKMDBqMTD6/EsK02INbGsuDL3EKMEB7OSCO+shUAh3pTEyqrUovz4otKc1OJDjNIc
-	LErivEbfylOEBNITS1KzU1MLUotgskwcnFINjHxMrMyrBbO3m5w9P6/qcM1bS/6lb+Kez7Xh
-	Dnrx63et6Mlvjs4HOFet8ovykyqY/7WxOlO9pkMtYs+O3Nmlix/t7/M3Z1iQ0nD5kvOqKZb6
-	2/y1r58I0t32+vn/V3HnJ1xze35keZyP/r/6VUpFYp6saafCe3dULQ/lZZwg9Pahy+W/Mmym
-	l5VYijMSDbWYi4oTAWOkM+d8AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHLMWRmVeSWpSXmKPExsXCNUNLT7fvY1aaQfciLouJPQYWc9avYbO4
-	/+A1u8WT/79ZLRqaHrFYfH72mtmi88l3RovDc0+yWlzeNYfN4t6a/6wWR9afZbHYfPYMs8Xi
-	5WoW+zoeMFkc/vqGyYHfY+npN2weO2fdZfdo2XeL3WPTqk42j02fJrF7nJjxm8XjxeaZjB4b
-	P/5n9/h228Nj8YsPTB6fN8kFcEdx2aSk5mSWpRbp2yVwZRxf38ZScNmq4tGOR4wNjBsNuhg5
-	OSQETCRufprPDGKzCahJXHk5iamLkYNDRMBKYtqO2C5GLg5mgWvMEru7T4LVCAv4SNy/MpkN
-	pIZFQFWi5WoEiMkrYCqxZXoCxERNicfbf7KD2JwCZhLrvt1nBLGFgEo6/j8Dm8IrIChxcuYT
-	FhCbWUBeonnrbOYJjDyzkKRmIUktYGRaxSiSmVeWm5iZY6pXnJ1RmZdZoZecn7uJERjqy2r/
-	TNzB+OWy+yFGAQ5GJR5ej2dZaUKsiWXFlbmHGCU4mJVEeGctBArxpiRWVqUW5ccXleakFh9i
-	lOZgURLn9QpPTRASSE8sSc1OTS1ILYLJMnFwSjUwLimsDXa7s64sdW/LCov9ydvW7Wl9qcpe
-	9IQjqrwuvCTpd/mv1wlLttmVKNpv6yyWV766MmN91u8zG0xL5L9ecZ/1X/CB5xyZ9hjlf/8m
-	9PnecXI/k8mx7NiFDUHHHbcH77EqvXzgbIuvxjxu05xHnmEzgnR9bNJ3mYWsDQ6+KtVq6Gqx
-	Rn2ZEktxRqKhFnNRcSIA/VO9TnECAAA=
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: x1e80100-crd: fix DAI used for
+ headset recording
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20240611142555.994675-1-krzysztof.kozlowski@linaro.org>
+ <20240611142555.994675-2-krzysztof.kozlowski@linaro.org>
+ <90f5ad41-7192-4c01-90c0-ad9c54094917@linaro.org>
+ <9e9cbc0b-f9fd-439c-93d1-054179f7b07f@linaro.org>
+ <7rfoogp7w3gmtyawmil5lilx4blbpnb3nzl5tv2onydmzblcqw@qooqesspnrp4>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <7rfoogp7w3gmtyawmil5lilx4blbpnb3nzl5tv2onydmzblcqw@qooqesspnrp4>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Hyeongtak Ji <hyeongtak.ji@sk.com>
+On 13/06/2024 12:10, Dmitry Baryshkov wrote:
+> On Thu, Jun 13, 2024 at 11:11:05AM +0200, Krzysztof Kozlowski wrote:
+>> On 13/06/2024 09:45, Konrad Dybcio wrote:
+>>>
+>>>
+>>> On 6/11/24 16:25, Krzysztof Kozlowski wrote:
+>>>> The SWR2 Soundwire instance has 1 output and 4 input ports, so for the
+>>>> headset recording (via the WCD9385 codec and the TX macro codec) we want
+>>>> to use the next DAI, not the first one (see qcom,dout-ports and
+>>>> qcom,din-ports for soundwire@6d30000 node).
+>>>>
+>>>> Original code was copied from other devices like SM8450 and SM8550.  On
+>>>> the SM8450 this was a correct setting, however on the SM8550 this worked
+>>>> probably only by coincidence, because the DTS defined no output ports on
+>>>> SWR2 Soundwire.
+>>>
+>>> Planning to send a fix for that?
+>>>
+>>> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>
+>> Not really, because microphone works on these targets and changing it
+>> would require testing. I don't have boards suitable for testing, so
+>> let's just leave it.
+> 
+> If you provide instructions, I can test microphones on SM8450 HDK.
+> 
 
-This patch adds target_nid under
-  /sys/kernel/mm/damon/admin/kdamonds/<N>/contexts/<N>/schemes/<N>/
+SM8550 and SM8650
 
-The 'target_nid' can be used as the destination node for DAMOS actions
-such as DAMOS_MIGRATE_{HOT,COLD} in the follow up patches.
-
-Signed-off-by: Hyeongtak Ji <hyeongtak.ji@sk.com>
-Signed-off-by: Honggyu Kim <honggyu.kim@sk.com>
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- include/linux/damon.h    | 11 ++++++++++-
- mm/damon/core.c          |  5 ++++-
- mm/damon/dbgfs.c         |  2 +-
- mm/damon/lru_sort.c      |  3 ++-
- mm/damon/reclaim.c       |  3 ++-
- mm/damon/sysfs-schemes.c | 33 ++++++++++++++++++++++++++++++++-
- 6 files changed, 51 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/damon.h b/include/linux/damon.h
-index f7da65e1ac04..21d6b69a015c 100644
---- a/include/linux/damon.h
-+++ b/include/linux/damon.h
-@@ -374,6 +374,7 @@ struct damos_access_pattern {
-  * @apply_interval_us:	The time between applying the @action.
-  * @quota:		Control the aggressiveness of this scheme.
-  * @wmarks:		Watermarks for automated (in)activation of this scheme.
-+ * @target_nid:		Destination node if @action is "migrate_{hot,cold}".
-  * @filters:		Additional set of &struct damos_filter for &action.
-  * @stat:		Statistics of this scheme.
-  * @list:		List head for siblings.
-@@ -389,6 +390,10 @@ struct damos_access_pattern {
-  * monitoring context are inactive, DAMON stops monitoring either, and just
-  * repeatedly checks the watermarks.
-  *
-+ * @target_nid is used to set the migration target node for migrate_hot or
-+ * migrate_cold actions, which means it's only meaningful when @action is either
-+ * "migrate_hot" or "migrate_cold".
-+ *
-  * Before applying the &action to a memory region, &struct damon_operations
-  * implementation could check pages of the region and skip &action to respect
-  * &filters
-@@ -410,6 +415,9 @@ struct damos {
- /* public: */
- 	struct damos_quota quota;
- 	struct damos_watermarks wmarks;
-+	union {
-+		int target_nid;
-+	};
- 	struct list_head filters;
- 	struct damos_stat stat;
- 	struct list_head list;
-@@ -726,7 +734,8 @@ struct damos *damon_new_scheme(struct damos_access_pattern *pattern,
- 			enum damos_action action,
- 			unsigned long apply_interval_us,
- 			struct damos_quota *quota,
--			struct damos_watermarks *wmarks);
-+			struct damos_watermarks *wmarks,
-+			int target_nid);
- void damon_add_scheme(struct damon_ctx *ctx, struct damos *s);
- void damon_destroy_scheme(struct damos *s);
- 
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index 6392f1cc97a3..c0ec5be4f56e 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -354,7 +354,8 @@ struct damos *damon_new_scheme(struct damos_access_pattern *pattern,
- 			enum damos_action action,
- 			unsigned long apply_interval_us,
- 			struct damos_quota *quota,
--			struct damos_watermarks *wmarks)
-+			struct damos_watermarks *wmarks,
-+			int target_nid)
- {
- 	struct damos *scheme;
- 
-@@ -381,6 +382,8 @@ struct damos *damon_new_scheme(struct damos_access_pattern *pattern,
- 	scheme->wmarks = *wmarks;
- 	scheme->wmarks.activated = true;
- 
-+	scheme->target_nid = target_nid;
-+
- 	return scheme;
- }
- 
-diff --git a/mm/damon/dbgfs.c b/mm/damon/dbgfs.c
-index 2461cfe2e968..51a6f1cac385 100644
---- a/mm/damon/dbgfs.c
-+++ b/mm/damon/dbgfs.c
-@@ -281,7 +281,7 @@ static struct damos **str_to_schemes(const char *str, ssize_t len,
- 
- 		pos += parsed;
- 		scheme = damon_new_scheme(&pattern, action, 0, &quota,
--				&wmarks);
-+				&wmarks, NUMA_NO_NODE);
- 		if (!scheme)
- 			goto fail;
- 
-diff --git a/mm/damon/lru_sort.c b/mm/damon/lru_sort.c
-index 3de2916a65c3..3775f0f2743d 100644
---- a/mm/damon/lru_sort.c
-+++ b/mm/damon/lru_sort.c
-@@ -163,7 +163,8 @@ static struct damos *damon_lru_sort_new_scheme(
- 			/* under the quota. */
- 			&quota,
- 			/* (De)activate this according to the watermarks. */
--			&damon_lru_sort_wmarks);
-+			&damon_lru_sort_wmarks,
-+			NUMA_NO_NODE);
- }
- 
- /* Create a DAMON-based operation scheme for hot memory regions */
-diff --git a/mm/damon/reclaim.c b/mm/damon/reclaim.c
-index 9bd341d62b4c..a05ccb41749b 100644
---- a/mm/damon/reclaim.c
-+++ b/mm/damon/reclaim.c
-@@ -177,7 +177,8 @@ static struct damos *damon_reclaim_new_scheme(void)
- 			/* under the quota. */
- 			&damon_reclaim_quota,
- 			/* (De)activate this according to the watermarks. */
--			&damon_reclaim_wmarks);
-+			&damon_reclaim_wmarks,
-+			NUMA_NO_NODE);
- }
- 
- static void damon_reclaim_copy_quota_status(struct damos_quota *dst,
-diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
-index bea5bc52846a..0632d28b67f8 100644
---- a/mm/damon/sysfs-schemes.c
-+++ b/mm/damon/sysfs-schemes.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/slab.h>
-+#include <linux/numa.h>
- 
- #include "sysfs-common.h"
- 
-@@ -1445,6 +1446,7 @@ struct damon_sysfs_scheme {
- 	struct damon_sysfs_scheme_filters *filters;
- 	struct damon_sysfs_stats *stats;
- 	struct damon_sysfs_scheme_regions *tried_regions;
-+	int target_nid;
- };
- 
- /* This should match with enum damos_action */
-@@ -1470,6 +1472,7 @@ static struct damon_sysfs_scheme *damon_sysfs_scheme_alloc(
- 	scheme->kobj = (struct kobject){};
- 	scheme->action = action;
- 	scheme->apply_interval_us = apply_interval_us;
-+	scheme->target_nid = NUMA_NO_NODE;
- 	return scheme;
- }
- 
-@@ -1692,6 +1695,28 @@ static ssize_t apply_interval_us_store(struct kobject *kobj,
- 	return err ? err : count;
- }
- 
-+static ssize_t target_nid_show(struct kobject *kobj,
-+		struct kobj_attribute *attr, char *buf)
-+{
-+	struct damon_sysfs_scheme *scheme = container_of(kobj,
-+			struct damon_sysfs_scheme, kobj);
-+
-+	return sysfs_emit(buf, "%d\n", scheme->target_nid);
-+}
-+
-+static ssize_t target_nid_store(struct kobject *kobj,
-+		struct kobj_attribute *attr, const char *buf, size_t count)
-+{
-+	struct damon_sysfs_scheme *scheme = container_of(kobj,
-+			struct damon_sysfs_scheme, kobj);
-+	int err = 0;
-+
-+	/* TODO: error handling for target_nid range. */
-+	err = kstrtoint(buf, 0, &scheme->target_nid);
-+
-+	return err ? err : count;
-+}
-+
- static void damon_sysfs_scheme_release(struct kobject *kobj)
- {
- 	kfree(container_of(kobj, struct damon_sysfs_scheme, kobj));
-@@ -1703,9 +1728,13 @@ static struct kobj_attribute damon_sysfs_scheme_action_attr =
- static struct kobj_attribute damon_sysfs_scheme_apply_interval_us_attr =
- 		__ATTR_RW_MODE(apply_interval_us, 0600);
- 
-+static struct kobj_attribute damon_sysfs_scheme_target_nid_attr =
-+		__ATTR_RW_MODE(target_nid, 0600);
-+
- static struct attribute *damon_sysfs_scheme_attrs[] = {
- 	&damon_sysfs_scheme_action_attr.attr,
- 	&damon_sysfs_scheme_apply_interval_us_attr.attr,
-+	&damon_sysfs_scheme_target_nid_attr.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(damon_sysfs_scheme);
-@@ -2031,7 +2060,8 @@ static struct damos *damon_sysfs_mk_scheme(
- 	};
- 
- 	scheme = damon_new_scheme(&pattern, sysfs_scheme->action,
--			sysfs_scheme->apply_interval_us, &quota, &wmarks);
-+			sysfs_scheme->apply_interval_us, &quota, &wmarks,
-+			sysfs_scheme->target_nid);
- 	if (!scheme)
- 		return NULL;
- 
-@@ -2068,6 +2098,7 @@ static void damon_sysfs_update_scheme(struct damos *scheme,
- 
- 	scheme->action = sysfs_scheme->action;
- 	scheme->apply_interval_us = sysfs_scheme->apply_interval_us;
-+	scheme->target_nid = sysfs_scheme->target_nid;
- 
- 	scheme->quota.ms = sysfs_quotas->ms;
- 	scheme->quota.sz = sysfs_quotas->sz;
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
