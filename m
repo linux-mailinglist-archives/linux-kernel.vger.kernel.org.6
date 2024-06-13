@@ -1,161 +1,80 @@
-Return-Path: <linux-kernel+bounces-214001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53168907D92
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:43:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F4C907DA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A6B31C22CCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:43:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AC141F24469
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0980E13BAC8;
-	Thu, 13 Jun 2024 20:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E61713B7BC;
+	Thu, 13 Jun 2024 20:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fuMZHDa4"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="t/CGnthG"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A6713B595
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 20:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A5C763E7;
+	Thu, 13 Jun 2024 20:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718311397; cv=none; b=QVZJBoe/PuL/JfJLOlwYlywbB+Ti9MzzqF5pKo/MAAe4qHtRihnKNe+nTc6IdGdXWOnQdxkt8fjZrNZYpNrZW2YqmkHJSMpxROMkPYFiz5UyGXEUIpTTjvTFOuYL8MFNvyKMC25KPNAcBFnhAEWZOgXvlzaUNM39i28Is6l/tAc=
+	t=1718311586; cv=none; b=lzRDOIj1rkFyeZcCx90AZcpgHHNaJZDGtPSd64IQif9oW0uydFpF03KIKQI7Zgid9Pj+226zMgdzf2l9gDIQ5/PuZo8fbxMegxXv+uAjesZRijS/j6CDqqUQLnj7DKvQE6BTbFAmwzIYSuQm3sB3jn3JFUcbWw1h618r7j8pJbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718311397; c=relaxed/simple;
-	bh=Te1wWeTYuhWG0UJJRZ0nQ9Ccy7EzdVqqwIlRrujyH3k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Axjb7DJ0yPlzHbpiwh+RWyLBcsAg0BVQXkjspHwHxCRF6fvmYXdRq5Tx11kWzW9DCR+cJDefiueTITcmUixMXlOv1T3C4qWuS700ueQYWAB0UR517zqXWKLGO3HjDMr6XoK6jSoRRFqZKNezQgNefpWpb0SxwPhIfBCOGsr678Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fuMZHDa4; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dfef5980a69so1808482276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:43:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718311394; x=1718916194; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mbp06UNvP6AGs/AzZYfCY2RlFHeTWL3VjFq/M7RiWuQ=;
-        b=fuMZHDa4bjNFsZajlFm6gAnBMvg/BwfoJNgcncVCRis1Xp1EqIcaCMTgNtrGkb+lev
-         Td1yWR1Rkd2rkCeBDcQJUchRHw/8NkPLAFMjtHsDDx4h3uwj27b8hpy81y9LyFa2yyfM
-         9ipuVzXbIEcs/BrpeRd3fBf6ccrZSzLeL8ssvU9nrI5TxLLoREyYQ7oBFjKdY47fYmNX
-         brSHYzQODPhrEttIHfMF8nrIT17YW5MH2w3MuvykUxNS6eeSH7aWNVoHMwlDZOaX/+Nv
-         qu3T40pgZ0PL8LiZWv6i/IS/Cc+IYcgv1Cs9LlVkewvKLmdhIAUqNzgMG4diumVCwnjX
-         H+XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718311394; x=1718916194;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mbp06UNvP6AGs/AzZYfCY2RlFHeTWL3VjFq/M7RiWuQ=;
-        b=P42O55tNGf5WXwInlKPAyBbiuSVFrulQsNj4wNtpbQWTy6wnEhCT7OBm3jGY/pyjCl
-         kG1co1y05EVEzOKMh6Q0UVIPV2bOsmmRk/QJhvmxnluIouqSQfNFqkvFuF9WzxnyYLM5
-         Vxp++wobl19w8GjSNvGI0CMzTlPCb1doHe02XpvYsZYCQ+8WzF1U8IJ1Xulb+wyfCFOI
-         +t+3JRIQGhfj7x+8bZV45RPiupjeiQP9g8uuUrXWQriMdg7rx3FeQcC+fFWO90XsPczy
-         +FhZGCLUf+laosIzLqiyIF5tMGIAb6ciBg5yi9t7fBMtss8K7nJGYCcmwYzOB+BEboGv
-         4arA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZLIezp8TzPcL8x96by012oJE8DhLtp3Sl07eG+7X6IpQVE+3bZZ9I7BsSRCnbxHzbYR/OdZt4mBpCTRWJJZNZAFliL0xPJ+Z5UZX3
-X-Gm-Message-State: AOJu0YwYrkCdjcubKnS2+zOYMq9fmx9F07bSuIKU2/7Fd1YzJEIIsyqU
-	w9zAgS+iwJ727NsVcRyieh6kkHKHgLhWZwpGxBhM/X8ZDa1Sw2qjMkUhEQZ0K6leyTbJh9KJArp
-	JYDsShsoN7JuhGEelG4Ks8rWPLAWEMBo7ZHlu
-X-Google-Smtp-Source: AGHT+IG0WhxM6z6YdDtEWCi+I5IKFVVK+KMGdEQEjK8s3DDuXT3JscqlC3UvTHCxO6S8YW/rHWD2Pox3VJGxEor1JBc=
-X-Received: by 2002:a25:b327:0:b0:dfe:653:3de0 with SMTP id
- 3f1490d57ef6-dff154f9c91mr601718276.63.1718311394391; Thu, 13 Jun 2024
- 13:43:14 -0700 (PDT)
+	s=arc-20240116; t=1718311586; c=relaxed/simple;
+	bh=HicCLRv+HEWgT4PEns+naj+VIcI7qkndERvazIZM33g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mgn0/Zo2ylkdxrtzeKxel5ScCw9TmjAfvRaXtD16aR7CJ0N98gr8hkyyWTUgGd9FsttqxqgpAcqWfVGFSY16fJCOFbdtGKe+dAMFWhe0MHQSPnU0FxbZhau55XHu+8wSb03IB9RGPwBpLtvHiE4cxDQyeWsbVGetuctWUqkZjPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=t/CGnthG; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=rdUt95wCW7pUkKB7MuV0OXQsjoGeXHyKiKG8gB7jBxw=; b=t/CGnthG7/sB5eOHvVxPMw254R
+	rYKGxhsxSrlVd1M19VkDAM7Ij2cdor+ezzPSlaQPt41RbGiH0hlwFBPYFFBjax6tvBIrafaw0ziNp
+	bMT/cuqDMWrQD9lkrBeRQbxKSm/00LV0m+Txf9iKaea8R4dJX0BHbcxLXt1Dfpgd7kZk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sHrKn-0000Mh-OF; Thu, 13 Jun 2024 22:46:13 +0200
+Date: Thu, 13 Jun 2024 22:46:13 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Rengarajan S <rengarajan.s@microchip.com>
+Cc: woojung.huh@microchip.com, UNGLinuxDriver@microchip.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v1] lan78xx: lan7801 MAC support with lan8841
+Message-ID: <6eec7a37-13d0-4451-9b32-4b031c942aa1@lunn.ch>
+References: <20240611094233.865234-1-rengarajan.s@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240609104355.442002-1-jcalmels@3xx0.net> <20240609104355.442002-5-jcalmels@3xx0.net>
- <CAHC9VhT5XWbhoY2Nw5jQz4GxpDriUdHw=1YsQ4xLVUtSnFxciA@mail.gmail.com>
- <z2bgjrzeq7crqx24chdbxnaanuhczbjnq6da3xw6al6omjj5xz@mqbzzzfva5sw>
- <887a3658-2d8d-4f9e-98f2-27124bb6f8e6@canonical.com> <CAHC9VhQFNPJTOct5rUv3HT6Z2S20mYdW75seiG8no5=fZd7JjA@mail.gmail.com>
- <uuvwcdsy7o4ulmrdzwffr6uywfacmlkjrontmjdj44luantpok@dtatxaa6tzyv>
- <CAHC9VhRnthf8+KgfuzFHXWEAc9RShDO0G_g0kc1OJ-UTih1ywg@mail.gmail.com>
- <rgzhcsblub7wedm734n56cw2qf6czjb4jgck6l5miur6odhovo@n5tgrco74zce>
- <CAHC9VhRGJTND25MFk4gR-FGxoLhMmgUrMpz_YoMFOwL6kr28zQ@mail.gmail.com> <ba8d88c8-a251-4c1f-8653-1082b0a101dd@canonical.com>
-In-Reply-To: <ba8d88c8-a251-4c1f-8653-1082b0a101dd@canonical.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 13 Jun 2024 16:43:03 -0400
-Message-ID: <CAHC9VhTfXGeSkDxCaHRWRJjc+4DBorHOrqhrw8BzWhKD9SG39Q@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] bpf,lsm: Allow editing capabilities in BPF-LSM hooks
-To: John Johansen <john.johansen@canonical.com>
-Cc: Jonathan Calmels <jcalmels@3xx0.net>, brauner@kernel.org, ebiederm@xmission.com, 
-	Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	KP Singh <kpsingh@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Joel Granados <j.granados@samsung.com>, David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	containers@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611094233.865234-1-rengarajan.s@microchip.com>
 
-On Wed, Jun 12, 2024 at 11:54=E2=80=AFPM John Johansen
-<john.johansen@canonical.com> wrote:
-> On 6/12/24 10:29, Paul Moore wrote:
-> > On Wed, Jun 12, 2024 at 4:15=E2=80=AFAM Jonathan Calmels <jcalmels@3xx0=
-.net> wrote:
-> >> On Tue, Jun 11, 2024 at 06:38:31PM GMT, Paul Moore wrote:
-> >>> On Tue, Jun 11, 2024 at 6:15=E2=80=AFPM Jonathan Calmels <jcalmels@3x=
-x0.net> wrote:
-> >
-> > ...
-> >
-> >>>> Arguably, if we do want fine-grained userns policies, we need LSMs t=
-o
-> >>>> influence the userns capset at some point.
-> >>>
-> >>> One could always use, or develop, a LSM that offers additional
-> >>> controls around exercising capabilities.  There are currently four
-> >>> in-tree LSMs, including the capabilities LSM, which supply a
-> >>> security_capable() hook that is used by the capability-based access
-> >>> controls in the kernel; all of these hook implementations work
-> >>> together within the LSM framework and provide an additional level of
-> >>> control/granularity beyond the existing capabilities.
-> >>
-> >> Right, but the idea was to have a simple and easy way to reuse/trigger
-> >> as much of the commoncap one as possible from BPF. If we're saying we
-> >> need to reimplement and/or use a whole new framework, then there is
-> >> little value.
-> >
-> > I can appreciate how allowing direct manipulation of capability bits
-> > from a BPF LSM looks attractive, but my hope is that our discussion
-> > here revealed that as you look deeper into making it work there are a
-> > number of pitfalls which prevent this from being a safe option for
-> > generalized systems.
-> >
-> >> TBH, I don't feel strongly about this, which is why it is absent from
-> >> v1. However, as John pointed out, we should at least be able to modify
-> >> the blob if we want flexible userns caps policies down the road.
-> >
-> > As discussed in this thread, there are existing ways to provide fine
-> > grained control over exercising capabilities that can be safely used
-> > within the LSM framework.  I don't want to speak to what John is
-> > envisioning, but he should be aware of these mechanisms, and if I
-> > recall he did voice a level of concern about the same worries I
-> > mentioned.
-> >
->
-> sorry, I should have been more clear. I envision LSMs being able to
-> update their own state in the userns hook.
+On Tue, Jun 11, 2024 at 03:12:33PM +0530, Rengarajan S wrote:
+> Add lan7801 MAC only support with lan8841. The PHY fixup is registered
+> for lan8841 and the initializations are done using lan8835_fixup since
+> the register configs are similar for both lann8841 and lan8835.
 
-Ah, okay, yes, that seems reasonable; although like any other change,
-until we have an in-tree user we should just leave it as-is.
+What exactly does this fixup do?
 
---=20
-paul-moore.com
+Looking at it, what protects it from being used on some other device
+which also happens to use the same PHY? Is there something to
+guarantee:
+
+struct lan78xx_net *dev = netdev_priv(phydev->attached_dev);
+
+really is a lan78xx_net * ?
+
+   Andrew
 
