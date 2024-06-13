@@ -1,169 +1,174 @@
-Return-Path: <linux-kernel+bounces-212988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEAA590696C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:55:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E52B590696E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5981AB25145
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:55:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55F76B257B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5EC14199F;
-	Thu, 13 Jun 2024 09:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="UASGHpkB"
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336771411C2;
-	Thu, 13 Jun 2024 09:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8ACB1411DA;
+	Thu, 13 Jun 2024 09:55:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5032414039A;
+	Thu, 13 Jun 2024 09:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718272502; cv=none; b=bxn8ppWDsvNfwdviMu0ZsdpyEE0Ds0bjFWB1HvTsYzlHj0/3PpMfoUpsQU3ox9jxH8jQSuFpDmSrqfZOliKjRJma6uFJDEI7YkIZAG5ks41tBzIsuKURiJL7bOXK2+o5Aow1CAxYiyvzRLU26BikKgD+WExUF7yMf84IHFVtyAY=
+	t=1718272516; cv=none; b=kLg6EliKiAcVwhf/XKrmcs3qkMWQNYcW3TQq2SRK6McSMk02L9LR4zMuQhFU6Dj9zfKGuwN0qs8uOXjKh2fJL7FF0e2akDCQ4XBZI66jFQXzvlhAF3O/ATUzAkVyjveUO8MaAr1Xb8Zd//orH/ShXEi6au2y1PS9HZALESk2c4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718272502; c=relaxed/simple;
-	bh=XnuWg2Emch0/204csrIJ1PmV8H0Z4/Kb0XfctwfzmfE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pmscpmDmFelP0j5STxZ2Z2ae6gIHEDwrp4jlie2KTPMarFeh3MsrHqJ/gDBwSoiezFY+hcD9HEr2miOPvLUIH6YCczLsr1TaVg34lJ1VBCOloozOQgCt37fvkeUqAxDLeRyYScaT2ezDHScJUCPT8YNyd9NUTL6iA2PzaS5QC4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=UASGHpkB; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
-From: Denis Arefev <arefev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1718272488;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=JxF9v+MgG1oJK9K0GvDYFSNk1WRmKVVkPVwWZtJ2zws=;
-	b=UASGHpkBaR6P9fcZXpMWF0YLq5RGEUYvq+MNYp3J85MYXz8EVrrWVtOPUALLMILWch8hRQ
-	gfAET9Tvo0BxyyWAjbJVQonuuQRO+LA/BO/NgeP+bXQ4GtF/htEu/mMSFRjBbLr6ZJ53mT
-	eQjArYsXZ3KR6NL1zUWnxaj7vkD5+uw=
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	lvc-project@linuxtesting.org
-Subject: [PATCH v2] net: missing check virtio
-Date: Thu, 13 Jun 2024 12:54:48 +0300
-Message-Id: <20240613095448.27118-1-arefev@swemel.ru>
+	s=arc-20240116; t=1718272516; c=relaxed/simple;
+	bh=3e92B1eVt9vTMbGDST7vZ+wtr7b9AXBKBsq0dXvWRfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oOZL9iXqQ9WeX9MMo+E6ViyH0Jhmmgh1cyqpd0aydDOvm1VaeC5fM1ZrXnjjNb1RdNuXzvn9xmXv+DgE0ljBf1MSjZV1LXaB+YXmiWGE4TZaSSmvfcaT56lFFFoQZ98T5I9/5esEk73mZVbs0/EMVEoDOj02MBPkY8LMZN+m6Gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 449571063;
+	Thu, 13 Jun 2024 02:55:38 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 703353F5A1;
+	Thu, 13 Jun 2024 02:55:11 -0700 (PDT)
+Date: Thu, 13 Jun 2024 11:55:08 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, ionela.voinescu@arm.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	len.brown@intel.com, vanshikonda@os.amperecomputing.com,
+	sumitg@nvidia.com, vincent.guittot@linaro.org
+Subject: Re: [PATCH 1/1] cpufreq: Rewire arch specific feedback for
+ cpuinfo/scaling_cur_freq
+Message-ID: <ZmrB_DqtmVpvG30l@arm.com>
+References: <20240603081331.3829278-1-beata.michalska@arm.com>
+ <20240603081331.3829278-2-beata.michalska@arm.com>
+ <20240603114811.oio3uemniib5uaa2@vireshk-i7>
+ <CAJZ5v0j1bqhmKrJirw+WgEVDdszZ9xQSgmfazVKMVa8H6_5TSw@mail.gmail.com>
+ <20240606085513.pptx5dtjcvvg3zo4@vireshk-i7>
+ <CAJZ5v0it5vZvzkbErkGOVruPbkxgr8VMTgQzsncpdQmvCOfBng@mail.gmail.com>
+ <20240613082358.yq2lui6vc35xi53t@vireshk-i7>
+ <CAJZ5v0iOvpx=YtPtbM9RPaVh2n4+T=r91bM7OZt5k8q0Tzmk+w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0iOvpx=YtPtbM9RPaVh2n4+T=r91bM7OZt5k8q0Tzmk+w@mail.gmail.com>
 
-Two missing check in virtio_net_hdr_to_skb() allowed syzbot
-to crash kernels again
+On Thu, Jun 13, 2024 at 11:27:52AM +0200, Rafael J. Wysocki wrote:
+> On Thu, Jun 13, 2024 at 10:24 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >
+> > On 07-06-24, 16:21, Rafael J. Wysocki wrote:
+> > > On Thu, Jun 6, 2024 at 10:55 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > > > What about this, hopefully this doesn't break any existing platforms
+> > > > and fix the problems for ARM (and others):
+> > > >
+> > > > - scaling_cur_freq:
+> > > >
+> > > >   Returns the frequency of the last P-state requested by the scaling
+> > > >   driver from the hardware.
+> > >
+> > > This would change the behavior for intel_pstate in the passive mode AFAICS.
+> > >
+> > > ATM it calls arch_freq_get_on_cpu(), after the change it would return
+> > > policy->cur which would not be the same value most of the time.  And
+> > > in the ->adjust_perf() case policy->cur is not updated by it even.
+> >
+> > Yeah, we would need to do the below part to make it work.
+> >
+> > > >  For set_policy() drivers, use the ->get()
+> > > >   callback to get a value that can provide the best estimate to user.
+> > > >
+> > > >   To make this work, we can add get() callback to intel and amd pstate
+> > > >   drivers, and use arch_freq_get_on_cpu().
+> > > >
+> > > >   This will keep the current behavior intact for such drivers.
+> > >
+> > > Well, the passive mode thing would need to be addressed then.
+> >
+> > Right. So this would keep the behavior of the file as is for all platforms and
+> > simplify the core.
+> >
+> > > > - cpuinfo_cur_freq:
+> > > >
+> > > >   Currently this file is available only if the get() callback is
+> > > >   available. Maybe we can keep this behavior as is, and expose this
+> > > >   now for both the pstate drivers (once above change is added). We
+> > > >   will be left with only one driver that doesn't provide the get()
+> > > >   callback: pasemi-cpufreq.c
+> > >
+> > > I would rather get rid of it completely.
+> >
+> > cpuinfo_cur_freq itself ? I thought such changes aren't allowed as they may end
+> > up breaking userspace tools.
+> 
+> cpuinfo_cur_freq is not always present anyway, so user space tools
+> need to be able to cope with the lack of it anyway.
+>
+> > > >   Coming back to the implementation of the file read operation, I
+> > > >   think the whole purpose of arch_freq_get_on_cpu() was to get a
+> > > >   better estimate (which may not be perfect) of the frequency the
+> > > >   hardware is really running at (in the last window) and if a platform
+> > > >   provides this, then it can be given priority over the ->get()
+> > > >   callback in order to show the value to userspace.
+> > >
+> > > There was a reason to add it and it was related to policy->cur being
+> > > meaningless on x86 in general (even in the acpi-cpufreq case), but
+> > > let's not go there.
+> >
+> > Right.
+> >
+> > > Hooking this up to cpuinfo_cur_freq on x86 wouldn't make much sense
+> > > IMV because at times it is not even close to the frequency the
+> > > hardware is running at.  It comes from the previous tick period,
+> > > basically, and the hardware can adjust the frequency with a resolution
+> > > that is orders of magnitude higher than the tick rate.
+> >
+> > Hmm. If that is the concern (which looks valid), how come it makes sense to do
+> > the same on ARM ? Beata, Ionela ?
+> >
+> > I thought, just like X86, ARM also doesn't have a guaranteed way to know the
+> > exact frequency anymore and AMUs are providing a better picture, and so we are
+> > moving to the same.
+> >
+> > If we don't want it for X86, then it can be done with help of a new driver flag
+> > CPUFREQ_NO_CPUINFO_SCALING_FREQ, instead of the availability of the get()
+> > callback.
+> >
+> > > Well, this sounds nice, but the changes are a bit problematic.
+> > >
+> > > If you don't want 3 files, I'd drop cpuinfo_cur_freq and introduce
+> > > something else to replace it which will expose the
+> > > arch_freq_get_on_cpu() return value and will be documented
+> > > accordingly.
+> >
+> > Well it is still meaningful to show the return value of the ->get() callback
+> > where the hardware provides it.
+> 
+> But this is a valid point.
+> 
+> > > Then scaling_cur_freq can be (over time) switched over to returning
+> > > policy->cur in the cases when it is meaningful and -ENODATA otherwise.
+> > >
+> > > This would at least allow us to stop making up stuff.
+> >
+> > Maybe a third file, just for arch_freq_get_on_cpu() is not that bad of an idea
+> > :)
+> 
+> /me thinks so.
+I am starting to lean towards that option.
+Making both cpuinfo_cur_freq and scaling_cur_freq sane, might create even more
+confusion as per which is providing what. We are already in a rather tricky
+situation. The interface should be clean, leaving no room for various
+interpretations - as much as possible, of course.
 
-1. After the skb_segment function the buffer may become non-linear
-(nr_frags != 0), but since the SKBTX_SHARED_FRAG flag is not set anywhere
-the __skb_linearize function will not be executed, then the buffer will
-remain non-linear. Then the condition (offset >= skb_headlen(skb))
-becomes true, which causes WARN_ON_ONCE in skb_checksum_help.
-
-2. The struct sk_buff and struct virtio_net_hdr members must be
-mathematically related.
-(gso_size) must be greater than (needed) otherwise WARN_ON_ONCE.
-(remainder) must be greater than (needed) otherwise WARN_ON_ONCE.
-(remainder) may be 0 if division is without remainder.
-
-offset+2 (4191) > skb_headlen() (1116)
-WARNING: CPU: 1 PID: 5084 at net/core/dev.c:3303 skb_checksum_help+0x5e2/0x740 net/core/dev.c:3303
-Modules linked in:
-CPU: 1 PID: 5084 Comm: syz-executor336 Not tainted 6.7.0-rc3-syzkaller-00014-gdf60cee26a2e #0
-Hardware name: Google Compute Engine/Google Compute Engine, BIOS Google 11/10/2023
-RIP: 0010:skb_checksum_help+0x5e2/0x740 net/core/dev.c:3303
-Code: 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 52 01 00 00 44 89 e2 2b 53 74 4c 89 ee 48 c7 c7 40 57 e9 8b e8 af 8f dd f8 90 <0f> 0b 90 90 e9 87 fe ff ff e8 40 0f 6e f9 e9 4b fa ff ff 48 89 ef
-RSP: 0018:ffffc90003a9f338 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff888025125780 RCX: ffffffff814db209
-RDX: ffff888015393b80 RSI: ffffffff814db216 RDI: 0000000000000001
-RBP: ffff8880251257f4 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: 000000000000045c
-R13: 000000000000105f R14: ffff8880251257f0 R15: 000000000000105d
-FS:  0000555555c24380(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000002000f000 CR3: 0000000023151000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ip_do_fragment+0xa1b/0x18b0 net/ipv4/ip_output.c:777
- ip_fragment.constprop.0+0x161/0x230 net/ipv4/ip_output.c:584
- ip_finish_output_gso net/ipv4/ip_output.c:286 [inline]
- __ip_finish_output net/ipv4/ip_output.c:308 [inline]
- __ip_finish_output+0x49c/0x650 net/ipv4/ip_output.c:295
- ip_finish_output+0x31/0x310 net/ipv4/ip_output.c:323
- NF_HOOK_COND include/linux/netfilter.h:303 [inline]
- ip_output+0x13b/0x2a0 net/ipv4/ip_output.c:433
- dst_output include/net/dst.h:451 [inline]
- ip_local_out+0xaf/0x1a0 net/ipv4/ip_output.c:129
- iptunnel_xmit+0x5b4/0x9b0 net/ipv4/ip_tunnel_core.c:82
- ipip6_tunnel_xmit net/ipv6/sit.c:1034 [inline]
- sit_tunnel_xmit+0xed2/0x28f0 net/ipv6/sit.c:1076
- __netdev_start_xmit include/linux/netdevice.h:4940 [inline]
- netdev_start_xmit include/linux/netdevice.h:4954 [inline]
- xmit_one net/core/dev.c:3545 [inline]
- dev_hard_start_xmit+0x13d/0x6d0 net/core/dev.c:3561
- __dev_queue_xmit+0x7c1/0x3d60 net/core/dev.c:4346
- dev_queue_xmit include/linux/netdevice.h:3134 [inline]
- packet_xmit+0x257/0x380 net/packet/af_packet.c:276
- packet_snd net/packet/af_packet.c:3087 [inline]
- packet_sendmsg+0x24ca/0x5240 net/packet/af_packet.c:3119
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0xd5/0x180 net/socket.c:745
- __sys_sendto+0x255/0x340 net/socket.c:2190
- __do_sys_sendto net/socket.c:2202 [inline]
- __se_sys_sendto net/socket.c:2198 [inline]
- __x64_sys_sendto+0xe0/0x1b0 net/socket.c:2198
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x40/0x110 arch/x86/entry/common.c:82
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
-
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller
-
-Signed-off-by: Denis Arefev <arefev@swemel.ru>
 ---
- V1 -> V2: incorrect type in argument 2
- include/linux/virtio_net.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/include/linux/virtio_net.h b/include/linux/virtio_net.h
-index 4dfa9b69ca8d..d1d7825318c3 100644
---- a/include/linux/virtio_net.h
-+++ b/include/linux/virtio_net.h
-@@ -56,6 +56,7 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
- 	unsigned int thlen = 0;
- 	unsigned int p_off = 0;
- 	unsigned int ip_proto;
-+	u64 ret, remainder, gso_size;
- 
- 	if (hdr->gso_type != VIRTIO_NET_HDR_GSO_NONE) {
- 		switch (hdr->gso_type & ~VIRTIO_NET_HDR_GSO_ECN) {
-@@ -98,6 +99,16 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
- 		u32 off = __virtio16_to_cpu(little_endian, hdr->csum_offset);
- 		u32 needed = start + max_t(u32, thlen, off + sizeof(__sum16));
- 
-+		if (hdr->gso_size) {
-+			gso_size = __virtio16_to_cpu(little_endian, hdr->gso_size);
-+			ret = div64_u64_rem(skb->len, gso_size, &remainder);
-+			if (!(ret && (hdr->gso_size > needed) &&
-+						((remainder > needed) || (remainder == 0)))) {
-+				return -EINVAL;
-+			}
-+			skb_shinfo(skb)->tx_flags |= SKBFL_SHARED_FRAG;
-+		}
-+
- 		if (!pskb_may_pull(skb, needed))
- 			return -EINVAL;
- 
--- 
-2.25.1
-
+BR
+Beata
 
