@@ -1,142 +1,135 @@
-Return-Path: <linux-kernel+bounces-213686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BDF69078BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:52:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E9699078C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A29651C20E4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:52:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 427C21F23839
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE3012FB15;
-	Thu, 13 Jun 2024 16:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF47A149E1E;
+	Thu, 13 Jun 2024 16:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lMfNpGla"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b="RD/4abPT"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C28A149C6A;
-	Thu, 13 Jun 2024 16:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E52F146583;
+	Thu, 13 Jun 2024 16:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718297502; cv=none; b=CxasQsrSjmBMXMeGoKxc49hGmbFhSX9RDmx+lMbvUEDTzenl+31Nty5vRjZ3oYvqWt6Whglr0040SKYpSWdnM3rnhCqpkivaVi4yhOhzu3080QQXKhHOAfcxTaCSQFIrks+6L9/UNW5toVSeirZMFA2TXbxlUklXzpi5ft9TaSM=
+	t=1718297514; cv=none; b=ZVf0pFN3nVr4wco7D9Q6oNaWquMtcBt+C81SH3iBqijxgnkrPozTs5xX27XCQOy41jF9XQNej+3dgKNmXFV6/uLDD4IrB/dq8qE1cW6kkNqEvrIaNOghTNSQZhGPpHUg+EvhDh0Ylo39DxzaAw+5EAZ16JiLx4EnGydEWr7sZik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718297502; c=relaxed/simple;
-	bh=ysxSPN1GZJ61FXtUViPGFG/7XkaykMc8yshAAseOWVE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IlZgZDcNIeEpxcRcYKAXd6DcPuTvpLN5nBlCIA29uMIaVBbqMoyG1ziEBsL/1nuE/kRONUDp3aQ+Ql/xtGhY9L74CbSbVTxJxcxFAEQ9bGa9PPRsxPjLSmwfOM/eYL4qkwA0niDjKzQq4+HGKys24AVukGepvk2aHG1EMnYHZiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lMfNpGla; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14416C2BBFC;
-	Thu, 13 Jun 2024 16:51:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718297502;
-	bh=ysxSPN1GZJ61FXtUViPGFG/7XkaykMc8yshAAseOWVE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lMfNpGlai+EID6gB3RC4QCPP1hQyEm6J70uVWbp08o1nevYbr00faGlcRsadgaXU5
-	 YTIbBd2REsoEiQI5FjqX62dxwke7iWAmjqfaQepEYmTOYXMr9VcutqkKywkGi8+xlI
-	 Jml/JNNlUY2sX9cV9JB9DkeReI+UC0+uNyEMzesH6sNPzgWw06m+Z4woYH4jx+PSuD
-	 pb53cnvscxJHbdNHpeeFsMOLUMeoXOeT2VGAmA8kQF94ip7EaSw8/0l0pEKiUjtX75
-	 DRNPkHO0dfFcaDscxYTJCpaF/sdEtCc/9qwKIamWVPHxX96cnDaPSdR7QNPKqk4tq3
-	 HQuwVt16ON6rA==
-From: SeongJae Park <sj@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org,
-	damon@lists.linux.dev
-Subject: Re: [PATCH 6.9 000/157] 6.9.5-rc1 review
-Date: Thu, 13 Jun 2024 09:51:39 -0700
-Message-Id: <20240613165139.84941-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240613113227.389465891@linuxfoundation.org>
-References: 
+	s=arc-20240116; t=1718297514; c=relaxed/simple;
+	bh=VNcJSnvqR6/3seiRGBE6M9MZOINb+wobmGnn1qcsztk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=u+wNqWeRsUzi8erb7HR6ynpLN0NOvpcc8dUoDUi8yzXutucwOHc3a5LMYywNsD1+cDnLPlYAMYdzWM6uKNZktjHwCl9jegZ3+PDfUT70JEXM4A9l8hB5ipNwG316jv4KqPLLZr0HKk9GXBRauKq6Uo4b7R9W1ltU9HkzYQmk6Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com; spf=pass smtp.mailfrom=jubnut.com; dkim=pass (2048-bit key) header.d=jubnut.com header.i=@jubnut.com header.b=RD/4abPT; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jubnut.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jubnut.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4W0T2k24TMz9stL;
+	Thu, 13 Jun 2024 18:51:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jubnut.com; s=MBO0001;
+	t=1718297502;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CHPeQUmbiayIxQb12SxfsIIYWQF+CskyfBhwRKbz8mY=;
+	b=RD/4abPTD9XsAvWgGQ1kW6r1+dvysVjmcjkwd00uhLfpT+nYTKZ6Po+oEBcGqYIR8gS9EX
+	WzapVDFCCBl94Tc+fLzZ6uHZStfzcAMAX4zdUjwqiuCrZFYn7NkZjde/NteZQjRUyNgcRE
+	ejPQlsxVHvAtBaXBa05+G6xTfix56WzW3R8ZMwsZYanTt7phip6WGPDpgkHAeQn5U5NOSh
+	FooSWp7SHybL6b40IIi1kj6nk1B3U0dVt4xBA13PtjQnJhD/I+jfXp7RLeZhGS6uNu9chS
+	t4T9EQ2dtHVUCY+ED4LWrWFLjICYz4Rq1WV0L3njOxLyY3HXjQCW/xKN5yIIhg==
+From: Ben Walsh <ben@jubnut.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
+ Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in
+ cros_ec_lpc_mec_read_bytes()
+In-Reply-To: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
+References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
+Date: Thu, 13 Jun 2024 17:51:39 +0100
+Message-ID: <87sexgrdk4.fsf@jubnut.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Rspamd-Queue-Id: 4W0T2k24TMz9stL
 
-Hello,
 
-On Thu, 13 Jun 2024 13:32:05 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+Thanks for fixing this! Unfortunately `in_range` returns -EINVAL if
+length == 0 (see the definition of `fwk_ec_lpc_mec_in_range`). I'm sure
+this broke something in my testing, but I can't find what it was now.
 
-> This is the start of the stable review cycle for the 6.9.5 release.
-> There are 157 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 15 Jun 2024 11:31:50 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.5-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
+My original suggestion was to add a test for "length == 0" before the
+"in_range" test, then do the test as you have done. But we decided to
+defer this to a later, separate patch.
 
-This rc kernel passes DAMON functionality test[1] on my test machine.
-Attaching the test results summary below.  Please note that I retrieved the
-kernel from linux-stable-rc tree[2].
+There's also a similar "in_range" test in `fwk_ec_lpc_mec_write_bytes`.
 
-Tested-by: SeongJae Park <sj@kernel.org>
+We could:
 
-[1] https://github.com/awslabs/damon-tests/tree/next/corr
-[2] 35fcf9de8f9d ("Linux 6.9.5-rc1")
+  1. Revert this and change the `data & EC_LPC_STATUS_BUSY_MASK` to
+  `res & EC_LPC_STATUS_BUSY_MASK`. This is the same logic as before the
+  negative error code change.
 
-Thanks,
-SJ
+  or 2. Put in a check for length == 0.
 
-[...]
+  or 3. Change the logic in `fwk_ec_lpc_mec_in_range`. Although I'm not
+  sure what the correct answer is to "zero length is in range?"
 
----
+I prefer option 2. What do you think?
 
-ok 6 selftests: damon: debugfs_duplicate_context_creation.sh
-ok 7 selftests: damon: debugfs_rm_non_contexts.sh
-ok 8 selftests: damon: debugfs_target_ids_read_before_terminate_race.sh
-ok 9 selftests: damon: debugfs_target_ids_pid_leak.sh
-ok 10 selftests: damon: sysfs.sh
-ok 11 selftests: damon: sysfs_update_removed_scheme_dir.sh
-ok 12 selftests: damon: sysfs_update_schemes_tried_regions_hang.py
-ok 13 selftests: damon: sysfs_update_schemes_tried_regions_wss_estimation.py
-ok 14 selftests: damon: damos_quota.py
-ok 15 selftests: damon: damos_apply_interval.py
-ok 16 selftests: damon: reclaim.sh
-ok 17 selftests: damon: lru_sort.sh
-ok 1 selftests: damon-tests: kunit.sh
-ok 2 selftests: damon-tests: huge_count_read_write.sh
-ok 3 selftests: damon-tests: buffer_overflow.sh
-ok 4 selftests: damon-tests: rm_contexts.sh
-ok 5 selftests: damon-tests: record_null_deref.sh
-ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
-ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
-ok 8 selftests: damon-tests: damo_tests.sh
-ok 9 selftests: damon-tests: masim-record.sh
-ok 10 selftests: damon-tests: build_i386.sh
-ok 11 selftests: damon-tests: build_arm64.sh
-ok 12 selftests: damon-tests: build_m68k.sh
-ok 13 selftests: damon-tests: build_i386_idle_flag.sh
-ok 14 selftests: damon-tests: build_i386_highpte.sh
-ok 15 selftests: damon-tests: build_nomemcg.sh
- [33m
- [92mPASS [39m
+Dan Carpenter <dan.carpenter@linaro.org> writes:
+
+> We changed these functions to returning negative error codes, but this
+> first error path was accidentally overlooked.  It leads to a Smatch
+> warning:
+>
+>     drivers/platform/chrome/cros_ec_lpc.c:181 ec_response_timed_out()
+>     error: uninitialized symbol 'data'.
+>
+> Fix this by returning the error code instead of success.
+>
+> Fixes: 68dbac0a58ef ("platform/chrome: cros_ec_lpc: MEC access can return error code")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/platform/chrome/cros_ec_lpc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+> index ebe9fb143840..f0470248b109 100644
+> --- a/drivers/platform/chrome/cros_ec_lpc.c
+> +++ b/drivers/platform/chrome/cros_ec_lpc.c
+> @@ -139,7 +139,7 @@ static int cros_ec_lpc_mec_read_bytes(unsigned int offset, unsigned int length,
+>  	int in_range = cros_ec_lpc_mec_in_range(offset, length);
+>  
+>  	if (in_range < 0)
+> -		return 0;
+> +		return in_range;
+>  
+>  	return in_range ?
+>  		cros_ec_lpc_io_bytes_mec(MEC_IO_READ,
+> @@ -158,7 +158,7 @@ static int cros_ec_lpc_mec_write_bytes(unsigned int offset, unsigned int length,
+>  	int in_range = cros_ec_lpc_mec_in_range(offset, length);
+>  
+>  	if (in_range < 0)
+> -		return 0;
+> +		return in_range;
+>  
+>  	return in_range ?
+>  		cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE,
+> -- 
+> 2.43.0
 
