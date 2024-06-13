@@ -1,93 +1,150 @@
-Return-Path: <linux-kernel+bounces-212492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727309061B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:26:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A38109061C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 060A6282ACE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:26:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B679C1C213EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529FB74297;
-	Thu, 13 Jun 2024 02:26:48 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1140B7E788;
+	Thu, 13 Jun 2024 02:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VqVMf8tG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AF079DF;
-	Thu, 13 Jun 2024 02:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11DA17C69;
+	Thu, 13 Jun 2024 02:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718245607; cv=none; b=nWBqfHG2QWn2ibqV44auRr3BFBs4SysjuRPVUt150YQUR4JRMPvuwXSun1LbctpT3wQAgNNbgy8dxXaubvc8F+4b6mrbcnfIQGiTwCSABoAwYU2jfDzLLsYt1+9RHk9fBoYOKaN3qyaduqkCxto4fbgi4X+jr7TBne1osD08XK4=
+	t=1718245655; cv=none; b=pmQS7pY7s13Qywp0aww4gSl2WwpUDELIuaEO32+nGMUyCfsKmZxuhsyBrUOaN7nm5qt8IQIY5gCb7MWykjKub9eo/9hvAU/dGaBQmbOBnQGGUJvigHsN16cACH98Z6x3/zSj4geXrdYvouF3uGpybcqnbZWXUFU2aJwV+ZM1/l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718245607; c=relaxed/simple;
-	bh=XVKzIgQldcQZP8lOvxR7rgnAfrstyghUmHfGbEbgoXU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=r7IUGiiuJoZbKEWiqq9bTxXd+AWju4hfwXS/Tu/sMKRbpgEURLaicGQ0nFIi/k7h3Wn9r6vZVt1h3UTCe3x/57GtEMjPDQHYIYQTmxgb2L1klmoR+BpuWbsH513J0ZlGv2pLnKBtM+IrVzMs/MBuF0bB1COUDydP4IofE7rexZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W05rP5Wpsz4f3nTK;
-	Thu, 13 Jun 2024 10:26:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 444B61A0185;
-	Thu, 13 Jun 2024 10:26:41 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgAX6RHfWGpmwzpVPQ--.25458S3;
-	Thu, 13 Jun 2024 10:26:41 +0800 (CST)
-Subject: Re: [PATCH -next 0/2] blk-throttle: fix lower control under super low
- iops limit
-To: Yu Kuai <yukuai1@huaweicloud.com>, tj@kernel.org, josef@toxicpanda.com,
- axboe@kernel.dk
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240513120848.2828797-1-yukuai1@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <fccf8e42-bac7-8d5f-3f21-bcb2ca8d06a9@huaweicloud.com>
-Date: Thu, 13 Jun 2024 10:26:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1718245655; c=relaxed/simple;
+	bh=Nh2RzwaSTxJgbNfHmt3JRc0uEjv3nRlrnUDcdTPlwq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j3RToR2RuO20+68BSmKwTH/o6gngfxyApY3ktFUNv/JybdAmfzTkq9KKkqnSyfWZ+PoJUoXd/knUiscM4cbi9x6gD0f7LjbA8FosQD9DVPSIfJCIbx9Kc0PDGSbBOFYMh1iIIHA0bSZdwgXNdfg4t9nINKG7rGqVZi42w7njGjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VqVMf8tG; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718245652; x=1749781652;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Nh2RzwaSTxJgbNfHmt3JRc0uEjv3nRlrnUDcdTPlwq8=;
+  b=VqVMf8tGl0GqyXf6C+Zjq2AeJzt1xBJ84PfSOq3v7Y4ep5FX/UYPtzCy
+   wZ6csTKR3JwYsOeY3bqkkvLXN4JrH4bE/Vg0xUlCwISPKqOh4WVoqI0Sl
+   uNy20oVW98cCuOD9N328bD80BkXnt5dtcCuY4Zg4EKQf18J9zLxLqXGTa
+   gsB+s375A3pv965i/g+gcJeH8SIX6uUjm98enI9q6JMdoBMDKpemc5tla
+   du6VocFv4RmgXGT6fae5ZKq4EXCahJTdxuabawLgBAq1I7glE5XgWyPX0
+   AMxTqPMi6YDj1PnyOcQ3fT/IBdPfwPYtDOEnE1bRg/xenBHy3KjFFMQn2
+   w==;
+X-CSE-ConnectionGUID: XxZwVx+tS1yirIUFxQCBqg==
+X-CSE-MsgGUID: ikPWenUVQ22a0doG6kiIbw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="14762594"
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="14762594"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 19:27:32 -0700
+X-CSE-ConnectionGUID: Hfsi00ypS3ujyFebs+qM4w==
+X-CSE-MsgGUID: ZXcO7e85TC+r/0EEzcI5Aw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="44371511"
+Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 12 Jun 2024 19:27:26 -0700
+Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sHaBP-00027m-2g;
+	Thu, 13 Jun 2024 02:27:23 +0000
+Date: Thu, 13 Jun 2024 10:27:17 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Oded Gabbay <ogabbay@kernel.org>,
+	Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: oe-kbuild-all@lists.linux.dev, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH 6/9] accel/rocket: Add a new driver for Rockchip's NPU
+Message-ID: <202406131022.1JKNS7me-lkp@intel.com>
+References: <20240612-6-10-rocket-v1-6-060e48eea250@tomeuvizoso.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240513120848.2828797-1-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAX6RHfWGpmwzpVPQ--.25458S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYv7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
-	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72
-	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
-	rI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr4
-	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
-	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
-	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAv
-	wI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
-	0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612-6-10-rocket-v1-6-060e48eea250@tomeuvizoso.net>
 
-Friendly ping ...
+Hi Tomeu,
 
-ÔÚ 2024/05/13 20:08, Yu Kuai Ð´µÀ:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Yu Kuai (2):
->    blk-throttle: factor out a helper to get throtl_slice from tg
->    blk-throttle: fix lower control under super low iops limit
-> 
->   block/blk-throttle.c | 52 ++++++++++++++++++++++++++++++++------------
->   block/blk-throttle.h |  6 +++++
->   2 files changed, 44 insertions(+), 14 deletions(-)
-> 
+kernel test robot noticed the following build errors:
 
+[auto build test ERROR on 83a7eefedc9b56fe7bfeff13b6c7356688ffa670]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Tomeu-Vizoso/iommu-rockchip-Add-compatible-for-rockchip-rk3588-iommu/20240612-215814
+base:   83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+patch link:    https://lore.kernel.org/r/20240612-6-10-rocket-v1-6-060e48eea250%40tomeuvizoso.net
+patch subject: [PATCH 6/9] accel/rocket: Add a new driver for Rockchip's NPU
+config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20240613/202406131022.1JKNS7me-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240613/202406131022.1JKNS7me-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406131022.1JKNS7me-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/clk.h:13,
+                    from drivers/accel/rocket/rocket_drv.c:4:
+>> drivers/accel/rocket/rocket_drv.c:213:31: error: 'rocket_pm_ops' undeclared here (not in a function); did you mean 'rocket_probe'?
+     213 |                 .pm = pm_ptr(&rocket_pm_ops),
+         |                               ^~~~~~~~~~~~~
+   include/linux/kernel.h:48:44: note: in definition of macro 'PTR_IF'
+      48 | #define PTR_IF(cond, ptr)       ((cond) ? (ptr) : NULL)
+         |                                            ^~~
+   drivers/accel/rocket/rocket_drv.c:213:23: note: in expansion of macro 'pm_ptr'
+     213 |                 .pm = pm_ptr(&rocket_pm_ops),
+         |                       ^~~~~~
+
+
+vim +213 drivers/accel/rocket/rocket_drv.c
+
+   207	
+   208	static struct platform_driver rocket_driver = {
+   209		.probe = rocket_probe,
+   210		.remove_new = rocket_remove,
+   211		.driver	 = {
+   212			.name = "rocket",
+ > 213			.pm = pm_ptr(&rocket_pm_ops),
+   214			.of_match_table = dt_match,
+   215		},
+   216	};
+   217	module_platform_driver(rocket_driver);
+   218	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
