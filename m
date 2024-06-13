@@ -1,259 +1,120 @@
-Return-Path: <linux-kernel+bounces-212715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 328E0906537
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:34:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 196C3906541
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A291E1F21AB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:34:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5B47289F70
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8718013D28B;
-	Thu, 13 Jun 2024 07:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D2F13C669;
+	Thu, 13 Jun 2024 07:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FxoiJ78c"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4cBLzcg"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35C313D26B;
-	Thu, 13 Jun 2024 07:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A495B13C660;
+	Thu, 13 Jun 2024 07:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718263984; cv=none; b=evd5/AEo9Bx9Wrfqyopn1bT0vI1CnlTIBjPFpR3BPMKFa64dTWjzm9GvBSdcXpHVRZHAJjjmz58Bvjy3iPbE/Xof+xldeacv3m3KCRrV+vfafdqy+rt+L3OvdVLOBETsxTGZ6UchFA2SuKhMzMhMArGEGiu1t53HEjlcNlCWtu4=
+	t=1718264074; cv=none; b=pkEWiDIsI3Ud0/2YwFcQitl/EgNoTf0HWGKa4c8YPkGPQFE/9ZqA+1iGmaDvrbu7yPnXFU4ZSY/nEG0Ftr0UEKOHXGvyLyjkluXeXWnmU8FA7hbOTGRwxt02oRanAo5IMThjaiVDyTHIq7GxiysnMp+PsCszBKCQnOd3PW3PwcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718263984; c=relaxed/simple;
-	bh=d0mZNWDpRk6kCJv92A4sILZo41s0K1Wp0msT2BRz2HA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I58bCfCjT+1AKDlJPXYweCQOpC9gKLVtrK2TxWhkH1pRCLBkLnvZrGh0kFXuOhpO4TxYspdjuZVoLfhH1BoNxRj8AVYpOoWsyOrokEBK3DUeBE5wUYtx2dEnSAYwrEEjA8qQQVQ2+nN0S5xdizJDAlVwdVTeO/5CYqQg1yMFHz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FxoiJ78c; arc=none smtp.client-ip=209.85.208.178
+	s=arc-20240116; t=1718264074; c=relaxed/simple;
+	bh=BgGPUA4CJHBAi6sstPxqPZGkojFNDXKzqwrZiGnPZHQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Ao2Du3jDFCmeUd6tx0QMLcAjZezzimeCa+GX7MxVeT5ockW0Ad2Df8aPeYzUybeLDLkLnn/YA2vhW2MEfgPlfrIfBtrch/kQzxtLrOz1knFmGRvlmJdl1U53P8k3aHX1chQ9DmqFskvYHGf3uP26vw6bMQTzPoalbd3Ut8rpDUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z4cBLzcg; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so5904341fa.2;
-        Thu, 13 Jun 2024 00:33:02 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42189d3c7efso8516715e9.2;
+        Thu, 13 Jun 2024 00:34:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718263981; x=1718868781; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0C8KlVl3OW2PC2dRMHxIiA4eTV9+V+jwqso0xqeA27M=;
-        b=FxoiJ78ccKBM32cI59ZqY0lEatSjSimSpA+ESw6cUf5FAQ7PrdwZ5CDzNvSZc/0TTE
-         sl5IQ6Yv+1VL4NY1kXpVeS+wuZ6u5lMlgtp7jQbq/bPa/1Y62pqFgh96GT03I012OKOu
-         HsuDH71fzE54G+0xNSHjNIkBi5KBRnavHADZAlzOZQInlQREUvAQfx5m41Vth2qROF49
-         sSJktkIPfLDz3n8ecXgBhumePYi+Z9K50S1LT0qinO0Dg98WatfE1s6CBNbLyS6KGugL
-         Wv663QHDF5aiFAi+WisYucRhyGpPmjdZnAmttXwmuWlFy2Tce0CChTW26S8OGX/qFLYg
-         GHYw==
+        d=gmail.com; s=20230601; t=1718264071; x=1718868871; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MSHRYQpgTDWbDhn+hhtstnXRqbhO24DfQNz+E/HyPBU=;
+        b=Z4cBLzcgRHjbW21WaW2xRi64ZiXmV/Gwhzs/xo/g1Q8frvnEcfQ6+kh6Um0Qh0YJ24
+         p8e6whW27/S7k2zKjHI8hJtMQSI/BQkRSKpB1XRIpc78BpSc/EdtHT8onVk3QlpZPphV
+         /panKcM6Lg1xkm2gyADwa/wCMakSdK7ANOoMsUrzguTwcuZLm4gFfDUGdy6QAoDLVOL5
+         SIbGvWLs4j1M7THeP30HBcrAR1rfWKLbdQkZEdeQyGV3a40RmULs/Hzt4HgYGTKM4tVh
+         RJ/ez12Am7sUeZgqGAg66SOgMi64E7Ikd+niF9RlYpHHA+ExqWalDnjJMCynzzO0KNNR
+         kPKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718263981; x=1718868781;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0C8KlVl3OW2PC2dRMHxIiA4eTV9+V+jwqso0xqeA27M=;
-        b=OU8I3vjy6Xhhg+dd8qsekbwr5Mpt9g9kMumiAR51ZZeaUdFiN05t9NhzrhnzFsxcoc
-         AgivUStZ4mu1lLSL8Dg2exUs9DgEpkP+TnmKFCQkAh2KSXR2R/pSj6C7iYCofHyW4vo9
-         xpRN8BTh7yLsYmgfpSHvXlkbpp91v44CrY6EtPPNGLxCGK/jNgFLJkrxuaYF3f2T4Fgs
-         9uPH13UHgy7BDMCD3QpQtM/4kis/7iB1bYF7k8QcNzeCwvXQUf0SjoJerfMZHtD+ShCv
-         vmHtPT8iYoOLC1TYG1CPXtAgdXT1I+8IfAIECp1d6eLcfyPbjtFUm25xH+dmp4u0L1iA
-         WNSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXyGbiFldt7NLOhWtVSDRrYv3/6FuVO1eofpRoxIA/Klm3IVyaw2TZBPkKGfZ5qpaDttzEBDttWIjBg1OZICOeDMpRyAWspKR2MujfvPTE9WuMZDzGfWmVHaWReTBUoGheHHX35QN3PDfeL/tu2OuKP7BhXjlQlqg6bwUatB+N0KMxiJowwXYM4
-X-Gm-Message-State: AOJu0YyDL0Dri34QQ74PrIbcfidcik0pltUSRxJyr/ySpHI85epsotEQ
-	100Am1djz60HHRkCrwMDqsxe9efmTU/YYiLZC05mb3EhfvEntwTGDdF9J7b07xSTRWUF5EuPa9+
-	RVugJRfvMnxbPX9xqR09tjvN9Q/fx/TvA
-X-Google-Smtp-Source: AGHT+IFSH1cz0gSocHoAg6tJNJ81lHTAApuUDBHX24yt9xXwpzJmO/R+w9fb+7XIYxSNcZJCRE4jhgyWvCzsdILNpcI=
-X-Received: by 2002:a2e:878f:0:b0:2eb:ecba:444a with SMTP id
- 38308e7fff4ca-2ebfc9fac80mr21389571fa.23.1718263980494; Thu, 13 Jun 2024
- 00:33:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718264071; x=1718868871;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MSHRYQpgTDWbDhn+hhtstnXRqbhO24DfQNz+E/HyPBU=;
+        b=RmewW2eMOG9wBzY/FC4f1RnMGfaJ4nlJCw5MIEkx21rkp76zmrSDcGv6OJ/O7ncxas
+         zaj08UED+T/eA/IJFax9ZkeH/sLWWljivsOceqacraepP3PQlHa95DnEDLmM2soVEA2Q
+         n7zWPW9qCAZUPW1M1l3/N/1RRP4LDMbh0KFWZOQTXtniwsJtkD1SUL8rLpRKgkVRjcv+
+         o3qDlohXzcpl2OQ4/OlnBCtq54aHHyI7DETXeRTiq+TsvP42PRRQByE+c1bVmbCtTcvp
+         xuOV7shHfp0vaNv0SFlO1yqRSMzhDLT6oK+ogSpeRLnLCMgwoUSnwfGzAISFfW+X317O
+         12yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUteEbYt+n0Zgmb6EZ0gC9VoJr+yFQIR2kRv/I8GWQL+LImhAdGPxk4GvPUzEkDAxYQcfxlMaLcnn7+S8pFRCaDF8xdKxtVjHfSdkIWy6LNXC0DDZUlUj8c3LRStZLjnu0/IsUHUzAT663DD8PU
+X-Gm-Message-State: AOJu0YxlWkXxVcqdfV3XajNLdvkxgymXuBIHXFGw7ZRs3T/rRKCRE7BW
+	Y8EI5WX/Z2Ckj/f5tga0YmhI2OzDfe6/6LUjz6KHaBWvgyZFpxA0ywmUDg==
+X-Google-Smtp-Source: AGHT+IE5HZjrLoCnNxLVajnotnkeImtDf2cI0u88h47cCjcg16Llc86SnlptsYF62rR065Ce2k3SMw==
+X-Received: by 2002:a05:600c:314d:b0:421:7c1e:5d5d with SMTP id 5b1f17b1804b1-422867bf846mr47056455e9.35.1718264070779;
+        Thu, 13 Jun 2024 00:34:30 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286eef70csm51236815e9.3.2024.06.13.00.34.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 00:34:30 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] kselftest/arm64: Fix a couple of spelling mistakes
+Date: Thu, 13 Jun 2024 08:34:29 +0100
+Message-Id: <20240613073429.1797451-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAE4VaREzY+a2PvQJYJbfh8DwB4OP7kucZG-e28H22xyWob1w_A@mail.gmail.com>
- <5b79732b-087c-411f-a477-9b837566673e@leemhuis.info> <20240527183139.42b6123c@rorschach.local.home>
- <CAE4VaRHaijpV1CC9Jo_Lg4tNQb_+=LTHwygOp5Bm2z5ErVzeow@mail.gmail.com>
- <20240528144743.149e351b@rorschach.local.home> <CAE4VaRE3_MYVt+=BGs+WVCmKUiQv0VSKE2NT+JmUPKG0UF+Juw@mail.gmail.com>
- <20240529144757.79d09eeb@rorschach.local.home> <20240529154824.2db8133a@rorschach.local.home>
- <CAE4VaRGRwsp+KuEWtsUCxjEtgv1FO+_Ey1-A9xr-o+chaUeteg@mail.gmail.com>
- <20240530095953.0020dff9@rorschach.local.home> <CAE4VaRGYoa_CAtttifVzmkdm4vW05WtoCwOrcH7=rSUVeD6n5g@mail.gmail.com>
- <ceb24cb7-dbb0-48b0-9de2-9557f3e310b5@leemhuis.info> <20240612115612.2e5f4b34@rorschach.local.home>
-In-Reply-To: <20240612115612.2e5f4b34@rorschach.local.home>
-From: =?UTF-8?B?SWxra2EgTmF1bGFww6TDpA==?= <digirigawa@gmail.com>
-Date: Thu, 13 Jun 2024 10:32:24 +0300
-Message-ID: <CAE4VaRFwdxNuUWb=S+itDLZf1rOZx9px+xoLWCi+hdUaWJwj6Q@mail.gmail.com>
-Subject: Re: Bug in Kernel 6.8.x, 6.9.x Causing Trace/Panic During Shutdown/Reboot
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, stable@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-ok, so if you don't have any idea where this bug is after those debug
-patches, I'll try to find some time to bisect it as a last resort.
-Stay tuned.
+There are two spelling mistakes in some error messages. Fix them.
 
---Ilkka
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/arm64/fp/kernel-test.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Wed, Jun 12, 2024 at 6:56=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
->
-> On Wed, 12 Jun 2024 15:36:22 +0200
-> "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.inf=
-o> wrote:
->
-> > Hi, Thorsten here, the Linux kernel's regression tracker. Top-posting
-> > for once, to make this easily accessible to everyone.
-> >
-> > Ilkka or Steven, what happened to this? This thread looks stalled. I
-> > also was unsuccessful when looking for other threads related to this
-> > report or the culprit. Did it fall through the cracks or am I missing
-> > something here?
->
-> Honesty, I have no idea where the bug is. I can't reproduce it. These
-> patches I sent would check all the places that add to the list to make
-> sure the proper trace_inode was being added, and the output shows that
-> they are all correct. Then suddenly, something that came from the
-> inode cache is calling the tracefs inode cache to free it, and that's
-> where the bug is happening.
->
-> This really looks like another bug that the recent changes have made
-> more predominate.
->
-> -- Steve
->
->
-> >
-> > Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat=
-)
-> > --
-> > Everything you wanna know about Linux kernel regression tracking:
-> > https://linux-regtracking.leemhuis.info/about/#tldr
-> > If I did something stupid, please tell me, as explained on that page.
-> >
-> > #regzbot poke
-> >
-> > On 02.06.24 09:32, Ilkka Naulap=C3=A4=C3=A4 wrote:
-> > > sorry longer delay, been a bit busy but here is the result from that
-> > > new patch. Only applied this patch so if the previous one is needed
-> > > also, let me know and I'll rerun it.
-> > >
-> > > --Ilkka
-> > >
-> > > On Thu, May 30, 2024 at 5:00=E2=80=AFPM Steven Rostedt <rostedt@goodm=
-is.org> wrote:
-> > >>
-> > >> On Thu, 30 May 2024 16:02:37 +0300
-> > >> Ilkka Naulap=C3=A4=C3=A4 <digirigawa@gmail.com> wrote:
-> > >>
-> > >>> applied your patch and here's the output.
-> > >>>
-> > >>
-> > >> Unfortunately, it doesn't give me any new information. I added one m=
-ore
-> > >> BUG on, want to try this? Otherwise, I'm pretty much at a lost. :-/
-> > >>
-> > >> -- Steve
-> > >>
-> > >> diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-> > >> index de5b72216b1a..a090495e78c9 100644
-> > >> --- a/fs/tracefs/inode.c
-> > >> +++ b/fs/tracefs/inode.c
-> > >> @@ -39,13 +39,17 @@ static struct inode *tracefs_alloc_inode(struct =
-super_block *sb)
-> > >>                 return NULL;
-> > >>
-> > >>         ti->flags =3D 0;
-> > >> +       ti->magic =3D 20240823;
-> > >>
-> > >>         return &ti->vfs_inode;
-> > >>  }
-> > >>
-> > >>  static void tracefs_free_inode(struct inode *inode)
-> > >>  {
-> > >> -       kmem_cache_free(tracefs_inode_cachep, get_tracefs(inode));
-> > >> +       struct tracefs_inode *ti =3D get_tracefs(inode);
-> > >> +
-> > >> +       BUG_ON(ti->magic !=3D 20240823);
-> > >> +       kmem_cache_free(tracefs_inode_cachep, ti);
-> > >>  }
-> > >>
-> > >>  static ssize_t default_read_file(struct file *file, char __user *bu=
-f,
-> > >> @@ -147,16 +151,6 @@ static const struct inode_operations tracefs_di=
-r_inode_operations =3D {
-> > >>         .rmdir          =3D tracefs_syscall_rmdir,
-> > >>  };
-> > >>
-> > >> -struct inode *tracefs_get_inode(struct super_block *sb)
-> > >> -{
-> > >> -       struct inode *inode =3D new_inode(sb);
-> > >> -       if (inode) {
-> > >> -               inode->i_ino =3D get_next_ino();
-> > >> -               inode->i_atime =3D inode->i_mtime =3D inode_set_ctim=
-e_current(inode);
-> > >> -       }
-> > >> -       return inode;
-> > >> -}
-> > >> -
-> > >>  struct tracefs_mount_opts {
-> > >>         kuid_t uid;
-> > >>         kgid_t gid;
-> > >> @@ -384,6 +378,7 @@ static void tracefs_dentry_iput(struct dentry *d=
-entry, struct inode *inode)
-> > >>                 return;
-> > >>
-> > >>         ti =3D get_tracefs(inode);
-> > >> +       BUG_ON(ti->magic !=3D 20240823);
-> > >>         if (ti && ti->flags & TRACEFS_EVENT_INODE)
-> > >>                 eventfs_set_ef_status_free(dentry);
-> > >>         iput(inode);
-> > >> @@ -568,6 +563,18 @@ struct dentry *eventfs_end_creating(struct dent=
-ry *dentry)
-> > >>         return dentry;
-> > >>  }
-> > >>
-> > >> +struct inode *tracefs_get_inode(struct super_block *sb)
-> > >> +{
-> > >> +       struct inode *inode =3D new_inode(sb);
-> > >> +
-> > >> +       BUG_ON(sb->s_op !=3D &tracefs_super_operations);
-> > >> +       if (inode) {
-> > >> +               inode->i_ino =3D get_next_ino();
-> > >> +               inode->i_atime =3D inode->i_mtime =3D inode_set_ctim=
-e_current(inode);
-> > >> +       }
-> > >> +       return inode;
-> > >> +}
-> > >> +
-> > >>  /**
-> > >>   * tracefs_create_file - create a file in the tracefs filesystem
-> > >>   * @name: a pointer to a string containing the name of the file to =
-create.
-> > >> diff --git a/fs/tracefs/internal.h b/fs/tracefs/internal.h
-> > >> index 69c2b1d87c46..9059b8b11bb6 100644
-> > >> --- a/fs/tracefs/internal.h
-> > >> +++ b/fs/tracefs/internal.h
-> > >> @@ -9,12 +9,15 @@ enum {
-> > >>  struct tracefs_inode {
-> > >>         unsigned long           flags;
-> > >>         void                    *private;
-> > >> +       unsigned long           magic;
-> > >>         struct inode            vfs_inode;
-> > >>  };
-> > >>
-> > >>  static inline struct tracefs_inode *get_tracefs(const struct inode =
-*inode)
-> > >>  {
-> > >> -       return container_of(inode, struct tracefs_inode, vfs_inode);
-> > >> +       struct tracefs_inode *ti =3D container_of(inode, struct trac=
-efs_inode, vfs_inode);
-> > >> +       BUG_ON(ti->magic !=3D 20240823);
-> > >> +       return ti;
-> > >>  }
-> > >>
-> > >>  struct dentry *tracefs_start_creating(const char *name, struct dent=
-ry *parent);
->
+diff --git a/tools/testing/selftests/arm64/fp/kernel-test.c b/tools/testing/selftests/arm64/fp/kernel-test.c
+index 50db26a3ed79..e8da3b4cbd23 100644
+--- a/tools/testing/selftests/arm64/fp/kernel-test.c
++++ b/tools/testing/selftests/arm64/fp/kernel-test.c
+@@ -233,7 +233,7 @@ static bool compute_digest(void *buf)
+ reread:
+ 	ret = recv(sock, buf, digest_len, 0);
+ 	if (ret == 0) {
+-		printf("No disgest returned\n");
++		printf("No digest returned\n");
+ 		return false;
+ 	}
+ 	if (ret != digest_len) {
+@@ -308,7 +308,7 @@ int main(void)
+ 
+ 	while (true) {
+ 		if (!compute_digest(digest)) {
+-			printf("Failed to coempute digest, iter=%d\n", iter);
++			printf("Failed to compute digest, iter=%d\n", iter);
+ 			return EXIT_FAILURE;
+ 		}
+ 
+-- 
+2.39.2
+
 
