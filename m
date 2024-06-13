@@ -1,94 +1,106 @@
-Return-Path: <linux-kernel+bounces-213430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 412BE90753F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:35:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0B9907543
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBD2E1F22431
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:35:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C858D284A7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF469145B0F;
-	Thu, 13 Jun 2024 14:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7547914658B;
+	Thu, 13 Jun 2024 14:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="epnrX2KU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpWSvufS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346A6145A04;
-	Thu, 13 Jun 2024 14:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50CF1422B4;
+	Thu, 13 Jun 2024 14:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718289297; cv=none; b=sITwinf6zU7afAYklEav/4PHzIHQtqqMj5cIlQmpUDByZI49qgqy0WZeLwJrJch3ewDhxAYGDrBRapj/RCQLYdbeTxzYOTP+5fGOKxLLuu1cuJUJq/MvWjl4IN6kvZxTdJhDP8T4GxQGFsHicaBV/jNy3IsZmix1CnfBEXDZAck=
+	t=1718289305; cv=none; b=R+220KDakv2cNuECy4MeDCIhZMbhTSETOeESWsZiIY6F8yvVXZ4twB0Hk9u408ScXNqGntRY/bKbNxecpq2yLpQfChqDaWQcJOxcRp0K610Pc8vE52SOUHaP5FqbPF675ks0ylbn0vm1IV/6r8KVZjZDeZBcwKFmXsaZrjDeshE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718289297; c=relaxed/simple;
-	bh=MdM3a6B4+l2qcSrHcAmmwfPHGPsUG5JqDPDvr1IT3LQ=;
+	s=arc-20240116; t=1718289305; c=relaxed/simple;
+	bh=JaP7qDY1oFoFZ4n3ApB2MhPSSgkthi/B+6BCfNqzZXE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TmGOsrIdiQ2NV2TobUpx1RR4opJdmtMZ92QVtgDr8vXyikHByIBJdEhTMp/MjBFPd9eneh1tJ2nQXxr7RVYMSQ+RByTNUkBHDGRn/vv+Hm+o3ATTCG6hzOIPFfYisij5b6YZaKLyoKCFrPDdjZOMRzXYsJOIr7wt3/HtnKfgC3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=epnrX2KU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D45EC32789;
-	Thu, 13 Jun 2024 14:34:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aOtzsmOMZdJOP01hJudAMyC998RWfLftOx5pvptLJFOhdGsxhV4CROr42Hxyj6o+sfeRTuuYlT8y24gXw+kZzhusy+ffPTDnEic2wMZEP6HilaiEZhXqNvgELgmDzVtq6m9/vwCMctV1eaOYyY/VbeAg0ORod4+SABtc/KYwtiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tpWSvufS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E9CEC32786;
+	Thu, 13 Jun 2024 14:35:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718289296;
-	bh=MdM3a6B4+l2qcSrHcAmmwfPHGPsUG5JqDPDvr1IT3LQ=;
+	s=k20201202; t=1718289305;
+	bh=JaP7qDY1oFoFZ4n3ApB2MhPSSgkthi/B+6BCfNqzZXE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=epnrX2KUjJkKb18onmCfdfb58vrBTjalSFG4FpziJxfKUzhkjH6fKGvLTjNO8LYxv
-	 tuC9AE86IRXfuy41fKp8UasotChIiSzDIXf5cyukLW2/nhdtdKGKMyd+1YJ6XEPHXO
-	 QmfchMYtXFu9+MSCag4IWfqSEZVn8vjseobeSbxXiBE/NnA63dNSWHUPlXPc0MKEpZ
-	 2WuYUSStlGBHxvrzVfp4KMDmut/TuiJwJJWZhVdnGJTbhXW1wgeBFniwBWBYQctR8Y
-	 qleNrFBnHPrCIb9PiTG+BuuNRNoft1nlvdlmxcq6zjQ5ri63hhjgFnHdaI93cg2/li
-	 ZVNwalbaLrPeg==
-Date: Thu, 13 Jun 2024 15:34:51 +0100
-From: Lee Jones <lee@kernel.org>
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>, Pavel Machek <pavel@ucw.cz>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Dustin Howett <dustin@howett.net>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	linux-leds@vger.kernel.org,
-	Rajas Paranjpe <paranjperajas@gmail.com>
-Subject: Re: [PATCH v3 3/4] platform/chrome: cros_kbd_led_backlight: allow
- binding through mfd device
-Message-ID: <20240613143451.GF2561462@google.com>
-References: <20240526-cros_ec-kbd-led-framework-v3-0-ee577415a521@weissschuh.net>
- <20240526-cros_ec-kbd-led-framework-v3-3-ee577415a521@weissschuh.net>
- <Zl0jIZbIKV6mG12I@google.com>
+	b=tpWSvufSz4/6eYuosODegqx8fYaQJdmhbXOMc9p3b5WQ/gfIGYomNolbhKVu0XyEs
+	 W2H0e+wQFo2NkfWXDAQ3LbTEDDBa2Alep0Fo++oTkFflawV4GEvJ9Wi9kiKocoOyXu
+	 fIs689QlI2/OOyKKFS+JJohZLTVF2vzDfltpGmegtsEUMHY9J9XtRXAhn/OQjlS7AN
+	 Mmo2SE5noT0cWKfvCzt91qNktweA/t/FLRttcxzlyVNGPmu4WlwLvnCi0XAQ/tlJrt
+	 5M7dL1TY4lZA2RowibqCH1a4V1xRmTX8OuDJjQXYcjGojVOUCAUfkVjOtM3IOv6kmW
+	 rvvZiMkjp8hjg==
+Date: Thu, 13 Jun 2024 15:34:58 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
+	Andy Chiu <andy.chiu@sifive.com>,
+	Jessica Clarke <jrtc27@jrtc27.com>, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 02/13] dt-bindings: cpus: add a thead vlen register
+ length property
+Message-ID: <20240613-gauntlet-starlet-2aedade31a06@spud>
+References: <20240610-xtheadvector-v2-0-97a48613ad64@rivosinc.com>
+ <20240610-xtheadvector-v2-2-97a48613ad64@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="AQap8GU9ejAJchW7"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zl0jIZbIKV6mG12I@google.com>
+In-Reply-To: <20240610-xtheadvector-v2-2-97a48613ad64@rivosinc.com>
 
-On Mon, 03 Jun 2024, Tzung-Bi Shih wrote:
 
-> On Sun, May 26, 2024 at 08:17:17PM +0200, Thomas Weißschuh wrote:
-> > The ChromeOS EC used in Framework laptops supports the standard CrOS EC
-> > keyboard backlight protocol.
-> > However the firmware on these laptops doesn't implement the ACPI ID
-> > GOOG0002 that is recognized by cros_kbd_led_backlight and they also
-> > don't use device tree.
-> > 
-> > Prepare the existing cros_kbd_led_backlight driver to be probed through
-> > the CrOS EC mfd device which works without ACPI or OF support.
-> > 
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> 
-> The patch overall looks good to me but it depends on previous patch in the
-> series (for LED_REJECT_NAME_CONFLICT).  Let's wait for review.
+--AQap8GU9ejAJchW7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I plan to take this via MFD.
+On Mon, Jun 10, 2024 at 03:56:39PM -0700, Charlie Jenkins wrote:
+> Add a property analogous to the vlenb CSR so that software can detect
+> the vector length of each CPU prior to it being brought online.
+> Currently software has to assume that the vector length read from the
+> boot CPU applies to all possible CPUs. On T-Head CPUs implementing
+> pre-ratification vector, reading the th.vlenb CSR may produce an illegal
+> instruction trap, so this property is required on such systems.
+>=20
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 
-Is someone going to Ack this patch?
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
--- 
-Lee Jones [李琼斯]
+--AQap8GU9ejAJchW7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmsDkgAKCRB4tDGHoIJi
+0u7xAP9LpPul5GSNB17Xr63YXTnJb87tSBlm5oBD3QK4jgiBbAD/WyZuDo4SvIBG
+T0dxQyzZxI2/QiuOT6A0fzXSpA+tgwY=
+=i6hR
+-----END PGP SIGNATURE-----
+
+--AQap8GU9ejAJchW7--
 
