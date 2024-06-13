@@ -1,194 +1,152 @@
-Return-Path: <linux-kernel+bounces-213545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C948E9076AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:29:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1AE99076BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 404401F2181C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:29:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 653EF1F22FF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B461494DF;
-	Thu, 13 Jun 2024 15:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1333E12C468;
+	Thu, 13 Jun 2024 15:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MbFOWK/O"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AFmCzMgt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74569266A7
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1174206C
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718292575; cv=none; b=egiZXkDbFz3xIkJjI0VRzub5lEFQ53Pvx+mcqeZ95xLE5Am9zTl9JeL0eeJGQt2Z/npzWOoVh5bYYvuXZEuitgDOMrvHrV07toCEq0iAZGMTZpEbuH6Ky6pfjQLhPS2ubnk5OdlnAa3ruYfie4PpTYTUGN0LnQh3IFbsZc3DgfY=
+	t=1718292760; cv=none; b=landlLG9Yr/4LxGJqjaBHBjGkjttnlUOCF7L5BZW8448Wqs0F6D1HAYy5nMiiY4PyDDXdYQ/8PBoksk1Q8i5p8LozkAr8ZtvLI0t6XDdabREGKOjCmK48HINCw+umgDtm9BdafQjMqWJuYOdkihbxq8G1mszUCC0AimyTmZyK/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718292575; c=relaxed/simple;
-	bh=EKluefSAeBcFIOlVa9Bl687D5tm2TGmvjy6DvHsiWhQ=;
+	s=arc-20240116; t=1718292760; c=relaxed/simple;
+	bh=da86AkFxHIkOc4tESz9ZsOeetZ6XG7V9OjcOgypTrw8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CIpmUgqY4ZSVktmbS5qoSkjCj2Xwa2E3wd7n0BvllJsnTW0pzL7HxyuFg4mrh/CDHHmEO1AxEz3ef2TcoATghH4JJtBl9PT6NIambBm50LdO8v4dAxc32gHGsHI4qf55lsxLzt6tzraKyf7KrbYoRj+Xv/Ds2B9poZs4q4RNc1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MbFOWK/O; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B271440E00C9;
-	Thu, 13 Jun 2024 15:29:30 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 6FosomFFqHn3; Thu, 13 Jun 2024 15:29:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718292567; bh=r/CggczeGNy7zdlqumo0uYFttdY5j2TXbeYU3k1iY9M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MbFOWK/OwMRvpJncAbMjzvxQ9kWd3/t1L9hHcDjIKplD4KLGOPkZi58CyhHxIgVZw
-	 qFrtQkS7jCbNjP9aHSHPCgOCUpRhXqUKagmCtYFAqNROnjmeuvAFJDpw1EXBw7Kqcy
-	 6I2ci0MkT9IpNNdpu5U2hXoY0kN2lcfQRzKSVe//1kKL0suZyUhD428eTQevO8BYOk
-	 WAPZx/4AJJZ+Ffbc5sqBiU5S+BrKZG7CxJP2oEBUfQLtBzhdd7N9Es2fv+a8tMNsCB
-	 B6zibRx9oRhkg9xQ0z+TwnrvEXJ+Y/Bh48tCSDhI7sEI9TG7JgCUSw/TSqyQB0umPN
-	 8RcsH+4szppTm/evHiMEspUSX3Dd+wTF5hpllWDm6E5BgDBl3rVl1OpNgRk8/MQOKf
-	 fceIZrVQUFT3K0bX9IJhZTwxPpiKmYr4jplM05T7MJvBZJsqrMtDB8uy3xlNvD3QTX
-	 bZB2NgXuDT0zGtXKwOdW4k29NCd3o2jCuMjqvqm9JKUuFAssb+khQjMmT/OrbpbKt7
-	 qtP6xNzsM7K9/hTqV0YrwxzPPGqyR80gXxaRbMjoQGkJ1E24KW3jFAxbJLsyDt4kwc
-	 7kRHkdB7963KhLjPWH1g3i8C/QuEejjaF8cGzkgYBTYcfR73A6JIq9KPUZd8VUsxm8
-	 dAzB9z6abWXC2Bsg07cDJcXs=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	 Content-Type:Content-Disposition:In-Reply-To; b=o2vV1cHEx+Fr399P9qW7QGvLf69ixQqRFEqz4Aej219/nmCbxSzgUH/0ky0ZsPL5lw9foozsdcwBVos2uY+5fFYBhIkQVMOhapoxNH5gmIj3N2gKW8hw6oJ9F43OIX1dDG7KbyxsxpcPRs5Tt0cL8FrSZPS7mxP2q4XaueCmqAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AFmCzMgt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718292757;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9rQScQ5vtt7eCN8eVf03+TDhuopk8F0T5btFX/XMq2I=;
+	b=AFmCzMgtuYnarEQC20QDfUw5t4FTwRW94tJnfBWDtGuFQ33atc2g0EoOWFoHWUXdihEwqn
+	390UZXPZn1ROovuWx//IaR0/6KNtDIZWY0wObtWV3R4FowYY48WirS3nmunMerCD2I5wrp
+	nkqk+fiRva+B9n7qSgZfDAfTt5MlbSA=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-356-YWEh7EpZM0qs87FoGoJjPQ-1; Thu,
+ 13 Jun 2024 11:32:30 -0400
+X-MC-Unique: YWEh7EpZM0qs87FoGoJjPQ-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 14EB740E0176;
-	Thu, 13 Jun 2024 15:29:02 +0000 (UTC)
-Date: Thu, 13 Jun 2024 17:28:56 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Steve Wahl <steve.wahl@hpe.com>, Ashish Kalra <ashish.kalra@amd.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	Pavin Joseph <me@pavinjoseph.com>,
-	Eric Hagberg <ehagberg@gmail.com>,
-	Simon Horman <horms@verge.net.au>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>,
-	Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
-	Hou Wenlong <houwenlong.hwl@antgroup.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Yuntao Wang <ytcoode@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <jroedel@suse.de>,
-	Michael Roth <michael.roth@amd.com>
-Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
-Message-ID: <20240613152826.GKZmsQGnO3OthLH3Vu@fat_crate.local>
-References: <20240520183633.1457687-1-steve.wahl@hpe.com>
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1684E1913F51;
+	Thu, 13 Jun 2024 15:32:06 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.233])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 841883000B64;
+	Thu, 13 Jun 2024 15:31:53 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 13 Jun 2024 17:30:30 +0200 (CEST)
+Date: Thu, 13 Jun 2024 17:30:22 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Rachel Menge <rachelmenge@linux.microsoft.com>,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	Wei Fu <fuweid89@gmail.com>, apais@linux.microsoft.com,
+	Sudhanva Huruli <Sudhanva.Huruli@microsoft.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christian Brauner <brauner@kernel.org>,
+	Mike Christie <michael.christie@oracle.com>,
+	Joel Granados <j.granados@samsung.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: [PATCH] zap_pid_ns_processes: clear TIF_NOTIFY_SIGNAL along with
+ TIF_SIGPENDING
+Message-ID: <20240613153021.GC18218@redhat.com>
+References: <1386cd49-36d0-4a5c-85e9-bc42056a5a38@linux.microsoft.com>
+ <20240608120616.GB7947@redhat.com>
+ <87a5jpqamx.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240520183633.1457687-1-steve.wahl@hpe.com>
+In-Reply-To: <87a5jpqamx.fsf@email.froward.int.ebiederm.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Mon, May 20, 2024 at 01:36:30PM -0500, Steve Wahl wrote:
-> Although there was a previous fix to avoid early kernel access to the
-> EFI config table on Intel systems, the problem can still exist on AMD
-> systems that support SEV (Secure Encrypted Virtualization).  The
-> command line option "nogbpages" brings this bug to the surface.  And
-> this is what caused the regression with my earlier patch that
-> attempted to reduce the use of gbpages.  This patch series fixes that
-> problem and restores my earlier patch.
-> 
-> The following 2 commits caused the EFI config table, and the CC_BLOB
-> entry in that table, to be accessed when enabling SEV at kernel
-> startup.
-> 
->     commit ec1c66af3a30 ("x86/compressed/64: Detect/setup SEV/SME features
->                           earlier during boot")
->     commit c01fce9cef84 ("x86/compressed: Add SEV-SNP feature
->                           detection/setup")
-> 
-> These accesses happen before the new kernel establishes its own
-> identity map, and before establishing a routine to handle page faults.
-> But the areas referenced are not explicitly added to the kexec
-> identity map.
-> 
-> This goes unnoticed when these areas happen to be placed close enough
-> to others areas that are explicitly added to the identity map, but
-> that is not always the case.
-> 
-> Under certain conditions, for example Intel Atom processors that don't
-> support 1GB pages, it was found that these areas don't end up mapped,
-> and the SEV initialization code causes an unrecoverable page fault,
-> and the kexec fails.
+On 06/13, Eric W. Biederman wrote:
+>
+> Oleg Nesterov <oleg@redhat.com> writes:
+>
+> > kernel_wait4() doesn't sleep and returns -EINTR if there is no
+> > eligible child and signal_pending() is true.
+> >
+> > That is why zap_pid_ns_processes() clears TIF_SIGPENDING but this is not
+> > enough, it should also clear TIF_NOTIFY_SIGNAL to make signal_pending()
+> > return false and avoid a busy-wait loop.
+>
+> I took a look through the code.  It used to be that TIF_NOTIFY_SIGNAL
+> was all about waking up a task so that task_work_run can be used.
+> io_uring still mostly uses it that way.  There is also a use in
+> kthread_stop that just uses it as a TIF_SIGPENDING without having a
+> pending signal.
+>
+> At the point in do_exit where exit_notify and thus zap_pid_ns_processes
+> is called I can't possibly see a use for TIF_NOTIFY_SIGNAL.
+> exit_task_work, exit_signals, and io_uring_cancel have all been called.
+>
+> So TIF_NOTIFY_SIGNAL should be spurious at this point and safe to clear.
+> Why it remains set is a mystery to me.
 
-What does Intel Atom have to do with SEV?!
+because exit_task_work() -> task_work_run() doesn't clear TIF_NOTIFY_SIGNAL.
 
-> Tau Liu had offered a patch to put the config table into the kexec
-> identity map to avoid this problem:
-> 
-> https://lore.kernel.org/all/20230601072043.24439-1-ltao@redhat.com/
-> 
-> But the community chose instead to avoid referencing this memory on
-> non-AMD systems where the problem was reported.
-> 
->     commit bee6cf1a80b5 ("x86/sev: Do not try to parse for the CC blob
->                           on non-AMD hardware")
-> 
-> I later wanted to make a different change to kexec identity map
-> creation, and had this patch accepted:
-> 
->     commit d794734c9bbf ("x86/mm/ident_map: Use gbpages only where full GB page should be mapped.")
-> 
-> but it quickly needed to be reverted because of problems on AMD systems.
-> 
-> The reported regression problems on AMD systems were due to the above
-> mentioned references to the EFI config table.  In fact, on the same
-> systems, the "nogbpages" command line option breaks kexec as well.
-> 
-> So I resubmit Tau Liu's original patch that maps the EFI config
-> table, add an additional patch by me that ensures that the CC blob is
-> also mapped (if present), and also resubmit my earlier patch to use
-> gpbages only when a full GB of space is requested to be mapped.
-> 
-> I do not advocate for removing the earlier, non-AMD fix.  With kexec,
-> two different kernel versions can be in play, and the earlier fix
-> still covers non-AMD systems when the kexec'd-from kernel doesn't have
-> these patches applied.
-> 
-> All three of the people who reported regression with my earlier patch
-> have retested with this patch series and found it to work where my
-> single patch previously did not.  With current kernels, all fail to
-> kexec when "nogbpages" is on the command line, but all succeed with
-> "nogbpages" after the series is applied.
-> 
-> Tao Liu (1):
->   x86/kexec: Add EFI config table identity mapping for kexec kernel
-> 
-> Steve Wahl (2):
->   x86/kexec: Add EFI Confidential Computing blob to kexec identity
->     mapping.
->   x86/mm/ident_map: Use gbpages only where full GB page should be
->     mapped.
-> 
->  arch/x86/kernel/machine_kexec_64.c | 82 ++++++++++++++++++++++++++++--
->  arch/x86/mm/ident_map.c            | 23 +++++++--
->  2 files changed, 95 insertions(+), 10 deletions(-)
+So yes, it is spurious, but to me a possible TIF_SIGPENDING is even more
+"spurious". See my reply to Wei.
 
-Anyway, + Ashish who's been dealing with SNP kexec. We have identified one EFI
-issue so far:
+We don't need to clear TIF_NOTIFY_SIGNAL inside the loop, task_work_addd()
+can't succeed after exit_task_work() sets ->task_works =&work_exited, but
+this is another story and this doesn't (well, shouldn't) differ from
+TIF_SIGPENDING.
 
-https://lore.kernel.org/r/20240612135638.298882-2-ardb%2Bgit@google.com
+> If I had infinite time and energy the ideal is to rework the pid
+> namespace exit logic
 
-You could give it a try and report back.
+Perhaps  in this case you could take a look at the next loop waiting for
+pid_ns->pid_allocated == init_pids ;)
 
-Thx.
+I always hated the fact that the the exiting sub-namespace init can
+"hang forever" if this namespace has the tasks injected from the parent
+namespace. And I had enough hard-to-debug internal bug reports which
+blamed the kernel.
 
--- 
-Regards/Gruss,
-    Boris.
+> This active waiting is weird and non-standard in the kernel and winds up
+> causeing a problem every couple of years because of that.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Agreed.
+
+Oleg.
+
 
