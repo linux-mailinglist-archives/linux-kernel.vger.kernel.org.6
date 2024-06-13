@@ -1,138 +1,118 @@
-Return-Path: <linux-kernel+bounces-213074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6760906ABC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:08:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370C5906AC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FAC2282805
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:08:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CF351C22902
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BF8142E83;
-	Thu, 13 Jun 2024 11:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828D7142E84;
+	Thu, 13 Jun 2024 11:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="BCIFIW7J";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="BCIFIW7J"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="kUH58Svf"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5026A13F44A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6AB13F44A
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718276925; cv=none; b=EJNzp602YGdjrFncDKyLL+p7yY6VG3oAMqhOrH5W+M+oRMLqOA/HopzqmH0FmL5BulAb/MOys9qjPzVTZSoKwOXZKwlpghfKNOq+u4hKxVoxDPHfQaW+sphr9vBHfTG4umrOL30Afn6b5AwB+LrobPDLSiJvdsIkeMm5IJNHGUc=
+	t=1718276970; cv=none; b=fKGt2PEkFXMb520gTK8VF7cnZaFM6XPrbcvkFc52hLSmSkpfTtuF7umUEo+T+zygQr/MnmTxe1neqLHVoDpkBgcDpE3LMKvbFNYPoEOd73DQ7pUJ45nygIyK03UEF3ziSUGhJ0rusurTcBfdg1Rtbnjhsn10AI3L9Ym0mBf2s+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718276925; c=relaxed/simple;
-	bh=NoKlM3z2XRRml8IVaCoEAkq7esY2u38pvl3GFNeJv3I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fv2G6i8OwtJJJ1Lr6KduvgiOFsIg73SIh/VcDuPXEiZQQ1dTyrqu6kR3VEi5qnuFPTM7aL+Bxf8hmpdQ8MjAbAfPo36mbZlzGH3av46R7TWP+z5S2hJY9HEyek4+M1XWTQPhCnuzM7Y5ZEnIT3dPhAIahXvx1sfGEsWdbKGcAvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=BCIFIW7J; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=BCIFIW7J; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 620A7352E8;
-	Thu, 13 Jun 2024 11:08:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1718276921; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=V/iWbWhG2My8bCeL6MeDIo/emE8CbfAk8+jMy72Gqbo=;
-	b=BCIFIW7JSProNphxHllz/TO+0aLiO6qBN8kvBH81YIO4Wv/eJcxqpNO7wIi9s7bhEIsQCy
-	mkHWsmTH5zP6fX+c/sovbv8wOvfhvioRTv3KgO2TW63V9JsfcU+IWfEPQEgFXM1TZI0k7j
-	dwHhD5Dg+gyL5719oodLn4yC5G5Cvak=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1718276921; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=V/iWbWhG2My8bCeL6MeDIo/emE8CbfAk8+jMy72Gqbo=;
-	b=BCIFIW7JSProNphxHllz/TO+0aLiO6qBN8kvBH81YIO4Wv/eJcxqpNO7wIi9s7bhEIsQCy
-	mkHWsmTH5zP6fX+c/sovbv8wOvfhvioRTv3KgO2TW63V9JsfcU+IWfEPQEgFXM1TZI0k7j
-	dwHhD5Dg+gyL5719oodLn4yC5G5Cvak=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0A8A713A7F;
-	Thu, 13 Jun 2024 11:08:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EEw2ADnTamb/DgAAD6G6ig
-	(envelope-from <nik.borisov@suse.com>); Thu, 13 Jun 2024 11:08:41 +0000
-From: Nikolay Borisov <nik.borisov@suse.com>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kees@kernel.org,
-	bp@alien8.de,
-	Nikolay Borisov <nik.borisov@suse.com>
-Subject: [PATCH v2] x86/boot: Remove unused function __fortify_panic()
-Date: Thu, 13 Jun 2024 14:08:37 +0300
-Message-Id: <20240613110837.300273-1-nik.borisov@suse.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718276970; c=relaxed/simple;
+	bh=/PwzYX+uk2Nedr1YIpzY/gURwWc4Gy3T1zJsTwNg4Jo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OG5up7Ju3f7b10X5hlZ3ehesbVfApK8r6W1eiBp3hQhMexR6vtuYE68CWxDmMlYs//EAAM8gRPm7DKc0TWmc3bKZVRoQEVC/SCdsvwnExYEtH7trtjSKQWrgjXMod3yG7eCIWPYq68kbhRKGKEarIrZx0dID6gghx4mPM/7b+ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=kUH58Svf; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id D224C1C0082; Thu, 13 Jun 2024 13:09:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1718276966;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MMBoc650EfPUZlWI2B7dwWY/pFS1sUXi2F5Pa+I/glc=;
+	b=kUH58SvfvV0SrS8SJJxc+YpCD9Pp3HGc/VKJPR9tBlQUN77maLsMDfcruVbx/mz6z2TgUc
+	VtosaKOu2o8hYOOyroI6rbN6AKptMKqUZXw5VNeAcJCs9y+5NJk8cZ5hWwLehQ08re8fTF
+	8uwBirw5o1sPHmS9vjTUMLSJUrJVeqY=
+Date: Thu, 13 Jun 2024 13:09:26 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 6.10-rc1
+Message-ID: <ZmrTZozoi0t/tuva@duo.ucw.cz>
+References: <CAHk-=wjQv_CSPzhjOMoOjGO3FmuHe5hzm6Ds69zZSFPa4PeuCA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.78 / 50.00];
-	BAYES_HAM(-2.98)[99.91%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -2.78
-X-Spam-Level: 
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SfBYjrROnx1aIQcB"
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjQv_CSPzhjOMoOjGO3FmuHe5hzm6Ds69zZSFPa4PeuCA@mail.gmail.com>
 
-That function is only used when the kernel is compiled with
-FORTIFY_SOURCE and when the kernel proper string.h header is used. The
-decompressor code doesn't use the kernel proper header but has local
-copy which doesn't contain any fortified implementations of the various
-string functions. As such __fortify_panic() can never be called from the
-decompressor so let's remove it.
 
-Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
----
-Since v1:
-	* Fixed typo in function
-	* Added () after __fortify_panic mention in the changelog...
+--SfBYjrROnx1aIQcB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- arch/x86/boot/compressed/misc.c | 5 -----
- 1 file changed, 5 deletions(-)
+Hi!
 
-diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
-index b70e4a21c15f..944454306ef4 100644
---- a/arch/x86/boot/compressed/misc.c
-+++ b/arch/x86/boot/compressed/misc.c
-@@ -531,8 +531,3 @@ asmlinkage __visible void *extract_kernel(void *rmode, unsigned char *output)
+> Ok, the merge window is over, and 6.10-rc1 is tagged and pushed out.
+>=20
+> This seems to be a regular-sized release, maybe even slightly on the
+> smaller side. All the stats look fairly normal, but "normal" obviously
+> means "much too big to post the shortlog", so below is - as always -
+> just my "merge log" that gives an overview of who I've merged from
+> with just the barest of descriptions.
+>=20
+> We don't have any new filesystems, and the xfs online repair work
+> means that the bcachefs fixes aren't even the biggest filesystem
+> change any more. But all of that is dwarfed by all the usual driver
+> updates (and, as is tradition, GPU drivers are in a massive lead, with
+> networking a distant second and everything else is relatively small).
+>=20
+> But we do have all the usual architecture updates, core cleanups and
+> fixes, tooling and documentation updates.
+>=20
+> Please - let the testing commence,
 
- 	return output + entry_offset;
- }
--
--void __fortify_panic(const u8 reason, size_t avail, size_t size)
--{
--	error("detected buffer overflow");
--}
---
-2.34.1
+I tried ~6.10-rc1 for a week or so, and it something was very wrong with
+the performance, likely to do with graphics. Thinkpad X220.
 
+It looked like GPU is working way harder than usual, leading to
+machine overheating and thermal throttling, making machine _really_
+unusable.
+
+I went back to 6.9, and things seem better. At least "have to buy new
+machine" feeling is gone.
+
+Unfortunately, these GPU perfromance issues are not exactly to
+confirm/debug. Hints would be welcome.
+
+Best								Pvel
+
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--SfBYjrROnx1aIQcB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZmrTZgAKCRAw5/Bqldv6
+8v6fAJ4hWPvVitw11YE7vnK2jz8J4NGQfQCgqcBOPW7/dVGbX8fKGHdQ2Q03FqQ=
+=Wm0q
+-----END PGP SIGNATURE-----
+
+--SfBYjrROnx1aIQcB--
 
