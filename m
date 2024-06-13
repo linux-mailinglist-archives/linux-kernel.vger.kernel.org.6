@@ -1,82 +1,101 @@
-Return-Path: <linux-kernel+bounces-213693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADFC59078D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:54:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E3C99078D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 629C61F23544
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:54:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC466284753
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B34149C7F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93807145A12;
 	Thu, 13 Jun 2024 16:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZn8K0bP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BThaP0qV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4495512F386;
-	Thu, 13 Jun 2024 16:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C831C1494DE;
+	Thu, 13 Jun 2024 16:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718297674; cv=none; b=Xqw3U9S9iJwFbNS4g6QKhxfVWJMLu6H653o0+kQEXLX2kLurxQpuY4lXg/z2xgBfw46xpxIJk+pbMXC20OYHp/AqV4MyF6C7jBf5u+p64zcmugnncEGn4DJUpCAJ5cZaeIzIg56aDrHzlhApbfY0TR8UJ5xCl4kEf1UZtxc2H5g=
+	t=1718297674; cv=none; b=OToPdf/+ZHorWglHrNFiD9eLhPe9tUqy30NpuaKwJZQKMINJrt53PD0QrVmyINkyx8ApBiQsNv26PqO1iRPZ3UvxB6S8kBm6nWIstVuLoIj/ANv3JAbkoahA4aHcV56jYj/TZT/VrLyEYjw7yEGtKB13cmCfO1qBnrrcrdqI4gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718297674; c=relaxed/simple;
-	bh=cOpWMtjOpM5JcUJn8Jsy0W8BZXiFPPhfC6HaQXCrUYg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TrALSs/EJcTTGHNdnH1lfg9OGOLajvlWF2FRj5wh3gmI+CrSaOI58a379SAi2rggrm3lmDE9A2XqRjmMHzqazn9iuczegy7q29UP5IGZ1seI899oFsQaYBK14HsmBQTlhljv5V5Nr0ochiRBYbpcgDXPBd9RWaIOtCmTqhqVJR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZn8K0bP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 730F6C2BBFC;
-	Thu, 13 Jun 2024 16:54:31 +0000 (UTC)
+	bh=liuR4gMpNjq/xKSucqP2XoRrQSlMIIT2FrkVNCQ3uEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zjt39LuXA0HtsiKDjHQV+95RWrcx5AJNphuwrYowD7UGBWn0EhGDvD1WZnlDMC7xim9aBtglhREX0PX5PLcSGlfC9MZIXUtbg0YrKU8oUN3U8ShfH35gHxXsCz+iNOfP8SmfaK2Q+p1uLixm7klA3xY0asXG9+12+sfdeYFXjKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BThaP0qV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B67DC3277B;
+	Thu, 13 Jun 2024 16:54:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718297673;
-	bh=cOpWMtjOpM5JcUJn8Jsy0W8BZXiFPPhfC6HaQXCrUYg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=CZn8K0bPASERaMkg6FivPqE7oz1NO1AI05YeBwF12OplA91xivbCrjr1cMPGhUvtx
-	 R2G9W7gYRXRMqpitU2MMRy4i6s2Yael1uvYKMA1+Sj1KP6nlSIPcHZuyHPOd/gN/Vw
-	 b7G6cYITwP+1BuoNFnbA0vizonkzpK579t9QUsTsR/mafPUPGmMxnHsZRs1Cnglj8s
-	 MiGtJnIMEIbimz4Q0gewcIVdI2NXa/CO9EIik1xtq+j9rS4DOsVXAc/5HZFcdDRRfC
-	 jTqRlHslnPA+MZ4SCD0X67nhkiwJXWUPM6QpUOWqcE3uoli2/4ahCHqTCxnHspHMsJ
-	 tAmmebEJ4p33g==
-From: Lee Jones <lee@kernel.org>
-To: pavel@ucw.cz, robh@kernel.org, andersson@kernel.org, 
- Anjelique Melendez <quic_amelende@quicinc.com>
-Cc: u.kleine-koenig@pengutronix.de, marijn.suijten@somainline.org, 
- kees@kernel.org, morf3089@gmail.com, quic_gurus@quicinc.com, 
- quic_subbaram@quicinc.com, linux-arm-msm@vger.kernel.org, 
- linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240607005250.4047135-1-quic_amelende@quicinc.com>
-References: <20240607005250.4047135-1-quic_amelende@quicinc.com>
-Subject: Re: (subset) [PATCH 1/2] leds: rgb: leds-qcom-lpg: Add PPG check
- for setting/clearing PBS triggers
-Message-Id: <171829767121.2715617.1437824058058864879.b4-ty@kernel.org>
-Date: Thu, 13 Jun 2024 17:54:31 +0100
+	s=k20201202; t=1718297674;
+	bh=liuR4gMpNjq/xKSucqP2XoRrQSlMIIT2FrkVNCQ3uEk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BThaP0qVXGat057GchZb6GahDincRv5taX79W44x7tusBUPkoeg5Plm5uc/rQ7WaW
+	 7MS7h1pX6xgCwRet/9i9NDbQGHA9GL+jKgL4f6ZHWEsol91MiXe8lZltVAGV1YKR65
+	 HMwfMX/JmkkEl6xJ73x00ba178zm60WUNgNyRL0HwE36cboHtkfsQiWJewq/zda6NA
+	 dtsSisl63qAjqgz6CZiCxHWHzUyACVXDwzwXHQosIjJPwq7ZVQMZBEK1cckiu3rQy6
+	 OzPreHo7HdiH0Oxxs+qN9AOQFxRWFsxclsQMoN9DF1jJPxW6H/BT+iYmRCpXg8Ogvv
+	 fmYqrAGelTRNA==
+Date: Thu, 13 Jun 2024 10:54:33 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Frank.li@nxp.com, linux-remoteproc@vger.kernel.org, krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org, krzk@kernel.org,
+	linux-arm-kernel@lists.infradead.org, s.hauer@pengutronix.de,
+	mathieu.poirier@linaro.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, festevam@gmail.com,
+	kernel@pengutronix.de, peng.fan@nxp.com, andersson@kernel.org,
+	conor+dt@kernel.org, shawnguo@kernel.org
+Subject: Re: [PATCH v3 1/1] dt-bindings: remoteproc: imx_rproc: add minItems
+ for power-domain
+Message-ID: <171829767127.2016899.8977063289627594833.robh@kernel.org>
+References: <20240610151721.274424-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240610151721.274424-1-Frank.Li@nxp.com>
 
-On Thu, 06 Jun 2024 17:52:50 -0700, Anjelique Melendez wrote:
-> Currently, all LED LPG devices will call lpg_{set,clear}_pbs_trigger()
-> when setting brightness regardless of if they support PPG and have PBS
-> triggers. Check if device supports PPG before setting/clearing PBS
-> triggers.
+
+On Mon, 10 Jun 2024 11:17:21 -0400, Frank Li wrote:
+> "fsl,imx8qxp-cm4" and "fsl,imx8qm-cm4" need minimum 2 power domains. Other
+> platform doesn't require 'power-domain'.
 > 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> 
+> Notes:
+>     Change from v2 to v3
+>     - only imx8qxp and imx8qm need power-domain, other platform don't need it.
+>     - update commit message.
+> 
+>     Change from v1 to v2
+>     - set minitem to 2 at top
+>     - Add imx8qm compatible string also
+>     - use not logic to handle difference compatible string restriction
+>     - update commit message.
+> 
+>     pass dt_binding_check.
+> 
+>     make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8  dt_binding_check DT_SCHEMA_FILES=fsl,imx-rproc.yaml
+>       SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>       CHKDT   Documentation/devicetree/bindings
+>       LINT    Documentation/devicetree/bindings
+>       DTEX    Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dts
+>       DTC_CHK Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.example.dtb
+> 
+>  .../bindings/remoteproc/fsl,imx-rproc.yaml        | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 > 
 
-Applied, thanks!
-
-[1/2] leds: rgb: leds-qcom-lpg: Add PPG check for setting/clearing PBS triggers
-      commit: bdd39a590cec198d4208ef4dd375971dbd079b5e
-
---
-Lee Jones [李琼斯]
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
