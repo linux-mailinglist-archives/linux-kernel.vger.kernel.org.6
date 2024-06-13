@@ -1,136 +1,99 @@
-Return-Path: <linux-kernel+bounces-213112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 021B7906BDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:45:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E998906BE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F7761F23226
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:45:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72B5FB240AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62239143C60;
-	Thu, 13 Jun 2024 11:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6333B143872;
+	Thu, 13 Jun 2024 11:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vy/JgZiA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="cdN5nyZG"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49BB143C51
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4031448EB;
+	Thu, 13 Jun 2024 11:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718279064; cv=none; b=mWpcI/aOIg6ersW3TIzEkq0yEP5XrxAV0AjFGks8mjYA6zZ+8XD9ARmH31qln+0w/v0V/ReEv7Iu9WIcgGzXopJ7OzdheatopW++QS6nHRGHV03jIfYOS1vnT5aGs55+IJo2F97W4K7pKF1XNthQytSYtsyIiZqeaQ2ysyfxsdg=
+	t=1718279079; cv=none; b=pUmAHrFc93UC4OmgzpIHSkjx7t5kCAvp0uBVtcBcJfSCSIgsJiDZuuvSqurBuH2XbnNMjwd6/AvLXsSQo0viX1HuGxMuElUXLT4b10VrKNY1KvgJcpZrsLmm21oTW5u+YgWNX/c3FxENPuL1picMk3cqAYxvADxbbVqKPMblhmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718279064; c=relaxed/simple;
-	bh=CJaBd2s3Dq0cWvdxftsetDuzthTx2fYfrrCKX/uQt4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f2QWDr+06+cXp2t60+R4V++nWBHgjBRuDOI80NxtixcRl39GmETpDw0SV9CV3kSYZhW15aL/fot1ZUe4XEQaG0Oxii3qQdSYt76NWi/3TplVBWmcVjkOOpKs7jNoM/jz7gidR/BxaVNrVJ+SPwzZ2YyeXmY2gaGxMBrB5THqgIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vy/JgZiA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E656CC2BBFC;
-	Thu, 13 Jun 2024 11:44:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718279064;
-	bh=CJaBd2s3Dq0cWvdxftsetDuzthTx2fYfrrCKX/uQt4g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vy/JgZiA9hLKZeOQSaWLZqpCTsMXOez7AWCU0tW3y2NC1s9CFpICD46QgRjb/ob9T
-	 CgL+H+FSvyRNnmD+J9S5hUDFlRTB1hyf3jOCKFjrFEEZqeUwOW1gb4zdMAb70XjFnJ
-	 acghkkGRzVkOfbnJxhgZBs3eKiswNd+mvvxRIxqFc5cWBh4GD6vBL/Go3pro7CpoB8
-	 NAjkDHC4SX0CBXy5GNf2aIzB+9yXiHjcd7W+rWFvNEccA7+lBs8etxbBM386LrfLo1
-	 ti0BdTUVBosnJccplm5LXlhCMARrcNEPEPDEA6SVkNVvTx0Ect+jRQP4UzlJxXfcjw
-	 quoBqeRQkHigA==
-Date: Thu, 13 Jun 2024 12:44:20 +0100
-From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Michal Hocko <mhocko@suse.com>, cve@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Felix Kuehling <felix.kuehling@amd.com>
-Subject: Re: CVE-2024-26628: drm/amdkfd: Fix lock dependency warning
-Message-ID: <20240613114420.GM1504919@google.com>
-References: <2024030649-CVE-2024-26628-f6ce@gregkh>
- <Zerheyn-4rB5kySt@tiehlicka>
- <20240314110938.GM1522089@google.com>
- <ZfsBpal_29lihveI@tiehlicka>
- <20240320154734.GU1522089@google.com>
- <Zmq8uSVv0X5f7xx+@duo.ucw.cz>
- <2024061335-wistful-brownnose-28ea@gregkh>
- <ZmrMo6qFbt9/3xoh@duo.ucw.cz>
+	s=arc-20240116; t=1718279079; c=relaxed/simple;
+	bh=2n+TNIHW7fyXz94EhLnmhhZsaSuYkTN3hTj+I+VmNYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jFMtIAwoVnQKrPEhzOXpAlL8X3TSTOL1/yHNSJ+GP73ntRGNF/KWuX9zPtXgAPkN9N+pGbyUrquXCPKf/efcA32AyYwx6gJEwODAQIXW+fPNMwjtq38tLyjVQVdTh98m3/sVu6nA6XKkkaMNM/TG0eaDoxcLWpQ/fdaJCV/WFbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=cdN5nyZG; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=yFzarZ08c6f35rJCPnIaJIVfFjDEHxsEXnJtD6p8xVQ=;
+	t=1718279077; x=1718711077; b=cdN5nyZG392kRcHgUNiDXM7s6JQ1k1g5ubbz/p9NhbSMq8K
+	8hAgXRQl1KGB7s5Ei+bzawwVZauM+QfxvQmc8Hqtcoik+LYNo8AYo94vRn3+1PE7RSoHt+FJ8fnr2
+	n36QaH1HiPnKhsZouauSv5nR97ZZbRuPqg1lwowQCt1DBxePsY6NTrpn0d8bfKomHBMx2sQLdi/Rl
+	FyBaSDwp/m2QkJBHFGL6cBea8TCoJKaoKnKCnresz9pjI8OC0KEXi7zuE8GkllCnFSUYV++4K8t2/
+	qn9fVgrohvPxC1FF2ifq968vfeQmoGUsjuhOkNHt1LolPuN5U4BgdXvSe17YLoWg==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sHisa-0002dB-Er; Thu, 13 Jun 2024 13:44:32 +0200
+Message-ID: <48832f23-7593-4bc5-875b-83462a603949@leemhuis.info>
+Date: Thu, 13 Jun 2024 13:44:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZmrMo6qFbt9/3xoh@duo.ucw.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Regression] 6.10-rc1: Fail to resurrect from suspend.
+To: Pavel Machek <pavel@ucw.cz>, David Wang <00107082@163.com>,
+ regressions@lists.linux.dev
+Cc: sivanich@hpe.com, kevin.tian@intel.com, baolu.lu@linux.intel.co,
+ jroedel@suse.de, linux-kernel@vger.kernel.org
+References: <20240530114907.4836-1-00107082@163.com>
+ <ZmrSVax+fzXNKyiq@duo.ucw.cz>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <ZmrSVax+fzXNKyiq@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718279077;3b71a3fd;
+X-HE-SMSGID: 1sHisa-0002dB-Er
 
-On Thu, 13 Jun 2024, Pavel Machek wrote:
-
-> On Thu 2024-06-13 12:16:50, Greg Kroah-Hartman wrote:
-> > On Thu, Jun 13, 2024 at 11:32:41AM +0200, Pavel Machek wrote:
-> > > On Wed 2024-03-20 15:47:34, Lee Jones wrote:
-> > > > On Wed, 20 Mar 2024, Michal Hocko wrote:
-> > > > 
-> > > > > On Thu 14-03-24 11:09:38, Lee Jones wrote:
-> > > > > > On Fri, 08 Mar 2024, Michal Hocko wrote:
-> > > > > > 
-> > > > > > > On Wed 06-03-24 06:46:11, Greg KH wrote:
-> > > > > > > [...]
-> > > > > > > >  Possible unsafe locking scenario:
-> > > > > > > > 
-> > > > > > > >        CPU0                    CPU1
-> > > > > > > >        ----                    ----
-> > > > > > > >   lock(&svms->lock);
-> > > > > > > >                                lock(&mm->mmap_lock);
-> > > > > > > >                                lock(&svms->lock);
-> > > > > > > >   lock((work_completion)(&svm_bo->eviction_work));
-> > > > > > > > 
-> > > > > > > > I believe this cannot really lead to a deadlock in practice, because
-> > > > > > > > svm_range_evict_svm_bo_worker only takes the mmap_read_lock if the BO
-> > > > > > > > refcount is non-0. That means it's impossible that svm_range_bo_release
-> > > > > > > > is running concurrently. However, there is no good way to annotate this.
-> > > > > > > 
-> > > > > > > OK, so is this even a bug (not to mention a security/weakness)?
-> > > > > > 
-> > > > > > Looks like the patch fixes a warning which can crash some kernels.  So
-> > > > > > the CVE appears to be fixing that, rather than the impossible deadlock.
-> > > > > 
-> > > > > Are you talking about lockdep warning or anything else?
-> > > > 
-> > > > Anything that triggers a BUG() or a WARN() (as per the splat in the
-> > > > commit message).  Many in-field kernels are configured to panic on
-> > > > BUG()s and WARN()s, thus triggering them are presently considered local
-> > > > DoS and attract CVE status.
-> > > 
-> > > So... because it is possible to configure machine to reboot on
-> > > warning, now every warning is a security issue?
-> > > 
-> > > Lockdep is for debugging, if someone uses it in production with panic
-> > > on reboot, they are getting exactly what they are asking for.
-> > > 
-> > > Not a security problem.
-> > 
-> > And we agree, I don't know what you are arguing about here, please stop.
+On 13.06.24 13:04, Pavel Machek wrote:
+>> My system fails to resurrect after `systemctl suspend` with 6.10-rc1,
+>> when pressing power button, the machine "sounds" starting(fans roaring),
+>> but my keyboard/mouse/monitor is not powered, and I have nothing to
+>> do but powering cycle the system.
+>>
+>> I run a bisect session, and narrows it down to following commit:
+>>
+>> 	commit d74169ceb0d2e32438946a2f1f9fc8c803304bd6
+>> 	Author: Dimitri Sivanich <sivanich@hpe.com>
+>> 	Date:   Wed Apr 24 15:16:29 2024 +0800
+>>
+>> 	    iommu/vt-d: Allocate DMAR fault interrupts locally
+>> 	    
+> [...]
+>> And I have confirmed that reverting this commit can fix my problem.
 > 
-> So you agree that WARN triggering randomly is not a security problem?
-> 
-> Following communication did not say so.
-> 
-> "The splat in the circular lockdep detection code appears to be generated
-> using some stacked pr_warn() calls, rather than a WARN()."
+> Bisected regression. Should we simply revert the patch?
 
-We agree that the lockdep detection is a debugging feature AND that even
-though the splat looks like a WARN(), it does not behave like one.
-Therefore it does not constitute a security issue.
+No need to afaics, as this afaics is fixed by "iommu/amd: Fix panic
+accessing amd_iommu_enable_faulting" which Joerg committed earlier today.
 
-However, yes, we believe that if an attacker can trip a WARN() and
-reboot a victim's machine on demand then this is equivalent to a local
-DoS attack and merits CVE status.
+https://lore.kernel.org/all/ZljHE%2FR4KLzGU6vx@hpe.com/
+https://lore.kernel.org/all/31f16e4e.afe2.18fc9d5dad0.Coremail.00107082@163.com/
 
--- 
-Lee Jones [李琼斯]
+Ciao, Thorsten
 
