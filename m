@@ -1,119 +1,115 @@
-Return-Path: <linux-kernel+bounces-213851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD4FE907BA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:39:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E40B8907BA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2418E282B0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:39:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 156C61C24148
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DEC14D428;
-	Thu, 13 Jun 2024 18:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212E814B949;
+	Thu, 13 Jun 2024 18:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pa62ppOQ"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNokVVAx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D3614C599
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F6F130AC8;
+	Thu, 13 Jun 2024 18:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718303896; cv=none; b=egliS29gWzUvshFtYu3j56nM9NWchQHTSJb9JeFy06MkvV9vKIYVwCT1PaRuAV/8ukRsR6cGjCaYUNNZiFJZ1dVBTFAL/fNlAx3M1D9OiMw3+OxK1//HCMb6zyhitcF6gNiLh+gdourU0UpCpXkaxIHUZypVVPzSbqDQC3ukMcw=
+	t=1718304057; cv=none; b=BmuvYri4S03FeqyPp6cemQOA6IKLO7Nab4ZaOlDjfeXrec8muGULuHqqS7aTEEl0Q3Vxk6n+ZYSEP53eKUXSQ0Nl4m0zDs47jLamCQRzfZZLHWWE8F/b6qVidC7vMKUiK1fVydqI/W+NN0Szez34HXi0MMtpnuyCxhPHuyb4P3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718303896; c=relaxed/simple;
-	bh=L/I0jGSnKvfURjR9QPVZSHNpgzmXSr/7QAs2Yjq/MN4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JcNUWZOEYftR3MRVRZ6Z7TxiQJBIhgXPIN3aX9vcsWwM0sN7j4R7GfJLZ9qIzLIQ6qqNDU3JAhXyCjFRu/imQWWT/V3RU6FrthJeeveDmO8ZOXj3cRPfG1eMrfUTXmQncjc7MEPwvPzoxLI8mJ/o/E8ifk9XNVtLbOrNaAKr1ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Pa62ppOQ; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2c2d6e09e62so1207058a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:38:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718303895; x=1718908695; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Updc3JmEB9tDfSD6bTK5d81zUhVfnHUf04ep4+BiNE0=;
-        b=Pa62ppOQ/dth7kPb21G3Nd8RYVyAjomc/DV4cmyRvKhw6ydKU6UluwZWcJQlRITjC8
-         B2UrSUsjKqZKLtan2C4jaxNc4zS+E3jFPZRYscMKFNkW6E/QLEf8suL1dVrPe1d5ocvg
-         Oaj1tDKrgUR/S864nOxHPheE9uea2a6mRBREJJkmNYC1y4TNtYtHMHb6TkT298epb87Q
-         uQ8yOhSDDHwZGV+nFQXdLc9cIlCnyxdORaXFPlkfKv1+jhuQh3Ky5ZNKmjuDF3KdvoBL
-         vjyCXm2GCjp85TXC1cL2SdBZ0pF7fHfb6rReMJxcR+CIs5v4CPkZhREfrxIMYxry+qiM
-         v9DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718303895; x=1718908695;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Updc3JmEB9tDfSD6bTK5d81zUhVfnHUf04ep4+BiNE0=;
-        b=SvfQWsy91mtXppP3SNVJCiM+t5dnJjnDcyh2SFyAnY4v86P9fl/kiDjwSsFOYBvIc5
-         O/0RYnVk/DyPBdtzI59xjgEE8loVxB/auT/VB5Jv+qqh5GQFmt2FEvNTuIM1VYvWnl5o
-         VVSDNq+O/yiemOgtkWlTG055DymhsrHLzGp3+VG+H+J/gazSJd0zeVk9ku9Jh3yRreWL
-         +mjgKAgU/OGcm76KQ/ouEjn3GG31GAl3ZPuasowcQM6EdKjJclvPwUUv6sNgi8z9h7/x
-         1vJ7tU/QfzoCZPoSK8FFZRoJWZuOPhZFM84sNJFd2N1IA4Dgmt2GOP5jDZNh5j5YhyhQ
-         dadw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBo5OXKmnI5qIUqgkEu63fb8rviw3UKIPm+nho/4yiRQ/hMRdUBdx191Ba4b2+0vbFPBbvjhzIqlpZONQrMJ3euFY2rcnSbYZiBAMf
-X-Gm-Message-State: AOJu0YxVehWclnMy0bAPHxg5SCv3LYs7yNJ8YScxodz0ZrCUZlw+Ti4/
-	UtKw2q8zEhmyfaNjeFMT/U7M/84WjFb1r02MpRQ4q1NmEvcDbOjysUwm2PjLojTwbt6jrH7AT0R
-	aEQ==
-X-Google-Smtp-Source: AGHT+IEoHsoXQ33CoHiGZZlVh3rR+/EUc+z3M2bB9VIq6N8UkxisrbO0XxnhPNgtzkGpaeE61uYDqNygW5Q=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:d2c8:b0:1f6:fbea:7976 with SMTP id
- d9443c01a7336-1f862a17756mr12475ad.10.1718303894500; Thu, 13 Jun 2024
- 11:38:14 -0700 (PDT)
-Date: Thu, 13 Jun 2024 11:38:13 -0700
-In-Reply-To: <608b37dbc59a80d32719c8fde8b6979a2b839e10.camel@intel.com>
+	s=arc-20240116; t=1718304057; c=relaxed/simple;
+	bh=dlNtThAMuLJ3XWCpoI7VTxxyt/1MyYvoexTmAVYy2OE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aS2gyPUvE7eGOZYASIYZ6QMs4/iXPGV+xCkQC0WBN/jBO6vF+T1xBh71rE3nXfeiDj9bpnPqHpRry7MMXx57dkwl263KudCDFl3ltXqJWjTgcIMvDvgAJBaVNTD+NmivuCj61kmR/scTE2IZdX3T7qjosr6QkWsdzW4geqC/M+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNokVVAx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06338C2BBFC;
+	Thu, 13 Jun 2024 18:40:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718304056;
+	bh=dlNtThAMuLJ3XWCpoI7VTxxyt/1MyYvoexTmAVYy2OE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HNokVVAxZYYMWSUAKL4yoMg2IEvn+30uNAZ52QYlT5ph6gQB6bKcBnSVhcILFE70G
+	 4JxsAHhH+kbBX0I9z+89VLKBxQZHzjDsHiBBw0hmXRshhrrMTphd/Q3FwVJuWCGk0d
+	 TI0jERHgSyEBPcOmBaoR/WVONbliJCcJEzUnPEaQx4vMVt1LREyB3IgksjGIpnNnIM
+	 2bdd34Vl6xr/DMXz/MlGMvoGtBYgg1Gs7/Tuw6UgLykDL1YVrNFJUVY5MtC39kg+2C
+	 C5sN3M9yiu/jDVONNR5obFZDqu/C8pkPY7mc8W+uvrqWM5wselH5DGhjyqegqEMA/W
+	 583c3W5dhEHSw==
+Date: Thu, 13 Jun 2024 21:40:51 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Bharat Bhushan <bbhushan2@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, jerinj@marvell.com,
+	lcherian@marvell.com, richardcochran@gmail.com
+Subject: Re: [net-next,v4 5/8] cn10k-ipsec: Add SA add/delete support for
+ outb inline ipsec
+Message-ID: <20240613184051.GH4966@unreal>
+References: <20240612134622.2157086-1-bbhushan2@marvell.com>
+ <20240612134622.2157086-6-bbhushan2@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240207172646.3981-1-xin3.li@intel.com> <608b37dbc59a80d32719c8fde8b6979a2b839e10.camel@intel.com>
-Message-ID: <Zms8lRn20MGVVN9h@google.com>
-Subject: Re: [PATCH v2 00/25] Enable FRED with KVM VMX
-From: Sean Christopherson <seanjc@google.com>
-To: Shan Kang <shan.kang@intel.com>
-Cc: Xin3 Li <xin3.li@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, "corbet@lwn.net" <corbet@lwn.net>, 
-	"x86@kernel.org" <x86@kernel.org>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "vkuznets@redhat.com" <vkuznets@redhat.com>, 
-	"bp@alien8.de" <bp@alien8.de>, "mingo@redhat.com" <mingo@redhat.com>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "hpa@zytor.com" <hpa@zytor.com>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "peterz@infradead.org" <peterz@infradead.org>, 
-	"shuah@kernel.org" <shuah@kernel.org>, Ravi V Shankar <ravi.v.shankar@intel.com>, 
-	"xin@zytor.com" <xin@zytor.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612134622.2157086-6-bbhushan2@marvell.com>
 
-On Wed, Mar 27, 2024, Shan Kang wrote:
-> On Wed, 2024-02-07 at 09:26 -0800, Xin Li wrote:
-> > This patch set enables the Intel flexible return and event delivery
-> > (FRED) architecture with KVM VMX to allow guests to utilize FRED.
-> >=20
-> We tested this FRED KVM patch set on a 7th Intel(R) Core(TM) CPU and the =
-Intel=20
-> Simics=C2=AE Simulator with the following four configurations:
+On Wed, Jun 12, 2024 at 07:16:19PM +0530, Bharat Bhushan wrote:
+> This patch adds support to add and delete Security Association
+> (SA) xfrm ops. Hardware maintains SA context in memory allocated
+> by software. Each SA context is 128 byte aligned and size of
+> each context is multiple of 128-byte. Add support for transport
+> and tunnel ipsec mode, ESP protocol, aead aes-gcm-icv16, key size
+> 128/192/256-bits with 32bit salt.
+> 
+> Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
+> ---
+> v3->v4:
+>  - Added check for crypto offload (XFRM_DEV_OFFLOAD_CRYPTO)
+>    Thanks "Leon Romanovsky" for pointing out
+>  
+> v2->v3:
+>  - Removed memset to zero wherever possible
+>   (comment from Kalesh Anakkur Purayil)
+>  - Corrected error hanlding when setting SA for inbound
+>    (comment from Kalesh Anakkur Purayil)
+>  - Move "netdev->xfrmdev_ops = &cn10k_ipsec_xfrmdev_ops;" to this patch
+>    This fix build error with W=1
+> 
+>  .../marvell/octeontx2/nic/cn10k_ipsec.c       | 456 ++++++++++++++++++
+>  .../marvell/octeontx2/nic/cn10k_ipsec.h       | 114 +++++
+>  2 files changed, 570 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
+> index fc1029c17c00..892bdbde92ee 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
+> @@ -336,6 +336,12 @@ static int cn10k_outb_cpt_clean(struct otx2_nic *pf)
+>  	/* Set inline ipsec disabled for this device */
+>  	pf->flags &= ~OTX2_FLAG_INLINE_IPSEC_ENABLED;
+>  
+> +	if (!bitmap_empty(pf->ipsec.sa_bitmap, CN10K_IPSEC_OUTB_MAX_SA)) {
+> +		netdev_err(pf->netdev, "SA installed on this device\n");
+> +		mutex_unlock(&pf->ipsec.lock);
+> +		return -EBUSY;
+> +	}
 
-That likely provides coverage for the happy cases, but I doubt it provides =
-negative
-testing, e.g. for VM-Enter consistency checks.  KVM-Unit-Tests are currentl=
-y the
-best choice for concistency checks (unfortunately).
+Sorry for not really reviewing the patches and posting some random
+comments, but this addition makes me wonder if it is correct
+design/implementation. At the stage of IPsec cleanup, all SAs should be
+removed before this call.
 
-And given the insanity of event re-injection, KVM selftests needs a dedicat=
-ed test
-for that, and another for the interactions with nVMX, e.g. a la svm_nested_=
-soft_inject_test.c.
+BTW, In kernel, this type of IPsec is called "Crypto Offload" and not
+"inline ipsec".
 
-I haven't looked too closely at the selftest that's already provided, but m=
-y
-suspicion is that we'll want multiple tests, or alternatively one test that
-uses KVM_ONE_VCPU_TEST_SUITE().
+Thanks
 
