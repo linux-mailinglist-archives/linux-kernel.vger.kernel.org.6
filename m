@@ -1,197 +1,415 @@
-Return-Path: <linux-kernel+bounces-212568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5028490635D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:16:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9EAC906363
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C847B23284
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 05:16:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5640AB23624
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 05:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EC4135A69;
-	Thu, 13 Jun 2024 05:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A2813210A;
+	Thu, 13 Jun 2024 05:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZSqQmfR3"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ucDcYjpx"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2048.outbound.protection.outlook.com [40.107.93.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779EE86246
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 05:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718255765; cv=none; b=mNzPrdsQz8qGuuKTkef82uUUwcjU124hIrpZhf82+UrUPrSEEvtywX5D8Irm7Xbhl6MUAri5F0WsjWm9qqt03gLxv8Rw9/89H0df0AGJtwIWc7XbsQPjQ+8JP2QVwOownuOHNyzWVPQ1T4TeqodeZFjIHV8gmbiT2znrZ2o8DsQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718255765; c=relaxed/simple;
-	bh=QUdxVsVlxJfG4mzBixKpG9z8qTNGFWMGeRu4fJuo5gs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=YNKY1BdOzsuEsQzL4CTsuubd9XeFVyjNEOK0XX1L7t+C8lJeW9Eb/syZCt5Li0H6QgLxzEQYNuQhgTINOlyNtpMRo5hb/Qg0e3WNE6b7V9d/pvwhiQ6vjw3/hx+sLsJ8w8GGQ36htUkZLfp4wDHOAhBHxO2ijox80SP23BQvl1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZSqQmfR3; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-35f23f3da44so705538f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 22:16:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718255762; x=1718860562; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EtfUUHuwzr569t6VOnXEXdZrMXfWjbd0r5DYKCbZN/4=;
-        b=ZSqQmfR31d7anHMztU6KBYny0Fp3Ie0GO7VTDVNg7vQfZ4AQ38/9iU2FkqodujOqn+
-         9AQi6CDg0JDy4mog1JvECamvHtnTWgq3c20Yj3v5gDMa7XPV5GKMzHKKZJ7w8uHH+AHj
-         aBikZ1cffFr+T9hJuxVvmwcYyY/OETH/aA5uIeWRNTiUU+suyvLqZzVclf0g+Y3mJDTV
-         8X7B0J//bGiNfVwuTz+rs9OY8PzMJjrlHyrmw4P7KLhK3gRH+mGv6aoyvtcvswbB0JOs
-         9pdapVwX4mETnWtyNqjy+4jvL9GlE8+4HdB0bLG3xfBWaFhEXL2hgUmc3+5KL4aNId1H
-         d3+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718255762; x=1718860562;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EtfUUHuwzr569t6VOnXEXdZrMXfWjbd0r5DYKCbZN/4=;
-        b=bKAogNBbitHyMvrNJzKcQ4eNhWQSiv7pqITungqWmJo6f8wHwD4STznWH5OzB4Fsdb
-         KESjt0fjqHdjX6TdwiurKXeT7SdElHMDG0hRHNriFsLo4V2aZs4Nldn26Is6pcrABqg9
-         4xiihRhIXj23WqG0i7+F+OLjHBTjaZpM9rqQBDNQmtndy5TWlsomRvaQKYERN7aHO/rR
-         CwCo5p6BFYcvHqQ9e5CLpHrlnfyehPsoYdZJpPcMmg7YMrNeamgOSYLlaqiM/+W7oFKW
-         GWGj42hVWW9u5T5esoZd3TOWuZNNKfvA9BuGIuK9dtXlOvQPNzB7Vn0uOiG6fuUbAfXG
-         Ohnw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXj4WAaTtJAfGFm5dc7wgtXPj9/uWbhxx2UladZpykVVbXmHm6puuZlsC8erLSmuFTB+M1WypZpRL5bZDf63OM3yVr2TMfuIOpsuGR
-X-Gm-Message-State: AOJu0YzYFkfmitQTfnuSiGDaYkJXk9nSFVbl/8kXoRgkfAvSIX3SeJQR
-	8Qc1uu3aE+rB+aH89Tydq+PMiH/F4lT8eUkYK3DGoeosbPBZ/zXAlysWgquiFUw=
-X-Google-Smtp-Source: AGHT+IGmrXsYGyUzIsflUwKvz92KSSMyEjsRe5mE41CKjjBa7BPtXLLftWzXvMVSbKd6KFtd/vOLIg==
-X-Received: by 2002:a5d:45c1:0:b0:360:73f4:7937 with SMTP id ffacd0b85a97d-36073f479bdmr610203f8f.6.1718255761516;
-        Wed, 12 Jun 2024 22:16:01 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075104c17sm573903f8f.106.2024.06.12.22.16.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 22:16:01 -0700 (PDT)
-Date: Thu, 13 Jun 2024 08:15:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev,
-	Martin Oliveira <martin.oliveira@eideticom.com>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tejun Heo <tj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Martin Oliveira <martin.oliveira@eideticom.com>,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Artemy Kovalyov <artemyko@nvidia.com>
-Subject: Re: [PATCH v2 1/4] kernfs: remove page_mkwrite() from
- vm_operations_struct
-Message-ID: <11acf031-a778-4ed9-8ece-c6d9aa0bce3f@moroto.mountain>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD17A4C6B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 05:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718255849; cv=fail; b=FnZcye05m5Fmc1QoU1P4UPRZ3ENdf9yYthyTkCIi6L7YMJxvq1ODj1uRVGnkcvYLpV0vI/nOxsNnYZOgu3Fg7A2T2wdkz0D+hzxYHp0BlN1K95SeO4/jGq2gNkk3riBCBXhoPpxoZmdI/pXcLnEPxwtpzQ/LnnhJ8/ZpaDx8X3U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718255849; c=relaxed/simple;
+	bh=mmrZvKwdG21zuZkUZxyWIYyNPJMX+LZa58RAyYmOKrM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mPf5yXvWb1OQ1w0eSiaY98LHkuclJG9ou8V8XWJiPMBjJDm0Q3noPC5GWf6d1G9qP1LsOTBxdIFTaJi9RGKtR4H4TTfOz0v+/SYQ+aEATSkmshZcSMVNibjeDj+ZROs9hXsdR2fjvHgDfkh8WKChZzZW9IoMqxSXaHwsjzUX+go=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ucDcYjpx; arc=fail smtp.client-ip=40.107.93.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=I9p8Dw+13AuTz9yHzSVMSR9SLFCouOg611j8iDv77tjwqmTS4Lza1avzbBY5LLtbKcv2uM0c1Iv4qujbjwYf2AxlNJ0LPSqgZ5WqYNxbWLUrIL0S6WFRQd506iqm7lF8mkpgiEi7qcLcoi8MC3tr/58t1pAJWw1eEs16b2fjkRKMB3HXIbhhSCxdcRA7ueiAG8fF3Grka9TV+qi2eLO/VOho8KZmpySdL2EKsXlff1VfsJuk1Gr4aZ6POss22UY6CW+Xrkx7dXot9lAWaiUrzOcmFkYDGAphQ8+oinWqBz3+KATI9/fL+8iSt6iH5AITJ7TGPGfsqnlGez3JRTZsEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EMvm6nbDjNmwPXbvJXXXrdZ7TbNzOzfrmPbL6J4eS50=;
+ b=gHXcErgxQ6XXlefEYeZceLmDR8PegNWTOUUJPmUhRwVxsqxB4OGm9UOaWABMU7z7AkKx+DAC9MBj5Y+jVaBwsp1o52duzvf3o2J877bRwOyhLhg4AG657WfLEwjFp9mE6On0KkGlGzRNHyx03Fw/w+a1xCnQEMI1VUJRtAMY24CRk28S3oBfNqk88/NcfKGs9vmaUUKFF3uRdkSfta+F5N7EmX5DtPwnDdLDVP0kg/bDn6cTt97MHz8ObasjabprON1Vdz5q8lFGMn3o9zo2OF6wG6aenibuYpyDxK293KjPNeR7uB2pGXRBxW97JKgJEritZH6s1ZdICxh93zh5VQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EMvm6nbDjNmwPXbvJXXXrdZ7TbNzOzfrmPbL6J4eS50=;
+ b=ucDcYjpxBfyVZVzqLTPdy0xEisUDNFy15QYPjZ7xdz+BTx0/maVBqXdYcbGzX/xF1awSDkgJcEbuKHxVH31or12wi14B5XYWb40YkosHJPBPvMadT5QbLbLaS8v3+ZavfTD2fmuJC851mHIiC5qAD9SPOEM+JLM5HrkQSqSyozM=
+Received: from BN8PR03CA0028.namprd03.prod.outlook.com (2603:10b6:408:94::41)
+ by CH3PR12MB8581.namprd12.prod.outlook.com (2603:10b6:610:15d::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.37; Thu, 13 Jun
+ 2024 05:17:23 +0000
+Received: from BN3PEPF0000B370.namprd21.prod.outlook.com
+ (2603:10b6:408:94:cafe::d0) by BN8PR03CA0028.outlook.office365.com
+ (2603:10b6:408:94::41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.24 via Frontend
+ Transport; Thu, 13 Jun 2024 05:17:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN3PEPF0000B370.mail.protection.outlook.com (10.167.243.167) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.0 via Frontend Transport; Thu, 13 Jun 2024 05:17:22 +0000
+Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Jun
+ 2024 00:17:20 -0500
+From: Mario Limonciello <mario.limonciello@amd.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+CC: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, "open
+ list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list
+	<linux-kernel@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>, "Mario
+ Limonciello" <mario.limonciello@amd.com>, Dmitry Torokhov
+	<dmitry.torokhov@gmail.com>, Chris Bainbridge <chris.bainbridge@gmail.com>
+Subject: [PATCH v3] drm/fb-helper: Detect when lid is closed during initialization
+Date: Thu, 13 Jun 2024 00:17:00 -0500
+Message-ID: <20240613051700.1112-1-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240611182732.360317-2-martin.oliveira@eideticom.com>
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B370:EE_|CH3PR12MB8581:EE_
+X-MS-Office365-Filtering-Correlation-Id: bd670ecc-8785-4625-64c7-08dc8b681b1c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230034|36860700007|7416008|376008|82310400020|1800799018;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kX/GgTHEUmWiWviSBysSUsnUQofdP3jtity8BXqmJ5X4vszLWYS0F7+UGuw4?=
+ =?us-ascii?Q?oENZnsbNajgau2HL29fedZ7LyawAox0H4jlVW3LjYHrAM8FFtNCUOcFqd8Ei?=
+ =?us-ascii?Q?mWA0mmGCc2slJqtnYUe2OJSt/ykj4Ux8+lAoCG6WNsWGe9IK60FxZ5eOfc5T?=
+ =?us-ascii?Q?sKwZ01c5N6g0gLTCOlDuzD27XOU0zMPb+YX9HxQKqFm21FICWdhRH/ZMEELl?=
+ =?us-ascii?Q?t2ubz5A5c9OCiKv5RiofQTvkEAh+cCsVL61jCxCNIp4RMJPpvL9EMErkqxfV?=
+ =?us-ascii?Q?cxbMWhMqt5gYsEnE6iHbb5TMiFx74yq1ylHUGZ9zEK7tGylfssr+off6fMFC?=
+ =?us-ascii?Q?Z4mKv3Dz8D7HH0vM5RErtEcrt1waABUiWkZAp7jou2Bc/c81PMAPmkjxkNiF?=
+ =?us-ascii?Q?WmUvo6ur6YPBoMgCgQfop91JUH8lpOfStbYny5PxPWRyXZpCfOLmxI9GKnAY?=
+ =?us-ascii?Q?qhS9rzyRJisff63ucM0aDfGeOmY+kGyk+CVzhNfXGbxf+C6uV/51k18qACRf?=
+ =?us-ascii?Q?8+oNkQmCFuJTNR4itFTSYx94jnnQPw5SniDEys7uiAUFHFJeCFP0fnvr3t+J?=
+ =?us-ascii?Q?rVMJEV+0tdsKPWEQoe0hWM+szHwYjmcA+dDgnXPvLMK+cYZCIfWn2d463q6m?=
+ =?us-ascii?Q?5PI97tfzPMcGqau6se+Y2bjJJwx49dE2N6rhcaCV8Czctaj5mc+PrFjuMcg4?=
+ =?us-ascii?Q?etj8cMhRkDLs/g4zla46l2iJPQlmNjZwWBw4YLxt2PSomKbsEZmxFf8XzWw7?=
+ =?us-ascii?Q?lFF4nRj/SPaYEWEMXFKPhcYjTZcHpRSAmPeVTHWbPvMfKgWLg3TCzurMW44p?=
+ =?us-ascii?Q?BDaWZOVwbe9ybUmSErBEYboba6NVffxuTBEuE21i4mSMt0NphOQgUc5d5+CA?=
+ =?us-ascii?Q?W7ypj/SyjdcJSjg4Ox+bus16Bj9XhBxyja4Kb+TpzXVDSaNlm6Dwh1NjOJoI?=
+ =?us-ascii?Q?Eh94Mg2eKlnNz11wg+P5jcXtbbIkZ8CeTAoCB/OJMmgHqrBXux7jFuqJam/2?=
+ =?us-ascii?Q?SIIrrTr7sVvpGLioCJmwtih81jHycDN1Kcb5xKExwMbQO9X6hbRMPjEzAFbk?=
+ =?us-ascii?Q?KWhJyRQI158WlZhtgxVtVkINVns924C6Pw5tD906EbTESRNHlOVj/w/RDwt2?=
+ =?us-ascii?Q?04iFC+nYSmuwBudJUl+W0+ZLFg0aST8xKFbeZJL3YMjCFQmeg9VSQoGdCMEC?=
+ =?us-ascii?Q?aTV+w0NZAJF1PBzRbF51TZxi7u5374+mZ6ND1K6Vk9n0p15I3eq+o8Y4CFAC?=
+ =?us-ascii?Q?/uysY/f4BGIyrePkDJro08YQZ9/QO46tcWJyPJl5AL21Q5Gr7rQGlf8HuTy4?=
+ =?us-ascii?Q?DHCPdJtKidQ3rukW0PxNpZxPVmtfs+pUtOkZ+94c8cLutXiCBulOtoIjEabD?=
+ =?us-ascii?Q?z7lYa7Q=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230034)(36860700007)(7416008)(376008)(82310400020)(1800799018);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2024 05:17:22.4816
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd670ecc-8785-4625-64c7-08dc8b681b1c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B370.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8581
 
-Hi Martin,
+If the lid on a laptop is closed when eDP connectors are populated
+then it remains enabled when the initial framebuffer configuration
+is built.
 
-kernel test robot noticed the following build warnings:
+When creating the initial framebuffer configuration detect the
+lid status and if it's closed disable any eDP connectors.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Martin-Oliveira/kernfs-remove-page_mkwrite-from-vm_operations_struct/20240612-023130
-base:   83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-patch link:    https://lore.kernel.org/r/20240611182732.360317-2-martin.oliveira%40eideticom.com
-patch subject: [PATCH v2 1/4] kernfs: remove page_mkwrite() from vm_operations_struct
-config: i386-randconfig-141-20240612 (https://download.01.org/0day-ci/archive/20240613/202406130357.6NmgCbMP-lkp@intel.com/config)
-compiler: gcc-12 (Ubuntu 12.3.0-9ubuntu2) 12.3.0
+Also set up a workqueue to monitor for any future lid events.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202406130357.6NmgCbMP-lkp@intel.com/
+Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3349
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+v2->v3:
+ * Use input device instead of ACPI device
+ * Detect lid open/close events
+---
+ drivers/gpu/drm/drm_client_modeset.c |  29 ++++++
+ drivers/gpu/drm/drm_fb_helper.c      | 132 +++++++++++++++++++++++++++
+ include/drm/drm_device.h             |   6 ++
+ include/drm/drm_fb_helper.h          |   2 +
+ 4 files changed, 169 insertions(+)
 
-smatch warnings:
-fs/kernfs/file.c:462 kernfs_fop_mmap() error: we previously assumed 'vma->vm_ops' could be null (see line 459)
-
-vim +462 fs/kernfs/file.c
-
-c637b8acbe079e Tejun Heo           2013-12-11  416  static int kernfs_fop_mmap(struct file *file, struct vm_area_struct *vma)
-414985ae23c031 Tejun Heo           2013-11-28  417  {
-c525aaddc366df Tejun Heo           2013-12-11  418  	struct kernfs_open_file *of = kernfs_of(file);
-414985ae23c031 Tejun Heo           2013-11-28  419  	const struct kernfs_ops *ops;
-414985ae23c031 Tejun Heo           2013-11-28  420  	int rc;
-414985ae23c031 Tejun Heo           2013-11-28  421  
-9b2db6e1894577 Tejun Heo           2013-12-10  422  	/*
-9b2db6e1894577 Tejun Heo           2013-12-10  423  	 * mmap path and of->mutex are prone to triggering spurious lockdep
-9b2db6e1894577 Tejun Heo           2013-12-10  424  	 * warnings and we don't want to add spurious locking dependency
-9b2db6e1894577 Tejun Heo           2013-12-10  425  	 * between the two.  Check whether mmap is actually implemented
-9b2db6e1894577 Tejun Heo           2013-12-10  426  	 * without grabbing @of->mutex by testing HAS_MMAP flag.  See the
-c810729fe6471a Ahelenia Ziemiańska 2023-12-21  427  	 * comment in kernfs_fop_open() for more details.
-9b2db6e1894577 Tejun Heo           2013-12-10  428  	 */
-df23fc39bce03b Tejun Heo           2013-12-11  429  	if (!(of->kn->flags & KERNFS_HAS_MMAP))
-9b2db6e1894577 Tejun Heo           2013-12-10  430  		return -ENODEV;
-9b2db6e1894577 Tejun Heo           2013-12-10  431  
-414985ae23c031 Tejun Heo           2013-11-28  432  	mutex_lock(&of->mutex);
-414985ae23c031 Tejun Heo           2013-11-28  433  
-414985ae23c031 Tejun Heo           2013-11-28  434  	rc = -ENODEV;
-c637b8acbe079e Tejun Heo           2013-12-11  435  	if (!kernfs_get_active(of->kn))
-414985ae23c031 Tejun Heo           2013-11-28  436  		goto out_unlock;
-414985ae23c031 Tejun Heo           2013-11-28  437  
-324a56e16e44ba Tejun Heo           2013-12-11  438  	ops = kernfs_ops(of->kn);
-414985ae23c031 Tejun Heo           2013-11-28  439  	rc = ops->mmap(of, vma);
-b44b2140265ddf Tejun Heo           2014-04-20  440  	if (rc)
-b44b2140265ddf Tejun Heo           2014-04-20  441  		goto out_put;
-414985ae23c031 Tejun Heo           2013-11-28  442  
-414985ae23c031 Tejun Heo           2013-11-28  443  	/*
-414985ae23c031 Tejun Heo           2013-11-28  444  	 * PowerPC's pci_mmap of legacy_mem uses shmem_zero_setup()
-414985ae23c031 Tejun Heo           2013-11-28  445  	 * to satisfy versions of X which crash if the mmap fails: that
-414985ae23c031 Tejun Heo           2013-11-28  446  	 * substitutes a new vm_file, and we don't then want bin_vm_ops.
-414985ae23c031 Tejun Heo           2013-11-28  447  	 */
-414985ae23c031 Tejun Heo           2013-11-28  448  	if (vma->vm_file != file)
-414985ae23c031 Tejun Heo           2013-11-28  449  		goto out_put;
-414985ae23c031 Tejun Heo           2013-11-28  450  
-414985ae23c031 Tejun Heo           2013-11-28  451  	rc = -EINVAL;
-414985ae23c031 Tejun Heo           2013-11-28  452  	if (of->mmapped && of->vm_ops != vma->vm_ops)
-414985ae23c031 Tejun Heo           2013-11-28  453  		goto out_put;
-414985ae23c031 Tejun Heo           2013-11-28  454  
-414985ae23c031 Tejun Heo           2013-11-28  455  	/*
-414985ae23c031 Tejun Heo           2013-11-28  456  	 * It is not possible to successfully wrap close.
-414985ae23c031 Tejun Heo           2013-11-28  457  	 * So error if someone is trying to use close.
-414985ae23c031 Tejun Heo           2013-11-28  458  	 */
-414985ae23c031 Tejun Heo           2013-11-28 @459  	if (vma->vm_ops && vma->vm_ops->close)
-                                                            ^^^^^^^^^^^
-If ->vm_ops is NULL
-
-414985ae23c031 Tejun Heo           2013-11-28  460  		goto out_put;
-414985ae23c031 Tejun Heo           2013-11-28  461  
-927bb8d619fea4 Martin Oliveira     2024-06-11 @462  	if (vma->vm_ops->page_mkwrite)
-                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^
-then we're in trouble
-
-927bb8d619fea4 Martin Oliveira     2024-06-11  463  		goto out_put;
-927bb8d619fea4 Martin Oliveira     2024-06-11  464  
-414985ae23c031 Tejun Heo           2013-11-28  465  	rc = 0;
-05d8f255867e31 Neel Natu           2024-01-27  466  	if (!of->mmapped) {
-a1d82aff5df760 Tejun Heo           2016-12-27  467  		of->mmapped = true;
-bdb2fd7fc56e19 Tejun Heo           2022-08-27  468  		of_on(of)->nr_mmapped++;
-414985ae23c031 Tejun Heo           2013-11-28  469  		of->vm_ops = vma->vm_ops;
-05d8f255867e31 Neel Natu           2024-01-27  470  	}
-414985ae23c031 Tejun Heo           2013-11-28  471  	vma->vm_ops = &kernfs_vm_ops;
-414985ae23c031 Tejun Heo           2013-11-28  472  out_put:
-c637b8acbe079e Tejun Heo           2013-12-11  473  	kernfs_put_active(of->kn);
-414985ae23c031 Tejun Heo           2013-11-28  474  out_unlock:
-414985ae23c031 Tejun Heo           2013-11-28  475  	mutex_unlock(&of->mutex);
-414985ae23c031 Tejun Heo           2013-11-28  476  
-414985ae23c031 Tejun Heo           2013-11-28  477  	return rc;
-414985ae23c031 Tejun Heo           2013-11-28  478  }
-
+diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
+index 31af5cf37a09..b8adfe87334b 100644
+--- a/drivers/gpu/drm/drm_client_modeset.c
++++ b/drivers/gpu/drm/drm_client_modeset.c
+@@ -257,6 +257,34 @@ static void drm_client_connectors_enabled(struct drm_connector **connectors,
+ 		enabled[i] = drm_connector_enabled(connectors[i], false);
+ }
+ 
++static void drm_client_match_edp_lid(struct drm_device *dev,
++				     struct drm_connector **connectors,
++				     unsigned int connector_count,
++				     bool *enabled)
++{
++	int i;
++
++	for (i = 0; i < connector_count; i++) {
++		struct drm_connector *connector = connectors[i];
++
++		switch (connector->connector_type) {
++		case DRM_MODE_CONNECTOR_LVDS:
++		case DRM_MODE_CONNECTOR_eDP:
++			if (!enabled[i])
++				continue;
++			break;
++		default:
++			continue;
++		}
++
++		if (dev->lid_closed) {
++			drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is closed, disabling\n",
++				    connector->base.id, connector->name);
++			enabled[i] = false;
++		}
++	}
++}
++
+ static bool drm_client_target_cloned(struct drm_device *dev,
+ 				     struct drm_connector **connectors,
+ 				     unsigned int connector_count,
+@@ -844,6 +872,7 @@ int drm_client_modeset_probe(struct drm_client_dev *client, unsigned int width,
+ 		memset(crtcs, 0, connector_count * sizeof(*crtcs));
+ 		memset(offsets, 0, connector_count * sizeof(*offsets));
+ 
++		drm_client_match_edp_lid(dev, connectors, connector_count, enabled);
+ 		if (!drm_client_target_cloned(dev, connectors, connector_count, modes,
+ 					      offsets, enabled, width, height) &&
+ 		    !drm_client_target_preferred(dev, connectors, connector_count, modes,
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index d612133e2cf7..41dd5887599a 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -30,6 +30,8 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/console.h>
++#include <linux/input.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/pci.h>
+ #include <linux/sysrq.h>
+ #include <linux/vga_switcheroo.h>
+@@ -413,6 +415,128 @@ static void drm_fb_helper_damage_work(struct work_struct *work)
+ 	drm_fb_helper_fb_dirty(helper);
+ }
+ 
++static void drm_fb_helper_lid_event(struct input_handle *handle, unsigned int type,
++				    unsigned int code, int value)
++{
++	if (type == EV_SW && code == SW_LID) {
++		struct drm_fb_helper *fb_helper = handle->handler->private;
++
++		if (value != fb_helper->dev->lid_closed) {
++			fb_helper->dev->lid_closed = value;
++			queue_work(fb_helper->input_wq, &fb_helper->lid_work);
++		}
++	}
++}
++
++struct drm_fb_lid {
++	struct input_handle handle;
++};
++
++static int drm_fb_helper_lid_connect(struct input_handler *handler,
++				     struct input_dev *dev,
++				     const struct input_device_id *id)
++{
++	struct drm_fb_helper *fb_helper = handler->private;
++	struct drm_fb_lid *lid;
++	char *name;
++	int error;
++
++	lid = kzalloc(sizeof(*lid), GFP_KERNEL);
++	if (!lid)
++		return -ENOMEM;
++
++	name = kasprintf(GFP_KERNEL, "drm-fb-helper-lid-%s", dev_name(&dev->dev));
++	if (!name) {
++		error = -ENOMEM;
++		goto err_free_lid;
++	}
++
++	lid->handle.dev = dev;
++	lid->handle.handler = handler;
++	lid->handle.name = name;
++	lid->handle.private = lid;
++
++	error = input_register_handle(&lid->handle);
++	if (error)
++		goto err_free_name;
++
++	error = input_open_device(&lid->handle);
++	if (error)
++		goto err_unregister_handle;
++
++	fb_helper->dev->lid_closed = dev->sw[SW_LID];
++	drm_dbg_kms(fb_helper->dev, "initial lid state is set to %d\n", fb_helper->dev->lid_closed);
++
++	return 0;
++
++err_unregister_handle:
++	input_unregister_handle(&lid->handle);
++err_free_name:
++	kfree(name);
++err_free_lid:
++	kfree(lid);
++	return error;
++}
++
++static void drm_fb_helper_lid_disconnect(struct input_handle *handle)
++{
++	struct drm_fb_lid *lid = handle->private;
++
++	input_close_device(handle);
++	input_unregister_handle(handle);
++
++	kfree(handle->name);
++	kfree(lid);
++}
++
++static const struct input_device_id drm_fb_helper_lid_ids[] = {
++	{
++		.flags = INPUT_DEVICE_ID_MATCH_EVBIT | INPUT_DEVICE_ID_MATCH_SWBIT,
++		.evbit = { BIT_MASK(EV_SW) },
++		.swbit = { [BIT_WORD(SW_LID)] = BIT_MASK(SW_LID) },
++	},
++	{ },
++};
++
++static struct input_handler drm_fb_helper_lid_handler = {
++	.event =	drm_fb_helper_lid_event,
++	.connect =	drm_fb_helper_lid_connect,
++	.disconnect =	drm_fb_helper_lid_disconnect,
++	.name =		"drm-fb-helper-lid",
++	.id_table =	drm_fb_helper_lid_ids,
++};
++
++static void drm_fb_helper_lid_work(struct work_struct *work)
++{
++	struct drm_fb_helper *fb_helper = container_of(work, struct drm_fb_helper,
++						       lid_work);
++	drm_fb_helper_hotplug_event(fb_helper);
++}
++
++static int drm_fb_helper_create_lid_handler(struct drm_fb_helper *fb_helper)
++{
++	int ret = 0;
++
++	if (fb_helper->deferred_setup)
++		return 0;
++
++	fb_helper->input_wq = create_singlethread_workqueue("drm-fb-lid");
++	if (fb_helper->input_wq == NULL)
++		return -ENOMEM;
++
++	drm_fb_helper_lid_handler.private = fb_helper;
++	ret = input_register_handler(&drm_fb_helper_lid_handler);
++	if (ret)
++		goto remove_wq;
++
++	return 0;
++
++remove_wq:
++	destroy_workqueue(fb_helper->input_wq);
++	fb_helper->input_wq = NULL;
++	return ret;
++}
++
+ /**
+  * drm_fb_helper_prepare - setup a drm_fb_helper structure
+  * @dev: DRM device
+@@ -445,6 +569,7 @@ void drm_fb_helper_prepare(struct drm_device *dev, struct drm_fb_helper *helper,
+ 	spin_lock_init(&helper->damage_lock);
+ 	INIT_WORK(&helper->resume_work, drm_fb_helper_resume_worker);
+ 	INIT_WORK(&helper->damage_work, drm_fb_helper_damage_work);
++	INIT_WORK(&helper->lid_work, drm_fb_helper_lid_work);
+ 	helper->damage_clip.x1 = helper->damage_clip.y1 = ~0;
+ 	mutex_init(&helper->lock);
+ 	helper->funcs = funcs;
+@@ -593,6 +718,9 @@ void drm_fb_helper_fini(struct drm_fb_helper *fb_helper)
+ 	if (!drm_fbdev_emulation)
+ 		return;
+ 
++	input_unregister_handler(&drm_fb_helper_lid_handler);
++	destroy_workqueue(fb_helper->input_wq);
++
+ 	cancel_work_sync(&fb_helper->resume_work);
+ 	cancel_work_sync(&fb_helper->damage_work);
+ 
+@@ -1842,6 +1970,10 @@ __drm_fb_helper_initial_config_and_unlock(struct drm_fb_helper *fb_helper)
+ 	width = dev->mode_config.max_width;
+ 	height = dev->mode_config.max_height;
+ 
++	ret = drm_fb_helper_create_lid_handler(fb_helper);
++	if (ret)
++		return ret;
++
+ 	drm_client_modeset_probe(&fb_helper->client, width, height);
+ 	ret = drm_fb_helper_single_fb_probe(fb_helper);
+ 	if (ret < 0) {
+diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
+index 63767cf24371..619af597784c 100644
+--- a/include/drm/drm_device.h
++++ b/include/drm/drm_device.h
+@@ -316,6 +316,12 @@ struct drm_device {
+ 	 * Root directory for debugfs files.
+ 	 */
+ 	struct dentry *debugfs_root;
++
++	/**
++	 * @lid_closed: Flag to tell the lid switch state
++	 */
++	bool lid_closed;
++
+ };
+ 
+ #endif
+diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
+index 375737fd6c36..7fb36c10299d 100644
+--- a/include/drm/drm_fb_helper.h
++++ b/include/drm/drm_fb_helper.h
+@@ -143,6 +143,8 @@ struct drm_fb_helper {
+ 	spinlock_t damage_lock;
+ 	struct work_struct damage_work;
+ 	struct work_struct resume_work;
++	struct work_struct lid_work;
++	struct workqueue_struct *input_wq;
+ 
+ 	/**
+ 	 * @lock:
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
 
 
