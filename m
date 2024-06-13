@@ -1,93 +1,132 @@
-Return-Path: <linux-kernel+bounces-212879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B949067BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:53:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BA289067BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:53:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180A828232E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:53:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4A0C1F2603A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB9013E897;
-	Thu, 13 Jun 2024 08:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1C613D88F;
+	Thu, 13 Jun 2024 08:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLZwrR9g"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IZ1OKDk+"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8256137936;
-	Thu, 13 Jun 2024 08:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0613F13D53E
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718268567; cv=none; b=WOLQFt60NG+LNrK2wvHuHJWpjLD+N4ZZ4S4Rp3m40BwnUcV985o2ffmHF6ciKInJzOJbmD5mnxg/m44pvbi/9iZaiFIjVw5BPO7UYP2L90EheIax2D0OYpJBQDigj5Gz3xqkCEzKWCy6Wtlqi1r2iXxDyYeC0KCIzz3YQ9Sif0Q=
+	t=1718268594; cv=none; b=nHCxRdmBJ41AlmGHBnHZs6rw0xUNpHeedq437EOUlUdlVjSDA0lxDae+VnVchxj39u0Wkt9uHZCsXvIcP3TS04g7WemL13+pdeKuBVkxBiwTkXZdUrMk+8LPdTj+FdPGEGkjfU/pJdTI+EdiaLxqxs4cfBbb7IdBhu8KW1fr4pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718268567; c=relaxed/simple;
-	bh=V77qM3lxWLpzjNjhIKYIFnAbpVbP/tQaTtykD1SSvyg=;
+	s=arc-20240116; t=1718268594; c=relaxed/simple;
+	bh=f9zjtO9AtabnLNuJxqiPcWb5sV8xQYdL18OmBwU1Kd4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=obceUVMNvK6U6AXYrJN1jEJaiebtZGlk8gw3f2JO98eB78r4bj3v4qOuWUtH2ufH48ivu/5gZfCHzjwuVXFBw3W51yFbUjjviCP1D7U46FdgHdXWK9zAHdxZa2l6ZmgGiDFdyo8arVCYka6cDtgc4+Gd/6U6spsYXg4t7Ql1O7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLZwrR9g; arc=none smtp.client-ip=209.85.167.45
+	 To:Cc:Content-Type; b=VB3fwIslhJrehkwpJESDy0ZAE+d4+QWkxDhuKTnd23Udm8jjQR8RCtIKyQvNDniIVDV0MfPEx6JmEDhkXaMjKOQG/2FmzbWR/eqJUX+jjzwY/oBR9Qtbp6J9WWtvTM3GDZ/JQTqqRJOr07hW1KK+yqJ3JsNRYezQ7uNNHqeHL2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IZ1OKDk+; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5295eb47b48so983763e87.1;
-        Thu, 13 Jun 2024 01:49:25 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57cb9a370ddso394602a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:49:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718268564; x=1718873364; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uoDG9jwFOreQjfWAEuHsfW2t7wLkR7xBn+RC3C/5v8o=;
-        b=mLZwrR9g5WRlTnxcYHTX75L1C34xl5bkpA0KLAKEbaRlVVoSGgtoa6ydMwUVt+R6jC
-         YD2U6sV3q25FBag5SSGaEewbQK+0DSsxgG4yCmtfoaC+l2TsYT4S3M/liPhyduVVyRJG
-         /84pCz4mJmgiO/8kTCmAn3McnXjSYBREQ6cpFsJkX/gpo9gByjtAp1dPwr3NXeW4GPrp
-         VgKY5vwrk9mrXPkhp+MVJSUZB4D7ZXJUqCG9VIkGfq102ZB2LWgRGAQ+D1+VqLTf2Unk
-         D6UwvJPfo8iuecul+vDOTbiAqQ7wCeqo3uFaDB8Rhbgmz7iJ3UBfHq7kU/wymCkJMBal
-         ZsEQ==
+        d=gmail.com; s=20230601; t=1718268591; x=1718873391; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f9zjtO9AtabnLNuJxqiPcWb5sV8xQYdL18OmBwU1Kd4=;
+        b=IZ1OKDk+VfsxUUKK684UtQSpWUpSSdu/W8dkrQKUQZwamqyTUHOeTyEsyiOOzBATmP
+         WyzkWw7ft2Xpx4GM0/F7FneFgp99EjpCQH+dTPs3q9mXEFbgnHUQE5QVUOMmDWcPhMsP
+         xOJfeQrvugoZqLLxUNdqtVpk7Y88T46Yacqav3zMS/lY1pW1324aoMgWdccADwdrFTUH
+         CBLdSQguXaggDwYYWeSaV6begIQME0l8k2D3/uVh3yqn8e+bKkLbPDLaDCbMm8iLAU8Z
+         /oHHXgLVo5TI3AJtAY97xkqtTMm6GrxDjjfNE0BmGctKMRnAns/q53CroEd3XoNj+aPm
+         DQfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718268564; x=1718873364;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uoDG9jwFOreQjfWAEuHsfW2t7wLkR7xBn+RC3C/5v8o=;
-        b=L1UyS6Hvp/hB/ipYx2gFQHkPLAQ5F+XIpZsuQltHgzn9DimAlSz7KG9wGHJKuxynmZ
-         Pv31PhGiYOBisnnRkvwR3Da/sPMwMZ2AIVEECnk5NNiJGMYGbOA5Ra5b9+VET5cfwMaP
-         nweUVvWr8WA2nDJpXugIpXcCYBwMnJrtiW1ClTYPkYJrUu31DJ8WNzVWZuh8rjzjGXBZ
-         89IZRH5iCRWOx9Rx7cJF2ns3DlTjZKDuSpAdG/be46x7YphzbrscE/Qa9Acrhl7gwj57
-         SQdpxK5XCIEEZFt4GccK1YkiQKwdQxxaPMlKGMC67/39PPH7ZxnhbukbGSfjuk7gBYUQ
-         d8rg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEEC+S11coSV2WZ7MtTqasSO2QL1uXfrHTOMqhEeCqgO+9kJmQQmEq3SqoTeWnwezu/Mp+Ug/CHibrSXdA6hNSjmfve/pVYdDytahIowqY42mQWlRr85XPBjLsHXaiN9ArY5mil/bO5sYa15J2Uywje0TkM/8WBhBJDcyYcQ9u5F/wBj8=
-X-Gm-Message-State: AOJu0YywmY7BJjZxMeUSwc3uIIAYq3aUKApdb1mriVHgfK/KzGldWvFO
-	HehBcFLhghF91a6sr3dFcmDZzJpaF4E0KKg0V7rrgNUCXRn4cBTx2MF41tydx8o6SyMJ3Buw2Zg
-	CtUetCw9+JFGfyA7YLFMFcPaWf2FKK4pHCLQ=
-X-Google-Smtp-Source: AGHT+IFQZFInh9533tDGNNq6304YQpb3saj0ciadIrVCmk8e0c0IRkqJbPMoMoITnTbKej0XwWqtJ6MvS47su09JT0w=
-X-Received: by 2002:a05:6512:108e:b0:52c:7f12:61d1 with SMTP id
- 2adb3069b0e04-52c9a3b972dmr3524638e87.1.1718268563795; Thu, 13 Jun 2024
- 01:49:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718268591; x=1718873391;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f9zjtO9AtabnLNuJxqiPcWb5sV8xQYdL18OmBwU1Kd4=;
+        b=MZRFh7PRejw3OQ2M4H/X6TTa8GzraUwuqC9UkXRHr9yE28yp1SSM4ylx2rFkToPN1f
+         bfN943UT3oawxaeDBRyX2vM8r5QiyUbIpKelCwf+qLoe1Z5YEQvqb4qJpUzZvNkqCSDf
+         j1Zo4DxahoqHPVkCL7Ejr1112BtWmkIFCIOC9XnLpi0FU+vjh+J/rO9p1PmTBiEESS3U
+         5QjZA01y+Kwp4RLCX+6EI3+RwANhgixsW8Wq3uJYxxSRFY7ajjUrh9gPyj+dPsv+lJ+X
+         WyDVlbUIVPfl4fw+hWjuIseku02v9pk/f55O0wtAaBPR+txaqdq48xPOs3/xo1114VBP
+         VVSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXviV32eccYdKuyDUJ5fMEQ5lnjjjNy9ySYZsnPi2UXP+W0mMRwEOahtrGzEijsEXaMeNfwmLKtqzX+WyjyNe0i0BiOyIMl/GLeHlC9
+X-Gm-Message-State: AOJu0YyC6xtS11L1VQtC2LR0o1PyP4Cdpah05UV9PzIuUNMcMXKjSUli
+	YDxiU0OA/n5sERVeEzlgKFhZU/Ji4OVUm9AJa93J7zkBHXLs9zXf9arP38H0pggj/H9duXADE4i
+	aYQm8QjwwTWl+3wCpJbgBoRygcI8=
+X-Google-Smtp-Source: AGHT+IHwOYreymC1B9TPFN1wj6YCfUaTdYq1QGaY2/vdQUfMOFyZMPCj764A6qrN+sEltGa36FWWwsci3aEnDocO0C4=
+X-Received: by 2002:a50:8e48:0:b0:57c:610a:6e7f with SMTP id
+ 4fb4d7f45d1cf-57ca9750ac8mr2586590a12.11.1718268591200; Thu, 13 Jun 2024
+ 01:49:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611132134.31269-1-bavishimithil@gmail.com>
- <20240611164951.51754ffc@aktux> <CAGzNGRmoSawz7yHGzHS8PeQwRAsnnORLMPrrNBLupNdaOkUeHw@mail.gmail.com>
- <CAGzNGRnnZWJP6CF1X6SXus2QCwUA763=qHUAy6c6Ny6_FFd7GQ@mail.gmail.com>
-In-Reply-To: <CAGzNGRnnZWJP6CF1X6SXus2QCwUA763=qHUAy6c6Ny6_FFd7GQ@mail.gmail.com>
-From: Mithil <bavishimithil@gmail.com>
-Date: Thu, 13 Jun 2024 14:19:12 +0530
-Message-ID: <CAGzNGRk3dwGEsQbrN4LZfKwDGTncHpKEcf2cLepUkRYBO4yn5Q@mail.gmail.com>
-Subject: Re: [PATCH v1] ARM: dts: twl6032: Add DTS file for TWL6032 PMIC
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>, 
-	Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-omap@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240610120209.66311-1-ioworker0@gmail.com> <20240610120209.66311-2-ioworker0@gmail.com>
+ <CAGsJ_4y4sKXbq4_ra9tTD-LWgB-x-HECyouxm_9r_N7Kw2We4g@mail.gmail.com> <be85ddcc-88ee-4f8d-9f73-b388f4d47b71@redhat.com>
+In-Reply-To: <be85ddcc-88ee-4f8d-9f73-b388f4d47b71@redhat.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Thu, 13 Jun 2024 16:49:39 +0800
+Message-ID: <CAK1f24kWHWL=nT2uDp=GF6dLp9AYuEVr4=ipUsWGK=cf9Qbfbg@mail.gmail.com>
+Subject: Re: [PATCH v7 1/4] mm/rmap: remove duplicated exit code in pagewalk loop
+To: David Hildenbrand <david@redhat.com>
+Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org, willy@infradead.org, 
+	sj@kernel.org, baolin.wang@linux.alibaba.com, maskray@google.com, 
+	ziy@nvidia.com, ryan.roberts@arm.com, mhocko@suse.com, fengwei.yin@intel.com, 
+	zokeefe@google.com, shy828301@gmail.com, xiehuan09@gmail.com, 
+	libang.li@antgroup.com, wangkefeng.wang@huawei.com, songmuchun@bytedance.com, 
+	peterx@redhat.com, minchan@kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-https://github.com/MightyM17/android_kernel_ti_omap4/blob/3.4/common/arch/arm/mach-omap2/board-espresso-pmic.c#L446-L455
-Should we map it accordingly? Like vaux1: regulator-vaux1 and
-compatible has ldo1, or should we call the node ldo1 as well?
--- 
-Best Regards,
-Mithil
+On Thu, Jun 13, 2024 at 4:27=E2=80=AFPM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 13.06.24 09:52, Barry Song wrote:
+> > On Tue, Jun 11, 2024 at 12:02=E2=80=AFAM Lance Yang <ioworker0@gmail.co=
+m> wrote:
+> >>
+> >> Introduce the labels walk_done and walk_done_err as exit points to
+> >> eliminate duplicated exit code in the pagewalk loop.
+> >>
+> >> Reviewed-by: Zi Yan <ziy@nvidia.com>
+> >> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> >> Reviewed-by: David Hildenbrand <david@redhat.com>
+> >> Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> >
+
+Hi Barry and David,
+
+Thanks for taking time to review!
+
+> > I don't think "return false" necessarily indicates an error, so
+> > "walk_done_err" doesn't seem like an appropriate name.
+> > However, this is a minor issue.
+>
+> Agreed. As we only have a single walk_done user, should we instead
+> remove "walk_done", keep the "page_vma_mapped_walk_done" for that single
+> user, and rename "walk_done_err" to "abort_walk" ?
+
+Yeah, I agree that 'abort_walk' is better than 'walk_done_err', and let's
+keep 'page_vma_mapped_walk_done' for that single user ;)
+
+Thanks again for the suggestions!
+Lance
+
+>
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
