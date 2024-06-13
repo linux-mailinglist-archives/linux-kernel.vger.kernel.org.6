@@ -1,213 +1,93 @@
-Return-Path: <linux-kernel+bounces-212878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9449067A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:52:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B949067BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6992B288434
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:52:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180A828232E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E9714375E;
-	Thu, 13 Jun 2024 08:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB9013E897;
+	Thu, 13 Jun 2024 08:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RuXZWM4F"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLZwrR9g"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D654143754
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8256137936;
+	Thu, 13 Jun 2024 08:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718268557; cv=none; b=MXkJvss+Vmlckgd78qIfKcXoNl3Nn6E9Ja3i6VosuZfSm4scTx0vd1nOTygXhKxUecbI6OOIuCyu4+NVJLM0pcigOIwH1oWXo6uVXeSyHWzjxaGnmtut2wLykHu+TmmxJb9/ANrwYGdK7HRpwvxEilzNFX9dgZRQW16Wz+w8ALk=
+	t=1718268567; cv=none; b=WOLQFt60NG+LNrK2wvHuHJWpjLD+N4ZZ4S4Rp3m40BwnUcV985o2ffmHF6ciKInJzOJbmD5mnxg/m44pvbi/9iZaiFIjVw5BPO7UYP2L90EheIax2D0OYpJBQDigj5Gz3xqkCEzKWCy6Wtlqi1r2iXxDyYeC0KCIzz3YQ9Sif0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718268557; c=relaxed/simple;
-	bh=HE8xq91tSeitAZbGRTpkR3ieVargSUmg1O1NMAOP4SI=;
+	s=arc-20240116; t=1718268567; c=relaxed/simple;
+	bh=V77qM3lxWLpzjNjhIKYIFnAbpVbP/tQaTtykD1SSvyg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rmksFIMieVIHtlvrMG9Rbz/mLozePgtYyWyFv/4D3qE+tuwgHiLN8n3nAdBn162H9BeH4F5i0S/1WLY9qw7xrDZrzoF+KTdwIrDxtB3fgSPHG7Dg9z/woQmFEzo0VYDJiW8SPbjolBO0mN6HhJMYzJhwYvkgH919YeJxYS3JsyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RuXZWM4F; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ebe3fb5d4dso7050701fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:49:15 -0700 (PDT)
+	 To:Cc:Content-Type; b=obceUVMNvK6U6AXYrJN1jEJaiebtZGlk8gw3f2JO98eB78r4bj3v4qOuWUtH2ufH48ivu/5gZfCHzjwuVXFBw3W51yFbUjjviCP1D7U46FdgHdXWK9zAHdxZa2l6ZmgGiDFdyo8arVCYka6cDtgc4+Gd/6U6spsYXg4t7Ql1O7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLZwrR9g; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5295eb47b48so983763e87.1;
+        Thu, 13 Jun 2024 01:49:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718268553; x=1718873353; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rTr/MAONVIXOW/ed2j1Y4JPjByHCaZY5bO3fhQlc/FI=;
-        b=RuXZWM4FHz8WH3PWVFQ+y18iIZk1St0oOpeuzo52nnLtbPZBkITizD+O83c2pqR9L4
-         yrKwI4RT8/5QCNG1JgjarrBXzLgcDmxMX4xLiBLBdtADUWiGdlIpmss/L3H3jBbb41Lf
-         IET7OtoH8JAyddCSP9u++tnYYickyQiguPqWg=
+        d=gmail.com; s=20230601; t=1718268564; x=1718873364; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uoDG9jwFOreQjfWAEuHsfW2t7wLkR7xBn+RC3C/5v8o=;
+        b=mLZwrR9g5WRlTnxcYHTX75L1C34xl5bkpA0KLAKEbaRlVVoSGgtoa6ydMwUVt+R6jC
+         YD2U6sV3q25FBag5SSGaEewbQK+0DSsxgG4yCmtfoaC+l2TsYT4S3M/liPhyduVVyRJG
+         /84pCz4mJmgiO/8kTCmAn3McnXjSYBREQ6cpFsJkX/gpo9gByjtAp1dPwr3NXeW4GPrp
+         VgKY5vwrk9mrXPkhp+MVJSUZB4D7ZXJUqCG9VIkGfq102ZB2LWgRGAQ+D1+VqLTf2Unk
+         D6UwvJPfo8iuecul+vDOTbiAqQ7wCeqo3uFaDB8Rhbgmz7iJ3UBfHq7kU/wymCkJMBal
+         ZsEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718268553; x=1718873353;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rTr/MAONVIXOW/ed2j1Y4JPjByHCaZY5bO3fhQlc/FI=;
-        b=TC0DGxdd3fqbPZNw/fWBdm72gOnwkiujDdYIqriKN5smQ3ljE3Yy6KlBTV8BauFbbT
-         qDWoQnHAW8sen2O6AaG69Oq9LZITlh1gYYrSkjwoEZ0rO2Xf5bcaFjJmQMGI5xLD8vG7
-         /wTQXQmnci6Fs72r0xVTN6+BLwoawPAcTyXz6llUXmMijX7HyHVYXOMNjlYNz/vcWzeI
-         WJCO0Y/imdMVKc+Xxmne54RRCJmReqaJrWasN3wk3ycCpNkxqX2wjTZpczA36bYCiqlf
-         8p+OxAm0EvpgEFA+69B4DYx1IpcZRL6f0Ilgk6A9i48vRNnLKu0UiBuw0JTgyq/7wjHX
-         OJ7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV96Z9NQNeSthS/1G+apR3iwxLp9HEES92TQSDpdd+tM5uzmp7fMWPj/xrH1YxhSR9e3p4EdoxHdecIvEwGUFv7K0gDuv1Adm1zxl+n
-X-Gm-Message-State: AOJu0Yz2j3NQA0H6lXMTT6Hu5bcjEWdlF9eqzRmiKOTE76OhnfjlJV1I
-	Jya82CFsZKJWSazRSCPTpYuM05XoKoUlZwWs6YIm6I13kdnxgA8I30lCCQmtmlupI31nt0Y0HbP
-	wVtusH1ePMi/GGFrWnvNv4kE8EHBoLWAyOs6A
-X-Google-Smtp-Source: AGHT+IE+r3Kqc9JyW9uVxa3CaFi4XFZ1lH1muZ8FT3YtffeqhpYi+YqDSnfERIqbeOv4xeS1JwHZdfibzglw2fkkhtw=
-X-Received: by 2002:a2e:7206:0:b0:2ec:2fb:de43 with SMTP id
- 38308e7fff4ca-2ec02fbdee7mr5173871fa.3.1718268553552; Thu, 13 Jun 2024
- 01:49:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718268564; x=1718873364;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uoDG9jwFOreQjfWAEuHsfW2t7wLkR7xBn+RC3C/5v8o=;
+        b=L1UyS6Hvp/hB/ipYx2gFQHkPLAQ5F+XIpZsuQltHgzn9DimAlSz7KG9wGHJKuxynmZ
+         Pv31PhGiYOBisnnRkvwR3Da/sPMwMZ2AIVEECnk5NNiJGMYGbOA5Ra5b9+VET5cfwMaP
+         nweUVvWr8WA2nDJpXugIpXcCYBwMnJrtiW1ClTYPkYJrUu31DJ8WNzVWZuh8rjzjGXBZ
+         89IZRH5iCRWOx9Rx7cJF2ns3DlTjZKDuSpAdG/be46x7YphzbrscE/Qa9Acrhl7gwj57
+         SQdpxK5XCIEEZFt4GccK1YkiQKwdQxxaPMlKGMC67/39PPH7ZxnhbukbGSfjuk7gBYUQ
+         d8rg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEEC+S11coSV2WZ7MtTqasSO2QL1uXfrHTOMqhEeCqgO+9kJmQQmEq3SqoTeWnwezu/Mp+Ug/CHibrSXdA6hNSjmfve/pVYdDytahIowqY42mQWlRr85XPBjLsHXaiN9ArY5mil/bO5sYa15J2Uywje0TkM/8WBhBJDcyYcQ9u5F/wBj8=
+X-Gm-Message-State: AOJu0YywmY7BJjZxMeUSwc3uIIAYq3aUKApdb1mriVHgfK/KzGldWvFO
+	HehBcFLhghF91a6sr3dFcmDZzJpaF4E0KKg0V7rrgNUCXRn4cBTx2MF41tydx8o6SyMJ3Buw2Zg
+	CtUetCw9+JFGfyA7YLFMFcPaWf2FKK4pHCLQ=
+X-Google-Smtp-Source: AGHT+IFQZFInh9533tDGNNq6304YQpb3saj0ciadIrVCmk8e0c0IRkqJbPMoMoITnTbKej0XwWqtJ6MvS47su09JT0w=
+X-Received: by 2002:a05:6512:108e:b0:52c:7f12:61d1 with SMTP id
+ 2adb3069b0e04-52c9a3b972dmr3524638e87.1.1718268563795; Thu, 13 Jun 2024
+ 01:49:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605094843.4141730-1-wenst@chromium.org> <CAFLszTjX=ixC3pRRGJeaP=ie_yc+KcCRyQ06MBFeSZnBepaXaw@mail.gmail.com>
- <CAGXv+5EcEYGqXq2C1OCK4J4t1NusV7nWp16zb74P6_tCeLnSGw@mail.gmail.com> <CAK7LNAQ7XAGgzhBXQWPFVgqJwdBcO3mF5pmQ3mSsmdrZ0EBL9Q@mail.gmail.com>
-In-Reply-To: <CAK7LNAQ7XAGgzhBXQWPFVgqJwdBcO3mF5pmQ3mSsmdrZ0EBL9Q@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 13 Jun 2024 16:49:02 +0800
-Message-ID: <CAGXv+5FpHkiJaNa=XRdnrmPJN01AdxsOYpTBur8zqM8tU=hFKQ@mail.gmail.com>
-Subject: Re: [PATCH] scripts/make_fit: Support decomposing DTBs
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Simon Glass <sjg@chromium.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	Elliot Berman <quic_eberman@quicinc.com>, Devicetree List <devicetree@vger.kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+References: <20240611132134.31269-1-bavishimithil@gmail.com>
+ <20240611164951.51754ffc@aktux> <CAGzNGRmoSawz7yHGzHS8PeQwRAsnnORLMPrrNBLupNdaOkUeHw@mail.gmail.com>
+ <CAGzNGRnnZWJP6CF1X6SXus2QCwUA763=qHUAy6c6Ny6_FFd7GQ@mail.gmail.com>
+In-Reply-To: <CAGzNGRnnZWJP6CF1X6SXus2QCwUA763=qHUAy6c6Ny6_FFd7GQ@mail.gmail.com>
+From: Mithil <bavishimithil@gmail.com>
+Date: Thu, 13 Jun 2024 14:19:12 +0530
+Message-ID: <CAGzNGRk3dwGEsQbrN4LZfKwDGTncHpKEcf2cLepUkRYBO4yn5Q@mail.gmail.com>
+Subject: Re: [PATCH v1] ARM: dts: twl6032: Add DTS file for TWL6032 PMIC
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>, 
+	Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-omap@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 10:45=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
->
-> On Tue, Jun 11, 2024 at 5:52=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org>=
- wrote:
-> >
-> > On Mon, Jun 10, 2024 at 11:16=E2=80=AFPM Simon Glass <sjg@chromium.org>=
- wrote:
-> > >
-> > > Hi Chen-Yu,
-> > >
-> > > On Wed, 5 Jun 2024 at 03:48, Chen-Yu Tsai <wenst@chromium.org> wrote:
-> > > >
-> > > > The kernel tree builds some "composite" DTBs, where the final DTB i=
-s the
-> > > > result of applying one or more DTB overlays on top of a base DTB wi=
-th
-> > > > fdtoverlay.
-> > > >
-> > > > The FIT image specification already supports configurations having =
-one
-> > > > base DTB and overlays applied on top. It is then up to the bootload=
-er to
-> > > > apply said overlays and either use or pass on the final result. Thi=
-s
-> > > > allows the FIT image builder to reuse the same FDT images for multi=
-ple
-> > > > configurations, if such cases exist.
-> > > >
-> > > > The decomposition function depends on the kernel build system, read=
-ing
-> > > > back the .cmd files for the to-be-packaged DTB files to check for t=
-he
-> > > > fdtoverlay command being called. This will not work outside the ker=
-nel
-> > > > tree. The function is off by default to keep compatibility with pos=
-sible
-> > > > existing users.
-> > > >
-> > > > To facilitate the decomposition and keep the code clean, the model =
-and
-> > > > compatitble string extraction have been moved out of the output_dtb
-> > > > function. The FDT image description is replaced with the base file =
-name
-> > > > of the included image.
-> > > >
-> > > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > > > ---
-> > > > This is a feature I alluded to in my replies to Simon's original
-> > > > submission of the make_fit.py script [1].
-> > > >
-> > > > This is again made a runtime argument as not all firmware out there
-> > > > that boot FIT images support applying overlays. Like my previous
-> > > > submission for disabling compression for included FDT images, the
-> > > > bootloader found in RK3399 and MT8173 Chromebooks do not support
-> > > > applying overlays. Another case of this is U-boot shipped by develo=
-pment
-> > > > board vendors in binary form (without upstream) in an image or in
-> > > > SPI flash on the board that were built with OF_LIBFDT_OVERLAY=3Dn.
-> > > > These would fail to boot FIT images with DT overlays. One such
-> > > > example is my Hummingboard Pulse. In these cases the firmware is
-> > > > either not upgradable or very hard to upgrade.
-> > > >
-> > > > I believe there is value in supporting these cases. A common script
-> > > > shipped with the kernel source that can be shared by distros means
-> > > > the distro people don't have to reimplement this in their downstrea=
-m
-> > > > repos or meta-packages. For ChromeOS this means reducing the amount
-> > > > of package code we have in shell script.
-> > > >
-> > > > [1] https://lore.kernel.org/linux-kbuild/20231207142723.GA3187877@g=
-oogle.com/
-> > > > [2]
-> > > >
-> > > >  scripts/Makefile.lib |  1 +
-> > > >  scripts/make_fit.py  | 70 ++++++++++++++++++++++++++++++----------=
-----
-> > > >  2 files changed, 49 insertions(+), 22 deletions(-)
-> > >
-> > > This is a clever way to discover the included files. Does it need to
-> > > rely on the Linux build information, or could this information someho=
-w
-> > > be in the .dtb files? I had expected some sort of overlay scheme in
-> >
-> > (+CC DT folks and mailing list)
-> >
-> > I suppose we could make the `fdtoverlay` program embed this data during
-> > the kernel build. That would keep the information together, while also
-> > having one source of truth (the kernel Makefiles). Whether it belongs
-> > in the DTB or not is a separate matter.
->
->
-> Some time ago, I asked a similar question
-> with a similar motivation.
->
-> https://lore.kernel.org/devicetree-compiler/CAK7LNARV8Bo-tBXMdOu55Wg9uZRX=
-vNiRdkDJ4LH8PwVMnMp4cA@mail.gmail.com/
-
-I think this discussion was geared towards "unapplying" overlays. What
-we would like is for metadata to be available, and preferably not tied
-to the kernel build system generated metadata file, so that with the same
-bunch of DTB + DTBO files, we could figure out how to decompose them and
-just bundle the components.
-
-If the metadata is embedded within the composite DTB, then given a DTB
-bundle (such as installed with `make dtbs_install`) the make_fit.py
-script could go and do the decomposition without the *.cmd files
-from the kernel build. This is assuming all the component parts are
-installed together.
-
-ChenYu
-
-> >
-> > > the source, but perhaps people have given up on that?
-> >
-> > I wouldn't say given up, since we haven't agreed on anything either.
-> > Elliot had some concerns when I brought this up earlier [1] though.
-> >
-> > ChenYu
-> >
-> > [1] https://lore.kernel.org/linux-mediatek/20240314113908471-0700.eberm=
-an@hu-eberman-lv.qualcomm.com/
-> >
->
-> --
-> Best Regards
-> Masahiro Yamada
+https://github.com/MightyM17/android_kernel_ti_omap4/blob/3.4/common/arch/arm/mach-omap2/board-espresso-pmic.c#L446-L455
+Should we map it accordingly? Like vaux1: regulator-vaux1 and
+compatible has ldo1, or should we call the node ldo1 as well?
+-- 
+Best Regards,
+Mithil
 
