@@ -1,111 +1,167 @@
-Return-Path: <linux-kernel+bounces-213712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44D3907960
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:05:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A0A890796B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F77EB21DD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:05:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12F641C21840
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C294C6B;
-	Thu, 13 Jun 2024 17:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9C1149DF4;
+	Thu, 13 Jun 2024 17:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UHs4QNB5"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kji33KUA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A3D1487D8
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 17:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0AB4C6B;
+	Thu, 13 Jun 2024 17:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718298328; cv=none; b=uFgVXJ/xPcyRcY1YXZIyyHZn2YU9ty2fwom77LfX72bsmFxrswu3zvOSLvykCherVtgiW2PGuidkIDOWE3+vvYtDUogjmBikvk7ziMlBwe4loH8jp1Dr0iHmAZlhYtltr7nwGtjXYULjEbv5LWlqQKh2tEjDtRNFDQwmUq1Hy0M=
+	t=1718298498; cv=none; b=hg3cCp+/PEKYs7f1Sep0Ufniw5Y83AyxCo+GkG41SRUdJ7gXoM/C8q8EE8iMjuSKH/MZiPWZ9pnuMBCMHNHPTtY2fmreibLP3Suw7Z/nnCpGe51n9FyxNkIivZWLxKhcfk65AAzIBBYaYwrwbaq2DafoFcVhLFsZ6Pg53u+r8/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718298328; c=relaxed/simple;
-	bh=p/p2G2Hnjt+abB5vSKz8c1cnMTyRrbY3vlMcptLFV7A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RsgbvdEXHHAEYEXG3bo6twdIqfhsk3ogOHH22zA+M+ipPuWqDmd2hmHY0+RPHxXyoa6curASF6cmEURC37mh0UOtGYhwDukGkURRJdo2xiVQ0IwuiofAdezYmB6OLsETDF/f5mqfYaOjXyV/MAUWswR612tIgH+X3YxnPgTA21Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UHs4QNB5; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52c32d934c2so1401356e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:05:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718298325; x=1718903125; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rzFTYmEc+fQ3/csX45CT9heivu+VSe2HarKq4DyBsq0=;
-        b=UHs4QNB59/TSi/V5oD4vL2euFuZ6U9IWHdSviSHCe5wHNlyyqAEHNIf1HH1+ReYG7I
-         4UyIVG1OQnrX5aXlgf2j3A4e/hLI1doUkn5XMecFPRGYtzlBIG5fpdMzxwMcXC0c+3Qu
-         +DgmwhNdCLVHNHHBZY3TdKbh2f2jEQe64Vk7yOJdisVmpPtPzuTNZJomQLKswJKTE4KX
-         CfScWqdBkbsvzO60zglpeUZYQQmdSBFLfqq9d1jdEkjSypCOrVTMN9PZj6rj+SK3EE4O
-         v5rbPl69mL8r5UyPKtqo8P5h6oEHZdJppJOeMPpmJL39fF8ofcTNYGKgWljFWlltyGzZ
-         CxMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718298325; x=1718903125;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rzFTYmEc+fQ3/csX45CT9heivu+VSe2HarKq4DyBsq0=;
-        b=ki6Wmny9oWQvWyhn5sytUGCfXmxto+/3DPc6fOGEL1XOFa0NtdkE14Rg8p8s+nT9qY
-         417rAvw97+D54tVo71D75a/UTZAUCPNyAss6hZb92vIX3C6haxVRNOA12f8zKwKFFyb9
-         K/aApCDpCvmEP3ytb0MQ4fFK/U8F3ybT8KyqN2DJ7A/jM9nbi/nCAm4sSjteZq4CyZ8o
-         tK/BHwZUt49CUVuPI/g395kck+e/Ghgc5yYF6I51R1I/gxLgetE7zTl6yJgYTP8VFntA
-         U9QYk8NPdoCYjjWzSAJ1Y4yAohU2FJBzHj0eRofDfvoMPfAP609gSgQ0XQ+l5DmKmDwc
-         MNXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKr6V3nm3f1VknKGeacv8o0jYJSYh3Sz4xXRLyiWM8Tuq0/V8i4sZldv4zW9YmWUMceUp52CXa3QMf/UDYPehEAE3Pr0ZdGE1Eq4f5
-X-Gm-Message-State: AOJu0Yx6aH8JlV/UEeR3IQlSZrYPwicd1idZWXpUlwX+ySPzj7Vq99Uh
-	iA3GdrbRHXuPTc/v/cCRXPSZsEG2bNZ0j693vymUBfkKqcpWMzyNJ0UkcxxotHc=
-X-Google-Smtp-Source: AGHT+IFMrJVT6uEGUQp5yGREv3B8DR09nqWG4bCjV8ublGXm51Hn18ceK46I7BCUMOznsI+esuuukQ==
-X-Received: by 2002:a19:e01e:0:b0:52c:8932:27bd with SMTP id 2adb3069b0e04-52ca6e6e7eemr215207e87.41.1718298325382;
-        Thu, 13 Jun 2024 10:05:25 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:900a:a4b1:9ab2:4d92:821a:bb76? ([2a00:f41:900a:a4b1:9ab2:4d92:821a:bb76])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca28259cbsm289479e87.62.2024.06.13.10.05.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 10:05:25 -0700 (PDT)
-Message-ID: <4fdb62a8-df00-4cd2-9c96-74afcae3ac5c@linaro.org>
-Date: Thu, 13 Jun 2024 19:05:22 +0200
+	s=arc-20240116; t=1718298498; c=relaxed/simple;
+	bh=/mtpv7oQiB/HDp/WMox9w7Z6Glgw+lsaHSyHSzXTWnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FQCbox2aNY3AfnBWxiXXiDKOjdUrBP/1zgw4ZmBDjXHbUKJsa/YfA4cXcQawjP0pZ8kWczbCcmeXQYb7pSzanxHSLmrXX9G0ToSjxSrgJaeEId3Eoa4OYjKbHM4kCwG/dZpzjZfFsGCoC/q/ZG2m8CBuLO3SlCVjNlXrWfCo0Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kji33KUA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA55C3277B;
+	Thu, 13 Jun 2024 17:08:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718298497;
+	bh=/mtpv7oQiB/HDp/WMox9w7Z6Glgw+lsaHSyHSzXTWnw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kji33KUAszF4cmuHylrzAFirU0EPFC5g79J6Z9DPYf+d1UcS5mMwA0fMS7EvkEUiO
+	 rRWaNB2iErp6PePjPgvoD+b2VLVc06h1pPT7BIRbPQYeM1DK1NjZAUDt+/rYGP+PN7
+	 3gL9u2LbjI6hPjo/Kp5gFQ4JqV5CXSttTaU3iPCzk9x3uTAqMfc4DKppjDA+IF88ho
+	 529fdp2nWG0brVsVe2N/wi9CkC3vE0t3wBo9uN06AVakPJ/Jj4Or2welFU3vumKzk6
+	 5f4y7uFW/7vXZvonpkdAUH1s1OWcA3AcDdrr0xri0UkAjLrHM0pmCrTFm4X6Wf/JPw
+	 +/SllKTYDwMOw==
+Date: Thu, 13 Jun 2024 11:08:16 -0600
+From: Rob Herring <robh@kernel.org>
+To: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: Add support for Amlogic A4 SoCs
+Message-ID: <20240613170816.GA2020944-robh@kernel.org>
+References: <20240611-a4_pinctrl-v1-0-dc487b1977b3@amlogic.com>
+ <20240611-a4_pinctrl-v1-1-dc487b1977b3@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] clk: qcom: gcc-sa8775p: Set FORCE_MEM_CORE_ON for
- gcc_ufs_phy_ice_core_clk
-To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Shazad Hussain <quic_shazhuss@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_jkona@quicinc.com,
- quic_imrashai@quicinc.com
-References: <20240612-sa8775p-v2-gcc-gpucc-fixes-v2-0-adcc756a23df@quicinc.com>
- <20240612-sa8775p-v2-gcc-gpucc-fixes-v2-3-adcc756a23df@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240612-sa8775p-v2-gcc-gpucc-fixes-v2-3-adcc756a23df@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611-a4_pinctrl-v1-1-dc487b1977b3@amlogic.com>
 
-
-
-On 6/12/24 13:08, Taniya Das wrote:
-> Update the force mem core bit for UFS ICE clock to force the core on
-> signal to remain active during halt state of the clk. If force mem
-> core bit of the clock is not set, the memories of the subsystem will
-> not retain the logic across power states.
+On Tue, Jun 11, 2024 at 01:10:57PM +0800, Xianwei Zhao wrote:
+> Add the new compatible name for Amlogic A4 pin controller, and add
+> a new dt-binding header file which document the detail pin names.
 > 
-> Fixes: 08c51ceb12f7 ("clk: qcom: add the GCC driver for sa8775p")
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > ---
+>  .../bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml |  2 +
+>  .../dt-bindings/gpio/amlogic,a4-aobus-pinctrl.h    | 21 +++++
+>  .../dt-bindings/gpio/amlogic,a4-periphs-pinctrl.h  | 93 ++++++++++++++++++++++
+>  3 files changed, 116 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml
+> index d9e0b2c48e84..f5eefa0fab5b 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml
+> @@ -15,6 +15,8 @@ allOf:
+>  properties:
+>    compatible:
+>      enum:
+> +      - amlogic,a4-aobus-pinctrl
+> +      - amlogic,a4-periphs-pinctrl
+>        - amlogic,c3-periphs-pinctrl
+>        - amlogic,t7-periphs-pinctrl
+>        - amlogic,meson-a1-periphs-pinctrl
+> diff --git a/include/dt-bindings/gpio/amlogic,a4-aobus-pinctrl.h b/include/dt-bindings/gpio/amlogic,a4-aobus-pinctrl.h
+> new file mode 100644
+> index 000000000000..7c7e746baed5
+> --- /dev/null
+> +++ b/include/dt-bindings/gpio/amlogic,a4-aobus-pinctrl.h
+> @@ -0,0 +1,21 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+> +/*
+> + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
+> + * Author: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_AMLOGIC_A4_AOBUS_PINCTRL_H
+> +#define _DT_BINDINGS_AMLOGIC_A4_AOBUS_PINCTRL_H
+> +
+> +/* GPIOAO */
+> +#define GPIOAO_0			0
+> +#define GPIOAO_1			1
+> +#define GPIOAO_2			2
+> +#define GPIOAO_3			3
+> +#define GPIOAO_4			4
+> +#define GPIOAO_5			5
+> +#define GPIOAO_6			6
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+I find defines with the value of the define in the name pretty 
+pointless.
 
-Konrad
+> +
+> +#define GPIO_TEST_N			7
+> +
+> +#endif
+> diff --git a/include/dt-bindings/gpio/amlogic,a4-periphs-pinctrl.h b/include/dt-bindings/gpio/amlogic,a4-periphs-pinctrl.h
+> new file mode 100644
+> index 000000000000..dfabca4b4790
+> --- /dev/null
+> +++ b/include/dt-bindings/gpio/amlogic,a4-periphs-pinctrl.h
+> @@ -0,0 +1,93 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+> +/*
+> + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
+> + * Author: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_AMLOGIC_A4_PERIPHS_PINCTRL_H
+> +#define _DT_BINDINGS_AMLOGIC_A4_PERIPHS_PINCTRL_H
+> +
+> +/* GPIOE */
+> +#define GPIOE_0				0
+> +#define GPIOE_1				1
+> +
+> +/* GPIOD */
+> +#define GPIOD_0				2
+> +#define GPIOD_1				3
+> +#define GPIOD_2				4
+> +#define GPIOD_3				5
+> +#define GPIOD_4				6
+> +#define GPIOD_5				7
+> +#define GPIOD_6				8
+> +#define GPIOD_7				9
+> +#define GPIOD_8				10
+> +#define GPIOD_9				11
+> +#define GPIOD_10			12
+> +#define GPIOD_11			13
+> +#define GPIOD_12			14
+> +#define GPIOD_13			15
+> +#define GPIOD_14			16
+> +#define GPIOD_15			17
+
+I'm not really much of a fan of using defines for GPIOs, but if you do, 
+wouldn't be better to split banks and lines up rather than a global 
+number space. See ASPEED_GPIO() or tegra header.
+
+Rob
 
