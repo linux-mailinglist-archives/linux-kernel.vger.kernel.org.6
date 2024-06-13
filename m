@@ -1,304 +1,197 @@
-Return-Path: <linux-kernel+bounces-213294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 076C690737D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:22:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40CE2907387
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D1471C23A7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:22:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BC3F1C233FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365E214600F;
-	Thu, 13 Jun 2024 13:21:18 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256321448DE;
-	Thu, 13 Jun 2024 13:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718284877; cv=none; b=B18aMvSChXqnWyOhYdM/DV04Nm5Jst2tX2b9jgfVxEJ8i6LnHqvSm8bqqjoonnEDCYIpelmsu1XIWQln+8YLaxcVs5eR3ka+fr2se/Kx6pS7nCWmwnDu9htA7KAkIMpqwLZ1PGjBJqALAcUhnB/WEq5DSNrvQgvEisISyGqFgZk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718284877; c=relaxed/simple;
-	bh=PBLigDFeoVj/3sesODDma7eu2K0yE9gUuHQjzZnRg4I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tqcqz08+ebsWmDw8zHHF5by7ipwgx6Y388StB2SiTCpyH/AIMq5YMQTXiAmF8y+nvclO2D1KsAkjAeV7rrozprRjZZzJF0fqnRQVthYgA7nA2xvocQXHAPp6HO2EkAifY5mCYJYSX4Sgju975mkCTdTwZVxmpsd2jQ89z7o+hoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-43-666af248739a
-From: Honggyu Kim <honggyu.kim@sk.com>
-To: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Gregory Price <gregory.price@memverge.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	42.hyeyoo@gmail.com,
-	art.jeongseob@gmail.com,
-	kernel_team@skhynix.com,
-	Hyeongtak Ji <hyeongtak.ji@sk.com>,
-	Honggyu Kim <honggyu.kim@sk.com>
-Subject: [PATCH v5 3/8] mm/damon/sysfs-schemes: add target_nid on sysfs-schemes
-Date: Thu, 13 Jun 2024 22:20:50 +0900
-Message-ID: <20240613132056.608-4-honggyu.kim@sk.com>
-X-Mailer: git-send-email 2.43.0.windows.1
-In-Reply-To: <20240613132056.608-1-honggyu.kim@sk.com>
-References: <20240613132056.608-1-honggyu.kim@sk.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16107147C82;
+	Thu, 13 Jun 2024 13:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="QaEOGIsQ"
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2061.outbound.protection.outlook.com [40.107.247.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7566D1448D8;
+	Thu, 13 Jun 2024 13:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718284883; cv=fail; b=hl+FN2c/IqcFQF0HVDo9MXS7UQjy/25M1JFwnnkWiGS+/yhfTU2tCLignVM5wkIwlGv95ndeSF2HneP6m/Wv+wNIc3C24ik3LR8JPoPrpyNLjAJRJeymA9kChuxjNYQMhFt6qkcWSlTxe0vLrLdaYjU/cPpMaKF5XrU6YymwVnw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718284883; c=relaxed/simple;
+	bh=LHWBRv6Kz3LgR6SydWvZSGzLiGDL0uN6OKpItSYvNhI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BW1bdigmDnt24oKmMfCrdMsiAhxD2lhJbdw57kAQv7BNF6kD7U4os6cWZwGUA3c9WPHi1+2S/fqohTd8BonDQMaHvP6/bNfhGls07kDclHDYkFY2E2GFvKQQ6XSab2/uFOZFx71nJEZXOMWDjd0f+1ZspsolCqqIX/Wxjk0azjM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=2n.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=QaEOGIsQ; arc=fail smtp.client-ip=40.107.247.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=2n.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=i7OwsxeNHPvq7U/JsascOAHqjzsb3tSJ3/rNU+CREWHJcpe27B2kZ45G8d4IBycoIe5JVCPrOuaUDYn8chmYwLWFApzyT0HpeEqA7cnaZ5lnv/Q1D7hnHOxwrkStBFe+I6e+z59Z7bZoTsKyxX03wt7VFKP1RhIM/dLJ1DQGkCFyZyWLVD4orwzwU7dQFQAnWGannGmtgtElPm3aDaR1VKHRSCGnDZQDE+7izftDMin7NvFodPljbF0jbaVg4j3W0QXabf6q8UxTweslr3kXeBHFGeH/h0dplw4pFU9JukYmdl+EkOCSNKaNeGLXfKdHrA3/9BZgVt7DtYLF7CtsPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5tUdOrxT955PQwT20/EJZ1RoJX2UwtFWOTcvsmbA9NM=;
+ b=H3DYmPwesBPzd1f+dm3myjzI7NsC8MLaQEyzKkoxCnzTQv3dHV7GsRptbiKXyMEqj98QMxboo1pAxnY2Ns5QmyjohD2QpLvw4tXjttnz/ZGeNrNegmHmZmNKNRkogmztAagjiX4hNq5Nu2zzkKZfTGnaDtNsQCGdhPcUX6IJFupM4x5PVz/wW56ynDokYP8Oadk1VPlifP+/TRU7TaTV1Rh9mwiFCgkYjANvnH8B7zqb5vQb38NRI9oW2CQ2UQKCVDGDGtoh/KFIF/hvzR5X73wREx5NZAW0Xu5Lde/nKm6yGa86xRpmZ37bbnX1AcZWGiOVmMiwZv7mYhzxsXXPMw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=broadcom.com smtp.mailfrom=2n.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5tUdOrxT955PQwT20/EJZ1RoJX2UwtFWOTcvsmbA9NM=;
+ b=QaEOGIsQ/McAs+I07uRN9L2h41KcmtrhL1u7xahYJyIblcpwFEv8mT+WrydrcvKellOsVXcHNDTN8KCS0yPjOjAOo2V1kjjVu0vHTl64rsUN4cLj2gEtI0QvkfQImX8bcyHZuaS2gNPeJ8iyjuP1M9BfZP58RABZDYwYKdyE7kI=
+Received: from DU7P195CA0001.EURP195.PROD.OUTLOOK.COM (2603:10a6:10:54d::15)
+ by AS2PR02MB9955.eurprd02.prod.outlook.com (2603:10a6:20b:605::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.37; Thu, 13 Jun
+ 2024 13:21:16 +0000
+Received: from DU2PEPF0001E9C5.eurprd03.prod.outlook.com
+ (2603:10a6:10:54d:cafe::2b) by DU7P195CA0001.outlook.office365.com
+ (2603:10a6:10:54d::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.24 via Frontend
+ Transport; Thu, 13 Jun 2024 13:21:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=2n.com; dkim=none (message not signed) header.d=none;dmarc=fail
+ action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of 2n.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ DU2PEPF0001E9C5.mail.protection.outlook.com (10.167.8.74) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Thu, 13 Jun 2024 13:21:16 +0000
+Received: from pcczc3457tyd.2n.cz.axis.com (10.0.5.60) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Jun
+ 2024 15:21:15 +0200
+From: =?UTF-8?q?Kamil=20Hor=C3=A1k=20-=202N?= <kamilh@axis.com>
+To: <florian.fainelli@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>,
+	<andrew@lunn.ch>, <hkallweit1@gmail.com>
+CC: <kamilh@axis.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 0/4] net: phy: bcm5481x: add support for BroadR-Reach mode
+Date: Thu, 13 Jun 2024 15:20:51 +0200
+Message-ID: <20240613132055.49207-1-kamilh@axis.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNLMWRmVeSWpSXmKPExsXC9ZZnoa7Hp6w0g1eblC0m9hhYzFm/hs3i
-	/oPX7BZP/v9mtWhoesRicXnXHDaLe2v+s1ocWX+WxWLz2TPMFouXq1ns63jAZHH46xsmBx6P
-	paffsHnsnHWX3aNl3y12j02rOtk8Nn2axO5xYsZvFo8Xm2cyemz8+J/d4/MmuQDOKC6blNSc
-	zLLUIn27BK6M4+vbWAouW1U82vGIsYFxo0EXIyeHhICJRM/yw8ww9uXf81hBbDYBNYkrLycx
-	dTFycIgIWElM2xHbxcjFwSxwjVlid/dJsHphAX+JvhV7GUFsFgFViWX9D8F6eQVMJa53LWeB
-	mKkp8Xj7T3YQm1PATOLR3FdsILYQUM2MH1eZIeoFJU7OfAJWzywgL9G8dTYzyDIJgfdsEs9n
-	NzJBDJKUOLjiBssERv5ZSHpmIelZwMi0ilEoM68sNzEzx0QvozIvs0IvOT93EyMwCpbV/one
-	wfjpQvAhRgEORiUeXo9nWWlCrIllxZW5hxglOJiVRHhnLQQK8aYkVlalFuXHF5XmpBYfYpTm
-	YFES5zX6Vp4iJJCeWJKanZpakFoEk2Xi4JRqYDS8s1214XCvZNJSldqZtrOcSr63TsyeyLDW
-	fNfhDI0c2e01pfLik51+mQVtvO3rYnZdcmH/g1f7Vp0tWLbwwFbvO3eKbDkFslpnB0Y4riwO
-	0FtQLaPilS2YKaEvX7nYt1s/zCRO+rTzNFcN2cWltYfXvJMO1CmpTuuazfnOq2ninOo2NfUI
-	JZbijERDLeai4kQAHeyADX4CAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrALMWRmVeSWpSXmKPExsXCNUNLT9fjU1aaQfs+YYuJPQYWc9avYbO4
-	/+A1u8WT/79ZLRqaHrFYfH72mtmi88l3RovDc0+yWlzeNYfN4t6a/6wWR9afZbHYfPYMs8Xi
-	5WoW+zoeMFkc/vqGyYHfY+npN2weO2fdZfdo2XeL3WPTqk42j02fJrF7nJjxm8XjxeaZjB4b
-	P/5n9/h228Nj8YsPTB6fN8kFcEdx2aSk5mSWpRbp2yVwZRxf38ZScNmq4tGOR4wNjBsNuhg5
-	OSQETCQu/57HCmKzCahJXHk5iamLkYNDRMBKYtqO2C5GLg5mgWvMEru7TzKD1AgL+Ev0rdjL
-	CGKzCKhKLOt/CNbLK2Aqcb1rOQvETE2Jx9t/soPYnAJmEo/mvmIDsYWAamb8uMoMUS8ocXLm
-	E7B6ZgF5ieats5knMPLMQpKahSS1gJFpFaNIZl5ZbmJmjqlecXZGZV5mhV5yfu4mRmC4L6v9
-	M3EH45fL7ocYBTgYlXh4PZ5lpQmxJpYVV+YeYpTgYFYS4Z21ECjEm5JYWZValB9fVJqTWnyI
-	UZqDRUmc1ys8NUFIID2xJDU7NbUgtQgmy8TBKdXAqLJL46RP6xktefVvCTuZDNtVy1f+nOI5
-	4e+sZzu2SyUnTlm3fu/TW+rb7mgIHOSUUbWY3FYk6T352ftmnQ1fSv7PkHSs3/HvJtsb0x8+
-	E2+c+/wvWDf2h/iC5XHBfvwd8fzL6gUEmbV9rDWvtgccNn2XcuKc9u87WzYHvCw62bLH3lHC
-	ZK/jHSWW4oxEQy3mouJEAInj7stzAgAA
-X-CFilter-Loop: Reflected
+X-ClientProxiedBy: se-mail01w.axis.com (10.20.40.7) To se-mail01w.axis.com
+ (10.20.40.7)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PEPF0001E9C5:EE_|AS2PR02MB9955:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf74e0a8-7ecf-43c1-32c7-08dc8babb491
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230035|36860700008|82310400021|1800799019|376009;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dG5TSHdNU2pDTm9vMVR0VmtTSVdWbGpXYXpRM1MzNE41SjVINFBHVzhaeVhP?=
+ =?utf-8?B?MHVreU9SZENpQ2xyYmVUYjlSQmRlRE42d2l3SFYxdDVYZUZmUTlmSlkzWU9q?=
+ =?utf-8?B?QzRPUDhkNW5lelAxbEx3S3JpUmNBTVdzL2d4bkhaUHp3bUtVVnlQM1ZQOS9K?=
+ =?utf-8?B?bHVicmpyZEVZaElhSEdOK0d0MFgwbXRPWG0yT3NVSEhTbGljNnFRcWk3S1Fh?=
+ =?utf-8?B?Wm0xaGR5SUxTYjZSb2FvcE1tcTRUaTJPRmNoK2VPWHAzSDBJL2dSWVFuV0VE?=
+ =?utf-8?B?b2lMMGFBcXhQc295dUZ0TEtoenh5OWt1R2JQTUdibjR6SW01dThjNlRmODBT?=
+ =?utf-8?B?V3F0aTRsUkpFZmx4bXVnZlVjMyt2VlJmeWh1V0RabmJNcDRJRFkzcDB1QzYx?=
+ =?utf-8?B?bWdrZWNQZFY2OWk3WmgxM21mUHRyRXFzQUJ0VGhNRHVGeGRHWDE1Qko0RHFk?=
+ =?utf-8?B?TS9CeTI1cU9NZjhzOGliaTdOUGVteVUzbTlZalBPY3dLNjltWXc1b1BoVmtz?=
+ =?utf-8?B?WWNHSEJQUGF3cTYyZk1OS1M0dVJZQm1QaHF4V05wN0o5V2xUVkpuYXhjaitI?=
+ =?utf-8?B?ckFoTEhFUkhWVHc4VjgwcDJ5OXpNaUZ1Q3VaM0pRMmkxaWVGNXJhekpneFBG?=
+ =?utf-8?B?VzBDSXNKckdoRjhKR1VNQ3lSVEFkaGM0MUltTkdSNGU1YkRzMlhwNkpJbk1Q?=
+ =?utf-8?B?SzBsZFh4UkVqVmM3Mm8xMG8xdXlwaG5BMWN4YlJ5QXJiRng4Q1dOUUJTMWtB?=
+ =?utf-8?B?U0thSHJUK081d2d6QzZRanBzZ05pd0dQM0dFcTVlMkRJdlhJUHBMdnNNNFB0?=
+ =?utf-8?B?ZTZxd1BrZVpBTW5kSnZMYytoOG1ZdUxYekZDdm5UMWZHTHdvQlRmV3E0SXpX?=
+ =?utf-8?B?R1Fja0hGeC9WNnU4cU50aXJjT3lTMk1RT1pjWUJsNk1XcllTK25GUU9rK1Ju?=
+ =?utf-8?B?Q3E1MENLMC9GcFFqSzdMZHg0dDRHRWJvWCtkU1lxWm5FYnY1eXpqeERvVWNs?=
+ =?utf-8?B?alRRU2hUdnpIZzRUdWpLTU4vaHN6WjFZRnJFMHFhKzJPK0ZUSDdZMWpRN05T?=
+ =?utf-8?B?dWo3QXY1d1hpeUV1YkRkUXAybVpvd09jdW83OWxDaG80aEVseEx5bEllZUV1?=
+ =?utf-8?B?V1pMaVZaVzRYaGs2dnRyTXhoK0F4T3dRakNRZmZJL1R6Y2p1UHFXeDdYbnBt?=
+ =?utf-8?B?NTFZSk5EV2J2YzhkVWREZUF0UlUvMVVRU2RVZWM0RXI2L0xoT2lGSHRrR0V0?=
+ =?utf-8?B?d2NGTVBDVk9MT0gxYklRbVR0ZVZJVUpUelFObU5PS2YrTjlydFpjREVXUGt3?=
+ =?utf-8?B?WmpiM1FEVG43N2grbWQvQytYMCtrWWFoUW1YUjR5L2JYL0Q2UUVVdjRyMUtD?=
+ =?utf-8?B?aGZUS2EwZmhDZzBhajVEOXRkc0o0a2FHNDN6cC9STENBdGFQcVhsazdRcEhl?=
+ =?utf-8?B?N2dBVFgxRDgxUFFpL3dhT3RlRmdKZkpWcWdnRlBLNEZ0elJUQk44Q0FHeXVY?=
+ =?utf-8?B?QzFKWGFVZUxPYXdKZXNmS0NSRFZNYm9jQjVxYW9EUDRQY09SV1N2NW04dWhz?=
+ =?utf-8?B?d25IVSt4eDhTV2QxdUNkMGVzc2ErTW5SVElOdTBSeFYxSnErRGhjMzJLUlhk?=
+ =?utf-8?B?VFM2TVpPMWlIZzd4TDJIUCtSTElsMm9rZ1VLcHQ1czgwamM4bW1pQ0hCUW1i?=
+ =?utf-8?B?MmwrakxQNUdsNzN4dXpNSDZaZVF6VmRpMkQ4TzE1enE0RWZlOFArK0plRUxL?=
+ =?utf-8?B?RW40emY0c2dxZ1RRa2JwSGFHS1ZwUENpaUsxdWd4ZDN0R2xoWlNzQTl3VWVH?=
+ =?utf-8?B?Wk1ZUmtFMkYyazdsTnBVcGxPbEd4RjI2cTJmZUt3dEtHVVNWeE51WjNMYkt0?=
+ =?utf-8?B?dWh4ZE92cys0b3hZejQyUWNSZVhZNHdwNDhaeTl6RFhYWmc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230035)(36860700008)(82310400021)(1800799019)(376009);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2024 13:21:16.4069
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf74e0a8-7ecf-43c1-32c7-08dc8babb491
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU2PEPF0001E9C5.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR02MB9955
 
-From: Hyeongtak Ji <hyeongtak.ji@sk.com>
+PATCH 1 - Add the 10baseT1BRR_Full link mode
 
-This patch adds target_nid under
-  /sys/kernel/mm/damon/admin/kdamonds/<N>/contexts/<N>/schemes/<N>/
+PATCH 2 - Add the definitions of LRE registers, necessary to use
+   BroadR-Reach modes on the BCM5481x PHY
 
-The 'target_nid' can be used as the destination node for DAMOS actions
-such as DAMOS_MIGRATE_{HOT,COLD} in the follow up patches.
+PATCH 3 - Add brr-mode flag to switch between IEEE802.3 and BroadR-Reach
 
-Signed-off-by: Hyeongtak Ji <hyeongtak.ji@sk.com>
-Signed-off-by: Honggyu Kim <honggyu.kim@sk.com>
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- include/linux/damon.h    | 11 ++++++++++-
- mm/damon/core.c          |  5 ++++-
- mm/damon/dbgfs.c         |  2 +-
- mm/damon/lru_sort.c      |  3 ++-
- mm/damon/reclaim.c       |  3 ++-
- mm/damon/sysfs-schemes.c | 33 ++++++++++++++++++++++++++++++++-
- 6 files changed, 51 insertions(+), 6 deletions(-)
+PATCH 4 - Implementation of the BroadR-Reach modes for the Broadcom
+   PHYs
 
-diff --git a/include/linux/damon.h b/include/linux/damon.h
-index f7da65e1ac04..21d6b69a015c 100644
---- a/include/linux/damon.h
-+++ b/include/linux/damon.h
-@@ -374,6 +374,7 @@ struct damos_access_pattern {
-  * @apply_interval_us:	The time between applying the @action.
-  * @quota:		Control the aggressiveness of this scheme.
-  * @wmarks:		Watermarks for automated (in)activation of this scheme.
-+ * @target_nid:		Destination node if @action is "migrate_{hot,cold}".
-  * @filters:		Additional set of &struct damos_filter for &action.
-  * @stat:		Statistics of this scheme.
-  * @list:		List head for siblings.
-@@ -389,6 +390,10 @@ struct damos_access_pattern {
-  * monitoring context are inactive, DAMON stops monitoring either, and just
-  * repeatedly checks the watermarks.
-  *
-+ * @target_nid is used to set the migration target node for migrate_hot or
-+ * migrate_cold actions, which means it's only meaningful when @action is either
-+ * "migrate_hot" or "migrate_cold".
-+ *
-  * Before applying the &action to a memory region, &struct damon_operations
-  * implementation could check pages of the region and skip &action to respect
-  * &filters
-@@ -410,6 +415,9 @@ struct damos {
- /* public: */
- 	struct damos_quota quota;
- 	struct damos_watermarks wmarks;
-+	union {
-+		int target_nid;
-+	};
- 	struct list_head filters;
- 	struct damos_stat stat;
- 	struct list_head list;
-@@ -726,7 +734,8 @@ struct damos *damon_new_scheme(struct damos_access_pattern *pattern,
- 			enum damos_action action,
- 			unsigned long apply_interval_us,
- 			struct damos_quota *quota,
--			struct damos_watermarks *wmarks);
-+			struct damos_watermarks *wmarks,
-+			int target_nid);
- void damon_add_scheme(struct damon_ctx *ctx, struct damos *s);
- void damon_destroy_scheme(struct damos *s);
- 
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index 6392f1cc97a3..c0ec5be4f56e 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -354,7 +354,8 @@ struct damos *damon_new_scheme(struct damos_access_pattern *pattern,
- 			enum damos_action action,
- 			unsigned long apply_interval_us,
- 			struct damos_quota *quota,
--			struct damos_watermarks *wmarks)
-+			struct damos_watermarks *wmarks,
-+			int target_nid)
- {
- 	struct damos *scheme;
- 
-@@ -381,6 +382,8 @@ struct damos *damon_new_scheme(struct damos_access_pattern *pattern,
- 	scheme->wmarks = *wmarks;
- 	scheme->wmarks.activated = true;
- 
-+	scheme->target_nid = target_nid;
-+
- 	return scheme;
- }
- 
-diff --git a/mm/damon/dbgfs.c b/mm/damon/dbgfs.c
-index 2461cfe2e968..51a6f1cac385 100644
---- a/mm/damon/dbgfs.c
-+++ b/mm/damon/dbgfs.c
-@@ -281,7 +281,7 @@ static struct damos **str_to_schemes(const char *str, ssize_t len,
- 
- 		pos += parsed;
- 		scheme = damon_new_scheme(&pattern, action, 0, &quota,
--				&wmarks);
-+				&wmarks, NUMA_NO_NODE);
- 		if (!scheme)
- 			goto fail;
- 
-diff --git a/mm/damon/lru_sort.c b/mm/damon/lru_sort.c
-index 3de2916a65c3..3775f0f2743d 100644
---- a/mm/damon/lru_sort.c
-+++ b/mm/damon/lru_sort.c
-@@ -163,7 +163,8 @@ static struct damos *damon_lru_sort_new_scheme(
- 			/* under the quota. */
- 			&quota,
- 			/* (De)activate this according to the watermarks. */
--			&damon_lru_sort_wmarks);
-+			&damon_lru_sort_wmarks,
-+			NUMA_NO_NODE);
- }
- 
- /* Create a DAMON-based operation scheme for hot memory regions */
-diff --git a/mm/damon/reclaim.c b/mm/damon/reclaim.c
-index 9bd341d62b4c..a05ccb41749b 100644
---- a/mm/damon/reclaim.c
-+++ b/mm/damon/reclaim.c
-@@ -177,7 +177,8 @@ static struct damos *damon_reclaim_new_scheme(void)
- 			/* under the quota. */
- 			&damon_reclaim_quota,
- 			/* (De)activate this according to the watermarks. */
--			&damon_reclaim_wmarks);
-+			&damon_reclaim_wmarks,
-+			NUMA_NO_NODE);
- }
- 
- static void damon_reclaim_copy_quota_status(struct damos_quota *dst,
-diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
-index bea5bc52846a..0632d28b67f8 100644
---- a/mm/damon/sysfs-schemes.c
-+++ b/mm/damon/sysfs-schemes.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/slab.h>
-+#include <linux/numa.h>
- 
- #include "sysfs-common.h"
- 
-@@ -1445,6 +1446,7 @@ struct damon_sysfs_scheme {
- 	struct damon_sysfs_scheme_filters *filters;
- 	struct damon_sysfs_stats *stats;
- 	struct damon_sysfs_scheme_regions *tried_regions;
-+	int target_nid;
- };
- 
- /* This should match with enum damos_action */
-@@ -1470,6 +1472,7 @@ static struct damon_sysfs_scheme *damon_sysfs_scheme_alloc(
- 	scheme->kobj = (struct kobject){};
- 	scheme->action = action;
- 	scheme->apply_interval_us = apply_interval_us;
-+	scheme->target_nid = NUMA_NO_NODE;
- 	return scheme;
- }
- 
-@@ -1692,6 +1695,28 @@ static ssize_t apply_interval_us_store(struct kobject *kobj,
- 	return err ? err : count;
- }
- 
-+static ssize_t target_nid_show(struct kobject *kobj,
-+		struct kobj_attribute *attr, char *buf)
-+{
-+	struct damon_sysfs_scheme *scheme = container_of(kobj,
-+			struct damon_sysfs_scheme, kobj);
-+
-+	return sysfs_emit(buf, "%d\n", scheme->target_nid);
-+}
-+
-+static ssize_t target_nid_store(struct kobject *kobj,
-+		struct kobj_attribute *attr, const char *buf, size_t count)
-+{
-+	struct damon_sysfs_scheme *scheme = container_of(kobj,
-+			struct damon_sysfs_scheme, kobj);
-+	int err = 0;
-+
-+	/* TODO: error handling for target_nid range. */
-+	err = kstrtoint(buf, 0, &scheme->target_nid);
-+
-+	return err ? err : count;
-+}
-+
- static void damon_sysfs_scheme_release(struct kobject *kobj)
- {
- 	kfree(container_of(kobj, struct damon_sysfs_scheme, kobj));
-@@ -1703,9 +1728,13 @@ static struct kobj_attribute damon_sysfs_scheme_action_attr =
- static struct kobj_attribute damon_sysfs_scheme_apply_interval_us_attr =
- 		__ATTR_RW_MODE(apply_interval_us, 0600);
- 
-+static struct kobj_attribute damon_sysfs_scheme_target_nid_attr =
-+		__ATTR_RW_MODE(target_nid, 0600);
-+
- static struct attribute *damon_sysfs_scheme_attrs[] = {
- 	&damon_sysfs_scheme_action_attr.attr,
- 	&damon_sysfs_scheme_apply_interval_us_attr.attr,
-+	&damon_sysfs_scheme_target_nid_attr.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(damon_sysfs_scheme);
-@@ -2031,7 +2060,8 @@ static struct damos *damon_sysfs_mk_scheme(
- 	};
- 
- 	scheme = damon_new_scheme(&pattern, sysfs_scheme->action,
--			sysfs_scheme->apply_interval_us, &quota, &wmarks);
-+			sysfs_scheme->apply_interval_us, &quota, &wmarks,
-+			sysfs_scheme->target_nid);
- 	if (!scheme)
- 		return NULL;
- 
-@@ -2068,6 +2098,7 @@ static void damon_sysfs_update_scheme(struct damos *scheme,
- 
- 	scheme->action = sysfs_scheme->action;
- 	scheme->apply_interval_us = sysfs_scheme->apply_interval_us;
-+	scheme->target_nid = sysfs_scheme->target_nid;
- 
- 	scheme->quota.ms = sysfs_quotas->ms;
- 	scheme->quota.sz = sysfs_quotas->sz;
+Changes in v2:
+  - Divided into multiple patches, removed useless link modes
+
+Changes in v3:
+  - Fixed uninitialized variable in bcm5481x_config_delay_swap function
+
+Changes in v4:
+  - Improved the division of functions between bcm-phy library and broadcom.c
+  - Changed the BroadR-Reach / IEEE mode switching to device tree boolean as
+    these modes are mutually exclusive and barely could coexist in one hardware
+  - Made the link mode selection compatible with current ethtool (i.e. the
+    linkmode is selected by choosing speed and master-slave)
+
+Changes in v5:
+  - Fixed the operator precedence as reported by the kernel test robot
+  - Fixed doc of bcm_linkmode_adv_to_mii_adv_t function
+
+Changes in v6:
+  - Moved the brr-mode flag to separate commit as required by the rules for 
+    DT binding patches
+  - Renamed some functions to make clear they handle LRE-related stuff
+  - Reordered variable definitions to match the coding style requirements
+
+Kamil Horák - 2N (4):
+  net: phy: bcm54811: New link mode for BroadR-Reach
+  net: phy: bcm54811: Add LRE registers definitions
+  dt-bindings: ethernet-phy: add optional brr-mode flag
+  net: phy: bcm-phy-lib: Implement BroadR-Reach link modes
+
+ .../devicetree/bindings/net/ethernet-phy.yaml |   7 +
+ drivers/net/phy/bcm-phy-lib.c                 | 125 ++++++
+ drivers/net/phy/bcm-phy-lib.h                 |   4 +
+ drivers/net/phy/broadcom.c                    | 370 +++++++++++++++++-
+ drivers/net/phy/phy-core.c                    |   3 +-
+ include/linux/brcmphy.h                       |  89 +++++
+ include/uapi/linux/ethtool.h                  |   1 +
+ net/ethtool/common.c                          |   3 +
+ 8 files changed, 584 insertions(+), 18 deletions(-)
+
 -- 
-2.34.1
+2.39.2
 
 
