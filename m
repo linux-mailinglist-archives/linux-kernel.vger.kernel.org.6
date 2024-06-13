@@ -1,135 +1,122 @@
-Return-Path: <linux-kernel+bounces-213795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 418CD907AA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:13:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEE3C907AAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D93011F23131
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:13:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BFA11C243E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 18:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC83D14AD0A;
-	Thu, 13 Jun 2024 18:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5CC14B064;
+	Thu, 13 Jun 2024 18:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ljbStTQj"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZrO/zRBj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A937D14A4F0;
-	Thu, 13 Jun 2024 18:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F2014A632
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718302407; cv=none; b=Q85mCHdjtQ7rwJbgzyGWytXfOhtHNKtgipAqGxo74fecGpFZEtYlDPLG20O3uVQCjqe4TSrEGgi1mMMJgT9YylJctDa1HsGSMP/gVjOOrrMJ3QX7CXT7JF9zAvtQ/0k33KQ13IJaSt+RTtY1i1e3UVd4JIqOpHCc99p7InBzP6c=
+	t=1718302429; cv=none; b=bUIT911ugluDdCXFVJZEdjH3rEYlCWRAdy9NKjzMmc0px6t6xNcnwIeuOyp7hullta8F3IgQz1iKn0bp+gjKt3PYYsofOYpNuD8xgpsbIwFV/NbV6uxWR55iHNZ59f763GnHk8mBhh0gRO3y3j9jX4ZZG/OyKNJuyp17A9BYv5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718302407; c=relaxed/simple;
-	bh=wNNl8rrQPycSg4IXL1NS7035Hu/VIN3/XOUEICPOlvQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SiZ4SmorIk1YInZ/1Iq3gRmgZ/zixa+mUtytDyAq99l/7Wdnj0/cGcW6dHOJgbvG1qkXUS7bQNDKZGsyq8QVAPtzCLQCRHotfWaTZX7FwqNu0v/m1wNTLse0m0FTVuq5Vw2TBr+p+xXvuncduxBwSYZbOEss1dmxO4LLgAazb20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ljbStTQj; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57c8353d8d0so1601144a12.1;
-        Thu, 13 Jun 2024 11:13:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718302404; x=1718907204; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wNNl8rrQPycSg4IXL1NS7035Hu/VIN3/XOUEICPOlvQ=;
-        b=ljbStTQj5l2UkGLsjkeEdPMsvJxQgTAJFSNDTfBP+AxdVwMY3IFzJvayeC0jGE/Zex
-         BZuJXrcTcVZgTQVqF0HaPpdy3B2jK66EcubnuCFInykukUhA4LaQkglzxmWMcWlt7M+Z
-         0iwqpArn1wZRkNy/HISQomyBiGRv3FIUfGOeZ2ZLZk/79vgm5yskcKVACst2cmlUxust
-         IiIVtWS7Vdv9zRFRXtllSfV+FARtUPL0/n8sdLxIOrrlbHdl6+VRb/3Wr3RtstBEj7Ln
-         QRXlcY6HCDiyyZ6Ao1Fce0DlT/rM/oBx796ByD3G/Vw7U8sKLrc76wAkbElPhHVbxwQ1
-         Q1Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718302404; x=1718907204;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wNNl8rrQPycSg4IXL1NS7035Hu/VIN3/XOUEICPOlvQ=;
-        b=VqvQW7IEJ4+kWlA8kLWke03sNLAdnH+UftVCp81wKz5uZ7fmTSPLS9N4FDidXyrgDh
-         Pc3tOjKCMojPNvmAhrSQiugGK9IYwxLxzkrAg/LfKpcBJSWsKVFnxJdsetYfhPKJ5fNx
-         5XInH9GnUZYS9tgqnKx0TngCbvyo6w/jSW7s+rPckXcFTtjDXSlQDQbjWqmlM4+ZPBCm
-         IAuNwY3cirzCgLLvX5eQCsU1jzenY+l3SF0QtU7OoknWVk3U6zLszIcKEgRTNOq4OAsN
-         7om3N1ik7ll6Uaz+vx4rLHf2x11kWlWD6Ne0b7mrpGLFJWlHMkPz6AAKtYXlVefd+9Vo
-         gLIg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4htjjEbEYSyDF1NGc9fo/7d7QeuxFQ/lY2LtSUuUSS0WgBHgGfCwiOMfryRY7nmJ3bE/oWkv04RG0CQEzpNQD5Bdss2sg0ecnRBsVkmH3DlFAbKwMfEC14PPCCQws6OC1c6WqhFsWPfWsYA==
-X-Gm-Message-State: AOJu0YzPjF8NDrUazOMKqIyNIvhf7ce2Cwg8IE17exyrlwJPpLGOELt+
-	Omrl6LFWTFiAPvEyaGlPaeQeqVz7vVvw1B90iqByak8yX1ZL0hkduilTtdAFDqVxy7Z7EU9oBqt
-	n9FGBF6sdEIi976ERrouH5Fpa87s=
-X-Google-Smtp-Source: AGHT+IEDJPaqSZUv5B5MxjIAxl6QnKc6ZsHvMrpeSQPPtVjYYPsRr9TBGMDkk43sN9E+cAoFf9Wiyix2XkFa0c4Z+4U=
-X-Received: by 2002:a50:cdde:0:b0:57c:74a3:8fd2 with SMTP id
- 4fb4d7f45d1cf-57cbd67f655mr488376a12.21.1718302403764; Thu, 13 Jun 2024
- 11:13:23 -0700 (PDT)
+	s=arc-20240116; t=1718302429; c=relaxed/simple;
+	bh=hoIXYPbZ6aocu1qJ+2/TrKkuZM2SVzmqHzSo7LfY/eU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OlHEWO61/k0QG8VHPQmyqr3pxkJFvZF2FprbBSWh8RMIkO9vesmRCQe0ciYwoMkZhLPVuGnb5lHbseIOwD4IMzv5/KR00/X2HMUkETbHZQejMl+Gq9ZvU+Ix8mxiBhnRmFzEo7nRNEgHw60EW0qAGS9bKvfljH675+6Mh8jzjx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZrO/zRBj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718302423;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Z8TqPTUTw/4Zs7sR0nY6BGVi0puLg7Tsv8WeeuKNgVQ=;
+	b=ZrO/zRBjEd6tu3/tjBA5NHG8reQX7YOZaZRTIOkr8hwc1HyZtM1s3uyQKOtJQwikMphtEI
+	lDp9CNt1HjFf2vPUZCj1jAZKB61W0vm+hcxJaey3uKV3LZT9AdcLjOXAfdhHNCVZ0l5JXs
+	AUwX9ZcAo+neZbC0jhJcFJPOy1qzHqc=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-570-cloVpsloNMCGhS9OlICJuw-1; Thu,
+ 13 Jun 2024 14:13:39 -0400
+X-MC-Unique: cloVpsloNMCGhS9OlICJuw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E076219560AB;
+	Thu, 13 Jun 2024 18:13:37 +0000 (UTC)
+Received: from RHTRH0061144.redhat.com (unknown [10.22.16.41])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 74F8419560BF;
+	Thu, 13 Jun 2024 18:13:34 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: netdev@vger.kernel.org
+Cc: dev@openvswitch.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pravin B Shelar <pshelar@ovn.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Adrian Moreno <amorenoz@redhat.com>,
+	Stefano Brivio <sbrivio@redhat.com>,
+	Ilya Maximets <i.maximets@ovn.org>
+Subject: [RFC net-next 0/7] selftests: net: Switch pmtu.sh to use the internal ovs script.
+Date: Thu, 13 Jun 2024 14:13:26 -0400
+Message-ID: <20240613181333.984810-1-aconole@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613001215.648829-1-mjguzik@gmail.com> <20240613001215.648829-2-mjguzik@gmail.com>
- <CAHk-=wgX9UZXWkrhnjcctM8UpDGQqWyt3r=KZunKV3+00cbF9A@mail.gmail.com>
- <CAHk-=wgPgGwPexW_ffc97Z8O23J=G=3kcV-dGFBKbLJR-6TWpQ@mail.gmail.com>
- <5cixyyivolodhsru23y5gf5f6w6ov2zs5rbkxleljeu6qvc4gu@ivawdfkvus3p>
- <20240613-pumpen-durst-fdc20c301a08@brauner> <CAHk-=wj0cmLKJZipHy-OcwKADygUgd19yU1rmBaB6X3Wb5jU3Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wj0cmLKJZipHy-OcwKADygUgd19yU1rmBaB6X3Wb5jU3Q@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 13 Jun 2024 20:13:10 +0200
-Message-ID: <CAGudoHHWL_CftUXyeZNU96qHsi5DT_OTL5ZLOWoCGiB45HvzVA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] lockref: speculatively spin waiting for the lock to
- be released
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu, Jun 13, 2024 at 7:00=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Thu, 13 Jun 2024 at 06:46, Christian Brauner <brauner@kernel.org> wrot=
-e:
-> >
-> > I've picked Linus patch and your for testing into the vfs.inode.rcu bra=
-nch.
->
-> Btw, if you added [patch 2/2] too, I think the exact byte counts in
-> the comments are a bit misleading.
->
-> The actual cacheline details will very much depend on 32-bit vs 64-bit
-> builds, but also on things like the slab allocator debug settings.
->
+Currently, if a user wants to run pmtu.sh and cover all the provided test
+cases, they need to install the Open vSwitch userspace utilities.  This
+dependency is difficult for users as well as CI environments, because the
+userspace build and setup may require lots of support and devel packages
+to be installed, system setup to be correct, and things like permissions
+and selinux policies to be properly configured.
 
-I indeed assumed "x86_64 production", with lines just copied from pahole.
+The kernel selftest suite includes an ovs-dpctl.py utility which can
+interact with the openvswitch module directly.  This lets developers and
+CI environments run without needing too many extra dependencies - just
+the pyroute2 python package.
 
-However, to the best of my understanding the counts are what one
-should expect on a 64-bit kernel.
+This series enhances the ovs-dpctl utility to provide support for set()
+and tunnel() flow specifiers, better ipv6 handling support, and the
+ability to add tunnel vports, and LWT interfaces.  Finally, it modifies
+the pmtu.sh script to call the ovs-dpctl.py utility rather than the
+typical OVS userspace utilities.
 
-That said:
+NOTE: This could also be applied as-is.  I'm trying to get the vng test
+      working in my environment, so I submitted as RFC because I didn't
+      get to test with the config change in 7/7.
 
-> I think the important part is to keep the d_lockref - that is often
-> dirty and exclusive in the cache - away from the mostly RO parts of
-> the dentry that can be shared across CPU's in the cache.
->
-> So rather than talk about exact byte offsets, maybe just state that
-> overall rule?
->
+Aaron Conole (6):
+  selftests: openvswitch: Support explicit tunnel port creation.
+  selftests: openvswitch: Refactor actions parsing.
+  selftests: openvswitch: Add set() and set_masked() support.
+  selftests: openvswitch: Add support for tunnel() key.
+  selftests: openvswitch: Support implicit ipv6 arguments.
+  selftests: net: Use the provided dpctl rather than the vswitchd for
+    tests.
+  selftests: net: add config for openvswitch
 
-I would assume the rule is pretty much well known and instead an
-indicator where is what (as added in my comments) would be welcome.
+ .../selftests/net/openvswitch/ovs-dpctl.py    | 370 +++++++++++++++---
+ tools/testing/selftests/net/config            |   5 ++++
+ tools/testing/selftests/net/pmtu.sh           |  87 +++-
+ 3 files changed, 394 insertions(+), 68 deletions(-)
 
-But if going that route, then perhaps:
-"Make sure d_lockref does not share a cacheline with fields used by
-RCU lookup, otherwise it can result in a signification throughput
-reduction. You can use pahole(1) to check the layout."
-[maybe a link to perfbook or something goes here?]
+-- 
+2.45.1
 
-Arguably a bunch of BUILD_BUG_ONs could be added to detect the overlap
-(only active without whatever runtime debug messing with the layout).
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
 
