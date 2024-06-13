@@ -1,205 +1,156 @@
-Return-Path: <linux-kernel+bounces-212907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C8C906810
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:04:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11DFC90680D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52FCDB2755E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:03:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 241011C24865
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A44B142654;
-	Thu, 13 Jun 2024 09:01:16 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2A913D88E;
+	Thu, 13 Jun 2024 09:01:29 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9186413F44A;
-	Thu, 13 Jun 2024 09:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A0513C9D5
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718269275; cv=none; b=o3CO+1+ktR+s7EnNQI8crWZ/saJQB5J6UPV50jWtgD22sz2MEMZ5DzxN+OU+Iv0h4BI4PzhwHqVB2LmeArGK7B/uwb7fuJw6QeJknw3HnYSw8Y719WV1ZucMI9/ytcdA58RoPuygJVa73+sjSPNjkgfTli0Wae4MaiQAhpZaccE=
+	t=1718269288; cv=none; b=beq6JCHBcA6H0rgEmUDQozGq4YDyR0Y6f4GHC9SAqkOyr1QnzYagFBDgSVoDxZFrZIv6lzVBKJ+e0EplWRuD1gK3avo+kw6YrxPQdonWrWvPb9Q1bKd91bJtAoWtp2U0IM+BYrRyMWn+AO68PT+ypQrwUMkz6uJpYt3MpcTeRNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718269275; c=relaxed/simple;
-	bh=pBXZbUm/Jl5grb2RKQ/TbHzbCh4rKjcU503dKpopY5k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kyKczP33hp1+0c8KuLNEJT5PpaSjyDVl0PCMtoZG/NV+eBvPsWUVmq1R+QtbSMstJg9eaKDhxOVL96PrMmVwx1crnkdeOt95yGeHrWC2j0oaO10eN7yLSx2gbsW1ZOLJs0827sVw7edx3FUMKWnth1XhUlCThuqJ+Pi1nel1AIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W0Gbh0CLKz4f3kkY;
-	Thu, 13 Jun 2024 17:01:04 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 9CD191A0568;
-	Thu, 13 Jun 2024 17:01:10 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgBXKBFOtWpmHK1uPQ--.16895S12;
-	Thu, 13 Jun 2024 17:01:10 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	brauner@kernel.org,
-	david@fromorbit.com,
-	chandanbabu@kernel.org,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH -next v5 8/8] iomap: don't increase i_size in iomap_write_end()
-Date: Thu, 13 Jun 2024 17:00:33 +0800
-Message-Id: <20240613090033.2246907-9-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240613090033.2246907-1-yi.zhang@huaweicloud.com>
-References: <20240613090033.2246907-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1718269288; c=relaxed/simple;
+	bh=zDQfReszuaU0SBuUkzOBkGk0heHhS+XHS45L0W88biY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=P4aNlCuQj6oi0XvzzU+ZvWv1pi5z4FQWfC13Tt6Do9Jl/Q3B0QkCwX/Xz1homtz3LJMgK316B/rEUvvnZftuj32j6BLkNz2WvdBog8KQeYxqhd7A672AYPkW4Bw8jXDFonEAtCZBiv2OFUJEqVbvYA+evIijXrCGI9T+c0MwCNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7ebd7c57a35so89611039f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:01:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718269286; x=1718874086;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jJ0P9PPpSPipQKnsMFKPK1AUyVT5U3lPgM2J/2QP/Wo=;
+        b=D9gCmKGwmGv+vSIrExs4bxwdGPOj+db5dVsuR6neZ5r6gQIjhnSYU0yhusQru/BpsR
+         6O1C7FmkfgGEC6U0N52MrG6iJvb9RlUuDiNn59sP75vwdyG2vjzlPvKqhLBy9891egnS
+         oyfOjAD8H9NgQWrDrY1yedL0v4HOKZVFALP6LMWk7gSK2dsS6NVHipztNneDTorkALnL
+         52KR8Ofxa6JxKMpB2zmJi1Z/Az3Uqgeba2qHP4To6FXzq5iWRkeWXRjm9n/uO6PsH8I4
+         Ib/ExdHFohMAzaZTuI1N9vBBZ2/tAg1VGI6R6IyYQbwB6cXGXUXovhOcKr5kV3xlMBKC
+         8ypw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNOY1BEeNnX+qDPe7y/JBr1ZctMyXcCGBeMhPK5mcpUnYpuMaR31pHJbV6RyZWbA2Juu7zPALWr2qcU98yN+zc3YRxr3m3UMdVLp7l
+X-Gm-Message-State: AOJu0YzZq/4/s/s9Q6mjHX7ye2j7JRF90De5XDWjRnYZCfY79SgarQO9
+	8Ltd2ksThnUGHj7R8cGH2N4t7qwAbQf73LapxxHUkRge3K7NoYwPqY3efLl7g26JRtz7xidtxF2
+	/b36KRAiRi7swX1e5TSQcmWT11TOHxFHU+NBFa05CL4TCfX4PwXO0C4g=
+X-Google-Smtp-Source: AGHT+IHBwQ1lxfk63ByiZP5u96AF5hted6fq87tFuZWyeJs+2VhWvmsFkrTunSQyNOZ6wgL9HKIt207hEibfABtpJQCaKXT89wYc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBXKBFOtWpmHK1uPQ--.16895S12
-X-Coremail-Antispam: 1UD129KBjvJXoWxCrW3CFWxCFWUWr48Cw4DJwb_yoWrAF4kpr
-	y293yrCan7tw17Wr1kAF98ZryYka4fKFW7CrW7GrWavFn0yr1xKF1rWayYyF95J3srCF4S
-	qr4kA3yrWF1UAr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
-	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUA
-	rcfUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-Received: by 2002:a05:6638:25c3:b0:488:e34a:5f76 with SMTP id
+ 8926c6da1cb9f-4b93ec0ef35mr294959173.1.1718269286392; Thu, 13 Jun 2024
+ 02:01:26 -0700 (PDT)
+Date: Thu, 13 Jun 2024 02:01:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000071b6ee061ac1be53@google.com>
+Subject: [syzbot] [net?] INFO: task hung in mpls_net_exit (2)
+From: syzbot <syzbot+a8b8d28a9e1a02270f42@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Zhang Yi <yi.zhang@huawei.com>
+Hello,
 
-This reverts commit '0841ea4a3b41 ("iomap: keep on increasing i_size in
-iomap_write_end()")'.
+syzbot found the following issue on:
 
-After xfs could zero out the tail blocks aligned to the allocation
-unitsize and convert the tail blocks to unwritten for realtime inode on
-truncate down, it couldn't expose any stale data when unaligned truncate
-down realtime inodes, so we could keep on stop increasing i_size for
-IOMAP_UNSHARE and IOMAP_ZERO in iomap_write_end().
+HEAD commit:    83a7eefedc9b Linux 6.10-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14a2c82e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c79815c08cc14227
+dashboard link: https://syzkaller.appspot.com/bug?extid=a8b8d28a9e1a02270f42
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3e8762812d56/disk-83a7eefe.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/29ef4962890d/vmlinux-83a7eefe.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1a5e4d91d135/bzImage-83a7eefe.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a8b8d28a9e1a02270f42@syzkaller.appspotmail.com
+
+INFO: task kworker/u8:11:2895 blocked for more than 144 seconds.
+      Not tainted 6.10.0-rc3-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u8:11   state:D stack:22712 pid:2895  tgid:2895  ppid:2      flags:0x00004000
+Workqueue: netns cleanup_net
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ mpls_net_exit+0x7d/0x2a0 net/mpls/af_mpls.c:2708
+ ops_exit_list net/core/net_namespace.c:173 [inline]
+ cleanup_net+0x802/0xcc0 net/core/net_namespace.c:640
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task kworker/0:3:5107 blocked for more than 144 seconds.
+      Not tainted 6.10.0-rc3-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/0:3     state:D stack:21912 pid:5107  tgid:5107  ppid:2      flags:0x00004000
+Workqueue: events linkwatch_event
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ linkwatch_event+0xe/0x60 net/core/link_watch.c:276
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+
 ---
- fs/iomap/buffered-io.c | 53 +++++++++++++++++++++++-------------------
- 1 file changed, 29 insertions(+), 24 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 4a23c3950a47..75360128f1da 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -891,37 +891,22 @@ static bool iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
- 		size_t copied, struct folio *folio)
- {
- 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
--	loff_t old_size = iter->inode->i_size;
--	size_t written;
- 
- 	if (srcmap->type == IOMAP_INLINE) {
- 		iomap_write_end_inline(iter, folio, pos, copied);
--		written = copied;
--	} else if (srcmap->flags & IOMAP_F_BUFFER_HEAD) {
--		written = block_write_end(NULL, iter->inode->i_mapping, pos,
--					len, copied, &folio->page, NULL);
--		WARN_ON_ONCE(written != copied && written != 0);
--	} else {
--		written = __iomap_write_end(iter->inode, pos, len, copied,
--					    folio) ? copied : 0;
-+		return true;
- 	}
- 
--	/*
--	 * Update the in-memory inode size after copying the data into the page
--	 * cache.  It's up to the file system to write the updated size to disk,
--	 * preferably after I/O completion so that no stale data is exposed.
--	 * Only once that's done can we unlock and release the folio.
--	 */
--	if (pos + written > old_size) {
--		i_size_write(iter->inode, pos + written);
--		iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
--	}
--	__iomap_put_folio(iter, pos, written, folio);
-+	if (srcmap->flags & IOMAP_F_BUFFER_HEAD) {
-+		size_t bh_written;
- 
--	if (old_size < pos)
--		pagecache_isize_extended(iter->inode, old_size, pos);
-+		bh_written = block_write_end(NULL, iter->inode->i_mapping, pos,
-+					len, copied, &folio->page, NULL);
-+		WARN_ON_ONCE(bh_written != copied && bh_written != 0);
-+		return bh_written == copied;
-+	}
- 
--	return written == copied;
-+	return __iomap_write_end(iter->inode, pos, len, copied, folio);
- }
- 
- static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
-@@ -936,6 +921,7 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 
- 	do {
- 		struct folio *folio;
-+		loff_t old_size;
- 		size_t offset;		/* Offset into folio */
- 		size_t bytes;		/* Bytes to write to folio */
- 		size_t copied;		/* Bytes copied from user */
-@@ -987,6 +973,23 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 		written = iomap_write_end(iter, pos, bytes, copied, folio) ?
- 			  copied : 0;
- 
-+		/*
-+		 * Update the in-memory inode size after copying the data into
-+		 * the page cache.  It's up to the file system to write the
-+		 * updated size to disk, preferably after I/O completion so that
-+		 * no stale data is exposed.  Only once that's done can we
-+		 * unlock and release the folio.
-+		 */
-+		old_size = iter->inode->i_size;
-+		if (pos + written > old_size) {
-+			i_size_write(iter->inode, pos + written);
-+			iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
-+		}
-+		__iomap_put_folio(iter, pos, written, folio);
-+
-+		if (old_size < pos)
-+			pagecache_isize_extended(iter->inode, old_size, pos);
-+
- 		cond_resched();
- 		if (unlikely(written == 0)) {
- 			/*
-@@ -1357,6 +1360,7 @@ static loff_t iomap_unshare_iter(struct iomap_iter *iter)
- 			bytes = folio_size(folio) - offset;
- 
- 		ret = iomap_write_end(iter, pos, bytes, bytes, folio);
-+		__iomap_put_folio(iter, pos, bytes, folio);
- 		if (WARN_ON_ONCE(!ret))
- 			return -EIO;
- 
-@@ -1422,6 +1426,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 		folio_mark_accessed(folio);
- 
- 		ret = iomap_write_end(iter, pos, bytes, bytes, folio);
-+		__iomap_put_folio(iter, pos, bytes, folio);
- 		if (WARN_ON_ONCE(!ret))
- 			return -EIO;
- 
--- 
-2.39.2
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
