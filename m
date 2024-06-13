@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-214098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15817907F65
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:32:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE3A907F68
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D4C0B23863
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:32:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C11DEB220E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642A2155312;
-	Thu, 13 Jun 2024 23:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3218E155CB7;
+	Thu, 13 Jun 2024 23:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lb9BjgSb"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H757mI7r"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34A514B95B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 23:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D084F14EC7E
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 23:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718321502; cv=none; b=m4HobeGccAF87D3bNhcsH9WG24I7FRhkzArwSQBiWzCf1wxZgarQXqevIp3/3OOjcP4hWpQuRExeGRUccqz9y0tdOkKOlAj67kV5XFN0Sxen31UH24vwdkf6ZF+UUN8koEDhvgyQOFuYx5v0/hcItRpDKV8qxy3s71f+zH7KEqQ=
+	t=1718321503; cv=none; b=WZLV22dH4eWBVNO9lO39G6k8eo1YQU9ja6shyf/GNRuegB8bW5vJ8ri6jY9OUXSOfmUYYPVle+21jr9I7gfm3qTZaffUhKZV08eyMvNRZkUHwe8T/C/zjmTiElvrsLomd6+N7i3D+RpKpkHVWuGD/N64V1tDRixOn6DzKcwMA10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718321502; c=relaxed/simple;
-	bh=ABOAU2K5glRCpGOq5xujWwNgIlUPYqmruIjqw8FdZs0=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=tRPSfvD+5ywyLfVKH6zmpdE2gDxtWx7q1ZodrM+nDAcdS6RyQFD6RyeiKTdW7TQHXrS4tSo6o9ZqdB7PlJ8V5ThASpQ82hcYABMgtgtdpUOq3fErlFqpw1tk3BJAWD/XU+GPki55C5XiD7Cd05pgelJliw2EQv+M8yqiNNXo6kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lb9BjgSb; arc=none smtp.client-ip=209.85.219.201
+	s=arc-20240116; t=1718321503; c=relaxed/simple;
+	bh=ERrHbjKpSrLndzYhYX3mAlB26TR8JNOzocZcSDYCu0o=;
+	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
+	 To:Content-Type; b=gfnY+3mQrthKiN4BR2zDAMfXDt0CFZKp4OzHd+P4i4OPMW3KDpMZTU97fDqWeYjz86FwwnEHl1nGwTBReETOp1H9qLUqR1uqPKX14CZ4MFe1tbo+yDwnmNHRR46YdoCNro7sko574jm/VWsxAi3l5RlsvRFihCXKMYEUvuLRYZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H757mI7r; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dff189c7e65so264199276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:31:39 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-632591a256bso2762617b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:31:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718321499; x=1718926299; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bv/Fm1C1sIcT67jHqqKPUxG1mSp4iG3kEZiVQMnNilI=;
-        b=lb9BjgSb3jBKObX2dp5cW/Nn5vzHwJmX3HsKeIGj2nwVaCdIPEwlvcLvBdWHrdoV28
-         IoqgCuBZX6XNQ2rkZTAz4nesoDeXaoe5Qapi7NtKkxZnTchbi9l7ho7yQyJle6/hW58u
-         hUz4FwlAAlROaiUHeO07VsJX2a0g7/6aS036V6bTS23lydSnomJ1wOBgMenaqVKO3xWh
-         2Cw8tRSE6H33pC5sNBgMK8QRBZtqKo5ExPuj6bEB2vUa2mWnLLzYV/iOmSiiqkR6SBnM
-         7Rdxnc7MsClcXH3MteVN6vVgfGoen7VBbMRNKTljEIZTFpNWHIQ/aKMdOssMA9WoG4SN
-         PWbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718321499; x=1718926299;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+        d=google.com; s=20230601; t=1718321501; x=1718926301; darn=vger.kernel.org;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=bv/Fm1C1sIcT67jHqqKPUxG1mSp4iG3kEZiVQMnNilI=;
-        b=fafeWQPAjiuDpG6BVL4zYcER/T8Lzw1x2VG3cxUoCbUzh7gzNuWYf0vY79Re1Jx+mh
-         yRCGjWXOiWrcghulE00w4NHYOQWTzsX9MEPVfUZnWhMjTyMayJvfvVWNupS/alW1oloU
-         crEozJbjwzwHCxKlHQpizpzf6o5e/A1TrehxHcMahRWemcsMAa6y5VDz3bSCKN0hkJh3
-         CaSahROChHqJOS7RETGf2C6Wojju/3gmvu+knSduItIqIOf/BIMeeOss2VqsgXfkSJ9V
-         Bz+nh/MD74YBJtpekcJgUaZFbKOPtMqCAnTcAlWGFkD1y9yEd19KDgkIn6ItG3jN3BrE
-         hYVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfiYyOIDXIHUfmr7jVG995bM4Vks+t8FWqWH5gJ+3QqYBdG2GZd7kCgbD6xp6DdQWgTeCIRw820+0rL4o4bChCRY1wDOYxmb1vzC/O
-X-Gm-Message-State: AOJu0Yzi9xYsdnuHQ92RzeWLL7wjLUN70bNHy0v0RTc5ir1ghKEZ4EtW
-	fmcZ7DCxE0jjEzLiTwxkeC9WB+8F9pZp5t1aa7kCZK7lxSGZat449eq1a1AlIMU6EGwXrNKugbY
-	AWF9TqA==
-X-Google-Smtp-Source: AGHT+IEeElc3Y5HxcuYVce8c3qaAQhtxoPOeS2i+52eehdbxjLd+idIerVIBEsPYYq9g+NtXzt+B6SE6V2RK
+        bh=qbSOB/P6de3ygMIG7fdBTW+eS92Yyh1ZhXc/HewO9bA=;
+        b=H757mI7rXcdwMc7RqT84wjqCNsslS7Dbcq4i+lTRPlyCJ9P2El/c3bh/VmBHGTkl45
+         qeXaKeiIjnCG+LdUNZ1lx8Z3FTpbMkKA/SorZmkj5kaEqXF7L7TYi4eCK0SVCIKyGwQ/
+         Aeim6hodHDGdFKp9ZGhlMAach1u16QOKemf0iPa/wVMvm98cMakuQFj+4SOIDBm8s3rx
+         xFkI7uMEUiQzKE2LoTeo429sA8/TMcD7FZXRRl3tZgK1DPKgRr8N9Wh8PsKrF8xzpkOg
+         gqEE0rJlE8oPKohPLTealsZ/EYdeR1nVt0zp9ookmOHFb/iAqPbqg3CWkrYj2+eyPiny
+         lqaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718321501; x=1718926301;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qbSOB/P6de3ygMIG7fdBTW+eS92Yyh1ZhXc/HewO9bA=;
+        b=NBawFw/NdfiZKVLv7iHQWxgmkYC7zC3+Nmq7deWFjf27DJjId0GE7pfzeSUZxrcDca
+         Poj+7Ce1Kvu8SM48sm0h8CoLHb3sv4Khi9awqf8xBZ1/8AYnmTp7rqLtSjgk4iHVzUIv
+         19Mm/oEkfCq1RJuB+bat18ACR+C+dmApLYJJXAIgUYnNqTEGsWX9A5VnWtE8gueTDpXP
+         L7bowNNC3jo6mAIUJB090NYwOmxbjNwq6fcRksZx1tzbml134NtPzTnwB7hxbEUtCAB0
+         Dolrmlx8I/fbV3pwJ2sQ17Pk0G92D+Wsr7B3Tm3rALHlN69a2Hs/EbnPDU8CdDiR2TaN
+         yHNg==
+X-Forwarded-Encrypted: i=1; AJvYcCXB6Ec9ijtF4mYNd1zxPBsq5IJDASa48wI+fxrsHPlPLKnAD7KHpIXb/l2KElLuXby7KfvPATy4u37UWNtZO6qXef7bRqWrDxeEQYYm
+X-Gm-Message-State: AOJu0YzQClt/Aj/GhrfoT9YvrF9dFdRXYCMe2qD9Z5yMBHlXPTAiy2n1
+	lZFbum3+WvwmezHpg5Dpm6MBRSkUT71gNuu4BVBD5Te5B3Mq45J6+/a3ZQfFGja6rWrAhaztyVE
+	NESzxZg==
+X-Google-Smtp-Source: AGHT+IHE5wM91COFyENsSJs6TdkrEyube8x5jVXFZVcONmu94l5YziFn9V2oVKc/3BzWS0BiAYO2r5J5dtvN
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:96dd:26a6:1493:53c8])
- (user=irogers job=sendgmr) by 2002:a05:6902:2988:b0:dfa:4b20:bdaf with SMTP
- id 3f1490d57ef6-dff15470dfdmr79758276.13.1718321498506; Thu, 13 Jun 2024
- 16:31:38 -0700 (PDT)
-Date: Thu, 13 Jun 2024 16:31:14 -0700
-Message-Id: <20240613233122.3564730-1-irogers@google.com>
+ (user=irogers job=sendgmr) by 2002:a05:690c:d1b:b0:61d:ece5:2bf with SMTP id
+ 00721157ae682-6322265e839mr3417667b3.4.1718321500762; Thu, 13 Jun 2024
+ 16:31:40 -0700 (PDT)
+Date: Thu, 13 Jun 2024 16:31:15 -0700
+In-Reply-To: <20240613233122.3564730-1-irogers@google.com>
+Message-Id: <20240613233122.3564730-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240613233122.3564730-1-irogers@google.com>
 X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
-Subject: [PATCH v3 0/8] Refactor perf python module build
+Subject: [PATCH v3 1/8] perf build: Add '*.a' to clean targets
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -98,94 +101,42 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Refactor the perf python module build to instead of building C files
-it links libraries. To support this make static libraries for tests,
-ui, util and pmu-events. Doing this allows fewer functions to be
-stubbed out, importantly parse_events is no longer stubbed out which
-will improve the ability to work with heterogeneous cores.
+Fix some excessively long lines by deploying '\'.
 
-By not building .c files for the python module and for the build of
-perf, this should also help build times.
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/Makefile.perf | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-Patch 1 adds '*.a' cleanup to the clean target.
-
-Patches 2 to 6 add static libraries for existing parts of the perf
-build.
-
-Patch 7 adds the python build using libraries rather than C source
-files.
-
-Patch 8 cleans up the python dependencies and removes the no longer
-needed python-ext-sources.
-
-v3: Add missed xtensa directory for the util build. Remove adding the
-    arch directory to perf-y as it creates an empty object file that
-    breaks with GCC and LTO.
-v2: Add '*.a' cleanup to clean target. Add reviewed-by James Clark.
-
-Ian Rogers (8):
-  perf build: Add '*.a' to clean targets
-  perf ui: Make ui its own library
-  perf pmu-events: Make pmu-events a library
-  perf test: Make tests its own library
-  perf bench: Make bench its own library
-  perf util: Make util its own library
-  perf python: Switch module to linking libraries from building source
-  perf python: Clean up build dependencies
-
- tools/perf/Build                              |  14 +-
- tools/perf/Makefile.config                    |   5 +
- tools/perf/Makefile.perf                      |  83 +++-
- tools/perf/arch/Build                         |   5 +-
- tools/perf/arch/arm/Build                     |   4 +-
- tools/perf/arch/arm/tests/Build               |   8 +-
- tools/perf/arch/arm/util/Build                |  10 +-
- tools/perf/arch/arm64/Build                   |   4 +-
- tools/perf/arch/arm64/tests/Build             |   8 +-
- tools/perf/arch/arm64/util/Build              |  20 +-
- tools/perf/arch/csky/Build                    |   2 +-
- tools/perf/arch/csky/util/Build               |   6 +-
- tools/perf/arch/loongarch/Build               |   2 +-
- tools/perf/arch/loongarch/util/Build          |   8 +-
- tools/perf/arch/mips/Build                    |   2 +-
- tools/perf/arch/mips/util/Build               |   6 +-
- tools/perf/arch/powerpc/Build                 |   4 +-
- tools/perf/arch/powerpc/tests/Build           |   6 +-
- tools/perf/arch/powerpc/util/Build            |  24 +-
- tools/perf/arch/riscv/Build                   |   2 +-
- tools/perf/arch/riscv/util/Build              |   8 +-
- tools/perf/arch/s390/Build                    |   2 +-
- tools/perf/arch/s390/util/Build               |  16 +-
- tools/perf/arch/sh/Build                      |   2 +-
- tools/perf/arch/sh/util/Build                 |   2 +-
- tools/perf/arch/sparc/Build                   |   2 +-
- tools/perf/arch/sparc/util/Build              |   2 +-
- tools/perf/arch/x86/Build                     |   6 +-
- tools/perf/arch/x86/tests/Build               |  20 +-
- tools/perf/arch/x86/util/Build                |  42 +-
- tools/perf/arch/xtensa/Build                  |   2 +-
- tools/perf/bench/Build                        |  46 +-
- tools/perf/scripts/Build                      |   4 +-
- tools/perf/scripts/perl/Perf-Trace-Util/Build |   2 +-
- .../perf/scripts/python/Perf-Trace-Util/Build |   2 +-
- tools/perf/tests/Build                        | 140 +++----
- tools/perf/tests/workloads/Build              |  12 +-
- tools/perf/ui/Build                           |  18 +-
- tools/perf/ui/browsers/Build                  |  14 +-
- tools/perf/ui/tui/Build                       |   8 +-
- tools/perf/util/Build                         | 394 +++++++++---------
- tools/perf/util/arm-spe-decoder/Build         |   2 +-
- tools/perf/util/cs-etm-decoder/Build          |   2 +-
- tools/perf/util/hisi-ptt-decoder/Build        |   2 +-
- tools/perf/util/intel-pt-decoder/Build        |   2 +-
- tools/perf/util/perf-regs-arch/Build          |  18 +-
- tools/perf/util/python-ext-sources            |  53 ---
- tools/perf/util/python.c                      | 271 +++++-------
- tools/perf/util/scripting-engines/Build       |   4 +-
- tools/perf/util/setup.py                      |  33 +-
- 50 files changed, 625 insertions(+), 729 deletions(-)
- delete mode 100644 tools/perf/util/python-ext-sources
-
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 5c35c0d89306..acc41a6717db 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -1201,12 +1201,19 @@ endif # CONFIG_PERF_BPF_SKEL
+ bpf-skel-clean:
+ 	$(call QUIET_CLEAN, bpf-skel) $(RM) -r $(SKEL_TMP_OUT) $(SKELETONS) $(SKEL_OUT)/vmlinux.h
+ 
+-clean:: $(LIBAPI)-clean $(LIBBPF)-clean $(LIBSUBCMD)-clean $(LIBSYMBOL)-clean $(LIBPERF)-clean arm64-sysreg-defs-clean fixdep-clean python-clean bpf-skel-clean tests-coresight-targets-clean
+-	$(call QUIET_CLEAN, core-objs)  $(RM) $(LIBPERF_A) $(OUTPUT)perf-archive $(OUTPUT)perf-iostat $(LANG_BINDINGS)
+-	$(Q)find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '\.*.cmd' -delete -o -name '\.*.d' -delete -o -name '*.shellcheck_log' -delete
++clean:: $(LIBAPI)-clean $(LIBBPF)-clean $(LIBSUBCMD)-clean $(LIBSYMBOL)-clean $(LIBPERF)-clean \
++		arm64-sysreg-defs-clean fixdep-clean python-clean bpf-skel-clean \
++		tests-coresight-targets-clean
++	$(call QUIET_CLEAN, core-objs)  $(RM) $(LIBPERF_A) $(OUTPUT)perf-archive \
++		$(OUTPUT)perf-iostat $(LANG_BINDINGS)
++	$(Q)find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '*.a' -delete -o \
++		-name '\.*.cmd' -delete -o -name '\.*.d' -delete -o -name '*.shellcheck_log' -delete
+ 	$(Q)$(RM) $(OUTPUT).config-detected
+-	$(call QUIET_CLEAN, core-progs) $(RM) $(ALL_PROGRAMS) perf perf-read-vdso32 perf-read-vdsox32 $(OUTPUT)$(LIBJVMTI).so
+-	$(call QUIET_CLEAN, core-gen)   $(RM)  *.spec *.pyc *.pyo */*.pyc */*.pyo $(OUTPUT)common-cmds.h TAGS tags cscope* $(OUTPUT)PERF-VERSION-FILE $(OUTPUT)FEATURE-DUMP $(OUTPUT)util/*-bison* $(OUTPUT)util/*-flex* \
++	$(call QUIET_CLEAN, core-progs) $(RM) $(ALL_PROGRAMS) perf perf-read-vdso32 \
++		perf-read-vdsox32 $(OUTPUT)$(LIBJVMTI).so
++	$(call QUIET_CLEAN, core-gen)   $(RM)  *.spec *.pyc *.pyo */*.pyc */*.pyo \
++		$(OUTPUT)common-cmds.h TAGS tags cscope* $(OUTPUT)PERF-VERSION-FILE \
++		$(OUTPUT)FEATURE-DUMP $(OUTPUT)util/*-bison* $(OUTPUT)util/*-flex* \
+ 		$(OUTPUT)util/intel-pt-decoder/inat-tables.c \
+ 		$(OUTPUT)tests/llvm-src-{base,kbuild,prologue,relocation}.c \
+ 		$(OUTPUT)pmu-events/pmu-events.c \
 -- 
 2.45.2.627.g7a2c4fd464-goog
 
