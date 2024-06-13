@@ -1,156 +1,105 @@
-Return-Path: <linux-kernel+bounces-213315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788309073A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:27:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A10B8907402
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A78C1C249D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:27:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45B201F21262
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29211448E0;
-	Thu, 13 Jun 2024 13:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D481448F1;
+	Thu, 13 Jun 2024 13:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="e/MGrL8+"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0lfE3IM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F91C144313
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274FB1448E5;
+	Thu, 13 Jun 2024 13:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718285194; cv=none; b=GUczNivAR5UDDzVLxo+QrTsGN1SYfvATb0whW3IF2xBrsC5TczzBtZeJXrxFDBRnXIl0L3UDxTZzffJ/V/DBvfXgJvfWJgIVyvhGR7sU7BGGbEy9UdpgVtl+iTeeSA3+qduurpkDahzj0yGlMITVMuYXZhpwtUyp4cY/9Ogcxkg=
+	t=1718286029; cv=none; b=e4//FKztHDopa6z6/ExV5RV6XIU3NBZZKwfye+gT50WaN4CFb15FQOeHE/SiI9jxYRiEOeSvMs22kZV+NwKFKLOkRB/pYyDCpy7FSqojvQlUTv4G4VL8eqo+pBlLM0rCBJTAokHgYIRVfHQys8hRkllFyIcSrwavOhCKZw4tQBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718285194; c=relaxed/simple;
-	bh=+VJMgZQRZcXY+XqqyBb10ftV5KWKVE4YsJ45Lh+jfBo=;
+	s=arc-20240116; t=1718286029; c=relaxed/simple;
+	bh=m5QYFdAL+feMVH2MyIxXOPX2B5GR+B9Lzkpomys7T0Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R48ydtKre5uZWWIaJ9iqk+czwJT7ebT0nbgbbjuMjCyqT41WPqNHQI92VeHFxYcWsNNinCsq7lXQin9IUVEL+KIoiEn8vws0CQE5JiqQ3812eyeODJ7bfB2iahvw6xZ/aOylx5rxlP3dEWEILKX82hl00kz02ZrdvHD92h/Y8N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=e/MGrL8+; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=tUprEpyoXgVVP7tdG+ofk5Qz4PEKJ2KarjlpvuZlTsU=; b=e/MGrL8+xOYhZEXU
-	bmEvKC514mfD+U+3XRIXF569y37YutTiVhEOg8p6h115ixYV6uZdmCsZtuszpJjN0sziy9pbWN0s/
-	wcQx89bg0OnQNex673O8qlJvQ6g2xS4humZ6OkaCQKDhGY0kCPWK5FD46TlnGJ6+6vvo6ByA9fEvi
-	P8GI28DtZdAxnH3Cz/9tLHOet7go5MDPscy7I1YYu9WIdHVGtV4fZ2UzdHExXUlXyIlvL02f6+4yy
-	CQqGtjocTPHpKXxjz3p6+Sj/zbWphw/eiqhnL/A+nO1bxfFeA8jVayDa52VnT1W0VV5zSuYCDf2Ga
-	iQHHfxRWbElGyBO6pQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sHkTF-0062MC-0W;
-	Thu, 13 Jun 2024 13:26:29 +0000
-Date: Thu, 13 Jun 2024 13:26:29 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: mporter@kernel.crashing.org, alex.bou9@gmail.com
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rapidio: removse some dead defines
-Message-ID: <ZmrzhW4_ANIfbOYk@gallifrey>
-References: <20240528002515.211366-1-linux@treblig.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SRZo6axezFolQXOqviyHdbx0+s8O+8tT/DuSlD9gZ3844un2s/WTFtcDWEu0CYpgkBxUhNdZLVatiA72rxLyg+TJF/f/aEIVwV3mXrsW9NgNSKDUoFdwQ2/6TMU/T+T9UmDS4NEHrevPTouGehy8wROIB0yUVTRleVSrxUfK7FE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0lfE3IM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 755CEC2BBFC;
+	Thu, 13 Jun 2024 13:40:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718286028;
+	bh=m5QYFdAL+feMVH2MyIxXOPX2B5GR+B9Lzkpomys7T0Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z0lfE3IMyfPRo/fEuZj//DfvwmChfaVwJtt7MWWguxlpXtAP8pfRITgz/TSDtJLxC
+	 99HT8TGmCjrAs5DsXQsKJpcsjZPSePj0Eavv0J3I9uXagFy31pSGRqNVrlhjYaR0kq
+	 sAmTmjY07VInHqmOQ5m3vfyvP5eJN+XRPLyN7rhvfdhrYWOx7WYikaNDa+ZbckbCJZ
+	 ZjKIWVEamUEVaDmZYoPybFdt6dzXdx3BB4DLFrPUHMXBfFTKbNu3wHFOz5TJo8bhQl
+	 tu9JNRbVzmwxOqthBRrGJjgzVwu8cLasXJ2O81OgIJ4FZ1t4H2kDLv3CCdHavOHlya
+	 iOHeWAAfYetEQ==
+Date: Thu, 13 Jun 2024 21:26:37 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Haylen Chu <heylenay@outlook.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mmc: sdhci-of-dwcmshc: Use inverted-wp quirk for CV18xx
+ and SG200x SoCs
+Message-ID: <ZmrzjWQgKzlQqVVv@xhacker>
+References: <SEYPR01MB42219753E4388009470D958DD7FC2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+ <Zmrt-dcPR_ZXlYH-@xhacker>
+ <Zmrw_egJomoF0Tf3@xhacker>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240528002515.211366-1-linux@treblig.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 13:25:16 up 36 days, 39 min,  1 user,  load average: 0.03, 0.02,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <Zmrw_egJomoF0Tf3@xhacker>
 
-* linux@treblig.org (linux@treblig.org) wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Thu, Jun 13, 2024 at 09:15:50PM +0800, Jisheng Zhang wrote:
+> On Thu, Jun 13, 2024 at 09:03:24PM +0800, Jisheng Zhang wrote:
+> > On Fri, May 31, 2024 at 02:13:47PM +0000, Haylen Chu wrote:
+> > > MMC controller integrated in Sophgo CV18xx and SG200x SoCs has an
+> > > inverted write-protect flag, causing SDCards misdetected as read-only.
+> > > So set SDHCI_QURIK_INVERTED_WRITE_PROTECT to make write protection work
+> > > correctly.
+> > 
+> > No, I would rather set cd-inverted property in dts.
 > 
-> 'mport_dma_buf', 'rio_mport_dma_map' and 'MPORT_MAX_DMA_BUFS' were
-> added in the original
-> commit e8de370188d0 ("rapidio: add mport char device driver")
-> but never used.
-> 
-> 'rio_cm_work' was unused since the original
-> commit b6e8d4aa1110 ("rapidio: add RapidIO channelized messaging
-> driver")
-> but never used.
-> 
-> Remove them.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> wp-inverted
 
-Ping?
+hmm, if I read the SCH correctly, there's no wp pin at all, so
+disable-wp is better
 
-Dave
-
-> ---
->  drivers/rapidio/devices/rio_mport_cdev.c | 20 --------------------
->  drivers/rapidio/rio_cm.c                 |  6 ------
->  2 files changed, 26 deletions(-)
 > 
-> diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
-> index 27afbb9d544b..5c83741c3005 100644
-> --- a/drivers/rapidio/devices/rio_mport_cdev.c
-> +++ b/drivers/rapidio/devices/rio_mport_cdev.c
-> @@ -97,18 +97,6 @@ module_param(dbg_level, uint, S_IWUSR | S_IWGRP | S_IRUGO);
->  MODULE_PARM_DESC(dbg_level, "Debugging output level (default 0 = none)");
->  #endif
->  
-> -/*
-> - * An internal DMA coherent buffer
-> - */
-> -struct mport_dma_buf {
-> -	void		*ib_base;
-> -	dma_addr_t	ib_phys;
-> -	u32		ib_size;
-> -	u64		ib_rio_base;
-> -	bool		ib_map;
-> -	struct file	*filp;
-> -};
-> -
->  /*
->   * Internal memory mapping structure
->   */
-> @@ -131,14 +119,6 @@ struct rio_mport_mapping {
->  	struct file *filp;
->  };
->  
-> -struct rio_mport_dma_map {
-> -	int valid;
-> -	u64 length;
-> -	void *vaddr;
-> -	dma_addr_t paddr;
-> -};
-> -
-> -#define MPORT_MAX_DMA_BUFS	16
->  #define MPORT_EVENT_DEPTH	10
->  
->  /*
-> diff --git a/drivers/rapidio/rio_cm.c b/drivers/rapidio/rio_cm.c
-> index 9135227301c8..97287e838ce1 100644
-> --- a/drivers/rapidio/rio_cm.c
-> +++ b/drivers/rapidio/rio_cm.c
-> @@ -198,12 +198,6 @@ struct cm_peer {
->  	struct rio_dev *rdev;
->  };
->  
-> -struct rio_cm_work {
-> -	struct work_struct work;
-> -	struct cm_dev *cm;
-> -	void *data;
-> -};
-> -
->  struct conn_req {
->  	struct list_head node;
->  	u32 destid;	/* requester destID */
-> -- 
-> 2.45.1
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+> > > 
+> > > Fixes: 017199c2849c ("mmc: sdhci-of-dwcmshc: Add support for Sophgo CV1800B and SG2002")
+> > > Signed-off-by: Haylen Chu <heylenay@outlook.com>
+> > > ---
+> > >  drivers/mmc/host/sdhci-of-dwcmshc.c | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> > > index 39edf04fedcf..62b7f28de54f 100644
+> > > --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
+> > > +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> > > @@ -962,7 +962,8 @@ static const struct sdhci_pltfm_data sdhci_dwcmshc_th1520_pdata = {
+> > >  
+> > >  static const struct sdhci_pltfm_data sdhci_dwcmshc_cv18xx_pdata = {
+> > >  	.ops = &sdhci_dwcmshc_cv18xx_ops,
+> > > -	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+> > > +	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN |
+> > > +		  SDHCI_QUIRK_INVERTED_WRITE_PROTECT,
+> > >  	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
+> > >  };
+> > >  
+> > > -- 
+> > > 2.45.1
+> > > 
 
