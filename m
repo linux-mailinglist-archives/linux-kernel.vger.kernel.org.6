@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-213569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 597F7907720
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:42:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B5EB907701
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DA7D1C24445
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:42:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB151288CED
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC4714B96B;
-	Thu, 13 Jun 2024 15:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9CF148304;
+	Thu, 13 Jun 2024 15:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ILj8Ey+G"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TpSsq8cF"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FA0149C69;
-	Thu, 13 Jun 2024 15:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C9212DDAB;
+	Thu, 13 Jun 2024 15:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718293214; cv=none; b=jMa4TcLsRKii5eyDwZzfhGyo665BrIuatNNNi1RedKJfBgKnw7pV5qb8iNN7hXzAlNImmAcGM37ZAgSCKjoem7sCJf8lbJRCjqFo80TLvUc85Ph9pK9ZKXbRA3o7QiW6JRd2eXdQjwC/HtCPL6zX5QHQ5pw7nXv6JjR0ngISbd0=
+	t=1718293210; cv=none; b=rPnxdDNWGdaKw9DASKktF4VkzR/a0qFYZO/Vq97ecQuChczW2++JifYMihsGNPy/EdMDKoMJCbgU/1lKQXWQSTgjKM+RR4Zhz4R1UmT79Q09dYTwS5HVMvCMQaDctiF6zVf2ikZckfjHIjP2IXSFOb40v4ly4PCSZttBEAe59+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718293214; c=relaxed/simple;
-	bh=nL13IUFKFeXstid8TA1/JabYUB619clPMQ0nEcOTZSk=;
+	s=arc-20240116; t=1718293210; c=relaxed/simple;
+	bh=A+dXVVqm8DvHqPQe4kTNX+ClO2D6uvRYrjqfjtfbS78=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Yv0prRHCaDannbMYMBtwtGA6pSWxxo/tg2v7Fsrp8VP8ww3ekGTYoTMOGfEOcQc990L/2FIpgZJqVWqSqreIIPuMjUupTb5USc8UOpXa2hOZ+cu2sFA/7vArw7aBZEFArQD2dQXko48Rr4OOjog39WrRhqUMtMRK2wxAftwCW+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ILj8Ey+G; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version; b=PNnCLEdWSVoQEVjdQF0gS6bbiHFOyUySgZ+zlzEP/JoZlNGV6GCHTjJg7w+TIkN+VbubQMFGMkNRUbeJQsVNPk6iE9S+ElZfjJsAEqxKDFKfBa1SxmJtLLAa3M66JbvG/MSDbipbiKYPZm2wyRnDlSfJ8ZHOeTNifIabWpQTbtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TpSsq8cF; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DDoRSf002951;
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DEQSMW026603;
 	Thu, 13 Jun 2024 15:39:50 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
 	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=uLXUx7Jp3bWbE
-	FcECk7slBB0jNtnowMXhhGygxJBd8E=; b=ILj8Ey+GeP8nN2owTF8zsbzwpRcQj
-	qO8hJBDrYsWHvWkneuCadTPak54P+eMoO9lWl2FOhSUVpgP31wAQ8I0yLWn5X3L4
-	PQJ7GHenGzZzD1U2GlwV8XNM6BidA9yS2+kFZ8hwPssap+yZlF+RSYCt69fqq7fK
-	Cx7Y9gwdxrUj2hso+XG4MWf7caTzXpg7d1K6d2Qsw14nHavswhandJcqmQJWz/AF
-	rfeF5T3StB+ibSzvbvfLbokeTBY7kLBKfXnUwGEkeKFCzcMQCuR5zIlIvKQwU5q5
-	UFXYB1n4JNGut/DrvkVJrOLUgRY7lFy9XfSh7AvjA/YOG8z8RcPmnmTMw==
+	:content-transfer-encoding:mime-version; s=pp1; bh=pcK1rMwKAY+PK
+	8Ytyz/2vRX/RRHh9XTkiYTIv46ktrM=; b=TpSsq8cFzJnwe+u1suk+FoH+lPoVM
+	M0wKWuXfnzK24xPI/asMuY0NJLtc/QQp1E8CuZWPrRfAIxHh7L6vtwUO9WCobLCc
+	KNXiKGdxN5ltwzKdCslukI62H2Gbhtv2hih2dOS4Fc/upBNGBPSKnFsB4UcNYD/m
+	GnamVPbgk676OGVACc7WZ0WdSFjmdCc/P9o5+i/Mev0kxAq/u6yKK0HLzs0feBAK
+	5s5YgKXZaH+73ir1mf7kp7TYwWfeYek8KacEbuD+IY16WLmBo+BOs6St4lQ1OMHE
+	kFmWgE6lOV31MU2ov/KzIoIPMEnsolHL+WIQ12Z2d3gdXgK1F5hfsr1Yg==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yqy258xxg-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yqq4u2373-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Thu, 13 Jun 2024 15:39:49 +0000 (GMT)
-Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45DFdnRh021098;
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45DFdn8N009704;
 	Thu, 13 Jun 2024 15:39:49 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yqy258xxa-1
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yqq4u236x-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Thu, 13 Jun 2024 15:39:49 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45DEAxeS023597;
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45DEAZNn008701;
 	Thu, 13 Jun 2024 15:39:48 GMT
 Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yn3un0qgj-1
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yn4b3rk19-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Thu, 13 Jun 2024 15:39:48 +0000
 Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45DFdgvl55640438
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45DFdgpn54854064
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 13 Jun 2024 15:39:44 GMT
+	Thu, 13 Jun 2024 15:39:45 GMT
 Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 48EFF20063;
+	by IMSVA (Postfix) with ESMTP id CEE4A2006A;
 	Thu, 13 Jun 2024 15:39:42 +0000 (GMT)
 Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C9CA52004E;
-	Thu, 13 Jun 2024 15:39:41 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 5C27C20067;
+	Thu, 13 Jun 2024 15:39:42 +0000 (GMT)
 Received: from black.boeblingen.de.ibm.com (unknown [9.155.200.166])
 	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 13 Jun 2024 15:39:41 +0000 (GMT)
+	Thu, 13 Jun 2024 15:39:42 +0000 (GMT)
 From: Ilya Leoshkevich <iii@linux.ibm.com>
 To: Alexander Gordeev <agordeev@linux.ibm.com>,
         Alexander Potapenko <glider@google.com>,
@@ -93,78 +93,121 @@ Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
         Roman Gushchin <roman.gushchin@linux.dev>,
         Sven Schnelle <svens@linux.ibm.com>,
         Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH v4 17/35] mm: kfence: Disable KMSAN when checking the canary
-Date: Thu, 13 Jun 2024 17:34:19 +0200
-Message-ID: <20240613153924.961511-18-iii@linux.ibm.com>
+Subject: [PATCH v4 18/35] lib/zlib: Unpoison DFLTCC output buffers
+Date: Thu, 13 Jun 2024 17:34:20 +0200
+Message-ID: <20240613153924.961511-19-iii@linux.ibm.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240613153924.961511-1-iii@linux.ibm.com>
 References: <20240613153924.961511-1-iii@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ZkRkVKlaPl-5RHA19x1OqnW-klsEghkh
+X-Proofpoint-ORIG-GUID: Ftz9VuNKiSSNqeta_DO5F7fudUAWQDRT
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: I4PaEB_PP3Cvo4oOH-ZDVke6KXq6_-uP
-X-Proofpoint-GUID: X5BX2RWEHptsiw2F2Vy6DfHMQyyCihli
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_09,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- suspectscore=0 mlxscore=0 malwarescore=0 adultscore=0 impostorscore=0
- mlxlogscore=999 lowpriorityscore=0 bulkscore=0 priorityscore=1501
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130112
+ definitions=2024-06-13_08,2024-06-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ clxscore=1015 impostorscore=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406130109
 
-KMSAN warns about check_canary() accessing the canary.
+The constraints of the DFLTCC inline assembly are not precise: they
+do not communicate the size of the output buffers to the compiler, so
+it cannot automatically instrument it.
 
-The reason is that, even though set_canary() is properly instrumented
-and sets shadow, slub explicitly poisons the canary's address range
-afterwards.
+Add the manual kmsan_unpoison_memory() calls for the output buffers.
+The logic is the same as in [1].
 
-Unpoisoning the canary is not the right thing to do: only
-check_canary() is supposed to ever touch it. Instead, disable KMSAN
-checks around canary read accesses.
+[1] https://github.com/zlib-ng/zlib-ng/commit/1f5ddcc009ac3511e99fc88736a9e1a6381168c5
 
+Reported-by: Alexander Gordeev <agordeev@linux.ibm.com>
 Reviewed-by: Alexander Potapenko <glider@google.com>
-Tested-by: Alexander Potapenko <glider@google.com>
 Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
 ---
- mm/kfence/core.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ lib/zlib_dfltcc/dfltcc.h      |  1 +
+ lib/zlib_dfltcc/dfltcc_util.h | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
 
-diff --git a/mm/kfence/core.c b/mm/kfence/core.c
-index 964b8482275b..cce330d5b797 100644
---- a/mm/kfence/core.c
-+++ b/mm/kfence/core.c
-@@ -305,8 +305,14 @@ metadata_update_state(struct kfence_metadata *meta, enum kfence_object_state nex
- 	WRITE_ONCE(meta->state, next);
- }
+diff --git a/lib/zlib_dfltcc/dfltcc.h b/lib/zlib_dfltcc/dfltcc.h
+index b96232bdd44d..0f2a16d7a48a 100644
+--- a/lib/zlib_dfltcc/dfltcc.h
++++ b/lib/zlib_dfltcc/dfltcc.h
+@@ -80,6 +80,7 @@ struct dfltcc_param_v0 {
+     uint8_t csb[1152];
+ };
  
-+#ifdef CONFIG_KMSAN
-+#define CHECK_CANARY_ATTRIBUTES noinline __no_kmsan_checks
-+#else
-+#define CHECK_CANARY_ATTRIBUTES inline
-+#endif
++static_assert(offsetof(struct dfltcc_param_v0, csb) == 384);
+ static_assert(sizeof(struct dfltcc_param_v0) == 1536);
+ 
+ #define CVT_CRC32 0
+diff --git a/lib/zlib_dfltcc/dfltcc_util.h b/lib/zlib_dfltcc/dfltcc_util.h
+index 4a46b5009f0d..10509270d822 100644
+--- a/lib/zlib_dfltcc/dfltcc_util.h
++++ b/lib/zlib_dfltcc/dfltcc_util.h
+@@ -2,6 +2,8 @@
+ #ifndef DFLTCC_UTIL_H
+ #define DFLTCC_UTIL_H
+ 
++#include "dfltcc.h"
++#include <linux/kmsan-checks.h>
+ #include <linux/zutil.h>
+ 
+ /*
+@@ -20,6 +22,7 @@ typedef enum {
+ #define DFLTCC_CMPR 2
+ #define DFLTCC_XPND 4
+ #define HBT_CIRCULAR (1 << 7)
++#define DFLTCC_FN_MASK ((1 << 7) - 1)
+ #define HB_BITS 15
+ #define HB_SIZE (1 << HB_BITS)
+ 
+@@ -34,6 +37,7 @@ static inline dfltcc_cc dfltcc(
+ )
+ {
+     Byte *t2 = op1 ? *op1 : NULL;
++    unsigned char *orig_t2 = t2;
+     size_t t3 = len1 ? *len1 : 0;
+     const Byte *t4 = op2 ? *op2 : NULL;
+     size_t t5 = len2 ? *len2 : 0;
+@@ -59,6 +63,30 @@ static inline dfltcc_cc dfltcc(
+                      : "cc", "memory");
+     t2 = r2; t3 = r3; t4 = r4; t5 = r5;
+ 
++    /*
++     * Unpoison the parameter block and the output buffer.
++     * This is a no-op in non-KMSAN builds.
++     */
++    switch (fn & DFLTCC_FN_MASK) {
++    case DFLTCC_QAF:
++        kmsan_unpoison_memory(param, sizeof(struct dfltcc_qaf_param));
++        break;
++    case DFLTCC_GDHT:
++        kmsan_unpoison_memory(param, offsetof(struct dfltcc_param_v0, csb));
++        break;
++    case DFLTCC_CMPR:
++        kmsan_unpoison_memory(param, sizeof(struct dfltcc_param_v0));
++        kmsan_unpoison_memory(
++                orig_t2,
++                t2 - orig_t2 +
++                    (((struct dfltcc_param_v0 *)param)->sbb == 0 ? 0 : 1));
++        break;
++    case DFLTCC_XPND:
++        kmsan_unpoison_memory(param, sizeof(struct dfltcc_param_v0));
++        kmsan_unpoison_memory(orig_t2, t2 - orig_t2);
++        break;
++    }
 +
- /* Check canary byte at @addr. */
--static inline bool check_canary_byte(u8 *addr)
-+static CHECK_CANARY_ATTRIBUTES bool check_canary_byte(u8 *addr)
- {
- 	struct kfence_metadata *meta;
- 	unsigned long flags;
-@@ -341,7 +347,8 @@ static inline void set_canary(const struct kfence_metadata *meta)
- 		*((u64 *)addr) = KFENCE_CANARY_PATTERN_U64;
- }
- 
--static inline void check_canary(const struct kfence_metadata *meta)
-+static CHECK_CANARY_ATTRIBUTES void
-+check_canary(const struct kfence_metadata *meta)
- {
- 	const unsigned long pageaddr = ALIGN_DOWN(meta->addr, PAGE_SIZE);
- 	unsigned long addr = pageaddr;
+     if (op1)
+         *op1 = t2;
+     if (len1)
 -- 
 2.45.1
 
