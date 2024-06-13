@@ -1,109 +1,167 @@
-Return-Path: <linux-kernel+bounces-213533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5855A90768B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:25:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38C8E9076AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AC381C22978
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:25:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 357872897B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615AD1494D1;
-	Thu, 13 Jun 2024 15:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116F7149E08;
+	Thu, 13 Jun 2024 15:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=aros@gmx.com header.b="lfbBGsPk"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZvsXJYxP"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4DC143724
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92AC149C52;
+	Thu, 13 Jun 2024 15:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718292344; cv=none; b=qt4cq0ovbMiPgAoQPOLfVlJHBW0qM8ckipw1fbF98tV/3XiFhcXJplb/8cV3vAe5oX1XC46QMwMJ1ZAe2zvjfLBgehA3joDpPbnGj6C/qkoBGRANVZxZVI31jrXAz+aH1DV+bDyyYfl0XoW181aXT+Cnr6eFXQkhTCgKA00ITkE=
+	t=1718292459; cv=none; b=I9+cwDMX38sUsAwRhU5RSgdUVrP5ERPGKPtimJ/yP2MEMM5SmjaEI7HczjlQPIh+xqXXiT+zZtyuMw6egCczB0ZODinq/1mHJqBQ9u2+zqm1tL+sc6Ys75YphtWXjmcDEFnG6/uqvv6dUsNb/h1v37ByHLE8e1G18T+FA2AC9zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718292344; c=relaxed/simple;
-	bh=SgEJ2ArjUh5vk1nxaTV96c7J0UGDKG9ggNn/hv9QBVQ=;
-	h=Message-ID:Date:MIME-Version:Subject:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nJ/OMgumPU/D9C2+8ks01ExZqaZLU2meQYuM5/7XlieWBgmOWtmtnTM9nc3SW+OIDXIRT4JqPzEuful0TZq2O8v0SuG745Rux9auW1stB2ioQFzkKXH3mz1nC5lXncc4D6u5TQbcxFdqh7vENhB8U58wo+0ZqM9jN5w0g6sttqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=aros@gmx.com header.b=lfbBGsPk; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1718292299; x=1718897099; i=aros@gmx.com;
-	bh=Ygb1KSvOtuF6EFCGpBLSYEHo0+xaQK9o8HMczXZcc2U=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=lfbBGsPkPtGJJ+B9Y0PJoGY6Iiy1R9useqy8g9/usgSUvkKzXVMgPCz/YeloQDlS
-	 Q1NTOfy+AuxQJeuoZutFs/yfUAIwL9NfsoVZz86XXAVxaeF1w26/pPo55sIeUqmMe
-	 a7c4UZoC08QtZg9debjYIr2TIoqzMRJoWdqscxAtaLbzqxFLWM8h1GN95aIvcmq4K
-	 Ff+xEt9hIv/dfBtU+rbTNC+zN37BuCQFiXWnV5xxXKZlpjpJ9tn+09rxEthh1y0nN
-	 azKCw0affhr02Kuq0WpH12MlF0HnxhTcnp76tSsfWiYGqbby6PJubdZwQSuJ/u10K
-	 dGYFyqDFnuR/fbjvZw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [10.69.110.7] ([89.149.39.109]) by mail.gmx.net (mrgmx004
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1M59C2-1sIsFb0vH2-000nHx; Thu, 13
- Jun 2024 17:24:59 +0200
-Message-ID: <c87eae55-8159-4623-b68d-149ce8af590b@gmx.com>
-Date: Thu, 13 Jun 2024 15:24:57 +0000
+	s=arc-20240116; t=1718292459; c=relaxed/simple;
+	bh=nGyWR1dJ/Cx1/kNOjC/sFq0kgMjjBZAKk9JiNCTt1nU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ie8NWejDKrQszXvnnABekTrmd3b/Um2o6SKKy1+nul9x+u2yEzetG4CFm+sY4YA5Z0dgwXASUlbPuXBAPgYbiL6pahj40jW44pJZENXUhIfI1D4e/1b7dOzYA3DwPB3ynHtVBuXlI1H+4DMnu1zOZb8m5Ydwo0a15AsjzqwByAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZvsXJYxP; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LGtsgFmy+c+3jY1klBtEAn+SFOvN7+PibxqK++aoOQw=; b=ZvsXJYxP8UkMA2jQImJwq9hj8k
+	lnMacW7gxkiWWjInImcqZHz6qwzqOxkqqK5ifqaleu1y5CPmgGsrjqjzXgNmwhEr/fBbfxqnMIpQd
+	vza3Ug5c25Bgj8dwzQerlRaE5w/hl0FC2kppP1KTGuZXYymgQPndNEfAvFQiAaGeLJcIwqTntKwj6
+	VimCBobGx4Zds43cmQCEG5jPxWtqeS9hSyj1se5p1KfvJ7+qNL1FUQJHyHu3W6tPH0mUX4D1MrVTM
+	tbBBKbOLZmpABQNmBS0kJSUb+UpJOQeO8Wx8fIPqKWH7nLGgtoGoXk2anaroCu+J7rqqmauuZ8bJn
+	PL3MtXiA==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sHmMJ-0000000HAMB-4A70;
+	Thu, 13 Jun 2024 15:27:27 +0000
+Date: Thu, 13 Jun 2024 08:27:27 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
+	yang@os.amperecomputing.com, linmiaohe@huawei.com,
+	muchun.song@linux.dev, osalvador@suse.de,
+	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
+	brauner@kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org,
+	hare@suse.de, linux-kernel@vger.kernel.org,
+	Zi Yan <zi.yan@sent.com>, linux-xfs@vger.kernel.org,
+	p.raghav@samsung.com, linux-fsdevel@vger.kernel.org, hch@lst.de,
+	gost.dev@samsung.com, cl@os.amperecomputing.com,
+	john.g.garry@oracle.com
+Subject: Re: [PATCH v7 06/11] filemap: cap PTE range to be created to allowed
+ zero fill in folio_map_range()
+Message-ID: <ZmsP36zmg2-hgtak@bombadil.infradead.org>
+References: <20240607145902.1137853-1-kernel@pankajraghav.com>
+ <20240607145902.1137853-7-kernel@pankajraghav.com>
+ <ZmnyH_ozCxr_NN_Z@casper.infradead.org>
+ <ZmqmWrzmL5Wx2DoF@bombadil.infradead.org>
+ <818f69fa-9dc7-4ca0-b3ab-a667cd1fb16d@redhat.com>
+ <ZmqqIrv4Fms-Vi6E@bombadil.infradead.org>
+ <b3fef638-4f4a-4688-8a39-8dfa4ae88836@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: PC speaker doesn't work under Linux, works in GRUB/EFI
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Takashi Iwai <tiwai@suse.de>, Stas Sergeev <stsp@users.sourceforge.net>,
- Vsevolod Volkov <home+kernel@vvv.kiev.ua>
-References: <186367bb-9ed4-42de-add2-59d3f50ec170@gmx.com>
- <ZmrWlflQxZa0rdv1@duo.ucw.cz>
-Content-Language: en-US
-From: "Artem S. Tashkinov" <aros@gmx.com>
-In-Reply-To: <ZmrWlflQxZa0rdv1@duo.ucw.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:YlAaT/+X+GDvxD8jKFeumB3IEpWx0im190sFGMoiThjB0pgU51O
- mlwGQsbqAuE+ZXUnOqFKc91TNeDXLD4dAwqJ1+jZGqyYZkESkPBriG121wnbziD39lliwkf
- vfl+1DZnGs++9uCYy6xtexBgtQj1f00C6K+S3MTsti1SSR92ZsNrIHRhHsU6iCbB7ayWmtE
- 462V6GvtpXKwkDgAfkXkA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:gqOacp/jg6E=;FcmKKx7sFuqXmVcPFTY4tnlsZzz
- cRjdvf/04M+g1V/t5xg1ioU6wCN7toGeMTvWEHyIaME26UINU5UZPz6VwtaW/mnt3NZ6ri91k
- vtG3YhuijbRxL37oAGDmm26TZnERJiJZzIBwgfZai/l0wZy0/dMwlFP6+FaynE36Hwvtu3aig
- GL+WSj1TCntJsppjjLatI9CV5BfeAL4jaRX2BpS6x4sCJiytkgtfsiJ1WFaM7y3o9kT3D9qCU
- S8vVUwDkg0JomOEtvxPFVgKVLeiSZ9LZpXzH+5Um38EhLkJycFF8u1gtLYUr2i3duaqss79mZ
- 4RD4/kIyBotqOG79sKMfnPw8TqMpTRG0MmTPJL6wFDpC3sHy/Ylo5DGpAh8gEb2W9evD6dm0S
- ml8lSZt+aaX3sGiYjiIOg5uBb1UzWxw5RsY7juO6a3AsF4p8Hmbv3G6mDM+6e+6GqQGu9sHs1
- b//HfwL9MoKEmfn13nyaUdC0i1Vjr5DfKJw2d02H53agzkjiFEXdFgUOGx80Swi7h80YAcsjj
- 6pBw0M+WSGwUoMuhEl++dfePu5O674lfKKhWaKeRMb59smY5KvZq1CuFnyW9TxakLjTC+ArmK
- ZB6IQpPre2kUYCF+EXKcTs1jR9lnmrPp1BVA645U8Cdo+jyE8ukNqaFWEC3TsSMUwfCI2G/4u
- 9zz1cyW50qvJTkhKiNBQKg5VMQaVnPj3STWLJuutgHvO+MW6Y8jQZrYx83niCN8YFSlbPpJuR
- 8ghxNL4RNMWDnSZr7L/WDBoA51ajQ34oE3ohL+wIZcLo0Ld48QTSjCyIpj+C1Y3fCA2PyYWsu
- X+kd5Ai55xVyuzcWtQZ+Bi6557CdMfsDXLidougrQdSKc=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b3fef638-4f4a-4688-8a39-8dfa4ae88836@redhat.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-Works for me.
+On Thu, Jun 13, 2024 at 10:16:10AM +0200, David Hildenbrand wrote:
+> On 13.06.24 10:13, Luis Chamberlain wrote:
+> > On Thu, Jun 13, 2024 at 10:07:15AM +0200, David Hildenbrand wrote:
+> > > On 13.06.24 09:57, Luis Chamberlain wrote:
+> > > > On Wed, Jun 12, 2024 at 08:08:15PM +0100, Matthew Wilcox wrote:
+> > > > > On Fri, Jun 07, 2024 at 02:58:57PM +0000, Pankaj Raghav (Samsung) wrote:
+> > > > > > From: Pankaj Raghav <p.raghav@samsung.com>
+> > > > > > 
+> > > > > > Usually the page cache does not extend beyond the size of the inode,
+> > > > > > therefore, no PTEs are created for folios that extend beyond the size.
+> > > > > > 
+> > > > > > But with LBS support, we might extend page cache beyond the size of the
+> > > > > > inode as we need to guarantee folios of minimum order. Cap the PTE range
+> > > > > > to be created for the page cache up to the max allowed zero-fill file
+> > > > > > end, which is aligned to the PAGE_SIZE.
+> > > > > 
+> > > > > I think this is slightly misleading because we might well zero-fill
+> > > > > to the end of the folio.  The issue is that we're supposed to SIGBUS
+> > > > > if userspace accesses pages which lie entirely beyond the end of this
+> > > > > file.  Can you rephrase this?
+> > > > > 
+> > > > > (from mmap(2))
+> > > > >          SIGBUS Attempted access to a page of the buffer that lies beyond the end
+> > > > >                 of the mapped file.  For an explanation of the treatment  of  the
+> > > > >                 bytes  in  the  page that corresponds to the end of a mapped file
+> > > > >                 that is not a multiple of the page size, see NOTES.
+> > > > > 
+> > > > > 
+> > > > > The code is good though.
+> > > > > 
+> > > > > Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > > > 
+> > > > Since I've been curating the respective fstests test to test for this
+> > > > POSIX corner case [0] I wanted to enable the test for tmpfs instead of
+> > > > skipping it as I originally had it, and that meant also realizing mmap(2)
+> > > > specifically says this now:
+> > > > 
+> > > > Huge page (Huge TLB) mappings
+> > > 
+> > > Confusion alert: this likely talks about hugetlb (MAP_HUGETLB), not THP and
+> > > friends.
+> > > 
+> > > So it might not be required for below changes.
+> > 
+> > Thanks, I had to ask as we're dusting off this little obscure corner of
+> > the universe. Reason I ask, is the test fails for tmpfs with huge pages,
+> > and this patch fixes it, but it got me wondering the above applies also
+> > to tmpfs with huge pages.
+> 
+> Is it tmpfs with THP/large folios or shmem with hugetlb? I assume the tmpfs
+> with THP. There are not really mmap/munmap restrictions to THP and friends
+> (because it's supposed to be "transparent" :) ).
 
-Regards,
-Artem
+The case I tested that failed the test was tmpfs with huge pages (not
+large folios). So should we then have this:
 
-On 6/13/24 11:23 AM, Pavel Machek wrote:
-> On Sun 2024-06-02 12:53:26, Artem S. Tashkinov wrote:
->> Hello,
->>
->> There's a bug filed in the kernel bugzilla where Vsevolod is unable to
->> figure out why he cannot make his pc speaker work under Linux:
->>
->> https://bugzilla.kernel.org/show_bug.cgi?id=3D218918
->>
->> Strangely, it works just fine as an EFI module and a GRUB module.
->>
->> What are the ways to debug the issue?
->
-> Is PC speaker even expected to work under linux?
-> 								Pavel
+diff --git a/mm/filemap.c b/mm/filemap.c
+index ea78963f0956..649beb9bbc6b 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3617,6 +3617,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 	vm_fault_t ret = 0;
+ 	unsigned long rss = 0;
+ 	unsigned int nr_pages = 0, mmap_miss = 0, mmap_miss_saved, folio_type;
++	unsigned int align = PAGE_SIZE;
+ 
+ 	rcu_read_lock();
+ 	folio = next_uptodate_folio(&xas, mapping, end_pgoff);
+@@ -3636,7 +3637,16 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 		goto out;
+ 	}
+ 
+-	file_end = DIV_ROUND_UP(i_size_read(mapping->host), PAGE_SIZE) - 1;
++	/*
++	 * As per the mmap(2) mmap(), the offset must be a multiple of the
++	 * underlying huge page size. The system automatically aligns length to
++	 * be a multiple of the underlying huge page size.
++	 */
++	if (folio_test_pmd_mappable(folio) &&
++	    (shmem_mapping(mapping) || folio_test_hugetlb(folio)))
++		align = 1 << folio_order(folio);
++
++	file_end = DIV_ROUND_UP(i_size_read(mapping->host), align) - 1;
+ 	if (end_pgoff > file_end)
+ 		end_pgoff = file_end;
+ 
 
