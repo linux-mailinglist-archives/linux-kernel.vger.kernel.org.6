@@ -1,152 +1,83 @@
-Return-Path: <linux-kernel+bounces-213735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2B09079A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:20:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16AC39079A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 492941C23DBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:20:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A62FC2879C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB9F14A4C9;
-	Thu, 13 Jun 2024 17:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2730614AD22;
+	Thu, 13 Jun 2024 17:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gjlSjOR5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kXFfAgqG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F40A14A093;
-	Thu, 13 Jun 2024 17:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FA714A4D2;
+	Thu, 13 Jun 2024 17:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718299201; cv=none; b=uLn3LXHhpEPkDU8uvd16Yvn+1jUBlV4fgF+7HHXJd44vkUGsknlx4GpzvMYqHjjhyYfZP6C6exYkA5hj9Q8yOc4ERbXTX94RhUcTHmYMpRQaUgDuN+sx/14DKZTOyxgJnlSI6Mwu6eHg4NJ47zzRXFQhPsz7n51FLKQk5yGY+2s=
+	t=1718299213; cv=none; b=gxmUJFIinl5Iq9J2HDhdmpmKvTufg9IGeelcGsYe5Y7jiZmlJbnw8rJeyO04Lm3vPkEsx/hi7aHEWvc2QQS50tzRZoFtKMgDxi02jjjENUXSUhinjzsOIoDnIJjcoXO4tpxImJ5PvImSnSgoPUDRzZTHY7JWMQvgctiRBoUxaMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718299201; c=relaxed/simple;
-	bh=RmIpd1nTc1q4Ns6AOINhQ9/9u4E1Af4vqvSzsOt87Yw=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=uVhgi/05OKpi2n3cHXch22Ycl/WTRY5jltSZJpeEBfo441khCO7mkKGoBkFoAKGB9wadM48VGxQ3H8LAK/EFafnYtBV1sIgZ9vK/OclpgTfPnVQm6U28KvrCRrzQJYp8whQ5AP3k5JRXVUuXjpUHDJBx47QndpR4dA5NlKCcXUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gjlSjOR5; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718299197; x=1749835197;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=RmIpd1nTc1q4Ns6AOINhQ9/9u4E1Af4vqvSzsOt87Yw=;
-  b=gjlSjOR5q/hfWxiHDjGiAEd1HEW3IRsOzq7yInyMg7OhWaU3mC+dKmaf
-   ZqPTRrgkt2uFJYe2p2e3qiquHgDEbV0n2cSBUvKqFB7TRhdQ6Z1t8cZyq
-   U6TBxRcvVQOFx3+Y0GjK9dNLHkkN94/NXOvkMyZIxql1JWyyMQTYVEeGp
-   GIoTIITPxERS1Beku5rtbGJ5Rfh2RBUZj+IQhJXxCgr/yghVCCKSzuEBZ
-   /uKfTqsRIyrNgAZRkdj0hFe8rGWimLm76qRYYS6E4KnEmA3usNYZnr1MK
-   81pO0Eq0MCze31YLkHTgwEQr8cqdkyQsoVTISaZ4Wxz/IDBM3l8n3HRq1
-   Q==;
-X-CSE-ConnectionGUID: sEnjKcM0R3uwyZeYbfvbqg==
-X-CSE-MsgGUID: 4wRacEt1SHainxEdilpZ/A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="25726091"
-X-IronPort-AV: E=Sophos;i="6.08,235,1712646000"; 
-   d="scan'208";a="25726091"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 10:19:56 -0700
-X-CSE-ConnectionGUID: invZadp7R+ur/ZhVQAYztw==
-X-CSE-MsgGUID: Ae4SEmaGQEyLuXKXD6POJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,235,1712646000"; 
-   d="scan'208";a="77680971"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.209])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 10:19:51 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 13 Jun 2024 20:19:47 +0300 (EEST)
-To: Philipp Stanner <pstanner@redhat.com>
-cc: Hans de Goede <hdegoede@redhat.com>, 
-    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-    Maxime Ripard <mripard@kernel.org>, 
-    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-    Daniel Vetter <daniel@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>, 
-    Sam Ravnborg <sam@ravnborg.org>, dakr@redhat.com, 
-    dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
-    linux-pci@vger.kernel.org
-Subject: Re: [PATCH v7 09/13] PCI: Give pcim_set_mwi() its own devres
- callback
-In-Reply-To: <20240605081605.18769-11-pstanner@redhat.com>
-Message-ID: <17445053-18a1-a56d-79d0-3b3d3ecab033@linux.intel.com>
-References: <20240605081605.18769-2-pstanner@redhat.com> <20240605081605.18769-11-pstanner@redhat.com>
+	s=arc-20240116; t=1718299213; c=relaxed/simple;
+	bh=Apy/YJfzCXG5qBffjVb5Em/7Y/ajo8ZRh+LCsukDKns=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ifx9IjiCMm46I1p1wTvzGACANJBojIW3v8ckfBxhZvcRFSKHthJp9Co45mAuit4PeIM4jbW5/2+iQf1Sm85XkmRtjno3btbPmP4e23PD8xDFvmJGICWusS6pXPeB1ADvzlZQvpcDZSNANHNWwXBIZqst5a6k+PJdXFF6lFdMn6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kXFfAgqG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66789C2BBFC;
+	Thu, 13 Jun 2024 17:20:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718299212;
+	bh=Apy/YJfzCXG5qBffjVb5Em/7Y/ajo8ZRh+LCsukDKns=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=kXFfAgqGGfRDajw1ZdSl8ujZ8VNXRrUmaB5qtDjpeh2Z+N7taNOmSuloB3JcuLlxY
+	 cQn7auRp4fQYw9q4qszuzglsJCU4SucZjkUAaahDbFKjsIUGkRvXpP28EcpM0Agd9K
+	 n8d6bfEiH0f0BmM9k7yQCnIqphMMFwSJc9DQSOvYG5VyhINGHmMerx0TozM2JWMXJX
+	 jp0xnrq5xZme5OE7Lfk6dn0LQxUWD094vSQxaCEtvXPP0ZS3q3C5r0ygn1by4LYoFv
+	 98QoRL7uyWnk0lrdx5nK4cw8ssU22dTHjOyn6y7qQGitRvmteIrGdvFrr/zCW+s5Bf
+	 yMtoAR8UHUmOQ==
+From: Lee Jones <lee@kernel.org>
+To: Daniel Thompson <daniel.thompson@linaro.org>, 
+ Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, 
+ Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <20240612-md-drivers-video-backlight-v1-1-f4ca1beb36cc@quicinc.com>
+References: <20240612-md-drivers-video-backlight-v1-1-f4ca1beb36cc@quicinc.com>
+Subject: Re: (subset) [PATCH] backlight: add missing MODULE_DESCRIPTION()
+ macros
+Message-Id: <171829921116.2731555.2620177411029795057.b4-ty@kernel.org>
+Date: Thu, 13 Jun 2024 18:20:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Wed, 5 Jun 2024, Philipp Stanner wrote:
-
-> Managing pci_set_mwi() with devres can easily be done with its own
-> callback, without the necessity to store any state about it in a
-> device-related struct.
+On Wed, 12 Jun 2024 07:12:31 -0700, Jeff Johnson wrote:
+> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/platform_lcd.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/rt4831-backlight.o
 > 
-> Remove the MWI state from struct pci_devres.
-> Give pcim_set_mwi() a separate devres-callback.
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
 > 
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> ---
->  drivers/pci/devres.c | 29 ++++++++++++++++++-----------
->  drivers/pci/pci.h    |  1 -
->  2 files changed, 18 insertions(+), 12 deletions(-)
 > 
-> diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-> index 936369face4b..0bafb67e1886 100644
-> --- a/drivers/pci/devres.c
-> +++ b/drivers/pci/devres.c
-> @@ -361,24 +361,34 @@ void __iomem *devm_pci_remap_cfg_resource(struct device *dev,
->  }
->  EXPORT_SYMBOL(devm_pci_remap_cfg_resource);
->  
-> +static void __pcim_clear_mwi(void *pdev_raw)
-> +{
-> +	struct pci_dev *pdev = pdev_raw;
-> +
-> +	pci_clear_mwi(pdev);
-> +}
-> +
->  /**
->   * pcim_set_mwi - a device-managed pci_set_mwi()
-> - * @dev: the PCI device for which MWI is enabled
-> + * @pdev: the PCI device for which MWI is enabled
->   *
->   * Managed pci_set_mwi().
->   *
->   * RETURNS: An appropriate -ERRNO error value on error, or zero for success.
->   */
-> -int pcim_set_mwi(struct pci_dev *dev)
-> +int pcim_set_mwi(struct pci_dev *pdev)
->  {
-> -	struct pci_devres *dr;
-> +	int ret;
->  
-> -	dr = find_pci_dr(dev);
-> -	if (!dr)
-> -		return -ENOMEM;
-> +	ret = devm_add_action(&pdev->dev, __pcim_clear_mwi, pdev);
-> +	if (ret != 0)
-> +		return ret;
-> +
-> +	ret = pci_set_mwi(pdev);
-> +	if (ret != 0)
-> +		devm_remove_action(&pdev->dev, __pcim_clear_mwi, pdev);
+> [...]
 
-I'm sorry if this is a stupid question but why this cannot use 
-devm_add_action_or_reset()?
+Applied, thanks!
 
-> -	dr->mwi = 1;
-> -	return pci_set_mwi(dev);
-> +	return ret;
->  }
->  EXPORT_SYMBOL(pcim_set_mwi);
+[1/1] backlight: add missing MODULE_DESCRIPTION() macros
+      commit: 7857f5c38d04a38e7a20060a6d370caf0424aa4e
 
--- 
- i.
+--
+Lee Jones [李琼斯]
 
 
