@@ -1,94 +1,187 @@
-Return-Path: <linux-kernel+bounces-213276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85BC0907363
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:17:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127F2907318
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AB5C1F21FDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:17:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6113FB229B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6676BA94D;
-	Thu, 13 Jun 2024 13:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6995142E81;
+	Thu, 13 Jun 2024 13:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FN/YXXTf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Kdljq+ne"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40DA9449;
-	Thu, 13 Jun 2024 13:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3E91EEE0
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 13:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718284632; cv=none; b=GINDdsXRjBbeqmrmLM1qGVzBLWZORJCAlnH5i+Ym8FqfJjn+hBEV73Zz/7+UiiqCWb7TnoXrhpAFzn8FZ3wbBUdojydDF0jIyM7yO5YS1yhQZ3dRNbJTYHrpVbP4uCAGULEzMcnwOGwxIHUodVFp3aV52YDuN5Nn/AZMNOhmRws=
+	t=1718283829; cv=none; b=a36eLTrnKqz9+RSYtIkOJVXEg6qx+bcF87eyY3mbiIWrpsy3EnwoS83mgNl5fituQ/Tq0KUFDgCzM56QyaiPOeKMt/yL03A9wNqs5zjOarNQPA+8DyuqlZZVV1K89xbU9AA0wO3Dl4GYpfmgWwmFt+rrCScze05U6LpRYRnlJe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718284632; c=relaxed/simple;
-	bh=JfrHfE5+wnDYBc2X9VtRgknSQ9saw1R3/iTpUCH9BvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RZvMEJMAJEognwFOcCPO6IWiiyKQWivVdSvur9wKR0C+9V8IdPIcruxwyQXqHoY9+wAHGPN38f2VNNsQbixxAe32z4mAsTE5b2ujIlP5a1qgexjV1WL5dNVq7ErFwV4pTdbbbtrHH5eMJxFUiT5Kp9cotNQTG1uSoJiZsTrFGbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FN/YXXTf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4AEEC2BBFC;
-	Thu, 13 Jun 2024 13:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718284632;
-	bh=JfrHfE5+wnDYBc2X9VtRgknSQ9saw1R3/iTpUCH9BvE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FN/YXXTfFlj5TBAZkWQYn5iGGeI1YxwT+7U2UH1v2gP0eiqakofHTI/1ITWPmE0/h
-	 e0hXtLxzPQhuQGHtC2TBz4TOVtIg1tbM/NxZ7TiV4WnfocY4rknXbE5OK+hWFeoKHp
-	 odyJol4pNo4rwKy9RX9KAc0Li2dLqE8fkUY0rbO22djo5QxhZUYiGh4gzJl6XkhwGm
-	 TjbwBiRIlV+UO/9OH/uRXNJsdiAzUjPQ3z3NijkbC9EEj/B8KlEvvY82XFw/bmGh0d
-	 oylavdJe4YlgsLLjapFSASlDcQc9R5eb95TjZNYO1IIbF8Ueytu+p9jziy/EUxHlp/
-	 XRG4SnanyDiAA==
-Date: Thu, 13 Jun 2024 21:03:20 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Haylen Chu <heylenay@outlook.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mmc: sdhci-of-dwcmshc: Use inverted-wp quirk for CV18xx
- and SG200x SoCs
-Message-ID: <Zmrt-dcPR_ZXlYH-@xhacker>
-References: <SEYPR01MB42219753E4388009470D958DD7FC2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+	s=arc-20240116; t=1718283829; c=relaxed/simple;
+	bh=rtLvmoxF2GmE00Hjcc/m71WlsFSqlYRWin0XbuHJRug=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=MYPIxo5zeg9Bd0euGsFl+LTAmjiEwiBP7bT3KJzQRo0XzCzxByAChtyCd5eKOaUCLSVefgIBhL4Qw0ngQ7YH5QGgK2m7706Cf7p1gCCRNK3MMykdvLpg61sXynyVoZK0hUZKKMP0Oj1NdspKDRHzqxQi+PafIZV++sUJPvWntBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Kdljq+ne; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1718283818; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=ahK598NWCKIbMN4pSV4HjInQjG/PYTNh2ZbeXe9IKmU=;
+	b=Kdljq+ney8qigU0gUsF7NZnKHdrQD9YYXLC2NuaHZxty2P7BsqQKSfK9mrXQwm9jp+aNoxun/+PcgVqo+iS20ljdJiO3E9hgUqPgyiRYjqcVpsisd5E4LT2NNc8wehH4Hdz4KdeoWFILUY0ehiOlliM0/xVQSZJGD3/3DMG3mes=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R871e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W8O9S4d_1718283817;
+Received: from 30.97.56.57(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8O9S4d_1718283817)
+          by smtp.aliyun-inc.com;
+          Thu, 13 Jun 2024 21:03:38 +0800
+Message-ID: <b0e6a8b1-a32c-459e-ae67-fde5d28773e6@linux.alibaba.com>
+Date: Thu, 13 Jun 2024 21:03:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <SEYPR01MB42219753E4388009470D958DD7FC2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [mm?] KASAN: slab-use-after-free Read in finish_fault
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+To: syzbot <syzbot+d6e5c328862b5ae6cbfe@syzkaller.appspotmail.com>,
+ akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ syzkaller-bugs@googlegroups.com
+References: <000000000000e21956061ac3eff0@google.com>
+ <4e578713-c907-4bec-b2c2-f585772eae13@linux.alibaba.com>
+In-Reply-To: <4e578713-c907-4bec-b2c2-f585772eae13@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 31, 2024 at 02:13:47PM +0000, Haylen Chu wrote:
-> MMC controller integrated in Sophgo CV18xx and SG200x SoCs has an
-> inverted write-protect flag, causing SDCards misdetected as read-only.
-> So set SDHCI_QURIK_INVERTED_WRITE_PROTECT to make write protection work
-> correctly.
 
-No, I would rather set cd-inverted property in dts.
+
+On 2024/6/13 20:08, Baolin Wang wrote:
 > 
-> Fixes: 017199c2849c ("mmc: sdhci-of-dwcmshc: Add support for Sophgo CV1800B and SG2002")
-> Signed-off-by: Haylen Chu <heylenay@outlook.com>
-> ---
->  drivers/mmc/host/sdhci-of-dwcmshc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> index 39edf04fedcf..62b7f28de54f 100644
-> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> @@ -962,7 +962,8 @@ static const struct sdhci_pltfm_data sdhci_dwcmshc_th1520_pdata = {
->  
->  static const struct sdhci_pltfm_data sdhci_dwcmshc_cv18xx_pdata = {
->  	.ops = &sdhci_dwcmshc_cv18xx_ops,
-> -	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-> +	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN |
-> +		  SDHCI_QUIRK_INVERTED_WRITE_PROTECT,
->  	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
->  };
->  
-> -- 
-> 2.45.1
+> On 2024/6/13 19:38, syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    d35b2284e966 Add linux-next specific files for 20240607
+>> git tree:       linux-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=178b77ba980000
+>> kernel config:  
+>> https://syzkaller.appspot.com/x/.config?x=d8bf5cd6bcca7343
+>> dashboard link: 
+>> https://syzkaller.appspot.com/bug?extid=d6e5c328862b5ae6cbfe
+>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for 
+>> Debian) 2.40
+>> syz repro:      
+>> https://syzkaller.appspot.com/x/repro.syz?x=174c680a980000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111b9696980000
+>>
+>> Downloadable assets:
+>> disk image: 
+>> https://storage.googleapis.com/syzbot-assets/e0055a00a2cb/disk-d35b2284.raw.xz
+>> vmlinux: 
+>> https://storage.googleapis.com/syzbot-assets/192cbb8cf833/vmlinux-d35b2284.xz
+>> kernel image: 
+>> https://storage.googleapis.com/syzbot-assets/57804c9c9319/bzImage-d35b2284.xz
+>>
+>> The issue was bisected to:
+>>
+>> commit 1c05047ad01693ad92bdf8347fad3b5c2b25e8bb
+>> Author: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> Date:   Tue Jun 4 10:17:45 2024 +0000
+>>
+>>      mm: memory: extend finish_fault() to support large folio
+>>
+>> bisection log:  
+>> https://syzkaller.appspot.com/x/bisect.txt?x=11267f94980000
+>> final oops:     
+>> https://syzkaller.appspot.com/x/report.txt?x=13267f94980000
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=15267f94980000
+>>
+>> IMPORTANT: if you fix the issue, please add the following tag to the 
+>> commit:
+>> Reported-by: syzbot+d6e5c328862b5ae6cbfe@syzkaller.appspotmail.com
+>> Fixes: 1c05047ad016 ("mm: memory: extend finish_fault() to support 
+>> large folio")
+>>
+>> ==================================================================
+>> BUG: KASAN: use-after-free in ptep_get include/linux/pgtable.h:317 
+>> [inline]
+>> BUG: KASAN: use-after-free in ptep_get_lockless 
+>> include/linux/pgtable.h:581 [inline]
+>> BUG: KASAN: use-after-free in pte_range_none mm/memory.c:4409 [inline]
+>> BUG: KASAN: use-after-free in finish_fault+0xf87/0x1460 mm/memory.c:4905
+>> Read of size 8 at addr ffff88807bfb7000 by task syz-executor149/5117
+>>
+>> CPU: 0 PID: 5117 Comm: syz-executor149 Not tainted 
+>> 6.10.0-rc2-next-20240607-syzkaller #0
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, 
+>> BIOS Google 04/02/2024
+>> Call Trace:
+>>   <TASK>
+>>   __dump_stack lib/dump_stack.c:91 [inline]
+>>   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:117
+>>   print_address_description mm/kasan/report.c:377 [inline]
+>>   print_report+0x169/0x550 mm/kasan/report.c:488
+>>   kasan_report+0x143/0x180 mm/kasan/report.c:601
+>>   ptep_get include/linux/pgtable.h:317 [inline]
+>>   ptep_get_lockless include/linux/pgtable.h:581 [inline]
+>>   pte_range_none mm/memory.c:4409 [inline]
+>>   finish_fault+0xf87/0x1460 mm/memory.c:4905
+>>   do_read_fault mm/memory.c:5052 [inline]
+>>   do_fault mm/memory.c:5178 [inline]
+>>   do_pte_missing mm/memory.c:3948 [inline]
+>>   handle_pte_fault+0x3db5/0x7130 mm/memory.c:5502
+>>   __handle_mm_fault mm/memory.c:5645 [inline]
+>>   handle_mm_fault+0x10df/0x1ba0 mm/memory.c:5810
+>>   faultin_page mm/gup.c:1339 [inline]
+>>   __get_user_pages+0x6ef/0x1590 mm/gup.c:1638
+>>   populate_vma_page_range+0x264/0x330 mm/gup.c:2078
+>>   __mm_populate+0x27a/0x460 mm/gup.c:2181
+>>   mm_populate include/linux/mm.h:3442 [inline]
+>>   __do_sys_remap_file_pages mm/mmap.c:3177 [inline]
+>>   __se_sys_remap_file_pages+0x7a1/0x9a0 mm/mmap.c:3103
+>>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
 > 
+> Thanks for reporting. I think the problem is I should also consider the 
+> pagetable of PMD size in case the pte entry overflows. I will fix this 
+> issue ASAP.
+
+I create following fix to avoid beyonding the PMD pagetable size.
+
+diff --git a/mm/memory.c b/mm/memory.c
+index 54d7d2acdf39..92c61800dfb4 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4878,13 +4878,16 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+                 pgoff_t idx = folio_page_idx(folio, page);
+                 /* The page offset of vmf->address within the VMA. */
+                 pgoff_t vma_off = vmf->pgoff - vmf->vma->vm_pgoff;
++               /* The index of the entry in the pagetable for fault 
+page. */
++               pgoff_t pte_off = pte_index(vmf->address);
+
+                 /*
+                  * Fallback to per-page fault in case the folio size in 
+page
+-                * cache beyond the VMA limits.
++                * cache beyond the VMA limits and PMD pagetable limits.
+                  */
+                 if (unlikely(vma_off < idx ||
+-                            vma_off + (nr_pages - idx) > vma_pages(vma))) {
++                            vma_off + (nr_pages - idx) > vma_pages(vma) ||
++                            pte_off < idx || pte_off + (nr_pages - idx) 
+ > PTRS_PER_PTE - 1)) {
+                         nr_pages = 1;
+                 } else {
+                         /* Now we can set mappings for the whole large 
+folio. */
 
