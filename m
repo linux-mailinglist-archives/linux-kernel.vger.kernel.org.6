@@ -1,238 +1,175 @@
-Return-Path: <linux-kernel+bounces-213057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7043E906A71
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:50:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01DCF906A73
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BB25281846
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:50:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 828CF1F223C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C85813DB99;
-	Thu, 13 Jun 2024 10:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A841514291D;
+	Thu, 13 Jun 2024 10:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Suh0MZp8"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CjIn4ui/"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B433142631;
-	Thu, 13 Jun 2024 10:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B57A142909
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718275848; cv=none; b=V1k6sAotTYnRP2i7c8x98m1nnkSI+UextxQIm/oSp6kIg7gYC3Du8OV/sCrOgrfyjriTAkFt+fv9qKl6JBYtvDBCw3rpM3rDBSWlTSkrfz8+qlhjD7iIZz2KvUmxQvlHb04GS6dYDT1GBMO4oK4rEXyz6i1Kliq377oaWHdKpRA=
+	t=1718275855; cv=none; b=cC6oacdQV962jRuFoI7MiDspU8/NgYYdGVKhJCan4/GfzLC4RaOVlvMuULTKu/7kldL5OVM3dUN4mfHYTQHyTPYcOh8v3ynS2wfcIcYf6W/mMtnvdHKHzVLIG7Yy/7echjVUNOcWDiqzkVo2XlVkYv0+70l8TxlmREqdqvOp88w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718275848; c=relaxed/simple;
-	bh=5PRbk3AfRxbmJsHY0erLSVKn/uDgUayeXpe4gOIVmlw=;
+	s=arc-20240116; t=1718275855; c=relaxed/simple;
+	bh=UgyBUaw5Cfb+8mR7p+p9qMbx6BdW9rHq+TZllqNkmHo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oIvGN64D/Mo6K1X2HtTjk6vf2BwmLBy3CSZrIespwsZKsZYkgAP5n60Zr433haHwYXBDc8NH/yKKZRLIqRGBY21n7DP2je1cLEzyAR8aSJVJYwRd+WqIKYkO3LyQGrDunFky0vT2TBJe3qXS6OqJeShwfr1c1I15g3OMROg7N4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Suh0MZp8; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52c89d6b4adso863037e87.3;
-        Thu, 13 Jun 2024 03:50:45 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FjqFJCJSkupfBYJQvvDBe961yX2v7PvE+lFppW8itD8xuTYvJQrnbr80N/VK3U/k1S4XpSXDhg7hCJkYyXX6wRFec8UL/bveyAQz+Elx+aHt9M6O1A4C+xyg7zARGh9GyEL8qZpyqscj5QG9kFqQBN6dFCJWop3/47UPU0wak3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CjIn4ui/; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso9595041fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 03:50:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718275844; x=1718880644; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718275852; x=1718880652; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fUOHZLqPwwXewI3YyWEmg6L7w15o022jE/kig0+VapA=;
-        b=Suh0MZp8YF4qHrKXVTrCOdV8n9EPWY7fM2h4RzPB/Gckxu/0f9/RsgSs6k/CXA0Jyb
-         sFX+x3Wc/EYc9qMl1VB3oN6GuFtflBVzhPnBoZIBrGLeFwL0JruSqVN2SyVL0boKWPws
-         fvHoEAmbsepM2PmVOGE2P83PPBvvuxpZnA85++heeXiPztUsyDokSmLbCPzAqeZkyCX6
-         ACtFplHHb38yA413WjLGPWWaN0gBLQnxDJ5FjgoMDHzPzpA+e5EvaWxvanIh7x0W6FrQ
-         GVlLE17z+CByZu4+W9gMnziA6Trnp/uWaK+e2KTWJePI4TPdfwP4udlXU9of6YhRa8Ev
-         WWdA==
+        bh=P8BVG4kRdfLOofP57LybYLwKmto1z7Z4ok3Ssg9M2l0=;
+        b=CjIn4ui/YvRaowrgfceqe7Bo0UxdNRXTeNdM+32ASt5jH/ft/7svKxiT9e5gSndnW+
+         lTfj6PFeTBao7nFCAWL8tSQhOjDk2mWNZ44dRKgpBX/2XOGyBLn4cEzdQicSR7F91/nF
+         AU3IJwDkXkPBLdShGb9h7gK4SCzTTbSh/+FHvQCT/QY89NyPYRVRQxcuDlDIhmZrfp7G
+         K/T+/Duz/MTvuaxgavpO7dXWpjzpvXvf2+aLfOYA034IJn1Ny6bRh+wyWq86CcjsbrMr
+         qAyOuIEWkFujRgAN+xazaaOQBF5tBxWpFVm2xj0q0cDQ+2Ep5eeGXd2aeJhvSgTQnXhf
+         Yw1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718275844; x=1718880644;
+        d=1e100.net; s=20230601; t=1718275852; x=1718880652;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fUOHZLqPwwXewI3YyWEmg6L7w15o022jE/kig0+VapA=;
-        b=VQDoaYVhzUITmCDZMPKZXb2xpxPMaZb2+yUxf29VdsOYzikXbxb7YySVxb85cFMfXf
-         Yz6d3P1DKa5otS3/UIKwKEJB5cyzoPR7UGN/85OcdlpB1Gs1bPs8qQKiW7wyp2l1PT/C
-         I5p/0qstw6Xw2GQ8klcIRHqYr3YN/Hk7Erq329C3HA0XeKH/725HPeapi+w/zL2ZqpUT
-         Zg7Md7GihogsKDLGZrLQkrHv9ShOlTWxTVR+ORPzjQkoi20Lus8ulve1HMNEk0TAoXay
-         Q8yw5ApyqY2BwRrgy6MYNzdZ5CHpFzUNuGJtrWamlaB7mjM4cqYBCkYc3MUbDI2qeXrh
-         R4dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFHxWFtPh4LbYJ0cF81yKk4oVD07u4cmm1kqAX9/flP+Bv9dQDwcPmaPV/XnZZDz59/EXBKp+dZpSITch+1BN3zE/6Lb3vwMFhJGquNmLxjFhRn/lcBXJ1kGlHGXmCV0ZbUBZKWhSq3L4Kaw==
-X-Gm-Message-State: AOJu0Yxw4tSWyDpxFwWwjevQfnkDmvWQI6+g6irwFyOgmd0uJAPdMepQ
-	HHwKgEy62jD9JgTG9uR0pAfwkX1PobY+wZmvEpSysFOl9eiIa9qR
-X-Google-Smtp-Source: AGHT+IH93LYEQhVEqIb57xnnF/55QOQGdtPtYnsX4yJPnd4maXAVHK2AIf1PLyUJrGR3305p67PJKA==
-X-Received: by 2002:a05:6512:34cd:b0:52c:9c33:986b with SMTP id 2adb3069b0e04-52c9c339b6dmr2319972e87.8.1718275843953;
-        Thu, 13 Jun 2024 03:50:43 -0700 (PDT)
-Received: from f (cst-prg-88-61.cust.vodafone.cz. [46.135.88.61])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422869d4f2esm57976275e9.0.2024.06.13.03.50.41
+        bh=P8BVG4kRdfLOofP57LybYLwKmto1z7Z4ok3Ssg9M2l0=;
+        b=kl4xP73YPkmWU41WMrHLyj3o9MO6YmycnPggKgXjuZnyJa+UqRuN1au+6xGwf6OoUy
+         vsh1mdxUpAMa2uM1Qm3l5urLW4j1LBPqZdLthwEcndeUrWUHwyT7SEUkZ7RHh3mMS87l
+         ghHUx9EDgBoMTfKpdDtZ3kvuvort12ByUPC7T8BNIhhuqvPBKUs906RuQrIVdPeCBqCk
+         lflXvku3qblZN3LkhXAAzFoiJlO39hV6QTVCOkEA8I6HiEJv+3pruu030wjvWnm2c06H
+         mi5c2fi9WzQy2LPYBIBmIwzLmyBKUOlBD98TBbPt516lqRE/HD2dOxE9uUTD5pQQs3yE
+         rlmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXI1rosXreMuwjesl5CsNHxyVLr3/6N39dqToKydh8u91WGsjmYVQWsRfnz9+eeXD4QT1cN2PleOd+/DYmmiiXzScs7FDXQygDEuZcL
+X-Gm-Message-State: AOJu0Yzp0m8qnARFUmxupvFPWGpI0Ie680SNmQxH6N4zBVvH5swoKMfg
+	e0/KnWWFxMK1ik12AwRXJcrpleb5Yz17w+AiD+torZxr8j2LfceRf7k5ZVJarc64rOaBtCRV5bt
+	7
+X-Google-Smtp-Source: AGHT+IFHavbOr+OgWlX2a5b/dvGpv+Y/52aYQqWXG4No5o2I0ST7yMd4AjYSJZeNAegwsKQiKBFEvA==
+X-Received: by 2002:a2e:681a:0:b0:2eb:db25:a68f with SMTP id 38308e7fff4ca-2ebfc9abdf4mr25206351fa.52.1718275852267;
+        Thu, 13 Jun 2024 03:50:52 -0700 (PDT)
+Received: from myrica ([2.221.137.100])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72ea3b2sm763316a12.55.2024.06.13.03.50.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 03:50:43 -0700 (PDT)
-Date: Thu, 13 Jun 2024 12:50:35 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] vfs: add rcu-based find_inode variants for iget ops
-Message-ID: <ly3nx2r4cbnvhlwcficugq7zj62xij54mzuyjowcwaucbvkwns@nuxskfzj6lvc>
-References: <20240606140515.216424-1-mjguzik@gmail.com>
- <ZmJqyrgPXXjY2Iem@dread.disaster.area>
- <bujynmx7n32tzl2xro7vz6zddt5p7lf5ultnaljaz2p2ler64c@acr7jih3wad7>
- <ZmgkLHa6LoV8yzab@dread.disaster.area>
- <20240611112846.qesh7qhhuk3qp4dy@quack3>
- <ZmjJCpWKFNZC2YAQ@dread.disaster.area>
+        Thu, 13 Jun 2024 03:50:51 -0700 (PDT)
+Date: Thu, 13 Jun 2024 11:51:07 +0100
+From: Jean-Philippe Brucker <jean-philippe@linaro.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev, Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	peter.maydell@linaro.org
+Subject: Re: [PATCH v3 02/14] arm64: Detect if in a realm and set RIPAS RAM
+Message-ID: <20240613105107.GC417776@myrica>
+References: <20240605093006.145492-1-steven.price@arm.com>
+ <20240605093006.145492-3-steven.price@arm.com>
+ <20240612104023.GB4602@myrica>
+ <3301ddd8-f088-48e3-bfac-460891698eac@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZmjJCpWKFNZC2YAQ@dread.disaster.area>
+In-Reply-To: <3301ddd8-f088-48e3-bfac-460891698eac@arm.com>
 
-On Wed, Jun 12, 2024 at 08:00:42AM +1000, Dave Chinner wrote:
-> On Tue, Jun 11, 2024 at 01:28:46PM +0200, Jan Kara wrote:
-> > On Tue 11-06-24 20:17:16, Dave Chinner wrote:
-> > > Your patch, however, just converts *some* of the lookup API
-> > > operations to use RCU. It adds complexity for things like inserts
-> > > which are going to need inode hash locking if the RCU lookup fails,
-> > > anyway.
+On Wed, Jun 12, 2024 at 11:59:22AM +0100, Suzuki K Poulose wrote:
+> On 12/06/2024 11:40, Jean-Philippe Brucker wrote:
+> > On Wed, Jun 05, 2024 at 10:29:54AM +0100, Steven Price wrote:
+> > > From: Suzuki K Poulose <suzuki.poulose@arm.com>
 > > > 
-> > > Hence your patch optimises the case where the inode is in cache but
-> > > the dentry isn't, but we'll still get massive contention on lookup
-> > > when the RCU lookup on the inode cache and inserts are always going
-> > > to be required.
+> > > Detect that the VM is a realm guest by the presence of the RSI
+> > > interface.
 > > > 
-> > > IOWs, even RCU lookups are not going to prevent inode hash lock
-> > > contention for parallel cold cache lookups. Hence, with RCU,
-> > > applications are going to see unpredictable contention behaviour
-> > > dependent on the memory footprint of the caches at the time of the
-> > > lookup. Users will have no way of predicting when the behaviour will
-> > > change, let alone have any way of mitigating it. Unpredictable
-> > > variable behaviour is the thing we want to avoid the most with core
-> > > OS caches.
+> > > If in a realm then all memory needs to be marked as RIPAS RAM initially,
+> > > the loader may or may not have done this for us. To be sure iterate over
+> > > all RAM and mark it as such. Any failure is fatal as that implies the
+> > > RAM regions passed to Linux are incorrect - which would mean failing
+> > > later when attempting to access non-existent RAM.
+> > > 
+> > > Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> > > Co-developed-by: Steven Price <steven.price@arm.com>
+> > > Signed-off-by: Steven Price <steven.price@arm.com>
 > > 
-> > I don't believe this is what Mateusz's patches do (but maybe I've terribly
-> > misread them). iget_locked() does:
+> > > +static bool rsi_version_matches(void)
+> > > +{
+> > > +	unsigned long ver_lower, ver_higher;
+> > > +	unsigned long ret = rsi_request_version(RSI_ABI_VERSION,
+> > > +						&ver_lower,
+> > > +						&ver_higher);
 > > 
-> > 	spin_lock(&inode_hash_lock);
-> > 	inode = find_inode_fast(...);
-> > 	spin_unlock(&inode_hash_lock);
-> > 	if (inode)
-> > 		we are happy and return
-> > 	inode = alloc_inode(sb);
-> > 	spin_lock(&inode_hash_lock);
-> > 	old = find_inode_fast(...)
-> > 	the rest of insert code
-> > 	spin_unlock(&inode_hash_lock);
+> > There is a regression on QEMU TCG (in emulation mode, not running under KVM):
 > > 
-> > And Mateusz got rid of the first lock-unlock pair by teaching
-> > find_inode_fast() to *also* operate under RCU. The second lookup &
-> > insertion stays under inode_hash_lock as it is now.
+> >    qemu-system-aarch64 -M virt -cpu max -kernel Image -nographic
+> > 
+> > This doesn't implement EL3 or EL2, so SMC is UNDEFINED (DDI0487J.a R_HMXQS),
+> > and we end up with an undef instruction exception. So this patch would
+> > also break hardware that only implements EL1 (I don't know if it exists).
 > 
-> Yes, I understand that. I also understand what that does to
-> performance characteristics when memory pressure causes the working
-> set cache footprint to change. This will result in currently 
-> workloads that hit the fast path falling off the fast path and
-> hitting contention and performing no better than they do today.
-> 
-> Remember, the inode has lock is taken when inode are evicted from
-> memory, too, so contention on the inode hash lock will be much worse
-> when we are cycling inodes through the cache compared to when we are
-> just doing hot cache lookups.
-> 
-> > So his optimization is
-> > orthogonal to your hash bit lock improvements AFAICT.
-> 
-> Not really. RCU for lookups is not necessary when hash-bl is used.
-> The new apis and conditional locking changes needed for RCU to work
-> are not needed with hash-bl. hash-bl scales and performs the same
-> regardless of whether the workload is cache hot or cache-cold.
-> 
-> And the work is almost all done already - it just needs someone with
-> time to polish it for merge.
-> 
-> > Sure his optimization
-> > just ~halves the lock hold time for uncached cases (for cached it
-> > completely eliminates the lock acquisition but I agree these are not that
-> > interesting) so it is not a fundamental scalability improvement but still
-> > it is a nice win for a contended lock AFAICT.
-> 
-> Yes, but my point is that it doesn't get rid of the scalability
-> problem - it just kicks it down the road for small machines and
-> people with big machines will continue to suffer from the global
-> lock contention cycling inodes through the inode cache causes...
-> 
-> That's kinda my point - adding RCU doesn't fix the scalability
-> problem, it simply hides a specific symptom of the problem *in some
-> environments* for *some worklaods*. hash-bl works for everyone,
-> everywhere and for all workloads, doesn't require new APIs or
-> conditional locking changes, and th work is mostly done. Why take a
-> poor solution when the same amount of verification effort would
-> finish off a complete solution?
-> 
-> The hash-bl patchset is out there - I don't have time to finish it,
-> so anyone who has time to work on inode hash lock scalability issues
-> is free to take it and work on it. I may have written it, but I
-> don't care who gets credit for getting it merged. Again: why take
-> a poor solution just because the person who wants the scalability
-> problem fixed won't pick up the almost finished work that has all
-> ready been done?
-> 
+> Thanks for the report,  Could we not check ID_AA64PFR0_EL1.EL3 >= 0 ? I
+> think we do this for kvm-unit-tests, we need the same here.
 
-My patch submission explicitly states that it does not fix the
-scalability problem but merely reduces it, so we are in agreement on
-this bit. My primary point being that absent full solutions the
-benefit/effort ratio is pretty good, but people are free to disagree
-with it.
+Good point, it also fixes this case and is simpler. It assumes RMM doesn't
+hide this field, but I can't think of a reason it would.
 
-This conversation is going in circles, so how about this as a way
-forward:
+This command won't work anymore:
 
-1. you could isolate the hash-bl parts from your original patchset (+
-rebase) and write a quick rundown what needs to be done for this to be
-committable
-2. if you think you can find the time to do the work yourself in the
-foreseeable future you could state the rough timeline (the thing will
-probably want to miss this merge cycle anyway so there is plenty of
-time)
-3. if you can't commit to the work yourself you can look for someone to
-do it for you. while you suggested that on the list there were no takers
-(for example someone else could have stepped in after I said I'm not
-going to do it, but that did not happen). perhaps you can prod people at
-your dayjob and whatever non-list spots.
+  qemu-system-aarch64 -M virt,secure=on -cpu max -kernel Image -nographic
 
-If you can't do the work in the foreseeable future (understandable) and
-there are no takers (realistically I suspect there wont be) then you are
-going to have stop opposing my patch on the grounds that hash-bl exists.
+implements EL3 and SMC still treated as undef. QEMU has a special case for
+starting at EL2 in this case, but I couldn't find what this is for.
 
-I don't know how much work is needed to sort it out, it is definitely
-much more than what was needed for my thing, which is in part why I did
-not go for hash-bl myself.
+Treating SMC as undef is correct because SCR_EL3.SMD resets to an
+architectutally UNKNOWN value. But the architecture requires that the CPU
+resets to the highest implemented exception level (DDI0487J.a R_JYLQV). So
+in my opinion we can use the ID_AA64PFR0_EL1.EL3 field here, and breaking
+this particular configuration is not a problem: users shouldn't expect
+Linux to boot when EL3 is implemented and doesn't run a firmware.
 
-Of course there may be reasons to not include my patch regardless of the
-state of hash-bl. If you have any then I suggest you state them for the
-vfs folk to consider. If you intend to write it should not go in on the
-because it does not fully fix the problem, then I note the commit
-message both concedes there is a limitation and provides a justification
-for inclusion despite of it. Merely stating there is still a scalability
-ceiling does not address it. Claiming it adds too much complexity for
-the reported benefit is imo not legit, but again it is a judgment call
-to make by the vfs folk.
+Thanks,
+Jean
 
-Right now the v4 landed in a vfs.inode.rcu branch. It really does not
-have to reach master if someone gets hash-bl to a state where the vfs
-cabal is happy with it. I don't know if Christian intends to submit it
-to master in the upcomming merge cycle, it is perfectly fine with me if
-it does not happen. Perhaps it even should not happen if the hash-bl
-gets a sensible timeline. Even so, should my patch land in master and
-hash-bl get work done at a much later date, there is no difficulty added
-to it stemming from my thing -- at worst some trivial editing to resolve
-a merge conflict.
-
-And with this message I'm done with the entire ordeal, with 2 exceptions:
-- if there is a bug reported against my patch i'm going to investigate
-- if my patch is stalled in the vfs.inode.rcu branch for weeks and there
-  is no replacement in sight (hash-bl, rhashtable, ${whatever_else}), I'm
-  going to prod about it
-
-Cheers.
+> 
+> 
+> Suzuki
+> 
+> > 
+> > The easiest fix is to detect the SMC conduit through the PSCI node in DT.
+> > SMCCC helpers already do this, but we can't use them this early in the
+> > boot. I tested adding an early probe to the PSCI driver to check this, see
+> > attached patches.
+> > 
+> > Note that we do need to test the conduit after finding a PSCI node,
+> > because even though it doesn't implement EL2 in this configuration, QEMU
+> > still accepts PSCI HVCs in order to support SMP.
+> > 
+> > Thanks,
+> > Jean
+> > 
+> 
 
