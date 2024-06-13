@@ -1,181 +1,243 @@
-Return-Path: <linux-kernel+bounces-213413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A7719074E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:15:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9D89074EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:17:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14DD01F21E73
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:15:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9758C281E69
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9995145A16;
-	Thu, 13 Jun 2024 14:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B36C145A16;
+	Thu, 13 Jun 2024 14:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+MGreyN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bL2P2cfM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CF510F1;
-	Thu, 13 Jun 2024 14:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718288143; cv=none; b=I/LXOhLkejtTXG0ZgwywcQQhwEwEkHVuwYSdHH+5hsVMAPyAkYBh9LlLmgDJ84XZEs5xJzUKo/WEPyktEvoK+PNPxEJFgZCpPfMuMXa/2tUDnXrBvb7J7CSM8YbHE3r4wlt2mn8aavlUTv6cPNo0uOqdKu+LwiE7AX667icojxA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718288143; c=relaxed/simple;
-	bh=JzDvvJIFsoEa8Pp8qeuXMOIfuGTZA2pY6sCk2zTKjoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XWirorQgDcLZRe7ruvxGvRn35k8Xt9W82r2gw2msw6AiJP3Yit2dbjOOhVEy0J4iH38FgkPSsj3Vriniwz+eZCalPKz3N+qZ6Ru14+CXmWXJtesAFngC5ICXZCxFLPntg7ydaKoZCezoxO4lJcKpj/T8hKeSG8iQ+GNz7BqNIK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+MGreyN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB66CC2BBFC;
-	Thu, 13 Jun 2024 14:15:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718288142;
-	bh=JzDvvJIFsoEa8Pp8qeuXMOIfuGTZA2pY6sCk2zTKjoQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c+MGreyNpxLjoAxhXsbjTrGiU1ZiPyaiegSPRV4Pnh1kzeM1z2qs69/qzeNLEN9Zl
-	 eXWi/qnxmfvJR9zLgQlFgddLCCOnXIWsBIBVq7TeeQFf0t1fN6QAmjO5WIRAv/dBMl
-	 TuPrmVQifdEhwNF+s9/mNTt1vaXjf+g1UbCqT9ebYbIF3pfKPvjVccIPTxqXWeG1VL
-	 tJN9Z16KipjklAv9syKzfciXDEgM/+nMFzcdv9XP33gfgUOICDHyE6nkDg81ordhIy
-	 8q3rbHRx2voGajA9vsaty6RlNzwoa7s/icxWGNjLgYiYJgnu2jvldp03BSixKLnifw
-	 SzDji6l+ihKlg==
-Date: Thu, 13 Jun 2024 11:15:37 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: James Clark <james.clark@arm.com>
-Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Guo Ren <guoren@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>, Nick Terrell <terrelln@fb.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Kees Cook <keescook@chromium.org>, Andrei Vagin <avagin@google.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Oliver Upton <oliver.upton@linux.dev>, Ze Gao <zegao2021@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-	linux-riscv@lists.infradead.org, coresight@lists.linaro.org,
-	rust-for-linux@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v1 0/7] Refactor perf python module build
-Message-ID: <Zmr_CfhYsvKePZFt@x1>
-References: <20240612183205.3120248-1-irogers@google.com>
- <bdf1ab6e-b887-4182-a0ae-7653bd835907@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875D11DFFC;
+	Thu, 13 Jun 2024 14:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718288216; cv=fail; b=f/NL45tGGbv45wyhKckjcgGmmOq+FY6p3jXuExW8+Fwteu7jMiKf9hVHf98Gx8JM6eKa4Q4RNZ5VUPYAWFj6RsuCgOEhPPCYjIi7Y+1Cnn/OnnuYxwgXSRqtXR8I1U6bjAaoegaLRlTxhUAslDix/+Cy/Ly/bhuzfsvhY5LO5Is=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718288216; c=relaxed/simple;
+	bh=WAgIKctPXo618HX4GNh/QQLPeDPEo2vqY+Ess8QvtDc=;
+	h=Message-ID:Date:Subject:From:To:CC:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=G/6SUJRwN+AdeoizbD2Q6KMRi4wlCtKcRghe09bBN2p1q/YWLhD2snNA5xI9WPerdOK+JmhRZaCEBDGQExFu73SUXADr4cMcODpKgUVXQZBiW1suNlWm1cZtQB4//4Z5GKfRQ89BYY3g/KMbXLMesChOifZ6hXo/vkKZb6Uooms=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bL2P2cfM; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718288215; x=1749824215;
+  h=message-id:date:subject:from:to:cc:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=WAgIKctPXo618HX4GNh/QQLPeDPEo2vqY+Ess8QvtDc=;
+  b=bL2P2cfMEL0V1qBOB0Mxw2q0M+J/Dy5zpfEqaH6dDNkTyoivzitfyTL3
+   NzkUAN8CNS0XeFUyKPTk+aaoB3DRoyoW/aRztFiyN2ekkiFzUwwrJi/zU
+   20qE7T71ppK61NdMIKjP6uLEAEzbji7DLMKXVDom39SRErcJxhG0t3lSX
+   qTezawN66mPIOBM1s5YljCuCqZC7Py/QBh3ltKDqZvw7zfsGq1MnnWdc7
+   EeFHmHZKkQIF/g+51BKCSrCeR1RfaiWJuPSUmhOBVlkwe3LtkPpuMUd/C
+   resBLP6P4LSAAc8sA6jFH31TFKYL9KojJFnzNVDerDkEHrAj+lko89qSc
+   w==;
+X-CSE-ConnectionGUID: k1AfIMRCSEO2DjPE1c4vPQ==
+X-CSE-MsgGUID: 4C04myeKTlSM4e6bmmAgpQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="18940496"
+X-IronPort-AV: E=Sophos;i="6.08,235,1712646000"; 
+   d="scan'208";a="18940496"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 07:16:44 -0700
+X-CSE-ConnectionGUID: 1iBJ2JfJTzeBFghhHRNdeg==
+X-CSE-MsgGUID: ruPiU75oTBKCnWpVCABumA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,235,1712646000"; 
+   d="scan'208";a="71377484"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Jun 2024 07:16:41 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 13 Jun 2024 07:16:40 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 13 Jun 2024 07:16:40 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 13 Jun 2024 07:16:40 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.45) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 13 Jun 2024 07:16:40 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Xg3Uvt9iVAsiJbdL/Y3btLVvtBNawZlTY3WAYAnjKiiHa5rpAw7NtZoBB6OVg7oQWCxcP3ZfbNqKp3f3phPYOkNPyk8/nRe3qVDdvYc9tjj8IfnV65nSP+oGGqt/zPIeRlLplFU1TfkgtqQX7VD+ktk8nNMutSUeeWG0EpfdPfX/9CIeNMMMDYEg65A3/BgEiivzHm0mBCOAmEqM5+EuRHN5r9iAGWfbFdXKx9ZtX46VH3zLAXhQdTC8WyaCoLCMSW3IwbMyGVRCEAtT5Iv8Mj4xrxn/7WGdRcb78uN6ERHOJ7poK4qIWbVwHBxi+B/GcA9bO/HkGTTAo+A8HAgheA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kiyNPNDaAjLbysq3UeXt41dqBsABhp2Bmj8JlgKKkZI=;
+ b=WHVRfIpOF0qiSozsuk0VFbY4OG9pQjUwHtjpDEWS2epCn1MeYAhz+HsO6ZzgDyUz+VLu5v4sN5ShxXjcORwte3CzxeWzxgPaBJup7hUX8/PgcaDAmeuMv0z3dgg6crmgjD5oCdLs7lohbX85DjA0zfp85dQmauGJsei3w4B10ATn+7y/rd/g7GrlSBzkkKb49oFdVA2pg92Hxn/B3Ms/z90DlqqaNVT3U5vlMje4VuclfcOLsXzUvfkpgcqch0ZuL6+zhrsawUrpf+9OLzrwXNznMZU0ohW+S2j0QjGHa+pSjumFrexZtmLPGe4vG+HVMabXz9Nw6afmZ74gor/Udg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
+ by SA0PR11MB4687.namprd11.prod.outlook.com (2603:10b6:806:96::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.25; Thu, 13 Jun
+ 2024 14:16:38 +0000
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6%6]) with mapi id 15.20.7677.019; Thu, 13 Jun 2024
+ 14:16:38 +0000
+Message-ID: <153c853c-9fbe-45ca-8a39-d382eeeb1871@intel.com>
+Date: Thu, 13 Jun 2024 16:16:33 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/15] net: hbl_cn: add habanalabs Core Network driver
+From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+To: Omer Shpigelman <oshpigelman@habana.ai>, <linux-kernel@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>
+CC: <ogabbay@kernel.org>, <zyehudai@habana.ai>
+References: <20240613082208.1439968-1-oshpigelman@habana.ai>
+ <20240613082208.1439968-2-oshpigelman@habana.ai>
+ <a0e8f31e-fa12-4f48-853d-16c78bce1d76@intel.com>
+Content-Language: en-US
+In-Reply-To: <a0e8f31e-fa12-4f48-853d-16c78bce1d76@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: VE1PR03CA0011.eurprd03.prod.outlook.com
+ (2603:10a6:802:a0::23) To MN6PR11MB8102.namprd11.prod.outlook.com
+ (2603:10b6:208:46d::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bdf1ab6e-b887-4182-a0ae-7653bd835907@arm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|SA0PR11MB4687:EE_
+X-MS-Office365-Filtering-Correlation-Id: fc5c26db-8323-4f20-d97a-08dc8bb37036
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230035|1800799019|366011|376009;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?OUQ0WDM0WWNPZ2UrT1Vyb1VENk1iNzc3UVRxMHBubTN6UzBtVzUwYVQ1Z0Js?=
+ =?utf-8?B?cGlBclRBeCtBbDFGZjl3NlEvdGlvZEF6M25IaE02KzVNL0tBeFc5eGhrU3ds?=
+ =?utf-8?B?SGpNcjJtcXJsOGQ5TE52S3ZWVklrWmdkT2FqUktYNmhTeHFNaS9VUDRRK0Q0?=
+ =?utf-8?B?a3FYbFZkaERRWkY3MEFQSWF5ZnpyTHJZZjZFYml4VkJ4NGNMemlBWjZIcG0y?=
+ =?utf-8?B?aFFERDNKaDBjODAvUTIvOU1Eb2NtWVB6cjZWR3pPQStzOGpvcE5aTXNMWGh5?=
+ =?utf-8?B?OEpXbm9yaHY4WFVmTDRPQ01sam43bE9qamVxdEZUYlJIaXpSc01EMHo3akNE?=
+ =?utf-8?B?L1lzQnRVNmdZMjJ4dkdvNkR1bERLcEcwZEpjUWxiYytncjdJL2dKNENiWXlV?=
+ =?utf-8?B?R0tkWmRkbnhyYTQ3Vll1WHpHVFdicXBIekRsV2hWTi9hSnpPa2JCRzNIVnZl?=
+ =?utf-8?B?KzZjZ1l6QWVLL09pcHk3N2Z2T2dyYkJwOEp5dnVIenRmWWhjR0pDdFZYd1hh?=
+ =?utf-8?B?U3Q2ZUJ3bUJWVjNoRGRBMUJYTjZEakxaMVFFakV3OHp0OWs2SUV6cWtNTzd2?=
+ =?utf-8?B?ZS80bDAwRStuNnZJY0ZzSUpoMUVvbXpZNjZJTTJ1TjVsMmNNQXE0eWJMMlBE?=
+ =?utf-8?B?Q2lFcHUxRCtUeWxBWXAwSFZ4cjVlMkR3RktWZFZYNGh6d3RwUjczRGdlSUVQ?=
+ =?utf-8?B?TkZNVktqcmRqZjdOUWFKcUgyczAyVjNmTEhLaUFUcUdPMHozTmFEWC9qcnhR?=
+ =?utf-8?B?N1hwdHM0YUpJQ2IxRm0xRXA0SHcyMU50RWhnVGJrSHd3Ym8rVEhHaG1RNWt6?=
+ =?utf-8?B?RGkxL3ZzN3V6NVdYVEErVXJWWjBGWlJkQ1hac3kxcEtMTWJzUzVpWnlvMEpo?=
+ =?utf-8?B?aGNFMWl5RXBjOGJSQTBGT3Y1dUhpS0ZBb3FtOU04SVdjTUhmSk5kVzN6dXY2?=
+ =?utf-8?B?aE9tQ1VPclNIYXFGbnlEeDd0OVM1bHVRazZOcm50cDFybEpJTVJsQjg0czQ2?=
+ =?utf-8?B?eFZYRTFjTURhMU9rSlFiK096eklxS3NuY0FlUVROaldVbkpIa2ZpVWJ4RVk1?=
+ =?utf-8?B?dXprWVBXeUpMQjBaZGplZmhRUlRvQkZMODVEZTdVcUNzWVMxM25mS2hMSzZN?=
+ =?utf-8?B?NFlLY2FWYWsrbjNuREZ5U1VaRkZtYVFMNWhVV2tGQmRtcG5kZEhLMGhmOXlz?=
+ =?utf-8?B?Sm9MZjVvZW5IbHpDWU1FVG5OZTBSckdpR0I3alpBSDdIYUVxM1k3am03RTUy?=
+ =?utf-8?B?Q1F6NVdBdzVJUUF1SmdBa0pCd1o2Ull3cm11YmNlM2RIYkN1dDVQYTF2YVdm?=
+ =?utf-8?B?NGc4TXpKZkhnaEVhRzNLOVhobVkzSGFOTkpHQjdkWXdpV0djSjF5QTZXbzZt?=
+ =?utf-8?B?WTR4RmRpQzQ4YUdiaC9zclhnaW1RQnREUzdpd1dxTHMxS293bGVWbGxBUng2?=
+ =?utf-8?B?U3cweWI0a2I1RXBPelNOTDY1WktmbVA2Q1NDQ2J3UHN6VUF2TS9idzVTeStG?=
+ =?utf-8?B?SGYvTXMwRnBzNlBUMUdoL1pPU1ZhTDlRVjRZOWtKYWJGeTlvb0pUZkljWmR1?=
+ =?utf-8?B?QkgvNGZDVEcwNUZla21rZ21GU3A5aGZJRUF2M2k4aXZJK2dDbVdReTQzWXBE?=
+ =?utf-8?B?RVhraXR1eXIyN2RmQ1JZeFAyVEtnZnNzOFJWRDF3VFhDb0hrNVlaNUg1YU5L?=
+ =?utf-8?B?YXFXT2ZBamRCVnp6ZThiTVhKcWZnRTJ3RHBqOHorUkxXcnd1cG95ZTFGeVpE?=
+ =?utf-8?Q?eCWIURqQuaRmSButuo=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230035)(1800799019)(366011)(376009);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZWhsaklmR2VsUVpjRUxzL3VkWUdEVGVWSzBNQ0FVZ3l1SkdNdkkyMUxNcU1X?=
+ =?utf-8?B?dmZXTVJXaVRnRFIzLzg5UTJFOXV1TWhsZW1hVHFmSFlvdGpYc3U0V0E1eEdN?=
+ =?utf-8?B?cUQ5MFNLNHBXbS93dkRta3FjNHoyNzk4Rm9XZ3hEbUtkNldFVXBrYzFPU0lk?=
+ =?utf-8?B?NzU4aS9tMEJSZWFkQ1NVc1V2WnN5ZmJSb2o5c0FjYk0vc1p2SnZsTFJPWjNH?=
+ =?utf-8?B?NFlqdEVJNURadHJXMHBkY3lreUlXYUhScEhsdjVmMzZQYXZqZjg1SkZXLzln?=
+ =?utf-8?B?SGkxemQzSysrTFlFSkJlN1UyL3JsNEQwSUl6aXdEZThDNnhkVTNZamdHSzN5?=
+ =?utf-8?B?cU82aTBySU43NU51djhaaGdMZ3gySWcrWUZRTDNad0tIWnhiQWN2TXU3UTRi?=
+ =?utf-8?B?amQxQU5MRG1XKysra2ZWeFNtUlJQYmpEVmxOYkp6TDhXR2tPc01STS9OZk5W?=
+ =?utf-8?B?TFI5ZHdPMjF6NUZ6ZEpOYlRlZG12WlJjM3RIUWdLamFFUGVaNmJNY3haNkJq?=
+ =?utf-8?B?M0IyYXhOWnMrMHAwQ1JkcnNZUW9sNFpYamRSOGlZamZmSzQ2b0hOSlprUk9x?=
+ =?utf-8?B?ek84LzRWUUszVmVIcklYd3hLUExNenlKaGJtUlduQ1FFWFBnOU94RmRjMkJQ?=
+ =?utf-8?B?cTFSZ0M3UjliQ1Q2aVZodlEzUGdzaGFIUXQ4c3VXOGF5a3ZkTFhrUmFua0F1?=
+ =?utf-8?B?cnJXOHdUOVc2MDA3MUdja0xFTExWN1g2aGVCNlgyaEdlM3NrSDdsdC9qTzJY?=
+ =?utf-8?B?dHdTVHVoRFZIVitNREJmaXdwbGFOZ1A2V09CZFF1NWlacXB0aHoyOVJFVE03?=
+ =?utf-8?B?OW5vN0xmeUgxek00cDQwZzc5Y1E4L282YnIySlgyeGNoUFh2S0JXR0E5TTdY?=
+ =?utf-8?B?OUxabWNnbFFieDhlRnZoemcrclZUOXQySlVMTHFRbnpVbFBzREZHbW4zTnNX?=
+ =?utf-8?B?UExOejRzN3U1MnArQm5YNmU2YW1UajhPdXNIcklFWmxQNW5pdzA4b2E1dWo2?=
+ =?utf-8?B?TEdBeWVjQlpqaStoMXh4RjU2WGVnS1phWG9iUUIyK1F6czBzNExiNTVwZFYx?=
+ =?utf-8?B?elJBTlpMaWQ2enJVM1R3NGQ1UFVtMSsrcFgzUTB1Sm9sRXdCd1dUODNnc2FN?=
+ =?utf-8?B?d1pzNlFtUG5tQWZab2RxT0lHZGQ0SXBJOEJJaTZJUDE1OHJIcHFyTUpQTEFY?=
+ =?utf-8?B?S2xOdnlZNkJueDBPczVHdVpyOE5ucVZDMTBtY2lOUW5KOFNaSWxvQ1V4WnJh?=
+ =?utf-8?B?bjhrZzZHci9mbGxHdlREcXZQdFVKWmxaT0t4WFpNUXlCQWNmQ3NhbmRYRkY5?=
+ =?utf-8?B?c1ZvWlp2TlFEYVJscGVqMmRPMDdWVFAzcmNxRHhNbG9lQnB1WmFROW44My9X?=
+ =?utf-8?B?TnV4ZEpSeE1UdFdDdG9tRG5WVjhGYUhqNEFLT0RySk1xM2NBQ09uNktzdTlq?=
+ =?utf-8?B?NWROSXdCTnE5TFhwRCtubCsxV1QxS2t1OWFFcXd4TlRMTDFsTUUwVGVLQWYy?=
+ =?utf-8?B?K3luTS93WFFsWktUQngrOXlTQ3FpYkV2TmhVZWhycXdwRmlvckQzTnE4a2U5?=
+ =?utf-8?B?Z1hnRnRBWjNxN2l5dmcwQlNjZEF1NWRrb2Y1YWtqbDNPWDJITEcxQmN3Qk41?=
+ =?utf-8?B?Vy93OVZJRnArTjdvczJtQkJHWEFjT0JKbUs5Tld1Y3NnY1FxZi90MlNRSlp5?=
+ =?utf-8?B?RmZuaHUzTDBRZ090Y3FvWFpDdFB3ZWQ2SzB6T2krdmNmNFZkdk5BN1NkQ2o1?=
+ =?utf-8?B?NWo0NHl3eHk5RHRFck9JVThQT0EwRS9sMS9oVGtBa0x4VDVKSHp5ZVI2SzRt?=
+ =?utf-8?B?TWR5QStKckg0dWR1d2Q1RTBSV0N3ajg0V00rTllqTGM2UTRTTUtoeGJYRTlX?=
+ =?utf-8?B?QTZGNFY1bVYxazNtVjYrNXdMLzhZSkFYclB2N3BmS2NvR2VDVGRteDJDSVB6?=
+ =?utf-8?B?WnJHVTJ6SnBBR3V5b2RRckRvaHRlbVZ1aDE5MGV3eWFOVHg0U2YxMGxIMVo1?=
+ =?utf-8?B?QzhlcDNNWHRZL3BsWG5WY0tISnp4aXBwdDJhMzdxcjVvWG9qbjVRRTdUQnp2?=
+ =?utf-8?B?dzJEdmxjTzgrb1Y4SzNBWU5YZXA3K1UyeVJmNmhYV3dPNHk2aW0zNkN5YVlD?=
+ =?utf-8?B?RS9LelliYS9pS1hFK0pybjdqdElabW1Mck82MkJUTGgwMWcyaWRNV0MrRUJs?=
+ =?utf-8?Q?RhQGum5aXCr0yOxqFzkNfbk=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc5c26db-8323-4f20-d97a-08dc8bb37036
+X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2024 14:16:37.9826
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: adjyWooys1iX+xwUoOdoGKRvx05n8OYdsI00qXdFRE4RGbDyvvcpci7dFBMXNPApT4TwwIUJh1HAjDYNh9ryZQEUiwBVh53EsduONt7PgUA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4687
+X-OriginatorOrg: intel.com
 
-On Thu, Jun 13, 2024 at 10:27:15AM +0100, James Clark wrote:
-> On 12/06/2024 19:31, Ian Rogers wrote:
-> > Refactor the perf python module build to instead of building C files
-> > it links libraries. To support this make static libraries for tests,
-> > ui, util and pmu-events. Doing this allows fewer functions to be
-> > stubbed out, importantly parse_events is no longer stubbed out which
-> > will improve the ability to work with heterogeneous cores.
-> > 
-> > Patches 1 to 5 add static libraries for existing parts of the perf
-> > build.
-> > 
-> > Patch 6 adds the python build using libraries rather than C source
-> > files.
-> > 
-> > Patch 7 cleans up the python dependencies and removes the no longer
-> > needed python-ext-sources.
-> > 
+On 6/13/24 15:01, Przemek Kitszel wrote:
+> On 6/13/24 10:21, Omer Shpigelman wrote:
+
+[...]
+
+>> +
+>> +int hbl_cn_read_spmu_counters(struct hbl_cn_port *cn_port, u64 
+>> out_data[], u32 *num_out_data)
+>> +{
+>> +    struct hbl_cn_device *hdev = cn_port->hdev;
+>> +    struct hbl_cn_asic_port_funcs *port_funcs;
+>> +    struct hbl_cn_stat *ignore;
+>> +    int rc;
+>> +
+>> +    port_funcs = hdev->asic_funcs->port_funcs;
+>> +
+>> +    port_funcs->spmu_get_stats_info(cn_port, &ignore, num_out_data);
 > 
-> Reviewed-by: James Clark <james.clark@arm.com>
+> hard to ignore that you deref uninitialized pointer...
+
+oh, sorry, I was in hurry, please disregard this particular comment
+
 > 
-> It does require a clean build to avoid some -fPIC errors presumably
-> because not everything that requires it gets rebuilt, for anyone who
-> gets stuck on that.
+> please consider going one step back and start with our internal mailing
+> lists, thank you
+> Przemek
 
-We need to find a way to avoid requiring the 'make clean' :-/
+but this option very much still holds
 
-- Arnaldo
- 
-> > Ian Rogers (7):
-> >   perf ui: Make ui its own library
-> >   perf pmu-events: Make pmu-events a library
-> >   perf test: Make tests its own library
-> >   perf bench: Make bench its own library
-> >   perf util: Make util its own library
-> >   perf python: Switch module to linking libraries from building source
-> >   perf python: Clean up build dependencies
-> > 
-> >  tools/perf/Build                              |  14 +-
-> >  tools/perf/Makefile.config                    |   5 +
-> >  tools/perf/Makefile.perf                      |  66 ++-
-> >  tools/perf/arch/Build                         |   4 +-
-> >  tools/perf/arch/arm/Build                     |   4 +-
-> >  tools/perf/arch/arm/tests/Build               |   8 +-
-> >  tools/perf/arch/arm/util/Build                |  10 +-
-> >  tools/perf/arch/arm64/Build                   |   4 +-
-> >  tools/perf/arch/arm64/tests/Build             |   8 +-
-> >  tools/perf/arch/arm64/util/Build              |  20 +-
-> >  tools/perf/arch/csky/Build                    |   2 +-
-> >  tools/perf/arch/csky/util/Build               |   6 +-
-> >  tools/perf/arch/loongarch/Build               |   2 +-
-> >  tools/perf/arch/loongarch/util/Build          |   8 +-
-> >  tools/perf/arch/mips/Build                    |   2 +-
-> >  tools/perf/arch/mips/util/Build               |   6 +-
-> >  tools/perf/arch/powerpc/Build                 |   4 +-
-> >  tools/perf/arch/powerpc/tests/Build           |   6 +-
-> >  tools/perf/arch/powerpc/util/Build            |  24 +-
-> >  tools/perf/arch/riscv/Build                   |   2 +-
-> >  tools/perf/arch/riscv/util/Build              |   8 +-
-> >  tools/perf/arch/s390/Build                    |   2 +-
-> >  tools/perf/arch/s390/util/Build               |  16 +-
-> >  tools/perf/arch/sh/Build                      |   2 +-
-> >  tools/perf/arch/sh/util/Build                 |   2 +-
-> >  tools/perf/arch/sparc/Build                   |   2 +-
-> >  tools/perf/arch/sparc/util/Build              |   2 +-
-> >  tools/perf/arch/x86/Build                     |   6 +-
-> >  tools/perf/arch/x86/tests/Build               |  20 +-
-> >  tools/perf/arch/x86/util/Build                |  42 +-
-> >  tools/perf/bench/Build                        |  46 +-
-> >  tools/perf/scripts/Build                      |   4 +-
-> >  tools/perf/scripts/perl/Perf-Trace-Util/Build |   2 +-
-> >  .../perf/scripts/python/Perf-Trace-Util/Build |   2 +-
-> >  tools/perf/tests/Build                        | 140 +++----
-> >  tools/perf/tests/workloads/Build              |  12 +-
-> >  tools/perf/ui/Build                           |  18 +-
-> >  tools/perf/ui/browsers/Build                  |  14 +-
-> >  tools/perf/ui/tui/Build                       |   8 +-
-> >  tools/perf/util/Build                         | 394 +++++++++---------
-> >  tools/perf/util/arm-spe-decoder/Build         |   2 +-
-> >  tools/perf/util/cs-etm-decoder/Build          |   2 +-
-> >  tools/perf/util/hisi-ptt-decoder/Build        |   2 +-
-> >  tools/perf/util/intel-pt-decoder/Build        |   2 +-
-> >  tools/perf/util/perf-regs-arch/Build          |  18 +-
-> >  tools/perf/util/python-ext-sources            |  53 ---
-> >  tools/perf/util/python.c                      | 271 +++++-------
-> >  tools/perf/util/scripting-engines/Build       |   4 +-
-> >  tools/perf/util/setup.py                      |  33 +-
-> >  49 files changed, 612 insertions(+), 722 deletions(-)
-> >  delete mode 100644 tools/perf/util/python-ext-sources
-> > 
+> 
+> [...]
+> 
+
 
