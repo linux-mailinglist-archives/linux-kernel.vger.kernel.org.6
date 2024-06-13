@@ -1,203 +1,220 @@
-Return-Path: <linux-kernel+bounces-212519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 168959062A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 05:27:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9ED9062A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 05:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2FB32838AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:27:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0A62B2258C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123F6130A53;
-	Thu, 13 Jun 2024 03:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34CE130A68;
+	Thu, 13 Jun 2024 03:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Lkq7CXMW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bOuy6pq/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF63748E;
-	Thu, 13 Jun 2024 03:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718249212; cv=none; b=jVjX04mipgnyUw3Yg2MbBt1TdXpbTuqKPgzNmMqhNHv3n2uEzmED1ILsqR5VKncvVJf+6xdcc9Vuh+J9Dz4VUpdrs8GJ6zo4vUOcEikUjdtDvPIpYnH7eU3VvWYSpnyzqOksLNKjU0Yb2D3dvHk6fwhO1LvLE5Juo5Cia7J8ifQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718249212; c=relaxed/simple;
-	bh=Ci/6KzgUEyT4IcUqdvbSzPDG4P3cJd9nDSTz7u6vAGE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=PupFgIUND4qBO6vUbTtCgFrPA1irue5maS2xVwQ6bNH+INONdULNDkwYcPIQIWi6bji5G0FzeXNWi2kxru141d9N2g+GsM83848o9/rKA7NEuKd06F9FzUuGTta6S8Upk2vh5czLffcoC1yK59hQGbC89k1eaZI/eB3hpe4rJvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Lkq7CXMW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45D22sCA004228;
-	Thu, 13 Jun 2024 03:26:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=yc5eWxdqnW699o6z6p1XlX
-	XM745raYjvb+nBTtzQq0o=; b=Lkq7CXMWltg0UF1UrfbUH4GooD3eEsJOuQoMov
-	z3CfGyrrFecsJ++ymIg5odPn5VimB9gYW/yGq5VjYNUadJG3IEV/tS77cOehBJRe
-	brqF1QJ5c+nFM/d5BOWHPsaL/vSGcHRabI2bv5VfbvSg/UbZjJ/aBZcFVEESY9xf
-	Brer1DjD4la05yylGSu67ssafeh1B2dQX2SvP1yFLlJNLZVMV8xNc7Q3yFjmbiP0
-	J3F2rckDzeR4VZf5PW3E3VfSnQjCPYpHCj6ZKyTsz6NPUTtcvci4eekTpv2yr1Wz
-	yybJz643lCZxtyp9HKU4h0e1qim59Ykp3DLjWMo480QG7IJA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yqqn304bh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 03:26:29 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45D3QSFF019533
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 03:26:28 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
- 2024 20:26:27 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 12 Jun 2024 20:26:26 -0700
-Subject: [PATCH] ASoC: amd: add missing MODULE_DESCRIPTION() macros
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAC5748E;
+	Thu, 13 Jun 2024 03:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718249278; cv=fail; b=pie1NVYCSBHLIRlf1ssWHtCi0kp4ikuJwzbXq4lrp6i7E+bYNy07JDwpBI6CO9dsR2p61gh7TFUx391ys7i7ugzBJttt3OBkHOQaaYa0GFGCK5XvnmfH8k7DAOY7s1wSY40XRuGYTqM4LhRsy9TBgP29fw/S15jCnv+RWFPUVI0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718249278; c=relaxed/simple;
+	bh=UGJVF2EKG1K1EE+VhP9PpSvKLzznfw/1UCbHYXTWucc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XsaSl/NM1gVL7r7JC0rM90LT+8EnjD48I8i/bE0hWWMAjBxqPNnJmNn+kX2+ztVLT6AyMk6pKu5Wo+dWQMyi/aVozzKHqGTKKLTY2NM8p2MAvDSqvq1dY2zi2i0EsH1Gn6fdTaOHsy6G8hRXrBk5So/hnD3DT/YItwUGxzArZn4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bOuy6pq/; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718249277; x=1749785277;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=UGJVF2EKG1K1EE+VhP9PpSvKLzznfw/1UCbHYXTWucc=;
+  b=bOuy6pq/o7gXkkIjjTN7UaokF66eDOm1m6Hr8rNMGESSb7XE1E09+/WR
+   lI5L2hLiEuAV/yQzB8h9Nn5VkM2nsLjaSD3/cqvAU+RODZcCXTXiKTtS2
+   92cDLCUB50Wl2/39wXeb3sWjTD/kYoRA6LNlR7C4p+7clTdJbipAa9tzt
+   2uXTI7DeSO/eFSYQXkNCsUgpmJk65DzAGIPRqXp4ec96oD/bCv4pGZ3tf
+   Rl92Jm2eBx5J8JtJu4rB1FNT506zuctviYdgWxPoGr8uWcKiF5eX5jn16
+   +PjuBoZ4ceWWWVCH+2y9xmvQjg1PSHcg94LsJ0sk/PyQiD2a25KMYY0kv
+   Q==;
+X-CSE-ConnectionGUID: 0RX2e9BYQYWRfsgqckjwTA==
+X-CSE-MsgGUID: POK6gft1TbO1JBN8jY7y7A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="15273692"
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="15273692"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 20:27:54 -0700
+X-CSE-ConnectionGUID: OfZ0LSK5T3Wh6Tieu0cA7Q==
+X-CSE-MsgGUID: hnRuu1/SQXeheENXXvuDJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="44440315"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Jun 2024 20:27:50 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 12 Jun 2024 20:27:49 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 12 Jun 2024 20:27:49 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 12 Jun 2024 20:27:49 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.170)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 12 Jun 2024 20:27:49 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PNtxwhgAManW0Xk/D3fVfLj5XUWtCUyLVMCVenSNHsrcA2QulKhpexDnnXaJG0X9ygtbWDq9x0bTnX0atCW8Povsu15L4FJU9vfkzhghydt+RMok42OkFoCd7IoOnBPqo2ODmbVTNUTKxFnbbQLAsXJXg0zlJcVb/YIFwy6tD4YZDhjQ/Lm4l2Yn4IEo1P2uO8L+s9fgiTMQEIpgPUUZl+UDQTzTbAk8BupZwAdlMB3LnPK2F5LqifjnR5xymRpLELiV+ttFERhjVJekdrdyMTvrvP8fP9XAjO5wzckUi9vc9V7Ro7Lb6RkfULTCbqNcP4XRyyyK/CL+wg/WSNQfdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p7o6rvgDTkg0tN/BW+vetJc3e51/7SVChrzoXfAEqag=;
+ b=fKbgL+VsdVd8F1dytS4VJTtyl/RPgE3pejs44aJsGCwCyeb8zjObjSWP56t4p9JiTFNHbnjwiZuVrRgrbSdOwIGT2p34POuoB48tzEr3Zmy/tnS/2se2b++WFm2xQ+4WAtjVkVhyvM9P8NHmcu8ykYJw7i6BwJcMI0qtFDMtK8HqjXZaqHyUctvlxZOtP2RqMTc7wexmvurtrkmPb3ksJGesyFCToALX5vyMDIuVpZr9QYcBZoQC1vYHMt5EZa3Xtg/VFdrBvgHnpS/noqJkf+5e3Ist0dBgQu/U795CKqezkw30oADQDDn/eU6aPGHp0jUia1bsKVAMGxuLav3USQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SA1PR11MB6734.namprd11.prod.outlook.com (2603:10b6:806:25d::22)
+ by SA0PR11MB4671.namprd11.prod.outlook.com (2603:10b6:806:9f::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.20; Thu, 13 Jun
+ 2024 03:27:48 +0000
+Received: from SA1PR11MB6734.namprd11.prod.outlook.com
+ ([fe80::fcf6:46d6:f050:8a8c]) by SA1PR11MB6734.namprd11.prod.outlook.com
+ ([fe80::fcf6:46d6:f050:8a8c%4]) with mapi id 15.20.7633.036; Thu, 13 Jun 2024
+ 03:27:48 +0000
+From: "Li, Xin3" <xin3.li@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "corbet@lwn.net" <corbet@lwn.net>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
+	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
+	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "shuah@kernel.org"
+	<shuah@kernel.org>, "vkuznets@redhat.com" <vkuznets@redhat.com>,
+	"peterz@infradead.org" <peterz@infradead.org>, "Shankar, Ravi V"
+	<ravi.v.shankar@intel.com>, "xin@zytor.com" <xin@zytor.com>
+Subject: RE: [PATCH v2 04/25] KVM: x86: Mark CR4.FRED as not reserved
+Thread-Topic: [PATCH v2 04/25] KVM: x86: Mark CR4.FRED as not reserved
+Thread-Index: AQHaWe+gBPWte0uMqUOIgIdlQKoa17HFZoMAgABotFA=
+Date: Thu, 13 Jun 2024 03:27:48 +0000
+Message-ID: <SA1PR11MB673449B25E4807599715E6A9A8C12@SA1PR11MB6734.namprd11.prod.outlook.com>
+References: <20240207172646.3981-1-xin3.li@intel.com>
+ <20240207172646.3981-5-xin3.li@intel.com> <ZmoPLOx8sujVsGIS@google.com>
+In-Reply-To: <ZmoPLOx8sujVsGIS@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR11MB6734:EE_|SA0PR11MB4671:EE_
+x-ms-office365-filtering-correlation-id: 4ac6a727-0b6b-4199-e222-08dc8b58cc57
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230034|376008|1800799018|366010|7416008|38070700012;
+x-microsoft-antispam-message-info: =?us-ascii?Q?V887f7UC8z1B4k7lLZjNyyLyWKRbTPUCPseg5BLSCzjnwcjnTQZDkciCo1Iw?=
+ =?us-ascii?Q?rRMBaXbiLSvx82w39HbdOx38fn+3rdPecrgZYteGsPVlifmTyW5RW5pzk0hB?=
+ =?us-ascii?Q?lzo60QyADnt0AMyuQcTqp7ZgHQq95Kk7PlxQ75KAVv87BhGaODX/FmndaH9H?=
+ =?us-ascii?Q?jZM2FuBg8ZNY0T1a3qZ9nV5d9RLXIUXCRsgqAl6+freyON11jSfzBYFMz356?=
+ =?us-ascii?Q?JPWYfvag08t/+lkC9OUA2Lj7MoDqvGF0RCuguG5GaYh0gUEZz8dSMBVmV9a0?=
+ =?us-ascii?Q?xZcgkqyl9vXWWQRW9tqgayeGos0bjLCCjm/uHLIiv+5tJNxadrg7dDigLckF?=
+ =?us-ascii?Q?iCV+5ozerJhn2wrBNTo/COdYgYd9Ai8JwEQgHi5rSOBdWRmyNHrJrwF2iKK8?=
+ =?us-ascii?Q?ssEr5A8RyXxm9pR3x8NztHidhbM2f0hbW5s/ikqdzOJ6J+fvT6hj6+k4k13Y?=
+ =?us-ascii?Q?9uW+DWVxvH3t/Ve0om7WoY0FrzUf3Oc7kx/3VWWl4Jnan/M5ncnYAXMy6Oc7?=
+ =?us-ascii?Q?Res+qYurd6TsjJtnEPK7NuEcOe2Eci2Vyo+oIHgh9OUCjuV0n/+IV/B6mlUA?=
+ =?us-ascii?Q?EIFlthvxcBrqyXU6d4cT6fHryAfgjlr0yPYA5rJSLPutBviDEs12Rhay+EMp?=
+ =?us-ascii?Q?4hT2PbOgFaYAx9Cqd0c+zzffN94P00fsNrpmuPzBSxlwpkpNwJM7ITRnWWn3?=
+ =?us-ascii?Q?qchpJNGUJvQ20O/VmJOhtGr9Oh2BvrSHztX8aQtBxUjEOKBNDhHSDaZqii/M?=
+ =?us-ascii?Q?sOUzn11oTZHZQPw/YppbhcqRKIhhrb3J7rtXEOEUOUBM1Vyr3FXDKjKN4uDY?=
+ =?us-ascii?Q?rQk1iNaCEXhdJCyhwBpzTviM8V99dHAuUt2tMHAA0WquvET48ao+vIwhwev4?=
+ =?us-ascii?Q?x5Txs4w+OG7m9W1trXbxCByKwphoZEX1FzoWGAVHX7NMSpDfgNWipDuZPxcL?=
+ =?us-ascii?Q?9i0qgChitCZGVacAnIq94NPEdP4jCiFtsykfkkveAZ2+/Z6xTHL/FCERUJGe?=
+ =?us-ascii?Q?rQ5+l4eUiJ+iI5EmT1XRDigLOp8KsKMRnu55xi8j85VbWu2ppCJ1qn1MnG5G?=
+ =?us-ascii?Q?uJJm6IWLqcccKyXvJmDGbN5gQXvzc8Gy3XQ8zWeeKBgtXTsZhmcuP1oUixjw?=
+ =?us-ascii?Q?4iExmG1rIi5EltbyQMPJPL25OEFrSJC32pU7RHZzg1OmXWjFWJAAni97Bu6i?=
+ =?us-ascii?Q?M1SBhZ3s9JBEqfWZMQDtgdaSoWUQtWZ1VDMdEatuFqkIjtgrAwyPFPf3Jf1l?=
+ =?us-ascii?Q?txF+9W0IGIW+UQxqWbqWwiWAWpoFmATmxgB4jFLKrVz0a1+fpjcSoMu6h2DA?=
+ =?us-ascii?Q?TwDOFn5L3m4zPfIqXbyKHZ9FmJFgg3ouh/NqBclIH0mFgRJqBfNduqDnfmvO?=
+ =?us-ascii?Q?dIHCYLw=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6734.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230034)(376008)(1800799018)(366010)(7416008)(38070700012);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?fA8gimwUOg58jfSuTlRLFscAeGDQ/eJM9jEIwmm1G2qeclwM+Pm0vtoh6aCM?=
+ =?us-ascii?Q?4/BVymwHUwfsbkyFQa/I3JIwOZH57Uu2M2vBeKqb0a1PNP5+CQk3TbEG6qRT?=
+ =?us-ascii?Q?TahlJKy7/iZnXvffLyJZFCVBh565FSgJ98kX0qRjQxmnRhszFh+UYbKe6UO8?=
+ =?us-ascii?Q?/2fenubd+01/C4i8HYSj84YP8fJEwRzql/Tyq5nqmihwp9yB9N6CvIOBXqaM?=
+ =?us-ascii?Q?JjaqhkJGp5bJM08XR3ibL2GV62iz2raOlDYUsGeBvRf/nJKzfoDX8n/qcvzg?=
+ =?us-ascii?Q?ZbvEXnrNwzKWLm4/HT5+d4BCmMkgEe2f2rRAT3YJAqYXpVdUIrwUM/2MJj0x?=
+ =?us-ascii?Q?5PZrXEaXyQ8uKBSea0IYCVJifEUQHvGvvgFbRKeZTNM6vjTmXn0OfxwDDZwP?=
+ =?us-ascii?Q?jsVkVa1POLha3fG1330k1A2bhGqEnwpCzuk6x37rn690XP43AuzynLolwZ8Y?=
+ =?us-ascii?Q?aQfKp4IFYIk8v7XrUVaMoUqK6zcoHujU79h7fP4SCx1IgYh1aIVa5xzi8Cvs?=
+ =?us-ascii?Q?CfZRdf4YTAKm3a1vNiD9VjMxHyiJxz3TbCq9GIVzbfsNTyWbGqICs3S6nVK2?=
+ =?us-ascii?Q?7qXxtdMzMiAgrrda6T2Wbxm338LY56Mtw9mzXP+vcGJRk/8WrXtnrRpPsBPg?=
+ =?us-ascii?Q?akOisgvSfp4oHO6R0VbOJUbfEEHqBtU5uA9tjRv+MKgEL0CWagl2858AF4Hg?=
+ =?us-ascii?Q?7uhla2bAbyA6SbjlfMxjjOvrwZxcNpEAlGEuylbrlpjahavjrOm3PPlJs1+a?=
+ =?us-ascii?Q?hDTQAUwC4aaFB9V6RYf3WVZkXhoFlF3OHxgqJqSGiBuF2T8rHoc1AFNr5nev?=
+ =?us-ascii?Q?1QfdRVYqmIX7lsSxsK20DCRbsdgxps6c52+tQT6F/o9NeBkLLXaqnWD6ZlEb?=
+ =?us-ascii?Q?cZEWS1ph6LAxcP2d6UVrbGqTDc0bV6OFfOzbi5BqLTG17tMK2d5qLhVJXC5a?=
+ =?us-ascii?Q?W7hDgWGvuBxmEBHyWWRyXJoLjPmiqkFnb45L8vt1II3tg2JcOUzQezooeWI3?=
+ =?us-ascii?Q?xFDRSZk92d70zzKDC0lD69f97P16bpGsP/ZCHx1ESdbf18VGA6nSzlI9AuNc?=
+ =?us-ascii?Q?AoulFaoWmm7oBa9C/6GRH1yf237dAoFhE5c2bYJwzE0HNqur6McwaQRhDdoQ?=
+ =?us-ascii?Q?JYrwpDh+vGRR7amItFw/oCqAnWCuPmpTMeq7ofhWTXd1X7wgOsSBMJhr/QN8?=
+ =?us-ascii?Q?3D/x/WMXkMtwIfpxXexbTE7IzuouSZvgHzCreEJb5ztmI8KDKLtkJXlDLVT6?=
+ =?us-ascii?Q?jpwQo9U+QQZhpvmBLsnin1uoj3VgZGFlxG9nHSkgrXpg3sP59VmGT6nIzzcx?=
+ =?us-ascii?Q?qbh/8Pypomfb3hmEtF0zGmero6PgPf5b22X8yOjg6xZt/YZJLLHBZ97cSMQh?=
+ =?us-ascii?Q?ASf2X/TdQfoHK3G6KKezV88caOmi5na+DzI+W7T1o6z1HQ71fsrkZogCWxyy?=
+ =?us-ascii?Q?HXD3EoumC+1D3+kR5qNtnRs5oAI22Nfgc/vwzy3Ye3H6QUprQOre1B/nPzOB?=
+ =?us-ascii?Q?8OdIXRix36sRhgYiGwVmTEgl13I2D8rY7nkRDFPf1OFyD2CNBq4fvwu1rLhA?=
+ =?us-ascii?Q?P+DmPDjbI91B0jkdpyY=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240612-md-sound-soc-amd-v1-1-ad1de0409c11@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAOJmamYC/x3MQQqDQAyF4atI1g3MTEWhVyldjDNpDdRYkloE8
- e7Gbh58i/dvYKRMBrdmA6UfG8/iiJcGypjlRcjVDSmkNnQx4VTR5kXOLZhdte9i7AMFukbw20f
- pyes/eX+4h2yEg2Yp4xl6sywrTtm+pLDvB8p14q2BAAAA
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jUJ8Od1hB6UnDkUhtqAF6F901r_euKbk
-X-Proofpoint-ORIG-GUID: jUJ8Od1hB6UnDkUhtqAF6F901r_euKbk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-12_12,2024-06-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- mlxlogscore=999 impostorscore=0 bulkscore=0 adultscore=0 phishscore=0
- priorityscore=1501 clxscore=1015 spamscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406130021
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6734.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ac6a727-0b6b-4199-e222-08dc8b58cc57
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2024 03:27:48.1390
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xh9URZJVF8nfyH81gJwXUQlinDAqUwgjTAiAs/BDGedIZtm58FeALh96cIUS7tboSnq+FRWi/fNbLdD+t63AYw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4671
+X-OriginatorOrg: intel.com
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/renoir/snd-acp3x-rn.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/yc/snd-soc-acp6x-mach.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/acp/snd-acp-i2s.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/acp/snd-acp-pdm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/acp/snd-acp-legacy-common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/acp/snd-acp-pci.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/amd/ps/snd-soc-ps-mach.o
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> On Wed, Feb 07, 2024, Xin Li wrote:
+> > The CR4.FRED bit, i.e., CR4[32], is no longer a reserved bit when a gue=
+st
+> > enumerates FRED, otherwise it is still a reserved bit.
+>=20
+> This isn't quite correct, as __cr4_reserved_bits() is used with kvm_cpu_c=
+aps too,
+> i.e. to compute CR4 bits that are reserved from the host's perspective.  =
+And that
+> matters, because if this check was done _only_ on guest CPUID, then KVM w=
+ould
+> allow CR4.FRED=3D1 before all of KVM support is in place.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-Corrections to these descriptions are welcomed. I'm not an expert in
-this code so in most cases I've taken these descriptions directly from
-code comments, Kconfig descriptions, or git logs.  History has shown
-that in some cases these are originally wrong due to cut-n-paste
-errors, and in other cases the drivers have evolved such that the
-original information is no longer accurate.
----
- sound/soc/amd/acp/acp-i2s.c           | 1 +
- sound/soc/amd/acp/acp-legacy-common.c | 1 +
- sound/soc/amd/acp/acp-pci.c           | 1 +
- sound/soc/amd/acp/acp-pdm.c           | 1 +
- sound/soc/amd/ps/ps-mach.c            | 1 +
- sound/soc/amd/renoir/acp3x-rn.c       | 1 +
- sound/soc/amd/yc/acp6x-mach.c         | 1 +
- 7 files changed, 7 insertions(+)
+Ah, that means I didn't dig deep enough.
 
-diff --git a/sound/soc/amd/acp/acp-i2s.c b/sound/soc/amd/acp/acp-i2s.c
-index 60cbc881be6e..0bc8617e922a 100644
---- a/sound/soc/amd/acp/acp-i2s.c
-+++ b/sound/soc/amd/acp/acp-i2s.c
-@@ -616,5 +616,6 @@ const struct snd_soc_dai_ops asoc_acp_cpu_dai_ops = {
- };
- EXPORT_SYMBOL_NS_GPL(asoc_acp_cpu_dai_ops, SND_SOC_ACP_COMMON);
- 
-+MODULE_DESCRIPTION("AMD ACP Audio I2S controller");
- MODULE_LICENSE("Dual BSD/GPL");
- MODULE_ALIAS(DRV_NAME);
-diff --git a/sound/soc/amd/acp/acp-legacy-common.c b/sound/soc/amd/acp/acp-legacy-common.c
-index 3be7c6d55a6f..4422cec81e3c 100644
---- a/sound/soc/amd/acp/acp-legacy-common.c
-+++ b/sound/soc/amd/acp/acp-legacy-common.c
-@@ -475,4 +475,5 @@ void check_acp_config(struct pci_dev *pci, struct acp_chip_info *chip)
- }
- EXPORT_SYMBOL_NS_GPL(check_acp_config, SND_SOC_ACP_COMMON);
- 
-+MODULE_DESCRIPTION("AMD ACP legacy common features");
- MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/sound/soc/amd/acp/acp-pci.c b/sound/soc/amd/acp/acp-pci.c
-index ad320b29e87d..565623afd42e 100644
---- a/sound/soc/amd/acp/acp-pci.c
-+++ b/sound/soc/amd/acp/acp-pci.c
-@@ -247,6 +247,7 @@ static struct pci_driver snd_amd_acp_pci_driver = {
- };
- module_pci_driver(snd_amd_acp_pci_driver);
- 
-+MODULE_DESCRIPTION("AMD ACP common PCI support");
- MODULE_LICENSE("Dual BSD/GPL");
- MODULE_IMPORT_NS(SND_SOC_ACP_COMMON);
- MODULE_ALIAS(DRV_NAME);
-diff --git a/sound/soc/amd/acp/acp-pdm.c b/sound/soc/amd/acp/acp-pdm.c
-index f754bf79b5e3..bb79269c2fc1 100644
---- a/sound/soc/amd/acp/acp-pdm.c
-+++ b/sound/soc/amd/acp/acp-pdm.c
-@@ -178,5 +178,6 @@ const struct snd_soc_dai_ops acp_dmic_dai_ops = {
- };
- EXPORT_SYMBOL_NS_GPL(acp_dmic_dai_ops, SND_SOC_ACP_COMMON);
- 
-+MODULE_DESCRIPTION("AMD ACP Audio PDM controller");
- MODULE_LICENSE("Dual BSD/GPL");
- MODULE_ALIAS(DRV_NAME);
-diff --git a/sound/soc/amd/ps/ps-mach.c b/sound/soc/amd/ps/ps-mach.c
-index e675b8f569eb..ff8ad036b077 100644
---- a/sound/soc/amd/ps/ps-mach.c
-+++ b/sound/soc/amd/ps/ps-mach.c
-@@ -75,5 +75,6 @@ static struct platform_driver acp63_mach_driver = {
- module_platform_driver(acp63_mach_driver);
- 
- MODULE_AUTHOR("Syed.SabaKareem@amd.com");
-+MODULE_DESCRIPTION("AMD Pink Sardine support for DMIC");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:" DRV_NAME);
-diff --git a/sound/soc/amd/renoir/acp3x-rn.c b/sound/soc/amd/renoir/acp3x-rn.c
-index 5d979a7b77fb..3249f74a0197 100644
---- a/sound/soc/amd/renoir/acp3x-rn.c
-+++ b/sound/soc/amd/renoir/acp3x-rn.c
-@@ -72,5 +72,6 @@ static struct platform_driver acp_mach_driver = {
- module_platform_driver(acp_mach_driver);
- 
- MODULE_AUTHOR("Vijendar.Mukunda@amd.com");
-+MODULE_DESCRIPTION("AMD Renoir support for DMIC");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:" DRV_NAME);
-diff --git a/sound/soc/amd/yc/acp6x-mach.c b/sound/soc/amd/yc/acp6x-mach.c
-index 1760b5d42460..4b32517c1b7c 100644
---- a/sound/soc/amd/yc/acp6x-mach.c
-+++ b/sound/soc/amd/yc/acp6x-mach.c
-@@ -504,5 +504,6 @@ static struct platform_driver acp6x_mach_driver = {
- module_platform_driver(acp6x_mach_driver);
- 
- MODULE_AUTHOR("Vijendar.Mukunda@amd.com");
-+MODULE_DESCRIPTION("AMD Yellow Carp support for DMIC");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:" DRV_NAME);
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240612-md-sound-soc-amd-d761170e0e31
-
+Thanks!
+    Xin
 
