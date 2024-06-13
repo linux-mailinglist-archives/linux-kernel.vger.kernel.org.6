@@ -1,140 +1,257 @@
-Return-Path: <linux-kernel+bounces-212788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9C690665F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:17:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E3C4906661
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 10:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 535BB1C23F93
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:17:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E846C1F256D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C4D13D2BD;
-	Thu, 13 Jun 2024 08:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7392813D50C;
+	Thu, 13 Jun 2024 08:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="KeAa/uha"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="e8wzCEsl"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2051.outbound.protection.outlook.com [40.107.244.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE7313D2BC
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 08:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718266663; cv=none; b=kZZrN1iybBSBPyg82zRmTs++sJ+d0WP6XeKG4JU2N0i6l23lDScvNdi0JY7MDQd1AISz7xGjE5WH9pxGy7qnP3Vrq+2Bdb+EvtIpWiuwiTypUfIJsHNwfmiKEfmhElNZ1KGR+H/cE82BgwDGnARByeP6Nos4boHGpykW/uqshHI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718266663; c=relaxed/simple;
-	bh=zlvVmXkKPR9E+W2TnsSBwpqbO54sU4MAevzrEpoPNYQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=S1HIWhsNv3qbaWVx2xPGAF8wm8PkFy8OYOX6mce9QjIqyplu5iFll86Ql05KJCYPSukoBmPSIcWrg19vGXkrXmYCvHNrIPPGAKGpY/zJwhvlTaqRrsi0p4YOj+7+HqxyHgaE8tsTPDAKTjSa8mtBFaGa9DR43osqjcMWQ0bNcTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=KeAa/uha; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ca342d6f3so253933e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 01:17:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718266659; x=1718871459; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zlvVmXkKPR9E+W2TnsSBwpqbO54sU4MAevzrEpoPNYQ=;
-        b=KeAa/uhaqRNyu8h4ZW48hm8whf2rJDlk2f25Zsg/t797/gvg+VkjQvI4x0FbCdBb8l
-         dm5S4BQcFhv7xRF4LXgTddDSNNQMKe/L4AKyFmgSOtqtr9Tob8oA3oetMqfx6lvj/rFi
-         QhkHwApi+5+YoDLSMJV4X0w8nNX6wFlKPorDTkNhcRw4e1fkesuxAkzoJKW3M2gYGMuN
-         GfurmCh/zzx+dM1NkUxi8ADC68zJyTYo6HjRgZGbWcfCr9eioUby8D7qdTQCFLaoBeN6
-         ivom7HfesIbe7gFMVrYQpuz+Hu74JZIMQCaBEwS8ZkJgJZrMhQVz1uSOOAFHTEMkavab
-         5FDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718266659; x=1718871459;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zlvVmXkKPR9E+W2TnsSBwpqbO54sU4MAevzrEpoPNYQ=;
-        b=TjcVAdsSUW1waiAsla6QeMXPTA1E9tglJ4cG4XOMu4aEy062VVNXD/Rt7jygiS5q45
-         qVekCKsw9SJcvLdC8ANDdmFgORT0CAV1mGtI53yItwXMKGyrRuY/eWAcWaMruSsFBj6g
-         eB9svujzV3iPs+6VoBBgwBqeAaFWIgrFSCthQQWf+BoflJ4w4jYRWKs4V8Tj0HkDgz4h
-         nBDqV6qPmXS0VjduQsl+cmTDTPcz3Qw0LnDth3yBZZl5WzvnFxvMUnXE9I8/i/lZExhR
-         b27Z0rbWSAnxzW8YI8g6tNj3Usn4IQ+YpebLHok8ARkGFNtOxkDueOU1uu1Re9bK7LN+
-         xAQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxWb5Av+8mmSrwkN767pwrqCer/bND7OQKe1Ta38GuIooQI8oxOcnOJlpbxjl4qtSHBG4z7p2A1/or8IERk+oPAGwZHleciY8F/i+r
-X-Gm-Message-State: AOJu0YwdHtRzL35VqPw59aHUkD2Sr5Ayc6Uqj+lD7K3lYNeTSmOrk/w/
-	QwFJiCJ+mhpKTVs7QhA8iQFTShYdze2jfrRa8APeV9OtdQOm7WKWYjt91tCTjEux8bL0apA+v06
-	ab8bCElYJlP/yRJG7XhCoo7FrbIHHZgAx5krN8A==
-X-Google-Smtp-Source: AGHT+IF34CrOTybVWCj97ZpeobyHJQSkJMauKqII8oRwBz2/SBJ0ILVCcG1q56HSZLX2R+nPr6vogyE1smxAWIap5as=
-X-Received: by 2002:ac2:5f8a:0:b0:52c:50ff:6567 with SMTP id
- 2adb3069b0e04-52c9a3c6f80mr2693323e87.22.1718266658942; Thu, 13 Jun 2024
- 01:17:38 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB7513D2AF;
+	Thu, 13 Jun 2024 08:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718266767; cv=fail; b=Nt/dai9uysncfbTD+ryT6irpiNQdTU+iBTh5rmZMprYJAejd3tohdXqQiC5H3oUcxPPPfuozLOzhIsvdOcGROfcORA6AGCRlW+NWBrrmowPQqEhlmSQXRMbXDTS38m/THECmjaklu2tzH6BYyadtoX5jzzKfpxVGDtmIn+Aby0g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718266767; c=relaxed/simple;
+	bh=hosPDq71C8DmySX1TO4FN7iQ1faro842qGuj7vtMEUU=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=draOJ6+sZF+NDgmDubChXmJlSjMFS+VFESH4v+3rN6aIVrdf99nnc/dXXTWgtLdK76Yx48VjSQeaPAYi18OI72Knda5cRpMIpDTm03sc8Yp0qi0YQVM5/8Ynmf9jR5z2DNN0jthz9C1Ns76KyVG3Mv2q7tVzsthKIhc3gEkbZ4Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=e8wzCEsl; arc=fail smtp.client-ip=40.107.244.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gyKR5lshYE4mhZtxx8Ob3jh2LAjZk2cYjBoQOfUsoJfrnwTVja/e66JmI/qFDc4N+JYd1IL+JmUNzYCv8O/It+qO7ucc46ukC11pmN1sTAAiRpaXqIk3pCAu0VHHM5OOa/oNuBwn7zs1gEt4EWf3gqEPi9BxRtQVcRrU8WJKAXIdpxnOcwlBqo6afFVUqEiYF8atGVgcMKCwO0nV4v87JwAkgnj5C+uvWxj8TzogvfaB/SkkAUscDQPQi4k3pX+oVawKZFX60ou9h4tw9uojefkVrRcD8TkeEOQ0HDuV4vU5ecEQfYBCqEitAFsn7rCY59u15+iKKIUDp2JyKxkxKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B38VU4S92u8wnV/A50Maa1uQHXb9lAhMLM1zeiHt3UM=;
+ b=aSvk24GmEXD7fch0Otnd04I1E3+8wqTRW2qTWj1JXykoiZ/i76SqbK7UfClJDso9JJ8Tn7oJzmOZ/syv0K7PUR3znXF5TksekNv01lGubB8uW+lJJFmvBTp4UzvF0bCweCaiYU2vP9e+Gk9sFt3CUUSq1HtfNQOPnwdvZs/flAd8QOttVpywEKoe7hjhiBmJVAypNrfktWmychDK34wV38USWlyAun4fbH9B8/VQ9/eafJoXxRgyrnjdQPlQI2pDqN8e1/apPT2NaGlM1x+ga6S+dXDFctByWYiWKXLlupAIJ+YQqfNtM03Vsv8BAVmbhaETtjNxtSYiM0RhiFPDCg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B38VU4S92u8wnV/A50Maa1uQHXb9lAhMLM1zeiHt3UM=;
+ b=e8wzCEslEkyOnPkxX0m1Gh4ElZdnAK3GPGnBq1JcMCc5Ml7nqFh9y5Hxid5LjZWsexFloThahzefDCNaJge1iJ58qsGtZyYLzjldLXnM/wR5PLCBkGTBQmd4dq+3UtwqtkZJhBEDzoslSrAiOFbDAnxChPt2Um/66px+AqCf7SI=
+Received: from DM6PR08CA0001.namprd08.prod.outlook.com (2603:10b6:5:80::14) by
+ IA1PR12MB6066.namprd12.prod.outlook.com (2603:10b6:208:3ee::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.36; Thu, 13 Jun 2024 08:19:22 +0000
+Received: from CY4PEPF0000FCC5.namprd03.prod.outlook.com
+ (2603:10b6:5:80:cafe::b8) by DM6PR08CA0001.outlook.office365.com
+ (2603:10b6:5:80::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.24 via Frontend
+ Transport; Thu, 13 Jun 2024 08:19:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000FCC5.mail.protection.outlook.com (10.167.242.107) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Thu, 13 Jun 2024 08:19:22 +0000
+Received: from BLRRASHENOY1 (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Jun
+ 2024 03:19:18 -0500
+From: Gautham R.Shenoy <gautham.shenoy@amd.com>
+To: Perry Yuan <perry.yuan@amd.com>, <Mario.Limonciello@amd.com>
+CC: <rafael.j.wysocki@intel.com>, <viresh.kumar@linaro.org>,
+	<Ray.Huang@amd.com>, <Borislav.Petkov@amd.com>, <Alexander.Deucher@amd.com>,
+	<Xinmei.Huang@amd.com>, <Xiaojian.Du@amd.com>, <Li.Meng@amd.com>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 10/10] cpufreq: amd-pstate: automatically load pstate
+ driver by default
+In-Reply-To: <39b55abeb278d9ae1688c0b87cb7ec8a3e37932a.1718095377.git.perry.yuan@amd.com>
+References: <cover.1718095377.git.perry.yuan@amd.com>
+ <39b55abeb278d9ae1688c0b87cb7ec8a3e37932a.1718095377.git.perry.yuan@amd.com>
+Date: Thu, 13 Jun 2024 13:49:15 +0530
+Message-ID: <87wmmti7b0.fsf@BLR-5CG11610CF.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610112700.80819-1-wsa+renesas@sang-engineering.com>
- <20240610112700.80819-2-wsa+renesas@sang-engineering.com> <CAMRc=MfZ11U+kAh1+K=DxtJ=QL+cY7Q_sBN4sQDF-RNgjpV0QA@mail.gmail.com>
- <jvnvx7a4pn6evrp5ehfrt4qsiuprq6ogvrue2a3uupwtydmgcm@2rvat7ibvgb4>
-In-Reply-To: <jvnvx7a4pn6evrp5ehfrt4qsiuprq6ogvrue2a3uupwtydmgcm@2rvat7ibvgb4>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 13 Jun 2024 10:17:27 +0200
-Message-ID: <CAMRc=Mc4__0zzJZG3BPnmbua88SLuEbX=Wk=EZnKH5HQvB+JPg@mail.gmail.com>
-Subject: Re: [PATCH v9 1/1] gpio: add sloppy logic analyzer using polling
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	linux-renesas-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
-	Linus Walleij <linus.walleij@linaro.org>, Kent Gibson <warthog618@gmail.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCC5:EE_|IA1PR12MB6066:EE_
+X-MS-Office365-Filtering-Correlation-Id: 11a860e5-09e4-4b8f-ace2-08dc8b8187ec
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230034|376008|82310400020|1800799018|36860700007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0KaQ3Wi5KblvbuQ4LOhXo0/b9XbHlvVQzQB3bdZgzikzrzWHyFOjR5kmTDrU?=
+ =?us-ascii?Q?obbV2ex0Qhpl3qgQR+4toHrDVu8ZD6pN9m3/h38Scry1BL+i8eDQ0BoVH8Vw?=
+ =?us-ascii?Q?M/0z74Us/VJjCbS9PIb4jsw/b64HiH2A3GQwGl4Et81Wrx4+FO4C8neIwp3Z?=
+ =?us-ascii?Q?rs1qQiIPTVVingZzWRdyWZnRbNso3kd/GrmHhcb7YnriV/Qq09lpCRJ4ma5N?=
+ =?us-ascii?Q?P9vig56otXCIbBuB6zr6TC9DUIY6KdYZVXicZfn0D3E8RSAidyi8EMJS3+lU?=
+ =?us-ascii?Q?CsH/C4uUAGWC6L6LY7dYCWGOJqm6tulXcSDTipH3IUeflD33sqJ0Ox6zCKmP?=
+ =?us-ascii?Q?0zUsiN7U+avFWyO7mFyM8k8q+DYqnXKdAGsow+jlwqhoemDXoJ18HDfr3TsE?=
+ =?us-ascii?Q?jq85AE1HIscnMRj+mniS6wlYO8X0y/dQJRaa6MRaRMdJCRr5txbB+gYf8THS?=
+ =?us-ascii?Q?uHLHSDW5+RUnUGi+Wpi8abI+Rm/owiU3bhER7gZt7AxnEOdjHNqA7UQ0XukW?=
+ =?us-ascii?Q?o9o2tdG2eRW+R8cBAJcbOP2q/ZrQPzqsvc22yT9xuXZdzZ8UFjfCZBBBS1Kt?=
+ =?us-ascii?Q?zuffiKsUkJPJ6R06BlOsqH2ZrnTFzVnmSIR4hY8SOX7QzytBu4ewI2URHrUN?=
+ =?us-ascii?Q?Cmx0XwKqLctdOIOaZ/OQ837nNXEfz7KwGOq0tScgns1bJ+2/EVG33fufc4cF?=
+ =?us-ascii?Q?TjealvFFlB+dCBpfXkMNft2Wbk1hSw7pf5NGtAI6lnzYvesvwEsVqetAqtQU?=
+ =?us-ascii?Q?jR40Oez0FznxnI3YYbKXXZfm84gufkubzDF/i6OJnW/J5zAlktWMErChB6J/?=
+ =?us-ascii?Q?R+kLjin+kwvnmi/Zn5weMOrhThPNLdY4WNyo7rXIXJyrHJPsUZqxDvw5FrxG?=
+ =?us-ascii?Q?htshIPzUezNyzgtvvlai3YMFMSTnVTlpxjj0+IA7tKVbIjSexYJhGmZT1dHT?=
+ =?us-ascii?Q?qBHREdcsXE3cKWUXMrDP18o9yBQWugzbyIj+LnzIIr+9DE+uVBHCrNB8cgC3?=
+ =?us-ascii?Q?5Qe6omT4XaSlIv9s736RTJUfcqrOba68wir3tLl4EzqV7aAOQ3oCzgL66Y9v?=
+ =?us-ascii?Q?A6nR5Ii5i+CaLZ5SItfyBGGi/ewvt/1Ad5u1hVKq6wDlHdTm0d8LFyR/H4JG?=
+ =?us-ascii?Q?zBgA0h+6OrDOxsFAb9Qlw7AvE4RK+sAp4lv7JOYcS4fLsPbsiDG8pievMo4J?=
+ =?us-ascii?Q?RiClQxSl8+/dMzKDnRDpkdrJPw7MAFUZCLgbDWxQETLLeImrmlV3M+ESgsTd?=
+ =?us-ascii?Q?SrelI3MhgXjCs+BNv9CM/cY63Fj9/TvrkFvfrs6ReOT/bujEGI+s3oDiROn7?=
+ =?us-ascii?Q?5fIMBICmzWHzltKANUydGzP06Tgsjwvl+GKJI6FOZ3O+Qc8nBDl37KbMeqnh?=
+ =?us-ascii?Q?FcH+IYc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230034)(376008)(82310400020)(1800799018)(36860700007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2024 08:19:22.4119
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11a860e5-09e4-4b8f-ace2-08dc8b8187ec
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000FCC5.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6066
 
-On Wed, Jun 12, 2024 at 6:03=E2=80=AFPM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> Hi Bart,
->
-> > I really dislike drivers being called in an ambiguous way like
-> > "simple" or - in this case "sloppy". I understand why it is - in fact
-> > - sloppy but can we call it anything else? Like
-> > "gpio-logic-analyzer.c"?
->
-> Sure, we can if you prefer. I named it like this to make the limitations
-> super-clear. And even with that in place, I still got a private email
-> where someone wanted to build a 400MHz-RPi-based logic analyzer device
-> with it. Which would not only have the latency problems, but also
-> likely have a max sampling speed of whopping 400kHz.
->
-> > > +Note that you must provide a name for every GPIO specified. Currentl=
-y a
-> > > +maximum of 8 probes are supported. 32 are likely possible but are no=
-t
-> > > +implemented yet.
-> > > +
-> >
-> > What happens on non-DT systems? Can you still create an analyzer in a
-> > different way? Can I maybe interest you in configfs for the purpose of
-> > device configuration like what gpio-sim and the upcoming gpio-virtuser
-> > does?
->
-> Frankly, I'd like to leave this to the person needing it. I've been
-> working on this for way too long already and am not up to major changes
-> anymore. Minor stuff, okay, I'll go one or two more rounds.
->
-> The GPIO analyzer is a debug tool aimed for development boards in remote
-> labs, and all boards I have access to use DT. Furthermore, debugfs is nic=
-e
-> because it is clear there is no stable ABI. It has been useful as-is in
-> the past. That's what I am offering. If that's not enough, no hard
-> feelings, but someone else needs to continue then.
->
-> All the best,
+Hello Perry,
 
-I see. I don't want to stop it from going upstream. On second thought
-though: are you sure drivers/gpio/ is the right place for it? This
-directory is for GPIO *providers* - mostly drivers for real HW and
-some "virtual" GPIO providers (gpio-aggregator, gpio-sim, gpio-latch).
-In general: modules that export their own gpio_chip. This module is a
-consumer of GPIOs exclusively. May I suggest moving it over to
-drivers/misc/? I think it's a better place for it and I wouldn't mind
-keeping the "sloppy" in the name then.
 
-Bart
+Perry Yuan <perry.yuan@amd.com> writes:
+
+> If the `amd-pstate` driver is not loaded automatically by default,
+> it is because the kernel command line parameter has not been added.
+> To resolve this issue, it is necessary to call the `amd_pstate_set_driver()`
+> function to enable the desired mode (passive/active/guided) before registering
+> the driver instance.
+> This ensures that the driver is loaded correctly without relying on the kernel
+> command line parameter.
+>
+> Meanwhle, user can add driver mode in command line which will override
+> the kernel config default option.
+>
+> [    0.917789] usb usb6: Manufacturer: Linux 6.9.0-rc6-amd-pstate-new-fix-v1 xhci-hcd
+> [    0.982579] amd_pstate: failed to register with return -22
+>
+> Reported-by: Andrei Amuraritei <andamu@posteo.net>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218705
+> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
+> ---
+>  drivers/cpufreq/amd-pstate.c | 27 ++++++++++++++++++---------
+>  1 file changed, 18 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index fa486dfaa7e8..6e5c398810bf 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -1841,28 +1841,37 @@ static int __init amd_pstate_init(void)
+>  	/* check if this machine need CPPC quirks */
+>  	dmi_check_system(amd_pstate_quirks_table);
+>  
+> -	switch (cppc_state) {
+> -	case AMD_PSTATE_UNDEFINED:
+> +	/*
+> +	 * get driver mode for loading from command line choice or kernel config
+> +	 * cppc_state will be AMD_PSTATE_UNDEFINED if no command line input
+> +	 * command line choice will override the kconfig option
+> +	 */
+> +	if (cppc_state == AMD_PSTATE_UNDEFINED) {
+> +		pr_err("pyuan cppc_state == AMD_PSTATE_UNDEFINED \n");
+
+As Mario pointed out, this needs to be removed :-)
+
+The following review comments are assuming that you want this patch so that
+amd-pstate is the default driver on shared-memory non-server platforms.
+
+
+>  		/* Disable on the following configs by default:
+>  		 * 1. Undefined platforms
+>  		 * 2. Server platforms
+>  		 * 3. Shared memory designs
+
+The comment says the driver needs to be disabled on the shared memory
+designs by default. But...
+
+
+
+>  		 */
+>  		if (amd_pstate_acpi_pm_profile_undefined() ||
+> -		    amd_pstate_acpi_pm_profile_server() ||
+> -		    !cpu_feature_enabled(X86_FEATURE_CPPC)) {
+
+...the check for shared-memory design has been removed. Is this
+intentional ? So do you want the comment to be fixed so that it is clear
+that we want amd-pstate to be the default driver on non-server platforms
+?
+
+
+
+> +		    amd_pstate_acpi_pm_profile_server()) {
+>  			pr_info("driver load is disabled, boot with specific mode to enable this\n");
+>  			return -ENODEV;
+>  		}
+> -		ret = amd_pstate_set_driver(CONFIG_X86_AMD_PSTATE_DEFAULT_MODE);
+> -		if (ret)
+> -			return ret;
+> -		break;
+> +		/* get driver mode from kernel config option [1:4] */
+> +		cppc_state = CONFIG_X86_AMD_PSTATE_DEFAULT_MODE;
+
+If someone booted the system with "amd_pstate=disable", the above will
+overwrite that preference, no ?
+
+> +	}
+> +
+> +	switch (cppc_state) {
+>  	case AMD_PSTATE_DISABLE:
+> +		pr_info("driver load is disabled, boot with specific mode to enable this\n");
+>  		return -ENODEV;
+
+....and this "case" statement will never be reachable in the
+aforementioned case.
+
+
+>  	case AMD_PSTATE_PASSIVE:
+>  	case AMD_PSTATE_ACTIVE:
+>  	case AMD_PSTATE_GUIDED:
+> +		ret = amd_pstate_set_driver(cppc_state);
+> +		if (ret)
+> +			return ret;
+>  		break;
+>  	default:
+>  		return -EINVAL;
+> @@ -1883,7 +1892,7 @@ static int __init amd_pstate_init(void)
+>  	/* enable amd pstate feature */
+>  	ret = amd_pstate_enable(true);
+>  	if (ret) {
+> -		pr_err("failed to enable with return %d\n", ret);
+> +		pr_err("failed to enable driver mode(%d)\n", cppc_state);
+>  		return ret;
+>  	}
+>  
+> -- 
+> 2.34.1
 
