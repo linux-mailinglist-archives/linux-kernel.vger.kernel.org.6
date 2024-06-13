@@ -1,184 +1,109 @@
-Return-Path: <linux-kernel+bounces-212488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A23AE9061AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:18:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 690389061B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 272D41F22263
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:18:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9912B1C21343
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9183D96D;
-	Thu, 13 Jun 2024 02:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t4SWGH7y"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7B12D60A
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154825F860;
+	Thu, 13 Jun 2024 02:20:45 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7993833062;
+	Thu, 13 Jun 2024 02:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718245127; cv=none; b=n1WUWIbc1ldbCQFNdHJm+TMl48CYvcfDWFZfbkuTCIHeZfua+/Y3q1jzLi1w3wE46qL9AHzIfBVWzF54NIxrLWiP5+jGfcPg/ldaOebR7UrbK5usAa2034V36P1nvCZtLcUqkjB3pXIuIhdUGbKEO06koFIvpaNHqwsMhpbFk98=
+	t=1718245244; cv=none; b=Z1pDo2AmU3NgtNwrGZQd709h4zpuE6e87i5K9185y7A2Zv1eAeGi4qh6rWgSfk6yCF9TwOJ7KMwca78By5Xb7H6njMm4Gv+aEQ2Ti0zY/f/jLVTl9t1rqtXODHtIOn2K8ZLiijeyw7sCl4BtauK+2mataa7ONax1Se7miAC2bp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718245127; c=relaxed/simple;
-	bh=/mWRmkzIysBdEAY04QxydbXxRhNTjjlwsLIad+cJVKM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rsJgQp9jM8U++BX5wFx1JTVttoyoD1H7g4CyOB+PqavXDeQTCxswxsBBqo6JPSJgtbBJehZ+7kUgiHnFiMoKUVDgBXTtDmnYNHNhuuHe+7+78a63+KALm9leX8pWKa7LCi3TqFOJYj/lTUPZLc4F9aUlG0vYRa6C6HRSshkpLCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t4SWGH7y; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso5216481fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 19:18:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718245123; x=1718849923; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=12rYDQECQwR2eWoCJ65xt9hG+fucIyD5JxR2TElJl4c=;
-        b=t4SWGH7yBWFGOYwS8N8ZA3t4zCp2X5koTHe60b84FrgkrA2PddRMg96p8+zZijFeGA
-         owm+c34mToD1eqdobOnpNA9V/3L3/VfBrX8ybmaKMmdYUMTb2h0p0EguG+OdR9Ir1ASR
-         H4BWYn2iYAu/U4wjPAc+w/miTJO9kWfozVDaY8psFWbEqrapwXM2Wc/eb3aQC39USpPh
-         VGsGuEhZV1CG0igdObf+9StY0fgmtISZKzBx3CVNUAH/q8vvblFDmTeJJyxCTkUEnxD3
-         yiBZkDd+R9VW/CuwVvqdC1rpTlBwGiGA/EPMFPbo2JMpl645uYNKVteWN4x3tfEVtHNc
-         qN6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718245123; x=1718849923;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=12rYDQECQwR2eWoCJ65xt9hG+fucIyD5JxR2TElJl4c=;
-        b=jWovvujcLZQzfyLPfipXR6SLI6Mt1dUtnKfpXJr5WPSHT3u44RRMtlTJDIzt68t1vK
-         ipUl7A65i75t5durm4tMzoBLZsN9m0NHvSGZoDne1CLDek8kr+8+gTUXdGMZcm754g+/
-         vWpjlt1WUmBMwJuatr2QnFB5COWSyQPUfiYUkpRTWRg3BrGfYCFebTcsviIv8Wu64RhH
-         YKGKVW+DgKlYueZdEw3E0T13LkIM6/neidkON0/zdjD4/c+GXvn8JxTQNgGJqi3nW1c8
-         ndEkVlM70qaiDoJ0wTcBvrmE0T1TrJ226wi15Nb+OtAtzIY2N5nZ7zrT8EPeig6yuUOm
-         41TA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdhniZjZ71Lda+5aHY1bhjfxEAMmAnzDDGij6qnG6eqLfC03VLrduHbZospHbICunOSl0J/lYlG3CPn8LAolQopVm5ilPKfzHi6OHH
-X-Gm-Message-State: AOJu0Yzrw7KHMuY0xwyAtS+TasD4kZzUwZqwNhdPknHtQRJxO+vXwSCP
-	oRmClF4QHXD7cXuy8+4UL2644SlajyCGicL/SZLGc2So3Mh85ynNyjdiLezsg1GsCqopg5uQMoF
-	eUuSkgNw6nRxAbUtHr81/YsKeU/+F4ax9R2Hq
-X-Google-Smtp-Source: AGHT+IFU4l3WY9wL81p+yVuTlpyUuiNnuA0ZnMTCC1qXPf1EmUjm/ZVtjaVB9KB3C5PIpAeWSfa1KdjCeGTyVRLq/zA=
-X-Received: by 2002:a05:651c:198c:b0:2eb:eb25:81f4 with SMTP id
- 38308e7fff4ca-2ebfc9ab264mr31400101fa.6.1718245123334; Wed, 12 Jun 2024
- 19:18:43 -0700 (PDT)
+	s=arc-20240116; t=1718245244; c=relaxed/simple;
+	bh=NrB1tWFuIhfmrmOs66MYBHQVmBB3oACaTlrPzQkS7dA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=nj87qpjDHPRvlcWBIjO6f/UMp8K1UAY/bVC3gWssBkJUFebj3wC+62QNtXsxpLTgX4BQX7GuobKZirHjgVYJCY5Ycy6A67zElASNeir1Falhq1dslaWDP67t2jcyOET7sZXPn8xU5AXPgt9csRW/6lO5fl9CSy0MpwPKbt6MpCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [111.207.111.194])
+	by gateway (Coremail) with SMTP id _____8Bx3+t0V2pmEkEGAA--.9673S3;
+	Thu, 13 Jun 2024 10:20:37 +0800 (CST)
+Received: from [10.180.13.176] (unknown [111.207.111.194])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8Cx78dvV2pmVgceAA--.8207S3;
+	Thu, 13 Jun 2024 10:20:32 +0800 (CST)
+Subject: Re: [PATCH v2] PCI: use local_pci_probe when best selected cpu is
+ offline
+To: Markus Elfring <Markus.Elfring@web.de>,
+ Huacai Chen <chenhuacai@loongson.cn>, linux-pci@vger.kernel.org,
+ loongarch@lists.linux.dev, Bjorn Helgaas <bhelgaas@google.com>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20240605075419.3973256-1-zhanghongchen@loongson.cn>
+ <9bf241c5-68af-4471-a159-1c673243d80d@web.de>
+From: Hongchen Zhang <zhanghongchen@loongson.cn>
+Message-ID: <d36de70b-3052-71eb-fdb4-c09256ff3b96@loongson.cn>
+Date: Thu, 13 Jun 2024 10:20:31 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608155316.451600-1-flintglass@gmail.com> <20240608155316.451600-2-flintglass@gmail.com>
- <CAKEwX=P1Ojb71AEJ2gzQTrfWidFPcJZmoNxEwji7TceBN-szCg@mail.gmail.com>
- <CAPpoddeigM44jhTA8Ua=+J4MC1MikouBZVoPrCW2LZF+9r5YeA@mail.gmail.com>
- <CAJD7tkYp3GbuXV9G5bAZ1DetMmepV5ynciA+ukae7CKuxpXDJQ@mail.gmail.com> <CAPpoddfj1EdfXfTUT8bLaNxat0hYiE4X9=qG38gPgRgmmVOjcw@mail.gmail.com>
-In-Reply-To: <CAPpoddfj1EdfXfTUT8bLaNxat0hYiE4X9=qG38gPgRgmmVOjcw@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 12 Jun 2024 19:18:05 -0700
-Message-ID: <CAJD7tkZTSGz1bpo-pMNP_=11O-7RrhubWonqhUJwrt+TB=Ougg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] mm: zswap: fix global shrinker memcg iteration
-To: Takero Funaki <flintglass@gmail.com>
-Cc: Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Shakeel Butt <shakeel.butt@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <9bf241c5-68af-4471-a159-1c673243d80d@web.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8Cx78dvV2pmVgceAA--.8207S3
+X-CM-SenderInfo: x2kd0w5krqwupkhqwqxorr0wxvrqhubq/1tbiAQAHB2ZqUJQAbQABsl
+X-Coremail-Antispam: 1Uk129KBj9xXoWruF1kZryruw1fZFWkKr43CFX_yoWkWFc_uF
+	n5GFs7Z3yqyr1DXanYkrsxuF98Wa17AFySyw18JFnF9w15J3ZxAayUJry5Aw15X34a9rn8
+	C3WYq3y093W3uosvyTuYvTs0mTUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbfxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWU
+	AwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
+	k0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
+	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
+	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
+	cVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
+	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
+	6r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jjwZcUUUUU=
 
-On Wed, Jun 12, 2024 at 7:13=E2=80=AFPM Takero Funaki <flintglass@gmail.com=
-> wrote:
->
-> 2024=E5=B9=B46=E6=9C=8813=E6=97=A5(=E6=9C=A8) 3:28 Yosry Ahmed <yosryahme=
-d@google.com>:
-> >
-> > On Wed, Jun 12, 2024 at 11:16=E2=80=AFAM Takero Funaki <flintglass@gmai=
-l.com> wrote:
-> > >
-> > > 2024=E5=B9=B46=E6=9C=8812=E6=97=A5(=E6=B0=B4) 3:26 Nhat Pham <nphamcs=
-@gmail.com>:
-> > >
-> > > >
-> > > > As I have noted in v0, I think this is unnecessary and makes it mor=
-e confusing.
-> > > >
-> > >
-> > > Does spin_lock() ensure that compiler optimizations do not remove
-> > > memory access to an external variable? I think we need to use
-> > > READ_ONCE/WRITE_ONCE for shared variable access even under a spinlock=
-.
-> > > For example,
-> > > https://elixir.bootlin.com/linux/latest/source/mm/mmu_notifier.c#L234
-> >
-> > In this example, it seems like mmu_interval_set_seq() updates
-> > interval_sub->invalidate_seq locklessly using WRITE_ONCE(). I think
-> > this is why READ_ONCE() is required in that particular case.
-> >
-> > >
-> > > isn't this a common use case of READ_ONCE?
-> > > ```c
-> > > bool shared_flag =3D false;
-> > > spinlock_t flag_lock;
-> > >
-> > > void somefunc(void) {
-> > >     for (;;) {
-> > >         spin_lock(&flag_lock);
-> > >         /* check external updates */
-> > >         if (READ_ONCE(shared_flag))
-> > >             break;
-> > >         /* do something */
-> > >         spin_unlock(&flag_lock);
-> > >     }
-> > >     spin_unlock(&flag_lock);
-> > > }
-> > > ```
-> > > Without READ_ONCE, the check can be extracted from the loop by optimi=
-zation.
-> >
-> > According to Documentation/memory-barriers.txt, lock acquiring
-> > functions are implicit memory barriers. Otherwise, the compiler would
-> > be able to pull any memory access outside of the lock critical section
-> > and locking wouldn't be reliable.
->
-> Ah, I understand now. The implicit barrier is sufficient as long as
-> all memory access occurs within the lock. It=E2=80=99s a fundamental rule=
- of
-> locking=E2=80=94facepalm.
->
-> I misread a module code, like in the link, where a lockless write
-> could invade a critical section. My example was in the opposite
-> direction, just wrong. Thank you so much for clarifying my
-> misunderstanding.
->
-> For now checking the patch, I suppose the locking mechanism itself is
-> not affected by my misunderstanding of READ_ONCE.
->
-> The corrected version of the cleaner should be:
-> ```c
-> void zswap_memcg_offline_cleanup(struct mem_cgroup *memcg)
-> {
->         /* lock out zswap shrinker walking memcg tree */
->         spin_lock(&zswap_shrink_lock);
->         if (zswap_next_shrink =3D=3D memcg) {
->                 do {
->                         zswap_next_shrink =3D mem_cgroup_iter(NULL,
->                                         zswap_next_shrink, NULL);
->                         spin_unlock(&zswap_shrink_lock);
->                         spin_lock(&zswap_shrink_lock);
->                         if (!zswap_next_shrink)
->                                 break;
->                 } while (!mem_cgroup_online(zswap_next_shrink));
->         }
->         spin_unlock(&zswap_shrink_lock);
-> }
-> ```
+Hi Markus,
+   Thanks for your review.
 
-Is the idea here to avoid moving the iterator to another offline memcg
-that zswap_memcg_offline_cleanup() was already called for, to avoid
-holding a ref on that memcg until the next run of zswap shrinking?
+On 2024/6/13 上午2:08, Markus Elfring wrote:
+> …
+>> This can be happen if a node is online while all its CPUs are offline
+>> (we can use "maxcpus=1" without "nr_cpus=1" to reproduce it), Therefore,
+>> in this case, we should call local_pci_probe() instead of work_on_cpu().
+> 
+> * Please take text layout concerns a bit better into account also according to
+>    the usage of paragraphs.
+>    https://elixir.bootlin.com/linux/v6.10-rc3/source/Documentation/process/maintainer-tip.rst#L128OK, Let rewrite the commit message.
+> * Please improve the change description with an imperative wording.
+>    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc3#n94
+OK, Let me use imperative word.
+> * Would you like to add the tag “Fixes” accordingly?
+OK, Let me add Fixes.
+> * How do you think about to specify the name of the affected function
+>    in the summary phrase?
+OK, Let me add the affected function in summary phrase.
 
-If yes, I think it's probably worth doing. But why do we need to
-release and reacquire the lock in the loop above?
+> 
+> Regards,
+> Markus
+> 
+
+
+-- 
+Best Regards
+Hongchen Zhang
+
 
