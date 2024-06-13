@@ -1,73 +1,53 @@
-Return-Path: <linux-kernel+bounces-212502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23302906226
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:54:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B1DF906236
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32BBE1C213C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:54:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EEB31C215BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973A712CD8E;
-	Thu, 13 Jun 2024 02:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52AF12CD8E;
+	Thu, 13 Jun 2024 02:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bKvjd8qb"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="BXBg2aSC"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8AC79C0;
-	Thu, 13 Jun 2024 02:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BE6126F1D;
+	Thu, 13 Jun 2024 02:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718247257; cv=none; b=Bt0aqMvXZ+Cwm2uIDNCkdrbu7U6hua/0+dvn1iQIhO0FmDCX1AV5QGQOJmmXSD+puR6TF7mFHQyWQhCuOoiCOtzliq8Ls6N3DJOfAqopDam8DXDYZNSFH0gBwM8oOP7dbjhP7N2I9lv05QvX4xjXWQ2V293yHcESiH/r1vwNluI=
+	t=1718247464; cv=none; b=lklrBU9lAx6okyrqawuBdJmYLoo1gMLC3WiGtEK/QjPnk7D9H5fqtLfk0frVEKtmWco/xpZHRCQnPv0/fLR7QAz4cZGCGEK8Kn6PL17Ek3/UcOmnsqeCJV9DQiWd9uRGvCBf+zsf64+zmwROxwTZGxRKJr32iRy2SgTtxiCRCWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718247257; c=relaxed/simple;
-	bh=832EzqDxWJ7nN/P5FfuAYp/Z11o7CeTnyqHfsasbrm8=;
+	s=arc-20240116; t=1718247464; c=relaxed/simple;
+	bh=TLL7Vi4AXjbV0h+Rp+oTDPJbtBaUErrOe9Swh52bSwo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RYqTR1vO49Zdee4HsuPe5qYrSg6yJgTzKHrVYBAQpw3J4h+CToJUkEp0W6fVs5O5sPTX35IzmV1K2VJeB1kXxekLVuKH6ZpWtOS3mTCXSxqr4CqCDJgLZaMjTyfTsgUjVfpPq30J5MC2uBdcQtj0nZLaRUKdOX4X0w7o8VYNRCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bKvjd8qb; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-705c739b878so756530b3a.1;
-        Wed, 12 Jun 2024 19:54:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718247256; x=1718852056; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uNmwMejHmNOh8I+RARUVaSfw/MphRluAD/hWf+7EyHM=;
-        b=bKvjd8qbuqszAWGmOoB8PwT5G3E+mgOFJjf5siuVPSY4+hmxgnTs578I6ThWgxMhpi
-         yov03gOC7rwMeJDjoRAX3E/EC6StGx6+jBv+2if1AdjMvzy3luqY5CUKAwp7QQX2GOFt
-         PWcRFtZRXJ67ZdRWV4//Ke5zZmAQ7nv6T7hS1RPC+Womy0iqLpbqPWKTtldKtjUQfuUE
-         01UMnc1tInL7CUB7PgjQXWgwLe30AdmTttJ04qQn0/31icNHdBjFyYdABqwsNnIXe7kc
-         8rxfob/uYVl9kVTZfGK5do1s1mV1H14MbG7BXPYq4RRQ31Ddz8bcuGMJ/6n0NwmFuGbz
-         azeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718247256; x=1718852056;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uNmwMejHmNOh8I+RARUVaSfw/MphRluAD/hWf+7EyHM=;
-        b=EtJY6GObqyYNeHUY/BozU2aDYJwg0UQDULSUcx0V2NI5qfd3p1BqDoiViZHQCVVyxY
-         CVsJ0OabMV6QckLrntr/3fJsrAeJgJc+KmTGTtWpOTxS3mx/Q2gIR95aRRsP18A1HLnX
-         NZ1+8pqFTBWCvs5kJswN57ADqO2j2lvPPNr8FzL2gDWnJAnyXR5tieG5KndZJrXqYFjl
-         xkaC/aijqHvhplYtB3Xj1rO39taC+9ANLvLKmlN+W1cW4kAVcAjzlKSqR82VS2VQLB7q
-         fIqKKIqayk4IvcZgDRpbWlamMDf4069GLDCftcyattdmn7Mewx/kpMoh5Ly8j2dYI95B
-         8S1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXkpgiPRkczceBsP9V1Jlwcr9u2k3gW+NMaEM+nOAum3Zw0XxyDoZqImw+Vb7lTgFI3pbey+0ZoPnelEcdbqZYVX7QVPCzKaSQ5bY1yH+Rcj+5R6w7zgW+qTgAjWWb1aZKfUYcS7vR6yZVI
-X-Gm-Message-State: AOJu0YyrtkjwAn+GKRuksAcU5RZ6wjAyqMjhjfXzrHXM6vZGGUgl9/k4
-	tvfnKmxIfUktNetSdrqYf2xyjQTLmTH34eamFXZEYqb1CJr2ukAg
-X-Google-Smtp-Source: AGHT+IGbL59FB/N0ejH67gB7kJ3RteUZ72f6jaqWjh8P39UHzwD8iyB1oIQqw4Is9dSdRe11OIbXhg==
-X-Received: by 2002:a05:6a20:7485:b0:1b6:dc44:8211 with SMTP id adf61e73a8af0-1b8bef9e17emr2373909637.1.1718247255601;
-        Wed, 12 Jun 2024 19:54:15 -0700 (PDT)
-Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc925fe7sm296762b3a.19.2024.06.12.19.54.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 19:54:15 -0700 (PDT)
-Message-ID: <12baa918-2066-47b1-ab88-27d1dc6041b2@gmail.com>
-Date: Thu, 13 Jun 2024 10:54:12 +0800
+	 In-Reply-To:Content-Type; b=R+R4jv2xqZjKxZbpVjqpS0aM0CpjU5EBuvQRTY/rSgvgsoH05pM0VH/1SfwNMR7CwSkBSl1mOV0t6wKpq5t2Pe06A8ksq4RXziE6I1wab94qtIrV9AEW6rUbiIhkCkvroANG3jY7EI0Nqhm0alJ/2HYvV135c5XuL4i7XkmglAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=BXBg2aSC; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [0.0.0.0] ([134.134.137.76])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45D2uYQl3987160
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 12 Jun 2024 19:56:35 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45D2uYQl3987160
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024051501; t=1718247397;
+	bh=vQd3vUyfsayygHgkM5vM2MNlvWp19CaBHld+FXf7POM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BXBg2aSCEhzk2RvuSnVO0dJBYl4slJiiWnlYi4TuGGDOoze45N+zfoscff9daak2V
+	 DfThAqiqZwkTySyJ4/LN9SQYQVXgL7MkIYPzNUllsL629ysmcVZBvZfiX7bYQUanp2
+	 Ku9nxoPOLH8u5Zpp9zej6hpAQNKsZASwXvOMNVOdr7GzUJuFYZDPan14Ad/YF2DgeQ
+	 vadXv3MSroQfyBFL2QHM3nQ3QZBeLNYY4TLJLTGQhvvrZtyILLD9vHNfcDp586q4zB
+	 KObZ0/Xq4iiFpiN8Cwq26xUJu4LNTnlkddHfhPtC4Mpq9TYhzYORGujpPUmeAK8j50
+	 5UIGU/oHdxDdQ==
+Message-ID: <7bf64b12-ea59-470c-ac31-8226be4eb496@zytor.com>
+Date: Wed, 12 Jun 2024 19:56:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,87 +55,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tty: serial: ma35d1: Add a NULL check for of_node
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: dan.carpenter@linaro.org, jirislaby@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, Jacky Huang <ychuang3@nuvoton.com>
-References: <20240611092251.159149-1-ychuang570808@gmail.com>
- <2024061118-sycamore-leggings-05a9@gregkh>
- <73d2167a-84ee-40a4-a68d-ba25229ff8ce@gmail.com>
- <2024061226-laborious-jubilance-8df8@gregkh>
+Subject: Re: [RESEND v1 1/3] x86/cpufeatures: Add {required,disabled} feature
+ configs
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+        x86@kernel.org, hpa@zytor.com, will@kernel.org, peterz@infradead.org,
+        akpm@linux-foundation.org, acme@kernel.org, namhyung@kernel.org
+References: <20240509205340.275568-1-xin@zytor.com>
+ <20240509205340.275568-2-xin@zytor.com>
+ <20240612133340.GBZmmjtD40dzhsWVyg@fat_crate.local>
 Content-Language: en-US
-From: Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <2024061226-laborious-jubilance-8df8@gregkh>
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <20240612133340.GBZmmjtD40dzhsWVyg@fat_crate.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Dear Greg,
+On 6/12/2024 6:33 AM, Borislav Petkov wrote:
+> On Thu, May 09, 2024 at 01:53:38PM -0700, Xin Li (Intel) wrote:
+>> diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+>> index 2a7279d80460..719302d37053 100644
+>> --- a/arch/x86/Kconfig.cpu
+>> +++ b/arch/x86/Kconfig.cpu
+>> @@ -358,6 +358,10 @@ config X86_P6_NOP
+>>   	depends on X86_64
+>>   	depends on (MCORE2 || MPENTIUM4 || MPSC)
+>>   
+>> +config X86_REQUIRED_FEATURE_NOPL
+> 
+> Can we keep the X86_{REQUIRED,DISABLED}_ prefixes solely in
+> arch/x86/Kconfig.cpufeatures and not spill them out into the rest of the tree?
 
+Good point, let me try.
 
-On 2024/6/12 下午 03:23, Greg KH wrote:
-> On Wed, Jun 12, 2024 at 08:43:54AM +0800, Jacky Huang wrote:
->> Dear Greg,
->>
->>
->> On 2024/6/11 下午 07:11, Greg KH wrote:
->>> On Tue, Jun 11, 2024 at 09:22:51AM +0000, Jacky Huang wrote:
->>>> From: Jacky Huang <ychuang3@nuvoton.com>
->>>>
->>>> The pdev->dev.of_node can be NULL if the "serial" node is absent.
->>>> Add a NULL check to return an error in such cases.
->>>>
->>>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
->>>> ---
->>>>    drivers/tty/serial/ma35d1_serial.c | 13 +++++++------
->>>>    1 file changed, 7 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/drivers/tty/serial/ma35d1_serial.c b/drivers/tty/serial/ma35d1_serial.c
->>>> index 19f0a305cc43..3b4206e815fe 100644
->>>> --- a/drivers/tty/serial/ma35d1_serial.c
->>>> +++ b/drivers/tty/serial/ma35d1_serial.c
->>>> @@ -688,12 +688,13 @@ static int ma35d1serial_probe(struct platform_device *pdev)
->>>>    	struct uart_ma35d1_port *up;
->>>>    	int ret = 0;
->>>> -	if (pdev->dev.of_node) {
->>>> -		ret = of_alias_get_id(pdev->dev.of_node, "serial");
->>>> -		if (ret < 0) {
->>>> -			dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
->>>> -			return ret;
->>>> -		}
->>>> +	if (!pdev->dev.of_node)
->>>> +		return -ENODEV;
->>>> +
->>>> +	ret = of_alias_get_id(pdev->dev.of_node, "serial");
->>>> +	if (ret < 0) {
->>>> +		dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
->>>> +		return ret;
->>>>    	}
->>>>    	up = &ma35d1serial_ports[ret];
->>>>    	up->port.line = ret;
->>> What commit id does this fix?
->>>
->>> thanks,
->>>
->>> greg k-h
->> This patch fix the in tree ma35d1 serial driver.
->> The last commit for ma35d1_serial.c is
->> '6b64f8e360c00f180cffa1806095cdd2abc55b16'.
-> That is obviously not the commit that causes this problem, which is what
-> I was looking for here.  Shouldn't you include a "Fixes:" line if this
-> is resolving a bug?
->
-> thanks,
->
-> greg k-h
+> 
+> This way there will be no confusion between X86_FEATURE_, X86_REQUIRED_FEATURE_,
+> X86_DISABLED_FEATURE_ and so on, and which one I am supposed to use where...
 
-I got it. The  commit that cause this problem is '930cbf92db01'.
-And I will send v2 patch with the "Fixes:" line.
-Fixes: 930cbf92db01 ("tty: serial: Add Nuvoton ma35d1 serial driver 
-support")
+Currently X86_DISABLED_FEATURE_ macros are defined only in:
+arch/x86/Kconfig.cpufeatures. But X86_REQUIRED_FEATURE_ macros are not.
 
 
-Best Regards,
-Jacky Huang
+>> diff --git a/arch/x86/Kconfig.cpufeatures b/arch/x86/Kconfig.cpufeatures
+>> new file mode 100644
+>> index 000000000000..326a8410ff06
+>> --- /dev/null
+>> +++ b/arch/x86/Kconfig.cpufeatures
+>> @@ -0,0 +1,153 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +#
+>> +# x86 feature bits (see arch/x86/include/asm/cpufeatures.h) that are
+>> +# either REQUIRED to be enabled, or DISABLED (always ignored) for this
+>> +# particular compile-time configuration.  The tests for these features
+>> +# are turned into compile-time constants via the generated
+>> +# <asm/featuremasks.h>.
+>> +#
+>> +# The naming of these variables *must* match asm/cpufeatures.h.
+> 
+> I presume they must match X86_FEATURE_<name>?
+
+Right, let me add this.
+
+> 
+> And REQUIRED and DISABLED is manipulated in by the script?
+> 
+> I guess I'll see later.
+
+Yep!
+
+Thanks!
+     Xin
 
 
