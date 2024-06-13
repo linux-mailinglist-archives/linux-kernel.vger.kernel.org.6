@@ -1,77 +1,136 @@
-Return-Path: <linux-kernel+bounces-212932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC499906861
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:18:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CEAA906868
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95A261F22DF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:18:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6B7B285350
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB85E13E897;
-	Thu, 13 Jun 2024 09:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87ECF13DDD3;
+	Thu, 13 Jun 2024 09:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="1UjYE41b"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3DF13E8A7
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718270277; cv=none; b=SoIuH4+R7+TC5MokfSMeJgBTSn503GLy6C9uttu+BghDNXYWbPTmJb4eHHY+GGG16vewWZwM0YwglQNSBvsr6gK80p5khZLUOGPM69JzRxA9/77JhBZAs/AvSxengfzpJaehDyMhThB7v23yiHLowP+k6sNn7cwuACc6B9Rfj14=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718270277; c=relaxed/simple;
-	bh=p8kzm0Lqep3ToXmg6GA1wy29eukb+Rh7R3EbC4CVU2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QYNgI8ijP7L9ImKBchNZce7092yJmhmGJnURBJCT+qAUQaKmIGO9MPoHczWKzNuOm2kc9PmPN5hHyFBm+J3nTEYs/Co2dYDu/rmBtKGLjd3M5E52WAGN980kggpc8m2bzxpiDyi+EJVyBuGyxQtR72AnQ0NpdCEcjfwxF8dHYzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=1UjYE41b; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (pd9fe9dd8.dip0.t-ipconnect.de [217.254.157.216])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o9FwA2BH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 3785C1C0BD3;
-	Thu, 13 Jun 2024 11:17:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1718270274;
-	bh=p8kzm0Lqep3ToXmg6GA1wy29eukb+Rh7R3EbC4CVU2E=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C845F29AB;
+	Thu, 13 Jun 2024 09:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718270395; cv=none; b=rX9cy6dxGhh8+mjRUd20LcKUDrzoI13hXk0m/fo+lYiGJOuIJMI4o/fU9cQHJ3QYC/hGXYa3kfm+F2C2LZrXtqAxz9fLdyIAwh01l9eroXkcFv+NXgKU4ON7/9Z/Hy3SWwjzKo9cAwibk0CZQUj0Tmz55y05g1xUicO+ZXdMmHs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718270395; c=relaxed/simple;
+	bh=8Xjm/uj9cAgItooDzOKc5oI7NbTaImBSC4XKzPzMWAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kKraMzGHwnnoQhDIivBl8aLlE3v6d1A1UBKmXfw7pHTDlT+y30EaUYeKYdThFK7aZm1bAD3Q22OIIGsEHqs4uC4Ck0EntlkVgzEgrc7RvGWZPrWEi79hdUNlKHpv+I96xJoDDGquRk3Pc4YeF+F84/SPxdiSzK00uSDsBHKGBx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o9FwA2BH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBD1BC2BBFC;
+	Thu, 13 Jun 2024 09:19:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718270395;
+	bh=8Xjm/uj9cAgItooDzOKc5oI7NbTaImBSC4XKzPzMWAY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1UjYE41bD/NcmQRCnVJomsWRUGxXqWEniAp3C1av6UHGGCxeJsJVvz1UMpy0ADzl8
-	 axK/udNQmJ58gtGSPUv1XAQsYmAa0RZz6RaMgFzRLTBlJLe2Vst50arTuW0kytKUSH
-	 Ja3rxO/lrdPykBZWWalmTfZbkusXFJwbElW8QBm8TrIgtSfkkWJJk3Vpwf4APSdqdK
-	 WAA8FZMPB2MvewJjNqlU7F3dUj/EpmnnIf++VS2kDiXAWqW8u12B2EfxSHujVhwiA0
-	 YzBsMPXgPRfBLgXSMVQsCCZFZAesOGkjcHIgpkCzfNwOew0uJiIHHfRn+UL9V42C61
-	 VIna/FzOT+Uew==
-Date: Thu, 13 Jun 2024 11:17:53 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: will@kernel.org, hch@infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/dma: Prune redundant pgprot arguments
-Message-ID: <Zmq5QWKtKvYzOej6@8bytes.org>
-References: <c2a81b72df59a71a13f8bad94f834e627c4c93dd.1717504749.git.robin.murphy@arm.com>
+	b=o9FwA2BHwLLmZ/7ti+Yq9/n6AalsdGJWg2ax2sYZQGUCb/xn+XoMMbgd/9muEROwH
+	 TBOm3a3DZy98nUC8dHQryUBpQuXRWlkfbh85h49ZrvkJhyVzES0rAWS7jWpI9fLXzu
+	 r8uMvqN/BcwNslxHy9o5vDdojL9yZQXUcVqGhdBJCa7qWSmu/UTi6wE06Vy9VtriaK
+	 dRvGi+cYDdN4nqmFi98hiLWhX3LQ0JOVubmpvQg4859Er3Av9PHqpruZGrVPiQFfwd
+	 SDTL3ax4y1ycLXw9u3MYl1FXXqHeVpcODHpTR9wbSFMGoFsqFlY1HW/UvyVPKu1P0h
+	 kmmPJ3NJ9P45Q==
+Date: Thu, 13 Jun 2024 10:19:52 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dev Jain <dev.jain@arm.com>
+Cc: shuah@kernel.org, oleg@redhat.com, stsp2@yandex.ru, mingo@kernel.org,
+	tglx@linutronix.de, mark.rutland@arm.com, ryan.roberts@arm.com,
+	suzuki.poulose@arm.com, Anshuman.Khandual@arm.com,
+	DeepakKumar.Mishra@arm.com, AneeshKumar.KizhakeVeetil@arm.com,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] selftests: Add a test mangling with uc_sigmask
+Message-ID: <Zmq5uK0RfvgVKFdO@finisterre.sirena.org.uk>
+References: <20240611075650.814397-1-dev.jain@arm.com>
+ <20240611075650.814397-3-dev.jain@arm.com>
+ <Zmg0GoGnJFbPysfK@finisterre.sirena.org.uk>
+ <ec1973ee-909d-41a2-8b32-256302d190b4@arm.com>
+ <ZmmfkbuCl61rEPs-@finisterre.sirena.org.uk>
+ <920f2e27-39ee-4c53-9c90-63d67e7d7586@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="YUY1zS9czf83kEFd"
+Content-Disposition: inline
+In-Reply-To: <920f2e27-39ee-4c53-9c90-63d67e7d7586@arm.com>
+X-Cookie: Your love life will be... interesting.
+
+
+--YUY1zS9czf83kEFd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c2a81b72df59a71a13f8bad94f834e627c4c93dd.1717504749.git.robin.murphy@arm.com>
 
-On Tue, Jun 04, 2024 at 01:39:09PM +0100, Robin Murphy wrote:
-> Somewhere amongst previous refactorings, the pgprot value in
-> __iommu_dma_alloc_noncontiguous() became entirely unused, and the one
-> used in iommu_dma_alloc_remap() can be computed locally rather than by
-> its one remaining caller. Clean 'em up.
-> 
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> ---
->  drivers/iommu/dma-iommu.c | 16 ++++++----------
->  1 file changed, 6 insertions(+), 10 deletions(-)
+On Thu, Jun 13, 2024 at 10:21:39AM +0530, Dev Jain wrote:
 
-Applied, thanks Robin.
+> I guess we agree on the same thing; so, how about I rephrase the delivery
+> and blocking code comments this way:
+> "A process can request blocking of a signal by masking it into its set of
+> blocked signals; such a signal, when sent to the process by the kernel, will
+> get blocked by the process and it may later unblock it and take an action.
+> At that point, the signal will be "delivered".
+
+Yes.
+
+> A signal sent by the kernel to the process, is said to be delivered to the
+> process when the process takes an action upon receipt of the signal: such
+> action may include termination, or jumping to a signal handler."
+
+I'd just drop this last paragraph.
+
+> > TBH I'm not sure what you mean there by real time signals, I can't see
+> > a reference to real time in the copies of signal(2), signal(7) or
+> > sigaction(2) on my system.  I suspect SA_NODEFER is the actual thing
+> > here.
+
+> Real-time signals get a mention on signal(7), under the heading
+> "Real-time signals":
+
+Ah, it's got a - in there so it doesn't show up in searches.
+
+> > I still don't follow what the above means.  When you say "invariant" you
+> > don't specify with respect to what, and it's not clear to me why the
+> > saved context in ucontext would have changed without the handler writing
+> > to it.  For clarity I think this needs to say what the ucontext is
+> > expected to be the same as/different to.
+
+> The ucontext at this stage is supposed to be empty, I guess I'll replace
+> the word "invariant" then.
+> "it's not clear to me why the saved context in ucontext would have changed
+> without the handler writing to it" - by invariant I meant, the set of blocked
+> signals before invocation of handler is exactly the set of signals blocked in
+> ucontext, which, in this case, is the empty set. I'll just write that ucontext
+> is empty.
+
+Yes, or like I say in general it's the the interrupted context (there's
+other parts of the signal frame which are changed).
+
+--YUY1zS9czf83kEFd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZqubMACgkQJNaLcl1U
+h9AXLQf/aNzj6GO0tVDsn4lAZgwmn9+i5bZOPoYs2VUX+xjqGAgxXGaBHZYGTtQv
+x6p5xqPIKZMH0IqOL2t6GjyQsvuxFLZqXSiTgTKUpGQBYzt5yG9HtHIWkQdDBelM
+3hXcZHCqYaqIh0eDTcJZcrMfHb4QUJIVXqsa1i2/Oz8oJNDVYTs+NeXtO8V5Z9dp
+rpJjtQF61pCwH3H6KaBlAUWcy8qnkA+WrwfgIgBU1lG1UFgmUp4FOTadg45JlBne
+zKHGSw9N74vmrNfrCxZp6961JbMxDWFRaHOVNlHlwpjkQwJiDHvWcYjED1L+32YO
+7Kp1Dq+eoxoW8dmF1uLF3VVYnyXXzg==
+=/g6T
+-----END PGP SIGNATURE-----
+
+--YUY1zS9czf83kEFd--
 
