@@ -1,136 +1,136 @@
-Return-Path: <linux-kernel+bounces-213597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F312090776C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:48:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E190907765
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:48:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2E641F24F81
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:48:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D9C11C21EEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD10A14A4F8;
-	Thu, 13 Jun 2024 15:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2A414A09F;
+	Thu, 13 Jun 2024 15:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LNJUEzSR"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LT1KdjTg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B455912DDA5;
-	Thu, 13 Jun 2024 15:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C6912EBF5
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718293406; cv=none; b=I1kun8vfRtM1dN54STzywkmqJVTLBDXqr5fwL22p+lPYAfD6Nn6BcGkRQNE48FjLkoMSO+NufQ85Gl/M/r+C/cY0mzCWvBu3+LSP3GGR35E/8/U7JiZJhu6koXjPbkA0R77FKCNS2i++C6+3ir+BkPL5XYnr/P94Mvf/v5A76iA=
+	t=1718293358; cv=none; b=lruFOiwe0YwkOiTLC7e85y69MLS3EPAFLaIrD7a/Hysha5b9TjADFFFV1txf3ZWkYYWw8fgL53WoMkCWMx9r/wBd55cDj9g8IxcoKz9TgoaHtbChR2tyUMaCQEFvmbfomLWAvtkNASeC1ThirGW5xeBZ0D9dmFx4UE4KF36Cm80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718293406; c=relaxed/simple;
-	bh=wuuRkupuSyLIHDwx1qrL9wK/w/CgUGVdFcSsUcJNGkQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Lpet4EW6gdfIFQDk7vDydkS6wG6HfoviHnNEII1htcWrJsMVgytC1+E6eMN78Ha/6a90qglw6ReppMKV70iWRIYcsrxk7w1hKPKyng4ufP+vmYS+tdoi45/aeGhf4jHMlWI63dm4bZ5cC6+Q9VeOp6e4yizfko1yXNpFZ9zWmow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LNJUEzSR; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718293354; x=1718898154; i=markus.elfring@web.de;
-	bh=7fcDu+jAjKTUeYUTcm6nT/VKOpL7/vLs7dIgrQeJffo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=LNJUEzSRtJ4s9iQHbH54cTGy1ouN6On874yZ2npBiEOFY80pZZFA5tks18EqHG01
-	 wpyeWVebam83eYtPIbbhzsqU4M0oxyPeFJgk3wHCrlejS+gA5I4d2Y1i7sfV5o10V
-	 XlYRG4zqLm9rdcnQK9P2axqomSmoMu+D/zj3o0yfGLp8ILJ+ZbAOdzdwK4C9ZGuL2
-	 AtqncLRaSFxzliD9iTwV3tyZw+nwz6jOO07W//sYkqmT45mSJ+ZMQMIo6a8u5zfrX
-	 GdMOYSuWxiB7YGYH1AFdkvXoTVJwk1dZFNHi3fpgV5CwxEf+O0E1Nvpz/00sChr6y
-	 KvUj8oSD0htlRKLcfQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MlbHE-1shnjs0jC6-00gPUD; Thu, 13
- Jun 2024 17:42:34 +0200
-Message-ID: <531fdbbb-486d-4207-b9a9-3db23935d583@web.de>
-Date: Thu, 13 Jun 2024 17:42:19 +0200
+	s=arc-20240116; t=1718293358; c=relaxed/simple;
+	bh=+cNA8prMtq63BGxILXqlaVJYINbLjR3W4DBSMt5rMmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AaNwQmaffb+WsBgYoi3wvFta3q3Urs0B92raFSOGU2sN9m6YouSXx6vsFi2bzr6E5PW2g0ForsXCVbz3g10r31/7uWNbzBLxomRiUgxHJT75VC6S/uw9Mk7AQwYb6KOBvFrWS3FUmzuR/LGyNwuii8clwO/1gX+b0EG1yqjtSls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LT1KdjTg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA334C2BBFC;
+	Thu, 13 Jun 2024 15:42:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718293357;
+	bh=+cNA8prMtq63BGxILXqlaVJYINbLjR3W4DBSMt5rMmw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LT1KdjTgBnvTkbS9BZb6UBNRHlPqWcYlUWH0Fr0CdxP+qCBLxAgQUxopIhRWSiz1b
+	 yv7RdZoAkLM47jsOCQcnKkJXZJda6TJJH/lIl7F7Yp8xsUZtrRe3AIVc6VV2coVVxd
+	 hA8ipP5mazHRLISWL+Gqpp3dCt94X8Ziwk6OC6q3DbvX78XOeCsXYqTujnekPcWetL
+	 VY4Xh8oXNIAAKoCdsNuYjo5WyCM1OViVKl+rEjRTtVU/9OvS13fusvla7U/Qcn52N7
+	 /mEJENGNBOw7reiBFLsFBP6Vu3eMJYNdebmvOKsPWecZQby8sxucJqQIPRPgpIBSRM
+	 CPv72iak1q9Jw==
+Date: Thu, 13 Jun 2024 16:42:34 +0100
+From: Lee Jones <lee@kernel.org>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: linux-kernel@vger.kernel.org,
+	Gregor Herburger <gregor.herburger@tq-group.com>,
+	linux@ew.tq-group.com
+Subject: Re: [PATCH 4/4] mfd: tqmx86: add I2C IRQ support
+Message-ID: <20240613154234.GJ2561462@google.com>
+References: <cover.1717499766.git.matthias.schiffer@ew.tq-group.com>
+ <18d0348f2f7b70329e44f7759bad7e6fe231dba0.1717499766.git.matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- linux-pci@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
- imx@lists.linux.dev, mhi@lists.linux.dev, Bjorn Helgaas
- <bhelgaas@google.com>, Fabio Estevam <festevam@gmail.com>,
- Jesper Nilsson <jesper.nilsson@axis.com>, Jingoo Han <jingoohan1@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Lucas Stach <l.stach@pengutronix.de>,
- Marek Vasut <marek.vasut+renesas@gmail.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Minghuan Lian
- <minghuan.Lian@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
- Niklas Cassel <cassel@kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>,
- Rob Herring <robh@kernel.org>, Roy Zang <roy.zang@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Siddharth Vadapalli <s-vadapalli@ti.com>,
- Srikanth Thokala <srikanth.thokala@intel.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Vignesh Raghavendra <vigneshr@ti.com>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel@pengutronix.de
-References: <20240606-pci-deinit-v1-2-4395534520dc@linaro.org>
-Subject: Re: [PATCH 2/5] PCI: endpoint: Introduce 'epc_deinit' event and
- notify the EPF drivers
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240606-pci-deinit-v1-2-4395534520dc@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jXSJJJkAI8hN72kU1CJg3ufojWOHI1sFKaf7Q+GXWoK5SHvixA/
- yrxpcO7iG26yVIJ6a+gDgi7IQ7X4UOlJm7doH6z6KQ09CoTZ4UXvjGVgP4qYQDw1TnsDnm+
- QVgctN2V24QtpAjdxg0dM1CAxHvdlatDjFFXPjenuaogsqXyOG9yQTvPPKq9AalAtAN4qQW
- hD6x4vYrIAaZEEVGxiS5w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PH53anvoYOY=;1/zV0cxQ7tZhIjrtlZ44ElZLM8Q
- i/dBiizYx2JrGEKiG8sYkKHnGA384j5aU9TmG7r2D/cFkSPs/yZ0hmPDsuuelZSGCyHWZiRN/
- oNO+wiyJAPxbMYILm8U3DhPAYJNZL7tChzi/zsp8B0Ib4ehYO2iwpmrdONugRbU5TIwAWBAtt
- O9Cd1boR1HzXoKsuicQTXIRq42M0q+eeFrw4gHvF7+yVAWOODfM1RkDrMF04xo8/hIKWasMLk
- GLOKEfJgm5NxvmR+h5J9rmAG2o7PdDilFFAtM4F5qG6niMNgdlmc8tMSNXWrTs5X7cNbolLND
- GdfeoqXQhgszfzzgCYEC62hZsCKBPBLGFLk9gcEhQVWbhP/v2X6XcVwAwDTXagzQG1eRcaHvn
- XWChBhxQIPWZJTDfcqUXc/ReGClUJqfuh9a3fj2HR3cYwKXHsMAM/0++GKDTGB3YK076k1DP0
- 016ihg2akVY+zAqRjQdKi3POQKULjiiULpUCYLnenqi1xkm9viAf2ME6hMmoNZdCrIW2eUD/L
- rEUUeKzuOB8gGXnQRywfc80Ounpdk42bjy4Spto3HpGg4b7ifudicAAzYTyfh+SXJQCUvKj2t
- a7wk5vPHw5S0wj9yOnCqxHesNBoirF69BTsUr66isiVPFDNjClzWomn1oCL303/nqyRZNFdnv
- UgbgIsRlXrUrB/UeMXpqN7c5K00XBixFRFBL5uLnpnFMlrZhtjCrFqooazZL0Of9zEvxbrkj3
- vDLGyltl4po3ybGUSKAFLDQ4jpbUG/r51SqZRAar3YCVovQArVWZ6ze02zV+bOiJXSkPd5VUW
- WMUlYtj68L5PQjuICaBMLKaGnwzPX9n/SgmiEdAohcyH0=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <18d0348f2f7b70329e44f7759bad7e6fe231dba0.1717499766.git.matthias.schiffer@ew.tq-group.com>
 
-=E2=80=A6
-> +++ b/drivers/pci/endpoint/pci-epc-core.c
-=E2=80=A6
-> +void pci_epc_deinit_notify(struct pci_epc *epc)
-> +{
-=E2=80=A6
-> +	mutex_lock(&epc->list_lock);
-> +	list_for_each_entry(epf, &epc->pci_epf, list) {
-> +		mutex_lock(&epf->lock);
-> +		if (epf->event_ops && epf->event_ops->epc_deinit)
-> +			epf->event_ops->epc_deinit(epf);
-> +		mutex_unlock(&epf->lock);
-> +	}
-> +	epc->init_complete =3D false;
-> +	mutex_unlock(&epc->list_lock);
-> +}
-=E2=80=A6
+On Wed, 05 Jun 2024, Matthias Schiffer wrote:
 
-Would you become interested to apply lock guards?
-https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/mutex.h#L1=
-96
+> From: Gregor Herburger <gregor.herburger@tq-group.com>
+> 
+> The i2c-ocores controller can run in interrupt mode on tqmx86 modules.
+> Add module parameter to allow configuring the IRQ number, similar to the
+> handling of the GPIO IRQ.
+> 
+> Signed-off-by: Gregor Herburger <gregor.herburger@tq-group.com>
+> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> ---
+>  drivers/mfd/tqmx86.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
+> index cf27497245322..b96af7091b6bc 100644
+> --- a/drivers/mfd/tqmx86.c
+> +++ b/drivers/mfd/tqmx86.c
+> @@ -50,6 +50,7 @@
+>  #define TQMX86_REG_IO_EXT_INT_9			2
+>  #define TQMX86_REG_IO_EXT_INT_12		3
+>  #define TQMX86_REG_IO_EXT_INT_MASK		0x3
+> +#define TQMX86_REG_IO_EXT_INT_I2C_SHIFT		0
+>  #define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
+>  #define TQMX86_REG_SAUC		0x17
+>  
+> @@ -60,7 +61,12 @@ static uint gpio_irq;
+>  module_param(gpio_irq, uint, 0);
+>  MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (7, 9, 12)");
+>  
+> -static const struct resource tqmx_i2c_soft_resources[] = {
+> +static uint i2c_irq;
+> +module_param(i2c_irq, uint, 0);
+> +MODULE_PARM_DESC(i2c_irq, "I2C IRQ number (7, 9, 12)");
 
-Regards,
-Markus
+Just one question; what is (7, 9, 12)?
+
+And why is it the same as the GPIO one?  Copy/paste error?
+
+> +static struct resource tqmx_i2c_soft_resources[] = {
+> +	DEFINE_RES_IRQ(0),
+>  	DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
+>  };
+>  
+> @@ -271,6 +277,18 @@ static int tqmx86_probe(struct platform_device *pdev)
+>  	ocores_platform_data.clock_khz = tqmx86_board_id_to_clk_rate(dev, board_id);
+>  
+>  	if (i2c_det == TQMX86_REG_I2C_DETECT_SOFT) {
+> +		if (i2c_irq) {
+> +			err = tqmx86_setup_irq(dev, "I2C", i2c_irq, io_base,
+> +					       TQMX86_REG_IO_EXT_INT_I2C_SHIFT);
+> +			if (err)
+> +				i2c_irq = 0;
+> +		}
+> +
+> +		if (i2c_irq)
+> +			tqmx_i2c_soft_resources[0].start = i2c_irq;
+> +		else
+> +			tqmx_i2c_soft_resources[0].flags = 0;
+> +
+>  		err = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
+>  					   tqmx86_i2c_soft_dev,
+>  					   ARRAY_SIZE(tqmx86_i2c_soft_dev),
+> -- 
+> TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+> Amtsgericht München, HRB 105018
+> Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+> https://www.tq-group.com/
+> 
+
+-- 
+Lee Jones [李琼斯]
 
