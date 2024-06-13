@@ -1,99 +1,89 @@
-Return-Path: <linux-kernel+bounces-212917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1255890682E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:10:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1529F906830
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEE3E1F23612
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:10:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 229CE1C236EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F1013E3F9;
-	Thu, 13 Jun 2024 09:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222AD13DDDB;
+	Thu, 13 Jun 2024 09:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjrquMx2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316E45477A;
-	Thu, 13 Jun 2024 09:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="TuJjJkej"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F98713DB88;
+	Thu, 13 Jun 2024 09:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718269827; cv=none; b=uwT+CJeFKsObwRrThdTHL8mlNTeltptWF72EqBnaalDzCVIptO6JTKs4XJrZniItKRimQDiex/ADt8VS4J453SctR7GLbAV7g+gPW6kTsFxW8/wczBuxRcj5rHUL29oiHrBzPhSHY8zAY7b8VTLfhFrWKXT55m92X7xWiRTa3WI=
+	t=1718269839; cv=none; b=hxk04OyoYyDb47a2I+wcMRu4alLAQnY7CDs01TQgmQGZpig5WOUUZ82MKsk77zsE781vnl50rWUhEONCHHRVWNutGK/ZzsXS1NOXIGVsnxBZ3njeU9IUs7K9XSsGdweWc3/E70eikjWe4Y/+ux6Y2M6Kj1DOK8nrfYsMqH+tgL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718269827; c=relaxed/simple;
-	bh=UK+zcEIHryurwkWJeX2LJatJ+UEVLlUY2B0YFlMx1SQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WOBDhleMANpiAdW+Hrlj0RRxtop7UelEuvyqXPdf7+ma4ER2/kD69Lq2tc94/JBf4+EzFw5v0n09QBF5OzSwKDxR/2kDgKvnHS9mWF7Vc563ae+0G2D1or0YvEk9lzhF/qOZPMMjONJnThRiP9d8VESwr7+UaocTp3qNxzNGZrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjrquMx2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB8F2C4AF1C;
-	Thu, 13 Jun 2024 09:10:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718269825;
-	bh=UK+zcEIHryurwkWJeX2LJatJ+UEVLlUY2B0YFlMx1SQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=KjrquMx2o3ugPiwV4D0S6VOvA9OwRP0F+5UYJcYmBLz80r7woSnhrcB3oNk0JEybY
-	 rVBN4JWRtKpasyUXRA43c1oS6+iKSvCZrRo6/EeeEKVQi/2M9jf8td28fm6y9noFiL
-	 thWz9oVDLK8L0FfC9b009HW5CGyP3LY5BIHCh7PpC6eSxhp73lo2fXLUJtP3cfxRFR
-	 Bck7xA/TNGaFBRgjFjSUeumldODjiMwtkSmXt5LqPp0IJHov9QUcawOkWyS98k+p7w
-	 26TS50YoENxvpIzAEDGAUeLJaO38ITJN7hVAsjlKV+5KmxKALG8QD4zhfymx/UYZ0x
-	 NOtVBt4d3ZGSQ==
-From: Mark Brown <broonie@kernel.org>
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, patches@opensource.cirrus.com, 
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240611122258.47406-1-animeshagarwal28@gmail.com>
-References: <20240611122258.47406-1-animeshagarwal28@gmail.com>
-Subject: Re: [PATCH] ASoC: dt-bindings: wlf,wm8804: Convert to dtschema
-Message-Id: <171826982446.253389.4335340259446732912.b4-ty@kernel.org>
-Date: Thu, 13 Jun 2024 10:10:24 +0100
+	s=arc-20240116; t=1718269839; c=relaxed/simple;
+	bh=uwgNIsvKzltZ++YyP8KzyRNwS3DxApijGasjMKyMWAU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qlo3TjYwUqdAdXF1OjxMQlVdJdF2rJ5xq/upb/DAG34KCTGAj1ntg+vTlfAdyxzzgMBSrhTGLvbNvbHSskM924XWwj8Vatpd36lV+WLZWH9ieOjq3/1bTQBuI/GgEZ2qfPMRf9FD5GzMG5Fhp96WTqn9bI6+8QeFVf7ftDKBFdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=TuJjJkej; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (pd9fe9dd8.dip0.t-ipconnect.de [217.254.157.216])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 0CA191C8182;
+	Thu, 13 Jun 2024 11:10:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1718269836;
+	bh=uwgNIsvKzltZ++YyP8KzyRNwS3DxApijGasjMKyMWAU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TuJjJkejGm0MfLgodYlEkxSB3Ynzcf7M+hp6VHakuN4+1vOgGlqd5oczCJuxEsOGu
+	 WqIkjKEwvX2haQyyUhbamusFUYwCEwIIRCIF6VlNfmtASHzYFmsyKRIG6pNAZcLWAd
+	 pnJcgXXchWIJBOdBNrJSEPf3B6PIWZ9BgiKB50q/eLtIjLHienBaLr1+0JriUp2iwW
+	 xk/7D9LdolUZZ5HhoJPZbmDBRZ1sPVJFbIQcrIIU/1NbVcFDt1gPY6qIkLDBDo8Uvq
+	 6Qd10LFqV3aJzVyIm3o1i+I+IOwZREW/LL6A2t0dHY5MOTvWP1zx9xBezWuv8oVM9D
+	 PNrYHh/Swi8LQ==
+Date: Thu, 13 Jun 2024 11:10:34 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Rob Clark <robdclark@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, Will Deacon <will@kernel.org>,
+	Rob Clark <robdclark@chromium.org>,
+	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Joao Martins <joao.m.martins@oracle.com>,
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+	"open list:IOMMU SUBSYSTEM" <iommu@lists.linux.dev>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/2] iommu/io-pgtable-arm: Add way to debug pgtable
+ walk
+Message-ID: <Zmq3iqSc8fFV0N-q@8bytes.org>
+References: <20240523175227.117984-1-robdclark@gmail.com>
+ <20240523175227.117984-2-robdclark@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-4c370
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523175227.117984-2-robdclark@gmail.com>
 
-On Tue, 11 Jun 2024 17:52:51 +0530, Animesh Agarwal wrote:
-> Convert the WM8804 audio codec bindings to DT schema.
+On Thu, May 23, 2024 at 10:52:21AM -0700, Rob Clark wrote:
+> From: Rob Clark <robdclark@chromium.org>
 > 
+> Add an io-pgtable method to walk the pgtable returning the raw PTEs that
+> would be traversed for a given iova access.
 > 
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> ---
+>  drivers/iommu/io-pgtable-arm.c | 51 ++++++++++++++++++++++++++++------
+>  include/linux/io-pgtable.h     |  4 +++
+>  2 files changed, 46 insertions(+), 9 deletions(-)
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: dt-bindings: wlf,wm8804: Convert to dtschema
-      commit: e8ffc08366f9787a69ac4b4fb3bfa0f837cd846a
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Acked-by: Joerg Roedel <jroedel@suse.de>
 
 
