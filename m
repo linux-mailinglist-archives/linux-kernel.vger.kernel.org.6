@@ -1,116 +1,146 @@
-Return-Path: <linux-kernel+bounces-213226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D954907217
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:44:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3BB6907220
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13B241F24F96
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:44:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCD0E1C20F3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF70A142E9D;
-	Thu, 13 Jun 2024 12:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB57142623;
+	Thu, 13 Jun 2024 12:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ll5DUe6M"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S65Gq2yB"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2161428E9
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E28817FD
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 12:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718282615; cv=none; b=IIisNn+Mgrb7McXUdQwIetClYQU6nWvBl5Mlq7YXV0yjeacioyMcv8RPcrqZAgE5X06G5GM7kIKukDzzqTCD3dkQK4e6yx3JS5H0jXemc2XW6s7iB+I+5czcqyYqLoMpTZXeVIzFzHE9zsAPwUXko0p/rDuFSv7wc6XxKA+pvBI=
+	t=1718282635; cv=none; b=XCOatwVAKBgdFBBo0I65k1PfBKSa+YJ9fEz2+yd02CMEX+hqgMMhfye1D1LWBffyWG4JuaXC4HnQKOfjCRuHwwMwYyAhRMNsMGAGfgW6XFkdGS6UXaFe6sZ61iL1NJmGkyzRjrym+f0m+yS/jEu6UqgcNdyXcGRyK6iADPFTryk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718282615; c=relaxed/simple;
-	bh=9vhByrYTddCz5w69wCkBjEj1ybXh+NO+Xa1LhTP6Elw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=cYtrM4qm9ebfxpLNZpUUopp0AkPq3QD6zvYyteQyK5vJDiVILJ22jloVLZZPAd8HNDBoAWbc7BIAlCTDR6kcOH35fN/Q+HOieA80fMJxdz8I205VWIUTBRd7VotH5akPj/JvphiEuNtCyMr0fVSRrATSq7Htk0KRdUB6lfSJcA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ll5DUe6M; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4df550a4d4fso280054e0c.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 05:43:33 -0700 (PDT)
+	s=arc-20240116; t=1718282635; c=relaxed/simple;
+	bh=h+xpkY7WSFIBvT9Gb60qWH87G4yPyQPGboaiQzUeWMM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ltHG8sT+lzzITEnfOdKyttWl5hFP+bUljBPdHo3IyO7WB4H6orPTiy1W850XvY9V60U1IN+n7tzYxASTdj3DFdF36ZkspKLv8wpoF9Nc7nWe8AATuqPDb/6v/EZKiIvcPdtJPldJq+UaS7159ushX0HiXTSFO81ZvqJSvvbfIF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S65Gq2yB; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57cbc66a0a6so75142a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 05:43:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718282612; x=1718887412; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=r/LfTxCOrGd7G5G1GEt1IaEmUTPInNVaJpu9fMewn5A=;
-        b=Ll5DUe6MN7P4yLs1QZzhOxztqFOVQM40/5lizAQUek/Ezd+cDlgKHePTLX3fqv9DiG
-         0MWrZ1eP63zDmj09yD/1UogpH98VzY10NgLf4DCeWAwe80GfsUw8mjjtsIyTkbd9IMJY
-         1nUv3jN+u8Y0THdJ3xyZNstynLlELoMwSilp/D5TaRBDxr3jAKKb249nngpZeVxRD0wS
-         iFFkB+/X7mUy5TrfhpJafQjOwXO+yDPn5j/+GytzFocACjZ7gTO/TT+fJsJZxLg3Iw1I
-         f1EKAPm+bffRhcc6LAWsbqP/1sAmXFzSm30wlBzKAU1Yb7Dj8YTzvl2sSXSjer0dFWUe
-         Y1bA==
+        d=gmail.com; s=20230601; t=1718282632; x=1718887432; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h+xpkY7WSFIBvT9Gb60qWH87G4yPyQPGboaiQzUeWMM=;
+        b=S65Gq2yBdifleod2wk5mnosBYfetXSzG9z3D0NlJUkA7HLbb+mM4+HEacU3tBkWQR7
+         YTgLmQBbA7N4sCRKcZhNn3x6MOdYS/P3T5xRRr6NZAsTiahonpyLG+kLAiOshZJTHL1k
+         jIC1oJ8e8VZ5xUcBdAf6PZizLVtYolSmXsG5cxXeVNQrelYOBp+6SYeYo3h/ADmrsSC5
+         mvE6ZFpI5IPDmSFwnsc7CUDyyAySZDOYCsjpCx9qodGmNFrissfLeJychkYh1tKAuMcc
+         K5odVidpH+YZYarLWhYTt0dOAmDbA3QCPtgEOmnr0pmaAQZuIozKqtLp0Mbhd1gs3JIT
+         B2rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718282612; x=1718887412;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r/LfTxCOrGd7G5G1GEt1IaEmUTPInNVaJpu9fMewn5A=;
-        b=FwxU3e07JcXC5xzGZ2+UQ9iqJ1UzCGaIwNj4OEd7yqsjIe1zRaoiGgB4Rp778T36a2
-         kl6C27iIlNjhLcbCMq+VzijGExwLFruQdpc/6zG1Xcx3Lh2DaDPNTKLq2wvpQjrO6Sy5
-         foxRJMGA0gRbLE7wIrrsIERZJgupDYGLv6NdM5pGaiBr5+rrh+g/hHXBNf5moAZkkUBL
-         CyrbIyKcBUrfkWipQ5W5XFpttHVszcBJzmTYqFOaiXZcESAahJ/7b3B9ScsL2Fu+ZMam
-         nWPh/8mcXS1jB4J6XJvF6Laimgxf0mvA68uvajRSBcyDapOuPpZ1zAtiBZWjBPRDh0WK
-         lZeg==
-X-Gm-Message-State: AOJu0YwnrIbLH/0biPyx6VpTZ1qYxBNw32zJ2zRBUiTRXLzsepnEBWju
-	dpklT+ML6dhSiOGTUsAMKNx1HgYftWipqSN38R7LNWWJ+kLbTpsajD/v95uNnX9rO0kMkkKiSK7
-	9+V6z/o5ETQvfaPgaRTwN8WTKVLsLuUap25pXkCcNchV1wQ6odvE=
-X-Google-Smtp-Source: AGHT+IE1yzoIiBI1Uass7Fh36Cfm7FBqITloTOhLEjBJOxttNrRWFltwQCAkGGTWxxFwSvpyp4qmtBdDb528xiWr3+U=
-X-Received: by 2002:a05:6122:324:b0:4ec:f175:8703 with SMTP id
- 71dfb90a1353d-4ed077296c4mr4733182e0c.0.1718282610792; Thu, 13 Jun 2024
- 05:43:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718282632; x=1718887432;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h+xpkY7WSFIBvT9Gb60qWH87G4yPyQPGboaiQzUeWMM=;
+        b=gYK8PLF/LUcMt698SlJOXgL9D1RZ+slWNP8vxu5DIt34blmooH3inGfnDQeE6o5vto
+         OllrJV2w2F/GTF19FQ/7qfhydq22ERKXwXVKRdQx7XlPltmYhotjYv+j8nVlLA4iupUg
+         dwxcR4rfgt/nQ/fNhZkuwDGRqPrNtDWDtPTLVF6yVQXM3qs5SccetDBC15IkJ3mEXgQO
+         sximkC4QpnBfVvAmdPDbrTkrerS8ceZPf1jwJPpIgmSKsiEBdvEkKPiyfybt4I3US5TD
+         Zxc5DNw/TNeRYK2LdMZ2fkPfEpmpPKjuI/ljSPVUeh4paZmsJ3u+Cj8xr4w0+e2om1S8
+         UqqA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+piugpAR9jX768QEd09tNIdYImnA6ekV1zJVTQ4srFgEFpH2o7chi1pl11m355yCqV0ECE9nTRqnBI+ur2GQd8zoSdajI9zXbSyTA
+X-Gm-Message-State: AOJu0YxnVXk6lp96LaPD6f2NjX9dyNhcKKa0sqHgqyaJ9ZYF7WRXO7it
+	lwYgXvVGb21/CNZ2UjDkXoszheGibt9nb6QlIJ/mXpk7u/RDfqavlRv3q/9z7cb/cxjUDUTU+co
+	qG+okFN4TR8+G64fvgIZJSIermJw=
+X-Google-Smtp-Source: AGHT+IHWEnhEAG7BIKzNUmdChKpRz4XU/chxrEqTqjIokiG3GESbbaPfbcO1r4pT+VE2ZOBA9+VCkv5DKbE6sUU47XU=
+X-Received: by 2002:a50:fa83:0:b0:579:fa8e:31a0 with SMTP id
+ 4fb4d7f45d1cf-57cb4bc275bmr2089842a12.10.1718282631462; Thu, 13 Jun 2024
+ 05:43:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 13 Jun 2024 18:13:18 +0530
-Message-ID: <CA+G9fYvWXuWyd3NiX3WwRyorRiDRbxGmRW_7aVnBVKUVA_TaGg@mail.gmail.com>
-Subject: security: ima_policy.c:427:17: error: too many arguments to function 'ima_filter_rule_init'
-To: open list <linux-kernel@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>
-Cc: Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Paul Moore <paul@paul-moore.com>, GUO Zihua <guozihua@huawei.com>, 
-	John Johansen <john.johansen@canonical.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>
+References: <20240610120209.66311-1-ioworker0@gmail.com> <20240610120209.66311-2-ioworker0@gmail.com>
+ <CAGsJ_4y4sKXbq4_ra9tTD-LWgB-x-HECyouxm_9r_N7Kw2We4g@mail.gmail.com>
+ <be85ddcc-88ee-4f8d-9f73-b388f4d47b71@redhat.com> <CAK1f24kWHWL=nT2uDp=GF6dLp9AYuEVr4=ipUsWGK=cf9Qbfbg@mail.gmail.com>
+In-Reply-To: <CAK1f24kWHWL=nT2uDp=GF6dLp9AYuEVr4=ipUsWGK=cf9Qbfbg@mail.gmail.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Thu, 13 Jun 2024 20:43:39 +0800
+Message-ID: <CAK1f24k24dEYWsoQ3avPufaL-A1EaudWtscLpc6XeVOdrZFcFw@mail.gmail.com>
+Subject: Re: [PATCH v7 1/4] mm/rmap: remove duplicated exit code in pagewalk loop
+To: David Hildenbrand <david@redhat.com>
+Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org, willy@infradead.org, 
+	sj@kernel.org, baolin.wang@linux.alibaba.com, maskray@google.com, 
+	ziy@nvidia.com, ryan.roberts@arm.com, mhocko@suse.com, fengwei.yin@intel.com, 
+	zokeefe@google.com, shy828301@gmail.com, xiehuan09@gmail.com, 
+	libang.li@antgroup.com, wangkefeng.wang@huawei.com, songmuchun@bytedance.com, 
+	peterx@redhat.com, minchan@kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The arm and arm64 kselftests builds started failing on Linux next-20240613 tag.
-Please find the build log and related links below.
+On Thu, Jun 13, 2024 at 4:49=E2=80=AFPM Lance Yang <ioworker0@gmail.com> wr=
+ote:
+>
+> On Thu, Jun 13, 2024 at 4:27=E2=80=AFPM David Hildenbrand <david@redhat.c=
+om> wrote:
+> >
+> > On 13.06.24 09:52, Barry Song wrote:
+> > > On Tue, Jun 11, 2024 at 12:02=E2=80=AFAM Lance Yang <ioworker0@gmail.=
+com> wrote:
+> > >>
+> > >> Introduce the labels walk_done and walk_done_err as exit points to
+> > >> eliminate duplicated exit code in the pagewalk loop.
+> > >>
+> > >> Reviewed-by: Zi Yan <ziy@nvidia.com>
+> > >> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > >> Reviewed-by: David Hildenbrand <david@redhat.com>
+> > >> Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> > >
+>
+> Hi Barry and David,
+>
+> Thanks for taking time to review!
+>
+> > > I don't think "return false" necessarily indicates an error, so
+> > > "walk_done_err" doesn't seem like an appropriate name.
+> > > However, this is a minor issue.
+> >
+> > Agreed. As we only have a single walk_done user, should we instead
+> > remove "walk_done", keep the "page_vma_mapped_walk_done" for that singl=
+e
+> > user, and rename "walk_done_err" to "abort_walk" ?
+>
+> Yeah, I agree that 'abort_walk' is better than 'walk_done_err', and let's
+> keep 'page_vma_mapped_walk_done' for that single user ;)
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+I just realized that there is another walk_done user, which is
+unmap_huge_pmd_locked().
 
-Build error:
---------
-security/integrity/ima/ima_policy.c: In function 'ima_lsm_copy_rule':
-security/integrity/ima/ima_policy.c:427:17: error: too many arguments
-to function 'ima_filter_rule_init'
-  427 |                 ima_filter_rule_init(nentry->lsm[i].type, Audit_equal,
-      |                 ^~~~~~~~~~~~~~~~~~~~
+Could I keep "walk_done" but rename it to "done_walk"?
 
-metadata:
-------
-  git_describe: next-20240613
-  git_ref: master
-  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-  git_sha: 6906a84c482f098d31486df8dc98cead21cce2d0
-  git_short_log: 6906a84c482f ("Add linux-next specific files for 20240613")
-  arch: arm and arm64
-  config: kselftest merge
-  build_name: gcc-13-lkftconfig-kselftest
-  config: https://storage.tuxsuite.com/public/linaro/lkft/builds/2hoLwDXEx5rCFxECYqQmkKEEurs/config
-  toolchain: gcc-13
+Thanks,
+Lance
 
-Build log:
----------
-  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2hoLwDXEx5rCFxECYqQmkKEEurs/
-  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240613/testrun/24303459/suite/build/test/gcc-13-lkftconfig-kselftest/details/
-
---
-Linaro LKFT
-https://lkft.linaro.org
+>
+> Thanks again for the suggestions!
+> Lance
+>
+> >
+> >
+> > --
+> > Cheers,
+> >
+> > David / dhildenb
+> >
 
