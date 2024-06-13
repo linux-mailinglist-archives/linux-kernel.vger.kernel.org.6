@@ -1,113 +1,168 @@
-Return-Path: <linux-kernel+bounces-212743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3990906590
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:48:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B926906599
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 351281F22545
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:48:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 546B41C21EC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B588713C8E3;
-	Thu, 13 Jun 2024 07:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DB613C9CB;
+	Thu, 13 Jun 2024 07:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zISvuQ+Q"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="HMvLdNuo"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6422A136660
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 07:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E5913C8FF;
+	Thu, 13 Jun 2024 07:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718264913; cv=none; b=ojcBfq0ZhECIBtCr+p+dWhzbrsTyhkd58fyRHLj4DaRGSrltm7flDoGXrmhrJ9P0PBuPNkvyzYAfB6hm7a+Zkest0IG9nBFjaqnVQd7u9qMHb8Z6XfrYRJK9fxlk9r5gvXwEEOMc9Afc4PMD+yNBcr//OjutQkDlxMWbwbL+VOA=
+	t=1718264958; cv=none; b=Q2AbHutii92cnpcd/NtH/vzdiNmPYzjMq9iyxbTpXV9yUH2VNqbg3DGKCC/FnsvT8oyeNTJUJ82ejRSPakmE7iVXuxCWWXd39P14WVTFdRNPQ2lJhXjGq1lR69Z88jrxZUzJr9uaFJYsFoknTHXtAue0UYzecN9JF2DlcngpqnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718264913; c=relaxed/simple;
-	bh=4WP+wvpQcfDeRRO9xJK0LLuMXzp+fXt20Q5xyse7NL4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VcZb2FrDNu2/sIfXqiFJEeHMWkNjnfy3lIziB/UdQX1nPbuo0CyKZvjm2DFcrpubj86n8ZoEJ3S++tRVssEWNwIsliICt8HzDJDkhwu220q8b8H2HDksS6yEkFgUJL639HH/ehuQZR/2OxCCJg+CUV1QppoqmVOgDtFDD5bO6hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zISvuQ+Q; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52bc1261f45so835196e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 00:48:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718264909; x=1718869709; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VdTreM/4CjpbEldQaCtjNolTelGaHpzCWji9mFlJTjk=;
-        b=zISvuQ+QH3dIVH/kACxiA8chwONrMKFXwjbzldw/Kzk9J9tu4S2ulbvMGBIVDkXtBi
-         Qoph+vHwIfGjSXDs/mRZHYVhW+VsqTrfhN8MEpQHhrwxlN7s2Y8hksZ1IBsKFqv79Pqz
-         I/UZ2efQ4ii8Ol2QoUX7jJPOG34IwCCaSkQJhlJwTFpeRkmSCVtdLz7Ps0Nd18oHYBV2
-         2REY65RllXcfht70RNv0bV6wUvhT8pRVB7kigkEhbeTScnYbxRQhMXVaNWEJNdaKb9PA
-         rK8ydZQKCdr9Tw/6HFQ6CXhG0Ui1eV7qNi9h6Z28AswVdrJtYCYusdMC5oPbttJiZFui
-         8dxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718264909; x=1718869709;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VdTreM/4CjpbEldQaCtjNolTelGaHpzCWji9mFlJTjk=;
-        b=HAgQwpc+bMcpuSPAPAdn8P5u+Hq6Qw1Xd4le2893sJ7E93h8Kjo8WdyIAjpnPQBzqf
-         cl+Ie6qtVjzP0ohevSoK1FT9+He6iPReXc8713Z87ot+IncLK7YDZjP6M4lGno8TRs41
-         AeRGSWX06PRs2fW0KyPNNctRviEXO/ymLpWot/sCSye5ujzZ8JTWOHlblumQP6hpCcFM
-         u+97XFZQRYZbOM7DtX91XKMfgYzUoRA4rTS+Hxz/kqjHkfhUYY/DbW2D/C1U8HdLZH45
-         ceRw0b7KuqYKtVvwrtXVLp4xxo0bMQ1zT5E2tHnSasg7a6K56aPHYJjMSzCRJ5C84i6E
-         TWeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVawCpHoiSoUCR9gu4PENMYTUKKsJ6FocLke5zjPcVNpjkRWc4tOdepAeCMdRkvCM1IbhrDFAlMNVSCWV7J7dJaq9M+Kjj7vT5CC90l
-X-Gm-Message-State: AOJu0YwB0xG6uGAkRCFMXxKMf0AemF0SQEKIrsS0cQl1GOTTC7DnTqYS
-	fVeK8RRFHVQShHs1dLncoG2O07rGz8Azr6Q0GEi02hrQCS0KjPO0LkY/VS4s1QA=
-X-Google-Smtp-Source: AGHT+IF2OVDFCqDLMt5hgTHiYYN2fy6FsGkyibfB0dHYIVclAaNr0xSF3MvK0gmdm1UmC+fM9//mUQ==
-X-Received: by 2002:ac2:418a:0:b0:52c:86de:cb61 with SMTP id 2adb3069b0e04-52c9a3b7977mr1991716e87.10.1718264909540;
-        Thu, 13 Jun 2024 00:48:29 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:900a:a4b1:c71b:4253:8a9f:c478? ([2a00:f41:900a:a4b1:c71b:4253:8a9f:c478])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca287aaf8sm115607e87.194.2024.06.13.00.48.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 00:48:29 -0700 (PDT)
-Message-ID: <2b39d763-5b79-4b21-85f9-22fee9f87468@linaro.org>
-Date: Thu, 13 Jun 2024 09:48:26 +0200
+	s=arc-20240116; t=1718264958; c=relaxed/simple;
+	bh=tOsnQVOFTDPDAjyXqM6o5BX1/ALySEuh1yBpE5U5t04=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=POrwzKFW3kXvLAy2vACT5dviI84CkJPtVgCsDAxTPqjL1tTk4LW526zQo9jz9A8B8iMeLYL4QLW4Fdtrz2J44oC1Pc9X/R/LpF0K0nW8R64mVNXGoIJMTOfPnD3RVTLX8XCPSaNGCV+73iUD+trdLjT3W2uOPdN6JEZ83g7V/QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=HMvLdNuo; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1718264955; x=1749800955;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tOsnQVOFTDPDAjyXqM6o5BX1/ALySEuh1yBpE5U5t04=;
+  b=HMvLdNuoCW8QchGY2gQAkxqeLGY+6ijhiwXQECNNzQ9dNSYAPU6ZI+2B
+   tsuWMRPLjwamHRPaWi1C73VEhpuYAJFSdL5PLMk9Uj+Ap+WnmAPLE0C2B
+   CdlC6Xd4IYdnIO7u5v6rgXOnuLgT3hVs6dyPltUYu18kC4YPcocFZfxh2
+   pe2wm2SRGIi4NXPrQQcBDxwlhO+UmkbrCMLTpSJbo5dimubNJgR6M8d+h
+   k3eCjlvuMmXcoeK3jst2qROa0TjIfRWnLHTmvUWvwylb8EUvLlLhCUmZT
+   RUd+8Hu1/hADsZ8wJdlM4NsfTlWdoM3ICnjVuKqZ20aqtg4SSzn2bqqSa
+   g==;
+X-CSE-ConnectionGUID: HD7DQktUQset5I4Uvw9H8Q==
+X-CSE-MsgGUID: EH4vLWffT2uZaRrw4Ct1EA==
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="asc'?scan'208";a="29819693"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Jun 2024 00:49:13 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 13 Jun 2024 00:48:53 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex03.mchp-main.com (10.10.85.151)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Thu, 13 Jun 2024 00:48:51 -0700
+Date: Thu, 13 Jun 2024 08:48:34 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+CC: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+	<palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Steven Rostedt
+	<rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Andrea Parri <parri.andrea@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>
+Subject: Re: [PATCH] riscv: Fix early ftrace nop patching
+Message-ID: <20240613-lubricant-breath-061192a9489a@wendy>
+References: <20240523115134.70380-1-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: qcom: motorola-falcon: add accelerometer,
- magnetometer
-To: Stanislav Jakubek <stano.jakubek@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, phone-devel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <ZmWMh6fuLasvGkR/@standask-GA-A55M-S2HP>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <ZmWMh6fuLasvGkR/@standask-GA-A55M-S2HP>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ucH24q+vfrE+sERa"
+Content-Disposition: inline
+In-Reply-To: <20240523115134.70380-1-alexghiti@rivosinc.com>
 
+--ucH24q+vfrE+sERa
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-
-On 6/9/24 13:05, Stanislav Jakubek wrote:
-> Add the accelerometer and magnetometer that are present on the Motorola
-> Moto G (2013) device.
-> 
-> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+On Thu, May 23, 2024 at 01:51:34PM +0200, Alexandre Ghiti wrote:
+> Commit c97bf629963e ("riscv: Fix text patching when IPI are used")
+> converted ftrace_make_nop() to use patch_insn_write() which does not
+> emit any icache flush relying entirely on __ftrace_modify_code() to do
+> that.
+>=20
+> But we missed that ftrace_make_nop() was called very early directly when
+> converting mcount calls into nops (actually on riscv it converts 2B nops
+> emitted by the compiler into 4B nops).
+>=20
+> This caused crashes on multiple HW as reported by Conor and Bj=F6rn since
+> the booting core could have half-patched instructions in its icache
+> which would trigger an illegal instruction trap: fix this by emitting a
+> local flush icache when early patching nops.
+>=20
+> Fixes: c97bf629963e ("riscv: Fix text patching when IPI are used")
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 > ---
+>  arch/riscv/include/asm/cacheflush.h | 6 ++++++
+>  arch/riscv/kernel/ftrace.c          | 3 +++
+>  2 files changed, 9 insertions(+)
+>=20
+> diff --git a/arch/riscv/include/asm/cacheflush.h b/arch/riscv/include/asm=
+/cacheflush.h
+> index dd8d07146116..ce79c558a4c8 100644
+> --- a/arch/riscv/include/asm/cacheflush.h
+> +++ b/arch/riscv/include/asm/cacheflush.h
+> @@ -13,6 +13,12 @@ static inline void local_flush_icache_all(void)
+>  	asm volatile ("fence.i" ::: "memory");
+>  }
+> =20
+> +static inline void local_flush_icache_range(unsigned long start,
+> +					    unsigned long end)
+> +{
+> +	local_flush_icache_all();
+> +}
+> +
+>  #define PG_dcache_clean PG_arch_1
+> =20
+>  static inline void flush_dcache_folio(struct folio *folio)
+> diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
+> index 4f4987a6d83d..32e7c401dfb4 100644
+> --- a/arch/riscv/kernel/ftrace.c
+> +++ b/arch/riscv/kernel/ftrace.c
+> @@ -120,6 +120,9 @@ int ftrace_init_nop(struct module *mod, struct dyn_ft=
+race *rec)
+>  	out =3D ftrace_make_nop(mod, rec, MCOUNT_ADDR);
+>  	mutex_unlock(&text_mutex);
 
-[...]
+So, turns out that this patch is not sufficient. I've seen some more
+crashes, seemingly due to initialising nops on this mutex_unlock().
+Palmer suggested moving the if (!mod) ... into the lock, which fixed
+the problem for me.
 
-> +&blsp1_i2c2 {
+> =20
+> +	if (!mod)
+> +		local_flush_icache_range(rec->ip, rec->ip + MCOUNT_INSN_SIZE);
+> +
+>  	return out;
+>  }
+> =20
+> --=20
+> 2.39.2
+>=20
 
-Consider setting a clock-frequency = <>
+--ucH24q+vfrE+sERa
+Content-Type: application/pgp-signature; name="signature.asc"
 
-With that:
+-----BEGIN PGP SIGNATURE-----
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmqkUQAKCRB4tDGHoIJi
+0m3VAQDMZOg52eVsvZthKmdZBM/Y3SXPrObGxlcvKyFsEVooWQD8C8VClKYq1GTX
+I/KHs08ahGuI+30Vfq/MEeFlrbU1AgU=
+=hljr
+-----END PGP SIGNATURE-----
 
-Konrad
+--ucH24q+vfrE+sERa--
 
