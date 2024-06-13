@@ -1,148 +1,139 @@
-Return-Path: <linux-kernel+bounces-212506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A69A906233
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:57:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB76906238
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E2E1C2156C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:57:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 579891F212AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F0B12CD8C;
-	Thu, 13 Jun 2024 02:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A0412CDAF;
+	Thu, 13 Jun 2024 02:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="r+lqTVY7"
-Received: from mail-40141.protonmail.ch (mail-40141.protonmail.ch [185.70.40.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l6fMNDli"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDD112CD8B;
-	Thu, 13 Jun 2024 02:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7025A12AAE0
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718247438; cv=none; b=Rc48VVEfo7aFNmsmedkljQ4CKVgt+oi/8yAy2mxFVdTgIfoctVjd0AGatYKkptqP/DWOGIWAyeRPab7qfkhhex3thSGAiyAnFZbMaRMzL1R6badscDxap8ljKciW730kNNbxM02AIJ0WYtmqDdGlsQ0xJHzbF0iQOp+HLY72NW4=
+	t=1718247499; cv=none; b=nNXmEjAFJz7R7IGrEwQVLYqUJgKQ+GQ7BQKxwNKhVh8bSNxmrykK6qdCcR5hZZsSzSSbK9CiaBJkQ07n8rhM0/lVwlcDeixddGXCLUElJj+4VzUI4hwscJj9SRo/xDcx59jO40CTme+PjnzAjtS1NQQdzhj4y5kr3m68avW1wls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718247438; c=relaxed/simple;
-	bh=f0f6wp31zL2RwkHRjXOVz/EH4HhEHMCWvKWESd4pTcA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lCVw9oYmajsgdOCYkcV8wHQNIY/s5yUld7ukhJXK23Rpqq6219t07Lo6osZZNjbwNOMOqf3mzZmAVPadvAPOzPrj0Nc/xT7Dddj+/9qiQ6cisycrMAjNy7zI2R+j7nVVK62FZ471Iwo2XImBhw3DIWiyOU2D7Fj1gAuW/82fYqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=r+lqTVY7; arc=none smtp.client-ip=185.70.40.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1718247435; x=1718506635;
-	bh=f0f6wp31zL2RwkHRjXOVz/EH4HhEHMCWvKWESd4pTcA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=r+lqTVY7WHJsHcd3KfQF7BiczX9O3mP903LHB6xgqzmvbsiDZ2CcNtWGmAIRpmze0
-	 78ZbJaCCO0BUC1HglrvpRBBFmJMHYObdGg7pmxCq9/ihWFBdKWzef/RuJ/UXApPBC6
-	 qf+oZ2LLg/bDCFgtmoOq5YT+qESseW8BOFp3VTfF9F0MutckXsoFBBUp4xWWvqnKgF
-	 7O9czbvgthXt4JmtaRpwKJX4HW27i8452qiONCA/8f+ctuWd+B5sOMSZKLKal3xMQV
-	 MSWCV90AtLThim8oW+msHS8L5kn6PKDTMaq4K6gHUsRnAO4MC409A6vda5jco23EAz
-	 LPp5zDniodh0A==
-Date: Thu, 13 Jun 2024 02:57:11 +0000
-To: linux-kernel@vger.kernel.org
-From: Raymond Hackley <raymondhackley@protonmail.com>
-Cc: Markuss Broks <markuss.broks@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, Nikita Travkin <nikita@trvn.ru>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: [PATCH v2 3/3] input/touchscreen: imagis: Add supports for Imagis IST3038
-Message-ID: <20240613025631.5425-4-raymondhackley@protonmail.com>
-In-Reply-To: <20240613025631.5425-1-raymondhackley@protonmail.com>
-References: <20240613025631.5425-1-raymondhackley@protonmail.com>
-Feedback-ID: 49437091:user:proton
-X-Pm-Message-ID: dbec9617af97a207be017b2482ca9ba7250f143f
+	s=arc-20240116; t=1718247499; c=relaxed/simple;
+	bh=cudCwVPFY8gj3Xql79RT0/yQoQxsiwHECqig9oVJ5Ek=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yek2JZ6d+vGHpaIESll47pHb9HtCMuP+nj4DyuVkpG4dv1nS2XufBKicM3O0eeenQDQEyjugxBmnrVm8T9sfmXk3/eiO1/0oldOx9+rxdAMPKi4x9zOC0zuSo2pO6fOE90xDRWgD2WkIMAdNqC2XlQFGtQnrsf2M4N2FTt3ikuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l6fMNDli; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57cad452f8bso359199a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 19:58:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718247496; x=1718852296; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cYlALMaSt5bKOLPpkzaQGZT0pfqD9pv8OI0qHYxUheA=;
+        b=l6fMNDliM0xtpewAV1oA3nGowb9jWtg018U2Sgsq5VA8Gt3qu4efvmFiUcT2PBBapM
+         Tq8xS0T3BkgiPPCc+adYOvQ+H+/+cqvqkJlTzyPgT6r7cdd2cbf/Orboq921QiOio6HQ
+         kYMTpBjS1V7Z60/07G7b3YHus6lp1J7qyslVQiI9vqqjlALnKG/eSitVJnztZ5xbkOuf
+         nCemvfWonqDse0N9G+yCe/Sxmu+6cYW6P0bLxv43jp5w18hjsHqxNoWCtPvwlonSRsAi
+         pUTnqK3gF18n1+ukT9P+8LEgNQk1shZkfZZAXU1jdrIUA7WT/82pE4QIL3xizO4J1MOF
+         9+JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718247496; x=1718852296;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cYlALMaSt5bKOLPpkzaQGZT0pfqD9pv8OI0qHYxUheA=;
+        b=RSqGpTzNjZ9QK5rBY2aqHN+y2dleuJKPlj+FbJZMf45BXarRdeu+oJ7AS3g0TKyVdX
+         LKA/DHGusoayyzt1Qc7YBqjzQkTOaJ1ZwAJYRWSyxno6GyxrZaCpJCHbae85VLZfIXc3
+         9VIJqtyV1nTW+pXr/z0izXAANWhet8pctXOFfqj6nVgH8q1Jupke92Gq2VZNaW5OdeKS
+         O5EW8E+jU5htWI9YopSt62o8+UasQUd4bo2S2CtHDX19T0NnsMufgCh66GGH2Cx2RVb5
+         v5Zsgz1iz7pQZg0yhhmjm4QmIIc1bVcAwTq0gfICut8UnqEBI/cR+btCbHudfgmp3xgY
+         JjQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfU+62mmIl2HLVdxhSdD10IUXQk516eJXilw0fcQL4Jgn73EcuXCAs5fJWB+M4p/0l+D7EhoDuW8pGjtJ3n+BgWZnE0n073wbw+IOD
+X-Gm-Message-State: AOJu0Yzn8coR3scUYM+Jy3XuWSpoVLHwn7GwIkthzPnhQTX2Cq5hnG3L
+	wwzBCLQDcPOB+v/N4ILKrBdoGp9r5GqTCtIPbe4K2WQrmZ6MHxjeRA3jOyoU57epg06QS1pXIoB
+	jFu679j7vwrEbT2wKYNdu1DkV38+JTOXHdINp
+X-Google-Smtp-Source: AGHT+IF9CciRYK/S+Ij1+KuSCnynD6lav8vXAPrkXMbU5iqPDXNWqrABMnPq8TuNELzKnGWLPQ19ZjeHQ37ywUEgQSE=
+X-Received: by 2002:a17:906:c149:b0:a6f:4d38:f40c with SMTP id
+ a640c23a62f3a-a6f4d391d2amr193732366b.62.1718247495476; Wed, 12 Jun 2024
+ 19:58:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240608155316.451600-1-flintglass@gmail.com> <20240608155316.451600-2-flintglass@gmail.com>
+ <CAKEwX=P1Ojb71AEJ2gzQTrfWidFPcJZmoNxEwji7TceBN-szCg@mail.gmail.com>
+ <CAPpoddeigM44jhTA8Ua=+J4MC1MikouBZVoPrCW2LZF+9r5YeA@mail.gmail.com>
+ <CAJD7tkYp3GbuXV9G5bAZ1DetMmepV5ynciA+ukae7CKuxpXDJQ@mail.gmail.com>
+ <CAPpoddfj1EdfXfTUT8bLaNxat0hYiE4X9=qG38gPgRgmmVOjcw@mail.gmail.com>
+ <CAJD7tkZTSGz1bpo-pMNP_=11O-7RrhubWonqhUJwrt+TB=Ougg@mail.gmail.com> <CAPpoddcp9rVvg77WapsuiMdMzFrV0UioJ+VbQuJbKNY7-=nvVw@mail.gmail.com>
+In-Reply-To: <CAPpoddcp9rVvg77WapsuiMdMzFrV0UioJ+VbQuJbKNY7-=nvVw@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Wed, 12 Jun 2024 19:57:37 -0700
+Message-ID: <CAJD7tkY0=0yKSmEz=E5dL7GLRsO8r6ESWyzF+HdgK0wnMpzLKg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/3] mm: zswap: fix global shrinker memcg iteration
+To: Takero Funaki <flintglass@gmail.com>
+Cc: Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Shakeel Butt <shakeel.butt@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Imagis IST3038 is another variant of Imagis IST3038 IC, which has
-a different register interface from IST3038C (possibly firmware defined).
+On Wed, Jun 12, 2024 at 7:36=E2=80=AFPM Takero Funaki <flintglass@gmail.com=
+> wrote:
+>
+> 2024=E5=B9=B46=E6=9C=8813=E6=97=A5(=E6=9C=A8) 11:18 Yosry Ahmed <yosryahm=
+ed@google.com>:
+>
+> > > The corrected version of the cleaner should be:
+> > > ```c
+> > > void zswap_memcg_offline_cleanup(struct mem_cgroup *memcg)
+> > > {
+> > >         /* lock out zswap shrinker walking memcg tree */
+> > >         spin_lock(&zswap_shrink_lock);
+> > >         if (zswap_next_shrink =3D=3D memcg) {
+> > >                 do {
+> > >                         zswap_next_shrink =3D mem_cgroup_iter(NULL,
+> > >                                         zswap_next_shrink, NULL);
+> > >                         spin_unlock(&zswap_shrink_lock);
+> > >                         spin_lock(&zswap_shrink_lock);
+> > >                         if (!zswap_next_shrink)
+> > >                                 break;
+> > >                 } while (!mem_cgroup_online(zswap_next_shrink));
+> > >         }
+> > >         spin_unlock(&zswap_shrink_lock);
+> > > }
+> > > ```
+> >
+> > Is the idea here to avoid moving the iterator to another offline memcg
+> > that zswap_memcg_offline_cleanup() was already called for, to avoid
+> > holding a ref on that memcg until the next run of zswap shrinking?
+> >
+> > If yes, I think it's probably worth doing. But why do we need to
+> > release and reacquire the lock in the loop above?
+>
+> Yes, the existing cleaner might leave the offline, already-cleaned memcg.
+>
+> The reacquiring lock is to not loop inside the critical section.
+> In shrink_worker of v0 patch, the loop was restarted on offline memcg
+> without releasing the lock. Nhat pointed out that we should drop the
+> lock after every mem_cgroup_iter() call. v1 was changed to reacquire
+> once per iteration like the cleaner code above.
 
-Unlike IST3038C/IST3032C, IST3038 has different registers for commands,
-which means IST3038 doesn't use protocol B.
-Similar to IST3032C and maybe the other variants, IST3038 has touch keys
-support, which provides KEY_APPSELECT and KEY_BACK.
+I am not sure how often we'll run into a situation where we'll be
+holding the lock for too long tbh. It should be unlikely to keep
+encountering offline memcgs for a long time.
 
-Add support for IST3038 with touch keys.
-
-Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
----
- drivers/input/touchscreen/imagis.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/input/touchscreen/imagis.c b/drivers/input/touchscreen=
-/imagis.c
-index 886bcfc8497a..aeabf8d057de 100644
---- a/drivers/input/touchscreen/imagis.c
-+++ b/drivers/input/touchscreen/imagis.c
-@@ -12,9 +12,17 @@
- #include <linux/property.h>
- #include <linux/regulator/consumer.h>
-=20
-+#define IST30XX_REG_STATUS=09=090x20
-+#define IST30XX_REG_CHIPID=09=09(0x40000000 | IST3038C_DIRECT_ACCESS)
-+
-+#define IST30XX_WHOAMI=09=09=090x30003000
-+#define IST30XXA_WHOAMI=09=09=090x300a300a
-+#define IST30XXB_WHOAMI=09=09=090x300b300b
-+#define IST3038_WHOAMI=09=09=090x30383038
-+
- #define IST3032C_WHOAMI=09=09=090x32c
-+#define IST3038C_WHOAMI=09=09=090x38c
-=20
--#define IST3038B_REG_STATUS=09=090x20
- #define IST3038B_REG_CHIPID=09=090x30
- #define IST3038B_WHOAMI=09=09=090x30380b
-=20
-@@ -25,7 +33,6 @@
- #define IST3038C_REG_TOUCH_STATUS=09(IST3038C_REG_HIB_BASE | IST3038C_HIB_=
-ACCESS)
- #define IST3038C_REG_TOUCH_COORD=09(IST3038C_REG_HIB_BASE | IST3038C_HIB_A=
-CCESS | 0x8)
- #define IST3038C_REG_INTR_MESSAGE=09(IST3038C_REG_HIB_BASE | IST3038C_HIB_=
-ACCESS | 0x4)
--#define IST3038C_WHOAMI=09=09=090x38c
- #define IST3038C_CHIP_ON_DELAY_MS=0960
- #define IST3038C_I2C_RETRY_COUNT=093
- #define IST3038C_MAX_FINGER_NUM=09=0910
-@@ -397,9 +404,17 @@ static const struct imagis_properties imagis_3032c_dat=
-a =3D {
- =09.protocol_b =3D true,
- };
-=20
-+static const struct imagis_properties imagis_3038_data =3D {
-+=09.interrupt_msg_cmd =3D IST30XX_REG_STATUS,
-+=09.touch_coord_cmd =3D IST30XX_REG_STATUS,
-+=09.whoami_cmd =3D IST30XX_REG_CHIPID,
-+=09.whoami_val =3D IST3038_WHOAMI,
-+=09.touch_keys_supported =3D true,
-+};
-+
- static const struct imagis_properties imagis_3038b_data =3D {
--=09.interrupt_msg_cmd =3D IST3038B_REG_STATUS,
--=09.touch_coord_cmd =3D IST3038B_REG_STATUS,
-+=09.interrupt_msg_cmd =3D IST30XX_REG_STATUS,
-+=09.touch_coord_cmd =3D IST30XX_REG_STATUS,
- =09.whoami_cmd =3D IST3038B_REG_CHIPID,
- =09.whoami_val =3D IST3038B_WHOAMI,
- };
-@@ -415,6 +430,7 @@ static const struct imagis_properties imagis_3038c_data=
- =3D {
- #ifdef CONFIG_OF
- static const struct of_device_id imagis_of_match[] =3D {
- =09{ .compatible =3D "imagis,ist3032c", .data =3D &imagis_3032c_data },
-+=09{ .compatible =3D "imagis,ist3038", .data =3D &imagis_3038_data },
- =09{ .compatible =3D "imagis,ist3038b", .data =3D &imagis_3038b_data },
- =09{ .compatible =3D "imagis,ist3038c", .data =3D &imagis_3038c_data },
- =09{ },
---=20
-2.39.2
-
-
+Nhat, do you think this could cause a problem in practice?
 
