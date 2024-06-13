@@ -1,195 +1,125 @@
-Return-Path: <linux-kernel+bounces-213739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD8AE9079AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:21:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C2E59079C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68FF81C2256F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:21:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F6661C20E33
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE42014A098;
-	Thu, 13 Jun 2024 17:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FB714A0B5;
+	Thu, 13 Jun 2024 17:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="llsDK23Y"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X/ZuGi4h"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D56D145FFD;
-	Thu, 13 Jun 2024 17:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938EC12EBC7;
+	Thu, 13 Jun 2024 17:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718299288; cv=none; b=rhQcDJ0kE7xMESAWKTzVnNiU51QPLCAbnIW4GBng1gm3g43LjmOrFmDHIA8PlMdzQhjwVOXnwM9JP16O4S5mFELM2cnZwm3VYqU8gxXKK6zKsWbD3YNS9oVwY7dJgcwYGNj5pFGok6senXuv9V3/rxxkYpqDkxIhHjj/791Wd9A=
+	t=1718299393; cv=none; b=R66iAfcQyUupY4KFNE7VjWlQEg2Um7d915RneneyYrpfFTSUUKYMt5PnM0NsLtL8vkb1HpwRFRa4evMMVEYzimrOY229b1bQnYfvD2p/F8HTsKGXsF0mKJXn2FSlmGRDJjAhKw9ZviZbL59c7cgfal8iXy9nUDf0F6fxQrQWBIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718299288; c=relaxed/simple;
-	bh=oQpR3WqnngfQNJeUbEy88r36UtSxS3u5kZrjD+GeDi0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=A+vmUTvUB6FkQfMnLmnY/zQSzOv/n4z/SW7WIS4S/fSKnux4WkKtVYAN5IiXVnkBUb3VNcBBWLCIN70Q9kJxCPpilX2izt5estqt8X8nMRWvaGEFrXznjzw77PBBCfpaFQduV2cCfpPiyeC1YtM2G9jFS/WlemIjsVSQIImOluU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=llsDK23Y; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718299284;
-	bh=oQpR3WqnngfQNJeUbEy88r36UtSxS3u5kZrjD+GeDi0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=llsDK23YX1btoiKV3FQ9dsccXLlI05kxWEIs0kEr0eIOhxZ/T5Yjxd12/qEsK61ds
-	 yvLDsaU542aYUx60VvJPvGIdPerlpY9+QfijAuOlUHs4l9mQDe6QGku80UXhPfQoXu
-	 N3vA8ZZI1uYDM3Vaidr4MmfJJcKFmmhd0RwqHsrtfiodk7tekw5hiuMdN0cwhKu0c/
-	 9fnwXbRY1tPP1vRb3I9VDqginw4NghLU7IpLZC8xrXJnMG0vncSfQ531ygQoqFortR
-	 3jkkwvUHTeAKJap9MgyzmUfRnCjG2iLuxJIS92V1OwWzrzfnpcGE8Xccu+fz7Yj4n1
-	 UkQ9CNAEnV82Q==
-Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id BCA943781139;
-	Thu, 13 Jun 2024 17:21:18 +0000 (UTC)
-Message-ID: <c9d1704ee28d1dc3d187308b03cb5278c1bf723b.camel@collabora.com>
-Subject: Re: [PATCH v6 5/6] arm64: dts: rockchip: Add VEPU121 to RK3588
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>, Ezequiel Garcia
- <ezequiel@vanguardiasur.com.ar>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Nicolas Frattaroli <frattaroli.nicolas@gmail.com>, Heiko Stuebner
- <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Jianfeng Liu
- <liujianfeng1994@gmail.com>, Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>,
- linux-media@vger.kernel.org,  linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
- kernel@collabora.com
-Date: Thu, 13 Jun 2024 13:21:04 -0400
-In-Reply-To: <20240613135034.31684-6-sebastian.reichel@collabora.com>
-References: <20240613135034.31684-1-sebastian.reichel@collabora.com>
-	 <20240613135034.31684-6-sebastian.reichel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1718299393; c=relaxed/simple;
+	bh=+2OFmWNM47yOmDpYrRVafvbtoDEP6ZH+OhJE24NiP7Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WdIA06eakQAImUPTQaoPl5g7V1bkxRcKShAU/SRI5jTnlxX2NlSIQi8mOgkQd01boSaSCHTFcXDY4whmAkIWJRcrRZ7zxbSiqnCeuMkXh4Kvl0BplL64Dx2e5MCaHpG5WBB1EksNaZVOT+roG+aS8RDTA9kNVMeJR0lunJEzHcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X/ZuGi4h; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52962423ed8so1585980e87.2;
+        Thu, 13 Jun 2024 10:23:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718299390; x=1718904190; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+2OFmWNM47yOmDpYrRVafvbtoDEP6ZH+OhJE24NiP7Q=;
+        b=X/ZuGi4hpLYlpYP9fC/otv0zfejU7gw2cCeiAVZozGvpPnZwH/3shGDTbHKx5s1tDi
+         Yu4vDuhte3S8ctsdv9+XHGfBnzHo6ghrxNuj3TfYG2Wxha3fUAlvifvv4oVCymxzUH2t
+         Wt4ZmHQ7UKWAgyLaUbMG2BTKL8FGmP1Q25NRELGU7ihxmr0lSeDLQ7Koz2aw3m6+YNAE
+         5m1O43E7y28iUojXbKBvyxIqyTuokxyQFd0NqSSKsv03UaOPAiMrH3R3g2mcPW9aKrqJ
+         JHqUwbwxpJEid4voCWz9kXyezHj04YL+fvpFHF5OeCuraBNn9G40F1k0x434LJnR2f/p
+         romQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718299390; x=1718904190;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+2OFmWNM47yOmDpYrRVafvbtoDEP6ZH+OhJE24NiP7Q=;
+        b=YGEMpNNwHcBNcGZz/JVTVq4tsF5nFJLE5njHmQgIvScn8ArMf/gqG8Vn7Cx5vHXljT
+         noT9rz3/lWQTVXlhyuUWrHoZjcF77ZlErHw8wXtJoNtSomCDRZc6mMFM4AfgOAWBZwqy
+         riksTqe1O5BEKFyR4pUXXrXZ/TPjZvo5U2Ujx0NeHzrqFrnVqgyklomniGyHEa2f5KRL
+         Etj1nDlaXrXUWI5YEm0hx1ck5FUxLCK9KtIo01UrdbcpauWZTuWU9cSbwTLC5Na1zCeg
+         0kR/wop+fUGRZI4D25+AXYXgaqngi0DRgiNkUVJi/89dzrxdfQi2R826uPuAt5dnL8xZ
+         RVhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhZw9agQ80UDAXHLrki/bBeG/ekFqdJ87F+ehWX3I+yb58/6nxJvom0MSEhGqZp7FrPF1QBswRoNKhMv2chd5/N+xIuRME6hycpZohcVUd7ZpLSyo37EoJHkUo23imZKnGOOUN5guwanImpQH6roPRsu7QHrrfv1jSuqOP11S0Ozg8VWZ3eHGaT/PasT5PGP/EtoHc9v8KpanBQuvH4dX5Qm5IoYRCMg==
+X-Gm-Message-State: AOJu0YzKQqJvndN/iM04TMPnIJAHtwVvZp+kysXnVmKsCYaBljywv4/f
+	LvYdfynZxfGEWFjFMUYM10VzgXYxRRYnOXe0B+jCAnhRF06fyQHIxLT9C7qiubI6vuKDaBx1tr9
+	O+b/vZ6iWKpq0tgp5jsu2Xsf2l8Y=
+X-Google-Smtp-Source: AGHT+IHBcqtVQqqbJMgNvgEQsiEKAsC+ECQLUgw7lRmSnRMkCyd3LvZGmOtmkguEXtv4jf53dBnmhQo3pJvMSYWBMNM=
+X-Received: by 2002:a19:e013:0:b0:52c:8206:b986 with SMTP id
+ 2adb3069b0e04-52ca6e9b23cmr241057e87.56.1718299389509; Thu, 13 Jun 2024
+ 10:23:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240612223025.1158537-1-boqun.feng@gmail.com>
+ <20240612223025.1158537-3-boqun.feng@gmail.com> <20240613144432.77711a3a@eugeo>
+ <ZmseosxVQXdsQjNB@boqun-archlinux>
+In-Reply-To: <ZmseosxVQXdsQjNB@boqun-archlinux>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 13 Jun 2024 19:22:54 +0200
+Message-ID: <CANiq72myhoCCWs7j0eZuxfoYMbTez7cPa795T57+gz2Dpd+xAw@mail.gmail.com>
+Subject: Re: [RFC 2/2] rust: sync: Add atomic support
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Gary Guo <gary@garyguo.net>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, 
+	Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, 
+	David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, 
+	Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, kent.overstreet@gmail.com, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, 
+	Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, 
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
+	Trevor Gross <tmgross@umich.edu>, dakr@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le jeudi 13 juin 2024 =C3=A0 15:48 +0200, Sebastian Reichel a =C3=A9crit=C2=
-=A0:
-> From: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
->=20
-> RK3588 has 4 Hantro G1 encoder-only cores. They are all independent IP,
-               Hantro H1
+On Thu, Jun 13, 2024 at 6:31=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
+rote:
+>
+> So let's start with some basic and simple until we really have a need
+> for generic `Atomic<T>`. Thoughts?
 
-H1 is the encoder core, G1 is the decoder core, and this exists as a combo =
-on
-this platform (vpu121).
+I don't want to delay this, but using generics would be more flexible,
+right? e.g. it could allow us to have atomics of, say, newtypes, if
+that were to be useful.
 
-> but can be used as a cluster (i.e. sharing work between the cores).
-> These cores are called VEPU121 in the TRM. The TRM describes one more
-> VEPU121, but that is combined with a Hantro H1. That one will be handled
-> using the VPU binding instead.
->=20
-> Signed-off-by: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Is there a particular disadvantage of using the generics? The two
+cases you mentioned would just be written explicitly, right?
 
-Acked-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+One disadvantage would be that they are different from the Rust
+standard library ones, e.g. in case we wanted third-party code to use
+them, but could be provided if needed later on.
 
-> ---
->  arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 80 +++++++++++++++++++++++
->  1 file changed, 80 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi b/arch/arm64/boot/=
-dts/rockchip/rk3588s.dtsi
-> index 6ac5ac8b48ab..dd85d4e55922 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> @@ -1159,6 +1159,86 @@ power-domain@RK3588_PD_SDMMC {
->  		};
->  	};
-> =20
-> +	vepu121_0: video-codec@fdba0000 {
-> +		compatible =3D "rockchip,rk3588-vepu121";
-> +		reg =3D <0x0 0xfdba0000 0x0 0x800>;
-> +		interrupts =3D <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		clocks =3D <&cru ACLK_JPEG_ENCODER0>, <&cru HCLK_JPEG_ENCODER0>;
-> +		clock-names =3D "aclk", "hclk";
-> +		iommus =3D <&vepu121_0_mmu>;
-> +		power-domains =3D <&power RK3588_PD_VDPU>;
-> +	};
-> +
-> +	vepu121_0_mmu: iommu@fdba0800 {
-> +		compatible =3D "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
-> +		reg =3D <0x0 0xfdba0800 0x0 0x40>;
-> +		interrupts =3D <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		clocks =3D <&cru ACLK_JPEG_ENCODER0>, <&cru HCLK_JPEG_ENCODER0>;
-> +		clock-names =3D "aclk", "iface";
-> +		power-domains =3D <&power RK3588_PD_VDPU>;
-> +		#iommu-cells =3D <0>;
-> +	};
-> +
-> +	vepu121_1: video-codec@fdba4000 {
-> +		compatible =3D "rockchip,rk3588-vepu121";
-> +		reg =3D <0x0 0xfdba4000 0x0 0x800>;
-> +		interrupts =3D <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		clocks =3D <&cru ACLK_JPEG_ENCODER1>, <&cru HCLK_JPEG_ENCODER1>;
-> +		clock-names =3D "aclk", "hclk";
-> +		iommus =3D <&vepu121_1_mmu>;
-> +		power-domains =3D <&power RK3588_PD_VDPU>;
-> +	};
-> +
-> +	vepu121_1_mmu: iommu@fdba4800 {
-> +		compatible =3D "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
-> +		reg =3D <0x0 0xfdba4800 0x0 0x40>;
-> +		interrupts =3D <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		clocks =3D <&cru ACLK_JPEG_ENCODER1>, <&cru HCLK_JPEG_ENCODER1>;
-> +		clock-names =3D "aclk", "iface";
-> +		power-domains =3D <&power RK3588_PD_VDPU>;
-> +		#iommu-cells =3D <0>;
-> +	};
-> +
-> +	vepu121_2: video-codec@fdba8000 {
-> +		compatible =3D "rockchip,rk3588-vepu121";
-> +		reg =3D <0x0 0xfdba8000 0x0 0x800>;
-> +		interrupts =3D <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		clocks =3D <&cru ACLK_JPEG_ENCODER2>, <&cru HCLK_JPEG_ENCODER2>;
-> +		clock-names =3D "aclk", "hclk";
-> +		iommus =3D <&vepu121_2_mmu>;
-> +		power-domains =3D <&power RK3588_PD_VDPU>;
-> +	};
-> +
-> +	vepu121_2_mmu: iommu@fdba8800 {
-> +		compatible =3D "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
-> +		reg =3D <0x0 0xfdba8800 0x0 0x40>;
-> +		interrupts =3D <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		clocks =3D <&cru ACLK_JPEG_ENCODER2>, <&cru HCLK_JPEG_ENCODER2>;
-> +		clock-names =3D "aclk", "iface";
-> +		power-domains =3D <&power RK3588_PD_VDPU>;
-> +		#iommu-cells =3D <0>;
-> +	};
-> +
-> +	vepu121_3: video-codec@fdbac000 {
-> +		compatible =3D "rockchip,rk3588-vepu121";
-> +		reg =3D <0x0 0xfdbac000 0x0 0x800>;
-> +		interrupts =3D <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		clocks =3D <&cru ACLK_JPEG_ENCODER3>, <&cru HCLK_JPEG_ENCODER3>;
-> +		clock-names =3D "aclk", "hclk";
-> +		iommus =3D <&vepu121_3_mmu>;
-> +		power-domains =3D <&power RK3588_PD_VDPU>;
-> +	};
-> +
-> +	vepu121_3_mmu: iommu@fdbac800 {
-> +		compatible =3D "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
-> +		reg =3D <0x0 0xfdbac800 0x0 0x40>;
-> +		interrupts =3D <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH 0>;
-> +		clocks =3D <&cru ACLK_JPEG_ENCODER3>, <&cru HCLK_JPEG_ENCODER3>;
-> +		clock-names =3D "aclk", "iface";
-> +		power-domains =3D <&power RK3588_PD_VDPU>;
-> +		#iommu-cells =3D <0>;
-> +	};
-> +
->  	av1d: video-codec@fdc70000 {
->  		compatible =3D "rockchip,rk3588-av1-vpu";
->  		reg =3D <0x0 0xfdc70000 0x0 0x800>;
-
+Cheers,
+Miguel
 
