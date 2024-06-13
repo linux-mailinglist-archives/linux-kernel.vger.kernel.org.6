@@ -1,132 +1,104 @@
-Return-Path: <linux-kernel+bounces-213147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 364E2906D0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:58:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5631C906D1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD6DB287259
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:58:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4801C22E6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2662D145B25;
-	Thu, 13 Jun 2024 11:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D90E146015;
+	Thu, 13 Jun 2024 11:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XpoQb+W8"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mJ4k9SyE"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D728A14386B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BBD145FFF;
+	Thu, 13 Jun 2024 11:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718279522; cv=none; b=cKS1ox/fmccQsqacuw3w40PQDxLuP8Fbroq5uBqNuLKAVp4IOgGOmReG7Tlt79oxMyN8muHE3CiDfIxxcJy5jx+r7Gw1j6pSgdHW/Mh6Ye23FPJ6Ue3ZMMXxTii8hpQ0GyysphPHlkDS0MDGO920mNyLU3Vc1fGmlult52Jft9g=
+	t=1718279553; cv=none; b=TDW2hN/bwK+BXB/hZrebW0jaWFc2zi07M/hEOmpS9sgT5GgTe2yybofEUFl9hVSwC3NccxEOtb8ufdMdIulaqBeAVhm4BFWsZBRy9XhOcfpLa+DljS6lA5UIzn/F9UnIKsEqsBE0Taga/nI0c9pvFL7LEx50qjtJd34DJRNpMQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718279522; c=relaxed/simple;
-	bh=LEMNOlqSbWvihp9TAFV3gKhrUTokJXgkBSjze5msUo8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IIVGtwnQO+sP5v20WKNCbQOFXNlCuu2DQXr+GCxNm748cwREjY9YFN/aUvokBKGUmyQcPxeACamMSWwaJ9YUyBNYrtZBz9Yhg/pAG7CY7FjEQ3K/FXiuNpSL8Sfmb1Km1/D6soQx8NFnIuWLFkwBoqn1zgOMjZlh0DG6SlNL66Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XpoQb+W8; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42108856c33so12710775e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 04:52:00 -0700 (PDT)
+	s=arc-20240116; t=1718279553; c=relaxed/simple;
+	bh=UiLaxLJk/49aOyDDnp3jrSQnCFDqvVhGAb9VZY64J/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rr3IDMLMluTAnDxeWGQ2vxyFOXbcqEwAm6VhPsLvfd28Iv03DvdOzmQ1MDghPbVED5WuRlP2+T8QkWZMhO4TPdzOnIjH5TFHDR/l87PZClIW1syxGxZcZW5O662EfkSHcwcQwAwZJAIP/w1OooQqFViQ8CzPAVu4/7nby7BnYjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mJ4k9SyE; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso1519952a12.1;
+        Thu, 13 Jun 2024 04:52:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718279519; x=1718884319; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Nk/PNuEosluR5OxyGRPxKqFcoUp4l1g0JxXBqb0kHWI=;
-        b=XpoQb+W8h2Un24UzsJaLoUqKPbqeuW6FbN2uoMLsxdZ04Sa4j3wcz0QbCusdvSuwA+
-         E3E+q12rugwhBYJolYYi8oABfNwFlINwKytZaSz4HevKFZWIPlMxEX+xjf8BuJWCHTqV
-         lIENPk0osf9P157xPp4M2UoUDXNWBeMyx/MdgW1RsrBCOyS1IISIJQnLd/slGxC4dRFR
-         M+W4zjpC0tQX9z8aV+YrJA9Jlx5Oc2x9VNuKY7IjxKBCwm3Bl8WQkSEPTyHBepIb74yZ
-         UQNQoqzEJOg9n8lBMskefvZMtmlUzhHN3Q/UFTT27mUGbF1XfOXOBKeSJ263evf52UG9
-         Oi0A==
+        d=gmail.com; s=20230601; t=1718279550; x=1718884350; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dbv/nrVwyXXxlAOsMk49c7RMKvSToPFz3Zd6uf8bQcE=;
+        b=mJ4k9SyEmE+l5SIWhjigMEVJqkoHAG9E1jtjh6YCP6EdSAuYfcJV/7ASXj9W+tagdH
+         Qq/uKmbi9TXxsKRejP46cgdpCYNvSMX7eAbFZ5OmgLRu29rdv94j0eZecLLr/EM/XPgL
+         ragOtQMe1lePNK1Rd76cDF2uwLvGPCSWAbMlpmRBcQhsbMLrt/zDEZMv8K6++D2ZFi21
+         o/9VtpqfP8mDYhswSk6SUmuD5eSOqYoSUpoL1GGODScDISqZT218Zts8TDx3rlonFFCK
+         wJOGXXxQmKRj35eQLLBb/VI2c9hWXHJEee8CxrzJEADG7OZeO7Ev1dSbmaN0PAfUBHYz
+         rTxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718279519; x=1718884319;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nk/PNuEosluR5OxyGRPxKqFcoUp4l1g0JxXBqb0kHWI=;
-        b=sIUv2bZTmH1JK0fWl2JCfrKO0nYJWLvYJuM4GMzaPDCyLwsz9BwLo5sEHYQb4WNx8I
-         +ImmqHrvKGp9+ntMpDElVGbr5/9p7UikfPHmUALef630I93t4WcFmkwI7Os+JNgLPA2e
-         aizzHZNSNQkW03DaE3ZnT2g5JbQ7MujO4vAu+9zglr8GVrVEWo9J0Lcnzi8VstiNMEgL
-         FwLkOZc17RK+RTQWgQq9wCqJwgKjik3ci83hzDpwcZAbQLH8jvQd/JdadLDFmp/1zyuF
-         dmtiQWv/GzfGF4xlyyGxZb5cof2PezegR1qfRh8y8eq/htDoH8lZtX06/GCp6jHwm/LU
-         w4tg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8W3WLevVcaz3JiZGnZpOMVRBd7x4xA5Zvh+iG2yqUrB2QL089klxUbdfE9kMcu5KMPReQjvnicuJXsY1QQ4MSTnsZbLMuI2rWkVfS
-X-Gm-Message-State: AOJu0Yxd1v9u5cbwoKcyVZWVwP7Exyu0+Kejis+5eu1Fz2KVvroK6lNX
-	9Dm6socUdt4L6mT6gd3eNjfYlrfGBMH/f/dHBFwU3sOISIzcwCqChy94S33HlZw=
-X-Google-Smtp-Source: AGHT+IEeX74rcc7ImXLhXmjYzbMCKYnwAOrNGqHMzUNaFMP5IwqUmhu/BZcLL2lJ48EiFXwsY9KFbw==
-X-Received: by 2002:a05:600c:310a:b0:421:81b1:7f45 with SMTP id 5b1f17b1804b1-422b6fc5a34mr21225265e9.12.1718279519186;
-        Thu, 13 Jun 2024 04:51:59 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:51ae:6dd8:7a33:3fb4? ([2a05:6e02:1041:c10:51ae:6dd8:7a33:3fb4])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-422870e96f9sm59813375e9.26.2024.06.13.04.51.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 04:51:58 -0700 (PDT)
-Message-ID: <ecf55d97-363d-4731-bcfa-81cb4e58f2c7@linaro.org>
-Date: Thu, 13 Jun 2024 13:51:57 +0200
+        d=1e100.net; s=20230601; t=1718279550; x=1718884350;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dbv/nrVwyXXxlAOsMk49c7RMKvSToPFz3Zd6uf8bQcE=;
+        b=dFrYZo+fw4xuMAzhMC94oxlcuhcVmD28Az6WHx9r/jeVav4BTQYv+ErGngvl14w/qr
+         UIA/VBVytZ4GLOBoYHxqvdjPg3jmon/f9IrAUtS93y6sxqBKhm4a3b4fO+GPHG2ntNjL
+         bieAdHk0AOUum4YoWU1R2zfc5SO1NtIGayMTtA9TzyXO7l57cSUFl4cbz3zhZjBRn54/
+         8bpdCn3QgjqDHZTVoz7KIv9d1qdScMugCUJ7W0/bLj0Gu16Gi+x/Y4WHT4O8x0oesbAl
+         wsl0ZpE5v+A3tcpT4TZQUDUxcnQm5H4NscJTxEmZlnOU6WEZAVMh2K9lRgNENQQX2dB+
+         YaYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVm+pnzgOyte3NOF/1ReOIvKq2990sv5rAS9+X+ALY+LFJvnDP6NJzceZf9gvT6q5a7eB1rgYjwmhby06SX6dnuuv7E783uQsuhp2BHUQO8uNcaekXTrTPQ8C4J41RC82PpGp26RuZsyfHH6/QUgdjOurz+rw+/y+8F9LhWwnXe6w==
+X-Gm-Message-State: AOJu0Yye4EF5/hy3yTi5F8A8g5aG6zrnXJwZKD5UkumNZwM8sV10yU8Z
+	j3qfTR9IrwadqsvpXMCeAbaJPyM8gI0yFfyY+byfBs31jBp7MbXO
+X-Google-Smtp-Source: AGHT+IG8qwB5MgX8BR4mjTHhID5JisGTczWwZagsP8iVADJIw6N1lHklOdF+IL0AKB+uX1m0tw5ZBA==
+X-Received: by 2002:a50:9f87:0:b0:57c:a793:8f43 with SMTP id 4fb4d7f45d1cf-57cb4ba1c25mr1940653a12.3.1718279550006;
+        Thu, 13 Jun 2024 04:52:30 -0700 (PDT)
+Received: from skbuf ([188.25.55.166])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb741e782sm808239a12.64.2024.06.13.04.52.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 04:52:29 -0700 (PDT)
+Date: Thu, 13 Jun 2024 14:52:26 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Martin Schiller <ms@dev.tdt.de>
+Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
+	f.fainelli@gmail.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 05/12] net: dsa: lantiq_gswip: Don't manually
+ call gswip_port_enable()
+Message-ID: <20240613115226.luvvmfwsdkp6bmx3@skbuf>
+References: <20240611135434.3180973-1-ms@dev.tdt.de>
+ <20240611135434.3180973-6-ms@dev.tdt.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] driver core: Add timeout for device shutdown
-To: Greg KH <gregkh@linuxfoundation.org>,
- Soumya Khasnis <soumya.khasnis@sony.com>
-Cc: rafael@kernel.org, linux-kernel@vger.kernel.org, festevam@denx.de,
- lee@kernel.org, benjamin.bara@skidata.com, dmitry.osipenko@collabora.com,
- ldmldm05@gmail.com, srinavasa.nagaraju@sony.com,
- Madhusudan.Bobbili@sony.com, shingo.takeuchi@sony.com,
- keita.aihara@sony.com, masaya.takahashi@sony.com
-References: <20240613083226.GA8191@sony.com>
- <2024061326-moonlit-protozoan-61f8@gregkh>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <2024061326-moonlit-protozoan-61f8@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240611135434.3180973-6-ms@dev.tdt.de>
 
-On 13/06/2024 10:43, Greg KH wrote:
-> On Thu, Jun 13, 2024 at 08:32:26AM +0000, Soumya Khasnis wrote:
->> The device shutdown callbacks invoked during shutdown/reboot
->> are prone to errors depending on the device state or mishandling
->> by one or more driver. In order to prevent a device hang in such
->> scenarios, we bail out after a timeout while dumping a meaningful
->> call trace of the shutdown callback to kernel logs, which blocks
->> the shutdown or reboot process.
+On Tue, Jun 11, 2024 at 03:54:27PM +0200, Martin Schiller wrote:
+> From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > 
-> Again, this is not a "device shutdown" timeout, it is a "the whole
-> system has not shutdown this fast" timeout.
+> We don't need to manually call gswip_port_enable() from within
+> gswip_setup() for the CPU port. DSA does this automatically for us.
 > 
-> And in looking at my system, it doesn't shutdown in 10 seconds as it is
-> madly flushing a ton of stuff out to the disks, and they are slow
-> beasts.  So your 10 second default would cause me data loss on my
-> workstation, not good!
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Acked-by: Hauke Mehrtens <hauke@hauke-m.de>
+> ---
 
-Thanks for pointing this out. It is exactly what I was worried about ...
+Needs your sign off.
 
-[ ... ]
-
-> Isn't this just a bug in your drivers?  Why not fix them?  Or if you
-> really have to have 10 seconds to shut down, use a watchdog timer that
-> you trigger from userspace and stop petting once you want to shut down.
-> Then, if it expires it will reset the machine, all of your policy
-> decisions would have been done in userspace, no need to get the kernel
-> involved at all.
-
-+1
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
 
