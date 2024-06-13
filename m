@@ -1,93 +1,83 @@
-Return-Path: <linux-kernel+bounces-213986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9ED907D4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:18:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9624A907D5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:19:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB4D4B27678
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:18:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8301C23729
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF0E13958C;
-	Thu, 13 Jun 2024 20:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44257144D0C;
+	Thu, 13 Jun 2024 20:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sM4I4ZHm"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Bf5/YajK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAEF824A4;
-	Thu, 13 Jun 2024 20:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7594513C9CF;
+	Thu, 13 Jun 2024 20:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718309880; cv=none; b=NfMYfN3rdNacRJBMhTTdatMZWaNMwsBEvKwcMTtca3L6jK9njH1hpH7UxiYzZdofKq9RZ7wJwI9df3k9IhzeUK8b5ZiNnN3n6CGGLTaBQ7o8iE0FNk9I+84CUqOR8CPf74+4TwSeToPqDkvXFLKvWDSQEf1aFOtLrtMZewRDrGE=
+	t=1718309935; cv=none; b=AAlbo2O/B0l4rtp0nN0pfK6vey/s8O2iMYMM8P0WDv7Wk+Kvsp9W+vZO8u1XD01S94cvzz7FcdJFmrkJI7+40rynJjSf+hQFm7GyfUny6w6lZDYghEq+mPcqO7CQly6Qzay+LHnpeyoEfem1c7HlvkNKYc/gvbO4LTv7zNiiFSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718309880; c=relaxed/simple;
-	bh=SeoW3pQUv+7r5hH9UutJVNk3geg6YNYfWR6URRa1t0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nTcSgxs1o6g2o2/M+2LUDCnKJ7RCxsR7ZMcdDzdx3ZzOINSxaRo2wdPZOMkMxe96PaXHpQByyNOb/WRDU7mj8+WIRtezt/9cHMlmtydTaakAKRh/ZK9YjnaJdj+ZT7Idtkn4H0b6P/lObKHTMDUVDgxcY/8aHr7ZOojSZTZ714o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sM4I4ZHm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BA8AC2BBFC;
-	Thu, 13 Jun 2024 20:17:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718309879;
-	bh=SeoW3pQUv+7r5hH9UutJVNk3geg6YNYfWR6URRa1t0w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sM4I4ZHmFl9zudcj8FKpOoM2BO2TXzDlCjiGjrvsIB/y3HVPD3QA5qFQ2X+hnc95u
-	 uxXuKHimDuNs6MAzDAGgA76gZQDldLo7Io2NUxrsana47vNYbWKLxunAQJkE/v2mTa
-	 qEQhNRVHH+rxGhWWsyQX53FgZtIPkKH9jkNNlLuPu1bTJqitdtMvndVJW48q765bUk
-	 NVJhEkUjlmSFkf5skF7sl36kVWMgI2EOA8kKEsM+bQ/Ohth+qVT0AQkhsIpdasJVcG
-	 KNqMBu3nYvly1LKtLOy6tLmprpoFwhwk9OKRJ0wCghMGWbLYAnsSyP7BQQhg+oZonn
-	 VZKRqAERGg72Q==
-Date: Thu, 13 Jun 2024 14:17:58 -0600
-From: Rob Herring <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Vladimir Oltean <olteanv@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v2 2/3] spi: dt-bindings: fsl-dspi: Convert to yaml format
-Message-ID: <20240613201758.GA2396297-robh@kernel.org>
-References: <20240613-ls_qspi-v2-0-b288f6f5b736@nxp.com>
- <20240613-ls_qspi-v2-2-b288f6f5b736@nxp.com>
+	s=arc-20240116; t=1718309935; c=relaxed/simple;
+	bh=tZkWlPzsEIJD0w2s0YudkX0DW+VefZKFhtp6mC0r2IU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=bH1KIwVsF6aM7kLlToKsks7wolV3AbQJlljAUG2hY+rYlyzO5jZ6WUb74YacGL/Jh3WX9DFII66EtQ+CNJWDlKZnmjNoQdwPr0dGeX2AfGk8R85UGjL4El2/ZCFu+C3Uk/z2pXoO+cJq8aL9QpNDLFyzRmhnERwE9+d7eUIir6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Bf5/YajK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D924C32786;
+	Thu, 13 Jun 2024 20:18:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1718309935;
+	bh=tZkWlPzsEIJD0w2s0YudkX0DW+VefZKFhtp6mC0r2IU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Bf5/YajKc4bfbaMnNBJtRIpnDJlNphOAbPvgJhaNCxXLBU5O1cF2Vv2cdDksmwZ8t
+	 24wyy/nVoSssXL2C+IQDaESgQcRd2hVNQwRF4vQZqJDdiaf4+wuo3rN8uEqqqzl1Et
+	 OW0XOY8HY+vtdqMwTvzMuRNA1pMauFSPHlAQ5qao=
+Date: Thu, 13 Jun 2024 13:18:53 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Christoph Hellwig
+ <hch@infradead.org>, Lorenzo Stoakes <lstoakes@gmail.com>, Baoquan He
+ <bhe@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, hailong liu
+ <hailong.liu@oppo.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Zhaoyang Huang <huangzhaoyang@gmail.com>,
+ steve.kang@unisoc.com
+Subject: Re: [Resend PATCHv4 1/1] mm: fix incorrect vbq reference in
+ purge_fragmented_block
+Message-Id: <20240613131853.814a40233d36d57f868f9a39@linux-foundation.org>
+In-Reply-To: <ZmstXFYq6iSHYdtR@pc636>
+References: <20240607023116.1720640-1-zhaoyang.huang@unisoc.com>
+	<ZmstXFYq6iSHYdtR@pc636>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613-ls_qspi-v2-2-b288f6f5b736@nxp.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 13, 2024 at 03:00:38PM -0400, Frank Li wrote:
-> Convert dt-binding spi-fsl-dspi.txt to yaml format.
+On Thu, 13 Jun 2024 19:33:16 +0200 Uladzislau Rezki <urezki@gmail.com> wrote:
+
+> > 2.25.1
+> > 
+> Yes there is a mess with holding wrong vbq->lock and vmap_blocks xarray.
 > 
-> Addtional changes during convert:
-> - compatible string "fsl,ls1028a-dspi" can be followed by
-> fsl,ls1021a-v1.0-dspi.
-> - Change "dspi0@4002c000" to "spi@4002c000" in example.
-> - Reorder properties in example.
-> - Use GIC include in example.
-> - Remove fsl,spi-cs-sck-delay and fsl,spi-sck-cs-delay by use common SPI
-> property.
-
-You can't just remove them. These are mature platforms using them and 
-replacing the properties would break kernels without your driver change. 
-The only compatible change would be put both properties in the DT.
-
-You need to pick up what Vladimir did:
-
-https://lore.kernel.org/linux-spi/20221111224651.577729-1-vladimir.oltean@nxp.com/
-
-> - Use compatible string 'jedec,spi-nor' in example.
+> The patch looks good to me. One small nit from my side is a commit
+> message. To me it is vague and it should be improved.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../devicetree/bindings/spi/fsl,dspi.yaml          | 115 +++++++++++++++++++++
->  .../devicetree/bindings/spi/spi-fsl-dspi.txt       |  65 ------------
->  2 files changed, 115 insertions(+), 65 deletions(-)
+> Could you please use Hailong.Liu <hailong.liu@oppo.com> explanation
+> of the issue and resend the patch?
+> 
+> See it here: https://lkml.org/lkml/2024/6/2/2
+> 
+> Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+
+Thanks, I'll queue this (with a cc:stable) for testing and shall await
+the updated changelog.
 
