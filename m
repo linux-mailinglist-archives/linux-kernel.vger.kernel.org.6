@@ -1,120 +1,90 @@
-Return-Path: <linux-kernel+bounces-213999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A910907D89
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:39:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2493907D2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 22:08:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F2371C22AAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:39:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DD371F24015
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 20:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AAA13B59C;
-	Thu, 13 Jun 2024 20:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611CB139568;
+	Thu, 13 Jun 2024 20:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FNz012tG"
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6dR/5Oh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8430137905;
-	Thu, 13 Jun 2024 20:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9973E2F50;
+	Thu, 13 Jun 2024 20:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718311166; cv=none; b=qhVN5NmWx4EzCyuH7Hf0rTygk3l3/eLcbmfoMnFmyckYw2ciL5cFwhNVHrmTii4kS6KxjUdXgxnsKU4dTDWQkJX16eo39sklRmZft0rUkMWTGmyEaqBRfRMnsOW3sRYf4nUEGUDVYQTB5P8gC+UsS77MZIzGSr42eSCdrb0uoRY=
+	t=1718309320; cv=none; b=r3z6oRjY6dwuKBVGrfXo9FLCLtykWUqzrTuG6OBhQNkCOvYI8IhOHfYALaAHRtJhkeN3ng7/5SmAaJS3WeH5CmfGqoLzTMrSIl73OEBHzYx4R7ffzSoxcDVoZ0sd5/d0MBE77a/nkLFlZLpNyToZ11XqwC+0hzDlAEB2zcucjc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718311166; c=relaxed/simple;
-	bh=I8gRIi2tdxobdYcQwtNcLo7D0+WLao4oQLpSk9VGsd4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aivuZAnTmJKVB3GEBTL2iGH+a9QiTbzmSv2sRt/7XSN+GQ6jnGC7uSQ3PTxHZ/yk/saPd2vQfB4Z3RMgsHFV2OQxYPK2vwEYarb9JHgY5t+8V6WKFIdAJa/FjXvSYc7OehMmeTkVXwaKHd72J3dnEGN2cGlV11aKFqb9gJyjzok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FNz012tG; arc=none smtp.client-ip=80.12.242.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id HqihskRdZzBzYHqihsC6L4; Thu, 13 Jun 2024 22:06:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1718309213;
-	bh=XRaMoPqcQEHhhGv65L0zaAfzpWmzmbt3FcfVA4d11vc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=FNz012tGnpXwimGS2ZPNBYPk07XwB2DRtd4sKHikpv/oIMXvLx+UcSkHqRDo4DeQC
-	 xs5rhCoDST8vj3aWQKXTHtG2wkXg6p21xVVcak5M1kdkLTaGe1oFQXjT4z2wAEPQqI
-	 SfUpOHmz0VAt251TQ/hF+xI4GLPGMo66qH9/iG4w6PPeljyUDBoBlb+fjWWvbNaqzK
-	 4cl0DrlT0aqIV2q1crlvTRlRdzazcSG0tJ2sR0Myfahih3PFH3ULLKQq8WBvZhJDqP
-	 hJaHBBwBw6iI4Vnn5yGkaGFT0BRQzaK8J/i0n55XDpzpsjD/eAuroK5PwOZEmxGSzF
-	 hh+jBcAsSb0rw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 13 Jun 2024 22:06:53 +0200
-X-ME-IP: 86.243.222.230
-Message-ID: <35b8a2e6-dc26-456e-be93-e929c6c8ca64@wanadoo.fr>
-Date: Thu, 13 Jun 2024 22:06:50 +0200
+	s=arc-20240116; t=1718309320; c=relaxed/simple;
+	bh=ygqYGRp7qazQZCtbOT5FAGb8ulegaXFd8LoNaGXhais=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bzTctHS0PvYaAehha5ntXs1oyiTvptgdRyM3jTM44QktjScNG098QdXK/e3Oy7it0wYDvzi1uHfGVWiTpmIRBM1AGWtgKu28XBWTIp6rRddkaCIqTA/GDlFmFEreE1MbiOhyd3LvwCbYf7P6q7WlL/3uoC4+T9PHsuNnS6wLXyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6dR/5Oh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A439AC2BBFC;
+	Thu, 13 Jun 2024 20:08:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718309320;
+	bh=ygqYGRp7qazQZCtbOT5FAGb8ulegaXFd8LoNaGXhais=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d6dR/5OhG8kuPCJVgGNWx5iZ3GsM87EOFD4n1u2bwFIiLrIuWhtrw2lnTkQq0ijf4
+	 peZ/851Qqtnlfo0SKPzZWCWxHPiFiH21Y4/weZ54HBvGB96oEwnTS9p3O2Y5LNDHT/
+	 406VK23CIGB+VeJRlxqxYGWhP4CD3DUJuGb4mpLzeQjUNldJqb13/ywitKjS6RFJYc
+	 vG3wbZnfZC1+ZQIftxbTlAZVLKelQUlZweKAenPHjldo8rsaAKzrgA02J7Z4IsOYYw
+	 wciqae9vYmmgypCL8AX/0tFiP8t58OslcEC4dvbiXtK4b/+ZpCTyCQ7y8mwaIE/XKX
+	 NVJVjjcyfh+BA==
+Date: Thu, 13 Jun 2024 14:08:37 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH v5 1/3] dt-bindings: mmc: mmc-spi-slot: Change
+ voltage-ranges to uint32-matrix
+Message-ID: <171830931400.2391260.17890560707264408523.robh@kernel.org>
+References: <20240613-ls_waring_esdhc-v5-0-36644e2fe21c@nxp.com>
+ <20240613-ls_waring_esdhc-v5-1-36644e2fe21c@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: duplicate patch in the vfs-brauner tree
-To: Andrew Morton <akpm@linux-foundation.org>,
- Christian Brauner <brauner@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20240613104837.346519cc@canb.auug.org.au>
- <20240612192141.69896438b5f6e674e07d418e@linux-foundation.org>
- <20240613-verbogen-daneben-84c61797c60a@brauner>
- <20240613124307.df90ed3225c7454ad81ac76c@linux-foundation.org>
-Content-Language: en-MW
-From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240613124307.df90ed3225c7454ad81ac76c@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240613-ls_waring_esdhc-v5-1-36644e2fe21c@nxp.com>
 
 
-Le 13/06/2024 à 21:43, Andrew Morton a écrit :
-> On Thu, 13 Jun 2024 14:17:01 +0200 Christian Brauner <brauner@kernel.org> wrote:
->
->>> Christian, if procfs patches are to henceforth go via the vfs tree,
->>> let's be a bit more organized about it?
->> Sure. I simply didn't see any any "applied" message from you so I just
->> assumed to pick the parts that are relevant. Sorry about that.
-> No probs.  If the author didn't cc you then my remember-to-cc-christian
-> brain cell is unreliable :(
+On Thu, 13 Jun 2024 10:32:05 -0400, Frank Li wrote:
+> According to common mmc core, voltages-ranges should be matrix.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> 
+> ---
+> Change from v4 to v5
+> - Change maxItems to 1
+> 
+> Not sure why it impact other mmc yaml's voltage-ranges.
+> Rob's answer:
+> 
+> It's a quirk of the tools. When decoding properties, the tools only know
+> all possible types. Types are global, not per binding. Sometimes it can
+> be figured out, but cases like this cannot be.
+> ---
+>  Documentation/devicetree/bindings/mmc/mmc-spi-slot.yaml | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
+> 
 
-I guess, that the author is me.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-in my .gitconfig, I use
-
-[sendemail.linux]
-     tocmd ="`pwd`/scripts/get_maintainer.pl --nogit --nogit-fallback 
---norolestats --nol"
-     cccmd ="`pwd`/scripts/get_maintainer.pl --nogit --nogit-fallback 
---norolestats --nom"
-
-and
-
- >scripts/get_maintainer.pl --nogit --nogit-fallback --norolestats --nol 
-fs/proc/generic.c
-[EMPTY OUTPUT]
-
- >scripts/get_maintainer.pl --nogit --nogit-fallback --norolestats --nol 
-fs/proc/generic.c
-linux-kernel@vger.kernel.org
-linux-fsdevel@vger.kernel.org
-
-
-Should MAINTAINERS be updated somewhere?
-
-
-(sorry for the mess I've generated :( )
-
-
-CJ
-
-
->
-> It'll be at https://lore.kernel.org/mm-commits/ but that's a hassle.
->
 
