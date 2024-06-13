@@ -1,101 +1,68 @@
-Return-Path: <linux-kernel+bounces-213761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7DF8907A0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:39:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D26DB907A12
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2DB1F235E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:39:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51237B24502
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0251482F0;
-	Thu, 13 Jun 2024 17:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB17514A093;
+	Thu, 13 Jun 2024 17:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxkFx2sc"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vLmEkgNi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C626114A093;
-	Thu, 13 Jun 2024 17:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF5514B081;
+	Thu, 13 Jun 2024 17:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718300347; cv=none; b=FvcBqipXnT4jVkCaQbuMt82mAVEta6SHLrHf2D25fq1tFY+kht90u8XLQFT+HOjE/jNRUa9ifdGf5dEqZjLgE4WZpXivzCWM1qEQXwwkyxqJtcHlgy1p6SS08yrEGsDPudHqXJsy0rKua91JAjyXuytR9RjzxBp+LjNakEDPxmc=
+	t=1718300353; cv=none; b=d1c/hf6Z+G1jxuvZz74VShKlQ5BRY71EcF69vWK7OwD9KHT5LvF4GQwCf2a+oLy/n8/mT3ZSFxSdJbZhgo0p2YepLAtiyx/AUPG4aO2B4dQZXgf8V6BscZkvspqyMaPLSPF0DgDdOajnPpMvm6LN+ZMXoLbpiXn74vcL6SUCdRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718300347; c=relaxed/simple;
-	bh=fHH7Y/GCV9RKHWRoNr6bxBkzHP+WxpUKHOajIKJQc0A=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lf4iKElbc9keRklBn9lGQ6hAlZqgy4ISQbyGU9RmOGzUcLz45CEiXPbxF0DhcKbF6hfq8OgdHd+aARmCwgXrcu6IYnM+lkbWWFqlXqFjCjwlUw2rnsJVGbkH+DAcK5zQ9x++sdlEBFIhfrMEohE+eeN/I1ZujTuw6ycNC6ar7qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gxkFx2sc; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52bbdb15dd5so1658349e87.3;
-        Thu, 13 Jun 2024 10:39:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718300344; x=1718905144; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=956BT+Uq9SD+emo8+jCK8z5I39sZ4FeCbRyFqSAHxWc=;
-        b=gxkFx2scR94MsRlvbmw5uI806EfMTrEnQpNzuFTxR9wGTPSOc+7D52WekaOxVJyu2P
-         wgKjqGD2SC3evJk+4k5zPryD57uZDRfw/HP4S8qUN+91swZKgCy60ho3uBSe0XlDg///
-         is7Tt4KaQcr9Z3fA8iaip8pYI8q32JWcFIKkXX6qut+iSB5q6dEVEGv78Yen3ATEOvrb
-         A+NxrI0xrwPvO1fgYJlbxpUPW1fUHJ8BagXdFv5oN74f83KWTKee5Q+NmWmYuKo1ciZV
-         rAPAmX6yQvSMDWS4J2SkiqXowLtcdDTvHrRnj3KgaD6YVbh4aWWdljhnv3GBXcDQ/cig
-         Wtqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718300344; x=1718905144;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=956BT+Uq9SD+emo8+jCK8z5I39sZ4FeCbRyFqSAHxWc=;
-        b=qyMzCidkHpEcC47LckCplOQOTZ3IlM87jg53yUgh6HM6EoV5aI25PrE7h4tZL4D5Zj
-         2NXfgvqlC0q6s07e3NKEFtKNH7XcrWDLhuCKXt1lckQOSJhaofr3yRE0XI9BM8gdZmku
-         lRcvvSxFpHzHQ0+sno4jHM2s3OMqzj9VV58UuD3683x3hj4KgriGtFkAPrOyplOjKBHX
-         bliQ4xvo7UcE0F5mISvuLTLv2R8h4i5wvUlgtolo8Jj0wMKQWnq6C5PCLfH2XQzkkUqr
-         r+JwuXYFV6ESFn808yhRjDpTFtCtMdQX5JH5J11RpA5zbWr39BGlG/kU6GTfXboG1iAH
-         v8iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsay3bizCj3Do0cRqomwNingFhHf4dfl/G1I2mBShys24omAVVodi2I7UDLTQixI5vi2ONjA28IctmRD1Z/9t5qvC8peqTlua7nst0zcD0JQi8nuCRdSbROheUzaTJsEDbGTmn4DgPkKZbLh20b6c9n7FemaoUS350KWqLFc95Au4byqghV1c4Gzf+FRELc4D1+ymIwdEYIaO1vjLR4Yv25QtszYbRcTnE+Zicfcs6BiRuwx791dFhoCpeki65HZwBzenqWl4FWzJU5UsntK2zY4BfJI+DyKVM4DRfFl0Zo+7NcoJPsldjd4WF3A+VzFLfGBFkFGBFIpBdiD2w8B6JUBJDzvJEmK3mnwnseKK0tfLs/E1YYCOOww9LMyeRxnuUpDi/1i31CkC7s6cFuM08onDuRCwADKlvhr9M5yMQZUCTwvE777CPzdIGIw==
-X-Gm-Message-State: AOJu0Yw4mvVvDUWiyeYHXkAdI5AZPvyQWVmfpJI8RthwN0PGekzTw8a9
-	jYd4+USev2JiNN9x1Y9Zzgu6jDzUmYX6hWnA45Swk+Fx7oZkN2Va
-X-Google-Smtp-Source: AGHT+IEqfg03O6T4CVRhNhuT1kToVJHsIj8GcfpqCCRbVlEQmwf5k9Sqz/b5zlxpaNyn2BuI8Okyaw==
-X-Received: by 2002:a05:6512:517:b0:52b:796e:66a5 with SMTP id 2adb3069b0e04-52ca6e9954cmr243776e87.66.1718300343767;
-        Thu, 13 Jun 2024 10:39:03 -0700 (PDT)
-Received: from pc636 (host-90-233-218-141.mobileonline.telia.com. [90.233.218.141])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca288cd87sm299099e87.304.2024.06.13.10.39.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 10:39:03 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Thu, 13 Jun 2024 19:38:59 +0200
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
-	linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <Zmsuswo8OPIhY5KJ@pc636>
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240612143305.451abf58@kernel.org>
- <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
- <ZmrfA1p2zSVIaYam@zx2c4.com>
- <80e03b02-7e24-4342-af0b-ba5117b19828@paulmck-laptop>
- <Zmru7hhz8kPDPsyz@pc636>
- <7efde25f-6af5-4a67-abea-b26732a8aca1@paulmck-laptop>
+	s=arc-20240116; t=1718300353; c=relaxed/simple;
+	bh=cM/32dqi6fZt6LQTmM2EuhniCZp3BnJkhJ9u/IvhkK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=paEG9jWIEj62Rl+3eqIbCqGWMwysOYvy660eFmBi0EvVD7ElSOMTxzNi9VihkRV0McAq5Skm5hpiGUeBjNIyTPT0u9NuAMXOsFBOuDkpl1Luwx7PfcPxzSw3zWocdrei3V9eYdGwjZupuBQoaYdtHRUqFXG2pFDyYXSAtOuM5v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vLmEkgNi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C36C2BBFC;
+	Thu, 13 Jun 2024 17:39:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718300352;
+	bh=cM/32dqi6fZt6LQTmM2EuhniCZp3BnJkhJ9u/IvhkK4=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=vLmEkgNiXKte5/uSoWuxw8K2LivuOoveM9eY5IF53RdFd2/aHR3HPlsyeJbzOxJCM
+	 0ab8T/A/5ugDDiTNIKpJUsZI5NNfA2P5ojQ6p4L9AOmyGZy7hmApe2Ie1KuPnd2oWQ
+	 kXNonU/JFutpllQ1SgrHvwSMciwJbVQ2fuUAAt4YrxDI6cXqqJmXwL82KdipaQUc/E
+	 27x5unmbWSKF3Y27/q/MwCanDS7OIVp5BbCztEwJpnc1QSFA3CWP0Fu1cfZtxAyc7T
+	 fdohD6WjscUhX3c/2T1Lu6zPrXCytxcvyKT19RP1XnEvWL9VBWu28a3Yjg/+b/qIzM
+	 +1cPrEz6SQm/Q==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 2E965CE0760; Thu, 13 Jun 2024 10:39:12 -0700 (PDT)
+Date: Thu, 13 Jun 2024 10:39:12 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Keith Busch <kbusch@kernel.org>
+Cc: Nilay Shroff <nilay@linux.ibm.com>, Keith Busch <kbusch@meta.com>,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, hch@lst.de, sagi@grimberg.me,
+	davidgow@google.com, akpm@linux-foundation.org,
+	venkat88@linux.vnet.ibm.com
+Subject: Re: [PATCH 1/2] list: introduce a new cutting helper
+Message-ID: <c65e7fef-cfee-4360-b03c-cfdd832912a4@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <f0e4c51c-8227-4f5c-876f-38fbb4a0e1bf@linux.ibm.com>
+ <ZmrscxG51gFRDVlM@kbusch-mbp>
+ <c475f0d8-3bc9-4d65-8fce-586f4b75b4fc@linux.ibm.com>
+ <ZmsD_HDLBQAqOOU3@kbusch-mbp.dhcp.thefacebook.com>
+ <31eb40f9-d68d-4348-b1fd-3cf057939297@paulmck-laptop>
+ <ZmsGfle1aZQauzRb@kbusch-mbp.dhcp.thefacebook.com>
+ <73b994eb-c689-48e0-b09c-a414041a0525@paulmck-laptop>
+ <ZmsS9DZWl8TccvKz@kbusch-mbp.dhcp.thefacebook.com>
+ <046f42c5-34b5-41a2-9680-5ef86ef25c01@paulmck-laptop>
+ <ZmsZ_lKgOlB6Wypy@kbusch-mbp.dhcp.thefacebook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,101 +71,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7efde25f-6af5-4a67-abea-b26732a8aca1@paulmck-laptop>
+In-Reply-To: <ZmsZ_lKgOlB6Wypy@kbusch-mbp.dhcp.thefacebook.com>
 
-On Thu, Jun 13, 2024 at 08:06:30AM -0700, Paul E. McKenney wrote:
-> On Thu, Jun 13, 2024 at 03:06:54PM +0200, Uladzislau Rezki wrote:
-> > On Thu, Jun 13, 2024 at 05:47:08AM -0700, Paul E. McKenney wrote:
-> > > On Thu, Jun 13, 2024 at 01:58:59PM +0200, Jason A. Donenfeld wrote:
-> > > > On Wed, Jun 12, 2024 at 03:37:55PM -0700, Paul E. McKenney wrote:
-> > > > > On Wed, Jun 12, 2024 at 02:33:05PM -0700, Jakub Kicinski wrote:
-> > > > > > On Sun,  9 Jun 2024 10:27:12 +0200 Julia Lawall wrote:
-> > > > > > > Since SLOB was removed, it is not necessary to use call_rcu
-> > > > > > > when the callback only performs kmem_cache_free. Use
-> > > > > > > kfree_rcu() directly.
-> > > > > > > 
-> > > > > > > The changes were done using the following Coccinelle semantic patch.
-> > > > > > > This semantic patch is designed to ignore cases where the callback
-> > > > > > > function is used in another way.
-> > > > > > 
-> > > > > > How does the discussion on:
-> > > > > >   [PATCH] Revert "batman-adv: prefer kfree_rcu() over call_rcu() with free-only callbacks"
-> > > > > >   https://lore.kernel.org/all/20240612133357.2596-1-linus.luessing@c0d3.blue/
-> > > > > > reflect on this series? IIUC we should hold off..
-> > > > > 
-> > > > > We do need to hold off for the ones in kernel modules (such as 07/14)
-> > > > > where the kmem_cache is destroyed during module unload.
-> > > > > 
-> > > > > OK, I might as well go through them...
-> > > > > 
-> > > > > [PATCH 01/14] wireguard: allowedips: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-> > > > > 	Needs to wait, see wg_allowedips_slab_uninit().
-> > > > 
-> > > > Also, notably, this patch needs additionally:
-> > > > 
-> > > > diff --git a/drivers/net/wireguard/allowedips.c b/drivers/net/wireguard/allowedips.c
-> > > > index e4e1638fce1b..c95f6937c3f1 100644
-> > > > --- a/drivers/net/wireguard/allowedips.c
-> > > > +++ b/drivers/net/wireguard/allowedips.c
-> > > > @@ -377,7 +377,6 @@ int __init wg_allowedips_slab_init(void)
-> > > > 
-> > > >  void wg_allowedips_slab_uninit(void)
-> > > >  {
-> > > > -	rcu_barrier();
-> > > >  	kmem_cache_destroy(node_cache);
-> > > >  }
-> > > > 
-> > > > Once kmem_cache_destroy has been fixed to be deferrable.
-> > > > 
-> > > > I assume the other patches are similar -- an rcu_barrier() can be
-> > > > removed. So some manual meddling of these might be in order.
-> > > 
-> > > Assuming that the deferrable kmem_cache_destroy() is the option chosen,
-> > > agreed.
-> > >
-> > <snip>
-> > void kmem_cache_destroy(struct kmem_cache *s)
-> > {
-> > 	int err = -EBUSY;
-> > 	bool rcu_set;
+On Thu, Jun 13, 2024 at 10:10:38AM -0600, Keith Busch wrote:
+> On Thu, Jun 13, 2024 at 09:01:47AM -0700, Paul E. McKenney wrote:
 > > 
-> > 	if (unlikely(!s) || !kasan_check_byte(s))
-> > 		return;
-> > 
-> > 	cpus_read_lock();
-> > 	mutex_lock(&slab_mutex);
-> > 
-> > 	rcu_set = s->flags & SLAB_TYPESAFE_BY_RCU;
-> > 
-> > 	s->refcount--;
-> > 	if (s->refcount)
-> > 		goto out_unlock;
-> > 
-> > 	err = shutdown_cache(s);
-> > 	WARN(err, "%s %s: Slab cache still has objects when called from %pS",
-> > 	     __func__, s->name, (void *)_RET_IP_);
-> > ...
-> > 	cpus_read_unlock();
-> > 	if (!err && !rcu_set)
-> > 		kmem_cache_release(s);
-> > }
-> > <snip>
-> > 
-> > so we have SLAB_TYPESAFE_BY_RCU flag that defers freeing slab-pages
-> > and a cache by a grace period. Similar flag can be added, like
-> > SLAB_DESTROY_ONCE_FULLY_FREED, in this case a worker rearm itself
-> > if there are still objects which should be freed.
-> > 
-> > Any thoughts here?
+> > Is there a way to avoid this issue by making this be a statement parameter
+> > to a macro?
 > 
-> Wouldn't we also need some additional code to later check for all objects
-> being freed to the slab, whether or not that code is  initiated from
-> kmem_cache_destroy()?
->
-Same away as SLAB_TYPESAFE_BY_RCU is handled from the kmem_cache_destroy() function.
-It checks that flag and if it is true and extra worker is scheduled to perform a
-deferred(instead of right away) destroy after rcu_barrier() finishes.
+> Something like this? It appears to work for the intended use, at least.
+> 
+> ---
+> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
+> index 3dc1e58865f77..cdd2e5c0d5cdb 100644
+> --- a/include/linux/rculist.h
+> +++ b/include/linux/rculist.h
+> @@ -204,6 +204,30 @@ static inline void list_replace_rcu(struct list_head *old,
+>  	old->prev = LIST_POISON2;
+>  }
+>  
+> +
+> +static inline void __list_cut_start(struct list_head *list,
+> +				    struct list_head *head,
+> +				    struct list_head *entry)
+> +{
+> +	list->next = entry;
+> +	list->prev = head->prev;
+> +	__list_del(entry->prev, head);
+> +}
+> +
+> +static inline void __list_cut_end(struct list_head *list,
+> +				  struct list_head *entry)
+> +{
+> +	entry->prev = list;
+> +	list->prev->next = list;
+> +}
+> +
+> +#define list_cut_rcu(list, head, entry, sync)		\
+> +	do {						\
+> +		__list_cut_start(list, head, entry);	\
 
---
-Uladzislau Rezki
+At this point, old readers might see the new list starting from "head"
+and new readers see the new (shorter) list, again, starting from "head".
+Presumably no readers can yet see "list".
+
+> +		sync;					\
+
+There are now no old readers, and thus no readers that can see
+any elements in the list starting from "entry".
+
+> +		__list_cut_end(list, entry); 		\
+
+And this fixes up the list now headed by "list".
+
+So:
+
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+
+And another argument for lambdas, not that there is a shortage of
+arguments against them.  ;-)
+
+> +	} while (0)
+> +
+>  /**
+>   * __list_splice_init_rcu - join an RCU-protected list into an existing list.
+>   * @list:	the RCU-protected list to splice
+> --
 
