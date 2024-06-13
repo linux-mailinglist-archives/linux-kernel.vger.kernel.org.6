@@ -1,118 +1,149 @@
-Return-Path: <linux-kernel+bounces-212971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96347906925
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:42:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3399906929
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96F591C23761
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:42:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80B7928422D
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307A214036A;
-	Thu, 13 Jun 2024 09:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C8414036E;
+	Thu, 13 Jun 2024 09:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gLOjkhsc"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="3YJu6hGE"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AB913F449
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69C713F45B
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 09:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718271771; cv=none; b=hFpqGhBHug9szK2ZCWgfNUbo3mFupZdYHwZCbkpbYBi7LB/J6mx8JMfNnhfKt4PiYDTv7q/v4VW4PD5mJ+m0+dLzllsxeHVIiw5yLmZ1F6vYZIusgD0+2K5DRfCqnEPr7u8eV1fDFsWVAQo0KeOicVtqzmRoQS73vXFiMq0xTdg=
+	t=1718271807; cv=none; b=k5LfUii3YL5AqZowLvf5SrpcuhoVhW03TPjPqzuKA23lf8Js+iQHc2PrCsLoUkvIayPV+7Fy8jy790GEEODHRmgd33XJW4va5YytrRJXlETJydiRKQxgWWG1urrV0KWWmXpSHcCe4kWBdETB4enH4c6oIW4shREE+jJXMCS5VEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718271771; c=relaxed/simple;
-	bh=/csI6K3GGf47jgq9/8chaqlW9Z0I9qjMXHACV/hlBtE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b63yZsfgUb/33enjLNgS4E7/LXNqMcSXDu3PP9SHy7ZiuMLiyF/JRRHXHw7UslR6ZjrGlxcNa6JYgHE7A/PMFvKui4hIErRZpzGuvU9K0XtUH7TyLXiUhEYMozd4QK7vwrrek9S5mzFcQqo4I8eYQSgA2OjlHAGMWLVlhcnvxYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gLOjkhsc; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6f4603237e0so591652b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:42:49 -0700 (PDT)
+	s=arc-20240116; t=1718271807; c=relaxed/simple;
+	bh=XdWD7NDBH2MZHT7kAWuCQTYJgCqR+oT+j023LwQheaU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lMKLqsE7OPOR+tqW1rEcr3vS1hra3kqGB0HalTYG2bDZxWpEUm73Qe+PEoQGpTGhRDgKJ9O4/HDoYnEvzBug0OR92PA72KY+KPfWHMyldfqnridMtIZMvIlHGO4PUtOUD+ioWJMDg235FBwJS0y/mD2gah/inOmC+lVqgeU87BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=3YJu6hGE; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e95a75a90eso7573721fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 02:43:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718271769; x=1718876569; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cu6cspdF8T8P6HUKOhK2SCIjh0ZPJfUV0xoeJIiJuuI=;
-        b=gLOjkhscYWEpYmkbANAeOuz1Q6HRkWzu2UnKXStgEBCaLsfc0VXCB0rlQAjyRcZvSo
-         GEdzXaoFLTi8JKKco31WtKNBtWUXx8SSqKqYIOnCOSinSCUdpGLd6x7sKbmo1Rcvokk5
-         YpXwAI/CQ0TeJuemxnfegNzQcDzmCqCKDtOWmK4QVaCvgQE5Hi0azm9q1p6MFI3qkOIv
-         zrDcQhkGdp9TsPpErG4pbnf/lkSDrZl3CTcP7u28M1USbe3UIX3EaGk6wFD4R5Rqm1ax
-         deZaYKvuqN9aXwQOYJLvL6HN0aIfboXYNINMgKA5uzNBIIA9ILvRjvIS/ENX16DGheZ7
-         xTVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718271769; x=1718876569;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718271804; x=1718876604; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cu6cspdF8T8P6HUKOhK2SCIjh0ZPJfUV0xoeJIiJuuI=;
-        b=XTe7KdMq1ReCq/Dm/EN3lHV+he2fitlOYRdoTVUbqrn8n6xkxyBAO2eqsFbGxll2tG
-         sNmw+HVUI+S13O1ggVNsgT0T7vqvYdq6L4v/gGQvUoLNp5OatUv5JmjSDdWfxzf11ggP
-         ezZToeW8zugcWeFx5DrCowAnlUlDiDKrwAHbGNs9693LE/DJXKagB7NNRqUqOiExUQDq
-         3TFQ6wUNR8Toyb7CUdGM60HIEvNuOCyh/c4qHCBT/kWR+UCzXOQMUjpRlIMCHUZZJal+
-         OnyeAxdh1JKbpLSFTCBSAv3VtfFvFUQBMV5K/K4NBKn5bXDOL2tSgDN85oJeu/8w4tOV
-         ifkg==
-X-Forwarded-Encrypted: i=1; AJvYcCVibql82AetRe8O0bcNwDDNCDnH2O13kfECRFPzy/Wt7JnQCdcUtESeAiAyRY9OBVKROWCiHaAWFuq+SilQHGeWHjom72WB5X68xsdb
-X-Gm-Message-State: AOJu0Yy6BNgMtpAzyGk91x3+LGtyVzCZi88FrPw27b1fMrm5Q7mQW42R
-	xrd6lmTagOr+QdVdB3hceKaB9kCEkyosHsVZN+tKA4djwHwX/0sqK2W5ufzNaX9fxx3D/X+UpDd
-	8
-X-Google-Smtp-Source: AGHT+IF5LpX8illGnH4Jh3LBbYZDLJzJWGwRolEuYaWWdqEDgfDtAQKDUpG9IAQVHyZdB2FSGLL+Mw==
-X-Received: by 2002:a05:6a00:1913:b0:705:cbcd:ebdc with SMTP id d2e1a72fcca58-705cbcdef6bmr2231556b3a.10.1718271768328;
-        Thu, 13 Jun 2024 02:42:48 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc96b6f0sm944991b3a.69.2024.06.13.02.42.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 02:42:47 -0700 (PDT)
-Date: Thu, 13 Jun 2024 15:12:45 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Riwen Lu <luriwen@hotmail.com>
-Cc: ionela.voinescu@arm.com, rafael@kernel.org, pierre.gondois@arm.com,
-	beata.michalska@arm.com, hotran@apm.com, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Riwen Lu <luriwen@kylinos.cn>
-Subject: Re: [PATCH v4] cpufreq/cppc: Remove the desired_perf compare when
- set target
-Message-ID: <20240613094245.cidth5miv4zxfg56@vireshk-i7>
-References: <OS3P286MB2490EB027398DDB852BE2169B1C02@OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM>
+        bh=XdWD7NDBH2MZHT7kAWuCQTYJgCqR+oT+j023LwQheaU=;
+        b=3YJu6hGEBkE71HsHYCKIrKkNtaQN/4hBsqkccMN6SZBLJO59BLWxMJQy5bT5h02rwL
+         cPPYOKSRhEm3xNhUkNv0uXp/8CeXGeB5cFetfBsz+kJj0EQrbQ3pedWuG6/uDeYr7GsP
+         NP2H9S6HfLG4GXONcEEFfbsXio2jnZ6O7wKQVaB0aNUow3AQfwHBphf1dxr40a+uTila
+         D/Jw0rX9QDsjIyExB3dVaCm3nPp0s5vZM8jozZ/f18EBHvfYCy02JS+Muji0dsU3/16c
+         Inj6DJ4HlMJZFRC+SY27FnD3Q+lfPckmTYmS3HH8TKkTnPqcQsFwjfRTa5b99pvwHkob
+         GaZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718271804; x=1718876604;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XdWD7NDBH2MZHT7kAWuCQTYJgCqR+oT+j023LwQheaU=;
+        b=Du2UZ8ppy+/b8XlOb0c+1qaL861Rqfv8YRBSxB+V0HFNDzn+7zWhJodKWMBYoM313i
+         DAeoQ2sbhTNbNzYQTswwTxCwJEkZzJN1q7WVya7V7eRJJoLrsTfH7R7CCKniSZte1OJE
+         izhpujqX0vwA0V4H33QliXL4vM3rUui69RQNhHzMjZEXwV/NNJUIAkZcwsHZNtZ8VhMT
+         fApWmNrMx/MwY++gC9BVhAV3N1Vk7vBRLvSP5sw4DRQte66rSFA8qSHqVZT7RrKlgF9M
+         nH3NfpQjgqQWpdfZXjJuTk0rslYq6Lk4SEcFbxhEep7BIb6B73gd5lqec9ZQ8TW/DOGs
+         qbPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqxOGb9iZusMg94McusKKbCBISA4GGUqwV8TSbKMqsZAunYvA+sRr4MqMRXH2jL1d9CKEaxnWliDnb1LZ+96+ZN8GjnZgapr2s8pxF
+X-Gm-Message-State: AOJu0Yzxs7qRehvr3r2nHdy6hmqJJKjla75fbm0T6CZgMCFJ2Oy2Ccp6
+	5LaZ+eGVcpry8jMFOrYixNaAsZlZ+FjI03+bNGSFAoW/7xWgGRZXPn9A8PJ/fgTj6GuDBqwqtIF
+	GlVbnkIt7oG7fLqe0bB5/PdvseE5bqj2q12rQNWLP+ThzhEsE
+X-Google-Smtp-Source: AGHT+IEXw894d4CqHfrKT7vpJjkQQa/77wKxL0xzaPs5YVHkjP7iOr6p77hXjXiPE5IhzrRyBwBwHczJBb44uDNP3AE=
+X-Received: by 2002:a2e:8891:0:b0:2eb:d9a3:2071 with SMTP id
+ 38308e7fff4ca-2ebfc964d08mr25060641fa.50.1718271803787; Thu, 13 Jun 2024
+ 02:43:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OS3P286MB2490EB027398DDB852BE2169B1C02@OS3P286MB2490.JPNP286.PROD.OUTLOOK.COM>
+References: <20240610112700.80819-1-wsa+renesas@sang-engineering.com>
+ <20240610112700.80819-2-wsa+renesas@sang-engineering.com> <CAMRc=MfZ11U+kAh1+K=DxtJ=QL+cY7Q_sBN4sQDF-RNgjpV0QA@mail.gmail.com>
+ <jvnvx7a4pn6evrp5ehfrt4qsiuprq6ogvrue2a3uupwtydmgcm@2rvat7ibvgb4>
+ <CAMRc=Mc4__0zzJZG3BPnmbua88SLuEbX=Wk=EZnKH5HQvB+JPg@mail.gmail.com>
+ <CACRpkda==5S75Bw6F3ZLUmf7kwgi_JkByiizR=m-61nrMDWuvQ@mail.gmail.com> <ce1d8150-c595-44d5-b19a-040920481709@app.fastmail.com>
+In-Reply-To: <ce1d8150-c595-44d5-b19a-040920481709@app.fastmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 13 Jun 2024 11:43:12 +0200
+Message-ID: <CAMRc=McpRjQO8mUrOA4bU_YqO8Tc9-Ujytfy1fcjGUEgH9NW0A@mail.gmail.com>
+Subject: Re: [PATCH v9 1/1] gpio: add sloppy logic analyzer using polling
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Kent Gibson <warthog618@gmail.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12-06-24, 19:46, Riwen Lu wrote:
-> From: Riwen Lu <luriwen@kylinos.cn>
-> 
-> There is a case that desired_perf is exactly the same with the old perf,
-> but the actual current freq is not.
-> 
-> This happened in S3 while the cpufreq governor is set to powersave.
-> During cpufreq resume process, the booting CPU's new_freq obtained via
-> .get() is the highest frequency, while the policy->cur and
-> cpu->perf_ctrls.desired_perf are in the lowest level(powersave
-> governor). Causing the warning: "CPU frequency out of sync:", and set
-> policy->cur to new_freq.
-> 
-> Then the governor->limits() calls cppc_cpufreq_set_target() to
-> configures the CPU frequency and returns directly because the
-> desired_perf converted from target_freq is the same with
-> cpu->perf_ctrls.desired_perf and both are the lowest_perf.
-> 
-> Since target_freq and policy->cur have been compared in
-> __cpufreq_driver_target(), there's no need to compare desired_perf and
-> cpu->perf_ctrls.desired_perf again in cppc_cpufreq_set_target() to
-> ensure that the CPU frequency is properly configured.
-> 
-> Signed-off-by: Riwen Lu <luriwen@kylinos.cn>
+On Thu, Jun 13, 2024 at 10:50=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrot=
+e:
+>
+> On Thu, Jun 13, 2024, at 10:27, Linus Walleij wrote:
+> > On Thu, Jun 13, 2024 at 10:17=E2=80=AFAM Bartosz Golaszewski <brgl@bgde=
+v.pl> wrote:
+> >
+> >> On second thought
+> >> though: are you sure drivers/gpio/ is the right place for it?
+> >
+> > Actually that is something I requested.
+> >
+> > I think it fits in drivers/gpio as it is such a clear cut usage of GPIO
+> > lines, and it doesn't really fit into any other subsystem.
+> >
+> >> May I suggest moving it over to drivers/misc/?
+> >
+> > Misc is a bit...
+> > messy. I remember Arnd being very sceptical about putting stuff there
+> > rather than creating new subsystems, so since I've tried to avoid it,
+> > albeit recently more and more stuff gets merged there again :/
+>
+> Right, and that is mostly to avoid having code in there because
+> there is no other place for it. Some parts of drivers/misc should
+> have been a separate subsystem, some should have use an existing
+> subsystem, and other parts should have never been merged.
+>
+> The parts of drivers/misc that make the most sense to me are
+> those that expose a one-of-a-kind piece of hardware as a
+> single character device.
+>
+> This one would probably fit into drivers/misc/ better than
+> some other drivers we have in there, but leaving it in
+> drivers/gpio/ also seems fine.
+>
 
-Applied. Thanks.
+This is my point. This really is a one-of-a-kind module that also
+doesn't register with any particular subsystem. If anything fits into
+drivers/misc/ then it's this.
 
--- 
-viresh
+To prove this point, I even moved the gpio-virtuser driver I'm working
+on to drivers/misc/ too as it isn't a GPIO provider either and merely
+a GPIO consumer with a one-shot user-space interface not conforming to
+any standards.
+
+> I could also imagine the functionality being exposed
+> through drivers/iio/ in a way that is similar to an
+> adc, but I don't know if that would work in practice or
+> how much of a rewrite that would be.
+>
+
+I could see it using configfs instead of DT for configuration and iio
+for presenting the output but - from what Wolfram said - insisting on
+this will simply result in this development being dropped entirely.
+
+Bart
 
