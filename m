@@ -1,141 +1,154 @@
-Return-Path: <linux-kernel+bounces-212471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F4090616E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 03:53:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB175906186
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624231F22486
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 01:53:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 702AC2838B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAE5182C5;
-	Thu, 13 Jun 2024 01:53:21 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC44374C6;
+	Thu, 13 Jun 2024 02:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FeSl3aPj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79C57F9;
-	Thu, 13 Jun 2024 01:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBFC617C72;
+	Thu, 13 Jun 2024 02:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718243600; cv=none; b=g4E+HSpf60PRCUYPE+1FSpj7zpWBaiCWmAcp6AQN2PO1gG+st86L0yufA8cH3fwEZUi1OlX90244MxAosD30naCQNQyrznY4ew+MEkrOTeeTeLSaqhrLtpE79clsrMDEtgUM2LL3Ak9299VyZSwTrc9yELaGlqq0qYFsSXcazGM=
+	t=1718244392; cv=none; b=rsQdJDnxalYKy3lerHvExSUp51hQHHUXXDYchxZuXHziaDw2E1UFoy5Os5ZHKy4YmSzLe1oREycOjrBb5DQ2WuoH8NMHULY9iAK4vWM/tXb58lREmBlONlFmo46ma2f+ZHexw8ev+S3icF6hAXHd35RUGdEftlMa8GISR70ZRrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718243600; c=relaxed/simple;
-	bh=08mouqv6dBOKj5PdWDUTOovkDkaA1fRX+axPfgiUQWY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YF+2jA1v4ofLLwhkL24Xy/zL/RM24YW/cq4vbJRnNhT940ecJSqO41NY9V8dMerYh+pjnye/v1orxq9w9Szg0+Sw+nw0s4Wie1ohoqHVmhuG8LjuMhAHSjNanqy07gZnlnGw8KZHdBw1ZPAb6Co2vaW66FdQE4RNNf9QG3CA4c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4W051y6q1czPqTg;
-	Thu, 13 Jun 2024 09:49:42 +0800 (CST)
-Received: from kwepemi500009.china.huawei.com (unknown [7.221.188.199])
-	by mail.maildlp.com (Postfix) with ESMTPS id ABD9A18007E;
-	Thu, 13 Jun 2024 09:53:08 +0800 (CST)
-Received: from localhost (10.175.127.227) by kwepemi500009.china.huawei.com
- (7.221.188.199) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Jun
- 2024 09:53:08 +0800
-Date: Thu, 13 Jun 2024 10:04:53 +0800
-From: Long Li <leo.lilong@huawei.com>
-To: "Darrick J. Wong" <djwong@kernel.org>, John Garry
-	<john.g.garry@oracle.com>
-CC: <david@fromorbit.com>, <hch@lst.de>, <viro@zeniv.linux.org.uk>,
-	<brauner@kernel.org>, <jack@suse.cz>, <chandan.babu@oracle.com>,
-	<willy@infradead.org>, <axboe@kernel.dk>, <martin.petersen@oracle.com>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<tytso@mit.edu>, <jbongio@google.com>, <ojaswin@linux.ibm.com>,
-	<ritesh.list@gmail.com>, <mcgrof@kernel.org>, <p.raghav@samsung.com>,
-	<linux-xfs@vger.kernel.org>, <catherine.hoang@oracle.com>
-Subject: Re: [PATCH v3 08/21] xfs: Introduce FORCEALIGN inode flag
-Message-ID: <20240613020453.GA2926743@ceph-admin>
-References: <20240429174746.2132161-1-john.g.garry@oracle.com>
- <20240429174746.2132161-9-john.g.garry@oracle.com>
- <20240612021058.GA729527@ceph-admin>
- <82269717-ab49-4a02-aaad-e25a01f15768@oracle.com>
- <20240612154342.GC2764752@frogsfrogsfrogs>
+	s=arc-20240116; t=1718244392; c=relaxed/simple;
+	bh=8sFmvQ7Z83X7NLUoXzzUfw6X3sNAVrct6codoq1wV7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ahN4vHTQZX/E29ojOqaqH00WW3uXfg6WRp4BA5txMLpg/lDvyU+3df4HZrbnyFQO7fJjZQM+e+yo1hOGwMneVpGFaip7AUaZNz5ohs14bQ9a1f6WljkIJ9uCrTVHnmtMCpZahhy4hYWfY/8MeAIKAjYTT6aTTICD9hNeZTtXyXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FeSl3aPj; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718244391; x=1749780391;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8sFmvQ7Z83X7NLUoXzzUfw6X3sNAVrct6codoq1wV7Q=;
+  b=FeSl3aPjOjZFmnCKj9Sfa4taT7g0EXtP7ZvmJ3dBSfVbZjhjpisYgt/i
+   H1QwLVH4WAf6wWP0DA4vrMmpI/ceWvokH6AeVCEyA9on2Okz8XMQ4CvWd
+   MPkjG7qBcP23BD+/g8HmhLOl6+sAiZu8x+Xk9L4MmM3pvi5ssCk/C5Nsp
+   iRohLlX3Iees3RD6pp2fKjbP7dId1DZpqquKNUa3QeM9bb7pWRLsqn/93
+   um7uRHeiDEwCncXhYnzyYPA6QLHtGQY9de+GHuzPvM2vWH1XPf3BGJ9as
+   NQUuNfzeUdSUPt1u+j44ctJxJ8BkoIVWWe3p99redMnftwDCemYJ1fHF4
+   g==;
+X-CSE-ConnectionGUID: WYbSL4Q3QZa2HulvPGK6oQ==
+X-CSE-MsgGUID: P75acOM5TCSmz+MfFGhNRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="15194300"
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="15194300"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 19:06:30 -0700
+X-CSE-ConnectionGUID: S0kNdoNXTeaDmFV2fIXYpQ==
+X-CSE-MsgGUID: 6aVpmYIvR1+lJTRSNmEW5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="44427853"
+Received: from lkp-server01.sh.intel.com (HELO 628d7d8b9fc6) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 12 Jun 2024 19:06:24 -0700
+Received: from kbuild by 628d7d8b9fc6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sHZr4-000270-15;
+	Thu, 13 Jun 2024 02:06:22 +0000
+Date: Thu, 13 Jun 2024 10:05:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Oded Gabbay <ogabbay@kernel.org>,
+	Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: oe-kbuild-all@lists.linux.dev, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH 6/9] accel/rocket: Add a new driver for Rockchip's NPU
+Message-ID: <202406130901.oiofrkFe-lkp@intel.com>
+References: <20240612-6-10-rocket-v1-6-060e48eea250@tomeuvizoso.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240612154342.GC2764752@frogsfrogsfrogs>
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi500009.china.huawei.com (7.221.188.199)
+In-Reply-To: <20240612-6-10-rocket-v1-6-060e48eea250@tomeuvizoso.net>
 
-On Wed, Jun 12, 2024 at 08:43:42AM -0700, Darrick J. Wong wrote:
-> On Wed, Jun 12, 2024 at 07:55:31AM +0100, John Garry wrote:
-> > On 12/06/2024 03:10, Long Li wrote:
-> > > On Mon, Apr 29, 2024 at 05:47:33PM +0000, John Garry wrote:
-> > > > From: "Darrick J. Wong"<djwong@kernel.org>
-> > > > 
-> > > > Add a new inode flag to require that all file data extent mappings must
-> > > > be aligned (both the file offset range and the allocated space itself)
-> > > > to the extent size hint.  Having a separate COW extent size hint is no
-> > > > longer allowed.
-> > > > 
-> > > > The goal here is to enable sysadmins and users to mandate that all space
-> > > > mappings in a file must have a startoff/blockcount that are aligned to
-> > > > (say) a 2MB alignment and that the startblock/blockcount will follow the
-> > > > same alignment.
-> > > > 
-> > > > jpg: Enforce extsize is a power-of-2 and aligned with afgsize + stripe
-> > > >       alignment for forcealign
-> > > > Signed-off-by: "Darrick J. Wong"<djwong@kernel.org>
-> > > > Co-developed-by: John Garry<john.g.garry@oracle.com>
-> > > > Signed-off-by: John Garry<john.g.garry@oracle.com>
-> > > > ---
-> > > >   fs/xfs/libxfs/xfs_format.h    |  6 ++++-
-> > > >   fs/xfs/libxfs/xfs_inode_buf.c | 50 +++++++++++++++++++++++++++++++++++
-> > > >   fs/xfs/libxfs/xfs_inode_buf.h |  3 +++
-> > > >   fs/xfs/libxfs/xfs_sb.c        |  2 ++
-> > > >   fs/xfs/xfs_inode.c            | 12 +++++++++
-> > > >   fs/xfs/xfs_inode.h            |  2 +-
-> > > >   fs/xfs/xfs_ioctl.c            | 34 +++++++++++++++++++++++-
-> > > >   fs/xfs/xfs_mount.h            |  2 ++
-> > > >   fs/xfs/xfs_super.c            |  4 +++
-> > > >   include/uapi/linux/fs.h       |  2 ++
-> > > >   10 files changed, 114 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
-> > > > index 2b2f9050fbfb..4dd295b047f8 100644
-> > > > --- a/fs/xfs/libxfs/xfs_format.h
-> > > > +++ b/fs/xfs/libxfs/xfs_format.h
-> > > > @@ -353,6 +353,7 @@ xfs_sb_has_compat_feature(
-> > > >   #define XFS_SB_FEAT_RO_COMPAT_RMAPBT   (1 << 1)		/* reverse map btree */
-> > > >   #define XFS_SB_FEAT_RO_COMPAT_REFLINK  (1 << 2)		/* reflinked files */
-> > > >   #define XFS_SB_FEAT_RO_COMPAT_INOBTCNT (1 << 3)		/* inobt block counts */
-> > > > +#define XFS_SB_FEAT_RO_COMPAT_FORCEALIGN (1 << 30)	/* aligned file data extents */
-> > > Hi, John
-> > > 
-> > > You know I've been using and testing your atomic writes patch series recently,
-> > > and I'm particularly interested in the changes to the on-disk format. I noticed
-> > > that XFS_SB_FEAT_RO_COMPAT_FORCEALIGN uses bit 30 instead of bit 4, which would
-> > > be the next available bit in sequence.
-> > > 
-> > > I'm wondering if using bit 30 is just a temporary solution to avoid conflicts,
-> > > and if the plan is to eventually use bits sequentially, for example, using bit 4?
-> > > I'm looking forward to your explanation.
-> > 
-> > I really don't know. I'm looking through the history and it has been like
-> > that this the start of my source control records.
-> > 
-> > Maybe it was a copy-and-paste error from XFS_FEAT_FORCEALIGN, whose value
-> > has changed since.
-> > 
-> > Anyway, I'll ask a bit more internally, and I'll look to change to (1 << 4)
-> > if ok.
-> 
-> I tend to use upper bits for ondisk features that are still under
-> development so that (a) there won't be collisions with other features
-> getting merged and (b) after the feature I'm working on gets merged, any
-> old fs images in my zoo will no longer mount.
-> 
+Hi Tomeu,
 
-I get it, thank you very much for your response.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on 83a7eefedc9b56fe7bfeff13b6c7356688ffa670]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Tomeu-Vizoso/iommu-rockchip-Add-compatible-for-rockchip-rk3588-iommu/20240612-215814
+base:   83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+patch link:    https://lore.kernel.org/r/20240612-6-10-rocket-v1-6-060e48eea250%40tomeuvizoso.net
+patch subject: [PATCH 6/9] accel/rocket: Add a new driver for Rockchip's NPU
+config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240613/202406130901.oiofrkFe-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240613/202406130901.oiofrkFe-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406130901.oiofrkFe-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from arch/loongarch/include/asm/processor.h:17,
+                    from arch/loongarch/include/asm/thread_info.h:15,
+                    from include/linux/thread_info.h:60,
+                    from include/asm-generic/current.h:6,
+                    from ./arch/loongarch/include/generated/asm/current.h:1,
+                    from include/linux/mutex.h:14,
+                    from include/linux/notifier.h:14,
+                    from include/linux/clk.h:14,
+                    from drivers/accel/rocket/rocket_core.c:6:
+>> arch/loongarch/include/uapi/asm/ptrace.h:25:25: error: expected identifier before '(' token
+      25 | #define PC              (GPR_END + 2)
+         |                         ^
+   drivers/accel/rocket/rocket_registers.h:53:9: note: in expansion of macro 'PC'
+      53 |         PC = 0x00000100,
+         |         ^~
+
+
+vim +25 arch/loongarch/include/uapi/asm/ptrace.h
+
+803b0fc5c3f2ba Huacai Chen 2022-05-31  16  
+803b0fc5c3f2ba Huacai Chen 2022-05-31  17  /*
+803b0fc5c3f2ba Huacai Chen 2022-05-31  18   * For PTRACE_{POKE,PEEK}USR. 0 - 31 are GPRs,
+803b0fc5c3f2ba Huacai Chen 2022-05-31  19   * 32 is syscall's original ARG0, 33 is PC, 34 is BADVADDR.
+803b0fc5c3f2ba Huacai Chen 2022-05-31  20   */
+803b0fc5c3f2ba Huacai Chen 2022-05-31  21  #define GPR_BASE	0
+803b0fc5c3f2ba Huacai Chen 2022-05-31  22  #define GPR_NUM		32
+803b0fc5c3f2ba Huacai Chen 2022-05-31  23  #define GPR_END		(GPR_BASE + GPR_NUM - 1)
+803b0fc5c3f2ba Huacai Chen 2022-05-31  24  #define ARG0		(GPR_END + 1)
+803b0fc5c3f2ba Huacai Chen 2022-05-31 @25  #define PC		(GPR_END + 2)
+803b0fc5c3f2ba Huacai Chen 2022-05-31  26  #define BADVADDR	(GPR_END + 3)
+803b0fc5c3f2ba Huacai Chen 2022-05-31  27  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
