@@ -1,62 +1,70 @@
-Return-Path: <linux-kernel+bounces-213334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599D99073E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:37:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FAD5907429
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D26C0B234A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:37:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD361B266F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68083143C5F;
-	Thu, 13 Jun 2024 13:36:47 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC79F143C5F;
+	Thu, 13 Jun 2024 13:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="I5kJt75h"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B884314430C;
-	Thu, 13 Jun 2024 13:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0BF1448D8;
+	Thu, 13 Jun 2024 13:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718285806; cv=none; b=PNuZZdpw2XSX/1bN8cPS206sm5yfe+MPfO/Yn0PvNSu73wFcM2sQrgQt1wL0qAea0qVaxeTKQAe0nFaFgDqvaTzO7O/GvgNIIUi0KZCZBX2EEfz/o6MTSsLvsvMthWxAfOasIGHmGGNKKTdxGeQaPqdxx+UazIM7e1d7Uqc6TK8=
+	t=1718285878; cv=none; b=ERN26E+S3v8jABa2dr4GodBfJpb1dvwVL+ZC27eUJmX7/rd/4HguGHQPqirHBxU4eaTIdmUvlWZE15pnbHfj2TZsWex8Y7mptkrg9ze1WyZygfw8ecTcc1S6eBRzDd+tCR/fuGbTk1vMyQE/6J9zjVvllXifoakhZHE0yjgq1pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718285806; c=relaxed/simple;
-	bh=e65AO8YkGqI6QNmDImUltk/oT8Th8lPKfyfsMwtaoc8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sgchlM9P2uJ9RhjZ/ewIcxoswEKhj6XCZB88RGMpbCTm0BRTGyJRaipOYC+5pUvkrJKinMfBC+qpdH5VeHac4Dpw9C5TKS7FbdyU7/zA3fKcw/BSizo1WW8h/LepIY28THZ28nmsA+F5GuihS59sXzLuE3EtmneK41GvWH6O438=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W0NcC6mT1zmb2t;
-	Thu, 13 Jun 2024 21:31:55 +0800 (CST)
-Received: from dggpeml500012.china.huawei.com (unknown [7.185.36.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id 761B1140258;
-	Thu, 13 Jun 2024 21:36:41 +0800 (CST)
-Received: from localhost.localdomain (10.67.175.61) by
- dggpeml500012.china.huawei.com (7.185.36.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 13 Jun 2024 21:36:41 +0800
-From: Zheng Yejian <zhengyejian1@huawei.com>
-To: <rostedt@goodmis.org>, <mhiramat@kernel.org>, <mark.rutland@arm.com>,
-	<mpe@ellerman.id.au>, <npiggin@gmail.com>, <christophe.leroy@csgroup.eu>,
-	<naveen.n.rao@linux.ibm.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-	<hpa@zytor.com>, <mcgrof@kernel.org>, <mathieu.desnoyers@efficios.com>,
-	<masahiroy@kernel.org>, <nathan@kernel.org>, <nicolas@fjasle.eu>,
-	<kees@kernel.org>, <james.clark@arm.com>, <kent.overstreet@linux.dev>,
-	<yhs@fb.com>, <jpoimboe@kernel.org>, <peterz@infradead.org>
-CC: <zhengyejian1@huawei.com>, <linux-kernel@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-modules@vger.kernel.org>, <linux-kbuild@vger.kernel.org>,
-	<bpf@vger.kernel.org>
-Subject: [PATCH 5/6] ftrace: Fix possible out-of-bound issue in ftrace_process_locs()
-Date: Thu, 13 Jun 2024 21:37:10 +0800
-Message-ID: <20240613133711.2867745-6-zhengyejian1@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240613133711.2867745-1-zhengyejian1@huawei.com>
-References: <20240613133711.2867745-1-zhengyejian1@huawei.com>
+	s=arc-20240116; t=1718285878; c=relaxed/simple;
+	bh=FktdJ3dpxYgLwv3mOnNq66XfSBNmbtiWt8nu4ZUssjU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f4bRwUogMH0OW7rCRIsX/M3BWl0K7+4ZFxFOtegHnvvjrQOr6SjTrDKAIwUONK5GeYKy6VDMoriK5mhai+RWOMNQEGxK0GC9rNQD4GofBSC42hGd7+mYsC9yntA+/TW2zHX4oqwJInsaoYA6q147UWhrWPpiIvrw1iHnWjIGdyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=I5kJt75h; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45D5pN0K001648;
+	Thu, 13 Jun 2024 08:37:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=QtBgSUb0MZHTNV1Q
+	4UZmYBvp+K84oqTEqIP2wfhcxF8=; b=I5kJt75hgkxNUT5w2+y9mbI+3srSVPnn
+	5lGCOpM0W8bscHn4p50FWaiOq0Px2AD0ebeWwcdwSC+dauRsdwDkciyKGKto/Q4v
+	hpMW3RGakWl4l33O2BBhrVlnH+SAsBki/wGxfl8fFT6B1Iv4/SCpc89/n+6VkEnJ
+	wLGtwUZ3JlITtJXnJP8+v/1fR/7xQMUOmiSmdfpUuZWbqUo9IsKvJMCwXQNWk59n
+	I9rsVShN84EsNLjE7UCLnrZxxSFljYeMJnTFaSkDljmc7Y5T/HXqxNO2D3NtC2fg
+	12sgdfI00spZ7uT2u3tPTmfgZ19fZ/isZGx8qyigEgUTZvNksZZ0OQ==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3yqskgreuv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 08:37:40 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
+ 2024 14:37:38 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Thu, 13 Jun 2024 14:37:38 +0100
+Received: from EDIN6ZZ2FY3.ad.cirrus.com (EDIN6ZZ2FY3.ad.cirrus.com [198.61.65.41])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 8F38A820248;
+	Thu, 13 Jun 2024 13:37:37 +0000 (UTC)
+From: Simon Trimmer <simont@opensource.cirrus.com>
+To: <tiwai@suse.com>
+CC: <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        <soyer@irl.hu>, <shenghao-ding@ti.com>, <kevin-lu@ti.com>,
+        <baojun.xu@ti.com>, Simon Trimmer <simont@opensource.cirrus.com>
+Subject: [PATCH 0/3] ALSA: hda: Component should be unbound before deconstruction
+Date: Thu, 13 Jun 2024 14:37:10 +0100
+Message-ID: <20240613133713.75550-1-simont@opensource.cirrus.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,74 +73,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpeml500012.china.huawei.com (7.185.36.15)
+X-Proofpoint-GUID: fSH1mpGTINbxL0twFSmqDta3asQgSHwc
+X-Proofpoint-ORIG-GUID: fSH1mpGTINbxL0twFSmqDta3asQgSHwc
+X-Proofpoint-Spam-Reason: safe
 
-In ftrace_process_locs(), a series pages are prepared and linked in
-start_pg, then fentry records are skipped or added, then unused pages
-are freed.
+Small chain of fixes to correct hda drivers using the hda component
+infrastructure so that they unregister their component before proceeding
+to deconstruct the driver.
 
-However, assume that all records are skipped, currently the start_pg
-will still be in list of ftrace_pages_start but without any record.
-Then in ftrace_free_mem() index record by (pg->index - 1) will be out
-of bound.
+These three patches been separated from the chain "[PATCH v2 0/7] ALSA:
+hda: Improvements to hda_component"
 
-To fix this issue, properly handle with unused start_pg and add
-WARN_ON_ONCE() where the records need to be indexed.
+Simon Trimmer (3):
+  ALSA: hda: cs35l56: Component should be unbound before deconstruction
+  ALSA: hda: cs35l41: Component should be unbound before deconstruction
+  ALSA: hda: tas2781: Component should be unbound before deconstruction
 
-Fixes: 26efd79c4624 ("ftrace: Fix possible warning on checking all pages used in ftrace_process_locs()")
-Signed-off-by: Zheng Yejian <zhengyejian1@huawei.com>
----
- kernel/trace/ftrace.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ sound/pci/hda/cs35l41_hda.c     | 4 ++--
+ sound/pci/hda/cs35l56_hda.c     | 4 ++--
+ sound/pci/hda/tas2781_hda_i2c.c | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 0e8628e4d296..c46c35ac9b42 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -6575,10 +6575,22 @@ static int ftrace_process_locs(struct module *mod,
- 		rec->ip = addr;
- 	}
- 
--	if (pg->next) {
-+	if (pg->index == 0) {
-+		/* No record is added on the current page, so it's unused */
-+		pg_unuse = pg;
-+	} else if (pg->next) {
-+		/* Current page has records, so it's next page is unused */
- 		pg_unuse = pg->next;
- 		pg->next = NULL;
- 	}
-+	/*
-+	 * Even the start_pg hasn't been used, that means, no record has
-+	 * been added, so restore state of ftrace_pages and just go out.
-+	 */
-+	if (pg_unuse == start_pg) {
-+		ftrace_pages->next = NULL;
-+		goto out;
-+	}
- 
- 	/* Assign the last page to ftrace_pages */
- 	ftrace_pages = pg;
-@@ -6794,6 +6806,8 @@ void ftrace_release_mod(struct module *mod)
- 	 */
- 	last_pg = &ftrace_pages_start;
- 	for (pg = ftrace_pages_start; pg; pg = *last_pg) {
-+		/* The page should have at lease one record */
-+		WARN_ON_ONCE(!pg->index);
- 		rec = &pg->records[0];
- 		if (within_module(rec->ip, mod)) {
- 			/*
-@@ -7176,6 +7190,8 @@ void ftrace_free_mem(struct module *mod, void *start_ptr, void *end_ptr)
- 		mod_map = allocate_ftrace_mod_map(mod, start, end);
- 
- 	for (pg = ftrace_pages_start; pg; last_pg = &pg->next, pg = *last_pg) {
-+		/* The page should have at lease one record */
-+		WARN_ON_ONCE(!pg->index);
- 		if (end < pg->records[0].ip ||
- 		    start >= (pg->records[pg->index - 1].ip + MCOUNT_INSN_SIZE))
- 			continue;
 -- 
-2.25.1
+2.34.1
 
 
