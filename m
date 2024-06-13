@@ -1,62 +1,57 @@
-Return-Path: <linux-kernel+bounces-213716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28CEE907972
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:10:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95FFA907973
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D5D71C22BF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:09:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A20401C23050
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C66149E01;
-	Thu, 13 Jun 2024 17:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD763149C79;
+	Thu, 13 Jun 2024 17:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uSLLD7t0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B51TCbhl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA04149C5A;
-	Thu, 13 Jun 2024 17:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3821494D1
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 17:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718298595; cv=none; b=jmfb8FTZo0804pc8cQfvaQGLrHb/raZ6qlJlwuZiFqlw6I9jUgkb/gnuYz9c/9DyjYPCZCpVwWXda/1MKuY4DQOQ2mOzWU8Hzvh1jLwXIfPtrDltsxKdQcJuINuXaMj72UDoxb8jJlHdP817lheh+/Bgrai3nD9vBveivW0IOnk=
+	t=1718298656; cv=none; b=inPd1emuwgQTNZHoJleK85mTqSIzZnRvqEkrfiWAwkFExxKFlf89Lyac4zfh3CYI86U/PV4SSIvvAmcEehEEkd29L31AFBbYK//DdKGCCW8aVqUn1P9BnAyMm9evNWs5ogeBhX4OtRUpWeZpFtpp2yMquyneuANbMf6EHUK3vkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718298595; c=relaxed/simple;
-	bh=sawuofgiTla22xNeYJ7qMOaw4kLeel2V7h6pjTPcsy4=;
+	s=arc-20240116; t=1718298656; c=relaxed/simple;
+	bh=hAvadJc30c7xwyyr2Veg3piHx/bbbzaPI9OpNL5/0Og=;
 	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rlCY80xnw9f68x1KTOGDw3gPitMzr5zpl6P2mhTSGk7R6sQg22iMJRRAMwnPcL+duanyfvA4vdqv3BACkx7sXa+kmNy7kCzc9CYuwueyS4ck0p/bLXrqIQDFZqTuB3iov3xlPv6MI3fvwXyP8kkTgoog8uYn1uyCwRgnYISrAFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uSLLD7t0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E585AC2BBFC;
-	Thu, 13 Jun 2024 17:09:51 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Ip8uHKnvRTAHwQTCdLWCrrdnZHQLgnIs1KLH+V0BT1Jx8leIFCYnYnnuN1BDXIk84lvTmv6lpvs3OhT5oGV58/cTO3kTaG/fHDr8VhyL3UwQrDkEo3C/XHT5o+W82NieJCDPlX6tPrGZ/F0ojHcnCX5M4SXqk11bR/4YRqGF0bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B51TCbhl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82A6FC2BBFC;
+	Thu, 13 Jun 2024 17:10:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718298594;
-	bh=sawuofgiTla22xNeYJ7qMOaw4kLeel2V7h6pjTPcsy4=;
+	s=k20201202; t=1718298655;
+	bh=hAvadJc30c7xwyyr2Veg3piHx/bbbzaPI9OpNL5/0Og=;
 	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=uSLLD7t0C1sZaoqbsr/ALoQz7x5p/xxV5cigTZ7XYHqwypv5JZvPJFYSwZkP2FL9N
-	 8uC65AYK11K2EKbEz74W951XcmEeJkVd2sc5Odf0zviaBSyQ3/FeUq+p2u6CJfp0Ax
-	 3JqYIHeMZrdY0QyZQNysWBTYl75mLuSAF4D4uz7efP9PzRgT2WxRIYsUdcefM+CpcE
-	 FIr2Y9Y7GnlV6nK6W8749oTAB6sFzTu6Nozt050HrZ/5gZbK5xxhik4XXzKfPjpx2r
-	 rlR7T3ZNbpntTiCOG6ODOfKMRzLkghYwA2Ds1ALeoUN3LMEw2FoMgAsaJoEH3UmSlb
-	 TlUiENI91I4xA==
+	b=B51TCbhlWFhEyQtPYVLxn7b8XSjANrp/Wp28BAiDKti08YwzLiSjExRS49v4yRIR4
+	 DzhSXxhtZrW3ULetc9FgaIA2UI9937UOYSQkYN+c6U1Ky/z5YRyvK5tQO0wNtJbhFj
+	 UsAMfZ9swL1g6a5Qg8KveiPWpczbXJkj7+9/fnCG7d5yvpb95jMDs1LdylqStJjdW/
+	 cAUpShmbjOqpsQcF+wRx+uQXMAcoCCyEETmavFexfzF0kAVe4TYy1wKq1eiqlYCxiU
+	 4Zv/ysm4P5qmvzEyfVknUASnGsLYnHxFX2A/Og6Dz7cR/1wpH0NSt2ucMStGZZir0f
+	 8m/zox0p+s/xA==
 From: Lee Jones <lee@kernel.org>
-To: Chanwoo Choi <cw00.choi@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, patches@opensource.cirrus.com, 
- llvm@lists.linux.dev, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240606143648.152668-1-krzysztof.kozlowski@linaro.org>
-References: <20240606143648.152668-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/3] mfd: max14577: Fix Wvoid-pointer-to-enum-cast
- warning (again)
-Message-Id: <171829859167.2724644.8244967741458502000.b4-ty@kernel.org>
-Date: Thu, 13 Jun 2024 18:09:51 +0100
+To: Charles Keepax <ckeepax@opensource.cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ patches@opensource.cirrus.com, linux-kernel@vger.kernel.org, 
+ alsa-devel@alsa-project.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240606142457.130553-1-krzysztof.kozlowski@linaro.org>
+References: <20240606142457.130553-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 1/2] mfd: arizona: Simplify with
+ spi_get_device_match_data()
+Message-Id: <171829865427.2725542.2835088856988490637.b4-ty@kernel.org>
+Date: Thu, 13 Jun 2024 18:10:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,26 +62,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.13.0
 
-On Thu, 06 Jun 2024 16:36:46 +0200, Krzysztof Kozlowski wrote:
-> 'type' is an enum, thus cast of pointer on 64-bit compile test with
-> clang and W=1 causes:
+On Thu, 06 Jun 2024 16:24:56 +0200, Krzysztof Kozlowski wrote:
+> Use spi_get_device_match_data() helper to simplify a bit the driver.
 > 
->   max14577.c:400:23: error: cast to smaller integer type 'enum maxim_device_type' from 'const void *' [-Werror,-Wvoid-pointer-to-enum-cast]
 > 
-> Year ago this was solved, although LKML discussion suggested warning is
-> not suitable for kernel.  Nothing changed in this regard for a year, so
-> assume the warning will stay and we want to have warnings-free builds.
-> 
-> [...]
 
 Applied, thanks!
 
-[1/3] mfd: max14577: Fix Wvoid-pointer-to-enum-cast warning (again)
-      commit: 9d1e745c2dc06fed0eb6e3b549b75669f9da77be
-[2/3] mfd: mxs-lradc: Fix Wvoid-pointer-to-enum-cast warning (again)
-      commit: a377d89e5064e787deecfb87d9464ea18f5f067e
-[3/3] mfd: wm8994: Fix Wvoid-pointer-to-enum-cast warning (again)
-      commit: 05bb1fb09b523136acb58421361a259127de68d4
+[1/2] mfd: arizona: Simplify with spi_get_device_match_data()
+      commit: 6cc27f7d3e26c6e661385c3cdbc554a8fefbdce5
+[2/2] mfd: madera: Simplify with spi_get_device_match_data()
+      commit: 8385f6c81bb6042273a6b6cf793424b309ec8f2b
 
 --
 Lee Jones [李琼斯]
