@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-212481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E31F906196
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:08:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4EBB90619A
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 04:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 281A2285922
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:08:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E3B2B224FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F1512BEA4;
-	Thu, 13 Jun 2024 02:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C423312CDAF;
+	Thu, 13 Jun 2024 02:08:11 +0000 (UTC)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB3B84DEA;
-	Thu, 13 Jun 2024 02:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F5D12B170;
+	Thu, 13 Jun 2024 02:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718244489; cv=none; b=i7wamg4HvXizlW+oazgAUJxzwmUZThPj5Zc5YNDYk3mAMOKaXJb/iU6kLS/yRoydrarKyTKjEF3TE0ag0YKgOKUJWvUKFjjGuDeO4d7YqSF5gtqZgfMYBRHjrmKidQYztWEi66MKoaI+6+LgarQvb6glvrDgB0H44De0pAC+TYw=
+	t=1718244491; cv=none; b=EZwGHSXSiE5Vd8ExacR/v9kIaYo4qPZrOCjloRLh63rH2Nror06dw1Utm+y47UvSdw7KVsSiJ1Yau8NG7Fxyinajv/xT0pv87LEnLvo5DAmUnSRmUvQrQxnFa2vFnziaUqn80zFCfZElwo8m6LC8/ows2gzoG/JSRWsjpsG+GYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718244489; c=relaxed/simple;
-	bh=sbl5X0446SNrZyzdSpjYqjhRmR8nZOs6R/E130gj5SI=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=bnu6KqAvXC7kbkXoRjsDI2PNichaghhizr1lqolgZWJd4Ei3Iu4AHTXwYABth4f9x8MzHCSsBLhOGmQfStuXI4VV1MbtmYTG87rNketSLO4Mg9dxdY0dnCZFro107IehlJgl9+dHoovlJ96eolmCHlotMe10jdrz4wbTbS3i7Rk=
+	s=arc-20240116; t=1718244491; c=relaxed/simple;
+	bh=S2lBCY9EvtAQte7nGdlIdh1f9xtxLIBbDYoaJVFJgmY=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=m8PGLKXVBAag++0uTNidMJDahEKjSyUmDuininbexETSgI+HT5/wHTOBBD09iQhuFST2kzie5GGtazxou58/0ZT7OnxhxetBkBMsmg/v8xw+/u8OqNssKkSqEKW+zpPDJax3f0LpQgicd/jCdr8y5z0pWSJxNNeCFQCFO15aBEI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id ADDEB1A1503;
-	Thu, 13 Jun 2024 04:08:06 +0200 (CEST)
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4ABCE1A0ABE;
+	Thu, 13 Jun 2024 04:08:08 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5DCCB1A0AB5;
-	Thu, 13 Jun 2024 04:08:06 +0200 (CEST)
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F0D071A0AB5;
+	Thu, 13 Jun 2024 04:08:07 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 07996181D0FD;
-	Thu, 13 Jun 2024 10:08:03 +0800 (+08)
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 9C1E2181D0F9;
+	Thu, 13 Jun 2024 10:08:05 +0800 (+08)
 From: Shengjiu Wang <shengjiu.wang@nxp.com>
 To: p.zabel@pengutronix.de,
 	abelvesa@kernel.org,
@@ -56,9 +56,9 @@ To: p.zabel@pengutronix.de,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	shengjiu.wang@gmail.com
-Subject: [PATCH v7 4/5] clk: imx: clk-audiomix: Add CLK_SET_RATE_PARENT flags for clocks
-Date: Thu, 13 Jun 2024 09:51:21 +0800
-Message-Id: <1718243482-18552-5-git-send-email-shengjiu.wang@nxp.com>
+Subject: [PATCH v7 5/5] clk: imx: clk-audiomix: Correct parent clock for earc_phy and audpll
+Date: Thu, 13 Jun 2024 09:51:22 +0800
+Message-Id: <1718243482-18552-6-git-send-email-shengjiu.wang@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1718243482-18552-1-git-send-email-shengjiu.wang@nxp.com>
 References: <1718243482-18552-1-git-send-email-shengjiu.wang@nxp.com>
@@ -69,54 +69,56 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-Add CLK_SET_RATE_PARENT flags that when the device driver sets the
-child clock rate, parent clock frequency can be refined accordingly.
+According to Reference Manual of i.MX8MP
+The parent clock of "earc_phy" is "sai_pll_out_div2",
+The parent clock of "audpll" is "osc_24m".
 
+Add CLK_GATE_PARENT() macro for usage of specifying parent clock.
+
+Fixes: 6cd95f7b151c ("clk: imx: imx8mp: Add audiomix block control")
 Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 Reviewed-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/clk/imx/clk-imx8mp-audiomix.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/clk/imx/clk-imx8mp-audiomix.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-index 517b1f88661b..7fd336a96cfe 100644
+index 7fd336a96cfe..50ad5873c990 100644
 --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
 +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-@@ -328,12 +328,12 @@ static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
- 	for (i = 0; i < ARRAY_SIZE(sels); i++) {
- 		if (sels[i].num_parents == 1) {
- 			hw = devm_clk_hw_register_gate_parent_data(dev,
--				sels[i].name, &sels[i].parent, 0,
-+				sels[i].name, &sels[i].parent, CLK_SET_RATE_PARENT,
- 				base + sels[i].reg, sels[i].shift, 0, NULL);
- 		} else {
- 			hw = devm_clk_hw_register_mux_parent_data_table(dev,
- 				sels[i].name, sels[i].parents,
--				sels[i].num_parents, 0,
-+				sels[i].num_parents, CLK_SET_RATE_PARENT,
- 				base + sels[i].reg,
- 				sels[i].shift, sels[i].width,
- 				0, NULL, NULL);
-@@ -376,7 +376,8 @@ static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
- 	clk_hw_data->hws[IMX8MP_CLK_AUDIOMIX_SAI_PLL_BYPASS] = hw;
+@@ -156,6 +156,15 @@ static const struct clk_parent_data clk_imx8mp_audiomix_pll_bypass_sels[] = {
+ 		PDM_SEL, 2, 0						\
+ 	}
  
- 	hw = devm_clk_hw_register_gate(dev, "sai_pll_out", "sai_pll_bypass",
--				       0, base + SAI_PLL_GNRL_CTL, 13,
-+				       CLK_SET_RATE_PARENT,
-+				       base + SAI_PLL_GNRL_CTL, 13,
- 				       0, NULL);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
-@@ -385,7 +386,8 @@ static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
- 	clk_hw_data->hws[IMX8MP_CLK_AUDIOMIX_SAI_PLL_OUT] = hw;
- 
- 	hw = devm_clk_hw_register_fixed_factor(dev, "sai_pll_out_div2",
--					       "sai_pll_out", 0, 1, 2);
-+					       "sai_pll_out",
-+					       CLK_SET_RATE_PARENT, 1, 2);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
- 		goto err_clk_register;
++#define CLK_GATE_PARENT(gname, cname, pname)						\
++	{								\
++		gname"_cg",						\
++		IMX8MP_CLK_AUDIOMIX_##cname,				\
++		{ .fw_name = pname, .name = pname }, NULL, 1,		\
++		CLKEN0 + 4 * !!(IMX8MP_CLK_AUDIOMIX_##cname / 32),	\
++		1, IMX8MP_CLK_AUDIOMIX_##cname % 32			\
++	}
++
+ struct clk_imx8mp_audiomix_sel {
+ 	const char			*name;
+ 	int				clkid;
+@@ -173,14 +182,14 @@ static struct clk_imx8mp_audiomix_sel sels[] = {
+ 	CLK_GATE("earc", EARC_IPG),
+ 	CLK_GATE("ocrama", OCRAMA_IPG),
+ 	CLK_GATE("aud2htx", AUD2HTX_IPG),
+-	CLK_GATE("earc_phy", EARC_PHY),
++	CLK_GATE_PARENT("earc_phy", EARC_PHY, "sai_pll_out_div2"),
+ 	CLK_GATE("sdma2", SDMA2_ROOT),
+ 	CLK_GATE("sdma3", SDMA3_ROOT),
+ 	CLK_GATE("spba2", SPBA2_ROOT),
+ 	CLK_GATE("dsp", DSP_ROOT),
+ 	CLK_GATE("dspdbg", DSPDBG_ROOT),
+ 	CLK_GATE("edma", EDMA_ROOT),
+-	CLK_GATE("audpll", AUDPLL_ROOT),
++	CLK_GATE_PARENT("audpll", AUDPLL_ROOT, "osc_24m"),
+ 	CLK_GATE("mu2", MU2_ROOT),
+ 	CLK_GATE("mu3", MU3_ROOT),
+ 	CLK_PDM,
 -- 
 2.34.1
 
