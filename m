@@ -1,112 +1,102 @@
-Return-Path: <linux-kernel+bounces-213385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF870907477
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:58:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C30A9907478
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 205CD1C24275
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:58:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0D191C23043
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79161459ED;
-	Thu, 13 Jun 2024 13:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93645144D21;
+	Thu, 13 Jun 2024 13:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="clhcumvE"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HUMiz+ZV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB041448FA;
-	Thu, 13 Jun 2024 13:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFEFB139CFE;
+	Thu, 13 Jun 2024 13:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718287073; cv=none; b=B35G4heZNrHB8annJL0W1lQj5FgAZAE+PABf4dxX0vAGU1stxk3F+zuISZm6L2T6aOwi6N4IHDO1kt993uOfQ6yx5kTtWNLoj6LQG3t/9blNE9C0ICBgidseSrSzmdWAy8URp17ig/NTrHKWkT0/kagdXjJFrESvsqOlXTOuWXM=
+	t=1718287143; cv=none; b=FV644LJh0meeZqtH2I2vMljVfihvzYEc+0vaKDerp3BEn/bw/3H+GvyXCdvTztVfqmjD85NmQFPziIwNbYYsv4qHjyPkXVYgdPTy9lbsUquWcHluqpWuD4ACuRKCW7m0i6bzAfL4B5bcX7uP4+MnRjynfegULJqjAxHoMv4hHbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718287073; c=relaxed/simple;
-	bh=B9iVUMQ7iBXze38SIjww4yo0dWA0ImTuZmCEx2SUH78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=n49cG20qcV3BpfWi6pQU5sPBGjKGy+8uX1FkcnroS66EFWJKvj44pSFjG4HH8avmjbgPtJH3et0yViC7/Upl1JCmdp4FZNmCn1Jk7gjm9q4lyG5M/dnaU2Er6SWcZ/EovXrQIdJMQjjSqFIkGax27kwg0f6kgVYje6T6QRF8PMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=clhcumvE; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718287069;
-	bh=B9iVUMQ7iBXze38SIjww4yo0dWA0ImTuZmCEx2SUH78=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=clhcumvEQ0/iPFIHMumilHTeupRda3bSPQoO+EK+KvqQFqFcvN56KlAR+nRGIn9gI
-	 2gIHi1sp/et2YyoI0MqHtdDj5xP9lVvrruVhoZwzmMRvyutGXUYe/b4sZdw1NL5gmw
-	 oY/v7KA9DFu2I7vftH4E2+BUsvtz8pXrmbteLat8Aa/qKGOBl2UFjbTcRycyJaK1RS
-	 V7ZAkRkiEUl/tw68f641kOAvCXE9u3XHjcL6FMIIT1h9pWs2pEGT+PwmZSUUl56VwF
-	 6wqPs/w3WpjxQEPxaXMGU6r5G1qp1+OrR3xE/8dN2LSj0MI6J3amlSVO/zmeGAVnsX
-	 GGCAF9wSWRVYQ==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id EE6B337820CD;
-	Thu, 13 Jun 2024 13:57:48 +0000 (UTC)
-Message-ID: <25c8432c-7e2c-4d32-bf5a-225aeaaa809a@collabora.com>
-Date: Thu, 13 Jun 2024 15:57:48 +0200
+	s=arc-20240116; t=1718287143; c=relaxed/simple;
+	bh=cvzl7oxeW0ZrGo1HjKtsJxQN2aBSgKyqdnK9ah3NI1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bmkibTcPLsDCk2WtwMbxXUpCdcQeOXgAE2BLxBfUDtIWK/WsnrWzP65u4Ak9IwvvZfAgx8ynz+lk70h0m0e90wCJ4DTZGm9BaIpcfB5anUCx5NrJBLx7O244CjXKwMrHvwnAnD9crsaXps2cIwXvu51ai2m6Y51m7Iwc5iy+wJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HUMiz+ZV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B6EC2BBFC;
+	Thu, 13 Jun 2024 13:59:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718287143;
+	bh=cvzl7oxeW0ZrGo1HjKtsJxQN2aBSgKyqdnK9ah3NI1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HUMiz+ZVjwDgIXB6hCXRizbGhUrbxEEjSOc6SwM6+MDWq02Kb5OcuwvN3eR9lGACi
+	 OmaXsoZItLjgcU0MiYk1XOGIfLnc/Cw8oXqCwgy3TUx+m4Yc8HMAevlqLy9mrsD2J5
+	 S5OkyP/VcwN55ABbeRRXKY+GvBd2DImAkX8KFJoA=
+Date: Thu, 13 Jun 2024 15:59:00 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Hannes Reinecke <hare@suse.de>, Jakub Kicinski <kuba@kernel.org>,
+	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Subject: Re: CVE-2024-26831: net/handshake: Fix handshake_req_destroy_test1
+Message-ID: <2024061357-fencing-pyromania-70a2@gregkh>
+References: <2024041704-CVE-2024-26831-2e6e@gregkh>
+ <97629d4e-1f3d-441c-b92a-2e8b74b9846a@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: ARM: airoha: add entry to cover Airoha SoC
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-References: <20240613133840.6949-1-krzysztof.kozlowski@linaro.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240613133840.6949-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <97629d4e-1f3d-441c-b92a-2e8b74b9846a@oracle.com>
 
-Il 13/06/24 15:38, Krzysztof Kozlowski ha scritto:
-> Airoha SoC is not covered by any maintainer entry so relevant patches
-> can be missed.  It seems Mediatek SoC maintainers were covering some
-> parts of Airoha and Airoha itself is subsidiary of Mediatek, so assign
-> the Airoha maintenance to Matthias and AngeloGioacchino.
+On Tue, Jun 11, 2024 at 10:21:47AM +0200, Vegard Nossum wrote:
 > 
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> On 17/04/2024 11:44, Greg Kroah-Hartman wrote:
+> > Description
+> > ===========
+> > 
+> > In the Linux kernel, the following vulnerability has been resolved:
+> > 
+> > net/handshake: Fix handshake_req_destroy_test1
+> > 
+> > Recently, handshake_req_destroy_test1 started failing:
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
-Acked-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-
-> ---
->   MAINTAINERS | 9 +++++++++
->   1 file changed, 9 insertions(+)
+> [...]
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fb32a2fe3a79..e7fd595b8f5e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1924,6 +1924,15 @@ F:	include/dt-bindings/reset/actions,*
->   F:	include/linux/soc/actions/
->   N:	owl
->   
-> +ARM/AIROHA SOC SUPPORT
-> +M:	Matthias Brugger <matthias.bgg@gmail.com>
-> +M:	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> +L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
-> +S:	Odd Fixes
-> +F:	arch/arm/boot/dts/airoha/
-> +F:	arch/arm64/boot/dts/airoha/
-> +
->   ARM/Allwinner SoC Clock Support
->   M:	Emilio López <emilio@elopez.com.ar>
->   S:	Maintained
+> > Affected files
+> > ==============
+> > 
+> > The file(s) affected by this issue are:
+> > 	net/handshake/handshake-test.c
+> 
+> Hi,
+> 
+> This patch
+> (https://git.kernel.org/torvalds/c/4e1d71cabb19ec2586827adfc60d68689c68c194)
+> fixes a kunit test; we therefore believe this is not a vulnerability.
 
+Many systems build kunit tests into the kernels they ship to customers
+(hint, a few hundred million phones have them enabled...)  So if your
+system does build this one, then it is an issue for you.
+
+If you don't build it, wonderful, not a problem!  But we can't just not
+assign a CVE just because someone might not build this file, again, we
+do not know use cases, which is why we have to assign CVEs for all files
+that could be built as part of a kernel image (but not for the userspace
+test stuff.)
+
+thanks,
+
+greg k-h
 
