@@ -1,129 +1,130 @@
-Return-Path: <linux-kernel+bounces-213747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73F99079D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:28:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 272629079D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDD2B1C22C7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:28:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A466FB24441
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDCB14A4EA;
-	Thu, 13 Jun 2024 17:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51F714A0B6;
+	Thu, 13 Jun 2024 17:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IW7+bqMx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6HZE6tS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD26149E06;
-	Thu, 13 Jun 2024 17:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DA314A0A8
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 17:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718299694; cv=none; b=k6tuOgpc0EpM8NUMuxnf/fqTRER3dE/QPzMDgh2nfgBcgnUKUcxJA76KzIuIDKGceurU2BgXm7SqXveCDtLSHQ9ZlQEdb7bycdPlL8F9rnoVosV/cuYSYN5Xz+Bt9nG/57DL4vjx6s6rweDhbrin0l/GikHqRSL2UgYG8dp04Zw=
+	t=1718299710; cv=none; b=CWqGAKKqmMSk13ZpmBzh8Osldq8VP+0sZuQR7bH7y3pD0bIicqnXBWfcO5QnCrXd3aQ09U4aopqbaBbAkhaEa1/aiaJ1gOU2AOlBKclCulkC/3i4mj7q4bU62nO1sUAXMaEKWnZjIRMDqdsTEPF2FPqYpqQO6QrpzvXNp7su6sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718299694; c=relaxed/simple;
-	bh=CNrPcqc8022Bt4QwcjS0SE8OmQ9gGgaggZXF2mwS7Sk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aQ1yv/IzvVTTCNHlWFiCTrkkylP0dI/Qg/JXyzCRi7J5SE0s1CIMp5QQqOgyc9lB/zGbEz3mflK1zhcPAIXdvabGK19Da7v8SGzYIe3McnZdD0xKp31Ut18qgvnzslPJZuTVc4z9/MxM0P9fUYyp9/xvx6ztdXwiP+uwLQSXNV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IW7+bqMx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DDhZB5018436;
-	Thu, 13 Jun 2024 17:28:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	aA7Z5zxsmTlozGn3Npa3uDeUxg+iQykh1R92quahMZ4=; b=IW7+bqMxXd9aIbTL
-	YszADtwGo7MbJN/pvNr+9ATdgZDipa6o+10/aKhV2y1/U6pFFuFVwWiaSrj+cmCH
-	d2Qx9mAiXj0nbXxvNy0w2jBbot99WWaJ4EAb3Xubk8DrRevyd5COVrG6AypYrhnq
-	zKz5oZfQCSgw4QV8earayidPNPyQMFHMe6xI9llsyuoxKl1mFgyZ9R4WWAufuzFB
-	qivFodtPq//GhBfGoq6wcxX3Nha2r2ZRpomxhMPf4RrkTGVCf5LNDEyvKX/xiKh8
-	EzyuvOPS/xLpMjf4aoHQ4u2s3EG7f3vxERLzkIEwUdA0fe1IBadJXeheTa4xPnbt
-	a49wvQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yr1wfgp7c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 17:28:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45DHS7vb017418
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Jun 2024 17:28:07 GMT
-Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
- 2024 10:28:02 -0700
-Message-ID: <24d2d3b3-d676-8e86-bae4-c3538b7b9981@quicinc.com>
-Date: Thu, 13 Jun 2024 22:57:59 +0530
+	s=arc-20240116; t=1718299710; c=relaxed/simple;
+	bh=QDAVq3HvuBQigwxCCl2Vy0xixFerZ7QHysFs+R596bg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GvHmRB2Ib4JOeqRx6V/fr8U+UUVOr8dcsU0O1UBWxHi2zzZ4myvrAfPY+ZxCQnbRbc7pUtqesZdiOYPbSazGJiOeKXeG00abrjqFkmNmDdr5Gsy8smQasop0qsEcqJEM5aTOgPFvUdosZkPxAblQxexnObp7cj3FzM0W8axxI1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6HZE6tS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40B83C2BBFC;
+	Thu, 13 Jun 2024 17:28:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718299709;
+	bh=QDAVq3HvuBQigwxCCl2Vy0xixFerZ7QHysFs+R596bg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N6HZE6tSlcqrQhJyQ6962jv0w9Xk9FjcjJ3a1bmD4Dhd9yWyGYqA05vWrRvPiqLVg
+	 ekMVlrK6jcrEVbJE3gb4Oc3ldV30Y7l5uyMyMTDqSQahnGnfcEWV7DFy/INJrt3c77
+	 5R0ivi0EWojkyyUxxX2TADmKH5CQRWohRrC9BMOLA2P0L7QW7xEad1rym4bIFdTi+2
+	 AeDvYGyYL8gBuJS81ETZWaW82zrsWzuMBbs8iAqVaowFhnAVe9+nEgW4hYUK3nLQxY
+	 vMGtQHqT28s6J+sioji184j92x602uNqV7iEujdowMi7vszTliw+T29M3j0WHR5b5i
+	 zRKWQNiAbgufA==
+Date: Thu, 13 Jun 2024 19:28:26 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Vignesh Raman <vignesh.raman@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, airlied@gmail.com, daniel@ffwll.ch, 
+	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com, mairacanal@riseup.net, 
+	hamohammed.sa@gmail.com, robdclark@gmail.com, maarten.lankhorst@linux.intel.com, 
+	tzimmermann@suse.de, daniels@collabora.com, helen.koike@collabora.com, 
+	guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] drm/ci: add tests on vkms
+Message-ID: <20240613-swine-of-abstract-flowers-c8d171@houat>
+References: <20240611091037.558969-1-vignesh.raman@collabora.com>
+ <20240613-bipedal-eccentric-locust-91632b@houat>
+ <bd430442-6074-44b1-ba62-d3fa9e7bf28e@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 0/4] arm64: dts: qcom: x1e80100: Enable bwmon and fastrpc
- support
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
-        <djakov@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <srinivas.kandagatla@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
-        <conor+dt@kernel.org>, <dmitry.baryshkov@linaro.org>,
-        <abel.vesa@linaro.org>
-References: <20240604011157.2358019-1-quic_sibis@quicinc.com>
- <be2dc908-c8d3-4739-9f46-8f8daf0f328e@linaro.org>
-From: Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <be2dc908-c8d3-4739-9f46-8f8daf0f328e@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: NyH2GTLbNEYNrJDtmz0cvT1ZdMXWEzf_
-X-Proofpoint-GUID: NyH2GTLbNEYNrJDtmz0cvT1ZdMXWEzf_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_11,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 adultscore=0
- bulkscore=0 mlxscore=0 mlxlogscore=797 spamscore=0 clxscore=1015
- impostorscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405170001 definitions=main-2406130125
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wrwuwca5fybozgrz"
+Content-Disposition: inline
+In-Reply-To: <bd430442-6074-44b1-ba62-d3fa9e7bf28e@collabora.com>
 
 
+--wrwuwca5fybozgrz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 6/6/24 16:00, Konrad Dybcio wrote:
-> On 4.06.2024 3:11 AM, Sibi Sankar wrote:
->> This patch series enables bwmon and fastrpc support on X1E80100 SoCs.
->>
->> This series applies on:
->> next-20240603 + https://lore.kernel.org/lkml/20240603205859.2212225-1-quic_sibis@quicinc.com/
->>
-> 
-> Going back to [1], is memlat-over-scmi not enough to give us good numbers
-> without OS intervention? Does probing bwmon and making some decisions in
-> Linux actually help here?
+Hi,
 
-Memlat and bwmon are meant to cover to different use cases. Though
-they have a big overlap on when they get triggered bwmon is specifically
-meant to address cases where band-width aggregation is required (meaning
-if other peripherals already have a avg bw vote on active LLCC/DDR, the
-vote from bwmon would be an additional request on top of that). However
-to make use of this we should vote for avg-kbps in addition to peak from
-icc-bwmon driver which we don't currently do (Shiv was planning on
-sending a fix for it).
+On Thu, Jun 13, 2024 at 01:56:10PM GMT, Vignesh Raman wrote:
+> On 13/06/24 13:07, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > On Tue, Jun 11, 2024 at 02:40:37PM GMT, Vignesh Raman wrote:
+> > > diff --git a/drivers/gpu/drm/ci/xfails/vkms-none-flakes.txt b/drivers=
+/gpu/drm/ci/xfails/vkms-none-flakes.txt
+> > > new file mode 100644
+> > > index 000000000000..56484a30aff5
+> > > --- /dev/null
+> > > +++ b/drivers/gpu/drm/ci/xfails/vkms-none-flakes.txt
+> > > @@ -0,0 +1,15 @@
+> > > +# Board Name: vkms
+> > > +# Bug Report: https://lore.kernel.org/dri-devel/61ed26af-062c-443c-9=
+df2-d1ee319f3fb0@collabora.com/T/#u
+> > > +# Failure Rate: 50
+> > > +# IGT Version: 1.28-g0df7b9b97
+> > > +# Linux Version: 6.9.0-rc7
+> > > +kms_cursor_legacy@long-nonblocking-modeset-vs-cursor-atomic
+> > > +kms_flip@basic-flip-vs-wf_vblank
+> > > +kms_flip@flip-vs-expired-vblank-interruptible
+> > > +kms_flip@flip-vs-wf_vblank-interruptible
+> > > +kms_flip@plain-flip-fb-recreate-interruptible
+> > > +kms_flip@plain-flip-ts-check
+> > > +kms_flip@plain-flip-ts-check-interruptible
+> > > +kms_flip@flip-vs-absolute-wf_vblank
+> > > +kms_flip@flip-vs-absolute-wf_vblank-interruptible
+> > > +kms_flip@flip-vs-blocking-wf-vblank
+> >=20
+> > We should have the header for every line here
+>=20
+> All the flakes in these tests were observed with version
+> 6.9.0-rc7/1.28-g0df7b9b97. So can we group them together?
+>=20
+> If we update this file for different IGT/kernel version, we can add a
+> separate header for each test.
 
--Sibi
+If we don't however, we have no way to tell in a couple months whether
+those flakes were there before we were adding those metadata, or if the
+metadata applies to everything, or only a subset.
 
-> 
-> Konrad
-> 
-> [1] https://lore.kernel.org/all/20240117173458.2312669-1-quic_sibis@quicinc.com/
+Maxime
+
+--wrwuwca5fybozgrz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZmssOgAKCRDj7w1vZxhR
+xZXFAQDs7TmILk6jOoCj9+p6Lqv0MVTBsGyty3bGr7SjLRmmrwEAkvxi7aXVgAQh
+mqM/wt5a7+S1t3VY6hhZBtVAz/AgOw4=
+=UG46
+-----END PGP SIGNATURE-----
+
+--wrwuwca5fybozgrz--
 
