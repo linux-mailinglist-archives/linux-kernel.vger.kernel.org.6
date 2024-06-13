@@ -1,79 +1,136 @@
-Return-Path: <linux-kernel+bounces-213477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294029075D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 16:57:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05CFB9075E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 359B61C22158
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:57:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C48D287EF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 15:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C3B1487E7;
-	Thu, 13 Jun 2024 14:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B1414901B;
+	Thu, 13 Jun 2024 15:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2PSVOG0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UmEmfmha"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521861487F9;
-	Thu, 13 Jun 2024 14:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1985D146A67
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 15:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718290640; cv=none; b=d/eILuHbsykKJFED2o4ZowhNHww1g5DUiMhLBfbifJXL4xQx9e3Icj6NIlhdbHesKEZE6VhSV/FPWR3RPBrgbP+UmC7vXdkC7kow5vsXm2IXWMu+b+b7SDCnrG3twtvX53o3REStFSChfecrPc21IkqHkPQPZzEXNNo4u9DO69A=
+	t=1718290941; cv=none; b=T+nQ1pJ5VBbACxB/EukfCY35SPXHKfMGJOYa8lGEROmPymtcJtx3xEQOadDasRg9wHzVWsZiOW7JIXxkz91N8fY7Xo57lWip1kGmw6ZO+QaEsUQwa5TkkRzv6I5o1ZqLOf6d+uuCaRWKNd4XQTc+/7ZaPn1s7yNqLD/+5PPKgDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718290640; c=relaxed/simple;
-	bh=VpDZul0bhSNu3Zrovm6iLbd1UEv4aTxLzxdXk/cP2X0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nKYQ47y1hjqx4kihUd7OOOCH+J4BrVfAZFwdajVkytZ9rgPhFOdr5XNNL3y5t8cwIx59hiCXYSquzoz1T6JwnDUgB2qrn18UGipWdMbqBQKKy4WX1+EgBxByb3yqoFXWFArWirIwmfqIMrxqnQEb288w98BC7USUy7c7Iw5ytXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2PSVOG0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72BBFC2BBFC;
-	Thu, 13 Jun 2024 14:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718290639;
-	bh=VpDZul0bhSNu3Zrovm6iLbd1UEv4aTxLzxdXk/cP2X0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=F2PSVOG0MlFsHAq/999jEQp7J8eEi49ExPpFlfq4Qi+2K8ypzQsEFAWq1RBP3uKcj
-	 Xp7WL+kVAe17fCpXy6AytoH4TuXKgPL+eLOq38aTw2EEOpRKPAlEuBlv7srEhZ/EF5
-	 omts0HGyoGQDEodHlc3vmdMWRFnv4dG8Zl+8KWAAVkeiLtMaqvFlNoVVE6pZlvNGV9
-	 /xlqhTkS97FLN+e0qQTor1srVAJchM5U93UgD4sTmDG8c/T36MH2RahWAdNZz+e2zd
-	 fiAogkV7OVmbeZzh3tVwNxRqEDE1F/VxincbIT/aK4arguf0wg1RH6WMECZuZi2VUr
-	 lGIqyXdjcP29Q==
-From: Lee Jones <lee@kernel.org>
-To: kernel@quicinc.com, Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <20240603-md-drivers-mfd-qcom-v1-1-88e48013eccc@quicinc.com>
-References: <20240603-md-drivers-mfd-qcom-v1-1-88e48013eccc@quicinc.com>
-Subject: Re: (subset) [PATCH] mfd: qcom-pm8008: add missing
- MODULE_DESCRIPTION() macro
-Message-Id: <171829063819.2654460.17122304587816760447.b4-ty@kernel.org>
-Date: Thu, 13 Jun 2024 15:57:18 +0100
+	s=arc-20240116; t=1718290941; c=relaxed/simple;
+	bh=vR9NwaM4K/cYj+QcW2JvRTu9+uSVsH0EXb3Y1Iv1cYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XoLSe4W+d42U+PAJ4JkA7hxWUbBUWss3KaHu7/2k+IN/Sl+2JydFsR65cmX2c3tQaumZ5WkedZDWmZMzU3+AJsSiuFUBp5VaLNlwlMMrwlHTsXg/6y7ukUnFraAOc1h7tkDPZgB7rRrV8ZfrOavjxvDUBZvaK143IgUsfv+lexs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UmEmfmha; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718290937;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RsGjIQ/eoSOVrd1/81v2Gd3TZB10IZEXVzo2atMoutM=;
+	b=UmEmfmhalnyQKtbhkezRRuEKDKzuTb0kA4x4vPxz+nnmU4GGLpPl3KXBOWib7Iu9nkcytY
+	LwtQFX4VPEP7F2Q4vNMAdvAqGGZrjqtUIm8tagf0CYTvuAbDURxgdD4RMQJgqGNSuxq1kg
+	W9xSZAqn3Y5dOYTeOw56V8c6C2Je7tk=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-672-toVAdbV7NkupH4EZS3Am9w-1; Thu,
+ 13 Jun 2024 11:02:11 -0400
+X-MC-Unique: toVAdbV7NkupH4EZS3Am9w-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A268C1955BDF;
+	Thu, 13 Jun 2024 15:01:58 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.233])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 1E7D21955E72;
+	Thu, 13 Jun 2024 15:01:33 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 13 Jun 2024 17:00:17 +0200 (CEST)
+Date: Thu, 13 Jun 2024 17:00:02 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Rachel Menge <rachelmenge@linux.microsoft.com>,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	Wei Fu <fuweid89@gmail.com>, apais@linux.microsoft.com,
+	Sudhanva Huruli <Sudhanva.Huruli@microsoft.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christian Brauner <brauner@kernel.org>,
+	Mike Christie <michael.christie@oracle.com>,
+	Joel Granados <j.granados@samsung.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: [PATCH] zap_pid_ns_processes: don't send SIGKILL to sub-threads
+Message-ID: <20240613150001.GB18218@redhat.com>
+References: <1386cd49-36d0-4a5c-85e9-bc42056a5a38@linux.microsoft.com>
+ <20240608154835.GD7947@redhat.com>
+ <87msnpov2z.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87msnpov2z.fsf@email.froward.int.ebiederm.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, 03 Jun 2024 17:05:44 -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/qcom-pm8008.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> 
+On 06/13, Eric W. Biederman wrote:
+>
+> Oleg Nesterov <oleg@redhat.com> writes:
+>
+> > The comment above the idr_for_each_entry_continue() loop tries to explain
+> > why we have to signal each thread in the namespace, but it is outdated.
+> > This code no longer uses kill_proc_info(), we have a target task so we can
+> > check thread_group_leader() and avoid the unnecessary group_send_sig_info.
+> > Better yet, we can change pid_task() to use PIDTYPE_TGID rather than _PID,
+> > this way it returns NULL if this pid is not a group-leader pid.
+> >
+> > Also, change this code to check SIGNAL_GROUP_EXIT, the exiting process /
+> > thread doesn't necessarily has a pending SIGKILL. Either way these checks
+> > are racy without siglock, so the patch uses data_race() to shut up KCSAN.
+>
+> You remove the comment but the meat of what it was trying to say remains
+> true.  For processes in a session or processes is a process group a list
+> of all such processes is kept.  No such list is kept for a pid
+> namespace.  So the best we can do is walk through the allocated pid
+> numbers in the pid namespace.
 
-Applied, thanks!
+OK, I'll recheck tomorrow. Yet I think it doesn't make sense to send
+SIGKILL to sub-threads, and the comment looks misleading today. This was
+the main motivation, but again, I'll recheck.
 
-[1/1] mfd: qcom-pm8008: add missing MODULE_DESCRIPTION() macro
-      commit: 7d58eb159f217c69e5b6a0d71b3cfd5f40b367bf
+> It would also help if this explains that in the case of SIGKILL
+> complete_signal always sets SIGNAL_GROUP_EXIT which makes that a good
+> check to use to see if the process has been killed (with SIGKILL).
 
---
-Lee Jones [李琼斯]
+Well, if SIGNAL_GROUP_EXIT is set we do not care if this process was
+killed or not. It (the whole thread group) is going to exit, that is all.
+
+We can even remove this check, it is just the optimization, just like
+the current fatal_signal_pending() check.
+
+Oleg.
 
 
