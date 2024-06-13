@@ -1,83 +1,196 @@
-Return-Path: <linux-kernel+bounces-213736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16AC39079A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:21:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF3319079A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A62FC2879C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:21:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BF09B23834
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2730614AD22;
-	Thu, 13 Jun 2024 17:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kXFfAgqG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC95D14B07D;
+	Thu, 13 Jun 2024 17:20:29 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FA714A4D2;
-	Thu, 13 Jun 2024 17:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D74D14A4DC;
+	Thu, 13 Jun 2024 17:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718299213; cv=none; b=gxmUJFIinl5Iq9J2HDhdmpmKvTufg9IGeelcGsYe5Y7jiZmlJbnw8rJeyO04Lm3vPkEsx/hi7aHEWvc2QQS50tzRZoFtKMgDxi02jjjENUXSUhinjzsOIoDnIJjcoXO4tpxImJ5PvImSnSgoPUDRzZTHY7JWMQvgctiRBoUxaMQ=
+	t=1718299229; cv=none; b=ZtwvfB/ZV7ejL0IeHHt+wXLN6SpcEedzqQXNkST5nvY6Qf/l5fH8CYNH4j+8j6h+qDxL1qYnT5T+jKeZXOIsNTDWgfZkKmEMPhxrR1y8LB51FuL2dhdSyYaIodRHoINWGZYNSEXfF1id1UuF0Jr4J8B/rTW2n9fBzuwOFBCTafA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718299213; c=relaxed/simple;
-	bh=Apy/YJfzCXG5qBffjVb5Em/7Y/ajo8ZRh+LCsukDKns=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ifx9IjiCMm46I1p1wTvzGACANJBojIW3v8ckfBxhZvcRFSKHthJp9Co45mAuit4PeIM4jbW5/2+iQf1Sm85XkmRtjno3btbPmP4e23PD8xDFvmJGICWusS6pXPeB1ADvzlZQvpcDZSNANHNWwXBIZqst5a6k+PJdXFF6lFdMn6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kXFfAgqG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66789C2BBFC;
-	Thu, 13 Jun 2024 17:20:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718299212;
-	bh=Apy/YJfzCXG5qBffjVb5Em/7Y/ajo8ZRh+LCsukDKns=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=kXFfAgqGGfRDajw1ZdSl8ujZ8VNXRrUmaB5qtDjpeh2Z+N7taNOmSuloB3JcuLlxY
-	 cQn7auRp4fQYw9q4qszuzglsJCU4SucZjkUAaahDbFKjsIUGkRvXpP28EcpM0Agd9K
-	 n8d6bfEiH0f0BmM9k7yQCnIqphMMFwSJc9DQSOvYG5VyhINGHmMerx0TozM2JWMXJX
-	 jp0xnrq5xZme5OE7Lfk6dn0LQxUWD094vSQxaCEtvXPP0ZS3q3C5r0ygn1by4LYoFv
-	 98QoRL7uyWnk0lrdx5nK4cw8ssU22dTHjOyn6y7qQGitRvmteIrGdvFrr/zCW+s5Bf
-	 yMtoAR8UHUmOQ==
-From: Lee Jones <lee@kernel.org>
-To: Daniel Thompson <daniel.thompson@linaro.org>, 
- Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, 
- Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <20240612-md-drivers-video-backlight-v1-1-f4ca1beb36cc@quicinc.com>
-References: <20240612-md-drivers-video-backlight-v1-1-f4ca1beb36cc@quicinc.com>
-Subject: Re: (subset) [PATCH] backlight: add missing MODULE_DESCRIPTION()
- macros
-Message-Id: <171829921116.2731555.2620177411029795057.b4-ty@kernel.org>
-Date: Thu, 13 Jun 2024 18:20:11 +0100
+	s=arc-20240116; t=1718299229; c=relaxed/simple;
+	bh=bcTlQCZmkD/Xi9pbAhyUanFMXK8HrG7tkMYcoDGGb+g=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UzpKMs75IVbWW7zhNibdHWrpI5+pD2F8huCnmktjEZagOgifZuqetAZ5hwtZrgUeqW/2KeGaGWqce0BWDux3C9iRJHQxmdU4JYOPKWOESIj+t/xEwSK38yalBRi6WUx4u+vdmhQLrYACAcjSChgyd+KOWJ5+Yk8xPlxCZkAWWLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W0TfD3Fs8z6K91P;
+	Fri, 14 Jun 2024 01:19:00 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8267F1400CB;
+	Fri, 14 Jun 2024 01:20:23 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Jun
+ 2024 18:20:22 +0100
+Date: Thu, 13 Jun 2024 18:20:21 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Trevor Gamblin <tgamblin@baylibre.com>
+CC: Lucas Stankus <lucas.p.stankus@gmail.com>, Lars-Peter Clausen
+	<lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan
+ Cameron <jic23@kernel.org>, Dmitry Rokosov <ddrokosov@sberdevices.ru>, Cosmin
+ Tanislav <cosmin.tanislav@analog.com>, Chen-Yu Tsai <wens@csie.org>, Hans de
+ Goede <hdegoede@redhat.com>, Ray Jui <rjui@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, "Broadcom internal kernel review list"
+	<bcm-kernel-feedback-list@broadcom.com>, "Shawn Guo" <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Neil Armstrong
+	<neil.armstrong@linaro.org>, "Kevin Hilman" <khilman@baylibre.com>, Jerome
+ Brunet <jbrunet@baylibre.com>, "Martin Blumenstingl"
+	<martin.blumenstingl@googlemail.com>, Saravanan Sekar <sravanhome@gmail.com>,
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
+	<baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+	<nuno.sa@analog.com>, Linus Walleij <linus.walleij@linaro.org>, Jean-Baptiste
+ Maneyrol <jmaneyrol@invensense.com>, Crt Mori <cmo@melexis.com>, Uwe
+ =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <imx@lists.linux.dev>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>
+Subject: Re: [RESEND][PATCH] iio: simplify with regmap_set_bits(),
+ regmap_clear_bits()
+Message-ID: <20240613182021.00005072@Huawei.com>
+In-Reply-To: <20240611165214.4091591-1-tgamblin@baylibre.com>
+References: <20240611165214.4091591-1-tgamblin@baylibre.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Wed, 12 Jun 2024 07:12:31 -0700, Jeff Johnson wrote:
-> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/platform_lcd.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/rt4831-backlight.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> 
-> [...]
+On Tue, 11 Jun 2024 12:52:06 -0400
+Trevor Gamblin <tgamblin@baylibre.com> wrote:
 
-Applied, thanks!
+> Simplify the way regmap is accessed in iio drivers.
+>=20
+> Instead of using regmap_update_bits() and passing the mask twice, use
+> regmap_set_bits().
+>=20
+> Instead of using regmap_update_bits() and passing val =3D 0, use
+> regmap_clear_bits().
+>=20
+> Suggested-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+Looks like a good change in general. However...
 
-[1/1] backlight: add missing MODULE_DESCRIPTION() macros
-      commit: 7857f5c38d04a38e7a20060a6d370caf0424aa4e
+The problem with a change like this is it results in
+non trivial backporting if we need to due to a fix in related
+code.
 
---
-Lee Jones [李琼斯]
+As such, whilst it will obviously generate a lot of patches, I'd
+like this split up into a series so each patch touches only one driver.
+Fine to keep a single patch for the multiple module for a single
+device cases though.
 
+Also some very long lines that need the line breaks put back.
+
+Jonathan
+
+
+> diff --git a/drivers/iio/accel/msa311.c b/drivers/iio/accel/msa311.c
+> index b8ddbfd98f11..40e605c57adb 100644
+> --- a/drivers/iio/accel/msa311.c
+> +++ b/drivers/iio/accel/msa311.c
+> @@ -1034,10 +1034,8 @@ static int msa311_chip_init(struct msa311_priv *ms=
+a311)
+>  				     "failed to unmap map0/map1 interrupts\n");
+> =20
+>  	/* Disable all axes by default */
+> -	err =3D regmap_update_bits(msa311->regs, MSA311_ODR_REG,
+> -				 MSA311_GENMASK(F_X_AXIS_DIS) |
+> -				 MSA311_GENMASK(F_Y_AXIS_DIS) |
+> -				 MSA311_GENMASK(F_Z_AXIS_DIS), 0);
+> +	err =3D regmap_clear_bits(msa311->regs, MSA311_ODR_REG,
+> +				MSA311_GENMASK(F_X_AXIS_DIS) | MSA311_GENMASK(F_Y_AXIS_DIS) | MSA311=
+_GENMASK(F_Z_AXIS_DIS));
+Too long
+
+> diff --git a/drivers/iio/adc/cpcap-adc.c b/drivers/iio/adc/cpcap-adc.c
+> index b6c4ef70484e..8fabf748c36b 100644
+> --- a/drivers/iio/adc/cpcap-adc.c
+> +++ b/drivers/iio/adc/cpcap-adc.c
+> @@ -385,9 +385,8 @@ static irqreturn_t cpcap_adc_irq_thread(int irq, void=
+ *data)
+> @@ -424,23 +423,17 @@ static void cpcap_adc_setup_calibrate(struct cpcap_=
+adc *ddata,
+>  	if (error)
+>  		return;
+> =20
+> -	error =3D regmap_update_bits(ddata->reg, CPCAP_REG_ADCC2,
+> -				   CPCAP_BIT_ATOX_PS_FACTOR |
+> -				   CPCAP_BIT_ADC_PS_FACTOR1 |
+> -				   CPCAP_BIT_ADC_PS_FACTOR0,
+> -				   0);
+> +	error =3D regmap_clear_bits(ddata->reg, CPCAP_REG_ADCC2,
+> +				  CPCAP_BIT_ATOX_PS_FACTOR | CPCAP_BIT_ADC_PS_FACTOR1 | CPCAP_BIT_AD=
+C_PS_FACTOR0);
+That one is over 100! =20
+>  	if (error)
+
+> diff --git a/drivers/iio/gyro/mpu3050-core.c b/drivers/iio/gyro/mpu3050-c=
+ore.c
+> index a791ba3a693a..ff1c81553045 100644
+> --- a/drivers/iio/gyro/mpu3050-core.c
+> +++ b/drivers/iio/gyro/mpu3050-core.c
+
+> =20
+> @@ -513,12 +513,8 @@ static irqreturn_t mpu3050_trigger_handler(int irq, =
+void *p)
+>  				 "FIFO overflow! Emptying and resetting FIFO\n");
+>  			fifo_overflow =3D true;
+>  			/* Reset and enable the FIFO */
+> -			ret =3D regmap_update_bits(mpu3050->map,
+> -						 MPU3050_USR_CTRL,
+> -						 MPU3050_USR_CTRL_FIFO_EN |
+> -						 MPU3050_USR_CTRL_FIFO_RST,
+> -						 MPU3050_USR_CTRL_FIFO_EN |
+> -						 MPU3050_USR_CTRL_FIFO_RST);
+> +			ret =3D regmap_set_bits(mpu3050->map, MPU3050_USR_CTRL,
+> +					      MPU3050_USR_CTRL_FIFO_EN | MPU3050_USR_CTRL_FIFO_RST);
+
+Keep the line break to stay under 80 chars.
+
+> @@ -997,11 +991,8 @@ static int mpu3050_drdy_trigger_set_state(struct iio=
+_trigger *trig,
+>  			return ret;
+> =20
+>  		/* Reset and enable the FIFO */
+> -		ret =3D regmap_update_bits(mpu3050->map, MPU3050_USR_CTRL,
+> -					 MPU3050_USR_CTRL_FIFO_EN |
+> -					 MPU3050_USR_CTRL_FIFO_RST,
+> -					 MPU3050_USR_CTRL_FIFO_EN |
+> -					 MPU3050_USR_CTRL_FIFO_RST);
+> +		ret =3D regmap_set_bits(mpu3050->map, MPU3050_USR_CTRL,
+> +				      MPU3050_USR_CTRL_FIFO_EN | MPU3050_USR_CTRL_FIFO_RST);
+
+For IIO stuff try and stay under 80 chars unless there is a strong
+readability argument for going longer.  Here there isn't one.
+
+>  		if (ret)
+>  			return ret;
+> =20
 
