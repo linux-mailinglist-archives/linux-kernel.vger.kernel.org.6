@@ -1,178 +1,394 @@
-Return-Path: <linux-kernel+bounces-213230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AF2790725E
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:47:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24FFA907268
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E0CCB2211C
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:46:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5E881F21C8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A071143884;
-	Thu, 13 Jun 2024 12:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976D4143C7A;
+	Thu, 13 Jun 2024 12:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bY9xcLBc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVO5Y11u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954002CA6;
-	Thu, 13 Jun 2024 12:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F3220ED;
+	Thu, 13 Jun 2024 12:47:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718282772; cv=none; b=H98Il9M0mGBq2UV1ZZwA5ocUvw33tigQi9kRDO9Zhsd15X3VGtVl3qf+E8LsvUvtUeZCVKczKI0KZnVPMdRJgkacqOJ+zGSqgqKN6UPMACZaVGMCrCtD4RplFuyt3BAdIbLJ2qo/r4RLoXtrre3DC0tFLRyz5DXMKFeYHcT4WxM=
+	t=1718282822; cv=none; b=qnOZBIWrrtYSvpLB00B5np44GR6O9EfyToHtHFnUMpjvy2n7NTS/XKFOvMtvzyAjvVWjix0RAx3QueM/SS/tSRk9v6CbUxt/mVsVezZ5IcXFKjspT2BapKiR0grZExg8y8FcsHIkviqEFaWtuzYIggvu2b5iLtnKZWgcz5eNREk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718282772; c=relaxed/simple;
-	bh=cfCIMolIL0z/9BdLp7c28KYqsd1e4cvIRocOkfmcZ08=;
+	s=arc-20240116; t=1718282822; c=relaxed/simple;
+	bh=gsUbpcLQpgDAJvsYM4jqhhT0OL75KDnPF5nPWEtzpLI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V0TMg1ylEl2kaX2BKvTebPvlNmasZiqGz7mOCWhtvNZOmKaHnBlGDMJ1J7j8aWxFLN05a7+CjRRy8WXH0uFKkHtGo7PZKDhHim+moOCszUj0HCMnRAUYkIBsIdOgQuhDYoTBHjUtDx5EpaLxjoVfptW+aKFIy+Xvqv3C2HPW9fY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bY9xcLBc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59D00C4AF1A;
-	Thu, 13 Jun 2024 12:46:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GbvRjWrqV0M+kFXcmA18KS4RgGsVMw9SDxi1Vzxpjo48C79ovL0oAM7vDwXPLOwaZ5DtCr8+874DStvRS57I6ETbmqM6BWKdhHYyLEDzW8ol4lNa1WA4Ht6ZbFo7mTaQ2VC6wkgUYlko9ZD2ruKBPySdLYSV9sjBbLEDlCmW/Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TVO5Y11u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A508EC2BBFC;
+	Thu, 13 Jun 2024 12:47:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718282772;
-	bh=cfCIMolIL0z/9BdLp7c28KYqsd1e4cvIRocOkfmcZ08=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=bY9xcLBchaDvzrtdUTNy9zOZJ0e7QkpI7+m9/3gM8hLADzknFSH4D6fBgxcOpcDpx
-	 GiqSZqbcWOYscQq8dCZT4gbD5MMWgwcwV9Bx19Z1oPyEFagYMVtQYkQeajrc0mKZvV
-	 Q1ma+nLS/ijqlrxMeuTvflAULxXhYBaNjFm625ScaqWChSiM0NXDBMfUl5vQC8XaHy
-	 zM85sb0bS2Td6Ytkyyh0gVc9idAM4KX3AjzI3NwRf1RoZh0MdxoDDUXVCz7wiSBnZQ
-	 xdXURGSPlYposntJNenfVKaabrc3cAGeKJVVoVKPfNndUFxHLpHuwR8u91TOcKAzmz
-	 I43fU844GD08A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 0237CCE3F3B; Thu, 13 Jun 2024 05:46:11 -0700 (PDT)
-Date: Thu, 13 Jun 2024 05:46:11 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
-	linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	bridge@lists.linux.dev, linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <e06440e2-9121-4c92-8bf2-945977987052@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
- <20240612143305.451abf58@kernel.org>
- <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
- <Zmov7ZaL-54T9GiM@zx2c4.com>
- <Zmo9-YGraiCj5-MI@zx2c4.com>
- <08ee7eb2-8d08-4f1f-9c46-495a544b8c0e@paulmck-laptop>
- <Zmrkkel0Fo4_g75a@zx2c4.com>
+	s=k20201202; t=1718282822;
+	bh=gsUbpcLQpgDAJvsYM4jqhhT0OL75KDnPF5nPWEtzpLI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TVO5Y11uNzT4AUpyPio2UmlJzsTQsJdX3+Zu65KAy8hHUoBLse1vJVSdmW9Kfk+SQ
+	 1Poet9RlIOuwPI1Pz30jTxQJ5G+w1T+fSnrpTPvZ8/Vq79k7djmABKaJGFuSVrOxvd
+	 zOxdIeWkzzsaGLG2+xMNLvm/il7jaouz66O7sM/jm69Y4Wyg7ss9r9BTxkq8SwccO+
+	 U0C+DK2N6taaCpxv8Iuugg/imW20pDLBWEa+F3rLrtbFFGgZZInQcyTkBVojRTVF/T
+	 3OyuF1VTw6s3UWy3uY825MB0dSkz6hBYSmZSm8A/RgUfA84PoQzvEzRPqfpqE8avZq
+	 7BEBYTEAnd7yQ==
+Date: Thu, 13 Jun 2024 09:46:58 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, mic@digikod.net, gnoack@google.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v4] perf trace: BTF-based enum pretty printing
+Message-ID: <ZmrqQs64TvAt8XjK@x1>
+References: <20240613042747.3770204-1-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zmrkkel0Fo4_g75a@zx2c4.com>
+In-Reply-To: <20240613042747.3770204-1-howardchu95@gmail.com>
 
-On Thu, Jun 13, 2024 at 02:22:41PM +0200, Jason A. Donenfeld wrote:
-> On Wed, Jun 12, 2024 at 08:38:02PM -0700, Paul E. McKenney wrote:
-> > o	Make the current kmem_cache_destroy() asynchronously wait for
-> > 	all memory to be returned, then complete the destruction.
-> > 	(This gets rid of a valuable debugging technique because
-> > 	in normal use, it is a bug to attempt to destroy a kmem_cache
-> > 	that has objects still allocated.)
-> > 
-> > o	Make a kmem_cache_destroy_rcu() that asynchronously waits for
-> > 	all memory to be returned, then completes the destruction.
-> > 	(This raises the question of what to is it takes a "long time"
-> > 	for the objects to be freed.)
+On Thu, Jun 13, 2024 at 12:27:47PM +0800, Howard Chu wrote:
+> changes in v4:
 > 
-> These seem like the best two options.
+> - Add enum support to tracepoint arguments
 
-I like them myself, but much depends on how much violence they do to
-the slab subsystem and to debuggability.
+That is cool, but see below the comment as having this as a separate
+patch.
 
-> > o	Make a kmem_cache_free_barrier() that blocks until all
-> > 	objects in the specified kmem_cache have been freed.
-> > 
-> > o	Make a kmem_cache_destroy_wait() that waits for all memory to
-> > 	be returned, then does the destruction.  This is equivalent to:
-> > 
-> > 		kmem_cache_free_barrier(&mycache);
-> > 		kmem_cache_destroy(&mycache);
+Also please, on the patch that introduces ! syscall tracepoint enum args
+BTF augmentation include examples of tracepoints being augmented. I'll
+try here while testing the patch as-is.
+
+More comments below.
+ 
+> - For tracing syscalls, move trace__load_vmlinux_btf() to
+> syscall__set_arg_fmts() to make it more elegant
 > 
-> These also seem fine, but I'm less keen about blocking behavior.
+> changes in v3:
+> 
+> - Fixed another awkward formatting issue in trace__load_vmlinux_btf()
+> 
+> changes in v2:
+> 
+> - Fix formatting issues
 
-One advantage of the blocking behavior is that it pinpoints memory
-leaks from that slab.  On the other hand, one can argue that you want
-this to block during testing but to be asynchronous in production.
-Borrowing someone else's hand, there are probably lots of other arguments
-one can make.
+<SNIP>
 
-> Though, along the ideas of kmem_cache_destroy_rcu(), you might also
-> consider renaming this last one to kmem_cache_destroy_rcu_wait/barrier().
-> This way, it's RCU focused, and you can deal directly with the question
-> of, "how long is too long to block/to memleak?"
+> before:
+> 
+> ```
+> perf $ ./perf trace -e landlock_add_rule
+>      0.000 ( 0.008 ms): ldlck-test/438194 landlock_add_rule(rule_type: 2)                                       = -1 EBADFD (File descriptor in bad state)
+>      0.010 ( 0.001 ms): ldlck-test/438194 landlock_add_rule(rule_type: 1)                                       = -1 EBADFD (File descriptor in bad state)
+> ```
+> 
+> after:
+> 
+> ```
+> perf $ ./perf trace -e landlock_add_rule
+>      0.000 ( 0.029 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_NET_PORT)                  = -1 EBADFD (File descriptor in bad state)
+>      0.036 ( 0.004 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_PATH_BENEATH)              = -1 EBADFD (File descriptor in bad state)
+> ```
+> 
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> ---
+>  tools/perf/builtin-trace.c | 121 ++++++++++++++++++++++++++++++++++---
+>  1 file changed, 111 insertions(+), 10 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 5cbe1748911d..0a168cb9b0c2 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -19,6 +19,7 @@
+>  #ifdef HAVE_LIBBPF_SUPPORT
+>  #include <bpf/bpf.h>
+>  #include <bpf/libbpf.h>
+> +#include <bpf/btf.h>
+>  #ifdef HAVE_BPF_SKEL
+>  #include "bpf_skel/augmented_raw_syscalls.skel.h"
+>  #endif
+> @@ -110,6 +111,11 @@ struct syscall_arg_fmt {
+>  	const char *name;
+>  	u16	   nr_entries; // for arrays
+>  	bool	   show_zero;
+> +	bool	   is_enum;
+> +	struct {
+> +		void	*entry;
+> +		u16	nr_entries;
+> +	}	   btf_entry;
+>  };
+>  
+>  struct syscall_fmt {
+> @@ -140,6 +146,7 @@ struct trace {
+>  #ifdef HAVE_BPF_SKEL
+>  	struct augmented_raw_syscalls_bpf *skel;
+>  #endif
+> +	struct btf		*btf;
+>  	struct record_opts	opts;
+>  	struct evlist	*evlist;
+>  	struct machine		*host;
+> @@ -887,6 +894,56 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
+>  
+>  #define SCA_GETRANDOM_FLAGS syscall_arg__scnprintf_getrandom_flags
+>  
+> +static int btf_enum_find_entry(struct btf *btf, char *type, struct syscall_arg_fmt *arg_fmt)
+> +{
+> +	const struct btf_type *bt;
+> +	char enum_prefix[][16] = { "enum", "const enum" }, *ep;
+> +	int id;
+> +	size_t i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(enum_prefix); i++) {
+> +		ep = enum_prefix[i];
+> +		if (strlen(type) > strlen(ep) + 1 && strstarts(type, ep))
+> +			type += strlen(ep) + 1;
+> +	}
+> +
+> +	id = btf__find_by_name(btf, type);
+> +	if (id < 0)
+> +		return -1;
+> +
+> +	bt = btf__type_by_id(btf, id);
+> +	if (bt == NULL)
+> +		return -1;
+> +
+> +	arg_fmt->btf_entry.entry      = btf_enum(bt);
+> +	arg_fmt->btf_entry.nr_entries = btf_vlen(bt);
+> +
+> +	return 0;
+> +}
+> +
+> +static size_t btf_enum_scnprintf(char *bf, size_t size, int val, struct btf *btf, char *type,
+> +				 struct syscall_arg_fmt *arg_fmt)
+> +{
+> +	struct btf_enum *be;
+> +	int i;
+> +
+> +	/* if btf_entry is NULL, find and save it to arg_fmt */
+> +	if (arg_fmt->btf_entry.entry == NULL)
+> +		if (btf_enum_find_entry(btf, type, arg_fmt))
+> +			return 0;
+> +
+> +	be = (struct btf_enum *)arg_fmt->btf_entry.entry;
+> +
+> +	for (i = 0; i < arg_fmt->btf_entry.nr_entries; ++i, ++be) {
+> +		if (be->val == val) {
+> +			return scnprintf(bf, size, "%s",
+> +					 btf__name_by_offset(btf, be->name_off));
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  #define STRARRAY(name, array) \
+>  	  { .scnprintf	= SCA_STRARRAY, \
+>  	    .strtoul	= STUL_STRARRAY, \
+> @@ -1238,6 +1295,7 @@ struct syscall {
+>  	bool		    is_exit;
+>  	bool		    is_open;
+>  	bool		    nonexistent;
+> +	bool		    use_btf;
+>  	struct tep_format_field *args;
+>  	const char	    *name;
+>  	const struct syscall_fmt  *fmt;
+> @@ -1699,6 +1757,15 @@ static void trace__symbols__exit(struct trace *trace)
+>  	symbol__exit();
+>  }
+>  
+> +static void trace__load_vmlinux_btf(struct trace *trace)
+> +{
+> +	trace->btf = btf__load_vmlinux_btf();
+> +	if (verbose > 0) {
+> +		fprintf(trace->output, trace->btf ? "vmlinux BTF loaded\n" :
+> +						    "Failed to load vmlinux BTF\n");
+> +	}
+> +}
+> +
+>  static int syscall__alloc_arg_fmts(struct syscall *sc, int nr_args)
+>  {
+>  	int idx;
+> @@ -1744,7 +1811,8 @@ static const struct syscall_arg_fmt *syscall_arg_fmt__find_by_name(const char *n
+>  }
+>  
+>  static struct tep_format_field *
+> -syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field *field)
+> +syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field *field,
+> +			    bool *use_btf)
+>  {
+>  	struct tep_format_field *last_field = NULL;
+>  	int len;
+> @@ -1756,6 +1824,7 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+>  			continue;
+>  
+>  		len = strlen(field->name);
+> +		arg->is_enum = false;
+>  
+>  		if (strcmp(field->type, "const char *") == 0 &&
+>  		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
+> @@ -1782,6 +1851,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+>  			 * 7 unsigned long
+>  			 */
+>  			arg->scnprintf = SCA_FD;
+> +		} else if (strstr(field->type, "enum") && use_btf != NULL) {
+> +			*use_btf = arg->is_enum = true;
+>  		} else {
+>  			const struct syscall_arg_fmt *fmt =
+>  				syscall_arg_fmt__find_by_name(field->name);
+> @@ -1796,9 +1867,14 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+>  	return last_field;
+>  }
+>  
+> -static int syscall__set_arg_fmts(struct syscall *sc)
+> +static int syscall__set_arg_fmts(struct trace *trace, struct syscall *sc)
 
-Good point!
+See the comment about evsel__init_tp_arg_scnprintf() below. Also please
+do patches on top of previous work, i.e. the v3 patch should be a
+separate patch and this v4 should add the extra functionality, i.e. the
+support for !syscall tracepoint enum BTF augmentation.
 
-> Specifically what I mean is that we can still claim a memory leak has
-> occurred if one batched kfree_rcu freeing grace period has elapsed since
-> the last call to kmem_cache_destroy_rcu_wait/barrier() or
-> kmem_cache_destroy_rcu(). In that case, you quit blocking, or you quit
-> asynchronously waiting, and then you splat about a memleak like we have
-> now.
+>  {
+> -	struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args);
+> +	bool use_btf;
+> +	struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args,
+> +									  &use_btf);
+> +
+> +	if (use_btf && trace->btf == NULL)
+> +		trace__load_vmlinux_btf(trace);
+>  
+>  	if (last_field)
+>  		sc->args_size = last_field->offset + last_field->size;
+> @@ -1883,15 +1959,20 @@ static int trace__read_syscall_info(struct trace *trace, int id)
+>  	sc->is_exit = !strcmp(name, "exit_group") || !strcmp(name, "exit");
+>  	sc->is_open = !strcmp(name, "open") || !strcmp(name, "openat");
+>  
+> -	return syscall__set_arg_fmts(sc);
+> +	return syscall__set_arg_fmts(trace, sc);
+>  }
+>  
+> -static int evsel__init_tp_arg_scnprintf(struct evsel *evsel)
+> +static int evsel__init_tp_arg_scnprintf(struct trace *trace, struct evsel *evsel)
 
-How about a kmem_cache_destroy_rcu() that marks that specified cache
-for destruction, and then a kmem_cache_destroy_barrier() that waits?
+The convention here is that evsel__ is the "class" name, so the first
+arg is a 'struct evsel *', if you really were transforming this into a
+'struct trace' specific "method" you would change the name of the C
+function to 'trace__init_tp_arg_scnprintf'.
 
-I took the liberty of adding your name to the Google document [1] and
-adding this section:
+But in this case instead of passing the 'struct trace' pointer all the
+way down we should instead pass a 'bool *use_btf' argument, making it:
 
-	kmem_cache_destroy_rcu/_barrier()
 
-	The idea here is to provide a asynchronous 
-	kmem_cache_destroy_rcu() as described above along with a
-	kmem_cache_destroy_barrier() that waits for the destruction
-	of all prior kmem_cache instances previously passed
-	to kmem_cache_destroy_rcu().  Alternatively,  could
-	return a cookie that could be passed into a later call to
-	kmem_cache_destroy_barrier().  This alternative has the
-	advantage of isolating which kmem_cache instance is suffering
-	the memory leak.
+static int evsel__init_tp_arg_scnprintf(struct evsel *evsel, bool *use_btf)
 
-Please let me know if either liberty is in any way problematic.
+Then, when evlist__set_syscall_tp_fields(evlist, &use_btf) returns,
+check that use_btf to check if we need to call
+trace__load_vmlinux_btf(trace).
 
-> But then, if that mechanism generally works, we don't really need a new
-> function and we can just go with the first option of making
-> kmem_cache_destroy() asynchronously wait. It'll wait, as you described,
-> but then we adjust the tail of every kfree_rcu batch freeing cycle to
-> check if there are _still_ any old outstanding kmem_cache_destroy()
-> requests. If so, then we can splat and keep the old debugging info we
-> currently have for finding memleaks.
+I'll test the patch as is now.
 
-The mechanism can always be sabotaged by memory-leak bugs on the part
-of the user of the kmem_cache structure in play, right?
+- Arnaldo
 
-OK, but I see your point.  I added this to the existing
-"kmem_cache_destroy() Lingers for kfree_rcu()" section:
-
-	One way of preserving this debugging information is to splat if
-	all of the slab’s memory has not been freed within a reasonable
-	timeframe, perhaps the same 21 seconds that causes an RCU CPU
-	stall warning.
-
-Does that capture it?
-
-							Thanx, Paul
-
-[1] https://docs.google.com/document/d/1v0rcZLvvjVGejT3523W0rDy_sLFu2LWc_NR3fQItZaA/edit?usp=sharing
+>  {
+>  	struct syscall_arg_fmt *fmt = evsel__syscall_arg_fmt(evsel);
+> +	bool use_btf;
+>  
+>  	if (fmt != NULL) {
+> -		syscall_arg_fmt__init_array(fmt, evsel->tp_format->format.fields);
+> +		syscall_arg_fmt__init_array(fmt, evsel->tp_format->format.fields, &use_btf);
+> +
+> +		if (use_btf && trace->btf == NULL)
+> +			trace__load_vmlinux_btf(trace);
+> +
+>  		return 0;
+>  	}
+>  
+> @@ -2103,6 +2184,16 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
+>  			if (trace->show_arg_names)
+>  				printed += scnprintf(bf + printed, size - printed, "%s: ", field->name);
+>  
+> +			if (sc->arg_fmt[arg.idx].is_enum && trace->btf) {
+> +				size_t p = btf_enum_scnprintf(bf + printed, size - printed, val,
+> +							      trace->btf, field->type,
+> +							      &sc->arg_fmt[arg.idx]);
+> +				if (p) {
+> +					printed += p;
+> +					continue;
+> +				}
+> +			}
+> +
+>  			printed += syscall_arg_fmt__scnprintf_val(&sc->arg_fmt[arg.idx],
+>  								  bf + printed, size - printed, &arg, val);
+>  		}
+> @@ -2791,7 +2882,7 @@ static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel,
+>  		val = syscall_arg_fmt__mask_val(arg, &syscall_arg, val);
+>  
+>  		/* Suppress this argument if its value is zero and show_zero property isn't set. */
+> -		if (val == 0 && !trace->show_zeros && !arg->show_zero)
+> +		if (val == 0 && !trace->show_zeros && !arg->show_zero && !arg->is_enum)
+>  			continue;
+>  
+>  		printed += scnprintf(bf + printed, size - printed, "%s", printed ? ", " : "");
+> @@ -2799,6 +2890,15 @@ static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel,
+>  		if (trace->show_arg_names)
+>  			printed += scnprintf(bf + printed, size - printed, "%s: ", field->name);
+>  
+> +		if (arg->is_enum && trace->btf) {
+> +			size_t p = btf_enum_scnprintf(bf + printed, size - printed, val, trace->btf,
+> +						      field->type, arg);
+> +			if (p) {
+> +				printed += p;
+> +				continue;
+> +			}
+> +		}
+> +
+>  		printed += syscall_arg_fmt__scnprintf_val(arg, bf + printed, size - printed, &syscall_arg, val);
+>  	}
+>  
+> @@ -4461,8 +4561,9 @@ static void evsel__set_syscall_arg_fmt(struct evsel *evsel, const char *name)
+>  	}
+>  }
+>  
+> -static int evlist__set_syscall_tp_fields(struct evlist *evlist)
+> +static int evlist__set_syscall_tp_fields(struct trace *trace)
+>  {
+> +	struct evlist *evlist = trace->evlist;
+>  	struct evsel *evsel;
+>  
+>  	evlist__for_each_entry(evlist, evsel) {
+> @@ -4470,7 +4571,7 @@ static int evlist__set_syscall_tp_fields(struct evlist *evlist)
+>  			continue;
+>  
+>  		if (strcmp(evsel->tp_format->system, "syscalls")) {
+> -			evsel__init_tp_arg_scnprintf(evsel);
+> +			evsel__init_tp_arg_scnprintf(trace, evsel);
+>  			continue;
+>  		}
+>  
+> @@ -4949,7 +5050,7 @@ int cmd_trace(int argc, const char **argv)
+>  
+>  	if (trace.evlist->core.nr_entries > 0) {
+>  		evlist__set_default_evsel_handler(trace.evlist, trace__event_handler);
+> -		if (evlist__set_syscall_tp_fields(trace.evlist)) {
+> +		if (evlist__set_syscall_tp_fields(&trace)) {
+>  			perror("failed to set syscalls:* tracepoint fields");
+>  			goto out;
+>  		}
+> -- 
+> 2.45.2
+> 
 
