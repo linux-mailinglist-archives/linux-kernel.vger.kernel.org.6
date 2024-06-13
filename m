@@ -1,163 +1,80 @@
-Return-Path: <linux-kernel+bounces-212640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18366906433
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:38:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3BA4906435
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B673A1F24478
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:38:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D8EA1F24B1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E6F137911;
-	Thu, 13 Jun 2024 06:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2EE137774;
+	Thu, 13 Jun 2024 06:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AXEuLiE/"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="v2M4YfBt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38364137761
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 06:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD69137761;
+	Thu, 13 Jun 2024 06:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718260683; cv=none; b=Xvw6QOK0hRdaB5puknuAb69Oqrn75xwI6521AexZA0a6jNZ47LGWuSIt53dqUFksgn5n4xgpK45FAjav1nvJwLWeCqvS+enIvkTfi63yjHXa31/y51hVuUbnkdEgoAoQTCJsi3b+wdrhoMbkpKqs38yDh/iGi2TjZDITUojFZVc=
+	t=1718260702; cv=none; b=gIGIv4K/UX6nF13vU8tblAaP33eVdew/q/nrM3ltGagj5TLs/yWz/ZSCVjU6pIycrAHeAUaXAOpMmoaRkyqUIfPVQC1SlQA08eb87pdEO/S+vxzHvaDm1Sgk0W3td+6gKqmQ70jm8fOqWRqPj7j1TG3iWd1W/DzNFRN/rUaMogg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718260683; c=relaxed/simple;
-	bh=D4H9WEaybswir/ij5ZUvHUvZ3BrEX8LaPweXhA6txCQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tFIpw5vm16mcwMOnx71KVs4uPggZ8nNNqyCmiChtHurLwdxxEBaEYrk599HajvEW5B8HetvtLrtPHPPt/P3l5HQVnCVbEE9mgGh+uchM3ChmBwro/aAZzDF+DJH54/IHSwKcXQuCirA+1Ar3JUeMKghDb1jNYiPc79XOJ8OKuw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AXEuLiE/; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6efe62f583so59914466b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 23:38:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718260680; x=1718865480; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nSxaLeoUF2GB1Ynl8GPq9r0Ie6ml6kc6+0f2KJsgPRI=;
-        b=AXEuLiE/uoqR6/G8TRtZ7Fthaw3ew+CCyLh8U8snXL54+PPjXidFKllyGOk7zlkgZv
-         Haxg+yCqc3teH9EoVzDJ4UO8uo0NqPtiml+p7ejaZwi4HfAXFWlCUwXIk38Ff/bbbQfe
-         8Lvi91ngAvc941Ec8M2eHQGb0wQPivU7s1rT/uXMbXeGDoJk4QMiYWynOk5bsCUHedrK
-         RSD2ANuTVd8505LC25cyLVVKv65xOKW9GFm+sQ5J8TNsSHV97HZOyziPVx8CqjDAMvg2
-         zrbzDWCRuFDRaYKR47rbc20qvsC22ZAfdWsGEDYZHzyy1RVo3fTtOPcdjoH74/IsGHkq
-         9LWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718260680; x=1718865480;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nSxaLeoUF2GB1Ynl8GPq9r0Ie6ml6kc6+0f2KJsgPRI=;
-        b=orVEyijL0i62ZRWtqdAr586yURzg1Fd+ccv1fV5ThUrWj9VqR3iSw0etMjmsqiuXq9
-         Oto8ZNPHfG6M7Tff6iRrvGkn7hfaKOOYwAhFF7TlVcW6HN6DE1KKBC2PDxunvyfpwqPu
-         n7JFmECgrwM/Imwq2/CIMxDNHNA77MiazQ23+WF5gG2uYY65JO90RIN55nTJEqJLrNmb
-         CNu3QE7ZEHpEeDdeovDzPIsOShyIrReBwJ7mQB2l5QkTjPARcv8RsaUda2BS1jPnUWXw
-         AJ59pPFNZixtqyM7BmpmcONWuSQMbqzwAIKWbnHfesM6wtRg58oIqMyIuScuFPQsxcte
-         zVDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCLL4D6yN9QLRdiVZR0FUEp5SxTd2e0P8MwYcFFMPsRwiHsAwTwodgIdh0/2ndcXl8r5y/amUjpwHoolBP3pDXhU32B154PfrnF9Bt
-X-Gm-Message-State: AOJu0YynvHOa2WAlvlaLzdR2P/9CHWeFD54qbutlW8lQKK9NZzjBwvyd
-	Ls6sHcabw1CmBjGvb2Op8+oryC4qBBm+6YNTnJtJJZeZDz09Q8N3dDALDjHbZiUOQl160x1NmR+
-	+a2nPiuCxPLhgu6jBOcHW9bJK4neisadWEzU4
-X-Google-Smtp-Source: AGHT+IEqcKmqMMras1IdQ4mwQeBPhF+tSokCQR7CyHJU0B0QtGnxu+D8T/n28pxb8A+jM+mpThteZ/Rdl1GC9K4JyBE=
-X-Received: by 2002:a17:907:e91:b0:a68:fb0c:b294 with SMTP id
- a640c23a62f3a-a6f47d622d0mr247392466b.77.1718260680210; Wed, 12 Jun 2024
- 23:38:00 -0700 (PDT)
+	s=arc-20240116; t=1718260702; c=relaxed/simple;
+	bh=m5NQR9vSNe9jt7EoYjpT9WHDiMr0ksjsMitObOWrQqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bGlV6MFGmvJNu8e79B/r7brkuV9rQSRZUwG+8yXz8y4IX6vX5LPMEf04DziFUVL9az3MsczsTRXC/SHqyYsWI/7vMi6j9JznHRbFKOZtvtwOLdlJEVYm7eJ0qzLaDdMhoMoBRsGsmkkrsf+QYPRJu4oHKp0ESkm/VpaI4fbXmls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=v2M4YfBt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA7E2C2BBFC;
+	Thu, 13 Jun 2024 06:38:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718260702;
+	bh=m5NQR9vSNe9jt7EoYjpT9WHDiMr0ksjsMitObOWrQqU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=v2M4YfBtHQtTr2a5QFGMyOnfDx5boMbf3A8zQDJfXJbh+8B40y8+0KoJduOjRsN6D
+	 1A/fJPCwbTKz3c7zeNF+nVBu6ImMIkLg7tmBoofIxdTV3ZfWo8+AMdm+06UUKrXQ2m
+	 g/upZWtAnlxHwL0kz04j/gpUzmz4KaRJBizVpM6I=
+Date: Thu, 13 Jun 2024 08:38:19 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: masahiroy@kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, Danny Lin <danny@kdrag0n.dev>,
+	=?iso-8859-1?B?zfFpZ28=?= Huguet <ihuguet@redhat.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Subject: Re: [PATCH v2] .editorconfig: remove trim_trailing_whitespace option
+Message-ID: <2024061340-chair-reliably-7b65@gregkh>
+References: <2024061137-jawless-dipped-e789@gregkh>
+ <877cetjrkh.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612180554.1328409-1-joychakr@google.com> <f0dbf963-bfd9-4a0b-8284-d141999da184@moroto.mountain>
-In-Reply-To: <f0dbf963-bfd9-4a0b-8284-d141999da184@moroto.mountain>
-From: Joy Chakraborty <joychakr@google.com>
-Date: Thu, 13 Jun 2024 12:07:46 +0530
-Message-ID: <CAOSNQF1AiD5rcpJr=c8Dov=j-g4=xOZXViX+Xibu_kBA=2rzgA@mail.gmail.com>
-Subject: Re: [PATCH] rtc: abx80x: Fix return value of nvmem callback on read
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Sean Anderson <sean.anderson@seco.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-rtc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877cetjrkh.fsf@intel.com>
 
-On Thu, Jun 13, 2024 at 11:48=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
-o.org> wrote:
->
-> On Wed, Jun 12, 2024 at 06:05:54PM +0000, Joy Chakraborty wrote:
-> > Read callbacks registered with nvmem core expect 0 to be returned on
-> > success and a negative value to be returned on failure.
+On Thu, Jun 13, 2024 at 09:16:14AM +0300, Jani Nikula wrote:
+> On Tue, 11 Jun 2024, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > Some editors (like the vim variants), when seeing "trim_whitespace"
+> > decide to do just that for all of the whitespace in the file you are
+> > saving, even if it is not on a line that you have modified.  This plays
+> > havoc with diffs and is NOT something that should be intended.
 > >
-> > abx80x_nvmem_xfer() on read calls i2c_smbus_read_i2c_block_data() which
-> > returns the number of bytes read on success as per its api description,
-> > this return value is handled as an error and returned to nvmem even on
-> > success.
-> >
-> > Fix to handle all possible values that would be returned by
-> > i2c_smbus_read_i2c_block_data().
-> >
-> > Fixes: e90ff8ede777 ("rtc: abx80x: Add nvmem support")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Joy Chakraborty <joychakr@google.com>
-> > ---
-> >  drivers/rtc/rtc-abx80x.c | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/rtc/rtc-abx80x.c b/drivers/rtc/rtc-abx80x.c
-> > index fde2b8054c2e..0f5847d1ca2a 100644
-> > --- a/drivers/rtc/rtc-abx80x.c
-> > +++ b/drivers/rtc/rtc-abx80x.c
-> > @@ -711,9 +711,16 @@ static int abx80x_nvmem_xfer(struct abx80x_priv *p=
-riv, unsigned int offset,
-> >               else
-> >                       ret =3D i2c_smbus_read_i2c_block_data(priv->clien=
-t, reg,
-> >                                                           len, val);
-> > -             if (ret)
-> > +             if (ret < 0)
-> >                       return ret;
-> >
-> > +             if (!write) {
-> > +                     if (ret)
-> > +                             len =3D ret;
-> > +                     else
-> > +                             return -EIO;
-> > +             }
->
-> I guess this is the conservative approach.  Ie.  Don't break things
-> which aren't already broken.  But I suspect the correct approach is to
-> say:
->
->         if (ret !=3D len)
->                 return -EIO;
->
-> Ah well.  Being conservative is good.  It probably doesn't ever happen
-> in real life so it probably doesn't matter either way.
->
-> I don't really like the if (write) follow by and if (!write)...  It
-> would add more lines, but improve readability if we just duplicate the
-> code a big:
->
->         if (write) {
->                 ret =3D write();
->                 if (ret)
->                         return ret;
->         } else {
->                 ret =3D read();
->                 if (ret <=3D 0)
->                         return ret ?: -EIO;
->                 len =3D ret;
->         }
->
+> > As the "only trim whitespace on modified files" is not part of the
+> 
+> Do you mean s/files/lines/?
 
-Sure, I'll do this in a follow up patch.
+Yes.  I'll edit this when I commit it as it's driving me crazy already
+and I think it needs to get to Linus "soon" before we start to see lots
+of busted patches sent to maintainers...
 
-Thanks
-Joy
-> regards,
-> dan carpenter
->
+thanks,
+
+greg k-h
 
