@@ -1,236 +1,227 @@
-Return-Path: <linux-kernel+bounces-214122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98928907FD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:45:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34760907FDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BAFD286ABF
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:45:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA546287C2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 23:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDEA15820F;
-	Thu, 13 Jun 2024 23:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282481534E7;
+	Thu, 13 Jun 2024 23:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dp46Bn0G"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mRoEpD07"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BE215698B
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 23:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96221369A5;
+	Thu, 13 Jun 2024 23:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718322232; cv=none; b=o3fj8GhBj0v/k5Yz+DGhoJGpJZq8O7XyTCJhynvwpJuw7SQg00qWC/Ys3SGXb6akJHPN2iEVpF7p70blvXFwYTvPXYCWPDfLcLeZ1OSoJJHMxAMB97Ci+cw2Ejx+GCP82j1pO4GE6/daVK1aUCfE2b5/AbA7F3cLIIkz/J5kV4s=
+	t=1718322314; cv=none; b=L+x3iJx9eAxlEuFP1SpBPaT/w96TvTuIkXMMXaCqsk7iQsaUMg09oSNMo0hMCiRjX7lj+DvnNn9kCLpPvSa1HSW3ZZpTBYi22Jc1TXBsqB1NgwEgpUWhORvBlFKPlnkfzqoYlnqTYqgtJ15oyOslXcrCUCBQwXcYOrbdjmoRO50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718322232; c=relaxed/simple;
-	bh=ohK2sslGjClxr9kCmY/gW62DMEkgvC5Tz6xsCMKB8Kw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eMgHRVbr4xsDw+9wh3/wRIhFMzshivIJ6q4aOAjh8auLA5RMWlPUGlPv5Z1BLylNRQ+Mj/+FnaJZhrmXI/KpFdUMmE3peZyAr4MO/hgEuzj2cUOhr63ZYrMi0n5oOc2lISCMFF1O7KBSSZJfGNY/ZpHZRdzCs2KDu89shRPNypo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dp46Bn0G; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52bbf73f334so1854877e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 16:43:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718322228; x=1718927028; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o+nA/cIlT4hl2if/i6DmrZViDpHELl0xAbf5HX+dSsg=;
-        b=dp46Bn0GgSBfaWpeBKeewld29XmOtyYVJjL/olH1FKcKt1zZ+GrCHw4YhcsgIoqUao
-         A2cGDav457pA7O4DCrkSy7JD4Aa+DXcnIvi9+VAPk4gCmiwhGwrwwCYGNuy68KQ9hQLE
-         XboJx73PAxIhuBfsNTqStEqRohA5A4nx0C1moYhGTexToHmTaPfGyjJ7JnGY5OCuVERn
-         nT2As/h4Yp2c/ppHjmBjr0xSGkhd/wqQLqC+6F9y7bo3y65xZiLqFM6NaMo1ruKPdkaj
-         sOQkL4HoB0gGxWK3RNVWCCs4894GlJ3DXSGG36I/JNiJp47ZfGWzJ7uuHTDVRm+XresH
-         nlQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718322228; x=1718927028;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o+nA/cIlT4hl2if/i6DmrZViDpHELl0xAbf5HX+dSsg=;
-        b=URAZMI3AyoVMUO8OAW0xPSfi0a2M7reNIevWo7KLU7cxbsA8jlHbHw1X1F8ldUh43o
-         LV7g61aJBUziXszsD51ulKg/61a14Ua/Xr0IHwr8lnA5xd4nG/JWDdQs01Xl14OYyhxg
-         rl6FxT/1EMFAILJNxdnVkL0HI+GP1B2pVBX8FcUoBPFLsRQ9y4xTwbGNpiguZuGAtUEJ
-         IjQdmnMNE9Lr4NE/Abh+JSE53uZ4NsJQFc5+W8j58sFk17CQX6PzT7eMZTY/i+SvScCQ
-         D9Qf0hQ6mSlqWm2ERuqyYO/LxRx3X/Jkx6RtNCQjCqh+Qy1yDCwgYKa41OnqlpA5HOJ5
-         1myw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDKc0QIIOFqTayfOHUA9ADLi0tJnyeHdPS6U0MxfisIzBBcLRAqFlBW3Axz2q0YIbNxjSgwt+yZwSP2lypAglAEOCfjjDfD4HwVSdn
-X-Gm-Message-State: AOJu0YwwF25tz+fBWVhXwsD+yt0Yk5l8DXtL4M+pFh0cCK4xIJJY6cIs
-	dtMP/P1pj2GCFCGaDpmeXSxs6tf70G3ZhIFVb8rLRBUQoHnigo5hPfOa2LjjhxE=
-X-Google-Smtp-Source: AGHT+IHn9zw8xwyxQcW/uwpUzGyv04x7qilrax9K0Qt1WPvstQMVz2u90LOnpn/z3s9upTTwu35Puw==
-X-Received: by 2002:a05:6512:3113:b0:52b:c089:4579 with SMTP id 2adb3069b0e04-52ca6e91501mr727321e87.49.1718322227777;
-        Thu, 13 Jun 2024 16:43:47 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2872260sm359298e87.142.2024.06.13.16.43.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 16:43:47 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 14 Jun 2024 02:43:43 +0300
-Subject: [PATCH v7 6/6] arm64: dts: qcom: c630: Add Embedded Controller
- node
+	s=arc-20240116; t=1718322314; c=relaxed/simple;
+	bh=PaSlr40QJse6dHNYFDgd5wEKX7Bqje7vtvx/rk8HyNw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uhonki/FoBaTAXTKZvghHY0R7aQXVDXB1nw7/u+p2FYqe4j7qVqC2UiruBMxBCPDdQP8dHDI4oCPOE5R0Ya4iBkRU0dWFSVXtpIQfO9UCYs/9Ik3M6RirwEi3OWHBYrP082d+AfKlJdBzayNFywaPqeGvkNX+XEfEfc+ww95XKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mRoEpD07; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DNSkeK022003;
+	Thu, 13 Jun 2024 23:44:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	Noz5pwMBvsmGR387X0Jg77Dw0n+SZY9A1aVzP4jEPgA=; b=mRoEpD07Uz4yHmAB
+	ljEEsA0x1Hos8hQIWkTwTgPpcsSGZSAO2Cw/r1HP/WycSTdd1SA141q+Y4EyIA/z
+	HNbKBrL+WF8r1m6khtN+1zEAiYgZaOVqc9nrXiFiqy7wjdV+CsQM266Myei4R1A5
+	grCuOIfurEcyeSNMbEILdhMYJKYDadbJxfGb33/mr8f45e3ELR1r6gWk5Q6JFaXb
+	VcV9EpDjYTvrpDcTDmv2wJAEZr8t0ZRqLJHYVe5edjtjIVqb7Ebz9/TAhjFasf8M
+	KQqI+hJQXQjRUh5OAP7Hjz6ZDBVEyilukaoWnUXHHCC6Hu4cd+0dSqiSANLMRJ+J
+	I6DX0w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yrafg80vh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 23:44:48 +0000 (GMT)
+Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45DNiloE015324;
+	Thu, 13 Jun 2024 23:44:47 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yrafg80vc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 23:44:47 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45DMDGBr028710;
+	Thu, 13 Jun 2024 23:44:46 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yn1muvqwm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 23:44:46 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45DNiflA47513912
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 13 Jun 2024 23:44:43 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0F78120043;
+	Thu, 13 Jun 2024 23:44:41 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A100A20040;
+	Thu, 13 Jun 2024 23:44:39 +0000 (GMT)
+Received: from [127.0.0.1] (unknown [9.152.108.100])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 13 Jun 2024 23:44:39 +0000 (GMT)
+Message-ID: <5a8a3c85760c19be66965630418e09a820f79277.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 12/35] kmsan: Support SLAB_POISON
+From: Ilya Leoshkevich <iii@linux.ibm.com>
+To: SeongJae Park <sj@kernel.org>, Alexander Potapenko <glider@google.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+        Andrew Morton
+ <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        David
+ Rientjes <rientjes@google.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Joonsoo
+ Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>,
+        Masami
+ Hiramatsu <mhiramat@kernel.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        Steven
+ Rostedt <rostedt@goodmis.org>,
+        Vasily Gorbik <gor@linux.ibm.com>, Vlastimil
+ Babka <vbabka@suse.cz>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Sven Schnelle
+ <svens@linux.ibm.com>
+Date: Fri, 14 Jun 2024 01:44:39 +0200
+In-Reply-To: <20240613233044.117000-1-sj@kernel.org>
+References: <20240613233044.117000-1-sj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: R8Ge89LT8ke23MedEmj8fyVcr9NYVe3c
+X-Proofpoint-GUID: xkSosI_V3EwHip4n10hyZ_Dwths6J4Ly
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240614-yoga-ec-driver-v7-6-9f0b9b40ae76@linaro.org>
-References: <20240614-yoga-ec-driver-v7-0-9f0b9b40ae76@linaro.org>
-In-Reply-To: <20240614-yoga-ec-driver-v7-0-9f0b9b40ae76@linaro.org>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Hans de Goede <hdegoede@redhat.com>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Nikita Travkin <nikita@trvn.ru>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2519;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=ve9c78TTAFS5VXzgVyLUhE7e1KCToRb1yljm5NLcL8s=;
- b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ1p2i67K8xUVD5MfTU5ja95T8upt7CHTU3bpZoc5d5vO4
- ugTkmvrZDRmYWDkYpAVU2TxKWiZGrMpOezDjqn1MINYmUCmMHBxCsBEHO9zMKzVDe1X83jL1lbT
- 3WHXZyQa21am8YUpzpxdf9s6/zL1p3VL7x7fJJrW477ojoibwYuXv65pe38tmnzno4FAkkLxpbA
- 7f0MDstq/JkhdnFryxJ7F/soJjsqppxcr8C/WXSS3Yfl3F3a3KaomHNFvvmgcWMdbl97DeVYv5/
- qbnl8bA9cyC4k+3LvMoKpWT32zbE0ic56bZe00UfWXE+TbbF4FL55Tr63Uf+2zUPXJ33sqVHWyf
- bK2GV7rvd3k/eXPmpczJOddSeq1PbNfmS+mQ/5K36oF8rly95RbmNZ8DledeUrDdFYzB8MhZ80q
- 5vPJXlHBP2RcOPgKFlf+6mW1ULr0lWHaKg+Rr58nf10DAA==
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-13_13,2024-06-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 clxscore=1011 mlxscore=0 mlxlogscore=999 lowpriorityscore=0
+ malwarescore=0 adultscore=0 bulkscore=0 priorityscore=1501 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406130167
 
-From: Bjorn Andersson <andersson@kernel.org>
+On Thu, 2024-06-13 at 16:30 -0700, SeongJae Park wrote:
+> Hi Ilya,
+>=20
+> On Thu, 13 Jun 2024 17:34:14 +0200 Ilya Leoshkevich
+> <iii@linux.ibm.com> wrote:
+>=20
+> > Avoid false KMSAN negatives with SLUB_DEBUG by allowing
+> > kmsan_slab_free() to poison the freed memory, and by preventing
+> > init_object() from unpoisoning new allocations by using __memset().
+> >=20
+> > There are two alternatives to this approach. First, init_object()
+> > can be marked with __no_sanitize_memory. This annotation should be
+> > used
+> > with great care, because it drops all instrumentation from the
+> > function, and any shadow writes will be lost. Even though this is
+> > not a
+> > concern with the current init_object() implementation, this may
+> > change
+> > in the future.
+> >=20
+> > Second, kmsan_poison_memory() calls may be added after memset()
+> > calls.
+> > The downside is that init_object() is called from
+> > free_debug_processing(), in which case poisoning will erase the
+> > distinction between simply uninitialized memory and UAF.
+> >=20
+> > Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+> > ---
+> > =C2=A0mm/kmsan/hooks.c |=C2=A0 2 +-
+> > =C2=A0mm/slub.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 13 ++++++++=
++----
+> > =C2=A02 files changed, 10 insertions(+), 5 deletions(-)
+> >=20
+> [...]
+> > --- a/mm/slub.c
+> > +++ b/mm/slub.c
+> > @@ -1139,7 +1139,12 @@ static void init_object(struct kmem_cache
+> > *s, void *object, u8 val)
+> > =C2=A0	unsigned int poison_size =3D s->object_size;
+> > =C2=A0
+> > =C2=A0	if (s->flags & SLAB_RED_ZONE) {
+> > -		memset(p - s->red_left_pad, val, s->red_left_pad);
+> > +		/*
+> > +		 * Use __memset() here and below in order to avoid
+> > overwriting
+> > +		 * the KMSAN shadow. Keeping the shadow makes it
+> > possible to
+> > +		 * distinguish uninit-value from use-after-free.
+> > +		 */
+> > +		__memset(p - s->red_left_pad, val, s-
+> > >red_left_pad);
+>=20
+> I found my build test[1] fails with below error on latest mm-unstable
+> branch.
+> 'git bisect' points me this patch.
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CC=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mm/slub.o
+> =C2=A0=C2=A0=C2=A0 /mm/slub.c: In function 'init_object':
+> =C2=A0=C2=A0=C2=A0 /mm/slub.c:1147:17: error: implicit declaration of fun=
+ction
+> '__memset'; did you mean 'memset'? [-Werror=3Dimplicit-function-
+> declaration]
+> =C2=A0=C2=A0=C2=A0=C2=A0 1147 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __memset(p - s->red_=
+left_pad, val, s-
+> >red_left_pad);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 ^~~~~~~~
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 memset
+> =C2=A0=C2=A0=C2=A0 cc1: some warnings being treated as errors
+>=20
+> I haven't looked in deep, but reporting first.=C2=A0 Do you have any idea?
+>=20
+> [1]
+> https://github.com/awslabs/damon-tests/blob/next/corr/tests/build_m68k.sh
+>=20
+>=20
+> Thanks,
+> SJ
+>=20
+> [...]
 
-The Embedded Controller in the Lenovo Yoga C630 is accessible on &i2c1
-and provides battery and adapter status, as well as altmode
-notifications for the second USB Type-C port.
+Thanks for the report.
 
-Add a definition for the EC.
+Apparently not all architectures have=C2=A0__memset(). We should probably go
+back to memset_no_sanitize_memory() [1], but this time mark it with
+noinline __maybe_unused __no_sanitize_memory, like it's done in, e.g.,
+32/35.
 
-Signed-off-by: Bjorn Andersson <andersson@kernel.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- .../boot/dts/qcom/sdm850-lenovo-yoga-c630.dts      | 75 ++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+Alexander, what do you think?
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts b/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
-index 8402ea2d93a7..f18050848cd8 100644
---- a/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
-@@ -370,6 +370,66 @@ zap-shader {
- &i2c1 {
- 	status = "okay";
- 	clock-frequency = <400000>;
-+
-+	embedded-controller@70 {
-+		compatible = "lenovo,yoga-c630-ec";
-+		reg = <0x70>;
-+
-+		interrupts-extended = <&tlmm 20 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&ec_int_state>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		connector@0 {
-+			compatible = "usb-c-connector";
-+			reg = <0>;
-+			power-role = "dual";
-+			data-role = "host";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					ucsi0_hs_in: endpoint {
-+						remote-endpoint = <&usb_1_dwc3_hs>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					ucsi0_ss_in: endpoint {
-+						remote-endpoint = <&usb_1_qmpphy_out>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					ucsi0_sbu: endpoint {
-+					};
-+				};
-+			};
-+		};
-+
-+		connector@1 {
-+			compatible = "usb-c-connector";
-+			reg = <1>;
-+			power-role = "dual";
-+			data-role = "host";
-+
-+			/*
-+			 * connected to the onboard USB hub, orientation is
-+			 * handled by the controller
-+			 */
-+		};
-+	};
- };
- 
- &i2c3 {
-@@ -695,6 +755,13 @@ mode_pin_active: mode-pin-state {
- 
- 		bias-disable;
- 	};
-+
-+	ec_int_state: ec-int-state {
-+		pins = "gpio20";
-+		function = "gpio";
-+
-+		bias-disable;
-+	};
- };
- 
- &uart6 {
-@@ -742,6 +809,10 @@ &usb_1_dwc3 {
- 	dr_mode = "host";
- };
- 
-+&usb_1_dwc3_hs {
-+	remote-endpoint = <&ucsi0_hs_in>;
-+};
-+
- &usb_1_hsphy {
- 	status = "okay";
- 
-@@ -762,6 +833,10 @@ &usb_1_qmpphy {
- 	vdda-pll-supply = <&vdda_usb1_ss_core>;
- };
- 
-+&usb_1_qmpphy_out {
-+	remote-endpoint = <&ucsi0_ss_in>;
-+};
-+
- &usb_2 {
- 	status = "okay";
- };
-
--- 
-2.39.2
-
+[1]
+https://lore.kernel.org/lkml/20231121220155.1217090-14-iii@linux.ibm.com/
 
