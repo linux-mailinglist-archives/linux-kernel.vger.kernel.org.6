@@ -1,167 +1,191 @@
-Return-Path: <linux-kernel+bounces-212945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B6AD90689D
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:27:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3FA99068A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C84E3B21F66
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:27:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 359312837B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7FA13F01A;
-	Thu, 13 Jun 2024 09:27:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D6313A3E3;
-	Thu, 13 Jun 2024 09:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1B713E3F9;
+	Thu, 13 Jun 2024 09:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8X2+ZrQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611EA13A3E3;
+	Thu, 13 Jun 2024 09:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718270846; cv=none; b=olCol8EoK3YzkT1KyQV5VbTOAoHvGyFQZ0bCrPyf4wxrKMqaJ9HRncymJeCkiIEUVjRdiLhYcB+1rgCHYny3NlIGJRR38Qjmb61KBcPUsTkEJeygyp67VrWXjL+Wxm15vjR/xNCLoT3A6soN/XIufW1QHV4qOkGfwoTLj+2B+Co=
+	t=1718270885; cv=none; b=AQqxFp6IrEI95aqZ+8dbZ9DffWfC4y2bMcSQp4nunXjFRwuHBm73Or9Dabv9ENw5E2+yOrVT+ZxCz9zNXJ6zkqrYiW+DPzXiwS9aHitTeaEIktQSriPDq6cRyxgpEs1Q+OvLMT86ksGKrN1zc4iGHwq/OOBYYy7TyvUm9ez233w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718270846; c=relaxed/simple;
-	bh=vxAPeb2Mts0r+X8CEYqNf06SKswc4GRuspVbQUOuPS0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=JWwnbme+yK8WiV0VbXA8R5KZLHe94n5qYp3heut5dUp8XwhHQGvSXuLGoVMy68Rtes9K+q22seIZMxnrZW2bWOVTaQ/prqFjxa/0sQHQ7h3FYNXKNu388ZoMVxYFU+Z2veBP/efIGXe2DNA1BA8VYrutl3y5aBFTphHNw1Vk0a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED0ED1063;
-	Thu, 13 Jun 2024 02:27:46 -0700 (PDT)
-Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F0333F5A1;
-	Thu, 13 Jun 2024 02:27:17 -0700 (PDT)
-Message-ID: <bdf1ab6e-b887-4182-a0ae-7653bd835907@arm.com>
-Date: Thu, 13 Jun 2024 10:27:15 +0100
+	s=arc-20240116; t=1718270885; c=relaxed/simple;
+	bh=acgcbcDGq6xB3czgsyNKkLJFVT82kOwOZNtYOx6Racc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C/19tI1m9YJBefwFQzJtnAJi7mrG2MSC+z0Hjp54y0+3QTQt5KvrGLFzDoxpShia7p1U6c9t9GRDba6PJT0Pqolc1qYbRd7QPgNLAo010iYO2nuS6xYQrc3JO+0QVVv1GfrWfCYkgClhiMVbi9x8eQ/T+awynHxN3Y53hdI4jyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8X2+ZrQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBE0AC4AF1D;
+	Thu, 13 Jun 2024 09:28:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718270884;
+	bh=acgcbcDGq6xB3czgsyNKkLJFVT82kOwOZNtYOx6Racc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=P8X2+ZrQtjW2y1raSKUDlUG/eFFJlxwyuSvjBw2mFnGHKaTv+GleO7LcctrJisAfD
+	 wjDqebYEfzhDiU9euaw2/sEDJQdKOh7hwaD/sExqKT01AHskmJkN0TqzxdSaeDXiTu
+	 EigpwJG6wbdPufMaYKVg9M8HybwV15Are/nBeOno0Wj3SWBIWC3cQbfsk+U+TI2Qba
+	 OFAOSY17ieE57Ex//f5hu2vOtiiu84wH/S0VI7oc6y9QjI4PS6aMG85VqSPiKOj5aT
+	 G5FjKkRfjqa1H7LCRNsAhfh2/BwyK/1sum+qig2yzEm/TIeP3eQ/f548hZNnKZq4Eh
+	 qByoO9CxohvJQ==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5bb10cfe7daso44483eaf.2;
+        Thu, 13 Jun 2024 02:28:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV6ah5z1QGOAoFqRlIuZBJSrC5IM+GGCeXmQznVv5iwflsEWIAt4I+ci+90XJV8i/80Y/0f8HJCPQebdIs35opeEUuOzQglwLBI2hj9Qkm5T+PchEydNQP3MAO91rXZ6z7of+f4Tz8=
+X-Gm-Message-State: AOJu0YyEWZxmi2gAK/EhwumcHq4B7f2ER8JrUMMHtekxcVM5gMV0TRyO
+	CnyJmYK6146D9dtiSfIl3yxw6jejGHwbxjFZVoEIoPBR4kSg7YqYSomINpR+U3iaq16euiZ1kDP
+	8kzC8SR02UTrlDpZX5AqFWAcndSI=
+X-Google-Smtp-Source: AGHT+IHONW/pZ2bf8O0TmFRXC4pvRWsKVXD/WylNA6AkeYAO/uUZqSD0JPYjCotHD1d3Pg0YtQqJc2Ha1g7kPFMUisk=
+X-Received: by 2002:a05:6870:524d:b0:254:7e18:7e1a with SMTP id
+ 586e51a60fabf-25514f70c6cmr4598291fac.5.1718270883998; Thu, 13 Jun 2024
+ 02:28:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/7] Refactor perf python module build
-To: Ian Rogers <irogers@google.com>
-References: <20240612183205.3120248-1-irogers@google.com>
-Content-Language: en-US
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
- Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Suzuki K Poulose <suzuki.poulose@arm.com>,
- Yicong Yang <yangyicong@hisilicon.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
- <aliceryhl@google.com>, Nick Terrell <terrelln@fb.com>,
- Ravi Bangoria <ravi.bangoria@amd.com>, Kees Cook <keescook@chromium.org>,
- Andrei Vagin <avagin@google.com>, Athira Jajeev
- <atrajeev@linux.vnet.ibm.com>, Oliver Upton <oliver.upton@linux.dev>,
- Ze Gao <zegao2021@gmail.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-csky@vger.kernel.org, linux-riscv@lists.infradead.org,
- coresight@lists.linaro.org, rust-for-linux@vger.kernel.org,
- bpf@vger.kernel.org
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <20240612183205.3120248-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240603081331.3829278-1-beata.michalska@arm.com>
+ <20240603081331.3829278-2-beata.michalska@arm.com> <20240603114811.oio3uemniib5uaa2@vireshk-i7>
+ <CAJZ5v0j1bqhmKrJirw+WgEVDdszZ9xQSgmfazVKMVa8H6_5TSw@mail.gmail.com>
+ <20240606085513.pptx5dtjcvvg3zo4@vireshk-i7> <CAJZ5v0it5vZvzkbErkGOVruPbkxgr8VMTgQzsncpdQmvCOfBng@mail.gmail.com>
+ <20240613082358.yq2lui6vc35xi53t@vireshk-i7>
+In-Reply-To: <20240613082358.yq2lui6vc35xi53t@vireshk-i7>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 13 Jun 2024 11:27:52 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iOvpx=YtPtbM9RPaVh2n4+T=r91bM7OZt5k8q0Tzmk+w@mail.gmail.com>
+Message-ID: <CAJZ5v0iOvpx=YtPtbM9RPaVh2n4+T=r91bM7OZt5k8q0Tzmk+w@mail.gmail.com>
+Subject: Re: [PATCH 1/1] cpufreq: Rewire arch specific feedback for cpuinfo/scaling_cur_freq
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: ionela.voinescu@arm.com, Beata Michalska <beata.michalska@arm.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	len.brown@intel.com, vanshikonda@os.amperecomputing.com, sumitg@nvidia.com, 
+	vincent.guittot@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jun 13, 2024 at 10:24=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.=
+org> wrote:
+>
+> On 07-06-24, 16:21, Rafael J. Wysocki wrote:
+> > On Thu, Jun 6, 2024 at 10:55=E2=80=AFAM Viresh Kumar <viresh.kumar@lina=
+ro.org> wrote:
+> > > What about this, hopefully this doesn't break any existing platforms
+> > > and fix the problems for ARM (and others):
+> > >
+> > > - scaling_cur_freq:
+> > >
+> > >   Returns the frequency of the last P-state requested by the scaling
+> > >   driver from the hardware.
+> >
+> > This would change the behavior for intel_pstate in the passive mode AFA=
+ICS.
+> >
+> > ATM it calls arch_freq_get_on_cpu(), after the change it would return
+> > policy->cur which would not be the same value most of the time.  And
+> > in the ->adjust_perf() case policy->cur is not updated by it even.
+>
+> Yeah, we would need to do the below part to make it work.
+>
+> > >  For set_policy() drivers, use the ->get()
+> > >   callback to get a value that can provide the best estimate to user.
+> > >
+> > >   To make this work, we can add get() callback to intel and amd pstat=
+e
+> > >   drivers, and use arch_freq_get_on_cpu().
+> > >
+> > >   This will keep the current behavior intact for such drivers.
+> >
+> > Well, the passive mode thing would need to be addressed then.
+>
+> Right. So this would keep the behavior of the file as is for all platform=
+s and
+> simplify the core.
+>
+> > > - cpuinfo_cur_freq:
+> > >
+> > >   Currently this file is available only if the get() callback is
+> > >   available. Maybe we can keep this behavior as is, and expose this
+> > >   now for both the pstate drivers (once above change is added). We
+> > >   will be left with only one driver that doesn't provide the get()
+> > >   callback: pasemi-cpufreq.c
+> >
+> > I would rather get rid of it completely.
+>
+> cpuinfo_cur_freq itself ? I thought such changes aren't allowed as they m=
+ay end
+> up breaking userspace tools.
 
+cpuinfo_cur_freq is not always present anyway, so user space tools
+need to be able to cope with the lack of it anyway.
 
-On 12/06/2024 19:31, Ian Rogers wrote:
-> Refactor the perf python module build to instead of building C files
-> it links libraries. To support this make static libraries for tests,
-> ui, util and pmu-events. Doing this allows fewer functions to be
-> stubbed out, importantly parse_events is no longer stubbed out which
-> will improve the ability to work with heterogeneous cores.
-> 
-> Patches 1 to 5 add static libraries for existing parts of the perf
-> build.
-> 
-> Patch 6 adds the python build using libraries rather than C source
-> files.
-> 
-> Patch 7 cleans up the python dependencies and removes the no longer
-> needed python-ext-sources.
-> 
+> > >   Coming back to the implementation of the file read operation, I
+> > >   think the whole purpose of arch_freq_get_on_cpu() was to get a
+> > >   better estimate (which may not be perfect) of the frequency the
+> > >   hardware is really running at (in the last window) and if a platfor=
+m
+> > >   provides this, then it can be given priority over the ->get()
+> > >   callback in order to show the value to userspace.
+> >
+> > There was a reason to add it and it was related to policy->cur being
+> > meaningless on x86 in general (even in the acpi-cpufreq case), but
+> > let's not go there.
+>
+> Right.
+>
+> > Hooking this up to cpuinfo_cur_freq on x86 wouldn't make much sense
+> > IMV because at times it is not even close to the frequency the
+> > hardware is running at.  It comes from the previous tick period,
+> > basically, and the hardware can adjust the frequency with a resolution
+> > that is orders of magnitude higher than the tick rate.
+>
+> Hmm. If that is the concern (which looks valid), how come it makes sense =
+to do
+> the same on ARM ? Beata, Ionela ?
+>
+> I thought, just like X86, ARM also doesn't have a guaranteed way to know =
+the
+> exact frequency anymore and AMUs are providing a better picture, and so w=
+e are
+> moving to the same.
+>
+> If we don't want it for X86, then it can be done with help of a new drive=
+r flag
+> CPUFREQ_NO_CPUINFO_SCALING_FREQ, instead of the availability of the get()
+> callback.
+>
+> > Well, this sounds nice, but the changes are a bit problematic.
+> >
+> > If you don't want 3 files, I'd drop cpuinfo_cur_freq and introduce
+> > something else to replace it which will expose the
+> > arch_freq_get_on_cpu() return value and will be documented
+> > accordingly.
+>
+> Well it is still meaningful to show the return value of the ->get() callb=
+ack
+> where the hardware provides it.
 
-Reviewed-by: James Clark <james.clark@arm.com>
+But this is a valid point.
 
-It does require a clean build to avoid some -fPIC errors presumably
-because not everything that requires it gets rebuilt, for anyone who
-gets stuck on that.
+> > Then scaling_cur_freq can be (over time) switched over to returning
+> > policy->cur in the cases when it is meaningful and -ENODATA otherwise.
+> >
+> > This would at least allow us to stop making up stuff.
+>
+> Maybe a third file, just for arch_freq_get_on_cpu() is not that bad of an=
+ idea
+> :)
 
-> Ian Rogers (7):
->   perf ui: Make ui its own library
->   perf pmu-events: Make pmu-events a library
->   perf test: Make tests its own library
->   perf bench: Make bench its own library
->   perf util: Make util its own library
->   perf python: Switch module to linking libraries from building source
->   perf python: Clean up build dependencies
-> 
->  tools/perf/Build                              |  14 +-
->  tools/perf/Makefile.config                    |   5 +
->  tools/perf/Makefile.perf                      |  66 ++-
->  tools/perf/arch/Build                         |   4 +-
->  tools/perf/arch/arm/Build                     |   4 +-
->  tools/perf/arch/arm/tests/Build               |   8 +-
->  tools/perf/arch/arm/util/Build                |  10 +-
->  tools/perf/arch/arm64/Build                   |   4 +-
->  tools/perf/arch/arm64/tests/Build             |   8 +-
->  tools/perf/arch/arm64/util/Build              |  20 +-
->  tools/perf/arch/csky/Build                    |   2 +-
->  tools/perf/arch/csky/util/Build               |   6 +-
->  tools/perf/arch/loongarch/Build               |   2 +-
->  tools/perf/arch/loongarch/util/Build          |   8 +-
->  tools/perf/arch/mips/Build                    |   2 +-
->  tools/perf/arch/mips/util/Build               |   6 +-
->  tools/perf/arch/powerpc/Build                 |   4 +-
->  tools/perf/arch/powerpc/tests/Build           |   6 +-
->  tools/perf/arch/powerpc/util/Build            |  24 +-
->  tools/perf/arch/riscv/Build                   |   2 +-
->  tools/perf/arch/riscv/util/Build              |   8 +-
->  tools/perf/arch/s390/Build                    |   2 +-
->  tools/perf/arch/s390/util/Build               |  16 +-
->  tools/perf/arch/sh/Build                      |   2 +-
->  tools/perf/arch/sh/util/Build                 |   2 +-
->  tools/perf/arch/sparc/Build                   |   2 +-
->  tools/perf/arch/sparc/util/Build              |   2 +-
->  tools/perf/arch/x86/Build                     |   6 +-
->  tools/perf/arch/x86/tests/Build               |  20 +-
->  tools/perf/arch/x86/util/Build                |  42 +-
->  tools/perf/bench/Build                        |  46 +-
->  tools/perf/scripts/Build                      |   4 +-
->  tools/perf/scripts/perl/Perf-Trace-Util/Build |   2 +-
->  .../perf/scripts/python/Perf-Trace-Util/Build |   2 +-
->  tools/perf/tests/Build                        | 140 +++----
->  tools/perf/tests/workloads/Build              |  12 +-
->  tools/perf/ui/Build                           |  18 +-
->  tools/perf/ui/browsers/Build                  |  14 +-
->  tools/perf/ui/tui/Build                       |   8 +-
->  tools/perf/util/Build                         | 394 +++++++++---------
->  tools/perf/util/arm-spe-decoder/Build         |   2 +-
->  tools/perf/util/cs-etm-decoder/Build          |   2 +-
->  tools/perf/util/hisi-ptt-decoder/Build        |   2 +-
->  tools/perf/util/intel-pt-decoder/Build        |   2 +-
->  tools/perf/util/perf-regs-arch/Build          |  18 +-
->  tools/perf/util/python-ext-sources            |  53 ---
->  tools/perf/util/python.c                      | 271 +++++-------
->  tools/perf/util/scripting-engines/Build       |   4 +-
->  tools/perf/util/setup.py                      |  33 +-
->  49 files changed, 612 insertions(+), 722 deletions(-)
->  delete mode 100644 tools/perf/util/python-ext-sources
-> 
+/me thinks so.
 
