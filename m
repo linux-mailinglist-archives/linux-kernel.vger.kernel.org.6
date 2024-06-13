@@ -1,116 +1,250 @@
-Return-Path: <linux-kernel+bounces-213126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C35906CAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:52:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D9EB906CCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 13:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9460D1C21A45
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:52:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 345D81C21343
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 11:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEAA146009;
-	Thu, 13 Jun 2024 11:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7685F1428FC;
+	Thu, 13 Jun 2024 11:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="MelYgE+K"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BzJcAgxz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1F4145FFD
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25571386DF
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 11:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718279393; cv=none; b=NJg62s1NdTWlTtuGjasjcveIe36pIyBAz7cfw7O5DgATmrCt7rUjCFGXcU5ZK0WncgLTtv3HA32Nr45IvOmh98DQFvvtxv6nIM6e10FDKfEr5cslbbzsiWWQWPYXibj9Q2JFXuMcu+fPP0LSIYBka3QaljYmGM6NZuOKTUPo+ak=
+	t=1718279450; cv=none; b=GxeSo1I92MWvlAWKiHM54hzqyX10DbRkLs7+DzMCzdMq3w+cmwnFeOR9n7Y5htn8YKpFcUnSuFlDD+6NmR80W64DX4HeLYUJ6eRb7nIwDPEbU7hc1m7uk+bxd0Jmo9DWFWhn/0D5YE1+ma6+SLZWbiPwVFsVeu0igUSmq47z30A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718279393; c=relaxed/simple;
-	bh=JMH7aegv+MnUlyAhiAM0CDdTw+aBY3IivqXYt0vaVMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fSEBWKvHLVzhfcv5h2pgFGBAf0Nhf0oYAj6N2tSrYZ9mnGVU+O9iGNKAqlC/Wjq5tidDLsq09de3bFBLe48lToc56diHCr+gbNt9SYUH10BcLqEzoMW+8EM2Dn6h22H0htYK8WoZguv4ybK4mm/TGA2wW8I46kcvytjunI47MX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=MelYgE+K; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7955ddc6516so57641485a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 04:49:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1718279391; x=1718884191; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jK9pHfBGXfQm/UiByYtEUABvVZaPCm/AtIE7LocooA8=;
-        b=MelYgE+Kl7Ng5gKsWGHUdZcEBt3m9G1gbQ/LukJ+6QdDvIIzfAE4or/6pGER/H1TUD
-         ZB7U5V1zn5JoLql72f4+zOQyN6CTQJX3H1ap0IUype7mhUrKZKIoZ4IJsfh75XxTRbJ+
-         9WTSmlMz5E0yGdBhnnGfqMlQGxz8O17gZ6QRkyxMh28TbyQ6MTCYgc5EjEFONDHyiaf6
-         zTHUzjvTFdRawHV8kpTJ9H9voRecAonQz37DDV9XDN4Q769wRHz3dmuPjK7VEKMXXDkF
-         6l/sOzyC62pa6W7HvTh5asUhUSa3gaYQX5ZZs/BiK+q9NFRYNGgYYUL+iyX0I8oHV4Nj
-         e4hA==
+	s=arc-20240116; t=1718279450; c=relaxed/simple;
+	bh=8Ycd2cGmwTyBXCFhxE1+AV91UpOWdSmdPwZwUr1oL4M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fpx6ok3b3LHqJJQBLOT4spDoDoenqZ/MjA4tvS7e+DNHqIBomJiD3SAWJM6e7SBna02RzIk2Dlo3YxgkIT52kqLtWFf7F/QG5VbxiEqE0C6REK8lpPl+0+wOLdbaKsPi/SKWIWFSLRx2kOj02jeK0lJ12JFd8YHn/QIYQubln+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BzJcAgxz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718279447;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vwtGUAzgjpCKqtdRSzTm8xlIpjclH657dtQUJu4HtYg=;
+	b=BzJcAgxzynj6rw7jngsmBQvYRE2Mk5wO0YR932vCFO3DMFq33lYIhF9qS/lb2tRQhGYlsD
+	k3t2L5sflsRQYPS6r6AOZn5D1w4N+ad7Y7hCY/7g/mS/hSlp/oBftavjW6CFy2hi0qzxpO
+	heEBzuAgDgucStuAZQ2tOl/U0TCeNqk=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-654-unUr4EwANwO-ZsiBG5X2sQ-1; Thu, 13 Jun 2024 07:50:46 -0400
+X-MC-Unique: unUr4EwANwO-ZsiBG5X2sQ-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-35f184b67ceso79885f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 04:50:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718279391; x=1718884191;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jK9pHfBGXfQm/UiByYtEUABvVZaPCm/AtIE7LocooA8=;
-        b=kdPwxjYDFL6uKObYkC/bNUcHWdce2QepHERINiSlA6HglVlNO76WpHhIZEiQQbfCQo
-         ZqVax5VLOLSR8YCfTXf/lBskyhz5EBzfEPVp93lYgsjwdIPQn7RXQB96FDchFq3yP/C/
-         9uZmzkVKqtbcsTh6KdM0sKP4rFmm6cbs2yrm2WAFiJTBqMbzqBR25YBJrfo/ySfFvsK6
-         DoOEALP0794DiGumwbASe7cx6OxQQFAIlQk6Cmm7Zi9NJ0XgWsswCHbPJRTEleCVFNJM
-         tbeYDfFpiU59PUGD2ep4ezfn7lgUYI4vuY3oDB3pVcF4J+EjJ0z9gfHyKLRGA5XdzOXJ
-         2ihQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXT7ixBx6LGja3eVOR0zPNJE0uHQa6W6LJH6kQ+Bev6dt5++qV+ho9Wmpf0pgiiM3B3YjEdhfB7WAcaHJ7S+4dJfUrQ/HgPb/PlVtE4
-X-Gm-Message-State: AOJu0YwFEyhBjlYgZ3R/lWwWvgeoWYir2g+wIRMeaP9uxBuZedR+Dh6J
-	w19D9daglr7lU1dS6HcqDqUkHZnnU80ZrkHCh2rar3gwZoJnHKPgXUelNc2klVUu7SfAc63TmGb
-	oRV8=
-X-Google-Smtp-Source: AGHT+IFWK9h3YEybm6BIGLMJNixPvA73NV4oZYSszQRCqVG7+H7HxqTpkqRohcPjaEg2JALqIvr1Ug==
-X-Received: by 2002:a05:620a:4482:b0:794:d988:521a with SMTP id af79cd13be357-797f6006419mr521195085a.7.1718279390820;
-        Thu, 13 Jun 2024 04:49:50 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.89])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798b73fb4dcsm40891385a.100.2024.06.13.04.49.50
+        d=1e100.net; s=20230601; t=1718279445; x=1718884245;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vwtGUAzgjpCKqtdRSzTm8xlIpjclH657dtQUJu4HtYg=;
+        b=BT7azMYMwNbkMXkDjf6D/7qYlvLPG3uvraeOKmxHZCWHslb6C51sRiIzoKGHRl9LiF
+         2aFsW6db+ME608vPXeJ7cguhH8fFm+glYjq7cbyVNyll/QqdKq24iytW0bg6nInX2bsA
+         sJU4cICoH1Rh5Yt3cG4IhC6jV4FbS6mKwRIYd4sarhAIG52ZXIv9Vi65eohdj2NFrgMu
+         jIOpIJRUrEODtrp9+vR6zNeKkH+W1Qb/YMRqZrkP/FCw+2/RrCbU0bFuVb71u3Mxzlvs
+         EdS1G7NxjBDinzREndcw16ovTbqwqKlEHkAOqTT3AaJYC4zSW/FnR6N/eZQ5Zl193IhX
+         W3BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVLKTUlpDrLB3tmp7VUEPL3dIcqHZjeP6NkopXXFNFnoNjsg3TkTXKcEkthZuA4gkmwL/6a6o7FEL+QBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmeA+G48P55g6DLceNMHD4UDx7VLLEetSdGUfAkbiEZ8TQpkdy
+	nk7+zHCWOSJTWX6bUtKM9XEYE+IpB3rXI/oE7IYwGzLxSzwuz22FMjmmEu84MDJvAUUI33vITY+
+	o/rqaUKLeEoFjGXhqM7sJkAv5Yn65/ptjiLy5Ntqea2TRd/RWnG5rCyBEAqEu3Q==
+X-Received: by 2002:a05:6000:1aca:b0:35f:2f28:27b9 with SMTP id ffacd0b85a97d-36079a4f9d6mr191224f8f.4.1718279445258;
+        Thu, 13 Jun 2024 04:50:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGRbsSHxYqnMWViAKh/hWHtNSlYYom+vTUZKo7+eJH0rRpbiLhlrz2AggEkXvSfmy/PB7rHSQ==
+X-Received: by 2002:a05:6000:1aca:b0:35f:2f28:27b9 with SMTP id ffacd0b85a97d-36079a4f9d6mr191192f8f.4.1718279444799;
+        Thu, 13 Jun 2024 04:50:44 -0700 (PDT)
+Received: from pstanner-thinkpadt14sgen1.remote.csb (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3607509c883sm1510620f8f.29.2024.06.13.04.50.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 04:49:50 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sHixg-00FW6s-Sj;
-	Thu, 13 Jun 2024 08:49:48 -0300
-Date: Thu, 13 Jun 2024 08:49:48 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
-	virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 03/10] iommu: Add attach handle to struct iopf_group
-Message-ID: <20240613114948.GA791043@ziepe.ca>
-References: <20240527040517.38561-1-baolu.lu@linux.intel.com>
- <20240527040517.38561-4-baolu.lu@linux.intel.com>
- <20240612133732.GW791043@ziepe.ca>
- <013afe9a-756f-4c85-baa1-977bea6be395@linux.intel.com>
+        Thu, 13 Jun 2024 04:50:44 -0700 (PDT)
+From: Philipp Stanner <pstanner@redhat.com>
+To: Hans de Goede <hdegoede@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	dakr@redhat.com
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Philipp Stanner <pstanner@redhat.com>
+Subject: [PATCH v9 00/13] Make PCI's devres API more consistent
+Date: Thu, 13 Jun 2024 13:50:13 +0200
+Message-ID: <20240613115032.29098-1-pstanner@redhat.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <013afe9a-756f-4c85-baa1-977bea6be395@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 13, 2024 at 12:23:17PM +0800, Baolu Lu wrote:
+Changes in v9:
+  - Remove forgotten dead code ('enabled' bit in struct pci_dev) in
+    patch No.8 ("Move pinned status bit...")
+  - Rework patch No.3:
+      - Change title from "Reimplement plural devres functions"
+        to "Add partial-BAR devres support".
+      - Drop excessive details about the general cleanup from the commit
+	message. Only motivate why this patch's new infrastructure is
+	necessary.
+  - Fix some minor spelling issues (s/pci/PCI ...)
 
->  struct iommu_ops {
->         bool (*capable)(struct device *dev, enum iommu_cap);
-> @@ -600,6 +598,7 @@ struct iommu_ops {
->         struct iommu_domain *blocked_domain;
->         struct iommu_domain *release_domain;
->         struct iommu_domain *default_domain;
-> +       bool user_pasid_table;
->  };
+Changes in v8:
+  - Rebase the series on the already merged patches which were slightly
+    modified by Bjorn Helgaas.
+  - Reword the pci_intx() commit message so it clearly states it's about
+    reworking pci_intx().
+  - Move the removal of find_pci_dr() from patch "Remove legacy
+    pcim_release()" to patch "Give pci_intx() its own devres callback"
+    since this later patch already removed all calls to that function.
+  - In patch "Give pci_intx() its own devres callback": use
+    pci_is_enabled() (and, thus, the enabled_cnt in struct pci_dev)
+    instead of a separate enabled field. (Bjorn)
 
-Yeah, maybe spell it 
+Changes in v7:
+  - Split the entire series in smaller, more atomic chunks / patches
+    (Bjorn)
+  - Remove functions (such as pcim_iomap_region_range()) that do not yet
+    have a user (Bjorn)
+  - Don't export interfaces publicly anymore, except for
+    pcim_iomap_range(), needed by vboxvideo (Bjorn)
+  - Mention the actual (vboxvideo) bug in "PCI: Warn users..." commit
+    (Bjorn)
+  - Drop docstring warnings on PCI-internal functions (Bjorn)
+  - Rework docstring warnings
+  - Fix spelling in a few places. Rewrapp paragraphs (Bjorn)
 
-  u8 user_pasid_table : 1;
+Changes in v6:
+  - Restructure the cleanup in pcim_iomap_regions_request_all() so that
+    it doesn't trigger a (false positive) test robot warning. No
+    behavior change intended. (Dan Carpenter)
 
-Jason
+Changes in v5:
+  - Add Hans's Reviewed-by to vboxvideo patch (Hans de Goede)
+  - Remove stable-kernel from CC in vboxvideo patch (Hans de Goede)
+
+Changes in v4:
+  - Rebase against linux-next
+
+Changes in v3:
+  - Use the term "PCI devres API" at some forgotten places.
+  - Fix more grammar errors in patch #3.
+  - Remove the comment advising to call (the outdated) pcim_intx() in pci.c
+  - Rename __pcim_request_region_range() flags-field "exclusive" to
+    "req_flags", since this is what the int actually represents.
+  - Remove the call to pcim_region_request() from patch #10. (Hans)
+
+Changes in v2:
+  - Make commit head lines congruent with PCI's style (Bjorn)
+  - Add missing error checks for devm_add_action(). (Andy)
+  - Repair the "Returns: " marks for docu generation (Andy)
+  - Initialize the addr_devres struct with memset(). (Andy)
+  - Make pcim_intx() a PCI-internal function so that new drivers won't
+    be encouraged to use the outdated pci_intx() mechanism.
+    (Andy / Philipp)
+  - Fix grammar and spelling (Bjorn)
+  - Be more precise on why pcim_iomap_table() is problematic (Bjorn)
+  - Provide the actual structs' and functions' names in the commit
+    messages (Bjorn)
+  - Remove redundant variable initializers (Andy)
+  - Regroup PM bitfield members in struct pci_dev (Andy)
+  - Make pcim_intx() visible only for the PCI subsystem so that new    
+    drivers won't use this outdated API (Andy, Myself)
+  - Add a NOTE to pcim_iomap() to warn about this function being the one
+    exception that does just return NULL.
+  - Consistently use the term "PCI devres API"; also in Patch #10 (Bjorn)
+
+
+¡Hola!
+
+PCI's devres API suffers several weaknesses:
+
+1. There are functions prefixed with pcim_. Those are always managed
+   counterparts to never-managed functions prefixed with pci_ – or so one
+   would like to think. There are some apparently unmanaged functions
+   (all region-request / release functions, and pci_intx()) which
+   suddenly become managed once the user has initialized the device with
+   pcim_enable_device() instead of pci_enable_device(). This "sometimes
+   yes, sometimes no" nature of those functions is confusing and
+   therefore bug-provoking. In fact, it has already caused a bug in DRM.
+   The last patch in this series fixes that bug.
+2. iomappings: Instead of giving each mapping its own callback, the
+   existing API uses a statically allocated struct tracking one mapping
+   per bar. This is not extensible. Especially, you can't create
+   _ranged_ managed mappings that way, which many drivers want.
+3. Managed request functions only exist as "plural versions" with a
+   bit-mask as a parameter. That's quite over-engineered considering
+   that each user only ever mapps one, maybe two bars.
+
+This series:
+- add a set of new "singular" devres functions that use devres the way
+  its intended, with one callback per resource.
+- deprecates the existing iomap-table mechanism.
+- deprecates the hybrid nature of pci_ functions.
+- preserves backwards compatibility so that drivers using the existing
+  API won't notice any changes.
+- adds documentation, especially some warning users about the
+  complicated nature of PCI's devres.
+
+
+Note that this series is based on my "unify pci_iounmap"-series from a
+few weeks ago. [1]
+
+I tested this on a x86 VM with a simple pci test-device with two
+regions. Operates and reserves resources as intended on my system.
+Kasan and kmemleak didn't find any problems.
+
+I believe this series cleans the API up as much as possible without
+having to port all existing drivers to the new API. Especially, I think
+that this implementation is easy to extend if the need for new managed
+functions arises :)
+
+Greetings,
+P.
+
+Philipp Stanner (13):
+  PCI: Add and use devres helper for bit masks
+  PCI: Add devres helpers for iomap table
+  PCI: Add partial-BAR devres support
+  PCI: Deprecate two surplus devres functions
+  PCI: Make devres region requests consistent
+  PCI: Warn users about complicated devres nature
+  PCI: Remove enabled status bit from pci_devres
+  PCI: Move pinned status bit to struct pci_dev
+  PCI: Give pcim_set_mwi() its own devres callback
+  PCI: Give pci_intx() its own devres callback
+  PCI: Remove legacy pcim_release()
+  PCI: Add pcim_iomap_range()
+  drm/vboxvideo: fix mapping leaks
+
+ drivers/gpu/drm/vboxvideo/vbox_main.c |  20 +-
+ drivers/pci/devres.c                  | 903 +++++++++++++++++++++-----
+ drivers/pci/iomap.c                   |  16 +
+ drivers/pci/pci.c                     |  94 ++-
+ drivers/pci/pci.h                     |  23 +-
+ include/linux/pci.h                   |   5 +-
+ 6 files changed, 858 insertions(+), 203 deletions(-)
+
+-- 
+2.45.0
+
 
