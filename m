@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-213240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED769072ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:54:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 139929072F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 14:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 481221F21B55
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:54:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAE731F22E4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 12:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F17142623;
-	Thu, 13 Jun 2024 12:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF7B14264C;
+	Thu, 13 Jun 2024 12:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TurZugmn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RUtV4uqJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D683717FD;
-	Thu, 13 Jun 2024 12:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223E017FD;
+	Thu, 13 Jun 2024 12:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718283283; cv=none; b=adSl5JIcBBzS28jtTjsTegvmnvHtbXL8O0g10wj2IpeTAXThSPi5QOjLOiJfiMiEnutcmAnxtYnnqrBxOl3eui9dRkKTV0qoRVkuGtxDOdT6s04AsGp5UiYQn2we2U3bhNsFtIMERIBaMAA/V+eMwn3Hd8jdIYtrI6LbcnCxDag=
+	t=1718283360; cv=none; b=bpFWzIPf+qM3TMRI7PwK59OKWJyW2oxKOyYuqVjsXyaEM8RboIRWb78Znbi7lGRPuuGRTFZC0khsV8Xp47B8dKIhPo4UO6eLQTiGoygcSq0sC3/wL87jQYCDDN5DPW+35o9fEOarm5Nu4cTA4hFTfmU+QQwtwZY1hsnGj2IcG3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718283283; c=relaxed/simple;
-	bh=dJYtdzaJMyEffYCt+yuyBL1OIf+l4LABJMoAMK9HJvw=;
+	s=arc-20240116; t=1718283360; c=relaxed/simple;
+	bh=QgHu5ABYGNTZrxtrG2jWENk/OLaY8CwfYDOtr7wuIxo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t046PB7mNQwNhEftNQ7J+nQro5ktAJyb/y6H1vwkXpVaPyoWh9yLzX4f8Fd7os9UsHqkfvdjeSV0sTzrGMOF5+yas+uti08FxcsD5D/Lx9F2aJ5yszvbTCw7/AEpkNuqCu2i87KNqHPpV/6a/DDvtN3PZ5t13/x86UbP/F5jR4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TurZugmn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60E25C2BBFC;
-	Thu, 13 Jun 2024 12:54:36 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=iNYYw32KjsKdZEzJ3TcDF+poVP3xNC3fJ9e7tiK/M+dU72F9KIRLCodDxwnLKsd01WvRfc4/MZ283OOXLQd6WvTv2c23h4fXoXUnu8f/qS7UFpudJyzfzLTxNfbjeuBE2ShDTORAm/1ad4XRLrxwX3zaisVHgf/a0AnT9sC/vwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RUtV4uqJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B94C2C2BBFC;
+	Thu, 13 Jun 2024 12:55:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718283283;
-	bh=dJYtdzaJMyEffYCt+yuyBL1OIf+l4LABJMoAMK9HJvw=;
+	s=k20201202; t=1718283359;
+	bh=QgHu5ABYGNTZrxtrG2jWENk/OLaY8CwfYDOtr7wuIxo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TurZugmnIzofQ9eTCeBoNGSHYURq0axCq2cHg1MXb8+tWNU1BzPWdDics6Wyn9Oyw
-	 HESzGIwcYc8KUlKxUe9SFxPHUCrPbf/KCzxTEwhzA9f1kqayzXduQ7/GDYqo7D49xj
-	 YViBSHOuj86MOoYIgHRJakw2sAH6lObgLxf8nHcGNr6tr2TsTcC7SulFZR44xLu+T9
-	 mjPKOlUvdxoTt0qL004WS8eIUZe2Po08B6QtvXq9h70HQGULDMiR3nV3gCMZGah3hJ
-	 ijYxoEoi/R1EZ8cfrqMHBhif5YOdYXI7+hHFMTxWPDpswvXlM9uxzVr9c4saMue24b
-	 JPRa+BQ2v67rA==
-Message-ID: <b6713018-73d2-44a8-8f2c-f6a7c73308d1@kernel.org>
-Date: Thu, 13 Jun 2024 14:54:33 +0200
+	b=RUtV4uqJ4izvYqOP8jS+d8IPhNK6zgQrPoyWfIrCaKyBhKY6YEYLOsimcjQ2FWTVB
+	 fZ0EAkAqKgRf7isZJTh69HsERdWTkPssrt432LMTBwOj/2pqVye0m5Cz0aX3W7/wr+
+	 ZnlK2yRJdHYX8O1XQZbcfcv0u5NM4wyhIFsFetqJmH2pZhoPiK6SYU96lf8rNepu+N
+	 qEBI0Y3rYMFLc4oOzeVQ1219/PJZIf6G4mIVzXKBjkHWjpIuWJvK7+3w5SkiDBPuHO
+	 ZOkPUaRxA8h0ivENpw4YVmBOvi065Iyrfyg3bMN+3L4c1ZnfZC5CJuM/pf6KZZHsDB
+	 +bCRIxYgMFa4Q==
+Message-ID: <3d0a7a82-6262-40e6-be25-4a1c4d8df2fe@kernel.org>
+Date: Thu, 13 Jun 2024 14:55:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] dt-bindings: display/msm: Add SM7150 DPU
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Danila Tikhonov <danila@jiaxyga.com>, robdclark@gmail.com,
- quic_abhinavk@quicinc.com, sean@poorly.run, marijn.suijten@somainline.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, daniel@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, quic_rmccann@quicinc.com, konrad.dybcio@linaro.org,
- neil.armstrong@linaro.org, jonathan@marek.ca, swboyd@chromium.org,
- quic_khsieh@quicinc.com, quic_jesszhan@quicinc.com,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240612184336.11794-1-danila@jiaxyga.com>
- <20240612184336.11794-4-danila@jiaxyga.com>
- <0e7bd7f2-b445-4a59-b456-8d03af121a8e@kernel.org>
- <4xqa6u3jh6z7zdfaamxl3jpucfymznxmd3ezhihgfky62iifkc@bdslrxujahxc>
+Subject: Re: [RFC PATCH v2 2/4] dt-bindings: clock: Add R9A09G057 core clocks
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240610233221.242749-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <6b3fe242-3733-4f16-b727-494dc1d82002@kernel.org>
+ <CA+V-a8vp0qHKqUMvyfy9hQjKyk8Cs0bDTnYh-ChvPi150r5i2g@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,48 +109,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <4xqa6u3jh6z7zdfaamxl3jpucfymznxmd3ezhihgfky62iifkc@bdslrxujahxc>
+In-Reply-To: <CA+V-a8vp0qHKqUMvyfy9hQjKyk8Cs0bDTnYh-ChvPi150r5i2g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/06/2024 12:13, Dmitry Baryshkov wrote:
-> On Thu, Jun 13, 2024 at 11:23:50AM +0200, Krzysztof Kozlowski wrote:
->> On 12/06/2024 20:43, Danila Tikhonov wrote:
->>> Document the DPU hardware found on the Qualcomm SM7150 platform.
->>
->> In general, this should be before MDSS, because it defines fully the
->> compatibles already used in the MDSS schema. For multi-binding devices
->> it always starts with children and ends with parent/top schema.
->>
->>>
->>> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
->>> ---
->>>  .../bindings/display/msm/qcom,sm7150-dpu.yaml | 143 ++++++++++++++++++
->>>  1 file changed, 143 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sm7150-dpu.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm7150-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm7150-dpu.yaml
->>> new file mode 100644
->>> index 0000000000000..1a44cad131a72
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sm7150-dpu.yaml
->>> @@ -0,0 +1,143 @@
->>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/display/msm/qcom,sm7150-dpu.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Qualcomm SM7150 Display DPU
->>
->> What is DPU? Such acronyms should be explained in description or
->> expanded here, if there is space.
-> 
-> Other bindings here use 'DPU', so probably we need to fix all of them at
-> the same time.
+On 13/06/2024 11:57, Lad, Prabhakar wrote:
 
-Well, we can also start it for new bindings but that's not a reason for
-resend itself.
+>>> of section 4.4.2 which cannot be controlled by CLKON register.
+>>> ---
+>>>  include/dt-bindings/clock/r9a09g057-cpg.h | 21 +++++++++++++++++++++
+>>>  1 file changed, 21 insertions(+)
+>>>  create mode 100644 include/dt-bindings/clock/r9a09g057-cpg.h
+>>
+>> Missing vendor prefix.
+>>
+> OK, Is this just for new includes being added, or do you want me to
+> rename the existing Renesas specific includes in here which dont have
+> vendor prefix?
+
+Didn't we discuss it?
+
+I commented only about this binding.
 
 Best regards,
 Krzysztof
