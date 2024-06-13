@@ -1,239 +1,139 @@
-Return-Path: <linux-kernel+bounces-212655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C22690646B
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:51:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9126E906473
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBD951F23FB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:51:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 929061C22B36
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73847137C23;
-	Thu, 13 Jun 2024 06:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B353F137C2E;
+	Thu, 13 Jun 2024 06:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JoAzxBX4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E2YkpHhg"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2073C2119
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 06:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8740B130485
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 06:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718261472; cv=none; b=doSr0gaZ+n46a7NbUfUimYnuxMxz7xs0UnAKwZv1IYoA1suBFQLDMWnKrQ8r9oTZuu/0hwTIkkLYog9dAK4uFHN7tYWeDvZ8Ap/8J+mpeG0gtdcb2/BzN9vl3TmRppVN3oVuSi8alIEDnAqV15labcyhOtr8jRcuBIDqWtoySnU=
+	t=1718261587; cv=none; b=X4l6qr2lHM540i/Dn9yvOy+hboJlLps2HWmcCUQ9FbJGebCH2HgocEl4MaKKJ+7qAlwtrsFjD3Wu8jgAo4zfyf1LjMNNDv6fUyOtGTUc/i7xFt2yOlCgeIdASKZ7A2Vz22MZRTQOREWiLfrbNMqpkWLiTreVC2aUPBAY2IZECpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718261472; c=relaxed/simple;
-	bh=dCYSl6m4zIwH4JbW6vfy7hbe96U8QsTjiiAI04n+hHg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bLiPcetmGuv0Sd3Mrltb1X8BvSLUq2z1nCzu7VY6Yyo5EGx5hKdP++/IG7W4NNhezhWwGHXHAMz7S51DvKFAMy+1ii625+b3Q70sd6XkI7inLEBVnHkOLJdaT1SPpKnP7k7e0N2UZpnd0g2oFU2JQN1zEI3pXvnmGpwFe2FmXiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JoAzxBX4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718261469;
+	s=arc-20240116; t=1718261587; c=relaxed/simple;
+	bh=yraTjogu4eOqUCyxiyu0hsjap40zvHzUuM2vZuXA884=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WJNzgncF69zfIZ/5Qp9IFUCSqXWkJiO1vS8xo3Ab0z9PRXtIUuXEZoQUPK8QHp4l2Wq8HMuJ+GB6zsSQ4rFHeb1HEx2P/kpOpfoBOBYdT6qSJlYR2zltGOH5EjURI4XTEJys3nRZoeuMUgGupp2PKXRJLeLHWUxrpUaX9IH1Umg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E2YkpHhg; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: seanjc@google.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718261582;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dCYSl6m4zIwH4JbW6vfy7hbe96U8QsTjiiAI04n+hHg=;
-	b=JoAzxBX4Odb5UwJnY/3oa9O1NqoGR0Cvz9GfsftU9UyZFUE6KvVXbf9wqAWK1vhGsIKOGW
-	/ogb1ONJDGOxIM84H5pkWdUAHkxDVIRdi9CWjEzX1VwpE317DMYhWgPw41/somJZu+/8gH
-	0nwD+rT1p8wbzZS3w8lM8HF+OMdDkJg=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-362-cmtoofamPw-4RMyS56pkcQ-1; Thu, 13 Jun 2024 02:51:05 -0400
-X-MC-Unique: cmtoofamPw-4RMyS56pkcQ-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-354f30004c8so100850f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 23:51:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718261464; x=1718866264;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dCYSl6m4zIwH4JbW6vfy7hbe96U8QsTjiiAI04n+hHg=;
-        b=osfdxALkJRsqEhkVueQvtIQfZGXoiHnj0PptG5jmNtrlBQi/P2+p3bJDKZmAhiP5SM
-         oduI5H2dSsJW/lcJrDXWyMLczO+fCqR5WOUNS1HT6WMcAum76jIw/mJ++X9/OAzNXNvq
-         P3UUT5FYw64lO24dXE5PEm8YQMRmJhvs4OyG/Y5QE2RQDcUwNIqzjVYfgrmtX8WRfcvs
-         hW5BftlQB4DE8NpUpjZurauzX5N3f0VEf6AIjQZ5Ut9GeewQLZyFZFG6Fex7FAKckA19
-         Nma5TxbgM/9vABjSSa0A1rvH1cjRiXCEtkgVleuSkzRJ8uv9x9UZ6//xfq6pCQR8fwYS
-         A2Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvsG1/wtrJfI12uFoOVIDFCiM9ql2uo7NGtFexr/Mp9IW10NniB/fmiF6DZQngi7kaCWUZJwKEofBhsUk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzad2/lsvpgTJ+sB7YwVO+Vx/fE3mlfPHsTS9oseW2KI5+Y+gy4
-	iCqqzN4av8aIbV5gSMRLJtgaaJ4Myhnumh2xEi+8nkV0Ou6oRePnCquFwmtAlKkBaBJdEDFDG/y
-	+pysZ/5dtTZ6FHUhq0eT76Tn3Gn/c48Lftwg8kK3WS6vncIYUXfq3gtNLADuCzw==
-X-Received: by 2002:a05:600c:511c:b0:421:7f30:7ccb with SMTP id 5b1f17b1804b1-422863a85d2mr28530815e9.1.1718261464148;
-        Wed, 12 Jun 2024 23:51:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEne33eg3SL5vDGQDj3JXJ9FvT7/47jv8TG8IqrLLqDZjm0NwnmBgsExGCfn22f4gGdxb3/Tg==
-X-Received: by 2002:a05:600c:511c:b0:421:7f30:7ccb with SMTP id 5b1f17b1804b1-422863a85d2mr28530655e9.1.1718261463751;
-        Wed, 12 Jun 2024 23:51:03 -0700 (PDT)
-Received: from pstanner-thinkpadt14sgen1.remote.csb (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de607sm49767315e9.34.2024.06.12.23.51.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 23:51:03 -0700 (PDT)
-Message-ID: <ef32b9184700a07048fbb387f7d42410f7db308d.camel@redhat.com>
-Subject: Re: [PATCH v8 03/13] PCI: Reimplement plural devres functions
-From: Philipp Stanner <pstanner@redhat.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>, Sam
- Ravnborg <sam@ravnborg.org>, dakr@redhat.com, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org
-Date: Thu, 13 Jun 2024 08:51:02 +0200
-In-Reply-To: <20240612204235.GA1037175@bhelgaas>
-References: <20240612204235.GA1037175@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	bh=Pob+bbjOFf7h6fV5Z73fEIqJzbiI/6j+uQH9c0cAzHg=;
+	b=E2YkpHhg9Fmt6ybwKMqAQ8YYVGNLeh+hnNDYUUgtnxXsZt8FPeY8y4asORfx9UtpBGDdgW
+	f89IxPl8BPGmssOaYtFNoF4Ne/Nort9q7LMc+MCYF/csuZLtAUXsUTYi9NWg2lq3NtdWXS
+	n7jRAHCQzaqnHvPxkt9oahMQUtNWoPk=
+X-Envelope-To: jthoughton@google.com
+X-Envelope-To: yuzhao@google.com
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: pbonzini@redhat.com
+X-Envelope-To: ankita@nvidia.com
+X-Envelope-To: axelrasmussen@google.com
+X-Envelope-To: catalin.marinas@arm.com
+X-Envelope-To: dmatlack@google.com
+X-Envelope-To: rientjes@google.com
+X-Envelope-To: james.morse@arm.com
+X-Envelope-To: corbet@lwn.net
+X-Envelope-To: maz@kernel.org
+X-Envelope-To: rananta@google.com
+X-Envelope-To: ryan.roberts@arm.com
+X-Envelope-To: shahuang@redhat.com
+X-Envelope-To: suzuki.poulose@arm.com
+X-Envelope-To: weixugc@google.com
+X-Envelope-To: will@kernel.org
+X-Envelope-To: yuzenghui@huawei.com
+X-Envelope-To: kvmarm@lists.linux.dev
+X-Envelope-To: kvm@vger.kernel.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-doc@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-mm@kvack.org
+Date: Wed, 12 Jun 2024 23:52:54 -0700
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: James Houghton <jthoughton@google.com>, Yu Zhao <yuzhao@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	David Matlack <dmatlack@google.com>,
+	David Rientjes <rientjes@google.com>,
+	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>,
+	Marc Zyngier <maz@kernel.org>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Shaoqin Huang <shahuang@redhat.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>,
+	Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v5 4/9] mm: Add test_clear_young_fast_only MMU notifier
+Message-ID: <ZmqXRhFSoE38foh6@linux.dev>
+References: <20240611002145.2078921-1-jthoughton@google.com>
+ <20240611002145.2078921-5-jthoughton@google.com>
+ <CAOUHufYGqbd45shZkGCpqeTV9wcBDUoo3iw1SKiDeFLmrP0+=w@mail.gmail.com>
+ <CADrL8HVHcKSW3hiHzKTit07gzo36jtCZCnM9ZpueyifgNdGggw@mail.gmail.com>
+ <ZmidYAWKU1HANKU6@linux.dev>
+ <ZmiqXUwMXtUGanQc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmiqXUwMXtUGanQc@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 2024-06-12 at 15:42 -0500, Bjorn Helgaas wrote:
-> On Wed, Jun 12, 2024 at 10:51:40AM +0200, Philipp Stanner wrote:
-> > On Tue, 2024-06-11 at 16:44 -0500, Bjorn Helgaas wrote:
-> > > I'm trying to merge these into pci/next, but I'm having a hard
-> > > time
-> > > writing the merge commit log.=C2=A0 I want a one-sentence description
-> > > of
-> > > each patch that tells me what the benefit of the patch is.=C2=A0
-> > > Usually
-> > > the subject line is a good start.
-> > >=20
-> > > "Reimplement plural devres functions" is kind of vague and
-> > > doesn't
-> > > quite motivate this patch, and I'm having a hard time extracting
-> > > the
-> > > relevant details from the commit log below.
-> >=20
-> > I would say that the summary would be something along the lines:
-> > "Set ground layer for devres simplification and extension"
-> >=20
-> > because this patch simplifies the existing functions and adds
-> > infrastructure that can later be used to deprecate the bloated
-> > existing
-> > functions, remove the hybrid mechanism and add pcim_iomap_range().
->=20
-> I think something concrete like "Add partial-BAR devres support"
-> would
-> give people a hint about what to look for.
+On Tue, Jun 11, 2024 at 12:49:49PM -0700, Sean Christopherson wrote:
+> On Tue, Jun 11, 2024, Oliver Upton wrote:
+> > On Tue, Jun 11, 2024 at 09:49:59AM -0700, James Houghton wrote:
+> > > I think consolidating the callbacks is cleanest, like you had it in
+> > > v2. I really wasn't sure about this change honestly, but it was my
+> > > attempt to incorporate feedback like this[3] from v4. I'll consolidate
+> > > the callbacks like you had in v2.
+> > 
+> > My strong preference is to have the callers expectations of the
+> > secondary MMU be explicit. Having ->${BLAH}_fast_only() makes this
+> > abundantly clear both at the callsite and in the implementation.
+> 
+> Partially agreed.  We don't need a dedicated mmu_notifier API to achieve that
+> for the callsites, e.g. ptep_clear_young_notify() passes fast_only=false, and a
+> new ptep_clear_young_notify_fast_only() does the obvious.
+> 
+> On the back end, odds are very good KVM is going to squish the "fast" and "slow"
+> paths back into a common helper, so IMO having dedicated fast_only() APIs for the
+> mmu_notifier hooks doesn't add much value in the end.
+> 
+> I'm not opposed to dedicated hooks, but I after poking around a bit, I suspect
+> that passing a fast_only flag will end up being less cleaner for all parties.
 
-Okay, will do.
+Yeah, I think I'm headed in the same direction after actually reading
+the MM side of this, heh.
 
->=20
-> This patch contains quite a bit more than that, and if it were
-> possible, it might be nice to split the rest to a different patch,
-> but
-> I'm not sure it's even possible=C2=A0
-
-I tried and got screamed at by the build chain because of dead code. So
-I don't really think they can be split more, unfortunately.
-
-In possibly following series's to PCI I'll pay attention to design
-things as atomically as possible from the start.
-
-
-> and I just want to get this series out
-> the door.
-
-That's actually something you and I have in common. I have been working
-on the preparations for this since November last year ^^'
-
->=20
-> If the commit log includes the partial-BAR idea and the specific
-> functions added, I think that will hold together.=C2=A0 And then it makes
-> sense for why the "plural" functions would be implemented on top of
-> the "singular" ones.
->=20
-> > > > Implement a set of singular functions=20
-> > >=20
-> > > What is this set of functions?=C2=A0 My guess is below.
-> > >=20
-> > > > that use devres as it's intended and
-> > > > use those singular functions to reimplement the plural
-> > > > functions.
-> > >=20
-> > > What does "as it's intended" mean?=C2=A0 Too nebulous to fit here.
-> >=20
-> > Well, the idea behind devres is that you allocate a device resource
-> > _for each_ object you want to be freed / deinitialized
-> > automatically.
-> > One devres object per driver / subsystem object, one devres
-> > callback
-> > per cleanup job for the driver / subsystem.
-> >=20
-> > What PCI devres did instead was to use just ONE devres object _for
-> > everything_ and then it had to implement all sorts of checks to
-> > check
-> > which sub-resource this master resource is actually about:
-> >=20
-> > (from devres.c)
-> > static void pcim_release(struct device *gendev, void *res)
-> > {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct pci_dev *dev =3D=
- to_pci_dev(gendev);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct pci_devres *this=
- =3D res;
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int i;
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0for (i =3D 0; i < DEVIC=
-E_COUNT_RESOURCE; i++)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0if (this->region_mask & (1 << i))
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-pci_release_region(dev, i);
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (this->mwi)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0pci_clear_mwi(dev);
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (this->restore_intx)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0pci_intx(dev, this->orig_intx);
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (this->enabled && !t=
-his->pinned)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0pci_disable_device(dev);
-> > }
-> >=20
-> >=20
-> > So one could dare to say that devres was partially re-implemented
-> > on
-> > top of devres.
-> >=20
-> > The for-loop and the if-conditions constitute that "re-
-> > implementation".
-> > No one has any clue why it has been done that way, because it
-> > provides
-> > 0 upsides and would have been far easier to implement by just
-> > letting
-> > devres do its job.
-> >=20
-> > Would you like to see the above details in the commit message?
->=20
-> No.=C2=A0 Just remove the "use devres as it's intended" since that's not
-> needed to motivate this patch.=C2=A0 I think we need fewer and
-> more-specific words.
-
-ACK. I will rework it
-
-
-Thank you Bjorn for your time and effort,
-
-P.
-
-
->=20
-> Bjorn
->=20
-
+-- 
+Thanks,
+Oliver
 
