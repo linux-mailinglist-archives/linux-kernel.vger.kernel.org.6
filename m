@@ -1,102 +1,129 @@
-Return-Path: <linux-kernel+bounces-212402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C13B6905FA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:18:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 799A6905F97
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 02:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E49EBB22669
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:18:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72C591C21AB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 00:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C04522E;
-	Thu, 13 Jun 2024 00:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6875828F1;
+	Thu, 13 Jun 2024 00:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQCyg9V4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mz/ZQ4SN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F349A32;
-	Thu, 13 Jun 2024 00:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA6137C;
+	Thu, 13 Jun 2024 00:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718237894; cv=none; b=JV7XudasR0sctyYov8ByTKOKreRppbrl+60XzpTNu//MptZdN+exGOAh8HCP4hBn2rRG3RwE0TM6iI63TkAeJINm5/nlP/0yXaubP6jyujNJbvXu/AUF4SMVhU6C9yH8jO79Q9eqmulXJNgmHdUwN0GcwxC/Ww4sK8uONvigkjg=
+	t=1718237432; cv=none; b=hrlwPFeAog/B8XYNVTRfZz4tNgZJlsJ75L0cRtlORlEDV5Rrno6WJ1MvVSE0UtCzWFrAWLqgsrTN6pSnrlmQ4TzKQqi77eqNQ5AF+u2Uvpp8IxPE3DJWepbaOy+Y4swkMSlse1LkWq9L9TOITwXuCOA/IhuuGSr+sW4TTB/4NKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718237894; c=relaxed/simple;
-	bh=SZefi0GZVNFS6wlza5IFvVBTTsmZN0q2ny+3b4RPSCo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q1nfuVkyaJeYLN7pUwZrZmcxANsMEP4jogPWJDtkdf+YXEK8r08xtyHhXBL8z41zUO81PGDTYA+Em0J8vy9yyMQQy5CGhSFtjr7lAQN5OVYaaWY52m+WtChKPDhRmKJB9dn25AK8pvixVHSnbG8NYshRmS8mi91NP7kFSkBljwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQCyg9V4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A2D3C116B1;
-	Thu, 13 Jun 2024 00:18:12 +0000 (UTC)
+	s=arc-20240116; t=1718237432; c=relaxed/simple;
+	bh=ALaMOklo/D6m9out9qebU875GAFWtP61hk1J63pvt/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BGTfOfycW+8XJWjm6WtyCQMTCZ4ViI1AeILaW5e40PN+BZ96FqKqUpC9aw1KjwrJsix9l9B0XgI4Qwx4axQbraEL7z8ObmIH7N4tG9gJLSvHgYp8PzL+5tF4RnQausEAeq/Fbh/WsSKoqY/0+2bqzmwXp0V1tPYK4Hjk4G16fzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mz/ZQ4SN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09BC8C116B1;
+	Thu, 13 Jun 2024 00:10:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718237893;
-	bh=SZefi0GZVNFS6wlza5IFvVBTTsmZN0q2ny+3b4RPSCo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=NQCyg9V4s+sJGt5RCWLFNEfoydPbD6uAkjxL6atxK6M0m4UIPdBlbz+wv90Fd2Ffo
-	 NRyArc1kpAReNK9OcsxMAS8kSB8hW8oX/BrwiGIXfbTVL72EkONZxOjuxtphJQ5zng
-	 sdmDtGqrPx7u7CJPQevJbpmoOMduoXwhXmPFcmTkOHzxVcEE1Y1KrgOLr4FPTlsNyT
-	 f6jR24eIcvVwPNcgEdP1Fl+MeMyiB9O4cHmvVQnYbSyRTbLSGdOa5uT8ipIrhCtM2R
-	 qtFa5tLb6M8eTh7EXsPjVpq0uReX1hXxWcjW8VxxLy9ZbHDQYtX3IVMRd32L9cJeNQ
-	 7R1kKlvmD2/tA==
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: [PATCH] zram: use copy_page for full page copy
-Date: Thu, 13 Jun 2024 08:04:22 +0800
-Message-ID: <20240613000422.1918-1-jszhang@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=k20201202; t=1718237431;
+	bh=ALaMOklo/D6m9out9qebU875GAFWtP61hk1J63pvt/w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mz/ZQ4SNRhD4Slftyf1RGHhLam/Qf7W3PwDTBqymj8MrjJ2zFfcEBpzzqoIp7aIRE
+	 +HNQhNVE1+IOeDAWgqZssDT0yMjs5KujxGNYD5/v0d4xLqGdW6Z4IfirrVTI0gfG77
+	 pMXEtZ7kL2cG4kkEGdlkXN+sdZwbMnbryjY9PGB3jmEupZmxCvx/3ljnSDJVkMYjc3
+	 aerFM5mLp0PJV3xP/U6IojVO32XHdmwSgJHAiTk7a4PvwYlAlAf0U2KtXvJacugqV3
+	 /CEmWSpj8No1QubiV6AWTL6traVV8XO5JJaskmf2fawRbrkUX9ZG4c4dRG9FtdOikt
+	 K1w3nC+pECkGA==
+Date: Wed, 12 Jun 2024 17:10:29 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
+ <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, Ivan
+ Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>,
+ Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
+ <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
+ Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
+ <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan
+ <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, "Christian
+ =?UTF-8?B?S8O2bmln?=" <christian.koenig@amd.com>, Bagas Sanjaya
+ <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, Nikolay
+ Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>,
+ David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
+ <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
+ Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
+ <pkaligineedi@google.com>, linux-mm@kvack.org, Matthew Wilcox
+ <willy@infradead.org>
+Subject: Re: [PATCH net-next v11 05/13] page_pool: convert to use netmem
+Message-ID: <20240612171029.71adc273@kernel.org>
+In-Reply-To: <20240607005127.3078656-6-almasrymina@google.com>
+References: <20240607005127.3078656-1-almasrymina@google.com>
+	<20240607005127.3078656-6-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-commit 42e99bd975fd ("zram: optimize memory operations with
-clear_page()/copy_page()") optimize page copy/clean operations, but
-then commit d72e9a7a93e4 ("zram: do not use copy_page with non-page
-aligned address") removes the optimization because there's memory
-corruption at that time, the reason was well explained. But after
-commit 1f7319c74275 ("zram: partial IO refactoring"), partial IO uses
-alloc_page() instead of kmalloc to allocate a page, so we can bring
-back the optimization.
+On Fri,  7 Jun 2024 00:51:15 +0000 Mina Almasry wrote:
+> Abstrace the memory type from the page_pool so we can later add support
+> for new memory types. Convert the page_pool to use the new netmem type
+> abstraction, rather than use struct page directly.
+> 
+> As of this patch the netmem type is a no-op abstraction: it's always a
+> struct page underneath. All the page pool internals are converted to
+> use struct netmem instead of struct page, and the page pool now exports
+> 2 APIs:
+> 
+> 1. The existing struct page API.
+> 2. The new struct netmem API.
+> 
+> Keeping the existing API is transitional; we do not want to refactor all
+> the current drivers using the page pool at once.
+> 
+> The netmem abstraction is currently a no-op. The page_pool uses
+> page_to_netmem() to convert allocated pages to netmem, and uses
+> netmem_to_page() to convert the netmem back to pages to pass to mm APIs,
+> 
+> Follow up patches to this series add non-paged netmem support to the
+> page_pool. This change is factored out on its own to limit the code
+> churn to this 1 patch, for ease of code review.
 
-commit 80ba4caf8ba9 ("zram: use copy_page for full page copy") brings
-back partial optimization, missed one point in zram_write_page().
-optimize the full page copying in zram_write_page() with copy_page()
+Sorry for lack of meaningful review, busy times, in the meantime:
 
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
----
- drivers/block/zram/zram_drv.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 3acd7006ad2c..4b2b5098062f 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -1478,11 +1478,13 @@ static int zram_write_page(struct zram *zram, struct page *page, u32 index)
- 	dst = zs_map_object(zram->mem_pool, handle, ZS_MM_WO);
- 
- 	src = zstrm->buffer;
--	if (comp_len == PAGE_SIZE)
-+	if (comp_len == PAGE_SIZE) {
- 		src = kmap_local_page(page);
--	memcpy(dst, src, comp_len);
--	if (comp_len == PAGE_SIZE)
-+		copy_page(dst, src);
- 		kunmap_local(src);
-+	} else {
-+		memcpy(dst, src, comp_len);
-+	}
- 
- 	zcomp_stream_put(zram->comps[ZRAM_PRIMARY_COMP]);
- 	zs_unmap_object(zram->mem_pool, handle);
+drivers/net/ethernet/renesas/ravb_main.c:306:16: error: incompatible integer to pointer conversion assigning to 'struct page *' from 'netmem_ref' (aka 'unsigned long') [-Wint-conversion]
+  306 |         rx_buff->page = page_pool_alloc(priv->rx_pool[q], &rx_buff->offset,
+      |                       ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  307 |                                         &size, gfp_mask);
+      |                                         ~~~~~~~~~~~~~~~~
 -- 
-2.43.0
-
+pw-bot: cr
 
