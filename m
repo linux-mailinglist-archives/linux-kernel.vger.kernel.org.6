@@ -1,55 +1,64 @@
-Return-Path: <linux-kernel+bounces-212632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65AB906418
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:33:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84EF590641C
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71A2BB21742
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:33:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C3A7B21457
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5A4136E1D;
-	Thu, 13 Jun 2024 06:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E3F136E35;
+	Thu, 13 Jun 2024 06:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dEqr5bpz"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dGE89Za5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F453F9F8;
-	Thu, 13 Jun 2024 06:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1775B4C69
+	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 06:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718260425; cv=none; b=fH7kgvt7xQ0pU2oR5hBlNO6AH5t+uMTDlkVgXkppO2RN0LSMbeoEdsLM68ZLcdCBEUayOJpTFyvvTydbCsBF6YyuR0fe8zHh4bc+aFjm2UWwQmdqMkgJyF+eLVq0FmMCo5mnRuusZAjcIY186W0sa5LWgyMXx2E1AogP4LR1IKw=
+	t=1718260510; cv=none; b=kVSF/2PDgVSfISV+ofOtMEElKzwntkD/Rf5OB6OgrVOs2SqVcUX5QlS9SFPWn1QIFDntsyD2HXplsDk9YnJjaFCyGYEBsFi5+JUGXvlgj+wa8yWqxQoG49p8wyRby4uRXGzDtzjdQSscrR0jr94AicVoshEXSsSRpdHSc4g5sKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718260425; c=relaxed/simple;
-	bh=1uwMHLAGc1z2U93IpJeP9U1wmh5+aaNHRM2UIrMn67Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N7Cmt4etQkNPFvI35MNLmN1WB3besW/2+YvHBZGQh2OkcUBsDwQfWIc7J7lhSDU1Evrr6Gcw+Z4MK3t593NDn1obeTWqoi9vR7KjpqYwuFi3nu98ZfFbOuIZKcghaHesU0UcjtzGtmnW3TbdlnTUckWTyoATD0PBctkaJG/ME3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dEqr5bpz; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718260383; x=1718865183; i=markus.elfring@web.de;
-	bh=XYFlE3j1QdMRcqnoXdyMkbWg0pD8rOylOq8xsgg0Sro=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=dEqr5bpzK5xdO1Go5kkN5R66O4T4sY2J1WeOjZxypm07Uq+4r7ewtAponHaLuf3r
-	 A1z64+8YKYgYhmO5Taz5CD0hfNKrTLKPeiK+YmlaYtUKJcEk5EM3NoXpHvL00EGk0
-	 +p2iCzf2MDwMC92EkaUsU10l8sh4Z8hUtehiFgbe4BAH4yR0XHcjZZC6BvWsw5qJP
-	 uIzoP9anVa8i7l3RigbB1sbpcLmD3W+MaO98p6/GXMPhVLUpic/bVs4W1iHZ5rJV4
-	 dgdHuRGYqM4g6EQA6gs8Bv2ewTsoUqJPXHAxluEwZXuAxxG5iQEyXyzGJ2HNEkb1k
-	 YXbZzFSY5D5kjTlNVw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MALeD-1s6PcC1eR9-000gnU; Thu, 13
- Jun 2024 08:33:03 +0200
-Message-ID: <8383c494-911f-40fd-abfa-9489fada67a3@web.de>
-Date: Thu, 13 Jun 2024 08:32:32 +0200
+	s=arc-20240116; t=1718260510; c=relaxed/simple;
+	bh=2YW1VcDO5vvDgSqZENQpnOTikqYo3+QOeHpBuHEJ79k=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=TjFoIz6QI3BYu+5eQRsVsEn/Kk6Q/YfUiKhbjd15pZdF/3CPR8zoyxL6M8huamCFZ1g8LqdQwuZFOP1huTirurJpoX5UmFlBhtwygIZ+Ne9sawnERG9lsNOLRSXcLAHvSmtkV+Ec0HDqUG9BNuqpYK+pbzygZzf02L2WliNMnck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dGE89Za5; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718260509; x=1749796509;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=2YW1VcDO5vvDgSqZENQpnOTikqYo3+QOeHpBuHEJ79k=;
+  b=dGE89Za5TQg0DkR+uU7MDBQlhQSfQZKn60oE/4g899mT5IIBVqBU4d+q
+   AWW513cPSXKAqrk1Nflr2V3+lbelNma+crpR1nlvShh2puvB0O4IeWEKK
+   pt0ATtOa3e1deO1W/m/KYgqi6Dzcva4zdo6gzlIqPo+BidlB4NeR1htL0
+   X+9ZjmZo7F83WctpYKM3LlgH0cQoxeEpb8pZbNHJ3o9GEjYPNSfeEhP4j
+   wY9vobIHCGvW+uAm3Dj4JnVktIPO27AOFQQxFVwaPYXlu6IiV6xCOXTbm
+   bYt5kK2O3Rh5jQSdIfkUengLC3Oh8VGAe3wsj+KI7ZwjPu4tpFYK+SHCV
+   w==;
+X-CSE-ConnectionGUID: DaYubPB9QfCvRYPSsyFiqg==
+X-CSE-MsgGUID: UrKd/Br7ROKvPkAdP49W8A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11101"; a="18881197"
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="18881197"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 23:35:09 -0700
+X-CSE-ConnectionGUID: jdv7yU8XQAu31tmE04AqOg==
+X-CSE-MsgGUID: x3FFM3qqTRWUpMXS9tD9RA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,234,1712646000"; 
+   d="scan'208";a="71241593"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by fmviesa001.fm.intel.com with ESMTP; 12 Jun 2024 23:35:05 -0700
+Message-ID: <52144c4e-0421-46ca-bd00-8602c12c901a@linux.intel.com>
+Date: Thu, 13 Jun 2024 14:32:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,50 +66,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] i2c: octeon: refactor hlc r/w operations
-To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
- linux-i2c@vger.kernel.org
-Cc: Andi Shyti <andi.shyti@kernel.org>, Robert Richter <rric@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <20240613025412.3848629-1-aryan.srivastava@alliedtelesis.co.nz>
- <20240613025412.3848629-2-aryan.srivastava@alliedtelesis.co.nz>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240613025412.3848629-2-aryan.srivastava@alliedtelesis.co.nz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:AMXbYtNW60HooN3NBFXHbB1Y3NnLec7m6FvFtCaVNcyGPQvnTkp
- NXw9pIZUMq17KNouN//BAiLaa9m5/2/P/PzRhGRIJMor//+TaDkeyhD2PWk5zl+zFiIAhhc
- +EzHZhPB3Mo9kObe3FRNBmTnF79H+Vx3lGLeHD0txuO5sbdoadLM2VCuVyJt2PPT68juYHd
- 13Ay6jBdALkO9IkhljbHQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:mAI9eMX67FU=;y8bHKGC5TBFSkww85QHfeDMKMP5
- U27nlmA6XuE2ycXgh7EtqN4CT/KPdi0PPzOo1slHFiZjXDfPgoJC9PRaJWIbY9KeMe9cLLWJ4
- 6XoEVgiXQXRdwYgFSZNYtzq9lJ4jQUILWET710WnDAi4hwyPk9DuonJHZXsykIB3KqW26P8je
- I5qmVTPv+/KJaBTapWaR4nlboS4azXZxonKtcOgaML4GBcOanOhkNv8r5LL4T+vZKWE9HkCKS
- i3YIkRXu8RItixqvsBujmfIKFjfeqCBjpr0u4pyi6QJ7poY+9KxPgr75V6iqAv0R8pSBCt0Yj
- /f1VPypZ0ERGvz3RQvmIMdR7UJoM20+b2QW7aQbBwzFyc4l8YzRsF8qi0ICSnk3eTBOU93fJM
- SnbxpbYj+e3dG0hYvcplUifXd/oefIYAzrfKm4sg4OyXIcVdZY8mguAbHeSZYcHMLSeV5Hj8m
- G2NEKDSg9Z3pI/zv4TYIcAAr5le9xwv9igIzIdg1pcGhsYOkgubdGlL6juaWf7yxQ8idmHDTr
- eo12g8QzdN1q5diZOmvs3SnSPDdSRgvs02IrIzI3vaPA2pMaGxStKBnem3uptiqpVMd1qnELs
- uI+GMEvz13p3MChWFVWJ/gy0T7R2gs8fKNaYRWPz7C72Rf5A6PlnFUjRHACx0XCBL7MlCeXH1
- ApE8rlX7rpkb+kag0m2GNdpp28HdNefC4pEJbGNTigKR4GOrtYAix9pzRHVhieBmkTa5PMiJI
- d5TqQPC7+/SW/fhfik3IqiaGAujj9qdo+HQmD+HuAAPQRNqtzBSWAG86HmYxQHEs8ItA+guO8
- 9Z60hfYNZbUGWVg1vi+W1hepeAPeFJHHqHtx/QKqXA2so=
+Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Nicolin Chen <nicolinc@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
+ Jacob Pan <jacob.jun.pan@linux.intel.com>,
+ Joel Granados <j.granados@samsung.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "virtualization@lists.linux-foundation.org"
+ <virtualization@lists.linux-foundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 05/10] iommufd: Add fault and response message
+ definitions
+To: Jason Gunthorpe <jgg@ziepe.ca>, "Tian, Kevin" <kevin.tian@intel.com>
+References: <20240527040517.38561-1-baolu.lu@linux.intel.com>
+ <20240527040517.38561-6-baolu.lu@linux.intel.com>
+ <BN9PR11MB52768F2D79C8FA75280F1FF38CF92@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <3ee41c29-46bb-4897-9e93-5982c43736cb@linux.intel.com>
+ <BN9PR11MB52764D7EF1EEDA95B694E8B68CFB2@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20240612131946.GT791043@ziepe.ca> <20240612135021.GY791043@ziepe.ca>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240612135021.GY791043@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> Refactor the current implementation of the high-level composite read and
-> write operations in preparation of the addition of block-mode read/write
-> operations.
-=E2=80=A6
+On 6/12/24 9:50 PM, Jason Gunthorpe wrote:
+> On Wed, Jun 12, 2024 at 10:19:46AM -0300, Jason Gunthorpe wrote:
+>>>> I prefer not to mess the definition of user API data and the kernel
+>>>> driver implementation. The kernel driver may change in the future, but
+>>>> the user API will remain stable for a long time.
+>>> sure it remains stable for reasonable reason. Here we defined some
+>>> fields but they are even not used and checked in the kernel. IMHO it
+>>> suggests redundant definition. If there is value to keep them, do we
+>>> need to at least verify them same as the completion record?
+>> They are not here for the kernel, they are here for userspace.
+>>
+>> A single HWPT and a single fault queue can be attached to multiple
+>> devices we need to return the dev_id so that userspace can know which
+>> device initiated the PRI. Same with PASID.
+>>
+>> The only way we could remove them is if we are sure that no vIOMMU
+>> requires RID or PASID in the virtual fault queue PRI fault message.. I
+>> don't think that is true?
+>>
+>> Cookie is not a replacement, cookie is an opaque value for the kernel
+>> to use to match a response to a request.
+> Oh I got this wrong, the above is the response, yeah we can ditch
+> everything but the cookie, and code right?
+> 
+> struct iommu_hwpt_page_response {
+>         __u32 cookie;
+>         __u32 code;
+> };
+> 
+> What is the workflow here? We expect the VMM will take the vIOMMU
+> response and match it to a request cookie for the kernel to complete?
 
-* I find that a cover letter can be helpful also for the presented small p=
-atch series.
+The workflow in the host kernel involves looking up the iopf_group using
+the cookie value in the response queue and then responding to the
+iopf_group with the code. Therefore, from the host kernel's perspective,
+it is acceptable if the user only passes the cookie and code in the
+response message.
 
-* How do you think about to replace any abbreviations in summary phrases?
-  - HLC
-  - r/w
+Since you both agreed that the response message could be simplified, I
+will implement the above structure in the new version.
 
-
-Regards,
-Markus
+Best regards,
+baolu
 
