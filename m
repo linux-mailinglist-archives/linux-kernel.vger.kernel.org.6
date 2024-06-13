@@ -1,265 +1,131 @@
-Return-Path: <linux-kernel+bounces-212665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB90906489
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:59:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E35906494
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 09:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1664528504F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:59:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 622BA2849CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D761137C2E;
-	Thu, 13 Jun 2024 06:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15ABE137C23;
+	Thu, 13 Jun 2024 07:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P7jNLZKM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="s8CKTaLY"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DEDA13791E
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 06:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6859622;
+	Thu, 13 Jun 2024 07:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718261980; cv=none; b=POjN80uRs6mmUG/tpHerk+I6vS6RAHnINQvBG8OsyND6LuxYumzgte2+u3pq6qzJ0DN9YXTjGzOZom/MExZ4L/GmnikPk4FJLZpRewc42K4rZrfdyD3j8ulEuBeDtvGn/DRBqoxhTKbCa6eCGWZvvMlOdUfk6QO5hHJfyMk9pEg=
+	t=1718262429; cv=none; b=n83G82Z7Dwrwjt2T88AQ0F//UrQQOxYWnTyDHuNim7dTkznypQKJdYXQKZ+j/2ZTZH9LiBKkC9UhFT6cdgjD0Htw/Dj+YjhlIOpvKPjCJYZYs0WrbMVWRVTkVee8qPsYlLPsLHoxe4OBFog7ymfxpmfYrEEdItMiYn9XVwgloJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718261980; c=relaxed/simple;
-	bh=pJwjntH5QMkuPUwNOFSmpR3KkB6NULCVjIIWybM6pWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hf3OXJFjF6oUTS6h4GkNj6Fp+mPUsbhm6qbCwKDSCCQSyfRY32ckSKbiqq4e44UbKW37VzC2FOfAWmBGSqhqFtr6Z2eUuL7WwMLMBwCf5NTUV53HK7L5WGa6AYRE3V9IZPPsXnjNbaja/YtwjPm/sWWcGe4RpvjmypzYTRvtDq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P7jNLZKM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718261977;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=drA76IDECayT317ZaKBjGX9PcBu+0gorkvMz8yjsoxU=;
-	b=P7jNLZKMTCuGmu/EM5gKsLH7vtT5doD+3OeZmJdp7DhRu0cNVtjSlkYmYXBUVRjnYB3XYS
-	6lO/Vl0UBwqbOCTXNj0HTWuUoRODMuS23/XVOU/LKDnTuxwGSeJqOLCrhehO/SEyKFqg7U
-	2Rta/EY8AH6oQECIDjBSfALva11Q8GA=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-167-5QA2bsrNNmyw0T9g7Nt4nQ-1; Thu, 13 Jun 2024 02:59:35 -0400
-X-MC-Unique: 5QA2bsrNNmyw0T9g7Nt4nQ-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-35f1f958b7dso415644f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Jun 2024 23:59:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718261974; x=1718866774;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=drA76IDECayT317ZaKBjGX9PcBu+0gorkvMz8yjsoxU=;
-        b=k2L0UctIiqRaVSLEr3ofv3S20U44NE9azrvNhbgaD9Nn44EZ0MotZy+LXKh9wd9Uyt
-         7BEryQLO0nUnUVcNZTcc8TJlMwX7BEeXNFxQk4FUnHxokF6e1/oYe5Dhd6syDqKotQZr
-         cvIM1TRrOs55IWHd103r6D2WG6ntT0gC0eG8ILex+apY4HhmYSMJ2FDDWBGF20itEsI1
-         3kSJAgW61n8Kexu4OjsEzJvPAsR7bOW30w2YaPa/VsV/JMmuIgmWANAyjxxxmTIC4kbT
-         kN+P7a/txLlRV19MeAphtCL6+axc/5AytL8WHsZONsAkU1HgYtf0ztQc5C7QUPnq8EUx
-         f8MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaIUf/XcQdfsZF3P62+FcWQxCqWOTPs/Y5zWt6/Vs2GiaoB6y4sXNNIRPJo4AxUvJG52JkTxtKtyk6YyTPelbisYGlDx7eSwCKFXmn
-X-Gm-Message-State: AOJu0Yz9KVe7G/siDd4htl6onp9bWD9+tajYKNpAMdPO0Ojp6lQ+Kr+p
-	4o8eYUzUuuWmqx30v88tvsHPMUP1h9fjvmXe/qptIdnLcfpXzZu5CWAmN8QooWXFo26lXwi11BD
-	dfX4Mo0unqrwr3Mj9SMbsEx+sof/1/OubP6htKcytKBj3fqJnELiuDql/eq4DPQ==
-X-Received: by 2002:adf:fc4a:0:b0:35f:1c26:b68d with SMTP id ffacd0b85a97d-35fe89433c6mr2681769f8f.60.1718261973685;
-        Wed, 12 Jun 2024 23:59:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGTGddEYi8s6Uj9O8LtEdStBWBMju/uoZiQ7uYD8Sqxu92RawWDLo3ZDwPwDowpIYg8Keq/wg==
-X-Received: by 2002:adf:fc4a:0:b0:35f:1c26:b68d with SMTP id ffacd0b85a97d-35fe89433c6mr2681752f8f.60.1718261973066;
-        Wed, 12 Jun 2024 23:59:33 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc7:341:5539:9b1a:2e49:4aac:204e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750f22e8sm779696f8f.80.2024.06.12.23.59.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 23:59:32 -0700 (PDT)
-Date: Thu, 13 Jun 2024 02:59:29 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Cindy Lu <lulu@redhat.com>
-Cc: dtatulea@nvidia.com, jasowang@redhat.com,
-	virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 1/2] vdpa: support set mac address from vdpa tool
-Message-ID: <20240613025548-mutt-send-email-mst@kernel.org>
-References: <20240611053239.516996-1-lulu@redhat.com>
+	s=arc-20240116; t=1718262429; c=relaxed/simple;
+	bh=LWRFNapN+wyTQNvWofeQWCa3j7JgLf2cUA8hrrwkD5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LBAcrxde2WNHh8Ksh3TlYi3X2udBnqp9yLiMYspPvd3qczNFpS9V/2bri/HiEtRfwpVD5ABo5wjWpWbTDU1GLHFRxHsNdcuUrc0xckUL2qG3F7mNnnShSIo4YF4VqT98aOMhlQ89XtryxH6YaIkBEwzRzURw1FqMqUnVh5b95OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=s8CKTaLY; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718262420;
+	bh=LWRFNapN+wyTQNvWofeQWCa3j7JgLf2cUA8hrrwkD5A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=s8CKTaLYhTF7um/sKo5IvJYMtqaSw3zTlF3L0BvrgEvaJkN5o6lrXpzBsomCKOUFC
+	 MeNTeggOihYDgpBHnJyTHpK97tzM+KyAqqHly23tjVpK5WjjRhl+Efw6OZiZzfYQkt
+	 ko19+oDsiWUbJj1srwsje4hqe6Qnn+2NsXu17sdAswEWwiGlCFgHjCPrnHV/7BgCVY
+	 4dpDcfMnKEk/4xUFs0gRDFP0D9JE3guGmQnnoHAGe7wHhf7VJrmeG6tYBW4d3bsbGs
+	 2/3DW0Z+c9boXXN3UpZURtNhy5Ohbew0/+T4QWcg3PM2jK4aruMaPsXKAiDTV79YuN
+	 C1ySXo9uPU4ag==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3198537821A3;
+	Thu, 13 Jun 2024 07:06:59 +0000 (UTC)
+Message-ID: <030a538b-bf28-4418-92fd-14225260eb85@collabora.com>
+Date: Thu, 13 Jun 2024 09:06:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611053239.516996-1-lulu@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v2 1/2] clk: mediatek: mt8173-infracfg: Handle
+ unallocated infracfg when module
+To: Alper Nebi Yasak <alpernebiyasak@gmail.com>,
+ linux-mediatek@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+ Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ Chen-Yu Tsai <wenst@chromium.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, linux-clk@vger.kernel.org
+References: <20240612201211.91683-1-alpernebiyasak@gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240612201211.91683-1-alpernebiyasak@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 11, 2024 at 01:32:32PM +0800, Cindy Lu wrote:
-> Add new UAPI to support the mac address from vdpa tool
-> Function vdpa_nl_cmd_dev_config_set_doit() will get the
-> MAC address from the vdpa tool and then set it to the device.
+Il 12/06/24 22:11, Alper Nebi Yasak ha scritto:
+> The MT8173 infracfg clock driver does initialization in two steps, via a
+> CLK_OF_DECLARE_DRIVER declaration. However its early init function
+> doesn't get to run when it's built as a module, presumably since it's
+> not loaded by the time it would have been called by of_clk_init(). This
+> causes its second-step probe() to return -ENOMEM when trying to register
+> clocks, as the necessary clock_data struct isn't initialized by the
+> first step.
 > 
-> The usage is: vdpa dev set name vdpa_name mac **:**:**:**:**:**
+> MT2701 and MT6797 clock drivers also use this mechanism, but they try to
+> allocate the necessary clock_data structure if missing in the second
+> step. Mimic that for the MT8173 infracfg clock as well to make it work
+> as a module.
 > 
-> Here is sample:
-> root@L1# vdpa -jp dev config show vdpa0
-> {
->     "config": {
->         "vdpa0": {
->             "mac": "82:4d:e9:5d:d7:e6",
->             "link ": "up",
->             "link_announce ": false,
->             "mtu": 1500
->         }
->     }
-> }
-> 
-> root@L1# vdpa dev set name vdpa0 mac 00:11:22:33:44:55
-> 
-> root@L1# vdpa -jp dev config show vdpa0
-> {
->     "config": {
->         "vdpa0": {
->             "mac": "00:11:22:33:44:55",
->             "link ": "up",
->             "link_announce ": false,
->             "mtu": 1500
->         }
->     }
-> }
-> 
-> Signed-off-by: Cindy Lu <lulu@redhat.com>
+> Signed-off-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
 
-
-
-I think actually the idea of allowing provisioning
-by specifying config of the device is actually valid.
-However
-- the name SET_CONFIG makes people think this allows
-  writing even when e.g. device is assigned to guest
-- having the internal api be mac specific is weird
-
-Shouldn't config be an attribute maybe, not a new command?
-
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 > ---
->  drivers/vdpa/vdpa.c       | 71 +++++++++++++++++++++++++++++++++++++++
->  include/linux/vdpa.h      |  2 ++
->  include/uapi/linux/vdpa.h |  1 +
->  3 files changed, 74 insertions(+)
 > 
-> diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
-> index a7612e0783b3..347ae6e7749d 100644
-> --- a/drivers/vdpa/vdpa.c
-> +++ b/drivers/vdpa/vdpa.c
-> @@ -1149,6 +1149,72 @@ static int vdpa_nl_cmd_dev_config_get_doit(struct sk_buff *skb, struct genl_info
->  	return err;
->  }
->  
-> +static int vdpa_nl_cmd_dev_config_set_doit(struct sk_buff *skb,
-> +					   struct genl_info *info)
-> +{
-> +	struct vdpa_dev_set_config set_config = {};
-> +	struct nlattr **nl_attrs = info->attrs;
-> +	struct vdpa_mgmt_dev *mdev;
-> +	const u8 *macaddr;
-> +	const char *name;
-> +	int err = 0;
-> +	struct device *dev;
-> +	struct vdpa_device *vdev;
+> Changes in v2:
+> - Rewrite patch subject for consistency
+> 
+> v1: https://lore.kernel.org/lkml/20231108213734.140707-1-alpernebiyasak@gmail.com/
+> 
+>   drivers/clk/mediatek/clk-mt8173-infracfg.c | 12 +++++++++++-
+>   1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-mt8173-infracfg.c b/drivers/clk/mediatek/clk-mt8173-infracfg.c
+> index 2f2f074e231a..ecc8b0063ea5 100644
+> --- a/drivers/clk/mediatek/clk-mt8173-infracfg.c
+> +++ b/drivers/clk/mediatek/clk-mt8173-infracfg.c
+> @@ -98,7 +98,17 @@ CLK_OF_DECLARE_DRIVER(mtk_infrasys, "mediatek,mt8173-infracfg",
+>   static int clk_mt8173_infracfg_probe(struct platform_device *pdev)
+>   {
+>   	struct device_node *node = pdev->dev.of_node;
+> -	int r;
+> +	int r, i;
 > +
-> +	if (!info->attrs[VDPA_ATTR_DEV_NAME])
-> +		return -EINVAL;
-> +
-> +	name = nla_data(info->attrs[VDPA_ATTR_DEV_NAME]);
-> +
-> +	down_write(&vdpa_dev_lock);
-> +	dev = bus_find_device(&vdpa_bus, NULL, name, vdpa_name_match);
-> +	if (!dev) {
-> +		NL_SET_ERR_MSG_MOD(info->extack, "device not found");
-> +		err = -ENODEV;
-> +		goto dev_err;
-> +	}
-> +	vdev = container_of(dev, struct vdpa_device, dev);
-> +	if (!vdev->mdev) {
-> +		NL_SET_ERR_MSG_MOD(
-> +			info->extack,
-> +			"Fail to find the specified management device");
-> +		err = -EINVAL;
-> +		goto mdev_err;
-> +	}
-> +	mdev = vdev->mdev;
-> +	if (nl_attrs[VDPA_ATTR_DEV_NET_CFG_MACADDR]) {
-> +		if (!(mdev->supported_features & BIT_ULL(VIRTIO_NET_F_MAC))) {
-> +			NL_SET_ERR_MSG_FMT_MOD(
-> +				info->extack,
-> +				"Missing features 0x%llx for provided attributes",
-> +				BIT_ULL(VIRTIO_NET_F_MAC));
-> +			err = -EINVAL;
-> +			goto mdev_err;
-> +		}
-> +		macaddr = nla_data(nl_attrs[VDPA_ATTR_DEV_NET_CFG_MACADDR]);
-> +		memcpy(set_config.net.mac, macaddr, ETH_ALEN);
-> +		set_config.mask |= BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MACADDR);
-> +		if (mdev->ops->set_mac) {
-> +			err = mdev->ops->set_mac(mdev, vdev, &set_config);
-> +		} else {
-> +			NL_SET_ERR_MSG_FMT_MOD(
-> +				info->extack,
-> +				"%s device not support set mac address ", name);
-> +		}
-> +
+> +	if (!infra_clk_data) {
+> +		infra_clk_data = mtk_alloc_clk_data(CLK_INFRA_NR_CLK);
+> +		if (!infra_clk_data)
+> +			return -ENOMEM;
 > +	} else {
-> +		NL_SET_ERR_MSG_FMT_MOD(info->extack,
-> +				       "%s device not support this config ",
-> +				       name);
+> +		for (i = 0; i < CLK_INFRA_NR_CLK; i++)
+> +			if (infra_clk_data->hws[i] == ERR_PTR(-EPROBE_DEFER))
+> +				infra_clk_data->hws[i] = ERR_PTR(-ENOENT);
 > +	}
-> +
-> +mdev_err:
-> +	put_device(dev);
-> +dev_err:
-> +	up_write(&vdpa_dev_lock);
-> +	return err;
-> +}
-> +
->  static int vdpa_dev_config_dump(struct device *dev, void *data)
->  {
->  	struct vdpa_device *vdev = container_of(dev, struct vdpa_device, dev);
-> @@ -1285,6 +1351,11 @@ static const struct genl_ops vdpa_nl_ops[] = {
->  		.doit = vdpa_nl_cmd_dev_stats_get_doit,
->  		.flags = GENL_ADMIN_PERM,
->  	},
-> +	{
-> +		.cmd = VDPA_CMD_DEV_CONFIG_SET,
-> +		.doit = vdpa_nl_cmd_dev_config_set_doit,
-> +		.flags = GENL_ADMIN_PERM,
-> +	},
->  };
->  
->  static struct genl_family vdpa_nl_family __ro_after_init = {
-> diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
-> index db15ac07f8a6..c97f4f1da753 100644
-> --- a/include/linux/vdpa.h
-> +++ b/include/linux/vdpa.h
-> @@ -581,6 +581,8 @@ struct vdpa_mgmtdev_ops {
->  	int (*dev_add)(struct vdpa_mgmt_dev *mdev, const char *name,
->  		       const struct vdpa_dev_set_config *config);
->  	void (*dev_del)(struct vdpa_mgmt_dev *mdev, struct vdpa_device *dev);
-> +	int (*set_mac)(struct vdpa_mgmt_dev *mdev, struct vdpa_device *dev,
-> +		       const struct vdpa_dev_set_config *config);
->  };
->  
->  /**
-> diff --git a/include/uapi/linux/vdpa.h b/include/uapi/linux/vdpa.h
-> index 54b649ab0f22..53f249fb26bc 100644
-> --- a/include/uapi/linux/vdpa.h
-> +++ b/include/uapi/linux/vdpa.h
-> @@ -19,6 +19,7 @@ enum vdpa_command {
->  	VDPA_CMD_DEV_GET,		/* can dump */
->  	VDPA_CMD_DEV_CONFIG_GET,	/* can dump */
->  	VDPA_CMD_DEV_VSTATS_GET,
-> +	VDPA_CMD_DEV_CONFIG_SET,
->  };
->  
->  enum vdpa_attr {
-> -- 
-> 2.45.0
+>   
+>   	r = mtk_clk_register_gates(&pdev->dev, node, infra_gates,
+>   				   ARRAY_SIZE(infra_gates), infra_clk_data);
+> 
+> base-commit: 03d44168cbd7fc57d5de56a3730427db758fc7f6
 
 
