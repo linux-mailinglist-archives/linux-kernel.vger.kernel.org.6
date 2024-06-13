@@ -1,54 +1,76 @@
-Return-Path: <linux-kernel+bounces-212586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19E19063A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 07:56:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF5C9063B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6015B284B9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 05:56:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 334E81F216C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD23633;
-	Thu, 13 Jun 2024 05:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2B21369A0;
+	Thu, 13 Jun 2024 06:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tLNSuK4S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvkO8eyv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C44613666E;
-	Thu, 13 Jun 2024 05:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E1837C;
+	Thu, 13 Jun 2024 06:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718258154; cv=none; b=CWi1uNygem7Bp1UBRpmNg5E2IAY0nySloVr1SyppmOaoGs+wiXVYvSMBqbtQDmS2WzT/r2gWLZ+F//HX+nlYYy3whEyAm2SylKBW8iS+jYt08O0hy9uf4tAmdZ/yBSFLyEMDrT6ZCHAEoC/Cuvl38h+kD3tYDmXOC9kkyIKEajM=
+	t=1718258567; cv=none; b=OR7yxlnDFhChAm13ywu4sNOpr17SI1eRaYX9Sc1vDwTzGUnr6BVBoV4KgYokU/oHxrmq+XfJESOegvFekpz1zyARRDjNyEZYJdp5F3Ym9JnYlKFIq4UDin56F53zcAa3MPa25YABO++p57DCWPcJsHJe/9XIKyIwrzD4Cu57mp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718258154; c=relaxed/simple;
-	bh=KN4qmdh/FyDgOSKi+sxrz5gqS8uoqP/5WyHmVrg1EdY=;
+	s=arc-20240116; t=1718258567; c=relaxed/simple;
+	bh=3sL49NFvnClvD1y18UTPpLyD+rkcg9Qkf8lGulrYlEI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bCE0Jk6nlCW4FLS7TAX4nJ8vDnxvDJGtrbxdPAp8Vsk1jEndc8J3uRe8OP3jNoA7egGFxiyx3U3flL8RIVnG/AnoAtD8epewqmML+Cu93GZoqlwHSuaC7O9+uKkH0E+EMeY/bxHVb9ofV2eCLxphO7MG0uzMT2PkuQBosyEzfFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tLNSuK4S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BC69C2BBFC;
-	Thu, 13 Jun 2024 05:55:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718258154;
-	bh=KN4qmdh/FyDgOSKi+sxrz5gqS8uoqP/5WyHmVrg1EdY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=efMhuAsbtUlZ0wobXcipPZ6QYVYz/MY5S73mU7nb90LjcvvumjcgYsqkcwlQojP7n+w9QGMg+V9iAIpEH1dDsoIQinGDCdgtfNDAXKmQUZS/G9rZmeGItm8AMSnTOCw8xjFsC0I9sCj0iIsnQPRsLSrQMtjTy7XUj1yhXUeTVZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvkO8eyv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 637B4C2BBFC;
+	Thu, 13 Jun 2024 06:02:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718258567;
+	bh=3sL49NFvnClvD1y18UTPpLyD+rkcg9Qkf8lGulrYlEI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tLNSuK4SrtIz4iPeZfziy2wNdi/nRPGrK/WdXTG5iNXf4Ag71rKLafE+lB6/6+yqo
-	 3lVVZKszv3Lso7yve1Z/spq72zo1gR3Z8VAimKSc0Wj9uDaq6Nc1XPqVcZhC/afh8z
-	 eX+H5DJIjwgU4PtiTO/qqanMqRQUS1VHiviZ5Zn8=
-Date: Thu, 13 Jun 2024 07:55:51 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com,
-	lizefan.x@bytedance.com, hannes@cmpxchg.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: Re: [PATCH RFC -next 1/7] kernfs: export pr_cont_kernfs_path()
-Message-ID: <2024061314-moodiness-snowflake-14c5@gregkh>
-References: <20240613014937.1326020-1-yukuai1@huaweicloud.com>
- <20240613014937.1326020-2-yukuai1@huaweicloud.com>
+	b=bvkO8eyvvIQKPJoZWLyWMTfK6O5N03AQA4XC6mijqToSBsMszcXr9Ps7YULdd+mwQ
+	 CMIxPSG6EFndRhrbMBaKeL08MauHHAIYDLjAKQjgKU9NWCkcTVyFrvmFQ8r91xLE5G
+	 KwzQ4EytMRXAmkLSDbDYk3Jw+MQeBKW52A481j5Gd4DtQ4Vuoxq/v80A/v3kTyKhUZ
+	 ykIEmOFhBgNH6uX8WEQThF4xIbon1RXDG+QAmVAq9AD4LNVqnG0TVN+3QEi1q60q0h
+	 oN9NkQffZog6Xl9BoKMpr+ebDOPGgNSA3sS4mGDmYKBzRXD9g7BgXpjse/6BO5DZDa
+	 qaftLWaQdNBdA==
+Date: Thu, 13 Jun 2024 09:00:31 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kees Cook <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	linux-hardening@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+	Ross Zwisler <zwisler@google.com>, wklin@google.com,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Linus Torvalds <torvalds@linuxfoundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v5 1/2] mm/memblock: Add "reserve_mem" to reserved named
+ memory at boot up
+Message-ID: <ZmqK_zeGus_VxAHN@kernel.org>
+References: <20240613003435.401549779@goodmis.org>
+ <20240613003508.752963299@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,33 +79,146 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240613014937.1326020-2-yukuai1@huaweicloud.com>
+In-Reply-To: <20240613003508.752963299@goodmis.org>
 
-On Thu, Jun 13, 2024 at 09:49:31AM +0800, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
+On Wed, Jun 12, 2024 at 08:34:36PM -0400, Steven Rostedt wrote:
+> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 > 
-> This helper is used in iocost, prepare to build iocost as kernel module.
+> In order to allow for requesting a memory region that can be used for
+> things like pstore on multiple machines where the memory layout is not the
+> same, add a new option to the kernel command line called "reserve_mem".
 > 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> The format is:  reserve_mem=nn:align:name
+> 
+> Where it will find nn amount of memory at the given alignment of align.
+> The name field is to allow another subsystem to retrieve where the memory
+> was found. For example:
+> 
+>   reserve_mem=12M:4096:oops ramoops.mem_name=oops
+> 
+> Where ramoops.mem_name will tell ramoops that memory was reserved for it
+> via the reserve_mem option and it can find it by calling:
+> 
+>   if (reserve_mem_find_by_name("oops", &start, &size)) {
+> 	// start holds the start address and size holds the size given
+> 
+> This is typically used for systems that do not wipe the RAM, and this
+> command line will try to reserve the same physical memory on soft reboots.
+> Note, it is not guaranteed to be the same location. For example, if KASLR
+> places the kernel at the location of where the RAM reservation was from a
+> previous boot, the new reservation will be at a different location.  Any
+> subsystem using this feature must add a way to verify that the contents of
+> the physical memory is from a previous boot, as there may be cases where
+> the memory will not be located at the same location.
+> 
+> Not all systems may work either. There could be bit flips if the reboot
+> goes through the BIOS. Using kexec to reboot the machine is likely to
+> have better results in such cases.
+> 
+> Link: https://lore.kernel.org/all/ZjJVnZUX3NZiGW6q@kernel.org/
+> 
+> Suggested-by: Mike Rapoport <rppt@kernel.org>
+> Tested-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 > ---
->  fs/kernfs/dir.c | 1 +
->  1 file changed, 1 insertion(+)
+> Changes since v4: https://lore.kernel.org/linux-trace-kernel/20240611215801.443593152@goodmis.org
 > 
-> diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-> index 458519e416fe..84ad163a4281 100644
-> --- a/fs/kernfs/dir.c
-> +++ b/fs/kernfs/dir.c
-> @@ -279,6 +279,7 @@ void pr_cont_kernfs_path(struct kernfs_node *kn)
->  out:
->  	spin_unlock_irqrestore(&kernfs_pr_cont_lock, flags);
->  }
-> +EXPORT_SYMBOL_GPL(pr_cont_kernfs_path);
+> - Add all checks about reserve_mem before allocation.
+>   This means reserved_mem_add() is now a void function.
+> 
+> - Check for name duplications.
+> 
+> - Fix compare of align to SMP_CACHE_BYTES ("<" instead of "<=")
+> 
+>  .../admin-guide/kernel-parameters.txt         |  20 +++
+>  include/linux/mm.h                            |   2 +
+>  mm/memblock.c                                 | 117 ++++++++++++++++++
+>  3 files changed, 139 insertions(+)
+> 
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index d09136e040d3..739d106a9165 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
 
-This isn't the helper that needs to be exported, it's a include wrapper
-that is using this for cgroups.  Please document this much better and
-perhaps, just fix up the cgroups code instead?
+...
 
-thanks,
+> +/*
+> + * Parse reserve_mem=nn:align:name
+> + */
+> +static int __init reserve_mem(char *p)
+> +{
+> +	phys_addr_t start, size, align;
+> +	char *name;
+> +	char *oldp;
+> +	int len;
+> +
+> +	if (!p)
+> +		return -EINVAL;
+> +
+> +	/* Check if there's room for more reserved memory */
+> +	if (reserved_mem_count >= RESERVE_MEM_MAX_ENTRIES)
+> +		return -EBUSY;
+> +
+> +	oldp = p;
+> +	size = memparse(p, &p);
+> +	if (!size || p == oldp)
+> +		return -EINVAL;
+> +
+> +	if (*p != ':')
+> +		return -EINVAL;
+> +
+> +	align = memparse(p+1, &p);
+> +	if (*p != ':')
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * memblock_phys_alloc() doesn't like a zero size align,
+> +	 * but it is OK for this command to have it.
+> +	 */
+> +	if (align < SMP_CACHE_BYTES)
+> +		align = SMP_CACHE_BYTES;
+> +
+> +	name = p + 1;
+> +	len = strlen(name);
+> +
+> +	/* name needs to have length but not too big */
+> +	if (!len || len >= RESERVE_MEM_NAME_SIZE)
+> +		return -EINVAL;
+> +
+> +	/* Make sure that name has text */
+> +	for (p = name; *p; p++) {
+> +		if (!isspace(*p))
+> +			break;
+> +	}
+> +	if (!*p)
+> +		return -EINVAL;
+> +
+> +	/* Make sure the name is not already used (size is only updated if found) */
+> +	if (reserve_mem_find_by_name(name, &start, &size))
+> +		return -EBUSY;
 
-greg k-h
+I'd prefer another variable here rather than size. Will be more robust IMO.
+
+> +
+> +	start = memblock_phys_alloc(size, align);
+> +	if (!start)
+> +		return -ENOMEM;
+> +
+> +	reserved_mem_add(start, size, name);
+> +
+> +	return 0;
+> +}
+> +__setup("reserve_mem=", reserve_mem);
+> +
+>  #if defined(CONFIG_DEBUG_FS) && defined(CONFIG_ARCH_KEEP_MEMBLOCK)
+>  static const char * const flagname[] = {
+>  	[ilog2(MEMBLOCK_HOTPLUG)] = "HOTPLUG",
+> -- 
+> 2.43.0
+> 
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
