@@ -1,220 +1,127 @@
-Return-Path: <linux-kernel+bounces-212587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-212589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DF529063B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:02:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D119063B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 08:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E99831F236B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:02:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 353B31C219DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 06:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B2F13699A;
-	Thu, 13 Jun 2024 06:02:02 +0000 (UTC)
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756C31369AD;
+	Thu, 13 Jun 2024 06:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DxcenJJR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D1D37C;
-	Thu, 13 Jun 2024 06:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEA537C;
+	Thu, 13 Jun 2024 06:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718258521; cv=none; b=HTAv8449X0u1bORL3LJVu+sa4i3MA00UkJkopxIbObFhcxpy0KXxAe/Dy3AYOWMe2KxjCJUCaAAK6OUzAN0FyCvUN6kwt2DvUBvGbjniN2zmGnT98y/EpVbrhQTgaCjjugHcX06+2H1PwWfOhCYyvRXa94/n2gPf33iIxBSm8mM=
+	t=1718258690; cv=none; b=fLK/FaVsjZ5AASP9xGSLHBCrF52mJjwWCe3S65HCnxywsPdI8GF/obtiFhzjwzNl4ejFzKJqvGwncud+ocwf1oTGZleqylgZrtcSGJGSB96N8kZhMI3tzmhbEIdBY/bzf3AHMq7HySJGRypyc8NB/n0/2HxjiEr4cFuQoojPgno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718258521; c=relaxed/simple;
-	bh=hmOOc21yf/tAgKaxOaNGQyF8RRQ7+21Xky3Lkd+n81Q=;
-	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
-	 References:Message-ID; b=fv+0BWCdnN6M4uTQdJoNf3EkZy76e28pC97k7EO9ff6STCykiz4AzCc4vA+kXKDXmh2enW+yux99XuhUsUcNEs6QDF/PhhlnUuBt64xoHM+seLXnh408Lw57Im89gJ5J+mL/iC1fksIq0gVEutV2O05Nu7igQVVX6ee+mWQ1qqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=194.37.255.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [127.0.0.1] (helo=localhost)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=99085fba10=ms@dev.tdt.de>)
-	id 1sHdWr-00FGeX-6Z; Thu, 13 Jun 2024 08:01:45 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ms@dev.tdt.de>)
-	id 1sHdWq-000M6s-59; Thu, 13 Jun 2024 08:01:44 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id B66A4240054;
-	Thu, 13 Jun 2024 08:01:43 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id 09632240053;
-	Thu, 13 Jun 2024 08:01:43 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-	by mail.dev.tdt.de (Postfix) with ESMTP id 6E79838543;
-	Thu, 13 Jun 2024 08:01:42 +0200 (CEST)
+	s=arc-20240116; t=1718258690; c=relaxed/simple;
+	bh=7LdEa2cXZ92dCOV0tvIy2du3N9yfvC7ip0HcqkAwNEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WC+T/aIK0cZExL9LyWc2gNRtPdB9HwADQoud1F8/wGk7XzCchg13vF/4ObfzIBHUwcfMDPpraOwIXjmTT3Yvw2Gv2sxzRhu6ke+raXLoGQ0Aafw/HDVgjJ0VD6MZWrbR0iXTX7MDpB3li+pBVqBKKmES0Ek5+ZfYGL2uKGs9LaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DxcenJJR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B256AC2BBFC;
+	Thu, 13 Jun 2024 06:04:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718258690;
+	bh=7LdEa2cXZ92dCOV0tvIy2du3N9yfvC7ip0HcqkAwNEk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DxcenJJRa56E3C/mgOBon5mdRqu/s2dglNrbBslIgsKqZQPnSv42myJqNdUwbwS86
+	 ZnTchHadTKKdC/FsOKWRlJY8omawHNlOKkPziXgC9DmDiAkupXVVOQsQ+ubwLizPI6
+	 Xh6ETy2wifOBbI0rjnd/lDv9abcX7hG+qotJOSiv56gj30hJvBW5uBRCj67ST8B8rx
+	 ozL4oegTH5D4RyqBIJEV512FvBfIYw7aiekKt73/D6257eVpL9t5t3JtnpHRwzBb9n
+	 XPtR7VKWr7LKbamwS2COeMJPpI3dqc/YsGCBjNqvKoLT0eCi1L/lptXVP0PFwDqf1i
+	 WKxkzWrcXAJ+Q==
+Date: Thu, 13 Jun 2024 09:02:34 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	linux-hardening@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+	Ross Zwisler <zwisler@google.com>, wklin@google.com,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Linus Torvalds <torvalds@linuxfoundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v3 2/2] pstore/ramoops: Add ramoops.mem_name= command
+ line option
+Message-ID: <ZmqLejL1mblOikLp@kernel.org>
+References: <20240611144911.327227285@goodmis.org>
+ <20240611144949.703297941@goodmis.org>
+ <202406121145.8860502D7@keescook>
+ <20240612145228.5bf426e0@rorschach.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Thu, 13 Jun 2024 08:01:42 +0200
-From: Martin Schiller <ms@dev.tdt.de>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, olek2@wp.pl
-Cc: hauke@hauke-m.de, tsbogend@alpha.franken.de, rdunlap@infradead.org,
- robh@kernel.org, bhelgaas@google.com, linux-mips@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] MIPS: pci: lantiq: restore reset gpio polarity
-Organization: TDT AG
-In-Reply-To: <Zmov-8IGm-misoRs@google.com>
-References: <20240607090400.1816612-1-ms@dev.tdt.de>
- <ZmnfQWFoIw5UCV-k@google.com> <7d34eb4017e809245daa342e3ccddf4f@dev.tdt.de>
- <b6bea9239050ed39ce3a051a5985b86d@dev.tdt.de> <ZmoXAR79emQBNyhj@google.com>
- <Zmov-8IGm-misoRs@google.com>
-Message-ID: <5452d21c1491d2c8c8ea07ac319b3850@dev.tdt.de>
-X-Sender: ms@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-X-purgate-ID: 151534::1718258504-1DCDF522-A67FD917/0/0
-X-purgate-type: clean
-X-purgate: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612145228.5bf426e0@rorschach.local.home>
 
-On 2024-06-13 01:32, Dmitry Torokhov wrote:
-> On Wed, Jun 12, 2024 at 02:45:37PM -0700, Dmitry Torokhov wrote:
->> On Wed, Jun 12, 2024 at 09:47:39PM +0200, Martin Schiller wrote:
->> > On 2024-06-12 20:39, Martin Schiller wrote:
->> > > On 2024-06-12 19:47, Dmitry Torokhov wrote:
->> > > > Hi Marton,
->> > >
->> > > Hi Dmitry,
->> > >
->> > > >
->> > > > On Fri, Jun 07, 2024 at 11:04:00AM +0200, Martin Schiller wrote:
->> > > > > Commit 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod
->> > > > > API") not
->> > > > > only switched to the gpiod API, but also inverted / changed the
->> > > > > polarity
->> > > > > of the GPIO.
->> > > > >
->> > > > > According to the PCI specification, the RST# pin is an active-low
->> > > > > signal. However, most of the device trees that have been widely
->> > > > > used for
->> > > > > a long time (mainly in the openWrt project) define this GPIO as
->> > > > > active-high and the old driver code inverted the signal internally.
->> > > > >
->> > > > > Apparently there are actually boards where the reset gpio must be
->> > > > > operated inverted. For this reason, we cannot use the
->> > > > > GPIOD_OUT_LOW/HIGH
->> > > > > flag for initialization. Instead, we must explicitly set the gpio to
->> > > > > value 1 in order to take into account any "GPIO_ACTIVE_LOW" flag that
->> > > > > may have been set.
->> > > >
->> > > > Do you have example of such boards? They could not have worked before
->> > > > 90c2d2eb7ab5 because it was actively setting the reset line to
->> > > > physical
->> > > > high, which should leave the device in reset state if there is an
->> > > > inverter between the AP and the device.
->> > >
->> > > Oh, you're right. I totally missed that '__gpio_set_value' was used in
->> > > the original code and that raw accesses took place without paying
->> > > attention to the GPIO_ACTIVE_* flags.
->> > >
->> > > You can find the device trees I am talking about in [1].
->> > >
->> > > @Thomas Bogendoerfer:
->> > > Would it be possible to stop the merging of this patch?
->> > > I think We have to do do some further/other changes.
->> > >
->> > > >
->> > > > >
->> > > > > In order to remain compatible with all these existing device
->> > > > > trees, we
->> > > > > should therefore keep the logic as it was before the commit.
->> > > >
->> > > > With gpiod API operating with logical states there's still
->> > > > difference in
->> > > > logic:
->> > > >
->> > > > 	gpiod_set_value_cansleep(reset_gpio, 1);
->> > > >
->> > > > will leave GPIO at 1 if it is described as GPIO_ACTIVE_HIGH (which is
->> > > > apparently what you want for boards with broken DTS) but for boards
->> > > > that accurately describe GPIO as GPIO_ACTIVE_LOW it well drive GPIO to
->> > > > 0, leaving the card in reset state.
->> > > >
->> > > > You should either use gpiod_set_raw_value_calsleep() or we can try and
->> > > > quirk it in gpiolib (like we do for many other cases of incorrect GPIO
->> > > > polarity descriptions and which is my preference).
->> >
->> > So you mean we should add an entry for "lantiq,pci-xway" to the
->> > of_gpio_try_fixup_polarity()?
->> > Do you know any dts / device outside the openWrt universe which is using
->> > this driver.
->> 
->> No, I don't.
->> 
->> Could you please try this:
->> 
->> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
->> index 59c7f8a2431a..4948ecaa422c 100644
->> --- a/drivers/gpio/gpiolib-of.c
->> +++ b/drivers/gpio/gpiolib-of.c
->> @@ -203,6 +203,16 @@ static void of_gpio_try_fixup_polarity(const 
->> struct device_node *np,
->>  		 */
->>  		{ "qi,lb60",		"rb-gpios",	true },
->>  #endif
->> +#if IS_ENABLED(CONFIG_PCI_LANTIQ)
->> +		/*
->> +		 * According to the PCI specification, the RST# pin is an
->> +		 * active-low signal. However, most of the device trees that
->> +		 * have been widely used for a long time incorrectly describe
->> +		 * reset GPIO as active-high, and were also using wrong name
->> +		 * for the property.
->> +		 */
->> +		{ "lantiq,pci-xway",	"gpios-reset",	false },
+On Wed, Jun 12, 2024 at 02:52:28PM -0400, Steven Rostedt wrote:
+> On Wed, 12 Jun 2024 11:45:57 -0700
+> Kees Cook <kees@kernel.org> wrote:
 > 
-> Sorry, "gpios-reset" is wrong, the driver used "gpio-reset". So:
+> > On Tue, Jun 11, 2024 at 10:49:13AM -0400, Steven Rostedt wrote:
+> > > From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+> > > 
+> > > Add a method to find a region specified by reserve_mem=nn:align:name for
+> > > ramoops. Adding a kernel command line parameter:
+> > > 
+> > >   reserve_mem=12M:4096:oops ramoops.mem_name=oops
+> > > 
+> > > Will use the size and location defined by the memmap parameter where it
+> > > finds the memory and labels it "oops". The "oops" in the ramoops option
+> > > is used to search for it.
+> > > 
+> > > This allows for arbitrary RAM to be used for ramoops if it is known that
+> > > the memory is not cleared on kernel crashes or soft reboots.
+> > > 
+> > > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>  
+> > 
+> > Acked-by: Kees Cook <kees@kernel.org>
+> > 
+> > Let me know if this should go via the pstore tree, if you'd rather carry
+> > it?
+> > 
 > 
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index 59c7f8a2431a..d21085830632 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -203,6 +203,16 @@ static void of_gpio_try_fixup_polarity(const
-> struct device_node *np,
->  		 */
->  		{ "qi,lb60",		"rb-gpios",	true },
->  #endif
-> +#if IS_ENABLED(CONFIG_PCI_LANTIQ)
-> +		/*
-> +		 * According to the PCI specification, the RST# pin is an
-> +		 * active-low signal. However, most of the device trees that
-> +		 * have been widely used for a long time incorrectly describe
-> +		 * reset GPIO as active-high, and were also using wrong name
-> +		 * for the property.
-> +		 */
-> +		{ "lantiq,pci-xway",	"gpio-reset",	false },
-> +#endif
->  #if IS_ENABLED(CONFIG_TOUCHSCREEN_TSC2005)
->  		/*
->  		 * DTS for Nokia N900 incorrectly specified "active high"
-> @@ -512,9 +522,9 @@ static struct gpio_desc
-> *of_find_gpio_rename(struct device_node *np,
->  		{ "reset",	"reset-n-io",	"marvell,nfc-uart" },
->  		{ "reset",	"reset-n-io",	"mrvl,nfc-uart" },
->  #endif
-> -#if !IS_ENABLED(CONFIG_PCI_LANTIQ)
-> +#if IS_ENABLED(CONFIG_PCI_LANTIQ)
->  		/* MIPS Lantiq PCI */
-> -		{ "reset",	"gpios-reset",	"lantiq,pci-xway" },
-> +		{ "reset",	"gpio-reset",	"lantiq,pci-xway" },
->  #endif
+> I'm going to send out another version to cover some more comments that
+> were made, and perhaps it's best if Mike Rapoport takes it through his
+> tree.
+
+I've added one more comment to v5, with that fixed I can take this.
+ 
+> Thanks!
 > 
->  		/*
+> -- Steve
 
-I wonder, when this renaming did not work so far, why did we not see the
-error message "failed to request gpio" in the log?
-
-@Aleksander Jan Bajkowski:
-You had problems with the PCI connection when you switched to linux 6.1
-and also have corresponding devices to test.
-
-Could you please remove my patch in the latest openWrt and try out
-Dmitry's change?
+-- 
+Sincerely yours,
+Mike.
 
