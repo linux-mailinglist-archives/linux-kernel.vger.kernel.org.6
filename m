@@ -1,126 +1,135 @@
-Return-Path: <linux-kernel+bounces-213758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-213759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF299079FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CFCA907A03
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 19:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B0EE284B6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:37:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9CA6285622
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Jun 2024 17:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E9414A0A4;
-	Thu, 13 Jun 2024 17:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E697114A4CF;
+	Thu, 13 Jun 2024 17:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="fFfUIfNl"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="NtzwmtRz"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FBC12D765
-	for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 17:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADED433A4;
+	Thu, 13 Jun 2024 17:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718300246; cv=none; b=J9uFb92ud5d5LvM76blg2pBwO0n5IwV+/lIYp0H2USuocqQmouUwk5KGzdVRdmBDG6OVXH3rqNBkbFRTinTsALeysQn4HYIw73SZFzwNyGnTyhJOnv9pxx+VWk2dDFieBRYN+OrdlLN2+LtarNcCDkuS2H8tA3iNzBYIyOV/3gM=
+	t=1718300321; cv=none; b=eAIycD8BhKfBRQF2R5yTkUjEMHhVLHoqxCZKYla3rZ9gUVYkH2floR+uRSoeDZ1S5GPjEsik8rppY4WrEOHBz1AgT8F0XcVJVY5j0uJycBTmEfghgB+DS0E16CZgK9HY21b4D2EA7yWIkYa887Sn8+Yi36o5fIeCqwy8mhSJ/GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718300246; c=relaxed/simple;
-	bh=tXc/IPw9F2ZzPAzq8zhKW3NQ/NzXgn/tJsZW2snLyt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jPiGhDWKGmG5AR96zdNbLLxH+g5TvCjydqLOp6oAL77bAmPFXrfq15TcdI4LyufXIqJAfiEasj8hFHyrssGzH2gWHBLvw1+pLU9hZcWgPc4D2w9BFuTCuSGLyengHltVaY0m/swnkI/MKWC3GyAQ2G3FbuLQzYpXie10uq9MGk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=fFfUIfNl; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2c2e31d319eso1056244a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 10:37:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1718300243; x=1718905043; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HeXCvOjfZUoc8Yy0DfPd4nvN0/4du747GE3bH4Ko4l8=;
-        b=fFfUIfNl6S4bipDTkvQBkYQzciacTD4M95mnlnbGJRfhYDY5uGfeocLh3fcjZ/IuDe
-         9WbOo9TXes/ZrIclogkM0FlRxlrunuEFnePhRlbDDQtnpKmK28StJmp9xabue5KsRJlf
-         23B6YwXgWIDFb+YPxU+ulmYnJxz6gXfzMGtpaD7jFHWlJL8iq4RZlhc88ROjCNwNl0AL
-         H1dOxV0PpB9pSChW7X1bLhrjkkqBnISkYnIc5llgxOtHKB9DSmnbBwpmgLUEcRaMBnGg
-         jl+Ny4DOmmFXQrxAUwc/grfvyVIPc1G5r+KnbcLAwmkhOQUQixYdHVvatnDprnJwCk+u
-         e91Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718300243; x=1718905043;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HeXCvOjfZUoc8Yy0DfPd4nvN0/4du747GE3bH4Ko4l8=;
-        b=hBStsr47dkumRhKPOBXfN2yM2yQt9QWydZ9emhqhoD38rDthh09m2Utvj/SIuSAPm1
-         JpaYbNaGWCZgaRri3VsJHYojrB7OajB1CAp5rfNCywPCbQCnmGSGwVbM4nT7uPGycLGp
-         VzN+Ea2XYKeO56+eUvcPeMUv8QHirVrzQ4wl209KKUSaeDnzFNEu7Gjht6Kx+bgpH4A0
-         T3JIZEWt+hPV6dJ/XD3tsQkjSp/d80GIwdN00ALsEaNXS2J1ilZE37rdaQXqImrn4WG/
-         Xi+C1RvI5derLAmYSSuHpY0qEBSAzyAzr4ajekJQd4fK4TgupqA+2lUi3ckb/rav/M+p
-         R57w==
-X-Forwarded-Encrypted: i=1; AJvYcCXzna4kf7ProHLwDQ49lY8bX2MOettyQq2dZBgM6lKVKxfML1v1uR78Vjfc3e6xIFSZeBA1on/5dYyO83kc2VA12OHVlfNBbaSlBb/F
-X-Gm-Message-State: AOJu0YwnTrywP2qMYoOLJBmDWzZZq/JaRFGhFKt0zahmx2W+mRdMb3ir
-	6IxL/7dcTEagsmpm4B+kmGIRABeVHFSR9qY5js2B3rqCkaFmum729BC1wlgaHlY=
-X-Google-Smtp-Source: AGHT+IHlqr2Gr/wVcfUHyYVtjtoS+IIJeHCrMCvXHq1erzaUkYT056DbAUb1350ehkSOSzCBD/aMgQ==
-X-Received: by 2002:a17:90a:1150:b0:2c2:cefc:abea with SMTP id 98e67ed59e1d1-2c4dbb43d8fmr471729a91.32.1718300243218;
-        Thu, 13 Jun 2024 10:37:23 -0700 (PDT)
-Received: from ghost (c-67-164-127-253.hsd1.ca.comcast.net. [67.164.127.253])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4a76a9f14sm4303029a91.48.2024.06.13.10.37.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 10:37:21 -0700 (PDT)
-Date: Thu, 13 Jun 2024 10:37:19 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Evan Green <evan@rivosinc.com>, Andy Chiu <andy.chiu@sifive.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] riscv: Separate vendor extensions from standard
- extensions
-Message-ID: <ZmsuTyVcxelGvGw+@ghost>
-References: <20240609-support_vendor_extensions-v2-0-9a43f1fdcbb9@rivosinc.com>
- <20240613-deepness-refried-c6dea811f6f6@spud>
+	s=arc-20240116; t=1718300321; c=relaxed/simple;
+	bh=iHrGBdCbZI2bStSbB8zQUHcxeTKog1kQOycxa6OEd14=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QTzV9AZlwSvpdaOoLJ0XRBj0QBbo8QT20BsYluuI/0GMPYhu5Le18kBAS6nVzkAblA9O/46x88jZbLagabzCEYw62NBUJEMVW4OyopD8w2MTlINHZdbHPHrZvd12Xn5Lxz5h4u52pkwl7aWL2K1ZGM7rPsnuT4zJApGjE50DxC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=NtzwmtRz; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1718300308;
+	bh=iHrGBdCbZI2bStSbB8zQUHcxeTKog1kQOycxa6OEd14=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NtzwmtRzXbCIGztjkGdDShXjrZTC/Ly0c8lotFu2MjMLQqolth5maGlsYhHgYY6Cm
+	 i/xFL1Dx5aUezuTk7dASqlDjEf+QuLx8RHz1DGU3LzqAkmtctrSmkPBJrxr41jzKKp
+	 lbX3DaolNUJ/+koLsSqUKYFZA5IQftzXkTt6KJWrkirXqQezSnRdocS846urwocawl
+	 9ogJKPsL20k6HxWW6QLZUOEbfjkAOhsLctQWpcxozb3B/ymKIz/pXu8j3ta+wUCJNg
+	 MtlYOpvnRPM8Wi+lPcdl7SYcbN2EEvYpjTzWIGe4UPjjQRLx33lmAkB0kfN3KeQa19
+	 MCodr9xvFjGiw==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id 9FD2060079;
+	Thu, 13 Jun 2024 17:38:21 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by x201s (Postfix) with ESMTP id 2C001201EC1;
+	Thu, 13 Jun 2024 17:38:18 +0000 (UTC)
+Message-ID: <711d788e-14e4-41fe-99ea-4c50be008018@fiberby.net>
+Date: Thu, 13 Jun 2024 17:38:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613-deepness-refried-c6dea811f6f6@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 0/5] net: flower: validate encapsulation control
+ flags
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Edward Cree <ecree.xilinx@gmail.com>,
+ Martin Habets <habetsm.xilinx@gmail.com>, linux-net-drivers@amd.com,
+ Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>, linux-rdma@vger.kernel.org,
+ Jesse Brandeburg <jesse.brandeburg@intel.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>, intel-wired-lan@lists.osuosl.org,
+ Louis Peens <louis.peens@corigine.com>, oss-drivers@corigine.com,
+ linux-kernel@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+ i.maximets@ovn.org
+References: <20240609173358.193178-1-ast@fiberby.net>
+ <20240612180419.391f584d@kernel.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
+In-Reply-To: <20240612180419.391f584d@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 13, 2024 at 03:45:33PM +0100, Conor Dooley wrote:
-> On Sun, Jun 09, 2024 at 09:34:13PM -0700, Charlie Jenkins wrote:
-> > All extensions, both standard and vendor, live in one struct
-> > "riscv_isa_ext". There is currently one vendor extension, xandespmu, but
-> > it is likely that more vendor extensions will be added to the kernel in
-> > the future. As more vendor extensions (and standard extensions) are
-> > added, riscv_isa_ext will become more bloated with a mix of vendor and
-> > standard extensions.
-> > 
-> > This also allows each vendor to be conditionally enabled through
-> > Kconfig.
-> > 
-> > ---
-> > This has been split out from the previous series that contained the
-> > addition of xtheadvector due to lack of reviews. The xtheadvector
-> > support will be posted again separately from this.
+Hi Jakub,
+
+On 6/13/24 1:04 AM, Jakub Kicinski wrote:
+> On Sun,  9 Jun 2024 17:33:50 +0000 Asbjørn Sloth Tønnesen wrote:
+>> Now that all drivers properly rejects unsupported flower control flags
+>> used with FLOW_DISSECTOR_KEY_CONTROL, then time has come to add similar
+>> checks to the drivers supporting FLOW_DISSECTOR_KEY_ENC_CONTROL.
 > 
-> I think that's a good call.
-> 
-> > The reviewed-bys on "riscv: Extend cpufeature.c to detect vendor extensions"
-> > and "riscv: Introduce vendor variants of extension helpers" have been
-> > dropped in this series. The majority of the code is the same in these
-> > patches, but thead-specific code is swapped out with andes-specific
-> > code. The changes are minimal, but I decided to drop the reviews in case
-> > I inadvertently introduced issues.
-> 
-> Actually, you only completely did that on the first of the two patches
-> you mention, but I don't mind.
+> Thanks for doing this work!
 
-You reviewed the third patch of this series in the first revision of
-this series and I should have updated this comment.
+Thank you, for maintaining the tree!
 
-- Charlie
+> Do you have any more of such series left?
 
+Not at the moment, I only stumbled upon this, because I read the code
+with an eye on adding a new IS_JUMBO_FRAME flag (patches for which are
+almost ready).
+
+Once this[1] currently RFC patch goes in, I might try to move all
+control flags in under FLOW_DIS_F_*, to get rid of the then
+FLOW_DIS_(IS_FRAGMENT|FIRST_FRAG|ENCAPSULATION|F_*).
+
+[1] [RFC PATCH net-next 1/9] net/sched: flower: define new tunnel flags
+https://lore.kernel.org/netdev/20240611235355.177667-2-ast@fiberby.net/
+
+> Could we perhaps consider
+> recording the driver support somewhere in struct net_device and do
+> the rejecting in the core?
+
+Sure, it could work for the control flags, and used_keys validation,
+but I am not sure if it is worth it, as most of the validation is
+very specific to the limitations of the different hardware. An easy
+first step in that direction would be to move the used_keys checks
+behind a helper, and possibly storing used_keys in struct net_device.
+
+> That's much easier to extend when adding
+> new flags than updating all the drivers.
+
+That's how it is now, with the new helpers, as all flags are
+unsupported, unless the driver specifically supports it.
+
+Any new flag only needs to be added to the core, and drivers only needs
+to be updated when they implement offloading support for a flag.
+
+> This series I think may not be a great first candidate as IIUC all
+> drivers would reject so the flag would be half-dead...
+
+Correct. I don't know if there is any hardware support planned for the
+tunnel-related encapsulation control flags.
+
+-- 
+Best regards
+Asbjørn Sloth Tønnesen
+Network Engineer
+Fiberby - AS42541
 
