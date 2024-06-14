@@ -1,158 +1,117 @@
-Return-Path: <linux-kernel+bounces-214632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1A490875F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:26:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C908C908761
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 993521C22633
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:26:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B129A1C233C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD21C192B66;
-	Fri, 14 Jun 2024 09:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC2F192B74;
+	Fri, 14 Jun 2024 09:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="ZZR1KZsB"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GfraxG/q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB56D18C33A;
-	Fri, 14 Jun 2024 09:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1D813CF9E;
+	Fri, 14 Jun 2024 09:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718357176; cv=none; b=Y3yMtueTFv58uaUdIdEJ9q8XoPzq8v/UgZRUCtMhW8mKCkp4IaXIYpIiP4KKI/O+9EHM6TyQjgvprPW198FGMpaQVPRKvMpfiG0BWiXTx86C+CEdSzAeHaGeLBF7OZ/x1vi2g57aThOaSqRoPBwh5ZcFpE5Tc2gYcSUp087lLGM=
+	t=1718357176; cv=none; b=I+Wv40XxKnrP8bNS+HXs5WEhwIwEIm86ETVv7SyckQC9hvm9lVh6SQCLe7gkKb08kyCcmQLJn0QKm4nMXcidcOmxLeCaQuKw9J7zGU8yE5qvQ/C0+XUxfg/zYdzjJCL/0V/HJ5iYE27Hl0SOKLs8nH57KHGPURZbF4Tgq/MwqW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718357176; c=relaxed/simple;
-	bh=9fe6/Skaw9o24Cn2omAm3tlR/7pTqWyvJNce2Q08LBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OlS8IAhHmoXH/jY4yyWv+vzslLyH58gUKLb+hgKDPtEKiQnt13xg2WtboUKrYJYtb7eSlXQFQzW4tu8RBMNNTfEmDStt3YQq2pgysfn381HdOR0pMzfjmGI2f/d1MOsl/qEX15RWZvijiTOMLIbbugKi82oSEjbEUtpMN+VMBnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=ZZR1KZsB; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4W0v691D0Xz9svV;
-	Fri, 14 Jun 2024 11:26:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1718357169;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wKdlyvSF7pCAKamuIrCSdc2r5zUKZ+TWhLzB5NWF7sE=;
-	b=ZZR1KZsBATXt8TUkNrnhy8NPhWZ9HUbnl97kMLnlKWta4bA6DEM9xTjmRsLAywUnIo1+uJ
-	WmIdOXXLqbhBqN4yKShp/3Jh4Vhh9ndbSK8s2AuJ/UjPiX17lfrdZQLDjQFp7B247DGzAT
-	FJeiStNCfo/wUbsWMrDsISWpyYt9wM+6aWeE+RoOaEO254zxRcT3NKpjM9Kr+R5TCZvy1p
-	3WfAK7OyQnxP+oo6W/CZ6OFyullms/6FRAX5KX+IeEFQMc5iEEyd/1GPX36S+ja3om8hH7
-	UsonYuuQWcaKM09pD9TVtUdBShHkBQRK51vqaAk5F3JUfHvoRXI76i61GMpWmQ==
-Date: Fri, 14 Jun 2024 09:26:02 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
-	brauner@kernel.org, akpm@linux-foundation.org, mcgrof@kernel.org,
-	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
-	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
-	linux-fsdevel@vger.kernel.org, hch@lst.de, gost.dev@samsung.com,
-	cl@os.amperecomputing.com, john.g.garry@oracle.com
-Subject: Re: [PATCH v7 04/11] readahead: allocate folios with
- mapping_min_order in readahead
-Message-ID: <20240614092602.jc5qeoxy24xj6kl7@quentin>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-5-kernel@pankajraghav.com>
- <ZmnuCQriFLdHKHkK@casper.infradead.org>
+	bh=RjYVsVZeskO22hC0XBoe6PRuahJdiNbuYlh8UW4q9Ec=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=T3zZwS0t/jo/w4uv2W2dtEaDpwuQEWGqEkJJocGXpogLMACkqYGHaZwm6ciegGHteCtQizm/75e0VPkLf3MqUeTT8Np+iGdvNozXdjmz0zbO7AW32eg80CpuQOHVhKqKqJPMoUe85cS8xn+fo8FD4ehmcvuq2oSqmIl5jSI5zWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GfraxG/q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC6FFC2BD10;
+	Fri, 14 Jun 2024 09:26:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718357175;
+	bh=RjYVsVZeskO22hC0XBoe6PRuahJdiNbuYlh8UW4q9Ec=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=GfraxG/qnai6WqVA80nwF7muZOesCiDzZ+eUnImSYE5OGqTAUyilOspk8wO/qTtnL
+	 xX2pdKAOy1LTLgnMMuOclxWhZZGgYZGmmWokMWZ72uDXAKnLJQ7lHQmZzx0vdTK8yo
+	 xMn1i8Ks4VfHCal5SZ6mH+S/UGCIpPxFGP9P2uhlKO2TQIYQc/dI0Z8dKo4fJaavvB
+	 NLmDGEDPPuXbSQ8lFbFT92yqiQBU0yGiVpTsDpcp1FUbR+rnM1Sad96/P0kLbRsLIH
+	 t+bBTlPtqWMrkzcxzS/WLyAF48b//KdIBxFiYaFravb5cWH83jNbJT2vWClqtWdssC
+	 c6ne2G/9BLbsg==
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Shuah Khan <shuah@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+ Jonathan Corbet <corbet@lwn.net>, Alexei Starovoitov <ast@kernel.org>, 
+ Benjamin Tissoires <bentiss@kernel.org>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-input@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Peter Hutterer <peter.hutterer@who-t.net>
+In-Reply-To: <20240608-hid_bpf_struct_ops-v3-0-6ac6ade58329@kernel.org>
+References: <20240608-hid_bpf_struct_ops-v3-0-6ac6ade58329@kernel.org>
+Subject: Re: [PATCH HID v3 00/16] HID: convert HID-BPF into using
+ bpf_struct_ops
+Message-Id: <171835717356.456783.6239687806060827051.b4-ty@kernel.org>
+Date: Fri, 14 Jun 2024 11:26:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZmnuCQriFLdHKHkK@casper.infradead.org>
-X-Rspamd-Queue-Id: 4W0v691D0Xz9svV
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.4
 
-On Wed, Jun 12, 2024 at 07:50:49PM +0100, Matthew Wilcox wrote:
-> On Fri, Jun 07, 2024 at 02:58:55PM +0000, Pankaj Raghav (Samsung) wrote:
-> > @@ -230,7 +247,9 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
-> >  		struct folio *folio = xa_load(&mapping->i_pages, index + i);
-> >  		int ret;
-> >  
-> > +
+On Sat, 08 Jun 2024 11:01:12 +0200, Benjamin Tissoires wrote:
+> The purpose of this series is to rethink how HID-BPF is invoked.
+> Currently it implies a jmp table, a prog fd bpf_map, a preloaded tracing
+> bpf program and a lot of manual work for handling the bpf program
+> lifetime and addition/removal.
 > 
-> Spurious newline
-Oops.
+> OTOH, bpf_struct_ops take care of most of the bpf handling leaving us
+> with a simple list of ops pointers, and we can directly call the
+> struct_ops program from the kernel as a regular function.
 > 
-> >  		if (folio && !xa_is_value(folio)) {
-> > +			long nr_pages = folio_nr_pages(folio);
-> 
-> Hm, but we don't have a reference on this folio.  So this isn't safe.
-> 
+> [...]
 
-That is why I added a check for mapping after read_pages(). You are
-right, we can make it better.
+Applied to hid/hid.git (for-6.11/bpf), thanks!
 
-> > @@ -240,12 +259,24 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
-> >  			 * not worth getting one just for that.
-> >  			 */
-> >  			read_pages(ractl);
-> > -			ractl->_index += folio_nr_pages(folio);
-> > +
-> > +			/*
-> > +			 * Move the ractl->_index by at least min_pages
-> > +			 * if the folio got truncated to respect the
-> > +			 * alignment constraint in the page cache.
-> > +			 *
-> > +			 */
-> > +			if (mapping != folio->mapping)
-> > +				nr_pages = min_nrpages;
-> > +
-> > +			VM_BUG_ON_FOLIO(nr_pages < min_nrpages, folio);
-> > +			ractl->_index += nr_pages;
-> 
-> Why not just:
-> 			ractl->_index += min_nrpages;
+[01/16] HID: rename struct hid_bpf_ops into hid_ops
+        https://git.kernel.org/hid/hid/c/146a06a0d225
+[02/16] HID: bpf: add hid_get/put_device() helpers
+        https://git.kernel.org/hid/hid/c/99b40bf8053f
+[03/16] HID: bpf: implement HID-BPF through bpf_struct_ops
+        https://git.kernel.org/hid/hid/c/ebc0d8093e8c
+[04/16] selftests/hid: convert the hid_bpf selftests with struct_ops
+        https://git.kernel.org/hid/hid/c/d7696738d66b
+[05/16] HID: samples: convert the 2 HID-BPF samples into struct_ops
+        https://git.kernel.org/hid/hid/c/e342d6f6f7d8
+[06/16] HID: bpf: add defines for HID-BPF SEC in in-tree bpf fixes
+        https://git.kernel.org/hid/hid/c/df67602fb8d5
+[07/16] HID: bpf: convert in-tree fixes into struct_ops
+        https://git.kernel.org/hid/hid/c/50fe0fc6e206
+[08/16] HID: bpf: remove tracing HID-BPF capability
+        https://git.kernel.org/hid/hid/c/4a86220e046d
+[09/16] selftests/hid: add subprog call test
+        https://git.kernel.org/hid/hid/c/05b3b8f19441
+[10/16] Documentation: HID: amend HID-BPF for struct_ops
+        https://git.kernel.org/hid/hid/c/c5958697a5fa
+[11/16] Documentation: HID: add a small blurb on udev-hid-bpf
+        https://git.kernel.org/hid/hid/c/5f42e19de53f
+[12/16] HID: bpf: Artist24: remove unused variable
+        https://git.kernel.org/hid/hid/c/26ba1e0a982b
+[13/16] HID: bpf: error on warnings when compiling bpf objects
+        https://git.kernel.org/hid/hid/c/c94ae2189aca
+[14/16] bpf: allow bpf helpers to be used into HID-BPF struct_ops
+        https://git.kernel.org/hid/hid/c/bd0747543b3d
+[15/16] HID: bpf: rework hid_bpf_ops_btf_struct_access
+        https://git.kernel.org/hid/hid/c/f1a5fb6c7cf6
+[16/16] HID: bpf: make part of struct hid_device writable
+        https://git.kernel.org/hid/hid/c/33c0fb85b571
 
-Then we will only move min_nrpages even if the folio we found had a
-bigger order. Hannes patches (first patch) made sure we move the
-ractl->index by folio_nr_pages instead of 1 and making this change will
-defeat the purpose because without mapping order set, min_nrpages will
-be 1.
+Cheers,
+-- 
+Benjamin Tissoires <bentiss@kernel.org>
 
-What I could do is the follows:
-
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 389cd802da63..92cf45cdb4d3 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -249,7 +249,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
- 
- 
-                if (folio && !xa_is_value(folio)) {
--                       long nr_pages = folio_nr_pages(folio);
-+                       long nr_pages;
-                        /*
-                         * Page already present?  Kick off the current batch
-                         * of contiguous pages before continuing with the
-@@ -266,10 +266,8 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
-                         * alignment constraint in the page cache.
-                         *
-                         */
--                       if (mapping != folio->mapping)
--                               nr_pages = min_nrpages;
-+                       nr_pages = max(folio_nr_pages(folio), (long)min_nrpages);
- 
--                       VM_BUG_ON_FOLIO(nr_pages < min_nrpages, folio);
-                        ractl->_index += nr_pages;
-                        i = ractl->_index + ractl->_nr_pages - index;
-                        continue;
-
-Now we will still move respecting the min order constraint but if we had
-a bigger folio and we do have a reference, then we move folio_nr_pages.
-> 
-> like you do below?
-Below we add a folio of min_order, so if that fails for some reason, we
-can unconditionally move min_nrpages.
 
