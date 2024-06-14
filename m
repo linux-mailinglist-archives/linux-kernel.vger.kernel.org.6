@@ -1,106 +1,146 @@
-Return-Path: <linux-kernel+bounces-215245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78C1C90903E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:28:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC5190903C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:28:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DEF11C233FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:28:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FDA81F22C48
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBEE17C211;
-	Fri, 14 Jun 2024 16:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="V4Cv8gkK"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBC417C20F;
+	Fri, 14 Jun 2024 16:28:18 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C47F16F0D1
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 16:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA84637;
+	Fri, 14 Jun 2024 16:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718382514; cv=none; b=ENJeA/tZTbWLDuw6TrArrx3UZfysmHXDpjd9NsHevTsK4Hx3PhKJj24Aj7+xBpba/IiyDnkQNK9ZiG9Zh0FvOgP/bBNQ87lCJF4JBi29bhM9REBk4sLswspYyJVzG1erzNuH1LW+W8gWDqYnrSHkYcdl6PDWQNLQThmZRST9BYY=
+	t=1718382498; cv=none; b=klv1u826hOyzL72uDUY+NbqC3doLpeaQgyVhjkKCv6dYjU5EvOkeUR+aHbdQ9rd2zuXi7anA0zvcQT0Q392I4OG3JzHxJKIfOtYzHCAcTSEfhSesaGIhRVmzavWWEb0h7Ss9/Hj0E6q35xTy1xAazZjTybdKYUzEgoUMsLjKhgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718382514; c=relaxed/simple;
-	bh=8esRhZr5t++HylGupLX6lyRpqHu8zZM1p1WN0/F8Ko0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sz6KOazhKMcujNpfC68x8A00dxTWYS+eOK+EyTeppuQIOfjKqL0DP5dBVN2kM7NAo9QOACNnw77yg9/dOTfmglsz9nkKiZuDJiJkORPhCrv1fAPMvkQKKfkIr4NVX8D9WINt6Sh/ITS/gRO0uQbnFQeLHk95PebQdHal+svuGWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=V4Cv8gkK; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a63359aaaa6so359113366b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:28:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718382509; x=1718987309; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bjciShuEmN4FOttkz3Fru1iIAynJFsivm4utVaX4RDQ=;
-        b=V4Cv8gkK56l5oxvYJmamzusDkfTD9NKIE2ExJ8mmzsfLMSKroCdM81ez60zXOX6Z/l
-         W9RUQvJgzWgpspSnrBbvuLelHj4iZDi/boFiV4q4y+UFpNx/TjoWqjWt00xN1CPzmFBU
-         lEuOT2v2ZDDBb10QVDf5o1BupcO0ZVKsLZeLo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718382509; x=1718987309;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bjciShuEmN4FOttkz3Fru1iIAynJFsivm4utVaX4RDQ=;
-        b=Ex3vQur8wYNZynMMmMjys8PYHqG96r3IJ8hbWX93OOlMpKGy5k8iKWZWkaSWu2A1in
-         OQxX+D0vvL5SjWFRld7MVOwDGziHyL/Kb2boQHJ79nkG1znGSA9ZotS3t801/JHoX5P1
-         258T8bv84vFbp4rPvH9JERtuMJ50UMSrNAveAvCjI1u3nsf2MhwHvgsd0Ed9WzeDFotF
-         2kIwB65aJtD/enPShbkpNvM/JKmksmkn3EumhLYplm41qAREXaVnuSHw34wKDpIWF7AB
-         lIrtSJlnqsGmHFIyFeHK66TvMuUThbjdXGDGq76OFLHKoyBZ4fRX01SXR04GzZEcD641
-         ReDw==
-X-Forwarded-Encrypted: i=1; AJvYcCW17u3GB8vdrPwXyLOQe1WYDbp4D0vwFfzq/1yunsTEpz5ZIOjZmwD6cf2lU7yL3A5mc5HmDluALfpk43O+EI3BfQqchF1ebX+J2B9D
-X-Gm-Message-State: AOJu0YzWoQ6vS44Bs4RxZLeU4Yo7GIPQiLj2ln5o+R0IV6XByTJYK7aW
-	S6wXwFMifDl7ZooIZCqhsSDZpKv3dXArIv+eMc/hTuzMYyuIEy1NH3MQEjpdJ3YGWAV01YjEaq2
-	S9e4pkw==
-X-Google-Smtp-Source: AGHT+IEKthR36x2Snann5nXIajzwgBNQnDjkwy8ej0RDcip52cS6ivp9tRoTkM69PFhIPBga+jmEvg==
-X-Received: by 2002:a17:906:40d7:b0:a6f:585d:626d with SMTP id a640c23a62f3a-a6f60dc896amr185376766b.48.1718382509442;
-        Fri, 14 Jun 2024 09:28:29 -0700 (PDT)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f41737sm198865866b.160.2024.06.14.09.28.28
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 09:28:28 -0700 (PDT)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57cc1c00b97so1033894a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:28:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW5dcLrV7gW7eCTAgtEtcKHvcVhEyQBuEezjr9v6fAcgPON3wb8bfL+eIrs7QZxhyX5ES1TKEFxklgmMO/ZvwwvfJF/aD3DCAaIQYnw
-X-Received: by 2002:a50:c357:0:b0:57c:7594:4436 with SMTP id
- 4fb4d7f45d1cf-57cbd6642ebmr2048528a12.12.1718382507928; Fri, 14 Jun 2024
- 09:28:27 -0700 (PDT)
+	s=arc-20240116; t=1718382498; c=relaxed/simple;
+	bh=vXSQ5+BquuRvhQj/1WKknpvAxJollwsRa0HUggyd0vg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RAEvBDAFbTFQlXUvXVz31YO/sjlZva4gGyrQDOytdMoRbaTSk7qeVS9mAsP3AMGtq/1Om7PaXP/p9eftn3s1SCsswFlBsbBGfA0d5STBpgXhd7wNz2FiijSnri4hQ1dW+zwmeCFROB+i4QN6VlVJam29vqnkN4OWdQLZXltHPcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 921F32800F9A4;
+	Fri, 14 Jun 2024 18:28:12 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 7AC6AFF5DD; Fri, 14 Jun 2024 18:28:12 +0200 (CEST)
+Date: Fri, 14 Jun 2024 18:28:12 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Alistair Francis <alistair23@gmail.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+	Jonathan.Cameron@huawei.com, alex.williamson@redhat.com,
+	christian.koenig@amd.com, kch@nvidia.com,
+	gregkh@linuxfoundation.org, logang@deltatee.com,
+	linux-kernel@vger.kernel.org, chaitanyak@nvidia.com,
+	rdunlap@infradead.org, Alistair Francis <alistair.francis@wdc.com>
+Subject: Re: [PATCH v11 3/4] PCI/DOE: Expose the DOE features via sysfs
+Message-ID: <ZmxvnLDBhkWPrXGK@wunner.de>
+References: <20240614001244.925401-1-alistair.francis@wdc.com>
+ <20240614001244.925401-3-alistair.francis@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zmr9oBecxdufMTeP@kernel.org> <CAHk-=wickw1bAqWiMASA2zRiEA_nC3etrndnUqn_6C1tbUjAcQ@mail.gmail.com>
- <CAHk-=wgOMcScTviziAbL9Z2RDduaEFdZbHsESxqUS2eFfUmUVg@mail.gmail.com> <Zmv8sMMGS8uosLQD@kernel.org>
-In-Reply-To: <Zmv8sMMGS8uosLQD@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 14 Jun 2024 09:28:11 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiOwJD6sp6mdFg+6Ab8shcB0+qD8=m6MFBA-ExxBnYG5A@mail.gmail.com>
-Message-ID: <CAHk-=wiOwJD6sp6mdFg+6Ab8shcB0+qD8=m6MFBA-ExxBnYG5A@mail.gmail.com>
-Subject: Re: [GIT PULL] memblock:fix validation of NUMA coverage
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Jan Beulich <jbeulich@suse.com>, Narasimhan V <Narasimhan.V@amd.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, stable@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240614001244.925401-3-alistair.francis@wdc.com>
 
-On Fri, 14 Jun 2024 at 01:20, Mike Rapoport <rppt@kernel.org> wrote:
->
-> A single constant is likely to backfire because I remember seeing checks
-> like 'if (nid < 0)' so redefining NUMA_NO_NODE will require auditing all
-> those.
+On Fri, Jun 14, 2024 at 10:12:43AM +1000, Alistair Francis wrote:
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/sched.h>
+>  #include <linux/pci.h>
+> +#include <linux/pci-doe.h>
+>  #include <linux/stat.h>
+>  #include <linux/export.h>
+>  #include <linux/topology.h>
 
-Yeah, fair enough.
+I'm not seeing any symbols used here which are defined in pci-doe.h.
+Am I missing something?
 
-> But a helper function works great.
+If not this additional #include can be dropped.
 
-Thanks, that patch looks like a nice improvement to me.
 
-                Linus
+> @@ -1143,6 +1144,9 @@ static void pci_remove_resource_files(struct pci_dev *pdev)
+>  {
+>  	int i;
+>  
+> +	if (IS_ENABLED(CONFIG_PCI_DOE))
+> +		pci_doe_sysfs_teardown(pdev);
+> +
+
+No need to constrain to "if (IS_ENABLED(CONFIG_PCI_DOE))" as you're
+defining an empty static inline in the header file.
+
+
+> @@ -1227,6 +1231,12 @@ static int pci_create_resource_files(struct pci_dev *pdev)
+>  	int i;
+>  	int retval;
+>  
+> +	if (IS_ENABLED(CONFIG_PCI_DOE)) {
+> +		retval = pci_doe_sysfs_init(pdev);
+> +		if (retval)
+> +			return retval;
+> +	}
+> +
+
+Same here.
+
+Note that pci_{create,remove}_resource_files() is not the right place
+to dynamically add sysfs attributes.  These functions are called very
+late to postpone exposure of ROM resources until they're enumerated.
+You want to add your sysfs attributes right after device_add() has been
+called and you want to remove them right before device_del() is called.
+
+See here for an example how it's done correctly:
+
+https://lore.kernel.org/all/20240528131940.16924-3-mariusz.tkaczyk@linux.intel.com/
+
+(Search for the call to pci_npem_create() in pci_device_add() and
+pci_npem_remove() in pci_destroy_dev().)
+
+
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -189,6 +189,7 @@ extern const struct attribute_group *pci_dev_groups[];
+>  extern const struct attribute_group *pci_dev_attr_groups[];
+>  extern const struct attribute_group *pcibus_groups[];
+>  extern const struct attribute_group *pci_bus_groups[];
+> +extern const struct attribute_group pci_doe_sysfs_group;
+>  #else
+>  static inline int pci_create_sysfs_dev_files(struct pci_dev *pdev) { return 0; }
+>  static inline void pci_remove_sysfs_dev_files(struct pci_dev *pdev) { }
+> @@ -196,6 +197,7 @@ static inline void pci_remove_sysfs_dev_files(struct pci_dev *pdev) { }
+>  #define pci_dev_attr_groups NULL
+>  #define pcibus_groups NULL
+>  #define pci_bus_groups NULL
+> +#define pci_doe_sysfs_group NULL
+>  #endif
+
+You only need the "extern const struct ..." definition, not the
+NULL definition.  The reason we have these NULL definitions is
+because we're referencing the attribute groups in files which
+are compiled even if CONFIG_SYSFS=n.  But I believe that's not
+the case here.
+
+Thanks,
+
+Lukas
 
