@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-215197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4513908FAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:08:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170D2908F9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:05:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 059371C212CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:08:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93C6028524B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD95916D9CF;
-	Fri, 14 Jun 2024 16:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8070A16C696;
+	Fri, 14 Jun 2024 16:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="LVCnsRnU"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="URq1dqzn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+ETc5Tgr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9E315FA87
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 16:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8A32B9A5;
+	Fri, 14 Jun 2024 16:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718381312; cv=none; b=BqlhTM5wNbtTTGIITLohgyfwq7aDD7vXJCiMotSXyVXJLkDi6VdW4Ecr8DxsVxPlLy7m0XTL8DczjxJvn0xQ4dGIt3QlYtEzgCeswcqfoOcUkjvVS8OM2ZC50/gwKA0ccTxCCspkusp6yDMfVQmVkjKrUA3GZqzRfEF7IF4rb7I=
+	t=1718381090; cv=none; b=UvI/9sXprpbfj8FQevdWAK7kLBsSVjPQQ+PZJBApGOTU6H/vxwrcWrRz6gXIWVkEW0z0sbbJdCnw0jrM739th274YJYjYBRlvKdHxUW7rP3c6GOTG0Si3oXtolN0Z1fc1RVSBgM2QKl5bHLHTn2cZ35xVoBSgY28m2Jy5UZuf+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718381312; c=relaxed/simple;
-	bh=6M2PqV/7h/kVPTerbxqLHrAdQOpFIkjlO3ANv87ZX/w=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=IrG0JV2Kz6RKjwgM9VJ5BDGX108BEw4QSQpBX4HIm89kBhyuAFA9GigZLewZ0njuUhfBEK4RQabcCKb5bjsN90FUdxcLptPw3EgTPSEpIFBiimthvkGsMRPFgflh9jos+H5JTQc0DG7CI714367453jsp2sZzxzoCAgarWAHRgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com; spf=none smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=LVCnsRnU; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=smartx.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2c2c6277ef3so1995894a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:08:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1718381308; x=1718986108; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kcJeTxiX3WM8uQrCcDSKPApG5QEh6G1KM14LKw9t1aU=;
-        b=LVCnsRnU/lyKetP1Xer6Ea40j/kbMTaBWHXcPj0S2Zz9Z5sDCfruAuF6/q+088IuMP
-         +B55/i4wc4I/CluMlzIxWYMfF2jb3PDwni1CyT/CxUFd+fACigDFDwHcUCvwjcBMSDyu
-         0vHXWEjByE7gSrCZlmnhukqD6ucFEg9fCwK/v1MXrWd8tHatuRFmKAywDBhL98Ffjsmw
-         wQ5dto40VrAVvcdIgZJUBea7ibx5mqDlQY8H8uu0mA1Q8yGWjEkfTwCn/vWbX/uMRQP9
-         epUT18CAnynL8DCe9I4UhC9KnfnzD+bQ77X7B3qc+CMd/mmnn2XWSxcqxR4Oq1kPdto+
-         PSaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718381308; x=1718986108;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kcJeTxiX3WM8uQrCcDSKPApG5QEh6G1KM14LKw9t1aU=;
-        b=pFLKB+OW+9noafQH1rsURoLs1njxm+lz4T6BjcpUbjM99DtF+qe5gACKxq/OQkIYq3
-         ClIPxG9/VbIcbDvhP4tGX82kRgMa2y96de3aqFki3gBwB9V7V44WtJBUhb7yk6VNkO0w
-         Rwn5mRl+yc1rjrVeuw+V3+PYCGNa6YWL+PS2gW40x4B5Cs+rG0vf48PEGYXv+0SNGkl6
-         ipIsE0Gy1nalbUVzME7xueAvVFo5wgZWcEt+ZOCgzFEDvNkRAjBBmKDHX79lGsMf8SUr
-         BLSyk359WL65sSEIqkhIYyBWEgA5Yr/efpa0iBcy4VvvWfOgy1cLOuprBZOlhEZYTs4T
-         XXNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYNPVO4UZ4cxDAY6z83uiNyeIC3r31s8EN+Jm5hpfEJi+pPIBcsHTRFFSrBznPIn9QMOVhePGxZeoBrq64WAztKaqQYKSKChWcfOuc
-X-Gm-Message-State: AOJu0YzSLueO6sowZpM24Sm6MUDF4Z5FJHqjrqo+8xngDFqhLFn1ULpC
-	KMOcGMd11UsqWVa3y2856ZaCg7CfInlhszBNPacRBx7tDfaLje39h9y8amJo6NQ=
-X-Google-Smtp-Source: AGHT+IFIgJB6vSmQN+lPIqYX2cO2RPgLhz5hQGek745gmjSMFGXi8hF8p8rCTTHAAuT6SC+VFGSrQw==
-X-Received: by 2002:a17:90b:8d5:b0:2c2:db95:80be with SMTP id 98e67ed59e1d1-2c4dc0288b7mr3311560a91.42.1718381307636;
-        Fri, 14 Jun 2024 09:08:27 -0700 (PDT)
-Received: from localhost.localdomain.cc (vps-bd302c4a.vps.ovh.ca. [15.235.142.94])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4a75d1d40sm6333532a91.9.2024.06.14.09.08.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 09:08:26 -0700 (PDT)
-From: Li Feng <fengli@smartx.com>
-To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-scsi@vger.kernel.org (open list:SCSI SUBSYSTEM),
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH] scsi: sd: Keep the discard mode stable
-Date: Sat, 15 Jun 2024 00:03:47 +0800
-Message-ID: <20240614160350.180490-1-fengli@smartx.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1718381090; c=relaxed/simple;
+	bh=4WF6JZsC3Ht/Gfaa311jklZxD5KElK3svrdFuhozFhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YgiJzRrekbIXJ3Mz8ge/OAc9htAh/CEg6xLTSmvxkdzdw3NkBRaJcdWckb/1hJschgyqNa4QZnChhRU+xHWPrIop5JqKCmTdddVU4GQc/5zf6h+b6bvTadAWgOl+F7tP1PPTtK0RnRjRwOX5qpvdgkD/Nn2luhvPTNNgcC8JfdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=URq1dqzn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+ETc5Tgr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 14 Jun 2024 18:04:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718381086;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gi0Ctfyyc/5laoLje+Jfda9IFf+g17QR1+NTWKKpkzY=;
+	b=URq1dqznDFEyKvue5WWUyghEYBMGpwkh7txsThmmwcrVQ9KyJWpXdEkMBaPnXU5plEZaWE
+	UpwgjyiI0tqjui61steL9vafHgl3QziQRHIa/xdOJHmSBFk5Jq8XJcoG6k1gXZiT2sTBJJ
+	8J6QQzVlYhQhq6CvfWr+WF9xfnMFjWM/KNhu6uJFwf0pyjeVVQvw7QEPCLVuIK6h4zWYkx
+	q+7akQ0MnhrQZuIotH+00OP5cc5fnGfUeNf9e+FRquJryXwpnjfGiBY7i1IE98w2wSKq5h
+	WIP8Q5y/jFuQRoPt0Exoo13e/oH8HQ448JKvBIKf6w1nVLjDMmweSjv/gQu38A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718381086;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gi0Ctfyyc/5laoLje+Jfda9IFf+g17QR1+NTWKKpkzY=;
+	b=+ETc5Tgr4yxAnUx+RKxcPxbLMEHt1UG8hPckBJGyZivqlVqKpBe0CffC3DZfuhDoqTQ1kO
+	5QXSf3GHBEIa6RDQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Eric Dumazet <edumazet@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+	Ben Segall <bsegall@google.com>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Juri Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH v6 net-next 08/15] net: softnet_data: Make xmit.recursion
+ per task.
+Message-ID: <20240614160445.UdPsIOTW@linutronix.de>
+References: <20240612170303.3896084-1-bigeasy@linutronix.de>
+ <20240612170303.3896084-9-bigeasy@linutronix.de>
+ <20240612131829.2e33ca71@rorschach.local.home>
+ <20240614082758.6pSMV3aq@linutronix.de>
+ <CANn89i+YfdmKSMgHni4ogMDq0BpFQtjubA0RxXcfZ8fpgV5_fw@mail.gmail.com>
+ <20240614094809.gvOugqZT@linutronix.de>
+ <834b61b93df3cbf5053e459f337e622e2c510fbd.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <834b61b93df3cbf5053e459f337e622e2c510fbd.camel@redhat.com>
 
-There is a scenario where a large number of discard commands
-are issued when the iscsi initiator connects to the target
-and then performs a session rescan operation. There is a time
-window, most of the commands are in UNMAP mode, and some
-discard commands become WRITE SAME with UNMAP.
+On 2024-06-14 16:08:42 [+0200], Paolo Abeni wrote:
+> 
+> I personally think (fear mostly) there is still the potential for some
+> (performance) regression. I think it would be safer to introduce this
+> change under a compiler conditional and eventually follow-up with a
+> patch making the code generic.
+> 
+> Should such later change prove to be problematic, we could revert it
+> without impacting the series as a whole. 
 
-The discard mode has been negotiated during the SCSI probe. If
-the mode is temporarily changed from UNMAP to WRITE SAME with
-UNMAP, IO ERROR may occur because the target may not implement
-WRITE SAME with UNMAP. Keep the discard mode stable to fix this
-issue.
+Sounds reasonable. In that case let me stick with "v6.5" of this patch
+(as just posted due the `more' member) and then I could introduce an
+option for !RT to use this optionally so it can be tested widely.
 
-Signed-off-by: Li Feng <fengli@smartx.com>
----
- drivers/scsi/sd.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+> Thanks!
+> 
+> Paolo
 
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index f6c822c9cbd2..0165dc70a99b 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -2598,7 +2598,12 @@ static int read_capacity_16(struct scsi_disk *sdkp, struct scsi_device *sdp,
- 		if (buffer[14] & 0x40) /* LBPRZ */
- 			sdkp->lbprz = 1;
- 
--		sd_config_discard(sdkp, SD_LBP_WS16);
-+		/*
-+		 * When the discard mode has been set to UNMAP, it should not be set to
-+		 * WRITE SAME with UNMAP.
-+		 */
-+		if (!sdkp->max_unmap_blocks)
-+			sd_config_discard(sdkp, SD_LBP_WS16);
- 	}
- 
- 	sdkp->capacity = lba + 1;
--- 
-2.45.2
-
+Sebastian
 
