@@ -1,200 +1,185 @@
-Return-Path: <linux-kernel+bounces-215499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF619093B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 23:36:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D029093B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 23:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01ADC1F2292F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:36:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C58EB21200
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607AA18412F;
-	Fri, 14 Jun 2024 21:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709F8184134;
+	Fri, 14 Jun 2024 21:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f/GZJE4+"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="TLALYyv4"
+Received: from EUR01-VE1-obe.outbound.protection.outlook.com (mail-ve1eur01on2047.outbound.protection.outlook.com [40.107.14.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B4914882D;
-	Fri, 14 Jun 2024 21:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718401006; cv=none; b=dFeqK0Jt3+OtmbD9CYJvHf5XJzqMXEEv2s1XC72OOmZuCcD3PcZlRl8G8bzkJDhidUkH0D+hTXr+4CQ5B3rXv1EaZM1+kbh0/p+oTOvDa110U7b5ZjlGl/9iAzKAbmFEo+m4rTGOdtix8wsDfmQpZe10zPoicE8orns+O9NE7gw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718401006; c=relaxed/simple;
-	bh=q0g6ibi75ZEzD6ggra8+zOk+wRYXZj61KZeiY/yG4P0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kzngoKG4RAUzgcwQFoj9hsqvS10DNRtSywQp7fSRCdgpkHV6Gx8HlhATaMEbkKNVDqqJGohjBRxojjY2jV/cLW12Xf4lOqoUC8beNhgeFV5DAGoCQUd0dAMaemg8aJ/B0hL2RPn8c8WWDzMh6F1L70QqbAodiYGjamk4Zob4hGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f/GZJE4+; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52c4b92c09bso3912823e87.1;
-        Fri, 14 Jun 2024 14:36:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718401003; x=1719005803; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bPuWx3FNS7o7yVF4Y5MNousWkGaU6pMFEqKrEXP5xc4=;
-        b=f/GZJE4+Rz36qz/SFySMk59b3bqp6qSY85IJc9EYXwOUJGhbz3fiY98sT9WXyjpH2m
-         vCWQyEHBJ21FWkrnSxjRAORcodPJft9pT7r4onrfxx6+49fLliKz4YE7xmRmi+QllsFt
-         MZm5ymCe5E7651KMU0RXM3ZB5UE7ipGNdIE3dGqfO7IMWb1Y/27NaClin74bIwc7Xy1Z
-         sDjYUpd30mR9Hqx+ZW9erQweXCDQLL37edRiq1hR+JtRSIOpF5hO0QTTU6ROSfspwhdJ
-         eRWuvHiAZY+ywOkeZUyInnAotYCZ3E3dKEelGcHkmx6Qo1e95Yn4QDJ/E83BOpUSlJzo
-         eBiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718401003; x=1719005803;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bPuWx3FNS7o7yVF4Y5MNousWkGaU6pMFEqKrEXP5xc4=;
-        b=ipneLUmRhQQjxmd5c9VBiShB+udDco56hQAgwFA54bSTYTzKuVouV5zkV+0uZygpcR
-         AjT68VxwN3fdqayDpQ1pCHbFzec05xU9ja6GWAPMlI4X3vktA0s7UVQX8eDVRRJ26dSG
-         8Jun4WCJ3z5PyeS35w7J76H5F/MrfzyT7hY/3N2EPM4LjIWFVGCpXfwjq0Njlt2T3eqI
-         xvxHuGsyGqPrDMi9e4tgfCDyrrNghpT7ReK10qwZK/Fa5KIAbgonm4gwV+oBKB+Pm1HX
-         wEk8fD36/I8ZIQxajiVXtvyS56PsOrulx3dUdh1XUV3MkQdDsFtIfRzOA2VAp/KLh2cL
-         5VTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJiksZyzaIQURlsWCQS/QGw5Ae1mSPuBtE6ZRhFDxiQ6wj8nTEZgnwE7p7DobMxjS7nRVluhuYzpf2hgDIVo3oKGK/xKYBAqPeqTCXwULr+Y1naiLMEGWxY5/6kg0jD+8pdadx
-X-Gm-Message-State: AOJu0YytuvuK4Jf0QbXxwoaZ7U/oWUJaSzEEgaEk21sgYw20LjvKpnkj
-	i9kWahcIIBC431gNF1ldfdEhBoUNYwKjnOW+YWKvTgKf9+zI4AwFfWZyKKI62F/FlhMqC9AmYWC
-	yLcDEzQT6jwP2OqrZOTWQ7exl6Go=
-X-Google-Smtp-Source: AGHT+IEmoSgtLwTY+KHsVc6GIwPMGR12YEcFNBBLmXtGr5ut1UXzXRAgLLv9mlDWzXaAwyJs4Pi7+h87CcyKoFuT5U0=
-X-Received: by 2002:a19:f014:0:b0:52c:8440:1d7b with SMTP id
- 2adb3069b0e04-52ca6e6e549mr2491614e87.36.1718401002763; Fri, 14 Jun 2024
- 14:36:42 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B468E143C7A;
+	Fri, 14 Jun 2024 21:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.14.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718401146; cv=fail; b=QUvxq5IaanetdVK4ZSGCFCnB4M4oq4zVskqVUfca/XCNvB7Z0Th3lezQB76lBvn7SnhhtcpIWEp9bHMj3i7ZJ74hWNw0IcJkLpL+8B0y4pFe5G50V5/WmmsMJfx1LZYme5t856EUl8cs3DY1zOIxfkzxe8thmmiJrXCgTPQIcCg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718401146; c=relaxed/simple;
+	bh=wxN+UPyITBkyNpizflLgeJlO+bj/ytSVVDOAwm0Qub4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=YZ7UXwr4mLFX5zHp4qCTQP/vtWVuR4cRi5C3ahMKCR/6KBrRc1RfDnW5+bnCtc2xklkktvrFdQ8Gk4O9TZvikNH5S97djZuXv6khRbuWOVo3otS/Z0yJMAMhGTo7tjQ9HKuQJ1d/Pq9ukenOx6/gNqjOrOe1Fd/RjYO0Vt9h4qA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=TLALYyv4; arc=fail smtp.client-ip=40.107.14.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iLY20SDmv+dE37KGi82LrUjLD4xbPqYsVg0blWFe2sJn4A9eR5KKEACxtL95YmJXG0t5ZUf1aKJ4i77FAyU8K+hTS2DU/PENWY6q+vyty+5MQ9HJIV6zoTIuuFzrLkUGbDfYxTKoklubAkOriAfAk5pgNN8leStIVr7ILx3CHLEqgLarCpOersoRwlR2aZQBBnYKYMEWwghGxNSk0veoHlabYZGaThUo2L9eaMTXqHPihLwxZKZbA7OyrQ1e/CHz9CFasjGbbDtLhaabS0lbZQszLjN/f8Y/jgxkhPkjpMC0ePAtC+n54ENtVFA9JGL3nvebFKsLEJz5oG/ep3bO2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=N5Y2LtF03k2lnMz4IxvTudZQjoCkHcFx8T9gJ1uQ5uA=;
+ b=SlUjJelV4vtsQ8YZy3eQVJ6hhbxQd3JqJiwilKAaQckiiCGeSiasYEZSeSojaqOCohNEhtSSmjxGccO9JCv5XSLdbBDwqD6PR5RNFm6dQ9upyJ0pjyyJdt1WXfAdGTuKDl8l7xw7m8xjanNKDw3JZgSpKZzJiyCLJwWAyOlFh/hMlscopHTM/+SFkya7uWeTdR/b9LVdIMiZbnJ4AJfbefw54ZEyP8+StjiYRduXAIp/S2r3e7FYzyucki1ueANPtB6VYex6V1Z+IW2eG5PrKAU7UR6hLiApeDfJKide6kJAg9qeRXPn/dGVt5CCx4QiOVie/BHowdUntLw+uQ7bjg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N5Y2LtF03k2lnMz4IxvTudZQjoCkHcFx8T9gJ1uQ5uA=;
+ b=TLALYyv4M4yRrRU+6s4oQGDDAsamSfVUgXpBGhZnEi0x90ZdTNN5NcaGVFRROsc+WlBUs3MH8jv/HARIutYGxg2pLaUUSymYAL3G0NWFREme6jTZZtsPPFAzTY4xrASnXSJhXjm8xrNO2mIV4adsLFQVmpVCrNI9rwG8/sqV40A=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DBBPR04MB7867.eurprd04.prod.outlook.com (2603:10a6:10:1e5::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.25; Fri, 14 Jun
+ 2024 21:38:54 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7677.024; Fri, 14 Jun 2024
+ 21:38:54 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-gpio@vger.kernel.org (open list:GPIO SUBSYSTEM),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/1] dt-bindings: gpio: mpc8xxx: Allow only use 'fsl,qoriq-gpio'
+Date: Fri, 14 Jun 2024 17:38:39 -0400
+Message-Id: <20240614213839.2532061-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR11CA0082.namprd11.prod.outlook.com
+ (2603:10b6:a03:f4::23) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aa5ffa9a-62cc-4a79-9368-989f5684c29c@alliedtelesis.co.nz> <CACRpkdbF-OsV_jUp42yttvdjckqY0MsLg4kGxTr3JDnjGzLRsA@mail.gmail.com>
-In-Reply-To: <CACRpkdbF-OsV_jUp42yttvdjckqY0MsLg4kGxTr3JDnjGzLRsA@mail.gmail.com>
-From: Luiz Angelo Daros de Luca <luizluca@gmail.com>
-Date: Fri, 14 Jun 2024 18:36:31 -0300
-Message-ID: <CAJq09z6dN0TkxxjmXT6yui8ydRUPTLcpFHyeExq_41RmSDdaHg@mail.gmail.com>
-Subject: Re: net: dsa: Realtek switch drivers
-To: Linus Walleij <linus.walleij@linaro.org>, 
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: "alsi@bang-olufsen.dk" <alsi@bang-olufsen.dk>, Andrew Lunn <andrew@lunn.ch>, 
-	Florian Fainelli <f.fainelli@gmail.com>, "olteanv@gmail.com" <olteanv@gmail.com>, 
-	=?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>, 
-	"ericwouds@gmail.com" <ericwouds@gmail.com>, David Miller <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"justinstitt@google.com" <justinstitt@google.com>, 
-	"rmk+kernel@armlinux.org.uk" <rmk+kernel@armlinux.org.uk>, netdev <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB7867:EE_
+X-MS-Office365-Filtering-Correlation-Id: 118b53d7-6f7d-45ee-29c8-08dc8cba633c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|366013|376011|52116011|1800799021|38350700011;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7JRMvwuBLf4qYWveu2Kvt3sVuEFsljn9JmOTKwdeqpMnUF2vi0wL5nGx+7Au?=
+ =?us-ascii?Q?hx0dItXsGd/561f3mmKYBPNbH2ezBewByBMBywuERHBubo14K/xlQrYtPO89?=
+ =?us-ascii?Q?ky5ul7dSUpmtSi/RbPxzIbdmmKu9hXUOi/6oOYm3rgEZ5/TjB0myRMTv5PoG?=
+ =?us-ascii?Q?AyeCnt8Arq2j6Q/g4DLmfvUFQ61PsGbmiAc0ZKdsi4MgwAOGAMb6eB/Nq1jJ?=
+ =?us-ascii?Q?asiqVe1yEG7nq1l8nCaOiTZ8x4e989l1/kK2QNA9AuJYLbbE7HurcF55Bbqy?=
+ =?us-ascii?Q?qiNvW1Abu1P8CVFG4Pd6VaNyp8CDAw4g85RVrS4JXOS63vlS/nSvE++azI4c?=
+ =?us-ascii?Q?RM/5A5WxAAO1JdGV6/jk7DdRDSgZZsa3F/DY8H1y3LTLuTUkdH9DwHnVhVrG?=
+ =?us-ascii?Q?xdFonxGRdeu1yVXZrLGPXHsH+kP3jZMm7hKC7k3quECkvaZrsVzZDBjToTF4?=
+ =?us-ascii?Q?+uLPcggcIppZ4d9K3IDTb34jUWzS1XPigqbun0dFVFn3FeRyFvmBoYqr0pdQ?=
+ =?us-ascii?Q?2on/8UQFTvPeF5Jfca23REHQ/UZpEPdPf7c5tlo4h0lqiv5LfWE8d5UVAH23?=
+ =?us-ascii?Q?P/b9PF2iLrTm/zOwjPJoyBzIBejH7r7PETwk01OGUMu4wpVBu/SmM7ZGRBtH?=
+ =?us-ascii?Q?5OzBNGZoj8xJlbluDSVBXrYcHeUWnZPUCCl5C+P9yRAgF6wyS9qaeTVZ7FFf?=
+ =?us-ascii?Q?rXRzorRTPs0Gmp2bA63lKTH5d9ZKafPCeC0++9FXxMg/4HwdfoPDH4gAwfek?=
+ =?us-ascii?Q?qntffH4nDsQeluKk+t6x4xxkfutOyLh21BGGVuW1x2A9CNuXgXLVC0PhCxB4?=
+ =?us-ascii?Q?rgm7aslNBAuBnpcmO6CIN7Dc1j9QxQHc3DYUI1hP4F9qQ7H4eg9KCIQF+fV0?=
+ =?us-ascii?Q?eBIqXKcakvwnZb5edZSCYfWWA7bxzBuXPzSi9KBW70xnOnlQbCNkCSug7FPI?=
+ =?us-ascii?Q?6N5P5qlHtRYcWQFrJ5ksU06yGyO2ktFsouDnttMImCZnDZs5w2Tpn1jWDDNF?=
+ =?us-ascii?Q?VeEOzhfTUkU1p++FDJWagmINxZg4GKi/cMcVatPIFGTlnpOyVAjqBJFL12nW?=
+ =?us-ascii?Q?xd1YhO9UEPhKgfd8twD16x3VzCom5KjKqUL1dgxZWhmofKumMkQC9DRt8mGU?=
+ =?us-ascii?Q?INEgAswrTeIaq7G2sHYJwQ1tZrNAEX7FPe+MpqCtrN0JeT8pHsN9n538ZrJk?=
+ =?us-ascii?Q?SZCN5s9G21wYzL+0BP8HclYPwKe+Yv+nJA3UDLtBUdaa5AGVPPxwzic141I+?=
+ =?us-ascii?Q?OSk+Y/xAYJU5ieFAoTJqD7O5aXs+dPIyG38l3D3yg0Vey+bQt6iAowu0Lh0o?=
+ =?us-ascii?Q?KUtNkwkEMX+nTBdNLQRE0N8PBdZLmBzYelDYxDFgihAAN36vb6Ov59D/bQh0?=
+ =?us-ascii?Q?ZHDiRbw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(52116011)(1800799021)(38350700011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?HqJsh95TCXDyny4STeHGhcvWGsD0PXF1CyQzaFkoUCXRcFnpWRl72XRd/5eR?=
+ =?us-ascii?Q?TPJZ7PQgmNtW2jXD+Wd7dU9NArvldGgiR3z7UU3zXmsOktcPrxaBdWr+3GEj?=
+ =?us-ascii?Q?JAJeDl/tW9l6TXhHpcKV9U/zeiqSr55Luw5zZub/ShmK3gcpQpcSZDlrviaw?=
+ =?us-ascii?Q?8nbAjW+WbQiq6aFd5SPOLejgmUG+krVi0aSryA8GPSkwOsiZVRkUc45qMY+o?=
+ =?us-ascii?Q?pFeNygDvLgkbcaSjCfvOqkfx9/AM4iH35Ao/NM/bX5aDMFl6C0HdGL24tCzR?=
+ =?us-ascii?Q?CFqZUJbmkmmtFJZAKIJGZB7faeGSAd3vo37izLs1MSIvSecxHvrAnoMk4IaO?=
+ =?us-ascii?Q?WxShgEb3KhC6HCwRffeq1BXriCNllfPCZCTEyWt5YwuNNlmSD9bzE6HklUy9?=
+ =?us-ascii?Q?YuzWViFYmTWZCdT1upHkdCy5N8GsmoT2aaXLrQKjTB6+4xn090dGS7/7tXpG?=
+ =?us-ascii?Q?Dux04+sy60SRlebN9SdT2mJoHJpik/fxAdoEe4qRDy9uG17X1vBtnqpum8VY?=
+ =?us-ascii?Q?cUig1NIpij51AsKb/16sNny9wNGrqwRFW8vEnWAu/bzzumAIC1xOUnGdN53e?=
+ =?us-ascii?Q?uro0Y21pzgCT0ZyhtcPgsCWbg0NbzQzPo2JSBEG9+PVT0dIbg0aEdR6rFwDs?=
+ =?us-ascii?Q?GJN+OkbI7KpYmKqUMWqKtR4v59H/BsyOsjPPFauiZwfPF0lL7xv2PNvIQfHz?=
+ =?us-ascii?Q?KoENURSfM/rfhA3IIAEh7oOhB5vntshhzKgis1SwwgiZWb+2bhsfK4OUEYd6?=
+ =?us-ascii?Q?wrXPOVgUG69TjXDd5/YZQ+sQmMDQ7jcIC7elQfOrPyVGo5LT4/bCL1yZ8F4u?=
+ =?us-ascii?Q?oTfgJ/935Hu0DSn5wKO1tkZ3hdMN/WMpwtX9pRplWhPZzWlK8jvCYu15Rt9+?=
+ =?us-ascii?Q?BNyY9yMiIjIANIM7pq4kavg8sipOuXzP9c/s1eR6cvNkX9DeOovgzpM5WCmC?=
+ =?us-ascii?Q?0VcLprrgI6JViG1Xs5JYq0Fgsa+YmK9Ov73ksnHIHq291lunuGAVwSFkWhbC?=
+ =?us-ascii?Q?magHhLKSdzFoTUhD+M1g0ZjiVHpyIqEO/C6KDQot138IWKUWR2/0Hdsx+jTX?=
+ =?us-ascii?Q?ul9EP8BEvjwkNhcxSRx0xdakBd43UTaCB6pkCpDWkCzn+5WI/TM3pMt1z5Yo?=
+ =?us-ascii?Q?X8v1XV3y7JSc5t96KH8Sy9TMtJZT9gv0TBnCj7QuKANmsom4juef/6D54b0c?=
+ =?us-ascii?Q?4gUhv34qLceaoJPUAsvfpqMdVQKd2DqpAl4+Hj1ai6CAnrNPZGivQxPlxQwD?=
+ =?us-ascii?Q?roQtHaRS2j3UAtfyvzkLbdg8GnNMbj68YuLcTrEOKcy3Vl88Mxm1SDO9/MTi?=
+ =?us-ascii?Q?NhdGaqbYNHS1CU/lQ/cAyxAaTXnnQ0FK2nXCij5yNzgZf9kqk6WFjkvBHhVm?=
+ =?us-ascii?Q?89Jmp6mpAovdet+OIWQIYUaRGQMjfpZ7A67M11VNo0HWHokBJRgE8gWlapoX?=
+ =?us-ascii?Q?nYGhts88gxB0YWxTNcQ98qJLUQwlVTeJ1hinZebUOtksHcbXjRgx+J1R7zUF?=
+ =?us-ascii?Q?LsdiJEmuy9Yn9Dd5++Tj0FTD0EZYpabt9FmP8fnu+FQpE2L+NoaHIKP7OMB2?=
+ =?us-ascii?Q?tphfRnGrhT94n0biIVf47pY0x7cojIBNdN9iOccA?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 118b53d7-6f7d-45ee-29c8-08dc8cba633c
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2024 21:38:54.0902
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xWWHRr7eVyAyLeV7pPsAl46AmK2MPrMqEJiiHvlzGx4hqzQRjBO6II675frRWXlU1pgnWq7f+gJ1hbcT7yh1hg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7867
 
-Hello Chris and Linus,
+Allow only use compatible string 'fsl,qoriq-gpio' in dts to fix below
+warning:
 
-> > I'm starting to look at some L2/L3 switches with Realtek silicon. I see
-> > in the upstream kernel there are dsa drivers for a couple of simple L2
-> > switches. While openwrt has support for a lot of the more advanced
-> > silicon. I'm just wondering if there is a particular reason no-one has
-> > attempted to upstream support for these switches?
->
-> It began with the RTL8366RB ("RTL8366 revision B") which I think is
-> equivalent to RTL8366S as well, but have not been able to test.
->
-> Then Luiz and Alvin jumped in and fixed up the RTL8365MB family.
->
-> So the support is pretty much what is stated in the DT bindings
-> in Documentation/devicetree/bindings/net/dsa/realtek.yaml:
->
-> properties:
->   compatible:
->     enum:
->       - realtek,rtl8365mb
->       - realtek,rtl8366rb
->     description: |
->       realtek,rtl8365mb:
->         Use with models RTL8363NB, RTL8363NB-VB, RTL8363SC, RTL8363SC-VB,
->         RTL8364NB, RTL8364NB-VB, RTL8365MB, RTL8366SC, RTL8367RB-VB, RTL8367S,
->         RTL8367SB, RTL8370MB, RTL8310SR
->       realtek,rtl8366rb:
->         Use with models RTL8366RB, RTL8366S
->
-> It may look like just RTL8365 and RTL8366 on the surface but the sub-version
-> is detected at runtime.
->
-> > If I were to start
-> > grabbing drivers from openwrt and trying to get them landed would that
-> > be a problem?
->
-> I think the base is there, when I started with RTL8366RB it was pretty
-> uphill but the kernel DSA experts (Vladimir & Andrew especially) are super
-> helpful so eventually we have arrived at something that works reasonably.
->
-> The RTL8356MB-family driver is more advanced and has a lot more features,
-> notably it supports all known RTL8367 variants.
+arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dtb: gpio@2300000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['fsl,qoriq-gpio'] is too short
+	'fsl,qoriq-gpio' is not one of ['fsl,mpc5121-gpio', 'fsl,mpc5125-gpio', 'fsl,mpc8349-gpio', 'fsl,mpc8572-gpio', 'fsl,mpc8610-gpio', 'fsl,pq3-gpio']
+	'fsl,qoriq-gpio' is not one of ['fsl,ls1021a-gpio', 'fsl,ls1028a-gpio', 'fsl,ls1043a-gpio', 'fsl,ls1088a-gpio', 'fsl,ls2080a-gpio']
 
-I played with RTL8367R. It mostly works with rtl8365mb driver but I
-wasn't able to enable the CPU tagging. Although
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+ Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-> The upstream OpenWrt in target/linux/generic/files/drivers/net/phy
-> has the following drivers for the old switchdev:
-> -rw-r--r--. 1 linus linus 25382 Jun  7 21:44 rtl8306.c
-> -rw-r--r--. 1 linus linus 40268 Jun  7 21:44 rtl8366rb.c
-> -rw-r--r--. 1 linus linus 33681 Jun  7 21:44 rtl8366s.c
-> -rw-r--r--. 1 linus linus 36324 Jun  7 21:44 rtl8366_smi.c
-> -rw-r--r--. 1 linus linus  4838 Jun  7 21:44 rtl8366_smi.h
-> -rw-r--r--. 1 linus linus 58021 Jun 12 18:50 rtl8367b.c
-> -rw-r--r--. 1 linus linus 59612 Jun 12 18:50 rtl8367.c
->
-> As far as I can tell we cover all but RTL8306 with the current in-tree
-> drivers, the only reason these are still in OpenWrt would be that some
-> boards are not migrated to DSA.
+diff --git a/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
+index eb046a48a3f59..ef72f569c8387 100644
+--- a/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
+@@ -19,6 +19,7 @@ properties:
+           - fsl,mpc8572-gpio
+           - fsl,mpc8610-gpio
+           - fsl,pq3-gpio
++          - fsl,qoriq-gpio
+       - items:
+           - enum:
+               - fsl,ls1021a-gpio
+-- 
+2.34.1
 
-These drivers you listed are mostly found in old or low spec devices.
-There is little incentive to invest too much time to migrate them. For
-rtl8365mb, it still lacks support for vlan and forwarding offload. So,
-the swconfig driver still makes sense.
-There is also a performance problem with checksum offloading. These
-switches are used with non-realtek SoC, which might lead to:
-
-"Checksum offload should work with category 1 and 2 taggers when the
-DSA conduit driver declares NETIF_F_HW_CSUM in vlan_features and looks
-at csum_start and csum_offset. For those cases, DSA will shift the
-checksum start and offset by the tag size. If the DSA conduit driver
-still uses the legacy NETIF_F_IP_CSUM or NETIF_F_IPV6_CSUM in
-vlan_features, the offload might only work if the offload hardware
-already expects that specific tag (perhaps due to matching vendors).
-DSA user ports inherit those flags from the conduit, and it is up to
-the driver to correctly fall back to software checksum when the IP
-header is not where the hardware expects. If that check is
-ineffective, the packets might go to the network without a proper
-checksum (the checksum field will have the pseudo IP header sum). For
-category 3, when the offload hardware does not already expect the
-switch tag in use, the checksum must be calculated before any tag is
-inserted (i.e. inside the tagger). Otherwise, the DSA conduit would
-include the tail tag in the (software or hardware) checksum
-calculation. Then, when the tag gets stripped by the switch during
-transmission, it will leave an incorrect IP checksum in place."
-See: https://docs.kernel.org/networking/dsa/dsa.html
-
-> But maybe I missed something?
-
-I guess Chris is talking about the realtek target that uses Realtek
-SoC (target/linux/realtek/files-5.15/). That is a completely different
-beast. Although it might share some (or a lot) logic with current
-upstream drivers, it is way more complex. It might require a
-multi-function device driver. Anyway, the current realtek SoC/target
-drivers need some love, like using regmap, implement functions using
-an abstraction layer (and not if model a inside the code), get rid of
-all magic numbers and replace them with meaningful macros, create a
-proper tagger (and not translate a generic one just before forwarding
-it). In OpenWrt, a code that gets things done might be acceptable but
-the upstream kernel requires something more maintainable. So, if you
-want to upstream those drivers, you can start by improving them in the
-openwrt.
-
-> Yours,
-> Linus Walleij
-
-
-Regards,
-
-Luiz
 
