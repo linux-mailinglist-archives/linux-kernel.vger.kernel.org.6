@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-215088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C16908E24
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:05:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30E4D908E25
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58A011C25257
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:05:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5188F28ED37
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42FF1A38D7;
-	Fri, 14 Jun 2024 15:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B501A3BDE;
+	Fri, 14 Jun 2024 15:02:25 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5651A2C1E
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04DA1A3BC5
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718377341; cv=none; b=hNRK/nrAlVroBjAK9Q+UVBL/bsQRks4lfresouaUHJL+uwI32dW29NHIL3egldeyHP9xjITOEf2gqtgxaEkuB4o5nVUXeNGLW7Lx3OzTTP9ChMfJRo08srvHiHc26uSy+9ODg1awrmad4pM/ydrR/GWD1FBclTnKInP0BgRE4u0=
+	t=1718377344; cv=none; b=GZTCxy9tIT70uyyW2eI4gKax9lTHzyYuZ5O0SlmAKRQGOeMlZP6rk+VqwnrhMJ/3iPnajeyy2BZOoJu3zd4tiPa27hQYiqd6Zhrak45UEWcCg/MzlyUEWSulg8z/SlD/PajWg/A5GIZN6x23nlc/MB6puMq0OTQqD0LQfPKZByo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718377341; c=relaxed/simple;
-	bh=SaacYyUK4VA0ZIK3QWS+qg+UtFV1Fzhe6PY45KSG2z8=;
+	s=arc-20240116; t=1718377344; c=relaxed/simple;
+	bh=DokKYdDhUPaBxrxkzI1NDcQu0Vtfhkifm18Gd0MF0u4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eXAwxDhSR76UbFqM/esmu4EfHsVciRYtt43vOoOP6b9EOmGvT4fdfGUSymPKtk3bGPNXAf3Pg51xo7Er998Id5RTAu86SWRpm4D8dFz8icoMagZ4iofV6sBqy2KJ3F5JTEt61Q/p/hYAj5gDShYsPQybX67uLAUkP7x5m7J9epo=
+	 MIME-Version; b=Ve9WRcZ6TdZFyETc6feVy3dl7bA12tW8AZSslm7KfY35GJYi0/HrLDMrWoXgO2vlLAmhEt89ZzdhN9bsARD9uO1tDwaPtpOE6Mq2bc7Q8g2gool4dLru3PP/1XJl1Why5jLTQ1/OSEVBdUkIX98b7vip+hKhBdMsyKAJIoAnz3w=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF60B1A2D;
-	Fri, 14 Jun 2024 08:02:43 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2FB4A1A9A;
+	Fri, 14 Jun 2024 08:02:47 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 28FAF3F5A1;
-	Fri, 14 Jun 2024 08:02:16 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7ABFC3F5A1;
+	Fri, 14 Jun 2024 08:02:19 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -59,9 +59,9 @@ Cc: Fenghua Yu <fenghua.yu@intel.com>,
 	Rex Nie <rex.nie@jaguarmicro.com>,
 	Dave Martin <dave.martin@arm.com>,
 	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Subject: [PATCH v3 21/38] x86/resctrl: Move mbm_cfg_mask to struct rdt_resource
-Date: Fri, 14 Jun 2024 15:00:16 +0000
-Message-Id: <20240614150033.10454-22-james.morse@arm.com>
+Subject: [PATCH v3 22/38] x86/resctrl: Add resctrl_arch_ prefix to pseudo lock functions
+Date: Fri, 14 Jun 2024 15:00:17 +0000
+Message-Id: <20240614150033.10454-23-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240614150033.10454-1-james.morse@arm.com>
 References: <20240614150033.10454-1-james.morse@arm.com>
@@ -73,109 +73,163 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The mbm_cfg_mask field lists the bits that user-space can set when
-configuring an event. This value is output via the last_cmd_status
-file.
-
-Once the filesystem parts of resctrl are moved to live in /fs/, the
-struct rdt_hw_resource is inaccessible to the filesystem code. Because
-this value is output to user-space, it has to be accessible to the
-filesystem code.
-
-Move it to struct rdt_resource.
+resctrl's pseudo lock has some copy-to-cache and measurement
+functions that are micro-architecture specific. pseudo_lock_fn()
+is not at all portable. Label these 'resctrl_arch_' so they stay
+under /arch/x86.
 
 Signed-off-by: James Morse <james.morse@arm.com>
 Tested-by: Peter Newman <peternewman@google.com>
 Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 ---
-Change since v1:
- * Reword comments to avoid being overly arch-specific.
----
- arch/x86/kernel/cpu/resctrl/internal.h | 3 ---
- arch/x86/kernel/cpu/resctrl/monitor.c  | 2 +-
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 5 ++---
- include/linux/resctrl.h                | 3 +++
- 4 files changed, 6 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/resctrl.h            |  5 ++++
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 36 ++++++++++++-----------
+ 2 files changed, 24 insertions(+), 17 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 06e80356cdbb..85a5c6e83fad 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -374,8 +374,6 @@ struct msr_param {
-  * @msr_update:		Function pointer to update QOS MSRs
-  * @mon_scale:		cqm counter * mon_scale = occupancy in bytes
-  * @mbm_width:		Monitor width, to detect and correct for overflow.
-- * @mbm_cfg_mask:	Bandwidth sources that can be tracked when Bandwidth
-- *			Monitoring Event Configuration (BMEC) is supported.
-  * @cdp_enabled:	CDP state of this resource
+diff --git a/arch/x86/include/asm/resctrl.h b/arch/x86/include/asm/resctrl.h
+index 50407e83d0ca..a88af68f9fe2 100644
+--- a/arch/x86/include/asm/resctrl.h
++++ b/arch/x86/include/asm/resctrl.h
+@@ -211,6 +211,11 @@ static inline void *resctrl_arch_mon_ctx_alloc(struct rdt_resource *r, int evtid
+ static inline void resctrl_arch_mon_ctx_free(struct rdt_resource *r, int evtid,
+ 					     void *ctx) { };
+ 
++u64 resctrl_arch_get_prefetch_disable_bits(void);
++int resctrl_arch_pseudo_lock_fn(void *_rdtgrp);
++int resctrl_arch_measure_cycles_lat_fn(void *_plr);
++int resctrl_arch_measure_l2_residency(void *_plr);
++int resctrl_arch_measure_l3_residency(void *_plr);
+ void resctrl_cpu_detect(struct cpuinfo_x86 *c);
+ 
+ #else
+diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
+index ad20822bb64e..f5d20a040a3d 100644
+--- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
++++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
+@@ -62,7 +62,8 @@ static const struct class pseudo_lock_class = {
+ };
+ 
+ /**
+- * get_prefetch_disable_bits - prefetch disable bits of supported platforms
++ * resctrl_arch_get_prefetch_disable_bits - prefetch disable bits of supported
++ *                                          platforms
+  * @void: It takes no parameters.
   *
-  * Members of this structure are either private to the architecture
-@@ -389,7 +387,6 @@ struct rdt_hw_resource {
- 	void			(*msr_update)(struct msr_param *m);
- 	unsigned int		mon_scale;
- 	unsigned int		mbm_width;
--	unsigned int		mbm_cfg_mask;
- 	bool			cdp_enabled;
- };
- 
-diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index 5906dccfb247..a09f5ed929d3 100644
---- a/arch/x86/kernel/cpu/resctrl/monitor.c
-+++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -1079,7 +1079,7 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
- 
- 		/* Detect list of bandwidth sources that can be tracked */
- 		cpuid_count(0x80000020, 3, &eax, &ebx, &ecx, &edx);
--		hw_res->mbm_cfg_mask = ecx & MAX_EVT_CONFIG_BITS;
-+		r->mbm_cfg_mask = ecx & MAX_EVT_CONFIG_BITS;
- 	}
- 
- 	r->mon_capable = true;
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 45c9b8b76cca..0446d30db4da 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -1729,7 +1729,6 @@ static void mbm_config_write_domain(struct rdt_resource *r,
- 
- static int mon_config_write(struct rdt_resource *r, char *tok, u32 evtid)
- {
--	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
- 	char *dom_str = NULL, *id_str;
- 	unsigned long dom_id, val;
- 	struct rdt_domain *d;
-@@ -1756,9 +1755,9 @@ static int mon_config_write(struct rdt_resource *r, char *tok, u32 evtid)
- 	}
- 
- 	/* Value from user cannot be more than the supported set of events */
--	if ((val & hw_res->mbm_cfg_mask) != val) {
-+	if ((val & r->mbm_cfg_mask) != val) {
- 		rdt_last_cmd_printf("Invalid event configuration: max valid mask is 0x%02x\n",
--				    hw_res->mbm_cfg_mask);
-+				    r->mbm_cfg_mask);
- 		return -EINVAL;
- 	}
- 
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index 65f0a2d17e4b..b04744b00f6f 100644
---- a/include/linux/resctrl.h
-+++ b/include/linux/resctrl.h
-@@ -167,6 +167,8 @@ enum resctrl_schema_fmt {
-  * @name:		Name to use in "schemata" file.
-  * @schema_fmt:	Which format string and parser is used for this schema.
-  * @evt_list:		List of monitoring events
-+ * @mbm_cfg_mask:	Bandwidth sources that can be tracked when Bandwidth
-+ *			Monitoring Event Configuration (BMEC) is supported.
-  * @cdp_capable:	Is the CDP feature available on this resource
+  * Capture the list of platforms that have been validated to support
+@@ -76,13 +77,13 @@ static const struct class pseudo_lock_class = {
+  * in the SDM.
+  *
+  * When adding a platform here also add support for its cache events to
+- * measure_cycles_perf_fn()
++ * resctrl_arch_measure_l*_residency()
+  *
+  * Return:
+  * If platform is supported, the bits to disable hardware prefetchers, 0
+  * if platform is not supported.
   */
- struct rdt_resource {
-@@ -181,6 +183,7 @@ struct rdt_resource {
- 	char			*name;
- 	enum resctrl_schema_fmt	schema_fmt;
- 	struct list_head	evt_list;
-+	unsigned int		mbm_cfg_mask;
- 	bool			cdp_capable;
- };
+-static u64 get_prefetch_disable_bits(void)
++u64 resctrl_arch_get_prefetch_disable_bits(void)
+ {
+ 	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL ||
+ 	    boot_cpu_data.x86 != 6)
+@@ -410,7 +411,7 @@ static void pseudo_lock_free(struct rdtgroup *rdtgrp)
+ }
  
+ /**
+- * pseudo_lock_fn - Load kernel memory into cache
++ * resctrl_arch_pseudo_lock_fn - Load kernel memory into cache
+  * @_rdtgrp: resource group to which pseudo-lock region belongs
+  *
+  * This is the core pseudo-locking flow.
+@@ -428,7 +429,7 @@ static void pseudo_lock_free(struct rdtgroup *rdtgrp)
+  *
+  * Return: 0. Waiter on waitqueue will be woken on completion.
+  */
+-static int pseudo_lock_fn(void *_rdtgrp)
++int resctrl_arch_pseudo_lock_fn(void *_rdtgrp)
+ {
+ 	struct rdtgroup *rdtgrp = _rdtgrp;
+ 	struct pseudo_lock_region *plr = rdtgrp->plr;
+@@ -714,7 +715,7 @@ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp)
+ 	 * Not knowing the bits to disable prefetching implies that this
+ 	 * platform does not support Cache Pseudo-Locking.
+ 	 */
+-	prefetch_disable_bits = get_prefetch_disable_bits();
++	prefetch_disable_bits = resctrl_arch_get_prefetch_disable_bits();
+ 	if (prefetch_disable_bits == 0) {
+ 		rdt_last_cmd_puts("Pseudo-locking not supported\n");
+ 		return -EINVAL;
+@@ -879,7 +880,8 @@ bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d)
+ }
+ 
+ /**
+- * measure_cycles_lat_fn - Measure cycle latency to read pseudo-locked memory
++ * resctrl_arch_measure_cycles_lat_fn - Measure cycle latency to read
++ *                                      pseudo-locked memory
+  * @_plr: pseudo-lock region to measure
+  *
+  * There is no deterministic way to test if a memory region is cached. One
+@@ -892,7 +894,7 @@ bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d)
+  *
+  * Return: 0. Waiter on waitqueue will be woken on completion.
+  */
+-static int measure_cycles_lat_fn(void *_plr)
++int resctrl_arch_measure_cycles_lat_fn(void *_plr)
+ {
+ 	struct pseudo_lock_region *plr = _plr;
+ 	u32 saved_low, saved_high;
+@@ -1076,7 +1078,7 @@ static int measure_residency_fn(struct perf_event_attr *miss_attr,
+ 	return 0;
+ }
+ 
+-static int measure_l2_residency(void *_plr)
++int resctrl_arch_measure_l2_residency(void *_plr)
+ {
+ 	struct pseudo_lock_region *plr = _plr;
+ 	struct residency_counts counts = {0};
+@@ -1114,7 +1116,7 @@ static int measure_l2_residency(void *_plr)
+ 	return 0;
+ }
+ 
+-static int measure_l3_residency(void *_plr)
++int resctrl_arch_measure_l3_residency(void *_plr)
+ {
+ 	struct pseudo_lock_region *plr = _plr;
+ 	struct residency_counts counts = {0};
+@@ -1212,18 +1214,18 @@ static int pseudo_lock_measure_cycles(struct rdtgroup *rdtgrp, int sel)
+ 	plr->cpu = cpu;
+ 
+ 	if (sel == 1)
+-		thread = kthread_create_on_node(measure_cycles_lat_fn, plr,
+-						cpu_to_node(cpu),
++		thread = kthread_create_on_node(resctrl_arch_measure_cycles_lat_fn,
++						plr, cpu_to_node(cpu),
+ 						"pseudo_lock_measure/%u",
+ 						cpu);
+ 	else if (sel == 2)
+-		thread = kthread_create_on_node(measure_l2_residency, plr,
+-						cpu_to_node(cpu),
++		thread = kthread_create_on_node(resctrl_arch_measure_l2_residency,
++						plr, cpu_to_node(cpu),
+ 						"pseudo_lock_measure/%u",
+ 						cpu);
+ 	else if (sel == 3)
+-		thread = kthread_create_on_node(measure_l3_residency, plr,
+-						cpu_to_node(cpu),
++		thread = kthread_create_on_node(resctrl_arch_measure_l3_residency,
++						plr, cpu_to_node(cpu),
+ 						"pseudo_lock_measure/%u",
+ 						cpu);
+ 	else
+@@ -1322,7 +1324,7 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 
+ 	plr->thread_done = 0;
+ 
+-	thread = kthread_create_on_node(pseudo_lock_fn, rdtgrp,
++	thread = kthread_create_on_node(resctrl_arch_pseudo_lock_fn, rdtgrp,
+ 					cpu_to_node(plr->cpu),
+ 					"pseudo_lock/%u", plr->cpu);
+ 	if (IS_ERR(thread)) {
 -- 
 2.39.2
 
