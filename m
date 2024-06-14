@@ -1,219 +1,100 @@
-Return-Path: <linux-kernel+bounces-214612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B8E90871A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:09:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0691908718
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 096911F2346F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:09:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5D0F1C22002
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DFB1922D6;
-	Fri, 14 Jun 2024 09:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2439B1922CD;
+	Fri, 14 Jun 2024 09:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eNBypqnE"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="MXZx04ZT";
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="MXZx04ZT"
+Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59B018FDA0;
-	Fri, 14 Jun 2024 09:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C968146A7A;
+	Fri, 14 Jun 2024 09:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718356145; cv=none; b=HPUlMu9nZBiHKw0aTVeHyOMgV8AVeclE1LHY2UZcm0EIYugMFmkqiK2ky6QwhKr360n6ysDCxjGcxFTaweZo1F/8I0UDOyMfQaboaXKyhYnswzzinUg1PDVR7/+Wz6fg3bd+zaRFIWs9JsK8S4MT+FK0afJ9byGLmr1pRfMcOqE=
+	t=1718356132; cv=none; b=HKJLJ+0Ww5HZ5RleMUI8TGjth482wbw6tbDuNgW2iovRsYXdF+ILj1huOUGSDJl2VXrleAHZYWqr9kpSrbFFxPcdVxu7+duRnr0mXmSNZB9XCzwJEMuNSJ5Mt3tXvPLuwS4abbH3WDRFKD+E5l5Ai1X2GI86+nInvGley/EHmnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718356145; c=relaxed/simple;
-	bh=300Ghz6NYmdB4lPInOyCX3ALeLqsytBDX+8juht/XBs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=h29b/Gw5luijOsDmgkPGjl1DVomthuQzWex97XcBgECShSTDXWvjf/vxK8uYDSWldlYWE1jfJkbXCYcwmQt52FO4xgSAuQsvdlHgkHNiKaylrjk9OnQzvFkH/ZRmyp4cxwSPgucxvmTs/CjEZ3pYG652cjnjONNw8WutGmhCwEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=eNBypqnE; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45E98Vaj072850;
-	Fri, 14 Jun 2024 04:08:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718356111;
-	bh=1X/gFKINVApjWSbUv0b70B/C3Us7zSQW86S+HUnm898=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=eNBypqnE6DwnxCcyepFYbbogWcL+LMo5kJKl5HEouXZtQbfj+7AZDDlwuZ6DNejgv
-	 WDHXRuUhyxIRqlyZ1XO1saZoEQuEOfY4HFlXUx0yLTy3tYBYWWohnGzJQLn+YtecWb
-	 M4rbMVKStRgMrfuSrA+rTBDWPqybymh3CaTezRNQ=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45E98VC4020605
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 14 Jun 2024 04:08:31 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
- Jun 2024 04:08:30 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 14 Jun 2024 04:08:30 -0500
-Received: from [172.24.227.57] (linux-team-01.dhcp.ti.com [172.24.227.57])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45E98P58090352;
-	Fri, 14 Jun 2024 04:08:25 -0500
-Message-ID: <60bc57a7-732b-4dcb-ae72-158639a635c0@ti.com>
-Date: Fri, 14 Jun 2024 14:38:24 +0530
+	s=arc-20240116; t=1718356132; c=relaxed/simple;
+	bh=4RP4q9QG25QH+De1LOzDhXZta2ZeRrdDRTLsqg6NviQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sIrZXYl/E8+gzfcoGDAidRCEu6b3Jzoj615NmxsSR6Er6wjIeyF9dxEv/EUIJ4dJ0j+VAFndSuNEt1QvHPiAHceML9m7N8Ui/ChkvY4/vVbPONKUB6P63o6a5okw9X2+JxYuKlb44y3Fzqw/z/hpEIUPj7Q1J/13ixZNaflR72I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=MXZx04ZT; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=MXZx04ZT; arc=none smtp.client-ip=88.97.38.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1718356122; bh=4RP4q9QG25QH+De1LOzDhXZta2ZeRrdDRTLsqg6NviQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MXZx04ZT9AN/P9rPEhdb4IzqE9vw6PolRAzCn9RBYYZQ7rklCBDnkxpE69XPsfsYz
+	 f9aXNX/D7Nqts+sHoBiOuNYvSGu36dQQGJ9tSekm22IDc+w+KDTtY/FYLcSAl8gGea
+	 +gUVACLvv849XtfBipBT+YT1bQkZ3NsW+Vb7gFT9/Jg/67lXlcZatOkAqiWc2FN+w6
+	 CUYcvP/Tg60cqNqm8xozqhb8VPASqD6Og8DSSB1LByifj1idQ/ODHqgzKssbPtIfpq
+	 wueVc0ZBPZ6XKnKEsCcJ8c9MpbhrZ6QHez5/u1QBHLipuB3acKyp5Qrs3xKii20Gsx
+	 MUlgaacYc1V+g==
+Received: by gofer.mess.org (Postfix, from userid 501)
+	id CB8BE1007EE; Fri, 14 Jun 2024 10:08:42 +0100 (BST)
+X-Spam-Level: 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1718356122; bh=4RP4q9QG25QH+De1LOzDhXZta2ZeRrdDRTLsqg6NviQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MXZx04ZT9AN/P9rPEhdb4IzqE9vw6PolRAzCn9RBYYZQ7rklCBDnkxpE69XPsfsYz
+	 f9aXNX/D7Nqts+sHoBiOuNYvSGu36dQQGJ9tSekm22IDc+w+KDTtY/FYLcSAl8gGea
+	 +gUVACLvv849XtfBipBT+YT1bQkZ3NsW+Vb7gFT9/Jg/67lXlcZatOkAqiWc2FN+w6
+	 CUYcvP/Tg60cqNqm8xozqhb8VPASqD6Og8DSSB1LByifj1idQ/ODHqgzKssbPtIfpq
+	 wueVc0ZBPZ6XKnKEsCcJ8c9MpbhrZ6QHez5/u1QBHLipuB3acKyp5Qrs3xKii20Gsx
+	 MUlgaacYc1V+g==
+Received: from localhost.localdomain (bigcore.local [IPv6:2a02:8011:d000:212:bc3c:1b4a:a6fa:362f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by gofer.mess.org (Postfix) with ESMTPSA id EEEC91000B8;
+	Fri, 14 Jun 2024 10:08:41 +0100 (BST)
+From: Sean Young <sean@mess.org>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org
+Subject: [PATCH] bus: ts-nbus: Use pwm_apply_might_sleep()
+Date: Fri, 14 Jun 2024 10:08:29 +0100
+Message-ID: <20240614090829.560605-1-sean@mess.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 2/3] net: ethernet: ti: Register the RPMsg
- driver as network device
-To: Andrew Lunn <andrew@lunn.ch>
-CC: <schnelle@linux.ibm.com>, <wsa+renesas@sang-engineering.com>,
-        <diogo.ivo@siemens.com>, <rdunlap@infradead.org>, <horms@kernel.org>,
-        <vigneshr@ti.com>, <rogerq@ti.com>, <danishanwar@ti.com>,
-        <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <srk@ti.com>, <rogerq@kernel.org>,
-        Siddharth
- Vadapalli <s-vadapalli@ti.com>, <y-mallik@ti.com>
-References: <20240531064006.1223417-1-y-mallik@ti.com>
- <20240531064006.1223417-3-y-mallik@ti.com>
- <4416ada7-399b-4ea0-88b0-32ca432d777b@lunn.ch>
- <2d65aa06-cadd-4462-b8b9-50c9127e6a30@ti.com>
- <f14a554c-555f-4830-8be5-13988ddbf0ba@lunn.ch>
- <b07cfdfe-dce4-484b-b8a8-9d0e49985c60@ti.com>
- <8b4dc94a-0d59-499f-8f28-d503e91f2b27@lunn.ch>
-Content-Language: en-US
-From: Yojana Mallik <y-mallik@ti.com>
-In-Reply-To: <8b4dc94a-0d59-499f-8f28-d503e91f2b27@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 
+pwm_apply_state() is deprecated since commit c748a6d77c06a ("pwm: Rename
+pwm_apply_state() to pwm_apply_might_sleep()").
 
+Signed-off-by: Sean Young <sean@mess.org>
+---
+ drivers/bus/ts-nbus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 6/12/24 20:29, Andrew Lunn wrote:
->> The shared memory address space in AM64x board is 2G and u32 data type for
->> address works to use this address space. In order to make the driver generic,to
->> work with systems that have more than 4G address space, we can change the base
->> addr data type to u64 in the virtual driver code and the corresponding
->> necessary changes have to be made in the firmware.
-> 
-> You probably need to think about this concept in a more generic
-> way. You have a block of memory which is physically shared between two
-> CPUs. Does each have its own MMU involved in accesses this memory? Why
-> would each see the memory at the same physical address? Why does one
-> CPU actually know anything about the memory layout of another CPU, and
-> can tell it how to use its own memory? Do not think about your AM64x
-> board when answering these questions. Think about an abstract system,
-> two CPUs with a block of shared memory. Maybe it is even a CPU and a
-> GPU with shared memory, etc. 
-> 
->> The shared memory layout is modeled as circular buffer.
->> /*      Shared Memory Layout
->>  *
->>  *	---------------------------	*****************
->>  *	|        MAGIC_NUM        |	 icve_shm_head
->>  *	|          HEAD           |
->>  *	---------------------------	*****************
->>  *	|        MAGIC_NUM        |
->>  *	|        PKT_1_LEN        |
->>  *	|          PKT_1          |
->>  *	---------------------------
->>  *	|        MAGIC_NUM        |
->>  *	|        PKT_2_LEN        |	 icve_shm_buf
->>  *	|          PKT_2          |
->>  *	---------------------------
->>  *	|           .             |
->>  *	|           .             |
->>  *	---------------------------
->>  *	|        MAGIC_NUM        |
->>  *	|        PKT_N_LEN        |
->>  *	|          PKT_N          |
->>  *	---------------------------	****************
->>  *	|        MAGIC_NUM        |      icve_shm_tail
->>  *	|          TAIL           |
->>  *	---------------------------	****************
->>  */
->>
->> Linux retrieves the following info provided in response by R5 core:
->>
->> Tx buffer head address which is stored in port->tx_buffer->head
->>
->> Tx buffer buffer's base address which is stored in port->tx_buffer->buf->base_addr
->>
->> Tx buffer tail address which is stored in port->tx_buffer->tail
->>
->> The number of packets that can be put into Tx buffer which is stored in
->> port->icve_tx_max_buffers
->>
->> Rx buffer head address which is stored in port->rx_buffer->head
->>
->> Rx buffer buffer's base address which is stored in port->rx_buffer->buf->base_addr
->>
->> Rx buffer tail address which is stored in port->rx_buffer->tail
->>
->> The number of packets that are put into Rx buffer which is stored in
->> port->icve_rx_max_buffers
-> 
-> I think most of these should not be pointers, but offsets from the
-> base of the shared memory. It then does not matter if they are mapped
-> at different physical addresses on each CPU.
-> 
->> Linux trusts these addresses sent by the R5 core to send or receive ethernet
->> packets. By this way both the CPUs map to the same physical address.
-> 
-> I'm not sure Linux should trust the R5. For a generic implementation,
-> the trust should be held to a minimum. There needs to be an agreement
-> about how the shared memory is partitioned, but each end needs to
-> verify that the memory is in fact valid, that none of the data
-> structures point outside of the shared memory etc. Otherwise one
-> system can cause memory corruption on the other, and that sort of bug
-> is going to be very hard to debug.
-> 
-> 	Andrew
-> 
+diff --git a/drivers/bus/ts-nbus.c b/drivers/bus/ts-nbus.c
+index baf22a82c47a7..b8af44c5cdbd0 100644
+--- a/drivers/bus/ts-nbus.c
++++ b/drivers/bus/ts-nbus.c
+@@ -294,7 +294,7 @@ static int ts_nbus_probe(struct platform_device *pdev)
+ 	state.duty_cycle = state.period;
+ 	state.enabled = true;
+ 
+-	ret = pwm_apply_state(pwm, &state);
++	ret = pwm_apply_might_sleep(pwm, &state);
+ 	if (ret < 0)
+ 		return dev_err_probe(dev, ret, "failed to configure PWM\n");
+ 
+-- 
+2.45.2
 
-The Linux Remoteproc driver which initializes remote processor cores carves out
-a section from DDR memory as reserved memory for each remote processor on the
-SOC. This memory region has been reserved in the Linux device tree file as
-reserved-memory. Out of this reserved memory for R5 core some memory is
-reserved for shared memory.
-
-The shared memory is divided into two distinct regions:
-one for the A53 -> R5 data path (Tx buffer for Linux), and other for R5 -> A53
-data path (Rx buffer for Linux).
-
-Four entities total shared memory size, number of packets, buffer slot size and
-base address of buffer has been hardcoded into the firmware code for both the
-Tx and Rx buffer. These four entities are informed by the R5 core and Linux
-retrieves these info from message received using icve_rpmsg_cb.
-
-Using the Base Address for Tx or Rx shared memory received and the value of
-number of packets, buffer slot size received, buffer's head address, shared
-memory buffer buffer's base address and tail address is calculated in the driver.
-
-Linux driver uses ioremap function to translate these physical addresses
-calculated into virtual address. Linux uses these virtual addresses to send
-packets to remote cores using icve_start_xmit function.
-
-It has been agreed upon by design that the remote core will use a particular
-start address of buffer and Linux will also use it, and it has been harcoded in
-the firmware in the remote core. Since this address has been harcoded in the
-firmware, it can be hardcoded in the Linux driver code and then a check can be
-made if the address received from remote core matches with the address
-hardcoded in the Linux driver.
-
-But viewing the driver from a generic perspective, the driver can interact with
-different firmware whose start address for the shared memory region will not
-match the one hardcoded into the Linux driver.
-
-This is why it has been decided to hardcode the start address in the firmware
-and it will be sent by the remote core to Linux and Linux will use it.
-
-Kindly suggest in what other ways can the driver get to know the start address
-of the shared memory if not informed by the remote core. Also how to do a check
-if the address is valid.
-
-Thanks and regards,
-Yojana Mallik
 
