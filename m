@@ -1,94 +1,73 @@
-Return-Path: <linux-kernel+bounces-214527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B4009085F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:16:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F016D9085FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:17:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D99EE28B30F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:16:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B8DD1F23619
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE06218509A;
-	Fri, 14 Jun 2024 08:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D001836E5;
+	Fri, 14 Jun 2024 08:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SF+M5d3L";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="21yxkPuf";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="b4I9Hbjx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vVTOJreZ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="FrzuS8rP"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0F4185082
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C761836CD
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718352965; cv=none; b=NWbNFKNqSUGzOHDDV2LD4MqAjH+BOrRfIva9OCTZsscALo1Fk+h54RNPoCAt4HxLycQhkdb3YKJBlwj+m2fB22jOcLbUpQkNxZrW86uM0mVcfzxBc6/Iu7eYEN9Omq2kHebrfkPKLC9UsECbzV7C7ViLEhNc/JM6CnmfB9Ap9ok=
+	t=1718353011; cv=none; b=oxcyT68LgaHw9HOa1L3aU4xrNevutsI0VoZTQDg9DklTnvCQvL6JaHxlJKiCti+DJOT/qMhHvMmttXK5D8Tz8DASnK5wwkBGjDK6WB8OREiBchXy0zDwK6pWzJyihYIEphi0+jqKARX3U4xxz7fesDfqr+CElNAqKnsqGAxAOLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718352965; c=relaxed/simple;
-	bh=wcehNLrpht/MugdmYesfBf1F3dAm2Titz8hi7VGBa8w=;
+	s=arc-20240116; t=1718353011; c=relaxed/simple;
+	bh=nwE7qH3et0xBAyB0MTDxfmgBc8lMSr+/9XrUUisIykQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VksfPD1cA4R6t9otqkirBAAR6i5JDemLqhJgeP754kzsGqCntjisvp9zb72NYOEwoSEpm0Pi+o6lNrwg6MkUgyBVoDEVIhEB/WiN+BA+AU8kyamMW5s6eQ9q93HxupSYCNxXOB2KhoXmB8aeQGJxgXJMB2fKFx5MKUPZFLC2/ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SF+M5d3L; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=21yxkPuf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=b4I9Hbjx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vVTOJreZ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 15AC020201;
-	Fri, 14 Jun 2024 08:15:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718352955; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6LoGxfJP3NSybvTfW3xLIcUrYqsNTqARgsCRE4cnrlA=;
-	b=SF+M5d3LtRJ6D/3p9qaVV+TV37UVt09yV+VBF1Wbt70WWQPE32EJBJe7G/iIHIBkcGZcCD
-	iFTgOBBCNDUaVfYT9nCWGEQlWxhf2C26X25w1i+AT5oT607pBsYVkJ10ztz8yRtb3L8P18
-	A6mcvQ2B75E/0T/ue/1TLLj/A/BlNIU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718352955;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6LoGxfJP3NSybvTfW3xLIcUrYqsNTqARgsCRE4cnrlA=;
-	b=21yxkPufH1IMmaiPDmGmFpzvMf1+IshWnmfGpdXWoqE2owZJstd6B0f+lADvjMz2CbEgZj
-	YN7pJgMwoKlZitAA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718352954; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6LoGxfJP3NSybvTfW3xLIcUrYqsNTqARgsCRE4cnrlA=;
-	b=b4I9Hbjxr+091JDb8ZlMY+qoW5zOpV5YamNIwyo/Ya4M4Aa8LVYNcYAREa8JLgoam0pJ3+
-	n9hl0SEdixKwLyimOA56KwXDIHLzEj/Nw1Uk01coWjjfCGFzEE+qxBRRbwCBXU2S/Uklep
-	8pWGzc+2gDKtvirzBaCVEn2xCKLmZ2k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718352954;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6LoGxfJP3NSybvTfW3xLIcUrYqsNTqARgsCRE4cnrlA=;
-	b=vVTOJreZGK0vaOT/BaQVi2Ff1kpu/TTHdCWjmY50O9U5q7HVbMZlT1yO94eI/+l6wib3dr
-	w/pEG9CO5hkf1eDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C7E6713AB1;
-	Fri, 14 Jun 2024 08:15:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LxHtLjn8a2YVYAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Fri, 14 Jun 2024 08:15:53 +0000
-Message-ID: <f5485db8-9e1d-4b95-a0ec-25ee8551795d@suse.de>
-Date: Fri, 14 Jun 2024 10:15:53 +0200
+	 In-Reply-To:Content-Type; b=Oa9aKPwyuovdznhOch5Lv2bwbzA6kAkZXlOCBr/3Usb8vYj6/foeBjysy3yw0E8mD+dl5nJ7xxv6jgPq6wXwchDUpUXRhAYx3eEjZP7xXW3KSVwuDhFKnrbe5M3tZhymdDb8cHCulk6znkobA2FlJrOl5w35sHlkeB58oV1PA4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=FrzuS8rP; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso30546021fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:16:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1718353007; x=1718957807; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eGmOzn1R1K16dkDMQJjEQ6wgWuo7/3DN6CTKOSNpNgg=;
+        b=FrzuS8rPAQXu5iSoydjMExSyF0JG+sUoXV2L9KKhAr3STgNHLgSQy3RJ9DFISFD2jh
+         RJIaamNFcx6y3QzFGFgMkyXtZyCs3N/Yd4Ri0WILV4SqrgR6wM5wx5icfRFqrqDfCBE8
+         GAZMoQdOeh1DYaZH/6ezzQCTaZPlDO/Xbj3lX3VijjB919wqP/MjTs56z4GU9mYxD394
+         swGKG+ChzC/dgP+gb1DZ2njamktxwk17e3LYy/vZJqeZxD2GiFgoVdwvgeNk9ewvYBGy
+         bZ5MXFrOwPGAf9etp/CNI0NbjA01Pwt7qNSRL8k73q1bkneRy6TvuZp5RQrUdyxbzua6
+         Wg9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718353007; x=1718957807;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eGmOzn1R1K16dkDMQJjEQ6wgWuo7/3DN6CTKOSNpNgg=;
+        b=lXLV0kF9vSL95qE6wlt9M0q+Rm33yOz5rmWGG9/lVGvFkGPsMnM+M90ZFRoVmWDj/5
+         lcGBJqO0c6He0ysKUNP8nenAzX6gxHDQcamZ5p7kWHuPut1iEyN1juTrWtLgwWis8Ib+
+         T3N2VjNzpuFqtL+7N7Fh8FrcC/+UvlOGSv9pe617rVnEcqwfTwStmhYd4MROK1tY4nRb
+         wPss9osPWDHYtf/+xUuWsaa1+XjoKZMEfR5XvmKGjDugFWeS8JL/iDcpZ6r2ez8L7jkK
+         yO6PtHd8ypwaz5uoisTHyzQLcWOgqb2FHbjwnxPYbd8T/tzDs9IxV0mYr4BN8N9FEkcg
+         6hGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLCBxuY43Cew1Lt4yfU9XdbF3ZdzHIYjgPaz9zBr6bXG7nPO0LmHOSvnFDOb0LpfD//H+YyPUFDGqGTCljs0ZHL5Un+7uWJduaI4p5
+X-Gm-Message-State: AOJu0YyWVs/mlXQ4WvObXlqVURA6TKS33gy+YthdOZ1+qN+VSezhSb5Y
+	L5ftAp7hiV74zvQXmn4zEcV5hbc4W28wvUX59CWSEf/F70Uhp0nMBhNI9VB2jzc=
+X-Google-Smtp-Source: AGHT+IGdVz9wnYuErYpbzpZPBaxajSeBzfE2NEQMkvFihFynmrdBmCln5caVCr3TFMsMNsUcb/jj1Q==
+X-Received: by 2002:a2e:7d03:0:b0:2eb:e56c:c90a with SMTP id 38308e7fff4ca-2ec0e5c8c3dmr14354061fa.43.1718353006713;
+        Fri, 14 Jun 2024 01:16:46 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.189])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6127c6fsm51121795e9.24.2024.06.14.01.16.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 01:16:46 -0700 (PDT)
+Message-ID: <d6b4e0cc-c16e-4ea7-bbc4-ddbaaadc9a25@tuxon.dev>
+Date: Fri, 14 Jun 2024 11:16:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,366 +75,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] drm/fb-helper: Detect when lid is closed during
- initialization
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>, amd-gfx@lists.freedesktop.org,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Chris Bainbridge <chris.bainbridge@gmail.com>
-References: <20240613051700.1112-1-mario.limonciello@amd.com>
+Subject: Re: [PATCH 05/12] dt-bindings: rtc: renesas,rzg3s-rtc: Document the
+ Renesas RZ/G3S RTC
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20240613051700.1112-1-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>, "lee@kernel.org"
+ <lee@kernel.org>,
+ "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240614071932.1014067-6-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB113464811F43F19115FCF62A786C22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB113464811F43F19115FCF62A786C22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.79
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-2.79 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,gitlab.freedesktop.org:url,amd.com:email]
 
-Hi Mario
+Hi, Biju,
 
-Am 13.06.24 um 07:17 schrieb Mario Limonciello:
-> If the lid on a laptop is closed when eDP connectors are populated
-> then it remains enabled when the initial framebuffer configuration
-> is built.
->
-> When creating the initial framebuffer configuration detect the
-> lid status and if it's closed disable any eDP connectors.
->
-> Also set up a workqueue to monitor for any future lid events.
+On 14.06.2024 10:53, Biju Das wrote:
+> Hi Claudiu,
+> 
+> Thanks for the patch.
+> 
+>> -----Original Message-----
+>> From: linux-arm-kernel <linux-arm-kernel-bounces@lists.infradead.org> On Behalf Of Claudiu
+>> Sent: Friday, June 14, 2024 8:19 AM
+>> Subject: [PATCH 05/12] dt-bindings: rtc: renesas,rzg3s-rtc: Document the Renesas RZ/G3S RTC
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Document the RTC IP (RTCA-3) available on the Renesas RZ/G3S SoC.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>  .../bindings/rtc/renesas,rzg3s-rtc.yaml       | 60 +++++++++++++++++++
+>>  1 file changed, 60 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/rtc/renesas,rzg3s-rtc.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/rtc/renesas,rzg3s-rtc.yaml
+>> b/Documentation/devicetree/bindings/rtc/renesas,rzg3s-rtc.yaml
+>> new file mode 100644
+>> index 000000000000..0e17f8a36155
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/rtc/renesas,rzg3s-rtc.yaml
+>> @@ -0,0 +1,60 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/rtc/renesas,rzg3s-rtc.yaml#
+> 
+> Please make it generic renesas,rtca3-rtc.yaml. Future SoCs may use this IP.
+> So use IP name instead.
 
-After reading through this patchset, I think fbdev emulation is not the 
-right place for this code, as lid state is global.
+From what I know the file name should correspond with the compatible that
+file was introduced with, and this one shouldn't be generic but SoC specific.
 
-You could put this into drm_client_modeset.c and track lid state per 
-client. drm_fb_helper_lid_work() would call the client's hotplug 
-callback. But preferable, lid state should be tracked per DRM device in 
-struct drm_mode_config and call drm_client_dev_hotplug() on each 
-lid-state event. Thoughts? Best regards Thomas
->
-> Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
-> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3349
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
-> v2->v3:
->   * Use input device instead of ACPI device
->   * Detect lid open/close events
-> ---
->   drivers/gpu/drm/drm_client_modeset.c |  29 ++++++
->   drivers/gpu/drm/drm_fb_helper.c      | 132 +++++++++++++++++++++++++++
->   include/drm/drm_device.h             |   6 ++
->   include/drm/drm_fb_helper.h          |   2 +
->   4 files changed, 169 insertions(+)
->
-> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
-> index 31af5cf37a09..b8adfe87334b 100644
-> --- a/drivers/gpu/drm/drm_client_modeset.c
-> +++ b/drivers/gpu/drm/drm_client_modeset.c
-> @@ -257,6 +257,34 @@ static void drm_client_connectors_enabled(struct drm_connector **connectors,
->   		enabled[i] = drm_connector_enabled(connectors[i], false);
->   }
->   
-> +static void drm_client_match_edp_lid(struct drm_device *dev,
-> +				     struct drm_connector **connectors,
-> +				     unsigned int connector_count,
-> +				     bool *enabled)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < connector_count; i++) {
-> +		struct drm_connector *connector = connectors[i];
-> +
-> +		switch (connector->connector_type) {
-> +		case DRM_MODE_CONNECTOR_LVDS:
-> +		case DRM_MODE_CONNECTOR_eDP:
-> +			if (!enabled[i])
-> +				continue;
-> +			break;
-> +		default:
-> +			continue;
-> +		}
-> +
-> +		if (dev->lid_closed) {
-> +			drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is closed, disabling\n",
-> +				    connector->base.id, connector->name);
-> +			enabled[i] = false;
-> +		}
-> +	}
-> +}
-> +
->   static bool drm_client_target_cloned(struct drm_device *dev,
->   				     struct drm_connector **connectors,
->   				     unsigned int connector_count,
-> @@ -844,6 +872,7 @@ int drm_client_modeset_probe(struct drm_client_dev *client, unsigned int width,
->   		memset(crtcs, 0, connector_count * sizeof(*crtcs));
->   		memset(offsets, 0, connector_count * sizeof(*offsets));
->   
-> +		drm_client_match_edp_lid(dev, connectors, connector_count, enabled);
->   		if (!drm_client_target_cloned(dev, connectors, connector_count, modes,
->   					      offsets, enabled, width, height) &&
->   		    !drm_client_target_preferred(dev, connectors, connector_count, modes,
-> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> index d612133e2cf7..41dd5887599a 100644
-> --- a/drivers/gpu/drm/drm_fb_helper.c
-> +++ b/drivers/gpu/drm/drm_fb_helper.c
-> @@ -30,6 +30,8 @@
->   #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->   
->   #include <linux/console.h>
-> +#include <linux/input.h>
-> +#include <linux/mod_devicetable.h>
->   #include <linux/pci.h>
->   #include <linux/sysrq.h>
->   #include <linux/vga_switcheroo.h>
-> @@ -413,6 +415,128 @@ static void drm_fb_helper_damage_work(struct work_struct *work)
->   	drm_fb_helper_fb_dirty(helper);
->   }
->   
-> +static void drm_fb_helper_lid_event(struct input_handle *handle, unsigned int type,
-> +				    unsigned int code, int value)
-> +{
-> +	if (type == EV_SW && code == SW_LID) {
-> +		struct drm_fb_helper *fb_helper = handle->handler->private;
-> +
-> +		if (value != fb_helper->dev->lid_closed) {
-> +			fb_helper->dev->lid_closed = value;
-> +			queue_work(fb_helper->input_wq, &fb_helper->lid_work);
-> +		}
-> +	}
-> +}
-> +
-> +struct drm_fb_lid {
-> +	struct input_handle handle;
-> +};
-> +
-> +static int drm_fb_helper_lid_connect(struct input_handler *handler,
-> +				     struct input_dev *dev,
-> +				     const struct input_device_id *id)
-> +{
-> +	struct drm_fb_helper *fb_helper = handler->private;
-> +	struct drm_fb_lid *lid;
-> +	char *name;
-> +	int error;
-> +
-> +	lid = kzalloc(sizeof(*lid), GFP_KERNEL);
-> +	if (!lid)
-> +		return -ENOMEM;
-> +
-> +	name = kasprintf(GFP_KERNEL, "drm-fb-helper-lid-%s", dev_name(&dev->dev));
-> +	if (!name) {
-> +		error = -ENOMEM;
-> +		goto err_free_lid;
-> +	}
-> +
-> +	lid->handle.dev = dev;
-> +	lid->handle.handler = handler;
-> +	lid->handle.name = name;
-> +	lid->handle.private = lid;
-> +
-> +	error = input_register_handle(&lid->handle);
-> +	if (error)
-> +		goto err_free_name;
-> +
-> +	error = input_open_device(&lid->handle);
-> +	if (error)
-> +		goto err_unregister_handle;
-> +
-> +	fb_helper->dev->lid_closed = dev->sw[SW_LID];
-> +	drm_dbg_kms(fb_helper->dev, "initial lid state is set to %d\n", fb_helper->dev->lid_closed);
-> +
-> +	return 0;
-> +
-> +err_unregister_handle:
-> +	input_unregister_handle(&lid->handle);
-> +err_free_name:
-> +	kfree(name);
-> +err_free_lid:
-> +	kfree(lid);
-> +	return error;
-> +}
-> +
-> +static void drm_fb_helper_lid_disconnect(struct input_handle *handle)
-> +{
-> +	struct drm_fb_lid *lid = handle->private;
-> +
-> +	input_close_device(handle);
-> +	input_unregister_handle(handle);
-> +
-> +	kfree(handle->name);
-> +	kfree(lid);
-> +}
-> +
-> +static const struct input_device_id drm_fb_helper_lid_ids[] = {
-> +	{
-> +		.flags = INPUT_DEVICE_ID_MATCH_EVBIT | INPUT_DEVICE_ID_MATCH_SWBIT,
-> +		.evbit = { BIT_MASK(EV_SW) },
-> +		.swbit = { [BIT_WORD(SW_LID)] = BIT_MASK(SW_LID) },
-> +	},
-> +	{ },
-> +};
-> +
-> +static struct input_handler drm_fb_helper_lid_handler = {
-> +	.event =	drm_fb_helper_lid_event,
-> +	.connect =	drm_fb_helper_lid_connect,
-> +	.disconnect =	drm_fb_helper_lid_disconnect,
-> +	.name =		"drm-fb-helper-lid",
-> +	.id_table =	drm_fb_helper_lid_ids,
-> +};
-> +
-> +static void drm_fb_helper_lid_work(struct work_struct *work)
-> +{
-> +	struct drm_fb_helper *fb_helper = container_of(work, struct drm_fb_helper,
-> +						       lid_work);
-> +	drm_fb_helper_hotplug_event(fb_helper);
-> +}
-> +
-> +static int drm_fb_helper_create_lid_handler(struct drm_fb_helper *fb_helper)
-> +{
-> +	int ret = 0;
-> +
-> +	if (fb_helper->deferred_setup)
-> +		return 0;
-> +
-> +	fb_helper->input_wq = create_singlethread_workqueue("drm-fb-lid");
-> +	if (fb_helper->input_wq == NULL)
-> +		return -ENOMEM;
-> +
-> +	drm_fb_helper_lid_handler.private = fb_helper;
-> +	ret = input_register_handler(&drm_fb_helper_lid_handler);
-> +	if (ret)
-> +		goto remove_wq;
-> +
-> +	return 0;
-> +
-> +remove_wq:
-> +	destroy_workqueue(fb_helper->input_wq);
-> +	fb_helper->input_wq = NULL;
-> +	return ret;
-> +}
-> +
->   /**
->    * drm_fb_helper_prepare - setup a drm_fb_helper structure
->    * @dev: DRM device
-> @@ -445,6 +569,7 @@ void drm_fb_helper_prepare(struct drm_device *dev, struct drm_fb_helper *helper,
->   	spin_lock_init(&helper->damage_lock);
->   	INIT_WORK(&helper->resume_work, drm_fb_helper_resume_worker);
->   	INIT_WORK(&helper->damage_work, drm_fb_helper_damage_work);
-> +	INIT_WORK(&helper->lid_work, drm_fb_helper_lid_work);
->   	helper->damage_clip.x1 = helper->damage_clip.y1 = ~0;
->   	mutex_init(&helper->lock);
->   	helper->funcs = funcs;
-> @@ -593,6 +718,9 @@ void drm_fb_helper_fini(struct drm_fb_helper *fb_helper)
->   	if (!drm_fbdev_emulation)
->   		return;
->   
-> +	input_unregister_handler(&drm_fb_helper_lid_handler);
-> +	destroy_workqueue(fb_helper->input_wq);
-> +
->   	cancel_work_sync(&fb_helper->resume_work);
->   	cancel_work_sync(&fb_helper->damage_work);
->   
-> @@ -1842,6 +1970,10 @@ __drm_fb_helper_initial_config_and_unlock(struct drm_fb_helper *fb_helper)
->   	width = dev->mode_config.max_width;
->   	height = dev->mode_config.max_height;
->   
-> +	ret = drm_fb_helper_create_lid_handler(fb_helper);
-> +	if (ret)
-> +		return ret;
-> +
->   	drm_client_modeset_probe(&fb_helper->client, width, height);
->   	ret = drm_fb_helper_single_fb_probe(fb_helper);
->   	if (ret < 0) {
-> diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
-> index 63767cf24371..619af597784c 100644
-> --- a/include/drm/drm_device.h
-> +++ b/include/drm/drm_device.h
-> @@ -316,6 +316,12 @@ struct drm_device {
->   	 * Root directory for debugfs files.
->   	 */
->   	struct dentry *debugfs_root;
-> +
-> +	/**
-> +	 * @lid_closed: Flag to tell the lid switch state
-> +	 */
-> +	bool lid_closed;
-> +
->   };
->   
->   #endif
-> diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
-> index 375737fd6c36..7fb36c10299d 100644
-> --- a/include/drm/drm_fb_helper.h
-> +++ b/include/drm/drm_fb_helper.h
-> @@ -143,6 +143,8 @@ struct drm_fb_helper {
->   	spinlock_t damage_lock;
->   	struct work_struct damage_work;
->   	struct work_struct resume_work;
-> +	struct work_struct lid_work;
-> +	struct workqueue_struct *input_wq;
->   
->   	/**
->   	 * @lock:
+Thank you,
+Claudiu Beznea
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+> 
+> Cheers,
+> Biju
+> 
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Real Time Clock for Renesas RZ/G3S SoC
+>> +
+>> +maintainers:
+>> +  - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: renesas,rzg3s-rtc
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  interrupts:
+>> +    maxItems: 3
+>> +
+>> +  interrupt-names:
+>> +    items:
+>> +      - const: alarm
+>> +      - const: period
+>> +      - const: carry
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +    description: RTC counter clock
+>> +
+>> +  clock-names:
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>> +  - interrupt-names
+>> +  - clocks
+>> +  - clock-names
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +
+>> +    rtc: rtc@1004ec00 {
+>> +        compatible = "renesas,rzg3s-rtc";
+>> +        reg = <0x1004ec00 0x400>;
+>> +        interrupts = <GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH>,
+>> +                     <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
+>> +                     <GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>;
+>> +        interrupt-names = "alarm", "period", "carry";
+>> +        clocks = <&vbattclk>;
+>> +        clock-names = "counter";
+>> +        status = "disabled";
+>> +    };
+>> --
+>> 2.39.2
+>>
+> 
 
