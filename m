@@ -1,164 +1,120 @@
-Return-Path: <linux-kernel+bounces-214863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09ABB908B40
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:07:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D377908B43
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EAFF1F242E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:07:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 153F31F21C3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6773E196427;
-	Fri, 14 Jun 2024 12:07:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD23811FE;
-	Fri, 14 Jun 2024 12:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481CE195FDE;
+	Fri, 14 Jun 2024 12:10:21 +0000 (UTC)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2EA811FE
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718366859; cv=none; b=bZ4Eh5Oslaj2tftOdNqV+FbFhP5bCN+Bvz1JWOgeQcNhcbSXkqVMeQV6No6zHsGMhyRMakDkqQgunCsGz4cXn12H0tmWt8NjeDsv+ZpvQRze12TpRf+Zmv1SyjJAwjcfWKGWHG0qeKKgNxqqR9TNlmvP12Ldjmr758w+wbJ5QUM=
+	t=1718367020; cv=none; b=rwnon7fFoLLAU9g/5wGUJ5aK5rPGnbRZJ6mctu23cLyKdZKjRKjSaWpTEHpXjKrwU7VBUMWfgpGj8GxkJAfdYsejvKcLOfM/8Ufpfgzh5dYoqkFRQINUzOFmV6v09Zk8Nxeb1aIr8ip1hzFDauPFWybdptD+aCPFd0n1xPIuZvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718366859; c=relaxed/simple;
-	bh=Vq6GkNjm49Si+NAnbQlMEolVQ3XwS1Z66jv5HfAMGuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TcQJU4oqA8B/PivOwt7hp1N87BxsexC+yFO0LKBpspA+MrIzVqVqRLaZ7NL8xJ4kD6AxqKtY6oXH06CQv676nIqMYvXfCUwsLi89mPdN6XmOVEAibgMMD8vxsMvBEfYtz6zo4X4TGQvgNj1ClB+4aeYHEuqBxv64FUWzJvPUXa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E093AFEC;
-	Fri, 14 Jun 2024 05:08:00 -0700 (PDT)
-Received: from [10.57.71.136] (unknown [10.57.71.136])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3DBB43F64C;
-	Fri, 14 Jun 2024 05:07:32 -0700 (PDT)
-Message-ID: <3516994c-7b06-4409-b9a9-975b9f7a60eb@arm.com>
-Date: Fri, 14 Jun 2024 13:07:29 +0100
+	s=arc-20240116; t=1718367020; c=relaxed/simple;
+	bh=NFyPsrA6jdLOEig7pGgzBt++SapvFKggz+7IsJWuL/U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MvLRvZDgTc/B4GWRV5TPCJo54WI1yttMmUFFJ4qJXEObozugyXARlfyN6MAnGvk+YCZzbC69eA45+b7OG6A6BnepLuiFxUWKn4QnAACuOSDHno2horrUdw/rMmVzziqaTxToXfHB9KglPWXJhLGjY0D+7mnOQaV6IJrT9NuOgKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6319bf71f28so15000897b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 05:10:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718367017; x=1718971817;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uCUg8QYCKMVfa4NHNqKto50dVwiO8FLSnVupggLvSyg=;
+        b=LzZIyqQaGm7DWUb1uZvgdYiz+olnBLgqmpjf8AhKxsAdp2AnYjs6GPG8ZjYzehWu4t
+         zQdZJq83AXYYV+b5+6S4MnJ5D0vGyQ8M9kfFjCEnfUVekemo2uE4g7Vv49nAXsU2Hcm5
+         mNAk4rHj0h+lV4XztzPLpcfVuioBKadM/JF/Fat712lToEDtYk0UkeSiRal3/JQpr3Oi
+         0u9EGpGOYQr6AsXZbV/geYAMo3WIWj4fT/gk8uRrhalFBUby2Co0URXnISQSD5cpGOOb
+         iej3zHEMpPPvy0uz7QZWcOkBGx6I0gAVlfsOxECe3401E1EBwJmp3+bhRrb/jXSm9IzO
+         UzDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQBy4vHUB+vwj7DyW1NmrrmUus6vwUICUd5Wv1qdFR4w6r/ERyHZ87zfKxUOAmHZHIJyELPvutqTxdke0yFWOOBxqguDiEgaTayoFP
+X-Gm-Message-State: AOJu0Yyi3Mj1QVRnyvKQVTGsRQZzkQl/xvYQ8SikZubWOILMuT2dwJC+
+	fV5BRJS+XumllObGfOtlLXcM+H+zH1jNL6FYgosXrAH/at9PMNhTyGipvixx
+X-Google-Smtp-Source: AGHT+IES0gvRcuf4TlLfK+QlUXE7llzGRWqKIT5QuQLv1mPBjJUDZAyecHsC9YVytnmKGJUD9Zienw==
+X-Received: by 2002:a05:690c:3:b0:62d:1eb6:87bf with SMTP id 00721157ae682-63222455d4emr25091077b3.5.1718367016015;
+        Fri, 14 Jun 2024 05:10:16 -0700 (PDT)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6327f50f18dsm1295967b3.131.2024.06.14.05.10.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 05:10:15 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dfe43dca3bfso2546416276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 05:10:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWpwgIlsU2sRYKPmLSu77uzvD6GuekVbSvLCaMo9yPjRFkUGhDb130QwKJuS+paJCkzlGDKTKv5WD6rmbUT/0Ul+pTcgK5G5+qJUM15
+X-Received: by 2002:a25:ad5c:0:b0:dfb:2cf2:cc23 with SMTP id
+ 3f1490d57ef6-dff154917f1mr2306806276.42.1718367015107; Fri, 14 Jun 2024
+ 05:10:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/9] iommu/rockchip: Attach multiple power domains
-To: Sebastian Reichel <sebastian.reichel@collabora.com>,
- Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>,
- Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
- <20240612-6-10-rocket-v1-2-060e48eea250@tomeuvizoso.net>
- <ffviz6ak6qsn2reg5y35aerzy7wxfx6fzix6xjyminbhfcguus@clszdjakdcjd>
- <CAAObsKCx+r5UuESnrPem1Rb1-BF4i8FVwu6uozWhABOWoq+M4Q@mail.gmail.com>
- <CAAObsKChaBZ2C5ezWsiZ_LoN6R2HFhFA9=UNSRYB6cyeo-jreg@mail.gmail.com>
- <vmgk4wmlxbsb7lphq2ep3xnxx3mbv6e6lecihtftxoyp5lidvy@mectcwirrlek>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <vmgk4wmlxbsb7lphq2ep3xnxx3mbv6e6lecihtftxoyp5lidvy@mectcwirrlek>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <cover.1718311756.git.u.kleine-koenig@baylibre.com>
+ <85a3d444f2943ebe9d64e722b1717a5f7d06ed48.1718311756.git.u.kleine-koenig@baylibre.com>
+ <CAMuHMdUHi0Yu2Giccp7pHqpjLWG2CjkGFWehLV0iWBHB_V4oGw@mail.gmail.com> <7xnzx6dlim2r5oujon3csocrljcvtvwz46yvmik62hpn4a2rlj@tiqrzlol7l5u>
+In-Reply-To: <7xnzx6dlim2r5oujon3csocrljcvtvwz46yvmik62hpn4a2rlj@tiqrzlol7l5u>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 14 Jun 2024 14:10:03 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUzj2Wa=HNk44L3G0S40XxZmwAYNd0nv9J_UsH478CHNg@mail.gmail.com>
+Message-ID: <CAMuHMdUzj2Wa=HNk44L3G0S40XxZmwAYNd0nv9J_UsH478CHNg@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 2/2] driver core: Don't allow passing a -ENOMEM to dev_err_probe()
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Petr Mladek <pmladek@suse.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Xiubo Li <xiubli@redhat.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-06-13 10:38 pm, Sebastian Reichel wrote:
-> Hi,
-> 
-> On Thu, Jun 13, 2024 at 11:34:02AM GMT, Tomeu Vizoso wrote:
->> On Thu, Jun 13, 2024 at 11:24 AM Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
->>> On Thu, Jun 13, 2024 at 2:05 AM Sebastian Reichel
->>> <sebastian.reichel@collabora.com> wrote:
->>>> On Wed, Jun 12, 2024 at 03:52:55PM GMT, Tomeu Vizoso wrote:
->>>>> IOMMUs with multiple base addresses can also have multiple power
->>>>> domains.
->>>>>
->>>>> The base framework only takes care of a single power domain, as some
->>>>> devices will need for these power domains to be powered on in a specific
->>>>> order.
->>>>>
->>>>> Use a helper function to stablish links in the order in which they are
->>>>> in the DT.
->>>>>
->>>>> This is needed by the IOMMU used by the NPU in the RK3588.
->>>>>
->>>>> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
->>>>> ---
->>>>
->>>> To me it looks like this is multiple IOMMUs, which should each get
->>>> their own node. I don't see a good reason for merging these
->>>> together.
->>>
->>> I have made quite a few attempts at splitting the IOMMUs and also the
->>> cores, but I wasn't able to get things working stably. The TRM is
->>> really scant about how the 4 IOMMU instances relate to each other, and
->>> what the fourth one is for.
->>>
->>> Given that the vendor driver treats them as a single IOMMU with four
->>> instances and we don't have any information on them, I resigned myself
->>> to just have them as a single device.
->>>
->>> I would love to be proved wrong though and find a way fo getting
->>> things stably as different devices so they can be powered on and off
->>> as needed. We could save quite some code as well.
->>
->> FWIW, here a few ways how I tried to structure the DT nodes, none of
->> these worked reliably:
->>
->> https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-devices-power/arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=heads#L1163
->> https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-schema-subnodes//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=heads#L1162
->> https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-devices//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=heads#L1163
->> https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-iommus//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=heads#L2669
->>
->> I can very well imagine I missed some way of getting this to work, but
->> for every attempt, the domains, iommus and cores were resumed in
->> different orders that presumably caused problems during concurrent
->> execution fo workloads.
->>
->> So I fell back to what the vendor driver does, which works reliably
->> (but all cores have to be powered on at the same time).
-> 
-> Mh. The "6.10-rocket-multiple-iommus" branch seems wrong. There is
-> only one iommu node in that. I would have expected a test with
-> 
-> rknn {
->      // combined device
-> 
->      iommus = <&iommu1>, <&iommu2>, ...;
-> };
-> 
-> Otherwise I think I would go with the schema-subnodes variant. The
-> driver can initially walk through the sub-nodes and collect the
-> resources into the main device, so on the driver side nothing would
-> really change. But that has a couple of advantages:
-> 
-> 1. DT and DT binding are easier to read
-> 2. It's similar to e.g. CPU cores each having their own node
-> 3. Easy to extend to more cores in the future
-> 4. The kernel can easily switch to proper per-core device model when
->     the problem has been identified
+Hi Uwe,
 
-It also would seem to permit describing and associating the per-core 
-IOMMUs individually - apart from core 0's apparent coupling to whatever 
-shared "uncore" stuff exists for the whole thing, from the distinct 
-clocks, interrupts, power domains etc. lining up with each core I'd 
-guess those IOMMUs are not interrelated the same way the ISP's 
-read/write IOMMUs are (which was the main justification for adopting the 
-multiple-reg design originally vs. distinct DT nodes like Exynos does). 
-However, practically that would require the driver to at least populate 
-per-core child devices to make DMA API or IOMMU API mappings with, since 
-we couldn't spread the "collect the resources" trick into those 
-subsystems as well.
+On Fri, Jun 14, 2024 at 11:15=E2=80=AFAM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@baylibre.com> wrote:
+> On Fri, Jun 14, 2024 at 09:26:52AM +0200, Geert Uytterhoeven wrote:
+> > Looks like dev_err_probe() does not have a dummy for the !CONFIG_PRINTK
+> > case yet, while it could definitely use one.
+>
+> Would you want to drop
+>
+>         device_set_deferred_probe_reason(dev, &vaf);
+>
+> from dev_err_probe() for !CONFIG_PRINTK, too? If not, you can throw away
+> the string only if __builtin_constant_p(__err !=3D -EPROBE_DEFER) && __er=
+r
+> !=3D -EPROBE_DEFER. I agree such an improvement would be nice, but that's
+> orthogonal to this series.
 
-Thanks,
-Robin.
+I would drop it. CONFIG_PRINTK=3Dn is only intended for production
+systems where no console is available, and the full behavior of the system
+is understood well.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
