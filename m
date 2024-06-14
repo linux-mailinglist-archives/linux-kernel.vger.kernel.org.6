@@ -1,97 +1,107 @@
-Return-Path: <linux-kernel+bounces-214564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 907FD908678
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:38:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C94908676
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45CA31F2473E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:38:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75A2928784C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7DD190481;
-	Fri, 14 Jun 2024 08:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="wqmcqBgR"
-Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF0F19007F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBD4190076;
 	Fri, 14 Jun 2024 08:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="tTgNOnuY"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05BC190066;
+	Fri, 14 Jun 2024 08:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718354291; cv=none; b=j3isAmLD90vIo6rzpfCPL9+kTX0tZAf7RS7K1R0RH0B+B3/IyFue+O0Lv3faqjhiQhdA5M6CdAMrnV8Q3p97f+IkZrD40DizL0DjpTNwl+aBRNxuVpcNrdJulUjMbTlrSMwi7Op1/DI+agm3YIiqQ1ZHMjZj8yZfRONerFjEBMQ=
+	t=1718354286; cv=none; b=qOvnkT1PtTsRwAzp9OjAqsiPlehnp4gIXP/T97L3TUMvO2HgJvje6XyBmuyTwYCnmIS7AbLle/MYG51ySl4fRsEsiXPKBwuB243ADrdHU5/hHzdctIPZ62MmEDNyGpk0GAARpnPAyyhDTOnZozZn6pWMdZHGfgnkjPxx932jJPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718354291; c=relaxed/simple;
-	bh=6QqwUINZwrYIdITWIBtpBk2qJO2319v2hxiHhZiXk5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qUlQ2kRc0CLYvkA2MXgJeqkoo5Xb3NbHPhbmZ5SM0ue0wmnEvSdfx1dkOY4Of45KixTh9FynvDY92xpxR4fdZ39a9LkwyU+5awnZKNNv9O/UNhK5rjT04uyYxHlSkvaB5JqH9qcy6ifGSfBxe1CsCz87YfY2tGgSLID+oUT0sLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=wqmcqBgR; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 23DBC14C1E1;
-	Fri, 14 Jun 2024 10:37:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1718354280;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dzytT4OTAPYYW6m/eVOiV+9/isR+EfC8guGdMV3QHtQ=;
-	b=wqmcqBgRPTtVLHA9EsnvT3Dc+kYnUrS17ArNJuQh9LwEh7GaogVQlE5qChrkhKmgc0FGzi
-	Jy0vOuO5RCrQ+pZzm/G7ji9TYvKvQxylvKWjD5HZsKF5w1JD0oALKspX7Xvd/4kR3cjL4F
-	cXF8SpBXcrBCSGG1Lqyafu7TS82pskwlxJU9aJQ8mbIxOYInXutcNhfSVTG3fXU3ybY/nc
-	BwJNgWrxJukQ9x/ExTpYO7ZMnqDTEToClvCyi1YyPFo/wHgIwnxw1p/RdEAtuaQ+r8hE79
-	+/GpY56BJBhO28XBndA2QAsvNVWGMNaN0VdvEqWJFlj0HBB7fkj1mJRbU6++Vw==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id b9898663;
-	Fri, 14 Jun 2024 08:37:50 +0000 (UTC)
-Date: Fri, 14 Jun 2024 17:37:35 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 5.10 000/317] 5.10.219-rc1 review
-Message-ID: <ZmwBTwSgfoQSlOGG@codewreck.org>
-References: <20240613113247.525431100@linuxfoundation.org>
+	s=arc-20240116; t=1718354286; c=relaxed/simple;
+	bh=ivcQjGPwDsRL7TjnjALyJ+4Yl01a48suFxsWagd9HTs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WBoD8T0i6OP3jlgPs775bz8XcjkwdYI6GbnihpSK9CDgR/WHA/7GZzcZiPcq/IjQC0dkSyRySgYMIuNa0LbG5Zl17sWtVxZdIJUcfpX1sOO1SDfbK13OuIWhMoA68xKlY124F0lQHivlAV5mkO6NO9W+GmgKKXm96DvllXPn6IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=tTgNOnuY; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718354268; x=1718959068; i=spasswolf@web.de;
+	bh=J2MGAZdIrgD9+Bzu7JaNXHJzpLQMTsnyYBIuffMdmcg=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:Reply-To:To:Cc:Date:
+	 In-Reply-To:References:Content-Type:MIME-Version:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=tTgNOnuY/3VeNmyH6sgKjfnby59kCnHstjO295eoL0ONf4BARwWYgjH9TzEx1EHp
+	 wvbepV0+SltAy5vol6tFW78AoZ7m7jMiu1DsIeO/4Umaz2HsMQM+qzv92SIJOTjYB
+	 InMCPsDTdiQZ7n19DIyjFJopORdRFeB38aTpTZhc1TtqSb2bK7Rgr1qq4TglLViNR
+	 CPBxTn5r2c9XbXFcoJb5YgPJgQWnM+dFBMr0qxEhWFV+6OHwxjAVivlY74ch1F3kY
+	 mW9SAS76XJYi1hzwKjpcRwZluETtW1G9wtTT2ZU5XKQlycbw949f5TBE3cm4EW53N
+	 66fzmsFUU6Jhzj9l1g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mx0N5-1sctZX2HF5-0149fu; Fri, 14
+ Jun 2024 10:37:48 +0200
+Message-ID: <e18bac6a57a4a45260e7282a70173fa6226955bc.camel@web.de>
+Subject: Re: commit 1c29a32ce65f4cd0f1c causes Bad rss-counter state and
+ firefox-esr crash in linux-next-20240613
+From: Bert Karwatzki <spasswolf@web.de>
+Reply-To: 20240613170351.cc3e7ccfa1bb198b57f31352@linux-foundation.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Date: Fri, 14 Jun 2024 10:37:48 +0200
+In-Reply-To: <20240613170351.cc3e7ccfa1bb198b57f31352@linux-foundation.org>
+References: <f4ea65e28ac47e6acb13f401f46a414a2f50f7bf.camel@web.de>
+	 <20240613170351.cc3e7ccfa1bb198b57f31352@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.52.2-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240613113247.525431100@linuxfoundation.org>
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:mWMPKDUBfStEkePPwT5f6bujc2xmxGr7EJ1wcXZs4QQMK9Z4MoH
+ vcJym9ih6ks5ieaFZXNNJ53lo3r+Q3SYt5EdHgoT0H62YF/aYgx/qycDUDCEYED/UaOA4DQ
+ i7e+qjpTiO6UYMPeApp7NtwcWSWFji2j6LVi1MN3FOwhQlH8wOwSgQUnpvxn7Qt97pF/Rii
+ GtsDg1UkOB1DIos8OMYAw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:sdtRHhsobkg=;/Qnt+Ms2qsdIGjv5ehDrLNShe4I
+ N+AFcFsQkKTJHFZ7WiExMxA1TNNSnl3Y/LWUqV8y3hmbRAXNTYIyR/X9sAfpYiHMpPGxu72Qu
+ C8Z1AFizngbn49PE3pbsMm9KTwMq6TB8hgTPVxSZCUuRo4ZKoffbuDVOdDK2Fc+/6CMFwx4fq
+ o9JADdq/v1WRkAV4F35aCdZyRHk2aZfLl3pQbMxytobKLANwoQo9PVfJBVGKr1him+U4LyrYN
+ 0GpznwqXIjjw39VW21y/Yc9MI/XO3lYF6AdBHJ9mZlBdqyB1bqUDLFPWIriBsXCwl2pybbjf4
+ XHI+CTaxNwuTqA7T5XnQklovUXFSBObFN4j/0kYvRw8Dtc0hArsvRaV0Wn730c6AfzKrEhUx9
+ XtmS7gZ2V6hkhh9fgPKxugzCnO1UX5amgTwRp7bG01Clsf8u0wa9YAgCucz0tTOtoWBqqCCVF
+ JQmCnPUSHF01TUFtwhk56T+Zj9wmNypBrJ5Ft1YNbS0NszjgZFftBuZ+w3K4L21rkm6AjEYXC
+ eLJhda/EFgFsR7icGy7Xs93tyP5C64JZstMVsKr7Y5Wn80Gf6dGzScMe2pk8MwTMc6sM9Aidw
+ aU4APhNaK3AVVTX7gTTfqjE7IHG8JBV+UibNVT7pNemiWb5yQPoMEkQBtKQZ9yQ43wlb99qT2
+ JmNa87iD2Hk8YR69CL0h9Jn6X0ofverAHUXfkSCeBq1pUJwBpRXR1OisdMFuhFItPovOlwz2G
+ LKMiGj3qVnbfJHUr1rIpu9WxKGSqLNsKtFqwDwKL7TaVQG8KRqY2lNNqn0I5g7/7u8WG5ab8+
+ l1OhfOicoqrAU0X5ct0NSt64TXhhfKMhTGyA9tLnaGMJA=
 
-Greg Kroah-Hartman wrote on Thu, Jun 13, 2024 at 01:30:18PM +0200:
-> This is the start of the stable review cycle for the 5.10.219 release.
-> There are 317 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 15 Jun 2024 11:31:50 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.219-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
+Am Donnerstag, dem 13.06.2024 um 17:03 -0700 schrieb Andrew Morton:
+> Let's hope Linus doesn't read this.  Why are we nuking the entire
+> planet just because some counter went wonky?
 
-(There will likely be a rc2 for riscv/ppc, but..)
+It's not just the wonky counter, the error always comes with a segfault which
+causes a firefox tab to crash, though I've not yet figured out how this is
+related to the BUG message or commit 1c29a32ce.
 
-Tested 853b71b570fb ("Linux 5.10.219-rc1") on:
-- arm i.MX6ULL (Armadillo 640)
-- arm64 i.MX8MP (Armadillo G4)
+[  179.393488] [   T2278] show_signal_msg: 16 callbacks suppressed
+[  179.393492] [   T2278] Privileged Cont[2278]: segfault at 22cddf91d3a0 ip
+000022cde1aad010 sp 00007ffc616851a8 error 7 likely on CPU 15 (core 7, socket 0)
+[  179.393504] [   T2278] Code: Unable to access opcode bytes at 0x22cde1aacfe6.
+[  179.498173] [   T2289] BUG: Bad rss-counter state mm:00000000d0a3f682
+type:MM_ANONPAGES val:1885
 
-No obvious regression in dmesg or basic tests:
-Tested-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
-
---
-Dominique Martinet | Asmadeus
+Bert Karwatzki
 
