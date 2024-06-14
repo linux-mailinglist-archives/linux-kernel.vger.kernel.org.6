@@ -1,189 +1,137 @@
-Return-Path: <linux-kernel+bounces-214910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7F8908BE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:43:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A65908BE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2FD9288A8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:43:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A16B1F21E62
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032C5199258;
-	Fri, 14 Jun 2024 12:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CCkG1sXw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365D5199EBB;
+	Fri, 14 Jun 2024 12:42:23 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3233199221
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2DF19752F;
+	Fri, 14 Jun 2024 12:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718368916; cv=none; b=F15NcWLuTXb8CPiIow6ReRCETGwhUv67VgTahoAaeDusQ3QygQVEHWqQYIQ6kPNX4fFxBZAbnguR1npz54P0x2oIUQ6WuCZfpJVonKVlBUxXTliTmoU3zKW6Fm65Db3ELuebQjcWVTtB6Cx+ur5zM5JLjNqLeHCSpklwMgtQf+s=
+	t=1718368942; cv=none; b=NavCr84QE7SPG5aYyDwtL2+Nn9510u2+FFQPQaFV/xmzGK0YKiUEsIKNLPi65L1nYsNP/mhTKUv3WeNXn1jgO64yv4yVBDZoYwFwqOH6otH1GTtFRAoaf7P4gWl5PZGR1riEoNk9DJgLFJQO37hZkhzW1ittbfrgRtJOU40RjBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718368916; c=relaxed/simple;
-	bh=0Gb13gkJSeAxhZPpbBeTY7+9eGjCgDsDFH/5LBPUpJc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Gq2syy/SgydVEAbMHja76lYKNFXuFwrnF1MudrRPoIaAKr/g9VgA+KUUATHaIrqXrl/K6zmkHRrf61hlvaGfytZ4voP1XVa+DDZkj4kdfdlkZ05bdG1GdNaCGH8QZQQyUD+Na7dzDPa+QBHuPOlm4sB9mi0Sa2c+Ydr/viiaDQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CCkG1sXw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718368913;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qVCa7RwQroi261t1F6XjVS7+W2uN0kc4IDTx0N1MMdo=;
-	b=CCkG1sXwwaJA7Oq5UJ4hQVlpQ6ZLP2WvcEkSvr0fD7ktgqT5/eWt/F3w/oKYQpFN2foLlT
-	hVC45mNHijuiiz63WEL4qBPzyPC+00E/qHkV2OYwlUTHWOaM4JDW7NPgFpnCFjS0LoPMEF
-	LwaqtE6otIOhNddLFsRNPEXBk6tZvxE=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-198-FxBaX_CBPnihzJlnMZnRwQ-1; Fri, 14 Jun 2024 08:41:52 -0400
-X-MC-Unique: FxBaX_CBPnihzJlnMZnRwQ-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-35f1f8d48b3so1263514f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 05:41:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718368911; x=1718973711;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qVCa7RwQroi261t1F6XjVS7+W2uN0kc4IDTx0N1MMdo=;
-        b=TbrZ43u7Mz0fQ2gOboHt05GWjh2ngqtbkGCWOKQqsPTJUoMoXlG5i8N9/POh9IoStP
-         nymANksmI7aYlgN8IgF9AXXblF60lHqfpm5cM7hyoPWUipZHZxpwXZ9j3l0E9Lu0PAdf
-         4FXb4FJ6FUlkdVasvhkWXe+XQv2DWbMU76XMAmid8825fWyjtpgmB1kDEnsuxItBrh0x
-         Btl/c4v47G6Xu0pCtWTgZjpRoib9exgUXPmnyhyUmGrf63M/LCeSeVBkfPbAEmnFMcoP
-         44oEiSPxAAQWxopZERoXe+r3YtT3qn+4DqKS2alanM79KF4I531dpYRwyDER6dTZTORl
-         Rf4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVilXDM6WzgJTtzMkFc9qpdYZyjIoRFTGYRs4+D/noUt+ZFsYhIMqNLMAmW1mkFxjTBbVG++ixlWPaGqb37ti5x4Sof9H8Fmlr0liY1
-X-Gm-Message-State: AOJu0YwP8iyPErkZA8FSHzUr+tpFWN1cw0/EpS3OUjyJra8b8TV5l7pv
-	k+ftE5u1t21i13heDeiFIoSpBEuV+pHDvJZML04TpXzBRVNOMF7DWXy9XS4PR4/5Ijr3zYWinPL
-	Sl/oCWRBlX3R8XT5tm1URVihxdjJU0+QuIgWnXGo3P/miu34+uSceVA9h8avBoQ==
-X-Received: by 2002:a5d:5283:0:b0:35d:bd46:960a with SMTP id ffacd0b85a97d-3607a764bf2mr1704160f8f.23.1718368911074;
-        Fri, 14 Jun 2024 05:41:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHDCXn202g0cRFTygkw8Oi1Eh/fwqFY0cLSIqyqzWBUKuRCdAAvjwjeStFj7/sd3j8BQHttjw==
-X-Received: by 2002:a5d:5283:0:b0:35d:bd46:960a with SMTP id ffacd0b85a97d-3607a764bf2mr1704134f8f.23.1718368910688;
-        Fri, 14 Jun 2024 05:41:50 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4f:2b00:69b5:3684:56c:6dd5? (p200300d82f4f2b0069b53684056c6dd5.dip0.t-ipconnect.de. [2003:d8:2f4f:2b00:69b5:3684:56c:6dd5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075104a0fsm4327929f8f.96.2024.06.14.05.41.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 05:41:49 -0700 (PDT)
-Message-ID: <e6378446-6087-4ffc-9ce9-320c5e128bd6@redhat.com>
-Date: Fri, 14 Jun 2024 14:41:47 +0200
+	s=arc-20240116; t=1718368942; c=relaxed/simple;
+	bh=xX+0hJOY5wHV2sFTLz2I53WZq9oVZ069f2wFZkuYpXA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fPZYHYxFvmOY/nfJU3eHTZ2qbwCUedO2uJ8YKZ2IHhGxH0uoTT528TG/0kznpzymjGdJdhu6xtYmLmRdiFj3lHTUdStIuVG2M8r6z45ah0qhxWe3RzaxU3IQqh1WoXMdmQbTDW4bysp09SZMjP90rycFI503KUMIaVceA9AaHm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 8485f3962a4b11ef9305a59a3cc225df-20240614
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:4eaac0dc-8ad9-48ef-8e6e-a3f37f87e633,IP:20,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:5
+X-CID-INFO: VERSION:1.1.38,REQID:4eaac0dc-8ad9-48ef-8e6e-a3f37f87e633,IP:20,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:5
+X-CID-META: VersionHash:82c5f88,CLOUDID:36e2953cecde2afbdb3f01b0793d3341,BulkI
+	D:240614185458SXRYECY3,BulkQuantity:1,Recheck:0,SF:64|66|24|17|19|44|102,T
+	C:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,
+	COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_FSI,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-UUID: 8485f3962a4b11ef9305a59a3cc225df-20240614
+Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
+	(envelope-from <luoxuanqiang@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 215960080; Fri, 14 Jun 2024 20:42:10 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id 445C8B80758A;
+	Fri, 14 Jun 2024 20:42:10 +0800 (CST)
+X-ns-mid: postfix-666C3AA2-18629611
+Received: from [10.42.12.252] (unknown [10.42.12.252])
+	by node2.com.cn (NSMail) with ESMTPA id ADCC7B80758A;
+	Fri, 14 Jun 2024 12:42:08 +0000 (UTC)
+Message-ID: <7075bb26-ede9-0dc7-fe93-e18703e5ddaa@kylinos.cn>
+Date: Fri, 14 Jun 2024 20:42:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] selftests/mm: mseal, self_elf: fix missing
- __NR_mseal
-From: David Hildenbrand <david@redhat.com>
-To: John Hubbard <jhubbard@nvidia.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
- Shuah Khan <shuah@kernel.org>
-Cc: Andrei Vagin <avagin@google.com>,
- Axel Rasmussen <axelrasmussen@google.com>,
- Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Peter Xu <peterx@redhat.com>, Rich Felker <dalias@libc.org>,
- linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <20240614023009.221547-1-jhubbard@nvidia.com>
- <20240614023009.221547-2-jhubbard@nvidia.com>
- <1ea35568-bfe5-430e-9f4b-edef17f0b22b@redhat.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH net v2] Fix race for duplicate reqsk on identical SYN
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <1ea35568-bfe5-430e-9f4b-edef17f0b22b@redhat.com>
+To: Florian Westphal <fw@strlen.de>
+Cc: edumazet@google.com, davem@davemloft.net, dsahern@kernel.org,
+ kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ pabeni@redhat.com, kuniyu@amazon.com, dccp@vger.kernel.org
+References: <20240614102628.446642-1-luoxuanqiang@kylinos.cn>
+ <20240614105441.GA24596@breakpoint.cc>
+From: luoxuanqiang <luoxuanqiang@kylinos.cn>
+In-Reply-To: <20240614105441.GA24596@breakpoint.cc>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 14.06.24 14:28, David Hildenbrand wrote:
-> On 14.06.24 04:30, John Hubbard wrote:
->> The selftests/mm build isn't exactly "broken", according to the current
->> documentation, which still claims that one must run "make headers",
->> before building the kselftests. However, according to the new plan to
->> get rid of that requirement [1], they are future-broken: attempting to
->> build selftests/mm *without* first running "make headers" will fail due
->> to not finding __NR_mseal.
+
+=E5=9C=A8 2024/6/14 18:54, Florian Westphal =E5=86=99=E9=81=93:
+> luoxuanqiang <luoxuanqiang@kylinos.cn> wrote:
+>>   include/net/inet_connection_sock.h |  2 +-
+>>   net/dccp/ipv4.c                    |  2 +-
+>>   net/dccp/ipv6.c                    |  2 +-
+>>   net/ipv4/inet_connection_sock.c    | 15 +++++++++++----
+>>   net/ipv4/tcp_input.c               | 11 ++++++++++-
+>>   5 files changed, 24 insertions(+), 8 deletions(-)
 >>
->> Therefore,  add ./usr/include/asm/unistd_[32|x32|64].h (created via
->> "make headers") to tools/uapi/, and change the selftests/mm files that
->> require __NR_mseal to include from the correct location. The way to do
->> so is to include <linux/unistd.h> instead of just <unistd.h>.
->>
->> [1] commit e076eaca5906 ("selftests: break the dependency upon local
->> header files")
->>
->> Fixes: 4926c7a52de7 ("selftest mm/mseal memory sealing")
->> Cc: Jeff Xu <jeffxu@chromium.org>
->> Cc: David Hildenbrand <david@redhat.com>
->> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
->> ---
-> 
-> If it works, great
+>> diff --git a/include/net/inet_connection_sock.h b/include/net/inet_con=
+nection_sock.h
+>> index 7d6b1254c92d..8773d161d184 100644
+>> --- a/include/net/inet_connection_sock.h
+>> +++ b/include/net/inet_connection_sock.h
+>> @@ -264,7 +264,7 @@ struct sock *inet_csk_reqsk_queue_add(struct sock =
+*sk,
+>>   				      struct request_sock *req,
+>>   				      struct sock *child);
+>>   void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_s=
+ock *req,
+>> -				   unsigned long timeout);
+>> +				   unsigned long timeout, bool *found_dup_sk);
+> Nit:
+>
+> I think it would be preferrable to change retval to bool rather than
+> bool *found_dup_sk extra arg, so one can do
+>
+> bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock=
+ *req,
+>    				   unsigned long timeout)
+> {
+> 	if (!reqsk_queue_hash_req(req, timeout))
+> 		return false;
+>
+> i.e. let retval indicate wheter reqsk was inserted or not.
+>
+> Patch looks good to me otherwise.
 
-... thinking again, are some of these headers arch-specific (IOW, 
-generating them per-arch would result in something slightly different)?
+Thank you for your confirmation!
 
-In tools/include/uapi/asm-generic/unistd.h, we already do have 
-__NR_mseal ...
+Regarding your suggestion, I had considered it before,
+but besides tcp_conn_request() calling inet_csk_reqsk_queue_hash_add(),
+dccp_v4(v6)_conn_request() also calls it. However, there is no
+consideration for a failed insertion within that function, so it's
+reasonable to let the caller decide whether to check for duplicate
+reqsk.
 
--- 
-Cheers,
+The purpose of my modification this time is solely to confirm if a
+reqsk for the same connection has already been inserted into the ehash.
+If the insertion fails, inet_ehash_insert() will handle the
+non-insertion gracefully, and I only need to release the duplicate
+reqsk. I believe this change is minimal and effective.
 
-David / dhildenb
+Those are my considerations.
 
 
