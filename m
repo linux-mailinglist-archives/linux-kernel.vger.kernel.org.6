@@ -1,110 +1,161 @@
-Return-Path: <linux-kernel+bounces-215358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 559EA909189
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:32:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1762909195
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B01A1C25DA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:32:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91ED81F229D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A6119FA89;
-	Fri, 14 Jun 2024 17:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8132D19EEBD;
+	Fri, 14 Jun 2024 17:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JMtBnXml"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YL+iy83j"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894B620E6
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 17:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966C31465A5;
+	Fri, 14 Jun 2024 17:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718386307; cv=none; b=sgbd7LDgvNUxPwfMCJawMwkbo8BttX+Mt0edS0ZkVdIW4sDl1Cpjf7S5sKaB1KOJcLORRyUZpE5+WE4qGrpd7/kmaE0o8q2cBdyfUF7wF5XHqIySPLuNt0tkVXv7C56/QnU7h1wcrxHpDpExbE3y7vnUiNUlBiJZECXZ70dK+4c=
+	t=1718386374; cv=none; b=CfQdhp80KVJVfoPVQp7+2iV5R6lO94Ipla0LSxwHiPJTmy5KCe4hpWml6LgBFAnkJ4j+K1ktSZyXFtykJJthslWYAGQu0je0JRsIc57b3UP7AdF8zKmhbq1Bh99iVLEFXqqmxS6p7/55c9kaVdtcya7kNKai/3sUlnHHBjBUDTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718386307; c=relaxed/simple;
-	bh=BSipHlIgDvAU9jtI+0UzoGnMftxvZb9NU2THa75rZr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ht4kojvhi4FI+ndV7IBLtLNWwqin0iXbs+BnCbmhDsEDOKdqrcGx51QLKWaQa7UbBq3IAAQ7ZD2/MyG+1od+cQ6sfRTkisHY8i5xNKquhTukmzwELbbh9Goq6GaD25GU7hRi3BQhrE4kJTroxenjdDdLck4B2JWDtvWFam3JT0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JMtBnXml; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-421820fc26dso20230575e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:31:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718386303; x=1718991103; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9aAn+dyPFDj13W9kA9p8UoX5UEoPcAwL160WAxAoG68=;
-        b=JMtBnXmlPkwAZGeP120iN5JmDE7dBxPvv/O/r4PZ2EtSpsOvoafQjb4HqXugYmIohg
-         7+oTb+Ca7kqtML11aUm0WEpcHAaLSjAOMqb4prFAJIkZhACXOM+53Ddd3Ts4TyaXaTkC
-         J6482p/iPzmWQNq2Kg92AT7omsUN7jj9CMnZ/Fw5XTOk6lNh9cfXhmBgg1VmFRgv6a/I
-         pldcPbi/usSIM5+5oWduSQ4SvKD3kS1/MVzno12JCJs/jYFedMRZPoigT8V9cIRA9OVv
-         lZpezaREi8rlC4/sSo4dox5JVNE0/9KIz1YXUSoR3uVTeK5Di8xLHbFXUSPtcrzIAc/P
-         x4dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718386303; x=1718991103;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9aAn+dyPFDj13W9kA9p8UoX5UEoPcAwL160WAxAoG68=;
-        b=e4CT9+Uf4dv0Tr3D3Q0bJrtpMf/j9v9s1pWnuCawhVIKecUdQk1E/jNwz0hBDppkXW
-         RwLdJIeHLHGv2YnQ///yqMWNVaRM+VpkRcnGtctQ7RUiqIxe8xCqyXxIQ8dAr3vCqPBE
-         QHkE/xFHqSKAHjtvXkjt77lK5DZXc0N7XrNY3Y6nmQ8nWJvgUnRNnFy/PWA2xOztw+9I
-         6xfDr+mfdNRFpnmrhHhNjpRSY6FeMeUlVY+KYqFOuOFYAoyeQR0XmLKjQVF9XQXfGCmV
-         ISaD5E6mVwYfMMyB/XEFEl5j+lqDqnXaG63LvHe4AxvhNe2H31CDZyTiacBTfy7InULv
-         nsuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwGIXUiuLtf7rvxhstYS/Iv6MYrqJxqlvsSclQhE2RC/s96l4zBP/pKJSamZMXFcIPxAV6tP+IuTL4WqvEzJChV/3NKUvEWF+DDleV
-X-Gm-Message-State: AOJu0Yyb9ogdUwDmp4TxfCSKk86Y0T8q13ZMxZyaIPWe0yJ6W+l8R3MI
-	eXD5TBojCNobymMd2du83+qJaqN0Yn/NCARcR1n0OHxys4sbA2eMy1EoorYdRVE=
-X-Google-Smtp-Source: AGHT+IHG7stbgSaExY65n+9KApXBI+yAhKzMZixuvshFIifsWmYEYNx+9bdoDb5iW6MQiJc8Gmrfkg==
-X-Received: by 2002:a05:6000:4014:b0:360:7558:49dd with SMTP id ffacd0b85a97d-3607a75c379mr3218191f8f.36.1718386302611;
-        Fri, 14 Jun 2024 10:31:42 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750ad082sm4909069f8f.59.2024.06.14.10.31.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 10:31:42 -0700 (PDT)
-Date: Fri, 14 Jun 2024 20:31:38 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Yangbo Lu <yangbo.lu@nxp.com>
-Cc: Richard Cochran <richardcochran@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net] ptp: fix integer overflow in max_vclocks_store
-Message-ID: <d094ecbe-8b14-45cc-8cd8-f70fdeca55d8@moroto.mountain>
+	s=arc-20240116; t=1718386374; c=relaxed/simple;
+	bh=o4UQjypgo9QMgDD5aBAMGyoqUTlXc8SIqGQXNDouQeY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UqmlSZW15X+XDbi//8SqMcDFwyQT01cOdHw2/uT25aX/DATBN4McUZt5uK2Fr3AujJ9BiqHHoK3zHdr4664p6DNyaDOTnSZs0N59blxxLkr3PQlmFum4O6meFErczJU4qgF97WNhvPVg39BjVkSyWXw9OAXJozzLdslNRMV4gm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YL+iy83j; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPA id 6CE52FF805;
+	Fri, 14 Jun 2024 17:32:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718386365;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=67iEUNjiy7HOBuGoqBAJEp5jlBOCrSiBVzovVrhf8kQ=;
+	b=YL+iy83jqq9bl02hakJXSOJ8KfKOOy8vAED2NEWLHenMZYkURWV2Ti2k1eK1UpGEgUB56k
+	eUwzeRyIWpqAsfRuuYnkGXcMzkqByjT7TGLPBeMqm9tDIKbEDFQW3fffkzZxxUzeCEm45S
+	Go4DxkW+5egokQSkV6e29gOj54hKh80CIopS5TDttW5TsaXgGl5mlskYN5HDqM/xapM4kz
+	Ziy7Y4EJo4GJVn3VZdFPL5b3Qicvbfe18QZSY/B87DvHQk5kpXUKqkaj+1BxOAipVqb7Fh
+	28V2ITL5/G64cE5dY7IDu4JuSnKx6wCwSu/NdS6of2guL6k/bLE1nVEeLcoHiQ==
+From: Herve Codina <herve.codina@bootlin.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Marc Zyngier <maz@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-um@lists.infradead.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH 00/23] Introduce irq_domain_instanciate()
+Date: Fri, 14 Jun 2024 19:32:01 +0200
+Message-ID: <20240614173232.1184015-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-On 32bit systems, the "4 * max" multiply can overflow.  Use size_mul()
-to fix this.
+Hi,
 
-Fixes: 44c494c8e30e ("ptp: track available ptp vclocks information")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/ptp/ptp_sysfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Previously, I sent a series related the support for the LAN966x PCI
+device [1] and in particular several patches related irq domain
+modifications and the introduction of the Microchip LAN966x OIC driver.
 
-diff --git a/drivers/ptp/ptp_sysfs.c b/drivers/ptp/ptp_sysfs.c
-index a15460aaa03b..bc1562fcd6c9 100644
---- a/drivers/ptp/ptp_sysfs.c
-+++ b/drivers/ptp/ptp_sysfs.c
-@@ -296,7 +296,7 @@ static ssize_t max_vclocks_store(struct device *dev,
- 	if (max < ptp->n_vclocks)
- 		goto out;
- 
--	size = sizeof(int) * max;
-+	size = size_mul(sizeof(int), max);
- 	vclock_index = kzalloc(size, GFP_KERNEL);
- 	if (!vclock_index) {
- 		err = -ENOMEM;
+During the review, it was asked to rework the irq domain modification in
+order to avoid more wrappers and a new irq_domain_instanciate() function
+was proposed [2].
+
+Also a patch [3] sent by Maitti Vaittinen can benefit of this new
+irq_domain_instanciate() function. Even if Maitti's use case is not
+handle yet in this series, it should not be a big deal add support for
+it on top of this current series.
+
+So, this current series introduces this new irq_domain_instanciate()
+function and migrate existing wrappers and functions to this new
+function (patches 1 to 20).
+
+It then introduces the first driver that uses directly this new function
+with the init()/exit() hooks set: the Microchip LAN966x OIC driver
+(patches 21 to 23).
+
+Existing irqchip drivers are not converted yet to use this new API
+function in the same way as the LAN966x OIC driver does.
+I prefer to have this series accepted first to avoid doing and re-doing
+several times the same modifications on existing drivers depending on
+changes requested on this current series review.
+
+[1] https://lore.kernel.org/lkml/20240527161450.326615-1-herve.codina@bootlin.com/
+[2] https://lore.kernel.org/lkml/8734pr5yq1.ffs@tglx/
+[3] https://lore.kernel.org/lkml/bbd219c95f4fe88752aee5f21232480fe9b949fb.1717486682.git.mazziesaccount@gmail.com/
+
+Best regards,
+Hervé
+
+Herve Codina (23):
+  irqdomain: Introduce irq_domain_free()
+  irqdomain: Introduce irq_domain_instantiate()
+  irqdomain: Fixed unbalanced fwnode get and put
+  irqdomain: Constify parameter in is_fwnode_irqchip()
+  irqdomain: Use a dedicated function to set the domain name
+  irqdomain: Convert __irq_domain_create() to use struct irq_domain_info
+  irqdomain: Handle additional domain flags in irq_domain_instantiate()
+  irqdomain: Handle domain hierarchy parent in irq_domain_instantiate()
+  irqdomain: Use irq_domain_instantiate() for hierarchy domain creation
+  irqdomain: Make __irq_domain_create() return an error code
+  irqdomain: Handle domain bus token in irq_domain_create()
+  irqdomain: Introduce init() and exit() hooks
+  genirq/generic_chip: Introduce
+    irq_domain_{alloc,remove}_generic_chips()
+  genirq/generic_chip: Introduce init() and exit() hooks
+  irqdomain: Add support for generic irq chips creation before
+    publishing a domain
+  irqdomain: Add a resource managed version of irq_domain_instantiate()
+  irqdomain: Convert __irq_domain_add() wrappers to
+    irq_domain_instantiate()
+  irqdomain: Convert domain creation functions to
+    irq_domain_instantiate()
+  um: virt-pci: Use irq_domain_instantiate()
+  irqdomain: Remove __irq_domain_add()
+  dt-bindings: interrupt-controller: Add support for Microchip LAN966x
+    OIC
+  irqchip: Add support for LAN966x OIC
+  MAINTAINERS: Add the Microchip LAN966x OIC driver entry
+
+ .../microchip,lan966x-oic.yaml                |  55 ++++
+ MAINTAINERS                                   |   6 +
+ arch/um/drivers/virt-pci.c                    |  16 +-
+ drivers/irqchip/Kconfig                       |  12 +
+ drivers/irqchip/Makefile                      |   1 +
+ drivers/irqchip/irq-lan966x-oic.c             | 278 ++++++++++++++++++
+ include/linux/irq.h                           |  33 +++
+ include/linux/irqdomain.h                     | 116 +++++++-
+ kernel/irq/devres.c                           |  41 +++
+ kernel/irq/generic-chip.c                     | 111 +++++--
+ kernel/irq/irqdomain.c                        | 243 +++++++++------
+ 11 files changed, 782 insertions(+), 130 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/microchip,lan966x-oic.yaml
+ create mode 100644 drivers/irqchip/irq-lan966x-oic.c
+
 -- 
-2.43.0
+2.45.0
 
 
