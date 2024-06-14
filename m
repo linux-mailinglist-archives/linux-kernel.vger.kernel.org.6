@@ -1,111 +1,123 @@
-Return-Path: <linux-kernel+bounces-214181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0743690809D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:28:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66129080A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F9A3B213AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:28:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BC8D28433F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C2D1822DB;
-	Fri, 14 Jun 2024 01:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Gw0dP4l8"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C9C1A28C
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129BB1822D7;
+	Fri, 14 Jun 2024 01:30:54 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id ABDB21A28C
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718328518; cv=none; b=QRedBwIl9QiNNV1GLMlSDMZIHN87IatAw6YVqVfKrxQIg3oZDdDUUwOBwQejBv5e6hjC37VErZwPEXLIhOt4JXvI+So1gAfR9E0DJVOB9cTvk0MeND+3ZAmvbtD6IncSR+hyTgNEmfU4a5uxBXJIW4z3qnmG+GfJubB0iZF4YUo=
+	t=1718328653; cv=none; b=KrLfPfvvw0I5pVUJ9ugIwvUder4RZdEqqfRdw7qvXPbEEHM4KwOHwJnmnEKXosB4K+wM5P88SFkA/6BPnonDqT0AcXSl2CqARw2vQ5mSPbDeIP23xshqreD95Jqb49zceaLdZkZ1DoxvY4f+RnsMq50oeBX/8e+bSMCvalpBQvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718328518; c=relaxed/simple;
-	bh=kAy4QYm4P0wejOln0sjgpR597XHtlPQRJDoOhOcNk64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=B0DDR96sUvtmmldkoJ1yDtVgJsm1IO1WtP1b2KkTjC+f8IJwStNRdaijSrU0+GlHvKRyZayn5YqC6JKBTjdr4Zgiaw+2JQFMKNbl4ZWa5R9J77EKkRLysEVwbbDlNH4Lr/k94g6BW37uC5HF5KtC7UyIzNMB362rPujRya4GkMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Gw0dP4l8; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-631702feb43so1435307b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:28:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718328514; x=1718933314; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=GIqw+lIrHlNp3Ja2na639L/jDhTu14FRyvhFXlStmiI=;
-        b=Gw0dP4l8Nl0v/byNuQc38V7cIRCu8YPPR5D4nWR8VvySOBEP7UvcOtg2EHEHz+wG4a
-         0D1HGnhuHnKEMBpMl02oP/NJ9Z3wDSq7oI4jPHQb2kF5lpvuYZ2qzEOWIro2GzGZdOes
-         t4EsKzmpYoims1KFRPSQ3N5gZoiGsNN3whEeQtJwwEhdU5xOeqSvJlimPGawPQmg60QJ
-         BpnZ3PI8skB9NhhXvDg+ETaFKe0G3KEfUwK+VoXkNzdLQ76IWg4VooAwfPwxMwZoD80Q
-         qB1FACa1KBAYKXWhnlEplQ0LaZ9cLuH5hhzg8UvyyVy2Ex9PNqKyKNqT03mZNeIsZmSp
-         Ibuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718328514; x=1718933314;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GIqw+lIrHlNp3Ja2na639L/jDhTu14FRyvhFXlStmiI=;
-        b=BSKGaCbH1GwzdalzVe9ZMr/KTnIJDAGm9T9NM/VhDX4WHrqjdqDj+P3+Bd4TJ5CILn
-         nnwLd1nV+jB2vU515IYOFc5MBHfHWagoWVV8mOOy4vYOGYqSJqjrxIU3lD3QHwufrWwR
-         Ux2yohp7siTp+lOqB4Ulas7FSomhUbwQ1I9HALzdcel5PUHFOd+WJCTusFEBXWtiXtKL
-         hIzDQwd8Fh73b4yWmV3TyDdS1JPaBNEl2yLcRwZu9Fgfz2VFjG0osMU5iLWrGDKQByHu
-         /96Tg3vUFG3aeScez/FuZCnaE2Cr5nDqFTx1gDVuL3gojALqPz5QAmoebkXjI0e1iWrr
-         6qXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXt+eL1KLDAELpGamD1swDOOdMllCJbefC9TIC83qsyuNWvbjuGuYEAb21iHkXvPMsYEEUFDSsNZfA6N8DEAbvRRJfNLQDO74twYscj
-X-Gm-Message-State: AOJu0YyaRJb/FlLlp2UrmysOXCNBwSMDMScommdPAtMBQDxybKUurqie
-	0yyvtcm+LBJcq0f9Ue6lB2WttV0cUIk4BvMpPMkT29STi1PlIl1y0sqOTaDMYOoiAkYEh5rewz9
-	A
-X-Google-Smtp-Source: AGHT+IHITEitzqsXprJFx4xSbyaEdkdTYCpN+vhffQWMpryu+R9ms/e5ru7TNT6qkEzhsp5v+kbFgQ==
-X-Received: by 2002:a05:6a20:1584:b0:1af:cefe:dba3 with SMTP id adf61e73a8af0-1bae7b3d2c7mr1832253637.0.1718328493877;
-        Thu, 13 Jun 2024 18:28:13 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f8575b119bsm20082135ad.27.2024.06.13.18.28.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 18:28:13 -0700 (PDT)
-Message-ID: <6d0ab5f4-45d5-4e16-bd4d-ae14e29d5f32@kernel.dk>
-Date: Thu, 13 Jun 2024 19:28:11 -0600
+	s=arc-20240116; t=1718328653; c=relaxed/simple;
+	bh=NHfuDosNeZjSwPeDyy3cQ2MkLsMtVZXIVIVqodb7G6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XRGka9hx6IjHxiCzLrasqW5GsUWKkLmIiSbLVUKI7KD7fu0TCc+IJsM1zjF7khNPsyfEZDJrbIIaYNbAO8YBd61GuzAFGvZLnvw152xr7FLFZUmsZOJMusE3gMvAS/Wojkq+J7y6XdfrEHoEIgv9e41b+QNOGG6QMLzNDw3FKW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 282581 invoked by uid 1000); 13 Jun 2024 21:30:43 -0400
+Date: Thu, 13 Jun 2024 21:30:43 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: syzbot <syzbot+1b2abad17596ad03dcff@syzkaller.appspotmail.com>,
+  syzbot <syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com>,
+  johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org,
+  linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+  luiz.dentz@gmail.com, marcel@holtmann.org, syzkaller-bugs@googlegroups.com
+Subject: [PATCH] USB: class: cdc-wdm: Fix CPU lockup caused by excessive log
+ messages
+Message-ID: <29855215-52f5-4385-b058-91f42c2bee18@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KMSAN: uninit-value in io_req_cqe_overflow
- (3)
-To: syzbot <syzbot+e6616d0dc8ded5dc56d6@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000852fce061acaa456@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <000000000000852fce061acaa456@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 6/13/24 1:38 PM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=12980e41980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e6616d0dc8ded5dc56d6
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13526ca2980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=144e5256980000
-
-#syz test: git://git.kernel.dk/linux.git io_uring-6.10
-
--- 
-Jens Axboe
+The syzbot fuzzer found that the interrupt-URB completion callback in
+the cdc-wdm driver was taking too long, and the driver's immediate
+resubmission of interrupt URBs with -EPROTO status combined with the
+dummy-hcd emulation to cause a CPU lockup:
 
 
+cdc_wdm 1-1:1.0: nonzero urb status received: -71
+cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
+watchdog: BUG: soft lockup - CPU#0 stuck for 26s! [syz-executor782:6625]
+CPU#0 Utilization every 4s during lockup:
+	#1:  98% system,	  0% softirq,	  3% hardirq,	  0% idle
+	#2:  98% system,	  0% softirq,	  3% hardirq,	  0% idle
+	#3:  98% system,	  0% softirq,	  3% hardirq,	  0% idle
+	#4:  98% system,	  0% softirq,	  3% hardirq,	  0% idle
+	#5:  98% system,	  1% softirq,	  3% hardirq,	  0% idle
+Modules linked in:
+irq event stamp: 73096
+hardirqs last  enabled at (73095): [<ffff80008037bc00>] console_emit_next_record kernel/printk/printk.c:2935 [inline]
+hardirqs last  enabled at (73095): [<ffff80008037bc00>] console_flush_all+0x650/0xb74 kernel/printk/printk.c:2994
+hardirqs last disabled at (73096): [<ffff80008af10b00>] __el1_irq arch/arm64/kernel/entry-common.c:533 [inline]
+hardirqs last disabled at (73096): [<ffff80008af10b00>] el1_interrupt+0x24/0x68 arch/arm64/kernel/entry-common.c:551
+softirqs last  enabled at (73048): [<ffff8000801ea530>] softirq_handle_end kernel/softirq.c:400 [inline]
+softirqs last  enabled at (73048): [<ffff8000801ea530>] handle_softirqs+0xa60/0xc34 kernel/softirq.c:582
+softirqs last disabled at (73043): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
+CPU: 0 PID: 6625 Comm: syz-executor782 Tainted: G        W          6.10.0-rc2-syzkaller-g8867bbd4a056 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+
+
+Testing showed that the problem did not occur if the two error
+messages -- the first two lines above -- were removed; apparently adding
+material to the kernel log takes a surprisingly large amount of time.
+
+In any case, the best approach for preventing these lockups and to
+avoid spamming the log with thousands of error messages per second is
+to ratelimit the two dev_err() calls.  Therefore we replace them with
+dev_err_ratelimited().
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Suggested-by: Greg KH <gregkh@linuxfoundation.org>
+Reported-and-tested-by: syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/linux-usb/00000000000073d54b061a6a1c65@google.com/
+Reported-and-tested-by: syzbot+1b2abad17596ad03dcff@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/linux-usb/000000000000f45085061aa9b37e@google.com/
+Fixes: 9908a32e94de ("USB: remove err() macro from usb class drivers")
+Link: https://lore.kernel.org/linux-usb/40dfa45b-5f21-4eef-a8c1-51a2f320e267@rowland.harvard.edu/
+Cc: stable@vger.kernel.org
+
+---
+
+ drivers/usb/class/cdc-wdm.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+Index: usb-devel/drivers/usb/class/cdc-wdm.c
+===================================================================
+--- usb-devel.orig/drivers/usb/class/cdc-wdm.c
++++ usb-devel/drivers/usb/class/cdc-wdm.c
+@@ -266,14 +266,14 @@ static void wdm_int_callback(struct urb
+ 			dev_err(&desc->intf->dev, "Stall on int endpoint\n");
+ 			goto sw; /* halt is cleared in work */
+ 		default:
+-			dev_err(&desc->intf->dev,
++			dev_err_ratelimited(&desc->intf->dev,
+ 				"nonzero urb status received: %d\n", status);
+ 			break;
+ 		}
+ 	}
+ 
+ 	if (urb->actual_length < sizeof(struct usb_cdc_notification)) {
+-		dev_err(&desc->intf->dev, "wdm_int_callback - %d bytes\n",
++		dev_err_ratelimited(&desc->intf->dev, "wdm_int_callback - %d bytes\n",
+ 			urb->actual_length);
+ 		goto exit;
+ 	}
 
