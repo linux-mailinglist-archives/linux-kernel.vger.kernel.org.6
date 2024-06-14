@@ -1,78 +1,72 @@
-Return-Path: <linux-kernel+bounces-214338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD739082F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:30:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E15069082F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83D671F2279B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:30:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C94C1F22813
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D18146A83;
-	Fri, 14 Jun 2024 04:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D9C146A97;
+	Fri, 14 Jun 2024 04:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="T6mBp3+T"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uIyWPRf6"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873851E4BE;
-	Fri, 14 Jun 2024 04:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C478145B0F;
+	Fri, 14 Jun 2024 04:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718339428; cv=none; b=FNjzb/narVxGywEyDXV4GOBuN/aUcU2uAJyU4bTd1fxWPsuY/rt5J704RmVzCMHXESeAQrAwJSmIhNLOQ+9iPMracQUwAoweYXsjgLpNmy+UD95hngQcuPiP8MfQHx+32MZBNS4s0loLDZ5a4+io5plZTW9b2sV8FMwcEXq2v80=
+	t=1718339408; cv=none; b=ltE02MFr7846Uv55CqFZaa8IxSV3dKfgd9oKJUaLNN4d9s42wAfd3q2YgsUfzX/mA3K97B2a4iwsVrcZoplRal08CYoDN5N/OZaHdWhX0QzUmLqHSN3+gT4ATrJFM5vT2VvFx+AJniFA72A8NZMGKgPGBSGiwi0W6zALfbASO6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718339428; c=relaxed/simple;
-	bh=tsflE49CV41bPrXn9OE6AiMLh5pZ25t/Y23e+/qJhy8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uy0DDbf5yfLuJ+h1QN00wRIMSz5BfFFL3VhprlgQa5g8x1OA+z8wDS/JF0KbyBi9oT3c2rvci0xR+h39z8tXva0lM2w1UPbnJloTX+Bwi3zmdvYbmmF191916wzgvY1xNm64po9gscFzyjdJnXKyzpkrVpAjNQKSYlJ/VZCuGbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=T6mBp3+T; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1718339421; x=1749875421;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tsflE49CV41bPrXn9OE6AiMLh5pZ25t/Y23e+/qJhy8=;
-  b=T6mBp3+TAcOXbjisT1nkUGnadFnFexdPgwJ1vXCEJE+nXhNoO8RiRACZ
-   0ae6tNYN4GgEMYxIAnM2OyzrD5uH2iOnnWE+7Y58Em/ksd6+ag+6l+PMN
-   aU51+1f08691TL+EimfSY9IFgQRYyqeYI5pGTxzXqvKZ/vcVRrOZ2WwxK
-   wwH15jwTu3Xfwb02Ro9VwxrcTwcz7H1V1NsLZHJIzMmd68oV+q8VDxT8V
-   Q8eI3CZKjNDDLxI8WnvXtx49UNOOa0l4WLTzpOnzmrmNZtNSOuOaKrAd2
-   pkJXJXQ6i0GUeqqNJ7qUSZqVcKhnGUx7dWvCm4mfDRKDbLti20PBgiCeR
-   A==;
-X-CSE-ConnectionGUID: OjLhOlxKTSaOlxAEgbhxtA==
-X-CSE-MsgGUID: I14g26kQRLef/3WKsLNqzQ==
-X-IronPort-AV: E=Sophos;i="6.08,236,1712646000"; 
-   d="scan'208";a="194898935"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Jun 2024 21:30:14 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 13 Jun 2024 21:29:34 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 13 Jun 2024 21:29:34 -0700
-Date: Fri, 14 Jun 2024 09:56:47 +0530
-From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-To: Horatiu Vultur <horatiu.vultur@microchip.com>
-CC: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>, <netdev@vger.kernel.org>,
-	<davem@davemloft.net>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bryan.whitehead@microchip.com>, <andrew@lunn.ch>, <linux@armlinux.org.uk>,
-	<sbauer@blackbox.su>, <hmehrtens@maxlinear.com>, <lxu@maxlinear.com>,
-	<hkallweit1@gmail.com>, <edumazet@google.com>, <pabeni@redhat.com>,
-	<wojciech.drewek@intel.com>, <UNGLinuxDriver@microchip.com>, "kernel test
- robot" <lkp@intel.com>
-Subject: Re: [PATCH net V4 2/3] net: lan743x: Support WOL at both the PHY and
- MAC appropriately
-Message-ID: <ZmvGhwxFNYx1OV4c@HYD-DK-UNGSW21.microchip.com>
-References: <20240612172539.28565-1-Raju.Lakkaraju@microchip.com>
- <20240612172539.28565-3-Raju.Lakkaraju@microchip.com>
- <20240613071532.tx376cehgvqjgyqx@DEN-DL-M31836.microchip.com>
+	s=arc-20240116; t=1718339408; c=relaxed/simple;
+	bh=0UjDZzGCwpS0vEyslgxoX8dO39jPgh2WtXXu/UWyOvs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y9Wm8aPWXKS4eklS9DGRSqrJKioCuW7tlDnPy4w4eUCSrWXX9hwTU1BvInJ8wrYsb2jj5u7B+malMWQ4toSNUm8/pPZjaqt4yut/gOCOGUCdd3OqSIiujnPoERo3bflvEPWUGNRQPgczDHbXSv4d1IdbgVUXGy4ljdNKDMLDL7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uIyWPRf6; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45E4TuFC071544;
+	Thu, 13 Jun 2024 23:29:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718339396;
+	bh=DxmtcHXwF27jHg8lT0TkaoTdHdPyc/MSkbPHQtr5PhM=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=uIyWPRf6BMHsY+YU+ibs9iXl1/u1EkydbBXWyoJRLvLZlD7v4ajb2zGO3fDxWOD6R
+	 uYCKOEJX/MoB5pQCHvG6MiY5Dz5jJ4zmUuEimhiWLJblPqbPhG+4lH+u1JhDv7BDmq
+	 QCyEAD9Uy9F9oJd6ESyoHqRE1qPambC+ccODLmIw=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45E4Tug7092429
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 13 Jun 2024 23:29:56 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 13
+ Jun 2024 23:29:56 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 13 Jun 2024 23:29:56 -0500
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45E4TqWY013799;
+	Thu, 13 Jun 2024 23:29:53 -0500
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, Siddharth Vadapalli <s-vadapalli@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>
+Subject: Re: [PATCH v4] arm64: dts: ti: k3-am62p: use eFuse MAC Address for CPSW3G Port 1
+Date: Fri, 14 Jun 2024 09:59:50 +0530
+Message-ID: <171826022276.240984.17076720942255752570.b4-ty@ti.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240604104425.3770037-1-s-vadapalli@ti.com>
+References: <20240604104425.3770037-1-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,49 +74,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20240613071532.tx376cehgvqjgyqx@DEN-DL-M31836.microchip.com>
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Horatiu,
+Hi Siddharth Vadapalli,
 
-The 06/13/2024 09:15, Horatiu Vultur wrote:
-> The 06/12/2024 22:55, Raju Lakkaraju wrote:
+On Tue, 04 Jun 2024 16:14:25 +0530, Siddharth Vadapalli wrote:
+> Add the "ethernet-mac-syscon" node within "wkup_conf" node corresponding to
+> the CTRLMMR_MAC_IDx registers within the CTRL_MMR space. Assign the
+> compatible "ti,am62p-cpsw-mac-efuse" to enable "syscon_regmap" operations
+> on these registers. The MAC Address programmed in the eFuse is accessible
+> through the CTRLMMR_MAC_IDx registers. The "ti,syscon-efuse" device-tree
+> property points to the CTRLMMR_MAC_IDx registers, allowing the CPSW driver
+> to fetch the MAC Address and assign it to the network interface associated
+> with CPSW3G MAC Port 1.
 > 
-> Hi Raju,
-> 
-> > Prevent options not supported by the PHY from being requested to it by the MAC
-> > Whenever a WOL option is supported by both, the PHY is given priority
-> > since that usually leads to better power savings.
-> > 
-> > Fixes: e9e13b6adc338 ("lan743x: fix for potential NULL pointer dereference with bare card")
-> 
-> I am not sure if you run checkpatch.pl, but this gives you a warning.
+> [...]
 
-I ran the checkpatch.pl on individual files and not on patches.
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-> The sha has too many chars.
+[1/1] arm64: dts: ti: k3-am62p: use eFuse MAC Address for CPSW3G Port 1
+      commit: 2116f8b73f69a02e42daa89ca3561f367a390e30
 
-Yes. instead of 12 chars, paste the 13 chars. I will fix this issue in next
-version of patch series.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-> 
-> > Signed-off-by: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-> > Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202406052200.w3zuc32H-lkp@intel.com/
-> 
-> I still don't think you should add the 'Reported-by' and 'Closes' tags
-> here because you introduced the issue in first V3 of this patch series.
-> Because the intel robot says: "If you fix the issue in a separate
-> patch/commit (i.e. not just a new version of the same patch/commit),
-> kindly add following tags".
-> 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Ok. I will remove.
-> -- 
-> /Horatiu
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
--- 
-Thanks,                                                                         
-Raju
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
+
 
