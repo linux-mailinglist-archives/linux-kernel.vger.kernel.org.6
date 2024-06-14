@@ -1,49 +1,77 @@
-Return-Path: <linux-kernel+bounces-214145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84BE7908026
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:21:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D404090802D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D7251F22F05
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:21:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C246C1C2166E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67F3BA33;
-	Fri, 14 Jun 2024 00:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD034A11;
+	Fri, 14 Jun 2024 00:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uuYLBKgB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k4jTeNhc"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D97FB67A;
-	Fri, 14 Jun 2024 00:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD2010E5
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 00:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718324442; cv=none; b=eSWIZxCSOuoKz91QgXbRxMa/53NsUjEA31xY9XIw5JyU3JruhQf8eRE/bwQa+VeeNGc2JUmranbEAZy9BKly/wOOr6aDHfvP3W3YEI2zj6xBXcxBv7HpLQuZDmn52Z8nSaiTwgS5hHNFGMkrP8N7nUkA1sA1Lw4nsCgYEthdCrc=
+	t=1718324970; cv=none; b=U1X7trC/MqVEozBgPkoFmd6tMSdf/xykAUk0n5vSgOEiI+DymRfO4r1vv21Il/LzfIPZ0ZVrwD+4gMXb8uF7/uYID+hcp2JYILjwIyHBcAw2F1i4GJDWF3tIqecwNeGnmvwDHy3kvTwoAiQhG91m19o/kbcOAILYpQnNVvadpUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718324442; c=relaxed/simple;
-	bh=S/2pfU1IGSj701N+VWuSME9P0RlCpEu9nKujv7ihyS8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=kX5R2LBZO0EBThK+WMyo6dMh7WMWljbrT/9kkpXbiOcTxzDMy13cxS/N0FrfBaoxoABD0uQXVyVpYOIYCjys0ujQDuHQYYvqOMEZ4LNLJceI00awU/fCGWsvHX9PLPff+UgDjgYOKbPtHBz4iuIyFncC4diDHRPeEm+n4UsaY3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uuYLBKgB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8FB8BC4AF1C;
-	Fri, 14 Jun 2024 00:20:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718324441;
-	bh=S/2pfU1IGSj701N+VWuSME9P0RlCpEu9nKujv7ihyS8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=uuYLBKgBes4bUU62q0xu2I8Alf3Td9Ku5reUbAWCaNF0i7eNNGH2MehRwPmx1EdsX
-	 k+Bth8QON6oZtZtNRkUd2p+8TCyIXB51ajDUvlaqohRNu/5E/l3QGvS4mEo0nnFkgz
-	 mTeWE8GHgwb1unMmdRXLHLtkN6tHoTHSJ+02OSUiRDY+HVBsTAqZ5mFU+aYL80jVZ7
-	 dL299+AO2CZSfFTrYaXJAIlFUaZEnFXJAldGOOX5dt4UiMFVWrWziapKpGDj++9PDk
-	 PCFOzx00gIi8q7y1boqAmMgNWbnvG30oh/Fg6xj7dvg4ZzKUXhMczewB84Z3PqJ5Nc
-	 VJXf88jggKrDg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 82C7BC43619;
-	Fri, 14 Jun 2024 00:20:41 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718324970; c=relaxed/simple;
+	bh=T2he062ue1HNH8zhVhTmZYo97bqquj2cJtHADAM2+wQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p+P6RHzUxoIDRzf8Mp23yU0PJJpqwxDhFmDWhAOODdV8mHZCLAniV7BTifUU45zNso0uZ4V8DYDhGLUT9/8HeZ2nULNxQUFLgMsnaxDIKwQYadhzHpVloABvN5EVtb5f6EnywDODBwD/dkSMmVtM5jt4sshaPMPhkpVZauIvrmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=k4jTeNhc; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f6559668e1so14573575ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 17:29:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718324968; x=1718929768; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vAXuwHTaTYrsYM6s/dd4FG1g6cVtV1H7rdN2ktdyH7c=;
+        b=k4jTeNhcXiU5xbTxGYcBd6b0gM/QBZyu3Wdg+36mdfW9Uozs5NOMdnfkCx2AQn/2YF
+         dg3yCWSLeIP8TROdmbFEPcaNVC2th9knOkGitlZiGXdYPjB/B3CE1ZkQnjrxC4+2arGm
+         qU0S16/F+r5/Ro0G8dEJi6+dVjQmsKn6t0pAM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718324968; x=1718929768;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vAXuwHTaTYrsYM6s/dd4FG1g6cVtV1H7rdN2ktdyH7c=;
+        b=d3l023H7kJg80E8QoGhAXdkQpfHy7wf3Teemx7w3hvHkmcPVMxtOPj+Nzq/rya0c6z
+         vYpT0AAgAYmLZRr1RBdPR40iKuIHyk5ZS1vVO7KMabWtfJkQLc1pl6nA4ddfoiKe+5/X
+         T9cL4oL7iS01ODuu4Icn7Y5Cb4Z+d8kdXo3p3gGJCphVkl7qD3MFhpd7u2NFwCXRpwFq
+         81fRQVAskmyBkhG+0d+myrwX5CtaTciAwML8quhCK0Ri2SsBedl9+WpfvEnCEk1U7e8s
+         jd3/X8d6B6OaqeTxr5UMw02fOR2GT8scbP40Ppg9PrvvedxsCDIArUTdHNlfBeAHj1AR
+         PCsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkeDpYMEYmOGcL8XmqDHnipfht0BfK0LeL0GriHH4uU2k09cFjdpURRer9NM1QHZhTh6+y6Z/9Y2u+1di2jMBP1XHMnMoyvOs9S/5/
+X-Gm-Message-State: AOJu0Ywu84mP3v+enHW11+HapbeoWV8L0AWdsi6iGizQRsBYvQxNWPF6
+	/1j8yQipnZgSb7yJfU8IrWp82Nhv6KPGih5MIToalUPWQuIB+839Xptu/So4iw==
+X-Google-Smtp-Source: AGHT+IFddZb/c9WlVWqx71wMPL2wiPOMYe6aPHyvNvwQXAApDuCNpd5EOPWsxF1Q/XbfkcshJ0oldA==
+X-Received: by 2002:a17:902:ce87:b0:1f5:e635:21e8 with SMTP id d9443c01a7336-1f8625ce721mr14599345ad.2.1718324967771;
+        Thu, 13 Jun 2024 17:29:27 -0700 (PDT)
+Received: from rekanorman3.syd.corp.google.com ([2401:fa00:9:14:b30:9938:9b1b:b70b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f3946esm20203555ad.269.2024.06.13.17.29.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 17:29:26 -0700 (PDT)
+From: Reka Norman <rekanorman@chromium.org>
+To: Mathias Nyman <mathias.nyman@intel.com>
+Cc: Reka Norman <rekanorman@chromium.org>,
+	stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH v2] xhci: Apply XHCI_RESET_TO_DEFAULT quirk to TGL
+Date: Fri, 14 Jun 2024 10:28:19 +1000
+Message-ID: <20240614002917.4014146-1-rekanorman@chromium.org>
+X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,67 +79,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v5 00/12] net: dsa: lantiq_gswip: code improvements
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171832444153.14234.12409372518780096116.git-patchwork-notify@kernel.org>
-Date: Fri, 14 Jun 2024 00:20:41 +0000
-References: <20240611135434.3180973-1-ms@dev.tdt.de>
-In-Reply-To: <20240611135434.3180973-1-ms@dev.tdt.de>
-To: Martin Schiller <ms@dev.tdt.de>
-Cc: martin.blumenstingl@googlemail.com, hauke@hauke-m.de, andrew@lunn.ch,
- f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+TGL systems have the same issue as ADL, where a large boot firmware
+delay is seen if USB ports are left in U3 at shutdown. So apply the
+XHCI_RESET_TO_DEFAULT quirk to TGL as well.
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+The issue it fixes is a ~20s boot time delay when booting from S5. It
+affects TGL devices, and TGL support was added starting from v5.3.
 
-On Tue, 11 Jun 2024 15:54:22 +0200 you wrote:
-> This patchset for the lantiq_gswip driver is a collection of minor fixes
-> and coding improvements by Martin Blumenstingl without any real changes
-> in the actual functionality.
-> 
-> === Changelog ===
-> From v4:
-> - merge dt-bindings patches to satisfy 'make dt_bindings_check' and add
->   some improvements suggested by Rob Herring
-> 
-> [...]
+Cc: stable@vger.kernel.org
+Signed-off-by: Reka Norman <rekanorman@chromium.org>
+---
 
-Here is the summary with links:
-  - [net-next,v5,01/12] dt-bindings: net: dsa: lantiq,gswip: convert to YAML schema
-    https://git.kernel.org/netdev/net-next/c/c7f75954212b
-  - [net-next,v5,02/12] net: dsa: lantiq_gswip: Only allow phy-mode = "internal" on the CPU port
-    https://git.kernel.org/netdev/net-next/c/b98f122ebdac
-  - [net-next,v5,03/12] net: dsa: lantiq_gswip: add terminating \n where missing
-    https://git.kernel.org/netdev/net-next/c/dd6d364e1895
-  - [net-next,v5,04/12] net: dsa: lantiq_gswip: Use dev_err_probe where appropriate
-    https://git.kernel.org/netdev/net-next/c/1763b155da02
-  - [net-next,v5,05/12] net: dsa: lantiq_gswip: Don't manually call gswip_port_enable()
-    https://git.kernel.org/netdev/net-next/c/f5ebf9ab6094
-  - [net-next,v5,06/12] net: dsa: lantiq_gswip: do also enable or disable cpu port
-    https://git.kernel.org/netdev/net-next/c/86b9ea6412af
-  - [net-next,v5,07/12] net: dsa: lantiq_gswip: Use dsa_is_cpu_port() in gswip_port_change_mtu()
-    https://git.kernel.org/netdev/net-next/c/7168ec1b0669
-  - [net-next,v5,08/12] net: dsa: lantiq_gswip: Change literal 6 to ETH_ALEN
-    https://git.kernel.org/netdev/net-next/c/c927b6e47b5c
-  - [net-next,v5,09/12] net: dsa: lantiq_gswip: Consistently use macros for the mac bridge table
-    https://git.kernel.org/netdev/net-next/c/e6c34597f89a
-  - [net-next,v5,10/12] net: dsa: lantiq_gswip: Remove dead code from gswip_add_single_port_br()
-    https://git.kernel.org/netdev/net-next/c/b068706b7831
-  - [net-next,v5,11/12] net: dsa: lantiq_gswip: Update comments in gswip_port_vlan_filtering()
-    https://git.kernel.org/netdev/net-next/c/e19fbe3996aa
-  - [net-next,v5,12/12] net: dsa: lantiq_gswip: Improve error message in gswip_port_fdb()
-    https://git.kernel.org/netdev/net-next/c/3b0a95ed7782
+Changes in v2:
+- Add cc stable
 
-You are awesome, thank you!
+ drivers/usb/host/xhci-pci.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index c040d816e626..137bd3da1128 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -49,6 +49,7 @@
+ #define PCI_DEVICE_ID_INTEL_DENVERTON_XHCI		0x19d0
+ #define PCI_DEVICE_ID_INTEL_ICE_LAKE_XHCI		0x8a13
+ #define PCI_DEVICE_ID_INTEL_TIGER_LAKE_XHCI		0x9a13
++#define PCI_DEVICE_ID_INTEL_TIGER_LAKE_PCH_XHCI		0xa0ed
+ #define PCI_DEVICE_ID_INTEL_COMET_LAKE_XHCI		0xa3af
+ #define PCI_DEVICE_ID_INTEL_ALDER_LAKE_PCH_XHCI		0x51ed
+ #define PCI_DEVICE_ID_INTEL_ALDER_LAKE_N_PCH_XHCI	0x54ed
+@@ -372,7 +373,8 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+ 		xhci->quirks |= XHCI_MISSING_CAS;
+ 
+ 	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
+-	    (pdev->device == PCI_DEVICE_ID_INTEL_ALDER_LAKE_PCH_XHCI ||
++	    (pdev->device == PCI_DEVICE_ID_INTEL_TIGER_LAKE_PCH_XHCI ||
++	     pdev->device == PCI_DEVICE_ID_INTEL_ALDER_LAKE_PCH_XHCI ||
+ 	     pdev->device == PCI_DEVICE_ID_INTEL_ALDER_LAKE_N_PCH_XHCI))
+ 		xhci->quirks |= XHCI_RESET_TO_DEFAULT;
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.45.2.627.g7a2c4fd464-goog
 
 
