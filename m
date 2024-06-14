@@ -1,39 +1,53 @@
-Return-Path: <linux-kernel+bounces-214975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C1A908CD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:58:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF95D908CE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CD1428B11B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:58:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 650A01F27B0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EE18F6A;
-	Fri, 14 Jun 2024 13:58:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5709F1CAAC
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6FBEAF0;
+	Fri, 14 Jun 2024 14:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="YV0Uon9a"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E26946C;
+	Fri, 14 Jun 2024 14:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718373500; cv=none; b=ftlv44ZRPGAHPIG6HOMvZMx+I0+YF8fIcqw8XsB//D0D05UDDoldaJk0TPQXyAQFU98mlXur6lI6i3rWnps2SPd3laWylqhrbP++yVt3Z33Sf7VPmox2d7g1CzuqZuAFFQ5I34YDMlPCTo5BF+q78qy3ohkUhUujjBNrhCuCHdY=
+	t=1718373645; cv=none; b=Y+MwBHas94PgGKHD/dCfGOA/qOJk5xVl9C4WT5Em4DW5UR3lVyxTTFEkNP1bLAhlHIzVaRcgXdRQps6+hn/ChOA+AcXJBICNFI4psWj8WkDyZmDi7jTq8UEq+TowpEQkWBPetKtbAhGTbRm0Lo8gJfKBMUt3Yr7w32yQMztRACc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718373500; c=relaxed/simple;
-	bh=TPzSN2V5iRobz2v//rjtERo2shqj+YEzRbBKLVukUE4=;
+	s=arc-20240116; t=1718373645; c=relaxed/simple;
+	bh=dtFIOzcHGLlLE56fbYI20sRmcTssDT8CPilSpqCXXcc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L7WYIJ7mbU9lXWBIMlMp6wwL2i+BKb0UKZiMc1gXSUbIIT3Eq0vLx9cI+L1NHuQ2aB5u6lmIOEuKoEJGdNjWud/VGgOJceX6bMg1APbATrKXPgbCx9NwHz5OnFstIgEVwgshyqm6tBBxRD89bhhkjgvihWH9cgMAr8rIdWlGh04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7B39A1480;
-	Fri, 14 Jun 2024 06:58:43 -0700 (PDT)
-Received: from [10.1.196.28] (eglon.cambridge.arm.com [10.1.196.28])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 39DC83F5A1;
-	Fri, 14 Jun 2024 06:58:15 -0700 (PDT)
-Message-ID: <3b31aab6-a264-4ccb-aca3-f75be21741b8@arm.com>
-Date: Fri, 14 Jun 2024 14:58:14 +0100
+	 In-Reply-To:Content-Type; b=fISNHFQ7Zgx9cfcks90+wCroVWgPuTrwSdkMyGjAjE25U30UKLR+EkZ19AstDhaokv2OEr6DhfvRGCkXxc5pC9yBLreZWasM4lMSaR2dSvMj49tp97lA1dDTLXUTzlV6P+CMwqBpSuwrnGghvi5Ob7ZYRWRy8mFF1su4BpY7L98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=YV0Uon9a; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 5FC1B889E9;
+	Fri, 14 Jun 2024 16:00:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1718373640;
+	bh=oUw90xGCTf/R7dw6Q3/eRNoQsVdHr+6eZVmO95Kclv0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YV0Uon9aW17RuCD2I4tLNs4DUZh687c3Uzp0pSqI0WjWtGi3wy/YSfHzpAllZ8CJz
+	 JtkJAsx53o2sX9XjurbO82uIhR/kzhnYuhD7d7iebIry7SBe+Dp1VQe8L43ScrhPMK
+	 kaCqr/zf0OxMR0gf1uyTc38MKAf53kOyHA17vPwJLlR1CI4QG2OAKm0k+la4y6nshX
+	 x2TlhJMvLdupYil3eY9sD9Phf2/UCVhetIPFnc9QLbBNpzxWQK45xZe4zMckCjP1Lp
+	 N5ngCLXil0/7/DcqEYSWbQNvpTTZ5Dd1jafnPFnSkIiiLB6G6RAkPjYPtjCgxoHMKG
+	 1Usv9sWiKenVQ==
+Message-ID: <4c2f1bac-4957-4814-bf62-816340bd9ff6@denx.de>
+Date: Fri, 14 Jun 2024 15:58:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,131 +55,160 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 24/31] x86/resctrl: Move get_config_index() to a header
-Content-Language: en-GB
-To: Reinette Chatre <reinette.chatre@intel.com>,
- Dave Martin <Dave.Martin@arm.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
- Fenghua Yu <fenghua.yu@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>
-References: <20240321165106.31602-1-james.morse@arm.com>
- <20240321165106.31602-25-james.morse@arm.com>
- <bfc39b79-b3bf-4187-ba63-56db1ed6d565@intel.com>
- <Zhfy3goUX8kWM5Hn@e133380.arm.com>
- <e3304a27-0c2c-4981-ae4c-01540c180628@intel.com>
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <e3304a27-0c2c-4981-ae4c-01540c180628@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [net-next,PATCH 2/2] net: stmmac: dwmac-stm32: stm32: add
+ management of stm32mp25 for stm32
+To: Christophe Roullier <christophe.roullier@foss.st.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>, Jose Abreu
+ <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240614130812.72425-1-christophe.roullier@foss.st.com>
+ <20240614130812.72425-3-christophe.roullier@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <20240614130812.72425-3-christophe.roullier@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Hi guys,
+On 6/14/24 3:08 PM, Christophe Roullier wrote:
 
-On 11/04/2024 18:41, Reinette Chatre wrote:
-> On 4/11/2024 7:25 AM, Dave Martin wrote:
->> On Mon, Apr 08, 2024 at 08:25:26PM -0700, Reinette Chatre wrote:
->>> On 3/21/2024 9:50 AM, James Morse wrote:
->>>> get_config_index() is used by the architecture specific code to map a
->>>> CLOSID+type pair to an index in the configuration arrays.
->>>>
->>>> MPAM needs to do this too to preserve the ABI to user-space, there is
->>>> no reason to do it differently.
->>>>
->>>> Move the helper to a header file.
+[...]
 
->>>> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
->>>> index 3de5bc63ace0..73c111963433 100644
->>>> --- a/include/linux/resctrl.h
->>>> +++ b/include/linux/resctrl.h
->>>> @@ -258,6 +258,21 @@ bool resctrl_arch_is_evt_configurable(enum resctrl_event_id evt);
->>>>  void resctrl_arch_mon_event_config_write(void *info);
->>>>  void resctrl_arch_mon_event_config_read(void *info);
->>>>  
->>>> +/* For use by arch code to remap resctrl's smaller CDP CLOSID range */
->>>> +static inline u32 resctrl_get_config_index(u32 closid,
->>>> +					   enum resctrl_conf_type type)
->>>> +{
->>>> +	switch (type) {
->>>> +	default:
->>>> +	case CDP_NONE:
->>>> +		return closid;
->>>> +	case CDP_CODE:
->>>> +			return (closid * 2) + 1;
->>>> +	case CDP_DATA:
->>>> +			return (closid * 2);
->>>> +	}
->>>> +}
->>>
->>> (please check the tabs)
->>
->> Noted.  I also see that redundant parentheses seem spuriously added
->> compared with the original version of this moved code.  I can make a
->> note to drop them if you prefer.
->>
->>> This change is unexpected to me. Could you please elaborate how
->>> MPAM's variant of CDP works?
->>>
->>> Thank you very much.
->>>
->>> Reinette
->>
->> Note: I haven't discussed this specifically with James, so the following
->> is my best guess at the rationale...  With that in mind:
->>
->> For MPAM, CDP isn't a special mode; instead, the PARTIDs for
->> instructions and data are always configured independently in the CPU.
->> If resctrl is not configured for CDP, we simply program the same PARTID
->> value both for instructions and data on task switch.
->>
->> For a given resctrl control group we could pick two random unrelated
->> PARTIDs, but there seems to be no advantage in doing that since resctrl
->> enables cdp globally or not, and we would require more effort to
->> translate resctrl closids to PARTIDs if we didn't pair the IDs up
->> systematically.
->>
->> (See [1], [2] in James' snapshot, which illustrate how he proposes
->> to do it.)
->>
->>
->> So, we may as well stick with the same scheme already established for
->> x86: nothing forces us to do that, but it looks simpler than the
->> alternatives.  I think that's the idea, anyway.
->>
->> Then, if the same scheme is used by multiple arches (and 100% of the
->> arches currently known to resctrl), it probably makes sense to share the
->> definition of the mapping at least as a default for arches that don't
->> have their own different ways of doing it.
->>
->> Does this make sense?
-> 
-> It does, thank you very much.
+> +static int stm32mp2_configure_syscfg(struct plat_stmmacenet_data *plat_dat)
+> +{
+> +	struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
+> +	u32 reg = dwmac->mode_reg;
+> +	int val = 0;
+> +
+> +	switch (plat_dat->mac_interface) {
+> +	case PHY_INTERFACE_MODE_MII:
+> +		break;
 
-Thanks for the summary Dave - spot on!
+dwmac->enable_eth_ck does not apply to MII mode ? Why ?
 
-There are some additional headaches for MPAM to provide the counters when CDP emulation is
-enabled: because two CLOSID/PARTID are in use, two counters have to be allocated and read,
-and their counters summed. This is all done behind the scenes in the MPAM driver.
+> +	case PHY_INTERFACE_MODE_GMII:
+> +		if (dwmac->enable_eth_ck)
+> +			val |= SYSCFG_ETHCR_ETH_CLK_SEL;
+> +		break;
+> +	case PHY_INTERFACE_MODE_RMII:
+> +		val = SYSCFG_ETHCR_ETH_SEL_RMII;
+> +		if (dwmac->enable_eth_ck)
+> +			val |= SYSCFG_ETHCR_ETH_REF_CLK_SEL;
+> +		break;
+> +	case PHY_INTERFACE_MODE_RGMII:
+> +	case PHY_INTERFACE_MODE_RGMII_ID:
+> +	case PHY_INTERFACE_MODE_RGMII_RXID:
+> +	case PHY_INTERFACE_MODE_RGMII_TXID:
+> +		val = SYSCFG_ETHCR_ETH_SEL_RGMII;
+> +		if (dwmac->enable_eth_ck)
+> +			val |= SYSCFG_ETHCR_ETH_CLK_SEL;
+> +		break;
+> +	default:
+> +		dev_err(dwmac->dev, "Mode %s not supported",
+> +			phy_modes(plat_dat->mac_interface));
+> +		/* Do not manage others interfaces */
+> +		return -EINVAL;
+> +	}
+> +
+> +	dev_dbg(dwmac->dev, "Mode %s", phy_modes(plat_dat->mac_interface));
+> +
+> +	/*  select PTP (IEEE1588) clock selection from RCC (ck_ker_ethxptp) */
 
-MBA gets even more fun - as there is no MBA_CODE/MBA_DATA - but whatever MPAM is using to
-back the MBA resource sees two CLOSID/PARTID. The result is the MPAM driver has to replay
-configuration changes to the second CLOSID/PARTID. Again, this is done behind the scenes
-in the MPAM driver.
+Drop extra leading space.
+Sentence starts with capital letter.
+
+> +	val |= SYSCFG_ETHCR_ETH_PTP_CLK_SEL;
+> +
+> +	/* Update ETHCR (set register) */
+> +	return regmap_update_bits(dwmac->regmap, reg,
+> +				 SYSCFG_MP2_ETH_MASK, val);
+> +}
+> +
+>   static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
+>   {
+>   	int ret;
+> @@ -292,6 +346,21 @@ static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
+>   	return stm32mp1_configure_pmcr(plat_dat);
+>   }
+>   
+> +static int stm32mp2_set_mode(struct plat_stmmacenet_data *plat_dat)
+> +{
+> +	int ret;
+> +
+> +	ret = stm32mp1_select_ethck_external(plat_dat);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = stm32mp1_validate_ethck_rate(plat_dat);
+> +	if (ret)
+> +		return ret;
 
 
-(and as we're on this topic: I've had requests to make the counters available for code and
-data separately - I don't intend to do this in resctrl as it wouldn't be portable to x86.
-I'm looking at doing this with the perf pmu stuff)
+Is it necessary to duplicate this entire function instead of some:
 
+if (is_mp2)
+   return stm32mp2_configure_syscfg(plat_dat);
+else
+   return stm32mp1_configure_syscfg(plat_dat);
 
-Thanks,
+?
 
-James
+> +	return stm32mp2_configure_syscfg(plat_dat);
+> +}
+> +
+>   static int stm32mcu_set_mode(struct plat_stmmacenet_data *plat_dat)
+>   {
+>   	struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
+> @@ -348,12 +417,6 @@ static int stm32_dwmac_parse_data(struct stm32_dwmac *dwmac,
+>   		return PTR_ERR(dwmac->clk_rx);
+>   	}
+>   
+> -	if (dwmac->ops->parse_data) {
+> -		err = dwmac->ops->parse_data(dwmac, dev);
+> -		if (err)
+> -			return err;
+> -	}
+> -
+>   	/* Get mode register */
+>   	dwmac->regmap = syscon_regmap_lookup_by_phandle(np, "st,syscon");
+>   	if (IS_ERR(dwmac->regmap))
+> @@ -365,20 +428,14 @@ static int stm32_dwmac_parse_data(struct stm32_dwmac *dwmac,
+>   		return err;
+>   	}
+>   
+> -	dwmac->mode_mask = SYSCFG_MP1_ETH_MASK;
+> -	err = of_property_read_u32_index(np, "st,syscon", 2, &dwmac->mode_mask);
+> -	if (err) {
+> -		if (dwmac->ops->is_mp13)
+> -			dev_err(dev, "Sysconfig register mask must be set (%d)\n", err);
+> -		else
+> -			dev_dbg(dev, "Warning sysconfig register mask not set\n");
+> -	}
+> +	if (dwmac->ops->parse_data)
+> +		err = dwmac->ops->parse_data(dwmac, dev);
+
+Why is this change here ? What is the purpose ?
+This should be documented in commit message too.
+
+The indirect call is not necessary either, simply do
+
+if (is_mp2)
+   return err;
+
+... do mp15/13 stuff here ...
+
+return err;
+
+[...]
 
