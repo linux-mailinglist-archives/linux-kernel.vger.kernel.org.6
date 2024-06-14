@@ -1,124 +1,296 @@
-Return-Path: <linux-kernel+bounces-214983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FB39908CE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:00:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE93908CD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CAA528B280
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:00:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EB1A285801
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04E2BA38;
-	Fri, 14 Jun 2024 14:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="a3kZRRhg"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13809463;
+	Fri, 14 Jun 2024 13:57:21 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D5119D8A7;
-	Fri, 14 Jun 2024 14:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A486FCB
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718373643; cv=none; b=q7dZUfhD/16jhNuszdQDJZK51lJQTzx4cyCwEbAJLEU458OBl1ivNwLOoKdsjE1r+JIphqCM7jod66P0dqSffDxEom2d+gI0LxclVc2N96g1Snto7KNJr4Dob7CL4/6Ws7T49XBmEmPM7b+zGaWpyVoZZhSbMARp0fwr2LmdTKI=
+	t=1718373441; cv=none; b=o3t3UURxO8MooyHiT38VIptWiqyyRPY5FeLvQoS3VlJnxoaslikHvg5DYkDPH2u+jG7dCxeCaMwcR+tinFmK/vQNlyqCxk28VgeON03WDHgpfwi1i8UQfJEWkksJwhO+K+m7o3LAMVstDqCZ/8/KwaSNi7/M/Elktr2rxXv1qhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718373643; c=relaxed/simple;
-	bh=N3ena08kJ6d6XrNJnJXjlULm5ttbXBgY0ikmHO0V7LI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bkx8YCaQpKEtC86aFHFMxYs365kwyXnt8OO44fXj5Cjpu8LuHR8IJm0fr94m5D2yKZXADmcQPey7JLA7I+TLxgozMgmvjCGb385KaVxSG0tZmnyCWLEMEz//nnejLcD791/kt2LoLKctiAt3gMnKvCBOcFtXuQQpkjN0zag8vVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=a3kZRRhg; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 5DB35889EC;
-	Fri, 14 Jun 2024 16:00:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1718373639;
-	bh=4+DN2i7csqmQcAXLvxkcKDrBrfSZbHHe/kZgUCJhXOI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=a3kZRRhgOmNtheXARqqNagHPCshPBM7Gz0hWk44rNgmGJlEMoFnH7r83Jhr+nfyHa
-	 +RfsmHIroQ9Y9DcPkjHBv76qG5f5IFQGAPoKMVHvhZPsiDhfryxIZt7pvPuB3GTLMO
-	 +kve1Jlc30+9GuSIjpVPs8P8jaY44ux3jDEd28AtpiJosO+USCOBJq+KVwsBsaU5mP
-	 tkgTYMenPeVEkEoQy+jaXecH80U3DZF0ZoI3ALacht9er/PL9lzHYnyRRrx0jAv9LG
-	 moYl3iGrflhI4xX9uy8GuZBrnbhLQ3E25o8eMDY9wXh8HIIdQIJ7SyNC/GHiDuQI+P
-	 Zr0kEUDFKa9XQ==
-Message-ID: <d7006e54-c0e8-445c-a589-9674235913a6@denx.de>
-Date: Fri, 14 Jun 2024 15:53:43 +0200
+	s=arc-20240116; t=1718373441; c=relaxed/simple;
+	bh=BYD8UOEU2vVnYti+IZtFPBfQoWeOOHaqqXqCOEEm9a4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=R+j0WpP6o4jf+G4RiH7iJG6mNb9RG2wLEN0q/ShcIwmKhW0q2DjFe1f4U0KagXJMGVnkIzyilIE6F0UXGB0gy1s0lR3DbazIKgjOttQMpTsY8G0QBMqsnxDeJ+w/aFNsElXjZ5UbLHEt1eCVw0wWuaj6AD5yUFAnGZYVFd4NUW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3746147204eso24701675ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 06:57:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718373438; x=1718978238;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AKfSpRWCAohZXKFpcx5c8GbsuZPJk363sAvhcB7aaFk=;
+        b=EknTmUlFFKcn2luvlN5GIjXT1W+lZxA02H31xqBix1e19PbH2FDi0Y02Jj7jKfyR5F
+         4N31q9WtQa4DBQErElVMESqJ9h0akaBYYnIofcEM5Wa/YXLEFzXiy8kc2DYZYyjL84aF
+         9ItIcmFJ6JXtcmBnX88keq1wL9SsGVE34i5GWKIus9cBIxwmfGdxXolErsoq092ZX8u7
+         rhecbQxsj2Jsh1YU+DBB0A76jz+OXwnLIpsO5+Vk598WA3rgRZqYSC9HKT4tleU4dt2j
+         N0todxYvzBPOHUD7/2R58yMtmQz36PL/NbiK1uXXqaP+/bJQ5+Z94dNHj9QIFQ74V/Fo
+         B2pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxpRcXYOdBe3F1qKZEBh6vN0MehBjZss9a8Y2ATNLTi9Hc0pngAf6MkAh51iBQffVpujPqXDmmh1J8JAMwH0U2hh91qu4uIKgB0h63
+X-Gm-Message-State: AOJu0YxeNJ0zpc+XdHYxpJyLfHVxmdupRXzdgI8gYH3emHgPVISg+A8S
+	WxqS8fzmLNZgSiEHW5amwo1I73u/crzV9gZ0P6ZUVadRQLzC9Ow7SwV9vOLYBpy9QJyXaubZmIN
+	nHyHl8BNm4Fsn9VJUOTxoaRWFp9KNtfAwqKNjL2/+mcHmS8kYFzSZcP0=
+X-Google-Smtp-Source: AGHT+IGun4W5Tjwq8Ryn2pfhvlBE3+obd/1fTziq7wxTty3KC22+aeEND9OHvCNW7ijYqKL8UNSkGSaV4yNuchci12SYaO5w11IE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next,PATCH 1/2] dt-bindings: net: add STM32MP25 compatible
- in documentation for stm32
-To: Christophe Roullier <christophe.roullier@foss.st.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Richard Cochran <richardcochran@gmail.com>, Jose Abreu
- <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240614130812.72425-1-christophe.roullier@foss.st.com>
- <20240614130812.72425-2-christophe.roullier@foss.st.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <20240614130812.72425-2-christophe.roullier@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+X-Received: by 2002:a05:6e02:194d:b0:375:dad7:a664 with SMTP id
+ e9e14a558f8ab-375e1036551mr1968155ab.6.1718373438558; Fri, 14 Jun 2024
+ 06:57:18 -0700 (PDT)
+Date: Fri, 14 Jun 2024 06:57:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000065a682061ad9fe42@google.com>
+Subject: [syzbot] [net?] KASAN: slab-out-of-bounds Read in mini_qdisc_pair_swap
+From: syzbot <syzbot+f243d5f2675d3151439a@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, jhs@mojatatu.com, 
+	jiri@resnulli.us, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/14/24 3:08 PM, Christophe Roullier wrote:
-> New STM32 SOC have 2 GMACs instances.
-> GMAC IP version is SNPS 5.30
-> 
-> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
-> ---
->   Documentation/devicetree/bindings/net/stm32-dwmac.yaml | 6 ++++++
->   1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/stm32-dwmac.yaml b/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
-> index f6e5e0626a3f..d087d8eaea12 100644
-> --- a/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
-> +++ b/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
-> @@ -23,12 +23,17 @@ select:
->             - st,stm32-dwmac
->             - st,stm32mp1-dwmac
->             - st,stm32mp13-dwmac
-> +          - st,stm32mp25-dwmac
->     required:
->       - compatible
->   
->   properties:
->     compatible:
->       oneOf:
-> +      - items:
-> +          - enum:
-> +              - st,stm32mp25-dwmac
-> +          - const: snps,dwmac-5.20
->         - items:
->             - enum:
->                 - st,stm32mp1-dwmac
-> @@ -121,6 +126,7 @@ allOf:
->           compatible:
->             contains:
->               enum:
-> +              - st,stm32mp25-dwmac
->                 - st,stm32mp1-dwmac
->                 - st,stm32-dwmac
+Hello,
 
-Keep the list sorted please.
+syzbot found the following issue on:
+
+HEAD commit:    707081b61156 Merge branch 'for-next/core', remote-tracking..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=149601f1180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=caeac3f3565b057a
+dashboard link: https://syzkaller.appspot.com/bug?extid=f243d5f2675d3151439a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6cad68bf7532/disk-707081b6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1a27e5400778/vmlinux-707081b6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/67dfc53755d0/Image-707081b6.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f243d5f2675d3151439a@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in mini_qdisc_pair_swap+0x68/0x164 net/sched/sch_generic.c:1557
+Read of size 8 at addr ffff00018c4b9000 by task kworker/u4:6/261
+
+CPU: 1 PID: 261 Comm: kworker/u4:6 Not tainted 6.8.0-rc7-syzkaller-g707081b61156 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/29/2024
+Workqueue: netns cleanup_net
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:291
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:298
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x178/0x518 mm/kasan/report.c:488
+ kasan_report+0xd8/0x138 mm/kasan/report.c:601
+ __asan_report_load8_noabort+0x20/0x2c mm/kasan/report_generic.c:381
+ mini_qdisc_pair_swap+0x68/0x164 net/sched/sch_generic.c:1557
+ clsact_chain_head_change+0x28/0x38 net/sched/sch_ingress.c:60
+ tcf_chain_head_change_item net/sched/cls_api.c:493 [inline]
+ tcf_chain0_head_change_cb_del+0x1e0/0x2d8 net/sched/cls_api.c:940
+ tcf_block_put_ext+0xfc/0x33c net/sched/cls_api.c:1529
+ clsact_destroy+0x1fc/0x790 net/sched/sch_ingress.c:300
+ __qdisc_destroy+0x160/0x4b8 net/sched/sch_generic.c:1067
+ qdisc_put net/sched/sch_generic.c:1094 [inline]
+ shutdown_scheduler_queue+0x168/0x200 net/sched/sch_generic.c:1147
+ dev_shutdown+0x244/0x480 net/sched/sch_generic.c:1481
+ unregister_netdevice_many_notify+0x7f4/0x17b8 net/core/dev.c:11073
+ unregister_netdevice_many net/core/dev.c:11139 [inline]
+ default_device_exit_batch+0xa1c/0xa9c net/core/dev.c:11619
+ ops_exit_list net/core/net_namespace.c:175 [inline]
+ cleanup_net+0x5dc/0x8d0 net/core/net_namespace.c:618
+ process_one_work+0x694/0x1204 kernel/workqueue.c:2633
+ process_scheduled_works kernel/workqueue.c:2706 [inline]
+ worker_thread+0x938/0xef4 kernel/workqueue.c:2787
+ kthread+0x288/0x310 kernel/kthread.c:388
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+
+Allocated by task 5782:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x40/0x78 mm/kasan/common.c:68
+ kasan_save_alloc_info+0x40/0x50 mm/kasan/generic.c:575
+ poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+ __kasan_kmalloc+0xac/0xc4 mm/kasan/common.c:387
+ kasan_kmalloc include/linux/kasan.h:211 [inline]
+ kmalloc_trace+0x26c/0x49c mm/slub.c:4012
+ kmalloc include/linux/slab.h:590 [inline]
+ kzalloc include/linux/slab.h:711 [inline]
+ uevent_show+0x160/0x320 drivers/base/core.c:2656
+ dev_attr_show+0x60/0xcc drivers/base/core.c:2364
+ sysfs_kf_seq_show+0x2d0/0x43c fs/sysfs/file.c:59
+ kernfs_seq_show+0x150/0x1fc fs/kernfs/file.c:205
+ seq_read_iter+0x3e0/0xc44 fs/seq_file.c:230
+ kernfs_fop_read_iter+0x144/0x5c8 fs/kernfs/file.c:279
+ call_read_iter include/linux/fs.h:2081 [inline]
+ new_sync_read fs/read_write.c:395 [inline]
+ vfs_read+0x78c/0x954 fs/read_write.c:476
+ ksys_read+0x15c/0x26c fs/read_write.c:619
+ __do_sys_read fs/read_write.c:629 [inline]
+ __se_sys_read fs/read_write.c:627 [inline]
+ __arm64_sys_read+0x7c/0x90 fs/read_write.c:627
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
+Freed by task 5782:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x40/0x78 mm/kasan/common.c:68
+ kasan_save_free_info+0x54/0x6c mm/kasan/generic.c:589
+ poison_slab_object+0x124/0x18c mm/kasan/common.c:240
+ __kasan_slab_free+0x3c/0x70 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2121 [inline]
+ slab_free mm/slub.c:4299 [inline]
+ kfree+0x144/0x3cc mm/slub.c:4409
+ uevent_show+0x1c8/0x320 drivers/base/core.c:2669
+ dev_attr_show+0x60/0xcc drivers/base/core.c:2364
+ sysfs_kf_seq_show+0x2d0/0x43c fs/sysfs/file.c:59
+ kernfs_seq_show+0x150/0x1fc fs/kernfs/file.c:205
+ seq_read_iter+0x3e0/0xc44 fs/seq_file.c:230
+ kernfs_fop_read_iter+0x144/0x5c8 fs/kernfs/file.c:279
+ call_read_iter include/linux/fs.h:2081 [inline]
+ new_sync_read fs/read_write.c:395 [inline]
+ vfs_read+0x78c/0x954 fs/read_write.c:476
+ ksys_read+0x15c/0x26c fs/read_write.c:619
+ __do_sys_read fs/read_write.c:629 [inline]
+ __se_sys_read fs/read_write.c:627 [inline]
+ __arm64_sys_read+0x7c/0x90 fs/read_write.c:627
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+
+The buggy address belongs to the object at ffff00018c4b8000
+ which belongs to the cache kmalloc-4k of size 4096
+The buggy address is located 0 bytes to the right of
+ allocated 4096-byte region [ffff00018c4b8000, ffff00018c4b9000)
+
+The buggy address belongs to the physical page:
+page:000000000267b9c9 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1cc4b8
+head:000000000267b9c9 order:3 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x5ffc00000000840(slab|head|node=0|zone=2|lastcpupid=0x7ff)
+page_type: 0xffffffff()
+raw: 05ffc00000000840 ffff0000c0002140 fffffdffc6008a00 dead000000000002
+raw: 0000000000000000 0000000000040004 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff00018c4b8f00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff00018c4b8f80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff00018c4b9000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                   ^
+ ffff00018c4b9080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff00018c4b9100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+Unable to handle kernel paging request at virtual address e0d5c054000002d6
+KASAN: maybe wild-memory-access in range [0x06b202a0000016b0-0x06b202a0000016b7]
+Mem abort info:
+  ESR = 0x0000000096000004
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x04: level 0 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[e0d5c054000002d6] address between user and kernel address ranges
+Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 PID: 261 Comm: kworker/u4:6 Tainted: G    B              6.8.0-rc7-syzkaller-g707081b61156 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/29/2024
+Workqueue: netns cleanup_net
+pstate: 00400005 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : mini_qdisc_pair_swap+0x130/0x164 net/sched/sch_generic.c:1585
+lr : mini_qdisc_pair_swap+0x124/0x164 net/sched/sch_generic.c:1585
+sp : ffff800097bb74e0
+x29: ffff800097bb74e0 x28: 1fffe00018f4985c x27: ffff800089180b74
+x26: 1fffe00018f4986c x25: 06b202a000001696 x24: dfff800000000000
+x23: 1fffe00031897200 x22: ffff00018c4b9000 x21: ffff0000c7a4c310
+x20: 00000000000170f0 x19: 06b202a0000016b6 x18: 1fffe00036804396
+x17: ffff80008ec9d000 x16: ffff800080276f8c x15: 0000000000000001
+x14: 1ffff00011dcf390 x13: 0000000000000000 x12: 0000000000000000
+x11: 0000000000000001 x10: 0000000000000000 x9 : 1fffe00018b89781
+x8 : 00d64054000002d6 x7 : 1fffe00036804397 x6 : ffff8000803be9e4
+x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : ffff0000c5c4bc00 x1 : 0000000000000000 x0 : 00000000000170f0
+Call trace:
+ mini_qdisc_pair_swap+0x130/0x164 net/sched/sch_generic.c:1585
+ clsact_chain_head_change+0x28/0x38 net/sched/sch_ingress.c:60
+ tcf_chain_head_change_item net/sched/cls_api.c:493 [inline]
+ tcf_chain0_head_change_cb_del+0x1e0/0x2d8 net/sched/cls_api.c:940
+ tcf_block_put_ext+0xfc/0x33c net/sched/cls_api.c:1529
+ clsact_destroy+0x1fc/0x790 net/sched/sch_ingress.c:300
+ __qdisc_destroy+0x160/0x4b8 net/sched/sch_generic.c:1067
+ qdisc_put net/sched/sch_generic.c:1094 [inline]
+ shutdown_scheduler_queue+0x168/0x200 net/sched/sch_generic.c:1147
+ dev_shutdown+0x244/0x480 net/sched/sch_generic.c:1481
+ unregister_netdevice_many_notify+0x7f4/0x17b8 net/core/dev.c:11073
+ unregister_netdevice_many net/core/dev.c:11139 [inline]
+ default_device_exit_batch+0xa1c/0xa9c net/core/dev.c:11619
+ ops_exit_list net/core/net_namespace.c:175 [inline]
+ cleanup_net+0x5dc/0x8d0 net/core/net_namespace.c:618
+ process_one_work+0x694/0x1204 kernel/workqueue.c:2633
+ process_scheduled_works kernel/workqueue.c:2706 [inline]
+ worker_thread+0x938/0xef4 kernel/workqueue.c:2787
+ kthread+0x288/0x310 kernel/kthread.c:388
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+Code: 97b951d7 91008333 aa0003f4 d343fe68 (38786908) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	97b951d7 	bl	0xfffffffffee5475c
+   4:	91008333 	add	x19, x25, #0x20
+   8:	aa0003f4 	mov	x20, x0
+   c:	d343fe68 	lsr	x8, x19, #3
+* 10:	38786908 	ldrb	w8, [x8, x24] <-- trapping instruction
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
