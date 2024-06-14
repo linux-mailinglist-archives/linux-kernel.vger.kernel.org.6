@@ -1,191 +1,160 @@
-Return-Path: <linux-kernel+bounces-214428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A1B908447
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:18:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8CED90844B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:18:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2E7283DB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:18:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C9241F2438A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BBB14884E;
-	Fri, 14 Jun 2024 07:18:19 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EE6149C4B;
+	Fri, 14 Jun 2024 07:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="VtUqZoPz"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7104D19D88A;
-	Fri, 14 Jun 2024 07:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18010146A90
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 07:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718349499; cv=none; b=DmcU0rf63dNte2NM4V3frLPv0I62OYmGecJPyYP8CKPANnIaJTeesl5dm6xNh7Svty4Lw0k1Pp6WODw3csYZvUKI57b7og6qst3iTx+iPeR10/2058JL9rH+4SF1bw14EV65q2u+xL/R5fiX7Y3GJKafJdd21InLy+i6z3MJX5g=
+	t=1718349508; cv=none; b=iihepbripxrR9qF6teHptLB91/RGs9NV3mHGrFkHX7rWQb16TpnYFBPFsNEJRA/jm4eQWZUKF/ofT7X3JvrXSNMyxAuDMHU+NujOiVK3HRJNxViT8xind4+AIfJbjZItmyrcSIQ3KBwl2kYZg1/naUb9G6jXOFpCg/TG+TndprA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718349499; c=relaxed/simple;
-	bh=J/eoe0h+3js10+DWPsnOUtalfUW5casYxooODFA3ark=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Iv/tXfeXZKJFD9kF8Am0JgNRssPuhmj4QiArohedJkJIcrogVxBDH2kUjzwJCcOhLXj9p+a+LGIF7xS6C1J0LNQ3CVD/jGLWQHJXmyPh3vLhU4Y1LKQMfNui+VjX9L+AZ1wWQCtCd69jL2+7h4fTrDDxuGPuuZJxuf0+z3V76Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W0rGH6cy2z4f3kv6;
-	Fri, 14 Jun 2024 15:17:59 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 766D51A0568;
-	Fri, 14 Jun 2024 15:18:11 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgDnCw+v7mtmcrhSPw--.45646S3;
-	Fri, 14 Jun 2024 15:18:09 +0800 (CST)
-Subject: Re: [PATCH -next v5 7/8] xfs: speed up truncating down a big realtime
- inode
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
- david@fromorbit.com, chandanbabu@kernel.org, jack@suse.cz,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
- John Garry <john.g.garry@oracle.com>
-References: <20240613090033.2246907-1-yi.zhang@huaweicloud.com>
- <20240613090033.2246907-8-yi.zhang@huaweicloud.com>
- <ZmveZolfY0Q0--1k@infradead.org>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <399680eb-cd60-4c27-ef2b-2704e470d228@huaweicloud.com>
-Date: Fri, 14 Jun 2024 15:18:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1718349508; c=relaxed/simple;
+	bh=wqLPYteu3ayqHey69yCKfVVfVBHj/xWhI8yDdx19SLE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R1T6Uu5yirbvgk4M0NSXWcMJ9TYCW/MAsOsA5qtQJyMEklLeGKZ5XWJhUWwK+OOIgPZbq5Q56PNMsftHaOP7vvzRkio32VttD23eBhlJyfcyknahYYzo7fsY+Cvc8MMoWaZIYomiB0NiNDRqU2/8iQIC0YqNWP6rR/0Sz/YLDw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=VtUqZoPz; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso21118041fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 00:18:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718349505; x=1718954305; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wqLPYteu3ayqHey69yCKfVVfVBHj/xWhI8yDdx19SLE=;
+        b=VtUqZoPz1UsOwgW8eYU0udIbjZpUtAcB2DEjl7VEQodjFhu7/wvvGpbvI6G8A5XEwr
+         xWh4T1w8haEgMcE3QAbHDUoSaGDvsH848MTnEIX/HioQTbJILLFrOY11MzBJFSKJfYSM
+         X4wBsKLYUQKgx9KDfvkJfXV35a0ZDqWwYbTS7Ea/KsEqTHHvWo7xjX8gKn+zYmVJyd8T
+         vvpK967izvdPAj/k75XtlZxgoNUOfAVBKTRvSFf2vpyhChn9oVchYGGuspqQHy1RdXdg
+         aCDtGhHr4OUJitR7e3Ei5IpWhwIYvNqutHPGh/nITec4ESfyGzymfnsPS7t9/Lw0IT5R
+         c/Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718349505; x=1718954305;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wqLPYteu3ayqHey69yCKfVVfVBHj/xWhI8yDdx19SLE=;
+        b=nM5k1XFgb8NiO/V6vmZh51zZzosRl3zBKrXVTcze+LIxC9PbSEqn84eXxHAcF5t3Db
+         e1PKU0ewDxnt7sbfUddsbbW6QKpCGNAnMVtCNw/BAnTrQPBc4T0aDgnZ1eLCUARPWK4r
+         mafGLfH6vN1kgtPrPxxL354Z+gPatbm0Yl1Uyc4dRWCLNrxJ+9hsrvIXlYX3GRX4HXak
+         fWlNs1qpoZlGm1apAEhmu60WE8awawjvQTVyGN6TuNdKoN9uPapsJqtk6RgmyrR4a3z9
+         w3t15AZ48lUSuf0kH4dePXZNazo6yfDgo7V/sdIZEALiF8XQLcBXQ8oTNUHMG9PSTHB5
+         pfTA==
+X-Forwarded-Encrypted: i=1; AJvYcCX01C+kRSWKoDUVK0lXn8uFo/e8Yjza7cPnmjdIWP+FHa1o0KVUPnZR3ZZNNw1QaeiYZKSGJxsWUUrz9FMTRlyNgu9/OEiiC7iKC+yg
+X-Gm-Message-State: AOJu0YwGDvnuQCBhFC1HQQKlzwlG6PA5uQ/1x/R2cAMDAVvfXhhppLmV
+	mwqur62APBTf8YSCixvFPcrhKIxXhu9jTTSu4DFhJtHtk9mW48FiQTTTXRgHAULKdLYmblwdN+y
+	7FUM46Z/WDkHn9a4pk0Ki40cagTYJ1Lj17/lHqw==
+X-Google-Smtp-Source: AGHT+IEqAc/IITHR5XH5IcyBzMofjdG67Sdge1uWmTB4/BihRUG9JruUjf29s0w2MnX3meX/UPaZVWsbSfUHTarWmeA=
+X-Received: by 2002:a2e:8886:0:b0:2ec:492:3fee with SMTP id
+ 38308e7fff4ca-2ec0e47c209mr11243421fa.30.1718349505123; Fri, 14 Jun 2024
+ 00:18:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZmveZolfY0Q0--1k@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgDnCw+v7mtmcrhSPw--.45646S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxGw1rtF4fGr1fKr1xCryDWrg_yoWrCFy7pF
-	Z7Ga45CrWkt34jkas7ZF1Yqw1Y9wnaya17AFy5XryxAas8Jr1fKrn3tryrJ3yjkr48WFWv
-	qFs5K347Z3WaqFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UWE__UUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <20240605122106.23818-1-brgl@bgdev.pl> <20240605122106.23818-2-brgl@bgdev.pl>
+ <87h6e6qjuh.fsf@kernel.org> <CAMRc=MdiKxtnN+g92RUTXdOydaPV5M2u5iUdKyE2SNvDkdXAjg@mail.gmail.com>
+ <871q5aqiei.fsf@kernel.org> <CAMRc=McacZMP-51hjH+d8=PVe+Wgw4a8xWcv0sRPLJKL_gP=KQ@mail.gmail.com>
+ <87sexqoxm9.fsf@kernel.org> <CAMRc=McYAbhL5M1geYtf8LbgJG5x_+ZUFKXRuo7Vff_8ssNoUA@mail.gmail.com>
+ <8db01c97-1cb2-4a86-abff-55176449e264@kernel.org> <CAMRc=Mer2HpuBLGiabNtSgSRduzrrtT1AtGoDXeHgYqavWXdrA@mail.gmail.com>
+ <87ikyenx5c.fsf@kernel.org> <CAMRc=MdPQu-r4aaeag9apYP1-FoQ2-_GAk_qnHqDz-jWibRDFQ@mail.gmail.com>
+In-Reply-To: <CAMRc=MdPQu-r4aaeag9apYP1-FoQ2-_GAk_qnHqDz-jWibRDFQ@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 14 Jun 2024 09:18:14 +0200
+Message-ID: <CAMRc=Mfsqnfy-Q++QyZNmsYoV72hUoNFEDCW6KZ0H_MEHEe5Rw@mail.gmail.com>
+Subject: Re: [PATCH v9 1/2] dt-bindings: net: wireless: qcom,ath11k: describe
+ the ath11k on QCA6390
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	ath11k@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	ath12k@lists.infradead.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/6/14 14:08, Christoph Hellwig wrote:
-> On Thu, Jun 13, 2024 at 05:00:32PM +0800, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> If we truncate down a big realtime inode, zero out the entire aligned
->> EOF extent could gets slow down as the rtextsize increases. Fortunately,
->> __xfs_bunmapi() would align the unmapped range to rtextsize, split and
->> convert the blocks beyond EOF to unwritten. So speed up this by
->> adjusting the unitsize to the filesystem blocksize when truncating down
->> a large realtime inode, let __xfs_bunmapi() convert the tail blocks to
->> unwritten, this could improve the performance significantly.
->>
->>  # mkfs.xfs -f -rrtdev=/dev/pmem1s -f -m reflink=0,rmapbt=0, \
->>             -d rtinherit=1 -r extsize=$rtextsize /dev/pmem2s
->>  # mount -ortdev=/dev/pmem1s /dev/pmem2s /mnt/scratch
->>  # for i in {1..1000}; \
->>    do dd if=/dev/zero of=/mnt/scratch/$i bs=$rtextsize count=1024; done
->>  # sync
->>  # time for i in {1..1000}; \
->>    do xfs_io -c "truncate 4k" /mnt/scratch/$i; done
->>
->>  rtextsize       8k      16k      32k      64k     256k     1024k
->>  before:       9.601s  10.229s  11.153s  12.086s  12.259s  20.141s
->>  after:        9.710s   9.642s   9.958s   9.441s  10.021s  10.526s
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->> ---
->>  fs/xfs/xfs_inode.c | 10 ++++++++--
->>  fs/xfs/xfs_iops.c  |  9 +++++++++
->>  2 files changed, 17 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
->> index 92daa2279053..5e837ed093b0 100644
->> --- a/fs/xfs/xfs_inode.c
->> +++ b/fs/xfs/xfs_inode.c
->> @@ -1487,6 +1487,7 @@ xfs_itruncate_extents_flags(
->>  	struct xfs_trans	*tp = *tpp;
->>  	xfs_fileoff_t		first_unmap_block;
->>  	int			error = 0;
->> +	unsigned int		unitsize = xfs_inode_alloc_unitsize(ip);
->>  
->>  	xfs_assert_ilocked(ip, XFS_ILOCK_EXCL);
->>  	if (atomic_read(&VFS_I(ip)->i_count))
->> @@ -1510,9 +1511,14 @@ xfs_itruncate_extents_flags(
->>  	 *
->>  	 * We have to free all the blocks to the bmbt maximum offset, even if
->>  	 * the page cache can't scale that far.
->> +	 *
->> +	 * For big realtime inode, don't aligned to allocation unitsize,
->> +	 * it'll split the extent and convert the tail blocks to unwritten.
->>  	 */
->> +	if (xfs_inode_has_bigrtalloc(ip))
->> +		unitsize = i_blocksize(VFS_I(ip));
->> +	first_unmap_block = XFS_B_TO_FSB(mp, roundup_64(new_size, unitsize));
-> 
-> If you expand what xfs_inode_alloc_unitsize and xfs_inode_has_bigrtalloc
-> this is looking a bit silly:
-> 
-> 	unsigned int            blocks = 1;
-> 
-> 	if (XFS_IS_REALTIME_INODE(ip))
-> 		blocks = ip->i_mount->m_sb.sb_rextsize;
-> 
-> 	unitsize = XFS_FSB_TO_B(ip->i_mount, blocks);
-> 	if (XFS_IS_REALTIME_INODE(ip) && ip->i_mount->m_sb.sb_rextsize > 1)
-> 		unsitsize = i_blocksize(inode);
-> 
-> So I think we can simply drop this part now that the variant that zeroes
-> the entire rtextent is gone.
-> 
-Thanks for your suggestion.
+On Wed, Jun 12, 2024 at 2:52=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> On Wed, Jun 12, 2024 at 2:49=E2=80=AFPM Kalle Valo <kvalo@kernel.org> wro=
+te:
+> >
+> > Bartosz Golaszewski <brgl@bgdev.pl> writes:
+> >
+> > >> >> Sure, I don't need DT but that's not my point. My point is why re=
+quire
+> > >> >> these supplies for _all_ devices having PCI id 17cb:1101 (ie. QCA=
+6390)
+> > >> >> then clearly there are such devices which don't need it? To me th=
+at's
+> > >> >> bad design and, if I'm understanding correctly, prevents use of
+> > >> >> qcom,ath11k-calibration-variant property. To me having the suppli=
+es
+> > >> >> optional in DT is more approriate.
+> > >> >>
+> > >> >
+> > >> > We require them because *they are physically there*.
+> > >>
+> > >> I understand that for all known DT QCA6390 hardware, the supplies sh=
+ould
+> > >> be provided thus they should be required. If in the future we have
+> > >> different design or we represent some pluggable PCI card, then:
+> > >> 1. Probably that PCI card does not need power sequencing, thus no DT
+> > >> description,
+> > >> 2. If still needs power sequencing, you can always amend bindings an=
+d
+> > >> un-require the supplies.
+> > >>
+> > >>
+> > >> Best regards,
+> > >> Krzysztof
+> > >>
+> > >
+> > > Kalle, does the above answer your questions? Are these bindings good =
+to go?
+> >
+> > To me most important is that we are on the same page that in some cases
+> > (eg. with M.2 boards) the supplies can be optional and we can update th=
+e
+> > bindings doc once such need arises (but we don't make any changes right
+> > now). Based on point 2 from Krzysztof I think we all agree, right?
+> >
+> > Just making sure: if we later change the supplies optional does that
+> > create any problems with backwards compatibility? It's important that
+> > updates go smoothly.
+>
+> No, you can always relax the requirements alright. It's only when you
+> make them more strict that you'll run into backward compatibility
+> issues.
+>
+> Bart
 
-Yeah, we could fix the realtime inode problem by just drop this part, but
-for the upcoming forcealign feature and atomic feature by John, IIUC, we
-couldn't split and convert the tail extent like RT inode does, we should
-zero out the entire tail force aligned extent, if not, atomic write could
-be broken by submitting unaligned bios.
+Kalle,
 
-Jone had already expand the xfs_inode_alloc_unitsize() [1], so I think
-we should keep this part for forcealign feature and deal with realtime
-inode separately, is that right?
+Is that ok with you? Can we get that queued to avoid the new
+check_dtbs warnings in next when the DTS changes land?
 
-[1]
-https://lore.kernel.org/linux-xfs/20240607143919.2622319-1-john.g.garry@oracle.com/T/#m73ccaa7b6fec9988f24b881e013fc367429405d6
-https://lore.kernel.org/linux-xfs/20240607143919.2622319-1-john.g.garry@oracle.com/T/#m1a6312428e4addc4d0d260fbf33ad7bcffb98e0d
-
-Thanks,
-Yi.
-
->> @@ -862,6 +862,15 @@ xfs_setattr_truncate_data(
->>  	/* Truncate down */
->>  	blocksize = xfs_inode_alloc_unitsize(ip);
->>  
->> +	/*
->> +	 * If it's a big realtime inode, zero out the entire EOF extent could
->> +	 * get slow down as the rtextsize increases, speed it up by adjusting
->> +	 * the blocksize to the filesystem blocksize, let __xfs_bunmapi() to
->> +	 * split the extent and convert the tail blocks to unwritten.
->> +	 */
->> +	if (xfs_inode_has_bigrtalloc(ip))
->> +		blocksize = i_blocksize(inode);
-> 
-> Same here.  And with that probably also the passing of the block size
-> to the truncate_page helpers.
-> 
-
+Bart
 
