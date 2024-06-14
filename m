@@ -1,112 +1,107 @@
-Return-Path: <linux-kernel+bounces-214521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D279085EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:15:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 335F89085EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5F871F22748
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:15:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 485141C20A86
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E710D184135;
-	Fri, 14 Jun 2024 08:14:22 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750AC1836FE;
+	Fri, 14 Jun 2024 08:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OHSr8R3F"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160AF1822F8
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CC718307E
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718352862; cv=none; b=c+iNeN04beWpffgw1Xs2WLbZxYWC3EwuJungpDZvXK0+OnJpo+/QdusJaMXK81aCb6HazzCEc6oJGDiIL/c5zVEzpv4HZFj9Hrjqt2Uynk7J4zjKEExgui1ZRGZgRBuBWzMLI79XggLcWNHryhOQyHg+46H57H56mgpNPb7vwd4=
+	t=1718352894; cv=none; b=IQVmR+prPTWLLPymp5aPPPrbu+wrhZcPwRjnWyaqhu8EkDIijpmbDyPlzZ8tgDBf2U5pO6xlROeb1CE9XkSARlc8bkE7VNqBeut7EzQGAMr5OnTyJ880NOK/nwd5ayj1uRbsOkb4na5BD41k5smgQ4fTZMDqSvDIOsX2+QZf7E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718352862; c=relaxed/simple;
-	bh=yLqAfftgtIHGKZn0iE5v48D5mADBsgNfgWxlFY1CiL0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qqbZJm5w9BLYY5TPkzTpplHVtlA+Ufh/GRUipKSUvWWAo+o8LtVNsTVwgYr8cZVHtMZMDOcDImQdo6cwDS9q6/Z/kufAN8H7uimLOuEWyZ/pSBAsYErbaIF9817TfSn4mTEWNEltra1LMeXWGM/FprOMH9Z1PUxjx8TJXqT3sSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-37586a82295so17859615ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:14:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718352860; x=1718957660;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=adMNGI81LfgdnwJM9zYhmP2IG5H/7LSnDJYwFF5kkRI=;
-        b=CsaiseW91ag0EUzHY3R7Anm2YTgBymrRUne1hkgPpiu5pJ2ZTL2ngL17FflUIxBkrr
-         MZl16kvjS6sLHEFw3FgTXHWDF6MioBuERheOr5ffkzjXB9sUE5jCx2gOu9dAQkPnddxA
-         +GPJ/OaYdhGyi+gbx3NAtnMdXO5snBXQQxuGoSwTerlzXhUzO2OCKX2rghlsldtGFsv6
-         WL50tEoXhiRhqWIkdQwj+qoqUVdvRDUYyBZtr0bVQ7x3Ek7GbzQ7GArJB4+6xMY4x9tn
-         DGZ6Xd8WPParg6yZLOObSi9W5gSDCXbqG6NTn541W+UZ8ROQLor1k7qR1NHs79JPsnGV
-         M6Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCVo9Ea/jANIFr4Xfc044cLSYRPL6BM/J8LnHI09h7/BQiTzg55jg4UZiI4EuKa5VI6FlW0/2of3LUQJD6DgWhh18K19GsSE6bfaQpeK
-X-Gm-Message-State: AOJu0Yx1lowEi/ppG8uKoidJKXbxYicF2OD2Low9gd4VOO5o5E75/3L3
-	WcHlHpJAhtRijQ/Oma7n6iWf59J7wx3MM6oSpXWNPI8yBZpWGoVeRMsIpyCOlONw/G2KKEhKCRv
-	XUW0NXDbtl1/5mp3drJJsxeTe4Ox6/J6Sw94rh3OXYonqs+TR247cWuw=
-X-Google-Smtp-Source: AGHT+IHbO4SJ4CladRVzwUwIWOBRY0asH+KlStwnD45lqOeoOzdgMkj/jdrOgL81L8pRX+dUYkIdMPK40jNAei0KmS3aKEJA/C1Y
+	s=arc-20240116; t=1718352894; c=relaxed/simple;
+	bh=AJr56AIyxw1AV+8imWQzB4XZoQsJAgsK6sLrW1PzyvM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mqNe6l6M2xidbjwI9UdZ2zfIUtOFxxvf1HFHmzF+zvjW52V7BJ2DSemtUjcSwt8Ju+LTkwKAYEZcMUEIxlSML/tEdHtHTMdCFna6JfgQSyZB714YBK56T3trQz8gHLvGpLLW1CBhySXMinINBOm4KYIxBN9mFwO92wwIrTcKW+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OHSr8R3F; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718352892;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kpIVMcrxNUuot3WrmRIeXJx5cyzexiU4T4G3Mxhn+Fo=;
+	b=OHSr8R3FGbEDBn5Np4aKkOaRmpB4Qxx7BMHcO8fRYQJazTWExyblqR5k5ji7Q/J5y/98oM
+	rOGHEN7X/n8amSyKkrIGYudYOA3hzsjLPI61rIdMuxIMjHRTYwWOJy3GR8BtFxPJIoCcip
+	MtpHBkz1dgOCuYb4tfJ+6YpAkwBeJLw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-608-QPyfIbc7Np-25l__XOO7DQ-1; Fri,
+ 14 Jun 2024 04:14:47 -0400
+X-MC-Unique: QPyfIbc7Np-25l__XOO7DQ-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C0BBC19560AE;
+	Fri, 14 Jun 2024 08:14:45 +0000 (UTC)
+Received: from thuth-p1g4.redhat.com (unknown [10.39.193.73])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F2DDA19560BF;
+	Fri, 14 Jun 2024 08:14:40 +0000 (UTC)
+From: Thomas Huth <thuth@redhat.com>
+To: linux-doc@vger.kernel.org,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	linux-s390@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sven Schnelle <svens@linux.ibm.com>
+Subject: [PATCH] Documentation: Add "S390" to the swiotlb kernel parameter
+Date: Fri, 14 Jun 2024 10:14:38 +0200
+Message-ID: <20240614081438.553160-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c85:b0:374:64df:681c with SMTP id
- e9e14a558f8ab-375e1053484mr1184695ab.4.1718352860205; Fri, 14 Jun 2024
- 01:14:20 -0700 (PDT)
-Date: Fri, 14 Jun 2024 01:14:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d4e4a1061ad53398@google.com>
-Subject: [syzbot] Monthly ext4 report (Jun 2024)
-From: syzbot <syzbot+list89334176c7333521aa2c@syzkaller.appspotmail.com>
-To: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hello ext4 maintainers/developers,
+The "swiotlb" kernel parameter is used on s390 for protected virt since
+commit 64e1f0c531d1 ("s390/mm: force swiotlb for protected virtualization")
+and thus should be marked in kernel-parameters.txt accordingly.
 
-This is a 31-day syzbot report for the ext4 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ext4
-
-During the period, 8 new issues were detected and 0 were fixed.
-In total, 38 issues are still open and 134 have been fixed so far.
-
-Some of the still happening issues:
-
-Ref  Crashes Repro Title
-<1>  9744    Yes   WARNING: locking bug in ext4_move_extents
-                   https://syzkaller.appspot.com/bug?extid=7f4a6f7f7051474e40ad
-<2>  767     Yes   WARNING: locking bug in __ext4_ioctl
-                   https://syzkaller.appspot.com/bug?extid=a537ff48a9cb940d314c
-<3>  547     Yes   WARNING: locking bug in ext4_ioctl
-                   https://syzkaller.appspot.com/bug?extid=a3c8e9ac9f9d77240afd
-<4>  491     Yes   INFO: task hung in sync_inodes_sb (5)
-                   https://syzkaller.appspot.com/bug?extid=30476ec1b6dc84471133
-<5>  452     No    possible deadlock in evict (3)
-                   https://syzkaller.appspot.com/bug?extid=dd426ae4af71f1e74729
-<6>  265     Yes   KMSAN: uninit-value in ext4_inlinedir_to_tree
-                   https://syzkaller.appspot.com/bug?extid=eaba5abe296837a640c0
-<7>  248     Yes   WARNING in __fortify_report
-                   https://syzkaller.appspot.com/bug?extid=50835f73143cc2905b9e
-<8>  226     No    possible deadlock in __ext4_mark_inode_dirty (3)
-                   https://syzkaller.appspot.com/bug?extid=72c7e5a0d9f5901e864e
-<9>  155     Yes   INFO: task hung in jbd2_journal_commit_transaction (5)
-                   https://syzkaller.appspot.com/bug?extid=3071bdd0a9953bc0d177
-<10> 32      Yes   kernel BUG in ext4_write_inline_data_end (2)
-                   https://syzkaller.appspot.com/bug?extid=0c89d865531d053abb2d
-
+Signed-off-by: Thomas Huth <thuth@redhat.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ PS: I wonder whether we could remove IA-64 nowadays...?
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+ Documentation/admin-guide/kernel-parameters.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b600df82669d..423427bf6e49 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6548,7 +6548,7 @@
+ 			This parameter controls use of the Protected
+ 			Execution Facility on pSeries.
+ 
+-	swiotlb=	[ARM,IA-64,PPC,MIPS,X86,EARLY]
++	swiotlb=	[ARM,IA-64,PPC,MIPS,X86,S390,EARLY]
+ 			Format: { <int> [,<int>] | force | noforce }
+ 			<int> -- Number of I/O TLB slabs
+ 			<int> -- Second integer after comma. Number of swiotlb
+-- 
+2.45.2
 
-You may send multiple commands in a single email message.
 
