@@ -1,187 +1,210 @@
-Return-Path: <linux-kernel+bounces-214245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71E709081D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:45:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930B8908210
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EF8FB21F84
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:45:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 841591C21E79
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD441836C6;
-	Fri, 14 Jun 2024 02:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A8C1448F1;
+	Fri, 14 Jun 2024 02:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="JvoDMu8G";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qtefudHW"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="khxLqtb0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FE118308F;
-	Fri, 14 Jun 2024 02:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB471374FE;
+	Fri, 14 Jun 2024 02:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718333098; cv=none; b=jfoc+DUEC3KVENrVGLlJuHn7vryPoI8uSQ7xC7gxA806PFlumuHvAUARIllWl6DbvsvmDfXEcDw84qoqgOtFChBSDjW6Y4p8nF2gkbLdjbO4zDEW63+ykesSVXzjnXcMI+u4o/mr7Ab23j3dloq5dnMwLaKSY3fdFNzoDefXLLo=
+	t=1718333495; cv=none; b=BOJblZEcipUHAlQJnGCSiT6mAIRBoDf///TXHQmR8tXc3PxzRGEVGcUnjidreSZu5VAdienL8ATuP+WdANZZok9ksnvbiBgKfL6CnHVkWe4f6lxR0oiODCElD3p0thFjcROEhTmOf3hwkYpIyE4/R4vNsZN4mcQSocM3bnMqohc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718333098; c=relaxed/simple;
-	bh=DGZI5mG40FnyaDB0BC1fbYrQ9V/VYVQVkIVUveeQsQI=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=lLb0AIiguhoM7oHMLrfFymY6YyFFM++TRdGoDmI5OHhwAJnMXHgN0AZ0DxK2thhJKUpyGEuUchIsGg8osC1p15xVEM/8PJfLH04FDlz4JRhdAMcpvm+bq7EEOimkmw4XJdGTQna8vzWFIoo4gXxB1KFMwgfZJGhtiMAQ/76yJyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=JvoDMu8G; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qtefudHW; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 8CE1013801A4;
-	Thu, 13 Jun 2024 22:44:56 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Thu, 13 Jun 2024 22:44:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1718333096;
-	 x=1718419496; bh=DGZI5mG40FnyaDB0BC1fbYrQ9V/VYVQVkIVUveeQsQI=; b=
-	JvoDMu8GtVyp/R7dzBMEhsJaWn3rMv3yGKSDsQgoC6JYmqsVf92GxAs9qnrgt5h9
-	VW9YbiNmkCV2aX8alm6YUmmMoueg/A7epiVr1dX64dwYU9cF8fNJTMcoxmpX+YeQ
-	8QghXkxTGa79NXx73/4+Ch5n2PDhy/LkyZKwDX/J37sYxBqBTmnV33ZaqjhBgUYN
-	W4UBysPQTeyYqc0OZ517U20coAKhUBztawapEs3gJEBAj+MTFagqov5f0cWdGxu0
-	Aag6RjR4aDvJCxdYsr9bDw08Mb6cVAO+ESCbT2Z/IGkSQi6pUnaMtT+++QGQb9NR
-	IKRlj4lhI+mWf8D3CDcqnw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718333096; x=
-	1718419496; bh=DGZI5mG40FnyaDB0BC1fbYrQ9V/VYVQVkIVUveeQsQI=; b=q
-	tefudHW7BEfc2lKY1jot8DKvoh/aWDHpoooOZ6nLjPh5Kp9dOPkAXIT7yl2BNqj8
-	r9cf5XMeFyPYGjtzDtKmb6EfA6piN4wyKWIXLezFOUxVgZ6RhPYN4lCIJsoukR+y
-	rsLUbIUrmtMVT4enAJmKBwBqR36XKWewROK7r1GusvAghyrOpQ45tXYT7Um1KyGg
-	6SFqW2GvkjY9o7Lci2mxne9/49EpndNNsu5xdb1DI4dhBwXJL5wMylz8EArUBcNZ
-	dHB0b67YxHzEtivCh2W93ezpFj9PyPF9SwvL4Ud1Eb26fBe5WDpPI5LIp13f8t7O
-	kKMrD63HeIOifT5wAlmzA==
-X-ME-Sender: <xms:p65rZkaoNjTqCbbZ3Sug1tiOFOnXeuTgcmAdY3epW_qAnyVkYN1L6A>
-    <xme:p65rZval8nKRirZVmf_Qt_8PNyI9FjIWNyFWt0s1vPMkbMbk3V2XmWeVb20_cq8Xf
-    TZETmVH9_c_qXq7cnA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedukedgiedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
-    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpeeivdefffdvgfegfeehjeelteevheehkeefvdffhfej
-    tdejvdeuhedtgfekudelleenucffohhmrghinhepuhgvfhhirdhorhhgnecuvehluhhsth
-    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghn
-    ghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:p65rZu8FlDxiVciJ_zDD0QoyOPXA0n-lXt01u8LwwJcSTG5SYPPOCQ>
-    <xmx:p65rZuqsksdVJS75a0FmCS5YppWoVR09e58MJKIfE_Tm_8sA3d88ow>
-    <xmx:p65rZvqfyVAbXQGGN7MQ9inGhime7gp38GsvuowIMNIjb9NNiTn_Zg>
-    <xmx:p65rZsRV8lIXX0pusjCTQW-eBGT4ZddX9GDNlbhdHMDzs6i9x0GW3w>
-    <xmx:qK5rZgCqWFyz6uaU_fkMXgz11HdQCElhJoY5FVPoouK_ceiyJUIieaFy>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 676B736A0074; Thu, 13 Jun 2024 22:44:55 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-515-g87b2bad5a-fm-20240604.001-g87b2bad5
+	s=arc-20240116; t=1718333495; c=relaxed/simple;
+	bh=t6bCGIaBJnf264kqofmLb4/O4TTdgZNzhkHU/ELqBbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RSLXlRuSzZkQ3Z8/LCuIpMdBBuiodBU/um/b6GIRKEWNeKoBqoqvmzcz36UEuy4c6qbkcAa4Pv/TFronLa2UFb32BCQXOWrk/kh0eTfzZTuaA9+wmPiP+h2Xw9RLu3Q1N4jleg4kBviCnmddg1FS0jeBi936AVdYtl3IZDBgCIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=khxLqtb0; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718333494; x=1749869494;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=t6bCGIaBJnf264kqofmLb4/O4TTdgZNzhkHU/ELqBbM=;
+  b=khxLqtb0KrQO+sC09XroxSiUE0VWEl87RRD//mxtFQ5f1ikZY2l2x8bK
+   qq5KOmaAgqk/JpJfV8/D4ObmwWLhcEN54tq6w8f740G9MiJYxvXbdHfMK
+   9h9i5ytetp7pSq2cb1N6FwmpKfNfjRlc+Tq0S0Sjusd66LjPfzJ0mn3PD
+   oPRF/Ei2V/bVyeO/EA858JU9RTSGhaBXRwgeiHLd4tCAwkqRitevRTWqv
+   3NsYJCJvCaA5PT0TBg4xzGSXhzKDftskaPlCf/Ng1nBOzzJvJ7R7AdKwB
+   rDqR5oLtj2NH21nj8Z0AdS8MdUPnmhxI3Sxy29HtsjvHsDi16L9Tc/y8d
+   g==;
+X-CSE-ConnectionGUID: MIps3CqhSIOqWjgCK38jjg==
+X-CSE-MsgGUID: f0nF87CcTOWrT72jOkYX5A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="32680059"
+X-IronPort-AV: E=Sophos;i="6.08,236,1712646000"; 
+   d="scan'208";a="32680059"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 19:51:33 -0700
+X-CSE-ConnectionGUID: oWAIFTdfT1mfCQZj+UkqWg==
+X-CSE-MsgGUID: EjxyDBZmQrCz+73Ek78TIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,236,1712646000"; 
+   d="scan'208";a="41077678"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa007.jf.intel.com with ESMTP; 13 Jun 2024 19:51:31 -0700
+Date: Fri, 14 Jun 2024 10:44:58 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: "Colberg, Peter" <peter.colberg@intel.com>
+Cc: "Xu, Yilun" <yilun.xu@intel.com>,
+	"linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
+	"mdf@kernel.org" <mdf@kernel.org>, "Wu, Hao" <hao.wu@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"russ.weight@linux.dev" <russ.weight@linux.dev>,
+	"Pagani, Marco" <marpagan@redhat.com>,
+	"trix@redhat.com" <trix@redhat.com>,
+	"russell.h.weight@intel.com" <russell.h.weight@intel.com>,
+	"matthew.gerlach@linux.intel.com" <matthew.gerlach@linux.intel.com>
+Subject: Re: [RFC PATCH v2 9/9] fpga: dfl: fix kernel warning on port
+ release/assign for SRIOV
+Message-ID: <ZmuuqlMJ4nU6m25U@yilunxu-OptiPlex-7050>
+References: <20240409233942.828440-1-peter.colberg@intel.com>
+ <20240409233942.828440-10-peter.colberg@intel.com>
+ <ZifVYiMgssOFjM17@yilunxu-OptiPlex-7050>
+ <97093c23ae13a1fdcc52f85e5658a39e8a5ce716.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <b291e5fb-bf3a-4129-96a0-99182e11f506@app.fastmail.com>
-In-Reply-To: 
- <CAAhV-H5C0rn-bY11FxoGANX+hEFrrbpj095ZAEbjC0ksQGuWpA@mail.gmail.com>
-References: <20240613-loongarch64-sleep-v1-0-a245232af5e4@flygoat.com>
- <20240613-loongarch64-sleep-v1-2-a245232af5e4@flygoat.com>
- <CAAhV-H7VKGMAH10S4sOZLkbgkUSMAYzpYt-dL83S0Vg286PsaQ@mail.gmail.com>
- <f9a0d11e-53c7-4a15-a7b3-209da8bcf52d@app.fastmail.com>
- <CAAhV-H5C0rn-bY11FxoGANX+hEFrrbpj095ZAEbjC0ksQGuWpA@mail.gmail.com>
-Date: Fri, 14 Jun 2024 03:44:36 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Huacai Chen" <chenhuacai@kernel.org>
-Cc: "Jianmin Lv" <lvjianmin@loongson.cn>, "Xuerui Wang" <kernel@xen0n.name>,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH 2/2] LoongArch: Fix ACPI standard register based S3 support
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <97093c23ae13a1fdcc52f85e5658a39e8a5ce716.camel@intel.com>
 
+On Wed, Jun 12, 2024 at 10:16:29PM +0000, Colberg, Peter wrote:
+> On Tue, 2024-04-23 at 23:36 +0800, Xu Yilun wrote:
+> > On Tue, Apr 09, 2024 at 07:39:42PM -0400, Peter Colberg wrote:
+> > > From: Xu Yilun <yilun.xu@intel.com>
+> > > 
+> > > DFL ports are registered as platform devices in PF mode. The port device
+> > > should be removed from the host when the user wants to configure the
+> > > port as a VF and pass through to a virtual machine. The FME device
+> > > ioctls DFL_FPGA_FME_PORT_RELEASE/ASSIGN are designed for this purpose.
+> > > 
+> > > In the previous implementation, the port platform device is not completely
+> > > destroyed on port release: it is removed from the system by
+> > > platform_device_del(), but the platform device instance is retained.
+> > > When the port assign ioctl is called, the platform device is added back by
+> > > platform_device_add(), which conflicts with this comment of device_add():
+> > > "Do not call this routine more than once for any device structure", and
+> > > will cause a kernel warning at runtime.
+> > > 
+> > > This patch tries to completely unregister the port platform device on
+> > > release and registers a new one on assign. But the main work is to remove
+> > > the dependency on struct dfl_feature_platform_data for many internal DFL
+> > > APIs. This structure holds many DFL enumeration infos for feature devices.
+> > > Many DFL APIs are expected to work with these info even when the port
+> > > platform device is unregistered. But with the change the platform_data will
+> > > be freed in this case. So this patch introduces a new structure
+> > > dfl_feature_dev_data for these APIs, which acts similarly to the previous
+> > > dfl_feature_platform_data. The dfl_feature_platform_data then only needs a
+> > > pointer to dfl_feature_dev_data to make the feature device driver work.
+> > > 
+> > > Signed-off-by: Xu Yilun <yilun.xu@intel.com>
+> > > Signed-off-by: Russ Weight <russell.h.weight@intel.com>
+> > > Signed-off-by: Peter Colberg <peter.colberg@intel.com>
+> > > ---
+> > > v2:
+> > > - Split monolithic patch into series at request of maintainer
+> > > - Substitute binfo->type for removed function feature_dev_id_type() in
+> > >   parse_feature_irqs().
+> > > - Return ERR_PTR(-ENOMEM) on !feature->params in
+> > >   binfo_create_feature_dev_data().
+> > > - Reorder cdev as first member of struct dfl_feature_platform_data
+> > >   such that container_of() to obtain pdata evaluates to a no-op.
+> > > - Align kernel-doc function name for __dfl_fpga_cdev_find_port_data().
+> > > ---
+> > >  drivers/fpga/dfl-afu-main.c |   9 +-
+> > >  drivers/fpga/dfl-fme-br.c   |  24 +-
+> > >  drivers/fpga/dfl-fme-main.c |   6 +-
+> > >  drivers/fpga/dfl.c          | 430 +++++++++++++++++-------------------
+> > >  drivers/fpga/dfl.h          |  86 +++++---
+> > >  5 files changed, 281 insertions(+), 274 deletions(-)
+> > > 
+> > > diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
+> > > index 42928cc7e42b..ead03b7aea70 100644
+> > > --- a/drivers/fpga/dfl-afu-main.c
+> > > +++ b/drivers/fpga/dfl-afu-main.c
+> > > @@ -143,9 +143,8 @@ static int port_reset(struct platform_device *pdev)
+> > >  	return ret;
+> > >  }
+> > >  
+> > > -static int port_get_id(struct platform_device *pdev)
+> > > +static int port_get_id(struct dfl_feature_dev_data *fdata)
+> > >  {
+> > > -	struct dfl_feature_dev_data *fdata = to_dfl_feature_dev_data(&pdev->dev);
+> > >  	void __iomem *base;
+> > >  
+> > >  	base = dfl_get_feature_ioaddr_by_id(fdata, PORT_FEATURE_ID_HEADER);
+> > > @@ -156,7 +155,8 @@ static int port_get_id(struct platform_device *pdev)
+> > >  static ssize_t
+> > >  id_show(struct device *dev, struct device_attribute *attr, char *buf)
+> > >  {
+> > > -	int id = port_get_id(to_platform_device(dev));
+> > > +	struct dfl_feature_dev_data *fdata = to_dfl_feature_dev_data(dev);
+> > > +	int id = port_get_id(fdata);
+> > 
+> 
+> Thank you for the comprehensive review.
+> 
+> > My quick idea is we go with these steps:
+> > 1. refactor struct dfl_feature_platform_data then replace all dev/pdev
+> >    arguments with pdata when necessary.
+> 
+> Could you outline how far the refactoring should go? The main changes
+> are introduced with the destruction of the platform device on port
 
+Yes, exactly. And the goal is to make the change in a standalone patch
+so that everyone can find it, rather than bury in other massive
+replacements.
 
-=E5=9C=A82024=E5=B9=B46=E6=9C=8814=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8A=E5=
-=8D=883:32=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
-> On Fri, Jun 14, 2024 at 10:25=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flyg=
-oat.com> wrote:
->>
->>
->>
->> =E5=9C=A82024=E5=B9=B46=E6=9C=8814=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8A=
-=E5=8D=883:11=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
->> > Hi, Jiaxun,
->> >
->> > On Fri, Jun 14, 2024 at 12:41=E2=80=AFAM Jiaxun Yang <jiaxun.yang@f=
-lygoat.com> wrote:
->> >>
->> >> Most LoongArch 64 machines are using custom "SADR" ACPI extension
->> >> to perform ACPI S3 sleep. However the standard ACPI way to perform
->> >> sleep is to write a value to ACPI PM1/SLEEP_CTL register, and this
->> >> is never supported properly in kernel.
->> > Maybe our hardware is insane so we need "SADR", if so, this patch m=
-ay
->> > break real hardware. What's your opinion, Jianmin?
->>
->> I understand why your hardware need SADR. Most systems DDR self-refre=
-sh
->> mode needs to be setup by firmware.
-> _S3 is also a firmware method, why we can't use it to setup self-refre=
-sh?
+> release. If the refactoring retains the platform device but adds all
+> the new members to pdata, I find that this patch would introduce non-
+> trivial intermediate code that is then deleted in a subsequent patch.
 
-That's the problem from ACPI spec. As per ACPI spec _S3 method only tells
-you what should you write into PM1 or SLEEP_CTL register, it will NOT pe=
-rform
-actual task to enter sleeping. (See 16.1.3.1 [1])
+That would not be a problem, as long as they clearly get explained, and
+in one patch series. Sometimes we need intermediate code to ensure a
+patch for one change, which makes people easy to read.
 
-On existing LoongArch hardware _S3 method is only used to mark presence =
-of S3
-state. This is violating ACPI spec, but I guess we must live with it.
+> 
+> > 2. factor out fdata from pdata, add fdata helpers.
+> > 3. massive pdata->fdata replacement.
+> > 4. delete all unused pdata helpers.
+> 
+> The (roughly) reverse order seems to produce the smallest patch set:
 
-Furthermore, on Loongson hardware you have to disable access to DDR memo=
-ry
-to access DDR controller's configuration registers. Which means self-ref=
-resh
-code must run from BIOS ROM.
+I don't think 'smallest' is the major concern, but it's fine if you
+firstly addressed other concerns. I cannot actually tell if it is
+better until the code is seen. But to emphasize on, the core change is
+splited out, the massive replacement patches are just replacements so
+they can be easily overviewed and skipped.
 
-[1]: https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/16_Waking_and_Sleepin=
-g/sleeping-states.html
+Thanks,
+Yilun 
 
-Thanks
-- Jiaxun
-
->
-> Huacai
->
->>
->> There is no chance that it may break real hardware. When firmware sup=
-plied
->> SADR it will always use SADR. The fallback only happens when _S3 meth=
-od exist
->> but no SADR supplied, which won't happen on real hardware.
->>
->> For QEMU we don't have stub firmware but standard compliant SEEP_CTL =
-is
->> sufficient for entering sleep mode, thus we need this fallback path.
->>
->> Thanks
->>
->> >
->> > Huacai
->> >
->> >>
->>
->> --
->> - Jiaxun
->>
-
---=20
-- Jiaxun
+> 
+> 1. Replace function argument `struct device *dev` with `struct
+> dfl_feature_platform_data *pdata` as needed.
+> 2. #define dfl_feature_dev_data dfl_feature_platform_data and massive
+> pdata -> fdata replacement.
+> 3. Remove #define dfl_feature_dev_data, factor out dfl_feature_dev_data
+> from dfl_feature_platform_data, and destroy platform device on release.
+> 
+> Thanks,
+> Peter
 
