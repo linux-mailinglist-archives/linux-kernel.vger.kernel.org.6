@@ -1,299 +1,123 @@
-Return-Path: <linux-kernel+bounces-214221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7CD890818B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:21:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1213A908194
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9106B283DB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:21:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 866B2B20BEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E4E1836C1;
-	Fri, 14 Jun 2024 02:21:24 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8533183085;
+	Fri, 14 Jun 2024 02:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="T+K02XZr"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C4A183092;
-	Fri, 14 Jun 2024 02:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833A514532B;
+	Fri, 14 Jun 2024 02:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718331683; cv=none; b=WCcLpPs+NZSXw3PbBdjQGxqyTW2pHFnKJ9aa50uiPn58xc15ClEiVfRdIMcXEm6GMsufBkP1b+09i9JFG5gu45uwtiZ1HlgYJa+kAi5tRjsFhwsVA/rNR/LIDi05fiCZNEEvZ/YDCHIhZwinMKw02iobHX10Vjkp/zfUjH6SOXo=
+	t=1718331895; cv=none; b=kxFDdsMAoD0ZuOETKkGm3lMTgX3w8ObOk8KBOIQ4w+yaxwi2wizS/Nmu36Zifz1Gk+xXjzr1Vxfl7DAxHX0673AkaTZfHEkN23+H9pDaXv2mU0PKkdBlV7MeCAb8fFAGgzOw6KjiVPDs/7c70U5EwcQ9pU59G2r3wUBrw6t5MB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718331683; c=relaxed/simple;
-	bh=8pPEdPF/eqxQjBYIiMHKHu4XT+T/5Ys7ImzS3a2tcRI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gJbmwor6zUx8Py41u318bk8zO+1B7fopZK5jAOzhXuyuzLFhC5nye0G8/LdgfU3g1/Ml+/3tXnNe1WDnviIFIikq7xowMcYzQ78dWK9F0oFKd3sx5m6QI5MEyTXU8U7dZVId5nYqYADPWkrpgxmc5sSQPSSHgJXNuZ+LOg0fXXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4W0jbR0gWXz355vc;
-	Fri, 14 Jun 2024 10:17:23 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id E753714035F;
-	Fri, 14 Jun 2024 10:21:11 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
- (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Jun
- 2024 10:21:11 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <corbet@lwn.net>, <rostedt@goodmis.org>, <mhiramat@kernel.org>,
-	<mark.rutland@arm.com>, <linux@armlinux.org.uk>, <ruanjinjie@huawei.com>,
-	<ardb@kernel.org>, <yangtiezhu@loongson.cn>, <arnd@arndb.de>,
-	<kees@kernel.org>, <rmk+kernel@armlinux.org.uk>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>
-Subject: [PATCH] arm: Add KPROBES_ON_FTRACE supported
-Date: Fri, 14 Jun 2024 10:23:18 +0800
-Message-ID: <20240614022318.2600814-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718331895; c=relaxed/simple;
+	bh=ytMZoWlY3T6/1y4PZKJPCyJB9wfqD73M1b9fAST+Qj8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SGox4qx55usvFDu5eALkAWG/q12pvLZISaUMpcM3q92qZRgDUNi0/DxLROLjli92JJqb/fJOzWUYKktdCO8aKG9xNd+HfQOt3Nud+yjqEvCO3cb6mvX8hEVWtLVGUwhWDt7RLLVGliQOSyUiaqLgyphhmBQC/y36XHtbWx/1ikk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=T+K02XZr; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45E1fTHS022852;
+	Fri, 14 Jun 2024 02:24:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-type:content-transfer-encoding; s=
+	corp-2023-11-20; bh=XrfRu0md5jJhhvMuPZJR9e3AV5ULPx1ilpLbNcmqO3Y=; b=
+	T+K02XZrtCGpUc1KGgq1YxzQiqb35Uip9zG6ujKMV+sd2fPo3XWA5/kensfV1xuX
+	+YIjItNgQTStyBPIs30tbzPAryHnHWa+5JW78wYcF3Q96F1yIf6RmaIGpfc/gFvn
+	R+pddzjcICOslcbW/5nyjxxyfeo8Yzay45xttuLIw/hlp3voUyk5Vz8jCsxcyaAL
+	kdMweBEEV6Zpqro4U2k4wfjCm+lL6MZoa7NWwtHuzbwKtVMJ+caUtzVDP0d9ZBxJ
+	5mXMVMUzY9nFUVPIiiubJst83gDrmwNssy+li4f5dhgM85NggjU/F+5dNCkqo/en
+	F2tWhMrAp3vqqrRfJEXXHQ==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ymh7dttbq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Jun 2024 02:24:35 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45E2IZuB012523;
+	Fri, 14 Jun 2024 02:24:35 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ynca1vs2h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Jun 2024 02:24:35 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 45E2OY1g011090;
+	Fri, 14 Jun 2024 02:24:34 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3ynca1vs1v-1;
+	Fri, 14 Jun 2024 02:24:34 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Khalid Aziz <khalid@gonehiking.org>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Matthew Wilcox <willy@infradead.org>, Hannes Reinecke <hare@suse.com>,
+        Finn Thain <fthain@linux-m68k.org>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        James Smart <james.smart@broadcom.com>,
+        Ram Vegesna <ram.vegesna@broadcom.com>,
+        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
+        "Juergen E. Fischer" <fischer@norbit.de>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v3] scsi: add missing MODULE_DESCRIPTION() macros
+Date: Thu, 13 Jun 2024 22:23:58 -0400
+Message-ID: <171833163028.268988.11962134341142261590.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240610-md-drivers-scsi-v3-1-055da78d66b2@quicinc.com>
+References: <20240610-md-drivers-scsi-v3-1-055da78d66b2@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-13_15,2024-06-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ phishscore=0 suspectscore=0 malwarescore=0 mlxscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2406140014
+X-Proofpoint-GUID: weQJtNGLWCFQrvm7HXFkpHw9QzmCh-v5
+X-Proofpoint-ORIG-GUID: weQJtNGLWCFQrvm7HXFkpHw9QzmCh-v5
 
-Add support for kprobes on ftrace call sites to avoid much of the overhead
-with regular kprobes. Try it with simple steps:
+On Mon, 10 Jun 2024 09:16:15 -0700, Jeff Johnson wrote:
 
-	cd /sys/kernel/debug/tracing/
-	echo 'p:myprobe sys_clone r0=%r0 r1=%r1 r2=%r2' > kprobe_events
-	echo 1 > events/kprobes/enable
-	echo  1 > events/kprobes/myprobe/enable
-	cat trace
-	# tracer: nop
-	#
-	# entries-in-buffer/entries-written: 2/2   #P:4
-	#
-	#                                _-----=> irqs-off/BH-disabled
-	#                               / _----=> need-resched
-	#                              | / _---=> hardirq/softirq
-	#                              || / _--=> preempt-depth
-	#                              ||| / _-=> migrate-disable
-	#                              |||| /     delay
-	#           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
-	#              | |         |   |||||     |         |
-	              sh-75      [000] .....    33.793362: myprobe: (sys_clone+0xc/0xa0) r0=0x1200011 r1=0x0 r2=0x0
-	              sh-75      [000] .....    34.817804: myprobe: (sys_clone+0xc/0xa0) r0=0x1200011 r1=0x0 r2=0x0
+> On x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/scsi_common.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/advansys.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/BusLogic.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/aha1740.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/isci/isci.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/elx/efct.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/atp870u.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/ppa.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/imm.o
+> 
+> [...]
 
-	cat /sys/kernel/debug/kprobes/list
-		c03453e8  k  sys_clone+0xc    [FTRACE]
-					       ^^^^^^
+Applied to 6.11/scsi-queue, thanks!
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- .../debug/kprobes-on-ftrace/arch-support.txt  |  2 +-
- arch/arm/Kconfig                              |  1 +
- arch/arm/include/asm/ftrace.h                 | 17 ++++++
- arch/arm/kernel/ftrace.c                      | 17 ------
- arch/arm/probes/Makefile                      |  1 +
- arch/arm/probes/ftrace.c                      | 53 +++++++++++++++++++
- arch/arm/probes/kprobes/core.c                | 32 +++++++++++
- 7 files changed, 105 insertions(+), 18 deletions(-)
- create mode 100644 arch/arm/probes/ftrace.c
+[1/1] scsi: add missing MODULE_DESCRIPTION() macros
+      https://git.kernel.org/mkp/scsi/c/95f8bf932b46
 
-diff --git a/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt b/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
-index 02febc883588..4ecd7d53e859 100644
---- a/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
-+++ b/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
-@@ -8,7 +8,7 @@
-     -----------------------
-     |       alpha: | TODO |
-     |         arc: | TODO |
--    |         arm: | TODO |
-+    |         arm: |  ok  |
-     |       arm64: | TODO |
-     |        csky: |  ok  |
-     |     hexagon: | TODO |
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index ee5115252aac..ed13b1743f94 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -114,6 +114,7 @@ config ARM
- 	select HAVE_KERNEL_LZO
- 	select HAVE_KERNEL_XZ
- 	select HAVE_KPROBES if !XIP_KERNEL && !CPU_ENDIAN_BE32 && !CPU_V7M
-+	select HAVE_KPROBES_ON_FTRACE if !XIP_KERNEL && !CPU_ENDIAN_BE32 && !CPU_V7M
- 	select HAVE_KRETPROBES if HAVE_KPROBES
- 	select HAVE_MOD_ARCH_SPECIFIC
- 	select HAVE_NMI
-diff --git a/arch/arm/include/asm/ftrace.h b/arch/arm/include/asm/ftrace.h
-index 5be3ddc96a50..c8e3f808b70c 100644
---- a/arch/arm/include/asm/ftrace.h
-+++ b/arch/arm/include/asm/ftrace.h
-@@ -22,6 +22,23 @@ struct dyn_arch_ftrace {
- #endif
- };
- 
-+/*
-+ * The compiler emitted profiling hook consists of
-+ *
-+ *   PUSH    {LR}
-+ *   BL	     __gnu_mcount_nc
-+ *
-+ * To turn this combined sequence into a NOP, we need to restore the value of
-+ * SP before the PUSH. Let's use an ADD rather than a POP into LR, as LR is not
-+ * modified anyway, and reloading LR from memory is highly likely to be less
-+ * efficient.
-+ */
-+#ifdef CONFIG_THUMB2_KERNEL
-+#define	NOP		0xf10d0d04	/* add.w sp, sp, #4 */
-+#else
-+#define	NOP		0xe28dd004	/* add   sp, sp, #4 */
-+#endif
-+
- static inline unsigned long ftrace_call_adjust(unsigned long addr)
- {
- 	/* With Thumb-2, the recorded addresses have the lsb set */
-diff --git a/arch/arm/kernel/ftrace.c b/arch/arm/kernel/ftrace.c
-index a0b6d1e3812f..f0f1bdf27637 100644
---- a/arch/arm/kernel/ftrace.c
-+++ b/arch/arm/kernel/ftrace.c
-@@ -25,23 +25,6 @@
- #include <asm/stacktrace.h>
- #include <asm/patch.h>
- 
--/*
-- * The compiler emitted profiling hook consists of
-- *
-- *   PUSH    {LR}
-- *   BL	     __gnu_mcount_nc
-- *
-- * To turn this combined sequence into a NOP, we need to restore the value of
-- * SP before the PUSH. Let's use an ADD rather than a POP into LR, as LR is not
-- * modified anyway, and reloading LR from memory is highly likely to be less
-- * efficient.
-- */
--#ifdef CONFIG_THUMB2_KERNEL
--#define	NOP		0xf10d0d04	/* add.w sp, sp, #4 */
--#else
--#define	NOP		0xe28dd004	/* add   sp, sp, #4 */
--#endif
--
- #ifdef CONFIG_DYNAMIC_FTRACE
- 
- static int __ftrace_modify_code(void *data)
-diff --git a/arch/arm/probes/Makefile b/arch/arm/probes/Makefile
-index 8b0ea5ace100..b3c355942a21 100644
---- a/arch/arm/probes/Makefile
-+++ b/arch/arm/probes/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_UPROBES)		+= decode.o decode-arm.o uprobes/
- obj-$(CONFIG_KPROBES)		+= decode.o kprobes/
-+obj-$(CONFIG_KPROBES_ON_FTRACE)	+= ftrace.o
- ifdef CONFIG_THUMB2_KERNEL
- obj-$(CONFIG_KPROBES)		+= decode-thumb.o
- else
-diff --git a/arch/arm/probes/ftrace.c b/arch/arm/probes/ftrace.c
-new file mode 100644
-index 000000000000..0f54b8e5d2a6
---- /dev/null
-+++ b/arch/arm/probes/ftrace.c
-@@ -0,0 +1,53 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/kprobes.h>
-+
-+/* Ftrace callback handler for kprobes -- called under preepmt disabled */
-+void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
-+			   struct ftrace_ops *ops, struct ftrace_regs *regs)
-+{
-+	struct kprobe *p;
-+	struct kprobe_ctlblk *kcb;
-+
-+	p = get_kprobe((kprobe_opcode_t *)ip);
-+	if (unlikely(!p) || kprobe_disabled(p))
-+		return;
-+
-+	kcb = get_kprobe_ctlblk();
-+	if (kprobe_running()) {
-+		kprobes_inc_nmissed_count(p);
-+	} else {
-+		unsigned long orig_ip = instruction_pointer(&(regs->regs));
-+
-+		instruction_pointer_set(&(regs->regs), ip);
-+
-+		__this_cpu_write(current_kprobe, p);
-+		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
-+		if (!p->pre_handler || !p->pre_handler(p, &(regs->regs))) {
-+			/*
-+			 * Emulate singlestep (and also recover regs->pc)
-+			 * as if there is a nop
-+			 */
-+			instruction_pointer_set(&(regs->regs),
-+						(unsigned long)p->addr + MCOUNT_INSN_SIZE);
-+			if (unlikely(p->post_handler)) {
-+				kcb->kprobe_status = KPROBE_HIT_SSDONE;
-+				p->post_handler(p, &(regs->regs), 0);
-+			}
-+			instruction_pointer_set(&(regs->regs), orig_ip);
-+		}
-+
-+		/*
-+		 * If pre_handler returns !0, it changes regs->pc. We have to
-+		 * skip emulating post_handler.
-+		 */
-+		__this_cpu_write(current_kprobe, NULL);
-+	}
-+}
-+NOKPROBE_SYMBOL(kprobe_ftrace_handler);
-+
-+int arch_prepare_kprobe_ftrace(struct kprobe *p)
-+{
-+	p->ainsn.insn = NULL;
-+	return 0;
-+}
-diff --git a/arch/arm/probes/kprobes/core.c b/arch/arm/probes/kprobes/core.c
-index d8238da095df..5e2f18cfd766 100644
---- a/arch/arm/probes/kprobes/core.c
-+++ b/arch/arm/probes/kprobes/core.c
-@@ -45,6 +45,38 @@ DEFINE_PER_CPU(struct kprobe *, current_kprobe) = NULL;
- DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
- 
- 
-+kprobe_opcode_t *arch_adjust_kprobe_addr(unsigned long addr, unsigned long offset,
-+					 bool *on_func_entry)
-+{
-+#ifdef CONFIG_KPROBES_ON_FTRACE
-+	unsigned long nop_offset = 0;
-+	u32 insn = 0;
-+
-+	/*
-+	 * Since 'addr' is not guaranteed to be safe to access, use
-+	 * copy_from_kernel_nofault() to read the instruction:
-+	 */
-+	if (copy_from_kernel_nofault(&insn, (void *)(addr + nop_offset),
-+				     sizeof(u32)))
-+		return NULL;
-+
-+	while (insn != NOP) {
-+		nop_offset += 4;
-+		if (copy_from_kernel_nofault(&insn, (void *)(addr + nop_offset),
-+					     sizeof(u32)))
-+			return NULL;
-+	}
-+
-+	*on_func_entry = offset <= nop_offset;
-+	if (*on_func_entry)
-+		offset = nop_offset;
-+#else
-+	*on_func_entry = !offset;
-+#endif
-+
-+	return (kprobe_opcode_t *)(addr + offset);
-+}
-+
- int __kprobes arch_prepare_kprobe(struct kprobe *p)
- {
- 	kprobe_opcode_t insn;
 -- 
-2.34.1
-
+Martin K. Petersen	Oracle Linux Engineering
 
