@@ -1,58 +1,73 @@
-Return-Path: <linux-kernel+bounces-214169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C1D6908076
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:05:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D8B2908079
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3992B1F22C76
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:05:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27C0B1F22C74
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0274E1C3D;
-	Fri, 14 Jun 2024 01:05:33 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F59158D87;
+	Fri, 14 Jun 2024 01:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="ELkRxXvR"
+Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC83163;
-	Fri, 14 Jun 2024 01:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A6B157E7D;
+	Fri, 14 Jun 2024 01:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718327132; cv=none; b=EClCJiut20856YccMVDaWtmL5rwKWpNFA0FlOiquQLmSw+ZsAFGvgO9Bu89zqLHhlaFiPH3WDRWYjukYJhH7DMBWfrvy1VQS6jXadgIamJJTUOgF9RoATTmn9iLulxMvGDd/jn9gN1IVTpJbEqU2JsUCw7OPJcJEt5uOYvw8Ldw=
+	t=1718327166; cv=none; b=fXXKqpgf2+JbvpSb6hitr/+CwugV7dkv8nVjE2nT3SIpTzrE323rWt0OJ1Wx2NIfjlPwzHXplARRjSP+EIPX1jYl1eLl9tkYFPd1Otbdc1l5lK7rBTLK6LPLGiN51bvDXoZ6FVGBcTpAt7MuSz0rv2dDNtsim5sJfJjvLW1WOgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718327132; c=relaxed/simple;
-	bh=PekTB8wWNvrnCvP2P/JIrxw9nxaknXwMDBljbAjXfyE=;
+	s=arc-20240116; t=1718327166; c=relaxed/simple;
+	bh=YTjukw/BGV8mYAKxsl/K54ofbjuLrNGSXQDE42MMWnI=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GBaCqrRobnuU852VaNknIuGiqvpvvwKRqoTmOrDcFxij5HAPpm/ZgXe79SHlC1Y17vDNBvBVcuWWyw5L7B/raF4RzqYIbzmN8JInvQHWH3Ebvgwjyvx+NnE9cj+2LLq3Ac8H65jHRKyz6Q8FHJSAEPGZma7VvXYDVB4gBjVSr8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45E0Ujcl028810;
-	Fri, 14 Jun 2024 01:05:26 GMT
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3yme965jrj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 14 Jun 2024 01:05:25 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 13 Jun 2024 18:05:24 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Thu, 13 Jun 2024 18:05:22 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+b778ac10fe2a0cd72517@syzkaller.appspotmail.com>
-CC: <amir73il@gmail.com>, <linux-kernel@vger.kernel.org>,
-        <linux-unionfs@vger.kernel.org>, <miklos@szeredi.hu>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH] ovl: avoid deadlock in ovl_create_tmpfile
-Date: Fri, 14 Jun 2024 09:05:22 +0800
-Message-ID: <20240614010522.2261016-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000871190061acd8fed@google.com>
-References: <000000000000871190061acd8fed@google.com>
+	 MIME-Version:Content-Type; b=CyyZtbg5FTqvzYCWjpBSXaVA8d3pD1SG9G8jpQ4aRttfUvUEcXn0tBGSC36S4tKHsF3d683VBSlo/Vq6av+DK/ktpTr1LP/Nx1AjJMFZH3VL38HqCw7lk4U1Byqv4kgNyQyOEstqM8s/BiH5Dp4y4lk5MEPxTaoA2oy9QITudGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=ELkRxXvR; arc=none smtp.client-ip=52.119.213.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1718327165; x=1749863165;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=rILIpK3Rb2EspulcRW6/eoNsK8bJDymZjW/BlfMedfU=;
+  b=ELkRxXvR4L7E2lE4ebqeEsUT8BzTwXpXBC41uBPOcL60ces7lxpgFM9d
+   FqXIYztBLv1hk5t9FewFJNhZK4Qo2Q9cMukbLNUjZbh/3Ov7qLZRb4rhy
+   p6n3osDXn/Z9vGLB9HTY6nL0yOL/UMa4vtFpalKJpMPCXHOvuwWT+QIA8
+   M=;
+X-IronPort-AV: E=Sophos;i="6.08,236,1712620800"; 
+   d="scan'208";a="4903152"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 01:06:02 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.7.35:47220]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.35.14:2525] with esmtp (Farcaster)
+ id 7be474e4-5fa9-4293-97e0-606460cbbe37; Fri, 14 Jun 2024 01:06:00 +0000 (UTC)
+X-Farcaster-Flow-ID: 7be474e4-5fa9-4293-97e0-606460cbbe37
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 14 Jun 2024 01:06:00 +0000
+Received: from 88665a182662.ant.amazon.com (10.106.100.23) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 14 Jun 2024 01:05:57 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <penguin-kernel@i-love.sakura.ne.jp>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <jhs@mojatatu.com>,
+	<jiri@resnulli.us>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <xiyou.wangcong@gmail.com>,
+	<kuniyu@amazon.com>
+Subject: Re: [net/sched] Question: Locks for clearing ERR_PTR() value from idrinfo->action_idr ?
+Date: Thu, 13 Jun 2024 18:05:48 -0700
+Message-ID: <20240614010548.71803-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <8d61200a-a739-4200-a8a3-5386a834d44f@I-love.SAKURA.ne.jp>
+References: <8d61200a-a739-4200-a8a3-5386a834d44f@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,53 +76,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: BhpMO5as8WEAVXN-nnT_laXPQq3yOLaw
-X-Proofpoint-ORIG-GUID: BhpMO5as8WEAVXN-nnT_laXPQq3yOLaw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_15,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1011 lowpriorityscore=0 adultscore=0 spamscore=0 suspectscore=0
- phishscore=0 impostorscore=0 mlxscore=0 mlxlogscore=679 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2405170001 definitions=main-2406140003
+X-ClientProxiedBy: EX19D046UWA004.ant.amazon.com (10.13.139.76) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-ovl_copy_up() will retrieve sb_writers, and ovl_want_write will also retrieve
-sb_writers, adjusting the order of their execution to avoid deadlocks.
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Fri, 14 Jun 2024 09:58:48 +0900
+> Hello.
+> 
+> syzbot is reporting hung task problems involving rtnl_muxex. A debug printk()
+> patch added to linux-next-20240611 suggested that many of them are caused by
+> an infinite busy loop inside tcf_idr_check_alloc().
 
-Reported-by: syzbot+b778ac10fe2a0cd72517@syzkaller.appspotmail.com
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
- fs/overlayfs/dir.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I think the fix is:
+https://lore.kernel.org/netdev/20240613071021.471432-1-druth@chromium.org/
 
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index 116f542442dd..ab65e98a1def 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -1314,10 +1314,6 @@ static int ovl_create_tmpfile(struct file *file, struct dentry *dentry,
- 	int flags = file->f_flags | OVL_OPEN_FLAGS;
- 	int err;
- 
--	err = ovl_copy_up(dentry->d_parent);
--	if (err)
--		return err;
--
- 	old_cred = ovl_override_creds(dentry->d_sb);
- 	err = ovl_setup_cred_for_create(dentry, inode, mode, old_cred);
- 	if (err)
-@@ -1360,6 +1356,10 @@ static int ovl_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 	if (!OVL_FS(dentry->d_sb)->tmpfile)
- 		return -EOPNOTSUPP;
- 
-+	err = ovl_copy_up(dentry->d_parent);
-+	if (err)
-+		return err;
-+
- 	err = ovl_want_write(dentry);
- 	if (err)
- 		return err;
--- 
-2.43.0
 
+> 
+> ----------
+> again:
+> 		rcu_read_lock();
+> 		p = idr_find(&idrinfo->action_idr, *index);
+> 
+> 		if (IS_ERR(p)) {
+> 			/* This means that another process allocated
+> 			 * index but did not assign the pointer yet.
+> 			 */
+> 			rcu_read_unlock();
+> 			goto again;
+> 		}
+> ----------
+> 
+> Since there is no sleep (e.g. cond_resched()/schedule_timeout_uninterruptible(1))
+> before "goto again;", once idr_find() returns an IS_ERR() value, all of that CPU's
+> computation resource is wasted forever with rtnl_mutex held (and anybody else who
+> tries to hold rtnl_mutex at rtnl_lock() is reported as hung task, resulting in
+> various hung task reports waiting for rtnl_mutex at rtnl_lock()).
+> 
+> Therefore, I tried to add a sleep before "goto again;", but I can't know whether
+> a sleep added to linux-next-20240612 solves the hung task problem because syzbot
+> currently cannot test linux-next kernels due to some different problem.
+> 
+> Therefore, I'm posting a question here before syzbot can resume testing of
+> linux-next kernels. As far as I can see, the ERR_PTR(-EBUSY) assigned at
+> 
+> 	mutex_lock(&idrinfo->lock);
+> 	ret = idr_alloc_u32(&idrinfo->action_idr, ERR_PTR(-EBUSY), index, max,
+> 			    GFP_KERNEL);
+> 	mutex_unlock(&idrinfo->lock);
+> 
+> in tcf_idr_check_alloc() is cleared by either
+> 
+> 	mutex_lock(&idrinfo->lock);
+> 	/* Remove ERR_PTR(-EBUSY) allocated by tcf_idr_check_alloc */
+> 	WARN_ON(!IS_ERR(idr_remove(&idrinfo->action_idr, index)));
+> 	mutex_unlock(&idrinfo->lock);
+> 
+> in tcf_idr_cleanup() or
+> 
+> 	mutex_lock(&idrinfo->lock);
+> 	/* Replace ERR_PTR(-EBUSY) allocated by tcf_idr_check_alloc */
+> 	idr_replace(&idrinfo->action_idr, a, a->tcfa_index);
+> 	mutex_unlock(&idrinfo->lock);
+> 
+> in tcf_idr_insert_many().
+> 
+> But is there a possibility that rtnl_mutex is released between
+> tcf_idr_check_alloc() and tcf_idr_{cleanup,insert_many}() ? If yes,
+> adding a sleep before "goto again;" won't be sufficient. But if no,
+> how can
+> 
+> 	/* This means that another process allocated
+> 	 * index but did not assign the pointer yet.
+> 	 */
+> 
+> happen (because both setting ERR_PTR(-EBUSY) and replacing with an !IS_ERR()
+> value are done without temporarily releasing rtnl_mutex) ?
+> 
+> Is there a possibility that tcf_idr_check_alloc() is called without holding
+> rtnl_mutex? If yes, adding a sleep before "goto again;" would help. But if no,
+> is this a sign that some path forgot to call tcf_idr_{cleanup,insert_many}() ?
 
