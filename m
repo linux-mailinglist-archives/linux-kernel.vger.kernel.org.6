@@ -1,127 +1,187 @@
-Return-Path: <linux-kernel+bounces-215144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926D0908EAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:26:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4DAB908EAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FD291F2315D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:26:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CCE42899F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC2A364A1;
-	Fri, 14 Jun 2024 15:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273E71B95B;
+	Fri, 14 Jun 2024 15:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="b1OF82qy"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iGyqQvfg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EC115ECD0;
-	Fri, 14 Jun 2024 15:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614AA15ECCF;
+	Fri, 14 Jun 2024 15:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718378801; cv=none; b=Yqf6PcNuN6dHYbKUOgY0ck1j3r0iwYMiCNzOFl49Ho3OgY30yG1t1680HwB5u8KeL8h0LRb1vCbrOPwL2kAy+kxCjDQ21NZXi8isl/TaBXI6lEvFVP7d2J1PXJ9Z66jek/XWwct9oW2YMEydoyc2WWYljVpFIkzGTSvRK3heTMg=
+	t=1718378788; cv=none; b=VUBYqmBCIQhgjG635kNT7Rqz7Ws/XzXtAbzXan8XC0Yf6iADmO4+Q1jAdfsIaHMFm37M9axMcULYn4l/9amcU3pmXHQzkeodvsbAbOsm92t10umHkh5Af4YdZnPEj0p0DVOJnJkd1j3R+dTCoAflfKcJZ5vbdFrHV5D20KFEGfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718378801; c=relaxed/simple;
-	bh=cjl0bkjeAO5Vua+9MaTkaLsH8+alieQpslyVDPvkcN0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MxTPDX72JVjUP+56W8ur9Pfc++GTNig5fpCjCkRDkqNick7L7D+ZL2tB1mTbdUgkHCtxxYagQlJhJsFV9CQgj9wUEX5z8owJRFNnArUILoiCSIPf5B4ICeWV53OeUx4xbsnCR5H6CL89Prf/ACuQ3aALGLSSxrt+wBksBYm247g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=b1OF82qy reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 13d1a6cfb4bcd6ae; Fri, 14 Jun 2024 17:26:29 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 0649E6A7417;
-	Fri, 14 Jun 2024 17:26:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1718378789;
-	bh=cjl0bkjeAO5Vua+9MaTkaLsH8+alieQpslyVDPvkcN0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=b1OF82qy4GvveuAegebT30EZmtNITmka/xRb6eK6KlVCaIGEn6X5iPgJsYkcnrVjH
-	 7nYH6odlfEayW2LzXFFrXOo0Yz/nAnnHLGzKNlgzYDyT9fMaBGvOC/nqpnflrZBil5
-	 JQfwZvqhzgfFfk/ZNMyOJdkLfzoBCx/bYXlqWSIPo6id+TJwXNuL60kO9Iapp2tEZ3
-	 a4B+YUVnOJDQ6br5nMVigvK8EjcVBYNp1OVNNiskROZCHif1TnBCD0exWfqrBBaKSe
-	 5cahNCrasC7dAkB6EBGPsIMCE3FXCRnvsGO1u7e8oASIMpq1EOBV9nC1CK3He7uZ0J
-	 EIVYqIU7wQBrg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
- LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>, fhortner@yahoo.de
-Subject:
- [PATCH v1 2/2] thermal: core: Change PM notifier priority to the minimum
-Date: Fri, 14 Jun 2024 17:26:00 +0200
-Message-ID: <3317718.44csPzL39Z@kreacher>
-In-Reply-To: <6070114.lOV4Wx5bFT@kreacher>
-References: <6070114.lOV4Wx5bFT@kreacher>
+	s=arc-20240116; t=1718378788; c=relaxed/simple;
+	bh=4NLhjLagJehuTOmWaUKeGAJfqt2/4rzGpxd/ChCEB5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bb3tviDNpeqqHp53bGboPbmEds70s5Ht/M3ZzTgYof8WFJR0ZHYx0UVw2WCkm31Z4Bm0xcOun/61ufMyCDqD9sEu0f6oayKlp1LmVdQ9MgovXr0w2tYs1FgOdCrPppzZsB8y+QEk7FsCIk8qWQOAvHBcWD92XW2Nyn7JKwKBR+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iGyqQvfg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C0A6C4AF51;
+	Fri, 14 Jun 2024 15:26:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718378787;
+	bh=4NLhjLagJehuTOmWaUKeGAJfqt2/4rzGpxd/ChCEB5U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iGyqQvfgCKL29czXdLpI26pg+vOmhaS4MR18JazX3SZMzYsUam/IWoTAfgbTupIAf
+	 fpzu7hlTKxc78qkMSxp476JG5DD1XlI0o43+E4Ed9BTXHijTaHLn/S3lANfMuxGMlI
+	 k72u7fp3PSi3NsI2+ZBl96yfgelboWNj7AquyRSkbzHrzF0lUD0a8vaJdZPqP2wN8f
+	 DRKrLPoz2NEZOTCN4OoN3BpU1xST19LNQWAUv5NAC3XL65TsM0KOOaCbi5fKA7uJ2j
+	 sc2T9qtK3i3tH9yfBzWPWBMCRF1OYxqoSVM6G50ltrWI3GepJgdg8fJOlXP+ApV9om
+	 vDi4VotHx0TkQ==
+Date: Fri, 14 Jun 2024 16:26:22 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Charles Wang <charles.goodix@gmail.com>
+Cc: dmitry.torokhov@gmail.com, dan.carpenter@linaro.org,
+	dianders@chromium.org, robh@kernel.org, krzk+dt@kernel.org,
+	jikos@kernel.org, bentiss@kernel.org, hbarnor@chromium.org,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] dt-bindings: input: Goodix SPI HID Touchscreen
+Message-ID: <20240614-renewably-snowless-861ca2ab9c93@spud>
+References: <20240614121538.236727-1-charles.goodix@gmail.com>
+ <20240614121538.236727-3-charles.goodix@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrfeduledgkeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepfeduudeutdeugfelffduieegiedtueefledvjeegffdttefhhffhtefhleejgfetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggr
- segrrhhmrdgtohhmpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
-
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-It is reported that commit 5a5efdaffda5 ("thermal: core: Resume thermal
-zones asynchronously") causes battery data in sysfs on Thinkpad P1 Gen2
-to become invalid after a resume from S3 (and it is necessary to reboot
-the machine to restore correct battery data).  Some investigation into
-the problem indicated that it happened because, after the commit in
-question, the ACPI battery PM notifier ran in parallel with
-thermal_zone_device_resume() for one of the thermal zones which
-apparently confused the platform firmware on the affected system.
-
-While the exact reason for the firmware confusion remains unclear, it
-is arguably not particularly relevant, and the expected behavior of the
-affected system can be restored by making the thermal PM notifier run
-at the lowest priority which avoids interference between work items
-spawned by it and the other PM notifiers (that will run before those
-work items now).
-
-Fixes: 5a5efdaffda5 ("thermal: core: Resume thermal zones asynchronously")
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218881
-Reported-by: fhortner@yahoo.de
-Tested-by: fhortner@yahoo.de
-Cc: 6.8+ <stable@vger.kernel.org> # 6.8+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/thermal_core.c |    6 ++++++
- 1 file changed, 6 insertions(+)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -1710,6 +1710,12 @@ static int thermal_pm_notify(struct noti
- 
- static struct notifier_block thermal_pm_nb = {
- 	.notifier_call = thermal_pm_notify,
-+	/*
-+	 * Run at the lowest priority to avoid interference between the thermal
-+	 * zone resume work items spawned by thermal_pm_notify() and the other
-+	 * PM notifiers.
-+	 */
-+	.priority = INT_MIN,
- };
- 
- static int __init thermal_init(void)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="sIpVdyPJbqU7YAg0"
+Content-Disposition: inline
+In-Reply-To: <20240614121538.236727-3-charles.goodix@gmail.com>
 
 
+--sIpVdyPJbqU7YAg0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Jun 14, 2024 at 08:15:38PM +0800, Charles Wang wrote:
+> The Goodix GT7986U touch controller report touch data according to the
+> HID protocol through the SPI bus. However, it is incompatible with
+> Microsoft's HID-over-SPI protocol.
+>=20
+> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+> ---
+>  .../bindings/input/goodix,gt7986u.yaml        | 65 +++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/goodix,gt7986=
+u.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml =
+b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+> new file mode 100644
+> index 000000000..1c518d03b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+> @@ -0,0 +1,65 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/goodix,gt7986u.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: GOODIX GT7986U SPI HID Touchscreen
+> +
+> +maintainers:
+> +  - Charles Wang <charles.goodix@gmail.com>
+> +
+> +description:
+> +  Supports the Goodix GT7986U touchscreen.
+> +  This touch controller reports data packaged according to the HID proto=
+col,
+> +  but is incompatible with Microsoft's HID-over-SPI protocol.
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - goodix,gt7986u
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +    description: reset gpio the chip is connected to.
+> +
+> +  goodix,hid-report-addr:
+> +    description: the register address for retrieving HID report data.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +additionalProperties: false
+
+unevaluatedProperties: false.
+
+Please test your binding w/ dt_binding_check.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - goodix,hid-report-addr
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    spi {
+> +      #address-cells =3D <1>;
+> +      #size-cells =3D <0>;
+> +      num-cs =3D <1>;
+> +      cs-gpios =3D <&gpio 2 GPIO_ACTIVE_HIGH>;
+
+cs-gpios shouldn't be needed for a basic example.
+
+Blank line here before the child node please.
+
+Thanks,
+Conor.
+
+> +      touchscreen@0 {
+> +        compatible =3D "goodix,gt7986u";
+> +        reg =3D <0>;
+> +        interrupt-parent =3D <&gpio>;
+> +        interrupts =3D <25 IRQ_TYPE_LEVEL_LOW>;
+> +        reset-gpios =3D <&gpio1 1 GPIO_ACTIVE_LOW>;
+> +        spi-max-frequency =3D <10000000>;
+> +        goodix,hid-report-addr =3D <0x22c8c>;
+> +      };
+> +    };
+> --=20
+> 2.43.0
+>=20
+>=20
+
+--sIpVdyPJbqU7YAg0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmxhHgAKCRB4tDGHoIJi
+0jvDAQDDtZyVi/8NgabB8fDEa1enuIUIT8ggVNgMugIqpQnRNAEA+oBaBQsso5Pk
+mO2mB6FIEIQiIEctAIhGz5QpwWq+aAQ=
+=Ez+U
+-----END PGP SIGNATURE-----
+
+--sIpVdyPJbqU7YAg0--
 
