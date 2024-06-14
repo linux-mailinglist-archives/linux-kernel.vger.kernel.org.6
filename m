@@ -1,488 +1,253 @@
-Return-Path: <linux-kernel+bounces-214966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18394908CBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:50:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F62E908CBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 869551F28875
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:50:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 765721C26500
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9BD47A64;
-	Fri, 14 Jun 2024 13:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MAyqcIPi"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2062.outbound.protection.outlook.com [40.107.220.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB9FC157;
+	Fri, 14 Jun 2024 13:49:21 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1819817C96
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718372879; cv=fail; b=cSWMcAHwOaPNBP8qtCLmhuWbipU1ZdBpW8xNeFfbiwhbB3ZKIkTQwo3NF7vi3hIFK2IYNgJ80WZdNE2805RrPNpUAWy8afE9I0JBk2k1qKC9YqOl9LriG7Q2w+NThe5uf2QUwVNq9GvPs7vgSBuTCmmaSYiOnGZQWFUovPHdiK8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718372879; c=relaxed/simple;
-	bh=YFjkc+m7CrvbagDM27MjCHolVfbjEAWAKrQTdN16DJI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=sQKmO/Nh6sIdps7NZVTXU4Fjo7xlJNDXOtw6q38zQEbID3CNjhhzw8cJEyxJE7VS0Mh+hA671NBE6QwpZFxbg3ltrdIT71eif485+vWpQF8B5Lo/RQeu9XKRFstYVdF6D1V+rTsl74xTr0QwBZGgFk+/OdCCpBeHjxbRS0EmVbw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MAyqcIPi; arc=fail smtp.client-ip=40.107.220.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Equc2P2/Unm2T2T1cQ+oIvlxidraQBS+ciSMkt2yrVFkcjIMvywTH10VgxgeTYSKGKrXL2FqKN5CMeW7GY1qrZ2OviKPa+o53YQwjRGG52yA9YIRYY4KsFTTa509HYyB1R2ha9nbk2pj9BAdut9ZHB35Gl6A3t7Fl2yfR2/X3G+qxaBtqPlSwlNi2+O29DkyT8QLzm//4dyCV3bO7drZUl2QqmFuxtsPlH4lzTzzKhwDTHBHYCTsPSY4ZTrmBve5b1cwnt3poOH7Z8CrdE+NyoVGil6rFTPaPqrV+FhL71o6SJeknjvf+63lti3gK1GoWZscwl9x1cT8Kqpzlun5vw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Hs2+TNAN87LKCrjBo446uWR/XK3vgDLDtWfVcT+omOE=;
- b=kl6Tr4RKYXQkTSQWbZmknd/JT3Ze9aCPoj7FCo64mzJMx0YqeTIeG75dvrAWOoxA2HEdKXjH1vk4jj4QthIsY7ksLjXs/7zsInpqKiWLqHwsgN/sj2EV100XKfFtdLve2A8HFutwR0UwQXu2XfcEV6OLUyK9zxPPtYzdkMLIV4kEBmIs1gow+107wTqR15D6fmKr5+uvbaMAHbj3JEE6RbdMtjlcbAo9s/NpUsPuEsfhE6nOprJzKQ7Jk8V8NdcmurS+I4oTlAu8f8xfdgoY/FoqIum+dF9snWgQaAQKsNkU70/1ZcY10yYcnO1Fw+iglkp13NE25A7qICpcYB8ytw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Hs2+TNAN87LKCrjBo446uWR/XK3vgDLDtWfVcT+omOE=;
- b=MAyqcIPiN+tVhhacAhkV4z5X1w7paFpypEjc7cnx5zQWPomJD4Rf6utfk+tVH/a7LFks8ujP1CViq49UBpXAwPdoXBlzTTdisPP0xK0Kxz/uZkFtA7D4FrizNhIIevKXSBDz7xPtHW+TwMx9RiWWaWFUqj/mKAurg5qDmHs9uLU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by SA1PR12MB6821.namprd12.prod.outlook.com (2603:10b6:806:25c::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.24; Fri, 14 Jun
- 2024 13:47:53 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.7677.024; Fri, 14 Jun 2024
- 13:47:53 +0000
-Message-ID: <df7dc942-4e65-4e3a-8b10-6f4f0d1ef602@amd.com>
-Date: Fri, 14 Jun 2024 08:47:51 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] drm/fb-helper: Detect when lid is closed during
- initialization
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>, amd-gfx@lists.freedesktop.org,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Chris Bainbridge <chris.bainbridge@gmail.com>
-References: <20240613051700.1112-1-mario.limonciello@amd.com>
- <f5485db8-9e1d-4b95-a0ec-25ee8551795d@suse.de>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <f5485db8-9e1d-4b95-a0ec-25ee8551795d@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SN7PR04CA0194.namprd04.prod.outlook.com
- (2603:10b6:806:126::19) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49B2BA33
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718372960; cv=none; b=Ba5gFcLlG0KzD/69krnCNB3qX0oVWYvOYaett1+VqcVcTFFB187LC9xytsxBeesKdbjokB6C5DHspbxduzjnNaf0fpVuLr7uO2rODz28l4wF3Y58m+nS48p4BolFuKRw1SFLjr1dpB+z2h4UkUQz43c5MDYDQbKR6WKjNIXQZtg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718372960; c=relaxed/simple;
+	bh=ZMZTADelmydgLbe5bhaNM4rTFN4WheJKgOouTeqO7Vk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=de6pvWvinjIfo6e6K4Als+Oxo0mRAkOqsogSIeRzMQPxIMDzT4maDniLOVMohBgvhJulHY6WWUz+Yt4STksmYmEuHaG6t0M4bnimpVwJHvqvlUW1zD3uBja77yR+nXP2jMO/nLpgTCpw96kFd1hX5HcIkbbMa5BqiQlOl17dxd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7eb7e13522bso236630039f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 06:49:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718372958; x=1718977758;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YBlbYhm7TAgZta9pO8+l+adV1ptzSfhU22SAdwmUGrs=;
+        b=MmYchq9LSZwk6iw17+FkaG2kl3PmnLfCGKvGKSOnqoYdt+i+5PhkzWN5Ke+9q04UxK
+         V/Yb5dUrnrHyLI1oHr096r6rWVhdKL6X/BpQc2DYtPOCq9lclC+cSz7wh8YYYNrW3pri
+         BdGhziE2bgNqSqvF/yCwqvuEisdL3Mz/TFnsozRoHIaGDKxdFhhznEn6B392iyaannuZ
+         kMqgE/bH00ECw6+kXlsUEXA8CceIK3mm5lzX5yZwxoySqVUvjYLwsixWGKj+d4tbT/P6
+         KQE4VyeoLyDUp6kfmX/4dv8KAol2sTJMTk4o/BicJzKv6bt4p0uH2VAyDGzFUuOFCb3f
+         N0pA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVuGf8oRb/6FYZOwnWzi4yIJh/bL5bpGLKbTxd5kSfNRjqY6V6GJFuCt37YW/cvOBujpEIErwkeh03IbdzWgbdZCIDr2ERcTM4VKkG
+X-Gm-Message-State: AOJu0YxlK3vUZQfBRwGyL9vBnEPbbCjVZaTiLkInbca+sXYGDoVHGiiR
+	717PA1jrTecnUABdkcXwaPS/kEwCOp0V0B1jsrBTaKrPdsTIEH22awC/Sn+droz08CYx47bVXoR
+	eRW26GlTWG3eOJ9UT/uPXjrIgfxJynZ0kAkan2tqxjXz/FEU89ZHyK+A=
+X-Google-Smtp-Source: AGHT+IFN+PhwIlTEwUD985zjwp/sm6N+Zfzfuaxn2WwqJQmN1e1IgcwDSTaEaYwGa5B58OechSsDNRyDvqn+jdY3uSjpmkODf0PU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SA1PR12MB6821:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0355a6cc-e8b8-470d-630f-08dc8c7896e9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|376011|7416011|1800799021;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RzhmbXR3Y0tPVGNTTDh2eEhzWGs0RG8wcjJCQkI2cXdRWFdoelhVRU1sMjJr?=
- =?utf-8?B?QzJ5NzZRZXpHTVlHNllTWUNwUm55S3IwUnJiazllSFQ3eDZyUnM0WkxxNmxh?=
- =?utf-8?B?eWwyOUFXeWdSUmpEZWt4cVYvbng4U3BGYzVxNDhXV21wUFd0d2xoYWNxWTlE?=
- =?utf-8?B?eGNhMkkwT01mWFNrUnVtcWhYR2plemZncm8xKzdMUXRpSjVJL002SCtGNzUx?=
- =?utf-8?B?VFRvelBNYU8yNzcxMGJ6MHh0aUcwV0s0a045dnhBMmRlMnFqdDI0ZDRaNTFI?=
- =?utf-8?B?KzZSY2htNXIvYkFlRmtwcEtOQ0RkZWNEQ0ZEb2huS0RPdllwTHZ0eWlaM2Fv?=
- =?utf-8?B?Rng0SEZwYTA0KzlOOW5kSUpVaDg0MDRKK3Jab0J5S00rZ3hLemppK1ZZR0U0?=
- =?utf-8?B?OElrV0l6b25oZ1pEbUk2dGgwU0pNcmRhQVN1ZWJyRVVORndsSUh3M0xtR0Zq?=
- =?utf-8?B?MFYrVEg4azIrKzUxN3MrYUpZS0JXYXRScGgxb2NISVVNcE0wM0lyTTVZMkFI?=
- =?utf-8?B?akQ5RjlJSm82aHlmMlRVMzFyQ0g2d0NpUjJINGYwU3B2ZVFtZmw4WTFOZEZs?=
- =?utf-8?B?Vjl5ZHE1MjlhR1B3dkVJaUVNd0hvNGpmU3lYbmZXMHEyRHczQ3JRSVo5bTYx?=
- =?utf-8?B?d1JiM3lBTlkzYStTSGg4dE5QOHBuUTQrR2FIQ0RkZjNBVmpVZHpGYTh5c1k4?=
- =?utf-8?B?Q2xHZ0hBSE5sV09zU1p0alRpL2NnWGVGQlNZT0E2RXlMV3ZEclJYU01QZ1V3?=
- =?utf-8?B?eDBIVG1TeW9MYiswa3ZKeUNvd1E4Y2FKamVUbFdjdVZEdThUbkY4aVlqRFBq?=
- =?utf-8?B?dlF6d2o2YlBNVStYcHJzZHJaekxUZGxsaHFJQ1JDb3Q3WWVWOG5aRjRscHNW?=
- =?utf-8?B?VVExT002eEdKZkhuVTFIK296c0owdTYxZ0tBMkw5bFl5R3ZWWFpOcW1Od2FP?=
- =?utf-8?B?eUZqMnk2b1JJSHY1RmNxQlFUQlZnL1k0ZzFVd2hoY2trWUFNUEtjR1NnY2hw?=
- =?utf-8?B?TVdsUmlVcHBGSzhuVk5JYytTZ1cxODNKMHBGUXMyK0hCbWg2bmFyTDBCWnFx?=
- =?utf-8?B?NlZDSWFrWHp0K1I3REhHT212ZGFGMXVPMitTWFRRMFpSTnVHR2UzcGdSUUhT?=
- =?utf-8?B?TTlqV292ZW1RcWxGc2dobXZkMUFsSEhGbkhJYmFQMGVIbDhqUitZQnR3R0JK?=
- =?utf-8?B?cGJmQXhmQlVOalhnZzQrM1FXUjdYUlEvUmpLSGNmV01sOTgxQUxXNEZ1WGZL?=
- =?utf-8?B?ZWs1Kzhpc3lvMjFXNiszM05oczV5NGZuTWdacXdVUG1qckhnYWR1NG9rZ2Yy?=
- =?utf-8?B?Y3gyUEZ0SWx5cVRDN1R0ek1JQ1NqeDhyM1JMRkRxR2gvWW12UlRSaU5YV1Q1?=
- =?utf-8?B?UmcvT2svd2MybWJheTI1UnhzNkQyendFaTJsQ1luS1hMUHgwT2NjSW9IOVd4?=
- =?utf-8?B?OU1QWlBqdXFjM0tpaGErNkZpZm1VNEZaeFJFYW53MGNSeVJnSHBNUU5IVmIw?=
- =?utf-8?B?cG1JZG9vMlorOC9sS0JlVkFldWF6cVVkQlZoTXE5QzJ3ODh4bE9MUE93TGhD?=
- =?utf-8?B?cWN0ZmFlMEVvSjFDNVFrK3N6WkRpN3FzVzJMYWt1MnVZM3dwRG5ac2lpMXZL?=
- =?utf-8?B?SG1wRXVNSjFOYlNReTMxMXhqS0tjMHN4ODltVU0xby9tUS9Zc0oxeHBDT2sw?=
- =?utf-8?Q?T8gwf87KCKH26gOJy/e3?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(7416011)(1800799021);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OW8waDVUYllGRlAyWjBUOTR2dUU4SEloTHk3bTZSYVhNY2pFUHVRNTR2ZXF1?=
- =?utf-8?B?SEl3R3ZPZzhzYURTOUNIUUo5RkFrVUtIMzJ6aGQ5OEh3S1hUVVFVckhhU21a?=
- =?utf-8?B?aWdCREovNnovakhHSnNOcFA3NVhSRFRSdzlGYnZIMVRoU1NhMStiQ1ZFWVNJ?=
- =?utf-8?B?L25sTEc4WTYxb3I1S2UxdzAySVZLTUhpUmIxdWVQS2I2dHBBMDVYVDBUWnIz?=
- =?utf-8?B?Yk94ZEJJR0ZVemtaSWdpczEvTC9yVTZBSWdRTnNjb2ZSYjZBQzZna0V5YVkx?=
- =?utf-8?B?K3QvL1loWlpzMDliWk5PWDFFYllkamdPQXFpVE81bzB4Q0lkbFYvVDNVTlhk?=
- =?utf-8?B?b3ZDNUFJT0l1L2NjSEY3MFl4MGtNa0xhNXZPcEtBamJyT1lxdDZGK0JTR1p6?=
- =?utf-8?B?L00rTDJYbjRCTERRT0tjMjhReDFTQXdCNVlid1ZLZWc2OCtsYmIwWHRzaTda?=
- =?utf-8?B?QUdpcC85SHZ3bHN1SzdTL0x3WXJWa1k0Mm1HRzdmVjlSbE10MXA4NnVkTUw2?=
- =?utf-8?B?UjJzUGlIaGpBa2ZYeXBMekZzUFBELzIzSnRpL2xZbVc1Z3NsMmprcTdkVFNp?=
- =?utf-8?B?REhhL1lEempaY1IwWXZOU1dtbnFxRGlTS1ppdGpkT2hrOGFETW9LSitqYytY?=
- =?utf-8?B?WUJLRVB6VHIxS2xoN1NCK0NKLzQxalU4L0UxSDArMDg4V0JRVjY0czRxK1l6?=
- =?utf-8?B?QmU2KzZGcXlRUUk1RzZuQ0NLeUwrMllpR0c4OTFySlY3TjJkRTZoMVNyUUV6?=
- =?utf-8?B?TFJFcUozdmc0RVlvMzBWZ0p4VWFkQ21kd3g2MVo1M1l1b2dkVWZiUjFLZjEw?=
- =?utf-8?B?cWYxaXdYMGRRTlBXb1JxZXlUQVdvcWpDdjBmSy8wOENoaWJ0THlZbGQ1VkJI?=
- =?utf-8?B?NUpkMjNERWtFdmlOTzRNM1kzUHA0VjhCOWd6bWg1OE82SngwL2FCME40TDZO?=
- =?utf-8?B?Z1Q2N0tlbmJkNEF6N1VRN3dOYVhHZXlEekdxdlhWSW92d3lvUXk5MHAxL3lX?=
- =?utf-8?B?Q25UaE9CeDE2RThjeUx1RFFLZ0pPc3RhTGhnWnlzSkwrM041VFRQMVpDOTZP?=
- =?utf-8?B?UHBPN09kVEw4eGFXL1hweTJvTXBZR0R1cWp0ZlJNNHpYbU5TdUJkNG9semx6?=
- =?utf-8?B?Z3hLaTJvcWtkUTY4YVoxcmEvWVJyRTM1b3o1TUI1QjcxQ0tMZ2d0SHJyMlJU?=
- =?utf-8?B?UEdSRUxuckI2TlB2M05YYXArMUQ4eVVzWmxicTNyQnZLalRNNVRodFJWYjZm?=
- =?utf-8?B?ZjhUR0JPMUttWEZzV0tPK1M5TWJFOXM5SmpmMExrRnlVcFBlWnE1ZklVQ0lm?=
- =?utf-8?B?UnMvQ2N3YTlOeDJxeXlXUll1UGVLY0VZTWpHS0hVVm1aMXVwYVhleWVoRldx?=
- =?utf-8?B?ZmxTTVZCeG9Pa2RlTkpiWGx0Q0RSamRkemp3UEZhbFlmQXBOeUtzanUzSGdG?=
- =?utf-8?B?V1Z1TU1vOXJsWHc0bDJLUS9TSk1mbFhLek15dkNYbDljZFFwWDhPRSswOHhN?=
- =?utf-8?B?bEYzYVVnKzBhUzd6VXhnRnlub004NTBYVVhnSW1tRGJVUElyOWpSUFBvSGNB?=
- =?utf-8?B?ZVJaZWRCOHVnaWlhd3A1T1pxSk5idHg0dFBJM3RTOGpnQy85dWlqemRjU21h?=
- =?utf-8?B?RUMvOXYxa1dlL0JSYmdVZ3NaakZGSDB1cnVDVUpTRHFTWDRRTHFSZ1lGWWFS?=
- =?utf-8?B?V01Nekp2QW1PcGRySEtDTTk5Y3duUGsvWkh5cXorQkRIYjJicXU2and4U2hN?=
- =?utf-8?B?ajBoTVI0bVNySGFzY0k1Vk5HZXgrRzJZcXpXQnhldzI1WnAyTWpxdlJ1THBS?=
- =?utf-8?B?TllidG5DR1EzSWgwcjc4VWpvUmNPTzdPOUc5MHZGRmdnOUpyWTZOdXBpSFlr?=
- =?utf-8?B?WnBWT0g5NkQxek1QTW0xNWxXeTdUMWE5Rnd4czY1U0dHM1pPaXhycGQ2UEND?=
- =?utf-8?B?dHBzVVBJaHoyeVN3OEpHQ1lNbUN2MUVCUDFyQmZzdEdaV09hOWxlYkw5SVp2?=
- =?utf-8?B?N012akJBYmlERlNRa1dueUVKS1NWTkhDOFpTSGFtdUYrd05hRVhXUmR6SllC?=
- =?utf-8?B?RXFqajdQaDhqUTZYcVlTRTNaZlZPZ3gzM3ozZHdBREgwZVordzFOTXY4WGxV?=
- =?utf-8?Q?X9ZrXUruUg98VIkVMLKQRCJhj?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0355a6cc-e8b8-470d-630f-08dc8c7896e9
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2024 13:47:53.6887
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /zaEwMOy/kqq/xphjo3Os1BI3Gwvo5fG7qGxTBS9h+BgujXVOLqYwkBCZ1XlPpmaSpBqhfoWUTsn3iIxDNNpMQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6821
+X-Received: by 2002:a05:6e02:2163:b0:375:a6cd:e005 with SMTP id
+ e9e14a558f8ab-375e0ec95admr1387445ab.4.1718372958104; Fri, 14 Jun 2024
+ 06:49:18 -0700 (PDT)
+Date: Fri, 14 Jun 2024 06:49:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c27da9061ad9e101@google.com>
+Subject: [syzbot] [mm?] inconsistent lock state in valid_state (3)
+From: syzbot <syzbot+40905bca570ae6784745@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/14/2024 03:15, Thomas Zimmermann wrote:
-> Hi Mario
-> 
-> Am 13.06.24 um 07:17 schrieb Mario Limonciello:
->> If the lid on a laptop is closed when eDP connectors are populated
->> then it remains enabled when the initial framebuffer configuration
->> is built.
->>
->> When creating the initial framebuffer configuration detect the
->> lid status and if it's closed disable any eDP connectors.
->>
->> Also set up a workqueue to monitor for any future lid events.
-> 
-> After reading through this patchset, I think fbdev emulation is not the 
-> right place for this code, as lid state is global.
-> 
-> You could put this into drm_client_modeset.c and track lid state per 
-> client. drm_fb_helper_lid_work() would call the client's hotplug 
-> callback. But preferable, lid state should be tracked per DRM device in 
-> struct drm_mode_config and call drm_client_dev_hotplug() on each 
-> lid-state event. Thoughts? Best regards Thomas
+Hello,
 
-This is pretty similar to what I first did when moving from ACPI over to 
-generic input switch.
+syzbot found the following issue on:
 
-It works for the initial configuration.  But I don't believe it makes 
-sense for the lid switch events because not all DRM clients will "want" 
-to respond to the lid switch events.  By leaving it up to the client for 
-everything except fbdev emulation they can also track the lid switch and 
-decide the policy.
+HEAD commit:    36534d3c5453 tcp: use signed arithmetic in tcp_rtx_probe0_..
+git tree:       bpf
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1618ee02980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=333ebe38d43c42e2
+dashboard link: https://syzkaller.appspot.com/bug?extid=40905bca570ae6784745
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10d8cf1c980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111059ce980000
 
-I also worry about what happens if the kernel does a hotplug callback on 
-lid events as well at the client choosing to do it.  Don't we end up 
-with two modesets?  So then I would think you need a handshake of some 
-sort to decide whether to do it for a given client where fbdev emulation 
-would opt in and then all other clients can choose to opt in or not.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4e648f638b5f/disk-36534d3c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/bbe0d41240f1/vmlinux-36534d3c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/17eb17ecd214/bzImage-36534d3c.xz
 
->>
->> Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
->> Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
->> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3349
->> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->> ---
->> v2->v3:
->>   * Use input device instead of ACPI device
->>   * Detect lid open/close events
->> ---
->>   drivers/gpu/drm/drm_client_modeset.c |  29 ++++++
->>   drivers/gpu/drm/drm_fb_helper.c      | 132 +++++++++++++++++++++++++++
->>   include/drm/drm_device.h             |   6 ++
->>   include/drm/drm_fb_helper.h          |   2 +
->>   4 files changed, 169 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/drm_client_modeset.c 
->> b/drivers/gpu/drm/drm_client_modeset.c
->> index 31af5cf37a09..b8adfe87334b 100644
->> --- a/drivers/gpu/drm/drm_client_modeset.c
->> +++ b/drivers/gpu/drm/drm_client_modeset.c
->> @@ -257,6 +257,34 @@ static void drm_client_connectors_enabled(struct 
->> drm_connector **connectors,
->>           enabled[i] = drm_connector_enabled(connectors[i], false);
->>   }
->> +static void drm_client_match_edp_lid(struct drm_device *dev,
->> +                     struct drm_connector **connectors,
->> +                     unsigned int connector_count,
->> +                     bool *enabled)
->> +{
->> +    int i;
->> +
->> +    for (i = 0; i < connector_count; i++) {
->> +        struct drm_connector *connector = connectors[i];
->> +
->> +        switch (connector->connector_type) {
->> +        case DRM_MODE_CONNECTOR_LVDS:
->> +        case DRM_MODE_CONNECTOR_eDP:
->> +            if (!enabled[i])
->> +                continue;
->> +            break;
->> +        default:
->> +            continue;
->> +        }
->> +
->> +        if (dev->lid_closed) {
->> +            drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is closed, 
->> disabling\n",
->> +                    connector->base.id, connector->name);
->> +            enabled[i] = false;
->> +        }
->> +    }
->> +}
->> +
->>   static bool drm_client_target_cloned(struct drm_device *dev,
->>                        struct drm_connector **connectors,
->>                        unsigned int connector_count,
->> @@ -844,6 +872,7 @@ int drm_client_modeset_probe(struct drm_client_dev 
->> *client, unsigned int width,
->>           memset(crtcs, 0, connector_count * sizeof(*crtcs));
->>           memset(offsets, 0, connector_count * sizeof(*offsets));
->> +        drm_client_match_edp_lid(dev, connectors, connector_count, 
->> enabled);
->>           if (!drm_client_target_cloned(dev, connectors, 
->> connector_count, modes,
->>                             offsets, enabled, width, height) &&
->>               !drm_client_target_preferred(dev, connectors, 
->> connector_count, modes,
->> diff --git a/drivers/gpu/drm/drm_fb_helper.c 
->> b/drivers/gpu/drm/drm_fb_helper.c
->> index d612133e2cf7..41dd5887599a 100644
->> --- a/drivers/gpu/drm/drm_fb_helper.c
->> +++ b/drivers/gpu/drm/drm_fb_helper.c
->> @@ -30,6 +30,8 @@
->>   #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->>   #include <linux/console.h>
->> +#include <linux/input.h>
->> +#include <linux/mod_devicetable.h>
->>   #include <linux/pci.h>
->>   #include <linux/sysrq.h>
->>   #include <linux/vga_switcheroo.h>
->> @@ -413,6 +415,128 @@ static void drm_fb_helper_damage_work(struct 
->> work_struct *work)
->>       drm_fb_helper_fb_dirty(helper);
->>   }
->> +static void drm_fb_helper_lid_event(struct input_handle *handle, 
->> unsigned int type,
->> +                    unsigned int code, int value)
->> +{
->> +    if (type == EV_SW && code == SW_LID) {
->> +        struct drm_fb_helper *fb_helper = handle->handler->private;
->> +
->> +        if (value != fb_helper->dev->lid_closed) {
->> +            fb_helper->dev->lid_closed = value;
->> +            queue_work(fb_helper->input_wq, &fb_helper->lid_work);
->> +        }
->> +    }
->> +}
->> +
->> +struct drm_fb_lid {
->> +    struct input_handle handle;
->> +};
->> +
->> +static int drm_fb_helper_lid_connect(struct input_handler *handler,
->> +                     struct input_dev *dev,
->> +                     const struct input_device_id *id)
->> +{
->> +    struct drm_fb_helper *fb_helper = handler->private;
->> +    struct drm_fb_lid *lid;
->> +    char *name;
->> +    int error;
->> +
->> +    lid = kzalloc(sizeof(*lid), GFP_KERNEL);
->> +    if (!lid)
->> +        return -ENOMEM;
->> +
->> +    name = kasprintf(GFP_KERNEL, "drm-fb-helper-lid-%s", 
->> dev_name(&dev->dev));
->> +    if (!name) {
->> +        error = -ENOMEM;
->> +        goto err_free_lid;
->> +    }
->> +
->> +    lid->handle.dev = dev;
->> +    lid->handle.handler = handler;
->> +    lid->handle.name = name;
->> +    lid->handle.private = lid;
->> +
->> +    error = input_register_handle(&lid->handle);
->> +    if (error)
->> +        goto err_free_name;
->> +
->> +    error = input_open_device(&lid->handle);
->> +    if (error)
->> +        goto err_unregister_handle;
->> +
->> +    fb_helper->dev->lid_closed = dev->sw[SW_LID];
->> +    drm_dbg_kms(fb_helper->dev, "initial lid state is set to %d\n", 
->> fb_helper->dev->lid_closed);
->> +
->> +    return 0;
->> +
->> +err_unregister_handle:
->> +    input_unregister_handle(&lid->handle);
->> +err_free_name:
->> +    kfree(name);
->> +err_free_lid:
->> +    kfree(lid);
->> +    return error;
->> +}
->> +
->> +static void drm_fb_helper_lid_disconnect(struct input_handle *handle)
->> +{
->> +    struct drm_fb_lid *lid = handle->private;
->> +
->> +    input_close_device(handle);
->> +    input_unregister_handle(handle);
->> +
->> +    kfree(handle->name);
->> +    kfree(lid);
->> +}
->> +
->> +static const struct input_device_id drm_fb_helper_lid_ids[] = {
->> +    {
->> +        .flags = INPUT_DEVICE_ID_MATCH_EVBIT | 
->> INPUT_DEVICE_ID_MATCH_SWBIT,
->> +        .evbit = { BIT_MASK(EV_SW) },
->> +        .swbit = { [BIT_WORD(SW_LID)] = BIT_MASK(SW_LID) },
->> +    },
->> +    { },
->> +};
->> +
->> +static struct input_handler drm_fb_helper_lid_handler = {
->> +    .event =    drm_fb_helper_lid_event,
->> +    .connect =    drm_fb_helper_lid_connect,
->> +    .disconnect =    drm_fb_helper_lid_disconnect,
->> +    .name =        "drm-fb-helper-lid",
->> +    .id_table =    drm_fb_helper_lid_ids,
->> +};
->> +
->> +static void drm_fb_helper_lid_work(struct work_struct *work)
->> +{
->> +    struct drm_fb_helper *fb_helper = container_of(work, struct 
->> drm_fb_helper,
->> +                               lid_work);
->> +    drm_fb_helper_hotplug_event(fb_helper);
->> +}
->> +
->> +static int drm_fb_helper_create_lid_handler(struct drm_fb_helper 
->> *fb_helper)
->> +{
->> +    int ret = 0;
->> +
->> +    if (fb_helper->deferred_setup)
->> +        return 0;
->> +
->> +    fb_helper->input_wq = create_singlethread_workqueue("drm-fb-lid");
->> +    if (fb_helper->input_wq == NULL)
->> +        return -ENOMEM;
->> +
->> +    drm_fb_helper_lid_handler.private = fb_helper;
->> +    ret = input_register_handler(&drm_fb_helper_lid_handler);
->> +    if (ret)
->> +        goto remove_wq;
->> +
->> +    return 0;
->> +
->> +remove_wq:
->> +    destroy_workqueue(fb_helper->input_wq);
->> +    fb_helper->input_wq = NULL;
->> +    return ret;
->> +}
->> +
->>   /**
->>    * drm_fb_helper_prepare - setup a drm_fb_helper structure
->>    * @dev: DRM device
->> @@ -445,6 +569,7 @@ void drm_fb_helper_prepare(struct drm_device *dev, 
->> struct drm_fb_helper *helper,
->>       spin_lock_init(&helper->damage_lock);
->>       INIT_WORK(&helper->resume_work, drm_fb_helper_resume_worker);
->>       INIT_WORK(&helper->damage_work, drm_fb_helper_damage_work);
->> +    INIT_WORK(&helper->lid_work, drm_fb_helper_lid_work);
->>       helper->damage_clip.x1 = helper->damage_clip.y1 = ~0;
->>       mutex_init(&helper->lock);
->>       helper->funcs = funcs;
->> @@ -593,6 +718,9 @@ void drm_fb_helper_fini(struct drm_fb_helper 
->> *fb_helper)
->>       if (!drm_fbdev_emulation)
->>           return;
->> +    input_unregister_handler(&drm_fb_helper_lid_handler);
->> +    destroy_workqueue(fb_helper->input_wq);
->> +
->>       cancel_work_sync(&fb_helper->resume_work);
->>       cancel_work_sync(&fb_helper->damage_work);
->> @@ -1842,6 +1970,10 @@ 
->> __drm_fb_helper_initial_config_and_unlock(struct drm_fb_helper 
->> *fb_helper)
->>       width = dev->mode_config.max_width;
->>       height = dev->mode_config.max_height;
->> +    ret = drm_fb_helper_create_lid_handler(fb_helper);
->> +    if (ret)
->> +        return ret;
->> +
->>       drm_client_modeset_probe(&fb_helper->client, width, height);
->>       ret = drm_fb_helper_single_fb_probe(fb_helper);
->>       if (ret < 0) {
->> diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
->> index 63767cf24371..619af597784c 100644
->> --- a/include/drm/drm_device.h
->> +++ b/include/drm/drm_device.h
->> @@ -316,6 +316,12 @@ struct drm_device {
->>        * Root directory for debugfs files.
->>        */
->>       struct dentry *debugfs_root;
->> +
->> +    /**
->> +     * @lid_closed: Flag to tell the lid switch state
->> +     */
->> +    bool lid_closed;
->> +
->>   };
->>   #endif
->> diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
->> index 375737fd6c36..7fb36c10299d 100644
->> --- a/include/drm/drm_fb_helper.h
->> +++ b/include/drm/drm_fb_helper.h
->> @@ -143,6 +143,8 @@ struct drm_fb_helper {
->>       spinlock_t damage_lock;
->>       struct work_struct damage_work;
->>       struct work_struct resume_work;
->> +    struct work_struct lid_work;
->> +    struct workqueue_struct *input_wq;
->>       /**
->>        * @lock:
-> 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+40905bca570ae6784745@syzkaller.appspotmail.com
 
+================================
+WARNING: inconsistent lock state
+6.10.0-rc2-syzkaller-00242-g36534d3c5453 #0 Not tainted
+--------------------------------
+inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage.
+syz-executor289/5091 [HC1[1]:SC0[0]:HE0:SE1] takes:
+ffff8880b9438828 (lock#9){?.+.}-{2:2}, at: local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
+ffff8880b9438828 (lock#9){?.+.}-{2:2}, at: __mmap_lock_do_trace_released+0x83/0x620 mm/mmap_lock.c:243
+{HARDIRQ-ON-W} state was registered at:
+  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+  local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
+  __mmap_lock_do_trace_released+0x9c/0x620 mm/mmap_lock.c:243
+  __mmap_lock_trace_released include/linux/mmap_lock.h:42 [inline]
+  mmap_read_unlock include/linux/mmap_lock.h:170 [inline]
+  process_vm_rw_single_vec mm/process_vm_access.c:110 [inline]
+  process_vm_rw_core mm/process_vm_access.c:216 [inline]
+  process_vm_rw+0xa60/0xcf0 mm/process_vm_access.c:284
+  __do_sys_process_vm_readv mm/process_vm_access.c:296 [inline]
+  __se_sys_process_vm_readv mm/process_vm_access.c:292 [inline]
+  __x64_sys_process_vm_readv+0xe0/0x100 mm/process_vm_access.c:292
+  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+irq event stamp: 2570
+hardirqs last  enabled at (2569): [<ffffffff8135203f>] __text_poke+0x9bf/0xd30 arch/x86/kernel/alternative.c:1943
+hardirqs last disabled at (2570): [<ffffffff8b86527e>] sysvec_irq_work+0xe/0xc0 arch/x86/kernel/irq_work.c:17
+softirqs last  enabled at (2532): [<ffffffff81a66bba>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
+softirqs last  enabled at (2532): [<ffffffff81a66bba>] bpf_link_alloc_id kernel/bpf/syscall.c:3170 [inline]
+softirqs last  enabled at (2532): [<ffffffff81a66bba>] bpf_link_prime+0x7a/0x1e0 kernel/bpf/syscall.c:3199
+softirqs last disabled at (2522): [<ffffffff81a66b8c>] spin_lock_bh include/linux/spinlock.h:356 [inline]
+softirqs last disabled at (2522): [<ffffffff81a66b8c>] bpf_link_alloc_id kernel/bpf/syscall.c:3168 [inline]
+softirqs last disabled at (2522): [<ffffffff81a66b8c>] bpf_link_prime+0x4c/0x1e0 kernel/bpf/syscall.c:3199
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(lock#9);
+  <Interrupt>
+    lock(lock#9);
+
+ *** DEADLOCK ***
+
+6 locks held by syz-executor289/5091:
+ #0: ffffffff8e3809e8 (tracepoints_mutex){+.+.}-{3:3}, at: tracepoint_probe_register_prio_may_exist+0xbb/0x190 kernel/tracepoint.c:478
+ #1: ffffffff8e1ce5b0 (cpu_hotplug_lock){++++}-{0:0}, at: static_key_enable+0x12/0x20 kernel/jump_label.c:217
+ #2: ffffffff8e3e1a48 (jump_label_mutex){+.+.}-{3:3}, at: jump_label_lock kernel/jump_label.c:27 [inline]
+ #2: ffffffff8e3e1a48 (jump_label_mutex){+.+.}-{3:3}, at: static_key_enable_cpuslocked+0xd7/0x260 kernel/jump_label.c:202
+ #3: ffffffff8e1e3688 (text_mutex){+.+.}-{3:3}, at: arch_jump_label_transform_apply+0x17/0x30 arch/x86/kernel/jump_label.c:145
+ #4: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ #4: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ #4: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: __pte_offset_map+0x82/0x380 mm/pgtable-generic.c:287
+ #5: ffff88801507b078 (ptlock_ptr(ptdesc)#2){+.+.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
+ #5: ffff88801507b078 (ptlock_ptr(ptdesc)#2){+.+.}-{2:2}, at: __pte_offset_map_lock+0x1ba/0x300 mm/pgtable-generic.c:375
+
+stack backtrace:
+CPU: 0 PID: 5091 Comm: syz-executor289 Not tainted 6.10.0-rc2-syzkaller-00242-g36534d3c5453 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ valid_state+0x13a/0x1c0 kernel/locking/lockdep.c:4013
+ mark_lock_irq+0xbb/0xc20 kernel/locking/lockdep.c:4216
+ mark_lock+0x223/0x350 kernel/locking/lockdep.c:4678
+ mark_usage kernel/locking/lockdep.c:4564 [inline]
+ __lock_acquire+0xb8e/0x1fd0 kernel/locking/lockdep.c:5091
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+ local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
+ __mmap_lock_do_trace_released+0x9c/0x620 mm/mmap_lock.c:243
+ __mmap_lock_trace_released include/linux/mmap_lock.h:42 [inline]
+ mmap_read_unlock_non_owner include/linux/mmap_lock.h:176 [inline]
+ do_mmap_read_unlock+0x5d/0x60 kernel/bpf/task_iter.c:1049
+ irq_work_single+0xe2/0x240 kernel/irq_work.c:221
+ irq_work_run_list kernel/irq_work.c:252 [inline]
+ irq_work_run+0x18b/0x350 kernel/irq_work.c:261
+ __sysvec_irq_work+0xb8/0x430 arch/x86/kernel/irq_work.c:22
+ instr_sysvec_irq_work arch/x86/kernel/irq_work.c:17 [inline]
+ sysvec_irq_work+0x9e/0xc0 arch/x86/kernel/irq_work.c:17
+ </IRQ>
+ <TASK>
+ asm_sysvec_irq_work+0x1a/0x20 arch/x86/include/asm/idtentry.h:738
+RIP: 0010:__text_poke+0xa4a/0xd30 arch/x86/kernel/alternative.c:1944
+Code: 7c 24 50 00 75 19 e8 d5 05 61 00 eb 18 e8 ce 05 61 00 e8 09 67 51 0a 48 83 7c 24 50 00 74 e7 e8 bc 05 61 00 fb 48 8b 44 24 78 <42> 80 3c 28 00 74 0d 48 8d bc 24 60 01 00 00 e8 12 c8 c6 00 48 8b
+RSP: 0018:ffffc900033f76a0 EFLAGS: 00000293
+RAX: 1ffff9200067ef00 RBX: 0000000000000000 RCX: ffff8880429c5a00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc900033f7870 R08: ffffffff81352094 R09: 1ffffffff25f56b0
+R10: dffffc0000000000 R11: fffffbfff25f56b1 R12: 1ffff9200067eee4
+R13: dffffc0000000000 R14: 0000000000000046 R15: ffffffff814262a6
+ text_poke arch/x86/kernel/alternative.c:1968 [inline]
+ text_poke_bp_batch+0x265/0xb30 arch/x86/kernel/alternative.c:2276
+ text_poke_flush arch/x86/kernel/alternative.c:2470 [inline]
+ text_poke_finish+0x30/0x50 arch/x86/kernel/alternative.c:2477
+ arch_jump_label_transform_apply+0x1c/0x30 arch/x86/kernel/jump_label.c:146
+ static_key_enable_cpuslocked+0x136/0x260 kernel/jump_label.c:205
+ static_key_enable+0x1a/0x20 kernel/jump_label.c:218
+ tracepoint_add_func+0x953/0x9e0 kernel/tracepoint.c:361
+ tracepoint_probe_register_prio_may_exist+0x122/0x190 kernel/tracepoint.c:482
+ bpf_raw_tp_link_attach+0x48b/0x6e0 kernel/bpf/syscall.c:3875
+ bpf_raw_tracepoint_open+0x1c2/0x240 kernel/bpf/syscall.c:3906
+ __sys_bpf+0x3c0/0x810 kernel/bpf/syscall.c:5730
+ __do_sys_bpf kernel/bpf/syscall.c:5795 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5793 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5793
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd578b74e39
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff287d14f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fd578b74e39
+RDX: 0000000000000010 RSI: 0000000020000080 RDI: 0000000000000011
+RBP: 0000000000000000 R08: 0000000000000006 R09: 0000000000000006
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	7c 24                	jl     0x26
+   2:	50                   	push   %rax
+   3:	00 75 19             	add    %dh,0x19(%rbp)
+   6:	e8 d5 05 61 00       	call   0x6105e0
+   b:	eb 18                	jmp    0x25
+   d:	e8 ce 05 61 00       	call   0x6105e0
+  12:	e8 09 67 51 0a       	call   0xa516720
+  17:	48 83 7c 24 50 00    	cmpq   $0x0,0x50(%rsp)
+  1d:	74 e7                	je     0x6
+  1f:	e8 bc 05 61 00       	call   0x6105e0
+  24:	fb                   	sti
+  25:	48 8b 44 24 78       	mov    0x78(%rsp),%rax
+* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2f:	74 0d                	je     0x3e
+  31:	48 8d bc 24 60 01 00 	lea    0x160(%rsp),%rdi
+  38:	00
+  39:	e8 12 c8 c6 00       	call   0xc6c850
+  3e:	48                   	rex.W
+  3f:	8b                   	.byte 0x8b
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
