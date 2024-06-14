@@ -1,205 +1,103 @@
-Return-Path: <linux-kernel+bounces-214510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5853C9085C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:11:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 323659085CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE0EF1F21B3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:11:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30B591C21F90
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F10D186E2D;
-	Fri, 14 Jun 2024 08:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C4D1836C7;
+	Fri, 14 Jun 2024 08:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pZVAdZdR"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q3fsTfIv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899D418413A
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952737318A;
+	Fri, 14 Jun 2024 08:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718352648; cv=none; b=KuXzK7rYkpPhLfzempiGm0maTYVuxJ7ZP8swfmFxiWBf5RgpYCS2ExfkN3mBoG+f+N9ymIsgq6CjKYmoE1uyVonmCEh/9CGsaFRyAADXPgtsP5jYLZFzLh4tFMQ7GuD+J6rZ8pkPaGOj4ySJDWl1XvI7os/bMU7kvDkqawt+vRU=
+	t=1718352751; cv=none; b=UMzu/uYE7gMPxe915XFlX80a9x/9/jh1R6l0GmnUGBku/vgx45SRN8lz2b/S1mQUjDQp0eIAmXm254RlG4V/RHoqXxgLjqCFFINffAlkeSwGxKh1OSyKUmBH/bEbbBoCtzeY0V+c+QVGvKccWMUE9p8uoSN5RqM7tYUNFT75m3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718352648; c=relaxed/simple;
-	bh=I3iLNPbAvcDPk6Nw1QUlh23HxzYQPmXbPfOcTvZTTEE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qHPRoz7Xr37NtedANkEvpZzoV+OKf8c+3yeaITjS+ywtXFOcnv/cQj8flfz2puHb8bhLGNGf0gUt0dGfbg0Fs90Cm3QU0DNR4Eh0tF4JunGDcCTG0t4s5V7h7pxXHVyLuDAH6f9NoOIp4ejdVjEkmHrCOwUiVmzC8pfQG//id9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pZVAdZdR; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57c75464e77so2191438a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:10:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718352645; x=1718957445; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Oy65aQubSD4tbmjRxefZecoIq4GXZIdFH64RPRpuevk=;
-        b=pZVAdZdRrEHDsbcc+Za54v7A87w0kBVRcyZVPtf3Iky2880lgTA3ViSQ6pYMdi7/nZ
-         tCt8ALQ4H8nWQd+q3io+Dy/L9eFukPtpNNrU+PjyJ8RiVVceB8TM/1fgKltG0s2AVlaI
-         msMxNQx+I4qGIEDWgtvnRjNcWQYhX3t6ToKVbL9B9ZmuviF1JrBS94TMKXo+UsNnX1Qm
-         sswaH+UsiZjD4f9iUAJBRpGaIewO4d3nh4eAlTCtyqOb8y6Gab4+LcjzNeNGPuNO1+6z
-         FK79TgVqlnUcIcqtA4+z4DCvJZKqPFAZgiO0hpSp7KI3o+njXCoRnOax+ws2cOH+15lQ
-         83OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718352645; x=1718957445;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Oy65aQubSD4tbmjRxefZecoIq4GXZIdFH64RPRpuevk=;
-        b=ArNr2RNaOJlF8dKa3ZZmC+/jmKp0TdC9fFaLqxp77l1xY4ZB7YkjfcALhjBUKBK4pd
-         E8NhX2+/pOvCpLb6PvZNE1kGdM1ntmYvhOUe1mWVmWF3rPSxNG4JRb6wbN2tQCTQ7xn3
-         U2sz5UbHGXCz43wlvKz9WdH7g9qS+G1keV37sEopy34d7uu2xBKEFbhPoIHO2x1jnOkV
-         kmxdAf47fRWdTbHOD1Zz+TPeI5iO8k1nzw152/MscnbYWGx3p5rvSWzID92ZqyL4Ndxu
-         J9cZI7HO2W0yyriRz3UrUh4yMC6u0YAanJJSEjuSSNRc3MXUivBk8XhLGm2FOZsCPuaX
-         bMVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjSamFZRNnvXvlDsdELFwB2qtFIK4zVCWLZdbsCgxFD9LwgX+nXFm0maNPSPWeMKKboKtQ1RPcX3ceZOfUpLwvqjU5bANQa5Oue1Ix
-X-Gm-Message-State: AOJu0YyC2LU0ELfKSMtiIRcxYxyxIMeyO2IfqYGh0ijgah7Qp5FcjafO
-	8MBJp2wmPA+CyRclpJltQfDXuU5aBA1ytU5clxBKOiSj/NKQUtFQZBgvLq5mjQ4=
-X-Google-Smtp-Source: AGHT+IG8vyu+lChvA75pP+yobBANu/WNvOVceOlafrcqMeCCCsOH0P5Be43wvfozwTxwaqjrFdJqbw==
-X-Received: by 2002:a50:ab1d:0:b0:57c:a7dc:b0e4 with SMTP id 4fb4d7f45d1cf-57cbd674334mr1467162a12.3.1718352644618;
-        Fri, 14 Jun 2024 01:10:44 -0700 (PDT)
-Received: from localhost (p509153eb.dip0.t-ipconnect.de. [80.145.83.235])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72ce07esm1910194a12.12.2024.06.14.01.10.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 01:10:44 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	William Breathitt Gray <wbg@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Lee Jones <lee@kernel.org>
-Cc: linux-iio@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] pwm-stm32: Make use of parametrised register definitions
-Date: Fri, 14 Jun 2024 10:10:14 +0200
-Message-ID:  <765681be4da184d8886e9837fcbe35321a5827f1.1718352022.git.u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1718352022.git.u.kleine-koenig@baylibre.com>
-References: <cover.1718352022.git.u.kleine-koenig@baylibre.com>
+	s=arc-20240116; t=1718352751; c=relaxed/simple;
+	bh=tX718joJyIE6B+wV6r1BSs0uMJZFD+gOUjigSrolFiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BLaNDi59IWMbbGCFiR3V3aGZXSzH431ISS8AHyW8XAG8Z4qRo2RlNDdi3HCA4nIyDKRhJnYP+ZUFcPqJFzbU8j8GAjB213Hnhu6APA+Z9VRqCMdqPDK7GqITsAqui2hmgDUicoKw8AQIu1TBaFsuapBbau444iaO4bmispgQ6cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q3fsTfIv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B34CC2BD10;
+	Fri, 14 Jun 2024 08:12:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718352750;
+	bh=tX718joJyIE6B+wV6r1BSs0uMJZFD+gOUjigSrolFiY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q3fsTfIvzWfbjqgMWimZHz75wRji/1p+IJN4Uta/5jtv3SIeuWh2de3Ff4Y+MAC0T
+	 NBMI+3DPozioudUgj0jlSWM+nPk7alc/rELse2FejAns9ESLW4u4OQE4JAgvxPalcm
+	 cfxwqnpt1ehFW+O+aRZra8342KQZ/J/c74Z2r5sv98qTgcC+uq1uypK+TKNbegUrVO
+	 Z6aQKhQfgFXzbrLaEljBoOH7SuPv2mIwmSo7ZslgOlbzucv97viCU9PrcykJUpqhq9
+	 +b9P99z8ZmrNY3pGqkNld8EnhTh13xB1kxOjLU1ZGCErelU076sgl5UdhpxhSJa12F
+	 WQhSAZhHeqMiw==
+Date: Fri, 14 Jun 2024 09:12:24 +0100
+From: Lee Jones <lee@kernel.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Ryan Walklin <ryan@testtoast.com>,
+	Chris Morgan <macroalpha82@gmail.com>
+Subject: Re: [PATCH v2 2/5] regulator: axp20x: AXP717: fix LDO supply rails
+ and off-by-ones
+Message-ID: <20240614081224.GD2561462@google.com>
+References: <20240418000736.24338-1-andre.przywara@arm.com>
+ <20240418000736.24338-3-andre.przywara@arm.com>
+ <f685b49a-36b1-46c9-a0a3-734bca8bd968@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3795; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=I3iLNPbAvcDPk6Nw1QUlh23HxzYQPmXbPfOcTvZTTEE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBma/rxUqR8k2kQlHINVk2JFXnkxxfFoFaxndNGF 3aiztX7/haJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZmv68QAKCRCPgPtYfRL+ ThklB/97HZsttyevmt4/WDxNzPTV1K7YemJMyPrX/qSaW/Izjg3FteFk8dQREwIT+SZb0yE/Rvk QFDdO9eqv/fHBkEvlk9ZD6VVISOXUlHdFI1ZzoOeraUg0epyeMQA6CmLWM0rwSst512yjG3Iin2 4Xn3CDsGAlXu1pWyFrsiuHUaUmhW99UsAMgfwGGwadOC9XBOgzAC3/7FdeZ4wJEUMBFCPBG6NPG ETc6E4OqBCJvi2GVXFG9WDCkN+jGMrTOCmp015RmPJaRktmKEIiDy3h/GofbKF3wYPrBnzHjQsg ore9yeaohvi1xHsMJ71ed9vH9kUvxlliZen1Fl+zFw1+m1C8
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <f685b49a-36b1-46c9-a0a3-734bca8bd968@arm.com>
 
-There is no semantic change, but it is a nicer on the eyes of a reader,
-because
+On Wed, 12 Jun 2024, Andre Przywara wrote:
 
-	TIM_CCR1 + 4 * ch
+> Hi Broonie,
+> 
+> On 18/04/2024 01:07, Andre Przywara wrote:
+> > The X-Powers AXP717 PMIC has separate input supply pins for each group
+> > of LDOs, so they are not all using the same DCDC1 input, as described
+> > currently.
+> > 
+> > Replace the "supply" member of each LDO description with the respective
+> > group supply name, so that the supply dependencies can be correctly
+> > described in the devicetree.
+> > 
+> > Also fix two off-by-ones in the regulator macros, after some double
+> > checking the numbers against the datasheet. This uncovered a bug in the
+> > datasheet: add a comment to document this.
+> > 
+> > Fixes: d2ac3df75c3a ("regulator: axp20x: add support for the AXP717")
+> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> 
+> Can you please take (at least) this one patch as a fix for 6.10? Applies
+> cleanly on top of v6.10-rc3. The changes are not super-critical, but worth
+> fixing nevertheless.
 
-encodes internal register knowledge, while
+FWIW, I have no idea what's going on with this set now.
 
-	TIM_CCRx(ch + 1)
+Once all of the necessary patches have been expedited, please gather
+together what's left and I'll take them via MFD.
 
-keeps that information completely in the header defining the registers.
-
-While I expected this to not result in any changes in the binary, gcc 13
-(as provided by Debian in the gcc-13-arm-linux-gnueabihf 13.2.0-12cross1
-package) compiles the new version with an allmodconfig to more compact
-code:
-
-	$ source/scripts/bloat-o-meter drivers/pwm/pwm-stm32.o-pre drivers/pwm/pwm-stm32.o
-	add/remove: 0/0 grow/shrink: 0/2 up/down: 0/-488 (-488)
-	Function                                     old     new   delta
-	stm32_pwm_get_state                          968     936     -32
-	stm32_pwm_apply_locked                      1920    1464    -456
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
- drivers/pwm/pwm-stm32.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
-index a2f231d13a9f..49a76514b83e 100644
---- a/drivers/pwm/pwm-stm32.c
-+++ b/drivers/pwm/pwm-stm32.c
-@@ -360,7 +360,7 @@ static int stm32_pwm_config(struct stm32_pwm *priv, unsigned int ch,
- 	dty = mul_u64_u64_div_u64(duty_ns, clk_get_rate(priv->clk),
- 				  (u64)NSEC_PER_SEC * (prescaler + 1));
- 
--	regmap_write(priv->regmap, TIM_CCR1 + 4 * ch, dty);
-+	regmap_write(priv->regmap, TIM_CCRx(ch + 1), dty);
- 
- 	/* Configure output mode */
- 	shift = (ch & 0x1) * CCMR_CHANNEL_SHIFT;
-@@ -382,9 +382,9 @@ static int stm32_pwm_set_polarity(struct stm32_pwm *priv, unsigned int ch,
- {
- 	u32 mask;
- 
--	mask = TIM_CCER_CC1P << (ch * 4);
-+	mask = TIM_CCER_CCxP(ch + 1);
- 	if (priv->have_complementary_output)
--		mask |= TIM_CCER_CC1NP << (ch * 4);
-+		mask |= TIM_CCER_CCxNP(ch + 1);
- 
- 	regmap_update_bits(priv->regmap, TIM_CCER, mask,
- 			   polarity == PWM_POLARITY_NORMAL ? 0 : mask);
-@@ -402,9 +402,9 @@ static int stm32_pwm_enable(struct stm32_pwm *priv, unsigned int ch)
- 		return ret;
- 
- 	/* Enable channel */
--	mask = TIM_CCER_CC1E << (ch * 4);
-+	mask = TIM_CCER_CCxE(ch + 1);
- 	if (priv->have_complementary_output)
--		mask |= TIM_CCER_CC1NE << (ch * 4);
-+		mask |= TIM_CCER_CCxNE(ch);
- 
- 	regmap_set_bits(priv->regmap, TIM_CCER, mask);
- 
-@@ -422,9 +422,9 @@ static void stm32_pwm_disable(struct stm32_pwm *priv, unsigned int ch)
- 	u32 mask;
- 
- 	/* Disable channel */
--	mask = TIM_CCER_CC1E << (ch * 4);
-+	mask = TIM_CCER_CCxE(ch + 1);
- 	if (priv->have_complementary_output)
--		mask |= TIM_CCER_CC1NE << (ch * 4);
-+		mask |= TIM_CCER_CCxNE(ch + 1);
- 
- 	regmap_clear_bits(priv->regmap, TIM_CCER, mask);
- 
-@@ -493,8 +493,8 @@ static int stm32_pwm_get_state(struct pwm_chip *chip,
- 	if (ret)
- 		goto out;
- 
--	state->enabled = ccer & (TIM_CCER_CC1E << (ch * 4));
--	state->polarity = (ccer & (TIM_CCER_CC1P << (ch * 4))) ?
-+	state->enabled = ccer & TIM_CCER_CCxE(ch + 1);
-+	state->polarity = (ccer & TIM_CCER_CCxP(ch + 1)) ?
- 			  PWM_POLARITY_INVERSED : PWM_POLARITY_NORMAL;
- 	ret = regmap_read(priv->regmap, TIM_PSC, &psc);
- 	if (ret)
-@@ -502,7 +502,7 @@ static int stm32_pwm_get_state(struct pwm_chip *chip,
- 	ret = regmap_read(priv->regmap, TIM_ARR, &arr);
- 	if (ret)
- 		goto out;
--	ret = regmap_read(priv->regmap, TIM_CCR1 + 4 * ch, &ccr);
-+	ret = regmap_read(priv->regmap, TIM_CCRx(ch + 1), &ccr);
- 	if (ret)
- 		goto out;
- 
-@@ -702,7 +702,7 @@ static int stm32_pwm_suspend(struct device *dev)
- 	ccer = active_channels(priv);
- 
- 	for (i = 0; i < chip->npwm; i++) {
--		mask = TIM_CCER_CC1E << (i * 4);
-+		mask = TIM_CCER_CCxE(i + 1);
- 		if (ccer & mask) {
- 			dev_err(dev, "PWM %u still in use by consumer %s\n",
- 				i, chip->pwms[i].label);
 -- 
-2.43.0
-
+Lee Jones [李琼斯]
 
