@@ -1,130 +1,106 @@
-Return-Path: <linux-kernel+bounces-214884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F6EB908B88
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:20:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0BC908B89
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5337B233B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:20:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D4531C226A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABDDD196D9A;
-	Fri, 14 Jun 2024 12:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="qT96+NjE"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B7A196C8C;
+	Fri, 14 Jun 2024 12:20:34 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83CA187560
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D65195F03
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718367611; cv=none; b=cPnLcEkzwvtWDt3kv5O4tD6sE5G4LLuyPJ5FHxARdPPkDDmgdhpvVFE0iF6tWdF/B/kuDi+V5lctT2bv5oiZl9QVbbjdGtT6mILJUIzEjRYmCxARtI9ASmNmRt5uHVeCE3zVXKaS9DQFGUEK0WOLQdU45dORWg3MhlTj2xgWVcw=
+	t=1718367634; cv=none; b=bPwf8lWjemkc98O+PTZ4JDogfKzB0h30tu372/SFTL1o1eO4YQf+iBS39CUnoMAYz5FHN2BN+SAi007CrpGvMR095IpF1rRHDghkdIS9HzZtpCF8Kq+lmWfS5TRYLHUcQhfLSlHUfRvin1NGEdZfhBKvgLIadtgQmrjVdh9ySqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718367611; c=relaxed/simple;
-	bh=u0r125JIfBM8xdZLsVXut9omsTU2mE6jFwfr2wi8EUo=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=LkbJ3Z8bliBYhEwfiRz3ePZaCqQqcfFVO2GKsuVjtS2NtOPPPnl3R/tCeZR7qpD6fqkTANBij/ZI7rZ6BBid7q4jrnukMilHezxAwRq85zR09l/5iV8KCaGQWvavCkTK1BdmEe0kafgrDCrziJvitOqYh+SvWL40xRWiRWb32TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=qT96+NjE; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6005a.ext.cloudfilter.net ([10.0.30.201])
-	by cmsmtp with ESMTPS
-	id HwEXsOIjXjfBAI5uZsBTw0; Fri, 14 Jun 2024 12:20:08 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id I5uYsQiPjHHoAI5uZsuFAn; Fri, 14 Jun 2024 12:20:07 +0000
-X-Authority-Analysis: v=2.4 cv=dskQCEg4 c=1 sm=1 tr=0 ts=666c3577
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=k_VYlBbNjbJsBR3UXVkA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=nmWuMzfKamIsx3l42hEX:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=nzruOxlZhLS4L8njztAd5vTjVq7eS1cdLUBo3gnFjes=; b=qT96+NjEnP6B62URpbuXwfw0Vo
-	hraih4Mhn7kADBC4yYMP3o8YLZJK9VfrzMTuhX+PeyYPkjF2ZCoYnyhCEpeo9Ps3LXFMSIoSOTxXI
-	mkJsM5ppCHEK5xlaCfSmM1ZIIldfiDkvkdqXuMd7sdKMbtzXGakbTsIhC+HXRm/8xhmTrKMBq6Vso
-	ZNS911WeEcgkHYzei6tYZxxvFUzyv5LLtKT0ZfWuB34zxW89M7C2ffoj6eE6EpnXRBwhGqKrR1T4m
-	CBW+8K/Wxy5A3OOTF/FMNhLcmkI5B24P+hP4S5EFxyizJaNyYjJndyUWqT8ly2c/OKAXh7JXx1EVc
-	pmieLvQA==;
-Received: from c-98-207-139-8.hsd1.ca.comcast.net ([98.207.139.8]:43690 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sI5uU-001sFc-0Q;
-	Fri, 14 Jun 2024 06:20:02 -0600
-Subject: Re: [PATCH 5.15 000/402] 5.15.161-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240613113302.116811394@linuxfoundation.org>
-In-Reply-To: <20240613113302.116811394@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <2c293d29-41da-7790-e7e3-182ba5420bf8@w6rz.net>
-Date: Fri, 14 Jun 2024 05:19:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1718367634; c=relaxed/simple;
+	bh=rF8IQJXE+F+fPTThN+RuBNY1i5eZMY2Xeb1eGXWtmso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dvKni18TiRunzXDLh1eQOccc4fKMACKUWU939cw/Hm6YC+IPnBIWbJDReHruhE8IH6MJg0gatAF4rdJCmdLJvf+U25BgdFoJFQzcTJxdEB9JvrqFF/6WsSU5MMRzU4sgDHRf7QscmEANAEOEm/dFbuxw2i1XySIgkFIC00w39NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91235C2BD10;
+	Fri, 14 Jun 2024 12:20:32 +0000 (UTC)
+Date: Fri, 14 Jun 2024 13:20:30 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: will@kernel.org, anshuman.khandual@arm.com,
+	scott@os.amperecomputing.com, cl@gentwo.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [v4 PATCH] arm64: mm: force write fault for atomic RMW
+ instructions
+Message-ID: <Zmw1jltdkMrTrT_l@arm.com>
+References: <20240605203723.643329-1-yang@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 98.207.139.8
-X-Source-L: No
-X-Exim-ID: 1sI5uU-001sFc-0Q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-98-207-139-8.hsd1.ca.comcast.net ([10.0.1.47]) [98.207.139.8]:43690
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 23
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfMSWaLoOgWnjdTQGm3CS1ahh69dsQ+PTOLNBdDRDtqUZCh7RERi84ZQGwDkzWvOqWXG4RpR8OFfOmxGBCXIrKv0ZUMzqA+XBWXP87NH1kAJyyLQp515L
- 2czZhKP/a8hSGyH/dCdssoChb5bmr8wssKnX76uIKh5h1kDNJJ+JPq/jJiD0bSIzK4OK8y7TybLKuJ4DhYuPS/MgVkTqZJ0wKw0=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605203723.643329-1-yang@os.amperecomputing.com>
 
-On 6/13/24 4:29 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.161 release.
-> There are 402 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 15 Jun 2024 11:31:50 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.161-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Wed, Jun 05, 2024 at 01:37:23PM -0700, Yang Shi wrote:
+> +static __always_inline bool aarch64_insn_is_class_cas(u32 insn)
+> +{
+> +	return aarch64_insn_is_cas(insn) ||
+> +	       aarch64_insn_is_casp(insn);
+> +}
+> +
+> +/*
+> + * Exclude unallocated atomic instructions and LD64B/LDAPR.
+> + * The masks and values were generated by using Python sympy module.
+> + */
+> +static __always_inline bool aarch64_atomic_insn_has_wr_perm(u32 insn)
+> +{
+> +	return ((insn & 0x3f207c00) == 0x38200000) ||
+> +	       ((insn & 0x3f208c00) == 0x38200000) ||
+> +	       ((insn & 0x7fe06c00) == 0x78202000) ||
+> +	       ((insn & 0xbf204c00) == 0x38200000);
+> +}
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+This is still pretty opaque if we want to modify it in the future. I
+guess we could add more tests on top but it would be nice to have a way
+to re-generate these masks. I'll think about, for now these tests would
+do.
 
-Tested-by: Ron Economos <re@w6rz.net>
+> @@ -511,6 +539,7 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
+>  	unsigned long addr = untagged_addr(far);
+>  	struct vm_area_struct *vma;
+>  	int si_code;
+> +	bool may_force_write = false;
+>  
+>  	if (kprobe_page_fault(regs, esr))
+>  		return 0;
+> @@ -547,6 +576,7 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
+>  		/* If EPAN is absent then exec implies read */
+>  		if (!alternative_has_cap_unlikely(ARM64_HAS_EPAN))
+>  			vm_flags |= VM_EXEC;
+> +		may_force_write = true;
+>  	}
+>  
+>  	if (is_ttbr0_addr(addr) && is_el1_permission_fault(addr, esr, regs)) {
+> @@ -568,6 +598,12 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
+>  	if (!vma)
+>  		goto lock_mmap;
+>  
+> +	if (may_force_write && (vma->vm_flags & VM_WRITE) &&
+> +	    is_el0_atomic_instr(regs)) {
+> +		vm_flags = VM_WRITE;
+> +		mm_flags |= FAULT_FLAG_WRITE;
+> +	}
 
+I think we can get rid of may_force_write and just test (vm_flags &
+VM_READ).
+
+-- 
+Catalin
 
