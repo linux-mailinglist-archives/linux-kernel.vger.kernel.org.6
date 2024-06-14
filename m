@@ -1,327 +1,176 @@
-Return-Path: <linux-kernel+bounces-215131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D946E908E7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:17:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B14908E80
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF7F41C251AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:17:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46A971C25175
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68FC215E5CB;
-	Fri, 14 Jun 2024 15:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D85C180A78;
+	Fri, 14 Jun 2024 15:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SRa3vcYz"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ppNIaeTY"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C7E17B437
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DF8156F4A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718378182; cv=none; b=TMNrxtF9wtuH15nsRFPkVQ31hwTfxwaQkf+CLsobX7rkbhnXa1UBAJ6oUIizHRl9ueNnBb4nTBFb2MhbfLL7r578agACI8ef1BfBHqFPsEdCqZkSQzwgPMrTXgJh93tf5P5lCzh1l7JzbzI7Fj51wqpwAxfhaSwJ/KrOV4VidgI=
+	t=1718378192; cv=none; b=eEm3eD6jZ/1iC9WtHxJQFfGSfvRKBxf6uO/foM1zyrm2oqrYBEKEP+GoG0rmR1odLPQRIDIAeR1GOIR3fOhDlmOAFKu6s6CXB2VUwdNAOXw5ERajkaZIs/hJ586b3mSmXPQ0gMdVHKNsdDVF6WM965iorl78Y2hoYDqzzzRDuuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718378182; c=relaxed/simple;
-	bh=TiodcIZ8APASrNG2TNFEbGVxf//IPiuvrfkl7MhR9Ec=;
+	s=arc-20240116; t=1718378192; c=relaxed/simple;
+	bh=82BKhcyYzugHO24SccvwRMSP84ffRJcHOxlx5YJViKA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O/QCekVcKJLktXNGLzDMG75oLuLoZjTGSHRC8T9SvSE2Prkmqaaq3y3LWIm+LtfIMKPCgBTahCWRgQnUIzZYfBlaUJkqBI/piOFTYYs9EQH/feWc+jRiS5jfg08wol0ODNb5fPOUPpTFHhobYpEr2jh76xNcXlIBcliFoiNmUAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SRa3vcYz; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: radhey.shyam.pandey@amd.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718378178;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cBFQtVI/CQ92nnAYeYybhd0YC0jo3zy4/zd2LFAyq3U=;
-	b=SRa3vcYzkww+nQWyrWYMn82GPZVRyTM7j+gmVc1qeV5BFJbhyzARtTdzoiOZbjW9+xQhJ/
-	ldNH3HqYVTkjjcETc6Hp6z6Mxs0g53P/xJ0oUiypAirXZWMKM/BPdSKgBqacdec/X4S46i
-	84dwES5RXjvTG4OfIoEAUN48CcCI6Zc=
-X-Envelope-To: laurent.pinchart@ideasonboard.com
-X-Envelope-To: linux-phy@lists.infradead.org
-X-Envelope-To: vkoul@kernel.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: michal.simek@amd.com
-X-Envelope-To: kishon@kernel.org
-Message-ID: <2bfa49bd-b72f-4c50-a573-5aa766dff6d9@linux.dev>
-Date: Fri, 14 Jun 2024 11:16:14 -0400
+	 In-Reply-To:Content-Type; b=RhRcMQd1rMNfrAxPmzjDPPGyyVEt/mPpLcP22tLXfw9GvyoBVqd6zvZdAXUot/K0jidfUwfeyt067hSgYAIGPeAFGmO3IjU2khIJ02wHVtAc3Xz8PUtXsZj4ikOTBwmfYXr9QVct4qUYdYd1/ym24gjAjba416GEbTPyKZekMEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ppNIaeTY; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-24c9f892aeaso1092159fac.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:16:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718378187; x=1718982987; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aEXFcMzVkenGJ+BkWNtfk85Td7ZfJA69rDpGmACovwc=;
+        b=ppNIaeTYeqQChHNTk6cs6u+UKAaveLvQ9zWw1uVt3/+B2ZE2+2I45N87AlbCMa0wTj
+         ocdqmt/qQKPJr+xpBHqk1J3yTxdHzpEjBmW5kiWbyytDr68JG7tFcFcQjbGvTohmqLMt
+         DA4jfhcBfsoZDOWpDuCLa4c9V2O+QjWmiWvz7dCHrrwoM2BFgFbCEPxGazNW0l5xUftO
+         w+9YUFIGsgGrmDrKXWpLRLJyHwK1gClBpY0E5d0sf+1PrpsR1485jmhZn1uyHAhiGGrK
+         +WmWoC+a3UOQktLhnBwY6XizEnpsVVxxgEDAEuyDEeKUWIfoaHhRBveXxrk74OKqyg6z
+         /StA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718378187; x=1718982987;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aEXFcMzVkenGJ+BkWNtfk85Td7ZfJA69rDpGmACovwc=;
+        b=FohXc5uPQMZbFb1AAFcIje1b4qPxvrUhZ+cybI95Op1CQOItqlCey7Ra7uoTt4jDCE
+         5RYseOT9BHBHCLXQD+/hwPVfDIAGngpT9GGDvlGCxqTS6IpFcX9knoTp1vgNHAjcLiXi
+         BzrImrQNGRmvQiodTEGpHaIDHplsHd4AlBoHdz7xBNygRc0LwZaXwTsJ4VU+biyB6X25
+         uZLZslB7g441jVfPxUQ0JRVueBYI7wgkZPLfv6VxFgCnAgZkj0E9z34BcEEKSw/fNZCj
+         P7n/yFuGbkG4zXhgIOVX8bm5Teav4/MmjbizZ5RflKZOzbNyF8/T1oxTCNfoO+/ArOtK
+         d58w==
+X-Forwarded-Encrypted: i=1; AJvYcCXEKNHQFkLTKZQ/OlYt7T5ZpSPAkONoAPq8Oa0r9hUwxmz0j50xXKCDG33m9Lt0TnIT3gdrH/sL2CHxb4Y3spLJ9QCJM8jSan2tARma
+X-Gm-Message-State: AOJu0Yxha2Pkt/Tq1QLZfQtJ6zoAuC8XDK2ZyhWt7vqFyIKiNsWWCx2R
+	iCcH/9a7AXbE1k8ugVKzwWMRmIjTYnNvVUYiBdlmE+oYRZL5gFO6Afpw+5JhFTE=
+X-Google-Smtp-Source: AGHT+IFO1xK0In15roboxefh1WiLKyHXcMeYqg8d+QLpQa84F3+WTT+qE0PYj1wMXasjehJfMzVnYA==
+X-Received: by 2002:a05:6870:4728:b0:254:8c7a:6c97 with SMTP id 586e51a60fabf-2584298504fmr3493907fac.30.1718378187574;
+        Fri, 14 Jun 2024 08:16:27 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2567a9a7fc6sm991687fac.18.2024.06.14.08.16.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 08:16:27 -0700 (PDT)
+Message-ID: <a9e4b62f-7021-4939-82a5-8b2089cd7193@baylibre.com>
+Date: Fri, 14 Jun 2024 10:16:26 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 2/4] phy: zynqmp: Store instance instead of type
-To: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>
-Cc: Vinod Koul <vkoul@kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Simek, Michal" <michal.simek@amd.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>
-References: <20240506170110.2874724-1-sean.anderson@linux.dev>
- <20240506170110.2874724-3-sean.anderson@linux.dev>
- <MN0PR12MB59535CC0B70185DDF8044AC5B7C22@MN0PR12MB5953.namprd12.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] iio: adc: ad7292: use
+ devm_regulator_get_enable_read_voltage
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Jonathan Cameron <jic23@kernel.org>
+Cc: Marcelo Schmitt <marcelo.schmitt1@gmail.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240612-iio-adc-ref-supply-refactor-v2-0-fa622e7354e9@baylibre.com>
+ <20240612-iio-adc-ref-supply-refactor-v2-3-fa622e7354e9@baylibre.com>
+ <f45d0cba3e3fc087d0a3b8c5af5401a5c38ec162.camel@gmail.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <MN0PR12MB59535CC0B70185DDF8044AC5B7C22@MN0PR12MB5953.namprd12.prod.outlook.com>
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <f45d0cba3e3fc087d0a3b8c5af5401a5c38ec162.camel@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On 6/14/24 02:02, Pandey, Radhey Shyam wrote:
->> -----Original Message-----
->> From: Sean Anderson <sean.anderson@linux.dev>
->> Sent: Monday, May 6, 2024 10:31 PM
->> To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>; linux-
->> phy@lists.infradead.org
->> Cc: Vinod Koul <vkoul@kernel.org>; linux-arm-kernel@lists.infradead.org;
->> linux-kernel@vger.kernel.org; Michal Simek <michal.simek@amd.com>;
->> Kishon Vijay Abraham I <kishon@kernel.org>; Sean Anderson
->> <sean.anderson@linux.dev>
->> Subject: [PATCH v2 2/4] phy: zynqmp: Store instance instead of type
->> 
->> The phy "type" is just the combination of protocol and instance, and is
->> never used apart from that. Store the instance directly, instead of
->> converting to a type first. No functional change intended.
->> 
->> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+On 6/14/24 10:11 AM, Nuno Sá wrote:
+> On Wed, 2024-06-12 at 16:03 -0500, David Lechner wrote:
+>> This makes use of the new devm_regulator_get_enable_read_voltage()
+>> function to reduce boilerplate code.
+>>
+>> Signed-off-by: David Lechner <dlechner@baylibre.com>
 >> ---
->> 
->> Changes in v2:
->> - Expand the icm_matrix comment
->> 
->>  drivers/phy/xilinx/phy-zynqmp.c | 115 +++++++++-----------------------
->>  1 file changed, 31 insertions(+), 84 deletions(-)
->> 
->> diff --git a/drivers/phy/xilinx/phy-zynqmp.c b/drivers/phy/xilinx/phy-
->> zynqmp.c
->> index 5a434382356c..5a8f81bbeb8d 100644
->> --- a/drivers/phy/xilinx/phy-zynqmp.c
->> +++ b/drivers/phy/xilinx/phy-zynqmp.c
->> @@ -147,22 +147,6 @@
->>  /* Total number of controllers */
->>  #define CONTROLLERS_PER_LANE		5
->> 
->> -/* Protocol Type parameters */
->> -#define XPSGTR_TYPE_USB0		0  /* USB controller 0 */
->> -#define XPSGTR_TYPE_USB1		1  /* USB controller 1 */
->> -#define XPSGTR_TYPE_SATA_0		2  /* SATA controller lane 0 */
->> -#define XPSGTR_TYPE_SATA_1		3  /* SATA controller lane 1 */
->> -#define XPSGTR_TYPE_PCIE_0		4  /* PCIe controller lane 0 */
->> -#define XPSGTR_TYPE_PCIE_1		5  /* PCIe controller lane 1 */
->> -#define XPSGTR_TYPE_PCIE_2		6  /* PCIe controller lane 2 */
->> -#define XPSGTR_TYPE_PCIE_3		7  /* PCIe controller lane 3 */
->> -#define XPSGTR_TYPE_DP_0		8  /* Display Port controller lane 0 */
->> -#define XPSGTR_TYPE_DP_1		9  /* Display Port controller lane 1 */
->> -#define XPSGTR_TYPE_SGMII0		10 /* Ethernet SGMII controller 0 */
->> -#define XPSGTR_TYPE_SGMII1		11 /* Ethernet SGMII controller 1 */
->> -#define XPSGTR_TYPE_SGMII2		12 /* Ethernet SGMII controller 2 */
->> -#define XPSGTR_TYPE_SGMII3		13 /* Ethernet SGMII controller 3 */
+>> v2 changes:
+>> * avoid else in return value check
+>> * use macro instead of comment to document internal reference voltage
+>> ---
+>>  drivers/iio/adc/ad7292.c | 36 ++++++------------------------------
+>>  1 file changed, 6 insertions(+), 30 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/ad7292.c b/drivers/iio/adc/ad7292.c
+>> index 6aadd14f459d..87ffe66058a1 100644
+>> --- a/drivers/iio/adc/ad7292.c
+>> +++ b/drivers/iio/adc/ad7292.c
+>> @@ -17,6 +17,8 @@
+>>  
+>>  #define ADI_VENDOR_ID 0x0018
+>>  
+>> +#define AD7292_INTERNAL_REF_MV 1250
+>> +
+>>  /* AD7292 registers definition */
+>>  #define AD7292_REG_VENDOR_ID		0x00
+>>  #define AD7292_REG_CONF_BANK		0x05
+>> @@ -79,7 +81,6 @@ static const struct iio_chan_spec ad7292_channels_diff[] = {
+>>  
+>>  struct ad7292_state {
+>>  	struct spi_device *spi;
+>> -	struct regulator *reg;
+>>  	unsigned short vref_mv;
+>>  
+>>  	__be16 d16 __aligned(IIO_DMA_MINALIGN);
+>> @@ -250,13 +251,6 @@ static const struct iio_info ad7292_info = {
+>>  	.read_raw = ad7292_read_raw,
+>>  };
+>>  
+>> -static void ad7292_regulator_disable(void *data)
+>> -{
+>> -	struct ad7292_state *st = data;
 >> -
->>  /* Timeout values */
->>  #define TIMEOUT_US			1000
->> 
->> @@ -185,7 +169,8 @@ struct xpsgtr_ssc {
->>  /**
->>   * struct xpsgtr_phy - representation of a lane
->>   * @phy: pointer to the kernel PHY device
->> - * @type: controller which uses this lane
->> + * @instance: instance of the protocol type (such as the lane within a
->> + *            protocol, or the USB/Ethernet controller)
->>   * @lane: lane number
->>   * @protocol: protocol in which the lane operates
->>   * @skip_phy_init: skip phy_init() if true
->> @@ -194,7 +179,7 @@ struct xpsgtr_ssc {
->>   */
->>  struct xpsgtr_phy {
->>  	struct phy *phy;
->> -	u8 type;
->> +	u8 instance;
->>  	u8 lane;
->>  	u8 protocol;
->>  	bool skip_phy_init;
->> @@ -331,8 +316,8 @@ static int xpsgtr_wait_pll_lock(struct phy *phy)
->> 
->>  	if (ret == -ETIMEDOUT)
->>  		dev_err(gtr_dev->dev,
->> -			"lane %u (type %u, protocol %u): PLL lock timeout\n",
->> -			gtr_phy->lane, gtr_phy->type, gtr_phy->protocol);
->> +			"lane %u (protocol %u, instance %u): PLL lock
->> timeout\n",
->> +			gtr_phy->lane, gtr_phy->protocol, gtr_phy-
->> >instance);
->> 
->>  	return ret;
->>  }
->> @@ -647,8 +632,7 @@ static int xpsgtr_phy_power_on(struct phy *phy)
->>  	 * cumulating waits for both lanes. The user is expected to initialize
->>  	 * lane 0 last.
->>  	 */
->> -	if (gtr_phy->protocol != ICM_PROTOCOL_DP ||
->> -	    gtr_phy->type == XPSGTR_TYPE_DP_0)
->> +	if (gtr_phy->protocol != ICM_PROTOCOL_DP || !gtr_phy->instance)
->>  		ret = xpsgtr_wait_pll_lock(phy);
->> 
->>  	return ret;
->> @@ -678,73 +662,33 @@ static const struct phy_ops xpsgtr_phyops = {
->>   * OF Xlate Support
->>   */
->> 
->> -/* Set the lane type and protocol based on the PHY type and instance
->> number. */
->> +/* Set the lane protocol and instance based on the PHY type and instance
->> number. */
->>  static int xpsgtr_set_lane_type(struct xpsgtr_phy *gtr_phy, u8 phy_type,
->>  				unsigned int phy_instance)
->>  {
->>  	unsigned int num_phy_types;
->> -	const int *phy_types;
->> 
->>  	switch (phy_type) {
->> -	case PHY_TYPE_SATA: {
->> -		static const int types[] = {
->> -			XPSGTR_TYPE_SATA_0,
->> -			XPSGTR_TYPE_SATA_1,
->> -		};
+>> -	regulator_disable(st->reg);
+>> -}
 >> -
->> -		phy_types = types;
->> -		num_phy_types = ARRAY_SIZE(types);
->> +	case PHY_TYPE_SATA:
->> +		num_phy_types = 2;
->>  		gtr_phy->protocol = ICM_PROTOCOL_SATA;
->>  		break;
->> -	}
->> -	case PHY_TYPE_USB3: {
->> -		static const int types[] = {
->> -			XPSGTR_TYPE_USB0,
->> -			XPSGTR_TYPE_USB1,
->> -		};
+>>  static int ad7292_probe(struct spi_device *spi)
+>>  {
+>>  	struct ad7292_state *st;
+>> @@ -277,29 +271,11 @@ static int ad7292_probe(struct spi_device *spi)
+>>  		return -EINVAL;
+>>  	}
+>>  
+>> -	st->reg = devm_regulator_get_optional(&spi->dev, "vref");
+>> -	if (!IS_ERR(st->reg)) {
+>> -		ret = regulator_enable(st->reg);
+>> -		if (ret) {
+>> -			dev_err(&spi->dev,
+>> -				"Failed to enable external vref supply\n");
+>> -			return ret;
+>> -		}
 >> -
->> -		phy_types = types;
->> -		num_phy_types = ARRAY_SIZE(types);
->> +	case PHY_TYPE_USB3:
->> +		num_phy_types = 2;
->>  		gtr_phy->protocol = ICM_PROTOCOL_USB;
->>  		break;
->> -	}
->> -	case PHY_TYPE_DP: {
->> -		static const int types[] = {
->> -			XPSGTR_TYPE_DP_0,
->> -			XPSGTR_TYPE_DP_1,
->> -		};
+>> -		ret = devm_add_action_or_reset(&spi->dev,
+>> -					       ad7292_regulator_disable, st);
+>> -		if (ret)
+>> -			return ret;
 >> -
->> -		phy_types = types;
->> -		num_phy_types = ARRAY_SIZE(types);
->> +	case PHY_TYPE_DP:
->> +		num_phy_types = 2;
->>  		gtr_phy->protocol = ICM_PROTOCOL_DP;
->>  		break;
->> -	}
->> -	case PHY_TYPE_PCIE: {
->> -		static const int types[] = {
->> -			XPSGTR_TYPE_PCIE_0,
->> -			XPSGTR_TYPE_PCIE_1,
->> -			XPSGTR_TYPE_PCIE_2,
->> -			XPSGTR_TYPE_PCIE_3,
->> -		};
->> -
->> -		phy_types = types;
->> -		num_phy_types = ARRAY_SIZE(types);
->> +	case PHY_TYPE_PCIE:
->> +		num_phy_types = 4;
->>  		gtr_phy->protocol = ICM_PROTOCOL_PCIE;
->>  		break;
->> -	}
->> -	case PHY_TYPE_SGMII: {
->> -		static const int types[] = {
->> -			XPSGTR_TYPE_SGMII0,
->> -			XPSGTR_TYPE_SGMII1,
->> -			XPSGTR_TYPE_SGMII2,
->> -			XPSGTR_TYPE_SGMII3,
->> -		};
->> -
->> -		phy_types = types;
->> -		num_phy_types = ARRAY_SIZE(types);
->> +	case PHY_TYPE_SGMII:
->> +		num_phy_types = 4;
->>  		gtr_phy->protocol = ICM_PROTOCOL_SGMII;
->>  		break;
->> -	}
->>  	default:
->>  		return -EINVAL;
->>  	}
->> @@ -752,22 +696,25 @@ static int xpsgtr_set_lane_type(struct xpsgtr_phy
->> *gtr_phy, u8 phy_type,
->>  	if (phy_instance >= num_phy_types)
->>  		return -EINVAL;
->> 
->> -	gtr_phy->type = phy_types[phy_instance];
->> +	gtr_phy->instance = phy_instance;
->>  	return 0;
->>  }
->> 
->>  /*
->> - * Valid combinations of controllers and lanes (Interconnect Matrix).
->> + * Valid combinations of controllers and lanes (Interconnect Matrix). Each
->> + * "instance" represents one controller for a lane. For PCIe and DP, the
->> + * "instance" is the logical lane in the link. For SATA, USB, and SGMII,
->> + * the instance is the index of the controller.
->> + *
->> + * This information is only used to validate the devicetree reference, and is
->> + * not used when programming the hardware.
->>   */
->>  static const unsigned int
->> icm_matrix[NUM_LANES][CONTROLLERS_PER_LANE] = {
->> -	{ XPSGTR_TYPE_PCIE_0, XPSGTR_TYPE_SATA_0, XPSGTR_TYPE_USB0,
->> -		XPSGTR_TYPE_DP_1, XPSGTR_TYPE_SGMII0 },
->> -	{ XPSGTR_TYPE_PCIE_1, XPSGTR_TYPE_SATA_1, XPSGTR_TYPE_USB0,
->> -		XPSGTR_TYPE_DP_0, XPSGTR_TYPE_SGMII1 },
->> -	{ XPSGTR_TYPE_PCIE_2, XPSGTR_TYPE_SATA_0, XPSGTR_TYPE_USB0,
->> -		XPSGTR_TYPE_DP_1, XPSGTR_TYPE_SGMII2 },
->> -	{ XPSGTR_TYPE_PCIE_3, XPSGTR_TYPE_SATA_1, XPSGTR_TYPE_USB1,
->> -		XPSGTR_TYPE_DP_0, XPSGTR_TYPE_SGMII3 }
->> +	/* PCIe, SATA, USB, DP, SGMII */
->> +	{ 0, 0, 0, 1, 0 }, /* Lane 0 */
->> +	{ 1, 1, 0, 0, 1 }, /* Lane 1 */
->> +	{ 2, 0, 0, 1, 2 }, /* Lane 2 */
->> +	{ 3, 1, 1, 0, 3 }, /* Lane 3 */
->>  };
+>> -		ret = regulator_get_voltage(st->reg);
+>> -		if (ret < 0)
+>> -			return ret;
+>> +	ret = devm_regulator_get_enable_read_voltage(&spi->dev, "vref");
+>> +	if (ret < 0 && ret == -ENODEV)
 > 
-> Feel this change reduces readability and introduce magic values
-> for icm_matrix and num_phy_types. At times decoding these 
-> numbers can be hard. 
+> ret != -ENODEV?
 
-> Can we retain deriving num_phy_types from ARRAY_SIZE(types);
-> and also defines for ICM matrix?
+yup, I messed this one up
 
-There is no point. The value of e.g. XPSGTR_TYPE_PCIE_3 would be 3.
-The value of XPSGTR_TYPE_SATA_1 would be 1. The names are already
-given by the structure of the matrix.
-
---Sean
-
->> 
->>  /* Translate OF phandle and args to PHY instance. */
->> @@ -822,7 +769,7 @@ static struct phy *xpsgtr_xlate(struct device *dev,
->>  	 * is allowed to operate on the lane.
->>  	 */
->>  	for (i = 0; i < CONTROLLERS_PER_LANE; i++) {
->> -		if (icm_matrix[phy_lane][i] == gtr_phy->type)
->> +		if (icm_matrix[phy_lane][i] == gtr_phy->instance)
->>  			return gtr_phy->phy;
->>  	}
->> 
->> --
->> 2.35.1.1320.gc452695387.dirty
+> 
+> - Nuno Sá
 > 
 
 
