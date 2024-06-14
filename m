@@ -1,85 +1,158 @@
-Return-Path: <linux-kernel+bounces-214968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55444908CBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:51:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C14B5908CC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 698111C25ACB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:51:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B10661C2644D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73098C07;
-	Fri, 14 Jun 2024 13:51:04 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8CF79E1;
+	Fri, 14 Jun 2024 13:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Py5qaGQT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D2879CF
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0B94C96;
+	Fri, 14 Jun 2024 13:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718373064; cv=none; b=U9KLr9r1vLa4vnYIbKqooQkrJ5rkqajDRa4xqdIzkBCQeSyIAXlLbVxCWAuRfY4lzZbWEej+0fM/fqPQhl60dUYt6TExScVkwKyXOWNlzttvIQ75LxCBQpmIefnFzv+Oc0WJLcRtHtpaWWShNTCORgojjVxGPGdkqcoNq1W4A6U=
+	t=1718373107; cv=none; b=fOzl3vTAV8ouo0F/55uiebvTI40rDw2aYKa04M1s8a5xPujCgrXoacPYUbvCkzd9MTGpfvAOGxkwN9GqYyAJM5RF9Rzns0CmAyiDUjyHiAy3VrWmUALFALFB38wx4nNa47AovNv9MpGWQSUa0mooAvURmiJA8CaXlfJeU9v2cIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718373064; c=relaxed/simple;
-	bh=+6DR/pJomE+6dtB3kuMO5pmZrhTXwpqpmGPrDFLpGXY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WOywU2R/+xKgM4M+kWg5z2Mmz03HqISbZCyIWRozQn4nvtdZWue98Rhtr18UIN4K9MeIh66u830jYRnRMTd25C1EWPn7JN8GQc4D6Kwh5gJ7HM4jjlOBx5uvAJf8Sh+a2Jx/5uhz9mgt17SM7R3rqO2f6JjlaYqdLjdqwKYmr4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7eb73f0683cso212074439f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 06:51:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718373062; x=1718977862;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oiAh3e/a7oxd1QOn1qlvAXctsN4zQwJRgAEMfeD8KyQ=;
-        b=IuIyjvDqDh/cIWqws0z+K+7eWHn0JhZgQH1pIGLOC6ENxnNn5yex6ZaXC+qVkERwHf
-         rRnt5OZqtgOEgI5Fkodw64yP0zhaDlbPlEyboMpj8Pv+Pv4egmehpisnhaHRUvVbT/OL
-         IyJRNbi0gX5iAJ7BEoNnmb3+9v5zI+UX6NDZGApIIISmy6zt9cOlhSx0KtSiq35gBGLw
-         xELs8PNV9lYrAzBjWxiRbfzn7KmM3aScaKeE0D2Ej0fvm295yuMhdKWaK3uBiw3bCf/A
-         MAWLOkOGmX/Siu0TiTafzqZJPbVqwNVDWRZ+A1UpHtNynDx7f2HtAsZw0JCLjXUw3qni
-         btKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXN+qtSNe40L3ECXVQeqkLHJ6o+Y7R09px723oZxeY4pRjSWexvIZ3NIlHq3cV/lueq2TKu9Qsl03+OkBY87xE60fbK5PrudRmS97qO
-X-Gm-Message-State: AOJu0Yx0dnCga6eJ0gde8+WM5NAzaoFAYEDk49fpVODuMIDLk+aXeiSz
-	x1Pwa9vIiqzwc+lpt+HZg/T8FXeO7Rj3IHpkoBwTNKUjzqpt6ylkugbylZzS3vTFirhGFd+tlZh
-	ewDNnAB7PSUyUiv+8L4jc59xDNPs1TVvSAvY7MCvUxgyGTGrztbpQLu4=
-X-Google-Smtp-Source: AGHT+IHen7M/XVIMESwQ5Fga8IBRUVc5ttqAh8dQTSA+uPwSB66hYAOximAkJ4BoYBMOPnOh2sSEu4VAHaxXE//7IBsVRb7Hu7Xa
+	s=arc-20240116; t=1718373107; c=relaxed/simple;
+	bh=IwA+nRpW3jBSAzmNE65SNenXWpawXrOy17dsMyzMFzs=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TwTjb8b2H3w1ZUeB7hT0Xcur/WQceY0i5SkKht/rAz2SyRfi/J3Kv5/N2n5jWsbEulkMPRRlDxSuJxf5pInRijZoxyYJutOqngyA/cncThVxBABRQF99r5lSM0tN29PjaqVy2ApLHZZ3aAm6sycBP4512RmyHQtf1fYXu/e0U3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Py5qaGQT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE47DC2BD10;
+	Fri, 14 Jun 2024 13:51:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718373106;
+	bh=IwA+nRpW3jBSAzmNE65SNenXWpawXrOy17dsMyzMFzs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Py5qaGQT2Qdyws4LOn1wqQPEZyN7pTTtC/irde5GED1n020PSRGCR7otLCPlfA8Yj
+	 WkoMOyTZ3rCF2AcZrNppcskTwlHOtnoxx53r7arw/iAnT9xhX9uLPrzEwPpzZEwKLD
+	 zAk68eknRRZ9n/JcVNl5CMRCzYTVOwHuqrNZkQQ2mQgs2BY0CvOm2F1NVEv7TERsWP
+	 URuHA8XbGUEmpHXgRbj5PViOqqL+Ez08+ArjA5j/nmwzZAnj2R5TkY2liWNkaBl0WP
+	 cuzvLr7sgwXBlRQ5SsBZ4celz97PM/gW7KaLLCA1kF8rEEGUDmfG0ocWgwcKXXDnnj
+	 FndaD24rWK8iA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sI7LE-003vmz-RI;
+	Fri, 14 Jun 2024 14:51:44 +0100
+Date: Fri, 14 Jun 2024 14:51:44 +0100
+Message-ID: <86msnnk4y7.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Sebastian Ene <sebastianene@google.com>
+Cc: catalin.marinas@arm.com,
+	james.morse@arm.com,
+	jean-philippe@linaro.org,
+	oliver.upton@linux.dev,
+	qperret@google.com,
+	qwandor@google.com,
+	sudeep.holla@arm.com,
+	suzuki.poulose@arm.com,
+	tabba@google.com,
+	will@kernel.org,
+	yuzenghui@huawei.com,
+	lpieralisi@kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v3 0/4] KVM: arm64: pKVM host proxy FF-A fixes
+In-Reply-To: <20240613132035.1070360-1-sebastianene@google.com>
+References: <20240613132035.1070360-1-sebastianene@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d81:b0:375:a3eb:bfb5 with SMTP id
- e9e14a558f8ab-375e0c7409amr1449295ab.0.1718373062176; Fri, 14 Jun 2024
- 06:51:02 -0700 (PDT)
-Date: Fri, 14 Jun 2024 06:51:02 -0700
-In-Reply-To: <20240614124811.689-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f68397061ad9e77d@google.com>
-Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
-From: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: sebastianene@google.com, catalin.marinas@arm.com, james.morse@arm.com, jean-philippe@linaro.org, oliver.upton@linux.dev, qperret@google.com, qwandor@google.com, sudeep.holla@arm.com, suzuki.poulose@arm.com, tabba@google.com, will@kernel.org, yuzenghui@huawei.com, lpieralisi@kernel.org, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hello,
+On Thu, 13 Jun 2024 14:20:31 +0100,
+Sebastian Ene <sebastianene@google.com> wrote:
+> 
+> Hello,
+> 
+> 
+> This series contains some small fixes for the host pKVM proxy code. I included
+> some of the patches that I already sent on the list as part of this series
+> to make it easier to keep track of them.
+> 
+> I verified the functionality with OPTEE as a TEE-OS.
+> 
+> Changelog:
+> 
+> v2 -> v3:
+> 
+> * small fixes on the commit messages
+> * applied the Review-by tags from Sudeep. Thank you Sudeep !
+>  
+> v1 -> v2:
+> 
+> * applied the feedback received from Will on the FFA_VERSION patch:
+>   The spec requires that no other calls to be issued prior to the FFA
+>   version negotiation and the current change reflects this. After the
+>   version negotiation phase is complete with Trustzone we will just
+>   return the hypervisor version.
+> 
+> * corrected some mistakes on the FFA_PARTITION_INFO_GET patch:
+>   - don't trim the number of bytes copied from the hypervisor buffer
+>   - introduce FFA_1_0_PARTITON_INFO_SZ definition
+>   - simplify the logic when the input flag is specified 
+> 
+> * collected the Ack from Will and embbeded it in the commit - Thanks Will ! 
+> 
+> 
+> v2:
+> https://lore.kernel.org/all/20240515172258.1680881-1-sebastianene@google.com/
+> 
+> v1:
+> 
+> * previously posted FFA_PARTITION_INFO_GET patch here:
+> https://lore.kernel.org/kvmarm/20240411133249.2134696-1-sebastianene@google.com/
+>  -> minor changes from the previous version, look for the current
+>     ffa_version in the host_buffer structure
+> 
+> * previously posted "Fix the identification range for the FF-A smcs" here:
+> https://lore.kernel.org/kvmarm/20240322124303.309423-1-sebastianene@google.com/
+> 
+> Thank you,
+> Sebastian
+> 
+> Sebastian Ene (4):
+>   KVM: arm64: Trap FFA_VERSION host call in pKVM
+>   KVM: arm64: Add support for FFA_PARTITION_INFO_GET
+>   KVM: arm64: Update the identification range for the FF-A smcs
+>   KVM: arm64: Use FF-A 1.1 with pKVM
+> 
+>  arch/arm64/kvm/hyp/include/nvhe/ffa.h |   2 +-
+>  arch/arm64/kvm/hyp/nvhe/ffa.c         | 180 +++++++++++++++++++++-----
+>  include/linux/arm_ffa.h               |   3 +
+>  3 files changed, 152 insertions(+), 33 deletions(-)
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Although these are labelled as fixes, I don't think they warrant being
+taken into 6.10. So assuming Oliver will take them into 6.11:
 
-fs/open.c:962:45: error: expected ')'
+Acked-by: Marc Zyngier <maz@kernel.org>
 
+	M.
 
-Tested on:
-
-commit:         83a7eefe Linux 6.10-rc3
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5a05c230e142f2bc
-dashboard link: https://syzkaller.appspot.com/bug?extid=5d34cc6474499a5ff516
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16b61e46980000
-
+-- 
+Without deviation from the norm, progress is not possible.
 
