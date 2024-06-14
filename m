@@ -1,168 +1,94 @@
-Return-Path: <linux-kernel+bounces-215229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 171B990900D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:23:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73DF590900F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD5D8284974
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:23:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 312D71F21F39
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B72216FF3C;
-	Fri, 14 Jun 2024 16:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B1518FC65;
+	Fri, 14 Jun 2024 16:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KcbTtm8a"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="VwKhLnNI"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C502116B751;
-	Fri, 14 Jun 2024 16:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AEB016F0EA;
+	Fri, 14 Jun 2024 16:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718382173; cv=none; b=h1QU6T87EGIPY3DlSTtw7J38qb/xJLK15YAsN480dPYI1OUmvrMDck4N8M9f3iH2WWSUosOXZH9OmGSbmi7TkJsQTsLYFKv63i1A509qmx6ppgdZkmrP8h0Q18u/33Wj1D/uuP7mktMN602quDBpPjsBzfy1r51tLJs+hRkRNaA=
+	t=1718382183; cv=none; b=ZkFEZjepLIWZgo2TfJjwrjLbXqpit1RvdTO1qiblumR0AQxKcU3EUmSywYwEUQC7QzpbNsfTElBnhuMyTQ33rrpTgPkfiBDzHhuPBQQeVLCbEC2sqDojkxI4UbPi+ef3CosqLJMuMchnF9W9JOR10pXeoJ/lJl2tB23EOL6oIjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718382173; c=relaxed/simple;
-	bh=fnbAgLOTfMMiJeUuSE5XbkbSe0qtEODYCIGVydsfSfI=;
+	s=arc-20240116; t=1718382183; c=relaxed/simple;
+	bh=9xVj2HYRLM1Bn9KcJv/C/fPJ9SREflQWxolwgh3d9DE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qZUHZtnqfZ+FZ3GsfHwISnYzQGgvQeT7JSTZVGdnl3edy6UaDP0U4R1r1JXZyvXp+vKZgnQaIbzXxwC4+K0AdECv30WVB7q3XOkEG7BffjDev57y/9Q9tk+pK9Bn3lb5v3ZJEW24/PToVCHbQRs4VvPGBew55m/WEgAvO2yk8YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KcbTtm8a; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-421757d217aso26020765e9.3;
-        Fri, 14 Jun 2024 09:22:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718382170; x=1718986970; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mHoUDsPBAFKjfdKT2Wcw7fH+ZbNcrP0Oy7YLPMG/sbY=;
-        b=KcbTtm8aNLnqD2RRn/UprMEj2qky6ffWZHBptC1rtHNVAKrxSED57LKjuUYBtZtHR5
-         KBHOnLAPHaOT4vtxOPL0tMp/F3jBfIZZMAa+G0etzRlPqa+dY40amGlDmTSzqmlYEl4g
-         bTHL9qepD6P2E087UZN2Lv5hRNhpoZLJH78u3h9/eHNLInJtaMGMfSfvlCAWLQVuhcr2
-         T3Ib3AAuNjS+MvsnY91ms0TBEU2UQg8GFKN7lBjknW03ITVRrY2INvpGJwaTjOk1Ab7H
-         PpMszVgyiXWLdJ1tFfF2bAvAKd9JI6iL+sz5WqaH2TGmA5gQrRh/qw/2FwhkoAe2/GKo
-         zZGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718382170; x=1718986970;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mHoUDsPBAFKjfdKT2Wcw7fH+ZbNcrP0Oy7YLPMG/sbY=;
-        b=XSxe/1nzCW8aY7ImkfMMAltbWwONtYcg0k9oi4tGN22b48hZolrhXNG2xs8I7yESyd
-         Ia/Xpap0QiE8AeOHsg09CL7mTc2i6p14Gt7wawq83FkNqhNVlv+SwxHDnkVX6GiKx+XP
-         W2GDvlJoeUR30/VpXAl5xjPPlnu2ajzeyHjvFm8Xw2/U00LEKuVGUkBWGuNP82QGjrpT
-         iLXJMjBbzCxavIVoKgu44fgfxbiYMnZO+oeYp664Xe0tTxVx5jcb8fFDV8Yv0bn34qLC
-         R4zR2zAfcTaJBIrxIsni1EiPk4GyRljSA7CMW38tVpkwX6LiIBDoomSrXyTxzMixoK6Q
-         MaPw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7/Qi9faH7SuUhG8PnndrIqS+n7SmyrfP1rL86PUpT/BilKs12ZcVW5VwF4hb7kcOrO1YawYfoY9m1MUnVkUGR9gb8OanFjeL621NfVIjQ0HPCvv6eLGRAVI2+9GHsUN/1RqtC6GbKwHE=
-X-Gm-Message-State: AOJu0YzE6TBjCF3bHaSILHgtCEl5mYUMx6+TkggwF0Pb+9wXO1DviZ+K
-	UM/KLLwyOVgTDYQ3wvZ+Kla5eXjmx8XXgRFsUsmYvO+f/j+eBxmD
-X-Google-Smtp-Source: AGHT+IHwPKb1oVe0OzriUhNOuh2dGKMPOr/keG0NpDIvE0NFORARtKt4Neke5HYOGPm38GZt1pemrQ==
-X-Received: by 2002:a05:600c:32a7:b0:422:1a82:3ed2 with SMTP id 5b1f17b1804b1-423b506058amr4577075e9.27.1718382169973;
-        Fri, 14 Jun 2024 09:22:49 -0700 (PDT)
-Received: from fedora ([213.94.26.172])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f602e0c2sm66620215e9.14.2024.06.14.09.22.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 09:22:49 -0700 (PDT)
-Date: Fri, 14 Jun 2024 18:22:48 +0200
-From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Rahul Rameshbabu <rrameshbabu@nvidia.com>,
-	Fabio Baltieri <fabiobaltieri@chromium.org>,
-	Ivan Gorinov <linux-kernel@altimeter.info>,
-	Johannes Roith <johannes@gnu-linux.rocks>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: uclogic: avoid linking common code into multiple
- modules
-Message-ID: <ZmxuWKX9lFv3pHqG@fedora>
-References: <20240529094816.1859073-1-arnd@kernel.org>
- <ZmSi5_-4mD4AaIJW@fedora>
- <54c19328-35e2-4506-aa3a-a0b08813d873@app.fastmail.com>
- <Zmcwlt6Kfpt09tKi@fedora>
- <8d93cdd6-379b-48e7-8a10-9df190b12623@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kPWSF3loIIPvJuuBv0WJAZ6ABcHpBoOSf4KyvnagIioR9JGn93Ewagux4u3z+MBx51os3R5Ardp+KWb3SMzO5VuEiJsC4CH5xYGltLrAYwbnq/nxTPKYHIJ//PUZlkrBxkGNYQjcqBpEOkXqlV48BHRFPzW7shsoWxO18a3KC8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=VwKhLnNI; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4W14M55CTXz9syZ;
+	Fri, 14 Jun 2024 18:22:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1718382177;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o4kmNllycobnJxPSc+JrUUAyzHlN3JuewkPkueoOCrQ=;
+	b=VwKhLnNIcoz0lhgP5s9Dt41KUzMS3nCkiikd6WnFm31u+xsqgcNudNVsj4mLs2hL3Qtu7+
+	LVrxuT2v/f+Fweo6AMqI2r76xJTXs4pYg5LaRPAsX0F54HbV6lLv1qOMeGu3IJre5Mc5c/
+	bFLE0Ty0nZ+f3nFBVuUoVYiynvcy4818IZxxcSGPlx75ElOEHEBuh6zdXho+jz+m4j1wDZ
+	YQ8Y4C7pnhjGka0ckIrJV8Z4UzHYzwKVvLhOVd4M7DOAhYm0HH+pN7Yd/sTsfj9cd16tlI
+	Afi89iaRp/qS9FgYI7669RBHxgoGBnvBio0/youFmba1UXsETdqfR5kDaHRiaw==
+Date: Fri, 14 Jun 2024 16:22:54 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Brian Foster <bfoster@redhat.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH 1/2] bcachefs: use FGP_WRITEBEGIN instead of combining
+ individual flags
+Message-ID: <20240614162254.wwuoftv6cbm5x5t7@quentin>
+References: <20240614105031.57032-1-kernel@pankajraghav.com>
+ <20240614105031.57032-2-kernel@pankajraghav.com>
+ <ZmxVZiveDdzyByTQ@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8d93cdd6-379b-48e7-8a10-9df190b12623@app.fastmail.com>
+In-Reply-To: <ZmxVZiveDdzyByTQ@casper.infradead.org>
 
-On Mon, Jun 10, 2024 at 08:25:15PM +0200, Arnd Bergmann wrote:
-> On Mon, Jun 10, 2024, at 18:57, José Expósito wrote:
-> > On Mon, Jun 10, 2024 at 08:24:51AM +0200, Arnd Bergmann wrote:
-> >> On Sat, Jun 8, 2024, at 20:28, José Expósito wrote:
-> >
-> > Turns out that, since the last time I checked the KUnit docs,
-> > we have "EXPORT_SYMBOL_IF_KUNIT" available now.
-> >
-> > I think we can use it and your final patch, without the MODULE_*
-> > changes, could look like:
+On Fri, Jun 14, 2024 at 03:36:22PM +0100, Matthew Wilcox wrote:
+> On Fri, Jun 14, 2024 at 10:50:30AM +0000, Pankaj Raghav (Samsung) wrote:
+> >  	ret = bch2_filemap_get_contig_folios_d(mapping, pos, end,
+> > -				   FGP_LOCK|FGP_WRITE|FGP_STABLE|FGP_CREAT,
+> > -				   mapping_gfp_mask(mapping),
+> > -				   &fs);
+> > +					       FGP_WRITEBEGIN,
+> > +					       mapping_gfp_mask(mapping), &fs);
 > 
-> Looks good to me, can you send that with
+> Don't change the indentation here.  In the next patch it makes the
+> lines too long.
+
+I used clangd to do the formatting. I will probably stick without
+changing the format in this patch
+
+Thanks.
 > 
-> Reported-by: Arnd Bergmann <arnd@arndb.de>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-
-I couldn't add the "Reported-by" tag because check-patch throws a
-warning if it is used without a "Closes" tag.
-
-Other than that, I sent v2:
-https://lore.kernel.org/linux-input/20240614161935.230529-1-jose.exposito89@gmail.com/T/
-
-Thanks a lot for looking into these warnings!
-
-Jose
-
-> ?
-> 
-> Feel free to take my original changelog text if that helps
-> 
->      Arnd
-> 
-> > diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
-> > index ce71b53ea6c5..e40f1ddebbb7 100644
-> > --- a/drivers/hid/Makefile
-> > +++ b/drivers/hid/Makefile
-> > @@ -154,10 +154,8 @@ obj-$(CONFIG_HID_WINWING)  += hid-winwing.o
-> >  obj-$(CONFIG_HID_SENSOR_HUB)   += hid-sensor-hub.o
-> >  obj-$(CONFIG_HID_SENSOR_CUSTOM_SENSOR) += hid-sensor-custom.o
-> > 
-> > -hid-uclogic-test-objs          := hid-uclogic-rdesc.o \
-> > -                                  hid-uclogic-params.o \
-> > -                                  hid-uclogic-rdesc-test.o
-> > -obj-$(CONFIG_HID_KUNIT_TEST)   += hid-uclogic-test.o
-> > +hid-uclogic-test-objs          := hid-uclogic-rdesc-test.o
-> > +obj-$(CONFIG_HID_KUNIT_TEST)   += hid-uclogic.o hid-uclogic-test.o
-> > 
-> >  obj-$(CONFIG_USB_HID)          += usbhid/
-> >  obj-$(CONFIG_USB_MOUSE)                += usbhid/
-> > diff --git a/drivers/hid/hid-uclogic-rdesc.c b/drivers/hid/hid-uclogic-rdesc.c
-> > index b6dfdf6356a6..6c7a90417569 100644
-> > --- a/drivers/hid/hid-uclogic-rdesc.c
-> > +++ b/drivers/hid/hid-uclogic-rdesc.c
-> > @@ -17,6 +17,7 @@
-> >  #include "hid-uclogic-rdesc.h"
-> >  #include <linux/slab.h>
-> >  #include <asm/unaligned.h>
-> > +#include <kunit/visibility.h>
-> > 
-> >  /* Fixed WP4030U report descriptor */
-> >  __u8 uclogic_rdesc_wp4030u_fixed_arr[] = {
-> > @@ -1242,3 +1243,4 @@ __u8 *uclogic_rdesc_template_apply(const __u8 
-> > *template_ptr,
-> > 
-> >         return rdesc_ptr;
-> >  }
-> > +EXPORT_SYMBOL_IF_KUNIT(uclogic_rdesc_template_apply);
-> >
-> > I hope that helps,
-> > Jose
+> In general, don't change the indentation.  It's been one of the biggest
+> pains of the folio conversion.  "Oh, you changed the name of this
+> function and now the arguments don't line up".  Don't line up the
+> arguments with the opening paren.
 
