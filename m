@@ -1,127 +1,102 @@
-Return-Path: <linux-kernel+bounces-215449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AA329092DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:18:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 705259092DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDD8E2855A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:18:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19E331F23F9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97D819E7C1;
-	Fri, 14 Jun 2024 19:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B4F19E7E9;
+	Fri, 14 Jun 2024 19:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="hg4RADWB"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yRKgWLOg"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F871487C7
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 19:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B2017C72
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 19:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718392698; cv=none; b=RqWVGr78LtywLkgsovFrQhs+3XsuCtysu7220dzKeVSshgU9cNc2/+xgj/P8UO8Uv2xOb3FBGqHvQS4GzmO1NJmvT6W61w1e3TnrppQ54T9lSBuNh64nzp/D+J+b2DW2bIqrnk/Yf3eBGy8EK202kp6pGuG/dYmxOADPi4kX9Xw=
+	t=1718392728; cv=none; b=W93uybVHiibMScgGcZC9YV9FQim5Df43Rwcl/fjpIccf9zaRBZABiJn8RihSl5hHeejEgS075I+LOjPxtL1nbplwUNMztqBDua9IjwGcZv5i9M7jVayq233f6WsLeZC6K1q/3mslps621Vflby6sAcPASsLz10UKKuXlU17bbJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718392698; c=relaxed/simple;
-	bh=tdDbH+Puela8GcjBir2w1hVjGJFIMP0Q6vxjuEJvfxg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e/UqzvNZlku0ie0/YVB3l+G19ClkmulboCWf3GrOtRrTXGxGhRNu2nR9RhEBiPWeibbCn/HM1yJ/rD8Aly89gZHf8jlVTi0eyHgmDFVLMUauQ6Ph+NhGjfnrqqcWVJYcf0QSN0fMeVgZ61Eaa8lOm4LC0r5TTgShhamtPLPFc7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=hg4RADWB; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b065d12dc6so12709236d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:18:15 -0700 (PDT)
+	s=arc-20240116; t=1718392728; c=relaxed/simple;
+	bh=MlT2UHhe380nkp9ttQmhAIbQuw1laeS/Uejo9GbqM/k=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ULkvFeqcvEKS8iQ+0z3TKPkygaNdCAvfxMALAzTiWR2sRFUHoHxyPvHjCpUbQeU9eCEVV0NxJ1+4Ho4i2oqaVOlgVnhDeHIOCG60G4lBmXd4S8ZvsCn5ON1LM1Zg4ANa+M9akfge2onVpDCgHaA1Mfb9BHSPE0TLYPQR1/0+WCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yRKgWLOg; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-62f4a731ad4so48993807b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:18:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718392695; x=1718997495; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tdDbH+Puela8GcjBir2w1hVjGJFIMP0Q6vxjuEJvfxg=;
-        b=hg4RADWBkSVtzEatCC7JWekyKE1GVDldNOVPw9YTUm3FLrpH4bEDe8Faj23ojMHpH8
-         bC8krjbBDbpxN39g0YHjAqAyy3xsCAL2bqNV0Y/zJT+I6BX/xu70ZgZwc/JnwHAn+Ndt
-         F42BF6tYMmAnDLK2xijo4ydA6ibh8GcfcE5rKiaIA9ZQ0XEG7jincTOxwBsLPoltzGGf
-         TYdj8fW1qoSP89yaTC7fWlwt7HHONRToq1D0dp/zrr0FY5NGyCux813CwgcDlWmRIusD
-         XHzl38sm8fNFaupFaVtJBUQgXLOc1Nh4dpQyhQpmznhwx3XJPpJqgyrYfLho2R/NheN1
-         9KOw==
+        d=google.com; s=20230601; t=1718392726; x=1718997526; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jrmWp60aVeCWXrY6kwQHhqo9qwrjn/e4JEeFk/uELP4=;
+        b=yRKgWLOghXAu6veStz/CqSVUMquw0xACmM+qG3K/7SIW9jZGplDnhknQ0+gZaWGklJ
+         J9CEC4j42nySZnBcfVt+v8EgC8Q1Owt3MGf8O4zJq7JyngnCH8tTIiCEjq9L+wD324fI
+         pQ9QsIQtZHGaSr8cShqyb1or3fIk4ZrCP4DEnbodA+UT9J3huT4zoE5J98JEQ/GuhUei
+         eu21kSjGIPg03sHBv2iNCEgAlHsDY6KmtAzKOZCuOJhHzmabe1d8IZy1VmzAEzDV3XK9
+         SYQVzwIanprk/NCBzzLXKVLJl+pNpYdBlb3S3A3/L4P84iyJzWj13cDgUF63c4htw8t4
+         p4Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718392695; x=1718997495;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tdDbH+Puela8GcjBir2w1hVjGJFIMP0Q6vxjuEJvfxg=;
-        b=PkC1xr6aCeCt/62My8w1SbY/8wXmdhR9oVq0laPmAbw4w7Ui7cVyhxM8nGUfEM20UJ
-         D3HhSyUH6Y+MFv8BX7lZEn/wq0ODzLB6uyoKoMdRbg0fbUWA4q748x3zk6UwxsqIzUK+
-         gR56KFMPP4hkh7aM7E21UNQvvIPw32O+CeKXP/qFUH4/39zqb4KCOWKLaHAM2ihTPMve
-         ERhJ5Op9V7twkpZNA1SD9g8zvGqGOI0/X/dqLif+k7M7r1PkDOL1e9mJnmBMu46MW6Se
-         IeoUWHxSuplK5KdMeErC14Bac08Hw2NP1DdspHaeNpd8Sqvd9MhAAcmkRe9IyQJkAa8V
-         lXmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIhF6s2ZUvSIHR4zYXazHosnhufqjIL0zdskQDQjFRQqzDUH/0Y5to0buKfjjDEQOTzODZboG2J8UCijEf2TUK8DYLz0FCzihMFl60
-X-Gm-Message-State: AOJu0Yw6YAk4KWDiPg5jhSqMXGGnzvPHfPKaBguMRAAy9/uJ35oU3ipx
-	oCr/GxngCKuaqnWbT8WlbI4e/yCBbgAJrsaaNBdP+n2KnScMRjiVfryv63s/9LI=
-X-Google-Smtp-Source: AGHT+IESVCS+ALD38NVdIUc0A9n3fVnIRuJrt6B5Nfu3A/Str0yGuf4a0V+N4cgl4VIb5bHvl5yXhw==
-X-Received: by 2002:a0c:9cce:0:b0:6b2:b2c4:90f5 with SMTP id 6a1803df08f44-6b2b2c49289mr29705686d6.4.1718392694328;
-        Fri, 14 Jun 2024 12:18:14 -0700 (PDT)
-Received: from [192.168.40.12] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5eb4a23sm21545956d6.75.2024.06.14.12.18.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 12:18:14 -0700 (PDT)
-Message-ID: <964821b3-dcbb-42b8-9062-2366a4d30a76@baylibre.com>
-Date: Fri, 14 Jun 2024 15:18:12 -0400
+        d=1e100.net; s=20230601; t=1718392726; x=1718997526;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jrmWp60aVeCWXrY6kwQHhqo9qwrjn/e4JEeFk/uELP4=;
+        b=ctoANO1R1UYXhnq/7YnjeRiznCAcRskUDkPTAF7qjDYKGvQWkWZqgT5vixlOGGPgBa
+         A2Cvvp7xq2dT30nXT8nAZHA65JXvNuJ1oHSC4tfgn/VNHBpo7qBXdICQik7JgCbULrSl
+         vPyYKM+tOm6pXida6Sqw5V6019aJ2/286DIjmVBk0wRGDu4Dnekc3Vzfsvcuy/4dvPBE
+         5YOwRnHtJEWWNXfuDYQbHvQeIfpjcLY/sGeiKnJBmGzdw+Zf4gvOXikgOtJub39WK1Bv
+         N5g5kzyR8ioI9n98BWK6LH9mkJRd98DMmS78ceaDo2zXuW3BPu7HbdgfjbXY99L5dp9b
+         po9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXTgJIXfP933pIumTqyGAJAss+9GPaF1uMwdSl3c2THD+NEbNBRPzGrhP4jDghWjgp2eo66rqVXViNGUQgQBESq8/Hkgy2BIqej6as3
+X-Gm-Message-State: AOJu0Yy9Qqj3AHFxId9Lyda8BjA+phwu+DuGff6oqcurFiAPd4Gq7Ahm
+	KaxSIWkkH+62sJ6abOGCHcRLntoHiGQKr8nQOy0FVwW71oSAdEpml1zu3nZpIrCxaKUz1jh1EIm
+	E53MmWtP3fA==
+X-Google-Smtp-Source: AGHT+IGLrqJZAjVk49RRhDnJAw4q3ZNkoRivcI2IJKQhXabVF5QImj7XjJ/TVfso+Ht5gHtMalkF2VCTuwngvg==
+X-Received: from ip.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:57f3])
+ (user=ipylypiv job=sendgmr) by 2002:a05:690c:6f13:b0:622:c8eb:6ffd with SMTP
+ id 00721157ae682-6321f6863cfmr6757507b3.0.1718392726537; Fri, 14 Jun 2024
+ 12:18:46 -0700 (PDT)
+Date: Fri, 14 Jun 2024 19:18:31 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: adc: adi-axi-adc: improve probe() error messaging
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240613163407.2147884-1-tgamblin@baylibre.com>
- <57d4659a5abb63d7c085865059b9d71c40371edd.camel@gmail.com>
-Content-Language: en-US
-From: Trevor Gamblin <tgamblin@baylibre.com>
-In-Reply-To: <57d4659a5abb63d7c085865059b9d71c40371edd.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
+Message-ID: <20240614191835.3056153-1-ipylypiv@google.com>
+Subject: [PATCH v1 0/4] ATA PASS-THROUGH sense data fixes
+From: Igor Pylypiv <ipylypiv@google.com>
+To: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>, Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Igor Pylypiv <ipylypiv@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+This patch series is fixing a few ATA PASS-THROUGH issues:
 
-On 2024-06-14 5:11 a.m., Nuno Sá wrote:
-> On Thu, 2024-06-13 at 12:34 -0400, Trevor Gamblin wrote:
->> The current error handling for calls such as devm_clk_get_enabled() in
->> the adi-axi-adc probe() function means that, if a property such as
->> 'clocks' (for example) is not present in the devicetree when booting a
->> kernel with the driver enabled, the resulting error message will be
->> vague, e.g.:
->>
->>> adi_axi_adc 44a00000.backend: probe with driver adi_axi_adc failed with error -2
->> Change the devm_clk_get_enabled(), devm_regmap_init_mmio(), and
->> devm_iio_backend_register() checks to use dev_err_probe() with some
->> context for easier debugging.
->>
->> After the fix:
->>
->>> adi_axi_adc 44a00000.backend: error -ENOENT: failed to get clock
->>> adi_axi_adc 44a00000.backend: probe with driver adi_axi_adc failed with error -2
->> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
->> ---
-> Somehow feel that in these cases the error log should come from the functions we're
-> calling but bah... likely not going happen/change:
->
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
->
-> (As a suggestion, you may do similar work in the axi-dac driver)
+1. Not reporting the sense data when ATA error happens and CK_COND is 0.
+2. Generating "fake" sense data based on ATA status/error registers even
+   though a valid sense data was already fetched from a disk.
+3. Fixed format sense data was using incorrect field offsets for ATA
+   PASS-THROUGH commands.
 
-Thanks. I'll send that early next week after a quick test on a board.
+Igor Pylypiv (4):
+  ata: libata: Remove redundant sense_buffer memsets
+  ata: libata-scsi: Generate ATA PT sense data when ATA ERR/DF are set
+  ata: libata-scsi: Report valid sense data for ATA PT if present
+  ata: libata-scsi: Fix offsets for the fixed format sense data
 
-Trevor
+ drivers/ata/libata-eh.c   |  2 --
+ drivers/ata/libata-scsi.c | 53 ++++++++++++++++++++-------------------
+ 2 files changed, 27 insertions(+), 28 deletions(-)
 
->
-> - Nuno Sá
->
->
+-- 
+2.45.2.627.g7a2c4fd464-goog
+
 
