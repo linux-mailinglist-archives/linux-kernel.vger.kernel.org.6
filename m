@@ -1,107 +1,138 @@
-Return-Path: <linux-kernel+bounces-214563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1C94908676
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:38:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53754908687
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75A2928784C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:38:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE3E1B25C05
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBD4190076;
-	Fri, 14 Jun 2024 08:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B9019148B;
+	Fri, 14 Jun 2024 08:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="tTgNOnuY"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nWwE/M0O"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05BC190066;
-	Fri, 14 Jun 2024 08:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7043190076
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718354286; cv=none; b=qOvnkT1PtTsRwAzp9OjAqsiPlehnp4gIXP/T97L3TUMvO2HgJvje6XyBmuyTwYCnmIS7AbLle/MYG51ySl4fRsEsiXPKBwuB243ADrdHU5/hHzdctIPZ62MmEDNyGpk0GAARpnPAyyhDTOnZozZn6pWMdZHGfgnkjPxx932jJPs=
+	t=1718354310; cv=none; b=Rg9vpKyQ7Mwtmu5z879EtE0M6ytlaLdSWcRuZIBjFUNhHTsHlV83g9TOW3x4lGBCgEKu3bfNt9tIQMIg4fkEXmbKRbzPJkI9N3Sv9UjWwq1FmvcIaNmNeYqCwzlPqxsuaEIDe+21f74ekjkNYmOYQiDC5VZRZw7xahiUrzDeQPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718354286; c=relaxed/simple;
-	bh=ivcQjGPwDsRL7TjnjALyJ+4Yl01a48suFxsWagd9HTs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WBoD8T0i6OP3jlgPs775bz8XcjkwdYI6GbnihpSK9CDgR/WHA/7GZzcZiPcq/IjQC0dkSyRySgYMIuNa0LbG5Zl17sWtVxZdIJUcfpX1sOO1SDfbK13OuIWhMoA68xKlY124F0lQHivlAV5mkO6NO9W+GmgKKXm96DvllXPn6IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=tTgNOnuY; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718354268; x=1718959068; i=spasswolf@web.de;
-	bh=J2MGAZdIrgD9+Bzu7JaNXHJzpLQMTsnyYBIuffMdmcg=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:Reply-To:To:Cc:Date:
-	 In-Reply-To:References:Content-Type:MIME-Version:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=tTgNOnuY/3VeNmyH6sgKjfnby59kCnHstjO295eoL0ONf4BARwWYgjH9TzEx1EHp
-	 wvbepV0+SltAy5vol6tFW78AoZ7m7jMiu1DsIeO/4Umaz2HsMQM+qzv92SIJOTjYB
-	 InMCPsDTdiQZ7n19DIyjFJopORdRFeB38aTpTZhc1TtqSb2bK7Rgr1qq4TglLViNR
-	 CPBxTn5r2c9XbXFcoJb5YgPJgQWnM+dFBMr0qxEhWFV+6OHwxjAVivlY74ch1F3kY
-	 mW9SAS76XJYi1hzwKjpcRwZluETtW1G9wtTT2ZU5XKQlycbw949f5TBE3cm4EW53N
-	 66fzmsFUU6Jhzj9l1g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mx0N5-1sctZX2HF5-0149fu; Fri, 14
- Jun 2024 10:37:48 +0200
-Message-ID: <e18bac6a57a4a45260e7282a70173fa6226955bc.camel@web.de>
-Subject: Re: commit 1c29a32ce65f4cd0f1c causes Bad rss-counter state and
- firefox-esr crash in linux-next-20240613
-From: Bert Karwatzki <spasswolf@web.de>
-Reply-To: 20240613170351.cc3e7ccfa1bb198b57f31352@linux-foundation.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Date: Fri, 14 Jun 2024 10:37:48 +0200
-In-Reply-To: <20240613170351.cc3e7ccfa1bb198b57f31352@linux-foundation.org>
-References: <f4ea65e28ac47e6acb13f401f46a414a2f50f7bf.camel@web.de>
-	 <20240613170351.cc3e7ccfa1bb198b57f31352@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.52.2-2 
+	s=arc-20240116; t=1718354310; c=relaxed/simple;
+	bh=c+HO6rpfLBrq4Z9yOBu/M6P73t6c6818voOiVXvjIvw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IAvuTe3gTfbRZzfKVEoA5D4xt0Cbjagab+hKYB6kcdCUjtzn/72vUqIGpP0X4Aca1wM5cWV8t2Zwy9LoVb2U/4bwYywg7C6wmdbFtPhs2QwpS24Zhh8L/k6iG6wDIwOyUdwb8NdRWmEROZ5MWR17QgPgVcduL3eREOWHS99VMYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nWwE/M0O; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso11670a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:38:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718354307; x=1718959107; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c+HO6rpfLBrq4Z9yOBu/M6P73t6c6818voOiVXvjIvw=;
+        b=nWwE/M0O0gq5uplzuekjg8J8iE2rhreU+wjM7Hjp7X3pv4LmE4j3CP7BZiO/IF20GT
+         80KEaHqMR/ams+VbM1aTX5tbZt1Rdc0hSsDa1d7BBRw94Df9kOruep7F6JWfID8lela6
+         F7UrV5n+i1QjfH8WaeVoMztQoxVJF+7rMOCn7WIWlgxBLKvg2Fu/UtTq5xHhJDsG4U0c
+         mCMSOrTX4P12oYhn2PXzFE7annnfucupBbnRC1kxtqvVHtlko3xJrGVp3Cjk3ylTRo1a
+         FZDP+/gtSMe0pZhs/rEKLzNIuyAWmEYqgdML0/dkm9HoMGMAsv1euriOdJO6nGq2wojD
+         012g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718354307; x=1718959107;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c+HO6rpfLBrq4Z9yOBu/M6P73t6c6818voOiVXvjIvw=;
+        b=ZmAuFj8ei5mwV/lZ9ADaESYMqP694+foEjJ4gAmD/53OcGLHygsHcolN8hCeC+zTX2
+         4h9XWUNVjIqfYmyuvgu9aug6qV3VlAB3NnsjuJepDmTzVVEbWz4ImEKm1hAwLBV6BeKd
+         9lMmEXeHEPjCyEFdd1QBiZGx/Ihr/xm4Ypsk9OwkbZQNdphy/jP5z6BaomIc9UB18Ews
+         Wk6JX7O8BdYCsGoq+ZMQyKD39489uNtb9ab7ajyuDk4Cczs0wM51zPdCEFQtcnfiYsEM
+         TPTA49IxgC1QgFTT3CLlbXeGsATDtD+H9m4gqCfuHeNhuRhJZ+V0GmOleJQx1Z42Zkhi
+         Dp9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWQKLaSkxtMsF8b9H4nNkleATk/cMb8om8rzUzPArgsj0AfK2WrPc1vBGPgYcFZCKNBM0z6mhAu+hPG7rL0Z5/s8+mqBqq8ipV/VGs+
+X-Gm-Message-State: AOJu0YzFY09A/W8sgM1uvFTZ6z8Jpl0mw6ttSX10rULLl86FzDd032yy
+	HJx9WGqan1/iBHI7QRwLzezrmfsLKGL3Y5Fh3AP1jwi/KSfTJcdYYATIh0/6bVtX2ykiZPyrQ07
+	zk4cCSM9HGYoaeZXes2NI+RU+V99SMHMAul+E
+X-Google-Smtp-Source: AGHT+IGOJ5MzRHXpapB8/uqnzhCpdHHzyc6Kpzyhlgt7qEsE81AECbBjRCWFT0B+/wsFnnA9nBNpETQePCJed29eCyk=
+X-Received: by 2002:a05:6402:35d1:b0:57c:b712:47b5 with SMTP id
+ 4fb4d7f45d1cf-57cbed0de04mr171811a12.4.1718354306227; Fri, 14 Jun 2024
+ 01:38:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:mWMPKDUBfStEkePPwT5f6bujc2xmxGr7EJ1wcXZs4QQMK9Z4MoH
- vcJym9ih6ks5ieaFZXNNJ53lo3r+Q3SYt5EdHgoT0H62YF/aYgx/qycDUDCEYED/UaOA4DQ
- i7e+qjpTiO6UYMPeApp7NtwcWSWFji2j6LVi1MN3FOwhQlH8wOwSgQUnpvxn7Qt97pF/Rii
- GtsDg1UkOB1DIos8OMYAw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:sdtRHhsobkg=;/Qnt+Ms2qsdIGjv5ehDrLNShe4I
- N+AFcFsQkKTJHFZ7WiExMxA1TNNSnl3Y/LWUqV8y3hmbRAXNTYIyR/X9sAfpYiHMpPGxu72Qu
- C8Z1AFizngbn49PE3pbsMm9KTwMq6TB8hgTPVxSZCUuRo4ZKoffbuDVOdDK2Fc+/6CMFwx4fq
- o9JADdq/v1WRkAV4F35aCdZyRHk2aZfLl3pQbMxytobKLANwoQo9PVfJBVGKr1him+U4LyrYN
- 0GpznwqXIjjw39VW21y/Yc9MI/XO3lYF6AdBHJ9mZlBdqyB1bqUDLFPWIriBsXCwl2pybbjf4
- XHI+CTaxNwuTqA7T5XnQklovUXFSBObFN4j/0kYvRw8Dtc0hArsvRaV0Wn730c6AfzKrEhUx9
- XtmS7gZ2V6hkhh9fgPKxugzCnO1UX5amgTwRp7bG01Clsf8u0wa9YAgCucz0tTOtoWBqqCCVF
- JQmCnPUSHF01TUFtwhk56T+Zj9wmNypBrJ5Ft1YNbS0NszjgZFftBuZ+w3K4L21rkm6AjEYXC
- eLJhda/EFgFsR7icGy7Xs93tyP5C64JZstMVsKr7Y5Wn80Gf6dGzScMe2pk8MwTMc6sM9Aidw
- aU4APhNaK3AVVTX7gTTfqjE7IHG8JBV+UibNVT7pNemiWb5yQPoMEkQBtKQZ9yQ43wlb99qT2
- JmNa87iD2Hk8YR69CL0h9Jn6X0ofverAHUXfkSCeBq1pUJwBpRXR1OisdMFuhFItPovOlwz2G
- LKMiGj3qVnbfJHUr1rIpu9WxKGSqLNsKtFqwDwKL7TaVQG8KRqY2lNNqn0I5g7/7u8WG5ab8+
- l1OhfOicoqrAU0X5ct0NSt64TXhhfKMhTGyA9tLnaGMJA=
+References: <20240612170303.3896084-1-bigeasy@linutronix.de>
+ <20240612170303.3896084-9-bigeasy@linutronix.de> <20240612131829.2e33ca71@rorschach.local.home>
+ <20240614082758.6pSMV3aq@linutronix.de>
+In-Reply-To: <20240614082758.6pSMV3aq@linutronix.de>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 14 Jun 2024 10:38:15 +0200
+Message-ID: <CANn89i+YfdmKSMgHni4ogMDq0BpFQtjubA0RxXcfZ8fpgV5_fw@mail.gmail.com>
+Subject: Re: [PATCH v6 net-next 08/15] net: softnet_data: Make xmit.recursion
+ per task.
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Daniel Bristot de Oliveira <bristot@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Frederic Weisbecker <frederic@kernel.org>, 
+	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>, Ben Segall <bsegall@google.com>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Donnerstag, dem 13.06.2024 um 17:03 -0700 schrieb Andrew Morton:
-> Let's hope Linus doesn't read this.  Why are we nuking the entire
-> planet just because some counter went wonky?
+On Fri, Jun 14, 2024 at 10:28=E2=80=AFAM Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+>
+> On 2024-06-12 13:18:29 [-0400], Steven Rostedt wrote:
+> > On Wed, 12 Jun 2024 18:44:34 +0200
+> > Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+> >
+> > > Softirq is preemptible on PREEMPT_RT. Without a per-CPU lock in
+> > > local_bh_disable() there is no guarantee that only one device is
+> > > transmitting at a time.
+> > > With preemption and multiple senders it is possible that the per-CPU
+> > > recursion counter gets incremented by different threads and exceeds
+> > > XMIT_RECURSION_LIMIT leading to a false positive recursion alert.
+> > >
+> > > Instead of adding a lock to protect the per-CPU variable it is simple=
+r
+> > > to make the counter per-task. Sending and receiving skbs happens alwa=
+ys
+> > > in thread context anyway.
+> > >
+> > > Having a lock to protected the per-CPU counter would block/ serialize=
+ two
+> > > sending threads needlessly. It would also require a recursive lock to
+> > > ensure that the owner can increment the counter further.
+> > >
+> > > Make the recursion counter a task_struct member on PREEMPT_RT.
+> >
+> > I'm curious to what would be the harm to using a per_task counter
+> > instead of per_cpu outside of PREEMPT_RT. That way, we wouldn't have to
+> > have the #ifdef.
+>
+> There should be a hole on !RT, too so we shouldn't gain weight. The
+> limit is set to 8 so an u8 would be enough. The counter is only accessed
+> with BH-disabled so it will be used only in one context since it can't
+> schedule().
+>
+> I think it should work fine. netdev folks, you want me to remove that
+> ifdef and use a per-Task counter unconditionally?
 
-It's not just the wonky counter, the error always comes with a segfault which
-causes a firefox tab to crash, though I've not yet figured out how this is
-related to the BUG message or commit 1c29a32ce.
+It depends if this adds another cache line miss/dirtying or not.
 
-[  179.393488] [   T2278] show_signal_msg: 16 callbacks suppressed
-[  179.393492] [   T2278] Privileged Cont[2278]: segfault at 22cddf91d3a0 ip
-000022cde1aad010 sp 00007ffc616851a8 error 7 likely on CPU 15 (core 7, socket 0)
-[  179.393504] [   T2278] Code: Unable to access opcode bytes at 0x22cde1aacfe6.
-[  179.498173] [   T2289] BUG: Bad rss-counter state mm:00000000d0a3f682
-type:MM_ANONPAGES val:1885
-
-Bert Karwatzki
+What about other fields from softnet_data.xmit ?
 
