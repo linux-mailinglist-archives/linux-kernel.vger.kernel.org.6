@@ -1,122 +1,176 @@
-Return-Path: <linux-kernel+bounces-214838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2647E908AE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:36:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1CB908AE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB47C288289
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:36:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BBF21F22590
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE46195968;
-	Fri, 14 Jun 2024 11:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D28195969;
+	Fri, 14 Jun 2024 11:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Kq+Lteve"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="R28OVEM3"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1689614D29B
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 11:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BBB14D29B
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 11:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718364961; cv=none; b=KvZXVt8B3IEt/Udh9MxCiFoFPaE4+esmGp9R0jr1AFWE6Ie0k8auxjQjxfIbLJQHJim5TV+5Y8jbF9clKsSbicQxXaynMWgz/oq7WRjH6wNHYlyL30mKSCfAc7OMuebII5ppy0wsjnpE2YGE8Oxe5E++++lKY3gP5cBRjMaHV60=
+	t=1718364972; cv=none; b=XIFg4VYntQ2uBSMtZztHP063e5CowmRumoK8cc9R1k7QQnK7qSk/u1XsqIPXb5uh9UWYfBkv7yEH23RDTp/Oq9NDmGn/CIjqM7uiSB6dqX1V09KuXZys8d8chHaaC2AYPI5XDDeDRg/inVZGke0y2xgxrfzjnc3OUu+6AbYZE7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718364961; c=relaxed/simple;
-	bh=QmppzqLNvLCWZT8Fmx2h1z/cJHb1DSDU6hZwdgDNQy4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=At63IuyenY4McC64ok0lXaVJ4kgSDrxuiJOzc0MmPfXrjHHsRCI7lfle7Ac68q/z/jeCXv04FVcsZRRY62RfGIiaJkXti84pzzxNqPbItwTwzRFRqYQW+pcX88wk5y0LQy9Jj65arKLz3pyFpgUpf8hlBt/MLxa69OQlZp3kONw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Kq+Lteve; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718364942; x=1718969742; i=markus.elfring@web.de;
-	bh=YcAax4mGY5XS6LXmltoAYPKWqdfE8AQ1OyYhEly7lVw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Kq+LteveHoSa87BACGK2tPOURM+bYwl+3Grz0UndoM3qJ5RioideGdKmfmy4OGrv
-	 hzSJUGHAQqpV8BUWuHfrijgOZ+2peQEEGhMsaTotfbqMfPLD+UPj5Lnrl/kk2sRTK
-	 MuRTS8PrBuHnh7TYsjoq1Pb0DbQDNkh/2+Pe4Z+5s2oTDiNtfZJgtD4eCPuMXPr63
-	 KLwKdu3aeGAk/TzOizo3r+a0Tx2RVWkkmJPzoOixO1CdJzrSw4PTVgGw/qzC614hb
-	 6lWczaZ5EhuXPTD3WXg5nXd9quedEquFLKgGcUDu0IMOFpewKPUmSA56lcFr8KYVR
-	 nTEhlt8vHyrT/WJcMg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MbCDq-1spD6s0NsO-00mPh0; Fri, 14
- Jun 2024 13:35:42 +0200
-Message-ID: <36c0231a-9916-4734-9042-7a07f4cb85f7@web.de>
-Date: Fri, 14 Jun 2024 13:35:36 +0200
+	s=arc-20240116; t=1718364972; c=relaxed/simple;
+	bh=D57VW2tUjXTLhv/XmrfsMmV1i/cLw0/QIlJ1ekguQ3s=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=QEh8J7HRoVlyDfmmfV39ZuPG0Mh0NlqycLfAdM0Z0EMbLV/VipKwon9Sk4C2WWsfd/bNswY6/81rzwObhFqlEnnD7jrivjgjMK6aQvgiOKzyEZlUjlR/Pdjn5SY2wlu94A6lHql6yRjiHQ+L3WXuf59yQd/IdXtC5MZyVzJCuXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=R28OVEM3; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6CCFB397;
+	Fri, 14 Jun 2024 13:35:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718364953;
+	bh=D57VW2tUjXTLhv/XmrfsMmV1i/cLw0/QIlJ1ekguQ3s=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=R28OVEM3qBRkruo0lA6efSJ2h9zoPF5nl4sscfD4VdZW2fa+hs0GuZapUSTLcRXkF
+	 /xXdu9zC89vz1FYULTc2RdsSuBLryN6j9EjvVdpwuTLQpAS5p6fgs2HA2WnROTV/LW
+	 RZxsfr/a0L3oHAIPMQOv2lQrHjRdeK27wKQ2V5YQ=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: jason-jh.lin@mediatek.com,
- Project_Global_Chrome_Upstream_Group@mediatek.com,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Jassi Brar <jassisinghbrar@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, Nancy Lin
- <nancy.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>
-References: <20240614040133.24967-2-jason-jh.lin@mediatek.com>
-Subject: Re: [PATCH 1/2] mailbox: Add power_get/power_put API to mbox_chan_ops
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240614040133.24967-2-jason-jh.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Eq0ooUkCsx0n+fQtzujpSvtI+YXXA7MuMYC9dd+eoYl1noa3q2u
- 8aplDdEWCX2ZAE4jiJZST4bkHw1JoXUswCdqQiz/HQS4ZZauqaHXeXRAysp8ig2f1fVSINJ
- OnZufXWHXdnUGucrm5vziAwqKpCjfnq+vaDcYCdoPY78q+x0EDg8I4exllvjjdUuJphu0wV
- tHdvWKU/Zp2eG8HbNKfzQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:q8ewVWtKAl4=;KGsuYjGac8cOmbgYY6kk9QAUTcG
- A81i94SRhWcE4NPlJ+Ra0TI1oXf8LK1aK3EROqqN3xkxDWRaFnmdHBmkZrDg98XMT0OTPQfmE
- 4dgHwShonqR50frrzl9SKUCJQxNqlESDSMkwc3QuPBafYTn1sv2eXr1nd/nrf9lJvT0av4HSS
- FhW8ENUiPdabenuhOQR/crDe36117ZPJcoYn050Ij3+KiWxAModrxC++2iP1s7oP0p+Yr/2nT
- ugoqGbOh4Y5hJW8mlPR3N3qsYr10Uc0eq2RhIwmR3IMf7fgf4Fz8MOp+sEIq0ZqEoUCow6UWO
- yz3Co7hHe2uz8XwHzvbuSVaWbuLV7gpkE0Lw0B1z18hMZBu+OPwbtj5t+VJu3108kxKoqCf3d
- w3mWn3K5TMMyiSKlMfZFP9REOamlJF+eDDll9P/SEkU5zDhM8DPEcUT89eE2x1Bjehc4Pfm3Q
- nWZ10gR1E7wDAG82tgOl3sA7wbliCmkIV/HAtLeOuGK9nNcn3BBJHZrr0lwed+p3c/hSyvBzA
- XNd1yz38vVGwR3+/j/PAm3eEhovgEJwuDLfQTmnJxLvnGLSOzR/Ml5zQLh6ewiPj/SuRciG9g
- Lr9j2u7l/oQR/b3278IiDApzrFKJ5Rh/Rf7jlj7oF/3ppOfh0rUCG1sjVy1UDdx18HXxvS8nc
- JQOB8dZ0OPScW/0tx/yduBzBksvJwvgVOyKypkNScEd+62VWR0jfBewKF+iBcE9fgE7ldxvu+
- qGOrLa3LqRJOdkK4x3XsyFMqVxWN98Ya3QlRcIUK5x5JWtmsEPjG4BZFj17dFg4SoR6z1I4Hz
- HQlEAjLuuKJ8tAXgFm5IG3OW7QEdR61mcdWNI4IKgzIq8=
+In-Reply-To: <082d9df0-0947-4452-a3fc-87eab2019e01@gmx.net>
+References: <20240613194150.2915202-1-kieran.bingham@ideasonboard.com> <20240613194150.2915202-2-kieran.bingham@ideasonboard.com> <082d9df0-0947-4452-a3fc-87eab2019e01@gmx.net>
+Subject: Re: [PATCH] staging: vc04_services: vchiq_arm: Fix initialisation check
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Dave Stevenson <dave.stevenson@raspberrypi.org>, detule <ogjoneski@gmail.com>, Dan Carpenter <dan.carpenter@linaro.org>, moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE <linux-arm-kernel@lists.infradead.org>, open list:STAGING SUBSYSTEM <linux-staging@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>;
+To: Florian Fainelli <florian.fainelli@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>, Umang Jain <umang.jain@ideasonboard.com>, linux-rpi-kernel@lists.infradead.org
+Date: Fri, 14 Jun 2024 12:36:05 +0100
+Message-ID: <171836496531.2248009.11650291484570726735@ping.linuxembedded.co.uk>
+User-Agent: alot/0.10
 
-> To avoid pm_runtime APIs calling sleep in all the atomic context APIs
+Hi Stefan,
 
-           PM-runtime?
+Sorry, indeed I completely missed this mail.
 
+Quoting Stefan Wahren (2024-06-13 21:01:42)
+> Hi Kieran,
+>=20
+> Am 13.06.24 um 21:41 schrieb Kieran Bingham:
+> > The vchiq_state used to be obtained through an accessor
+> > which would validate that the VCHIQ had been initialised
+> > correctly with the remote.
+> >
+> > In commit 42a2f6664e18 ("staging: vc04_services: Move global g_state to
+> > vchiq_state") the global state was moved to the vchiq_mgnt structures
+> > stored as a vchiq instance specific context. This conversion removed the
+> > helpers and instead replaced users of this helper with the assumption
+> > that the state is always available and the remote connected.
+> >
+> > Fix this broken assumption by re-introducing the logic that was lost
+> > during the conversion.
+>=20
+> thank you for sending this patch. Maybe it's worth to mention that this
+> patch also drop some unnecessary NULL checks of state.
 
-> in mbox_chan_ops, we add power_get/power_put API to let the controllers
-> implement them with pm_runtime APIs outside the other atomic context API=
-s
-> in mbox_chan_ops.
+I don't understand this comment. Nothing is dropped is it?
 
-* How do you think about to omit the word =E2=80=9Cwe=E2=80=9D from such a=
- change description?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.10-rc3#n94
+The newly added vchiq_remote_initialised() is itself a null-check too!
 
-* Would you like to improve any indications for adjustments of data struct=
-ures?
+> > Fixes: 42a2f6664e18 ("staging: vc04_services: Move global g_state to vc=
+hiq_state")
+> > Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> > ---
+> >   .../staging/vc04_services/interface/vchiq_arm/vchiq_arm.c  | 4 ++--
+> >   .../staging/vc04_services/interface/vchiq_arm/vchiq_core.h | 5 +++++
+> >   .../staging/vc04_services/interface/vchiq_arm/vchiq_dev.c  | 7 ++++++-
+> >   3 files changed, 13 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_ar=
+m.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> > index 54467be8c371..67d853f5f2a0 100644
+> > --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> > +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> > @@ -804,7 +804,7 @@ int vchiq_initialise(struct vchiq_state *state, str=
+uct vchiq_instance **instance
+> >        * block forever.
+> >        */
+> >       for (i =3D 0; i < VCHIQ_INIT_RETRIES; i++) {
+> > -             if (state)
+> > +             if (vchiq_remote_initialised(state))
+> >                       break;
+> >               usleep_range(500, 600);
+> >       }
+> > @@ -1299,7 +1299,7 @@ void vchiq_dump_platform_instances(struct vchiq_s=
+tate *state, struct seq_file *f
+> >   {
+> >       int i;
+> >
+> > -     if (!state)
+> > +     if (!vchiq_remote_initialised(state))
+> >               return;
+> >
+> >       /*
+> > diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_co=
+re.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+> > index 8af209e34fb2..382ec08f6a14 100644
+> > --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+> > +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+> > @@ -413,6 +413,11 @@ struct vchiq_state {
+> >       struct opaque_platform_state *platform_state;
+> >   };
+> >
+> > +static inline bool vchiq_remote_initialised(const struct vchiq_state *=
+state)
+> > +{
+> > +     return state->remote && state->remote->initialised;
+> > +}
+> > +
+> >   struct bulk_waiter {
+> >       struct vchiq_bulk *bulk;
+> >       struct completion event;
+> > diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_de=
+v.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+> > index 3c63347d2d08..8c4830df1070 100644
+> > --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+> > +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+> > @@ -1170,6 +1170,11 @@ static int vchiq_open(struct inode *inode, struc=
+t file *file)
+> >
+> >       dev_dbg(state->dev, "arm: vchiq open\n");
+> >
+> > +     if (!vchiq_remote_initialised(state)) {
+> > +             dev_err(state->dev, "arm: vchiq has no connection to Vide=
+oCore\n");
+> Can you please downgrade the log level to dev_dbg, because vchiq_open is
+> called from userspace, so we can prevent log spamming?
 
+Sure.
 
-> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-
-Does a dot really belong to the personal name
-(according to the Developer's Certificate of Origin)?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc3#n438
-
-Regards,
-Markus
+> > +             return -ENOTCONN;
+> > +     }
+> > +
+> >       instance =3D kzalloc(sizeof(*instance), GFP_KERNEL);
+> >       if (!instance)
+> >               return -ENOMEM;
+> > @@ -1200,7 +1205,7 @@ static int vchiq_release(struct inode *inode, str=
+uct file *file)
+> >
+> >       dev_dbg(state->dev, "arm: instance=3D%p\n", instance);
+> >
+> > -     if (!state) {
+> > +     if (!vchiq_remote_initialised(state)) {
+> >               ret =3D -EPERM;
+> >               goto out;
+> >       }
+>
 
