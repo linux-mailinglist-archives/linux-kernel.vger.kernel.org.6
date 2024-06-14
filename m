@@ -1,201 +1,158 @@
-Return-Path: <linux-kernel+bounces-215406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9D5909253
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:32:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9565190929B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:54:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D2FF1C22E73
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:32:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36E2C1F22802
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AEA19E7E9;
-	Fri, 14 Jun 2024 18:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A891B1A0AF1;
+	Fri, 14 Jun 2024 18:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TbWo6WoK"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b="D1SQpY5Q"
+Received: from www522.your-server.de (www522.your-server.de [195.201.215.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BA24409
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 18:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5B619FA84;
+	Fri, 14 Jun 2024 18:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.215.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718389969; cv=none; b=JpebzJTeF1x0E0bTQH9oM9sLoXZYoAZCIDy7OcrGzqQmVqLoIojBnevTC9DbMKNevicv9650Xe01h6NgrA+yQriZJYZNR0lN2GglXL+nZLsL1xzm9gU0FsS98dZIQFXwEZsrEfcnmp/v9FGiP0/Q/6YckozIJQsZuULKkq3jC3o=
+	t=1718391233; cv=none; b=DOAJNA+ZleYzPrrThFzs5AtaWs53B/vVL5c9+LUOLws3KnYnI3L8QLo2U+VJn4yzXkmjkIMDHm8bpMJjByLBf2qUI5zDtyWwXfnO84e11TTkQkf1TmLaoletKINU//BK/UQiCYAqFZ4HyV50kgniKCMHETXmFJENN9tLr+6dhrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718389969; c=relaxed/simple;
-	bh=kWHXfiW/eWv847hDdyNDPfVjaGDkYdtb8A2LHmGvu2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PHZM+hxAuP3xB7f26btZTGXE6lgVpnAfb0koqFlEmQKq50tPv9vQB5YyYO+RQraT2A45wS+4agsqXFsFF0PA1l1tB5Bwe1gpvPp95TvD6VKIZke+fhccoax2Al0VPDP7y1ycQ/8RWXxSuVzTA+maaJSZQlAnZsvmwl5EwpMMBUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TbWo6WoK; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: sebott@redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718389963;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bfjAgyWtBbRxONbdiKFFSvpzW16ct8ELGbCI1RgaYDo=;
-	b=TbWo6WoK1irRzuNAiIl8Od4+Hy08BlCQJoKsWrUFVp96WCEIXacnZGW5V8snVx167JFiyo
-	LoH7xl7Os41ZevbeY/1nDDIpa04sLSc500zOFXzatRhoCrqVGfXtvXY0j9PYgxdnRgbiNT
-	iQjWcGIV0uhvq4anf8OpW6dOY1sTdE4=
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: kvmarm@lists.linux.dev
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: maz@kernel.org
-X-Envelope-To: james.morse@arm.com
-X-Envelope-To: suzuki.poulose@arm.com
-X-Envelope-To: catalin.marinas@arm.com
-X-Envelope-To: will@kernel.org
-X-Envelope-To: shahuang@redhat.com
-X-Envelope-To: eric.auger@redhat.com
-Date: Fri, 14 Jun 2024 18:32:37 +0000
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Sebastian Ott <sebott@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Shaoqin Huang <shahuang@redhat.com>,
-	Eric Auger <eric.auger@redhat.com>
-Subject: Re: [PATCH v4 3/6] KVM: arm64: add emulation for CTR_EL0 register
-Message-ID: <ZmyMxRoKN5VhUW7J@linux.dev>
-References: <20240603130507.17597-1-sebott@redhat.com>
- <20240603130507.17597-4-sebott@redhat.com>
- <ZmtwjLbP283ra0Xq@linux.dev>
- <Zmty99X4hnYwtRS4@linux.dev>
- <0b148e21-1714-f4f7-bc77-2a12b990572d@redhat.com>
+	s=arc-20240116; t=1718391233; c=relaxed/simple;
+	bh=X4on6X+88uTtA052hLd8IsojhN2ZO9yOasjMNwEvFjo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=CHPL8eQeLcuf+xxTbOFsQfEYrv80dh2pS7Bw3rh3Y2U7xelZtsWtQRVj5295cu8/ZCbIQ6fBlj7hwSBzL8DspQyZnvLxIIvTJUdBS/7SnLmE354EtzlXLU+89bRSw8DpRZ44XbFNKQqrh3FcqSk5MElz+1R7thizGpzNDFQYPZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de; spf=pass smtp.mailfrom=folker-schwesinger.de; dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b=D1SQpY5Q; arc=none smtp.client-ip=195.201.215.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=folker-schwesinger.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=folker-schwesinger.de; s=default2212; h=In-Reply-To:References:To:From:Cc:
+	Subject:Message-Id:Date:Content-Type:Content-Transfer-Encoding:Mime-Version:
+	Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=QENhb9HFgTzguovvznEeWYIHmMFEH/ZbGTpLCqvvbY0=; b=D1SQpY5Q3iU5y6hS8x3yCA2fCw
+	Xefzm8C0+45Bsx/hdgDkRNbsSx/QEswS5UQ34JGXS6GhfYViD98oyeBpeza3esE6hVmq+sMfSpn8T
+	MJJI+G8UJ9YF3ttwRvN2GliXh7gTihyr1Teipx7qAcKSLC9+xmPwqQ3M4P902G7Q4kAbEikSprWDp
+	e8SrOyC+SUT00xqTD9EEtEC3l5gsMjEhnROTiPfNaL+m4kFPdK9Qw69K0E4pVp5Kbca6f05ZV1gNU
+	Yp3CcMz1SO/a4C5cqCgerfhV3SGCbSYwDnIxP5DmaKdXcDjCMjkPzH9zKrlNe0dUYFb8725cOivwN
+	3AkQUWVQ==;
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+	by www522.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <dev@folker-schwesinger.de>)
+	id 1sIBkj-000LiY-5F; Fri, 14 Jun 2024 20:34:21 +0200
+Received: from [185.213.155.213] (helo=localhost)
+	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <dev@folker-schwesinger.de>)
+	id 1sIBkh-000GCY-3A;
+	Fri, 14 Jun 2024 20:34:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0b148e21-1714-f4f7-bc77-2a12b990572d@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 14 Jun 2024 18:34:19 +0000
+Message-Id: <D1ZYFRA8S0KC.3GG78DB9BA5AG@folker-schwesinger.de>
+Subject: Re: [PATCH 1/3] phy: rockchip: emmc: Enable pulldown for strobe
+ line
+Cc: "Vinod Koul" <vkoul@kernel.org>, "Kishon Vijay Abraham I"
+ <kishon@kernel.org>, "Chris Ruehl" <chris.ruehl@gtsys.com.hk>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Christopher Obbard" <chris.obbard@collabora.com>, "Doug Anderson"
+ <dianders@chromium.org>, "Brian Norris" <briannorris@chromium.org>, "Jensen
+ Huang" <jensenhuang@friendlyarm.com>, <linux-phy@lists.infradead.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>
+From: "Folker Schwesinger" <dev@folker-schwesinger.de>
+To: "Alban Browaeys" <alban.browaeys@gmail.com>,
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "Conor Dooley"
+ <conor@kernel.org>
+X-Mailer: aerc 0.17.0-152-g73bcb4661460
+References: <20240326-rk-default-enable-strobe-pulldown-v1-0-f410c71605c0@folker-schwesinger.de> <313d5a24b6cffa1a9160e624bb6855aa7f66589e.camel@gmail.com> <20240411-mushily-pucker-732583c1d340@spud> <2192003.Icojqenx9y@diego> <2427291970ac0962bf56b2455e5cb26e49d42c51.camel@gmail.com>
+In-Reply-To: <2427291970ac0962bf56b2455e5cb26e49d42c51.camel@gmail.com>
+X-Authenticated-Sender: dev@folker-schwesinger.de
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27306/Fri Jun 14 10:28:44 2024)
 
-On Fri, Jun 14, 2024 at 05:31:37PM +0200, Sebastian Ott wrote:
+Hi Alban,
 
-[...]
+thanks for aggregating all the background information about the issue.
 
-> Hm, but in that case we'd use reset_vm_ftr_id_reg() meaning we would have
-> to make IDREG() work for this reg. Either by adding special handling to
-> that macro or by increasing kvm->arch.id_regs[] a lot - both options don't
-> sound very appealing.
+On Tue Jun 11, 2024 at 9:38 PM CEST, Alban Browaeys wrote:
+>
+> Could you test the enable-strobe property on all the dts that  disabled
+> hs400es due to this new default (I lack the hardware to test the
+> patches).
+> At least arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi
+> arch/arm64/boot/dts/rockchip/rk3399-rock-4c-plus.dts
+> arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dtsi
+> and ping the board tester for other boards to test if they require
+> "rockchip,enable-strobe-pulldown" for EMMC HS400 write support (read is
+> fine even with the new default).
+>
 
-Hiding some of the ugly details behind IDREG() isn't the worst thing,
-IMO. The feature ID registers are not laid out contiguously in the
-architecture, so it'd make sense that the corresponding KVM code not be
-brittle to this.
+I tested some of the boards that include rk3399-rock-pi-4.dtsi (see
+below).
 
-The other benefit is we initialize kvm->arch.ctr_el0 exactly once, just
-like the other ID registers. I believe there's a quirk with this patch
-where an initialization that happens after a KVM_SET_ONE_REG on CTR_EL0
-will clobber the userspace value.
+> On Tue, 2024-02-27 at 10:11 +0000, Folker Schwesinger wrote:
+> > with the following applied, the EMMC related errors are gone. dmesg
+> > only
+> > shows "Purging ... bytes" during my tests:
+> >=20
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dtsi
+> > b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dtsi
+> > index f2279aa6ca9e..ae0fb87e1a8b 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dtsi
+> > @@ -647,8 +647,10 @@ &saradc {
+> >  &sdhci {
+> >         max-frequency =3D <150000000>;
+> >         bus-width =3D <8>;
+> > -       mmc-hs200-1_8v;
+> > +       mmc-hs400-1_8v;
+> > +       mmc-hs400-enhanced-strobe;
+> >         non-removable;
+> > +       rockchip,enable-strobe-pulldown;
+> >         status =3D "okay";
+> >  };
+> >=20
+> > For testing I ran dd three times in a row:
+> >=20
+> > dd if=3D/dev/zero of=3D./zero.bin bs=3D1M count=3D5000
+> >=20
+> > I tested this on both a Rock 4SE board and a Rock Pi 4B+ board with
+> > the
+> > same results.
+>
+> Folker, are you confident "Rock 4SE board and Rock Pi 4B+" were fixed
+> with above patch?
+> Ie the "rockchip,enable-strobe-pulldown;" should be under an
+> "rockchip,rk3399-emmc-phy" compaible node, that is &emmc_phy in
+> arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dtsi, not sdhci.
+>
 
-So, here's where I'm at locally, I'll work it a bit more and try to
-densely pack CTR_EL0 into the id_regs array. I also have some (untested)
-changes to get CTR_EL0 to show up in the debugfs interface we now have.
+The above diff was just a quick shot at testing the
+"rockchip,enable-strobe-pulldown" property when I first learned about
+it. I later realized that the property belongs under the &emmc_phy node
+as you suggested. That's what I did in the other patchset I sent a bit
+later, which was accepted and applied:
 
-Mind if I post what I have afterwards?
+https://lists.infradead.org/pipermail/linux-rockchip/2024-March/045723.html
+f720dd9b8b6d8b2160beda789429d5489ce8a099
+c1b1f340dd7db11f273e426e110697551c9f501f
 
-commit 6bf81bd50dc16309a627863948d49cfeeb00897e
-Author: Sebastian Ott <sebott@redhat.com>
-Date:   Mon Jun 3 15:05:03 2024 +0200
+So yes, the Rock 4SE, Rock Pi 4B and Rock Pi 4B+ boards all were fixed
+with the patch. I regularly have the Rock 4SE and Rock 4B running from
+EMMC, always with the patch applied since I sent it.
 
-    KVM: arm64: Treat CTR_EL0 as a VM feature ID register
-    
-    Signed-off-by: Sebastian Ott <sebott@redhat.com>
-    Reviewed-by: Shaoqin Huang <shahuang@redhat.com>
-    Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
-
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 212ae77eefaf..e5b8cdd70914 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -327,10 +327,20 @@ struct kvm_arch {
- 	 */
- #define IDREG_IDX(id)		(((sys_reg_CRm(id) - 1) << 3) | sys_reg_Op2(id))
- #define IDX_IDREG(idx)		sys_reg(3, 0, 0, ((idx) >> 3) + 1, (idx) & Op2_mask)
--#define IDREG(kvm, id)		((kvm)->arch.id_regs[IDREG_IDX(id)])
-+#define IDREG(kvm, id)								\
-+(*({										\
-+	u64 *__reg;								\
-+	if ((id) == SYS_CTR_EL0)						\
-+		__reg = &(kvm)->arch.ctr_el0;					\
-+	else									\
-+		__reg = &((kvm)->arch.id_regs[IDREG_IDX(id)]);			\
-+	__reg;									\
-+}))
- #define KVM_ARM_ID_REG_NUM	(IDREG_IDX(sys_reg(3, 0, 0, 7, 7)) + 1)
- 	u64 id_regs[KVM_ARM_ID_REG_NUM];
- 
-+	u64 ctr_el0;
-+
- 	/* Masks for VNCR-baked sysregs */
- 	struct kvm_sysreg_masks	*sysreg_masks;
- 
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index dfabf7aec2c7..1ab2cbbc7a76 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -1583,6 +1583,9 @@ static bool is_feature_id_reg(u32 encoding)
-  */
- static inline bool is_vm_ftr_id_reg(u32 id)
- {
-+	if (id == SYS_CTR_EL0)
-+		return true;
-+
- 	return (sys_reg_Op0(id) == 3 && sys_reg_Op1(id) == 0 &&
- 		sys_reg_CRn(id) == 0 && sys_reg_CRm(id) >= 1 &&
- 		sys_reg_CRm(id) < 8);
-@@ -1886,7 +1889,7 @@ static bool access_ctr(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
- 	if (p->is_write)
- 		return write_to_read_only(vcpu, p, r);
- 
--	p->regval = read_sanitised_ftr_reg(SYS_CTR_EL0);
-+	p->regval = IDREG(vcpu->kvm, SYS_CTR_EL0);
- 	return true;
- }
- 
-@@ -2475,7 +2478,10 @@ static const struct sys_reg_desc sys_reg_descs[] = {
- 	{ SYS_DESC(SYS_CCSIDR2_EL1), undef_access },
- 	{ SYS_DESC(SYS_SMIDR_EL1), undef_access },
- 	{ SYS_DESC(SYS_CSSELR_EL1), access_csselr, reset_unknown, CSSELR_EL1 },
--	{ SYS_DESC(SYS_CTR_EL0), access_ctr },
-+	ID_WRITABLE(CTR_EL0, CTR_EL0_DIC_MASK |
-+			     CTR_EL0_IDC_MASK |
-+			     CTR_EL0_DminLine_MASK |
-+			     CTR_EL0_IminLine_MASK),
- 	{ SYS_DESC(SYS_SVCR), undef_access },
- 
- 	{ PMU_SYS_REG(PMCR_EL0), .access = access_pmcr, .reset = reset_pmcr,
-@@ -3714,18 +3720,11 @@ FUNCTION_INVARIANT(midr_el1)
- FUNCTION_INVARIANT(revidr_el1)
- FUNCTION_INVARIANT(aidr_el1)
- 
--static u64 get_ctr_el0(struct kvm_vcpu *v, const struct sys_reg_desc *r)
--{
--	((struct sys_reg_desc *)r)->val = read_sanitised_ftr_reg(SYS_CTR_EL0);
--	return ((struct sys_reg_desc *)r)->val;
--}
--
- /* ->val is filled in by kvm_sys_reg_table_init() */
- static struct sys_reg_desc invariant_sys_regs[] __ro_after_init = {
- 	{ SYS_DESC(SYS_MIDR_EL1), NULL, get_midr_el1 },
- 	{ SYS_DESC(SYS_REVIDR_EL1), NULL, get_revidr_el1 },
- 	{ SYS_DESC(SYS_AIDR_EL1), NULL, get_aidr_el1 },
--	{ SYS_DESC(SYS_CTR_EL0), NULL, get_ctr_el0 },
- };
- 
- static int get_invariant_sys_reg(u64 id, u64 __user *uaddr)
-
--- 
-Thanks,
-Oliver
 
