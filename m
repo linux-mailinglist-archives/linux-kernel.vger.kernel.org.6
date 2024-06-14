@@ -1,142 +1,251 @@
-Return-Path: <linux-kernel+bounces-214392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D9E8908394
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:17:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBABD90839A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9281F2172E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:17:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87329285A27
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FC31482F1;
-	Fri, 14 Jun 2024 06:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCC0148307;
+	Fri, 14 Jun 2024 06:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TGbh30l1"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="ogsBOJL6";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="gn7kM8E2"
+Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0061B3EA7B;
-	Fri, 14 Jun 2024 06:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718345868; cv=none; b=bBCKyPPpE7O3CfiTa2fpq8OFIJb0nyC8QzKzSQxfp/akfrMBWywhvg51fT6IiVtAZyktKIvFYqEZGfeY49odMy18gOWk9obMKBYmBWyOng/V0wDETncgTrmyLrJ8QooXExZS88rd/fu47LSAHXsASd58lFbzX69y6VgizUNh/pw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718345868; c=relaxed/simple;
-	bh=eUysjo7n92xhbgcglYOc+3gcPHLAzDqyZv5RxuoqAYw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=uTpXZLt+c3PfveIrFDdhCKMD1p0cvVdoYIbQ2nXnughBj/LR5tF6xGn2r4W7iiqfQxlIslxSnSddPP7cObdpOVeWepSBjMRDS4aAnoZkU73Bvxfovt+HADq1Ew/BQ871GFlSqfVuxKVgv/SQOaGQsacl22kjidBMkn/icGJNd4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TGbh30l1; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45E4Qvd7023215;
-	Fri, 14 Jun 2024 06:17:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	8H4T+4b8Bi/qkliYB7EjavN/cd30fvA4EnVz2Kbvl0w=; b=TGbh30l1/IGYvogj
-	ZPRiXcR0TUdsBbyzzXS+BwAI+vJIM+rC9iJEwWvwM2CKFPVEO5hNoxBT0d15/O7l
-	EKb/O/yRm4fdysz42aE5s0g7fo9W3MCA9RYoLmZUz3XHHkNZEa6LCBwTUaMHanj3
-	ba6Ek8dLORILhpiu5mVA8a+pg/tbj0/9M0sm3NzSYyuML+MIMjYfCfzYFYjAD49C
-	uPlZdBcodfWS5f3rfigysu4YL3FZNnwtDnVNFdSW9+3yLUdmHRDVUgIkCocOickP
-	unI8SZOQZIEil213HmBYurxSXTKdb+zzUKeaGgyrfsLJKVDngpEHcQXq7R9vxEvE
-	CKhQOw==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yrbbt8pbq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Jun 2024 06:17:35 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45E61PGR027225;
-	Fri, 14 Jun 2024 06:17:34 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yn211ey8y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Jun 2024 06:17:34 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45E6HW9r1442366
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Jun 2024 06:17:34 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3E2925805B;
-	Fri, 14 Jun 2024 06:17:32 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E07F15805E;
-	Fri, 14 Jun 2024 06:17:28 +0000 (GMT)
-Received: from [9.43.5.15] (unknown [9.43.5.15])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 14 Jun 2024 06:17:28 +0000 (GMT)
-Message-ID: <e44fab6a-8ae7-4cbc-86c6-c9a50458b0d5@linux.vnet.ibm.com>
-Date: Fri, 14 Jun 2024 11:47:26 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crypto: ecc - Fix off-by-one missing to clear most
- significant digit
-Content-Language: en-GB
-To: Stefan Berger <stefanb@linux.ibm.com>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net
-Cc: linux-kernel@vger.kernel.org, jarkko@kernel.org
-References: <20240613213820.995832-1-stefanb@linux.ibm.com>
-From: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-In-Reply-To: <20240613213820.995832-1-stefanb@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: XMLOpWWF7ZPVMXnNL9lQjP25GFo0udVk
-X-Proofpoint-ORIG-GUID: XMLOpWWF7ZPVMXnNL9lQjP25GFo0udVk
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489093EA7B;
+	Fri, 14 Jun 2024 06:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.143.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718346478; cv=fail; b=UCn6N3uw40+x9NBCfNrc44orXZ0cJCEyYw8TCCFL9lJdF7iI/ImVcTpEnFp5V4h2jTNSvZVyR0y8nWYZh+O9kToHfVnh9qJ8htiOGF4jto9a1RS6k0U/aDErkKWCvkC3P+Opk/9UrBXLsMvWO9Wm01EM4ZO7VZokPcVBIlRadJA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718346478; c=relaxed/simple;
+	bh=Gwsu212BkLuVmLeYbFtLBkPqYc69gbNUV6bbzmugE1U=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=udLLhmib2JgT9yvnCy7B9Sgn6CQtWD6/hSHX7HlUD9A966OBgfl6Mu7E550cywzJ7my5meLgRVJd9ss6u6FS83Z+WjpfDom7Q5T5XsUyWMluygNxAS39pS8u1rdGYsXUnK0Fs4I+m/NFhdGN8vCmSrRnYkeiB5rhEHV1UXe9qTw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=ogsBOJL6; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=gn7kM8E2; arc=fail smtp.client-ip=68.232.143.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1718346476; x=1749882476;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Gwsu212BkLuVmLeYbFtLBkPqYc69gbNUV6bbzmugE1U=;
+  b=ogsBOJL6E3D1GbJNqjJsx5YAkp1qmXPu350/8EwXVt0K1yhaIC40lpdf
+   sG5xbEkx0ZQEPpJsBg+/WQ8BXjydYOP0OFm5ivRMUK5LCUe1X4TPvkR2b
+   Xd+ZaFlHPLRF2UfYIzhrXfOWExdEFuemLJc8TD0CwQ1rEhIxk35BEbIWj
+   BODgJQW6IKQ4KiJUwxKTpwwVi13hEtNYWJh9ZWzPcbZKjzHRI1kNB/b8T
+   aYmXQYgIYhWXR8vbI6OeldurCZFI1q6cyU7+YOYtWfbvye0O++pAzB6nV
+   viP+VRAukT8IZ0pHKiGUfDWQFnSOOgIw/ghs+yM0XPh06Hui+wJMagV17
+   w==;
+X-CSE-ConnectionGUID: Nns5Z2gKSRyPGHSUrkXLUw==
+X-CSE-MsgGUID: wXWY4XUWQuyr3B5g3AR3NQ==
+X-IronPort-AV: E=Sophos;i="6.08,236,1712592000"; 
+   d="scan'208";a="19147941"
+Received: from mail-dm3nam02lp2041.outbound.protection.outlook.com (HELO NAM02-DM3-obe.outbound.protection.outlook.com) ([104.47.56.41])
+  by ob1.hgst.iphmx.com with ESMTP; 14 Jun 2024 14:27:48 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FCBHPJScHsNsPnSi/YA5AwuTniQrwxp7Dla6bNcw4N256UtSO1RI7iOaC+itPOEtsPjleg9mbaRkq7G9ULlsNbQhHc+A89V6pN2TXULuzK0BgycCr9n+Jx2QZpY1uKL0XzbmSvoXxKz8kn4gNuQsAKR69Ks95SZL57RariVjlhDfzcsVMoz7ciCD/tEGEwlq/fnjWKAhqWTt/yCPr7sEuzA8pQp9jWxsBf8fM/nbFHnjxjbz9HUkrc0dMXnF+d26YP9gxNc4y4Ufsoi+XYFjYvj/UvIVUnkJooljxsmrCIWZbO7aT+cu7MdN4tX1qqqeR3yaQfcUbByc373ofakGgA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QUJkEqVB67jN2kuDgT3cXsv5m3iDyMGHI7wo2jbFBMY=;
+ b=iLZ0AiDcncyYj37N+ixh3kT6z87MRq2/3mXjAwEPgO+AtC8rCEMNehSGvU7LmgzOAl0zFfpMklYsEnm4cKjdLs4AdbVE05hpt8KE0pEtbq3wrC1RSpVGASywA+GJm+PBhlQAGh/o6XLZt6c1ZlbyS7nHoVGT2jHaJ8Br6pwoZbPnF4IFyF3/bvOTnr636Wp5wHdqFmAJfc8n68nvQprFh0Kl93T/5wtvNDS8UsjkCUJ6f4Hvg8Lojx7VS4jbZbAC37uT+XYpwaWr5aE5BjH2Fy0kxt2Y7usPTR2kdjMRZ7CF4rRsQSGG9eoPZVx3TC57mtnpoUU43JYFMT4anreX4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QUJkEqVB67jN2kuDgT3cXsv5m3iDyMGHI7wo2jbFBMY=;
+ b=gn7kM8E2Seu8BJeuC2QaY7S60kyjeF1cXApv9OosyvpCzgywDwyI0tYpgmOvKXFJJPP3FKEC+UVwMOaLMfLrxV9OfyGx1JNaq6Omafih3iXqvdcRuFFhxtE+JghObAlUT7ia2kjb6VqHN2jCuXXWf7i61279nsNaq+qref43oOc=
+Received: from DM6PR04MB6575.namprd04.prod.outlook.com (2603:10b6:5:1b7::7) by
+ CO6PR04MB7795.namprd04.prod.outlook.com (2603:10b6:5:35b::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.21; Fri, 14 Jun 2024 06:27:45 +0000
+Received: from DM6PR04MB6575.namprd04.prod.outlook.com
+ ([fe80::bf16:5bed:e63:588f]) by DM6PR04MB6575.namprd04.prod.outlook.com
+ ([fe80::bf16:5bed:e63:588f%6]) with mapi id 15.20.7677.024; Fri, 14 Jun 2024
+ 06:27:44 +0000
+From: Avri Altman <Avri.Altman@wdc.com>
+To: Joel Slebodnick <jslebodn@redhat.com>, "linux-scsi@vger.kernel.org"
+	<linux-scsi@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"alim.akhtar@samsung.com" <alim.akhtar@samsung.com>, "bvanassche@acm.org"
+	<bvanassche@acm.org>, "James.Bottomley@HansenPartnership.com"
+	<James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
+	<martin.petersen@oracle.com>, "peter.wang@mediatek.com"
+	<peter.wang@mediatek.com>, "manivannan.sadhasivam@linaro.org"
+	<manivannan.sadhasivam@linaro.org>, "ahalaney@redhat.com"
+	<ahalaney@redhat.com>, "beanhuo@micron.com" <beanhuo@micron.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH] scsi: ufs: core: Free memory allocated for model before
+ reinit
+Thread-Topic: [PATCH] scsi: ufs: core: Free memory allocated for model before
+ reinit
+Thread-Index: AQHavb95/lPaUQt0S0akgSoqvJltDLHGHZ0AgACuniA=
+Date: Fri, 14 Jun 2024 06:27:44 +0000
+Message-ID:
+ <DM6PR04MB65754C0FF7EA562C33BCB0FBFCC22@DM6PR04MB6575.namprd04.prod.outlook.com>
+References: <20240613182728.2521951-1-jslebodn@redhat.com>
+ <20240613200202.2524194-1-jslebodn@redhat.com>
+In-Reply-To: <20240613200202.2524194-1-jslebodn@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR04MB6575:EE_|CO6PR04MB7795:EE_
+x-ms-office365-filtering-correlation-id: f36293e4-869f-4a32-834e-08dc8c3b1a0e
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230035|376009|7416009|1800799019|366011|38070700013;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?vRlSmeWVgKYtCmyG87LXG0BO187sa20zez1XDm/ISbfmEBSMMnjml7a5lCPM?=
+ =?us-ascii?Q?5dW9yrY9pecKVw4eqxgFQlxaE7BrDC1WrrayYFv4Tp5rwTW0Pmxulf4H22Ic?=
+ =?us-ascii?Q?A8aNLAKi3+DbKaIBUzbF5Kc6Y45m+91WqcEVP3BIBLxVWrUOyCkHaqhyGs01?=
+ =?us-ascii?Q?v4A18S4nG2rKSrXxj9qwmdLKSx13XzOE9TY14Q6y7tsLQJczjv1w4u7Mi0dk?=
+ =?us-ascii?Q?E//7A4g4y/LCFPjPuc3kI1iDD5cms+cLu5y/3ve2m4JwbmM/LH8aLRZiZrE8?=
+ =?us-ascii?Q?uIsbUQeAXrsefktU4agBum1GNzXfCaTOa4L53M1ogsIwwFF8iU0wp5Tz5BrO?=
+ =?us-ascii?Q?hYVmVxL9vzXDK8VWXsoV6sCf4u5VwR25eTG61Rvs+9FUcOhM59ofXoBQrKgp?=
+ =?us-ascii?Q?IDKWIXoNpflZk1IxYClSSHo9XLgarHIDJoLgA7AULNMSqzZ4TSRGMAuIkjAl?=
+ =?us-ascii?Q?jilW+R5Z1aZwl/lWu3WjZMvYuc8Kmu2tl8D0wJT2946OqAaMIZnVo4g4BAgY?=
+ =?us-ascii?Q?fDelz9pFom7hJ6gOYG4m7ShN+DfVjkQ3uDqddQTDae8yt7ymOvigZ1KVyLOp?=
+ =?us-ascii?Q?exzXKeDcqctxzq5weIBz+T/RmbLmgd/awd+56tSTzLrZqWO21tJXIJ26r420?=
+ =?us-ascii?Q?gu0BDZ+7uEhPbMPL4a44q30mOn6S7pvMG+RrKJHI9Z4oIkmxZN8qfBTUF228?=
+ =?us-ascii?Q?yqwveyxZc6RL3G4lR44XWZZyPPzNbdyEIXK46qjk/UmSK25u9n8vfCZV64PG?=
+ =?us-ascii?Q?xpD4YfoVh35tTM9BqDWcWfZLbVK8Jmc9YWjW6dZb2he2w6t0RsaWnSBo8OQH?=
+ =?us-ascii?Q?kYaLNUA7XJ4A15duTumkmDI8/NLuLiQhIv7KG1myitXMNZZmjHoEhFUMsHSo?=
+ =?us-ascii?Q?Z+PwszwRUeXQoGCW4LKGQRRjwZMrMGZIPz5Z8hcpct0fF36PrjaoPL9wAkVP?=
+ =?us-ascii?Q?F7ZML6sNtFCf13kTfjnuYycrIO1rzSEFcNURJwxabvl0xoPbtuJau2fS0bYl?=
+ =?us-ascii?Q?Qt6wb7JJCOpeSMDjzAxzAAVfrowhMo7JElye8Iv7sqRQ1Z2JHBZsMlymV2nr?=
+ =?us-ascii?Q?TuD9XZajkhWocYYKF+sqivrGzrYcdLWfFrUGrkMhzGDBxhbsosYGo9Zrt/25?=
+ =?us-ascii?Q?6iHJe2zBNAafNFkuK++AgCHqn5UtVP+9QzvJUt9YZd6ZKm4+HCkjFXguDmh9?=
+ =?us-ascii?Q?gfyhBHgXHfVvH3OMguXhZ2Rn/YmzAAkFcY5EVyCpICz9inkNkGUzkgmD1vTz?=
+ =?us-ascii?Q?y2EhTrjPuTnk0QC2637UnQo94NzoMrNEXCTrY52vIcqZslg2Ap6b68rcHS0I?=
+ =?us-ascii?Q?AVy7TcX08I81ihCLAoCQ0xgNtFBeQHdpN3knhyXrGBjvJKRSQFtiFdqSE9W/?=
+ =?us-ascii?Q?sxhEjkw=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR04MB6575.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230035)(376009)(7416009)(1800799019)(366011)(38070700013);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?mILFjHIB9XqhDW3SdsxRzBaXyZWy4b+dOH7fvYR5pgMH4ya6lU8XvhKosiR/?=
+ =?us-ascii?Q?xqHkj2nN6pHjT76Ig4chqG+K/eS8TtjXJ5yEXIzdSg2eW+JEcLWMqtePlb9C?=
+ =?us-ascii?Q?Tf8s3EkR3+4VTM2xzBV9abJiKUP4IpwQ/PGfMpa0InJetgo8Xf/8Xb66gl2F?=
+ =?us-ascii?Q?n8LnMfmhFj2gZyReXS9tccCxCDrbQMXUqGtbRxWtK67E1+73nqyjFsGjVhS5?=
+ =?us-ascii?Q?iN+Qbc7c8uKNVydFZYeaXra6Zgd+B9yo8zaBwnpPoKVJGfurIkdg51vyNb2v?=
+ =?us-ascii?Q?XbFGtfzynK+tDFEFZo0C6BFNz7ppVi+B/J7xvX4R3QLdGINmTpRlqOCcqhep?=
+ =?us-ascii?Q?kKjJyj0w5qK+FetgtaC2Dq+qMh65ZFU8u32UpEs598nRePMBLMdrd5bPLAGR?=
+ =?us-ascii?Q?FZRgtWDIbFuw1NWZ6zTsM8tGHb/+BQ1C21/0nZFz8ChqhDCX/CLti1crJ2Ij?=
+ =?us-ascii?Q?CKPH46DQAzUhb0wJjORAWJg9r2Hy8epvdqJAirU1mF6m+PqG8nOIss225dPW?=
+ =?us-ascii?Q?fI93zjjj9d62GMzsW39SKuT5ZJK4tmePvWNIQL/ACRIgvy/0cSt0zGs4Txub?=
+ =?us-ascii?Q?lsNoU9eb+Gf381zSfo9sTBr49DnZzeDzDdMPl//o5txHbFPcMCefj7W5XRhM?=
+ =?us-ascii?Q?0fGomoCvK/UzsURrT6c9lZtllxuzb6pYUq7DwKnINPdoXXQJFYv760ZASP8h?=
+ =?us-ascii?Q?mzuXZ90OhEgL0SJdDi6vDnXXYe6Jq2Udf7yj8t2fzywA6YDOix1Q3KMTIfOP?=
+ =?us-ascii?Q?GlAUf/lafYsnGAVcKS0bM0NBJG00PXcXH93qqhrzTWIh9SZ3k30UijqTDYsV?=
+ =?us-ascii?Q?8h/syh4ZHYIDA4oJNomiZ/yYTjVws8LboBzdvm/dmF0X5JdSLhgxpn/sy+lc?=
+ =?us-ascii?Q?K5NvaoCqRR4OwyLot28B1OIIm3jswd1gq8a/bKl3hDOS7TpmBkcn1ktJRY+s?=
+ =?us-ascii?Q?8Qk3THfu+sEXPwqH1vrADb02CATiu4SyBsKFuyHjZPc1B5QtrnI23KkhFdqB?=
+ =?us-ascii?Q?nB5rtIBG57/VmfDWt98wfGyYZE4SPdnyKuIDy5QiihrNupKorilTtpYh5nli?=
+ =?us-ascii?Q?liabVmD+gFrlJ9WU/mNepyqg5Zb0r4AAvXA86D5eDWuQ3DvyDabUVmE4IWBC?=
+ =?us-ascii?Q?SK40HOZZtXcpNNgxUa7+bQqAptfvHJ9TszJyy0VPIVKqSzrTNUmg1WzMikNW?=
+ =?us-ascii?Q?XPDM1IpxmLIIKEC7PNMafgh3tL8t2S3oxDQSCLrXYrmimfr4iiNF7t07Dwbh?=
+ =?us-ascii?Q?M9JRAcfERcBQRzzJHNE+33ScBO8wNUp6V5EMiMiR7rCUPhlQsEALLBMOou+H?=
+ =?us-ascii?Q?IhbFjCRXqmE1vh9KzIeByQxHu/i0onRAcZ3pV5zFEWIw4BjwzjrXhOf/c1ad?=
+ =?us-ascii?Q?+JWugX+4JTHyynKYi9R0oCwUJSqWl57/oXUDPDVvCyevPEpmPgLoFXoQLaob?=
+ =?us-ascii?Q?s5FsOdQxE2ge+ZMZtMAfUFiOsnpHVJEtosHXiBsUgxchmZ+hF7haDBUOZ+mb?=
+ =?us-ascii?Q?llQ39oMZc3uqzcOJF4Oq1sDEW/AmlK3eyv47AE3q0UK91P/+7hwLZ88KWKik?=
+ =?us-ascii?Q?QuT0wjs3rPOEQjS1VSbAAv6GNTG5AQrY+rWopVtqohCpOymw141T1UxJKnw8?=
+ =?us-ascii?Q?rFpkDtoupHX5Je3s01czEV5JrqIBh8I+hci1t5iw+J4e?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_15,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 bulkscore=0 phishscore=0 clxscore=1011 spamscore=0
- impostorscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999
- lowpriorityscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405170001 definitions=main-2406140038
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Qu2pwIqNo6KuZ99d37sGo5cQ3Da88M9YRKzpYUDZy2BDJTdz4LiWC9UyFh7sTA4YtiLfb9YV6ZPmrr/L/RFZzFdho4xOu2PdOqPcXXuwVxrHgcBuUe4iE6M4cSNwBNHK9VUwddkaq+aqSz7SB6A2yaoy0UE+ySVJdYjfHglqthUt7w7IWeF035AgbYfgzjWrIDcMLl7gifu92yAcb+lvieoSKAlihkBSbgh+HvKWAXr7nB3pedtAkhIMPEoVVZBWwcEy9ibPlAP0V4KD3ZUO+ZGhTdM0mkBJfkz6s+ZIR9xouRD6hZpKo2qv2WwQncNNIThN/gCYO+ERzDSg47wSM0M3I/sK5uj7rmXi1og/nQmUdQCV5b8pAFZ/d4BS8rdHCJp8f0uPW1suJ4eE1td4KNmAzIQ8XoRpk3w0unlocp3lHIUShqvY8IYa6WgtowJIpTr4eQ2OJ5S1MB7e0fAt40Ryl3ve+IHayfZbJKh9ThWukro5tKOhaCtPUK7IfEW4Fo1wA0HxUJkBxxqBNs5JOPyyeZoNHBRINNILvBEzKWIlGc6EPR9dNJ414dgX0ixmSqnzKkxYdq3VBIdTu6IK2lOQuH1QaIH+TnefMypi4EQr3rABSXHI86SEIPjwsEr2
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR04MB6575.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f36293e4-869f-4a32-834e-08dc8c3b1a0e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jun 2024 06:27:44.7267
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: lTi48hEFUuajPq0+e31f/yXfErI5/qJ+2s9ia6oISipmRli3dZpX1jaWwsOuqgVwSoctPMN2/phy1Jl3hWJRlA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR04MB7795
 
-Tested with the proposed patch and issue is fixed.
+> Under the conditions that a device is to be reinitialized within ufshcd_p=
+robe_hba,
+> the device must first be fully reset.
+>=20
+> Resetting the device should include freeing U8 model (member of
+> dev_info)  but does not, and this causes a memory leak.
+> ufs_put_device_desc is responsible for freeing model.
+>=20
+> unreferenced object 0xffff3f63008bee60 (size 32):
+>   comm "kworker/u33:1", pid 60, jiffies 4294892642
+>   hex dump (first 32 bytes):
+>     54 48 47 4a 46 47 54 30 54 32 35 42 41 5a 5a 41  THGJFGT0T25BAZZA
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace (crc ed7ff1a9):
+>     [<ffffb86705f1243c>] kmemleak_alloc+0x34/0x40
+>     [<ffffb8670511cee4>] __kmalloc_noprof+0x1e4/0x2fc
+>     [<ffffb86705c247fc>] ufshcd_read_string_desc+0x94/0x190
+>     [<ffffb86705c26854>] ufshcd_device_init+0x480/0xdf8
+>     [<ffffb86705c27b68>] ufshcd_probe_hba+0x3c/0x404
+>     [<ffffb86705c29264>] ufshcd_async_scan+0x40/0x370
+>     [<ffffb86704f43e9c>] async_run_entry_fn+0x34/0xe0
+>     [<ffffb86704f34638>] process_one_work+0x154/0x298
+>     [<ffffb86704f34a74>] worker_thread+0x2f8/0x408
+>     [<ffffb86704f3cfa4>] kthread+0x114/0x118
+>     [<ffffb86704e955a0>] ret_from_fork+0x10/0x20
+>=20
+> Fixes: 96a7141da332 ("scsi: ufs: core: Add support for reinitializing the=
+ UFS
+> device")
+> Cc: <stable@vger.kernel.org>
+>=20
+> Reviewed-by: Andrew Halaney <ahalaney@redhat.com>
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Signed-off-by: Joel Slebodnick <jslebodn@redhat.com>
+Reviewed-by: Avri Altman <avri.altman@wdc.com>
 
 
-Tested-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-
-Regards,
-
-Venkat.
-
-On 14/06/24 3:08 am, Stefan Berger wrote:
-> Fix an off-by-one error where the most significant digit was not
-> initialized leading to signature verification failures by the testmgr.
->
-> Example: If a curve requires ndigits (=9) and diff (=2) indicates that
-> 2 digits need to be set to zero then start with digit 'ndigits - diff' (=7)
-> and clear 'diff' digits starting from there, so 7 and 8.
->
-> Reported-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-> Closes: https://lore.kernel.org/linux-crypto/619bc2de-b18a-4939-a652-9ca886bf6349@linux.ibm.com/T/#m045d8812409ce233c17fcdb8b88b6629c671f9f4
-> Fixes: 2fd2a82ccbfc ("crypto: ecdsa - Use ecc_digits_from_bytes to create hash digits array")
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 > ---
->   crypto/ecc.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/crypto/ecc.c b/crypto/ecc.c
-> index fe761256e335..dd48d9928a21 100644
-> --- a/crypto/ecc.c
-> +++ b/crypto/ecc.c
-> @@ -78,7 +78,7 @@ void ecc_digits_from_bytes(const u8 *in, unsigned int nbytes,
->   	/* diff > 0: not enough input bytes: set most significant digits to 0 */
->   	if (diff > 0) {
->   		ndigits -= diff;
-> -		memset(&out[ndigits - 1], 0, diff * sizeof(u64));
-> +		memset(&out[ndigits], 0, diff * sizeof(u64));
->   	}
->   
->   	if (o) {
+>  drivers/ufs/core/ufshcd.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c index
+> 0cf07194bbe8..a0407b9213ca 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -8787,6 +8787,7 @@ static int ufshcd_probe_hba(struct ufs_hba *hba, bo=
+ol
+> init_dev_params)
+>             (hba->quirks & UFSHCD_QUIRK_REINIT_AFTER_MAX_GEAR_SWITCH)) {
+>                 /* Reset the device and controller before doing reinit */
+>                 ufshcd_device_reset(hba);
+> +               ufs_put_device_desc(hba);
+>                 ufshcd_hba_stop(hba);
+>                 ufshcd_vops_reinit_notify(hba);
+>                 ret =3D ufshcd_hba_enable(hba);
+> --
+> 2.40.1
+
 
