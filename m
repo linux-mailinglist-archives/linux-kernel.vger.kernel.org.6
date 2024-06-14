@@ -1,118 +1,102 @@
-Return-Path: <linux-kernel+bounces-214328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA409082D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:00:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A78819082D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A764B23304
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:00:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD8411C22881
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3C11474A7;
-	Fri, 14 Jun 2024 04:00:39 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F063146D60;
+	Fri, 14 Jun 2024 04:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="FzFJHs2f"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A221E519
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 04:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E87D19D894
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 04:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718337638; cv=none; b=EqHdwSXVZ5SyaHZStuNVIhtdLMSVOwLXtz0hKQZAI3s8tQd3dFv55BMXrbMnoCYGJxjB+C2qbeh5h3nWvHjo3aiJ0LMluZeeJJ1LswmKPhVRr9PSMilQKD1fcJIkmCxyvDzqKNLZUSqsW7pRQoyjvCNA4wG00BsWB5DSn0wVvo8=
+	t=1718337705; cv=none; b=bXBDDVhYBsXy4MjynIL420PXDStcgvpFAAPVhE7ypgLv6OtNarUvbr0bZAFjOfiXgE/ti2CVOu/55gKinWw8RaWF2kxPJEyKNv/jOY9T9LlTxPrljk1NOf4erOI08U5Ex6j25oSpb0YPeP24aaOkpWrbfiLfmTioVI/oBpaSJ4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718337638; c=relaxed/simple;
-	bh=UWhBNIvEleEJlp8kJ8o4z4qdLSaB5WqNPToWO9eMztQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=CC8apNm8q/p9yomNd8rVDuLFQlEGDiiEz2je0lk5xS25SPV/jlQP/s6fNXotKykb7aFEN3L9E+WNpjNdzpL69cFFJkIHkCzf2geKNmMiNgaKTMxVG+yTssm6mSyy+W3BPkJxAigqxt2f2zT3yCsY+9Wng63QIKY1iut/VpI1YBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W0lnm0KRFzxQwN;
-	Fri, 14 Jun 2024 11:56:28 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5772C14066B;
-	Fri, 14 Jun 2024 12:00:34 +0800 (CST)
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+	s=arc-20240116; t=1718337705; c=relaxed/simple;
+	bh=yQpgV/upBkqIHsXWhvICnGeX0GRq/NCKorfFFk2+OJo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XqUxDz1Bl1q7Yk5aYKrynIka2j0KypD2uwIc0iKCNzRXhF9EsueyuA9SnBrCMUdeUmdwz+jBYXmLcRJPNzoGQl2zsCmWR5SYaDgspwD5GzDoJrIM7vtbZDa21j550XSepwsoRBe0cYKQzwtvguRu1TrQItAIaw/a51anLZyU1J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=FzFJHs2f; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: cb0f40b82a0211efa54bbfbb386b949c-20240614
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=VhJt4H7m25HdTeiGoiaZmPXbeNUjQW89pMMXO+LSutM=;
+	b=FzFJHs2fbME1+B98DQ+nHHha/My7zd6irMgF5fj0nojQUpvd9IjtMAl0AlId76lkEe+nTYeu0xorvZDBwzKPIOw3IaLsvmWnCVth+Odo2aJfcgJyf1eXUTEmWxaDAeRNH5UVRkZppwn4tsqRx6M8wNDaVKR6IgPE9dL0aWYiECM=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:1726d7ab-707a-424a-af09-84bf61a42787,IP:0,U
+	RL:0,TC:0,Content:100,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:100
+X-CID-META: VersionHash:393d96e,CLOUDID:53ee1285-4f93-4875-95e7-8c66ea833d57,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:801|102,TC:nil,Content:3,EDM:-3,IP:n
+	il,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LE
+	S:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: cb0f40b82a0211efa54bbfbb386b949c-20240614
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 2063254935; Fri, 14 Jun 2024 12:01:35 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 14 Jun 2024 12:00:32 +0800
-Message-ID: <41702bd8-2a1f-90dd-d90e-fb5cba2fffa7@huawei.com>
-Date: Fri, 14 Jun 2024 12:00:32 +0800
+ 15.2.1118.26; Thu, 13 Jun 2024 21:01:34 -0700
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 14 Jun 2024 12:01:34 +0800
+From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Chun-Kuang Hu
+	<chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, "Jason-JH . Lin"
+	<jason-jh.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Nancy
+ Lin <nancy.lin@mediatek.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH 0/2] Fix sleeping function called from invalid context
+Date: Fri, 14 Jun 2024 12:01:31 +0800
+Message-ID: <20240614040133.24967-1-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v3 1/8] arm64/sysreg: Add definitions for immediate
- versions of MSR ALLINT
-From: "Liao, Chang" <liaochang1@huawei.com>
-To: Mark Brown <broonie@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>, <catalin.marinas@arm.com>,
-	<will@kernel.org>, <maz@kernel.org>, <oliver.upton@linux.dev>,
-	<james.morse@arm.com>, <suzuki.poulose@arm.com>, <yuzenghui@huawei.com>,
-	<tglx@linutronix.de>, <ardb@kernel.org>, <anshuman.khandual@arm.com>,
-	<miguel.luis@oracle.com>, <joey.gouly@arm.com>, <ryan.roberts@arm.com>,
-	<jeremy.linton@arm.com>, <ericchancf@google.com>,
-	<kristina.martsenko@arm.com>, <robh@kernel.org>,
-	<scott@os.amperecomputing.com>, <songshuaishuai@tinylab.org>,
-	<shijie@os.amperecomputing.com>, <akpm@linux-foundation.org>,
-	<bhe@redhat.com>, <horms@kernel.org>, <mhiramat@kernel.org>,
-	<rmk+kernel@armlinux.org.uk>, <shahuang@redhat.com>,
-	<takakura@valinux.co.jp>, <dianders@chromium.org>, <swboyd@chromium.org>,
-	<sumit.garg@linaro.org>, <frederic@kernel.org>, <reijiw@google.com>,
-	<akihiko.odaki@daynix.com>, <ruanjinjie@huawei.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<kvmarm@lists.linux.dev>
-References: <20240415064758.3250209-1-liaochang1@huawei.com>
- <20240415064758.3250209-2-liaochang1@huawei.com>
- <ZjUKMWPknEhLYoK8@FVFF77S0Q05N> <Zjjz-tzLRC2nH51A@finisterre.sirena.org.uk>
- <cde4d448-dc9d-eaad-4a2d-a6d34bda4449@huawei.com>
- <ZjpALOdSgu-qhshR@finisterre.sirena.org.uk>
- <e632a9ed-7659-9336-6e7f-a43c4759a7a3@huawei.com>
- <9868a5ac-ae23-4481-afe6-ba3cd8dbfa47@sirena.org.uk>
- <3f9f0ef1-7290-21df-ef01-dc56b34a0195@huawei.com>
-In-Reply-To: <3f9f0ef1-7290-21df-ef01-dc56b34a0195@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+Content-Type: text/plain
+X-MTK: N
 
-Hi, Mark
+We found that there is a spin_lock_irqsave protection in msg_submit()
+of mailbox.c and it is in the atomic context.
+So when the mailbox controller driver calls pm_runtime_get_sync() in
+mbox_chan_ops->send_data(), it will get this BUG report.
+"BUG: sleeping function called from invalid context at drivers/base/power/runtime.c:1164"
 
-在 2024/6/5 17:52, Liao, Chang 写道:
-> Hi, Mark
-> 
-> 在 2024/6/4 21:29, Mark Brown 写道:
->> On Mon, Jun 03, 2024 at 11:26:39AM +0800, Liao, Chang wrote:
->>
->>> Mark, Is your concern is that the series of pstate related macro name in
->>> sysregs.h are lack of self-explanatory nature, which make it diffuclt to
->>> understand their functionality and purpose? If so, I daft some alternative
->>> macro names in the code below, looking forward to your feedback, or if you
->>> have any proposal for making these helpers discoverable.
->>
->> ...
->>
->>> -#define SET_PSTATE(x, r)               __emit_inst(0xd500401f | PSTATE_ ## r | ((!!x) << PSTATE_Imm_shift))
->>> +#define MSR_PSTATE_ENCODE(x, r)                __emit_inst(0xd500401f | PSTATE_ ## r | ((!!x) << PSTATE_Imm_shift))
->>
->> Possibly, yes?  TBH I was thinking of a comment but that does have "MSR"
->> in it so might come up in greps.  Not sure what others would prefer.
-> 
-> I am going to push revision v4 of the interrupt masking patchset, this revision
-> involves several improvements based on feedback and further testing:
-> 
+Add API to mbox_chan_ops to make mailbox takes into account that a driver
+may need PM done.
 
-Kindly ping, the new revsion is available at the link:
+Jason-JH.Lin (2):
+  mailbox: Add power_get/power_put API to mbox_chan_ops
+  mailbox: mtk-cmdq: Move pm_runimte_get and put to mbox_chan_ops API
 
-https://lore.kernel.org/all/20240614034433.602622-1-liaochang1@huawei.com/
+ drivers/mailbox/mailbox.c          | 55 ++++++++++++++++++++++++++++++
+ drivers/mailbox/mtk-cmdq-mailbox.c | 37 ++++++++++----------
+ include/linux/mailbox_controller.h | 11 ++++++
+ 3 files changed, 84 insertions(+), 19 deletions(-)
 
 -- 
-BR
-Liao, Chang
+2.18.0
+
 
