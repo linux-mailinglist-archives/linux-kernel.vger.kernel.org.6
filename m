@@ -1,138 +1,290 @@
-Return-Path: <linux-kernel+bounces-214566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53754908687
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:39:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C39090868B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE3E1B25C05
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:39:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EA2C289E4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B9019148B;
-	Fri, 14 Jun 2024 08:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9EA19007A;
+	Fri, 14 Jun 2024 08:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nWwE/M0O"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kuW3tu2M"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7043190076
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B453A18FC84
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718354310; cv=none; b=Rg9vpKyQ7Mwtmu5z879EtE0M6ytlaLdSWcRuZIBjFUNhHTsHlV83g9TOW3x4lGBCgEKu3bfNt9tIQMIg4fkEXmbKRbzPJkI9N3Sv9UjWwq1FmvcIaNmNeYqCwzlPqxsuaEIDe+21f74ekjkNYmOYQiDC5VZRZw7xahiUrzDeQPs=
+	t=1718354350; cv=none; b=svLiMxwTYNr15SANOot1Per0k0klFHNjVFNhI/JtK9UBi70AfhKWBqoNhOsTdcVlECPRJ63s4CLPYujVVmNa1ywcq9fzUPQBERlPZKUZ4ZYsI93SRyH6uJtfADBsV6Mcd4DDN6FCX+Z9Od3rPhXrONuTVDxgSSnFUY4PfZGMYAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718354310; c=relaxed/simple;
-	bh=c+HO6rpfLBrq4Z9yOBu/M6P73t6c6818voOiVXvjIvw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IAvuTe3gTfbRZzfKVEoA5D4xt0Cbjagab+hKYB6kcdCUjtzn/72vUqIGpP0X4Aca1wM5cWV8t2Zwy9LoVb2U/4bwYywg7C6wmdbFtPhs2QwpS24Zhh8L/k6iG6wDIwOyUdwb8NdRWmEROZ5MWR17QgPgVcduL3eREOWHS99VMYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nWwE/M0O; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso11670a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:38:28 -0700 (PDT)
+	s=arc-20240116; t=1718354350; c=relaxed/simple;
+	bh=xzM1u2b8tbZcnEXzSiajOXvtqBwxeK/lFWiRYIuiTxY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=H9VecJgHfimUPPBXcOO1R+RFOxkkuKbFhsFRPAqDOz+EFJXgwAi7LVhuDVim1wBQhfYAd8UibpUgP3NGJYL/kfehmKep4iNK0zE+ryfDOTAzpb41eYfTtC2jlN9jmNBFzthdPdhFGR/7B73ERUFizizQuNDmLa6uxtP/xdf3Lxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kuW3tu2M; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-35f223e7691so1166772f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:39:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718354307; x=1718959107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c+HO6rpfLBrq4Z9yOBu/M6P73t6c6818voOiVXvjIvw=;
-        b=nWwE/M0O0gq5uplzuekjg8J8iE2rhreU+wjM7Hjp7X3pv4LmE4j3CP7BZiO/IF20GT
-         80KEaHqMR/ams+VbM1aTX5tbZt1Rdc0hSsDa1d7BBRw94Df9kOruep7F6JWfID8lela6
-         F7UrV5n+i1QjfH8WaeVoMztQoxVJF+7rMOCn7WIWlgxBLKvg2Fu/UtTq5xHhJDsG4U0c
-         mCMSOrTX4P12oYhn2PXzFE7annnfucupBbnRC1kxtqvVHtlko3xJrGVp3Cjk3ylTRo1a
-         FZDP+/gtSMe0pZhs/rEKLzNIuyAWmEYqgdML0/dkm9HoMGMAsv1euriOdJO6nGq2wojD
-         012g==
+        d=linaro.org; s=google; t=1718354347; x=1718959147; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gyw6TIQZ0Xcni+LNb3JwKvBdl1n46DFQH3QxBDRHvF0=;
+        b=kuW3tu2Mru7lSYtc6BS43ChKkOEYZg1/Rwl/NJPumPTblAfkSVT5uOO6vvAs01+sqP
+         NAAbwZpSrD4v79KrX+Ct6jc5Quwrbt2S2jKG7JKygn2h8IhUStaJpG1iGe3mfqFqAwUT
+         2n6upmmichg0R4lMx6eOyNZZ7SEMwRZ7/h3+CULtNaGJKi7JrNWON5NEHBbgM6hhK2qi
+         OFpfdj11WoL6RlcoS8pM6jhBE/ONJiA357SY8N8npMbOXhe3DndzHMBhw1oMBtCpAJpc
+         LJPIDJHeL44tJD712aybyc5ibgdgna3wSngW2LRXG4Mivd60ERtAmCJBRNCYrqd6Qyqt
+         e/Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718354307; x=1718959107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c+HO6rpfLBrq4Z9yOBu/M6P73t6c6818voOiVXvjIvw=;
-        b=ZmAuFj8ei5mwV/lZ9ADaESYMqP694+foEjJ4gAmD/53OcGLHygsHcolN8hCeC+zTX2
-         4h9XWUNVjIqfYmyuvgu9aug6qV3VlAB3NnsjuJepDmTzVVEbWz4ImEKm1hAwLBV6BeKd
-         9lMmEXeHEPjCyEFdd1QBiZGx/Ihr/xm4Ypsk9OwkbZQNdphy/jP5z6BaomIc9UB18Ews
-         Wk6JX7O8BdYCsGoq+ZMQyKD39489uNtb9ab7ajyuDk4Cczs0wM51zPdCEFQtcnfiYsEM
-         TPTA49IxgC1QgFTT3CLlbXeGsATDtD+H9m4gqCfuHeNhuRhJZ+V0GmOleJQx1Z42Zkhi
-         Dp9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWQKLaSkxtMsF8b9H4nNkleATk/cMb8om8rzUzPArgsj0AfK2WrPc1vBGPgYcFZCKNBM0z6mhAu+hPG7rL0Z5/s8+mqBqq8ipV/VGs+
-X-Gm-Message-State: AOJu0YzFY09A/W8sgM1uvFTZ6z8Jpl0mw6ttSX10rULLl86FzDd032yy
-	HJx9WGqan1/iBHI7QRwLzezrmfsLKGL3Y5Fh3AP1jwi/KSfTJcdYYATIh0/6bVtX2ykiZPyrQ07
-	zk4cCSM9HGYoaeZXes2NI+RU+V99SMHMAul+E
-X-Google-Smtp-Source: AGHT+IGOJ5MzRHXpapB8/uqnzhCpdHHzyc6Kpzyhlgt7qEsE81AECbBjRCWFT0B+/wsFnnA9nBNpETQePCJed29eCyk=
-X-Received: by 2002:a05:6402:35d1:b0:57c:b712:47b5 with SMTP id
- 4fb4d7f45d1cf-57cbed0de04mr171811a12.4.1718354306227; Fri, 14 Jun 2024
- 01:38:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718354347; x=1718959147;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gyw6TIQZ0Xcni+LNb3JwKvBdl1n46DFQH3QxBDRHvF0=;
+        b=rjAv4dcAZjSFdLh8XQUyr4UTJfqaGIsZoJQblw2PYudjnqFEwyHjWneJqmIBla7RKO
+         oAzqm5yGbDDOg0kMU0oI6OewfcuHwv4kkXVI3XR1PC0uTo+xM2hvC9N0xVmh3S2eflRA
+         72kpEeHzN8Lw5oHzuqQm4iVhRLc5MO5W7AaDa9CNX2bTvr5qV7pvIxFpw7KdqeF3K8Sj
+         q4yaMCu1+iQEV00YS9mli++DSjC9lVhJyx+9+VwAep/Ig0dO2kF0zvA9qS+AE/76OT7E
+         PsGw0iyT5YJ0GnZv3Emh24qYcdbWttdmpL+6SZGVBFOC3rXAS7vAy6/LcOFle3tiZJnj
+         8ycA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8nmyAD1/m/Y3k+0rqpDUnrYTqNH5tZikLeO/yN9u7lvljCi23MuH+wRN0R676s+EaLSsM3VPmbLvs11ph+skaeSYQ01WebG4yxUbZ
+X-Gm-Message-State: AOJu0YykaKM5x6lnqvRYvjBrRtjZXdPIa6ABwtepcNe8t7uc8FyFGBlk
+	PbJGDA//NReg0blOJABxe2r8pxFH0FDYlyLx3Zu2zENV8XMLRppphsXeQnhUqJ4=
+X-Google-Smtp-Source: AGHT+IGhakMQyioBHsX0F33tZUElM2k7k/HiK58xnch8pvg3F+O/gic2pejzHdQ0R1UImKTvpQJZYA==
+X-Received: by 2002:adf:f04f:0:b0:35f:2551:b967 with SMTP id ffacd0b85a97d-360718de62emr5139003f8f.16.1718354346939;
+        Fri, 14 Jun 2024 01:39:06 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:261a:269e:a3a8:a2cc? ([2a01:e0a:982:cbb0:261a:269e:a3a8:a2cc])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750f249csm3717924f8f.75.2024.06.14.01.39.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 01:39:06 -0700 (PDT)
+Message-ID: <37e7b6a5-5345-48cb-996f-c50ec935cded@linaro.org>
+Date: Fri, 14 Jun 2024 10:39:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612170303.3896084-1-bigeasy@linutronix.de>
- <20240612170303.3896084-9-bigeasy@linutronix.de> <20240612131829.2e33ca71@rorschach.local.home>
- <20240614082758.6pSMV3aq@linutronix.de>
-In-Reply-To: <20240614082758.6pSMV3aq@linutronix.de>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 14 Jun 2024 10:38:15 +0200
-Message-ID: <CANn89i+YfdmKSMgHni4ogMDq0BpFQtjubA0RxXcfZ8fpgV5_fw@mail.gmail.com>
-Subject: Re: [PATCH v6 net-next 08/15] net: softnet_data: Make xmit.recursion
- per task.
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	Daniel Bristot de Oliveira <bristot@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Frederic Weisbecker <frederic@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>, Ben Segall <bsegall@google.com>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 13/14] drm/bridge: synopsys: Add DW HDMI QP TX controller
+ driver
+To: Andy Yan <andyshrk@163.com>
+Cc: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Sam Ravnborg <sam@ravnborg.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, kernel@collabora.com,
+ Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
+ Algea Cao <algea.cao@rock-chips.com>
+References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
+ <20240601-b4-rk3588-bridge-upstream-v1-13-f6203753232b@collabora.com>
+ <20240601143226.GA2003970@ravnborg.org>
+ <59519381-2729-4839-9882-65a981a0c551@collabora.com>
+ <20240604204110.GA84949@ravnborg.org>
+ <f656c72e-fac8-4345-9b65-1031ebe81c25@collabora.com>
+ <304b4602-8722-4ed0-a555-8dada573ee79@collabora.com>
+ <5dc16b34-d638-4fab-84e1-cb7db08ad80e@linaro.org>
+ <2d8e9235.68f3.19015881d35.Coremail.andyshrk@163.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <2d8e9235.68f3.19015881d35.Coremail.andyshrk@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 14, 2024 at 10:28=E2=80=AFAM Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
->
-> On 2024-06-12 13:18:29 [-0400], Steven Rostedt wrote:
-> > On Wed, 12 Jun 2024 18:44:34 +0200
-> > Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
-> >
-> > > Softirq is preemptible on PREEMPT_RT. Without a per-CPU lock in
-> > > local_bh_disable() there is no guarantee that only one device is
-> > > transmitting at a time.
-> > > With preemption and multiple senders it is possible that the per-CPU
-> > > recursion counter gets incremented by different threads and exceeds
-> > > XMIT_RECURSION_LIMIT leading to a false positive recursion alert.
-> > >
-> > > Instead of adding a lock to protect the per-CPU variable it is simple=
-r
-> > > to make the counter per-task. Sending and receiving skbs happens alwa=
-ys
-> > > in thread context anyway.
-> > >
-> > > Having a lock to protected the per-CPU counter would block/ serialize=
- two
-> > > sending threads needlessly. It would also require a recursive lock to
-> > > ensure that the owner can increment the counter further.
-> > >
-> > > Make the recursion counter a task_struct member on PREEMPT_RT.
-> >
-> > I'm curious to what would be the harm to using a per_task counter
-> > instead of per_cpu outside of PREEMPT_RT. That way, we wouldn't have to
-> > have the #ifdef.
->
-> There should be a hole on !RT, too so we shouldn't gain weight. The
-> limit is set to 8 so an u8 would be enough. The counter is only accessed
-> with BH-disabled so it will be used only in one context since it can't
-> schedule().
->
-> I think it should work fine. netdev folks, you want me to remove that
-> ifdef and use a per-Task counter unconditionally?
+On 14/06/2024 08:56, Andy Yan wrote:
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> Hi Neil，
+> 
+> At 2024-06-05 19:48:09, "Neil Armstrong" <neil.armstrong@linaro.org> wrote:
+>> On 05/06/2024 12:11, Cristian Ciocaltea wrote:
+>>> On 6/5/24 12:34 AM, Cristian Ciocaltea wrote:
+>>>> On 6/4/24 11:41 PM, Sam Ravnborg wrote:
+>>>>> Hi Cristian.
+>>>>>
+>>>>> On Tue, Jun 04, 2024 at 10:32:04PM +0300, Cristian Ciocaltea wrote:
+>>>>>> Hi Sam,
+>>>>>>
+>>>>>> On 6/1/24 5:32 PM, Sam Ravnborg wrote:
+>>>>>>> Hi Cristian,
+>>>>>>>
+>>>>>>> a few drive-by comments below.
+>>>>>>>
+>>>>>>> 	Sam
+>>>>>>>
+>>>>>>>
+>>>>>>>> +
+>>>>>>>> +static const struct drm_connector_funcs dw_hdmi_qp_connector_funcs = {
+>>>>>>>> +	.fill_modes = drm_helper_probe_single_connector_modes,
+>>>>>>>> +	.detect = dw_hdmi_connector_detect,
+>>>>>>>> +	.destroy = drm_connector_cleanup,
+>>>>>>>> +	.force = dw_hdmi_qp_connector_force,
+>>>>>>>> +	.reset = drm_atomic_helper_connector_reset,
+>>>>>>>> +	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+>>>>>>>> +	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+>>>>>>>> +};
+>>>>>>>> +
+>>>>>>>> +static int dw_hdmi_qp_bridge_attach(struct drm_bridge *bridge,
+>>>>>>>> +				    enum drm_bridge_attach_flags flags)
+>>>>>>>> +{
+>>>>>>>> +	struct dw_hdmi *hdmi = bridge->driver_private;
+>>>>>>>> +
+>>>>>>>> +	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)
+>>>>>>>> +		return drm_bridge_attach(bridge->encoder, hdmi->next_bridge,
+>>>>>>>> +					 bridge, flags);
+>>>>>>>> +
+>>>>>>>> +	return dw_hdmi_connector_create(hdmi, &dw_hdmi_qp_connector_funcs);
+>>>>>>>> +}
+>>>>>>>
+>>>>>>> Are there any users left that requires the display driver to create the
+>>>>>>> connector?
+>>>>>>> In other words - could this driver fail if DRM_BRIDGE_ATTACH_NO_CONNECTOR
+>>>>>>> is not passed and drop dw_hdmi_connector_create()?
+>>>>>>>
+>>>>>>> I did not try to verify this - just a naive question.
+>>>>>>
+>>>>>> I've just tested this and it doesn't work - dw_hdmi_connector_create()
+>>>>>> is still needed.
+>>>>>
+>>>>> Hmm, seems the display driver or some other bridge driver fails to
+>>>>> support "DRM_BRIDGE_ATTACH_NO_CONNECTOR".
+>>>>> what other drivers are involved?
+>>>>
+>>>> Could it be related to the glue driver (updated in the next patch) which
+>>>> is also responsible for setting up the encoder?
+>>>>
+>>>>> Note that my comments here should be seen as potential future
+>>>>> improvements, and do not block the patch from being used.
+>>>>
+>>>> Thanks for the heads up! Will try to get back to this soon and investigate.
+>>>    
+>>> IIUC, modern bridges should not create the connector but rely on display
+>>> drivers to take care of, which in this case is the VOP2 driver. However,
+>>> it also handles some of the older SoCs relying on the non-QP variant of
+>>> DW HDMI IP. Hence the existing dw-hdmi driver would be also impacted in
+>>> order to come up with a proper solution.
+>>>
+>>> A quick check shows there are several users of this IP:
+>>>
+>>> $ git grep -E '= dw_hdmi_(bind|probe)\('
+>>> drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c:    hdmi->dw_hdmi = dw_hdmi_probe(pdev, plat_data);
+>>> drivers/gpu/drm/bridge/synopsys/dw-hdmi.c:      hdmi = dw_hdmi_probe(pdev, plat_data);
+>>> drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c:        hdmi->hdmi = dw_hdmi_probe(pdev, match->data);
+>>> drivers/gpu/drm/ingenic/ingenic-dw-hdmi.c:      hdmi = dw_hdmi_probe(pdev, &ingenic_dw_hdmi_plat_data);
+>>> drivers/gpu/drm/meson/meson_dw_hdmi.c:  meson_dw_hdmi->hdmi = dw_hdmi_probe(pdev, &meson_dw_hdmi->dw_plat_data);
+>>> drivers/gpu/drm/renesas/rcar-du/rcar_dw_hdmi.c: hdmi = dw_hdmi_probe(pdev, &rcar_dw_hdmi_plat_data);
+>>> drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c:            hdmi->hdmi = dw_hdmi_bind(pdev, encoder, plat_data);
+>>> drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c:  hdmi->hdmi = dw_hdmi_bind(pdev, encoder, plat_data);
+>>>
+>>> I didn't check which display drivers would be involved, I'd guess there
+>>> are quite a few of them as well. So it seems this ends up being a pretty
+>>> complex task.
+>>
+>> If this would be a brand new driver, then it should only support DRM_BRIDGE_ATTACH_NO_CONNECTOR,
+>> so you should not create a connector from the driver.
+>>
+>> The fact dw-hdmi accepts an attach without the flag is for legacy purpose
+>> since some DRM drivers haven't switched to DRM_BRIDGE_ATTACH_NO_CONNECTOR yes,
+>> but it's a requirement for new bridges so at some point you'll need to make
+>> sure the rockchip glue and drm driver supports DRM_BRIDGE_ATTACH_NO_CONNECTOR.
+>>
+>> This will greatly simplify the driver!
+> 
+> Based on the previous discussion， the DW HDMI QP drivers will be implemented like this：
+> 
+> Core bridge library：
+>   drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
+> Rockchip platform specific glue：
+> drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
+> 
+> As a new bridge driver should only support DRM_BRIDGE_ATTACH_NO_CONNECTOR,
+> Is it acceptable if we implement the connector at  the rockchip glue dw_hdmi_qp-rockchip.c ？
+> 
+> Our current combination is a bit complex：
+> The display controller driver is  drivers/gpu/drm/rockchip/rockchip_drm_vop2.c ，which shared
+> by rk3568， rk3588 and some upcoming soc like rk3528/rk3562.
+> 
+> For rk3588， we have totally new HDMI、DP、DSI2  IP， they need brand new bridge driver that
+> should only support DRM_BRIDGE_ATTACH_NO_CONNECTOR， and there is also an eDP on rk3588
+> use analogix_dp_core.c that create connector by analogix_dp bridge。
+> 
+> For  rk3568， the HDMI/eDP/DSI IP are based on old IP， the corresponding drivers are dw-hdmi，analogix_dp
+> and dw-mipi-dsi, they both create drm connector by it's bridge driver. And rk3528/rk3562 are like this too。
+> 
+> So if we can create drm_connector at glue side (such as dw_hdmi_qp-rockchip.c), let the interface driver decide
+> if it should create drm_connector or not will make the vop2 driver simpler。
 
-It depends if this adds another cache line miss/dirtying or not.
+I think you should start migration to drm_bridge_connector instead of hacking dw_hdmi_qp-rockchip.c into
+fitting into DRM_BRIDGE_ATTACH_NO_CONNECTOR.
 
-What about other fields from softnet_data.xmit ?
+You'll add technical dept, and the migration will be even harder afterwards.
+
+But in any case, bridge/synopsys/dw-hdmi-qp.c and rockchip/dw_hdmi_qp-rockchip.c should be send
+in two separate patchsets, so how rockchip DRM_BRIDGE_ATTACH_NO_CONNECTOR is a different story.
+
+Neil
+
+> 
+> 
+> 
+> 
+> 
+>>
+>> Neil
+>>
+>>>
+>>> Cristian
+
 
