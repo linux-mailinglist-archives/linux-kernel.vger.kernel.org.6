@@ -1,100 +1,106 @@
-Return-Path: <linux-kernel+bounces-214611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0691908718
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:08:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7AFD90871C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:10:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5D0F1C22002
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:08:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53A2E283779
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2439B1922CD;
-	Fri, 14 Jun 2024 09:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C541922CE;
+	Fri, 14 Jun 2024 09:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="MXZx04ZT";
-	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="MXZx04ZT"
-Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vxxLdAaz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C968146A7A;
-	Fri, 14 Jun 2024 09:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADFB146A7A;
+	Fri, 14 Jun 2024 09:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718356132; cv=none; b=HKJLJ+0Ww5HZ5RleMUI8TGjth482wbw6tbDuNgW2iovRsYXdF+ILj1huOUGSDJl2VXrleAHZYWqr9kpSrbFFxPcdVxu7+duRnr0mXmSNZB9XCzwJEMuNSJ5Mt3tXvPLuwS4abbH3WDRFKD+E5l5Ai1X2GI86+nInvGley/EHmnk=
+	t=1718356205; cv=none; b=nqifJa01vcxtbLX/dp4wzouzJN3AIfz+sub7+qd8+7V4gkti3vMDCdCGejxXk7wzEsYe97/wuY2Vkp5WAHVjhwIPiAkq2ESNnn5AhK/BkB4pu+uS0xzA1mUFnPmSTjApTTa/cp8DAkBXf+6K/wiqQ6tSiujrgqumUsvMo3WcDeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718356132; c=relaxed/simple;
-	bh=4RP4q9QG25QH+De1LOzDhXZta2ZeRrdDRTLsqg6NviQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sIrZXYl/E8+gzfcoGDAidRCEu6b3Jzoj615NmxsSR6Er6wjIeyF9dxEv/EUIJ4dJ0j+VAFndSuNEt1QvHPiAHceML9m7N8Ui/ChkvY4/vVbPONKUB6P63o6a5okw9X2+JxYuKlb44y3Fzqw/z/hpEIUPj7Q1J/13ixZNaflR72I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=MXZx04ZT; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=MXZx04ZT; arc=none smtp.client-ip=88.97.38.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
-	t=1718356122; bh=4RP4q9QG25QH+De1LOzDhXZta2ZeRrdDRTLsqg6NviQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MXZx04ZT9AN/P9rPEhdb4IzqE9vw6PolRAzCn9RBYYZQ7rklCBDnkxpE69XPsfsYz
-	 f9aXNX/D7Nqts+sHoBiOuNYvSGu36dQQGJ9tSekm22IDc+w+KDTtY/FYLcSAl8gGea
-	 +gUVACLvv849XtfBipBT+YT1bQkZ3NsW+Vb7gFT9/Jg/67lXlcZatOkAqiWc2FN+w6
-	 CUYcvP/Tg60cqNqm8xozqhb8VPASqD6Og8DSSB1LByifj1idQ/ODHqgzKssbPtIfpq
-	 wueVc0ZBPZ6XKnKEsCcJ8c9MpbhrZ6QHez5/u1QBHLipuB3acKyp5Qrs3xKii20Gsx
-	 MUlgaacYc1V+g==
-Received: by gofer.mess.org (Postfix, from userid 501)
-	id CB8BE1007EE; Fri, 14 Jun 2024 10:08:42 +0100 (BST)
-X-Spam-Level: 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
-	t=1718356122; bh=4RP4q9QG25QH+De1LOzDhXZta2ZeRrdDRTLsqg6NviQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MXZx04ZT9AN/P9rPEhdb4IzqE9vw6PolRAzCn9RBYYZQ7rklCBDnkxpE69XPsfsYz
-	 f9aXNX/D7Nqts+sHoBiOuNYvSGu36dQQGJ9tSekm22IDc+w+KDTtY/FYLcSAl8gGea
-	 +gUVACLvv849XtfBipBT+YT1bQkZ3NsW+Vb7gFT9/Jg/67lXlcZatOkAqiWc2FN+w6
-	 CUYcvP/Tg60cqNqm8xozqhb8VPASqD6Og8DSSB1LByifj1idQ/ODHqgzKssbPtIfpq
-	 wueVc0ZBPZ6XKnKEsCcJ8c9MpbhrZ6QHez5/u1QBHLipuB3acKyp5Qrs3xKii20Gsx
-	 MUlgaacYc1V+g==
-Received: from localhost.localdomain (bigcore.local [IPv6:2a02:8011:d000:212:bc3c:1b4a:a6fa:362f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by gofer.mess.org (Postfix) with ESMTPSA id EEEC91000B8;
-	Fri, 14 Jun 2024 10:08:41 +0100 (BST)
-From: Sean Young <sean@mess.org>
-To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org
-Subject: [PATCH] bus: ts-nbus: Use pwm_apply_might_sleep()
-Date: Fri, 14 Jun 2024 10:08:29 +0100
-Message-ID: <20240614090829.560605-1-sean@mess.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1718356205; c=relaxed/simple;
+	bh=CoUsKKpI32pU95daZgGcxXSyemfLlfTxinEmRmDSL1E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JBm5jfO2m6O6EoaAEGnukVFd55ti7MVcWOEI6rLcceOHhwcFltXhx5oG0lPaX4GnDLYqQo8TpV32VNvOpNvdU1tEDpnXLjBOeYBnAT9P4CvQIJ7QR7E8kXOOUU7JSBLpV61YhcHQUBKtWDABmPOY3VYEbT+3gtp14owzOcNiMTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vxxLdAaz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51142C2BD10;
+	Fri, 14 Jun 2024 09:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718356204;
+	bh=CoUsKKpI32pU95daZgGcxXSyemfLlfTxinEmRmDSL1E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vxxLdAazcaZPdI0+ItnGVpNbpgrE1yvW7nZwkhj1881EeqjZjzXDLT8N8vfDMXGnq
+	 8oeTYCnMDkHLZdQD375/WN/aYgQ5ua9izz16Yu4dyNbc9LQFu8jJj0rn9E8KEnPnsD
+	 cYRD6pVO8ty/MBxzxKzs9zp00KUZB3rqZVyyWY3E=
+Date: Fri, 14 Jun 2024 11:10:02 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: Ismael Luceno <ismael@iodev.co.uk>, stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
+	Vitaly Lifshits <vitaly.lifshits@intel.com>
+Subject: Re: Intel e1000e driver bug on stable (6.9.x)
+Message-ID: <2024061406-refreeze-flatfoot-f33a@gregkh>
+References: <ZmfcJsyCB6M3wr84@pirotess>
+ <2024061323-unhappily-mauve-b7ea@gregkh>
+ <6dcfa590-8d09-4d3a-9c35-0294099489ed@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6dcfa590-8d09-4d3a-9c35-0294099489ed@leemhuis.info>
 
-pwm_apply_state() is deprecated since commit c748a6d77c06a ("pwm: Rename
-pwm_apply_state() to pwm_apply_might_sleep()").
+On Fri, Jun 14, 2024 at 08:58:11AM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
+> On 13.06.24 10:35, Greg KH wrote:
+> > On Wed, Jun 12, 2024 at 10:33:19PM +0200, Ismael Luceno wrote:
+> >>
+> >> I noticed that the NIC started to fail on a couple of notebooks [0]
+> >> [1] after upgrading to 6.9.1.
+> >>
+> >> I tracked down the problem to commit 861e8086029e ("e1000e: move force
+> >> SMBUS from enable ulp function to avoid PHY loss issue", 2024-03-03),
+> >> included in all 6.9.x releases.
+> >>
+> >> The fix is in commit bfd546a552e1 ("e1000e: move force SMBUS near
+> >> the end of enable_ulp function", 2024-05-28) from mainline.
+> >>
+> >> The NIC fails right after boot on both systems I tried; I mention
+> >> because the description is a bit unclear about that on the fix, maybe
+> >> other systems are affected differently.
+> > 
+> > Now queued up, thanks.
+> 
+> I see that they are in the latest 6.6.y and 6.9.y stable-rcs. Thing is:
+> 
+> bfd546a552e1 causes other regressions, which is why Hui Wang submitted a
+> revert for that one:
+> 
+> https://lore.kernel.org/all/20240611062416.16440-1-hui.wang@canonical.com/
+> 
+> Vitaly Lifshits meanwhile submitted a change that afaics is meant to fix
+> that regression:
+> 
+> https://lore.kernel.org/all/20240613120134.224585-1-vitaly.lifshits@intel.com/
+> 
+> CCed both so they can comment.
+> 
+> Not sure what's the best way forward here, maybe it is "not picking up
+> bfd546a552e1 for now and waiting a few more days till the dust settles".
 
-Signed-off-by: Sean Young <sean@mess.org>
----
- drivers/bus/ts-nbus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ok, I'll just not pick this one up and let the maintainers figure it
+out as this is still broken in Linus's tree as well.
 
-diff --git a/drivers/bus/ts-nbus.c b/drivers/bus/ts-nbus.c
-index baf22a82c47a7..b8af44c5cdbd0 100644
---- a/drivers/bus/ts-nbus.c
-+++ b/drivers/bus/ts-nbus.c
-@@ -294,7 +294,7 @@ static int ts_nbus_probe(struct platform_device *pdev)
- 	state.duty_cycle = state.period;
- 	state.enabled = true;
- 
--	ret = pwm_apply_state(pwm, &state);
-+	ret = pwm_apply_might_sleep(pwm, &state);
- 	if (ret < 0)
- 		return dev_err_probe(dev, ret, "failed to configure PWM\n");
- 
--- 
-2.45.2
+Thanks for noticing this!
 
+thanks,
+
+greg k-h
 
