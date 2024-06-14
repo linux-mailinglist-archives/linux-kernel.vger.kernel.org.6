@@ -1,150 +1,100 @@
-Return-Path: <linux-kernel+bounces-215185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F88908F56
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:50:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6084A908F58
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E4691F216C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:50:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72A931C20D67
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5594E16B73D;
-	Fri, 14 Jun 2024 15:50:23 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFE015FA95;
+	Fri, 14 Jun 2024 15:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KFCBNwdv"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F21615B562
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CD119D8A8
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718380222; cv=none; b=oR4IftRnWLH9x0umSciuHiQftPBQSrIpwtJtxauc0/qu4/hWzDGImF0MfMffGqy4l0JGHvFaubCJcLUYdLQupH1KFuVd1SOlA7dXYKqf7QM++7eAiDYVXYLVHqD1z1p5DzK5c7AUCYbHny5uohHj1RosckqfQQbVIqWWqNhftFU=
+	t=1718380265; cv=none; b=i1fIqYeXvKhBFsjfJjyeLjl+i3agU2qwdjIAW0sEaVjH9GEs9qA51Mvywq44pCOao2FfALSA14NUUje3Ml1s4Yks+2ZprkopgnBE3DiopSmwZaYkcNP6W9SFis2mrKpQwotmZKml/oCzaTCayic13CgTyvlKWgWTr0bhBqAQ4Bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718380222; c=relaxed/simple;
-	bh=eEaMUsD2rZrdszBawcdmXrpAkK9gZi0K/sFTkhrTvJw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cIgzqj4cP7k0juElr748HkneUHCnYo2FxwDZjsoF2GOrzXt31CuiY40vSJk9oWEYmGNhp2OUly+8JvgXzkCr3rmZ6oV+ofsXtlyw4YrWSTsyezlCxhb5dRUwURGkCySt+Awn6OyUMEb5MrAb/sw0a+UqNk1eDKDcoeMVsoLf8y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-375e45a4110so8253865ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:50:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718380220; x=1718985020;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q2j2pYJL3E7Tl8CHR3yVJ1heQbZR4qqoUVD6Td5o04c=;
-        b=rKnvgplgZEMoXKjI7aPqRhA9I1FZoXMUUvelLacptKMfeBmwnCMYsZ4iYfXqgvu38i
-         bxbwDwjKgq+taofpjyZc0SAnAyP3NrOLU41s4NHppTmNud5mpoX8vu5xSTHxXhJT1T5A
-         5mx8u7khxAfrdyinQ8riLrxnQVfp84EzUZIfN0eYuDKu2t48lH1ueTfxa7uTBnwhOUlc
-         pTcv8X+uzPVUbpZFSegZpvHgWSic51i5Qgwd2qc0XnVSJgcu6qFNBsg9+VrZhx7cEDXo
-         afVSf22GXcSK2kK9wsg5vhGbuoK8Pg3QsUC93pjRH1GuDvsoLVrhlow6KLyL0B+PXoey
-         qaLg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9BdiAgLPaHIMqtufF8GmYLJtq/j8bCwe8CHqdLXmzjcGTVXcck3qojLYN6yilRnUVhdgbskn7J/vs5HVAA0s68Bh2UJQm46Bv2qTV
-X-Gm-Message-State: AOJu0YxfFhrS6ly149VyXQNr/cUYeAk1Thb7H2HxjaVuYtK0ZTlqfE6X
-	7GV2OYFUicJDagvP3oQ5splxIFA+P/chxxUsVo/9rxLtJ67WPbABFDqNpWowQQ4BVrLA8DwRBWn
-	WS8vF534spYtcVR7yw+b8Unvzg0rSle7D+PR0AeXXcI0gpudVN1fv8fU=
-X-Google-Smtp-Source: AGHT+IH1zmV3U3XvSe6YiB+uqVWTuWnQPg4pCFKXeRSuAMpaB6caxUG3TcLORbeaK4pVcuQTukWd2YCPMggg0GFH303blRVbltAo
+	s=arc-20240116; t=1718380265; c=relaxed/simple;
+	bh=BvjgjlgucoXkEkKLtVSOVM2pyQUuUWHW5q5svClDKlA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PUZJmmH+f5gSOJ0scVsd6ukhTXc1kZFTndmW4jMCGJ4Ln4tcghEZy6JLzvYWowi2nwQS715mHZ0U2yBW20NsAAmq6kQgjPe3z0wOlm0AonHe62LlkvO/cQY5RKRYt2R+pgTZKHvPdE7cNha+q/aNJLl31jydfPD7bx455TPowDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KFCBNwdv; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1718380260; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=YYE4KSPkg1QQNyDaGn6/ggOWuxBN59PMEdzwWo8hCNY=;
+	b=KFCBNwdvZzIbvhlA9XODWGUMtpibROQlSntBYUL71BdaJliJz9Vkd2CgJZmbmsXzmc+n0Mg9Ko4CW8WVRj7IeBgPzRhrubDLGJGcurV7xMhdnoNsEUhjhGda70P80Lo9ChLA2l6wj1ZGGdzd5kUMQ/VA+ki4YD4KbHM+Zrr1DgY=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R941e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W8RXOKv_1718380259;
+Received: from 192.168.0.106(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8RXOKv_1718380259)
+          by smtp.aliyun-inc.com;
+          Fri, 14 Jun 2024 23:50:59 +0800
+Message-ID: <4fc95571-7815-458f-9d34-5109b1be7399@linux.alibaba.com>
+Date: Fri, 14 Jun 2024 23:50:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c29:b0:375:a03d:773a with SMTP id
- e9e14a558f8ab-375e0e27c0fmr1674525ab.1.1718380220552; Fri, 14 Jun 2024
- 08:50:20 -0700 (PDT)
-Date: Fri, 14 Jun 2024 08:50:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a2aa7a061adb921e@google.com>
-Subject: [syzbot] [wpan?] WARNING in lowpan_xmit
-From: syzbot <syzbot+ba0ca9eb9e8da84dadeb@syzkaller.appspotmail.com>
-To: alex.aring@gmail.com, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wpan@vger.kernel.org, 
-	miquel.raynal@bootlin.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	stefan@datenfreihafen.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17789a56980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
-dashboard link: https://syzkaller.appspot.com/bug?extid=ba0ca9eb9e8da84dadeb
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a4edf8b28d7f/disk-2ccbdf43.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5f9b0fd6168d/vmlinux-2ccbdf43.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a2c5f918ca4f/bzImage-2ccbdf43.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ba0ca9eb9e8da84dadeb@syzkaller.appspotmail.com
-
-ieee802154 phy0 wpan0: encryption failed: -22
-ieee802154 phy1 wpan1: encryption failed: -22
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 1237 at include/linux/skbuff.h:3069 skb_network_header_len include/linux/skbuff.h:3069 [inline]
-WARNING: CPU: 1 PID: 1237 at include/linux/skbuff.h:3069 lowpan_header net/ieee802154/6lowpan/tx.c:236 [inline]
-WARNING: CPU: 1 PID: 1237 at include/linux/skbuff.h:3069 lowpan_xmit+0xe38/0x11a0 net/ieee802154/6lowpan/tx.c:282
-Modules linked in:
-CPU: 1 PID: 1237 Comm: aoe_tx0 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:skb_network_header_len include/linux/skbuff.h:3069 [inline]
-RIP: 0010:lowpan_header net/ieee802154/6lowpan/tx.c:236 [inline]
-RIP: 0010:lowpan_xmit+0xe38/0x11a0 net/ieee802154/6lowpan/tx.c:282
-Code: 85 7c fe ff ff 48 01 81 48 02 00 00 e8 91 ea 24 fe e9 59 fc ff ff e8 d7 79 f4 f6 90 0f 0b 90 e9 17 f6 ff ff e8 c9 79 f4 f6 90 <0f> 0b 90 e9 fa f6 ff ff e8 bb 79 f4 f6 0f b7 8d e0 fe ff ff 48 c7
-RSP: 0018:ffffc900049979c0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff888022284cb0 RCX: ffffffff8a99627f
-RDX: ffff8880232b1e00 RSI: ffffffff8a996b87 RDI: 0000000000000003
-RBP: ffffc90004997b60 R08: 0000000000000003 R09: 000000000000ffff
-R10: 000000000000ffff R11: 0000000000000000 R12: ffff88807cecf836
-R13: 000000000000ffff R14: ffffc90004997a50 R15: ffff88807cecf780
-FS:  0000000000000000(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd216ae56c6 CR3: 0000000061aee000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __netdev_start_xmit include/linux/netdevice.h:4882 [inline]
- netdev_start_xmit include/linux/netdevice.h:4896 [inline]
- xmit_one net/core/dev.c:3578 [inline]
- dev_hard_start_xmit+0x143/0x790 net/core/dev.c:3594
- __dev_queue_xmit+0x7ba/0x4130 net/core/dev.c:4393
- dev_queue_xmit include/linux/netdevice.h:3095 [inline]
- tx+0xcc/0x190 drivers/block/aoe/aoenet.c:62
- kthread+0x1e7/0x3c0 drivers/block/aoe/aoecmd.c:1229
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] BUG: Bad rss-counter state (5)
+To: syzbot <syzbot+f2bbbb592debc978d46d@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+References: <0000000000007f58de061adb8ea6@google.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <0000000000007f58de061adb8ea6@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 2024/6/14 23:49, syzbot wrote:
+>>
+>>
+>> On 2024/6/14 23:12, syzbot wrote:
+>>> syzbot has bisected this issue to:
+>>>
+>>> commit 1c05047ad01693ad92bdf8347fad3b5c2b25e8bb
+>>> Author: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>> Date:   Tue Jun 4 10:17:45 2024 +0000
+>>>
+>>>       mm: memory: extend finish_fault() to support large folio
+>>>
+>>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=106e8e56980000
+>>> start commit:   d35b2284e966 Add linux-next specific files for 20240607
+>>> git tree:       linux-next
+>>> final oops:     https://syzkaller.appspot.com/x/report.txt?x=126e8e56980000
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=146e8e56980000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=d8bf5cd6bcca7343
+>>> dashboard link: https://syzkaller.appspot.com/bug?extid=f2bbbb592debc978d46d
+>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17f57a36980000
+>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a57696980000
+>>>
+>>> Reported-by: syzbot+f2bbbb592debc978d46d@syzkaller.appspotmail.com
+>>> Fixes: 1c05047ad016 ("mm: memory: extend finish_fault() to support large folio")
+>>>
+>>> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>>
+>> Thanks. Please try the fix in mm-unstable branch
+>>
+>> #syz test:
+> 
+> want either no args or 2 args (repo, branch), got 1
+> 
+>> https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?h=mm-unstable&id=4135d2688b42f097f78062ef328f3056db32e3a0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git 
+mm-unstable
 
