@@ -1,106 +1,84 @@
-Return-Path: <linux-kernel+bounces-214885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0BC908B89
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:20:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DAAEE908B8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D4531C226A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:20:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B5671C21249
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B7A196C8C;
-	Fri, 14 Jun 2024 12:20:34 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D65195F03
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B121990AE;
+	Fri, 14 Jun 2024 12:20:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224EC195F03;
+	Fri, 14 Jun 2024 12:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718367634; cv=none; b=bPwf8lWjemkc98O+PTZ4JDogfKzB0h30tu372/SFTL1o1eO4YQf+iBS39CUnoMAYz5FHN2BN+SAi007CrpGvMR095IpF1rRHDghkdIS9HzZtpCF8Kq+lmWfS5TRYLHUcQhfLSlHUfRvin1NGEdZfhBKvgLIadtgQmrjVdh9ySqo=
+	t=1718367643; cv=none; b=mfQgkeIi+JLzznoGjW8dnaKIt+BktUufIhRvDmp0vBgdFRhuLYoEYCtLQvU1Mbn9wNJyu0IrVzXa85GpaMjhgcBn3qKyVH6dFDHhWhL/QmiMzJiQ7G/lP64zLtjdAIUCkeNl7gG9eS208opMWKkwNBYtMd9stuts5sidv0DgKE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718367634; c=relaxed/simple;
-	bh=rF8IQJXE+F+fPTThN+RuBNY1i5eZMY2Xeb1eGXWtmso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dvKni18TiRunzXDLh1eQOccc4fKMACKUWU939cw/Hm6YC+IPnBIWbJDReHruhE8IH6MJg0gatAF4rdJCmdLJvf+U25BgdFoJFQzcTJxdEB9JvrqFF/6WsSU5MMRzU4sgDHRf7QscmEANAEOEm/dFbuxw2i1XySIgkFIC00w39NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91235C2BD10;
-	Fri, 14 Jun 2024 12:20:32 +0000 (UTC)
-Date: Fri, 14 Jun 2024 13:20:30 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Yang Shi <yang@os.amperecomputing.com>
-Cc: will@kernel.org, anshuman.khandual@arm.com,
-	scott@os.amperecomputing.com, cl@gentwo.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [v4 PATCH] arm64: mm: force write fault for atomic RMW
- instructions
-Message-ID: <Zmw1jltdkMrTrT_l@arm.com>
-References: <20240605203723.643329-1-yang@os.amperecomputing.com>
+	s=arc-20240116; t=1718367643; c=relaxed/simple;
+	bh=AQjmUgnkIYBObU9R4yF5y+8pGugJxUIcztwj75zUnTI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fp8DOsRPzG9AChtm86ae5iiGV1r9MzzrcQW1FDvGLvbhLJO5tC0pTw8z0bvra+Or1fhEE7XokgfgOT1vlhhJ8hg6XY1oxu89Du1Tsmj6iIDwfoWb9gU/l0Np69dajtrUMYbM0z7iF1pmPHp56indN1lXAba25KRrZA/XCvToeYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 176E7FEC;
+	Fri, 14 Jun 2024 05:21:06 -0700 (PDT)
+Received: from [10.57.71.136] (unknown [10.57.71.136])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 572BD3F64C;
+	Fri, 14 Jun 2024 05:20:40 -0700 (PDT)
+Message-ID: <f22db70d-01da-4b49-a13c-6c4639215468@arm.com>
+Date: Fri, 14 Jun 2024 13:20:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240605203723.643329-1-yang@os.amperecomputing.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommu/iova: add missing MODULE_DESCRIPTION() macro
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20240613-md-arm-drivers-iommu-v1-1-1fe0bd953119@quicinc.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240613-md-arm-drivers-iommu-v1-1-1fe0bd953119@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 05, 2024 at 01:37:23PM -0700, Yang Shi wrote:
-> +static __always_inline bool aarch64_insn_is_class_cas(u32 insn)
-> +{
-> +	return aarch64_insn_is_cas(insn) ||
-> +	       aarch64_insn_is_casp(insn);
-> +}
-> +
-> +/*
-> + * Exclude unallocated atomic instructions and LD64B/LDAPR.
-> + * The masks and values were generated by using Python sympy module.
-> + */
-> +static __always_inline bool aarch64_atomic_insn_has_wr_perm(u32 insn)
-> +{
-> +	return ((insn & 0x3f207c00) == 0x38200000) ||
-> +	       ((insn & 0x3f208c00) == 0x38200000) ||
-> +	       ((insn & 0x7fe06c00) == 0x78202000) ||
-> +	       ((insn & 0xbf204c00) == 0x38200000);
-> +}
+On 2024-06-14 2:14 am, Jeff Johnson wrote:
+> With ARCH=arm, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iommu/iova.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-This is still pretty opaque if we want to modify it in the future. I
-guess we could add more tests on top but it would be nice to have a way
-to re-generate these masks. I'll think about, for now these tests would
-do.
+Acked-by: Robin Murphy <robin.murphy@arm.com>
 
-> @@ -511,6 +539,7 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
->  	unsigned long addr = untagged_addr(far);
->  	struct vm_area_struct *vma;
->  	int si_code;
-> +	bool may_force_write = false;
->  
->  	if (kprobe_page_fault(regs, esr))
->  		return 0;
-> @@ -547,6 +576,7 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
->  		/* If EPAN is absent then exec implies read */
->  		if (!alternative_has_cap_unlikely(ARM64_HAS_EPAN))
->  			vm_flags |= VM_EXEC;
-> +		may_force_write = true;
->  	}
->  
->  	if (is_ttbr0_addr(addr) && is_el1_permission_fault(addr, esr, regs)) {
-> @@ -568,6 +598,12 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
->  	if (!vma)
->  		goto lock_mmap;
->  
-> +	if (may_force_write && (vma->vm_flags & VM_WRITE) &&
-> +	    is_el0_atomic_instr(regs)) {
-> +		vm_flags = VM_WRITE;
-> +		mm_flags |= FAULT_FLAG_WRITE;
-> +	}
-
-I think we can get rid of may_force_write and just test (vm_flags &
-VM_READ).
-
--- 
-Catalin
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>   drivers/iommu/iova.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+> index d59d0ea2fd21..16c6adff3eb7 100644
+> --- a/drivers/iommu/iova.c
+> +++ b/drivers/iommu/iova.c
+> @@ -1000,4 +1000,5 @@ void iova_cache_put(void)
+>   EXPORT_SYMBOL_GPL(iova_cache_put);
+>   
+>   MODULE_AUTHOR("Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>");
+> +MODULE_DESCRIPTION("IOMMU I/O Virtual Address management");
+>   MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240613-md-arm-drivers-iommu-f637be6ec5c8
+> 
 
