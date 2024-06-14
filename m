@@ -1,181 +1,180 @@
-Return-Path: <linux-kernel+bounces-214898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61322908BBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:32:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7836908BBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 651301C20951
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:32:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9E1AB26197
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3245B1990B2;
-	Fri, 14 Jun 2024 12:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE6B1974F5;
+	Fri, 14 Jun 2024 12:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nopoLBWV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F4IOpaTz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A802312D74D;
-	Fri, 14 Jun 2024 12:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FA8192B87
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718368334; cv=none; b=dWMUsrhVdMHqog/9lV20iqcrAbav2B7D+/j1lqiAmWW9SpaktICbTFYI7vP1ml3LgrsbQit20CMOO+xFkwVyxKcdIlVP6XMAvjCU+OwoHxWjyd/LTNiYEJGxAkpFhjGn7MKIL+PjApb5S/qH/dQ6O1S98fvs077wLC5x6pyHpmg=
+	t=1718368347; cv=none; b=RRcCQDMXdfikbptEo5oV5a8d6mlboqIa6Wfpzkv2mNsdbnl393pi3zJWJ02MTw4VZHsW7BvK/XJJ/R7ej5AeqFwcJMxJDtSHTSVAvoS8MQHEQybzHQyq2bEW9h3qIAbaAGYaWS7Kew5eAMBJ/odoyhYiLXs24oR+eXTSTyqZ5E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718368334; c=relaxed/simple;
-	bh=d4Bv2ZzuYu1QopJr82AZ6xrYRfuX0NoNXCgdGIEC8Nc=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=HHVZ8apKioEiOszJsF+u4OX3hTdFxLTW8GU8H67pNQp8YLAcHOpIf3TVnnF+zY1xc85KBPr3J2DblNG/YsbNZh+E/vm07k1Jl65FBnfY3EykP9bEoREhof4qlz+TmKEhwSuZyPpm4GNgpfF+4X4GGQKt5lNymEUCtJsNfzOpIaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nopoLBWV; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718368333; x=1749904333;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=d4Bv2ZzuYu1QopJr82AZ6xrYRfuX0NoNXCgdGIEC8Nc=;
-  b=nopoLBWVgSFSExTMBwO/aW4kMJIYsMsdyNQsT72/1dXDRK0NDOW7e2Ri
-   ceuEArmNwdkhMVMd+CN9SiFjRFtSgjkYD6ZA55/XNE48UAEuLU3pjmTif
-   s/M49bCv5Kra3GinF/wHpe3i2Mx9WMMN9yEXRhbofrKv/6XRang1O96Yh
-   FAd6DBoLOAgGWYd5ykOyR9V1jijDYBnyA0S6IBRSQf1L7Wz4ToKz4veHd
-   F7Uu4Veuqa2gnT4s/a9QQGVEButySgp/xXDIdRWqfk3qL8qQKqLXF9WHE
-   VkvljUzRrgdwYCo6suW+yUzPlY/2V14RgaBAUsCHDCouk3JI7alnFOR9r
-   Q==;
-X-CSE-ConnectionGUID: c4nys7iCQhSEjg28/63XYw==
-X-CSE-MsgGUID: knrB/t/5TE6ckMB8gDY8sA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="26366574"
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="scan'208";a="26366574"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 05:32:12 -0700
-X-CSE-ConnectionGUID: tdkimbqMR1mmScCfKZcLzg==
-X-CSE-MsgGUID: KkhV+DFFQ7q2xccIm4rZzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="scan'208";a="40414794"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.222])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 05:32:04 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 14 Jun 2024 15:32:01 +0300 (EEST)
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-cc: Bjorn Andersson <andersson@kernel.org>, 
-    Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
-    Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-    Conor Dooley <conor+dt@kernel.org>, 
-    Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-    Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Bjorn Helgaas <bhelgaas@google.com>, johan+linaro@kernel.org, 
-    bmasney@redhat.com, djakov@kernel.org, 
-    Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
-    devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    linux-pci@vger.kernel.org, vireshk@kernel.org, quic_vbadigan@quicinc.com, 
-    quic_skananth@quicinc.com, quic_nitegupt@quicinc.com, 
-    quic_parass@quicinc.com, krzysztof.kozlowski@linaro.org
-Subject: Re: [PATCH v14 3/4] PCI: Bring the PCIe speed to MBps logic to new
- pcie_link_speed_to_mbps()
-In-Reply-To: <20240609-opp_support-v14-3-801cff862b5a@quicinc.com>
-Message-ID: <c76624fa-1c07-1bb4-dff0-e35fe072f176@linux.intel.com>
-References: <20240609-opp_support-v14-0-801cff862b5a@quicinc.com> <20240609-opp_support-v14-3-801cff862b5a@quicinc.com>
+	s=arc-20240116; t=1718368347; c=relaxed/simple;
+	bh=unj9T+8T5abtTHOKw1WlHenCCmuODCN3uPhBjmY/QjU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bsu6FH5MP+IHhzbKKGTT9+YMiUINV9E8w7sGggIRDnAz0cIJhzFeAbrrmjkS9hUeKBYS3EfbqG52tve2lFLSZKxhYbb4RdrADwkxPsRRpd59I6To8P+TMx3yHCiEkzt5zKIxbexpa4CoXQkq8/1mOTPOCI3NWrts9/ujVod15Gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F4IOpaTz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718368344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Qv4UeeUDlJSpPi4tS9iRS5bdmFfBhluxvgTR/MQ7F+g=;
+	b=F4IOpaTzi/8hKeK0BpEPQLd/oT/hI2aaEvo3V69trz5vkStE8Sic2dJGXnYMLMS14HGQyn
+	Ad6Y90YY5xrQGa7I6csABRwtx29RvVrE9jgfNUvvkeRo2DmwIRFx+2jJFoBQpll8JM7H/N
+	AMNzr3GJes0DARQ0BlCtZ6iKpFueJLI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-149-V4GWjguWNaqiPeDcT8m77g-1; Fri, 14 Jun 2024 08:32:23 -0400
+X-MC-Unique: V4GWjguWNaqiPeDcT8m77g-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-422c0c00762so14280095e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 05:32:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718368342; x=1718973142;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Qv4UeeUDlJSpPi4tS9iRS5bdmFfBhluxvgTR/MQ7F+g=;
+        b=EuDwCGbrTM0etOWG5H8a1m6/yzYaYiq0P6M2u2xYa+Tl3U6h2F2lDeJJuqb5hOj+VT
+         SaDUG6hGNBr9efCf61PKwe3YCuG/HPcaUrRB5OjhoJ36/ScEdHXSKUBQf7AZDU9nYHp+
+         Ff5NxymaXKfTlNfqqM5EDschM3rjAZpQ/pFQVAHHZUlOLhhwZaAGBt48BUPOv91T5m+L
+         VOfbp0pQIxJBGRbYiCaAJlVuwW3f9mMHa1F0HWWb18mi1BE3iEl49Ugy8xQv01++FL5Z
+         iy3Z0Qq4vpMwG6lTKhGeut4m03wr/gRX82icOxt+sHUGJboS2gKH/VZDgsaKkoFdvt0w
+         QjTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWzD0wlgZu57J86wcj+iQ1wPq8f4U2hQolTyu1s0KAbcVlBJqMhhmqdrH713thBxAfQY+C2UG++QUTIOZpX8NpMHXfUwogyrLaA+RkM
+X-Gm-Message-State: AOJu0Yy5D4p5JTc6PlhXqAuRuUSrB+pBIESh0z0jcm1QJ84cfYLV29eA
+	W8wsSboXlK0a78ub/BbF5JahrUg6hSeF8K4qGj10H0xvGdxCMhVz6EDilje9a7VwCmuIHMn5byB
+	vcx8ypLBakloMaI8vV8N3OfplLaPuzt6PYINgDgCoEo4Pgv3jEBZQgJ0Y44fjqA==
+X-Received: by 2002:a7b:c3d8:0:b0:420:173f:e1e9 with SMTP id 5b1f17b1804b1-4230482bd13mr20031785e9.21.1718368342200;
+        Fri, 14 Jun 2024 05:32:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGjM92OLN5N6TyehLFw8nPrKH0Xa1IoYpfgLz1PVSEJoZJpK0WPd0TyW0jx0VWLVkuB1quBQw==
+X-Received: by 2002:a7b:c3d8:0:b0:420:173f:e1e9 with SMTP id 5b1f17b1804b1-4230482bd13mr20031545e9.21.1718368341768;
+        Fri, 14 Jun 2024 05:32:21 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4f:2b00:69b5:3684:56c:6dd5? (p200300d82f4f2b0069b53684056c6dd5.dip0.t-ipconnect.de. [2003:d8:2f4f:2b00:69b5:3684:56c:6dd5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286fe9184sm93848965e9.13.2024.06.14.05.32.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 05:32:21 -0700 (PDT)
+Message-ID: <795f1d32-a44d-4000-8029-76f9693a2114@redhat.com>
+Date: Fri, 14 Jun 2024 14:32:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/6] selftests/mm: remove local __NR_* definitions
+To: John Hubbard <jhubbard@nvidia.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
+ Shuah Khan <shuah@kernel.org>
+Cc: Andrei Vagin <avagin@google.com>,
+ Axel Rasmussen <axelrasmussen@google.com>,
+ Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Peter Xu <peterx@redhat.com>, Rich Felker <dalias@libc.org>,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20240614023009.221547-1-jhubbard@nvidia.com>
+ <20240614023009.221547-7-jhubbard@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240614023009.221547-7-jhubbard@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, 9 Jun 2024, Krishna chaitanya chundru wrote:
-
-> Bring the switch case in pcie_link_speed_mbps() to new function to
-> the header file so that it can be used in other places like
-> in controller driver.
+On 14.06.24 04:30, John Hubbard wrote:
+> This continues the work on getting the selftests to build without
+> requiring people to first run "make headers" [1].
 > 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> Now that the system call numbers are in the correct, checked-in
+> locations in the kernel tree (./tools/include/uapi/asm/unistd*.h),
+> make sure that the mm selftests include that file (indirectly).
+> 
+> Doing so provides guaranteed definitions at build time, so remove all of
+> the checks for "ifdef __NR_xxx" in the mm selftests, because they will
+> always be true (defined).
+> 
+> [1] commit e076eaca5906 ("selftests: break the dependency upon local
+> header files")
+> 
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Jeff Xu <jeffxu@chromium.org>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 > ---
->  drivers/pci/pci.c | 19 +------------------
->  drivers/pci/pci.h | 22 ++++++++++++++++++++++
->  2 files changed, 23 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index d2c388761ba9..6e50fa89b913 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -6027,24 +6027,7 @@ int pcie_link_speed_mbps(struct pci_dev *pdev)
->  	if (err)
->  		return err;
->  
-> -	switch (to_pcie_link_speed(lnksta)) {
-> -	case PCIE_SPEED_2_5GT:
-> -		return 2500;
-> -	case PCIE_SPEED_5_0GT:
-> -		return 5000;
-> -	case PCIE_SPEED_8_0GT:
-> -		return 8000;
-> -	case PCIE_SPEED_16_0GT:
-> -		return 16000;
-> -	case PCIE_SPEED_32_0GT:
-> -		return 32000;
-> -	case PCIE_SPEED_64_0GT:
-> -		return 64000;
-> -	default:
-> -		break;
-> -	}
-> -
-> -	return -EINVAL;
-> +	return pcie_link_speed_to_mbps(to_pcie_link_speed(lnksta));
 
-pcie_link_speed_mbps() calls pcie_link_speed_to_mbps(), seems quite 
-confusing to me. Perhaps renaming one to pcie_dev_speed_mbps() would help
-against the almost identical naming.
+Lovely
 
-In general, I don't like moving that code into a header file, did you 
-check how large footprint the new function is (when it's not inlined)?
-
-Unrelated to this patch, it would be nice if LNKSTA register read would 
-not be needed at all here but since cur_bus_speed is what it is currently, 
-it's just wishful thinking.
-
->  }
->  EXPORT_SYMBOL(pcie_link_speed_mbps);
->  
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 1b021579f26a..391a5cd388bd 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -333,6 +333,28 @@ void pci_bus_put(struct pci_bus *bus);
->  	 (speed) == PCIE_SPEED_2_5GT  ?  2500*8/10 : \
->  	 0)
->  
-> +static inline int pcie_link_speed_to_mbps(enum pci_bus_speed speed)
-> +{
-> +	switch (speed) {
-> +	case PCIE_SPEED_2_5GT:
-> +		return 2500;
-> +	case PCIE_SPEED_5_0GT:
-> +		return 5000;
-> +	case PCIE_SPEED_8_0GT:
-> +		return 8000;
-> +	case PCIE_SPEED_16_0GT:
-> +		return 16000;
-> +	case PCIE_SPEED_32_0GT:
-> +		return 32000;
-> +	case PCIE_SPEED_64_0GT:
-> +		return 64000;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-
-
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
- i.
+Cheers,
+
+David / dhildenb
 
 
