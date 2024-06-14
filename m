@@ -1,206 +1,120 @@
-Return-Path: <linux-kernel+bounces-214730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041EA908946
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:07:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9245490894C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ABEA1C2661D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:07:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38E941F2BCB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BA3195F3A;
-	Fri, 14 Jun 2024 10:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A7281AC7;
+	Fri, 14 Jun 2024 10:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="alvdrXnc"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iayTsd34"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5717C192B7D;
-	Fri, 14 Jun 2024 10:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8636148319;
+	Fri, 14 Jun 2024 10:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718359480; cv=none; b=Z5df6HCpr3ojH8Sw5qFiKsOotQJefgxYDSxKx2lEdn78yB4D5Yapk5QQAFnjlyirVKFMDXOqKbUsptxBho/G/KzHoXMvyTfWtX4iryWcCr9LmBBi6Wo7k3aPJOaSaBbNa6ccCGFtOIjfI5UF7ZaLTGjpY/9hxutqH0RGCL/HZQ0=
+	t=1718359581; cv=none; b=kyHQFZ08F9eGoPnWBccgrFmBlV6upF93qBIQ0TdqPcN63qXrPNui706iXPARmCDHn0e74HStsw01rSUleqA205fciCnTjX0BJa4OeQkqQs9JGIBvhYOpm/yMw0VG7F1MEMpG5z0i00DZUrENQh2DBTfc/eQeSHktHiCmJ77KtU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718359480; c=relaxed/simple;
-	bh=G7HAy6RB0CVVPe1ouzdeSx44OWMoH2sLvWjILX5aMx4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Tn5OHkzJBKXjwrNocmoHHQLDwdjGzGzTLdbVE1aCP/dowy3W/JAdXcbo8zbT2b0FedPZizOI9sQnCDmOBJr6HK7r2gh0R8CT9GGJFPddI0A/KIqJRnUd5xbN+bFVwCb253cC5YXw2Xmuoe0H6EEua4gsbhBDG54L+WScg3kYHY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=alvdrXnc; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1718359476;
-	bh=G7HAy6RB0CVVPe1ouzdeSx44OWMoH2sLvWjILX5aMx4=;
-	h=From:Date:Subject:To:Cc:From;
-	b=alvdrXncrJYx/H4SKHJ+FwREHFnwadGfM/9/k7tCPI8KM6OAKkvg1E6NjhtahnJcW
-	 dLYTa1qt8ITwUDFn7wL4CFmESI0OW9fymJhkU/SOPTJEmP/EUXsYKsbcLUPBU/Xi+2
-	 6RIf7t3FQ5WPsmN3xvR3r1vHvrploSS32H/kEwAQ=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Fri, 14 Jun 2024 12:04:29 +0200
-Subject: [PATCH] leds: cros_ec: Implement review comments from Lee
+	s=arc-20240116; t=1718359581; c=relaxed/simple;
+	bh=M+wudfRew0zZ0o2jEhGKUvusyJLRH89lvhLCPTPKDJc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=jdAYE9vjqhtGx51YLDic+6gXif9YSVLfzP+ftu91XuC4/OIrqNE+L00XcRmYpAcbx9LHlUPe2yKj6msQS9U3JwiQ8SKwqC31QsUhasfGcf5PR5ck0Dq6V5CvFmRjbm969VwCuW3orw56LQjk3F8hHV+GkDommj8xD5FLvv+Qt7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iayTsd34; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718359580; x=1749895580;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=M+wudfRew0zZ0o2jEhGKUvusyJLRH89lvhLCPTPKDJc=;
+  b=iayTsd348RioBTVogaMcGVtwRvwKQ6zbb5ZY0+VfC4yUFROfPVnN4oB7
+   NlSVfMUQFkCUTu9DHcDfUXjAgYeXx9TXgHgIK5EEzUE1tq9hbcEeqUkqr
+   vGBGvMPdF+unkysdNgZ4Iu4XAYfBeMOlNbF0mlfu6qk8SqmSdw2hSUq7J
+   6dsSOhdX9034V8Z0nCELKCrM4K8gMsMtPG2xBuzrbTWak3Sb3uJazWIF3
+   AIrg4qtD2GDGpz8YhPAuG8cwRTLyawoJKl8jnbJh+0WjJ1NS+vOH3BPDR
+   sTlA/46g3p9URsyeIYSmwOf/yf5pXQyXW7l1etj6PQbflCPoDFNQ2ZxAS
+   g==;
+X-CSE-ConnectionGUID: Dfyh1Pw4RFWffGyXK7JNuw==
+X-CSE-MsgGUID: ECsfw+lMSTChVR3HS+si3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="32715804"
+X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
+   d="scan'208";a="32715804"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 03:06:19 -0700
+X-CSE-ConnectionGUID: Swo5ctbJQEaxpmynKRoqug==
+X-CSE-MsgGUID: GnEecZIsRhGB7Xm97YsUMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
+   d="scan'208";a="45575859"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.222])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 03:06:14 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: linux-pci@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Philipp Stanner <pstanner@redhat.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>
+Cc: linux-kernel@vger.kernel.org,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	Robert Richter <rric@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH v2 0/4] PCI: Resource helper improvements
+Date: Fri, 14 Jun 2024 13:06:02 +0300
+Message-Id: <20240614100606.15830-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240614-cros_ec-led-review-v1-1-946f2549fac2@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAKwVbGYC/x3M0QpAQBBG4VfRXJvCongVSWv8mBLaLZS8u+XyX
- HznJg+n8FRHNzkc6nVbQ6RxRDLbdQLrEJqyJMuTMs1Z3OY7CC8Y+AM4GVIZ20tZVMZQgLvDqNc
- /bdrneQHG9gOxZAAAAA==
-To: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>, 
- Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>
-Cc: linux-leds@vger.kernel.org, chrome-platform@lists.linux.dev, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718359476; l=4274;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=G7HAy6RB0CVVPe1ouzdeSx44OWMoH2sLvWjILX5aMx4=;
- b=uiD9pGnNZpgmiwedlFEzAECWQGAArHZE2wsPQAYu6qGS7H/vXYgZO0fDn0T+g3JB6IlMH67hO
- cMAHGEqL/dgCM9YsqvSGinGeo9eDksCEclZj9obm1pG9aRzX09ZrhN7
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Implement review comments from Lee as requested in [0] for
-"leds: Add ChromeOS EC driver".
+This series introduces resource_set_{range,size}() helpers to replace
+often repeated code fragments to set resource start and end addresses.
+The last two patches clean up nearby code.
 
-Changes:
-* Inline DRV_NAME string constant.
-* Use dev_err() instead of dev_warn() to report errors.
-* Rename cros_ec_led_probe_led() to cros_ec_led_probe_one().
-* Make loop variable "int" where they belong.
-* Move "Unknown LED" comment to where it belongs.
-* Register trigger during _probe().
-* Use module_platform_driver() and drop all the custom boilerplate.
+For now, this series only converts PCI subsystem. There are plenty of
+resource start/end setting code elsewhere in the kernel but those can
+be converted once the helpers reach Linus' tree.
 
-[0] https://lore.kernel.org/lkml/20240614093445.GF3029315@google.com/T/#m8750abdef6a968ace765645189170814196c9ce9
+--
+v2:
+- Improved commit message
+- Added patch to introduce ALIGN_DOWN_IF_NONZERO()
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- drivers/leds/leds-cros_ec.c | 50 +++++++++++++--------------------------------
- 1 file changed, 14 insertions(+), 36 deletions(-)
+Ilpo Järvinen (4):
+  resource: Add resource set range and size helpers
+  PCI: Use resource_set_{range,size}() helpers
+  PCI: Use align and resource helpers, and SZ_* in quirk_s3_64M()
+  PCI: Introduce ALIGN_DOWN_IF_NONZERO() helper locally
 
-diff --git a/drivers/leds/leds-cros_ec.c b/drivers/leds/leds-cros_ec.c
-index 7bb21a587713..275522b81ea5 100644
---- a/drivers/leds/leds-cros_ec.c
-+++ b/drivers/leds/leds-cros_ec.c
-@@ -14,8 +14,6 @@
- #include <linux/platform_data/cros_ec_commands.h>
- #include <linux/platform_data/cros_ec_proto.h>
- 
--#define DRV_NAME	"cros-ec-led"
--
- static const char * const cros_ec_led_functions[] = {
- 	[EC_LED_ID_BATTERY_LED]            = LED_FUNCTION_CHARGING,
- 	[EC_LED_ID_POWER_LED]              = LED_FUNCTION_POWER,
-@@ -152,7 +150,7 @@ static int cros_ec_led_count_subleds(struct device *dev,
- 
- 		if (common_range != range) {
- 			/* The multicolor LED API expects a uniform max_brightness */
--			dev_warn(dev, "Inconsistent LED brightness values\n");
-+			dev_err(dev, "Inconsistent LED brightness values\n");
- 			return -EINVAL;
- 		}
- 	}
-@@ -176,22 +174,21 @@ static const char *cros_ec_led_get_color_name(struct led_classdev_mc *led_mc_cde
- 	return led_get_color_name(color);
- }
- 
--static int cros_ec_led_probe_led(struct device *dev, struct cros_ec_device *cros_ec,
-+static int cros_ec_led_probe_one(struct device *dev, struct cros_ec_device *cros_ec,
- 				 enum ec_led_id id)
- {
- 	union cros_ec_led_cmd_data arg = {};
- 	struct cros_ec_led_priv *priv;
- 	struct led_classdev *led_cdev;
- 	struct mc_subled *subleds;
--	int ret, num_subleds;
--	size_t i, subled;
-+	int i, ret, num_subleds;
-+	size_t subled;
- 
- 	arg.req.led_id = id;
- 	arg.req.flags = EC_LED_FLAGS_QUERY;
- 	ret = cros_ec_led_send_cmd(cros_ec, &arg);
--	/* Unknown LED, skip */
- 	if (ret == -EINVAL)
--		return 0;
-+		return 0; /* Unknown LED, skip */
- 	if (ret == -EOPNOTSUPP)
- 		return -ENODEV;
- 	if (ret < 0)
-@@ -247,11 +244,14 @@ static int cros_ec_led_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct cros_ec_dev *ec_dev = dev_get_drvdata(dev->parent);
- 	struct cros_ec_device *cros_ec = ec_dev->ec_dev;
--	int ret = 0;
--	size_t i;
-+	int i, ret = 0;
-+
-+	ret = devm_led_trigger_register(dev, &cros_ec_led_trigger);
-+	if (ret)
-+		return ret;
- 
- 	for (i = 0; i < EC_LED_ID_COUNT; i++) {
--		ret = cros_ec_led_probe_led(dev, cros_ec, i);
-+		ret = cros_ec_led_probe_one(dev, cros_ec, i);
- 		if (ret)
- 			break;
- 	}
-@@ -260,38 +260,16 @@ static int cros_ec_led_probe(struct platform_device *pdev)
- }
- 
- static const struct platform_device_id cros_ec_led_id[] = {
--	{ DRV_NAME, 0 },
-+	{ "cros-ec-led", 0 },
- 	{}
- };
- 
- static struct platform_driver cros_ec_led_driver = {
--	.driver.name	= DRV_NAME,
-+	.driver.name	= "cros-ec-led",
- 	.probe		= cros_ec_led_probe,
- 	.id_table	= cros_ec_led_id,
- };
--
--static int __init cros_ec_led_init(void)
--{
--	int ret;
--
--	ret = led_trigger_register(&cros_ec_led_trigger);
--	if (ret)
--		return ret;
--
--	ret = platform_driver_register(&cros_ec_led_driver);
--	if (ret)
--		led_trigger_unregister(&cros_ec_led_trigger);
--
--	return ret;
--};
--module_init(cros_ec_led_init);
--
--static void __exit cros_ec_led_exit(void)
--{
--	platform_driver_unregister(&cros_ec_led_driver);
--	led_trigger_unregister(&cros_ec_led_trigger);
--};
--module_exit(cros_ec_led_exit);
-+module_platform_driver(cros_ec_led_driver);
- 
- MODULE_DEVICE_TABLE(platform, cros_ec_led_id);
- MODULE_DESCRIPTION("ChromeOS EC LED Driver");
+ drivers/pci/controller/pci-tegra.c       |  2 +-
+ drivers/pci/controller/pci-thunder-pem.c |  4 +--
+ drivers/pci/ecam.c                       |  2 +-
+ drivers/pci/iov.c                        |  6 ++--
+ drivers/pci/pci.c                        |  3 +-
+ drivers/pci/quirks.c                     | 23 +++++++---------
+ drivers/pci/setup-bus.c                  | 35 ++++++++++--------------
+ drivers/pci/setup-res.c                  |  7 ++---
+ include/linux/ioport.h                   | 32 ++++++++++++++++++++++
+ 9 files changed, 68 insertions(+), 46 deletions(-)
 
----
-base-commit: b6774dd948171c478c7aa19318b1d7ae9cf6d7a4
-change-id: 20240614-cros_ec-led-review-ec93abc65933
-
-Best regards,
 -- 
-Thomas Weißschuh <linux@weissschuh.net>
+2.39.2
 
 
