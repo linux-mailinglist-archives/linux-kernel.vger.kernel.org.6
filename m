@@ -1,141 +1,228 @@
-Return-Path: <linux-kernel+bounces-215418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C43CC909276
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:42:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86968909274
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A17F1F21ACC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:42:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24EAE28E0D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980571474B1;
-	Fri, 14 Jun 2024 18:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747801A01C1;
+	Fri, 14 Jun 2024 18:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rw+wpOwv"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d3gVxdH0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BC619E7D3
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 18:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7AB19ADB3;
+	Fri, 14 Jun 2024 18:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718390521; cv=none; b=mmHpE40KFi2jXli99WLB946HVMTrmD9W5LiLqiWiC5ZrzM17SPPSRpeq+lPfcE0L51/QPE9IICqitYwMQLNfvyHQ2y+/xMg6/i8ozI+cRI0yCq8z71eBqooSFWJ/8TD6ZmvUO3QpjOgyVm10fY+sZHHi/Q8xdxglBCmQzRhhr8s=
+	t=1718390499; cv=none; b=qNeM+TJJjDORGzOJ79u3IhSU1EwH3dL+J0WZDXQsHHbunt7ofumeBvb/XyqGVPdQLk4e5KH+fzBdtWa8s3NKajf2SNHrHs7rEXffdeDin5Fslr47uwZdGOEI3oYSfpvjlTtxkaOzBLec5hEqV1gu7qCOAQ4nWaNTUu6H2kuMh4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718390521; c=relaxed/simple;
-	bh=smhGVoNScnHd2z7vMT22m6DH6aKiAwPtLS5rY7FZD6g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AbYZzGZc3C2Gnsdv7ej9PCbBjUgy0SFRPI+I0wEz4gYR9VG2kc8HepfBLJlkxFaxg5oy/ZV/Lce/0iEUw5+ImfWSn/EhJVg2Ilzc+rR4KoyPO86kIY92McUCX/W20LH8sBF3ZHZ5OWbpU/Nh2hVWGcxwYF3L9S4m6SMKzqzcDMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rw+wpOwv; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ec17eb4493so12607761fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 11:42:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718390518; x=1718995318; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Uj57t1ODMW2OcVRkdwrT3HO4yZE9XuGW/qj+IY0Y/Ko=;
-        b=rw+wpOwvRn+Dhy7CereSzDsFTqJoIzTOgnNoyaxuuLdu74LbQ/FB3F7/GzOZI4qO2o
-         kRC+DXk4LTM8r5tchrsxu7jsNFicMD2LkAhNC/2pDtlPHDE4vccJ1igRm806eSqaq9JO
-         ePrCZqNBTqKbKNUnBeH2B4HHZzLCaIM9YJO8lqotN9u7yP7RRbLljePRIDreAh8qbJgs
-         ndBWWMTX5TlFJfxNcs7Fsq4BkMAz0Vzz7+gCKTPATpt4tNQ6QjvKjWStziWR5u3JEucw
-         ZCwPoDngN65oriiB4cWNU3C7cJgmBDnJDm14APoO0YfdGRiZTD6sRePTZ6uikzm4eZyr
-         Irxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718390518; x=1718995318;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Uj57t1ODMW2OcVRkdwrT3HO4yZE9XuGW/qj+IY0Y/Ko=;
-        b=taxwxbklWCsasduw3JauDGanzWyNj6oIJz/cgGw+HKmXlpTkKRZ9eZu+R1u2fX365Z
-         zlb/cQikdrhBZICJcQWeYBZdOvU47eT7e6ntEs1AWYhriBvcPoyUQDzcSqCW+vAmzwrw
-         iwbaP7pM3QVh2Nouo9r0jKttatMtu3rN46Sh6cr/ocTmv84EErgV1AqVw4rHDZbRIqyh
-         fatsvidx7DBY5IuaAzCfLjzBWqM8e+hyqEZJzLAx/Y3fzCGzJ1ZibOVy3ya4foXqvYyD
-         2pjubI8AsL05qb4KYmou881XBc9jgzDx4xhR3ObDIMlSzzSAFeW8JJZe7KKXWLiehz9E
-         UHkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPLKoYphbl41LkWtOH/i1PXb86Ix7uuBlZzUW2og1C4wV+OU3RjGJs2FhFYs9eC0zaIHPg1zfq64Zu651ZmMkRLpyS9FgTsC4tK/wm
-X-Gm-Message-State: AOJu0Yw9AP7j4u1pgL17V/SCiW9IVNYuHvE3yDEMi2vmgUY1xpJR5uZT
-	p2JaKtOB4ctI2Y70G+YAHJ6rEgOPRe8mTQxZLn+bSzcgopUGqYnNxiFjzRwY604E6Zi5jy9qZe7
-	6oTGutgCKKhf3bx+c8liYdM5Nq9IfVmQR7Y4Q
-X-Google-Smtp-Source: AGHT+IFzCV2gPA0qaN2e8B6qjxroL2HsxN6qG52djyO/eLkThaU6zDeJHIOz6lk6qq7yEJ8jNwjWoXlE0b8yTETozrA=
-X-Received: by 2002:a2e:a443:0:b0:2ec:1973:2b89 with SMTP id
- 38308e7fff4ca-2ec19732c1amr18483151fa.30.1718390518143; Fri, 14 Jun 2024
- 11:41:58 -0700 (PDT)
+	s=arc-20240116; t=1718390499; c=relaxed/simple;
+	bh=eNfNLPou9bpDvL/G8e13RmhlK6Su6AEqPpnIuSsApjA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e7harG5QmBI9GHjLUigF7fL42lkoTj+/YiWW8MLBcZuH4bF98FJ5mS811uXFgJJ0m5snXtmq8Zq33ASAFKx7zJmV+nvMcg/ct/7XZSpz83QT22rNtw7gJXewnZV9pX3P8/IcuQ8sWEPyx1Jy5j6bhXhTZNlxn+oU6Ma9l3Xctgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d3gVxdH0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 661B1C2BD10;
+	Fri, 14 Jun 2024 18:41:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718390499;
+	bh=eNfNLPou9bpDvL/G8e13RmhlK6Su6AEqPpnIuSsApjA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d3gVxdH0BxA+WtA3scbeVwkYwYzeMkYO4urUszsIfoSrrOwSAJR4DD1R+Jyb56JiH
+	 aQkf3M9/+Q7IH8fcqeD8iizadr0rpbvF9Z4dntHG2YQVNsKNgGWXQTqomvTNnrMNo6
+	 s6zA63mdxp4BDm7qifjkxCKuYbf1zWfnuSiiHKVJtBYLmv+7pygVw4OVFevo7K/NB/
+	 Y1lA2FVJXCgq3XNk6n3jPa/Y65mTlnFFYPePdaQt69IDkf8iyJgtzROZXdWA+FV4k5
+	 flfbFxERUJdxWQnpvBZaNj5LlQbyLz8knuqiwnENzhMEI0HT9xZI7Ace64nDYGtnFC
+	 IQKKbUsJrhQTg==
+Date: Fri, 14 Jun 2024 15:41:35 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, mic@digikod.net, gnoack@google.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v4] perf trace: BTF-based enum pretty printing
+Message-ID: <ZmyO39kNH0gscc5n@x1>
+References: <20240613042747.3770204-1-howardchu95@gmail.com>
+ <ZmrqQs64TvAt8XjK@x1>
+ <ZmrtGuhdMlbssODG@x1>
+ <CAH0uvogFih59J1nBQKKM4r2Fc1UA755EoAa01e6MihSd1_QHFg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614100902.3469724-1-usamaarif642@gmail.com>
- <20240614100902.3469724-2-usamaarif642@gmail.com> <b5952ee4-3b86-40ff-a3de-8a08f09557bd@linux.dev>
-In-Reply-To: <b5952ee4-3b86-40ff-a3de-8a08f09557bd@linux.dev>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Fri, 14 Jun 2024 11:41:21 -0700
-Message-ID: <CAJD7tkY6rxiB1oR+ykWFqx6JV=xsM-maPtu1rtthJZY_z1h5MQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] mm: store zero pages to be swapped out in a bitmap
-To: Chengming Zhou <chengming.zhou@linux.dev>
-Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org, hannes@cmpxchg.org, 
-	shakeel.butt@linux.dev, david@redhat.com, ying.huang@intel.com, 
-	hughd@google.com, willy@infradead.org, nphamcs@gmail.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH0uvogFih59J1nBQKKM4r2Fc1UA755EoAa01e6MihSd1_QHFg@mail.gmail.com>
 
-On Fri, Jun 14, 2024 at 5:06=E2=80=AFAM Chengming Zhou <chengming.zhou@linu=
-x.dev> wrote:
->
-> On 2024/6/14 18:07, Usama Arif wrote:
-> > Approximately 10-20% of pages to be swapped out are zero pages [1].
-> > Rather than reading/writing these pages to flash resulting
-> > in increased I/O and flash wear, a bitmap can be used to mark these
-> > pages as zero at write time, and the pages can be filled at
-> > read time if the bit corresponding to the page is set.
-> > With this patch, NVMe writes in Meta server fleet decreased
-> > by almost 10% with conventional swap setup (zswap disabled).
-> >
-> > [1] https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d=
-03d1344dde9fce0@epcms5p1/
-> >
-> > Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->
-> Looks good to me, only some small nits below.
->
-> Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
->
-> > ---
-> >  include/linux/swap.h |   1 +
-> >  mm/page_io.c         | 113 ++++++++++++++++++++++++++++++++++++++++++-
-> >  mm/swapfile.c        |  15 ++++++
-> >  3 files changed, 128 insertions(+), 1 deletion(-)
-> >
-> [...]
-> > +
-> > +static void swap_zeromap_folio_set(struct folio *folio)
-> > +{
-> > +     struct swap_info_struct *sis =3D swp_swap_info(folio->swap);
-> > +     swp_entry_t entry;
-> > +     unsigned int i;
-> > +
-> > +     for (i =3D 0; i < folio_nr_pages(folio); i++) {
-> > +             entry =3D page_swap_entry(folio_page(folio, i));
->
-> It seems simpler to use:
->
-> swp_entry_t entry =3D folio->swap;
->
-> for (i =3D 0; i < folio_nr_pages(folio); i++, entry.val++)
+On Thu, Jun 13, 2024 at 11:50:59PM +0800, Howard Chu wrote:
+> Thanks for testing and reviewing this patch, and your precious suggestions.
 
-I was actually thinking we could introduce folio_swap_entry(folio, i)
-after the series. Multiple callers of page_swap_entry() have a folio
-already. It would save some compound_head() calls.
+You're welcome
+ 
+> On Thu, Jun 13, 2024 at 8:59 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > > On Thu, Jun 13, 2024 at 12:27:47PM +0800, Howard Chu wrote:
+> > > > changes in v4:
 
-Alternatively, for this patch we can introduce
-zeromap_update_range(zeromap, offset, size, value). Then we can use it
-in swap_zeromap_folio_set/cear() as well as swap_range_free(). It
-would also be a good place to park the comment about using atomic
-operations (set_bit() and clear_bit()).
+> > > > - Add enum support to tracepoint arguments
+
+> > > That is cool, but see below the comment as having this as a separate
+> > > patch.
+
+> > > Also please, on the patch that introduces ! syscall tracepoint enum args
+> > > BTF augmentation include examples of tracepoints being augmented. I'll
+
+> > You did it as a notes for v4, great, I missed that.
+
+> > > try here while testing the patch as-is.
+
+> > The landlock_add_rule continues to work, using the same test program I
+> > posted when testing your v1 patch:
+
+> > root@x1:~# perf trace -e landlock_add_rule
+> >      0.000 ( 0.016 ms): landlock_add_r/475518 landlock_add_rule(ruleset_fd: 1, rule_type: LANDLOCK_RULE_PATH_BENEATH, rule_attr: 0x7ffd790ff690) = -1 EBADFD (File descriptor in bad state)
+> >      0.115 ( 0.003 ms): landlock_add_r/475518 landlock_add_rule(ruleset_fd: 2, rule_type: LANDLOCK_RULE_NET_PORT, rule_attr: 0x7ffd790ff690) = -1 EBADFD (File descriptor in bad state)
+
+> > Now lets try with some of the !syscalls tracepoints with enum args:
+
+> > root@x1:~# perf trace -e timer:hrtimer_start --max-events=5
+> >      0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff225050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
+> > 18446744073709.551 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff2a5050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
+> >      0.007 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff325050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
+> >      0.007 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff3a5050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
+> > 18446744073709.543 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff425050, function: 0xffffffff9e22ddd0, expires: 210588861000000, softexpires: 210588861000000, mode: HRTIMER_MODE_ABS)
+> > root@x1:~#
+
+> > Cool, it works!
+
+> > Now lets try and use it with filters, to get something other than HRTIMER_MODE_ABS:
+
+> > root@x1:~# perf trace -e timer:hrtimer_start --filter='mode!=HRTIMER_MODE_ABS' --max-events=5
+> > No resolver (strtoul) for "mode" in "timer:hrtimer_start", can't set filter "(mode!=HRTIMER_MODE_ABS) && (common_pid != 475859 && common_pid != 4041)"
+> > root@x1:~#
+
+> > oops, that is the next step then :-)
+ 
+> Sure, I will add support for enum filtering(enum string -> int).
+
+Cool
+ 
+> > If I do:
+
+> > root@x1:~# pahole --contains_enumerator=HRTIMER_MODE_ABS
+> > enum hrtimer_mode {
+> >         HRTIMER_MODE_ABS             = 0,
+> >         HRTIMER_MODE_REL             = 1,
+> >         HRTIMER_MODE_PINNED          = 2,
+> >         HRTIMER_MODE_SOFT            = 4,
+> >         HRTIMER_MODE_HARD            = 8,
+> >         HRTIMER_MODE_ABS_PINNED      = 2,
+> >         HRTIMER_MODE_REL_PINNED      = 3,
+> >         HRTIMER_MODE_ABS_SOFT        = 4,
+> >         HRTIMER_MODE_REL_SOFT        = 5,
+> >         HRTIMER_MODE_ABS_PINNED_SOFT = 6,
+> >         HRTIMER_MODE_REL_PINNED_SOFT = 7,
+> >         HRTIMER_MODE_ABS_HARD        = 8,
+> >         HRTIMER_MODE_REL_HARD        = 9,
+> >         HRTIMER_MODE_ABS_PINNED_HARD = 10,
+> >         HRTIMER_MODE_REL_PINNED_HARD = 11,
+> > }
+> > root@x1:~#
+
+> > And then use the value for HRTIMER_MODE_ABS instead:
+
+> > root@x1:~# perf trace -e timer:hrtimer_start --filter='mode!=0' --max-events=1
+> >      0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff225050, function: 0xffffffff9e22ddd0, expires: 210759990000000, softexpires: 210759990000000, mode: HRTIMER_MODE_ABS_PINNED_HARD)
+> > root@x1:~#
+
+> > Now also filtering HRTIMER_MODE_ABS_PINNED_HARD:
+
+> > root@x1:~# perf trace -e timer:hrtimer_start --filter='mode!=0 && mode != 10' --max-events=2
+> >      0.000 podman/178137 timer:hrtimer_start(hrtimer: 0xffffa2024468fda8, function: 0xffffffff9e2170c0, expires: 210886679225214, softexpires: 210886679175214, mode: HRTIMER_MODE_REL)
+> >     32.935 podman/5046 timer:hrtimer_start(hrtimer: 0xffffa20244fabc40, function: 0xffffffff9e2170c0, expires: 210886712159707, softexpires: 210886712109707, mode: HRTIMER_MODE_REL)
+> > root@x1:~#
+
+> > But this then should be a _third_ patch :-)
+> 
+> Sure.
+
+> > We're making progress!
+ 
+> > See the comment about evsel__init_tp_arg_scnprintf() below. Also please
+> > do patches on top of previous work, i.e. the v3 patch should be a
+> > separate patch and this v4 should add the extra functionality, i.e. the
+> > support for !syscall tracepoint enum BTF augmentation.
+ 
+> Thank you for suggesting this. May I ask if this is saying that v3 and
+> v4 should all be separated?
+
+Yes, I suggest you extract from v4 the updated contents of v3 and have
+it as a "perf trace: Augment enum syscall arguments with BTF", have the
+examples of such syscalls before and after.
+
+Then have another patch, that assumes that first patch with the fix and
+the "perf trace: Augment enum syscall arguments with BTF" are applied
+that will add support for augmenting non-syscall tracepoints with enum
+arguments with BTF.
+ 
+> > The convention here is that evsel__ is the "class" name, so the first
+> > arg is a 'struct evsel *', if you really were transforming this into a
+> > 'struct trace' specific "method" you would change the name of the C
+> > function to 'trace__init_tp_arg_scnprintf'.
+ 
+> Oops, my bad. Thanks for pointing it out.
+ 
+> > But in this case instead of passing the 'struct trace' pointer all the
+> > way down we should instead pass a 'bool *use_btf' argument, making it:
+
+> > static int evsel__init_tp_arg_scnprintf(struct evsel *evsel, bool *use_btf)
+ 
+> You are right, we should do that. Thanks for pointing out this silly
+> implementation. I think we should do the same for
+> syscall__set_arg_fmts(struct trace *trace, struct syscall *sc) as
+> well. Also, I forgot to delete the unused 'bool use_btf' in struct
+> syscall, I will delete it.
+>
+> > Then, when evlist__set_syscall_tp_fields(evlist, &use_btf) returns,
+> > check that use_btf to check if we need to call
+> > trace__load_vmlinux_btf(trace).
+ 
+> > And when someone suggests you do something and you implement it, a
+> > Suggested-by: tag is as documented in:
+
+> > ⬢[acme@toolbox perf-tools-next]$ grep -A5 Suggested-by Documentation/process/submitting-patches.rst
+> > Using Reported-by:, Tested-by:, Reviewed-by:, Suggested-by: and Fixes:
+ 
+> > A Suggested-by: tag indicates that the patch idea is suggested by the person
+> > named and ensures credit to the person for the idea. Please note that this
+> > tag should not be added without the reporter's permission
+ 
+> May I ask if you want a Suggested-by? Hats off to you sir.
+
+yes, it is appropriate in this case.
+ 
+> Also, do you want me to do the fixes on evsel__init_tp_arg_scnprintf()
+
+If its separate from what you are doing, yes, you do the fix then
+continue with the new features.
+
+> for tracepoint enum, and send it as v5, or just send a separate patch
+> for tracepoint enum, so we get a patch for syscall enum, and another
+> patch for tracepoint enum? Sorry to bother you on these trivial
+> things.
+
+> Thanks again for this detailed review, and valuable suggestions.
+
+- Arnaldo
 
