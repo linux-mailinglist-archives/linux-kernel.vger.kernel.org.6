@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-215160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6411908F05
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:40:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A5A2908EF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:37:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22DEAB259A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:37:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C438D1F23DD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3BF155392;
-	Fri, 14 Jun 2024 15:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887C116F91E;
+	Fri, 14 Jun 2024 15:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="g2WEe20R"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="IaEN/oB6"
 Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D4616D4FC
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BEE16F0D5
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718379389; cv=none; b=SF+mDSw4j8Wysv7wHCftJo1lH8aU5Q5CQ7o8NNWhmpt1XvOy8Y88QDa6rVss1dUJzQt71ejU9QjAPc1ftT01FzExTI5OygGqMRejvtWooIv0tuwgD8jFAeKdlUtxOAeDz3FcymEAr4jnurExFE0j5ApQk3a0P4UhGWHTOy4pB2c=
+	t=1718379397; cv=none; b=UYwbFLT87x09izh4sgd1wyPbcdIodmibUaqiGt411j0IqxZVMahW4H8I4U/bEw68quame0ltQVyrnIoBzJBK/znWlltD/8O3e9UkXYZ8FTzqJdq0BAsmXeHqZI7hzJfw8nQgtCPNi+mdXrn0tkinSWooZ3uScKLLOIpskxp7qIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718379389; c=relaxed/simple;
-	bh=GhR6sYeDn1XaPbJaQyiGAJMfp3+6qJK9pLZBGDCCuPU=;
+	s=arc-20240116; t=1718379397; c=relaxed/simple;
+	bh=B9dNKu0g1GOvL1g8mOZK4aOrZsmlnULWwgMOQQakRgI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cG5AP0fdPTAlgeBtQBXbE4TPRCNPiXJo7syr62w0qeypgodg3tfugXQhJwg6ZNp0yDIEY+Px/urA8gBhMkIJGjP2ZZiLuTB+XL+uigDKJcb9Mgas6sICD1SwjbLlJAkSM6VGzky2NEyUaUNkc6ZTs3VECjRaVMJgSiLxBNPnO7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=g2WEe20R; arc=none smtp.client-ip=178.60.130.6
+	 MIME-Version:Content-Type; b=eTwQDAypGAfH0hA1obmSe/T3z12a6e++PsID4QGgaHZKCeJYazlmf2+N1zJeLymftHBJCWNyoiLB7acnan9FLXIe2Zh7ijop3k+9rNazysbZz0kkePuVQI2eDhuZ34igCqpdkvdAxzS6JNDFZOi/HFmffmr6nxZ8Ywb2CcKrSz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=IaEN/oB6; arc=none smtp.client-ip=178.60.130.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -36,16 +36,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=WCQBKaM5/7WaKHxgT7dEJbGWb3sM+ygzUWYJFAvbV1Y=; b=g2WEe20Ri4+WMKGJEHCtLowPJb
-	e1K7fp0ahqjoyRFByqwH8frtjGYH6PUCh1NoxuL0wD5CQqfvnU/hIWQ2gGCyFrZiV55KmJ+QIyiAC
-	KnafVcC7owm35XIAUbpBEmosR6XEj2dyNJyvEbYJcbZoAIGs9aAk1qvLJdrgWnxC2PrD2+IXuDpnM
-	V+I5ZGQrFOfifSa5jn4in/9UfngVuqMAJ4qsEwQhQWTN3G/1s3Gr1RaUZe56kWs5tGhzcUpRPJLy5
-	K7bwdPja9PF3pPAXiX3cGwORdWl5FUQtOW210P1SHDnqTTscm6938n0Jc0Bl1wflvvAuuwWbOPBP0
-	Y160FIvQ==;
+	bh=DKE9E8EfN4qFoXgS2Nhr4CIKzmxCOJoEG4cKtj5vuJs=; b=IaEN/oB63jOJZPzaLtrY3GcTEr
+	O2HwdvD0tELiCl8UT8ClfthshVPMcQjTs4roGd3avMcu/rpj5oOMw1xfjUluVHCPu23C+2vyt2ynX
+	GS+/rJP7mm6UJuE0TowPo0nhB0LGZ+/RhpvIAC6gGSalh5fntHV8Ztdo7yCFztMgNO+EUzGaOwDXX
+	YDRNij7OtLLhDeropi8r9FYTwqLCGjnQbsyYYrksowqXkzlyJlmdq5mUYihHwg6t0GSOVlptQ4TAT
+	ruwfSc0SZhsRQkYFgO+LVvZ7VcLg3J9fjIetGINtzbeVlPa8Hjy6m+/Q8h/1dk9hiUV+aOxPvkcGK
+	OmfZvXsQ==;
 Received: from [179.118.191.115] (helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sI8yX-003B8v-P6; Fri, 14 Jun 2024 17:36:26 +0200
+	id 1sI8yf-003B8v-Kq; Fri, 14 Jun 2024 17:36:34 +0200
 From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
 To: dri-devel@lists.freedesktop.org,
 	amd-gfx@lists.freedesktop.org,
@@ -80,9 +80,9 @@ Cc: kernel-dev@igalia.com,
 	Karol Herbst <kherbst@redhat.com>,
 	Lyude Paul <lyude@redhat.com>,
 	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v6 5/8] drm/i915: Enable async flips on the primary plane
-Date: Fri, 14 Jun 2024 12:35:32 -0300
-Message-ID: <20240614153535.351689-6-andrealmeid@igalia.com>
+Subject: [PATCH v6 6/8] drm/nouveau: Enable async flips on the primary plane
+Date: Fri, 14 Jun 2024 12:35:33 -0300
+Message-ID: <20240614153535.351689-7-andrealmeid@igalia.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240614153535.351689-1-andrealmeid@igalia.com>
 References: <20240614153535.351689-1-andrealmeid@igalia.com>
@@ -99,23 +99,47 @@ This driver can perfom async flips on primary planes, so enable it.
 
 Signed-off-by: André Almeida <andrealmeid@igalia.com>
 ---
- drivers/gpu/drm/i915/display/i9xx_plane.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/nouveau/dispnv04/crtc.c | 4 ++++
+ drivers/gpu/drm/nouveau/dispnv50/wndw.c | 4 ++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/drivers/gpu/drm/i915/display/i9xx_plane.c b/drivers/gpu/drm/i915/display/i9xx_plane.c
-index 0279c8aabdd1..0142beef20dc 100644
---- a/drivers/gpu/drm/i915/display/i9xx_plane.c
-+++ b/drivers/gpu/drm/i915/display/i9xx_plane.c
-@@ -931,6 +931,9 @@ intel_primary_plane_create(struct drm_i915_private *dev_priv, enum pipe pipe)
+diff --git a/drivers/gpu/drm/nouveau/dispnv04/crtc.c b/drivers/gpu/drm/nouveau/dispnv04/crtc.c
+index 4310ad71870b..fd06d46d49ec 100644
+--- a/drivers/gpu/drm/nouveau/dispnv04/crtc.c
++++ b/drivers/gpu/drm/nouveau/dispnv04/crtc.c
+@@ -1285,6 +1285,7 @@ int
+ nv04_crtc_create(struct drm_device *dev, int crtc_num)
+ {
+ 	struct nouveau_display *disp = nouveau_display(dev);
++	struct nouveau_drm *drm = nouveau_drm(dev);
+ 	struct nouveau_crtc *nv_crtc;
+ 	struct drm_plane *primary;
+ 	int ret;
+@@ -1338,6 +1339,9 @@ nv04_crtc_create(struct drm_device *dev, int crtc_num)
+ 	if (ret)
+ 		return ret;
  
- 	intel_plane_helper_add(plane);
- 
-+	if (plane->async_flip)
-+		plane->base.async_flip = true;
++	if (drm->client.device.info.chipset >= 0x11)
++		primary->async_flip = true;
 +
- 	return plane;
+ 	return nvif_head_vblank_event_ctor(&nv_crtc->head, "kmsVbl", nv04_crtc_vblank_handler,
+ 					   false, &nv_crtc->vblank);
+ }
+diff --git a/drivers/gpu/drm/nouveau/dispnv50/wndw.c b/drivers/gpu/drm/nouveau/dispnv50/wndw.c
+index 7a2cceaee6e9..55db0fdf61e7 100644
+--- a/drivers/gpu/drm/nouveau/dispnv50/wndw.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/wndw.c
+@@ -763,6 +763,10 @@ nv50_wndw_new_(const struct nv50_wndw_func *func, struct drm_device *dev,
+ 			return ret;
+ 	}
  
- fail:
++	if (type == DRM_PLANE_TYPE_PRIMARY &&
++	    drm->client.device.info.chipset >= 0x11)
++		wndw->plane.async_flip = true;
++
+ 	return 0;
+ }
+ 
 -- 
 2.45.2
 
