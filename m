@@ -1,137 +1,250 @@
-Return-Path: <linux-kernel+bounces-214911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07A65908BE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:43:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D84908BEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A16B1F21E62
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:43:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 941B61F24CE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365D5199EBB;
-	Fri, 14 Jun 2024 12:42:23 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C9919AD63;
+	Fri, 14 Jun 2024 12:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UmpqYJaT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2DF19752F;
-	Fri, 14 Jun 2024 12:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC3E19752F;
+	Fri, 14 Jun 2024 12:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718368942; cv=none; b=NavCr84QE7SPG5aYyDwtL2+Nn9510u2+FFQPQaFV/xmzGK0YKiUEsIKNLPi65L1nYsNP/mhTKUv3WeNXn1jgO64yv4yVBDZoYwFwqOH6otH1GTtFRAoaf7P4gWl5PZGR1riEoNk9DJgLFJQO37hZkhzW1ittbfrgRtJOU40RjBM=
+	t=1718368954; cv=none; b=Y7SM3VXxhi58WVj6D09FVEDORYJNlBf7mWEJwzj+Rr55LeDWs5G/RxPPD+Q/7leyz+sL70URiZhTH5LB4FfFDNjbEiHkM/QZzULLDiKktYjf2w6Eru/apn9KSJxgspRcQEEdxwxBO1xTCNMpYPG1dK6hxdkDEsIq27Fu31WiCcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718368942; c=relaxed/simple;
-	bh=xX+0hJOY5wHV2sFTLz2I53WZq9oVZ069f2wFZkuYpXA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fPZYHYxFvmOY/nfJU3eHTZ2qbwCUedO2uJ8YKZ2IHhGxH0uoTT528TG/0kznpzymjGdJdhu6xtYmLmRdiFj3lHTUdStIuVG2M8r6z45ah0qhxWe3RzaxU3IQqh1WoXMdmQbTDW4bysp09SZMjP90rycFI503KUMIaVceA9AaHm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 8485f3962a4b11ef9305a59a3cc225df-20240614
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:4eaac0dc-8ad9-48ef-8e6e-a3f37f87e633,IP:20,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:5
-X-CID-INFO: VERSION:1.1.38,REQID:4eaac0dc-8ad9-48ef-8e6e-a3f37f87e633,IP:20,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:5
-X-CID-META: VersionHash:82c5f88,CLOUDID:36e2953cecde2afbdb3f01b0793d3341,BulkI
-	D:240614185458SXRYECY3,BulkQuantity:1,Recheck:0,SF:64|66|24|17|19|44|102,T
-	C:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,
-	COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSI,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
-X-UUID: 8485f3962a4b11ef9305a59a3cc225df-20240614
-Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
-	(envelope-from <luoxuanqiang@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 215960080; Fri, 14 Jun 2024 20:42:10 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 445C8B80758A;
-	Fri, 14 Jun 2024 20:42:10 +0800 (CST)
-X-ns-mid: postfix-666C3AA2-18629611
-Received: from [10.42.12.252] (unknown [10.42.12.252])
-	by node2.com.cn (NSMail) with ESMTPA id ADCC7B80758A;
-	Fri, 14 Jun 2024 12:42:08 +0000 (UTC)
-Message-ID: <7075bb26-ede9-0dc7-fe93-e18703e5ddaa@kylinos.cn>
-Date: Fri, 14 Jun 2024 20:42:07 +0800
+	s=arc-20240116; t=1718368954; c=relaxed/simple;
+	bh=WeBN0VZbib2KKwbwVhRG6ocqVa7whAD2cctLyv+c7Hc=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=cv47OdDiIUHP6lHb/Nnnqr+nIky6BC3JeIyTrHEuvEvwd3bNJiWApxiREDGnpeK7whfdFOlhXNfG7Tgaofxs3NhUtxa960VvQCO3Z7xBFRpimvEIDXalatQcH12ItX5FitQV6sqe5JO+ACTO8/kBadKjvdxNLGd9HzBCUtZDlYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UmpqYJaT; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718368952; x=1749904952;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=WeBN0VZbib2KKwbwVhRG6ocqVa7whAD2cctLyv+c7Hc=;
+  b=UmpqYJaTr5cOoJYvPZ3UdJXH5eVPBdD6Ayd/5R+P6qaeefPtAHcFG9eC
+   qVDQSuanMW2Nb5rV0bXTDfrv2IM78TqcWIi0ahypZBwgvVE7JTBgsyWIb
+   LXh4Odinrl5sOGFU4FScFcAmn7yJDcR2pwCEHQfFhU3+xp79nDARO6w/l
+   oNC6rqwt1cpo6dPFDWOtxJOe/+LfGb7qvzl9mu+2HEK3lAkov5cHzP/MJ
+   Fjw79hbU8TXTujGW50E24TWJz09gVgxU3m+Itn/st0Lqs0cPdnDI4fdmU
+   iBu1aRYxrrTShG11ssJVm0+DW3S/NaeY64K7M+MmOLULH/ulDP3u2H64n
+   g==;
+X-CSE-ConnectionGUID: dMykDZ6QTp+Mu598AFc8hQ==
+X-CSE-MsgGUID: vRWKSrXuSFuoS1XIqFk6fA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="25927167"
+X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
+   d="scan'208";a="25927167"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 05:42:31 -0700
+X-CSE-ConnectionGUID: N88e8vZ2TPiCe6N6J4VNAA==
+X-CSE-MsgGUID: 9fL4jmExReaq/x4XC/0lkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
+   d="scan'208";a="44861288"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.222])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 05:42:24 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 14 Jun 2024 15:42:20 +0300 (EEST)
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+cc: Bjorn Andersson <andersson@kernel.org>, 
+    Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+    Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+    Conor Dooley <conor+dt@kernel.org>, 
+    Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+    Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    Bjorn Helgaas <bhelgaas@google.com>, johan+linaro@kernel.org, 
+    bmasney@redhat.com, djakov@kernel.org, 
+    Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+    devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-pci@vger.kernel.org, vireshk@kernel.org, quic_vbadigan@quicinc.com, 
+    quic_skananth@quicinc.com, quic_nitegupt@quicinc.com, 
+    quic_parass@quicinc.com, krzysztof.kozlowski@linaro.org
+Subject: Re: [PATCH v14 4/4] PCI: qcom: Add OPP support to scale
+ performance
+In-Reply-To: <20240609-opp_support-v14-4-801cff862b5a@quicinc.com>
+Message-ID: <04e7e509-9911-d5b2-619c-e7b87ed0ef50@linux.intel.com>
+References: <20240609-opp_support-v14-0-801cff862b5a@quicinc.com> <20240609-opp_support-v14-4-801cff862b5a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH net v2] Fix race for duplicate reqsk on identical SYN
-Content-Language: en-US
-To: Florian Westphal <fw@strlen.de>
-Cc: edumazet@google.com, davem@davemloft.net, dsahern@kernel.org,
- kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- pabeni@redhat.com, kuniyu@amazon.com, dccp@vger.kernel.org
-References: <20240614102628.446642-1-luoxuanqiang@kylinos.cn>
- <20240614105441.GA24596@breakpoint.cc>
-From: luoxuanqiang <luoxuanqiang@kylinos.cn>
-In-Reply-To: <20240614105441.GA24596@breakpoint.cc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
+On Sun, 9 Jun 2024, Krishna chaitanya chundru wrote:
 
-=E5=9C=A8 2024/6/14 18:54, Florian Westphal =E5=86=99=E9=81=93:
-> luoxuanqiang <luoxuanqiang@kylinos.cn> wrote:
->>   include/net/inet_connection_sock.h |  2 +-
->>   net/dccp/ipv4.c                    |  2 +-
->>   net/dccp/ipv6.c                    |  2 +-
->>   net/ipv4/inet_connection_sock.c    | 15 +++++++++++----
->>   net/ipv4/tcp_input.c               | 11 ++++++++++-
->>   5 files changed, 24 insertions(+), 8 deletions(-)
->>
->> diff --git a/include/net/inet_connection_sock.h b/include/net/inet_con=
-nection_sock.h
->> index 7d6b1254c92d..8773d161d184 100644
->> --- a/include/net/inet_connection_sock.h
->> +++ b/include/net/inet_connection_sock.h
->> @@ -264,7 +264,7 @@ struct sock *inet_csk_reqsk_queue_add(struct sock =
-*sk,
->>   				      struct request_sock *req,
->>   				      struct sock *child);
->>   void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_s=
-ock *req,
->> -				   unsigned long timeout);
->> +				   unsigned long timeout, bool *found_dup_sk);
-> Nit:
->
-> I think it would be preferrable to change retval to bool rather than
-> bool *found_dup_sk extra arg, so one can do
->
-> bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock=
- *req,
->    				   unsigned long timeout)
-> {
-> 	if (!reqsk_queue_hash_req(req, timeout))
-> 		return false;
->
-> i.e. let retval indicate wheter reqsk was inserted or not.
->
-> Patch looks good to me otherwise.
+> QCOM Resource Power Manager-hardened (RPMh) is a hardware block which
+> maintains hardware state of a regulator by performing max aggregation of
+> the requests made by all of the clients.
+> 
+> PCIe controller can operate on different RPMh performance state of power
+> domain based on the speed of the link. And this performance state varies
+> from target to target, like some controllers support GEN3 in NOM (Nominal)
+> voltage corner, while some other supports GEN3 in low SVS (static voltage
+> scaling).
+> 
+> The SoC can be more power efficient if we scale the performance state
+> based on the aggregate PCIe link bandwidth.
+> 
+> Add Operating Performance Points (OPP) support to vote for RPMh state based
+> on the aggregate link bandwidth.
+> 
+> OPP can handle ICC bw voting also, so move ICC bw voting through OPP
+> framework if OPP entries are present.
+> 
+> As we are moving ICC voting as part of OPP, don't initialize ICC if OPP
+> is supported.
+> 
+> Before PCIe link is initialized vote for highest OPP in the OPP table,
+> so that we are voting for maximum voltage corner for the link to come up
+> in maximum supported speed.
+> 
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 93 +++++++++++++++++++++++++++-------
+>  1 file changed, 75 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index ff1d891c8b9a..296e2d5036f6 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/init.h>
+>  #include <linux/of.h>
+>  #include <linux/pci.h>
+> +#include <linux/pm_opp.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/phy/pcie.h>
+> @@ -1404,15 +1405,13 @@ static int qcom_pcie_icc_init(struct qcom_pcie *pcie)
+>  	return 0;
+>  }
+>  
+> -static void qcom_pcie_icc_update(struct qcom_pcie *pcie)
+> +static void qcom_pcie_icc_opp_update(struct qcom_pcie *pcie)
+>  {
+> +	int speed, width, ret, freq_mbps;
+>  	struct dw_pcie *pci = pcie->pci;
+> +	unsigned long freq_kbps;
+> +	struct dev_pm_opp *opp;
+>  	u32 offset, status;
+> -	int speed, width;
+> -	int ret;
+> -
+> -	if (!pcie->icc_mem)
+> -		return;
+>  
+>  	offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>  	status = readw(pci->dbi_base + offset + PCI_EXP_LNKSTA);
+> @@ -1424,10 +1423,26 @@ static void qcom_pcie_icc_update(struct qcom_pcie *pcie)
+>  	speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, status);
+>  	width = FIELD_GET(PCI_EXP_LNKSTA_NLW, status);
+>  
+> -	ret = icc_set_bw(pcie->icc_mem, 0, width * QCOM_PCIE_LINK_SPEED_TO_BW(speed));
+> -	if (ret) {
+> -		dev_err(pci->dev, "Failed to set bandwidth for PCIe-MEM interconnect path: %d\n",
+> -			ret);
+> +	if (pcie->icc_mem) {
+> +		ret = icc_set_bw(pcie->icc_mem, 0, width * QCOM_PCIE_LINK_SPEED_TO_BW(speed));
+> +		if (ret) {
+> +			dev_err(pci->dev, "Failed to set bandwidth for PCIe-MEM interconnect path: %d\n",
+> +				ret);
+> +		}
+> +	} else {
+> +		freq_mbps = pcie_link_speed_to_mbps(pcie_link_speed[speed]);
+> +		if (freq_mbps < 0)
+> +			return;
+> +
+> +		freq_kbps = freq_mbps * 1000;
 
-Thank you for your confirmation!
+Use define from units.h instead of literal.
 
-Regarding your suggestion, I had considered it before,
-but besides tcp_conn_request() calling inet_csk_reqsk_queue_hash_add(),
-dccp_v4(v6)_conn_request() also calls it. However, there is no
-consideration for a failed insertion within that function, so it's
-reasonable to let the caller decide whether to check for duplicate
-reqsk.
+> +		opp = dev_pm_opp_find_freq_exact(pci->dev, freq_kbps * width, true);
+> +		if (!IS_ERR(opp)) {
+> +			ret = dev_pm_opp_set_opp(pci->dev, opp);
+> +			if (ret)
+> +				dev_err(pci->dev, "Failed to set OPP for freq (%ld): %d\n",
+> +					freq_kbps * width, ret);
 
-The purpose of my modification this time is solely to confirm if a
-reqsk for the same connection has already been inserted into the ehash.
-If the insertion fails, inet_ehash_insert() will handle the
-non-insertion gracefully, and I only need to release the duplicate
-reqsk. I believe this change is minimal and effective.
+Make width unsigned and use %lu ?
 
-Those are my considerations.
+-- 
+ i.
 
+> +		}
+> +		dev_pm_opp_put(opp);
+>  	}
+>  }
+>  
+> @@ -1471,7 +1486,9 @@ static void qcom_pcie_init_debugfs(struct qcom_pcie *pcie)
+>  static int qcom_pcie_probe(struct platform_device *pdev)
+>  {
+>  	const struct qcom_pcie_cfg *pcie_cfg;
+> +	unsigned long max_freq = INT_MAX;
+
+Why isn't this ULONG_MAX ?
+
+You should also include <linux/limits.h>.
+
+>  	struct device *dev = &pdev->dev;
+> +	struct dev_pm_opp *opp;
+>  	struct qcom_pcie *pcie;
+>  	struct dw_pcie_rp *pp;
+>  	struct resource *res;
+> @@ -1539,9 +1556,42 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>  		goto err_pm_runtime_put;
+>  	}
+>  
+> -	ret = qcom_pcie_icc_init(pcie);
+> -	if (ret)
+> +	/* OPP table is optional */
+> +	ret = devm_pm_opp_of_add_table(dev);
+> +	if (ret && ret != -ENODEV) {
+> +		dev_err_probe(dev, ret, "Failed to add OPP table\n");
+>  		goto err_pm_runtime_put;
+> +	}
+> +
+> +	/*
+> +	 * Before PCIe link is initialized vote for highest OPP in the OPP table,
+> +	 * so that we are voting for maximum voltage corner for the link to come up
+> +	 * in maximum supported speed. At the end of the probe(), OPP will be
+> +	 * updated using qcom_pcie_icc_opp_update().
+> +	 */
+> +	if (!ret) {
+> +		opp = dev_pm_opp_find_freq_floor(dev, &max_freq);
+> +		if (IS_ERR(opp)) {
+> +			dev_err_probe(pci->dev, PTR_ERR(opp),
+> +				      "Unable to find max freq OPP\n");
+> +			goto err_pm_runtime_put;
+> +		} else {
+> +			ret = dev_pm_opp_set_opp(dev, opp);
+> +		}
+> +
+> +		dev_pm_opp_put(opp);
+> +		if (ret) {
+> +			dev_err_probe(pci->dev, ret,
+> +				      "Failed to set OPP for freq %ld\n",
+> +				      max_freq);
+
+It's unsigned so use %lu.
+
+-- 
+ i.
 
