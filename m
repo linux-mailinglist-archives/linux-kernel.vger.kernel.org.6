@@ -1,264 +1,129 @@
-Return-Path: <linux-kernel+bounces-214796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28064908A08
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:34:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32D6D908A13
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A33C11F23A0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:34:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C186828B91F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCD11957E1;
-	Fri, 14 Jun 2024 10:33:52 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AEA31946BB;
+	Fri, 14 Jun 2024 10:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="teEWlvVU"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588FE146582;
-	Fri, 14 Jun 2024 10:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0A4146D6A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718361231; cv=none; b=GuN5FT8pclcHsbCCrZlKUlcO/GxHwtoFdUCJfji3syf519XVdXjkRHSOfgzzI7Iqh+StdCiqwkK6AQG7rc+jouUKnk7v+DJQV1qBciIYwFTl35Elx/2udK0Ytfx85uyNeXuyciT8jfm3SLOIGh0hNXeANZ3eFajTTGjTEvLvUJo=
+	t=1718361327; cv=none; b=QMCwdSVeJWsn66hAKayTzMMEpJ/WOFgWY5AiElvoGF0Z8jKo9rOYCYbtisRWqpODCV2yltr8C0FyowhCL7TOuUxG+CAfuRtuy96QFc4APtJ+sM6R6xQaQB4vuIwU69Bs0918xe56WQwF4fjh28OS7xIkgwZnxfcRHBdogREcyzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718361231; c=relaxed/simple;
-	bh=1knMsh8HE/uLqdwfneid1eDPZ2hiMkkpaPCL9yNabis=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=btX4KUNpveNSBVqIt8iXnsW/6QDPuupkyXH2/bA+DE4cy3XQNHNAvqIxaKxBJkrRD1d50Cgt3it9WgAdA2mFoyuNqVpSS6is+O9M7YMF8evto3hvvqFwx6ApTATxW/PU7cZg+YOtFUyaPpw2OFZOKVVXp8UDeWwe8wsiyPz4/iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 91277dac2a3911ef9305a59a3cc225df-20240614
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:3923f807-859b-417f-a51c-044b38158a78,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:1
-X-CID-INFO: VERSION:1.1.38,REQID:3923f807-859b-417f-a51c-044b38158a78,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:1
-X-CID-META: VersionHash:82c5f88,CLOUDID:3408e41a52207bd45173a2324f63f1a2,BulkI
-	D:240614144740H35N4DT4,BulkQuantity:4,Recheck:0,SF:19|44|64|66|24|72|102,T
-	C:nil,Content:0,EDM:-3,IP:-2,URL:11|1,File:nil,RT:nil,Bulk:40,QS:nil,BEC:n
-	il,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_ULN
-X-UUID: 91277dac2a3911ef9305a59a3cc225df-20240614
-Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
-	(envelope-from <luoxuanqiang@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 534930339; Fri, 14 Jun 2024 18:33:40 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 88DBEB80758A;
-	Fri, 14 Jun 2024 18:33:40 +0800 (CST)
-X-ns-mid: postfix-666C1C84-46297613
-Received: from [10.42.12.252] (unknown [10.42.12.252])
-	by node2.com.cn (NSMail) with ESMTPA id D0EF4B80758A;
-	Fri, 14 Jun 2024 10:33:39 +0000 (UTC)
-Message-ID: <ae9635cb-d896-4f85-8541-96f7c21546d3@kylinos.cn>
-Date: Fri, 14 Jun 2024 18:33:39 +0800
+	s=arc-20240116; t=1718361327; c=relaxed/simple;
+	bh=zQTF8f1f4E4offgF6AppLKOcBdlWwKz4eWbWjGZGOSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i7jyaAMK3MhQrrEXieVINhhqh2/msLKVeYGdIWHE+pw7D1cvQAaMIs2OIg3HYJll6V2Q+mkii84O+889HPt6gkulTM0/XaxT+jc9Fe5GQ/4Zsi+8OL6/FC8+VGKQN3bVKNGrqK5rGYOjhurQh66MOvGIjFo584JByimLgoQ/56s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=teEWlvVU; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52b7e693b8aso2805138e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 03:35:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718361324; x=1718966124; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gi0zKyxT3hCd9nb/MhrUUh7myaChKF1I5PdBUyc2GXs=;
+        b=teEWlvVUTdSj7i/zCVjz2AkzvoRghq+p6jDie657GiaKHfA5G2ESEp0cwqYDYvgxjq
+         6Am5IXyt85BaN35MFgVOxdOTJoJ2VmZfWBFFeIPeL7YBZRm4aRuIKrpKS+aoYYCUUHdP
+         Y2vHvW5sETuPwhJIzrQusKaEceMr1WfGFkqhrfqv3miZJEumFmj0oKScjz1jsTa8+pEM
+         FFYlZgS3DQH5XzcsGK4vpnI50gbD+K6BQ42ml2+4B9oiZRfHLWmKD1IIKPJr/tjwHyyf
+         6ubFH+QzWNqNbU7jhqwc/AYEInvFylWg6Fjf/H+4nZGtc7GX+0ZgUoAuURMZuiIkcUwj
+         HtrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718361324; x=1718966124;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gi0zKyxT3hCd9nb/MhrUUh7myaChKF1I5PdBUyc2GXs=;
+        b=p+9knXJr2NMvVv8iyT4E4d6fmN8FBZQtn5pQZ+h0tAGPLWP71X+EG7truNq4V6KqHD
+         fQspgO5hTA3cJBt8gJG4+P4FyWg1DgzWpgFIM2+YeFVJ5Spsx2aCsOP2NCuHgFNVis+z
+         ShjQBC5PxGQyT54mY5fDHeqi+OWPpRCElHJkii7SdHpaq3FjNgQLkdbnw7Hzk3/sDVQE
+         6bZ1lw7K2bObImCx2WG27+Ar6QcGtjhbhB7K3J2Q/NIxL+E+epUDnwb1JUv/suVf2MeH
+         vkkjnXFbOxmRtuOYBeTbGxjQ8UQ8DdA079nR/2gBl8rVh74t5+C8EGmcxt9s4DwVk1c9
+         7p4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUV+i5P62gtmxoQXA0BcdVdjck/XMbM/EaiC7EcJnRVIRRXAC0LK13dIfeZhcdymWGBeaHl/LwfWSi29DmHistEZFC7OeY0o7rW5wVI
+X-Gm-Message-State: AOJu0YwTVugle43XakTIkZAN3EXUPMWolxoMvRJpp/vVKp+mAEZtEwdY
+	8dWisEAHiJv5U+6ADGnliwvq1trTIxQjYx/d1Z1oTRThZZgtjPiE5/03b45l5zU=
+X-Google-Smtp-Source: AGHT+IF21atwqR62ijL3XLbekBscy+usmTEKarUelgvxFuWKneWXxFSinPdGquI11kE+MEGG3syk0w==
+X-Received: by 2002:ac2:4649:0:b0:52c:94ad:9b26 with SMTP id 2adb3069b0e04-52ca0464493mr1605471e87.30.1718361324088;
+        Fri, 14 Jun 2024 03:35:24 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2872578sm468370e87.130.2024.06.14.03.35.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 03:35:23 -0700 (PDT)
+Date: Fri, 14 Jun 2024 13:35:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Guillaume La Roque <glaroque@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Vasily Khoruzhick <anarsoul@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Anson Huang <Anson.Huang@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Amit Kucheria <amitk@kernel.org>, 
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Heiko Stuebner <heiko@sntech.de>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Pascal Paillet <p.paillet@foss.st.com>, 
+	Keerthy <j-keerthy@ti.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, zhanghongchen <zhanghongchen@loongson.cn>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	imx@lists.linux.dev, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com, Florian Fainelli <f.fainelli@gmail.com>, 
+	linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 09/22] dt-bindings: thermal: qcom-spmi-adc-tm-hc:
+ reference thermal-sensor schema
+Message-ID: <mobms3s3tibh6wljulwr3okof2msvewed55ukecj3bkdfbgech@blk6udpuy5ov>
+References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org>
+ <20240614-dt-bindings-thermal-allof-v1-9-30b25a6ae24e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v1 1/1] Fix race for duplicate reqsk on identical SYN
-Content-Language: en-US
-To: Eric Dumazet <edumazet@google.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, fw@strlen.de, kuba@kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com
-References: <CANn89iJBOAg+KCZBvkUxdAfTS1jacBBcrW6M5AZQvr=UPFJ0dA@mail.gmail.com>
- <20240614060012.158026-1-luoxuanqiang@kylinos.cn>
- <666c066e.630a0220.98be4.aba1SMTPIN_ADDED_BROKEN@mx.google.com>
- <CANn89iJDcJmT6GfrPRvkt-BBfwHDhssDDMF=5JZMOCRrhxm5bQ@mail.gmail.com>
-From: luoxuanqiang <luoxuanqiang@kylinos.cn>
-In-Reply-To: <CANn89iJDcJmT6GfrPRvkt-BBfwHDhssDDMF=5JZMOCRrhxm5bQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240614-dt-bindings-thermal-allof-v1-9-30b25a6ae24e@linaro.org>
+
+On Fri, Jun 14, 2024 at 11:46:08AM GMT, Krzysztof Kozlowski wrote:
+> Device is a thermal sensor and it requires '#thermal-sensor-cells', so
+> reference the thermal-sensor.yaml to simplify it and bring the
+> common definition of '#thermal-sensor-cells' property.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../devicetree/bindings/thermal/qcom-spmi-adc-tm-hc.yaml          | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
-=E5=9C=A8 2024/6/14 17:41, Eric Dumazet =E5=86=99=E9=81=93:
-> On Fri, Jun 14, 2024 at 10:59=E2=80=AFAM luoxuanqiang <luoxuanqiang@kyl=
-inos.cn> wrote:
->> On Fri, Jun 14, 2024 at 8:01=E2=80=AFAM luoxuanqiang <luoxuanqiang@kyl=
-inos.cn> wrote:
->>>> When bonding is configured in BOND_MODE_BROADCAST mode, if two ident=
-ical SYN packets
->>>> are received at the same time and processed on different CPUs, it ca=
-n potentially
->>>> create the same sk (sock) but two different reqsk (request_sock) in =
-tcp_conn_request().
->>>>
->>>> These two different reqsk will respond with two SYNACK packets, and =
-since the generation
->>>> of the seq (ISN) incorporates a timestamp, the final two SYNACK pack=
-ets will have
->>>> different seq values.
->>>>
->>>> The consequence is that when the Client receives and replies with an=
- ACK to the earlier
->>>> SYNACK packet, we will reset(RST) it.
->>>>
->>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>>
->>>> This behavior is consistently reproducible in my local setup, which =
-comprises:
->>>>
->>>>                    | NETA1 ------ NETB1 |
->>>> PC_A --- bond --- |                    | --- bond --- PC_B
->>>>                    | NETA2 ------ NETB2 |
->>>>
->>>> - PC_A is the Server and has two network cards, NETA1 and NETA2. I h=
-ave bonded these two
->>>>    cards using BOND_MODE_BROADCAST mode and configured them to be ha=
-ndled by different CPU.
->>>>
->>>> - PC_B is the Client, also equipped with two network cards, NETB1 an=
-d NETB2, which are
->>>>    also bonded and configured in BOND_MODE_BROADCAST mode.
->>>>
->>>> If the client attempts a TCP connection to the server, it might enco=
-unter a failure.
->>>> Capturing packets from the server side reveals:
->>>>
->>>> 10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [S], s=
-eq 320236027,
->>>> 10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [S], s=
-eq 320236027,
->>>> localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [S.], =
-seq 2967855116,
->>>> localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [S.], =
-seq 2967855123, <=3D=3D
->>>> 10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [.], a=
-ck 4294967290,
->>>> 10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [.], a=
-ck 4294967290,
->>>> localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [R], s=
-eq 2967855117, <=3D=3D
->>>> localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [R], s=
-eq 2967855117,
->>>>
->>>> Two SYNACKs with different seq numbers are sent by localhost, result=
-ing in an anomaly.
->>>>
->>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>>
->>>> The attempted solution is as follows:
->>>> In the tcp_conn_request(), while inserting reqsk into the ehash tabl=
-e, it also checks
->>>> if an entry already exists. If found, it avoids reinsertion and rele=
-ases it.
->>>>
->>>> Simultaneously, In the reqsk_queue_hash_req(), the start of the req-=
->rsk_timer is
->>>> adjusted to be after successful insertion.
->>>>
->>>> Signed-off-by: luoxuanqiang <luoxuanqiang@kylinos.cn>
->>>> ---
->>>>   include/net/inet_connection_sock.h |  2 +-
->>>>   net/dccp/ipv4.c                    |  2 +-
->>>>   net/dccp/ipv6.c                    |  2 +-
->>>>   net/ipv4/inet_connection_sock.c    | 16 ++++++++++++----
->>>>   net/ipv4/tcp_input.c               | 11 ++++++++++-
->>>>   5 files changed, 25 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/include/net/inet_connection_sock.h b/include/net/inet_c=
-onnection_sock.h
->>>> index 7d6b1254c92d..8773d161d184 100644
->>>> --- a/include/net/inet_connection_sock.h
->>>> +++ b/include/net/inet_connection_sock.h
->>>> @@ -264,7 +264,7 @@ struct sock *inet_csk_reqsk_queue_add(struct soc=
-k *sk,
->>>>                                        struct request_sock *req,
->>>>                                        struct sock *child);
->>>>   void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request=
-_sock *req,
->>>> -                                  unsigned long timeout);
->>>> +                                  unsigned long timeout, bool *foun=
-d_dup_sk);
->>>>   struct sock *inet_csk_complete_hashdance(struct sock *sk, struct s=
-ock *child,
->>>>                                           struct request_sock *req,
->>>>                                           bool own_req);
->>>> diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
->>>> index ff41bd6f99c3..13aafdeb9205 100644
->>>> --- a/net/dccp/ipv4.c
->>>> +++ b/net/dccp/ipv4.c
->>>> @@ -657,7 +657,7 @@ int dccp_v4_conn_request(struct sock *sk, struct=
- sk_buff *skb)
->>>>          if (dccp_v4_send_response(sk, req))
->>>>                  goto drop_and_free;
->>>>
->>>> -       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
->>>> +       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT, NU=
-LL);
->>>>          reqsk_put(req);
->>>>          return 0;
->>>>
->>>> diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
->>>> index 85f4b8fdbe5e..493cdb12ce2b 100644
->>>> --- a/net/dccp/ipv6.c
->>>> +++ b/net/dccp/ipv6.c
->>>> @@ -400,7 +400,7 @@ static int dccp_v6_conn_request(struct sock *sk,=
- struct sk_buff *skb)
->>>>          if (dccp_v6_send_response(sk, req))
->>>>                  goto drop_and_free;
->>>>
->>>> -       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
->>>> +       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT, NU=
-LL);
->>>>          reqsk_put(req);
->>>>          return 0;
->>>>
->>>> diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connect=
-ion_sock.c
->>>> index d81f74ce0f02..d9394db98a5a 100644
->>>> --- a/net/ipv4/inet_connection_sock.c
->>>> +++ b/net/ipv4/inet_connection_sock.c
->>>> @@ -1123,12 +1123,17 @@ static void reqsk_timer_handler(struct timer=
-_list *t)
->>>>   }
->>>>
->>>>   static void reqsk_queue_hash_req(struct request_sock *req,
->>>> -                                unsigned long timeout)
->>>> +                                unsigned long timeout, bool *found_=
-dup_sk)
->>>>   {
->>>> +
->>>> +       inet_ehash_insert(req_to_sk(req), NULL, found_dup_sk);
->>>> +       if(found_dup_sk && *found_dup_sk)
->>>> +               return;
->>>> +
->>>> +       /* The timer needs to be setup after a successful insertion.=
- */
->>> I am pretty sure we had a prior attempt to fix this issue, and the fi=
-x
->>> was problematic.
->>>
->>> You are moving the inet_ehash_insert() before the mod_timer(), this
->>> will add races.
->> Could you kindly explain what "races" refer to here? Thank you!
->
-> Hmmm... maybe this is ok. Please respin your patch after fixing
-> checkpatch issues, and add a 'net' tag
->
-> ( See https://patchwork.kernel.org/project/netdevbpf/patch/202406140600=
-12.158026-1-luoxuanqiang@kylinos.cn/
-> for all warnings / fails)
->
-> Please CC Kuniyuki Iwashima <kuniyu@amazon.com> because I will be OOO
-> for about 4 days.
-
-The formatting error has been resolved and the V2 version has been sent. =
-Enjoy your holiday! Thank you!
-
+-- 
+With best wishes
+Dmitry
 
