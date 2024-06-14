@@ -1,59 +1,78 @@
-Return-Path: <linux-kernel+bounces-214805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0676908A44
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:40:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4363F908A51
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4D3128AB4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:40:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE98B1F2B9E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA921946DF;
-	Fri, 14 Jun 2024 10:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rcQ+Y7w4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A83F193091;
-	Fri, 14 Jun 2024 10:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3F0194AC2;
+	Fri, 14 Jun 2024 10:41:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8F31946A7;
+	Fri, 14 Jun 2024 10:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718361611; cv=none; b=Jf3HYy2icj9VcwGX/R95j2HpqdhwPjJUPNjIZ0q7x/EH9xc4dhw2O12bmzO2jWdvCP1J4LOuWTH0s/s/XzLHrVdwSAgsKLeGa38KqDCngreEHvngg5wyVdzCRyZZ8sNrhegL4sl/0eb/5CxgmYvzVH15KUJx6fRSd4Wq+Eg82j8=
+	t=1718361664; cv=none; b=Sx5l7sE2zfq1/c30R0zmXkpDbzgbGGkJN9C1M1VoLJlSnQXpkjoEXjm+f8TIc41WnBAhDzMSQ5ncdmmjxYWyNJIhqXHgPzXHR6zsZVPZII3MzxyWTqA9+Yrp1jsqJONyNgFo/JHpy9v0TOUg03LxRNgg2Njqgxv2VhZdoGAyEKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718361611; c=relaxed/simple;
-	bh=tyNmttcGD7mv/zaQQ53j3wvOf7uHsqj2O50VjgoUkpQ=;
+	s=arc-20240116; t=1718361664; c=relaxed/simple;
+	bh=AmUgqvZgbKj2NQIuvs3Dt8TOXhMLfPmQOpUxQzf8iYk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ruvUxFqlDWsjvqNYqwp8M/fn4x74Wpojz2eE0AAJ8uMK46uYB50VcAK3tgUxQxmDC189lqiLuyTHoEaMp7/fpiXNhVUWpSrMIj6tLhkkWHtq3c7YyEp/jgdtUCs9KLEjXOWyIftHGscKYQHP3XWVtOKNvOUpgrLp1B4oPWVE/BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rcQ+Y7w4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D7CBC4AF1D;
-	Fri, 14 Jun 2024 10:40:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718361610;
-	bh=tyNmttcGD7mv/zaQQ53j3wvOf7uHsqj2O50VjgoUkpQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rcQ+Y7w4qf9bivaz88L7K7po5QtSYgk2n2Eeh5TbOPy9BSqXeEDV6ZkNhudlxONrG
-	 Yxjox3pM355owrdGkdRIMih0dPLa1cMd4Wc2k2itoBlgSB8GXtX5/LNLUzYzAI8wkr
-	 yHd/bWXKsLzCd4aEbxK9YTrTzX6t9wYMgkrHKD2V2QDobfbW5zp9AZ+as9ol40L0tq
-	 lahkb3GV2g29hZZGBdnU7zrx2CmwzhsHs+SruSn96MGyOqjfijvHModslg5YJzMPVL
-	 en7Sh5/qd6sbnVlBV/fi9wnGG5rlA7GKtPpjjwiHAZZf1cgnFvXvWTfsenLrLKU5cV
-	 XDEetV5VdyphQ==
-Date: Fri, 14 Jun 2024 11:40:06 +0100
-From: Simon Horman <horms@kernel.org>
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/6] selftests: net: lib: remove ns from list
- after clean-up
-Message-ID: <20240614104006.GC8447@kernel.org>
-References: <20240607-upstream-net-next-20240607-selftests-mptcp-net-lib-v1-0-e36986faac94@kernel.org>
- <20240607-upstream-net-next-20240607-selftests-mptcp-net-lib-v1-2-e36986faac94@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Evrx9fNGU2jVeYxwLjvjMGFXC+H+z4aLP/LKiZRCe0CFw0uL1wELo5Zx8soyJQHg5iLj5qgP+iZZVBuGOvIhos/UwR12rWu/21tDb8u/q3gPn+dZaRZYaVyKwEPIP94yRxuKtTzjHnBCQOArvPUW6OdhdcHHzatf/KQCwbRrX34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1476B1480;
+	Fri, 14 Jun 2024 03:41:20 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B4E003F5A1;
+	Fri, 14 Jun 2024 03:40:49 -0700 (PDT)
+Date: Fri, 14 Jun 2024 11:40:47 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, llvm@lists.linux.dev,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>,
+	dakr@redhat.com
+Subject: Re: [RFC 2/2] rust: sync: Add atomic support
+Message-ID: <ZmweL12SL7Unlfpe@J2N7QTR9R3.cambridge.arm.com>
+References: <20240612223025.1158537-1-boqun.feng@gmail.com>
+ <20240612223025.1158537-3-boqun.feng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,30 +81,179 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240607-upstream-net-next-20240607-selftests-mptcp-net-lib-v1-2-e36986faac94@kernel.org>
+In-Reply-To: <20240612223025.1158537-3-boqun.feng@gmail.com>
 
-On Fri, Jun 07, 2024 at 06:31:03PM +0200, Matthieu Baerts (NGI0) wrote:
-> Instead of only appending items to the list, removing them when the
-> netns has been deleted.
+On Wed, Jun 12, 2024 at 03:30:25PM -0700, Boqun Feng wrote:
+> Provide two atomic types: AtomicI32 and AtomicI64 with the existing
+> implemenation of C atomics. These atomics have the same semantics of the
+> corresponding LKMM C atomics, and using one memory (ordering) model
+> certainly reduces the reasoning difficulty and potential bugs from the
+> interaction of two different memory models.
 > 
-> By doing that, we can make sure 'cleanup_all_ns()' is not trying to
-> remove already deleted netns.
+> Also bump my role to the maintainer of ATOMIC INFRASTRUCTURE to reflect
+> my responsiblity on these Rust APIs.
 > 
-> Reviewed-by: Geliang Tang <geliang@kernel.org>
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> Note that `Atomic*::new()`s are implemented vi open coding on struct
+> atomic*_t. This allows `new()` being a `const` function, so that it can
+> be used in constant contexts.
+> 
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 
-Hi Matthieu,
+I have a few minor comments below.
 
-I like this, and I am happy to see that it has been accepted.
+> ---
+>  MAINTAINERS                       |    4 +-
+>  arch/arm64/kernel/cpufeature.c    |    2 +
+>  rust/kernel/sync.rs               |    1 +
+>  rust/kernel/sync/atomic.rs        |   63 ++
+>  rust/kernel/sync/atomic/impl.rs   | 1375 +++++++++++++++++++++++++++++
+>  scripts/atomic/gen-atomics.sh     |    1 +
+>  scripts/atomic/gen-rust-atomic.sh |  136 +++
+>  7 files changed, 1581 insertions(+), 1 deletion(-)
+>  create mode 100644 rust/kernel/sync/atomic.rs
+>  create mode 100644 rust/kernel/sync/atomic/impl.rs
+>  create mode 100755 scripts/atomic/gen-rust-atomic.sh
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d6c90161c7bf..a8528d27b260 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3458,7 +3458,7 @@ F:	drivers/input/touchscreen/atmel_mxt_ts.c
+>  ATOMIC INFRASTRUCTURE
+>  M:	Will Deacon <will@kernel.org>
+>  M:	Peter Zijlstra <peterz@infradead.org>
+> -R:	Boqun Feng <boqun.feng@gmail.com>
+> +M:	Boqun Feng <boqun.feng@gmail.com>
+>  R:	Mark Rutland <mark.rutland@arm.com>
+>  L:	linux-kernel@vger.kernel.org
+>  S:	Maintained
+> @@ -3467,6 +3467,8 @@ F:	arch/*/include/asm/atomic*.h
+>  F:	include/*/atomic*.h
+>  F:	include/linux/refcount.h
+>  F:	scripts/atomic/
+> +F:	rust/kernel/sync/atomic.rs
+> +F:	rust/kernel/sync/atomic/
+>  
+>  ATTO EXPRESSSAS SAS/SATA RAID SCSI DRIVER
+>  M:	Bradley Grove <linuxdrivers@attotech.com>
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 48e7029f1054..99e6e2b2867f 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -1601,6 +1601,8 @@ static bool
+>  has_cpuid_feature(const struct arm64_cpu_capabilities *entry, int scope)
+>  {
+>  	u64 val = read_scoped_sysreg(entry, scope);
+> +	if (entry->capability == ARM64_HAS_LSE_ATOMICS)
+> +		return false;
+>  	return feature_matches(val, entry);
+>  }
 
-I do wonder if we can go a step further and use an associative array for
-ns_list (maybe renamed).  I think this would reduce remove_ns_list to
-something like:
+As per other replies, this'll obviously need to go.
 
-	unset ns_list["$item"]
+> diff --git a/rust/kernel/sync/atomic.rs b/rust/kernel/sync/atomic.rs
+> new file mode 100644
+> index 000000000000..b0f852cf1741
+> --- /dev/null
+> +++ b/rust/kernel/sync/atomic.rs
+> @@ -0,0 +1,63 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Atomic primitives.
+> +//!
+> +//! These primitives have the same semantics as their C counterparts, for precise definitions of
+> +//! the semantics, please refer to tools/memory-model. Note that Linux Kernel Memory (Consistency)
+> +//! Model is the only model for Rust development in kernel right now, please avoid to use Rust's
+> +//! own atomics.
+> +
+> +use crate::bindings::{atomic64_t, atomic_t};
 
-OTOH, perhaps this breaks with older versions of bash that we still
-care about.
+As with the last patch, why no atomic_long_t?
 
-...
+[...]
+
+> +#gen_proto_order_variant(meta, pfx, name, sfx, order, atomic, ty, int, raw, arg...)
+> +gen_proto_order_variant()
+> +{
+> +	local meta="$1"; shift
+> +	local pfx="$1"; shift
+> +	local name="$1"; shift
+> +	local sfx="$1"; shift
+> +	local order="$1"; shift
+> +	local atomic="$1"; shift
+> +	local ty="$1"; shift
+> +	local int="$1"; shift
+> +	local raw="$1"; shift
+> +
+> +	local fn_name="${raw}${pfx}${name}${sfx}${order}"
+> +	local atomicname="${raw}${atomic}_${pfx}${name}${sfx}${order}"
+> +
+> +	local ret="$(gen_ret_type "${meta}" "${int}")"
+> +	local params="$(gen_params "${int}" $@)"
+> +	local args="$(gen_args "$@")"
+> +	local retstmt="$(gen_ret_stmt "${meta}")"
+> +
+> +cat <<EOF
+> +    /// See \`${atomicname}\`.
+> +    #[inline(always)]
+> +    pub fn ${fn_name}(&self${params}) ${ret}{
+> +        // SAFETY:\`self.0.get()\` is a valid pointer.
+> +        unsafe {
+> +            ${retstmt}${atomicname}(${args});
+> +        }
+> +    }
+> +EOF
+> +}
+
+AFAICT the 'ty' argument (AtomicI32/AtomicI64) isn't used and can be
+removed.
+
+Likewise for 'raw'.
+
+> +
+> +cat << EOF
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Generated by $0
+> +//! DO NOT MODIFY THIS FILE DIRECTLY
+> +
+> +use super::*;
+> +use crate::bindings::*;
+> +
+> +impl AtomicI32 {
+> +EOF
+> +
+> +grep '^[a-z]' "$1" | while read name meta args; do
+> +	gen_proto "${meta}" "${name}" "atomic" "AtomicI32" "i32" "" ${args}
+
+With 'ty' and 'raw' gone, this'd be:
+
+	gen_proto "${meta}" "${name}" "atomic" "i32" ${args}
+
+> +done
+> +
+> +cat << EOF
+> +}
+> +
+> +impl AtomicI64 {
+> +EOF
+> +
+> +grep '^[a-z]' "$1" | while read name meta args; do
+> +	gen_proto "${meta}" "${name}" "atomic64" "AtomicI64" "i64" "" ${args}
+
+With 'ty' and 'raw' gone, this'd be:
+
+	gen_proto "${meta}" "${name}" "atomic64" "i64" ${args}
+
+Mark.
+
+> +done
+> +
+> +cat << EOF
+> +}
+> +
+> +EOF
+> -- 
+> 2.45.2
+> 
 
