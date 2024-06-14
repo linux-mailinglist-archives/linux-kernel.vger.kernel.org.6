@@ -1,134 +1,162 @@
-Return-Path: <linux-kernel+bounces-214753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A5E4908990
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:19:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C34B908994
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C23811F2A779
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:19:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CC17B28AB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2967B1946D9;
-	Fri, 14 Jun 2024 10:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AAE1953B4;
+	Fri, 14 Jun 2024 10:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEbBKomz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KeGAn1nU"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E261946CF;
-	Fri, 14 Jun 2024 10:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FAC194A4B
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718360299; cv=none; b=rwxZq/4iSxIaj5ID3Qbs9V4TisfwFbP9y+MbGcafZFQCKOOjyVG8Ni3UNVczh0VIluduGehaQASp8sPb1RLltNzLWBZL9yrjGqxViGrh5O1XSvYNehFjKO5rU1B8JhGyCov5VO7C7YWq2hR85aVy+UklXRUbK1IFT7OGRtZmT0M=
+	t=1718360309; cv=none; b=VuVA2h2PdcPcU6YYf0wISfvFDGVYEZ58aAJl3I51LKJFBePz2ErC0epW9h8Jk+ei6x6e0vxIIzvkBou7G+OFeqFFi8bQxbmpUTaN1kpWXYJtb9kY+Nxz2Lt5vHh4HfAk2HAgUlpA3QmAH9pLdncMqbv570cUyYsuwsKHBBGb1lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718360299; c=relaxed/simple;
-	bh=h8LI/aLo2YCQ6LHsew5aV45Yh/X6RYEb897K6QSHCcA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KjlGvp3r4vgPGtODuIXNuuR2VqyQRlp1hDxEGLu2jLVbOvBF1b3n6evmgKiNegy3XQ+B9DzLAmntOxrBXvxmsBvlwT1IVpoy5Fc41wr9QF2fCPT4u9btKMRxhQ1eeYyRQsaM6M1INPFJeuZlZMv0AlZ80izDFwja+EQTPipRF4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEbBKomz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AFC8C4AF1D;
-	Fri, 14 Jun 2024 10:18:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718360299;
-	bh=h8LI/aLo2YCQ6LHsew5aV45Yh/X6RYEb897K6QSHCcA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UEbBKomzV/KNMhnpo8CPfXQvLOiAnYpmsRSU+Noine82IcDR0hlgvkaKIbbgb+14z
-	 xjJSdxjyRNRJIGfyZ6nS+9FuoJTaWGFDugVjfOa1LaszunyM5QVvakBvbybI+bLrEu
-	 IezpSaCMIQg+Y+3uQDlZQwqizEHfR/KsgmNgdhqR4YBL2fTsnJ9RL+NoFU2MbecL4F
-	 +ziGgLNhu3HMsx4rD3p6Dwg8qHNOYmn0VBnkq0kAtms8a4N0QPWV7QvsFhyPyWhAd9
-	 B9MXHLa+teQhQ2ACerLRHy2yNiV5j03/voL9uXcXmpYAQwKRRYIVD6EpkDR2h42Jow
-	 mPEMcIgaHT2ig==
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3d1b5f32065so78384b6e.2;
-        Fri, 14 Jun 2024 03:18:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVmfWtRrrOLwLGl7syMmB8a+GYXuVlOrPAUmmdOK10KMvV23Uym+gI/ia+4MUYgyAlf2NZ6m4Y340x2knilNEUj2eeYQWsSxtfDecJv5rDEaJuMUI3HVz55qi3AFfy3Gb1u96INU/A=
-X-Gm-Message-State: AOJu0Yxx/p+YwtpIu88isjJFxFeoISp0OIsaU5SUmHQAc8tlDz+Av7Sd
-	isIPC83rDWQKJX/Qcrc8/Hs9wi3wuxvL0OtGMGVWQj1x3UUoLD6BYDjQrcCbKAk/FAULo5yyPlh
-	YMwCwwoq/fhWuI7mD7khXkQmQj/U=
-X-Google-Smtp-Source: AGHT+IEHJ41s4vZC8w/qfjS4THnTprUyL/hz49O9TrABifs4wGJv/11tj8VA3mnTAyto3HebuvupmbVoS5vb7IMWMY4=
-X-Received: by 2002:a4a:de45:0:b0:5ba:ca86:a025 with SMTP id
- 006d021491bc7-5bdad9f3f2dmr2229187eaf.0.1718360298223; Fri, 14 Jun 2024
- 03:18:18 -0700 (PDT)
+	s=arc-20240116; t=1718360309; c=relaxed/simple;
+	bh=e/vS57MZRDtlro2SWvpS0gu0uEi42A6fSDn9ZPw9edg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XCsatUPdH3ejPtZ08lpi/t/3fwCBKyXEODmwZzkEPUvBcwCemjWwZKOxSHi+ysqtI4DXsluAAPvw3tqtyJxE+ERDDr4dRg49MMEVaQh6kNt/ly2agZOhHhuu5BLJBZ5LYUZuRl5GgNE75whNiyn/dgV3ilPFpMbT5ZcqEeATyjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KeGAn1nU; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e724bc46c4so21341141fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 03:18:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718360306; x=1718965106; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JYj+vYlav0P5TSwPVqUtIz1j4klkYA9AbEcUeqORsg0=;
+        b=KeGAn1nUQF6+CVbZjIK4zqzqB5zouZA3VWCcH0K7MdjX93hAE1t0fYh2vpIxeqlGi8
+         rv/Gr1ZLhEnd4onknKztBsJoGvrqI3uUn4HjtMmWnV40MMLJKw3ip9H/M1OJBY6rrp04
+         0jB2H17cvRxm0Hynq0SvHguxlRXnzeHcGqHygzDeWzwlF1tHny5j7JR3bOqOfAjDTGT0
+         5E3RsK6mdbpKgyhvjcMEunLE4KZtqzdgLjswcx0u149zhwBnFDE5eoDXe3Nz09Ln/6tU
+         BxH1R8Hy3dPz2WughcJIOqy21DbD04FOH89NMq3qK98me/hEIB4GthDJ3vCi3ts3X+0G
+         k9wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718360306; x=1718965106;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JYj+vYlav0P5TSwPVqUtIz1j4klkYA9AbEcUeqORsg0=;
+        b=QZGy45/bKmkF5DkaKx3fMHbaja8Fv0zq1QVKQEGx1ZqhSS9U5pZRRrS/yntEWNfafi
+         bNx8//Q9rqN9iD+rgTVIZqnfzWcwuYHOOxSvOKieQ58ElyambHeg7OzK9+4QPUO1vgrR
+         vTn0Bosu3rhOtO88VZOx+Vdr6hHKtD5nJB+6LFhSrXt0Rl3VRaG5yQZtdugYITQuSTlh
+         lzF/+w28oGWdwmjk0h8GqdSrc5anNQd4Q//up1H8NoSkMreQylw3jbYhC71f2i+gVM/3
+         L3I714Jeh5/Hw6pA23BBA6xgOOofclCDWy6t3Y4YO8P/yyVE4E45aEwalTOz7WW8/iSU
+         vfMA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0qAnOtYfPTPsu5CDTtfWM0eJVmq+B+yBPzO2RK2Lh4BUwcxdHToDimhtJxecNSFib+bxPmC4zbOJPPMArhb2VuDt07C9rojpCl4AI
+X-Gm-Message-State: AOJu0YxRF2bxdTBwtdVrtbFYGdi2L6O3t+Xt6rqmpYZeUKHLrAj0axJD
+	P5ozdGvD3JfYKAB4UDWT39IGrRbjkyKxYj1t5jdsDZQW9sR8D8gKxBpwTlFwM74=
+X-Google-Smtp-Source: AGHT+IH4H3K8j6QfiGJlv35cF2UfdUw7daGofG712v461wn4hJojqEJ1PEJFBhgsfwpiXRogE71/Vw==
+X-Received: by 2002:a2e:878a:0:b0:2ec:48c:8ae2 with SMTP id 38308e7fff4ca-2ec0e5d0b88mr14261061fa.23.1718360306362;
+        Fri, 14 Jun 2024 03:18:26 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05bf44c4sm5000241fa.9.2024.06.14.03.18.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 03:18:25 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v3 0/5] phy: qcom: qmp-pcie: drop second clock-output-names
+ entry
+Date: Fri, 14 Jun 2024 13:18:23 +0300
+Message-Id: <20240614-fix-pcie-phy-compat-v3-0-730d1811acf4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1051df4c-067f-455e-8c7f-9dc47dc8ed00@yahoo.de>
- <435867b5-029b-419f-bb7f-2d4902c62556@leemhuis.info> <a97f9f4d-17f1-44cf-a0f4-634fd38aba2a@yahoo.de>
- <CAJZ5v0jwvq6W0u7Zx4GzQxJOnrF4KvN1RHtqqDcaMvN6yp0hDg@mail.gmail.com>
- <312649b1-eea9-4346-af93-76a821e88eb7@yahoo.de> <CAJZ5v0jfvRWK0M3Xf=36e74cVQ9rN5T1WdZZVnuk1XmZ=xu==g@mail.gmail.com>
- <78549853-1763-40cf-9974-3fc737fad093@yahoo.de> <CAJZ5v0h5pQDaA-bEOmcz_TpE87kFqWLFLJC+=OLjg5ZtF3hxpQ@mail.gmail.com>
- <91d94429-fc7e-4828-914d-1a251ee1ba99@yahoo.de> <CAJZ5v0gPZHDfuK1FRdTAG8Eqjf0NWUQdf-_GCWsWf6dCBE=1dg@mail.gmail.com>
- <543787c3-db5b-4f63-b5e0-df508300db73@yahoo.de> <CAJZ5v0h7jDw3yX689nZdB+YeJbCk0vFoUgVb4Yi0cqDxjL5chQ@mail.gmail.com>
- <40ec1e53-2bc8-48aa-9909-fac9072adb57@yahoo.de> <CAJZ5v0jtjXfvr4GXukjyO9XsEO6K2Nfux3otpFPP4vWS_9_qEQ@mail.gmail.com>
- <CAJZ5v0hcX0JAMBA+EVZURDH1BTQ2zL-W_4BjSx0a=1oRaR90ug@mail.gmail.com>
- <CAJZ5v0jGGV=i8Swu=c8f9bwo--AckUfqZrt0zeqDWKBijG+Z3A@mail.gmail.com> <bcac5925-fe2b-4570-83b6-182f4a301721@yahoo.de>
-In-Reply-To: <bcac5925-fe2b-4570-83b6-182f4a301721@yahoo.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 14 Jun 2024 12:18:06 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h7WnfQxhobA6B7S3Tvo-AnKTR9kP+5aexa6rixqpyHJg@mail.gmail.com>
-Message-ID: <CAJZ5v0h7WnfQxhobA6B7S3Tvo-AnKTR9kP+5aexa6rixqpyHJg@mail.gmail.com>
-Subject: Re: Regression, thermal: core: battery reading wrong after wake from
- S3 [Was: Bug Report according to thermal_core.c]
-To: "fhortner@yahoo.de" <fhortner@yahoo.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO8YbGYC/33NzQqDMAzA8VeRnpfRL0V32nuMHVqNGthsaaVMx
+ Hdf9TIGY8d/SH5ZWcRAGNmlWFnARJHclEOdCtaOZhoQqMvNJJeal1JATy/wLSH4cYHWPb2ZwfK
+ +02h1ZTvD8qUPmNcO9XbPPVKcXViOJ0ns0/9eEsChNkaL0jZS8fr6oMkEd3ZhYDuY5AephP6Ny
+ Iw0Da8rhaZUtv9Ctm17A/nORbv8AAAA
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ devicetree@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2468;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=e/vS57MZRDtlro2SWvpS0gu0uEi42A6fSDn9ZPw9edg=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmbBjwQrd5js8BXipsqsF5cpu5SbQHYqeKPfwwD
+ JdYmlmoThyJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZmwY8AAKCRCLPIo+Aiko
+ 1agVB/9WS3uiu3HZIel16w7kPNn4LdNLQX7XqhyLY9sHu6oe1PD1PpxqXReCWlgn3W3g9Kcxtpz
+ H9+ur40bZ2unxnckJ1e3Go1juItrgf9O4RrIgGblqqeaxdBfTcwSItG8XQaYothSKlb9IcYNiKA
+ e5wCnDgFfa+pqqsLs8GCiJkjM87kb6KQPh0JHRaTUiS4ZcAvPvMO8sITHlRqU+hNkQynETq/uiP
+ SGot13W3gfp9bU95srZco4aCiYPufBAGNKktkk928d1nNVLbdv5HRdboy+oIM2sAxhfk/uwufAI
+ sOClMbo24MaYPpyVH8ifUcs7lBJ5lHN/uHrGz0zic1Ps1r52
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Thu, Jun 13, 2024 at 10:04=E2=80=AFPM fhortner@yahoo.de <fhortner@yahoo.=
-de> wrote:
->
-> Am 13.06.24 um 17:14 schrieb Rafael J. Wysocki:
->
-> Let's see if the ACPI thermal zone is the real culprit.
->
-> The attached patch only adds the delay for thermal zone 0 which is the
-> ACPI thermal zone.  It also prints the ID and type for all of the
-> resuming thermal zones.
->
-> Please test it (removing all of the test changes/patches tried so far)
-> and let me know what happens to the battery readings.
->
-> Patch
->
-> thermal-delay-resume.patch
->
-> does not work. Output according to dmesg.txt
->
-> Attached is a slightly modified version of the last patch I sent.
-> Please test it and let me know if it addresses the problem you are
-> seeing.
->
-> If it helps, I think we are done with this at least for now.
->
-> patch thermal-core-resume-prio.patch with .priority =3D -1 does work
->
-> One more thing to try is the attached patch (independent of the
-> previous one) to lower the priority of the thermal PM notifier to make
-> it run always after the ACPI battery one.
->
-> Please test this one too and let me know if it works for you.
->
-> patch thermal-core-resume-prio.patch
->
-> with .priority =3D INT_MIN does also work.
->
-> If you need any further tests, please don't hesitate to tell me so.
+While testing the linux-next on SM8450-HDK I noticed that one of the
+PCIe hosts stays in the deferred state, because the corresponding PHY
+isn't probed. A quick debug pointed out that while the patches that
+added support for the PIPE AUX clock to the PHY driver have landed,
+corresponding DT changes were not picked up for 6.10. Restore the
+compatibility with the existing DT files by dropping the second entry in
+the clock-output-names array and always generating the corresponding
+name on the fly.
 
-No, thank you, I think you've done enough and it is appreciated.
+To: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-phy@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-I don't see any particular drawbacks of this approach and investing
-more time in trying to get to the bottom of the issue is probably not
-worth it.
+Changes in v3:
+- Also added DT bits to remove DT warning
+- Link to v2: https://lore.kernel.org/r/20240614-fix-pcie-phy-compat-v2-0-990863ea53bf@linaro.org
 
-I'm going to submit the last patch as the proposed solution.
+Changes in v2:
+- Fixed generated AUX clock name (Neil)
+- Link to v1: https://lore.kernel.org/r/20240521-fix-pcie-phy-compat-v1-0-8aa415b92308@linaro.org
 
-> Thank you for your help!
+---
+Dmitry Baryshkov (5):
+      phy: qcom: qmp-pcie: restore compatibility with existing DTs
+      dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: drop second output clock name
+      arm64: dts: qcom: sm8450: drop second clock name from clock-output-names
+      arm64: dts: qcom: sm8550: drop second clock name from clock-output-names
+      arm64: dts: qcom: sm8650: drop second clock name from clock-output-names
 
-No problem and thank you!
+ .../devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml      | 7 +------
+ arch/arm64/boot/dts/qcom/sm8450.dtsi                             | 2 +-
+ arch/arm64/boot/dts/qcom/sm8550.dtsi                             | 2 +-
+ arch/arm64/boot/dts/qcom/sm8650.dtsi                             | 2 +-
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie.c                         | 9 +++------
+ 5 files changed, 7 insertions(+), 15 deletions(-)
+---
+base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
+change-id: 20240521-fix-pcie-phy-compat-b0fd4eb46bda
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
