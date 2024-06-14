@@ -1,142 +1,142 @@
-Return-Path: <linux-kernel+bounces-215547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F630909464
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 01:02:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C41C090949A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 01:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ABEC1C21544
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 23:02:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 471951F23C95
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 23:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95073186E33;
-	Fri, 14 Jun 2024 23:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1F11AB537;
+	Fri, 14 Jun 2024 23:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Z4B9lWOg"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2g5MBss+"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E82481D0;
-	Fri, 14 Jun 2024 23:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3618519049A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 23:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718406135; cv=none; b=c6uKz5eD2Plm89j1ThBXETuyu5zRLdmNUJKwTNYoslQygBQAzwWolwuTGZSlbLq7SPKkGUsgncK+qjMAMaLYCE3HzTZosYrBoRsJGPYD8GXyQHuiaLMz0gaFPHYE9WjMpSQgGyOZxhhp+LJ1hOnwqxjD7PSUUSlBpzP3pCeo4bg=
+	t=1718406328; cv=none; b=EOQmkphqzeNIHT+ptHzJOrQVGaVMjtk2Vb+DBDse6+Covk3npNPvSej9cV5xKP8gPXuU9tT6/QWU0MBq8bpjK+nryd6/zTGHu6kBlp4VRgfo7ce7MebSae5XDNsD4dbp8pWf3LUdV+cWcygqTOvolZpzkLsuWhbVgDyKxOXkqkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718406135; c=relaxed/simple;
-	bh=hZeBpYPqthNjGLmgXQlqe9y50Nl0NheaVfpuNnURqkA=;
-	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=ouiRhvRYiiWPqqCTxq76msFa3YhuMK5PXaqa44CsXXvULgwKCUCxLD1RRR4oXtCi2T0HpXBE0ePSKhqBN9KOf+fLd6+j+zw8WaQ42v6/5o6rc7kP5AOF3j4LllMYtL78ps/qYeN3P+WPFlSZFzCckThlGXumkY09yIjThmTZjzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Z4B9lWOg; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45EMokmK013359;
-	Fri, 14 Jun 2024 23:02:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:content-type:mime-version; s=pp1;
-	 bh=MbVQgVNhZ9lQsiVH5Q356oJewXvGRo/rfiDLIfEXhiI=; b=Z4B9lWOg6eE0
-	xTMalYsaEBhPZeNR+CJOlH1h91EAgROfyDqB7HpW+8fr1UrszJfvXg+Y4txwFGg5
-	xXsGWWUUvRl5kKbTa2uGiUGHfjVM0mPC0lMpdIui0KYXrg2W0WHEWNJtywlKc4Dx
-	Bf6/tY8psAacAxyn2dTw40aLZYzG6hM8DGYPAyah+0NQhLkwf9Rqc1q2ycG8zJwR
-	Q9we2BpKb7OIupBtqzY7hQUMAt0vIVPY43R5pAO7o35rIgkLCwG3d8JO3jYWAe9G
-	R39c3nKpmLV2ILIeNUKI/dhLhl1Tg8VsTrs/r1lHJY4f7VBP/xcNBZ9OnvVTMorW
-	DwlWqoEgkA==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yrxpcr1kj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Jun 2024 23:02:10 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45ELAWPc027243;
-	Fri, 14 Jun 2024 23:02:09 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yn211nnf5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Jun 2024 23:02:09 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45EN23Mn55181750
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Jun 2024 23:02:05 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9450A2004F;
-	Fri, 14 Jun 2024 23:02:03 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 36ECC2004E;
-	Fri, 14 Jun 2024 23:02:03 +0000 (GMT)
-Received: from localhost (unknown [9.171.18.71])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 14 Jun 2024 23:02:03 +0000 (GMT)
-Date: Sat, 15 Jun 2024 01:02:01 +0200
-From: Vasily Gorbik <gor@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Heiko Carstens <hca@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: [GIT PULL] s390 updates for 6.10-rc4
-Message-ID: <your-ad-here.call-01718406121-ext-7930@work.hours>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: SZM1ukOTbvgyoNgLWqfQ3NnLEl-D6kke
-X-Proofpoint-ORIG-GUID: SZM1ukOTbvgyoNgLWqfQ3NnLEl-D6kke
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1718406328; c=relaxed/simple;
+	bh=JON1NdPgYPoWrnE0rBETijaw+SbmqmxVotV1RuOXvoc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mquHc5cPak5ZAg3Txyp0HDiMoFD2+gjK7i9+dNpr19gSIrxifwjuBwhjChEjIjBvLUNPq5CPkQLw7rpnc3BDA7eZeujnXDZvgsG1sNm8YAyK9AAHZH0RhQCJ4T+guyQvtvS4OetLcuOoQY6wano4MJG3daFjf8rm4Er2cuEXWRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2g5MBss+; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dfe25446483so3888586276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 16:05:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718406308; x=1719011108; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Yn2hFXhX79WK1EuGevpcsoabHDFdbQfZxb2v8U67kDg=;
+        b=2g5MBss+jYosVE+e4oF7hJvrL97VmnkItlxRQJ45oN24nTZ+v3HPEKyJOfFFYr4eoZ
+         QvFxsZOGfpPauTswkh+KM/ryd2wYNW87P0fQZNCBT9unPqhSA4WvDWMNBHOJIz6S7k4V
+         QmV6uFMjIEjcBxeSySj4E46SJHFa2TF30F9HLm9pdZ55SeDcivbNDhuJhMwJw01Mm3IH
+         52ZRJ4GzC+OHGDXRYvYCGfNByZcUiYpLpJyWgtbMfQgKcMEQ4QJpvpyvVeXsl1bU839I
+         d6jcuhyGz9zUWf5vrcNS+0/FKfnukFtgary7QxNyQqlBrxT64r0pjnxFuHkQkDLjMoxh
+         91WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718406308; x=1719011108;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Yn2hFXhX79WK1EuGevpcsoabHDFdbQfZxb2v8U67kDg=;
+        b=LW50nH9dmYs68abHrltWmhcckMRBLl6/r77Z4G+j01tIuXquYXOiQ2x67fjA8pQ9CG
+         EDKV10aT3m8ampp12XMQD3ZlCqcvFC3yEP5hnPxdbQ0iXv3vO1TvWaZh+2zauYjB8pCO
+         3R0ll3GnB887oZc8vDfVsI0yPPsWn4dd/o5oaLxpJK/QCvyIyGrDFEvJP4LfJIcHwngQ
+         l5humFnx1heUfQWXT7egoi4/iYnmd4NBDVtyJVfBlCBaUl7t6V1/IAQoju1P9sIkn/vs
+         S8nyUwwuzXvLqwTv0LZycH6Rl8eQXjz8vKIq2P3gFBO/BJhKdYXepZGFOB6CA4tNSziq
+         2vJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTqRc+1pV46U1GiDVVsu72SrEq0woMcMEQ8Ib0QDzlrN1jN/1doB5By63FQl+WQT8AVivul1FpRduRfyP6vRu9a44ntTnb8HEw8qy3
+X-Gm-Message-State: AOJu0YyWYJE0/Il0QfJErH2Q4aXthHD36rATF3TsUNubuqKWGRZlgZIi
+	FQ68yTuLilrrAjaq7SqnYGmfMZYCzHYyBTR4xoDtFS3QqhZX/uemm326bNJ5oAx5mSFCtcE93I+
+	Qvw==
+X-Google-Smtp-Source: AGHT+IG+ZloUhmtk/dvF1n0BAyilcNB3L2cfA9Zfr3ld5hq7p6cOMW9TVxQTjZ6Wg9M3YIfspZKx34kVKi8=
+X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:92f9:5432:a95e:d0e8])
+ (user=surenb job=sendgmr) by 2002:a25:938b:0:b0:dda:d7cf:5c2c with SMTP id
+ 3f1490d57ef6-dff154676camr253369276.13.1718406307948; Fri, 14 Jun 2024
+ 16:05:07 -0700 (PDT)
+Date: Fri, 14 Jun 2024 16:05:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-14_17,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=486 clxscore=1011
- lowpriorityscore=0 suspectscore=0 phishscore=0 mlxscore=0 impostorscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406140161
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
+Message-ID: <20240614230504.3849136-1-surenb@google.com>
+Subject: [PATCH 1/1] mm: handle profiling for fake memory allocations during compaction
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: kent.overstreet@linux.dev, vbabka@suse.cz, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, keescook@chromium.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Linus,
+During compaction isolated free pages are marked allocated so that they
+can be split and/or freed. For that, post_alloc_hook() is used inside
+split_map_pages() and release_free_list(). split_map_pages() marks free
+pages allocated, splits the pages and then lets alloc_contig_range_noprof()
+free those pages. release_free_list() marks free pages and immediately
+frees them. This usage of post_alloc_hook() affect memory allocation
+profiling because these functions might not be called from an instrumented
+allocator, therefore current->alloc_tag is NULL and when debugging is
+enabled (CONFIG_MEM_ALLOC_PROFILING_DEBUG=y) that causes warnings.
+To avoid that, wrap such post_alloc_hook() calls into an instrumented
+function which acts as an allocator which will be charged for these
+fake allocations. Note that these allocations are very short lived until
+they are freed, therefore the associated counters should usually read 0.
 
-please pull s390 changes for 6.10-rc4.
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+---
+ mm/compaction.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-Thank you,
-Vasily
+diff --git a/mm/compaction.c b/mm/compaction.c
+index e731d45befc7..739b1bf3d637 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -79,6 +79,13 @@ static inline bool is_via_compact_memory(int order) { return false; }
+ #define COMPACTION_HPAGE_ORDER	(PMD_SHIFT - PAGE_SHIFT)
+ #endif
+ 
++static struct page *mark_allocated_noprof(struct page *page, unsigned int order, gfp_t gfp_flags)
++{
++	post_alloc_hook(page, order, __GFP_MOVABLE);
++	return page;
++}
++#define mark_allocated(...)	alloc_hooks(mark_allocated_noprof(__VA_ARGS__))
++
+ static void split_map_pages(struct list_head *freepages)
+ {
+ 	unsigned int i, order;
+@@ -93,7 +100,7 @@ static void split_map_pages(struct list_head *freepages)
+ 
+ 			nr_pages = 1 << order;
+ 
+-			post_alloc_hook(page, order, __GFP_MOVABLE);
++			mark_allocated(page, order, __GFP_MOVABLE);
+ 			if (order)
+ 				split_page(page, order);
+ 
+@@ -122,7 +129,7 @@ static unsigned long release_free_list(struct list_head *freepages)
+ 			 * Convert free pages into post allocation pages, so
+ 			 * that we can free them via __free_page.
+ 			 */
+-			post_alloc_hook(page, order, __GFP_MOVABLE);
++			mark_allocated(page, order, __GFP_MOVABLE);
+ 			__free_pages(page, order);
+ 			if (pfn > high_pfn)
+ 				high_pfn = pfn;
 
-The following changes since commit 01c51a32dc18f128d2e55a7b2128b77fc01a2285:
+base-commit: c286c21ff94252f778515b21b6bebe749454a852
+-- 
+2.45.2.627.g7a2c4fd464-goog
 
-  KVM: s390x: selftests: Add shared zeropage test (2024-06-05 17:03:24 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.10-4
-
-for you to fetch changes up to 693d41f7c938f92d881e6a51525e6c132a186afd:
-
-  s390/mm: Restore mapping of kernel image using large pages (2024-06-11 16:20:40 +0200)
-
-----------------------------------------------------------------
-s390 updates for 6.10-rc4
-
-- A couple of fixes for regressions resulting from the uncoupling of
-  physical vs virtual kernel address spaces: fix the mapping of the
-  kernel image using large pages; enforce alignment checks on physical
-  addresses before creating large pages
-
-- Update defconfigs
-
-----------------------------------------------------------------
-Alexander Gordeev (2):
-      s390/mm: Allow large pages only for aligned physical addresses
-      s390/mm: Restore mapping of kernel image using large pages
-
-Heiko Carstens (1):
-      s390: Update defconfigs
-
- arch/s390/boot/startup.c             | 27 +++++++++++++++++++---
- arch/s390/boot/vmem.c                | 12 +++++++---
- arch/s390/boot/vmlinux.lds.S         |  1 +
- arch/s390/configs/debug_defconfig    | 43 ++++++++++++++++++++++++++++--------
- arch/s390/configs/defconfig          | 40 ++++++++++++++++++++++++++++-----
- arch/s390/configs/zfcpdump_defconfig |  5 +----
- 6 files changed, 103 insertions(+), 25 deletions(-)
 
