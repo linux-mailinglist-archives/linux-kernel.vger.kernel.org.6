@@ -1,107 +1,141 @@
-Return-Path: <linux-kernel+bounces-215466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA324909325
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:06:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD05D90932A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C190B217E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:06:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB5C81C22B85
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51871A0AFD;
-	Fri, 14 Jun 2024 20:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15401A3BBB;
+	Fri, 14 Jun 2024 20:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KpiM9gRA"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZhA5TST"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EB2383;
-	Fri, 14 Jun 2024 20:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B11383;
+	Fri, 14 Jun 2024 20:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718395596; cv=none; b=owqzscpybklsFeYLH+p+bc20wHyUX0A6qf/iCK6Ch7n7BBkzpohaxox0oTNegfAj+lGNKwrv00uFH26sOtqfMtkfL6z0njDrMGcD01e1HJrPmFjHyKvlZEzv84V7qQxd0MHbi3cmWDnappbJ7nsb5mowUiIOJd85gR7Mqoi317M=
+	t=1718395653; cv=none; b=CkQ9fJkbB0cfZI3hIyMTwUEsT+43SN+bWni3jHCp3YV9TTSGSoLH0VyhfcDXsoXX/QfTar8/98mxnGkgE3PMyADRtEjM+rmwVgqeG8CEuWDqsMeZC2weR0OMIGRVNhsDKezcQJTDWM1FC5Q7/DbVRbb9U9bm3FB4+HdC9U9D3L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718395596; c=relaxed/simple;
-	bh=nHoaP/GaQSxefAsiXgLGzU/oYd+wmrJui6yiBp86/9U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TrjhsNy6DXHjGMAKVUJ1UsQh5M88+VwuHAqAU4kDkwup0SUiNzzahiBh8QEFNP7HVyjqNakmD7lvEXrS1BYTIRVFytb2mT9qlVY9f9EGKp1MtyWf9UhungmE/ltT/O4k4nIMV7EXz7HHyZrPbcsk4S95HIX5zItVzZ8SFlbN8Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KpiM9gRA; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=/MLyFvtvPCSsCJBTNsNdmmW4gAACNBIixoKyIDtkgHA=; b=KpiM9gRAEtHBYCNqMqUcW9c7ux
-	jMGg9HU8CYEa3JHzoo/j9bU08bl6Rin1+QVzkErrt/ABhDCTK5VQ1llpYaT5dckNVh6f6KGkB08Zs
-	JksbBz+amTYE8agkI9ECjSLAwDQ0B03I+r+f4BoE5Q3n/ucoX+nnSDJKhRuFjAy4has40hSKEU1iJ
-	XVMNBi6bVPNcsrrFOSaI+2J3RF69NvzBMGCq97bXZyi/bDLyidwF5/3M+3bsHdEzDG4EPM0iahHTM
-	Usb4V2GISzumrK/uYmFTe9B1NbkAfa9zMWWnqyczfnvioUL/6SK5I3X5eiXXsdkjT7zKSTtbZ7UcT
-	SOKf22Gw==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sIDBt-00000003wbD-12Dh;
-	Fri, 14 Jun 2024 20:06:29 +0000
-Message-ID: <65e8b991-84cb-4ff6-8daf-943ed0b5daa4@infradead.org>
-Date: Fri, 14 Jun 2024 13:06:28 -0700
+	s=arc-20240116; t=1718395653; c=relaxed/simple;
+	bh=TLgK8xBlI7oOA+HqaXRUGCcZgq0Lk85TpQM6TQ5u5vE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gH2zv9FnV2CS9yEHimQSpjZCi4QouJkRkEFf14VOucO/3xDEwah7pZrH+d7xmoPoPTQm+P0Ya2r0dyOAJflLXEEufJIrVbQb050NxtKUTYmVWOULVtrf7mg87b+ZhQCvNlM6HIc7ROMY/6ohQZUXe9lzF/isD77tOG6znSROO4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZhA5TST; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 286B3C2BD10;
+	Fri, 14 Jun 2024 20:07:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718395652;
+	bh=TLgK8xBlI7oOA+HqaXRUGCcZgq0Lk85TpQM6TQ5u5vE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UZhA5TSTgrFRJ9dD/QT1sJgzGt5IJQ3Hcb3774r5mwGZYvh/ncQlMr12G/49O+ype
+	 woKnX70Axer069t3Z9L5exZ4HcTk/JxiG0Eb8RGIOGIsEtlmcW2eAMaHh4fjyMSkWb
+	 q6wBuNUF0k8Z/k+R0lQaFNhZ+37igEYeTZJcUR6xOC8Bdl2VqDl3GM+ptzECnNRb0I
+	 iKLXF6C9qJQDnwCgpsAGlTHRyfsP5gK2JP5rtTGYiq2raFrsq2vMMWWOJcMVxnE2wD
+	 dgQW2njMxCFVpGMA8A/dXKzSja2vd0kgSJTTX+4fmQimKe1AdetaN2pC8zpqLDuVev
+	 +f/LKzF10mpgw==
+Date: Fri, 14 Jun 2024 13:07:29 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev
+Subject: Re: [PATCHv8 bpf-next 3/9] uprobe: Add uretprobe syscall to speed up
+ return probe
+Message-ID: <20240614200729.GA1585004@thelio-3990X>
+References: <20240611112158.40795-1-jolsa@kernel.org>
+ <20240611112158.40795-4-jolsa@kernel.org>
+ <20240614174822.GA1185149@thelio-3990X>
+ <ZmyZgzqsowkGyqmH@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: Remove unused "spia_*" kernel parameters
-To: Thomas Huth <thuth@redhat.com>, linux-doc@vger.kernel.org,
- Alexander Shiyan <shc_work@mail.ru>, Olof Johansson <olof@lixom.net>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- linux-mtd@lists.infradead.org
-References: <20240614184041.601056-1-thuth@redhat.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240614184041.601056-1-thuth@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmyZgzqsowkGyqmH@krava>
 
-
-
-On 6/14/24 11:40 AM, Thomas Huth wrote:
-> The kernel module parameters "spia_io_base", "spia_fio_base",
-> "spia_pedr" and "spia_peddr" have been removed via commit e377ca1e32f6
-> ("ARM: clps711x: p720t: Special driver for handling NAND memory is removed").
-> Time to remove them from the documentation now, too.
+On Fri, Jun 14, 2024 at 09:26:59PM +0200, Jiri Olsa wrote:
+> On Fri, Jun 14, 2024 at 10:48:22AM -0700, Nathan Chancellor wrote:
+> > Hi Jiri,
+> > 
+> > On Tue, Jun 11, 2024 at 01:21:52PM +0200, Jiri Olsa wrote:
+> > > Adding uretprobe syscall instead of trap to speed up return probe.
+> > ...
+> > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > > index 2c83ba776fc7..2816e65729ac 100644
+> > > --- a/kernel/events/uprobes.c
+> > > +++ b/kernel/events/uprobes.c
+> > > @@ -1474,11 +1474,20 @@ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
+> > >  	return ret;
+> > >  }
+> > >  
+> > > +void * __weak arch_uprobe_trampoline(unsigned long *psize)
+> > > +{
+> > > +	static uprobe_opcode_t insn = UPROBE_SWBP_INSN;
+> > 
+> > This change as commit ff474a78cef5 ("uprobe: Add uretprobe syscall to
+> > speed up return probe") in -next causes the following build error for
+> > ARCH=loongarch allmodconfig:
+> > 
+> >   In file included from include/linux/uprobes.h:49,
+> >                    from include/linux/mm_types.h:16,
+> >                    from include/linux/mmzone.h:22,
+> >                    from include/linux/gfp.h:7,
+> >                    from include/linux/xarray.h:16,
+> >                    from include/linux/list_lru.h:14,
+> >                    from include/linux/fs.h:13,
+> >                    from include/linux/highmem.h:5,
+> >                    from kernel/events/uprobes.c:13:
+> >   kernel/events/uprobes.c: In function 'arch_uprobe_trampoline':
+> >   arch/loongarch/include/asm/uprobes.h:12:33: error: initializer element is not constant
+> >      12 | #define UPROBE_SWBP_INSN        larch_insn_gen_break(BRK_UPROBE_BP)
+> >         |                                 ^~~~~~~~~~~~~~~~~~~~
+> >   kernel/events/uprobes.c:1479:39: note: in expansion of macro 'UPROBE_SWBP_INSN'
+> >    1479 |         static uprobe_opcode_t insn = UPROBE_SWBP_INSN;
 > 
-> Signed-off-by: Thomas Huth <thuth@redhat.com>
+> reproduced, could you please try the change below
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Yeah, that fixes the issue for me.
 
-Thanks.
+Tested-by: Nathan Chancellor <nathan@kernel.org> # build
 
 > ---
->  Documentation/admin-guide/kernel-parameters.txt | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index ff02e1a02e12..dd8436c98735 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6273,11 +6273,6 @@
->  			Not specifying this option is equivalent to
->  			spec_store_bypass_disable=auto.
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 2816e65729ac..6986bd993702 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -1476,8 +1476,9 @@ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
 >  
-> -	spia_io_base=	[HW,MTD]
-> -	spia_fio_base=
-> -	spia_pedr=
-> -	spia_peddr=
-> -
->  	split_lock_detect=
->  			[X86] Enable split lock detection or bus lock detection
+>  void * __weak arch_uprobe_trampoline(unsigned long *psize)
+>  {
+> -	static uprobe_opcode_t insn = UPROBE_SWBP_INSN;
+> +	static uprobe_opcode_t insn;
 >  
-
--- 
-~Randy
+> +	insn = insn ?: UPROBE_SWBP_INSN;
+>  	*psize = UPROBE_SWBP_INSN_SIZE;
+>  	return &insn;
+>  }
 
