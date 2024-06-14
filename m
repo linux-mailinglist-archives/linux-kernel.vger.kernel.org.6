@@ -1,132 +1,189 @@
-Return-Path: <linux-kernel+bounces-214909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ADE9908BE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:43:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7F8908BE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:43:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9661D28716E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:43:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2FD9288A8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5094A199389;
-	Fri, 14 Jun 2024 12:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032C5199258;
+	Fri, 14 Jun 2024 12:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T50MrKNc"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CCkG1sXw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B365C19A29F
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3233199221
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718368906; cv=none; b=j/bvv0xk7qMW8aMZN4FAVHxOkg6kX92/v4F9mhxirC+xDKp4UMr3TwDtBMSP5gt8tD2/YgbczBcszfP1BKnZqFBmIRexxNVc7pxerd2cB+E/iLPtsi6nrFhI9Y0s4TEg2sgkIl2pe+poeqR31rJZjMCQxO4ZRPeZdFmvpir4fwo=
+	t=1718368916; cv=none; b=F15NcWLuTXb8CPiIow6ReRCETGwhUv67VgTahoAaeDusQ3QygQVEHWqQYIQ6kPNX4fFxBZAbnguR1npz54P0x2oIUQ6WuCZfpJVonKVlBUxXTliTmoU3zKW6Fm65Db3ELuebQjcWVTtB6Cx+ur5zM5JLjNqLeHCSpklwMgtQf+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718368906; c=relaxed/simple;
-	bh=OVCh0xiNtbKDo7jHdOZaakUb3rirDOQ3yptayCuHr+8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GcFNGH2lRzZXPXku0t4AXTeGNVQoZIoc9WJJeOcJCA2RDPivlpJPSeeExYMAak9pk1dxvbzPOxUbjawUu4zD163RvLTc5rAMbc5ABKlqvafkYNmDHIxLOrXQ1frRaCjuLX7Wb8vuvYa90/T2hA0aS6+2RoGNQ3VhBwF/pujWuQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=T50MrKNc; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4405304d062so12184131cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 05:41:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718368902; x=1718973702; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BmhzD6drL+dqelhUuMiG4rDosl5mRy0mIhnFlZNZ6YM=;
-        b=T50MrKNcSLj0hGcRihRrH9Ok907alJUsFeoP952I+XrOArHlgHCBxDMpxYrgOhnyKx
-         UYBDGXgF+vp2hfBV0dfglqZyuXdDqC81EBkJIcnimrEuAUHNpH1kVbKdJbHCmgl2JHvP
-         0Iwz/KJ9ISkMpnaRr3Zac+SuTyDF1J7SIT7y0=
+	s=arc-20240116; t=1718368916; c=relaxed/simple;
+	bh=0Gb13gkJSeAxhZPpbBeTY7+9eGjCgDsDFH/5LBPUpJc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Gq2syy/SgydVEAbMHja76lYKNFXuFwrnF1MudrRPoIaAKr/g9VgA+KUUATHaIrqXrl/K6zmkHRrf61hlvaGfytZ4voP1XVa+DDZkj4kdfdlkZ05bdG1GdNaCGH8QZQQyUD+Na7dzDPa+QBHuPOlm4sB9mi0Sa2c+Ydr/viiaDQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CCkG1sXw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718368913;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qVCa7RwQroi261t1F6XjVS7+W2uN0kc4IDTx0N1MMdo=;
+	b=CCkG1sXwwaJA7Oq5UJ4hQVlpQ6ZLP2WvcEkSvr0fD7ktgqT5/eWt/F3w/oKYQpFN2foLlT
+	hVC45mNHijuiiz63WEL4qBPzyPC+00E/qHkV2OYwlUTHWOaM4JDW7NPgFpnCFjS0LoPMEF
+	LwaqtE6otIOhNddLFsRNPEXBk6tZvxE=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-198-FxBaX_CBPnihzJlnMZnRwQ-1; Fri, 14 Jun 2024 08:41:52 -0400
+X-MC-Unique: FxBaX_CBPnihzJlnMZnRwQ-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-35f1f8d48b3so1263514f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 05:41:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718368902; x=1718973702;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BmhzD6drL+dqelhUuMiG4rDosl5mRy0mIhnFlZNZ6YM=;
-        b=THc8aLdOqjJtn9Gt7Rd6q3Qt2hKK1mJxnfAMXEBQDlZSofPBf3ri3BZ7gxd8qrb06d
-         ZSHAg0yNKk/8uH4h68i7ctTWyopAGEcBebfA8QnSitYvpTRUmJIXURbNSTbOBw6i6pTv
-         DagO4QEe5n8k3dE0/eifg+1lkK6N6+1IDTi0ckiNd/JLiOge8DSN3+LVZrAjVCakUYSM
-         Ow2SnQd9Ey78695K3wF+WHmztKm/YlmAKlhqUq4I/xDpusm7ZaU/hao3DqDkRlHs8EL+
-         Znet//FGK8K20GDQjG2zPmBEfPgXy8Nw8syrtEvDB+TL+QWKnEZ7ypMsjQr5Q1jtn/I2
-         a+5w==
-X-Forwarded-Encrypted: i=1; AJvYcCX1e2FGYoadgDO1NV9So/zAphDgbNyBj7ZzPK5R4LP5vXOJcjEJXdvM0SiNJcfTNFPSv9O44gOxwIxZZiJAW1BgFUALpIw0FVlacAGw
-X-Gm-Message-State: AOJu0Yy+w3XE1TQau8DR4ugB6Xg+iWpv8e0hYPE3sviuj8i1aP7QdDo1
-	V1tk/0MpdQCy0uQH0mtHerYHhsB5jL1awORG5LrnmBw20yj89eWgjT3EO3lohA==
-X-Google-Smtp-Source: AGHT+IEhkccRGU/pAfXr2wII9wTmtO39p/PGCYtDnTWQ8tgsir/ZFOzyqT7qIyMxanAIk0Mr5KL2DQ==
-X-Received: by 2002:a05:6214:4b85:b0:6b0:76f1:8639 with SMTP id 6a1803df08f44-6b2afd5a04amr24760176d6.42.1718368902656;
-        Fri, 14 Jun 2024 05:41:42 -0700 (PDT)
-Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5c202e8sm17734056d6.50.2024.06.14.05.41.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 05:41:41 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 14 Jun 2024 12:41:30 +0000
-Subject: [PATCH v6 4/4] media: uvcvideo: Exit early if there is not int_urb
+        d=1e100.net; s=20230601; t=1718368911; x=1718973711;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qVCa7RwQroi261t1F6XjVS7+W2uN0kc4IDTx0N1MMdo=;
+        b=TbrZ43u7Mz0fQ2gOboHt05GWjh2ngqtbkGCWOKQqsPTJUoMoXlG5i8N9/POh9IoStP
+         nymANksmI7aYlgN8IgF9AXXblF60lHqfpm5cM7hyoPWUipZHZxpwXZ9j3l0E9Lu0PAdf
+         4FXb4FJ6FUlkdVasvhkWXe+XQv2DWbMU76XMAmid8825fWyjtpgmB1kDEnsuxItBrh0x
+         Btl/c4v47G6Xu0pCtWTgZjpRoib9exgUXPmnyhyUmGrf63M/LCeSeVBkfPbAEmnFMcoP
+         44oEiSPxAAQWxopZERoXe+r3YtT3qn+4DqKS2alanM79KF4I531dpYRwyDER6dTZTORl
+         Rf4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVilXDM6WzgJTtzMkFc9qpdYZyjIoRFTGYRs4+D/noUt+ZFsYhIMqNLMAmW1mkFxjTBbVG++ixlWPaGqb37ti5x4Sof9H8Fmlr0liY1
+X-Gm-Message-State: AOJu0YwP8iyPErkZA8FSHzUr+tpFWN1cw0/EpS3OUjyJra8b8TV5l7pv
+	k+ftE5u1t21i13heDeiFIoSpBEuV+pHDvJZML04TpXzBRVNOMF7DWXy9XS4PR4/5Ijr3zYWinPL
+	Sl/oCWRBlX3R8XT5tm1URVihxdjJU0+QuIgWnXGo3P/miu34+uSceVA9h8avBoQ==
+X-Received: by 2002:a5d:5283:0:b0:35d:bd46:960a with SMTP id ffacd0b85a97d-3607a764bf2mr1704160f8f.23.1718368911074;
+        Fri, 14 Jun 2024 05:41:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHDCXn202g0cRFTygkw8Oi1Eh/fwqFY0cLSIqyqzWBUKuRCdAAvjwjeStFj7/sd3j8BQHttjw==
+X-Received: by 2002:a5d:5283:0:b0:35d:bd46:960a with SMTP id ffacd0b85a97d-3607a764bf2mr1704134f8f.23.1718368910688;
+        Fri, 14 Jun 2024 05:41:50 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4f:2b00:69b5:3684:56c:6dd5? (p200300d82f4f2b0069b53684056c6dd5.dip0.t-ipconnect.de. [2003:d8:2f4f:2b00:69b5:3684:56c:6dd5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075104a0fsm4327929f8f.96.2024.06.14.05.41.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 05:41:49 -0700 (PDT)
+Message-ID: <e6378446-6087-4ffc-9ce9-320c5e128bd6@redhat.com>
+Date: Fri, 14 Jun 2024 14:41:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] selftests/mm: mseal, self_elf: fix missing
+ __NR_mseal
+From: David Hildenbrand <david@redhat.com>
+To: John Hubbard <jhubbard@nvidia.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
+ Shuah Khan <shuah@kernel.org>
+Cc: Andrei Vagin <avagin@google.com>,
+ Axel Rasmussen <axelrasmussen@google.com>,
+ Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Peter Xu <peterx@redhat.com>, Rich Felker <dalias@libc.org>,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20240614023009.221547-1-jhubbard@nvidia.com>
+ <20240614023009.221547-2-jhubbard@nvidia.com>
+ <1ea35568-bfe5-430e-9f4b-edef17f0b22b@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <1ea35568-bfe5-430e-9f4b-edef17f0b22b@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240614-guenter-mini-v6-4-7b7fdc3b21b3@chromium.org>
-References: <20240614-guenter-mini-v6-0-7b7fdc3b21b3@chromium.org>
-In-Reply-To: <20240614-guenter-mini-v6-0-7b7fdc3b21b3@chromium.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Tomasz Figa <tfiga@chromium.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Alan Stern <stern@rowland.harvard.edu>, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Sean Paul <seanpaul@chromium.org>, 
- Ricardo Ribalda <ribalda@chromium.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>
-X-Mailer: b4 0.13.0
 
-If there is no int_urb there is no need to do a clean stop.
+On 14.06.24 14:28, David Hildenbrand wrote:
+> On 14.06.24 04:30, John Hubbard wrote:
+>> The selftests/mm build isn't exactly "broken", according to the current
+>> documentation, which still claims that one must run "make headers",
+>> before building the kselftests. However, according to the new plan to
+>> get rid of that requirement [1], they are future-broken: attempting to
+>> build selftests/mm *without* first running "make headers" will fail due
+>> to not finding __NR_mseal.
+>>
+>> Therefore,  add ./usr/include/asm/unistd_[32|x32|64].h (created via
+>> "make headers") to tools/uapi/, and change the selftests/mm files that
+>> require __NR_mseal to include from the correct location. The way to do
+>> so is to include <linux/unistd.h> instead of just <unistd.h>.
+>>
+>> [1] commit e076eaca5906 ("selftests: break the dependency upon local
+>> header files")
+>>
+>> Fixes: 4926c7a52de7 ("selftest mm/mseal memory sealing")
+>> Cc: Jeff Xu <jeffxu@chromium.org>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+>> ---
+> 
+> If it works, great
 
-Also we avoid calling usb_kill_urb(NULL). It is properly handled by the
-usb framework, but it is not polite.
+... thinking again, are some of these headers arch-specific (IOW, 
+generating them per-arch would result in something slightly different)?
 
-Now that we are at it, fix the code style in uvc_status_start() for
-consistency.
-
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_status.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
-index 8fd8250110e2..9108522beea6 100644
---- a/drivers/media/usb/uvc/uvc_status.c
-+++ b/drivers/media/usb/uvc/uvc_status.c
-@@ -308,7 +308,7 @@ static int __uvc_status_start(struct uvc_device *dev, gfp_t flags)
- {
- 	lockdep_assert_held(&dev->status_lock);
- 
--	if (dev->int_urb == NULL)
-+	if (!dev->int_urb)
- 		return 0;
- 
- 	return usb_submit_urb(dev->int_urb, flags);
-@@ -320,6 +320,9 @@ static void __uvc_status_stop(struct uvc_device *dev)
- 
- 	lockdep_assert_held(&dev->status_lock);
- 
-+	if (!dev->int_urb)
-+		return;
-+
- 	/*
- 	 * Prevent the asynchronous control handler from requeing the URB. The
- 	 * barrier is needed so the flush_status change is visible to other
+In tools/include/uapi/asm-generic/unistd.h, we already do have 
+__NR_mseal ...
 
 -- 
-2.45.2.627.g7a2c4fd464-goog
+Cheers,
+
+David / dhildenb
 
 
