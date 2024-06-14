@@ -1,136 +1,296 @@
-Return-Path: <linux-kernel+bounces-214927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A730908C42
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:08:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9172E908C44
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4703F1C2582C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:08:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19BE91F249E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA33519AA4F;
-	Fri, 14 Jun 2024 13:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2894F19AA41;
+	Fri, 14 Jun 2024 13:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bmIkdB6S"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMdkC05s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F51A26ACA
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CACA26ACA;
+	Fri, 14 Jun 2024 13:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718370529; cv=none; b=nlSfduDL4WWfH6feu94vARcKvAi8JCN50phWeCVEf8SJi3ChZFu5TOr7YBYvFhuMhKWLzIdqb41qXdv1Zrfe51VOxrWCQkAnZxblhtmuCZ8r8d/XycukdVfYBYKciYAkGhkIFUCr28sqHBhSNF2LlMXmVJSK//D7fn2Wh2u2q4A=
+	t=1718370582; cv=none; b=prVjWTB5x6SH27a2GMKLTpLKLKsG2PXmBk/8osjXouWRFyMi7qtfPwpFzjLo/Lx7gA+k/DMo3neLzLKaVKMsq3jBF8uFjv+qpGc6YgojfvlRmtIGiqDngUtrfXn/sbMVucJzSaG7uuHc5As5wtp0kLNYCM+fBK6kw1v+2hgD6lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718370529; c=relaxed/simple;
-	bh=RhpMA204NZDYJYNHGbObqP1HVKtXQG0aL387cmYERWI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ctg4+sOgKUeJj9HuQWkVZCwI2eHAnp7hxenh/r/8FJ6r7RVUdvk6OvsqaB1goerm2oWOFGafOQT5xD1U+BNo2miqO33eEqCmipI8Z0tUIXH+KhrFwQmNjvJyEJgfMGtwT58jjxgvV50qi6eorc2j7oMZy+lb4C9c9EKY2ZY98cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bmIkdB6S; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718370527;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=o66M81Kt0vn1cGekbi5B1k+DRIpH0j0EOW3GSkaUuxs=;
-	b=bmIkdB6SvbKNXyGXLBFSBQef9LtjM9/BuLB5F8q14N1Uu0o8SXPTvjywupWznOkZOpkZhH
-	81OLO+87jo9mx7Ev6X4XZgxuANkUiltab2hmjuOPQbJvCTc2b5cL/CUd23sGjpLUXNiMDG
-	KajrxVkrEGsO7I2Hzh3+XaN9rVV014o=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-608-FnJRlT2sMNqMGhWFx9bXmg-1; Fri, 14 Jun 2024 09:08:45 -0400
-X-MC-Unique: FnJRlT2sMNqMGhWFx9bXmg-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2eab2099bbfso3909801fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 06:08:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718370524; x=1718975324;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o66M81Kt0vn1cGekbi5B1k+DRIpH0j0EOW3GSkaUuxs=;
-        b=Tt08hkt2RcTHZuymleBHMItxein3EE2EDroVqenS/Ia43IIbRVGcl5TtFjxXLdGu9Z
-         IFWPywACnrp4b4mA3OK07icSa5J81lHgklhkjhoMRYsRaYsErtuiTXVMvjj3bCRfIDvz
-         6/9XZQDArcmoYJn3Xe8L57/9K1gp76KlrseeznjK46nBuiTAK/nc6TI/L217n0QmNwxb
-         l+Lp1hRV++D5SH8Y0lo6paT3vF9jn1IXDCpOunB7aqui42zUxoK+truXh3JhCtoBBZ0n
-         JOt9Lz8b2C0I9SADTX8YqNEOp8Y3DgrewX/Jd0QoEx6NmmZsmLDLrRFhib6DRAanHDjv
-         8WTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqADONpFF+4y+/LlIFtLSWWbRHltgK2/sfpevfqCT5LIYHQPh1WWVi3PlZF4Q2d6MRIlAasIy1moElx/o/viWWCa1n4hMKLGUS7ezd
-X-Gm-Message-State: AOJu0YzxZ66HrXNyX+8co1vj3X9EHvE++hABcqPr0mb/TOkKX2Uwl9Tc
-	l9ZsxRxodhBsnUKUP6H343eKq3P3rLKFSf+R0wCTQmftyJr8qGAeIFqEBfLj8zrhHVXbVdS7JJm
-	GvEY1+3PNVeZOi0R01PIq52wbH+PBt4tcOhWoZdOeNY60slpzFz9KfEMXVf2qLQ==
-X-Received: by 2002:ac2:5f5b:0:b0:52c:a7c8:ec3c with SMTP id 2adb3069b0e04-52ca7c8ecf1mr1344576e87.0.1718370524058;
-        Fri, 14 Jun 2024 06:08:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJ57w4Gx5dDKQsq3VemcAEipsIPrhuSF7VcNJmUPeZ0WTy/9bR151y62TJZ0xzmZpmJBwfPA==
-X-Received: by 2002:ac2:5f5b:0:b0:52c:a7c8:ec3c with SMTP id 2adb3069b0e04-52ca7c8ecf1mr1344560e87.0.1718370523593;
-        Fri, 14 Jun 2024 06:08:43 -0700 (PDT)
-Received: from gerbillo.redhat.com ([2a0d:3341:b083:7210::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286eef9c1sm98099655e9.7.2024.06.14.06.08.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 06:08:43 -0700 (PDT)
-Message-ID: <1b99efc20adda0b1f24ec477b3612caedb704374.camel@redhat.com>
-Subject: Re: [PATCH] hippi: fix possible buffer overflow caused by bad DMA
- value in rr_start_xmit()
-From: Paolo Abeni <pabeni@redhat.com>
-To: Huai-Yuan Liu <qq810974084@gmail.com>, jes@trained-monkey.org, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org
-Cc: linux-hippi@sunsite.dk, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com
-Date: Fri, 14 Jun 2024 15:08:41 +0200
-In-Reply-To: <20240612093153.297167-1-qq810974084@gmail.com>
-References: <20240612093153.297167-1-qq810974084@gmail.com>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1718370582; c=relaxed/simple;
+	bh=e6kELu63/VjfYReNnjC+nzRVVQndtg244gQ0BkXtEas=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JQTA2k8nWiNhz0rIaQ5U9fMhBIH74UhNLXq1LXPw5UheJyuAzG9wVBVap5VKI4HAH04T54z5cPW9RrEao4Dz7KH9zk8JcFI7aHGNAD+cWOmm1+Q6udFyOlMU/INj3+UrRh1CXWVnWE0yHw8LuSn0rdxukuq27DsfJEMQAeMgrFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GMdkC05s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DA75C2BD10;
+	Fri, 14 Jun 2024 13:09:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718370581;
+	bh=e6kELu63/VjfYReNnjC+nzRVVQndtg244gQ0BkXtEas=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GMdkC05sdOfXAbzWVw0x4cllrfBOw1WbwFkTaZEPbGHlTbCEV8CdBnTOTAfbqtV81
+	 L/dc5s0btl5IxUF5kDlDfPylNBSwg3XrdCLfwSZ6ofWioZqGGKC6LqLU/chSlmVnFc
+	 r07SteGAipSte7fIC4OHHpBFdCdw4rSkyAD++A1aSWu9QgJfJEOIpUUJ0cvVZ/75Gl
+	 iZMq94ZyrhE2eDTbvZpGt+0H/KV7vD9oaz91xb1HLDnV0a0F9GFEMLmV6iSi+3xlJ5
+	 OJLf03OciKF0H67qiS6ng98tIuGQwMLW741PPu1XMIpwgPSaCBk8EJYhktskfGhhMP
+	 VmW6eYg2DXWoQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sI6gV-003vHX-96;
+	Fri, 14 Jun 2024 14:09:39 +0100
+Date: Fri, 14 Jun 2024 14:09:38 +0100
+Message-ID: <86r0czk6wd.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	will@kernel.org,
+	catalin.marinas@arm.com,
+	mark.rutland@arm.com,
+	Mark Brown <broonie@kernel.org>,
+	James Clark <james.clark@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Suzuki Poulose <suzuki.poulose@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH V18 2/9] KVM: arm64: Explicitly handle BRBE traps as UNDEFINED
+In-Reply-To: <86sexfk8ke.wl-maz@kernel.org>
+References: <20240613061731.3109448-1-anshuman.khandual@arm.com>
+	<20240613061731.3109448-3-anshuman.khandual@arm.com>
+	<86sexfk8ke.wl-maz@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, broonie@kernel.org, james.clark@arm.com, robh@kernel.org, suzuki.poulose@arm.com, peterz@infradead.org, mingo@redhat.com, acme@kernel.org, linux-perf-users@vger.kernel.org, oliver.upton@linux.dev, james.morse@arm.com, kvmarm@lists.linux.dev
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, 2024-06-12 at 17:31 +0800, Huai-Yuan Liu wrote:
-> The value rrpriv->info->tx_ctrl is stored in DMA memory, and it is
-> assigned to txctrl, so txctrl->pi can be modified at any time by maliciou=
-s
-> hardware. Becausetxctrl->pi is assigned to index, buffer overflow may
-> occur when the code "rrpriv->tx_skbuff[index]" is executed.
->=20
-> To address this issue, the index should be checked.
->=20
-> Fixes: f33a7251c825 ("hippi: switch from 'pci_' to 'dma_' API")
-> Signed-off-by: Huai-Yuan Liu <qq810974084@gmail.com>
-> ---
->  drivers/net/hippi/rrunner.c | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/drivers/net/hippi/rrunner.c b/drivers/net/hippi/rrunner.c
-> index aa8f828a0ae7..184f0933bca0 100644
-> --- a/drivers/net/hippi/rrunner.c
-> +++ b/drivers/net/hippi/rrunner.c
-> @@ -1440,6 +1440,11 @@ static netdev_tx_t rr_start_xmit(struct sk_buff *s=
-kb,
->  	txctrl =3D &rrpriv->info->tx_ctrl;
-> =20
->  	index =3D txctrl->pi;
-> +	if (index < 0 || index >=3D TX_RING_ENTRIES) {
+On Fri, 14 Jun 2024 13:33:37 +0100,
+Marc Zyngier <maz@kernel.org> wrote:
+> 
+> On Thu, 13 Jun 2024 07:17:24 +0100,
+> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> > 
+> > The Branch Record Buffer Extension (BRBE) adds a number of system registers
+> > and instructions, which we don't currently intend to expose to guests. Our
+> > existing logic handles this safely, but this could be improved with some
+> > explicit handling of BRBE.
+> > 
+> > The presence of BRBE is currently hidden from guests as the cpufeature
+> > code's ftr_id_aa64dfr0[] table doesn't have an entry for the BRBE field,
+> > and so this will be zero in the sanitised value of ID_AA64DFR0 exposed to
+> > guests via read_sanitised_id_aa64dfr0_el1(). As the ftr_id_aa64dfr0[] table
+> > may gain an entry for the BRBE field in future, for robustness we should
+> > explicitly mask out the BRBE field in read_sanitised_id_aa64dfr0_el1().
+> > 
+> > The BRBE system registers and instructions are currently trapped by the
+> > existing configuration of the fine-grained traps. As neither the registers
+> > nor the instructions are described in the sys_reg_descs[] table,
+> > emulate_sys_reg() will warn that these are unknown before injecting an
+> > UNDEFINED exception into the guest.
+> > 
+> > Well-behaved guests shouldn't try to use the registers or instructions, but
+> > badly-behaved guests could use these, resulting in unnecessary warnings. To
+> > avoid those warnings, we should explicitly handle the BRBE registers and
+> > instructions as UNDEFINED.
+> > 
+> > Address the above by having read_sanitised_id_aa64dfr0_el1() mask out the
+> > ID_AA64DFR0.BRBE field, and explicitly handling all of the BRBE system
+> > registers and instructions as UNDEFINED.
+> > 
+> > Cc: Marc Zyngier <maz@kernel.org>
+> > Cc: Oliver Upton <oliver.upton@linux.dev>
+> > Cc: James Morse <james.morse@arm.com>
+> > Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Will Deacon <will@kernel.org>
+> > Cc: kvmarm@lists.linux.dev
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> > ----
+> > Changes in V18:
+> > 
+> > - Updated the commit message
+> > 
+> >  arch/arm64/kvm/sys_regs.c | 56 +++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 56 insertions(+)
+> > Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+> > ---
+> >  arch/arm64/kvm/sys_regs.c | 56 +++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 56 insertions(+)
+> > 
+> > diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> > index 22b45a15d068..3d4686abe5ee 100644
+> > --- a/arch/arm64/kvm/sys_regs.c
+> > +++ b/arch/arm64/kvm/sys_regs.c
+> > @@ -1304,6 +1304,11 @@ static int set_pmcr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r,
+> >  	return 0;
+> >  }
+> >  
+> > +#define BRB_INF_SRC_TGT_EL1(n)				\
+> > +	{ SYS_DESC(SYS_BRBINF_EL1(n)), undef_access },	\
+> > +	{ SYS_DESC(SYS_BRBSRC_EL1(n)), undef_access },	\
+> > +	{ SYS_DESC(SYS_BRBTGT_EL1(n)), undef_access }	\
+> > +
+> >  /* Silly macro to expand the DBG{BCR,BVR,WVR,WCR}n_EL1 registers in one go */
+> >  #define DBG_BCR_BVR_WCR_WVR_EL1(n)					\
+> >  	{ SYS_DESC(SYS_DBGBVRn_EL1(n)),					\
+> > @@ -1722,6 +1727,9 @@ static u64 read_sanitised_id_aa64dfr0_el1(struct kvm_vcpu *vcpu,
+> >  	/* Hide SPE from guests */
+> >  	val &= ~ID_AA64DFR0_EL1_PMSVer_MASK;
+> >  
+> > +	/* Hide BRBE from guests */
+> > +	val &= ~ID_AA64DFR0_EL1_BRBE_MASK;
+> > +
+> >  	return val;
+> >  }
+> >  
+> > @@ -2240,6 +2248,52 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+> >  	{ SYS_DESC(SYS_DBGCLAIMCLR_EL1), trap_raz_wi },
+> >  	{ SYS_DESC(SYS_DBGAUTHSTATUS_EL1), trap_dbgauthstatus_el1 },
+> >  
+> > +	/*
+> > +	 * BRBE branch record sysreg address space is interleaved between
+> > +	 * corresponding BRBINF<N>_EL1, BRBSRC<N>_EL1, and BRBTGT<N>_EL1.
+> > +	 */
+> > +	BRB_INF_SRC_TGT_EL1(0),
+> > +	BRB_INF_SRC_TGT_EL1(16),
+> > +	BRB_INF_SRC_TGT_EL1(1),
+> > +	BRB_INF_SRC_TGT_EL1(17),
+> > +	BRB_INF_SRC_TGT_EL1(2),
+> > +	BRB_INF_SRC_TGT_EL1(18),
+> > +	BRB_INF_SRC_TGT_EL1(3),
+> > +	BRB_INF_SRC_TGT_EL1(19),
+> > +	BRB_INF_SRC_TGT_EL1(4),
+> > +	BRB_INF_SRC_TGT_EL1(20),
+> > +	BRB_INF_SRC_TGT_EL1(5),
+> > +	BRB_INF_SRC_TGT_EL1(21),
+> > +	BRB_INF_SRC_TGT_EL1(6),
+> > +	BRB_INF_SRC_TGT_EL1(22),
+> > +	BRB_INF_SRC_TGT_EL1(7),
+> > +	BRB_INF_SRC_TGT_EL1(23),
+> > +	BRB_INF_SRC_TGT_EL1(8),
+> > +	BRB_INF_SRC_TGT_EL1(24),
+> > +	BRB_INF_SRC_TGT_EL1(9),
+> > +	BRB_INF_SRC_TGT_EL1(25),
+> > +	BRB_INF_SRC_TGT_EL1(10),
+> > +	BRB_INF_SRC_TGT_EL1(26),
+> > +	BRB_INF_SRC_TGT_EL1(11),
+> > +	BRB_INF_SRC_TGT_EL1(27),
+> > +	BRB_INF_SRC_TGT_EL1(12),
+> > +	BRB_INF_SRC_TGT_EL1(28),
+> > +	BRB_INF_SRC_TGT_EL1(13),
+> > +	BRB_INF_SRC_TGT_EL1(29),
+> > +	BRB_INF_SRC_TGT_EL1(14),
+> > +	BRB_INF_SRC_TGT_EL1(30),
+> > +	BRB_INF_SRC_TGT_EL1(15),
+> > +	BRB_INF_SRC_TGT_EL1(31),
+> > +
+> > +	/* Remaining BRBE sysreg addresses space */
+> > +	{ SYS_DESC(SYS_BRBCR_EL1), undef_access },
+> > +	{ SYS_DESC(SYS_BRBFCR_EL1), undef_access },
+> > +	{ SYS_DESC(SYS_BRBTS_EL1), undef_access },
+> > +	{ SYS_DESC(SYS_BRBINFINJ_EL1), undef_access },
+> > +	{ SYS_DESC(SYS_BRBSRCINJ_EL1), undef_access },
+> > +	{ SYS_DESC(SYS_BRBTGTINJ_EL1), undef_access },
+> > +	{ SYS_DESC(SYS_BRBIDR0_EL1), undef_access },
+> > +
+> >  	{ SYS_DESC(SYS_MDCCSR_EL0), trap_raz_wi },
+> >  	{ SYS_DESC(SYS_DBGDTR_EL0), trap_raz_wi },
+> >  	// DBGDTR[TR]X_EL0 share the same encoding
+> > @@ -2751,6 +2805,8 @@ static struct sys_reg_desc sys_insn_descs[] = {
+> >  	{ SYS_DESC(SYS_DC_CISW), access_dcsw },
+> >  	{ SYS_DESC(SYS_DC_CIGSW), access_dcgsw },
+> >  	{ SYS_DESC(SYS_DC_CIGDSW), access_dcgsw },
+> > +	{ SYS_DESC(OP_BRB_IALL), undef_access },
+> > +	{ SYS_DESC(OP_BRB_INJ), undef_access },
+> >  };
+> >  
+> >  static const struct sys_reg_desc *first_idreg;
+> 
+> I don't think we need any update to the sys_reg table to handle
+> this. Instead, we should make use of the FGU infrastructure that has
+> been in since 6.9 to make this stuff UNDEF unconditionally.
+> 
+> It should be as simple as:
+> 
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index ee33f5467ce5..7cafe3f72c01 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -4964,6 +4964,11 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
+>  		kvm->arch.fgu[HAFGRTR_GROUP] |= ~(HAFGRTR_EL2_RES0 |
+>  						  HAFGRTR_EL2_RES1);
+>  
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, BRBE, IMP))
+> +		kvm->arch.fgu[HDFGRTR_GROUP] |= (HDFGRTR_nBRBDATA |
+> +						 HDFGRTR_nBRBCTL  |
+> +						 HDFGRTR_nBRBIDR);
+> +
+>  	set_bit(KVM_ARCH_FLAG_FGU_INITIALIZED, &kvm->arch.flags);
+>  out:
+>  	mutex_unlock(&kvm->arch.config_lock);
+> 
+> which is of course untested, but that I expect to be correct.
 
-'index' is u32, the first condition is not needed.
+Actually, to disable the *instructions*, a similar hack must be
+applied to HFGITR_EL2. The resulting patch should be something like:
 
-> +		printk("invalid index value %02x\n", index);
+diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+index ee33f5467ce5..49d86dae8d80 100644
+--- a/arch/arm64/kvm/sys_regs.c
++++ b/arch/arm64/kvm/sys_regs.c
+@@ -4964,6 +4964,15 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
+ 		kvm->arch.fgu[HAFGRTR_GROUP] |= ~(HAFGRTR_EL2_RES0 |
+ 						  HAFGRTR_EL2_RES1);
+ 
++	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, BRBE, IMP)) {
++		kvm->arch.fgu[HDFGRTR_GROUP] |= (HDFGRTR_nBRBDATA  |
++						 HDFGRTR_nBRBCTL   |
++						 HDFGRTR_nBRBIDR);
++		kvm->arch.fgu[HFGITR_GROUP] |= (HFGITR_EL2_nBRBINJ |
++						HFGITR_EL2_nBRBIALL);
++	}
++
++
+ 	set_bit(KVM_ARCH_FLAG_FGU_INITIALIZED, &kvm->arch.flags);
+ out:
+ 	mutex_unlock(&kvm->arch.config_lock);
 
-please use netdev_err() instead.
+The implicit dependency here is that FGT is always present on a system
+that implements BRBE. The architecture supports this assertion:
+
+- BRBE is not available before ARMv9.1
+- FGT is mandatory from ARMv8.6
+
+Given that v9.1 is congruent to v8.6, we have the required overlap.
 
 Thanks,
 
-Paolo
+	M.
 
+-- 
+Without deviation from the norm, progress is not possible.
 
