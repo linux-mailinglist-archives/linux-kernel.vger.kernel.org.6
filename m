@@ -1,232 +1,234 @@
-Return-Path: <linux-kernel+bounces-215394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A585909219
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:03:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7221E90921C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:05:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A79B8284472
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:03:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E91601F25304
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A311E19DF5A;
-	Fri, 14 Jun 2024 18:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C2D19E7D3;
+	Fri, 14 Jun 2024 18:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nHOzi5Oa"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2087.outbound.protection.outlook.com [40.107.243.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iPc9UwfG"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99CCB646;
-	Fri, 14 Jun 2024 18:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718388197; cv=fail; b=DWY+UETOCBHHXH1nb6RF1UAUVLgb0ECaygKoYR/ub4zxN2gtoV73XpEEXSEJtakoRBwR0l5GHLYTbtnr3Va7GFyQWnUklhrYRzcTdtTIimMi1VLmaUx0Dsg/AFtaYfXxNIywgkHLpoCVWWSiqzjc4EAD6mvYYv3FB+glk06u47Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718388197; c=relaxed/simple;
-	bh=kc/eNHbfgJwXplbrXRKRLmE2GBmd22c//iTIUPY9xKY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Sx5UH6Zi2x0Qx4HfvZMcafjkPP7CZoK2w2vheze0BxSwlvhlpo6OjKqEQ54yQTszY75jGvO0XGol4PDNSc8SJITAPAG/XcsqODnWK/1Y/G/pLhxPQ6I8QJzrk8P05jj8+xOx7OTZhdshd7h0FT3CmNhBVeJQvNQPB+93JSmiQxw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nHOzi5Oa; arc=fail smtp.client-ip=40.107.243.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aeABQBMX10ORnGnpfK6KRBsdBDmfDCxPsvnFESbAJ5Jr1TkKg1qAE0eqaqYZPCKeQz57qgPM7gHGuWKRsoGCKJp0ia9/Nuf0ee+LKkXBny36QoRlBjsUKXxJrR9sPprQDNiIE1PZDpXBXGj7DbthWmNuA7mOvEjV34tC7xG7DTsocNVemzwBGuVvdwUHtVWgh7n8sBAgAsvp0u8Vocxm30rfH6iHA+F4WHuIQwOWtkUgRymyc3qiKHuNGxbP3vBPajU09C+Qa9Uhz8a2lG3UrEhkJh32coz7UGK8I/kJJvcS96+iRMv0bNWh6+/p4w+/fEDXP6Ml/x+uKzFUpBevNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/FWxjd2csYPZgV+iUA1RUi9aLDANBMpNfrVsIR//u/0=;
- b=hXmq2RhcSQPuFviRw0Oj6QSY+H0DP95xxfQ8Nv0+jHaE5fxxcbBQ/7M4ZxlsgPpQbyUDrXrGyL5kCSQqRWm78/JvEb1Our2Yx+zFgsWM8vKZokQCDKdy22G7NFo5kzCtx/vYsbsZIGGfYeLg4VESTdUM1TWs2xqaRaJHPwcTsP1UbCfE+P7jXYYTRvx0LM/L8kss21LjTI7G/T+ZZKiwQMhoB56fQdx6YKNTkVIO50quWXSi09zd92llAWobkXj+Bv5qwxK5q/2frJPvHtnP7EVLLEwe8BsnNLKUuLg3sorum3VHXB1iRmLUNeP0eb23Vga45S8xNQ51OkIA978Jaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/FWxjd2csYPZgV+iUA1RUi9aLDANBMpNfrVsIR//u/0=;
- b=nHOzi5OaOythIny6eeztDwL5aywAE4teYBg+EU1pAwq6qrgbOFN//QqMz6QO1v5w6uS/b5OHGchzJGbTq8nGmdUTmf8jriE2z0PCJb5VhDueeze+80Fc61x5wQAnjVRY1kXPfJgbn9Bs7Z+XtHi5d8twyISVIW9WKxSk1yhUk5u668Ap3bueEO/A8bwvVnwRpIL56Rj8FV+XUUvws5IXpqhr0OkLSDhrTXaDMKwPs71qGW37J8v277MkZHSp1Zs2ON3lJ0B0hGAWY3Aa3R8f2H9+q5PoBGzydAXiLGsoi8JR51sdML0nZV/7ttBdAbj6FtRBw6mQ4zWhmnANmiM1Kg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com (2603:10b6:a03:20b::16)
- by CY8PR12MB7730.namprd12.prod.outlook.com (2603:10b6:930:85::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.25; Fri, 14 Jun
- 2024 18:03:09 +0000
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::2cf4:5198:354a:cd07]) by BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::2cf4:5198:354a:cd07%4]) with mapi id 15.20.7677.024; Fri, 14 Jun 2024
- 18:03:08 +0000
-Message-ID: <9f3d50b9-6acf-4bab-b6ff-cd524ad0a2c8@nvidia.com>
-Date: Fri, 14 Jun 2024 11:02:32 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] selftests/mm: mseal, self_elf: fix missing
- __NR_mseal
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
- Shuah Khan <shuah@kernel.org>
-Cc: Andrei Vagin <avagin@google.com>,
- Axel Rasmussen <axelrasmussen@google.com>,
- Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Peter Xu <peterx@redhat.com>, Rich Felker <dalias@libc.org>,
- linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <20240614023009.221547-1-jhubbard@nvidia.com>
- <20240614023009.221547-2-jhubbard@nvidia.com>
- <1ea35568-bfe5-430e-9f4b-edef17f0b22b@redhat.com>
- <e6378446-6087-4ffc-9ce9-320c5e128bd6@redhat.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <e6378446-6087-4ffc-9ce9-320c5e128bd6@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR05CA0090.namprd05.prod.outlook.com
- (2603:10b6:a03:332::35) To BY5PR12MB4130.namprd12.prod.outlook.com
- (2603:10b6:a03:20b::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070FA19ADB3
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 18:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718388343; cv=none; b=E5+Wo0bbZ/REj8mzYsj88PKdatzSxiGm8A/XkJo50ZmsQluTAw8Kiu2ttaV317oNwPe7YJ0XfeA3labMs70iyjpaz2NAMZY0gz3cEf6TVxc7nsn7GanP6m4F5wuFWjzU6F5esWNtxwN6yGQXgrlK+K9q4ulltNzFpLSN7QS7MzA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718388343; c=relaxed/simple;
+	bh=hNhj4oQKB9aRCcIq7/rMXhmUVhPaDoni0j2lJhoy2OE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uhj6hyEYNBsCNqQgvuGSpYp46+uYWtKgcRfi2C6fUB7FRxiet5z9aC278WfIaJdwFSQQ24sFlhKZ6EZ54K5PUePrBiKoG+a8tOEyhVuSK11oQa0Y5f2rR8OJ5Q18FVSOVda/c8OLIpV94pQc/vyOtERXjfP+K1jieCphEWYMF5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iPc9UwfG; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-681953ad4f2so1987424a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 11:05:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718388340; x=1718993140; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SoNh1tojhGl6DE6Qa2dKAxuaT1KpRubysgC5JHV5d8A=;
+        b=iPc9UwfG9F2f60RLwb4T07RP6kSSIIs0tEbH4EhGKGHjREha3Lh3E7KWCI88682BVT
+         t/UkvtDsY4Inb4VkXr5qLeVNANzDUiZajMRTK47jTQxokXxyzPRM+mqU+QCthH1tN1Bw
+         Z8a0CumQAQuuFtOgU2LB36yr+5IDGVYFL/MJuKZtNkWDg7f4yD8Uo3Jrken95dspQc8X
+         Q82ty8+4kixbdl8inPYe8ks5RqHRGOiL7tYQzyK3zHv0LrkRdFw/NowraSY4EzysVfCs
+         +ytHq5uxSFQT0VX7y5y/LUC8m5f3HV2zGmdkCP4+L6VDLEtmuKXdJMV8G5eqlF76DXqG
+         hRbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718388340; x=1718993140;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SoNh1tojhGl6DE6Qa2dKAxuaT1KpRubysgC5JHV5d8A=;
+        b=ByijcsRicxZM+rqQXqmFzirL+O6wqkpuU9U3A4Q/2uLbSzrUoVQ+eEZgy/QOeXYHCO
+         oTa7gR+gsOJQ3QbD8z33OnK2LG3RzUMwknAZKKLRyGWYyQmejxuN7ln/Khd38tNDQJhI
+         GpD03br6IZfTymImTe4dB1uaa18yteRVaDvxeNivUQFQEvjbroftSPiYLFG65X2eOsAl
+         tbRGf7FkBCud2pNqxVvqjDEpQdzxw4HOmyzMfQb9bObMBrisWpacvhk1YFNcFzyVzbI7
+         G2HM6TM+AQNhD5Z9DGBURMFlQkjtxL1fAADW3HlgZU69Vw3CAITbR/oePCQOl8QVbOIJ
+         PSHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgizyYd/BCt8rX4ccUq7oP1GPQd7aeKOMTARFKq44Yxkrfoo2eyyWYpkaPe/00dSLnVCHau0aPVf1hSkHOpOtlb0v8YIBH5ELZG6Zz
+X-Gm-Message-State: AOJu0YymkZfas8ls16DS6xw5QQoFp9Eat7exvbmXFny9hMS8Qwx6NOGM
+	lXBud+fJ7eS+OWwhim801I6C0eS0rJ7JLMf9773lfF1CDNcspc07ofkKEmYLfE2EZtcQgN+lEAP
+	qcmB7JcPdim1Ye8BO1CPvG6MJVo7s7T0vL+ATqA==
+X-Google-Smtp-Source: AGHT+IGPXck+B6yocgMSj5EK96i63c8Roh0QGWnbr/CvcZMU0FTNUAr3Gy5zR4lrtPFEtUKFUicicx2KMW1qUtU069A=
+X-Received: by 2002:a17:902:e74a:b0:1f6:ebe2:758d with SMTP id
+ d9443c01a7336-1f862900731mr36854965ad.51.1718388340177; Fri, 14 Jun 2024
+ 11:05:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4130:EE_|CY8PR12MB7730:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4fdaff84-dae8-4621-5ead-08dc8c9c3f77
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|366013|7416011|376011;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eDBZTENIQjRIaG5QUEVINmZKbkowa0Q5V25OcWRKSW4rQmgvci9FOXk1Z1JS?=
- =?utf-8?B?VS9rcUV0RDRyQktoVVNJRC9abFU3QmZ2MEtmdHlXZUxKTzZTNmliNXl5Mkt1?=
- =?utf-8?B?c3VkUlpnWEhvK0xqazBUTlZQdnNpRlRRNjdRUi9oOUZ6SEF3dUVBQ21nc3p3?=
- =?utf-8?B?T25Fd1NFRFBzMDdNWjUybkoyVG1ELzh0azBmckJIaFdvMnQrMGhFMVlQRXpN?=
- =?utf-8?B?RisrZ2dKZzZwUzh4aVM5OThPeWR3VTJtenArdW1ENjdaSVBPZlJ3TmlXUWJ5?=
- =?utf-8?B?eXJOVGNpdFJEMHV4amxOQW5abmlNamV6Q2ZqQ011WU9Ga2pFN0ZCN2VwMmdD?=
- =?utf-8?B?akxNTGZjR3RzSGJMU21yRVN2djNTM0cwMlZkQ3ExTXBINmx3TWpwV2FqODU4?=
- =?utf-8?B?R1A3a1JDSGJiK0wrb0lPclFGa2NXeXNVb21DS2w3eUpwU1Q2S0JyQWorN2Nr?=
- =?utf-8?B?MDRBTUo4aktUbEV1cjUzUElpaVkvcUxYVy91SjdSUHFlSUY4NE12eFBtOW50?=
- =?utf-8?B?ZzdoTnZDTzRpdFRkWUtnSmFkY3BDQ1VDYTZRVEZoZUczZUx4cVdmUlc3cWpi?=
- =?utf-8?B?U0VGUzZiVUVGempKdkNPeVZhUTJEUnFFT3FBZ3JmQkx6WXRlN0VKRWU3Q0l0?=
- =?utf-8?B?VWVOSExkSzZwTGNQSXdvaFZRK2RVU2NvKzFPUGpQekh0VGhFZkZIRW5zTnNx?=
- =?utf-8?B?RkFXMDlzbVhXWlZFNWZiMEhaUGpHTVNaa2hCR1lQK090VWkzRFhiYXRUcVNh?=
- =?utf-8?B?V2xiVXVkejFQNUF4MjhyM3FmdWZMY2Q3RGFOdjNuUU16dWNodVR1aG1CQW1Q?=
- =?utf-8?B?aUI2L0d1YVp4R05xTjFtTFJGemM1aUowOFdlcDV3b2JUczMzU3pUVkNCSTRZ?=
- =?utf-8?B?R2grRi9kZzV1T3Nwc3lHYlJJdWVhWGwrVE5KWDFTS2k5bm4rS3ZVb2xPWmJG?=
- =?utf-8?B?b2dRYVpub3JkVGxtRzdKYUtFNVdOeUpIT1NsbStOeldWZW1PbGFudFhxREdZ?=
- =?utf-8?B?dnMwZWlQSUhMNGpHQkk0UDZKVmsrNXByVUVYbGc2U3Y2ampoSVpvR1VRR3Zr?=
- =?utf-8?B?eEkvT2ZHano1QmpHaTcrZzlLczZoSXZiUFJzSStRNFZ6b0J6anMvb0FiN2wx?=
- =?utf-8?B?UmpxUk5NalFabzZiUkc2RFRIL3l1U2lEMjFPamptSXdBUFhVZkVpZTU4MVJN?=
- =?utf-8?B?S05WYWVjcWtYVlI1VU9YNTBXY2ZiWkUxWlg3aVJ2ZW5ld2cvREZIQVBRdGR5?=
- =?utf-8?B?Y1BmWDlOQ3dRQTlmSVgxeERPT3pUak81RnVKNzdCZTdkc3I1NFJhSDREc0k1?=
- =?utf-8?B?U0ZzWndqUndMZ2FqZklXVFh1RzNCaTY1OFJBTjVhTk9yNGpLbkNDdWY0VGhY?=
- =?utf-8?B?MkgxSFd1YUk0dTBFNXZacXRXZ0JEZm1QYkZUK1JlZTFpZDU2eUZtWDJ5Y1l2?=
- =?utf-8?B?T2hVRkhCRFFmQ1FBWmJuUHgvWlZVMTBmcnA1djExbHRIRlJKY3dUbG4wNERk?=
- =?utf-8?B?ckkzdmlKWHdrZ3pqM25lVW51VjZXdkdFcU92ZUdJTE92U2Jlckczc25Uemx1?=
- =?utf-8?B?NFIzS25LYWJCSnJXcGNBSlUzOEtSUlpRMEFKOVZMQTNhbXd4a0kxQXk2NUZR?=
- =?utf-8?B?WUpnK0hMUGZYYlJmKzREVTdxWldtckkxTzBrTUxWdWJRN0U5WHljSGdNSUI2?=
- =?utf-8?B?OXF4R1hnaVR5K2NLQTBMMUp5ZGd5TGE3SDNvRG9kWUlQRTVnL3pVYW5ac1Ez?=
- =?utf-8?Q?Zi8tsgbiVmCeHBSgFnF9VZxoogAH9D3RJ7/1WcE?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4130.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(7416011)(376011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WTBGc2xJT3pKaGhwOEJpT1ltNGxqNTA4MnA2bVZEYlZtMWZyNWRheU5pd1lG?=
- =?utf-8?B?VHJIcWJmZmh3N0ZlN2c2ZmpSTjg4L3VvK2luVmdTTFc0RUNaYjBBalpxSUVa?=
- =?utf-8?B?RVhPNnRBZFIrN0tlbnNMVmhRandra1JORDBnWU8zdEZVZTE2UWhyL01lTGdC?=
- =?utf-8?B?RDRXMSs2ZjlzVkNYZmlYR0EzalowTVdqMU5CbnhTeng1bTBCWDhJT1YrSk9O?=
- =?utf-8?B?OXk1N0Y2SmtlcFgxdEhPWklRSHlNaHh6VHQvY3lqYnJ4WXFyT1RWVGZUdkFD?=
- =?utf-8?B?aFlpakx4ci85L3Vma1J0N0U2MG5YQ1pmUWJMNDJHSzBIQi9NbTdzWnJlb0RQ?=
- =?utf-8?B?WlR5bVVzTHRCMXljSXpBclkyYTFIVjVLZjVrVEJDQkdIbG1CY05nZzhDTncv?=
- =?utf-8?B?SEZLcTRqSm9IRGdzZzN5T1RzUzR5S0tDR21QWGNSTW4zdEVSczFlMkE0eG52?=
- =?utf-8?B?R3Y4TGl5QUd0NmhSanpCUTA1L3MrMThHK1dnSVo4aHkrQ1FxWEU4Y2E5WDRy?=
- =?utf-8?B?RTVrSGdNWStYeXJHUE10ck1ab3ZCY2Q0SnRJUTIzTHpxb2JmUHZVMGJwa2JG?=
- =?utf-8?B?cjRFRzlBb2lhNXgzbzkyc3VYd3FKK2k5cDlkZm16T0svK3BOcVZNNFlxVjZE?=
- =?utf-8?B?T0hoaTd5U0Uybys2TUo2RnF0Y2tSeTZ5bytZalIxemhRN1VFL0FEcFI3MW1C?=
- =?utf-8?B?Sjh4bEp4ak82NFdkMnhKbmRwNXRiVmUycUJNTW5majl5dklJa0tWZ1hnY1JN?=
- =?utf-8?B?RWdJeXVTNHF1bW9FcDNhanBFcjVqNU8wblZPeHJkbjNkaE1CamJvUmdkVUVa?=
- =?utf-8?B?QlJEdmhGTUk4V1dMZGV3VDA0cHRMY0NiZHR6QnU0ZTBYc0hZcVdQTk5FYXZQ?=
- =?utf-8?B?eDFSd0t5Q3VaZFB6SngzK1lPa21rSm9DTFBzZmdJdUxqcFpMZ1lPYm54T0R0?=
- =?utf-8?B?aWZmQUp6aTdobW9RRGRDWGw3NmZzY2NWYUR0Q05wVlkzQkMvTmppdXA4bUlJ?=
- =?utf-8?B?QlM1Q00yY2ZnQXN3SkZYZExDdGtsS29xOGhHblQ0ZGtnT3BncDFGNFloOFlr?=
- =?utf-8?B?ZmM2Y2pWNzlOcnJWS2tCU0trWkRyVURPaG4vVm1mWU1EdVk3ampzem0zNmhF?=
- =?utf-8?B?cjVTbzFNbXVSTXJmdHZZUnVKTHBCOU5uSEJwc0FFT29iNGlkSEEvY0QwVTNU?=
- =?utf-8?B?aGIxZ3lJOGxtd1BiMW9zZEE3UkxsRWpXdHZHOHREbzRsdGhWTlFNbGFZZWt0?=
- =?utf-8?B?Zzg3MGIzRnRqbkhUZnBTTlFCY2luZGJOcWtOVTZ6REpBWklsS1Z0SXU0R09V?=
- =?utf-8?B?UFJXUFpZblMvNVJzQThucVNoc1hsY3d0MHVRT1hFdG42bGsvSXQ3WnhXUWIv?=
- =?utf-8?B?RGJPNWgxRVRhenpyRDlvVFJhVGdpSVhYaTdzOXJPakV0eHVVSjRzR0RTcXpL?=
- =?utf-8?B?VUNlS2pxcnBEdjhrQTBLa3ptMXRySnYxODg5dS9FRUhEK1IvN0x4SXZOcXRi?=
- =?utf-8?B?SWxmTG5FV1Mrc1k2UDgrbG1Wd3JqYUQzRjRnTVF2R3ZjOWhKdVIra05VRDdX?=
- =?utf-8?B?NzJmYXhxc1ExSTVjb1A1dmhSTTFtb1VEM2hQU2dza3lDUC80YkVjaVpHZEN5?=
- =?utf-8?B?SUZPS2Q4cmJpTzRmOEdTQVIrZU11b2lvYkdQaHZEaC9rc1BLdGZseVFydmpn?=
- =?utf-8?B?VzBydnNab1B1dVhkc0hzcUIyTVZpc1lnbUVDOEJaZUdwQWdpeGNUd3MwQmVF?=
- =?utf-8?B?VWNKUnE0d2xFUFk1VWZPblhiQVlsTG1ST0plNXhSbUt0Y3FCUHpJM1pxdCs3?=
- =?utf-8?B?TjhXZXRJa1NYUUFFUnNWWk44V0hTc1RHZWJHOHNqQkZXQ0FyVktEaVpZZ1Zx?=
- =?utf-8?B?OTM4d1JKU2xycVN1T0ROSExBNnFLbXIwWUxsVnVubHNLU044a1RIMmpPMThR?=
- =?utf-8?B?ZUVjSWM3WUNBaXh4SkNrS3hFYXl2OHhqbitrRWg4MzEveS9YWWxETDdmWisw?=
- =?utf-8?B?Ly9MRW0yOGZoa2NlOUUxRXBqcElFcEhPTldmbzdRYmd0TUYzcXVRT0Qzb0t3?=
- =?utf-8?B?dE9UN04xdnpCN2liQnFzUGpqMEtHdFN0OVNCTmthWmdWcHE5bjFsOTRZdjMr?=
- =?utf-8?B?anI4OVBPQkVOa0FPYUs5VGNqT3gwalUvaFVxYzEySDZXSWUrUzNJTjM3c3E4?=
- =?utf-8?B?K1E9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4fdaff84-dae8-4621-5ead-08dc8c9c3f77
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4130.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2024 18:03:08.8570
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9NdWvyTeoaMkd53vuaeuYD0jjZGs4NoyvbsLuhMAS5qKAVXTNmg+QAXSmIYrpYaVu/rKb8JPFANLc+iEk58TEg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7730
+References: <20240417133731.2055383-1-quic_c_gdjako@quicinc.com> <20240417133731.2055383-6-quic_c_gdjako@quicinc.com>
+In-Reply-To: <20240417133731.2055383-6-quic_c_gdjako@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 14 Jun 2024 21:05:28 +0300
+Message-ID: <CAA8EJppcXVu72OSo+OiYEiC1HQjP3qCwKMumOsUhcn6Czj0URg@mail.gmail.com>
+Subject: Re: [PATCH v8 5/7] arm64: dts: qcom: sdm845: Add DT nodes for the TBUs
+To: Georgi Djakov <quic_c_gdjako@quicinc.com>
+Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, 
+	iommu@lists.linux.dev, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	conor+dt@kernel.org, devicetree@vger.kernel.org, andersson@kernel.org, 
+	konrad.dybcio@linaro.org, robdclark@gmail.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, quic_cgoldswo@quicinc.com, 
+	quic_sukadev@quicinc.com, quic_pdaly@quicinc.com, quic_sudaraja@quicinc.com, 
+	djakov@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/14/24 5:41 AM, David Hildenbrand wrote:
-> On 14.06.24 14:28, David Hildenbrand wrote:
->> On 14.06.24 04:30, John Hubbard wrote:
->>> The selftests/mm build isn't exactly "broken", according to the current
->>> documentation, which still claims that one must run "make headers",
->>> before building the kselftests. However, according to the new plan to
->>> get rid of that requirement [1], they are future-broken: attempting to
->>> build selftests/mm *without* first running "make headers" will fail due
->>> to not finding __NR_mseal.
->>>
->>> Therefore,  add ./usr/include/asm/unistd_[32|x32|64].h (created via
->>> "make headers") to tools/uapi/, and change the selftests/mm files that
->>> require __NR_mseal to include from the correct location. The way to do
->>> so is to include <linux/unistd.h> instead of just <unistd.h>.
->>>
->>> [1] commit e076eaca5906 ("selftests: break the dependency upon local
->>> header files")
->>>
->>> Fixes: 4926c7a52de7 ("selftest mm/mseal memory sealing")
->>> Cc: Jeff Xu <jeffxu@chromium.org>
->>> Cc: David Hildenbrand <david@redhat.com>
->>> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
->>> ---
->>
->> If it works, great
-> 
-> ... thinking again, are some of these headers arch-specific (IOW, 
-> generating them per-arch would result in something slightly different)?
+On Wed, 17 Apr 2024 at 16:39, Georgi Djakov <quic_c_gdjako@quicinc.com> wrote:
+>
+> Add the device-tree nodes for the TBUs (translation buffer units) that
+> are present on the sdm845 platforms. The TBUs can be used debug the
+> kernel and provide additional information when a context faults occur.
+>
+> Describe the all registers, clocks, interconnects and power-domain
+> resources that are needed for each of the TBUs.
+>
+> Signed-off-by: Georgi Djakov <quic_c_gdjako@quicinc.com>
 
-Oh wow, yes they are. I'm guilty of x86-centric thinking (again).
+This patch now prevents interconnect drivers from hitting the sync
+state on SDM845.
+The TBU driver is enabled only when the ARM_SMMU_QCOM_DEBUG is
+enabled, which is not a typical case on a normal system:
 
-hmm, this is going to make it really a lot of trouble to do this
-approach. But there's no point in turning back now, so I guess I'd
-better fire up the cross-compilers and generate for all the arches.
-
-> 
-> In tools/include/uapi/asm-generic/unistd.h, we already do have 
-> __NR_mseal ...
-
-Yes, but it doesn't get used in selftests/mm, with the way headers are
-set up right now.
+[   26.209151] qnoc-sdm845 1500000.interconnect: sync_state() pending
+due to 150c5000.tbu
+[   26.217228] qnoc-sdm845 1620000.interconnect: sync_state() pending
+due to 150c5000.tbu
+[   26.229926] qnoc-sdm845 1500000.interconnect: sync_state() pending
+due to 150c9000.tbu
+[   26.238008] qnoc-sdm845 1620000.interconnect: sync_state() pending
+due to 150c9000.tbu
+[   26.249068] qnoc-sdm845 1740000.interconnect: sync_state() pending
+due to 150cd000.tbu
+[   26.257127] qnoc-sdm845 1740000.interconnect: sync_state() pending
+due to 150d1000.tbu
+[   26.265159] qnoc-sdm845 1740000.interconnect: sync_state() pending
+due to 150d5000.tbu
+[   26.273189] qnoc-sdm845 1500000.interconnect: sync_state() pending
+due to 150d9000.tbu
+[   26.281206] qnoc-sdm845 1620000.interconnect: sync_state() pending
+due to 150d9000.tbu
+[   26.289203] qnoc-sdm845 1500000.interconnect: sync_state() pending
+due to 150dd000.tbu
+[   26.297196] qnoc-sdm845 1620000.interconnect: sync_state() pending
+due to 150dd000.tbu
+[   26.305201] qnoc-sdm845 1500000.interconnect: sync_state() pending
+due to 150e1000.tbu
+[   26.313207] qnoc-sdm845 1620000.interconnect: sync_state() pending
+due to 150e1000.tbu
 
 
-thanks,
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 73 ++++++++++++++++++++++++++++
+>  1 file changed, 73 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index 2f20be99ee7e..fa9403aad96f 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -15,6 +15,7 @@
+>  #include <dt-bindings/dma/qcom-gpi.h>
+>  #include <dt-bindings/firmware/qcom,scm.h>
+>  #include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/interconnect/qcom,icc.h>
+>  #include <dt-bindings/interconnect/qcom,osm-l3.h>
+>  #include <dt-bindings/interconnect/qcom,sdm845.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> @@ -5085,6 +5086,78 @@ apps_smmu: iommu@15000000 {
+>                                      <GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH>;
+>                 };
+>
+> +               anoc_1_tbu: tbu@150c5000 {
+> +                       compatible = "qcom,sdm845-tbu";
+> +                       reg = <0x0 0x150c5000 0x0 0x1000>;
+> +                       interconnects = <&system_noc MASTER_GNOC_SNOC QCOM_ICC_TAG_ACTIVE_ONLY
+> +                                        &config_noc SLAVE_IMEM_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
+> +                       power-domains = <&gcc HLOS1_VOTE_AGGRE_NOC_MMU_TBU1_GDSC>;
+> +                       qcom,stream-id-range = <&apps_smmu 0x0 0x400>;
+> +               };
+> +
+> +               anoc_2_tbu: tbu@150c9000 {
+> +                       compatible = "qcom,sdm845-tbu";
+> +                       reg = <0x0 0x150c9000 0x0 0x1000>;
+> +                       interconnects = <&system_noc MASTER_GNOC_SNOC QCOM_ICC_TAG_ACTIVE_ONLY
+> +                                        &config_noc SLAVE_IMEM_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
+> +                       power-domains = <&gcc HLOS1_VOTE_AGGRE_NOC_MMU_TBU2_GDSC>;
+> +                       qcom,stream-id-range = <&apps_smmu 0x400 0x400>;
+> +               };
+> +
+> +               mnoc_hf_0_tbu: tbu@150cd000 {
+> +                       compatible = "qcom,sdm845-tbu";
+> +                       reg = <0x0 0x150cd000 0x0 0x1000>;
+> +                       interconnects = <&mmss_noc MASTER_MDP0 QCOM_ICC_TAG_ACTIVE_ONLY
+> +                                        &mmss_noc SLAVE_MNOC_HF_MEM_NOC QCOM_ICC_TAG_ACTIVE_ONLY>;
+> +                       power-domains = <&gcc HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC>;
+> +                       qcom,stream-id-range = <&apps_smmu 0x800 0x400>;
+> +               };
+> +
+> +               mnoc_hf_1_tbu: tbu@150d1000 {
+> +                       compatible = "qcom,sdm845-tbu";
+> +                       reg = <0x0 0x150d1000 0x0 0x1000>;
+> +                       interconnects = <&mmss_noc MASTER_MDP0 QCOM_ICC_TAG_ACTIVE_ONLY
+> +                                        &mmss_noc SLAVE_MNOC_HF_MEM_NOC QCOM_ICC_TAG_ACTIVE_ONLY>;
+> +                       power-domains = <&gcc HLOS1_VOTE_MMNOC_MMU_TBU_HF1_GDSC>;
+> +                       qcom,stream-id-range = <&apps_smmu 0xc00 0x400>;
+> +               };
+> +
+> +               mnoc_sf_0_tbu: tbu@150d5000 {
+> +                       compatible = "qcom,sdm845-tbu";
+> +                       reg = <0x0 0x150d5000 0x0 0x1000>;
+> +                       interconnects = <&mmss_noc MASTER_CAMNOC_SF QCOM_ICC_TAG_ACTIVE_ONLY
+> +                                        &mmss_noc SLAVE_MNOC_SF_MEM_NOC QCOM_ICC_TAG_ACTIVE_ONLY>;
+> +                       power-domains = <&gcc HLOS1_VOTE_MMNOC_MMU_TBU_SF_GDSC>;
+> +                       qcom,stream-id-range = <&apps_smmu 0x1000 0x400>;
+> +               };
+> +
+> +               compute_dsp_tbu: tbu@150d9000 {
+> +                       compatible = "qcom,sdm845-tbu";
+> +                       reg = <0x0 0x150d9000 0x0 0x1000>;
+> +                       interconnects = <&system_noc MASTER_GNOC_SNOC QCOM_ICC_TAG_ACTIVE_ONLY
+> +                                        &config_noc SLAVE_IMEM_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
+> +                       qcom,stream-id-range = <&apps_smmu 0x1400 0x400>;
+> +               };
+> +
+> +               adsp_tbu: tbu@150dd000 {
+> +                       compatible = "qcom,sdm845-tbu";
+> +                       reg = <0x0 0x150dd000 0x0 0x1000>;
+> +                       interconnects = <&system_noc MASTER_GNOC_SNOC QCOM_ICC_TAG_ACTIVE_ONLY
+> +                                        &config_noc SLAVE_IMEM_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
+> +                       power-domains = <&gcc HLOS1_VOTE_AGGRE_NOC_MMU_AUDIO_TBU_GDSC>;
+> +                       qcom,stream-id-range = <&apps_smmu 0x1800 0x400>;
+> +               };
+> +
+> +               anoc_1_pcie_tbu: tbu@150e1000 {
+> +                       compatible = "qcom,sdm845-tbu";
+> +                       reg = <0x0 0x150e1000 0x0 0x1000>;
+> +                       clocks = <&gcc GCC_AGGRE_NOC_PCIE_TBU_CLK>;
+> +                       interconnects = <&system_noc MASTER_GNOC_SNOC QCOM_ICC_TAG_ACTIVE_ONLY
+> +                                        &config_noc SLAVE_IMEM_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
+> +                       power-domains = <&gcc HLOS1_VOTE_AGGRE_NOC_MMU_PCIE_TBU_GDSC>;
+> +                       qcom,stream-id-range = <&apps_smmu 0x1c00 0x400>;
+> +               };
+> +
+>                 lpasscc: clock-controller@17014000 {
+>                         compatible = "qcom,sdm845-lpasscc";
+>                         reg = <0 0x17014000 0 0x1f004>, <0 0x17300000 0 0x200>;
+>
+
+
 -- 
-John Hubbard
-NVIDIA
-
+With best wishes
+Dmitry
 
