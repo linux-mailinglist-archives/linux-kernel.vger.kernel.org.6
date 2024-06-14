@@ -1,259 +1,299 @@
-Return-Path: <linux-kernel+bounces-214813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD00908A6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:49:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC352908A70
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA128B23099
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:49:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFFD61C21F2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF08194AEF;
-	Fri, 14 Jun 2024 10:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B04419539C;
+	Fri, 14 Jun 2024 10:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ULvZR+wS"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="d1JBZU9X"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32E6194AE5
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4B3194C8F
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718362131; cv=none; b=BdEMUjdhSgeqgZCO+9AiljTRRyo654belRxBQbQOli7bZ7HXHzzmeRlTTlHZA957bkAtg8CntnRlYB3LMQiQCL5T/wxYVvdEpv6KH6qemLO/PxNwnLyJPmW/ZJ29Rv2duFbh192wrQSkJxdPFhFM+emy1TjB7kAQZs0RQ81UqLo=
+	t=1718362191; cv=none; b=DdeLPFhfWQdeTyLsO+CvC0MI3lOC8DDpzGHBtT4L3/HPO9tk/xjW8K2Eef9ZNJ/U2w/7eJRQqmM/X+Cwsc7dcEgP7S9l7qfdowEowBFeaGEnhvwVyBlMTskJTFGTTny42mRmEFBhyTrFvyy9k9ZV0VJspj9yc9axmP1KUvRGOvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718362131; c=relaxed/simple;
-	bh=ZXU+0RMH0fz/pS+haFqcAKCaYVHjid2A9LxGhmMo8l0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q9rhI6+7VU7xZAmBLV2poItT2/TJVduvBpOVQrd/c+a15fR3tGdVGEENHOfVJUBFtdEvRZ8CAxmQQPN3cPQ19V10+IoBQn1OufQxVfx66idMu3OPtYujIB+mGIbf/qPTYxKp2qVEryVfi4RcPsKNyzoPgaiGNRizaD1GlJ9uxxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ULvZR+wS; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-681953ad4f2so1625504a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 03:48:49 -0700 (PDT)
+	s=arc-20240116; t=1718362191; c=relaxed/simple;
+	bh=z+Gi4zzeOa9LwC60xY2b81mdL1JzQOP7pMfXreCx7AU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TpNOvKOy1YmUDWu79AVWkhURdETZOfwVl/CAfQQJycGT7OKoJu78d5Ej8hqjjIKHHrqOhFoMntqaYld1rwykGMLos3bv7r15nVa+G9AuUIuhBkN5OAy3esehHquw3jfOoQ74chFaWU2vqClgLy4Qdn2zXFEEUwJ3zfCPjLDIfDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=d1JBZU9X; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-704218fc926so44908b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 03:49:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718362129; x=1718966929; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FJRFKVvp1PoPGBhKf/e9VTmU0CVL3sNznYNLbRBztzw=;
-        b=ULvZR+wS/hE9Ui0qxEbqShEACnlnuqbK3iolxi1ecMvyMEimcZ24gSzDDE32Z7b+5J
-         +tdfjNEoxG/j2Xf5rPDInV5r4ac4S1ApyS3huSDtwpbUwe7ZRuRPhYvPXbEgEe9bCEq+
-         /z24duZhwsIet0UpbZGW7vtSPieFmWgSOX3ZR0NTeRTi64lN3xJna5lRUyW3ReFGBmCf
-         B1jZFUuDpaiOhKCJ12wWsKgmdxGMTbfdIHVzro/HXkoCsyPXBBuJKTGTvVVn1lz3wqhR
-         b2uCeu4nKD34TiWlLyt/Zv7m1AjUrjSQW+afecZRB0TiyMqxIw6VtSN5lGjuZZ8a4gR/
-         LuHg==
+        d=bytedance.com; s=google; t=1718362189; x=1718966989; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hmqCAHcpbwggVjy6exq+YALJF1pljPcusJTHFPXAlKI=;
+        b=d1JBZU9XdfaFR2ECvQNSYqKyhw7os2KOUvJdKxCAMzczJwkBJ5M9rJQvssAPZHx+B5
+         lPHpUEWBji45nUoAQnOnbVQ9fdzKHZTuKaQOv+uPayS4jv+HebA2BvAku4pyVqkxmrrc
+         MuAYuCkTgzFHQMrdrJWUZWDfqDkYnOovzYwenOBZZuHXo7/kmyf47d6E/HXC2agDNbu4
+         RGoad80aZGEdqVkIcigviSjOv7FYlarrswIsz0328SxKksrbmPyG9O15cAjCIwtO/1Gt
+         pZkGLgL/qLLg6k0tf5SGwdIwjPLRt4eRt/IKG14M8Jrj06vdUQ2Lg7P2O2gX4Uhue4IV
+         vY0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718362129; x=1718966929;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FJRFKVvp1PoPGBhKf/e9VTmU0CVL3sNznYNLbRBztzw=;
-        b=IpgAbjpfqtOwdg/hD1TnEQDoAitO+CDndDTAD1sdp2whqwQRNgcJi0NKpCjph1Kmr+
-         W5TcmkbEhP52A8DWAG1Rce7IY3b/mTq3yZWqY8v/K0qYhig66RF9IkC+f9S5+Yk2zgBM
-         tvWDJaB+a5V1kwVoXboSh61qWxlOoHFeWD8RdlUwtyZISBN27vRYIJDqwe9yERHccw5a
-         m0fQc5mGoiOp5BSO42FvBmlAaK1cVYnT/afnfx5e6QA63GuGtn4jUl/m9F7eqle0VVxq
-         BtZ9Lqgr/sG7rYODLjVWr93IPLy2D0jfjzAb3sIUrjZG2y/VVyjMHFw1+hXd+BfXwcwq
-         JSrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXgj8Qy7+D6VU0RQkMooNbHpkm933RNk59E/+2I+mTGfvDbrPWibqnPkYJo1tojfY+KqY+Qp6+t8AUPHXHL4nQ1+jwFyMck2oqWVuJT
-X-Gm-Message-State: AOJu0YzL40ECxsES2VrVOKgHCEPKfyn/asQdQS4bIEOywNTATWcQ77EW
-	FycHN4MIODGn0kdf/Ks3qixBoi/eMfhQbrAQajYG5Flts3jax4WjWWTmQkSr6juBCsXou00NXkE
-	Xl7V7AE0vogVZK2S9ArYsaxrUuXxokUhd58fhQw==
-X-Google-Smtp-Source: AGHT+IFBNs6asuW3ITzwrzxBuJ34dIEDrFFiB0cxCgEUXerjbV3bUVsVACrV/h+c0Xuym4jmu0bWBIKinZhT1ShFBqQ=
-X-Received: by 2002:a17:90a:928a:b0:2c2:e97f:89d5 with SMTP id
- 98e67ed59e1d1-2c4dbd44d6amr2419553a91.42.1718362128949; Fri, 14 Jun 2024
- 03:48:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718362189; x=1718966989;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hmqCAHcpbwggVjy6exq+YALJF1pljPcusJTHFPXAlKI=;
+        b=FTLuFxEuNQBBzTNEsxpHbaaUxub/m/UdFz9Qer5e5ss2MObRNIttvrzIe3pE/mKGV8
+         VBWc9/tZnSrmGXXthgqaEcvt1ycn9LuhchxaC4N4UhPY7o+wligPwsc+u9r8FPk/5aDM
+         es5h1yW6FzlBctJQsTJ/9GpTLi4NQnH+3PDFv03ADu5TTPWLIGsOylcs0y4SxjZKXZnD
+         kMz2a7PUozvEUntLfvJGygvXbB59zvnyjqfIVdVzrSD6cO3jc0bjR86ExUAtJV4b/6HU
+         sLhDWFVI8yjYgt6YkvW51fnRtEtRB8Hi1XrlwR1g0dQNSBlqkirkZawptVDcT0FD7wzt
+         IbMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/JjeQ3WvZKPX4/q1YX+we7MwM8AK/JT5BKxzdBaW8SwbptY7v6h0u3HC6T/+XMSQZ/TXn8woJNfu6p//bRVFK29xIXV4mO7HtZ2/H
+X-Gm-Message-State: AOJu0YwT28E81EGImXZkH8VQ/0iunjHnTvgxPyNVihg15k+MP9Lx+juB
+	tcSa8OBsY8v6r0SY1+v6vTI4vygsjcauVNxrf4NV5qGiwzJO4ekK2am2sfEVQL4=
+X-Google-Smtp-Source: AGHT+IGtCcMdp4KkgsUlEmyCdU6iXnl4cUS8Wg4L+AA4odNhkkdCncUU4TqYUpiClGd3D4OkYRrqlQ==
+X-Received: by 2002:a05:6a00:8995:b0:705:bf53:aa8d with SMTP id d2e1a72fcca58-705d71c7ef2mr2298021b3a.3.1718362189063;
+        Fri, 14 Jun 2024 03:49:49 -0700 (PDT)
+Received: from [10.84.144.49] ([203.208.167.148])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc96b65asm2771727b3a.74.2024.06.14.03.49.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 03:49:48 -0700 (PDT)
+Message-ID: <f2fbf466-f722-4fd3-9883-189145e599f4@bytedance.com>
+Date: Fri, 14 Jun 2024 18:49:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613181613.4329-1-kprateek.nayak@amd.com> <20240614092801.GL8774@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240614092801.GL8774@noisy.programming.kicks-ass.net>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Fri, 14 Jun 2024 12:48:37 +0200
-Message-ID: <CAKfTPtBTxhbmh=605TJ9sRw-nFu6w-KY7QpAxRUh5AjhQWa2ig@mail.gmail.com>
-Subject: Re: [PATCH v2 00/14] Introducing TIF_NOTIFY_IPI flag
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>, linux-kernel@vger.kernel.org, 
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>, 
-	Michal Simek <monstr@monstr.eu>, Dinh Nguyen <dinguyen@kernel.org>, Jonas Bonn <jonas@southpole.se>, 
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Andrew Donnellan <ajd@linux.ibm.com>, Benjamin Gray <bgray@linux.ibm.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Xin Li <xin3.li@intel.com>, 
-	Kees Cook <keescook@chromium.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Tony Battersby <tonyb@cybernetics.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Brian Gerst <brgerst@gmail.com>, Leonardo Bras <leobras@redhat.com>, 
-	Imran Khan <imran.f.khan@oracle.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Rik van Riel <riel@surriel.com>, Tim Chen <tim.c.chen@linux.intel.com>, 
-	David Vernet <void@manifault.com>, Julia Lawall <julia.lawall@inria.fr>, linux-alpha@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
-	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-pm@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/3] asynchronously scan and free empty user PTE pages
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>
+Cc: hughd@google.com, willy@infradead.org, mgorman@suse.de,
+ muchun.song@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1718267194.git.zhengqi.arch@bytedance.com>
+ <02f8cbd0-8b2b-4c2d-ad96-f854d25bf3c2@redhat.com>
+ <efac94f6-2fb3-4682-a894-7c8ffac18d20@bytedance.com>
+ <2cda0af6-8fde-4093-b615-7979744d6898@redhat.com>
+ <aadae460-3797-4d10-a380-5d4fe8189e20@bytedance.com>
+ <aaf9a7d7-647f-41bf-91b4-e362ff5df6b0@redhat.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <aaf9a7d7-647f-41bf-91b4-e362ff5df6b0@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 14 Jun 2024 at 11:28, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Thu, Jun 13, 2024 at 06:15:59PM +0000, K Prateek Nayak wrote:
-> > Effects of call_function_single_prep_ipi()
-> > ==========================================
-> >
-> > To pull a TIF_POLLING thread out of idle to process an IPI, the sender
-> > sets the TIF_NEED_RESCHED bit in the idle task's thread info in
-> > call_function_single_prep_ipi() and avoids sending an actual IPI to the
-> > target. As a result, the scheduler expects a task to be enqueued when
-> > exiting the idle path. This is not the case with non-polling idle states
-> > where the idle CPU exits the non-polling idle state to process the
-> > interrupt, and since need_resched() returns false, soon goes back to
-> > idle again.
-> >
-> > When TIF_NEED_RESCHED flag is set, do_idle() will call schedule_idle(),
-> > a large part of which runs with local IRQ disabled. In case of ipistorm,
-> > when measuring IPI throughput, this large IRQ disabled section delays
-> > processing of IPIs. Further auditing revealed that in absence of any
-> > runnable tasks, pick_next_task_fair(), which is called from the
-> > pick_next_task() fast path, will always call newidle_balance() in this
-> > scenario, further increasing the time spent in the IRQ disabled section.
-> >
-> > Following is the crude visualization of the problem with relevant
-> > functions expanded:
-> > --
-> > CPU0                                                  CPU1
-> > ====                                                  ====
-> >                                                       do_idle() {
-> >                                                               __current_set_polling();
-> >                                                               ...
-> >                                                               monitor(addr);
-> >                                                               if (!need_resched())
-> >                                                                       mwait() {
-> >                                                                       /* Waiting */
-> > smp_call_function_single(CPU1, func, wait = 1) {                              ...
-> >       ...                                                                     ...
-> >       set_nr_if_polling(CPU1) {                                               ...
-> >               /* Realizes CPU1 is polling */                                  ...
-> >               try_cmpxchg(addr,                                               ...
-> >                           &val,                                               ...
-> >                           val | _TIF_NEED_RESCHED);                           ...
-> >       } /* Does not send an IPI */                                            ...
-> >       ...                                                             } /* mwait exit due to write at addr */
-> >       csd_lock_wait() {                                       }
-> >       /* Waiting */                                           preempt_set_need_resched();
-> >               ...                                             __current_clr_polling();
-> >               ...                                             flush_smp_call_function_queue() {
-> >               ...                                                     func();
-> >       } /* End of wait */                                     }
-> > }                                                             schedule_idle() {
-> >                                                                       ...
-> >                                                                       local_irq_disable();
-> > smp_call_function_single(CPU1, func, wait = 1) {                      ...
-> >       ...                                                             ...
-> >       arch_send_call_function_single_ipi(CPU1);                       ...
-> >                                               \                       ...
-> >                                                \                      newidle_balance() {
-> >                                                 \                             ...
-> >                                             /* Delay */                       ...
-> >                                                   \                   }
-> >                                                    \                  ...
-> >                                                     \-------------->  local_irq_enable();
-> >                                                                       /* Processes the IPI */
-> > --
-> >
-> >
-> > Skipping newidle_balance()
-> > ==========================
-> >
-> > In an earlier attempt to solve the challenge of the long IRQ disabled
-> > section, newidle_balance() was skipped when a CPU waking up from idle
-> > was found to have no runnable tasks, and was transitioning back to
-> > idle [2]. Tim [3] and David [4] had pointed out that newidle_balance()
-> > may be viable for CPUs that are idling with tick enabled, where the
-> > newidle_balance() has the opportunity to pull tasks onto the idle CPU.
->
-> I don't think we should be relying on this in any way shape or form.
-> NOHZ can kill that tick at any time.
->
-> Also, semantically, calling newidle from the idle thread is just daft.
-> You're really not newly idle in that case.
->
-> > Vincent [5] pointed out a case where the idle load kick will fail to
-> > run on an idle CPU since the IPI handler launching the ILB will check
-> > for need_resched(). In such cases, the idle CPU relies on
-> > newidle_balance() to pull tasks towards itself.
->
-> Is this the need_resched() in _nohz_idle_balance() ? Should we change
-> this to 'need_resched() && (rq->nr_running || rq->ttwu_pending)' or
-> something long those lines?
+Hi David,
 
-It's not only this but also in do_idle() as well which exits the loop
-to look for tasks to schedule
+On 2024/6/14 15:53, David Hildenbrand wrote:
+>>> My thinking is, we start with a madvise(MADV_PT_RECLAIM) that will
+>>> synchronously try to reclaim page tables without any asynchronous work.
+>>>
+>>> Similar to MADV_COLLAPSE that only does synchronous work. Of course,
+>>
+>> This is feasible, but I worry that some user-mode programs may not be
+>> able to determine when to call it.
+> 
+> Some yes, but others clearly :) Meaning, it's one step into the right 
+> direction without having to worry about asynchronous work in the kernel 
+> for now. That doesn't mean that asynchronous option is off the table.
 
->
-> I mean, it's fairly trivial to figure out if there really is going to be
-> work there.
->
-> > Using an alternate flag instead of NEED_RESCHED to indicate a pending
-> > IPI was suggested as the correct approach to solve this problem on the
-> > same thread.
->
-> So adding per-arch changes for this seems like something we shouldn't
-> unless there really is no other sane options.
->
-> That is, I really think we should start with something like the below
-> and then fix any fallout from that.
+Got it. I will try to implement a synchronous madvise option in the
+next version.
 
-The main problem is that need_resched becomes somewhat meaningless
-because it doesn't  only mean "I need to resched a task" and we have
-to add more tests around even for those not using polling
+> 
+>>
+>> My previous idea was to do something similar to madvise(MADV_HUGEPAGE),
+>> just mark the vma as being able to reclaim the pgtable, and then hand
+>> it over to the background thread for asynchronous reclaim.
+> 
+> That's one option, although there might be workloads where you really 
+> don't have to scan asynchronously and possibly repeatedly.
+> 
+> For example, after virtio-mem discarded some memory it hotunplugged from 
+> a VM using MADV_DONTNEED (in a sequence of multiple steps), it could 
+> just setup a timer to free up page tables after a while exactly once. No 
+> need to scan repeatedly / multiple times if virtio-mem didn't remove any 
+> memory from a VM.
+> 
+> For memory allocators it could be similar: trigger it once (from another 
+> thread?) on a range after sufficient freeing happened. If the workload 
+> is mostly idle, there might not be a need to free up memory.
 
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 0935f9d4bb7b..cfa45338ae97 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -5799,7 +5800,7 @@ static inline struct task_struct *
->  __pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
->  {
->         const struct sched_class *class;
-> -       struct task_struct *p;
-> +       struct task_struct *p = NULL;
->
->         /*
->          * Optimization: we know that if all tasks are in the fair class we can
-> @@ -5810,9 +5811,11 @@ __pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
->         if (likely(!sched_class_above(prev->sched_class, &fair_sched_class) &&
->                    rq->nr_running == rq->cfs.h_nr_running)) {
->
-> -               p = pick_next_task_fair(rq, prev, rf);
-> -               if (unlikely(p == RETRY_TASK))
-> -                       goto restart;
-> +               if (rq->nr_running) {
+Thanks for adding this information!
 
-How do you make the diff between a spurious need_resched() because of
-polling and a cpu becoming idle ? isn't rq->nr_running null in both
-cases ?
-In the later case, we need to call sched_balance_newidle() but not in the former
+> 
+> (mostly focused on anonymous memory + shmem for now. With file-backed 
+> memory it might be different, but that has so far not been the biggest 
+> consumer we saw regarding page tables.)
 
-> +                       p = pick_next_task_fair(rq, prev, rf);
-> +                       if (unlikely(p == RETRY_TASK))
-> +                               goto restart;
-> +               }
->
->                 /* Assume the next prioritized class is idle_sched_class */
->                 if (!p) {
+OK.
+
+> 
+> Of course, for real asynchronous/automatic scanning in the kernel, one 
+> could try finding clues when scanning is reasonable: for example, mark 
+> page tables that have been scanned and there was nothing to reclaim, and 
+> mark page tables when modifying them. But such optimizations are rather 
+> future work I guess, because devil is in the detail.
+
+Yes, we can optimize it step by step.
+
+> 
+>>
+>>> if we don't need any heavy locking for reclaim, we might also just
+>>> try reclaiming during MADV_DONTNEED when spanning a complete page
+>>
+>> I think the lock held by the current solution is not too heavy and
+>> should be acceptable.
+>>
+>> But for MADV_FREE case, it still needs to be handled by
+>> madvise(MADV_PT_RECLAIM) or asynchronous work.
+> 
+> Yes. Interestingly, reclaim code might be able to do that scanning + 
+> reclaim if locking is cheap.
+
+Yes, I am also considering implementing another madvise option in the
+next version:
+
+    mark the vma, then add its corresponding mm to a global list, and
+    then traverse the list and reclaim it when the memory is tight and
+    enters the system reclaim path.
+
+
+> 
+>>
+>>> table. That won't sort out all cases where reclaim is possible, but
+>>> with both approaches we could cover quite a lot that were discovered
+>>> to really result in a lot of emprt page tables.
+>>
+
+[...]
+
+>>>
+>>> I pushed it to
+>>>       https://github.com/davidhildenbrand/linux/tree/page_table_reclaim
+>>>
+>>> I suspect it's a non-working version (and I assume the locking is
+>>> broken, there
+>>> are no VMA checks, etc), it's an old prototype. Just to give you an idea
+>>> about the
+>>> lockless scanning and how I started by triggering reclaim only when
+>>> kicked-off by
+>>> user space.
+>>
+>> Many thanks! But I'm worried that on some platforms disbaling the IRQ
+>> might be more expensive than holding the lock, such as arm64? Not sure.
+> 
+> Scanning completely lockless (no mmap lock, not PT locks), means that -- 
+> as long as there is not much to reclaim (for most workloads the common 
+> case!) -- you would not affect the workload at all.
+> 
+> Take a look at the khugepaged logic that does mmap_read_trylock(mm) and 
+> makes sure to drop the mmap lock frequently due to 
+> khugepaged_pages_to_scan, to not affect the workload too much while 
+> scanning.
+> 
+
+OK, I will take a look.
+
+>>
+>>>
+>>>>
+>>>>>
+>>>>> We'll have to double check whether all anon memory cases can 
+>>>>> *properly*
+>>>>> handle pte_offset_map_lock() failing (not just handling it, but doing
+>>>>> the right thing; most of that anon-only code didn't ever run into that
+>>>>> issue so far, so these code paths were likely never triggered).
+>>>>
+>>>> Yeah, I'll keep checking this out too.
+>>>>
+>>>>>
+>>>>>
+>>>>>> For the path that will also free PTE pages in THP, we need to recheck
+>>>>>> whether the
+>>>>>> content of pmd entry is valid after holding pmd lock or pte lock.
+>>>>>>
+>>>>>> 4. TODO
+>>>>>> =======
+>>>>>>
+>>>>>> Some applications may be concerned about the overhead of scanning and
+>>>>>> rebuilding
+>>>>>> page tables, so the following features are considered for
+>>>>>> implementation in the
+>>>>>> future:
+>>>>>>
+>>>>>>        - add per-process switch (via prctl)
+>>>>>>        - add a madvise option (like THP)
+>>>>>>        - add MM_PGTABLE_SCAN_DELAY/MM_PGTABLE_SCAN_SIZE control (via
+>>>>>> procfs file)
+>>>>>> Perhaps we can add the refcount to PTE pages in the future as well,
+>>>>>> which would
+>>>>>> help improve the scanning speed.
+>>>>>
+>>>>> I didn't like the added complexity last time, and the problem of
+>>>>> handling situations where we squeeze multiple page tables into a 
+>>>>> single
+>>>>> "struct page".
+>>>>
+>>>> OK, except for refcount, do you think the other three todos above are
+>>>> still worth doing?
+>>>
+>>> I think the question is from where we start: for example, only 
+>>> synchronous
+>>> reclaim vs. asynchonous reclaim. Synchronous reclaim won't really affect
+>>> workloads that do not actively trigger it, so it raises a lot less
+>>> eyebrows. ...
+>>> and some user space might have a good idea where it makes sense to 
+>>> try to
+>>> reclaim, and when.
+>>>
+>>> So the other things you note here rather affect asynchronous reclaim, 
+>>> and
+>>> might be reasonable in that context. But not sure if we should start
+>>> with doing
+>>> things asynchronously.
+>>
+>> I think synchronous and asynchronous have their own advantages and
+>> disadvantages, and are complementary. Perhaps they can be implemented at
+>> the same time?
+> 
+> 
+> No strong opinion, something synchronous sounds to me like the 
+> low-hanging fruit, that could add the infrastructure to be used by 
+> something more advanced/synchronously :)
+
+Got it, I will try to do the following in the next version.
+
+a. for MADV_DONTNEED case, try synchronous reclaim as you said
+
+b. for MADV_FREE case:
+
+	- add a madvise option for synchronous reclaim
+
+	- add another madvise option to mark the vma, then add its
+           corresponding mm to a global list, and then traverse
+           the list and reclaim it when the memory is tight and
+           enters the system reclaim path.
+           (maybe there is an option to unmark)
+
+c. for s390 case you mentioned, create a CONFIG_FREE_PT first, and
+    then s390 will not select this config until the problem is solved.
+
+d. for lockless scan, try using disabling IRQ or (mmap read lock + 
+pte_offset_map_nolock).
+
+Thanks,
+Qi
+
+> 
 
