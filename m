@@ -1,106 +1,118 @@
-Return-Path: <linux-kernel+bounces-214327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D24C29082CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:00:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA409082D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DA01284B1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:00:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A764B23304
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF721143726;
-	Fri, 14 Jun 2024 04:00:37 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3C11474A7;
+	Fri, 14 Jun 2024 04:00:39 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F9738B
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 04:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A221E519
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 04:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718337637; cv=none; b=Io8uMpqbM818j5WLpJdWyZhJPTibJ9KLchPFnpGoQgEGiP1xHI8Tf8wQ/LoanC3rIAUu5kr0a+SROKIWVN7SWnPkpFutXaiSRc5iMzBYlB0gVC+0cvxv4hXqn2QztO4vgjfmDu+0dl4LNwHnYSECnvpis0T83z31wCn37Ccek04=
+	t=1718337638; cv=none; b=EqHdwSXVZ5SyaHZStuNVIhtdLMSVOwLXtz0hKQZAI3s8tQd3dFv55BMXrbMnoCYGJxjB+C2qbeh5h3nWvHjo3aiJ0LMluZeeJJ1LswmKPhVRr9PSMilQKD1fcJIkmCxyvDzqKNLZUSqsW7pRQoyjvCNA4wG00BsWB5DSn0wVvo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718337637; c=relaxed/simple;
-	bh=YD/hzsHGKMaPc9AEbzcC6z/zcPMYzbpxMvd818N27SE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eBPNg7fWsLy6u5Jill9bg98hLUxSacI9OS/duN02qWxH1I44BTtSRj5XmRDBdzPrASd95GZQwXrYiNYhvdqV0rs6/7O/vWh3wJSNOPIQWYFjZGzuYVWk4G1zSHr1n6OS8dZw9QKm4Kv0Nc76s3sEIiW+PnU5m6TueNhuZQyo5rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav415.sakura.ne.jp (fsav415.sakura.ne.jp [133.242.250.114])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 45E40WLc079668;
-	Fri, 14 Jun 2024 13:00:32 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav415.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp);
- Fri, 14 Jun 2024 13:00:32 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 45E40WRc079665
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 14 Jun 2024 13:00:32 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <522c0b17-c515-475d-8224-637ca0eaf6a2@I-love.SAKURA.ne.jp>
-Date: Fri, 14 Jun 2024 13:00:30 +0900
+	s=arc-20240116; t=1718337638; c=relaxed/simple;
+	bh=UWhBNIvEleEJlp8kJ8o4z4qdLSaB5WqNPToWO9eMztQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=CC8apNm8q/p9yomNd8rVDuLFQlEGDiiEz2je0lk5xS25SPV/jlQP/s6fNXotKykb7aFEN3L9E+WNpjNdzpL69cFFJkIHkCzf2geKNmMiNgaKTMxVG+yTssm6mSyy+W3BPkJxAigqxt2f2zT3yCsY+9Wng63QIKY1iut/VpI1YBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W0lnm0KRFzxQwN;
+	Fri, 14 Jun 2024 11:56:28 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5772C14066B;
+	Fri, 14 Jun 2024 12:00:34 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 14 Jun 2024 12:00:32 +0800
+Message-ID: <41702bd8-2a1f-90dd-d90e-fb5cba2fffa7@huawei.com>
+Date: Fri, 14 Jun 2024 12:00:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net/sched] Question: Locks for clearing ERR_PTR() value from
- idrinfo->action_idr ?
-To: Pedro Tammela <pctammela@mojatatu.com>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Network Development
- <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <8d61200a-a739-4200-a8a3-5386a834d44f@I-love.SAKURA.ne.jp>
- <de8e2709-8d7f-4e51-a4a4-35bad72ba136@mojatatu.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <de8e2709-8d7f-4e51-a4a4-35bad72ba136@mojatatu.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v3 1/8] arm64/sysreg: Add definitions for immediate
+ versions of MSR ALLINT
+From: "Liao, Chang" <liaochang1@huawei.com>
+To: Mark Brown <broonie@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>, <catalin.marinas@arm.com>,
+	<will@kernel.org>, <maz@kernel.org>, <oliver.upton@linux.dev>,
+	<james.morse@arm.com>, <suzuki.poulose@arm.com>, <yuzenghui@huawei.com>,
+	<tglx@linutronix.de>, <ardb@kernel.org>, <anshuman.khandual@arm.com>,
+	<miguel.luis@oracle.com>, <joey.gouly@arm.com>, <ryan.roberts@arm.com>,
+	<jeremy.linton@arm.com>, <ericchancf@google.com>,
+	<kristina.martsenko@arm.com>, <robh@kernel.org>,
+	<scott@os.amperecomputing.com>, <songshuaishuai@tinylab.org>,
+	<shijie@os.amperecomputing.com>, <akpm@linux-foundation.org>,
+	<bhe@redhat.com>, <horms@kernel.org>, <mhiramat@kernel.org>,
+	<rmk+kernel@armlinux.org.uk>, <shahuang@redhat.com>,
+	<takakura@valinux.co.jp>, <dianders@chromium.org>, <swboyd@chromium.org>,
+	<sumit.garg@linaro.org>, <frederic@kernel.org>, <reijiw@google.com>,
+	<akihiko.odaki@daynix.com>, <ruanjinjie@huawei.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<kvmarm@lists.linux.dev>
+References: <20240415064758.3250209-1-liaochang1@huawei.com>
+ <20240415064758.3250209-2-liaochang1@huawei.com>
+ <ZjUKMWPknEhLYoK8@FVFF77S0Q05N> <Zjjz-tzLRC2nH51A@finisterre.sirena.org.uk>
+ <cde4d448-dc9d-eaad-4a2d-a6d34bda4449@huawei.com>
+ <ZjpALOdSgu-qhshR@finisterre.sirena.org.uk>
+ <e632a9ed-7659-9336-6e7f-a43c4759a7a3@huawei.com>
+ <9868a5ac-ae23-4481-afe6-ba3cd8dbfa47@sirena.org.uk>
+ <3f9f0ef1-7290-21df-ef01-dc56b34a0195@huawei.com>
+In-Reply-To: <3f9f0ef1-7290-21df-ef01-dc56b34a0195@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-On 2024/06/14 11:47, Pedro Tammela wrote:
-> On 13/06/2024 21:58, Tetsuo Handa wrote:
+Hi, Mark
+
+在 2024/6/5 17:52, Liao, Chang 写道:
+> Hi, Mark
+> 
+> 在 2024/6/4 21:29, Mark Brown 写道:
+>> On Mon, Jun 03, 2024 at 11:26:39AM +0800, Liao, Chang wrote:
 >>
->> Is there a possibility that tcf_idr_check_alloc() is called without holding
->> rtnl_mutex?
+>>> Mark, Is your concern is that the series of pstate related macro name in
+>>> sysregs.h are lack of self-explanatory nature, which make it diffuclt to
+>>> understand their functionality and purpose? If so, I daft some alternative
+>>> macro names in the code below, looking forward to your feedback, or if you
+>>> have any proposal for making these helpers discoverable.
+>>
+>> ...
+>>
+>>> -#define SET_PSTATE(x, r)               __emit_inst(0xd500401f | PSTATE_ ## r | ((!!x) << PSTATE_Imm_shift))
+>>> +#define MSR_PSTATE_ENCODE(x, r)                __emit_inst(0xd500401f | PSTATE_ ## r | ((!!x) << PSTATE_Imm_shift))
+>>
+>> Possibly, yes?  TBH I was thinking of a comment but that does have "MSR"
+>> in it so might come up in greps.  Not sure what others would prefer.
 > 
-> There is, but not in the code path of this reproducer.
+> I am going to push revision v4 of the interrupt masking patchset, this revision
+> involves several improvements based on feedback and further testing:
 > 
->> If yes, adding a sleep before "goto again;" would help. But if no,
->> is this a sign that some path forgot to call tcf_idr_{cleanup,insert_many}() ?
-> 
-> The reproducer is sending a new action message with 2 actions.
-> Actions are committed to the idr after processing in order to make them visible
-> together and after any errors are caught.
-> 
-> The bug happens when the actions in the message refer to the same index. Since
-> the first processing succeeds, adding -EBUSY to the index, the second processing,
-> which references the same index, will loop forever.
-> 
-> After the change to rely on RCU for this check, instead of the idr lock, the hangs
-> became more noticeable to syzbot since now it's hanging a system-wide lock.
 
-Thank you for explanation. Then, what type of sleep do we want?
+Kindly ping, the new revsion is available at the link:
 
-schedule_timeout_uninteruptible(1)
-(based on an assumption that conflict will be solved shortly) ?
+https://lore.kernel.org/all/20240614034433.602622-1-liaochang1@huawei.com/
 
-wait_event()/wake_up_all() using one global waitqueue
-(based on an assumption that conflict is rare) ?
-
-wait_event()/wake_up_all() using per struct tcf_idrinfo waitqueue
-(based on an assumption that conflict might not be rare) ?
-
+-- 
+BR
+Liao, Chang
 
