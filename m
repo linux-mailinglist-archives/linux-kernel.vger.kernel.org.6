@@ -1,113 +1,115 @@
-Return-Path: <linux-kernel+bounces-215464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F8B90931D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:00:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BF38909323
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96D45B236CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:00:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9012F1F23795
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6547B1A3BA1;
-	Fri, 14 Jun 2024 20:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E551A3BA4;
+	Fri, 14 Jun 2024 20:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LhhUXeAn"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZYrk0p0"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B16416D339
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 20:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE901F946;
+	Fri, 14 Jun 2024 20:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718395208; cv=none; b=Pjg+FVrhSDxki3UIqerfsx8DKCBsQKUp9DAAW5vTxZ2sppCkwbEeAnDOMuqQJIaqfTNmUJj/hx57TcZEctGHR3cVF7/MQd4CSpBPvr6UfERRJDlO5Ng3YiRlB1nEqElqTh75E0hCKPaXC0NLVXfN4NNW8l0YosKdL5fuB03VGto=
+	t=1718395504; cv=none; b=IWIyEVyA3c27kBnSJ3EcC+IMF5PqeCSK0lJXypB9Q7F/BhezaXgnv8y0/rFVjijwZljjqve2ujRuNV84YbY4eRsiHsQNfPpQlF+hXvJ894aycj1ADtHhdlnfVEqHzUM2FVMJE4OQGHRZF9HAVkRLedHvZPP9+ZaSyc0kbSCp1ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718395208; c=relaxed/simple;
-	bh=UecWv9IJeqO0ogDEFKZ30msCBczVQJG5/sT8DUT1gZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hMrr4uyvQErik8Gze8e3gEh+c/kT59qDEZh7KqW1vP0WvPXI1m4ztauWSi3xhQCqfcMW97FcyXiMQxSChnspwKA6uhK1c3O+WP5rJLbE2b/ugu8Y6P5GlR2UHY02lC39zSJU4CzSXmCxb3i3GOBAFxvTZVay/Thi7bVr5Kneals=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LhhUXeAn; arc=none smtp.client-ip=209.85.218.43
+	s=arc-20240116; t=1718395504; c=relaxed/simple;
+	bh=RY8ceAoPye2/KbZtpTdpJ8++ZFtCXb35P5m4OwHe5Os=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=szVtZYVMvQi+ykbOibdUQWx0xbCPYnwhLemub8p8NhZjMmfHYmy+F0uSPFjti/o7R7QWEwMROVfx/jtqdzACiunspNxnRAVBqNl4LTbh/PHV1JJHerfE2Dj5a90S6cyYCl0/XjCPo4AMjixUh8SGlwpnR/93RBBMw+FaAjsqFbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gZYrk0p0; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6f2f5ad1d1so23382166b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:00:07 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57c83100bd6so3216136a12.3;
+        Fri, 14 Jun 2024 13:05:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718395206; x=1719000006; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=1sffmBRRqxvVZKL+gZwYpJ+2d0Xa8nclbjp8aHRZVxo=;
-        b=LhhUXeAn19Lem4aLVuVLFqh60R/NnQnt2pZbNScUCFAapXJxvAqmkZVpQ12Ypr2HIZ
-         d8OogiURlMaX+LGJ/so/VoZ8AT5t3bGD80aqMB1MxanPoqKJLZrlHOevFlEWl8vxcpOd
-         ZZuTeNxDy1QbyUq2vbHLs5zysV3ZVs/SVYewmCLk+C5iSd1g/r28mtS6w4qFQoCv6BSE
-         ct3tVdWQm3tYtwUAHqf1UoCsiEFPUfOMWkZsz7eyQuzV1syX0Kl63rEaCWRtVMb/Uxn/
-         tz5n/jdHMYW8pwGhbk1cG1v+GYlTHoRjAvNd4NxEbwornz+vT8DVSwrCbQnlxR9zDvD6
-         k80Q==
+        d=gmail.com; s=20230601; t=1718395502; x=1719000302; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GOLNVEd7uGKCnwNzRJhDFbm6VnORpl1wejZd5oVyq3I=;
+        b=gZYrk0p0XFmSrCMwr+cECwmmKsXx5ManCUtfKty2UJuV+2I7h8qZglyT4JXZrX2Aqr
+         lCKfvkzTemVZGLJxyE2Xyzf0K2A8xmujKJIJkO7zCeWthN7SY/JwLQcH/Yx0VqAMCL5+
+         jy6iUt6i8l80cTjdeGdjTYmnzlVQA7GTUhNQRvvJ7+xRG1pvGottCxfHxdRsQdzcx4aj
+         PIbP/79c9Ia1KRqPVtedmyYYsuMXMDbaushwcRUoNBLTImgz/ZWTG5bqBNVid2L/avZH
+         cFHRE+TvlHpZ4EMiGtmLSkkPIk88Ci5yQn4UQJdp62w+S4r0PoaAG5/zIFR2RdS1AJue
+         0Y8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718395206; x=1719000006;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1718395502; x=1719000302;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1sffmBRRqxvVZKL+gZwYpJ+2d0Xa8nclbjp8aHRZVxo=;
-        b=C1EX0lnb81cse6w6+gn6WTZHJI7Q0DHpuOiOO8HffFa3kAR79NK2VF/Qno7ljUEmrg
-         6g03s7S6Q29hyF0444Zb8+STXwSNKxno5dbz2L6asje1DaA4hlsUn7+hRJbGrnfMsoZp
-         rWjMrvpRk9s/Ed4pVGNk3kfGRf1TJTIFpkGLYk676SZ0tlgD8C6xxsC788gOou5ZW8+F
-         JNDTQxOKlldvUHaD2bQ6I+L8tRRL1rDSOR3mKWzfpF45y5n6eyJ09aNt46UjtKb8aqW5
-         CzgLDrNX5k3BkpKmDZQ+3lDX9WCNGei1NLo6MBYhhHymYqg3CIl/XhjMoEAUYzu0b1FG
-         eiIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWRMVI99OLQ/tVeqPRYsjWni3tal+gGxqh9THMGEp1Zx+eKqvcpcIF0yHcYc8sNikHqrPpOdVRUCHnJTiqUdpn9g29B9dgs4HUg/Vu
-X-Gm-Message-State: AOJu0YybOEUDiXZfj+CFGvFzd45EmTDV2ceF8SmCW7eoOWbY3JCOlrUZ
-	hNR3NhTFMRgQYoE3TBTod8JJkZbJwtDifJJMbZxB/5r/fY7MKOMTPgJEIA==
-X-Google-Smtp-Source: AGHT+IHuBi11JQJsVJTkYZSJBQdsXFWebGBbRzzvC/b2FAzj0+X9BAS2A1lf02+zZ0XxgNKvQEv3Qw==
-X-Received: by 2002:a17:906:f5a3:b0:a69:edd:3323 with SMTP id a640c23a62f3a-a6f60d13971mr290842166b.2.1718395205371;
-        Fri, 14 Jun 2024 13:00:05 -0700 (PDT)
-Received: from [192.168.0.104] (p57935a9b.dip0.t-ipconnect.de. [87.147.90.155])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ed359bsm217076966b.137.2024.06.14.13.00.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 13:00:03 -0700 (PDT)
-Message-ID: <4a18cc93-5495-41b1-a40f-7873954200f6@gmail.com>
-Date: Fri, 14 Jun 2024 22:00:03 +0200
+        bh=GOLNVEd7uGKCnwNzRJhDFbm6VnORpl1wejZd5oVyq3I=;
+        b=TlHXbhLuUOVYLX57kYbNvL7blz3GIZhDNhtzMP6zLKx4klHzh5mfQAFIXwc0BpZNGR
+         Ed4be1smy7Yvk2BtbCaODTSdzWzGsCBOc34sp6XzRhqHhjRyNj/CBwHGjWYhrhp3k+ht
+         vslBIkdj8X9YnzydSWELd/C1p+qgwIDJNNNUSFxL3ZqJh0sErvPdHeY0/mTuVCvp3LwR
+         B/itKw4B2LAuzL93J6Yenp6pvfMNkDSxW1lMMcldPJL5m/Y7AjZdSEhQ3qTddvZSKjYV
+         umtuZM8EBG9w5IuMetV8+E06DBcYKis7j9XgypWlcWsu8QpO6pM1+mOu6JK8nVPvktN5
+         m1uw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8HCuHqUnF15Ye1EOz5wQS4EBhmal5TgPNFsm+SLF07jVWUV8hNvkeIMSLDtp33cIyDkLxKOvl5a15B2BSncuipcz0qbJZSyo/FylRh5sM6zeMHMUib4s2XIdEwvUmX0rgaDqUkfnwD9wH7IZ25nqgTMyq78fDYV5U8sBnhMUsWAqDpmwsHQ/f717k
+X-Gm-Message-State: AOJu0YwaE3pEdfljz+U7ir2Bj3c4PAtUULIhjQw4nRWi+CRzoAEc/Mvb
+	oeyvlv0acuc+ra2zaq5XUglacIQSHmikxz18F/hI4YHndu/TFyc8
+X-Google-Smtp-Source: AGHT+IEWfLWlENiwg72FCRRqNPcBcq3lwyJii5+8BM8ZYIu/nw1QYu4DRlw4LsF9JMJ9JUGXSABcog==
+X-Received: by 2002:a50:ab1d:0:b0:57c:a886:c402 with SMTP id 4fb4d7f45d1cf-57cbd665237mr2364187a12.12.1718395501361;
+        Fri, 14 Jun 2024 13:05:01 -0700 (PDT)
+Received: from localhost ([2a02:168:59f0:1:b0ab:dd5e:5c82:86b0])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb741e5aesm2639504a12.60.2024.06.14.13.05.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 13:05:01 -0700 (PDT)
+Date: Fri, 14 Jun 2024 22:04:56 +0200
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Jann Horn <jannh@google.com>, Tahera Fahimi <fahimitahera@gmail.com>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, outreachy@lists.linux.dev,
+	netdev@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>
+Subject: Re: [PATCH v3] landlock: Add abstract unix socket connect restriction
+Message-ID: <20240614.128b8d9046fd@gnoack.org>
+References: <ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000>
+ <CAG48ez3NvVnonOqKH4oRwRqbSOLO0p9djBqgvxVwn6gtGQBPcw@mail.gmail.com>
+ <20240611.Pi8Iph7ootae@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] staging: rtl8192e: Cleanup multiple issues
-To: Teddy Engel <engel.teddy@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <cover.1718309120.git.engel.teddy@gmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <cover.1718309120.git.engel.teddy@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240611.Pi8Iph7ootae@digikod.net>
 
-On 6/13/24 22:15, Teddy Engel wrote:
-> Remove some unused constants, macros, and structs.
-> Capitalize a constant.
+On Tue, Jun 11, 2024 at 10:19:20AM +0200, Mickaël Salaün wrote:
+> On Tue, Jun 11, 2024 at 12:27:58AM +0200, Jann Horn wrote:
+> > This reminds me - from what I remember, Landlock also doesn't restrict
+> > access to filesystem-based unix sockets yet... I'm I'm right about
+> > that, we should probably at some point add code at some point to
+> > restrict that as part of the path-based filesystem access rules? (But
+> > to be clear, I'm not saying I expect you to do that as part of your
+> > patch, just commenting for context.)
 > 
-> The patch order matters - please apply in order.
-> 
-> Teddy Engel (5):
->    staging: rtl8192e: Remove unused constants
->    staging: rtl8192e: Remove unused struct phy_ofdm_rx_status_rxsc
->    staging: rtl8192e: Capitalize constant RegC38_TH
->    staging: rtl8192e: Remove unused macro dm_tx_bb_gain_idx_to_amplify
->    staging: rtl8192e: Remove unnecessary pre-declaration of struct
->      net_device
-> 
->   drivers/staging/rtl8192e/rtl8192e/r8190P_def.h | 9 ---------
->   drivers/staging/rtl8192e/rtl8192e/rtl_cam.h    | 1 -
->   drivers/staging/rtl8192e/rtl8192e/rtl_dm.c     | 4 ++--
->   drivers/staging/rtl8192e/rtl8192e/rtl_dm.h     | 6 +-----
->   drivers/staging/rtl8192e/rtl8192e/rtl_pci.h    | 1 -
->   5 files changed, 3 insertions(+), 18 deletions(-)
-> 
+> Yes, I totally agree.  For now, unix socket binding requires to create
+> the LANDLOCK_ACCESS_FS_MAKE_SOCK right, but connecting to an existing
+> socket is not controlled.  The abstract unix socket scoping is
+> orthogonal and extends Landlock with unix socket LSM hooks, which are
+> required to extend the "filesystem" access rights to control path-based
+> unix socket.
 
+Thanks for the reminder, Jann!  I filed it as
+https://github.com/landlock-lsm/linux/issues/36.
 
-Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+–Günther
 
