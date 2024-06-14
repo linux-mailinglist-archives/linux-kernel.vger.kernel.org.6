@@ -1,137 +1,119 @@
-Return-Path: <linux-kernel+bounces-214943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E3F908C76
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:30:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF8FE908C79
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BD161C22E5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:30:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4301B2505A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0C620E6;
-	Fri, 14 Jun 2024 13:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367E779CC;
+	Fri, 14 Jun 2024 13:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="PvWIGrqN"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eR1kFTle"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C36E817
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5F36FB1;
+	Fri, 14 Jun 2024 13:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718371839; cv=none; b=rjf+ycFy0+cgScmESCxroEtUWrvkJ1Scr15cUZ+Za5ZH9xrkku7eQU9Zs/RfG+2IfU493PYiiUhM7tBoO/cZRTxPMMQ84RWaJGGjQjQq5eWBD8a2YVPXyQ1oJt7KHQET6Kbk7GlxczEjOPKE0mdxTdZdK2h7EEEktX/5X6Cii9E=
+	t=1718371845; cv=none; b=PsmFdYguVOSqhZlxUSDN6GYytYrwxpjhwSR2/XkcrnmAu+6pwx2n5uXdnAba8zE8D3IiCa/TpeWBDdiHMpy5Vtd7ia8XAzZvfKwgU54VQWDdLDFj7vUwaVPMqZE5sjnpj7S/oSasEvQb3Bjz19bGMDOmrHyacvd2UOaC/ya0Lc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718371839; c=relaxed/simple;
-	bh=IrUqQGQwMsJxdGGWpIHTN9D0+7CLh6RJMSAS0N42slk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WVWrUkUfj+IIp0rSVZOA5JBQz2dfMa+Rn+q5GqfGeV6ADKg7LNgsVVau869wm2Ax7cDUVRCa2Pd820dH/QVX37MGy+xuYIoADm0UKqy/wg9GDTPs9yYjnnfpCM42zqVrb9Yz22AqYq01kCUjLJUcJ2Hx55mtClup3yQDpb5yXJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=PvWIGrqN; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1718371838; x=1749907838;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=W6LtgifkW6+vXdOdWZYDsm/k1XVnlz90Nl+MiPv0cOs=;
-  b=PvWIGrqNnR5FPRUg1T8sBjw3tKdM+3pALM1y1DqkOx3XcvFpJICS2Akj
-   1oqIuVOZQOp0unhDCxmI7aJq1TclwpIBGkflgNw9ylTUn/yC0Qqu2uC4y
-   DwXrGVJaBPqhdccVwrl9KP5fEuY2D/5jR/Ztw8PY1jwH6hZiC2ASQAhuT
-   g=;
-X-IronPort-AV: E=Sophos;i="6.08,237,1712620800"; 
-   d="scan'208";a="96832771"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 13:30:36 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.43.254:56353]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.22.205:2525] with esmtp (Farcaster)
- id 2b5aa1d4-dad0-4f2f-93a7-f12dbffe2c77; Fri, 14 Jun 2024 13:30:35 +0000 (UTC)
-X-Farcaster-Flow-ID: 2b5aa1d4-dad0-4f2f-93a7-f12dbffe2c77
-Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 14 Jun 2024 13:30:35 +0000
-Received: from u5d18b891348c5b.ant.amazon.com (10.1.213.23) by
- EX19D014EUC004.ant.amazon.com (10.252.51.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 14 Jun 2024 13:30:31 +0000
-From: James Gowans <jgowans@amazon.com>
-To: Mike Rapoport <rppt@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-CC: James Gowans <jgowans@amazon.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, Alex Graf <graf@amazon.de>
-Subject: [PATCH] memblocks: Move late alloc warning down to phys alloc
-Date: Fri, 14 Jun 2024 15:30:16 +0200
-Message-ID: <20240614133016.134150-1-jgowans@amazon.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718371845; c=relaxed/simple;
+	bh=vL1psw2K7KdLQoefCcMZmZk94P9CsVo4pPmcu7NaZsM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=DTDAHfSUHwPqTe2N1LWGkmcoy91OGyZhx3BLDm4fw3/G5PPgzceZ1Baj1f/lHLzPZnSDo81wzR5VL1WdoOf1Vk3kHDO10omBWuEBDx8wxVzXJc4nX/aUTG/UBgFy5A1fkjbxTQn6IkyvVmMJI0vK7TzHQuDGHIFGCEiNU/yhH6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eR1kFTle; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D6AEC3277B;
+	Fri, 14 Jun 2024 13:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718371845;
+	bh=vL1psw2K7KdLQoefCcMZmZk94P9CsVo4pPmcu7NaZsM=;
+	h=From:Date:Subject:To:Cc:From;
+	b=eR1kFTleqEsD6L++fxYetDKgLK7pUf59TOWf7QZZSMFaTKiOeBsctgVQNlcM4LoKx
+	 moZD17o+Id5R2v2vFHG72LhluQENVt36maJBQ4/wD/l0UBp4EHjOhF1ikDpAve+VUL
+	 UHs9z0ykcT7nt5cDYx0ZTX8DAj2EW0NoUzVCTr3vQClRL7BG/iTqBvFR8H6rhc0VxT
+	 li7QrLnuVAS6XLmRlUEwcbtOHUFoISJzKnNRBzTp+kLqfZL3S3zO+ExZDY0mE2QgDt
+	 V3A0wtZhRzN7TIKPjxqnnK0xRxOZ1FEMfLn+BSUyVLebhV6T2fHYVagQhkNCXzeKGH
+	 kMj3dKvetMVBA==
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-250aa23752dso258479fac.3;
+        Fri, 14 Jun 2024 06:30:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV/xrZ1M35XARbtQvSF2RuiYvb3r7h8jM0Oz8C0gjE6DKRhfnIVENyfwT+bUwrEAI703LF/ug0iraUDIJryYjUQyLPHVqO5E5uX6ZLPSUjO+rBvco123kiWKi+UrbFoYNcfSVYaCBg=
+X-Gm-Message-State: AOJu0YzhjnkbYooDLPRjz3/219RptmnY9VIiYJXV5JgW/chC2FPuOnyg
+	qge1R7Pv2FvVYIrh4UP4eZJ3sJ2fxJTN5oFUzFdzQomdbDC0ukoA5ZGfFXVOSyF8NwTIsh4xr3C
+	1Yj8Yq55QAN6fSitlm94rfNj4cfk=
+X-Google-Smtp-Source: AGHT+IFH1reZfTyhI8sy1nuFdZvL6mvMFfVHqzNOnLumcmjRb49O7YFIKA9cBFHgWKEc6XwXaHRJTikZmbDgQjar+I0=
+X-Received: by 2002:a4a:d027:0:b0:5aa:3e4f:f01e with SMTP id
+ 006d021491bc7-5bdadc10d0amr2805968eaf.1.1718371844318; Fri, 14 Jun 2024
+ 06:30:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D042UWA003.ant.amazon.com (10.13.139.44) To
- EX19D014EUC004.ant.amazon.com (10.252.51.182)
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 14 Jun 2024 15:30:33 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hki_YFWhBU8vZ9eubo0yVhDGRCx893Qd21UENaNXfaNA@mail.gmail.com>
+Message-ID: <CAJZ5v0hki_YFWhBU8vZ9eubo0yVhDGRCx893Qd21UENaNXfaNA@mail.gmail.com>
+Subject: [GIT PULL] ACPI fixes for v6.10-rc4
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-If a driver/subsystem tries to do an allocation after memblocks have
-been freed and the memory handed to the buddy allocator, it will not
-actually be legal to use that allocation - the buddy allocator owns the
-memory. This is handled by the memblocks function which does allocations
-and returns virtual addresses by printing a warning and doing a kmalloc
-instead. However, the physical allocation function does not to do this
-check - callers of the physical alloc function are unprotected against
-mis-use.
+Hi Linus,
 
-Improve the error catching here by moving the check into the physical
-allocation function which is used by the virtual addr allocation
-function.
+Please pull from the tag
 
-Signed-off-by: James Gowans <jgowans@amazon.com>
-Cc: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alex Graf <graf@amazon.de>
----
- mm/memblock.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-6.10-rc4
 
-diff --git a/mm/memblock.c b/mm/memblock.c
-index d09136e040d3..dd4f237dc1fc 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1457,6 +1457,17 @@ phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
- 		align = SMP_CACHE_BYTES;
- 	}
- 
-+	/*
-+	 * Detect any accidental use of these APIs after slab is ready, as at
-+	 * this moment memblock may be deinitialized already and its
-+	 * internal data may be destroyed (after execution of memblock_free_all)
-+	 */
-+	if (WARN_ON_ONCE(slab_is_available())) {
-+		void *vaddr = kzalloc_node(size, GFP_NOWAIT, nid);
-+
-+		return vaddr ? virt_to_phys(vaddr) : 0;
-+	}
-+
- again:
- 	found = memblock_find_in_range_node(size, align, start, end, nid,
- 					    flags);
-@@ -1576,13 +1587,6 @@ static void * __init memblock_alloc_internal(
- {
- 	phys_addr_t alloc;
- 
--	/*
--	 * Detect any accidental use of these APIs after slab is ready, as at
--	 * this moment memblock may be deinitialized already and its
--	 * internal data may be destroyed (after execution of memblock_free_all)
--	 */
--	if (WARN_ON_ONCE(slab_is_available()))
--		return kzalloc_node(size, GFP_NOWAIT, nid);
- 
- 	if (max_addr > memblock.current_limit)
- 		max_addr = memblock.current_limit;
--- 
-2.34.1
+with top-most commit 04f82fbb8686995f17b51ccd23c10fee12f1a2fd
 
+ Merge branch acpi-x86
+
+on top of commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+
+ Linux 6.10-rc3
+
+to receive ACPI fixes for 6.10-rc4.
+
+These fix a recent regression in the ACPI EC driver and make system
+suspend work on multiple platforms where StorageD3Enable _DSD is
+missing in the ACPI tables.
+
+Specifics:
+
+ - Make the ACPI EC driver directly evaluate an "orphan" _REG method
+   under the EC device, if present, which stopped being evaluated after
+   the driver had started to install its EC address space handler at the
+   root of the ACPI namespace (Rafael Wysocki).
+
+ - Make more devices put NVMe storage devices into D3 at suspend to work
+   around missing StorageD3Enable _DSD in the BIOS (Mario Limonciello).
+
+Thanks!
+
+
+---------------
+
+Mario Limonciello (1):
+      ACPI: x86: Force StorageD3Enable on more products
+
+Rafael J. Wysocki (1):
+      ACPI: EC: Evaluate orphan _REG under EC device
+
+---------------
+
+ drivers/acpi/acpica/acevents.h |  4 ++++
+ drivers/acpi/acpica/evregion.c |  6 +----
+ drivers/acpi/acpica/evxfregn.c | 54 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/acpi/ec.c              |  3 +++
+ drivers/acpi/x86/utils.c       | 24 ++++++++-----------
+ include/acpi/acpixf.h          |  4 ++++
+ 6 files changed, 76 insertions(+), 19 deletions(-)
 
