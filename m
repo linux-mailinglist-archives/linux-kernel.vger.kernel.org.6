@@ -1,106 +1,101 @@
-Return-Path: <linux-kernel+bounces-215403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41F3490923D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:25:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 972EA909242
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C77C4B224E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:25:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 890D81C21023
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD8D19D07D;
-	Fri, 14 Jun 2024 18:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JDayHVGh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179B419E7D0;
+	Fri, 14 Jun 2024 18:26:25 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76382CCD0
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 18:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C1B179BC;
+	Fri, 14 Jun 2024 18:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718389525; cv=none; b=sQDqY3PH9rxYQsOnSi372G+Pfb1UqR9N+kXOmrddxzNTXp6CN5nlZi0ACk/WKypVRMfp4PDLeqh8mZeeu72fAqwUHD9qCfOwsSzEEVTV5fuTm8V9QUM5W+OSLvSSlH4Za4N6DKo0XWxLSY+0v/uYEO6J0hNLwXW1jvspEwg6ZSw=
+	t=1718389584; cv=none; b=CvD/6LJVtSTOGesu4gIwoBA/We52aGOY4eBfWsMITS/rNM1jvsVmax/bbpoKKLuRvtSr4bjfp2vBQWjLsDmQc3iWxIRcXvlKnwmtZuhghHuvQ6z/DqKKn3Z76zwh9D0LxDVCUUKorlyMzMmFHahWqrgx98yuP86B7AzolJpWrEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718389525; c=relaxed/simple;
-	bh=17XqsCYTuwNMMXk8dTaMUWD29V4eaG1WBt3UP1RONPE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F3JKarGtsG42M8UngHwXfBirbFr3j4eV9N3Zw6KRHYGeA2qvZQpC0p9igTvmF8s5d2pohxW3cvwLR3glLAzkP+wMrid8b5QxYOP5y6grKUvn9DldL0OhTccqUkNop+VVSfTo1TMMJx+/ozAB+IUPfblvlVJAN/lqFH4nyGsVjp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JDayHVGh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718389522;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=rVuWdzbjR5bd+U/y/e+aXYkOnbjqY8dHfGNq+VGdIi8=;
-	b=JDayHVGhOsqyTsP2Ad/nyu/rj92i6P1AfN1sMw/KeuYaCMC2j/t0hLubb//K84YDF0lAhC
-	aWz9VgUury8MzzMqelMym58pFXC0YfNURuZRGUYZA+1cym7uthwQInhCXW8RLmEfZ9CWWD
-	jOmAl8ZKDsuOjWDAZcN61Zb3glASZqI=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-368-yroaDZQoPo2HAkZQVCiwnQ-1; Fri,
- 14 Jun 2024 14:25:18 -0400
-X-MC-Unique: yroaDZQoPo2HAkZQVCiwnQ-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 28041195608C;
-	Fri, 14 Jun 2024 18:25:15 +0000 (UTC)
-Received: from thuth-p1g4.redhat.com (unknown [10.39.193.73])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B377A1956087;
-	Fri, 14 Jun 2024 18:25:10 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: linux-doc@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	arnd@arndb.de
-Subject: [PATCH] Documentation: Remove unused "mtdset=" from kernel-parameters.txt
-Date: Fri, 14 Jun 2024 20:25:08 +0200
-Message-ID: <20240614182508.600113-1-thuth@redhat.com>
+	s=arc-20240116; t=1718389584; c=relaxed/simple;
+	bh=jHAGhtBgYIhIH5h0XhykMYsCyNogbFyWVdwTe6RHoOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eJ0Pdg6qW82ISx+U6Co5oO0Y0ipU6xlsZYC6Gomy9LxAwgBXVdcpGeWPXYjJO47HF1x622A7lI/QN7r499RszFmrTrfFh86Ti/4S0Abpj20g3q1QIQj200i05zL2oHjy9HOPjS8SLCpiu1WAw/7xZaeDYtmezUZFrnRQcalu1JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD416C2BD10;
+	Fri, 14 Jun 2024 18:26:22 +0000 (UTC)
+Date: Fri, 14 Jun 2024 14:26:21 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Kris Van Hees <kris.van.hees@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masahiro
+ Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Nick Desaulniers
+ <ndesaulniers@google.com>, Jiri Olsa <olsajiri@gmail.com>, Elena Zannoni
+ <elena.zannoni@oracle.com>
+Subject: Re: [PATCH v4 1/3] kbuild: add mod(name,file)_flags to assembler
+ flags for module objects
+Message-ID: <20240614142621.5ac455c8@rorschach.local.home>
+In-Reply-To: <ZmyHsnXQoWgp7F2X@oracle.com>
+References: <20240614171428.968174-1-kris.van.hees@oracle.com>
+	<20240614171428.968174-2-kris.van.hees@oracle.com>
+	<20240614134651.4ed2091d@rorschach.local.home>
+	<ZmyHsnXQoWgp7F2X@oracle.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The kernel parameter "mtdset" has been removed two years ago in
-commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support") and
-thus should be removed from the documentation now, too.
+On Fri, 14 Jun 2024 14:10:58 -0400
+Kris Van Hees <kris.van.hees@oracle.com> wrote:
 
-Signed-off-by: Thomas Huth <thuth@redhat.com>
----
- Documentation/admin-guide/kernel-parameters.txt | 5 -----
- 1 file changed, 5 deletions(-)
+> On Fri, Jun 14, 2024 at 01:46:51PM -0400, Steven Rostedt wrote:
+> > On Fri, 14 Jun 2024 13:14:26 -0400
+> > Kris Van Hees <kris.van.hees@oracle.com> wrote:
+> >   
+> > > Module objects compiled from C source can be identified by the presence
+> > > of -DKBUILD_MODFILE and -DKBUILD_MODNAME on their compile command lines.
+> > > However, module objects from assembler source do not have this defines.
+> > > 
+> > > Add $(modfile_flags) to modkern_aflags (similar to modkern_cflahs), and
+> > > add $(modname_flags) to a_flags (similar to c_flags).  
+> > 
+> > You explain what this does but not why it does it.  
+> 
+> The first paragraph is meant to estabish the "why" (being able to identify
+> what objects are module objects, even if they are compiled from assembler
+> source).
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 87d5bee924fe..ff02e1a02e12 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3631,11 +3631,6 @@
- 	mtdparts=	[MTD]
- 			See drivers/mtd/parsers/cmdlinepart.c
- 
--	mtdset=		[ARM]
--			ARM/S3C2412 JIVE boot control
--
--			See arch/arm/mach-s3c/mach-jive.c
--
- 	mtouchusb.raw_coordinates=
- 			[HW] Make the MicroTouch USB driver use raw coordinates
- 			('y', default) or cooked coordinates ('n')
--- 
-2.45.2
+Perhaps there's a lack of context. Sure, the cover letter can help in
+this regard, but I always look at each commit as a stand alone.
 
+> 
+> As I mention, for objects compiled from C source code, those defines being
+> present identifies those objects as belonging to a module.  For objects
+> compiled from assembler source code, those defines are not present.  Passing
+> them on the compile command line for assembler source code files for objects
+> that are part of one or more modules allows us to identify all objects that
+> are part of modules with a single consistent mechanism.
+
+Sure, but why do we care? Again, if this was the only patch you sent,
+it should explain why it is being done.
+
+Perhaps something like: "In order to be able to identify what code is
+from a module, even if it is built in, ..."
+
+But what you are saying is just "C code has these flags, make
+assembly have them too". Which is meaningless.
+
+The other patches could use some more explanation too.
+
+-- Steve
 
