@@ -1,260 +1,184 @@
-Return-Path: <linux-kernel+bounces-214900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43720908BBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:33:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC23908BC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:34:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B14691F23D13
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:33:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D185B273FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E43198840;
-	Fri, 14 Jun 2024 12:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12B41991D2;
+	Fri, 14 Jun 2024 12:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rcvHrAOq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wfalRvyS"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E031A14D29B;
-	Fri, 14 Jun 2024 12:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794DE197A90;
+	Fri, 14 Jun 2024 12:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718368420; cv=none; b=bj496EQ0uqQfhpuMF3LH8EquAjZfaL48fREU57feuPWuC/lx8ROPVDlcgnkDurTYJsHIpot6roCJtNHDGjad0TiNtBt9U1lq6B45zzptqI1cgS3Ae1uH4a/eKY5GuKz8VF+E4ckFhKQ6nS+LPU1uH/5gdOTifhw7b8K87kY1eYk=
+	t=1718368449; cv=none; b=atS+0H7xlX8+6Cirzpl3DPn5E8FE1boS/ye/CxIYf18rW4vpi/8Q3ba+3jme7atjDo+d5I7cg1XtMNjHnSyk9GCZKKxZGPXjHPZdOxrp2IJgTfw8UNDo+hzrHafNP5iOc6RDs8JO8JjbmTbdv2krNKIJmwPVSR2905mjNJQLzCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718368420; c=relaxed/simple;
-	bh=GLgMoYqQYcCbuXGoGXD8j9JN7q1v3yKblwBp8qWBNDg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SfsyXCtVV+KOCKAGXa8kcY4BxE/9lbmtG4EAie1ic9X0REKthLFmWaSZ6BPo4H+jFOmPCPkj6tPgdcI6Ra4T3ahnaAD6js9IlA9gyA8PuK4hrAAX9fNBT1V3mfOKQI9tezjyMieNQJmkm2wUim+yFSXpO4IRT4+pJP3N8ZS5HNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rcvHrAOq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A45EC2BD10;
-	Fri, 14 Jun 2024 12:33:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718368419;
-	bh=GLgMoYqQYcCbuXGoGXD8j9JN7q1v3yKblwBp8qWBNDg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rcvHrAOqi7cmNK2hFeCL7mbpMGmgqrkr6N49QVPhLOWr5S8WjJFX0GYBoPBV7trxu
-	 ZRB+kKsmsKVpgZ7ZVgACEy4v7DwvXhTnNrQpv0hIuM+v/+dvM/xVzIMEZ3kNHzJ7mR
-	 R3ZcuDSWDGVvCK2+iAwsF1BNEtdYTuJV7uqSVtfHvu+4x97PDKoPsHkq9kuqycwzVx
-	 SbYBqbpFZA4IUdxaKRBi7ukGp0Tr65TZhdZk/fl8ZrUASGKm0rBS4QFLgaDdW5F37B
-	 au5NprFajJ/GHL6J7ArBL1doaJfhrQEPKSKs4VBA9HGJU8SXZURILQtPHDlwaBRBjn
-	 VkzcRoq0YscPQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sI67d-003upH-Cb;
-	Fri, 14 Jun 2024 13:33:37 +0100
-Date: Fri, 14 Jun 2024 13:33:37 +0100
-Message-ID: <86sexfk8ke.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	will@kernel.org,
-	catalin.marinas@arm.com,
-	mark.rutland@arm.com,
-	Mark Brown <broonie@kernel.org>,
-	James Clark <james.clark@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Suzuki Poulose <suzuki.poulose@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH V18 2/9] KVM: arm64: Explicitly handle BRBE traps as UNDEFINED
-In-Reply-To: <20240613061731.3109448-3-anshuman.khandual@arm.com>
-References: <20240613061731.3109448-1-anshuman.khandual@arm.com>
-	<20240613061731.3109448-3-anshuman.khandual@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1718368449; c=relaxed/simple;
+	bh=B2nOjYL3lFg4bp1IsZgH4scpFXv01qJzfqLMfIueunY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K7XyJcVCFKJIkqeHNfW7qZFRDrK1mqKGWGYzhbs9Lq/odAO3gANTH1MZ4C/z9F1Rg1XsjPHRIiNGxMJrJr3FMKuwOJjkNYy7ksjov/P+DLn1kCziXYvAhPWW9V4ml0eP4PdWli+8JoV34Po7GNJpt6mV68uwmigAvw6e3xL9T4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wfalRvyS; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A86A17047;
+	Fri, 14 Jun 2024 14:33:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718368430;
+	bh=B2nOjYL3lFg4bp1IsZgH4scpFXv01qJzfqLMfIueunY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wfalRvyS2jqZaU2aTE1qzDFVqvw+JjmEL4BWenYU2ak8p855BAIf301hhF72gYjeD
+	 tmBqjnpSmcZ8VcP/ZNyfhERe6jDNPMfhKlUhOE+iITaPA0/rbKnaffGNDt66mg4wAc
+	 ctes+j4do1WRWp4aECKVv0LRmTGKC62ESHXis1GA=
+Date: Fri, 14 Jun 2024 15:33:45 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Louis Kuo <louis.kuo@mediatek.com>,
+	Phi-bang Nguyen <pnguyen@baylibre.com>,
+	Florian Sylvestre <fsylvestre@baylibre.com>,
+	Andy Hsieh <andy.hsieh@mediatek.com>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Paul Elder <paul.elder@ideasonboard.com>,
+	Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v4 3/5] media: platform: mediatek: isp_30: add mediatek
+ ISP3.0 sensor interface
+Message-ID: <20240614123345.GN6019@pendragon.ideasonboard.com>
+References: <20240110141443.364655-1-jstephan@baylibre.com>
+ <20240110141443.364655-4-jstephan@baylibre.com>
+ <3c2bee40-3792-409c-b42f-f8b013ff641c@collabora.com>
+ <CAEHHSvaT_U+HNzWQUoK9EuqGuqEd11+Lu0CLz_rL7uQf0Q5isw@mail.gmail.com>
+ <53838e76-bfa4-41f5-a015-a37472e98991@collabora.com>
+ <CAEHHSvaRqZM9c8oD05WKkhOHdjKLBkR6tXp2Q1b8OMiDxDsDhQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, broonie@kernel.org, james.clark@arm.com, robh@kernel.org, suzuki.poulose@arm.com, peterz@infradead.org, mingo@redhat.com, acme@kernel.org, linux-perf-users@vger.kernel.org, oliver.upton@linux.dev, james.morse@arm.com, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEHHSvaRqZM9c8oD05WKkhOHdjKLBkR6tXp2Q1b8OMiDxDsDhQ@mail.gmail.com>
 
-On Thu, 13 Jun 2024 07:17:24 +0100,
-Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+On Fri, Jun 14, 2024 at 12:38:15PM +0200, Julien Stephan wrote:
+> Le mer. 12 juin 2024 à 10:06, AngeloGioacchino Del Regno a écrit :
+> >
+> > Il 10/06/24 16:39, Julien Stephan ha scritto:
+> [...]
+> > >>
+> > >>> +     writel(0x10001, input->base + SENINF_TG1_SEN_CK);
+> > >>
+> > >> Unroll this one... this is the TG1 sensor clock divider.
+> > >>
+> > >> CLKFL GENMASK(5, 0)
+> > >> CLKRS GENMASK(13, 8)
+> > >> CLKCNT GENMASK(21,16)
+> > >>
+> > >> Like this, I don't get what you're trying to set, because you're using a fixed
+> > >> sensor clock rate, meaning that only a handful of camera sensors will be usable.
+> > >>
+> > >> Is this 8Mhz? 16? 24? what? :-)
+> > >>
+> > >> Two hints:
+> > >>    - sensor_clk = clk_get_rate(isp_clk) / (tg1_sen_ck_clkcnt + 1);
+> > >>    - int mtk_seninf_set_sensor_clk(u8 rate_mhz);
+> > >>
+> > >> Please :-)
+> > >
+> > > Hi Angelo,
+> > >
+> > > I think I get your point about not hardcoding the sensor rate, but I
+> > > am not sure how to use
+> > > a mtk_seninf_set_sensor_clk(u8 rate_mhz); function.
+> > >
+> > > Where would it be called? How is it exposed to the user?
+> > >
+> >
+> > As for where: setup, streaming start, resolution change (which may be covered
+> > by streaming start anyway, as a change should be calling stop->start anyway).
+> >
+> > And for the how is it exposed to the user - well, depends what you mean for user,
+> > but it's all standard V4L2 API :-)
+> >
+> > Last but not least, I can give you another hint....
+> >
+> > struct media_entity *entity = (something_here);
+> > struct media_pad *mpad;
+> > struct v4l2_subdev *cam_subdev;
+> > struct v4l2_ctrl *ctl;
+> > s64 link_frequency, pixel_clock;
+> >
+> > if (entity->pads[0].flags & MEDIA_PAD_FL_SINK)
+> >     return -E_NOT_A_CAMERA_SENSOR_WE_IGNORE_THIS_ONE;
+> >
+> > pad = media_pad_remote_pad_first(&entity->pads[0]);
+> > if (!pad)
+> >    return -ENOENT;
+> >
+> > if (!is_media_entity_v4l2_subdev(pad->entity))
+> >    return -ENOENT;
+> >
+> > if (pad->entity->function != MEDIA_ENT_F_CAM_SENSOR)
+> >    return -ENOENT;
+> >
 > 
-> The Branch Record Buffer Extension (BRBE) adds a number of system registers
-> and instructions, which we don't currently intend to expose to guests. Our
-> existing logic handles this safely, but this could be improved with some
-> explicit handling of BRBE.
+> Hi Angelo,
 > 
-> The presence of BRBE is currently hidden from guests as the cpufeature
-> code's ftr_id_aa64dfr0[] table doesn't have an entry for the BRBE field,
-> and so this will be zero in the sanitised value of ID_AA64DFR0 exposed to
-> guests via read_sanitised_id_aa64dfr0_el1(). As the ftr_id_aa64dfr0[] table
-> may gain an entry for the BRBE field in future, for robustness we should
-> explicitly mask out the BRBE field in read_sanitised_id_aa64dfr0_el1().
+> Thank you for the detailed explanation :)
+> However, I can't make it work because in my case, seninf is connected
+> to an external ISP
+> so pad->entity->function == MEDIA_ENT_F_PROC_VIDEO_ISP.
 > 
-> The BRBE system registers and instructions are currently trapped by the
-> existing configuration of the fine-grained traps. As neither the registers
-> nor the instructions are described in the sys_reg_descs[] table,
-> emulate_sys_reg() will warn that these are unknown before injecting an
-> UNDEFINED exception into the guest.
-> 
-> Well-behaved guests shouldn't try to use the registers or instructions, but
-> badly-behaved guests could use these, resulting in unnecessary warnings. To
-> avoid those warnings, we should explicitly handle the BRBE registers and
-> instructions as UNDEFINED.
-> 
-> Address the above by having read_sanitised_id_aa64dfr0_el1() mask out the
-> ID_AA64DFR0.BRBE field, and explicitly handling all of the BRBE system
-> registers and instructions as UNDEFINED.
-> 
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Oliver Upton <oliver.upton@linux.dev>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: kvmarm@lists.linux.dev
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ----
-> Changes in V18:
-> 
-> - Updated the commit message
-> 
->  arch/arm64/kvm/sys_regs.c | 56 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
-> Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-> ---
->  arch/arm64/kvm/sys_regs.c | 56 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
-> 
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 22b45a15d068..3d4686abe5ee 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -1304,6 +1304,11 @@ static int set_pmcr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r,
->  	return 0;
->  }
->  
-> +#define BRB_INF_SRC_TGT_EL1(n)				\
-> +	{ SYS_DESC(SYS_BRBINF_EL1(n)), undef_access },	\
-> +	{ SYS_DESC(SYS_BRBSRC_EL1(n)), undef_access },	\
-> +	{ SYS_DESC(SYS_BRBTGT_EL1(n)), undef_access }	\
-> +
->  /* Silly macro to expand the DBG{BCR,BVR,WVR,WCR}n_EL1 registers in one go */
->  #define DBG_BCR_BVR_WCR_WVR_EL1(n)					\
->  	{ SYS_DESC(SYS_DBGBVRn_EL1(n)),					\
-> @@ -1722,6 +1727,9 @@ static u64 read_sanitised_id_aa64dfr0_el1(struct kvm_vcpu *vcpu,
->  	/* Hide SPE from guests */
->  	val &= ~ID_AA64DFR0_EL1_PMSVer_MASK;
->  
-> +	/* Hide BRBE from guests */
-> +	val &= ~ID_AA64DFR0_EL1_BRBE_MASK;
-> +
->  	return val;
->  }
->  
-> @@ -2240,6 +2248,52 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  	{ SYS_DESC(SYS_DBGCLAIMCLR_EL1), trap_raz_wi },
->  	{ SYS_DESC(SYS_DBGAUTHSTATUS_EL1), trap_dbgauthstatus_el1 },
->  
-> +	/*
-> +	 * BRBE branch record sysreg address space is interleaved between
-> +	 * corresponding BRBINF<N>_EL1, BRBSRC<N>_EL1, and BRBTGT<N>_EL1.
-> +	 */
-> +	BRB_INF_SRC_TGT_EL1(0),
-> +	BRB_INF_SRC_TGT_EL1(16),
-> +	BRB_INF_SRC_TGT_EL1(1),
-> +	BRB_INF_SRC_TGT_EL1(17),
-> +	BRB_INF_SRC_TGT_EL1(2),
-> +	BRB_INF_SRC_TGT_EL1(18),
-> +	BRB_INF_SRC_TGT_EL1(3),
-> +	BRB_INF_SRC_TGT_EL1(19),
-> +	BRB_INF_SRC_TGT_EL1(4),
-> +	BRB_INF_SRC_TGT_EL1(20),
-> +	BRB_INF_SRC_TGT_EL1(5),
-> +	BRB_INF_SRC_TGT_EL1(21),
-> +	BRB_INF_SRC_TGT_EL1(6),
-> +	BRB_INF_SRC_TGT_EL1(22),
-> +	BRB_INF_SRC_TGT_EL1(7),
-> +	BRB_INF_SRC_TGT_EL1(23),
-> +	BRB_INF_SRC_TGT_EL1(8),
-> +	BRB_INF_SRC_TGT_EL1(24),
-> +	BRB_INF_SRC_TGT_EL1(9),
-> +	BRB_INF_SRC_TGT_EL1(25),
-> +	BRB_INF_SRC_TGT_EL1(10),
-> +	BRB_INF_SRC_TGT_EL1(26),
-> +	BRB_INF_SRC_TGT_EL1(11),
-> +	BRB_INF_SRC_TGT_EL1(27),
-> +	BRB_INF_SRC_TGT_EL1(12),
-> +	BRB_INF_SRC_TGT_EL1(28),
-> +	BRB_INF_SRC_TGT_EL1(13),
-> +	BRB_INF_SRC_TGT_EL1(29),
-> +	BRB_INF_SRC_TGT_EL1(14),
-> +	BRB_INF_SRC_TGT_EL1(30),
-> +	BRB_INF_SRC_TGT_EL1(15),
-> +	BRB_INF_SRC_TGT_EL1(31),
-> +
-> +	/* Remaining BRBE sysreg addresses space */
-> +	{ SYS_DESC(SYS_BRBCR_EL1), undef_access },
-> +	{ SYS_DESC(SYS_BRBFCR_EL1), undef_access },
-> +	{ SYS_DESC(SYS_BRBTS_EL1), undef_access },
-> +	{ SYS_DESC(SYS_BRBINFINJ_EL1), undef_access },
-> +	{ SYS_DESC(SYS_BRBSRCINJ_EL1), undef_access },
-> +	{ SYS_DESC(SYS_BRBTGTINJ_EL1), undef_access },
-> +	{ SYS_DESC(SYS_BRBIDR0_EL1), undef_access },
-> +
->  	{ SYS_DESC(SYS_MDCCSR_EL0), trap_raz_wi },
->  	{ SYS_DESC(SYS_DBGDTR_EL0), trap_raz_wi },
->  	// DBGDTR[TR]X_EL0 share the same encoding
-> @@ -2751,6 +2805,8 @@ static struct sys_reg_desc sys_insn_descs[] = {
->  	{ SYS_DESC(SYS_DC_CISW), access_dcsw },
->  	{ SYS_DESC(SYS_DC_CIGSW), access_dcgsw },
->  	{ SYS_DESC(SYS_DC_CIGDSW), access_dcgsw },
-> +	{ SYS_DESC(OP_BRB_IALL), undef_access },
-> +	{ SYS_DESC(OP_BRB_INJ), undef_access },
->  };
->  
->  static const struct sys_reg_desc *first_idreg;
+> How can I get the pad corresponding to the sensor?
 
-I don't think we need any update to the sys_reg table to handle
-this. Instead, we should make use of the FGU infrastructure that has
-been in since 6.9 to make this stuff UNDEF unconditionally.
+You don't have to. You can drop that check, and get the link frequency
+of the source subdev with v4l2_get_link_freq(), whatever it is.
 
-It should be as simple as:
+> > cam_subdev = media_entity_to_v4l2_subdev(pad->entity);
+> > ctl = v4l2_ctrl_find(subdev->ctrl_handler, V4L2_CID_PIXEL_RATE);
+> 
+> Is this mandatory to implement V4L2_CID_PIXEL_RATE ?
+> Should I return an error if not found?
 
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index ee33f5467ce5..7cafe3f72c01 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -4964,6 +4964,11 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
- 		kvm->arch.fgu[HAFGRTR_GROUP] |= ~(HAFGRTR_EL2_RES0 |
- 						  HAFGRTR_EL2_RES1);
- 
-+	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, BRBE, IMP))
-+		kvm->arch.fgu[HDFGRTR_GROUP] |= (HDFGRTR_nBRBDATA |
-+						 HDFGRTR_nBRBCTL  |
-+						 HDFGRTR_nBRBIDR);
-+
- 	set_bit(KVM_ARCH_FLAG_FGU_INITIALIZED, &kvm->arch.flags);
- out:
- 	mutex_unlock(&kvm->arch.config_lock);
+Does SENINF need to know both the pixel rate and link frequency ?
+V4L2_CID_PIXEL_RATE is very ill-defined, at the moment it only makes
+sense as a value relative to the sensor pixel array, and doesn't really
+apply further down in the pipeline. What information do you need to
+program the SENINF ?
 
-which is of course untested, but that I expect to be correct.
-
-Thanks,
-
-	M.
+> > /* multiplier is usually bits per pixel, divider is usually num of lanes */
+> > link_frequency = v4l2_get_link_freq(cam_subdev->ctrl_handler, multiplier, divider);
+> > pixel_clock = v4l2_ctrl_g_ctrl_int64(ctl);
+> 
+> How to know the sensor clock given link_frequency and pixel_clock?
+> Can you point me to drivers doing something similar?
+> 
+> >
+> > ....now you know what the sensor wants, set the seninf sensor clock accordingly.
+> >
+> > Cheers
+> > Angelo
+> >
+> [...]
 
 -- 
-Without deviation from the norm, progress is not possible.
+Regards,
+
+Laurent Pinchart
 
