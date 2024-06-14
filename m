@@ -1,338 +1,144 @@
-Return-Path: <linux-kernel+bounces-214825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443E5908AA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:06:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 379B5908AAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394441C22BB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:06:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D35FD1F281BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6E5195964;
-	Fri, 14 Jun 2024 11:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD42A195969;
+	Fri, 14 Jun 2024 11:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ZS0ss3El"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBIBKGWS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19BE1922C6
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 11:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E414812EBCC;
+	Fri, 14 Jun 2024 11:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718363204; cv=none; b=ld9VrPY80epMHsm3y3BwZG81XQho0ULrgmz4gABlVXY0ncb6lLPkvLGkQbKrj2B4BliDpmK3BEnozjyoQhPKxPcaSTPLeqHJmrTiUzuaUkafjXvtREXVq33aV9CH+rKOh9ftw990lsQ5WHlJabO5xyhH1qRHZpGf0Q4sMh6kmHU=
+	t=1718363300; cv=none; b=AY3ecT9EbX6t+MxQ9ggAmNNVSoEkpAOK24hqkvcvVyMixnlmHQwRuE4xBehkp0Gm7SoQwXm9QQJ2EwJhKFSv2JO5mo26sOck6i5U/LyBz374SkkCKKj0JBFZY9KT2tCw5E6tn59Qfhcfue0AeYtsS4+KgoBfppYrGCE1leGE68A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718363204; c=relaxed/simple;
-	bh=ITk4Pmw1wElvoJaLQpDB7x++r9MKwh7KfmJ6kjQS1SQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ClJYw2dJ504OLjqyRh+cXPjuUMzfg4qIN/vvP5I2PrNOPt/Bn0ia4OjYAvl0oD2xmeqYsVeniGNoCcrsF9GQBKPcq0Gr/FOKG1/cG06+chG5qqB2B2VPao3rUigra/zj/XKVliCGZqnV2xiFUolvr87gdExZwod64Dtm042hAT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ZS0ss3El; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52c819f6146so2870985e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 04:06:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1718363201; x=1718968001; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r5D80in0TCKF7CT1Ecrry2kBSeVogFVfKvkdHakj/G8=;
-        b=ZS0ss3ElqQML10fu8j8eKaPhMQw1iuTwzguoHoek/Oe8FTuHaFnT4KmHUxH8aAAFUx
-         3vRTiWK6dgDF+yhhras1S1z+/EitG+4GxE9hKx9vmfG2YF8RCDzYHOYqW3Msj19nkJ2+
-         bF7XlyQnH0pxNhP0jibLTkt8fAqpzaNBXTGA/e4hOgDd4UrnIavYp0PlLE+R9cFWWQyG
-         0NRB6aglvZ8hXKBpKxYOn8Uc3tRmHvqpl625gnU3PpaEB60D5ICm65sACbYcRTxKx3Rq
-         8LHzDO9qPDAZNILgX0d4Wd3TfI9a8zqLwUqs6fD5An30HF55Lr+oxSHol+vhmq94R4HH
-         Q3Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718363201; x=1718968001;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r5D80in0TCKF7CT1Ecrry2kBSeVogFVfKvkdHakj/G8=;
-        b=soi1uVkGH1K99NI/ksGd2/ku+cW3TdfjEskb5OuO20JvsBbzS3ncKeQyvsoAiLJ2EO
-         dC1y0x8fYIWuPWmMmTvfbMbs9EVFt8PMAQJFtgyjckqUpdg1o2xeCs+h0HV85p6VbQAD
-         Y/ML60GDPp3UEseWRnRTUYksJd3K1fzuO9LRre9z8GDlNbLPPsGlPUXhFq6O9nrILZiz
-         wgbMvhWHstQEsxwsBn9prQXw5A2JctaY15uPYyfuTol+IrWtJv4JA8+RIeSyuVR8W/OS
-         Bd4c9bkaiSbdV+PLilY08LapzVUCjC1tYpurjv0BBf1gcLe4pGl9vhBtitmy/QfW2MOG
-         /iVg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8vIZClVGquW9FiIBJ0AEzYA/MaDTv3RBgeNe859vKX1UVt3a8XuYELSDTrjznnzjg5SdAzAkjuZw3IUDu/WF68K2Lk/EvsG47i43b
-X-Gm-Message-State: AOJu0YxtcbTCAjgeybr4EXQeNI5LbW0fVZ5t0aO5EHG2vfPYlvk9AeEP
-	XxTWewsrjQR/BTUTAZ3C4xmKFpxSGL0C6nK1ad7o7VK1U/ZuESKol5d6nmZc7LdxCDlQIYPX8BH
-	I
-X-Google-Smtp-Source: AGHT+IH9JHjPbSmLTT+F7xHZJ81IvkKNjZ+2yhkxhvBPp4AqZfmx5Y0pBQzf79FJO58OFQjWNVtaWg==
-X-Received: by 2002:a05:6512:3ca4:b0:52c:8339:d09b with SMTP id 2adb3069b0e04-52ca6e55096mr1765316e87.1.1718363200927;
-        Fri, 14 Jun 2024 04:06:40 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.189])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075104a1bsm4095242f8f.102.2024.06.14.04.06.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 04:06:40 -0700 (PDT)
-Message-ID: <4a477079-b4a6-4861-ae24-b3b87adb8ecd@tuxon.dev>
-Date: Fri, 14 Jun 2024 14:06:38 +0300
+	s=arc-20240116; t=1718363300; c=relaxed/simple;
+	bh=J3Z19esqkJSiD+J31FVHiY7rajAIJvecYRWlBUKaHdg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MWxa3j9TE7Gay5mZWnYLs7wiC850wwRF/YYaZL+Lk8qunKYmEDg+R9FEfNNVbQLgz4cP4J0QsBl2Fjp8mbUtOMfxtjrBdAUJEF9CNbE7/+UhlJ/bP774WSc1vkZGccRsVMrIDDA8XqXfzy6CtB6aPnLynfKWIVtMGg1feXvHxjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBIBKGWS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65555C4AF1D;
+	Fri, 14 Jun 2024 11:08:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718363299;
+	bh=J3Z19esqkJSiD+J31FVHiY7rajAIJvecYRWlBUKaHdg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bBIBKGWSbksDxfjSKBvOAuBywyMdWhh84dpWfEclFSDTuki8iVwY+UgtgTaPB/d3o
+	 +dPMVo/dKZRR7Wtnfj1rSJitdni6yAoH7aw1JV63Vaq6TtZC+QVGZFZGHhiv0TO1OK
+	 xrAgebiE+GrWnK5XLN7v3YZH7mqgmKm3m9BPF5+AtxptCKF3ZFkMVTRDmKAVAbDD1U
+	 PnMIqp4C/0YLCcU4v0wSRb/MXVp6w8mAzhogdYT0gVt0YyofUzxUjWaN7x1ZE1mYW/
+	 Z8v/36BciI5UsF4DNB/SZ20793vkZzxIiROc/ZR7C15w3MfWTI/susyqL4mI99qwua
+	 2F8A2um+qaUZQ==
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5bafec9ad2eso84704eaf.0;
+        Fri, 14 Jun 2024 04:08:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXZh3D7xmiexpCfG5Oz8MfGAJBd1R05I5jUk0OZ38ge/3hDr+44SfsjKSDfBJKnv7sczWuPt3JeBrAst7SrwdbujMFIIo+cSNPzlFMph0Qh//uS6Yo02QXU4aNiOEAoOje3ECp8
+X-Gm-Message-State: AOJu0Yzr6dsWCRuvI9vdijWk2CxQ1D/C+Zcnl4hlMR//ul+Kw2PKGrDm
+	s8qpu7ZYkgT9VfW7BnPdFo+rvO3CBT0yFnjIEzKUQCFLCobAOckvz4vlseU8kX8qopJAK0h1tOS
+	dWKZToMNfCdIBwwVbibvEsiDEJW8=
+X-Google-Smtp-Source: AGHT+IHbu0Wz338NoDGVXvE8vx4VwP6nzR5XDnCPXh+YmoBxMOtDP8iab9l7e+vYa0av/03GOX6so6ubej3scieU5/U=
+X-Received: by 2002:a4a:e1da:0:b0:5ba:ead2:c742 with SMTP id
+ 006d021491bc7-5bdad9f0343mr2533730eaf.0.1718363298689; Fri, 14 Jun 2024
+ 04:08:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/12] rtc: renesas-rtca3: Add driver for RTCA-3 available
- on Renesas RZ/G3S SoC
-Content-Language: en-US
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
- magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
- <20240614071932.1014067-7-claudiu.beznea.uj@bp.renesas.com>
- <2024061409215756e6a10c@mail.local>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <2024061409215756e6a10c@mail.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240613211011.413120-1-surajjs@amazon.com>
+In-Reply-To: <20240613211011.413120-1-surajjs@amazon.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 14 Jun 2024 13:08:07 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iLtYOWc0w202kq8Tb-n=8ToQj2xHQ2_socwqqTyXufSw@mail.gmail.com>
+Message-ID: <CAJZ5v0iLtYOWc0w202kq8Tb-n=8ToQj2xHQ2_socwqqTyXufSw@mail.gmail.com>
+Subject: Re: [PATCH] acpi: Support CONFIG_ACPI without CONFIG_PCI
+To: Suraj Jitindar Singh <surajjs@amazon.com>
+Cc: linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, sjitindarsingh@gmail.com, 
+	robert.moore@intel.com, rafael.j.wysocki@intel.com, lenb@kernel.org, 
+	okaya@kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Alexandre,
+On Thu, Jun 13, 2024 at 11:10=E2=80=AFPM Suraj Jitindar Singh
+<surajjs@amazon.com> wrote:
+>
+> Make is possible to use ACPI without having CONFIG_PCI set.
+>
+> When initialising ACPI the following call chain occurs:
+>
+>   acpi_init() ->
+>     acpi_bus_init() ->
+>       acpi_load_tables() ->
+>         acpi_ev_install_region_handlers() ->
+>
+> acpi_ev_install_region_handlers() calls acpi_ev_install_space_handler() o=
+n
+> each of the default address spaces defined as:
+>
+>   u8 acpi_gbl_default_address_spaces[ACPI_NUM_DEFAULT_SPACES] =3D {
+>           ACPI_ADR_SPACE_SYSTEM_MEMORY,
+>           ACPI_ADR_SPACE_SYSTEM_IO,
+>           ACPI_ADR_SPACE_PCI_CONFIG,
+>           ACPI_ADR_SPACE_DATA_TABLE
+>   };
+>
+> However in acpi_ev_install_space_handler() the case statement for
+> ACPI_ADR_SPACE_PCI_CONFIG is ifdef'd as:
+>
+>   #ifdef ACPI_PCI_CONFIGURED
+>                   case ACPI_ADR_SPACE_PCI_CONFIG:
+>
+>                           handler =3D acpi_ex_pci_config_space_handler;
+>                           setup =3D acpi_ev_pci_config_region_setup;
+>                           break;
+>   #endif
+>
+> ACPI_PCI_CONFIGURED is not defined if CONFIG_PCI is not enabled, thus the
+> attempt to install the handler fails.
+>
+> Fix this by ifdef'ing ACPI_ADR_SPACE_PCI_CONFIG in the list of default
+> address spaces.
 
-On 14.06.2024 12:21, Alexandre Belloni wrote:
-> Hello Claudiu,
-> 
-> On 14/06/2024 10:19:26+0300, Claudiu wrote:
->> +static int rtca3_initial_setup(struct rtca3_priv *priv)
->> +{
->> +	unsigned long osc32k_rate;
->> +	u8 pes, tmp, mask;
->> +	u32 sleep_us;
->> +	int ret;
->> +
->> +	osc32k_rate = clk_get_rate(priv->clk);
->> +	if (!osc32k_rate)
->> +		return -EINVAL;
->> +
->> +	sleep_us = DIV_ROUND_UP_ULL(1000000ULL, osc32k_rate) * 6;
->> +
->> +	priv->ppb.ten_sec = DIV_ROUND_CLOSEST_ULL(1000000000ULL, (osc32k_rate * 10));
->> +	priv->ppb.sixty_sec = DIV_ROUND_CLOSEST_ULL(1000000000ULL, (osc32k_rate * 60));
->> +
->> +	/*
->> +	 * According to HW manual (section 22.4.2. Clock and count mode setting procedure)
->> +	 * we need to wait at least 6 cycles of the 32KHz clock after clock was enabled.
->> +	 */
->> +	usleep_range(sleep_us, sleep_us + 10);
->> +
->> +	/* Disable alarm and carry interrupts. */
->> +	mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE;
->> +	rtca3_byte_update_bits(priv, RTCA3_RCR1, mask, 0);
->> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR1, tmp, !(tmp & mask),
->> +				 10, RTCA3_DEFAULT_TIMEOUT_US);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * Stop the RTC and set to 12 hours mode and calendar count mode.
->> +	 * RCR2.START initial value is undefined so we need to stop here
->> +	 * all the time.
->> +	 */
-> 
-> Certainly not, if you stop the RTC on probe, you lose the time
-> information, this must only be done when the RTC has never been
-> initialised. The whole goal of the RTC is the keep time across reboots,
-> its lifecycle is longer than the system.
+What if there are PCI operation regions in the AML on the platform?
+How are they going to be handled?
 
-This was also my first thought when I read the HW manual.
-
-It has been done like this to follow the HW manual. According to HW manual
-[1], chapter 22.3.19 RTC Control Register 2 (RCR2), initial value of START
-bit is undefined.
-
-If it's 1 while probing but it has never been initialized, we can falsely
-detect that RTC is started and skip the rest of the initialization steps.
-W/o initialization configuration, the RTC will not be able to work.
-
-Even with this implementation we don't loose the time b/w reboots. Here is
-the output on my board [2]. The steps I did were the following:
-1/ remove the power to the board (I don't have a battery for RTC installed
-   at the moment)
-2/ boot the board and issue hwclock -w
-3/ reboot
-4/ check the systime and rtc time
-5/ poweroff
-6/ poweron
-7/ boot and check systime and RTC time
-
-As you can see the time is not lost but continue to increment. I presume
-the hardware takes into account that time needs to increment when initial
-configuration is executed.
-
-[1]
-https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg3s-general-purpose-microprocessors-single-core-arm-cortex-a55-11-ghz-cpu-and-dual-core-cortex-m33-250
-[2] https://p.fr33tux.org/585cd6
-
-> 
-> Also, why do you insist on 12H-mode? The proper thing to do is to support
-> 12H-mode on read but always use 24H-mode when setting the time.
-
-OK, I wasn't aware of this. I think I followed this approach as it looked
-to me the number of operation to update the hardware registers was lower
-for 12h mode.
-
-I'll adjust as proposed.
-
-> 
->> +	mask = RTCA3_RCR2_START | RTCA3_RCR2_HR24 | RTCA3_RCR2_CNTMD;
->> +	writeb(0, priv->base + RTCA3_RCR2);
->> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR2, tmp, !(tmp & mask),
->> +				 10, RTCA3_DEFAULT_TIMEOUT_US);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Execute reset and wait for reset and calendar count mode to be applied. */
->> +	mask = RTCA3_RCR2_RESET | RTCA3_RCR2_CNTMD;
->> +	writeb(RTCA3_RCR2_RESET, priv->base + RTCA3_RCR2);
->> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR2, tmp, !(tmp & mask),
->> +				 10, RTCA3_RESET_TIMEOUT_US);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * According to HW manual (section 22.6.3. Notes on writing to and reading
->> +	 * from registers) after reset we need to wait 6 clock cycles before
->> +	 * writing to RTC registers.
->> +	 */
->> +	usleep_range(sleep_us, sleep_us + 10);
->> +
->> +	/* Set no adjustment. */
->> +	writeb(0, priv->base + RTCA3_RADJ);
->> +	ret = readb_poll_timeout(priv->base + RTCA3_RADJ, tmp, !tmp, 10,
->> +				 RTCA3_DEFAULT_TIMEOUT_US);
->> +
->> +	/* Start the RTC and enable automatic time error adjustment. */
->> +	mask = RTCA3_RCR2_START | RTCA3_RCR2_AADJE;
->> +	writeb(RTCA3_RCR2_START | RTCA3_RCR2_AADJE, priv->base + RTCA3_RCR2);
->> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR2, tmp, ((tmp & mask) == mask),
->> +				 10, RTCA3_START_TIMEOUT_US);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * According to HW manual (section 22.6.4. Notes on writing to and reading
->> +	 * from registers) we need to wait 1/128 seconds while the clock is operating
->> +	 * (RCR2.START bit = 1) to be able to read the counters after a return from
->> +	 * reset.
->> +	 */
->> +	usleep_range(8000, 9000);
->> +
->> +	/* Set period interrupt to 1/64 seconds. It is necessary for alarm setup. */
->> +	pes = FIELD_PREP(RTCA3_RCR1_PES, RTCA3_RCR1_PES_1_64_SEC);
->> +	rtca3_byte_update_bits(priv, RTCA3_RCR1, RTCA3_RCR1_PES, pes);
->> +	return readb_poll_timeout(priv->base + RTCA3_RCR1, tmp, ((tmp & RTCA3_RCR1_PES) == pes),
->> +				  10, RTCA3_DEFAULT_TIMEOUT_US);
->> +}
->> +
->> +static int rtca3_request_irqs(struct platform_device *pdev, struct rtca3_priv *priv)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	int ret, irq;
->> +
->> +	irq = platform_get_irq_byname(pdev, "alarm");
->> +	if (irq < 0)
->> +		return dev_err_probe(dev, irq, "Failed to get alarm IRQ!\n");
->> +
->> +	ret = devm_request_irq(dev, irq, rtca3_alarm_handler, 0, "rtca3-alarm", priv);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "Failed to request alarm IRQ!\n");
->> +	priv->wakeup_irq = irq;
->> +
->> +	irq = platform_get_irq_byname(pdev, "period");
->> +	if (irq < 0)
->> +		return dev_err_probe(dev, irq, "Failed to get period IRQ!\n");
->> +
->> +	ret = devm_request_irq(dev, irq, rtca3_periodic_handler, 0, "rtca3-period", priv);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "Failed to request period IRQ!\n");
->> +
->> +	/*
->> +	 * Driver doesn't implement carry handler. Just get the IRQ here
->> +	 * for backward compatibility, in case carry support will be added later.
->> +	 */
->> +	irq = platform_get_irq_byname(pdev, "carry");
->> +	if (irq < 0)
->> +		return dev_err_probe(dev, irq, "Failed to get carry IRQ!\n");
->> +
->> +	return 0;
->> +}
->> +
->> +static int rtca3_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct rtca3_priv *priv;
->> +	int ret;
->> +
->> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->> +	if (!priv)
->> +		return -ENOMEM;
->> +
->> +	priv->base = devm_platform_ioremap_resource(pdev, 0);
->> +	if (IS_ERR(priv->base))
->> +		return PTR_ERR(priv->base);
->> +
->> +	priv->clk = devm_clk_get_enabled(dev, "counter");
->> +	if (IS_ERR(priv->clk))
->> +		return PTR_ERR(priv->clk);
->> +
->> +	platform_set_drvdata(pdev, priv);
->> +
->> +	spin_lock_init(&priv->lock);
->> +	atomic_set(&priv->alrm_sstep, RTCA3_ALRM_SSTEP_DONE);
->> +	init_completion(&priv->set_alarm_completion);
->> +
->> +	ret = rtca3_initial_setup(priv);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "Failed to setup the RTC!\n");
->> +
->> +	ret = rtca3_request_irqs(pdev, priv);
->> +	if (ret)
->> +		return ret;
->> +
->> +	device_init_wakeup(&pdev->dev, 1);
->> +
->> +	priv->rtc_dev = devm_rtc_allocate_device(&pdev->dev);
->> +	if (IS_ERR(priv->rtc_dev))
->> +		return PTR_ERR(priv->rtc_dev);
->> +
->> +	priv->rtc_dev->ops = &rtca3_ops;
->> +	priv->rtc_dev->max_user_freq = 256;
->> +	priv->rtc_dev->range_min = mktime64(1999, 1, 1, 0, 0, 0);
->> +	priv->rtc_dev->range_max = mktime64(2098, 12, 31, 23, 59, 59);
-> 
-> This very much looks like the range should be 2000 to 2099, why do you
-> want to shift it?
-
-2000-2099 was my first option for this but then I saw one of your old
-commits on this topic and, since I'm not very familiar with RTC,
-I took it as example. I'll adjust as you proposed.
-
-commit beee05dfbead
-Author: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date:   Wed Mar 20 12:30:10 2019 +0100
-
-    rtc: sh: set range
-
-    The SH RTC is a BCD RTC with some version having 4 digits for the year.
-
-    The range for the RTCs with only 2 digits for the year was unfortunately
-    shifted to handle 1999 to 2098.
-
-    Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-    Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-
-
-Thank you for your review,
-Claudiu Beznea
-
-> 
-> 
+> Fixes: bd23fac3eaaa ("ACPICA: Remove PCI bits from ACPICA when CONFIG_PCI=
+ is unset")
+> CC: stable@vger.kernel.org # 5.0.x-
+> Signed-off-by: Suraj Jitindar Singh <surajjs@amazon.com>
+> ---
+>  drivers/acpi/acpica/evhandler.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/acpi/acpica/evhandler.c b/drivers/acpi/acpica/evhand=
+ler.c
+> index 1c8cb6d924df..371093acb362 100644
+> --- a/drivers/acpi/acpica/evhandler.c
+> +++ b/drivers/acpi/acpica/evhandler.c
+> @@ -26,7 +26,9 @@ acpi_ev_install_handler(acpi_handle obj_handle,
+>  u8 acpi_gbl_default_address_spaces[ACPI_NUM_DEFAULT_SPACES] =3D {
+>         ACPI_ADR_SPACE_SYSTEM_MEMORY,
+>         ACPI_ADR_SPACE_SYSTEM_IO,
+> +#ifdef ACPI_PCI_CONFIGURED
+>         ACPI_ADR_SPACE_PCI_CONFIG,
+> +#endif
+>         ACPI_ADR_SPACE_DATA_TABLE
+>  };
+>
+> --
+> 2.34.1
+>
+>
 
