@@ -1,131 +1,113 @@
-Return-Path: <linux-kernel+bounces-214425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 989ED90843C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:15:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B2290843F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:15:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31DF4B2193B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:15:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDE97B21A58
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3998D1487EA;
-	Fri, 14 Jun 2024 07:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0264146A90;
+	Fri, 14 Jun 2024 07:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="TQ8oKK6L"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="MYlL8iEZ"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAA820317;
-	Fri, 14 Jun 2024 07:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547E620317
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 07:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718349327; cv=none; b=Plbkv994v7vCqPUB0pvJejsNXWYgSm+JKEfsTatbkmMQvGe97kcWk8NWBbStM+BDJG0waku6c+LL1FJhmwb2yS7eClYjmlV/vAtOSYL+hqCsrXCh9Zop2drokitlUFK2VDjGHNDvVrM0Wp1aym2muzacYkBMMw9od3OAIMOVloY=
+	t=1718349337; cv=none; b=TA67xwYeKLy7vKUZsMU6UjHbWdstGSczAauTaD52ZQmISrJQbBfWcVBdlfwJfQK7Dq7DODGk7Uhkca9UBDHOZA/K16Blb/bWMLZ8O7a0l6iQrCG4VjobKk8ztNhecJlQ0Vc6MnghdLInvLJqGYJb6mRrVCLl0vh41/t7xvS0qQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718349327; c=relaxed/simple;
-	bh=v5AMpN5DYyM3f+Xn84fM+3GMWQHLMCXOB6gjmmA7s24=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rRMvmQkkYRAH3K2Y1lxsLWmlJHBA0AhdF4VRsMqM5oJm6soR3N6KvFhylmhqnrsSfzh7RRH+Krv1omGhStpJjNo7WG4dK9fcsgj8XVN5xXKR6YTqFnnUNUsPzvhaqHPAr4YlDwf0/0rL4iI+8N3+b/tjE5rpSpju1JP/NL8qgas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=TQ8oKK6L; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: dc4a37d22a1d11efa54bbfbb386b949c-20240614
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=Tfh75ueWVlJEBbGX4eUx02SwpuikQxjyrP+FXeiLmzA=;
-	b=TQ8oKK6LlxcocHVmcOEI/yQwV9APQgc+MtQeCBLazXYLzWRBgSSa3WVUT7rXvLF+8Ujs1LRPp/ncLtcwz9CuTzsiGWhnwaxfAsqTLADrzddOz3Lp+JKbi8Hq6lX4+hFVTRgJhlUnZtFvZhLWYuBsrPNZK33gkGe+EQBU/axwF5I=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.39,REQID:77a28801-640e-4f6c-b9d5-89c618b5d2d8,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:393d96e,CLOUDID:ed579244-4544-4d06-b2b2-d7e12813c598,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: dc4a37d22a1d11efa54bbfbb386b949c-20240614
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
-	(envelope-from <mark-pk.tsai@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 587594635; Fri, 14 Jun 2024 15:15:21 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 14 Jun 2024 00:15:20 -0700
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 14 Jun 2024 15:15:20 +0800
-From: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
-To: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
-	<nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Jonathan Corbet
-	<corbet@lwn.net>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino
- Del Regno <angelogioacchino.delregno@collabora.com>
-CC: <yj.chiang@mediatek.com>, <mark-pk.tsai@mediatek.com>,
-	<linux-kbuild@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>
-Subject: [PATCH] kbuild: doc: Update default INSTALL_MOD_DIR from extra to updates
-Date: Fri, 14 Jun 2024 15:15:02 +0800
-Message-ID: <20240614071507.11359-1-mark-pk.tsai@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1718349337; c=relaxed/simple;
+	bh=w1tIP1ZAX3zgXr75I5+0iBdwboaTgLkumsxFyIIXU9E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DMwrxX0A72OhPpipRVs1UiBa7CQtsyI8yX/qiLTwL+Zdja8gX6CHshhdBTtCRpfkSKAzsEFq/M7mcagDIsxGUe7r71sajQJHcEQnNZLtlwjeDbt+TYbBFZkFACpeAAcIJ4PvVTEGQsWbkUlhv6rxHKFnaCd22dJAo7vqhYXU1gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=MYlL8iEZ; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so11285455e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 00:15:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718349333; x=1718954133; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bWxaqyzMmty2X0CllBIN4vvbBGJjuoyCos9bG6RTIXY=;
+        b=MYlL8iEZ8DXaxEhhc1SLlleNdB4+4mGCqNp5F5b4NbvmGuc0yg0O17GL40ojTBKa/t
+         yoqGvAAmuAoCD9KVP+VTNun1oB4w8wlxG7kC4ZL0YngC+Jws7808DI5N+AszdLX1wl9w
+         28lSbhWZdSLieKD6Vkz0bcFULybG9Xx9z9zDZTWCBZ4NUupAXn8VZ63XPsdkLEtTz7B5
+         KNHZCoSXP2cx/PVRa+140hEkFcBWcWE+S2K/xfsNdJB6bQSGIjj9Y1fXDOq5WvrvZxqQ
+         rd5XiwA0b5C2YoyLbYqFJeXiZtoIWKS7CqfzNbKzsT/Lh4s+2AMPfKX5ptZYBZlox94A
+         Yihg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718349333; x=1718954133;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bWxaqyzMmty2X0CllBIN4vvbBGJjuoyCos9bG6RTIXY=;
+        b=V1uXuvK6tMButnGbJd9PLTq8MdVXF/dbfV51Ua4p5wU7EKRAlA//fHLRERlMrfLqK0
+         8Dc6PPKQ6OtuGzZcI2Z7ud6B18id1xXmrbFZknMuaTAtHB4vZ7Pf9L0/nxBfNSIr8AlK
+         60Tp09f1G++JtxIqY9yLNctOEHfQObScxu+lSpgabYotiKGza+Z8Qc3hpvF+JDMffq35
+         TcxRLBUMIA8wf2ffQC1jqzq87zHTZqWD6HeT3hk6/dGbQpMZoSImA9shQol7kD0xSSoq
+         OiggB65c7PpmEa5QmzGCNm+LlYTtPSIJ+bGDk9wGf//wJr4LHKw5BDj4j9zQVwPXYFA7
+         Np8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXKMU2IwP86SIImooI+r93w6xoM55BGTQ6QJlCeMEELrT2UlDpIhZceXZ/krVj60yglkPSO17+oaB/wdx/xgXm3V/Ott4aIfTqB7N8P
+X-Gm-Message-State: AOJu0Yzqvm9aF3ycFMlf2QLHn3RyQsUUFbWfrdhgcj8arc6owumISmFE
+	ST9GZjD5LfQn7E/1KU0qsuLQJebFS/1ooydPx0JP1QA/4w42j2LaOJV+Ir2yVb2w1/ex/h8OtTL
+	7
+X-Google-Smtp-Source: AGHT+IFjYFJI8hmhx69oWOi1nIoazI0X/FyGuUtdE43izG8eBRnEKz3Ov7qpH3BlwHZRyGZ3kd0L1A==
+X-Received: by 2002:a05:600c:1552:b0:421:def3:b0d9 with SMTP id 5b1f17b1804b1-4230482117emr17626415e9.7.1718349333416;
+        Fri, 14 Jun 2024 00:15:33 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:8d3:3800:6155:d3bf:61c:c4b5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750acf32sm3528967f8f.49.2024.06.14.00.15.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 00:15:33 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpiolib: put gpio_suffixes in a single compilation unit
+Date: Fri, 14 Jun 2024 09:15:31 +0200
+Message-ID: <171834931757.6326.8605051498855992570.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240612184821.58053-1-brgl@bgdev.pl>
+References: <20240612184821.58053-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-The default INSTALL_MOD_DIR was changed from 'extra' to
-'updates' in commit b74d7bb7ca24 ("kbuild: Modify default
-INSTALL_MOD_DIR from extra to updates").
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-This commit updates the documentation to align with the
-latest kernel.
 
-Signed-off-by: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
----
- Documentation/kbuild/modules.rst | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+On Wed, 12 Jun 2024 20:48:21 +0200, Bartosz Golaszewski wrote:
+> The gpio_suffixes array is defined in the gpiolib.h header. This means
+> the array is stored in .rodata of every compilation unit that includes
+> it. Put the definition for the array in gpiolib.c and export just the
+> symbol in the header. We need the size of the array so expose it too.
+> 
+> 
 
-diff --git a/Documentation/kbuild/modules.rst b/Documentation/kbuild/modules.rst
-index a1f3eb7a43e2..131863142cbb 100644
---- a/Documentation/kbuild/modules.rst
-+++ b/Documentation/kbuild/modules.rst
-@@ -128,7 +128,7 @@ executed to make module versioning work.
- 
- 	modules_install
- 		Install the external module(s). The default location is
--		/lib/modules/<kernel_release>/extra/, but a prefix may
-+		/lib/modules/<kernel_release>/updates/, but a prefix may
- 		be added with INSTALL_MOD_PATH (discussed in section 5).
- 
- 	clean
-@@ -417,7 +417,7 @@ directory:
- 
- And external modules are installed in:
- 
--	/lib/modules/$(KERNELRELEASE)/extra/
-+	/lib/modules/$(KERNELRELEASE)/updates/
- 
- 5.1 INSTALL_MOD_PATH
- --------------------
-@@ -438,10 +438,10 @@ And external modules are installed in:
- -------------------
- 
- 	External modules are by default installed to a directory under
--	/lib/modules/$(KERNELRELEASE)/extra/, but you may wish to
-+	/lib/modules/$(KERNELRELEASE)/updates/, but you may wish to
- 	locate modules for a specific functionality in a separate
- 	directory. For this purpose, use INSTALL_MOD_DIR to specify an
--	alternative name to "extra."::
-+	alternative name to "updates."::
- 
- 		$ make INSTALL_MOD_DIR=gandalf -C $KDIR \
- 		       M=$PWD modules_install
+Applied, thanks!
+
+[1/1] gpiolib: put gpio_suffixes in a single compilation unit
+      commit: 7e92061f1e9d1f6d3bfa6113719534f2c773b041
+
+Best regards,
 -- 
-2.18.0
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
