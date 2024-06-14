@@ -1,154 +1,159 @@
-Return-Path: <linux-kernel+bounces-214809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E25908A5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:43:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C0A908A5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCF541F226D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:43:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AC681F21129
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A065D194AEF;
-	Fri, 14 Jun 2024 10:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D733A194ACB;
+	Fri, 14 Jun 2024 10:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rHe5tIyF"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Mm+xjw2A"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33A1146D6A
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A598A193091
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718361793; cv=none; b=aif6yNsR7PVtUCBfTVsQ3KquPmP4EA+StM82dsDJXBd6Nx1HNJjeKiCjT1foMkx2ribXR6z87kjWRkzbFZRw+FIcIdnmu2pCvofDBLmN0+ynTwCeHezs+hgfNNdbREYfehyiQlktG3mTfpvn7A84ErFN80pRd4I8/UV616TLkQI=
+	t=1718361839; cv=none; b=ZwrmeRflLtVa5mNFuBO8adT9eAxCjw596kDfv41djjLUzjuQRD6qloeWEvHuyDSb0EGGAcau8q0CameE0NYQxlxUqn9+3J1OjdCbn9N70ovKv/bKI5I/1JywUWcMPvEMLFJYBghYmSiRVvRCS+vFlsRY69hUfmqEIXjuJEXnDGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718361793; c=relaxed/simple;
-	bh=FD/DV7O2NKNv4PDTR/vHzvphEUionU4UsD94b6WepTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fl/rjp6rzKw2Dx7ttXt/QGrfUcbNumjVf1nCQTEQgpTIQx0iKVOUtfBxeJ6zXEOHVK5boYIf/YHuNJsK4P0Bfp3eLmP183V+t/PvVTC+bxsBGwqjw5Pf4el7+KYDHsqAjzEwqUVA/XSkyaDaxJfpmHDbWsRc5qHVxInfS11mOrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rHe5tIyF; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: 0x1207@gmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718361788;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SgrqTw+/It1adEehXLmXgK1moXKsGq11xoueSFrMzIE=;
-	b=rHe5tIyFpYY8WnnvPWz/uRNkvY1NX0ZvYBVNgMPpFZoqBS5Er8gvmcjyMkxpNGymbke3VK
-	rrSwU18WcSDFZhwwFjaNC1iU8syEFiPYTXUIA8KVMF6O3Zz8/R6xbj2f3LDVicpL2eid9F
-	rBqWnk88DXauX70HneT4jxMDHcG/uF0=
-X-Envelope-To: linux@armlinux.org.uk
-X-Envelope-To: davem@davemloft.net
-X-Envelope-To: alexandre.torgue@foss.st.com
-X-Envelope-To: joabreu@synopsys.com
-X-Envelope-To: edumazet@google.com
-X-Envelope-To: kuba@kernel.org
-X-Envelope-To: pabeni@redhat.com
-X-Envelope-To: mcoquelin.stm32@gmail.com
-X-Envelope-To: jpinto@synopsys.com
-X-Envelope-To: vinschen@redhat.com
-X-Envelope-To: netdev@vger.kernel.org
-X-Envelope-To: linux-stm32@st-md-mailman.stormreply.com
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: xfr@outlook.com
-X-Envelope-To: rock.xu@nio.com
-Message-ID: <0474a247-e5f2-4a7f-879b-c764591a5f28@linux.dev>
-Date: Fri, 14 Jun 2024 11:43:00 +0100
+	s=arc-20240116; t=1718361839; c=relaxed/simple;
+	bh=7PuP78ru6jiBfVBrYl1dVfoJwyFY0gSotJgrsbXkFAI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LuXIZDQAdfsUmnv/D84JI6uoXbNEwlCK7kyTr5r9zgWcA573gml2FB5JULzL8wCItllA60CTkVaDUjUOqdppfD6NuZjkWakRoFf6f04mvmVHc0XaTGVOjrnsx8U1IivyJJY/nZEjsN2vW2FUMGBWM1OMMhu2i8NOaEAWsEkclc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Mm+xjw2A; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from Monstersaurus.local (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 92348B53;
+	Fri, 14 Jun 2024 12:43:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718361820;
+	bh=7PuP78ru6jiBfVBrYl1dVfoJwyFY0gSotJgrsbXkFAI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Mm+xjw2ApRB54+5k532l1+y03V7JRK0Go9F/0TpWBjPwdXuYQuxMr+JvElVoPlwMp
+	 /y2T+QWmfil/MkJzh4tE+iNITBXadyAPbueDeq6CAcuMuJ41URZNrjfOs2FiCAqvOs
+	 n/y3YM3W4K5cBqTgiN1PyG7syjC6T2qhC/35pp5g=
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+To: Umang Jain <umang.jain@ideasonboard.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	linux-rpi-kernel@lists.infradead.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.org>,
+	detule <ogjoneski@gmail.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
+	linux-staging@lists.linux.dev (open list:STAGING SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [v2 PATCH] staging: vc04_services: vchiq_arm: Fix initialisation check
+Date: Fri, 14 Jun 2024 11:43:35 +0100
+Message-Id: <20240614104339.3858830-1-kieran.bingham@ideasonboard.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v2] net: stmmac: Enable TSO on VLANs
-To: Furong Xu <0x1207@gmail.com>,
- "Russell King (Oracle)" <linux@armlinux.org.uk>,
- "David S. Miller" <davem@davemloft.net>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, Joao Pinto
- <jpinto@synopsys.com>, Corinna Vinschen <vinschen@redhat.com>
-Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- xfr@outlook.com, rock.xu@nio.com
-References: <20240614060349.498414-1-0x1207@gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20240614060349.498414-1-0x1207@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On 14/06/2024 07:03, Furong Xu wrote:
-> The TSO engine works well when the frames are not VLAN Tagged.
-> But it will produce broken segments when frames are VLAN Tagged.
-> 
-> The first segment is all good, while the second segment to the
-> last segment are broken, they lack of required VLAN tag.
-> 
-> An example here:
-> ========
-> // 1st segment of a VLAN Tagged TSO frame, nothing wrong.
-> MacSrc > MacDst, ethertype 802.1Q (0x8100), length 1518: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [.], seq 1:1449
-> 
-> // 2nd to last segments of a VLAN Tagged TSO frame, VLAN tag is missing.
-> MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 1449:2897
-> MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 2897:4345
-> MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 4345:5793
-> MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [P.], seq 5793:7241
-> 
-> // normal VLAN Tagged non-TSO frame, nothing wrong.
-> MacSrc > MacDst, ethertype 802.1Q (0x8100), length 1022: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [P.], seq 7241:8193
-> MacSrc > MacDst, ethertype 802.1Q (0x8100), length 70: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [F.], seq 8193
-> ========
-> 
-> When transmitting VLAN Tagged TSO frames, never insert VLAN tag by HW,
-> always insert VLAN tag to SKB payload, then TSO works well on VLANs for
-> all MAC cores.
-> 
-> Tested on DWMAC CORE 5.10a, DWMAC CORE 5.20a and DWXGMAC CORE 3.20a
-> 
-> Signed-off-by: Furong Xu <0x1207@gmail.com>
-> ---
->    Changes in v2:
->      - Use __vlan_hwaccel_push_inside() to insert vlan tag to the payload.
-> ---
->   .../net/ethernet/stmicro/stmmac/stmmac_main.c | 27 ++++++++++---------
->   1 file changed, 14 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index bbedf2a8c60f..e8cbfada63ca 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -4233,18 +4233,27 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
->   {
->   	struct dma_desc *desc, *first, *mss_desc = NULL;
->   	struct stmmac_priv *priv = netdev_priv(dev);
-> -	int nfrags = skb_shinfo(skb)->nr_frags;
-> -	u32 queue = skb_get_queue_mapping(skb);
->   	unsigned int first_entry, tx_packets;
->   	struct stmmac_txq_stats *txq_stats;
-> -	int tmp_pay_len = 0, first_tx;
-> +	int tmp_pay_len = 0, first_tx, nfrags;
->   	struct stmmac_tx_queue *tx_q;
-> -	bool has_vlan, set_ic;
-> +	bool set_ic;
->   	u8 proto_hdr_len, hdr;
-> -	u32 pay_len, mss;
-> +	u32 pay_len, mss, queue;
->   	dma_addr_t des;
->   	int i;
->   
+The vchiq_state used to be obtained through an accessor
+which would validate that the VCHIQ had been initialised
+correctly with the remote.
 
-As there will be another iteration, could you please re-arrange
-variables to keep reverse x-mas tree order?
+In commit 42a2f6664e18 ("staging: vc04_services: Move global g_state to
+vchiq_state") the global state was moved to the vchiq_mgnt structures
+stored as a vchiq instance specific context. This conversion removed the
+helpers and instead replaced users of this helper with the assumption
+that the state is always available and the remote connected.
 
+Fix this broken assumption by re-introducing the logic that was lost
+during the conversion.
+
+Fixes: 42a2f6664e18 ("staging: vc04_services: Move global g_state to vchiq_state")
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+---
+v2:
+ - No change, just resend
+
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_arm.c  | 4 ++--
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_core.h | 5 +++++
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_dev.c  | 7 ++++++-
+ 3 files changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 54467be8c371..67d853f5f2a0 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -804,7 +804,7 @@ int vchiq_initialise(struct vchiq_state *state, struct vchiq_instance **instance
+ 	 * block forever.
+ 	 */
+ 	for (i = 0; i < VCHIQ_INIT_RETRIES; i++) {
+-		if (state)
++		if (vchiq_remote_initialised(state))
+ 			break;
+ 		usleep_range(500, 600);
+ 	}
+@@ -1299,7 +1299,7 @@ void vchiq_dump_platform_instances(struct vchiq_state *state, struct seq_file *f
+ {
+ 	int i;
+ 
+-	if (!state)
++	if (!vchiq_remote_initialised(state))
+ 		return;
+ 
+ 	/*
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+index 8af209e34fb2..382ec08f6a14 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
+@@ -413,6 +413,11 @@ struct vchiq_state {
+ 	struct opaque_platform_state *platform_state;
+ };
+ 
++static inline bool vchiq_remote_initialised(const struct vchiq_state *state)
++{
++	return state->remote && state->remote->initialised;
++}
++
+ struct bulk_waiter {
+ 	struct vchiq_bulk *bulk;
+ 	struct completion event;
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+index 3c63347d2d08..8c4830df1070 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_dev.c
+@@ -1170,6 +1170,11 @@ static int vchiq_open(struct inode *inode, struct file *file)
+ 
+ 	dev_dbg(state->dev, "arm: vchiq open\n");
+ 
++	if (!vchiq_remote_initialised(state)) {
++		dev_err(state->dev, "arm: vchiq has no connection to VideoCore\n");
++		return -ENOTCONN;
++	}
++
+ 	instance = kzalloc(sizeof(*instance), GFP_KERNEL);
+ 	if (!instance)
+ 		return -ENOMEM;
+@@ -1200,7 +1205,7 @@ static int vchiq_release(struct inode *inode, struct file *file)
+ 
+ 	dev_dbg(state->dev, "arm: instance=%p\n", instance);
+ 
+-	if (!state) {
++	if (!vchiq_remote_initialised(state)) {
+ 		ret = -EPERM;
+ 		goto out;
+ 	}
+-- 
+2.34.1
 
 
