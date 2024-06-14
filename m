@@ -1,92 +1,128 @@
-Return-Path: <linux-kernel+bounces-214836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70180908AE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:34:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1C83908AE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14170287DC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:34:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2906B273EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC00D195B03;
-	Fri, 14 Jun 2024 11:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CDFF195B03;
+	Fri, 14 Jun 2024 11:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qyHrDvni"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OIbzACZ9"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2980114D29B;
-	Fri, 14 Jun 2024 11:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C16214D29B;
+	Fri, 14 Jun 2024 11:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718364861; cv=none; b=SBV1Nf3McrEa40wbbknqdJW/OcjVEOxbifn9WNC9Sz4Z5+eNWd4aqGa9Pdh5Jkj1ucJ+1/BbCbnRD6IERGpiIVXNkT0HO921lvkgoAm7TxURPzENurXuCAgmHy2tF4rLcAtXflTL6o5lEYaY4JD3HjH5kJe5BpAcEg0jdVzdrT8=
+	t=1718364871; cv=none; b=Dqlmv27D/ArUawCTcANHZ3BE5ZK5AGXU7W+uIblGZzcFCY09kNTeo3+YeAxmGwiVe7J+vnwc2Uv/Xydwkyi7/1rj1ujAvXzDdkyC03RtwLnc9clZMUvJk8wySfSsSAK8kpSnTp5VGjKelfO31bt18WCLKOoNeHjdtKtTK0fGG/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718364861; c=relaxed/simple;
-	bh=a6SfxOD/OD964Vn3l5GGkho4iS9L9TigZsmPyszmyyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LkI0mOFj9nunNSpChyIF5Q+GTisqdqTUMK7zdoFmqGXQgjU5RnR1gwt7sZkbfxFNGRnCcOLok01STvzKymGwxJnQ7N8eCzmr9sww+cDv/tJsvLW58Q/z03u+Y/MK8wH4trlxp1A9cqwnLqQ/c0l2GlscdAODCrmygjHLg/nEBi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qyHrDvni; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CD2CC4AF1D;
-	Fri, 14 Jun 2024 11:34:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718364860;
-	bh=a6SfxOD/OD964Vn3l5GGkho4iS9L9TigZsmPyszmyyk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qyHrDvniMH0T1YjwWZIvzspPiASRLb/PAbidhdOaRSTZ6EgiSH+wyApb9ra8wmr3f
-	 M5B8ifQuPgniTPWJ89p++14NtI5nBYkP30g3FBLk8kB4b06PrDw/eS+mAoi1BwKC+6
-	 HJorhnFpvKwNI9gkB8FmnY15TR/Anot1Z3CvY5DA7LagOl8UnPu3opPzDMC0X7F4wM
-	 pXk3a0vPa+Nym6Xb3gMAKH0SDspb3W3M8PGyMC+ryzj1qvd3O+oZ+OpnovMc+7MOwS
-	 TlZ3AgxWC4l1XpAn1uEorI9f3GFmEw0E4CHo5Pt8qtDf/VPMg42WcYycHIvs4IElCP
-	 /tdKykjpvGp7w==
-Date: Fri, 14 Jun 2024 13:34:17 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa@kernel.org>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
-	lkml <linux-kernel@vger.kernel.org>, Jean Delvare <jdelvare@suse.de>
-Subject: [GIT PULL] i2c-host-fixes for v6.10-rc4
-Message-ID: <u4eloe4b6geus3g24orbcz4fz5r6ze55fhdue4q7dwluhakwh5@a6j4n3jgu3tt>
+	s=arc-20240116; t=1718364871; c=relaxed/simple;
+	bh=89WfJNb+pkIMHLvX5/VVcTSWnnaDls4AtCiZk8mJt/8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sK9cFBrhn9e8cZLI8CJqji0lly2YZcGudwYiR9I3Ifx2DqENW2BJiaEI5o9dSc50y8xC7szSv1M4KorVMmFfjH56HnPQsJXlw3va7k58W5yRf2xBxjYVu0IxqLhw2OImhX6PopjFelSl7hJHCFwmBVBzVuqGYrZpCUZXdJRmqx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OIbzACZ9; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45EBLldd009060;
+	Fri, 14 Jun 2024 11:34:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=v
+	NRcsEt/ZPXZ5MULuZxrcBN0tHNfhU6zxkgm6+WxjgM=; b=OIbzACZ9FwCbreDik
+	aP1/DBd5S3hMzLZK7vGhI7urUxWFDgecqlSS7fWR3y38Jh/s5RJuN2987VZJTlcL
+	IsA86oXRW3WL00o1qW6lk7X0WXIXwlY5xEAyn+2zOJDssKGJ1il9uvFC2RX0GP7l
+	52nf5yho2k2isPoOlOe9gsiNcZlYsjzyTCTLWprQah8HyM+ZhhiP73hODG+i1XBJ
+	CW+rXj7J1nXfmkOXIV7q9eY0c3TRf/YloMezY/A+Nr00jEWv69Pvi5RKMiWEI7YK
+	Q74vzH6HWoqcHU6YDSw00G/6K3+qSK4+e1yNR7esbQsGyHVDFa0kCqUa98Ao+MQD
+	poXmw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yrjts8cpe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Jun 2024 11:34:26 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45EBYP6x029598;
+	Fri, 14 Jun 2024 11:34:25 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yrjts8cpb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Jun 2024 11:34:25 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45EA0DIk028808;
+	Fri, 14 Jun 2024 11:34:25 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yn1mv1956-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Jun 2024 11:34:24 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45EBYJc756688998
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Jun 2024 11:34:21 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7F71C2004B;
+	Fri, 14 Jun 2024 11:34:19 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 38C4F20040;
+	Fri, 14 Jun 2024 11:34:19 +0000 (GMT)
+Received: from [9.152.224.222] (unknown [9.152.224.222])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 14 Jun 2024 11:34:19 +0000 (GMT)
+Message-ID: <6926ba88-42df-4917-b373-0b36ed80c0d7@linux.ibm.com>
+Date: Fri, 14 Jun 2024 13:34:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: Add "S390" to the swiotlb kernel parameter
+To: Thomas Huth <thuth@redhat.com>, linux-doc@vger.kernel.org,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        Heiko Carstens
+ <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Sven Schnelle <svens@linux.ibm.com>
+References: <20240614081438.553160-1-thuth@redhat.com>
+Content-Language: en-US
+From: Christian Borntraeger <borntraeger@linux.ibm.com>
+In-Reply-To: <20240614081438.553160-1-thuth@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: HJcg8mp_cVCX9JlFn9GWb3PJfua-CSMO
+X-Proofpoint-GUID: n0LxrR1obvK1-C62vzD3ksl9Pa02v52J
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-13_15,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxlogscore=825
+ adultscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0
+ priorityscore=1501 mlxscore=0 suspectscore=0 impostorscore=0
+ malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406140074
 
-Hi Wolfram,
 
-not many fixes in this period. This pull request includes two
-fixes from Jean that were queued up last week.
 
-Thanks,
-Andi
+Am 14.06.24 um 10:14 schrieb Thomas Huth:
+> The "swiotlb" kernel parameter is used on s390 for protected virt since
+> commit 64e1f0c531d1 ("s390/mm: force swiotlb for protected virtualization")
+> and thus should be marked in kernel-parameters.txt accordingly.
+> 
+> Signed-off-by: Thomas Huth <thuth@redhat.com>
 
-The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
+Acked-by: Christian Borntraeger <borntraeger@linux.ibm.com>
 
-  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
+> ---
+>   PS: I wonder whether we could remove IA-64 nowadays...?
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.10-rc4
-
-for you to fetch changes up to cbf3fb5b29e99e3689d63a88c3cddbffa1b8de99:
-
-  i2c: designware: Fix the functionality flags of the slave-only interface (2024-06-12 17:07:34 +0100)
-
-----------------------------------------------------------------
-Two fixes from Jean aim to correctly report i2c functionality,
-specifically ensuring that I2C_FUNC_SLAVE is reported when a
-device operates solely as a slave interface.
-
-----------------------------------------------------------------
-Jean Delvare (2):
-      i2c: at91: Fix the functionality flags of the slave-only interface
-      i2c: designware: Fix the functionality flags of the slave-only interface
-
- drivers/i2c/busses/i2c-at91-slave.c       | 3 +--
- drivers/i2c/busses/i2c-designware-slave.c | 2 +-
- 2 files changed, 2 insertions(+), 3 deletions(-)
+probably
 
