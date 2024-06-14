@@ -1,137 +1,133 @@
-Return-Path: <linux-kernel+bounces-214504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0209085AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:10:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C73089085BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E16511F2188F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:10:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7520A289A3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B101487E7;
-	Fri, 14 Jun 2024 08:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2591836D3;
+	Fri, 14 Jun 2024 08:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V7EAs5Cb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uf49o4YU"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9A11474A3
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494BD1822F8
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718352594; cv=none; b=rFzU7zenUKo8AP4SKIxCHYT+KcWt47X3onzQSTINJ9t46g3YM1LrFbpeH4ADY4Uznfr4Em62kMdn0VGMhUkPGb3hF57ok1GxPbJsPbGAiV4pPXxx75Nf389pUvaqHFRmklzZ/U7VSGAF2g4Oo74CbWfqrXyMKXMAxyBNdNlNwkc=
+	t=1718352644; cv=none; b=otk1wefj2X4VCd5HZliiGYZ8hPlIXJ9ISCOinHRN+CyVfTq5bXj2er3y0KCIuHqUDd4JcBezPU2lonmH+r5FFi0GDgvsVXiUKyfbGdQTQSkeYINc9K1Ekq1WDBmMAVMq2UhHHqKbpckd4lFMir5pGj4VoDGgDF6o5YF2aIjZe70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718352594; c=relaxed/simple;
-	bh=zeKU0CVwyRvivWCPaa6lgnVkTh9d9JSpkkiaiX9acpI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Vz1IWqKY2ZPD7pX20WGmqt+JuDprMM6Lj8MhPEt+ZPks/En0MMnHrrt9N/zhYnveQBlmhOsgCkr8z5Fa88e3iBEO1WXPcfo0Tz3RBSPaEFAk6re6yoLFJZnS6LwKRIeFf3Yq5kfmvN0TqXpnNAv0EBY3qWFmFEsn7Iv8VwVZ5iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V7EAs5Cb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718352591;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zeKU0CVwyRvivWCPaa6lgnVkTh9d9JSpkkiaiX9acpI=;
-	b=V7EAs5CbAIyk436WouDKsmnB7k69dvxGMjSCOFmkNsG/5llR22gT7sutXawejNGIUDMJJs
-	Dn3GM7vqdbjYrbuWGRM69g4QobqAPFmneUgxzk5M+rkxFKbaZgBvx+pgs1Vff7zZsHTBEG
-	P1JSbRS9DC1hIs+0NinkefiHLeagnak=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-83-62J08O_bPzK6mwppvz3rOw-1; Fri, 14 Jun 2024 04:09:50 -0400
-X-MC-Unique: 62J08O_bPzK6mwppvz3rOw-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ebf1470cbaso2142731fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:09:49 -0700 (PDT)
+	s=arc-20240116; t=1718352644; c=relaxed/simple;
+	bh=XtY06yQNqFNmqjsRt6dtXpp7Ga45DKbLPLwoxJXu+Kk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=D147PICi7x5WWTJvMXjmkT1gewfKRaBaFzjiwS2CmzPka39W+LsSNxSB6R1Sb/rHHQnIpkRwKRrMrOwNEuBnJ0fXlh+3Ur9YJcJW2K376JtYvZb4awDeunK6/tZOGHMPNsxeVSJ1G/gNyjaAG9nG/fSIz1YuUzlNopZSoyGKqHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uf49o4YU; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a63359aaaa6so266507666b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:10:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718352639; x=1718957439; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dQuauHWW6Nhu7VIVhyecgZ9pWHe1Gm4RQ6VrtSN+/jk=;
+        b=uf49o4YUdtYRC1cuqd6I16NAWak3ezlI4cAE146EJbpl/BVrXJeSgOFS62OQQVW50x
+         gebiV6kpFAZsaJHGU9oXcqXKlxSxvC3ZS8sJURtvAp3gDbDbhxuYxJBM1f3w7wSrpLEU
+         Pf7foYSk0RMA4zsQqIjlJrsd2Q+eep0myrxeot6iMIP/8tkKTsbsc+PpTbHRLNCr161Q
+         rlYElRqPr8Yl/D78q5OE7kPADRdLxtXnHqiGbfmgvTm11h/3SDaqPrWUJ8r0D2pCBsIw
+         R4TWlyLn7s0WcMxaewb6eZRli6ob7eyNGrcsNZp6DMX+m4lNJd5VSsfeqOAYDLU2JTpJ
+         sVKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718352588; x=1718957388;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zeKU0CVwyRvivWCPaa6lgnVkTh9d9JSpkkiaiX9acpI=;
-        b=rAC59iHnmLFI+KR2MIJR2DBVNQZISzWwBQ7dDu0ViJboqBWrCF4+pKyc01euNiAeYr
-         LgjuZvlAkXcw5xsKa+BSmMhdIVKwPm0EA0ZldFMJzpw1BthC7Z4BwcZDkCPWLIxLpxiR
-         xZHUoVeDMN+Sf827d5mUb1c1NvVYKTqf9nvSZ1bcAN6T7MmCcKZC+fvMDiETskipKiRt
-         5JTxme+W897Uu6SUctekMQRvxf8w+eKhKdghfLC5uRJ9AKARJy5lThKoJYrT4+kVsSVA
-         /MkVs46VD1es0VTeMTKIJKajhieS0SDORXz463AxV6HQcJ40RYijPs+3ueCMYWMRQzPY
-         Wmhg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvZ3EoEvLNljuRTyYfuqS/NgRhTedlur2+ceaTdCGLt2uecivosRNeIAYG/z+LhScgk1cedFWSjxpKBZtb37+gOSNYacn5EztZx70Q
-X-Gm-Message-State: AOJu0Yyrfull5lQFW9ehDgkrq7PkM2iOHmQQQAfaHl9ZCYpfCYJZAADg
-	6LWxIpTs5qOLKQY0ePINBV/TtPJZ7kRXkcqkm3Gx6odtV1BcfxrW5+A0Nisn11rh93eVe0Us9iu
-	9iVkLrcELSlwxZFkXNLhW6nacw/UilPHWayR7qJji4tK1gkTmCrpEVJS00ixegQ==
-X-Received: by 2002:a2e:3a04:0:b0:2ec:170e:5b24 with SMTP id 38308e7fff4ca-2ec170e5bdemr5016181fa.4.1718352588577;
-        Fri, 14 Jun 2024 01:09:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEojhkGc53mNCU+E2IN7hi4HmtzQJ53jr3VJgck+QTx6Sd1w0/sVXdy0S6H013pzAwYnFikhQ==
-X-Received: by 2002:a2e:3a04:0:b0:2ec:170e:5b24 with SMTP id 38308e7fff4ca-2ec170e5bdemr5016131fa.4.1718352588163;
-        Fri, 14 Jun 2024 01:09:48 -0700 (PDT)
-Received: from pstanner-thinkpadt14sgen1.remote.csb (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f602e0c2sm50049225e9.14.2024.06.14.01.09.46
+        d=1e100.net; s=20230601; t=1718352639; x=1718957439;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dQuauHWW6Nhu7VIVhyecgZ9pWHe1Gm4RQ6VrtSN+/jk=;
+        b=hcdwv5y7vaLKZp55weHS2HcM1uHw96yVk4ainUZEjJSEkb6IWnEGmdYyKsEt/7xDZR
+         wH53SM6bysM4Xvim7EJrVe8r177dxqH9D/gdGbE028BAXEJdRtSin8x/pKzUa7mdssnA
+         0T2kLjPIdcsR9cKpWoDdaKJ1kJUJxXBZ/fULvEwTQ2JvMVgVHEh6lNFXNwi6gKlOxRsz
+         seiyvl4aVw/zl4Xaz11JLUKCLW6yI8vp95ysWCIkl0zFMyGDvpAb2VQhyXfP8DQVRucQ
+         4ZUmkisTm2qzVxOGmb4ZEjUC3djSCr0I58Ej2s31hmlwZGaSN+x+iUfJk2SJItM3K1jk
+         oE4A==
+X-Forwarded-Encrypted: i=1; AJvYcCXWXlKpKXYZWh43P+Oro0PLE5oDOLKPyWnD7sYDiJNPjYbCszwhit3u8wnWoe8wU7OuVw08EWsmg7UQCg7TgyBEOecehG5/iG4hYFIi
+X-Gm-Message-State: AOJu0YyMtW6rG20cEtiRL3X+2JczVWt7Q8DKeTqacdMrk2SIvcxF2ggC
+	aX4VW6e0VJCLHjiRNTeZit072vQy4HBV8364zKsSNrmXjKZSUFbpQtFJWlmMrzK3vAeh/I0ZR4w
+	+1x8=
+X-Google-Smtp-Source: AGHT+IG4iAQVA130APkrQA/MPvG/bMQvQuYj4vQDeEupKxmjnm9Px/TgUM87w6xgfYjGLI7F60ewqw==
+X-Received: by 2002:a17:906:138c:b0:a6f:2e28:4008 with SMTP id a640c23a62f3a-a6f60dc572cmr131844766b.54.1718352639612;
+        Fri, 14 Jun 2024 01:10:39 -0700 (PDT)
+Received: from localhost (p509153eb.dip0.t-ipconnect.de. [80.145.83.235])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f988f9sm156627466b.197.2024.06.14.01.10.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 01:09:47 -0700 (PDT)
-Message-ID: <5d38858130e129fd3568e97d466a4b905e864f8f.camel@redhat.com>
-Subject: Re: [PATCH v9 10/13] PCI: Give pci_intx() its own devres callback
-From: Philipp Stanner <pstanner@redhat.com>
-To: Bjorn Helgaas <helgaas@kernel.org>, Andy Shevchenko
-	 <andriy.shevchenko@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>, Sam
- Ravnborg <sam@ravnborg.org>, dakr@redhat.com, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org
-Date: Fri, 14 Jun 2024 10:09:46 +0200
-In-Reply-To: <20240613210614.GA1081813@bhelgaas>
-References: <20240613210614.GA1081813@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Fri, 14 Jun 2024 01:10:39 -0700 (PDT)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	William Breathitt Gray <wbg@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Lee Jones <lee@kernel.org>
+Cc: linux-iio@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] mfd: stm32-timers: Make register definition more flexible
+Date: Fri, 14 Jun 2024 10:10:10 +0200
+Message-ID: <cover.1718352022.git.u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1253; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=XtY06yQNqFNmqjsRt6dtXpp7Ga45DKbLPLwoxJXu+Kk=; b=owGbwMvMwMXY3/A7olbonx/jabUkhrTsX48f8qn9z6i3nvpq/lb/5wZuPQ5SHKzvz7qb9x8N2 OCYfYOpk9GYhYGRi0FWTJHFvnFNplWVXGTn2n+XYQaxMoFMYeDiFICJSDBwMLTPlr2rVuUWNW+2 8t08vd2+dll7nn3JkzF4Uy+rPeVf0M0809/RBawrGJvKSvns6tS/l9gtbbgc/kcqjSnUaFKfDqP Lyikbf8Q+cd4sc/8VpyO7nf6mCX3zZkmYd3JJcxUocLjd4ngeHHTF2k28TLBdnf1JqfCj7L6mZv eEMxyTZpsHa6crfLSOuXp/6aFG5Yu+86r+GGfnrlh3145Jt/6gPXeju/zea76OlX3TZz1PNdj8N v9Eef4cFrkH27ffUTmXuH1vs3MN48tVeY8P7u15pW5/Lo7Hu8jgzJ6D1p7zP24JmNPb2KXcVDwp k/nZZ9N1mxmeeWj4sNi1H3nva3+p5aDdXJemjzuuF3MCAA==
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2024-06-13 at 16:06 -0500, Bjorn Helgaas wrote:
-> On Thu, Jun 13, 2024 at 01:50:23PM +0200, Philipp Stanner wrote:
-> > pci_intx() is one of the functions that have "hybrid mode" (i.e.,
-> > sometimes managed, sometimes not). Providing a separate pcim_intx()
-> > function with its own device resource and cleanup callback allows
-> > for
-> > removing further large parts of the legacy PCI devres
-> > implementation.
-> >=20
-> > As in the region-request-functions, pci_intx() has to call into its
-> > managed counterpart for backwards compatibility.
-> >=20
-> > As pci_intx() is an outdated function, pcim_intx() shall not be
-> > made
-> > visible to drivers via a public API.
->=20
-> What makes pci_intx() outdated?=C2=A0 If it's outdated, we should mention
-> why and what the 30+ callers (including a couple in drivers/pci/)
-> should use instead.
+Hello,
 
-That is 100% based on Andy Shevchenko's (+CC) statement back from
-January 2024 a.D. [1]
+I'm not sure that everyone will agree the changes in here are
+worthwhile, but I like them. One surprise is that this makes the
+generated code for drivers/pwm/pwm-stm32.c more compact (see patch 4 for
+a bloat-o-meter statistic). I'm surprised because it boils down to gcc
+not noticing that
 
-Apparently INTx is "old IRQ management" and should be done through
-pci_alloc_irq_vectors() nowadays.
+	mask = ((((1UL))) << (1 + 4 * ((1) - 1))) << (ch * 4);
 
+is equivalent to
 
-[1] https://lore.kernel.org/all/ZabyY3csP0y-p7lb@surfacebook.localdomain/
+	mask = ((((1UL))) << (1 + 4 * ((ch + 1) - 1)));
 
+.
 
-P.
+I'm unsure what to suggest for how to merge this series. I have some
+further changes on my agenda to drivers/pwm/pwm-stm32.c, so either
+merging this via pwm or a stable branch would be great for me.
 
+Best regards
+Uwe
 
->=20
-> Bjorn
->=20
+Uwe Kleine-König (4):
+  mfd: stm32-timers: Unify alignment of register definition
+  mfd: stm32-timers: Add some register definitions with a parameter
+  mfd: stm32-timers: Drop TIM_DIER_CC_IE(x) in favour of
+    TIM_DIER_CCxIE(x)
+  pwm-stm32: Make use of parametrised register definitions
+
+ drivers/counter/stm32-timer-cnt.c |   4 +-
+ drivers/pwm/pwm-stm32.c           |  22 ++--
+ include/linux/mfd/stm32-timers.h  | 179 ++++++++++++++++--------------
+ 3 files changed, 107 insertions(+), 98 deletions(-)
+
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+-- 
+2.43.0
 
 
