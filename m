@@ -1,170 +1,138 @@
-Return-Path: <linux-kernel+bounces-215510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5000B9093F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:00:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9354909401
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B2C41C21F09
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:00:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDD1B1C21210
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDE9186E29;
-	Fri, 14 Jun 2024 22:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8290A18413E;
+	Fri, 14 Jun 2024 22:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="fMZ/bdWe"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OsXI2jcW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F184E149C44
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 22:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4147149C44;
+	Fri, 14 Jun 2024 22:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718402422; cv=none; b=ZBtyTviSwMx+5OWJNr//1BBTe8dJ0FPciT7T2WjnkUVVaKxxHMUax5PfCn633bzhRADFp7aH4kKXUaar9kHEEN6EB3tNrLSztVEqt/yIT5WA2SxNjWIJSjCIswZWDtMZf/QJIcoeRlVAMtW8Qfdb3tihJnLBr9EQxqJs2i92S5Y=
+	t=1718402609; cv=none; b=JxIYA1yO1B4Nn2+GqWQm1xOmMtkxBQP1H7U2xRs7ANdURT4ewQXC8LF+1VRc6MTz8R/ptqmO+o9wxocjcoz4QO+0JbeuyaPt51Jj0U05hf+oilgAdC+JG6uraXq4QDTp/9xQ1zvPfD6im3SYXpawkbXwKyYf4Ct+YTzm4qjJYdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718402422; c=relaxed/simple;
-	bh=+5veQkgnVNkMxA9kgPIirgp7ENT3iYRLPKA4QGYdskE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pqni/d4iV3s71j3yJkx5iSJinmVB1dEtaxj2SnRYtJ2vBw2upUZj03jrSQMKU31sA4xtcY/BP+Eu8WymiErMY7ei1zyRaM2avi/GhLYrLiZb1LvzIkggMrZh4nk3heC3cn/Qkz/NQ6m6BDxho39q7VqCON+c/7+OZfitALwm6l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=fMZ/bdWe; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6b065d12dc6so13320286d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:00:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1718402420; x=1719007220; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=YICLqeWZ7CPWIj9cycB+v+Sx/kefZlyQDl7Jt1GJ9mk=;
-        b=fMZ/bdWeaWA7whE83xnLlOq9RJ6cBRTmRFhpaKzURd2VcVLPh9/oyAltab2a2+v78J
-         dT1hxsuCamWxCGFqxXm6iYlhgC7zSck/2+w2+t2cYaDdTXx6CsPdYNW14kEsw+gLFvP2
-         6yvkui8SLdhQbrcdSylGTRIsMrg2SRjJL+5c8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718402420; x=1719007220;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YICLqeWZ7CPWIj9cycB+v+Sx/kefZlyQDl7Jt1GJ9mk=;
-        b=WgzT/lale+rRikBhULSWnqzlrYanf9qorJsZY3n1+NLcX8WUipOlxQDRJ8hu/5h1Rz
-         wF8Ex6F5oBk+mvklWrlUKl4KJXXVj4O5xlVqfbapAWjjRI6qa/xIWURbdnRGkZIueWcV
-         jW6QyQDzPGgThqmUtbbpJMZJ/54UfryubY2dNF1AepKngUAV304Z/8XsW8ghKZUI+E7r
-         evjXEK9eleAvQr1uWYtfIZDVK5MrWkHjHiZXz6O6GG1nlJI9TzMC9l/iI6n90iGhpqJ9
-         wYRZV1Yr22nQNwe1ManaCmh9ZPpKhe0Jk307tGfSh1loGxSmHmOiAvZdZCdAtj2eWGDk
-         B7uw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1D314QmmCfK6pvLjo3+dokQilGpvdjU1smBa46ZpTC9A+s44SYJmCKE9jV2sWOcbtF7YAjTBL4580r/jPddfi45H4zjYTThr3G6Vs
-X-Gm-Message-State: AOJu0YzOHptpcf+I1aFGeLkFXWbnRf/RNqTQyoGuZjsjU2UDQXEgfwKq
-	Gwy/ItGqEaWvkceoE4UfFtJZxyGPwKvQVFip8JnT4P1+EKX+NFWD6cOe6Z3D0g==
-X-Google-Smtp-Source: AGHT+IG/HD2HHZaQReiMiEQIeKbUkIZLrpVW6+XwOsJB6JUy8Iaw3habv8swl8TM2z1Y2OKuwVX6NQ==
-X-Received: by 2002:a0c:d6c7:0:b0:6b2:b251:7d95 with SMTP id 6a1803df08f44-6b2b2517db4mr30028326d6.17.1718402419852;
-        Fri, 14 Jun 2024 15:00:19 -0700 (PDT)
-Received: from [10.66.192.68] ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5f05782sm23013906d6.139.2024.06.14.15.00.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 15:00:19 -0700 (PDT)
-Message-ID: <a640b47b-c1a3-4f0c-8780-ca08edcf089e@broadcom.com>
-Date: Fri, 14 Jun 2024 15:00:12 -0700
+	s=arc-20240116; t=1718402609; c=relaxed/simple;
+	bh=pnfRKVMJtcMvTZXgsbnPkluvMLxhMc1SMF0VOt5BoRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=oMelfj6f0YT7nTFaO1Kst0Fu3CbUkTvpOM9VfL2NeGhy0uEercbgwVfbEf1LT+C2bEhZNeRERQzNs6X/PmpiGlZ69UjOCfSOaSxvn/uqC/ASWpGvenAFlKJhM/nu1o5xzo2wFb3+5LiIroVctmWTvlS/8CAXvgmZLSUf6uacGdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OsXI2jcW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28C8BC2BD10;
+	Fri, 14 Jun 2024 22:03:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718402609;
+	bh=pnfRKVMJtcMvTZXgsbnPkluvMLxhMc1SMF0VOt5BoRQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=OsXI2jcWYpgFuwwLeo3viE6MZZ5Zr3ulI4P+WzFGbdHbLKa0zpoT6JTwFrU3KbgdB
+	 3NXjVaJ3ux4D5H/h8r1RofiY/h5d7dFmHm8JtkLRscEqqUmQC9vX/YDkI/NL9BDcK/
+	 1cFoaIKi6V7CoKgfIOZ3HkKlxA/nMx6rZ+zhSWElHPOOc1Q+bkiTI5l78ZgbrFkQa+
+	 3DhoZP9u6Pkq9RbL9t6NISOtaPmnDbnDfiHxwlBSAA8wz6iTDBQxlA/k+9ztyAFZH6
+	 BWBqDtJ4VdCs8a14yyjjzbVT5ZYXpWoLHjVjW2tggzNOi+pC2BfAsz95LJBdEUx9/D
+	 9qT2hecRbIMCA==
+Date: Fri, 14 Jun 2024 17:03:27 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Bitao Hu <yaoma@linux.alibaba.com>, bhelgaas@google.com,
+	weirongguang@kylinos.cn, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kanie@linux.alibaba.com,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCHv2] PCI: pciehp: Use appropriate conditions to check the
+ hotplug controller status
+Message-ID: <20240614220327.GA1125489@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 8/8] x86/vmware: Add TDX hypercall support
-To: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, hpa@zytor.com, dave.hansen@linux.intel.com,
- mingo@redhat.com, tglx@linutronix.de, x86@kernel.org,
- netdev@vger.kernel.org, richardcochran@gmail.com,
- linux-input@vger.kernel.org, dmitry.torokhov@gmail.com, zackr@vmware.com,
- linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
- timothym@vmware.com, akaher@vmware.com, dri-devel@lists.freedesktop.org,
- daniel@ffwll.ch, airlied@gmail.com, tzimmermann@suse.de, mripard@kernel.org,
- maarten.lankhorst@linux.intel.com, horms@kernel.org,
- kirill.shutemov@linux.intel.com, Tim Merrifield <tim.merrifield@broadcom.com>
-References: <20240613191650.9913-1-alexey.makhalov@broadcom.com>
- <20240613191650.9913-9-alexey.makhalov@broadcom.com>
- <844ef200-aabe-4497-85c9-44fc46c9133a@intel.com>
- <20240614161404.GCZmxsTNLSoYTqoRoj@fat_crate.local>
- <74f8300b-3520-4824-81e3-71464e3da3b6@intel.com>
- <1750e44f-f9a9-4c2a-afb3-f1ae8237ccb0@broadcom.com>
- <20240614190956.GFZmyVhLGeyLjwvA6X@fat_crate.local>
-Content-Language: en-US
-From: Alexey Makhalov <alexey.makhalov@broadcom.com>
-Autocrypt: addr=alexey.makhalov@broadcom.com; keydata=
- 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 EuY0
-In-Reply-To: <20240614190956.GFZmyVhLGeyLjwvA6X@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zmyb2WMhhNc7zQ2i@wunner.de>
 
-
-
-On 6/14/24 12:09 PM, Borislav Petkov wrote:
-> On Fri, Jun 14, 2024 at 11:32:16AM -0700, Alexey Makhalov wrote:
->>
->>
->> On 6/14/24 9:19 AM, Dave Hansen wrote:
->>> On 6/14/24 09:14, Borislav Petkov wrote:
->>>> On Fri, Jun 14, 2024 at 09:03:22AM -0700, Dave Hansen wrote:
->>> ...
->>>>> You need to zero out all of 'args' somehow.
->>>>
->>>> You mean like this:
->>>>
->>>> 	struct tdx_module_args args = {};
->>>>
->>>> ?
->>>
->>> Yes, or do all the assignments with the initializer.  We seem to do it
->>> both ways, so whatever works.
->>
->> Thanks Dave for pointing that out. I missed that at v7.
+On Fri, Jun 14, 2024 at 09:36:57PM +0200, Lukas Wunner wrote:
+> On Fri, Jun 14, 2024 at 01:41:20PM -0500, Bjorn Helgaas wrote:
+> > On Tue, May 28, 2024 at 02:42:00PM +0800, Bitao Hu wrote:
+> > > "present" and "link_active" can be 1 if the status is ready, and 0 if
+> > > it is not. Both of them can be -ENODEV if reading the config space
+> > > of the hotplug port failed. That's typically the case if the hotplug
+> > > port itself was hot-removed. Therefore, this situation can occur:
+> > > pciehp_card_present() may return 1 and pciehp_check_link_active()
+> > > may return -ENODEV because the hotplug port was hot-removed in-between
+> > > the two function calls. In that case we'll emit both "Card present"
+> > > *and* "Link Up" since both 1 and -ENODEV are considered "true". This
+> > > is not the expected behavior. Those messages should be emited when
+> > > "present" and "link_active" are positive.
+> [...]
+> > > --- a/drivers/pci/hotplug/pciehp_ctrl.c
+> > > +++ b/drivers/pci/hotplug/pciehp_ctrl.c
+> > > @@ -276,10 +276,10 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
+> > >  	case OFF_STATE:
+> > >  		ctrl->state = POWERON_STATE;
+> > >  		mutex_unlock(&ctrl->state_lock);
+> > > -		if (present)
+> > > +		if (present > 0)
+> > 
+> > I completely agree that this is a problem and this patch addresses it.
+> > But ...
+> > 
+> > It seems a little bit weird to me that we even get to this switch
+> > statement if we got -ENODEV from either pciehp_card_present() or
+> > pciehp_check_link_active().  If that happens, a config read failed,
+> > but we're going to go ahead and call pciehp_enable_slot(), which is
+> > going to do a bunch more config accesses, potentially try to power up
+> > the slot, etc.
+> > 
+> > If a config read failed, it seems like we might want to avoid doing
+> > some of this stuff.
 > 
-> Ok, I'll fold this struct initialization oneliner into the last patch.
+> Hm, good point.  I guess we should change the logical expression instead:
 > 
-Thanks!
+> -	if (present <= 0 && link_active <= 0) {
+> +	if (present < 0 || link_active < 0 || (!present && !link_active)) {
+
+It gets to be a fairly complicated expression, and I'm not 100% sure
+we should handle the config read failure the same as the "!present &&
+!link_active" case.  The config read failure probably means the
+Downstream Port is gone, the other case means the device *below* that
+port is gone.  
+
+We likely want to cancel the delayed work in both cases, but what
+about the indicators?  If the Downstream Port is gone, we're not going
+to be able to change them.  Do we want the same message for both?
+
+Maybe we should handle the config failures separately first?  These
+error conditions make everything so ugly.
+
+> > > -		if (link_active)
+> > > +		if (link_active > 0)
+> > >  			ctrl_info(ctrl, "Slot(%s): Link Up\n",
+> > >  				  slot_name(ctrl));
+> > 
+> > These are cases where we misinterpreted -ENODEV as "device is present"
+> > or "link is active".
+> > 
+> > pciehp_ignore_dpc_link_change() and pciehp_slot_reset() also call
+> > pciehp_check_link_active(), and I think they also interpret -ENODEV as
+> > "link is active".
+> > 
+> > Do we need similar changes there?
+> 
+> Another good observation, both need to check for <= 0 instead of == 0.
+> Do you want to fix that yourself or would you prefer me (or someone else)
+> to submit a patch?
+
+It'd be great if you or somebody else could do that.
+
+Bjorn
 
