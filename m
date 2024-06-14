@@ -1,259 +1,116 @@
-Return-Path: <linux-kernel+bounces-214806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4363F908A51
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:41:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73266908A53
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE98B1F2B9E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:41:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7C028C9D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3F0194AC2;
-	Fri, 14 Jun 2024 10:41:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8F31946A7;
-	Fri, 14 Jun 2024 10:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF5C1946D9;
+	Fri, 14 Jun 2024 10:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="pOz6eajc"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F57194AF0
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718361664; cv=none; b=Sx5l7sE2zfq1/c30R0zmXkpDbzgbGGkJN9C1M1VoLJlSnQXpkjoEXjm+f8TIc41WnBAhDzMSQ5ncdmmjxYWyNJIhqXHgPzXHR6zsZVPZII3MzxyWTqA9+Yrp1jsqJONyNgFo/JHpy9v0TOUg03LxRNgg2Njqgxv2VhZdoGAyEKA=
+	t=1718361670; cv=none; b=KjOQY5pMIONYdn9tNzM8QZu1d7ydh9UIRz9kmpxiFgw3DRDHkgzwlGuNLbgA7imirzXUFr42phm0Drig3q4ckpJGO6+eJIeBT4wJcEsa3PYsGRElhonDnOUNftDPrEKqAjMDJNtrymQvoI+2hBTuXuGR0ySa5pBvMIefLudxGt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718361664; c=relaxed/simple;
-	bh=AmUgqvZgbKj2NQIuvs3Dt8TOXhMLfPmQOpUxQzf8iYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Evrx9fNGU2jVeYxwLjvjMGFXC+H+z4aLP/LKiZRCe0CFw0uL1wELo5Zx8soyJQHg5iLj5qgP+iZZVBuGOvIhos/UwR12rWu/21tDb8u/q3gPn+dZaRZYaVyKwEPIP94yRxuKtTzjHnBCQOArvPUW6OdhdcHHzatf/KQCwbRrX34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1476B1480;
-	Fri, 14 Jun 2024 03:41:20 -0700 (PDT)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B4E003F5A1;
-	Fri, 14 Jun 2024 03:40:49 -0700 (PDT)
-Date: Fri, 14 Jun 2024 11:40:47 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, llvm@lists.linux.dev,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,
-	Luc Maranget <luc.maranget@inria.fr>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	kent.overstreet@gmail.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>,
-	dakr@redhat.com
-Subject: Re: [RFC 2/2] rust: sync: Add atomic support
-Message-ID: <ZmweL12SL7Unlfpe@J2N7QTR9R3.cambridge.arm.com>
-References: <20240612223025.1158537-1-boqun.feng@gmail.com>
- <20240612223025.1158537-3-boqun.feng@gmail.com>
+	s=arc-20240116; t=1718361670; c=relaxed/simple;
+	bh=fR5O23eHFUud678VEBckctrC86/Dv5g0dvv4PUadpzA=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=IgUvoDK8DacweyKAxz3gbkwuEyCwgEOHpKZjjomHZrAwHFDfSXkUjlDqkgLaU/yqxXutyzkS2WjzhXiPYbVfKSL/YjLh2K0UlDO4a++fDIiQ6Nj/AtlbOgFMRlC02yBn9heiN0Yp+GNWK4AAIoKeN143njFruYW4zDxrbKaf+N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=pOz6eajc; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1EE88B53;
+	Fri, 14 Jun 2024 12:40:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718361650;
+	bh=fR5O23eHFUud678VEBckctrC86/Dv5g0dvv4PUadpzA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=pOz6eajcv2YAkl8f4GlFN7CGZVF1hq5qrUsUky03sFd6sPPsSy5cL+lNTBCGTWTzR
+	 A69m1n/8xI1VNTT33zwGv1IuKDaa6uGFxafOevwIA1CStAPgW9HMr3g14FdBuMkzF5
+	 pqPjUf2q/YDqZhiYylgonSwxjwKmSKy9e4Z3nFWk=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612223025.1158537-3-boqun.feng@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <2024061436-twister-survival-a05c@gregkh>
+References: <20240613194150.2915202-1-kieran.bingham@ideasonboard.com> <20240613194150.2915202-2-kieran.bingham@ideasonboard.com> <2024061436-twister-survival-a05c@gregkh>
+Subject: Re: [PATCH] staging: vc04_services: vchiq_arm: Fix initialisation check
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Umang Jain <umang.jain@ideasonboard.com>, Florian Fainelli <florian.fainelli@broadcom.com>, linux-rpi-kernel@lists.infradead.org, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Stefan Wahren <wahrenst@gmx.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Dave Stevenson <dave.stevenson@raspberrypi.org>, detule <ogjoneski@gmail.com>, Dan Carpenter <dan.carpenter@linaro.org>, moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE <linux-arm-kernel@lists.infradead.org>, open list:STAGING SUBSYSTEM <linux-staging@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>;
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Fri, 14 Jun 2024 11:41:02 +0100
+Message-ID: <171836166207.2248009.279146431554771910@ping.linuxembedded.co.uk>
+User-Agent: alot/0.10
 
-On Wed, Jun 12, 2024 at 03:30:25PM -0700, Boqun Feng wrote:
-> Provide two atomic types: AtomicI32 and AtomicI64 with the existing
-> implemenation of C atomics. These atomics have the same semantics of the
-> corresponding LKMM C atomics, and using one memory (ordering) model
-> certainly reduces the reasoning difficulty and potential bugs from the
-> interaction of two different memory models.
-> 
-> Also bump my role to the maintainer of ATOMIC INFRASTRUCTURE to reflect
-> my responsiblity on these Rust APIs.
-> 
-> Note that `Atomic*::new()`s are implemented vi open coding on struct
-> atomic*_t. This allows `new()` being a `const` function, so that it can
-> be used in constant contexts.
-> 
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+Quoting Greg Kroah-Hartman (2024-06-14 07:50:08)
+> On Thu, Jun 13, 2024 at 08:41:46PM +0100, Kieran Bingham wrote:
+> > The vchiq_state used to be obtained through an accessor
+> > which would validate that the VCHIQ had been initialised
+> > correctly with the remote.
+> >=20
+> > In commit 42a2f6664e18 ("staging: vc04_services: Move global g_state to
+> > vchiq_state") the global state was moved to the vchiq_mgnt structures
+> > stored as a vchiq instance specific context. This conversion removed the
+> > helpers and instead replaced users of this helper with the assumption
+> > that the state is always available and the remote connected.
+> >=20
+> > Fix this broken assumption by re-introducing the logic that was lost
+> > during the conversion.
+> >=20
+> > Fixes: 42a2f6664e18 ("staging: vc04_services: Move global g_state to vc=
+hiq_state")
+> > Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> > ---
+> >  .../staging/vc04_services/interface/vchiq_arm/vchiq_arm.c  | 4 ++--
+> >  .../staging/vc04_services/interface/vchiq_arm/vchiq_core.h | 5 +++++
+> >  .../staging/vc04_services/interface/vchiq_arm/vchiq_dev.c  | 7 ++++++-
+> >  3 files changed, 13 insertions(+), 3 deletions(-)
+>=20
+> You sent 2 different patches here, both with the same subject, which one
+> is correct?
 
-I have a few minor comments below.
+What in the git ... ? (history formatted to new lines..)
 
-> ---
->  MAINTAINERS                       |    4 +-
->  arch/arm64/kernel/cpufeature.c    |    2 +
->  rust/kernel/sync.rs               |    1 +
->  rust/kernel/sync/atomic.rs        |   63 ++
->  rust/kernel/sync/atomic/impl.rs   | 1375 +++++++++++++++++++++++++++++
->  scripts/atomic/gen-atomics.sh     |    1 +
->  scripts/atomic/gen-rust-atomic.sh |  136 +++
->  7 files changed, 1581 insertions(+), 1 deletion(-)
->  create mode 100644 rust/kernel/sync/atomic.rs
->  create mode 100644 rust/kernel/sync/atomic/impl.rs
->  create mode 100755 scripts/atomic/gen-rust-atomic.sh
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d6c90161c7bf..a8528d27b260 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3458,7 +3458,7 @@ F:	drivers/input/touchscreen/atmel_mxt_ts.c
->  ATOMIC INFRASTRUCTURE
->  M:	Will Deacon <will@kernel.org>
->  M:	Peter Zijlstra <peterz@infradead.org>
-> -R:	Boqun Feng <boqun.feng@gmail.com>
-> +M:	Boqun Feng <boqun.feng@gmail.com>
->  R:	Mark Rutland <mark.rutland@arm.com>
->  L:	linux-kernel@vger.kernel.org
->  S:	Maintained
-> @@ -3467,6 +3467,8 @@ F:	arch/*/include/asm/atomic*.h
->  F:	include/*/atomic*.h
->  F:	include/linux/refcount.h
->  F:	scripts/atomic/
-> +F:	rust/kernel/sync/atomic.rs
-> +F:	rust/kernel/sync/atomic/
->  
->  ATTO EXPRESSSAS SAS/SATA RAID SCSI DRIVER
->  M:	Bradley Grove <linuxdrivers@attotech.com>
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 48e7029f1054..99e6e2b2867f 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -1601,6 +1601,8 @@ static bool
->  has_cpuid_feature(const struct arm64_cpu_capabilities *entry, int scope)
->  {
->  	u64 val = read_scoped_sysreg(entry, scope);
-> +	if (entry->capability == ARM64_HAS_LSE_ATOMICS)
-> +		return false;
->  	return feature_matches(val, entry);
->  }
+kbingham@Monstersaurus:~/iob/libcamera/raspberrypi/sources/linux$ history |=
+ grep send-email
+ 2427  git send-email \
+ 	./0001-staging-vc04_services-vchiq_arm-Fix-initialisation-c.patch \
+ 	--cc-cmd ./scripts/get_maintainer.pl \
+	./0001-staging-vc04_services-vchiq_arm-Fix-initialisation-c.patch \
+	--to "Umang Jain <umang.jain@ideasonboard.com>" \
+	--to "Florian Fainelli <florian.fainelli@broadcom.com>" \
+	--to "linux-rpi-kernel@lists.infradead.org"
 
-As per other replies, this'll obviously need to go.
+I .... uh ... somehow specified the patch twice...
 
-> diff --git a/rust/kernel/sync/atomic.rs b/rust/kernel/sync/atomic.rs
-> new file mode 100644
-> index 000000000000..b0f852cf1741
-> --- /dev/null
-> +++ b/rust/kernel/sync/atomic.rs
-> @@ -0,0 +1,63 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Atomic primitives.
-> +//!
-> +//! These primitives have the same semantics as their C counterparts, for precise definitions of
-> +//! the semantics, please refer to tools/memory-model. Note that Linux Kernel Memory (Consistency)
-> +//! Model is the only model for Rust development in kernel right now, please avoid to use Rust's
-> +//! own atomics.
-> +
-> +use crate::bindings::{atomic64_t, atomic_t};
+So both mails are the identical patch. Would you like me to send a third
+identical one as a v2? or pick either of these?
 
-As with the last patch, why no atomic_long_t?
+in fact - never mind - v2 coming.
 
-[...]
+--
+Kieran
 
-> +#gen_proto_order_variant(meta, pfx, name, sfx, order, atomic, ty, int, raw, arg...)
-> +gen_proto_order_variant()
-> +{
-> +	local meta="$1"; shift
-> +	local pfx="$1"; shift
-> +	local name="$1"; shift
-> +	local sfx="$1"; shift
-> +	local order="$1"; shift
-> +	local atomic="$1"; shift
-> +	local ty="$1"; shift
-> +	local int="$1"; shift
-> +	local raw="$1"; shift
-> +
-> +	local fn_name="${raw}${pfx}${name}${sfx}${order}"
-> +	local atomicname="${raw}${atomic}_${pfx}${name}${sfx}${order}"
-> +
-> +	local ret="$(gen_ret_type "${meta}" "${int}")"
-> +	local params="$(gen_params "${int}" $@)"
-> +	local args="$(gen_args "$@")"
-> +	local retstmt="$(gen_ret_stmt "${meta}")"
-> +
-> +cat <<EOF
-> +    /// See \`${atomicname}\`.
-> +    #[inline(always)]
-> +    pub fn ${fn_name}(&self${params}) ${ret}{
-> +        // SAFETY:\`self.0.get()\` is a valid pointer.
-> +        unsafe {
-> +            ${retstmt}${atomicname}(${args});
-> +        }
-> +    }
-> +EOF
-> +}
 
-AFAICT the 'ty' argument (AtomicI32/AtomicI64) isn't used and can be
-removed.
-
-Likewise for 'raw'.
-
-> +
-> +cat << EOF
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Generated by $0
-> +//! DO NOT MODIFY THIS FILE DIRECTLY
-> +
-> +use super::*;
-> +use crate::bindings::*;
-> +
-> +impl AtomicI32 {
-> +EOF
-> +
-> +grep '^[a-z]' "$1" | while read name meta args; do
-> +	gen_proto "${meta}" "${name}" "atomic" "AtomicI32" "i32" "" ${args}
-
-With 'ty' and 'raw' gone, this'd be:
-
-	gen_proto "${meta}" "${name}" "atomic" "i32" ${args}
-
-> +done
-> +
-> +cat << EOF
-> +}
-> +
-> +impl AtomicI64 {
-> +EOF
-> +
-> +grep '^[a-z]' "$1" | while read name meta args; do
-> +	gen_proto "${meta}" "${name}" "atomic64" "AtomicI64" "i64" "" ${args}
-
-With 'ty' and 'raw' gone, this'd be:
-
-	gen_proto "${meta}" "${name}" "atomic64" "i64" ${args}
-
-Mark.
-
-> +done
-> +
-> +cat << EOF
-> +}
-> +
-> +EOF
-> -- 
-> 2.45.2
-> 
+>=20
+> Please send a v2 so that I know what to apply, I've dropped this one
+> from my queue now, thanks.
+>=20
+> greg k-h
 
