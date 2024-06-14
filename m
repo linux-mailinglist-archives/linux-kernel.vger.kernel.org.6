@@ -1,98 +1,148 @@
-Return-Path: <linux-kernel+bounces-214536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A828908620
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:22:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FDF490862C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8B421C211F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:22:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C6DEB2532B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D15218410E;
-	Fri, 14 Jun 2024 08:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ESPVHlhV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22828185086;
+	Fri, 14 Jun 2024 08:20:22 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854131836E9
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E59185084
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718353213; cv=none; b=jvep4fAVOSFJOlWg8LOwsjrRlVltjIdcWQqwX3BGrxgDVa/uaGIof6vo6K/sKqIggVZPSwmMp8cBVSm+U6BQe0DfnDjxyXEAlmtRusH4ZcdY++vdkaT8ZfMBnP2+7RRnVnYe/knNQ2DpdlvopjdZi28WwKLYyBI2AtnUUfHYakQ=
+	t=1718353221; cv=none; b=gG5CoxcSQPJmKSYb4gcpMFrZ1GymnE3nTqi3uX7oy8VGIzlzYv7AtOU5UgzUG26+bLVd/E437/uJnncHNV1OuiuHzOkkx1z1hUvOlB7p9rHbO1i1sQvoZvylqWdURv0Rl2q14P4CJk6cZUTWAWF1tTZSTUDtOxh1Ak2hbyD3kEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718353213; c=relaxed/simple;
-	bh=X5c8MpgPj5qYJRYA2r6eJqb0Ao5dFb7mECFRWBRRy5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oKfk4K8gRLQdjRZI/WJKxhf6Y2ZBam2qr8OyD0+7gedHg/d88kCNOKgEByvuGOhazoQIqTuScndWcEqP2LL0XrgeBv9QTnzRnl9WM+rxSprHuaXCVhPsaEEKLXVtSpTzKrsII45YwL5pAuT5UbtRgOAvV2JW4/AdgmAgwbWGaHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ESPVHlhV; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718353213; x=1749889213;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=X5c8MpgPj5qYJRYA2r6eJqb0Ao5dFb7mECFRWBRRy5I=;
-  b=ESPVHlhVAvuQL3yNp6S8bIXGxGPAkSlE9TAUHAiZVzTKhxG9L2kVePGp
-   bgk0FYYaW9Vr4vJX256YgvcOKNVaPC19X7E9EEhpZUiS9vqBP1hNsYe4q
-   V7/RSSZTaFjwsX/DL7yh1iFDQdPnCOKo7hjzoCY8ojq3D0bmRh0N9t+mO
-   u5CZGcc2Ix4ONPdtFfTIUu8jbhMnNBLPrVIqHexU4h3VsdaRxF4tK4xP/
-   MsHB78rSGHYblzQni0ua29YTdNrjAnyYbTey4KEoZ+5AeMHapuZXF1nU0
-   iRbMg1aX1ewbS3vWbZcYIyXgJue5lmWXBJgvHZGg4E6r8aVGAa2BqYpJE
-   w==;
-X-CSE-ConnectionGUID: cMUqStjYRlG/uzEM08jlbA==
-X-CSE-MsgGUID: aGDdTfuhQT6/iFB6ENxgbw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="26647530"
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="scan'208";a="26647530"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 01:20:12 -0700
-X-CSE-ConnectionGUID: 75RvTaFVTNqMTJeyBeohXA==
-X-CSE-MsgGUID: e/Qc+JhnSSi1q2GQGbHQuQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="scan'208";a="71630247"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 01:20:10 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 5670311FBC0;
-	Fri, 14 Jun 2024 11:20:08 +0300 (EEST)
-Date: Fri, 14 Jun 2024 08:20:08 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: kernel test robot <lkp@intel.com>
-Cc: Bingbu Cao <bingbu.cao@intel.com>, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
-	Andreas Helbech Kleist <andreaskleist@gmail.com>
-Subject: Re: ERROR: modpost: "i2c_acpi_new_device_by_fwnode"
- [drivers/media/pci/intel/ipu-bridge.ko] undefined!
-Message-ID: <Zmv9OLoxDxPI9de_@kekkonen.localdomain>
-References: <202406111148.Jbw7a5GF-lkp@intel.com>
+	s=arc-20240116; t=1718353221; c=relaxed/simple;
+	bh=ISPOFElUhPfORR5OTgaw5Rb0UncyFlwjMM+BnZW/tY0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Herr5qbbpWSLjdkvSEJV04UGazu1M7Dei3eM/fh2cdqcfYq81QyYMKCUJrpR+YUs39GXe2hL8h4m/finpQhwhOkBCe11hba3jK65jGAEgfXX0k+RXZz6bKSO1/9I0vXtF2yDt4CgeTuQxInkr8K+iwdSO8ZlClK3FFiaEhSy35o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7eb4c4378c0so196103839f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:20:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718353219; x=1718958019;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uyixLgySkZFyTY3mdGYpcbq5ugcacH5aYgYfssaBYrk=;
+        b=NY2LUSnH9Xn4TfPvJGdSPhZjbFjrefE9lb1WLVDaF8Hk5968kPge/DuQX20C00+c+g
+         htqaHt1vBCfRsLoRvc4FQokkJg9Ms7t1y7OIR4OsT+Pff4O3D1GXrkJllBp8Ez7cnQTk
+         yFkuWnrDB5fjPsAKymrI66/1QxfMzOwJgcjPWmEXgMCkR7p5aFGYPNbmsQDIFmAfGJgf
+         WOC62XkvuNqj/z0DHcDitXX3NKVDOySk5TWmcIlGj5lnJ+3iE6n0+5obp61kMA3ZtMvn
+         NemGLifUUnntdN+MXYmW5cHG/TaxiKvr6oKTGoDGGAS0yvF0MLKTP44arLBdU+TeuRmk
+         YTDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVByHAv09bzxTqDWf7Ts4ArfladQdHu3/do50KqXUWWZ8aypqXsA9KVRbERiMGD4M62oblwYWhstt1LrumdQJ7Xt3hVkrqd2COuU8Ra
+X-Gm-Message-State: AOJu0Yyqa0qsXOZ7/tjzeLH2YtDdJXAyu613dxn5fGE+k8rxuNJrKxXo
+	3VbMD4pCHLLVIyjGxGmq8O5NzCPkbskCH5/2b/tnpbAG/Cic/WEz/MWCasxEsMpw23gv5h+r8yI
+	6jX0Hbwqg7zDmtEO4Hhob2nVkSUA2Svs5fCFiSOgws/6qDdjeZz86veg=
+X-Google-Smtp-Source: AGHT+IHeQ4/CpDpeiPcPyxbqwa8q2xOsL6kEA4Mhc/1f2HelZdksUCn4qpOO7MZ52eZ3zLI2EVkJQJ19VPbxYScJ/QNdCjOee6Qc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202406111148.Jbw7a5GF-lkp@intel.com>
+X-Received: by 2002:a05:6602:3fd5:b0:7eb:99c1:373c with SMTP id
+ ca18e2360f4ac-7ebeaeff0eemr3926039f.0.1718353217830; Fri, 14 Jun 2024
+ 01:20:17 -0700 (PDT)
+Date: Fri, 14 Jun 2024 01:20:17 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000025d569061ad54981@google.com>
+Subject: [syzbot] [netfilter?] upstream test error: WARNING: suspicious RCU
+ usage in _destroy_all_sets
+From: syzbot <syzbot+b62c37cdd58103293a5a@syzkaller.appspotmail.com>
+To: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
+	kadlec@netfilter.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, pabeni@redhat.com, 
+	pablo@netfilter.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi folks,
+Hello,
 
-On Tue, Jun 11, 2024 at 12:06:38PM +0800, kernel test robot wrote:
-> >> ERROR: modpost: "i2c_acpi_new_device_by_fwnode" [drivers/media/pci/intel/ipu-bridge.ko] undefined!
-> >> ERROR: modpost: "i2c_find_device_by_fwnode" [drivers/media/pci/intel/ipu-bridge.ko] undefined!
+syzbot found the following issue on:
 
-Sorry, forgot to cc you. I posted this
-<URL:https://lore.kernel.org/linux-i2c/20240614081418.2506288-1-sakari.ailus@linux.intel.com/T/#u>
-to address this, the I2C dependency can then be removed. I'll post another
-patch for that.
+HEAD commit:    d20f6b3d747c Merge tag 'net-6.10-rc4' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1720df36980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
+dashboard link: https://syzkaller.appspot.com/bug?extid=b62c37cdd58103293a5a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
--- 
-Kind regards,
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/682e40151249/disk-d20f6b3d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5b5e6dd23e74/vmlinux-d20f6b3d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/08385974a61e/bzImage-d20f6b3d.xz
 
-Sakari Ailus
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b62c37cdd58103293a5a@syzkaller.appspotmail.com
+
+=============================
+WARNING: suspicious RCU usage
+6.10.0-rc3-syzkaller-00099-gd20f6b3d747c #0 Not tainted
+-----------------------------
+net/netfilter/ipset/ip_set_core.c:1200 suspicious rcu_dereference_protected() usage!
+
+other info that might help us debug this:
+
+
+rcu_scheduler_active = 2, debug_locks = 1
+3 locks held by kworker/u8:13/2892:
+ #0: ffff888015ed5948 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff888015ed5948 ((wq_completion)netns){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc90009bcfd00 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc90009bcfd00 (net_cleanup_work){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffffffff8f5db250 (pernet_ops_rwsem){++++}-{3:3}, at: cleanup_net+0x16a/0xcc0 net/core/net_namespace.c:594
+
+stack backtrace:
+CPU: 1 PID: 2892 Comm: kworker/u8:13 Not tainted 6.10.0-rc3-syzkaller-00099-gd20f6b3d747c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: netns cleanup_net
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ lockdep_rcu_suspicious+0x221/0x340 kernel/locking/lockdep.c:6712
+ _destroy_all_sets+0x232/0x5f0 net/netfilter/ipset/ip_set_core.c:1200
+ ip_set_net_exit+0x20/0x50 net/netfilter/ipset/ip_set_core.c:2396
+ ops_exit_list net/core/net_namespace.c:173 [inline]
+ cleanup_net+0x802/0xcc0 net/core/net_namespace.c:640
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
