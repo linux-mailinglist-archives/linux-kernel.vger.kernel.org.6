@@ -1,111 +1,182 @@
-Return-Path: <linux-kernel+bounces-215605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C0D39094D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 01:44:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD369094D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 01:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D45D1C21085
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 23:44:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75A1DB22001
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 23:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD678188CB6;
-	Fri, 14 Jun 2024 23:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72EF187569;
+	Fri, 14 Jun 2024 23:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7JyT5I9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PQ6Z6dEi"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DFD187565;
-	Fri, 14 Jun 2024 23:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF87757E5
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 23:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718408624; cv=none; b=KgtpPyQwSqdNseHnipTz4luFl4AJvG0qBRIJ2HVFBoKaWArcRBM3bHtVFVDuESi+OH09W/fbF0uXuKt3OnogWWTg8r5vHlXJe/JUknrnwotQQ4XG4tGj9Bs9Ya+phQPiy1J2KZ1pNH/o2UlFWUvTR+M5MP5IlukMYJyG5C2B6Rc=
+	t=1718408780; cv=none; b=LNWmyvWzlDWnrnNMYUFU5VA6CqlN2pxJbHwGJOBc5Ss0uew3NFq1Jdd320yQDb+h94ViLtU5a1X2TKOekBCykExaWP9+2s6Ko0npS4apA/LwOYwu9feAVMQXA75vGXwG+0uyvxMn0XGLL9/+43o9MS0jwTSgbU2hXMRMpeuqBZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718408624; c=relaxed/simple;
-	bh=95jnULNHIyAe8VUlUTuzjPrBvu1cqlweV8jZzxqurCY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=OrMtHRqBjeEkCHivpCMjI/cjZsTR9hxWkEXDJ7vPuayy3B3Qcvmh3LugSfNPXmengxpuI6OadfMhHzdI9YsyIhDhHml6IzGKQNQ82IE6pVZ55w2IOkejtbg4ll/QTq1PyGuGN8YcgFZliHda9Z08Bj55/YYvVC/oCDTJhBBAtX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a7JyT5I9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47EC9C3277B;
-	Fri, 14 Jun 2024 23:43:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718408623;
-	bh=95jnULNHIyAe8VUlUTuzjPrBvu1cqlweV8jZzxqurCY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=a7JyT5I9e6bfXybPWmdE8M6QwyH1I47W6EQ9pZsZXKvLmUwKZpRjgIOyP4VFXmyzP
-	 yX9aB2Fb0pw/pZwxZtuf5fW0dUJyrLzEJaP3vd2N+d1tXfPZIP5ZWfz4S2IDlTrU3X
-	 nZo5PEFQJ5uD8BLXHQE6eI9A6LnClMSwcTqCjNaAVMIHMznSwwcNwN3CBjoQcdsPu6
-	 rqCPeYg4cyZUlEuNDOL1lrdXqZAjVJA31Qe973+84XbC4tIOek4WoQoBRRrnKnRwTL
-	 WkNZ0unTfo/Y9hj+MlgEt6aJIFVFOM0L/9Zhc8XwdkPMEFLbZtYH15AkwN9jmXJyyc
-	 syMXXvk5EfLug==
-From: Mark Brown <broonie@kernel.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, 
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
-In-Reply-To: <20240613132527.46537-1-rf@opensource.cirrus.com>
-References: <20240613132527.46537-1-rf@opensource.cirrus.com>
-Subject: Re: [PATCH v2] ASoC: cs35l56: Disconnect ASP1 TX sources when ASP1
- DAI is hooked up
-Message-Id: <171840862302.307440.2310063714501102380.b4-ty@kernel.org>
-Date: Sat, 15 Jun 2024 00:43:43 +0100
+	s=arc-20240116; t=1718408780; c=relaxed/simple;
+	bh=ljJzkXa7ANkHoKsMp4kvwIbmepQnokgR3jDEO1hn3hQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=HufhC3ehPeR/e5sBiWL18+rmtWoDiiWkSLSJsmKoh91Kv0QjVg4G8Ed58jBE9hr50csAwlkmx63urvb6qjQUdoEOGsjJ76x9R1npvL8iXqUrStimJy7g7ZKdeeY6SA/cYGkwwsrqRAW4brNyFVxWfWcVjRw9djVvbIY/jaOWVX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PQ6Z6dEi; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-632e098ab42so15152377b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 16:46:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718408777; x=1719013577; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ihyioj1vM0TB1JZPZzaB/gYRDOE282ffuWXqLcMdCjo=;
+        b=PQ6Z6dEisAI1gHfIRMbVHL5P1bD2s6e2+xRU1XvxnRkxRZijFCH6UNcKiAeLg7gN5r
+         k6I98ub0lOZO+TDY3q7ZiUOqEW4msB3aD/iyygAKWtIBkSl+gVODeVpOpaY0z6ktau/i
+         k1xP761R8Uf4fQeRPDXgipWFz/0e88+ctejoDg1RyMMNqeHEXHY+ItrVl9Ew4t9aA6zn
+         fGrWQpZJ+AHnNQJDs+CUb8eRGzZbDERzVYZqX5txkPq7sUFjDfWYozwWnBjpVvWoi81Y
+         j5oMFiySDGy84pfecLGrhr/rjCNMEcC2P+PpCt5pXE5RIpgx0Ptq0HYRUCZ6tPOrK4ES
+         EZ0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718408777; x=1719013577;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ihyioj1vM0TB1JZPZzaB/gYRDOE282ffuWXqLcMdCjo=;
+        b=Kurt5PTiYq/fQb4AzZQMu1gi5399LaxsYC7sUIf6Zx78fhnX6bSPO5Htu0oDEnU3qB
+         fRE0DV66kI35Ser9owizPf26heZzsAWlKIey1Fl5zsiujIyxnI5fpfvG5kbgCfZHrqnq
+         MXIJkDqBLhPU+J2th1NzmStLvur0LiCEKMIwuJTxxBXHmTinU6mFLmO6csTkDw2oU9Do
+         ShfKzdoPCWsGiMwYBUZMVWfLJWKIN6ILEZlypue55MZv7wRudwSLGp5OpwsL+ss3ZybZ
+         ZlC197zIwgMftvojfc2uBUFNkJKI8TxvgBCa4rnYyi/joZ5ZyY5QbMPeZdAucqP42B6t
+         AUgg==
+X-Forwarded-Encrypted: i=1; AJvYcCXizt4JPBM7Skj6xi/T/HHWIi2c7sso379GiRJHjhKknPUt4QAAZUaW5zpyYhcnguqpFuyj3lN4gk+P+qtjibws4x68AMCitLMdiVSf
+X-Gm-Message-State: AOJu0YywCl5wtOMyjqjsCkPlRZZdijo+bGbU8B9WgDhOF6mjfWs7EGxr
+	plFok73Q4L5i5xd+cEY5Cwq0EMxuZQ9y3I5X+93wQZme7OehIBJT74tLMwgJjyAFKp2/98MKCXx
+	8tg==
+X-Google-Smtp-Source: AGHT+IGsNIFQzvSxopjGxpBcmhg8niaT/U2KyXwPKBNT1HI7T+uzCN3yVFXnFKldTa3gvdpm7vToxU/snMo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:f8e:b0:62c:c5ea:66ad with SMTP id
+ 00721157ae682-6322255e683mr12725577b3.4.1718408777427; Fri, 14 Jun 2024
+ 16:46:17 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 14 Jun 2024 16:46:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-0bd45
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
+Message-ID: <20240614234607.1405974-1-seanjc@google.com>
+Subject: [kvm-unit-tests GIT PULL] x86: Fixes, cleanups, and new tests
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sean Christopherson <seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 13 Jun 2024 14:25:27 +0100, Richard Fitzgerald wrote:
-> If the ASP1 DAI is hooked up by the machine driver the ASP TX mixer
-> sources should be initialized to disconnected. There aren't currently
-> any available products using the ASP so this doesn't affect any
-> existing systems.
-> 
-> The cs35l56 does not have any fixed default for the mixer source
-> registers. When the cs35l56 boots, its firmware patches these registers
-> to setup a system-specific routing; this is so that Windows can use
-> generic SDCA drivers instead of needing knowledge of chip-specific
-> registers. The setup varies between end-products, which each have
-> customized firmware, and so the default register state varies between
-> end-products. It can also change if the firmware on an end-product is
-> upgraded - for example if a change was needed to the routing for Windows
-> use-cases. It must be emphasized that the settings applied by the
-> firmware are not internal magic tuning; they are statically implementing
-> use-case setup that on Linux would be done via ALSA controls.
-> 
-> [...]
+Please pull a smattering of x86 changes, most of which have been sitting around
+on-list for quite some time.  There are still quite a few KUT x86 series that
+want attention, but they are all quite large and exceeded what little review
+time I have for KUT :-/
 
-Applied to
+Note, the posted interrupt test fails due to KVM bugs, patches posted:
+https://lore.kernel.org/all/20240607172609.3205077-1-seanjc@google.com
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+The following changes since commit a68956b3fb6f5f308822b20ce0ff8e02db1f7375:
 
-Thanks!
+  gitlab-ci: Always save artifacts (2024-06-05 12:49:58 +0200)
 
-[1/1] ASoC: cs35l56: Disconnect ASP1 TX sources when ASP1 DAI is hooked up
-      commit: 8af49868e51ed1ba117b74728af12abe1eda82e5
+are available in the Git repository at:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+  https://github.com/kvm-x86/kvm-unit-tests.git tags/kvm-x86-2024.06.14
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+for you to fetch changes up to ee1d79c3f0f871bf78f20930cb1a2441f28ac027:
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+  nVMX: Verify KVM actually loads the value in HOST_PAT into the PAT MSR (2024-06-11 06:41:23 -0700)
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+----------------------------------------------------------------
+x86 fixes, cleanups, and new testcases:
 
-Thanks,
-Mark
+ - Add a testcase to verify that KVM doesn't inject a triple fault (or any
+   other "error") if a nested VM is run with an EP4TA pointing MMIO.
 
+ - Play nice with CR4.CET in test_vmxon_bad_cr()
+
+ - Force emulation when testing MSR_IA32_FLUSH_CMD to workaround an issue where
+   Skylake CPUs don't follow the architecturally defined behavior, and so that
+   the test doesn't break if/when new bits are supported by future CPUs.
+
+ - Rework the async #PF test to support IRQ-based page-ready notifications.
+
+ - Fix a variety of issues related to adaptive PEBS.
+
+ - Add several nested VMX tests for virtual interrupt delivery and posted
+   interrupts.
+
+ - Ensure PAT is loaded with the default value after the nVMX PAT tests
+   (failure to do so was causing tests to fail due to all memory being UC).
+
+ - Misc cleanups.
+
+----------------------------------------------------------------
+Alejandro Jimenez (1):
+      x86: vmexit: Allow IPI test to be accelerated by SVM AVIC
+
+Dan Wu (1):
+      x86/asyncpf: Update async page fault test for IRQ-based "page ready"
+
+Jack Wang (1):
+      x86/msr: Fix typo in output SMR
+
+Jim Mattson (1):
+      nVMX: Enable x2APIC mode for virtual-interrupt delivery tests
+
+Marc Orr (3):
+      nVMX: test nested "virtual-interrupt delivery"
+      nVMX: test nested EOI virtualization
+      nVMX: add self-IPI tests to vmx_basic_vid_test
+
+Mingwei Zhang (3):
+      x86: Add FEP support on read/write register instructions
+      x86: msr: testing MSR_IA32_FLUSH_CMD reserved bits only in KVM emulation
+      x86/pmu: Clear mask in PMI handler to allow delivering subsequent PMIs
+
+Oliver Upton (1):
+      nVMX: add test for posted interrupts
+
+Sean Christopherson (9):
+      nVMX: Use helpers to check for WB memtype and 4-level EPT support
+      nVMX: Use setup_dummy_ept() to configure EPT for test_ept_eptp() test
+      nVMX: Add a testcase for running L2 with EP4TA that points at MMIO
+      x86/pmu: Enable PEBS on fixed counters iff baseline PEBS is support
+      x86/pmu: Iterate over adaptive PEBS flag combinations
+      x86/pmu: Test adaptive PEBS without any adaptive counters
+      x86/pmu: Add a PEBS test to verify the host LBRs aren't leaked to the guest
+      nVMX: Ensure host's PAT is loaded at the end of all VMX tests
+      nVMX: Verify KVM actually loads the value in HOST_PAT into the PAT MSR
+
+Yang Weijiang (3):
+      nVMX: Exclude CR4.CET from the test_vmxon_bad_cr()
+      nVMX: Rename union vmx_basic and related global variable
+      nVMX: Introduce new vmx_basic MSR feature bit for vmx tests
+
+ lib/x86/apic.h       |   5 +
+ lib/x86/asm/bitops.h |   8 +
+ lib/x86/desc.h       |  30 +++-
+ lib/x86/pmu.h        |   6 +-
+ lib/x86/processor.h  |  24 ++-
+ x86/asyncpf.c        | 154 ++++++++++------
+ x86/msr.c            |  23 ++-
+ x86/pmu.c            |   1 +
+ x86/pmu_pebs.c       | 110 +++++++-----
+ x86/unittests.cfg    |  19 +-
+ x86/vmx.c            |  50 +++---
+ x86/vmx.h            |   7 +-
+ x86/vmx_tests.c      | 497 ++++++++++++++++++++++++++++++++++++++++++++++++---
+ 13 files changed, 755 insertions(+), 179 deletions(-)
 
