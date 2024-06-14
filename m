@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-215377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD7909091B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:37:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02E59091BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:37:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D55A2893C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:37:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52EC41F24EB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217B61B012B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB211B1408;
 	Fri, 14 Jun 2024 17:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dEv8F+Yn"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aP3N0jiR"
 Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543591AD9F5;
-	Fri, 14 Jun 2024 17:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C4D1AED33;
+	Fri, 14 Jun 2024 17:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718386383; cv=none; b=kUNwLD9ju9P/mUiqF7Xb+VeA8m4hV/T90zf8M8EXaiSRLbdkrsXhCjZ/CQR9Dtefl8UXI3SjgwmtqxaIimIgLqQ/IfUhDqfQVjpwZBh+wNdPy6skitLnPzohqQXKkApejmADDHfxDJEW/pQHo58SRfWlfA09eNQ9UDPZrgGjglE=
+	t=1718386384; cv=none; b=Bh7Mn7dGARNY27HGcfnT3QWb3/eBwUkb8Imo8OJorxvHqsaoukJQFo99GCr5ezbWgdSp2L3D5b4XpFvD8Q678mF+6ijlLTfR8WSO3YXTP6W62DjQKYuNVmZ/DTPMyM/Fm3VYt2QTYYGUss//XWHw93sJqksazDo7guFxA4R/0vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718386383; c=relaxed/simple;
-	bh=+GEMoT9fsybF2t6htFlaw8fkxkNsZBe9GF9d/ejPY80=;
+	s=arc-20240116; t=1718386384; c=relaxed/simple;
+	bh=7z89Bg/HvIwaBDXEsHwRmRRcszz8hpFc/huwhFys+EY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SKP5q/QW5MEcUDxAzeaTt4YZ/+/GLCQeyH8egSf92n9SZSW6wF6jPg50PgpUwiAmGpKi0XUarqWe75cTmGqXu9liVsjIPgnr86LUoeGz2aCu3C40YKiDPVa0p5rwy+YkNvdAGLN+B/BSGZX2+AMEXVJu6yky7TsX0tPEzBzO+7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dEv8F+Yn; arc=none smtp.client-ip=217.70.183.199
+	 MIME-Version; b=p+rII/J9TlopOrvcTGqNWuYVT614gK3f7NwT5dbKt6GnU+JwbmAs4jcONgCez5q7JzqS0CzkQ5hNlkv0dHm+2iZNJQRePkXFGLQC4GSaBjUe30iWCOpMnhS493kBZsZc0ouB6ItO5CzQnvjzGQGym3olcC2RKmNFGbeoTKMy3Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aP3N0jiR; arc=none smtp.client-ip=217.70.183.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 1569EFF806;
+Received: by mail.gandi.net (Postfix) with ESMTPA id DA020FF807;
 	Fri, 14 Jun 2024 17:32:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718386379;
+	t=1718386380;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TgSTclGEyMVNAcyML8FqLvo4YRpuke6IGp+WHuItynU=;
-	b=dEv8F+YnoNI0QIBoh3E5anMu3hKDqUOCr8ora+u+Di5YR922JEF+cKtDfeUAM6W3MK1yuU
-	zZOBncfdU/J4snrEKG7burRvMzc4gCJW3fkvfKsNmQHoqJONN3PsE0v9DnEoQmk9YTLrGq
-	qayVRK9g3/daqT9BizVyKmQ3aUZB9THh5TNa7QG0rKRcPQvql4rEY+9UmapVDWiWcwXB5H
-	j7kvJWE4WvIqxaPjsT3Z3oIrgdU3gzhyzre0jNOb7NyoJX9+VbQ+hT8MuOJhiIh5ZI1tfe
-	Smx+ZrOZpDDru6tzqqm/opoLeAehq5Q9LUWxuz12kWrsMi262Zx2akJKw4gYww==
+	bh=lrO21D/F1M18TMwOh5nDZl9q9v++C9Qwkdmyr7nENho=;
+	b=aP3N0jiRHNCo/PI9Tmqi+m5BiLjCBPomS0d3Lp7pX3CPht3E5bXpuBNeafgNXjcQLIIejB
+	x6LmGLn8nncQ6TZnXR42IpSud3pbCGNMnyrm6XUayFplZ3syjkO6Lfu9VfxpcE2ZZcp1L9
+	RkeQ+nFgaN3u6Ev22GPXJpznyhr7TTsaDTSAG8ZOeIn7owqypv+Y0fhHuXbKFoxlia3Hag
+	JmBynUt4HWat6VA6ZRUZjcELmcRxX1in1l9+XaLY7C6PFRSMdkEuVH+J4pJRkwjoF+exb8
+	vpa0LYbN1O3E9GQvGkQHhJM0mTyTIZOf7MUQYnFlBOPkCN5t1koRO/SSX17FnA==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Matti Vaittinen <mazziesaccount@gmail.com>,
 	Herve Codina <herve.codina@bootlin.com>,
@@ -62,9 +62,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Horatiu Vultur <horatiu.vultur@microchip.com>,
 	Steen Hegelund <steen.hegelund@microchip.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH 16/23] irqdomain: Add a resource managed version of irq_domain_instantiate()
-Date: Fri, 14 Jun 2024 19:32:17 +0200
-Message-ID: <20240614173232.1184015-17-herve.codina@bootlin.com>
+Subject: [PATCH 17/23] irqdomain: Convert __irq_domain_add() wrappers to irq_domain_instantiate()
+Date: Fri, 14 Jun 2024 19:32:18 +0200
+Message-ID: <20240614173232.1184015-18-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240614173232.1184015-1-herve.codina@bootlin.com>
 References: <20240614173232.1184015-1-herve.codina@bootlin.com>
@@ -77,83 +77,114 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-Add a devres version of irq_domain_instantiate().
+__irq_domain_add() wrappers use directly __irq_domain_add(). With the
+introduction of irq_domain_instantiate(), __irq_domain_add() becomes
+obsolete.
+
+In order to fully remove __irq_domain_add(), convert wrappers to
+irq_domain_instantiate()
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- include/linux/irqdomain.h |  2 ++
- kernel/irq/devres.c       | 41 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 43 insertions(+)
+ include/linux/irqdomain.h | 58 +++++++++++++++++++++++++++++++++++----
+ 1 file changed, 53 insertions(+), 5 deletions(-)
 
 diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-index 5540b22a755c..8820317582c4 100644
+index 8820317582c4..1cd1cbf57736 100644
 --- a/include/linux/irqdomain.h
 +++ b/include/linux/irqdomain.h
-@@ -304,6 +304,8 @@ struct irq_domain_info {
- };
- 
- struct irq_domain *irq_domain_instantiate(const struct irq_domain_info *info);
-+struct irq_domain *devm_irq_domain_instantiate(struct device *dev,
-+					       const struct irq_domain_info *info);
- 
- struct irq_domain *__irq_domain_add(struct fwnode_handle *fwnode, unsigned int size,
- 				    irq_hw_number_t hwirq_max, int direct_max,
-diff --git a/kernel/irq/devres.c b/kernel/irq/devres.c
-index f6e5515ee077..b3e98668f4dd 100644
---- a/kernel/irq/devres.c
-+++ b/kernel/irq/devres.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/module.h>
- #include <linux/interrupt.h>
-+#include <linux/irqdomain.h>
- #include <linux/device.h>
- #include <linux/gfp.h>
- #include <linux/irq.h>
-@@ -282,3 +283,43 @@ int devm_irq_setup_generic_chip(struct device *dev, struct irq_chip_generic *gc,
+@@ -400,7 +400,17 @@ static inline struct irq_domain *irq_domain_add_linear(struct device_node *of_no
+ 					 const struct irq_domain_ops *ops,
+ 					 void *host_data)
+ {
+-	return __irq_domain_add(of_node_to_fwnode(of_node), size, size, 0, ops, host_data);
++	struct irq_domain_info info = {
++		.fwnode = of_node_to_fwnode(of_node),
++		.size = size,
++		.hwirq_max = size,
++		.ops = ops,
++		.host_data = host_data,
++	};
++	struct irq_domain *d;
++
++	d = irq_domain_instantiate(&info);
++	return IS_ERR(d) ? NULL : d;
  }
- EXPORT_SYMBOL_GPL(devm_irq_setup_generic_chip);
- #endif /* CONFIG_GENERIC_IRQ_CHIP */
+ 
+ #ifdef CONFIG_IRQ_DOMAIN_NOMAP
+@@ -409,7 +419,17 @@ static inline struct irq_domain *irq_domain_add_nomap(struct device_node *of_nod
+ 					 const struct irq_domain_ops *ops,
+ 					 void *host_data)
+ {
+-	return __irq_domain_add(of_node_to_fwnode(of_node), 0, max_irq, max_irq, ops, host_data);
++	struct irq_domain_info info = {
++		.fwnode = of_node_to_fwnode(of_node),
++		.hwirq_max = max_irq,
++		.direct_max = max_irq,
++		.ops = ops,
++		.host_data = host_data,
++	};
++	struct irq_domain *d;
 +
-+#ifdef CONFIG_IRQ_DOMAIN
-+static void devm_irq_domain_remove(struct device *dev, void *res)
-+{
-+	struct irq_domain **domain = res;
++	d = irq_domain_instantiate(&info);
++	return IS_ERR(d) ? NULL : d;
+ }
+ 
+ extern unsigned int irq_create_direct_mapping(struct irq_domain *host);
+@@ -419,7 +439,16 @@ static inline struct irq_domain *irq_domain_add_tree(struct device_node *of_node
+ 					 const struct irq_domain_ops *ops,
+ 					 void *host_data)
+ {
+-	return __irq_domain_add(of_node_to_fwnode(of_node), 0, ~0, 0, ops, host_data);
++	struct irq_domain_info info = {
++		.fwnode = of_node_to_fwnode(of_node),
++		.hwirq_max = ~0U,
++		.ops = ops,
++		.host_data = host_data,
++	};
++	struct irq_domain *d;
 +
-+	irq_domain_remove(*domain);
-+}
++	d = irq_domain_instantiate(&info);
++	return IS_ERR(d) ? NULL : d;
+ }
+ 
+ static inline struct irq_domain *irq_domain_create_linear(struct fwnode_handle *fwnode,
+@@ -427,14 +456,33 @@ static inline struct irq_domain *irq_domain_create_linear(struct fwnode_handle *
+ 					 const struct irq_domain_ops *ops,
+ 					 void *host_data)
+ {
+-	return __irq_domain_add(fwnode, size, size, 0, ops, host_data);
++	struct irq_domain_info info = {
++		.fwnode = fwnode,
++		.size = size,
++		.hwirq_max = size,
++		.ops = ops,
++		.host_data = host_data,
++	};
++	struct irq_domain *d;
 +
-+/**
-+ * devm_irq_domain_instantiate() - Instantiate a new irq domain data for a
-+ *                                 managed device.
-+ * @dev:	Device to instantiate the domain for
-+ * @info:	Domain information pointer pointing to the information for this
-+ *		domain
-+ *
-+ * Return: A pointer to the instantiated irq domain or an ERR_PTR value.
-+ */
-+struct irq_domain *devm_irq_domain_instantiate(struct device *dev,
-+					       const struct irq_domain_info *info)
-+{
-+	struct irq_domain *domain;
-+	struct irq_domain **dr;
++	d = irq_domain_instantiate(&info);
++	return IS_ERR(d) ? NULL : d;
+ }
+ 
+ static inline struct irq_domain *irq_domain_create_tree(struct fwnode_handle *fwnode,
+ 					 const struct irq_domain_ops *ops,
+ 					 void *host_data)
+ {
+-	return __irq_domain_add(fwnode, 0, ~0, 0, ops, host_data);
++	struct irq_domain_info info = {
++		.fwnode = fwnode,
++		.hwirq_max = ~0,
++		.ops = ops,
++		.host_data = host_data,
++	};
++	struct irq_domain *d;
 +
-+	dr = devres_alloc(devm_irq_domain_remove, sizeof(*dr), GFP_KERNEL);
-+	if (!dr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	domain = irq_domain_instantiate(info);
-+	if (!IS_ERR(domain)) {
-+		*dr = domain;
-+		devres_add(dev, dr);
-+	} else {
-+		devres_free(dr);
-+	}
-+
-+	return domain;
-+}
-+EXPORT_SYMBOL_GPL(devm_irq_domain_instantiate);
-+#endif /* CONFIG_IRQ_DOMAIN */
++	d = irq_domain_instantiate(&info);
++	return IS_ERR(d) ? NULL : d;
+ }
+ 
+ extern void irq_domain_remove(struct irq_domain *host);
 -- 
 2.45.0
 
