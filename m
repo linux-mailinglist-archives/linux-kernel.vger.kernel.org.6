@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-214893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98FE2908BA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:29:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D150908BAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EA4A2837F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:29:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9527282EB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F10197540;
-	Fri, 14 Jun 2024 12:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6A5197A90;
+	Fri, 14 Jun 2024 12:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iqooB21x"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KBgG46Ve"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E5914885C
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF63B1974EA
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718368157; cv=none; b=bPpLcreTnJeWvNMBQMJL214a5r7kLXNb0cIAQdul8N9kGkeryIZRHhhc3n2Jl0RU6PrYZHFcLgQakN0rgHoU+ptpcINau1qnRfbZBhTlc1auZLTZ8EO2LTGH1q4MQ8shrlrNosdmvf2T/bk3HyjCdcP9eTmL4pbU/bu/ZZWYav8=
+	t=1718368186; cv=none; b=rWaY73N3rqTVLAQ4SMhfeuRVj/Vc+3TmaaovwDmI4l8uUqsHPYPjbsfqaYNKWQMqMk3b2w/COQtfGiETiIrpuT/4Q2e+PPnStdHJFJp4JCQ5BQRh7a8vuqnZoteXUt9YlLfpiWYYgPui/sZxBfLC2A1RL3ZIxD4s5vV6d5Wej4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718368157; c=relaxed/simple;
-	bh=DGLKkYNVGH2/85QfKWu18CEyWYVgyRB7Mj7BL+je7sA=;
+	s=arc-20240116; t=1718368186; c=relaxed/simple;
+	bh=OhKgU15ZWjeC2N6hpKVV9bnKlAh6JPYi/WMmK1hnWQU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NNWdfHAjtemcHoKyeMnVnopjFkQHojdII+Hjswq517k6ZLFX+HfamR/ODqkdT8APGYwKolngzXrEh2gKBXe5mCfXz4w54xZQ81D9bAxu4oK2f2MdSew7wPCefLjmc063V8BEl74XqUYdjxTeYIZdTgMNkVctn1Mh3fUE8GEs+ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iqooB21x; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=TFLP/iwqdqITZEOGqQ2/WXuEI0Kb2b7+agdSG3JBWWk2XbY7x940IZaFGkoPZIs+EOB/elDU4rhgomkbiMbqXYqHla+HQ1GzPrT6/njal5W0gC+uXg20fh/nd3iKN/QPcvClT3p0FPH+OSmB1RwXedrqMH0HChwppaQl27zQl0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KBgG46Ve; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718368154;
+	s=mimecast20190719; t=1718368183;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OpzfGazkoadY+952z1FT0R3Qu7RnAvh/9ItP+vL8jvI=;
-	b=iqooB21xG5MiZX6O4i/jSaRVrZ1jJ7NHTBJmMj6uOeRdYkTjSwcRYjajqjAswLqJt+g9H0
-	nOtI0VxcZc2MtE9yeTMK891vpWAIyKLDxoa4uSgiAXtyjnvA6VABpoXMBRABNZat4T0abY
-	ZSiuII6wK8YUyQVr1Q7/CzxQKZ5RYVc=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=T8R5hFnH4t68Z/MixcytprsQWRka9fyIV4kLoij88qc=;
+	b=KBgG46Ve1Y2qnEwDjnztw9LEEs8cNWWTsoeYjlqDgC57cuXNdtyFtrI0/UE7b5lCxWmjCJ
+	RYung5BC+lv1D/GKWs/ckKLyHYq4g12VN8IrT38OwiCuFyA5tuaHJDvmRbCZIbrowZ9TpY
+	rNLaT7gCK0T3RuzWrpGwyVdjjGfKxMs=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-614-EQblI1oHNVG4lTLSqwJ1yw-1; Fri, 14 Jun 2024 08:29:11 -0400
-X-MC-Unique: EQblI1oHNVG4lTLSqwJ1yw-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2eb6f6b1b2dso15921951fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 05:29:11 -0700 (PDT)
+ us-mta-17-TA0sVx5ePgmzXopZXNnCpw-1; Fri, 14 Jun 2024 08:29:42 -0400
+X-MC-Unique: TA0sVx5ePgmzXopZXNnCpw-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-421bb51d73cso12362055e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 05:29:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718368150; x=1718972950;
+        d=1e100.net; s=20230601; t=1718368181; x=1718972981;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=OpzfGazkoadY+952z1FT0R3Qu7RnAvh/9ItP+vL8jvI=;
-        b=dkukpFWrv7Pby6Ul7kqnRS5Ut34sWdrrJ/A5pose8IS0S+SqlzyzaGURHoGAe1txAR
-         jbezUeV+KSUq7a+BDcpEMDhqKBvUjkIVsWjFWudg1r/5gs5bA6Gl6iT+xA2mihaQvPrm
-         d8QTnrD5rXA6BLis7Ez9Wm/UeLlAp17PDX+oDI0sKgbgTlS176LDCGiSG8wy9NE83kG8
-         SBytN9oLw5NRrHH9eBNPGv+GYM91l6ii3V4LbuszPcbbo1rPJFD0kpaSY9evAZhtyNuj
-         I+RdN7GXiXsmJPVWCyK/D+S+oe6fgnb954WHaKnv0Jq3dWqqV+KW01+LsZ7WePIWxK7v
-         bqXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLol7OnXB3bP70cdklxxJESIe//mObVlGMmUI6/0CRPk8+b4jBiFztOAwff3i7SWKgfP8nYhnQKb2hGcaoRxrbXaXaG9T5M4NnIa1f
-X-Gm-Message-State: AOJu0YwibKWEtti3cfnP+PZz2s1Y2vl0QFf5QxqMts/BYF+X5QWqPEKO
-	ciW3KrA/YJaiE2+1hp7+wNCCvPb9VBTLR4ey+bVZzGwrkoKR7sQfHwrWdTiCNLr0azVXmiwMyAN
-	de3n5thA2NV+6cVZsK5ZXmXXxL68PPtYaeB785iVSowQd/khM87/56L2Y2hPSvA==
-X-Received: by 2002:a05:6512:1190:b0:52c:81d5:6d0e with SMTP id 2adb3069b0e04-52ca6e564f1mr2297916e87.2.1718368150001;
-        Fri, 14 Jun 2024 05:29:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEotTRtVSpcxjjzjpcv2rVBi6RzQ8yY693fx2HYwiN5VURefKq/pVJyEgxat33d284A0inBtQ==
-X-Received: by 2002:a05:6512:1190:b0:52c:81d5:6d0e with SMTP id 2adb3069b0e04-52ca6e564f1mr2297891e87.2.1718368149424;
-        Fri, 14 Jun 2024 05:29:09 -0700 (PDT)
+        bh=T8R5hFnH4t68Z/MixcytprsQWRka9fyIV4kLoij88qc=;
+        b=mwTbzmhT+I7mBGVjbKmX9V4SvuVVGrpwgv4Ua2raqKmh6BpNRe+HPfKwIvOZ8XnOho
+         3BvCJV0nqqeo/UXIxf/5WnaG/jwQvFhgsEkWtF5wD/Il+tgQHmiaK3SR6w6ltgdbcSXq
+         1rYg9pUleP20aWwi4x/ixgGyxQcsT6oJ3ttG3CZMH+DseKtSzAM7hqGv3hvaMCEVNZnh
+         io0EhNbOtgNX7UIG036ufyPVMQOJQS0pFlIbJzzh2l9jwyNltbQCTQ0kWqv2kqUzlW/q
+         EXSRFy8TquE6dSrBhtyxriRGSXmbNKXdguE2DLsbpjGGqifisjPACRI91bQgLlw5SgAn
+         vIOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMoW60uP70qWK+fbpGSa7Somhz8WNtv4TjascRwlPcNGuRyM8KdHRXXgD7na16E7afi7GUb0XGv73VNh2Q1ocd+W+wyl48cmC1UvV8
+X-Gm-Message-State: AOJu0YwNqi+xMUayOZDzVPg7CYJWqPjL2yfEKY+b3SUSufBREa1+SX/B
+	e+CcJwqvw5UKEJlFFq+fETCo2Y064YMZZ0er0Pksuu9NwaySt2S1c1lFDLISsPGkqva7hGeW4N0
+	pQmp+BJy7UCKeKlxwAhVGHEhCuPaUBlMv720Wv5VVh/fXDYfDhXAa4UjOMIhRQg==
+X-Received: by 2002:a05:600c:1c13:b0:421:f346:6b06 with SMTP id 5b1f17b1804b1-42304848abfmr26039065e9.28.1718368181294;
+        Fri, 14 Jun 2024 05:29:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH7U3z0j+A8w50q9VK9ennnUqTj3tgKOwX6iZR1j+mid9Zz3P1cpJZ6LxrKXNgf9wgqUZyz0g==
+X-Received: by 2002:a05:600c:1c13:b0:421:f346:6b06 with SMTP id 5b1f17b1804b1-42304848abfmr26038715e9.28.1718368180879;
+        Fri, 14 Jun 2024 05:29:40 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f4f:2b00:69b5:3684:56c:6dd5? (p200300d82f4f2b0069b53684056c6dd5.dip0.t-ipconnect.de. [2003:d8:2f4f:2b00:69b5:3684:56c:6dd5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3607509c8cdsm4273908f8f.35.2024.06.14.05.29.08
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f602e7e3sm60036305e9.12.2024.06.14.05.29.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 05:29:09 -0700 (PDT)
-Message-ID: <fec9c02a-1639-47d0-b192-430d05899758@redhat.com>
-Date: Fri, 14 Jun 2024 14:29:07 +0200
+        Fri, 14 Jun 2024 05:29:40 -0700 (PDT)
+Message-ID: <b125057f-5e84-4ba7-adfd-792382cbf0f3@redhat.com>
+Date: Fri, 14 Jun 2024 14:29:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,8 +82,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] selftests/mm: mseal, self_elf: rename
- TEST_END_CHECK to REPORT_TEST_PASS
+Subject: Re: [PATCH v2 4/6] selftests/mm: fix vm_util.c build failures: add
+ snapshot of fs.h
 To: John Hubbard <jhubbard@nvidia.com>,
  Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
  Shuah Khan <shuah@kernel.org>
@@ -97,7 +97,7 @@ Cc: Andrei Vagin <avagin@google.com>,
  linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
  LKML <linux-kernel@vger.kernel.org>
 References: <20240614023009.221547-1-jhubbard@nvidia.com>
- <20240614023009.221547-4-jhubbard@nvidia.com>
+ <20240614023009.221547-5-jhubbard@nvidia.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -145,18 +145,35 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240614023009.221547-4-jhubbard@nvidia.com>
+In-Reply-To: <20240614023009.221547-5-jhubbard@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 14.06.24 04:30, John Hubbard wrote:
-> Now that the test macros are factored out into their final location, and
-> simplified, it's time to rename TEST_END_CHECK to something that
-> represents its new functionality: REPORT_TEST_PASS.
+> On Ubuntu 23.04, on a clean git tree, the selftests/mm build fails due
+> 10 or 20 missing items, all of which are found in fs.h, which is created
+> via "make headers". However, as per [1], the idea is to stop requiring
+> "make headers", and instead, take a snapshot of the files and check them
+> in.
+> 
+> Here are a few of the build errors:
+> 
+> vm_util.c:34:21: error: variable has incomplete type 'struct pm_scan_arg'
+>          struct pm_scan_arg arg;
+> ...
+> vm_util.c:45:28: error: use of undeclared identifier 'PAGE_IS_WPALLOWED'
+> ...
+> vm_util.c:55:21: error: variable has incomplete type 'struct page_region'
+> ...
+> vm_util.c:105:20: error: use of undeclared identifier 'PAGE_IS_SOFT_DIRTY'
+> 
+> To fix this, add fs.h, taken from a snapshot of ./usr/include/linux/fs.h
+> after running "make headers".
+> 
+> [1] commit e076eaca5906 ("selftests: break the dependency upon local
+> header files")
 > 
 > Cc: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Jeff Xu <jeffxu@chromium.org>
-> Tested-by: Jeff Xu <jeffxu@chromium.org>
 > Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 > ---
 
