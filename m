@@ -1,128 +1,86 @@
-Return-Path: <linux-kernel+bounces-214616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D025908721
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:12:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75DE8908724
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E743F1F2386D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:12:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12DEE282C6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143E61922CB;
-	Fri, 14 Jun 2024 09:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928971922D1;
+	Fri, 14 Jun 2024 09:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YOCcUmy5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="loIp9n8s"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512485FBB7;
-	Fri, 14 Jun 2024 09:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292A75FBB7;
+	Fri, 14 Jun 2024 09:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718356345; cv=none; b=UMp/DpsMOh8oFGoJZjP98/r9waZ+0j4UxplT/F6h0ZFnXJnEANX99VEDk+j3qDZenb34qk68onp3szi7Rknr4E1pJOTQozIMsb96VPhH+EJfwVO5o82XuugMg856DyBzh7Ttu2+L2mmnBItSC9A803WMwWTvzPbJHPwZiXlcA9M=
+	t=1718356413; cv=none; b=WydwDLdYJtGFjvsKosgTFdB+dialW8x389hAEg6IVv0AxX4phdbAwL+6DBT3zBS5sALWvNlUVZULvrCcbWwPwC7o8cUiQzNVB73hZgR66QBhtiGWLSdZCZZ/a8roxZp3wHomPlV5PjTRqyqKZgYfnPerxxGAI+cEjZrsAbki/Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718356345; c=relaxed/simple;
-	bh=7kGde42zdHXHJOiY91tpSQwRc7oayfWjAOUL0Cw7kx8=;
+	s=arc-20240116; t=1718356413; c=relaxed/simple;
+	bh=WysQkcsjHsZaBSJnIBgs479ThPkkcLzyNfHVNY3NAwE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uItdYtpcUEua/DhKGrDFnDugu3rK/14EL41o1YCokBPYqcFsJ0rO0Tbr1hN38mrajniVYGwbQ81spx5wcunpPhYmOiBelJMk6E0gJwLblxBhz5eUDNjdSck1/qp9dlbsoboJtCDMueQ96vHT2Pz6WZrShCBnEV/80tRN2MpSxT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YOCcUmy5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8B39C2BD10;
-	Fri, 14 Jun 2024 09:12:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718356345;
-	bh=7kGde42zdHXHJOiY91tpSQwRc7oayfWjAOUL0Cw7kx8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YOCcUmy5WDD73LPlthR8Z01XvAUv3QLCpF98pK38P2rhpXKFxmYNdAZRsU3XXOQwX
-	 okNuK5pkqT7c9RV/HmT+HVlmqY5C0Y/LVU6C24VlOmZKbBgfIDm0bOktzVDkqkD094
-	 KVJ020f/we3F1IA3ESsLfT10fXPmmga+JOL6ykYIcWFfBFpAPfCCX4pV/NkEXPrsef
-	 Nl4Rcr4RdR9Ke3gbLPmedjZrqcCmnj0aGboANINrP0St4MH5wBWHGv+/OMvmUKyMh0
-	 7vMxlokrn+vPipnqXt0UawcaIA/2+RWmFZPCD9UuThSjGwVG6BBWGly/FzR6+VYsP9
-	 c56UBNQARDAvQ==
-Date: Fri, 14 Jun 2024 10:12:20 +0100
-From: Lee Jones <lee@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Pavel Machek <pavel@ucw.cz>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@weissschuh.net>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
-	Dustin Howett <dustin@howett.net>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v3 0/5] ChromeOS Embedded Controller LED driver
-Message-ID: <20240614091220.GA3029315@google.com>
-References: <20240613-cros_ec-led-v3-0-500b50f41e0f@weissschuh.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TxPMRif8lsgkz0+DbovfejY6J8oCMjyzOrVEwxD1hkIA45EP7YeMoH5HD9NYeyyIcqdkZRWTLCo2ZgKsfuoDHBovgxGYRduMyqUOv0t6nvVK8oCkhuuRLHW2B0FFkElPa3IJ7trZ89bVcK8c2vlf7CdwE+VnxiGjVpSNgq/9cnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=loIp9n8s; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=2FLvUNKmUUOI9oGFN4S5Yxt9b1DL4nZ5rhrTKzw0Pbg=; b=loIp9n8s3in8Fncb4yXeksH5pb
+	JHfIfqs8ikcnros3eS6WxI/BtagbryOeQX4DrzmsD+/Pv724JvM57Kb+DC888DvrERtK+z0sISV0q
+	MmtST+wywd3Yq8rXR2ZKG5ZcY4MSMQJ+2sslNKRZh4WCqhlKIEN9Ha34UN81sekZmlFU80ngqPbcv
+	ZOMqQLiLPUdrVvLfs0JeelkDgAnP76bVzCyj8YKcRUYJiX/N5HCaiL61IaVaIVxSwnCgVizd+qrW4
+	FYFAh9626pkN2QpwNX+scOXldavm+DoxfAyL6W1TbBCgOiGQXvYc3q60Nfa+3oHRBXXIyfubIal34
+	irmevVWg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sI2zy-000000028xX-2zBc;
+	Fri, 14 Jun 2024 09:13:30 +0000
+Date: Fri, 14 Jun 2024 02:13:30 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	djwong@kernel.org, brauner@kernel.org, david@fromorbit.com,
+	chandanbabu@kernel.org, jack@suse.cz, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com,
+	John Garry <john.g.garry@oracle.com>
+Subject: Re: [PATCH -next v5 7/8] xfs: speed up truncating down a big
+ realtime inode
+Message-ID: <ZmwJuiMHQ8qgkJDS@infradead.org>
+References: <20240613090033.2246907-1-yi.zhang@huaweicloud.com>
+ <20240613090033.2246907-8-yi.zhang@huaweicloud.com>
+ <ZmveZolfY0Q0--1k@infradead.org>
+ <399680eb-cd60-4c27-ef2b-2704e470d228@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240613-cros_ec-led-v3-0-500b50f41e0f@weissschuh.net>
+In-Reply-To: <399680eb-cd60-4c27-ef2b-2704e470d228@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, 13 Jun 2024, Thomas Weißschuh wrote:
+On Fri, Jun 14, 2024 at 03:18:07PM +0800, Zhang Yi wrote:
+> Thanks for your suggestion.
+> 
+> Yeah, we could fix the realtime inode problem by just drop this part, but
+> for the upcoming forcealign feature and atomic feature by John, IIUC, we
+> couldn't split and convert the tail extent like RT inode does, we should
+> zero out the entire tail force aligned extent, if not, atomic write could
+> be broken by submitting unaligned bios.
 
-> Add a LED driver that supports the LED devices exposed by the
-> ChromeOS Embedded Controller.
-> 
-> Patch 1-3 add a utility function to the led subsystem.
-> Patch 4 introduces the actual driver.
-> Patch 5 registers the driver through the cros_ec mfd devices.
-> 
-> Currently the driver introduces some non-standard LED functions.
-> (See "cros_ec_led_functions")
-> 
-> Tested on a Framework 13 AMD, Firmware 3.05.
-> 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> ---
-> Changes in v3:
-> - Set default_trigger explicitly as the LED core doesn't do this anymore
-> - Only set intensity for first subled by default
-> - Link to v2: https://lore.kernel.org/r/20240531-cros_ec-led-v2-0-6cc34408b40d@weissschuh.net
-> 
-> Changes in v2:
-> - Cosmetic cleanups (Tzung-Bi)
-> - Add trailing comma to MFD cell array
-> - Rename LEDs and trigger to "chromeos" prefix, to align with kbd
->   backlight driver
-> - Don't use type "rgb" anymore, they are only "multicolor"
-> - Align commit messages and subject to subsystem standards (Lee)
-> - Rename led_color_name() to led_get_color_name()
-> - The same for cros_ec_led_color_name()
-> - Link to v1: https://lore.kernel.org/r/20240520-cros_ec-led-v1-0-4068fc5c051a@weissschuh.net
-> 
-> ---
-> Thomas Weißschuh (5):
->       leds: core: Introduce led_get_color_name() function
->       leds: multicolor: Use led_get_color_name() function
->       leds: core: Unexport led_colors[] array
->       leds: Add ChromeOS EC driver
->       mfd: cros_ec: Register LED subdevice
-> 
->  MAINTAINERS                         |   5 +
->  drivers/leds/Kconfig                |  15 ++
->  drivers/leds/Makefile               |   1 +
->  drivers/leds/led-class-multicolor.c |   2 +-
->  drivers/leds/led-core.c             |  12 +-
->  drivers/leds/leds-cros_ec.c         | 299 ++++++++++++++++++++++++++++++++++++
->  drivers/leds/leds.h                 |   1 -
->  drivers/mfd/cros_ec_dev.c           |   9 ++
->  include/linux/leds.h                |  10 ++
->  9 files changed, 350 insertions(+), 4 deletions(-)
-> ---
-> base-commit: 2ccbdf43d5e758f8493a95252073cf9078a5fea5
-> change-id: 20240519-cros_ec-led-3efa24e3991e
+Let's worry about that if/when those actually land.  I also see no
+rason why those couldn't just use partially convert to unwritten path
+offhand (but without having looked into the details).
 
-Applied and submitted for testing.
-
-All being well, I'll follow-up with a cross-subsystem pull-request shortly
-
--- 
-Lee Jones [李琼斯]
 
