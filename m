@@ -1,148 +1,159 @@
-Return-Path: <linux-kernel+bounces-214421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED45F908429
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:04:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D64FE90842D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6986C1F22989
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:04:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42CC8B21E5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A461487F9;
-	Fri, 14 Jun 2024 07:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982D4148829;
+	Fri, 14 Jun 2024 07:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fH/MV2++"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="LxF65KUT"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2104.outbound.protection.outlook.com [40.92.102.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B4313A41A
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 07:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718348638; cv=none; b=UGiVMrNbBR74E4qS1DQsnCeMLc7Zi+VRqjcgAk0le0x2hcko5sbHDrMs9K3hPN/oynIGJAC2BVvFT2F+/DeCfeNkLFDs32kcpoILeP4YOTrO7twu/Vg9x9XZ/kW8ShobqboOKIQ7l2j4t/MVhIYaLh9IA+yskjtWAWCAea0uIX0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718348638; c=relaxed/simple;
-	bh=MNbfEaigD6aPLWW54LgFWKSKSsvzTT7J6aOZ31OO87c=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BiISgTG5diHX/ROKGBuNRyQzQvdRvPqW+7HJlzgxEQKDujhsclKzKPgeBV6JS2XHiKbl+xhnCUWLSTpnCLtx63yq9AvKsQ44N7xmGndaGdaPAezazPGF8s/9TKwAIUElV2T4i3Nftxd4ebcbJwdkB5LedHI+GmrTcvtYdJKU+dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fH/MV2++; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-421757d217aso20692965e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 00:03:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718348635; x=1718953435; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p4TNjSLKkh/gyKR6pHDFcT9hwwp7eBZGwBalltj+b7Q=;
-        b=fH/MV2++fbvhpL2hDr7kUBcXdWAuDhM2zqCa4cDui7BX6PmzRhiXuarPAmQQZnKCfL
-         mkSWPTLd+3SrlFihmp3bTuvsYRYArvHvrHx8bCza2CqdBzbBFQV04J9v0S6J+N8fZgui
-         XwWEP3+nmiI8EmRBrECKadO/Pfm3QKeM5HUTtD09aiSSGxEqe0y5mlAM6+PBTajJ1TZe
-         uC3jyBqWmFrM1ccN79YC31Xk+G7ZhmGkgLWCdcoza2DaYRa7wLZD9Yw0jIc6/Pxsri3S
-         OsEx4TTqfOw6n4/yjj9r7SlUG/PyqXW7Eu37VB3RSgrOYCnmu/bY7rBDfU4MTMFYs/3o
-         e2ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718348635; x=1718953435;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=p4TNjSLKkh/gyKR6pHDFcT9hwwp7eBZGwBalltj+b7Q=;
-        b=FAPA7VmQIqwoloHuoRFr4ESkGGZTnDwxlKbpGBT1uo7lHC797KZ931UlWGakA0c7MR
-         UCDua9JDqBRONe8o9jX5H8vTI8DnIdVfb02OcstCLL9JKsjEl8piZl/9Kp2IJfzam+hN
-         CyO/V9OzJaD21hrA9hHS+NscpD/1/VTZdNwqkl1QJJDjNPCHWGZdweaRp45I0slfuE9D
-         R2DvDPoE8UZSqHROQUzD0JC1Raci8swnClyMDBnIE2He8OszFUbN+746Gz1S3dJqnMD/
-         GfSpa4ltcIIzctvuvb8Y4Hu6bVq+zMHV3dXRcFV7M9auoQrODv3VRookaUJ6GvLDqaOW
-         7dVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWVnCPocwnCBMJBRZjNajpc2OMlW9oFRAed2KOliZ5b+g1j16Cdf4ZvV0xkWCRydzK4/OthVJpJq+kjEwLj+FaUj0wfShAZOD+WSoYs
-X-Gm-Message-State: AOJu0YwrTOzrulECJcGnCvSN4JP2pMZ7Hl+KlsDlJm+UXMZxMDNcN9vv
-	/29L2JUNMPoXNAsoQstT0iwCrETXpfFw5ZL8+1Kc9BPc9Epns7YO+afaL2TGbwk=
-X-Google-Smtp-Source: AGHT+IHAglRk9laq/PIfLee3Z5IGuhgrv0laafxD6GLaZVL31iAoc0E90SWCdrFlPsghFo7Ds38cTA==
-X-Received: by 2002:a05:600c:3c9a:b0:41c:2313:da8d with SMTP id 5b1f17b1804b1-4230483252bmr21763455e9.0.1718348635126;
-        Fri, 14 Jun 2024 00:03:55 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:261a:269e:a3a8:a2cc? ([2a01:e0a:982:cbb0:261a:269e:a3a8:a2cc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de623sm87193705e9.31.2024.06.14.00.03.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 00:03:54 -0700 (PDT)
-Message-ID: <ef7015e9-53b8-414c-802c-a56b98506755@linaro.org>
-Date: Fri, 14 Jun 2024 09:03:53 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DB012FF87;
+	Fri, 14 Jun 2024 07:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.104
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718348720; cv=fail; b=FIqNzU5bpIOwX3U1Z12f+hG/DGGik92xxibMriwwmoZcbinNKHoMNs0oKvP1wHSLDtMuwQPcjDVNU4a9BnteoPtg9+6DdYbStZCnMDm7LLeBrWSLpXI9mbIJfft88ZdEB6NoMmiE9tB1QTX1cjHaD8yyBkrn/adgkPaKVi7qpBY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718348720; c=relaxed/simple;
+	bh=6gWjo353oZ/i0X+Gm3CxBXqNIuuOMoo6TI9jFc0/EBE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=WoulxN37H/BBYa8S/Bd1RoI4jF24cqzcm5kqeHDeoYaV8+Brtafqd9Rzi8Xj1tT+OuKik66qt0oobR8hahL+zwOp0M4NHmi382xU4OBvjB+9qXjE4xgKGbV4VYHCKp9AqNHTE+rF5XA2Xh6i5hQK32qqQOz8TD3HkJl91h66ap8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=LxF65KUT; arc=fail smtp.client-ip=40.92.102.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=I4K1U0N+bdheGn3afld9e0UMw4gFiT2sqL3PO922Zn2csNF+7HVr1nGns8vtvq/vJSmmWbu7x5SFYKL2GGhhjMzBmXDmAis1y7yoFVRarzzic0Qfu9N3wHjWjzjX1sXpAorJakglCf0pt6yUh+WlIrPBb9ioICXQ5NzDWPnTp2W7Uf9Lb8DkGzaIu84nOhysirtNRFqg1I4oQDIBZL3rS2CvSsewgRHSzm4GDyFUFQapirtVATRqzi5GqGbvLUomRPJ/DHFJgNPBMaX8vyJGk2VLs1Tmy7W4VdhoezaCJ1EY96q45dg6/7WKPfik9dYyZbEyt7wZcTS9cVJMhMLUVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6gWjo353oZ/i0X+Gm3CxBXqNIuuOMoo6TI9jFc0/EBE=;
+ b=T4pvJ9GRhkJbbsC0wq8xxKdzf6o4/UkOBmummXFcej/PVfrQ5w5oVZ+AvDqDmCn6yWEO2pFyoop2aD7Ix1AphAvmL6k29uKlT8phjyj4M7IzCdpGtGmEzpuIm0N3gIygYlJR4w5Wy3qyoEAm07NW5RzJYqg/DTnJ8EkJBV/om6pL8SRl/cELEUFUxf7ljVQSlOQV1+92Pb4fSAbJ8ecwvL6vc+a/KzWWlDsYgTI7Y4vZzVLypbmrQjKPXxv1T7H3uHdRhbq2k/OZ6GOF9A2/WrZQCUgQ7kOeWlAqB78ySo+TqM4UpaW9iMAbImDSpWuaO+nOhvX0HR30QAvzkbzRLw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6gWjo353oZ/i0X+Gm3CxBXqNIuuOMoo6TI9jFc0/EBE=;
+ b=LxF65KUT7jwGyrIpQ4RqFUFo8qe6yTSpGKcpIAts77f273Rnw1cYQd7/UNAH76MGnlwp/FKERBVN07VaeNJvcTKhndFxOTpmbSmfgt8gD0BaJ/yU47PX127KG/ur3EZZG1Lhu6BRh3goG8KBPwu4wjiavQPXZI2mM5ET8xMujpPstfxtsOZeV8R4k4Opvw58r90AOCmkgCe4A7ECHgThGGREYzw+LEZPyAOtuHTBYrXMHWD1v8y6c/sojK9+rtFkLXKx/oQTyK7PsvzwD9cuvLY6B5e1AmXQrd4+7ZOxLL0ME1UlETi2DpkMf9/Eoj5GW90Xq8WCUoMZ+jPRF6iWWw==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by PNXP287MB0077.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:c4::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.25; Fri, 14 Jun
+ 2024 07:05:10 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.7677.024; Fri, 14 Jun 2024
+ 07:05:10 +0000
+Message-ID:
+ <MA0P287MB2822FAB6825487FEC3756241FEC22@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Fri, 14 Jun 2024 15:05:01 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 0/5] riscv: sophgo: add clock support for sg2042
+To: Conor Dooley <conor@kernel.org>
+Cc: Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu,
+ chao.wei@sophgo.com, krzysztof.kozlowski+dt@linaro.org,
+ mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
+ richardcochran@gmail.com, robh+dt@kernel.org, sboyd@kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, guoren@kernel.org,
+ jszhang@kernel.org, inochiama@outlook.com, samuel.holland@sifive.com
+References: <cover.1717661798.git.unicorn_wang@outlook.com>
+ <MA0P287MB2822B36985A6EC138C2A97CAFEC12@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+ <20240613-partly-closure-b473efa8fbce@spud>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <20240613-partly-closure-b473efa8fbce@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TMN: [3JyLCXtZpAw/f5Sn+BCcTElAUlqo3CNI]
+X-ClientProxiedBy: SI2PR02CA0052.apcprd02.prod.outlook.com
+ (2603:1096:4:196::18) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <25e2c5eb-273f-4755-9fc4-e80f96996bca@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] firmware: meson_sm: add missing MODULE_DESCRIPTION()
- macro
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20240613-md-arm64-drivers-firmware-meson-v1-1-28e4138a8597@quicinc.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240613-md-arm64-drivers-firmware-meson-v1-1-28e4138a8597@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PNXP287MB0077:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6bc92fba-e9a8-4a15-93a7-08dc8c40545a
+X-Microsoft-Antispam: BCL:0;ARA:14566002|461199023|3412199020|440099023;
+X-Microsoft-Antispam-Message-Info:
+	yofAFqaTpwyVaMbA32IAKs1hnhSjHPLH8bk4cKFSi4v0+VFqyubfFhcQd0Jz+ddlJESqPp936rEqxt2IC4XrSwx/WpVWL7nxlQbNmxvA4+TS66OYGSJlM3lfCgvsBLQN+8jxLfsOAqzUXxztF7PJl4ysnotvSW7QYb4yL2LPt+XBT+qj9GmAFktgIlekm/lQIusbyh2BfsH1t3j4BUGiXMYa3IHypfF2hHaD/VNu9O8Htkd5wdtXxDhbNIkdyswEWNdnmbLd9VC1eS8VwbxEOX4+G0csx0tqXLp1IdhUOmAWMdAOrsySDeCYQno+LNbqqDjgd8gy/asUGyeJOILw1bbaJSP8nEPHo3gfP7KnOQg0Psldu/B3D5wVcpceT56lR/V0msL3m/GCfeKHMxXUlca0aZlUxBxeKszfUDVu5+ajV7RpZngOqiPP3jVqRJodDVBxjNnCSoZbR5mLEZJRbtNVP9JZWj4hmuOeQK8n/e/QBt9Ctd0/poQfLvv0Fg2KE57IavpFTHn1AqUzVYnJGgpZ06WmFlTx3m1R06VmRcH7aUGr7BianZT0xs8DQk5/
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TGo3TVdlWUZWSVlmb0NlalJKUDZnQ044cGtodTREc2ZlZ2I3cTYxS2tKVTBo?=
+ =?utf-8?B?SmFJd2dSSGVSQ1lNcks0bHk4TzIweUFSbkVEVWpxQW9VU09ZYy9rWmdFU2V6?=
+ =?utf-8?B?RUY0R29Vd1RqZXRFTVlMYVpXdjMxaWp4V2xNNi9jTXJIOGQ3TU9jNldxWWh1?=
+ =?utf-8?B?YVNwOXRWU1E1dEw2Y2VrYVMwUm1CbzBzbjM3dHE4UVN6cmE3YVZjWDY3UWhJ?=
+ =?utf-8?B?MVUya0xlRldZOE1CRFIzNmFZV0x0em0rSlR1VTBFL1EvaTMvQ2pLaE0ycTk2?=
+ =?utf-8?B?N2VnMGlIWVIrQ1pPamVYemhnejNNWHdUMHR5YmlkSndqRlgzNmY1ek9EVVpn?=
+ =?utf-8?B?VmFOT2JDZE5yS0J2a2haMmhoQ2lNdmExUFU2SHBmRWpTU3dzVlJheGc4Z1cy?=
+ =?utf-8?B?SzJ1Ri93R1pydDJmcUNuMFZ4SU1WbWorMDNEN3JweXNyc2dpTTAwN2RMRW1C?=
+ =?utf-8?B?ZzNJYjk1S08vckMxN2swNWFOSFlIZVJnUGtMMnpGV1U3QU5DU0JHVmFaWjVD?=
+ =?utf-8?B?TGhlKzdsc05hUk12TFc2Zk54UVBBQ0VLbmd1SWVuR09CV1BsZ3RONHNpSWpm?=
+ =?utf-8?B?b2FoMkNlT0RNVWx5aUtxRzc4Q0xoR255b3VPaVh3S1gvV0lVOTV2K1N6L1hk?=
+ =?utf-8?B?dHVxSjd0NmdUUkVaVGFXY3lCK0N5NnZTQzVHbEhFc0V1ellnaU1uL2g2OFlW?=
+ =?utf-8?B?eUdHOUk2ZGpxRWJuQW1Rakc0T3NVeUdKVnIxajRaVmJxeStmZTA0WHRLM0xP?=
+ =?utf-8?B?eWI0SGZBYlQ2Wk5oRGRtL2J3MW9GOVJpRVNnYWI2UkJaN3ZQRFBDRjdUaWZ5?=
+ =?utf-8?B?V3lQdmJISW9RaVN2aTZ0M2FVV25QTHlZdXlNeitkWVpHM1kraXFyQVdRTVk3?=
+ =?utf-8?B?QUhaczNwN1M4UFNObzNVTEpuOEpQbFhVV0Fkd1Y2aXRDbmN4TUpCVHB6WkRm?=
+ =?utf-8?B?S2dadVZsRTBhaVVYc3ZMK3UvNTdZT3ZDdXNMMFJiUjAvanpHejFDSlVydnpp?=
+ =?utf-8?B?cGVPSmdlb1NYTHljNVByUjViS0VpUlRNRlc1Sy9mNThkSk12WUJtbzVBTlNt?=
+ =?utf-8?B?ak5WeHJ2TmxodDBIeDlEaGhKeWJDdmE4STdxSGZoV3BackU4OWk4NG1qL2VE?=
+ =?utf-8?B?ZTVrd0RVWnZaeldyUEZuNWo1TGMwSU5td0UyZjlVZU14L2s1Y29RMXhoLzRX?=
+ =?utf-8?B?dU50YnFtOTJ5dWJhMk4zOWJiSTJPOUM5QmdqWWFVVGlIellOODlnNjBXWmlX?=
+ =?utf-8?B?M1RyckF3WHhXa3g2Z1psM0tFdGFiS2VGR0R0emt5dFJaQml5TjFLams0QmVm?=
+ =?utf-8?B?Zng0N3o1YUZQZEJQNXNrM09XQmx3ODVrblFVWnpBZUc2Tm4wRlBqc2RLMjZU?=
+ =?utf-8?B?ek9HcytuZll5VFgyS01YSm80YnczbGZuRkJ5djYzb3VYUWhpcDYrRk5GUU93?=
+ =?utf-8?B?V3A3a3hrNk1nczVGZjh5YU1IZzRSeHJ5RmJ0QjhiRG5qaThSa2dQekVXTkZs?=
+ =?utf-8?B?eHF2UEgxUmVOcGpWN2NQS21pM3g3LzZkdUowQ1FhMkkzVnhFVmI3M0pJL0Ft?=
+ =?utf-8?B?TEVjcUZqckMxSTMyY2lCU1k3UTdyc2tMb1ByK3E4RjRoL0tJQUZDL3B3T1F4?=
+ =?utf-8?B?dGFhLzhrK2szdGJSQkhCam5OK0RqbE5iYmxQSTlsNENEMWE3YW1UZlBnZEF0?=
+ =?utf-8?Q?7lzRQ1n9v5HuMH4fCzbL?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6bc92fba-e9a8-4a15-93a7-08dc8c40545a
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2024 07:05:10.3658
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PNXP287MB0077
 
-On 13/06/2024 23:18, Jeff Johnson wrote:
-> With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/meson/meson_sm.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->   drivers/firmware/meson/meson_sm.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/firmware/meson/meson_sm.c b/drivers/firmware/meson/meson_sm.c
-> index 5d7f62fe1d5f..f25a9746249b 100644
-> --- a/drivers/firmware/meson/meson_sm.c
-> +++ b/drivers/firmware/meson/meson_sm.c
-> @@ -340,4 +340,5 @@ static struct platform_driver meson_sm_driver = {
->   	},
->   };
->   module_platform_driver_probe(meson_sm_driver, meson_sm_probe);
-> +MODULE_DESCRIPTION("Amlogic Secure Monitor driver");
->   MODULE_LICENSE("GPL v2");
-> 
-> ---
-> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> change-id: 20240613-md-arm64-drivers-firmware-meson-2ce24a9a9de9
-> 
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+On 2024/6/14 0:45, Conor Dooley wrote:
+> On Thu, Jun 13, 2024 at 05:34:03PM +0800, Chen Wang wrote:
+>> ping ~~~
+> My suggestion is that you, as platform maintainer for sophgo, apply these
+> patches and send Stephen a pull request. That's usually the best way to
+> expedite patches for clock drivers.
+>
+> Thanks,
+> Conor.
+
+Thank you, Conor, I will try this.
+
+Regards,
+
+Chen
+
+[......]
+
+
 
