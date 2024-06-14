@@ -1,146 +1,80 @@
-Return-Path: <linux-kernel+bounces-215244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC5190903C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:28:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11B32909043
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FDA81F22C48
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:28:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 178F41C20CFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBC417C20F;
-	Fri, 14 Jun 2024 16:28:18 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3571B180A78;
+	Fri, 14 Jun 2024 16:30:48 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA84637;
-	Fri, 14 Jun 2024 16:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01F41756A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 16:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718382498; cv=none; b=klv1u826hOyzL72uDUY+NbqC3doLpeaQgyVhjkKCv6dYjU5EvOkeUR+aHbdQ9rd2zuXi7anA0zvcQT0Q392I4OG3JzHxJKIfOtYzHCAcTSEfhSesaGIhRVmzavWWEb0h7Ss9/Hj0E6q35xTy1xAazZjTybdKYUzEgoUMsLjKhgo=
+	t=1718382647; cv=none; b=Gkqq5Gd2ctvI9tXqjwEQ0EXUh5yiNPo0sgFfzfbpJ7vBOhfiZ6T6ttq7Tk+viK1mgUG9rxblPB9G2jD7i3zgOccoXGI2lmxS4fn8FjHJOWiHqN3bFJuJGJwLp7V86V6So2KYkwAUTc7z8AmquxYJZX8xi9Swl7ioYfdck/v3V8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718382498; c=relaxed/simple;
-	bh=vXSQ5+BquuRvhQj/1WKknpvAxJollwsRa0HUggyd0vg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RAEvBDAFbTFQlXUvXVz31YO/sjlZva4gGyrQDOytdMoRbaTSk7qeVS9mAsP3AMGtq/1Om7PaXP/p9eftn3s1SCsswFlBsbBGfA0d5STBpgXhd7wNz2FiijSnri4hQ1dW+zwmeCFROB+i4QN6VlVJam29vqnkN4OWdQLZXltHPcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 921F32800F9A4;
-	Fri, 14 Jun 2024 18:28:12 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 7AC6AFF5DD; Fri, 14 Jun 2024 18:28:12 +0200 (CEST)
-Date: Fri, 14 Jun 2024 18:28:12 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Alistair Francis <alistair23@gmail.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-	Jonathan.Cameron@huawei.com, alex.williamson@redhat.com,
-	christian.koenig@amd.com, kch@nvidia.com,
-	gregkh@linuxfoundation.org, logang@deltatee.com,
-	linux-kernel@vger.kernel.org, chaitanyak@nvidia.com,
-	rdunlap@infradead.org, Alistair Francis <alistair.francis@wdc.com>
-Subject: Re: [PATCH v11 3/4] PCI/DOE: Expose the DOE features via sysfs
-Message-ID: <ZmxvnLDBhkWPrXGK@wunner.de>
-References: <20240614001244.925401-1-alistair.francis@wdc.com>
- <20240614001244.925401-3-alistair.francis@wdc.com>
+	s=arc-20240116; t=1718382647; c=relaxed/simple;
+	bh=NP/w9eF1odFhNih4JuDBdoZkpi6HfrXoTgiTK2coqdY=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=bZ1+5/kG6vjCKa9vzK69e2lJCoupQK9w2RautUsQyA1jn39UWeI9mho7GWVHIZ0phrHDG16XgVUoWuJhdFL6+oymTKOjRVFYcn5Bl1fGjXWANloolp64D39eKgBO37GIDQXtffVVS7pY5rD9422458jGk39Dk6C14PwyrZoNkWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 697DAC2BD10;
+	Fri, 14 Jun 2024 16:30:47 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.97)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1sI9pW-00000001roz-1Q7d;
+	Fri, 14 Jun 2024 12:31:10 -0400
+Message-ID: <20240614163015.456541709@goodmis.org>
+User-Agent: quilt/0.68
+Date: Fri, 14 Jun 2024 12:30:15 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 00/13] tracing/ring-buffer: Persistent traces across a reboot or crash
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614001244.925401-3-alistair.francis@wdc.com>
-
-On Fri, Jun 14, 2024 at 10:12:43AM +1000, Alistair Francis wrote:
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -16,6 +16,7 @@
->  #include <linux/kernel.h>
->  #include <linux/sched.h>
->  #include <linux/pci.h>
-> +#include <linux/pci-doe.h>
->  #include <linux/stat.h>
->  #include <linux/export.h>
->  #include <linux/topology.h>
-
-I'm not seeing any symbols used here which are defined in pci-doe.h.
-Am I missing something?
-
-If not this additional #include can be dropped.
 
 
-> @@ -1143,6 +1144,9 @@ static void pci_remove_resource_files(struct pci_dev *pdev)
->  {
->  	int i;
->  
-> +	if (IS_ENABLED(CONFIG_PCI_DOE))
-> +		pci_doe_sysfs_teardown(pdev);
-> +
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ring-buffer/for-next
 
-No need to constrain to "if (IS_ENABLED(CONFIG_PCI_DOE))" as you're
-defining an empty static inline in the header file.
+Head SHA1: a62b4f6fbdffa8e90959da485b68f844241d300f
 
 
-> @@ -1227,6 +1231,12 @@ static int pci_create_resource_files(struct pci_dev *pdev)
->  	int i;
->  	int retval;
->  
-> +	if (IS_ENABLED(CONFIG_PCI_DOE)) {
-> +		retval = pci_doe_sysfs_init(pdev);
-> +		if (retval)
-> +			return retval;
-> +	}
-> +
+Steven Rostedt (Google) (13):
+      ring-buffer: Allow mapped field to be set without mapping
+      ring-buffer: Add ring_buffer_alloc_range()
+      ring-buffer: Add ring_buffer_meta data
+      tracing: Implement creating an instance based on a given memory region
+      ring-buffer: Add output of ring buffer meta page
+      ring-buffer: Add test if range of boot buffer is valid
+      ring-buffer: Validate boot range memory events
+      tracing: Add option to use memmapped memory for trace boot instance
+      ring-buffer: Save text and data locations in mapped meta data
+      tracing/ring-buffer: Add last_boot_info file to boot instance
+      tracing: Handle old buffer mappings for event strings and functions
+      tracing: Update function tracing output for previous boot buffer
+      tracing: Add last boot delta offset for stack traces
 
-Same here.
-
-Note that pci_{create,remove}_resource_files() is not the right place
-to dynamically add sysfs attributes.  These functions are called very
-late to postpone exposure of ROM resources until they're enumerated.
-You want to add your sysfs attributes right after device_add() has been
-called and you want to remove them right before device_del() is called.
-
-See here for an example how it's done correctly:
-
-https://lore.kernel.org/all/20240528131940.16924-3-mariusz.tkaczyk@linux.intel.com/
-
-(Search for the call to pci_npem_create() in pci_device_add() and
-pci_npem_remove() in pci_destroy_dev().)
-
-
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -189,6 +189,7 @@ extern const struct attribute_group *pci_dev_groups[];
->  extern const struct attribute_group *pci_dev_attr_groups[];
->  extern const struct attribute_group *pcibus_groups[];
->  extern const struct attribute_group *pci_bus_groups[];
-> +extern const struct attribute_group pci_doe_sysfs_group;
->  #else
->  static inline int pci_create_sysfs_dev_files(struct pci_dev *pdev) { return 0; }
->  static inline void pci_remove_sysfs_dev_files(struct pci_dev *pdev) { }
-> @@ -196,6 +197,7 @@ static inline void pci_remove_sysfs_dev_files(struct pci_dev *pdev) { }
->  #define pci_dev_attr_groups NULL
->  #define pcibus_groups NULL
->  #define pci_bus_groups NULL
-> +#define pci_doe_sysfs_group NULL
->  #endif
-
-You only need the "extern const struct ..." definition, not the
-NULL definition.  The reason we have these NULL definitions is
-because we're referencing the attribute groups in files which
-are compiled even if CONFIG_SYSFS=n.  But I believe that's not
-the case here.
-
-Thanks,
-
-Lukas
+----
+ Documentation/admin-guide/kernel-parameters.txt |   9 +
+ include/linux/ring_buffer.h                     |  20 +
+ kernel/trace/ring_buffer.c                      | 878 +++++++++++++++++++++---
+ kernel/trace/trace.c                            | 242 ++++++-
+ kernel/trace/trace.h                            |  10 +-
+ kernel/trace/trace_output.c                     |  12 +-
+ 6 files changed, 1056 insertions(+), 115 deletions(-)
 
