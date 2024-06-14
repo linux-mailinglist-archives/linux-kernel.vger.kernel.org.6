@@ -1,163 +1,134 @@
-Return-Path: <linux-kernel+bounces-214635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D452B90876D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:29:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB9FC908772
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68C50B24B49
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:29:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A78511C244A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAC11922E4;
-	Fri, 14 Jun 2024 09:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB09E1922C2;
+	Fri, 14 Jun 2024 09:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RMg1JEWD"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="J9dp0fEv"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1482AEE9
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30EE481D0;
+	Fri, 14 Jun 2024 09:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718357369; cv=none; b=VKIeMuR4OO3oU6i5L73FLCmBSVds4+EIbGNBVSldNoqabU16pda+Qa7ajy84uqygkmBDbh4ExrXvCCfP7DUTEs+ulLCSIwNsVrp9YDLblNoawEXd3VjXMbQBI8WZeRai5xLaMwDZySRXmqhxKwBW+BiGZgeZOZG3L0vWqssz62k=
+	t=1718357477; cv=none; b=QPdfEU4IIP+8i0MVvDv3CkGn2A06m+JzowKS2mWAiXs5gV+QkK4BWMVI7mhgcKgIbr6yS/atHW+rHY9Ul1Z4QR4mmNqmRsTqx3Yzo7W4l14geT8xq+GAJPbIElZkPkB2jb/Y6AAEClxCfMRoySnHbxubm/r4hV+tdb8KqKOyeVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718357369; c=relaxed/simple;
-	bh=2EFgdU2m8MZMkfNPC/OdfW+RXLLf0iLElY/mcH8eE44=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V2P4NG73eVrBHUqUlbjSvgddtlITRLstaMBLF5U8Ln8cJUZJxKAx0p5DF1spPIGOUx9KaBp0gAYpjaljanuTQIKIDtAnKVnjMFQjyxlqhczVMuDjd+YtrsiUI4XnhL9Qz1aIhgxDBtTuil21Bhcf/QCAG3Rzckjz9HJbZmShnjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RMg1JEWD; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57a1fe6392eso2584093a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 02:29:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718357366; x=1718962166; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2EFgdU2m8MZMkfNPC/OdfW+RXLLf0iLElY/mcH8eE44=;
-        b=RMg1JEWDOKlQBP4Exg5GO+jkD3sjKzKNUMC7grM2QA6evW1W4n1jYuwqpLlUtiX56s
-         +ayzbzaIXUtbISMaelgsoG+go5KrlwHkPRWEiGXKlSIQEwVCaGsebwPTdbsly09VeJVz
-         Oj3C54biCNPZIiHrFGqdCGJCNrXbXiJuYRYJ8j36nOZCaY5zlmhWXNMlQufSAcPhAiON
-         3LTRMJsU81xas9hDYA46+0DJX9J3TfWfvILDR38xn3il1UAOApFpdsFKm4mI84cYsi9s
-         JlzFHcfe290K1db7YX9Q0lfOgBLHOBM4MUCGDh2K2pNasx2+Ck87QL7eRY8NNdGh9Y2G
-         cYjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718357366; x=1718962166;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2EFgdU2m8MZMkfNPC/OdfW+RXLLf0iLElY/mcH8eE44=;
-        b=SNyAi/kQnUl90AE2LD3s9YGBmf/CuhESH1H36LHSbXDlpuQ8qKzjCSmwWpoZsB3Qlp
-         v+6ugXycbRNcig2dV4z2FwKP/8uiDElr2RBbQsqpGL3FOee1QXYjfWssuJ2TByRKYSWP
-         hjRQFmhcp9zoe+hnMvfyx9tKAOavk3EV9ItPZpU/3Mx/HgqT/3CHoNcLJcdFWgyqwa0I
-         HHZFPfG25nTNNiaCKt6V2J3bF6tGO3BgmdW2lclRMoDE75VSyHfM9IfeVpIenECs0FQQ
-         6ahxAVHZ+cdcBPU7KxCQlTQGN7Yro/EAuiDZ1d3hA9ICN2B107oWKXHCwTRUrzXcHjyS
-         zw9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVT7Ec74a8Zgu702EgpZDMkPzNR20cgoue3cK8DdtZdjXMnrTyCn2nET3woHKyJIl9/0hbSEbf5aafRdbG7d6NpVCVgW4GjvJvX2aoX
-X-Gm-Message-State: AOJu0YwGeHVs+U1ZBWR9b6qNEnWci0kI/4Oy6N7xw6lKxDaaeN7lL38I
-	614MHqnbOTAoGk0YC55m5sinc2A9lpnzyrA4w4dG7VfYnAhV//LvvlSdVSCrXtYRGRuy8Mxdh2g
-	39gcl5GkIp3ZmMzvET8HArMlEB2cY8g5regDa
-X-Google-Smtp-Source: AGHT+IE/Dsm5sUO90WDhySqhQle8Wcf1bswme3pUqrR0JWcYyB5h/4IPxDUk/BYo+n4AtSKF3b8oVx+F2L267FDc7+s=
-X-Received: by 2002:a17:906:b814:b0:a6f:5609:9552 with SMTP id
- a640c23a62f3a-a6f60cee4ebmr125971166b.10.1718357365840; Fri, 14 Jun 2024
- 02:29:25 -0700 (PDT)
+	s=arc-20240116; t=1718357477; c=relaxed/simple;
+	bh=4ceCkLbXRmlPcpC7DXa3ORY5EqwpZcjocMUx6eOdwqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bmu8oC0JPLGgxZB2tAPOfIlmcN7Zef42O/2ygjK2u5Cj56gz9GHruJVFOiDwdPhK3nP8VGbwoSv1so1Sbs2E1wRzKgcQXjiq3MoFeo/f4eJ0TYW4gD8ZD+IL8PV2gd+S6u4N0DnmGlK+tFRw0CRvmyRllNq89FJ+d/frge9rZuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=J9dp0fEv; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1718357471;
+	bh=4ceCkLbXRmlPcpC7DXa3ORY5EqwpZcjocMUx6eOdwqE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J9dp0fEv+bRHXP/2V/m0DI6PsfWRGV6mPr5DFmcLtsGZiZGdmrGk9IcYCejxZ0u5G
+	 zzeKROMeYX7RxmjadVogL9bcPGUHf2EWgzKCN1qPahxksBq601tZIzUhFr0JajqFU4
+	 4PjYvWWCcQiGlCMcB0QiOCwZuiMYtxleVCDmGvtA=
+Date: Fri, 14 Jun 2024 11:31:11 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-leds@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
+	Dustin Howett <dustin@howett.net>, Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v3 0/5] ChromeOS Embedded Controller LED driver
+Message-ID: <047fa978-d0a5-47d3-adb2-4b49e45b7ed4@t-8ch.de>
+References: <20240613-cros_ec-led-v3-0-500b50f41e0f@weissschuh.net>
+ <20240614091220.GA3029315@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610121820.328876-1-usamaarif642@gmail.com>
- <CAJD7tkZzHhvVNjECqMiFKEu988eteiFk4aGpE=f=gXE4tnF4NA@mail.gmail.com> <52df55b7-2e1d-4a95-85bf-19f6680e3fec@gmail.com>
-In-Reply-To: <52df55b7-2e1d-4a95-85bf-19f6680e3fec@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Fri, 14 Jun 2024 02:28:47 -0700
-Message-ID: <CAJD7tkYRU-8_fxco6B+--9wVCKzHWOWM19AwfzJTLpVcJ_1P0Q@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] mm: store zero pages to be swapped out in a bitmap
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, david@redhat.com, 
-	ying.huang@intel.com, hughd@google.com, willy@infradead.org, 
-	nphamcs@gmail.com, chengming.zhou@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240614091220.GA3029315@google.com>
 
-On Fri, Jun 14, 2024 at 2:22=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
- wrote:
->
->
-> On 13/06/2024 22:21, Yosry Ahmed wrote:
-> > On Mon, Jun 10, 2024 at 5:18=E2=80=AFAM Usama Arif <usamaarif642@gmail.=
-com> wrote:
-> >> Going back to the v1 implementation of the patchseries. The main reaso=
-n
-> >> is that a correct version of v2 implementation requires another rmap
-> >> walk in shrink_folio_list to change the ptes from swap entry to zero p=
-ages to
-> >> work (i.e. more CPU used) [1], is more complex to implement compared t=
-o v1
-> >> and is harder to verify correctness compared to v1, where everything i=
-s
-> >> handled by swap.
-> >>
-> >> ---
-> >> As shown in the patchseries that introduced the zswap same-filled
-> >> optimization [2], 10-20% of the pages stored in zswap are same-filled.
-> >> This is also observed across Meta's server fleet.
-> >> By using VM counters in swap_writepage (not included in this
-> >> patchseries) it was found that less than 1% of the same-filled
-> >> pages to be swapped out are non-zero pages.
-> >>
-> >> For conventional swap setup (without zswap), rather than reading/writi=
-ng
-> >> these pages to flash resulting in increased I/O and flash wear, a bitm=
-ap
-> >> can be used to mark these pages as zero at write time, and the pages c=
-an
-> >> be filled at read time if the bit corresponding to the page is set.
-> >>
-> >> When using zswap with swap, this also means that a zswap_entry does no=
-t
-> >> need to be allocated for zero filled pages resulting in memory savings
-> >> which would offset the memory used for the bitmap.
-> >>
-> >> A similar attempt was made earlier in [3] where zswap would only track
-> >> zero-filled pages instead of same-filled.
-> >> This patchseries adds zero-filled pages optimization to swap
-> >> (hence it can be used even if zswap is disabled) and removes the
-> >> same-filled code from zswap (as only 1% of the same-filled pages are
-> >> non-zero), simplifying code.
-> >>
-> >> This patchseries is based on mm-unstable.
-> > Aside from saving swap/zswap space and simplifying the zswap code
-> > (thanks for that!), did you observe any performance benefits from not
-> > having to go into zswap code for zero-filled pages?
-> >
-> > In [3], I observed ~1.5% improvement in kernbench just by optimizing
-> > zswap's handling of zero-filled pages, and that benchmark only
-> > produced around 1.5% zero-filled pages. I imagine avoiding the zswap
-> > code entirely, and for workloads that have 10-20% zero-filled pages,
-> > the performance improvement should be more pronounced.
-> >
-> > When zswap is not being used and all swap activity translates to IO, I
-> > imagine the benefits will be much more significant.
-> >
-> > I am curious if you have any numbers with or without zswap :)
->
-> Apart from tracking zero-filled pages (using inaccurate counters not in
-> this series) which had the same pattern to zswap_same_filled_pages, the
-> nvme writes went down around 5-10% during stable points in the
-> production experiment. The performance improved by 2-3% at some points,
-> but this is comparing 2 sets of machines running production workloads
-> (which can vary between machine sets), so I would take those numbers
-> cautiously and which is why I didnt include them in the cover letter.
->
+On 2024-06-14 10:12:20+0000, Lee Jones wrote:
+> On Thu, 13 Jun 2024, Thomas Weißschuh wrote:
+> 
+> > Add a LED driver that supports the LED devices exposed by the
+> > ChromeOS Embedded Controller.
+> > 
+> > Patch 1-3 add a utility function to the led subsystem.
+> > Patch 4 introduces the actual driver.
+> > Patch 5 registers the driver through the cros_ec mfd devices.
+> > 
+> > Currently the driver introduces some non-standard LED functions.
+> > (See "cros_ec_led_functions")
+> > 
+> > Tested on a Framework 13 AMD, Firmware 3.05.
+> > 
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> > Changes in v3:
+> > - Set default_trigger explicitly as the LED core doesn't do this anymore
+> > - Only set intensity for first subled by default
+> > - Link to v2: https://lore.kernel.org/r/20240531-cros_ec-led-v2-0-6cc34408b40d@weissschuh.net
+> > 
+> > Changes in v2:
+> > - Cosmetic cleanups (Tzung-Bi)
+> > - Add trailing comma to MFD cell array
+> > - Rename LEDs and trigger to "chromeos" prefix, to align with kbd
+> >   backlight driver
+> > - Don't use type "rgb" anymore, they are only "multicolor"
+> > - Align commit messages and subject to subsystem standards (Lee)
+> > - Rename led_color_name() to led_get_color_name()
+> > - The same for cros_ec_led_color_name()
+> > - Link to v1: https://lore.kernel.org/r/20240520-cros_ec-led-v1-0-4068fc5c051a@weissschuh.net
+> > 
+> > ---
+> > Thomas Weißschuh (5):
+> >       leds: core: Introduce led_get_color_name() function
+> >       leds: multicolor: Use led_get_color_name() function
+> >       leds: core: Unexport led_colors[] array
+> >       leds: Add ChromeOS EC driver
+> >       mfd: cros_ec: Register LED subdevice
+> > 
+> >  MAINTAINERS                         |   5 +
+> >  drivers/leds/Kconfig                |  15 ++
+> >  drivers/leds/Makefile               |   1 +
+> >  drivers/leds/led-class-multicolor.c |   2 +-
+> >  drivers/leds/led-core.c             |  12 +-
+> >  drivers/leds/leds-cros_ec.c         | 299 ++++++++++++++++++++++++++++++++++++
+> >  drivers/leds/leds.h                 |   1 -
+> >  drivers/mfd/cros_ec_dev.c           |   9 ++
+> >  include/linux/leds.h                |  10 ++
+> >  9 files changed, 350 insertions(+), 4 deletions(-)
+> > ---
+> > base-commit: 2ccbdf43d5e758f8493a95252073cf9078a5fea5
+> > change-id: 20240519-cros_ec-led-3efa24e3991e
+> 
+> Applied and submitted for testing.
+> 
+> All being well, I'll follow-up with a cross-subsystem pull-request shortly
 
-Yeah this makes sense, thanks. It would have been great if we had
-comparable numbers with and without this series. But this shouldn't be
-a big deal, the advantage of the series should be self-explanatory.
-It's just a shame you don't get to brag about it :)
+Thanks!
+
+I'm not sure which effect this application has on the review comments
+you gave to patch 4 (thanks for those, too).
+
+After implementing your requests, should I
+* resubmit the whole series
+* resubmit only patch 4
+* send an incremental patch on top of the series
+?
+
+
+Thomas
 
