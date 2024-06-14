@@ -1,97 +1,182 @@
-Return-Path: <linux-kernel+bounces-214204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1654C90812C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:57:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E73B5908130
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC4781F22C6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:57:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5602CB227B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B281822F9;
-	Fri, 14 Jun 2024 01:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ngASyHv2"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297CF1773D
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F20D1822F8;
+	Fri, 14 Jun 2024 01:58:05 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CD119D88A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718330220; cv=none; b=lkfAGKOff247uUPAjOuINa4cNewS+PaftMvGA6sXjNeyNaoiTb13/8RxvhGbkQjYOEmpjH3096E9C/HETnB+Q1L2isp/f2TjdjtuOT7ATMZdmL0gM1AtPikk99zfcSEjeu+M+qwDYxcy8rKNTTyYruq3InKKFoNegwn6H3sg3Wo=
+	t=1718330284; cv=none; b=qZB5QieK0X81VRBe9gcnHiGRPU9x1RaLtrOzzdHRVToJBxXWHzqkoRi6bCLHoQ2k1QWg70dTf5qqnNRdlhGHdZH2ajK7rQ2RuehQYILVG/T//Uudq9wJ4p5AG3qh3VjEETkoPrk2lsSXFy2ssbwx4jWqAfwqDEPmMQA8cIkx6MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718330220; c=relaxed/simple;
-	bh=vyOqg9db//0BT1sFIeTPiOlI0FScPbhfE9kHaAwECak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mu9ZuNZYamNpX4mt6wXRVFnJJkodG5yGCtNO/SKzCUuO+MMhGMQeWoiOpmweb82o6nNeGlPwiVMVfi5S2nWv4VQ8VZAJMll5GFh/TKCcbGD/lc7LqIUD9LXfqnTmOUeVvZ6Pmmtm9aDy38pNpnpcFBKx1GVpLKizh9czZlIU0MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ngASyHv2; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c1baf8ff31so306726a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:56:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718330216; x=1718935016; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=L/cT5QY86RD4pMSybSC7ezIiLKHexGe78wlrIu7nM5I=;
-        b=ngASyHv2k0Db0Cq2osrtVPvYZk0/CTFgqR3Al7qtLA6d8njdD3//ZI1cOCYOBHB22q
-         QDLJurvT7lM59AQ9KTNBAC/fD3WqsZp7u6m1lY4VG15cpTv+q0KP00mVBwJf5VL0OBSy
-         J++L1EE18DSptIJfxjsnom2R4LJCnLVz5UiVLuytNZ1nx7TN6yZ7jecs5vO50QGho1U+
-         /UinVVmTH8fLaOh2SuaBH6UfUlFXvEHA61oBGL+VzOD8sVbzTVleokbA22z2cOh++KAG
-         lYvyTdqGV2XFsaDViyAwNOe1xFJCQgzkY5/6o3c15UlPPYAWGM0zytIdDgvQYISqsNFQ
-         Ds8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718330216; x=1718935016;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L/cT5QY86RD4pMSybSC7ezIiLKHexGe78wlrIu7nM5I=;
-        b=nIB0GSv4DZNvqKXfKg2hLkq+l1vEgTyAR3mtZKcjAGT6WMhp1blxdXt2lOQLj0plgw
-         VA4OqrXvObHbY5oH8SuTUcQik74L4AXiO2ZmXJpjyw/4XNPlnwq4SLI6+AonOb8zrgNV
-         OBBa2R+nEzcHAYV4nkU/Mrh9CSxLmbjQZ+/aI7lOTVkLMSUFDhmwKgFGEd0VMWsDt6fX
-         B790+Pp/D3hvQY4AJ4Xy2UN3G1lZ7kon7T0wYU3Tud5Xo9bTMN6ocMpWTO6GMMTTDvR2
-         +U2uzOBJuQGIBPC/PsUK3fgeVotH8xrdHY52L/N64wMziF+8ls7ybIHSzyP57cMC263c
-         pWjw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3JrS+zVLAa2jW0gpeLpeo0XW2/03Jh2w/xQ7dqsyHT9ZAwXW2En2tZCqW2VTfYQWERGiw8mOpTpRohJIbCKY+Lq2tVz0zjqGROZBW
-X-Gm-Message-State: AOJu0Yx2AsZrJOUi84b1uYojCz4C5YF+5Cs3u7mTQ7e/OfYrADx9UIxl
-	gsaxZGoUinpULUjRdOPmeRsBhzBepmgXCR1piVLsVd4V8mLZ5XeMLrQr1MU3RVk=
-X-Google-Smtp-Source: AGHT+IG01YkLWFpFb5K5FGuGR1Hct+TnKSUI8iy4lKTY3rTUKYG2lCSLI60kr07UAtfDFCyqy/+wfw==
-X-Received: by 2002:a17:90a:578e:b0:2c4:cd15:3e4b with SMTP id 98e67ed59e1d1-2c4dc03a6a5mr1447650a91.4.1718330216343;
-        Thu, 13 Jun 2024 18:56:56 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4dc5f7e0esm631767a91.48.2024.06.13.18.56.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jun 2024 18:56:55 -0700 (PDT)
-Message-ID: <fc8f4adb-feef-421b-995d-ae9ae059f4c5@kernel.dk>
-Date: Thu, 13 Jun 2024 19:56:53 -0600
+	s=arc-20240116; t=1718330284; c=relaxed/simple;
+	bh=pNaP2i0RLq43N9o02Bf3GwmGTBO2FK7tqatydjNoddc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZA9V4F1pGLJfclTqpbBtBhboSmeKs/enAE8YTsmGxIrT0ksQW6Xz5eLuRNpRjUkMCKrbJke+e6Xqmlw3y8eEn+hsJ0lhj3mdVJx+cDC2sCxG9mEllhHxOFJpLkAvDew3AzwWnMbU7PPG6uh57ob9umkw+JbrLWOdzHwpiGmqgTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-d6dff70000001748-de-666ba39e165c
+Date: Fri, 14 Jun 2024 10:57:45 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	Byungchul Park <lkml.byungchul.park@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel_team@skhynix.com, akpm@linux-foundation.org,
+	ying.huang@intel.com, vernhao@tencent.com,
+	mgorman@techsingularity.net, hughd@google.com, willy@infradead.org,
+	peterz@infradead.org, luto@kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	rjgolo@gmail.com
+Subject: Re: [PATCH v11 09/12] mm: implement LUF(Lazy Unmap Flush) defering
+ tlb flush when folios get unmapped
+Message-ID: <20240614015745.GA47085@system.software.com>
+References: <20240531092001.30428-1-byungchul@sk.com>
+ <20240531092001.30428-10-byungchul@sk.com>
+ <fab1dd64-c652-4160-93b4-7b483a8874da@intel.com>
+ <CAHyrMpxETdVewTH3MCS4qPyD6Xf1zRUfWZf-8SCdpCFj2Pj_Wg@mail.gmail.com>
+ <f17f33e8-1c1f-460f-8c5a-713476f524a3@intel.com>
+ <26dc4594-430b-483c-a26c-7e68bade74b0@redhat.com>
+ <20240603093505.GA12549@system.software.com>
+ <d650c29b-129f-4fac-9a9d-ea1fbdae2c3a@intel.com>
+ <20240604015348.GB26609@system.software.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KMSAN: uninit-value in io_req_cqe_overflow
- (3)
-To: syzbot <syzbot+e6616d0dc8ded5dc56d6@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <0000000000003835b9061acfe0c4@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <0000000000003835b9061acfe0c4@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604015348.GB26609@system.software.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOIsWRmVeSWpSXmKPExsXC9ZZnoe68xdlpBod6zC3mrF/DZvF5wz82
+	i08vHzBavNjQzmjxdf0vZounn/pYLC7vmsNmcW/Nf1aLo52bmC3O71rLarFj6T4mi0sHFjBZ
+	HO89wGQx/95nNovNm6YyWxyfMpXR4vcPoI6TsyazOAh5fG/tY/HYOesuu8eCTaUem1doeSze
+	85LJY9OqTjaPTZ8msXu8O3eO3ePEjN8sHvNOBnq833eVzWPrLzuPxqnX2Dw+b5IL4IvisklJ
+	zcksSy3St0vgyjjTe5Sx4LpMxfuVPxgbGD+LdjFyckgImEicO9HFCmP/WzCHBcRmEVCVWLhm
+	P1icTUBd4saNn8wgtgiQfWrlcvYuRi4OZoHjzBIfPi5iBEkICxRIvJowiR3E5hWwkGh6+p8Z
+	pEhI4AqzxNHJX5khEoISJ2c+AdvALKAlcePfS6YuRg4gW1pi+T8OkDCngKXEy4YvbCC2qICy
+	xIFtx5kgjtvHLvHheiqELSlxcMUNlgmMArOQTJ2FZOoshKkLGJlXMQpl5pXlJmbmmOhlVOZl
+	Vugl5+duYgRG57LaP9E7GD9dCD7EKMDBqMTD6/EsK02INbGsuDL3EKMEB7OSCO+shUAh3pTE
+	yqrUovz4otKc1OJDjNIcLErivEbfylOEBNITS1KzU1MLUotgskwcnFINjJLedltKmNo093Nr
+	aebqbmwzf/hQq7Qzcv/SkvTtgb7uNk+5V9z2lev51GL99/NHliSLT/w7JjcsrLYXffLr4I5r
+	ih1zO600NwoqrzrqwaVWvfl0xqqmeO2bqkYhaTyP/iqsuJ/W4XeeRXB3t53hL72erMwnbZtS
+	f/pwWyUkPWvKCZ6Rd1BTiaU4I9FQi7moOBEAYeRamsoCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPIsWRmVeSWpSXmKPExsXC5WfdrDtvcXaawa6XShZz1q9hs/i84R+b
+	xaeXDxgtXmxoZ7T4uv4Xs8XTT30sFofnnmS1uLxrDpvFvTX/WS2Odm5itji/ay2rxY6l+5gs
+	Lh1YwGRxvPcAk8X8e5/ZLDZvmspscXzKVEaL3z+AOk7OmsziIOzxvbWPxWPnrLvsHgs2lXps
+	XqHlsXjPSyaPTas62Tw2fZrE7vHu3Dl2jxMzfrN4zDsZ6PF+31U2j8UvPjB5bP1l59E49Rqb
+	x+dNcgH8UVw2Kak5mWWpRfp2CVwZZ3qPMhZcl6l4v/IHYwPjZ9EuRk4OCQETiX8L5rCA2CwC
+	qhIL1+xnBbHZBNQlbtz4yQxiiwDZp1YuZ+9i5OJgFjjOLPHh4yJGkISwQIHEqwmT2EFsXgEL
+	iaan/5lBioQErjBLHJ38lRkiIShxcuYTsA3MAloSN/69ZOpi5ACypSWW/+MACXMKWEq8bPjC
+	BmKLCihLHNh2nGkCI+8sJN2zkHTPQuhewMi8ilEkM68sNzEzx1SvODujMi+zQi85P3cTIzDa
+	ltX+mbiD8ctl90OMAhyMSjy8Hs+y0oRYE8uKK3MPMUpwMCuJ8M5aCBTiTUmsrEotyo8vKs1J
+	LT7EKM3BoiTO6xWemiAkkJ5YkpqdmlqQWgSTZeLglGpg5LP9ET7JPF1Pm039TsFNgcC6Xd6m
+	mw60Wj3bePuBk9wejwguqxUqh8+nc7tfuLqyb+M843lrq16deidgdvEvI5ee5P+8n4E8lix6
+	gXeOu0oJiG+bI3JSNffezxoWTg32Ntu2q7P550hKqpqExVxVr1jbfvUvE/N9tyLtaaZfmZWE
+	d9Qq6CxWYinOSDTUYi4qTgQA7zbYpLICAAA=
+X-CFilter-Loop: Reflected
 
+On Tue, Jun 04, 2024 at 10:53:48AM +0900, Byungchul Park wrote:
+> On Mon, Jun 03, 2024 at 06:23:46AM -0700, Dave Hansen wrote:
+> > On 6/3/24 02:35, Byungchul Park wrote:
+> > ...> In luf's point of view, the points where the deferred flush should be
+> > > performed are simply:
+> > > 
+> > > 	1. when changing the vma maps, that might be luf'ed.
+> > > 	2. when updating data of the pages, that might be luf'ed.
+> > 
+> > It's simple, but the devil is in the details as always.
+> 
+> Agree with that.
+> 
+> > > All we need to do is to indentify the points:
+> > > 
+> > > 	1. when changing the vma maps, that might be luf'ed.
+> > > 
+> > > 	   a) mmap and munmap e.i. fault handler or unmap_region().
+> > > 	   b) permission to writable e.i. mprotect or fault handler.
+> > > 	   c) what I'm missing.
+> > 
+> > I'd say it even more generally: anything that installs a PTE which is
+> > inconsistent with the original PTE.  That, of course, includes writes.
+> > But it also includes crazy things that we do like uprobes.  Take a look
+> > at __replace_page().
+> > 
+> > I think the page_vma_mapped_walk() checks plus the ptl keep LUF at bay
+> > there.  But it needs some really thorough review.
+> > 
+> > But the bigger concern is that, if there was a problem, I can't think of
+> > a systematic way to find it.
+> > 
+> > > 	2. when updating data of the pages, that might be luf'ed.
+> > > 
+> > > 	   a) updating files through vfs e.g. file_end_write().
+> > > 	   b) updating files through writable maps e.i. 1-a) or 1-b).
+> > > 	   c) what I'm missing.
+> > 
+> > Filesystems or block devices that change content without a "write" from
+> > the local system.  Network filesystems and block devices come to mind.
+> 
+> AFAIK, every network filesystem eventully "updates" its connected local
+> filesystem.  It could be still handled at the point where updating the
+> local file system.
 
-#syz test: git://git.kernel.dk/linux.git syz-test
+To cover client of network file systems and any using page cache, struct
+address_space_operations's write_end() call sites seem to be the best
+place to handle that.  At the same time, of course, I should limit the
+target of luf to 'folio_mapping(folio) != NULL' for file pages.
 
--- 
-Jens Axboe
+	Byungchul
 
-
+> > I honestly don't know what all the rules are around these, but they
+> > could certainly be troublesome.
+> > 
+> > There appear to be some interactions for NFS between file locking and
+> > page cache flushing.
+> > 
+> > But, stepping back ...
+> > 
+> > I'd honestly be a lot more comfortable if there was even a debugging LUF
+> 
+> I'd better provide a method for better debugging.  Lemme know whatever
+> it is we need.
+> 
+> > mode that enforced a rule that said:
+> 
+> Why "debugging mode"?  The following rules should be enforced always.
+> 
+> >   1. A LUF'd PTE can't be rewritten until after a luf_flush() occurs
+> 
+> "luf_flush() should be followed when.." is more correct because
+> "luf_flush() -> another luf -> the pte gets rewritten" can happen.  So
+> it should be "the pte gets rewritten -> another luf by any chance ->
+> luf_flush()", that is still safe.
+> 
+> >   2. A LUF'd page's position in the page cache can't be replaced until
+> >      after a luf_flush()
+> 
+> "luf_flush() should be followed when.." is more correct too.
+> 
+> These two rules are exactly same as what I described but more specific.
+> I like your way to describe the rules.
+> 
+> 	Byungchul
+> 
+> > or *some* other independent set of rules that can tell us when something
+> > goes wrong.  That uprobes code, for instance, seems like it will work.
+> > But I can also imagine writing it ten other ways where it would break
+> > when combined with LUF.
 
