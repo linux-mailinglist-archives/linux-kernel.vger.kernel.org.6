@@ -1,53 +1,39 @@
-Return-Path: <linux-kernel+bounces-214984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF95D908CE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:01:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A572908CD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 650A01F27B0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:01:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 412C31C25422
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6FBEAF0;
-	Fri, 14 Jun 2024 14:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="YV0Uon9a"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E26946C;
-	Fri, 14 Jun 2024 14:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4E78F44;
+	Fri, 14 Jun 2024 13:59:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163D079CF
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718373645; cv=none; b=Y+MwBHas94PgGKHD/dCfGOA/qOJk5xVl9C4WT5Em4DW5UR3lVyxTTFEkNP1bLAhlHIzVaRcgXdRQps6+hn/ChOA+AcXJBICNFI4psWj8WkDyZmDi7jTq8UEq+TowpEQkWBPetKtbAhGTbRm0Lo8gJfKBMUt3Yr7w32yQMztRACc=
+	t=1718373555; cv=none; b=rDqnRiYbn/fcBQoiOtoeAuOkYx80YVtmBNIh/BZkv6e77Ge8yHEyEk0nh7dLyP/J9oT7QFjzyhy/80piTj9IE3m0m6DY8J2uGMroQRim6AbD0X7ODQicmDCP/HESaNGiX6zDpldSMxTiZBEGTaR9BZAK7UHylxiVoG+nWZvpI3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718373645; c=relaxed/simple;
-	bh=dtFIOzcHGLlLE56fbYI20sRmcTssDT8CPilSpqCXXcc=;
+	s=arc-20240116; t=1718373555; c=relaxed/simple;
+	bh=O8rQAoZh+GFQusD52/AxHZGlDyQ2BNovWAmx80/SfT8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fISNHFQ7Zgx9cfcks90+wCroVWgPuTrwSdkMyGjAjE25U30UKLR+EkZ19AstDhaokv2OEr6DhfvRGCkXxc5pC9yBLreZWasM4lMSaR2dSvMj49tp97lA1dDTLXUTzlV6P+CMwqBpSuwrnGghvi5Ob7ZYRWRy8mFF1su4BpY7L98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=YV0Uon9a; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 5FC1B889E9;
-	Fri, 14 Jun 2024 16:00:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1718373640;
-	bh=oUw90xGCTf/R7dw6Q3/eRNoQsVdHr+6eZVmO95Kclv0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YV0Uon9aW17RuCD2I4tLNs4DUZh687c3Uzp0pSqI0WjWtGi3wy/YSfHzpAllZ8CJz
-	 JtkJAsx53o2sX9XjurbO82uIhR/kzhnYuhD7d7iebIry7SBe+Dp1VQe8L43ScrhPMK
-	 kaCqr/zf0OxMR0gf1uyTc38MKAf53kOyHA17vPwJLlR1CI4QG2OAKm0k+la4y6nshX
-	 x2TlhJMvLdupYil3eY9sD9Phf2/UCVhetIPFnc9QLbBNpzxWQK45xZe4zMckCjP1Lp
-	 N5ngCLXil0/7/DcqEYSWbQNvpTTZ5Dd1jafnPFnSkIiiLB6G6RAkPjYPtjCgxoHMKG
-	 1Usv9sWiKenVQ==
-Message-ID: <4c2f1bac-4957-4814-bf62-816340bd9ff6@denx.de>
-Date: Fri, 14 Jun 2024 15:58:33 +0200
+	 In-Reply-To:Content-Type; b=TxLXgsaDdAw/xaIpg4F/3myR3gGyekQNkyDFwDFyRGMg/YVDPmY1sLxh08MVzgYhmwB4yhJOmof77Vj4/UWNfjGzMJVgiyC0Me1WFntNiuZPUR2Nu7Y2ZuSNEYJ0PhrPZSr/t8IGFWinAsBYos2HNtrl94FjQj2bEh5gk/Mrdu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0DE8FFEC;
+	Fri, 14 Jun 2024 06:59:38 -0700 (PDT)
+Received: from [10.1.196.28] (eglon.cambridge.arm.com [10.1.196.28])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1BB913F5A1;
+	Fri, 14 Jun 2024 06:59:09 -0700 (PDT)
+Message-ID: <a029cfe6-7526-44c1-a0db-88d2ad8bb827@arm.com>
+Date: Fri, 14 Jun 2024 14:59:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,160 +41,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next,PATCH 2/2] net: stmmac: dwmac-stm32: stm32: add
- management of stm32mp25 for stm32
-To: Christophe Roullier <christophe.roullier@foss.st.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Richard Cochran <richardcochran@gmail.com>, Jose Abreu
- <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240614130812.72425-1-christophe.roullier@foss.st.com>
- <20240614130812.72425-3-christophe.roullier@foss.st.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <20240614130812.72425-3-christophe.roullier@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v1 28/31] x86/resctrl: Drop __init/__exit on assorted
+ symbols
+Content-Language: en-GB
+To: Dave Martin <Dave.Martin@arm.com>,
+ Amit Singh Tomar <amitsinght@marvell.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
+ Babu Moger <Babu.Moger@amd.com>, shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, David Hildenbrand <david@redhat.com>,
+ Rex Nie <rex.nie@jaguarmicro.com>
+References: <20240321165106.31602-1-james.morse@arm.com>
+ <20240321165106.31602-29-james.morse@arm.com>
+ <c27c7813-5744-4363-bb7b-f9fbe80fd549@intel.com>
+ <ZhfzF8L6w1pgJJ1r@e133380.arm.com>
+ <47af4fef-35d3-4d88-9afa-42c1a99fbe07@marvell.com>
+ <ZhlfQKMg4xeA53SD@e133380.arm.com>
+ <b87653fa-34e3-4124-a96f-f5d2b9730f10@marvell.com>
+ <ZjEaA+YRPA+p9msM@e133380.arm.com>
+ <cb40c3e6-f678-45c7-b8e7-a6f337b51dfb@marvell.com>
+ <ZjO4LXqGcy4bwsn4@e133380.arm.com>
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <ZjO4LXqGcy4bwsn4@e133380.arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
 
-On 6/14/24 3:08 PM, Christophe Roullier wrote:
+Hi guys,
 
-[...]
+On 02/05/2024 16:58, Dave Martin wrote:
+> On Wed, May 01, 2024 at 09:51:51PM +0530, Amit Singh Tomar wrote:
+>>>>> I think James will need to comment on this, but I think that yes, it
+>>>>> is probably appropriate to require a reboot.  I think an MPAM error
+>>>>> interrupt should only happen if the software did something wrong, so
+>>>>> it's a bit like hitting a BUG(): we don't promise that everything works
+>>>>> 100% properly until the system is restarted.  Misbehaviour should be
+>>>>> contained to MPAM though.
 
-> +static int stm32mp2_configure_syscfg(struct plat_stmmacenet_data *plat_dat)
-> +{
-> +	struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
-> +	u32 reg = dwmac->mode_reg;
-> +	int val = 0;
-> +
-> +	switch (plat_dat->mac_interface) {
-> +	case PHY_INTERFACE_MODE_MII:
-> +		break;
-
-dwmac->enable_eth_ck does not apply to MII mode ? Why ?
-
-> +	case PHY_INTERFACE_MODE_GMII:
-> +		if (dwmac->enable_eth_ck)
-> +			val |= SYSCFG_ETHCR_ETH_CLK_SEL;
-> +		break;
-> +	case PHY_INTERFACE_MODE_RMII:
-> +		val = SYSCFG_ETHCR_ETH_SEL_RMII;
-> +		if (dwmac->enable_eth_ck)
-> +			val |= SYSCFG_ETHCR_ETH_REF_CLK_SEL;
-> +		break;
-> +	case PHY_INTERFACE_MODE_RGMII:
-> +	case PHY_INTERFACE_MODE_RGMII_ID:
-> +	case PHY_INTERFACE_MODE_RGMII_RXID:
-> +	case PHY_INTERFACE_MODE_RGMII_TXID:
-> +		val = SYSCFG_ETHCR_ETH_SEL_RGMII;
-> +		if (dwmac->enable_eth_ck)
-> +			val |= SYSCFG_ETHCR_ETH_CLK_SEL;
-> +		break;
-> +	default:
-> +		dev_err(dwmac->dev, "Mode %s not supported",
-> +			phy_modes(plat_dat->mac_interface));
-> +		/* Do not manage others interfaces */
-> +		return -EINVAL;
-> +	}
-> +
-> +	dev_dbg(dwmac->dev, "Mode %s", phy_modes(plat_dat->mac_interface));
-> +
-> +	/*  select PTP (IEEE1588) clock selection from RCC (ck_ker_ethxptp) */
-
-Drop extra leading space.
-Sentence starts with capital letter.
-
-> +	val |= SYSCFG_ETHCR_ETH_PTP_CLK_SEL;
-> +
-> +	/* Update ETHCR (set register) */
-> +	return regmap_update_bits(dwmac->regmap, reg,
-> +				 SYSCFG_MP2_ETH_MASK, val);
-> +}
-> +
->   static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
->   {
->   	int ret;
-> @@ -292,6 +346,21 @@ static int stm32mp1_set_mode(struct plat_stmmacenet_data *plat_dat)
->   	return stm32mp1_configure_pmcr(plat_dat);
->   }
->   
-> +static int stm32mp2_set_mode(struct plat_stmmacenet_data *plat_dat)
-> +{
-> +	int ret;
-> +
-> +	ret = stm32mp1_select_ethck_external(plat_dat);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = stm32mp1_validate_ethck_rate(plat_dat);
-> +	if (ret)
-> +		return ret;
+Indeed - all the reasons for the MPAM error interrupt being triggered indicate a software
+bug, so re-mounting resctrl with the same buggy code isn't going to fix anything.
 
 
-Is it necessary to duplicate this entire function instead of some:
+>>>> if "resctrl" is nonfunctional in this state, then this comment[1] here does
+>>>> *not* make sense.
+>>>>
+>>>> "restore any modified controls to their reset values."
 
-if (is_mp2)
-   return stm32mp2_configure_syscfg(plat_dat);
-else
-   return stm32mp1_configure_syscfg(plat_dat);
+The MPAM driver goes on to reset all the MPAM hardware to the best of its ability.
+These means everything gets set back to 100%, so its as if MPAM is not implemented.
+This is better than throttling the wrong task because an out-of-range PARTID for
+${important_task} is using the configuration of ${background_process}...
 
-?
 
-> +	return stm32mp2_configure_syscfg(plat_dat);
-> +}
-> +
->   static int stm32mcu_set_mode(struct plat_stmmacenet_data *plat_dat)
->   {
->   	struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
-> @@ -348,12 +417,6 @@ static int stm32_dwmac_parse_data(struct stm32_dwmac *dwmac,
->   		return PTR_ERR(dwmac->clk_rx);
->   	}
->   
-> -	if (dwmac->ops->parse_data) {
-> -		err = dwmac->ops->parse_data(dwmac, dev);
-> -		if (err)
-> -			return err;
-> -	}
-> -
->   	/* Get mode register */
->   	dwmac->regmap = syscon_regmap_lookup_by_phandle(np, "st,syscon");
->   	if (IS_ERR(dwmac->regmap))
-> @@ -365,20 +428,14 @@ static int stm32_dwmac_parse_data(struct stm32_dwmac *dwmac,
->   		return err;
->   	}
->   
-> -	dwmac->mode_mask = SYSCFG_MP1_ETH_MASK;
-> -	err = of_property_read_u32_index(np, "st,syscon", 2, &dwmac->mode_mask);
-> -	if (err) {
-> -		if (dwmac->ops->is_mp13)
-> -			dev_err(dev, "Sysconfig register mask must be set (%d)\n", err);
-> -		else
-> -			dev_dbg(dev, "Warning sysconfig register mask not set\n");
-> -	}
-> +	if (dwmac->ops->parse_data)
-> +		err = dwmac->ops->parse_data(dwmac, dev);
+>>> Can you clarify what you mean here?
+>>
+>> What I meant was, What's the rationale behind restoring the modified
+>> controls, if user is going to restart the system anyways (in order to use
+>> MPAM again),  but later realized that it is needed so that *non* MPAM loads>> (user may still want to run other things even after MPAM error interrupt)
+>> would not have any adverse effect with modified controls.
+>>
+>> Therefore, taking my statement back.
+> 
+> Ack: we can't force the system to restart without losing data.  Really,
+> the decision about when and whether to attempt a graceful shutdown or
+> reboot should be left to userspace.  But until userspace does shut down
+> the system, we do our best to behave as if the broken part of the system
+> (MPAM) were not present at all.
 
-Why is this change here ? What is the purpose ?
-This should be documented in commit message too.
+Dave's systemd choking on this angle is interesting - I'll go experiment with this.
 
-The indirect call is not necessary either, simply do
+The alternative here is to delete the __exit text completely as it can't be run, and
+instead get MPAM's error interrupt to disable the static-keys and return -EIO for every
+call into the arch code.
+I didn't do this as its likely to cause extra churn to ensure that every arch helper can
+propagate errors back to user-space, and this seemed like a good (re-)use of existing code.
 
-if (is_mp2)
-   return err;
+The third option was to not do anything in MPAM, and just print a message to say bad
+things might be happening. Given its extra work for hardware to detect the error
+conditions, I previously assumed no-one would do this, and hardware would just 'go wrong'
+instead... but as someone has built this, it would be good to try and react to it.
 
-... do mp15/13 stuff here ...
 
-return err;
+Thanks,
 
-[...]
+James
 
