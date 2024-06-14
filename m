@@ -1,184 +1,221 @@
-Return-Path: <linux-kernel+bounces-215388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE939091FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:48:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B493E9091FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:48:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 424CC1C2521A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:48:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E66A28B3C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BD619DF6D;
-	Fri, 14 Jun 2024 17:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC9619E7D3;
+	Fri, 14 Jun 2024 17:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nRzKMURf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AVfKxho2"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A08719D8B7;
-	Fri, 14 Jun 2024 17:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8584619B3F7
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 17:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718387306; cv=none; b=HwUh4M0pMmjOKJrEZwmUMqE4axqvk1r9ray8eT7UXgHDdTW/niPi9AYteOZKDZtIRh4kF0pt+2YiNZ0OpRDYpHuYgFezDlLjJ/7tECbfriWG0ZHFdzTZk5Na2UkdDNyfN2xMz5UJWbSBxA2Sj/gN133MxPd4AjreT3qcNLjGHqA=
+	t=1718387324; cv=none; b=P6zeuAIvIA0BWrcbQ8gpWamWgrHoyTwZ58IEKRs3OhD9Ac0Y3/PxFigfo5v7GkSgZtHNZ1S7IxIq6DJaUFtdZnupFHT8QD4fPs1RBaKKXAwaMrUzmLzTS6GsEmprcq6rqjaIgUZC9hCfHQfk5Mn9xSHHw80plX/luTBtxIVyd8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718387306; c=relaxed/simple;
-	bh=kdioDkX1AS0ZacOm577/Bq/Mk3c/jw5avXaWrRVP09I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gkfeyz7tLsZ3AIQT+UdmN91B/PwZxiQirpioFnezjvwKyvZVNBrC73v+OVRtz0A+mL9KjzAR4ZIqmLwlrPHDWCwXo2+E7u93ieKMRKDgVcI48YOfrahYEh66lJsxcvC19682m65+eTnypX7m6w6Cm22LanPTMXM8s9gCG38Qfsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nRzKMURf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C01FC2BD10;
-	Fri, 14 Jun 2024 17:48:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718387306;
-	bh=kdioDkX1AS0ZacOm577/Bq/Mk3c/jw5avXaWrRVP09I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nRzKMURfx3699Ers/mBC17k9lC7l2PTU25jHIqx/w3EIokujRe01eXxCYnOeDJnsB
-	 yN2QslLeldA8xblLL50UetOwnLisGXVgtBrE54guc/Cj6SYqUafcez4HgHjxmfOCUn
-	 YkNqGwT8H4dd61l1NxGmPDnM73l6AdB1QCas/5D0VtqRESu0MY9kA7fLmrFm52ZPLb
-	 F6lFoUmQfhGtgV4x/xlU9zUz3ZOBcPW9LLGG74qkXF0ddzpbZ6BTcBxF4DHx84fGAp
-	 csYpCcMKe9J8q1DB+7EzjNBUrDgGKLS6eUhZxMwSUVzOYwIpALfl4CV8ca4NlyfexP
-	 qvcVV5z0kGXhQ==
-Date: Fri, 14 Jun 2024 10:48:22 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-	linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org,
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev
-Subject: Re: [PATCHv8 bpf-next 3/9] uprobe: Add uretprobe syscall to speed up
- return probe
-Message-ID: <20240614174822.GA1185149@thelio-3990X>
-References: <20240611112158.40795-1-jolsa@kernel.org>
- <20240611112158.40795-4-jolsa@kernel.org>
+	s=arc-20240116; t=1718387324; c=relaxed/simple;
+	bh=92J8SyqxIdf2oE6L5pTOUXazVSTyJnFiR/byTfNtl/o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hWk1mf5Pug1qUOY8zM37QFEKfVMzZl6rtxp6cI1jH1H8A6DI21UmgUgcjvKnX2QSsLI4laCe1UeZ+oEin2vPp5vOyLY9UoD6ZY9njojiR7ZtbhvxnEHl3H4DAmaOYrzIpznIg+WXB/2A6If1WCL+xEXcq2VYOtvy+kyu3tbRZxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AVfKxho2; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dfe71dd22a5so2667515276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:48:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718387321; x=1718992121; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P/1LOPv92dlO9DKKyPTS9cPz+tBToHnqWBwgmZh3nDw=;
+        b=AVfKxho2HOkrGPN0M2Zq1/bMxgOLQz3fhN/A+DC8VLDeHkJ4h8xH8y5VYOEJSaXA0x
+         6CTgNtmppB0wrfbKpiKzclvhGgrAZ6ZnXYoM4Gt+fjHT6u0OVSYj1Yyqlae9QBafSq+U
+         cZXTQegp5zEF1XrMocEEg2J6sZzjW03LsyE8wycbf//X5vfOV9aT3eer4N2caGvdgYkg
+         M7Fc9nzEpVJQbpxWxvLPsq49PYoBEu8WI6VYEgr0FGPgDsUVIVo/TR/o9EDkBTB9iieu
+         6jbUfUX7eLKCiIwe+2hFVmAAKJGfXExDpYg2ICmVrmP9siuqKI0qfkawhgEBe99mOhrG
+         0pUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718387321; x=1718992121;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P/1LOPv92dlO9DKKyPTS9cPz+tBToHnqWBwgmZh3nDw=;
+        b=cm12oAaUnWWAgYXT7UdM4yUO7yoDw/Xw7yTQpAGs9EFvRLWOWtbTpAn6EUaB5Lxlad
+         e2+KhoWDf8p7SmH8U3rYFeB30q5rDF/F4w81l4X4S7XbaT7mY+jB//G2CpCsZmi9G8zs
+         OrorlSvJx8TBapHropeGV32lsNP1WxgZ+PnyjPuEFczRulA4FlREshNwWhaeXyfzcfny
+         hCQYJFGCHKHPXHkB+pZmdGLhoGYvKmBF5zIg1ScUDwCa16G4cEh/JPNGBytrO1vDeSup
+         Y3BXeyBT9rO6zazUFD+64TurGdJIavLK28A/AGYOYqOO6+nPUQ8ksLNhdpmJzzl/UMMD
+         csYg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6i2cNR11uG/hkoxdNu68AjZtUXAZEvsJ4Mb1eq5e6j8mBq34kq3+HD6Fy9728i+61EKLeA9E4GGDlvGVaeu0xkxDyEgtxMIsHZn8x
+X-Gm-Message-State: AOJu0YwTCGmY0oK8TMMybHYAevNCm7DUS25af82n981mFK4kNHCO3csT
+	aFioLJ5OQDUDCUGbuObTX7Ff1+bjgE8gvOXHf7W7IRwJKeq2roE6lu1KNLS+8nItrwDxNyREzcw
+	gg9B3cRguRpdaA5t9nwRtZCdgCYugcholfnhjaA==
+X-Google-Smtp-Source: AGHT+IGUxEdaon415iN8h281a2LuqoE9nZyftt9g8HQiehPuXE3/tb0mRmefYubCxnRYFAQS7EzlNNoC73f3DBYcL/8=
+X-Received: by 2002:a25:c785:0:b0:de6:1057:c85f with SMTP id
+ 3f1490d57ef6-dff1537c45dmr3081777276.22.1718387321539; Fri, 14 Jun 2024
+ 10:48:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611112158.40795-4-jolsa@kernel.org>
+References: <CAMSo37U3Pree8XbHNBOzNXhFAiPss+8FQms1bLy06xeMeWfTcg@mail.gmail.com>
+ <20240613095901.508753-1-jtornosm@redhat.com> <CAMSo37UzU9WrQOQVo=Bb-LfOwS=GJrsSLMgGAwLY7JoGQ9ap7g@mail.gmail.com>
+In-Reply-To: <CAMSo37UzU9WrQOQVo=Bb-LfOwS=GJrsSLMgGAwLY7JoGQ9ap7g@mail.gmail.com>
+From: Yongqin Liu <yongqin.liu@linaro.org>
+Date: Sat, 15 Jun 2024 01:48:30 +0800
+Message-ID: <CAMSo37XjHhBz1hc_se0Fj8=gnju-iOT52Nf60jwLJ1hPN_kUaQ@mail.gmail.com>
+Subject: Re: [PATCH] net: usb: ax88179_178a: fix link status when link is set
+ to down/up
+To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+Cc: amit.pundir@linaro.org, davem@davemloft.net, edumazet@google.com, 
+	inventor500@vivaldi.net, jstultz@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, stable@vger.kernel.org, 
+	sumit.semwal@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hello, Jose
 
-On Tue, Jun 11, 2024 at 01:21:52PM +0200, Jiri Olsa wrote:
-> Adding uretprobe syscall instead of trap to speed up return probe.
-...
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 2c83ba776fc7..2816e65729ac 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -1474,11 +1474,20 @@ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
->  	return ret;
->  }
->  
-> +void * __weak arch_uprobe_trampoline(unsigned long *psize)
-> +{
-> +	static uprobe_opcode_t insn = UPROBE_SWBP_INSN;
+On Thu, 13 Jun 2024 at 19:46, Yongqin Liu <yongqin.liu@linaro.org> wrote:
+>
+> Hi, Jose
+>
+> On Thu, 13 Jun 2024 at 17:59, Jose Ignacio Tornos Martinez
+> <jtornosm@redhat.com> wrote:
+> >
+> > Hello again,
+> >
+> > There was a problem copying the patch, sorry, here the good one:
+>
+> Thanks very much for the work!
+>
+> I will test it tomorrow, and let you know the result then.
+>
 
-This change as commit ff474a78cef5 ("uprobe: Add uretprobe syscall to
-speed up return probe") in -next causes the following build error for
-ARCH=loongarch allmodconfig:
+I tested with the ACK android15-6.6 and the android-mainline branches,
+which have the issue reported,
+after applying this patch, the network works again now.
 
-  In file included from include/linux/uprobes.h:49,
-                   from include/linux/mm_types.h:16,
-                   from include/linux/mmzone.h:22,
-                   from include/linux/gfp.h:7,
-                   from include/linux/xarray.h:16,
-                   from include/linux/list_lru.h:14,
-                   from include/linux/fs.h:13,
-                   from include/linux/highmem.h:5,
-                   from kernel/events/uprobes.c:13:
-  kernel/events/uprobes.c: In function 'arch_uprobe_trampoline':
-  arch/loongarch/include/asm/uprobes.h:12:33: error: initializer element is not constant
-     12 | #define UPROBE_SWBP_INSN        larch_insn_gen_break(BRK_UPROBE_BP)
-        |                                 ^~~~~~~~~~~~~~~~~~~~
-  kernel/events/uprobes.c:1479:39: note: in expansion of macro 'UPROBE_SWBP_INSN'
-   1479 |         static uprobe_opcode_t insn = UPROBE_SWBP_INSN;
-        |                                       ^~~~~~~~~~~~~~~~
+Here is the console output from the mainline branch, in case you want to ch=
+eck:
+https://gist.github.com/liuyq/bd3fdada41411bc89a0cd4acf9ec11cf
 
-> +	*psize = UPROBE_SWBP_INSN_SIZE;
-> +	return &insn;
-> +}
-> +
->  static struct xol_area *__create_xol_area(unsigned long vaddr)
->  {
->  	struct mm_struct *mm = current->mm;
-> -	uprobe_opcode_t insn = UPROBE_SWBP_INSN;
-> +	unsigned long insns_size;
->  	struct xol_area *area;
-> +	void *insns;
->  
->  	area = kmalloc(sizeof(*area), GFP_KERNEL);
->  	if (unlikely(!area))
-> @@ -1502,7 +1511,8 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
->  	/* Reserve the 1st slot for get_trampoline_vaddr() */
->  	set_bit(0, area->bitmap);
->  	atomic_set(&area->slot_count, 1);
-> -	arch_uprobe_copy_ixol(area->pages[0], 0, &insn, UPROBE_SWBP_INSN_SIZE);
-> +	insns = arch_uprobe_trampoline(&insns_size);
-> +	arch_uprobe_copy_ixol(area->pages[0], 0, insns, insns_size);
->  
->  	if (!xol_add_vma(mm, area))
->  		return area;
-> @@ -1827,7 +1837,7 @@ void uprobe_copy_process(struct task_struct *t, unsigned long flags)
->   *
->   * Returns -1 in case the xol_area is not allocated.
->   */
-> -static unsigned long get_trampoline_vaddr(void)
-> +unsigned long uprobe_get_trampoline_vaddr(void)
->  {
->  	struct xol_area *area;
->  	unsigned long trampoline_vaddr = -1;
-> @@ -1878,7 +1888,7 @@ static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs)
->  	if (!ri)
->  		return;
->  
-> -	trampoline_vaddr = get_trampoline_vaddr();
-> +	trampoline_vaddr = uprobe_get_trampoline_vaddr();
->  	orig_ret_vaddr = arch_uretprobe_hijack_return_addr(trampoline_vaddr, regs);
->  	if (orig_ret_vaddr == -1)
->  		goto fail;
-> @@ -2123,7 +2133,7 @@ static struct return_instance *find_next_ret_chain(struct return_instance *ri)
->  	return ri;
->  }
->  
-> -static void handle_trampoline(struct pt_regs *regs)
-> +void uprobe_handle_trampoline(struct pt_regs *regs)
->  {
->  	struct uprobe_task *utask;
->  	struct return_instance *ri, *next;
-> @@ -2187,8 +2197,8 @@ static void handle_swbp(struct pt_regs *regs)
->  	int is_swbp;
->  
->  	bp_vaddr = uprobe_get_swbp_addr(regs);
-> -	if (bp_vaddr == get_trampoline_vaddr())
-> -		return handle_trampoline(regs);
-> +	if (bp_vaddr == uprobe_get_trampoline_vaddr())
-> +		return uprobe_handle_trampoline(regs);
->  
->  	uprobe = find_active_uprobe(bp_vaddr, &is_swbp);
->  	if (!uprobe) {
-> -- 
-> 2.45.1
-> 
+Thanks again for all the help!
 
-Cheers,
-Nathan
+Best regards,
+Yongqin Liu
+
+
+
+> >
+> > $ git diff drivers/net/usb/ax88179_178a.c
+> > diff --git a/drivers/net/usb/ax88179_178a.c b/drivers/net/usb/ax88179_1=
+78a.c
+> > index 51c295e1e823..60357796be99 100644
+> > --- a/drivers/net/usb/ax88179_178a.c
+> > +++ b/drivers/net/usb/ax88179_178a.c
+> > @@ -174,7 +174,6 @@ struct ax88179_data {
+> >         u32 wol_supported;
+> >         u32 wolopts;
+> >         u8 disconnecting;
+> > -       u8 initialized;
+> >  };
+> >
+> >  struct ax88179_int_data {
+> > @@ -327,7 +326,8 @@ static void ax88179_status(struct usbnet *dev, stru=
+ct urb *urb)
+> >
+> >         if (netif_carrier_ok(dev->net) !=3D link) {
+> >                 usbnet_link_change(dev, link, 1);
+> > -               netdev_info(dev->net, "ax88179 - Link status is: %d\n",=
+ link);
+> > +               if (!link)
+> > +                       netdev_info(dev->net, "ax88179 - Link status is=
+: %d\n", link);
+> >         }
+> >  }
+> >
+> > @@ -1543,6 +1543,7 @@ static int ax88179_link_reset(struct usbnet *dev)
+> >                          GMII_PHY_PHYSR, 2, &tmp16);
+> >
+> >         if (!(tmp16 & GMII_PHY_PHYSR_LINK)) {
+> > +               netdev_info(dev->net, "ax88179 - Link status is: 0\n");
+> >                 return 0;
+> >         } else if (GMII_PHY_PHYSR_GIGA =3D=3D (tmp16 & GMII_PHY_PHYSR_S=
+MASK)) {
+> >                 mode |=3D AX_MEDIUM_GIGAMODE | AX_MEDIUM_EN_125MHZ;
+> > @@ -1580,6 +1581,8 @@ static int ax88179_link_reset(struct usbnet *dev)
+> >
+> >         netif_carrier_on(dev->net);
+> >
+> > +       netdev_info(dev->net, "ax88179 - Link status is: 1\n");
+> > +
+> >         return 0;
+> >  }
+> >
+> > @@ -1678,12 +1681,21 @@ static int ax88179_reset(struct usbnet *dev)
+> >
+> >  static int ax88179_net_reset(struct usbnet *dev)
+> >  {
+> > -       struct ax88179_data *ax179_data =3D dev->driver_priv;
+> > +       u16 tmp16;
+> >
+> > -       if (ax179_data->initialized)
+> > +       ax88179_read_cmd(dev, AX_ACCESS_PHY, AX88179_PHY_ID, GMII_PHY_P=
+HYSR,
+> > +                        2, &tmp16);
+> > +       if (tmp16) {
+> > +               ax88179_read_cmd(dev, AX_ACCESS_MAC, AX_MEDIUM_STATUS_M=
+ODE,
+> > +                                2, 2, &tmp16);
+> > +               if (!(tmp16 & AX_MEDIUM_RECEIVE_EN)) {
+> > +                       tmp16 |=3D AX_MEDIUM_RECEIVE_EN;
+> > +                       ax88179_write_cmd(dev, AX_ACCESS_MAC, AX_MEDIUM=
+_STATUS_MODE,
+> > +                                         2, 2, &tmp16);
+> > +               }
+> > +       } else {
+> >                 ax88179_reset(dev);
+> > -       else
+> > -               ax179_data->initialized =3D 1;
+> > +       }
+> >
+> >         return 0;
+> >  }
+> >
+> > Best regards
+> > Jos=C3=A9 Ignacio
+> >
+>
+>
+> --
+> Best Regards,
+> Yongqin Liu
+> ---------------------------------------------------------------
+> #mailing list
+> linaro-android@lists.linaro.org
+> http://lists.linaro.org/mailman/listinfo/linaro-android
+
+
+
+--
+Best Regards,
+Yongqin Liu
+---------------------------------------------------------------
+#mailing list
+linaro-android@lists.linaro.org
+http://lists.linaro.org/mailman/listinfo/linaro-android
 
