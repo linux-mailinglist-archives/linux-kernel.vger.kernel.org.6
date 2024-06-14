@@ -1,201 +1,719 @@
-Return-Path: <linux-kernel+bounces-214697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2580D9088C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:56:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 764519088C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B242A2902AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:56:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0031429046C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CA2195F0C;
-	Fri, 14 Jun 2024 09:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABA2196438;
+	Fri, 14 Jun 2024 09:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EMJsBj8+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="cQOnDa3G"
+Received: from AUS01-ME3-obe.outbound.protection.outlook.com (mail-me3aus01olkn2164.outbound.protection.outlook.com [40.92.63.164])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A41192B87;
-	Fri, 14 Jun 2024 09:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718358599; cv=none; b=h6TH6VPd3l2855wYT5IUrP1ytwskxWOQukydNXgWy2yIJ/zqZg55R3CdM8Z9p5SgeK2UNvlTUo41lfC6YjpKJVRUdV80pL0dfN/Me58dK4XaIIqnR9RO+HjAAvaQrNcm81u39DVzEMWPHHQsziTtQrgPfbrIvI8vjUnRvKYZkE8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718358599; c=relaxed/simple;
-	bh=2OZ3L7NQnRMDE7VXZmO25GoZOXA0atjNt18Kc5M8loQ=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=sig6um4VhUh5hUXDlYnwqd2rB/IuSpNYdtPbAriq7TEFRcwy6KHQe8NBvNSUgGeq5rN47B77bcPfea9iBavzLqhrZ1u7cDy30PVxx+Jag/5SN1s1+sgnb8IHIZITbXHhL2YNas0Nb9IXf9aM+lZ8t9wqo+48OWEg+egMxX4ovBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EMJsBj8+; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718358598; x=1749894598;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=2OZ3L7NQnRMDE7VXZmO25GoZOXA0atjNt18Kc5M8loQ=;
-  b=EMJsBj8+WfmQj4DPrNh+kGsAgRGAxt91QId9Uxecl9R0X+HYiWLxLfq8
-   zG/4cvJBLMzNTNjwU+gQJdlWILMvEONiAb7kHMLxw7N/HqSFnHU55Vgj7
-   cHRdcD3SG786MeEEqRYOKQbDSXN9KvNgUG5vCCvUCV1LVBkzrr96UWWYX
-   VNb7bsZ2+26i3LgFBVI8r1Ri5v+zEUSCltHDl3IJeGGLyzLba/NKTbtxY
-   Jl1pQIK82c38CiYX//RnGI3T+IebHwuTqzlsd8/sLVesUozeWZp3Ya9Ar
-   3qibClJno497Do0Joyg42CdwP5lnlfwkj+jDj3zk42FhK+DorsSQBV0Qi
-   g==;
-X-CSE-ConnectionGUID: cYFCeWBqQcOx1nu9D/pdQg==
-X-CSE-MsgGUID: AAkocf0HSESftyQDtXK5mQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="37760681"
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="scan'208";a="37760681"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 02:49:57 -0700
-X-CSE-ConnectionGUID: ICK1xWFqRlWMZGnakqtFzA==
-X-CSE-MsgGUID: +AgR8c+2QZKzx1jIe+fLGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="scan'208";a="40551884"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.222])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 02:49:50 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 14 Jun 2024 12:49:46 +0300 (EEST)
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
-    Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-    Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-    Hans de Goede <hdegoede@redhat.com>, 
-    Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-    Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Konrad Dybcio <konrad.dybcio@linaro.org>, linux-pm@vger.kernel.org, 
-    devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org, 
-    linux-arm-msm@vger.kernel.org, Nikita Travkin <nikita@trvn.ru>, 
-    Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v7 0/6] power: supply: Lenovo Yoga C630 EC
-In-Reply-To: <20240614-yoga-ec-driver-v7-0-9f0b9b40ae76@linaro.org>
-Message-ID: <0cf0e301-2caf-bcfb-33db-355ac89f5a2d@linux.intel.com>
-References: <20240614-yoga-ec-driver-v7-0-9f0b9b40ae76@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0B6192B8D;
+	Fri, 14 Jun 2024 09:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.63.164
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718358623; cv=fail; b=K4l0BcNSfDhf/9yItdscBm1m9QSMTiM4Y2L8+FtE/ka+hmiusQh+ofU802gzwJfF/dp8gfDrkpmvMUCSpv44Tawpo7DWEEKpud7pJJrtevv5Z5PQ+Cnym/Fpz5D//m0ifoBc+Pg61uPCJp9rK+CB7F2cRKZE1ZtBLfGXpItiCFk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718358623; c=relaxed/simple;
+	bh=/TbTD8JtqiKd0YcfLb8FIHHd/6E6He57dmMA22VEaYs=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=oEilanMuXsol87DrPmlOcFqCYl7YT7lSI3NkGs8qONUsDEfhxnB82GBAulnATfaurnmNoI6jlZgUBqZlC/sSU079zZaOuyQmPWMC5Q9JfwYAF9vyqRHSdMqK4TkMrhCXbfkaNdWLfMs0C4YrNqAlBguMrPx+QdkiMyjcmM8vBM0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=cQOnDa3G; arc=fail smtp.client-ip=40.92.63.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XCsMmM/Ki8fJUWG3a4ubNrIJiqLLwkmcRpOgYs4IBqA/9KWWhkyvq/kgnYdBRmI1SeTR67HUWaw786T7/O8RdT4fRsRgMowlOwF7TrsV4sxU/XLaRjOht4beBrlKoN0DeCiOjT25j0ZseI4et4AqpDO3S7EtTLo527q9fxfkZ21EUK/XYvKmBSG+OyalKC+q3uPYKOyFoHkBMjVaOviu7CtxSHs3u32HE9PUZ4vEHyPZss6FuVnzh1/YGLvWdblhKfEUtXApCefE8q5YqetskNj3AWMffljHQN9ClPw+cVqtX7PpCVfdxYy+KpYNlE+ByqMvCW/F7QQ8lxRPeVaBnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YdFX8qhpjrVE59ZTW80a28mEr+G++j9u98lzuAOix5Q=;
+ b=MmZmwoRBpfhJ36xDip4RdPe6IlQScTBL2l42nivA1RLCeEqQ/pRnS7MfvOy3ZS7vqBa8GZKpeQGSRlDv/v2BUJKuu7QUNIyHczIVE0hRDdtDqB86qnf/AAgRDVcFHkASaGgaBDuxgjoIp2Z23fYX20+nD/ixuB3R+y++CzFNIjeoJWKNbYLVxl/AyPUJdU397K/mA7dyYCyVdZc097xashK9b7Drv7T3FK8gH+0uW8XyILpiRChlfAVI6BrbsEYn8YWZzDCgFH0XaxfhxG5aqiiHA52tH1v84yrP5G72GWDLBytGWFzTxCkZMH9yxlAxfN9z6UNiFkotSLngZEzikw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YdFX8qhpjrVE59ZTW80a28mEr+G++j9u98lzuAOix5Q=;
+ b=cQOnDa3Gtip/TMHojG3dbWceBpxTrXOyhEz2VstDoLW7rdotEUd6P/jr61dPPY8LYs9YKOIBwyZ+u6iwthMUG4dr0tYfqJ1gCSJI29B2vRUavSAVwFoGOUEVxnpMTcFxTpwZrH1qkgSso2E9mxwMwlyOI2Y8eJKxOeb29AhNihZU6TmII8R78OhninrAOkVH7TAYVsqLnkJYyJnKORYrl2F+tv+RjlnyYDOIZu1qVIXOwL+1UTlXozydZ6UnejvgmH8c2HKH9hkLd7/NThbPgmYl+dPk6jAII2d40VY5KDt5O7mSp8P1ViUPfMvZA0E6JL+lbHUzxQtPBmnhlRkoQg==
+Received: from MEYP282MB2697.AUSP282.PROD.OUTLOOK.COM (2603:10c6:220:14c::12)
+ by SY4P282MB1962.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:cd::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.25; Fri, 14 Jun
+ 2024 09:50:15 +0000
+Received: from MEYP282MB2697.AUSP282.PROD.OUTLOOK.COM
+ ([fe80::f23f:94aa:b5cf:7696]) by MEYP282MB2697.AUSP282.PROD.OUTLOOK.COM
+ ([fe80::f23f:94aa:b5cf:7696%3]) with mapi id 15.20.7677.024; Fri, 14 Jun 2024
+ 09:50:15 +0000
+From: Vanillan Wang <songjinjian@hotmail.com>
+To: chandrashekar.devegowda@intel.com,
+	chiranjeevi.rapolu@linux.intel.com,
+	haijun.liu@mediatek.com,
+	m.chetan.kumar@linux.intel.com,
+	ricardo.martinez@linux.intel.com,
+	loic.poulain@linaro.org,
+	ryazanov.s.a@gmail.com,
+	johannes@sipsolutions.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Jinjian Song <jinjian.song@fibocom.com>
+Subject: [net-next v1] net: wwan: t7xx: Add debug port
+Date: Fri, 14 Jun 2024 17:49:51 +0800
+Message-ID:
+ <MEYP282MB269762C5070B97CD769C8CD5BBC22@MEYP282MB2697.AUSP282.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [NLFjexRlP99vCydBO8tfbrtLhk5qp4aDtsYgg4njLBU=]
+X-ClientProxiedBy: SI2PR01CA0010.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::12) To MEYP282MB2697.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:220:14c::12)
+X-Microsoft-Original-Message-ID:
+ <20240614094951.6671-1-songjinjian@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MEYP282MB2697:EE_|SY4P282MB1962:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7218b7f0-f7aa-448a-ebe3-08dc8c5763b9
+X-Microsoft-Antispam: BCL:0;ARA:14566002|461199024|440099024|3412199020;
+X-Microsoft-Antispam-Message-Info:
+	i+px7bYv0FRTCVGHWnZ7LqY3IL/VqEpNGdeiESqoPF7SpuwdjDiNB1QkfR3akgvkzmfBJscpNVAawaFkJ7bZGxG7yoDsxIRGGnf92IXtXio9xwfIM6K/NcajiVDyzp3VHnyBsB4V3Hlgkx/M9uOEMICMAatjhtlQIxCdzvhCYRH4uqmI420+C3N4NcEZBb/cG8kfoGgg4vo56T/dVJGLmmfZvqF8XB/tME4fcO5tFd6dM7w0/z/M8qmLX9dJi5JgYQaPZdmuJ9Q9yEm30mDICdCzwrzjIWFJltdmqMja0+zjviO6GYRFln7Ryw5OW9yEjsjsdeb5ouiv0VaQKCD5LQuf9Fc01cpakgYiewLFJHB7O5O4QrUf3539pGOEhRd142Aw/jsL+HFejyFxHPMmfSan53mi+Na2FgkCmiixp04qHN062Oahc1SkdRR8Dvm5RRsHdmwWPF/zel7hD8MU410RFdEKQmKHmzhbSnsix9agSkPjrCSol9cT0qjXGF12yXe3eZZSawpJsbrtOAQr3mjt6WANvcWRZKTrdE0nhaE9fniqc2e3uuVeldFfjTII
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?qJsgfeXJrogGw2Or0/z2590+31IDip7SslteMl3j6ahBbZ6XxCJOeKS7PfPX?=
+ =?us-ascii?Q?tbcj6gL9A5lw+LlIQPS65DZQqKFZOoDqJJtL1px6OlglYhh7vhpzX6oYcwxW?=
+ =?us-ascii?Q?hdIaVUWyzbedB+M2iJ4nbQAfkjoX1E0uvFPC08jocSfsDs/3uf85fnQICO9f?=
+ =?us-ascii?Q?P5wbUz6TMVTL9EAPdtYjuaaTH4Ccl+ROzsc1QlMrRKxIpyxqGl9Y3I6aLDvr?=
+ =?us-ascii?Q?5kC6dbPkiQxAMMDgsJI6bb978mw7zZabOunZUT5JH/v6vJeNWM/BSDV1aIpS?=
+ =?us-ascii?Q?2opcjgwzBREKiVLYaaW514/tfTuO8mpalrbQ2Mj6WRCpEllO6qYZAaZbqc7u?=
+ =?us-ascii?Q?lUZLM5LiTE/tQsIc6P/7ft/cKHRz3y7CpjlSwsZFCv0DGf8v9AQBSb+/6lR8?=
+ =?us-ascii?Q?aTjUULBeIQZsAcMmj2shcnwjkBzPRaf2IX+ZZ3lpo57AGdIlYa6G9/4qjmLM?=
+ =?us-ascii?Q?mpTn+zYK50znDv+oIclakndv8uSxvxoL65XC5UsSDBiyoELU8NMsbfZo7K6x?=
+ =?us-ascii?Q?iEiRFlDpas8qHg0lmW0oAyL+U1uhpsyQ/WgC1lmnVHoRgqUvePWufW1OWABx?=
+ =?us-ascii?Q?5O8F1CAo0X5D8hxyfeUvAASQdZUhpc1CQhx2t+UZJR4v46r2Sv96UwJ+t0rH?=
+ =?us-ascii?Q?E7vRO2E/afq+MJPlnKI6RPOGosBozd3vV5tr35CDTQhmzw7WVh9HFo/NRjnh?=
+ =?us-ascii?Q?rCWU6C6NLw6neWQnMg0HTMWY2Bbkz8QqUGgp5Q3RrfpBjaQ20Q5t4zm587e4?=
+ =?us-ascii?Q?N3UzdJH38m2B1oy9nkxxuNRajnDrVSxVYbjMKTuPCcE6gcuW0vVMsbWZXjlQ?=
+ =?us-ascii?Q?Kqx8ygttoEFioxcroV9FUcl8yRB0SoWvSV0naoCGm4FN8D4IgzHNaphPyown?=
+ =?us-ascii?Q?RxVZuVrd1+vBFOQ1YV7zT8q9fA/xpUxKDPCv/CGHe2IYkKGRC5lKV4fnEv9r?=
+ =?us-ascii?Q?9J/2TMecKTf8yTDGKSd5y0OK3ZAe0tmCwGRxVgcU2iC8fjorzstCKdXqB0U6?=
+ =?us-ascii?Q?nVU48nuEK1e8O1XSh5EzG/wGe0HfVstQqavr4DyLJ4nK56I8D33qlz/5QCuM?=
+ =?us-ascii?Q?8Jcsm3r4mETXv4F9hf1a7Qo634ZuAoXcIeBiwFemAzI3LkL9HlcSnBBUodZh?=
+ =?us-ascii?Q?yTKr1mWUM6G6EaUHRdGI87PG57VHWNfzcX8AvyxNvD9TYN2GAYsl+3ZDfcYp?=
+ =?us-ascii?Q?gF6FXTFAOY3fUry+NFgtVXlS1VHaite1rSMoi2R/LZsO95GWQa0SvFAGvO2O?=
+ =?us-ascii?Q?duPLT8wV0nqteUQm1Tkt?=
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-746f3.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7218b7f0-f7aa-448a-ebe3-08dc8c5763b9
+X-MS-Exchange-CrossTenant-AuthSource: MEYP282MB2697.AUSP282.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2024 09:50:15.1985
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SY4P282MB1962
 
-On Fri, 14 Jun 2024, Dmitry Baryshkov wrote:
+From: Jinjian Song <jinjian.song@fibocom.com>
 
-> This adds binding, driver and the DT support for the Lenovo Yoga C630
-> Embedded Controller, to provide battery information.
-> 
-> Support for this EC was implemented by Bjorn, who later could not work
-> on this driver. I've picked this patchset up and updated it following
-> the pending review comments.
-> 
-> DisplayPort support is still not a part of this patchset. It uses EC
-> messages to provide AltMode information rather than implementing
-> corresponding UCSI commands. However to have a cleaner uAPI story, the
-> AltMode should be handled via the same Type-C port.
-> 
-> Merge strategy: the driver bits depend on the platform/arm64 patch,
-> which adds interface for the subdrivers. I'd either ask to get that
-> patch merged to the immutable branch, which then can be picked up by
-> power/supply and USB trees or, to make life simpler, ack merging all
-> driver bits e.g. through USB subsystem (I'm biased here since I plan to
-> send more cleanups for the UCSI subsystem, which would otherwise result
-> in cross-subsystem conflicts).
+Add support for userspace to switch on the debug port(ADB,MIPC).
+ - ADB port: /dev/ccci_sap_adb
+ - MIPC port: /dev/ttyMIPC0
 
-In preparation for making an IB, I took patch 1-2 into 
-platform-drivers-x86-lenovo-c630 branch. I'll tag it once LKP has 
-built tested the branch.
+Switch on debug port:
+ - debug: 'echo debug > /sys/bus/pci/devices/${bdf}/t7xx_mode
 
+Switch off debug port:
+ - normal: 'echo normal > /sys/bus/pci/devices/${bdf}/t7xx_mode
+
+Signed-off-by: Jinjian Song <jinjian.song@fibocom.com>
+---
+ drivers/net/wwan/t7xx/Makefile          |   1 +
+ drivers/net/wwan/t7xx/t7xx_pci.c        |   7 +
+ drivers/net/wwan/t7xx/t7xx_pci.h        |   2 +
+ drivers/net/wwan/t7xx/t7xx_port.h       |  16 ++
+ drivers/net/wwan/t7xx/t7xx_port_debug.c | 354 ++++++++++++++++++++++++
+ drivers/net/wwan/t7xx/t7xx_port_proxy.c |  45 ++-
+ drivers/net/wwan/t7xx/t7xx_port_proxy.h |   2 +
+ 7 files changed, 426 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/net/wwan/t7xx/t7xx_port_debug.c
+
+diff --git a/drivers/net/wwan/t7xx/Makefile b/drivers/net/wwan/t7xx/Makefile
+index 2652cd00504e..b9684fd46d76 100644
+--- a/drivers/net/wwan/t7xx/Makefile
++++ b/drivers/net/wwan/t7xx/Makefile
+@@ -11,6 +11,7 @@ mtk_t7xx-y:=	t7xx_pci.o \
+ 		t7xx_port_proxy.o  \
+ 		t7xx_port_ctrl_msg.o \
+ 		t7xx_port_wwan.o \
++		t7xx_port_debug.o \
+ 		t7xx_hif_dpmaif.o  \
+ 		t7xx_hif_dpmaif_tx.o \
+ 		t7xx_hif_dpmaif_rx.o  \
+diff --git a/drivers/net/wwan/t7xx/t7xx_pci.c b/drivers/net/wwan/t7xx/t7xx_pci.c
+index e0b1e7a616ca..6b18460d626c 100644
+--- a/drivers/net/wwan/t7xx/t7xx_pci.c
++++ b/drivers/net/wwan/t7xx/t7xx_pci.c
+@@ -41,6 +41,7 @@
+ #include "t7xx_pcie_mac.h"
+ #include "t7xx_reg.h"
+ #include "t7xx_state_monitor.h"
++#include "t7xx_port_proxy.h"
+ 
+ #define T7XX_PCI_IREG_BASE		0
+ #define T7XX_PCI_EREG_BASE		2
+@@ -59,6 +60,8 @@ static const char * const t7xx_mode_names[] = {
+ 	[T7XX_FASTBOOT_SWITCHING] = "fastboot_switching",
+ 	[T7XX_FASTBOOT_DOWNLOAD] = "fastboot_download",
+ 	[T7XX_FASTBOOT_DUMP] = "fastboot_dump",
++	[T7XX_DEBUG] = "debug",
++	[T7XX_NORMAL] = "normal",
+ };
+ 
+ static_assert(ARRAY_SIZE(t7xx_mode_names) == T7XX_MODE_LAST);
+@@ -82,6 +85,10 @@ static ssize_t t7xx_mode_store(struct device *dev,
+ 	} else if (index == T7XX_RESET) {
+ 		WRITE_ONCE(t7xx_dev->mode, T7XX_RESET);
+ 		t7xx_acpi_pldr_func(t7xx_dev);
++	} else if (index == T7XX_DEBUG) {
++		t7xx_proxy_port_debug(t7xx_dev, true);
++	} else if (index == T7XX_NORMAL) {
++		t7xx_proxy_port_debug(t7xx_dev, false);
+ 	}
+ 
+ 	return count;
+diff --git a/drivers/net/wwan/t7xx/t7xx_pci.h b/drivers/net/wwan/t7xx/t7xx_pci.h
+index 49a11586d8d8..bdcadeb035e0 100644
+--- a/drivers/net/wwan/t7xx/t7xx_pci.h
++++ b/drivers/net/wwan/t7xx/t7xx_pci.h
+@@ -50,6 +50,8 @@ enum t7xx_mode {
+ 	T7XX_FASTBOOT_SWITCHING,
+ 	T7XX_FASTBOOT_DOWNLOAD,
+ 	T7XX_FASTBOOT_DUMP,
++	T7XX_DEBUG,
++	T7XX_NORMAL,
+ 	T7XX_MODE_LAST, /* must always be last */
+ };
+ 
+diff --git a/drivers/net/wwan/t7xx/t7xx_port.h b/drivers/net/wwan/t7xx/t7xx_port.h
+index f74d3bab810d..aa9b0df1f730 100644
+--- a/drivers/net/wwan/t7xx/t7xx_port.h
++++ b/drivers/net/wwan/t7xx/t7xx_port.h
+@@ -27,6 +27,7 @@
+ #include <linux/types.h>
+ #include <linux/wait.h>
+ #include <linux/wwan.h>
++#include <linux/cdev.h>
+ 
+ #include "t7xx_hif_cldma.h"
+ #include "t7xx_pci.h"
+@@ -42,6 +43,8 @@ enum port_ch {
+ 	/* to AP */
+ 	PORT_CH_AP_CONTROL_RX = 0x1000,
+ 	PORT_CH_AP_CONTROL_TX = 0x1001,
++	PORT_CH_AP_ADB_RX = 0x100a,
++	PORT_CH_AP_ADB_TX = 0x100b,
+ 
+ 	/* to MD */
+ 	PORT_CH_CONTROL_RX = 0x2000,
+@@ -100,6 +103,16 @@ struct t7xx_port_conf {
+ 	struct port_ops		*ops;
+ 	char			*name;
+ 	enum wwan_port_type	port_type;
++	bool			debug;
++	char			*class_name;
++	unsigned char		baseminor;
++};
++
++struct t7xx_cdev {
++	struct t7xx_port	*port;
++	struct cdev		cdev;
++	dev_t			dev_num;
++	struct class		*dev_class;
+ };
+ 
+ struct t7xx_port {
+@@ -134,6 +147,9 @@ struct t7xx_port {
+ 		struct {
+ 			struct rchan			*relaych;
+ 		} log;
++		struct {
++			struct t7xx_cdev		*debug_port;
++		} debug;
+ 	};
+ };
+ 
+diff --git a/drivers/net/wwan/t7xx/t7xx_port_debug.c b/drivers/net/wwan/t7xx/t7xx_port_debug.c
+new file mode 100644
+index 000000000000..8c94a72f210d
+--- /dev/null
++++ b/drivers/net/wwan/t7xx/t7xx_port_debug.c
+@@ -0,0 +1,354 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2021, MediaTek Inc.
++ * Copyright (c) 2024, Fibocom Wireless Inc.
++ *
++ * Authors: Jinjian Song <jinjian.song@fibocom.com>
++ */
++
++#include <linux/bitfield.h>
++#include <linux/cdev.h>
++#include <linux/mutex.h>
++#include <linux/poll.h>
++#include <linux/skbuff.h>
++#include <linux/spinlock.h>
++
++#include "t7xx_state_monitor.h"
++#include "t7xx_port.h"
++#include "t7xx_port_proxy.h"
++
++static __poll_t port_char_poll(struct file *fp, struct poll_table_struct *poll)
++{
++	struct t7xx_port *port;
++	__poll_t mask = 0;
++
++	port = fp->private_data;
++	poll_wait(fp, &port->rx_wq, poll);
++
++	spin_lock_irq(&port->rx_wq.lock);
++	if (!skb_queue_empty(&port->rx_skb_list))
++		mask |= EPOLLIN | EPOLLRDNORM;
++	spin_unlock_irq(&port->rx_wq.lock);
++
++	return mask;
++}
++
++/**
++ * port_char_open() - open char port
++ * @inode: pointer to inode structure
++ * @file: pointer to file structure
++ *
++ * Open a char port using pre-defined md_ccci_ports structure in port_proxy
++ *
++ * Return: 0 for success, -EINVAL for failure
++ */
++static int port_char_open(struct inode *inode, struct file *file)
++{
++	struct t7xx_cdev *t7xx_debug;
++	struct t7xx_port *port;
++
++	t7xx_debug = container_of(inode->i_cdev, struct t7xx_cdev, cdev);
++	port = t7xx_debug->port;
++
++	if (!port)
++		return -EINVAL;
++
++	port->port_conf->ops->enable_chl(port);
++	atomic_inc(&port->usage_cnt);
++
++	file->private_data = port;
++
++	return nonseekable_open(inode, file);
++}
++
++static int port_char_close(struct inode *inode, struct file *file)
++{
++	struct t7xx_port *port;
++	struct sk_buff *skb;
++
++	port = file->private_data;
++
++	/* decrease usage count, so when we ask again,
++	 * the packet can be dropped in recv_request.
++	 */
++	atomic_dec(&port->usage_cnt);
++	port->port_conf->ops->disable_chl(port);
++
++	/* purge RX request list */
++	spin_lock_irq(&port->rx_wq.lock);
++	while ((skb = __skb_dequeue(&port->rx_skb_list)) != NULL)
++		dev_kfree_skb(skb);
++	spin_unlock_irq(&port->rx_wq.lock);
++
++	return 0;
++}
++
++static ssize_t port_char_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
++{
++	bool full_req_done = false;
++	struct t7xx_port *port;
++	int ret = 0, read_len;
++	struct sk_buff *skb;
++
++	port = file->private_data;
++
++	spin_lock_irq(&port->rx_wq.lock);
++	if (skb_queue_empty(&port->rx_skb_list)) {
++		if (file->f_flags & O_NONBLOCK) {
++			spin_unlock_irq(&port->rx_wq.lock);
++			return -EAGAIN;
++		}
++
++		ret = wait_event_interruptible_locked_irq(port->rx_wq,
++							  !skb_queue_empty(&port->rx_skb_list));
++		if (ret == -ERESTARTSYS) {
++			spin_unlock_irq(&port->rx_wq.lock);
++			return -EINTR;
++		}
++	}
++	skb = skb_peek(&port->rx_skb_list);
++
++	if (count >= skb->len) {
++		read_len = skb->len;
++		full_req_done = true;
++		__skb_unlink(skb, &port->rx_skb_list);
++	} else {
++		read_len = count;
++	}
++
++	spin_unlock_irq(&port->rx_wq.lock);
++	if (copy_to_user(buf, skb->data, read_len)) {
++		dev_err(port->dev, "Read on %s, copy to user failed, %d/%zu\n",
++			port->port_conf->name, read_len, count);
++		ret = -EFAULT;
++	}
++
++	skb_pull(skb, read_len);
++	if (full_req_done)
++		dev_kfree_skb(skb);
++
++	return ret ? ret : read_len;
++}
++
++static ssize_t port_char_write(struct file *file, const char __user *buf,
++			       size_t count, loff_t *ppos)
++{
++	unsigned int header_len = sizeof(struct ccci_header);
++	size_t  offset, txq_mtu, chunk_len = 0;
++	struct t7xx_port *port;
++	struct sk_buff *skb;
++	bool blocking;
++	int ret;
++
++	port = file->private_data;
++
++	blocking = !(file->f_flags & O_NONBLOCK);
++	if (!blocking)
++		return -EAGAIN;
++
++	if (!port->chan_enable)
++		return -EINVAL;
++
++	txq_mtu = t7xx_get_port_mtu(port);
++	if (txq_mtu < 0)
++		return -EINVAL;
++
++	for (offset = 0; offset < count; offset += chunk_len) {
++		chunk_len = min(count - offset, txq_mtu - header_len);
++
++		skb = __dev_alloc_skb(chunk_len + header_len, GFP_KERNEL);
++		if (!skb)
++			return -ENOMEM;
++
++		ret = copy_from_user(skb_put(skb, chunk_len), buf + offset, chunk_len);
++
++		if (ret) {
++			dev_kfree_skb(skb);
++			return -EFAULT;
++		}
++
++		ret = t7xx_port_send_skb(port, skb, 0, 0);
++		if (ret) {
++			if (ret == -EBUSY && !blocking)
++				ret = -EAGAIN;
++			dev_kfree_skb_any(skb);
++			return ret;
++		}
++	}
++
++	return count;
++}
++
++static int t7xx_cdev_init(struct t7xx_port *port)
++{
++	struct t7xx_cdev *t7xx_debug;
++	struct device *dev;
++
++	dev = &port->t7xx_dev->pdev->dev;
++
++	t7xx_debug = devm_kzalloc(dev, sizeof(*t7xx_debug), GFP_KERNEL);
++	if (!t7xx_debug)
++		return -ENOMEM;
++
++	t7xx_debug->port = port;
++	port->debug.debug_port = t7xx_debug;
++
++	return 0;
++}
++
++static void t7xx_cdev_uninit(struct t7xx_port *port)
++{
++	struct device *dev;
++
++	if (!port->debug.debug_port)
++		return;
++
++	dev = &port->t7xx_dev->pdev->dev;
++
++	devm_kfree(dev, port->debug.debug_port);
++	port->debug.debug_port = NULL;
++}
++
++static const struct file_operations char_fops = {
++	.owner = THIS_MODULE,
++	.open = &port_char_open,
++	.read = &port_char_read,
++	.write = &port_char_write,
++	.release = &port_char_close,
++	.poll = &port_char_poll,
++};
++
++static int port_char_init(struct t7xx_port *port)
++{
++	const struct t7xx_port_conf *port_conf = port->port_conf;
++	struct t7xx_cdev *t7xx_debug;
++	struct device *dev;
++	int ret;
++
++	if (port->debug.debug_port)
++		return 0;
++
++	t7xx_cdev_init(port);
++
++	t7xx_debug = port->debug.debug_port;
++
++	port->rx_length_th = RX_QUEUE_MAXLEN;
++
++	ret = alloc_chrdev_region(&t7xx_debug->dev_num, port_conf->baseminor, 1, "t7xx_cdev");
++	if (ret) {
++		dev_err(port->dev, "Alloc chrdev region failed, ret=%d\n", ret);
++		return ret;
++	}
++
++	cdev_init(&t7xx_debug->cdev, &char_fops);
++	t7xx_debug->cdev.owner = THIS_MODULE;
++
++	ret = cdev_add(&t7xx_debug->cdev, t7xx_debug->dev_num, 1);
++	if (ret) {
++		dev_err(port->dev, "Add cdev failed, ret=%d\n", ret);
++		goto err_cdev_add;
++	}
++
++	t7xx_debug->dev_class = class_create(port_conf->class_name);
++	if (IS_ERR(t7xx_debug->dev_class)) {
++		ret = PTR_ERR(t7xx_debug->dev_class);
++		dev_err(port->dev, "Create class failed, ret=%d\n", ret);
++		goto err_class_create;
++	}
++
++	dev = device_create(t7xx_debug->dev_class, NULL, t7xx_debug->dev_num,
++			    NULL, port->port_conf->name);
++	if (IS_ERR(dev)) {
++		ret = PTR_ERR(dev);
++		dev_err(port->dev, "Create device failed, ret=%d\n", ret);
++		goto err_device_create;
++	}
++
++	port->debug.debug_port->cdev = t7xx_debug->cdev;
++	t7xx_debug->port = port;
++
++	return 0;
++
++err_device_create:
++	class_destroy(t7xx_debug->dev_class);
++err_class_create:
++	cdev_del(&t7xx_debug->cdev);
++err_cdev_add:
++	unregister_chrdev_region(t7xx_debug->dev_num, 1);
++	return ret;
++}
++
++static void port_char_uninit(struct t7xx_port *port)
++{
++	struct t7xx_cdev *t7xx_debug;
++	unsigned long flags;
++	struct sk_buff *skb;
++
++	if (!port->debug.debug_port)
++		return;
++
++	t7xx_debug = port->debug.debug_port;
++
++	device_destroy(t7xx_debug->dev_class, t7xx_debug->dev_num);
++	class_destroy(t7xx_debug->dev_class);
++	cdev_del(&t7xx_debug->cdev);
++	unregister_chrdev_region(t7xx_debug->dev_num, 1);
++
++	t7xx_cdev_uninit(port);
++
++	spin_lock_irqsave(&port->rx_wq.lock, flags);
++	while ((skb = __skb_dequeue(&port->rx_skb_list)) != NULL)
++		dev_kfree_skb(skb);
++	spin_unlock_irqrestore(&port->rx_wq.lock, flags);
++}
++
++static int port_char_recv_skb(struct t7xx_port *port, struct sk_buff *skb)
++{
++	const struct t7xx_port_conf *port_conf = port->port_conf;
++	unsigned long flags;
++
++	if (!atomic_read(&port->usage_cnt) || !port->chan_enable) {
++		dev_dbg_ratelimited(port->dev, "Port %s is not opened, drop packets\n",
++				    port_conf->name);
++		return -ENETDOWN;
++	}
++
++	spin_lock_irqsave(&port->rx_wq.lock, flags);
++	if (port->rx_skb_list.qlen >= port->rx_length_th) {
++		spin_unlock_irqrestore(&port->rx_wq.lock, flags);
++		return -ENOBUFS;
++	}
++
++	__skb_queue_tail(&port->rx_skb_list, skb);
++	spin_unlock_irqrestore(&port->rx_wq.lock, flags);
++
++	wake_up_all(&port->rx_wq);
++
++	return 0;
++}
++
++static int port_char_enable_chl(struct t7xx_port *port)
++{
++	spin_lock(&port->port_update_lock);
++	port->chan_enable = true;
++	spin_unlock(&port->port_update_lock);
++
++	return 0;
++}
++
++static int port_char_disable_chl(struct t7xx_port *port)
++{
++	spin_lock(&port->port_update_lock);
++	port->chan_enable = false;
++	spin_unlock(&port->port_update_lock);
++
++	return 0;
++}
++
++struct port_ops debug_port_ops = {
++	.init = &port_char_init,
++	.recv_skb = &port_char_recv_skb,
++	.uninit = &port_char_uninit,
++	.enable_chl = &port_char_enable_chl,
++	.disable_chl = &port_char_disable_chl,
++};
+diff --git a/drivers/net/wwan/t7xx/t7xx_port_proxy.c b/drivers/net/wwan/t7xx/t7xx_port_proxy.c
+index 7d6388bf1d7c..3dd87f25124e 100644
+--- a/drivers/net/wwan/t7xx/t7xx_port_proxy.c
++++ b/drivers/net/wwan/t7xx/t7xx_port_proxy.c
+@@ -39,6 +39,8 @@
+ 
+ #define Q_IDX_CTRL			0
+ #define Q_IDX_MBIM			2
++#define Q_IDX_MIPC			2
++#define Q_IDX_ADB			3
+ #define Q_IDX_AT_CMD			5
+ 
+ #define INVALID_SEQ_NUM			GENMASK(15, 0)
+@@ -100,6 +102,28 @@ static const struct t7xx_port_conf t7xx_port_conf[] = {
+ 		.path_id = CLDMA_ID_AP,
+ 		.ops = &ctl_port_ops,
+ 		.name = "t7xx_ap_ctrl",
++	}, {
++		.tx_ch = PORT_CH_AP_ADB_TX,
++		.rx_ch = PORT_CH_AP_ADB_RX,
++		.txq_index = Q_IDX_ADB,
++		.rxq_index = Q_IDX_ADB,
++		.path_id = CLDMA_ID_AP,
++		.ops = &debug_port_ops,
++		.name = "ccci_sap_adb",
++		.debug = true,
++		.class_name = "t7xx_adb",
++		.baseminor = 100,
++	}, {
++		.tx_ch = PORT_CH_MIPC_TX,
++		.rx_ch = PORT_CH_MIPC_RX,
++		.txq_index = Q_IDX_MIPC,
++		.rxq_index = Q_IDX_MIPC,
++		.path_id = CLDMA_ID_MD,
++		.ops = &debug_port_ops,
++		.name = "ttyCMIPC0",
++		.debug = true,
++		.class_name = "t7xx_mipc",
++		.baseminor = 101,
+ 	},
+ };
+ 
+@@ -505,13 +529,32 @@ static void t7xx_proxy_init_all_ports(struct t7xx_modem *md)
+ 		spin_lock_init(&port->port_update_lock);
+ 		port->chan_enable = false;
+ 
+-		if (port_conf->ops && port_conf->ops->init)
++		if (!port_conf->debug && port_conf->ops && port_conf->ops->init)
+ 			port_conf->ops->init(port);
+ 	}
+ 
+ 	t7xx_proxy_setup_ch_mapping(port_prox);
+ }
+ 
++void t7xx_proxy_port_debug(struct t7xx_pci_dev *t7xx_dev, bool show)
++{
++	struct port_proxy *port_prox = t7xx_dev->md->port_prox;
++	struct t7xx_port *port;
++	int i;
++
++	for_each_proxy_port(i, port, port_prox) {
++		const struct t7xx_port_conf *port_conf = port->port_conf;
++
++		spin_lock_init(&port->port_update_lock);
++		if (port_conf->debug && port_conf->ops && port_conf->ops->init) {
++			if (show)
++				port_conf->ops->init(port);
++			else
++				port_conf->ops->uninit(port);
++		}
++	}
++}
++
+ void t7xx_port_proxy_set_cfg(struct t7xx_modem *md, enum port_cfg_id cfg_id)
+ {
+ 	struct port_proxy *port_prox = md->port_prox;
+diff --git a/drivers/net/wwan/t7xx/t7xx_port_proxy.h b/drivers/net/wwan/t7xx/t7xx_port_proxy.h
+index 7f5706811445..5bf958824aa8 100644
+--- a/drivers/net/wwan/t7xx/t7xx_port_proxy.h
++++ b/drivers/net/wwan/t7xx/t7xx_port_proxy.h
+@@ -93,11 +93,13 @@ struct ctrl_msg_header {
+ /* Port operations mapping */
+ extern struct port_ops wwan_sub_port_ops;
+ extern struct port_ops ctl_port_ops;
++extern struct port_ops debug_port_ops;
+ 
+ #ifdef CONFIG_WWAN_DEBUGFS
+ extern struct port_ops t7xx_trace_port_ops;
+ #endif
+ 
++void t7xx_proxy_port_debug(struct t7xx_pci_dev *t7xx_dev, bool show);
+ void t7xx_port_proxy_reset(struct port_proxy *port_prox);
+ void t7xx_port_proxy_uninit(struct port_proxy *port_prox);
+ int t7xx_port_proxy_init(struct t7xx_modem *md);
 -- 
- i.
+2.34.1
 
-
-> 
-> ---
-> Changes in v7:
-> - In PSY driver use guard() instead of scoped_guard() (Ilpo)
-> - Use switch/case rather than ifs in yoga_c630_ucsi_read() (Ilpo)
-> - Link to v6: https://lore.kernel.org/r/20240612-yoga-ec-driver-v6-0-8e76ba060439@linaro.org
-> 
-> Changes in v6:
-> - Use guard() instead of scoped_guard() (Ilpo)
-> - Add a define for UCSI version register (Ilpo)
-> - Added a check to prevent overflowing the address in reg16 read (Ilpo)
-> - Link to v5: https://lore.kernel.org/r/20240607-yoga-ec-driver-v5-0-1ac91a0b4326@linaro.org
-> 
-> Changes in v5:
-> - Added missing article in the commit message (Bryan)
-> - Changed yoga_c630_ec_ucsi_get_version() to explicitly set the register
->   instead of just incrementing it (Bryan)
-> - Dropped spurious debugging pr_info (Bryan)
-> - Added missing includes all over the place (Ilpo)
-> - Switched to scoped_guard() where it's suitable (Ilpo)
-> - Defined register bits (Ilpo, Bryan)
-> - Whitespace cleanup (Ilpo, Bryan)
-> - Reworked yoga_c630_ucsi_notify() to use switch-case (Bryan)
-> - Use ternary operators instead of if()s (Ilpo)
-> - Switched power supply driver to use fwnode (Sebastian)
-> - Fixed handling of the adapter's type vs usb_type (Sebastian)
-> - Added SCOPE property to the battery (Sebastian)
-> - Link to v4: https://lore.kernel.org/r/20240528-yoga-ec-driver-v4-0-4fa8dfaae7b6@linaro.org
-> 
-> Changes in v4:
-> - Moved bindings to platform/ to follow example of other Acer Aspire1 EC
->   (Nikita Travkin)
-> - Fixed dt validation for EC interrupt pin (Rob Herring)
-> - Dropped separate 'scale' property (Oliver Neukum)
-> - Link to v3: https://lore.kernel.org/r/20240527-yoga-ec-driver-v3-0-327a9851dad5@linaro.org
-> 
-> Changes in v3:
-> - Split the driver into core and power supply drivers,
-> - Added UCSI driver part, handling USB connections,
-> - Fixed Bjorn's address in DT bindings (Brian Masney)
-> - Changed power-role for both ports to be "dual" per UCSI
-> - Link to v2: https://lore.kernel.org/linux-arm-msm/20230205152809.2233436-1-dmitry.baryshkov@linaro.org/
-> 
-> Changes in v2:
-> - Dropped DP support for now, as the bindings are in process of being
->   discussed separately,
-> - Merged dt patch into the same patchseries,
-> - Removed the fixed serial number battery property,
-> - Fixed indentation of dt bindings example,
-> - Added property: reg and unevaluatedProperties to the connector
->   bindings.
-> - Link to v1: https://lore.kernel.org/linux-arm-msm/20220810035424.2796777-1-bjorn.andersson@linaro.org/
-> 
-> ---
-> Bjorn Andersson (2):
->       dt-bindings: platform: Add Lenovo Yoga C630 EC
->       arm64: dts: qcom: c630: Add Embedded Controller node
-> 
-> Dmitry Baryshkov (4):
->       platform: arm64: add Lenovo Yoga C630 WOS EC driver
->       usb: typec: ucsi: add Lenovo Yoga C630 glue driver
->       power: supply: lenovo_yoga_c630_battery: add Lenovo C630 driver
->       arm64: dts: qcom: sdm845: describe connections of USB/DP port
-> 
->  .../bindings/platform/lenovo,yoga-c630-ec.yaml     |  83 ++++
->  arch/arm64/boot/dts/qcom/sdm845.dtsi               |  53 ++-
->  .../boot/dts/qcom/sdm850-lenovo-yoga-c630.dts      |  75 ++++
->  drivers/platform/arm64/Kconfig                     |  14 +
->  drivers/platform/arm64/Makefile                    |   1 +
->  drivers/platform/arm64/lenovo-yoga-c630.c          | 290 ++++++++++++
->  drivers/power/supply/Kconfig                       |   9 +
->  drivers/power/supply/Makefile                      |   1 +
->  drivers/power/supply/lenovo_yoga_c630_battery.c    | 500 +++++++++++++++++++++
->  drivers/usb/typec/ucsi/Kconfig                     |   9 +
->  drivers/usb/typec/ucsi/Makefile                    |   1 +
->  drivers/usb/typec/ucsi/ucsi_yoga_c630.c            | 204 +++++++++
->  include/linux/platform_data/lenovo-yoga-c630.h     |  44 ++
->  13 files changed, 1283 insertions(+), 1 deletion(-)
-> ---
-> base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
-> change-id: 20240527-yoga-ec-driver-76fd7f5ddae8
-> 
-> Best regards,
-> 
 
