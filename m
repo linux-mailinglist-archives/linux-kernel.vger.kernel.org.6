@@ -1,675 +1,494 @@
-Return-Path: <linux-kernel+bounces-214692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6967F9088AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:55:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E17939088B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D362228F17C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:55:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D97FB25DCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E636C1A2FB3;
-	Fri, 14 Jun 2024 09:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45BA194A4C;
+	Fri, 14 Jun 2024 09:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n8RO82co"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="DyGdPtVC"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D15D1A2C16
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3086119412D;
+	Fri, 14 Jun 2024 09:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718358448; cv=none; b=jCDXCgyyguIAdt5/TMw5Oyra17sCh1mPYVGlQezhArUtwBEeWF+6XNiK9K0Vi9TtY4U6ZEhlawoHcMRzQAqSvsLUnWgvPT9aDkKZ63k48fxEM7aRamX1F4zqd8sWxeRw3cSpeBP435rDCCdINx0vAdekIsKrmplE04R5JVQCQAY=
+	t=1718358478; cv=none; b=V6NBrq+V7E1rWKr9zlwqLsyIGhp5weg3rxijaC1DFUpSxPUcCZjW2hXtrtJn77ONjw+61JQ4FrY5VocaxKLvbtUsFQoZk0HLrgVXQaeCWBPHqgX2hqbYYkWU3qmYoMq9akm0VHDMQl7csQj8hCr8bs64s96Id8+YXs41/M3qULc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718358448; c=relaxed/simple;
-	bh=PTWaCGHhxDG3JPho0JTkQVwDMdXBskC1S/cinQsqs34=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=q0cFgl6YDMl/OVISHO4OFXo8ZoXTdiF0/1X+E19YiI+n2q20qDAscaVjKBSQTZzBcPn1LeCkyNru4pEjGCONh6bD5Xxn/1sIAcUih3wfmKUL9BlNPkxbpeWdwepDOkqeFhA+vgSgcXgeTZYmCw3PJAdLfKFd6KCUTeFKHxbj+Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n8RO82co; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6efe62f583so192137066b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 02:47:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718358443; x=1718963243; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R2gPriGbKHdVX74nqBWMkbblvztnZeI8q7lI51XJyjE=;
-        b=n8RO82coUuSwayFApPgbCsc4AxTRvRPM2KrNVoqsg2+5oWaGsXBOs6kIVAhuWqwr4l
-         zK9eD7w3RrIo4qBggVkwSRz9OBoYTQpjEazeKHiYwciezqMWD80n/w1Kn7lU0wF/DOhH
-         hRR2t/0qDoMVb2S/8rhCsBhpUo2AU+vP2N7Pdp0BplGXqEHkE+1ZILau2emeFAfNN0d/
-         iwXKplDF1xRNHANBSLm4uIBMnXdUfB/XQLaBIX3qXMH7xPxGyYigDihxdNnUyIZRRclq
-         IxFUOIJJnlSv4O2UdhNieCQ2GSzstFVzgMWEsNXhIJO6Ha6BCXIdellPxXCVcOWOr46M
-         CsSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718358443; x=1718963243;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R2gPriGbKHdVX74nqBWMkbblvztnZeI8q7lI51XJyjE=;
-        b=qSY4OMgFM7E2cz0+hnSlX/zbfe15/TAZckGUNQ8IGPpOJzOa1WRo9t1tgg8NhHNsQH
-         MiN1bxBK3+ecR5DY8iQH6X4+Kr3I/iA7+0IOQVDEc7iW+RyXeJcddE0IWkY2nEMqBDOs
-         5B6HhqniNQP/a+YzsdZ4FvNgeayhRVUsdPUo9e0j5paGOYLfl8YHYW6v8Sfqvsdlkg7c
-         RwbaAlyxrWOz28wHXBuNuDlNQk5VDkEPsF7WGskrcS00SsMXSeZ6XgrdINCjt7vhM4FX
-         wQKvg+Z/VaUEcMxizMMNNpJyBMhaZ+w/lT1zmvHBXY23ZKIgcOHCjJXuQTIkcaSnPxGU
-         IWvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxUrQJmisXbM5sE81LmXm+JUsHxV+2FAXoODmakDn1+PdVXqAB56piCLuTBGlcV2GtsYPv0lIkHmTYq/8a/k/HeAcUxySHe8RMqsHK
-X-Gm-Message-State: AOJu0YxOcMwR+PatbXwCVbi145eMIU1zW4dVM6fVN+4XqrSscB0YjdhX
-	a3PiWG0eYPf4dADceOEP1DKRDIfF/N/Lwv9tJc+msDDmalIbqioSwCt0C+qYsDk=
-X-Google-Smtp-Source: AGHT+IEf3+S0MhgY0wukGRo771V3bdpj3ZA5SXQwPVRN2B+sO2RVirDXSDvX66hTXcXM0U1zEb/VKQ==
-X-Received: by 2002:a17:906:4f16:b0:a6e:f997:7d91 with SMTP id a640c23a62f3a-a6f60d42257mr139307566b.38.1718358443385;
-        Fri, 14 Jun 2024 02:47:23 -0700 (PDT)
-Received: from [127.0.1.1] ([78.10.206.163])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f9c84csm164966366b.222.2024.06.14.02.47.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 02:47:22 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 14 Jun 2024 11:46:21 +0200
-Subject: [PATCH 22/22] dt-bindings: thermal: cleanup examples indentation
+	s=arc-20240116; t=1718358478; c=relaxed/simple;
+	bh=LPsGomOjuosLutGl0N/WwgNE2B736KH7EMTOa4C9ITw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U1yKLeHxKMexeHLOc5HbGyf7rzvaKVPJb+KNZ0h+c9HIxE/nBZRWQ2q/P8g7lEul9V3FeCrxy5Qsf+oAFHLE4g+3/Ho+s3K/V5u7OLRc++LgQ8vXR0ssDVYrsGEajzrx9S3qxyUczEWSDzGC1Nfwiaj7V1f78Pbx9lLsD9cWXGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=DyGdPtVC; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1718358473;
+	bh=LPsGomOjuosLutGl0N/WwgNE2B736KH7EMTOa4C9ITw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DyGdPtVCQxMIu1/YdPFzw/0HmT9xMTXvZiSklhivsMgTboE8qSo9LPeLzDnHBr73A
+	 hCyM8FQoJjaTSWK7O5MnOZPGQn99NtLFTG2g2AodeWoR2uuhZd+/GsRs/VQg+xjsE4
+	 +AFKWZho2KOUVmH8pMDmPxvzDq/0GUEgONv6VZm0=
+Date: Fri, 14 Jun 2024 11:47:52 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-leds@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
+	Dustin Howett <dustin@howett.net>, Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v3 4/5] leds: Add ChromeOS EC driver
+Message-ID: <4b301931-4c29-435e-a2e7-6cc2ed540aa5@t-8ch.de>
+References: <20240613-cros_ec-led-v3-0-500b50f41e0f@weissschuh.net>
+ <20240613-cros_ec-led-v3-4-500b50f41e0f@weissschuh.net>
+ <20240614090219.GE2561462@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240614-dt-bindings-thermal-allof-v1-22-30b25a6ae24e@linaro.org>
-References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org>
-In-Reply-To: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Guillaume La Roque <glaroque@baylibre.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Vasily Khoruzhick <anarsoul@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Anson Huang <Anson.Huang@nxp.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Amit Kucheria <amitk@kernel.org>, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
- Heiko Stuebner <heiko@sntech.de>, Biju Das <biju.das.jz@bp.renesas.com>, 
- Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Pascal Paillet <p.paillet@foss.st.com>, Keerthy <j-keerthy@ti.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Scott Branden <sbranden@broadcom.com>, 
- zhanghongchen <zhanghongchen@loongson.cn>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, imx@lists.linux.dev, 
- linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- Florian Fainelli <f.fainelli@gmail.com>, 
- linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=21269;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=PTWaCGHhxDG3JPho0JTkQVwDMdXBskC1S/cinQsqs34=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmbBFzHrd9GOiKwbzJMror8sT+hnOlEceWGq75k
- 7UM0c1D222JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZmwRcwAKCRDBN2bmhouD
- 1yuHEACQQW+ctgqsyxcNpgAHqwclHpTy68YBzjAnl4LzShLU/IKf0yY+RsTopyTrhoi2a8uqxym
- tb/2s73RE2G0GQGl6ovK2iXBnX57zoQHgEiM+npaJaO8VOeo7SqdNFVMogAV6tQqsJ1at1ApsyZ
- /Rsq7yRCQMOME6Fh7mGb6xsxi1vn1Pe0Pmx4FAHcDlZORtDY0q5uCrzuV5ox3hLALkNxy2gR5Cr
- SLzND16UJibYdb1DDPgARuC8T62okbBouAY/sxXbD1ri9KpKOpZTfq6tXSAwe7Uq16dVk5gMTZH
- pgz9p2yaqZ3YfQfLfClz44hpM5JFAHpK2OQaW8XDXDhcHASmA30A2JGeJjHAvt+E9157G2e5XGX
- vDOkH5TldhWe0Jf3WqfvqF7pJd4iQhNpBbqTglUIDZo7RnwYPyXsQqIQFVUMkp513EZQ513iQJk
- ImwdYUGZHbNyg642Bju3dWO6ydMpKIpRLinsMHViIFI0XOIa+GYqW5n9XrRo95RsEZAJBGiamw1
- kztcCY3tAQVxMZCXBalUMhCJsldG+yK0kybQ42JUjgLYIP/pYJ6Gbl4FRdBTCwORdDwCufh4p5a
- J2cutoXsbGMslNy/H3IVMfdFi//qegvrgHFSYaxZlHeyvMtwjOw0yJvviRhsuBz//He4zuLCH8k
- 8ea1P+ZuXQH2j3w==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240614090219.GE2561462@google.com>
 
-Preferred indentation for DTS examples in the bindings is 4-space.  It
-is also preferred not to have redundant/unused labels. No functional
-change
+On 2024-06-14 10:02:19+0000, Lee Jones wrote:
+> On Thu, 13 Jun 2024, Thomas Weißschuh wrote:
+> 
+> > The ChromeOS Embedded Controller exposes an LED control command.
+> > Expose its functionality through the leds subsystem.
+> > 
+> > The LEDs are exposed as multicolor devices.
+> > A hardware trigger, which is active by default, is provided to let the
+> > EC itself take over control over the LED.
+> > 
+> > The driver is designed to be probed via the cros_ec mfd device.
+> > 
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> >  MAINTAINERS                 |   5 +
+> >  drivers/leds/Kconfig        |  15 +++
+> >  drivers/leds/Makefile       |   1 +
+> >  drivers/leds/leds-cros_ec.c | 299 ++++++++++++++++++++++++++++++++++++++++++++
+> >  4 files changed, 320 insertions(+)
+> 
+> Mostly fine.  Couple of points.
+> 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index aacccb376c28..8bc3491a08af 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -5135,6 +5135,11 @@ S:	Maintained
+> >  F:	Documentation/devicetree/bindings/sound/google,cros-ec-codec.yaml
+> >  F:	sound/soc/codecs/cros_ec_codec.*
+> >  
+> > +CHROMEOS EC LED DRIVER
+> > +M:	Thomas Weißschuh <thomas@weissschuh.net>
+> > +S:	Maintained
+> > +F:	drivers/leds/leds-cros_ec.c
+> > +
+> >  CHROMEOS EC SUBDRIVERS
+> >  M:	Benson Leung <bleung@chromium.org>
+> >  R:	Guenter Roeck <groeck@chromium.org>
+> > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> > index 05e6af88b88c..aa2fec9a34ed 100644
+> > --- a/drivers/leds/Kconfig
+> > +++ b/drivers/leds/Kconfig
+> > @@ -179,6 +179,21 @@ config LEDS_CR0014114
+> >  	  To compile this driver as a module, choose M here: the module
+> >  	  will be called leds-cr0014114.
+> >  
+> > +config LEDS_CROS_EC
+> > +	tristate "LED Support for ChromeOS EC"
+> > +	depends on MFD_CROS_EC_DEV
+> > +	depends on LEDS_CLASS_MULTICOLOR
+> > +	select LEDS_TRIGGERS
+> > +	default MFD_CROS_EC_DEV
+> > +	help
+> > +	  This option enables support for LEDs managed by ChromeOS ECs.
+> > +	  All LEDs exposed by the EC are supported in multicolor mode.
+> > +	  A hardware trigger to switch back to the automatic behaviour is
+> > +	  provided.
+> > +
+> > +	  To compile this driver as a module, choose M here: the module
+> > +	  will be called leds-cros_ec.
+> > +
+> >  config LEDS_EL15203000
+> >  	tristate "LED Support for Crane EL15203000"
+> >  	depends on LEDS_CLASS
+> > diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> > index effdfc6f1e95..3491904e13f7 100644
+> > --- a/drivers/leds/Makefile
+> > +++ b/drivers/leds/Makefile
+> > @@ -26,6 +26,7 @@ obj-$(CONFIG_LEDS_CLEVO_MAIL)		+= leds-clevo-mail.o
+> >  obj-$(CONFIG_LEDS_COBALT_QUBE)		+= leds-cobalt-qube.o
+> >  obj-$(CONFIG_LEDS_COBALT_RAQ)		+= leds-cobalt-raq.o
+> >  obj-$(CONFIG_LEDS_CPCAP)		+= leds-cpcap.o
+> > +obj-$(CONFIG_LEDS_CROS_EC)		+= leds-cros_ec.o
+> >  obj-$(CONFIG_LEDS_DA903X)		+= leds-da903x.o
+> >  obj-$(CONFIG_LEDS_DA9052)		+= leds-da9052.o
+> >  obj-$(CONFIG_LEDS_GPIO)			+= leds-gpio.o
+> > diff --git a/drivers/leds/leds-cros_ec.c b/drivers/leds/leds-cros_ec.c
+> > new file mode 100644
+> > index 000000000000..7bb21a587713
+> > --- /dev/null
+> > +++ b/drivers/leds/leds-cros_ec.c
+> > @@ -0,0 +1,299 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> > + *  ChromeOS EC LED Driver
+> > + *
+> > + *  Copyright (C) 2024 Thomas Weißschuh <linux@weissschuh.net>
+> > + */
+> > +
+> > +#include <linux/device.h>
+> > +#include <linux/leds.h>
+> > +#include <linux/led-class-multicolor.h>
+> > +#include <linux/mod_devicetable.h>
+> > +#include <linux/module.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/platform_data/cros_ec_commands.h>
+> > +#include <linux/platform_data/cros_ec_proto.h>
+> > +
+> > +#define DRV_NAME	"cros-ec-led"
+> 
+> Please refrain from defining device names.  Use the string in-place.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/thermal/amlogic,thermal.yaml          | 18 ++---
- .../bindings/thermal/brcm,avs-ro-thermal.yaml      | 16 ++--
- .../devicetree/bindings/thermal/brcm,avs-tmon.yaml | 16 ++--
- .../devicetree/bindings/thermal/qcom-tsens.yaml    | 88 ++++++++++------------
- .../bindings/thermal/rcar-gen3-thermal.yaml        | 64 ++++++++--------
- .../devicetree/bindings/thermal/rcar-thermal.yaml  | 60 +++++++--------
- .../devicetree/bindings/thermal/rzg2l-thermal.yaml | 36 ++++-----
- .../devicetree/bindings/thermal/sprd-thermal.yaml  | 42 +++++------
- .../bindings/thermal/ti,am654-thermal.yaml         | 10 +--
- 9 files changed, 172 insertions(+), 178 deletions(-)
+This is the common pattern used for other drivers using the cros_ec MFD
+device. I'll change it, though.
 
-diff --git a/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml b/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
-index e52fc40e215d..725303e1a364 100644
---- a/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
-+++ b/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
-@@ -50,13 +50,13 @@ unevaluatedProperties: false
- 
- examples:
-   - |
--        cpu_temp: temperature-sensor@ff634800 {
--                compatible = "amlogic,g12a-cpu-thermal",
--                             "amlogic,g12a-thermal";
--                reg = <0xff634800 0x50>;
--                interrupts = <0x0 0x24 0x0>;
--                clocks = <&clk 164>;
--                #thermal-sensor-cells = <0>;
--                amlogic,ao-secure = <&sec_AO>;
--        };
-+    temperature-sensor@ff634800 {
-+        compatible = "amlogic,g12a-cpu-thermal",
-+                     "amlogic,g12a-thermal";
-+        reg = <0xff634800 0x50>;
-+        interrupts = <0x0 0x24 0x0>;
-+        clocks = <&clk 164>;
-+        #thermal-sensor-cells = <0>;
-+        amlogic,ao-secure = <&sec_AO>;
-+    };
- ...
-diff --git a/Documentation/devicetree/bindings/thermal/brcm,avs-ro-thermal.yaml b/Documentation/devicetree/bindings/thermal/brcm,avs-ro-thermal.yaml
-index 0271a0bc1843..29a9844e8b48 100644
---- a/Documentation/devicetree/bindings/thermal/brcm,avs-ro-thermal.yaml
-+++ b/Documentation/devicetree/bindings/thermal/brcm,avs-ro-thermal.yaml
-@@ -35,14 +35,14 @@ unevaluatedProperties: false
- 
- examples:
-   - |
--        avs-monitor@7d5d2000 {
--                compatible = "brcm,bcm2711-avs-monitor",
--                             "syscon", "simple-mfd";
--                reg = <0x7d5d2000 0xf00>;
-+    avs-monitor@7d5d2000 {
-+        compatible = "brcm,bcm2711-avs-monitor",
-+                     "syscon", "simple-mfd";
-+        reg = <0x7d5d2000 0xf00>;
- 
--                thermal: thermal {
--                        compatible = "brcm,bcm2711-thermal";
--                        #thermal-sensor-cells = <0>;
--                };
-+        thermal: thermal {
-+            compatible = "brcm,bcm2711-thermal";
-+            #thermal-sensor-cells = <0>;
-         };
-+    };
- ...
-diff --git a/Documentation/devicetree/bindings/thermal/brcm,avs-tmon.yaml b/Documentation/devicetree/bindings/thermal/brcm,avs-tmon.yaml
-index 32730211e15b..081486b44382 100644
---- a/Documentation/devicetree/bindings/thermal/brcm,avs-tmon.yaml
-+++ b/Documentation/devicetree/bindings/thermal/brcm,avs-tmon.yaml
-@@ -45,11 +45,11 @@ required:
- 
- examples:
-   - |
--     thermal@f04d1500 {
--          compatible = "brcm,avs-tmon-bcm7445", "brcm,avs-tmon";
--          reg = <0xf04d1500 0x28>;
--          interrupts = <0x6>;
--          interrupt-names = "tmon";
--          interrupt-parent = <&avs_host_l2_intc>;
--          #thermal-sensor-cells = <0>;
--     };
-+    thermal@f04d1500 {
-+        compatible = "brcm,avs-tmon-bcm7445", "brcm,avs-tmon";
-+        reg = <0xf04d1500 0x28>;
-+        interrupts = <0x6>;
-+        interrupt-names = "tmon";
-+        interrupt-parent = <&avs_host_l2_intc>;
-+        #thermal-sensor-cells = <0>;
-+    };
-diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-index cce6624228c7..01f9f45b94c2 100644
---- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-+++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-@@ -295,22 +295,16 @@ unevaluatedProperties: false
- examples:
-   - |
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
--    // Example msm9860 based SoC (ipq8064):
--    gcc: clock-controller {
-+    thermal-sensor {
-+        compatible = "qcom,ipq8064-tsens";
- 
--           /* ... */
-+        nvmem-cells = <&tsens_calib>, <&tsens_calib_backup>;
-+        nvmem-cell-names = "calib", "calib_backup";
-+        interrupts = <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-names = "uplow";
- 
--           tsens: thermal-sensor {
--                compatible = "qcom,ipq8064-tsens";
--
--                 nvmem-cells = <&tsens_calib>, <&tsens_calib_backup>;
--                 nvmem-cell-names = "calib", "calib_backup";
--                 interrupts = <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>;
--                 interrupt-names = "uplow";
--
--                 #qcom,sensors = <11>;
--                 #thermal-sensor-cells = <1>;
--          };
-+        #qcom,sensors = <11>;
-+        #thermal-sensor-cells = <1>;
-     };
- 
-   - |
-@@ -347,66 +341,66 @@ examples:
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
-     // Example 1 (legacy: for pre v1 IP):
-     tsens1: thermal-sensor@4a9000 {
--           compatible = "qcom,msm8916-tsens", "qcom,tsens-v0_1";
--           reg = <0x4a9000 0x1000>, /* TM */
--                 <0x4a8000 0x1000>; /* SROT */
-+        compatible = "qcom,msm8916-tsens", "qcom,tsens-v0_1";
-+        reg = <0x4a9000 0x1000>, /* TM */
-+              <0x4a8000 0x1000>; /* SROT */
- 
--           nvmem-cells = <&tsens_caldata>, <&tsens_calsel>;
--           nvmem-cell-names = "calib", "calib_sel";
-+        nvmem-cells = <&tsens_caldata>, <&tsens_calsel>;
-+        nvmem-cell-names = "calib", "calib_sel";
- 
--           interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
--           interrupt-names = "uplow";
-+        interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-names = "uplow";
- 
--           #qcom,sensors = <5>;
--           #thermal-sensor-cells = <1>;
-+        #qcom,sensors = <5>;
-+        #thermal-sensor-cells = <1>;
-     };
- 
-   - |
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
-     // Example 2 (for any platform containing v1 of the TSENS IP):
-     tsens2: thermal-sensor@4a9000 {
--          compatible = "qcom,qcs404-tsens", "qcom,tsens-v1";
--          reg = <0x004a9000 0x1000>, /* TM */
--                <0x004a8000 0x1000>; /* SROT */
-+        compatible = "qcom,qcs404-tsens", "qcom,tsens-v1";
-+        reg = <0x004a9000 0x1000>, /* TM */
-+              <0x004a8000 0x1000>; /* SROT */
- 
--          nvmem-cells = <&tsens_caldata>;
--          nvmem-cell-names = "calib";
-+        nvmem-cells = <&tsens_caldata>;
-+        nvmem-cell-names = "calib";
- 
--          interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>;
--          interrupt-names = "uplow";
-+        interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-names = "uplow";
- 
--          #qcom,sensors = <10>;
--          #thermal-sensor-cells = <1>;
-+        #qcom,sensors = <10>;
-+        #thermal-sensor-cells = <1>;
-     };
- 
-   - |
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
-     // Example 3 (for any platform containing v2 of the TSENS IP):
-     tsens3: thermal-sensor@c263000 {
--           compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
--           reg = <0xc263000 0x1ff>,
--                 <0xc222000 0x1ff>;
-+        compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
-+        reg = <0xc263000 0x1ff>,
-+              <0xc222000 0x1ff>;
- 
--           interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>,
--                        <GIC_SPI 508 IRQ_TYPE_LEVEL_HIGH>;
--           interrupt-names = "uplow", "critical";
-+        interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 508 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-names = "uplow", "critical";
- 
--           #qcom,sensors = <13>;
--           #thermal-sensor-cells = <1>;
-+        #qcom,sensors = <13>;
-+        #thermal-sensor-cells = <1>;
-     };
- 
-   - |
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
-     // Example 4 (for any IPQ8074 based SoC-s):
-     tsens4: thermal-sensor@4a9000 {
--           compatible = "qcom,ipq8074-tsens";
--           reg = <0x4a9000 0x1000>,
--                 <0x4a8000 0x1000>;
-+        compatible = "qcom,ipq8074-tsens";
-+        reg = <0x4a9000 0x1000>,
-+              <0x4a8000 0x1000>;
- 
--           interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
--           interrupt-names = "combined";
-+        interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-names = "combined";
- 
--           #qcom,sensors = <16>;
--           #thermal-sensor-cells = <1>;
-+        #qcom,sensors = <16>;
-+        #thermal-sensor-cells = <1>;
-     };
- ...
-diff --git a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml
-index d92e882c9e8d..b6657d64cf3d 100644
---- a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml
-+++ b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml
-@@ -106,33 +106,33 @@ examples:
-     #include <dt-bindings/power/r8a7795-sysc.h>
- 
-     tsc: thermal@e6198000 {
--            compatible = "renesas,r8a7795-thermal";
--            reg = <0xe6198000 0x100>,
--                  <0xe61a0000 0x100>,
--                  <0xe61a8000 0x100>;
--            interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
--                         <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
--                         <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
--            clocks = <&cpg CPG_MOD 522>;
--            power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
--            resets = <&cpg 522>;
--            #thermal-sensor-cells = <1>;
-+        compatible = "renesas,r8a7795-thermal";
-+        reg = <0xe6198000 0x100>,
-+              <0xe61a0000 0x100>,
-+              <0xe61a8000 0x100>;
-+        interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&cpg CPG_MOD 522>;
-+        power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+        resets = <&cpg 522>;
-+        #thermal-sensor-cells = <1>;
-     };
- 
-     thermal-zones {
--            sensor_thermal: sensor-thermal {
--                    polling-delay-passive = <250>;
--                    polling-delay = <1000>;
--                    thermal-sensors = <&tsc 0>;
-+        sensor_thermal: sensor-thermal {
-+            polling-delay-passive = <250>;
-+            polling-delay = <1000>;
-+            thermal-sensors = <&tsc 0>;
- 
--                    trips {
--                            sensor1_crit: sensor1-crit {
--                                    temperature = <90000>;
--                                    hysteresis = <2000>;
--                                    type = "critical";
--                            };
--                    };
-+            trips {
-+                sensor1_crit: sensor1-crit {
-+                    temperature = <90000>;
-+                    hysteresis = <2000>;
-+                    type = "critical";
-+                };
-             };
-+        };
-     };
-   - |
-     #include <dt-bindings/clock/r8a779a0-cpg-mssr.h>
-@@ -140,14 +140,14 @@ examples:
-     #include <dt-bindings/power/r8a779a0-sysc.h>
- 
-     tsc_r8a779a0: thermal@e6190000 {
--            compatible = "renesas,r8a779a0-thermal";
--            reg = <0xe6190000 0x200>,
--                  <0xe6198000 0x200>,
--                  <0xe61a0000 0x200>,
--                  <0xe61a8000 0x200>,
--                  <0xe61b0000 0x200>;
--            clocks = <&cpg CPG_MOD 919>;
--            power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
--            resets = <&cpg 919>;
--            #thermal-sensor-cells = <1>;
-+        compatible = "renesas,r8a779a0-thermal";
-+        reg = <0xe6190000 0x200>,
-+              <0xe6198000 0x200>,
-+              <0xe61a0000 0x200>,
-+              <0xe61a8000 0x200>,
-+              <0xe61b0000 0x200>;
-+        clocks = <&cpg CPG_MOD 919>;
-+        power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+        resets = <&cpg 919>;
-+        #thermal-sensor-cells = <1>;
-     };
-diff --git a/Documentation/devicetree/bindings/thermal/rcar-thermal.yaml b/Documentation/devicetree/bindings/thermal/rcar-thermal.yaml
-index 119998d10ff4..221a58d18cad 100644
---- a/Documentation/devicetree/bindings/thermal/rcar-thermal.yaml
-+++ b/Documentation/devicetree/bindings/thermal/rcar-thermal.yaml
-@@ -98,8 +98,8 @@ examples:
-   # Example (non interrupt support)
-   - |
-     thermal@ffc48000 {
--            compatible = "renesas,thermal-r8a7779", "renesas,rcar-thermal";
--            reg = <0xffc48000 0x38>;
-+        compatible = "renesas,thermal-r8a7779", "renesas,rcar-thermal";
-+        reg = <0xffc48000 0x38>;
-     };
- 
-   # Example (interrupt support)
-@@ -109,12 +109,12 @@ examples:
-     #include <dt-bindings/interrupt-controller/irq.h>
- 
-     thermal@e61f0000 {
--            compatible = "renesas,thermal-r8a73a4", "renesas,rcar-thermal";
--            reg = <0xe61f0000 0x14>, <0xe61f0100 0x38>,
--                  <0xe61f0200 0x38>, <0xe61f0300 0x38>;
--            interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
--            clocks = <&mstp5_clks R8A73A4_CLK_THERMAL>;
--            power-domains = <&pd_c5>;
-+        compatible = "renesas,thermal-r8a73a4", "renesas,rcar-thermal";
-+        reg = <0xe61f0000 0x14>, <0xe61f0100 0x38>,
-+              <0xe61f0200 0x38>, <0xe61f0300 0x38>;
-+        interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&mstp5_clks R8A73A4_CLK_THERMAL>;
-+        power-domains = <&pd_c5>;
-     };
- 
-   # Example (with thermal-zone)
-@@ -124,32 +124,32 @@ examples:
-     #include <dt-bindings/power/r8a7790-sysc.h>
- 
-     thermal: thermal@e61f0000 {
--      compatible = "renesas,thermal-r8a7790",
--                   "renesas,rcar-gen2-thermal",
--                   "renesas,rcar-thermal";
--            reg = <0xe61f0000 0x10>, <0xe61f0100 0x38>;
--            interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
--            clocks = <&cpg CPG_MOD 522>;
--            power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
--            resets = <&cpg 522>;
--            #thermal-sensor-cells = <0>;
-+        compatible = "renesas,thermal-r8a7790",
-+                     "renesas,rcar-gen2-thermal",
-+                     "renesas,rcar-thermal";
-+        reg = <0xe61f0000 0x10>, <0xe61f0100 0x38>;
-+        interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&cpg CPG_MOD 522>;
-+        power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
-+        resets = <&cpg 522>;
-+        #thermal-sensor-cells = <0>;
-     };
- 
-     thermal-zones {
--            cpu_thermal: cpu-thermal {
--                    polling-delay-passive = <1000>;
--                    polling-delay = <5000>;
-+        cpu_thermal: cpu-thermal {
-+            polling-delay-passive = <1000>;
-+            polling-delay = <5000>;
- 
--                    thermal-sensors = <&thermal>;
-+            thermal-sensors = <&thermal>;
- 
--                    trips {
--                            cpu-crit {
--                                    temperature = <115000>;
--                                    hysteresis = <0>;
--                                    type = "critical";
--                            };
--                    };
--                    cooling-maps {
--                    };
-+            trips {
-+                cpu-crit {
-+                    temperature = <115000>;
-+                    hysteresis = <0>;
-+                    type = "critical";
-+                };
-             };
-+            cooling-maps {
-+            };
-+        };
-     };
-diff --git a/Documentation/devicetree/bindings/thermal/rzg2l-thermal.yaml b/Documentation/devicetree/bindings/thermal/rzg2l-thermal.yaml
-index 2f96c0fe0f75..136589f5adee 100644
---- a/Documentation/devicetree/bindings/thermal/rzg2l-thermal.yaml
-+++ b/Documentation/devicetree/bindings/thermal/rzg2l-thermal.yaml
-@@ -53,27 +53,27 @@ examples:
-     #include <dt-bindings/clock/r9a07g044-cpg.h>
- 
-     tsu: thermal@10059400 {
--            compatible = "renesas,r9a07g044-tsu",
--                         "renesas,rzg2l-tsu";
--            reg = <0x10059400 0x400>;
--            clocks = <&cpg CPG_MOD R9A07G044_TSU_PCLK>;
--            resets = <&cpg R9A07G044_TSU_PRESETN>;
--            power-domains = <&cpg>;
--            #thermal-sensor-cells = <1>;
-+        compatible = "renesas,r9a07g044-tsu",
-+                     "renesas,rzg2l-tsu";
-+        reg = <0x10059400 0x400>;
-+        clocks = <&cpg CPG_MOD R9A07G044_TSU_PCLK>;
-+        resets = <&cpg R9A07G044_TSU_PRESETN>;
-+        power-domains = <&cpg>;
-+        #thermal-sensor-cells = <1>;
-     };
- 
-     thermal-zones {
--            cpu-thermal {
--                    polling-delay-passive = <250>;
--                    polling-delay = <1000>;
--                    thermal-sensors = <&tsu 0>;
-+        cpu-thermal {
-+            polling-delay-passive = <250>;
-+            polling-delay = <1000>;
-+            thermal-sensors = <&tsu 0>;
- 
--                    trips {
--                            sensor_crit: sensor-crit {
--                                    temperature = <125000>;
--                                    hysteresis = <1000>;
--                                    type = "critical";
--                            };
--                    };
-+            trips {
-+                sensor_crit: sensor-crit {
-+                    temperature = <125000>;
-+                    hysteresis = <1000>;
-+                    type = "critical";
-+                };
-             };
-+        };
-     };
-diff --git a/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml b/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
-index f65076fc68f9..afa551f6185f 100644
---- a/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
-+++ b/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
-@@ -86,27 +86,27 @@ unevaluatedProperties: false
- 
- examples:
-   - |
--        ap_thm0: thermal@32200000 {
--                compatible = "sprd,ums512-thermal";
--                reg = <0x32200000 0x10000>;
--                clock-names = "enable";
--                clocks = <&aonapb_gate 32>;
--                #thermal-sensor-cells = <1>;
--                nvmem-cells = <&thm0_sign>, <&thm0_ratio>;
--                nvmem-cell-names = "thm_sign_cal", "thm_ratio_cal";
--                #address-cells = <1>;
--                #size-cells = <0>;
-+    thermal@32200000 {
-+        compatible = "sprd,ums512-thermal";
-+        reg = <0x32200000 0x10000>;
-+        clock-names = "enable";
-+        clocks = <&aonapb_gate 32>;
-+        #thermal-sensor-cells = <1>;
-+        nvmem-cells = <&thm0_sign>, <&thm0_ratio>;
-+        nvmem-cell-names = "thm_sign_cal", "thm_ratio_cal";
-+        #address-cells = <1>;
-+        #size-cells = <0>;
- 
--                prometheus-sensor@0 {
--                        reg = <0>;
--                        nvmem-cells = <&thm0_sen0>;
--                        nvmem-cell-names = "sen_delta_cal";
--                };
--
--                ank-sensor@1 {
--                        reg = <1>;
--                        nvmem-cells = <&thm0_sen1>;
--                        nvmem-cell-names = "sen_delta_cal";
--                };
-+        prometheus-sensor@0 {
-+            reg = <0>;
-+            nvmem-cells = <&thm0_sen0>;
-+            nvmem-cell-names = "sen_delta_cal";
-         };
-+
-+        ank-sensor@1 {
-+            reg = <1>;
-+            nvmem-cells = <&thm0_sen1>;
-+            nvmem-cell-names = "sen_delta_cal";
-+        };
-+    };
- ...
-diff --git a/Documentation/devicetree/bindings/thermal/ti,am654-thermal.yaml b/Documentation/devicetree/bindings/thermal/ti,am654-thermal.yaml
-index 16801aa78bc2..c123d9070525 100644
---- a/Documentation/devicetree/bindings/thermal/ti,am654-thermal.yaml
-+++ b/Documentation/devicetree/bindings/thermal/ti,am654-thermal.yaml
-@@ -47,11 +47,11 @@ examples:
-         thermal-sensors = <&vtm0 0>;
- 
-         trips {
--                mpu0_crit: mpu0_crit {
--                        temperature = <125000>; /* milliCelsius */
--                        hysteresis = <2000>; /* milliCelsius */
--                        type = "critical";
--                };
-+            mpu0_crit: mpu0_crit {
-+                temperature = <125000>; /* milliCelsius */
-+                hysteresis = <2000>; /* milliCelsius */
-+                type = "critical";
-+            };
-         };
-     };
- ...
+> > +static const char * const cros_ec_led_functions[] = {
+> > +	[EC_LED_ID_BATTERY_LED]            = LED_FUNCTION_CHARGING,
+> > +	[EC_LED_ID_POWER_LED]              = LED_FUNCTION_POWER,
+> > +	[EC_LED_ID_ADAPTER_LED]            = "adapter",
+> > +	[EC_LED_ID_LEFT_LED]               = "left",
+> > +	[EC_LED_ID_RIGHT_LED]              = "right",
+> > +	[EC_LED_ID_RECOVERY_HW_REINIT_LED] = "recovery-hw-reinit",
+> > +	[EC_LED_ID_SYSRQ_DEBUG_LED]        = "sysrq-debug",
+> > +};
+> > +
+> > +static_assert(ARRAY_SIZE(cros_ec_led_functions) == EC_LED_ID_COUNT);
+> 
+> What does this do?  Result in a build failure?
 
--- 
-2.43.0
+Yes. It's the standard C version of BUILD_BUG_ON().
+It can be used in all contexts, in contrast to BUILD_BUG_ON) and is
+already widely used within the tree.
 
+The goal is to make sure that additions to "enum ec_led_id" do not
+inadvertedly lead to out-of-bounds accesses in those arrays.
+
+> > +static const int cros_ec_led_to_linux_id[] = {
+> > +	[EC_LED_COLOR_RED]    = LED_COLOR_ID_RED,
+> > +	[EC_LED_COLOR_GREEN]  = LED_COLOR_ID_GREEN,
+> > +	[EC_LED_COLOR_BLUE]   = LED_COLOR_ID_BLUE,
+> > +	[EC_LED_COLOR_YELLOW] = LED_COLOR_ID_YELLOW,
+> > +	[EC_LED_COLOR_WHITE]  = LED_COLOR_ID_WHITE,
+> > +	[EC_LED_COLOR_AMBER]  = LED_COLOR_ID_AMBER,
+> > +};
+> > +
+> > +static_assert(ARRAY_SIZE(cros_ec_led_to_linux_id) == EC_LED_COLOR_COUNT);
+> > +
+> > +static const int cros_ec_linux_to_ec_id[] = {
+> > +	[LED_COLOR_ID_RED]    = EC_LED_COLOR_RED,
+> > +	[LED_COLOR_ID_GREEN]  = EC_LED_COLOR_GREEN,
+> > +	[LED_COLOR_ID_BLUE]   = EC_LED_COLOR_BLUE,
+> > +	[LED_COLOR_ID_YELLOW] = EC_LED_COLOR_YELLOW,
+> > +	[LED_COLOR_ID_WHITE]  = EC_LED_COLOR_WHITE,
+> > +	[LED_COLOR_ID_AMBER]  = EC_LED_COLOR_AMBER,
+> > +};
+> > +
+> > +struct cros_ec_led_priv {
+> > +	struct led_classdev_mc led_mc_cdev;
+> > +	struct cros_ec_device *cros_ec;
+> > +	enum ec_led_id led_id;
+> > +};
+> > +
+> > +static inline struct cros_ec_led_priv *cros_ec_led_cdev_to_priv(struct led_classdev *led_cdev)
+> > +{
+> > +	return container_of(lcdev_to_mccdev(led_cdev), struct cros_ec_led_priv, led_mc_cdev);
+> > +}
+> > +
+> > +union cros_ec_led_cmd_data {
+> > +	struct ec_params_led_control req;
+> > +	struct ec_response_led_control resp;
+> > +} __packed;
+> > +
+> > +static int cros_ec_led_send_cmd(struct cros_ec_device *cros_ec,
+> > +				union cros_ec_led_cmd_data *arg)
+> > +{
+> > +	int ret;
+> > +	struct {
+> > +		struct cros_ec_command msg;
+> > +		union cros_ec_led_cmd_data data;
+> > +	} __packed buf = {
+> > +		.msg = {
+> > +			.version = 1,
+> > +			.command = EC_CMD_LED_CONTROL,
+> > +			.insize  = sizeof(arg->resp),
+> > +			.outsize = sizeof(arg->req),
+> > +		},
+> > +		.data.req = arg->req
+> > +	};
+> > +
+> > +	ret = cros_ec_cmd_xfer_status(cros_ec, &buf.msg);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	arg->resp = buf.data.resp;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int cros_ec_led_trigger_activate(struct led_classdev *led_cdev)
+> > +{
+> > +	struct cros_ec_led_priv *priv = cros_ec_led_cdev_to_priv(led_cdev);
+> > +	union cros_ec_led_cmd_data arg = {};
+> > +
+> > +	arg.req.led_id = priv->led_id;
+> > +	arg.req.flags = EC_LED_FLAGS_AUTO;
+> > +
+> > +	return cros_ec_led_send_cmd(priv->cros_ec, &arg);
+> > +}
+> > +
+> > +static struct led_hw_trigger_type cros_ec_led_trigger_type;
+> > +
+> > +static struct led_trigger cros_ec_led_trigger = {
+> > +	.name = "chromeos-auto",
+> > +	.trigger_type = &cros_ec_led_trigger_type,
+> > +	.activate = cros_ec_led_trigger_activate,
+> > +};
+> > +
+> > +static int cros_ec_led_brightness_set_blocking(struct led_classdev *led_cdev,
+> > +					       enum led_brightness brightness)
+> > +{
+> > +	struct cros_ec_led_priv *priv = cros_ec_led_cdev_to_priv(led_cdev);
+> > +	union cros_ec_led_cmd_data arg = {};
+> > +	enum ec_led_colors led_color;
+> > +	struct mc_subled *subled;
+> > +	size_t i;
+> > +
+> > +	led_mc_calc_color_components(&priv->led_mc_cdev, brightness);
+> > +
+> > +	arg.req.led_id = priv->led_id;
+> > +
+> > +	for (i = 0; i < priv->led_mc_cdev.num_colors; i++) {
+> > +		subled = &priv->led_mc_cdev.subled_info[i];
+> > +		led_color = cros_ec_linux_to_ec_id[subled->color_index];
+> > +		arg.req.brightness[led_color] = subled->brightness;
+> > +	}
+> > +
+> > +	return cros_ec_led_send_cmd(priv->cros_ec, &arg);
+> > +}
+> > +
+> > +static int cros_ec_led_count_subleds(struct device *dev,
+> > +				     struct ec_response_led_control *resp,
+> > +				     unsigned int *max_brightness)
+> > +{
+> > +	unsigned int range, common_range = 0;
+> > +	int num_subleds = 0;
+> > +	size_t i;
+> > +
+> > +	for (i = 0; i < EC_LED_COLOR_COUNT; i++) {
+> > +		range = resp->brightness_range[i];
+> > +
+> > +		if (!range)
+> > +			continue;
+> > +
+> > +		num_subleds++;
+> > +
+> > +		if (!common_range)
+> > +			common_range = range;
+> > +
+> > +		if (common_range != range) {
+> > +			/* The multicolor LED API expects a uniform max_brightness */
+> > +			dev_warn(dev, "Inconsistent LED brightness values\n");
+> 
+> You shouldn't print a warning then return an error.
+> 
+> Please upgrade to dev_err().
+
+Ack.
+
+> > +			return -EINVAL;
+> > +		}
+> > +	}
+> > +
+> > +	if (!num_subleds)
+> > +		return -EINVAL;
+> > +
+> > +	*max_brightness = common_range;
+> > +	return num_subleds;
+> > +}
+> > +
+> > +static const char *cros_ec_led_get_color_name(struct led_classdev_mc *led_mc_cdev)
+> > +{
+> > +	int color;
+> > +
+> > +	if (led_mc_cdev->num_colors == 1)
+> > +		color = led_mc_cdev->subled_info[0].color_index;
+> > +	else
+> > +		color = LED_COLOR_ID_MULTI;
+> > +
+> > +	return led_get_color_name(color);
+> > +}
+> > +
+> > +static int cros_ec_led_probe_led(struct device *dev, struct cros_ec_device *cros_ec,
+> 
+> Odd naming choice.
+> 
+> How about cros_ec_led_probe_one() or cros_ec_led_init()?
+
+Ack.
+
+> > +				 enum ec_led_id id)
+> > +{
+> > +	union cros_ec_led_cmd_data arg = {};
+> > +	struct cros_ec_led_priv *priv;
+> > +	struct led_classdev *led_cdev;
+> > +	struct mc_subled *subleds;
+> > +	int ret, num_subleds;
+> > +	size_t i, subled;
+> 
+> Why size_t for the iterator?
+
+Habit, because ARRAY_SIZE() returns size_t.
+Will change to int.
+
+> > +	arg.req.led_id = id;
+> > +	arg.req.flags = EC_LED_FLAGS_QUERY;
+> > +	ret = cros_ec_led_send_cmd(cros_ec, &arg);
+> > +	/* Unknown LED, skip */
+> 
+> Place the comment inside the if() or next to the return.
+
+Ack.
+ 
+> > +	if (ret == -EINVAL)
+> > +		return 0;
+> > +	if (ret == -EOPNOTSUPP)
+> > +		return -ENODEV;
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > +	if (!priv)
+> > +		return -ENOMEM;
+> > +
+> > +	num_subleds = cros_ec_led_count_subleds(dev, &arg.resp,
+> > +						&priv->led_mc_cdev.led_cdev.max_brightness);
+> > +	if (num_subleds < 0)
+> > +		return num_subleds;
+> > +
+> > +	priv->cros_ec = cros_ec;
+> > +	priv->led_id = id;
+> > +
+> > +	subleds = devm_kcalloc(dev, num_subleds, sizeof(*subleds), GFP_KERNEL);
+> > +	if (!subleds)
+> > +		return -ENOMEM;
+> > +
+> > +	subled = 0;
+> > +	for (i = 0; i < EC_LED_COLOR_COUNT; i++) {
+> > +		if (!arg.resp.brightness_range[i])
+> > +			continue;
+> > +
+> > +		subleds[subled].color_index = cros_ec_led_to_linux_id[i];
+> > +		if (subled == 0)
+> > +			subleds[subled].intensity = 100;
+> > +		subled++;
+> > +	}
+> > +
+> > +	priv->led_mc_cdev.subled_info = subleds;
+> > +	priv->led_mc_cdev.num_colors = num_subleds;
+> > +
+> > +	led_cdev = &priv->led_mc_cdev.led_cdev;
+> > +	led_cdev->brightness_set_blocking = cros_ec_led_brightness_set_blocking;
+> > +	led_cdev->trigger_type = &cros_ec_led_trigger_type;
+> > +	led_cdev->default_trigger = cros_ec_led_trigger.name;
+> > +	led_cdev->hw_control_trigger = cros_ec_led_trigger.name;
+> > +
+> > +	led_cdev->name = devm_kasprintf(dev, GFP_KERNEL, "chromeos:%s:%s",
+> > +					cros_ec_led_get_color_name(&priv->led_mc_cdev),
+> > +					cros_ec_led_functions[id]);
+> > +	if (!led_cdev->name)
+> > +		return -ENOMEM;
+> > +
+> > +	return devm_led_classdev_multicolor_register(dev, &priv->led_mc_cdev);
+> > +}
+> > +
+> > +static int cros_ec_led_probe(struct platform_device *pdev)
+> > +{
+> > +	struct device *dev = &pdev->dev;
+> > +	struct cros_ec_dev *ec_dev = dev_get_drvdata(dev->parent);
+> > +	struct cros_ec_device *cros_ec = ec_dev->ec_dev;
+> > +	int ret = 0;
+> > +	size_t i;
+> > +
+> > +	for (i = 0; i < EC_LED_ID_COUNT; i++) {
+> > +		ret = cros_ec_led_probe_led(dev, cros_ec, i);
+> > +		if (ret)
+> > +			break;
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static const struct platform_device_id cros_ec_led_id[] = {
+> > +	{ DRV_NAME, 0 },
+> > +	{}
+> > +};
+> > +
+> > +static struct platform_driver cros_ec_led_driver = {
+> > +	.driver.name	= DRV_NAME,
+> > +	.probe		= cros_ec_led_probe,
+> > +	.id_table	= cros_ec_led_id,
+> > +};
+> > +
+> > +static int __init cros_ec_led_init(void)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = led_trigger_register(&cros_ec_led_trigger);
+> > +	if (ret)
+> > +		return ret;
+> 
+> This has to be done before probe?
+
+Nope, I think the can be moved into probe.
+It makes everything easier.
+
+> > +	ret = platform_driver_register(&cros_ec_led_driver);
+> > +	if (ret)
+> > +		led_trigger_unregister(&cros_ec_led_trigger);
+> > +
+> > +	return ret;
+> > +};
+> > +module_init(cros_ec_led_init);
+> > +
+> > +static void __exit cros_ec_led_exit(void)
+> > +{
+> > +	platform_driver_unregister(&cros_ec_led_driver);
+> > +	led_trigger_unregister(&cros_ec_led_trigger);
+> > +};
+> > +module_exit(cros_ec_led_exit);
+> > +
+> > +MODULE_DEVICE_TABLE(platform, cros_ec_led_id);
+> > +MODULE_DESCRIPTION("ChromeOS EC LED Driver");
+> > +MODULE_AUTHOR("Thomas Weißschuh <linux@weissschuh.net");
+> > +MODULE_LICENSE("GPL");
+> > 
+> > -- 
+> > 2.45.2
+> > 
+> 
+> -- 
+> Lee Jones [李琼斯]
 
