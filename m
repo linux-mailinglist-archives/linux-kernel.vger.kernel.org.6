@@ -1,94 +1,134 @@
-Return-Path: <linux-kernel+bounces-214751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 733B090898B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:18:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A5E4908990
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28FA61F27E13
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:18:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C23811F2A779
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A80B19412F;
-	Fri, 14 Jun 2024 10:18:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2967B1946D9;
+	Fri, 14 Jun 2024 10:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEbBKomz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CF17E574
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E261946CF;
+	Fri, 14 Jun 2024 10:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718360284; cv=none; b=cIcpMmg3cdNf1aDNSSJMWktahoHkf3Zf51JTQ39GguyF9TZZSJ98mhmuNfO4xCvZm+esUtWUVjccz2xiyKJVB8jb97c9icnB9Ft2cr4FtcCNrWMx478QCSUzs/mCyxCK2Y8kvdkLLprO5/uOTnNEkDNrkO4pPJj/NTFHPGigSVg=
+	t=1718360299; cv=none; b=rwxZq/4iSxIaj5ID3Qbs9V4TisfwFbP9y+MbGcafZFQCKOOjyVG8Ni3UNVczh0VIluduGehaQASp8sPb1RLltNzLWBZL9yrjGqxViGrh5O1XSvYNehFjKO5rU1B8JhGyCov5VO7C7YWq2hR85aVy+UklXRUbK1IFT7OGRtZmT0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718360284; c=relaxed/simple;
-	bh=4G+914elYXMeWW+C/AaXZxtLt0Gt0mRHwzM4WKL9Euc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=d7tpftkC5QRCui9gsYQ9iQR/87Q8nB7XVoBo/ttFRcO6eVsjjiBMXSOyzzH0Qui3W0BrgGmgTLm6gCdaS6ZBoOkiPbTXnzQyvCZ7ykpsqHYAW/UQOf4REGrKZ3JeM4mrQgiC/LXPNmSa//BNxbB6K3pLjBeWlTK0Ml8isdW/x+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7ebcbef22c8so203964139f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 03:18:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718360282; x=1718965082;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YV80qxKF+oHGlNR5edDZVi5v7ORv7cKhK2eY2MZxvMU=;
-        b=DByElSnbnVA1nbQYh9mRkYcUhszhDYcAOQt21LsndwHbFOdD2RvpnU1nKcV99368Rn
-         7UIrSGaauwxRpskXT+G0iE1O6jSoAMUzfb1k25hb7pHCLb0Cnzmr+P0zcYjbM7XfOfnk
-         4mapVmEp2PPxG7YMbFkmXOiJcGQzDCR3lKCd5L17hJG0e2QdyYqp9CKKI38rv4SC1Y3X
-         SM3OHMdHoiay3HUeNq08ZyFh8RZOslfbtVAyTq7M93sFIUFuYWZaThkhBgwyC0OSO8kJ
-         BVlRwF3e5UgG5j80FNStY8Mls5ow0V0dOXkqmNf8sLLG3hioJQoRfNuvMMiQEgNSKbil
-         HUuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjlUfUif8anXVxPRaNUsnepHTQPBy5U1LxGY9H240DSRKp3zNv6liR+85XGVOb0eCaN3Mlb8scCIQrjV8ATn1aVag2ryMUuQdQ6iKN
-X-Gm-Message-State: AOJu0YzGDLVtRylEbb5I2pUHASojWvrqIJbXNH/fRe/LsNJZo42HT1yh
-	d0WeSssiyDzxgvloieKEqX7U3jafo/osNLiNtBriZmTK4vKDdoUY1XPpwWS/uTkWJ0eXgWs9l9M
-	sLJYXcuQeXpQDyxTe3rwAWBfisXZ1QiFmItGuXXRUvOJJ2jfP31i9mz4=
-X-Google-Smtp-Source: AGHT+IF6FEIajU3aE0lAs/p561HSiklP+Ko1QGAmxnmqzC2Rq5zwDYqKiEBTeCQqp9y3Ia7qs+sCY2/ttlVH5iB8sCM3RgMhLynF
+	s=arc-20240116; t=1718360299; c=relaxed/simple;
+	bh=h8LI/aLo2YCQ6LHsew5aV45Yh/X6RYEb897K6QSHCcA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KjlGvp3r4vgPGtODuIXNuuR2VqyQRlp1hDxEGLu2jLVbOvBF1b3n6evmgKiNegy3XQ+B9DzLAmntOxrBXvxmsBvlwT1IVpoy5Fc41wr9QF2fCPT4u9btKMRxhQ1eeYyRQsaM6M1INPFJeuZlZMv0AlZ80izDFwja+EQTPipRF4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEbBKomz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AFC8C4AF1D;
+	Fri, 14 Jun 2024 10:18:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718360299;
+	bh=h8LI/aLo2YCQ6LHsew5aV45Yh/X6RYEb897K6QSHCcA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UEbBKomzV/KNMhnpo8CPfXQvLOiAnYpmsRSU+Noine82IcDR0hlgvkaKIbbgb+14z
+	 xjJSdxjyRNRJIGfyZ6nS+9FuoJTaWGFDugVjfOa1LaszunyM5QVvakBvbybI+bLrEu
+	 IezpSaCMIQg+Y+3uQDlZQwqizEHfR/KsgmNgdhqR4YBL2fTsnJ9RL+NoFU2MbecL4F
+	 +ziGgLNhu3HMsx4rD3p6Dwg8qHNOYmn0VBnkq0kAtms8a4N0QPWV7QvsFhyPyWhAd9
+	 B9MXHLa+teQhQ2ACerLRHy2yNiV5j03/voL9uXcXmpYAQwKRRYIVD6EpkDR2h42Jow
+	 mPEMcIgaHT2ig==
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3d1b5f32065so78384b6e.2;
+        Fri, 14 Jun 2024 03:18:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVmfWtRrrOLwLGl7syMmB8a+GYXuVlOrPAUmmdOK10KMvV23Uym+gI/ia+4MUYgyAlf2NZ6m4Y340x2knilNEUj2eeYQWsSxtfDecJv5rDEaJuMUI3HVz55qi3AFfy3Gb1u96INU/A=
+X-Gm-Message-State: AOJu0Yxx/p+YwtpIu88isjJFxFeoISp0OIsaU5SUmHQAc8tlDz+Av7Sd
+	isIPC83rDWQKJX/Qcrc8/Hs9wi3wuxvL0OtGMGVWQj1x3UUoLD6BYDjQrcCbKAk/FAULo5yyPlh
+	YMwCwwoq/fhWuI7mD7khXkQmQj/U=
+X-Google-Smtp-Source: AGHT+IEHJ41s4vZC8w/qfjS4THnTprUyL/hz49O9TrABifs4wGJv/11tj8VA3mnTAyto3HebuvupmbVoS5vb7IMWMY4=
+X-Received: by 2002:a4a:de45:0:b0:5ba:ca86:a025 with SMTP id
+ 006d021491bc7-5bdad9f3f2dmr2229187eaf.0.1718360298223; Fri, 14 Jun 2024
+ 03:18:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3f90:b0:7eb:8530:810 with SMTP id
- ca18e2360f4ac-7ebeb64474emr4768839f.4.1718360282632; Fri, 14 Jun 2024
- 03:18:02 -0700 (PDT)
-Date: Fri, 14 Jun 2024 03:18:02 -0700
-In-Reply-To: <3cdc2784-6c02-e251-579a-24df9036424e@netfilter.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003e238a061ad6ee64@google.com>
-Subject: Re: [syzbot] [netfilter?] net-next test error: WARNING: suspicious
- RCU usage in _destroy_all_sets
-From: syzbot <syzbot+cfbe1da5fdfc39efc293@syzkaller.appspotmail.com>
-To: kadlec@netfilter.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <1051df4c-067f-455e-8c7f-9dc47dc8ed00@yahoo.de>
+ <435867b5-029b-419f-bb7f-2d4902c62556@leemhuis.info> <a97f9f4d-17f1-44cf-a0f4-634fd38aba2a@yahoo.de>
+ <CAJZ5v0jwvq6W0u7Zx4GzQxJOnrF4KvN1RHtqqDcaMvN6yp0hDg@mail.gmail.com>
+ <312649b1-eea9-4346-af93-76a821e88eb7@yahoo.de> <CAJZ5v0jfvRWK0M3Xf=36e74cVQ9rN5T1WdZZVnuk1XmZ=xu==g@mail.gmail.com>
+ <78549853-1763-40cf-9974-3fc737fad093@yahoo.de> <CAJZ5v0h5pQDaA-bEOmcz_TpE87kFqWLFLJC+=OLjg5ZtF3hxpQ@mail.gmail.com>
+ <91d94429-fc7e-4828-914d-1a251ee1ba99@yahoo.de> <CAJZ5v0gPZHDfuK1FRdTAG8Eqjf0NWUQdf-_GCWsWf6dCBE=1dg@mail.gmail.com>
+ <543787c3-db5b-4f63-b5e0-df508300db73@yahoo.de> <CAJZ5v0h7jDw3yX689nZdB+YeJbCk0vFoUgVb4Yi0cqDxjL5chQ@mail.gmail.com>
+ <40ec1e53-2bc8-48aa-9909-fac9072adb57@yahoo.de> <CAJZ5v0jtjXfvr4GXukjyO9XsEO6K2Nfux3otpFPP4vWS_9_qEQ@mail.gmail.com>
+ <CAJZ5v0hcX0JAMBA+EVZURDH1BTQ2zL-W_4BjSx0a=1oRaR90ug@mail.gmail.com>
+ <CAJZ5v0jGGV=i8Swu=c8f9bwo--AckUfqZrt0zeqDWKBijG+Z3A@mail.gmail.com> <bcac5925-fe2b-4570-83b6-182f4a301721@yahoo.de>
+In-Reply-To: <bcac5925-fe2b-4570-83b6-182f4a301721@yahoo.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 14 Jun 2024 12:18:06 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0h7WnfQxhobA6B7S3Tvo-AnKTR9kP+5aexa6rixqpyHJg@mail.gmail.com>
+Message-ID: <CAJZ5v0h7WnfQxhobA6B7S3Tvo-AnKTR9kP+5aexa6rixqpyHJg@mail.gmail.com>
+Subject: Re: Regression, thermal: core: battery reading wrong after wake from
+ S3 [Was: Bug Report according to thermal_core.c]
+To: "fhortner@yahoo.de" <fhortner@yahoo.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Jun 13, 2024 at 10:04=E2=80=AFPM fhortner@yahoo.de <fhortner@yahoo.=
+de> wrote:
+>
+> Am 13.06.24 um 17:14 schrieb Rafael J. Wysocki:
+>
+> Let's see if the ACPI thermal zone is the real culprit.
+>
+> The attached patch only adds the delay for thermal zone 0 which is the
+> ACPI thermal zone.  It also prints the ID and type for all of the
+> resuming thermal zones.
+>
+> Please test it (removing all of the test changes/patches tried so far)
+> and let me know what happens to the battery readings.
+>
+> Patch
+>
+> thermal-delay-resume.patch
+>
+> does not work. Output according to dmesg.txt
+>
+> Attached is a slightly modified version of the last patch I sent.
+> Please test it and let me know if it addresses the problem you are
+> seeing.
+>
+> If it helps, I think we are done with this at least for now.
+>
+> patch thermal-core-resume-prio.patch with .priority =3D -1 does work
+>
+> One more thing to try is the attached patch (independent of the
+> previous one) to lower the priority of the thermal PM notifier to make
+> it run always after the ACPI battery one.
+>
+> Please test this one too and let me know if it works for you.
+>
+> patch thermal-core-resume-prio.patch
+>
+> with .priority =3D INT_MIN does also work.
+>
+> If you need any further tests, please don't hesitate to tell me so.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+No, thank you, I think you've done enough and it is appreciated.
 
-net/netfilter/ipset/ip_set_core.c:60:4: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Werror,-Wimplicit-int]
-net/netfilter/ipset/ip_set_core.c:60:9: error: expected ';' after top level declarator
-net/netfilter/ipset/ip_set_core.c:235:2: error: call to undeclared function 'ip_set_type_lock'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
-net/netfilter/ipset/ip_set_core.c:236:7: error: call to undeclared function 'find_set_type'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
-net/netfilter/ipset/ip_set_core.c:240:3: error: call to undeclared function 'ip_set_type_unlock'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
-net/netfilter/ipset/ip_set_core.c:246:2: error: call to undeclared function 'ip_set_type_unlock'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
-net/netfilter/ipset/ip_set_core.c:905:8: error: unterminated function-like macro invocation
-net/netfilter/ipset/ip_set_core.c:2453:69: error: expected expression
-net/netfilter/ipset/ip_set_core.c:2453:69: error: expected '}'
+I don't see any particular drawbacks of this approach and investing
+more time in trying to get to the bottom of the issue is probably not
+worth it.
 
+I'm going to submit the last patch as the proposed solution.
 
-Tested on:
+> Thank you for your help!
 
-commit:         0e728dae netfilter: ipset: Fix suspicious rcu_derefere..
-git tree:       git://blackhole.szhk.kfki.hu/nf main
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7266aeba025a54a4
-dashboard link: https://syzkaller.appspot.com/bug?extid=cfbe1da5fdfc39efc293
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+No problem and thank you!
 
