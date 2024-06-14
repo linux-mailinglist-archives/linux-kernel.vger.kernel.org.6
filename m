@@ -1,195 +1,187 @@
-Return-Path: <linux-kernel+bounces-214877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E41908B6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:16:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF42908B81
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E9D51C25257
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:16:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 705981F2B20E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320BD1991C9;
-	Fri, 14 Jun 2024 12:16:24 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84D119ADA3;
+	Fri, 14 Jun 2024 12:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="AwAvx7Bc"
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2059.outbound.protection.outlook.com [40.107.6.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DD118F2D2
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718367383; cv=none; b=Sb1BdHHEEgUnhf2fc8B98He96tAJxzBBG1y5ki+l+rvBYJa2urZ7UOkjK3RTVDZxNS5z2eYXvOI8F+OKZdgfB+G9CDKKk5ywr1JIsA33hpk0Y4TJEHTnP/0xljyvtul8o2vY1Zn1+fbYWYjKPXDbCDpHYZyWCdJQmULBt1mhKpw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718367383; c=relaxed/simple;
-	bh=/Rujk8DjihECRgTxY5K/o9PR1gx2ryqyCsAZfVNkkS4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qvjilU8K3q1CfI2IO4zYNxwv/XeBElwW+SlaaR2E0S9S50/nuoN1P8oC8SewaftzOUdUnTE5sZNxrRpvgddWM7w5/rvBxTbf1Yf4pq97o7SvQL/2gIz6Kel7PqSdgSiAn8aRF5hPvcJSo9ZZ6okkvDz41ScObBfEhngJEKezubU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e8dc9db8deso207701239f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 05:16:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718367381; x=1718972181;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vB05HPijVVK+UzmnMPGdCm9HQMlq2U20Ujta3yugVqY=;
-        b=cQDfsdjztWBXTBJ1LqcdYFaZThzWZaor2dvGmI581AQsW0X0/VniafAiyIPdUOQ4VA
-         SU59CLIkV8QTvBVIDRqMstQAJ3wQwbvDIiRVok7pFryTa1bANQa/61/evOEuL0Z3OHU2
-         Xyw2qUDwlYvX+egb9grG0h3XXoNxOvtsqtsBHziEnFLgo8MuNzBCe4KiW7+i8zX/4+jM
-         xpeYfocODQtM0FMtQaRYiLDEd3MPJdvWxRfBIWnD+LeXcxdVl8YtWBORz9IZ9Orgrk6p
-         yQW1KLM1NsaElE1gEHsnxTBvNDPg1jRJnHHuCvl5iCAA2Xozk7XJRfnoKKP4puUddX2z
-         50Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0cuRYHS93HZpJXRsw2YkmKKrWMAardIJHvrzDRJJLZXJfPM0DakuRz5t5Tt042wkf32/kcMhN2dR3yvNSidE7QKEtaM+hcE3jM5t4
-X-Gm-Message-State: AOJu0YxqylvuQIA13N+v/T6915/zX1e+9tPbj0clXeD2CuewMlQsTWlX
-	GK0Yb/047wioink9kUgtWc8mXZmq7JiCsM6Pp2SYX62Wi/x9FSwFjvZ5YKnLGXDN0TpkBEk+TPp
-	QpesmGN1ONXK9h6e6Mtvtn8OcYKMdN3RvuCb9iyscdIgR4NNso9KTCao=
-X-Google-Smtp-Source: AGHT+IHYFcJnb+5OofRIeaS8UT7bfdq2MIZHDD2qTc1tn/r5bWzluutMriZZLOcTtb6uxQDEremSBv/cJ6sTbA3fgsPNbWm3BkCT
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6D81990C2;
+	Fri, 14 Jun 2024 12:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718367410; cv=fail; b=AKztY7ag2IP88RFklR+bztzGL/rO3mU+h2wO6rFHxChTtsi+zIKVQ7lyWcAAtfBNu86uVvpV1y5XjoZSn2akcW3WzrcCBxlO7kJJlgW2j6ivDZx/plaG/T5hexlu7u9QsmphtPA6WLk3EY3K80ZJVqdMJpHoYEdD/A7g3svVGfg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718367410; c=relaxed/simple;
+	bh=BIG0l6HSnxbcIUY5GNzpd4CzCkM+GwVOHy4YaujkUtQ=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lQDvPpDH9rvNS27DZOU8y62ixQUaQbGJFmrHO+0vC0Md47vO27zMZUeIG9+wffFPNdk9i0OARARIWk/Ansv+CattkW42zPOKY3gyfDEn5C1rMdibTJ7k4u8WWCHsAiADYTWRSxD47S3Ul8pFcFbmAfDMdpA9UzH01vATzbzui7I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=AwAvx7Bc; arc=fail smtp.client-ip=40.107.6.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jAs1c6HKtANHBxafYNZOlA7QPujAPyLM/r6rBr7MMUpOT9FBvWR5ZL51c+dy3x9K+Auqsy1LbN8eA6OqjVkf8abJdi9Ox8SFDkVEZSypzyfrXRA8OU4bIoj2nNlbWVDzVUPcm2lrzZoy29yjQSdxEO/SXK67Qjh7CBNwMe3kxURDBskb5uEHokXVmzKh4IWcJevryDe99JKGZTvYgnYydbgBlEmmjnoIcE4z7zdmQXz5HoLJIS8md2vAJugzaVwNVMrNe1judY8fB8BhqORMxZjlFMIX57+8Il5MVOCm66WEfRYPyFkHXkBX4rc6abdcJ4H88yuMmX8oU5G2fJ51+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BCcH4YUV1BP11XIBqBpwP18AsBjoj33htNJUGCDXiRU=;
+ b=iPkkt2UJJh8NLLH0rfBjKPztfkOoRsVbXYShKD/KC2LJID4c5foDg7zGnCi2nDJIEz3wbLj845mWVsUQFPhS7vK/rYPRs68zwFRoBa1FQdz/yOCozSvxku5ToyPuyQDGSzcryGN/3Eb1l3Ohd9VnqY9QahEWMIFb6FUI+T74GlJp4OiHnOO1A1WcViSjV3kn8mLTMTZn8BXvSIwHXcCR53BVyUDE9tpQ1TJktcvg+SsulZL+ngegQKWeY5zCWxsG88yOUUyhNBpoQFVd+D518tqwHXL//bZXTTaSq6YDT2eEYt+SBBxUhzr6LBpXQWJzgIm/Prd9cpYH4FOVgDjDwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BCcH4YUV1BP11XIBqBpwP18AsBjoj33htNJUGCDXiRU=;
+ b=AwAvx7BcmoNTDQo+JJ1nafacMCshcPgGRpfpLIUa4nNPpIr4tPvOCjCWMjvXofGVhOwtcC7SNOLTqs8AFCvpmfP6ZXRmC4UVrXLNmqx5tgr6k5lX3ltvLFvYVsNTOFdPpdV2PoHOCViDPzgSmf0R6+PIK1A0er8iAi2KxDbP6aw=
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
+ by DU4PR04MB10693.eurprd04.prod.outlook.com (2603:10a6:10:588::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.21; Fri, 14 Jun
+ 2024 12:16:45 +0000
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256%5]) with mapi id 15.20.7633.037; Fri, 14 Jun 2024
+ 12:16:44 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>, Frank Li
+	<frank.li@nxp.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org"
+	<linux-i2c@vger.kernel.org>, "linux-iio@vger.kernel.org"
+	<linux-iio@vger.kernel.org>, "linux-pwm@vger.kernel.org"
+	<linux-pwm@vger.kernel.org>, "linux-spi@vger.kernel.org"
+	<linux-spi@vger.kernel.org>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>, "linux-watchdog@vger.kernel.org"
+	<linux-watchdog@vger.kernel.org>
+Subject: RE: [PATCH] dt-bindings: drop stale Anson Huang from maintainers
+Thread-Topic: [PATCH] dt-bindings: drop stale Anson Huang from maintainers
+Thread-Index: AQHavkGTDHH4DyW5tkyonqziSWJqWrHHLMlA
+Date: Fri, 14 Jun 2024 12:16:44 +0000
+Message-ID:
+ <AM6PR04MB5941410C48BDDC4FAE7D761188C22@AM6PR04MB5941.eurprd04.prod.outlook.com>
+References: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|DU4PR04MB10693:EE_
+x-ms-office365-filtering-correlation-id: a8c4b532-14b2-4c30-e99a-08dc8c6bdb3e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230037|366013|376011|7416011|1800799021|38070700015|921017;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?IouN3IIF5plRPkSCXvVWMUnq9gXH+tyx09hAmOs04Fxljf9fiwUkidENs1tH?=
+ =?us-ascii?Q?Hx9HE1lpAzoynWD6+4AJkY56GgjgczuCETuduKoj1++qUihC8/U6m7/I6z3G?=
+ =?us-ascii?Q?AkIt/2Vg8CzZ939XbOfCZgzRECPymCLVPOek0SFlnTBYAn3FmWoda/vbfqXv?=
+ =?us-ascii?Q?9G9ha0Ht45Wfk0WPUkT413pmP2nEP9x71036EpQc1Sy6omMzuVgTqbvNtoGa?=
+ =?us-ascii?Q?dOXAdA7fBL3g6pyM680g5NJhDyJ+kbw9DLZL319IeErNpR2kOtcQbEP5CRsg?=
+ =?us-ascii?Q?OYEimV406npIVHsz5YjfFUNL7A3NVTDzGedcacDXxepYLblWVrOJWMzVKhNO?=
+ =?us-ascii?Q?LSLUms6l/dTTQrqJJGjNMR0N1pY26iYCYWsNLNXhlEWKSzRs/55yDJKigPNU?=
+ =?us-ascii?Q?pVjxuwExyalkL45H4BVl/2t6vx48pbxnmgcZqVu+CLuTWtywwmbAIRL4G46a?=
+ =?us-ascii?Q?Su9DN37WVE3KS1o8dyooHI9e+uej6vIb+pTddLd0R4zNYKKTBfsmErYfBgRz?=
+ =?us-ascii?Q?IOt8shR5eTDiaDt1SJy/hGNxeyoa3XHWZNxu9OgKgBJlZLZQg34vl/JyfLiE?=
+ =?us-ascii?Q?I45zEBpa/JIJ3GuDB9zB5vq5heYu/xUAew0Q/sDaO5cBnLPbNosU7sRvA2QI?=
+ =?us-ascii?Q?X17DJS/hriwoOiC/b1FQs8401D3oxqwIUDdN8m/Ci3/3J8Um2oSwN/Qi8JzC?=
+ =?us-ascii?Q?kVjNr8tKogxT37bHI1jQS2722JIDEVo0jp1qkaQ49SWlv/gjU8jH5DHi6fDp?=
+ =?us-ascii?Q?cRT39ik8XOCJaPxzPVocoiQNXbozrEVp6XkE7CoEgABT88p9SzVcgXx01gV3?=
+ =?us-ascii?Q?bMq7TyrMTLpmgjXIhxSXe/LcTgVXc8NTOk9vzc/ngVwmKKA8scjzexVkHX5O?=
+ =?us-ascii?Q?tSPH0z2fog815X22MU98JMOJiCegPIH3l83AE2GdkMC/E34Njk3x3YsKc+ON?=
+ =?us-ascii?Q?88gRulv1gz/D+IqEgRzBfKUCY23prMd/exnE1jaYD9YYw0G3yGB5/z0PQWt4?=
+ =?us-ascii?Q?79bOuTvfs3xBs5jFrij58ucQAyLldhmvc9ppOfL7SQboqAsnA9tB01JthZNi?=
+ =?us-ascii?Q?sEuJoxtFKy3+aDPmxWUsXFir6EF2qcSJA9X2jIuxkqh6J2vSMRkmUBcSZNSe?=
+ =?us-ascii?Q?M0vfXVSJjAiIEGy9PsqFK1pSBtleqA4s0wtUAyctEALRQQ76pSIWx6+WsZpk?=
+ =?us-ascii?Q?vbUl7htosaljfDBfc/Dj4zRea/cdnDrx1BK2KVPBWNNF0Fte8lEsvfHRGCtC?=
+ =?us-ascii?Q?mK70Okng2DtZrNszkxBAhcr0VUPZmRgiF7DUNt6pkDyrKv7pJLYrWA4uk9y8?=
+ =?us-ascii?Q?mXmRBLy5dIs0tLHnYzj1x4zal6PUurfabD6iEvLAJardh+uyrsqLGxRAgKBX?=
+ =?us-ascii?Q?+t1P5yWGE/zluPVvYWMJfPPLFtWO?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(7416011)(1800799021)(38070700015)(921017);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?K+l4osRW+v31sMu4ZcfEtjnDeqIrJmrDmMKIa1cPkH+wmYoLFSFd9Wp992X4?=
+ =?us-ascii?Q?IDD/ubpmJja1lzmL4mCbq3vSBTq3qBACCqKTsmZv19xqH5sntGwS6qoTw6oF?=
+ =?us-ascii?Q?HEIIbVfU75yQaphNBodm3iKm3rgLoSs3tliYP/h2n+NfRziZnI+xlJmQn2J3?=
+ =?us-ascii?Q?5Jd8jYnlqroNsu3VzTD6CBE0vwVSouyeAuLYXlLW+UvCWeznXsiAfDwEyG9h?=
+ =?us-ascii?Q?E2Pm9mOQ0T4blM15BRzqSKTQLqflVyJV3mOzQZg6/zKys1T7sKuchp0HsPhO?=
+ =?us-ascii?Q?UpyM91zYZFfedkD+2AcEhvSzAJToH1B2jmuUn40RU19l/xbxvQYVslTFfj34?=
+ =?us-ascii?Q?zJErC5psyxaH2+DGZLrNIr+ImWLlX1a7ujN06OPhrZTooSzTf9pAA+VBSTtt?=
+ =?us-ascii?Q?wrZwj03pv5Im3/qjq+AbIq1RNPs5AG4BSh0CK/gVfvqfts/mYb6ZUYxmz9hc?=
+ =?us-ascii?Q?1wu3ZnveiHnNSlBLg8sVaXhla8aCmr8OPffGAfygPQSYDn0803PiOtKJKi5z?=
+ =?us-ascii?Q?o1T/dxUx6d5WBBYij7I9JBMffFE3iAdgmXyxHY9iOzqBIrQsOy/bxoTXFq9T?=
+ =?us-ascii?Q?as1jz3ADgWKGAl6g7gRLfi7vPtZCWf17jnKznF0SkziMj6XAs5NHZkc74mOK?=
+ =?us-ascii?Q?YMtS0aeUfg+y/EN87SmiBBc9iXYLeVvXAJQw2N7y4LJ29N5u47nuHrDB7Smq?=
+ =?us-ascii?Q?Cen1QVZRpOzKvkIsjF97sZH56n+vAmqoet7zFpQEIx6HMhbvvgfdt6lmrGQ8?=
+ =?us-ascii?Q?ohoB5KKXTNMOYXgQ/UflxVATlV3ZVCa5B8wjtlszdrGDBKdyy6y3K3RAkKXj?=
+ =?us-ascii?Q?sLjk6ctXWkFJFs9ddsQ0DjsbFpy15SR9tOXAxL64RZ2E7kQDXp5nuise+HiS?=
+ =?us-ascii?Q?La6JqWEjTIYGfzOvDWT5Ms3YW5mxYkdKFfdRnw74aSMXoe2GjDRElgOTIVnO?=
+ =?us-ascii?Q?PCmmUVUWryYO+gWaqqDCrnKD0rxf/5f3YR8ppetyfPJlRoIC56xSoSp0PWf+?=
+ =?us-ascii?Q?hLKQDITr/BAWt0HqtfLzLi/bSTPV7F6f+oPKArrJiHRic8VIyErUQWnmyue8?=
+ =?us-ascii?Q?uM0R9PhESvdOAMi/Or18rRNng3J3xAZE+cyOxzoFituhmPMwG11JUeBLbMcG?=
+ =?us-ascii?Q?532UrdubJtCeFm0w3pwmhzlYwBMdZ4e1edQY4Kcb6tzw72mQbOfJ39MfTahk?=
+ =?us-ascii?Q?YLSvfvc/+VLlBEX/Aq2uT+okKAT/lXEu8SluDaYrvksWfJK4+Jf5bn02zdmc?=
+ =?us-ascii?Q?XSVoRzzTRyhckJvgKnq47XFbuvh0t9LWtb7X5X6loJ5E+UKWo8TtC4/PSlgm?=
+ =?us-ascii?Q?MhYIvHkOX1EBGFVrHoceRwTAjuvXxnTlaCHW2BRG/zmBa7tarkaCp9G13lS/?=
+ =?us-ascii?Q?PN4m9KM4i9IQnCulc3OkIeE7yJdBPSwWNXuBaJF6Jvl/y4wyZV8LL4GI4GQU?=
+ =?us-ascii?Q?ApF/3dSwUdwUVCALd2CMmTfqwf+Pau5Hb9Q6fIHnmqdvdDCFGS1zfPVx5J8f?=
+ =?us-ascii?Q?4bA91SIqPOxRbuOnycP8LBQwTHPdoLoQRVKtuHOjtk3l7dZ8Fru4G5/d2nby?=
+ =?us-ascii?Q?WF2SzF8A/C9YGX802uE=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4e:0:b0:36c:4c63:9c93 with SMTP id
- e9e14a558f8ab-375e02b6954mr1413495ab.3.1718367381068; Fri, 14 Jun 2024
- 05:16:21 -0700 (PDT)
-Date: Fri, 14 Jun 2024 05:16:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000057a891061ad8951a@google.com>
-Subject: [syzbot] [crypto?] [bcachefs?] BUG: unable to handle kernel paging
- request in crypto_skcipher_encrypt
-From: syzbot <syzbot+026f1857b12f5eb3f9e9@syzkaller.appspotmail.com>
-To: davem@davemloft.net, herbert@gondor.apana.org.au, 
-	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a8c4b532-14b2-4c30-e99a-08dc8c6bdb3e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jun 2024 12:16:44.7217
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: cy6Uhl9p0cGIv7/BDZEmuEFDIxPHfCbEsJnHNo9pUg6jxo3eY+Z4UG59LSbmun3pUubU1YeymzPyxIG7TKH+oQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10693
 
-Hello,
+> Subject: [PATCH] dt-bindings: drop stale Anson Huang from maintainers
+>=20
+> Emails to Anson Huang bounce:
+>=20
+>   Diagnostic-Code: smtp; 550 5.4.1 Recipient address rejected: Access den=
+ied.
+>=20
+> Add IMX platform maintainers for bindings which would become orphaned.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-syzbot found the following issue on:
+Acked-by: Peng Fan <peng.fan@nxp.com>
 
-HEAD commit:    ac2193b4b460 Merge branches 'for-next/misc', 'for-next/kse..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=120a2a56980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2ce2e16ea9422f82
-dashboard link: https://syzkaller.appspot.com/bug?extid=026f1857b12f5eb3f9e9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12e534a2980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16e15446980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1a058064a7f1/disk-ac2193b4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/71fd113f4bcf/vmlinux-ac2193b4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a4603f3a4756/Image-ac2193b4.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/ea4906e9262d/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+026f1857b12f5eb3f9e9@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 32768
-bcachefs (loop0): mounting version 1.7: mi_btree_bitmap opts=compression=lz4,nojournal_transaction_names
-bcachefs (loop0): recovering from clean shutdown, journal seq 7
-Unable to handle kernel paging request at virtual address dfff800000000004
-KASAN: null-ptr-deref in range [0x0000000000000020-0x0000000000000027]
-Mem abort info:
-  ESR = 0x0000000096000005
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x05: level 1 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
-  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[dfff800000000004] address between user and kernel address ranges
-Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 6250 Comm: syz-executor983 Tainted: G        W          6.10.0-rc3-syzkaller-gac2193b4b460 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : crypto_skcipher_alg include/crypto/skcipher.h:375 [inline]
-pc : crypto_skcipher_encrypt+0x48/0x124 crypto/skcipher.c:637
-lr : crypto_skcipher_encrypt+0x24/0x124 crypto/skcipher.c:635
-sp : ffff80009a2759d0
-x29: ffff80009a2759d0 x28: 0000000000000000 x27: dfff800000000000
-x26: ffff80009a275fe0 x25: ffff80009a275a80 x24: ffff80009a275a60
-x23: ffff0000c8482a80 x22: 0000000000000020 x21: dfff800000000000
-x20: 0000000000000008 x19: ffff80009a275a80 x18: ffff0000d67d9a30
-x17: 2065657274622074 x16: ffff80008ae35f00 x15: 0000000000000002
-x14: 1ffff0001344eb56 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff70001344eb58 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : 0000000000000004 x7 : 0000000000000000 x6 : 000000000000003f
-x5 : 0000000000000040 x4 : 0000000000000000 x3 : 0000000000000010
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000020
-Call trace:
- crypto_skcipher_alg include/crypto/skcipher.h:375 [inline]
- crypto_skcipher_encrypt+0x48/0x124 crypto/skcipher.c:637
- do_encrypt_sg fs/bcachefs/checksum.c:108 [inline]
- do_encrypt+0x558/0x6a0 fs/bcachefs/checksum.c:150
- gen_poly_key fs/bcachefs/checksum.c:191 [inline]
- bch2_checksum+0x1c0/0x784 fs/bcachefs/checksum.c:227
- bch2_btree_node_read_done+0x119c/0x4ac8 fs/bcachefs/btree_io.c:1074
- btree_node_read_work+0x50c/0xe04 fs/bcachefs/btree_io.c:1345
- bch2_btree_node_read+0x1f50/0x280c fs/bcachefs/btree_io.c:1730
- __bch2_btree_root_read fs/bcachefs/btree_io.c:1769 [inline]
- bch2_btree_root_read+0x2a8/0x534 fs/bcachefs/btree_io.c:1793
- read_btree_roots+0x21c/0x730 fs/bcachefs/recovery.c:475
- bch2_fs_recovery+0x31c4/0x5488 fs/bcachefs/recovery.c:803
- bch2_fs_start+0x30c/0x53c fs/bcachefs/super.c:1031
- bch2_fs_open+0x8b4/0xb64 fs/bcachefs/super.c:2123
- bch2_mount+0x4fc/0xe18 fs/bcachefs/fs.c:1917
- legacy_get_tree+0xd4/0x16c fs/fs_context.c:662
- vfs_get_tree+0x90/0x288 fs/super.c:1780
- do_new_mount+0x278/0x900 fs/namespace.c:3352
- path_mount+0x590/0xe04 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount fs/namespace.c:3875 [inline]
- __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3875
- __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-Code: 977849b2 f9400294 91006280 d343fc08 (38756908) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	977849b2 	bl	0xfffffffffde126c8
-   4:	f9400294 	ldr	x20, [x20]
-   8:	91006280 	add	x0, x20, #0x18
-   c:	d343fc08 	lsr	x8, x0, #3
-* 10:	38756908 	ldrb	w8, [x8, x21] <-- trapping instruction
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Regards,
+Peng.
 
