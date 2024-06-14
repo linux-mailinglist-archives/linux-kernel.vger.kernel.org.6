@@ -1,177 +1,111 @@
-Return-Path: <linux-kernel+bounces-215134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA955908E85
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:19:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE707908E86
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 685BB1F22F05
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:19:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E34E51C208EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C082628B;
-	Fri, 14 Jun 2024 15:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5D716D4E7;
+	Fri, 14 Jun 2024 15:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AO5LPneH"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SAsTP2B0"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C84715FA93
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1059619D8B2;
+	Fri, 14 Jun 2024 15:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718378267; cv=none; b=Iw14SI3OiZn1nRwKNHu1ux8NDBNzOQAl2LkeplqsI2MrdoYTYn+6ebM7YKLmvxrBk8gDuM5tTIMdaOpCzgZ3g9LpZBp5l7mKRFGHi/RRP0266fNEZ8fTOJglNHOcNtMm5vyKSt3LleeWmRb+xjj477Xa7WLmZhHK2viKyCMwxpo=
+	t=1718378336; cv=none; b=rHC3zXZhysTTVnm32hHNBO9ecM9V+rpSPa+TpMixQcHH37HUZZ+vi7wZu/QIN0R5fiEuyemOW4bKzHGTZcD2NQa04GjqEREMhs5TxGXua0gAfsBQH4TfdS2zUzz74F/ZbM7aj3b+AYaFUkmqBKT6lejiWxoYIbnhTqeZulcfU1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718378267; c=relaxed/simple;
-	bh=/8YTxGv/qHRDce0zKq4WiqsRJNX/QIeidL1MxQCvHKA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CXii51QQZPzM2sV+DpBMn7vrwihiFMQkpkHztwLhW6hlJ5UDO4uvMU8mv/g6PWtoB1Hpe0NJBAPhoVBcFoZQCw8MVXEbD/QpQfRBJEq35QWMx6wk0BIWHXT33I575SaxCLSjv9VgjfdGMgRFJKdpF12/CkK/YBqUay1RQmjf0T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AO5LPneH; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: radhey.shyam.pandey@amd.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718378262;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EK/My33etlwM5NxXlcqrJJJAuLZlZ53SGlM1Z/KkM/w=;
-	b=AO5LPneHUK8kRzcznQSE74VYKBs3yjWR7bbqeINnWEMZSQ8lc97BsqLBQh2egQqaU+kul4
-	O5lSdr/zjbDnTNeb9e8DeHsBDAxGibylHKPdFu5z+ds2lP3Y2oph5JCzQC4mo04zC2Pgig
-	7I85gJPe5Sxn7xqhx/rJDmJphzr+t1U=
-X-Envelope-To: laurent.pinchart@ideasonboard.com
-X-Envelope-To: linux-phy@lists.infradead.org
-X-Envelope-To: vkoul@kernel.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: michal.simek@amd.com
-X-Envelope-To: kishon@kernel.org
-Message-ID: <f8a5307a-ab9a-4b9a-9cf5-1b88f912b201@linux.dev>
-Date: Fri, 14 Jun 2024 11:17:39 -0400
+	s=arc-20240116; t=1718378336; c=relaxed/simple;
+	bh=n0VXXCfPmou8uH9QZpI7EsxDFETVqYEtAGTVK8+9SMs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dd+yRB7A5nLCpwSL//yOUKcFu76WPalcD9okGOKuu4fBOWh6/woSsaKk5HDxft58SPYk5mjnpnpDx0/qrc+5+YWijmu0ijgFbK6s/812nxXM+Tgwyk2lHeJcLyFl0NcW56/iInETAJ+TWDB6pJvVziEXZHU2TpcRYE7EQeZyRYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SAsTP2B0; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42179dafd6bso21337675e9.0;
+        Fri, 14 Jun 2024 08:18:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718378333; x=1718983133; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=n0VXXCfPmou8uH9QZpI7EsxDFETVqYEtAGTVK8+9SMs=;
+        b=SAsTP2B0oHgnyFVSOeQTdxlxg0USJ23E423f3VJ95OsDre7/e4orPD5fBLIVbcouBm
+         uP7IThX6j+mUKz574SBhHBtlLpuQel3puLal0rKnIQF+f8gQAr4L1mi1Zxav6E/XLwny
+         6I6JhvhimOHksj8ZTR7g02PBzEFA/fmLhSlVHTL5HoSCKF7D10LJKEkHihxI1qsT+qdt
+         Izr+kyd2EebynW2eeQ6NUCJ5DTUiMVGbWlLQs/G8M98/7CQD9b9jZ28bunthXMKCou4m
+         ZftRxwpPK3taMqfD3zbgt/nsNLnRZJ91vhONl1wtXHJWec8Lv4tSNqZTUeiHeKtuBzHM
+         z8YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718378333; x=1718983133;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=n0VXXCfPmou8uH9QZpI7EsxDFETVqYEtAGTVK8+9SMs=;
+        b=dMzHksBnELvD+koImr9PvB9Nsvo6fglA6hdscE/KWA/rDkIjQ+SCf9UXkXnmnEaxGx
+         30kYzTsT0iPqDv+fRhaMogn7D7iFUtHBEPuE/9ZL1MX4o3Iw8libPZIxDEurmLxNeiAo
+         PvIrDruN9jPQ50kzlUordPwNfQVtyRDuPDowZOWuS/cBfyvAuX9QCcYJdA+4yhTrb5+K
+         KwdNv0j9QoRVsSkcke/Hat2rk5ETh4T9yl/LE7A2zav5xjpdJSPeeW/2m9OPxO+MGY3Q
+         Ie5hG50wul3B0a9UJITKTdJDge9OTxyoV20/k+dyR+CNp9F44ReEc/1zHQiLFJ/TCdQp
+         r0ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0sKeWJLesPQVrgx1+CI8r1qNTbfa3K1Vzu1/o8CgTFKzZ/kWCuajlodqF+o4dN2vtosK82lIwmC6M5UAZxUgaG6/zZbZEHzDo6LB6v2n/Z8B2S6olOGAUIUUnGw7F0cEdRxBmDhqt
+X-Gm-Message-State: AOJu0YyAxIu0gIztOQdi5x4tKNEfBS4VedmcdJI8KHEDr8/JPrub2P1W
+	TaoiQ4yRN48Cd6EWYNpdgjxgyUUyZAkjouoOpZrCDDKKatuv4CV8
+X-Google-Smtp-Source: AGHT+IF1nYDfi4kUMdMPKte9fw+UfwhCCfql8Q9Sz16z3yWy1yf0BeeKwkONyjVHSR28hmQ0vzd/xQ==
+X-Received: by 2002:a5d:6e10:0:b0:360:728d:8439 with SMTP id ffacd0b85a97d-3607a4c864fmr3011348f8f.2.1718378333023;
+        Fri, 14 Jun 2024 08:18:53 -0700 (PDT)
+Received: from nsa.fritz.box ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360751037absm4606529f8f.91.2024.06.14.08.18.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 08:18:52 -0700 (PDT)
+Message-ID: <c1b4fa5da3a28cc3c1eef1701015a8f21231cf17.camel@gmail.com>
+Subject: Re: [PATCH v2 0/5] iio: adc: use
+ devm_regulator_get_enable_read_voltage round 1
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
+ <jic23@kernel.org>
+Cc: Marcelo Schmitt <marcelo.schmitt1@gmail.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-iio@vger.kernel.org,  linux-kernel@vger.kernel.org
+Date: Fri, 14 Jun 2024 17:18:52 +0200
+In-Reply-To: <20240612-iio-adc-ref-supply-refactor-v2-0-fa622e7354e9@baylibre.com>
+References: 
+	<20240612-iio-adc-ref-supply-refactor-v2-0-fa622e7354e9@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 1/4] phy: zynqmp: Enable reference clock correctly
-To: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>
-Cc: Vinod Koul <vkoul@kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Simek, Michal" <michal.simek@amd.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>
-References: <20240506170110.2874724-1-sean.anderson@linux.dev>
- <20240506170110.2874724-2-sean.anderson@linux.dev>
- <MN0PR12MB59531E522EC62B160EEC35E5B7C22@MN0PR12MB5953.namprd12.prod.outlook.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <MN0PR12MB59531E522EC62B160EEC35E5B7C22@MN0PR12MB5953.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 6/14/24 01:30, Pandey, Radhey Shyam wrote:
->> -----Original Message-----
->> From: Sean Anderson <sean.anderson@linux.dev>
->> Sent: Monday, May 6, 2024 10:31 PM
->> To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>; linux-
->> phy@lists.infradead.org
->> Cc: Vinod Koul <vkoul@kernel.org>; linux-arm-kernel@lists.infradead.org;
->> linux-kernel@vger.kernel.org; Michal Simek <michal.simek@amd.com>;
->> Kishon Vijay Abraham I <kishon@kernel.org>; Sean Anderson
->> <sean.anderson@linux.dev>
->> Subject: [PATCH v2 1/4] phy: zynqmp: Enable reference clock correctly
->> 
->> Lanes can use other lanes' reference clocks, as determined by refclk.
->> Use refclk to determine the clock to enable/disable instead of always
->> using the lane's own reference clock. This ensures the clock selected in
->> xpsgtr_configure_pll is the one enabled.
->> 
->> For the other half of the equation, always program REF_CLK_SEL even when
->> we are selecting the lane's own clock. This ensures that Linux's idea of
->> the reference clock matches the hardware. We use the "local" clock mux
->> for this instead of going through the ref clock network.
->> 
->> Fixes: 25d700833513 ("phy: xilinx: phy-zynqmp: dynamic clock support for
->> power-save")
->> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->> ---
->> 
->> Changes in v2:
->> - New
->> 
->>  drivers/phy/xilinx/phy-zynqmp.c | 14 +++++++++-----
->>  1 file changed, 9 insertions(+), 5 deletions(-)
->> 
->> diff --git a/drivers/phy/xilinx/phy-zynqmp.c b/drivers/phy/xilinx/phy-
->> zynqmp.c
->> index f72c5257d712..5a434382356c 100644
->> --- a/drivers/phy/xilinx/phy-zynqmp.c
->> +++ b/drivers/phy/xilinx/phy-zynqmp.c
->> @@ -80,7 +80,8 @@
->> 
->>  /* Reference clock selection parameters */
->>  #define L0_Ln_REF_CLK_SEL(n)		(0x2860 + (n) * 4)
->> -#define L0_REF_CLK_SEL_MASK		0x8f
->> +#define L0_REF_CLK_LCL_SEL		BIT(7)
->> +#define L0_REF_CLK_SEL_MASK		0x9f
->> 
->>  /* Calibration digital logic parameters */
->>  #define L3_TM_CALIB_DIG19		0xec4c
->> @@ -349,11 +350,14 @@ static void xpsgtr_configure_pll(struct xpsgtr_phy
->> *gtr_phy)
->>  		       PLL_FREQ_MASK, ssc->pll_ref_clk);
->> 
->>  	/* Enable lane clock sharing, if required */
->> -	if (gtr_phy->refclk != gtr_phy->lane) {
->> +	if (gtr_phy->refclk == gtr_phy->lane)
->> +		/* Lane3 Ref Clock Selection Register */
-> 
-> This is common ref clock selection and not lane 3?
+On Wed, 2024-06-12 at 16:03 -0500, David Lechner wrote:
+> Following up from [1], this is the first round of patches to convert the
+> ADC drivers to use devm_regulator_get_enable_read_voltage().
+>=20
+> Some of these are trivial but some aren't so I'm breaking them up into
+> smaller series to spread out the review load (and my work load).
+>=20
+> [1]:
+> https://lore.kernel.org/linux-iio/20240429-regulator-get-enable-get-votla=
+ge-v2-0-b1f11ab766c1@baylibre.com
+>=20
+> ---
 
-This is copied from the existing comment. I will remove it.
+Just two things that look like typos... With that:
 
---Sean
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
->> +		xpsgtr_clr_set(gtr_phy->dev, L0_Ln_REF_CLK_SEL(gtr_phy-
->> >lane),
->> +			       L0_REF_CLK_SEL_MASK, L0_REF_CLK_LCL_SEL);
->> +	else
->>  		/* Lane3 Ref Clock Selection Register */
->>  		xpsgtr_clr_set(gtr_phy->dev, L0_Ln_REF_CLK_SEL(gtr_phy-
->> >lane),
->>  			       L0_REF_CLK_SEL_MASK, 1 << gtr_phy->refclk);
->> -	}
->> 
->>  	/* SSC step size [7:0] */
->>  	xpsgtr_clr_set_phy(gtr_phy, L0_PLL_SS_STEP_SIZE_0_LSB,
->> @@ -573,7 +577,7 @@ static int xpsgtr_phy_init(struct phy *phy)
->>  	mutex_lock(&gtr_dev->gtr_mutex);
->> 
->>  	/* Configure and enable the clock when peripheral phy_init call */
->> -	if (clk_prepare_enable(gtr_dev->clk[gtr_phy->lane]))
->> +	if (clk_prepare_enable(gtr_dev->clk[gtr_phy->refclk]))
->>  		goto out;
->> 
->>  	/* Skip initialization if not required. */
->> @@ -625,7 +629,7 @@ static int xpsgtr_phy_exit(struct phy *phy)
->>  	gtr_phy->skip_phy_init = false;
->> 
->>  	/* Ensure that disable clock only, which configure for lane */
->> -	clk_disable_unprepare(gtr_dev->clk[gtr_phy->lane]);
->> +	clk_disable_unprepare(gtr_dev->clk[gtr_phy->refclk]);
->> 
->>  	return 0;
->>  }
->> --
->> 2.35.1.1320.gc452695387.dirty
-> 
 
 
