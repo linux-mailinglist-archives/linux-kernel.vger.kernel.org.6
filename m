@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-215368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902729091A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:34:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9489091B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFEE51C21C25
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:34:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0B19B295A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CEA1AB505;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A641AC235;
 	Fri, 14 Jun 2024 17:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cuMXidjZ"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="j9mZJCji"
 Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F1F19E7F3;
-	Fri, 14 Jun 2024 17:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6A71A2FB9;
+	Fri, 14 Jun 2024 17:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718386377; cv=none; b=i8RVqzBUtQTYUjkPMyU1RIrsLAooFbR5SJo52a5m7MvNsf1TrZ7xNz3eGkDMp25Z8m+pXgOe9pbPAmX7gwuY9vdr6vZfYZ+UibNtMbnDI8iF2oX1674YoJxhuyRy/beBoc+uCfv1YxyR80BXzKmdQq8mdyN6UvACDpHdIDLjEA4=
+	t=1718386378; cv=none; b=L7oFe04NT3OrrkyvWG2Q+q2EtYVxkzNiooozasRkibXeB029pMrY67Qfnug8X69zLESB9yDyweu0+VLRHbCxOM3D2p+UVBxCoU+hGu8E4ITgCwamcon8Nc1MzdpxORsXH0Sc0EZCLFeMrsNPN/znBj00rZM6G+F0fjImFn6dU9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718386377; c=relaxed/simple;
-	bh=cWBa5SUpvNFZXavd+X5cwWOfW9TPK1UkWUZWuQPYQOg=;
+	s=arc-20240116; t=1718386378; c=relaxed/simple;
+	bh=jCoNvzNYdAlBtWeLwq9+MucCPKALc9tEZvAvUc+Vmj8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fCST6DsJSSO7idZB8HEIpy6DEsTv6H9Xb42Y3djRv0DTMterMaKfEdb/BDD8zK3pPHPJJOI43QKY3zbgkNFkvKV65uh+LteBs6W73WKOAyEc4ir2UR0MDqJC5dbXjN0ysYsE77NKOeiuLCkCuxucdd9IJ+/ZE/U5vfi5Ew91TWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cuMXidjZ; arc=none smtp.client-ip=217.70.183.199
+	 MIME-Version; b=GibUh8BHYJJ/W9zaUnfNKzXZrzzlk2UgC5+1GR8jG9ZCQAr8i8Mt7p1xhsrZBfIVE7bIKBVnRv92lcZCitQSD1F5238WX1Z4Fi3l7xper6rD0tt/S9Y/RHb4ZP7NcH9ihDEW107joqHQufyts7vAQT3bgIleKPg5Z7w+IkTbPGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=j9mZJCji; arc=none smtp.client-ip=217.70.183.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 886E6FF806;
-	Fri, 14 Jun 2024 17:32:47 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 8A994FF807;
+	Fri, 14 Jun 2024 17:32:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718386368;
+	t=1718386369;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rTbRL0qnBuvXH1zQoBWsJHhVuNTZbzn7iLMor6spAIk=;
-	b=cuMXidjZFlDUPwkClU+4BnO1XQw1HNsIqDezaiP9DFkLkv6PlxkkbHLjWwJAJ+dPibHWm+
-	PSZVswV4By/kBZMMIblWiD8sQUS0tlUqVlnMfvxiH31Zb75juVJ3al0TzDQwF3U5TSm4TP
-	4WNPgJENI1GZ2TxpYKKZn6gEe+28VN2V59I9SSgd8YrUKwVTELQ270vkecSZh0wYgaJKRz
-	6jpX/Or5Gn2pqDMQDWl52LmSPO5y7om2QF4H2yLCiyZiDGjm4xRGRndDeQdNJsQoyT3FeS
-	uCU1DXZ7+0qp2MXJuuC2krGaKb1ieBQT9/Q0WdaOl5KY8pLd1PYIXOvlYKyMJQ==
+	bh=3ETpH9U3zJAUx8gMI+S0kUDXLMTaIq1vXRUaXwjXffw=;
+	b=j9mZJCjipsjNo9x7akuPGHHDXKc0Wm1HJ4TWq+w5/oxvjSXJeUY+HI4VGcrdMaAoDxP+sf
+	vjpuSZ2vzgCxSbmmbnmNnyBDB+XHxQWKG8KuiZbd0HAJ3Yh93hcoENeyGrpSzUa9yJtufb
+	crnSJHlhie1of9gkpFRwnOnGLsOiVUXyMJPhQSzGrDrS2y3g0tJRrShODauoGhpzLlAt2q
+	ETxw6v4nimxi2MFQx/Y1I+tShZ7zG+bTZy703umJLkihTezVbrD1jtcp+1yQzLIUEoQL6F
+	qHXckEQOvxIF/VFUHFzQbnqrL6oEjC+FCQnjr4UeaZyfu+Y6Scc+P8vc68kiZw==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Matti Vaittinen <mazziesaccount@gmail.com>,
 	Herve Codina <herve.codina@bootlin.com>,
@@ -61,11 +61,10 @@ Cc: linux-kernel@vger.kernel.org,
 	Allan Nielsen <allan.nielsen@microchip.com>,
 	Horatiu Vultur <horatiu.vultur@microchip.com>,
 	Steen Hegelund <steen.hegelund@microchip.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 03/23] irqdomain: Fixed unbalanced fwnode get and put
-Date: Fri, 14 Jun 2024 19:32:04 +0200
-Message-ID: <20240614173232.1184015-4-herve.codina@bootlin.com>
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH 04/23] irqdomain: Constify parameter in is_fwnode_irqchip()
+Date: Fri, 14 Jun 2024 19:32:05 +0200
+Message-ID: <20240614173232.1184015-5-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240614173232.1184015-1-herve.codina@bootlin.com>
 References: <20240614173232.1184015-1-herve.codina@bootlin.com>
@@ -78,61 +77,32 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-fwnode_handle_get(fwnode) is called when a domain is created with fwnode
-passed as a function parameter. fwnode_handle_put(domain->fwnode) is
-called when the domain is destroyed but during the creation a path
-exists that does not set domain->fwnode.
+The fwnode parameter has no reason to be pointer to an un-const struct
+fwnode_handle. Indeed, struct fwnode_handle is not modified by the
+function.
 
-If this path is taken, the fwnode get will never be put.
+Be consistent with other function performing the same kind
+of operation such as is_of_node(), is_acpi_device_node() or
+is_software_node(): constify the fwnode parameter.
 
-To avoid the unbalanced get and put, set domain->fwnode unconditionally.
-
-Fixes: d59f6617eef0 ("genirq: Allow fwnode to carry name information only")
-Cc: stable@vger.kernel.org
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- kernel/irq/irqdomain.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ include/linux/irqdomain.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index 012ada09b419..31277488ed42 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -156,7 +156,6 @@ static struct irq_domain *__irq_domain_create(struct fwnode_handle *fwnode,
- 		switch (fwid->type) {
- 		case IRQCHIP_FWNODE_NAMED:
- 		case IRQCHIP_FWNODE_NAMED_ID:
--			domain->fwnode = fwnode;
- 			domain->name = kstrdup(fwid->name, GFP_KERNEL);
- 			if (!domain->name) {
- 				kfree(domain);
-@@ -165,7 +164,6 @@ static struct irq_domain *__irq_domain_create(struct fwnode_handle *fwnode,
- 			domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
- 			break;
- 		default:
--			domain->fwnode = fwnode;
- 			domain->name = fwid->name;
- 			break;
- 		}
-@@ -185,7 +183,6 @@ static struct irq_domain *__irq_domain_create(struct fwnode_handle *fwnode,
- 		}
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index ab8939c8724d..a3b43e357009 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -314,7 +314,7 @@ static inline struct fwnode_handle *of_node_to_fwnode(struct device_node *node)
  
- 		domain->name = strreplace(name, '/', ':');
--		domain->fwnode = fwnode;
- 		domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
- 	}
+ extern const struct fwnode_operations irqchip_fwnode_ops;
  
-@@ -201,8 +198,8 @@ static struct irq_domain *__irq_domain_create(struct fwnode_handle *fwnode,
- 		domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
- 	}
- 
--	fwnode_handle_get(fwnode);
--	fwnode_dev_initialized(fwnode, true);
-+	domain->fwnode = fwnode_handle_get(fwnode);
-+	fwnode_dev_initialized(domain->fwnode, true);
- 
- 	/* Fill structure */
- 	INIT_RADIX_TREE(&domain->revmap_tree, GFP_KERNEL);
+-static inline bool is_fwnode_irqchip(struct fwnode_handle *fwnode)
++static inline bool is_fwnode_irqchip(const struct fwnode_handle *fwnode)
+ {
+ 	return fwnode && fwnode->ops == &irqchip_fwnode_ops;
+ }
 -- 
 2.45.0
 
