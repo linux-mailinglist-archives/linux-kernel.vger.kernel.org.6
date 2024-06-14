@@ -1,263 +1,199 @@
-Return-Path: <linux-kernel+bounces-215129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E40908E72
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:16:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE75E908E74
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A53FB1F27160
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:16:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC05D1C25022
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0DD15FD08;
-	Fri, 14 Jun 2024 15:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CED16EBFD;
+	Fri, 14 Jun 2024 15:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B98Kx3N8"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gvsa8j2k"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CCC61FE7;
-	Fri, 14 Jun 2024 15:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718378033; cv=none; b=RP+htRELevwm1uNv1vWqeUSRqArUIy0Y1DsZONi0I5d9vGlhUxY09jJVlUbaP4H1A6fr0PEKEEclSc8+2T2Y9RXWrLQPlaroc13q5pDSgwkp73aoLuTD+aqGA4eX+tfDlSVtGh6DMl0QR12Jcoyq5XypP7gt3WpiAog+oGWQIX0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718378033; c=relaxed/simple;
-	bh=kdKKu//V/JDY1w85ohlNPYuN8+Zb6e4jCyerEC54//g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=co5RBr9HPH41qnw/qSck6yIjv8pYcKuDbdm41FXGcJ276v14jcIklTwD7ddYUZt11sxiAePWgjGh6TgS9UkN+EkSaxPLa2ys90Kp8+fvg+VKqyC67BihkA8MNXlk94oPfO9CPiuvoc7r+76/mOPaAu8+H0r84RrA9h1YfdvCVn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=B98Kx3N8; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=deIBNATut27wpMnCOaCssM9eor3bEzumeemqFygW8TY=; b=B98Kx3N8kXudY+xIUMWAuXyS34
-	Cb3ySf95PPGJcL5tONbFUNUpyXzeLkbdV7B4OzImHpv9rnaezC/PRQzPlSEA5PABiEV1cl8VuccUA
-	MC2Gv+5ZCES+ZOp6KczaeLlLKKZGyHfOAaPGQ+3b+76s4D/wHsZKlgERRFuvFphricZHkLA/HVgP4
-	MWdvA7wiA1vHibSUOvHHzbx7EcwL1DOdvQUZynZ5p0xCOL24GHkcH04tf+w732TnhTmLkECB0yyd8
-	qMY3TVSKEyl94B5OSfuYgJsfncOom5M9BqJQvwzIWxjGcPmhXCf9jwKCx62dvNpyickzbmv4GRHeP
-	cXBWK6Rg==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sI8cf-00000003C7i-2r4S;
-	Fri, 14 Jun 2024 15:13:49 +0000
-Message-ID: <36039474-367e-44d9-9cc5-54b327e5a8d9@infradead.org>
-Date: Fri, 14 Jun 2024 08:13:48 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BBC16B72B;
+	Fri, 14 Jun 2024 15:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718378034; cv=fail; b=e/dV1IS1MoNfNKuL/7igJgGJv67HLc6DVIsVorlYB7jM3UwuPEdREKrK6awWylTWlL6BVd/ZE6REGCx7OWpBfxK+ljj3bzGeSs/WJV2giiibpoFVxxEaql7DdaQAAYgbp9iJS/jtXLEsQpJL/FmUGqZfSaC1JQFhQOeTfzHlnFQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718378034; c=relaxed/simple;
+	bh=wptOTkphudZb8uslcf+fctqrSvUCDcFJ/udeF1Ae22Q=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=L+DcYExQgKkPSxqF7YPg22IL2dVyPs+NvlNfbS2D8TMAnYZ24V3fgbd2DOO3VyrHXzyx47TJzEDG0Vzbna9eNyN/qH4eelhOzZdJtCenpy5lLqUrzU5OqYFjxqe4aNXCLB2aiV49ZT/++UfeoxI9Nxf01LT+dirBI5o4FmbDkUA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gvsa8j2k; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718378034; x=1749914034;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=wptOTkphudZb8uslcf+fctqrSvUCDcFJ/udeF1Ae22Q=;
+  b=gvsa8j2k2lJHGZ7PwNoit/927xbKhiSdyO42mlQ40D+WZXdXx2/XD+yr
+   k/8DHKrNuSsDLYMdhThBfpZ/4zuOhLJwYN+aEmPu1wiZ5Yy/FKqYjaZPF
+   wq5QAJR+vPko6913CitlCWoBU1Tw+0jgwjrSMeEZMDFOu6loDMpwLtiZN
+   ISSp5w8EgG/3grZLajohbMRVfdrEmb/Q+HfYY8BE3wVZbaQUl2WaI7d+G
+   wc/2vhwbBUcJKcq79DoP54fQmDemmInrnE2vomE+BwvSQ/WLcB2IB9kx5
+   d/tIpK+Zs+HVeWcHiI3KrdjuMN9D4wEuG0IDbiF/87SkhfKQtxVEywJM1
+   w==;
+X-CSE-ConnectionGUID: VZoNC8cFToCSCD4rB4zhwg==
+X-CSE-MsgGUID: dRSmITFQTi+cMSOby3bvKQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="25843612"
+X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
+   d="scan'208";a="25843612"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 08:13:53 -0700
+X-CSE-ConnectionGUID: EsqpvIguQP28pw6Jxu/gqA==
+X-CSE-MsgGUID: 2zRmXNGnQf6qsTgTP3T1LQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
+   d="scan'208";a="40403485"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Jun 2024 08:13:52 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 14 Jun 2024 08:13:52 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 14 Jun 2024 08:13:51 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 14 Jun 2024 08:13:51 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.43) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 14 Jun 2024 08:13:51 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GBqf9/tgTOdUl9CeTxTAg/2U9vcXBGLZ6eNePTkvgl+JHsqQ7Bs8n0rfkFyNTnG3ofRo7IYpjzEwtNMEnx7hYX+BU5TPZctyN8VsAoNTNLY/j2CT/xLiQc1rAOS125S0DD6mbqCektZMJoAGxHZ2B81LSymTISfE+uH7PTC5swIbzmwWYPh2HGVe/Z9htWu4/MKhA7LxWeqC5CtoB/p2xlHJmEbkhWj2b2IfNgsgCTIXjUwyXDQThkt7iPznUU0hJUkE8UIMG5qWAtElYkN7LzqOfaw85wT7Z2Itm6VAjtzENF9H9rJZHpqv3bCzIKv8832hy3AnZVTqlUBYA30AVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wptOTkphudZb8uslcf+fctqrSvUCDcFJ/udeF1Ae22Q=;
+ b=fWT0BkuH6+E/3KGz0XTDmMe0mIPx8c6/vMV1SH7SAFISNOteTQLsJB2jkoBeRCI4lWWknzr/oNEW+qMMZRU44QwJUOeuOc49jpC0yIS7pWOdbLYLPJIKGPnyA9wG2sGq7mv1hWMiNJq4azPTUqrkchG4AaaBB6j0/tkDNSWoZ4RyJ13jXhmufxz6WjF8W/0+IFpXA2lSBYaJS+l2LDHvcsW9owt/QCY0ZXidM6qWw+FQSTBh6sdHSW0YQjS8wKBaxfTXXln8aNTOkHhpWzzgDX2y9MHzLJqflpD+mRY/k0CFm3aOoVkhfdSgtnfeDvdfBAo5zxhhmNKvL7obmCuk5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by CO1PR11MB5028.namprd11.prod.outlook.com (2603:10b6:303:9a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.25; Fri, 14 Jun
+ 2024 15:13:49 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%5]) with mapi id 15.20.7677.019; Fri, 14 Jun 2024
+ 15:13:49 +0000
+From: "Luck, Tony" <tony.luck@intel.com>
+To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+CC: Borislav Petkov <bp@alien8.de>, Aristeu Rozanski <aris@redhat.com>, "Mauro
+ Carvalho Chehab" <mchehab@kernel.org>, "linux-edac@vger.kernel.org"
+	<linux-edac@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/1] EDAC/igen6: Add Intel Arrow Lake-U/H SoCs support
+Thread-Topic: [PATCH 1/1] EDAC/igen6: Add Intel Arrow Lake-U/H SoCs support
+Thread-Index: AQHavggj5LNeKDDKdUG3DvmjsZqj+LHHXp2w
+Date: Fri, 14 Jun 2024 15:13:49 +0000
+Message-ID: <SJ1PR11MB60831A5611FD481481018373FCC22@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <20240614030354.69180-1-qiuxu.zhuo@intel.com>
+In-Reply-To: <20240614030354.69180-1-qiuxu.zhuo@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|CO1PR11MB5028:EE_
+x-ms-office365-filtering-correlation-id: 863bdf48-cb6c-48c0-c492-08dc8c849802
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230037|366013|376011|1800799021|38070700015;
+x-microsoft-antispam-message-info: =?us-ascii?Q?Z3Y1w3KPxou/Eiaguc6QPTDoE9OB7J1d2nR4IobWdB3f+6dri/X+IkyLQZxj?=
+ =?us-ascii?Q?Jy5vNa6wDcAd+4v4sva/PNteI5RtnK4YrFGMoIF9HyCQAWkq9SKtwhnP44DT?=
+ =?us-ascii?Q?qC4O9ZePEmWFll6Z4iGsm5PkSV4SECD1P0sISlWQt++WLhqMj+KOi5w4c2dn?=
+ =?us-ascii?Q?dCSQkkesXgLgOpd6M9XqHko3kfVYAgobqexCaSTUehmbh6sUb7pBX6Hy4P6J?=
+ =?us-ascii?Q?HH7SO8zYwrWofThgoMg+WQKZA4GXCEJhPtBBwTpWl1KUCjNyu1mdKJ31LAl8?=
+ =?us-ascii?Q?PRypNniSHEzGofByHxQO2YRbqG+G0co6sCXyOGgryG/97lyIK24avs6q0RrC?=
+ =?us-ascii?Q?bHXKfBMT44dASzqA9eXm/pPDGa6K43IaYuy97QJWkLPiWKQ3A9Mo8wywXLo5?=
+ =?us-ascii?Q?DJijTc3P2uGev+BcQmGkb+soDEq3yGqom2cMlGI9q1EANnG7yVmsQ82xTQG2?=
+ =?us-ascii?Q?OmKfmc2bIP1YkVJWvoI9Biz4BYAPWNT0KkFOWQRlTS1esLcuTnfd7il9o31C?=
+ =?us-ascii?Q?41khPavphXsSRDbElfAX9L3CFjwEi7UnzsoaIESo4TbzBqi0DEeJsePtlsLd?=
+ =?us-ascii?Q?/bLSf4nrfaQvGYo3BkT10u/K1/jIr+FaPa0hATVb9MPfQiCjjiaYsK8zAjD1?=
+ =?us-ascii?Q?IH0/KOK6kRkR6Sjq4caB223TIZMFl7GO3bYqlltWBKm7XVvFKibu1RpPXguf?=
+ =?us-ascii?Q?vIML6Mke8u/4S2DX9Se+h9c7aY1vrr8TR1eSqgePFKjlyX6l05vesAUp+FwY?=
+ =?us-ascii?Q?F73Kxi0cbQRJ72YagiOs60gERPTEB28cLMAupWeGn22jsvMvdgn0e0yBX1lW?=
+ =?us-ascii?Q?D6X3OC3jvC+9xVcYy/eU07PDj+KWs+hRpigBaVa5f2xV0zIQtf2BmFeqUWKZ?=
+ =?us-ascii?Q?uCxO/a0gT/mkRWf/uzHYou38fKU2PufE5EnK3Qp7yIzN04/vt8zbE4gkgQJ1?=
+ =?us-ascii?Q?xYjF7X3S7b39nnCTZrQGI8IgDXZPW64UbIDqsDNs5FF2xsU34B5uUTki4FQh?=
+ =?us-ascii?Q?rWqFg9vLgVvpBeGsoF09/rC5s6ahphTzpqVqQpB5jNVHMmhKURCvZYiYt8gw?=
+ =?us-ascii?Q?VUiVLQ5zkV5ZT5LjYddCyqbYmlZYZt6ka3NsGsIPB/O0jTnyTlfZDf07YEjO?=
+ =?us-ascii?Q?RrJ9VqS8rYULwD9AuJfRApRvxZ8pPNNJ/sMXQx5XpFswdbAUQvvVAv31GgGA?=
+ =?us-ascii?Q?zwOyh9Smo75w2QhOzvuufP6Q2oE1ZFMwViz0enC5Bnf+4jDXMtFyqpHzGL5e?=
+ =?us-ascii?Q?2sKyaMchowmWHiCH9QrWi1Wa5XoNjPNhn1O9JCoqLgvhA3r126SkZULZYbNe?=
+ =?us-ascii?Q?G0X95B8+k6wahbDNjbGZaP2WMQBzzO1Xi2mhQnzPhczTXinYiR3OiBxq2rYM?=
+ =?us-ascii?Q?o+yl3f4=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021)(38070700015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?uzdDo84hIlQ1MsKOfDKVyksv4VLxm5KO6t+OilsJZxuV1MqSfLg9gUV0gYgs?=
+ =?us-ascii?Q?XTU7uai1pa8FMhO7ujhoW//bq/7yom8rVVv3P9+ijGpuRydFMzta/kjPQ+J2?=
+ =?us-ascii?Q?Vhq5NqEeqql2R8XxKK9H7ytFMoF+PKn64IIYC12PP+Iyl7aMceltHKc18BA4?=
+ =?us-ascii?Q?I8rsLpT7GNMpstv27YInnJirL3Q7w685FgpsLtcP6FLMNziq07C0vF4kwCFH?=
+ =?us-ascii?Q?4zp8wKpoTJyubGNhP3Oj2hfYymTAyoGHDGqaJURe8UIJ9DBIpab/MCGHRgxp?=
+ =?us-ascii?Q?mH3CK8eh0GqKpCYtn7vdrM6o1WHtAvTgkQzaiBvOJPTNFuw04DgdjNUFtVdo?=
+ =?us-ascii?Q?a4OHCDblOevIohh5RRU3gDzTwoSGTvxCEFeKbQZD5d+9SUvjMRkjcmefFt/8?=
+ =?us-ascii?Q?2qb9Om2+NIQkhuFu3OhtqALt8ukEEmWZNq2/SDMTDo+YeRDpp9xKOgeVmHl6?=
+ =?us-ascii?Q?D53RTVPm1QmxeOvCHw73PVftQpzQMHDTfLQxKonLxPj/T8HJxgeSMyH3my2v?=
+ =?us-ascii?Q?ZeXSDjXS9vXdQQuA9wY+dT++bThq0+jc4Xn+hQ4geAXk5g6vHGbAYiblP+nP?=
+ =?us-ascii?Q?eVFuIK8Uv/NkX7EfNLoZKi30EPLOhD2O0DZz9CASH3TFHPG7bDrs3G6TkL7L?=
+ =?us-ascii?Q?lVkpC38C+rMh6PZjxatpSR3YZNsLT88V2z7D2c1nTbZj25g+frTRZATAd/WY?=
+ =?us-ascii?Q?eDlP5SPqlbwl91WceEDGrIz7SS5uy68TqEkzybI4/HIvnnIuuMbUxF9qiAnZ?=
+ =?us-ascii?Q?FUshhjOGlmd/OM08ApDqpZyPcpjG3pXyr/LFoElqX7o5x1/ORG4MbCn1TT8/?=
+ =?us-ascii?Q?kdAXh3x9J2cQ5hlXBKBssyviZNr/7ZINDjwRgJSEbV5pVFSJvItUUyIyYio9?=
+ =?us-ascii?Q?d9kvbgC5rNMNdnaI44uT1wnwInXRiODZnc4hxDlFAASjlJThTjlH1A81FRbK?=
+ =?us-ascii?Q?TSkm2TcJGFOQJMRfx2edM8crAxX/GI4RxgzxZaGYd3XzRqrbgHFPRPdgAOS2?=
+ =?us-ascii?Q?ZTW+zC319fT5GIQllRd+NjlYT7vpC0q7nm+I/4lMDz0b82Ygii5+M4f3Yx77?=
+ =?us-ascii?Q?VdU11AdZEFuPVTmS75MJ8qs0ZS88JT3UHk+QlurWt7EzZ25x8eyUnroPI+yP?=
+ =?us-ascii?Q?WJyTT4vWmYnt8uf9q5GjNPfZqSXO36doBKdfxIUt2ALpbJAF1l+dBLn4EgxT?=
+ =?us-ascii?Q?KsNWTiISwlQ8Csu81sZT4MU4kbquHkQv1kJwtScMwh5/lJp5jzcD5RIaPa8F?=
+ =?us-ascii?Q?W0/g3ppdwwoxQMSNbBqs+q/3DmoVgXrhPfAll+CRMrkklUksHez/Nn2Srgqx?=
+ =?us-ascii?Q?vBGoC1cDGkC7ArM/UKXur3YbpQDZYrHlnjZ+U7k/YwRYRCWAAOHHfBNMTVfx?=
+ =?us-ascii?Q?YBRrTaSlfIFrxAjtHjc5EXO8hwpn/l8XMbdKefQ0ODXgJvnfroR2ewXeh2PG?=
+ =?us-ascii?Q?i32h0bszF8c2COG9EmnaTdjDQtCDHgUz9y6gmi7IeagX735PuOBwKJiUgEXR?=
+ =?us-ascii?Q?BShphsNoYo+y55H/CRQU92MhqkGjOZedYtDn2D/1v6G2BUDJzdRpD8tUVsrr?=
+ =?us-ascii?Q?ShOW5ImYU2HQ26knKzVrsIvfR8brfyHkQ1t6YYtY?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] doc-guide: add help documention checktransupdate.rst
-To: Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
- Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240614055328.778041-1-dzm91@hust.edu.cn>
- <20240614055328.778041-2-dzm91@hust.edu.cn>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240614055328.778041-2-dzm91@hust.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 863bdf48-cb6c-48c0-c492-08dc8c849802
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jun 2024 15:13:49.3202
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: oMabxD7xDnIFZKvqvp3RNn5dwIcRsVmP/a0vIf+kI5i8bGree/sqAENrDp0jsNCSkvft3dODXXKuM7uUT6F1Xg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5028
+X-OriginatorOrg: intel.com
 
-Fix Subject: "documentation"
+> Arrow Lake-U/H SoCs share same IBECC registers with Meteor Lake-P
+> SoCs. Add Arrow Lake-U/H SoC compute die IDs for EDAC support.
 
-On 6/13/24 10:53 PM, Dongliang Mu wrote:
-> This commit adds help documents - Documentation/doc-guide/checktransupdate.rst
-> for scripts/checktransupdate.py, including English and Chinese versions
-> 
-> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
-> ---
->  Documentation/doc-guide/checktransupdate.rst  | 63 +++++++++++++++++++
->  Documentation/doc-guide/index.rst             |  1 +
->  .../zh_CN/doc-guide/checktransupdate.rst      | 62 ++++++++++++++++++
->  .../translations/zh_CN/doc-guide/index.rst    |  1 +
->  4 files changed, 127 insertions(+)
->  create mode 100644 Documentation/doc-guide/checktransupdate.rst
->  create mode 100644 Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
-> 
-> diff --git a/Documentation/doc-guide/checktransupdate.rst b/Documentation/doc-guide/checktransupdate.rst
-> new file mode 100644
-> index 000000000000..ec218c883b31
-> --- /dev/null
-> +++ b/Documentation/doc-guide/checktransupdate.rst
-> @@ -0,0 +1,63 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +Check translation update
-> +==========================
-> +
-> +This script helps track the translation status of the documentation in
-> +different locales, i.e., whether the documentation is update-to-date with
+Thanks. Merged to RAS tree for inclusion in v6.11
 
-                                                         up-to-date with
-
-> +the English conterpart.
-
-               counterpart.
-
-> +
-> +How it works
-> +------------
-> +
-> +It uses ``git log`` command to track the latest English commit from the
-> +translation commit (order by author date) and the latest English commits
-> +from HEAD. If any differences occur, the file is considered as out-of-date,
-> +then commits that need to be updated will be collected and reported.
-> +
-> +Features implemented
-> +--------------------
-> +
-> +-  check all files in a certain locale
-> +-  check a single file or a set of files
-> +-  provide options to change output format
-> +
-> +Usage
-> +-----
-> +
-> +::
-> +
-> +   checktransupdate.py [-h] [-l LOCALE] [--print-commits | --no-print-commits] [--print-updated-files | --no-print-updated-files] [--debug | --no-debug] [files ...]
-> +
-> +Options
-> +~~~~~~~
-> +
-> +-  ``-l``, ``--locale``: locale to check when file is not specified
-> +-  ``--[no-]print-commits``: whether to print commits between origin and
-> +   translation
-> +-  ``--[no-]print-updated-files``: whether to print files that do no
-> +   need to be updated
-> +-  ``files``: files to check, if this option is specified, the locale
-> +   option will be ignored.
-> +
-> +Samples
-> +~~~~~~~
-> +
-> +-  ``./scripts/checktransupdate.py -l zh_CN``
-> +   This will print all the files that need to be updated in the zh_CN locale.
-> +-  ``./scripts/checktransupdate.py Documentation/translations/zh_CN/process/coding-style.rst``
-> +   This will only print the status of the specified file.
-> +
-> +Then the output is something like:
-> +
-> +::
-> +
-> +    Documentation/translations/zh_CN/process/coding-style.rst       (2 commits)
-> +    commit 6813216bbdba ("Documentation: coding-style: ask function-like macros to evaluate parameters")
-> +    commit 185ea7676ef3 ("Documentation: coding-style: Update syntax highlighting for code-blocks")
-> +
-> +Features to be implemented
-> +----------------------------
-> +
-> +- track the translation status of files that have no translation
-> +- files can be a folder instead of only a file
-> \ No newline at end of file
-
-add a newline.
-
-> diff --git a/Documentation/doc-guide/index.rst b/Documentation/doc-guide/index.rst
-> index 7c7d97784626..24d058faa75c 100644
-> --- a/Documentation/doc-guide/index.rst
-> +++ b/Documentation/doc-guide/index.rst
-> @@ -12,6 +12,7 @@ How to write kernel documentation
->     parse-headers
->     contributing
->     maintainer-profile
-> +   checktransupdate
->  
->  .. only::  subproject and html
->  
-> diff --git a/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
-> new file mode 100644
-> index 000000000000..ce1165de1343
-> --- /dev/null
-> +++ b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
-> @@ -0,0 +1,62 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +.. include:: ../disclaimer-zh_CN.rst
-> +
-> +:Original: Documentation/doc-guide/checktransupdate.rst
-> +
-> +:译者: 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
-> +
-> +检查翻译更新
-> +=============
-> +
-> +这个脚本帮助跟踪不同语言的文档翻译状态，即文档是否与对应的英文版本保持更新。
-> +
-> +工作原理
-> +------------
-> +
-> +它使用 ``git log`` 命令来跟踪翻译提交的最新英文提交（按作者日期排序）和英文文档的
-> +最新提交。如果有任何差异，则该文件被认为是过期的，然后需要更新的提交将被收集并报告。
-> +
-> +实现的功能
-> +--------------------
-> +
-> +- 检查特定语言中的所有文件
-> +- 检查单个文件或一组文件
-> +- 提供更改输出格式的选项
-> +
-> +用法
-> +-----
-> +
-> +::
-> +
-> +   checktransupdate.py [-h] [-l LOCALE] [--print-commits | --no-print-commits] [--print-updated-files | --no-print-updated-files] [--debug | --no-debug] [files ...]
-> +
-> +选项
-> +~~~~~~~
-> +
-> +-  ``-l``, ``--locale``: 检查指定的文件语言，如果未指定文件
-> +-  ``--[no-]print-commits``: 是否打印英文原始版本和翻译版本之间的提交
-> +-  ``--[no-]print-updated-files``: 是否打印无需更新的文件
-> +-  ``files``: 要检查的文件，如果指定了此选项，将忽略语言选项
-> +
-> +示例
-> +~~~~~~~
-> +
-> +-  ``./scripts/checktransupdate.py -l zh_CN``
-> +   这将打印 zh_CN 语言中需要更新的所有文件。
-> +-  ``./scripts/checktransupdate.py Documentation/translations/zh_CN/process/coding-style.rst``
-> +   这将只打印指定文件的状态。
-> +
-> +然后输出类似如下的内容：
-> +
-> +::
-> +
-> +    Documentation/translations/zh_CN/process/coding-style.rst       (2 commits)
-> +    commit 6813216bbdba ("Documentation: coding-style: ask function-like macros to evaluate parameters")
-> +    commit 185ea7676ef3 ("Documentation: coding-style: Update syntax highlighting for code-blocks")
-> +
-> +待实现的功能
-> +-------------
-> +
-> +- 跟踪没有翻译过的文件的翻译状态
-> +- 文件参数可以是文件夹而不仅仅是单个文件
-> \ No newline at end of file
-
-add a newline.
-
-> diff --git a/Documentation/translations/zh_CN/doc-guide/index.rst b/Documentation/translations/zh_CN/doc-guide/index.rst
-> index 78c2e9a1697f..0ac1fc9315ea 100644
-> --- a/Documentation/translations/zh_CN/doc-guide/index.rst
-> +++ b/Documentation/translations/zh_CN/doc-guide/index.rst
-> @@ -18,6 +18,7 @@
->     parse-headers
->     contributing
->     maintainer-profile
-> +   checktransupdate
->  
->  .. only::  subproject and html
->  
-
-thanks.
--- 
-~Randy
+-Tony
 
