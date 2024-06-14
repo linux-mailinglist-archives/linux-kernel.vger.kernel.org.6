@@ -1,180 +1,142 @@
-Return-Path: <linux-kernel+bounces-214829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD48908AB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:21:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10A9E908AC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9597289E73
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:21:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B458B26492
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C096195807;
-	Fri, 14 Jun 2024 11:21:38 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25624195B37;
+	Fri, 14 Jun 2024 11:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="r8603sDw"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF95B1922DB;
-	Fri, 14 Jun 2024 11:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EA613B2AD;
+	Fri, 14 Jun 2024 11:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718364097; cv=none; b=LQVPEgPe6SnCi32ZR9Tjx/NZHJmAjQQ4NDU5BBucKO4G3RkcYIgktjYc1k9HEpMMqwHMkIznYZYOsdBG+Gnbx7kMGkAcgLm0Vyclo0BRsNHB9lko87MrYgaO+03t4U90CnhIAGzRe4YUROd3CLQV1q5gyh5F1J2JCcYazNhs7yg=
+	t=1718364315; cv=none; b=XGDiL6BS6hGwktF6JTphOyqnEPHavp8Z3/QFko2FN/Ii0SA95mqooCtwXiMigp8178nxgpTB6QqRDF6kLWWppIQGoTwVZr5L5Ov81ji/hMTt21Y5gyxf/vqQRSVF5MMIZpNkdMg3qT3yipM3iwHdQDpAB1IuYtzYVsTnidhCRXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718364097; c=relaxed/simple;
-	bh=Fk2bp+GIffzDwEC7aQtOfpug0emOQaAVjf3NSFbxpeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tcxkOlQTAnZe0c75SBLaNZOhxlF14UhGqRvN6jkhmFy1SnJGvB39Qf0q4xn3kEUOabfxrK+T0I00LiL+8EChtpmJrrMlgRyLvrfbdu6W/9mBeWjT0vDGSGKZdAhXz9URAn1gNZANMc3ayoW9Yfwav2ha7gJ2Xntm8nOgyjma+EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 017D43372A;
-	Fri, 14 Jun 2024 11:21:34 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E9D9D13AAF;
-	Fri, 14 Jun 2024 11:21:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /SALOb0nbGa/FgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 14 Jun 2024 11:21:33 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8C4EAA0873; Fri, 14 Jun 2024 13:21:29 +0200 (CEST)
-Date: Fri, 14 Jun 2024 13:21:29 +0200
-From: Jan Kara <jack@suse.cz>
-To: Cyril Hrubis <chrubis@suse.cz>
-Cc: Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v2] loop: Disable fallocate() zero and discard if not
- supported
-Message-ID: <20240614112129.s7hvcyqmnwmngiko@quack3>
-References: <20240613163817.22640-1-chrubis@suse.cz>
+	s=arc-20240116; t=1718364315; c=relaxed/simple;
+	bh=FfcqpBVds2UvXxczWh5DMlzHAA+FEwzBbmT5gv1mKE0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kgNlnbIXkwGtMJYT/sUHdGav8lvUHGbvS5CMqMeoFbYK3kdfOn1YqicMR7/WdD/FWJS7gShEfIY+4B85rJbRZBpzwA3ANC1WE9COV6SKFmik5UsS5iTdLRbcJIt/qRoIt2cYSxR2qb0+QXOPSyNvVUMyJRrYAQ52jqF+JTtFOTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=r8603sDw; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1718364310; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=u8iAIlbQi0tUJ3qu8xocmxzckhx265PFdpBlcy4mJCQ=;
+	b=r8603sDwbINXztjW836pPhPVJnatY87ChFFiRmOwMcxVc8fOWPKJA45fJo0TwC3/HwUfS4z/AQlPqSgxXx7Ti9U8nP+1LPTYjDHukj4GTHGC0rarwunzFJhr8cONLubCG1TLDfCS0/OWe9QlpunZFOSwJ08PiWR6lq7GIK5yf40=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=54;SR=0;TI=SMTPD_---0W8R3gfJ_1718364305;
+Received: from 192.168.0.106(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8R3gfJ_1718364305)
+          by smtp.aliyun-inc.com;
+          Fri, 14 Jun 2024 19:25:07 +0800
+Message-ID: <f764133b-1aaf-4f4b-9a2e-d04ab35d660f@linux.alibaba.com>
+Date: Fri, 14 Jun 2024 19:25:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613163817.22640-1-chrubis@suse.cz>
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Rspamd-Queue-Id: 017D43372A
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/22] dt-bindings: thermal: sprd: reference
+ thermal-sensor schema
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Guillaume La Roque <glaroque@baylibre.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Vasily Khoruzhick <anarsoul@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Anson Huang <Anson.Huang@nxp.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Amit Kucheria <amitk@kernel.org>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+ Heiko Stuebner <heiko@sntech.de>, Biju Das <biju.das.jz@bp.renesas.com>,
+ Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Pascal Paillet <p.paillet@foss.st.com>, Keerthy <j-keerthy@ti.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ zhanghongchen <zhanghongchen@loongson.cn>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, imx@lists.linux.dev,
+ linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org>
+ <20240614-dt-bindings-thermal-allof-v1-17-30b25a6ae24e@linaro.org>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20240614-dt-bindings-thermal-allof-v1-17-30b25a6ae24e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu 13-06-24 18:38:17, Cyril Hrubis wrote:
-> If fallcate is implemented but zero and discard operations are not
-     ^^^ fallocate
 
-> supported by the filesystem the backing file is on we continue to fill
-> dmesg with errors from the blk_mq_end_request() since each time we call
-> fallocate() on the loop device the EOPNOTSUPP error from lo_fallocate()
-> ends up propagated into the block layer. In the end syscall succeeds
-> since the blkdev_issue_zeroout() falls back to writing zeroes which
-> makes the errors even more misleading and confusing.
-> 
-> How to reproduce:
-> 
-> 1. make sure /tmp is mounted as tmpfs
-> 2. dd if=/dev/zero of=/tmp/disk.img bs=1M count=100
-> 3. losetup /dev/loop0 /tmp/disk.img
-> 4. mkfs.ext2 /dev/loop0
-> 5. dmesg |tail
-> 
-> [710690.898214] operation not supported error, dev loop0, sector 204672 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.898279] operation not supported error, dev loop0, sector 522 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.898603] operation not supported error, dev loop0, sector 16906 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.898917] operation not supported error, dev loop0, sector 32774 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.899218] operation not supported error, dev loop0, sector 49674 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.899484] operation not supported error, dev loop0, sector 65542 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.899743] operation not supported error, dev loop0, sector 82442 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.900015] operation not supported error, dev loop0, sector 98310 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.900276] operation not supported error, dev loop0, sector 115210 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> [710690.900546] operation not supported error, dev loop0, sector 131078 op 0x9:(WRITE_ZEROES) flags 0x8000800 phys_seg 0 prio class 0
-> 
-> This patch changes the lo_fallocate() to clear the flags for zero and
-> discard operations if we get EOPNOTSUPP from the backing file fallocate
-> callback, that way we at least stop spewing errors after the first
-> unsuccessful try.
-> 
-> CC: Jan Kara <jack@suse.cz>
-> Signed-off-by: Cyril Hrubis <chrubis@suse.cz>
 
-Thanks. Besides the spelling fix the patch looks good to me. Feel free to
-add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
->  drivers/block/loop.c | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
+On 2024/6/14 17:46, Krzysztof Kozlowski wrote:
+> Device is a thermal sensor and it requires '#thermal-sensor-cells', so
+> reference the thermal-sensor.yaml to simplify it and bring the
+> common definition of '#thermal-sensor-cells' property.
 > 
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index 93780f41646b..1153721bc7c2 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -302,6 +302,21 @@ static int lo_read_simple(struct loop_device *lo, struct request *rq,
->  	return 0;
->  }
->  
-> +static void loop_clear_limits(struct loop_device *lo, int mode)
-> +{
-> +	struct queue_limits lim = queue_limits_start_update(lo->lo_queue);
-> +
-> +	if (mode & FALLOC_FL_ZERO_RANGE)
-> +		lim.max_write_zeroes_sectors = 0;
-> +
-> +	if (mode & FALLOC_FL_PUNCH_HOLE) {
-> +		lim.max_hw_discard_sectors = 0;
-> +		lim.discard_granularity = 0;
-> +	}
-> +
-> +	queue_limits_commit_update(lo->lo_queue, &lim);
-> +}
-> +
->  static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
->  			int mode)
->  {
-> @@ -320,6 +335,14 @@ static int lo_fallocate(struct loop_device *lo, struct request *rq, loff_t pos,
->  	ret = file->f_op->fallocate(file, mode, pos, blk_rq_bytes(rq));
->  	if (unlikely(ret && ret != -EINVAL && ret != -EOPNOTSUPP))
->  		return -EIO;
-> +
-> +	/*
-> +	 * We initially configure the limits in a hope that fallocate is
-> +	 * supported and clear them here if that turns out not to be true.
-> +	 */
-> +	if (unlikely(ret == -EOPNOTSUPP))
-> +		loop_clear_limits(lo, mode);
-> +
->  	return ret;
->  }
->  
-> -- 
-> 2.44.2
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+LGTM. Thanks.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+
+> ---
+>   Documentation/devicetree/bindings/thermal/sprd-thermal.yaml | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> diff --git a/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml b/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
+> index 76aaa004c8ac..f65076fc68f9 100644
+> --- a/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
+> @@ -11,6 +11,8 @@ maintainers:
+>     - Baolin Wang <baolin.wang7@gmail.com>
+>     - Chunyan Zhang <zhang.lyra@gmail.com>
+>   
+> +$ref: thermal-sensor.yaml#
+> +
+>   properties:
+>     compatible:
+>       const: sprd,ums512-thermal
+> @@ -77,11 +79,10 @@ required:
+>     - clock-names
+>     - nvmem-cells
+>     - nvmem-cell-names
+> -  - "#thermal-sensor-cells"
+>     - "#address-cells"
+>     - "#size-cells"
+>   
+> -additionalProperties: false
+> +unevaluatedProperties: false
+>   
+>   examples:
+>     - |
+> 
 
