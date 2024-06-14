@@ -1,94 +1,315 @@
-Return-Path: <linux-kernel+bounces-215496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3459093AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 23:22:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F2939093AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 23:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FF72288405
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:22:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38B5C1C21D9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CE1184126;
-	Fri, 14 Jun 2024 21:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD7C1822F3;
+	Fri, 14 Jun 2024 21:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="GGbMHccH"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4c5BRCBk"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2083.outbound.protection.outlook.com [40.107.220.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5843F13A24B;
-	Fri, 14 Jun 2024 21:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718400163; cv=none; b=WZx+ewLtxT3GZETcRxljiCmxmcPc0mdZfjUOh4XUWyqfYcBt8OQJuEd9CrEudT1q4n4P0dhVE/AZNwD+NZLORFI9u/jrPyV2Lrr+J25PStiig36edQ+V3uY0mpzYxQZA+sFIF3V87/tiXRZAUA8TgwgWusag6rqeP8Xx5MVi0dE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718400163; c=relaxed/simple;
-	bh=mI0xdPiIrvwp6EccuD83bzOdj0amVBKo2auwQXYt8uE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q61tnWaCXIGZQYHYEHlOtSsjB8DrW02zqtDGn9zT2s9hfk8d6jo29gcFiSpwED268xntkWbRo3S43EEGyMQ60/VldFzFngj4ni4WdWk+Om8y4LsJUYDd95ptW3OlTtOVPiQCrWzDEC1W7cpdxyQXee8/QDczuJfAlrCzCLo+nwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=GGbMHccH; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=masz3u7cozgmbioxpjqwm7i5ae.protonmail; t=1718400152; x=1718659352;
-	bh=mI0xdPiIrvwp6EccuD83bzOdj0amVBKo2auwQXYt8uE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=GGbMHccHMMsGnA/ccfGbUrR5Ou/GaweRk7E0oAtlGGyBcg52NBBjlrI00Y/agaBDJ
-	 CEufLLgMBzlcAvbGboVOpXkQluxsmGSAzGhdhYEtoFmexZg5DmttSiVAvUGT51qbBe
-	 V33dUaziIsAWC4qndI9dLduaBwSF+BZdcDikAIXaIm1bjM3RIJ/ARE05k6WRxH38GZ
-	 K+dNjGtj7D7LksWZAk+iuEDyO+dWA7bDW9f44Eqxpwld1dTVHkP0nHv0L3ES4lwzdS
-	 7/dA6hIHPXoLvQ25Yht47pYU0Cav3JsEJrb3po6zYvO07E+iCD1RN5VagbqatQnhMM
-	 mb3QBQhupzr1A==
-Date: Fri, 14 Jun 2024 21:22:24 +0000
-To: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Gary Guo <gary@garyguo.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, kent.overstreet@gmail.com, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, elver@google.com, Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>, dakr@redhat.com
-Subject: Re: [RFC 2/2] rust: sync: Add atomic support
-Message-ID: <c1c45a2e-afdf-40a6-9f44-142752368d5e@proton.me>
-In-Reply-To: <ZmxUxaIwHWnB42h-@Boquns-Mac-mini.home>
-References: <20240612223025.1158537-1-boqun.feng@gmail.com> <20240612223025.1158537-3-boqun.feng@gmail.com> <20240613144432.77711a3a@eugeo> <ZmseosxVQXdsQjNB@boqun-archlinux> <CANiq72myhoCCWs7j0eZuxfoYMbTez7cPa795T57+gz2Dpd+xAw@mail.gmail.com> <ZmtC7h7v1t6XJ6EI@boqun-archlinux> <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com> <ZmxUxaIwHWnB42h-@Boquns-Mac-mini.home>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 53ca9493f4ed178b60e9c57bdabd3b5e208fb377
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFCD2F50
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 21:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718400577; cv=fail; b=KxrXq1/BKnOGnFeppRLzOnK330CFZR0wKWgWo8zUFAZ5iyJqu+uCWdclXXfwiESdDLjku1T1ybkgnDoIfVu4VhswxbWMiOwVAyjUDA5ReXI4AnjA/9Un1qOgJpSZIH5/LnGvlgHIbaTCn3tfkFXado2km9uav3CSD3Qn3t4mHc4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718400577; c=relaxed/simple;
+	bh=LZnCDjr32c2VFBqAVzGPVrnLrotuoieROomGpGh0AEY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=aGvmEyc+aACgrZkCR9VFwL/tm/SoCxV5fL+L3YsQMiqAHk7Tcs5Ldh3R14bX4aQKmpCkMdcopLqG9Sbnqw63dIGn7mcRDRRawTUmqmfzBSzo8GgP9XAaLpqtmsFCvUieE31VcVSBIT6/hmZYhTePRI3USnSOz6VpaJzTwSWJPcs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4c5BRCBk; arc=fail smtp.client-ip=40.107.220.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bihbk9Hg0uPfBiG/Tqu20p3g9i3ZQwCH/pmtIJhj+4VgPY0xPMnMKinLIC25Eu13tQyeHUKkckM9D+s+rXlmJWPLxBXe5y143ezRX/m8PrAz0vb9hX4mYmNQCPIOVcjYOdShLhPX3vWJZx0QBrfWVwonjhQXecHpDrYUB/qMkLsIyE5GsqutbCMyHPagJQoeDe9raHFeHoN3IzT8BFbYHhMOznZBtlRvNMolnSCWRiA/DNDzwqocK0RGNfTI3ZLB/599DllKgLUypLxGY7yXvFUNmEyM/jeupsNhugjDuu8S9nPvk1HmQ0qGo/X0k0qCD97WDWjeusLNF2MNOoUg/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Tx3xSoFc9PAm4vToiIG4Ce8Z4Q4ENcjPZ1fIePhVsgM=;
+ b=Rg67ekuQAipQvZ8RhnPF5p2gMk6/bRQcEc0J0mwvXS9MUVXQa/m47ZkiqhnE8NLEa5Jqgz22qHf1rSptZwAz1u/rDlkZeK9KCKS1rpi663Zai6uwbmPQYx0hzE1DsRpsoqUCQ6du+7WWn/dONUZ9TAs+e7OjPB7mhG6aIjib2VRzrASiLRsnRFGAtHHTeRV4gomPf1COKjPgMW0968gNHKB+hSbm6/4TVtjKMhebro36SLgeIBcxi/sZ0p6qsrGcUTfKQuGpnu2LamGgCcLMCZBmcOfi4Lux4GmQtrf5EGyNlAnG4nGQQhSZWYiw1CIRdKZd1YfctZWqOOEG5A6M7g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Tx3xSoFc9PAm4vToiIG4Ce8Z4Q4ENcjPZ1fIePhVsgM=;
+ b=4c5BRCBk9MZeJSdMHheoXDjTQmWnJTsRpwXDSaXkvovdJah8lfKvpeLhNF37TqYsmgFneIfR4vHlt7KwooJ+2kw7cKkBq4qn1FixRf/VdiQ2yFsdozpH2/Jl2j6egLEfBcOrWx2lIO7yQYdBiK/Jg8C4HFaAAVqyHPi+haRlBfk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by BY5PR12MB4067.namprd12.prod.outlook.com (2603:10b6:a03:212::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.25; Fri, 14 Jun
+ 2024 21:29:33 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.7633.037; Fri, 14 Jun 2024
+ 21:29:33 +0000
+Message-ID: <a65739a4-1c0e-ab36-611d-e2da0bd1d00a@amd.com>
+Date: Fri, 14 Jun 2024 16:29:29 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Reply-To: babu.moger@amd.com
+Subject: Re: [PATCH v20 00/18] Add support for Sub-NUMA cluster (SNC) systems
+Content-Language: en-US
+To: Reinette Chatre <reinette.chatre@intel.com>, babu.moger@amd.com,
+ Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+ Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+ Peter Newman <peternewman@google.com>, James Morse <james.morse@arm.com>,
+ Drew Fustini <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, patches@lists.linux.dev
+References: <20240610183528.349198-1-tony.luck@intel.com>
+ <658d9869-ef22-48a7-876a-5bbba4f134ff@amd.com>
+ <bc52a051-4296-48ac-9a83-29139855553f@intel.com>
+ <e17d3a79-9c07-44cd-b0ea-2d0545680342@amd.com>
+ <f57e9cf2-35b6-401d-afc2-8d11b22836c2@intel.com>
+From: "Moger, Babu" <bmoger@amd.com>
+In-Reply-To: <f57e9cf2-35b6-401d-afc2-8d11b22836c2@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA0PR11CA0006.namprd11.prod.outlook.com
+ (2603:10b6:806:d3::11) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|BY5PR12MB4067:EE_
+X-MS-Office365-Filtering-Correlation-Id: bc28d5a7-fa10-4366-bb33-08dc8cb91513
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|366013|7416011|376011;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TnZCek4zdEs2UUxTcDd3RzkyRDdML1RoNlBoR3Q5aGRUbE9NbUZEaGk4dVlJ?=
+ =?utf-8?B?VXdCMXJ6cCtIS2pJSGE3cmF3OHZNVmJOSHk4NCt5SEk4Q2VUd0ZnRldLTDEx?=
+ =?utf-8?B?ak91bHpFMEo1Qis0OWNTVXFoZjhFYXlQanRFdXNuUHJuS0ovMGdrUUVZMjds?=
+ =?utf-8?B?TzFrSFFIUG1zUm5LbjJOc2w1QkZHRTU1YzR6K0g4YU1IQ1NMdGx1N3lTV3RS?=
+ =?utf-8?B?cFBqNFB6Nk5VS0lVdEpIOGZKQlR0MDN5UHIrbkJPd01CMkVRTVk3V0FjdCsz?=
+ =?utf-8?B?RXh4c0p5NWFjczRUOW05Ui9TZVFGMXV0U0hNQk1rbmlWZkI5blJ3aDVQL2I2?=
+ =?utf-8?B?bXEyM0ZBR2lBN0U3KytFWGdZNHd3T016YUlNdHI5c3h5ODJ5QUlHWGl6cUdQ?=
+ =?utf-8?B?YXZsNWFQSk9IV0thNDJSS045UXRIVlltSzZmUkVVNzRpa0MrZEo1azZLTnVv?=
+ =?utf-8?B?eEhadUxMUTlISE9HTzNobzc3VWhkQVFpeFhMQjVpWStLdnZCSWtha2RzRXZy?=
+ =?utf-8?B?TE9aT3FCeFY1QmdSYmhVZjdiaEJ3RGp6V3Y3a0Q5eUs3MnpJcStpenljMmkw?=
+ =?utf-8?B?RU9qZXFPZ0tNMVpuVmZ0bnpXeUZEVklZVVBrZ0NEbnAwemtqeWZXcnlKdnhs?=
+ =?utf-8?B?a0hFZ01Selh1RUZnbGY1eWRMT0VSVEdZZ1Y2SGZncTE2cEFveU5YcDlMUVk5?=
+ =?utf-8?B?MnZWMXZPRkpkS3ZhU3p3SEtFa3BoWW90M1NyZ0ZIaUVRcVBmeVNzMVBENjlJ?=
+ =?utf-8?B?Z0ZXR3VxeTFUWlFYL2pnMEI2WjBUbG1yalNXT1dseWVDWXA0NzNJZnp1dW1O?=
+ =?utf-8?B?MnFMb0w0QThZM09DTmNyM0gyQzhET0N0cDFBWlM4VUNOczlNWVYyeG1RT2o3?=
+ =?utf-8?B?dnpieGx5MldkWkV0K3FINTlOOFF6cDcvd09ObkxBaVRLeEFUemhvV2xXUkVH?=
+ =?utf-8?B?NllTeGl2RGlCZHBRT1U4all1UlU3UGJUcXBGblRUWDNjSVZYdkx5SWRZUkNh?=
+ =?utf-8?B?TjIrZXJYSTV0c041NmxldmVwaVJRWE5IVVhJRHRsSG9QMlhweWw2WHk4TitF?=
+ =?utf-8?B?cU9INlJoM0ljWC8rMjRMRjlEemlRMXlpeVY3ZFBuaXBMbEl1VDhaSGNJZHJo?=
+ =?utf-8?B?aVZSZVRWTEppRjdZa1hjTlZxM3M4QTViMFZCKzk2WUlzaXVYQkhtTVdZcERr?=
+ =?utf-8?B?Y1VqcE4xZCtZb0sreDhvQzdsZGhJdFkyYmtwWElkV3VEL1lLMG9ZdmZoUmJT?=
+ =?utf-8?B?VWVhVk5mUjJUcHVhLzE5SDZiZjluME40MVZGS3VYWlBFOGVDa1B3enIxRFIw?=
+ =?utf-8?B?VTkxSkVvYVU5MUE2aVNMUmxOS1ZJQTZtak1weHNXVmp1dGt4Wm1VdnNMcklh?=
+ =?utf-8?B?U0FXNVNEdlBMcFdPT0lFdGpVK0xrMkNRMS9JK214a2Q3eFBocHNzWFBDM29r?=
+ =?utf-8?B?aTdtMHBFbEFaZkNoQ1dKdk5PWXlWSDgzdVgyZk1PcWpobGZzOHVKWmdmbFYv?=
+ =?utf-8?B?NGhPRTg5UENtYjNSUU9GWHJ2QUtRNW1raUhYVG00Vy84TG51c21aYnNTQWQ3?=
+ =?utf-8?B?NmpIZ05jQnN0aDdPK0xZSEdGN0pUVW9WVU9WZW9ZcU9zb0hPNlVEaHc5WVR3?=
+ =?utf-8?B?RUdFU0VPcCtSZHo3OEFySXpEeXU3aDljTUhlbXFlQUdLS00yeUJkaDY1QVdr?=
+ =?utf-8?B?SnR6UmhmR0RmZW9FdTA3SFZxcis0czJ1MjQ1dUhaUGpSQ2o2aEUzekZBLzMy?=
+ =?utf-8?Q?V38VG6t7b3N/Rk7kNh3TVxdhbTlJcKHIkV8uVMN?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(7416011)(376011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZlhoOXMzNy8xb2NTZCtkK0tOcnZYN1NYa20rQU1DeDZwSlZmL3N1ZFRHSytL?=
+ =?utf-8?B?bGpXcUIxcTYvT0czWUJubDBzTzhRdEZ6OHlzdkpQNXRTTzJzVGtybWNmUkRy?=
+ =?utf-8?B?YmFVellBaEhsOWFybkFyaExVT2FIMkhYMXlEbVpib04wdEFYV0ZOY2ZKenY0?=
+ =?utf-8?B?MnkxS0pSc3FZMFpVbGtkc0hhMFdsYk5OK1V1SlBic3ZxUzRGbEx0aENNZndN?=
+ =?utf-8?B?V0t0Mnd0MUR1U0dMZGVXOXZzUzJBTUhTYkJYVHBqWkU3a2tCQVhiVSt4eXk2?=
+ =?utf-8?B?YnMyK25xd1MyS2kyaFoveFVtZkpEZHA4Qk0wVnFHb0duTlc5bVFwVGZBTnow?=
+ =?utf-8?B?NURPWE5zLzExTWc5dDlramtNRndaZXNOV1hpMERianhmUUJzZEpKdVcyWER5?=
+ =?utf-8?B?aTlGSWE2eXZxL211eEtIenVpTzJIYjBaS2ZNd3piSFlyQ0Z2VFpNUHdkeW1L?=
+ =?utf-8?B?SEVMSElzKytMQ2lUK29Vcm02RXhNRHREeVNRQ0FWRlpuMkFvNTRBQWQ2b0xy?=
+ =?utf-8?B?bER0MWJrelpGRUdxUWZTRWNtMzBCaGg5K0tGZlZNdmdZSUkwN0s3NnZtM0Vr?=
+ =?utf-8?B?Mm1vcFluUytuUTVpdzZvNTBZMUw4REJNSUpUajdiWERSb1VVam9wQyt6anQ0?=
+ =?utf-8?B?Vk0vdHhGd2JuTmpKblJaeTBha0lva045U3h6bDkreDZGT2hUYmlVaW9vNUY4?=
+ =?utf-8?B?VEtFZy8vdGltcWw3TWFWVXBlQ003alNUbi9UY0kxYVpVSWw3bHcrSElhbHll?=
+ =?utf-8?B?dXdVT0RQcXBSYlV1cmdHRVQvZm83dVdkcDNDdDc2SnBSRS81TzlXa1dkcVps?=
+ =?utf-8?B?Skl3QTNQMUVQQ2dTNGZ0ZmdteFEyWFZCYzVvYk5CWStrVWZuZkV2S1dUVkNa?=
+ =?utf-8?B?amQwMHNUV24yY1JIRHpINllON1hHdzduZWVLVG91VXhsQlBVYWZSeFRQVk1W?=
+ =?utf-8?B?dHQ0dVl1T3NWVnV0S1ZqcHZ1TERCMldwT08vYVR5OEhKMVdDcVppdHFCL2d0?=
+ =?utf-8?B?WTNET3c2ZzUrNlJiSGtsTTRWNkczazdRamdkaXA1bjNhbnA3UW56U1hWeHB2?=
+ =?utf-8?B?NDBycE50d2grTjYyN3U0R1BPVXdKSlJ2R1V2dzJCejN5alJQMnRsT0twc0I1?=
+ =?utf-8?B?K1NlY2hYK0Nia2lNRXEydHVnR2RFbm1HNVFGNVQ5RHFoTFRZODZIaVFyc1ZV?=
+ =?utf-8?B?OHo0R1Z5UkMzL3AwVTJaWDJZVUhGVUdLV1E2T25oczNBbWNTaVZZeFN3bVFm?=
+ =?utf-8?B?M010dm9GNW9jZE9DM0VkNXFDdVlCbVQyejBpRnc4bWs3QU93MUpUdFJnUlRP?=
+ =?utf-8?B?OU9weHlTR1kvY2o1Z0VrZ0dJQlNnLzVSMklZSXh5TzcrTTQ1aXRNR0lFL245?=
+ =?utf-8?B?WkxRd25Oc0hIRDZjaEdtTFZ4ZGNBWVVMTnNGVkdTaG1kZktaL09ZOTNPRmV6?=
+ =?utf-8?B?WUVrcGsxVE9FWkdwSmlkckg2bVZ1MHNMNjJ0UkZZYVdkQVc5STR5QmM3bGc5?=
+ =?utf-8?B?alp0RUZUZkN6RUlXVFpKYnZ4Y0RCbC9uZ2VxY28yRmRqcXg1TDNTSUU4QzRw?=
+ =?utf-8?B?Y1FCWFN2cXRJbEhRakRmWFUzTHVrTE95OGdCYzZDVkJOenUyY1AxVzVBKy9U?=
+ =?utf-8?B?WVJJVkw3Y1ZibjFGRkdGVGtkNnBFcW9RRE5ySXJLMGtwTithSXNESFZCMmls?=
+ =?utf-8?B?M0htMXlQd1pMNjBxeldpMWJsL3UvMTNmRkUyVks4Q21TdEVtNG4vL2xmcENo?=
+ =?utf-8?B?WXRUMGJuSlZNckwyN0d3MTBRU3BHLzE3SVFreHhWbGludUdUNUpsSEZSNmU0?=
+ =?utf-8?B?WFVobXAvQVhLMVp3UnVrRVloY0t2aDZhTE4rZm0zK3BjeEl2TGIyd3QzaU1J?=
+ =?utf-8?B?WDhST0hicWVEaUViLyswc3IydHdwWkcxN2xnU25jWm0rRG5vL2FJWk9uakVP?=
+ =?utf-8?B?eUNONXBkZ24zY0ppdkxTOWY2VUcwTEdNR0liSGtmci9ydjJzeGVWOXlOMHVn?=
+ =?utf-8?B?SlFVM3A5bkJ5NGdTMytrY0dFaUZGZHAya2pKQkduM0Y5Mk1ONzFHRFJ1M0lN?=
+ =?utf-8?B?UFhTcUhQbmlXcEt0YnJ0NVVobUlFWjNpN2N0YUtBcXZ3VnpBTTNLOXBlOVpI?=
+ =?utf-8?Q?FJiXZTe7KSMC0xU14HCoxeJBv?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc28d5a7-fa10-4366-bb33-08dc8cb91513
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2024 21:29:33.1529
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TkvPek3xxdLHt8Nrk6B2cy2zJ5pO7NftGevUJdBgGNMeTTQvYfic1v6k8LmiMUsG
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4067
 
-On 14.06.24 16:33, Boqun Feng wrote:
-> On Fri, Jun 14, 2024 at 11:59:58AM +0200, Miguel Ojeda wrote:
->> On Thu, Jun 13, 2024 at 9:05=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com=
-> wrote:
+Hi Reinette,
+
+On 6/14/2024 11:46 AM, Reinette Chatre wrote:
+> Hi Babu,
+> 
+> On 6/14/24 9:27 AM, Moger, Babu wrote:
+>> Hi Reinette,
+>>
+>> On 6/13/24 15:32, Reinette Chatre wrote:
+>>> Hi Babu,
 >>>
->>> Does this make sense?
+>>> On 6/13/24 12:17 PM, Moger, Babu wrote:
+>>>> I may be little bit out of sync here. Also, sorry to come back late 
+>>>> in the
+>>>> series.
+>>>>
+>>>> Looking at the series again, I see this approach adds lots of code.
+>>>> Look at this structure.
+>>>>
+>>>>
+>>>> @@ -187,10 +196,12 @@ struct rdt_resource {
+>>>>        bool            alloc_capable;
+>>>>        bool            mon_capable;
+>>>>        int            num_rmid;
+>>>> -    enum resctrl_scope    scope;
+>>>> +    enum resctrl_scope    ctrl_scope;
+>>>> +    enum resctrl_scope    mon_scope;
+>>>>        struct resctrl_cache    cache;
+>>>>        struct resctrl_membw    membw;
+>>>> -    struct list_head    domains;
+>>>> +    struct list_head    ctrl_domains;
+>>>> +    struct list_head    mon_domains;
+>>>>        char            *name;
+>>>>        int            data_width;
+>>>>        u32            default_ctrl;
+>>>>
+>>>> There are two scope fields.
+>>>> There are two domains fields.
+>>>>
+>>>> These are very confusing and very hard to maintain. Also, I am not 
+>>>> sure if
+>>>> these fields are useful for anything other than SNC feature. This 
+>>>> approach
+>>>> adds quite a bit of code for no specific advantage.
+>>>>
+>>>> Why don't we just split the RDT_RESOURCE_L3 resource
+>>>> into separate resources, one for control, one for monitoring.
+>>>> We already have "control" only resources (MBA, SMBA, L2). Lets 
+>>>> create new
+>>>> "monitor" only resource. I feel it will be much cleaner approach.
+>>>>
+>>>> Tony has already tried that approach and showed that it is much 
+>>>> simpler.
+>>>>
+>>>> v15-RFC :
+>>>> https://lore.kernel.org/lkml/20240130222034.37181-1-tony.luck@intel.com/ 
+>>>>
+>>>>
+>>>> What do you think?
+>>>>
+>>>
+>>> Some highlights of my thoughts in response to that series, but the whole
+>>> thread
+>>> may be of interest to you:
+>>> https://lore.kernel.org/lkml/78c88c6d-2e8d-42d1-a6f2-1c5ac38fb258@intel.com/ 
+>>>
+>>> https://lore.kernel.org/lkml/59944211-d34a-4ba3-a1de-095822c0b3f0@intel.com/ 
+>>>
+>>>
 >>
->> Implementation-wise, if you think it is simpler or more clear/elegant
->> to have the extra lower level layer, then that sounds fine.
+>> Went through the thread, in summary:
 >>
->> However, I was mainly talking about what we would eventually expose to
->> users, i.e. do we want to provide `Atomic<T>` to begin with? If yes,
->=20
-> The truth is I don't know ;-) I don't have much data on which one is
-> better. Personally, I think AtomicI32 and AtomicI64 make the users have
-> to think about size, alignment, etc, and I think that's important for
-> atomic users and people who review their code, because before one uses
-> atomics, one should ask themselves: why don't I use a lock? Atomics
-> provide the ablities to do low level stuffs and when doing low level
-> stuffs, you want to be more explicit than ergonomic.
+>> The main concerns are related to duplication of code and data structures.
+>>
+>> The solutions are
+>>
+>> a) Split the domains.
+>> This is what this series is doing now. This creates members like
+>> ctrl_scope, mon_scope, ctrl_domains etc.. These fields are added to all
+>> the resources (MBA, SMBA and L2). Then there is additional domain header.
+>>
+>>
+>> b) Split the resource.
+>>    Split RDT_RESOURCE_L3 into two, one for "monitor" and one for 
+>> "control".
+>>    There will be one domain structure for "monitor" and  one for 
+>> "control"
+>>
+>> Both these approaches have code and data duplication. So, there is no
+>> difference that way.
+> 
+> Could you please elaborate where code and data duplication of (a) is?
 
-How would this be different with `Atomic<i32>` and `Atomic<i64>`? Just
-because the underlying `Atomic<I>` type is generic shouldn't change
-this, right?
+We have ctrl_scope, mon_scope, ctrl_domains. mon_domains.  Only one 
+resource, RDT_RESOURCE_L3 is going to use these fields. Rest of the 
+resources don't need these fields. But these fields are part of all the 
+resources.
 
----
-Cheers,
-Benno
+I am not too worried about the size of the patch.  But, I don't foresee 
+these fields will be used anytime soon in these resources(MBA. L3. 
+SMBA). Why add it now? In future we may have to cleanup all these anyways.
 
+> 
+>>
+>> But complexity wise, approach (a) adds quite bit of complexity. 
+>> Doesn't it?
+> 
+> "complex" is a subjective term. Could you please elaborate what is complex
+> about this? Is your concern about the size of the patch? To me that is
+> not a concern when considering the end result of how the resctrl structures
+> are organized.
+> 
+>>
+>> For me, solution (b) looks simple and easy. Eventually, we may have to
+>> restructure these data structures anyways. I feel it is the right 
+>> direction.
+>>
+> 
+> I understand that it is tempting to look for smallest patch possible but we
+> really need to ensure that any work integrates well into resctrl. Doing
+> so may end up with larger patches but in the end it makes the data 
+> structures
+> and code easier to understand. I specifically find the duplication of 
+> structures
+> troublesome since that requires developers to always be on high alert of
+> what code is being worked on and what flows the particular code 
+> participates in
+> since the duplication results in members of structures be invalid based 
+> on which
+> code flow is used. To me this is an unnecessary burden on developers and 
+> against
+> your original goal of making resctrl easier to maintain.
+> 
+> Reinette
+
+-- 
+- Babu Moger
 
