@@ -1,199 +1,92 @@
-Return-Path: <linux-kernel+bounces-214835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1802908ADC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:33:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70180908AE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BD73B232FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:33:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14170287DC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F678195F0C;
-	Fri, 14 Jun 2024 11:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC00D195B03;
+	Fri, 14 Jun 2024 11:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lb9gJZwF"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qyHrDvni"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703ED78C90;
-	Fri, 14 Jun 2024 11:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2980114D29B;
+	Fri, 14 Jun 2024 11:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718364771; cv=none; b=tMXdKd/xphvahM+KAo3T4zKEdm3knh98DWtGpoZStCgBAJOiLRg+O8ludx2SepqmMg3zdoLB/wfYZ13nMpdIR38ES8rrB3/H1WHEskydDDQlr6J9yCH5dWY66uiPECr0xzVCTSjqgTvsrctQhwpaogzj7EQc7IgZGEQrM9ZVtOA=
+	t=1718364861; cv=none; b=SBV1Nf3McrEa40wbbknqdJW/OcjVEOxbifn9WNC9Sz4Z5+eNWd4aqGa9Pdh5Jkj1ucJ+1/BbCbnRD6IERGpiIVXNkT0HO921lvkgoAm7TxURPzENurXuCAgmHy2tF4rLcAtXflTL6o5lEYaY4JD3HjH5kJe5BpAcEg0jdVzdrT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718364771; c=relaxed/simple;
-	bh=BZxQFdVeG2QT4ILRMGsZqQyCOlQ7KBcsO2feZ2kEUnE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BYMjed0XbC8g4Ps3uOkxNb2mLjF9ONinZNsDCZF8DTE6puCds4BJQ+b/27qui/ljbJQ3DP9BwOwVi/8cuG39BlUV7Fq0d8HWrJxr5Trzcnp2hRSCeBUry7t29L+8DULPUpXBpkKAoW7tvCU1EOk2Rxfd35MEsZKk5gREq827Ckk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lb9gJZwF; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2547e1c7bbeso993612fac.2;
-        Fri, 14 Jun 2024 04:32:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718364769; x=1718969569; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eEf7gvt8spx/WQGM8gzqsUzpDdVScLyfQu5pad8/08k=;
-        b=lb9gJZwFVst+oCJbvuSIl8UjtLDgsCDR3mTnL3HrL81nB98jNpATEVy1bfNV2L2aW5
-         39R/gAAugqZ//48eX9P48N1m2yO8OvCnrB1TQzGzum9nOEgCOFL9sKQy67DrYGFz+GGx
-         RD/4P7dYqur/GnbFL930MQoOk03sLJBL4jmjCrmBhXAO1yQ8S9PsS5P/kd6UESjqtmEX
-         EwvYmgRiOVQtCZq6zj1RnsF9DYCH5n5BCeTQ8plcX41qm5L+yZ7a5iUaGOFm84k9qp5F
-         aQPHKjQ5BEYTHfjJKEnVcL0drXx7UIfO+FlAFglh/KQAZMTI5M2js+COmr/BUPwexVTm
-         oG4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718364769; x=1718969569;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eEf7gvt8spx/WQGM8gzqsUzpDdVScLyfQu5pad8/08k=;
-        b=e8Wxi5vRn5CRaVlkfoJmsZ+UVSxoS9r3kVTiLaO274SqSwgIhhObU+zF5AsoiadeMF
-         ysYykb7Sm/9Rp0BfpcN9/eXGnDK93g0tT0ExayUjFs8ovMCvJYMVu1qKBOthzoTzMQd2
-         qsxgN+y9W4aI75u3RzJG/z2GRAfOMXEyc9gLhTYS+XHSX63mhEU6ohfMcKaJGjxkoDn/
-         YsOV3HYAh2sw/FsXnwYLRjvUo13EA0+5u8/1Hm4TxboMi5pmu7Omal0m7gorjLMxAP4c
-         OA9J0DOReOs8SdYYPnh0T8NsrTtOXbcG8FhS8bILzYi5504z4mH1cEc+m1ndZ7SvLik+
-         4LNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBDgDThT0cY+KHXpsMHH6b5T88Cu1WzWjucoa1KiQ5MyLfgTOB3x3YB8EHZ/TWpTxUgOtyhg9Q2h6fELbg/reYOvz7JCjLDwQiszD59GJU5kgFDsY/Uoa8MeIE2ZxCpmmHtctqGWREIlvkoO4By1VyblkZJDQDrgLWN18BRfgWCXWs/MQ6
-X-Gm-Message-State: AOJu0YzC0oLxmY6KaARUkvSdKfZIGTjBbZktem40Fx3D6zbAA0dn5oKr
-	geRp4zG36szlDZJNK4uRmocmlr4eidvaV5hBGg6WMkcBZMFdFJSc
-X-Google-Smtp-Source: AGHT+IGWbIK7SenoDtzFtCrqP2fbskbuS12NCnmeZb5JH1qUBznPIz22Vy037PSvdnlOhNciw6zXwg==
-X-Received: by 2002:a05:6870:1488:b0:254:8e90:2d19 with SMTP id 586e51a60fabf-2584288bdb7mr2467251fac.4.1718364769311;
-        Fri, 14 Jun 2024 04:32:49 -0700 (PDT)
-Received: from dev0.. ([49.43.162.104])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc91dc0asm2841474b3a.34.2024.06.14.04.32.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 04:32:48 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: kuba@kernel.org,
-	horms@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	shuah@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	jain.abhinav177@gmail.com
-Subject: [PATCH v3] sefltests: net: Add on/off checks for network interface non fixed features
-Date: Fri, 14 Jun 2024 11:32:40 +0000
-Message-Id: <20240614113240.41550-1-jain.abhinav177@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718364861; c=relaxed/simple;
+	bh=a6SfxOD/OD964Vn3l5GGkho4iS9L9TigZsmPyszmyyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LkI0mOFj9nunNSpChyIF5Q+GTisqdqTUMK7zdoFmqGXQgjU5RnR1gwt7sZkbfxFNGRnCcOLok01STvzKymGwxJnQ7N8eCzmr9sww+cDv/tJsvLW58Q/z03u+Y/MK8wH4trlxp1A9cqwnLqQ/c0l2GlscdAODCrmygjHLg/nEBi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qyHrDvni; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CD2CC4AF1D;
+	Fri, 14 Jun 2024 11:34:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718364860;
+	bh=a6SfxOD/OD964Vn3l5GGkho4iS9L9TigZsmPyszmyyk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=qyHrDvniMH0T1YjwWZIvzspPiASRLb/PAbidhdOaRSTZ6EgiSH+wyApb9ra8wmr3f
+	 M5B8ifQuPgniTPWJ89p++14NtI5nBYkP30g3FBLk8kB4b06PrDw/eS+mAoi1BwKC+6
+	 HJorhnFpvKwNI9gkB8FmnY15TR/Anot1Z3CvY5DA7LagOl8UnPu3opPzDMC0X7F4wM
+	 pXk3a0vPa+Nym6Xb3gMAKH0SDspb3W3M8PGyMC+ryzj1qvd3O+oZ+OpnovMc+7MOwS
+	 TlZ3AgxWC4l1XpAn1uEorI9f3GFmEw0E4CHo5Pt8qtDf/VPMg42WcYycHIvs4IElCP
+	 /tdKykjpvGp7w==
+Date: Fri, 14 Jun 2024 13:34:17 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa@kernel.org>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
+	lkml <linux-kernel@vger.kernel.org>, Jean Delvare <jdelvare@suse.de>
+Subject: [GIT PULL] i2c-host-fixes for v6.10-rc4
+Message-ID: <u4eloe4b6geus3g24orbcz4fz5r6ze55fhdue4q7dwluhakwh5@a6j4n3jgu3tt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch addresses the TODO (add non fixed feature on/off check).
-I have tested it manually on my system after making changes as suggested
-in v1 and v2 linked below for reference.
-Patch now restores the features being tested to their initial state.
+Hi Wolfram,
 
-Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
----
-PATCH v2:
-https://lore.kernel.org/all/20240609132124.51683-1-jain.abhinav177@gmail.com/
+not many fixes in this period. This pull request includes two
+fixes from Jean that were queued up last week.
 
-Changes since v2:
- - Added a check for netdev if it exists.
- - If netdev doesn't exist, create a veth pair for testing.
- - Restore the feature being tested to its intial state.
+Thanks,
+Andi
 
-PATCH v1:
-https://lore.kernel.org/all/20240606212714.27472-1-jain.abhinav177@gmail.com/
+The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
 
-Changes since v1:
- - Removed the addition of tail command as it was not required after
-   below change.
- - Used read to parse the temp features file rather than using for loop
-   and took out awk/grep/sed from v1.
----
- tools/testing/selftests/net/netdevice.sh | 55 +++++++++++++++++++++++-
- 1 file changed, 54 insertions(+), 1 deletion(-)
+  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
 
-diff --git a/tools/testing/selftests/net/netdevice.sh b/tools/testing/selftests/net/netdevice.sh
-index e3afcb424710..d937d39dda6a 100755
---- a/tools/testing/selftests/net/netdevice.sh
-+++ b/tools/testing/selftests/net/netdevice.sh
-@@ -104,6 +104,20 @@ kci_netdev_ethtool()
- {
- 	netdev=$1
- 
-+	#check if netdev is provided as an argument
-+	if [ -z "$netdev" ]; then
-+		echo "No network device provided, creating a veth pair"
-+		ip link add veth0 type veth peer name veth1
-+		netdev="veth0"
-+		veth_created=1
-+	else
-+		#check if the provided netdev exists
-+		if ! ip link show "$netdev" > /dev/null 2>&1; then
-+			echo "Network device $netdev does not exist."
-+			return 1
-+		fi
-+	fi
-+
- 	#check presence of ethtool
- 	ethtool --version 2>/dev/null >/dev/null
- 	if [ $? -ne 0 ];then
-@@ -124,11 +138,50 @@ kci_netdev_ethtool()
- 		return 1
- 	fi
- 	echo "PASS: $netdev: ethtool list features"
--	#TODO for each non fixed features, try to turn them on/off
-+
-+	while read -r FEATURE VALUE FIXED; do
-+		[ "$FEATURE" != "Features" ] || continue # Skip "Features" line
-+		[ "$FIXED" != "[fixed]" ] || continue # Skip fixed features
-+		feature = "${FEATURE%:*}"
-+
-+		initial_state=$(ethtool -k "$netdev" | grep "$feature:" | awk '{print $2}')
-+		ethtool --offload "$netdev" "$feature" off
-+		if [ $? -eq 0 ]; then
-+			echo "PASS: $netdev: Turned off feature: $feature"
-+		else
-+			echo "FAIL: $netdev: Failed to turn off feature: $feature"
-+		fi
-+
-+		ethtool --offload "$netdev" "$feature" on
-+		if [ $? -eq 0 ]; then
-+			echo "PASS: $netdev: Turned on feature: $feature"
-+		else
-+			echo "FAIL: $netdev: Failed to turn on feature: $feature"
-+		fi
-+
-+		#restore the feature to its initial state
-+		ethtool --offload "$netdev" "$feature" "$initial_state"
-+		if [$? -eq 0]; then
-+			echo "PASS: $netdev: Restore feature $feature to" \
-+				" initial state $initial_state"
-+		else
-+			echo "FAIL: $netdev: Failed to restore feature " \
-+				"$feature to initial state $initial_state"
-+		fi
-+
-+	done < "$TMP_ETHTOOL_FEATURES"
-+
- 	rm "$TMP_ETHTOOL_FEATURES"
- 
- 	kci_netdev_ethtool_test 74 'dump' "ethtool -d $netdev"
- 	kci_netdev_ethtool_test 94 'stats' "ethtool -S $netdev"
-+
-+	#clean up veth interface pair if it was created
-+	if ["$veth_created" ]; then
-+		ip link delete veth0
-+		echo "Removed veth pair"
-+	fi
-+
- 	return 0
- }
- 
--- 
-2.34.1
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.10-rc4
+
+for you to fetch changes up to cbf3fb5b29e99e3689d63a88c3cddbffa1b8de99:
+
+  i2c: designware: Fix the functionality flags of the slave-only interface (2024-06-12 17:07:34 +0100)
+
+----------------------------------------------------------------
+Two fixes from Jean aim to correctly report i2c functionality,
+specifically ensuring that I2C_FUNC_SLAVE is reported when a
+device operates solely as a slave interface.
+
+----------------------------------------------------------------
+Jean Delvare (2):
+      i2c: at91: Fix the functionality flags of the slave-only interface
+      i2c: designware: Fix the functionality flags of the slave-only interface
+
+ drivers/i2c/busses/i2c-at91-slave.c       | 3 +--
+ drivers/i2c/busses/i2c-designware-slave.c | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
