@@ -1,61 +1,59 @@
-Return-Path: <linux-kernel+bounces-214615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A9FF90871F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:12:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D025908721
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC69F1F2382A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:11:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E743F1F2386D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5623B1922C2;
-	Fri, 14 Jun 2024 09:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143E61922CB;
+	Fri, 14 Jun 2024 09:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Rwppda1a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YOCcUmy5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2B75FBB7
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512485FBB7;
+	Fri, 14 Jun 2024 09:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718356311; cv=none; b=dtGz8aPXtveMe5v0IKJNjTvsQ7/mS5AhP0Ag2Q69Zb/84Doy/2svEIdoiiPJKgnmiLalRNNgGCSumpKlLdtCDdOkK78EsGZgbzJ6I0u0UEWo1GzvHuvD264i4yqUGz5+eZwJb3Qm6XmcgCyUC2UDHrmT3ow8UaWhtwtrkg7rfhE=
+	t=1718356345; cv=none; b=UMp/DpsMOh8oFGoJZjP98/r9waZ+0j4UxplT/F6h0ZFnXJnEANX99VEDk+j3qDZenb34qk68onp3szi7Rknr4E1pJOTQozIMsb96VPhH+EJfwVO5o82XuugMg856DyBzh7Ttu2+L2mmnBItSC9A803WMwWTvzPbJHPwZiXlcA9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718356311; c=relaxed/simple;
-	bh=PyT3i07hVZXSmRuKgMLGdo4Bxyuj19MmGk+2thL7vGY=;
+	s=arc-20240116; t=1718356345; c=relaxed/simple;
+	bh=7kGde42zdHXHJOiY91tpSQwRc7oayfWjAOUL0Cw7kx8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mmNuld6Be9w7jp42XN5Rrc3jvEMr5JJfagRJo1ywiAnnaljHf+aj7/wBGv+cX8UwrCTTmYrrptt66m6RDANTP0bJ1NyneDXdD9dXYmPp4EiaVN3MQbuN0q3EIQ/RZTlhbGpPAGTskiTRPVdcCF7nXeQoWNVyul7fSp+stzIkJ9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Rwppda1a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A871FC2BD10;
-	Fri, 14 Jun 2024 09:11:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718356311;
-	bh=PyT3i07hVZXSmRuKgMLGdo4Bxyuj19MmGk+2thL7vGY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=uItdYtpcUEua/DhKGrDFnDugu3rK/14EL41o1YCokBPYqcFsJ0rO0Tbr1hN38mrajniVYGwbQ81spx5wcunpPhYmOiBelJMk6E0gJwLblxBhz5eUDNjdSck1/qp9dlbsoboJtCDMueQ96vHT2Pz6WZrShCBnEV/80tRN2MpSxT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YOCcUmy5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8B39C2BD10;
+	Fri, 14 Jun 2024 09:12:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718356345;
+	bh=7kGde42zdHXHJOiY91tpSQwRc7oayfWjAOUL0Cw7kx8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rwppda1aLZIXLJs35olcYIjwj21f86cZkWa0/kRQDTpATfF0PJe7bRDMEcX6YR2Nw
-	 f9cL5q91QzF+mzmHXZzOOXM6athaJGWHjomZTNJ4aHwEESckpwJK+WNQ5C3gX3G6V3
-	 IEgvvlGHYVsLuj0MZF+QEIAcweiHuinDi301fQyE=
-Date: Fri, 14 Jun 2024 11:11:48 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Carlos Llamas <cmllamas@google.com>, kernel-team@android.com,
-	Alice Ryhl <aliceryhl@google.com>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Martijn Coenen <maco@android.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Todd Kjos <tkjos@android.com>, LKML <linux-kernel@vger.kernel.org>,
-	Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
-	John Stultz <jstultz@google.com>, Nick Chen <chenjia3@oppo.com>,
-	Steven Moreland <smoreland@google.com>,
-	Tim Murray <timmurray@google.com>
-Subject: Re: [PATCH v5] binder: use bitmap for faster descriptor lookup
-Message-ID: <2024061443-breeding-obvious-908d@gregkh>
-References: <20240612042535.1556708-1-cmllamas@google.com>
- <7daafcb7-2c80-4c2a-bf25-7202634f79f0@web.de>
+	b=YOCcUmy5WDD73LPlthR8Z01XvAUv3QLCpF98pK38P2rhpXKFxmYNdAZRsU3XXOQwX
+	 okNuK5pkqT7c9RV/HmT+HVlmqY5C0Y/LVU6C24VlOmZKbBgfIDm0bOktzVDkqkD094
+	 KVJ020f/we3F1IA3ESsLfT10fXPmmga+JOL6ykYIcWFfBFpAPfCCX4pV/NkEXPrsef
+	 Nl4Rcr4RdR9Ke3gbLPmedjZrqcCmnj0aGboANINrP0St4MH5wBWHGv+/OMvmUKyMh0
+	 7vMxlokrn+vPipnqXt0UawcaIA/2+RWmFZPCD9UuThSjGwVG6BBWGly/FzR6+VYsP9
+	 c56UBNQARDAvQ==
+Date: Fri, 14 Jun 2024 10:12:20 +0100
+From: Lee Jones <lee@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Pavel Machek <pavel@ucw.cz>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@weissschuh.net>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+	Dustin Howett <dustin@howett.net>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v3 0/5] ChromeOS Embedded Controller LED driver
+Message-ID: <20240614091220.GA3029315@google.com>
+References: <20240613-cros_ec-led-v3-0-500b50f41e0f@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,48 +63,66 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7daafcb7-2c80-4c2a-bf25-7202634f79f0@web.de>
+In-Reply-To: <20240613-cros_ec-led-v3-0-500b50f41e0f@weissschuh.net>
 
-On Thu, Jun 13, 2024 at 06:50:53PM +0200, Markus Elfring wrote:
-> …
-> > +++ b/drivers/android/binder.c
-> …
-> > +static void try_shrink_dmap(struct binder_proc *proc)
-> > +{
-> …
-> > +	binder_proc_lock(proc);
-> > +	nbits = dbitmap_shrink_nbits(&proc->dmap);
-> > +	binder_proc_unlock(proc);
-> …
-> > +	new = bitmap_zalloc(nbits, GFP_KERNEL);
-> > +	binder_proc_lock(proc);
-> > +	dbitmap_shrink(&proc->dmap, new, nbits);
-> > +	binder_proc_unlock(proc);
-> > +}
-> …
+On Thu, 13 Jun 2024, Thomas Weißschuh wrote:
+
+> Add a LED driver that supports the LED devices exposed by the
+> ChromeOS Embedded Controller.
 > 
-> Would you become interested to apply lock guards?
-> https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/cleanup.h#L124
+> Patch 1-3 add a utility function to the led subsystem.
+> Patch 4 introduces the actual driver.
+> Patch 5 registers the driver through the cros_ec mfd devices.
+> 
+> Currently the driver introduces some non-standard LED functions.
+> (See "cros_ec_led_functions")
+> 
+> Tested on a Framework 13 AMD, Firmware 3.05.
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> ---
+> Changes in v3:
+> - Set default_trigger explicitly as the LED core doesn't do this anymore
+> - Only set intensity for first subled by default
+> - Link to v2: https://lore.kernel.org/r/20240531-cros_ec-led-v2-0-6cc34408b40d@weissschuh.net
+> 
+> Changes in v2:
+> - Cosmetic cleanups (Tzung-Bi)
+> - Add trailing comma to MFD cell array
+> - Rename LEDs and trigger to "chromeos" prefix, to align with kbd
+>   backlight driver
+> - Don't use type "rgb" anymore, they are only "multicolor"
+> - Align commit messages and subject to subsystem standards (Lee)
+> - Rename led_color_name() to led_get_color_name()
+> - The same for cros_ec_led_color_name()
+> - Link to v1: https://lore.kernel.org/r/20240520-cros_ec-led-v1-0-4068fc5c051a@weissschuh.net
+> 
+> ---
+> Thomas Weißschuh (5):
+>       leds: core: Introduce led_get_color_name() function
+>       leds: multicolor: Use led_get_color_name() function
+>       leds: core: Unexport led_colors[] array
+>       leds: Add ChromeOS EC driver
+>       mfd: cros_ec: Register LED subdevice
+> 
+>  MAINTAINERS                         |   5 +
+>  drivers/leds/Kconfig                |  15 ++
+>  drivers/leds/Makefile               |   1 +
+>  drivers/leds/led-class-multicolor.c |   2 +-
+>  drivers/leds/led-core.c             |  12 +-
+>  drivers/leds/leds-cros_ec.c         | 299 ++++++++++++++++++++++++++++++++++++
+>  drivers/leds/leds.h                 |   1 -
+>  drivers/mfd/cros_ec_dev.c           |   9 ++
+>  include/linux/leds.h                |  10 ++
+>  9 files changed, 350 insertions(+), 4 deletions(-)
+> ---
+> base-commit: 2ccbdf43d5e758f8493a95252073cf9078a5fea5
+> change-id: 20240519-cros_ec-led-3efa24e3991e
 
+Applied and submitted for testing.
 
-Hi,
+All being well, I'll follow-up with a cross-subsystem pull-request shortly
 
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
-
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
-
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
+-- 
+Lee Jones [李琼斯]
 
