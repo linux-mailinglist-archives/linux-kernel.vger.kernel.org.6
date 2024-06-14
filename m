@@ -1,139 +1,167 @@
-Return-Path: <linux-kernel+bounces-215153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BEC908ECF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:35:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E7F908ED2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 094AB2818E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:35:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 329D81F21F53
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901A615CD64;
-	Fri, 14 Jun 2024 15:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7E815FA8C;
+	Fri, 14 Jun 2024 15:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nLsPPILe"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TxhI0YxW"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA8A3B1AB
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3377A15A861
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718379313; cv=none; b=o/StxEFVCAnhOVQTERrqjeuRUwHYU+EGUFrMYT1U4EWNvxO/xObB9XnpM1jcqFN9LWbPEfOCA3l6Y8YjLRP/v9nas8fdDS7qzfcnPtWlF0A0DvE9mGnCjhK8xLctykhYIG+dVGsr0YUqT6+cdDz2wyIiOtePGieN8FKdf0PIXuI=
+	t=1718379332; cv=none; b=mXku6cL8DtLoM0SQRtNga+L80wP79GXyLTMLaOZGpP90P8fuP1gvBQ+FEk6+D1JNlNkezQPDAWWcdYgzA1OnUkB6n+bgbv/UIY8qmzcQKBfhytKHxOa32fLLmQ7gbdTLOwJfNEj6Mk4YLWxui0Yr2+SW8qTaYyFJ7ezJfGOoNNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718379313; c=relaxed/simple;
-	bh=By+OoUK9phjDxFni9NpDYhaOStLT4N1Ufyg/V2rZsuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aWxxd+eki2QscaCdksrAH3Fdxtm4Xs9Cwgi9adjB0DMvPwJVONOZBp1BmL+9/e6hR9LUo2uLjw4Bl4vDrU6G0jCTjafNlK/tnmRep5ykJ2wKbF4yYkhwYzbkTe6ivBjJCalRBH1WKzJn6oOzSzSybVGdTLu4Gy9Ni7C7Vu7zQFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nLsPPILe; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso38163611fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:35:10 -0700 (PDT)
+	s=arc-20240116; t=1718379332; c=relaxed/simple;
+	bh=e+pZ7eTKAx4VkEW8APS8mrMH/EItOgatnlu+M5ND5W0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CH+jp1EZJf3pWuptpG9Yy8I6XBOycDOiwTih7LRmbNd8+NftYGi75+LFiqnf+c05VNXg29aUFRi5coZj9E35m8m/SD89pAkOiNX7tRLmSBcbusB1gUoSz2xGV3WHwzQM+o/PMl01X9T5Ot56GOdEBxDeucgm4KjAGS1Ax4WWhkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TxhI0YxW; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dff1eb1c1fcso971203276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:35:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718379309; x=1718984109; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=By+OoUK9phjDxFni9NpDYhaOStLT4N1Ufyg/V2rZsuM=;
-        b=nLsPPILey2jD3seYmP68z6SLyndCASGyfQre4fy54xmJm+Suif8hg/mcv4Gi029hpp
-         vu2iBc4QYZvm6EMN4RCySgNJwp3+VZptNtAVTNU00Zo2enINoAaoWwRAFWLMcub7v+cJ
-         XQMMEqffUgP27ooAmFUX/BKpkDGnvYhwTTj/oomMY1oQtcAu8RjjKh9+LdTsnA7+48j5
-         4JwEi95WscZoDmLadMY2OFTqVaci8B9c8W4VNtnDdtaRjE85E6l2eLm7vzCIkDvNTTyC
-         vtxMImDmCVOHj8oO1RpIcFv4mZQX5x7XyHiy50o6u+zo/fqa75O4ZuFJxEfNRbl544QB
-         DMaw==
+        d=google.com; s=20230601; t=1718379330; x=1718984130; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dK2lFOmA7MzUYlO9j8YBz7d5Tzn0my7qhQPYijrsljo=;
+        b=TxhI0YxW6xVpd9aAQgKbK9L3KECstPjYk20FHevuHna2SCQFrmeW4DYKhVJ/PESNVu
+         3B93VEiWxa+dEb0ACMlTdCVmlPx4aqoBTVklLB4lJjNt+beBUmhXSAMe8RYs3hfC6qdV
+         iZPBvK0910CYSWXNsBeqjLaeVJVwOJSbrmZQUd4xFk8KY1cEiPhxTOzGyRzl8Qp/tnOd
+         tiwQd1fQpr1vIikiTd4Gj6e73oVkQ1YEWh6k+ABQ2MU4Zpo8u+k54M2MQWkyzyYvBG+D
+         1iiGR6R4I7YrKsK2FiZrBhjmdLzRkAfKwX39Lw7CS3czRKFH/UcUA9hWVP5deiLb+J38
+         uG2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718379309; x=1718984109;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=By+OoUK9phjDxFni9NpDYhaOStLT4N1Ufyg/V2rZsuM=;
-        b=C4t6UhvOJL2Q/N+X0PGOUL6fWAc3jahgE3MDnCaYlqqppAwyCRSurwhTFsYAphfgoN
-         +9/HHmbeROei6nt6JRNa6O1B4YYPG1bd1u1i76JnVNPdWjLTMjUcd/KXs/Ga42J+BD71
-         0Nc+sr2GbtclyVACS7O8yFWUhtTHfjoEgHvjkCRoe/TDtqzyjL8AJgtN4d5T/KAdN148
-         BUI+EmdYb6OFRSuXTUe7edFfuv7Klm2q+CWMxzT9pPFtotGWA3ajFMK5SAGbt/mOf1gD
-         rggEMpRmliSByCWigJCGOLyDOKxHTee6++aTjuilnvaej/2uSUlhLGvjQyRGO8EyXE3v
-         M9IA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRQxG+Ro1xdIXlGKS/nnDwde5xTznf8iKW6LqUHV+RZY70gr8nqoduoRZy3t/XAam0bVcZSKhoIEimnk2XQrOq167Xi7s7Tk4zLo3+
-X-Gm-Message-State: AOJu0YxCb+mMCvMO4omva3L4yPq+WzkXBz2/e5JXjwrP0a949uFZESli
-	Sve/UFiTsJrRQic/fAeBy0Woo02ebqwLyG9x3pq5sjEXBdtPSfZUp5iBOCdw+Rw=
-X-Google-Smtp-Source: AGHT+IEZFCe/X0dPZ4UuhbZeK/Ijt1BLha/MawlM++zT52lImv6xyoOojlWTAYxhTmOdMBbXtX4hig==
-X-Received: by 2002:ac2:44a2:0:b0:52c:a5cc:27e7 with SMTP id 2adb3069b0e04-52ca6e9dafcmr2324082e87.66.1718379309156;
-        Fri, 14 Jun 2024 08:35:09 -0700 (PDT)
-Received: from localhost (p509153eb.dip0.t-ipconnect.de. [80.145.83.235])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f40fe2sm200252766b.148.2024.06.14.08.35.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 08:35:08 -0700 (PDT)
-Date: Fri, 14 Jun 2024 17:35:07 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sean Young <sean@mess.org>, linux-kernel@vger.kernel.org, 
-	linux-pwm@vger.kernel.org
-Subject: Re: [PATCH] bus: ts-nbus: Use pwm_apply_might_sleep()
-Message-ID: <rlpicrfrp4nsftgj24oakn6urj7axi2gptrlzpdk3f2scvmzqb@5caoklb74wvm>
-References: <20240614090829.560605-1-sean@mess.org>
- <xj5mqnte5dgs4yzuku6g7gnprgm43tdbunxmo6o4thzreyraok@kttvkz5dhaei>
- <1f13c705-dec7-48f6-a6d7-4a9000eedf7d@app.fastmail.com>
+        d=1e100.net; s=20230601; t=1718379330; x=1718984130;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dK2lFOmA7MzUYlO9j8YBz7d5Tzn0my7qhQPYijrsljo=;
+        b=BiYGTbEjEYAjNSJivyzBrUl9lpXPNiA2jotv/+t6rATu7nqLxtH5WiECYA72wDVC0T
+         pmS7wwAecO/u6QgatQbl2lBD5gjKBIi9enAZBeGvnLdMCcuGC7dWwSz2qcvk7e0Hk7gR
+         MToqy1jbUcWZe8NBYzjN+PIo5Dbml6rQI0WKVgTCt816cv8oo/Na5nG/uGPnFx8/GKKC
+         5dLrlAQal2H/T+L4fLSf0WMGtr+gg1JeunOacBbsUcgjNT+wkmbzCb/wfQ5MQnVroztv
+         mE89jesmCiNyIzW0hpQMLM+0XJ9ta7VU/YMyiZ0tumjUTATETxYZ+wJYd89KIW4OeX7L
+         yBDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpvdvt67xQxWDV4bebkvCY+DuTwfOcZQUwBdIzS0Vcz+LgJ2ePAFlUQZ1eezI3G//5fP9Cek+lEOVc/yZjmdv7lKLDHwVRLshC+d54
+X-Gm-Message-State: AOJu0YwY/Q3Ado1jFCuPI5nLwZBi/zEueUb68t3fJyzF7GtzsN1m8/tp
+	aJdTzKheo2py5s3gh5L+sGOAmT1XZwnuKfV2LgJZjFYe9UEmw07ah1GYq6r0okgA/zeUdrLc0kj
+	/eQ==
+X-Google-Smtp-Source: AGHT+IHZ+72AO/j0fqGW0W0xo4ynxvLZU81Wx/9eB8DTQbR+p/iEZtM5Z/d/JmTxJ48EWnz7qRK+kllwhBo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:18ca:b0:dfe:fca5:2b9c with SMTP id
+ 3f1490d57ef6-dff1389defemr890465276.2.1718379330021; Fri, 14 Jun 2024
+ 08:35:30 -0700 (PDT)
+Date: Fri, 14 Jun 2024 08:35:23 -0700
+In-Reply-To: <20240614152228.GAZmxgNPmozj7UzRdV@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="c5ub5pa2ooxsz7dl"
-Content-Disposition: inline
-In-Reply-To: <1f13c705-dec7-48f6-a6d7-4a9000eedf7d@app.fastmail.com>
+Mime-Version: 1.0
+References: <202406141648.jO9qNGLa-lkp@intel.com> <20240614152228.GAZmxgNPmozj7UzRdV@fat_crate.local>
+Message-ID: <ZmxjOxhPy67QOh5Q@google.com>
+Subject: Re: [tip:x86/alternatives 14/14] arch/x86/kvm/kvm.o: warning:
+ objtool: .altinstr_replacement+0xc5: call without frame pointer save/setup
+From: Sean Christopherson <seanjc@google.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: kernel test robot <lkp@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, oe-kbuild-all@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="us-ascii"
+
+On Fri, Jun 14, 2024, Borislav Petkov wrote:
+> On Fri, Jun 14, 2024 at 04:15:14PM +0800, kernel test robot wrote:
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/alternatives
+> > head:   f776e41fdcc4141876ef6f297318ab04c2382eb7
+> > commit: f776e41fdcc4141876ef6f297318ab04c2382eb7 [14/14] x86/alternative: Replace the old macros
+> > config: x86_64-buildonly-randconfig-r001-20211209 (https://download.01.org/0day-ci/archive/20240614/202406141648.jO9qNGLa-lkp@intel.com/config)
+> > compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240614/202406141648.jO9qNGLa-lkp@intel.com/reproduce)
+> > 
+> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202406141648.jO9qNGLa-lkp@intel.com/
+> > 
+> > All warnings (new ones prefixed by >>):
+> > 
+> > >> arch/x86/kvm/kvm.o: warning: objtool: .altinstr_replacement+0xc5: call without frame pointer save/setup
+> 
+> That thing comes from:
+> 
+> SYM_FUNC_START(vmx_do_interrupt_irqoff)
+>         VMX_DO_EVENT_IRQOFF CALL_NOSPEC _ASM_ARG1
+> SYM_FUNC_END(vmx_do_interrupt_irqoff)
+> 
+> at the end of arch/x86/kvm/vmx/vmenter.S.
+> 
+> I know Sean had a patchset to cleanup that gunk. Sean?
+
+That series was just for the actual VM-Enter/VM-Exit path.  vmx_do_interrupt_irqoff()
+is unrelated, it's just another asm chunk of code that happnes to live in vmenter.S
+(which is obviously is a bit of a misnomer these days).
+
+> >From reading objtool docs, those functions (vmx_do_nmi_irqoff() too AFAICT)
+> should have FRAME_BEGIN/FRAME_END  but if I do that, objtool bitches
+> differently:
+
+That function does create a stack frame, just without using FRAME_BEGIN/END so
+it's not dependent on using frame pointers.  Ironically, the intent is to try and
+placate objtool.
+
+IIUC, this warning just stared showing up with the alternatives changes?  Does
+CALL_NOSPEC generate different code now?
+
+.macro VMX_DO_EVENT_IRQOFF call_insn call_target
+	/*
+	 * Unconditionally create a stack frame, getting the correct RSP on the
+	 * stack (for x86-64) would take two instructions anyways, and RBP can
+	 * be used to restore RSP to make objtool happy (see below).
+	 */
+	push %_ASM_BP
+	mov %_ASM_SP, %_ASM_BP
+
+#ifdef CONFIG_X86_64
+	/*
+	 * Align RSP to a 16-byte boundary (to emulate CPU behavior) before
+	 * creating the synthetic interrupt stack frame for the IRQ/NMI.
+	 */
+	and  $-16, %rsp
+	push $__KERNEL_DS
+	push %rbp
+#endif
+	pushf
+	push $__KERNEL_CS
+	\call_insn \call_target
+
+	/*
+	 * "Restore" RSP from RBP, even though IRET has already unwound RSP to
+	 * the correct value.  objtool doesn't know the callee will IRET and,
+	 * without the explicit restore, thinks the stack is getting walloped.
+	 * Using an unwind hint is problematic due to x86-64's dynamic alignment.
+	 */
+	mov %_ASM_BP, %_ASM_SP
+	pop %_ASM_BP
+	RET
+.endm
+
+> 
+> arch/x86/kvm/kvm-intel.o: warning: objtool: vmx_do_interrupt_irqoff+0xc: undefined stack state
+> 
+> Suggestions?
 
 
---c5ub5pa2ooxsz7dl
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hello Arnd,
-
-On Fri, Jun 14, 2024 at 01:38:05PM +0200, Arnd Bergmann wrote:
-> On Fri, Jun 14, 2024, at 12:06, Uwe Kleine-K=F6nig wrote:
-> > On Fri, Jun 14, 2024 at 10:08:29AM +0100, Sean Young wrote:
-> >
-> > Thanks. I guess the patch becoming
-> > 8129d25e32b7fd0f77bc664252321f3a16bb26b8 was created a while before
-> > pwm_apply_might_sleep() was a thing.
-> >
-> > Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
-> >
-> > Arnd, you merged the last changes to that driver. Do you want to care
-> > for that one, too? If not I can apply it via my pwm tree.
->=20
-> Whichever works best for you. I generally take drivers/bus
-> and drivers/soc fixes through the soc tree, but if this is
-> a PWM related change then having it in the pwm tree makes
-> sense as well.
->=20
-> If you like me to pick it up through the soc tree, please
-> forward the fix to soc@kernel.org.
-
-OK, then I pick it up and consider it done. Thanks.
-
-Best regards
-Uwe
-
---c5ub5pa2ooxsz7dl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZsYykACgkQj4D7WH0S
-/k4xQwf/RPjgnr71cDGKDmyjNofEfiQ1ZhYO5iXTl8+UCZqHHQ+9E5JiswnpxUDi
-nLBXz3EHObg2h+x0f7HpDn4TLGgn0zLCJ5R1mUhtJXgYU0v61Xs4XJDGhTQ075zM
-+7GoRqdNAhtsycqHhXRy5Dkgr0nTMhQjhpSpVfrWFImvy4CV4FfWuWB6k60aFKvC
-mNJPJhu+9jrs2P2HGu4rxv6IHhgUJrB2uC4Rp/rJoh6bHOls5usy1OTffCkvndTi
-TOGz/D8L0qabV5zpOyoBt/VygYr9lbu3WY8Bs6bnfPMF8miWptTIiJ6X+pIyAMJf
-kqBUuTD9Ri+GtNUMWxwviNJVVx1AnQ==
-=49MG
------END PGP SIGNATURE-----
-
---c5ub5pa2ooxsz7dl--
 
