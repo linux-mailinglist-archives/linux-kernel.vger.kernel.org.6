@@ -1,413 +1,151 @@
-Return-Path: <linux-kernel+bounces-215123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99ABC908E63
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:14:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C24CD908E8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 865531C23E71
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:14:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B81DB22749
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A991B19580B;
-	Fri, 14 Jun 2024 15:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3621B16C855;
+	Fri, 14 Jun 2024 15:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IfMjiQiY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KvRjTshn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90AC813E046;
-	Fri, 14 Jun 2024 15:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05FC15AAD7;
+	Fri, 14 Jun 2024 15:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718377831; cv=none; b=qqFqWfgYcWM+jQDq7/yavGWQbYktD6pv8jev0flD03pqSgcVUO+2g8QF55y/FH0HyrSi1vii8rEwTFevyFUUPOnGAONxuLhqKjC64kIinzVaWZDuxM06ciMGxtaZ+4112U+1kEYJ2oaQZyp9Ju8PHGJM1KxB7HmczwJoIXRwhLk=
+	t=1718377873; cv=none; b=fmPeE/DpgvUXb0LmyM5NueKsyO89RBAmz991kQsahC14paN1Uq7S5U4fBu6Za+9tmayZ05d67xJRtlBZV/zlSFTeYIVIsHXcOWIwKc+8dxL5OmSwpITgyfJeBouG+MJwjQ1asyPtfP8OPaht63t0C20ihU5R8LcUoOyGSdH9lG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718377831; c=relaxed/simple;
-	bh=o2NPSa264TsX89kQvYw6c2W52Obbl82MGm8ffWtcZv8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bdnIN1OwxUFfNzx4eGE1eUP8xeHfLUCkFqfoKdx9bq0Eq7I9PSJfe+Hti/qNZ2d1mZu38gNybNivjRiuxIqkwP2rgEuZbh9UytwYZ3sk4s2gOuE2QNnbnJIcrAS2PmzHlGejj+t0s1rVqCYvFn+yrWxz+0o/+Ot5rnZ5AdgwlVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IfMjiQiY; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1718377873; c=relaxed/simple;
+	bh=t+p8hRe7ZJaO1YiL/Ey5QrMotfYND+fGv7wrcUgpxyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iqp3KsuRW+hQwlsn5lf2aBzouqtK9LOYCKjFl0nbfJAayzCkLOv/tEML303ld7HGPGyBvqHqn+whgFp3WLhnFamhgAd8CVdEamgax3ft1YIqVOE5FPAIuM0o8Jy2Rbo2vueM5o1s7w14ri11achv8e/yqmQsxUO/5i8FI2eVZ2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KvRjTshn; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718377829; x=1749913829;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=o2NPSa264TsX89kQvYw6c2W52Obbl82MGm8ffWtcZv8=;
-  b=IfMjiQiY+zZY90LHPml5OV/GBJ16fLXub9YZsuqW1Vap+tS2gu58YP+Y
-   Ie1CAABCF5E2kWyg0eyvKiS9dkWV7uuAfTj0MKFmNgp+NbEZCImtx8DWv
-   7x+6oIitHDepVt5Iwt0TsL7pbgMkZ7svLaHYCdGPNS5qHw0mbtnnkq/lp
-   XHUmFA3ZmWSDW6gBjSrC9g0LYj8e6vYe90wPKm+kQ1BfgSRN+45Yz7Mq9
-   0lWHBDM14i1fR2A5Gs/6ycSVFZghLvxZ9Vzrcf+5cD0UmMWA1yDFHuXcx
-   M+PkOH0mphyrE0Jyrl9Rfx7W+bFCeGPv1cGUg4cpfrh3bVLTNbw8h/Hcu
-   A==;
-X-CSE-ConnectionGUID: sGOmc6Q2R3y54cpEPizb7g==
-X-CSE-MsgGUID: yHirxdPWQSuQX/2x8Zcviw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="19089356"
+  t=1718377871; x=1749913871;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=t+p8hRe7ZJaO1YiL/Ey5QrMotfYND+fGv7wrcUgpxyA=;
+  b=KvRjTshnCJVS4/oaXFsQXcfkOV0qRN+5PvWtRq1uKgU+/xYycOgzFkdk
+   4sTsfALvfgudGnW31TlcOSay8XZG2WIPIP8baIPh287MYErO1PG5Jdiv8
+   ys2zXiUOHLQ79aobZpyjeB3mtfYcvaKTDptbnXI0wjg/BXU5u4Qpa89c/
+   1d019mt8FDPuq2Tue7Va82UxYDGd6z5C+XmnZzCcSEdyJbbAXbjeydsFm
+   ekpIS6wzG2yzdLIk7L31irBU3s0ROw68FMPrIdWSUpzrnKn58yzX84tGm
+   rZj6WmzahMXxGns7Xm6Jd7yAJvJkUWfFittLgnhMDE+CI5GRwZXFuH1lQ
+   w==;
+X-CSE-ConnectionGUID: sOrgkzAtQbCB97EHEvWOEg==
+X-CSE-MsgGUID: sB+N6ngaQ6epyHZ6PCM5pw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="19119124"
 X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
-   d="scan'208";a="19089356"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 08:10:29 -0700
-X-CSE-ConnectionGUID: N1Dwe7OqQf+rOj+D1l+Iew==
-X-CSE-MsgGUID: 5c6fQ8PESlmv98LU/Q1+Dg==
+   d="scan'208";a="19119124"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 08:11:08 -0700
+X-CSE-ConnectionGUID: JEC5FGQ4RVyhmrCQyeMSlw==
+X-CSE-MsgGUID: YxrmvlMCRIymwmM76zQFPw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
-   d="scan'208";a="40629403"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.222])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 08:10:25 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	Lukas Wunner <lukas@wunner.de>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	"Oliver O'Halloran" <oohall@gmail.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-edac@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 3/3] PCI: Handle TLP Log in Flit mode
-Date: Fri, 14 Jun 2024 18:09:21 +0300
-Message-Id: <20240614150921.29724-4-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240614150921.29724-1-ilpo.jarvinen@linux.intel.com>
-References: <20240614150921.29724-1-ilpo.jarvinen@linux.intel.com>
+   d="scan'208";a="71297906"
+Received: from lkp-server01.sh.intel.com (HELO 9e3ee4e9e062) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 14 Jun 2024 08:11:06 -0700
+Received: from kbuild by 9e3ee4e9e062 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sI8Zz-0001RE-1E;
+	Fri, 14 Jun 2024 15:11:03 +0000
+Date: Fri, 14 Jun 2024 23:10:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sebastian Kropatsch <seb-dev@mail.de>, Heiko Stuebner <heiko@sntech.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-rockchip@lists.infradead.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] arm64: dts: rockchip: Improve LEDs on NanoPi R6C/R6S
+Message-ID: <202406142337.SdnyldQ8-lkp@intel.com>
+References: <20240612205056.397204-4-seb-dev@mail.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612205056.397204-4-seb-dev@mail.de>
 
-Flit mode introduced in PCIe r6.0 alters how the TLP Header Log is
-presented through AER and DPC Capability registers. The TLP Prefix Log
-Register is not present with Flit mode and the register becomes
-extension for TLP Header Log (PCIe r6.1 secs 7.8.4.12 & 7.9.14.13).
+Hi Sebastian,
 
-Adapt pcie_read_tlp_log() and struct pcie_tlp_log to read and store
-also the extended TLP Header Log when the link is in Flit mode. As
-Prefix Log and Extended TLP Header are not present at the same time,
-C union can be used.
+kernel test robot noticed the following build warnings:
 
-Determining whether the error occurred while the Link was in Flit mode
-is bit complicated. In case of AER, Advanced Error Capabilities and
-Control Register directly tells whether the error was logged in Flit
-mode or not (PCIe r6.1 sec 7.8.4.7). DPC Capability (PCIe r6.1 sec
-7.9.14), unfortunately, does not contain the same information.
+[auto build test WARNING on rockchip/for-next]
+[also build test WARNING on linus/master v6.10-rc3 next-20240613]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Unlike AER, the DPC capability does not provide way to discern whether
-the error was logged in Flit mode (this is confirmed by PCI WG to be an
-oversight in the spec). DPC will bring link down immediately following
-an error, which make it impossible to acquire the Flit mode status
-directly from the Link Status 2 register because Flit Mode Status is
-only set in certain Link states (PCIe r6.1 sec 7.5.3.20). As a
-workaround, use the flit_mode value stored into the struct pci_bus.
+url:    https://github.com/intel-lab-lkp/linux/commits/Sebastian-Kropatsch/arm64-dts-rockchip-Add-common-definitions-for-NanoPi-R6C-and-R6S/20240613-045639
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git for-next
+patch link:    https://lore.kernel.org/r/20240612205056.397204-4-seb-dev%40mail.de
+patch subject: [PATCH 3/5] arm64: dts: rockchip: Improve LEDs on NanoPi R6C/R6S
+config: arm64-randconfig-051-20240614 (https://download.01.org/0day-ci/archive/20240614/202406142337.SdnyldQ8-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+dtschema version: 2024.6.dev1+g833054f
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240614/202406142337.SdnyldQ8-lkp@intel.com/reproduce)
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/pci/pci.h             |  5 +--
- drivers/pci/pcie/aer.c        |  4 ++-
- drivers/pci/pcie/dpc.c        | 23 +++++++++++---
- drivers/pci/pcie/tlp.c        | 57 ++++++++++++++++++++++++-----------
- include/linux/aer.h           | 13 ++++++--
- include/ras/ras_event.h       | 12 ++++----
- include/uapi/linux/pci_regs.h |  6 +++-
- 7 files changed, 85 insertions(+), 35 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406142337.SdnyldQ8-lkp@intel.com/
 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 54f5a1584ed8..12e8cfd04ebe 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -425,8 +425,9 @@ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info);
- void aer_print_error(struct pci_dev *dev, struct aer_err_info *info);
- 
- int pcie_read_tlp_log(struct pci_dev *dev, int where, int where2,
--		      unsigned int tlp_len, struct pcie_tlp_log *log);
--unsigned int aer_tlp_log_len(struct pci_dev *dev);
-+		      unsigned int tlp_len, bool flit,
-+		      struct pcie_tlp_log *log);
-+unsigned int aer_tlp_log_len(struct pci_dev *dev, u32 aercc);
- void pcie_print_tlp_log(const struct pci_dev *dev,
- 			const struct pcie_tlp_log *log, const char *pfx);
- #endif	/* CONFIG_PCIEAER */
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index efb9e728fe94..6beb856964e1 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -1241,7 +1241,9 @@ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
- 			info->tlp_header_valid = 1;
- 			pcie_read_tlp_log(dev, aer + PCI_ERR_HEADER_LOG,
- 					  aer + PCI_ERR_PREFIX_LOG,
--					  aer_tlp_log_len(dev), &info->tlp);
-+					  aer_tlp_log_len(dev, aercc),
-+					  aercc & PCI_ERR_CAP_TLP_LOG_FLIT,
-+					  &info->tlp);
- 		}
- 	}
- 
-diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-index 598f74384471..a374f3216ce2 100644
---- a/drivers/pci/pcie/dpc.c
-+++ b/drivers/pci/pcie/dpc.c
-@@ -219,7 +219,9 @@ static void dpc_process_rp_pio_error(struct pci_dev *pdev)
- 		goto clear_status;
- 	pcie_read_tlp_log(pdev, cap + PCI_EXP_DPC_RP_PIO_HEADER_LOG,
- 			  cap + PCI_EXP_DPC_RP_PIO_TLPPREFIX_LOG,
--			  dpc_tlp_log_len(pdev), &tlp_log);
-+			  dpc_tlp_log_len(pdev),
-+			  pdev->subordinate->flit_mode,
-+			  &tlp_log);
- 	pcie_print_tlp_log(pdev, &tlp_log, "");
- 
- 	if (pdev->dpc_rp_log_size < 5)
-@@ -398,12 +400,23 @@ void pci_dpc_init(struct pci_dev *pdev)
- 
- 	/* Quirks may set dpc_rp_log_size if device or firmware is buggy */
- 	if (!pdev->dpc_rp_log_size) {
-+		u16 flags;
-+		int ret;
-+
-+		ret = pcie_capability_read_word(pdev, PCI_EXP_FLAGS, &flags);
-+		if (ret)
-+			return;
-+
- 		pdev->dpc_rp_log_size =
- 				FIELD_GET(PCI_EXP_DPC_RP_PIO_LOG_SIZE, cap);
--		if (pdev->dpc_rp_log_size < 4 || pdev->dpc_rp_log_size > 9) {
--			pci_err(pdev, "RP PIO log size %u is invalid\n",
--				pdev->dpc_rp_log_size);
--			pdev->dpc_rp_log_size = 0;
-+		if (FIELD_GET(PCI_EXP_FLAGS_FLIT, flags)) {
-+			pdev->dpc_rp_log_size += FIELD_GET(PCI_EXP_DPC_RP_PIO_LOG_SIZE4, cap) << 4;
-+		} else {
-+			if (pdev->dpc_rp_log_size < 4 || pdev->dpc_rp_log_size > 9) {
-+				pci_err(pdev, "RP PIO log size %u is invalid\n",
-+					pdev->dpc_rp_log_size);
-+				pdev->dpc_rp_log_size = 0;
-+			}
- 		}
- 	}
- }
-diff --git a/drivers/pci/pcie/tlp.c b/drivers/pci/pcie/tlp.c
-index 097ac8514e96..5e68b1516f68 100644
---- a/drivers/pci/pcie/tlp.c
-+++ b/drivers/pci/pcie/tlp.c
-@@ -7,6 +7,7 @@
- 
- #include <linux/aer.h>
- #include <linux/array_size.h>
-+#include <linux/bitfield.h>
- #include <linux/pci.h>
- #include <linux/string.h>
- 
-@@ -15,11 +16,15 @@
- /**
-  * aer_tlp_log_len - Calculates AER Capability TLP Header/Prefix Log length
-  * @dev: PCIe device
-+ * @aercc: AER Capabilities and Control register value
-  *
-  * Return: TLP Header/Prefix Log length
-  */
--unsigned int aer_tlp_log_len(struct pci_dev *dev)
-+unsigned int aer_tlp_log_len(struct pci_dev *dev, u32 aercc)
- {
-+	if (aercc & PCI_ERR_CAP_TLP_LOG_FLIT)
-+		return FIELD_GET(PCI_ERR_CAP_TLP_LOG_SIZE, aercc);
-+
- 	return 4 + dev->eetlp_prefix_max;
- }
- 
-@@ -46,6 +51,7 @@ unsigned int dpc_tlp_log_len(struct pci_dev *dev)
-  * @where: PCI Config offset of TLP Header Log
-  * @where2: PCI Config offset of TLP Prefix Log
-  * @tlp_len: TLP Log length (Header Log + TLP Prefix Log in DWORDs)
-+ * @flit: TLP Logged in Flit mode
-  * @log: TLP Log structure to fill
-  *
-  * Fill @log from TLP Header Log registers, e.g., AER or DPC.
-@@ -53,28 +59,34 @@ unsigned int dpc_tlp_log_len(struct pci_dev *dev)
-  * Return: 0 on success and filled TLP Log structure, <0 on error.
-  */
- int pcie_read_tlp_log(struct pci_dev *dev, int where, int where2,
--		      unsigned int tlp_len, struct pcie_tlp_log *log)
-+		      unsigned int tlp_len, bool flit, struct pcie_tlp_log *log)
- {
- 	unsigned int i;
- 	int off, ret;
--	u32 *to;
-+
-+	if (tlp_len > ARRAY_SIZE(log->dw))
-+		tlp_len = ARRAY_SIZE(log->dw);
- 
- 	memset(log, 0, sizeof(*log));
- 
- 	for (i = 0; i < tlp_len; i++) {
--		if (i < 4) {
-+		if (i < 4)
- 			off = where + i * 4;
--			to = &log->dw[i];
--		} else {
-+		else
- 			off = where2 + (i - 4) * 4;
--			to = &log->prefix[i - 4];
--		}
- 
--		ret = pci_read_config_dword(dev, off, to);
-+		ret = pci_read_config_dword(dev, off, &log->dw[i]);
- 		if (ret)
- 			return pcibios_err_to_errno(ret);
- 	}
- 
-+	/*
-+	 * Hard-code non-Flit mode to 4 DWORDs, for now. The exact length
-+	 * can only be known if the TLP is parsed.
-+	 */
-+	log->header_len = flit ? tlp_len : 4;
-+	log->flit = flit;
-+
- 	return 0;
- }
- 
-@@ -89,21 +101,30 @@ int pcie_read_tlp_log(struct pci_dev *dev, int where, int where2,
- void pcie_print_tlp_log(const struct pci_dev *dev,
- 			const struct pcie_tlp_log *log, const char *pfx)
- {
--	char buf[(10 + 1) * (4 + ARRAY_SIZE(log->prefix)) + 14 + 1];
-+	char buf[(10 + 1) * PCIE_TLP_LOG_MAXLEN + 1];
- 	unsigned int i;
- 	int len;
- 
- 	len = scnprintf(buf, sizeof(buf), "%#010x %#010x %#010x %#010x",
- 			log->dw[0], log->dw[1], log->dw[2], log->dw[3]);
- 
--	if (log->prefix[0])
--		len += scnprintf(buf + len, sizeof(buf) - len, " E-E Prefixes:");
--	for (i = 0; i < ARRAY_SIZE(log->prefix); i++) {
--		if (!log->prefix[i])
--			break;
--		len += scnprintf(buf + len, sizeof(buf) - len,
--				 " %#010x", log->prefix[i]);
-+	if (log->flit) {
-+		for (i = 4; i < log->header_len; i++) {
-+			len += scnprintf(buf + len, sizeof(buf) - len,
-+					 " %#010x", log->dw[i]);
-+		}
-+	} else {
-+		if (log->prefix[0])
-+			len += scnprintf(buf + len, sizeof(buf) - len,
-+					 " E-E Prefixes:");
-+		for (i = 0; i < ARRAY_SIZE(log->prefix); i++) {
-+			if (!log->prefix[i])
-+				break;
-+			len += scnprintf(buf + len, sizeof(buf) - len,
-+					 " %#010x", log->prefix[i]);
-+		}
- 	}
- 
--	pci_err(dev, "%sTLP Header: %s\n", pfx, buf);
-+	pci_err(dev, "%sTLP Header%s: %s\n", pfx,
-+		log->flit ? " (Flit)" : "", buf);
- }
-diff --git a/include/linux/aer.h b/include/linux/aer.h
-index dc498adaa1c8..96d1f83e4a65 100644
---- a/include/linux/aer.h
-+++ b/include/linux/aer.h
-@@ -18,9 +18,18 @@
- 
- struct pci_dev;
- 
-+#define PCIE_TLP_LOG_MAXLEN		14
-+
- struct pcie_tlp_log {
--	u32 dw[4];
--	u32 prefix[4];
-+	union {
-+		u32 dw[PCIE_TLP_LOG_MAXLEN];
-+		struct {
-+			u32 _do_not_use[4];
-+			u32 prefix[4];
-+		};
-+	};
-+	u8 header_len;		/* Length of the Logged TLP Header in DWORDs */
-+	bool flit;		/* TLP was logged when in Flit mode */
- };
- 
- struct aer_capability_regs {
-diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
-index 7c47151d5c72..316d216e0573 100644
---- a/include/ras/ras_event.h
-+++ b/include/ras/ras_event.h
-@@ -309,7 +309,7 @@ TRACE_EVENT(aer_event,
- 		__field(	u32,		status		)
- 		__field(	u8,		severity	)
- 		__field(	u8, 		tlp_header_valid)
--		__array(	u32, 		tlp_header, 4	)
-+		__array(	u32, 		tlp_header, PCIE_TLP_LOG_MAXLEN	)
- 	),
- 
- 	TP_fast_assign(
-@@ -318,10 +318,10 @@ TRACE_EVENT(aer_event,
- 		__entry->severity	= severity;
- 		__entry->tlp_header_valid = tlp_header_valid;
- 		if (tlp_header_valid) {
--			__entry->tlp_header[0] = tlp->dw[0];
--			__entry->tlp_header[1] = tlp->dw[1];
--			__entry->tlp_header[2] = tlp->dw[2];
--			__entry->tlp_header[3] = tlp->dw[3];
-+			int i;
-+
-+			for (i = 0; i < PCIE_TLP_LOG_MAXLEN; i++)
-+				__entry->tlp_header[i] = tlp->dw[i];
- 		}
- 	),
- 
-@@ -334,7 +334,7 @@ TRACE_EVENT(aer_event,
- 		__print_flags(__entry->status, "|", aer_correctable_errors) :
- 		__print_flags(__entry->status, "|", aer_uncorrectable_errors),
- 		__entry->tlp_header_valid ?
--			__print_array(__entry->tlp_header, 4, 4) :
-+			__print_array(__entry->tlp_header, PCIE_TLP_LOG_MAXLEN, 4) :
- 			"Not available")
- );
- 
-diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-index b6f9012a3fc4..161b67525447 100644
---- a/include/uapi/linux/pci_regs.h
-+++ b/include/uapi/linux/pci_regs.h
-@@ -485,6 +485,7 @@
- #define   PCI_EXP_TYPE_RC_EC	   0xa	/* Root Complex Event Collector */
- #define  PCI_EXP_FLAGS_SLOT	0x0100	/* Slot implemented */
- #define  PCI_EXP_FLAGS_IRQ	0x3e00	/* Interrupt message number */
-+#define  PCI_EXP_FLAGS_FLIT	0x8000	/* Flit Mode Supported */
- #define PCI_EXP_DEVCAP		0x04	/* Device capabilities */
- #define  PCI_EXP_DEVCAP_PAYLOAD	0x00000007 /* Max_Payload_Size */
- #define  PCI_EXP_DEVCAP_PHANTOM	0x00000018 /* Phantom functions */
-@@ -788,6 +789,8 @@
- #define  PCI_ERR_CAP_ECRC_GENE	0x00000040	/* ECRC Generation Enable */
- #define  PCI_ERR_CAP_ECRC_CHKC	0x00000080	/* ECRC Check Capable */
- #define  PCI_ERR_CAP_ECRC_CHKE	0x00000100	/* ECRC Check Enable */
-+#define  PCI_ERR_CAP_TLP_LOG_FLIT	0x00040000 /* TLP was logged in Flit Mode */
-+#define  PCI_ERR_CAP_TLP_LOG_SIZE	0x00f80000 /* Logged TLP Size (only in Flit mode) */
- #define PCI_ERR_HEADER_LOG	0x1c	/* Header Log Register (16 bytes) */
- #define PCI_ERR_ROOT_COMMAND	0x2c	/* Root Error Command */
- #define  PCI_ERR_ROOT_CMD_COR_EN	0x00000001 /* Correctable Err Reporting Enable */
-@@ -1038,8 +1041,9 @@
- #define  PCI_EXP_DPC_CAP_RP_EXT		0x0020	/* Root Port Extensions */
- #define  PCI_EXP_DPC_CAP_POISONED_TLP	0x0040	/* Poisoned TLP Egress Blocking Supported */
- #define  PCI_EXP_DPC_CAP_SW_TRIGGER	0x0080	/* Software Triggering Supported */
--#define  PCI_EXP_DPC_RP_PIO_LOG_SIZE	0x0F00	/* RP PIO Log Size */
-+#define  PCI_EXP_DPC_RP_PIO_LOG_SIZE	0x0F00	/* RP PIO Log Size [3:0] */
- #define  PCI_EXP_DPC_CAP_DL_ACTIVE	0x1000	/* ERR_COR signal on DL_Active supported */
-+#define  PCI_EXP_DPC_RP_PIO_LOG_SIZE4	0x2000	/* RP PIO Log Size [4] */
- 
- #define PCI_EXP_DPC_CTL			0x06	/* DPC control */
- #define  PCI_EXP_DPC_CTL_EN_FATAL	0x0001	/* Enable trigger on ERR_FATAL message */
+dtcheck warnings: (new ones prefixed by >>)
+>> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: leds: led-1:linux,default-trigger: 'oneOf' conditional failed, one must be fixed:
+   	'stmmac-0:01:link' is not one of ['backlight', 'default-on', 'heartbeat', 'disk-activity', 'disk-read', 'disk-write', 'timer', 'pattern', 'audio-micmute', 'audio-mute', 'bluetooth-power', 'flash', 'kbd-capslock', 'mtd', 'nand-disk', 'none', 'torch', 'usb-gadget', 'usb-host', 'usbport']
+   	'stmmac-0:01:link' does not match '^cpu[0-9]*$'
+   	'stmmac-0:01:link' does not match '^hci[0-9]+-power$'
+   	'stmmac-0:01:link' does not match '^mmc[0-9]+$'
+   	'stmmac-0:01:link' does not match '^phy[0-9]+tx$'
+   	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
+>> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: leds: led-1: Unevaluated properties are not allowed ('linux,default-trigger' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
+   arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: leds: led-2:linux,default-trigger: 'oneOf' conditional failed, one must be fixed:
+   	'r8169-3-3100:00:link' is not one of ['backlight', 'default-on', 'heartbeat', 'disk-activity', 'disk-read', 'disk-write', 'timer', 'pattern', 'audio-micmute', 'audio-mute', 'bluetooth-power', 'flash', 'kbd-capslock', 'mtd', 'nand-disk', 'none', 'torch', 'usb-gadget', 'usb-host', 'usbport']
+   	'r8169-3-3100:00:link' does not match '^cpu[0-9]*$'
+   	'r8169-3-3100:00:link' does not match '^hci[0-9]+-power$'
+   	'r8169-3-3100:00:link' does not match '^mmc[0-9]+$'
+   	'r8169-3-3100:00:link' does not match '^phy[0-9]+tx$'
+   	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
+   arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: leds: led-2: Unevaluated properties are not allowed ('linux,default-trigger' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: leds: led-1:linux,default-trigger: 'oneOf' conditional failed, one must be fixed:
+   	'stmmac-0:01:link' is not one of ['backlight', 'default-on', 'heartbeat', 'disk-activity', 'disk-read', 'disk-write', 'timer', 'pattern', 'audio-micmute', 'audio-mute', 'bluetooth-power', 'flash', 'kbd-capslock', 'mtd', 'nand-disk', 'none', 'torch', 'usb-gadget', 'usb-host', 'usbport']
+   	'stmmac-0:01:link' does not match '^cpu[0-9]*$'
+   	'stmmac-0:01:link' does not match '^hci[0-9]+-power$'
+   	'stmmac-0:01:link' does not match '^mmc[0-9]+$'
+   	'stmmac-0:01:link' does not match '^phy[0-9]+tx$'
+   	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
+>> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: leds: led-1: Unevaluated properties are not allowed ('linux,default-trigger' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
+   arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: leds: led-2:linux,default-trigger: 'oneOf' conditional failed, one must be fixed:
+   	'r8169-3-3100:00:link' is not one of ['backlight', 'default-on', 'heartbeat', 'disk-activity', 'disk-read', 'disk-write', 'timer', 'pattern', 'audio-micmute', 'audio-mute', 'bluetooth-power', 'flash', 'kbd-capslock', 'mtd', 'nand-disk', 'none', 'torch', 'usb-gadget', 'usb-host', 'usbport']
+   	'r8169-3-3100:00:link' does not match '^cpu[0-9]*$'
+   	'r8169-3-3100:00:link' does not match '^hci[0-9]+-power$'
+   	'r8169-3-3100:00:link' does not match '^mmc[0-9]+$'
+   	'r8169-3-3100:00:link' does not match '^phy[0-9]+tx$'
+   	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
+   arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: leds: led-2: Unevaluated properties are not allowed ('linux,default-trigger' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml#
+
 -- 
-2.39.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
