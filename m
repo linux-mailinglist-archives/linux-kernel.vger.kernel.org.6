@@ -1,107 +1,88 @@
-Return-Path: <linux-kernel+bounces-215218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A2C0908FE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:17:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2730908FEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A25C81C2295B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:17:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B771C1C22B68
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1915181B81;
-	Fri, 14 Jun 2024 16:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WKUjiGpb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF34316D9CF;
+	Fri, 14 Jun 2024 16:18:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D82616D9CF;
-	Fri, 14 Jun 2024 16:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB3216D4FC
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 16:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718381833; cv=none; b=J4x+ln88W5SBviZmVlgpoXKsjLU3lrYeN/8lSOGVogVFCR+DBOjpXj1XiZksTftNp3qb8jp8MRhgprGBF86aPm+phV951uJYXsUj7t7N+retJVlgU/Y65sXxMfOLfLWtLBp21UUANEe47MDsyGs/QbucEc1+VNdjzDIGxHzfX4Q=
+	t=1718381886; cv=none; b=FSLzrSI6759d7mjzXd85ktPYDCh9Lnms0tGNZcawzwUO0qgnKxw5M453maPwGeZLKvaytqqnyS9Q5gZxU6bKqLQR3GIPzcJfHU0hyjNwejJW+LfoQ34zVBGVztU3EsXUxMHNvg3x9qtlh2IHoCCwZTSKrg9NPamOdcxfJIn15Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718381833; c=relaxed/simple;
-	bh=rUDbAwt/h0GLgZcxweo77P+njhdjO7sRzKJA4DU7QAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tSdn8C3TYUA9q+HUOmlyDb8g2rVqEdE7k7DTOmR7/JobzfLHthNRST9egObZkqKOeHseuqn9WAAfo0RirOQWZTH3FCdYOfBCYgTn5s2HdhNLb09IktO/W2BuuRkrTOLaHX3mxl3jvJzXQo80W1PLhpJLuxIvy3Hij3TdgBQc75s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WKUjiGpb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C72C32786;
-	Fri, 14 Jun 2024 16:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718381832;
-	bh=rUDbAwt/h0GLgZcxweo77P+njhdjO7sRzKJA4DU7QAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WKUjiGpbQ6vSgDikdQrtYjmcjpk5Y6w5mtfEOsK+zcO/QlUYDq49zp1kT4Nk3exJb
-	 4FZpwSLehgZQIIaS8Fzvd3K4TjM3m97afoydWqtCD7nNxTZuKP3R7nFPvlwp/s6B2R
-	 eTXNWfcad4lxtI0m9stOKdpQ1fe9dZWkKyrvlyU053KI0RxoWxMZ9mfrRnmB7hs0g3
-	 h7UH5g7UtACMfBFCq330U8BiXlR6zR11zLrlBnoggnwwxWwGftWpHXyPpv8oobpsDp
-	 EGh/4vaZAwS5p0ekOYbjG23g2J9gD1LDrH1quUzwpLz5Ux8K+pblsKZ0S89UnNSllr
-	 dG7BQG286BijA==
-Date: Fri, 14 Jun 2024 17:17:08 +0100
-From: Simon Horman <horms@kernel.org>
-To: Adrian Moreno <amorenoz@redhat.com>
-Cc: netdev@vger.kernel.org, aconole@redhat.com, echaudro@redhat.com,
-	i.maximets@ovn.org, dev@openvswitch.org,
-	Pravin B Shelar <pshelar@ovn.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 7/9] net: openvswitch: do not notify drops
- inside sample
-Message-ID: <20240614161708.GU8447@kernel.org>
-References: <20240603185647.2310748-1-amorenoz@redhat.com>
- <20240603185647.2310748-8-amorenoz@redhat.com>
+	s=arc-20240116; t=1718381886; c=relaxed/simple;
+	bh=k2rX1sGAzRLLcsSbTagcuZYrp3EpVKtgxQIopbhRJs8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OEX1B//dz1T1fJmfMNm5QUw6AotY7sFeU6D5lBXfpwFL7pNEpKYvMofSxGb8ELn8E89y2Gap2oBjWU1YDitkRF6Ij6SMwwkHXJuxN26DdXVTshkzsWOCpgNa7aF/j1K+ZsJbDBSElo2PPtSLIeVh8xyxoWBBBCVe3HiGaZvFTaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7ebeebdc580so96892439f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:18:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718381884; x=1718986684;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sGoN0m1iTucOXtjke0ncEJnnrAPBlXJ70PprLdh+wbI=;
+        b=YvAoWrukqCecIjhb0iqarDkieQqQy6ytjVE5VkjxQFnSaI0pdOUL8gTwWFPsg2LnrA
+         9m1NMOEqduIQR/I3/dEFI5k26FnhNPkJfWP5NPgRhyvZLXQIwC8V03opbBde1vJPav9J
+         zchUbIzwMQSNe9rpvcYivRtFeNkgEBamzPmcnnU7Ui4HYhKNI+RGEUNuVc4cuIjjoygg
+         Ow/7jkG9ER0KR4NfzoSYKLgobeDNImq0ke6R/CEZT7MBbsqwQLYPSQQPsZHHp7bIHD7S
+         FqibiaH/pNKaE+6UJVJc9IzgSDFDTcnnXgcBw4N8DuOXnqcyAjIHG0u3ew1KLWSk/YMw
+         QAVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAULyl48JHzL8to/biyuao38B4/gKFwFbsrOnkHsLH13Gwefw1ip1JUwuKnWlRUMk19rGE0dSxcVHiUn80SjENkzo3fKtG1QW3gpgV
+X-Gm-Message-State: AOJu0Yyq5EBwObCdcCcF2OdfawBjkTerZcOu2TqlXiifZrWz7oMaOdd8
+	n6wzvGxa5+yveqdGNiMdUGPzx7U1q10ZOCSH+BGA8IGOa5t+v91ShQ7TY0xv5ss1E/O8Siak/T0
+	7YVn7E9mgaIN3L3J7LAPBcuGZ3PQvv4T//P75g9KtGQ70yAOrwqm4ehM=
+X-Google-Smtp-Source: AGHT+IGhzLD1XcV3ejk8zkw0+64ic7JKIJ42YMF77eoj27g4fw0gCyw7No0lHJmuuLUmWowjFPP8RpyqtqtwmyhtcUYGRSeuzvsj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240603185647.2310748-8-amorenoz@redhat.com>
+X-Received: by 2002:a05:6638:3488:b0:4b9:6c10:36a9 with SMTP id
+ 8926c6da1cb9f-4b96c103ff0mr25393173.1.1718381883922; Fri, 14 Jun 2024
+ 09:18:03 -0700 (PDT)
+Date: Fri, 14 Jun 2024 09:18:03 -0700
+In-Reply-To: <4fc95571-7815-458f-9d34-5109b1be7399@linux.alibaba.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c7ad34061adbf5d8@google.com>
+Subject: Re: [syzbot] BUG: Bad rss-counter state (5)
+From: syzbot <syzbot+f2bbbb592debc978d46d@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, baolin.wang@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 03, 2024 at 08:56:41PM +0200, Adrian Moreno wrote:
-> The OVS_ACTION_ATTR_SAMPLE action is, in essence,
-> observability-oriented.
-> 
-> Apart from some corner case in which it's used a replacement of clone()
-> for old kernels, it's really only used for sFlow, IPFIX and now,
-> local emit_sample.
-> 
-> With this in mind, it doesn't make much sense to report
-> OVS_DROP_LAST_ACTION inside sample actions.
-> 
-> For instance, if the flow:
-> 
->   actions:sample(..,emit_sample(..)),2
-> 
-> triggers a OVS_DROP_LAST_ACTION skb drop event, it would be extremely
-> confusing for users since the packet did reach its destination.
-> 
-> This patch makes internal action execution silently consume the skb
-> instead of notifying a drop for this case.
-> 
-> Unfortunately, this patch does not remove all potential sources of
-> confusion since, if the sample action itself is the last action, e.g:
-> 
->     actions:sample(..,emit_sample(..))
-> 
-> we actually _should_ generate a OVS_DROP_LAST_ACTION event, but we aren't.
-> 
-> Sadly, this case is difficult to solve without breaking the
-> optimization by which the skb is not cloned on last sample actions.
-> But, given explicit drop actions are now supported, OVS can just add one
-> after the last sample() and rewrite the flow as:
-> 
->     actions:sample(..,emit_sample(..)),drop
-> 
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+Hello,
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
+Reported-and-tested-by: syzbot+f2bbbb592debc978d46d@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         8d0a686e mm: add swappiness= arg to memory.reclaim
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-unstable
+console output: https://syzkaller.appspot.com/x/log.txt?x=14d4e154980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fba40c4590d687b
+dashboard link: https://syzkaller.appspot.com/bug?extid=f2bbbb592debc978d46d
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
