@@ -1,88 +1,113 @@
-Return-Path: <linux-kernel+bounces-214220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D61A5908189
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:21:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7998908190
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBFB21C20D08
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:21:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CC3D28344A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441D8183073;
-	Fri, 14 Jun 2024 02:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52277183073;
+	Fri, 14 Jun 2024 02:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oYwz+2Ok"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BJLDlIkc"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803862AE75;
-	Fri, 14 Jun 2024 02:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0B42836A;
+	Fri, 14 Jun 2024 02:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718331677; cv=none; b=tqaCShxScfrXK5WgsVSoRycrmd/g4gD6oSZh/pyOfiQu4l0KXSjC8zoUzw5UiDIvOTJ5i2xbyP4NDy1xtXdN117kLima9p5IKq4fbtG10Z2k+CS+ReOpOnNTQ60Cu5ciBGg5MOdqtUeY98Yqy5P0gn9j4wuCkXWZKY52ikBCgS0=
+	t=1718331847; cv=none; b=X15I5JSIgY3MGqMx9gKxRKMegnBlv9ikRWYMGdkhl6TuO1f6POtlFe46/GH7zrpkg77cLe19UrKPjhOXQv13/FCj1ROGFH+PbsQ0zrszUfUHVGxm1f2LPB/Ri8U6EnpD+V/Rf61Qhwyagtm7iocgpzHnqrKEukTSx/w5qkK8Fgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718331677; c=relaxed/simple;
-	bh=BNG0nAvaHGm3HWERpezfVrO8KZGZ2JvMeFwF0CQszUQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WWEiODehZ0lhMid4U5xPJzljCjE79wAv6c70wXABLbkHma7tGVgQS9St2CmjeUfNrosazo4fIRZAk0Cu4NNFZ7aNpW5gCkq7/LZi/WTCavadPhuWr7S3cu8H6oZjWnCwHyP+YHZUBFReRpOUEIR7ALw7K9/BQVIpzNvZwr8uYrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oYwz+2Ok; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA239C2BBFC;
-	Fri, 14 Jun 2024 02:21:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718331677;
-	bh=BNG0nAvaHGm3HWERpezfVrO8KZGZ2JvMeFwF0CQszUQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oYwz+2Okf9is4/9hlucE2Oyd1SvFV2qx7OeIcUKUFzx99mRCN/CDhihLCXgHdI2L/
-	 ekPPpDh1B/153moJ9XJGFgV8BUAQGrMGq/dxjYsESYJqkskzrv4tspk6LeXPS89AKv
-	 SccrLYtjI74cHL+yNk3k+/WYzvgNt38uGAG9eO8LX5Yv+cvygDSYWLsAWNLx9bRYvV
-	 6wggHmIeMsYSmOEXj0LD0kUmqcJAGR2tZsjDzTrK0A0a55aCkv0c6qJt1gdF5CAsB2
-	 vYUdp+wyQeH61im70SKWz7zIQB3KUEq7dJQlcjVZPTrqn8Em5NvaVytAF2F13vamkC
-	 6THrVKVaA1oug==
-Date: Fri, 14 Jun 2024 02:21:13 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Ben Walsh <ben@jubnut.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Fix error code in
- cros_ec_lpc_mec_read_bytes()
-Message-ID: <ZmupGcjkuU0bNtdl@google.com>
-References: <e0b43fb5-ecc8-4fb4-9b76-c06dea8cc4c4@moroto.mountain>
- <87sexgrdk4.fsf@jubnut.com>
- <ZmsvHBrYSpwYLyxx@google.com>
- <87o784ac55.fsf@jubnut.com>
+	s=arc-20240116; t=1718331847; c=relaxed/simple;
+	bh=3FQ3MEtOrZtut3EegPkICwKG9Bx9tibnLwOSZ/KO8Hk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jgvm2EMuppU0G3XNhHYyOF7iKSeefudbhbpoU0LgI1QKrAhzWzq5RrapYqBNAdGUlzgTshiHtKfTXIWBaQ3bJaM27TNuZDA9bZCMtMeKbVQ5utQzv5UAB6iVORO6a3XjqWb9EQH2brBK1n9+o2jk4Gb/hWl4LsaPCKp85vY1jcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=BJLDlIkc; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45E1fRRS009891;
+	Fri, 14 Jun 2024 02:23:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-type:content-transfer-encoding; s=
+	corp-2023-11-20; bh=3wbXBl4iTgVDeRdgFASpmQd/bkRz1fit9xhsn00Vf2s=; b=
+	BJLDlIkcV3nwUQ1tmNQv/Yj/FRgeuN/7w9xNfzdSk11fGtSBID98N8V2Ap9wFbyT
+	MiW0Lk8yFGvKolOFBAPV0n0N6nVdKi78zSkY4ry8TS7Zm7vOrMJRsugGJTDN6f59
+	VLKtJSh5qcBMI/wdnkPyYGCTLv6Zxb8eJ03/qZvFIXAa7tn5W9fVKrjPROvftiEq
+	913zD0nHZJUPfuBPjLvs7btdcwDuO9nRbDwbEdsW5ajQGDjuraOo4+N6ItiCYHpw
+	GcRxx64XwgQRJYB1Ho45C4vtkrqrhv0Iiual4rokjhRokGeHdM2QDHIVsdnswHnt
+	Pc2lGXSpN8podzDnwC7X5Q==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ymh19ar65-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Jun 2024 02:23:46 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45E1dakL012556;
+	Fri, 14 Jun 2024 02:23:45 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ynca1vrjp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Jun 2024 02:23:45 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 45E2NhG3009531;
+	Fri, 14 Jun 2024 02:23:45 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3ynca1vrfh-2;
+	Fri, 14 Jun 2024 02:23:45 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: linux-scsi@vger.kernel.org, Joel Slebodnick <jslebodn@redhat.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
+        avri.altman@wdc.com, bvanassche@acm.org,
+        James.Bottomley@HansenPartnership.com, peter.wang@mediatek.com,
+        manivannan.sadhasivam@linaro.org, ahalaney@redhat.com,
+        beanhuo@micron.com
+Subject: Re: [PATCH] scsi: ufs: core: Free memory allocated for model before reinit
+Date: Thu, 13 Jun 2024 22:23:01 -0400
+Message-ID: <171833164847.271429.16176301177294117604.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240613182728.2521951-1-jslebodn@redhat.com>
+References: <20240613182728.2521951-1-jslebodn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o784ac55.fsf@jubnut.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-13_15,2024-06-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=963 adultscore=0
+ phishscore=0 suspectscore=0 malwarescore=0 mlxscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2406140014
+X-Proofpoint-GUID: qKSmDeCooTkvJLEx_S1zgxQ3b7iJ95n-
+X-Proofpoint-ORIG-GUID: qKSmDeCooTkvJLEx_S1zgxQ3b7iJ95n-
 
-On Thu, Jun 13, 2024 at 08:14:14PM +0100, Ben Walsh wrote:
-> Tzung-Bi Shih <tzungbi@kernel.org> writes:
-> > On Thu, Jun 13, 2024 at 05:51:39PM +0100, Ben Walsh wrote:
-> >>   or 2. Put in a check for length == 0.
-> >> 
-> >>   or 3. Change the logic in `fwk_ec_lpc_mec_in_range`. Although I'm not
-> >>   sure what the correct answer is to "zero length is in range?"
-> >> 
-> >> I prefer option 2. What do you think?
-> >
-> > How about drop the length check at [2]?
-> >
-> > [2]: https://elixir.bootlin.com/linux/v6.9/source/drivers/platform/chrome/cros_ec_lpc_mec.c#L44
-> >
+On Thu, 13 Jun 2024 14:27:28 -0400, Joel Slebodnick wrote:
+
+> Under the conditions that a device is to be reinitialized within
+> ufshcd_probe_hba, the device must first be fully reset.
 > 
-> This works, but we still end up calling cros_ec_lpc_io_bytes_mec() with
-> zero length. Although this seems to work fine, we could put a length
-> check at the top of cros_ec_lpc_read_bytes() to avoid it.
+> Resetting the device should include freeing U8 model (member of
+> dev_info)  but does not, and this causes a memory leak.
+> ufs_put_device_desc is responsible for freeing model.
+> 
+> [...]
 
-I guess you mean: cros_ec_lpc_io_bytes_mec().  Ack.
+Applied to 6.10/scsi-fixes, thanks!
+
+[1/1] scsi: ufs: core: Free memory allocated for model before reinit
+      https://git.kernel.org/mkp/scsi/c/135c6eb27a85
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
