@@ -1,103 +1,258 @@
-Return-Path: <linux-kernel+bounces-215242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7005A909042
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EEB4690904A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA7BDB2C3CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:27:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D63C2B24E2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B4419AD48;
-	Fri, 14 Jun 2024 16:26:28 +0000 (UTC)
-Received: from irl.hu (irl.hu [95.85.9.111])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE2816D9D5;
+	Fri, 14 Jun 2024 16:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zbN5fKtA"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2062.outbound.protection.outlook.com [40.107.223.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29BC171E71;
-	Fri, 14 Jun 2024 16:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718382387; cv=none; b=TX3UsjBWKFPPIL7jqoF0EBk0HKRye6VndTaE7rfK9axKcWo/JDmAyUtDrqO2LMCqFKn8Zx0oxkwT48ILVFZciDFbtu1YdnpmHI6jp8MlX1P2dyMcAsRIJHo4A+uMrtjd4REkFItLw3dFANKo7fSpPkDOxPhDGtVAqMC042FqVjY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718382387; c=relaxed/simple;
-	bh=BYBfSUu5Tvg6iHzjCbzvcPIDyIa6A01WCSSw+P+6RqQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TpLeNcI3VkW6QyfDcAO1253gsmJ+jOfooZb0Hpymrdm1tlgBCRMPM7CaZCmlwAcKhz4vu4lzM98XAss2CZjOzjFNgclJFPctNPJtjPRDePgoCkB0OCBlrxUzBpeioQX1BtsrNEvcM+74O1jzDSUJCSXDBmlR9ADy/ZAZ8dhUx4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
-Received: from fedori.lan (c3e47615.dsl.pool.telekom.hu [::ffff:195.228.118.21])
-  (AUTH: CRAM-MD5 soyer@irl.hu, )
-  by irl.hu with ESMTPSA
-  id 0000000000070CEE.00000000666C6F29.001D2CC2; Fri, 14 Jun 2024 18:26:17 +0200
-Message-ID: <225d762d359a109afe568c567885a7b7e282e137.camel@irl.hu>
-Subject: Re: [PATCH 2/2] media: v4l2: map UVC_CT_ROLL_ABSOLUTE_CONTROL
-From: Gergo Koteles <soyer@irl.hu>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-  linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 14 Jun 2024 18:26:16 +0200
-In-Reply-To: <20240612203124.GU28989@pendragon.ideasonboard.com>
-References: <cover.1718216718.git.soyer@irl.hu>
-	 <163b1aee53fa78fe1a8d0b8bb7b0f7be1f1975c9.1718216718.git.soyer@irl.hu>
-	 <20240612203124.GU28989@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEEE637
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 16:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718382477; cv=fail; b=Q3NKDpBFcu7cpdjS6vfXlIisnDwPIukdV/qgqh3T3rsxnZxElOWbKkimlwXzEtHUN7KI004GMuQ1MZSaYhZeilp96d71yr+N975UkpIUsod4Nz2R1DInB4SvABeV3e91EXMjq/owNpXiZbHQZCqHBir8OUhD0Cnw7BjnuZ6a/W8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718382477; c=relaxed/simple;
+	bh=l4ejjmUF4ABaTPjJVWQ3Y0JMuMUTR5Rha7TgJqMGQbM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ttUPo631sCxPtxsXnPrEjHJLW8EiYBxzwjc5qLRrNUY5aTqhJAB0ePNRSvmaXvECYNjR9bdY9ztZSDY0TGgM2NNd/HEMo/8GiLYCa4+rNuhiupSatnXSUgBGX/RZVUTyZQgW2dwXO+qaaiBMKX3FC0oxYmi8221YGmvBKezbg4M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zbN5fKtA; arc=fail smtp.client-ip=40.107.223.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WiKBIkhIyVPZvb2Ik0OOcyuoGrwJeYVbWdP0INU1H7yfVon4N2V4yv0esRCsQImKQ3ghdQg/pSgHQFdXUXNbgiq8v8ZeLqpkmlw6NGEkBH1Ct7KvsaYCow9S13crR1MzgXEhDV2wU6fJxNa/eck0sf5tJ3+EPAMVjDN4ZHUQ/JnOaMurbt9UV0crACSzoll6pPOFMRsUukCNCKdF9NbkSIoHIPbtL/ujr6ECqsleyUWxMzAGYZpKYOc4zMu6vdF2VrntXGD/3G4CS/s2OGxlZ18nE5GyN6a/GOETHgfQ2jNJsAzxM5mckndCNfeJrEDFk7QGzLbcTx9D82pLBYbJdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oqno2spJGD7EH3ZOGaQpkIx1jhFKf59PBuInIdIiWCY=;
+ b=J9cGWu0bzod86KlD0YDMZVzlF3NRQuF6/7tKA1C8mQJ2mmR2KsTrJvrG/E4o/N/aJvRLLuVKiPuLD08+rF5xkrt7SRozt2jDljhq/77lugVSxi4PGXOMSBfX9u4g4tVnz8VzaZDwiWZetex/4mlLzGQIxANuU0HKYQM7ZeIHwNPdn+kqX9Xs7LV0wc4IaTPNtX0buYCJyxliNzvbnqKYJR1ekSYtNf/Qn0aUo6JxMb9/OFzlfjIq2TLswghvBRtZUjgElr5CXDnpb2ztYnmmQdegkDEsHL9iHPBsIVB1H2HVUihXqd9EdfDaF9ZC9xjVfPXCnFP52rmKawUuZDp6XQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oqno2spJGD7EH3ZOGaQpkIx1jhFKf59PBuInIdIiWCY=;
+ b=zbN5fKtA8crEHjUS8ildrkwHPg9W7RIp9EFikhc91f9nsLRt5Gkvpw6BWBIIRiQHoNbx672AoEnuAyIMqtSFW4cXaWRXISmgYXJ4xhxZpy+9AaruL5E7cvogk8R3AeLg1Aa710uXQHlTeztxa/UaEjwQ5X4U+dXcwxk20dCrpj0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by SJ2PR12MB8136.namprd12.prod.outlook.com (2603:10b6:a03:4f8::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.25; Fri, 14 Jun
+ 2024 16:27:51 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.7633.037; Fri, 14 Jun 2024
+ 16:27:51 +0000
+Message-ID: <e17d3a79-9c07-44cd-b0ea-2d0545680342@amd.com>
+Date: Fri, 14 Jun 2024 11:27:48 -0500
+User-Agent: Mozilla Thunderbird
+Reply-To: babu.moger@amd.com
+Subject: Re: [PATCH v20 00/18] Add support for Sub-NUMA cluster (SNC) systems
+To: Reinette Chatre <reinette.chatre@intel.com>,
+ Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+ Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+ Peter Newman <peternewman@google.com>, James Morse <james.morse@arm.com>,
+ Drew Fustini <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, patches@lists.linux.dev
+References: <20240610183528.349198-1-tony.luck@intel.com>
+ <658d9869-ef22-48a7-876a-5bbba4f134ff@amd.com>
+ <bc52a051-4296-48ac-9a83-29139855553f@intel.com>
+Content-Language: en-US
+From: "Moger, Babu" <babu.moger@amd.com>
+In-Reply-To: <bc52a051-4296-48ac-9a83-29139855553f@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA9P221CA0019.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:806:25::24) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|SJ2PR12MB8136:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3d82d7cb-3085-4dcf-586b-08dc8c8eef7c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|366013|7416011|376011;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MUl2TEZGdmU1YktTNzlYcDRmU0ZwN0JJMUg4emJNd3RtYS9qZzMrVm9sU3F3?=
+ =?utf-8?B?NEZ5VzNJYW91elhQVmFyZWRNbWxUL0NWdFJCS1hNckJlYllVbXlPVzVKZU9x?=
+ =?utf-8?B?Vm42MXhzLzc2cExGTlFZbW4vMUh0ZDJtM2JwanBmQWswQXF0bTg4UWxVY3lZ?=
+ =?utf-8?B?WGVlYjRZUkdWdUNNQmJCLzNyMTF4ekx0RFpEQ1lhcGZkQVlwU2RhRDBxVm9R?=
+ =?utf-8?B?RlVZZlkzVmZtQ0pKUkwvN3BESXc0M0NRU3R1dktVVFRGYk9jank1S0FTSmNI?=
+ =?utf-8?B?cmRzMzA3UmNvTmRua0RHWWgvVk4wdXlFNWNLd0Q4V0RBWmZ4MFFHMjFsTG5K?=
+ =?utf-8?B?b2czU1hMdXFrUFM4QXFOZmNjSytjWURvV3RhQlF6OWc2L0VHOVZ5K2dIdzlN?=
+ =?utf-8?B?MmtHd1B1NjNTM1lMWmUwdGtON25MdEsyYnhTYmt2QnNndGV3WG94c1VDRVpI?=
+ =?utf-8?B?TjBPQmpOYmxabVN5MFhscTNsckRNNzJSUzlDTzRXblNOT044RTN0STBjZ2Z3?=
+ =?utf-8?B?djdmTWhpcFdSYlV2L1BFRWtGTkRkbXM1L1hQb0Q4cFdYNkVUMzcyK1A5RlJv?=
+ =?utf-8?B?Q1NXaWpvc2xOK0FsZWZUOFVwcFgyUFY3enFFS2RocEEvdUYrRGUzWlZ6b3dq?=
+ =?utf-8?B?R2RHZXNDcW1oMndSeFYwa21nTUlDL1VrU2llb1JVM1UwTVFqT1pneXpOcktx?=
+ =?utf-8?B?UXVOVy9HUzIvdDQvZ0VrbUFjbjQ2UCt0SzRJMmVXOVZaK3VwMDVtR0NiQXlK?=
+ =?utf-8?B?bXBkVG9EVnhCVU1rdDZ1U3VZR0V2cXBPQUM5dlBxcDVGN2EzT2FzTEtIdDFW?=
+ =?utf-8?B?M0dCbkczVmJuNEpVcWF4UWlxSGNINWkyNzlqamV5SHNSVHd4Uzl5aTFWMjA2?=
+ =?utf-8?B?ZHpWZUowNDE0Z1VHT1BvbHJFRjYyREVPcXdrcHdkWjlCUitJTXA1SVphN2VT?=
+ =?utf-8?B?eE9vVDRHZUUrQ2lDdHFFa3M2VFh0ek9YLzRVUmw3MGxGenNTK1ByOCtpOGtK?=
+ =?utf-8?B?Nm9vRGVtejVkQ0wvaFhyZlBSTG1BZmU3TGtITkF0Q3JCdDNHK3NCWXdIdS9C?=
+ =?utf-8?B?QWFZeTBuRmdITkJiUllyRVhHNFY4U0ZYTWMzaVVOYnZXM1NvcXNwNndHVkxO?=
+ =?utf-8?B?MlF4bUJYaWJtQ2FoMWxndDcwNHNRakpPcVJ3cHZnRE1FQnFiYS84MXZuWXRS?=
+ =?utf-8?B?YUlWdnRmOGY5aHlOSmJsNjBUczhCd1N6N2hncFZWMmdqdUtJaEcyRkVsMElq?=
+ =?utf-8?B?UDFBcHRQdDhWMWN3UEZyVGkyRmxsKzcwOS8xYktlK29uQUJvMWVwMHhxbWVx?=
+ =?utf-8?B?VXJlVFcxeXFiQ0J4V0VIcE56ZmdrZ001TDhVWVFwR2lvMzRPWkZGQzVLOXMr?=
+ =?utf-8?B?M2dkSFlIS3VKb1A3WUQ3TW42eC92S1dMblJIaW9ZT0xlTFdtRXVtRzlVNEVu?=
+ =?utf-8?B?a213TzByOXYxNUxSL0VabUtkSzRuQmcxa1VSeXk5UUt5T20vUWZEU2NQY2xm?=
+ =?utf-8?B?ZkdjRkY3djlmUUZOVnFmNmplQTFIRVprczJXODk2SXpaaHEvNjZTRlZ0UTEx?=
+ =?utf-8?B?Q3B0K0Y2Z285Vi9HUmV4eDJja0tVQzRRRmVaQ2VXRTV5MkZIcTlKUHZORXVR?=
+ =?utf-8?B?YVhQRzY2TFdDVzBObkZlT3dvTGw2OWNQcjBhelJWWS9pbjBueW9vWHZiNXRk?=
+ =?utf-8?B?cVRHbWd2TzhqNXlrM1JWS1dPQUtBRU4yaHM5WDhVa3JLandMa1hGKzdXNjRT?=
+ =?utf-8?Q?Vb4gZWNFMurV/qdKjOaxp15/ndCwM4haXkfBePw?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(7416011)(376011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?enZCNHFLMkdCbUNVN0ZmOExld3FCaVIrODRhcmx3dGwrbUdXNnA0WFpGdVdy?=
+ =?utf-8?B?YVlJeVZkc2piWWhEb3hoRDlGdFRFWHJKaGI1YS9peVJwa2hkSHNjMmNZL2xW?=
+ =?utf-8?B?VHBJRjBZdHBJL0Ezckp6MzVKczlDdzhTZGhMTEVJM2cyS2VBbDdHajBmZzNv?=
+ =?utf-8?B?M0k1MVB1VCtmN2w1cVJYVmFwbHN6VzdMS0FPZS9nMEE5akZMbnR3M3ZSNW1P?=
+ =?utf-8?B?WkpqL0hOaGZjZTNCZzBWUVdCdFlwQ3o1Nk5tWXh2QmtSclBsRkxEK3dKMTA5?=
+ =?utf-8?B?M1VhTjF0KzZHT1M1TDNmeVdDWDF5UXFLUVd2SFZmcGx1TFl2V3lJbUVhMDhO?=
+ =?utf-8?B?ei85dzJUUHdvdkpQVmlEcE5lVFgwY2kzYVJkSzhNdEkxZVRzeS9qbFhyOG55?=
+ =?utf-8?B?YmFTblFWNnllcGpaYXcyV29Lc1F2R3RaWTdKZ0Y3RzN0MFZrdG9jZlVDcnBx?=
+ =?utf-8?B?OE5zTzRhZUxUWTZMUFBXcnFUZjcyOCt6OTE4L0RUNHRjSDVkbDNXR0g3OVFp?=
+ =?utf-8?B?OWQ0VityME1uQmRTTjd5QXB1YTF4Mmo0SXZwN2NRUnl4TERWTzBpeHZBT2E4?=
+ =?utf-8?B?WFlMN0NweUFZUXFuemRrV2ZuRlY5RUxtTXZBNTkxZTZtbXllajAzcG9pMk1W?=
+ =?utf-8?B?QTNMQUsyVkN2RDRKQ2NibDZzTGR4TFBXRk1tejZORlplUTdKNE5IZzM5dEpQ?=
+ =?utf-8?B?YUo0WVhyNHo2U250ZVoxTnNPSzV5UHArS3hZZnB3RzE1Y2xlN2JGcXoxL0gy?=
+ =?utf-8?B?TVRTWUJ6U2tjMzBNS084ZnFJSnRaR25nWkpLRk8xazhCdWRHUmdkTCtlNkIx?=
+ =?utf-8?B?Y0FhbHB0T3ZjNWdraFZ5dGJkR1dYRjNCTGpMUklPS0lKcFJjb2VWVWRNUEgr?=
+ =?utf-8?B?TGpKM0FYY1dJd2pqd3c2ZFBoT1hDeXlWa25tNHJLU1R1TC9IYlUvRzlTZHpC?=
+ =?utf-8?B?N1pIWUEzaDNKb3pJTUszOWdnSnVhUE80RmtybHBZWU5majJ3ZE11S1JXcmlE?=
+ =?utf-8?B?aHdaNFR3Nm9mTHdPNlh2WmxPdlVtYThZdmlXOHJQQWJZeTB6UStJbkVXVUU2?=
+ =?utf-8?B?NGU1T3ByaVZ2eGZVYlhnMldNRzdNOGxBRUl1QjNWa21GS2l4QU5PS2pTamdF?=
+ =?utf-8?B?amMyeXFkWUhzWEpKem91cDNPOFhlWlFKZ1NGYkFNdEZSWGJhNldlVElaQVJ1?=
+ =?utf-8?B?Y1pvSi9XV29XaDNKWHVKS1NXUkpIYy82Z3Z2MjY2bkRITGE4TGdQdVdET0RT?=
+ =?utf-8?B?WFNvejV6TEVOU2VLdG5EZmlJc0VEU2JVTGR5d0NJQng2ZVlwTVdHNFpIYmVx?=
+ =?utf-8?B?M3VEbHA5R3E4SHRvZEhsRUxaS1dWVkRuUVZyVkFZVjBvOVZ6RE8wK0ZYV1BD?=
+ =?utf-8?B?d01RVmdxcXRkcEdLQk9Ubzl6d0xFL25IUkhYcXpaZGlpSWo4alQ4R1BIOUxM?=
+ =?utf-8?B?ZlUwMXQ4b3hMUHJRZk13MFpqR0Z3T0QzMm5vRlZLZlFkNWVwYkM5Y2l5eTNu?=
+ =?utf-8?B?bXN0Y1JkYzd1UzhwRHo2bGpoUTllUVVLakRIcWlFOEticWFCcjJyYlVKSmFi?=
+ =?utf-8?B?YXZYS0RJSVJXNFlaK2RzbXBGVEZUbm53OVZVMTNmSllHbHo5ajZGRnRMSUNr?=
+ =?utf-8?B?T0YwbzEwQ3NJOXc5V1NvR3FZQ1g2b2NzOFlZaXF3OHI4N1ZWUTZGMy8wazA2?=
+ =?utf-8?B?dHBxcWx0dm9NakhIWnlHeWRpN0tZdXlKeDB4bENsU05yaHBGM0hYckx4Ukh4?=
+ =?utf-8?B?NzZvR05yR1R0N0ZKNkdwdCsrc2JReUlaQVIvTWFDc2lRcjVpRTZYR3ZaOE1P?=
+ =?utf-8?B?bmJVWkREZGt1SUFQZitpYzlTOWx0Vm5MQzgzUWVPQzBiMXVrSWgyT2hlWGs3?=
+ =?utf-8?B?NTdPbzdRaGxQMXRQY0hTTlNrVkNnZkhwSmFmNlB6cHF3NW1Lb1V4M1c1OVd4?=
+ =?utf-8?B?NS9NNlAzREJ2b3ZTYVlDY0MzNnVXSFdIbDAybVhWeU9vbVhjUkF4TzhTVmZM?=
+ =?utf-8?B?c2JxeWdVdUVUOFN5Uy8zSStGZXdNNlo0K2FYWTJWbU0wY2U0NHcwVmFXTFk2?=
+ =?utf-8?B?ZWFWYlY5Z3ZHZ2xkVG8wRnVaaXYzeW42dUtFeCtPOXNhTHhtZlUyaXZSU0x0?=
+ =?utf-8?Q?D1S4=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d82d7cb-3085-4dcf-586b-08dc8c8eef7c
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2024 16:27:51.3227
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ODb3W6d4Iw5xkgGvZMMpLAPoTkSwy1Xz4bcUnVPESRsMf5hFPsx2c5P1so2Xy+1s
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8136
 
-Hi Laurent,
+Hi Reinette,
 
-On Wed, 2024-06-12 at 23:31 +0300, Laurent Pinchart wrote:
-> On Wed, Jun 12, 2024 at 08:31:14PM +0200, Gergo Koteles wrote:
-> > Some new UVC cameras can report whether they are mounted in 'portrait
-> > mode'.
-> >=20
-> > Current roll degrees (-90, 0, 90, 180) are reported with
-> > UVC_CT_ROLL_ABSOLUTE_CONTROL.
->=20
-> UVC_CT_ROLL_ABSOLUTE_CONTROL is about controlling the motion of the
-> camera along the roll axis, while this patch series sounds like you want
-> to support reporting the mounting orientation of the device, not cause
-> the device to rotate. Is that right ?
+On 6/13/24 15:32, Reinette Chatre wrote:
+> Hi Babu,
+> 
+> On 6/13/24 12:17 PM, Moger, Babu wrote:
+>> I may be little bit out of sync here. Also, sorry to come back late in the
+>> series.
+>>
+>> Looking at the series again, I see this approach adds lots of code.
+>> Look at this structure.
+>>
+>>
+>> @@ -187,10 +196,12 @@ struct rdt_resource {
+>>       bool            alloc_capable;
+>>       bool            mon_capable;
+>>       int            num_rmid;
+>> -    enum resctrl_scope    scope;
+>> +    enum resctrl_scope    ctrl_scope;
+>> +    enum resctrl_scope    mon_scope;
+>>       struct resctrl_cache    cache;
+>>       struct resctrl_membw    membw;
+>> -    struct list_head    domains;
+>> +    struct list_head    ctrl_domains;
+>> +    struct list_head    mon_domains;
+>>       char            *name;
+>>       int            data_width;
+>>       u32            default_ctrl;
+>>
+>> There are two scope fields.
+>> There are two domains fields.
+>>
+>> These are very confusing and very hard to maintain. Also, I am not sure if
+>> these fields are useful for anything other than SNC feature. This approach
+>> adds quite a bit of code for no specific advantage.
+>>
+>> Why don't we just split the RDT_RESOURCE_L3 resource
+>> into separate resources, one for control, one for monitoring.
+>> We already have "control" only resources (MBA, SMBA, L2). Lets create new
+>> "monitor" only resource. I feel it will be much cleaner approach.
+>>
+>> Tony has already tried that approach and showed that it is much simpler.
+>>
+>> v15-RFC :
+>> https://lore.kernel.org/lkml/20240130222034.37181-1-tony.luck@intel.com/
+>>
+>> What do you think?
+>>
+> 
+> Some highlights of my thoughts in response to that series, but the whole
+> thread
+> may be of interest to you:
+> https://lore.kernel.org/lkml/78c88c6d-2e8d-42d1-a6f2-1c5ac38fb258@intel.com/
+> https://lore.kernel.org/lkml/59944211-d34a-4ba3-a1de-095822c0b3f0@intel.com/
+> 
 
-The SET_CUR of UVC_CT_ROLL_ABSOLUTE_CONTROL is optional, so I think
-it's for reporting also.
+Went through the thread, in summary:
 
-The cameras I've tested before can't roll the sensor, they only report
-the angle/orientation.
+The main concerns are related to duplication of code and data structures.
 
-Yes, I was thinking to support the mounting orientation report, however
-I tried a friend's DJI Osmo Pocket 3, which can roll the sensor in +-
-30=CB=9A with ROLL_ABSOLUTE UVC control. It can also be
-Panned/Tilted/Zoomed, very cool.
+The solutions are
 
-I think mapping UVC_CT_ROLL_ABSOLUTE_CONTROL to V4L2_CID_ROLL_ABSOLUTE
-would be useful. I can reword the commit message a bit if you'd like.
+a) Split the domains.
+This is what this series is doing now. This creates members like
+ctrl_scope, mon_scope, ctrl_domains etc.. These fields are added to all
+the resources (MBA, SMBA and L2). Then there is additional domain header.
 
->=20
-> If that's the case, the right V4L2 control to use would be
-> V4L2_CID_CAMERA_SENSOR_ROTATION. Mapping it to
-> UVC_CT_ROLL_ABSOLUTE_CONTROL is problematic though, as
-> UVC_CT_ROLL_ABSOLUTE_CONTROL is not meant for this in the UVC spec. We
-> would likely need a quirk to control how it gets used.
->=20
 
-I can also create a quirk for the other two cameras to map
-UVC_CT_ROLL_ABSOLUTE_CONTROL to V4L2_CID_CAMERA_SENSOR_ROTATION.
+b) Split the resource.
+  Split RDT_RESOURCE_L3 into two, one for "monitor" and one for "control".
+  There will be one domain structure for "monitor" and  one for "control"
 
-Maybe it can be detected if CT_ROLL_ABSOLUTE_CONTROL doesn't have
-SET_CUR, default 0, step 90.
+Both these approaches have code and data duplication. So, there is no
+difference that way.
 
->=20
-Best regards,
-Gergo
+But complexity wise, approach (a) adds quite bit of complexity. Doesn't it?
 
+For me, solution (b) looks simple and easy. Eventually, we may have to
+restructure these data structures anyways. I feel it is the right direction.
+
+-- 
+Thanks
+Babu Moger
 
