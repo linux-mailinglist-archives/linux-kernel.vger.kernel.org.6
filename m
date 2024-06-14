@@ -1,85 +1,105 @@
-Return-Path: <linux-kernel+bounces-215289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD4B59090B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:43:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E3AB9090B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73C451F21662
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:43:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D14F1C22EEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406B118FC65;
-	Fri, 14 Jun 2024 16:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CED919AA41;
+	Fri, 14 Jun 2024 16:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WOL7j80x"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hL+l8FUI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085FE181B91
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 16:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACFF181B84;
+	Fri, 14 Jun 2024 16:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718383423; cv=none; b=ifQvtFrDKbT2zQ+fnBRaxIAOdCF95lWZY9NQdUmeCLUKXxifH8556WEl7OGBGdYQ/uxDmWi5o3kJBacni/laGLv+078pGGT2OuehFR2utoSuOSVOTFjIH0gfIXZ42j1+UZXeNFC9LFODB5y5JKAQbhU5TUttIoCuEDtdI1mbfEI=
+	t=1718383428; cv=none; b=lnle25+6WBkzXMvSaaUI4YHoxDbR92pu4S4edtsYjowIVZAnB/ZRVdV02wUPVIVYt9T24p9j1p33PYFeU46o7oxLQf8agRO9ouYA8ZHODVVmornZx4U5/8uWos5RAPFPIvQbfrl2U0i9htR7T8H8ITdVBeg3RhQ6X5AcQze+5N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718383423; c=relaxed/simple;
-	bh=d5Lvv7h5cpXDk6W/gnDRiwt19RfIXWkkQRdmPaInaso=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=uTVPf6AY2YAu3+6QSvs5CWFyp5rz+Y+hvqEFJjQ+oKpQYtLuEB8ihXHXhIL+qXUNCx3+3Zyd2IiqqcVaoU4CYjCxF9JpuhRZk3nc4JPSYk2i7aicIONF7qZAeo8gyzJyYPfGfwh0vm1uFtzwxJvAtvKMBg4a51a7qUhzN+6r/9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WOL7j80x; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57cb9efd8d1so3341964a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:43:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718383420; x=1718988220; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=d5Lvv7h5cpXDk6W/gnDRiwt19RfIXWkkQRdmPaInaso=;
-        b=WOL7j80xUccsPVleNhCDphc9x94xAtd1W0wwE/qlFqgVar2uygrYhKIiYhgC41dqMt
-         jFjkyizhUnHi3UxlhFhYGsJv6FO1IhbvJPBdli2g/Fy+kEusoS3w0vJHJ+4CjMDkJXsz
-         1TB+RXREUjIduvFXZNbzkmxSymbWYDYf0SjnoLFbcnl7WBWnwwOM7504PrFYv4UJ+ICi
-         vGa31c5hUy2avCo/M8dhZTYPkxexsRaQOaXoeKuy5/bQ1+C4Pmo+jQpE51TB8KkdFRGz
-         /H8DYwN8HXr5m0BTC8aYynLV3lNXAMAZ5tXbkCWbS5krfjc+9CntHZeZ5w6bVk1vPhik
-         3x6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718383420; x=1718988220;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d5Lvv7h5cpXDk6W/gnDRiwt19RfIXWkkQRdmPaInaso=;
-        b=T/gk9CxMXFUIJd+9K0BJOWeNi/fCsX8CXWPPh9UESkj/EJf7OQqs65eQ9FgC26dUZA
-         50Uz6xVL9Vb91NWKU1oBMzGKHy90QZCPUH523YrSZXDxaUEyAXK7k//4xtCCe5p+Oetz
-         pk5I+lOX0XDGx0EXq6LK1QdoY0N9y3+csXBAS3/i1kgNyHz4mMksLH0r+xDkXeTZGtIK
-         OjkTGas23Fooowc/7HP6ZKuf1Rkhb5iBiR44nqZEBJx8Ykb960zN0Ap89KAN3eM/UU2k
-         arX7568J12Xl0+3WG+fOhWXTs0G1GAaNOm0iJM69Bhc+OL+aOEmiDSCFkehPXnZXQs05
-         /MZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgvBssItUXuHlpGrosRRmE+GTZidktZsGcccR6Ahv5WpYXJ1+Six3Ed/kDIF7k7trYuE/k5XAlBvHxJcylnhNVNeE8LwFk9jBeyUBc
-X-Gm-Message-State: AOJu0Yw2j1ZBEZiFgcLPZALhH0PD2USPHsvRra4Jde/WNj1nER6QhV8O
-	Ghb3BSsaiBshx1CY0GaA4kmG10DydxBSoRJFSJaRiAhxyjYH/P79w6Z5LGAdKGORhEvSnEwZpEq
-	AYc5j00tlESwmjHevSdUF2XZW3rQ=
-X-Google-Smtp-Source: AGHT+IGPpkBq28XKJpDdjBk3xqnrBsnQijyAHpYp9bTM7Iv02IbJso4b9IqplKPZDYWKOLAW0VgpylUqyEQ3H7NBal8=
-X-Received: by 2002:a05:6402:516:b0:57c:5c50:2ef9 with SMTP id
- 4fb4d7f45d1cf-57cb4b9965fmr3884615a12.3.1718383420051; Fri, 14 Jun 2024
- 09:43:40 -0700 (PDT)
+	s=arc-20240116; t=1718383428; c=relaxed/simple;
+	bh=OGecIESkxQlGPPHFvJKS/1V4WaNGOExMXfaeDU81YVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sUNFMuY0ucyF+v5e/HwLAjU4//fa00A1ilvYHqCLRr2/PzatMPI+XQVrYSYM2W5f2XWcJ2WtWOEzYCserclRPZYv8V2wen9IY2DoDd5sy2NDiPNMdBG6CH/WV9BMUOk3oN8mSv70LzoMuynSP0cwzhQzAFGJx+opzS3QhcM4Jk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hL+l8FUI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56300C2BD10;
+	Fri, 14 Jun 2024 16:43:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718383428;
+	bh=OGecIESkxQlGPPHFvJKS/1V4WaNGOExMXfaeDU81YVM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hL+l8FUIXR9ASHQf9xeEPHt7CfdJYNX0X2a16Kb6dXovnPp+k2I7dQZVJz+bHAS+w
+	 /Akw4bgdYCbPoCYPoxyXVhpR07QLakzGw+lOuLOCEcwc4m6XbzkVwX996ca3rr7kcm
+	 ZekEHG9V5TCkNvXESp+C05L37+ynL56sBerph8iI/t5rhWxp+D44Fo5+P42u35Gl0K
+	 7dhB+rmHkWPUfnZ28d9jgrO3szh5oJ5ZQY2ImBXkHINHxIt+m8b3G8wRkGcMlTbQL6
+	 yUuCucQDUEkjvZjxu10iU71nkcLMlqu5oTEbzmsM1vD1k2Y6LXTCZz2aWqsZ/1SvcG
+	 l+KTBfQzjR8yQ==
+Date: Fri, 14 Jun 2024 17:43:44 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	"J.M.B. Downing" <jonathan.downing@nautel.com>,
+	Chancel Liu <chancel.liu@nxp.com>, Arnd Bergmann <arnd@arndb.de>,
+	Michael Ellerman <mpe@ellerman.id.au>, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v3 0/4] Add audio support for LPC32XX CPUs
+Message-ID: <ZmxzQLbzuEupDkiJ@finisterre.sirena.org.uk>
+References: <20240611094810.27475-1-piotr.wojtaszczyk@timesys.com>
+ <20240614163500.386747-1-piotr.wojtaszczyk@timesys.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Philippe Simons <simons.philippe@gmail.com>
-Date: Fri, 14 Jun 2024 18:43:28 +0200
-Message-ID: <CADomA48VNZiDPVKrUTq6h8SMBO-GA5HUGXXRRA9jAQnPKyESJg@mail.gmail.com>
-Subject: Re: (subset) [PATCH v3] mfd: axp20x: AXP717: Fix missing IRQ status
- registers range
-To: lee@kernel.org
-Cc: andre.przywara@arm.com, jernej.skrabec@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	macroalpha82@gmail.com, ryan@testtoast.com, 
-	Philippe Simons <simons.philippe@gmail.com>, wens@csie.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4uEH+YoQX+igcbHZ"
+Content-Disposition: inline
+In-Reply-To: <20240614163500.386747-1-piotr.wojtaszczyk@timesys.com>
+X-Cookie: Your love life will be... interesting.
 
-Tested on my RG35XX-H, v6.10rc3 boots with the patch applied
 
-Tested-by: Philippe Simons <simons.philippe@gmail.com>
+--4uEH+YoQX+igcbHZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Jun 14, 2024 at 06:34:48PM +0200, Piotr Wojtaszczyk wrote:
+> This pach set is to bring back audio to machines with a LPC32XX CPU.
+> The legacy LPC32XX SoC used to have audio spport in linux 2.6.27.
+> The support was dropped due to lack of interest from mainaeners.
+
+Please don't send new patches in reply to old patches or serieses, this
+makes it harder for both people and tools to understand what is going
+on - it can bury things in mailboxes and make it difficult to keep track
+of what current patches are, both for the new patches and the old ones.
+
+--4uEH+YoQX+igcbHZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZscz8ACgkQJNaLcl1U
+h9BWvgf/f+S9NLVWH8/lPOJWNtq9tQndYQy8OK5iMAQJm7mKL0A4ttTTMYMYnh9h
+tL3EW+ywS15IBWgG89JDmI9AuB9nWQKgmQIqjVuGW+54g1EYmViI28IteOGUZnv4
+xSF8N2Ak+ag00veuwAnYp3oMDUbtZ/VpEcoBj6Na+QDI5ok19cDT4Vqo0lWSMTn8
+9liaCr84fAjnbULZLuudLqd4wrhxbBtaYwCQ+iH2tW/N4j04iuTdop7ogfilTi/0
+ZsZOYX4xC1lJ1EbS7qpQSTsA5aDQQ7BwwzOE43HOhzTLoOcVVEl2a5dmZkSHNNDc
+2R617vs7FjbtGTrFUOVMTAzD01F8lQ==
+=TUpG
+-----END PGP SIGNATURE-----
+
+--4uEH+YoQX+igcbHZ--
 
