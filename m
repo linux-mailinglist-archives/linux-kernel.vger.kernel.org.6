@@ -1,197 +1,324 @@
-Return-Path: <linux-kernel+bounces-214415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4501908410
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:58:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C840F90840B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F7911F226A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:58:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EDE61F227A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176E71487ED;
-	Fri, 14 Jun 2024 06:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03561487D1;
+	Fri, 14 Jun 2024 06:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="RfO3s8vr"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87EEA142E80;
-	Fri, 14 Jun 2024 06:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7gBNUjA"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80A41474B3;
+	Fri, 14 Jun 2024 06:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718348286; cv=none; b=nKao9Fhz9ZRKZsH7g5ke+aWvXvjijPynTUJS98BBrpLiKkxMQcBlgGt5VsjS80PO4/JIgCU60huL318GakXGWsOCRocM+S+aclzoaMr54EGAXhvM9oyhiWsOMRhIRnaMuVczcSRX9hy42vsssptVcM9EWRnh72wH6MYf28DbDV0=
+	t=1718348173; cv=none; b=cRa4ptOtfAwGpaPmaGV7jA9qCrJ2AKXV/7NZb7/7fMhroJfQssOGLWsnClrr6ZpxMcc2aVXmy1cBxNp+oMMJoyXGpmKw0/fqsV0/dwTSKwDGx5BXm7v+6rFkC4LTeR/gCXV4IUgm6jEUkPTxk63mzMHr9+aD5MkUONnNN+iypig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718348286; c=relaxed/simple;
-	bh=m86rVSpWrUT7GKV3AdRZmPKsD6oplVmcSgc01YtQa6s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=YhHDQTTiy2ILbLtqPIhwyO8o4zUs9yjO03KmojiaRwAzPHxnErmUJ/EStcXo8kMhD9MKc4GuKm4U9LHFPnbH4w3UJfwg9c94xaeFLeqjgjX7Hl+G1K/HKYjoHBKmi5izRtBsLhFdEZMwNA5eoMOA/tpF4OvnN0YkHNdn82kt3kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=RfO3s8vr; arc=none smtp.client-ip=45.254.50.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=m86rVSpWrUT7GKV3AdRZmPKsD6oplVmcSgc01YtQa6s=; b=R
-	fO3s8vrPt986Re4L1zE26Mt3Ovi3UwLGM6G/Hu7Wz5WC08ltLZD2eW9eYAaAy7y+
-	c4lA2VXr5VPtTHGA83CmoRZ7lcU8pYixjpB7x4gc115E1gXC/kW5XOtIZYuPWtZN
-	K6MCqmX1rLW2DIn62NWAcT2C/g6Hv2gH3c/M5Jn6oM=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-139 (Coremail) ; Fri, 14 Jun 2024 14:56:00 +0800
- (CST)
-Date: Fri, 14 Jun 2024 14:56:00 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: neil.armstrong@linaro.org
-Cc: "Cristian Ciocaltea" <cristian.ciocaltea@collabora.com>, 
-	"Sam Ravnborg" <sam@ravnborg.org>, 
-	"Andrzej Hajda" <andrzej.hajda@intel.com>, 
-	"Robert Foss" <rfoss@kernel.org>, 
-	"Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>, 
-	"Jonas Karlman" <jonas@kwiboo.se>, 
-	"Jernej Skrabec" <jernej.skrabec@gmail.com>, 
-	"Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, 
-	"Maxime Ripard" <mripard@kernel.org>, 
-	"Thomas Zimmermann" <tzimmermann@suse.de>, 
-	"David Airlie" <airlied@gmail.com>, 
-	"Daniel Vetter" <daniel@ffwll.ch>, 
-	"Sandy Huang" <hjc@rock-chips.com>, 
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	"Andy Yan" <andy.yan@rock-chips.com>, 
-	"Rob Herring" <robh@kernel.org>, 
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
-	"Conor Dooley" <conor+dt@kernel.org>, 
-	"Mark Yao" <markyao0591@gmail.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
-	kernel@collabora.com, "Alexandre ARNOUD" <aarnoud@me.com>, 
-	"Luis de Arquer" <ldearquer@gmail.com>, 
-	"Algea Cao" <algea.cao@rock-chips.com>
-Subject: Re:Re: [PATCH 13/14] drm/bridge: synopsys: Add DW HDMI QP TX
- controller driver
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <5dc16b34-d638-4fab-84e1-cb7db08ad80e@linaro.org>
-References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
- <20240601-b4-rk3588-bridge-upstream-v1-13-f6203753232b@collabora.com>
- <20240601143226.GA2003970@ravnborg.org>
- <59519381-2729-4839-9882-65a981a0c551@collabora.com>
- <20240604204110.GA84949@ravnborg.org>
- <f656c72e-fac8-4345-9b65-1031ebe81c25@collabora.com>
- <304b4602-8722-4ed0-a555-8dada573ee79@collabora.com>
- <5dc16b34-d638-4fab-84e1-cb7db08ad80e@linaro.org>
-X-NTES-SC: AL_Qu2aCv+ft0kt5iOYYekZnEobh+Y5UcK2s/ki2YFXN5k0iSX1/AY6fnxFOVrVy86gLTCnsxuyUDx35Od+VKh2UY7Q6aNmi14EuUvgLw7snJnK
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1718348173; c=relaxed/simple;
+	bh=cHzQVR+QoJunZTIXVhTgufjTwPxEpctcpiZI9XSE5Rk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IknSu5scZDdT+xCMc0WUc+aNmejcPVtOCdmS+0cs86ChCQK9n3Oc9h4O464jjFLMaHVDZWvsp6ualyXBCOT/KQr5HiVpRHDtmZgTQ3FjdPBNPB+lQoT7pwUYovXPKiGMy8xEastXV06OBnNOU4+DfYo1UQNN/FczmEoHmmBJveI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R7gBNUjA; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52c89d6b4adso1719218e87.3;
+        Thu, 13 Jun 2024 23:56:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718348170; x=1718952970; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=n24EXAlVZKGSBdu/7kYSS2jHZx5u9QVUK7yX+sUB4h0=;
+        b=R7gBNUjAvL7UqQGGG4U7h0sWBcBbjl9fxyqP13ZBqmtt+Pu2kuuOFHC6y6Pl49wdDE
+         IXJ2gBj/SAYDnVJGbANsxRKSEy4KvcfwWxpFuLrtARBBN1p5B3yzoRvP/ljKjwnM/Hc4
+         OQQfNLNqSckHV0+zdnHOav5HKIx88CpjzleRejqatE2jvqjSdOEF+n9hy4PR5HimUC0b
+         sSWcjN8ArS4NQbFTyqGFkx3uG9G69dQKm951mBeWqLrN5/+W0PGfbadAPo+bj0zbeMny
+         0RXwRYiBzsikFhrj+y/Y1a7fHtIMp9uACXjyTWdmMDV6iBCQ4+YoBSsKl9voR41cMvIm
+         vbUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718348170; x=1718952970;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n24EXAlVZKGSBdu/7kYSS2jHZx5u9QVUK7yX+sUB4h0=;
+        b=cnn0Cavr4sVE5gLNGjpkUlM0KCp8Bta7ULsGVS3mEBq/JD34Tfv73d/7TbJ10QFkrc
+         WqRtGBRjOGiI25Lt97GmXKEeHCS3UaQaX+OQeH/MkzZFZBcUOMeXW22/MaOuYSsHYg7J
+         yfUI+FpWbKcAEyUqciI+Shj2C0JTYH9FGW35ukKXSFsYXWdta+5NvZ5F9U7ggkd4+/PG
+         Ea3mPj/nGzHCZwpyqAgHaEmCp382yCnGa2AQ68/TdQWNO4Okr2br2EMfQPpUZC/inT/e
+         G9lzW9bvX/0KbG9vI2JafI6qs3ZaI0RR/A0cHw/c6t4z+jb3HKD+iFK4MNimVxRwfsgz
+         KJig==
+X-Forwarded-Encrypted: i=1; AJvYcCX5XZYoYaLunxwNmgQbRApc9WxjWaJGyRmddjAOB1WUq/6Ghe40yXzxfuaTAPRCFfo1EQippqYniZqrj12PnC5wZMwjk6YBQSq0xmfKDDTJaMjelrmus1hET/8Q59K8mfQaorMbWa5/q2HPMH56Wwt0uKE9an5jMvib/79gLMiWeGlgo1ipaH6J
+X-Gm-Message-State: AOJu0Yz8F+sMYNq378ipdPHKYC0W50u0zkv8l0cEOVl14qeZNYeyn4FP
+	tilyXCvvvfcd0m+gzcctn5CaturNXk3L8Balq02q7mneSGp4maqQVxQZJQ==
+X-Google-Smtp-Source: AGHT+IF1aWze5zMVrk59hfZLBXrV94azpWD18wJQFV5oFH7sEx/0NKhdqV8nWXEWDPH+xzHzfni9rw==
+X-Received: by 2002:a05:6512:542:b0:516:a091:db5e with SMTP id 2adb3069b0e04-52ca6e90abemr967787e87.48.1718348169562;
+        Thu, 13 Jun 2024 23:56:09 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2887effsm426127e87.257.2024.06.13.23.56.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 23:56:09 -0700 (PDT)
+Message-ID: <21a468c2-7d8f-459a-a5a9-53d8694c3f38@gmail.com>
+Date: Fri, 14 Jun 2024 09:56:07 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <2d8e9235.68f3.19015881d35.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wB3f5GA6Wtmef5xAA--.11944W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMwf9XmXAl1B3hgACsG
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 09/10] mfd: bd96801: Add ERRB IRQ
+To: Lee Jones <lee@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Thomas Gleixner <tglx@linutronix.de>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-watchdog@vger.kernel.org
+References: <cover.1717486682.git.mazziesaccount@gmail.com>
+ <332a2d2429e2ba3c96afd28c1ccc18efc38e1fd3.1717486682.git.mazziesaccount@gmail.com>
+ <20240613163249.GN2561462@google.com>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20240613163249.GN2561462@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-CgoKCgoKCkhpIE5laWzvvIwKCkF0IDIwMjQtMDYtMDUgMTk6NDg6MDksICJOZWlsIEFybXN0cm9u
-ZyIgPG5laWwuYXJtc3Ryb25nQGxpbmFyby5vcmc+IHdyb3RlOgo+T24gMDUvMDYvMjAyNCAxMjox
-MSwgQ3Jpc3RpYW4gQ2lvY2FsdGVhIHdyb3RlOgo+PiBPbiA2LzUvMjQgMTI6MzQgQU0sIENyaXN0
-aWFuIENpb2NhbHRlYSB3cm90ZToKPj4+IE9uIDYvNC8yNCAxMTo0MSBQTSwgU2FtIFJhdm5ib3Jn
-IHdyb3RlOgo+Pj4+IEhpIENyaXN0aWFuLgo+Pj4+Cj4+Pj4gT24gVHVlLCBKdW4gMDQsIDIwMjQg
-YXQgMTA6MzI6MDRQTSArMDMwMCwgQ3Jpc3RpYW4gQ2lvY2FsdGVhIHdyb3RlOgo+Pj4+PiBIaSBT
-YW0sCj4+Pj4+Cj4+Pj4+IE9uIDYvMS8yNCA1OjMyIFBNLCBTYW0gUmF2bmJvcmcgd3JvdGU6Cj4+
-Pj4+PiBIaSBDcmlzdGlhbiwKPj4+Pj4+Cj4+Pj4+PiBhIGZldyBkcml2ZS1ieSBjb21tZW50cyBi
-ZWxvdy4KPj4+Pj4+Cj4+Pj4+PiAJU2FtCj4+Pj4+Pgo+Pj4+Pj4KPj4+Pj4+PiArCj4+Pj4+Pj4g
-K3N0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcl9mdW5jcyBkd19oZG1pX3FwX2Nvbm5l
-Y3Rvcl9mdW5jcyA9IHsKPj4+Pj4+PiArCS5maWxsX21vZGVzID0gZHJtX2hlbHBlcl9wcm9iZV9z
-aW5nbGVfY29ubmVjdG9yX21vZGVzLAo+Pj4+Pj4+ICsJLmRldGVjdCA9IGR3X2hkbWlfY29ubmVj
-dG9yX2RldGVjdCwKPj4+Pj4+PiArCS5kZXN0cm95ID0gZHJtX2Nvbm5lY3Rvcl9jbGVhbnVwLAo+
-Pj4+Pj4+ICsJLmZvcmNlID0gZHdfaGRtaV9xcF9jb25uZWN0b3JfZm9yY2UsCj4+Pj4+Pj4gKwku
-cmVzZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9jb25uZWN0b3JfcmVzZXQsCj4+Pj4+Pj4gKwkuYXRv
-bWljX2R1cGxpY2F0ZV9zdGF0ZSA9IGRybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9kdXBsaWNh
-dGVfc3RhdGUsCj4+Pj4+Pj4gKwkuYXRvbWljX2Rlc3Ryb3lfc3RhdGUgPSBkcm1fYXRvbWljX2hl
-bHBlcl9jb25uZWN0b3JfZGVzdHJveV9zdGF0ZSwKPj4+Pj4+PiArfTsKPj4+Pj4+PiArCj4+Pj4+
-Pj4gK3N0YXRpYyBpbnQgZHdfaGRtaV9xcF9icmlkZ2VfYXR0YWNoKHN0cnVjdCBkcm1fYnJpZGdl
-ICpicmlkZ2UsCj4+Pj4+Pj4gKwkJCQkgICAgZW51bSBkcm1fYnJpZGdlX2F0dGFjaF9mbGFncyBm
-bGFncykKPj4+Pj4+PiArewo+Pj4+Pj4+ICsJc3RydWN0IGR3X2hkbWkgKmhkbWkgPSBicmlkZ2Ut
-PmRyaXZlcl9wcml2YXRlOwo+Pj4+Pj4+ICsKPj4+Pj4+PiArCWlmIChmbGFncyAmIERSTV9CUklE
-R0VfQVRUQUNIX05PX0NPTk5FQ1RPUikKPj4+Pj4+PiArCQlyZXR1cm4gZHJtX2JyaWRnZV9hdHRh
-Y2goYnJpZGdlLT5lbmNvZGVyLCBoZG1pLT5uZXh0X2JyaWRnZSwKPj4+Pj4+PiArCQkJCQkgYnJp
-ZGdlLCBmbGFncyk7Cj4+Pj4+Pj4gKwo+Pj4+Pj4+ICsJcmV0dXJuIGR3X2hkbWlfY29ubmVjdG9y
-X2NyZWF0ZShoZG1pLCAmZHdfaGRtaV9xcF9jb25uZWN0b3JfZnVuY3MpOwo+Pj4+Pj4+ICt9Cj4+
-Pj4+Pgo+Pj4+Pj4gQXJlIHRoZXJlIGFueSB1c2VycyBsZWZ0IHRoYXQgcmVxdWlyZXMgdGhlIGRp
-c3BsYXkgZHJpdmVyIHRvIGNyZWF0ZSB0aGUKPj4+Pj4+IGNvbm5lY3Rvcj8KPj4+Pj4+IEluIG90
-aGVyIHdvcmRzIC0gY291bGQgdGhpcyBkcml2ZXIgZmFpbCBpZiBEUk1fQlJJREdFX0FUVEFDSF9O
-T19DT05ORUNUT1IKPj4+Pj4+IGlzIG5vdCBwYXNzZWQgYW5kIGRyb3AgZHdfaGRtaV9jb25uZWN0
-b3JfY3JlYXRlKCk/Cj4+Pj4+Pgo+Pj4+Pj4gSSBkaWQgbm90IHRyeSB0byB2ZXJpZnkgdGhpcyAt
-IGp1c3QgYSBuYWl2ZSBxdWVzdGlvbi4KPj4+Pj4KPj4+Pj4gSSd2ZSBqdXN0IHRlc3RlZCB0aGlz
-IGFuZCBpdCBkb2Vzbid0IHdvcmsgLSBkd19oZG1pX2Nvbm5lY3Rvcl9jcmVhdGUoKQo+Pj4+PiBp
-cyBzdGlsbCBuZWVkZWQuCj4+Pj4KPj4+PiBIbW0sIHNlZW1zIHRoZSBkaXNwbGF5IGRyaXZlciBv
-ciBzb21lIG90aGVyIGJyaWRnZSBkcml2ZXIgZmFpbHMgdG8KPj4+PiBzdXBwb3J0ICJEUk1fQlJJ
-REdFX0FUVEFDSF9OT19DT05ORUNUT1IiLgo+Pj4+IHdoYXQgb3RoZXIgZHJpdmVycyBhcmUgaW52
-b2x2ZWQ/Cj4+Pgo+Pj4gQ291bGQgaXQgYmUgcmVsYXRlZCB0byB0aGUgZ2x1ZSBkcml2ZXIgKHVw
-ZGF0ZWQgaW4gdGhlIG5leHQgcGF0Y2gpIHdoaWNoCj4+PiBpcyBhbHNvIHJlc3BvbnNpYmxlIGZv
-ciBzZXR0aW5nIHVwIHRoZSBlbmNvZGVyPwo+Pj4KPj4+PiBOb3RlIHRoYXQgbXkgY29tbWVudHMg
-aGVyZSBzaG91bGQgYmUgc2VlbiBhcyBwb3RlbnRpYWwgZnV0dXJlCj4+Pj4gaW1wcm92ZW1lbnRz
-LCBhbmQgZG8gbm90IGJsb2NrIHRoZSBwYXRjaCBmcm9tIGJlaW5nIHVzZWQuCj4+Pgo+Pj4gVGhh
-bmtzIGZvciB0aGUgaGVhZHMgdXAhIFdpbGwgdHJ5IHRvIGdldCBiYWNrIHRvIHRoaXMgc29vbiBh
-bmQgaW52ZXN0aWdhdGUuCj4+ICAgCj4+IElJVUMsIG1vZGVybiBicmlkZ2VzIHNob3VsZCBub3Qg
-Y3JlYXRlIHRoZSBjb25uZWN0b3IgYnV0IHJlbHkgb24gZGlzcGxheQo+PiBkcml2ZXJzIHRvIHRh
-a2UgY2FyZSBvZiwgd2hpY2ggaW4gdGhpcyBjYXNlIGlzIHRoZSBWT1AyIGRyaXZlci4gSG93ZXZl
-ciwKPj4gaXQgYWxzbyBoYW5kbGVzIHNvbWUgb2YgdGhlIG9sZGVyIFNvQ3MgcmVseWluZyBvbiB0
-aGUgbm9uLVFQIHZhcmlhbnQgb2YKPj4gRFcgSERNSSBJUC4gSGVuY2UgdGhlIGV4aXN0aW5nIGR3
-LWhkbWkgZHJpdmVyIHdvdWxkIGJlIGFsc28gaW1wYWN0ZWQgaW4KPj4gb3JkZXIgdG8gY29tZSB1
-cCB3aXRoIGEgcHJvcGVyIHNvbHV0aW9uLgo+PiAKPj4gQSBxdWljayBjaGVjayBzaG93cyB0aGVy
-ZSBhcmUgc2V2ZXJhbCB1c2VycyBvZiB0aGlzIElQOgo+PiAKPj4gJCBnaXQgZ3JlcCAtRSAnPSBk
-d19oZG1pXyhiaW5kfHByb2JlKVwoJwo+PiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2lteC9pbXg4
-bXAtaGRtaS10eC5jOiAgICBoZG1pLT5kd19oZG1pID0gZHdfaGRtaV9wcm9iZShwZGV2LCBwbGF0
-X2RhdGEpOwo+PiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3N5bm9wc3lzL2R3LWhkbWkuYzogICAg
-ICBoZG1pID0gZHdfaGRtaV9wcm9iZShwZGV2LCBwbGF0X2RhdGEpOwo+PiBkcml2ZXJzL2dwdS9k
-cm0vaW14L2lwdXYzL2R3X2hkbWktaW14LmM6ICAgICAgICBoZG1pLT5oZG1pID0gZHdfaGRtaV9w
-cm9iZShwZGV2LCBtYXRjaC0+ZGF0YSk7Cj4+IGRyaXZlcnMvZ3B1L2RybS9pbmdlbmljL2luZ2Vu
-aWMtZHctaGRtaS5jOiAgICAgIGhkbWkgPSBkd19oZG1pX3Byb2JlKHBkZXYsICZpbmdlbmljX2R3
-X2hkbWlfcGxhdF9kYXRhKTsKPj4gZHJpdmVycy9ncHUvZHJtL21lc29uL21lc29uX2R3X2hkbWku
-YzogIG1lc29uX2R3X2hkbWktPmhkbWkgPSBkd19oZG1pX3Byb2JlKHBkZXYsICZtZXNvbl9kd19o
-ZG1pLT5kd19wbGF0X2RhdGEpOwo+PiBkcml2ZXJzL2dwdS9kcm0vcmVuZXNhcy9yY2FyLWR1L3Jj
-YXJfZHdfaGRtaS5jOiBoZG1pID0gZHdfaGRtaV9wcm9iZShwZGV2LCAmcmNhcl9kd19oZG1pX3Bs
-YXRfZGF0YSk7Cj4+IGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9kd19oZG1pLXJvY2tjaGlwLmM6
-ICAgICAgICAgICAgaGRtaS0+aGRtaSA9IGR3X2hkbWlfYmluZChwZGV2LCBlbmNvZGVyLCBwbGF0
-X2RhdGEpOwo+PiBkcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuOGlfZHdfaGRtaS5jOiAgaGRtaS0+
-aGRtaSA9IGR3X2hkbWlfYmluZChwZGV2LCBlbmNvZGVyLCBwbGF0X2RhdGEpOwo+PiAKPj4gSSBk
-aWRuJ3QgY2hlY2sgd2hpY2ggZGlzcGxheSBkcml2ZXJzIHdvdWxkIGJlIGludm9sdmVkLCBJJ2Qg
-Z3Vlc3MgdGhlcmUKPj4gYXJlIHF1aXRlIGEgZmV3IG9mIHRoZW0gYXMgd2VsbC4gU28gaXQgc2Vl
-bXMgdGhpcyBlbmRzIHVwIGJlaW5nIGEgcHJldHR5Cj4+IGNvbXBsZXggdGFzay4KPgo+SWYgdGhp
-cyB3b3VsZCBiZSBhIGJyYW5kIG5ldyBkcml2ZXIsIHRoZW4gaXQgc2hvdWxkIG9ubHkgc3VwcG9y
-dCBEUk1fQlJJREdFX0FUVEFDSF9OT19DT05ORUNUT1IsCj5zbyB5b3Ugc2hvdWxkIG5vdCBjcmVh
-dGUgYSBjb25uZWN0b3IgZnJvbSB0aGUgZHJpdmVyLgo+Cj5UaGUgZmFjdCBkdy1oZG1pIGFjY2Vw
-dHMgYW4gYXR0YWNoIHdpdGhvdXQgdGhlIGZsYWcgaXMgZm9yIGxlZ2FjeSBwdXJwb3NlCj5zaW5j
-ZSBzb21lIERSTSBkcml2ZXJzIGhhdmVuJ3Qgc3dpdGNoZWQgdG8gRFJNX0JSSURHRV9BVFRBQ0hf
-Tk9fQ09OTkVDVE9SIHllcywKPmJ1dCBpdCdzIGEgcmVxdWlyZW1lbnQgZm9yIG5ldyBicmlkZ2Vz
-IHNvIGF0IHNvbWUgcG9pbnQgeW91J2xsIG5lZWQgdG8gbWFrZQo+c3VyZSB0aGUgcm9ja2NoaXAg
-Z2x1ZSBhbmQgZHJtIGRyaXZlciBzdXBwb3J0cyBEUk1fQlJJREdFX0FUVEFDSF9OT19DT05ORUNU
-T1IuCj4KPlRoaXMgd2lsbCBncmVhdGx5IHNpbXBsaWZ5IHRoZSBkcml2ZXIhCgpCYXNlZCBvbiB0
-aGUgcHJldmlvdXMgZGlzY3Vzc2lvbu+8jCB0aGUgRFcgSERNSSBRUCBkcml2ZXJzIHdpbGwgYmUg
-aW1wbGVtZW50ZWQgbGlrZSB0aGlz77yaCgpDb3JlIGJyaWRnZSBsaWJyYXJ577yaIAogZHJpdmVy
-cy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1oZG1pLXFwLmMKUm9ja2NoaXAgcGxhdGZvcm0g
-c3BlY2lmaWMgZ2x1Ze+8mgpkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvZHdfaGRtaV9xcC1yb2Nr
-Y2hpcC5jCgpBcyBhIG5ldyBicmlkZ2UgZHJpdmVyIHNob3VsZCBvbmx5IHN1cHBvcnQgRFJNX0JS
-SURHRV9BVFRBQ0hfTk9fQ09OTkVDVE9SLCAKSXMgaXQgYWNjZXB0YWJsZSBpZiB3ZSBpbXBsZW1l
-bnQgdGhlIGNvbm5lY3RvciBhdCAgdGhlIHJvY2tjaGlwIGdsdWUgZHdfaGRtaV9xcC1yb2NrY2hp
-cC5jIO+8nwoKT3VyIGN1cnJlbnQgY29tYmluYXRpb24gaXMgYSBiaXQgY29tcGxleO+8mgpUaGUg
-ZGlzcGxheSBjb250cm9sbGVyIGRyaXZlciBpcyAgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3Jv
-Y2tjaGlwX2RybV92b3AyLmMg77yMd2hpY2ggc2hhcmVkCmJ5IHJrMzU2OO+8jCByazM1ODggYW5k
-IHNvbWUgdXBjb21pbmcgc29jIGxpa2UgcmszNTI4L3JrMzU2Mi4KCkZvciByazM1ODjvvIwgd2Ug
-aGF2ZSB0b3RhbGx5IG5ldyBIRE1J44CBRFDjgIFEU0kyICBJUO+8jCB0aGV5IG5lZWQgYnJhbmQg
-bmV3IGJyaWRnZSBkcml2ZXIgdGhhdApzaG91bGQgb25seSBzdXBwb3J0IERSTV9CUklER0VfQVRU
-QUNIX05PX0NPTk5FQ1RPUu+8jCBhbmQgdGhlcmUgaXMgYWxzbyBhbiBlRFAgb24gcmszNTg4CnVz
-ZSBhbmFsb2dpeF9kcF9jb3JlLmMgdGhhdCBjcmVhdGUgY29ubmVjdG9yIGJ5IGFuYWxvZ2l4X2Rw
-IGJyaWRnZeOAggoKRm9yICByazM1NjjvvIwgdGhlIEhETUkvZURQL0RTSSBJUCBhcmUgYmFzZWQg
-b24gb2xkIElQ77yMIHRoZSBjb3JyZXNwb25kaW5nIGRyaXZlcnMgYXJlIGR3LWhkbWnvvIxhbmFs
-b2dpeF9kcAphbmQgZHctbWlwaS1kc2ksIHRoZXkgYm90aCBjcmVhdGUgZHJtIGNvbm5lY3RvciBi
-eSBpdCdzIGJyaWRnZSBkcml2ZXIuIEFuZCByazM1MjgvcmszNTYyIGFyZSBsaWtlIHRoaXMgdG9v
-44CCCgpTbyBpZiB3ZSBjYW4gY3JlYXRlIGRybV9jb25uZWN0b3IgYXQgZ2x1ZSBzaWRlIChzdWNo
-IGFzIGR3X2hkbWlfcXAtcm9ja2NoaXAuYyksIGxldCB0aGUgaW50ZXJmYWNlIGRyaXZlciBkZWNp
-ZGUKaWYgaXQgc2hvdWxkIGNyZWF0ZSBkcm1fY29ubmVjdG9yIG9yIG5vdCB3aWxsIG1ha2UgdGhl
-IHZvcDIgZHJpdmVyIHNpbXBsZXLjgIIKCgoKCgo+Cj5OZWlsCj4KPj4gCj4+IENyaXN0aWFuCg==
+On 6/13/24 19:32, Lee Jones wrote:
+> On Tue, 04 Jun 2024, Matti Vaittinen wrote:
+> 
+>> The ROHM BD96801 "scalable PMIC" provides two physical IRQs. The ERRB
+>> handling can in many cases be omitted because it is used to inform fatal
+>> IRQs, which usually kill the power from the SOC.
+>>
+>> There may however be use-cases where the SOC has a 'back-up' emergency
+>> power source which allows some very short time of operation to try to
+>> gracefully shut down sensitive hardware. Furthermore, it is possible the
+>> processor controlling the PMIC is not powered by the PMIC. In such cases
+>> handling the ERRB IRQs may be beneficial.
+>>
+>> Add support for ERRB IRQs.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>> ---
+>> Revision history:
+>> v2 =>:
+>> 	- No changes
+>> v1 => v2:
+>> 	- New patch
+>> ---
+>>   drivers/mfd/rohm-bd96801.c | 291 ++++++++++++++++++++++++++++++++-----
+>>   1 file changed, 253 insertions(+), 38 deletions(-)
+>>
+>> diff --git a/drivers/mfd/rohm-bd96801.c b/drivers/mfd/rohm-bd96801.c
+>> index 1c2a9591be7b..b7f073318873 100644
+>> --- a/drivers/mfd/rohm-bd96801.c
+>> +++ b/drivers/mfd/rohm-bd96801.c
+>> @@ -5,13 +5,9 @@
+>>    * ROHM BD96801 PMIC driver
+>>    *
+>>    * This version of the "BD86801 scalable PMIC"'s driver supports only very
+>> - * basic set of the PMIC features. Most notably, there is no support for
+>> - * the ERRB interrupt and the configurations which should be done when the
+>> - * PMIC is in STBY mode.
+>> - *
+>> - * Supporting the ERRB interrupt would require dropping the regmap-IRQ
+>> - * usage or working around (or accepting a presense of) a naming conflict
+>> - * in debugFS IRQs.
+> 
+> Why bother adding all that blurb in the first place?
+
+Because, I assume there are users who would like to have the ERRB in 
+use. The main purpose of this comment is that any such users could
+	a) see this version does not support ERRB.
+	b) can find the original RFC with ERRB supportn and a workaround.
+	c) know why this version does not work with ERRB and thus fix this
+
+It seems this ERRB support may be missing from upstream for a while, 
+hence I think having this note is worthy until (if) this ERRB patch 
+lands in upstream.
+
+> 
+>> + * basic set of the PMIC features.
+>> + * Most notably, there is no support for the configurations which should
+>> + * be done when the PMIC is in STBY mode.
+>>    *
+>>    * Being able to reliably do the configurations like changing the
+>>    * regulator safety limits (like limits for the over/under -voltages, over
+>> @@ -23,16 +19,14 @@
+>>    * be the need to configure these safety limits. Hence it's not simple to
+>>    * come up with a generic solution.
+>>    *
+>> - * Users who require the ERRB handling and STBY state configurations can
+>> - * have a look at the original RFC:
+>> + * Users who require the STBY state configurations can  have a look at the
+>> + * original RFC:
+>>    * https://lore.kernel.org/all/cover.1712920132.git.mazziesaccount@gmail.com/
+>> - * which implements a workaround to debugFS naming conflict and some of
+>> - * the safety limit configurations - but leaves the state change handling
+>> - * and synchronization to be implemented.
+>> + * which implements some of the safety limit configurations - but leaves the
+>> + * state change handling and synchronization to be implemented.
+>>    *
+>>    * It would be great to hear (and receive a patch!) if you implement the
+>> - * STBY configuration support or a proper fix to the debugFS naming
+>> - * conflict in your downstream driver ;)
+>> + * STBY configuration support or a proper fix in your downstream driver ;)
+>>    */
+
+...
+
+>>   static int bd96801_i2c_probe(struct i2c_client *i2c)
+>>   {
+>> -	struct regmap_irq_chip_data *intb_irq_data;
+>> +	int i, ret, intb_irq, errb_irq, num_regu_irqs, num_intb, num_errb = 0;
+>> +	int wdg_irq_no;
+>> +	struct regmap_irq_chip_data *intb_irq_data, *errb_irq_data;
+>> +	struct irq_domain *intb_domain, *errb_domain;
+>> +	struct resource wdg_irq;
+>>   	const struct fwnode_handle *fwnode;
+>> -	struct irq_domain *intb_domain;
+>> +	struct resource *regulator_res;
+>>   	struct regmap *regmap;
+>> -	int ret, intb_irq;
+>>   
+>>   	fwnode = dev_fwnode(&i2c->dev);
+>>   	if (!fwnode)
+>> @@ -212,10 +364,28 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
+>>   	if (intb_irq < 0)
+>>   		return dev_err_probe(&i2c->dev, intb_irq, "INTB IRQ not configured\n");
+>>   
+>> +	num_intb =  ARRAY_SIZE(regulator_intb_irqs);
+>> +
+>> +	/* ERRB may be omitted if processor is powered by the PMIC */
+>> +	errb_irq = fwnode_irq_get_byname(fwnode, "errb");
+>> +	if (errb_irq < 0)
+>> +		errb_irq = 0;
+>> +
+>> +	if (errb_irq)
+>> +		num_errb = ARRAY_SIZE(regulator_errb_irqs);
+>> +
+>> +	num_regu_irqs = num_intb + num_errb;
+>> +
+>> +	regulator_res = kcalloc(num_regu_irqs, sizeof(*regulator_res), GFP_KERNEL);
+> 
+> Why not devm_* and omit the kfree()?
+
+I used kcalloc() because this memory is only temporarily needed. It is 
+not needed after devm_mfd_add_devices() returns.
+
+Sure the devm_* would simplify the error paths... Thanks!
+
+> 
+>> +	if (!regulator_res)
+>> +		return -ENOMEM;
+>> +
+>>   	regmap = devm_regmap_init_i2c(i2c, &bd96801_regmap_config);
+>> -	if (IS_ERR(regmap))
+>> -		return dev_err_probe(&i2c->dev, PTR_ERR(regmap),
+>> +	if (IS_ERR(regmap)) {
+>> +		ret = dev_err_probe(&i2c->dev, PTR_ERR(regmap),
+>>   				    "Regmap initialization failed\n");
+>> +		goto free_out;
+>> +	}
+>>   
+>>   	ret = regmap_write(regmap, BD96801_LOCK_REG, BD96801_UNLOCK);
+>>   	if (ret)
+>> @@ -224,18 +394,63 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
+>>   	ret = devm_regmap_add_irq_chip(&i2c->dev, regmap, intb_irq,
+>>   				       IRQF_ONESHOT, 0, &bd96801_irq_chip_intb,
+>>   				       &intb_irq_data);
+>> -	if (ret)
+>> -		return dev_err_probe(&i2c->dev, ret, "Failed to add INTB IRQ chip\n");
+>> +	if (ret) {
+>> +		dev_err_probe(&i2c->dev, ret, "Failed to add INTB irq_chip\n");
+>> +		goto free_out;
+>> +	}
+>>   
+>>   	intb_domain = regmap_irq_get_domain(intb_irq_data);
+>>   
+>> -	ret = devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO,
+>> -				   bd96801_mfd_cells,
+>> -				   ARRAY_SIZE(bd96801_mfd_cells), NULL, 0,
+>> -				   intb_domain);
+>> -
+>> +	/*
+>> +	 * MFD core code is built to handle only one IRQ domain. BD96801
+>> +	 * has two domains so we do IRQ mapping here and provide the
+>> +	 * already mapped IRQ numbers to sub-devices.
+>> +	 */
+>> +	for (i = 0; i < num_intb; i++) {
+>> +		struct resource *res = &regulator_res[i];
+>> +
+>> +		*res = regulator_intb_irqs[i];
+>> +		res->start = res->end = irq_create_mapping(intb_domain,
+>> +							    res->start);
+>> +	}
+>> +
+>> +	wdg_irq_no = irq_create_mapping(intb_domain, BD96801_WDT_ERR_STAT);
+>> +	wdg_irq = DEFINE_RES_IRQ_NAMED(wdg_irq_no, "bd96801-wdg");
+>> +	bd96801_mfd_cells[WDG_CELL].resources = &wdg_irq;
+>> +	bd96801_mfd_cells[WDG_CELL].num_resources = 1;
+>> +
+>> +	if (num_errb) {
+> 
+> 	if (!num_errb)
+> 		goto skip_errb;
+
+Ok, can do.
+
+> 
+>> +		ret = devm_regmap_add_irq_chip(&i2c->dev, regmap, errb_irq,
+>> +					       IRQF_ONESHOT, 0,
+>> +					       &bd96801_irq_chip_errb,
+>> +					       &errb_irq_data);
+>> +		if (ret) {
+>> +			dev_err_probe(&i2c->dev, ret,
+>> +				      "Failed to add ERRB (%d) irq_chip\n",
+>> +				      errb_irq);
+>> +			goto free_out;
+>> +		}
+>> +		errb_domain = regmap_irq_get_domain(errb_irq_data);
+>> +
+>> +		for (i = 0; i < num_errb; i++) {
+>> +			struct resource *res = &regulator_res[num_intb + i];
+>> +
+>> +			*res = regulator_errb_irqs[i];
+>> +			res->start = res->end = irq_create_mapping(errb_domain,
+>> +								   res->start);
+>> +		}
+>> +	}
+> 
+> skip_errb:
+
+...
+
+Thanks for comments Lee. Reworking this will have to wait for the 
+irqdomain name suffix, which I will continue after Hervé has done his 
+part of the irqdomain changes. I will omit this patch from the next 
+re-spin of the series.
+
+Yours,
+	-- Matti
+
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
 
 
