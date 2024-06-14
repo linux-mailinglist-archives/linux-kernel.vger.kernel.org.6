@@ -1,123 +1,164 @@
-Return-Path: <linux-kernel+bounces-214182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D66129080A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:31:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06A9B9080A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BC8D28433F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:31:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B038284386
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129BB1822D7;
-	Fri, 14 Jun 2024 01:30:54 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id ABDB21A28C
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97F7158D8D;
+	Fri, 14 Jun 2024 01:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V856VLXp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586B42F44
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718328653; cv=none; b=KrLfPfvvw0I5pVUJ9ugIwvUder4RZdEqqfRdw7qvXPbEEHM4KwOHwJnmnEKXosB4K+wM5P88SFkA/6BPnonDqT0AcXSl2CqARw2vQ5mSPbDeIP23xshqreD95Jqb49zceaLdZkZ1DoxvY4f+RnsMq50oeBX/8e+bSMCvalpBQvo=
+	t=1718328779; cv=none; b=q38y+l2BgolFL8y2pKQD6O+K9f4r390Cge6hWCWRalwzGUmKfKaLDuoGKSW+Gz/RCeLd76wqcWqWcy+yofizk+raeMOCPnHa6Lmxwn05uRugiFWLY+lMA4MrV18iuXS3A4HxC6zcKGwoFFqHmtNF6Lct7jF8vJH2I1x5M4Gk3H4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718328653; c=relaxed/simple;
-	bh=NHfuDosNeZjSwPeDyy3cQ2MkLsMtVZXIVIVqodb7G6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XRGka9hx6IjHxiCzLrasqW5GsUWKkLmIiSbLVUKI7KD7fu0TCc+IJsM1zjF7khNPsyfEZDJrbIIaYNbAO8YBd61GuzAFGvZLnvw152xr7FLFZUmsZOJMusE3gMvAS/Wojkq+J7y6XdfrEHoEIgv9e41b+QNOGG6QMLzNDw3FKW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 282581 invoked by uid 1000); 13 Jun 2024 21:30:43 -0400
-Date: Thu, 13 Jun 2024 21:30:43 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: syzbot <syzbot+1b2abad17596ad03dcff@syzkaller.appspotmail.com>,
-  syzbot <syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com>,
-  johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org,
-  linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-  luiz.dentz@gmail.com, marcel@holtmann.org, syzkaller-bugs@googlegroups.com
-Subject: [PATCH] USB: class: cdc-wdm: Fix CPU lockup caused by excessive log
- messages
-Message-ID: <29855215-52f5-4385-b058-91f42c2bee18@rowland.harvard.edu>
+	s=arc-20240116; t=1718328779; c=relaxed/simple;
+	bh=Fq67c7NLEOa5qBfZ6f3hPMTOPg+FlCpN87WN/bAjhW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UCJiVS4eV0MvLIzxyCsM1LTfgY9Qo0Y+uDKhiaeQgRVGdcPcvA9Ji1tUQJzWeTQJemv7gK0HTClrr9r9RK9oTwiVtEbPWt259BrLS68QSDmxhQYpFTS3Hphr6JM+62hPC6zXcYTRtfTDot7TvVltS6/MdOL+rthB5xiVyclwJg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V856VLXp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718328776;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MomHJJ0WTXAcFGOMzH8XSlE6O618dhh1qz/zUs8NtfM=;
+	b=V856VLXpXVANJf3xliZ4YJCqlfL7zizNX7kuP0sH8uNi1cxgCY5ZVLPIJ5DqoLVppeApSJ
+	VGqpUVzhbKYQiHQF8pe2dc8Ess8YjRD7WLwHsJlYjysRogsORxCFCC/W9+QxKfYK1aYmtZ
+	+8grIZx0V9wlKsoROf3912J5BQdFyXA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-355-bUZTF0aLM8u8t2Wkb7qMSw-1; Thu,
+ 13 Jun 2024 21:32:50 -0400
+X-MC-Unique: bUZTF0aLM8u8t2Wkb7qMSw-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3A320195608C;
+	Fri, 14 Jun 2024 01:32:48 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.37])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2E6FC3000219;
+	Fri, 14 Jun 2024 01:32:45 +0000 (UTC)
+Date: Fri, 14 Jun 2024 09:32:41 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
+	"zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Lorenzo Stoakes <lstoakes@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	hailong liu <hailong.liu@oppo.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	steve.kang@unisoc.com
+Subject: Re: [Resend PATCHv4 1/1] mm: fix incorrect vbq reference in
+ purge_fragmented_block
+Message-ID: <ZmuduRrf3hLXWBkT@MiWiFi-R3L-srv>
+References: <20240607023116.1720640-1-zhaoyang.huang@unisoc.com>
+ <CAGWkznEODMbDngM3toQFo-bgkezEpmXf_qE=SpuYcqsjEJk1DQ@mail.gmail.com>
+ <CAGWkznE-HcYBia2HDcHt6trM9oeJ2x6KdyFzR3Jd_-L5HyPxSA@mail.gmail.com>
+ <ZmiUgPDjzI32Cqr9@pc636>
+ <CAGWkznGnaV8Tz0XrgaVWEVG0ug7dp3w23ygKKmq8SPu_AMBhoA@mail.gmail.com>
+ <ZmmGHhUDk5PqSHPB@pc636>
+ <ZmqwvtZQwYLNYf+V@MiWiFi-R3L-srv>
+ <ZmrXwABpPPoK0bIp@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZmrXwABpPPoK0bIp@pc636>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-The syzbot fuzzer found that the interrupt-URB completion callback in
-the cdc-wdm driver was taking too long, and the driver's immediate
-resubmission of interrupt URBs with -EPROTO status combined with the
-dummy-hcd emulation to cause a CPU lockup:
+On 06/13/24 at 01:28pm, Uladzislau Rezki wrote:
+> On Thu, Jun 13, 2024 at 04:41:34PM +0800, Baoquan He wrote:
+> > On 06/12/24 at 01:27pm, Uladzislau Rezki wrote:
+> > > On Wed, Jun 12, 2024 at 10:00:14AM +0800, Zhaoyang Huang wrote:
+> > > > On Wed, Jun 12, 2024 at 2:16 AM Uladzislau Rezki <urezki@gmail.com> wrote:
+> > > > >
+> > > > > >
+> > > > > > Sorry to bother you again. Are there any other comments or new patch
+> > > > > > on this which block some test cases of ANDROID that only accept ACKed
+> > > > > > one on its tree.
+> > > > > >
+> > > > > I have just returned from vacation. Give me some time to review your
+> > > > > patch. Meanwhile, do you have a reproducer? So i would like to see how
+> > > > > i can trigger an issue that is in question.
+> > > > This bug arises from an system wide android test which has been
+> > > > reported by many vendors. Keep mount/unmount an erofs partition is
+> > > > supposed to be a simple reproducer. IMO, the logic defect is obvious
+> > > > enough to be found by code review.
+> > > >
+> > > Baoquan, any objection about this v4?
+> > > 
+> > > Your proposal about inserting a new vmap-block based on it belongs
+> > > to, i.e. not per-this-cpu, should fix an issue. The problem is that
+> > > such way does __not__ pre-load a current CPU what is not good.
+> > 
+> > With my understand, when we start handling to insert vb to vbq->xa and
+> > vbq->free, the vmap_area allocation has been done, it doesn't impact the
+> > CPU preloading when adding it into which CPU's vbq->free, does it? 
+> > 
+> > Not sure if I miss anything about the CPU preloading.
+> > 
+> Like explained below in this email-thread:
+> 
+> vb_alloc() inserts a new block _not_ on this CPU. This CPU tries to
+> allocate one more time and its free_list is empty(because on a prev.
+> step a block has been inserted into another CPU-block-queue), thus
+> it allocates a new block one more time and which is inserted most
+> likely on a next zone/CPU. And so on.
 
+Thanks for detailed explanation, got it now.
 
-cdc_wdm 1-1:1.0: nonzero urb status received: -71
-cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-watchdog: BUG: soft lockup - CPU#0 stuck for 26s! [syz-executor782:6625]
-CPU#0 Utilization every 4s during lockup:
-	#1:  98% system,	  0% softirq,	  3% hardirq,	  0% idle
-	#2:  98% system,	  0% softirq,	  3% hardirq,	  0% idle
-	#3:  98% system,	  0% softirq,	  3% hardirq,	  0% idle
-	#4:  98% system,	  0% softirq,	  3% hardirq,	  0% idle
-	#5:  98% system,	  1% softirq,	  3% hardirq,	  0% idle
-Modules linked in:
-irq event stamp: 73096
-hardirqs last  enabled at (73095): [<ffff80008037bc00>] console_emit_next_record kernel/printk/printk.c:2935 [inline]
-hardirqs last  enabled at (73095): [<ffff80008037bc00>] console_flush_all+0x650/0xb74 kernel/printk/printk.c:2994
-hardirqs last disabled at (73096): [<ffff80008af10b00>] __el1_irq arch/arm64/kernel/entry-common.c:533 [inline]
-hardirqs last disabled at (73096): [<ffff80008af10b00>] el1_interrupt+0x24/0x68 arch/arm64/kernel/entry-common.c:551
-softirqs last  enabled at (73048): [<ffff8000801ea530>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (73048): [<ffff8000801ea530>] handle_softirqs+0xa60/0xc34 kernel/softirq.c:582
-softirqs last disabled at (73043): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
-CPU: 0 PID: 6625 Comm: syz-executor782 Tainted: G        W          6.10.0-rc2-syzkaller-g8867bbd4a056 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+It's a pity we can't unify the xa and the list into one vbq structure
+based on one principal.
 
+> 
+> See:
+> 
+> <snip vb_alloc>
+> ...
+>         rcu_read_lock();
+> 	vbq = raw_cpu_ptr(&vmap_block_queue); <- Here it is correctly accessing this CPU 
+> 	list_for_each_entry_rcu(vb, &vbq->free, free_list) {
+> 		unsigned long pages_off;
+> ...
+> <snip vb_alloc>
+> 
+> <snip new_vmap_block>
+> ...
+>        vbq = addr_to_vbq(va->va_start); <- Here we insert based on hashing, i.e. not to this CPU-block-queue
+>        spin_lock(&vbq->lock);
+>        list_add_tail_rcu(&vb->free_list, &vbq->free);
+>        spin_unlock(&vbq->lock);
+> ...
+> <snip new_vmap_block>
+> 
+> Thanks!
+> 
+> --
+> Uladzislau Rezki
+> 
 
-Testing showed that the problem did not occur if the two error
-messages -- the first two lines above -- were removed; apparently adding
-material to the kernel log takes a surprisingly large amount of time.
-
-In any case, the best approach for preventing these lockups and to
-avoid spamming the log with thousands of error messages per second is
-to ratelimit the two dev_err() calls.  Therefore we replace them with
-dev_err_ratelimited().
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Suggested-by: Greg KH <gregkh@linuxfoundation.org>
-Reported-and-tested-by: syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-usb/00000000000073d54b061a6a1c65@google.com/
-Reported-and-tested-by: syzbot+1b2abad17596ad03dcff@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/linux-usb/000000000000f45085061aa9b37e@google.com/
-Fixes: 9908a32e94de ("USB: remove err() macro from usb class drivers")
-Link: https://lore.kernel.org/linux-usb/40dfa45b-5f21-4eef-a8c1-51a2f320e267@rowland.harvard.edu/
-Cc: stable@vger.kernel.org
-
----
-
- drivers/usb/class/cdc-wdm.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-Index: usb-devel/drivers/usb/class/cdc-wdm.c
-===================================================================
---- usb-devel.orig/drivers/usb/class/cdc-wdm.c
-+++ usb-devel/drivers/usb/class/cdc-wdm.c
-@@ -266,14 +266,14 @@ static void wdm_int_callback(struct urb
- 			dev_err(&desc->intf->dev, "Stall on int endpoint\n");
- 			goto sw; /* halt is cleared in work */
- 		default:
--			dev_err(&desc->intf->dev,
-+			dev_err_ratelimited(&desc->intf->dev,
- 				"nonzero urb status received: %d\n", status);
- 			break;
- 		}
- 	}
- 
- 	if (urb->actual_length < sizeof(struct usb_cdc_notification)) {
--		dev_err(&desc->intf->dev, "wdm_int_callback - %d bytes\n",
-+		dev_err_ratelimited(&desc->intf->dev, "wdm_int_callback - %d bytes\n",
- 			urb->actual_length);
- 		goto exit;
- 	}
 
