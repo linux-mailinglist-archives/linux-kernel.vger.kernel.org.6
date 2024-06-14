@@ -1,122 +1,97 @@
-Return-Path: <linux-kernel+bounces-214569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F5F908690
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:40:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 907FD908678
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43ABD1C254D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:40:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45CA31F2473E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067FD19007E;
-	Fri, 14 Jun 2024 08:40:26 +0000 (UTC)
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777A71836DE;
-	Fri, 14 Jun 2024 08:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7DD190481;
+	Fri, 14 Jun 2024 08:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="wqmcqBgR"
+Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF0F19007F;
+	Fri, 14 Jun 2024 08:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718354425; cv=none; b=O8+GAzonR097uK+BZ8saqzmKJ4GURYZ6IqfWpWHursY0sEA59pmXVimVsyPEVLOl+dtxIP51mRpWU7vWgsCPeVy5MPpZmkNPag7E8kNn4EVfB3CQXB31cLgXQHxoMgiQoyliDXtdTSBW/PDiApwsC1K96KC7Ojk70j8pid76m44=
+	t=1718354291; cv=none; b=j3isAmLD90vIo6rzpfCPL9+kTX0tZAf7RS7K1R0RH0B+B3/IyFue+O0Lv3faqjhiQhdA5M6CdAMrnV8Q3p97f+IkZrD40DizL0DjpTNwl+aBRNxuVpcNrdJulUjMbTlrSMwi7Op1/DI+agm3YIiqQ1ZHMjZj8yZfRONerFjEBMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718354425; c=relaxed/simple;
-	bh=fUz6PrtFBHmdSanceP4rEnElFSeTVqazvmJwnBn6bg8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OxWcqTeG85nviXwhRoja5wS+TJUgYc1lfV+t+08vup9zBJywIpBNW5uw20ZRyUVXs+xNo/kEVNjU5OmbnsZ7C7li22tPRi7GXdrIAEK4BQFEBRzXwiKOiWE0M13TANjlB93E3BYNekp3zFJMQ0MEEdnQsgyPAtTKgKNlc8lO/q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
-X-QQ-mid: bizesmtpsz10t1718354248tjm52n
-X-QQ-Originating-IP: qslyn0oMXcpOJEcFPvUvJm0egT/cIEGM1bOAZQB2Bz0=
-Received: from [192.168.3.231] ( [116.128.244.171])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 14 Jun 2024 16:37:25 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 8925404822079021439
-Message-ID: <93D6D58053EB522F+de1c8896-65e1-442d-99f6-c5b222c0a816@chenxiaosong.com>
-Date: Fri, 14 Jun 2024 16:37:24 +0800
+	s=arc-20240116; t=1718354291; c=relaxed/simple;
+	bh=6QqwUINZwrYIdITWIBtpBk2qJO2319v2hxiHhZiXk5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qUlQ2kRc0CLYvkA2MXgJeqkoo5Xb3NbHPhbmZ5SM0ue0wmnEvSdfx1dkOY4Of45KixTh9FynvDY92xpxR4fdZ39a9LkwyU+5awnZKNNv9O/UNhK5rjT04uyYxHlSkvaB5JqH9qcy6ifGSfBxe1CsCz87YfY2tGgSLID+oUT0sLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=wqmcqBgR; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 23DBC14C1E1;
+	Fri, 14 Jun 2024 10:37:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1718354280;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dzytT4OTAPYYW6m/eVOiV+9/isR+EfC8guGdMV3QHtQ=;
+	b=wqmcqBgRPTtVLHA9EsnvT3Dc+kYnUrS17ArNJuQh9LwEh7GaogVQlE5qChrkhKmgc0FGzi
+	Jy0vOuO5RCrQ+pZzm/G7ji9TYvKvQxylvKWjD5HZsKF5w1JD0oALKspX7Xvd/4kR3cjL4F
+	cXF8SpBXcrBCSGG1Lqyafu7TS82pskwlxJU9aJQ8mbIxOYInXutcNhfSVTG3fXU3ybY/nc
+	BwJNgWrxJukQ9x/ExTpYO7ZMnqDTEToClvCyi1YyPFo/wHgIwnxw1p/RdEAtuaQ+r8hE79
+	+/GpY56BJBhO28XBndA2QAsvNVWGMNaN0VdvEqWJFlj0HBB7fkj1mJRbU6++Vw==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id b9898663;
+	Fri, 14 Jun 2024 08:37:50 +0000 (UTC)
+Date: Fri, 14 Jun 2024 17:37:35 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 5.10 000/317] 5.10.219-rc1 review
+Message-ID: <ZmwBTwSgfoQSlOGG@codewreck.org>
+References: <20240613113247.525431100@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Question about pNFS documentation
-To: Chuck Lever III <chuck.lever@oracle.com>
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>,
- Anna Schumaker <anna@kernel.org>, Benjamin Coddington <bcodding@redhat.com>,
- Olga Kornievskaia <kolga@netapp.com>, Josef Bacik <josef@toxicpanda.com>,
- Jeff Layton <jlayton@kernel.org>,
- Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "liuzhengyuan@kylinos.cn" <liuzhengyuan@kylinos.cn>,
- "huhai@kylinos.cn" <huhai@kylinos.cn>,
- "chenxiaosong@kylinos.cn" <chenxiaosong@kylinos.cn>
-References: <BA2DED4720A37AFC+88e58d9e-6117-476d-8e06-1d1a62037d6d@chenxiaosong.com>
- <08BB98A6-FA14-4551-B977-8BC4029DB0E1@oracle.com>
-Content-Language: en-US
-From: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
-In-Reply-To: <08BB98A6-FA14-4551-B977-8BC4029DB0E1@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240613113247.525431100@linuxfoundation.org>
 
-Thanks for your reply. By the way, are there any plans for the Linux NFS 
-server to implement the file, flexfile and object layout?
+Greg Kroah-Hartman wrote on Thu, Jun 13, 2024 at 01:30:18PM +0200:
+> This is the start of the stable review cycle for the 5.10.219 release.
+> There are 317 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 15 Jun 2024 11:31:50 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.219-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
 
-Thanks,
-ChenXiaoSong.
+(There will likely be a rc2 for riscv/ppc, but..)
 
-在 2024/6/13 23:31, Chuck Lever III 写道:
-> Hi-
-> 
->> On Jun 13, 2024, at 4:35 AM, ChenXiaoSong <chenxiaosong@chenxiaosong.com> wrote:
->>
->> Greetings,
->>
->> I am very interested in Parallel NFS (pNFS) and want to setup a testing and debugging environment for pNFS. I found some pNFS documentation [1] [2] [3], but I still don't know how to setup Linux environment about file layout, block layout, object layout, and flexible file layout. Some documentation like spNFS(simple pNFS) is unmaintained and was dropped. Can you recommend some other detailed documentation(how to use pNFS in Linux)?
->>
->> Thanks,
->> ChenXiaoSong.
->>
->> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/admin-guide/nfs/pnfs-block-server.rst
->>
->> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/admin-guide/nfs/pnfs-scsi-server.rst
->>
->> [3] https://linux-nfs.org/wiki/index.php/PNFS_Development
-> 
-> I'm not aware of recent documentation other than what you
-> have listed here.
-> 
-> Note that the Linux NFS client implements the file, block,
-> and flexfile layout types, but the Linux NFS server
-> implements only the pNFS block layout type.
-> 
-> I've been building out testing that we can run for each
-> release of NFSD that will exercise pNFS block layout
-> support in the Linux NFS server and client, since pNFS
-> block is the common denominator between our client and
-> server.
-> 
-> Look at the 9 commits at the tip of [1]. These contain
-> changes to kdevops that add the ability for it to set up
-> an iSCSI target and enable pNFS on its local NFS server.
-> If you can read Ansible scripts, these might help you
-> form recipes for you to set up your own environment
-> using the Linux NFS implementation and its iSCSI target
-> and initiator.
-> 
-> Admin documentation (outside of kdevops) is on the to-do
-> list, but hasn't been started.
-> 
-> 
-> --
-> Chuck Lever
-> 
-> [1] https://github.com/chucklever/kdevops/tree/pnfs-block-testing
+Tested 853b71b570fb ("Linux 5.10.219-rc1") on:
+- arm i.MX6ULL (Armadillo 640)
+- arm64 i.MX8MP (Armadillo G4)
+
+No obvious regression in dmesg or basic tests:
+Tested-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+
+--
+Dominique Martinet | Asmadeus
 
