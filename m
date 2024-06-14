@@ -1,219 +1,178 @@
-Return-Path: <linux-kernel+bounces-215202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E21908FBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:11:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68FF8908FB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C004B266B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:10:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 900121C210E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC9519B3E6;
-	Fri, 14 Jun 2024 16:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A716171082;
+	Fri, 14 Jun 2024 16:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GFfkQLxx"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2064.outbound.protection.outlook.com [40.107.94.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GCAnvxS1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9310F195F2D
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 16:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718381338; cv=fail; b=sygD9q2Y+sYxWAzVCGhNs6qRG7gfXyzcZXKmdPf4qmJ55tKUfyN8LecE5Msc6UR6W//klDcM+FrmjcdFEtqg+kMFdIgFgM7yJ14KGxL5L+d9zhBQiGknhg8eVbc8CEk6rhSS3uLQfv2zfQYxG+2uAzI5fSunbGp6SQ3ntIuVkdY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718381338; c=relaxed/simple;
-	bh=MNMouv0Auf9fsOaoWO5hwwUkAJa0JmanDq99qQ3Du3s=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ejBizA+B/ICs19Q3PnE/9c1JccBdzfG4K6KljRaU4wYgWjAigeTvwDsWIez341QjWXnOHCZ/EayUEqOGbCMfsQUfYLmL7RxgNX0e4ppb+uT5l2xNGxaewHaECNuR+dSlQvWCk6bWoPLlhn3m6lK3MwkK77ZJAc3F8gHzvSJ1nbI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GFfkQLxx; arc=fail smtp.client-ip=40.107.94.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Zkvl1cqhnyES5mJ4vV3UaYLsgl9LoicRfMElySEkIQfJp/ZuKmnD5oiVLbK4Joh8g5+JAPWKiTTAJEV5Wsq1coM/JNL+9Ke0RYFBdQANBrF+uSNWVB5bdtIbvAAlVKYXjNoEpLCro7TDYZm+iDO1T0xxnGHODlcs16MdxhAiVPDA3JpzE4uylBNsEkC2HA+lPXW6E06+JljEHBGG4wbhuBzZ22HORU+uM1Zn33wAPxZCqFI4TBQkaEuWgeuy7jGLG7E7PAB5ru4vpfOTpN7qt4hx/CKJq/9Eg5l17PysV7V76jtNyEh2LwsyIS7xrg/W5Mn0dAHapu2Oj/4lBVygqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sZwkv++j/6MR+qBMBo6S5oJRGzKMdLbU0zWWY77bwKk=;
- b=LwmVNbYqNtioI6QNL2xUyl9MYxJGi9Rq45+1USIpe7YwsWCRFm6PeBfgqzoOK7OUuVj2QvBxzvWS9+Nga8T9zX6AgZgC70J2q1+LR/ThYhgyROQVk+xaOs5bk6rLJjclEg6qTB0DQ2ISuBQ7Gwl9VSTFVnU9TA29MFEDT15aSDv87lrZ/WBKCeY4TFJlyH/q+gHZJmZ+MH8F/VsTp2NTzOJLqmZeXV6UsOZK1rq6fD/j15jSsyFDrNpyOn8GFfqX1VoxHFVdFe+4hFvGSXYZxSGKUKGtcARnLjJDUt0wFb73FBg/G/hUFx/UXKfLX4OFmFdwHXIias90umTjeMZK/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sZwkv++j/6MR+qBMBo6S5oJRGzKMdLbU0zWWY77bwKk=;
- b=GFfkQLxxi10/fXZ4wMcj84t87mB2saXsTUjkU6qmaC83SYNf7wxvINEsvFQi0qx1S6kbRvgxOKwOWE1rEMh4kuAyNO5aJPzb4B8jlopXc56uNCj2RCGKa2NDloQfDpwDDcV+kYPQ4bcREMfM5Dk2LuY50kxPTUi0zYlIXDEp6vE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5732.namprd12.prod.outlook.com (2603:10b6:208:387::17)
- by CY5PR12MB6430.namprd12.prod.outlook.com (2603:10b6:930:3a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.26; Fri, 14 Jun
- 2024 16:08:53 +0000
-Received: from BL1PR12MB5732.namprd12.prod.outlook.com
- ([fe80::bf0:d462:345b:dc52]) by BL1PR12MB5732.namprd12.prod.outlook.com
- ([fe80::bf0:d462:345b:dc52%6]) with mapi id 15.20.7677.024; Fri, 14 Jun 2024
- 16:08:53 +0000
-Message-ID: <a5326e77-bb19-a92f-6beb-7d2c64866891@amd.com>
-Date: Fri, 14 Jun 2024 11:08:53 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] virt/coco/sev-guest: Don't free decrypted memory
-Content-Language: en-US
-To: Li RongQing <lirongqing@baidu.com>, dan.j.williams@intel.com,
- bp@alien8.de, linux-kernel@vger.kernel.org
-References: <20240614051036.41983-1-lirongqing@baidu.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <20240614051036.41983-1-lirongqing@baidu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN7PR04CA0176.namprd04.prod.outlook.com
- (2603:10b6:806:125::31) To BL1PR12MB5732.namprd12.prod.outlook.com
- (2603:10b6:208:387::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF9BD512;
+	Fri, 14 Jun 2024 16:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718381384; cv=none; b=J5HTkjUCwn58L5CSSujvQDNZSbPqiWlFJ3acJvla1g/z2qOpsKdaUymuHj9vYvnzUvtA+lfZW877fkdWr249z79B9uI/OwqqWW2x3seK8gaFgcpX3ax77TTIq7uowVCLGNPm9lfkOr/nk9FAXNnmLUjlLh63mWlLSe/7BF1jXtg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718381384; c=relaxed/simple;
+	bh=i6G4moCMnqhzFyyBB6tQeSxoa8cndGODhPD7vUB4a4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Pnd5xVdikUb8LKcJ6vBhcP8zkTuaxUmaDe5m4mY8g8ZEl9GrNAN8NTEymyqm6yWeT8Anshm3ruMK/1mTWXmOlw6CEM5CcBoDg+CJ5nDemcnfpJ2IS64fbkVysO2r//rTKnZptqFfGMKnkl6NrdRg6Ea6+lbzO5uihwvx2xg1PCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GCAnvxS1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD8B3C2BD10;
+	Fri, 14 Jun 2024 16:09:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718381384;
+	bh=i6G4moCMnqhzFyyBB6tQeSxoa8cndGODhPD7vUB4a4Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=GCAnvxS16+wFmkgOlsKpHUFr0GxQY+1IH7051TFHP+y8chtyCdRQ6URBbZTj4GRMp
+	 TiLUDs+dq0ihSVDDozhG6Q43TtwjOVIZ0kvyDrns5Wh4wO2NXOriUpKZw8WueFBQaG
+	 4m6/3bKGGhWuh51mQxiq/q+y6LazAKFyJC2hLpBMaWTZ/72yB2gMjGG0Jwr12wXzke
+	 Hvw/h18FfHXppTfW4KkX+OWwzY9JaD/mpbjZQutYJt+sd3OVFuS7QnLwlQ3g+bsA+M
+	 vghRkD9ubmqFr7wc1Onm7x6r+NpUCEIzRMXo55H2YceUqHnuNWuo4scooIiAdCfyfY
+	 xuTd8/yy6slYw==
+Date: Fri, 14 Jun 2024 11:09:42 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org, maz@kernel.org, tglx@linutronix.de,
+	anna-maria@linutronix.de, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com,
+	rdunlap@infradead.org, vidyas@nvidia.com,
+	ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com,
+	kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp,
+	andrew@lunn.ch, gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org,
+	rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org,
+	lorenzo.pieralisi@arm.com, jgg@mellanox.com,
+	ammarfaizi2@gnuweeb.org, robin.murphy@arm.com,
+	lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org,
+	vkoul@kernel.org, okaya@kernel.org, agross@kernel.org,
+	andersson@kernel.org, mark.rutland@arm.com,
+	shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com
+Subject: Re: [PATCH v3 03/24] PCI/MSI: Provide MSI_FLAG_PCI_MSI_MASK_PARENT
+Message-ID: <20240614160942.GA1114672@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5732:EE_|CY5PR12MB6430:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4e385109-db04-4196-daa7-08dc8c8c493a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|366013|376011;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?S3REZ2FFdjRTNE5EYlJlS3NXekRBQ0MrV25wd0hBbko4NnQzRDJpTDNLRmN3?=
- =?utf-8?B?ZnR0bERWU3hPS0UyMnZ6WlJma2VJVFU0Z0ZqcldxWXc1Nk4zbUI4VlFsNVdH?=
- =?utf-8?B?VG5zMnlnNm9XN1FXN25uNy9lQWE4SlY2bjY4S3paMURieS9iN05BaU5VR3Fj?=
- =?utf-8?B?U3ZtNTcyWHp0RlRHTU0xZUVoMFFUWUlaVWZsLzUrQW44WlE0SDg4VEh5RDZ1?=
- =?utf-8?B?QVFmdi9pZEk1Nm9aNnoyWkk1Qm4wSjBld0NMQmpHc1hUZTFlRkt5YmhHNG1K?=
- =?utf-8?B?ZDl2azlRaVAyYlhjblZIK1VrMCtEVW5Fd1hHem5VWXY1NitSVnJGS0VJYzUz?=
- =?utf-8?B?aXFmZUlkSEhsUFRqZys2L2cxZTRkR3pVd2hrVGVDdkJsalBDalZLQWh4eElt?=
- =?utf-8?B?eTdRUWVXV24xNCt6dElxaVN2RW5GbGoxKytiY1JuZjlFRG4vT2l6SGU2Umlt?=
- =?utf-8?B?UExIMUlOQmR6RmtCVWNwY2lpYTF3R2JTbGxJUXlIYllRelR6TDhHQ2F1NUJC?=
- =?utf-8?B?TUlCYWZzYUlMeGM2ZmJpa2hzdzlSL0FDdC8rYWlpaHM5OWd4ZWZyMDR0MWZF?=
- =?utf-8?B?MjZGZmlaR0dOaTVJRStBcFJqdHUzazEwZndEVWRlMm43WHJqL2hWK1hhQmRZ?=
- =?utf-8?B?RnVkQlNuOWhaMFZhRzFraFdxZ2dmd0hHaGV4Q1JKZ01oWldjNGtzSWlwZDlr?=
- =?utf-8?B?QUNqdkhVSUgzaHR6UndVN0xhNndxYzI1MC9USzE0ZklVWHJjMDVKUjRlMFN0?=
- =?utf-8?B?TXY0RmdKNUhjV2IyeXUzU1Z2bmpicE4rQ01lNUUvS2NvRjlMeENZQjIxWVhG?=
- =?utf-8?B?WjZaKzFFVVBFNWZvekNGZVBZUmM2RUVsMGNWYnlQUkNDdGZLRXhLL0czVmRZ?=
- =?utf-8?B?eFMwTk90dmVrNkRqakRpdWNPcUZ1aEhsQzQ4OFdxK3h1eUVGV2h6dENCNDlo?=
- =?utf-8?B?L1lVVXRnZ3I3SXBvQXg0Y3d5Y2RuQ05ONFowWTFSTXdDVG8rblNKRFMvSlEr?=
- =?utf-8?B?WmRGRkMwVXo2MTlyTjRiTW1maUdLL3VMQnpCTHl3T3BsK2NpTzRtTWgvcmFS?=
- =?utf-8?B?RHFBMElTYVVBZm5QMjlmSCt1MFR6SmRUUGVmQjlZc0VmdnlrVCtGTWdiZUpt?=
- =?utf-8?B?TVA1Y0FPQzVqQjE4Tm1uL2xNeG0zZnFZUFFHNGM0WTRBam90ZDRrTG50eUUx?=
- =?utf-8?B?UjF5UnVLNSt4UGtLMlN1QlZEOUczVUk4RFBjRWtKS20rNGJ0cGJ6TG0vWlBp?=
- =?utf-8?B?dU91TXIrb0RwdS9wZFhHMjFYL3c5TTQxL2E3Q1YrbE52T1J4MUx4d3RkK2M4?=
- =?utf-8?B?R01hc2VmdW95cURXQTFGaXVGaGMxMzh2cktqRld3VVRDVTh0UThtMEQ1aU8w?=
- =?utf-8?B?MlhiV2c2T0FaUnNPMXVBWFcxVVhYOER5VDlvTHVKbDBGVzR3TXpKUEl2ZUdx?=
- =?utf-8?B?eXJ2Q3lDZUEyRzNIcUJMRjQ0QXNrajNDc2c1R3VLazJMYU9sbXZxNjA5NnRF?=
- =?utf-8?B?bGNWSWlMSWJLVkRkSGFRUGk0am5zOCtQTWF4Ym4vcldEUkFNR3pyekN2b0di?=
- =?utf-8?B?alpKVWErc1orMldnOVo1SFViUEd5QTdkMG50bFhSaG05TmZ2OFRpRCs0L0g0?=
- =?utf-8?B?OFRFN0c1ZjVCQkxwcTBDSHhMRG5iT0lGK3VNWTQzUVJXNDZYUEh3YmNOcERv?=
- =?utf-8?B?eGNZOC9YZWNpekN5cUpSeGJTR0J4UmRaKzlGQmRqM3dsczhLNlN4N1hIYys3?=
- =?utf-8?Q?pcaeCIYPPJE5iRkIKRtgO/GM9CuOqXt8MkSwZ8e?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5732.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(376011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SHVVUGRKdnZyZ2NKMTIzclJSemRBMWxRN2ZEekxudjRHcTJWeHZGVjg5UjlL?=
- =?utf-8?B?WENycVg1ZGxnSXBMMzlUTXRMejBId2tmTTJnM2Z4dGhnSjYzWWozOFJGK3JI?=
- =?utf-8?B?YlA0N0tpdGE2NTJJRTY1aHN5blVIaGlwM0NuS3JIVmI3S1U5YmI4RzBvQU1M?=
- =?utf-8?B?WWZsY044NWFXQy9WU0JTQVJGbFlPelBzSU9QSDZLN1BFT01RSzNyUTB3NmVD?=
- =?utf-8?B?Ui9vcTlDalRHS3B2eVhrbk9oVTFCYmJBWXdudTFuZ2E5YjFRQlNLbjVyOTRq?=
- =?utf-8?B?aFQvcG9VRDR6S1VEUXgvREk1YkFjQ3NPa2JiMjZsa2hVd2xNclA4MGRxR0lx?=
- =?utf-8?B?ejFxVUZqcy9YQWUvemQ5dTJ0VEQvMStncWsrWFFYRk91Tk5MK2d0aUY4RXJ2?=
- =?utf-8?B?MzIzV1NhM3g3QStmNWlmelNxNDVld0QxbUJrVXZZek1QRENBbjVkdi9pRFJz?=
- =?utf-8?B?RG1HcXA1UW95NjRMbEZzekJYdFdEcnlocmNqdDdVZ095UVp5Wjdxa2ord21s?=
- =?utf-8?B?QUQ0WGhQS0N0Q2J0dml3SXhEa05SbHkzRXdGZldCSzNwODl0TDV1dzhIOW5N?=
- =?utf-8?B?ZitYS0FRU2Urc1BnMVVUL01HSUhzVGdOL3l1QWZjMzNvVnlsdnorOTVoc0p0?=
- =?utf-8?B?SXZXdlNWRldrUE54MHlXRlJlbTBDQ1J3QkkyUlJUT2JqT1JXN0xSS21TVDh3?=
- =?utf-8?B?MXBLdUJmNEFETG5zMXNKSXJTZnhtZW41dllqbzB4QTRnZHRIb1ZkRFNPbE5C?=
- =?utf-8?B?U3RzcHFwVHJOSlhSWUI4dDhBN21BcU5TQ2laRko4ZlhIZ0htcGN6dmFKekRT?=
- =?utf-8?B?cWxwL1B0SUI5SUJjSE5iK0xpUFpHemdhU0Mzd25ETEliTFFPcXdMKzlLUzA4?=
- =?utf-8?B?WkppcXV6cmFYOU9PT0Z4V0RyOW9jdVNEMDBtUXZWR1JKendUZDBFVUFPeEY3?=
- =?utf-8?B?aUpRakZleFR6bzA1b3dWQXBqTUJoM1VWQlV4Rk9jdmtMcTFGZ0NOa3JJSHVi?=
- =?utf-8?B?aHA0YmtZRUR1a3p1bDBWWlJMamR6Z0RSbDd3a1Z3Z1NNQSszT01PdVgyMDIx?=
- =?utf-8?B?VjM1ZWVsOWk4QzMwYTJnbkJXYVFpeHd1dEVLbHdXM3ZCN2RkSlpvYURMUTdv?=
- =?utf-8?B?N0ZGbEJ5TFhnbFRNQVdhaWpaa0I4UFFpRmRpTTloVE5pczk0WXMzeGg0cG5v?=
- =?utf-8?B?YUVVMnIxK2h4TkdHNWczcVlFVW1yTTZUc3VmVVpMUHpURGkxWXVBU3NLb1NS?=
- =?utf-8?B?Y2lRVUJOR3BQOVdWOXlEalRRU0pVYXVQaFUxck9vK3lKRlhyeGhQMnZQRDBR?=
- =?utf-8?B?NjVHWUxoRTZubDJPb2d4c28rR251dUdGNWQwVkl3Y0JGMVZubWtSc2RZdGJ2?=
- =?utf-8?B?aFN1cmFnTWJaNHNHUHdHSk04SUc3TWc5eU1KNlVML29RSDdDWnRMYnRvZ3di?=
- =?utf-8?B?NmwzSDlTcENzVW5qSkNxU0w4OFZrTm9ISDNKSXdNaXZ6d2VoVFIvZmkrQ2tU?=
- =?utf-8?B?anhrR0ZGMWgvVjM4bmJ2ekdObk8xUzR3TDB0dC9qQTNDRXRwc1BxZVFmWExD?=
- =?utf-8?B?NW1objFyWEVUNVNjVHRvRzZKbzROaU9mWXJmSllRR0tXZms1aFU2N1U4VkdG?=
- =?utf-8?B?VXhnQkxWQXNQNjhzK1ZMeENvcHkvTnZoSDA1SDFXTW81cDdNMmwrT1QvbWdv?=
- =?utf-8?B?bXNVem5mR1Mrbi8rbjVaK3NuQ3l6SEI5T0NrbjJPUzZJMUhzaHZGSDNFdGJQ?=
- =?utf-8?B?SEFNck1sNVJuNVltc2twYmpQN3MrbnYzT0hrVklNVTNWbkd0T1N1TVg2L2sv?=
- =?utf-8?B?WHNRYlowbll1aVJZb3k5S2xvcThFSkJxU3pxbkhYbzhjbTBHZTkvU2JGa1Fj?=
- =?utf-8?B?cVV2TklWdXhlRmI0Skw0MUVFeXgwU2FxWEsxRzQ4S2JRYXhXYWVzeC9BZDA5?=
- =?utf-8?B?ODk0ckE1NjFBVktJVjNtZDAzSDkxZUR1UzJ6eUN2U0Z5MTYrY3JkMEY1dGd2?=
- =?utf-8?B?dkwreXZsTXQrWEZSck9JTVhjd0h3UVdpOXZ6SGV1T0FkcExqR1hYMXR1TENk?=
- =?utf-8?B?c0VxWVQxdVcwM1dpWUFqSEtPc2N1K29KRE5MelhPSUhPYjVHN1ErQ3VtQnds?=
- =?utf-8?Q?+3l9CaMPi1em9us2JkB+m3eW2?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e385109-db04-4196-daa7-08dc8c8c493a
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5732.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2024 16:08:53.3116
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2HEugkZgc0yLRw4LkaMRYS5aRuAXlLgeGSMnHG6rN8ezz1lCtHGYlDLM7TN9we1BNX5kbaeaxohuDlGq5WdEHg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6430
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240614102403.13610-4-shivamurthy.shastri@linutronix.de>
 
-On 6/14/24 00:10, Li RongQing wrote:
-> In CoCo VMs, it is possible for the untrusted host to cause
-> set_memory_decrypted() to fail such that an error is returned
-> and the resulting memory is shared. Callers need to take care
+On Fri, Jun 14, 2024 at 12:23:42PM +0200, Shivamurthy Shastri wrote:
+> Most ARM(64) PCI/MSI domains mask and unmask in the parent domain after or
+> before the PCI mask/unmask operation takes place. So there are more than a
+> dozen of the same wrapper implementation all over the place.
 
-Can you explain how it would fail or where in the call path it would fail? 
-Are you referring to the the Page State Change being performed by the host 
-but it returns a failure?
+Is this an opportunity to clean up all these wrappers?  If you could
+mention an example or two here, maybe somebody would be motivated to
+come back and simplify the existing wrappers to take advantage of this
+new flag?
 
-As long as the encryption bit hasn't been cleared in any of the guest 
-pagetables for the page range, then there should not be an issue. When the 
-page is referenced it will generate a #NPF and the host will have to make 
-that page a private page in order for forward progress to be made. But, 
-that page will already have been PVALIDATEd previously, so the resulting 
-#VC for the page no longer being PVALIDATEd will allow the guest to detect 
-the malicious hypervisor and terminate.
-
-If we fail during the __change_page_attr_set_clr() call and we get a mix 
-of pagetable entries that could be a problem, so leaking the pages would 
-be best in that case.
-
-And since the failure reason isn't clear after the call, leaking the pages 
-is probably the safest thing.
-
-Thanks,
-Tom
-
-> to handle these errors to avoid returning decrypted (shared)
-> memory to the page allocator, which could lead to functional
-> or security issues. so don't free decrypted memory
+> Don't make the same mistake with the new per device PCI/MSI domains and
+> provide a new MSI feature flag, which lets the domain implementation
+> enable this sequence in the PCI/MSI code.
 > 
-> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> Signed-off-by: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
+
+I assume you'll merge this series via some other tree, so:
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
 > ---
->   drivers/virt/coco/sev-guest/sev-guest.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
+> v3: new patch to replace the global static key - Marc Zyngier
+> ---
+>  drivers/pci/msi/irqdomain.c | 21 +++++++++++++++++++++
+>  include/linux/msi.h         |  2 ++
+>  2 files changed, 23 insertions(+)
 > 
-> diff --git a/drivers/virt/coco/sev-guest/sev-guest.c b/drivers/virt/coco/sev-guest/sev-guest.c
-> index 654290a8e..799563a 100644
-> --- a/drivers/virt/coco/sev-guest/sev-guest.c
-> +++ b/drivers/virt/coco/sev-guest/sev-guest.c
-> @@ -730,8 +730,7 @@ static void *alloc_shared_pages(struct device *dev, size_t sz)
->   
->   	ret = set_memory_decrypted((unsigned long)page_address(page), npages);
->   	if (ret) {
-> -		dev_err(dev, "failed to mark page shared, ret=%d\n", ret);
-> -		__free_pages(page, get_order(sz));
-> +		dev_err(dev, "failed to mark page shared, leak page, ret=%d\n", ret);
->   		return NULL;
->   	}
->   
+> diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
+> index 03d2dd25790d..112c2ff3035c 100644
+> --- a/drivers/pci/msi/irqdomain.c
+> +++ b/drivers/pci/msi/irqdomain.c
+> @@ -148,17 +148,35 @@ static void pci_device_domain_set_desc(msi_alloc_info_t *arg, struct msi_desc *d
+>  	arg->hwirq = desc->msi_index;
+>  }
+>  
+> +static __always_inline void cond_mask_parent(struct irq_data *data)
+> +{
+> +	struct msi_domain_info *info = data->domain->host_data;
+> +
+> +	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
+> +		irq_chip_mask_parent(data);
+> +}
+> +
+> +static __always_inline void cond_unmask_parent(struct irq_data *data)
+> +{
+> +	struct msi_domain_info *info = data->domain->host_data;
+> +
+> +	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
+> +		irq_chip_unmask_parent(data);
+> +}
+> +
+>  static void pci_irq_mask_msi(struct irq_data *data)
+>  {
+>  	struct msi_desc *desc = irq_data_get_msi_desc(data);
+>  
+>  	pci_msi_mask(desc, BIT(data->irq - desc->irq));
+> +	cond_mask_parent(data);
+>  }
+>  
+>  static void pci_irq_unmask_msi(struct irq_data *data)
+>  {
+>  	struct msi_desc *desc = irq_data_get_msi_desc(data);
+>  
+> +	cond_unmask_parent(data);
+>  	pci_msi_unmask(desc, BIT(data->irq - desc->irq));
+>  }
+>  
+> @@ -170,6 +188,7 @@ static void pci_irq_unmask_msi(struct irq_data *data)
+>  
+>  #define MSI_COMMON_FLAGS	(MSI_FLAG_FREE_MSI_DESCS |	\
+>  				 MSI_FLAG_ACTIVATE_EARLY |	\
+> +				 MSI_FLAG_PCI_MSI_MASK_PARENT |	\
+>  				 MSI_FLAG_DEV_SYSFS |		\
+>  				 MSI_REACTIVATE)
+>  
+> @@ -195,10 +214,12 @@ static const struct msi_domain_template pci_msi_template = {
+>  static void pci_irq_mask_msix(struct irq_data *data)
+>  {
+>  	pci_msix_mask(irq_data_get_msi_desc(data));
+> +	cond_mask_parent(data);
+>  }
+>  
+>  static void pci_irq_unmask_msix(struct irq_data *data)
+>  {
+> +	cond_unmask_parent(data);
+>  	pci_msix_unmask(irq_data_get_msi_desc(data));
+>  }
+>  
+> diff --git a/include/linux/msi.h b/include/linux/msi.h
+> index dc27cf3903d5..04f33e7f6f8b 100644
+> --- a/include/linux/msi.h
+> +++ b/include/linux/msi.h
+> @@ -556,6 +556,8 @@ enum {
+>  	MSI_FLAG_USE_DEV_FWNODE		= (1 << 7),
+>  	/* Set parent->dev into domain->pm_dev on device domain creation */
+>  	MSI_FLAG_PARENT_PM_DEV		= (1 << 8),
+> +	/* Support for parent mask/unmask */
+> +	MSI_FLAG_PCI_MSI_MASK_PARENT	= (1 << 9),
+>  
+>  	/* Mask for the generic functionality */
+>  	MSI_GENERIC_FLAGS_MASK		= GENMASK(15, 0),
+> -- 
+> 2.34.1
+> 
 
