@@ -1,202 +1,174 @@
-Return-Path: <linux-kernel+bounces-214965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8988908CBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:49:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F2A908CB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B3D4B24225
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:49:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 310471C2573E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307572BCF6;
-	Fri, 14 Jun 2024 13:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VLOAr6tD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7951315E8C;
+	Fri, 14 Jun 2024 13:47:56 +0000 (UTC)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE934EED3
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A0E9460;
+	Fri, 14 Jun 2024 13:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718372877; cv=none; b=jXPbr79BhxE+yCEBbebalr0d9E/r8cTekKyDKxNIrkPdc8uF8p+PuEZzW+ilUvARuZygrzq3v4htNARxKrWu2BPtty6WuuOsy6B9D5DzCdS3lj6CHPEvA8GZtsa/FFGCuUUydS3wcVg/Pt2o9WnL899llLxQIduyqselfUaeZFw=
+	t=1718372875; cv=none; b=hh2Bd+9dr5IrY01aPF43nIlB5KnjEnfO5uhBDhYuw2K63naK9h8qC4SK87y0CMsFuUR7fljr9Y89hSE23hsGcAzvcKues8+70k9usO5x7nmL3TGY6ZNdLFNK3IGO+qz6lx+/3yCLo7QJDNIPaAwD9U8pVftMY+kihbG3FNN6/ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718372877; c=relaxed/simple;
-	bh=jJFqlaJdKqU7Z/8dLxSiXJ8iFEYSgxcqV0Bzr/VH1dU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OmFmAtnjENTKHVsZ4bydKy5BBbBxNvaZqty/MG2eTfwAEHckTZWoJDqvfJWs9AkjToJnJAsSzLdX0u28fai5rDAA+QmLkx05tfPo2ZMMON8/LouxG/dcBCGksicyrMoNh4rLcYYe4E7ZXHPH2Y3GqMFETTBR8T2/Iju+KIRIJgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VLOAr6tD; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718372876; x=1749908876;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=jJFqlaJdKqU7Z/8dLxSiXJ8iFEYSgxcqV0Bzr/VH1dU=;
-  b=VLOAr6tDjbiDaPyfHYPF4sQLjAH49aMqfFnWnmPGAHchpM80x/wZ4Vzx
-   CFN6F/yZuHDscklWa7da8dvHZas5nCS5BS5Eqmt/RBX7ZO2aNgoOymCsR
-   T1rXaFTLBj7Saiy6CFBQ9SYYmqjIPsLMWwohHxtLldwOrURxag2vyU6VX
-   ECGE4MlkxBbtgUVor4e0rE6xEpQEgfE7cj0QEi49Yu8q6se/AiBYjY5GV
-   egv5sFfUXTGH1dQuc3Y+l1FkGPg5z0rdKTFZU6Oyjyf921sPDJsq+V33K
-   f3lbeyHWJvKFCHdvSeJVqPBUlsNymudBzSe2KNPyS//WpiP4XppzLQzYZ
-   A==;
-X-CSE-ConnectionGUID: vWDflc15Qg6N+11CyQhdsA==
-X-CSE-MsgGUID: vqu0/whrQ/Wg4cAGNnBEiQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="19079175"
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="scan'208";a="19079175"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 06:47:53 -0700
-X-CSE-ConnectionGUID: oZ/SNXioSFWQnJeFwVAFHA==
-X-CSE-MsgGUID: xifLnIQaQ/WeX0ldZChrFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="scan'208";a="40386690"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa006.fm.intel.com with ESMTP; 14 Jun 2024 06:47:52 -0700
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	eranian@google.com,
-	ak@linux.intel.com,
-	yunying.sun@intel.com,
-	tim.c.chen@linux.intel.com,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V2 8/8] perf/x86/intel/uncore: Support HBM and CXL PMON counters
-Date: Fri, 14 Jun 2024 06:46:31 -0700
-Message-Id: <20240614134631.1092359-9-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20240614134631.1092359-1-kan.liang@linux.intel.com>
-References: <20240614134631.1092359-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1718372875; c=relaxed/simple;
+	bh=1aZksGUp8fLgwOWNQFUHylne4EqFbmCyrS3QmoLiH8g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RozzewteCF+/KazmlGGh0THZcA7lfQkpTRnJlQYuOjc12jG7UZUV2l4QBSjvs4a/9lEPgaXBsLYsYtiqbPBvEULwcr+VLWoha4GAeY01RtYqzmHMfhbfvk6eBmeUlYePLFOX2vi3lwuntz7oGa4o5VsIFRKHGAzNVizcGPqq0UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f70c457823so18282125ad.3;
+        Fri, 14 Jun 2024 06:47:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718372873; x=1718977673;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FZPLXCovA6tOx8EtxF21Zr80qSMU7lHz0lsliYvpAQ4=;
+        b=IfAcvIQi4jYHMKctQtoR9O+3zGM5oiyhus+mrGWf53vFLXddc3SShIos56Ak4t716E
+         dYTQ3Xi+CPt88Ig9NKevroEhf3DRUJO2taXo8+PnhBiUh2teyQPpZDszRVqJN29ydtwP
+         p53Fsa9Iu4ZO7E09hHscZPUA6H1JVjWMKdvHvZS7V+cVihkpJNZTBLjmhoyKLMqnOhDq
+         Gsb79m//yAjACrGNR7yhgWV3+9ayYyLCLWmMQSB2S2GdKJvDOEWSmg7YMVDzucQOzbhJ
+         a7I/udXyLvWEOA61o92fBB61XI2pF6VGhug8SO20v+rtiubkL2KCceTLkM2zPItMgTZv
+         fhoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRyaYisizilA5uff/hkx15cdESbAXHLcTSJLIR3ZuO/RTbrsEKr/n/dcHisBqRSXRIkdJraG+hpi69mbbZ8DvbV22k3Uk3lfqJgCdw
+X-Gm-Message-State: AOJu0Yy6KPAQ62LBiomGE7j47o/XhAU7rqDiGJli64zpuhwZBCWjpvnA
+	bdQdhuCyhCsMlSq28aFMfbspQhW4QqBeraNtaZc0192s7FDrYO1avBhcPJ7sHRiP2iphA+hjebD
+	EI/TFW8TOcR35ILIUDr1HeOlrWJY=
+X-Google-Smtp-Source: AGHT+IGqYisqr6N/qTpubTKsyCIzPOsj+J+8M/m56EvEBdCWAjklU3BuWRyrgT55xP61Z2DfTNgcC5zBXsBcwmTctBc=
+X-Received: by 2002:a17:90a:b00f:b0:2c2:d813:bffa with SMTP id
+ 98e67ed59e1d1-2c4dbd431b5mr2778121a91.43.1718372873526; Fri, 14 Jun 2024
+ 06:47:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240614073517.94974-1-sieberf@amazon.com>
+In-Reply-To: <20240614073517.94974-1-sieberf@amazon.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Fri, 14 Jun 2024 06:47:42 -0700
+Message-ID: <CAM9d7ciYQ9C0_zgwWYt505+Mv56EC7byqxBXkPgGydomrzTHcw@mail.gmail.com>
+Subject: Re: [PATCH] perf: sched map skips redundant lines with cpu filters
+To: Fernand Sieber <sieberf@amazon.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Kan Liang <kan.liang@linux.intel.com>
+Hello,
 
-Unknown uncore PMON types can be found in both SPR and EMR with HBM or
-CXL.
+On Fri, Jun 14, 2024 at 12:49=E2=80=AFAM Fernand Sieber <sieberf@amazon.com=
+> wrote:
+>
+> perf sched map supports cpu filter.
+> However, even with cpu filters active, any context switch currently
+> corresponds to a separate line.
+> As result, context switches on irrelevant cpus result to redundant lines,
+> which makes the output particlularly difficult to read on wide
+> architectures.
+>
+> Fix it by skipping printing for irrelevant CPUs.
+>
+> Example snippet of output before fix:
+>
+>   *B0       1.461147 secs
+>    B0
+>    B0
+>    B0
+>   *G0       1.517139 secs
+>
+> After fix:
+>
+>   *B0       1.461147 secs
+>   *G0       1.517139 secs
+>
+> Signed-off-by: Fernand Sieber <sieberf@amazon.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
- $ls /sys/devices/ | grep type
- uncore_type_12_16
- uncore_type_12_18
- uncore_type_12_2
- uncore_type_12_4
- uncore_type_12_6
- uncore_type_12_8
- uncore_type_13_17
- uncore_type_13_19
- uncore_type_13_3
- uncore_type_13_5
- uncore_type_13_7
- uncore_type_13_9
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-The unknown PMON types are HBM and CXL PMON. Except for the name, the
-other information regarding the HBM and CXL PMON counters can be
-retrieved via the discovery table. Add them into the uncores tables for
-SPR and EMR.
+Thanks,
+Namhyung
 
-The event config registers for all CXL related units are 8-byte apart.
-Add SPR_UNCORE_MMIO_OFFS8_COMMON_FORMAT to specially handle it.
-
-Tested-by: Yunying Sun <yunying.sun@intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/intel/uncore_snbep.c | 55 +++++++++++++++++++++++++++-
- 1 file changed, 53 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index fbafc6ea198f..4d5933851895 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -6162,7 +6162,55 @@ static struct intel_uncore_type spr_uncore_mdf = {
- 	.name			= "mdf",
- };
- 
--#define UNCORE_SPR_NUM_UNCORE_TYPES		12
-+static void spr_uncore_mmio_offs8_init_box(struct intel_uncore_box *box)
-+{
-+	__set_bit(UNCORE_BOX_FLAG_CTL_OFFS8, &box->flags);
-+	intel_generic_uncore_mmio_init_box(box);
-+}
-+
-+static struct intel_uncore_ops spr_uncore_mmio_offs8_ops = {
-+	.init_box		= spr_uncore_mmio_offs8_init_box,
-+	.exit_box		= uncore_mmio_exit_box,
-+	.disable_box		= intel_generic_uncore_mmio_disable_box,
-+	.enable_box		= intel_generic_uncore_mmio_enable_box,
-+	.disable_event		= intel_generic_uncore_mmio_disable_event,
-+	.enable_event		= spr_uncore_mmio_enable_event,
-+	.read_counter		= uncore_mmio_read_counter,
-+};
-+
-+#define SPR_UNCORE_MMIO_OFFS8_COMMON_FORMAT()			\
-+	SPR_UNCORE_COMMON_FORMAT(),				\
-+	.ops			= &spr_uncore_mmio_offs8_ops
-+
-+static struct event_constraint spr_uncore_cxlcm_constraints[] = {
-+	UNCORE_EVENT_CONSTRAINT(0x02, 0x0f),
-+	UNCORE_EVENT_CONSTRAINT(0x05, 0x0f),
-+	UNCORE_EVENT_CONSTRAINT(0x40, 0xf0),
-+	UNCORE_EVENT_CONSTRAINT(0x41, 0xf0),
-+	UNCORE_EVENT_CONSTRAINT(0x42, 0xf0),
-+	UNCORE_EVENT_CONSTRAINT(0x43, 0xf0),
-+	UNCORE_EVENT_CONSTRAINT(0x4b, 0xf0),
-+	UNCORE_EVENT_CONSTRAINT(0x52, 0xf0),
-+	EVENT_CONSTRAINT_END
-+};
-+
-+static struct intel_uncore_type spr_uncore_cxlcm = {
-+	SPR_UNCORE_MMIO_OFFS8_COMMON_FORMAT(),
-+	.name			= "cxlcm",
-+	.constraints		= spr_uncore_cxlcm_constraints,
-+};
-+
-+static struct intel_uncore_type spr_uncore_cxldp = {
-+	SPR_UNCORE_MMIO_OFFS8_COMMON_FORMAT(),
-+	.name			= "cxldp",
-+};
-+
-+static struct intel_uncore_type spr_uncore_hbm = {
-+	SPR_UNCORE_COMMON_FORMAT(),
-+	.name			= "hbm",
-+};
-+
-+#define UNCORE_SPR_NUM_UNCORE_TYPES		15
- #define UNCORE_SPR_CHA				0
- #define UNCORE_SPR_IIO				1
- #define UNCORE_SPR_IMC				6
-@@ -6186,6 +6234,9 @@ static struct intel_uncore_type *spr_uncores[UNCORE_SPR_NUM_UNCORE_TYPES] = {
- 	NULL,
- 	NULL,
- 	&spr_uncore_mdf,
-+	&spr_uncore_cxlcm,
-+	&spr_uncore_cxldp,
-+	&spr_uncore_hbm,
- };
- 
- /*
-@@ -6655,7 +6706,7 @@ static struct intel_uncore_type gnr_uncore_b2cmi = {
- };
- 
- static struct intel_uncore_type gnr_uncore_b2cxl = {
--	SPR_UNCORE_MMIO_COMMON_FORMAT(),
-+	SPR_UNCORE_MMIO_OFFS8_COMMON_FORMAT(),
- 	.name			= "b2cxl",
- };
- 
--- 
-2.35.1
-
+> ---
+>  tools/perf/builtin-sched.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+> index 7422c930abaf..aa59f763ca46 100644
+> --- a/tools/perf/builtin-sched.c
+> +++ b/tools/perf/builtin-sched.c
+> @@ -1594,8 +1594,6 @@ static int map_switch_event(struct perf_sched *sche=
+d, struct evsel *evsel,
+>
+>         sched->curr_thread[this_cpu.cpu] =3D thread__get(sched_in);
+>
+> -       printf("  ");
+> -
+>         new_shortname =3D 0;
+>         if (!tr->shortname[0]) {
+>                 if (!strcmp(thread__comm_str(sched_in), "swapper")) {
+> @@ -1622,6 +1620,11 @@ static int map_switch_event(struct perf_sched *sch=
+ed, struct evsel *evsel,
+>                 new_shortname =3D 1;
+>         }
+>
+> +       if (sched->map.cpus && !perf_cpu_map__has(sched->map.cpus, this_c=
+pu))
+> +               goto out;
+> +
+> +       printf("  ");
+> +
+>         for (i =3D 0; i < cpus_nr; i++) {
+>                 struct perf_cpu cpu =3D {
+>                         .cpu =3D sched->map.comp ? sched->map.comp_cpus[i=
+].cpu : i,
+> @@ -1656,9 +1659,6 @@ static int map_switch_event(struct perf_sched *sche=
+d, struct evsel *evsel,
+>                         color_fprintf(stdout, color, "   ");
+>         }
+>
+> -       if (sched->map.cpus && !perf_cpu_map__has(sched->map.cpus, this_c=
+pu))
+> -               goto out;
+> -
+>         timestamp__scnprintf_usec(timestamp, stimestamp, sizeof(stimestam=
+p));
+>         color_fprintf(stdout, color, "  %12s secs ", stimestamp);
+>         if (new_shortname || tr->comm_changed || (verbose > 0 && thread__=
+tid(sched_in))) {
+> @@ -1675,9 +1675,9 @@ static int map_switch_event(struct perf_sched *sche=
+d, struct evsel *evsel,
+>         if (sched->map.comp && new_cpu)
+>                 color_fprintf(stdout, color, " (CPU %d)", this_cpu);
+>
+> -out:
+>         color_fprintf(stdout, color, "\n");
+>
+> +out:
+>         thread__put(sched_in);
+>
+>         return 0;
+> --
+> 2.40.1
+>
+>
 
