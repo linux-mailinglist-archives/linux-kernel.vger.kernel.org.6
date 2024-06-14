@@ -1,140 +1,78 @@
-Return-Path: <linux-kernel+bounces-215425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC66690928C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:52:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A586909294
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF62F1C21AE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:52:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4AF51F23A1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3461A254F;
-	Fri, 14 Jun 2024 18:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075131A2FD2;
+	Fri, 14 Jun 2024 18:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="f4+ZqOpx"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UeTbOCi6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F53F1A0B1B
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 18:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE2A1A0AF5;
+	Fri, 14 Jun 2024 18:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718391130; cv=none; b=eji2lrQffxTzWQ6ciLQDBOQz0PVnJRf9ywf9PKEIabeUOkqgQ+2dJtGNuFvhfXlbMGt78VRjuR5CANFnzUXiy7MrDKvtJPfeb414wyHMuU8fRF9IMTzHFVvsLsPgkWWyygmMC9Se1WSp3nbuBj8Z89jX2UNOaOJIHqyo058h42w=
+	t=1718391141; cv=none; b=Hikb3kjnCti3CQg1kXJw2NhaMH9FdSrZkY7mgOXQmWIJH2GJFQGjoHrKv3cPSkWyTo26a7nOnZi8mkXbl6920aK3AKHYH0cgp6o1cMsGGoqdvHaKgRD3tlWHLaLNPXacrrrfIDV6m9hvlkGYA2R0YCBH/EhZTOBI12P8hZXBMQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718391130; c=relaxed/simple;
-	bh=Wnop8Qq538e7eVgLq4rlSTIJC3zohtdzZO1W1QS3zjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jk6vy9azXi9wCOyhIQ8yV+Rlf1JOhGS3LLciXLe9AIzmnoI2czvmg+zrZByOufS5sC9DEMKCy7ViT21qqAujOni10geeV/CtVbMH41tXh1I8WUQD2sxk4avSmGU9Iw+zUT6Ih68Ag2jSoGmE7Mg/HfBNQ45kddWZMJ1rAlK6oHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=f4+ZqOpx; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3c9cc681ee7so1071253b6e.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 11:52:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1718391127; x=1718995927; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LVDBvdP08HJe2LLNeEFHiRk2XhY0KePdWqVaxMDbvKE=;
-        b=f4+ZqOpxDlaOGx/uXxzo+JBV3c2J+GdTOHq0+3o/5hHOeiEIA3IMlgKm9Hvu7Y+4Pn
-         HKoQYCiCJj7/mPtUf5e1lapZ3Stw453sOUQmF43/uKKN/vqrX+TshpH6rxDd1KQ7zN2x
-         EOGzifnTP+0JdNPUnf5sv5ffBAXf+KbzaJ50jCN1lv55KQLh1VB3OSuyCN2R/iUEZ93O
-         kN87c9B6b1nv3WH2i50U1tVXOQocVi+ftsmta9MD6vSkoz9WLR2+IMxCgtyhL0oFYjuH
-         4IXpXhNh5eLnMGKUUHtWmSji8+VhyIHzRXeUaHP7L6izMP2mjkzQB0iZCBBCyH6gicic
-         y6mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718391127; x=1718995927;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LVDBvdP08HJe2LLNeEFHiRk2XhY0KePdWqVaxMDbvKE=;
-        b=snndWa2kYoCtFGQNskYAr/pfC7vB2LcFhRb4nsfxVQihfBkMFzi0X3LFmPFU+fPTQB
-         tG/pNYcTnYK0q/sEiKT/uyCzaVKAyUF1UjY8yyANgDl0Vl/EFzsi3SbK7cY11fdZXOkq
-         r4J0q1fjyROz/7V8kWEpnNEtsqAPNvHP1p9mkmD0u+uDFCi3Mbm3plf/Sbu04CWqUFfw
-         +Ayx3CsdkhT2hhFzuTKS2eYmkUx/xtDeRNaGjTDm+WfG7Kki8jG7caxxUzfFsk9aJ+sS
-         WMKMG2BQzou4NVslXVyuMX5vXDCB2uv+PZSTvDxOJhmHeaJNbbSdJN79I0GW+xyKQOyB
-         yHIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTHwXwEYtXZ0qrYov0i/JhS1EkyVXC0YZgI37AU5X6j922UbYTKOj+J8dUNCGR2K7HzOJxmLHY3/HQ7IUAOGGpI5CYT6bzu9womyCQ
-X-Gm-Message-State: AOJu0Yys2aA0mb9maNSd/kewtf9P4DN+OffVNgOPvEo+dD763yp0P2iG
-	3H5YjHQ1DeD2+7D/2+toWf2nGESj0wrgCELpffNRfywsLwmu/feOL0wRnRgbPJg=
-X-Google-Smtp-Source: AGHT+IH5wsewHDu4BXzms8+/hfuFuKIa/9eeUhy5xDV/FWcrmW7WzNgNCo/H/BIyrLMqqglhgTp+DQ==
-X-Received: by 2002:a05:6808:11d0:b0:3d1:d36b:379e with SMTP id 5614622812f47-3d244f362e9mr3226002b6e.26.1718391127297;
-        Fri, 14 Jun 2024 11:52:07 -0700 (PDT)
-Received: from mail.minyard.net ([2001:470:b8f6:1b:c3a8:c961:e73:5e22])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d2476bb36fsm618151b6e.40.2024.06.14.11.52.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 11:52:06 -0700 (PDT)
-Date: Fri, 14 Jun 2024 13:52:05 -0500
-From: Corey Minyard <corey@minyard.net>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Quan Nguyen <quan@os.amperecomputing.com>,
-	Corey Minyard <minyard@acm.org>,
-	openipmi-developer@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ipmi: ssif_bmc: prevent integer overflow on 32bit systems
-Message-ID: <ZmyRVQzcIbDwgnP9@mail.minyard.net>
-Reply-To: corey@minyard.net
-References: <1431ca2e-4e9c-4520-bfc0-6879313c30e9@moroto.mountain>
+	s=arc-20240116; t=1718391141; c=relaxed/simple;
+	bh=9Kkr/pbB+nY/Hsb3QiUB7zMIcCe+UpOwOdCKI42w5M8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=c+qiKgEZ7o9DL+KvlnsBBgGxJfJ/IXpuSI2AjPQjh3LAYEqgmUuFMLeWHEPN0TvkIh5M16nT1CV3Gw/i8hivXzEKJDSH4MTYPi/EItWZjssKFEKgLA+wAVEXRSKyUJ0gtVpdANRRgujn5ImLDyJBhhyNkSxCsSxBai9qqMzDgJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UeTbOCi6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BC5C3C4AF1C;
+	Fri, 14 Jun 2024 18:52:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718391140;
+	bh=9Kkr/pbB+nY/Hsb3QiUB7zMIcCe+UpOwOdCKI42w5M8=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=UeTbOCi62pIH0M0iX/i+Nj649RevslYRs+6w+yAsSnN7pt4XugPy5xTZ18JXZ+iPq
+	 urZeAsL9ZSAak0K4mWHhztZy9Q0+gOVkchTZsgcD/p6rm0pPa2Xkl/ORKenWzqsuAP
+	 THB0FAS8RXx82yRMwV6u8PaPVkTG5AYlSZiTJkLcuYNuxhDrZOaL6Ru+HJ7cr9hguZ
+	 9RkUbanGCyL+j4geyVncnY9bEAyd95yPLht+jA6xMuYBmcAyyJdPYnasNZYF60MAGp
+	 NCMIe8IpGZktmEwF3QKaolSXr4aGRS908m6YedGKliKsx0JGibG438eouftgYvxSR3
+	 vc1bGonPwSEvQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A72CEC43616;
+	Fri, 14 Jun 2024 18:52:20 +0000 (UTC)
+Subject: Re: [git pull] IOMMU Fixes for Linux v6.10-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ZmxZxT-j1B71PHQp@8bytes.org>
+References: <ZmxZxT-j1B71PHQp@8bytes.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ZmxZxT-j1B71PHQp@8bytes.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-fix-v6.10-rc3
+X-PR-Tracked-Commit-Id: 12243a8115f8583a6bcada7717c01fb164e23c89
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 11100273f25e326dd12c4534b1aaadb4df59d680
+Message-Id: <171839114068.28657.10840558314640422451.pr-tracker-bot@kernel.org>
+Date: Fri, 14 Jun 2024 18:52:20 +0000
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, iommu@lists.linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1431ca2e-4e9c-4520-bfc0-6879313c30e9@moroto.mountain>
 
-On Fri, Jun 14, 2024 at 08:30:44PM +0300, Dan Carpenter wrote:
-> There are actually two bugs here.  First, we need to ensure that count
-> is at least sizeof(u32) or msg.len will be uninitialized data.
-> 
-> The "msg.len" variable is a u32 that comes from the user.  On 32bit
-> systems the "sizeof_field(struct ipmi_ssif_msg, len) + msg.len"
-> addition can overflow if "msg.len" is greater than U32_MAX - 4.
-> 
-> Valid lengths for "msg.len" are 1-254.  Add a check for that to
-> prevent the integer overflow.
+The pull request you sent on Fri, 14 Jun 2024 16:55:01 +0200:
 
-Thanks, this is in my tree.
+> git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-fix-v6.10-rc3
 
--corey
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/11100273f25e326dd12c4534b1aaadb4df59d680
 
-> 
-> Fixes: dd2bc5cc9e25 ("ipmi: ssif_bmc: Add SSIF BMC driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/char/ipmi/ssif_bmc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> ---
->  drivers/char/ipmi/ssif_bmc.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/ipmi/ssif_bmc.c b/drivers/char/ipmi/ssif_bmc.c
-> index 56346fb32872..ab4e87a99f08 100644
-> --- a/drivers/char/ipmi/ssif_bmc.c
-> +++ b/drivers/char/ipmi/ssif_bmc.c
-> @@ -177,13 +177,15 @@ static ssize_t ssif_bmc_write(struct file *file, const char __user *buf, size_t
->  	unsigned long flags;
->  	ssize_t ret;
->  
-> -	if (count > sizeof(struct ipmi_ssif_msg))
-> +	if (count < sizeof(msg.len) ||
-> +	    count > sizeof(struct ipmi_ssif_msg))
->  		return -EINVAL;
->  
->  	if (copy_from_user(&msg, buf, count))
->  		return -EFAULT;
->  
-> -	if (!msg.len || count < sizeof_field(struct ipmi_ssif_msg, len) + msg.len)
-> +	if (!msg.len || msg.len > IPMI_SSIF_PAYLOAD_MAX ||
-> +	    count < sizeof_field(struct ipmi_ssif_msg, len) + msg.len)
->  		return -EINVAL;
->  
->  	spin_lock_irqsave(&ssif_bmc->lock, flags);
-> -- 
-> 2.43.0
-> 
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
