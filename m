@@ -1,308 +1,155 @@
-Return-Path: <linux-kernel+bounces-214407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B919083FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:47:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C5919083FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0A1EB2228E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:47:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5B791C23050
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F881474A3;
-	Fri, 14 Jun 2024 06:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86DF1487CE;
+	Fri, 14 Jun 2024 06:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SzIzMKCv"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n1y8s+XD"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC86142658
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 06:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F2138C
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 06:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718347643; cv=none; b=rJlWkg8mHloHRD5eLh0t4AT/u6giVxPG/+ForA2Th4D6311nBxe6Mpmzz/hz/XocHGgbx6abC8DV4OFBo4IDJ00Sxdr5jOTngUEIF7S0iY1SvW5yI5RBR6MpSDb69znIa1v3aohH+fvh7j0hjDjaWLFIqNi8nytXG+MjA+4JwOs=
+	t=1718347707; cv=none; b=c6WtG+JaxPumfbaM0CuIr9v/lbL3p3uVb7pURYC4mtaSEfQXYCc85jSGvqaosYE/hG1rQZZweGerrSyYOa6pdNSt8ETRAAsp/LK3XJoR2/4j/Ln88/yt+Zlz4GsECIGXQZjLg8covsB3TXNYCD3GctSfidJMyCV7m3litvz7C5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718347643; c=relaxed/simple;
-	bh=zz8v+vL+REmG+S900X0JuRYT5Cftph+WpyQOWBcEdSw=;
+	s=arc-20240116; t=1718347707; c=relaxed/simple;
+	bh=yTvhl2IUS1cbZ8FmnJISCj1I5etRv6Wb4WLy/6guEdg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qBEA9ttNcCNVCNxLf295ayn4CTazX6b2/3rZY8pkz13JvWxDT6QpUw+wRzzzOkT0na9VP+iyO7ObrFznj/aGzH2Sx85i53XyWqRh0bDdkQC4dg4lnyj7hVqwiWOgJbl7aluvmO4v51J7vFCz8u+p73hbMKj8XYyaEbWC9nCGpXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SzIzMKCv; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso10331a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 23:47:20 -0700 (PDT)
+	 To:Cc:Content-Type; b=BPjiPd/EA8mKj1QAZ+5/7jZsAOeyWwLPPaVhaF06kKSp6soke4CCkko3SE3SHHcKnNbaJJKKTVGW8Mn1feF1VrkJYaqgJeeBXX/piO2kqP5HwfL9Z7FhETMT9VY23ocPbWZliaT7UWah/6A3PRb00UoV9djMk1VhaLohzURnvO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n1y8s+XD; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52bc1261e8fso2147348e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 23:48:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718347639; x=1718952439; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718347703; x=1718952503; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=69cA3Yf8WtruWYIY2J7QK8I4+WOENuklRWzqSqmNyfY=;
-        b=SzIzMKCvYTS1ZrON5nv1NxWnqJNnMGluOBOGbOv1ku7PLNAgMKpx/RYaPOJySoi+Th
-         AQHydD/qwzJF5UgIPmJCXug2fe8O7opcfZ9SHnWfM9hI2fA37QY9dzA2EcgEMq+mMAQA
-         zMuUexd+sMHJbDKLPe7PGusxt8eqSqPM40k7IAdXrV1lGDRU8z4S8Q77JWBW89eeXqcc
-         qYVbFagXUZRvn5d3gXaAD0u7VJsY7TOnn5rUYHEfdAK3yHIelXchBTG1x+wnnLWQJ6Md
-         w9Y6opN7lkMPrp0IDTXceajh3SppNm1Llmr6UJuBrDVg1BrnMMFgu3vPdTKBRw39BkdS
-         lSNg==
+        bh=n21AcI7ZyImS+JT8RLtnfNQgbRDZVCrUU5GE4hIUqKY=;
+        b=n1y8s+XDYtXG7fhpqsr/Me/aaLsHqM6L7BmzH0OsoEn/Nmw5qJC2s4uHEZjc5gUpZ5
+         QshZY44hT5xxhdSXKoLc59MLQU3bWoeA2K4DJk74kcxPEfdr/bbJC4amNLX4ZrK5cS8r
+         7ILM158FnUCF2fZskwUGKtCg4Cdt+Ex6cCeGdGaGZKGsBsEJ3FI3lkuE/PwWTKy008fA
+         xeCBRFDVLj/jDIgvZVqZ3T/RgvD7ob0EsqDD0VGYxrpT5PR6ksLu/HMjD/88rNhapTVe
+         5kAS8qrwb5WolEJ7G1J+DopwNdf1f1jYNmauHLJkWlususNfRHFQgpXpIHesIJrHAZNH
+         U90w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718347639; x=1718952439;
+        d=1e100.net; s=20230601; t=1718347703; x=1718952503;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=69cA3Yf8WtruWYIY2J7QK8I4+WOENuklRWzqSqmNyfY=;
-        b=YHUE+LIT5nryIKFRnxjb8rfj1y1L2lYOyBKcNZcNyPbtitjTEJu645hf0el4mjUpuZ
-         3GgcEolPE6ObGsGt69TWX5UT2hrdMzq+Q0uL0D2AmSxZciUojf7EiJauUqvdHSntfnOe
-         RkCJVUVq/J347rRyfMhHyyrmpRUXQkJt03rec+BEZ2OyrwRhjdR1DJit44HKx+VO0/Zo
-         W5ucpGBvLTmubE9Wa9ZDhSX5rJFWYzGERnTXJulrcxMPPwwTUc1rHkZBHuWdvo77z9fP
-         TdvaN2p4pej5NcpISvN3vwDEbwomih3TAun8qc/YEOjWU6Cw3NIoLo2O86VEVGYPOxda
-         qifA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/Isk4AS/O5zNxN/XLFPgYmlIY3ovET0C8le+YBQiTz4c/Bi3haIP1kvtaf6PTOecnZ8tZkBwj0Y8jR99pfXOpCjoFEAPrAi+iQSi1
-X-Gm-Message-State: AOJu0YxtFN9lhtjqRJKgRX0lDHgTd7XLLQUgqg/cjWtN4h7Ish4DlnUo
-	Ioxqf/6WkAl860bk9VFIAhPZP0fViFEL3rXfEl9yTM8N320BCm3c57iyCub+6Ohl2kJEHcrtl9P
-	c4db5UlI+9Cuy2Vf12SjD6SvxGPvYvuQZx3qa
-X-Google-Smtp-Source: AGHT+IFnhD8o8sIGFdkO2QiD417DxPmDrN9Var3tev5g1oGRP6REzBqh/h4DhA7i5i1TgJzTspx32tVG0EshnT9Q5Zo=
-X-Received: by 2002:a05:6402:34c5:b0:57c:bb0d:5e48 with SMTP id
- 4fb4d7f45d1cf-57cbec62916mr119941a12.2.1718347638405; Thu, 13 Jun 2024
- 23:47:18 -0700 (PDT)
+        bh=n21AcI7ZyImS+JT8RLtnfNQgbRDZVCrUU5GE4hIUqKY=;
+        b=Nz9OB8DblS8H72Hu0Dl2BzNBmYLSdNojqNA12fJj7Wm0K0wTFHmkTR1u0buCO8OV1m
+         txPv4DYjfLl8ti8VdIK888ex3DIeokzbgdTj/DZeREAQD53Wdt5ovw4MuKRq9wowVZIx
+         ZqNA+mvksLzY8YiQwsCgPw2Sf5MVF472bFDfCqkABHCXrmg1J8nBSwID/OrDOe+uzx31
+         wbE0hCw+kWCHM8oOq+tHKejBHshY/2kpPy5uKSjhppSGskMiXwotlD3i06ttk9F6RA5O
+         VqwrxRPU/aobxUW03tG8njpp8GOHyci6jpMlTc3o0wjeWFV1mz5B44dMak7PxiHO5KCQ
+         iMPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOV3Nvxrd7YCwTTGCkOgqAYvJi/vEk8c9/jNfhS5OtxsBjA48Igmu/oCZDD1kcFOQ1Cs91KsIAEw4+ApbLy4/Zjq/8ISsq7bZ+X6bI
+X-Gm-Message-State: AOJu0YwgcbC+6weQ92Srsd0h5zWde4XzPhSA13rWDfyKcHwA7MWlaxqg
+	Go5XsPhJPgHtpdin8KpuPjt4D49nlJvtrBEqfX+eDm9TQ08fI2v4+V5YesUbt99GNCQKBPhSLUl
+	pcgHXBb0qDuhHHP9QTvJ2GZU8zwvi2ywkbzj2HQ==
+X-Google-Smtp-Source: AGHT+IFrZm9K+8bcFC036pMlD/5EnYhtWdAcFipBud3JNlaPiInNyeWH7o20nlajvM9PGHxsP2H2vqWpmnHG0VfjOAY=
+X-Received: by 2002:ac2:43d6:0:b0:52b:bdfe:e0c9 with SMTP id
+ 2adb3069b0e04-52ca6e562camr1241037e87.9.1718347703314; Thu, 13 Jun 2024
+ 23:48:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614060012.158026-1-luoxuanqiang@kylinos.cn>
-In-Reply-To: <20240614060012.158026-1-luoxuanqiang@kylinos.cn>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 14 Jun 2024 08:47:07 +0200
-Message-ID: <CANn89iJBOAg+KCZBvkUxdAfTS1jacBBcrW6M5AZQvr=UPFJ0dA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] Fix race for duplicate reqsk on identical SYN
-To: luoxuanqiang <luoxuanqiang@kylinos.cn>, Florian Westphal <fw@strlen.de>
-Cc: davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <aa5ffa9a-62cc-4a79-9368-989f5684c29c@alliedtelesis.co.nz>
+In-Reply-To: <aa5ffa9a-62cc-4a79-9368-989f5684c29c@alliedtelesis.co.nz>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 14 Jun 2024 08:48:11 +0200
+Message-ID: <CACRpkdbF-OsV_jUp42yttvdjckqY0MsLg4kGxTr3JDnjGzLRsA@mail.gmail.com>
+Subject: Re: net: dsa: Realtek switch drivers
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: "alsi@bang-olufsen.dk" <alsi@bang-olufsen.dk>, Andrew Lunn <andrew@lunn.ch>, 
+	Florian Fainelli <f.fainelli@gmail.com>, "olteanv@gmail.com" <olteanv@gmail.com>, 
+	=?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>, 
+	"ericwouds@gmail.com" <ericwouds@gmail.com>, David Miller <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"luizluca@gmail.com" <luizluca@gmail.com>, "justinstitt@google.com" <justinstitt@google.com>, 
+	"rmk+kernel@armlinux.org.uk" <rmk+kernel@armlinux.org.uk>, netdev <netdev@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 14, 2024 at 8:01=E2=80=AFAM luoxuanqiang <luoxuanqiang@kylinos.=
-cn> wrote:
->
-> When bonding is configured in BOND_MODE_BROADCAST mode, if two identical =
-SYN packets
-> are received at the same time and processed on different CPUs, it can pot=
-entially
-> create the same sk (sock) but two different reqsk (request_sock) in tcp_c=
-onn_request().
->
-> These two different reqsk will respond with two SYNACK packets, and since=
- the generation
-> of the seq (ISN) incorporates a timestamp, the final two SYNACK packets w=
-ill have
-> different seq values.
->
-> The consequence is that when the Client receives and replies with an ACK =
-to the earlier
-> SYNACK packet, we will reset(RST) it.
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> This behavior is consistently reproducible in my local setup, which compr=
-ises:
->
->                   | NETA1 ------ NETB1 |
-> PC_A --- bond --- |                    | --- bond --- PC_B
->                   | NETA2 ------ NETB2 |
->
-> - PC_A is the Server and has two network cards, NETA1 and NETA2. I have b=
-onded these two
->   cards using BOND_MODE_BROADCAST mode and configured them to be handled =
-by different CPU.
->
-> - PC_B is the Client, also equipped with two network cards, NETB1 and NET=
-B2, which are
->   also bonded and configured in BOND_MODE_BROADCAST mode.
->
-> If the client attempts a TCP connection to the server, it might encounter=
- a failure.
-> Capturing packets from the server side reveals:
->
-> 10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [S], seq 32=
-0236027,
-> 10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [S], seq 32=
-0236027,
-> localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [S.], seq 2=
-967855116,
-> localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [S.], seq 2=
-967855123, <=3D=3D
-> 10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [.], ack 42=
-94967290,
-> 10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [.], ack 42=
-94967290,
-> localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [R], seq 29=
-67855117, <=3D=3D
-> localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [R], seq 29=
-67855117,
->
-> Two SYNACKs with different seq numbers are sent by localhost, resulting i=
-n an anomaly.
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> The attempted solution is as follows:
-> In the tcp_conn_request(), while inserting reqsk into the ehash table, it=
- also checks
-> if an entry already exists. If found, it avoids reinsertion and releases =
-it.
->
-> Simultaneously, In the reqsk_queue_hash_req(), the start of the req->rsk_=
-timer is
-> adjusted to be after successful insertion.
->
-> Signed-off-by: luoxuanqiang <luoxuanqiang@kylinos.cn>
-> ---
->  include/net/inet_connection_sock.h |  2 +-
->  net/dccp/ipv4.c                    |  2 +-
->  net/dccp/ipv6.c                    |  2 +-
->  net/ipv4/inet_connection_sock.c    | 16 ++++++++++++----
->  net/ipv4/tcp_input.c               | 11 ++++++++++-
->  5 files changed, 25 insertions(+), 8 deletions(-)
->
-> diff --git a/include/net/inet_connection_sock.h b/include/net/inet_connec=
-tion_sock.h
-> index 7d6b1254c92d..8773d161d184 100644
-> --- a/include/net/inet_connection_sock.h
-> +++ b/include/net/inet_connection_sock.h
-> @@ -264,7 +264,7 @@ struct sock *inet_csk_reqsk_queue_add(struct sock *sk=
-,
->                                       struct request_sock *req,
->                                       struct sock *child);
->  void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock =
-*req,
-> -                                  unsigned long timeout);
-> +                                  unsigned long timeout, bool *found_dup=
-_sk);
->  struct sock *inet_csk_complete_hashdance(struct sock *sk, struct sock *c=
-hild,
->                                          struct request_sock *req,
->                                          bool own_req);
-> diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
-> index ff41bd6f99c3..13aafdeb9205 100644
-> --- a/net/dccp/ipv4.c
-> +++ b/net/dccp/ipv4.c
-> @@ -657,7 +657,7 @@ int dccp_v4_conn_request(struct sock *sk, struct sk_b=
-uff *skb)
->         if (dccp_v4_send_response(sk, req))
->                 goto drop_and_free;
->
-> -       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
-> +       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT, NULL);
->         reqsk_put(req);
->         return 0;
->
-> diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
-> index 85f4b8fdbe5e..493cdb12ce2b 100644
-> --- a/net/dccp/ipv6.c
-> +++ b/net/dccp/ipv6.c
-> @@ -400,7 +400,7 @@ static int dccp_v6_conn_request(struct sock *sk, stru=
-ct sk_buff *skb)
->         if (dccp_v6_send_response(sk, req))
->                 goto drop_and_free;
->
-> -       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
-> +       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT, NULL);
->         reqsk_put(req);
->         return 0;
->
-> diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_s=
-ock.c
-> index d81f74ce0f02..d9394db98a5a 100644
-> --- a/net/ipv4/inet_connection_sock.c
-> +++ b/net/ipv4/inet_connection_sock.c
-> @@ -1123,12 +1123,17 @@ static void reqsk_timer_handler(struct timer_list=
- *t)
->  }
->
->  static void reqsk_queue_hash_req(struct request_sock *req,
-> -                                unsigned long timeout)
-> +                                unsigned long timeout, bool *found_dup_s=
-k)
->  {
-> +
-> +       inet_ehash_insert(req_to_sk(req), NULL, found_dup_sk);
-> +       if(found_dup_sk && *found_dup_sk)
-> +               return;
-> +
-> +       /* The timer needs to be setup after a successful insertion. */
+On Fri, Jun 14, 2024 at 3:49=E2=80=AFAM Chris Packham
+<Chris.Packham@alliedtelesis.co.nz> wrote:
 
-I am pretty sure we had a prior attempt to fix this issue, and the fix
-was problematic.
+> I'm starting to look at some L2/L3 switches with Realtek silicon. I see
+> in the upstream kernel there are dsa drivers for a couple of simple L2
+> switches. While openwrt has support for a lot of the more advanced
+> silicon. I'm just wondering if there is a particular reason no-one has
+> attempted to upstream support for these switches?
 
-You are moving the inet_ehash_insert() before the mod_timer(), this
-will add races.
+It began with the RTL8366RB ("RTL8366 revision B") which I think is
+equivalent to RTL8366S as well, but have not been able to test.
 
-Hint here is the use of TIMER_PINNED.
+Then Luiz and Alvin jumped in and fixed up the RTL8365MB family.
 
-CCing Florian, because he just removed TIMER_PINNED for TW, he might
-have the context
-to properly fix this issue.
+So the support is pretty much what is stated in the DT bindings
+in Documentation/devicetree/bindings/net/dsa/realtek.yaml:
 
->         timer_setup(&req->rsk_timer, reqsk_timer_handler, TIMER_PINNED);
->         mod_timer(&req->rsk_timer, jiffies + timeout);
->
-> -       inet_ehash_insert(req_to_sk(req), NULL, NULL);
->         /* before letting lookups find us, make sure all req fields
->          * are committed to memory and refcnt initialized.
->          */
-> @@ -1137,9 +1142,12 @@ static void reqsk_queue_hash_req(struct request_so=
-ck *req,
->  }
->
->  void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock =
-*req,
-> -                                  unsigned long timeout)
-> +                                  unsigned long timeout, bool *found_dup=
-_sk)
->  {
-> -       reqsk_queue_hash_req(req, timeout);
-> +       reqsk_queue_hash_req(req, timeout, found_dup_sk);
-> +       if(found_dup_sk && *found_dup_sk)
-> +               return;
-> +
->         inet_csk_reqsk_queue_added(sk);
->  }
->  EXPORT_SYMBOL_GPL(inet_csk_reqsk_queue_hash_add);
-> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-> index 9c04a9c8be9d..467f1b7bbd5a 100644
-> --- a/net/ipv4/tcp_input.c
-> +++ b/net/ipv4/tcp_input.c
-> @@ -7255,8 +7255,17 @@ int tcp_conn_request(struct request_sock_ops *rsk_=
-ops,
->         } else {
->                 tcp_rsk(req)->tfo_listener =3D false;
->                 if (!want_cookie) {
-> +                       bool found_dup_sk =3D false;
-> +
->                         req->timeout =3D tcp_timeout_init((struct sock *)=
-req);
-> -                       inet_csk_reqsk_queue_hash_add(sk, req, req->timeo=
-ut);
-> +                       inet_csk_reqsk_queue_hash_add(sk, req, req->timeo=
-ut,
-> +                                                       &found_dup_sk);
-> +
-> +                       if(unlikely(found_dup_sk)){
-> +                               reqsk_free(req);
-> +                               return 0;
-> +                       }
-> +
->                 }
->                 af_ops->send_synack(sk, dst, &fl, req, &foc,
->                                     !want_cookie ? TCP_SYNACK_NORMAL :
-> --
-> 2.25.1
->
+properties:
+  compatible:
+    enum:
+      - realtek,rtl8365mb
+      - realtek,rtl8366rb
+    description: |
+      realtek,rtl8365mb:
+        Use with models RTL8363NB, RTL8363NB-VB, RTL8363SC, RTL8363SC-VB,
+        RTL8364NB, RTL8364NB-VB, RTL8365MB, RTL8366SC, RTL8367RB-VB, RTL836=
+7S,
+        RTL8367SB, RTL8370MB, RTL8310SR
+      realtek,rtl8366rb:
+        Use with models RTL8366RB, RTL8366S
+
+It may look like just RTL8365 and RTL8366 on the surface but the sub-versio=
+n
+is detected at runtime.
+
+> If I were to start
+> grabbing drivers from openwrt and trying to get them landed would that
+> be a problem?
+
+I think the base is there, when I started with RTL8366RB it was pretty
+uphill but the kernel DSA experts (Vladimir & Andrew especially) are super
+helpful so eventually we have arrived at something that works reasonably.
+
+The RTL8356MB-family driver is more advanced and has a lot more features,
+notably it supports all known RTL8367 variants.
+
+The upstream OpenWrt in target/linux/generic/files/drivers/net/phy
+has the following drivers for the old switchdev:
+-rw-r--r--. 1 linus linus 25382 Jun  7 21:44 rtl8306.c
+-rw-r--r--. 1 linus linus 40268 Jun  7 21:44 rtl8366rb.c
+-rw-r--r--. 1 linus linus 33681 Jun  7 21:44 rtl8366s.c
+-rw-r--r--. 1 linus linus 36324 Jun  7 21:44 rtl8366_smi.c
+-rw-r--r--. 1 linus linus  4838 Jun  7 21:44 rtl8366_smi.h
+-rw-r--r--. 1 linus linus 58021 Jun 12 18:50 rtl8367b.c
+-rw-r--r--. 1 linus linus 59612 Jun 12 18:50 rtl8367.c
+
+As far as I can tell we cover all but RTL8306 with the current in-tree
+drivers, the only reason these are still in OpenWrt would be that some
+boards are not migrated to DSA.
+
+But maybe I missed something?
+
+Yours,
+Linus Walleij
 
