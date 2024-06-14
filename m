@@ -1,301 +1,313 @@
-Return-Path: <linux-kernel+bounces-214582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D9189086C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:51:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D850B9086C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CC23281331
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:51:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1CC81C22699
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A361922C6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77D51922CC;
 	Fri, 14 Jun 2024 08:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="MibdVBdf"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2135.outbound.protection.outlook.com [40.107.215.135])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AK0OW/FC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BC114B940;
-	Fri, 14 Jun 2024 08:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.135
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718355079; cv=fail; b=uFB4LxJbXQIlchQtgWbekjlrjn6DZcQaqP5SLNSn24tz8p1eitC/+OsP75YK9PP+HkIy19Ajo3Hj07rZo6zJ8CTPQKTSwpvGlI0wpcJH1JxmqJdE6QiNuOHkxkD+y0+nKuiuhrY269e8VB0qIpw5dDmPeEaYvGMIUu85hdvx2Ss=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79F6187546
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718355079; cv=none; b=LqkpcKJYIX3ThOQ/WWTVzmdfl9olenWia9dJeimt0AMM7T+AHa4Pa8azlMAZCmskBB4qnU470O52MZ8F0xEztuZcs0lRJSUtDBm4/oeBentCNyPnS0Qi8xYZSKa8MedJX3vgfLGEc/8/hrffUBoRmaOGHkA2+wJIaeoYfclDeFs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718355079; c=relaxed/simple;
-	bh=0JboslFbEHpHvWR6czvc0LuGsI1wAArYt3aG5eTU69c=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=pd1pORDkTR8lmWzqQPskxqxKJfV4rkJQLbnxl5JKM4h/IwVnzhTzfBYPkUVqawZIGC1lFvIFSf/oDMD36ueipiujOxDPLrErHV0NVpD2zdVHYYTmrkvpQf/8PD1ORI+oc8h+KTN44koPFLr0hTOl9bIFLQyUB9KhrzZ/ByyaEKw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=MibdVBdf; arc=fail smtp.client-ip=40.107.215.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YykVoofjVswPN7/GlD7aijF0+6hWrY3R+PB8aZyrGauN1TKuP9XW2smtj+5BQkCXfP9HuApGfYaGSjXxvLt0MuduHqyyhv7D3z0Glmt6HtLbljZMxfUzBuHeTTWtCHNPbSrgpMTdzD0E1GefvIRmDN1EkeV8gFJJETqItPPeaxIf3rCow32s13bSGNbdamb7m4V35ZhOrbxnTB9+WFm7nqHgIwDS0p2tHYKKlvQ0i/J7VlQ58W7OUQ1mVjiz9odhZuJSUEkcPin8oowfgbgQ8F6QwEjZPNwKPgSF/6yczAZMdtgWq3khijftcd4bPzZLzrJNY0qi8Phks6QkEUKGEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V8A4p2wwOmIYB5l682T+CgOOXgYJHEKC2CkcqzMAKuw=;
- b=Wy43/zvY2ol6exb2KwwNTD0mAFh/NqVVULJ8SjjOmwyscrOt7BoytVgb02qYsnK1zhAiNCJ9K2YYm6QdiZnCHOi5UbY/uxKdhh4ZAzaAXjKwiNgTApMlRQ+V/E0uRu1JNIU8dZleFORVyLwgoKPkGEPD/tcw5hjt2FCAPqRn7QZRts2QTOzoUuk9gHNEwr5BbIcCTQJrT+CxvTYgBEY+yvwbpZCS310w9LEtapqQQCE353rVbOvQvArCZQ9hFJN6ndoSvoUJ2IWDKHnYStWPy0XtbBvi+1zkLtV70FxE+5DFEnRjVaug66+0lv3UC03r6Wl61RS9Wo8dquRqyAk/RQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V8A4p2wwOmIYB5l682T+CgOOXgYJHEKC2CkcqzMAKuw=;
- b=MibdVBdf7FT7wuwbjWIPpiTfc22b8zIohSDGYDl0nWhq5E+hNnUGaVoDJddBq2jeXiILNXuJgtCT6xlQ+AjgOIm6U/MRwdm22FjbZ5d4zfH6RLRSE+E+mXTi3koier8ZRXy0Hl6n4jqmVfRrnqD6PTTEnrVvBlCfDjxCUXkMcOteeIL8w2NlI1umYJ9VY/uIU9X+td8eSkTC0K6+drK87/8LWbvmG+AD6jJH3P/O6DmIkdlD+Xil85JYwDRqNyFPO7RZ74BuZjcpmAxICfCWHZjsrSTleHSRquqmV7fZkZSvFXMyHmJNCbbF87mYJXPKRV5h4PXcAuYAIaudT0HaJA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from TYZPR03MB6896.apcprd03.prod.outlook.com (2603:1096:400:289::14)
- by SEZPR03MB7193.apcprd03.prod.outlook.com (2603:1096:101:e6::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.25; Fri, 14 Jun
- 2024 08:51:11 +0000
-Received: from TYZPR03MB6896.apcprd03.prod.outlook.com
- ([fe80::ac4e:718:3b03:3123]) by TYZPR03MB6896.apcprd03.prod.outlook.com
- ([fe80::ac4e:718:3b03:3123%7]) with mapi id 15.20.7677.024; Fri, 14 Jun 2024
- 08:51:10 +0000
-Message-ID: <42752f1c-fa79-450c-bbf8-f55464db14ae@amlogic.com>
-Date: Fri, 14 Jun 2024 16:51:01 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: Add support for Amlogic A4 SoCs
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240611-a4_pinctrl-v1-0-dc487b1977b3@amlogic.com>
- <20240611-a4_pinctrl-v1-1-dc487b1977b3@amlogic.com>
- <20240613170816.GA2020944-robh@kernel.org>
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-In-Reply-To: <20240613170816.GA2020944-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR01CA0163.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::19) To TYZPR03MB6896.apcprd03.prod.outlook.com
- (2603:1096:400:289::14)
+	bh=8fldpzu5YQHbVabTBE5i4/pUEh6EW9y8eP3q9nv8yGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FxjVe5/n4vySgRuQU8/lDwSRHlvcG0yuEQICJ/QTOC5ucy9TPQWuosffVy+JHkJG3U3QpuT5mQ3Oy2LAMrW9xFn0vjyezyFeyarpLakxyeIpJI/GdO1RETbOTcOgWbo8yeuzKkB/J68X9sQvzueUwmL2cU8MkJ5P0CdszD5bme4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AK0OW/FC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718355076;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PsytS7a/+imSTfzmJw541GS5vJYBUHRv7S94N80bBaQ=;
+	b=AK0OW/FCCfUfVj95T7DSw4Rl/nytcyM/J3yRJyqL2lpctzao3J2R9d8qsmRcfkoWPNE0Og
+	+lDkhX8lfcjJ+uc6Y9uS/Wg1bmPQuuJd6YVcUDDriuhXeKxHp9PzGFlWy75zvBtj6mxO3H
+	5oQcbF9MCx3Ak2nFdbrPfUgSOYx0YRc=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-102-D3qQ1NP5P8KLVS1_sB-A5g-1; Fri, 14 Jun 2024 04:51:13 -0400
+X-MC-Unique: D3qQ1NP5P8KLVS1_sB-A5g-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4218447b900so10366505e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:51:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718355072; x=1718959872;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PsytS7a/+imSTfzmJw541GS5vJYBUHRv7S94N80bBaQ=;
+        b=WEegFRJb0BLi89nD/IC8jWfY3NDh4S8k+8ezQ07s9dgWHcvfcq/O8T2B9F3HrfoN90
+         WB8sLhz/EuPCYegF5I0sxY1ZLrUBCBf367LUbs8aHGaqZAcfFMz8Q9Fwf0LwKfTVY2MJ
+         irQ0r0s4ybNgEg0fysIoKkce2RYCCMFnyUhs5ziexvvZLKOFPu7ZePT3KQ5ts6cOhVPm
+         /B+eN8mHNzOSpj5oY9hHvZrflAO7QqK1GL+wKFosp/MIO//1O29pQVgYrNYLFQdaScjN
+         oehhZVLcSosGCekbYLJWXiXjWvlZ+nDHk66cuP/NhDskS1CuMx3dycQ/NrQO3fNRCv3C
+         uPYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWR9bGV/6t0QMFtXMMX+6PHaSY83XC2iXWhuPRXkCNmv+iTj6nHqGqSp62tD+vaVhGfsZo5K4A7OexbaggtR3axn41qKLs4LAwU/S9q
+X-Gm-Message-State: AOJu0YzuXNrr/vaSvM9+IInCTBgUFuTEDwRsYMEA3dd/ybydldrEnRQf
+	/PZUIpZBlvxqA8lZsp0wN8CAse2R03G0HtfhSN1kFEZfXkDiVBHhDXN2ZggoIx+LyJDKZ2H+TB6
+	GClLdA3xbj+etAfsNTMkPn5DTnhNjaoHzmqslnHSZ0cq4zzQOpZUgT5aTnGOiNA==
+X-Received: by 2002:a05:600c:4f44:b0:421:7d22:321d with SMTP id 5b1f17b1804b1-422b6ec4aafmr47196015e9.6.1718355072319;
+        Fri, 14 Jun 2024 01:51:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGsu3IWUGSgJrp0I8s6yL0LrXtPPpTU6s+Mm6hpBc3uQGVqH2PWXWu/GcfhrsvdsfJ3aGcQzw==
+X-Received: by 2002:a05:600c:4f44:b0:421:7d22:321d with SMTP id 5b1f17b1804b1-422b6ec4aafmr47195715e9.6.1718355071815;
+        Fri, 14 Jun 2024 01:51:11 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4f:2b00:69b5:3684:56c:6dd5? (p200300d82f4f2b0069b53684056c6dd5.dip0.t-ipconnect.de. [2003:d8:2f4f:2b00:69b5:3684:56c:6dd5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de5d5sm89244655e9.33.2024.06.14.01.51.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 01:51:11 -0700 (PDT)
+Message-ID: <e151cfd9-c0a5-4536-a490-77dc47aa3ed6@redhat.com>
+Date: Fri, 14 Jun 2024 10:51:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR03MB6896:EE_|SEZPR03MB7193:EE_
-X-MS-Office365-Filtering-Correlation-Id: 57bda40a-c10c-4954-2cf9-08dc8c4f237a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230035|1800799019|7416009|366011|376009;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZU0vSnk3eW5WK3RjQTYrMHdFdGc5cXFSaEJ5VDc5bGpOVEQ5SkVBaFlYS1A4?=
- =?utf-8?B?bUczUmhkekVOcGd2UENkeGVBVEwxZjJ6VGQ3Tzc5TTFIQVE5VmJxTGFCWkRk?=
- =?utf-8?B?SThrSTJTZzVaS1Q0RThyd3JpeXVjUDRiYVVYZC9lMDJVdlRtVVNGb2pwUnhi?=
- =?utf-8?B?QjE1OHRPOExkWngrSTUrWG83bDVuK1pGK0FuZjB3aHAyQVc0WWI3bE9zMzZP?=
- =?utf-8?B?MllUUnFMTEZJV2lCd05sNERTQkE0ZWVweTBIbFpQRXZvR0c3QzA2WThWMDdG?=
- =?utf-8?B?N0N2aERSdUZia3pIOVVZbVI1YUVzVlYyUVREVVZ5SWxkMVRwU3grSHVsMHRW?=
- =?utf-8?B?YjA3MU4rTDJmUGRCUVN1bVFRMVRlRWZ5SldPNDJYNEhRUFJCMHVVZDhjMWJK?=
- =?utf-8?B?RExQeVBVZTBtczNUVFFXUkNkYjQ2Njg5VUtKTTZpSjBLZEpydmNWbk1lakV5?=
- =?utf-8?B?WUJWSmVIS1diNGdLL1VvVVhackRHbVNjUG5xbldjQmkrQ0VQWkYzSHdnZ0hN?=
- =?utf-8?B?Y2NNUmRJdk1zd05RcHQzcHBKYnBtZW1yTE82bjV0NzJHYlRFMXFrL1Q4d3lu?=
- =?utf-8?B?UmhHd0xZQ1E2d0I1Mmk2S3IvdlAyZkF5K0d1aUY5QTBaeGd5ZU5BbXZabUho?=
- =?utf-8?B?aldsZ2JqYUxCREhiOGdNc2dJNGVLVHY1UTZzUXFia3g3ZzRFbFpsam1ZZk04?=
- =?utf-8?B?NW5oNWVud2Z2QU4vcTRGL1pQdHBTd0RyNm1xM1U2RVpteFJ6bUQra2tzSXRZ?=
- =?utf-8?B?ZmdXV2thRVdLeVBDT3R6ZEhzbTN6NS9FdFlnM3dtcFg0TFRMaFpQUTdyTDFp?=
- =?utf-8?B?MXJEQ0wzQ1N4MkJQQmlYMjFkMmw1bWVUWU9pYnRNVUFvOEFtT1d1MjlPejRJ?=
- =?utf-8?B?VHkwRlkzRWZFQ1VuSzNYZ3hXN3J5STJ2REYxODdzL2tiQVhnSzlXUmpMZUM3?=
- =?utf-8?B?RDh6dElKQVZPd0pzUENxMTEzTllVQ0VWbElCTG9Oa2pxU1FmQXNWZkJ6bzU1?=
- =?utf-8?B?LzJlZVQvTVFaV2xUSnNPSjNKZ1ZNV21KQjE2NjlLcXR0QnZrVnR2ck5xRElI?=
- =?utf-8?B?MHBNY0UzK2JqZ1lBN2tGdEo2UWVSQ21iY2dKK2EyM0k2cldYc2VpY1Via1hk?=
- =?utf-8?B?Q0ZUOUJ4aE9YZ0FZa2FQd0NPN1UvaS9TNlpJSlFPaU5qaXM1bHhWb3hSNVA4?=
- =?utf-8?B?QnIvc1pROVlISnpOWFcyQ0ZXRms0QkxpcWlFZlEwaHNvQ2NhcVE1OHBaeTNZ?=
- =?utf-8?B?UGVkcWxraERSdi9sYmJiTS9vTEZNa3hVc0lRMUxqZk1tdHJTYnMwa1BvYlRo?=
- =?utf-8?B?ZTN4QnYxY1FLa3pITzJOZG9CMWRXK1FUbTNkQk5EZE0rcmxmZ3BvY2pQQlZ4?=
- =?utf-8?B?RlRwZS9PTlFvWTdaekJIT0haNUZ3UEt0VWlmNzE5ZHl1OGZROGF1WHV0RFQ5?=
- =?utf-8?B?V2tEeDAwaGw5eW1qVmJUMlY0dlB1U0lyTEVVOU45WWk1bXQvV1VnWExyYVFx?=
- =?utf-8?B?TUlOcVJyK1lGbU0wbWpNUDczR3EyTVhGQjlZakJBSUlHbERlOStTMmpxblJU?=
- =?utf-8?B?NGd3QWMvVFN5YW9raEVDUkxxcWlXanF1Y29NVmU3S2xDbGx5TGFjV3V4Umdl?=
- =?utf-8?B?RE82TmM0cEhXaDZibGZjOWIwZHZjbldZM253SURPdVBRSGZ2T3JvUkdXZkFw?=
- =?utf-8?B?WHRKU09lYlcyVExiRmlXaERBemJuMEsvbURiYWx2V1Z6ejc5V1E4dWhXNTI2?=
- =?utf-8?Q?ioyZUlq/2ktpcWHCSFoffN0GsAM37cDtbriSABN?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6896.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230035)(1800799019)(7416009)(366011)(376009);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cHRvZ2ZxYzNuK2k2bHhBbWMrREdsdkl5bnpwZFdpVWQ5VnJrTkZFU0hFRlhD?=
- =?utf-8?B?L2JqVkdOWWE0R2NuL2hEQnA3U1ExS3FVUmRrVEVTSE1ydHhlS0tsVFNSTkxI?=
- =?utf-8?B?S0lRbzNsRnEzclJGNU9zZ0xIZlBRcmlSbkpNSXVHVVhOWTFQL2M4LzMxNGVB?=
- =?utf-8?B?M0xvckx0dHVaek51TkJVWmFaSUdpTTJjZGV2UUw5a0luWWNYQkRJUGNJNnl6?=
- =?utf-8?B?WmgvVXU0d0lNYjdqTWtxN3cvTmxYYURTTmRhZm15YlhkN0t5TkVSSDVzTGZO?=
- =?utf-8?B?SHNSSE44TVpEeHhBSVp5T3BYa3owcFNaMlUrS0lhU0w4SS9rL2dDUXJ3czJE?=
- =?utf-8?B?UFJoU2Z2L1l4LzltUmI3Z2xDamhkNVVJeXJnWlR3WHNBcW85akZuaWpXODhj?=
- =?utf-8?B?R09CMFFaVUJGY0hmTnlETC9sNjBHZWN5Qy9FeENzUjJYd3pPZmJqQlBrQUMz?=
- =?utf-8?B?WDdzMVhCUzdZU1Jpak9iYWlDdlc4TDUvSWVkVGhoNmhoVG1qUkttaXhHREIw?=
- =?utf-8?B?NmdjczFlSExDU0NLcXJ3RURmWmNWNUV3M2swUDF4WTB0RzJEbmplZkM1Z3ov?=
- =?utf-8?B?aVdXMUJqdk5Eb2RranZMbXpGWkZ5dkhYdlNidThYNWMwZXpMRTZLQ2hvWFJx?=
- =?utf-8?B?cmFtcHdhaWpQYTJKQ1BmalBNTC9lQWxEbndkR0RmczlZL3hvckVrSkNuTjVP?=
- =?utf-8?B?MStibmFrNkJSdllkUDlDSDU3Zi9GemtkZG9JOGY4NmJvWjFOWEhDZFF0WTc3?=
- =?utf-8?B?RDVIeHpQem9SeFdyeEZ0NklrN0VsNE1qOTlWeXg0Q0pwUEJNYjFvYWhzdHQ0?=
- =?utf-8?B?eDJnTkNrVmk1MktWTVNVY3NuSUVVS0grSHN3WUo4aC9jd1V3RjNIOXZBODYz?=
- =?utf-8?B?Y1J4RFNybnNNaTAxNTZIVW5qcUEvMGtCT1NWQ2FidTlqcG81QjBHSCtMbmNy?=
- =?utf-8?B?UDF5OEhpR1dZdStyU3UvS2hKbEw2R3Q0a0pPbjlTa3YzU3NoN0JmQ2tMVHdn?=
- =?utf-8?B?QkY0OVErc3NCMkFldEFGdGFtYWtQQVZNZHo2K0pwRU5HMXRhV3VYMEgrSW1Z?=
- =?utf-8?B?YVhsaGplSVdrRmptK0p2TXJ6bHJrRGJNaHltNTJaRWZQQld3RU1KWmZhVjcz?=
- =?utf-8?B?MzViLzNXMVpVbG9NOHVLZVpxaU83YlF2dE5adHBQM08ycXVYSmhFUEtzbzBq?=
- =?utf-8?B?enZ0ZnJrdXU5QVhhOGlJUzVLV2JVcFBQMWI0ZDV1aTd1bndadUNRTVRPbTZs?=
- =?utf-8?B?TFRPNXIrZzZ5bmdYb0ZUWis2d0svL1RTVEdJMnZ6d0loTmo1QU1WVVZYSWFm?=
- =?utf-8?B?aEFvQ3hnYUt2U09MRkhHNGVGTW1qaWxPLzRTS1V0bDNyYTh5M1pFMklqeUtw?=
- =?utf-8?B?NjUyaXhpRTJoZDYyRVJaN01PRHErSTdKa2pLN21qUmp5Y1JQWVdiaWk0c05z?=
- =?utf-8?B?YXU5VmZMOVVKYk83OVFZYVV4cTRSSUJXTmNzK1o5YTRyZHFmY0M0d0F3cHJE?=
- =?utf-8?B?MDB1cG0xbnJjZFV3dFZubkJWVGNDVzJ1dFlISlFDVXlTTlhZejByWjVOMXR6?=
- =?utf-8?B?SGpWMnlVUXNqNk1iZzhWa1pCd1hLOHJoN1BFeFJLck1vd0pvU1dLcHBDaG1T?=
- =?utf-8?B?dk4weVVYd1QxMUw4a0Jld3J3clBicHAvRUxvenV3NnY4V0tMVHNIM1RyT2hL?=
- =?utf-8?B?dUluR000akN1azBmL0hYYkNsamRTL0g3WU9MT2xsaWVnUTNjTTBRU2ZMREJw?=
- =?utf-8?B?V28xT0lEdllCQU4wVWtzbHZUZUZsb0swcW16cTB5Z0p1SWp5dG4wLzVIaDM1?=
- =?utf-8?B?aUVyUFk3Tm5PMDVmVnJNejc3SzZZdUJYa01lTFpCdUNoU0h3SCtnU1hpd0tW?=
- =?utf-8?B?Q1FIVjZVVTJXWlZmV0dma3pZcCttWlVtcUgydjk5Q0Eza0JzUEo5eE10dlJ1?=
- =?utf-8?B?Z3hDL1NQTHMyTnhML21pVjd4bnNFMnBueW5xM052WnNlKzRwS2VKVWUzV0lW?=
- =?utf-8?B?TE5sU3hVdnVuNlhZRngvQkZFcXRabDdnQ2IxVXFycG4vNURBR2NLN2t5VkY3?=
- =?utf-8?B?L0Y0Rm9IZ1dUZHFmMHViNEdPQm40NTRHNXdWNGRHM1F6aUE2bC9YQjIreUJv?=
- =?utf-8?B?YStIanB5VjNBWTFCMUZiNmhuRmlvOEorQ25OVDNmc2pLRWI2UGRQTnowQ3Zo?=
- =?utf-8?B?alE9PQ==?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57bda40a-c10c-4954-2cf9-08dc8c4f237a
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6896.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2024 08:51:10.7312
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: k3l4CYE+S+/OucuqLNmMRs/q7Js8lYB/PZwE9M4nPd0Kcm1rK9OA8+443bTCGqQWq52CTJP/0z7e5h80xvgr8fW4i4g9/JBLfRXpJhLJNKk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB7193
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 3/3] mm: remove folio_test_anon(folio)==false path in
+ __folio_add_anon_rmap()
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, chrisl@kernel.org,
+ linux-kernel@vger.kernel.org, mhocko@suse.com, ryan.roberts@arm.com,
+ baolin.wang@linux.alibaba.com, yosryahmed@google.com, shy828301@gmail.com,
+ surenb@google.com, v-songbaohua@oppo.com, willy@infradead.org,
+ ying.huang@intel.com, yuzhao@google.com
+References: <20240613000721.23093-1-21cnbao@gmail.com>
+ <20240613000721.23093-4-21cnbao@gmail.com>
+ <CAGsJ_4zx3Rp9ye=LFhzEN+JypAq1zb_gLQZgyiRvYJZTMpLCHA@mail.gmail.com>
+ <b0b4a134-1d40-4eef-94f3-5c4593b55e78@redhat.com>
+ <CAGsJ_4zDoevXiNOTbSefU4WfoPEpbkhArc1niTBFRPsMHu5j8w@mail.gmail.com>
+ <cac7d354-bcf3-4d7f-866a-9665568a50a0@redhat.com>
+ <CAGsJ_4xfPPz8oOe79nPxues0PkEem8O2Q+0zo6pU8uDGO1kMkg@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAGsJ_4xfPPz8oOe79nPxues0PkEem8O2Q+0zo6pU8uDGO1kMkg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Rob,
-      Thanks for your review.
-
-On 2024/6/14 01:08, Rob Herring wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> On Tue, Jun 11, 2024 at 01:10:57PM +0800, Xianwei Zhao wrote:
->> Add the new compatible name for Amlogic A4 pin controller, and add
->> a new dt-binding header file which document the detail pin names.
+On 14.06.24 09:56, Barry Song wrote:
+> On Thu, Jun 13, 2024 at 9:12 PM David Hildenbrand <david@redhat.com> wrote:
 >>
->> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
->> ---
->>   .../bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml |  2 +
->>   .../dt-bindings/gpio/amlogic,a4-aobus-pinctrl.h    | 21 +++++
->>   .../dt-bindings/gpio/amlogic,a4-periphs-pinctrl.h  | 93 ++++++++++++++++++++++
->>   3 files changed, 116 insertions(+)
+>> On 13.06.24 11:06, Barry Song wrote:
+>>> On Thu, Jun 13, 2024 at 8:49 PM David Hildenbrand <david@redhat.com> wrote:
+>>>>
+>>>> On 13.06.24 10:46, Barry Song wrote:
+>>>>> On Thu, Jun 13, 2024 at 12:08 PM Barry Song <21cnbao@gmail.com> wrote:
+>>>>>>
+>>>>>> From: Barry Song <v-songbaohua@oppo.com>
+>>>>>>
+>>>>>> The folio_test_anon(folio)==false case within do_swap_page() has been
+>>>>>> relocated to folio_add_new_anon_rmap(). Additionally, two other callers
+>>>>>> consistently pass anonymous folios.
+>>>>>>
+>>>>>> stack 1:
+>>>>>> remove_migration_pmd
+>>>>>>       -> folio_add_anon_rmap_pmd
+>>>>>>         -> __folio_add_anon_rmap
+>>>>>>
+>>>>>> stack 2:
+>>>>>> __split_huge_pmd_locked
+>>>>>>       -> folio_add_anon_rmap_ptes
+>>>>>>          -> __folio_add_anon_rmap
+>>>>>>
+>>>>>> __folio_add_anon_rmap() only needs to handle the cases
+>>>>>> folio_test_anon(folio)==true now.
+>>>>>
+>>>>> My team reported a case where swapoff() is calling
+>>>>> folio_add_anon_rmap_pte *not* folio_add_anon_rmap_ptes
+>>>>> with one new anon  (!folio_test_anon(folio)).
+>>>>>
+>>>>> I will double check all folio_add_anon_rmap_pte() cases.
+>>>>
+>>>> Right, swapoff() path is a bit special (e.g., we don't do any kind of
+>>>> batching on the swapoff() path).
+>>>>
+>>>> But we should never get a new large anon folio there, or could that now
+>>>> happen?
+>>>
+>>> My team encountered the following issue while testing this RFC
+>>> series on real hardware. Let me take a look to identify the
+>>> problem.
+>>>
+>>> [  261.214195][T11285] page:000000004cdd779e refcount:4 mapcount:1
+>>> mapping:00000000ba142c22 index:0x1 pfn:0x1b30a6
+>>> [  261.214213][T11285] memcg:ffffff8003678000
+>>> [  261.214217][T11285] aops:swap_aops
+>>> [  261.214233][T11285] flags:
+>>> 0x2000000000081009(locked|uptodate|owner_priv_1|swapbacked|zone=1|kasantag=0x0)
+>>> [  261.214241][T11285] page_type: 0x0()
+>>> [  261.214246][T11285] raw: 2000000000081009 0000000000000000
+>>> dead000000000122 0000000000000000
+>>> [  261.214251][T11285] raw: 0000000000000001 00000000000d84b3
+>>> 0000000400000000 ffffff8003678000
+>>> [  261.214254][T11285] page dumped because:
+>>> VM_WARN_ON_FOLIO(!folio_test_anon(folio))
+>>> [  261.214257][T11285] page_owner tracks the page as allocated
+>>> [  261.214260][T11285] page last allocated via order 0, migratetype
+>>> Movable, gfp_mask 0x2140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), pid
+>>> 11285, tgid 11285 (swapoff), ts 261214177545, free_ts 261151875699
+>>> [  261.214268][T11285]  post_alloc_hook+0x1b8/0x1c0
+>>> [  261.214284][T11285]  prep_new_page+0x28/0x13c
+>>> [  261.214291][T11285]  get_page_from_freelist+0x198c/0x1aa4
+>>> [  261.214298][T11285]  __alloc_pages+0x15c/0x330
+>>> [  261.214304][T11285]  __folio_alloc+0x1c/0x4c
+>>> [  261.214310][T11285]  __read_swap_cache_async+0xd8/0x48c
+>>> [  261.214320][T11285]  swap_cluster_readahead+0x158/0x324
+>>> [  261.214326][T11285]  swapin_readahead+0x64/0x448
+>>> [  261.214331][T11285]  __arm64_sys_swapoff+0x6ec/0x14b0
+>>> [  261.214337][T11285]  invoke_syscall+0x58/0x114
+>>> [  261.214353][T11285]  el0_svc_common+0xac/0xe0
+>>> [  261.214360][T11285]  do_el0_svc+0x1c/0x28
+>>> [  261.214366][T11285]  el0_svc+0x38/0x68
+>>> [  261.214372][T11285]  el0t_64_sync_handler+0x68/0xbc
+>>> [  261.214376][T11285]  el0t_64_sync+0x1a8/0x1ac
+>>> [  261.214381][T11285] page last free pid 90 tgid 90 stack trace:
+>>> [  261.214386][T11285]  free_unref_page_prepare+0x338/0x374
+>>> [  261.214395][T11285]  free_unref_page_list+0x84/0x378
+>>> [  261.214400][T11285]  shrink_folio_list+0x1234/0x13e4
+>>> [  261.214409][T11285]  evict_folios+0x1458/0x19b4
+>>> [  261.214417][T11285]  try_to_shrink_lruvec+0x1c8/0x264
+>>> [  261.214422][T11285]  shrink_one+0xa8/0x234
+>>> [  261.214427][T11285]  shrink_node+0xb38/0xde0
+>>> [  261.214432][T11285]  balance_pgdat+0x7a4/0xdb4
+>>> [  261.214437][T11285]  kswapd+0x290/0x4e4
+>>> [  261.214442][T11285]  kthread+0x114/0x1bc
+>>> [  261.214459][T11285]  ret_from_fork+0x10/0x20
+>>> [  261.214477][T11285] ------------[ cut here ]------------
+>>> [  261.214480][T11285] WARNING: CPU: 3 PID: 11285 at mm/rmap.c:1305
+>>> folio_add_anon_rmap_ptes+0x2b4/0x330
+>>>
+>>> [  261.215403][T11285] pstate: 63400005 (nZCv daif +PAN -UAO +TCO +DIT
+>>> -SSBS BTYPE=--)
+>>> [  261.215423][T11285] pc : folio_add_anon_rmap_ptes+0x2b4/0x330
+>>> [  261.215428][T11285] lr : folio_add_anon_rmap_ptes+0x2b4/0x330
+>>> [  261.215433][T11285] sp : ffffffc0a7dbbbf0
+>>> [  261.215437][T11285] x29: ffffffc0a7dbbbf0 x28: ffffff8040860a08
+>>> x27: ffffff80db480000
+>>> [  261.215445][T11285] x26: fffffffe04cc2980 x25: ffffff808f77f120
+>>> x24: 0000007b44941000
+>>> [  261.215452][T11285] x23: 0000000000000001 x22: 0000000000000001
+>>> x21: fffffffe04cc2980
+>>> [  261.215459][T11285] x20: ffffff80db480000 x19: fffffffe04cc2980
+>>> x18: ffffffed011dae80
+>>> [  261.215465][T11285] x17: 0000000000000001 x16: ffffffffffffffff
+>>> x15: 0000000000000004
+>>> [  261.215471][T11285] x14: ffffff82fb73fac0 x13: 0000000000000003
+>>> x12: 0000000000000003
+>>> [  261.215476][T11285] x11: 00000000fffeffff x10: c0000000fffeffff x9
+>>> : 0d46c0889b468e00
+>>> [  261.215483][T11285] x8 : 0d46c0889b468e00 x7 : 545b5d3935343431 x6
+>>> : 322e31363220205b
+>>> [  261.215489][T11285] x5 : ffffffed013de407 x4 : ffffffed00698967 x3
+>>> : 0000000000000000
+>>> [  261.215495][T11285] x2 : 0000000000000000 x1 : ffffffc0a7dbb8c0 x0
+>>> : ffffff8068c15c80
+>>> [  261.215501][T11285] Call trace:
+>>> [  261.215504][T11285]  folio_add_anon_rmap_ptes+0x2b4/0x330
+>>> [  261.215509][T11285]  __arm64_sys_swapoff+0x8cc/0x14b0
+>>> [  261.215516][T11285]  invoke_syscall+0x58/0x114
+>>> [  261.215526][T11285]  el0_svc_common+0xac/0xe0
+>>> [  261.215532][T11285]  do_el0_svc+0x1c/0x28
+>>> [  261.215539][T11285]  el0_svc+0x38/0x68
+>>> [  261.215544][T11285]  el0t_64_sync_handler+0x68/0xbc
+>>> [  261.215548][T11285]  el0t_64_sync+0x1a8/0x1ac
+>>> [  261.215552][T11285] ---[ end trace 0000000000000000 ]---
 >>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml
->> index d9e0b2c48e84..f5eefa0fab5b 100644
->> --- a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml
->> +++ b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml
->> @@ -15,6 +15,8 @@ allOf:
->>   properties:
->>     compatible:
->>       enum:
->> +      - amlogic,a4-aobus-pinctrl
->> +      - amlogic,a4-periphs-pinctrl
->>         - amlogic,c3-periphs-pinctrl
->>         - amlogic,t7-periphs-pinctrl
->>         - amlogic,meson-a1-periphs-pinctrl
->> diff --git a/include/dt-bindings/gpio/amlogic,a4-aobus-pinctrl.h b/include/dt-bindings/gpio/amlogic,a4-aobus-pinctrl.h
->> new file mode 100644
->> index 000000000000..7c7e746baed5
->> --- /dev/null
->> +++ b/include/dt-bindings/gpio/amlogic,a4-aobus-pinctrl.h
->> @@ -0,0 +1,21 @@
->> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
->> +/*
->> + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
->> + * Author: Xianwei Zhao <xianwei.zhao@amlogic.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_AMLOGIC_A4_AOBUS_PINCTRL_H
->> +#define _DT_BINDINGS_AMLOGIC_A4_AOBUS_PINCTRL_H
->> +
->> +/* GPIOAO */
->> +#define GPIOAO_0                     0
->> +#define GPIOAO_1                     1
->> +#define GPIOAO_2                     2
->> +#define GPIOAO_3                     3
->> +#define GPIOAO_4                     4
->> +#define GPIOAO_5                     5
->> +#define GPIOAO_6                     6
+>> Ah, yes. in unuse_pte(), you'll have to do the right thing if
+>> !folio_test(anon) before doing the folio_add_anon_rmap_pte().
+>>
+>> You might have a fresh anon folio in the swapcache that was never mapped
+>> (hopefully order-0, otherwise we'd likely be in trouble).
 > 
-> I find defines with the value of the define in the name pretty
-> pointless.
+> Yes. It is order-0
 > 
-In the driver, this macro definition not only uses its value, but also 
-uses this character, for example as following,
-
-MESON_PIN(GPIOE_0),
-#define MESON_PIN(x) PINCTRL_PIN(x, #x)
-
-GPIO_GROUP(GPIOE_0),
-#define GPIO_GROUP(gpio)                                               \
-         {                                                              \
-                 .name = #gpio,                                         \
-                 .pins = (const unsigned int[]){ gpio },                \
-                 .num_pins = 1,                                         \
-                 .data = (const struct meson_pmx_axg_data[]){           \
-                         PMX_DATA(0),                                   \
-                 },                                                     \
-         }
-
->> +
->> +#define GPIO_TEST_N                  7
->> +
->> +#endif
->> diff --git a/include/dt-bindings/gpio/amlogic,a4-periphs-pinctrl.h b/include/dt-bindings/gpio/amlogic,a4-periphs-pinctrl.h
->> new file mode 100644
->> index 000000000000..dfabca4b4790
->> --- /dev/null
->> +++ b/include/dt-bindings/gpio/amlogic,a4-periphs-pinctrl.h
->> @@ -0,0 +1,93 @@
->> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
->> +/*
->> + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
->> + * Author: Xianwei Zhao <xianwei.zhao@amlogic.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_AMLOGIC_A4_PERIPHS_PINCTRL_H
->> +#define _DT_BINDINGS_AMLOGIC_A4_PERIPHS_PINCTRL_H
->> +
->> +/* GPIOE */
->> +#define GPIOE_0                              0
->> +#define GPIOE_1                              1
->> +
->> +/* GPIOD */
->> +#define GPIOD_0                              2
->> +#define GPIOD_1                              3
->> +#define GPIOD_2                              4
->> +#define GPIOD_3                              5
->> +#define GPIOD_4                              6
->> +#define GPIOD_5                              7
->> +#define GPIOD_6                              8
->> +#define GPIOD_7                              9
->> +#define GPIOD_8                              10
->> +#define GPIOD_9                              11
->> +#define GPIOD_10                     12
->> +#define GPIOD_11                     13
->> +#define GPIOD_12                     14
->> +#define GPIOD_13                     15
->> +#define GPIOD_14                     16
->> +#define GPIOD_15                     17
+> [  261.214260][T11285] page last allocated via order 0, migratetype
 > 
-> I'm not really much of a fan of using defines for GPIOs, but if you do,
-> wouldn't be better to split banks and lines up rather than a global
-> number space. See ASPEED_GPIO() or tegra header.
-> For the same reasons described above.
-I want to keep the same style as the previous drive.
+> Otherwise, we would have encountered this VM_WARN_ON_FOLIO?
+> 
+> __folio_add_anon_rmap()
+> {
+> ...
+> VM_WARN_ON_FOLIO(folio_test_large(folio) &&
+>       level != RMAP_LEVEL_PMD, folio);
+> ...
+> }
+> 
+> Given that nobody has ever reported this warning, I assume all callers
+> using folio_add_anon_rmap_pte(s) are right now safe to move to ?
 
-> Rob
+Yes, and we should likely add a VM_WARN_ON_ONCE() here that we have a 
+small folio if !anon. If that ever changes, we can assess the situation.
+
+Only swap created "new" anon folios without properly calling the right 
+function so far, all other code handles that correctly.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
