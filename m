@@ -1,237 +1,139 @@
-Return-Path: <linux-kernel+bounces-214558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C48590865F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:35:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A3E5908669
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02F1528FAD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:35:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7F4CB24ABE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE79190068;
-	Fri, 14 Jun 2024 08:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29783190079;
+	Fri, 14 Jun 2024 08:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCTYyYFS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AiBYYl9A"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191B7190044;
-	Fri, 14 Jun 2024 08:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A37190044
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718354090; cv=none; b=usb0Ur0RWIZfn6VAWcER9KnEltU4s8paTWtq3Scw29KEuUId8MUNCTTIGk/Pzn8p0yAsM4pFBfF0d+pLwXcYmePOdw2JEk9Z0u9aPWnvfSpRlt5Tueyz7kCxVAoKKdevoAS2O7IJ95thZUWAXCWtguAHp9BzxBZFFLUssWYQ1NU=
+	t=1718354140; cv=none; b=IsJ/kDSVJwNp6l+tE1BjQO3wQpnz6EViVz9sUhTH2ttD4yHYzyNjKZW46lrUlIGRIaG2EDiqgdjOGYD7+28nODYW+oLYG1GB9Bmdba2/L/p7Y2r7TBd+BShXAszlIPkx5zYHuqkGcGbuU9mTzFK3eowSe9vw46ylWVbup90pPdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718354090; c=relaxed/simple;
-	bh=5+vsvTPoSsGnlov0diQOja8u3p3y/iXbs53szWp5oUQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wd/cqdhB4oTYyMNF6zZXtw8tMPTTr92Lxf1gEuAqXytEK0uXYLDTrtym8neT0oTbAvECcL1f/03AZv9FhIvv1HLiNNSi3zCKh76HXjyvNyg3J3Bi+gpTbvwSDb6VlvyconDSdd8/vG4FdJki1NHAPIf8GlrQyObi0SZHd99iqzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCTYyYFS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BB5DC2BD10;
-	Fri, 14 Jun 2024 08:34:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718354089;
-	bh=5+vsvTPoSsGnlov0diQOja8u3p3y/iXbs53szWp5oUQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nCTYyYFS6yudck+kRFg9JLllXg9Pw1hNipl0nYMA+E1/STCeSBtvsReI+J41omqOG
-	 XijQYcagfKs9qlTPL2BTu8PE4JBXgtbtlr5W8/jdr46SXYBxOYsEyx4QXJaSMQdfhq
-	 U+ubX+4OeKdWmtA393fu0Lpc7uQLrA6FTUKGquamb6UmDojuzD9n7jt79cqN9rNi02
-	 Cqko1X+JAIfDAy1R4BjMnrv0/CviudJWSIn8zisVkplkrRPmNdUWkFyhGhoTfVvWGn
-	 n23248IrPf8K1VV7eqoChlhyNfANPWRhg7/5rbLFNjEwYnNTr6dpxrDwk/nIKyygd0
-	 zVj0ie09LC5Ug==
-Date: Fri, 14 Jun 2024 10:34:47 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Andy Yan <andyshrk@163.com>
-Cc: neil.armstrong@linaro.org, 
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
-	kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>, 
-	Luis de Arquer <ldearquer@gmail.com>, Algea Cao <algea.cao@rock-chips.com>
-Subject: Re: [PATCH 13/14] drm/bridge: synopsys: Add DW HDMI QP TX controller
- driver
-Message-ID: <20240614-neat-polecat-of-agreement-68e2df@houat>
-References: <20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com>
- <20240601-b4-rk3588-bridge-upstream-v1-13-f6203753232b@collabora.com>
- <20240601143226.GA2003970@ravnborg.org>
- <59519381-2729-4839-9882-65a981a0c551@collabora.com>
- <20240604204110.GA84949@ravnborg.org>
- <f656c72e-fac8-4345-9b65-1031ebe81c25@collabora.com>
- <304b4602-8722-4ed0-a555-8dada573ee79@collabora.com>
- <5dc16b34-d638-4fab-84e1-cb7db08ad80e@linaro.org>
- <2d8e9235.68f3.19015881d35.Coremail.andyshrk@163.com>
+	s=arc-20240116; t=1718354140; c=relaxed/simple;
+	bh=aXVVMd280kDEU99slp/goCJdHS5H7XE36h5Z2IJXkXg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XchTNt95ovjs2d77XfxtALufeNTh3Nuwko9y4Cd+Zx7d5JqZytjRQztMWj/b4sE3OSVK4WLHULOLI+OKxJBgmRDDpUz327p4db7phFaOXxVF0tc4yGHu62BqrZsIP+8f6Xw5FedhYgss1bRwXuXhXFD2pbckd7UgtU5QRzVIZT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AiBYYl9A; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52c8c0d73d3so2132621e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:35:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718354137; x=1718958937; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3DHzKRpXg9J/TD6lO3tM3V685Xzbxz5fbjLyyBJ38qc=;
+        b=AiBYYl9AgQSz78/B36T40zgA5eWZZ7WDFadxFYnp4Xie2QDx7P/VW696SF+11v4NwM
+         tD36IOs89OtP9xBJYCp4YPmQwemb2rNnLBm6uORCTgT5QXZh6SEivgmAgBUR0zyc1VZv
+         nz/Jz/RZwiq18hkb9Vdw65WS3NZZz2TE/Uv98FSYkQQVDOCXfJJmTt96oI5CU1ZMhCt+
+         7TVJ7mgXTlnlMeYjNmBDNcJ/78BTrRPvQl6Cc0nee9kOdghXRHhhan+0dNNF5GoVsUBS
+         kZH2gamR+uUmFDDnO866H6lvGcJ58kbcnR+wMtvaFbfawGfHp5iyrbA4F1QDGEG+pISx
+         vY+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718354137; x=1718958937;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3DHzKRpXg9J/TD6lO3tM3V685Xzbxz5fbjLyyBJ38qc=;
+        b=C97hsgJuooPKDU40D5df+PGfr4O6qo7sVuOnuxRHwugUV1ymuquMT50lQhbgFpzSl9
+         dgA8XJMSES19eYlCkfr90xDPHT1oDSkFHnFLqxGJreQQuRI7mpzjq5OUH2CyhwMt4mHW
+         Gf4n1aa7x+ppkb/uboQmOt4hV2n+VDIVvrzyDQ4PvwQxKJlSyYiTn49pBvHklavEncut
+         0EBd6k01LgBNQT3C3fki7qYA6V3pnY9ewMhsXhXsMJPdKw10+ufNR2H0KKitVPqT9pkj
+         /zGoLH8aj3sVoadIiTpKvWEDI4V4HIKUtV1JX0GDVbgIwCJG+dDnrEgiT6ENEvSEI3mU
+         XcXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX25ba64IeIrTbSiIrroz4HEMbNwo/J1jHaqMh7hJ1cVPmGVT8rpaTyTGeg3TNC9BeyeZwJ582pPTlonSGL8GbtFumfljmU+qE1jj83
+X-Gm-Message-State: AOJu0YwXMzjKU/CAtcNO+5Vuo1R8rfGTMH1EMiNr5F+I4VMf7zBLH114
+	i32v8xAbxa5b2TLUmJImeDfJLI51Z+sKraeXhS2nLw0S44LC0RNwyuxisWfgPru1LXOoN4XMMKa
+	nVCw=
+X-Google-Smtp-Source: AGHT+IEQYII1Qj2KahNl20kfi6Kd0iMIEGFVS/P375Teoc/Ydgcxx2q5cNcvZc4KM7O23+ZS+5UwLA==
+X-Received: by 2002:ac2:5929:0:b0:52c:9ae0:beee with SMTP id 2adb3069b0e04-52ca6e90a58mr1297191e87.49.1718354136880;
+        Fri, 14 Jun 2024 01:35:36 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282f1dbsm444776e87.110.2024.06.14.01.35.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 01:35:36 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 0/2] phy: qcom: qmp-pcie: drop second clock-output-names
+ entry
+Date: Fri, 14 Jun 2024 11:35:33 +0300
+Message-Id: <20240614-fix-pcie-phy-compat-v2-0-990863ea53bf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="k3c77qnfy4wcw7us"
-Content-Disposition: inline
-In-Reply-To: <2d8e9235.68f3.19015881d35.Coremail.andyshrk@163.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANUAbGYC/32NQQ7CIBBFr9LM2jGA1FRX3sN0AXTaTqKFQENsG
+ u4u9gAu38//7++QKDIluDc7RMqc2C8V1KkBN5tlIuShMiihtGiVxJE/GBwThnlD59/BrGjFOGi
+ y+moHA3UZItXaYX32lWdOq4/bcZLlL/3vyxIFdsZo2dqbuoju8eLFRH/2cYK+lPIF25jAkLcAA
+ AA=
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ devicetree@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1313;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=aXVVMd280kDEU99slp/goCJdHS5H7XE36h5Z2IJXkXg=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmbADXrUm9cJ44C/Qoh4AWATZBW3PHxHeKo1RHh
+ gPK0/xfq4WJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZmwA1wAKCRCLPIo+Aiko
+ 1QuOB/kBXJliWLone1Vftys+maL+YWswmOnQbrJaQc6CEa3Mie9hAeLIx8NBcEIIXS5NYMOuOOd
+ UCghRsR0hPuJmF0uhQZ8fSVchGAjzz01YWZbj7PVsdM0EX20qN5EWZAPhrUY5n23FqZiVnujqL7
+ lwh+pD6jiErEGx4UZWJS6/4SHCK7h8Grzgi+h7Gsvl5TKrmwIXG6CxIcgTJeux46gUm/ak5tjza
+ qUc3JlGHT4cAKtobXjt7QAqIVGDxSH7OQrnBYIN3WUnWP0wK/v8WbYwZVF4xuEqjXQ89NLYOhzb
+ 6aM5Mwg1u1mmPX4hmyuh3856QQGpinpPcwVipkAywFo8+ZVF
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
+While testing the linux-next on SM8450-HDK I noticed that one of the
+PCIe hosts stays in the deferred state, because the corresponding PHY
+isn't probed. A quick debug pointed out that while the patches that
+added support for the PIPE AUX clock to the PHY driver have landed,
+corresponding DT changes were not picked up for 6.10. Restore the
+compatibility with the existing DT files by dropping the second entry in
+the clock-output-names array and always generating the corresponding
+name on the fly.
 
---k3c77qnfy4wcw7us
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Fixed generated AUX clock name (Neil)
+- Link to v1: https://lore.kernel.org/r/20240521-fix-pcie-phy-compat-v1-0-8aa415b92308@linaro.org
 
-Hi,
+---
+Dmitry Baryshkov (2):
+      phy: qcom: qmp-pcie: restore compatibility with existing DTs
+      dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: drop second output clock name
 
-On Fri, Jun 14, 2024 at 02:56:00PM GMT, Andy Yan wrote:
-> At 2024-06-05 19:48:09, "Neil Armstrong" <neil.armstrong@linaro.org> wrot=
-e:
-> >On 05/06/2024 12:11, Cristian Ciocaltea wrote:
-> >> On 6/5/24 12:34 AM, Cristian Ciocaltea wrote:
-> >>> On 6/4/24 11:41 PM, Sam Ravnborg wrote:
-> >>>> Hi Cristian.
-> >>>>
-> >>>> On Tue, Jun 04, 2024 at 10:32:04PM +0300, Cristian Ciocaltea wrote:
-> >>>>> Hi Sam,
-> >>>>>
-> >>>>> On 6/1/24 5:32 PM, Sam Ravnborg wrote:
-> >>>>>> Hi Cristian,
-> >>>>>>
-> >>>>>> a few drive-by comments below.
-> >>>>>>
-> >>>>>> 	Sam
-> >>>>>>
-> >>>>>>
-> >>>>>>> +
-> >>>>>>> +static const struct drm_connector_funcs dw_hdmi_qp_connector_fun=
-cs =3D {
-> >>>>>>> +	.fill_modes =3D drm_helper_probe_single_connector_modes,
-> >>>>>>> +	.detect =3D dw_hdmi_connector_detect,
-> >>>>>>> +	.destroy =3D drm_connector_cleanup,
-> >>>>>>> +	.force =3D dw_hdmi_qp_connector_force,
-> >>>>>>> +	.reset =3D drm_atomic_helper_connector_reset,
-> >>>>>>> +	.atomic_duplicate_state =3D drm_atomic_helper_connector_duplica=
-te_state,
-> >>>>>>> +	.atomic_destroy_state =3D drm_atomic_helper_connector_destroy_s=
-tate,
-> >>>>>>> +};
-> >>>>>>> +
-> >>>>>>> +static int dw_hdmi_qp_bridge_attach(struct drm_bridge *bridge,
-> >>>>>>> +				    enum drm_bridge_attach_flags flags)
-> >>>>>>> +{
-> >>>>>>> +	struct dw_hdmi *hdmi =3D bridge->driver_private;
-> >>>>>>> +
-> >>>>>>> +	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)
-> >>>>>>> +		return drm_bridge_attach(bridge->encoder, hdmi->next_bridge,
-> >>>>>>> +					 bridge, flags);
-> >>>>>>> +
-> >>>>>>> +	return dw_hdmi_connector_create(hdmi, &dw_hdmi_qp_connector_fun=
-cs);
-> >>>>>>> +}
-> >>>>>>
-> >>>>>> Are there any users left that requires the display driver to creat=
-e the
-> >>>>>> connector?
-> >>>>>> In other words - could this driver fail if DRM_BRIDGE_ATTACH_NO_CO=
-NNECTOR
-> >>>>>> is not passed and drop dw_hdmi_connector_create()?
-> >>>>>>
-> >>>>>> I did not try to verify this - just a naive question.
-> >>>>>
-> >>>>> I've just tested this and it doesn't work - dw_hdmi_connector_creat=
-e()
-> >>>>> is still needed.
-> >>>>
-> >>>> Hmm, seems the display driver or some other bridge driver fails to
-> >>>> support "DRM_BRIDGE_ATTACH_NO_CONNECTOR".
-> >>>> what other drivers are involved?
-> >>>
-> >>> Could it be related to the glue driver (updated in the next patch) wh=
-ich
-> >>> is also responsible for setting up the encoder?
-> >>>
-> >>>> Note that my comments here should be seen as potential future
-> >>>> improvements, and do not block the patch from being used.
-> >>>
-> >>> Thanks for the heads up! Will try to get back to this soon and invest=
-igate.
-> >>  =20
-> >> IIUC, modern bridges should not create the connector but rely on displ=
-ay
-> >> drivers to take care of, which in this case is the VOP2 driver. Howeve=
-r,
-> >> it also handles some of the older SoCs relying on the non-QP variant of
-> >> DW HDMI IP. Hence the existing dw-hdmi driver would be also impacted in
-> >> order to come up with a proper solution.
-> >>=20
-> >> A quick check shows there are several users of this IP:
-> >>=20
-> >> $ git grep -E '=3D dw_hdmi_(bind|probe)\('
-> >> drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c:    hdmi->dw_hdmi =3D dw_h=
-dmi_probe(pdev, plat_data);
-> >> drivers/gpu/drm/bridge/synopsys/dw-hdmi.c:      hdmi =3D dw_hdmi_probe=
-(pdev, plat_data);
-> >> drivers/gpu/drm/imx/ipuv3/dw_hdmi-imx.c:        hdmi->hdmi =3D dw_hdmi=
-_probe(pdev, match->data);
-> >> drivers/gpu/drm/ingenic/ingenic-dw-hdmi.c:      hdmi =3D dw_hdmi_probe=
-(pdev, &ingenic_dw_hdmi_plat_data);
-> >> drivers/gpu/drm/meson/meson_dw_hdmi.c:  meson_dw_hdmi->hdmi =3D dw_hdm=
-i_probe(pdev, &meson_dw_hdmi->dw_plat_data);
-> >> drivers/gpu/drm/renesas/rcar-du/rcar_dw_hdmi.c: hdmi =3D dw_hdmi_probe=
-(pdev, &rcar_dw_hdmi_plat_data);
-> >> drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c:            hdmi->hdmi =3D=
- dw_hdmi_bind(pdev, encoder, plat_data);
-> >> drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c:  hdmi->hdmi =3D dw_hdmi_bind(pd=
-ev, encoder, plat_data);
-> >>=20
-> >> I didn't check which display drivers would be involved, I'd guess there
-> >> are quite a few of them as well. So it seems this ends up being a pret=
-ty
-> >> complex task.
-> >
-> >If this would be a brand new driver, then it should only support DRM_BRI=
-DGE_ATTACH_NO_CONNECTOR,
-> >so you should not create a connector from the driver.
-> >
-> >The fact dw-hdmi accepts an attach without the flag is for legacy purpose
-> >since some DRM drivers haven't switched to DRM_BRIDGE_ATTACH_NO_CONNECTO=
-R yes,
-> >but it's a requirement for new bridges so at some point you'll need to m=
-ake
-> >sure the rockchip glue and drm driver supports DRM_BRIDGE_ATTACH_NO_CONN=
-ECTOR.
-> >
-> >This will greatly simplify the driver!
->=20
-> Based on the previous discussion=EF=BC=8C the DW HDMI QP drivers will be =
-implemented like this=EF=BC=9A
->=20
-> Core bridge library=EF=BC=9A=20
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c
-> Rockchip platform specific glue=EF=BC=9A
-> drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
+ .../devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml      | 7 +------
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie.c                         | 9 +++------
+ 2 files changed, 4 insertions(+), 12 deletions(-)
+---
+base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
+change-id: 20240521-fix-pcie-phy-compat-b0fd4eb46bda
 
-Note that the bridge HDMI helpers Dmitry was mentioning have now been
-merged, so I'd expect the core bridge library to be fairly minimal. And
-the new driver should obviously use it as much as it can.
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Maxime
-
---k3c77qnfy4wcw7us
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZmwApgAKCRDj7w1vZxhR
-xT0IAP4/kmfWDAzASkD4k7DBXB/yo/pfsaXLvK+zrDWYsFYe6wD+LtPFo+ws3cz9
-4CjYg+ksCPXRokUjsMds5ojnZJpfVwk=
-=JElF
------END PGP SIGNATURE-----
-
---k3c77qnfy4wcw7us--
 
