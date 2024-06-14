@@ -1,97 +1,104 @@
-Return-Path: <linux-kernel+bounces-214466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CDD490850C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:32:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E82D1908525
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6B391F215CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:32:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDA101C22E4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CB41836FD;
-	Fri, 14 Jun 2024 07:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760751836CD;
+	Fri, 14 Jun 2024 07:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KRam2YRI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DI5xFhOd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9470A14659D;
-	Fri, 14 Jun 2024 07:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CC8158D87;
+	Fri, 14 Jun 2024 07:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718350232; cv=none; b=JKPL7XIQZbmZAAtrozvPp1777n10tbU5yTepdXlX+/22gUYyMzre4K7588ipVR0hsWLt/tpYOkygX1pcUy3ljLPjmJdGxgLJ82WSvE9wQGcdw8bgRaugx9JaACmJzwQ1jjdQ2V6b8eTxA259J9krighF9FzBIh384NnAh1/5NC4=
+	t=1718350413; cv=none; b=hzVfUrQUaJRLN3jouQnF34T/prmbDmLdTLsnam97qD/lg1+dv2F54wv6zwQNxy/4kQsnMjXxMPg7K3n+vfjC9Jk/PWKfSY7msU7sfZync9yUPA3ckLxxqAtBylGwqH7kSFYTI9JR380cH3ay3cAdNoTNHcdC1HiU3cypsnMfVss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718350232; c=relaxed/simple;
-	bh=KYK3uAsizy5cMqvfjKNpPCncJwEtmoVnTlHLRj/gliU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=V8NXccONVi/mP0ay9VvVuoKGjKTSiWmvB+BREeS0Q/hT7pkz76tTczhccFY8g81R60iFcQOrdgVthL377FxKDEOBqyyrO45ZNtnJupc9EMzbfFqUFPEqUGoX7mQy6k5apUol0HsXhZ/MWAVry96VPEq4sgOTLj9zCumIe+M8AoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KRam2YRI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 16B36C4AF51;
-	Fri, 14 Jun 2024 07:30:32 +0000 (UTC)
+	s=arc-20240116; t=1718350413; c=relaxed/simple;
+	bh=NnkmAXOOWVZBMmSqgujLFcgmwxn48aka8vwCP+88UZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UdNKl1T7jmLjcbRi+wNO3Bfw71GO9Yqy3eK4xOyzZl8nM34Sq8ILqEHQYlMffmxYIXVAG+mUVWgaz7c3JWPA1aJ9fbx0CwK1SY1uU96ac1TznGBUTzunGJVtrJNrdbuVrBRKI88g4HYBL0tShy8WdjvcHUUahcRJb83ft2SPzGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DI5xFhOd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F89CC2BD10;
+	Fri, 14 Jun 2024 07:33:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718350232;
-	bh=KYK3uAsizy5cMqvfjKNpPCncJwEtmoVnTlHLRj/gliU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=KRam2YRIRxotkL2tLaQX3PqA19ollVKEDKyRChnNrcOw56WGcIeD8hAXD5dMyn/xf
-	 IZEztUcKza1lwFJ5xQs6vvQID9gKnPxv15E3kUYa67BVMbOjYumbvs/c43gI+ATXi8
-	 Ht1QcWQrdqGIOVXCAKzvTDkzf8KOo7dYpEptGndXC8PjfjYXjs2wlXIjcpXVwvgwHt
-	 zur5YSivUETRUcTP4u67pS2/SMG0opOLdcIR+iR4+/0c+4yuhK8h2yyoHs7rbGNMlU
-	 AdKgRQ8V/sYatkjJqoXhs/+cIU5onoJ7vaWFPMmbFIssryUroczFd56EruKFXsWzg2
-	 XH4NN9oEGsnNw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0A330C43616;
-	Fri, 14 Jun 2024 07:30:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1718350412;
+	bh=NnkmAXOOWVZBMmSqgujLFcgmwxn48aka8vwCP+88UZs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DI5xFhOdjQNg736myA0URAZZXPnU4nkPBwlDT5j11/xqDepPKNTSeUJOZL0VzP78z
+	 Gija8ZvzsBIvSQvQZgN2CKyBYONNbneV97Xw46m0pZ6iejHSj3QVukJgOHaw6n5vEJ
+	 oPmNs7XQyKSovf9ZEFJM6K15LIm3xk4zeLcrYGHwDqPjUCQ1snvszipq3ByAXJg8iQ
+	 bH22iOboDVQpyv1c0zS0BOBES5DnTQZ8taQOTO4VL6P5MvVJabccgtOreaS1mIayMf
+	 Qki3z/jPfNl6nl++W+rT3j9EzUHaYd6pMBIRMyAoApsEr1aQyraU56QXk5+aQujBGv
+	 Eojfa4GEc9Isg==
+Date: Fri, 14 Jun 2024 10:31:21 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Jan Beulich <jbeulich@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Borislav Petkov <bp@alien8.de>, Narasimhan V <Narasimhan.V@amd.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>, stable@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] memblock:fix validation of NUMA coverage
+Message-ID: <Zmvxyc5xguxefBwo@kernel.org>
+References: <Zmr9oBecxdufMTeP@kernel.org>
+ <CAHk-=wickw1bAqWiMASA2zRiEA_nC3etrndnUqn_6C1tbUjAcQ@mail.gmail.com>
+ <CAHk-=wgOMcScTviziAbL9Z2RDduaEFdZbHsESxqUS2eFfUmUVg@mail.gmail.com>
+ <663e80fc-6785-4ac5-ae74-e5f26d938f49@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3 net-next] net: hsr: Send supervisory frames to HSR network
- with ProxyNodeTable data
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171835023203.4750.14652013430494509364.git-patchwork-notify@kernel.org>
-Date: Fri, 14 Jun 2024 07:30:32 +0000
-References: <20240610133914.280181-1-lukma@denx.de>
-In-Reply-To: <20240610133914.280181-1-lukma@denx.de>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: kuba@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- wojciech.drewek@intel.com, edumazet@google.com, olteanv@gmail.com,
- davem@davemloft.net, o.rempel@pengutronix.de, Tristram.Ha@microchip.com,
- bigeasy@linutronix.de, r-gunasekaran@ti.com, horms@kernel.org,
- n.zhandarovich@fintech.ru, m-karicheri2@ti.com, Arvid.Brodin@xdin.com,
- dan.carpenter@linaro.org, ricardo@marliere.net, casper.casan@gmail.com,
- linux-kernel@vger.kernel.org, liuhangbin@gmail.com, tanggeliang@kylinos.cn,
- shuah@kernel.org, syoshida@redhat.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <663e80fc-6785-4ac5-ae74-e5f26d938f49@suse.com>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Mon, 10 Jun 2024 15:39:14 +0200 you wrote:
-> This patch provides support for sending supervision HSR frames with
-> MAC addresses stored in ProxyNodeTable when RedBox (i.e. HSR-SAN) is
-> enabled.
+On Fri, Jun 14, 2024 at 08:01:33AM +0200, Jan Beulich wrote:
+> On 13.06.2024 19:38, Linus Torvalds wrote:
+> > On Thu, 13 Jun 2024 at 10:09, Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> >>
+> >> Is there some broken scripting that people have started using (or have
+> >> been using for a while and was recently broken)?
+> > 
+> > ... and then when I actually pull the code, I note that the problem
+> > where it checked _one_ bogus value has just been replaced with
+> > checking _another_ bogus value.
+> > 
+> > Christ.
+> > 
+> > What if people use a node ID that is simply outside the range
+> > entirely, instead of one of those special node IDs?
+> > 
+> > And now for memblock_set_node() you should apparently use NUMA_NO_NODE
+> > to not get a warning, but for memblock_set_region_node() apparently
+> > the right random constant to use is MAX_NUMNODES.
+> > 
+> > Does *any* of this make sense? No.
+> > 
+> > How about instead of having two random constants - and not having any
+> > range checking that I see - just have *one* random constant for "I
+> > have no range", call that NUMA_NO_NODE,
 > 
-> Supervision frames with RedBox MAC address (appended as second TLV)
-> are only send for ProxyNodeTable nodes.
-> 
-> [...]
+> Just to mention it - my understanding is that this is an ongoing process
+> heading in this very direction. I'm not an mm person at all, so I can't
+> tell why the conversion wasn't done / can't be done all in one go.
 
-Here is the summary with links:
-  - [v3,net-next] net: hsr: Send supervisory frames to HSR network with ProxyNodeTable data
-    https://git.kernel.org/netdev/net-next/c/5f703ce5c981
+Nah, it's an historical mess and my oversight.
+ 
+> Jan
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Sincerely yours,
+Mike.
 
