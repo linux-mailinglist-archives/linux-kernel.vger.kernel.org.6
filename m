@@ -1,158 +1,124 @@
-Return-Path: <linux-kernel+bounces-214969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C14B5908CC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:51:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FB39908CE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B10661C2644D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:51:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CAA528B280
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8CF79E1;
-	Fri, 14 Jun 2024 13:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04E2BA38;
+	Fri, 14 Jun 2024 14:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Py5qaGQT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="a3kZRRhg"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0B94C96;
-	Fri, 14 Jun 2024 13:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D5119D8A7;
+	Fri, 14 Jun 2024 14:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718373107; cv=none; b=fOzl3vTAV8ouo0F/55uiebvTI40rDw2aYKa04M1s8a5xPujCgrXoacPYUbvCkzd9MTGpfvAOGxkwN9GqYyAJM5RF9Rzns0CmAyiDUjyHiAy3VrWmUALFALFB38wx4nNa47AovNv9MpGWQSUa0mooAvURmiJA8CaXlfJeU9v2cIg=
+	t=1718373643; cv=none; b=q7dZUfhD/16jhNuszdQDJZK51lJQTzx4cyCwEbAJLEU458OBl1ivNwLOoKdsjE1r+JIphqCM7jod66P0dqSffDxEom2d+gI0LxclVc2N96g1Snto7KNJr4Dob7CL4/6Ws7T49XBmEmPM7b+zGaWpyVoZZhSbMARp0fwr2LmdTKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718373107; c=relaxed/simple;
-	bh=IwA+nRpW3jBSAzmNE65SNenXWpawXrOy17dsMyzMFzs=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TwTjb8b2H3w1ZUeB7hT0Xcur/WQceY0i5SkKht/rAz2SyRfi/J3Kv5/N2n5jWsbEulkMPRRlDxSuJxf5pInRijZoxyYJutOqngyA/cncThVxBABRQF99r5lSM0tN29PjaqVy2ApLHZZ3aAm6sycBP4512RmyHQtf1fYXu/e0U3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Py5qaGQT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE47DC2BD10;
-	Fri, 14 Jun 2024 13:51:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718373106;
-	bh=IwA+nRpW3jBSAzmNE65SNenXWpawXrOy17dsMyzMFzs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Py5qaGQT2Qdyws4LOn1wqQPEZyN7pTTtC/irde5GED1n020PSRGCR7otLCPlfA8Yj
-	 WkoMOyTZ3rCF2AcZrNppcskTwlHOtnoxx53r7arw/iAnT9xhX9uLPrzEwPpzZEwKLD
-	 zAk68eknRRZ9n/JcVNl5CMRCzYTVOwHuqrNZkQQ2mQgs2BY0CvOm2F1NVEv7TERsWP
-	 URuHA8XbGUEmpHXgRbj5PViOqqL+Ez08+ArjA5j/nmwzZAnj2R5TkY2liWNkaBl0WP
-	 cuzvLr7sgwXBlRQ5SsBZ4celz97PM/gW7KaLLCA1kF8rEEGUDmfG0ocWgwcKXXDnnj
-	 FndaD24rWK8iA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sI7LE-003vmz-RI;
-	Fri, 14 Jun 2024 14:51:44 +0100
-Date: Fri, 14 Jun 2024 14:51:44 +0100
-Message-ID: <86msnnk4y7.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: catalin.marinas@arm.com,
-	james.morse@arm.com,
-	jean-philippe@linaro.org,
-	oliver.upton@linux.dev,
-	qperret@google.com,
-	qwandor@google.com,
-	sudeep.holla@arm.com,
-	suzuki.poulose@arm.com,
-	tabba@google.com,
-	will@kernel.org,
-	yuzenghui@huawei.com,
-	lpieralisi@kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v3 0/4] KVM: arm64: pKVM host proxy FF-A fixes
-In-Reply-To: <20240613132035.1070360-1-sebastianene@google.com>
-References: <20240613132035.1070360-1-sebastianene@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1718373643; c=relaxed/simple;
+	bh=N3ena08kJ6d6XrNJnJXjlULm5ttbXBgY0ikmHO0V7LI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bkx8YCaQpKEtC86aFHFMxYs365kwyXnt8OO44fXj5Cjpu8LuHR8IJm0fr94m5D2yKZXADmcQPey7JLA7I+TLxgozMgmvjCGb385KaVxSG0tZmnyCWLEMEz//nnejLcD791/kt2LoLKctiAt3gMnKvCBOcFtXuQQpkjN0zag8vVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=a3kZRRhg; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 5DB35889EC;
+	Fri, 14 Jun 2024 16:00:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1718373639;
+	bh=4+DN2i7csqmQcAXLvxkcKDrBrfSZbHHe/kZgUCJhXOI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a3kZRRhgOmNtheXARqqNagHPCshPBM7Gz0hWk44rNgmGJlEMoFnH7r83Jhr+nfyHa
+	 +RfsmHIroQ9Y9DcPkjHBv76qG5f5IFQGAPoKMVHvhZPsiDhfryxIZt7pvPuB3GTLMO
+	 +kve1Jlc30+9GuSIjpVPs8P8jaY44ux3jDEd28AtpiJosO+USCOBJq+KVwsBsaU5mP
+	 tkgTYMenPeVEkEoQy+jaXecH80U3DZF0ZoI3ALacht9er/PL9lzHYnyRRrx0jAv9LG
+	 moYl3iGrflhI4xX9uy8GuZBrnbhLQ3E25o8eMDY9wXh8HIIdQIJ7SyNC/GHiDuQI+P
+	 Zr0kEUDFKa9XQ==
+Message-ID: <d7006e54-c0e8-445c-a589-9674235913a6@denx.de>
+Date: Fri, 14 Jun 2024 15:53:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: sebastianene@google.com, catalin.marinas@arm.com, james.morse@arm.com, jean-philippe@linaro.org, oliver.upton@linux.dev, qperret@google.com, qwandor@google.com, sudeep.holla@arm.com, suzuki.poulose@arm.com, tabba@google.com, will@kernel.org, yuzenghui@huawei.com, lpieralisi@kernel.org, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next,PATCH 1/2] dt-bindings: net: add STM32MP25 compatible
+ in documentation for stm32
+To: Christophe Roullier <christophe.roullier@foss.st.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>, Jose Abreu
+ <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240614130812.72425-1-christophe.roullier@foss.st.com>
+ <20240614130812.72425-2-christophe.roullier@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <20240614130812.72425-2-christophe.roullier@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Thu, 13 Jun 2024 14:20:31 +0100,
-Sebastian Ene <sebastianene@google.com> wrote:
+On 6/14/24 3:08 PM, Christophe Roullier wrote:
+> New STM32 SOC have 2 GMACs instances.
+> GMAC IP version is SNPS 5.30
 > 
-> Hello,
+> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
+> ---
+>   Documentation/devicetree/bindings/net/stm32-dwmac.yaml | 6 ++++++
+>   1 file changed, 6 insertions(+)
 > 
-> 
-> This series contains some small fixes for the host pKVM proxy code. I included
-> some of the patches that I already sent on the list as part of this series
-> to make it easier to keep track of them.
-> 
-> I verified the functionality with OPTEE as a TEE-OS.
-> 
-> Changelog:
-> 
-> v2 -> v3:
-> 
-> * small fixes on the commit messages
-> * applied the Review-by tags from Sudeep. Thank you Sudeep !
->  
-> v1 -> v2:
-> 
-> * applied the feedback received from Will on the FFA_VERSION patch:
->   The spec requires that no other calls to be issued prior to the FFA
->   version negotiation and the current change reflects this. After the
->   version negotiation phase is complete with Trustzone we will just
->   return the hypervisor version.
-> 
-> * corrected some mistakes on the FFA_PARTITION_INFO_GET patch:
->   - don't trim the number of bytes copied from the hypervisor buffer
->   - introduce FFA_1_0_PARTITON_INFO_SZ definition
->   - simplify the logic when the input flag is specified 
-> 
-> * collected the Ack from Will and embbeded it in the commit - Thanks Will ! 
-> 
-> 
-> v2:
-> https://lore.kernel.org/all/20240515172258.1680881-1-sebastianene@google.com/
-> 
-> v1:
-> 
-> * previously posted FFA_PARTITION_INFO_GET patch here:
-> https://lore.kernel.org/kvmarm/20240411133249.2134696-1-sebastianene@google.com/
->  -> minor changes from the previous version, look for the current
->     ffa_version in the host_buffer structure
-> 
-> * previously posted "Fix the identification range for the FF-A smcs" here:
-> https://lore.kernel.org/kvmarm/20240322124303.309423-1-sebastianene@google.com/
-> 
-> Thank you,
-> Sebastian
-> 
-> Sebastian Ene (4):
->   KVM: arm64: Trap FFA_VERSION host call in pKVM
->   KVM: arm64: Add support for FFA_PARTITION_INFO_GET
->   KVM: arm64: Update the identification range for the FF-A smcs
->   KVM: arm64: Use FF-A 1.1 with pKVM
-> 
->  arch/arm64/kvm/hyp/include/nvhe/ffa.h |   2 +-
->  arch/arm64/kvm/hyp/nvhe/ffa.c         | 180 +++++++++++++++++++++-----
->  include/linux/arm_ffa.h               |   3 +
->  3 files changed, 152 insertions(+), 33 deletions(-)
+> diff --git a/Documentation/devicetree/bindings/net/stm32-dwmac.yaml b/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
+> index f6e5e0626a3f..d087d8eaea12 100644
+> --- a/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
+> @@ -23,12 +23,17 @@ select:
+>             - st,stm32-dwmac
+>             - st,stm32mp1-dwmac
+>             - st,stm32mp13-dwmac
+> +          - st,stm32mp25-dwmac
+>     required:
+>       - compatible
+>   
+>   properties:
+>     compatible:
+>       oneOf:
+> +      - items:
+> +          - enum:
+> +              - st,stm32mp25-dwmac
+> +          - const: snps,dwmac-5.20
+>         - items:
+>             - enum:
+>                 - st,stm32mp1-dwmac
+> @@ -121,6 +126,7 @@ allOf:
+>           compatible:
+>             contains:
+>               enum:
+> +              - st,stm32mp25-dwmac
+>                 - st,stm32mp1-dwmac
+>                 - st,stm32-dwmac
 
-Although these are labelled as fixes, I don't think they warrant being
-taken into 6.10. So assuming Oliver will take them into 6.11:
-
-Acked-by: Marc Zyngier <maz@kernel.org>
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Keep the list sorted please.
 
