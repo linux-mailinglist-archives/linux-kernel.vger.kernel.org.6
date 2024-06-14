@@ -1,124 +1,178 @@
-Return-Path: <linux-kernel+bounces-214986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3663C908CF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:04:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A893908CF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB4E6B254D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:04:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B09B31F230FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939FB9441;
-	Fri, 14 Jun 2024 14:04:05 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.237.72.81])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B27419D88F;
-	Fri, 14 Jun 2024 14:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.237.72.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6DEBA38;
+	Fri, 14 Jun 2024 14:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VRU7cHE8"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02FC7464
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 14:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718373845; cv=none; b=mIINQYPJyGhp3D4rJTuerzmW4Oc3A5EleGH8RBXnkFe5v67RxiNQ4Jgid8hzTLd2J26h/07rHU3rVRqKQU2/Kz+V1gg2nYzvIh/2cCAN1wHJVzkYsqMN+q+4eK+OUez2sBNTPGw5MnXdZRBXN68DBw12PZROLuhuxz89BuHOvyY=
+	t=1718373868; cv=none; b=pL0VfsBaxth4SWzGl9UhKcq3JwXqMF1fMWvki62jObwXD6QhSJoOBT4UqokZbN9v+2gH75yuPIYWsISm7E8G7GJKnFvot4lP2OuU1THOms4uPc6qXKUOkCF4zawGNCJOo+pTuHUuPHXnp5m8KbvldG0fOq+/AeZRn8HkuhMaLpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718373845; c=relaxed/simple;
-	bh=rkF0k1RwPPKSYFrEbPqHA/ISHzb5dgdUG2YoZmRGpOs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=krUqAYtIL50u8YAygdQtws5oJup16iTn0ryULR/Ie2pWKY9YEZO3AXA2xuF+OBStsnbSsIXRfuj79r2O1sALWnOxKJC2qvYyNSY85HQJEvFccMOQ7w4VoEPplUlT8lFBEy9YKot1wZpAiGIKW+8rGA+VM91kvWbr4yu6Oco174E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=52.237.72.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.52])
-	by app1 (Coremail) with SMTP id HgEQrAB3eyqyTWxmpTbhBw--.18080S2;
-	Fri, 14 Jun 2024 22:03:30 +0800 (CST)
-Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
-	by gateway (Coremail) with SMTP id _____wBXbyWxTWxm3_gXAQ--.29981S2;
-	Fri, 14 Jun 2024 22:03:30 +0800 (CST)
-From: Dongliang Mu <dzm91@hust.edu.cn>
-To: Alex Shi <alexs@kernel.org>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dongliang Mu <dzm91@hust.edu.cn>,
-	Qing Zhang <zhangqing@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: Marco Elver <elver@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] docs/zh_CN: add back the missing part in the English version
-Date: Fri, 14 Jun 2024 22:03:20 +0800
-Message-ID: <20240614140326.3028384-1-dzm91@hust.edu.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1718373868; c=relaxed/simple;
+	bh=f1I2izaEwdrTKDYFgUwTYTY2ennzgeG3p5+KWbrZfU0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QoOo6RFxxLxLqF2MBcy00+jfAkIl53nctInhQggeE7x3I/CblxdbSWBndDFQphKB84XWsJ5P6kl+iuK6eMJn1HtRRSf7UFtG4Tvx6DcrJwYcN8TSb6o1XNuUZIQ28cBKwfVFWJdIOWt2+KglXdGbzb8YjJKlK1CXyVCxkjamLgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VRU7cHE8; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so21148831fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 07:04:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718373865; x=1718978665; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=db7sE7gdNSfDkTH/SLqMSnZ6L88Gths7vYb0/TqgdKM=;
+        b=VRU7cHE8onUruAckfm/Pei/s14IHKQ76HTih5IKInperyjGpL4iylm3s+IUBvHMgKi
+         LxJanpHIgQcJTvvTRGAp7TcXBV8byENsJQHZMzNbVJbrg7azXfzfjxN0OvBFRcpbW56g
+         pkQh1vIIVHl4J6U13G3Mwqaky3FGieaYEoM6CNKXyg4XjneKDfwF27dxcENaisFLbZ6w
+         CZyVyD84Wyq/fV/8XBq58tUbq75kWWwcRmYCysX6adH/+A+Eo/36qGlbTszJRZ89xIub
+         6UtNB1iwDpCaMfAvIEM8UkGRoG3Q76DyrYLSCmjyc0Ym/8E/zb+dHHJcRzcQ+brQxkR7
+         jATQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718373865; x=1718978665;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=db7sE7gdNSfDkTH/SLqMSnZ6L88Gths7vYb0/TqgdKM=;
+        b=oYPOXsLW2vxrreHGbzb/D61pyfjsSO0+OLSMOQXoiTqBgt/09BdtWM16e3XGTdr+Jz
+         qWovz2Kzu6L2krt7AIPd6WQIoD6O8svatkhQ3RNdKHO0tiuPrSHXORwXrSA/IN1c7YE9
+         uOUJbMWsuwFWm86w4h8COg9tZ8kGhhHZXHwQigOfOxzTYuXtMYS47WPFliPPl89fGRw2
+         CZTgiK1G2aH1A7eTD4/oUc8JAkpdZkQl+lbJZ0vz8KBkrsLG2NRbDJKzkwzssIeHpr3l
+         i7nyrK6XsKRehSg75Z4ul/Es0CRvhH3SiUK0SBGcwbOk3WetYs9+qwV0IJwRpByyQR2m
+         qnxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjijvZ+Y1+uJU3qFs9Dm+iL2LOWg8xJIHqyFE0uLrbJ2K4SSYBTjof2dh7SHxb3aokCCkdmGFhCnVnY8EnvhmNmm9F2gt3iCInELUE
+X-Gm-Message-State: AOJu0YzHX1fO+K5V1VGCLtbj7A0m5bH8qInqfqrlNuFjjjSpXaTZyxPP
+	ZbWzrh4RVl+YibtMR9TPHKMxIU32EdIs7QUFfODRG48+U3JrwTWGf6VfbAQ1fHBYam5qqgPXHXk
+	r
+X-Google-Smtp-Source: AGHT+IEQ/9CdNafN3ICQ2QfdqLMQd7VY1Js0/I455oOeWFuzmq38dPh57KkFo8JhwUZcxnxpU6JvAA==
+X-Received: by 2002:a05:651c:547:b0:2ec:f8a:6f11 with SMTP id 38308e7fff4ca-2ec0f8a702emr17969671fa.9.1718373864725;
+        Fri, 14 Jun 2024 07:04:24 -0700 (PDT)
+Received: from gpeter-l.lan ([2a0d:3344:2e8:8510::3aa])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f5f33ccesm61310525e9.3.2024.06.14.07.04.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 07:04:24 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+To: lee@kernel.org,
+	arnd@arndb.de,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tudor.ambarus@linaro.org,
+	andre.draszik@linaro.org,
+	saravanak@google.com,
+	willmcvicker@google.com,
+	semen.protsenko@linaro.org,
+	kernel-team@android.com,
+	Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH 0/2] Add syscon of_syscon_register_regmap api
+Date: Fri, 14 Jun 2024 15:04:19 +0100
+Message-ID: <20240614140421.3172674-1-peter.griffin@linaro.org>
+X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HgEQrAB3eyqyTWxmpTbhBw--.18080S2
-Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF4UZw4DJFyxXr4UJF4UCFg_yoW8Zw4Dpr
-	97GryxJFy8Zry3Jry3CF4DGFyUAF1xGayUCFySgw1avr1UJrW7tr42kF98KFyxWry0yFyj
-	9F4FkFWUCr1qy3JanT9S1TB71UUUUjJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQIb7Iv0xC_Cr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vE
-	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AFwI0_JF
-	0_Jw1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF
-	0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26F
-	4j6r4UJwAv7VCjz48v1sIEY20_GFW3Jr1UJwAv7VCY1x0262k0Y48FwI0_Gr1j6F4UJwAm
-	72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42
-	xK82IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8uFyUJr1UMxC20s026xCaFVCjc4AY
-	6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbW89tUUUUU==
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-The zh_CN kasan document misses the code change in commit eefe68280c94
-("kasan: Add documentation for CONFIG_KASAN_EXTRA_INFO").
+Hi Lee, Arnd, Krzysztof, all,
 
-Fix this by adding the translation of the missing part.
+This series adds support to syscon driver for a new of_syscon_register_regmap()
+api.
 
-Note that this missing commit is found by checktransupdate.py
+Platforms such as gs101 require a special regmap to access PMU registers, which
+in the existing upstream client drivers are accessed via syscon regmap. This
+issue was partly solved in [1] whereby a custom regmap is created in exynos-pmu
+and a new API exynos_get_pmu_regmap_by_phandle() created.
 
-Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
----
- .../translations/zh_CN/dev-tools/kasan.rst     | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+One issue with the approach in [1] is that it required client drivers to be
+updated from syscon_regmap_lookup_by_phandle() to
+exynos_get_pmu_regmap_by_phandle() when obtaining the regmap.
 
-diff --git a/Documentation/translations/zh_CN/dev-tools/kasan.rst b/Documentation/translations/zh_CN/dev-tools/kasan.rst
-index 2b1e8f74904b..4491ad2830ed 100644
---- a/Documentation/translations/zh_CN/dev-tools/kasan.rst
-+++ b/Documentation/translations/zh_CN/dev-tools/kasan.rst
-@@ -235,6 +235,24 @@ slab对象的描述以及关于访问的内存页的信息。
- 通用KASAN还报告两个辅助调用堆栈跟踪。这些堆栈跟踪指向代码中与对象交互但不直接
- 出现在错误访问堆栈跟踪中的位置。目前，这包括 call_rcu() 和排队的工作队列。
- 
-+CONFIG_KASAN_EXTRA_INFO
-+~~~~~~~~~~~~~~~~~~~~~~~
-+
-+启用 CONFIG_KASAN_EXTRA_INFO 选项允许 KASAN 记录和报告更多信息。目前支持的
-+额外信息包括分配和释放时的 CPU 编号和时间戳。更多的信息可以帮助找到内核错误的原因，
-+并将错误与其他系统事件关联起来，但代价是用额外的内存来记录更多信息（有关更多
-+开销的细节，请参见 CONFIG_KASAN_EXTRA_INFO 选项的帮助文本）。
-+
-+以下为 CONFIG_KASAN_EXTRA_INFO 开启后的报告（仅显示不同部分）::
-+
-+    ==================================================================
-+    ...
-+    Allocated by task 134 on cpu 5 at 229.133855s:
-+    ...
-+    Freed by task 136 on cpu 3 at 230.199335s:
-+    ...
-+    ==================================================================
-+
- 实施细则
- --------
- 
+Whilst updating to exynos_get_pmu_regmap_by_phandle() was OK for exynos
+specific drivers, it meant other drivers like syscon-reboot and syscon-poweroff
+which span multiple SoC architectures could not be easily re-used.
+
+In previous review feedback for USB phy and gs101 poweroff driver Krzysztof
+requested [2] that we take a more generic approach that other SoCs can also
+leverage.
+
+The new of_syscon_register_regmap() api overcomes this limitation by allowing
+a SoC driver like exynos-pmu to register it's SoC specific regmap with the
+syscon driver. This keeps the SoC complexity out of syscon driver, and allows
+client drivers to continue using syscon_regmap_lookup_by_phandle() as before.
+The solution allows more code re-use and can be used by other SoC archs.
+
+Notes on probe ordering
+
+exynos-pmu runs at postcore_initcall, so all but one of the client drivers
+(ufs phy, usb phy, watchdog) run after the regmap is created and registered.
+
+The one exception to this is pinctrl-samsung driver which is also
+postcore_initcall level. The exynos_get_pmu_regmap() and
+exynos_get_pmu_regmap_by_phandle() have been temporarily left to support
+-EPROBE_DEFER for pinctrl-samsung driver.
+
+The longer term plan to solve that probe ordering issue is to enable
+fw_devlink for syscon dt properties so they are correctly listed as
+suppliers in /sys/class/devlink. I tested a PoC patch (see below) for
+fw_devlink and that seemed to work fine. Once fw_devlink supports syscon I
+believe exynos_get_pmu_regmap_by_phandle() api could be removed. The main issue
+currently with fw_devlink syscon support is the wide diversity of dt property
+naming currently in use. That was discussed previously here [3]
+
+1248a1256,1257
+> DEFINE_SUFFIX_PROP(syscon_phandle, "syscon-phandle", NULL)
+> DEFINE_SUFFIX_PROP(pmu_syscon, "pmu-syscon", NULL)
+1358a1368,1369
+>     { .parse_prop = parse_syscon_phandle, },
+>     { .parse_prop = parse_pmu_syscon, },
+
+
+Note one previous concern from Saravana about syscon potentially probing
+before exynos-pmu driver and it relying on drivers/Makefile ordering. I tested
+this and even if mfd is listed before soc in drivers/Makefile exynos-pmu
+always probes first due to syscon driver not setting a .of_match_table entry.
+
+Once the syscon and exynos-pmu patchs are queued I will send patches for
+watchdog and ufs phy driver to switch back to syscon_regmap_lookup_by_phandle()
+
+Many thanks,
+
+Peter.
+
+[1] https://lore.kernel.org/linux-arm-kernel/20240219204238.356942-1-peter.griffin@linaro.org/T/
+[2] https://lore.kernel.org/lkml/06383015-51b2-4f4c-9fd8-e4f7ce12f44e@kernel.org/
+[3] https://lore.kernel.org/all/CAGETcx-CCpaV7R0O0HpDpoX6KxQBuJiMmKdWA8nDE-5Qj2Sa7g@mail.gmail.com/
+
+
+Peter Griffin (2):
+  mfd: syscon: add of_syscon_register_regmap() API
+  soc: samsung: exynos-pmu: update to use of_syscon_register_regmap()
+
+ drivers/mfd/syscon.c             | 48 ++++++++++++++++++++++++++++++++
+ drivers/soc/samsung/exynos-pmu.c | 38 ++++++++++---------------
+ include/linux/mfd/syscon.h       |  8 ++++++
+ 3 files changed, 70 insertions(+), 24 deletions(-)
+
 -- 
-2.43.0
+2.45.2.627.g7a2c4fd464-goog
 
 
