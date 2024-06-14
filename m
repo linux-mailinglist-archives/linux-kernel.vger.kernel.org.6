@@ -1,43 +1,54 @@
-Return-Path: <linux-kernel+bounces-215176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5820908F65
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:53:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFC6908F32
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8862AB2F819
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:44:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC47281E0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FED816B754;
-	Fri, 14 Jun 2024 15:41:35 +0000 (UTC)
-Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.154.197.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206BF195FDE;
+	Fri, 14 Jun 2024 15:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="rhLNILGX"
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8CD1922ED;
-	Fri, 14 Jun 2024 15:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.197.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AAB195B04
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718379694; cv=none; b=UpVKhVYxSi5zgTuRp1fDC6Goj8AgymUP35iYCafJeIQz/b/IKLG7lPvhhvon4tVKGladvNhx2oJjtFG6C19GeHVVbewML3pLNf8Vwwe8E7HCjRsH0P0PALGD/kY5pnYaDrU7oBGZiNuyCIF6L3f7Hy1eL4Eq61eUYVKdPIDLhsw=
+	t=1718379711; cv=none; b=HxbnbSjDboVEd6yA2IYFkvXjnnEGHQoKhBGqpKucPuJAQkYsT8bpjD+1pnF3wl4GpGmz+xOxJWimzAsu6ken51T+CLWyEpqsR8T9WHNihuhxxsiQ7uL9aE6SDUtJfpOn3IwUc8pSdTJGkTzA/ZL/YmEt+qOtdQzwmt5OS/rOGUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718379694; c=relaxed/simple;
-	bh=NuypO2a4UCFR+QKwfwKznr+i/G+Uu16jAhZA/QVOWRk=;
+	s=arc-20240116; t=1718379711; c=relaxed/simple;
+	bh=G8B8akW16zGg8zUlOix/RFqn7c0bYnlcLHUwDty6SOo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IQxNI+tuV7NWu8buarTCW/eIBLoiJMaP7cyJ3bGN5+cFwdwVQC45MK5NneGq9jx2QbISttMefV9g3SLngrpXW6SVZKGFruPTn6hlK1lroNKzO09yrBGd1hlyxWUjw382itS4X8YhGOqYQEQRoxDVNRWodpdiNHApg+4vRbgXV2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=43.154.197.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
-X-QQ-mid: bizesmtpsz14t1718379665tmshyc
-X-QQ-Originating-IP: hsNr8Dbi+rmVRMwgNwSA6NX71qYffL9sTWsd1BX6hZ0=
-Received: from [172.16.211.131] ( [220.202.230.232])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 14 Jun 2024 23:41:03 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4420144836948564987
-Message-ID: <4BA53556BED3049F+15d632a4-567a-4350-b4a3-c4ba77721fa5@chenxiaosong.com>
-Date: Fri, 14 Jun 2024 23:40:57 +0800
+	 In-Reply-To:Content-Type; b=FR03ng1tHcaXIw2tiJwEmGGf5CKLhUQLCeVy2fmrznnD5tl7nu3l9BygBNRGr+M1ZRNoGywoJCeKs7hUmg7Qe3+Fy6rVzY9nMwWxa6aLe5pBclXHKXU5ldUAVGmuIzHglOaowjrur+RfoIqIlQNw7Z4qra/YPseiDrlYJ66FxSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=rhLNILGX; arc=none smtp.client-ip=80.12.242.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id I93YsIab3c2iUI93Yse5qb; Fri, 14 Jun 2024 17:41:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1718379706;
+	bh=fMkYys7M3zvaEsKBAT2YIbRf9BEpH1IjB7DODovtk1w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=rhLNILGXGh6aZy8/ZRpK3rclBOuHKCCxpwcPv0Hhqjvh0e+xj4zkrYdYkzN51+IzO
+	 1A7ebratQJgPPg7UOz4eMBXylChdfGeMEK9rBNIKG7RCRUhtR/jKQTAO9JKgvXdl4y
+	 bLb1dFMa61l7Vixmqo2HriueRmAc0t9RHPN30bpm5zEcKmdnPZYESj557sUlHdpi3c
+	 bMJDrcajhRAij70CcfBXO/l/Yrjd9AnTFu7FepxREKkV6nTd0PAi75hkS7wUPCbsiS
+	 5e4fEamEtnPCSBfswOQtnBg+rpzSc8T+bM54+D+M0sN8j784Pa2pe2GSxbLDsNQaz1
+	 wVMwtr8UiyOYw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 14 Jun 2024 17:41:46 +0200
+X-ME-IP: 86.243.222.230
+Message-ID: <d6428e19-986d-4451-bfcf-17705cc9e53b@wanadoo.fr>
+Date: Fri, 14 Jun 2024 17:41:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -45,56 +56,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Question about pNFS documentation
-To: Chuck Lever III <chuck.lever@oracle.com>
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>,
- Anna Schumaker <anna@kernel.org>, Benjamin Coddington <bcodding@redhat.com>,
- Olga Kornievskaia <kolga@netapp.com>, Josef Bacik <josef@toxicpanda.com>,
- Jeff Layton <jlayton@kernel.org>, neilb@suse.de, kolga@netapp.com,
- Dai.Ngo@oracle.com, tom@talpey.com,
- Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "liuzhengyuan@kylinos.cn" <liuzhengyuan@kylinos.cn>,
- "huhai@kylinos.cn" <huhai@kylinos.cn>,
- "chenxiaosong@kylinos.cn" <chenxiaosong@kylinos.cn>
-References: <BA2DED4720A37AFC+88e58d9e-6117-476d-8e06-1d1a62037d6d@chenxiaosong.com>
- <08BB98A6-FA14-4551-B977-8BC4029DB0E1@oracle.com>
- <93D6D58053EB522F+de1c8896-65e1-442d-99f6-c5b222c0a816@chenxiaosong.com>
- <1D4505F5-1923-4E7B-A12B-F1E05308914C@oracle.com>
-Content-Language: en-US
-From: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
-In-Reply-To: <1D4505F5-1923-4E7B-A12B-F1E05308914C@oracle.com>
+Subject: Re: [PATCH v8] ALSA: hda/tas2781: Add tas2781 hda SPI driver
+To: Baojun Xu <baojun.xu@ti.com>, tiwai@suse.de
+Cc: robh+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+ lgirdwood@gmail.com, perex@perex.cz, pierre-louis.bossart@linux.intel.com,
+ kevin-lu@ti.com, shenghao-ding@ti.com, navada@ti.com, 13916275206@139.com,
+ v-hampiholi@ti.com, v-po@ti.com, niranjan.hy@ti.com,
+ alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+ liam.r.girdwood@intel.com, yung-chuan.liao@linux.intel.com,
+ broonie@kernel.org, soyer@irl.hu
+References: <20240614040554.610-1-baojun.xu@ti.com>
+Content-Language: en-MW
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240614040554.610-1-baojun.xu@ti.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
 
-Thanks very much for your detailed reply.
+Le 14/06/2024 à 06:05, Baojun Xu a écrit :
+> This patch was used to add TAS2781 devices on SPI support in sound/pci/hda.
+> It use ACPI node descript about parameters of TAS2781 on SPI, it like:
+>      Scope (_SB.PC00.SPI0)
+>      {
+>          Device (GSPK)
+>          {
+>              Name (_HID, "TXNW2781")  // _HID: Hardware ID
+>              Method (_CRS, 0, NotSerialized)
+>              {
+>                  Name (RBUF, ResourceTemplate ()
+>                  {
+>                      SpiSerialBusV2 (...)
+>                      SpiSerialBusV2 (...)
+>                  }
+>              }
+>          }
+>      }
+> 
+> And in platform/x86/serial-multi-instantiate.c, those spi devices will be
+> added into system as a single SPI device, so TAS2781 SPI driver will
+> probe twice for every single SPI device. And driver will also parser
+> mono DSP firmware binary and RCA binary for itself.
+> The code support Realtek as the primary codec.
+> 
+> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+> 
+> ---
 
-在 2024/6/14 21:00, Chuck Lever III 写道:
-> 
->> On Jun 14, 2024, at 4:37 AM, ChenXiaoSong <chenxiaosong@chenxiaosong.com> wrote:
->>
->> Thanks for your reply. By the way, are there any plans for the Linux NFS server to implement the file, flexfile and object layout?
-> 
-> The object layout type has been deprecated, IIRC. Support for
-> that type was removed from the Linux NFS client years ago. No
-> support for it in the server is planned.
-> 
-> The file layout type generally needs a cluster file system
-> on the back end. You could build something over Ceph or
-> gfs2, but it would be a significant effort and would need
-> user demand. Currently there isn't any.
-> 
-> The NFS server has a toy flexfile layout implementation
-> which is not much more than a proof of concept. We do have
-> an unscoped to-do to look at building that out to provide
-> a platform for testing the client's flexfile support. That
-> effort is not a high priority.
-> 
-> 
-> --
-> Chuck Lever
-> 
-> 
+Hi,
+
+not a must-have but using "checkpatch.pl --strict" could slightly 
+improve readability in some places.
+
+Maybe at least,
+    - ./scripts/checkpatch.pl --strict --test-only=Blank
+      --> to save a few LoC
+
+    - ./scripts/checkpatch.pl --strict --test-only=parentheses
+      --> to improve readability and reduce the length of some lines
+
+
+This is already v8, so feel free to just ignore this mail and the 
+--strict option.
+
+CJ
 
