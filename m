@@ -1,165 +1,118 @@
-Return-Path: <linux-kernel+bounces-215594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F09B9094BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 01:23:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2003A9094BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 01:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A02C41C21196
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 23:23:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAAA71F20F94
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 23:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FF218F2E1;
-	Fri, 14 Jun 2024 23:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFB5146582;
+	Fri, 14 Jun 2024 23:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kyqvEup1"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="lu9W8PVB"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88667188CBA
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 23:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C4D18410E;
+	Fri, 14 Jun 2024 23:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718407223; cv=none; b=fN6FYczjVg3nFqBberByCFoEldufHGqDpGuJioaKXRWhAQpZzzGwr00/uZt1mBtdb5GA83IU9bfs7IdiQ/IU/y9bijiuJ7QMLNZ0tr8ctQRMnuJVqxOQPw48DaTibjE5XX4Ok1gJ7VqCMmWL4LH4dHfEwjSfbK45r2ftvl98CLE=
+	t=1718407284; cv=none; b=Cy3lx2Qh7OxJ/+xUAwOfx2sThZWi/YvU9ED8Ud6VJ5sQhOq/eweDCIbSXVdvJPD5c4cyC1i/7Uj4efVQmO6thhwNXz2nkYJjdK9nR3HYTrVbyJqIYx/ip3HI9PtHMZDQcyBFIpdhQpsef/6wbjKjVw3LxjHLGE7zY4bSlRCH2wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718407223; c=relaxed/simple;
-	bh=q+6qZrb3RdoangQKqi6dIYyRHARSJeq03WZY8KBQenI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=vFosxoCbA9z0oFdBI3kI62ob1P+r7YoNksqjbn0v+JmxDnrpE3DxlsnRHqbG1d+ZnzH6iFGwEWT2NxEPaHgv3IRRx0iF2aHUQYX/iAiaPGFRzebKeSyiJbAwGAaD02EBI9lcbj4kkDYPT36N1VdgV8bIyXtibXCQfhsmh1meuwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kyqvEup1; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70109d34a16so2424863b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 16:20:21 -0700 (PDT)
+	s=arc-20240116; t=1718407284; c=relaxed/simple;
+	bh=JlwKIzdDc2gilccjbO1/bZmedm07qgXPguzxriJ3hi0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KrpFtSDRIoY2t6LQSMIHvAQdxqW7DQ3mKA2vcghvfyWqXfpd9sAPPL1Cp/BFYaBS8jkiSWgayF5IoiS41B5cGCDnUd+mwocoVJLSDXXSZOM03ix1VfVxgGS794zmHVwxAICH/n4RUrHPCTDkL9z9iLprlcdMBYIPdzR90pXLCTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=lu9W8PVB; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57cad452f8bso3005557a12.2;
+        Fri, 14 Jun 2024 16:21:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718407221; x=1719012021; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5sKXX4VALlpzvd31iPrb4eMztLZWEFkwR52gFSz74AM=;
-        b=kyqvEup1hfHQXl0fB+Vrn5StarmDg7WBGkw35cOtFN60VuBSPa0ZZkq7Y3//qpjMOW
-         cefXX6LZQeiZlgag1rk+IxcHN3fkLP/WcE5IdhlGE5+SFi94ZV7zvNzExTIMnhHmaV4E
-         GCu+RKzjZCOP3ABW6SSEpbKCMszV/bfgI4dKg=
+        d=googlemail.com; s=20230601; t=1718407281; x=1719012081; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fXu7k1QKS8vI2uwVYNkcYSTHvjBL0gY7WbM8/Ozvj/A=;
+        b=lu9W8PVBGlZIMXf0yBVijg8SK/q8Q0qNZfFYF872mDJe1K+zLVc/2duxIqPtx+VfB4
+         Xnno7KKB9NYkZKZFMim9JGMsoH2OODOL1dYTdXx0WUWl146lae/b0oWJBYT12FnZmq3F
+         INXuCHQYNpBoKKmKWPJDZ51HuKEpIXTxG1qrTETtncSDYxdBE1mgVTwXjB3Z0QKBJfg7
+         f/fC8/m2Fkrq0yHv2g584wLauPLP21CYel8L2czOtlzCwkthkH1aRbhlGJNjWVyMttad
+         iyuHerz6XbWRVdnHms9eVhFYTwEQPym6082tIynmhiRmiHSI3cKgtE8cnVdEU1cyKxlD
+         /G4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718407221; x=1719012021;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5sKXX4VALlpzvd31iPrb4eMztLZWEFkwR52gFSz74AM=;
-        b=S7IketRc3x6L9SaeSfpqeEhe7oYK1fk7jiWKpGT+F6tZMVysgdnLpGUFrHWrCihUdl
-         SbrZbO7FSSbdmH6NN1VA8OrBE8ufDZiUHe7rxZzwRZfeL/OPBoEbxnOoACkK5qBn62tP
-         RgQHiV3N4bO0vmSe9gZbMzxM93rViUFLtSKDtnm6ctPCa6YwRtMuFUAh3KOuhoETSjzY
-         oDYIBqMBqhQvjhPycntXimBkP+aDeDyXBfYquLrWA2eZHkXrZYbRFVgHfhLdR3GvJqcY
-         rh/Ozw495RILHlRjILbv7xEpBiwzA1Xd+nGNzYyTWf0YyxlxC7Uui0Yx7vVjB1GzKll5
-         8q+w==
-X-Gm-Message-State: AOJu0Yz4CQMk9yS2c+E4vndRTZNV+JhCcv9cnxCJZYfPmeMzufgJtJTp
-	gJuBMmvtLKTMv4jFnvbJ0qbIW3yxnSaX1eG44K88YsXvl68Uz26mtpbfCDljEP32jEKcWelMGmY
-	=
-X-Google-Smtp-Source: AGHT+IEaKtIKsVDOYcOmB47qgVisOpqhdKsdmoxHcr8Lwv42IwYY08IPuEJQDEoV3VsClwjTqs1o7g==
-X-Received: by 2002:a05:6a00:1888:b0:704:b8c0:42ed with SMTP id d2e1a72fcca58-705d7144e01mr4910662b3a.9.1718407220764;
-        Fri, 14 Jun 2024 16:20:20 -0700 (PDT)
-Received: from localhost (213.126.145.34.bc.googleusercontent.com. [34.145.126.213])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-6fee39bb90dsm2698718a12.77.2024.06.14.16.20.20
+        d=1e100.net; s=20230601; t=1718407281; x=1719012081;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fXu7k1QKS8vI2uwVYNkcYSTHvjBL0gY7WbM8/Ozvj/A=;
+        b=eZtmL9+yh0RQQX8XGgcFzXQr7ugsJXzRbthXzANcUmU+ySz6At1jVmKuqlOQ9mWr2R
+         hXgyNPUOBjuZ9j59QXwzagLdnvwq0n3FNBetZrfaBx/jvgwJDFkC3i8Jdg/LhoJ+bm32
+         Kxz2lM3oQExEucMmxA4RtX9gLLbIjXCWLnzItT4DRxHYih8qeHxM1ROKRbzZfZfWebfx
+         j+YOFwL4V5mtH2ua6F2l5880tQemgBrl5wjIgcQzFA9tWbtca+MfCFo2MygOuhTOxWEA
+         jZDwbao7Jaj/0w4FDyq6GsOocwyVukZSeFA7iD5y4EHo3HWL3TP37d2+CArFstMzgDth
+         QarQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3q5QU7302bMXD7W8vRgRDa0BDvrq9+xieyj0qd9w+46Yb2kQ7mXy8WhQCFawQhp9SluOcCpbcgOySa28Y1PMST0LUSsWSXP8QMWr4LqtC1yvVPskujIYUMjQWTXbsElompv0H
+X-Gm-Message-State: AOJu0YzDO3InSEvzKrsJEikJ6L2dwyKcplSWcjrlwgPfeSzvbW1DwitB
+	ygxO2h+vDCXhiFdAFlOuG6Wf6t+CWgKFoqVZoGrblRbRq4uruzU=
+X-Google-Smtp-Source: AGHT+IGhHA4QPh7/6Dd6EnaARY+JdOci3GUIQJT1ngUwmjquFtmH0GCsJTa8YTNcfm0uCQTQVMLBsg==
+X-Received: by 2002:a50:9b04:0:b0:578:60a6:7c69 with SMTP id 4fb4d7f45d1cf-57cbd69e7a0mr3017216a12.30.1718407280589;
+        Fri, 14 Jun 2024 16:21:20 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4225.dip0.t-ipconnect.de. [91.43.66.37])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb743adacsm2856765a12.86.2024.06.14.16.21.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 16:20:20 -0700 (PDT)
-From: jeffxu@chromium.org
-To: akpm@linux-foundation.org,
-	jannh@google.com,
-	sroettger@google.com,
-	rdunlap@infradead.org,
-	david@redhat.com,
-	adhemerval.zanella@linaro.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	jorgelo@chromium.org,
-	keescook@chromium.org,
-	Jeff Xu <jeffxu@chromium.org>
-Subject: [PATCH v2 1/1] /proc/pid/smaps: add mseal info for vma
-Date: Fri, 14 Jun 2024 23:20:14 +0000
-Message-ID: <20240614232014.806352-2-jeffxu@google.com>
-X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
-In-Reply-To: <20240614232014.806352-1-jeffxu@google.com>
-References: <20240614232014.806352-1-jeffxu@google.com>
+        Fri, 14 Jun 2024 16:21:20 -0700 (PDT)
+Message-ID: <0fbe98f5-584e-402f-b50a-0438515ead7b@googlemail.com>
+Date: Sat, 15 Jun 2024 01:21:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.1 00/85] 6.1.94-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240613113214.134806994@linuxfoundation.org>
+Content-Language: de-DE
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20240613113214.134806994@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Jeff Xu <jeffxu@chromium.org>
+Am 13.06.2024 um 13:34 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.1.94 release.
+> There are 85 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Add sl in /proc/pid/smaps to indicate vma is sealed
+Builds, boots and works w/o regressions on 2-socket Ivy Bridge Xeon E5-2697 v2. It runs 8 
+VMs with some load for an hour now, and I don't see any problems or hiccups. No dmesg 
+oddities either.
 
-Signed-off-by: Jeff Xu <jeffxu@chromium.org>
----
- Documentation/filesystems/proc.rst | 1 +
- fs/proc/task_mmu.c                 | 3 +++
- include/linux/mm.h                 | 5 +++++
- mm/internal.h                      | 5 -----
- 4 files changed, 9 insertions(+), 5 deletions(-)
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 7c3a565ffbef..82d142de3461 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -571,6 +571,7 @@ encoded manner. The codes are the following:
-     um    userfaultfd missing tracking
-     uw    userfaultfd wr-protect tracking
-     ss    shadow stack page
-+    sl    sealed
-     ==    =======================================
- 
- Note that there is no guarantee that every flag and associated mnemonic will
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 6ed1f56b32b4..93fb2c61b154 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -711,6 +711,9 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
- #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_MINOR */
- #ifdef CONFIG_X86_USER_SHADOW_STACK
- 		[ilog2(VM_SHADOW_STACK)] = "ss",
-+#endif
-+#ifdef CONFIG_64BIT
-+		[ilog2(VM_SEALED)] = "sl",
- #endif
- 	};
- 	size_t i;
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 587d34879865..84c4cc7354b4 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -406,6 +406,11 @@ extern unsigned int kobjsize(const void *objp);
- #define VM_ALLOW_ANY_UNCACHED		VM_NONE
- #endif
- 
-+#ifdef CONFIG_64BIT
-+/* VM is sealed, in vm_flags */
-+#define VM_SEALED	_BITUL(63)
-+#endif
-+
- /* Bits set in the VMA until the stack is in its final location */
- #define VM_STACK_INCOMPLETE_SETUP (VM_RAND_READ | VM_SEQ_READ | VM_STACK_EARLY)
- 
-diff --git a/mm/internal.h b/mm/internal.h
-index fd68c43664d5..72f7c110d563 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1509,11 +1509,6 @@ void __meminit __init_single_page(struct page *page, unsigned long pfn,
- unsigned long shrink_slab(gfp_t gfp_mask, int nid, struct mem_cgroup *memcg,
- 			  int priority);
- 
--#ifdef CONFIG_64BIT
--/* VM is sealed, in vm_flags */
--#define VM_SEALED	_BITUL(63)
--#endif
--
- #ifdef CONFIG_64BIT
- static inline int can_do_mseal(unsigned long flags)
- {
+
+Beste Grüße,
+Peter Schneider
+
 -- 
-2.45.2.627.g7a2c4fd464-goog
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
