@@ -1,751 +1,185 @@
-Return-Path: <linux-kernel+bounces-214842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03923908AF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:39:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A9B908AF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44421B282AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:39:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 043211C218A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6B2195F17;
-	Fri, 14 Jun 2024 11:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518E0195B2E;
+	Fri, 14 Jun 2024 11:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d7WEsk88"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UmByOVj2"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915DE190477
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 11:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B99190477
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 11:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718365132; cv=none; b=fc/QPdCMM8GBtnNOWScA0NF0r7bx5IQGm4ZDZjumVIK2hweqITq7k9Eqs3uf+IIasLz8CXRZ1qBVz/z7DWsN2R1CPRKibjEuJW9ZozuHpSvW/5hVO5zMK2cDotMURzmGNemYonG8nAUYOsYDPzNQ1n+g/79/SGSWDcXIPqjfWkI=
+	t=1718365359; cv=none; b=rgkjQyfnNYjoHrg8czHKn6tPHbVrGbOgGNV5/GCCU2EMdca4sxgvjGWlop3DxlNs1T7l/C6785OEKYun/3I2MhVXJpQMefisi+mZrmtL4kPaBkEcCYAxdjE46AL8Rrfr4z6y1IF65kgtxQ49M+x3VVNUN2oweO3CoaAe5euEVaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718365132; c=relaxed/simple;
-	bh=MIQcMyT1Vs/YI/jlupNDzy6HFIXPnDO2IsWrF2KHIX4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iwU1Bu14EWR6Q+iZWRkcCLpOWGCnsNrU2iqH1m0U46X+HIpipo/INfnbnWb4cTBmBO9Brdpj8qJFvEq0wOu+pM+jHm/tfbv6eu34lH7pT6bXBqdk9uqRDC0TBr+XGDLIqHE0B485w+3RxbYR2YI3i2SCkmGUXG8FO7eASGOEJpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d7WEsk88; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1718365359; c=relaxed/simple;
+	bh=hVZaXClb8YH9qvz97ZEwzE1i0kxb6RNI4BzeFUGcHdc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oTbQ21tfTuv+e5U3nawfVfn5CwFNZGQTktae3GydtBi6ZoyJTtSh/ER3kt0PaxWm8kbMmYIWQ58fTl2ctu9dCDsFL5TctMGvGQfiosjMHnMA8804xukB4OnkXG06/aY3zgrpahXCRnI/t5JSh1/WJU/ZYSn2M+C+PGNwhBsH10s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UmByOVj2; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718365128;
+	s=mimecast20190719; t=1718365356;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MIQcMyT1Vs/YI/jlupNDzy6HFIXPnDO2IsWrF2KHIX4=;
-	b=d7WEsk88lfaRYcJRuq8a4xMd6+efUPJNHyPw1lsHgh3mcvbegEtjlDwb15JtOI3jzN9AdU
-	LCWZRYkzLFXk3oxDwlZKmnnO4dLBEhN0Vs6MHmdBIySVXPSmWL0SdgGD2zG3xeZ4q551n0
-	osdceATEZJkkZHlL2qdzMQYqdmaQjcM=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XXNWd08UpDrUoLaDSemWxBmdphtjcrXbt9rmtguMKlI=;
+	b=UmByOVj2LEIG5Lm5DQKSr+Hgk27YPfNBd8au2CU0n74T2L6DLnpjOkiZrlmh36qUMhPkDN
+	POKp3IapvYEC+SueLPIDpR5O4UMnk5BqPwxzT01egsDrrZQPs4XTXaZBUxQHTHUNeROg0c
+	4dEEuJ0PT7vwVKuCZsDQlrlIzi/Ddoc=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-665-7j-SNj6oOgye_hHTVR_wEw-1; Fri, 14 Jun 2024 07:38:46 -0400
-X-MC-Unique: 7j-SNj6oOgye_hHTVR_wEw-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2eae267d112so3385161fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 04:38:46 -0700 (PDT)
+ us-mta-263-g7WiQuDFMFi-La0YtWT_SA-1; Fri, 14 Jun 2024 07:42:34 -0400
+X-MC-Unique: g7WiQuDFMFi-La0YtWT_SA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4219cb14a23so19339705e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 04:42:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718365125; x=1718969925;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MIQcMyT1Vs/YI/jlupNDzy6HFIXPnDO2IsWrF2KHIX4=;
-        b=ZHEDwtgTgg0ObrTiov+9LKgGrIEDs8y3OW3tZEcIVHOX1CHa8l4XYgj81n8kgMOZ12
-         ZB4iHAGbARWf0XaO3WpYZALYrYNTrluH/q9QLjWv2vIJ0d0nDQL3LCN2TDrG1NspZYiX
-         9Icy5IZLlQTEvs94lRSHXqXpMHOFmIY7FxWA1lNhnc/9N5+VDH7fOdrv0gafEeTwYR9g
-         PVlVgbllazwIvG8kpbM+e3MkRFX/tTTlahPxlkFTSZ48ZRSRlUdcNQa0IHQwYY1zQrwg
-         hfz5Q2JAPeW90SDkvSvco31O8vPGly1vf1TmmxNgTCQxJuLARuvCBaYsSiEY8VwmLAW3
-         GEYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFBJh8sA65u70Ptb3pAhwTz0zAbFz5bW2Y+ObVQGSlv99Nx0mTsqo418jQMZWpI0Detue4D0er+fAMyHOmHYwdjXrKSLvIKvFAUwc2
-X-Gm-Message-State: AOJu0Ywo0azJAnBTdXxl4OIXO4x1SHgR74xzay+BuHCLJYKBFYX6RJyV
-	OIYI4d2JazyW22Cw8YVR8UmZJ5SGDaB7ym8SODs3CLL+F8wyo2cYWLR7WCKES23kIUfRVkWgGJm
-	dyXuNT9nlL5h1JdLfeXrdRtNAnTT1hT6u20rhATiBmyhTz8DfexnrziKh7ydGbA==
-X-Received: by 2002:a2e:be9c:0:b0:2eb:e49c:45df with SMTP id 38308e7fff4ca-2ec0e5c37c6mr19591741fa.4.1718365125195;
-        Fri, 14 Jun 2024 04:38:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFW/xqCushfSofwC96M/qZayEpFYcTReZO+++39mq1ZtAs8mEi0k/SDJZEY4P+1P0fa0ssmYg==
-X-Received: by 2002:a2e:be9c:0:b0:2eb:e49c:45df with SMTP id 38308e7fff4ca-2ec0e5c37c6mr19591101fa.4.1718365122671;
-        Fri, 14 Jun 2024 04:38:42 -0700 (PDT)
-Received: from pstanner-thinkpadt14sgen1.remote.csb (nat-pool-muc-u.redhat.com. [149.14.88.27])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750934a4sm4150696f8f.10.2024.06.14.04.38.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 04:38:42 -0700 (PDT)
-Message-ID: <442e5119dc4d2630b34d8cf9228c84b9cfee1717.camel@redhat.com>
-Subject: Re: [PATCH v9 00/13] Make PCI's devres API more consistent
-From: Philipp Stanner <pstanner@redhat.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>, Sam
- Ravnborg <sam@ravnborg.org>, dakr@redhat.com, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org
-Date: Fri, 14 Jun 2024 13:38:41 +0200
-In-Reply-To: <20240613215743.GA1085850@bhelgaas>
-References: <20240613215743.GA1085850@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        d=1e100.net; s=20230601; t=1718365353; x=1718970153;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XXNWd08UpDrUoLaDSemWxBmdphtjcrXbt9rmtguMKlI=;
+        b=FUe3cJYSO0GseOQfzVjKJndv3y1maq0H0tm/Qeo/s/pQcbLQ/MmH8l8e29TLP+MVJV
+         cViVQufiYK8YmdRRVuYSD/MzpfM6RiEMf/SC1I4+kOEjg7NOFvXoh6FiPhNWBBZ1ipe4
+         sZ58JnEUPh2jZH2PQf1xVJsHo8qVxRorGYfo1eJ8mZf6Ue+i+IVxtCcxe+fjelompqos
+         YcaKBfEkiIHhwOChBqPk/BRmall1Ni5gSJSiwBd9/TOE/Gos5lFR7kYzFio63togl/jw
+         CEt0w824VqYzfPz2E2JKm8KDk+UWCWagsSJvmSULgaJyPU9Sptkw2N7FqTrbb6o779Wc
+         QgUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpk73sOFzyzBXrHYUSWeRSpTGHCYeWBONS6bFjogkuUxvbmAMPL+qR6c3u5hmQyw5rQ/mjc5xDeNCUrWdbWAlzdGzmv1P820mCImpm
+X-Gm-Message-State: AOJu0YwB3HbXMTKsq4hksVHTbAy22j4j/CaHSQSVUP4W2Ibs8DsSEHc3
+	Okiu9K5PJeiiHOq+PxsOAHJkYRojqEhyLTkStRC8V/iY0PcH6Y/M+fY49ZWWdyuMoIVwLJuO087
+	tIn4CHkd1+EYmdBZe4M2DoQSRhmq+2YOrd6IPEkk2A3uG/KkcSHMwff+1NI7A3w==
+X-Received: by 2002:a05:600c:1f94:b0:421:f43d:dadd with SMTP id 5b1f17b1804b1-4230484c52bmr28971865e9.33.1718365353468;
+        Fri, 14 Jun 2024 04:42:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtUipV2eNLCznRAMcgt+sPsKPl3oqaV9hUdXChEZr6dor4vA/9vXUz0gOGUwmWG/ulsqqu7A==
+X-Received: by 2002:a05:600c:1f94:b0:421:f43d:dadd with SMTP id 5b1f17b1804b1-4230484c52bmr28971655e9.33.1718365353069;
+        Fri, 14 Jun 2024 04:42:33 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4f:2b00:69b5:3684:56c:6dd5? (p200300d82f4f2b0069b53684056c6dd5.dip0.t-ipconnect.de. [2003:d8:2f4f:2b00:69b5:3684:56c:6dd5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075104a8fsm4169001f8f.110.2024.06.14.04.42.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 04:42:32 -0700 (PDT)
+Message-ID: <b41f3392-fd0e-4df7-8e29-754def75376b@redhat.com>
+Date: Fri, 14 Jun 2024 13:42:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] cleanups, fixes, and progress towards avoiding "make
+ headers"
+To: John Hubbard <jhubbard@nvidia.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
+ Shuah Khan <shuah@kernel.org>
+Cc: Andrei Vagin <avagin@google.com>,
+ Axel Rasmussen <axelrasmussen@google.com>,
+ Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Peter Xu <peterx@redhat.com>, Rich Felker <dalias@libc.org>,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20240608021023.176027-1-jhubbard@nvidia.com>
+ <b5dd99c7-866b-467c-9f76-d043e887394c@redhat.com>
+ <c1277bf6-a211-49eb-80af-726f16ca1802@nvidia.com>
+ <17b503f8-5d0c-48a3-9eeb-85b01583f9bb@redhat.com>
+ <b60c8c02-5497-4c6c-ae60-86309e55f1bd@nvidia.com>
+ <2c6f86b4-8151-4bb8-8400-3ea546ca10ac@nvidia.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <2c6f86b4-8151-4bb8-8400-3ea546ca10ac@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2024-06-13 at 16:57 -0500, Bjorn Helgaas wrote:
-> On Thu, Jun 13, 2024 at 01:50:13PM +0200, Philipp Stanner wrote:
-> > Changes in v9:
-> > =C2=A0 - Remove forgotten dead code ('enabled' bit in struct pci_dev) i=
-n
-> > =C2=A0=C2=A0=C2=A0 patch No.8 ("Move pinned status bit...")
-> > =C2=A0 - Rework patch No.3:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Change title from "Reimplement plural =
-devres functions"
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to "Add partial-BAR devres s=
-upport".
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Drop excessive details about the gener=
-al cleanup from the
-> > commit
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0message. Only motivate =
-why this patch's new infrastructure
-> > is
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0necessary.
-> > =C2=A0 - Fix some minor spelling issues (s/pci/PCI ...)
-> >=20
-> > Changes in v8:
-> > =C2=A0 - Rebase the series on the already merged patches which were
-> > slightly
-> > =C2=A0=C2=A0=C2=A0 modified by Bjorn Helgaas.
-> > =C2=A0 - Reword the pci_intx() commit message so it clearly states it's
-> > about
-> > =C2=A0=C2=A0=C2=A0 reworking pci_intx().
-> > =C2=A0 - Move the removal of find_pci_dr() from patch "Remove legacy
-> > =C2=A0=C2=A0=C2=A0 pcim_release()" to patch "Give pci_intx() its own de=
-vres
-> > callback"
-> > =C2=A0=C2=A0=C2=A0 since this later patch already removed all calls to =
-that
-> > function.
-> > =C2=A0 - In patch "Give pci_intx() its own devres callback": use
-> > =C2=A0=C2=A0=C2=A0 pci_is_enabled() (and, thus, the enabled_cnt in stru=
-ct pci_dev)
-> > =C2=A0=C2=A0=C2=A0 instead of a separate enabled field. (Bjorn)
-> >=20
-> > Changes in v7:
-> > =C2=A0 - Split the entire series in smaller, more atomic chunks /
-> > patches
-> > =C2=A0=C2=A0=C2=A0 (Bjorn)
-> > =C2=A0 - Remove functions (such as pcim_iomap_region_range()) that do
-> > not yet
-> > =C2=A0=C2=A0=C2=A0 have a user (Bjorn)
-> > =C2=A0 - Don't export interfaces publicly anymore, except for
-> > =C2=A0=C2=A0=C2=A0 pcim_iomap_range(), needed by vboxvideo (Bjorn)
-> > =C2=A0 - Mention the actual (vboxvideo) bug in "PCI: Warn users..."
-> > commit
-> > =C2=A0=C2=A0=C2=A0 (Bjorn)
-> > =C2=A0 - Drop docstring warnings on PCI-internal functions (Bjorn)
-> > =C2=A0 - Rework docstring warnings
-> > =C2=A0 - Fix spelling in a few places. Rewrapp paragraphs (Bjorn)
-> >=20
-> > Changes in v6:
-> > =C2=A0 - Restructure the cleanup in pcim_iomap_regions_request_all() so
-> > that
-> > =C2=A0=C2=A0=C2=A0 it doesn't trigger a (false positive) test robot war=
-ning. No
-> > =C2=A0=C2=A0=C2=A0 behavior change intended. (Dan Carpenter)
-> >=20
-> > Changes in v5:
-> > =C2=A0 - Add Hans's Reviewed-by to vboxvideo patch (Hans de Goede)
-> > =C2=A0 - Remove stable-kernel from CC in vboxvideo patch (Hans de Goede=
-)
-> >=20
-> > Changes in v4:
-> > =C2=A0 - Rebase against linux-next
-> >=20
-> > Changes in v3:
-> > =C2=A0 - Use the term "PCI devres API" at some forgotten places.
-> > =C2=A0 - Fix more grammar errors in patch #3.
-> > =C2=A0 - Remove the comment advising to call (the outdated) pcim_intx()
-> > in pci.c
-> > =C2=A0 - Rename __pcim_request_region_range() flags-field "exclusive" t=
-o
-> > =C2=A0=C2=A0=C2=A0 "req_flags", since this is what the int actually rep=
-resents.
-> > =C2=A0 - Remove the call to pcim_region_request() from patch #10. (Hans=
-)
-> >=20
-> > Changes in v2:
-> > =C2=A0 - Make commit head lines congruent with PCI's style (Bjorn)
-> > =C2=A0 - Add missing error checks for devm_add_action(). (Andy)
-> > =C2=A0 - Repair the "Returns: " marks for docu generation (Andy)
-> > =C2=A0 - Initialize the addr_devres struct with memset(). (Andy)
-> > =C2=A0 - Make pcim_intx() a PCI-internal function so that new drivers
-> > won't
-> > =C2=A0=C2=A0=C2=A0 be encouraged to use the outdated pci_intx() mechani=
-sm.
-> > =C2=A0=C2=A0=C2=A0 (Andy / Philipp)
-> > =C2=A0 - Fix grammar and spelling (Bjorn)
-> > =C2=A0 - Be more precise on why pcim_iomap_table() is problematic
-> > (Bjorn)
-> > =C2=A0 - Provide the actual structs' and functions' names in the commit
-> > =C2=A0=C2=A0=C2=A0 messages (Bjorn)
-> > =C2=A0 - Remove redundant variable initializers (Andy)
-> > =C2=A0 - Regroup PM bitfield members in struct pci_dev (Andy)
-> > =C2=A0 - Make pcim_intx() visible only for the PCI subsystem so that
-> > new=C2=A0=C2=A0=C2=A0=20
-> > =C2=A0=C2=A0=C2=A0 drivers won't use this outdated API (Andy, Myself)
-> > =C2=A0 - Add a NOTE to pcim_iomap() to warn about this function being
-> > the one
-> > =C2=A0=C2=A0=C2=A0 exception that does just return NULL.
-> > =C2=A0 - Consistently use the term "PCI devres API"; also in Patch #10
-> > (Bjorn)
-> >=20
-> >=20
-> > =C2=A1Hola!
-> >=20
-> > PCI's devres API suffers several weaknesses:
-> >=20
-> > 1. There are functions prefixed with pcim_. Those are always
-> > managed
-> > =C2=A0=C2=A0 counterparts to never-managed functions prefixed with pci_=
- =E2=80=93 or
-> > so one
-> > =C2=A0=C2=A0 would like to think. There are some apparently unmanaged
-> > functions
-> > =C2=A0=C2=A0 (all region-request / release functions, and pci_intx()) w=
-hich
-> > =C2=A0=C2=A0 suddenly become managed once the user has initialized the =
-device
-> > with
-> > =C2=A0=C2=A0 pcim_enable_device() instead of pci_enable_device(). This
-> > "sometimes
-> > =C2=A0=C2=A0 yes, sometimes no" nature of those functions is confusing =
-and
-> > =C2=A0=C2=A0 therefore bug-provoking. In fact, it has already caused a =
-bug in
-> > DRM.
-> > =C2=A0=C2=A0 The last patch in this series fixes that bug.
-> > 2. iomappings: Instead of giving each mapping its own callback, the
-> > =C2=A0=C2=A0 existing API uses a statically allocated struct tracking o=
-ne
-> > mapping
-> > =C2=A0=C2=A0 per bar. This is not extensible. Especially, you can't cre=
-ate
-> > =C2=A0=C2=A0 _ranged_ managed mappings that way, which many drivers wan=
-t.
-> > 3. Managed request functions only exist as "plural versions" with a
-> > =C2=A0=C2=A0 bit-mask as a parameter. That's quite over-engineered
-> > considering
-> > =C2=A0=C2=A0 that each user only ever mapps one, maybe two bars.
-> >=20
-> > This series:
-> > - add a set of new "singular" devres functions that use devres the
-> > way
-> > =C2=A0 its intended, with one callback per resource.
-> > - deprecates the existing iomap-table mechanism.
-> > - deprecates the hybrid nature of pci_ functions.
-> > - preserves backwards compatibility so that drivers using the
-> > existing
-> > =C2=A0 API won't notice any changes.
-> > - adds documentation, especially some warning users about the
-> > =C2=A0 complicated nature of PCI's devres.
-> >=20
-> >=20
-> > Note that this series is based on my "unify pci_iounmap"-series
-> > from a
-> > few weeks ago. [1]
-> >=20
-> > I tested this on a x86 VM with a simple pci test-device with two
-> > regions. Operates and reserves resources as intended on my system.
-> > Kasan and kmemleak didn't find any problems.
-> >=20
-> > I believe this series cleans the API up as much as possible without
-> > having to port all existing drivers to the new API. Especially, I
-> > think
-> > that this implementation is easy to extend if the need for new
-> > managed
-> > functions arises :)
-> >=20
-> > Greetings,
-> > P.
-> >=20
-> > Philipp Stanner (13):
-> > =C2=A0 PCI: Add and use devres helper for bit masks
-> > =C2=A0 PCI: Add devres helpers for iomap table
-> > =C2=A0 PCI: Add partial-BAR devres support
-> > =C2=A0 PCI: Deprecate two surplus devres functions
-> > =C2=A0 PCI: Make devres region requests consistent
-> > =C2=A0 PCI: Warn users about complicated devres nature
-> > =C2=A0 PCI: Remove enabled status bit from pci_devres
-> > =C2=A0 PCI: Move pinned status bit to struct pci_dev
-> > =C2=A0 PCI: Give pcim_set_mwi() its own devres callback
-> > =C2=A0 PCI: Give pci_intx() its own devres callback
-> > =C2=A0 PCI: Remove legacy pcim_release()
-> > =C2=A0 PCI: Add pcim_iomap_range()
-> > =C2=A0 drm/vboxvideo: fix mapping leaks
-> >=20
-> > =C2=A0drivers/gpu/drm/vboxvideo/vbox_main.c |=C2=A0 20 +-
-> > =C2=A0drivers/pci/devres.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 903 +++++++++++=
-++++++++++-
-> > ----
-> > =C2=A0drivers/pci/iomap.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 16 =
-+
-> > =C2=A0drivers/pci/pci.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 94 ++-
-> > =C2=A0drivers/pci/pci.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 23 +-
-> > =C2=A0include/linux/pci.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=
-=A0 5 +-
-> > =C2=A06 files changed, 858 insertions(+), 203 deletions(-)
->=20
-> This is on pci/devres with some commit log rework and the following
-> diffs.=C2=A0 I think the bar short/int thing is the only actual code
-> change.=C2=A0 Happy to squash in any other updates or things I botched.
+On 13.06.24 23:27, John Hubbard wrote:
+> On 6/12/24 7:11 PM, John Hubbard wrote:
+>> On 6/12/24 1:24 AM, David Hildenbrand wrote:
+>>> On 11.06.24 22:54, John Hubbard wrote:
+>>>> On 6/11/24 2:36 AM, David Hildenbrand wrote:
+>>>>> On 08.06.24 04:10, John Hubbard wrote:
+> ...
+>>>> You remembered correctly, but the situation is slighly muddier than
+>>>> one would prefer. :)
+>>>
+>>>
+>>> Absolutely, and I appreciate that you are trying to improve the situation.
+>>>
+>>
+>> I think the attempts to further tease apart the include headers could
+>> go into a separate, subsequent series, yes? And let this one go in
+>> unmolested for now?
+>    
+> 
+> On second thought, it is actually much easier than I thought, let me
+> post a v2 with the unistd.h header fixes, after all.
 
-I looked through your tree and only found the following nit:
+Great! :)
 
-In commit "PCI: Remove struct pci_devres.enabled status bit" you
-changed the line
+-- 
+Cheers,
 
-"The PCI devres implementation has a separate boolean to track whether
-a"
-
-to:
-
-"The pci_devres struct has a separate boolean to track whether a device
-is"
-
-In past reviews that has been criticized and I was told to always call
-it "struct pci_devres", not the other way around. That's also how it's
-put in the following paragraph.
-
->=20
-> Planned for v6.11.
-
-\o/
-
-P.
-
->=20
-> diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-> index 2f0379a4e58f..d9b78a0d903a 100644
-> --- a/drivers/pci/devres.c
-> +++ b/drivers/pci/devres.c
-> @@ -11,7 +11,7 @@
-> =C2=A0 * 1. It is very strongly tied to the statically allocated mapping
-> table in
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 struct pcim_iomap_devres below. This is mostly=
- solved in the
-> sense of the
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 pcim_ functions in this file providing things =
-like ranged
-> mapping by
-> - *=C2=A0=C2=A0=C2=A0 bypassing this table, wheras the functions that wer=
-e present
-> in the old
-> + *=C2=A0=C2=A0=C2=A0 bypassing this table, whereas the functions that we=
-re present
-> in the old
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 API still enter the mapping addresses into the=
- table for users
-> of the old
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 API.
-> =C2=A0 *
-> @@ -25,10 +25,11 @@
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 Consequently, in the new API, region requests =
-performed by the
-> pcim_
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 functions are automatically cleaned up through=
- the devres
-> callback
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 pcim_addr_resource_release().
-> - *=C2=A0=C2=A0=C2=A0 Users utilizing pcim_enable_device() + pci_*region*=
-() are
-> redirected in
-> + *
-> + *=C2=A0=C2=A0=C2=A0 Users of pcim_enable_device() + pci_*region*() are =
-redirected
-> in
-> =C2=A0 *=C2=A0=C2=A0=C2=A0 pci.c to the managed functions here in this fi=
-le. This isn't
-> exactly
-> - *=C2=A0=C2=A0=C2=A0 perfect, but the only alternative way would be to p=
-ort ALL
-> drivers using
-> - *=C2=A0=C2=A0=C2=A0 said combination to pcim_ functions.
-> + *=C2=A0=C2=A0=C2=A0 perfect, but the only alternative way would be to p=
-ort ALL
-> drivers
-> + *=C2=A0=C2=A0=C2=A0 using said combination to pcim_ functions.
-> =C2=A0 *
-> =C2=A0 * TODO:
-> =C2=A0 * Remove the legacy table entirely once all calls to
-> pcim_iomap_table() in
-> @@ -42,7 +43,7 @@ struct pcim_iomap_devres {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0void __iomem *table[PCI_S=
-TD_NUM_BARS];
-> =C2=A0};
-> =C2=A0
-> -/* Used to restore the old intx state on driver detach. */
-> +/* Used to restore the old INTx state on driver detach. */
-> =C2=A0struct pcim_intx_devres {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int orig_intx;
-> =C2=A0};
-> @@ -77,7 +78,7 @@ struct pcim_addr_devres {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0void __iomem *baseaddr;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned long offset;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned long len;
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0short bar;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int bar;
-> =C2=A0};
-> =C2=A0
-> =C2=A0static inline void pcim_addr_devres_clear(struct pcim_addr_devres
-> *res)
-> @@ -108,8 +109,9 @@ static inline void pcim_addr_devres_clear(struct
-> pcim_addr_devres *res)
-> =C2=A0 * Request a range within a device's PCI BAR.=C2=A0 Sanity check th=
-e
-> input.
-> =C2=A0 */
-> =C2=A0static int __pcim_request_region_range(struct pci_dev *pdev, int
-> bar,
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0unsigned long offset, unsigned long maxlen,
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0const char *name, int req_flags)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- unsigned long offset,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- unsigned long maxlen,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- const char *name, int
-> req_flags)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0resource_size_t start =3D=
- pci_resource_start(pdev, bar);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0resource_size_t len =3D p=
-ci_resource_len(pdev, bar);
-> @@ -118,7 +120,7 @@ static int __pcim_request_region_range(struct
-> pci_dev *pdev, int bar,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (start =3D=3D 0 || len=
- =3D=3D 0) /* Unused BAR. */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0return 0;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (len <=3D offset)
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0return=C2=A0 -EINVAL;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0return -EINVAL;
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0start +=3D offset;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0len -=3D offset;
-> @@ -141,7 +143,8 @@ static int __pcim_request_region_range(struct
-> pci_dev *pdev, int bar,
-> =C2=A0}
-> =C2=A0
-> =C2=A0static void __pcim_release_region_range(struct pci_dev *pdev, int
-> bar,
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0unsigned long offset, unsigned long maxlen)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0unsigned long offset,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0unsigned long maxlen)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0resource_size_t start =3D=
- pci_resource_start(pdev, bar);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0resource_size_t len =3D p=
-ci_resource_len(pdev, bar);
-> @@ -166,7 +169,7 @@ static void __pcim_release_region_range(struct
-> pci_dev *pdev, int bar,
-> =C2=A0}
-> =C2=A0
-> =C2=A0static int __pcim_request_region(struct pci_dev *pdev, int bar,
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0const char *name, int flags)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *name, int flags)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned long offset =3D =
-0;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned long len =3D pci=
-_resource_len(pdev, bar);
-> @@ -208,7 +211,7 @@ static struct pcim_addr_devres
-> *pcim_addr_devres_alloc(struct pci_dev *pdev)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct pcim_addr_devres *=
-res;
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0res =3D devres_alloc_node=
-(pcim_addr_resource_release,
-> sizeof(*res),
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0GFP_KERNE=
-L, dev_to_node(&pdev->dev));
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0GFP_KERNEL, dev_to_node(&pdev->dev))=
-;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (res)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0pcim_addr_devres_clear(res);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return res;
-> @@ -223,7 +226,8 @@ static inline void pcim_addr_devres_free(struct
-> pcim_addr_devres *res)
-> =C2=A0/*
-> =C2=A0 * Used by devres to identify a pcim_addr_devres.
-> =C2=A0 */
-> -static int pcim_addr_resources_match(struct device *dev, void
-> *a_raw, void *b_raw)
-> +static int pcim_addr_resources_match(struct device *dev,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void *a_raw=
-, void *b_raw)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct pcim_addr_devres *=
-a, *b;
-> =C2=A0
-> @@ -402,7 +406,6 @@ int pcim_set_mwi(struct pci_dev *pdev)
-> =C2=A0}
-> =C2=A0EXPORT_SYMBOL(pcim_set_mwi);
-> =C2=A0
-> -
-> =C2=A0static inline bool mask_contains_bar(int mask, int bar)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return mask & BIT(bar);
-> @@ -438,8 +441,8 @@ static struct pcim_intx_devres
-> *get_or_create_intx_devres(struct device *dev)
-> =C2=A0 *
-> =C2=A0 * Returns: 0 on success, -ENOMEM on error.
-> =C2=A0 *
-> - * Enables/disables PCI INTx for device @pdev.
-> - * Restores the original state on driver detach.
-> + * Enable/disable PCI INTx for device @pdev.
-> + * Restore the original state on driver detach.
-> =C2=A0 */
-> =C2=A0int pcim_intx(struct pci_dev *pdev, int enable)
-> =C2=A0{
-> @@ -492,7 +495,7 @@ int pcim_enable_device(struct pci_dev *pdev)
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/*
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * We prefer removing the=
- action in case of an error over
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * devm_add_action_or_reset() =
-because the later could
-> theoretically be
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * devm_add_action_or_reset() =
-because the latter could
-> theoretically be
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * disturbed by users hav=
-ing pinned the device too soon.
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D pci_enable_device=
-(pdev);
-> @@ -618,7 +621,7 @@ static void
-> pcim_remove_mapping_from_legacy_table(struct pci_dev *pdev,
-> =C2=A0 * The same as pcim_remove_mapping_from_legacy_table(), but
-> identifies the
-> =C2=A0 * mapping by its BAR index.
-> =C2=A0 */
-> -static void pcim_remove_bar_from_legacy_table(struct pci_dev *pdev,
-> short bar)
-> +static void pcim_remove_bar_from_legacy_table(struct pci_dev *pdev,
-> int bar)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0void __iomem **legacy_iom=
-ap_table;
-> =C2=A0
-> @@ -783,7 +786,7 @@ static void pcim_iounmap_region(struct pci_dev
-> *pdev, int bar)
-> =C2=A0int pcim_iomap_regions(struct pci_dev *pdev, int mask, const char
-> *name)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret;
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0short bar;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int bar;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0void __iomem *mapping;
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0for (bar =3D 0; bar < DEV=
-ICE_COUNT_RESOURCE; bar++) {
-> @@ -813,7 +816,7 @@ int pcim_iomap_regions(struct pci_dev *pdev, int
-> mask, const char *name)
-> =C2=A0EXPORT_SYMBOL(pcim_iomap_regions);
-> =C2=A0
-> =C2=A0static int _pcim_request_region(struct pci_dev *pdev, int bar, cons=
-t
-> char *name,
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0int request_flags)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int request_flags)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct pcim_addr_devres *=
-res;
-> @@ -903,7 +906,7 @@ void pcim_release_region(struct pci_dev *pdev,
-> int bar)
-> =C2=A0 */
-> =C2=A0static void pcim_release_all_regions(struct pci_dev *pdev)
-> =C2=A0{
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0short bar;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int bar;
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0for (bar =3D 0; bar < PCI=
-_STD_NUM_BARS; bar++)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0pcim_release_region(pdev, bar);
-> @@ -923,7 +926,7 @@ static void pcim_release_all_regions(struct
-> pci_dev *pdev)
-> =C2=A0static int pcim_request_all_regions(struct pci_dev *pdev, const cha=
-r
-> *name)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret;
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0short bar;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int bar;
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0for (bar =3D 0; bar < PCI=
-_STD_NUM_BARS; bar++) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0ret =3D pcim_request_region(pdev, bar, name);
-> @@ -960,7 +963,7 @@ static int pcim_request_all_regions(struct
-> pci_dev *pdev, const char *name)
-> =C2=A0int pcim_iomap_regions_request_all(struct pci_dev *pdev, int mask,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *name)
-> =C2=A0{
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0short bar;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int bar;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int ret;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0void __iomem **legacy_iom=
-ap_table;
-> =C2=A0
-> @@ -1004,14 +1007,14 @@
-> EXPORT_SYMBOL(pcim_iomap_regions_request_all);
-> =C2=A0 */
-> =C2=A0void pcim_iounmap_regions(struct pci_dev *pdev, int mask)
-> =C2=A0{
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0short bar;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int i;
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0for (bar =3D 0; bar < PCI_STD_=
-NUM_BARS; bar++) {
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0if (!mask_contains_bar(mask, bar))
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0for (i =3D 0; i < PCI_STD_NUM_=
-BARS; i++) {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0if (!mask_contains_bar(mask, i))
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0con=
-tinue;
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0pcim_iounmap_region(pdev, bar);
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0pcim_remove_bar_from_legacy_table(pdev, bar);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0pcim_iounmap_region(pdev, i);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0pcim_remove_bar_from_legacy_table(pdev, i);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> =C2=A0}
-> =C2=A0EXPORT_SYMBOL(pcim_iounmap_regions);
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 1b4832a60047..807f8be043cd 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -4073,6 +4073,11 @@ EXPORT_SYMBOL(pci_release_regions);
-> =C2=A0 *
-> =C2=A0 * Returns 0 on success, or %EBUSY on error.=C2=A0 A warning
-> =C2=A0 * message is also printed on failure.
-> + *
-> + * NOTE:
-> + * This is a "hybrid" function: It's normally unmanaged, but becomes
-> managed
-> + * when pcim_enable_device() has been called in advance. This hybrid
-> feature is
-> + * DEPRECATED! If you want managed cleanup, use the pcim_* functions
-> instead.
-> =C2=A0 */
-> =C2=A0int pci_request_regions(struct pci_dev *pdev, const char *res_name)
-> =C2=A0{
-> @@ -4437,17 +4442,13 @@ void pci_disable_parity(struct pci_dev *dev)
-> =C2=A0 * NOTE:
-> =C2=A0 * This is a "hybrid" function: It's normally unmanaged, but become=
-s
-> managed
-> =C2=A0 * when pcim_enable_device() has been called in advance. This hybri=
-d
-> feature is
-> - * DEPRECATED!
-> + * DEPRECATED! If you want managed cleanup, use pcim_intx() instead.
-> =C2=A0 */
-> =C2=A0void pci_intx(struct pci_dev *pdev, int enable)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u16 pci_command, new;
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/*
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * This is done for backwards =
-compatibility, because the old
-> PCI devres
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * API had a mode in which thi=
-s function became managed if
-> the dev had
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * been enabled with pcim_enab=
-le_device() instead of
-> pci_enable_device().
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Preserve the "hybrid" behav=
-ior for backwards compatibility
-> */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (pci_is_managed(pdev))=
- {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0WARN_ON_ONCE(pcim_intx(pdev, enable) !=3D 0);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0return;
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index e51e6fa79fcc..e6d299b93c21 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -813,7 +813,8 @@ static inline pci_power_t
-> mid_pci_get_power_state(struct pci_dev *pdev)
-> =C2=A0int pcim_intx(struct pci_dev *dev, int enable);
-> =C2=A0
-> =C2=A0int pcim_request_region(struct pci_dev *pdev, int bar, const char
-> *name);
-> -int pcim_request_region_exclusive(struct pci_dev *pdev, int bar,
-> const char *name);
-> +int pcim_request_region_exclusive(struct pci_dev *pdev, int bar,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *name);
-> =C2=A0void pcim_release_region(struct pci_dev *pdev, int bar);
-> =C2=A0
-> =C2=A0/*
->=20
+David / dhildenb
 
 
