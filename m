@@ -1,139 +1,69 @@
-Return-Path: <linux-kernel+bounces-215386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 907A59091F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:46:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF81B9091F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 411882832E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:46:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91F971F23AD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C6919D07D;
-	Fri, 14 Jun 2024 17:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="RyFScOOv"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354AC19EEAA;
+	Fri, 14 Jun 2024 17:46:54 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2065519D89C;
-	Fri, 14 Jun 2024 17:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B466019D89C;
+	Fri, 14 Jun 2024 17:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718387203; cv=none; b=N7uOnnq6SBOYRvbaKkXxblMlO0A1csuA2xA82qlMfMlM7G8Zb9MWvYsqAU44aYrpMbMh1jM1JJVWaSo5DSevl5j/sgx2NPe9iKql9WcQZwupRjuFTVeqy2WGV8A5Gw9HnHcrGhBiM2ffSUd/pumavvGxtrS2gT0OHNR9CaWsctI=
+	t=1718387213; cv=none; b=qxoIC0R55vGOWlOEMu0CEPXglDKCymeq03J0D9HFgoRqkIY1kEW1AVkdFX1tL5A7Nws3Mkzn+Grhs6QOAWy6LBjUg7Zebq4xl+eaSRUhjfjzn8iwizmbzZcDQMa67k05g2+6AtD8mzeShg4ZIX+djPFCIXMOpQcy9EqhW9L3dSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718387203; c=relaxed/simple;
-	bh=FUhw5QSPT52a+n51aUGW5MWySfTN62An4zO5LFmLXlg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gmNLvPD69xIC7OUX4yqWTShiFnQuTT32QrmcKiUUyiwAnjyyYO/T7WwFnHZEy+2SizAc6CYKnpPSliMlnnw7hKU6cUmqWqLHHGnWsQjwBwniiAc1wnqSqt1ILwbKFoSY/5Z0Nhiwg/XC6WDoIAue2pRKIxfZE9lyu6NmG8IIMSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=RyFScOOv; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=VLp0XKh59OcMtWOpegZjhoT2Uyd2kf1eZygBpGw1rsc=; b=RyFScOOv02S+cmpl/z+zry8jWZ
-	4Ql+RZ9Ko1bSpLGTcwpEN7SHVwBt3hfQp5iAPTG88/4v6NGFkMHHVmI69NYq6tDmIlb+5W08BsY/q
-	XrhqmI6yU6sapMPi4VwjK9ViJDsz7BeG+/vSo/acrDoAb2MeqJObWoT4PMD0j82D/M/VFi0s4chHR
-	DURdpOET2UoxjeoYxfgMp9gCNWoPxARX9i4TxvfPw9i75IOVWSnPgw6TElfepHCPCQZ11xVkvjhWR
-	UYVXOeOKjb+rngRSVfsZzjwzWtpgGnwJZaYlMAMGNlksAy4DDi+JbLmcN8mRTx9uAJ1ko/qBek0bX
-	NyW8uHrg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59072)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sIB0C-000280-0u;
-	Fri, 14 Jun 2024 18:46:16 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sIB09-0002Jc-8R; Fri, 14 Jun 2024 18:46:13 +0100
-Date: Fri, 14 Jun 2024 18:46:13 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Kory Maincent <kory.maincent@bootlin.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Radu Pirea <radu-nicolae.pirea@oss.nxp.com>,
-	Jay Vosburgh <j.vosburgh@gmail.com>,
-	Andy Gospodarek <andy@greyhouse.net>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Rahul Rameshbabu <rrameshbabu@nvidia.com>,
-	Shannon Nelson <shannon.nelson@amd.com>,
-	Alexandra Winter <wintera@linux.ibm.com>
-Subject: Re: [PATCH net-next v15 07/14] net: Add struct kernel_ethtool_ts_info
-Message-ID: <ZmyB5cUz6zWcw4nr@shell.armlinux.org.uk>
-References: <20240612-feature_ptp_netnext-v15-0-b2a086257b63@bootlin.com>
- <20240612-feature_ptp_netnext-v15-7-b2a086257b63@bootlin.com>
- <19d5b8f250979c7c244e7b5b08d12783667576ee.camel@redhat.com>
+	s=arc-20240116; t=1718387213; c=relaxed/simple;
+	bh=RORB+zb23DcV9RCrRL/YDiqRnMupOiDZ3d4zA6QVmBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L6wyqkQjp1UAmTzOaU+ey706H+s0cYJ4HRvKeDVFZ+WEyfbDOAyGEUrcqtNHSd0sZ4Yl0rsz5v10iqi48usZgPJdHskhl00M2z4Nkq4bMvvUYfnYj9uwElAR4sVJq1tva9jVdF2HKkjbhugn9gJAJwdzH4e8j4mJ9Ahgw0MRI0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 525AFC2BD10;
+	Fri, 14 Jun 2024 17:46:52 +0000 (UTC)
+Date: Fri, 14 Jun 2024 13:46:51 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Kris Van Hees <kris.van.hees@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masahiro
+ Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Nick Desaulniers
+ <ndesaulniers@google.com>, Jiri Olsa <olsajiri@gmail.com>, Elena Zannoni
+ <elena.zannoni@oracle.com>
+Subject: Re: [PATCH v4 1/3] kbuild: add mod(name,file)_flags to assembler
+ flags for module objects
+Message-ID: <20240614134651.4ed2091d@rorschach.local.home>
+In-Reply-To: <20240614171428.968174-2-kris.van.hees@oracle.com>
+References: <20240614171428.968174-1-kris.van.hees@oracle.com>
+	<20240614171428.968174-2-kris.van.hees@oracle.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <19d5b8f250979c7c244e7b5b08d12783667576ee.camel@redhat.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 14, 2024 at 04:02:04PM +0200, Paolo Abeni wrote:
-> On Wed, 2024-06-12 at 17:04 +0200, Kory Maincent wrote:
-> > In prevision to add new UAPI for hwtstamp we will be limited to the struct
-> > ethtool_ts_info that is currently passed in fixed binary format through the
-> > ETHTOOL_GET_TS_INFO ethtool ioctl. It would be good if new kernel code
-> > already started operating on an extensible kernel variant of that
-> > structure, similar in concept to struct kernel_hwtstamp_config vs struct
-> > hwtstamp_config.
-> > 
-> > Since struct ethtool_ts_info is in include/uapi/linux/ethtool.h, here
-> > we introduce the kernel-only structure in include/linux/ethtool.h.
-> > The manual copy is then made in the function called by ETHTOOL_GET_TS_INFO.
-> > 
-> > Acked-by: Shannon Nelson <shannon.nelson@amd.com>
-> > Acked-by: Alexandra Winter <wintera@linux.ibm.com>
-> > Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+On Fri, 14 Jun 2024 13:14:26 -0400
+Kris Van Hees <kris.van.hees@oracle.com> wrote:
+
+> Module objects compiled from C source can be identified by the presence
+> of -DKBUILD_MODFILE and -DKBUILD_MODNAME on their compile command lines.
+> However, module objects from assembler source do not have this defines.
 > 
-> I think it would be nice if a few more vendors could actually step-in
-> and test/ack the driver specific bits.
+> Add $(modfile_flags) to modkern_aflags (similar to modkern_cflahs), and
+> add $(modname_flags) to a_flags (similar to c_flags).
 
-Well, in part this series was triggered because of an issue having
-PTP support in Marvell's PP2 driver, and then the issue that if we
-add it to the Marvell PHY driver, the platforms that are currently
-using the PP2 based PTP support were forced into the weird situation
-that some of the PTP calls hit the PP2 driver and others hit the
-PHY driver.
+You explain what this does but not why it does it.
 
-I had sent Kory an email a couple of weeks ago saying that I'm
-unlikely to be able to test this out in that setup any time soon,
-I've had high work pressure for the last seven-ish weeks, and I
-would need to be in front of the hardware, which is fairly rare
-at the moment, and I'm not going to be in front of the hardware
-until August. So I'm just not going to be able to test it in a
-reasonable time scale.
-
-There's not a lot I can do about that, sorry.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+-- Steve
 
