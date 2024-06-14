@@ -1,305 +1,188 @@
-Return-Path: <linux-kernel+bounces-214287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9CA490824A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 05:05:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C997390824B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 05:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F4CE2833F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:05:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E0AEB2318E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554661836E9;
-	Fri, 14 Jun 2024 03:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EKfZ6T5Q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6CF145A11;
-	Fri, 14 Jun 2024 03:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958621836DB;
+	Fri, 14 Jun 2024 03:06:05 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49E01482E0;
+	Fri, 14 Jun 2024 03:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718334338; cv=none; b=cKHTqW73mX03rVu7Gt5RFg7iGuJGjkwr7T0XX8ACiVF/SG045UQpAg+XS4+Ojz5EyQKTTKhyYykmjSsuCKOyiV3+sE+KsFFf7RUAVtYxppPCxyxOQGVE9l+DAsGnMIjh6ToMYIyIlj5MzqYAUvR1Ickv6/pefvAEnj8T19CIl9I=
+	t=1718334365; cv=none; b=XpeZp79ZaZuh89ZusiEcne+KSvMBYuYGKbck7chEj1HpySAo6MOs6+4g7YJbsbTOfXUcKI2sJBtT7fYJHANlLFkTniiiKpoZE9pih2YsTKy5eZU0WADQet8U4xDoSUGN9slK2Mg2pyVZAsyGUWI0fC8phX4JG+d+tigu1tcvKYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718334338; c=relaxed/simple;
-	bh=pdjpsrCqWVNaZ5myktaZ+kpfr8DDRAbCGhEM1qd7Rcs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YkVJhivcQtP9IyWmq0teqVK43jYsJEHZ8Hq+nN373e8hYETbvJWpRLQEIqaR+moyxhW9UHwSyy0iZGo7sMSutu8wvv1hVNL2KEQKaM2SjXC3JAj1sYZgOum9T5SFrM2NYphxAQGTYrmwzccMn8+Q7p8aXcpXrbZZLi9wnQ66I8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EKfZ6T5Q; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718334337; x=1749870337;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=pdjpsrCqWVNaZ5myktaZ+kpfr8DDRAbCGhEM1qd7Rcs=;
-  b=EKfZ6T5Q1kPgdpTIEyGQJlqflNkdLl5hHrfz9t4V3sYGN62NeWDH+qO5
-   XCfWDzMZfEXT6SwOuPbZJDp4Cq5AQ3IXc4cdR7fDhY1Y+j3nP9wMYmmpc
-   5tjH2bmdoqldgqg2w/hJ6akBoUlntSjAFeCZCQQBiRhspGbQPH6gz8/ct
-   D08oeGt0UrK/SFEo1IiiSnHnxxAibwyecJEz8Vb06xxujNmNssmzhD/yg
-   NdMiKaUYgMxE2p5SfIGxfCutRvCFgDcyomZR35NYdLRopUhBHmZI9VdZa
-   8t6GBa2O6Ka0F1TCVtV0pEXHXBTEgt+tX0VIud1c5nU3oOQmiy9TS7d8m
-   Q==;
-X-CSE-ConnectionGUID: p0MTIlMoSRuos3eFfcn0cQ==
-X-CSE-MsgGUID: vyzSsrkLQNCzHdp+jDu9tQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="15330666"
-X-IronPort-AV: E=Sophos;i="6.08,236,1712646000"; 
-   d="scan'208";a="15330666"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 20:05:36 -0700
-X-CSE-ConnectionGUID: GaI/lrk0Q4yJW2N1wGRzNQ==
-X-CSE-MsgGUID: Sf5xxH4MRM6RftQS111yaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,236,1712646000"; 
-   d="scan'208";a="44742730"
-Received: from sramkris-mobl1.amr.corp.intel.com (HELO [10.124.223.37]) ([10.124.223.37])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 20:05:34 -0700
-Message-ID: <ccb9b171-6315-4157-b1a3-cc652c9cf044@linux.intel.com>
-Date: Thu, 13 Jun 2024 20:05:32 -0700
+	s=arc-20240116; t=1718334365; c=relaxed/simple;
+	bh=ijrLn2Ezx5U5mGDBHpfW9Z/myiPUI0c/wUdXZIc99C0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dp1QVKVAZhcQs1UPFnheC+xRGoYXLbpShOkfI6VSeatGbNj+gAzSxcHXxzjwoJAU3KL/GTY9JfHWcW20JcV5DF8e6rgj+T+BhlPkQDdapkeGUTwILgfPU+otmMj3HAtlw3Ae/loDImq8aOPi6gHz+JGliZz40ULWA4TSTDivaoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-d6dff70000001748-61-666bb3973391
+From: Honggyu Kim <honggyu.kim@sk.com>
+To: SeongJae Park <sj@kernel.org>
+Cc: damon@lists.linux.dev,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Gregory Price <gregory.price@memverge.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	42.hyeyoo@gmail.com,
+	art.jeongseob@gmail.com,
+	kernel_team@skhynix.com,
+	Hyeongtak Ji <hyeongtak.ji@sk.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	Yunjeong Mun <yunjeong.mun@sk.com>,
+	Honggyu Kim <honggyu.kim@sk.com>
+Subject: Re: [PATCH v5 0/8] DAMON based tiered memory management for CXL memory
+Date: Fri, 14 Jun 2024 12:05:51 +0900
+Message-ID: <20240614030554.784-1-honggyu.kim@sk.com>
+X-Mailer: git-send-email 2.43.0.windows.1
+In-Reply-To: <20240613174604.63629-1-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] PCI/AER: Store UNCOR_STATUS bits that might be
- ANFE in aer_err_info
-To: "Duan, Zhenzhong" <zhenzhong.duan@intel.com>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org"
- <lenb@kernel.org>, "james.morse@arm.com" <james.morse@arm.com>,
- "Luck, Tony" <tony.luck@intel.com>, "bp@alien8.de" <bp@alien8.de>,
- "dave@stgolabs.net" <dave@stgolabs.net>,
- "jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>,
- "Jiang, Dave" <dave.jiang@intel.com>,
- "Schofield, Alison" <alison.schofield@intel.com>,
- "Verma, Vishal L" <vishal.l.verma@intel.com>,
- "Weiny, Ira" <ira.weiny@intel.com>, "bhelgaas@google.com"
- <bhelgaas@google.com>, "helgaas@kernel.org" <helgaas@kernel.org>,
- "mahesh@linux.ibm.com" <mahesh@linux.ibm.com>,
- "oohall@gmail.com" <oohall@gmail.com>,
- "linmiaohe@huawei.com" <linmiaohe@huawei.com>,
- "shiju.jose@huawei.com" <shiju.jose@huawei.com>,
- "Preble, Adam C" <adam.c.preble@intel.com>, "lukas@wunner.de"
- <lukas@wunner.de>,
- "Smita.KoralahalliChannabasappa@amd.com"
- <Smita.KoralahalliChannabasappa@amd.com>, "rrichter@amd.com"
- <rrichter@amd.com>, "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
- "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Tsaur, Erwin" <erwin.tsaur@intel.com>,
- "Kuppuswamy, Sathyanarayanan" <sathyanarayanan.kuppuswamy@intel.com>,
- "Williams, Dan J" <dan.j.williams@intel.com>,
- "Wanyan, Feiting" <feiting.wanyan@intel.com>,
- "Wang, Yudong" <yudong.wang@intel.com>, "Peng, Chao P"
- <chao.p.peng@intel.com>,
- "qingshun.wang@linux.intel.com" <qingshun.wang@linux.intel.com>
-References: <20240509084833.2147767-1-zhenzhong.duan@intel.com>
- <20240509084833.2147767-2-zhenzhong.duan@intel.com>
- <53a3795b-4ccd-458e-88cd-d510031bc6b6@linux.intel.com>
- <SJ0PR11MB6744B7733567E065F5F3C5C892C22@SJ0PR11MB6744.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <SJ0PR11MB6744B7733567E065F5F3C5C892C22@SJ0PR11MB6744.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDLMWRmVeSWpSXmKPExsXC9ZZnoe70zdlpBvc6LSwm9hhYzFm/hs3i
+	/oPX7BZP/v9mtWhoesRicXnXHDaLe2v+s1ocWX+WxWLz2TPMFouXq1ns63jAZHH46xsmBx6P
+	paffsHnsnHWX3aNl3y12j02rOtk8Nn2axO5xYsZvFo8Xm2cyemz8+J/d4/MmuQDOKC6blNSc
+	zLLUIn27BK6Mow0/GQtuK1csPHGNvYHxumQXIyeHhICJxJSmh2ww9v45u5lBbDYBNYkrLycx
+	gdgiAooS5x5fZO1i5OJgFtjKInGj8wQjSEJYwF/i6ZU9YEUsAqoSD+bOYAexeQVMJfZMbGOB
+	GKop8Xj7T7A4p4CxxPs3J8DqhQR4JF5t2M8IUS8ocXLmE7B6ZgF5ieats5lBlkkI/GeT+LFp
+	GyPEIEmJgytusExg5J+FpGcWkp4FjEyrGIUy88pyEzNzTPQyKvMyK/SS83M3MQLjYFntn+gd
+	jJ8uBB9iFOBgVOLh9XiWlSbEmlhWXJl7iFGCg1lJhHfWQqAQb0piZVVqUX58UWlOavEhRmkO
+	FiVxXqNv5SlCAumJJanZqakFqUUwWSYOTqkGRsdb/Mua+I/qPX0jfX6f3vE9/r8Tvku5bs9O
+	kDqlydRoa+wTUNjvzCpzZ5rF6zJbPv05wcuqBGYzzlJmjRaLPnHzXtW+p4liv6ZOyxI5viX/
+	jeLDG6GzTVfeYnqVGDTv6NTadsv59//+MF91gkf33JTcY4zB27YneCd1x5SfmKRdp+KzQJXl
+	lxJLcUaioRZzUXEiAO8NfpR/AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNLMWRmVeSWpSXmKPExsXCNUNLT3f65uw0g4aVKhYTewws5qxfw2Zx
+	/8Frdosn/3+zWjQ0PWKx+PzsNbNF55PvjBaH555ktbi8aw6bxb01/1ktjqw/y2Kx+ewZZovF
+	y9UsDl17zmqxr+MBk8Xhr2+YLH5vW8HmIOix9PQbNo+ds+6ye7Tsu8XusWlVJ5vHpk+T2D1O
+	zPjN4vFi80xGj40f/7N7fLvt4bH4xQcmj8+b5AK4o7hsUlJzMstSi/TtErgyjjb8ZCy4rVyx
+	8MQ19gbG65JdjJwcEgImEvvn7GYGsdkE1CSuvJzEBGKLCChKnHt8kbWLkYuDWWAri8SNzhOM
+	IAlhAX+Jp1f2gBWxCKhKPJg7gx3E5hUwldgzsY0FYqimxOPtP8HinALGEu/fnACrFxLgkXi1
+	YT8jRL2gxMmZT8DqmQXkJZq3zmaewMgzC0lqFpLUAkamVYwimXlluYmZOaZ6xdkZlXmZFXrJ
+	+bmbGIFRsKz2z8QdjF8uux9iFOBgVOLh9XiWlSbEmlhWXJl7iFGCg1lJhHfWQqAQb0piZVVq
+	UX58UWlOavEhRmkOFiVxXq/w1AQhgfTEktTs1NSC1CKYLBMHp1QDo7Hsyr3RO4/+b14k+nCV
+	11N2own3TbXuGfjN2J9WuWpdckwqf35YUc1s91tWck2Na76Eb/u0aYsJ2+XKFP6z70ymGudk
+	3TDiSZr+Z+LWCY9DXgc7LNsTJbF69ZSd5isufdJyV/+y6XWWeeoDkxcHevbvYc+Y71u3vsM8
+	WeKIX3vmHdu4vc1zJimxFGckGmoxFxUnAgCvQf2+fgIAAA==
+X-CFilter-Loop: Reflected
 
+Hi SeongJae,
 
-On 6/13/24 7:39 PM, Duan, Zhenzhong wrote:
-> Hi
->
->> -----Original Message-----
->> From: Kuppuswamy Sathyanarayanan
->> <sathyanarayanan.kuppuswamy@linux.intel.com>
->> Subject: Re: [PATCH v4 1/3] PCI/AER: Store UNCOR_STATUS bits that might
->> be ANFE in aer_err_info
->>
->> Hi,
->>
->> On 5/9/24 1:48 AM, Zhenzhong Duan wrote:
->>> In some cases the detector of a Non-Fatal Error(NFE) is not the most
->>> appropriate agent to determine the type of the error. For example,
->>> when software performs a configuration read from a non-existent
->>> device or Function, completer will send an ERR_NONFATAL Message.
->>> On some platforms, ERR_NONFATAL results in a System Error, which
->>> breaks normal software probing.
->>>
->>> Advisory Non-Fatal Error(ANFE) is a special case that can be used
->>> in above scenario. It is predominantly determined by the role of the
->>> detecting agent (Requester, Completer, or Receiver) and the specific
->>> error. In such cases, an agent with AER signals the NFE (if enabled)
->>> by sending an ERR_COR Message as an advisory to software, instead of
->>> sending ERR_NONFATAL.
->>>
->>> When processing an ANFE, ideally both correctable error(CE) status and
->>> uncorrectable error(UE) status should be cleared. However, there is no
->>> way to fully identify the UE associated with ANFE. Even worse, Non-Fatal
->>> Error(NFE) may set the same UE status bit as ANFE. Treating an ANFE as
->>> NFE will reproduce above mentioned issue, i.e., breaking softwore probing;
->>> treating NFE as ANFE will make us ignoring some UEs which need active
->>> recover operation. To avoid clearing UEs that are not ANFE by accident,
->>> the most conservative route is taken here: If any of the NFE Detected
->>> bits is set in Device Status, do not touch UE status, they should be
->>> cleared later by the UE handler. Otherwise, a specific set of UEs that
->>> may be raised as ANFE according to the PCIe specification will be cleared
->>> if their corresponding severity is Non-Fatal.
->>>
->>> To achieve above purpose, store UNCOR_STATUS bits that might be ANFE
->>> in aer_err_info.anfe_status. So that those bits could be printed and
->>> processed later.
->>>
->>> Tested-by: Yudong Wang <yudong.wang@intel.com>
->>> Co-developed-by: "Wang, Qingshun" <qingshun.wang@linux.intel.com>
->>> Signed-off-by: "Wang, Qingshun" <qingshun.wang@linux.intel.com>
->>> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@intel.com>
->>> ---
->>>  drivers/pci/pci.h      |  1 +
->>>  drivers/pci/pcie/aer.c | 53
->> ++++++++++++++++++++++++++++++++++++++++++
->>>  2 files changed, 54 insertions(+)
->>>
->>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
->>> index 17fed1846847..3f9eb807f9fd 100644
->>> --- a/drivers/pci/pci.h
->>> +++ b/drivers/pci/pci.h
->>> @@ -412,6 +412,7 @@ struct aer_err_info {
->>>
->>>  	unsigned int status;		/* COR/UNCOR Error Status */
->>>  	unsigned int mask;		/* COR/UNCOR Error Mask */
->>> +	unsigned int anfe_status;	/* UNCOR Error Status for ANFE */
->>>  	struct pcie_tlp_log tlp;	/* TLP Header */
->>>  };
->>>
->>> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
->>> index ac6293c24976..f2839b51321a 100644
->>> --- a/drivers/pci/pcie/aer.c
->>> +++ b/drivers/pci/pcie/aer.c
->>> @@ -107,6 +107,12 @@ struct aer_stats {
->>>  					PCI_ERR_ROOT_MULTI_COR_RCV |
->> 	\
->>>  					PCI_ERR_ROOT_MULTI_UNCOR_RCV)
->>>
->>> +#define AER_ERR_ANFE_UNC_MASK
->> 	(PCI_ERR_UNC_POISON_TLP |	\
->>> +					PCI_ERR_UNC_COMP_TIME |
->> 	\
->>> +					PCI_ERR_UNC_COMP_ABORT |
->> 	\
->>> +					PCI_ERR_UNC_UNX_COMP |
->> 	\
->>> +					PCI_ERR_UNC_UNSUP)
->>> +
->>>  static int pcie_aer_disable;
->>>  static pci_ers_result_t aer_root_reset(struct pci_dev *dev);
->>>
->>> @@ -1196,6 +1202,49 @@ void aer_recover_queue(int domain, unsigned
->> int bus, unsigned int devfn,
->>>  EXPORT_SYMBOL_GPL(aer_recover_queue);
->>>  #endif
->>>
->>> +static void anfe_get_uc_status(struct pci_dev *dev, struct aer_err_info
->> *info)
->>> +{
->>> +	u32 uncor_mask, uncor_status, anfe_status;
->>> +	u16 device_status;
->>> +	int aer = dev->aer_cap;
->>> +
->>> +	pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS,
->> &uncor_status);
->>> +	pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_MASK,
->> &uncor_mask);
->>> +	/*
->>> +	 * According to PCIe Base Specification Revision 6.1,
->>> +	 * Section 6.2.3.2.4, if an UNCOR error is raised as
->>> +	 * Advisory Non-Fatal error, it will match the following
->>> +	 * conditions:
->>> +	 *	a. The severity of the error is Non-Fatal.
->>> +	 *	b. The error is one of the following:
->>> +	 *		1. Poisoned TLP           (Section 6.2.3.2.4.3)
->>> +	 *		2. Completion Timeout     (Section 6.2.3.2.4.4)
->>> +	 *		3. Completer Abort        (Section 6.2.3.2.4.1)
->>> +	 *		4. Unexpected Completion  (Section 6.2.3.2.4.5)
->>> +	 *		5. Unsupported Request    (Section 6.2.3.2.4.1)
->>> +	 */
->>> +	anfe_status = uncor_status & ~uncor_mask & ~info->severity &
->>> +		      AER_ERR_ANFE_UNC_MASK;
->>> +
->>> +	if (pcie_capability_read_word(dev, PCI_EXP_DEVSTA,
->> &device_status))
->>> +		return;
->>> +	/*
->>> +	 * Take the most conservative route here. If there are Non-Fatal
->> errors
->>> +	 * detected, do not assume any bit in uncor_status is set by ANFE.
->>> +	 */
->>> +	if (device_status & PCI_EXP_DEVSTA_NFED)
->>> +		return;
->> You can move this check to the top of the function. You don't need to check
->> the rest if NFE error is detected in device status.
-> The v3 just worked that way. Jonathan pointed a race that NFE triggered after
-> the check will be treated as ANFE and cleared. Check it after reading UNCOR_STATUS
-> can avoid the race.
->
-> See https://lkml.org/lkml/2024/4/22/1011 for discussion details.
+On Thu, 13 Jun 2024 10:46:04 -0700 SeongJae Park <sj@kernel.org> wrote:
+> Hi Honggyu,
+> 
+> On Thu, 13 Jun 2024 22:20:47 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
+> 
+> > There was an RFC IDEA "DAMOS-based Tiered-Memory Management" previously
+> > posted at [1].
+> > 
+> > It says there is no implementation of the demote/promote DAMOS action
+> > are made.  This patch series is about its implementation for physical
+> > address space so that this scheme can be applied in system wide level.
+> > 
+> > Changes from RFC v4:
+> > https://lore.kernel.org/20240512175447.75943-1-sj@kernel.org
+> >   1. Add usage and design documents
+> >   2. Rename alloc_demote_folio to alloc_migrate_folio
+> >   3. Add evaluation results with "demotion_enabled" true
+> >   4. Rebase based on v6.10-rc3
+> 
+> I left comments on the new patches for the documentation.
+> 
+> [...]
+> > 
+> > Evaluation Results
+> > ==================
+> > 
+> > All the result values are normalized to DRAM-only execution time because
+> > the workload cannot be faster than DRAM-only unless the workload hits
+> > the peak bandwidth but our redis test doesn't go beyond the bandwidth
+> > limit.
+> > 
+> > So the DRAM-only execution time is the ideal result without affected by
+> > the gap between DRAM and CXL performance difference.  The NUMA node
+> > environment is as follows.
+> > 
+> >   node0 - local DRAM, 512GB with a CPU socket (fast tier)
+> >   node1 - disabled
+> >   node2 - CXL DRAM, 96GB, no CPU attached (slow tier)
+> > 
+> > The following is the result of generating zipfian distribution to
+> > redis-server and the numbers are averaged by 50 times of execution.
+> > 
+> >   1. YCSB zipfian distribution read only workload
+> >   memory pressure with cold memory on node0 with 512GB of local DRAM.
+> >   ====================+================================================+=========
+> >                       |       cold memory occupied by mmap and memset  |
+> >                       |   0G  440G  450G  460G  470G  480G  490G  500G |
+> >   ====================+================================================+=========
+> >   Execution time normalized to DRAM-only values                        | GEOMEAN
+> >   --------------------+------------------------------------------------+---------
+> >   DRAM-only           | 1.00     -     -     -     -     -     -     - | 1.00
+> >   CXL-only            | 1.19     -     -     -     -     -     -     - | 1.19
+> >   default             |    -  1.00  1.05  1.08  1.12  1.14  1.18  1.18 | 1.11
+> >   DAMON tiered        |    -  1.03  1.03  1.03  1.03  1.03  1.07 *1.05 | 1.04
+> >   DAMON lazy          |    -  1.04  1.03  1.04  1.05  1.06  1.06 *1.06 | 1.05
+> >   ====================+================================================+=========
+> >   CXL usage of redis-server in GB                                      | AVERAGE
+> >   --------------------+------------------------------------------------+---------
+> >   DRAM-only           |  0.0     -     -     -     -     -     -     - |  0.0
+> >   CXL-only            | 51.4     -     -     -     -     -     -     - | 51.4
+> >   default             |    -   0.6  10.6  20.5  30.5  40.5  47.6  50.4 | 28.7
+> >   DAMON tiered        |    -   0.6   0.5   0.4   0.7   0.8   7.1   5.6 |  2.2
+> >   DAMON lazy          |    -   0.5   3.0   4.5   5.4   6.4   9.4   9.1 |  5.5
+> >   ====================+================================================+=========
+> > 
+> > Each test result is based on the exeuction environment as follows.
+> 
+> Nit.  s/exeuction/execution/
 
-Got it. I would recommend adding a comment about it in handler. May be
-some thing like,
+Thanks. Fixed it.
 
-/*
- * To avoid race between device status read and error status register read, cache
- * uncorrectable error status before checking for NFE in device status * register. */
->
-> Thanks
-> Zhenzhong
->
->>> +
->>> +	/*
->>> +	 * If there is another ANFE between reading uncor_status and
->> clearing
->>> +	 * PCI_ERR_COR_ADV_NFAT bit in cor_status register, that ANFE
->> isn't
->>> +	 * recorded in info->anfe_status. It will be read out as NFE in
->>> +	 * following uncor_status register reading and processed by NFE
->>> +	 * handler.
->>> +	 */
->>> +	info->anfe_status = anfe_status;
->>> +}
->>> +
->>>  /**
->>>   * aer_get_device_error_info - read error status from dev and store it to
->> info
->>>   * @dev: pointer to the device expected to have a error record
->>> @@ -1213,6 +1262,7 @@ int aer_get_device_error_info(struct pci_dev
->> *dev, struct aer_err_info *info)
->>>  	/* Must reset in this function */
->>>  	info->status = 0;
->>> +	info->anfe_status = 0;
->>>  	info->tlp_header_valid = 0;
->>>
->>>  	/* The device might not support AER */
->>> @@ -1226,6 +1276,9 @@ int aer_get_device_error_info(struct pci_dev
->> *dev, struct aer_err_info *info)
->>>  			&info->mask);
->>>  		if (!(info->status & ~info->mask))
->>>  			return 0;
->>> +
->>> +		if (info->status & PCI_ERR_COR_ADV_NFAT)
->>> +			anfe_get_uc_status(dev, info);
->>>  	} else if (type == PCI_EXP_TYPE_ROOT_PORT ||
->>>  		   type == PCI_EXP_TYPE_RC_EC ||
->>>  		   type == PCI_EXP_TYPE_DOWNSTREAM ||
->> --
->> Sathyanarayanan Kuppuswamy
->> Linux Kernel Developer
+> [...]
+> > In summary, the evaluation results show that DAMON memory management
+> > with DAMOS_MIGRATE_{HOT,COLD} actions reduces the performance slowdown
+> > compared to the "default" memory policy from 11% to 3~5% when the system
+> > runs with high memory pressure on its fast tier DRAM nodes.
+> > 
+> > Having these DAMOS_MIGRATE_HOT and DAMOS_MIGRATE_COLD actions can make
+> > tiered memory systems run more efficiently under high memory pressures.
+> 
+> Thank you very much for continuing this great work.
+> 
+> Other than trivial comments on documentation patches and the above typo, I have
+> no particular concern on this patchset.  I'm looking forward to the next
+> version.
 
--- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
+I have addressed all your comments and resent v6 again. Please have a
+look again.
+https://lore.kernel.org/20240614030010.751-1-honggyu.kim@sk.com
 
+Thanks very much for your review!
+
+Thanks,
+Honggyu
+
+> 
+> Thanks,
+> SJ
+> [...]
 
