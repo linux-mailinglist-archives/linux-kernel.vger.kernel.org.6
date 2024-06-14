@@ -1,250 +1,377 @@
-Return-Path: <linux-kernel+bounces-215412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B4F90926A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:38:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C46190926C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4E491C231F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:38:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E214A1F2208A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773F71A01C5;
-	Fri, 14 Jun 2024 18:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8071D19EEAA;
+	Fri, 14 Jun 2024 18:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mJgGi7eY"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VRAY458N"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB1119AA6E
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 18:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718390315; cv=none; b=bcEEVKewnBbyNQxZZv5YGzGqyqGSsJekiUIynAY81GAuESA8WrIKXKCL9coIX4iqCu2jHsv1RfInSg7KiOZs0psRvjP/dpfYT76ABKlA1/q6YH54nm0sCFGrdAqj/qnxKW5+/WrUCu+d5jVc3DS8C7UPXzpJLDQgUEurzKDcqDU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718390315; c=relaxed/simple;
-	bh=J/5ihBaXRolkDPJN8mQlqnFwgbD48z7p4gtk24WAW7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ii/+9z9APVIcT8fiZSuMWCGvqVXCUiM9A8l8QyRt/czLG8VWc1OBA2gHDdeDQoEC7uHTM8HZwjYj2iK9c8H7OE4dBYUDrRhlx0ldP9nQ08eV7rQuyefdzJ12R85XHNE5OhwINgIF8U0vIpWkGLyPw4R2PLzE9MdPUOQnRpILA1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mJgGi7eY; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f70131063cso21550765ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 11:38:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718390313; x=1718995113; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=S0zMa6C8i8qb67Vd+aRO22odjQQQkyxDlIIdx8dvZpo=;
-        b=mJgGi7eY5T/3HhojOIvl5dPm/qMcAHtZo/niENniiQmj3o3z8ZYoPuQXUOUmGjYqyS
-         WqnuhBXszy0kdF8aOOMgpXEYNMvyPySQdhSPhyVJYiERQ6EjidR7v/yrXsp2H1PVtL0H
-         hlyNOtjVJbpOHjoWv9RqgquOJod6vR70PGUquE84OfHC6tBKOEjFpLf4w3kaJtycw4yD
-         cXww26KY9loON4w6CDqsYBTwEgPAHUHWndZZJasK5dnX6nF2U5AXtowqoOZBDJEHC2PW
-         aKunMw1JqHCKecf/DRK6jvykVElyu0j54UpK5Gopbr2Ylf9QUlbfN/mtm1cxtfmY2+7q
-         SleQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718390313; x=1718995113;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S0zMa6C8i8qb67Vd+aRO22odjQQQkyxDlIIdx8dvZpo=;
-        b=liOxxB1/iFeKFYG2BqdSRyPmRWV5SNo0IkB+oSxa5BVFKP0TEpDZMoa3DKJmaG9FXW
-         4xadUwazAUM1U40NMfkfwXsrTofw331kU473zFcLQ8TmuJA8L9Cf1n71UlCOrg95WgEZ
-         EI5+Y4tgRZRJX8lKW1LYau/af+xpEsqeYkbLrQkfiYIaIeJ6zv0jirj96EWovHUNrEHZ
-         Anu8pCZoCpmh3dniydmuE5SVi+RwOYGCp/b7bOQc/i/eZOdVE9CSC814hOwam9Iz9+ea
-         N2fhPTt0ytJo8BWlO2v1lkdw8QNc5zbCumPCp1dcPyP13BE0+QT6rLwkFmc9fFTBh9in
-         8AKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqKE04SB1POyMJHDVoG4mm2yu8/HDiwk4NH4QPwpgOBqLflIJXnd4muQB4/YK9PxNMfTMbxsQ1T7s8Nfjxf5LG+bXchfv6LPBlykPr
-X-Gm-Message-State: AOJu0YzxxGrJr/OjsvXgl3kMOiKLWvPmKNC5T1gwp1C8Ki9amiUzDjtR
-	V7+hViSQg62ssGVZgYk3gJoXGC8nEgvwUal/pNICp1qBI9XGoxPqaPj25KeVPA==
-X-Google-Smtp-Source: AGHT+IHgK17r9FcbDbyrNIS1RKHIl6JLZNOHV/yb5UnACNKgT/L1t8iTDDr3iuoXxdanmEElFsFr7w==
-X-Received: by 2002:a17:902:dace:b0:1f7:908:963a with SMTP id d9443c01a7336-1f8626d2879mr43415625ad.24.1718390312748;
-        Fri, 14 Jun 2024 11:38:32 -0700 (PDT)
-Received: from google.com (201.215.168.34.bc.googleusercontent.com. [34.168.215.201])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f4d14esm35177965ad.288.2024.06.14.11.38.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 11:38:32 -0700 (PDT)
-Date: Fri, 14 Jun 2024 18:38:28 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Lei Liu <liulei.rjpt@vivo.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH v3] binder_alloc: Replace kcalloc with kvcalloc to
- mitigate OOM issues
-Message-ID: <ZmyOJJmA7h6sZ_8A@google.com>
-References: <20240614040930.11119-1-liulei.rjpt@vivo.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857EB19ADB3;
+	Fri, 14 Jun 2024 18:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718390370; cv=fail; b=UM57+bvhIA2J4ci87hFVjFZK3gwPgD/weTTIGq/RgZC/fxs4ehTdiqELsV/835pq0oy6Vwq5fqRQvRciecRw3Ozex7USpeJ+bMMpAEnGFT24B4kOgZCJFxAYfRVEHsc3IJQ4Qf2bkqWdH2Vqne3SoyXOWgmic04FXZtmZtwwnlY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718390370; c=relaxed/simple;
+	bh=p9ytLCtX9c6YT4TnMpLMHN9OyVms/kO/emMSlzZxYaw=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=VDi51P79glPukN5c65i9vzE2rx/cW5r5iS5eq9VGeKpyzwa2S+XFESWab9Sxt+9DlnfuSz6JBJi8+NN4IF9qyXOZCCWHJkmZGNuTSYWWsgkM6+MW+rozdMUk1TDo6wPCtyuP7GK0+VwGpUqrtToQOtvng1JQcEktqzNrgQSnoAQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VRAY458N; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718390368; x=1749926368;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=p9ytLCtX9c6YT4TnMpLMHN9OyVms/kO/emMSlzZxYaw=;
+  b=VRAY458N65H2X3BU1LBOwPiE/VDINP85tIiY2VBYy9+lAjVq6+vndVfc
+   ElrRvivbzsSV7X7aEsxaeCYMchUt8UFI0VpNtETEQWlD9MRq2N8OSNg8f
+   I12zTTsmxALuPqAB/kk81kIlD8GqGSvvAaTzpVsywr4XBm0BmYupDs9tZ
+   V0vBvdttCZ5fw4cMCJmnvYH7/3TC/H/BFQLVnktXeBhguXlcANd+FxjSJ
+   dEt4ojuXwtnPrjX/iPe7o3VQc/CRXUBn2qhikCKGXK6316m/Fv2VOqNKv
+   RC5jSCxNOnr7VnrBDXvXSrjtiQSbsOIQf9rLzYeh/PaM5M1JjHyX5jWCP
+   g==;
+X-CSE-ConnectionGUID: 27PiO8jkSkicd0JmjfvjOg==
+X-CSE-MsgGUID: r+kMRQVuSxqnJDm8yUmFlQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="15261869"
+X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
+   d="scan'208";a="15261869"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 11:39:28 -0700
+X-CSE-ConnectionGUID: oGXbY1nEQ1mfF3DTuZzI4g==
+X-CSE-MsgGUID: c9MgP1aZQBCWae9dcZXVrg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
+   d="scan'208";a="45535518"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Jun 2024 11:39:28 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 14 Jun 2024 11:39:27 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 14 Jun 2024 11:39:27 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 14 Jun 2024 11:39:27 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.177)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 14 Jun 2024 11:39:26 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bsX+3+/MngrOiA2yHBpTdQi15EuPdV1hy5WdeQwXpgcqVy8LvUtHFoiNee1/WNehserRZ4c6ZHp+Cdy2aLQEHWYatyESY+B8u1ice0h8UgXIa3BG6b9i3d+pZSbsbO/2ESLT3kp4FGZQ5n8qdgn744LxhlYEvHw2oGblJXMP0FosdktujNq1p/oTKDzfsaV0dJbhuqNtfEsJgAL3BobyoODAv82dwdcHSVY6zmaFLfdSoY7dkJmpqEjfpOEGw98HYHwRfqoGsNPAnIuJwPx5zCwQqOgpSOZyqGZKezEyGDe/wJU7KoNiGgm6dz7a5+mBmNTopJsk1M33a4E36WkuAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SMcohNld8elllUNP+h3wwMG82bXzJzZgiK/LLB8rh1E=;
+ b=ipngpSCT/6koAtrnp106aTC0rqU9dlgIB9CzutAT4a0yv+rBbOdlxOLGAveZ3C/hZLHsQyOdtmXPMorUy48QZ6817PF4vdtQchK7xyv/LQaEDL2XwdJbXLXS66qQjK2nNHLXOZVHM7bXnCNIIrE3vM8qD1DtdR1bH6HR0J7jw6mme0YonxP39LrY8OXsJdJYT6BLkrkNzcw0MZGzB0PZ/CK7GWYm0HAn419lvrSYatdyrMvi5nxOCI2kZ7570H2ELBAs5V1qn0JA0/pTtZodD8nmorm9CsSSLYOkjn3HXdW1iFLYi0Dp4XHIaJZPXLNAgooFBP8Uso2wNMEdjesqog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by PH0PR11MB5159.namprd11.prod.outlook.com (2603:10b6:510:3c::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.25; Fri, 14 Jun
+ 2024 18:39:24 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7677.019; Fri, 14 Jun 2024
+ 18:39:24 +0000
+Message-ID: <61fd7414-a36c-47a8-8633-163cb29b0e2f@intel.com>
+Date: Fri, 14 Jun 2024 11:39:22 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] selftests/resctrl: Add support for MBM and MBA
+ tests on AMD
+To: Babu Moger <babu.moger@amd.com>, <fenghua.yu@intel.com>,
+	<shuah@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<ilpo.jarvinen@linux.intel.com>, <maciej.wieczor-retman@intel.com>,
+	<peternewman@google.com>, <eranian@google.com>
+References: <cover.1717626661.git.babu.moger@amd.com>
+ <3c2034e3391634b35192819b69eabd7db8cffa8f.1717626661.git.babu.moger@amd.com>
+Content-Language: en-US
+From: Reinette Chatre <reinette.chatre@intel.com>
+In-Reply-To: <3c2034e3391634b35192819b69eabd7db8cffa8f.1717626661.git.babu.moger@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0349.namprd03.prod.outlook.com
+ (2603:10b6:303:dc::24) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240614040930.11119-1-liulei.rjpt@vivo.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH0PR11MB5159:EE_
+X-MS-Office365-Filtering-Correlation-Id: bebf791f-f0d2-4ad2-4791-08dc8ca1500a
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|376011|1800799021;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?VU1nUVAwNkF4ZjZaWjZtOXZQWURXUXhhTEsrSzRIcUozMisrdWFYcHBETlAv?=
+ =?utf-8?B?VzNWcGJIbjU4YmswcnFjcjRrbFRvMlhaOFprZnhDUE5HS3RoQkhmaWFJRmJo?=
+ =?utf-8?B?b2ZBN0QzNFYxWVBzWjgxN1NHRWxsanlVYWV4SEpCY3FWMnQrWGo1bTNFaVNW?=
+ =?utf-8?B?Ujc5OVR1YkJoTExDaE4wY2xyeTZMZ2ZJNjYyRC9rK0ZWWXRmY0t0Z3FURWp2?=
+ =?utf-8?B?NHVQTGo4YVJOdDE4aldMRjJPZEhCUUVuOTYvYkdDYkQ1aktQem5uSFRtKzA0?=
+ =?utf-8?B?RkM1RTA4MzFZbysyaHNLc016dEdFNkVXdVJCNXFwaWlFVnlPUUJ2STF6UElU?=
+ =?utf-8?B?ZDFZUml0dUQ1L0tOdU5OaktLZ25uZVhVaEp0RXBGbEppOW45K0FDd3plMXlu?=
+ =?utf-8?B?eFV6cUJwMnF6azlscVp3OGlFUXRZWGNlMGRzOGF5QjB6ZzUyUTZyb2txbVZ4?=
+ =?utf-8?B?QS9hNk5SanBUQkllT3ZUS0tzOGhSemF6aW5ieWxFUllCMWdFMWZtVHZoR1V5?=
+ =?utf-8?B?bnJGYUV4eXMybHB6WnZRMTRDaUxUNzlaS0hxcjdMSXdkSk4zNzZWbEdqRm53?=
+ =?utf-8?B?eWhPL2I4QUV1OU5tMVIrdlpkSzExYnk0djRpMlJ5bVg2NjZlemNlTnZQSFAx?=
+ =?utf-8?B?Q1JaNUcvVkVsSTB3MUJEUlZXdFNJeEJKQnR5N1RVL3pjOW1UMmhFSjJaMzh2?=
+ =?utf-8?B?YjMxaTFOMVh6eTk1T0RmenFnc3EyZjZQdEFBVzZwd1VBVytiK0RoVUhmQUR1?=
+ =?utf-8?B?SFE3L3YxM2MwUm9HbENGeHpsZU0xelJOalBNcElLa1p3VjNBSCtJNGkvNGhu?=
+ =?utf-8?B?V3lxdkZLeGxqT210U1hlOXNqeGNxUFg1aHQ2L0N5U09zeWp1emlVSElnZitW?=
+ =?utf-8?B?NG0zUlVTWWgyODE0SFpyUVRHZ094ektxTS9KVjYzTlpSZWZkallQR0Y4WkZ6?=
+ =?utf-8?B?WWV1bzBoNll2T0hJMTMzZ2JiTnkwc2dxRFg4TUN2aEZ1clMzaGZ3b2NKYVUy?=
+ =?utf-8?B?ZFhHSmtLR2dVZnBDTDRvTHVkd2dYd212NWlGcjQwYWZiY1NFY2RKOHdHRXBo?=
+ =?utf-8?B?aTRvOUhCZGtoaGhzRjlkOWh5VVROL21vcjcxcFo3UHQ1dllwNlNzelBhV251?=
+ =?utf-8?B?MUlEM2tOK3ZUUENERmJYMHlaUFhGUVVVdng2ZUMrL2M4QlgzclRPWTRxQ1Bt?=
+ =?utf-8?B?RmExVXFaSlU2ajQ5dkwxWllmUHVQL2p4ZVpJNk1GUGk2Z0UvdC84SytscDNk?=
+ =?utf-8?B?K3Q4UGhBNlpxM1RlZ2ltZG5JNndZNk9iTDdZYThjWlQwbXVBOCt5bWRIaTVk?=
+ =?utf-8?B?MzREQ2NnUWl6V0lWZWhhMFRoOTRnL3pOQmpFUTFrTFFHZmtKV3QrNEkxR2li?=
+ =?utf-8?B?eXR3cDBBaXhtOUxKak43SGJIRk9YMFBEc2gxRXI4bUlESThsT2ZQb0NJdlZN?=
+ =?utf-8?B?NG9IdDJtbTZSMVR4WmFUQWNicEpLQW5xeXpWK1J3bktmRzVtWVp2ZmJiNENV?=
+ =?utf-8?B?UWVpWHhtYVJZYUw5MTdYK1gwUE9RblNGNEoza0RQS0w5ZmRhYVU4aERxSmhK?=
+ =?utf-8?B?MW9tZVVtM0N5aEtrcHNxWGdrU0lqRTZHYnVPYmRZZmU5VHAzQkRtQ2RSZVVJ?=
+ =?utf-8?B?bXRPK1Z3b2ZHbnQ0Vnl2czUxUEtyYUJKcGMrY1ZwdWpaaWtBa0JCbFlTMCtv?=
+ =?utf-8?B?aFNmR2xLQXdPSFp3RkxnY2d1ZHVXeEhoaFlVN2R3VDFVLzlGTDJVTFQxS2I5?=
+ =?utf-8?Q?NIVom+uZ6ratPwqosp+UsDnZDpok3yIAPQ72WKq?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WVVqTzJLSXh4U2o4dVBBc0ZxT1FMTmExRGZ4eTNvZEM3bFJRamQxR0xGVU1x?=
+ =?utf-8?B?Y3lOUDg0NTE3ZlpPKzhMTnZENDFCb3dDeWxzUGlzNDdDY1RsT1JoM29YUUxh?=
+ =?utf-8?B?Q2hnbHBvUkRxb1ZQaHp3d2hRWnZSLzUyQXc1dWRwSFNWN2E3ZFhtbm5iUW9E?=
+ =?utf-8?B?MzhoV0FheGFjczRVaWtUSjZEaDFJVjhyZ1luTmhPeXNyUmNpNlNrQitWSHBQ?=
+ =?utf-8?B?U28rYWg5WmFpYzYxM0UyczQzUDlLOUxGZkNoRlpSZzVnSEdYdHgvQVRpRHNi?=
+ =?utf-8?B?UDEvaHQ1ZmxtMmhoLy9kV0ZUK05Rc3Bma3QvZGdOdUo1MkR0T29GOXErVE83?=
+ =?utf-8?B?dkxMVlpMdmh2OHhXd3N5d0tiR0YydEs3VC9qMmRlUVkzK2pUY3Raamx4aTRo?=
+ =?utf-8?B?QVpkenJuMjRUWnB6OG5yWWx1bmtobzRkZHpTeUhra2pSQmtNUmJ6c0NnSWhw?=
+ =?utf-8?B?eWJFcGpLbDJ2Ykc2TnpxSUk0cmUvbDdwVnJxRkFLTWdmM3J6UUlBb0ZGTGZ0?=
+ =?utf-8?B?aXBneWxnZGFWdDQ5SHJueWN2bTBBeWk5dUVuRU4xL0hwUmk1TjBvS1o0N1Ru?=
+ =?utf-8?B?V1FmNEVJay9NVlhBU1llRjVhQnlvazVnN2pJc1Y4UFJMd3g2cHRIekpIVTRw?=
+ =?utf-8?B?RnhYczQybnhWbXl0QlowV3ZUbXdRd3hHaFJmK1pkU24xWTN2eXJYZjlXYXB4?=
+ =?utf-8?B?cDBrdlJZWVYwOERrZDROS0tOWDVsamNacFRyRFFOU3I2YnJ6TFlCbXAyWGh5?=
+ =?utf-8?B?bHlFNjdKdzJsamd6Q2pPdEhBWjBYSFZvK2d1UlV6dnhOeUlwWkNZWVhmUmRX?=
+ =?utf-8?B?TUxWdy9DWEFQSzZSRHJQaURTSDhkYzdmSXVKU2owV0F6SGU1OUpGRmVMbndt?=
+ =?utf-8?B?aEJTc2JBYVZmVGVjZG1GNCtHZG5PR2k5bUNxKzN5T21ldnVlZ3JhczdEYTVD?=
+ =?utf-8?B?MDZxNDVSVlNkN2I5NmVCbm5zclJVKy9FUjc5L3cyVG5zdk9oM0w1Z0dXNVlr?=
+ =?utf-8?B?QkJuRjcvK2pMejFoWnc2ZFhPdFRzU2lxVDlmRTU2NlNaUG15K0tCanhZeExF?=
+ =?utf-8?B?ekxkYlRMa0R0dTlYSG0zc2hLRXl3UEhWeGExaXIxc3dZMzQ2WVltMm5kZDdB?=
+ =?utf-8?B?ZEVCZE5aeS9QQ3RxR29uSSt4emtOSjFVdUlOcGFCOXFkcnNWWXhKa3pYOGk3?=
+ =?utf-8?B?TDh2Mjh4TVRiak9uL2QxZXorNWpBN3dmVFJNdC9UQWJnQVNKVi9JcnZhOE1z?=
+ =?utf-8?B?RXROQ3czK3lSSjljRk9kalJuamJyRk1hdVpMNkJJdWVQWGhsa2RZT0s5T25a?=
+ =?utf-8?B?eTlQV3JMNDMyZWpxNEtGdk5qTXFxMmE2TEhFMGUvSklCNTRYNTBIdUJibkJK?=
+ =?utf-8?B?cVlOYmNBdSt2V0ZGaWU2T0REbjNGanBUQWlqYTlWdFNnZU1BQ0FQVXhPMHBQ?=
+ =?utf-8?B?REx1VTdpM2dJODlJM3YyOFEveFR5OTJUQ2lLT1dud3pRRHlQT1haRmhKYnE3?=
+ =?utf-8?B?OWRrTkZsTlFadW1hZkdkeUN0ZjVUWWVhUkxZUkNLTzZvdktqMXcydjJDbiti?=
+ =?utf-8?B?L0FvdlNUQ0lINWg2Nk9pb2JiMFpLQkhGZjZpdVQ4YlJmYWJHbVdTcDEvanU5?=
+ =?utf-8?B?a0JRNkZqdithZ3d0eVM0ekFiZVBXQlorK0RTWDVJTmtLVDdtQkxEV1N3QnMr?=
+ =?utf-8?B?MWsxV3lxK3NqVmtFYUtFbWdxNjFrSXp6eHJmQWhsOUpNYmNjYm42TTdDUG9O?=
+ =?utf-8?B?ODhPbHI0V3huUEZPaEhCcEhwRlVDcFQ4KzJFVEFLY0ZaSEFuOHRmRHgxd0Nw?=
+ =?utf-8?B?VGJxT1VWZk1Zd09yelVNTWZVVVhrWUt6ellDc2ZtNStuZlpFZ2s3ZHpjV3Mx?=
+ =?utf-8?B?UFZnQ05ZVU9DcTdKOHU2V3BuNC9vaHZEekxpcThoaUhCTGphNmNBbXdyMXNY?=
+ =?utf-8?B?d2hVdWIxSWV1Z3dabVBMZWtBcUtTWDJTQkhablNaVFpORWgrd3lHc2k0RmVm?=
+ =?utf-8?B?RlRaakNKdlVURk1xVndCM2FPd0d4SmYzelBzNjFGN1h1T2lhcGNBUW5NTVlD?=
+ =?utf-8?B?SGxrSzNPdTNnVGZHS0NyK2NRRjVuY3RRTkZnQ2xad1FLWnY4MUdDc2pHRDhh?=
+ =?utf-8?B?MC9UNk5nZUswak40TSttVUNCOEhoTFlia3JueTdHYURpU0NZcExJa1QyRU5B?=
+ =?utf-8?B?VHc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: bebf791f-f0d2-4ad2-4791-08dc8ca1500a
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2024 18:39:24.0991
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TBDY2vlS+ybj3Wr82AE8c2Oy9LN2Q/VZvmWf/Ymf4RGqL0oTP2OYrJwJuusrZpctxyBpJuOV9TmrS1UrBvJ9K8dQcLnLMh+89PcY9LMnXlI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5159
+X-OriginatorOrg: intel.com
 
-On Fri, Jun 14, 2024 at 12:09:29PM +0800, Lei Liu wrote:
-> 1.In binder_alloc, there is a frequent need for order3 memory
-> allocation, especially on small-memory mobile devices, which can lead
-> to OOM and cause foreground applications to be killed, resulting in
-> flashbacks.The kernel call stack after the issue occurred is as follows:
-> dumpsys invoked oom-killer:
-> gfp_mask=0x40dc0(GFP_KERNEL|__GFP_COMP|__GFP_ZERO), order=3,
-> oom_score_adj=-950
-> CPU: 6 PID: 31329 Comm: dumpsys Tainted: G        WC O
-> 5.10.168-android12-9-00003-gc873b6b86254-ab10823632 #1
-> Call trace:
->  dump_backtrace.cfi_jt+0x0/0x8
->  dump_stack_lvl+0xdc/0x138
->  dump_header+0x5c/0x2ac
->  oom_kill_process+0x124/0x304
->  out_of_memory+0x25c/0x5e0
->  __alloc_pages_slowpath+0x690/0xf6c
->  __alloc_pages_nodemask+0x1f4/0x3dc
->  kmalloc_order+0x54/0x338
->  kmalloc_order_trace+0x34/0x1bc
->  __kmalloc+0x5e8/0x9c0
->  binder_alloc_mmap_handler+0x88/0x1f8
->  binder_mmap+0x90/0x10c
->  mmap_region+0x44c/0xc14
->  do_mmap+0x518/0x680
->  vm_mmap_pgoff+0x15c/0x378
->  ksys_mmap_pgoff+0x80/0x108
->  __arm64_sys_mmap+0x38/0x48
->  el0_svc_common+0xd4/0x270
->  el0_svc+0x28/0x98
->  el0_sync_handler+0x8c/0xf0
->  el0_sync+0x1b4/0x1c0
-> Mem-Info:
-> active_anon:47096 inactive_anon:57927 isolated_anon:100
-> active_file:43790 inactive_file:44434 isolated_file:0
-> unevictable:14693 dirty:171 writeback:0\x0a slab_reclaimable:21676
-> slab_unreclaimable:81771\x0a mapped:84485 shmem:4275 pagetables:33367
-> bounce:0\x0a free:3772 free_pcp:198 free_cma:11
-> Node 0 active_anon:188384kB inactive_anon:231708kB active_file:175160kB
-> inactive_file:177736kB unevictable:58772kB isolated(anon):400kB
-> isolated(file):0kB mapped:337940kB dirty:684kB writeback:0kB
-> shmem:17100kB shmem_thp: 0kB shmem_pmdmapped: 0kB anon_thp: 0kB
-> writeback_tmp:0kB kernel_stack:84960kB shadow_call_stack:21340kB
-> Normal free:15088kB min:8192kB low:42616kB high:46164kB
-> reserved_highatomic:4096KB active_anon:187644kB inactive_anon:231608kB
-> active_file:174552kB inactive_file:178012kB unevictable:58772kB
-> writepending:684kB present:3701440kB managed:3550144kB mlocked:58508kB
-> pagetables:133468kB bounce:0kB free_pcp:1048kB local_pcp:12kB
-> free_cma:44kB
-> Normal: 3313*4kB (UMEH) 165*8kB (UMEH) 35*16kB (H) 15*32kB (H) 0*64kB
-> 0*128kB 0*256kB 0*512kB 0*1024kB 0*2048kB 0*4096kB = 15612kB
-> 108356 total pagecache pages
+Hi Babu,
 
-Think about indenting this stacktrace. IMO, the v1 had a commit log that
-was much easier to follow.
-
+On 6/5/24 3:45 PM, Babu Moger wrote:
+> Add support to read UMC (Unified Memory Controller) perf events to compare
+> the numbers with QoS monitor for AMD.
 > 
-> 2.We use kvcalloc to allocate memory, which can reduce system OOM
-> occurrences, as well as decrease the time and probability of failure
-> for order3 memory allocations. Additionally, it can also improve the
-> throughput of binder (as verified by Google's binder_benchmark testing
-> tool).
-> 
-> 3.We have conducted multiple tests on an 12GB memory phone, and the
-> performance of kvcalloc is better. Below is a partial excerpt of the
-> test data.
-> throughput = (size * Iterations)/Time
-
-Huh? Do you have an explanation for this performance improvement?
-Did you test this under memory pressure?
-
-My understanding is that kvcalloc() == kcalloc() if there is enough
-contiguous memory no?
-
-I would expect the performance to be the same at best.
-
-> kvcalloc->kvmalloc:
-> Benchmark-kvcalloc	Time	CPU	Iterations	throughput(Gb/s)
-> ----------------------------------------------------------------
-> BM_sendVec_binder-4096	30926 ns	20481 ns	34457	4563.66↑
-> BM_sendVec_binder-8192	42667 ns	30837 ns	22631	4345.11↑
-> BM_sendVec_binder-16384	67586 ns	52381 ns	13318	3228.51↑
-> BM_sendVec_binder-32768	116496 ns	94893 ns	7416	2085.97↑
-> BM_sendVec_binder-65536	265482 ns	209214 ns	3530	871.40↑
-> 
-> kcalloc->kmalloc
-> Benchmark-kcalloc	Time	CPU	Iterations	throughput(Gb/s)
-> ----------------------------------------------------------------
-> BM_sendVec_binder-4096	39070 ns	24207 ns	31063	3256.56
-> BM_sendVec_binder-8192	49476 ns	35099 ns	18817	3115.62
-> BM_sendVec_binder-16384	76866 ns	58924 ns	11883	2532.86
-> BM_sendVec_binder-32768	134022 ns	102788 ns	6535	1597.78
-> BM_sendVec_binder-65536	281004 ns	220028 ns	3135	731.14
-> 
-> Signed-off-by: Lei Liu <liulei.rjpt@vivo.com>
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
 > ---
-> Changelog:
-> v2->v3:
-> 1.Modify the commit message description as the description for the V2
->   version is unclear.
-
-The complete history of the changelog would be better.
-
+> v3: Made read_from_mc_dir function generic to both AMD and Intel.
+>      Rest are mostly related to rebase.
+> 
+> v2: Replace perror with ksft_perror.
 > ---
->  drivers/android/binder_alloc.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>   tools/testing/selftests/resctrl/resctrl_val.c | 80 ++++++++++++-------
+>   1 file changed, 50 insertions(+), 30 deletions(-)
 > 
-> diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-> index 2e1f261ec5c8..5dcab4a5e341 100644
-> --- a/drivers/android/binder_alloc.c
-> +++ b/drivers/android/binder_alloc.c
-> @@ -836,7 +836,7 @@ int binder_alloc_mmap_handler(struct binder_alloc *alloc,
->  
->  	alloc->buffer = vma->vm_start;
->  
-> -	alloc->pages = kcalloc(alloc->buffer_size / PAGE_SIZE,
-> +	alloc->pages = kvcalloc(alloc->buffer_size / PAGE_SIZE,
->  			       sizeof(alloc->pages[0]),
->  			       GFP_KERNEL);
+> diff --git a/tools/testing/selftests/resctrl/resctrl_val.c b/tools/testing/selftests/resctrl/resctrl_val.c
+> index 23c0e0a1d845..ffacafb535cd 100644
+> --- a/tools/testing/selftests/resctrl/resctrl_val.c
+> +++ b/tools/testing/selftests/resctrl/resctrl_val.c
+> @@ -11,6 +11,7 @@
+>   #include "resctrl.h"
+>   
+>   #define UNCORE_IMC		"uncore_imc_"
+> +#define AMD_UMC			"amd_umc_"
+>   #define READ_FILE_NAME		"events/cas_count_read"
+>   #define WRITE_FILE_NAME		"events/cas_count_write"
+>   #define DYN_PMU_PATH		"/sys/bus/event_source/devices"
+> @@ -128,7 +129,7 @@ static int open_perf_event(int i, int cpu_no, int j)
+>   }
+>   
+>   /* Get type and config (read and write) of an MC counter */
+> -static int read_from_mc_dir(char *mc_dir, int count)
+> +static int read_from_mc_dir(char *mc_dir, int count, int vendor)
+>   {
+>   	char cas_count_cfg[1024], mc_counter_cfg[1024], mc_counter_type[1024];
+>   	FILE *fp;
+> @@ -152,41 +153,56 @@ static int read_from_mc_dir(char *mc_dir, int count)
+>   	mc_counters_config[count][WRITE].type =
+>   				mc_counters_config[count][READ].type;
+>   
+> -	/* Get read config */
+> -	sprintf(mc_counter_cfg, "%s%s", mc_dir, READ_FILE_NAME);
+> -	fp = fopen(mc_counter_cfg, "r");
+> -	if (!fp) {
+> -		ksft_perror("Failed to open MC config file");
+> +	if (vendor == ARCH_AMD) {
+> +		/*
+> +		 * Setup the event and umasks for UMC events
+> +		 * Number of CAS commands sent for reads:
+> +		 * EventCode = 0x0a, umask = 0x1
+> +		 * Number of CAS commands sent for writes:
+> +		 * EventCode = 0x0a, umask = 0x2
+> +		 */
+> +		mc_counters_config[count][READ].event = 0xa;
+> +		mc_counters_config[count][READ].umask = 0x1;
+>   
+> -		return -1;
+> -	}
+> -	if (fscanf(fp, "%s", cas_count_cfg) <= 0) {
+> -		ksft_perror("Could not get MC cas count read");
+> +		mc_counters_config[count][WRITE].event = 0xa;
+> +		mc_counters_config[count][WRITE].umask = 0x2;
+> +	} else {
+> +		/* Get read config */
+> +		sprintf(mc_counter_cfg, "%s%s", mc_dir, READ_FILE_NAME);
+> +		fp = fopen(mc_counter_cfg, "r");
+> +		if (!fp) {
+> +			ksft_perror("Failed to open MC config file");
+> +
+> +			return -1;
+> +		}
+> +		if (fscanf(fp, "%s", cas_count_cfg) <= 0) {
+> +			ksft_perror("Could not get MC cas count read");
+> +			fclose(fp);
+> +
+> +			return -1;
+> +		}
+>   		fclose(fp);
+>   
+> -		return -1;
+> -	}
+> -	fclose(fp);
+> +		get_event_and_umask(cas_count_cfg, count, READ);
+>   
+> -	get_event_and_umask(cas_count_cfg, count, READ);
+> +		/* Get write config */
+> +		sprintf(mc_counter_cfg, "%s%s", mc_dir, WRITE_FILE_NAME);
+> +		fp = fopen(mc_counter_cfg, "r");
+> +		if (!fp) {
+> +			ksft_perror("Failed to open MC config file");
+>   
+> -	/* Get write config */
+> -	sprintf(mc_counter_cfg, "%s%s", mc_dir, WRITE_FILE_NAME);
+> -	fp = fopen(mc_counter_cfg, "r");
+> -	if (!fp) {
+> -		ksft_perror("Failed to open MC config file");
+> +			return -1;
+> +		}
+> +		if  (fscanf(fp, "%s", cas_count_cfg) <= 0) {
+> +			ksft_perror("Could not get MC cas count write");
+> +			fclose(fp);
+>   
+> -		return -1;
+> -	}
+> -	if  (fscanf(fp, "%s", cas_count_cfg) <= 0) {
+> -		ksft_perror("Could not get MC cas count write");
+> +			return -1;
+> +		}
+>   		fclose(fp);
+>   
+> -		return -1;
+> +		get_event_and_umask(cas_count_cfg, count, WRITE);
+>   	}
+> -	fclose(fp);
+> -
+> -	get_event_and_umask(cas_count_cfg, count, WRITE);
+>   
+>   	return 0;
+>   }
+> @@ -213,6 +229,8 @@ static int num_of_mem_controllers(void)
+>   	vendor = get_vendor();
+>   	if (vendor == ARCH_INTEL) {
+>   		sysfs_name = UNCORE_IMC;
+> +	} else if (vendor == ARCH_AMD) {
+> +		sysfs_name = AMD_UMC;
+>   	} else {
+>   		ksft_perror("Unsupported vendor!\n");
+>   		return -1;
+> @@ -228,6 +246,7 @@ static int num_of_mem_controllers(void)
+>   			/*
+>   			 * imc counters are named as "uncore_imc_<n>", hence
+>   			 * increment the pointer to point to <n>.
+> +			 * For AMD, it will be amd_umc_<n>.
+>   			 */
+>   			temp = temp + strlen(sysfs_name);
+>   
+> @@ -239,7 +258,7 @@ static int num_of_mem_controllers(void)
+>   			if (temp[0] >= '0' && temp[0] <= '9') {
+>   				sprintf(mc_dir, "%s/%s/", DYN_PMU_PATH,
+>   					ep->d_name);
+> -				ret = read_from_mc_dir(mc_dir, count);
+> +				ret = read_from_mc_dir(mc_dir, count, vendor);
+>   				if (ret) {
+>   					closedir(dp);
+>   
+> @@ -250,8 +269,9 @@ static int num_of_mem_controllers(void)
+>   		}
+>   		closedir(dp);
+>   		if (count == 0) {
+> -			ksft_print_msg("Unable to find MC counters\n");
+> -
+> +			ksft_print_msg("Unable to find iMC/UMC counters\n");
+> +			if (vendor == ARCH_AMD)
+> +				ksft_print_msg("Try loading amd_uncore module\n");
+>   			return -1;
+>   		}
+>   	} else {
 
-I believe Greg had asked for these to be aligned to the parenthesis.
-You can double check by running checkpatch with the -strict flag.
+Can all the vendor checking be contained in num_of_mem_controllers() instead of
+scattered through multiple layers? There can be two vendor specific functions to
+initialize mc_counters_config[][]. Only the type setting code ends up
+being shared so that can be split into a function that is called by both
+vendor functions?
 
->  	if (alloc->pages == NULL) {
-> @@ -869,7 +869,7 @@ int binder_alloc_mmap_handler(struct binder_alloc *alloc,
->  	return 0;
->  
->  err_alloc_buf_struct_failed:
-> -	kfree(alloc->pages);
-> +	kvfree(alloc->pages);
->  	alloc->pages = NULL;
->  err_alloc_pages_failed:
->  	alloc->buffer = 0;
-> @@ -939,7 +939,7 @@ void binder_alloc_deferred_release(struct binder_alloc *alloc)
->  			__free_page(alloc->pages[i].page_ptr);
->  			page_count++;
->  		}
-> -		kfree(alloc->pages);
-> +		kvfree(alloc->pages);
->  	}
->  	spin_unlock(&alloc->lock);
->  	if (alloc->mm)
-> -- 
-> 2.34.1
-> 
-
-I'm not so sure about the results and performance improvements that are
-claimed here. However, the switch to kvcalloc() itself seems reasonable
-to me.
-
-I'll run these tests myself as the results might have some noise. I'll
-get back with the results.
-
-Thanks,
-Carlos Llamas
-
+Reinette
 
