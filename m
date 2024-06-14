@@ -1,210 +1,214 @@
-Return-Path: <linux-kernel+bounces-215528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C74C890942A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:31:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F078290942E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C5CC1F227F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:31:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 646A51F22779
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283FE1850BA;
-	Fri, 14 Jun 2024 22:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CED1862AE;
+	Fri, 14 Jun 2024 22:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Q+dJreoC"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2078.outbound.protection.outlook.com [40.107.223.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JT/JiCZR"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733AA26AD7
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 22:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718404269; cv=fail; b=dsgYsxjjyGtjWWr2AcG6HIA83nSOr/rGzUBEufE53424J2csXa7aoP0ClNAY93DeRxXKOJGMBPE5at1UOSKjf8Ax3tKz5rpBsTyy2mealvICD2cOwjNk3mDwuPz3A4x1H88QAOp+2Ad/gg16YczwJy9Pl/T3hhNqGDiQsl6rKJA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718404269; c=relaxed/simple;
-	bh=LnZvlmCaotP14aIdNKabgyu3t2pATu/kNb2wfzU/nDM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jucYT5PrG0pu5yAN9xUixvQ8rH9QbohIQC094bHefFY3Y4O4OQh80BcBCfnRA1gHCGJkY4xMM59u2S9cz+/yjLHjn3o0LCP4f1Z2gLjw+eCRnpAWQsDEJGw0ne1POqEoNKY66BCo4/zw5Ps1BjseUPemB9tM/TgW6WIRSyGXUY4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Q+dJreoC; arc=fail smtp.client-ip=40.107.223.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=innJtOtSvnjTKPDe2AcsyrbYujK3skcyykwe6A3CaYCXNIdU7GTZFqFqWRc9HUnuQfs7wsn0KTnPrZcQ9Jlhxh5C3zVoxXcaoOHcSvbU+UmccuCLV+5mkgD7yVofWyfWBWS5Ztaq9u3Xgm82CiuLMjWYM8+V6NFe/bhbaT4dBXgrgc+5+DHFvX15z+UzMctB1n6O3uiImDeT9fDLx3g+Dzk5C3tkEehXHrwq6T9hcALAGxOGWrsLo/kPvq2ZlM2woe1pjnoXCJULjESSFVf/xLF5kfXeFXO1YqF2dU0CzHclksZO/8q7Q69ZryiJWsYayg4o/UCztt54WFDYclGxdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CytFBpYyT2Yyd0Isrh0iEWhqUbF8R90v+UUopIW5CeQ=;
- b=OsnBsV2fOGoP5EMXeOKra9bfY8A79HWMhkDUa8JBD56RmUjftLgRKhJfF6t8yg8Y8ujgdKFMkW5r2exptVzFByfpwdhOpOOLhNh01pqk4N1Y9e9gly5zW40eaWqRlL+sUt5zJg5AwPPqUk0u0Uez0pprROkDYlNR1jYuatkTfL0Pt/3NNpgwjmC2cK1bGQiUQhbJqKmRSgKq/TkXUVgV4MlLaYx9LJ5O7eiukI5SS1AoSNfOeS/aE6HCU+2TTKTqDDdEGvUKFUf8TMOCmhG0LcZ8F07r33lQPNu9pQRZu3CkPGFhuin2ZZRWR+svKSac7XKAoqJqWeJ9hGSpryQtFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CytFBpYyT2Yyd0Isrh0iEWhqUbF8R90v+UUopIW5CeQ=;
- b=Q+dJreoC1dS2V2+lPz+gjgwNjqa9suDmrpW0/LjC3WiWG4Gcf/9iSzuzAceLUIQdkBMq+Vorgcmu/EyoFcImeZj3FyuGywTpoH9tAd/pX3CkJY06ayLPeOMvw8A6CZZcVBqDWxC+uz0L6jMO6DGBwg/T99CiyQ4dLZLhKQppRsg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by PH7PR12MB7872.namprd12.prod.outlook.com (2603:10b6:510:27c::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.37; Fri, 14 Jun
- 2024 22:31:03 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.7633.037; Fri, 14 Jun 2024
- 22:31:03 +0000
-Message-ID: <00bc5d85-e5ae-9ddd-7c2f-699785e40289@amd.com>
-Date: Fri, 14 Jun 2024 17:31:00 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v20 00/18] Add support for Sub-NUMA cluster (SNC) systems
-Content-Language: en-US
-To: "Luck, Tony" <tony.luck@intel.com>,
- "babu.moger@amd.com" <babu.moger@amd.com>,
- "Chatre, Reinette" <reinette.chatre@intel.com>,
- "Yu, Fenghua" <fenghua.yu@intel.com>,
- "Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>,
- Peter Newman <peternewman@google.com>, James Morse <james.morse@arm.com>,
- Drew Fustini <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>
-Cc: "x86@kernel.org" <x86@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "patches@lists.linux.dev" <patches@lists.linux.dev>
-References: <20240610183528.349198-1-tony.luck@intel.com>
- <658d9869-ef22-48a7-876a-5bbba4f134ff@amd.com>
- <bc52a051-4296-48ac-9a83-29139855553f@intel.com>
- <e17d3a79-9c07-44cd-b0ea-2d0545680342@amd.com>
- <f57e9cf2-35b6-401d-afc2-8d11b22836c2@intel.com>
- <a65739a4-1c0e-ab36-611d-e2da0bd1d00a@amd.com>
- <SJ1PR11MB6083C6F02ADFC43B5316F71EFCC22@SJ1PR11MB6083.namprd11.prod.outlook.com>
-From: "Moger, Babu" <bmoger@amd.com>
-In-Reply-To: <SJ1PR11MB6083C6F02ADFC43B5316F71EFCC22@SJ1PR11MB6083.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN7PR04CA0202.namprd04.prod.outlook.com
- (2603:10b6:806:126::27) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B4C137905;
+	Fri, 14 Jun 2024 22:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718404508; cv=none; b=Y6l27sMBvN/vHTxVh1GSXyJ0wFY6BV3mQK7kIj/JFhTgUSE8Lu5d+ZjRlervQyFC/6RhShRCMq3ed+QLbn9NJHsqIwnRdiVTJOQUrlDuexU3WcXJgGcapCbGqVCCUGdEw+LdX6TD5FkrdVc4c4F69RbRM1hLFT+4kq8+NjY9R0s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718404508; c=relaxed/simple;
+	bh=E0I7vnsNiEgJ3h6oEt+1hD/h/hGcMM12yiRg06OyFvY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TniWweus8iurXPh5XxLhSP0APyiLa+vbv+4X1Dg8Z0Fu5Sp3FYNVEMmqghpNO+tyerc4nBivI7jKVRzOUzRNR3XwM5dehx0/7RS77VAbJbiRR9sUCn72Jf/KC391I7c47/1IFtT90fK3qh/OWZ7gUpFhKxNdOasnL7DAX1Zh3uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JT/JiCZR; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b09072c9d9so21280826d6.1;
+        Fri, 14 Jun 2024 15:35:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718404505; x=1719009305; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E0I7vnsNiEgJ3h6oEt+1hD/h/hGcMM12yiRg06OyFvY=;
+        b=JT/JiCZR6GyM5Qj+eLQtyJReGcM/Qeoih1RBybLQXAeNFjnWd7ZmaiXe5hLbjj1vec
+         37xZQyFUNyX8kVD6bYX2DIItfBwhA/RSF+oqfSdTskxU0whyZQ5+TX11AztLoVAt7rtC
+         Mb7eN77h34JrpDTdBWeTLtdAkCnGh3NhOhH2oAjvIKpF1MITw5n82nJ5yKHy5A109e4K
+         3mbbEWXQIZE1QpVCSMEYqxowZYVb+YRc5A9Mv+V2dhWr4IRW0Cb5NVRghmLiiRX4c0zG
+         TF5TuN1A4Ts49SA1KrRxG01ZLi2qEhjVldT+KTwlecTc5G1rDF08rYODtUncxWNwpmuw
+         eVZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718404505; x=1719009305;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E0I7vnsNiEgJ3h6oEt+1hD/h/hGcMM12yiRg06OyFvY=;
+        b=m8FhFDMVYwN6nwZAj1INMYVqEdfJEldyL2UBFxcj+ILt28V4G6Oe/K3E12/6yPyw1e
+         m2lIQfiR903nDLm5rSnP20mVZBtcv4TgobmaSgE6bEZ+eWLc7Sp6Me3BSgHr7ZDcgSh8
+         sL5yptb47t1ExVy6kBx4s9IuA/P5haM6guExrXNcpA5PoP41KeNaxUfHlotidlX5MOgh
+         e5/glNkxrQiGJ9uUisF8cMappfXxWR2iEfUAxF+JQh1iZ1OoIsDMTKS1GyRCsCXqKxmc
+         p4MGb2gNwwuDHKNEXjCFlx6ixOVWdlLT25jI/YukVa6y+T4wRExtkr54FEcYCPAdldwp
+         m5Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCVq56lLSv7/pH/tQCUlm5NqJ76i3sPYjoPvt5IISOz3piFCdC7Y87Oa8T2sYUr0YPLrEJO81VSebDwVLkgsfZu3lbQHH+GZ0pCg1jazuZhCj5TA1o1918dgx4oa21h348NsjYWoUqgh
+X-Gm-Message-State: AOJu0YzZTTIlth9gf5Cm1UkfRcdQLUpLYcErBz2xI9HNWkmG4DQ5anAM
+	/c2bdunUL+VEjFgqaH/JvBnO9OUT/RK6RGIm+QfzFEpD8n4gU11mci1Om4a1J3B4GOpQ0gjwyuM
+	coJ7cIYOa/h8MvAbFUE5YM8xF74A=
+X-Google-Smtp-Source: AGHT+IFHhWMz4bQc3O+IUtEZZ51wsvrPFXXryj9Yt8+5ij9PiDJPELvtZ5+wvOScKiEgqSJEtU7THcVmVIv2Tc6V2s0=
+X-Received: by 2002:a0c:b711:0:b0:6af:3d00:bbfd with SMTP id
+ 6a1803df08f44-6b2af2fe509mr75117616d6.27.1718404505192; Fri, 14 Jun 2024
+ 15:35:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|PH7PR12MB7872:EE_
-X-MS-Office365-Filtering-Correlation-Id: a18578eb-9af6-4377-ec75-08dc8cc1acc4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|1800799021|366013|7416011|376011|921017;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N3paTTg2M2pHZEJKU2RQWW5ZeDZ0MFJqQ2hWVThUVUJMbzhIT0xwbjcrRW9X?=
- =?utf-8?B?V2o2eXlWNU5SM2ZqYTV6djdQZDZGZjQ1OTlQNEpCYk5WYkdnbmNTZ0pENnVD?=
- =?utf-8?B?YVNhVTd5OVBlRkY4Sm5YdmxjTmg1SmlMVzJuakgvMXpQbU4xWjd0b0YxcE5a?=
- =?utf-8?B?SU91SDlOQ2Rvazg4ZzdSYi91ZzJmd1g4dHlkQXMvbjNsQmx6ZTRnVlZVK2h5?=
- =?utf-8?B?RXI1QWcyNzR2bkZpTktGNlZFMGl5bVFSZnJSaTBMSTFJUzNDazBEdHF1dE1n?=
- =?utf-8?B?cGdKakNBd2VRVjdlQ292QVRsR00yRHJNVmRiTkVuR0YvVzROQWlwYUkzR3I5?=
- =?utf-8?B?NmhFcFBVaTl1UkNTNDB0NGcvcnJRTUdtcHhwKytXZnVRSHQ2QUM4TkZNRHJz?=
- =?utf-8?B?ZHU0YVo3NzdOdWw2VWRyUGtBMjVxSVNKb29leUZDN2p2KzhiekQ3ZUJ2RmRI?=
- =?utf-8?B?M25oR2pvdzROQzg3azRNM2NwSXl1SjlRYlBremtpQmhueXVnekdDRHBiTlVR?=
- =?utf-8?B?Y0N5ck04TmdvMFF4ckYwTlhIZEZ1dEx1d2tRVFlNT09hanNHeDJMYWwyenRE?=
- =?utf-8?B?ZkNuRWVoMWxhQVZ5eldPcGEvQWNOTCtnWnpadEpVVDZwdDJJemZuaGJaWUdX?=
- =?utf-8?B?bWRyeXlEaE8xWnB2cXozVy9uYkxtNzIyV1hCOVdQZHdmbUFuODlsRzV3VW40?=
- =?utf-8?B?UG5yOHRVZFhIVEF1ZUtzRHlCcXEzbXNFZm5SMGRPdStBU1RRaHRrOEx5b2lo?=
- =?utf-8?B?NWFQYTF6TTJ6b1k0OGpsWFQyRm5yL0JxT01uZmtwUk5TN015NXRHcGVkUDhB?=
- =?utf-8?B?d0dhR1IvZWNpdlNoTk12bDB4Nk5FV3JrL2crQlg1VjRZM0E4c21lNVpwU00x?=
- =?utf-8?B?d3lzYlJSdUhPVTBKY1ZUZEkxZmN3UkJWZnVKYitObFBQdytYd0lZTEhnQ05Q?=
- =?utf-8?B?aGRoQWhIb003b1V6cEE2TWdXTFdRbWRxa1l5Tk8rdVJoYlRpMDgzT2RMK25a?=
- =?utf-8?B?RWF0VlhnTFc3OUVDVjBiRlduVFNHdmNTNGpJUnRoelRReG1Sbm9pV1F1TXZS?=
- =?utf-8?B?bGpkbkNwRVlCdVlYaGZ6cEtEaWFOZ2Y1anpFdXNsZTZFOURtR1YyRTV1WjdD?=
- =?utf-8?B?OFFkclNFNlIwTEUwRUZMS0pWdk5JU216YVM2enB4RDJHMGxBMDdRcDcvSXh6?=
- =?utf-8?B?cWhXclNTUDVBQ0hlR2VLeER1aElVTzNaTnF6Z2h5QWhBUkVIb2NuZHh1ZDVD?=
- =?utf-8?B?eFlwTGVPcWRZTVVtbTVyQ2dpemRoZjZPZUpmdllkQitxZGdqNTIrMTJCajdh?=
- =?utf-8?B?WVFzNmxLc3NCa1BUSGlIR1Z0T1pxNERtNmIxcXp3ODRrMUtSTC9uejh1WXhC?=
- =?utf-8?B?eGZPT2JRT0s2Zm50Q2xmZFRrbEFUMkdvUGJUcjBTZ1RBdGR2NkdBdzFwblBn?=
- =?utf-8?B?aGFkK0RZa2ZkcjRIQUNKSjNpY3dwZnl1c250ZXIybnFyQk5kTVZHMHNtOS9i?=
- =?utf-8?B?TFZIaXRzODNxQjJYUkluWWFVRVJkejRMWGVWenpjNGxSaUpBSEg2K1c2QVB3?=
- =?utf-8?B?VUY2c1BPUnltMDV1UDE5WXZ2S1FZMHp2NVYwMExpQjlQZ0g2blBra0Q0Ykxo?=
- =?utf-8?B?aFl2aXVSYTVSVmpPcVNsWTFQcXJaeFlCQkgwNUsvZTQ5UWpzSkozQzNrOGph?=
- =?utf-8?B?MkdTYWNWRVV1bkpTRnFTZitaajRpU3J2Rm9jRzRUWlA5NHF1aHNObnNZMS9a?=
- =?utf-8?B?S2JzYlA0K1FKNExSd0NPL3NtUXA3MHVYMyt3andXaWFiaW5ENFZlb0lHcWZY?=
- =?utf-8?Q?hdwt7+pQ1snV3zXURpjkJqdgpBO1emGY5HOT8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(7416011)(376011)(921017);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?d2pFUHpxRlRDa2NBYXZ3RER4UEN3KzR1V0FyeHhLZTlwU3VFSFNZR2VkNzBy?=
- =?utf-8?B?eHlvR0pHUG5uNDBSVVhVdFB5RjBya0JyUkRRUEhibDF1UEQvSzVoV084MVVY?=
- =?utf-8?B?Y1ZKaURjWEROVzJYeG9TMXlJRndrakJIRmFoa3QxTnd4Zk83ZHNaOU1CUWdz?=
- =?utf-8?B?bWlTbHhoWjBmQWZ3K3ZUR0tnSjl6QmxwTStYb0tsTU1mRkRrcnFvMkdQbVJi?=
- =?utf-8?B?dTIyRDVUZk1JNmNGNWZGbHh1T3VJRUxTQUtvM1pqdUZ3cVhEUzVHaUVUNmJr?=
- =?utf-8?B?WUZlTVl2VzFvaEUvN3ZmWFlNdG8xQm5QOE5vYkw3NkhzYjEvS0s2ajI2UlBS?=
- =?utf-8?B?MlJyVjFUZUErMlBwV1lGVlhQbnhSdCs1YngyVXVwUnd5eU10Qkp2bjVaMEth?=
- =?utf-8?B?T3lrOExaWk0yMnJ2UFpiWjVZR2txdDM0SDZNdXFyMTIyREF3aFRTRUsvOHdJ?=
- =?utf-8?B?S1d5eUxmdVRubWFlU1pNVmNmeVRjeWM3MWdxR1ZMaEhQNUpzeXRWODhaWWtw?=
- =?utf-8?B?RXVlTnZkVzlMVGozTnQ4NzJJcmRNM3phRWR0VEVxN0hGRGFxM3NCYlJFY21F?=
- =?utf-8?B?U3dzbDlGNEsrZlB2UmpVREZ2UEEyeGNpVW5TTnFMVnZkMlBkTDJ4Tnlrblcx?=
- =?utf-8?B?aEJQK0U5Z3Z5dzczM0J5ak9PRkZMMnExOFRZZnJ2bkpNeFpiMjM1RXNicVpF?=
- =?utf-8?B?Q2NpbUxucWpkS2JCekRUNTZ0d3V4U3U1dkRqcllLRS9QZ0t1N1hBN1RDdFN6?=
- =?utf-8?B?ZUhFOEMwVndieHE4TG1QNXlVRFdRNklRUXJqWEZuQ0FDM0pZZ1FOYS80SlVS?=
- =?utf-8?B?WGtobGJQZVNhMU1Va1I5OWRBd2pYMEtuL213L2ZMUGU2OVgrTlhCdkZUTEJR?=
- =?utf-8?B?ZXZmQ0pxU1p1ekhyanB1a0FrM3JNQXBLVFpWeG03WUVUQjZuQmFieEh4Ui9X?=
- =?utf-8?B?Q3JpNlFyYU5YT0hiTmN2aGVBbmFxVzE2Sm9EdUx1R1VOT2kvOVAwaWF4L3ZG?=
- =?utf-8?B?ODBiMnY2Z2dDdHdnK3ByQ2t2L09OeEdRbkZ3TFVZYVprd3FFUnRDL0xCL2do?=
- =?utf-8?B?OTFyaEFzM2t5cHhrV1Q1amd2aGFSUWl5YkpDNXJYbXBVWXZhQlBvTkhBc3FO?=
- =?utf-8?B?Tk1Fc2VYejdTYjg1VVp1R2VTcnZidXhpdno3L1Q4Tk9ndkJJSit1Uk01cE1M?=
- =?utf-8?B?RXJ1OWhML3FveUtFLzFIRTV1bnFudkloemhUckhRdVcyckpmdDJKakZxUXlG?=
- =?utf-8?B?b2hMNDg4VythOXBmQUNtRTNYalUxeThDZ0lPY0JDMXdJOCs5Z0VTQmd0d0ov?=
- =?utf-8?B?bU41SElJc0xHL1hPSWNEeGtPZkdCL24zQUJWYzErcHlKQ3hITnZBSHQ2alpX?=
- =?utf-8?B?WmpVYnU3cGt5MHl2djhjajhXbDdHTU9LUVFwTkp6ZjdLeVFFdlBkZVdZckRX?=
- =?utf-8?B?dG82UGtqZzNYVzcxb2h0OXVaUGlvZUZLV0ZMYlB3elZDSlpBam9YbXhqcUhr?=
- =?utf-8?B?OU1TQ09paEgvT2lLVmFlU3RIRkJsaUswZk1EVTkvenVYcmxGZ0txb0VEaHRL?=
- =?utf-8?B?RU9Cc0h1UkZBaDVvaitxKzVmaE55VWp3Syt2MmcydWdpWUJMNk1hZ29aUGpQ?=
- =?utf-8?B?VS9zRWJyUi8xL0VZVVNXaFZpREY4NWl6SkF3UlZuSStXRjF5UCtLeUdRSEdX?=
- =?utf-8?B?a3p1Z2l4cXllb0tLYUtSbkt0UktmeXhtbmNCMU11SEFaMGRTRlN6NitJNnVY?=
- =?utf-8?B?REhHY0FueXl3VjNQS2dyY2plaC9YejRyOFZOdGJRTEhMMThGN0RoZUNvb0pa?=
- =?utf-8?B?c1FtNFd5WWdKVzdzNWN2TzNGczEyZkwwR3VsbnRGVmJYaHpFVFRoTjByZTNi?=
- =?utf-8?B?YmE1cW1nVE11dWllWURiUFZTdWRtYXZCc3cvVWlzNFRESEYyR0lsNFZjMCtJ?=
- =?utf-8?B?c3Z1Z25UNzJEVWZQOGczeWpBQUN4UlRVcHNCRFRRS2l6aFlDcmh6TzJDQ3FH?=
- =?utf-8?B?QTlZS0FCQjZpWm4wSTk4S2pUcklJMUFvYndlRFpWeFBhNmJDd2tUMWlralQ1?=
- =?utf-8?B?U2VKVjBqZjdhWmVDeDhBalI3Q2ZSVDFCU3M0eEdiQW10VVVJMWdtVHB1aE16?=
- =?utf-8?Q?6HT3UH5VSuPmuzelX0xs0iqZM?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a18578eb-9af6-4377-ec75-08dc8cc1acc4
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2024 22:31:03.6421
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HnpdVoDZvBUmeHsi5woMvsvlKBsHcdh6OFxVWR0yeIh4o/Jy/Za3SdqjPwuK9Hon
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7872
+References: <20240608155316.451600-1-flintglass@gmail.com> <CAKEwX=PsmuPQUvrsOO7a+JGd=gDmjP5_XDGD+z-0R6dBea+BOg@mail.gmail.com>
+ <CAPpoddcgmZs6=s1MrzLgOAJxoVW5_bLa4CGxHq3KhF3GOi8VBw@mail.gmail.com>
+In-Reply-To: <CAPpoddcgmZs6=s1MrzLgOAJxoVW5_bLa4CGxHq3KhF3GOi8VBw@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Fri, 14 Jun 2024 15:34:54 -0700
+Message-ID: <CAKEwX=NxBzd4Ev2z8j+J=TMUiVJwa-c8aHiwzMWG+FngGt6mUQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] mm: zswap: global shrinker fix and proactive shrink
+To: Takero Funaki <flintglass@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jun 13, 2024 at 9:09=E2=80=AFPM Takero Funaki <flintglass@gmail.com=
+> wrote:
+>
+> 2024=E5=B9=B46=E6=9C=8814=E6=97=A5(=E9=87=91) 0:22 Nhat Pham <nphamcs@gma=
+il.com>:
+> >
+> > Taking a step back from the correctness conversation, could you
+> > include in the changelog of the patches and cover letter a realistic
+> > scenario, along with user space-visible metrics that show (ideally all
+> > 4, but at least some of the following):
+> >
+> > 1. A user problem (that affects performance, or usability, etc.) is hap=
+pening.
+> >
+> > 2. The root cause is what we are trying to fix (for e.g in patch 1, we
+> > are skipping over memcgs unnecessarily in the global shrinker loop).
+> >
+> > 3. The fix alleviates the root cause in b)
+> >
+> > 4. The userspace-visible problem goes away or is less serious.
+> >
+>
+> Thank you for your suggestions.
+> For quick response before submitting v2,
+>
+> 1.
+> The visible issue is that pageout/in operations from active processes
+> are slow when zswap is near its max pool size. This is particularly
+> significant on small memory systems, where total swap usage exceeds
+> what zswap can store. This means that old pages occupy most of the
+> zswap pool space, and recent pages use swap disk directly.
 
+Makes sense. You could probably check pswpin stats etc. to verify
+this, or maybe some sort of tracing to measure performance impact?
 
-On 6/14/2024 4:40 PM, Luck, Tony wrote:
->> We have ctrl_scope, mon_scope, ctrl_domains. mon_domains.  Only one
->> resource, RDT_RESOURCE_L3 is going to use these fields. Rest of the
->> resources don't need these fields. But these fields are part of all the
->> resources.
->>
->> I am not too worried about the size of the patch.  But, I don't foresee
->> these fields will be used anytime soon in these resources(MBA. L3.
->> SMBA). Why add it now? In future we may have to cleanup all these anyways.
-> 
-> Babu,
-> 
-> I mentioned yesterday that future patches could split struct rdt_resource. I was noodling
-> at doing so back in February. Patches (messy, not finished or fit for consumption) are
-> here (just to give you an idea where things might build from here):
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/aegl/linux.git rdt_split_resource
+>
+> 2.
+> This issue is caused by zswap keeping the pool size near 100%. Since
+> the shrinker fails to shrink the pool to accept_thr_percent and zswap
+> rejects incoming pages, rejection occurs more frequently than it
+> should. The rejected pages are directly written to disk while zswap
+> protects old pages from eviction, leading to slow pageout/in
+> performance for recent pages on the swap disk.
 
-I see, it is similar to splitting the resource (option a. v15-RFC) and 
-little more. I think we should move to that direction eventually.
--- 
-Babu Moger
+Yeah this makes sense. The hysteresis heuristic is broken.
+
+>
+> 3.
+> If the pool size were shrunk proactively, rejection by pool limit hits
+> would be less likely. New incoming pages could be accepted as the pool
+> gains some space in advance, while older pages are written back in the
+> background. zswap would then be filled with recent pages, as expected
+> in the LRU logic.
+>
+> Patch 1 and 2 make the shrinker reduce the pool to accept_thr_percent.
+> Patch 3 makes zswap_store trigger the shrinker before reaching the max
+> pool size. With this series, zswap will prepare some space to reduce
+> the probability of problematic pool_limit_hit situation, thus reducing
+> slow reclaim and the page priority inversion against LRU.
+
+Makes sense, but do include numbers to back up your claims if you have them=
+!
+
+>
+> 4.
+> Once proactive shrinking reduces the pool size, pageouts complete
+> instantly as long as the space prepared by shrinking can store the
+> direct reclaim. If an admin sees a large pool_limit_hit, lowering
+> accept_threshold_percent will improve active process performance.
+>
+
+This makes sense from a glance. Thank you for writing all of this, and
+please include actual numbers from a benchmark to show these in your
+v2, if you have them :)
+
+> Regarding the production workload, I believe we are facing different situ=
+ations.
+>
+> My intended workload is low-activity services distributed on small
+> system like t2.nano, with 0.5G to 1G of RAM. There are a significant
+> number of pool_limit_hits and the zswap pool usage sometimes stays
+> near 100% filled by background service processes.
+>
+> When I evaluated zswap and zramswap, zswap performed well. I suppose
+> this was because of its LRU. Once old pages occupied zramswap, there
+> was no way to move pages from zramswap to the swap disk. zswap could
+> adapt to this situation by writing back old pages in LRU order. We
+> could benefit from compressed swap storing recent pages and also
+> utilize overcommit backed by a large swap on disk.
+>
+> I think if a system has never seen a pool limit hit, there is no need
+> to manage the costly LRU. In such cases, I will try zramswap.
+>
+> I am developing these patches by testing with artificially allocating
+> large memory to fill the zswap pool (emulating background services),
+> and then invoking another allocation to trigger direct reclaim
+> (emulating short-live active process).
+> On real devices, seeing much less pool_limit_hit by lower
+> accept_thr_percent=3D50 and higher max_pool_percent=3D25.
+> Note that before patch 3, zswap_store() did not count some of the
+> rejection as pool_limit_hit properly (underestimated). we cannot
+> compare the counter directly.
+
+Sounds good! Did you see performance improvement from lowering
+pool_limit_hit etc.?
+
+>
+> I will try to create a more reproducible realistic benchmark, but it
+> might not be realistic for your workload.
+
+Your approach is not interfering with our workload - we don't
+encounter the global shrinker in production ever. That does not mean I
+will not consider your code though - this is everyone's kernel, not
+just Meta's kernel :)
+
+What I was concerned with was if there were any real workloads at all
+that benefit from it - as long as there are (which there seem to be
+based on your description), and the approach does not hurt other
+cases, I'm happy to review it for merging :)
+
+And as I have stated before, I personally believe the global shrinker
+needs to change. I just do not have the means to verify that any
+ideas/improvement actually work in a realistic scenario (since our
+production system does not encounter global shrinker). Thank you for
+picking up the work!
 
