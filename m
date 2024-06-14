@@ -1,147 +1,158 @@
-Return-Path: <linux-kernel+bounces-214630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 369C5908757
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:25:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE1A490875F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E6481C22FD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:25:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 993521C22633
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968E61922FC;
-	Fri, 14 Jun 2024 09:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD21C192B66;
+	Fri, 14 Jun 2024 09:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AiW/ysVs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="ZZR1KZsB"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2F9191497;
-	Fri, 14 Jun 2024 09:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB56D18C33A;
+	Fri, 14 Jun 2024 09:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718357130; cv=none; b=L+0VKz4QJEpjyiQ6UgFXA+K6c+wq/P86PYiStTdqRr4QX3gC3ZkBF2EzaTv7d4u0hysMKHk83MhH7PtTaSVGQzWOb0GsCLHuoXHoE2hXEQFZq/Q9jBDeVfT9N0LuhDv7cinZVIKMPa1LTqcJYgfQAkVisFwaHGB5n7f+B35ASVk=
+	t=1718357176; cv=none; b=Y3yMtueTFv58uaUdIdEJ9q8XoPzq8v/UgZRUCtMhW8mKCkp4IaXIYpIiP4KKI/O+9EHM6TyQjgvprPW198FGMpaQVPRKvMpfiG0BWiXTx86C+CEdSzAeHaGeLBF7OZ/x1vi2g57aThOaSqRoPBwh5ZcFpE5Tc2gYcSUp087lLGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718357130; c=relaxed/simple;
-	bh=ahmJ4DUtC/KtQwSFizke71LMBIHWUNU2u1aqPfaaGOY=;
+	s=arc-20240116; t=1718357176; c=relaxed/simple;
+	bh=9fe6/Skaw9o24Cn2omAm3tlR/7pTqWyvJNce2Q08LBA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B2hXpNcJi+jT5IODBqbSj08joFFAkTk3qXDKqFdC4DiuJq/WPiqeKVHmtcQOOEZ9b/PIqyjDvNcu7aChaI2PpYGtO/wPGWFMUfU8zp1cjWw+4n0jGsxpsLxzdIHQimjwYXyt81hoHLWytXIDDcpFjtMcYZ0FNkSg06XOgE5Bmwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AiW/ysVs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FD51C2BD10;
-	Fri, 14 Jun 2024 09:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718357130;
-	bh=ahmJ4DUtC/KtQwSFizke71LMBIHWUNU2u1aqPfaaGOY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AiW/ysVs2zmxbYPWOVfdrHnRbJbMLsZe59HM6uL3X+csssJ0WoJccpNbEECekwzGp
-	 17rmMjNSXHR2QosV38XvjUVo6QY0ryRfi+gWAN/aUbBJgTKqDGHQkXBQ6iIk8/mQCp
-	 ZxUaDAZrN9TKArfRHvfuvbpM47dB4957kPPkKg1r5vy79U1oWwN/zh8DV7lmDCGiDT
-	 ircOzhlpVUe5NVJldmgdsooHiPW2bkFMhshXijdIHZB0ldzhOLJW2X/eGvuf2xKK5i
-	 bJ71F+1NaJcHp8r8kJmiSXrpM4EVlJy5aXwkj9TYthsBqD9vcT2CM054Myjpm16h52
-	 uDVy9MKniQVpw==
-Date: Fri, 14 Jun 2024 11:25:25 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Alexei Starovoitov <ast@kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	"open list:HID CORE LAYER" <linux-input@vger.kernel.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH HID v3 03/16] HID: bpf: implement HID-BPF through
- bpf_struct_ops
-Message-ID: <toq56n25r3jkxbnea6g5wxj3oc4zpgqbor5qjzg444uyh3bx3a@zh4sepdjrwob>
-References: <20240608-hid_bpf_struct_ops-v3-0-6ac6ade58329@kernel.org>
- <20240608-hid_bpf_struct_ops-v3-3-6ac6ade58329@kernel.org>
- <CAADnVQJDZju=QMiAH=TpYHr6KQh3-TT-jNtJ-O2u7JstY5486Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OlS8IAhHmoXH/jY4yyWv+vzslLyH58gUKLb+hgKDPtEKiQnt13xg2WtboUKrYJYtb7eSlXQFQzW4tu8RBMNNTfEmDStt3YQq2pgysfn381HdOR0pMzfjmGI2f/d1MOsl/qEX15RWZvijiTOMLIbbugKi82oSEjbEUtpMN+VMBnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=ZZR1KZsB; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4W0v691D0Xz9svV;
+	Fri, 14 Jun 2024 11:26:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1718357169;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wKdlyvSF7pCAKamuIrCSdc2r5zUKZ+TWhLzB5NWF7sE=;
+	b=ZZR1KZsBATXt8TUkNrnhy8NPhWZ9HUbnl97kMLnlKWta4bA6DEM9xTjmRsLAywUnIo1+uJ
+	WmIdOXXLqbhBqN4yKShp/3Jh4Vhh9ndbSK8s2AuJ/UjPiX17lfrdZQLDjQFp7B247DGzAT
+	FJeiStNCfo/wUbsWMrDsISWpyYt9wM+6aWeE+RoOaEO254zxRcT3NKpjM9Kr+R5TCZvy1p
+	3WfAK7OyQnxP+oo6W/CZ6OFyullms/6FRAX5KX+IeEFQMc5iEEyd/1GPX36S+ja3om8hH7
+	UsonYuuQWcaKM09pD9TVtUdBShHkBQRK51vqaAk5F3JUfHvoRXI76i61GMpWmQ==
+Date: Fri, 14 Jun 2024 09:26:02 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
+	brauner@kernel.org, akpm@linux-foundation.org, mcgrof@kernel.org,
+	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
+	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
+	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
+	linux-fsdevel@vger.kernel.org, hch@lst.de, gost.dev@samsung.com,
+	cl@os.amperecomputing.com, john.g.garry@oracle.com
+Subject: Re: [PATCH v7 04/11] readahead: allocate folios with
+ mapping_min_order in readahead
+Message-ID: <20240614092602.jc5qeoxy24xj6kl7@quentin>
+References: <20240607145902.1137853-1-kernel@pankajraghav.com>
+ <20240607145902.1137853-5-kernel@pankajraghav.com>
+ <ZmnuCQriFLdHKHkK@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQJDZju=QMiAH=TpYHr6KQh3-TT-jNtJ-O2u7JstY5486Q@mail.gmail.com>
+In-Reply-To: <ZmnuCQriFLdHKHkK@casper.infradead.org>
+X-Rspamd-Queue-Id: 4W0v691D0Xz9svV
 
-On Jun 10 2024, Alexei Starovoitov wrote:
-> On Sat, Jun 8, 2024 at 2:01 AM Benjamin Tissoires <bentiss@kernel.org> wrote:
-> >
+On Wed, Jun 12, 2024 at 07:50:49PM +0100, Matthew Wilcox wrote:
+> On Fri, Jun 07, 2024 at 02:58:55PM +0000, Pankaj Raghav (Samsung) wrote:
+> > @@ -230,7 +247,9 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+> >  		struct folio *folio = xa_load(&mapping->i_pages, index + i);
+> >  		int ret;
+> >  
 > > +
-> > +static int hid_bpf_ops_init_member(const struct btf_type *t,
-> > +                                const struct btf_member *member,
-> > +                                void *kdata, const void *udata)
-> > +{
-> > +       u32 moff = __btf_member_bit_offset(t, member) / 8;
-> > +       u32 flags;
-> > +
-> > +       switch (moff) {
-> > +       case offsetof(struct hid_bpf_ops, hid_id):
-> > +               /* For hid_id and flags fields, this function has to copy it
-> > +                * and return 1 to indicate that the data has been handled by
-> > +                * the struct_ops type, or the verifier will reject the map if
-> > +                * the value of those fields is not zero.
-> > +                */
-> > +               ((struct hid_bpf_ops *)kdata)->hid_id = ((struct hid_bpf_ops *)udata)->hid_id;
-> > +               return 1;
-> > +       case offsetof(struct hid_bpf_ops, flags):
-> > +               flags = ((struct hid_bpf_ops *)udata)->flags;
-> > +               if (flags & ~BPF_F_BEFORE)
-> > +                       return -EINVAL;
-> > +               ((struct hid_bpf_ops *)kdata)->flags = flags;
 > 
-> minor nit: I'd cast kdata/udate in the beginning of
-> the function to make the lines shorter and less verbose.
-> Similar to how bpf_tcp_ca_init_member() does it.
+> Spurious newline
+Oops.
+> 
+> >  		if (folio && !xa_is_value(folio)) {
+> > +			long nr_pages = folio_nr_pages(folio);
+> 
+> Hm, but we don't have a reference on this folio.  So this isn't safe.
+> 
 
-The change looks like:
+That is why I added a check for mapping after read_pages(). You are
+right, we can make it better.
 
----
-diff --git a/drivers/hid/bpf/hid_bpf_struct_ops.c b/drivers/hid/bpf/hid_bpf_struct_ops.c
-index 9192c66cde20..dde547e734ed 100644
---- a/drivers/hid/bpf/hid_bpf_struct_ops.c
-+++ b/drivers/hid/bpf/hid_bpf_struct_ops.c
-@@ -97,8 +97,14 @@ static int hid_bpf_ops_init_member(const struct btf_type *t,
-                                 const struct btf_member *member,
-                                 void *kdata, const void *udata)
- {
--       u32 moff = __btf_member_bit_offset(t, member) / 8;
--       u32 flags;
-+       const struct hid_bpf_ops *uhid_bpf_ops;
-+       struct hid_bpf_ops *khid_bpf_ops;
-+       u32 moff;
-+
-+       uhid_bpf_ops = (const struct hid_bpf_ops *)udata;
-+       khid_bpf_ops = (struct hid_bpf_ops *)kdata;
-+
-+       moff = __btf_member_bit_offset(t, member) / 8;
+> > @@ -240,12 +259,24 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+> >  			 * not worth getting one just for that.
+> >  			 */
+> >  			read_pages(ractl);
+> > -			ractl->_index += folio_nr_pages(folio);
+> > +
+> > +			/*
+> > +			 * Move the ractl->_index by at least min_pages
+> > +			 * if the folio got truncated to respect the
+> > +			 * alignment constraint in the page cache.
+> > +			 *
+> > +			 */
+> > +			if (mapping != folio->mapping)
+> > +				nr_pages = min_nrpages;
+> > +
+> > +			VM_BUG_ON_FOLIO(nr_pages < min_nrpages, folio);
+> > +			ractl->_index += nr_pages;
+> 
+> Why not just:
+> 			ractl->_index += min_nrpages;
+
+Then we will only move min_nrpages even if the folio we found had a
+bigger order. Hannes patches (first patch) made sure we move the
+ractl->index by folio_nr_pages instead of 1 and making this change will
+defeat the purpose because without mapping order set, min_nrpages will
+be 1.
+
+What I could do is the follows:
+
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 389cd802da63..92cf45cdb4d3 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -249,7 +249,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
  
-        switch (moff) {
-        case offsetof(struct hid_bpf_ops, hid_id):
-@@ -107,13 +113,12 @@ static int hid_bpf_ops_init_member(const struct btf_type *t,
-                 * the struct_ops type, or the verifier will reject the map if
-                 * the value of those fields is not zero.
-                 */
--               ((struct hid_bpf_ops *)kdata)->hid_id = ((struct hid_bpf_ops *)udata)->hid_id;
-+               khid_bpf_ops->hid_id = uhid_bpf_ops->hid_id;
-                return 1;
-        case offsetof(struct hid_bpf_ops, flags):
--               flags = ((struct hid_bpf_ops *)udata)->flags;
--               if (flags & ~BPF_F_BEFORE)
-+               if (uhid_bpf_ops->flags & ~BPF_F_BEFORE)
-                        return -EINVAL;
--               ((struct hid_bpf_ops *)kdata)->flags = flags;
-+               khid_bpf_ops->flags = uhid_bpf_ops->flags;
-                return 1;
-        }
-        return 0;
----
+ 
+                if (folio && !xa_is_value(folio)) {
+-                       long nr_pages = folio_nr_pages(folio);
++                       long nr_pages;
+                        /*
+                         * Page already present?  Kick off the current batch
+                         * of contiguous pages before continuing with the
+@@ -266,10 +266,8 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+                         * alignment constraint in the page cache.
+                         *
+                         */
+-                       if (mapping != folio->mapping)
+-                               nr_pages = min_nrpages;
++                       nr_pages = max(folio_nr_pages(folio), (long)min_nrpages);
+ 
+-                       VM_BUG_ON_FOLIO(nr_pages < min_nrpages, folio);
+                        ractl->_index += nr_pages;
+                        i = ractl->_index + ractl->_nr_pages - index;
+                        continue;
 
+Now we will still move respecting the min order constraint but if we had
+a bigger folio and we do have a reference, then we move folio_nr_pages.
 > 
-> Acked-by: Alexei Starovoitov <ast@kernel.org>
-
-And I'm going to apply the series now
-
-Cheers,
-Benjamin
+> like you do below?
+Below we add a folio of min_order, so if that fails for some reason, we
+can unconditionally move min_nrpages.
 
