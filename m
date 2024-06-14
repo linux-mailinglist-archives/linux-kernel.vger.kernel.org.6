@@ -1,227 +1,264 @@
-Return-Path: <linux-kernel+bounces-214794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 115A6908A02
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:34:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28064908A08
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 277881C26D06
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:34:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A33C11F23A0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168371946C6;
-	Fri, 14 Jun 2024 10:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JzMQl+Yc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCD11957E1;
+	Fri, 14 Jun 2024 10:33:52 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191682AEE9;
-	Fri, 14 Jun 2024 10:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588FE146582;
+	Fri, 14 Jun 2024 10:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718361205; cv=none; b=WYFqlK6worFwvrdHOTgbxVZzOTEeG4MIk6deTvXwFQVrLQXiJ9nX8tkiaxA9Smx69jVOaKXao4s9CqYnmPsZhaYT1SUhrVlIbEK/bY6vVDZ6R73OK6I5Cs6sXlFmiIWCcSga0eR1dRwg3rcmeMrmgt7OrJuFMHUx4jaCNdVRFDU=
+	t=1718361231; cv=none; b=GuN5FT8pclcHsbCCrZlKUlcO/GxHwtoFdUCJfji3syf519XVdXjkRHSOfgzzI7Iqh+StdCiqwkK6AQG7rc+jouUKnk7v+DJQV1qBciIYwFTl35Elx/2udK0Ytfx85uyNeXuyciT8jfm3SLOIGh0hNXeANZ3eFajTTGjTEvLvUJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718361205; c=relaxed/simple;
-	bh=E/xEtRlIojGJ4rk2DeNsa98B5Haa8Oxs9KK7LwLX9Lw=;
+	s=arc-20240116; t=1718361231; c=relaxed/simple;
+	bh=1knMsh8HE/uLqdwfneid1eDPZ2hiMkkpaPCL9yNabis=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CnmjQEs0/OtrRp44VTMNrG3vAl7x0g1fFtwF5bbYPJJf5coVdAWoZN58pZ4ztsT9FRUxs2ZqHSqBQU1SE+lNiVyjpBgZS65TJzM0J4e59HR+3Juy2sdwMcn6tfcZMxG3xv5NBmetIjzk67IYtvAowQFHMJlAZtc7z3hXY+0b+kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JzMQl+Yc; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718361204; x=1749897204;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=E/xEtRlIojGJ4rk2DeNsa98B5Haa8Oxs9KK7LwLX9Lw=;
-  b=JzMQl+YcbmvpM7b8YxZcBMhvm/JAf8QT5w6bNTIKY2nX9nw/Q5GhJBMz
-   QQICgePbpXHhW+BVJWZzn+DIqo8yFx+YKiGw6aIS5VbpnK6Pj8RrA+CO7
-   JtHWIv8FLZvUc2e+nx50mQWhLAEMuF4Xc5mAmAkev70akr5nX2OM4FJtU
-   /M82Lrk69tUBHfoahU3eTERPVtzgW3EPKfPbbVTD+GzWb1NnbCtM8fYCw
-   MOtOGGgEwb/Ar9jTOJRJ+KhsRrtqfnp6QFEGeH9/896SBD7ujSUdkDD0d
-   GZorR8B8dGN3fU+EmXQEfCkTtH65kMPqyVf2KtuM0UNilvv5Myf7fwY4N
-   w==;
-X-CSE-ConnectionGUID: aLZVAuHOSpa4maGK/bw98A==
-X-CSE-MsgGUID: rEx88AWFQQOnkIwIGKJmlg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="25815875"
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="scan'208";a="25815875"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 03:33:23 -0700
-X-CSE-ConnectionGUID: akj9vkTiR5SLcyTW/t0a8A==
-X-CSE-MsgGUID: q5T9PPhnScCPeBNgyLGWuw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="scan'208";a="71230947"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.94.248.10])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 03:33:15 -0700
-Message-ID: <9490cba1-1fa3-4a00-bab8-aa4a07a418f5@intel.com>
-Date: Fri, 14 Jun 2024 13:33:10 +0300
+	 In-Reply-To:Content-Type; b=btX4KUNpveNSBVqIt8iXnsW/6QDPuupkyXH2/bA+DE4cy3XQNHNAvqIxaKxBJkrRD1d50Cgt3it9WgAdA2mFoyuNqVpSS6is+O9M7YMF8evto3hvvqFwx6ApTATxW/PU7cZg+YOtFUyaPpw2OFZOKVVXp8UDeWwe8wsiyPz4/iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 91277dac2a3911ef9305a59a3cc225df-20240614
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:3923f807-859b-417f-a51c-044b38158a78,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:1
+X-CID-INFO: VERSION:1.1.38,REQID:3923f807-859b-417f-a51c-044b38158a78,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:1
+X-CID-META: VersionHash:82c5f88,CLOUDID:3408e41a52207bd45173a2324f63f1a2,BulkI
+	D:240614144740H35N4DT4,BulkQuantity:4,Recheck:0,SF:19|44|64|66|24|72|102,T
+	C:nil,Content:0,EDM:-3,IP:-2,URL:11|1,File:nil,RT:nil,Bulk:40,QS:nil,BEC:n
+	il,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_ULN
+X-UUID: 91277dac2a3911ef9305a59a3cc225df-20240614
+Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
+	(envelope-from <luoxuanqiang@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 534930339; Fri, 14 Jun 2024 18:33:40 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id 88DBEB80758A;
+	Fri, 14 Jun 2024 18:33:40 +0800 (CST)
+X-ns-mid: postfix-666C1C84-46297613
+Received: from [10.42.12.252] (unknown [10.42.12.252])
+	by node2.com.cn (NSMail) with ESMTPA id D0EF4B80758A;
+	Fri, 14 Jun 2024 10:33:39 +0000 (UTC)
+Message-ID: <ae9635cb-d896-4f85-8541-96f7c21546d3@kylinos.cn>
+Date: Fri, 14 Jun 2024 18:33:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] mmc: sdhci-of-dwcmshc: extract init function for
- rk35xx/th1520
-To: Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu,
- conor+dt@kernel.org, guoren@kernel.org, inochiama@outlook.com,
- jszhang@kernel.org, krzysztof.kozlowski+dt@linaro.org, palmer@dabbelt.com,
- paul.walmsley@sifive.com, robh@kernel.org, ulf.hansson@linaro.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-riscv@lists.infradead.org,
- chao.wei@sophgo.com, haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com,
- tingzhu.wang@sophgo.com
-Cc: Chen Wang <unicorn_wang@outlook.com>
-References: <cover.1718241495.git.unicorn_wang@outlook.com>
- <459e341a32128ffbae5acdc77a1c835cbee582e6.1718241495.git.unicorn_wang@outlook.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v1 1/1] Fix race for duplicate reqsk on identical SYN
 Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <459e341a32128ffbae5acdc77a1c835cbee582e6.1718241495.git.unicorn_wang@outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Eric Dumazet <edumazet@google.com>
+Cc: davem@davemloft.net, dsahern@kernel.org, fw@strlen.de, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com
+References: <CANn89iJBOAg+KCZBvkUxdAfTS1jacBBcrW6M5AZQvr=UPFJ0dA@mail.gmail.com>
+ <20240614060012.158026-1-luoxuanqiang@kylinos.cn>
+ <666c066e.630a0220.98be4.aba1SMTPIN_ADDED_BROKEN@mx.google.com>
+ <CANn89iJDcJmT6GfrPRvkt-BBfwHDhssDDMF=5JZMOCRrhxm5bQ@mail.gmail.com>
+From: luoxuanqiang <luoxuanqiang@kylinos.cn>
+In-Reply-To: <CANn89iJDcJmT6GfrPRvkt-BBfwHDhssDDMF=5JZMOCRrhxm5bQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On 13/06/24 04:43, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
-> 
-> Extract init function for rk35xx/th1520, which is an intermediate
-> process before further optimization.
-> 
-> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> ---
->  drivers/mmc/host/sdhci-of-dwcmshc.c | 83 ++++++++++++++++-------------
->  1 file changed, 46 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> index 346d2d323a05..38ab755aa044 100644
-> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> @@ -749,10 +749,19 @@ static void rk35xx_sdhci_reset(struct sdhci_host *host, u8 mask)
->  	sdhci_reset(host, mask);
->  }
->  
-> -static int rk35xx_init(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
-> +static int rk35xx_init(struct device *dev, struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
->  {
->  	int err;
-> -	struct rk35xx_priv *priv = dwc_priv->priv;
-> +	struct rk35xx_priv *priv;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(struct rk35xx_priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	if (of_device_is_compatible(dev->of_node, "rockchip,rk3588-dwcmshc"))
-> +		priv->devtype = DWCMSHC_RK3588;
-> +	else
-> +		priv->devtype = DWCMSHC_RK3568;
->  
->  	priv->reset = devm_reset_control_array_get_optional_exclusive(mmc_dev(host->mmc));
->  	if (IS_ERR(priv->reset)) {
-> @@ -787,6 +796,8 @@ static int rk35xx_init(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
->  	sdhci_writel(host, 0, DWCMSHC_EMMC_DLL_TXCLK);
->  	sdhci_writel(host, 0, DWCMSHC_EMMC_DLL_STRBIN);
->  
-> +	dwc_priv->priv = priv;
-> +
->  	return 0;
->  }
->  
-> @@ -915,6 +926,35 @@ static void th1520_sdhci_reset(struct sdhci_host *host, u8 mask)
->  	}
->  }
->  
-> +static int th1520_init(struct device *dev,
-> +		       struct sdhci_host *host,
-> +		       struct dwcmshc_priv *dwc_priv)
-> +{
-> +	dwc_priv->delay_line = PHY_SDCLKDL_DC_DEFAULT;
-> +
-> +	if (device_property_read_bool(dev, "mmc-ddr-1_8v") ||
-> +	    device_property_read_bool(dev, "mmc-hs200-1_8v") ||
-> +	    device_property_read_bool(dev, "mmc-hs400-1_8v"))
-> +		dwc_priv->flags |= FLAG_IO_FIXED_1V8;
-> +	else
-> +		dwc_priv->flags &= ~FLAG_IO_FIXED_1V8;
-> +
-> +	/*
-> +	 * start_signal_voltage_switch() will try 3.3V first
-> +	 * then 1.8V. Use SDHCI_SIGNALING_180 rather than
-> +	 * SDHCI_SIGNALING_330 to avoid setting voltage to 3.3V
-> +	 * in sdhci_start_signal_voltage_switch().
-> +	 */
-> +	if (dwc_priv->flags & FLAG_IO_FIXED_1V8) {
-> +		host->flags &= ~SDHCI_SIGNALING_330;
-> +		host->flags |=  SDHCI_SIGNALING_180;
-> +	}
-> +
-> +	sdhci_enable_v4_mode(host);
-> +
-> +	return 0;
-> +}
-> +
->  static void cv18xx_sdhci_reset(struct sdhci_host *host, u8 mask)
->  {
->  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> @@ -1230,46 +1270,15 @@ static int dwcmshc_probe(struct platform_device *pdev)
->  	host->mmc_host_ops.execute_tuning = dwcmshc_execute_tuning;
->  
->  	if (pltfm_data == &sdhci_dwcmshc_rk35xx_pdata) {
-> -		rk_priv = devm_kzalloc(&pdev->dev, sizeof(struct rk35xx_priv), GFP_KERNEL);
-> -		if (!rk_priv) {
-> -			err = -ENOMEM;
-> -			goto err_clk;
-> -		}
-> -
-> -		if (of_device_is_compatible(pdev->dev.of_node, "rockchip,rk3588-dwcmshc"))
-> -			rk_priv->devtype = DWCMSHC_RK3588;
-> -		else
-> -			rk_priv->devtype = DWCMSHC_RK3568;
-> -
-> -		priv->priv = rk_priv;
-> -
-> -		err = rk35xx_init(host, priv);
-> +		err = rk35xx_init(&pdev->dev, host, priv);
 
-rk_priv is used further on, but it is not assigned anymore.
+=E5=9C=A8 2024/6/14 17:41, Eric Dumazet =E5=86=99=E9=81=93:
+> On Fri, Jun 14, 2024 at 10:59=E2=80=AFAM luoxuanqiang <luoxuanqiang@kyl=
+inos.cn> wrote:
+>> On Fri, Jun 14, 2024 at 8:01=E2=80=AFAM luoxuanqiang <luoxuanqiang@kyl=
+inos.cn> wrote:
+>>>> When bonding is configured in BOND_MODE_BROADCAST mode, if two ident=
+ical SYN packets
+>>>> are received at the same time and processed on different CPUs, it ca=
+n potentially
+>>>> create the same sk (sock) but two different reqsk (request_sock) in =
+tcp_conn_request().
+>>>>
+>>>> These two different reqsk will respond with two SYNACK packets, and =
+since the generation
+>>>> of the seq (ISN) incorporates a timestamp, the final two SYNACK pack=
+ets will have
+>>>> different seq values.
+>>>>
+>>>> The consequence is that when the Client receives and replies with an=
+ ACK to the earlier
+>>>> SYNACK packet, we will reset(RST) it.
+>>>>
+>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>>>
+>>>> This behavior is consistently reproducible in my local setup, which =
+comprises:
+>>>>
+>>>>                    | NETA1 ------ NETB1 |
+>>>> PC_A --- bond --- |                    | --- bond --- PC_B
+>>>>                    | NETA2 ------ NETB2 |
+>>>>
+>>>> - PC_A is the Server and has two network cards, NETA1 and NETA2. I h=
+ave bonded these two
+>>>>    cards using BOND_MODE_BROADCAST mode and configured them to be ha=
+ndled by different CPU.
+>>>>
+>>>> - PC_B is the Client, also equipped with two network cards, NETB1 an=
+d NETB2, which are
+>>>>    also bonded and configured in BOND_MODE_BROADCAST mode.
+>>>>
+>>>> If the client attempts a TCP connection to the server, it might enco=
+unter a failure.
+>>>> Capturing packets from the server side reveals:
+>>>>
+>>>> 10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [S], s=
+eq 320236027,
+>>>> 10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [S], s=
+eq 320236027,
+>>>> localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [S.], =
+seq 2967855116,
+>>>> localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [S.], =
+seq 2967855123, <=3D=3D
+>>>> 10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [.], a=
+ck 4294967290,
+>>>> 10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [.], a=
+ck 4294967290,
+>>>> localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [R], s=
+eq 2967855117, <=3D=3D
+>>>> localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [R], s=
+eq 2967855117,
+>>>>
+>>>> Two SYNACKs with different seq numbers are sent by localhost, result=
+ing in an anomaly.
+>>>>
+>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>>>
+>>>> The attempted solution is as follows:
+>>>> In the tcp_conn_request(), while inserting reqsk into the ehash tabl=
+e, it also checks
+>>>> if an entry already exists. If found, it avoids reinsertion and rele=
+ases it.
+>>>>
+>>>> Simultaneously, In the reqsk_queue_hash_req(), the start of the req-=
+>rsk_timer is
+>>>> adjusted to be after successful insertion.
+>>>>
+>>>> Signed-off-by: luoxuanqiang <luoxuanqiang@kylinos.cn>
+>>>> ---
+>>>>   include/net/inet_connection_sock.h |  2 +-
+>>>>   net/dccp/ipv4.c                    |  2 +-
+>>>>   net/dccp/ipv6.c                    |  2 +-
+>>>>   net/ipv4/inet_connection_sock.c    | 16 ++++++++++++----
+>>>>   net/ipv4/tcp_input.c               | 11 ++++++++++-
+>>>>   5 files changed, 25 insertions(+), 8 deletions(-)
+>>>>
+>>>> diff --git a/include/net/inet_connection_sock.h b/include/net/inet_c=
+onnection_sock.h
+>>>> index 7d6b1254c92d..8773d161d184 100644
+>>>> --- a/include/net/inet_connection_sock.h
+>>>> +++ b/include/net/inet_connection_sock.h
+>>>> @@ -264,7 +264,7 @@ struct sock *inet_csk_reqsk_queue_add(struct soc=
+k *sk,
+>>>>                                        struct request_sock *req,
+>>>>                                        struct sock *child);
+>>>>   void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request=
+_sock *req,
+>>>> -                                  unsigned long timeout);
+>>>> +                                  unsigned long timeout, bool *foun=
+d_dup_sk);
+>>>>   struct sock *inet_csk_complete_hashdance(struct sock *sk, struct s=
+ock *child,
+>>>>                                           struct request_sock *req,
+>>>>                                           bool own_req);
+>>>> diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
+>>>> index ff41bd6f99c3..13aafdeb9205 100644
+>>>> --- a/net/dccp/ipv4.c
+>>>> +++ b/net/dccp/ipv4.c
+>>>> @@ -657,7 +657,7 @@ int dccp_v4_conn_request(struct sock *sk, struct=
+ sk_buff *skb)
+>>>>          if (dccp_v4_send_response(sk, req))
+>>>>                  goto drop_and_free;
+>>>>
+>>>> -       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
+>>>> +       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT, NU=
+LL);
+>>>>          reqsk_put(req);
+>>>>          return 0;
+>>>>
+>>>> diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
+>>>> index 85f4b8fdbe5e..493cdb12ce2b 100644
+>>>> --- a/net/dccp/ipv6.c
+>>>> +++ b/net/dccp/ipv6.c
+>>>> @@ -400,7 +400,7 @@ static int dccp_v6_conn_request(struct sock *sk,=
+ struct sk_buff *skb)
+>>>>          if (dccp_v6_send_response(sk, req))
+>>>>                  goto drop_and_free;
+>>>>
+>>>> -       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
+>>>> +       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT, NU=
+LL);
+>>>>          reqsk_put(req);
+>>>>          return 0;
+>>>>
+>>>> diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connect=
+ion_sock.c
+>>>> index d81f74ce0f02..d9394db98a5a 100644
+>>>> --- a/net/ipv4/inet_connection_sock.c
+>>>> +++ b/net/ipv4/inet_connection_sock.c
+>>>> @@ -1123,12 +1123,17 @@ static void reqsk_timer_handler(struct timer=
+_list *t)
+>>>>   }
+>>>>
+>>>>   static void reqsk_queue_hash_req(struct request_sock *req,
+>>>> -                                unsigned long timeout)
+>>>> +                                unsigned long timeout, bool *found_=
+dup_sk)
+>>>>   {
+>>>> +
+>>>> +       inet_ehash_insert(req_to_sk(req), NULL, found_dup_sk);
+>>>> +       if(found_dup_sk && *found_dup_sk)
+>>>> +               return;
+>>>> +
+>>>> +       /* The timer needs to be setup after a successful insertion.=
+ */
+>>> I am pretty sure we had a prior attempt to fix this issue, and the fi=
+x
+>>> was problematic.
+>>>
+>>> You are moving the inet_ehash_insert() before the mod_timer(), this
+>>> will add races.
+>> Could you kindly explain what "races" refer to here? Thank you!
+>
+> Hmmm... maybe this is ok. Please respin your patch after fixing
+> checkpatch issues, and add a 'net' tag
+>
+> ( See https://patchwork.kernel.org/project/netdevbpf/patch/202406140600=
+12.158026-1-luoxuanqiang@kylinos.cn/
+> for all warnings / fails)
+>
+> Please CC Kuniyuki Iwashima <kuniyu@amazon.com> because I will be OOO
+> for about 4 days.
 
->  		if (err)
->  			goto err_clk;
->  	}
->  
->  	if (pltfm_data == &sdhci_dwcmshc_th1520_pdata) {
-> -		priv->delay_line = PHY_SDCLKDL_DC_DEFAULT;
-> -
-> -		if (device_property_read_bool(dev, "mmc-ddr-1_8v") ||
-> -		    device_property_read_bool(dev, "mmc-hs200-1_8v") ||
-> -		    device_property_read_bool(dev, "mmc-hs400-1_8v"))
-> -			priv->flags |= FLAG_IO_FIXED_1V8;
-> -		else
-> -			priv->flags &= ~FLAG_IO_FIXED_1V8;
-> -
-> -		/*
-> -		 * start_signal_voltage_switch() will try 3.3V first
-> -		 * then 1.8V. Use SDHCI_SIGNALING_180 rather than
-> -		 * SDHCI_SIGNALING_330 to avoid setting voltage to 3.3V
-> -		 * in sdhci_start_signal_voltage_switch().
-> -		 */
-> -		if (priv->flags & FLAG_IO_FIXED_1V8) {
-> -			host->flags &= ~SDHCI_SIGNALING_330;
-> -			host->flags |=  SDHCI_SIGNALING_180;
-> -		}
-> -
-> -		sdhci_enable_v4_mode(host);
-> +		err = th1520_init(&pdev->dev, host, priv);
-> +		if (err)
-> +			goto err_clk;
->  	}
->  
->  #ifdef CONFIG_ACPI
+The formatting error has been resolved and the V2 version has been sent. =
+Enjoy your holiday! Thank you!
 
 
