@@ -1,100 +1,315 @@
-Return-Path: <linux-kernel+bounces-215186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6084A908F58
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:51:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ECFB908F64
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72A931C20D67
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:51:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA81B1F21877
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFE015FA95;
-	Fri, 14 Jun 2024 15:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A49016D339;
+	Fri, 14 Jun 2024 15:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KFCBNwdv"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TGUggFJF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CD119D8A8
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0782E83F
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718380265; cv=none; b=i1fIqYeXvKhBFsjfJjyeLjl+i3agU2qwdjIAW0sEaVjH9GEs9qA51Mvywq44pCOao2FfALSA14NUUje3Ml1s4Yks+2ZprkopgnBE3DiopSmwZaYkcNP6W9SFis2mrKpQwotmZKml/oCzaTCayic13CgTyvlKWgWTr0bhBqAQ4Bc=
+	t=1718380426; cv=none; b=sTVnS+yRP5HTiXmv51NxCLzm32NOro51WfOH5Cldp75ehrVSKA1xK8x5Gl23O+1pcRRdpy+pg1tl5R8g9Sd4z3hsb+rIBDQZeQYE6MIL2mO43bwPlwN0amLEc7lxRxyUvtV3ksifDWQKRlRkAEH/b0D0Lt6SW1Y/rzPciZx7svY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718380265; c=relaxed/simple;
-	bh=BvjgjlgucoXkEkKLtVSOVM2pyQUuUWHW5q5svClDKlA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PUZJmmH+f5gSOJ0scVsd6ukhTXc1kZFTndmW4jMCGJ4Ln4tcghEZy6JLzvYWowi2nwQS715mHZ0U2yBW20NsAAmq6kQgjPe3z0wOlm0AonHe62LlkvO/cQY5RKRYt2R+pgTZKHvPdE7cNha+q/aNJLl31jydfPD7bx455TPowDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KFCBNwdv; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718380260; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=YYE4KSPkg1QQNyDaGn6/ggOWuxBN59PMEdzwWo8hCNY=;
-	b=KFCBNwdvZzIbvhlA9XODWGUMtpibROQlSntBYUL71BdaJliJz9Vkd2CgJZmbmsXzmc+n0Mg9Ko4CW8WVRj7IeBgPzRhrubDLGJGcurV7xMhdnoNsEUhjhGda70P80Lo9ChLA2l6wj1ZGGdzd5kUMQ/VA+ki4YD4KbHM+Zrr1DgY=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R941e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W8RXOKv_1718380259;
-Received: from 192.168.0.106(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8RXOKv_1718380259)
-          by smtp.aliyun-inc.com;
-          Fri, 14 Jun 2024 23:50:59 +0800
-Message-ID: <4fc95571-7815-458f-9d34-5109b1be7399@linux.alibaba.com>
-Date: Fri, 14 Jun 2024 23:50:58 +0800
+	s=arc-20240116; t=1718380426; c=relaxed/simple;
+	bh=p+uS9AnX9IlW7iLsqwe8/uICO0mzf3w9Saj+OzNfAIw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rRQ8ddDyCwAPBFAivnFAwaYKtW74LT1nW00a2RIqc828/nhMYEQXzQGPRB6Ka5smaQS+ygkFSXedwdGBy9UDH1EZcqi1iLzcF0UmRC+1hoKmLpWARB2pA6BbKQu/hhkowFrOZqQm8oET0DkJweHmUJYkq1qBbVxhKJvM6DXTjeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TGUggFJF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718380422;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e29yJTW0Ie34L9PY/2yli5ohFO7CjSG8TA/RdpL/28U=;
+	b=TGUggFJFboH9l7lcDqZ0Nor4YzDyigl8hgepOJMt6WIV9UmEojd/iyJ2oZCtjnuz369dtK
+	TlCJhWgggKllp5RoYW6rSAF18RyAPII7+0E0Y7v2+qUWYHNdbm/MBXVJXj40i6TOfK8USn
+	m6diILRW+WRbKyxpSczCdf06Knrk+JE=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-695-UjRq48DrPa-MPtQXiRSfTA-1; Fri,
+ 14 Jun 2024 11:53:37 -0400
+X-MC-Unique: UjRq48DrPa-MPtQXiRSfTA-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8C8B01956087;
+	Fri, 14 Jun 2024 15:53:35 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.16.41])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 451921955E72;
+	Fri, 14 Jun 2024 15:53:32 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: Stefano Brivio <sbrivio@redhat.com>
+Cc: netdev@vger.kernel.org,  dev@openvswitch.org,
+  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org,  Pravin B
+ Shelar <pshelar@ovn.org>,  "David S. Miller" <davem@davemloft.net>,  Eric
+ Dumazet <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo
+ Abeni <pabeni@redhat.com>,  Shuah Khan <shuah@kernel.org>,  Adrian Moreno
+ <amorenoz@redhat.com>,  Ilya Maximets <i.maximets@ovn.org>
+Subject: Re: [RFC net-next 6/7] selftests: net: Use the provided dpctl
+ rather than the vswitchd for tests.
+In-Reply-To: <20240613223737.28761cf3@elisabeth> (Stefano Brivio's message of
+	"Thu, 13 Jun 2024 22:37:37 +0200")
+References: <20240613181333.984810-1-aconole@redhat.com>
+	<20240613181333.984810-7-aconole@redhat.com>
+	<20240613223737.28761cf3@elisabeth>
+Date: Fri, 14 Jun 2024 11:53:29 -0400
+Message-ID: <f7tbk43pll2.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] BUG: Bad rss-counter state (5)
-To: syzbot <syzbot+f2bbbb592debc978d46d@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
-References: <0000000000007f58de061adb8ea6@google.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <0000000000007f58de061adb8ea6@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
+Hi Stefano,
 
+Thanks for the review!
 
-On 2024/6/14 23:49, syzbot wrote:
->>
->>
->> On 2024/6/14 23:12, syzbot wrote:
->>> syzbot has bisected this issue to:
->>>
->>> commit 1c05047ad01693ad92bdf8347fad3b5c2b25e8bb
->>> Author: Baolin Wang <baolin.wang@linux.alibaba.com>
->>> Date:   Tue Jun 4 10:17:45 2024 +0000
->>>
->>>       mm: memory: extend finish_fault() to support large folio
->>>
->>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=106e8e56980000
->>> start commit:   d35b2284e966 Add linux-next specific files for 20240607
->>> git tree:       linux-next
->>> final oops:     https://syzkaller.appspot.com/x/report.txt?x=126e8e56980000
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=146e8e56980000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=d8bf5cd6bcca7343
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=f2bbbb592debc978d46d
->>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17f57a36980000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a57696980000
->>>
->>> Reported-by: syzbot+f2bbbb592debc978d46d@syzkaller.appspotmail.com
->>> Fixes: 1c05047ad016 ("mm: memory: extend finish_fault() to support large folio")
->>>
->>> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
->>
->> Thanks. Please try the fix in mm-unstable branch
->>
->> #syz test:
-> 
-> want either no args or 2 args (repo, branch), got 1
-> 
->> https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?h=mm-unstable&id=4135d2688b42f097f78062ef328f3056db32e3a0
+Stefano Brivio <sbrivio@redhat.com> writes:
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git 
-mm-unstable
+> On Thu, 13 Jun 2024 14:13:32 -0400
+> Aaron Conole <aconole@redhat.com> wrote:
+>
+>> The current pmtu test infrastucture requires an installed copy of the
+>> ovs-vswitchd userspace.  This means that any automated or constrained
+>> environments may not have the requisite tools to run the tests.  However,
+>> the pmtu tests don't require any special classifier processing.  Indeed
+>> they are only using the vswitchd in the most basic mode - as a NORMAL
+>> switch.
+>> 
+>> However, the ovs-dpctl kernel utility can now program all the needed basic
+>> flows to allow traffic to traverse the tunnels and provide support for at
+>> least testing some basic pmtu scenarios.
+>
+> I didn't know about that tool, that looks like a nice improvement. A
+> few comments below (mostly nits):
+
+It didn't at the time, so no worries :)
+
+>> More complicated flow pipelines
+>> can be added to the internal ovs test infrastructure, but that is work for
+>> the future.  For now, enable the most common cases - wide mega flows with
+>> no other prerequisites.
+>> 
+>> Signed-off-by: Aaron Conole <aconole@redhat.com>
+>> ---
+>>  tools/testing/selftests/net/pmtu.sh | 87 ++++++++++++++++++++++-------
+>>  1 file changed, 67 insertions(+), 20 deletions(-)
+>> 
+>> diff --git a/tools/testing/selftests/net/pmtu.sh b/tools/testing/selftests/net/pmtu.sh
+>> index cfc84958025a..7f4f35d88dcc 100755
+>> --- a/tools/testing/selftests/net/pmtu.sh
+>> +++ b/tools/testing/selftests/net/pmtu.sh
+>> @@ -846,22 +846,73 @@ setup_ovs_vxlan_or_geneve() {
+>>  	type="${1}"
+>>  	a_addr="${2}"
+>>  	b_addr="${3}"
+>> +	dport="6081"
+>>  
+>>  	if [ "${type}" = "vxlan" ]; then
+>> +		dport="4789"
+>>  		opts="${opts} ttl 64 dstport 4789"
+>>  		opts_b="local ${b_addr}"
+>>  	fi
+>>  
+>> -	run_cmd ovs-vsctl add-port ovs_br0 ${type}_a -- \
+>> -		set interface ${type}_a type=${type} \
+>> -		options:remote_ip=${b_addr} options:key=1 options:csum=true || return 1
+>> -
+>> +	run_cmd python3 ./openvswitch/ovs-dpctl.py add-if ovs_br0 ${type}_a -t ${type}
+>
+> In some restricted environments, it might actually be more convenient
+> to carry around ovs-vsctl than Python with (Python) libraries.
+>
+> Nowadays I typically (albeit seldom) run kselftests in throw-away VM
+> images made by mbuto (https://mbuto.sh/, see demo on the right), and
+> while it copies python3 and dynamic libraries from the host, adding
+> Python libraries such as pyroute2 gets quite complicated.
+>
+> So I'm wondering, if it's not too messy: could we have two functions
+> starting from approximately here (say, setup_ovs_dpctl() and
+> setup_ovs_vsctl()), try with ovs-dpctl first, and, if that fails,
+> fall back to ovs-vsctl?
+
+It didn't seem to be too bad - so I went ahead and made that change.  It
+tested well, so I'll resubmit it with that.
+
+>>  	run_cmd ${ns_b} ip link add ${type}_b type ${type} id 1
+>> ${opts_b} remote ${a_addr} ${opts} || return 1
+>>  
+>>  	run_cmd ${ns_b} ip addr add ${tunnel4_b_addr}/${tunnel4_mask} dev ${type}_b
+>>  	run_cmd ${ns_b} ip addr add ${tunnel6_b_addr}/${tunnel6_mask} dev ${type}_b
+>>  
+>> +	run_cmd ip link set ${type}_a up
+>>  	run_cmd ${ns_b} ip link set ${type}_b up
+>> +
+>> +	ports=$(python3 ./openvswitch/ovs-dpctl.py show)
+>> +	br0_port=$(echo "$ports" | grep -E "\sovs_br0" | sed -e 's@port @@' | cut -d: -f1 | xargs)
+>> +	type_a_port=$(echo "$ports" | grep ${type}_a | sed -e 's@port @@' | cut -d: -f1 | xargs)
+>> +	veth_a_port=$(echo "$ports" | grep veth_A | sed -e 's@port @@' | cut -d: -f1 | xargs)
+>> +
+>> +	v4_a_tun="${prefix4}.${a_r1}.1"
+>> +	v4_b_tun="${prefix4}.${b_r1}.1"
+>> +
+>> +	v6_a_tun="${prefix6}:${a_r1}::1"
+>> +	v6_b_tun="${prefix6}:${b_r1}::1"
+>> +
+>> +	if [ "${v4_a_tun}" == "${a_addr}" ]; then
+>
+> I see now that 05d92cb0e919 ("selftests/net: change shebang to bash to
+> support "source"") turned this into a Bash script (for no real reason,
+> lib.sh could have simply been sourced with '.' instead).
+>
+> Other than that, this happily runs with dash and possibly others, and:
+>
+>   $ checkbashisms -f pmtu.sh 
+>   possible bashism in pmtu.sh line 201 (should be '.', not 'source'):
+>   source lib.sh
+>   possible bashism in pmtu.sh line 202 (should be '.', not 'source'):
+>   source net_helper.sh
+>
+> Would it be possible to change this to POSIX shell:
+>
+> 	if [ "${v4_a_tun}" = "${a_addr}" ]; then
+>
+> even just for consistency with the rest of the file?
+
+done.
+
+>> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
+>> +		    "recirc_id(0),in_port(${veth_a_port}),eth(),eth_type(0x0800),ipv4()" \
+>> +		    "set(tunnel(tun_id=1,dst=${v4_b_tun},ttl=64,tp_dst=${dport},flags(df|csum))),${type_a_port}"
+>> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
+>> +		    "recirc_id(0),in_port(${veth_a_port}),eth(),eth_type(0x86dd),ipv6()" \
+>> +		    "set(tunnel(tun_id=1,dst=${v4_b_tun},ttl=64,tp_dst=${dport},flags(df|csum))),${type_a_port}"
+>> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
+>> +		    "recirc_id(0),tunnel(tun_id=1,src=${v4_b_tun},dst=${v4_a_tun}),in_port(${type_a_port}),eth(),eth_type(0x0800),ipv4()" \
+>> +		    "${veth_a_port}"
+>> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
+>> +		    "recirc_id(0),tunnel(tun_id=1,src=${v4_b_tun},dst=${v4_a_tun}),in_port(${type_a_port}),eth(),eth_type(0x86dd),ipv6()" \
+>> +		    "${veth_a_port}"
+>> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
+>> +		    "recirc_id(0),tunnel(tun_id=1,src=${v4_b_tun},dst=${v4_a_tun}),in_port(${type_a_port}),eth(),eth_type(0x0806),arp()" \
+>> +		    "${veth_a_port}"
+>> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
+>> +		    "recirc_id(0),in_port(${veth_a_port}),eth(),eth_type(0x0806),arp(sip=${veth4_c_addr},tip=${tunnel4_b_addr})" \
+>> +		    "set(tunnel(tun_id=1,dst=${v4_b_tun},ttl=64,tp_dst=${dport},flags(df|csum))),${type_a_port}"
+>> +	else
+>> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
+>> +		    "recirc_id(0),in_port(${veth_a_port}),eth(),eth_type(0x0800),ipv4()" \
+>> +		    "set(tunnel(tun_id=1,ipv6_dst=${v6_b_tun},ttl=64,tp_dst=${dport},flags(df|csum))),${type_a_port}"
+>> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
+>> +		    "recirc_id(0),in_port(${veth_a_port}),eth(),eth_type(0x86dd),ipv6()" \
+>> +		    "set(tunnel(tun_id=1,ipv6_dst=${v6_b_tun},ttl=64,tp_dst=${dport},flags(df|csum))),${type_a_port}"
+>> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
+>> +		    "recirc_id(0),tunnel(tun_id=1,ipv6_src=${v6_b_tun},ipv6_dst=${v6_a_tun}),in_port(${type_a_port}),eth(),eth_type(0x0800),ipv4()" \
+>> +		    "${veth_a_port}"
+>> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
+>> +		    "recirc_id(0),tunnel(tun_id=1,ipv6_src=${v6_b_tun},ipv6_dst=${v6_a_tun}),in_port(${type_a_port}),eth(),eth_type(0x86dd),ipv6()" \
+>> +		    "${veth_a_port}"
+>> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
+>> +		    "recirc_id(0),tunnel(tun_id=1,ipv6_src=${v6_b_tun},ipv6_dst=${v6_a_tun}),in_port(${type_a_port}),eth(),eth_type(0x0806),arp()" \
+>> +		    "${veth_a_port}"
+>> +		run_cmd python3 ./openvswitch/ovs-dpctl.py add-flow ovs_br0 \
+>> +		    "recirc_id(0),in_port(${veth_a_port}),eth(),eth_type(0x0806),arp(sip=${veth4_c_addr},tip=${tunnel4_b_addr})" \
+>> +		    "set(tunnel(tun_id=1,ipv6_dst=${v6_b_tun},ttl=64,tp_dst=${dport},flags(df|csum))),${type_a_port}"
+>> +	fi
+>>  }
+>>  
+>>  setup_ovs_geneve4() {
+>> @@ -881,7 +932,7 @@ setup_ovs_vxlan6() {
+>>  }
+>>  
+>>  setup_ovs_bridge() {
+>> -	run_cmd ovs-vsctl add-br ovs_br0 || return $ksft_skip
+>> +	run_cmd python3 ./openvswitch/ovs-dpctl.py add-dp ovs_br0 || return $ksft_skip
+>>  	run_cmd ip link set ovs_br0 up
+>>  
+>>  	run_cmd ${ns_c} ip link add veth_C-A type veth peer name veth_A-C
+>> @@ -891,7 +942,7 @@ setup_ovs_bridge() {
+>>  	run_cmd ${ns_c} ip link set veth_C-A up
+>>  	run_cmd ${ns_c} ip addr add ${veth4_c_addr}/${veth4_mask} dev veth_C-A
+>>  	run_cmd ${ns_c} ip addr add ${veth6_c_addr}/${veth6_mask} dev veth_C-A
+>> -	run_cmd ovs-vsctl add-port ovs_br0 veth_A-C
+>> +	run_cmd python3 ./openvswitch/ovs-dpctl.py add-if ovs_br0 veth_A-C
+>>  
+>>  	# Move veth_A-R1 to init
+>>  	run_cmd ${ns_a} ip link set veth_A-R1 netns 1
+>> @@ -942,8 +993,10 @@ cleanup() {
+>>  
+>>  	ip link del veth_A-C			2>/dev/null
+>>  	ip link del veth_A-R1			2>/dev/null
+>> -	ovs-vsctl --if-exists del-port vxlan_a	2>/dev/null
+>> -	ovs-vsctl --if-exists del-br ovs_br0	2>/dev/null
+>> +	# squelch the output of the del-if commands since it can be wordy
+>> +	python3 ./openvswitch/ovs-dpctl.py del-if ovs_br0 -d true vxlan_a	>/dev/null	2>&1
+>> +	python3 ./openvswitch/ovs-dpctl.py del-if ovs_br0 -d true geneve_a	>/dev/null	2>&1
+>> +	python3 ./openvswitch/ovs-dpctl.py del-dp ovs_br0 >/dev/null	2>&1
+>
+> The idea behind those tabs before 2>/dev/null was to keep them aligned
+> and make those redirections a bit easier on the eyes.
+>
+> If you add more, you could keep those aligned as well -- or just decide
+> that lines are too long and drop the tabs altogether.
+
+Yeah, looks like I missed the /dev/null tabs but those were supposed to
+be lined up.  Anyway, I rewrote this part so that it looks better (I
+think).
+
+>>  	rm -f "$tmpoutfile"
+>>  }
+>>  
+>> @@ -1407,16 +1460,10 @@ test_pmtu_ipvX_over_ovs_vxlanY_or_geneveY_exception() {
+>>  		exp_mtu=$((${ll_mtu} - 40          - 8          - 8                   - 14))
+>>  	fi
+>>  
+>> -	if [ "${type}" = "vxlan" ]; then
+>> -		tun_a="vxlan_sys_4789"
+>> -	elif [ "${type}" = "geneve" ]; then
+>> -		tun_a="genev_sys_6081"
+>> -	fi
+>> -
+>> -	trace ""        "${tun_a}"  "${ns_b}"  ${type}_b \
+>> -	      ""        veth_A-R1   "${ns_r1}" veth_R1-A \
+>> -	      "${ns_b}" veth_B-R1   "${ns_r1}" veth_R1-B \
+>> -	      ""        ovs_br0     ""         veth-A-C  \
+>> +	trace ""        "${type}_a"  "${ns_b}"  ${type}_b \
+>> +	      ""        veth_A-R1    "${ns_r1}" veth_R1-A \
+>> +	      "${ns_b}" veth_B-R1    "${ns_r1}" veth_R1-B \
+>> +	      ""        ovs_br0      ""         veth-A_C  \
+>>  	      "${ns_c}" veth_C-A
+>>  
+>>  	if [ ${family} -eq 4 ]; then
+>> @@ -1436,8 +1483,8 @@ test_pmtu_ipvX_over_ovs_vxlanY_or_geneveY_exception() {
+>>  	mtu "${ns_b}"  veth_B-R1 ${ll_mtu}
+>>  	mtu "${ns_r1}" veth_R1-B ${ll_mtu}
+>>  
+>> -	mtu ""        ${tun_a}  $((${ll_mtu} + 1000))
+>> -	mtu "${ns_b}" ${type}_b $((${ll_mtu} + 1000))
+>> +	mtu ""        ${type}_a  $((${ll_mtu} + 1000))
+>> +	mtu "${ns_b}" ${type}_b  $((${ll_mtu} + 1000))
+>>  
+>>  	run_cmd ${ns_c} ${ping} -q -M want -i 0.1 -c 20 -s $((${ll_mtu} + 500)) ${dst} || return 1
+>>  
+
 
