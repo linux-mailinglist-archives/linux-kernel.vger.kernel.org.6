@@ -1,103 +1,107 @@
-Return-Path: <linux-kernel+bounces-215217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA7C9908FE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:17:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A2C0908FE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C33FB1C225DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:17:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A25C81C2295B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A696D171E71;
-	Fri, 14 Jun 2024 16:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1915181B81;
+	Fri, 14 Jun 2024 16:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZbSbbwx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WKUjiGpb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD59316B751;
-	Fri, 14 Jun 2024 16:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D82616D9CF;
+	Fri, 14 Jun 2024 16:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718381824; cv=none; b=B4D/80xnBci4q6qieBXF9/LcPKMwwUhk+ScPaaHn6JdUXbFUgdhHP2vE+fkc4rUP1j2vSf1o21zhTCs2zrW4SB2+ZSCCIlrjeygKzzjIS+1pNGuNRYYpnmwKp0NlRq96RX9F2dj8xRMZlwVbAb8vkiLI6r7M8v+cj4XlHdzKgGY=
+	t=1718381833; cv=none; b=J4x+ln88W5SBviZmVlgpoXKsjLU3lrYeN/8lSOGVogVFCR+DBOjpXj1XiZksTftNp3qb8jp8MRhgprGBF86aPm+phV951uJYXsUj7t7N+retJVlgU/Y65sXxMfOLfLWtLBp21UUANEe47MDsyGs/QbucEc1+VNdjzDIGxHzfX4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718381824; c=relaxed/simple;
-	bh=ny18+cFND10LAssQjkN6LB+Uls/v9RXAHugewOw77HQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m3ZHKA4oq1t+aYBzfUY4r5YTsmB+OoZ3xb65/xJds2RzqYk+jXtL5LbLBSNUlXfeNkQRV3dv63wWKlI/qJkpJawQtIybYReDe0umxp20+DngJzsCAioSgxpUPIQnK3OwqrdkluIlkD/ZtNUOs2IpGO2yRR1WECwZcDhBL/aGc1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZbSbbwx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 747FDC4AF1A;
-	Fri, 14 Jun 2024 16:17:02 +0000 (UTC)
+	s=arc-20240116; t=1718381833; c=relaxed/simple;
+	bh=rUDbAwt/h0GLgZcxweo77P+njhdjO7sRzKJA4DU7QAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tSdn8C3TYUA9q+HUOmlyDb8g2rVqEdE7k7DTOmR7/JobzfLHthNRST9egObZkqKOeHseuqn9WAAfo0RirOQWZTH3FCdYOfBCYgTn5s2HdhNLb09IktO/W2BuuRkrTOLaHX3mxl3jvJzXQo80W1PLhpJLuxIvy3Hij3TdgBQc75s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WKUjiGpb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C72C32786;
+	Fri, 14 Jun 2024 16:17:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718381822;
-	bh=ny18+cFND10LAssQjkN6LB+Uls/v9RXAHugewOw77HQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=cZbSbbwxrZBpXHm9L7dMbQuqdB09lqSMTFGTCY3N/m2E/218Q5uHmh+r+0zhvcxBt
-	 92vbnEgXzyGNkJgIDkTPPVWn0XAZvfGpEPiWDhRtYO6JNF3RBbB/a/V2G5oJI8ywv9
-	 erg5fKwRST9Qx/iQSEm75aOBEglZwvzTK6UUeX7G+JWMgWsulVVKXpXUFyLQbN0WPJ
-	 VO2Ar3rZXfXLpC5wHmYg2la73ki870AhQhReC2bq1iob6RZyPFviakMQF9oFH6CGPc
-	 kbT4C9TWT5sKlHDBUInpkSA3SFlOjksM+vaB0JWD/1y8nLxpr0YVdOvJIdIrVJLKtr
-	 dvdNezLwauUVw==
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5bb10cfe7daso195959eaf.2;
-        Fri, 14 Jun 2024 09:17:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWdVoQ2A3YUUreBdypjRnjyoODwVmEcnHvQGKcp/D3zcV39yIeQIYUec9N+5oopbjXsqou0wgc99jS1bu3FDLzyJyar3AbBhNmSFBp92w7BSUAOUq04SSdnNNwEl3U9E5XTtrcXqxlzxoCrlpfyHAQ2/tvI6JrrYOSRrUW2I/y6ekI25unw2qs=
-X-Gm-Message-State: AOJu0Yy+llHJZQmjpIg/2DQ+Usk9XIIKz3Y58aT/O2Z9lIRdmH5YVHIR
-	2QVhDImtu+LSpOefWJv4mEkMR7RbXeyDMoPNtuvIfj/3rHoAZuUKfjv5lRt24Cb5w1qIeh9qjSY
-	aDlVDr0Na3IYIAIO2FKZ2mtmQRkU=
-X-Google-Smtp-Source: AGHT+IFApnv1VjvRPVap5sbsncAXBf3AzMgr2psaWlYVdHE/t1gR+HY3GiOqmw98ipb2MoyyMX114Z7+ysX7sg3eYZo=
-X-Received: by 2002:a4a:c482:0:b0:5bd:ad72:15d3 with SMTP id
- 006d021491bc7-5bdadc0905fmr3345426eaf.1.1718381821764; Fri, 14 Jun 2024
- 09:17:01 -0700 (PDT)
+	s=k20201202; t=1718381832;
+	bh=rUDbAwt/h0GLgZcxweo77P+njhdjO7sRzKJA4DU7QAQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WKUjiGpbQ6vSgDikdQrtYjmcjpk5Y6w5mtfEOsK+zcO/QlUYDq49zp1kT4Nk3exJb
+	 4FZpwSLehgZQIIaS8Fzvd3K4TjM3m97afoydWqtCD7nNxTZuKP3R7nFPvlwp/s6B2R
+	 eTXNWfcad4lxtI0m9stOKdpQ1fe9dZWkKyrvlyU053KI0RxoWxMZ9mfrRnmB7hs0g3
+	 h7UH5g7UtACMfBFCq330U8BiXlR6zR11zLrlBnoggnwwxWwGftWpHXyPpv8oobpsDp
+	 EGh/4vaZAwS5p0ekOYbjG23g2J9gD1LDrH1quUzwpLz5Ux8K+pblsKZ0S89UnNSllr
+	 dG7BQG286BijA==
+Date: Fri, 14 Jun 2024 17:17:08 +0100
+From: Simon Horman <horms@kernel.org>
+To: Adrian Moreno <amorenoz@redhat.com>
+Cc: netdev@vger.kernel.org, aconole@redhat.com, echaudro@redhat.com,
+	i.maximets@ovn.org, dev@openvswitch.org,
+	Pravin B Shelar <pshelar@ovn.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 7/9] net: openvswitch: do not notify drops
+ inside sample
+Message-ID: <20240614161708.GU8447@kernel.org>
+References: <20240603185647.2310748-1-amorenoz@redhat.com>
+ <20240603185647.2310748-8-amorenoz@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240602-md-cpuidle-haltpoll-v1-1-8d649277ca23@quicinc.com>
-In-Reply-To: <20240602-md-cpuidle-haltpoll-v1-1-8d649277ca23@quicinc.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 14 Jun 2024 18:16:50 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hy9=p6RkN9ywfdg_5ZMFJSC5Tc5ukjNhKGhWAnKjR5uw@mail.gmail.com>
-Message-ID: <CAJZ5v0hy9=p6RkN9ywfdg_5ZMFJSC5Tc5ukjNhKGhWAnKjR5uw@mail.gmail.com>
-Subject: Re: [PATCH] cpuidle: haltpoll: add missing MODULE_DESCRIPTION() macro
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603185647.2310748-8-amorenoz@redhat.com>
 
-On Mon, Jun 3, 2024 at 12:24=E2=80=AFAM Jeff Johnson <quic_jjohnson@quicinc=
-.com> wrote:
->
-> make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpuidle/cpuidle=
--haltpoll.o
->
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/cpuidle/cpuidle-haltpoll.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/cpuidle/cpuidle-haltpoll.c b/drivers/cpuidle/cpuidle=
--haltpoll.c
-> index d8515d5c0853..bcd03e893a0a 100644
-> --- a/drivers/cpuidle/cpuidle-haltpoll.c
-> +++ b/drivers/cpuidle/cpuidle-haltpoll.c
-> @@ -141,5 +141,6 @@ static void __exit haltpoll_exit(void)
->
->  module_init(haltpoll_init);
->  module_exit(haltpoll_exit);
-> +MODULE_DESCRIPTION("cpuidle driver for haltpoll governor");
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Marcelo Tosatti <mtosatti@redhat.com>");
->
-> ---
+On Mon, Jun 03, 2024 at 08:56:41PM +0200, Adrian Moreno wrote:
+> The OVS_ACTION_ATTR_SAMPLE action is, in essence,
+> observability-oriented.
+> 
+> Apart from some corner case in which it's used a replacement of clone()
+> for old kernels, it's really only used for sFlow, IPFIX and now,
+> local emit_sample.
+> 
+> With this in mind, it doesn't make much sense to report
+> OVS_DROP_LAST_ACTION inside sample actions.
+> 
+> For instance, if the flow:
+> 
+>   actions:sample(..,emit_sample(..)),2
+> 
+> triggers a OVS_DROP_LAST_ACTION skb drop event, it would be extremely
+> confusing for users since the packet did reach its destination.
+> 
+> This patch makes internal action execution silently consume the skb
+> instead of notifying a drop for this case.
+> 
+> Unfortunately, this patch does not remove all potential sources of
+> confusion since, if the sample action itself is the last action, e.g:
+> 
+>     actions:sample(..,emit_sample(..))
+> 
+> we actually _should_ generate a OVS_DROP_LAST_ACTION event, but we aren't.
+> 
+> Sadly, this case is difficult to solve without breaking the
+> optimization by which the skb is not cloned on last sample actions.
+> But, given explicit drop actions are now supported, OVS can just add one
+> after the last sample() and rewrite the flow as:
+> 
+>     actions:sample(..,emit_sample(..)),drop
+> 
+> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
 
-Applied as 6.11 material, thanks!
+Reviewed-by: Simon Horman <horms@kernel.org>
+
 
