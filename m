@@ -1,107 +1,208 @@
-Return-Path: <linux-kernel+bounces-215179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D25908F44
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:46:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC10908F42
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:46:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F1A81F29BB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:46:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE07E1C20ECA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A09E16DEB7;
-	Fri, 14 Jun 2024 15:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2099D364A1;
+	Fri, 14 Jun 2024 15:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KMP75Ftt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IvmqLn6K"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9B916C878;
-	Fri, 14 Jun 2024 15:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92472F3E
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718379974; cv=none; b=LVRveq+Pm4ahFZ2ed2Rr/6gJow6XIPpdWSf1L5kZ+C6ZEKI8QRoU0p5HMbHN0XAdrBsaoO7fo4L1KWlP2bPor2/tjVinqTQOPpBLyKGudLaZVYlCFDohYtP0xSRINCWKbygqfd9wzGMuTJSo1o4IGsoLt3k4J64VXqlUV9WPe28=
+	t=1718379971; cv=none; b=B/d/wAq6hmyWF8yeH/qu/T8PdldEG8f5h9T9j3xhyhl0YKkcrh0BrLpZzeJi7G05cPaDHecDXweiLy8sFgvX4/S1agBRhQG+cKfQaRoo4uMyz9VQbhG7+Nq8WZmeU1tqqIH9jNuIrgJt+C3GPLCMBJy6oEeO/G7x9xHDcR0Q3m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718379974; c=relaxed/simple;
-	bh=Z6g1BYX8L60xI0ndaIE5U6XB1JZQMw7PdN+V+G9CosE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jLIRPF1v8XFwGznYtNzUthvi2Fa922JgVpbYbq/vsPhorkDW+S6Gf1wZB7d+vfoZTZFB3q2P5j2+xqjBFlNjH6pDfUjKgnYL40FL/I1HbwRwM7taXrzPDgq1hfCS4NTGglT2/lubtWIMmOprkVDCdVfpiIuweD+VIJmVeEHCcCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KMP75Ftt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44A2EC4AF1A;
-	Fri, 14 Jun 2024 15:46:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718379974;
-	bh=Z6g1BYX8L60xI0ndaIE5U6XB1JZQMw7PdN+V+G9CosE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=KMP75FtteaGZ46C996OXqSGmqE8rWWkj1b09SMD1m7ZkuO+h+D9jFg3FzgpqRMBey
-	 HkpEFBQC4TEBD32vbqGt4lh5UB2RQat0ogmEy+he9JH5tEnOyKub8ZBxNoxRXksbtx
-	 J3we+RxnWNyrzDYh1PmqUZOijLVeGmmvYxwn+ZVIoI5Gdj/dDESavn4EZ7vMgfCn1Z
-	 +NDhG7qOp/3PRGxVS8NEvgmned3x+Ov0As130rdvKUoAXXva/MoiHZlqYwwTY1rl70
-	 mrwEvxQXe+2elBeW2NL/yMjVfW64yXBndY8ex+UpKRTXP3A9qK/hBPknsKf0x3oGu7
-	 6f+tz1lGsi/zw==
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: linux-pwm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Sean Young <sean@mess.org>
-Subject: [PATCH] pwm: Drop pwm_apply_state()
-Date: Fri, 14 Jun 2024 17:46:02 +0200
-Message-ID: <20240614154603.689727-2-ukleinek@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1718379971; c=relaxed/simple;
+	bh=XNFRwGgQs0AmajRntgrOUObRTNe+qXNYuFZRVs7W3hc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IJ+vs76PBLYHT9QS7pEFXGWxBcGl5W7yM3MX6Gv/zt9Ea7qTiGvLVhrvi6ZjCWGtfMJApGWwSX9c5H9stFMEP8MDV7V94FY5O+hA+fwCWdhGq9G1sMfTliXrrHR+RAWc9hFyHnXLvq3yd6yVSlG6ikPmpRDvlgX/g9p42vIMQ0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IvmqLn6K; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7043684628cso58432b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:46:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718379969; x=1718984769; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pHhXNaU5RbwYqq1iDYAlGO/+PUn+f/432PYR4FenmOE=;
+        b=IvmqLn6KPmnblM3sQDZMKX/Wrin5HQTIbZmJVJbtCHoaCOeXEfPwnqw8ZkgEuCx8Uh
+         WRK80nXUJ2o+HSbODPKIuwoCQrCSwJ9LHLk7jLk7b4A5rfKhsqluIwCod086kjR6S2Rq
+         OqfFKJPVXgRLK3x05fLy6X8AvBtcZ4kNBRTg+VPUSV2seu18+g93/NxJs1QbRsYmPAc5
+         EjW60zSRjuk+ImE0G5A0JO71OVjzhx1OZY1pEDc/xUaA2pzrz5iSBQhLHSLTJWPKj1Zw
+         9Mjd9GAgUUxtSUC+sjuQnYY+2b3/pviBz5ucDq9Qs4lBpwg18VZOF27SP8SB1pwhXQbH
+         Rqag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718379969; x=1718984769;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pHhXNaU5RbwYqq1iDYAlGO/+PUn+f/432PYR4FenmOE=;
+        b=Ckwp0RLjJOXhWrdRfpYy75b/QCkYFGDnBFv+HDznrZcwPAzWH28Cj3YnizkkWfdAxX
+         ZMmsRisDq0clEvg9qUHW5Ie0ySDSKR65wP/J2FKwIOelRcVaAT/e5h0Xs5QDBYn2iUvj
+         fOnnDlM5JXVYDvfaZafo/yXbUp6Dc+2Mu3TOUTPH7j7VLg6z11gI4iovE/hRO/oATVVM
+         CpmHPP6JutBll5Paly7/qTcuOou7sQVU0Mrm3NRupP080fwlPagcBaV86rfIbT1Bg1Yl
+         PkH4Hngizg6pbtAO0XWf7KFJ6HXuqcgOlE1WwV+BT7hpyaXxdbObfyR/CjeUxLxma59F
+         bTAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWhIwnS8K+uiIeW1XejM5EF+u1TMX6lmUqF5ETSdMCfooSUER2E0k/ovjNtHnLMlaL1fl45cseYoHFsHo/s1hNTMhMBLWCWzc9pdRKy
+X-Gm-Message-State: AOJu0Yw8c69HlkEJeacqT2rjhDXThDgduq4evUR/RzYiv0FWI1uSuPiQ
+	WBp7o3NNHz8UzTZuZfp7v63JRrt7SAG1zBq4R11hs2slc6xPWToc
+X-Google-Smtp-Source: AGHT+IHUf0uKVh8fNq+1Ay2u2th6Tdv6VPB0S5U5mfnlL6BSYqKVRDy9oyWYgHr7fjhes7ast2u8Wg==
+X-Received: by 2002:a05:6a21:9988:b0:1b6:d2e7:160 with SMTP id adf61e73a8af0-1bae7bb22d5mr3422261637.0.1718379969121;
+        Fri, 14 Jun 2024 08:46:09 -0700 (PDT)
+Received: from vaxr-BM6660-BM6360.. ([2001:288:7001:2703:7415:39cf:af58:4dff])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc96c793sm3178252b3a.51.2024.06.14.08.46.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 08:46:08 -0700 (PDT)
+From: I Hsin Cheng <richard120310@gmail.com>
+To: akpm@linux-foundation.org
+Cc: jserv@ccns.ncku.edu.tw,
+	linux-kernel@vger.kernel.org,
+	I Hsin Cheng <richard120310@gmail.com>
+Subject: [PATCH] lib/plist.c: Avoid worst case scenario in plist_add
+Date: Fri, 14 Jun 2024 23:46:03 +0800
+Message-Id: <20240614154603.65203-1-richard120310@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1437; i=ukleinek@kernel.org; h=from:subject; bh=Z6g1BYX8L60xI0ndaIE5U6XB1JZQMw7PdN+V+G9CosE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBmbGW7KFhB2Q7K6dl9fzXu5zx+pBZf8bDUzkSMX OwwDuUdYVCJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZmxluwAKCRCPgPtYfRL+ ThJZB/wPEdpuBE33pkjryetp2yEAreWO2n1W+2RNBdfHjUy91IOZlfClP+FWvYkQCGsby3xdh68 bGItAR4Vgo0Gj4PURZUQHOKN8mqze78WlEaVx3ygvw3YzMkMBVbnkGnYB4pa9MY5YEE7sxQrZJ1 PlLOjyiOoA6sPQsBah6vDaNvGBA+sY8nS8/kZeCejgweh3HNgcQCpWIVMH6T6ZRrKRQhx4n97Uc VbyrI882j9OEGCMnPdjN3tTVedkulQGDRF47b806S3ueK6KjYFYyV90MP0QFX4e01K/DqLOQdtC gsage3RfW/NGkOuOfy9174TanWsmWixWP4rEcYL53TGLMrWK
-X-Developer-Key: i=ukleinek@kernel.org; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-This function is not supposed to be used any more since commit
-c748a6d77c06 ("pwm: Rename pwm_apply_state() to
-pwm_apply_might_sleep()") that is included in v6.8-rc1. Two kernel
-releases should be enough for everyone to adapt, so drop the old
-function that was introduced as a compatibility stub for the transition.
+Worst case scenario of plist_add() happens when the priority of the
+inserted plist_node is going to be the largest after the insertion is
+done. The cost is going to be more significant when the original plist
+is longer, because the iterator is going to traverse the whole plist to
+find the correct position to insert the new node.
 
-Signed-off-by: Uwe Kleine-König <ukleinek@kernel.org>
+The situation can be avoided by using a reverse iterator at the same
+time, doing so the maximum possible number of iteration is going to
+shrink from N to N/2.
+
+The proposed change of plist_add pasts the test in lib/plist.c to
+validate its correctness, also add the worst case scenario test for
+plist_add() in plist_test().
+
+The worst case test are tested with the size of test_data and test_node
+growing from 200 to 1000. The result are showned in the following table,
+in which we can observed that the proposed change of plist_add performs
+better than the original version, and the difference between these two
+implementations are more significant with the size of N growing.
+
+The random case test [1], and best case test [2] are also provided, with
+result showing the proposed change performs slightly better in random
+case test while the original implementation performs slightly better in
+best case test, while the difference in both test are minor, we can see
+them as even in those two situations.
+
+ -----------------------------------------------------------
+| Test size      |   200 |   400 |    600 |    800 |   1000 |
+ -----------------------------------------------------------
+| new_plist_add  | 140911| 548681| 1220512| 2048493| 3763755|
+ -----------------------------------------------------------
+| old_plist_add  | 188198| 774222| 1643547| 3008929| 4947435|
+ -----------------------------------------------------------
+
+Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+Signed-off-by: Ching-Chun (Jim) Huang <jserv@ccns.ncku.edu.tw>
 ---
-Hello,
+[1]:
+The random cases are created via the following code
+test_data[i] = get_random_u64();
 
-with Sean patch fixing ts-nbus[1], the last user of pwm_apply_state() is
-gone, so pwm_apply_state() can be dropped now.
+[2]:
+The best cases are created via the following code
+test_data[i] = (ARRAY_SIZE(test_data) - i);
+---
+ lib/plist.c | 38 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
 
-Thanks for reminding me of this task.
-
-Best regards
-Uwe
-
-[1] https://lore.kernel.org/linux-pwm/20240614090829.560605-1-sean@mess.org
- include/linux/pwm.h | 7 -------
- 1 file changed, 7 deletions(-)
-
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index 75ad0d2fd949..f8c2dc12dbd3 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -563,13 +563,6 @@ static inline void pwm_apply_args(struct pwm_device *pwm)
- 	pwm_apply_might_sleep(pwm, &state);
+diff --git a/lib/plist.c b/lib/plist.c
+index 0d86ed7a7..06cf2169b 100644
+--- a/lib/plist.c
++++ b/lib/plist.c
+@@ -72,7 +72,7 @@ static void plist_check_head(struct plist_head *head)
+  */
+ void plist_add(struct plist_node *node, struct plist_head *head)
+ {
+-	struct plist_node *first, *iter, *prev = NULL;
++	struct plist_node *first, *iter, *prev = NULL, *last, *reverse_iter;
+ 	struct list_head *node_next = &head->node_list;
+ 
+ 	plist_check_head(head);
+@@ -83,16 +83,26 @@ void plist_add(struct plist_node *node, struct plist_head *head)
+ 		goto ins_node;
+ 
+ 	first = iter = plist_first(head);
++	last = reverse_iter = list_entry(first->prio_list.prev, struct plist_node, prio_list);
+ 
+ 	do {
+ 		if (node->prio < iter->prio) {
+ 			node_next = &iter->node_list;
+ 			break;
++		} else if (node->prio >= reverse_iter->prio) {
++			prev = reverse_iter;
++			iter = list_entry(reverse_iter->prio_list.next,
++				struct plist_node, prio_list);
++			if (likely(reverse_iter != last))
++				node_next = &iter->node_list;
++			break;
+ 		}
+ 
+ 		prev = iter;
+ 		iter = list_entry(iter->prio_list.next,
+ 				struct plist_node, prio_list);
++		reverse_iter = list_entry(reverse_iter->prio_list.prev,
++				struct plist_node, prio_list);
+ 	} while (iter != first);
+ 
+ 	if (!prev || prev->prio != node->prio)
+@@ -255,6 +265,32 @@ static int  __init plist_test(void)
+ 	}
+ 
+ 	printk(KERN_DEBUG "end plist test\n");
++
++	/* Worst case test for plist_add() */
++	unsigned int test_data[241];
++
++	for (i = 0; i < ARRAY_SIZE(test_data); i++)
++		test_data[i] = i;
++
++	ktime_t start, end, time_elapsed = 0;
++
++	plist_head_init(&test_head);
++
++	for (i = 0; i < ARRAY_SIZE(test_node); i++) {
++		plist_node_init(test_node + i, 0);
++		test_node[i].prio = test_data[i];
++	}
++
++	for (i = 0; i < ARRAY_SIZE(test_node); i++) {
++		if (plist_node_empty(test_node + i)) {
++			start = ktime_get();
++			plist_add(test_node + i, &test_head);
++			end = ktime_get();
++			time_elapsed += (end - start);
++		}
++	}
++
++	pr_debug("plist_add worst case test time elapsed %lld\n", time_elapsed);
+ 	return 0;
  }
  
--/* only for backwards-compatibility, new code should not use this */
--static inline int pwm_apply_state(struct pwm_device *pwm,
--				  const struct pwm_state *state)
--{
--	return pwm_apply_might_sleep(pwm, state);
--}
--
- struct pwm_lookup {
- 	struct list_head list;
- 	const char *provider;
-
-base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-prerequisite-patch-id: 51738c9613a88df12ce0963aa6bdb92fa15262e1
 -- 
-2.43.0
+2.34.1
 
 
