@@ -1,129 +1,322 @@
-Return-Path: <linux-kernel+bounces-214799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89D41908A22
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:36:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A4B908A27
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78E6D28BE31
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:36:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96D9E1F23E53
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E89A1946C2;
-	Fri, 14 Jun 2024 10:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FAFD194132;
+	Fri, 14 Jun 2024 10:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WQ52yifT"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BLT4kW81"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834531946AC
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C682A194085
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718361355; cv=none; b=dS4EQ6FBzwiYUEc6CPzq82kXA171mWZgx6k0j0C6rz1pyG5EDciJVZJJ7BXru/eGK7ejHexRUvmC5kJBLpvXX1OUUu7qbskX+SBTLJ1CsbFg4o6r5Z/vkAXN717gNlJJZoKeoWo+zK6UspXyt4TU1MASMU5EI7K8LYP+1djAMU4=
+	t=1718361451; cv=none; b=DsTfbe67Our79CxDNy6IKxee+eOphP1xFD8R72n5cZmNRDoS510COFW8mNmy6Wm2sJapFOtHgkoGzrUi0qh6NCXdx7IYsOA23adoC51TNkC8+uBQRy8jO6PqlGllWkuLKjwlDd3w+sZlFOpP/1+TZPLQ7xdc4zzfpaAzKeH7YE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718361355; c=relaxed/simple;
-	bh=66n4QJTe2QoUaT86K35RhfAcMVqLfHGNaa6rF0sOxD0=;
+	s=arc-20240116; t=1718361451; c=relaxed/simple;
+	bh=zmtM9P8EOqx1FZjRdKTb5n/z6vFq5gDORgSkGrxnYuk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BlxfHzVNsojvdNwMmlt6teWSEYOASVYAdrM0hSwHek5NJSDaAvFsJegDEZT7CtWFLqDzph9aaZ1wJb2vwniyS2V2B/l0NWJQprS6CgPczMVLdEYONGu6QE/tFLSUeW1NilZ6vfxeKtoMU5f8FzkMAAOBizvYvwd9f8FZvsCZj/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WQ52yifT; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ebd95f136bso21619681fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 03:35:53 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pi3WF9wjYW5MdYa7t58vroLWi18B9+TVM83n4KE4eeE6HxBIfsb2NSySuJKkWJ4P+rXpWXt2/PrY19IAg6woun8gzWQxmS953Lq0SZyZ/u2NGHKneffwTUu8kOfwx/oyl29vRjdR31wQOOJJT5+4EfaLjiiAsJbEo5s2Q1O+ycE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BLT4kW81; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57c75464e77so2366847a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 03:37:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718361352; x=1718966152; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718361447; x=1718966247; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6FMH9kgG6GLU9nGWzxsHP28rIR4BzbcGX6Cg1+tBHV0=;
-        b=WQ52yifTxs4M0BD6jZcwLFWbxKFFEWly8hPPkm3acLoYw/Qu0q3Lu9FMpsJbzSah0D
-         4tuIy3+yq0vMMqu9JuKilaqSgt/P5i+zlCD/zf+goa4QIhA5Jqca0Nb+4zR0DPigOs1c
-         tPT0GsX50m1P0RUqOBrXC5AIceo0q6fudjSofyRRUgkgfGxJU7d0xTFS4UFaXweBULde
-         qhuQfF9ec0cq2efdmXBlUFuL8dFjGhBneESBkKQzFwQe2Zo3J+9vTei060rkpITPHUUO
-         m5OH9k0Y5DwO/uo4ljBXp3zYG94RusPT2ezd562OaWmaQEsxBOZFOAXU5buF6pPiB+U3
-         GWXw==
+        bh=0OriRI7xNCMkxlWs2IiRsExQGF8yht7ObcIi6rihikc=;
+        b=BLT4kW811cw5ReF4z09DjJF9eWr+0mHyEfOhoX3ondfHVjhsyQQcNOX+sTNwwQP3Be
+         MisNvEdYQgcXrghIIdRy0Ksez+JWulkIHfyRGjzLjSamFHaVXOzeKQFFjgz5XCj/Z9oM
+         RdmZ9LBVzRN7IDaSPYMHQHJ/8clbfuFWVboXRBqzjjPUU3ww31I2CGc/DaT2PRcQ9N2L
+         NJrCX2o4dpcgXMTpo9imzt/Tuz7eoRtwCvSxkjKhtmFj0ebWlkigpHGRxW7k04zkkvlc
+         Iv5+GQkw7rXpIyUlpF7JslX5Hi6+bjcj5Uk6hKmGJUIjIuNxNL0x8pcVsbuvPvAOjwoK
+         anDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718361352; x=1718966152;
+        d=1e100.net; s=20230601; t=1718361447; x=1718966247;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6FMH9kgG6GLU9nGWzxsHP28rIR4BzbcGX6Cg1+tBHV0=;
-        b=jW58hkCMVslcScDYoq1TIocLpc3pB6bzw/Ji9oE07DS3ngeqi+d6CUQojTwREVT9BE
-         nqv2UlplATPoLB0ULSIgpMgQ8kzc10Szqzl/weXWA8QhPdFzvXeGW3k8QetBzYg70jX9
-         E3XAm+SBcWfiBxfwFgfWBsYtT6xgSTCi/H6rF4XLjQhrKnD6Yq1Bm1K9c/jnDLDFkOOk
-         q4PIGlvLf3CGDiEAvTBV9LZoQ6d9v9pj2eMcXUPc6NlJS3lo4t1KMUhtTXKY33Kn45Pa
-         UK8nXseFcto7QEQyU5YbiEws/nOQOo+GMaj0rwTvhPx9PMdONXcKbTf7KIrZC3EOMGOR
-         V8Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCVz2OkMriBfq4VDrnBVPp47l1LNQlQA5dBelvQpFefyigsEfbY2orwi8+hiLdzDHlDo0gvhPTclIfNFNXUDxaxP8VW3eg3HsC/p2/xu
-X-Gm-Message-State: AOJu0YwrgNK/3mxwuv5qkY9AmlHmUNWXgQMy1qCQ4X1puaOlKt1mLG5c
-	iXUunTovR19ptieTjW5qmEgwdWRkoFulsOAUlSUZAtXeA993Gwv3FLSTqIzUaZc=
-X-Google-Smtp-Source: AGHT+IEbw6LK2rPBbVuJQJBgxOhegr+TV/18ANijB4Rchh5JfiMQ1/qs7DuIZLwqd6QzWtrSJTx22Q==
-X-Received: by 2002:a2e:8386:0:b0:2ea:e26d:c9ba with SMTP id 38308e7fff4ca-2ec0e5d0c09mr13495761fa.27.1718361351635;
-        Fri, 14 Jun 2024 03:35:51 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05bf438fsm4969921fa.24.2024.06.14.03.35.50
+        bh=0OriRI7xNCMkxlWs2IiRsExQGF8yht7ObcIi6rihikc=;
+        b=KivPujR/MEpKbqBOZBCW+lpiSblE4S545BvLMJl/G/UtQyosCpijB1ZxB/hzIw5OM9
+         ntTyDUQrocwdmbIVjIgUKu97BWKw6sqQwOGG8M/wB8iPfWctGiz2D62NWn2xYZ9Bx0wJ
+         CxdlUCEIQjNNY4WQ/83NgpCiybz/BAuNUjT8voQgmR1FiafJG/GFcom7zWbqzmIxJxiB
+         Bs5IKkceAjIxRhZEoaNjBDK0ADRSOFiiTIE9qMlCdyguDacEp3Z2MwDWHTfnFhyk1/8q
+         9b/eZySjHgKuTPzCNSv62QpRJE/YdebkZzuOvi+6E3204DOpRnlBBcP+LmD6AWwAETcH
+         Hhag==
+X-Gm-Message-State: AOJu0Yyo8seEWFr/TTBcVqMF/AZhI1FR83JLLalEQO2sNXraufntOHHo
+	pdEjdRRxWQv+5kZvu90e3DJIZ8U0UOPImwZgkWOb/f7jkWT3YazwtaRgnNpIZwg=
+X-Google-Smtp-Source: AGHT+IGHSLoRi8jypxNAigXEWnfdZMZjy36n3Gkuce88q62zGrV4fmJpD9TsNdDubWdWIkt2IVlp3A==
+X-Received: by 2002:a50:9ea9:0:b0:57a:2327:d2d2 with SMTP id 4fb4d7f45d1cf-57cbd6c6e54mr1653455a12.29.1718361446835;
+        Fri, 14 Jun 2024 03:37:26 -0700 (PDT)
+Received: from localhost (p509153eb.dip0.t-ipconnect.de. [80.145.83.235])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cbb30ba30sm1564062a12.39.2024.06.14.03.37.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 03:35:51 -0700 (PDT)
-Date: Fri, 14 Jun 2024 13:35:49 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Guillaume La Roque <glaroque@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Vasily Khoruzhick <anarsoul@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Anson Huang <Anson.Huang@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Amit Kucheria <amitk@kernel.org>, 
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, Heiko Stuebner <heiko@sntech.de>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Pascal Paillet <p.paillet@foss.st.com>, 
-	Keerthy <j-keerthy@ti.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, zhanghongchen <zhanghongchen@loongson.cn>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	imx@lists.linux.dev, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, Florian Fainelli <f.fainelli@gmail.com>, 
-	linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 11/22] dt-bindings: thermal: qcom-tsens: reference
- thermal-sensor schema
-Message-ID: <eesj54re2itzlcr3ctntqjued5mqucbfxuoiy64344qkzt5be7@2643dlhd4kpl>
-References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org>
- <20240614-dt-bindings-thermal-allof-v1-11-30b25a6ae24e@linaro.org>
+        Fri, 14 Jun 2024 03:37:26 -0700 (PDT)
+Date: Fri, 14 Jun 2024 12:37:25 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: William Qiu <william.qiu@starfivetech.com>
+Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	Hal Feng <hal.feng@starfivetech.com>, Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v12] pwm: opencores: Add PWM driver support
+Message-ID: <6hbj4uua442il6koeaypkqapctlwrhrmsbguyx74hwqzkycepf@7zpqo6mojqvn>
+References: <20240429075140.56867-1-william.qiu@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pz7cmbt7u7ur6jmg"
+Content-Disposition: inline
+In-Reply-To: <20240429075140.56867-1-william.qiu@starfivetech.com>
+
+
+--pz7cmbt7u7ur6jmg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240614-dt-bindings-thermal-allof-v1-11-30b25a6ae24e@linaro.org>
 
-On Fri, Jun 14, 2024 at 11:46:10AM GMT, Krzysztof Kozlowski wrote:
-> Device is a thermal sensor and it requires '#thermal-sensor-cells', so
-> reference the thermal-sensor.yaml to simplify it and bring the
-> common definition of '#thermal-sensor-cells' property.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
+Hello William,
 
-Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+thanks for your patience and sorry for taking so long until I came
+around to review this.
+
+On Mon, Apr 29, 2024 at 03:51:40PM +0800, William Qiu wrote:
+> diff --git a/drivers/pwm/pwm-ocores.c b/drivers/pwm/pwm-ocores.c
+> new file mode 100644
+> index 000000000000..039fb3c526a7
+> --- /dev/null
+> +++ b/drivers/pwm/pwm-ocores.c
+> @@ -0,0 +1,240 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * OpenCores PWM Driver
+> + *
+> + * https://opencores.org/projects/ptc
+> + *
+> + * Copyright (C) 2018-2023 StarFive Technology Co., Ltd.
+> + *
+> + * Limitations:
+> + * - The hardware only do inverted polarity.
+
+s/do/does/
+
+> + * - The hardware minimum period / duty_cycle is (1 / pwm_apb clock frequency) ns.
+> + * - The hardware maximum period / duty_cycle is (U32_MAX / pwm_apb clock frequency) ns.
+
+How does the hardware behave on disable? Does it complete the currently
+running period when reconfiguring or disabling? Are glitches expected
+in .apply()? Please answer these questions in the Limitations paragraph.
+
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pwm.h>
+> +#include <linux/reset.h>
+> +#include <linux/slab.h>
+> +
+> +/* OpenCores Register offsets */
+> +#define REG_OCPWM_CNTR    0x0
+> +#define REG_OCPWM_HRC     0x4
+> +#define REG_OCPWM_LRC     0x8
+> +#define REG_OCPWM_CTRL    0xC
+> +
+> +/* OCPWM_CTRL register bits*/
+> +#define REG_OCPWM_EN      BIT(0)
+
+I would prefer this one to be called REG_OCPWM_CNTR_EN. Ditto for the
+following definitions.
+
+> +#define REG_OCPWM_ECLK    BIT(1)
+> +#define REG_OCPWM_NEC     BIT(2)
+> +#define REG_OCPWM_OE      BIT(3)
+> +#define REG_OCPWM_SIGNLE  BIT(4)
+> +#define REG_OCPWM_INTE    BIT(5)
+> +#define REG_OCPWM_INT     BIT(6)
+> +#define REG_OCPWM_CNTRRST BIT(7)
+> +#define REG_OCPWM_CAPTE   BIT(8)
+> +
+> [...]
+> +static int ocores_pwm_apply(struct pwm_chip *chip,
+> +			    struct pwm_device *pwm,
+> +			    const struct pwm_state *state)
+> +{
+> +	struct ocores_pwm_device *ddata = chip_to_ocores(chip);
+> +	u32 ctrl_data = 0;
+> +	u64 period_data, duty_data;
+> +
+> +	if (state->polarity != PWM_POLARITY_INVERSED)
+> +		return -EINVAL;
+> +
+> +	ctrl_data = ocores_pwm_readl(ddata, pwm->hwpwm, REG_OCPWM_CTRL);
+> +	ocores_pwm_writel(ddata, pwm->hwpwm, REG_OCPWM_CTRL, 0);
+> +
+> +	period_data = mul_u64_u32_div(state->period, ddata->clk_rate, NSEC_PER_SEC);
+> +	if (period_data > U32_MAX)
+> +		period_data = U32_MAX;
+
+This assignment is useless, the value of period_data isn't used later,
+
+I think you want:
+
+	period_data = ...
+
+	if (!period_data)
+		return -EINVAL
+
+	if (period_data > U32_MAX)
+		period_data = U32_MAX;
+
+	ocores_pwm_writel(ddata, pwm->hwpwm, 0x8, (u32)period_data);
 
 
--- 
-With best wishes
-Dmitry
+> +	else if (period_data > 0)
+> +		ocores_pwm_writel(ddata, pwm->hwpwm, 0x8, (u32)period_data);
+> +	else
+> +		return -EINVAL;
+> +
+> +	duty_data = mul_u64_u32_div(state->duty_cycle, ddata->clk_rate, NSEC_PER_SEC);
+> +	if (duty_data <= U32_MAX)
+> +		ocores_pwm_writel(ddata, pwm->hwpwm, REG_OCPWM_HRC, (u32)duty_data);
+> +	else
+> +		return -EINVAL;
+
+duty_data > U32_MAX should be handled in the same way as period_data >
+U32_MAX.
+
+> +	ocores_pwm_writel(ddata, pwm->hwpwm, REG_OCPWM_CNTR, 0);
+> +
+> +	if (state->enabled) {
+> +		ctrl_data = ocores_pwm_readl(ddata, pwm->hwpwm, REG_OCPWM_CTRL);
+> +		ocores_pwm_writel(ddata, pwm->hwpwm, REG_OCPWM_CTRL,
+> +				  ctrl_data | REG_OCPWM_EN | REG_OCPWM_OE);
+> +	}
+
+Wouldn't it make sense to unset REG_OCPWM_EN | REG_OCPWM_OE if
+(!state->enabled)?
+
+> +	return 0;
+> +}
+> +
+> +static const struct pwm_ops ocores_pwm_ops = {
+> +	.get_state	= ocores_pwm_get_state,
+> +	.apply		= ocores_pwm_apply,
+
+In other structs you're using a single space before =. I'd prefer that
+here, too.
+
+> +};
+> +
+> +static const struct ocores_pwm_data jh7100_pwm_data = {
+> +	.get_ch_base = starfive_jh71x0_get_ch_base,
+> +};
+> +
+> +static const struct ocores_pwm_data jh7110_pwm_data = {
+> +	.get_ch_base = starfive_jh71x0_get_ch_base,
+> +};
+
+These two are identical. Does it make sense to use only one instance of
+these?
+
+> [...]
+> +static int ocores_pwm_probe(struct platform_device *pdev)
+> +{
+> +	const struct of_device_id *id;
+> +	struct device *dev = &pdev->dev;
+> +	struct ocores_pwm_device *ddata;
+> +	struct pwm_chip *chip;
+> +	struct clk *clk;
+> +	struct reset_control *rst;
+> +	int ret;
+> +
+> +	id = of_match_device(ocores_pwm_of_match, dev);
+> +	if (!id)
+> +		return -EINVAL;
+> +
+> +	chip = devm_pwmchip_alloc(&pdev->dev, 8, sizeof(*ddata));
+> +	if (IS_ERR(chip))
+> +		return -ENOMEM;
+> +
+> +	ddata = chip_to_ocores(chip);
+> +	ddata->data = id->data;
+> +	chip->ops = &ocores_pwm_ops;
+> +
+> +	ddata->regs = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(ddata->regs))
+> +		return dev_err_probe(dev, PTR_ERR(ddata->regs),
+> +				     "Unable to map IO resources\n");
+> +
+> +	clk = devm_clk_get_enabled(dev, NULL);
+> +	if (IS_ERR(clk))
+> +		return dev_err_probe(dev, PTR_ERR(clk),
+> +				     "Unable to get pwm's clock\n");
+> +
+> +	ret = devm_clk_rate_exclusive_get(dev, clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	rst = devm_reset_control_get_optional_exclusive(dev, NULL);
+> +	if (IS_ERR(rst))
+> +		return dev_err_probe(dev, PTR_ERR(rst),
+> +				     "Unable to get pwm's reset\n");
+> +
+> +	reset_control_deassert(rst);
+> +
+> +	ret = devm_add_action_or_reset(dev, ocores_pwm_reset_control_assert, rst);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ddata->clk_rate = clk_get_rate(clk);
+> +	if (ddata->clk_rate <= 0 || ddata->clk_rate > NSEC_PER_SEC)
+
+clk_rate is an u32. So ddata->clk_rate <= 0 will never be true. Also on
+64bit archs clk_get_rate() might return 4294967297 which results in
+ddata->clk_rate being assigned 1 and then passing this test.
+
+> +		return dev_err_probe(dev, ddata->clk_rate,
+> +				     "Unable to get clock's rate\n");
+> +
+> +	ret = devm_pwmchip_add(dev, chip);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "Could not register PWM chip\n");
+> +
+> +	return 0;
+> +}
+
+Best regards
+Uwe
+
+--pz7cmbt7u7ur6jmg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZsHWAACgkQj4D7WH0S
+/k6lKQf+NrcJlhAWZK2lB9x1qKMuEf//I36x7OJfXngdmSPtftOITcdOcDS7lTsA
+IHIwvdbt6lLAVKAIfAH1jj5BMEXYj7JnqggU4HCaGVPFA8/60Tiviwf++x1KMmqS
+wb/Z2gUunjqLkZH74ur/RlNb2wfkr/vE9UAjsMqXSimQvvcwiCpnthOld7/VPwG/
+Ud+mvxizzs/rlXNDHR/wDB8tuTVLjzxGjpdhgOI0huSoA5EUT8HhrdMqcmzmwUHc
+cvcDNIT9BaXRzlEIHvRrBVh8G1OigEOJChdA6Z+ncPf+L7U6sNMATjcReJiCta01
+3pfQy2GISFd9JefXZGMjNkVHn/ti/A==
+=TK0N
+-----END PGP SIGNATURE-----
+
+--pz7cmbt7u7ur6jmg--
 
