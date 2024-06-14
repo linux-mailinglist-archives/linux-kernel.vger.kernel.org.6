@@ -1,156 +1,129 @@
-Return-Path: <linux-kernel+bounces-215356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 172F89091BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:37:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4DB1909182
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8F08B2BBEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:32:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 255161F2506D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C6C1AD9F4;
-	Fri, 14 Jun 2024 17:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B3419DF41;
+	Fri, 14 Jun 2024 17:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="J+WbIdRx"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="InuplvbW"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A751A0B06;
-	Fri, 14 Jun 2024 17:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F12C20E6
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 17:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718386083; cv=none; b=MONai/VRDOjdz8oSW7U66AYUs9u2GWVJoWi5GKMpPhbXZlYX9Gli38HD906GHKBhRq8toOKQeKTP9dV46AjKb/HV/EkTHH8l3Uwa64s1U7zQ5q3UDFclcBa785eHi5sptWPG4MnrqfMt7BiUcfnQyAVdBkkUaGRiYFJvUjq+EW4=
+	t=1718386252; cv=none; b=QT41FPwyAIze9JZvuwNsJ7J3HPod2BEiVVdMh3KtnHVKj5V+do+3mDMM4FntU7QaFXEOMRx/ejM0pSZkC5rhSkgvC9+hBBZuu9/NN2Iju+qYeo00tbHBPPT4YIx4RWrh4LeViR9ERWyS51kl0KtdXanZUR3NDyXLv9gxZLStz7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718386083; c=relaxed/simple;
-	bh=ARZFA4y/9uwLTB3MdL3MTgkr1diITeL0LLNBiW47wT8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PynNQT9Z+mveDWEFc2YvXJwxIO2ULRNWJil7RGsU/CQ1AsMRx1F+HjFJKYVYriAtRe3YdVbwnqNRwsWEeYitb9RxfpEuc5j1fIheBKe5OgyEnainRV4URfunl+zRcvQFqwQysk6Kq1EgXt4euf8VI0ShrrM2ow4R96EKPd61AcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=J+WbIdRx; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45EHR5OL029770;
-	Fri, 14 Jun 2024 17:27:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=J39yxlvbP0yKB
-	JnLw2grb5us5I6tyJ4PFtaeuOyYn04=; b=J+WbIdRxbxQkuPmm7gT459Jqdo9kk
-	YeYzalW5e3nG0VHE0NwyklOb6Ng1mWlhzcyjK6EVVDqPSaWl7HbSgtQJTqIBe+u7
-	gbk1lrILYTzCvc+W8A9SU8y/fBoaYLBF0rocL0FFPq9kzuAPO2+7cvHtrp4y0OUW
-	RNgGd3aJqAtDjotXttns5rfOUDyyZoWba76RuBnkCISI+U4JjdeBTU3P023Jzf0K
-	UijtEBNfE8mv4emHR3qHQaSq1jOiT5MQ7ZotPY5iTfjbgrwXuJYuNdOkxh1/v0G3
-	rfHyKywcoruf0hrJzqa9ykNLZaO2WoYy2pzyKNuOAa5/WenTBmAQg9HOA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yrryk05nu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Jun 2024 17:27:57 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45EHRv2F031035;
-	Fri, 14 Jun 2024 17:27:57 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yrryk05nr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Jun 2024 17:27:57 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45EGWJbU027267;
-	Fri, 14 Jun 2024 17:27:56 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yn211km5j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Jun 2024 17:27:55 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45EHRoP433489448
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Jun 2024 17:27:52 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 40ADC2004D;
-	Fri, 14 Jun 2024 17:27:50 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A706420040;
-	Fri, 14 Jun 2024 17:27:47 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.43.82.18])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 14 Jun 2024 17:27:47 +0000 (GMT)
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-To: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
-        irogers@google.com, namhyung@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
-        maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
-        disgoel@linux.vnet.ibm.com
-Subject: [PATCH 2/2] tools/perf: Fix parallel-perf python script to replace new python syntax ":=" usage
-Date: Fri, 14 Jun 2024 22:57:42 +0530
-Message-Id: <20240614172742.56976-2-atrajeev@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20240614172742.56976-1-atrajeev@linux.vnet.ibm.com>
-References: <20240614172742.56976-1-atrajeev@linux.vnet.ibm.com>
+	s=arc-20240116; t=1718386252; c=relaxed/simple;
+	bh=OuNYhmUKQHj/+toxfhoz0GPPmvE2PFXyg/c0bbZV3GQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DyR5THp11ISxKSx5346DcQfWkUP6m1yZJskeHQ7mpVglexQ5gJegFKTFvD0S5SC1R5nfUtbET3QbH97Rwr+7/CZYQBQUUEMIF6awxf+lJONCpuJmZXy/7icwL2Vsyi63TPXTpmcCh9jNfMzrVsz2obtliq66zGPNZIEO9QMVVcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=InuplvbW; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52bc3130ae6so2717098e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:30:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718386248; x=1718991048; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GhYLyvnes7IrRyooiF6hUo9Wtmgl5c1FE7dQTHZivIs=;
+        b=InuplvbW6PFQthqw0ESLFhfq3C+r4+CPGUcZi6n76AearsZErB7T8UJD0IX+dlMIbh
+         RIYmwMQfK4mc841Jywfx0lTuEB0JLogPpDjaHkQDwMQIXxAwDckBKmLXu/6KJ3TfoKs6
+         LunoM8gOBMt8Ij9EUM3Ze+0lu7w/vqmCX+qfeipndgrsMQ3TKgHN3X7UqjGaVQcc9DVN
+         toIjrORkW78vPsMDVgu8QTGR0SifPQ9CGYJAZV51q7au/T0c34fwy0TlSooZ0Sx3XExO
+         4zyh4W+/uSNkP3NP4CWgEMukTiHsH73X+oqtJ0zUjEJOi5Nwb0km8MMOf9tAndOxAswj
+         mPpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718386248; x=1718991048;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GhYLyvnes7IrRyooiF6hUo9Wtmgl5c1FE7dQTHZivIs=;
+        b=JHZkaQ1PCu1QsVpIPOG9z40mCdb9yYs3e9rbU6ACm1UA710mVH1nrAUfjHmNKk0wxr
+         UWPNcV9ezam9KMm1vt/07kZKb3Zw4cdaghSDwE0eV1Uttj4tBz+GYUVDZXaZyUZZqDFN
+         Z86piVNGcGTRNY88xljMENnayrs0YjS59b+Pz0Wit8Es4Fxxq97flCo+9xPIZj27o/RG
+         UYsD0zWu59+Dr0QMX/AduFhb6bdhp6ueSOpurbH+ODtQzrhq7SVtrfTtBZIJX1gb7pc9
+         +b/FFQ8uCAlEhzcMdZAdiv/rcZ9qGoe62NxpfKxDOcxnIbmRpui7G9iG7/PsW+zI9sVG
+         ZsxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVLZJJ2xpeBEEEoijCd9Km14WTOofWiMNSEPxknzgq3WVtTGE/O9BxZ46LBaiPdLIVHZwv8WfRn7d2Omkk7/4UF6xrZYtJh8xvKcW/0
+X-Gm-Message-State: AOJu0YwSD2BG4rfAyHTGiYiQSmTgShyWP3JrvqPMejfoGaklB/Xz90dC
+	sQ9jIwWB/jpVSqPmAR2utUIOuTefAYI+VeqjaI65Kg0U+Pg/yyZKt6VyJO9ivnM=
+X-Google-Smtp-Source: AGHT+IE8HK8BsiSh+6Wu+Mm+URrKAZY78WQcHj2XcIl5gyStXYt1n7LGGfHjo2+cbwsFt3wfVVbDyg==
+X-Received: by 2002:a05:6512:114a:b0:52c:a809:62e9 with SMTP id 2adb3069b0e04-52ca80963f5mr2378320e87.0.1718386248378;
+        Fri, 14 Jun 2024 10:30:48 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6127d6dsm69701075e9.26.2024.06.14.10.30.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 10:30:48 -0700 (PDT)
+Date: Fri, 14 Jun 2024 20:30:44 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Quan Nguyen <quan@os.amperecomputing.com>
+Cc: Corey Minyard <minyard@acm.org>,
+	openipmi-developer@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] ipmi: ssif_bmc: prevent integer overflow on 32bit systems
+Message-ID: <1431ca2e-4e9c-4520-bfc0-6879313c30e9@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: pGwEYCnSDPcD3FvjaSlIoOBSnVV70lEK
-X-Proofpoint-ORIG-GUID: uLuJWEu8xRSWAMWgx45eDHejLO7LQxr2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-14_15,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- malwarescore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- spamscore=0 mlxscore=0 adultscore=0 suspectscore=0 phishscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406140119
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-perf test "perf script tests" fails as below in systems
-with python 3.6
+There are actually two bugs here.  First, we need to ensure that count
+is at least sizeof(u32) or msg.len will be uninitialized data.
 
-	File "/home/athira/linux/tools/perf/tests/shell/../../scripts/python/parallel-perf.py", line 442
-	if line := p.stdout.readline():
-             ^
-	SyntaxError: invalid syntax
-	--- Cleaning up ---
-	---- end(-1) ----
-	92: perf script tests: FAILED!
+The "msg.len" variable is a u32 that comes from the user.  On 32bit
+systems the "sizeof_field(struct ipmi_ssif_msg, len) + msg.len"
+addition can overflow if "msg.len" is greater than U32_MAX - 4.
 
-This happens because ":=" is a new syntax that assigns values
-to variables as part of a larger expression. This is introduced
-from python 3.8 and hence fails in setup with python 3.6
-Address this by splitting the large expression and check the
-value in two steps:
-Previous line: if line := p.stdout.readline():
-Current change:
-	line = p.stdout.readline()
-	if line:
+Valid lengths for "msg.len" are 1-254.  Add a check for that to
+prevent the integer overflow.
 
-With patch
-
-	./perf test "perf script tests"
-	 93: perf script tests:  Ok
-
-Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Fixes: dd2bc5cc9e25 ("ipmi: ssif_bmc: Add SSIF BMC driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- tools/perf/scripts/python/parallel-perf.py | 3 ++-
+ drivers/char/ipmi/ssif_bmc.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
+---
+ drivers/char/ipmi/ssif_bmc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/scripts/python/parallel-perf.py b/tools/perf/scripts/python/parallel-perf.py
-index 21f32ec5ed46..be85fd7f6632 100755
---- a/tools/perf/scripts/python/parallel-perf.py
-+++ b/tools/perf/scripts/python/parallel-perf.py
-@@ -439,7 +439,8 @@ def ProcessCommandOutputLines(cmd, per_cpu, fn, *x):
- 	pat = re.compile(r"\s*\[[0-9]+\]")
- 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
- 	while True:
--		if line := p.stdout.readline():
-+		line = p.stdout.readline()
-+		if line:
- 			line = line.decode("utf-8")
- 			if pat.match(line):
- 				line = line.split()
+diff --git a/drivers/char/ipmi/ssif_bmc.c b/drivers/char/ipmi/ssif_bmc.c
+index 56346fb32872..ab4e87a99f08 100644
+--- a/drivers/char/ipmi/ssif_bmc.c
++++ b/drivers/char/ipmi/ssif_bmc.c
+@@ -177,13 +177,15 @@ static ssize_t ssif_bmc_write(struct file *file, const char __user *buf, size_t
+ 	unsigned long flags;
+ 	ssize_t ret;
+ 
+-	if (count > sizeof(struct ipmi_ssif_msg))
++	if (count < sizeof(msg.len) ||
++	    count > sizeof(struct ipmi_ssif_msg))
+ 		return -EINVAL;
+ 
+ 	if (copy_from_user(&msg, buf, count))
+ 		return -EFAULT;
+ 
+-	if (!msg.len || count < sizeof_field(struct ipmi_ssif_msg, len) + msg.len)
++	if (!msg.len || msg.len > IPMI_SSIF_PAYLOAD_MAX ||
++	    count < sizeof_field(struct ipmi_ssif_msg, len) + msg.len)
+ 		return -EINVAL;
+ 
+ 	spin_lock_irqsave(&ssif_bmc->lock, flags);
 -- 
-2.35.3
+2.43.0
 
 
