@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-215086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A59908E22
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:05:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7107908E23
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19F4F1C259AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:05:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4824E28D822
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217E01A38D4;
-	Fri, 14 Jun 2024 15:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A76C1AB502;
+	Fri, 14 Jun 2024 15:02:18 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1848E1A2FAF
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD5F1A3BAB
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718377334; cv=none; b=dxhSIhQwsF0S1yqnacK2Uig/UiKgW+iNvsGfR46y9LscKNWpcbpgIOh9dZTMEroQnNavA+XVYwiOJC5oFcNSxCjKPpeRTbZcH91epwpNwCx/w5ZBJimv8bn9VurfIoSLHmqVxB+XJ+SDlyW9hu2WZGdy1kb6pqLYwMw00DIo1pE=
+	t=1718377338; cv=none; b=GO4d5q4/2ExPsejqpJ6xP+/xn0PIRCwzQX8OFz3hWkhiES8yhTNz76bl9u4lqM2nncQ/b9y9MVGAqX2Oa4FCZOcgoA/3+MKCDmRC9ezx8mNLUm/0TluanTRH9ZtphdUuMZ1oSrM8BQcy80Wr38MVx5DZC7nfok+zXpohkjr0NYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718377334; c=relaxed/simple;
-	bh=QU9DU+yJhBKugsQjBf99MRrnlXKzYxQCfGRO7LV8/jY=;
+	s=arc-20240116; t=1718377338; c=relaxed/simple;
+	bh=pxiLph68joHlE1YGl7yo6slrPXf2diFZkyMs3EXW6FU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=vEZ1LTBAlBXyzLLXpzIvfDPv5+fCD0bUNExG8/4+94ek9Zv60nGdtEUsfhD4wjbAl+TGNmmesLnF094rfxvcdyYbnVSfcv5bDfEPgqSpTYKtTQPaB/QBues0dIFpnd1SyJjKsAYRNky7YF4Wo6jgdUCYOw3d83dHQ6l1atj++eM=
+	 MIME-Version; b=prnlDcwoH3d6fk6k8XZiSVaM4goZTsIFomne6HCkYN9Eh2IHtBrHR98YKmbAyryKU4tojPdOIZ+v7q5rIDgRzXIwlmhTKRm1vxY2Xv4xQhj3uNQTSqUV+r8Wg9ScWDLwk4XjmsQTqEAxuEGGXjs9JcBWOVgzNzPG1r0R/hsuIRg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0EB681A00;
-	Fri, 14 Jun 2024 08:02:37 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D7E61A25;
+	Fri, 14 Jun 2024 08:02:40 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C86C3F5A1;
-	Fri, 14 Jun 2024 08:02:09 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE8D83F5A1;
+	Fri, 14 Jun 2024 08:02:12 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -58,10 +58,11 @@ Cc: Fenghua Yu <fenghua.yu@intel.com>,
 	David Hildenbrand <david@redhat.com>,
 	Rex Nie <rex.nie@jaguarmicro.com>,
 	Dave Martin <dave.martin@arm.com>,
+	Dave Martin <Dave.Martin@arm.com>,
 	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Subject: [PATCH v3 19/38] x86/resctrl: Add resctrl_arch_is_evt_configurable() to abstract BMEC
-Date: Fri, 14 Jun 2024 15:00:14 +0000
-Message-Id: <20240614150033.10454-20-james.morse@arm.com>
+Subject: [PATCH v3 20/38] x86/resctrl: Change mon_event_config_{read,write}() to be arch helpers
+Date: Fri, 14 Jun 2024 15:00:15 +0000
+Message-Id: <20240614150033.10454-21-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240614150033.10454-1-james.morse@arm.com>
 References: <20240614150033.10454-1-james.morse@arm.com>
@@ -73,165 +74,167 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When BMEC is supported the resctrl event can be configured in a number
-of ways. This depends on architecture support. rdt_get_mon_l3_config()
-modifies the struct mon_evt and calls mbm_config_rftype_init() to create
-the files that allow the configuration.
+mon_event_config_{read,write}() are called via IPI and access model
+specific registers to do their work.
 
-Splitting this into separate architecture and filesystem parts would
-require the struct mon_evt and mbm_config_rftype_init() to be exposed.
+To support another architecture, this needs abstracting.
 
-Instead, add resctrl_arch_is_evt_configurable(), and use this from
-resctrl_mon_resource_init() to initialise struct mon_evt and call
-mbm_config_rftype_init().
-resctrl_arch_is_evt_configurable() calls rdt_cpu_has() so it doesn't
-obviously benefit from being inlined. Putting it in core.c will allow
-rdt_cpu_has() to eventually become static.
+Rename mon_event_config_{read,write}() to have a "resctrl_arch_"
+prefix, and move their struct mon_config_info parameter into
+<linux/resctrl.h>.  This allows another architecture to supply an
+implementation of these.
 
-resctrl_arch_is_evt_configurable() uses rdt_cpu_has() from
-resctrl_mon_resource_init(), which isn't marked __init. In addition,
-MPAM needs to initialise resctrl late. Drop the __init on the relevant
-functions.
+As struct mon_config_info is now exposed globally, give it a 'resctrl_'
+prefix. MPAM systems need access to the domain to do this work, add
+the resource and domain to struct resctrl_mon_config_info.
 
+Co-developed-by: Dave Martin <Dave.Martin@arm.com>
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
 Signed-off-by: James Morse <james.morse@arm.com>
 Tested-by: Peter Newman <peternewman@google.com>
 Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 ---
- arch/x86/kernel/cpu/resctrl/core.c     | 19 +++++++++++++++++--
- arch/x86/kernel/cpu/resctrl/internal.h |  4 ++--
- arch/x86/kernel/cpu/resctrl/monitor.c  | 18 +++++++++---------
- arch/x86/kernel/cpu/resctrl/rdtgroup.c |  2 +-
- include/linux/resctrl.h                |  2 ++
- 5 files changed, 31 insertions(+), 14 deletions(-)
+Changes since v1:
+ * [Whitespace only] Re-tabbed struct resctrl_mon_config_info in
+   <linux/resctrl.h> to fit the prevailing style.
 
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 06521c124795..252201eefdd0 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -651,7 +651,7 @@ struct rdt_options {
- 	bool	force_off, force_on;
- };
- 
--static struct rdt_options rdt_options[]  __initdata = {
-+static struct rdt_options rdt_options[]  __ro_after_init = {
- 	RDT_OPT(RDT_FLAG_CMT,	    "cmt",	X86_FEATURE_CQM_OCCUP_LLC),
- 	RDT_OPT(RDT_FLAG_MBM_TOTAL, "mbmtotal", X86_FEATURE_CQM_MBM_TOTAL),
- 	RDT_OPT(RDT_FLAG_MBM_LOCAL, "mbmlocal", X86_FEATURE_CQM_MBM_LOCAL),
-@@ -691,7 +691,7 @@ static int __init set_rdt_options(char *str)
- }
- __setup("rdt", set_rdt_options);
- 
--bool __init rdt_cpu_has(int flag)
-+bool rdt_cpu_has(int flag)
- {
- 	bool ret = boot_cpu_has(flag);
- 	struct rdt_options *o;
-@@ -711,6 +711,21 @@ bool __init rdt_cpu_has(int flag)
+   Non-functional change.
+
+ * [Commit message only] Reword to align with the actual naming of the
+   definitions and destination header file.
+---
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 34 +++++++++++++-------------
+ include/linux/resctrl.h                |  9 +++++++
+ 2 files changed, 26 insertions(+), 17 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index da71f1d80be4..45c9b8b76cca 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -1578,11 +1578,6 @@ static int rdtgroup_size_show(struct kernfs_open_file *of,
  	return ret;
  }
  
-+bool resctrl_arch_is_evt_configurable(enum resctrl_event_id evt)
-+{
-+	if (!rdt_cpu_has(X86_FEATURE_BMEC))
-+		return false;
-+
-+	switch (evt) {
-+	case QOS_L3_MBM_TOTAL_EVENT_ID:
-+		return rdt_cpu_has(X86_FEATURE_CQM_MBM_TOTAL);
-+	case QOS_L3_MBM_LOCAL_EVENT_ID:
-+		return rdt_cpu_has(X86_FEATURE_CQM_MBM_LOCAL);
-+	default:
-+		return false;
-+	}
-+}
-+
- static __init bool get_mem_config(void)
+-struct mon_config_info {
+-	u32 evtid;
+-	u32 mon_config;
+-};
+-
+ #define INVALID_CONFIG_INDEX   UINT_MAX
+ 
+ /**
+@@ -1607,9 +1602,9 @@ static inline unsigned int mon_event_config_index_get(u32 evtid)
+ 	}
+ }
+ 
+-static void mon_event_config_read(void *info)
++void resctrl_arch_mon_event_config_read(void *info)
  {
- 	struct rdt_hw_resource *hw_res = &rdt_resources_all[RDT_RESOURCE_MBA];
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index f4f48542447f..06e80356cdbb 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -509,7 +509,7 @@ int alloc_rmid(u32 closid);
- void free_rmid(u32 closid, u32 rmid);
- int rdt_get_mon_l3_config(struct rdt_resource *r);
- void resctrl_mon_resource_exit(void);
--bool __init rdt_cpu_has(int flag);
-+bool rdt_cpu_has(int flag);
- void mon_event_count(void *info);
- int rdtgroup_mondata_show(struct seq_file *m, void *arg);
- void mon_event_read(struct rmid_read *rr, struct rdt_resource *r,
-@@ -529,7 +529,7 @@ bool has_busy_rmid(struct rdt_domain *d);
- void __check_limbo(struct rdt_domain *d, bool force_free);
- void rdt_domain_reconfigure_cdp(struct rdt_resource *r);
- void __init thread_throttle_mode_init(void);
--void __init mbm_config_rftype_init(const char *config);
-+void mbm_config_rftype_init(const char *config);
- void rdt_staged_configs_clear(void);
- bool closid_allocated(unsigned int closid);
- int resctrl_find_cleanest_closid(void);
-diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index 66bd869f02a9..5906dccfb247 100644
---- a/arch/x86/kernel/cpu/resctrl/monitor.c
-+++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -1030,6 +1030,15 @@ int resctrl_mon_resource_init(void)
+-	struct mon_config_info *mon_info = info;
++	struct resctrl_mon_config_info *mon_info = info;
+ 	unsigned int index;
+ 	u64 msrval;
  
- 	l3_mon_evt_init(r);
+@@ -1624,14 +1619,15 @@ static void mon_event_config_read(void *info)
+ 	mon_info->mon_config = msrval & MAX_EVT_CONFIG_BITS;
+ }
  
-+	if (resctrl_arch_is_evt_configurable(QOS_L3_MBM_TOTAL_EVENT_ID)) {
-+		mbm_total_event.configurable = true;
-+		mbm_config_rftype_init("mbm_total_bytes_config");
-+	}
-+	if (resctrl_arch_is_evt_configurable(QOS_L3_MBM_LOCAL_EVENT_ID)) {
-+		mbm_local_event.configurable = true;
-+		mbm_config_rftype_init("mbm_local_bytes_config");
-+	}
-+
+-static void mondata_config_read(struct rdt_domain *d, struct mon_config_info *mon_info)
++static void mondata_config_read(struct resctrl_mon_config_info *mon_info)
+ {
+-	smp_call_function_any(&d->cpu_mask, mon_event_config_read, mon_info, 1);
++	smp_call_function_any(&mon_info->d->cpu_mask,
++			      resctrl_arch_mon_event_config_read, mon_info, 1);
+ }
+ 
+ static int mbm_config_show(struct seq_file *s, struct rdt_resource *r, u32 evtid)
+ {
+-	struct mon_config_info mon_info = {0};
++	struct resctrl_mon_config_info mon_info = {0};
+ 	struct rdt_domain *dom;
+ 	bool sep = false;
+ 
+@@ -1642,9 +1638,11 @@ static int mbm_config_show(struct seq_file *s, struct rdt_resource *r, u32 evtid
+ 		if (sep)
+ 			seq_puts(s, ";");
+ 
+-		memset(&mon_info, 0, sizeof(struct mon_config_info));
++		memset(&mon_info, 0, sizeof(struct resctrl_mon_config_info));
++		mon_info.r = r;
++		mon_info.d = dom;
+ 		mon_info.evtid = evtid;
+-		mondata_config_read(dom, &mon_info);
++		mondata_config_read(&mon_info);
+ 
+ 		seq_printf(s, "%d=0x%02x", dom->id, mon_info.mon_config);
+ 		sep = true;
+@@ -1677,9 +1675,9 @@ static int mbm_local_bytes_config_show(struct kernfs_open_file *of,
  	return 0;
  }
  
-@@ -1071,15 +1080,6 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
- 		/* Detect list of bandwidth sources that can be tracked */
- 		cpuid_count(0x80000020, 3, &eax, &ebx, &ecx, &edx);
- 		hw_res->mbm_cfg_mask = ecx & MAX_EVT_CONFIG_BITS;
--
--		if (rdt_cpu_has(X86_FEATURE_CQM_MBM_TOTAL)) {
--			mbm_total_event.configurable = true;
--			mbm_config_rftype_init("mbm_total_bytes_config");
--		}
--		if (rdt_cpu_has(X86_FEATURE_CQM_MBM_LOCAL)) {
--			mbm_local_event.configurable = true;
--			mbm_config_rftype_init("mbm_local_bytes_config");
--		}
- 	}
- 
- 	r->mon_capable = true;
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 8c4ec7df12d3..da71f1d80be4 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -2066,7 +2066,7 @@ void __init thread_throttle_mode_init(void)
- 	rft->fflags = RFTYPE_CTRL_INFO | RFTYPE_RES_MB;
- }
- 
--void __init mbm_config_rftype_init(const char *config)
-+void mbm_config_rftype_init(const char *config)
+-static void mon_event_config_write(void *info)
++void resctrl_arch_mon_event_config_write(void *info)
  {
- 	struct rftype *rft;
+-	struct mon_config_info *mon_info = info;
++	struct resctrl_mon_config_info *mon_info = info;
+ 	unsigned int index;
  
+ 	index = mon_event_config_index_get(mon_info->evtid);
+@@ -1693,14 +1691,16 @@ static void mon_event_config_write(void *info)
+ static void mbm_config_write_domain(struct rdt_resource *r,
+ 				    struct rdt_domain *d, u32 evtid, u32 val)
+ {
+-	struct mon_config_info mon_info = {0};
++	struct resctrl_mon_config_info mon_info = {0};
+ 
+ 	/*
+ 	 * Read the current config value first. If both are the same then
+ 	 * no need to write it again.
+ 	 */
++	mon_info.r = r;
++	mon_info.d = d;
+ 	mon_info.evtid = evtid;
+-	mondata_config_read(d, &mon_info);
++	mondata_config_read(&mon_info);
+ 	if (mon_info.mon_config == val)
+ 		return;
+ 
+@@ -1712,7 +1712,7 @@ static void mbm_config_write_domain(struct rdt_resource *r,
+ 	 * are scoped at the domain level. Writing any of these MSRs
+ 	 * on one CPU is observed by all the CPUs in the domain.
+ 	 */
+-	smp_call_function_any(&d->cpu_mask, mon_event_config_write,
++	smp_call_function_any(&d->cpu_mask, resctrl_arch_mon_event_config_write,
+ 			      &mon_info, 1);
+ 
+ 	/*
 diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index 02b745f9c4c4..fbae9a907544 100644
+index fbae9a907544..65f0a2d17e4b 100644
 --- a/include/linux/resctrl.h
 +++ b/include/linux/resctrl.h
-@@ -262,6 +262,8 @@ u32 resctrl_arch_get_num_closid(struct rdt_resource *r);
- struct rdt_domain *resctrl_arch_find_domain(struct rdt_resource *r, int id);
+@@ -220,6 +220,13 @@ struct resctrl_cpu_defaults {
+ 	u32 rmid;
+ };
+ 
++struct resctrl_mon_config_info {
++	struct rdt_resource	*r;
++	struct rdt_domain	*d;
++	u32			evtid;
++	u32			mon_config;
++};
++
+ /**
+  * resctrl_arch_sync_cpu_closid_rmid() - Refresh this CPU's CLOSID and RMID.
+  *					 Call via IPI.
+@@ -263,6 +270,8 @@ struct rdt_domain *resctrl_arch_find_domain(struct rdt_resource *r, int id);
  int resctrl_arch_update_domains(struct rdt_resource *r, u32 closid);
  
-+bool resctrl_arch_is_evt_configurable(enum resctrl_event_id evt);
-+
+ bool resctrl_arch_is_evt_configurable(enum resctrl_event_id evt);
++void resctrl_arch_mon_event_config_write(void *info);
++void resctrl_arch_mon_event_config_read(void *info);
+ 
  /*
   * Update the ctrl_val and apply this config right now.
-  * Must be called on one of the domain's CPUs.
 -- 
 2.39.2
 
