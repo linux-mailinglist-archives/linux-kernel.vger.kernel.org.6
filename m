@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-214891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E60908BA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:28:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D04F908BA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA64F282D31
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:28:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5ED52831FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2CA19750B;
-	Fri, 14 Jun 2024 12:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D761A197540;
+	Fri, 14 Jun 2024 12:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EEySDumO"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TPSBVpmB"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C3018C350
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34EB19645D
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718368096; cv=none; b=FQqApamcLBTvr67G1w6lu0LZnqjJgZLef/QMayDHksOF/uOgNU1Mb79D2cdXX+oL8vG3wkIRdvYiN2E49PqCbsiNBRJqs8VSjYpzeHJeTABfy/XnY9rEmel38SzzZnWMST3m5qmi/A8VowmbiOg9+9BA9wDM4ljkPKw1VjqloCo=
+	t=1718368126; cv=none; b=gT+oycJpBFr5Phy2iwMrRdiE4CD3PTxip+dARSJ/ObUOe6T+NclK/9XrW5yxtRrbJHVZlU+KPMr5e3x1rYJMQiHGcSNcv/o0m9iUMZRotYl3pwNKEgEqnkjYkonP7VNk56ktXcrebNEc3tWfbuwRMaTxDlkgNtBoxG69i0UxsWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718368096; c=relaxed/simple;
-	bh=WB0n4Nw8v6FP92UkyEHi3buw3bVenYcbikfby5Qsepw=;
+	s=arc-20240116; t=1718368126; c=relaxed/simple;
+	bh=dlceyXDwrFie5dGB7Ub48z8vpHRpMDmU2rENI5U3cwg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qnElDEo7qD3BeUIqi2YfbICorp8ez8dZ/KQnjj34KvwRRXccQPk88NUsop9t+YyDE6DuSVwlcMqJcuMLqmfmJbnJfi4JjgFarTJaAPdtFOh+pmLtQlKBNhalTgCotjB43ZDo2WP8+iDJc2FwHDJADyUAs+Sf9NVYxGiW9jiogf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EEySDumO; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=NDZVSrpneYR9xhXxM6xlXwReAtYEX+mohfaM7RfXEGQFwLLPg2EU0PQoSwdpVSYv5YlZ/EoJywfAeyYOoMv52cm2BPqlT7KmDIsatkNEtFVIZ3sH7L5TKhNIazPKRJ32+X13HCMaYk8PeW8FTgwrwlMYAQwBzkIf5I/Dys/l2G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TPSBVpmB; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718368093;
+	s=mimecast20190719; t=1718368123;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=44OrimEhmtrhm5kT3OMFjktUTjI2bbjoVIwPzlDDZo4=;
-	b=EEySDumOXl8k7eM5eE5+pfMQw5XZNPgP+WssTSdqkI3m4cecku3jMJLHdYB4nUIdQP6xLd
-	fmCM2kUMPmkDTPlSyxoT9eAU6pNUgby76QRjocaiw+w4NYoKGUKniMRk8pZDDVMq1UFs+N
-	uBbLsm9aGiyYuhrBSw6ImfqhgN4ke2g=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=cuB/MEoybwBxASr/hZ2BGd8er9YYETQMO5fxV/a59cY=;
+	b=TPSBVpmBY2k1oTTyHdV99vODO12Z0aJ2sOIi/qM5dKYzve3ub1Hb2zCVyjEz9ZZlwVvu+B
+	GsKyGHmnIsGsFtez3Bz0aLo2Xgs5iYCtO1hbVUJn1xAvScBI35g73MIJ/ix5WSe1A+XNAA
+	wPfuauYSwOrjuZymsxFjuZ257i58g6Q=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-655-hg2ss1ZUPeWt1X2spBz8PQ-1; Fri, 14 Jun 2024 08:28:12 -0400
-X-MC-Unique: hg2ss1ZUPeWt1X2spBz8PQ-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4229a964745so13272025e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 05:28:11 -0700 (PDT)
+ us-mta-601-bH70fXlWNQSO_NPYgPi34Q-1; Fri, 14 Jun 2024 08:28:42 -0400
+X-MC-Unique: bH70fXlWNQSO_NPYgPi34Q-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4217a6a00d8so14313175e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 05:28:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718368091; x=1718972891;
+        d=1e100.net; s=20230601; t=1718368121; x=1718972921;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=44OrimEhmtrhm5kT3OMFjktUTjI2bbjoVIwPzlDDZo4=;
-        b=U/jf5JduvnDLj2eZp0sAmgnGsN1c5oukS9XhybN9UbXrbqv77Bbj9TRBPMTdU4EV3t
-         bkcLu0irw4M4NjoCS4gHlMJV57KcUkE23DfXT1573rFDHsi2IA/D+jtgJagMeXfb3Amb
-         5qfyhnAZCKKdGubOO+hBHQ+sg43Zz75IH4pAfbrs086zlmJxQEm5E4/MWzQhQwQeR+xW
-         S9dw1VwkeiVC/DEylMySOSpyonDlGBYfZpa0KQ5oLrB4WhlTAFpxIa8jldjT4iBKqAS0
-         2If+229Oda/fEgkzGZaaSXUlDhKxoPUMCZQefhwPwNxmCsCXnhThPp+S98nocgMkJSEj
-         d3Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCWG3GzkQsD0ISA9Ty8e4yp4utsbqj6TXH/qC4lzPbHvqNg2bCWuawIavFJGosF63UQShcQvZr327otDR7MCMU2+P6+nfedn91GldMnS
-X-Gm-Message-State: AOJu0YzpMbG7fvzbpdhEDIvUMoOTUM9P2E3aeTbbZ5BO4zfrBvjJLezA
-	Z5nCwejdX0ce/brAnWRlRzV3TXZs8I5e2QTzZC9DOEIv6v3Hm3xU/wGy9InHgxcj0bPUTrsdZ0F
-	qky7HCptPRZSL8l3ZhCDJUCw/a0KuugV5MXwkp96W/RXYwaqnKZxKecGb0BYraA==
-X-Received: by 2002:a05:600c:358b:b0:421:75e2:c090 with SMTP id 5b1f17b1804b1-42307be9ad6mr9684145e9.11.1718368091010;
-        Fri, 14 Jun 2024 05:28:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEEY5jcT3+kJEcHCxufK6taxbELIO4UwJqeqjP1xwhwbg/Xt4vvi2DkQU8xTOqyNCQN612FCQ==
-X-Received: by 2002:a05:600c:358b:b0:421:75e2:c090 with SMTP id 5b1f17b1804b1-42307be9ad6mr9683985e9.11.1718368090576;
-        Fri, 14 Jun 2024 05:28:10 -0700 (PDT)
+        bh=cuB/MEoybwBxASr/hZ2BGd8er9YYETQMO5fxV/a59cY=;
+        b=EFKXIfjsS6JqwyL0wOHAnov7V3W/TjF5PsQ/+nrrIBMBe3+ZL1n5/Ad1UqmxW2Ggui
+         LW5wedS1rIu+dtc1S3q8Tb60j4kdajm7SNsc4sIrZ4R+I5unsGTTvravpGVSP8LWJogC
+         eJ7ubVF95sogcxwqKDvKdBKjnaIFBmk10TYE+wJ3JlF+Shq9K7fZ4DzTR6CMvui7CLOp
+         swdktFkXjSJt1OcfjCWs03k7W82N06idbMDr4DSXE3n9ita5ynmoO7Rfiy+U/xXEV/mF
+         p0z4U4tbFZrkG6QaLZfj0dWDNx06l95fGEolW9+NPl7gAX3oDbDfzGtk98BKG93W6Y89
+         MGow==
+X-Forwarded-Encrypted: i=1; AJvYcCVclOUolLuQ0emTpeBdfg+38DYfWd5Gdl60wxnJd75m8iMJx+ZI3hQ4bBWsiVMGvy1G51hJu63na6QXde5qBWMCjZopYDZ11m3FmTXQ
+X-Gm-Message-State: AOJu0Yy5KdzAagmSnL6AGbgx/wvKtwIhrPgR73W73OVJlQf64NLeREf+
+	jKwwk8jko8nuV1R727jOCd6rKsiIsCFEVgllkiUES+xprpTMuGrIJ3P/9NROMusvol7AvnR1Uce
+	zTrd2FEq3MwAt9SjsXMvpU2Ts+6rdbrhI2g6sPVoVnxGBo9JEHBm/pFSNKqfKQA==
+X-Received: by 2002:a05:600c:3587:b0:421:7f4d:5280 with SMTP id 5b1f17b1804b1-42304824adcmr19941145e9.21.1718368120924;
+        Fri, 14 Jun 2024 05:28:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEnAJwCEpeTICMD2MEFhlNRZc0S14myX4xtrkntCZQua9LScjHkEqyeSvgRkT0N4/ifqaQtHA==
+X-Received: by 2002:a05:600c:3587:b0:421:7f4d:5280 with SMTP id 5b1f17b1804b1-42304824adcmr19940985e9.21.1718368120548;
+        Fri, 14 Jun 2024 05:28:40 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f4f:2b00:69b5:3684:56c:6dd5? (p200300d82f4f2b0069b53684056c6dd5.dip0.t-ipconnect.de. [2003:d8:2f4f:2b00:69b5:3684:56c:6dd5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874e73bcsm93684005e9.41.2024.06.14.05.28.09
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874e7060sm96373685e9.40.2024.06.14.05.28.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 05:28:10 -0700 (PDT)
-Message-ID: <1ea35568-bfe5-430e-9f4b-edef17f0b22b@redhat.com>
-Date: Fri, 14 Jun 2024 14:28:08 +0200
+        Fri, 14 Jun 2024 05:28:40 -0700 (PDT)
+Message-ID: <4c6ffb1e-0381-4d5e-afa2-f8809f0b445f@redhat.com>
+Date: Fri, 14 Jun 2024 14:28:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,8 +82,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] selftests/mm: mseal, self_elf: fix missing
- __NR_mseal
+Subject: Re: [PATCH v2 2/6] selftests/mm: mseal, self_elf: factor out test
+ macros and other duplicated items
 To: John Hubbard <jhubbard@nvidia.com>,
  Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
  Shuah Khan <shuah@kernel.org>
@@ -97,7 +97,7 @@ Cc: Andrei Vagin <avagin@google.com>,
  linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
  LKML <linux-kernel@vger.kernel.org>
 References: <20240614023009.221547-1-jhubbard@nvidia.com>
- <20240614023009.221547-2-jhubbard@nvidia.com>
+ <20240614023009.221547-3-jhubbard@nvidia.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -145,33 +145,27 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240614023009.221547-2-jhubbard@nvidia.com>
+In-Reply-To: <20240614023009.221547-3-jhubbard@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 14.06.24 04:30, John Hubbard wrote:
-> The selftests/mm build isn't exactly "broken", according to the current
-> documentation, which still claims that one must run "make headers",
-> before building the kselftests. However, according to the new plan to
-> get rid of that requirement [1], they are future-broken: attempting to
-> build selftests/mm *without* first running "make headers" will fail due
-> to not finding __NR_mseal.
+> Clean up and move some copy-pasted items into a new mseal_helpers.h.
 > 
-> Therefore,  add ./usr/include/asm/unistd_[32|x32|64].h (created via
-> "make headers") to tools/uapi/, and change the selftests/mm files that
-> require __NR_mseal to include from the correct location. The way to do
-> so is to include <linux/unistd.h> instead of just <unistd.h>.
+> 1. The test macros can be made safer and simpler, by observing that they
+> are invariably called when about to return. This means that the macros
+> do not need an intrusive label to goto; they can simply return.
 > 
-> [1] commit e076eaca5906 ("selftests: break the dependency upon local
-> header files")
+> 2. PKEY* items. We cannot, unfortunately use pkey-helpers.h. The best we
+> can do is to factor out these few items into mseal_helpers.h.
 > 
-> Fixes: 4926c7a52de7 ("selftest mm/mseal memory sealing")
+> 3. These tests still need their own definition of u64, so also move that
+> to the header file.
+> 
 > Cc: Jeff Xu <jeffxu@chromium.org>
 > Cc: David Hildenbrand <david@redhat.com>
 > Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 > ---
-
-If it works, great
 
 Acked-by: David Hildenbrand <david@redhat.com>
 
