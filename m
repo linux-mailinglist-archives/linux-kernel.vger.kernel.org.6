@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-215071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA68F908E13
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:02:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB809908E14
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6753D1F24371
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:02:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D234B28B73
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A865016ABC1;
-	Fri, 14 Jun 2024 15:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BDC16F845;
+	Fri, 14 Jun 2024 15:01:31 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AAA316D30D
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE37B16DED1
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718377287; cv=none; b=CKrpzwgbesRCCJmr8jbHcKOTKbv16bWpMBFksdKXjutjfXYWuWRWzndzzioT+N+b1Y9nwswBT01Mr5Pr3qJ34BFZJPtGtTrkRQ9Jo3Tidrsl4mQy9r8PLbOdtncfENjiWcENBM0oJOIqTEt9Q3e+xYwhagtEKZjWZXFs27krhD0=
+	t=1718377290; cv=none; b=lAAMbRnwrbANXKrK2tRssvvK9b74iPmakHOv7HWQ+tLgt4SPT16+iPEV7ko2IkReGRkpwXEy2iC8MIzZ66XklOgw+jTItu9OJYGsNb4UxF1pL6eLAksGS7wDK4QdWeNqP9LOXqBNRNWiwxIrH2swo6M84tNnDazC7AqYCAEGvbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718377287; c=relaxed/simple;
-	bh=bPdQCQ4xeJZ4G0IuxdRn3sYl14kL8nEeodwfTmYOUy4=;
+	s=arc-20240116; t=1718377290; c=relaxed/simple;
+	bh=9HjblyKT9yDb0MvOFM1UtebUzOYOF+HL+erC7wkISCs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gCMciVEiX8O6Liac2fnUDVTUmp+iWTvkOkFhAdOMIL+YOipv6gT4eDKl+5+cLqnudwGsYa4FSUprov/D7kPF97myA2M+mZIiZmFxgO70/CsNqdBynaNCeTBLFCBZznookIYdq+/aRhDmPsviPt88o3oz5DTqCGITHaio6xU120g=
+	 MIME-Version; b=bxCwkHx/SABG7cvIwV16nR5h2kGVkMFKaM35cWzoXPX6msNejaXesJEUe6ANpBH8nuz+pCnLZOUNHrNeVxmFF0HS+gqeFbMEuXSwooJg1sMVtIlq3yGanaWoKsuuQ2zH4ZlDyv6yhZ5PCjytkQohg/bGUbtPq44LIsvGlF7sHic=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CEBA21480;
-	Fri, 14 Jun 2024 08:01:49 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 106DF15A1;
+	Fri, 14 Jun 2024 08:01:53 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 43DB33F5A1;
-	Fri, 14 Jun 2024 08:01:22 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 79EB73F5A1;
+	Fri, 14 Jun 2024 08:01:25 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -58,9 +58,9 @@ Cc: Fenghua Yu <fenghua.yu@intel.com>,
 	David Hildenbrand <david@redhat.com>,
 	Rex Nie <rex.nie@jaguarmicro.com>,
 	Dave Martin <dave.martin@arm.com>
-Subject: [PATCH v3 05/38] x86/resctrl: Use schema type to determine the schema format string
-Date: Fri, 14 Jun 2024 15:00:00 +0000
-Message-Id: <20240614150033.10454-6-james.morse@arm.com>
+Subject: [PATCH v3 06/38] x86/resctrl: Move data_width to be a schema property
+Date: Fri, 14 Jun 2024 15:00:01 +0000
+Message-Id: <20240614150033.10454-7-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240614150033.10454-1-james.morse@arm.com>
 References: <20240614150033.10454-1-james.morse@arm.com>
@@ -72,132 +72,174 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Resctrl's architecture code gets to specify a format string that is
-used when printing schema entries. This is expected to be one of two
-values that the filesystem code supports.
+The resctrl architecture code gets to specify the width of the schema
+entries that are used by resctrl. These are determined by the schema
+format, e.g. percentage or bitmap.
 
-Setting this format string allows the architecture code to change
-the ABI resctrl presents to user-space.
+Move this property into struct resctrl_schema and get the filesystem
+parts of resctrl to set it based on the schema format.
 
-Instead, use the schema format enum to choose which format string to
-use.
+This allows rdt_init_padding() to be removed, its work can be done
+by schemata_list_add(), allowing max_name_width and max_data_width
+to be moved out of core.c which has no counterpart after the
+move to fs.
+
+The logic for calculating max_name_width was moved in earlier patches,
+but the definition was not moved.
 
 Signed-off-by: James Morse <james.morse@arm.com>
 ---
 Changes since v2:
  * This patch is new.
 ---
- arch/x86/kernel/cpu/resctrl/core.c        |  4 ----
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c |  2 +-
- arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 12 ++++++++++++
- include/linux/resctrl.h                   |  4 ++--
- 4 files changed, 15 insertions(+), 7 deletions(-)
+ arch/x86/kernel/cpu/resctrl/core.c     | 26 --------------------------
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 11 +++++++++++
+ include/linux/resctrl.h                |  4 ++--
+ 3 files changed, 13 insertions(+), 28 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 02a51cce380f..4a5216a13b46 100644
+index 4a5216a13b46..4de7d20aa5aa 100644
 --- a/arch/x86/kernel/cpu/resctrl/core.c
 +++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -71,7 +71,6 @@ struct rdt_hw_resource rdt_resources_all[] = {
- 			.schema_fmt		= RESCTRL_SCHEMA_BITMAP,
- 			.cache_level		= 3,
- 			.domains		= domain_init(RDT_RESOURCE_L3),
--			.format_str		= "%d=%0*x",
- 		},
- 		.msr_base		= MSR_IA32_L3_CBM_BASE,
- 		.msr_update		= cat_wrmsr,
-@@ -84,7 +83,6 @@ struct rdt_hw_resource rdt_resources_all[] = {
- 			.schema_fmt		= RESCTRL_SCHEMA_BITMAP,
- 			.cache_level		= 2,
- 			.domains		= domain_init(RDT_RESOURCE_L2),
--			.format_str		= "%d=%0*x",
- 		},
- 		.msr_base		= MSR_IA32_L2_CBM_BASE,
- 		.msr_update		= cat_wrmsr,
-@@ -101,7 +99,6 @@ struct rdt_hw_resource rdt_resources_all[] = {
- 			.schema_fmt		= RESCTRL_SCHEMA_PERCENTAGE,
- 			.cache_level		= 3,
- 			.domains		= domain_init(RDT_RESOURCE_MBA),
--			.format_str		= "%d=%*u",
- 		},
- 	},
- 	[RDT_RESOURCE_SMBA] =
-@@ -112,7 +109,6 @@ struct rdt_hw_resource rdt_resources_all[] = {
- 			.schema_fmt		= RESCTRL_SCHEMA_MBPS,
- 			.cache_level		= 3,
- 			.domains		= domain_init(RDT_RESOURCE_SMBA),
--			.format_str		= "%d=%*u",
- 		},
- 	},
- };
-diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-index 30a4ff2b6392..380b88b69c6e 100644
---- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-@@ -483,7 +483,7 @@ static void show_doms(struct seq_file *s, struct resctrl_schema *schema, int clo
- 			ctrl_val = resctrl_arch_get_config(r, dom, closid,
- 							   schema->conf_type);
+@@ -44,12 +44,6 @@ static DEFINE_MUTEX(domain_list_lock);
+  */
+ DEFINE_PER_CPU(struct resctrl_pqr_state, pqr_state);
  
--		seq_printf(s, r->format_str, dom->id, max_data_width,
-+		seq_printf(s, schema->fmt_str, dom->id, max_data_width,
- 			   ctrl_val);
- 		sep = true;
+-/*
+- * Used to store the max resource name width and max resource data width
+- * to display the schemata in a tabular format
+- */
+-int max_name_width, max_data_width;
+-
+ /*
+  * Global boolean for rdt_alloc which is true if any
+  * resource allocation is enabled.
+@@ -222,7 +216,6 @@ static bool __get_mem_config_intel(struct rdt_resource *r)
+ 			return false;
+ 		r->membw.arch_needs_linear = false;
  	}
+-	r->data_width = 3;
+ 
+ 	if (boot_cpu_has(X86_FEATURE_PER_THREAD_MBA))
+ 		r->membw.throttle_mode = THREAD_THROTTLE_PER_THREAD;
+@@ -262,8 +255,6 @@ static bool __rdt_get_mem_config_amd(struct rdt_resource *r)
+ 	r->membw.throttle_mode = THREAD_THROTTLE_UNDEFINED;
+ 	r->membw.min_bw = 0;
+ 	r->membw.bw_gran = 1;
+-	/* Max value is 2048, Data width should be 4 in decimal */
+-	r->data_width = 4;
+ 
+ 	r->alloc_capable = true;
+ 
+@@ -283,7 +274,6 @@ static void rdt_get_cache_alloc_cfg(int idx, struct rdt_resource *r)
+ 	r->cache.cbm_len = eax.split.cbm_len + 1;
+ 	r->default_ctrl = BIT_MASK(eax.split.cbm_len + 1) - 1;
+ 	r->cache.shareable_bits = ebx & r->default_ctrl;
+-	r->data_width = (r->cache.cbm_len + 3) / 4;
+ 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
+ 		r->cache.arch_has_sparse_bitmasks = ecx.split.noncont;
+ 	r->alloc_capable = true;
+@@ -631,20 +621,6 @@ static int resctrl_arch_offline_cpu(unsigned int cpu)
+ 	return 0;
+ }
+ 
+-/*
+- * Choose a width for the resource name and resource data based on the
+- * resource that has widest name and cbm.
+- */
+-static __init void rdt_init_padding(void)
+-{
+-	struct rdt_resource *r;
+-
+-	for_each_alloc_capable_rdt_resource(r) {
+-		if (r->data_width > max_data_width)
+-			max_data_width = r->data_width;
+-	}
+-}
+-
+ enum {
+ 	RDT_FLAG_CMT,
+ 	RDT_FLAG_MBM_TOTAL,
+@@ -942,8 +918,6 @@ static int __init resctrl_late_init(void)
+ 	if (!get_rdt_resources())
+ 		return -ENODEV;
+ 
+-	rdt_init_padding();
+-
+ 	state = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+ 				  "x86/resctrl/cat:online:",
+ 				  resctrl_arch_online_cpu,
 diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index b12307d465bc..af9968328771 100644
+index af9968328771..4f8e20cc06eb 100644
 --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
 +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -2597,6 +2597,18 @@ static int schemata_list_add(struct rdt_resource *r, enum resctrl_conf_type type
- 	if (cl > max_name_width)
- 		max_name_width = cl;
+@@ -58,6 +58,12 @@ static struct kernfs_node *kn_mongrp;
+ /* Kernel fs node for "mon_data" directory under root */
+ static struct kernfs_node *kn_mondata;
  
-+	switch (r->schema_fmt) {
-+	case RESCTRL_SCHEMA_BITMAP:
-+		s->fmt_str = "%d=%0*x";
-+		break;
-+	case RESCTRL_SCHEMA_PERCENTAGE:
-+		s->fmt_str = "%d=%0*u";
-+		break;
-+	case RESCTRL_SCHEMA_MBPS:
-+		s->fmt_str = "%d=%0*u";
-+		break;
-+	}
++/*
++ * Used to store the max resource name width and max resource data width
++ * to display the schemata in a tabular format
++ */
++int max_name_width, max_data_width;
++
+ static struct seq_buf last_cmd_status;
+ static char last_cmd_status_buf[512];
+ 
+@@ -2600,15 +2606,20 @@ static int schemata_list_add(struct rdt_resource *r, enum resctrl_conf_type type
+ 	switch (r->schema_fmt) {
+ 	case RESCTRL_SCHEMA_BITMAP:
+ 		s->fmt_str = "%d=%0*x";
++		s->data_width = (r->cache.cbm_len + 3) / 4;
+ 		break;
+ 	case RESCTRL_SCHEMA_PERCENTAGE:
+ 		s->fmt_str = "%d=%0*u";
++		s->data_width = 3;
+ 		break;
+ 	case RESCTRL_SCHEMA_MBPS:
+ 		s->fmt_str = "%d=%0*u";
++		s->data_width = 4;
+ 		break;
+ 	}
+ 
++	max_data_width = max(max_data_width, s->data_width);
 +
  	INIT_LIST_HEAD(&s->list);
  	list_add(&s->list, &resctrl_schema_all);
  
 diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index 975345f3cd0a..abecbd92ac93 100644
+index abecbd92ac93..ddcd938972d2 100644
 --- a/include/linux/resctrl.h
 +++ b/include/linux/resctrl.h
-@@ -184,7 +184,6 @@ enum resctrl_schema_fmt {
+@@ -182,7 +182,6 @@ enum resctrl_schema_fmt {
+  * @membw:		If the component has bandwidth controls, their properties.
+  * @domains:		RCU list of all domains for this resource
   * @name:		Name to use in "schemata" file.
-  * @data_width:		Character width of data when displaying
+- * @data_width:		Character width of data when displaying
   * @default_ctrl:	Specifies default cache cbm or memory B/W percent.
-- * @format_str:		Per resource format string to show domain value
   * @schema_fmt:	Which format string and parser is used for this schema.
   * @evt_list:		List of monitoring events
-  * @cdp_capable:	Is the CDP feature available on this resource
-@@ -201,7 +200,6 @@ struct rdt_resource {
+@@ -198,7 +197,6 @@ struct rdt_resource {
+ 	struct resctrl_membw	membw;
+ 	struct list_head	domains;
  	char			*name;
- 	int			data_width;
+-	int			data_width;
  	u32			default_ctrl;
--	const char		*format_str;
  	enum resctrl_schema_fmt	schema_fmt;
  	struct list_head	evt_list;
- 	bool			cdp_capable;
-@@ -219,6 +217,7 @@ struct rdt_resource *resctrl_arch_get_resource(enum resctrl_res_level l);
-  *			   user-space
+@@ -218,6 +216,7 @@ struct rdt_resource *resctrl_arch_get_resource(enum resctrl_res_level l);
   * @list:	Member of resctrl_schema_all.
   * @name:	The name to use in the "schemata" file.
-+ * @fmt_str:	Format string to show domain value
+  * @fmt_str:	Format string to show domain value
++ * @data_width:	Character width of data when displaying
   * @conf_type:	Whether this schema is specific to code/data.
   * @res:	The resource structure exported by the architecture to describe
   *		the hardware that is configured by this schema.
-@@ -229,6 +228,7 @@ struct rdt_resource *resctrl_arch_get_resource(enum resctrl_res_level l);
- struct resctrl_schema {
+@@ -229,6 +228,7 @@ struct resctrl_schema {
  	struct list_head		list;
  	char				name[8];
-+	const char			*fmt_str;
+ 	const char			*fmt_str;
++	int				data_width;
  	enum resctrl_conf_type		conf_type;
  	struct rdt_resource		*res;
  	u32				num_closid;
