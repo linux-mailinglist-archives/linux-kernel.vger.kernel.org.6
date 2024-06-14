@@ -1,137 +1,98 @@
-Return-Path: <linux-kernel+bounces-214621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A4F908731
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:19:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C23A908734
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB3482860B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:19:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 336171C23E60
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CFD1922D5;
-	Fri, 14 Jun 2024 09:19:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E62B7E574;
-	Fri, 14 Jun 2024 09:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BDF1922DB;
+	Fri, 14 Jun 2024 09:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fZkJ3EAP"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F827E574;
+	Fri, 14 Jun 2024 09:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718356788; cv=none; b=HuN8RsFSsuga9wf+ZZglI5T8xmrN6SIIw6FNg7nNlLx01twKHUj3fI5jj5cWP3PoFIQGZOlZcdq9fo0LrTOdcjK51CiFE1eXye1ZsaJiKW1dEJ05FWYUmwaVL2o/l3aAD55N7TDTcF020t7X2aNQlebo/q76uk2Emvvoa9Ue+YA=
+	t=1718356849; cv=none; b=dHvlOsPA1sxr3zrIgd3zb4+KgC7oJCACzmnX58HrHt0WVLhHBej9kEZdLUvtQ7mn5oUOphXsTk2bR6w2RCplJb3ajSwIofgh7dkMtmvCRL/1lV7VLHMh8THrakE+8tZO4XNi5ADRKCp0kIsmUAGGEY5WalH1lI/5sLcqeRq2bLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718356788; c=relaxed/simple;
-	bh=GBUGIbROlFX1OdcaWHEELKAdQiLL5ncUEClh6MLQAww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QNwlgHehUruBEjgqZ4HDrd1GM3B1lCWYIOtas3LsRHuWxIHvWfuUY3V7dUu29VkF8XJwMr2mCoSeigpYi03KyJbLaemOpDGvI9UlyFJIlVzzRc9QCwfvEKWUPFIyDbguhyIO6rzkQY8RFl4ftC+6EGMA7g5KWLseHlw0/UEkGKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 47D68339;
-	Fri, 14 Jun 2024 02:20:10 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6730F3F5A1;
-	Fri, 14 Jun 2024 02:19:44 -0700 (PDT)
-Date: Fri, 14 Jun 2024 10:19:42 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v2 2/2] firmware: arm_scmi: mailbox: support P2A channel
- completion
-Message-ID: <ZmwLLoh1dbykOZZq@bogus>
-References: <20240510-scmi-notify-v2-0-e994cf14ef86@nxp.com>
- <20240510-scmi-notify-v2-2-e994cf14ef86@nxp.com>
+	s=arc-20240116; t=1718356849; c=relaxed/simple;
+	bh=HshnEux44yjCDxWGvCAW64D2WirZpynJCuI3AZAPo6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K/p8wB2l4QDaYKDtpfBsLBtZjQ25S1NoPE9h3l0kBhxFMcCB453w105rsPnj8nSEAXz/u++o9IeiQsktwBde+yxqjALUwXHsgzrF6zsFy042OaB6D7j7mzFkf73rE3PSvEcI+IL+o3mcrYrzwzjXfy1Xcm3qqp7Go2UJKyiaWXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fZkJ3EAP; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D8344FF808;
+	Fri, 14 Jun 2024 09:20:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718356845;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OIukM7uEAP6PimUjtjH6s1SAkBrtqNLDUxaSMzE1W20=;
+	b=fZkJ3EAPxMmd6VJBQSst59XRrdpqTPoXVtEfgrOB/Hbhs4Pa5aHMkv3FCG/dlRRpyyVyE3
+	yBWhcNpUVkbXz74M07qluyKfTa8cLBR8kzpYn9DgK/X9kPMk5j519Q2M7rozX6l+qaWLnr
+	9tJF938iWHWchRetO9g3rhLYtQvaQcUAAGJpcXvH5NLW/JRSNXQj7fUFlQ5gvL9+FttmLo
+	xLYF37w/2V5ndaRDjeS4indP59/QEW3OiHyBQ8sGuy4jWZkLmCeLpqAhgAjLjSrsFLh2xI
+	yQj4APgy3CQq7G3dekYTGO7p4RVP9xlUjFCDkXBap71WMOWduyaR+FobTL95+g==
+Date: Fri, 14 Jun 2024 11:20:41 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
+ <andrew@lunn.ch>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
+ <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
+ <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
+ <atenart@kernel.org>
+Subject: Re: [PATCH net-next v13 01/13] net: phy: Introduce ethernet link
+ topology representation
+Message-ID: <20240614112041.3560ebe2@fedora.home>
+In-Reply-To: <20240613175819.035a1e8e@kernel.org>
+References: <20240607071836.911403-1-maxime.chevallier@bootlin.com>
+	<20240607071836.911403-2-maxime.chevallier@bootlin.com>
+	<20240613175819.035a1e8e@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240510-scmi-notify-v2-2-e994cf14ef86@nxp.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Fri, May 10, 2024 at 11:19:48AM +0800, Peng Fan (OSS) wrote:
+Hello Jakub,
 
-There was some coding style error reported(unbalanced {}) which made me
-look at the code again. I don't think we need to splat out error.
+On Thu, 13 Jun 2024 17:58:19 -0700
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-> @@ -300,8 +326,30 @@ static void mailbox_fetch_notification(struct scmi_chan_info *cinfo,
->  static void mailbox_clear_channel(struct scmi_chan_info *cinfo)
->  {
->  	struct scmi_mailbox *smbox = cinfo->transport_info;
-> +	struct device *cdev = cinfo->dev;
-> +	struct mbox_chan *intr;
-> +	int ret;
->  
->  	shmem_clear_channel(smbox->shmem);
-> +
-> +	if (!shmem_channel_intr_enabled(smbox->shmem))
-> +		return;
-> +
-> +	if (smbox->chan_platform_receiver)
-> +		intr = smbox->chan_platform_receiver;
-> +	else if (smbox->chan)
-> +		intr = smbox->chan;
-> +	else {
-> +		dev_err(cdev, "Channel INTR wrongly set?\n");
-> +		return;
-> +	}
+> On Fri,  7 Jun 2024 09:18:14 +0200 Maxime Chevallier wrote:
+> > +static inline struct phy_device
+> > +*phy_link_topo_get_phy(struct net_device *dev, u32 phyindex)  
 > 
+> nit: * on the previous line
 
-If it is OK I would like to fix it up with below change.
+I'll address that, thanks for reviewing !
 
-Regards,
-Sudeep
-
--->8
-
-diff --git i/drivers/firmware/arm_scmi/mailbox.c w/drivers/firmware/arm_scmi/mailbox.c
-index adb69a6a0223..3bb3fba8f478 100644
---- i/drivers/firmware/arm_scmi/mailbox.c
-+++ w/drivers/firmware/arm_scmi/mailbox.c
-@@ -326,30 +326,25 @@ static void mailbox_fetch_notification(struct scmi_chan_info *cinfo,
- static void mailbox_clear_channel(struct scmi_chan_info *cinfo)
- {
-        struct scmi_mailbox *smbox = cinfo->transport_info;
--       struct device *cdev = cinfo->dev;
--       struct mbox_chan *intr;
-+       struct mbox_chan *intr_chan = NULL;
-        int ret;
-
-        shmem_clear_channel(smbox->shmem);
-
--       if (!shmem_channel_intr_enabled(smbox->shmem))
--               return;
--
-        if (smbox->chan_platform_receiver)
--               intr = smbox->chan_platform_receiver;
-+               intr_chan = smbox->chan_platform_receiver;
-        else if (smbox->chan)
--               intr = smbox->chan;
--       else {
--               dev_err(cdev, "Channel INTR wrongly set?\n");
-+               intr_chan = smbox->chan;
-+
-+       if (!(intr_chan && shmem_channel_intr_enabled(smbox->shmem)))
-                return;
--       }
-
--       ret = mbox_send_message(intr, NULL);
-+       ret = mbox_send_message(intr_chan, NULL);
-        /* mbox_send_message returns non-negative value on success, so reset */
-        if (ret > 0)
-                ret = 0;
-
--       mbox_client_txdone(intr, ret);
-+       mbox_client_txdone(intr_chan, ret);
- }
-
- static bool
-
+Maxime
 
