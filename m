@@ -1,192 +1,117 @@
-Return-Path: <linux-kernel+bounces-215039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90533908D94
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:37:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C35908D97
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:37:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE2C1F23EE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:37:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 000FC1F2407B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C07A10A1E;
-	Fri, 14 Jun 2024 14:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A14E10979;
+	Fri, 14 Jun 2024 14:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yu788xU+"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bQBCxnLh"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E812C1B963
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 14:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20A9EAE5;
+	Fri, 14 Jun 2024 14:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718375806; cv=none; b=U1kgiYb6oswfSfmT9wD7g6Bk5LE5v0M6hbvsU/r02NXdwec6M7TesjRjmSZEUz0j2AvwYnRKN578lehuAr1aF6evNwmdr4XxeGBJeX3zO4mLS+kFg6qezkmvFIDTsOFC4xt1Y8Oz7QB1dfx+b7EDN/O4eR8iDQ4gZZUuPga49/o=
+	t=1718375829; cv=none; b=lPwos7qJNc98tgqAEFUhXcHKBDqQVn5EPUao98zjKhTac0X7sHBkC1XY8wH9IW2BVlAKbiaX9sOtB/K0iHf7NI0btXuTQYYr8U4KIAwo8A9wHvttjfejvGiIIYJaFW7U5RkMECfwVQAlB+cB42eimNV5OTdmOwAFEi0bd3+yiGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718375806; c=relaxed/simple;
-	bh=i+2swah0zZgVXbkTe0iYaiZCqnlKaxQhq77fv0zxHYg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=D1Uad/7L2lHPl3wOFqf+9XrH/xtpGm9q79Eqdqzvn5/uCrI2XuOaxaoAlgqpoPRy5nETmKUDzytIZ9uICAVg4a5YNR5J9HHEKuy/WA2aEBGfn8hBllf8np/coMuVas7HiKSMTUaixjsq9Ge8qR2kYwH7sm9YvBM4wT7yVtu3reE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yu788xU+; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4218008c613so18257065e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 07:36:44 -0700 (PDT)
+	s=arc-20240116; t=1718375829; c=relaxed/simple;
+	bh=CqxEKJfvF0T3GUJBD8Jm6FdqD1+1lf3t3cWycwQdufc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ABs+jwV0fAywKi1F2vf/fUWAbtYwaTBNAA8WjkqYB1yqY6QTamFimzkMNsgs/swi301Y6YMcZ6fLs3wK+N7hg+nf12SDo8pjWO8QWfJ9lwq9EJzIj5uJWntZWf3CT4Y0wdNH/44bkQv+UXow6ei+ToTXY4D3nApt8VD0FimOcso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bQBCxnLh; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f6fd08e0f2so17084845ad.3;
+        Fri, 14 Jun 2024 07:37:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718375803; x=1718980603; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9pjHA27KSDFDPJxgz/w9YGYzEfUAZs5JLmVszAQFE64=;
-        b=Yu788xU+ImZuRg0jMvRS4JRm6usITv3JKkwnjZ5/JZwrhyfXTlSooPlDtKiiDRZl4d
-         4KSioArFHhraoEP1ZEnw4T5jieEjU6jA5btwyCA4B5rRz/WXLRw1t9uhyLTPtss+3hoi
-         B3V25qbYdetozLPf0YbENEhu98Y51ypCCKSfmGbrEJQIfdVX99Ljzb/v8C3XKNQBadFK
-         ranqmJpYAuQyXjCyzYaImLWuaqGAFrmxO++pXYMLxw7bQAgped/IGD4snFdt6+sRF+g6
-         o72jNL2A/TvN6DGh5uqsopF3W2Ml1PrIY1bGHYt2G83duYjdjsN31eVqR8LtOfzY6Sp6
-         p+uA==
+        d=gmail.com; s=20230601; t=1718375828; x=1718980628; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jGaRzs2YeDfss0WnIYDXvC9VI2jtEtGa0WdK+noWbmA=;
+        b=bQBCxnLhHDJP0aXIh42Q1qi9QeLdvMlV0Q6TYNIwrZbGTDP8lPhtSToSeBVDoRMhqF
+         /Fz8CSF+FJkTFwlGvHc2ZGyq2PuZIbhIJ44wrY2/yiwZ6S+zpSy6x7yuGoAMpQwu2nTi
+         8Zjf5TUDzzCHGfeLRbC8h0clN5QjRVvCjNzMK/bRw+PYd+nD1QyTMw8Z7uJWYfFJrowK
+         4AYt6U4PzX7s6POqvq3X7xPlvh3nW/vY32XZqX1T4G8gjXRSnwJ8N0+VUNiONvSxzFsN
+         kOnjo/T5Jm0DeSLY+bi+aq/pqbNp268tKZjkLlYtb9v5flDUVuKzVAVNZdi7NeRcXnUH
+         Ahqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718375803; x=1718980603;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9pjHA27KSDFDPJxgz/w9YGYzEfUAZs5JLmVszAQFE64=;
-        b=ck5u8//9GHtzkxDeWZZ5GHp2D7FUYcVHxNYAxWEAvyY7Xa3kiwM4V6lxwGYIaDE+bz
-         fj7b+xZCk+iszRDoAqgOySKI0GxJmlqCv6pxPJAzDJypllxzo5yZT55KX99qbMbaUwCL
-         FftFPVoXQGJNiRS7u6giN8128hf9S8cP6WFs9XcwR0biKp5Lf/AlwzUHAROha6Hm8RDv
-         YFQuwq9eHBeTdMLvVDDFWekaNaZ9sSjclpAVw25jaFPeR2sP9YshY//AAgOuHEFIDPxc
-         BZta2olKIKOp8wNpA+E0/FRPqSII24AIbFMMC8L3897nrK2FwP0W8h0A7EX5uu3gAvf7
-         6X7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWLd9QUKWn/eMhnAJNe1Avy7t8JvNhgqQRtxTIi8RRY3KYHxfdxrr8wF7EpT8EFnJKE7i12o5yosLoa7pkWr05NcFT2orRsnXaELtL8
-X-Gm-Message-State: AOJu0Ywsvg+aZ6KpFzy2/XTqZkfePD8AH5QlOhCe0fAViA0mVDrmaU7o
-	qCjQy09EBELI/t/Dquut3hP+esGwle8tjQy2ko+22SU8LuMZwzwaJReRVvYxfmE=
-X-Google-Smtp-Source: AGHT+IEzMKgUi8Y9YIfJCmkgzt1+FWf2beN5X++98O6QozELkl3Svx/Pv/K8danURzS2F0IaAL6yBw==
-X-Received: by 2002:a05:600c:1f92:b0:421:7407:d778 with SMTP id 5b1f17b1804b1-423048272eamr23600425e9.14.1718375803117;
-        Fri, 14 Jun 2024 07:36:43 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:261a:269e:a3a8:a2cc? ([2a01:e0a:982:cbb0:261a:269e:a3a8:a2cc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42285574e33sm44341635e9.1.2024.06.14.07.36.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 07:36:42 -0700 (PDT)
-Message-ID: <966d2474-57ea-4eca-baac-4b448c76fbf4@linaro.org>
-Date: Fri, 14 Jun 2024 16:36:39 +0200
+        d=1e100.net; s=20230601; t=1718375828; x=1718980628;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jGaRzs2YeDfss0WnIYDXvC9VI2jtEtGa0WdK+noWbmA=;
+        b=i0QERzmLNgEis+wELgOqNcgvoHRmgKSGovmQkeevWJHmW4SU+rp3nzLh0TilhCyBbS
+         13v7cc2LIQzns3wGWCoQwQ1v8aPs6dfX8KbnNrisEjd7GlCzg2zy/Jmb1Kzd1VyyFBJY
+         lQskW3B1CaB6idJS/Ps66bA0+o4NozO4aQds0qCDwj4w7WCCeeqe33G7t1atSn9RBjvG
+         FSHmu2zs9FmsrSVnIiwZpktf467s2fPL5VPxlJRXDNcRHVK9i+8p6beEKkVmfG2t1UPP
+         g2spcXH2SB09ndUxU0rZK0a2y4pinGFdMIKXWwkSwEmYH63BJl3sdQN7DMvsb8fzdDTZ
+         K4qg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCoR7WhrYIPUTRKwosXiSIFBHAr5Glz6Hpkpts6QbXS6U2VMcKXNPX7/6tgDQULbQl0cgrsVuWXnD9MOIj4y0xtMmNgt0sBUSZQ6acTuBDOdwkVDm/J8evJuUCLd6EiIGup86qAryJEWHB55DQ+0p1WnvB0u/IHdhoZaKGgkL4
+X-Gm-Message-State: AOJu0Yxho19iMXV9ztWUbsLGi6Go9K2/22UzRL130gUOWNx7ktO36KIz
+	1vlBGJ5XVVcCxPWo8Pk+Dsz7n/Vcl9oF6WLwHfmIhZ1MDBDOAoQx
+X-Google-Smtp-Source: AGHT+IFM/0oolWKKXUd4bovtkt9q6nvnm/QqHT/gKWlpnIFHnNWCfFTeLxW6RDMtiL2wY20/yExaOQ==
+X-Received: by 2002:a17:902:dac1:b0:1f7:3217:3539 with SMTP id d9443c01a7336-1f8627cc42dmr33252315ad.38.1718375827758;
+        Fri, 14 Jun 2024 07:37:07 -0700 (PDT)
+Received: from joaog-nb.. (201-13-139-53.dial-up.telesp.net.br. [201.13.139.53])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e6e42csm32720855ad.73.2024.06.14.07.37.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 07:37:07 -0700 (PDT)
+From: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Cc: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] iio: trigger: Fix condition for own trigger
+Date: Fri, 14 Jun 2024 11:36:58 -0300
+Message-Id: <20240614143658.3531097-1-jpaulo.silvagoncalves@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 02/22] dt-bindings: thermal: amlogic: reference
- thermal-sensor schema
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Guillaume La Roque <glaroque@baylibre.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Vasily Khoruzhick <anarsoul@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Anson Huang <Anson.Huang@nxp.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Amit Kucheria <amitk@kernel.org>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- Heiko Stuebner <heiko@sntech.de>, Biju Das <biju.das.jz@bp.renesas.com>,
- Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Pascal Paillet <p.paillet@foss.st.com>, Keerthy <j-keerthy@ti.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>,
- zhanghongchen <zhanghongchen@loongson.cn>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-sunxi@lists.linux.dev, imx@lists.linux.dev,
- linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com,
- Florian Fainelli <f.fainelli@gmail.com>,
- linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org>
- <20240614-dt-bindings-thermal-allof-v1-2-30b25a6ae24e@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240614-dt-bindings-thermal-allof-v1-2-30b25a6ae24e@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-On 14/06/2024 11:46, Krzysztof Kozlowski wrote:
-> Device is a thermal sensor and all in-tree DTS provide
-> '#thermal-sensor-cells', so reference the thermal-sensor.yaml to
-> simplify it, bring the common definition of '#thermal-sensor-cells'
-> property and require it.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->   Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml b/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
-> index 01fccdfc4178..e52fc40e215d 100644
-> --- a/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
-> @@ -11,6 +11,8 @@ maintainers:
->   
->   description: Binding for Amlogic Thermal
->   
-> +$ref: thermal-sensor.yaml#
-> +
->   properties:
->     compatible:
->       oneOf:
-> @@ -44,7 +46,7 @@ required:
->     - clocks
->     - amlogic,ao-secure
->   
-> -additionalProperties: false
-> +unevaluatedProperties: false
->   
->   examples:
->     - |
-> 
+From: João Paulo Gonçalves <joao.goncalves@toradex.com>
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+The condition for checking if triggers belong to the same IIO device to
+set attached_own_device is currently inverted, causing
+iio_trigger_using_own() to return an incorrect value. Fix it by testing
+for the correct return value of iio_validate_own_trigger().
+
+Cc: stable@vger.kernel.org
+Fixes: 517985ebc531 ("iio: trigger: Add simple trigger_validation helper")
+Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+---
+ drivers/iio/industrialio-trigger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iio/industrialio-trigger.c b/drivers/iio/industrialio-trigger.c
+index 16de57846bd9..2e84776f4fbd 100644
+--- a/drivers/iio/industrialio-trigger.c
++++ b/drivers/iio/industrialio-trigger.c
+@@ -315,7 +315,7 @@ int iio_trigger_attach_poll_func(struct iio_trigger *trig,
+ 	 * this is the case if the IIO device and the trigger device share the
+ 	 * same parent device.
+ 	 */
+-	if (iio_validate_own_trigger(pf->indio_dev, trig))
++	if (!iio_validate_own_trigger(pf->indio_dev, trig))
+ 		trig->attached_own_device = true;
+
+ 	return ret;
+--
+2.34.1
 
