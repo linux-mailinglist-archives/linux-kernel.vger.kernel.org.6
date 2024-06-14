@@ -1,77 +1,99 @@
-Return-Path: <linux-kernel+bounces-215211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5F2A908FCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:14:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEC93908FD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 447A5282E1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:14:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0941B29097
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1212B9A5;
-	Fri, 14 Jun 2024 16:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C174181CEA;
+	Fri, 14 Jun 2024 16:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHPu368e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="encO+XLL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8F16CDB3;
-	Fri, 14 Jun 2024 16:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0491802BF;
+	Fri, 14 Jun 2024 16:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718381650; cv=none; b=WhYIDgN4bZpHT8tLi4iFBN93+lhWOtB4rhm5eMtnVFDx892wG2E91IjjtMw2dJmHfSgaPxJAzMFN+jveGWq7NDAx66GM4JdIl3JYJkTe1E2Q3bDoWvMrQbiWKviY6Mph/jQCtLZJ5VOZXQbEu1iMGiK/0r929dh2eyBbISsjci4=
+	t=1718381685; cv=none; b=IpD8Tv/kzVg4DU7yj3L/WnKIIrwgTAWDWHJSS8Raj5T0ZVCbFwHexx3KAycFkrW0i/FZw14cQNPYvC37CLr9hst1cCkKUodEVc4fsG4Nmlb8ipkcrwEf6wyMEnZVb8SYeAUgGhLOGF0eNxoGJznbOkgRHfzHOmx+wfbkCNDZ/UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718381650; c=relaxed/simple;
-	bh=8hlqOeoJesdrM/kznHbtxymhcdzkztPlTxq5hmHvQlg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WNFle4RGdWJrTJAT5yTIJkSLMUQ/DGU8V7bsaHa4yj/gOfh7fzLpACMFGBQwc81SZszd5ShoxO8ieQL3nMfISwdoJA5OrqkapmMVx044kmQx49fuzusyBrrrzS9ceo4XZsK9pA3kb136F1mZi/gUoKxofFkabNzSwmhMZHkK6zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHPu368e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3EC6C2BD10;
-	Fri, 14 Jun 2024 16:14:06 +0000 (UTC)
+	s=arc-20240116; t=1718381685; c=relaxed/simple;
+	bh=6/hK32YyxB/oulfz7g+LC1o7De7LeZULQu3LvuNUbpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=mOAkbbAHTHnOQ5mNreM2Ai9R7aYD28JRi8fxyFdRUGm7TG5F01H58rRFL4o/ukIprEpz1EqA/LwzI9qzSQJf6vQFRiMo9kxuKTA0pq2RFPLr328rXb/x4VSN3GHZXKEJoQE4OJpDalNJ/563JFijYu/NUeXq9Frr1m88Wlg1+Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=encO+XLL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0D12C2BD10;
+	Fri, 14 Jun 2024 16:14:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718381649;
-	bh=8hlqOeoJesdrM/kznHbtxymhcdzkztPlTxq5hmHvQlg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DHPu368eBj4oxKcJlzs7NZzauYfn+j/NAjlcGAlQa3jM6ELI1pqpWmQ8GeUhNuimn
-	 mqRhjtdDP47FA6nds9JXRTbo9cank1WWDwcrNg58ugiiN8HkzAWEG8gdYxSVhU3hHI
-	 OAOd+SI9x0dYK46AxDEDhMaooi4i7hKAwOJyWj6ZH/dQl9yWbhJKyO/9poIZvxUmgI
-	 DZhIB/rL/sLCUlz187TLy3EWEFwOFE82luweUNbX55Qyu5d/FsWF95J/zukQM6jWXk
-	 tHML+8mBY3vzud6Z6IwyPS58ofq27aoUvomQp+U9cJYv5OcWg3xnQwdjxGCcZKG8NZ
-	 QC5JUeE0GZasQ==
-Date: Fri, 14 Jun 2024 17:14:04 +0100
-From: Simon Horman <horms@kernel.org>
-To: Adrian Moreno <amorenoz@redhat.com>
-Cc: netdev@vger.kernel.org, aconole@redhat.com, echaudro@redhat.com,
-	i.maximets@ovn.org, dev@openvswitch.org,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/9] net: sched: act_sample: add action
- cookie to sample
-Message-ID: <20240614161404.GS8447@kernel.org>
-References: <20240603185647.2310748-1-amorenoz@redhat.com>
- <20240603185647.2310748-3-amorenoz@redhat.com>
+	s=k20201202; t=1718381685;
+	bh=6/hK32YyxB/oulfz7g+LC1o7De7LeZULQu3LvuNUbpA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=encO+XLLfhclLh17ucfRA+1G9aZik3WtQrNyy4rlKnHJu4hNRHt4R43pIB5q86mHn
+	 6YmT4CewVfuozNLkvqBo1uinKkkObS+JYNQvYZq+sjtQWW7QR+f1sbZcXCXXUqygM+
+	 3vapXlNKDHrMWWyDRx+ogl/wc5ZpYMAt5lPYLAmvvnwJE5BhZN0rARQZvm2+H1pmOl
+	 Zp5D5IqmLygidHzHDYSuOeQl5JqXu6Vs4wtV5AtqScgYEnqmGmS/fpGqlktvgJ4zOi
+	 I9nuLYjzcIVwJHDH6s5PAz98cIgtmygUQIkUPEbvPhvjrWhhuPSn0qiIvjBQ9Fkbdn
+	 /VFthmuytJ4RQ==
+Date: Fri, 14 Jun 2024 11:14:43 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Sam Ravnborg <sam@ravnborg.org>, dakr@redhat.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v9 10/13] PCI: Give pci_intx() its own devres callback
+Message-ID: <20240614161443.GA1115997@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240603185647.2310748-3-amorenoz@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5d38858130e129fd3568e97d466a4b905e864f8f.camel@redhat.com>
 
-On Mon, Jun 03, 2024 at 08:56:36PM +0200, Adrian Moreno wrote:
-> If the action has a user_cookie, pass it along to the sample so it can
-> be easily identified.
+On Fri, Jun 14, 2024 at 10:09:46AM +0200, Philipp Stanner wrote:
+> On Thu, 2024-06-13 at 16:06 -0500, Bjorn Helgaas wrote:
+> > On Thu, Jun 13, 2024 at 01:50:23PM +0200, Philipp Stanner wrote:
+> > > pci_intx() is one of the functions that have "hybrid mode" (i.e.,
+> > > sometimes managed, sometimes not). Providing a separate pcim_intx()
+> > > function with its own device resource and cleanup callback allows
+> > > for
+> > > removing further large parts of the legacy PCI devres
+> > > implementation.
+> > > 
+> > > As in the region-request-functions, pci_intx() has to call into its
+> > > managed counterpart for backwards compatibility.
+> > > 
+> > > As pci_intx() is an outdated function, pcim_intx() shall not be
+> > > made
+> > > visible to drivers via a public API.
+> > 
+> > What makes pci_intx() outdated?  If it's outdated, we should mention
+> > why and what the 30+ callers (including a couple in drivers/pci/)
+> > should use instead.
 > 
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+> That is 100% based on Andy Shevchenko's (+CC) statement back from
+> January 2024 a.D. [1]
+> 
+> Apparently INTx is "old IRQ management" and should be done through
+> pci_alloc_irq_vectors() nowadays.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Do we have pcim_ support for pci_alloc_irq_vectors()?
 
+> [1] https://lore.kernel.org/all/ZabyY3csP0y-p7lb@surfacebook.localdomain/
 
