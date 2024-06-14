@@ -1,150 +1,130 @@
-Return-Path: <linux-kernel+bounces-214921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4649908C22
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:58:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D2F908C25
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C6801F23C43
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:58:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD89D1C21FD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5457719AA42;
-	Fri, 14 Jun 2024 12:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC96D19A29F;
+	Fri, 14 Jun 2024 12:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m3wNiDHn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLYIQ+d5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2DA19A29B;
-	Fri, 14 Jun 2024 12:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A37D1990C2;
+	Fri, 14 Jun 2024 12:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718369879; cv=none; b=dzrxjmkvU7wroek6ksB2/rWZRHproOCbMncsvusDVn5IC5QXY3hG0wyHHSyJZiBMkKuWc9hGuWTF5YeueMboF0MHxN42gqyleSSg/JABlzSCkPl5xnl4m4Z8UNUuI7CAms+8oVvIG/RVA0uHvXx5wdSCaHINymwigltZxqMkifM=
+	t=1718369956; cv=none; b=HD673VR/47ul3uXUkZDh4R8FHYLv3RTG0aCJicB1U5OCOc8CzLPw+Hiz1XunB6Ch6Vv/ynVIU9zAChlFfNo66rVthqrmm+Y4eGMPZWiA1WA2BLr/aU+uOp5vHImzLaAmrgspv3db3KefWJyKJu73xXUG0E69oEMsFzeDKbGj8hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718369879; c=relaxed/simple;
-	bh=HCRovoAa1zGmgG0Pz8GJKQKP/C/f+F6NWJoVTm3RPws=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=QOCSi3wnHcej3V44+xzSocQRbgsqyVVWHsJFvuyOferLXema36U7Q5LRNAlL7ETwnAjZ1MmmXSG4/Xs8JNLojtUBMNgbg8qL3bWhjh/CW3T+SjIAa5FMrpa3l+AYMJdng+2y86+I9wBRvMX7BDyqY46FsHJEw+rRI1bjI+QNYbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m3wNiDHn; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718369878; x=1749905878;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=HCRovoAa1zGmgG0Pz8GJKQKP/C/f+F6NWJoVTm3RPws=;
-  b=m3wNiDHnFbzkBn9QSdiwK3s4gouMFcaGrQcdl4ICjta5YAbjg1Ddx2Qr
-   /METDPss+PZQ7RxlnptGBRAVM6G8VF/3VvnQi961zlHRS7sxxM2peeOLK
-   E3HvJv+9+AXYYGKMP7aTIe0X3OQyKWRuiYiAUsKyp8SfuFpBVidYG91qw
-   cr/OLrWyv0CjK20h7iC++biqNZYGT9oDpJv5txjHKDRqvUIzenGLtdM+7
-   aIExSTvfZNm2ZawS1F/QlHcLQta4wmVBx41MS6uoBA+qLEb6jA2en4DOE
-   thjcQ4ocLS/os3TioWmEkjU+ZYKHJHG2nrr4m1YZmFA9nJnCVsJDUtxg1
-   Q==;
-X-CSE-ConnectionGUID: ID2t8JSIQXaKMGmhmiLXMA==
-X-CSE-MsgGUID: +VILcGYWTwmpUbPMJM0+5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="26649479"
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="scan'208";a="26649479"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 05:57:57 -0700
-X-CSE-ConnectionGUID: ND41G8VNRSCad+rFwIws0w==
-X-CSE-MsgGUID: +4i6ZaJFStGPQ2N0NBMx5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="scan'208";a="40456270"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.222])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 05:57:53 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 14 Jun 2024 15:57:49 +0300 (EEST)
-To: Dan Carpenter <dan.carpenter@linaro.org>
-cc: Frank Li <Frank.Li@nxp.com>, Jon Mason <jdmason@kudzu.us>, 
-    Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, 
-    Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Kishon Vijay Abraham I <kishon@kernel.org>, 
-    Bjorn Helgaas <bhelgaas@google.com>, ntb@lists.linux.dev, 
-    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] PCI: endpoint: Clean up error handling in
- vpci_scan_bus()
-In-Reply-To: <68e0f6a4-fd57-45d0-945b-0876f2c8cb86@moroto.mountain>
-Message-ID: <d8f510d1-db05-66a8-b379-464fdc817143@linux.intel.com>
-References: <68e0f6a4-fd57-45d0-945b-0876f2c8cb86@moroto.mountain>
+	s=arc-20240116; t=1718369956; c=relaxed/simple;
+	bh=72YwQ/7+JDf4h/iYndf9k40v1XEkmlBBOisQcZ77H1A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GeD26KlBVt37HWhbqx/KHJSUPgYQrP9rY9M8GicsDZUwr257lf0tjKPJ0nWNKN+NUsTyjstH2lhXXsbTpOnDQnA67VtO0jwbptw7uv0M9b0BzJVaLXTDi1GOfGTc+9KLruZDfvPB/J/RK/UhX5JLkeAGRePkTYYBsAJJkkMz4S4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLYIQ+d5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F39A1C2BD10;
+	Fri, 14 Jun 2024 12:59:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718369955;
+	bh=72YwQ/7+JDf4h/iYndf9k40v1XEkmlBBOisQcZ77H1A=;
+	h=From:Date:Subject:To:Cc:From;
+	b=PLYIQ+d5xIZ7PmFNaN1cYMs0XRZyn6wslfWglXTdxOBYanhqE9bVxqKot10ZQnE32
+	 h4aBUoa6GFiUBWVe+hlWxhwP9bHduoLHu71HH0/FzlJbFSxJJUcM31/ZjddCxaGIjM
+	 thHFpSIQYRhq5Yos46dF7KPrgo96/HD8ydTnOu9MKoaLhyhJ6rh8Lf5cZXN7leWiHW
+	 HSR6PqNivCzOQCPbNJz4jpNCU6D26IZNbq25AeEoOF+YU24QtfrJhBWvK5oOtY/+Nt
+	 R8aZERgk2cef6lW1wSDC+uWahBpx/YAM6dVatZHTTZl83tNiftFOv0CFG8fQOo7lru
+	 r7fmRSlpnmDzw==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Fri, 14 Jun 2024 08:59:10 -0400
+Subject: [PATCH] nfsd: fix error handling bug in nfsd_nl_pool_mode_get_doit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1335945687-1718369869=:1013"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240614-nfsd-next-v1-1-d360eea79d0b@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAJ0+bGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDM0MT3by04hTdvNSKEt0U0zSzpKSUNAMj8xQloPqCotS0zAqwWdGxtbU
+ ArPBQS1sAAAA=
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, linux-nfs@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1657; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=72YwQ/7+JDf4h/iYndf9k40v1XEkmlBBOisQcZ77H1A=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmbD6i98vkm1783UDy76Wu3K7VmDJyApKpxSjY/
+ VFk09Yks2KJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZmw+ogAKCRAADmhBGVaC
+ FTL9EADBYcNMnm3fO12t6XrT67eLIM59SZBrffA7Wwr2D4JfJPfVMAK37Mf7HtIQlBUXwsnzRQP
+ 0Zzeb1ZU1f5jiQsmCLv1Mahse9wk/p1MgLArGyn5bgp2U+YGcrAgyIFVzsX31Bu12v1puxLC56S
+ 7GiBgbhwPNlOrIKYcFgT4GqxrrDCAUaQkPaGXUfvjol+geJTVxTxw4Ik+CBGHGQThx4vrqDBscQ
+ vwplvv3BBs1N149HqJbhlZ6MF5XyRtH1y0UmY2xoN+G60vvmPP3J5ZcGBN6fBzLJfatoBZaMGTJ
+ vh9p4IqYCaV4c/xXUYqjo2rfMDBDWSmFcVhAk7UuU5HN0M68AfLi0gJg+4/d6PfeFoEqhxYw9MP
+ 8zA5d6aFIBjzpuv1URUkm2+0L9RrY+SeFlH03fZojxQ5qShfBf4GTcPeUpxGjXMI7TeaGLjMuWH
+ nV8xAaqJ+GUzt3tud59LnZhpiUdjBBoMCmipO46mliVVK67cfWBdPSXrDAcVmKtWy7X/fx5Za50
+ y6pdjo0Ti9bXhrjSmROAzyRcQZVd4Tt76HNH6MgwzPivdlKmxsiEb9W3B1poA2d1KcwaHnCUBKw
+ nQ64x9NUDb6PTfy+gcw16DHZmiCCqtPdlA1ifeyv27hZ111W8cHZ2VQO7jAg5JaRF4gzEIapsMj
+ 5qvhv7R9zEgRaUQ==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+As Jakub pointed out, I meant to use a bitwise or after the call to
+nla_put_string. Also move the sunrpc_get_pool_mode call up in the
+function, which simplifies the error handling a bit.
 
---8323328-1335945687-1718369869=:1013
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Cc: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Technically, I think the logical or works just as well as a bitwise or
+here, but this is cleaner and maybe slightly more efficient. Chuck,
+it's probably best to squash this into 84a570328ee.
+---
+ fs/nfsd/nfsctl.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-On Mon, 10 Jun 2024, Dan Carpenter wrote:
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index 187e9be77b78..e5d2cc74ef77 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -2214,6 +2214,9 @@ int nfsd_nl_pool_mode_get_doit(struct sk_buff *skb, struct genl_info *info)
+ 	void *hdr;
+ 	int err;
+ 
++	if (sunrpc_get_pool_mode(buf, ARRAY_SIZE(buf)) >= ARRAY_SIZE(buf))
++		return -ERANGE;
++
+ 	skb = genlmsg_new(GENLMSG_DEFAULT_SIZE, GFP_KERNEL);
+ 	if (!skb)
+ 		return -ENOMEM;
+@@ -2223,11 +2226,7 @@ int nfsd_nl_pool_mode_get_doit(struct sk_buff *skb, struct genl_info *info)
+ 	if (!hdr)
+ 		goto err_free_msg;
+ 
+-	err = -ERANGE;
+-	if (sunrpc_get_pool_mode(buf, ARRAY_SIZE(buf)) >= ARRAY_SIZE(buf))
+-		goto err_free_msg;
+-
+-	err = nla_put_string(skb, NFSD_A_POOL_MODE_MODE, buf) ||
++	err = nla_put_string(skb, NFSD_A_POOL_MODE_MODE, buf) |
+ 	      nla_put_u32(skb, NFSD_A_POOL_MODE_NPOOLS, nfsd_nrpools(net));
+ 	if (err)
+ 		goto err_free_msg;
 
-> Smatch complains about inconsistent NULL checking in vpci_scan_bus():
->=20
->     drivers/pci/endpoint/functions/pci-epf-vntb.c:1024 vpci_scan_bus()
->     error: we previously assumed 'vpci_bus' could be null (see line 1021)
->=20
-> Instead of printing an error message and then crashing we should return
-> an error code and clean up.  Also the NULL check is reversed so it
-> prints an error for success instead of failure.
->=20
-> Fixes: e35f56bb0330 ("PCI: endpoint: Support NTB transfer between RC and =
-EP")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/pci/endpoint/functions/pci-epf-vntb.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/=
-endpoint/functions/pci-epf-vntb.c
-> index 8e779eecd62d..7f05a44e9a9f 100644
-> --- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
-> +++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-> @@ -1018,8 +1018,10 @@ static int vpci_scan_bus(void *sysdata)
->  =09struct epf_ntb *ndev =3D sysdata;
-> =20
->  =09vpci_bus =3D pci_scan_bus(ndev->vbus_number, &vpci_ops, sysdata);
-> -=09if (vpci_bus)
-> -=09=09pr_err("create pci bus\n");
-> +=09if (!vpci_bus) {
-> +=09=09pr_err("create pci bus failed\n");
-> +=09=09return -EINVAL;
-> +=09}
-> =20
->  =09pci_bus_add_devices(vpci_bus);
-> =20
-> @@ -1338,10 +1340,14 @@ static int epf_ntb_bind(struct pci_epf *epf)
->  =09=09goto err_bar_alloc;
->  =09}
-> =20
-> -=09vpci_scan_bus(ntb);
-> +=09ret =3D vpci_scan_bus(ntb);
-> +=09if (ret)
-> +=09=09goto err_unregister;
-> =20
->  =09return 0;
-> =20
-> +err_unregister:
-> +=09pci_unregister_driver(&vntb_pci_driver);
->  err_bar_alloc:
->  =09epf_ntb_config_spad_bar_free(ntb);
+---
+base-commit: 84a570328eefd4df2e201deb5d43d152e0aca55a
+change-id: 20240614-nfsd-next-d5f6bbdf027d
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-
---=20
- i.
-
---8323328-1335945687-1718369869=:1013--
 
