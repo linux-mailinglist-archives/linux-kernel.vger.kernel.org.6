@@ -1,202 +1,106 @@
-Return-Path: <linux-kernel+bounces-215140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC39908E99
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:24:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68561908E9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C5D31F21ED0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:24:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EBCC1F22403
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFD416A38B;
-	Fri, 14 Jun 2024 15:23:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC37315FA73;
-	Fri, 14 Jun 2024 15:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3010B16C6A0;
+	Fri, 14 Jun 2024 15:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sHpA3rsH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678A015EFDF;
+	Fri, 14 Jun 2024 15:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718378607; cv=none; b=dqGrUL0+uhSQ9WsEBrs6S5YBkgxoxDxA7/zNtRpYjEqrLzoAKq/EzsDL3i/paWjfJGrtEF2EojlqreuMAgUt9JtK9tiFJA4PqDtTvtFbwpWo6Q7rJF79qYh+KXqQK0cJaAn4FTw+H0kZwLRVmrwHtEGqn/E1JDVZioyYKzlQIzQ=
+	t=1718378618; cv=none; b=D9/mxI0VvFOxka9tDBDs9Zg/XStgKQjLzz2tRgKYy/xQe8+Rsk6vSC5xX8Mfm1AYJa11A9vS4gyd5q6HsDe+ic7WtwzJsoAbZGbrQ5q2GbmQZ+6YZfL82cUUMfbwt1fmH5ymXYaTHUCwrFex+WkffyH8Er2/Xhb8u8XlKkFkA/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718378607; c=relaxed/simple;
-	bh=EL0yGZvLp178iwjqGXn1neHj8u1yfXcPxngFTq3rdXU=;
+	s=arc-20240116; t=1718378618; c=relaxed/simple;
+	bh=D8SdDyZNxqPcDlfI0tBoGYiGmsRowmEdQjGm0ySvkak=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rbbc/vUDdmFPm6alZvJ13IJYjpjTkiIEiVe0dIbNly29qBB2XaYmGU2SfGGt4z6WZe3nVu+n70V7gYNNRZ3ISjkwQB6oxMyLipMstov4QinOLzobH0LVnEqLBNhGTbu9j/3Dth619QhIuhUxEHyVxUUdavIsdshzhawn2m8y72Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C7FF4FEC;
-	Fri, 14 Jun 2024 08:23:48 -0700 (PDT)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A5DE43F5A1;
-	Fri, 14 Jun 2024 08:23:21 -0700 (PDT)
-Date: Fri, 14 Jun 2024 16:23:18 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	will@kernel.org, catalin.marinas@arm.com,
-	Mark Brown <broonie@kernel.org>, James Clark <james.clark@arm.com>,
-	Rob Herring <robh@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Suzuki Poulose <suzuki.poulose@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>, kvmarm@lists.linux.dev
-Subject: Re: [PATCH V18 6/9] KVM: arm64: nvhe: Disable branch generation in
- nVHE guests
-Message-ID: <ZmxgZqxXWnRqwbDC@J2N7QTR9R3.cambridge.arm.com>
-References: <20240613061731.3109448-1-anshuman.khandual@arm.com>
- <20240613061731.3109448-7-anshuman.khandual@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gih61EeyzpPTpTGolZy6AdY6oR3N13U0OUOvJDkdHGBPEiUUfhHJydo9EEqyGbbM1OoosqYL5OrVom7wg0J/matmY/mTmVE/JEHknRy57p3WiYRNtloH9sZyL/3PywKKNinytD7C39e3wePuSWemONcwXgeN966M4O/bn67T/kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sHpA3rsH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FFA3C2BD10;
+	Fri, 14 Jun 2024 15:23:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718378618;
+	bh=D8SdDyZNxqPcDlfI0tBoGYiGmsRowmEdQjGm0ySvkak=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sHpA3rsHkpa6n6ixnEQO/NMuV/ZkYgZKABpMdhSMNnw5sd8BMJIJmB0IeNM2bVWTV
+	 8pt8diEECJ6RQLI+eaOzpI+0wzuHj1ZcD6cfZVsNNp3j0cIhdH0abpP1MzFw3YS192
+	 Bn0/xMXehyj0xc0h+LCZsMLv/mEFrFFooNnOBORaKEdtGYxj13kFgplmulbDkBr/0T
+	 mqdtEoxMQKPcwdS3fmdGN6hMMGvVw78VY0hxpjnzs3/cdoXFwOOvc9HQYK9k97Jz6i
+	 F9/z3o3bMhh9hJFqjDkkAxwqTG18R57nHz6Y7Gj+mv8P9DdxZazw5cNLSu2e5BrhVv
+	 vgNxLYRGfQFSw==
+Date: Fri, 14 Jun 2024 16:23:34 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	James Morse <james.morse@arm.com>,
+	Aishwarya TCV <Aishwarya.TCV@arm.com>
+Subject: Re: selftests: arm64: fp-stress: KERNEL-1-0/3-0/4-0/6-0 - gcc-13 -
+ Failed - clang-pass
+Message-ID: <Zmxgds7Ms5K6wmkj@finisterre.sirena.org.uk>
+References: <CA+G9fYtobhBTnH1=2oHxesLfyYd2VGK55nJn+iniWPj2vyNCOQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="HD+u2jxYKMXTxpY3"
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYtobhBTnH1=2oHxesLfyYd2VGK55nJn+iniWPj2vyNCOQ@mail.gmail.com>
+X-Cookie: Your love life will be... interesting.
+
+
+--HD+u2jxYKMXTxpY3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240613061731.3109448-7-anshuman.khandual@arm.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 11:47:28AM +0530, Anshuman Khandual wrote:
-> Disable the BRBE before we enter the guest, saving the status and enable it
-> back once we get out of the guest. This avoids capturing branch records in
-> the guest kernel or userspace, which would be confusing the host samples.
+On Thu, Jun 13, 2024 at 07:21:15PM +0530, Naresh Kamboju wrote:
+> The following selftests: arm64 tests failed on FVP-aemva test and kernel
+> built with gcc-13 but pass with clang.
+>=20
+> arm64_fp-stress_KERNEL-1-0/3-0/4-0/6-0 - gcc-13 - Failed
+> arm64_fp-stress_KERNEL-1-0/3-0/4-0/6-0 - clang-18 - Pass
 
-It'd be good to explain why we need to do this for nVHE, but not for
-VHE. I *think* that you're relying on BRBCR_EL2.EL0HBRE being ignored
-when HCR_EL2.TGE == 0, and BRBCR_EL1.E{1,0}BRE being initialized to 0
-out-of-reset.
+This seems vanishingly unlikely to be compiler related without some
+other information suggesting why it might compiler related.  It is more
+likely that your GCC run suffered the very intermittent glitch which
+we've been aware of for a while.
 
-What should a user do if they *want* samples from a guest? Is that
-possible to do on other architectures, or do is that always prevented?
+--HD+u2jxYKMXTxpY3
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Mark.
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Oliver Upton <oliver.upton@linux.dev>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: kvmarm@lists.linux.dev
-> Cc: linux-arm-kernel@lists.infradead.org
-> CC: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ----
-> Changes in V18:
-> 
-> - Used host_data_ptr() to access host_debug_state.brbcr_el1 register
-> - Changed DEBUG_STATE_SAVE_BRBE to use BIT(7)
-> - Reverted back iflags as u8
-> 
->  arch/arm64/include/asm/kvm_host.h  |  3 +++
->  arch/arm64/kvm/debug.c             |  5 +++++
->  arch/arm64/kvm/hyp/nvhe/debug-sr.c | 31 ++++++++++++++++++++++++++++++
->  3 files changed, 39 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 36b8e97bf49e..db922c10bd2a 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -579,6 +579,7 @@ struct kvm_host_data {
->  		u64 trfcr_el1;
->  		/* Values of trap registers for the host before guest entry. */
->  		u64 mdcr_el2;
-> +		u64 brbcr_el1;
->  	} host_debug_state;
->  };
->  
-> @@ -842,6 +843,8 @@ struct kvm_vcpu_arch {
->  #define DEBUG_STATE_SAVE_SPE	__vcpu_single_flag(iflags, BIT(5))
->  /* Save TRBE context if active  */
->  #define DEBUG_STATE_SAVE_TRBE	__vcpu_single_flag(iflags, BIT(6))
-> +/* Save BRBE context if active  */
-> +#define DEBUG_STATE_SAVE_BRBE	__vcpu_single_flag(iflags, BIT(7))
->  
->  /* SVE enabled for host EL0 */
->  #define HOST_SVE_ENABLED	__vcpu_single_flag(sflags, BIT(0))
-> diff --git a/arch/arm64/kvm/debug.c b/arch/arm64/kvm/debug.c
-> index ce8886122ed3..8fa648943f0f 100644
-> --- a/arch/arm64/kvm/debug.c
-> +++ b/arch/arm64/kvm/debug.c
-> @@ -336,10 +336,15 @@ void kvm_arch_vcpu_load_debug_state_flags(struct kvm_vcpu *vcpu)
->  	if (cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_TraceBuffer_SHIFT) &&
->  	    !(read_sysreg_s(SYS_TRBIDR_EL1) & TRBIDR_EL1_P))
->  		vcpu_set_flag(vcpu, DEBUG_STATE_SAVE_TRBE);
-> +
-> +	/* Check if we have BRBE implemented and available at the host */
-> +	if (cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_BRBE_SHIFT))
-> +		vcpu_set_flag(vcpu, DEBUG_STATE_SAVE_BRBE);
->  }
->  
->  void kvm_arch_vcpu_put_debug_state_flags(struct kvm_vcpu *vcpu)
->  {
->  	vcpu_clear_flag(vcpu, DEBUG_STATE_SAVE_SPE);
->  	vcpu_clear_flag(vcpu, DEBUG_STATE_SAVE_TRBE);
-> +	vcpu_clear_flag(vcpu, DEBUG_STATE_SAVE_BRBE);
->  }
-> diff --git a/arch/arm64/kvm/hyp/nvhe/debug-sr.c b/arch/arm64/kvm/hyp/nvhe/debug-sr.c
-> index 53efda0235cf..97e861df1b45 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/debug-sr.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/debug-sr.c
-> @@ -79,6 +79,32 @@ static void __debug_restore_trace(u64 trfcr_el1)
->  	write_sysreg_el1(trfcr_el1, SYS_TRFCR);
->  }
->  
-> +static void __debug_save_brbe(u64 *brbcr_el1)
-> +{
-> +	*brbcr_el1 = 0;
-> +
-> +	/* Check if the BRBE is enabled */
-> +	if (!(read_sysreg_el1(SYS_BRBCR) & (BRBCR_ELx_E0BRE | BRBCR_ELx_ExBRE)))
-> +		return;
-> +
-> +	/*
-> +	 * Prohibit branch record generation while we are in guest.
-> +	 * Since access to BRBCR_EL1 is trapped, the guest can't
-> +	 * modify the filtering set by the host.
-> +	 */
-> +	*brbcr_el1 = read_sysreg_el1(SYS_BRBCR);
-> +	write_sysreg_el1(0, SYS_BRBCR);
-> +}
-> +
-> +static void __debug_restore_brbe(u64 brbcr_el1)
-> +{
-> +	if (!brbcr_el1)
-> +		return;
-> +
-> +	/* Restore BRBE controls */
-> +	write_sysreg_el1(brbcr_el1, SYS_BRBCR);
-> +}
-> +
->  void __debug_save_host_buffers_nvhe(struct kvm_vcpu *vcpu)
->  {
->  	/* Disable and flush SPE data generation */
-> @@ -87,6 +113,9 @@ void __debug_save_host_buffers_nvhe(struct kvm_vcpu *vcpu)
->  	/* Disable and flush Self-Hosted Trace generation */
->  	if (vcpu_get_flag(vcpu, DEBUG_STATE_SAVE_TRBE))
->  		__debug_save_trace(host_data_ptr(host_debug_state.trfcr_el1));
-> +	/* Disable BRBE branch records */
-> +	if (vcpu_get_flag(vcpu, DEBUG_STATE_SAVE_BRBE))
-> +		__debug_save_brbe(host_data_ptr(host_debug_state.brbcr_el1));
->  }
->  
->  void __debug_switch_to_guest(struct kvm_vcpu *vcpu)
-> @@ -100,6 +129,8 @@ void __debug_restore_host_buffers_nvhe(struct kvm_vcpu *vcpu)
->  		__debug_restore_spe(*host_data_ptr(host_debug_state.pmscr_el1));
->  	if (vcpu_get_flag(vcpu, DEBUG_STATE_SAVE_TRBE))
->  		__debug_restore_trace(*host_data_ptr(host_debug_state.trfcr_el1));
-> +	if (vcpu_get_flag(vcpu, DEBUG_STATE_SAVE_BRBE))
-> +		__debug_restore_brbe(*host_data_ptr(host_debug_state.brbcr_el1));
->  }
->  
->  void __debug_switch_to_host(struct kvm_vcpu *vcpu)
-> -- 
-> 2.25.1
-> 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZsYHUACgkQJNaLcl1U
+h9CAWwf/a0pSAw+DbWzM6Fe/PkhNmHLgbX+JX3F3jqYiNkqSry4njPH92PLX89Bx
+1FAcozNEF+GBfOMVJMyv9dkcE+YD8zIOC34vW5VYcHHnSsMXNZT9RrWWs6dWG0LS
+0FqH0mGjAJwk0ainYOBk/d+94Re0NP5vpHIOhqZ+vc+KM5t0bGRV/iIE6xiGlRqD
+40abY7vf9rdtMi+2qMLgR98VHI/32g2W3sPOjQSNogZKkw70s7txIfhoqIyA0WNK
+blLo5P4ehHnFwiq/JnjAtqKjc7Bgbs/l4E51jUDmomJ8LUcDU04MVVNd1WiGPSZW
+7+zPuhIcdrDn/AxrovzeewO1wloBuA==
+=i8mz
+-----END PGP SIGNATURE-----
+
+--HD+u2jxYKMXTxpY3--
 
