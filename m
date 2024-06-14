@@ -1,160 +1,94 @@
-Return-Path: <linux-kernel+bounces-214470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD2F1908528
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:35:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A00908536
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F30C28A267
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:35:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 760A628A89B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B6E1482FE;
-	Fri, 14 Jun 2024 07:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA2C149C57;
+	Fri, 14 Jun 2024 07:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="mQoUF+6C"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9HtjLDh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC7F14659D;
-	Fri, 14 Jun 2024 07:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DDE1487E7;
+	Fri, 14 Jun 2024 07:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718350538; cv=none; b=GHfVqSARLbI6ciY6hrr3r+hE1EgBYyH2mwnHd8AMJHp34zYWA4sUW65dWFVA5hC0t8AIWcEgoRPJ/9zd5R+5K43bzVT4MvwRL7810iLh8DkkLMenDx/Bf83EKDecqSQAFz37Stpjr6M9EzEXYd7DUFE20gFPJ4pkxr+MTQaLL7g=
+	t=1718350653; cv=none; b=D2iBYuaRahyVkwtNJ+egwY24TBeHXVgneH/Pw0zdEkagUKzosODXXCzRyGNrZoGEfTTmh3ei2BQrdz5nlcKDA9mi4fPt4YFvIMJvUoD9/ZwlH2I7w0DJQLwZao3IV5fVEOAQAs7/oQwx4F8ps+zgpGltAXvzzhubG/V0xWuwZYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718350538; c=relaxed/simple;
-	bh=zzbz9Wanpkr35AX5R0+HsXH0pco4+GUM0zXv7LOp2R0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cyixTf9V0gH1bSG5kjn2E9ldgl3t7NQsXyC4o6+67IRyCkgR/Amz1JJRo88HZXoKV2rcGSykcoCvFWvmzCdGLHZgSQwzlOviFgWiXubARt43Sx4XAx1a6d4p5TzQwm/2jMy4ZDGTvP5FwGMYHpz+aI35/HFJu/W3wHlnD+aX2Ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=mQoUF+6C; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1718350538; x=1749886538;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=P7p3pFfy9IomOWnf8uMXjciduYMrQ/Z31QJee1iffv4=;
-  b=mQoUF+6CXvTY47t23t19UvwgiJCiHc7PP5wCzKAL3hd9nWNECBsyDFmj
-   ejQ3GKu92mUaqWmZRa0KYTBrA1q9XIqZVIAyoOmS8PKfTpjBP05oWGmEQ
-   V3rWfB4+ohWEYJj46SWK3LRMYjdvDndHB4IbSyR6uB4ijpXlI5+2nsuzi
-   o=;
-X-IronPort-AV: E=Sophos;i="6.08,237,1712620800"; 
-   d="scan'208";a="413389174"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 07:35:35 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.10.100:45130]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.7.69:2525] with esmtp (Farcaster)
- id 6930515c-e5e5-4621-a4ba-ecf3e8a0f2ba; Fri, 14 Jun 2024 07:35:33 +0000 (UTC)
-X-Farcaster-Flow-ID: 6930515c-e5e5-4621-a4ba-ecf3e8a0f2ba
-Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 14 Jun 2024 07:35:33 +0000
-Received: from dev-dsk-sieberf-metal-1a-7543e84d.eu-west-1.amazon.com
- (172.19.116.227) by EX19D003EUB001.ant.amazon.com (10.252.51.97) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Fri, 14 Jun
- 2024 07:35:30 +0000
-From: Fernand Sieber <sieberf@amazon.com>
-To:
-CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	Fernand Sieber <sieberf@amazon.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH] perf: sched map skips redundant lines with cpu filters
-Date: Fri, 14 Jun 2024 09:35:17 +0200
-Message-ID: <20240614073517.94974-1-sieberf@amazon.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1718350653; c=relaxed/simple;
+	bh=rTMS19bsUEwOUdxCnpYu3VKi8NTm93CaEq6q+AaxU1E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TGbE+g7vrR3hL8jQLZ1Oi44CwP+vO5DkQK7+dUCUM13wplC42Jux8EwiIloyEL1/846JcnfHD+Am6u0uqJGqfdr7zhqXFRpmdm9MEZb9SzTNyueU76aljPgVWqSAQgrn++lG6T+vLzsfCRwh7HOtXX0Q6JLdupkWYNfGuve9tTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F9HtjLDh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B76FC2BD10;
+	Fri, 14 Jun 2024 07:37:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718350652;
+	bh=rTMS19bsUEwOUdxCnpYu3VKi8NTm93CaEq6q+AaxU1E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F9HtjLDhWA845v9L9+m05Oj8QHzGblNnaL150upEU1mANsiTRmIzcswrozdhvAEpB
+	 myjM7sOvlZdATnO19Ey+xrpRM46CVaKCE3j0wcN6YHnD2HpvLvFn7UIatfmpLIEBuB
+	 CUNG/E7vj0mDzUsc3HVAndQJ+m/gUehnneuQvPRICiWmf3dvcXnuboS+C8JtUI2FQy
+	 90CDKWfl9h5BqSxnqBV+FSxFxShTRt98CqVdZ3C7SMHbcvr5j+QCZPAJzpZjkgPFXZ
+	 zlRMrsaQ94w+CkfKkIWUYU97fVOa5v5wrjTCn/9SbOr1Y1oTL0rNDat/Cso+ePK2uM
+	 JGk8QnyTD6Jew==
+Date: Fri, 14 Jun 2024 08:37:26 +0100
+From: Lee Jones <lee@kernel.org>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] Immutable branch between MFD and Regulator due for
+ the v6.10 merge window
+Message-ID: <20240614073726.GZ2561462@google.com>
+References: <20240608155526.12996-1-johan+linaro@kernel.org>
+ <20240614073306.GY2561462@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D038UWC001.ant.amazon.com (10.13.139.213) To
- EX19D003EUB001.ant.amazon.com (10.252.51.97)
+In-Reply-To: <20240614073306.GY2561462@google.com>
 
-perf sched map supports cpu filter.
-However, even with cpu filters active, any context switch currently
-corresponds to a separate line.
-As result, context switches on irrelevant cpus result to redundant lines,
-which makes the output particlularly difficult to read on wide
-architectures.
+On Fri, 14 Jun 2024, Lee Jones wrote:
 
-Fix it by skipping printing for irrelevant CPUs.
+> Enjoy!
+> 
+> The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+> 
+>   Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-regulator-pm8008-v6.10
 
-Example snippet of output before fix:
+Whoa!  We're en-route to v6.11 already.
 
-  *B0       1.461147 secs
-   B0
-   B0
-   B0
-  *G0       1.517139 secs
+Kill this one - I'll submit a new one.
 
-After fix:
-
-  *B0       1.461147 secs
-  *G0       1.517139 secs
-
-Signed-off-by: Fernand Sieber <sieberf@amazon.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
----
- tools/perf/builtin-sched.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index 7422c930abaf..aa59f763ca46 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -1594,8 +1594,6 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
- 
- 	sched->curr_thread[this_cpu.cpu] = thread__get(sched_in);
- 
--	printf("  ");
--
- 	new_shortname = 0;
- 	if (!tr->shortname[0]) {
- 		if (!strcmp(thread__comm_str(sched_in), "swapper")) {
-@@ -1622,6 +1620,11 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
- 		new_shortname = 1;
- 	}
- 
-+	if (sched->map.cpus && !perf_cpu_map__has(sched->map.cpus, this_cpu))
-+		goto out;
-+
-+	printf("  ");
-+
- 	for (i = 0; i < cpus_nr; i++) {
- 		struct perf_cpu cpu = {
- 			.cpu = sched->map.comp ? sched->map.comp_cpus[i].cpu : i,
-@@ -1656,9 +1659,6 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
- 			color_fprintf(stdout, color, "   ");
- 	}
- 
--	if (sched->map.cpus && !perf_cpu_map__has(sched->map.cpus, this_cpu))
--		goto out;
--
- 	timestamp__scnprintf_usec(timestamp, stimestamp, sizeof(stimestamp));
- 	color_fprintf(stdout, color, "  %12s secs ", stimestamp);
- 	if (new_shortname || tr->comm_changed || (verbose > 0 && thread__tid(sched_in))) {
-@@ -1675,9 +1675,9 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
- 	if (sched->map.comp && new_cpu)
- 		color_fprintf(stdout, color, " (CPU %d)", this_cpu);
- 
--out:
- 	color_fprintf(stdout, color, "\n");
- 
-+out:
- 	thread__put(sched_in);
- 
- 	return 0;
 -- 
-2.40.1
-
+Lee Jones [李琼斯]
 
