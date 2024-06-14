@@ -1,141 +1,339 @@
-Return-Path: <linux-kernel+bounces-214149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14241908038
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98FB890803D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17C1B1C21785
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:45:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F4931C21895
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243BE1C3D;
-	Fri, 14 Jun 2024 00:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9892E4A29;
+	Fri, 14 Jun 2024 00:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="eGWo8Zva"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VSQ0vAHr"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3F236C
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 00:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2411C27
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 00:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718325931; cv=none; b=DWZPrQpZnXLNjZlfuZzmk0VUMA8bINttu2pl6qcuVBUs672i1D0FfShX+QPwmEwK4vYqF3IvIn7hEiUMV5mCEH9ZTFkyHI3pNZmHuwMARhUJKxrnOLUR6ExVuG0suBCBjq37GQArYuW33GJVWpa0p6fGFBCt52xI9SgHfeU1yoY=
+	t=1718325979; cv=none; b=lYoupqeAqm/7E4mFocguEAIkck62lXVLKcOXyDxDZ3yQ4QUQL9AbWwuzUlKIxYl/FKq5cU486CF4PXN6sd3AUykrZ9DesDadOkK9X42hRoKzjk02xe+CXwgpE1Uc8Zl5TNb3MJ3W7b9B2TeYhtHlP9xTkdr8ZcJVaLJND2r6I3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718325931; c=relaxed/simple;
-	bh=+jMS/xbYOImcqZhfvBmN0HrXors2OJkh7ZVEIcwy8Yc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nYzU99bLcl3uuC88wqQ7CoXvlPVFtCZNPwy4eJWWZR1tkE4+6r0NAWNa3pLkeYO7qj7188Io2OEBDN87iMtzqxDndcQTv+VIr3v73vn/BbrUUBeLIx3gM9seKbcRQ6B37/04w604Czt0iyadypvGdC++u3S6vZSRJvswzzl/SYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=eGWo8Zva; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718325926; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=BSHGNJJW9QoXcHWB3k8CQMWS0eij0PY1paTcRNlGmA0=;
-	b=eGWo8ZvauAbAiOEB42aoHczSD2QWUGLKEI9iCMrc0DlsBFcIs69CKpdlBOoY+au162myxfeI3n+uVV+4s0bKJxWjlMbmZeyOI9Ue4pg9qbYvbsDQnNBccTqWwBSTUybKXhOKYRDRCUfXDYt70ndnrIjNjkHTb54ldhCJdZiVDWI=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R861e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W8PHSgM_1718325885;
-Received: from 30.97.56.56(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8PHSgM_1718325885)
-          by smtp.aliyun-inc.com;
-          Fri, 14 Jun 2024 08:45:25 +0800
-Message-ID: <03b1c415-b86b-482c-ae9d-f8d0730fafbe@linux.alibaba.com>
-Date: Fri, 14 Jun 2024 08:45:25 +0800
+	s=arc-20240116; t=1718325979; c=relaxed/simple;
+	bh=FaJMwA7FZEfroEEokBWOVEECEfwQ7UZ4ZpeRN/2/PiE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LIaOTPJv/GTzG2iLojCorq3bYnjg19VwWdvi2zSdL6c4S9Ffe8uGaug5kvEb1xrkOD4z1NAgoQQ7ZwRTqL22KLpehxOMt83Khci9qfPTQ1XvkkleeJlu7+5UVUOaQcXYkxPWf2wixWzDH6FFxY9WWZbr84do2Ma+NxE0VMKof7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VSQ0vAHr; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4400cc0dad1so208891cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 17:46:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718325977; x=1718930777; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Asxs/kZeDuFqFuPWDIAMNDEd8GKDcr8694xjcmYE3Ms=;
+        b=VSQ0vAHrheJsxMtMCSFrSWSabzeitxXTG6H2q2uUZEeVxl0fzWpK3Z6E9bjo4nltFm
+         Q4FDA33LurGHzLO6xLqzSYdi2wzny0WSB/+7CrIGf+OVtDG5vTDKCoXRSNzBEqBb5zPF
+         gVQmFWGqFVCBWntMYE1z7b7JRyC0orLx/eaE/ernv59uWb+rOIDMGTwe0ZsFiZeQ71XL
+         Yl6W/yfTb1u8izV7VLonH2oMUc6ZZS3D0iNTlZNZsVo3el6Bc4fUU/xFrb5JvXbmgGu4
+         5BtK2mLd8w1mXNXdTv7gfL+SQEC5uEtyFE3qJur4Vt6rp1CGqB2OlfrZNofs4eNrTtUl
+         OmxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718325977; x=1718930777;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Asxs/kZeDuFqFuPWDIAMNDEd8GKDcr8694xjcmYE3Ms=;
+        b=fqtCREkipnZ6McKzOn9wAxOaMRxI+RLQn6Y1D5Zr31isb9+9RIZMpZCBJxwGZSR2mj
+         N3qqj0N93lJhnGkqa78gMT+B0V7hfKYNb7syJsRPPvrjLeQtpmDVeUqNRE4Aa0g2mjVf
+         V3zDGRs/SBJ9vkXQiL1p2heFQUsESYt562j5CcJb3QusYuoeuVuU2btg+iYwkERFC9S0
+         pYTGuQqzjk50KG1UPbuXXMfnKaa3LX83RUNX9i4FzOPHx7Db4JYlBy9rs6VEmk94jEVk
+         PU8w5JntRTnHJqRM4Kso9VRkyauOQwRFcB0t+oJbgnVyktrYwGSsDl0Bgv3s0nBFqQLU
+         RKtw==
+X-Forwarded-Encrypted: i=1; AJvYcCUi81MnV/wJMsWZ8R52ldnwln8v3RvTWLmC+W8Icnqc2Qjy3aB8qqfEH2kBrW5tnAIi+llfxu7RbomPiKfhgM1orpiS5Ep7w1DMQPIG
+X-Gm-Message-State: AOJu0YzA+dtu8BigUwd/rhXLtDLi5N0S6FrPd4IO8uYsxJ7rPh6KYmUO
+	cJS/hiDmbyLKJKUKoEDoNsg4nRoP9bRli6UeqXC+lmrlKvAq0i9B0a8+BPJUDBuLRGqSExes/kY
+	ILGnKmengNQmPZiRZH+DzX/eX9TrBmOir8Wu6
+X-Google-Smtp-Source: AGHT+IGjUg3mQVuhJvrtmUiftlzpv301WqnhGdatSbuJnCPMxvufnzhovj6pU+cNzvr99mLC1f9iMBM88+tv9TVf1h4=
+X-Received: by 2002:a05:622a:1b07:b0:441:2a51:70e8 with SMTP id
+ d75a77b69052e-442176085a5mr1619601cf.4.1718325976582; Thu, 13 Jun 2024
+ 17:46:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: shmem: fix getting incorrect lruvec when replacing a
- shmem folio
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, hannes@cmpxchg.org,
- nphamcs@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <3c11000dd6c1df83015a8321a859e9775ebbc23e.1718266112.git.baolin.wang@linux.alibaba.com>
- <CAJD7tkYj_+edtqxTWH6Hmakv48Fx0GMUWwvU82L-V8SxmNg2qQ@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <CAJD7tkYj_+edtqxTWH6Hmakv48Fx0GMUWwvU82L-V8SxmNg2qQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240611002145.2078921-1-jthoughton@google.com>
+ <20240611002145.2078921-5-jthoughton@google.com> <CAOUHufYGqbd45shZkGCpqeTV9wcBDUoo3iw1SKiDeFLmrP0+=w@mail.gmail.com>
+ <CADrL8HVHcKSW3hiHzKTit07gzo36jtCZCnM9ZpueyifgNdGggw@mail.gmail.com>
+ <ZmioedgEBptNoz91@google.com> <CADrL8HU_FKHTz_6d=xhVLZFDQ_zQo-zdB2rqdpa2CKusa1uo+A@mail.gmail.com>
+ <ZmjtEBH42u7NUWRc@google.com>
+In-Reply-To: <ZmjtEBH42u7NUWRc@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Thu, 13 Jun 2024 17:45:40 -0700
+Message-ID: <CADrL8HUW2q79F0FsEjhGW0ujij6+FfCqas5UpQp27Epfjc94Nw@mail.gmail.com>
+Subject: Re: [PATCH v5 4/9] mm: Add test_clear_young_fast_only MMU notifier
+To: Sean Christopherson <seanjc@google.com>
+Cc: Yu Zhao <yuzhao@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Ankit Agrawal <ankita@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
+	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Shaoqin Huang <shahuang@redhat.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
+	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jun 11, 2024 at 5:34=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Tue, Jun 11, 2024, James Houghton wrote:
+> > On Tue, Jun 11, 2024 at 12:42=E2=80=AFPM Sean Christopherson <seanjc@go=
+ogle.com> wrote:
+> > > --
+> > > diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
+> > > index 7b77ad6cf833..07872ae00fa6 100644
+> > > --- a/mm/mmu_notifier.c
+> > > +++ b/mm/mmu_notifier.c
+> > > @@ -384,7 +384,8 @@ int __mmu_notifier_clear_flush_young(struct mm_st=
+ruct *mm,
+> > >
+> > >  int __mmu_notifier_clear_young(struct mm_struct *mm,
+> > >                                unsigned long start,
+> > > -                              unsigned long end)
+> > > +                              unsigned long end,
+> > > +                              bool fast_only)
+> > >  {
+> > >         struct mmu_notifier *subscription;
+> > >         int young =3D 0, id;
+> > > @@ -393,9 +394,12 @@ int __mmu_notifier_clear_young(struct mm_struct =
+*mm,
+> > >         hlist_for_each_entry_rcu(subscription,
+> > >                                  &mm->notifier_subscriptions->list, h=
+list,
+> > >                                  srcu_read_lock_held(&srcu)) {
+> > > -               if (subscription->ops->clear_young)
+> > > -                       young |=3D subscription->ops->clear_young(sub=
+scription,
+> > > -                                                               mm, s=
+tart, end);
+> > > +               if (!subscription->ops->clear_young ||
+> > > +                   fast_only && !subscription->ops->has_fast_aging)
+> > > +                       continue;
+> > > +
+> > > +               young |=3D subscription->ops->clear_young(subscriptio=
+n,
+> > > +                                                       mm, start, en=
+d);
+> >
+> > KVM changing has_fast_aging dynamically would be slow, wouldn't it?
+>
+> No, it could/would be done quite quickly.  But, I'm not suggesting has_fa=
+st_aging
+> be dynamic, i.e. it's not an "all aging is guaranteed to be fast", it's a=
+ "this
+> MMU _can_ do fast aging".  It's a bit fuzzy/weird mostly because KVM can =
+essentially
+> have multiple secondary MMUs wired up to the same mmu_notifier.
+>
+> > I feel like it's simpler to just pass in fast_only into `clear_young` i=
+tself
+> > (and this is how I interpreted what you wrote above anyway).
+>
+> Eh, maybe?  A "has_fast_aging" flag is more robust in the sense that it r=
+equires
+> secondary MMUs to opt-in, i.e. all secondary MMUs will be considered "slo=
+w" by
+> default.
+>
+> It's somewhat of a moot point because KVM is the only secondary MMU that =
+implements
+> .clear_young() and .test_young() (which I keep forgetting), and that seem=
+s unlikely
+> to change.
+>
+> A flag would also avoid an indirect call and thus a RETPOLINE when CONFIG=
+_RETPOLINE=3Dy,
+> i.e. would be a minor optimization when KVM doesn't suppport fast aging. =
+ But that's
+> probably a pretty unlikely combination, so it's probably not a valid argu=
+ment.
+>
+> So, I guess I don't have a strong opinion?
 
+(Sorry for the somewhat delayed response... spent some time actually
+writing what this would look like.)
 
-On 2024/6/14 06:24, Yosry Ahmed wrote:
-> On Thu, Jun 13, 2024 at 1:21 AM Baolin Wang
-> <baolin.wang@linux.alibaba.com> wrote:
->>
->> When testing shmem swapin, I encountered the warning below on my machine.
->> The reason is that replacing an old shmem folio with a new one causes
->> mem_cgroup_migrate() to clear the old folio's memcg data. As a result,
->> the old folio cannot get the correct memcg's lruvec needed to remove itself
->> from the LRU list when it is being freed. This could lead to possible serious
->> problems, such as LRU list crashes due to holding the wrong LRU lock, and
->> incorrect LRU statistics.
->>
->> To fix this issue, we can fallback to use the mem_cgroup_replace_folio()
->> to replace the old shmem folio.
->>
->> [ 5241.100311] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x5d9960
->> [ 5241.100317] head: order:4 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
->> [ 5241.100319] flags: 0x17fffe0000040068(uptodate|lru|head|swapbacked|node=0|zone=2|lastcpupid=0x3ffff)
->> [ 5241.100323] raw: 17fffe0000040068 fffffdffd6687948 fffffdffd69ae008 0000000000000000
->> [ 5241.100325] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
->> [ 5241.100326] head: 17fffe0000040068 fffffdffd6687948 fffffdffd69ae008 0000000000000000
->> [ 5241.100327] head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
->> [ 5241.100328] head: 17fffe0000000204 fffffdffd6665801 ffffffffffffffff 0000000000000000
->> [ 5241.100329] head: 0000000a00000010 0000000000000000 00000000ffffffff 0000000000000000
->> [ 5241.100330] page dumped because: VM_WARN_ON_ONCE_FOLIO(!memcg && !mem_cgroup_disabled())
->> [ 5241.100338] ------------[ cut here ]------------
->> [ 5241.100339] WARNING: CPU: 19 PID: 78402 at include/linux/memcontrol.h:775 folio_lruvec_lock_irqsave+0x140/0x150
->> [...]
->> [ 5241.100374] pc : folio_lruvec_lock_irqsave+0x140/0x150
->> [ 5241.100375] lr : folio_lruvec_lock_irqsave+0x138/0x150
->> [ 5241.100376] sp : ffff80008b38b930
->> [...]
->> [ 5241.100398] Call trace:
->> [ 5241.100399]  folio_lruvec_lock_irqsave+0x140/0x150
->> [ 5241.100401]  __page_cache_release+0x90/0x300
->> [ 5241.100404]  __folio_put+0x50/0x108
->> [ 5241.100406]  shmem_replace_folio+0x1b4/0x240
->> [ 5241.100409]  shmem_swapin_folio+0x314/0x528
->> [ 5241.100411]  shmem_get_folio_gfp+0x3b4/0x930
->> [ 5241.100412]  shmem_fault+0x74/0x160
->> [ 5241.100414]  __do_fault+0x40/0x218
->> [ 5241.100417]  do_shared_fault+0x34/0x1b0
->> [ 5241.100419]  do_fault+0x40/0x168
->> [ 5241.100420]  handle_pte_fault+0x80/0x228
->> [ 5241.100422]  __handle_mm_fault+0x1c4/0x440
->> [ 5241.100424]  handle_mm_fault+0x60/0x1f0
->> [ 5241.100426]  do_page_fault+0x120/0x488
->> [ 5241.100429]  do_translation_fault+0x4c/0x68
->> [ 5241.100431]  do_mem_abort+0x48/0xa0
->> [ 5241.100434]  el0_da+0x38/0xc0
->> [ 5241.100436]  el0t_64_sync_handler+0x68/0xc0
->> [ 5241.100437]  el0t_64_sync+0x14c/0x150
->> [ 5241.100439] ---[ end trace 0000000000000000 ]---
->>
->> Fixes: 85ce2c517ade ("memcontrol: only transfer the memcg data for migration")
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->>   mm/shmem.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/mm/shmem.c b/mm/shmem.c
->> index 99bd3c34f0fb..4acaf02bfe44 100644
->> --- a/mm/shmem.c
->> +++ b/mm/shmem.c
->> @@ -1908,7 +1908,7 @@ static int shmem_replace_folio(struct folio **foliop, gfp_t gfp,
->>          xa_lock_irq(&swap_mapping->i_pages);
->>          error = shmem_replace_entry(swap_mapping, swap_index, old, new);
->>          if (!error) {
->> -               mem_cgroup_migrate(old, new);
->> +               mem_cgroup_replace_folio(old, new);
-> 
-> The comment above the definition of mem_cgroup_replace_folio() needs
-> to be updated with this change. It mentions that it is only used in
-> replace_page_cache_folio(), which is no longer true.
+I see what you mean, thanks! So has_fast_aging might be set by KVM if
+the architecture sets a Kconfig saying that it understands the concept
+of fast aging, basically what the presence of this v5's
+test_clear_young_fast_only() indicates.
 
-Indeed, will update the related comments in v2. Thanks.
+>
+> > > Double ugh.  Peeking ahead at the "failure" code, NAK to adding
+> > > kvm_arch_young_notifier_likely_fast for all the same reasons I object=
+ed to
+> > > kvm_arch_has_test_clear_young() in v1.  Please stop trying to do anyt=
+hing like
+> > > that, I will NAK each every attempt to have core mm/ code call direct=
+ly into KVM.
+> >
+> > Sorry to make you repeat yourself; I'll leave it out of v6. I don't
+> > like it either, but I wasn't sure how important it was to avoid
+> > calling into unnecessary notifiers if the TDP MMU were completely
+> > disabled.
+>
+> If it's important, e.g. for performance, then the mmu_notifier should hav=
+e a flag
+> so that the behavior doesn't assume a KVM backend.   Hence my has_fast_ag=
+ing
+> suggestion.
+
+Thanks! That makes sense.
+
+> > > Anyways, back to this code, before we spin another version, we need t=
+o agree on
+> > > exactly what behavior we want out of secondary MMUs.  Because to me, =
+the behavior
+> > > proposed in this version doesn't make any sense.
+> > >
+> > > Signalling failure because KVM _might_ have relevant aging informatio=
+n in SPTEs
+> > > that require taking kvm->mmu_lock is a terrible tradeoff.  And for th=
+e test_young
+> > > case, it's flat out wrong, e.g. if a page is marked Accessed in the T=
+DP MMU, then
+> > > KVM should return "young", not "failed".
+> >
+> > Sorry for this oversight. What about something like:
+> >
+> > 1. test (and maybe clear) A bits on TDP MMU
+> > 2. If accessed && !should_clear: return (fast)
+> > 3. if (fast_only): return (fast)
+> > 4. If !(must check shadow MMU): return (fast)
+> > 5. test (and maybe clear) A bits in shadow MMU
+> > 6. return (slow)
+>
+> I don't understand where the "must check shadow MMU" in #4 comes from.  I=
+ also
+> don't think it's necessary; see below.
+
+I just meant `kvm_has_shadow_mmu_sptes()` or
+`kvm_memslots_have_rmaps()`. I like the logic you suggest below. :)
+
+> > Some of this reordering (and maybe a change from
+> > kvm_shadow_root_allocated() to checking indirect_shadow_pages or
+> > something else) can be done in its own patch.
+
+So just to be clear, for test_young(), I intend to have a patch in v6
+to elide the shadow MMU check if the TDP MMU indicates Accessed. Seems
+like a pure win; no reason not to include it if we're making logic
+changes here anyway.
+
+> >
+> > > So rather than failing the fast aging, I think what we want is to kno=
+w if an
+> > > mmu_notifier found a young SPTE during a fast lookup.  E.g. something=
+ like this
+> > > in KVM, where using kvm_has_shadow_mmu_sptes() instead of kvm_memslot=
+s_have_rmaps()
+> > > is an optional optimization to avoid taking mmu_lock for write in pat=
+hs where a
+> > > (very rare) false negative is acceptable.
+> > >
+> > >   static bool kvm_has_shadow_mmu_sptes(struct kvm *kvm)
+> > >   {
+> > >         return !tdp_mmu_enabled || READ_ONCE(kvm->arch.indirect_shado=
+w_pages);
+> > >   }
+> > >
+> > >   static int __kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *ran=
+ge,
+> > >                          bool fast_only)
+> > >   {
+> > >         int young =3D 0;
+> > >
+> > >         if (!fast_only && kvm_has_shadow_mmu_sptes(kvm)) {
+> > >                 write_lock(&kvm->mmu_lock);
+> > >                 young =3D kvm_handle_gfn_range(kvm, range, kvm_age_rm=
+ap);
+> > >                 write_unlock(&kvm->mmu_lock);
+> > >         }
+> > >
+> > >         if (tdp_mmu_enabled && kvm_tdp_mmu_age_gfn_range(kvm, range))
+> > >                 young =3D 1 | MMU_NOTIFY_WAS_FAST;
+
+The most straightforward way (IMHO) to return something like `1 |
+MMU_NOTIFY_WAS_FAST` up to the MMU notifier itself is to make
+gfn_handler_t return int instead of bool.
+
+In this v5, I worked around this need by using `bool *failed` in patch
+5[1]. I think the way this is going to look now in v6 would be cleaner
+by actually changing gfn_handler_t to return int, and then we can
+write something like what you wrote here. What do you think?
+
+[1]: https://lore.kernel.org/linux-mm/20240611002145.2078921-6-jthoughton@g=
+oogle.com/
+
+> > I don't think this line is quite right. We might set
+> > MMU_NOTIFY_WAS_FAST even when we took the mmu_lock. I understand what
+> > you mean though, thanks.
+>
+> The name sucks, but I believe the logic is correct.  As posted here in v5=
+, the
+> MGRLU code wants to age both fast _and_ slow MMUs.  AIUI, the intent is t=
+o always
+> get aging information, but only look around at other PTEs if it can be do=
+ne fast.
+>
+>         if (should_walk_secondary_mmu()) {
+>                 notifier_result =3D
+>                         mmu_notifier_test_clear_young_fast_only(
+>                                         vma->vm_mm, addr, addr + PAGE_SIZ=
+E,
+>                                         /*clear=3D*/true);
+>         }
+>
+>         if (notifier_result & MMU_NOTIFIER_FAST_FAILED)
+>                 secondary_young =3D mmu_notifier_clear_young(vma->vm_mm, =
+addr,
+>                                                            addr + PAGE_SI=
+ZE);
+>         else {
+>                 secondary_young =3D notifier_result & MMU_NOTIFIER_FAST_Y=
+OUNG;
+>                 notifier_was_fast =3D true;
+>         }
+>
+> The change, relative to v5, that I am proposing is that MGLRU looks aroun=
+d if
+> the page was young in _a_ "fast" secondary MMU, whereas v5 looks around i=
+f and
+> only if _all_ secondary MMUs are fast.
+>
+> In other words, if a fast MMU had a young SPTE, look around _that_ MMU, v=
+ia the
+> fast_only flag.
+
+Oh, yeah, that's a lot more intelligent than what I had. I think I
+fully understand your suggestion; I guess we'll see in v6. :)
+
+I wonder if this still makes sense if whether or not an MMU is "fast"
+is determined by how contended some lock(s) are at the time. I think
+it does, but I guess we can discuss more if it turns out that having
+an architecture participate like this is actually something we want to
+do (i.e., that performance results say it's a good idea).
+
+Thanks Sean!
 
