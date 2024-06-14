@@ -1,111 +1,122 @@
-Return-Path: <linux-kernel+bounces-214628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 789A9908750
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:25:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CD99908759
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7684D1C23140
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:25:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD731284FD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7947D1922E1;
-	Fri, 14 Jun 2024 09:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3101922DC;
+	Fri, 14 Jun 2024 09:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCWTZwRc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T0Myv6I2"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48D918C33A;
-	Fri, 14 Jun 2024 09:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5776D190071;
+	Fri, 14 Jun 2024 09:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718357099; cv=none; b=JR52a9FIy2Sv46gZk25eaAeCPRCaQ8IW0+3Wy7O+CWwI93HnX3ZS1dXWp1go4dLvt8jjaG/N0tqJNBSsYmEX1yBUe+7c68j7xR095IBYlRUEXIQtHbVW06crHjiddEaN5uYRQ6S+YNc1qf8Og/Rd3erC0tRKvx9yBxwn4hrEmGU=
+	t=1718357139; cv=none; b=LEC9qKnEFj9gmUc6WA2A4sdrWblUrMnSi59AlO8KeekBYsX4toYzHUo7ZUWgE/rAISD/Ck+aTYFtI41bFu5apXNlGu4MBzpA90vgK9vaeQDxwk4zUsqY88hTj5MTpMT0ggDiIBaxGVujj8sf3oOGFrFQ3wm5g8JAh0pJdYa5zQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718357099; c=relaxed/simple;
-	bh=O5kc28lbH4t01HLT1wS8PwFPEcZXeuB0ELq0NAIyPjs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ZUYY+5BvgDd7WLwl+Axzhw2oJZHA6oD0w3fA9m9h/SQWFbmR1TLSiZNUT1f6/lenHkXwoeQId9CwrElno2dcVbt00GKxi2w9A5nX+ygN+4VW7PCGrkyAn6d43zqDCUQOoIxZmncXBnJBlIHNvDyF/GEfMJ9PwS7ghIlGVvRhrwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCWTZwRc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7030CC2BD10;
-	Fri, 14 Jun 2024 09:24:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718357099;
-	bh=O5kc28lbH4t01HLT1wS8PwFPEcZXeuB0ELq0NAIyPjs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=iCWTZwRcvVCSP21qA/FLhovAdDIulSJl1VwUJPi9ls2quluhGRv7RFqc8UdqZeGRn
-	 DSE/krIOndKxKSEfiATpH4wdS2VGUNrE5Y8Fp8yfiUeorqjGe9CZCbzgxY/U0JRl3Q
-	 /bYPa7k+WT/L/fF/Oddq/H+UeJWSSw8pNZpIYsW9kwOYtngGdSrfpMSrhFtWHZq3il
-	 xXUTRinbRpnLzXAhSRlJ5DSK2uojz3DwIO4LQumLmn1i65MQRfDRbjh1uZ+oN5ag5i
-	 aQzHlUUzkgUtm/g0DGHWJDBSubvWxIJb5CQi5FYm9QkS3/6sTFMJn+JgAeJfr23KGh
-	 W3CtpUP2/DKiA==
-From: Mark Brown <broonie@kernel.org>
-To: Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-sunxi@lists.linux.dev, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Ryan Walklin <ryan@testtoast.com>, 
- Chris Morgan <macroalpha82@gmail.com>
-In-Reply-To: <20240418000736.24338-1-andre.przywara@arm.com>
-References: <20240418000736.24338-1-andre.przywara@arm.com>
-Subject: Re: (subset) [PATCH v2 0/5] regulator: Fix AXP717 PMIC support
-Message-Id: <171835709508.262359.11220442613835711253.b4-ty@kernel.org>
-Date: Fri, 14 Jun 2024 10:24:55 +0100
+	s=arc-20240116; t=1718357139; c=relaxed/simple;
+	bh=UWWGN8rwUhoUf3ASge4Yp7b3xfivuopyY+SUJKZCE1A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qb/aqr59DYVY7axhjF6T0eaZOlz8JMtpAOAIvcHJCeA/WdrW3Qu56IH0mvHMkVijQkAEP4BdHb5nzfk54oEdIL0nolB84K4xTxFeiO9Ad8Ld8nd4H/mRhQaANifkq8vfX+/31E12GJYX0P+5zmOCCG1Q9D3Ye57nDDlTwXtoF9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T0Myv6I2; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f6a837e9a3so13420905ad.1;
+        Fri, 14 Jun 2024 02:25:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718357137; x=1718961937; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=14sEE7yn1U0eUXYZByRzOLPuXHbmQOHSDN3TIPlXPVQ=;
+        b=T0Myv6I2BnJVbzZXvWXYaHWfl25aWDGkBD5i+En8peaOCvxc63R5/R1s/26WhF+ZKu
+         LaUaB10jGCWSG3gO/o9AMAf0VEFW72gafj+JfH9ToxSzyZRJsPJsEwO2SGTNUOJtkAcG
+         xU0/h7epuUBDUXsLur/R/py8wZhGNKuI/XPtgDnTLUg6lwZ2u4CklMwfIMzbyZGB5u04
+         lT+IIMl+3n5+xkXHYPKAEXcmBfZOiouLApN7gnhSlRvV4rJ53CtfYfSfMpftlFq3KP0B
+         pSDMUTdtIcwH2P3FM0qa6/jAOIAJh23y8ihbBtgtV5MeRcarAladCWseEJNC3IDp2KIz
+         el/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718357137; x=1718961937;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=14sEE7yn1U0eUXYZByRzOLPuXHbmQOHSDN3TIPlXPVQ=;
+        b=cCpNW5E+49QqJfNkl6RiDxk0e7tsmVCVODD4nW+VDlWNn1JcUGyPvstqxTVKNis8Qd
+         mc05y2cX3HEGPADBovWhXkUb6Pi7g7D+Rt7lxksbGrf0mGSACGi1Ff2ITtjMhvVoUe+u
+         fT6Y9lZCJZOY5jyyxDRkAhV+jirY1weo43rV0hRI8U9oCY1p7qMho798CJ8gYiAi+LhA
+         4dYqqYVShiEcZNj/e4j8DdkJgLTG64lREubDu2SqAIZxCd3NCPyqDPw122t22s7QAc3c
+         2xl6gADp1QmqqRvPZFtI+NQri1Q3MfbJsAe8dS2NIdxNcnDrimjaILPux50FYJtv1Dp+
+         IOSg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1m3/ICls1w+d8n0oH/WemVA6kkPgRd7gbTgt7aODi079r8HJqXq1WLNtWa2wku+iO9lJHDRmxh53Zq/Refhe7P3WdLo8Lm6GG1pQg
+X-Gm-Message-State: AOJu0YyVDFcK6mtDAG+CXjU7f5eBjdfpJtdjYyd+BqyUZitFYGOqP5rO
+	e0n6i2cQXhVfz06LalELbuDw5jjn4REt/fgwF5di+O/tA9hssWqs
+X-Google-Smtp-Source: AGHT+IGXeLZqqIbJyrkcAeI6rs6MxGVpjuOg2DOfz3FZfPTUzzQbVXdgdEp5ZcrINQBEE8kr/RsKmQ==
+X-Received: by 2002:a17:903:1250:b0:1f7:13ac:e80e with SMTP id d9443c01a7336-1f8625c1578mr24880735ad.4.1718357137473;
+        Fri, 14 Jun 2024 02:25:37 -0700 (PDT)
+Received: from localhost.localdomain ([106.13.248.94])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855eff755sm27800365ad.184.2024.06.14.02.25.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 02:25:37 -0700 (PDT)
+From: Yusong Gao <a869920004@gmail.com>
+To: mcgrof@kernel.org
+Cc: linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	a869920004@gmail.com
+Subject: [PATCH] module: Add log information for loading module failures
+Date: Fri, 14 Jun 2024 09:25:19 +0000
+Message-Id: <20240614092519.1611533-1-a869920004@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-0bd45
+Content-Transfer-Encoding: 8bit
 
-On Thu, 18 Apr 2024 01:07:31 +0100, Andre Przywara wrote:
-> This is v2 of the fixes to the AXP717 PMIC support series. Lee put the
-> original patches in an immutable branch already, so these here go on top.
-> Patch 1 is new in v2, and adds the IRQ status and acknowledge registers
-> to the writable range. Thanks to Chris for pointing this out.
-> Patch 2 contains fixes to the regulator descriptions: the LDOs had the
-> wrong supply source, and two numbers were wrong. The datasheet describes
-> the voltage ranges and register values differently from what our macros
-> expect, in a way that literally begs for off-by-ones, so here you go.
-> Also there is an actual wrong number in the datasheet, add a comment to
-> document this.
-> I don't know if that's still feasible, but those two patches would be a
-> good candidate to squash into the patches that they fix.
-> 
-> [...]
+Add log information in kernel-space when loading module failures.
+Try to load the unsigned module and the module with bad signature
+when set 1 to /sys/module/module/parameters/sig_enforce.
 
-Applied to
+Unsigned module case:
+(linux) insmod unsigned.ko
+[   18.714661] Loading of unsigned module is rejected
+insmod: can't insert 'unsigned.ko': Key was rejected by service
+(linux)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Bad signature module case:
+(linux) insmod bad_signature.ko
+insmod: can't insert 'bad_signature.ko': Key was rejected by service
+(linux)
 
-Thanks!
+There have different logging behavior the bad signature case only log
+in user-space, add log info for fatal errors in module_sig_check().
 
-[2/5] regulator: axp20x: AXP717: fix LDO supply rails and off-by-ones
-      commit: 0057222c45140830a7bf55e92fb67f84a2814f67
+Signed-off-by: Yusong Gao <a869920004@gmail.com>
+---
+ kernel/module/signing.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/kernel/module/signing.c b/kernel/module/signing.c
+index a2ff4242e623..6a6493c8f7e4 100644
+--- a/kernel/module/signing.c
++++ b/kernel/module/signing.c
+@@ -113,6 +113,7 @@ int module_sig_check(struct load_info *info, int flags)
+ 		 * unparseable signatures, and signature check failures --
+ 		 * even if signatures aren't required.
+ 		 */
++		pr_notice("Loading module failed (errno=%d)\n", -err);
+ 		return err;
+ 	}
+ 
+-- 
+2.34.1
 
 
