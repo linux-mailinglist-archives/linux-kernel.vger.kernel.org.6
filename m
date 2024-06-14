@@ -1,197 +1,185 @@
-Return-Path: <linux-kernel+bounces-215146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F2D5908EB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:27:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8365E908EA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E31A1F23A17
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:27:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AD6AB28588
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C129180A90;
-	Fri, 14 Jun 2024 15:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BFF16B73D;
+	Fri, 14 Jun 2024 15:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="VZJkEp42"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F161415FA96;
-	Fri, 14 Jun 2024 15:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="H6sZ+JFk"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE60915CD64;
+	Fri, 14 Jun 2024 15:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718378804; cv=none; b=acIUPJ/zfILVQJrJiRpt+J7VVcFZi8mVr/9mTEvSyrD9gtmBMvxg/kpzsXqNPygVP/gUpvna8rFQuol4BZLT9K6vMwFZYsAcj1KRmxm2gbvdzvCZ3rEe7TSy9fYYI+fDoP/19zHyCXyxd3z+O6MGNri/4vP2xPndaUcMn6WXj/s=
+	t=1718378584; cv=none; b=NJlQZWVu2sG0X/QTzq3l3PO+nNNXuSqrscEGRNQuzOlu/+6zbhcV8ICQGJKIe7h0x7Ed+buc7h+4f9ZSucVgCIZWNk2LCnF6UzXjlPFenAJ0MwA4jtNARa87nL8mP1FplZdQNNu7k+EcWZofi42phs2trAvjhYHLL6dcA4GVy4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718378804; c=relaxed/simple;
-	bh=xkm7TOfE+0Lij82Nq9O/l46tHzduMTcUqYKjBJC6MeQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jiI4aLsCh0/2Xmv8mwluj3ve9yTpm7CDBfS/QqP2IE72JL4iUbOXXm8+9v+eUcX3wFi0fRf+Bcd97C0RtdAZMwJucWe50MROy0fgyVjPSRyxqN2Kx/pPfYBSLpIeRjzdVZFabsbswEFASRclLizESgAvs8h9oYI+NsT5Esj7meg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=VZJkEp42 reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 6ef55ecccd86ff32; Fri, 14 Jun 2024 17:26:34 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 1FAF16A741D;
-	Fri, 14 Jun 2024 17:26:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1718378793;
-	bh=xkm7TOfE+0Lij82Nq9O/l46tHzduMTcUqYKjBJC6MeQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=VZJkEp42w9TC/S8Rmws36AZO7ucAbv4I8RhKoVaPLOX7BDIG+Mr9YTAypBQU4veyD
-	 9WJjfoWId0GpByicz++c5PTi7NdE9lzFfMjMEXd9NpisXBUcBjNX4ltB9R0BGz5Wjh
-	 9qrHh8aWQ06RXhvOiZamqWexjK6qG1Ka9LBsIjwy/usdSTu1LBIryaVf3vlKjmtVkc
-	 1tcvw66mXV58JbHrCsWBmL1/E/d/T1G9WI3diB/AY+wMS/cpQjvGN8N5aZWkkA27+z
-	 i5ai4+PJF7Tla2ZfyVO1TBauaYEwLlm4Dfyk0dN380RLv1yBZA+G9rBT/niano/afB
-	 8ZeAcJq91hzfg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
- LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>
-Subject:
- [PATCH v1 1/2] thermal: core: Synchronize suspend-prepare and post-suspend
- actions
-Date: Fri, 14 Jun 2024 17:22:25 +0200
-Message-ID: <2202941.irdbgypaU6@kreacher>
-In-Reply-To: <6070114.lOV4Wx5bFT@kreacher>
-References: <6070114.lOV4Wx5bFT@kreacher>
+	s=arc-20240116; t=1718378584; c=relaxed/simple;
+	bh=ceHwlhkQOv5Wkvy5F61fCWlYXHLEh5xGfP6+3SG6EDs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=C4o71iNwZnPrnMbbnMDeQyYs6CRFXkVKz3qAM5a4SBlaxYPBPYTu97H6J1tjhjCh93KwLumTKWP18wNFuG1k8mTkXdcjtqoiIzvr2m4Uf6yRFISGg5Uhrkh3BbLs48+RVWV8YT3nbr9rSLQI3sQpn//MIj+a6e17u2dQrNXvLHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=H6sZ+JFk; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=yAGhS
+	Ow2NI85cih3XGIkfc/UtZ8P/eczFTAfdvqLy8o=; b=H6sZ+JFkVQTNUzqKHaUah
+	N/CJydLUMiy1B8fj/9SITomrvG2oIcTQqUvOqpbyfYKo0b4Fw1wbGoz4q0ggrmNV
+	raLZVoLLy4Fv3ELXa5C4qFpv2e9FqCUagUsIzscZsTSa35D/w7hfT9Q7+YrbO3vI
+	4CGTNj8l6l5IQcmYARwGKw=
+Received: from ubuntu.localdomain (unknown [120.228.117.74])
+	by gzga-smtp-mta-g1-0 (Coremail) with SMTP id _____wD3n6tCYGxmSah9Cg--.3328S2;
+	Fri, 14 Jun 2024 23:22:42 +0800 (CST)
+From: Chi Zhiling <chizhiling@163.com>
+To: mchehab@kernel.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chi Zhiling <chizhiling@kylinos.cn>
+Subject: [PATCH v2] media: xc2028: avoid use-after-free in load_firmware_cb()
+Date: Fri, 14 Jun 2024 08:22:25 -0700
+Message-Id: <20240614152225.3943-1-chizhiling@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240531091026.3094284-1-chizhiling@163.com>
+References: <20240531091026.3094284-1-chizhiling@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrfeduledgkeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehsrhhi
- nhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3n6tCYGxmSah9Cg--.3328S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXF47KrWDJr43Ar1UJr4fKrg_yoWrWw43pF
+	nxZFWfCrW8Jry3Jr47Jr4UJr1FqrW5Aa10kr4xA34agr13WrZ8tryUtFWUXr1UWr45Aa47
+	JF15JrWrtF4qyw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UsFxUUUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbBLwr9nWXAk3F1ZQABsT
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Chi Zhiling <chizhiling@kylinos.cn>
 
-After commit 5a5efdaffda5 ("thermal: core: Resume thermal zones
-asynchronously") it is theoretically possible that, if a system suspend
-starts immediately after a system resume, thermal_zone_device_resume()
-spawned by the thermal PM notifier for one of the thermal zones at the
-end of the system resume will run after the PM thermal notifier for the
-suspend-prepare action.  If that happens, tz->suspended set by the latter
-will be reset by the former which may lead to unexpected consequences.
+syzkaller reported use-after-free in load_firmware_cb() [1].
+The reason is because the module allocated a struct tuner in tuner_probe(),
+and then the module initialization failed, the struct tuner was released.
+A worker which created during module initialization accesses this struct
+tuner later, it caused use-after-free.
 
-To avoid that race, synchronize thermal_zone_device_resume() with the
-suspend-prepare thermal PM notifier with the help of additional bool
-field and completion in struct thermal_zone_device.
+The process is as follows:
 
-Note that this also ensures running __thermal_zone_device_update() at
-least once for each thermal zone between system resume and the following
-system suspend in case it is needed to start thermal mitigation.
+task-6504           worker_thread
+tuner_probe                             <= alloc dvb_frontend [2]
+...
+request_firmware_nowait                 <= create a worker
+...
+tuner_remove                            <= free dvb_frontend
+...
+                    request_firmware_work_func  <= the firmware is ready
+                    load_firmware_cb    <= but now the dvb_frontend has been freed
 
-Fixes: 5a5efdaffda5 ("thermal: core: Resume thermal zones asynchronously")
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+To fix the issue, check the dvd_frontend in load_firmware_cb(), if it is
+null, report a warning and just return.
+
+[1]:
+    ==================================================================
+     BUG: KASAN: use-after-free in load_firmware_cb+0x1310/0x17a0
+     Read of size 8 at addr ffff8000d7ca2308 by task kworker/2:3/6504
+
+     Call trace:
+      load_firmware_cb+0x1310/0x17a0
+      request_firmware_work_func+0x128/0x220
+      process_one_work+0x770/0x1824
+      worker_thread+0x488/0xea0
+      kthread+0x300/0x430
+      ret_from_fork+0x10/0x20
+
+     Allocated by task 6504:
+      kzalloc
+      tuner_probe+0xb0/0x1430
+      i2c_device_probe+0x92c/0xaf0
+      really_probe+0x678/0xcd0
+      driver_probe_device+0x280/0x370
+      __device_attach_driver+0x220/0x330
+      bus_for_each_drv+0x134/0x1c0
+      __device_attach+0x1f4/0x410
+      device_initial_probe+0x20/0x30
+      bus_probe_device+0x184/0x200
+      device_add+0x924/0x12c0
+      device_register+0x24/0x30
+      i2c_new_device+0x4e0/0xc44
+      v4l2_i2c_new_subdev_board+0xbc/0x290
+      v4l2_i2c_new_subdev+0xc8/0x104
+      em28xx_v4l2_init+0x1dd0/0x3770
+
+     Freed by task 6504:
+      kfree+0x238/0x4e4
+      tuner_remove+0x144/0x1c0
+      i2c_device_remove+0xc8/0x290
+      __device_release_driver+0x314/0x5fc
+      device_release_driver+0x30/0x44
+      bus_remove_device+0x244/0x490
+      device_del+0x350/0x900
+      device_unregister+0x28/0xd0
+      i2c_unregister_device+0x174/0x1d0
+      v4l2_device_unregister+0x224/0x380
+      em28xx_v4l2_init+0x1d90/0x3770
+
+     The buggy address belongs to the object at ffff8000d7ca2000
+      which belongs to the cache kmalloc-2k of size 2048
+     The buggy address is located 776 bytes inside of
+      2048-byte region [ffff8000d7ca2000, ffff8000d7ca2800)
+     The buggy address belongs to the page:
+     page:ffff7fe00035f280 count:1 mapcount:0 mapping:ffff8000c001f000 index:0x0
+     flags: 0x7ff800000000100(slab)
+     raw: 07ff800000000100 ffff7fe00049d880 0000000300000003 ffff8000c001f000
+     raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
+     page dumped because: kasan: bad access detected
+
+     Memory state around the buggy address:
+      ffff8000d7ca2200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+      ffff8000d7ca2280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+     >ffff8000d7ca2300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                           ^
+      ffff8000d7ca2380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+      ffff8000d7ca2400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+     ==================================================================
+
+[2]
+    Actually, it is allocated for struct tuner, and dvb_frontend is inside.
+
+Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
 ---
- drivers/thermal/thermal_core.c |   21 +++++++++++++++++++++
- drivers/thermal/thermal_core.h |    4 ++++
- 2 files changed, 25 insertions(+)
+ drivers/media/tuners/xc2028.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -1406,6 +1406,7 @@ thermal_zone_device_register_with_trips(
- 	ida_init(&tz->ida);
- 	mutex_init(&tz->lock);
- 	init_completion(&tz->removal);
-+	init_completion(&tz->resume);
- 	id = ida_alloc(&thermal_tz_ida, GFP_KERNEL);
- 	if (id < 0) {
- 		result = id;
-@@ -1652,6 +1653,9 @@ static void thermal_zone_device_resume(s
- 	thermal_zone_device_init(tz);
- 	__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
+diff --git a/drivers/media/tuners/xc2028.c b/drivers/media/tuners/xc2028.c
+index 5a967edceca9..352b8a3679b7 100644
+--- a/drivers/media/tuners/xc2028.c
++++ b/drivers/media/tuners/xc2028.c
+@@ -1361,9 +1361,16 @@ static void load_firmware_cb(const struct firmware *fw,
+ 			     void *context)
+ {
+ 	struct dvb_frontend *fe = context;
+-	struct xc2028_data *priv = fe->tuner_priv;
++	struct xc2028_data *priv;
+ 	int rc;
  
-+	complete(&tz->resume);
-+	tz->resuming = false;
++	if (!fe) {
++		pr_warn("xc2028: No frontend in %s\n", __func__);
++		return;
++	}
 +
- 	mutex_unlock(&tz->lock);
- }
- 
-@@ -1669,6 +1673,20 @@ static int thermal_pm_notify(struct noti
- 		list_for_each_entry(tz, &thermal_tz_list, node) {
- 			mutex_lock(&tz->lock);
- 
-+			if (tz->resuming) {
-+				/*
-+				 * thermal_zone_device_resume() queued up for
-+				 * this zone has not acquired the lock yet, so
-+				 * release it to let the function run and wait
-+				 * util it has done the work.
-+				 */
-+				mutex_unlock(&tz->lock);
++	priv = fe->tuner_priv;
 +
-+				wait_for_completion(&tz->resume);
-+
-+				mutex_lock(&tz->lock);
-+			}
-+
- 			tz->suspended = true;
- 
- 			mutex_unlock(&tz->lock);
-@@ -1686,6 +1704,9 @@ static int thermal_pm_notify(struct noti
- 
- 			cancel_delayed_work(&tz->poll_queue);
- 
-+			reinit_completion(&tz->resume);
-+			tz->resuming = true;
-+
- 			/*
- 			 * Replace the work function with the resume one, which
- 			 * will restore the original work function and schedule
-Index: linux-pm/drivers/thermal/thermal_core.h
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.h
-+++ linux-pm/drivers/thermal/thermal_core.h
-@@ -55,6 +55,7 @@ struct thermal_governor {
-  * @type:	the thermal zone device type
-  * @device:	&struct device for this thermal zone
-  * @removal:	removal completion
-+ * @resume:	resume completion
-  * @trip_temp_attrs:	attributes for trip points for sysfs: trip temperature
-  * @trip_type_attrs:	attributes for trip points for sysfs: trip type
-  * @trip_hyst_attrs:	attributes for trip points for sysfs: trip hysteresis
-@@ -89,6 +90,7 @@ struct thermal_governor {
-  * @poll_queue:	delayed work for polling
-  * @notify_event: Last notification event
-  * @suspended: thermal zone suspend indicator
-+ * @resuming:	indicates whether or not thermal zone resume is in progress
-  * @trips:	array of struct thermal_trip objects
-  */
- struct thermal_zone_device {
-@@ -96,6 +98,7 @@ struct thermal_zone_device {
- 	char type[THERMAL_NAME_LENGTH];
- 	struct device device;
- 	struct completion removal;
-+	struct completion resume;
- 	struct attribute_group trips_attribute_group;
- 	struct thermal_attr *trip_temp_attrs;
- 	struct thermal_attr *trip_type_attrs;
-@@ -123,6 +126,7 @@ struct thermal_zone_device {
- 	struct delayed_work poll_queue;
- 	enum thermal_notify_event notify_event;
- 	bool suspended;
-+	bool resuming;
- #ifdef CONFIG_THERMAL_DEBUGFS
- 	struct thermal_debugfs *debugfs;
- #endif
-
-
+ 	tuner_dbg("request_firmware_nowait(): %s\n", fw ? "OK" : "error");
+ 	if (!fw) {
+ 		tuner_err("Could not load firmware %s.\n", priv->fname);
+-- 
+2.25.1
 
 
