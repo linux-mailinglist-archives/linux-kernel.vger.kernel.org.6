@@ -1,55 +1,84 @@
-Return-Path: <linux-kernel+bounces-215511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9354909401
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:03:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD46E909404
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDD1B1C21210
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:03:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EEAD1C2161A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8290A18413E;
-	Fri, 14 Jun 2024 22:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B281862A2;
+	Fri, 14 Jun 2024 22:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OsXI2jcW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xk7r51tr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4147149C44;
-	Fri, 14 Jun 2024 22:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C284A1487ED;
+	Fri, 14 Jun 2024 22:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718402609; cv=none; b=JxIYA1yO1B4Nn2+GqWQm1xOmMtkxBQP1H7U2xRs7ANdURT4ewQXC8LF+1VRc6MTz8R/ptqmO+o9wxocjcoz4QO+0JbeuyaPt51Jj0U05hf+oilgAdC+JG6uraXq4QDTp/9xQ1zvPfD6im3SYXpawkbXwKyYf4Ct+YTzm4qjJYdw=
+	t=1718402672; cv=none; b=uU6jlfKoQqKVCRvMKO3b5DesP52dOIxUkD1ppsh27y3CLinl3bEQg/LNAyob7uCVNFuKlIPTu1egumCZDxrgqwFvIob2RauFr/RPM/BFHdGIBE04bGwwjDuX5+wSJ62H8tZTo/KPXeswJPLcoOU01cIL9gclZJqnAkCsJmi47Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718402609; c=relaxed/simple;
-	bh=pnfRKVMJtcMvTZXgsbnPkluvMLxhMc1SMF0VOt5BoRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=oMelfj6f0YT7nTFaO1Kst0Fu3CbUkTvpOM9VfL2NeGhy0uEercbgwVfbEf1LT+C2bEhZNeRERQzNs6X/PmpiGlZ69UjOCfSOaSxvn/uqC/ASWpGvenAFlKJhM/nu1o5xzo2wFb3+5LiIroVctmWTvlS/8CAXvgmZLSUf6uacGdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OsXI2jcW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28C8BC2BD10;
-	Fri, 14 Jun 2024 22:03:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718402609;
-	bh=pnfRKVMJtcMvTZXgsbnPkluvMLxhMc1SMF0VOt5BoRQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=OsXI2jcWYpgFuwwLeo3viE6MZZ5Zr3ulI4P+WzFGbdHbLKa0zpoT6JTwFrU3KbgdB
-	 3NXjVaJ3ux4D5H/h8r1RofiY/h5d7dFmHm8JtkLRscEqqUmQC9vX/YDkI/NL9BDcK/
-	 1cFoaIKi6V7CoKgfIOZ3HkKlxA/nMx6rZ+zhSWElHPOOc1Q+bkiTI5l78ZgbrFkQa+
-	 3DhoZP9u6Pkq9RbL9t6NISOtaPmnDbnDfiHxwlBSAA8wz6iTDBQxlA/k+9ztyAFZH6
-	 BWBqDtJ4VdCs8a14yyjjzbVT5ZYXpWoLHjVjW2tggzNOi+pC2BfAsz95LJBdEUx9/D
-	 9qT2hecRbIMCA==
-Date: Fri, 14 Jun 2024 17:03:27 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Bitao Hu <yaoma@linux.alibaba.com>, bhelgaas@google.com,
-	weirongguang@kylinos.cn, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kanie@linux.alibaba.com,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [PATCHv2] PCI: pciehp: Use appropriate conditions to check the
- hotplug controller status
-Message-ID: <20240614220327.GA1125489@bhelgaas>
+	s=arc-20240116; t=1718402672; c=relaxed/simple;
+	bh=HdKSiteX1Un1YtoVxmJvySJHtIPF5Vxdx6iJwgU2Z2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ys9v6ziiVF4fbOBxrATNEEdUtKAP9Wl8wsUtO8d0nFkSckKbRfjwXDAEJtyTVheJxwQuqxP6RoU6I3fJnaFS14WhDbbZ0LYwMRkf/O7BUMvBo3LNoWMhia5WDvIFnOuFiLcykZjsT/6C0OZQfgEtYSXOfH8O+iKhu5YmPXXWQDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xk7r51tr; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718402671; x=1749938671;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HdKSiteX1Un1YtoVxmJvySJHtIPF5Vxdx6iJwgU2Z2o=;
+  b=Xk7r51tr6pJYGwBi+l7Q+1dlAUpJfjj9NqnMPIDWsBjGGAL5o1PJPKz1
+   6UDwTnt+IizVNJSwDKfZYpw1iFvbBDygqHhprOKD22qg/WmnuVhUA40pl
+   jXKT540Mc6MFZPopR9xctlysON8DbFpho8q2oJeEIfhKqaZ8nH7GLcQ2R
+   MIvuGofp9RQ/9ap2Sq4QTKVibgNV3Fy5yCPhv2rTivWN2aF7TGSeAz1m7
+   yBeRpxQ4xiImxuhwe9NgUXyiSVyLkrV+9wklvE2Whagl9VYmj0iEtK/L/
+   SC9liV7qW+WKu5QLWoKIuyEuk8V7TNdAbbcv5eelgBgXRgIAa8Oao5XLB
+   Q==;
+X-CSE-ConnectionGUID: 6A5FgMDySOmL4Lk71o27kA==
+X-CSE-MsgGUID: y12ncJbETP2X4uRixApS/Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="32855185"
+X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
+   d="scan'208";a="32855185"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 15:04:29 -0700
+X-CSE-ConnectionGUID: BIt/LgMwRnKc6/X1k7Mq1w==
+X-CSE-MsgGUID: vDcFpkdNRe+MGRRxoBMNtw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
+   d="scan'208";a="41127062"
+Received: from lkp-server01.sh.intel.com (HELO 9e3ee4e9e062) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 14 Jun 2024 15:04:24 -0700
+Received: from kbuild by 9e3ee4e9e062 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sIF1y-0001q1-0r;
+	Fri, 14 Jun 2024 22:04:22 +0000
+Date: Sat, 15 Jun 2024 06:03:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Frank Li <Frank.Li@nxp.com>, Yangbo Lu <yangbo.lu@nxp.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Madalin Bucur <madalin.bucur@nxp.com>,
+	Sean Anderson <sean.anderson@seco.com>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH 1/2] dt-bindings: ptp: Convert ptp-qoirq to yaml format
+Message-ID: <202406150525.S8VdHLlY-lkp@intel.com>
+References: <20240614-ls_fman-v1-1-cb33c96dc799@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,81 +87,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zmyb2WMhhNc7zQ2i@wunner.de>
+In-Reply-To: <20240614-ls_fman-v1-1-cb33c96dc799@nxp.com>
 
-On Fri, Jun 14, 2024 at 09:36:57PM +0200, Lukas Wunner wrote:
-> On Fri, Jun 14, 2024 at 01:41:20PM -0500, Bjorn Helgaas wrote:
-> > On Tue, May 28, 2024 at 02:42:00PM +0800, Bitao Hu wrote:
-> > > "present" and "link_active" can be 1 if the status is ready, and 0 if
-> > > it is not. Both of them can be -ENODEV if reading the config space
-> > > of the hotplug port failed. That's typically the case if the hotplug
-> > > port itself was hot-removed. Therefore, this situation can occur:
-> > > pciehp_card_present() may return 1 and pciehp_check_link_active()
-> > > may return -ENODEV because the hotplug port was hot-removed in-between
-> > > the two function calls. In that case we'll emit both "Card present"
-> > > *and* "Link Up" since both 1 and -ENODEV are considered "true". This
-> > > is not the expected behavior. Those messages should be emited when
-> > > "present" and "link_active" are positive.
-> [...]
-> > > --- a/drivers/pci/hotplug/pciehp_ctrl.c
-> > > +++ b/drivers/pci/hotplug/pciehp_ctrl.c
-> > > @@ -276,10 +276,10 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
-> > >  	case OFF_STATE:
-> > >  		ctrl->state = POWERON_STATE;
-> > >  		mutex_unlock(&ctrl->state_lock);
-> > > -		if (present)
-> > > +		if (present > 0)
-> > 
-> > I completely agree that this is a problem and this patch addresses it.
-> > But ...
-> > 
-> > It seems a little bit weird to me that we even get to this switch
-> > statement if we got -ENODEV from either pciehp_card_present() or
-> > pciehp_check_link_active().  If that happens, a config read failed,
-> > but we're going to go ahead and call pciehp_enable_slot(), which is
-> > going to do a bunch more config accesses, potentially try to power up
-> > the slot, etc.
-> > 
-> > If a config read failed, it seems like we might want to avoid doing
-> > some of this stuff.
-> 
-> Hm, good point.  I guess we should change the logical expression instead:
-> 
-> -	if (present <= 0 && link_active <= 0) {
-> +	if (present < 0 || link_active < 0 || (!present && !link_active)) {
+Hi Frank,
 
-It gets to be a fairly complicated expression, and I'm not 100% sure
-we should handle the config read failure the same as the "!present &&
-!link_active" case.  The config read failure probably means the
-Downstream Port is gone, the other case means the device *below* that
-port is gone.  
+kernel test robot noticed the following build warnings:
 
-We likely want to cancel the delayed work in both cases, but what
-about the indicators?  If the Downstream Port is gone, we're not going
-to be able to change them.  Do we want the same message for both?
+[auto build test WARNING on 03d44168cbd7fc57d5de56a3730427db758fc7f6]
 
-Maybe we should handle the config failures separately first?  These
-error conditions make everything so ugly.
+url:    https://github.com/intel-lab-lkp/linux/commits/Frank-Li/dt-bindings-ptp-Convert-ptp-qoirq-to-yaml-format/20240615-043704
+base:   03d44168cbd7fc57d5de56a3730427db758fc7f6
+patch link:    https://lore.kernel.org/r/20240614-ls_fman-v1-1-cb33c96dc799%40nxp.com
+patch subject: [PATCH 1/2] dt-bindings: ptp: Convert ptp-qoirq to yaml format
+reproduce: (https://download.01.org/0day-ci/archive/20240615/202406150525.S8VdHLlY-lkp@intel.com/reproduce)
 
-> > > -		if (link_active)
-> > > +		if (link_active > 0)
-> > >  			ctrl_info(ctrl, "Slot(%s): Link Up\n",
-> > >  				  slot_name(ctrl));
-> > 
-> > These are cases where we misinterpreted -ENODEV as "device is present"
-> > or "link is active".
-> > 
-> > pciehp_ignore_dpc_link_change() and pciehp_slot_reset() also call
-> > pciehp_check_link_active(), and I think they also interpret -ENODEV as
-> > "link is active".
-> > 
-> > Do we need similar changes there?
-> 
-> Another good observation, both need to check for <= 0 instead of == 0.
-> Do you want to fix that yourself or would you prefer me (or someone else)
-> to submit a patch?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406150525.S8VdHLlY-lkp@intel.com/
 
-It'd be great if you or somebody else could do that.
+All warnings (new ones prefixed by >>):
 
-Bjorn
+   Warning: Documentation/devicetree/bindings/net/fsl-fman.txt references a file that doesn't exist: Documentation/devicetree/bindings/ptp/ptp-qoriq.txt
+>> Warning: Documentation/devicetree/bindings/net/fsl-tsec-phy.txt references a file that doesn't exist: Documentation/devicetree/bindings/ptp/ptp-qoriq.txt
+   Warning: Documentation/devicetree/bindings/power/wakeup-source.txt references a file that doesn't exist: Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
+   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
+   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/qcom
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/display/exynos/
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/ptp/ptp-qoriq.txt
+   Can't open Documentation/output/net.h.rst at ./Documentation/sphinx/parse-headers.pl line 328, <IN> line 13.
+   make[3]: *** [Documentation/userspace-api/media/Makefile:34: Documentation/output/net.h.rst] Error 2
+   Can't open Documentation/output/ca.h.rst at ./Documentation/sphinx/parse-headers.pl line 328, <IN> line 25.
+   make[3]: *** [Documentation/userspace-api/media/Makefile:25: Documentation/output/ca.h.rst] Error 2
+   Can't open Documentation/output/dmx.h.rst at ./Documentation/sphinx/parse-headers.pl line 328, <IN> line 66.
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
