@@ -1,296 +1,171 @@
-Return-Path: <linux-kernel+bounces-214970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE93908CD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:57:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64336908CD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:58:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EB1A285801
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:57:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53A651C263B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13809463;
-	Fri, 14 Jun 2024 13:57:21 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A486FCB
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9B88F40;
+	Fri, 14 Jun 2024 13:57:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6752279CF
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718373441; cv=none; b=o3t3UURxO8MooyHiT38VIptWiqyyRPY5FeLvQoS3VlJnxoaslikHvg5DYkDPH2u+jG7dCxeCaMwcR+tinFmK/vQNlyqCxk28VgeON03WDHgpfwi1i8UQfJEWkksJwhO+K+m7o3LAMVstDqCZ/8/KwaSNi7/M/Elktr2rxXv1qhs=
+	t=1718373479; cv=none; b=ujfm1OmPJeQLjVFkmyxm5OVVDQxhe3To4fxSF3EWnMnmahcRGakm+rX4sErHAlHIxjHCtXzR+ZJCh0UccT7cn4TSTa6fW8EswlXDlEM0QG8SjmJMTlBnlfd/zOV1tN9OejCoPf+/NgSYprsDEgklW5x9y4rA6+LyGh8goFaWRYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718373441; c=relaxed/simple;
-	bh=BYD8UOEU2vVnYti+IZtFPBfQoWeOOHaqqXqCOEEm9a4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=R+j0WpP6o4jf+G4RiH7iJG6mNb9RG2wLEN0q/ShcIwmKhW0q2DjFe1f4U0KagXJMGVnkIzyilIE6F0UXGB0gy1s0lR3DbazIKgjOttQMpTsY8G0QBMqsnxDeJ+w/aFNsElXjZ5UbLHEt1eCVw0wWuaj6AD5yUFAnGZYVFd4NUW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3746147204eso24701675ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 06:57:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718373438; x=1718978238;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AKfSpRWCAohZXKFpcx5c8GbsuZPJk363sAvhcB7aaFk=;
-        b=EknTmUlFFKcn2luvlN5GIjXT1W+lZxA02H31xqBix1e19PbH2FDi0Y02Jj7jKfyR5F
-         4N31q9WtQa4DBQErElVMESqJ9h0akaBYYnIofcEM5Wa/YXLEFzXiy8kc2DYZYyjL84aF
-         9ItIcmFJ6JXtcmBnX88keq1wL9SsGVE34i5GWKIus9cBIxwmfGdxXolErsoq092ZX8u7
-         rhecbQxsj2Jsh1YU+DBB0A76jz+OXwnLIpsO5+Vk598WA3rgRZqYSC9HKT4tleU4dt2j
-         N0todxYvzBPOHUD7/2R58yMtmQz36PL/NbiK1uXXqaP+/bJQ5+Z94dNHj9QIFQ74V/Fo
-         B2pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxpRcXYOdBe3F1qKZEBh6vN0MehBjZss9a8Y2ATNLTi9Hc0pngAf6MkAh51iBQffVpujPqXDmmh1J8JAMwH0U2hh91qu4uIKgB0h63
-X-Gm-Message-State: AOJu0YxeNJ0zpc+XdHYxpJyLfHVxmdupRXzdgI8gYH3emHgPVISg+A8S
-	WxqS8fzmLNZgSiEHW5amwo1I73u/crzV9gZ0P6ZUVadRQLzC9Ow7SwV9vOLYBpy9QJyXaubZmIN
-	nHyHl8BNm4Fsn9VJUOTxoaRWFp9KNtfAwqKNjL2/+mcHmS8kYFzSZcP0=
-X-Google-Smtp-Source: AGHT+IGun4W5Tjwq8Ryn2pfhvlBE3+obd/1fTziq7wxTty3KC22+aeEND9OHvCNW7ijYqKL8UNSkGSaV4yNuchci12SYaO5w11IE
+	s=arc-20240116; t=1718373479; c=relaxed/simple;
+	bh=NLLHY0sm+/6nGzt9ZAvEWauMfCBit/rIFP7jShz2tCc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L+IvIhoOvUuH72bZMcXS/A5imIpmKDhGMVVLBK5wj+TjOBCKYd65EZjJ1AnK0sOAXr61dCa7aK6lZjhSkKvIBwJ2Y7eqlkZ1AST0Ygoqp6Q34Rp6A4z54PkkIXmTre+ek8awHOuKJezFkmzAUvCYF3RZ4sXUqip3sfthomV9gZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3614FEC;
+	Fri, 14 Jun 2024 06:58:19 -0700 (PDT)
+Received: from [10.1.196.28] (eglon.cambridge.arm.com [10.1.196.28])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D3453F5A1;
+	Fri, 14 Jun 2024 06:57:50 -0700 (PDT)
+Message-ID: <293d54b8-b664-4106-83e9-64ba8c504f32@arm.com>
+Date: Fri, 14 Jun 2024 14:57:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:194d:b0:375:dad7:a664 with SMTP id
- e9e14a558f8ab-375e1036551mr1968155ab.6.1718373438558; Fri, 14 Jun 2024
- 06:57:18 -0700 (PDT)
-Date: Fri, 14 Jun 2024 06:57:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000065a682061ad9fe42@google.com>
-Subject: [syzbot] [net?] KASAN: slab-out-of-bounds Read in mini_qdisc_pair_swap
-From: syzbot <syzbot+f243d5f2675d3151439a@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, jhs@mojatatu.com, 
-	jiri@resnulli.us, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
-	xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 17/31] x86/resctrl: Move mbm_cfg_mask to struct
+ rdt_resource
+Content-Language: en-GB
+To: Dave Martin <Dave.Martin@arm.com>,
+ Reinette Chatre <reinette.chatre@intel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+ Fenghua Yu <fenghua.yu@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
+ shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>
+References: <20240321165106.31602-1-james.morse@arm.com>
+ <20240321165106.31602-18-james.morse@arm.com>
+ <966b7b32-6600-4b1f-9535-0298fedd57a7@intel.com>
+ <Zhfwzh4sHvTYyTJ1@e133380.arm.com>
+ <c96cdf6a-02a8-4ee2-91f5-e4329015e276@intel.com>
+ <Zh/fqIFJDjsb1jYT@e133380.arm.com>
+ <9e57c086-ce5c-403a-9134-9e2aa5124535@intel.com>
+ <ZiE7w0P2CWQeXZ5F@e133380.arm.com>
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <ZiE7w0P2CWQeXZ5F@e133380.arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi guys,
 
-syzbot found the following issue on:
+On 18/04/2024 16:26, Dave Martin wrote:
+> On Wed, Apr 17, 2024 at 10:18:48PM -0700, Reinette Chatre wrote:
+>> On 4/17/2024 7:41 AM, Dave Martin wrote:
+>>> On Thu, Apr 11, 2024 at 10:39:06AM -0700, Reinette Chatre wrote:
+>>>> On 4/11/2024 7:16 AM, Dave Martin wrote:
+>>>>> On Mon, Apr 08, 2024 at 08:21:24PM -0700, Reinette Chatre wrote:
+>>>>>> On 3/21/2024 9:50 AM, James Morse wrote:
+>>>>>>> The mbm_cfg_mask field lists the bits that user-space can set when
+>>>>>>> configuring an event. This value is output via the last_cmd_status
+>>>>>>> file.
+>>>>>>>
+>>>>>>> Once the filesystem parts of resctrl are moved to live in /fs/, the
+>>>>>>> struct rdt_hw_resource is inaccessible to the filesystem code. Because
+>>>>>>> this value is output to user-space, it has to be accessible to the
+>>>>>>> filesystem code.
+>>>>>>>
+>>>>>>> Move it to struct rdt_resource.
 
-HEAD commit:    707081b61156 Merge branch 'for-next/core', remote-tracking..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=149601f1180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=caeac3f3565b057a
-dashboard link: https://syzkaller.appspot.com/bug?extid=f243d5f2675d3151439a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+>>> Maybe, but the bits as defined by AMD BMEC look rather architecture and
+>>> bus specific, and I am suspicious that there is no guaranteed clean
+>>> mapping between MPAM's config and BMEC's config.
+>>>
+>>> MPAM currently just has "reads" and "writes" (or both), though as for
+>>> BMEC, the meanings of these are not fully defined.  I suppose finer
+>>> filtering granularity might be supported in future (at least, it is not
+>>> explicitly ruled out).
+>>>
+>>> James' current approach seems to be to pick a single BMEC flag that's
+>>> in the right sort of area for each MPAM bit (though not equivalent) and
+>>> translate that bit across to drive a corresponding the MPAM bit.  But
+>>> I'd say that this is arch-specific configuration masquerading as
+>>> generic configuration IMHO and not really generic at all.
+>>>
+>>> See "untested: arm_mpam: resctrl: Allow monitors to be configured"
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git/commit/?h=mpam/snapshot/v6.7-rc2&id=db0ac51f60675b6c4a54ccd24fa7198ec321c56d
+>>>
+>>> I guess this needs discussion with James, since there will have been
+>>> additional thought process behind all this that is not captured; either
+>>> way, I guess it could be resolved after this series, but it will need a
+>>> decision before the MPAM support is merged (or at least, before MPAM
+>>> exposes userspace support for event configuration upstream).
+>>>
+>>> (If this has already been discussed and James' current approach has
+>>> already been agreed as the least worst option, then I guess I can live
+>>> with it; I just find it icky, and it looks odd to have AMD specifics in
+>>> a common header.)
+>>
+>> I am not aware of such a discussion.
+>>
+>> Sounds like a motivation to delay this portion of the changes in patch #8.
+>>
+>> Reinette
+> 
+> 
+> Ack, I'll discuss this with James.
+> 
+> I guess the thing to do will be to keep the affected definitions in the
+> x86 headers for now, and carry the exports in James' MPAM branch until
+> we figure out whether it really makes sense to share them.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I'm afraid this ship has already sailed. Nothing about the 'mbm_total_bytes_config'
+section of Documentation/arch/x86/resctrl.rst says that this interface is AMD specific. It
+just happens not to be supported on Intel parts, meaning no-one can tell the difference today.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6cad68bf7532/disk-707081b6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1a27e5400778/vmlinux-707081b6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/67dfc53755d0/Image-707081b6.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f243d5f2675d3151439a@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-out-of-bounds in mini_qdisc_pair_swap+0x68/0x164 net/sched/sch_generic.c:1557
-Read of size 8 at addr ffff00018c4b9000 by task kworker/u4:6/261
-
-CPU: 1 PID: 261 Comm: kworker/u4:6 Not tainted 6.8.0-rc7-syzkaller-g707081b61156 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/29/2024
-Workqueue: netns cleanup_net
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:291
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:298
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x178/0x518 mm/kasan/report.c:488
- kasan_report+0xd8/0x138 mm/kasan/report.c:601
- __asan_report_load8_noabort+0x20/0x2c mm/kasan/report_generic.c:381
- mini_qdisc_pair_swap+0x68/0x164 net/sched/sch_generic.c:1557
- clsact_chain_head_change+0x28/0x38 net/sched/sch_ingress.c:60
- tcf_chain_head_change_item net/sched/cls_api.c:493 [inline]
- tcf_chain0_head_change_cb_del+0x1e0/0x2d8 net/sched/cls_api.c:940
- tcf_block_put_ext+0xfc/0x33c net/sched/cls_api.c:1529
- clsact_destroy+0x1fc/0x790 net/sched/sch_ingress.c:300
- __qdisc_destroy+0x160/0x4b8 net/sched/sch_generic.c:1067
- qdisc_put net/sched/sch_generic.c:1094 [inline]
- shutdown_scheduler_queue+0x168/0x200 net/sched/sch_generic.c:1147
- dev_shutdown+0x244/0x480 net/sched/sch_generic.c:1481
- unregister_netdevice_many_notify+0x7f4/0x17b8 net/core/dev.c:11073
- unregister_netdevice_many net/core/dev.c:11139 [inline]
- default_device_exit_batch+0xa1c/0xa9c net/core/dev.c:11619
- ops_exit_list net/core/net_namespace.c:175 [inline]
- cleanup_net+0x5dc/0x8d0 net/core/net_namespace.c:618
- process_one_work+0x694/0x1204 kernel/workqueue.c:2633
- process_scheduled_works kernel/workqueue.c:2706 [inline]
- worker_thread+0x938/0xef4 kernel/workqueue.c:2787
- kthread+0x288/0x310 kernel/kthread.c:388
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
-
-Allocated by task 5782:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x40/0x78 mm/kasan/common.c:68
- kasan_save_alloc_info+0x40/0x50 mm/kasan/generic.c:575
- poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
- __kasan_kmalloc+0xac/0xc4 mm/kasan/common.c:387
- kasan_kmalloc include/linux/kasan.h:211 [inline]
- kmalloc_trace+0x26c/0x49c mm/slub.c:4012
- kmalloc include/linux/slab.h:590 [inline]
- kzalloc include/linux/slab.h:711 [inline]
- uevent_show+0x160/0x320 drivers/base/core.c:2656
- dev_attr_show+0x60/0xcc drivers/base/core.c:2364
- sysfs_kf_seq_show+0x2d0/0x43c fs/sysfs/file.c:59
- kernfs_seq_show+0x150/0x1fc fs/kernfs/file.c:205
- seq_read_iter+0x3e0/0xc44 fs/seq_file.c:230
- kernfs_fop_read_iter+0x144/0x5c8 fs/kernfs/file.c:279
- call_read_iter include/linux/fs.h:2081 [inline]
- new_sync_read fs/read_write.c:395 [inline]
- vfs_read+0x78c/0x954 fs/read_write.c:476
- ksys_read+0x15c/0x26c fs/read_write.c:619
- __do_sys_read fs/read_write.c:629 [inline]
- __se_sys_read fs/read_write.c:627 [inline]
- __arm64_sys_read+0x7c/0x90 fs/read_write.c:627
- __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
-Freed by task 5782:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x40/0x78 mm/kasan/common.c:68
- kasan_save_free_info+0x54/0x6c mm/kasan/generic.c:589
- poison_slab_object+0x124/0x18c mm/kasan/common.c:240
- __kasan_slab_free+0x3c/0x70 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2121 [inline]
- slab_free mm/slub.c:4299 [inline]
- kfree+0x144/0x3cc mm/slub.c:4409
- uevent_show+0x1c8/0x320 drivers/base/core.c:2669
- dev_attr_show+0x60/0xcc drivers/base/core.c:2364
- sysfs_kf_seq_show+0x2d0/0x43c fs/sysfs/file.c:59
- kernfs_seq_show+0x150/0x1fc fs/kernfs/file.c:205
- seq_read_iter+0x3e0/0xc44 fs/seq_file.c:230
- kernfs_fop_read_iter+0x144/0x5c8 fs/kernfs/file.c:279
- call_read_iter include/linux/fs.h:2081 [inline]
- new_sync_read fs/read_write.c:395 [inline]
- vfs_read+0x78c/0x954 fs/read_write.c:476
- ksys_read+0x15c/0x26c fs/read_write.c:619
- __do_sys_read fs/read_write.c:629 [inline]
- __se_sys_read fs/read_write.c:627 [inline]
- __arm64_sys_read+0x7c/0x90 fs/read_write.c:627
- __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
-The buggy address belongs to the object at ffff00018c4b8000
- which belongs to the cache kmalloc-4k of size 4096
-The buggy address is located 0 bytes to the right of
- allocated 4096-byte region [ffff00018c4b8000, ffff00018c4b9000)
-
-The buggy address belongs to the physical page:
-page:000000000267b9c9 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1cc4b8
-head:000000000267b9c9 order:3 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0x5ffc00000000840(slab|head|node=0|zone=2|lastcpupid=0x7ff)
-page_type: 0xffffffff()
-raw: 05ffc00000000840 ffff0000c0002140 fffffdffc6008a00 dead000000000002
-raw: 0000000000000000 0000000000040004 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff00018c4b8f00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff00018c4b8f80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff00018c4b9000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                   ^
- ffff00018c4b9080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff00018c4b9100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-Unable to handle kernel paging request at virtual address e0d5c054000002d6
-KASAN: maybe wild-memory-access in range [0x06b202a0000016b0-0x06b202a0000016b7]
-Mem abort info:
-  ESR = 0x0000000096000004
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x04: level 0 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[e0d5c054000002d6] address between user and kernel address ranges
-Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 1 PID: 261 Comm: kworker/u4:6 Tainted: G    B              6.8.0-rc7-syzkaller-g707081b61156 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/29/2024
-Workqueue: netns cleanup_net
-pstate: 00400005 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : mini_qdisc_pair_swap+0x130/0x164 net/sched/sch_generic.c:1585
-lr : mini_qdisc_pair_swap+0x124/0x164 net/sched/sch_generic.c:1585
-sp : ffff800097bb74e0
-x29: ffff800097bb74e0 x28: 1fffe00018f4985c x27: ffff800089180b74
-x26: 1fffe00018f4986c x25: 06b202a000001696 x24: dfff800000000000
-x23: 1fffe00031897200 x22: ffff00018c4b9000 x21: ffff0000c7a4c310
-x20: 00000000000170f0 x19: 06b202a0000016b6 x18: 1fffe00036804396
-x17: ffff80008ec9d000 x16: ffff800080276f8c x15: 0000000000000001
-x14: 1ffff00011dcf390 x13: 0000000000000000 x12: 0000000000000000
-x11: 0000000000000001 x10: 0000000000000000 x9 : 1fffe00018b89781
-x8 : 00d64054000002d6 x7 : 1fffe00036804397 x6 : ffff8000803be9e4
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : ffff0000c5c4bc00 x1 : 0000000000000000 x0 : 00000000000170f0
-Call trace:
- mini_qdisc_pair_swap+0x130/0x164 net/sched/sch_generic.c:1585
- clsact_chain_head_change+0x28/0x38 net/sched/sch_ingress.c:60
- tcf_chain_head_change_item net/sched/cls_api.c:493 [inline]
- tcf_chain0_head_change_cb_del+0x1e0/0x2d8 net/sched/cls_api.c:940
- tcf_block_put_ext+0xfc/0x33c net/sched/cls_api.c:1529
- clsact_destroy+0x1fc/0x790 net/sched/sch_ingress.c:300
- __qdisc_destroy+0x160/0x4b8 net/sched/sch_generic.c:1067
- qdisc_put net/sched/sch_generic.c:1094 [inline]
- shutdown_scheduler_queue+0x168/0x200 net/sched/sch_generic.c:1147
- dev_shutdown+0x244/0x480 net/sched/sch_generic.c:1481
- unregister_netdevice_many_notify+0x7f4/0x17b8 net/core/dev.c:11073
- unregister_netdevice_many net/core/dev.c:11139 [inline]
- default_device_exit_batch+0xa1c/0xa9c net/core/dev.c:11619
- ops_exit_list net/core/net_namespace.c:175 [inline]
- cleanup_net+0x5dc/0x8d0 net/core/net_namespace.c:618
- process_one_work+0x694/0x1204 kernel/workqueue.c:2633
- process_scheduled_works kernel/workqueue.c:2706 [inline]
- worker_thread+0x938/0xef4 kernel/workqueue.c:2787
- kthread+0x288/0x310 kernel/kthread.c:388
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
-Code: 97b951d7 91008333 aa0003f4 d343fe68 (38786908) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	97b951d7 	bl	0xfffffffffee5475c
-   4:	91008333 	add	x19, x25, #0x20
-   8:	aa0003f4 	mov	x20, x0
-   c:	d343fe68 	lsr	x8, x19, #3
-* 10:	38786908 	ldrb	w8, [x8, x24] <-- trapping instruction
+Because the documentation doesn't say "AMD only" or "consult the lid of the box for the
+meaning of the bits" - I expect user-space can expect this to work in the same way on any
+platform that supports these files. As such, it has become resctrl's interface to this
+stuff. We certainly don't want two different ways of doing this.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+As MPAM can configure the monitors like this, I'm stuck between a rock and a hard place. I
+can't invent something new - because existing user-space expects BMEC, and making these
+bits generic is being questioned because its secretly AMD specific.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Mapping the BMEC^Wresctrl bits to what MPAM supports is my best attempt at supporting
+this. The MPAM driver is all about fitting MPAM into a shape that can be exposed via
+resctrl, so this is hardly out of keeping. (I could make the same argument about the
+MBA percentages...)
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+The same argument holds for X86's event numbers. Some agreement on IDs for events is
+needed between the arch and fs code - and we may as well stick with the X86 numbers today
+- its certainly more convenient for the X86 arch code. Where arm64/MPAM or any other
+architecture extends this, I'd hope to do it via perf where numbered events are already
+understood to be platform specific, and there is tooling to support this.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+For configurable events on non-AMD architectures? We can kick that into the perf weeds -
+but we need somewhere to hang the fs/resctrl code that drives these files. I think
+'is_AMD()' is detestable, and as these bits are uapi, they should be exposed for all
+architectures that support resctrl.
 
-If you want to undo deduplication, reply with:
-#syz undup
+
+Thanks,
+
+James
 
