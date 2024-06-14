@@ -1,144 +1,235 @@
-Return-Path: <linux-kernel+bounces-215474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D871890934F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:19:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D13909352
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA6C51C232BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:19:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC6141C232FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBB8184128;
-	Fri, 14 Jun 2024 20:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA2019ADBF;
+	Fri, 14 Jun 2024 20:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LTJGfLCc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gIg8yIK1"
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19104393;
-	Fri, 14 Jun 2024 20:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806D8145B34;
+	Fri, 14 Jun 2024 20:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718396389; cv=none; b=W+pHsZEv8xxRwGYbgJamKRI6U1pIfnml4sCX/QFmoe3VceI/Qr9/uRvceDjsze5RM/aivih/igjpfW1p3/hejDE/4P/R8AW5VPAkxrhfIoPeRGDHWI3+d57ESKFzKH1uR8xxnPKVK5rRVp79uV0KKX/TNSp8wWkl4NC+//PNXAs=
+	t=1718396416; cv=none; b=dxXch9Tjg+/ViMl0nzKB87/csECfGmnlgE6AnUplrzQj1N9NSZK/a7fAGdL+np8nAxlpugev7UHOboL0rnscMMYrZln4LuHtLQevT+kpiZRk0jOVDiGZiaKshD5FDWOoFQwYA+oU5JdlmjTZ6vQbNJyt97NrkykxbfZ78v2Ny+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718396389; c=relaxed/simple;
-	bh=MO7d+ilL3XZhUZBsmfpYq+oyqYrOIe1GkR5FSI2xQbg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Ak+c7a1uVxUQhGmBjRNjYMSuNIymlXDgPcpLvbmuUdHFA2GfhSTjuDIxN4XUG5HxI02N+Lj1zU8AgF4vCLxXQpxqIvcu2CKBxVi7NXetfs0oLWH1qTOo3f7L/ZdIgAwxJf2rnh0OC93xY1A5WlIRfmKXaX1Fvo84rDsK3Flzqxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LTJGfLCc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45EKChw7030498;
-	Fri, 14 Jun 2024 20:19:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	H+fhsOX2oM3LNxV6L2zysDTUgRq1q4HveG16XE7UwTI=; b=LTJGfLCchDbD5kA7
-	ivQXJFRY+n7gPsCUw0suYyhCJfNYGDXZBv8JK9+YaEogiix3rTgzjbfegw2zmJmb
-	GKveLIfDBB32nPSigJ1lZYjlls2i7CYUoeQwKapOdHqXFg1wKe159/N0i4YYhYUD
-	523bjlEmojznB6XRPKgQUBSfU2aVfkaqz4LBC8DWLmOS/JnP2/gJtAec3XOeRVCd
-	/GDa4c92+aUEVBitS9hdiCuOiJ/zxYOf8vF4vFuwVMKBtDrBHUo61VQsackNh3aE
-	V/r13yZFa5KrAhX31YVZhZfWEcdB6twMzRSHg3vcrZGep1ZqcfcakZeuZIGmt/Q2
-	jPXDKg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yr6q42m48-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Jun 2024 20:19:44 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45EKJhw5030496
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Jun 2024 20:19:43 GMT
-Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 14 Jun
- 2024 13:19:38 -0700
-Message-ID: <122b5418-ca2d-df7d-a1d5-d7682ce0ed5a@quicinc.com>
-Date: Sat, 15 Jun 2024 01:49:34 +0530
+	s=arc-20240116; t=1718396416; c=relaxed/simple;
+	bh=SL3LXdGpVn93N29tSyCl+OiuXnNiv14zHiXAfmhinnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N7ozrrxYX1nWRQzVpASTNLR04Ikmrd/zbI80/8z6sFsvI/+yjpQ5hSDTxGgGpfr1ghslzueLOyb4g7y5iVrM94wVcnkE2tAPNQ80/C25c277YiPkxhmn+uon/NhHLmAqX30XpURhOUXmvjU9gXCT8XdrMKkFGUef0K/tskg2kEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gIg8yIK1; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-48c390a1054so998931137.0;
+        Fri, 14 Jun 2024 13:20:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718396413; x=1719001213; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5CUAuynBVyz1fHYaZykoo5xpEFYTJwiFVf5avH/YD40=;
+        b=gIg8yIK115uTTUk6Knl8X4yYT3ORsqGyRqxJzfuSilSPvo2KFCKHg0cqx34R/X99Kg
+         wpGPpT5oOhUBGRY1UP5yOuLIRIU+p2JEgBjXaZO9oIBTVazF7Mv6K3jrWxINr5rCDBJH
+         85lmarozL1wlH6Nr1fRsoZwXZrGcGq/fYjk8Zl4OWdz/Ai1+rhlQGeLxeQ/kizMTbGB7
+         ZnNN94slUpGhzjRjxXLpJvAOds6lAI1C6M8iQXz8b0Ji57vEePKGDB+qsUSSAoiCSyqs
+         dHESC9NVI7zlFqf20TvTWCcT8OhUPm3uip+iTTQvfhu+8xWjSUVoV45/wKF6ATyUZ8u+
+         25fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718396413; x=1719001213;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5CUAuynBVyz1fHYaZykoo5xpEFYTJwiFVf5avH/YD40=;
+        b=L62D5aZ7KBIZFiiNGTilcy+dAvkXNrX/DvMCX7vSJEyoyj7ZvkyCzRE47zTB0Rv5Ph
+         ujMtN6lAPGBIm84RUx1AlVBSfKD9GNpeZy5xKaFlM9tmc6BfGVmnvJBVFnzlHi66yvhO
+         bYi6aUwYQj6DqgK1Sh87jPqVT53LmU34vu8MOEJc6xnmbx+PMGX0Eay11cXnceNOPDb8
+         RvI2MOKaU+NVok+l0X+53D7C6Jp9fa6vQOYav6C5wuqxZJ3H02utkPHLuPysaZ57OwxZ
+         IRBbL+1Avm02JGVX9XLhy/1OrDbFK+IPPMXJRQYVa44MrODWIvYb/tIeFt8DSYLjZBKD
+         hKag==
+X-Forwarded-Encrypted: i=1; AJvYcCU4SbKGQdm1XXFpDz92bpqjINc4uAaqlZf5Teb3V7JKEZU3sao0GTSUcS262vv5eqVGr6N76tlZ9fLRwYGzTfuATix9rgeH7DeJvgAetXwiSaKjQwlcaMEUg7CxYmBTBCq9e0PpLVC4iSsRqaBM/czTtKa9WFlx06Yx6bZ8dTrDl8a4aUVxAzw=
+X-Gm-Message-State: AOJu0Yz8p6PS2s6I4owtyaP6fdhpODAl3tSbwHPbIdI390ZEsulgoTGk
+	nU/P4e5wCCkkmnaIR1HYQ7LFoJp76LkKH2RnZc7Q20yTXd1Xp+bT
+X-Google-Smtp-Source: AGHT+IHeZPt+coJs0UUjzvIRyH7KLBAHbOKzSy3UT6stagMTqVFlSqoIJw6X4dKYtBRry1sNMWpzuw==
+X-Received: by 2002:a67:e249:0:b0:48d:9792:5bfe with SMTP id ada2fe7eead31-48dae34a5b9mr4308573137.16.1718396413309;
+        Fri, 14 Jun 2024 13:20:13 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-798abe69dffsm176912385a.126.2024.06.14.13.20.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 13:20:12 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id D8BE1120006C;
+	Fri, 14 Jun 2024 16:20:10 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Fri, 14 Jun 2024 16:20:10 -0400
+X-ME-Sender: <xms:-qVsZn4233Bg4h8CYciH-FYwf6Gd12xjqfEGsTdjl6QA5jiAcw4ReQ>
+    <xme:-qVsZs6DHWLHgvPwKH4wyGRTfgSw01mIhxwTBlTIOJkXTp3HWoLZV6KFbALJxxSMK
+    t1BbeXfZ5y4dvV26Q>
+X-ME-Received: <xmr:-qVsZueKRGiocyoZPU9yTmkb-TzOXfOx9x7K3UtbwfYZTdsWmddqC-r9yBoD9g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeduledgudegkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveei
+    udffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedt
+    ieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfh
+    higihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:-qVsZoIa0p0SKpKTSsAdGKByO2AuK-qzOcW7xWgZLMx3YekiPfSWaA>
+    <xmx:-qVsZrLZYV6LKYERiZtQkYoB6vb1NFvDsznJ78aIyxbfmnzIfp1Juw>
+    <xmx:-qVsZhw5PqYPcfLuoSIZmOxvOfNIIe3xQJU3vf0n6hkYt2nxA0ftpg>
+    <xmx:-qVsZnIKOxAH2U6xyQmhe7kWJruyFTswUX4up4tIPdDPv0C96gCLOQ>
+    <xmx:-qVsZmarTnrWkXSGtpILPx652VtRHGbOAmhFWRu-w1s9q7OeOT1evxcf>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 14 Jun 2024 16:20:08 -0400 (EDT)
+Date: Fri, 14 Jun 2024 13:20:04 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, llvm@lists.linux.dev,
+	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
+ linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
+ Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com
+Subject: Re: [RFC 2/2] rust: sync: Add atomic support
+Message-ID: <Zmyl9OHjIarJIIYi@boqun-archlinux>
+References: <20240612223025.1158537-1-boqun.feng@gmail.com>
+ <20240612223025.1158537-3-boqun.feng@gmail.com>
+ <ZmweL12SL7Unlfpe@J2N7QTR9R3.cambridge.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 2/4] soc: qcom: icc-bwmon: Allow for interrupts to be
- shared across instances
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <djakov@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <srinivas.kandagatla@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
-        <conor+dt@kernel.org>, <dmitry.baryshkov@linaro.org>,
-        <abel.vesa@linaro.org>
-References: <20240604011157.2358019-1-quic_sibis@quicinc.com>
- <20240604011157.2358019-3-quic_sibis@quicinc.com>
- <5e5f052b-df59-47fb-aed0-10b4f980f151@linaro.org>
- <5df5dc6b-872f-34c5-a6d2-a64f9c881193@quicinc.com>
- <672b6156-e425-4f3b-86f4-02a34cab2b67@linaro.org>
-From: Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <672b6156-e425-4f3b-86f4-02a34cab2b67@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: kvdxFHK5rbyFNXzxYVdLiWOjYLBkeImc
-X-Proofpoint-ORIG-GUID: kvdxFHK5rbyFNXzxYVdLiWOjYLBkeImc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-14_17,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=624 suspectscore=0 impostorscore=0
- phishscore=0 spamscore=0 bulkscore=0 priorityscore=1501 clxscore=1015
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406140140
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmweL12SL7Unlfpe@J2N7QTR9R3.cambridge.arm.com>
 
-
-
-On 6/14/24 13:54, Krzysztof Kozlowski wrote:
-> On 13/06/2024 19:02, Sibi Sankar wrote:
->>
->>
->> On 6/4/24 12:16, Krzysztof Kozlowski wrote:
->>> On 04/06/2024 03:11, Sibi Sankar wrote:
->>>> The multiple BWMONv4 instances available on the X1E80100 SoC use the
->>>> same interrupt number. Mark them are shared to allow for re-use across
->>>> instances.
->>
->> Hey Krzysztof,
->>
->> Thanks for taking time to review the series :)
->>
->>>
->>> Would be nice if you also mention you checked that it is safe to have
->>> both devm and shared interrupts (so you investigated possibility of race
->>> on exit path).
->>
->> I didn't see any problems with devm being used with SHARED when I posted
->> it out. After your review comments I went back again to vett the exit
->> path for races and ran into an pre-existing splat [1] but the bwmon
->> instances work as expected on module removal/re-insertion.
+On Fri, Jun 14, 2024 at 11:40:47AM +0100, Mark Rutland wrote:
+[...]
+> > +#gen_proto_order_variant(meta, pfx, name, sfx, order, atomic, ty, int, raw, arg...)
+> > +gen_proto_order_variant()
+> > +{
+> > +	local meta="$1"; shift
+> > +	local pfx="$1"; shift
+> > +	local name="$1"; shift
+> > +	local sfx="$1"; shift
+> > +	local order="$1"; shift
+> > +	local atomic="$1"; shift
+> > +	local ty="$1"; shift
+> > +	local int="$1"; shift
+> > +	local raw="$1"; shift
+> > +
+> > +	local fn_name="${raw}${pfx}${name}${sfx}${order}"
+> > +	local atomicname="${raw}${atomic}_${pfx}${name}${sfx}${order}"
+> > +
+> > +	local ret="$(gen_ret_type "${meta}" "${int}")"
+> > +	local params="$(gen_params "${int}" $@)"
+> > +	local args="$(gen_args "$@")"
+> > +	local retstmt="$(gen_ret_stmt "${meta}")"
+> > +
+> > +cat <<EOF
+> > +    /// See \`${atomicname}\`.
+> > +    #[inline(always)]
+> > +    pub fn ${fn_name}(&self${params}) ${ret}{
+> > +        // SAFETY:\`self.0.get()\` is a valid pointer.
+> > +        unsafe {
+> > +            ${retstmt}${atomicname}(${args});
+> > +        }
+> > +    }
+> > +EOF
+> > +}
 > 
-> Using devm and shared interrupts is in general sign of possible race
-> issues and should be avoided. Just "not seeing problems" is not an
-> argument for me, to be honest.
-
-Didn't I go further and say I got it tested though? Also can you
-elaborate on what race do you think the bwmon will hit rather than
-being too generic about it?
-
--Sibi
-
+> AFAICT the 'ty' argument (AtomicI32/AtomicI64) isn't used and can be
+> removed.
 > 
-> Best regards,
-> Krzysztof
+
+Good catch.
+
+> Likewise for 'raw'.
 > 
+> > +
+> > +cat << EOF
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +//! Generated by $0
+> > +//! DO NOT MODIFY THIS FILE DIRECTLY
+> > +
+> > +use super::*;
+> > +use crate::bindings::*;
+> > +
+> > +impl AtomicI32 {
+> > +EOF
+> > +
+> > +grep '^[a-z]' "$1" | while read name meta args; do
+> > +	gen_proto "${meta}" "${name}" "atomic" "AtomicI32" "i32" "" ${args}
+> 
+> With 'ty' and 'raw' gone, this'd be:
+> 
+> 	gen_proto "${meta}" "${name}" "atomic" "i32" ${args}
+> 
+> > +done
+> > +
+> > +cat << EOF
+> > +}
+> > +
+> > +impl AtomicI64 {
+> > +EOF
+> > +
+> > +grep '^[a-z]' "$1" | while read name meta args; do
+> > +	gen_proto "${meta}" "${name}" "atomic64" "AtomicI64" "i64" "" ${args}
+> 
+> With 'ty' and 'raw' gone, this'd be:
+> 
+> 	gen_proto "${meta}" "${name}" "atomic64" "i64" ${args}
+> 
+
+All fixed locally, thanks!
+
+Regards,
+Boqun
+
+> Mark.
+> 
+> > +done
+> > +
+> > +cat << EOF
+> > +}
+> > +
+> > +EOF
+> > -- 
+> > 2.45.2
+> > 
 
