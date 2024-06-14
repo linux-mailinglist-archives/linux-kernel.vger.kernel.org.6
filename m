@@ -1,159 +1,201 @@
-Return-Path: <linux-kernel+bounces-215405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6931909252
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:32:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9D5909253
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3086D1F24377
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:32:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D2FF1C22E73
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A0519EEB7;
-	Fri, 14 Jun 2024 18:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AEA19E7E9;
+	Fri, 14 Jun 2024 18:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="AaukQLHD"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TbWo6WoK"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2BF16A397
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 18:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BA24409
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 18:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718389946; cv=none; b=VsToKHehqlIkIUHcB09bp7Tm66j0NZvTy+6JLOUkrO87/5GbdYNdcpCTtlNMbCvmE3vynuLE94qC5rqYmHBzcn2LuRXBzNs7+rp5bNUXZr1MyfUHK7818w4Qekz9ZEcDPF4DtGE+0UYr5mcQrzEQKWKulN7nZAnaEt2PsDHwigI=
+	t=1718389969; cv=none; b=JpebzJTeF1x0E0bTQH9oM9sLoXZYoAZCIDy7OcrGzqQmVqLoIojBnevTC9DbMKNevicv9650Xe01h6NgrA+yQriZJYZNR0lN2GglXL+nZLsL1xzm9gU0FsS98dZIQFXwEZsrEfcnmp/v9FGiP0/Q/6YckozIJQsZuULKkq3jC3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718389946; c=relaxed/simple;
-	bh=pQIr6kyiB9T7RTOGhQzU4XxML3cjRb50MpUy3V+mOcQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j3UZpHUT9FGRSaWsynV4428EAiAvDitfrZ3RlFU1zEhd9Vtbg9NU62lECmm6UKSVc6107SEBGxrR/1v9KVMKzgOCvDwcOFVw4lzhqwZruYqgy57emWrSAAnkUHF3a5gglDaLQQ8ALwdHMmtU7xDXeq6d1PHy+w3iVWsWPC9MK8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=AaukQLHD; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b064c4857dso12079606d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 11:32:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1718389944; x=1718994744; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=a+ZJEh6x6Lv8M2AN3cpcyYkfsWGE1WXAQKMbV67aTJY=;
-        b=AaukQLHDUtytaY2h4tQtfQ/DxJVmdXSg2upaveL5r33UIr68Xet8i8w9pUSMR205ee
-         C9sKlaW+RB/vGC8ON9TM2YaqSA3yB2q5VrpQKNhtxCn4/HGEkLhMTmUZyE+qTa9Sczxy
-         dbeiIQ4Y1PpCUJaE0l+PDV7VTpAfFLk+9R/Dk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718389944; x=1718994744;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a+ZJEh6x6Lv8M2AN3cpcyYkfsWGE1WXAQKMbV67aTJY=;
-        b=DHaei7BxOe69u6v4/8kIdE81z47TPqPDpZ3SPX0OtdShmiQu9Rsk20WDujySQHJO8q
-         60ZA/U5FATR3gPna/bcyVjbA6q+o+v633vHvKc8xS9usrwGPkqpI8s7LrN9pVb9NWgbr
-         +KhzSmq8Lih9qNWtWD/+RJxqqhZit99M5KytODqPtRUqI8nZzQVbml4FTMAQG0OsTat8
-         VuJgtZ0n5iSlyNdDOLsQke72RwkaTR1qKTlPYyiFnmsxsCZpSCExu35Za3/IoZvTiSwf
-         mfM/dXbcEzMtMid/extVLyjPvYnyBrruiac8UjpNq5T1fcTKqKyc5jRlk5KZK1A4cOcB
-         dNsg==
-X-Gm-Message-State: AOJu0YwlNQGcBApMZlOZn4H+SNR8agTxd5lYQGZyVd9B+1qoBsBB7uM3
-	CMeZ/Cutyl+/fRBG6awRFETXUHvLu263mB7wJjlUBCTyS8R9zXLLKa61B+6rMQ==
-X-Google-Smtp-Source: AGHT+IGioDtYzmWk+SYhqfm9DebuWAb/mp0AENVr2ydYI4ZP81ROYuzpODtzdxlMQipzCd3UYBAVtw==
-X-Received: by 2002:ad4:55c3:0:b0:6b0:8041:8ae1 with SMTP id 6a1803df08f44-6b2afd94baamr30167806d6.61.1718389944507;
-        Fri, 14 Jun 2024 11:32:24 -0700 (PDT)
-Received: from [10.66.192.68] ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5c10580sm21164366d6.32.2024.06.14.11.32.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 11:32:24 -0700 (PDT)
-Message-ID: <1750e44f-f9a9-4c2a-afb3-f1ae8237ccb0@broadcom.com>
-Date: Fri, 14 Jun 2024 11:32:16 -0700
+	s=arc-20240116; t=1718389969; c=relaxed/simple;
+	bh=kWHXfiW/eWv847hDdyNDPfVjaGDkYdtb8A2LHmGvu2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PHZM+hxAuP3xB7f26btZTGXE6lgVpnAfb0koqFlEmQKq50tPv9vQB5YyYO+RQraT2A45wS+4agsqXFsFF0PA1l1tB5Bwe1gpvPp95TvD6VKIZke+fhccoax2Al0VPDP7y1ycQ/8RWXxSuVzTA+maaJSZQlAnZsvmwl5EwpMMBUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TbWo6WoK; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: sebott@redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718389963;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bfjAgyWtBbRxONbdiKFFSvpzW16ct8ELGbCI1RgaYDo=;
+	b=TbWo6WoK1irRzuNAiIl8Od4+Hy08BlCQJoKsWrUFVp96WCEIXacnZGW5V8snVx167JFiyo
+	LoH7xl7Os41ZevbeY/1nDDIpa04sLSc500zOFXzatRhoCrqVGfXtvXY0j9PYgxdnRgbiNT
+	iQjWcGIV0uhvq4anf8OpW6dOY1sTdE4=
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: kvmarm@lists.linux.dev
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: maz@kernel.org
+X-Envelope-To: james.morse@arm.com
+X-Envelope-To: suzuki.poulose@arm.com
+X-Envelope-To: catalin.marinas@arm.com
+X-Envelope-To: will@kernel.org
+X-Envelope-To: shahuang@redhat.com
+X-Envelope-To: eric.auger@redhat.com
+Date: Fri, 14 Jun 2024 18:32:37 +0000
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Sebastian Ott <sebott@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Shaoqin Huang <shahuang@redhat.com>,
+	Eric Auger <eric.auger@redhat.com>
+Subject: Re: [PATCH v4 3/6] KVM: arm64: add emulation for CTR_EL0 register
+Message-ID: <ZmyMxRoKN5VhUW7J@linux.dev>
+References: <20240603130507.17597-1-sebott@redhat.com>
+ <20240603130507.17597-4-sebott@redhat.com>
+ <ZmtwjLbP283ra0Xq@linux.dev>
+ <Zmty99X4hnYwtRS4@linux.dev>
+ <0b148e21-1714-f4f7-bc77-2a12b990572d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 8/8] x86/vmware: Add TDX hypercall support
-To: Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
- hpa@zytor.com, dave.hansen@linux.intel.com, mingo@redhat.com,
- tglx@linutronix.de, x86@kernel.org, netdev@vger.kernel.org,
- richardcochran@gmail.com, linux-input@vger.kernel.org,
- dmitry.torokhov@gmail.com, zackr@vmware.com,
- linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
- timothym@vmware.com, akaher@vmware.com, dri-devel@lists.freedesktop.org,
- daniel@ffwll.ch, airlied@gmail.com, tzimmermann@suse.de, mripard@kernel.org,
- maarten.lankhorst@linux.intel.com, horms@kernel.org,
- kirill.shutemov@linux.intel.com, Tim Merrifield <tim.merrifield@broadcom.com>
-References: <20240613191650.9913-1-alexey.makhalov@broadcom.com>
- <20240613191650.9913-9-alexey.makhalov@broadcom.com>
- <844ef200-aabe-4497-85c9-44fc46c9133a@intel.com>
- <20240614161404.GCZmxsTNLSoYTqoRoj@fat_crate.local>
- <74f8300b-3520-4824-81e3-71464e3da3b6@intel.com>
-Content-Language: en-US
-From: Alexey Makhalov <alexey.makhalov@broadcom.com>
-Autocrypt: addr=alexey.makhalov@broadcom.com; keydata=
- xsFNBGVo9lkBEACeouRIm6Q3QTvjcnPczfBqgLffURstVJz5nqjnrNR4T+8dwNrZB8PTgOWA
- QdGV4bIyqtNG7UHQuZ7sVKr2tx0gYJyQ5uZgncEHB5YIuhQ/CyAHrVmO+5/0/xWCLI0g44rF
- ZJqsYw2JQ2+vayTWbR65rkOiKL8GOVFNZanDg80BRh6qCmCEMXd/tymxvgnvWpHtxMgukexk
- 4vV9nV4XhxRVYdpLk8mBxsh+AEbHE+nbWgIuJDrmrZDGI2Dha7JFoB0Mi6hbbYd9BdkcHKQ7
- 6c+S1xOrZL3jX7OIFhb4NNnEOhh8/+BDlyby478p6YsimNa7TgAUbrygGyfVG8usrZy8SvO+
- vUbVQwqjcJaCK1xazK12dfuZm2kSMJUrJqa9ng6OMjkE2/WrtnK8ruFNSCdytzbuheT0nYUJ
- Uwy84cU4p2K/N2C4vYjcn+IT+l1BFr5FViKYruoRLVH6zK/WOoZjA+Fc6tdM5nC1pgSB9c7h
- XLQqDSzYPzk3nqeHWG1qJ0Hu7pscIrjxyNTIZ5le0TlpblJdoRcL5maDNw22yle8m4D18ERF
- VrqNoqwW8fObMCHbd6C3m75lzerq1HhrSvLyU4UfprEyAcjOI1C0319SXfYlXDjKXRQyaDZP
- wxln8uShSitSSnx0AsSAjcUa8Cc7km81+G2WSK3S2wVIAN11awARAQABzS5BbGV4ZXkgTWFr
- aGFsb3YgPGFsZXhleS5tYWtoYWxvdkBicm9hZGNvbS5jb20+wsGNBBMBCAA3FiEEjLzRtST/
- a5u42vOKbM7yHr5SJ3cFAmVo9lwFCQ0oaIACGwMECwkIBwUVCAkKCwUWAgMBAAAKCRBszvIe
- vlInd0jTD/9bZtjehewLRrW3dRDAbLG/+J5g1K4X5qQPfAo42NrhZQlOTibL7ixwq7NSXynZ
- V4Iu9jHAW++KXjxJzkg7zjBf9OOvvgCpqZGKYgWNvHHnX4eIVh8Ikp5JtvGPMBcRv7lJA5co
- kb+RHo9iRrB1dvRIOsP1SlGS85SiNA0yvmgqwbigLDmDRSWtvvt9XPwU1iqF+1OopT3UE10i
- /z+qE2ogcw2ADveBovq2W4JeQEBvlETwDKOdh8Q3UBHOqrZUrL7YjpUxgmb89FcjdDzUU95I
- fCB5YxF0hUctxFH5Uujh2F4qk0m2rp7+aOGtxWCJUqkHXjgpOoxyn0FPZiZlDkst84NO5OSI
- 5ZFPwaFqxUrFF+cFCY2O/UE2gpoK9Lt3gYNK6o2WIAtufuiYVdK6lANMkBgZ+t2fDLIN147a
- 172zu8XnyJMTo+tVfUjxwqynoR/NSWpVPs0Ck3K0LGjQE0tJ6HZrH0vudXk3YaiqW+D4CtGh
- I17Pk0h6x8LCdjmWmuDXoc99ezOEFSyWuTHjAYxx3cmgSUyIhdHtimuf0CVLTcFoBErb/5pJ
- zjb11Cj0HP87FMH57bnD3qyfkBMOB6tztfdt3vkCBaWkxaiTGXNhwr4IiLUoi90yIdXDMcTj
- /gvnjXgN+31iYgPWgTOdUEQud0DwDwuDwkzx/0x4sF1Dfc7BTQRlaPZcARAAuGkoYKWcrCh8
- 5RffedM6uBZ4p5Z4+RVj05uq7hlAwhHUpLP/XGbgNzhJP375Lonmnuyg2x7oHxfiwOohuuiA
- MnhSeEXn2qWZJuHosrYxs9y2zyiE/GTUAcqKiYBFa/96zOaZjHpNuQ5qSHYL64WhqvtmCQYg
- fL+jes2Z4IXl2R7MrN9OE+G3A3pOAo8TZKUEmlUV85fSmgopIX+hCiSQmRNRtp2jK6hd2+38
- YAXc+eRxYgXKaWX5zeBgNrfM7Oxeh/0iWRZPWstTvVH2xMlzywOB3e/fqg+Q3NlPGDrTyHoc
- L86ZELSLcMTFn+RXw8lX8oVjTcQA0M8sQHB5g0JEWtMsFjnQZkJGCfeh0Odbn/F8nZ6LQQtu
- +fjc/4n9vRun+PZjdhd3W9ZM9D87W9XJg9txIaYnoUXBLLpHK/OirFfr5cJTUf4svtE3EVXb
- x6P9vr7zqUbE0f76h1eDPmyMwFAuibIXhNoEoKQtEjLX9aKgKYny3hczRiuQpA+6U4oTNn4S
- /CEqphLPT53aMH0w4x0CebMPozf24ZE9YphdX8ECclLBlDL1/zx2xKrJNw8v6wdXMSfsybBW
- 98b5b1eVBk1uc1UMlpDl7AIHyCMTjL9Ha85eoya/Hk9l93aVHgK04hOBY2ED1/ZRpj0M5P5m
- tNX1JqZunpyvKooT1PrJr4UAEQEAAcLBfAQYAQgAJhYhBIy80bUk/2ubuNrzimzO8h6+Uid3
- BQJlaPZeBQkNKGiAAhsMAAoJEGzO8h6+Uid3SDoQAI3XXqsehWKvyAVeGXPxmkk+Suos/nJC
- xZWjp4U2xbbegBnNWladZoNdlVW/WV+FSFsN5IWztxQTWBMI12A0dx+Ooi9PSIANnlN+gQsA
- 9WeQ5iDNveEHZyK1GmuqZ3M3YZ1r3T2KyzTnPPZQ1B8gMQ442bOBWe077MqtLaC0J1jHyWHU
- j6BbUCAyR2/OCV/n1bH4wYIm2lgrOd2WuzoAGvju+j2g7hMRxw/xeHeu8S0czHuEZ0dC6fR1
- ZKUOw03+mM/xRzL1be6RVS9AF7R5oDd11RrTOb7k14z0inFqSRrRwzOPKcuMxrApcquar336
- 3FQuLcJLjBo/SAOh2JatOkkwkw5PZseqdwcAk5+wcCbdYy8J8ttR04iV1FzrdQp8HbVxGNo7
- AlDn1qtoHzvJHSQG51tbXWfLIi1ek3tpwJWj08+Zo+M47X6B65g7wdrwCiiFfclhXhI1eJNy
- fqqZgi3rxgu4sc5lmR846emZ/Tx85/nizqWCv7xUBxQwmhRPZRW+37vS2OLpyrTtBj3/tEM9
- m9GMmTZqaJFeK7WCpprJV4jNHpWZuNAsQrdK1MrceIxb0/6wYe0xK79lScxms+zs9pGTrO4U
- 5RoS4gXK65ECcBH8/mumV6oBmLrNxKUrzTczdo9PnkmRyZcAa6AndbjmQDznwxvTZu2LjMPC EuY0
-In-Reply-To: <74f8300b-3520-4824-81e3-71464e3da3b6@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0b148e21-1714-f4f7-bc77-2a12b990572d@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
+On Fri, Jun 14, 2024 at 05:31:37PM +0200, Sebastian Ott wrote:
 
+[...]
 
-On 6/14/24 9:19 AM, Dave Hansen wrote:
-> On 6/14/24 09:14, Borislav Petkov wrote:
->> On Fri, Jun 14, 2024 at 09:03:22AM -0700, Dave Hansen wrote:
-> ...
->>> You need to zero out all of 'args' somehow.
->>
->> You mean like this:
->>
->> 	struct tdx_module_args args = {};
->>
->> ?
-> 
-> Yes, or do all the assignments with the initializer.  We seem to do it
-> both ways, so whatever works.
+> Hm, but in that case we'd use reset_vm_ftr_id_reg() meaning we would have
+> to make IDREG() work for this reg. Either by adding special handling to
+> that macro or by increasing kvm->arch.id_regs[] a lot - both options don't
+> sound very appealing.
 
-Thanks Dave for pointing that out. I missed that at v7.
+Hiding some of the ugly details behind IDREG() isn't the worst thing,
+IMO. The feature ID registers are not laid out contiguously in the
+architecture, so it'd make sense that the corresponding KVM code not be
+brittle to this.
+
+The other benefit is we initialize kvm->arch.ctr_el0 exactly once, just
+like the other ID registers. I believe there's a quirk with this patch
+where an initialization that happens after a KVM_SET_ONE_REG on CTR_EL0
+will clobber the userspace value.
+
+So, here's where I'm at locally, I'll work it a bit more and try to
+densely pack CTR_EL0 into the id_regs array. I also have some (untested)
+changes to get CTR_EL0 to show up in the debugfs interface we now have.
+
+Mind if I post what I have afterwards?
+
+commit 6bf81bd50dc16309a627863948d49cfeeb00897e
+Author: Sebastian Ott <sebott@redhat.com>
+Date:   Mon Jun 3 15:05:03 2024 +0200
+
+    KVM: arm64: Treat CTR_EL0 as a VM feature ID register
+    
+    Signed-off-by: Sebastian Ott <sebott@redhat.com>
+    Reviewed-by: Shaoqin Huang <shahuang@redhat.com>
+    Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
+
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index 212ae77eefaf..e5b8cdd70914 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -327,10 +327,20 @@ struct kvm_arch {
+ 	 */
+ #define IDREG_IDX(id)		(((sys_reg_CRm(id) - 1) << 3) | sys_reg_Op2(id))
+ #define IDX_IDREG(idx)		sys_reg(3, 0, 0, ((idx) >> 3) + 1, (idx) & Op2_mask)
+-#define IDREG(kvm, id)		((kvm)->arch.id_regs[IDREG_IDX(id)])
++#define IDREG(kvm, id)								\
++(*({										\
++	u64 *__reg;								\
++	if ((id) == SYS_CTR_EL0)						\
++		__reg = &(kvm)->arch.ctr_el0;					\
++	else									\
++		__reg = &((kvm)->arch.id_regs[IDREG_IDX(id)]);			\
++	__reg;									\
++}))
+ #define KVM_ARM_ID_REG_NUM	(IDREG_IDX(sys_reg(3, 0, 0, 7, 7)) + 1)
+ 	u64 id_regs[KVM_ARM_ID_REG_NUM];
+ 
++	u64 ctr_el0;
++
+ 	/* Masks for VNCR-baked sysregs */
+ 	struct kvm_sysreg_masks	*sysreg_masks;
+ 
+diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+index dfabf7aec2c7..1ab2cbbc7a76 100644
+--- a/arch/arm64/kvm/sys_regs.c
++++ b/arch/arm64/kvm/sys_regs.c
+@@ -1583,6 +1583,9 @@ static bool is_feature_id_reg(u32 encoding)
+  */
+ static inline bool is_vm_ftr_id_reg(u32 id)
+ {
++	if (id == SYS_CTR_EL0)
++		return true;
++
+ 	return (sys_reg_Op0(id) == 3 && sys_reg_Op1(id) == 0 &&
+ 		sys_reg_CRn(id) == 0 && sys_reg_CRm(id) >= 1 &&
+ 		sys_reg_CRm(id) < 8);
+@@ -1886,7 +1889,7 @@ static bool access_ctr(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
+ 	if (p->is_write)
+ 		return write_to_read_only(vcpu, p, r);
+ 
+-	p->regval = read_sanitised_ftr_reg(SYS_CTR_EL0);
++	p->regval = IDREG(vcpu->kvm, SYS_CTR_EL0);
+ 	return true;
+ }
+ 
+@@ -2475,7 +2478,10 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+ 	{ SYS_DESC(SYS_CCSIDR2_EL1), undef_access },
+ 	{ SYS_DESC(SYS_SMIDR_EL1), undef_access },
+ 	{ SYS_DESC(SYS_CSSELR_EL1), access_csselr, reset_unknown, CSSELR_EL1 },
+-	{ SYS_DESC(SYS_CTR_EL0), access_ctr },
++	ID_WRITABLE(CTR_EL0, CTR_EL0_DIC_MASK |
++			     CTR_EL0_IDC_MASK |
++			     CTR_EL0_DminLine_MASK |
++			     CTR_EL0_IminLine_MASK),
+ 	{ SYS_DESC(SYS_SVCR), undef_access },
+ 
+ 	{ PMU_SYS_REG(PMCR_EL0), .access = access_pmcr, .reset = reset_pmcr,
+@@ -3714,18 +3720,11 @@ FUNCTION_INVARIANT(midr_el1)
+ FUNCTION_INVARIANT(revidr_el1)
+ FUNCTION_INVARIANT(aidr_el1)
+ 
+-static u64 get_ctr_el0(struct kvm_vcpu *v, const struct sys_reg_desc *r)
+-{
+-	((struct sys_reg_desc *)r)->val = read_sanitised_ftr_reg(SYS_CTR_EL0);
+-	return ((struct sys_reg_desc *)r)->val;
+-}
+-
+ /* ->val is filled in by kvm_sys_reg_table_init() */
+ static struct sys_reg_desc invariant_sys_regs[] __ro_after_init = {
+ 	{ SYS_DESC(SYS_MIDR_EL1), NULL, get_midr_el1 },
+ 	{ SYS_DESC(SYS_REVIDR_EL1), NULL, get_revidr_el1 },
+ 	{ SYS_DESC(SYS_AIDR_EL1), NULL, get_aidr_el1 },
+-	{ SYS_DESC(SYS_CTR_EL0), NULL, get_ctr_el0 },
+ };
+ 
+ static int get_invariant_sys_reg(u64 id, u64 __user *uaddr)
+
+-- 
+Thanks,
+Oliver
 
