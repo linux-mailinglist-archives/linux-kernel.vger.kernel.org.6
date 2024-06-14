@@ -1,122 +1,121 @@
-Return-Path: <linux-kernel+bounces-215064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05A47908E06
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:57:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C520908E09
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A220528B8E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7025628BDD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE4715F3E5;
-	Fri, 14 Jun 2024 14:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144DE13C671;
+	Fri, 14 Jun 2024 15:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RqiA2VIr"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vYUuU2+n"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F5F15EFB2
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 14:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85A4107B6;
+	Fri, 14 Jun 2024 15:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718377051; cv=none; b=BuUBncCFCx78CpTmmA0xChAB5iqlXWJ/i13MkD97mCO5C59ph6XS47I523rDMNRK6bVCIpk1MXfooFsaRBaRYEZZMzOWRC/HZbHcm84l6vb3RfkfUGS79f56XWrZDBhT31UymNB2U3XlDJiZuwKcKwECngxkJdY9jL/Eto3K/28=
+	t=1718377204; cv=none; b=ASQbxXQHc9zhT4WJ4Co6+EULX4rHi0dy+mnGDEu3bF91eRkpftwLl1yCAM26RxWfRLzhC3/5s7bg8uSbKMH6nFrfNyWCk8ALNObVbF+WZtomgNXsqdLf1IdLU+6cT09/+t9xctcJvQ2WlvRDQdztoyW1sMJWM9ZiQv1SkU9rF1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718377051; c=relaxed/simple;
-	bh=PDBN7CfZoySclWGICiQXNm0dLSN3WzDrHOHH5KLuTBY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PHwOAxlT3099cjqY7VmegoGuEkOCFAuFu/kU6zuYn6CytRsUE6KGp/rn4zFTwfUtPbGvCB9/XyX+A0Rr8cP26QCtGN6LzMdKDRkkxTq8ymbsYu2lALbEz8+jzG/TU92IkQN2az+B24rw6YnBUxzT1KhY0llyky8CimJv0d6Epa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RqiA2VIr; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-254e42df409so1288732fac.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 07:57:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718377029; x=1718981829; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PDBN7CfZoySclWGICiQXNm0dLSN3WzDrHOHH5KLuTBY=;
-        b=RqiA2VIrxAOZYTsqAo8GuIbdlsUvpOHlVWfUE5OZ2lOHx3TehibFiFxCa4fso0dFQw
-         ZdMZAgNLfrA9TEpk10rYcsqx2RmMkBADquXriPe8v0k5UoIjKTl/Lv4jDdQ2BX7K0nUz
-         aE0bhrbcm7wLkCANOH5rpITri/4e+Bd+96WVo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718377029; x=1718981829;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PDBN7CfZoySclWGICiQXNm0dLSN3WzDrHOHH5KLuTBY=;
-        b=hTjq9RSFKzm9tMXu+bEfXCy6Le63Yynj9QVY36AneZos6g/TQ08DKQxXuOlPmpkbNr
-         MmumNOVJiRx3CLTTGbSFHDfPbmNYXP6TkZfTJlX1VUY++xuWeRggJ7MkELMP5dykkmvp
-         ey2wEzxmJDaRhEDDlujkhBByjVwMn1GyGzp22HbuN54R7Edo9k/3AID24UyswnhJBP5o
-         j6dcthz5UF5W78l/CYtvcG7DcP9AbF5vlC62a2pt5HwL/sNqxwQs4yBriYoPg7xsHyMJ
-         Qwqay0/9MVHtbgBRGVwtwMTYFO0DjyQsekgGI0ZTMZU53PGMo6QjtNsib3EmB6GrWwA9
-         YTUA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3fV5ETPjfWG+Fq3mrOYS5aSAsuK7TEkhSdDVumQExOMshZbUUMstJO5gbN9liMu2PtzmNIap0VYQ6RzlhCvkIPshS555DhSIQB39S
-X-Gm-Message-State: AOJu0YzlxLghUK8GTbvbRBMEhUPwvkyxgGZkbS0vmEhTE/8bBV5hJmOY
-	lRXEXGglzlsMTW6LGGvf5zoZC4nOp8TZ6wYVyU/xMn3cK4ebrg0ctYJ48Yo4ah+U6sfol/hn3qj
-	w4/rrK9jBJ4DPe46X6V3jweeAnbj8Cp15BLPK2OnSwBG8NSbgTg==
-X-Google-Smtp-Source: AGHT+IEUcAWOw1CVNlN0YcNfMetLlCT81YqYJzny/v8B5VIR1b7mnqvJKLKUWEnEomwJ3Vd4mFsoMMwH5EJv6fYqHso=
-X-Received: by 2002:a05:6871:72c:b0:24f:c241:4d16 with SMTP id
- 586e51a60fabf-25842be40f2mr3448708fac.50.1718377029521; Fri, 14 Jun 2024
- 07:57:09 -0700 (PDT)
+	s=arc-20240116; t=1718377204; c=relaxed/simple;
+	bh=HG7tUk5f2GMVDaroNXwyvAuKKxoNRRjFQOiOSXymybk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PBc3F2OECwYNDbtqs448NVzQLFuEgdFISY4XcovT2rky+j1IIqyfTPB6QTkWg3eBqGw9J4i4kdKNBT+YUneF71ixJXi1vASU7e/LvnNMs0fMyETLREFpgMxXZ9WFBB96poRr1GRtSSooKx02JUGyp2ruBNT3vkq3QXNQ1gfieGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vYUuU2+n; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45EExl7U104954;
+	Fri, 14 Jun 2024 09:59:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718377187;
+	bh=TomOE3JPf28M6CJ/1WrFKx7BcSJaRCno0blGFncVygY=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=vYUuU2+n6BdudYVX7RTomlHZAX6EGcfZo9M/YaXlypw5Pa0q/iGIP8hrGZrkiuRlb
+	 JwT+FccvM4hzJHIqQAb6CiCR+MPtuZ/2gOqxrayHCGPpMqP4Kmo+YDdB47b4plEpGv
+	 DE04jkPA5ntzRk5r5hbPfZ50KJh0VZcIgPafX4aY=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45EExlWj006674
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 14 Jun 2024 09:59:47 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
+ Jun 2024 09:59:47 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 14 Jun 2024 09:59:47 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45EExkp5009807;
+	Fri, 14 Jun 2024 09:59:47 -0500
+Date: Fri, 14 Jun 2024 20:29:46 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Roger Quadros <rogerq@kernel.org>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <afd@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>,
+        <danishanwar@ti.com>, <srk@ti.com>
+Subject: Re: [PATCH v6 5/8] arm64: dts: ti: k3-j722s: Move MAIN domain
+ overrides to k3-j722s-main.dtsi
+Message-ID: <8b06ba3e-f4b2-4654-aaaf-2f15816fff07@ti.com>
+References: <20240612132409.2477888-1-s-vadapalli@ti.com>
+ <20240612132409.2477888-6-s-vadapalli@ti.com>
+ <d4c33ee4-1e91-40e5-90c8-bd793bcf34ff@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614023009.221547-1-jhubbard@nvidia.com> <20240614023009.221547-3-jhubbard@nvidia.com>
- <4c6ffb1e-0381-4d5e-afa2-f8809f0b445f@redhat.com>
-In-Reply-To: <4c6ffb1e-0381-4d5e-afa2-f8809f0b445f@redhat.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Fri, 14 Jun 2024 07:56:57 -0700
-Message-ID: <CABi2SkXcb_GaSomWrj+n8tEg-VmR3e5bLpqw0-h9K=6gkiBxow@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] selftests/mm: mseal, self_elf: factor out test
- macros and other duplicated items
-To: David Hildenbrand <david@redhat.com>
-Cc: John Hubbard <jhubbard@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Shuah Khan <shuah@kernel.org>, Andrei Vagin <avagin@google.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Muhammad Usama Anjum <usama.anjum@collabora.com>, 
-	Peter Xu <peterx@redhat.com>, Rich Felker <dalias@libc.org>, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <d4c33ee4-1e91-40e5-90c8-bd793bcf34ff@kernel.org>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, Jun 14, 2024 at 5:28=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 14.06.24 04:30, John Hubbard wrote:
-> > Clean up and move some copy-pasted items into a new mseal_helpers.h.
-> >
-> > 1. The test macros can be made safer and simpler, by observing that the=
-y
-> > are invariably called when about to return. This means that the macros
-> > do not need an intrusive label to goto; they can simply return.
-> >
-> > 2. PKEY* items. We cannot, unfortunately use pkey-helpers.h. The best w=
-e
-> > can do is to factor out these few items into mseal_helpers.h.
-> >
-> > 3. These tests still need their own definition of u64, so also move tha=
-t
-> > to the header file.
-> >
-> > Cc: Jeff Xu <jeffxu@chromium.org>
-> > Cc: David Hildenbrand <david@redhat.com>
-> > Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> > ---
->
-> Acked-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Jeff Xu <jeffxu@google.com>
+On Fri, Jun 14, 2024 at 12:53:37PM +0300, Roger Quadros wrote:
+> Hi Siddharth,
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+[...]
+
+> > --- a/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+> > +++ b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+> > @@ -232,14 +232,3 @@ cbass_wakeup: bus@b00000 {
+> >  
+> >  /* Include J722S specific peripherals */
+> >  #include "k3-j722s-main.dtsi"
+> > -
+> > -/* Main domain overrides */
+> > -
+> > -&inta_main_dmss {
+> > -	ti,interrupt-ranges = <7 71 21>;
+> > -};
+> > -
+> > -&oc_sram {
+> > -	reg = <0x00 0x70000000 0x00 0x40000>;
+> > -	ranges = <0x00 0x00 0x70000000 0x40000>;
+> > -};
+> These are originally set in k3-am62p-j722s-common-main.dtsi
+> which cannot be as they are not common to both SoCs.
+> 
+> Should we be moving the AM62 specific portion into k3-am62p-main.dtsi.
+> 
+> So they are no longer overrides but SoC specific changes?
+
+Roger,
+
+Thank you for reviewing the patch. I will remove the above properties
+within the respective nodes of k3-am62p-j722s-common-main.dtsi and add
+them to match the respective SoC in k3-{soc}-main.dtsi.
+
+Regards,
+Siddharth.
 
