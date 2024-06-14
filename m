@@ -1,104 +1,103 @@
-Return-Path: <linux-kernel+bounces-215241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38D3F909040
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:28:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7005A909042
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEFACB2C11C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:26:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA7BDB2C3CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB394A11;
-	Fri, 14 Jun 2024 16:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IF8ldubh"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B4419AD48;
+	Fri, 14 Jun 2024 16:26:28 +0000 (UTC)
+Received: from irl.hu (irl.hu [95.85.9.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35C8192B7B;
-	Fri, 14 Jun 2024 16:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29BC171E71;
+	Fri, 14 Jun 2024 16:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718382369; cv=none; b=dxG5xxkW1Alhyq9XZJdyEmZ1+Qn6K4xM2WICXZM3u0TzqWmR3RhNTZIQicpPODij0CBI+nPIi1Bef6qi2NJxErXddjv3QpNYFOJUllrSAJ8cZaDl+btTpdGCZI5InIcdMYaJ2a/dft2AHW0nrdbrdeHKmu9xlRbDOkdyFKh2A0Y=
+	t=1718382387; cv=none; b=TX3UsjBWKFPPIL7jqoF0EBk0HKRye6VndTaE7rfK9axKcWo/JDmAyUtDrqO2LMCqFKn8Zx0oxkwT48ILVFZciDFbtu1YdnpmHI6jp8MlX1P2dyMcAsRIJHo4A+uMrtjd4REkFItLw3dFANKo7fSpPkDOxPhDGtVAqMC042FqVjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718382369; c=relaxed/simple;
-	bh=ayg07pF7euQv/CPhXKbrgipzCXGh1+VtDo0vciMqb4c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CpjjKeDAEQCJR3PRXSxW7URpujdfb181jfL8138MowLpyXqTP3aM7AW9VwZPZZb4gfc4mflgEtPedtjIN5SltzXfpYkgHVNZNz06BLHXrfzI8mEv9tAyP/bcoKb6aAMK7Gb1x4QcncbzIXjtGF12Xwsr+pclQy/fsq/Dln9370A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IF8ldubh; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-62a0809f96dso2335067b3.0;
-        Fri, 14 Jun 2024 09:26:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718382366; x=1718987166; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZLGKDZVOQ3iS6C5OGcazxokC/tYhNiWsWZ8pHrHihu0=;
-        b=IF8ldubhLRsL+WU05KIo0+qJ4h1YtQI8Iix20/BZMpWjCxV0kl35bc6/3ofyPYjP/z
-         Ex2BJrbja8qp1izsYk/eguxZGEotrymgB/vEOtOfeFyEed+9LsPqnAakkjN7PEJHBMXh
-         kolNEy90Y5/K9XXvPl0X+jAgC33AAEBsPt5j2HB+QVF2Pfq7s4UT6kptiWO5OqaqDVrh
-         yI5KxbaGcFNv2OFSsMLZqamZB5avaBuGFKVpoc0azefQpEn80P4rzcJlg4UYvYc+HWfC
-         9/cWp+0/CjwDO1QgFv2iv5gT5XsKTOaYEfID5a3MrJVxS9ICaX28UO4My/OkAPFif/+v
-         4LUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718382366; x=1718987166;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZLGKDZVOQ3iS6C5OGcazxokC/tYhNiWsWZ8pHrHihu0=;
-        b=NVv33R4ER7GV2BqaENcUtFrrzEjrwoHgaj4wF0XMv19/Ds2rDCoU7Y8J6x+tQjU38b
-         ggNE0K9hHA9dQeIa1oiS4Ba0iLYCV7iwwJZFZxwVQaQn7FlJljSSchmD5sO6FgZZHXk1
-         OkoLUJN7cWxuuRf5mG1P8aEjSgbboschPcDbH+Q3/j3wMzI45eAuj99cVpRfkuw5PUI5
-         3CSca0o+bh3jouCKrcjyCWInMpRm1AlM8ywWDutfJcyqPuM/GcRbtEKK3qt2LKJaAN+G
-         Yzs91kDB/LYOMymczLI/IHwhty8rOJUv9GWPm13m+LFvZrZviCmCt88f23jprsKSMCdA
-         3hBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxqk9S8khgtMTRnXQN9uYjMrcPIbPsSGHa+lm3szf3PHE0XF5acZ4sMRs+alVjQVeSpFhziXOTR/O6FyWRHoI7nMNKbQ38dfqdanMdsR3tqiioZnzssZrw4AVwVNldx/Mz0hXwKUdzqQ==
-X-Gm-Message-State: AOJu0YxDkq9MRG6kpbOhvOPo/TEeDpL3x9vD1BqG92ps7Lc73z3SFJQB
-	6s1Id5YpjYrtsu3tREcBihewFgkjHsY9R+5scvH4fJSX6KbzMp8J98RrXfRxGnSptJaFNWX3xSa
-	xKEhbHXPIxhE/Z7LPfhHdDQ0BnyZZgA==
-X-Google-Smtp-Source: AGHT+IFpX3YXCHGs47WbQav3cjkOyVOtvBNL3pgoaCNtlNCAXWBCPtzUF39Uqme38dR1sz3eJd4rv7/aTHNWqC1IsvM=
-X-Received: by 2002:a25:d64d:0:b0:df7:a3c6:c849 with SMTP id
- 3f1490d57ef6-dff15526355mr2617298276.4.1718382366653; Fri, 14 Jun 2024
- 09:26:06 -0700 (PDT)
+	s=arc-20240116; t=1718382387; c=relaxed/simple;
+	bh=BYBfSUu5Tvg6iHzjCbzvcPIDyIa6A01WCSSw+P+6RqQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TpLeNcI3VkW6QyfDcAO1253gsmJ+jOfooZb0Hpymrdm1tlgBCRMPM7CaZCmlwAcKhz4vu4lzM98XAss2CZjOzjFNgclJFPctNPJtjPRDePgoCkB0OCBlrxUzBpeioQX1BtsrNEvcM+74O1jzDSUJCSXDBmlR9ADy/ZAZ8dhUx4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
+Received: from fedori.lan (c3e47615.dsl.pool.telekom.hu [::ffff:195.228.118.21])
+  (AUTH: CRAM-MD5 soyer@irl.hu, )
+  by irl.hu with ESMTPSA
+  id 0000000000070CEE.00000000666C6F29.001D2CC2; Fri, 14 Jun 2024 18:26:17 +0200
+Message-ID: <225d762d359a109afe568c567885a7b7e282e137.camel@irl.hu>
+Subject: Re: [PATCH 2/2] media: v4l2: map UVC_CT_ROLL_ABSOLUTE_CONTROL
+From: Gergo Koteles <soyer@irl.hu>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+  linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 14 Jun 2024 18:26:16 +0200
+In-Reply-To: <20240612203124.GU28989@pendragon.ideasonboard.com>
+References: <cover.1718216718.git.soyer@irl.hu>
+	 <163b1aee53fa78fe1a8d0b8bb7b0f7be1f1975c9.1718216718.git.soyer@irl.hu>
+	 <20240612203124.GU28989@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614124233.334806-1-qq810974084@gmail.com>
-In-Reply-To: <20240614124233.334806-1-qq810974084@gmail.com>
-From: Justin Tee <justintee8345@gmail.com>
-Date: Fri, 14 Jun 2024 09:25:55 -0700
-Message-ID: <CABPRKS9s11TqdoYF3sxHsXAxSNwt0fK+=29amtK9XHAvb4xM_w@mail.gmail.com>
-Subject: Re: [PATCH V2 RESEND] scsi: lpfc: Fix a possible null pointer dereference
-To: Huai-Yuan Liu <qq810974084@gmail.com>
-Cc: Justin Tee <justin.tee@broadcom.com>, james.smart@broadcom.com, 
-	dick.kennedy@broadcom.com, James.Bottomley@hansenpartnership.com, 
-	martin.petersen@oracle.com, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Huai-Yuan,
+Hi Laurent,
 
-> diff --git a/drivers/scsi/lpfc/lpfc_attr.c b/drivers/scsi/lpfc/lpfc_attr.c
-> index b1c9107d3408..94d968a255ff 100644
-> --- a/drivers/scsi/lpfc/lpfc_attr.c
-> +++ b/drivers/scsi/lpfc/lpfc_attr.c
-> @@ -1904,6 +1904,8 @@ lpfc_xcvr_data_show(struct device *dev, struct device_attribute *attr,
->
->         /* Get transceiver information */
->         rdp_context = kmalloc(sizeof(*rdp_context), GFP_KERNEL);
-> +       if (!rdp_context)
-> +               goto out_free_rdp;
+On Wed, 2024-06-12 at 23:31 +0300, Laurent Pinchart wrote:
+> On Wed, Jun 12, 2024 at 08:31:14PM +0200, Gergo Koteles wrote:
+> > Some new UVC cameras can report whether they are mounted in 'portrait
+> > mode'.
+> >=20
+> > Current roll degrees (-90, 0, 90, 180) are reported with
+> > UVC_CT_ROLL_ABSOLUTE_CONTROL.
+>=20
+> UVC_CT_ROLL_ABSOLUTE_CONTROL is about controlling the motion of the
+> camera along the roll axis, while this patch series sounds like you want
+> to support reporting the mounting orientation of the device, not cause
+> the device to rotate. Is that right ?
 
-Understood that kfree(NULL) essentially translates to no-op, but I'd
-prefer that we return len here instead of goto out_free_rdp because
-there really is nothing to free if kmalloc failed.
+The SET_CUR of UVC_CT_ROLL_ABSOLUTE_CONTROL is optional, so I think
+it's for reporting also.
 
-Thanks,
-Justin
+The cameras I've tested before can't roll the sensor, they only report
+the angle/orientation.
+
+Yes, I was thinking to support the mounting orientation report, however
+I tried a friend's DJI Osmo Pocket 3, which can roll the sensor in +-
+30=CB=9A with ROLL_ABSOLUTE UVC control. It can also be
+Panned/Tilted/Zoomed, very cool.
+
+I think mapping UVC_CT_ROLL_ABSOLUTE_CONTROL to V4L2_CID_ROLL_ABSOLUTE
+would be useful. I can reword the commit message a bit if you'd like.
+
+>=20
+> If that's the case, the right V4L2 control to use would be
+> V4L2_CID_CAMERA_SENSOR_ROTATION. Mapping it to
+> UVC_CT_ROLL_ABSOLUTE_CONTROL is problematic though, as
+> UVC_CT_ROLL_ABSOLUTE_CONTROL is not meant for this in the UVC spec. We
+> would likely need a quirk to control how it gets used.
+>=20
+
+I can also create a quirk for the other two cameras to map
+UVC_CT_ROLL_ABSOLUTE_CONTROL to V4L2_CID_CAMERA_SENSOR_ROTATION.
+
+Maybe it can be detected if CT_ROLL_ABSOLUTE_CONTROL doesn't have
+SET_CUR, default 0, step 90.
+
+>=20
+Best regards,
+Gergo
+
 
