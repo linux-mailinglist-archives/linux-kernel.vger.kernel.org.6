@@ -1,292 +1,140 @@
-Return-Path: <linux-kernel+bounces-215354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C6D90917E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:31:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA507909169
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5DD21F23DE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:31:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2A161C2314B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01F11A0AE5;
-	Fri, 14 Jun 2024 17:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB971A01C2;
+	Fri, 14 Jun 2024 17:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PPMfcOol"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ctEn4gJS"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6D719AD48;
-	Fri, 14 Jun 2024 17:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC49319DF51;
+	Fri, 14 Jun 2024 17:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718386068; cv=none; b=rslq+epaMpOYkUm2Nd0YReQxqAezXP6P2BL2jyDu0TZjbSxg+sR4CiPLwmp0R1QNZnt3Dg6VkaUj3zSa8EJbYpeUaPtth5U97KVnO9UDMOjYBuwwFHZHpFWcO+PmJTQhxxTR3L7WWvrM6jwOCNVsJEMjxsgB/0jTK3uZRVtVZ4A=
+	t=1718386030; cv=none; b=Pm1Yzq4ns1xp4IPmdA1TML0rJ/f5DtobiBZmz6Y3nki1itqAR1qWo4/Xqkze+e1i23Jb3iFvDpiRUpC2Xf1qqMeQ5fb7+bWHJbZyXxuUWPys10Cx11ATKH9uHk8GnhPdwkmloQkHH/382BhVVxfi80BkZz/58I+MwyUuYuUXJzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718386068; c=relaxed/simple;
-	bh=h/nTQIbxFl88qsbZ9FLBxCeU/ARE39LsUxtCQ/z63u8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ipwBdlUWlWityDbLT7o2PatcvX0E3HwxoUA6AeZhBlWQX8BVLCnjkzNtgjvRtyECtAfWiB4zaz470SvaOBsvAPwpqqOYZ7eA4fDilYYtlxFobDoxtlVjblHax/9jdZB479rxZ/yOFMxDw1mvnJN0s+ySnttqjFNLq0afKsE9nNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PPMfcOol; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45EGQRll021156;
-	Fri, 14 Jun 2024 17:27:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=ZVhzGXPnjNmfF
-	+zJ8nQh2/Ub5nRPVmH3iLmyuvHkw4M=; b=PPMfcOolb+lIRgCZ3QCa+4yOiFIqx
-	3GCDRvxZYZbHZ/7wnYdUXr+23Sgre0MuEe81WFURAlYmGuYv2sHWFXOPLOk52YES
-	uC39SnEO9jZfW/PMdNsZgRdmpvLhIkoMtjY0IwH3yNaqW/fZtMDKamUXuLWV4hHT
-	+o9mYavfy+65T+UYy6Y3zeatOdO/SG3NOHJyzBqktGgvurwFOyeNu/oI85DqUdUD
-	4eS8zYM3lqDGc+fJp9aTpAPM5ZODzgETHREZVKxP5i/ouvyVn1Tpke3R6I1dOsqq
-	9qaH6TtH14viksOESXH04VIBKZG9tI0f6lPCkS9C5Sf0X6HicbS/qSZ7w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yrq7crhjs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Jun 2024 17:27:38 +0000 (GMT)
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45EHRbAe018451;
-	Fri, 14 Jun 2024 17:27:37 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yrq7crhjq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Jun 2024 17:27:37 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45EGb7hf027209;
-	Fri, 14 Jun 2024 17:27:37 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yn211km36-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Jun 2024 17:27:36 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45EHRV0b50528716
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Jun 2024 17:27:33 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3B8B320040;
-	Fri, 14 Jun 2024 17:27:31 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6DA7920043;
-	Fri, 14 Jun 2024 17:27:28 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.43.82.18])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 14 Jun 2024 17:27:28 +0000 (GMT)
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-To: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
-        irogers@google.com, namhyung@kernel.org, segher@kernel.crashing.org,
-        christophe.leroy@csgroup.eu
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
-        maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
-        disgoel@linux.vnet.ibm.com
-Subject: [V4 16/16] tools/perf: Set instruction name to be used with insn-stat when using raw instruction
-Date: Fri, 14 Jun 2024 22:56:31 +0530
-Message-Id: <20240614172631.56803-17-atrajeev@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20240614172631.56803-1-atrajeev@linux.vnet.ibm.com>
-References: <20240614172631.56803-1-atrajeev@linux.vnet.ibm.com>
+	s=arc-20240116; t=1718386030; c=relaxed/simple;
+	bh=m1lLm+WZC4v+Y35S1XB9lWwlw3k4bRL9Y21+zCpCDBQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Um1D4tgXWZ+RiGGxwS5csYJY3/xlJNIFMuCsmatRkIQKwcZl4sErfT8WwNnnyuq+HtXN5MFqR3SJfdNW0UE4Hv81evHmJQquZyoVB7LQDOkYmtc3UFH5YqbR4ztjsvjf5jsYrKLyc3Dg7cYTXB7uONgUcgfT2lsAokLmSDImxe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ctEn4gJS; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45EHR2TK020312;
+	Fri, 14 Jun 2024 12:27:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718386022;
+	bh=XewSngMq7bNS3KBsgmr6l1N/bnY3ToVln2WUXlo0Z6k=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=ctEn4gJSX5tYMgvzBRYJ6xnk2sDRV91wXRcrNTf5ZQZNAt70ruXZWxlT/miB39qNA
+	 brez0qungSVOWIwhxbd6L5/IBP2y2kr6hinh7sp+RzwgAIc6UvNJrujtORIpzbntgT
+	 WEDzoF35fLrbt7lEQvTPBP41UtqrZzzz79d4UAc0=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45EHR2l5010617
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 14 Jun 2024 12:27:02 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
+ Jun 2024 12:27:01 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 14 Jun 2024 12:27:01 -0500
+Received: from localhost (udba0500997.dhcp.ti.com [128.247.81.249])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45EHR1gJ066390;
+	Fri, 14 Jun 2024 12:27:01 -0500
+Date: Fri, 14 Jun 2024 12:27:01 -0500
+From: Brandon Brnich <b-brnich@ti.com>
+To: Devarsh Thakkar <devarsht@ti.com>
+CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <praneeth@ti.com>, <a-bhatia1@ti.com>,
+        <j-luthra@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>
+Subject: Re: [PATCH 2/3] arm64: dts: ti: k3-am62a7-sk: Reserve 576MiB of
+ global CMA
+Message-ID: <20240614172701.3xxs2ydagj3sjrwo@udba0500997>
+References: <20240613150902.2173582-1-devarsht@ti.com>
+ <20240613150902.2173582-3-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: e7rDvBzsRFbU3GOTwmeg5oq4OYByz2Ow
-X-Proofpoint-ORIG-GUID: 39Fosqaq3oYZeXxssOsztYgMg5jnq288
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-14_15,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- adultscore=0 phishscore=0 mlxscore=0 spamscore=0 clxscore=1015
- impostorscore=0 lowpriorityscore=0 suspectscore=0 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406140119
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240613150902.2173582-3-devarsht@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Since the "ins.name" is not set while using raw instruction,
-perf annotate with insn-stat gives wrong data:
+Hi Devarsh,
 
-Result from "./perf annotate --data-type --insn-stat":
+On 20:39-20240613, Devarsh Thakkar wrote:
+> Reserve 576MiB of CMA as global CMA pool starting after initial 1GiB of
+> DDR.
+> 
+> AM62ax has different multimedia components such as Camera, Display, H.264
+> VPU and JPEG Encoder which use CMA for buffer allocations.
+> 
+> The 12x 720x480 realtime VPU decode use-case requires 544MiB of CMA,
+> additional 32MiB is kept as buffer in case some other peripheral also
+> require it while VPU is running.
+> 
+> The reason to choose latter 1GiB is to not overlap with existing memory map
+> which is utilizing initial 1GiB for remoteproc firmwares as shared here
+> [1].
+> 
+> Also some drivers such as JPEG require 32bit addressing so not allocating
+> from higher DDR address.
+> 
+> Link: https://lore.kernel.org/all/20240605124859.3034-5-hnagalla@ti.com [1]
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
 
-Annotate Instruction stats
-total 615, ok 419 (68.1%), bad 196 (31.9%)
+I have validated that this patch works with VPU. 
 
-  Name      :  Good   Bad
------------------------------------------------------------
-            :   419   196
+Tested-by: Brandon Brnich <b-brnich@ti.com>
 
-Patch sets "dl->ins.name" in arch specific function "check_ppc_insn"
-while initialising "struct disasm_line". Also update "ins_find" function
-to pass "struct disasm_line" as a parameter so as to set its name field
-in arch specific call.
+Best,
+Brandon
 
-With the patch changes:
-
-Annotate Instruction stats
-total 609, ok 446 (73.2%), bad 163 (26.8%)
-
-  Name/opcode:  Good   Bad
------------------------------------------------------------
-  58                  :   323    80
-  32                  :    49    43
-  34                  :    33    11
-  OP_31_XOP_LDX       :     8    20
-  40                  :    23     0
-  OP_31_XOP_LWARX     :     5     1
-  OP_31_XOP_LWZX      :     2     3
-  OP_31_XOP_LDARX     :     3     0
-  33                  :     0     2
-  OP_31_XOP_LBZX      :     0     1
-  OP_31_XOP_LWAX      :     0     1
-  OP_31_XOP_LHZX      :     0     1
-
-Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
----
- .../perf/arch/powerpc/annotate/instructions.c  | 18 +++++++++++++++---
- tools/perf/builtin-annotate.c                  |  4 ++--
- tools/perf/util/annotate.c                     |  2 +-
- tools/perf/util/disasm.c                       | 10 +++++-----
- tools/perf/util/disasm.h                       |  2 +-
- 5 files changed, 24 insertions(+), 12 deletions(-)
-
-diff --git a/tools/perf/arch/powerpc/annotate/instructions.c b/tools/perf/arch/powerpc/annotate/instructions.c
-index 13eaec36a9dc..0667229cf656 100644
---- a/tools/perf/arch/powerpc/annotate/instructions.c
-+++ b/tools/perf/arch/powerpc/annotate/instructions.c
-@@ -189,8 +189,9 @@ static int cmp_offset(const void *a, const void *b)
- 	return (val1->value - val2->value);
- }
- 
--static struct ins_ops *check_ppc_insn(int raw_insn)
-+static struct ins_ops *check_ppc_insn(struct disasm_line *dl)
- {
-+	int raw_insn = dl->raw.raw_insn;
- 	int opcode = PPC_OP(raw_insn);
- 	int mem_insn_31 = PPC_21_30(raw_insn);
- 	struct insn_offset *ret;
-@@ -198,19 +199,30 @@ static struct ins_ops *check_ppc_insn(int raw_insn)
- 		"OP_31_INSN",
- 		mem_insn_31
- 	};
-+	char name_insn[32];
- 
- 	/*
- 	 * Instructions with opcode 32 to 63 are memory
- 	 * instructions in powerpc
- 	 */
- 	if ((opcode & 0x20)) {
-+		/*
-+		 * Set name in case of raw instruction to
-+		 * opcode to be used in insn-stat
-+		 */
-+		if (!strlen(dl->ins.name)) {
-+			sprintf(name_insn, "%d", opcode);
-+			dl->ins.name = strdup(name_insn);
-+		}
- 		return &load_store_ops;
- 	} else if (opcode == 31) {
- 		/* Check for memory instructions with opcode 31 */
- 		ret = bsearch(&mem_insns_31_opcode, ins_array, ARRAY_SIZE(ins_array), sizeof(ins_array[0]), cmp_offset);
--		if (ret != NULL)
-+		if (ret) {
-+			if (!strlen(dl->ins.name))
-+				dl->ins.name = strdup(ret->name);
- 			return &load_store_ops;
--		else {
-+		} else {
- 			mem_insns_31_opcode.value = PPC_22_30(raw_insn);
- 			ret = bsearch(&mem_insns_31_opcode, arithmetic_ins_op_31, ARRAY_SIZE(arithmetic_ins_op_31),
- 					sizeof(arithmetic_ins_op_31[0]), cmp_offset);
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index 50d2fb222d48..926467b9a023 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -396,10 +396,10 @@ static void print_annotate_item_stat(struct list_head *head, const char *title)
- 	printf("total %d, ok %d (%.1f%%), bad %d (%.1f%%)\n\n", total,
- 	       total_good, 100.0 * total_good / (total ?: 1),
- 	       total_bad, 100.0 * total_bad / (total ?: 1));
--	printf("  %-10s: %5s %5s\n", "Name", "Good", "Bad");
-+	printf("  %-10s: %5s %5s\n", "Name/opcode", "Good", "Bad");
- 	printf("-----------------------------------------------------------\n");
- 	list_for_each_entry(istat, head, list)
--		printf("  %-10s: %5d %5d\n", istat->name, istat->good, istat->bad);
-+		printf("  %-20s: %5d %5d\n", istat->name, istat->good, istat->bad);
- 	printf("\n");
- }
- 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index c7e4fd16e8b4..cebaffd24fd7 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -2235,7 +2235,7 @@ static struct annotated_item_stat *annotate_data_stat(struct list_head *head,
- 		return NULL;
- 
- 	istat->name = strdup(name);
--	if (istat->name == NULL) {
-+	if ((istat->name == NULL) || (!strlen(istat->name))) {
- 		free(istat);
- 		return NULL;
- 	}
-diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-index 987bff9f71c3..0373cabf2625 100644
---- a/tools/perf/util/disasm.c
-+++ b/tools/perf/util/disasm.c
-@@ -855,7 +855,7 @@ static void ins__sort(struct arch *arch)
- 	qsort(arch->instructions, nmemb, sizeof(struct ins), ins__cmp);
- }
- 
--static struct ins_ops *__ins__find(struct arch *arch, const char *name, int raw_insn)
-+static struct ins_ops *__ins__find(struct arch *arch, const char *name, struct disasm_line *dl)
- {
- 	struct ins *ins;
- 	const int nmemb = arch->nr_instructions;
-@@ -867,7 +867,7 @@ static struct ins_ops *__ins__find(struct arch *arch, const char *name, int raw_
- 		 */
- 		struct ins_ops *ops;
- 
--		ops = check_ppc_insn(raw_insn);
-+		ops = check_ppc_insn(dl);
- 		if (ops)
- 			return ops;
- 	}
-@@ -901,9 +901,9 @@ static struct ins_ops *__ins__find(struct arch *arch, const char *name, int raw_
- 	return ins ? ins->ops : NULL;
- }
- 
--struct ins_ops *ins__find(struct arch *arch, const char *name, int raw_insn)
-+struct ins_ops *ins__find(struct arch *arch, const char *name, struct disasm_line *dl)
- {
--	struct ins_ops *ops = __ins__find(arch, name, raw_insn);
-+	struct ins_ops *ops = __ins__find(arch, name, dl);
- 
- 	if (!ops && arch->associate_instruction_ops)
- 		ops = arch->associate_instruction_ops(arch, name);
-@@ -913,7 +913,7 @@ struct ins_ops *ins__find(struct arch *arch, const char *name, int raw_insn)
- 
- static void disasm_line__init_ins(struct disasm_line *dl, struct arch *arch, struct map_symbol *ms)
- {
--	dl->ins.ops = ins__find(arch, dl->ins.name, dl->raw.raw_insn);
-+	dl->ins.ops = ins__find(arch, dl->ins.name, dl);
- 
- 	if (!dl->ins.ops)
- 		return;
-diff --git a/tools/perf/util/disasm.h b/tools/perf/util/disasm.h
-index 6b6ec23e4f6f..e3b32a796e80 100644
---- a/tools/perf/util/disasm.h
-+++ b/tools/perf/util/disasm.h
-@@ -99,7 +99,7 @@ struct annotate_args {
- struct arch *arch__find(const char *name);
- bool arch__is(struct arch *arch, const char *name);
- 
--struct ins_ops *ins__find(struct arch *arch, const char *name, int raw_insn);
-+struct ins_ops *ins__find(struct arch *arch, const char *name, struct disasm_line *dl);
- int ins__scnprintf(struct ins *ins, char *bf, size_t size,
- 		   struct ins_operands *ops, int max_ins_name);
- 
--- 
-2.43.0
-
+> ---
+>  arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+> index e026f65738b3..67faf46d7a35 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+> @@ -40,6 +40,15 @@ reserved-memory {
+>  		#size-cells = <2>;
+>  		ranges;
+>  
+> +		/* global cma region */
+> +		linux,cma {
+> +			compatible = "shared-dma-pool";
+> +			reusable;
+> +			size = <0x00 0x24000000>;
+> +			alloc-ranges = <0x00 0xc0000000 0x00 0x24000000>;
+> +			linux,cma-default;
+> +		};
+> +
+>  		secure_tfa_ddr: tfa@9e780000 {
+>  			reg = <0x00 0x9e780000 0x00 0x80000>;
+>  			alignment = <0x1000>;
+> -- 
+> 2.39.1
+> 
 
