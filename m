@@ -1,117 +1,139 @@
-Return-Path: <linux-kernel+bounces-215180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE4B908F4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:48:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67BEC908ECF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6CF9284887
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:48:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 094AB2818E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D509D146A7D;
-	Fri, 14 Jun 2024 15:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901A615CD64;
+	Fri, 14 Jun 2024 15:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gErbsjQX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nLsPPILe"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2957314A90
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA8A3B1AB
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718380122; cv=none; b=asUc4wpWhNwNAjqwWqrKX5U+gZ0Ea9BFvhSFMCRAutHdnomPrH+fltCtVM389xKWN/O11HTFABEcsupzOMNl+V2wwEWkKsqmufmPt6ko/S54mti6IEWJJ1NgAlUlanSk7NLLEjiS6+QSkxUt/o1CoyprmnNcnj7noNJM8sz/jHA=
+	t=1718379313; cv=none; b=o/StxEFVCAnhOVQTERrqjeuRUwHYU+EGUFrMYT1U4EWNvxO/xObB9XnpM1jcqFN9LWbPEfOCA3l6Y8YjLRP/v9nas8fdDS7qzfcnPtWlF0A0DvE9mGnCjhK8xLctykhYIG+dVGsr0YUqT6+cdDz2wyIiOtePGieN8FKdf0PIXuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718380122; c=relaxed/simple;
-	bh=jO7Dzw5P4v+LVE4NQ3h4pjMq0kf48JMKykV7530/mdk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zs7z1LXRTJh2RYG89jXAWMtM09Wj9NX9whkrkazMy82XQBDgFVewPy2jLXe27iS6WfIjC+p2KSqkGkS4QcgsXkRpiEj91nvXuCF7GESQCI3MpW/2ycSiizmfxklJYyrMhwRewLMa9cHUMYSFKHbl0HNH+FhJOOWlNNEdTz64IyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gErbsjQX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6EF0C2BD10;
-	Fri, 14 Jun 2024 15:48:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718380121;
-	bh=jO7Dzw5P4v+LVE4NQ3h4pjMq0kf48JMKykV7530/mdk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gErbsjQXHDwJOe8wCzAChDDl0ZuO/k8RfNsD1cODyzEJKV2xE1QFWNBBnKdDlNmSr
-	 SiuXFB4w7G0v1KVfZ/yhiXJP+eKTjfR8xqnZJQMZiffWcsepQc6zHdeseXNFDOQlXw
-	 qsZvF6iKuWEPWIsXmVW3ANQ/sSllcFRAdY0oudiKu/JDAuHpic1Eil3dmzhRGM0fKw
-	 cUPrushCS6DNBd7omHy/d81U0PjLZbeXLw7JEWOcMB7FzB1HYnJkHEUGs8G4Z+bad7
-	 dZ+1TRbBw7OrgKJRJIJc5hkJffYgj3Lit9DczbG3so8hwL/2sZnFwHqtxCLNtWDGe/
-	 V9B0X01H9rHNA==
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] irqchip/dw-apb-ictl: Support building as module
-Date: Fri, 14 Jun 2024 23:34:49 +0800
-Message-ID: <20240614153449.2083-1-jszhang@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1718379313; c=relaxed/simple;
+	bh=By+OoUK9phjDxFni9NpDYhaOStLT4N1Ufyg/V2rZsuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aWxxd+eki2QscaCdksrAH3Fdxtm4Xs9Cwgi9adjB0DMvPwJVONOZBp1BmL+9/e6hR9LUo2uLjw4Bl4vDrU6G0jCTjafNlK/tnmRep5ykJ2wKbF4yYkhwYzbkTe6ivBjJCalRBH1WKzJn6oOzSzSybVGdTLu4Gy9Ni7C7Vu7zQFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nLsPPILe; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso38163611fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:35:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718379309; x=1718984109; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=By+OoUK9phjDxFni9NpDYhaOStLT4N1Ufyg/V2rZsuM=;
+        b=nLsPPILey2jD3seYmP68z6SLyndCASGyfQre4fy54xmJm+Suif8hg/mcv4Gi029hpp
+         vu2iBc4QYZvm6EMN4RCySgNJwp3+VZptNtAVTNU00Zo2enINoAaoWwRAFWLMcub7v+cJ
+         XQMMEqffUgP27ooAmFUX/BKpkDGnvYhwTTj/oomMY1oQtcAu8RjjKh9+LdTsnA7+48j5
+         4JwEi95WscZoDmLadMY2OFTqVaci8B9c8W4VNtnDdtaRjE85E6l2eLm7vzCIkDvNTTyC
+         vtxMImDmCVOHj8oO1RpIcFv4mZQX5x7XyHiy50o6u+zo/fqa75O4ZuFJxEfNRbl544QB
+         DMaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718379309; x=1718984109;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=By+OoUK9phjDxFni9NpDYhaOStLT4N1Ufyg/V2rZsuM=;
+        b=C4t6UhvOJL2Q/N+X0PGOUL6fWAc3jahgE3MDnCaYlqqppAwyCRSurwhTFsYAphfgoN
+         +9/HHmbeROei6nt6JRNa6O1B4YYPG1bd1u1i76JnVNPdWjLTMjUcd/KXs/Ga42J+BD71
+         0Nc+sr2GbtclyVACS7O8yFWUhtTHfjoEgHvjkCRoe/TDtqzyjL8AJgtN4d5T/KAdN148
+         BUI+EmdYb6OFRSuXTUe7edFfuv7Klm2q+CWMxzT9pPFtotGWA3ajFMK5SAGbt/mOf1gD
+         rggEMpRmliSByCWigJCGOLyDOKxHTee6++aTjuilnvaej/2uSUlhLGvjQyRGO8EyXE3v
+         M9IA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRQxG+Ro1xdIXlGKS/nnDwde5xTznf8iKW6LqUHV+RZY70gr8nqoduoRZy3t/XAam0bVcZSKhoIEimnk2XQrOq167Xi7s7Tk4zLo3+
+X-Gm-Message-State: AOJu0YxCb+mMCvMO4omva3L4yPq+WzkXBz2/e5JXjwrP0a949uFZESli
+	Sve/UFiTsJrRQic/fAeBy0Woo02ebqwLyG9x3pq5sjEXBdtPSfZUp5iBOCdw+Rw=
+X-Google-Smtp-Source: AGHT+IEZFCe/X0dPZ4UuhbZeK/Ijt1BLha/MawlM++zT52lImv6xyoOojlWTAYxhTmOdMBbXtX4hig==
+X-Received: by 2002:ac2:44a2:0:b0:52c:a5cc:27e7 with SMTP id 2adb3069b0e04-52ca6e9dafcmr2324082e87.66.1718379309156;
+        Fri, 14 Jun 2024 08:35:09 -0700 (PDT)
+Received: from localhost (p509153eb.dip0.t-ipconnect.de. [80.145.83.235])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f40fe2sm200252766b.148.2024.06.14.08.35.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 08:35:08 -0700 (PDT)
+Date: Fri, 14 Jun 2024 17:35:07 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Sean Young <sean@mess.org>, linux-kernel@vger.kernel.org, 
+	linux-pwm@vger.kernel.org
+Subject: Re: [PATCH] bus: ts-nbus: Use pwm_apply_might_sleep()
+Message-ID: <rlpicrfrp4nsftgj24oakn6urj7axi2gptrlzpdk3f2scvmzqb@5caoklb74wvm>
+References: <20240614090829.560605-1-sean@mess.org>
+ <xj5mqnte5dgs4yzuku6g7gnprgm43tdbunxmo6o4thzreyraok@kttvkz5dhaei>
+ <1f13c705-dec7-48f6-a6d7-4a9000eedf7d@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="c5ub5pa2ooxsz7dl"
+Content-Disposition: inline
+In-Reply-To: <1f13c705-dec7-48f6-a6d7-4a9000eedf7d@app.fastmail.com>
 
-Allow the user selection and building of this interrupt controller
-driver as a module, for example, in some synaptics arm64 SoCs it is
-used as a second level interrupt controller hanging off the ARM GIC
-and is therefore loadable during boot.
 
-However, this interrupt controller can also be used as the main
-interrupt controller by other platforms, so we must keep this kind
-of support by checking whether DW_APB_ICTL is builtin or not.
+--c5ub5pa2ooxsz7dl
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
----
- drivers/irqchip/Kconfig           |  2 +-
- drivers/irqchip/irq-dw-apb-ictl.c | 13 ++++++++++---
- 2 files changed, 11 insertions(+), 4 deletions(-)
+Hello Arnd,
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 14464716bacb..cfd1102eb273 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -145,7 +145,7 @@ config DAVINCI_CP_INTC
- 	select IRQ_DOMAIN
- 
- config DW_APB_ICTL
--	bool
-+	tristate "DesignWare APB Interrupt Controller"
- 	select GENERIC_IRQ_CHIP
- 	select IRQ_DOMAIN_HIERARCHY
- 
-diff --git a/drivers/irqchip/irq-dw-apb-ictl.c b/drivers/irqchip/irq-dw-apb-ictl.c
-index d5c1c750c8d2..5eda6c4689cf 100644
---- a/drivers/irqchip/irq-dw-apb-ictl.c
-+++ b/drivers/irqchip/irq-dw-apb-ictl.c
-@@ -122,7 +122,7 @@ static int __init dw_apb_ictl_init(struct device_node *np,
- 	int ret, nrirqs, parent_irq, i;
- 	u32 reg;
- 
--	if (!parent) {
-+	if (!parent && IS_BUILTIN(CONFIG_DW_APB_ICTL)) {
- 		/* Used as the primary interrupt controller */
- 		parent_irq = 0;
- 		domain_ops = &dw_apb_ictl_irq_domain_ops;
-@@ -214,5 +214,12 @@ static int __init dw_apb_ictl_init(struct device_node *np,
- 	release_mem_region(r.start, resource_size(&r));
- 	return ret;
- }
--IRQCHIP_DECLARE(dw_apb_ictl,
--		"snps,dw-apb-ictl", dw_apb_ictl_init);
-+#if IS_BUILTIN(CONFIG_DW_APB_ICTL)
-+IRQCHIP_DECLARE(dw_apb_ictl, "snps,dw-apb-ictl", dw_apb_ictl_init);
-+#else
-+IRQCHIP_PLATFORM_DRIVER_BEGIN(dw_apb_ictl)
-+IRQCHIP_MATCH("snps,dw-apb-ictl", dw_apb_ictl_init)
-+IRQCHIP_PLATFORM_DRIVER_END(dw_apb_ictl)
-+MODULE_DESCRIPTION("DesignWare APB Interrupt Controller");
-+MODULE_LICENSE("GPL v2");
-+#endif
--- 
-2.43.0
+On Fri, Jun 14, 2024 at 01:38:05PM +0200, Arnd Bergmann wrote:
+> On Fri, Jun 14, 2024, at 12:06, Uwe Kleine-K=F6nig wrote:
+> > On Fri, Jun 14, 2024 at 10:08:29AM +0100, Sean Young wrote:
+> >
+> > Thanks. I guess the patch becoming
+> > 8129d25e32b7fd0f77bc664252321f3a16bb26b8 was created a while before
+> > pwm_apply_might_sleep() was a thing.
+> >
+> > Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+> >
+> > Arnd, you merged the last changes to that driver. Do you want to care
+> > for that one, too? If not I can apply it via my pwm tree.
+>=20
+> Whichever works best for you. I generally take drivers/bus
+> and drivers/soc fixes through the soc tree, but if this is
+> a PWM related change then having it in the pwm tree makes
+> sense as well.
+>=20
+> If you like me to pick it up through the soc tree, please
+> forward the fix to soc@kernel.org.
 
+OK, then I pick it up and consider it done. Thanks.
+
+Best regards
+Uwe
+
+--c5ub5pa2ooxsz7dl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZsYykACgkQj4D7WH0S
+/k4xQwf/RPjgnr71cDGKDmyjNofEfiQ1ZhYO5iXTl8+UCZqHHQ+9E5JiswnpxUDi
+nLBXz3EHObg2h+x0f7HpDn4TLGgn0zLCJ5R1mUhtJXgYU0v61Xs4XJDGhTQ075zM
++7GoRqdNAhtsycqHhXRy5Dkgr0nTMhQjhpSpVfrWFImvy4CV4FfWuWB6k60aFKvC
+mNJPJhu+9jrs2P2HGu4rxv6IHhgUJrB2uC4Rp/rJoh6bHOls5usy1OTffCkvndTi
+TOGz/D8L0qabV5zpOyoBt/VygYr9lbu3WY8Bs6bnfPMF8miWptTIiJ6X+pIyAMJf
+kqBUuTD9Ri+GtNUMWxwviNJVVx1AnQ==
+=49MG
+-----END PGP SIGNATURE-----
+
+--c5ub5pa2ooxsz7dl--
 
