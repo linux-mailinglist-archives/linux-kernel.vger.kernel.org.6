@@ -1,112 +1,149 @@
-Return-Path: <linux-kernel+bounces-215196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 170D2908F9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:05:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD79A908FAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93C6028524B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:04:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 702431C22F0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8070A16C696;
-	Fri, 14 Jun 2024 16:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542A416E888;
+	Fri, 14 Jun 2024 16:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="URq1dqzn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+ETc5Tgr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="mfApwInj"
+Received: from msa.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8A32B9A5;
-	Fri, 14 Jun 2024 16:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41E36FCB;
+	Fri, 14 Jun 2024 16:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718381090; cv=none; b=UvI/9sXprpbfj8FQevdWAK7kLBsSVjPQQ+PZJBApGOTU6H/vxwrcWrRz6gXIWVkEW0z0sbbJdCnw0jrM739th274YJYjYBRlvKdHxUW7rP3c6GOTG0Si3oXtolN0Z1fc1RVSBgM2QKl5bHLHTn2cZ35xVoBSgY28m2Jy5UZuf+I=
+	t=1718381328; cv=none; b=J9Jb3b1+zzNgCnr3dGQfmhGsdYA9tiTZaBwbUgCZIj8BjrTc4lmXp7Sb3VGWjy4/gpFTvcUzMr4k4qkXqvX8SWvEdp9vMSw+RNzwcNBaqz0Z7lETF0dB/NZQtcjPak3ePMHHemtayGMO7vbjw9aKJb6EGLcyLG9Eht+B8epT93E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718381090; c=relaxed/simple;
-	bh=4WF6JZsC3Ht/Gfaa311jklZxD5KElK3svrdFuhozFhY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YgiJzRrekbIXJ3Mz8ge/OAc9htAh/CEg6xLTSmvxkdzdw3NkBRaJcdWckb/1hJschgyqNa4QZnChhRU+xHWPrIop5JqKCmTdddVU4GQc/5zf6h+b6bvTadAWgOl+F7tP1PPTtK0RnRjRwOX5qpvdgkD/Nn2luhvPTNNgcC8JfdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=URq1dqzn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+ETc5Tgr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 14 Jun 2024 18:04:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718381086;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gi0Ctfyyc/5laoLje+Jfda9IFf+g17QR1+NTWKKpkzY=;
-	b=URq1dqznDFEyKvue5WWUyghEYBMGpwkh7txsThmmwcrVQ9KyJWpXdEkMBaPnXU5plEZaWE
-	UpwgjyiI0tqjui61steL9vafHgl3QziQRHIa/xdOJHmSBFk5Jq8XJcoG6k1gXZiT2sTBJJ
-	8J6QQzVlYhQhq6CvfWr+WF9xfnMFjWM/KNhu6uJFwf0pyjeVVQvw7QEPCLVuIK6h4zWYkx
-	q+7akQ0MnhrQZuIotH+00OP5cc5fnGfUeNf9e+FRquJryXwpnjfGiBY7i1IE98w2wSKq5h
-	WIP8Q5y/jFuQRoPt0Exoo13e/oH8HQ448JKvBIKf6w1nVLjDMmweSjv/gQu38A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718381086;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gi0Ctfyyc/5laoLje+Jfda9IFf+g17QR1+NTWKKpkzY=;
-	b=+ETc5Tgr4yxAnUx+RKxcPxbLMEHt1UG8hPckBJGyZivqlVqKpBe0CffC3DZfuhDoqTQ1kO
-	5QXSf3GHBEIa6RDQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Eric Dumazet <edumazet@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Daniel Bristot de Oliveira <bristot@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	Ben Segall <bsegall@google.com>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Juri Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH v6 net-next 08/15] net: softnet_data: Make xmit.recursion
- per task.
-Message-ID: <20240614160445.UdPsIOTW@linutronix.de>
-References: <20240612170303.3896084-1-bigeasy@linutronix.de>
- <20240612170303.3896084-9-bigeasy@linutronix.de>
- <20240612131829.2e33ca71@rorschach.local.home>
- <20240614082758.6pSMV3aq@linutronix.de>
- <CANn89i+YfdmKSMgHni4ogMDq0BpFQtjubA0RxXcfZ8fpgV5_fw@mail.gmail.com>
- <20240614094809.gvOugqZT@linutronix.de>
- <834b61b93df3cbf5053e459f337e622e2c510fbd.camel@redhat.com>
+	s=arc-20240116; t=1718381328; c=relaxed/simple;
+	bh=R8H8MXJyPb1YM2V92M76ao7oPk/gsYPlvbPUU2JSefY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K8a5pf1y9rmuisSYnqYc2TSWyDXuTZuwqOBT89iD0Gj4sQwVkGYLroHrEHWvEsqJfFngi+EaV2AwmcOkVyEEHbBme2ATyWeNE1vtUsXsDMLrkeFy+AerbiQD33ji9hXpYGzOYspTvj1iHIlLJQjsAiVRuJGAU19+4QucueYzQcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=mfApwInj; arc=none smtp.client-ip=80.12.242.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id I9TgsKvp3tf3yI9TgsiObM; Fri, 14 Jun 2024 18:08:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1718381317;
+	bh=iew86RGc22LJ+Q/8TMphmmkcMzmxkXz0kaXfqIW+KKw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=mfApwInjnFPbwpLRxOXdkb6DU8ITDBwhgC7xAdU65yUWLf8jt/8jrF4FFTIDcY2th
+	 iEaahGn2BBaAUi/aQs9YoQcdVURdTzssWNlwOQsZ+ipTuXHMZYiNHEb5C5tkqoaWaI
+	 Kp0acai4IiMym0K99Bb3/Zv/wzE0Bfy2lMIZQDHfms6thq48feafrfAdrW6X97VQRS
+	 U/ax0jsUoBKM34bKWSzTa59xi8UwuCHepVD8jIWgHGUwv1mevIKc2Q44ByIpls246K
+	 ZV9sqMX5tPORVxcb5p50B94POU8T37Dr+8N5tzNd3sf3ouUswuh6JahE3M891WLWus
+	 dcnOmDTWS+flA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 14 Jun 2024 18:08:37 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Karol Herbst <kherbst@redhat.com>,
+	Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org
+Subject: [PATCH] drm/nouveau: Constify struct nouveau_job_ops
+Date: Fri, 14 Jun 2024 18:08:30 +0200
+Message-ID: <860e9753d7867aa46b003bb3d0497f1b04065b24.1718381285.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <834b61b93df3cbf5053e459f337e622e2c510fbd.camel@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On 2024-06-14 16:08:42 [+0200], Paolo Abeni wrote:
-> 
-> I personally think (fear mostly) there is still the potential for some
-> (performance) regression. I think it would be safer to introduce this
-> change under a compiler conditional and eventually follow-up with a
-> patch making the code generic.
-> 
-> Should such later change prove to be problematic, we could revert it
-> without impacting the series as a whole. 
+"struct nouveau_job_ops" is not modified in these drivers.
 
-Sounds reasonable. In that case let me stick with "v6.5" of this patch
-(as just posted due the `more' member) and then I could introduce an
-option for !RT to use this optionally so it can be tested widely.
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-> Thanks!
-> 
-> Paolo
+In order to do it, "struct nouveau_job" and "struct nouveau_job_args" also
+need to be adjusted to this new const qualifier.
 
-Sebastian
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   5570	    152	      0	   5722	   165a	drivers/gpu/drm/nouveau/nouveau_exec.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   5630	    112	      0	   5742	   166e	drivers/gpu/drm/nouveau/nouveau_exec.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/gpu/drm/nouveau/nouveau_exec.c  | 2 +-
+ drivers/gpu/drm/nouveau/nouveau_sched.h | 4 ++--
+ drivers/gpu/drm/nouveau/nouveau_uvmm.c  | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nouveau_exec.c b/drivers/gpu/drm/nouveau/nouveau_exec.c
+index e65c0ef23bc7..a0b5f1b16e8b 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_exec.c
++++ b/drivers/gpu/drm/nouveau/nouveau_exec.c
+@@ -188,7 +188,7 @@ nouveau_exec_job_timeout(struct nouveau_job *job)
+ 	return DRM_GPU_SCHED_STAT_NOMINAL;
+ }
+ 
+-static struct nouveau_job_ops nouveau_exec_job_ops = {
++static const struct nouveau_job_ops nouveau_exec_job_ops = {
+ 	.submit = nouveau_exec_job_submit,
+ 	.armed_submit = nouveau_exec_job_armed_submit,
+ 	.run = nouveau_exec_job_run,
+diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.h b/drivers/gpu/drm/nouveau/nouveau_sched.h
+index e1f01a23e6f6..20cd1da8db73 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_sched.h
++++ b/drivers/gpu/drm/nouveau/nouveau_sched.h
+@@ -42,7 +42,7 @@ struct nouveau_job_args {
+ 		u32 count;
+ 	} out_sync;
+ 
+-	struct nouveau_job_ops *ops;
++	const struct nouveau_job_ops *ops;
+ };
+ 
+ struct nouveau_job {
+@@ -73,7 +73,7 @@ struct nouveau_job {
+ 		u32 count;
+ 	} out_sync;
+ 
+-	struct nouveau_job_ops {
++	const struct nouveau_job_ops {
+ 		/* If .submit() returns without any error, it is guaranteed that
+ 		 * armed_submit() is called.
+ 		 */
+diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+index ee02cd833c5e..9402fa320a7e 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+@@ -1534,7 +1534,7 @@ nouveau_uvmm_bind_job_cleanup(struct nouveau_job *job)
+ 	nouveau_uvmm_bind_job_put(bind_job);
+ }
+ 
+-static struct nouveau_job_ops nouveau_bind_job_ops = {
++static const struct nouveau_job_ops nouveau_bind_job_ops = {
+ 	.submit = nouveau_uvmm_bind_job_submit,
+ 	.armed_submit = nouveau_uvmm_bind_job_armed_submit,
+ 	.run = nouveau_uvmm_bind_job_run,
+-- 
+2.45.2
+
 
