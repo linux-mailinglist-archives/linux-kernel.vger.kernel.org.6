@@ -1,147 +1,123 @@
-Return-Path: <linux-kernel+bounces-215223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A91B1908FF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:20:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4CC9909008
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D8731C22A38
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:19:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB26BB29A3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00FEE181BB6;
-	Fri, 14 Jun 2024 16:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFD6171E71;
+	Fri, 14 Jun 2024 16:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lc4Wln6a"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EbysnwGS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF6C1802DF;
-	Fri, 14 Jun 2024 16:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77304637;
+	Fri, 14 Jun 2024 16:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718381980; cv=none; b=emRdVD6ly0yMTN7gcuQWpdkiLkE0JOmJjEi8hvr7Q3vtkRsZnQkMns27Rjnfxw1m8UVBErMtLnnfdwx7iqN2n2nBVIUys1Hbfm5qMn/Qcsv/htY1hjQZD7fp6Xia1nRRNgRax8SKhCwHibWFKkxsivKXQM09ZcfKdhvyWPRRTQg=
+	t=1718382114; cv=none; b=cjeIkLDOPUlZ72RhrejbfJFd1v0Ut2DvBFcrKburxQaH3AOsgPa4ogv/HR5L/f0pCfMc3SuH/OjZLAF6dyWA2KltGPJNt9u4eTkh6Bav1sURYqXmMZCsANwtD2s/4AK21uMDGi/U6Xg8ScJM/Q+2KWn+CSIsSHQBVQF2B19SINE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718381980; c=relaxed/simple;
-	bh=X7O9sgfBk/HcHdXdDTmYkBdEl+w9C7UN+j/WfZL45CQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Eod0UTZbdF0JJPittCrmQV/wC7cuI6+xgUMr9oSCJYbIpoDANUKmi2fEEy9dAuNXpYboRiGlXqNHmfqSw+/w5YEQLG0IRy5RdOeBiZh9W73W5w1VxdRWSqMgy7/iAPjm59UDpEdoERueJcULbyyJUPtW3nnQly5ox1qoGhoG3ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lc4Wln6a; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718381979; x=1749917979;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=X7O9sgfBk/HcHdXdDTmYkBdEl+w9C7UN+j/WfZL45CQ=;
-  b=lc4Wln6arn1DHMDjA/8OpuTBuzRrmVOVYQy5IYZ+J1vM7V/NGX5HS5+L
-   UUWReLxmUqZur5roD+wdZGjfsdW7DI4hFa39C0bnyJNbY4M/LKvGNs53J
-   UjWOlZs7yF1jpryGZSzW1IFPe/fK7ce/DdIbWrsUKRw485k5ZCj6Vt5KN
-   CnmuM964x7KLzyK+HiOiq3NDjh8AizyEAA+bH8bcZSql9wtLacmhjK5f+
-   fTuG5TAnMeLlq9vTiYjY5fYsPCCAAuwM7RahiXl2a4AeDDDNy0elClkBW
-   k9uX55zKTVbTtvGq5nyfNait+e8hDezUnbojeJvcdDUt9evnm43zi4M+Y
-   Q==;
-X-CSE-ConnectionGUID: aXpX8r0jQDeK1wX2dyOH/g==
-X-CSE-MsgGUID: ld63QdzzTkWuAQukoMf2fg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="26694886"
-X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
-   d="scan'208";a="26694886"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 09:19:38 -0700
-X-CSE-ConnectionGUID: oZ52MSDoR5Cde6m1ib9q7A==
-X-CSE-MsgGUID: U6wrozA3SGOq5yXZhGkxCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
-   d="scan'208";a="45080061"
-Received: from unknown (HELO [10.125.111.79]) ([10.125.111.79])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 09:19:37 -0700
-Message-ID: <74f8300b-3520-4824-81e3-71464e3da3b6@intel.com>
-Date: Fri, 14 Jun 2024 09:19:35 -0700
+	s=arc-20240116; t=1718382114; c=relaxed/simple;
+	bh=3gS7lmJ3XLUEPpg7b58zfXEwl9wGyHzOeGQZBUzLDLM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fkphN0MeBC+H+d9Rc7iv0Gfg8rsQSb/BsVzioVFnPQNQigBssE3c6I2BdYeNGDT5ErJu4vraC5fOwf6RVj/dXFcnk2XOYulEPI8pXMSmnK3bzjkjLnncfeblcSlGVzZB0y6sE/fylFN9jEhPzqp8ItKXDRJKwt0zfyZgzq0vTgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EbysnwGS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45E8GgVF030966;
+	Fri, 14 Jun 2024 16:21:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ppnvC/ArPtVIlJzIvzpz61ZVN8j+4Yift9Ae0cCDUcs=; b=EbysnwGS4cZTYbl7
+	gHvKS8jTcdGgA5daWROx/eJIKIglFFN/dmfctbWv/NXSFQRsKmyuTRSuhbqOShjO
+	w8rJkVpxr1R2DKvQ3+wV+LZnBZVDlCjAtiq6ijb3oz8ME1SlJH2L5jdz5WCmPFii
+	92UUmEqYX5XK4ivkU726APmqZgwl7/X2Qo3x31XgGDgVcte5pKfrzbFzVGTZSpgs
+	FPO5CCJ3zdYZgWkh7AKzwEjQTRpSaZwAavo8H+Y4LZzjS7tb4ehFZZiXPKGvIoNC
+	z+I9Q1aTvgdK9roXrA4FsZTZUhqSyJIEktt783ajsLXXjwG7Em7XjUYBKOErR/Kg
+	ykRo2A==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yr6q2t9pv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Jun 2024 16:21:26 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45EGLNuO021852
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Jun 2024 16:21:23 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 14 Jun
+ 2024 09:21:23 -0700
+Message-ID: <8f0ab2e9-3f41-3b39-6733-e5063dd7ca43@quicinc.com>
+Date: Fri, 14 Jun 2024 10:21:22 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 8/8] x86/vmware: Add TDX hypercall support
-To: Borislav Petkov <bp@alien8.de>
-Cc: Alexey Makhalov <alexey.makhalov@broadcom.com>,
- linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, hpa@zytor.com,
- dave.hansen@linux.intel.com, mingo@redhat.com, tglx@linutronix.de,
- x86@kernel.org, netdev@vger.kernel.org, richardcochran@gmail.com,
- linux-input@vger.kernel.org, dmitry.torokhov@gmail.com, zackr@vmware.com,
- linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
- timothym@vmware.com, akaher@vmware.com, dri-devel@lists.freedesktop.org,
- daniel@ffwll.ch, airlied@gmail.com, tzimmermann@suse.de, mripard@kernel.org,
- maarten.lankhorst@linux.intel.com, horms@kernel.org,
- kirill.shutemov@linux.intel.com, Tim Merrifield <tim.merrifield@broadcom.com>
-References: <20240613191650.9913-1-alexey.makhalov@broadcom.com>
- <20240613191650.9913-9-alexey.makhalov@broadcom.com>
- <844ef200-aabe-4497-85c9-44fc46c9133a@intel.com>
- <20240614161404.GCZmxsTNLSoYTqoRoj@fat_crate.local>
-From: Dave Hansen <dave.hansen@intel.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH 7/9] accel/rocket: Add IOCTL for BO creation
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20240614161404.GCZmxsTNLSoYTqoRoj@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Joerg Roedel <joro@8bytes.org>,
+        Will
+ Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Heiko Stuebner
+	<heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Oded Gabbay
+	<ogabbay@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>,
+        David
+ Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+CC: <iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-media@vger.kernel.org>, <linaro-mm-sig@lists.linaro.org>
+References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
+ <20240612-6-10-rocket-v1-7-060e48eea250@tomeuvizoso.net>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20240612-6-10-rocket-v1-7-060e48eea250@tomeuvizoso.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: cfgQbnp0Qu7uwDjEmxhNpEZP84sCt-Lp
+X-Proofpoint-GUID: cfgQbnp0Qu7uwDjEmxhNpEZP84sCt-Lp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-14_14,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ bulkscore=0 mlxlogscore=666 priorityscore=1501 spamscore=0 phishscore=0
+ adultscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406140110
 
-On 6/14/24 09:14, Borislav Petkov wrote:
-> On Fri, Jun 14, 2024 at 09:03:22AM -0700, Dave Hansen wrote:
-...
->> You need to zero out all of 'args' somehow.
+On 6/12/2024 7:53 AM, Tomeu Vizoso wrote:
+> This uses the SHMEM DRM helpers and we map right away to the CPU and NPU
+> sides, as all buffers are expected to be accessed from both.
 > 
-> You mean like this:
-> 
-> 	struct tdx_module_args args = {};
-> 
-> ?
+> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
 
-Yes, or do all the assignments with the initializer.  We seem to do it
-both ways, so whatever works.
+Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
 
