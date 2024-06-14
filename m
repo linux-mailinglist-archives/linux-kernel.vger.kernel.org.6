@@ -1,106 +1,153 @@
-Return-Path: <linux-kernel+bounces-215445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876739092CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:09:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FA049092CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:09:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C05D28407B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:09:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E1AE285393
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304441A2562;
-	Fri, 14 Jun 2024 19:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC6A1A38D5;
+	Fri, 14 Jun 2024 19:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a04Wl6j9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Uk/GR843"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEADB1A2C3C
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 19:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40BE1A2FAE
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 19:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718392096; cv=none; b=jb5856kvzQbaaRaTKwJdgTVWHR2SO4ksJU6+c7QmYxCjEl7HT5jK05zcCnYRupHCLy/d3fgX7lzIqjpNAyjH+JcGxETVUsijxt2fpkDOje1sF97Uiziy2FoG1FWcvqXyqV2gXFh/AgTFJUfa52MYTGElqDE7lFSyks30/9jHKyc=
+	t=1718392171; cv=none; b=f4glhIOwkKSpEUVbGGvuX51ue0Jy424Oq9WHAZjW7TnH3j3V+bUe0c+S82V8u3qAJvIs1ejq6iCzltoHm09I7aZI+Ytarxk538KpiqanC9laNbOxOQ4r6caDvnQUFjR6CopetZS/4D8YhhilVW6uYJJOB1J1oYNPHBJCmOjrobw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718392096; c=relaxed/simple;
-	bh=SQ/YQJdOFpW9+EoBypMmkzS+5zxvUiRg5Z5oH8yhL00=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hy9tdJLEVxv8TcMc6JDBkRrqZ3TJFgVwF1+PJ3IV0/M9c9/vN3LVdZG2Z13XiyxAXpKu2KS1xL3kPsF+OKtjHfOc2Fw9ockeejVJMfFcx2NpKRc04P5GAlk8Yrzzhr8+c1U2xyk7kMotG+a/YprJBFMBZvmGR2vW+IgmeSExw2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a04Wl6j9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718392093;
+	s=arc-20240116; t=1718392171; c=relaxed/simple;
+	bh=Wizhiytn4Lj3Shj2nqRLymOMjV8PCb5TMVol1RzlXWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SvYLW+BTyPrHvDeP2n3SRWtkaGa3FV2XThvrlM7r14k2I2lWZ+AXPW8YgyNFhiVnHKupcM70mMv2yPxEEDC2CyYdXIe6blprPyEtQk2VJOsUKX0cOkWmA3HubvXSmg8XFNu73qOY79SanZtpUPSkUESeufTLpfFBYFnRFBkdJGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Uk/GR843; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: coltonlewis@google.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718392167;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=DwSn56t118gnsozrPMNHvwFUxMQgx5fcblRLcH107/8=;
-	b=a04Wl6j90G+qNx0f3PwLq4FsZLEk04VL86lpnEwrAmGteUqAehd4fftFWAoZWRjhSIvIBT
-	/GmY7Ai5/GwG6OxUyl9qrEXyEVuzrxcIp9yseyTLGCTxEG+eAfXuATf+uDhRzQmEirg6Jz
-	KUUkQei05tXPuOHfbuc1+m5BMu9hwN4=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-374-cYgAlWJEON-cBqK9V1LgOw-1; Fri,
- 14 Jun 2024 15:08:12 -0400
-X-MC-Unique: cYgAlWJEON-cBqK9V1LgOw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CFAC4195608C;
-	Fri, 14 Jun 2024 19:08:09 +0000 (UTC)
-Received: from thuth-p1g4.redhat.com (unknown [10.39.193.73])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9B3221955F2D;
-	Fri, 14 Jun 2024 19:08:06 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: linux-doc@vger.kernel.org,
-	Vineet Gupta <vgupta@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-snps-arc@lists.infradead.org
-Subject: [PATCH] Documentation: Remove unused "nps_mtm_hs_ctr" from kernel-parameters.txt
-Date: Fri, 14 Jun 2024 21:08:04 +0200
-Message-ID: <20240614190804.602970-1-thuth@redhat.com>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gkzyBBXAwCY3OzPK+SBz7H8Gt8fdJVI1ukS9jG1P/vI=;
+	b=Uk/GR843p9Box6vvqsaHG5/Rl57kIPIH+lAwURbqN6EOIWpimaV5f9KvkM310qiACy/fNc
+	PF75FHaijo3O9EY3HAqFx+oCi4Runo9dXFhJd2kbkY4muHk/tGFsh2SMz1XfHfJtfRDOzQ
+	h/aEl6tewTosCcf3fTQYa/N0oN1Zs5k=
+X-Envelope-To: kvm@vger.kernel.org
+X-Envelope-To: corbet@lwn.net
+X-Envelope-To: maz@kernel.org
+X-Envelope-To: james.morse@arm.com
+X-Envelope-To: suzuki.poulose@arm.com
+X-Envelope-To: yuzenghui@huawei.com
+X-Envelope-To: catalin.marinas@arm.com
+X-Envelope-To: will@kernel.org
+X-Envelope-To: linux-doc@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: kvmarm@lists.linux.dev
+Date: Fri, 14 Jun 2024 19:09:21 +0000
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: kvm@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v6] KVM: arm64: Add early_param to control WFx trapping
+Message-ID: <ZmyVYQG_wC9rRonF@linux.dev>
+References: <20240523174056.1565133-1-coltonlewis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523174056.1565133-1-coltonlewis@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-The "nps_mtm_hs_ctr" parameter has been removed in commit dd7c7ab01a04
-("ARC: [plat-eznps]: Drop support for EZChip NPS platform"). Remove it
-from the documentation now, too.
+On Thu, May 23, 2024 at 05:40:55PM +0000, Colton Lewis wrote:
+> Add an early_params to control WFI and WFE trapping. This is to
+> control the degree guests can wait for interrupts on their own without
+> being trapped by KVM. Options for each param are trap and notrap. trap
+> enables the trap. notrap disables the trap. Note that when enabled,
+> traps are allowed but not guaranteed by the CPU architecture. Absent
+> an explicitly set policy, default to current behavior: disabling the
+> trap if only a single task is running and enabling otherwise.
+> 
+> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+> ---
+> v6:
+>  * Rebase to v6.9.1
 
-Signed-off-by: Thomas Huth <thuth@redhat.com>
----
- Documentation/admin-guide/kernel-parameters.txt | 9 ---------
- 1 file changed, 9 deletions(-)
+As in from the stable tree? Please base your patches on an -rc tag, and
+especially one from this release cycle.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index dd8436c98735..f58001338860 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4143,15 +4143,6 @@
- 			parameter, xsave area per process might occupy more
- 			memory on xsaves enabled systems.
+> +static bool kvm_vcpu_should_clear_twi(struct kvm_vcpu *vcpu)
+> +{
+> +	if (likely(kvm_wfi_trap_policy == KVM_WFX_NOTRAP_SINGLE_TASK))
+> +		return single_task_running() &&
+> +			(atomic_read(&vcpu->arch.vgic_cpu.vgic_v3.its_vpe.vlpi_count) ||
+> +			 vcpu->kvm->arch.vgic.nassgireq);
+> +
+> +	return kvm_wfi_trap_policy == KVM_WFX_NOTRAP;
+> +}
+
+Generally, it is more readable to organize your code in such a way that
+multiline statements are unnested as much as possible. So if you were to
+invert the if condition it'd become a bit cleaner.
+
+Here is what I plan on squashing into this patch,
+kvm_vcpu_should_clear_twe() got the same treatment for the sake of
+consistency.
+
+diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+index 9cddd1096b0a..53e23528d2cf 100644
+--- a/arch/arm64/kvm/arm.c
++++ b/arch/arm64/kvm/arm.c
+@@ -557,20 +557,20 @@ static void vcpu_set_pauth_traps(struct kvm_vcpu *vcpu)
  
--	nps_mtm_hs_ctr=	[KNL,ARC]
--			This parameter sets the maximum duration, in
--			cycles, each HW thread of the CTOP can run
--			without interruptions, before HW switches it.
--			The actual maximum duration is 16 times this
--			parameter's value.
--			Format: integer between 1 and 255
--			Default: 255
--
- 	nptcg=		[IA-64] Override max number of concurrent global TLB
- 			purges which is reported from either PAL_VM_SUMMARY or
- 			SAL PALO.
--- 
-2.45.2
+ static bool kvm_vcpu_should_clear_twi(struct kvm_vcpu *vcpu)
+ {
+-	if (likely(kvm_wfi_trap_policy == KVM_WFX_NOTRAP_SINGLE_TASK))
+-		return single_task_running() &&
+-			(atomic_read(&vcpu->arch.vgic_cpu.vgic_v3.its_vpe.vlpi_count) ||
+-			 vcpu->kvm->arch.vgic.nassgireq);
++	if (unlikely(kvm_wfi_trap_policy != KVM_WFX_NOTRAP_SINGLE_TASK))
++		return kvm_wfi_trap_policy == KVM_WFX_NOTRAP;
+ 
+-	return kvm_wfi_trap_policy == KVM_WFX_NOTRAP;
++	return single_task_running() &&
++	       (atomic_read(&vcpu->arch.vgic_cpu.vgic_v3.its_vpe.vlpi_count) ||
++		vcpu->kvm->arch.vgic.nassgireq);
+ }
+ 
+ static bool kvm_vcpu_should_clear_twe(struct kvm_vcpu *vcpu)
+ {
+-	if (likely(kvm_wfe_trap_policy == KVM_WFX_NOTRAP_SINGLE_TASK))
+-		return single_task_running();
++	if (unlikely(kvm_wfe_trap_policy != KVM_WFX_NOTRAP_SINGLE_TASK))
++		return kvm_wfe_trap_policy == KVM_WFX_NOTRAP;
+ 
+-	return kvm_wfe_trap_policy == KVM_WFX_NOTRAP;
++	return single_task_running();
+ }
+ 
+ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
 
+-- 
+Thanks,
+Oliver
 
