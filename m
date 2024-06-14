@@ -1,147 +1,197 @@
-Return-Path: <linux-kernel+bounces-215460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76600909306
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:38:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EF89909307
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D3981C211AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:38:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D23771F2336D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A336D1A38CD;
-	Fri, 14 Jun 2024 19:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC1E19ADB8;
+	Fri, 14 Jun 2024 19:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="T/LCp9jL"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="GdPLF6ZB"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD7015B562
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 19:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4354E15B562
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 19:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718393887; cv=none; b=hCjYFoGNoHXsd8M7/5qMqW8YQJasLZseFUpZsmC9IAzwF6ROA+ZDGAvHfuXHF2IQ2gnq7ilJ5EtHXGHVdB4g21z6/i0Ha1R5SOX8MfHlT7UALDUJhxale/4VgKVOBEuSFA87rv+58CVBSTt32Tnoo58/LT+qusVT0+qzIu/6rFg=
+	t=1718394049; cv=none; b=BdVUEapW5tqZ71Hs3zTuER+qx2r6W1ONMJ/LrQL6N1FDtJKaBRMuKbqtlrlvPz4WVzg1saKPKlk+urKrJwtlL6mBU7rY0zZfMQYfV/OA5HyRQopJ5tqecwx+SfU+gfMXu5YrCrBk4aUvHuz0FEr7g/yCLBekR+kVYHDV+Sax7HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718393887; c=relaxed/simple;
-	bh=LH7oYnjhXEDLBGjKZQFYGvvVxeK0Fc2BRHOXDVHtmAc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WgWFyJesFsJlKDS28uR1n8BOFFukNLPZSR/Xzig2YBCBooHfkW15sl3DV/1DVwgORiiTckM4IDzGcnIpQVXBeFuoVkcDkxxoPXhtZzxgpVrZ2OTGTCrxxfQfJJ0Zy6+GSKDZQMvUlqwHMZzMryMUSjYZYb9/7+DujNkDjt2c7hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=T/LCp9jL; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=G3US0s9AhbQW+KZXBzdRBe9+d9S85YJD8W6IE7z1fBA=; b=T/LCp9jLHrYdd3c+tDD2hJZ6vE
-	hfmV5L7VdybRhnWv6XcvT+GC8YYy4q/0+rQWpuQ/z51tGuJSD9DtRNGqjt6mIVvfJwnMuODuJIapp
-	gWrqE13N35HevWJjGE/HVyUsVG9CbCzja2IGECPK97e8ALWcYgUPW2oMA/DfOwmkjV9WJmddgG94f
-	zVLgg1CgBvBxZ7e8ysRRRtsraMkbUH8Q/yciScnbHh0nsMMT6ohFD5+6JiFc86fPlVz4pZ3VpK77F
-	ZPi2CyyzlLCs/J+PgG9oc/WdgbWCPvvlbbXdgfYHomdOJFU+vnSxupySJFyd/x+NbT68J4Vz2OAWY
-	a9k66X+Q==;
-Received: from [179.118.191.115] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1sICkD-003Fy9-IJ; Fri, 14 Jun 2024 21:37:53 +0200
-Message-ID: <ea501920-7319-46f4-98ca-cea412abf8a9@igalia.com>
-Date: Fri, 14 Jun 2024 16:37:41 -0300
+	s=arc-20240116; t=1718394049; c=relaxed/simple;
+	bh=VqNw2ns7aqtWqDR0d5abv9h9DSXkqkFbhkx4mdQOkI8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JtmFPDjjahLhXoUdFh8MDW+lcUUCMXJDiOoR0kT8lYbmJ5SFTQYQoZUMFBw15JjBeimbSiygwpXwROdhx5Y3LrKGBSgnWa5uhxh1L7FOQfHnoXDJuN7ojE783qOUqAgoQmKm0MuEU/sf1YxV88SaAHBWTqSViMy6c3mQ6rm5zfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=GdPLF6ZB; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57c7ec8f1fcso3071513a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:40:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1718394045; x=1718998845; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wbc4GSgCSERDLxOuFdZrA/q/zxBmzXnyTxqibt9VdMs=;
+        b=GdPLF6ZBrIuMGKusGj1cDSHwE4PMQconZgUcSvXqO09whx4gb+M8m5jeX5h9XUP+ZF
+         q6Qt+a3u2Tp2e72LJRVCgaohhYV5KoVxipn8NB3nFyur8C8dfhIhoPf38mSuT1q7uawt
+         mGvGEyvLL4wd5wUBosXWdkA+DM3+2WndiXAh61t+VAzUVq7U2b0Wj/ngCKqVwAxqWWnA
+         c3Gd7Gy+zr4w5Eu698f5tCIrL1vb0Pl7Wjc7gNUQcIQgS4hdhGPJozAVJnwFydIcR95f
+         R7ssTsmygMFi2/iuRJXkXKsq+QSCNPZTEZY/t+GvWyyt1oNqFXdF2TfNY27vSOlMATPp
+         EFaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718394045; x=1718998845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wbc4GSgCSERDLxOuFdZrA/q/zxBmzXnyTxqibt9VdMs=;
+        b=PrYLXyB+OPjidgYmVGZdbOjZ1QQQRXOXz1BGzcZaoquSLlATqimATE4amQCjt65GF7
+         AgsvpnTWLKfAtbjq1+KVlCPPL7O0Nrdz7NUoKjHujjWM4N1dEMSUWUtLV9QusQxR6Vqg
+         yo9rEZIG/o4jhBWIuay2qNsxtvdZA3SCDMU6acy++JreLR4h7596Sudf6pU0t6t79eMx
+         y/Qbrur8LBYxeiRqxTQ0iP95ubRbVMCOHeb1IB/r3UOwgH4K43Os52dvCmlp+1oEuISj
+         Y+qVkgQ+obSkj5FNGLExXIshJnT2nnv0xbZOOBItRedKF5oYP7jJHj3oWofKfHENrta6
+         u+WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9HFGXduqF3aN5SsCXdSLo6hU0kwll6UJg0Em46V2TqPc/0rtHZ8CmmGj807gtu8VQLRrDv0b32bzzpk+vKeM9Sme9MoSxjZgAsKTx
+X-Gm-Message-State: AOJu0YyywsoGGfeL8vhpRiv60dOJgQ4f1+uETxsykAjy5aH0nrg2ey06
+	AHhLD2Uff6sNOf3GrSZBAUVxHWRChmRFt7ho0G7G4kRXIi5RwQDXBV2t1ej9w5szpelN+sAQIrz
+	64ATCsq0Nyk7ov0AdBVsgtZXLTKRKut9yvi0/Hw==
+X-Google-Smtp-Source: AGHT+IEH8WEKx3xQbq1+oKvg4iOkF+AGoOi+MlB17Wrarh1LPwitVZ/727ewHKaMbj47weG8aVpunbjT5+1+Srui+5I=
+X-Received: by 2002:a50:8747:0:b0:57c:563b:f37f with SMTP id
+ 4fb4d7f45d1cf-57cbd67dbedmr2527046a12.19.1718394045408; Fri, 14 Jun 2024
+ 12:40:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/8] drm: Support per-plane async flip configuration
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- nouveau@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- kernel-dev@igalia.com, Melissa Wen <mwen@igalia.com>,
- alexander.deucher@amd.com, christian.koenig@amd.com,
- Simon Ser <contact@emersion.fr>, Pekka Paalanen <ppaalanen@gmail.com>,
- daniel@ffwll.ch, Daniel Stone <daniel@fooishbar.org>,
- =?UTF-8?B?J01hcmVrIE9sxaHDoWsn?= <maraeo@gmail.com>,
- Dave Airlie <airlied@gmail.com>, ville.syrjala@linux.intel.com,
- Xaver Hugl <xaver.hugl@gmail.com>, Joshua Ashton <joshua@froggi.es>,
- =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>,
- Sam Ravnborg <sam@ravnborg.org>, Boris Brezillon <bbrezillon@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Karol Herbst <kherbst@redhat.com>,
- Lyude Paul <lyude@redhat.com>
-References: <20240614153535.351689-1-andrealmeid@igalia.com>
- <lxfxqbax6azdpeamwm2qqv2tulgxrb7y3qzb4ir4myt6x5sqez@imd3yd5mbk7u>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <lxfxqbax6azdpeamwm2qqv2tulgxrb7y3qzb4ir4myt6x5sqez@imd3yd5mbk7u>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <cover.1718136376.git.yan@cloudflare.com> <dcfa5db9be2d29b68fe7c87b3f017e98e5ec83b4.1718136376.git.yan@cloudflare.com>
+ <fed7b2ca-5180-417f-a676-fb126157dff3@kernel.org> <86109f6c4a8303950ac13811a3f8506ff44a6cfc.camel@redhat.com>
+In-Reply-To: <86109f6c4a8303950ac13811a3f8506ff44a6cfc.camel@redhat.com>
+From: Yan Zhai <yan@cloudflare.com>
+Date: Fri, 14 Jun 2024 14:40:34 -0500
+Message-ID: <CAO3-PboH9aNSC7RaJdkouFoa5L2Eoqi7OjLuAay9EGABr1fEBQ@mail.gmail.com>
+Subject: Re: [PATCH v4 net-next 1/7] net: add rx_sk to trace_kfree_skb
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, netdev@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, David Ahern <dsahern@kernel.org>, 
+	Abhishek Chauhan <quic_abchauha@quicinc.com>, Mina Almasry <almasrymina@google.com>, 
+	Florian Westphal <fw@strlen.de>, Alexander Lobakin <aleksander.lobakin@intel.com>, 
+	David Howells <dhowells@redhat.com>, Jiri Pirko <jiri@resnulli.us>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Pavel Begunkov <asml.silence@gmail.com>, 
+	linux-kernel@vger.kernel.org, kernel-team@cloudflare.com, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Neil Horman <nhorman@tuxdriver.com>, 
+	linux-trace-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
+On Fri, Jun 14, 2024 at 5:15=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wro=
+te:
+>
+> On Wed, 2024-06-12 at 09:59 +0200, Jesper Dangaard Brouer wrote:
+> >
+> > On 11/06/2024 22.11, Yan Zhai wrote:
+> > > skb does not include enough information to find out receiving
+> > > sockets/services and netns/containers on packet drops. In theory
+> > > skb->dev tells about netns, but it can get cleared/reused, e.g. by TC=
+P
+> > > stack for OOO packet lookup. Similarly, skb->sk often identifies a lo=
+cal
+> > > sender, and tells nothing about a receiver.
+> > >
+> > > Allow passing an extra receiving socket to the tracepoint to improve
+> > > the visibility on receiving drops.
+> > >
+> > > Signed-off-by: Yan Zhai<yan@cloudflare.com>
+> > > ---
+> > > v3->v4: adjusted the TP_STRUCT field order to be consistent
+> > > v2->v3: fixed drop_monitor function prototype
+> > > ---
+> > >   include/trace/events/skb.h | 11 +++++++----
+> > >   net/core/dev.c             |  2 +-
+> > >   net/core/drop_monitor.c    |  9 ++++++---
+> > >   net/core/skbuff.c          |  2 +-
+> > >   4 files changed, 15 insertions(+), 9 deletions(-)
+> > >
+> > > diff --git a/include/trace/events/skb.h b/include/trace/events/skb.h
+> > > index 07e0715628ec..3e9ea1cca6f2 100644
+> > > --- a/include/trace/events/skb.h
+> > > +++ b/include/trace/events/skb.h
+> > > @@ -24,13 +24,14 @@ DEFINE_DROP_REASON(FN, FN)
+> > >   TRACE_EVENT(kfree_skb,
+> > >
+> > >     TP_PROTO(struct sk_buff *skb, void *location,
+> > > -            enum skb_drop_reason reason),
+> > > +            enum skb_drop_reason reason, struct sock *rx_sk),
+> > >
+> > > -   TP_ARGS(skb, location, reason),
+> > > +   TP_ARGS(skb, location, reason, rx_sk),
+> > >
+> > >     TP_STRUCT__entry(
+> > >             __field(void *,         skbaddr)
+> > >             __field(void *,         location)
+> > > +           __field(void *,         rx_skaddr)
+> >
+> > Is there any reason for appending the "addr" part to "rx_sk" ?
+> > It makes it harder to read this is the sk (socket).
+> >
+> > AFAICR the skbaddr naming is a legacy thing.
+>
+> I'm double-minded about the above: I can see your point, but on the
+> flip side the 'addr' suffix is consistently used in net-related
+> tracepoints.
+> >
+> > >             __field(unsigned short, protocol)
+> > >             __field(enum skb_drop_reason,   reason)
+> > >     ),
+> > > @@ -38,12 +39,14 @@ TRACE_EVENT(kfree_skb,
+> > >     TP_fast_assign(
+> > >             __entry->skbaddr =3D skb;
+> > >             __entry->location =3D location;
+> > > +           __entry->rx_skaddr =3D rx_sk;
+> > >             __entry->protocol =3D ntohs(skb->protocol);
+> > >             __entry->reason =3D reason;
+> > >     ),
+> > >
+> > > -   TP_printk("skbaddr=3D%p protocol=3D%u location=3D%pS reason: %s",
+> > > -             __entry->skbaddr, __entry->protocol, __entry->location,
+> > > +   TP_printk("skbaddr=3D%p rx_skaddr=3D%p protocol=3D%u location=3D%=
+pS reason: %s",
+> >                                ^^^^^^^^^
+> > I find it hard to visually tell skbaddr and rx_skaddr apart.
+> > And especially noticing the "skb" vs "sk" part of the string.
+>
+> I agree 'rx_skaddr' is sub-optimal. Either be consistent with all the
+> other net tracepoints and use 'skaddr' (which will very likely will
+> increase Jesper concerns, but I personally have no problem with such
+> format) or prefer readability with something alike 'rx_sk' or (even
+> better) 'sk'.
+>
 
-Em 14/06/2024 14:32, Dmitry Baryshkov escreveu:
-> On Fri, Jun 14, 2024 at 12:35:27PM GMT, André Almeida wrote:
->> AMD hardware can do async flips with overlay planes, but currently there's no
->> easy way to enable that in DRM. To solve that, this patchset creates a new
->> drm_plane field, bool async_flip, that allows drivers to choose which plane can
->> or cannot do async flips. This is latter used on drm_atomic_set_property when
->> users want to do async flips.
->>
->> Patch 1 allows async commits with IN_FENCE_ID in any driver.
->>
->> Patches 2 to 7 have no function change. As per current code, every driver that
->> allows async page flips using the atomic API, allows doing it only in the
->> primary plane. Those patches then enable it for every driver.
->>
->> Patch 8 finally enables async flip on overlay planes for amdgpu.
->>
->> Changes from v5:
->> - Instead of enabling plane->async_flip in the common code, move it to driver
->> code.
->> - Enable primary plane async flip on every driver
->> https://lore.kernel.org/dri-devel/20240612193713.167448-1-andrealmeid@igalia.com/
->>
->> André Almeida (8):
->>    drm/atomic: Allow userspace to use explicit sync with atomic async
->>      flips
->>    drm: Support per-plane async flip configuration
->>    drm/amdgpu: Enable async flips on the primary plane
->>    drm: atmel-hlcdc: Enable async flips on the primary plane
->>    drm/i915: Enable async flips on the primary plane
->>    drm/nouveau: Enable async flips on the primary plane
->>    drm/vc4: Enable async flips on the primary plane
->>    drm/amdgpu: Make it possible to async flip overlay planes
->>
->>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c | 2 ++
->>   drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c         | 3 +++
->>   drivers/gpu/drm/drm_atomic_uapi.c                       | 8 +++++---
->>   drivers/gpu/drm/i915/display/i9xx_plane.c               | 3 +++
->>   drivers/gpu/drm/nouveau/dispnv04/crtc.c                 | 4 ++++
->>   drivers/gpu/drm/nouveau/dispnv50/wndw.c                 | 4 ++++
->>   drivers/gpu/drm/vc4/vc4_plane.c                         | 4 +++-
-> 
-> The main question is why only these drivers were updated.
-> 
+Jesper explained to me in a private message that "addr" makes more
+sense when there was no BPF, since likely nothing would dereference
+the pointer anymore at that time, so it's purely an address. But it is
+no longer the case now. Also, in later patches of this change, I am
+already breaking the "convention" by replacing kfree_skb with
+sk_skb_reason_drop, so how about breaking it once more, and just
+calling it "rx_sk". I want to keep the "rx_" to emphasize this is a
+receiving socket. Let me send an amended version early next week and
+see if more thoughts come.
 
-According to `git grep async_page_flip`, only those drivers supports 
-async page flip. The only corner case is radeon, that does supports 
-async but doesn't support planes.
+thanks
+Yan
 
-Do you know any other driver that should be updated to?
 
->>   include/drm/drm_plane.h                                 | 5 +++++
->>   8 files changed, 29 insertions(+), 4 deletions(-)
->>
->> -- 
->> 2.45.2
->>
-> 
+> Thanks,
+>
+> Paolo
+>
 
