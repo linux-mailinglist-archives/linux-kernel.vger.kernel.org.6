@@ -1,136 +1,82 @@
-Return-Path: <linux-kernel+bounces-214759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50BD09089A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:20:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C72F69089A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEDE3B290A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:20:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3823928C891
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0371990AE;
-	Fri, 14 Jun 2024 10:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DY2LIUjp"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C04193086;
+	Fri, 14 Jun 2024 10:21:25 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F49519596D
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110671922DF
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718360314; cv=none; b=BrBM0DAem6sUtVWvwTmCD34HDFCzTcNq2ySnLHxUbw7Yjdfz2GvSpHU2QMJUwBqc2UKvfdBCAB9dga5q+/n1b34c6v+yPxsiKBJElKUjB7CTmbdz6WhT/2VWc+4HB6auwZr9K1ePeyyBnv4eRwAuam9nBxfLscjIYWNW4nmu+Pk=
+	t=1718360485; cv=none; b=ebCQgcNvCtu5zIxLUB25NaLibTdUIPIzEaXwrXrNQn6J7XTQyzATDccOB1czE+/k1AcCNqsejdW5FYWYEL0mP+IxdVRp06owqe7ksPgRsCTVGSae69ZkhLCnXJMRC4ThTvjjzBnapps9qkndJvaqjqJ7EA8B5jOo3pBytX0y8Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718360314; c=relaxed/simple;
-	bh=MZCf8mnQz2wY6O1+pqxmfIEqh1YUFg8IemwSFRmNpok=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MypRXDsi5NObysWnOWF4FLKvSc1G3xqA0gjNE0Vau4N8gdPXLTdH/4qakTMD6B3TZ92o2uRMHitU0e0wmCwbqLWaNgl/KgmGZWcVHuNsLV+Y3rAXY9XMLhUfa5KG6q9aqzgHZpqJPr7o2syHEJAYPpQy5J6wi7f/qNdpUJ3UqyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DY2LIUjp; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebdfe26242so22454931fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 03:18:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718360310; x=1718965110; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z+ZwmUTp38M/O9EH9E3Ps/UD84j3Bczm9KWW6nl3TPg=;
-        b=DY2LIUjpaikyX6qhTOtbGASDQ5r3yanR7bgMWs7fKWVP2iBWPgqdfWNvWcnpcmby/i
-         M78Ou/e4EcudwyrMXECBC5wu5ZuSbFigRGipafmanUCyGiLUteV+M17c40TVvcz2V9Qh
-         df37wV9GzmHGJJegyZXJlwcShbv6Dw+AvmH8EBnC6YnI59D5QdaC2pdLaPg8iYPijtFy
-         Z/G/6A2hc1njtUoOuwgd8k5HYnoCliKO4GNTggY4VkZLoIdJDpqX+MzKSkzJwG3pjPpi
-         vM/ic96wN83xd9Wf5uLE0fp4qkgtCzC1VzTE3cSob414tAzXrj41N5GI6kE6pxZVZrnn
-         6LBA==
+	s=arc-20240116; t=1718360485; c=relaxed/simple;
+	bh=zYOQ+8E92CNIY55or+VRKSngS3bnldwsdHuCQmj0Y7k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bRWd3A312F/VTO6ArldErBvvadKEeK1Tm8hvlNHYXnEb0/qnoiOnjVxmq4kZOVPrsY3+agLW+fDF1sSfE1sJUykdyXqFJwVSasXsoPuqlIH/R05r22nhKUpipwRr2GzCLD3hy52x2eX49/r4vYY1mIw6JJgT2NwL8qFZW4HZ6Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-375da99c867so14787805ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 03:21:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718360310; x=1718965110;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z+ZwmUTp38M/O9EH9E3Ps/UD84j3Bczm9KWW6nl3TPg=;
-        b=drB2GwLSdffzb61SPb2nmTgdP1tBINgpMhTido6IUKCKsD3X78IewA+PC9A+UgRVxU
-         aKrwmXxGcYZYRCsOyg0FSI5Ts/n015OzQXxl6E7sQym6OSCKO6eYPdHmFZ/6CZxGeDDc
-         ixHC7Zn4mignmFiWcJ4BoloFURls/PN2Nz5f/dAZBNSw+sL85O3fe3Vwd8I7+J5jt8uK
-         FhKK8xq4uqkLRwzJMvE500EvD1c05ljjnIV2tQ1CUuHgErVwiueqKwhOHnCoxL7ulGty
-         u+Cc153C1GHtgUguxUeWIT+aVUEUfXDJemKoH+wwyWKfy5873WgffvmqdTf4UQyaZWIc
-         zM9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWRUO+vSPs50kOxKf23Ao28f7npqGBo7VS4XOwdIJl72TxryNsaZF1tRy3Ttz0O6nijQgAUQUV5zD96naTv0Ezi95bsy8oLfE6UKq+a
-X-Gm-Message-State: AOJu0YwNZ7x956Ag45Qkn7B0BFKKrPHpECQ6pWqVjoraIMD5bWQtFYsa
-	pUwL1ILyR3Tta1qM+6WSxdYdR70eVlStohWXaZiB7vbymaSbzbqbyWQbiLYgbZQ=
-X-Google-Smtp-Source: AGHT+IGf92dHtEW+22pt5cgtgehi6svFPvHQLSs6V182C2BFk+rW9n3xyhEyFztBIaQKHiKxf/4tsg==
-X-Received: by 2002:a05:651c:f:b0:2eb:eb7c:ec1b with SMTP id 38308e7fff4ca-2ec0e47a16bmr15923151fa.25.1718360310379;
-        Fri, 14 Jun 2024 03:18:30 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05bf44c4sm5000241fa.9.2024.06.14.03.18.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 03:18:29 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 14 Jun 2024 13:18:28 +0300
-Subject: [PATCH v3 5/5] arm64: dts: qcom: sm8650: drop second clock name
- from clock-output-names
+        d=1e100.net; s=20230601; t=1718360483; x=1718965283;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oFHwp0b+eRNT9O6SHAoR/Wg4aQCOw85BNCwLlUxmQOQ=;
+        b=WdzNTHxWVFQnGtle1NPumWEhQOBeUEGRESCAgVyEHK+BPSMWl737vL6tKpkQm5MNIV
+         0ERZT/KlexOZYwoaNqqN1H48jP/x4uEUTS3HlmplCquYo4od2FuRItYcyRLW5S8obvWv
+         f+lg7YO5TaBbF8pDfbhykBkkUKMn+2gfFGkJ95fFfsd0L/23AoEpGy6XSs5KkrhNi5fU
+         IN74c2QVa4+PROi9mQsIv7NEOfs8bIa/1a3iMVrV7nsLSlEIvlJiWxbGmZL04NYMykf/
+         K7akX2LNuSzfMjLnQwwjUZBVtn48xFuPSlKcDDCLgwQv+Qv8uBZ4XTD8mOdxkRO6wo44
+         B+ZA==
+X-Gm-Message-State: AOJu0Yzj+BjGOOHPA9UlaAlVuAyF8Sv7Mcel7xEuZHgX2EHZOD7sQJBg
+	gcF7DW3rTQ7kg9oB6m2vrhax+TjI2YDiFXa0hHDSAKNvLWgJiziDgvJp7WUrGMtTedphdKaEY9W
+	rRfEsWOBodoDR6dMRpEQQbL09tWSBGxJqDY4DY6jqtZTaGxdqfLKdfkg=
+X-Google-Smtp-Source: AGHT+IGSuwO39Ov/5dHTb4IJheo7B74HPtrFoZ0clJMlm2SgI0b5ES7SMJ4AuFhTYEOS0mv5Jo5ZzU+8ecIAW40UgLD/ecsufykp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240614-fix-pcie-phy-compat-v3-5-730d1811acf4@linaro.org>
-References: <20240614-fix-pcie-phy-compat-v3-0-730d1811acf4@linaro.org>
-In-Reply-To: <20240614-fix-pcie-phy-compat-v3-0-730d1811acf4@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- devicetree@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1027;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=MZCf8mnQz2wY6O1+pqxmfIEqh1YUFg8IemwSFRmNpok=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmbBjx9D/ZLq3okDwoSrCY49/FyPtyz1zzx62I/
- J9UpKckPHqJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZmwY8QAKCRCLPIo+Aiko
- 1ZhgB/9UcCMK3aQN+aFhTEGhksL8qodU1DQd+Vxj31SGu75kWZsCXMpKVcpEzKpHAg03X7SYaFB
- gg63kAX5mf4iTMeVIWQfkarMBLqNwrm9QcCSVhgbRz5Zm1c2/DzQ5JtBC2ddVwipQ55LirNH/My
- iS7B2iNdhpbAd0/XEhcdfZagMnr18OMnUX+aiel7wKI6GMcWZNco0F7q95lFog1Sqfil2HyOe8G
- ZlKRlGa/8t+VpINtkx8MghuNqjxxCw21uTET0UL+gCpdeYP4t7fr56/OfUEG7QdhICkRsKTDNK+
- QSw9IRuiMMKeInJsmlO0S96hEjiQzBTCCzAmGwx6fzlgFrPA
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Received: by 2002:a05:6e02:164e:b0:375:9f67:6e7d with SMTP id
+ e9e14a558f8ab-375e1021197mr1697835ab.4.1718360481157; Fri, 14 Jun 2024
+ 03:21:21 -0700 (PDT)
+Date: Fri, 14 Jun 2024 03:21:21 -0700
+In-Reply-To: <0000000000002d4832061ad549c9@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001365e2061ad6fae8@google.com>
+Subject: Re: [syzbot] #syz test: git://blackhole.szhk.kfki.hu/nf main
+From: syzbot <syzbot+cfbe1da5fdfc39efc293@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-There is no need to specify exact name for the second (AUX) output
-clock. It has never been used for the lookups based on the system
-clock name. The driver generates it on its own, in order to remain
-compatible with the older DT. Drop the clock name.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Fixes: d00b42f170df ("arm64: dts: qcom: sm8650: remove pcie-1-phy-aux-clk and add pcie1_phy pcie1_phy_aux_clk")
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8650.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+***
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index 5b8b1d581a13..5df2e00fdb5b 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -2474,7 +2474,7 @@ pcie1_phy: phy@1c0e000 {
- 			power-domains = <&gcc PCIE_1_PHY_GDSC>;
- 
- 			#clock-cells = <1>;
--			clock-output-names = "pcie1_pipe_clk", "pcie1_phy_aux_clk";
-+			clock-output-names = "pcie1_pipe_clk";
- 
- 			#phy-cells = <0>;
- 
+Subject: #syz test: git://blackhole.szhk.kfki.hu/nf main
+Author: kadlec@netfilter.org
+
+#syz test: git://blackhole.szhk.kfki.hu/nf main
 
 -- 
-2.39.2
-
+E-mail  : kadlec@blackhole.kfki.hu, kadlecsik.jozsef@wigner.hu
+PGP key : https://wigner.hu/~kadlec/pgp_public_key.txt
+Address : Wigner Research Centre for Physics
+          H-1525 Budapest 114, POB. 49, Hungary
 
