@@ -1,99 +1,136 @@
-Return-Path: <linux-kernel+bounces-214926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E94B0908C3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:08:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A730908C42
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDF931C22225
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:08:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4703F1C2582C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E636E19A2A9;
-	Fri, 14 Jun 2024 13:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA33519AA4F;
+	Fri, 14 Jun 2024 13:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xmr5l/oX"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bmIkdB6S"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927EA26ACA;
-	Fri, 14 Jun 2024 13:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F51A26ACA
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718370507; cv=none; b=PAomQ9/Gz5p3qT5caj91gDXCPnmwHKcdZMdE7G+QHZlswZPC06KijMw8lTle8iv7mNC7R0e6SAO9GfaJcJYts/6w9EUa4EFQbltPu7YSUAwvi6o3aU17ZVIBer0AHaA6BCkOOofQcN/EwYnSVb2B8ifAkxhXoDJYVTrnTiu2TUU=
+	t=1718370529; cv=none; b=nlSfduDL4WWfH6feu94vARcKvAi8JCN50phWeCVEf8SJi3ChZFu5TOr7YBYvFhuMhKWLzIdqb41qXdv1Zrfe51VOxrWCQkAnZxblhtmuCZ8r8d/XycukdVfYBYKciYAkGhkIFUCr28sqHBhSNF2LlMXmVJSK//D7fn2Wh2u2q4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718370507; c=relaxed/simple;
-	bh=t3xhUUAwCao5G4aVc1jzhrPvysAENUJFdWQNZrkQEnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bGN7GsHiOcGuJNb8gy3aNcxsB9fEj1yXRLuoq4FFpJEPG2b9iy8Qjk7rhI9DRR0WH24npUmLXIJubnyThM4JNuOR5JGsULfgXLz7onms5ooVoERWz3aQ5I8P2Vn5RwJazex/5BEKdpZSwFHx2s6xlUPkmpc9ZlQuBeIRXQUaquQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xmr5l/oX; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-6bce380eb9bso1288452a12.0;
-        Fri, 14 Jun 2024 06:08:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718370505; x=1718975305; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZNM2KHSPHrZv0rqrC428DTKu5CzRUqPsIONnWWtEu/U=;
-        b=Xmr5l/oXr2F2Kvh93o0fmBxWptWeaQqRy/Nz7yPBguoc9EA9mZFSaJfgmi4Ui3blA1
-         QR48ZceRtYOE2pr4Vv1HQNWgTEeIeV+UAjGxiEwDKNA5L6APcSPSK2xQ3KIwpP7vC2Aq
-         /tmHW6QdmSrpicC0zfJN6t3pPvUNTxxXmtiutqa25RF9zYDMTsvCxa5bs3BSbZGUyfm/
-         +T0SwfzmrDgbeadnzEDu2JaqF7Fs3AwbBnPS5rFFwpQRLo1AfQaBxGY73y4zdtiZTtOB
-         C+QyS51N3Q/Ey2dbMEvH/VGIHF0RDa7tlXDIj0lVhK889Bi7BLl0T0sKH2vrZhKWcfu+
-         WDAg==
+	s=arc-20240116; t=1718370529; c=relaxed/simple;
+	bh=RhpMA204NZDYJYNHGbObqP1HVKtXQG0aL387cmYERWI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ctg4+sOgKUeJj9HuQWkVZCwI2eHAnp7hxenh/r/8FJ6r7RVUdvk6OvsqaB1goerm2oWOFGafOQT5xD1U+BNo2miqO33eEqCmipI8Z0tUIXH+KhrFwQmNjvJyEJgfMGtwT58jjxgvV50qi6eorc2j7oMZy+lb4C9c9EKY2ZY98cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bmIkdB6S; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718370527;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=o66M81Kt0vn1cGekbi5B1k+DRIpH0j0EOW3GSkaUuxs=;
+	b=bmIkdB6SvbKNXyGXLBFSBQef9LtjM9/BuLB5F8q14N1Uu0o8SXPTvjywupWznOkZOpkZhH
+	81OLO+87jo9mx7Ev6X4XZgxuANkUiltab2hmjuOPQbJvCTc2b5cL/CUd23sGjpLUXNiMDG
+	KajrxVkrEGsO7I2Hzh3+XaN9rVV014o=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-608-FnJRlT2sMNqMGhWFx9bXmg-1; Fri, 14 Jun 2024 09:08:45 -0400
+X-MC-Unique: FnJRlT2sMNqMGhWFx9bXmg-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2eab2099bbfso3909801fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 06:08:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718370505; x=1718975305;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZNM2KHSPHrZv0rqrC428DTKu5CzRUqPsIONnWWtEu/U=;
-        b=euO/yLI73e4bCH9Za0hurjW6fR74VO/U1UK2jb12skXY/aH7+Trw4r7HY99sh3H9/2
-         i0Qx6kpmKOwHFefBOxqLtBBWDOdm7XW6CJ1bkZOEmV8vM/ZzfZrWxRkontxp9cTdMhkD
-         5JaMBRY8FjkmTFacwDZYyk9Cpx0DuFK7xoRxN1YZR+CDhQJgTuHagqk6RNOpThWhe7+r
-         /OBiKgPv8Uqc06ZBXsQVimXZQQX8o8RxAum95Z8qNcAnKRk3KFDklMVlI030OQES3grv
-         yvo4RdU72fQ1D85LXB5VXtpB0eWYCczT9YDM6vlB5RhSY1W2eDfpmaYrfnNiy2sXLBH4
-         JmnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+B/FUnkF8H8stEp9lwihlMB9Gw84SuxjYbQcIBuXowVpX/dRBMWkQMdD8qb4e3YJjZZPKgxNnnHyQhaFAGgogLj+2/hSogHldt3F6VoAZD7wqcNzL6eGZ0iS8E7knuf7c8DnJnpTGRfk=
-X-Gm-Message-State: AOJu0Yz0Hoqy5hezv+okFvAndGazxmb33ni8R5L5m6888KGlLK3CxFrV
-	UiMH2mHlXMuLDXUYbMz1sFfrLK+rML7cGd0mOvulipbOmgDHR1YB
-X-Google-Smtp-Source: AGHT+IFGG4IyXXqa6zyUtivb6vcFgZtJ/33V4QOuxQ5yb5USvZK7qpPWNOzs6HK8SBxmFYDL7Iwm/Q==
-X-Received: by 2002:a17:90b:705:b0:2bd:d42a:e071 with SMTP id 98e67ed59e1d1-2c4db951d76mr2408414a91.30.1718370504403;
-        Fri, 14 Jun 2024 06:08:24 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4a76a9a42sm6084845a91.49.2024.06.14.06.08.22
+        d=1e100.net; s=20230601; t=1718370524; x=1718975324;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o66M81Kt0vn1cGekbi5B1k+DRIpH0j0EOW3GSkaUuxs=;
+        b=Tt08hkt2RcTHZuymleBHMItxein3EE2EDroVqenS/Ia43IIbRVGcl5TtFjxXLdGu9Z
+         IFWPywACnrp4b4mA3OK07icSa5J81lHgklhkjhoMRYsRaYsErtuiTXVMvjj3bCRfIDvz
+         6/9XZQDArcmoYJn3Xe8L57/9K1gp76KlrseeznjK46nBuiTAK/nc6TI/L217n0QmNwxb
+         l+Lp1hRV++D5SH8Y0lo6paT3vF9jn1IXDCpOunB7aqui42zUxoK+truXh3JhCtoBBZ0n
+         JOt9Lz8b2C0I9SADTX8YqNEOp8Y3DgrewX/Jd0QoEx6NmmZsmLDLrRFhib6DRAanHDjv
+         8WTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqADONpFF+4y+/LlIFtLSWWbRHltgK2/sfpevfqCT5LIYHQPh1WWVi3PlZF4Q2d6MRIlAasIy1moElx/o/viWWCa1n4hMKLGUS7ezd
+X-Gm-Message-State: AOJu0YzxZ66HrXNyX+8co1vj3X9EHvE++hABcqPr0mb/TOkKX2Uwl9Tc
+	l9ZsxRxodhBsnUKUP6H343eKq3P3rLKFSf+R0wCTQmftyJr8qGAeIFqEBfLj8zrhHVXbVdS7JJm
+	GvEY1+3PNVeZOi0R01PIq52wbH+PBt4tcOhWoZdOeNY60slpzFz9KfEMXVf2qLQ==
+X-Received: by 2002:ac2:5f5b:0:b0:52c:a7c8:ec3c with SMTP id 2adb3069b0e04-52ca7c8ecf1mr1344576e87.0.1718370524058;
+        Fri, 14 Jun 2024 06:08:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHJ57w4Gx5dDKQsq3VemcAEipsIPrhuSF7VcNJmUPeZ0WTy/9bR151y62TJZ0xzmZpmJBwfPA==
+X-Received: by 2002:ac2:5f5b:0:b0:52c:a7c8:ec3c with SMTP id 2adb3069b0e04-52ca7c8ecf1mr1344560e87.0.1718370523593;
+        Fri, 14 Jun 2024 06:08:43 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3341:b083:7210::f71])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286eef9c1sm98099655e9.7.2024.06.14.06.08.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 06:08:23 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 14 Jun 2024 06:08:21 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Naresh Solanki <naresh.solanki@9elements.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] hwmon: (max6639) : Update hwmon init using info
- structure
-Message-ID: <2b53fe36-ce84-4237-a53d-fae35bcde705@roeck-us.net>
-References: <20240614055533.2735210-1-naresh.solanki@9elements.com>
+        Fri, 14 Jun 2024 06:08:43 -0700 (PDT)
+Message-ID: <1b99efc20adda0b1f24ec477b3612caedb704374.camel@redhat.com>
+Subject: Re: [PATCH] hippi: fix possible buffer overflow caused by bad DMA
+ value in rr_start_xmit()
+From: Paolo Abeni <pabeni@redhat.com>
+To: Huai-Yuan Liu <qq810974084@gmail.com>, jes@trained-monkey.org, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org
+Cc: linux-hippi@sunsite.dk, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com
+Date: Fri, 14 Jun 2024 15:08:41 +0200
+In-Reply-To: <20240612093153.297167-1-qq810974084@gmail.com>
+References: <20240612093153.297167-1-qq810974084@gmail.com>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614055533.2735210-1-naresh.solanki@9elements.com>
 
-On Fri, Jun 14, 2024 at 11:25:30AM +0530, Naresh Solanki wrote:
-> Update hwmon init with info instead of group. The hwmon info structure
-> in more flexible to describe sensor attribute & easy to maintian.
-> 
-> Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+On Wed, 2024-06-12 at 17:31 +0800, Huai-Yuan Liu wrote:
+> The value rrpriv->info->tx_ctrl is stored in DMA memory, and it is
+> assigned to txctrl, so txctrl->pi can be modified at any time by maliciou=
+s
+> hardware. Becausetxctrl->pi is assigned to index, buffer overflow may
+> occur when the code "rrpriv->tx_skbuff[index]" is executed.
+>=20
+> To address this issue, the index should be checked.
+>=20
+> Fixes: f33a7251c825 ("hippi: switch from 'pci_' to 'dma_' API")
+> Signed-off-by: Huai-Yuan Liu <qq810974084@gmail.com>
+> ---
+>  drivers/net/hippi/rrunner.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>=20
+> diff --git a/drivers/net/hippi/rrunner.c b/drivers/net/hippi/rrunner.c
+> index aa8f828a0ae7..184f0933bca0 100644
+> --- a/drivers/net/hippi/rrunner.c
+> +++ b/drivers/net/hippi/rrunner.c
+> @@ -1440,6 +1440,11 @@ static netdev_tx_t rr_start_xmit(struct sk_buff *s=
+kb,
+>  	txctrl =3D &rrpriv->info->tx_ctrl;
+> =20
+>  	index =3D txctrl->pi;
+> +	if (index < 0 || index >=3D TX_RING_ENTRIES) {
 
-Applied.
+'index' is u32, the first condition is not needed.
+
+> +		printk("invalid index value %02x\n", index);
+
+please use netdev_err() instead.
 
 Thanks,
-Guenter
+
+Paolo
+
 
