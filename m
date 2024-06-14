@@ -1,157 +1,114 @@
-Return-Path: <linux-kernel+bounces-214791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2739089F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:33:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570DB908A04
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:34:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB9621C25249
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:33:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 099381F2AB96
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E544F19645D;
-	Fri, 14 Jun 2024 10:31:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0978B1946D4;
-	Fri, 14 Jun 2024 10:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E4C146D6A;
+	Fri, 14 Jun 2024 10:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="hT0h+5h5"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0336146582
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718361109; cv=none; b=IU33O5AHfcKI4kZiyeP53fFYNWduMJkNnchoRT3ho7x7LEAdPfM2qO/1kKLbxw+20ngsTGD179slun4fiUJBEj8V4RFN4nQfMkvAOZaJ5Evju/VBuwj88bUYhRbjUiYlbPxgjn+jpOTuCoi0BJ1F3Qa9Tjd94bx4Kgaa3SuOQAs=
+	t=1718361221; cv=none; b=DmroV1LpW58ccor8nk2JC8+fwFR4cIfnJ8poDR0h3zh5IPnMoOnIubIwhTB3RP529M17amve9hy9NCjCCqoW45u5Tka7drHsIcw0zT5ps7FbkXhmUstJEyG4sVWt4DXBrUGH3hb1oyNrWpWU+Mia/hg9EAEA9XHjYexCNhIgVjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718361109; c=relaxed/simple;
-	bh=fCD5BzlfvdbD3VwAFQXtMi9z1gSgn4XeQTakGTYn6mw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K8OJTX4wxROhUbtsBfSRfuthd/Y2B9fXCm0ckUzPp546kj7y/wOKQgwO2ybkIiDcp0+0rYlZIvf9rrCnPXadZDrZcrCEpfZnv8SG0IJmKypbryPCgA7zkKQ+dbQK+LScxXCHuMNL1XaArRxWAdUNz5WQDDCEspgcKL4T7gOo9jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A6911480;
-	Fri, 14 Jun 2024 03:32:12 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2EC633F5A1;
-	Fri, 14 Jun 2024 03:31:45 -0700 (PDT)
-Date: Fri, 14 Jun 2024 11:31:43 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v2 2/2] firmware: arm_scmi: mailbox: support P2A channel
- completion
-Message-ID: <ZmwcD-v6dCmObP_2@pluto>
-References: <20240510-scmi-notify-v2-0-e994cf14ef86@nxp.com>
- <20240510-scmi-notify-v2-2-e994cf14ef86@nxp.com>
- <ZmwLLoh1dbykOZZq@bogus>
+	s=arc-20240116; t=1718361221; c=relaxed/simple;
+	bh=zKFVQcNDWqXCGZ7zuzGjVyrkVqlxiBV4E3WyjElyZPg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mIQ291ij8KpIXeawb+UGktW3xiDE2rZILPEkgkQcQLVmm7rv5B/40j1LV/7pX16cjBj611OYAkKxcLMixGPl3UX8bt3J3wG5JgMlOPCqgXhsd9OK8yuPT2w0ShqYLPdAoE5dmD4eurjiLtkD+4+bxDW7DYzzxfYpkKeLqk5qRe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=hT0h+5h5; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1718361220; x=1749897220;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zKFVQcNDWqXCGZ7zuzGjVyrkVqlxiBV4E3WyjElyZPg=;
+  b=hT0h+5h5U+6t29DSz1ATuXnDKPp5jQFVQ6VGjEjpKRa3zMM5K/99D4tZ
+   R8AkVezZnzVnTeDJn/fyK8co9OpS+ci9k3o6smepELH5EC/euI4VEsDR9
+   d1rflsygmTos8BAzO+UaZ8UYbllAz9G6DghVUfAVT0QTQs2a5Re2wVJtn
+   pAHyqdJFoj+guYjqbnyhJtTSMojimXD+QBY5DP9azo7QOw0qzQsgTJC2b
+   8E0YbxIJttMFcIrziUSewoUUNM1ktHbHdeTPswy1Iy+hY+4/KHgFVH+dM
+   8ICbt1/GpmaS7DCk2kghfNDOB13jY80GT9cUJBpVkZlk48kNebLx5BgeX
+   A==;
+X-CSE-ConnectionGUID: SO3PLno2RDKKqlus4gx9zg==
+X-CSE-MsgGUID: gghXVzn6TvCsGhAud+X65w==
+X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
+   d="asc'?scan'208";a="258401164"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Jun 2024 03:33:40 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 14 Jun 2024 03:33:03 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex03.mchp-main.com (10.10.85.151)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Fri, 14 Jun 2024 03:33:02 -0700
+Date: Fri, 14 Jun 2024 11:32:44 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Samuel Holland <samuel.holland@sifive.com>
+CC: <linux-riscv@lists.infradead.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Andrew Jones <ajones@ventanamicro.com>, Conor Dooley <conor@kernel.org>,
+	<linux-kernel@vger.kernel.org>, Deepak Gupta <debug@rivosinc.com>
+Subject: Re: [PATCH v2 3/3] riscv: Call riscv_user_isa_enable() only on the
+ boot hart
+Message-ID: <20240614-ambition-machine-e7ece59835b2@wendy>
+References: <20240613171447.3176616-1-samuel.holland@sifive.com>
+ <20240613171447.3176616-4-samuel.holland@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="qiDFuQ1nB2wyYWDo"
+Content-Disposition: inline
+In-Reply-To: <20240613171447.3176616-4-samuel.holland@sifive.com>
+
+--qiDFuQ1nB2wyYWDo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZmwLLoh1dbykOZZq@bogus>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 14, 2024 at 10:19:42AM +0100, Sudeep Holla wrote:
-> On Fri, May 10, 2024 at 11:19:48AM +0800, Peng Fan (OSS) wrote:
-> 
-> There was some coding style error reported(unbalanced {}) which made me
-> look at the code again. I don't think we need to splat out error.
-> 
-> > @@ -300,8 +326,30 @@ static void mailbox_fetch_notification(struct scmi_chan_info *cinfo,
-> >  static void mailbox_clear_channel(struct scmi_chan_info *cinfo)
-> >  {
-> >  	struct scmi_mailbox *smbox = cinfo->transport_info;
-> > +	struct device *cdev = cinfo->dev;
-> > +	struct mbox_chan *intr;
-> > +	int ret;
-> >  
-> >  	shmem_clear_channel(smbox->shmem);
-> > +
-> > +	if (!shmem_channel_intr_enabled(smbox->shmem))
-> > +		return;
-> > +
-> > +	if (smbox->chan_platform_receiver)
-> > +		intr = smbox->chan_platform_receiver;
-> > +	else if (smbox->chan)
-> > +		intr = smbox->chan;
-> > +	else {
-> > +		dev_err(cdev, "Channel INTR wrongly set?\n");
-> > +		return;
-> > +	}
-> > 
-> 
-> If it is OK I would like to fix it up with below change.
-> 
+On Thu, Jun 13, 2024 at 10:14:41AM -0700, Samuel Holland wrote:
+> Now that the [ms]envcfg CSR value is maintained per thread, not per
+> hart, riscv_user_isa_enable() only needs to be called once during boot,
+> to set the value for the init task. This also allows it to be marked as
+> __init. riscv_isa_extension_check() sets any_cpu_has_zicboz, so it also
+> needs to be marked __init; it could have had this annotation already.
+>=20
+> Reviewed-by: Deepak Gupta <debug@rivosinc.com>
+> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 
-Hi,
-
-> Regards,
-> Sudeep
-> 
-> -->8
-> 
-> diff --git i/drivers/firmware/arm_scmi/mailbox.c w/drivers/firmware/arm_scmi/mailbox.c
-> index adb69a6a0223..3bb3fba8f478 100644
-> --- i/drivers/firmware/arm_scmi/mailbox.c
-> +++ w/drivers/firmware/arm_scmi/mailbox.c
-> @@ -326,30 +326,25 @@ static void mailbox_fetch_notification(struct scmi_chan_info *cinfo,
->  static void mailbox_clear_channel(struct scmi_chan_info *cinfo)
->  {
->         struct scmi_mailbox *smbox = cinfo->transport_info;
-> -       struct device *cdev = cinfo->dev;
-> -       struct mbox_chan *intr;
-> +       struct mbox_chan *intr_chan = NULL;
->         int ret;
-> 
->         shmem_clear_channel(smbox->shmem);
-> 
-> -       if (!shmem_channel_intr_enabled(smbox->shmem))
-> -               return;
-> -
->         if (smbox->chan_platform_receiver)
-> -               intr = smbox->chan_platform_receiver;
-> +               intr_chan = smbox->chan_platform_receiver;
->         else if (smbox->chan)
-> -               intr = smbox->chan;
-> -       else {
-> -               dev_err(cdev, "Channel INTR wrongly set?\n");
-> +               intr_chan = smbox->chan;
-> +
-> +       if (!(intr_chan && shmem_channel_intr_enabled(smbox->shmem)))
->                 return;
-> -       }
-
-Fine with dropping the dev_err() but is not this cumulative negated-if a
-bit cryptic...also you can bail out early straight away as before when
-platform has not required any P2A completion irq...I mean something like
-
-	
-       struct mbox_chan *intr_chan = NULL;
-
-       shmem_clear_channel(smbox->shmem);
-       if (!shmem_channel_intr_enabled(smbox->shmem))
-		return;
-
-       if (smbox->chan_platform_receiver)
-		intr_chan = smbox->chan_platform_receiver;
-       else if (smbox->chan)
-		intr_chan = smbox->chan;
-
-       if (!intr_chan)
-	       return;
-
-(or just a dangling else return;)
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
 
-.. no strongs opinion here really, though.
+--qiDFuQ1nB2wyYWDo
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Cristian
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmwcTAAKCRB4tDGHoIJi
+0mUHAQCStAMT6gpp0nXlmH2BnbFquTM6/e0j0BbeyiugguDaigD+IVfaMRkmfF8j
+lhiLwlGdAwHHQezVNILCQlCUtjVz2wE=
+=GZRs
+-----END PGP SIGNATURE-----
+
+--qiDFuQ1nB2wyYWDo--
 
