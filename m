@@ -1,123 +1,144 @@
-Return-Path: <linux-kernel+bounces-214223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1213A908194
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:25:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DAEFE908197
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 866B2B20BEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:25:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74D67B2287F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8533183085;
-	Fri, 14 Jun 2024 02:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE59C183081;
+	Fri, 14 Jun 2024 02:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="T+K02XZr"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="V3NL6jSn";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="enY8kinJ"
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833A514532B;
-	Fri, 14 Jun 2024 02:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848B31822EB;
+	Fri, 14 Jun 2024 02:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718331895; cv=none; b=kxFDdsMAoD0ZuOETKkGm3lMTgX3w8ObOk8KBOIQ4w+yaxwi2wizS/Nmu36Zifz1Gk+xXjzr1Vxfl7DAxHX0673AkaTZfHEkN23+H9pDaXv2mU0PKkdBlV7MeCAb8fFAGgzOw6KjiVPDs/7c70U5EwcQ9pU59G2r3wUBrw6t5MB4=
+	t=1718331919; cv=none; b=hW95EDXSStM/U95Fjc6/Do4iFGj+tXIROYXjWca08ouNG1MNfO+JSuK6+BOSBkGo1h2TZY6Lsd1kZvqpq2sA+QjhJI+UVZF+7Fhzv3xlGqI5THbkAuEu+KoSGIjMl9kkR2pShoiKTbA7K26m80VU5l9OGGcRDNTc4G+dn5qgXsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718331895; c=relaxed/simple;
-	bh=ytMZoWlY3T6/1y4PZKJPCyJB9wfqD73M1b9fAST+Qj8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SGox4qx55usvFDu5eALkAWG/q12pvLZISaUMpcM3q92qZRgDUNi0/DxLROLjli92JJqb/fJOzWUYKktdCO8aKG9xNd+HfQOt3Nud+yjqEvCO3cb6mvX8hEVWtLVGUwhWDt7RLLVGliQOSyUiaqLgyphhmBQC/y36XHtbWx/1ikk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=T+K02XZr; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45E1fTHS022852;
-	Fri, 14 Jun 2024 02:24:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=
-	corp-2023-11-20; bh=XrfRu0md5jJhhvMuPZJR9e3AV5ULPx1ilpLbNcmqO3Y=; b=
-	T+K02XZrtCGpUc1KGgq1YxzQiqb35Uip9zG6ujKMV+sd2fPo3XWA5/kensfV1xuX
-	+YIjItNgQTStyBPIs30tbzPAryHnHWa+5JW78wYcF3Q96F1yIf6RmaIGpfc/gFvn
-	R+pddzjcICOslcbW/5nyjxxyfeo8Yzay45xttuLIw/hlp3voUyk5Vz8jCsxcyaAL
-	kdMweBEEV6Zpqro4U2k4wfjCm+lL6MZoa7NWwtHuzbwKtVMJ+caUtzVDP0d9ZBxJ
-	5mXMVMUzY9nFUVPIiiubJst83gDrmwNssy+li4f5dhgM85NggjU/F+5dNCkqo/en
-	F2tWhMrAp3vqqrRfJEXXHQ==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ymh7dttbq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Jun 2024 02:24:35 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45E2IZuB012523;
-	Fri, 14 Jun 2024 02:24:35 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ynca1vs2h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 14 Jun 2024 02:24:35 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 45E2OY1g011090;
-	Fri, 14 Jun 2024 02:24:34 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3ynca1vs1v-1;
-	Fri, 14 Jun 2024 02:24:34 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: Khalid Aziz <khalid@gonehiking.org>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Matthew Wilcox <willy@infradead.org>, Hannes Reinecke <hare@suse.com>,
-        Finn Thain <fthain@linux-m68k.org>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        James Smart <james.smart@broadcom.com>,
-        Ram Vegesna <ram.vegesna@broadcom.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
-        "Juergen E. Fischer" <fischer@norbit.de>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        target-devel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v3] scsi: add missing MODULE_DESCRIPTION() macros
-Date: Thu, 13 Jun 2024 22:23:58 -0400
-Message-ID: <171833163028.268988.11962134341142261590.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240610-md-drivers-scsi-v3-1-055da78d66b2@quicinc.com>
-References: <20240610-md-drivers-scsi-v3-1-055da78d66b2@quicinc.com>
+	s=arc-20240116; t=1718331919; c=relaxed/simple;
+	bh=Pf7UPKwrd/kvnTcMtegUpf1NMAComiNd4Hhie73WEqY=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=gSL0vMWXOiVXTjHU04bfHfqBFdI/+/xMitWUU00xBJZllUHWfMr4SmvJQTDSxlmMhOdHpRECGc5lKYOx1SjBTWtFXir9GNnhrb4wDO4ybHx2ywUv9JE+qLGiTnphwHa+tSJNYqVTM88CCoviB+A2ccEdm/EVWunmaV1ReVNpkk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=V3NL6jSn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=enY8kinJ; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id B2DD51140220;
+	Thu, 13 Jun 2024 22:25:17 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Thu, 13 Jun 2024 22:25:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1718331917;
+	 x=1718418317; bh=Pf7UPKwrd/kvnTcMtegUpf1NMAComiNd4Hhie73WEqY=; b=
+	V3NL6jSnjobA3yCXOVJZnVLoQdK1qnGFjHHxbzLRh1ZAdHmdBFJnam8iut9Ex1ho
+	0FzSu5z+3yYUTfh+3DoPextN442seJYLb/p2xfNVFiUs+1uW3jPz6Lg2KxSfoKPf
+	s39W+PQd8n6bCWASoD4lCwoymB8mUzVD9amuD05rHyEhn1WHyZd0E9o0eEdqBGF0
+	s2laT+mwLwVTugWnUkEJ6zV8XfewI6gmAaKOGgDB1audkt50JKLdgE/w9qGAi8K/
+	uK6tsDQCLkbK5WZwILXFFkbsQ4KDS3TYlFcVOZOJH16vh2WZ+R8eHfnVo9XoIahU
+	azgrPx64BNVXAdGOhcia0Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718331917; x=
+	1718418317; bh=Pf7UPKwrd/kvnTcMtegUpf1NMAComiNd4Hhie73WEqY=; b=e
+	nY8kinJY1C23yyY7LawTo4tLazXcHQQ4eK/Z38mJnR6DRO5MUnB1DXmPsQMw+9PR
+	4mLj7WW93zJw4n6nGc4vxOmcdPnHv3PG2oQrOLFzlMlfMFFv/MDGJMQcFasbpq+J
+	ZVSGXA4Nxsz1zB71NWuiA0PUg4jOuJhp0sms2exHwn8VrVptgkHHTd/GsNvbYWkz
+	gVbpvXkffXXJfxKGwd/PHnFNnICwQXl5zdn5t1x/0FJSxiQsD7dNxJ8c5w121BZo
+	1S9+e6SiEfg9L7qCBd7wPGjTKtVJErgmBLJtaLQv/rU/zTZYwo+KY3P5J3nkrFiz
+	fWwHEBiYXSEUCEnmvaa8Q==
+X-ME-Sender: <xms:DaprZtqPpwX2tWYaT9p_MDrUpy3d7UxVfz569t_LI01bmFyr2u3opg>
+    <xme:DaprZvo3hOR32eZ-eaAKZLbDblRr910CA6Wwv94d5dVSin8W8iuLZTe3AHugMYh3B
+    pnysYmRTl3g_2vcnKs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedukedgheekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
+    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
+    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
+    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:DaprZqPJbnTi0sO8m0IvLwE3Sf9RRtZItiwQoeF4MR-xMq0TrL74jQ>
+    <xmx:DaprZo64e533aPxzfv_LRU8bzd77pMNNIG6hTEDwRmrw4nWAYXKxIg>
+    <xmx:DaprZs7sqLiuArcf_Cfk3tYVXj1YLB_Gwco2yidLnpjhzFb6MBruwg>
+    <xmx:DaprZgiEfNdbfIy9tCklsbi9YIr13Yzihdsord51hchfH5YQQxuyjQ>
+    <xmx:DaprZmQkSRNmCKfqSyHxI9NC8wh7PRpdFvR9AihEll6vaV91arXbgEhz>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 383F436A0074; Thu, 13 Jun 2024 22:25:17 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-515-g87b2bad5a-fm-20240604.001-g87b2bad5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-13_15,2024-06-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- phishscore=0 suspectscore=0 malwarescore=0 mlxscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2406140014
-X-Proofpoint-GUID: weQJtNGLWCFQrvm7HXFkpHw9QzmCh-v5
-X-Proofpoint-ORIG-GUID: weQJtNGLWCFQrvm7HXFkpHw9QzmCh-v5
+Message-Id: <f9a0d11e-53c7-4a15-a7b3-209da8bcf52d@app.fastmail.com>
+In-Reply-To: 
+ <CAAhV-H7VKGMAH10S4sOZLkbgkUSMAYzpYt-dL83S0Vg286PsaQ@mail.gmail.com>
+References: <20240613-loongarch64-sleep-v1-0-a245232af5e4@flygoat.com>
+ <20240613-loongarch64-sleep-v1-2-a245232af5e4@flygoat.com>
+ <CAAhV-H7VKGMAH10S4sOZLkbgkUSMAYzpYt-dL83S0Vg286PsaQ@mail.gmail.com>
+Date: Fri, 14 Jun 2024 03:24:47 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Huacai Chen" <chenhuacai@kernel.org>,
+ "Jianmin Lv" <lvjianmin@loongson.cn>
+Cc: "Xuerui Wang" <kernel@xen0n.name>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH 2/2] LoongArch: Fix ACPI standard register based S3 support
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 10 Jun 2024 09:16:15 -0700, Jeff Johnson wrote:
 
-> On x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/scsi_common.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/advansys.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/BusLogic.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/aha1740.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/isci/isci.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/elx/efct.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/atp870u.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/ppa.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/imm.o
-> 
-> [...]
 
-Applied to 6.11/scsi-queue, thanks!
+=E5=9C=A82024=E5=B9=B46=E6=9C=8814=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8A=E5=
+=8D=883:11=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
+> Hi, Jiaxun,
+>
+> On Fri, Jun 14, 2024 at 12:41=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flyg=
+oat.com> wrote:
+>>
+>> Most LoongArch 64 machines are using custom "SADR" ACPI extension
+>> to perform ACPI S3 sleep. However the standard ACPI way to perform
+>> sleep is to write a value to ACPI PM1/SLEEP_CTL register, and this
+>> is never supported properly in kernel.
+> Maybe our hardware is insane so we need "SADR", if so, this patch may
+> break real hardware. What's your opinion, Jianmin?
 
-[1/1] scsi: add missing MODULE_DESCRIPTION() macros
-      https://git.kernel.org/mkp/scsi/c/95f8bf932b46
+I understand why your hardware need SADR. Most systems DDR self-refresh
+mode needs to be setup by firmware.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+There is no chance that it may break real hardware. When firmware suppli=
+ed
+SADR it will always use SADR. The fallback only happens when _S3 method =
+exist
+but no SADR supplied, which won't happen on real hardware.
+
+For QEMU we don't have stub firmware but standard compliant SEEP_CTL is
+sufficient for entering sleep mode, thus we need this fallback path.
+
+Thanks
+
+>
+> Huacai
+>
+>>
+
+--=20
+- Jiaxun
 
