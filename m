@@ -1,143 +1,114 @@
-Return-Path: <linux-kernel+bounces-214595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D19DB9086ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:02:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A328A9086F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB3E21C215A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:02:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D242285253
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419D01922E9;
-	Fri, 14 Jun 2024 09:02:13 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDCB1922DB;
+	Fri, 14 Jun 2024 09:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="KPa+R5oK"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E2B146A7A;
-	Fri, 14 Jun 2024 09:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5279B146A7A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718355732; cv=none; b=nM14kHWFiLp1ijfYm+ApDYNdBjSEYWtAnswHmVxXR/pGa+yjTsBkoRRV8alLFN+LYmXBY+mhNPvEWQt71v/YXsBjwQnxtOk5i5g5eGs15xHHZlj/WL8Pyh4Z+1VlIDW8y3WBWEgpm5pM2RslyjTFprlwVYwToDcqBwOQ0yt++2A=
+	t=1718355745; cv=none; b=IDZnsnWMdAEO7IDcEGhDJWLhn1GEUisTUE/kaSj2QwqVLjuFsfT3QdbnHXERFKhgbm32k+9oHK7kYYNPBWTS1cKgtAaAl4ypC/mucm68WeayAkrUdTJNLyB2OzTTqVqlCk9NdZ/CuxPKPP6ZI9u/bVrDHeKYQTlaT4kP123AiYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718355732; c=relaxed/simple;
-	bh=xSwd9RT7wcgXqiFIolq3usCVmZfuWKhwVGxFbsWPf5k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qWAzzEdlVMovsSXjlSHylDnIsquI/g72dvfBwuBHhI9sT2/ojz1LlPxslVwaY93n+COafB7tixzgnsGcc66svTEvOFubgmpVc8OhwUolK4Nz2unD8F2XTD8MHIqnmk4ILG4iH6OerlWXecFuS7iuwm7iqtvZ9eFPxN5mKJSYHrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E23DC32786;
-	Fri, 14 Jun 2024 09:02:10 +0000 (UTC)
-Message-ID: <08900a94-cbba-4c76-8b47-e467f747cd99@xs4all.nl>
-Date: Fri, 14 Jun 2024 11:02:08 +0200
+	s=arc-20240116; t=1718355745; c=relaxed/simple;
+	bh=kLmziNlU4IUEgtUcJiUaFf1IZylaN9GSdXDb3FGyVUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Do8C3mRJXuuOMhVyZ/Z9CXrjsOViQIMStZP+kG436iaauVCOkmUuzOXBhpQNxWceCqV/REC20POp+DHzNnRUue0q4c3Vn688HWg3Huy09Wvl4UHEOh0XtsoS1oSbmeruT1G7vdv+7HhOQPsJ+SLcVSDEfbbfVFxh58E1+jCdENk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=KPa+R5oK; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 0EC2F1C00A6; Fri, 14 Jun 2024 11:02:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1718355739;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gajs+YblsbGQm7Fi/g3ZN116bv4CeCZehq41ao50w6c=;
+	b=KPa+R5oKiqXt0nb3JGCEWUks7t6CvwkjeG6hBTijaj2tQzqjTSWmuzzD8n8vGhMSHV9iLI
+	rzKWnzkDu4xynF5CkQrLGNjmNGQNIlXV59zkL378ei5yr3ncoUkJeKCHfL3TpQe14MDxmq
+	mXA71RrWoNl7iVRkllVeJq6QlifCy1Q=
+Date: Fri, 14 Jun 2024 11:02:18 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 6.10-rc1
+Message-ID: <ZmwHGviv/6J6FQLf@duo.ucw.cz>
+References: <CAHk-=wjQv_CSPzhjOMoOjGO3FmuHe5hzm6Ds69zZSFPa4PeuCA@mail.gmail.com>
+ <ZmrTZozoi0t/tuva@duo.ucw.cz>
+ <CAHk-=wjqHL7KjOWYBVKFewcKPWL7CJxddWfJnvL3AfOqfR8vMg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] media: uvcvideo: stop stream during unregister
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Tomasz Figa <tfiga@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Alan Stern <stern@rowland.harvard.edu>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, Sean Paul <seanpaul@chromium.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-References: <20240611-guenter-mini-v5-0-047b6fe5d08b@chromium.org>
- <20240611-guenter-mini-v5-1-047b6fe5d08b@chromium.org>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20240611-guenter-mini-v5-1-047b6fe5d08b@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="iUClFSfoZ6LpOrmC"
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjqHL7KjOWYBVKFewcKPWL7CJxddWfJnvL3AfOqfR8vMg@mail.gmail.com>
 
-On 11/06/2024 10:12, Ricardo Ribalda wrote:
-> uvc_unregister_video() can be called asynchronously from
-> uvc_disconnect(). If the device is still streaming when that happens, a
-> plethora of race conditions can happen.
-> 
-> Make sure that the device has stopped streaming before exiting this
-> function.
-> 
-> If the user still holds handles to the driver's file descriptors, any
-> ioctl will return -ENODEV from the v4l2 core.
-> 
-> This change make uvc more consistent with the rest of the v4l2 drivers
-> using the vb2_fop_* and vb2_ioctl_* helpers.
-> 
-> Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/usb/uvc/uvc_driver.c | 32 +++++++++++++++++++++++++++++++-
->  1 file changed, 31 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> index bbd90123a4e7..f1df6384e738 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -1908,11 +1908,41 @@ static void uvc_unregister_video(struct uvc_device *dev)
->  	struct uvc_streaming *stream;
->  
->  	list_for_each_entry(stream, &dev->streams, list) {
-> +		/* Nothing to do here, continue. */
->  		if (!video_is_registered(&stream->vdev))
->  			continue;
->  
-> +		/*
-> +		 * For stream->vdev we follow the same logic as:
-> +		 * vb2_video_unregister_device().
-> +		 */
-> +
-> +		/* 1. Take a reference to vdev */
-> +		get_device(&stream->vdev.dev);
-> +
-> +		/* 2. Ensure that no new ioctls can be called. */
->  		video_unregister_device(&stream->vdev);
-> -		video_unregister_device(&stream->meta.vdev);
-> +
-> +		/* 3. Wait for old ioctls to finish. */
-> +		mutex_lock(&stream->mutex);
-> +
-> +		/* 4. Stop streamming. */
 
-streamming -> streaming
+--iUClFSfoZ6LpOrmC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +		uvc_queue_streamoff(&stream->queue, stream->type);
+On Thu 2024-06-13 09:17:24, Linus Torvalds wrote:
+> On Thu, 13 Jun 2024 at 04:09, Pavel Machek <pavel@ucw.cz> wrote:
+> >
+> > I tried ~6.10-rc1 for a week or so, and it something was very wrong with
+> > the performance, likely to do with graphics. Thinkpad X220.
+> >
+> > It looked like GPU is working way harder than usual, leading to
+> > machine overheating and thermal throttling, making machine _really_
+> > unusable.
+> >
+> > I went back to 6.9, and things seem better. At least "have to buy new
+> > machine" feeling is gone.
+> >
+> > Unfortunately, these GPU perfromance issues are not exactly to
+> > confirm/debug. Hints would be welcome.
+>=20
+> Well, it sounds like it is a big enough performance issue that you can
+> definitely feel it fairly easily.
+>=20
+> Which would make a bisection possible?
 
-This should call uvc_queue_release (just a wrapper around vb2_queue_release())
-instead. Then it is identical in behavior to vb2_video_unregister_device.
+I wanted to go and buy new computer last week. This week ... well, the
+machine is not fastest but I'm not looking forward to reinstall.
 
-Note that uvc_v4l2_release() also calls uvc_queue_release(): it's safe
-to call uvc_queue_release() twice.
+If I can get at least basic metric on the gpu (%idle? which process
+use how much time?), it might be feasible. Is there tool similar for
+top?
 
-With that change:
+Best regards,
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
 
-Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+--iUClFSfoZ6LpOrmC
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards,
+-----BEGIN PGP SIGNATURE-----
 
-	Hans
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZmwHGgAKCRAw5/Bqldv6
+8kUSAKC85Q6k4DyIkV87JqoZKa6H540SuQCfXQNnxa5OTKOh2nC8UbDDAQwgjcM=
+=W9G0
+-----END PGP SIGNATURE-----
 
-> +
-> +		mutex_unlock(&stream->mutex);
-> +
-> +		put_device(&stream->vdev.dev);
-> +
-> +		/*
-> +		 * For stream->meta.vdev we can directly call:
-> +		 * vb2_video_unregister_device().
-> +		 */
-> +		vb2_video_unregister_device(&stream->meta.vdev);
-> +
-> +		/*
-> +		 * Now both vdevs are not streaming and all the ioctls will
-> +		 * return -ENODEV.
-> +		 */
->  
->  		uvc_debugfs_cleanup_stream(stream);
->  	}
-> 
-
+--iUClFSfoZ6LpOrmC--
 
