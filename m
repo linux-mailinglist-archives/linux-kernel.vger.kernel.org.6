@@ -1,184 +1,111 @@
-Return-Path: <linux-kernel+bounces-214901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC23908BC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:34:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD09D908BD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:36:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D185B273FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:34:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75B541F2428A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12B41991D2;
-	Fri, 14 Jun 2024 12:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00FB119AA70;
+	Fri, 14 Jun 2024 12:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wfalRvyS"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EetvqcnY"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794DE197A90;
-	Fri, 14 Jun 2024 12:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9CC19A29F;
+	Fri, 14 Jun 2024 12:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718368449; cv=none; b=atS+0H7xlX8+6Cirzpl3DPn5E8FE1boS/ye/CxIYf18rW4vpi/8Q3ba+3jme7atjDo+d5I7cg1XtMNjHnSyk9GCZKKxZGPXjHPZdOxrp2IJgTfw8UNDo+hzrHafNP5iOc6RDs8JO8JjbmTbdv2krNKIJmwPVSR2905mjNJQLzCE=
+	t=1718368543; cv=none; b=ACb9D6srCIZoucG4KL+7vXpHPEno/gwfbQyKT8RFCuThBVPfUfC72iHoZvJnaV20NNvN4cu/xVJxG70gBsbd2iQOGhrF/BlPA8H5D4zUdFDwosMaQxxvke8OC/eL827KOOXF/DQnQvVVyaHwpO6eT/0DzRIJr5b5Xf7EuHIlpaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718368449; c=relaxed/simple;
-	bh=B2nOjYL3lFg4bp1IsZgH4scpFXv01qJzfqLMfIueunY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K7XyJcVCFKJIkqeHNfW7qZFRDrK1mqKGWGYzhbs9Lq/odAO3gANTH1MZ4C/z9F1Rg1XsjPHRIiNGxMJrJr3FMKuwOJjkNYy7ksjov/P+DLn1kCziXYvAhPWW9V4ml0eP4PdWli+8JoV34Po7GNJpt6mV68uwmigAvw6e3xL9T4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wfalRvyS; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A86A17047;
-	Fri, 14 Jun 2024 14:33:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1718368430;
-	bh=B2nOjYL3lFg4bp1IsZgH4scpFXv01qJzfqLMfIueunY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wfalRvyS2jqZaU2aTE1qzDFVqvw+JjmEL4BWenYU2ak8p855BAIf301hhF72gYjeD
-	 tmBqjnpSmcZ8VcP/ZNyfhERe6jDNPMfhKlUhOE+iITaPA0/rbKnaffGNDt66mg4wAc
-	 ctes+j4do1WRWp4aECKVv0LRmTGKC62ESHXis1GA=
-Date: Fri, 14 Jun 2024 15:33:45 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Louis Kuo <louis.kuo@mediatek.com>,
-	Phi-bang Nguyen <pnguyen@baylibre.com>,
-	Florian Sylvestre <fsylvestre@baylibre.com>,
-	Andy Hsieh <andy.hsieh@mediatek.com>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v4 3/5] media: platform: mediatek: isp_30: add mediatek
- ISP3.0 sensor interface
-Message-ID: <20240614123345.GN6019@pendragon.ideasonboard.com>
-References: <20240110141443.364655-1-jstephan@baylibre.com>
- <20240110141443.364655-4-jstephan@baylibre.com>
- <3c2bee40-3792-409c-b42f-f8b013ff641c@collabora.com>
- <CAEHHSvaT_U+HNzWQUoK9EuqGuqEd11+Lu0CLz_rL7uQf0Q5isw@mail.gmail.com>
- <53838e76-bfa4-41f5-a015-a37472e98991@collabora.com>
- <CAEHHSvaRqZM9c8oD05WKkhOHdjKLBkR6tXp2Q1b8OMiDxDsDhQ@mail.gmail.com>
+	s=arc-20240116; t=1718368543; c=relaxed/simple;
+	bh=IbtBPRoyFXCs87LWeIWDZbEJ9oo6tXVOgMrbPvuKucw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AsEuCj7nuIvj9YwC1/HeIsh3u3ewoV9wKPfl9TvYTtYygbhyejyIx012sez2ssxbWv2zapAgvRFTZvSLOKXZQUsccSCK5ClAHiW9uVqUwOnZDR7BU8QZLgfQMRCqTjL9q/0hbTmKkbQO5fvPGpG0A5RpOs+txrRRH9Xe+6TMjOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EetvqcnY; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45ECZY15124199;
+	Fri, 14 Jun 2024 07:35:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718368534;
+	bh=Xvl6MWSzL1Ip/Pwqt0EGpSh5XBn8DsBko9UP4NmzQwA=;
+	h=From:To:CC:Subject:Date;
+	b=EetvqcnYjxvohUSjpC/3DGcV5O6Ru1yclR7O9I8A9nvdHcvxMBm2Wz1kmjFtkqpBU
+	 iR9KTk2C4xDGlFi2wiwTaMqF+r1GB15yZzrnlj/1dfBlnGC/XZQ3YtFNaBX5cdIYKF
+	 gZp/W1MwDmKWGbRhp59y/qyrRHNZceu1IruqTA78=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45ECZY8B039985
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 14 Jun 2024 07:35:34 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
+ Jun 2024 07:35:34 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 14 Jun 2024 07:35:34 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45ECZXaD130405;
+	Fri, 14 Jun 2024 07:35:33 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <praneeth@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <devarsht@ti.com>, <d-gole@ti.com>, <bb@ti.com>
+Subject: [PATCH] arm64: dts: ti: k3-am62x-sk-common: Add bootph-all for I2C1 instance pinmux
+Date: Fri, 14 Jun 2024 18:05:32 +0530
+Message-ID: <20240614123532.203983-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEHHSvaRqZM9c8oD05WKkhOHdjKLBkR6tXp2Q1b8OMiDxDsDhQ@mail.gmail.com>
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, Jun 14, 2024 at 12:38:15PM +0200, Julien Stephan wrote:
-> Le mer. 12 juin 2024 à 10:06, AngeloGioacchino Del Regno a écrit :
-> >
-> > Il 10/06/24 16:39, Julien Stephan ha scritto:
-> [...]
-> > >>
-> > >>> +     writel(0x10001, input->base + SENINF_TG1_SEN_CK);
-> > >>
-> > >> Unroll this one... this is the TG1 sensor clock divider.
-> > >>
-> > >> CLKFL GENMASK(5, 0)
-> > >> CLKRS GENMASK(13, 8)
-> > >> CLKCNT GENMASK(21,16)
-> > >>
-> > >> Like this, I don't get what you're trying to set, because you're using a fixed
-> > >> sensor clock rate, meaning that only a handful of camera sensors will be usable.
-> > >>
-> > >> Is this 8Mhz? 16? 24? what? :-)
-> > >>
-> > >> Two hints:
-> > >>    - sensor_clk = clk_get_rate(isp_clk) / (tg1_sen_ck_clkcnt + 1);
-> > >>    - int mtk_seninf_set_sensor_clk(u8 rate_mhz);
-> > >>
-> > >> Please :-)
-> > >
-> > > Hi Angelo,
-> > >
-> > > I think I get your point about not hardcoding the sensor rate, but I
-> > > am not sure how to use
-> > > a mtk_seninf_set_sensor_clk(u8 rate_mhz); function.
-> > >
-> > > Where would it be called? How is it exposed to the user?
-> > >
-> >
-> > As for where: setup, streaming start, resolution change (which may be covered
-> > by streaming start anyway, as a change should be calling stop->start anyway).
-> >
-> > And for the how is it exposed to the user - well, depends what you mean for user,
-> > but it's all standard V4L2 API :-)
-> >
-> > Last but not least, I can give you another hint....
-> >
-> > struct media_entity *entity = (something_here);
-> > struct media_pad *mpad;
-> > struct v4l2_subdev *cam_subdev;
-> > struct v4l2_ctrl *ctl;
-> > s64 link_frequency, pixel_clock;
-> >
-> > if (entity->pads[0].flags & MEDIA_PAD_FL_SINK)
-> >     return -E_NOT_A_CAMERA_SENSOR_WE_IGNORE_THIS_ONE;
-> >
-> > pad = media_pad_remote_pad_first(&entity->pads[0]);
-> > if (!pad)
-> >    return -ENOENT;
-> >
-> > if (!is_media_entity_v4l2_subdev(pad->entity))
-> >    return -ENOENT;
-> >
-> > if (pad->entity->function != MEDIA_ENT_F_CAM_SENSOR)
-> >    return -ENOENT;
-> >
-> 
-> Hi Angelo,
-> 
-> Thank you for the detailed explanation :)
-> However, I can't make it work because in my case, seninf is connected
-> to an external ISP
-> so pad->entity->function == MEDIA_ENT_F_PROC_VIDEO_ISP.
-> 
-> How can I get the pad corresponding to the sensor?
+I2C1 controller controls io-expander which provides power to voltage
+regulator vdd_mmc1 for MMC SD using a gpio line.
 
-You don't have to. You can drop that check, and get the link frequency
-of the source subdev with v4l2_get_link_freq(), whatever it is.
+Add bootph-all to the pinmux node for this instance, as this is used during
+SPL stage too by the bootloader while using SD boot mode as without this
+the SD boot mode fails with below error when using this device-tree in
+u-boot:
 
-> > cam_subdev = media_entity_to_v4l2_subdev(pad->entity);
-> > ctl = v4l2_ctrl_find(subdev->ctrl_handler, V4L2_CID_PIXEL_RATE);
-> 
-> Is this mandatory to implement V4L2_CID_PIXEL_RATE ?
-> Should I return an error if not found?
+"Timed out in wait_for_event: status=0000
+Check if pads/pull-ups of bus are properly configured
+Timed out in wait_for_event: status=0000
+Check if pads/pull-ups of bus are properly configured
+"
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-Does SENINF need to know both the pixel rate and link frequency ?
-V4L2_CID_PIXEL_RATE is very ill-defined, at the moment it only makes
-sense as a value relative to the sensor pixel array, and doesn't really
-apply further down in the pipeline. What information do you need to
-program the SENINF ?
-
-> > /* multiplier is usually bits per pixel, divider is usually num of lanes */
-> > link_frequency = v4l2_get_link_freq(cam_subdev->ctrl_handler, multiplier, divider);
-> > pixel_clock = v4l2_ctrl_g_ctrl_int64(ctl);
-> 
-> How to know the sensor clock given link_frequency and pixel_clock?
-> Can you point me to drivers doing something similar?
-> 
-> >
-> > ....now you know what the sensor wants, set the seninf sensor clock accordingly.
-> >
-> > Cheers
-> > Angelo
-> >
-> [...]
-
+diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+index 52231bfe60fe..ec32fd9791f8 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+@@ -168,6 +168,7 @@ AM62X_IOPAD(0x1e4, PIN_INPUT_PULLUP, 0) /* (A16/D14) I2C0_SDA */
+ 	};
+ 
+ 	main_i2c1_pins_default: main-i2c1-default-pins {
++		bootph-all;
+ 		pinctrl-single,pins = <
+ 			AM62X_IOPAD(0x1e8, PIN_INPUT_PULLUP, 0) /* (B17/A17) I2C1_SCL */
+ 			AM62X_IOPAD(0x1ec, PIN_INPUT_PULLUP, 0) /* (A17/A16) I2C1_SDA */
 -- 
-Regards,
+2.39.1
 
-Laurent Pinchart
 
