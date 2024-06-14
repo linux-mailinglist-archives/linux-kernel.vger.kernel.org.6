@@ -1,134 +1,125 @@
-Return-Path: <linux-kernel+bounces-215281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18529090AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:42:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C7E890909D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E09A0B2E5C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:40:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FF9E1C22176
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93317190072;
-	Fri, 14 Jun 2024 16:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBEED181B84;
+	Fri, 14 Jun 2024 16:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MJPzMklW"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZNwwPrxO"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1A919D8B3;
-	Fri, 14 Jun 2024 16:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8620316DEB8;
+	Fri, 14 Jun 2024 16:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718383211; cv=none; b=jj9Yd2uKkmfbSlYgBSkismGttIskmF4touWS0Ez8ZFu1uW79ZZmzWbwAP808L4EsqHdNXlKkJs07QWnbn2qNME4tkYeYz7DaZ5I0kgfqpxQpaYHrU87Pdj4Z+TTX2xOabeeAy8x8H6ThcDAsHW8KAoGTe084yTuyhjxc5Xqz+sQ=
+	t=1718383227; cv=none; b=AJpGljmmjMUDUmpT5dDqJ9LKK+YtMlbnOfIfTla/mJBjcgbyUICjRGcbBWuee7uiW9Lft4Svc/a1y8Q972gGUwcDMUsBIAGinxq92YZtEMFZwyl/HkaEsRoXBM2rKMtEl/fanySBnEkX8+6V+qsLS4OUPAUqCVxItPUv/bSvRnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718383211; c=relaxed/simple;
-	bh=3/EpBHFCwFxGp4rZgZ9kAxejp5oyqD5NlW4xxmoqCBI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lAUlPqOtNjW1Im9Qrqs35p7Dxe5K1KT5xAD+I8ehyu2aX5uTOjlav4Y5ArJT4XdNau7h1nCuhwyiFEjqWnTewJ1zc/mqoAKwPXB62RGovv7VmGD9mJz5h+9e3AteOLY2SR7kB40da3uCwzBwJihrIVQV7DdELCldW1o35uAH9B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MJPzMklW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45E9m9mU032695;
-	Fri, 14 Jun 2024 16:39:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	euP53KvYb4OJB4lz2pMwCFHlr8WB3Zw8Vqkw9q4K+yU=; b=MJPzMklWEv2QvVr6
-	dDRImL+6abJwTfPmSY59ATFEY6yWKvHotDZJq0Tr+G45fIazFqYz3OwL/LbjCGQD
-	qCTxWMSXB5yLOx098wRnPCjps3B+vNBaGnCtwVk194//KibcL5Kcx+XMdz1AQggw
-	w1Xd+C0VIxsq57iY0VJiTnHH7KRz/89sVs6aU7Upskv1waehrIZjUaScA1F0U0+z
-	MxQDWi32w6eGcUvusWOlAfFdiTvdsPFZ7ByGtbHI0q1k5vL7jppTjCtLE8JC/lS+
-	fWnbJt3/8Gp7ZjWQwoW5GLUpR52VZ9NFyt/O0KhaDTDVwFMypvWw1k7KVdkS3TRN
-	bQbPPQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yr6q2tbcu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Jun 2024 16:39:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45EGdjnX013203
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 14 Jun 2024 16:39:45 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 14 Jun
- 2024 09:39:43 -0700
-Message-ID: <7e32d69f-7024-01d8-a165-fc00ea60fa90@quicinc.com>
-Date: Fri, 14 Jun 2024 10:39:43 -0600
+	s=arc-20240116; t=1718383227; c=relaxed/simple;
+	bh=yejfZKnOtR3JbjBSGM5OWTQp5i/1krtlrjkOlmbwGbE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rvdQtyd4kFGntCVqhWFsOeZEgjdc29uZh+fxSlK5/ecyyslPpyuN+qfDUB2x5mFDd4xTMlHWgqCag4Fm2G5KvzbO7DV06CZpdER+BYD7FdTQ3MNgg939fKnwfvvr2BaOsqgrqbIFMahBhGvgd/VvIitzFtaAhhBJ1jnIhG//hlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZNwwPrxO; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3608545debbso497809f8f.1;
+        Fri, 14 Jun 2024 09:40:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718383224; x=1718988024; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5cva5ubDay+7L2mSctSJOBdcLAJjx5eNheeoTqcRQMs=;
+        b=ZNwwPrxOhwt8ylpwXYmbASD/JtKHdTgFHawjcWkHG8Pw01bTbfRYnUIuV4Lo4pZF7P
+         FxOdTHS5NEHxHINOys3VSJbTWuKks8SryYXHeOhnnVkC+eBXr1hhlmMYrEeAM/NZQPVP
+         ln2w8iOw8gnDUzqsb7n9Vr2ifLEkgFfclp5jryBIboxKlCvjm9jsySjvUEnqnpZ/Jzjy
+         OR7XBrGzyohl6ThKnhDBReeFg/baLymeIhKjCxhdTFWVDVUIzVWknto7XlaIYWcTnu0w
+         PYe6sqP6qiopqTBNDCK1fx+Orho4rXOZLlz3ZXvCgIIVpQgZ+g/zx7FX7qYmBajWU04j
+         oBew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718383224; x=1718988024;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5cva5ubDay+7L2mSctSJOBdcLAJjx5eNheeoTqcRQMs=;
+        b=POcUGWsyIHr89b2JCJhNdcFxGTUZqGBebUSQrTB6YUrIxkMcGRllBSuyCFVCch+ot2
+         1jfUsHnWKkjQQX/qrLr0A1Fzip2VoslNchyOZ1Z2zBfRZ4UmUHewic4HNb0HX2Rcd8V8
+         C5e1MDf8RxHOygvWrcqVULzp/vCGar/po454+xu4YwvWc+dxkHwT/0FWqhtgS6c59WxD
+         gsXxgb8nzShuLFIqvLNmQmb+yXGlduA3RRT/h98+t3gXYGyPyU3+0POvkEWnida5SYqr
+         S1ikX6jkUuxFqZZmlVLImtpktLIVyoxn+eE7t0JXleMuVDT27UMgFOB53228Z9q8uZtP
+         TAkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrOfH13DU6YeHYQrv8joSP4PkHQkXQPiRVnEBAXIr9uE6LYyutNOcnIcKQcefaiUhbMk6cokyYzp/IAUA//fn22okd4uKJbnlK/wd+yo0EHtHNd4wTXPESv2QoaF6HVGUE
+X-Gm-Message-State: AOJu0Yy6PrgSd+iXguY5c5AE0VkrK2rqY+eJ83psRKtPg4dBDIdsPx2G
+	bwQwewEqJnoFnwGtTqUD7w1fOv42nDRu0N6aWrfnqDzp5EE0q4RMI+KUbqbAlka0LxNMkKydkvj
+	6BYWUKn3H8oooz7UBSxLBTh6FyDY=
+X-Google-Smtp-Source: AGHT+IEGRhuND7qmTE5KFh84lubXWjfv+DvC83JjimqS9AxVyzQGDKUQbSXO5q8FTMr6ZJGydn9cWCxC7i1JJtlXAQA=
+X-Received: by 2002:a5d:4108:0:b0:35f:2935:7cfd with SMTP id
+ ffacd0b85a97d-3607a739eaemr2071929f8f.27.1718383223630; Fri, 14 Jun 2024
+ 09:40:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH 9/9] accel/rocket: Add IOCTLs for synchronizing memory
- accesses
-Content-Language: en-US
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Joerg Roedel <joro@8bytes.org>,
-        Will
- Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Heiko Stuebner
-	<heiko@sntech.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Oded Gabbay
-	<ogabbay@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>,
-        David
- Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-CC: <iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-media@vger.kernel.org>, <linaro-mm-sig@lists.linaro.org>
-References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
- <20240612-6-10-rocket-v1-9-060e48eea250@tomeuvizoso.net>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20240612-6-10-rocket-v1-9-060e48eea250@tomeuvizoso.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 50nkHqkNt-PDRn_5o0klNCIcppNdnO4M
-X-Proofpoint-ORIG-GUID: 50nkHqkNt-PDRn_5o0klNCIcppNdnO4M
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-14_14,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=840
- malwarescore=0 mlxscore=0 spamscore=0 suspectscore=0 adultscore=0
- impostorscore=0 bulkscore=0 clxscore=1015 phishscore=0 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406140113
+References: <4b875158-1aa7-402e-8861-860a493c49cd@I-love.SAKURA.ne.jp>
+ <3e9b2a54-73d4-48cb-a510-d17984c97a45@I-love.SAKURA.ne.jp> <52d3d784-47ad-4190-920b-e5fe4673b11f@I-love.SAKURA.ne.jp>
+In-Reply-To: <52d3d784-47ad-4190-920b-e5fe4673b11f@I-love.SAKURA.ne.jp>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 14 Jun 2024 09:40:12 -0700
+Message-ID: <CAADnVQLB6Zt1QjW+BeUmQJnWzGeCr7b2r0KKfygsJPzo0Rq+4A@mail.gmail.com>
+Subject: Re: [PATCH] bpf: don't call mmap_read_trylock() from IRQ context
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/12/2024 7:53 AM, Tomeu Vizoso wrote:
-> diff --git a/include/uapi/drm/rocket_accel.h b/include/uapi/drm/rocket_accel.h
-> index 888c9413e4cd..1539af0af4fe 100644
-> --- a/include/uapi/drm/rocket_accel.h
-> +++ b/include/uapi/drm/rocket_accel.h
-> @@ -12,9 +12,13 @@ extern "C" {
->   #endif
->   
->   #define DRM_ROCKET_CREATE_BO			0x00
-> -#define DRM_ROCKET_SUBMIT			0x01
-> +#define DRM_ROCKET_PREP_BO			0x01
-> +#define DRM_ROCKET_FINI_BO			0x02
-> +#define DRM_ROCKET_SUBMIT			0x03
+On Fri, Jun 14, 2024 at 8:15=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2024/06/08 20:04, Tetsuo Handa wrote:
+> > On 2024/06/08 19:53, Tetsuo Handa wrote:
+> >> inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage.
+> >
+> > Oops, "inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage." example wa=
+s
+> > found at https://syzkaller.appspot.com/text?tag=3DCrashReport&x=3D14f01=
+79a980000 .
+> >
+> > Then, do we want to
+> >
+> > -     if (in_hardirq()) {
+> > +     if (!in_task()) {
+> >
+> > instead?
+> >
+>
+> "inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage." upon unlock from I=
+RQ work
+> was reported at https://syzkaller.appspot.com/bug?extid=3D40905bca570ae67=
+84745 .
 
-This looks like a uAPI breaking change.  Shouldn't you have defined 
-SUBMIT as 0x03 from the beginning, or put the new BO ioctls after it?
+imo the issue is elsewhere. syzbot reports:
+local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
+ __mmap_lock_do_trace_released+0x9c/0x620 mm/mmap_lock.c:243
+ __mmap_lock_trace_released include/linux/mmap_lock.h:42 [inline]
 
+it complains about:
+local_lock(&memcg_paths.lock);
+in TRACE_MMAP_LOCK_EVENT.
+which looks like a false positive.
 
