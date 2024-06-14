@@ -1,121 +1,106 @@
-Return-Path: <linux-kernel+bounces-214915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E64A908BF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:44:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFFA4908BF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBBCC286EDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:44:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F1832835B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16115199243;
-	Fri, 14 Jun 2024 12:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E17219ADB6;
+	Fri, 14 Jun 2024 12:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xl+olCv8"
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="fo0v88/d"
+Received: from mail-40137.protonmail.ch (mail-40137.protonmail.ch [185.70.40.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E8A1990AC;
-	Fri, 14 Jun 2024 12:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8395D19AD81
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718369083; cv=none; b=UhL2/lpTsmQIWQvuQUAozjuxb3rnvgxv/J19MapxwDopcZUriSdm5g04SLgxuGE7LMOUPi0b6Afgeq88vlIow+4npQOiJBsbywXfNbBizXzo0AV5+PeWWfglQVhac54hMzOUFOvKLSipsezHDGeN8iHm2MsHPriaxNLmmJH5nzM=
+	t=1718368981; cv=none; b=B2tHwRPgMEvsK5tTu8l81nyX25neQSWF2oX+OwVTaXwWRqNZmqw6hhtWDQyU+PKMrPXSc8kj63oT8/V6V4Sz6XX7TkkSZV1hSyThJbgFy7lLl3B2VzAb6pFugFqPwK+5NwWsvrreOR+GfEpyxvx5NAae3oUnrfP3hb3uP9MXj10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718369083; c=relaxed/simple;
-	bh=6haZaBoCzYDbs6gYHymH85S6kUGBAmgTaEwCfRsPvpM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TzbxPSNi62OlZUYgxxh/E1udYpXB4vB6BS8R9muyIMpYIN4QN8VkltxWRMAlpoYuRudBQjezoowoH5+EHn/fOKWM/ypgix0D58hjspooNLU6aQOzeCnJZZoo10PYDCf+RTsHMDWWbHbBNkMxyiFsIkHA66vshs1FZnQ1qVRvIjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xl+olCv8; arc=none smtp.client-ip=209.85.210.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-70423e8e6c9so1894975b3a.0;
-        Fri, 14 Jun 2024 05:44:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718369081; x=1718973881; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ID8vcKMAuhxPQfV9/bb6FKbXp3VjWvrumIK/fNKJqMQ=;
-        b=Xl+olCv8tK/IkH6rHXbSxyR7PiAC4B8yNRIjYIhr6mmKYersjhlxcR9K9qjX7EWaPD
-         llBVqLj3yDRbK82SgkVpeH1VIvxc8zBoKg3OAEgEnuWh/vyityPj0c22HHqnaGL15NeB
-         w0Tew/iOACI9IVpJW/2iBd2ME7FyJOpMw5zqEn8hyrlLRoncBvbgwYxj9jl14sc9Kt2Z
-         IW4OvjMc72kNryKKnbZ7NHOEBcMMKCN2i2q9ZCDQmfLQmsa59l7jkNfMTTAbyH2cxAIH
-         3Wv7HKtuCQ5uI6Dkt/WCWOIg2DmsL2hlp5fvzmpSxfAIcli9J22B5OumpRYzrMjZwpAC
-         tVTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718369081; x=1718973881;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ID8vcKMAuhxPQfV9/bb6FKbXp3VjWvrumIK/fNKJqMQ=;
-        b=eQyZQKS6YcQB3A02qrQ8WcGKbLGT+8FsRJYOfVEJTlltecShbPnxNIOUuA71if4G0X
-         XkEbfqbRbNt7HTYgYId4zSXH6TTgf8ZL1M58wtNKfrcIIZlmYUBH/Z6leDSohr11GVoA
-         UNDT02wB9QKWskn671wGyLG1UjN9bVQJxWKqXOQSD8QQsgkPRO4SLA5VdC4FvfF1+AWI
-         Wggm27FlhReUtQYkVYIKhJa2AHTfkz2oaw8NmHBHUMSDjaRmcX+k9vgydv5IwdVJ4qza
-         BmV9bBDzFh+QDUXQP+IERd74ODZUdbhN9myHvBK46GmBz/kCc7QqWGoDFGJVDLM2/Sgk
-         g0VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWa0js02t0HClUgsW0Ya1cG2FaK+ve6QG4mwQpbWAtAKCi6haxPTtmIPy+mpKx3x74vI/AYoPWSonGAHeh2neAXudghGaTbiyiRAAB4
-X-Gm-Message-State: AOJu0YymsMByU9l6m4cgJhb05Hbcdj1kTxRnuYoQNzFvXzLMSlAh5ipC
-	e2sLXugTIpWnH2nzxalfOormOssle8cDFEm4PLEM3ZknGDm4pN1/
-X-Google-Smtp-Source: AGHT+IF6i2yJXoSE/ZnaP0Xb7S1w+yKGOYcVl1SB7CAAinDBAPE/W9opYHXowo+oPJhVfB+WzVROmA==
-X-Received: by 2002:a05:6a00:3d55:b0:705:ddb0:5260 with SMTP id d2e1a72fcca58-705ddb05420mr1618893b3a.0.1718369081207;
-        Fri, 14 Jun 2024 05:44:41 -0700 (PDT)
-Received: from lhy-a01-ubuntu22.. ([106.39.42.164])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ce994dfasm2880362b3a.16.2024.06.14.05.44.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 05:44:40 -0700 (PDT)
-From: Huai-Yuan Liu <qq810974084@gmail.com>
-To: james.smart@broadcom.com,
-	dick.kennedy@broadcom.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Huai-Yuan Liu <qq810974084@gmail.com>
-Subject: [PATCH V2 RESEND] scsi: lpfc: Fix a possible null pointer dereference
-Date: Fri, 14 Jun 2024 20:42:33 +0800
-Message-Id: <20240614124233.334806-1-qq810974084@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718368981; c=relaxed/simple;
+	bh=R35MwdhkDzAwQQIkOBIkyiAwfm1duRkanzr02CqKYFs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lRF2VrbVnfza8ukAQpbzlWeRShTO4uEG+tlFgnsyMevaTNkRyiEsHkEwfjPCyu7uTWFY01fPycM7XEhsdEpz3kbyron79KQrPMdnqLpkZbio0xhKMo5Mb55JpyT5Ino9RNctRscH29rpIvFmL+XLHFmx12RU2ryWuVno8OLeNbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=fo0v88/d; arc=none smtp.client-ip=185.70.40.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1718368971; x=1718628171;
+	bh=/P4Ipyi5V6XC49ifR6u6XzXB7A6kcDydd2cvy9jsBTs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=fo0v88/dWr1ArYRzF6gRPHiUh6wNMMwjTG545+fQA16wqy3rMw0m3Ji9M1PSyZjdN
+	 DY3/CrNeJggZTkIva5imy27cnX4KCUK7nKumSxnF+LpRkjICj4WIuLPvdnFj56wWfv
+	 yjFw++7rnh2CJN/xYBZkjMoCe+o9HW9Twuhc2rRx/XO4mJ5AMhM70qe0AUzC42KHDT
+	 AX+UsBmsEtzoV9+7uv0/gu3ixqrxNThB8YlyZmSCAOTBeEqMhZOhFDFJg7sPxwcETI
+	 SqcnT8LJMRaZXtQzW1uVJoGDcjQFRJKt3ZVxB75MiyZerO4A2IONn3GZtDFmoXYjuv
+	 1wTo+R5/J1AfA==
+Date: Fri, 14 Jun 2024 12:42:45 +0000
+To: Andreas Hindborg <nmi@metaspace.dk>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, Bart Van Assche <bvanassche@acm.org>, Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Andreas Hindborg <a.hindborg@samsung.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Greg KH <gregkh@linuxfoundation.org>, Matthew Wilcox <willy@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Chaitanya Kulkarni <chaitanyak@nvidia.com>, Luis Chamberlain <mcgrof@kernel.org>, Yexuan Yang <1182282462@bupt.edu.cn>, =?utf-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>, Joel Granados <j.granados@samsung.com>, "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, Daniel Gomez <da.gomez@samsung.com>, Niklas Cassel <Niklas.Cassel@wdc.com>, Philipp Stanner <pstanner@redhat.com>, Conor Dooley <conor@kernel.org>, Johannes Thumshirn <Johannes.Thumshirn@wdc.com>, =?utf-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>, open list <linux-kernel@vger.kernel.org>,
+	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, "lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>, "gost.dev@samsung.com" <gost.dev@samsung.com>
+Subject: Re: [PATCH v6 1/3] rust: block: introduce `kernel::block::mq` module
+Message-ID: <e9a36116-6cb9-479a-a883-dd36f78a8577@proton.me>
+In-Reply-To: <20240611114551.228679-2-nmi@metaspace.dk>
+References: <20240611114551.228679-1-nmi@metaspace.dk> <20240611114551.228679-2-nmi@metaspace.dk>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 9d41ef20cbfc7aaec43b1f1474cb4170cff5c190
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-In function lpfc_xcvr_data_show, the memory allocation with kmalloc might
-fail, thereby making rdp_context a null pointer. In the following context 
-and functions that use this pointer, there are dereferencing operations,
-leading to null pointer dereference.
+On 11.06.24 13:45, Andreas Hindborg wrote:
+> From: Andreas Hindborg <a.hindborg@samsung.com>
+>=20
+> Add initial abstractions for working with blk-mq.
+>=20
+> This patch is a maintained, refactored subset of code originally publishe=
+d
+> by Wedson Almeida Filho <wedsonaf@gmail.com> [1].
+>=20
+> [1] https://github.com/wedsonaf/linux/tree/f2cfd2fe0e2ca4e90994f96afe268b=
+bd4382a891/rust/kernel/blk/mq.rs
+>=20
+> Cc: Wedson Almeida Filho <wedsonaf@gmail.com>
+> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
+> ---
+>  rust/bindings/bindings_helper.h    |   3 +
+>  rust/helpers.c                     |  16 ++
+>  rust/kernel/block.rs               |   5 +
+>  rust/kernel/block/mq.rs            |  98 +++++++++++
+>  rust/kernel/block/mq/gen_disk.rs   | 215 ++++++++++++++++++++++++
+>  rust/kernel/block/mq/operations.rs | 245 ++++++++++++++++++++++++++++
+>  rust/kernel/block/mq/raw_writer.rs |  55 +++++++
+>  rust/kernel/block/mq/request.rs    | 253 +++++++++++++++++++++++++++++
+>  rust/kernel/block/mq/tag_set.rs    |  86 ++++++++++
+>  rust/kernel/error.rs               |   6 +
+>  rust/kernel/lib.rs                 |   2 +
+>  11 files changed, 984 insertions(+)
+>  create mode 100644 rust/kernel/block.rs
+>  create mode 100644 rust/kernel/block/mq.rs
+>  create mode 100644 rust/kernel/block/mq/gen_disk.rs
+>  create mode 100644 rust/kernel/block/mq/operations.rs
+>  create mode 100644 rust/kernel/block/mq/raw_writer.rs
+>  create mode 100644 rust/kernel/block/mq/request.rs
+>  create mode 100644 rust/kernel/block/mq/tag_set.rs
 
-To fix this issue, a null pointer check should be added. If it is null, 
-just jump to 'out_free_rdp'.
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
-Fixes: 479b0917e447 ("scsi: lpfc: Create a sysfs entry called lpfc_xcvr_data for transceiver info")
-Signed-off-by: Huai-Yuan Liu <qq810974084@gmail.com>
 ---
-V2:
-* In patch V2, we have removed the unnecessary 'out of memory' message.
-  Thank Bart Van Assche for helpful advice.
----
- drivers/scsi/lpfc/lpfc_attr.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/scsi/lpfc/lpfc_attr.c b/drivers/scsi/lpfc/lpfc_attr.c
-index b1c9107d3408..94d968a255ff 100644
---- a/drivers/scsi/lpfc/lpfc_attr.c
-+++ b/drivers/scsi/lpfc/lpfc_attr.c
-@@ -1904,6 +1904,8 @@ lpfc_xcvr_data_show(struct device *dev, struct device_attribute *attr,
- 
- 	/* Get transceiver information */
- 	rdp_context = kmalloc(sizeof(*rdp_context), GFP_KERNEL);
-+	if (!rdp_context)
-+		goto out_free_rdp;
- 
- 	rc = lpfc_get_sfp_info_wait(phba, rdp_context);
- 	if (rc) {
--- 
-2.34.1
+Cheers,
+Benno
 
 
