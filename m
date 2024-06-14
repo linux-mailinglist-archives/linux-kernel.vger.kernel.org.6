@@ -1,234 +1,252 @@
-Return-Path: <linux-kernel+bounces-214298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9018290826F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 05:19:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C8F908275
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 05:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 358EC1C21CBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:19:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 378FE1C22873
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAE52AEE9;
-	Fri, 14 Jun 2024 03:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UOG2vPQE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3728413A41A;
-	Fri, 14 Jun 2024 03:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F75D19D8A5;
+	Fri, 14 Jun 2024 03:23:04 +0000 (UTC)
+Received: from hust.edu.cn (unknown [202.114.0.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5882EEDA;
+	Fri, 14 Jun 2024 03:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.114.0.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718335129; cv=none; b=jmbGamxLcodJEwPHLXa/2cLRd2vNPLGT+qe05c3kcyawZ+sUUDq7jn367sw83KLWZ0HNZP//msMGhKfw1Ag+YoVqCCswaSD2xvb7EnJJaPpGthP3b1bhqSOmM5SHUDD0Ii5Bc2zqpfOguPPEA2qH042+3aNw2nMkgZwBLbjlJVw=
+	t=1718335383; cv=none; b=aHWsZe6f8rR8ET6zXZOlgRzo5/YQqnI1i4JQeTZM8lZ/XfIIocVu9Jo91x/xerYKXglh263ESfJUo4FhXuZoJfb9Ts4xXRyU9UdJlpmiUmp03AdbeL5EjTRCe93JZhud46P/xu4Uczym6Ys1H4izEC2KVNFzOMU4FaPHXzqXUdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718335129; c=relaxed/simple;
-	bh=bfC7ZFdSGlt/iPNEFIyEnRVpEJMH7HcVEFcs2hs1+I4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZdbZeeSq49F2gUBjQ8dCyvxXc91CcDiFIulHSjNjMuYuDlu9R5PV6UH9pOBO2KkjYllwfHYdG3vVR28nex62aBBVyqrpK9oEVs6PFN9UM6NfsYA2dw5fm3PgJ4ieuI9WMvmEf3gabFxpTUVdpFrYMjxy3DEBLI+CrVE+Xa5iyZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UOG2vPQE; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718335127; x=1749871127;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=bfC7ZFdSGlt/iPNEFIyEnRVpEJMH7HcVEFcs2hs1+I4=;
-  b=UOG2vPQE9FRVDDX/lTLnT3k5JyrPD6qP5Fo90Y1fQxEEcZlTuYEFEsvA
-   zuybMWWY37WqYstwD0GtnIYD8JLCkXIurdLpc5TpelLjSlgrDvZYVseBF
-   wh6kEpPZP7NBMIhI3kmZsPJxoGkpnkfl06rMEZJU9FK6zQ21rxVnEt9by
-   aATqyT3VYi0KwiuMaO0LGWd3M7J+hLG2tnVUWtpQ/043ob9XZqu5mpnA5
-   +2Lja9GBH8kboRm6lLFjYSeIu+uvczyfp6wEuGeCPO2UmDeAwbi/Q3My9
-   /0zUDC7DMrp2gwKkbJClE7vr1KW7FWsh5XbayXL2d59drAUtkNFVTZHcg
-   g==;
-X-CSE-ConnectionGUID: a9hJu7ScQae0sKUpbZf6Ew==
-X-CSE-MsgGUID: I0Jikjg/TQ6NGfaIBuBPrw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="26604014"
-X-IronPort-AV: E=Sophos;i="6.08,236,1712646000"; 
-   d="scan'208";a="26604014"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 20:18:46 -0700
-X-CSE-ConnectionGUID: CB/YVIa+RBajDCpGR50kBQ==
-X-CSE-MsgGUID: qmQSFax3S4GrkcYS5R16Ww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,236,1712646000"; 
-   d="scan'208";a="71142877"
-Received: from sramkris-mobl1.amr.corp.intel.com (HELO [10.124.223.37]) ([10.124.223.37])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 20:18:44 -0700
-Message-ID: <1e04a69d-225d-4e62-9ca9-fb7fbbc16f67@linux.intel.com>
-Date: Thu, 13 Jun 2024 20:18:43 -0700
+	s=arc-20240116; t=1718335383; c=relaxed/simple;
+	bh=IGGOUv4o6Ew7BHj4OgyN+VVU/Ccaklhcaa/GG6r+PDc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N3hIiiwcdF8kmr/Gky+nxMawPuLwCcl24XlOWK6iueOtK0fTmmzJWJwAssiCe9WYpYVQtQS7drLsPFlweCrnnNy0W/hvqzYSl8deDFgV6sZWwQH1vY7PGb3kyZlvIBSw+yEvOLm4KwLvVKZTwtTlyAyE4auW8cW8ocmODZCr8yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=202.114.0.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.52])
+	by app1 (Coremail) with SMTP id HgEQrACHaapst2tmyv3ZBw--.22289S2;
+	Fri, 14 Jun 2024 11:22:20 +0800 (CST)
+Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
+	by gateway (Coremail) with SMTP id _____wDX3sZnt2tmJrkUAQ--.49431S2;
+	Fri, 14 Jun 2024 11:22:16 +0800 (CST)
+From: Dongliang Mu <dzm91@hust.edu.cn>
+To: Alex Shi <alexs@kernel.org>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Dongliang Mu <dzm91@hust.edu.cn>,
+	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] docs/zh_CN: add process/researcher-guidelines Chinese translation
+Date: Fri, 14 Jun 2024 11:21:44 +0800
+Message-ID: <20240614032211.241899-1-dzm91@hust.edu.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] PCI/AER: Clear UNCOR_STATUS bits that might be
- ANFE
-To: "Duan, Zhenzhong" <zhenzhong.duan@intel.com>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org"
- <lenb@kernel.org>, "james.morse@arm.com" <james.morse@arm.com>,
- "Luck, Tony" <tony.luck@intel.com>, "bp@alien8.de" <bp@alien8.de>,
- "dave@stgolabs.net" <dave@stgolabs.net>,
- "jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>,
- "Jiang, Dave" <dave.jiang@intel.com>,
- "Schofield, Alison" <alison.schofield@intel.com>,
- "Verma, Vishal L" <vishal.l.verma@intel.com>,
- "Weiny, Ira" <ira.weiny@intel.com>, "bhelgaas@google.com"
- <bhelgaas@google.com>, "helgaas@kernel.org" <helgaas@kernel.org>,
- "mahesh@linux.ibm.com" <mahesh@linux.ibm.com>,
- "oohall@gmail.com" <oohall@gmail.com>,
- "linmiaohe@huawei.com" <linmiaohe@huawei.com>,
- "shiju.jose@huawei.com" <shiju.jose@huawei.com>,
- "Preble, Adam C" <adam.c.preble@intel.com>, "lukas@wunner.de"
- <lukas@wunner.de>,
- "Smita.KoralahalliChannabasappa@amd.com"
- <Smita.KoralahalliChannabasappa@amd.com>, "rrichter@amd.com"
- <rrichter@amd.com>, "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
- "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Tsaur, Erwin" <erwin.tsaur@intel.com>,
- "Williams, Dan J" <dan.j.williams@intel.com>,
- "Wanyan, Feiting" <feiting.wanyan@intel.com>,
- "Wang, Yudong" <yudong.wang@intel.com>, "Peng, Chao P"
- <chao.p.peng@intel.com>,
- "qingshun.wang@linux.intel.com" <qingshun.wang@linux.intel.com>
-References: <20240509084833.2147767-1-zhenzhong.duan@intel.com>
- <20240509084833.2147767-4-zhenzhong.duan@intel.com>
- <9ce06552-79d9-4bd9-9a3e-2ffd72c4cf4a@intel.com>
- <SJ0PR11MB674404B356BFEB3E3E099CFC92C22@SJ0PR11MB6744.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <SJ0PR11MB674404B356BFEB3E3E099CFC92C22@SJ0PR11MB6744.namprd11.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HgEQrACHaapst2tmyv3ZBw--.22289S2
+Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvJXoWfJw43GFyxXF1Uuw15tFW8JFb_yoWDWry8pF
+	ZFgas3ta1xKrn7J3yfGF1I9F4rWFZ7CFW3K3WkJFyrZwn3Ar92qa17t34SqFWag340ya4U
+	Zryj9rWrCr1Iva7anT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUQab7Iv0xC_tr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
+	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
+	126r1DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
+	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
+	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1U
+	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtw
+	CF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Y
+	z7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
+	7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jhcTQUUUUU=
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
+Finish the translation of researcher-guidelines and add it to the
+index file.
 
-On 6/13/24 7:40 PM, Duan, Zhenzhong wrote:
->
->> -----Original Message-----
->> From: Kuppuswamy, Sathyanarayanan
->> Subject: Re: [PATCH v4 3/3] PCI/AER: Clear UNCOR_STATUS bits that might
->> be ANFE
->>
->>
->> On 5/9/24 1:48 AM, Zhenzhong Duan wrote:
->>> When processing an ANFE, ideally both correctable error(CE) status and
->>> uncorrectable error(UE) status should be cleared. However, there is no
->>> way to fully identify the UE associated with ANFE. Even worse, Non-Fatal
->>> Error(NFE) may set the same UE status bit as ANFE. Treating an ANFE as
->>> NFE will bring some issues, i.e., breaking softwore probing; treating
->> /s/softwore/software
-> Good catch, will fix. It's strange 'checkpatch --codespell' doesn't catch this.
->
->> May be this is already discussed. But can you explain why treating
->> AFNE as non-fatal error will bring probing issues?
-> Copied below from spec 6.1, 6.2.3.2.4, says it can results in a System Error.
->
-> In some cases the detector of a non-fatal error is not the most appropriate agent to determine whether the error is
-> recoverable or not, or if it even needs any recovery action at all. For example, if software attempts to perform a
-> configuration read from a non-existent device or Function, the resulting UR Status in the Completion will signal the error
-> to software, and software does not need for the Completer in addition to signal the error by sending an ERR_NONFATAL
-> Message. In fact, on some platforms, signaling the error with ERR_NONFATAL results in a System Error, which breaks
-> normal software probing.
->
->>> NFE as ANFE will make us ignoring some UEs which need active recover
->> /s/ignoring/ignore
-> Will fix.
->
->>> operation. To avoid clearing UEs that are not ANFE by accident, the
->>> most conservative route is taken here: If any of the NFE Detected bits
->>> is set in Device Status, do not touch UE status, they should be cleared
->>> later by the UE handler. Otherwise, a specific set of UEs that may be
->>> raised as ANFE according to the PCIe specification will be cleared if
->>> their corresponding severity is Non-Fatal.
->>>
->>> For instance, previously when kernel receives an ANFE with Poisoned TLP
->>> in OS native AER mode, only status of CE will be reported and cleared:
->>>
->>>   AER: Correctable error message received from 0000:b7:02.0
->>>   PCIe Bus Error: severity=Correctable, type=Transaction Layer, (Receiver ID)
->>>     device [8086:0db0] error status/mask=00002000/00000000
->>>      [13] NonFatalErr
->>>
->>> If the kernel receives a Malformed TLP after that, two UEs will be
->>> reported, which is unexpected. Malformed TLP Header is lost since
->>> the previous ANFE gated the TLP header logs:
->>>
->>>   PCIe Bus Error: severity="Uncorrectable (Fatal), type=Transaction Layer,
->> (Receiver ID)
->>>     device [8086:0db0] error status/mask=00041000/00180020
->>>      [12] TLP                    (First)
->>>      [18] MalfTLP
->>>
->>> Now, for the same scenario, both CE status and related UE status will be
->>> reported and cleared after ANFE:
->>>
->>>   AER: Correctable error message received from 0000:b7:02.0
->>>   PCIe Bus Error: severity=Correctable, type=Transaction Layer, (Receiver ID)
->>>     device [8086:0db0] error status/mask=00002000/00000000
->>>      [13] NonFatalErr
->>>     Uncorrectable errors that may cause Advisory Non-Fatal:
->>>      [18] TLP
->>>
->>> Tested-by: Yudong Wang <yudong.wang@intel.com>
->>> Co-developed-by: "Wang, Qingshun" <qingshun.wang@linux.intel.com>
->>> Signed-off-by: "Wang, Qingshun" <qingshun.wang@linux.intel.com>
->>> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@intel.com>
->>> ---
->>>  drivers/pci/pcie/aer.c | 7 ++++++-
->>>  1 file changed, 6 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
->>> index ed435f09ac27..6a6a3a40569a 100644
->>> --- a/drivers/pci/pcie/aer.c
->>> +++ b/drivers/pci/pcie/aer.c
->>> @@ -1115,9 +1115,14 @@ static void pci_aer_handle_error(struct
->> pci_dev *dev, struct aer_err_info *info)
->>>  		 * Correctable error does not need software intervention.
->>>  		 * No need to go through error recovery process.
->>>  		 */
->>> -		if (aer)
->>> +		if (aer) {
->>>  			pci_write_config_dword(dev, aer +
->> PCI_ERR_COR_STATUS,
->>>  					info->status);
->>> +			if (info->anfe_status)
->>> +				pci_write_config_dword(dev,
->>> +						       aer +
->> PCI_ERR_UNCOR_STATUS,
->>> +						       info->anfe_status);
->>> +		}
->> Why split the handling part and storing part into two patches? Why not
->> merge
->> this part of patch 1/3.
-> This is based on Bjorn's suggestion at https://www.spinics.net/lists/linux-pci/msg149012.html,
-> clearing UNCOR_STATUS might be more important, deserve to raise out.
+Update to commit 27103dddc2da ("Documentation: update mailing list
+addresses")
 
-I think Bjorn's suggestion is to divide it into two logical patches.
-One for printing the error and another to clear the UNCOR_STATUS
-properly. But currently you have split the UNCOR_STATUS status caching and
-clearing process into two patches. IMO, your first patch can store ANFE
-status and clear it. You can add print support in the second patch. 
+Reviewed-by: Alex Shi <alexs@kernel.org>
+Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+---
+v2->v3: modify _cn_submittingpatches to _cn_researcherguidelines
+        according to jon
+v1->v2: Revise description suggested by Alex Shi
+        Add a commit id to keep track of the translation status
+        Add a new line at the end of researcher-guidelines.rst
+ .../translations/zh_CN/process/index.rst      |   2 +-
+ .../zh_CN/process/researcher-guidelines.rst   | 129 ++++++++++++++++++
+ 2 files changed, 130 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/translations/zh_CN/process/researcher-guidelines.rst
 
-
-Code wise it looks fine to me. You can add my Reviewed-by after fixing
-the typos
-
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-
->
-> Thanks
-> Zhenzhong
-
+diff --git a/Documentation/translations/zh_CN/process/index.rst b/Documentation/translations/zh_CN/process/index.rst
+index 5c6c8ccdd50d..5a5cd7c01c62 100644
+--- a/Documentation/translations/zh_CN/process/index.rst
++++ b/Documentation/translations/zh_CN/process/index.rst
+@@ -64,6 +64,7 @@ TODOLIST:
+    management-style
+    stable-kernel-rules
+    submit-checklist
++   researcher-guidelines
+ 
+ TODOLIST:
+ 
+@@ -71,7 +72,6 @@ TODOLIST:
+ * kernel-docs
+ * deprecated
+ * maintainers
+-* researcher-guidelines
+ * contribution-maturity-model
+ 
+ 
+diff --git a/Documentation/translations/zh_CN/process/researcher-guidelines.rst b/Documentation/translations/zh_CN/process/researcher-guidelines.rst
+new file mode 100644
+index 000000000000..1f2da68fc4e8
+--- /dev/null
++++ b/Documentation/translations/zh_CN/process/researcher-guidelines.rst
+@@ -0,0 +1,129 @@
++.. SPDX-License-Identifier: GPL-2.0-or-later
++
++.. include:: ../disclaimer-zh_CN.rst
++
++.. _cn_researcherguidelines:
++
++:Original: Documentation/process/researcher-guidelines.rst
++
++:译者:
++ - 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
++
++研究人员指南
+++++++++++++++++++++++
++
++Linux 内核社区欢迎对 Linux 内核及其开发过程中涉及的活动与任何其他副产品
++进行透明的研究。Linux 从这种研究中受益匪浅，其多方面均由某种形式的研究所推动。
++
++社区非常感谢研究人员在公开研究结果之前能分享初步发现，特别是涉及安全的研究。
++早期参与有助于提高研究质量并使 Linux 受益。无论如何，推荐研究人员与社区分享
++已发表研究的开放访问副本。
++
++本文旨在澄清研究开展过程中 Linux 内核社区认可与不认可的一些做法。至少，这类
++研究及相关活动应遵循标准的研究伦理规则。有关研究伦理、技术伦理以及开发者社区
++研究的更多背景信息，请查阅：
++
++* `研究伦理史 <https://www.unlv.edu/research/ORI-HSR/history-ethics>`_
++* `IEEE 伦理 <https://www.ieee.org/about/ethics/index.html>`_
++* `开发者和研究人员对开源项目实验伦理的看法 <https://arxiv.org/pdf/2112.13217.pdf>`_
++
++Linux 内核社区期望与项目互动的每个人都是真诚地为了使 Linux 变得更好。
++对 Linux 内核社区产生的任何公开可用的成果（包括但不限于源代码）的研究
++是受欢迎的，对开发者的研究如若要开展，则必须要明确说明，获得（开发者）同意。
++
++完全基于公开可用资源（包括公共邮件列表的帖子和公开代码库的提交）的被动研究
++显然是允许的。不过，和任何研究一样，仍需遵循标准伦理。
++
++然而，针对开发者行为的主动研究必须在获得相关开发者的明确同意和完全披露的情况下进行。
++未经同意，不得与开发者互动或对其进行实验；这也是标准的研究伦理。
++
++调查
++=======
++
++研究通常采用调查问卷的形式发送给维护者或贡献者。然而，内核社区通常从这些调查问卷中获益
++甚少。内核开发过程之所以有效，是因为每个开发者都从中受益，即使与目标不同的人一起工作。
++而回应调查则是对繁忙开发者的单向需求，对他们自己或整个内核社区没有相应的好处。因此，
++这种研究方法不被鼓励。
++
++内核社区成员已经收到过多的电子邮件，可能会将调查请求视为对他们时间的又一要求。发送
++此类请求会剥夺社区宝贵的贡献者时间，且不太可能产生有统计意义的回应。
++
++作为替代，研究人员应考虑参加开发者活动，举办研讨会来介绍研究项目及其对参与者的益处，
++并直接与社区互动。该方式获得的信息将比电子邮件调查问卷丰富得多，且社区也能从中学习
++到您的见解。
++
++补丁
++=======
++
++澄清：向开发者发送补丁**是**与他们互动，但他们已经同意接收**善意贡献**。故意发送有缺陷/
++有漏洞的补丁或在讨论中提供误导信息是不被同意的。这种交流会对开发者造成损害
++（例如，消耗时间、精力和士气），并通过破坏整个开发者社区对贡献者（及其所在组织）
++的信任而损害项目，削弱为贡献者提供建设性反馈的努力，并使最终用户面临软件缺陷的风险。
++
++研究人员参与 Linux 本身的开发与其他人一样受到欢迎和鼓励。研究 Linux 代码是常见
++做法，尤其是在开发或运行可产生可操作结果的分析工具时。
++
++在与开发者社区互动时，发送补丁历来是产生影响的最佳方式。Linux 已经有很多已知的
++漏洞 -- 更有帮助的是经过审核的修复。在贡献之前，请仔细阅读相关文档：
++
++* Documentation/process/development-process.rst
++* Documentation/process/submitting-patches.rst
++* Documentation/admin-guide/reporting-issues.rst
++* Documentation/process/security-bugs.rst
++
++然后发送补丁（包括所有如下详细信息的提交日志）并跟进其他开发者的任何反馈。
++
++当发送因研究而产生的补丁时，提交日志应至少包含以下详细信息，以便开发者有适当的上下文
++来理解贡献。回答：
++
++* 找到了什么具体问题？
++* 在运行系统上如何触发这个问题？
++* 遇到这个问题对系统会有什么影响？
++* 如何发现这个问题？具体包括任何测试、静态或动态分析程序及其他用于执行工作的工具或方法的详细信息。
++* 在哪个版本的 Linux 上发现了这个问题？强烈推荐使用最新的发布版本或最近的 linux-next 分支（参见 Documentation/process/howto.rst）。
++* 进行了哪些更改来修复这个问题，为什么认为这些更改是正确的？
++* 如何进行构建测试和运行时测试？
++* 此更改修复了哪个先前的提交？这应该在 "Fixes:" 标签中，如文档所述。
++* 还有谁审查了这个补丁？这应该在适当的 "Reviewed-by:" 标签中注明；见下文。
++
++例如::
++
++  From: Author <author@email>
++  Subject: [PATCH] drivers/foo_bar: Add missing kfree()
++
++  The error path in foo_bar driver does not correctly free the allocated
++  struct foo_bar_info. This can happen if the attached foo_bar device
++  rejects the initialization packets sent during foo_bar_probe(). This
++  would result in a 64 byte slab memory leak once per device attach,
++  wasting memory resources over time.
++
++  This flaw was found using an experimental static analysis tool we are
++  developing, LeakMagic[1], which reported the following warning when
++  analyzing the v5.15 kernel release:
++
++   path/to/foo_bar.c:187: missing kfree() call?
++
++  Add the missing kfree() to the error path. No other references to
++  this memory exist outside the probe function, so this is the only
++  place it can be freed.
++
++  x86_64 and arm64 defconfig builds with CONFIG_FOO_BAR=y using GCC
++  11.2 show no new warnings, and LeakMagic no longer warns about this
++  code path. As we don't have a FooBar device to test with, no runtime
++  testing was able to be performed.
++
++  [1] https://url/to/leakmagic/details
++
++  Reported-by: Researcher <researcher@email>
++  Fixes: aaaabbbbccccdddd ("Introduce support for FooBar")
++  Signed-off-by: Author <author@email>
++  Reviewed-by: Reviewer <reviewer@email>
++
++如果您是第一次参与贡献，建议在补丁在发布到公共列表前请其他人私下进行审核。（如果明确
++告诉您补丁需要更仔细的内部审查，则这是必需的。）这些人预计会在最终的补丁中包含他们的
++"Reviewed-by" 标签。找到熟悉 Linux 贡献的其他开发者，特别是您自己组织内的开发者，
++并在将补丁发送到公共邮件列表前请他们帮助审核，往往会显著提高补丁的质量，从而减少
++其他开发者的负担。
++
++如果你找不到人内部审核补丁且需要帮助找到这样的人，或者如果您对本文档和开发者社区的期望
++有任何其他问题，请联系技术咨询委员会私有邮件列表：<tech-board@groups.linuxfoundation.org>。
 -- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
+2.43.0
 
 
