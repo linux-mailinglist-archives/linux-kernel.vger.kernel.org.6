@@ -1,417 +1,248 @@
-Return-Path: <linux-kernel+bounces-215433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7759092A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:59:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A502C9092A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77A131F224B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:59:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 990331C22920
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D8B1A255B;
-	Fri, 14 Jun 2024 18:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B8D1A0AF0;
+	Fri, 14 Jun 2024 19:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VSKw9hQO"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SwvuVFs9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857C082D6D;
-	Fri, 14 Jun 2024 18:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718391573; cv=none; b=DUWUExqKOSgnWvFI2QSwFJfqxO14zfdISS6SDMTfKJLNocae2XKyS16eSRDYo4/igvW2LJLaNe3BAZasuSjHG0JzN1rARfxE1QQtleS+RI4tTb0gFGkEnipsFj2jDcBpd2pcrIiBE0OwkrHMO1a0koCvWf3f957FyDlEwdluuHg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718391573; c=relaxed/simple;
-	bh=izinKD8qxZhmLsNG5ZHOywhsTSiCXkzhmdMCXLd6pOw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FUMgbpJ3FQXhWRJjPk0JxSvWBQTifH4L2tcwtjKoHmoeBirmksLUOnSaz2lTTWiqh5M5LkF4oreMIA6mkW6O0fwH+kHpeKJES+WzOp60lI33pr2GNIC6/UVeEUlbRcq2uLMVxPfU/VkQS7HhVYZQw2K3kILm2P8m3OMWTEdSPNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VSKw9hQO; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7024d571d8eso1970038b3a.0;
-        Fri, 14 Jun 2024 11:59:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718391570; x=1718996370; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=FOb3CsA47zkA831K5pVYY7AgWfK/9r6iX+g6uL1ZPAU=;
-        b=VSKw9hQOzgjz4fWIg0+BZqiEXX5DOsNLTdT32lPcSej4mh4xeW2IJuaKvh96CG1zBV
-         DAXwXz7mzyuL3Ty5CtdmNHdMMW9WkptRODnp1GGHcQ1d8/RltRsQIUubQweR/wD+9G4m
-         fMaEa+C03FOAEdWZlndJkqmjYldKqzJziXYF3uiAFRncElAfr+n8AgJtDq0fqM2/hm2V
-         dF4Wp1I9O9cTcWBhrgJnG6NgwyjrnMbYtZko+Gl0J/3pOkkR7YmfttBoxzFEhXZJVyg5
-         iHXN3ipbaXsfcQfzmi9t/GYmNve4oXUCQJ33GK53AfLdglCuGWU3Mcngb/6rLNJ0lVWd
-         6euQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718391570; x=1718996370;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FOb3CsA47zkA831K5pVYY7AgWfK/9r6iX+g6uL1ZPAU=;
-        b=igu6A99o0oRusnqkHaIVWHua2pq4ssaWPIkWlVmI1lglaothm15edoZChM/TtNXOGO
-         B0IYhxpIPpchWSkZwYurRmiVlHcTOYFQiHB/RNVyzeV699hOzaH81bqqC4NSVySANktx
-         D4KZ+9PP8B1n0dCxNCFaSmHHXfyoVBsgqKtHCjlDDz4QI1/bVLlPmTSQoDQuoZcs0Dks
-         KhHCXg7SVGGSZoVeC5kNcyJloBA7NsH/45LD2yHX1yBFGrPPoHgzlD31GTR6yPL/Yy2q
-         DNHLqhN2EPmgHn7TNVRGJUi+98v5+XY0ZRImXZMmiZnLcdl2DaCQouONvr4l6OPesSf3
-         Vjiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVVJmXVg4bMy8PskK9JuHkFaEo0OsWRIXwxPkBjszV2di83QAAfNvdFGHnzheMGkWEBgx1UIp+B9N34vSh+tJjNMcNDJ6IfUIFtGE0nMvGcs1h8nfLTjFaJ70r/+VFokBBmo38gu9EMdA==
-X-Gm-Message-State: AOJu0YxVs+BSM9e2ol5g7RL3aq+aSrAGg1ADemhpzU6anoMDwS2kvSFn
-	HxUC1mFKhHXy36I0FuoI9epJq4Mgqz3w5BEBB+C+/O3pKiwAK3PoY9KVwg==
-X-Google-Smtp-Source: AGHT+IEJwU9AojupZhWELDo34Lrcz7p46td1ywJEQMsWI5PAGByLqo0GspLHUDthMDyoXAtQviJzUg==
-X-Received: by 2002:a05:6a20:394b:b0:1b7:f59d:fd12 with SMTP id adf61e73a8af0-1bae8263edfmr4482871637.55.1718391569788;
-        Fri, 14 Jun 2024 11:59:29 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4c466bf5fsm4288469a91.35.2024.06.14.11.59.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 11:59:28 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-To: linux-hwmon@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	=?UTF-8?q?Ren=C3=A9=20Rebe?= <rene@exactcode.de>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Armin Wolf <W_Armin@gmx.de>,
-	Stephen Horvath <s.horvath@outlook.com.au>,
-	Paul Menzel <pmenzel@molgen.mpg.de>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Sasha Kozachuk <skozachuk@google.com>,
-	John Hamrick <johnham@google.com>
-Subject: [RFT PATCH] hwmon: (spd5118) Add support for Renesas/ITD SPD5118 hub controllers
-Date: Fri, 14 Jun 2024 11:59:24 -0700
-Message-Id: <20240614185924.604672-1-linux@roeck-us.net>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4743A801
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 19:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718391692; cv=fail; b=Ufj6PpF+KtQMtPaTolOujwkAJjOfVeYwZHKIWuKluvovCAVo1KoKBFGYWpG5rC1XcWkd9Mf2y4Ffd43ogJ/g1k7h4JywV+HhutemZ+epy2EUISC7JAQQ2+e9507PA3yCoxT11KhzL6WonEv9GurXohaN9pUIQiLgk6sCxEVoJig=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718391692; c=relaxed/simple;
+	bh=MiB0Se7Y7dPePCQA6MrPmqXRG2frfi/YZvDbbns5tB8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=nmyJGx1Z6z7dimueKzgprq9JhVlhmDkxjJrtRLKNt/OsNi8ErQxtdluSSBeM0ord4AFDb3cALX+UjKqJ88eZubAK3h3TTzri3+yRfc1EhH4DLcmtoYrgBTCem5dZFAuS/z1vPJd7dcO45manyq+fmKapxiz6uuFmSeDZJLnizJA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SwvuVFs9; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718391690; x=1749927690;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=MiB0Se7Y7dPePCQA6MrPmqXRG2frfi/YZvDbbns5tB8=;
+  b=SwvuVFs9z2YQLCApO9U6YJUJapBmsyw3eszSCWvAx1GSqZ0oxeNBVwt0
+   VvHCKCdK1Orh+q//jvYH+Sh2wC47WPyB2Bujbh8C48tQFlAYNgqZ++IMR
+   TH3UKsPoqjkimUNBEbzIXsdZfKBdtpwcPitpw/Dq87thQgw8nXc1Db1lz
+   CnyVctYwD3gMm2rDFjIyIIo+0QGZm4/iYHpHRVNlMnA/f4UDG2HZpE4d8
+   DzrOYRXgGVTePEm2puP3VzbpdW7BeNs6cp8uaj/fWL2RKqurfveieRh6Y
+   6KUB6gB3lDKc0zSMMT8RHuX0wWiYuVfQp0l2nBMkOHHsczDaoHW149WG+
+   A==;
+X-CSE-ConnectionGUID: VKsq/zZaRGqBrpllEgEvNw==
+X-CSE-MsgGUID: 4iUu6fW5TdyzXeF2AKqn8g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="37818846"
+X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
+   d="scan'208";a="37818846"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 12:00:59 -0700
+X-CSE-ConnectionGUID: N5eQA/sYRVGtjbpTITYN8w==
+X-CSE-MsgGUID: YMYH6ubmRPOWzXGf0/qUmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
+   d="scan'208";a="40694139"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Jun 2024 12:00:58 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 14 Jun 2024 12:00:57 -0700
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 14 Jun 2024 12:00:57 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 14 Jun 2024 12:00:57 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 14 Jun 2024 12:00:57 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=W15JrLhDRy9riOXKHVdoAfesOzroHgGqL5+hWhnInlrYCttBA6CDxTccCxBfzp+sYaMfp2ZldzGC8L49gZqCeIKuBhLIYAI16lOh8NfDYu6cnR8ICOwI47D1ERZ4QcvbgU+QQ226G8OB1VBrHtZAz5tOCHnmIZszCbazk1pbk7n1UBbBk3uftCDkWXIlxUVGF20qTEcxobnmN5Z1A0uEzr83opbxQUOf2QjaPMBmrQMhPMIUNLWFeP9uQiHXxKQhUtDA5SkumJb0MIxZgqr780YpOquwd+UCueonkTUA/gaUVE644GMl3bnr437jMteC/95Om7/bp1iBTy2o24ldYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oy6z+WdgHQ5+5+EGV9x5UP1EKVPAG1fpeQFKy8Xh3yk=;
+ b=ePxdd1JjAzuD0KofSWFC8mQrqFX3V/UMf42w7V1x2QdU7zzvTkkRJfrR4pavrgRbYrbh9BfkvNxrHoXwutNqpKZ8eHK3FZvQC8TMoRA89nn2WXczPx5rDlzn6Yd08FHacKR+tiaVK5mKSuMn+YVAYD4ws+bWtRiSS/dit28dqcMOo6Hajqu//ecSDmGZNv23ycON4nDBVovoVUXUg4Thb5PiOCiWWKSrKG5+iRGxZx5qt7zS+y+ThkHrI2/5tlEKKXPyORgBsA2XoP4b6tfUhT5WdvjcWbRfeixCz/1dvRBk7MVMbt8aAIyQS3EL8nT9oHue1xzTdNjvRI9UIqI9ug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BYAPR11MB2854.namprd11.prod.outlook.com (2603:10b6:a02:c9::12)
+ by PH8PR11MB6753.namprd11.prod.outlook.com (2603:10b6:510:1c8::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.26; Fri, 14 Jun
+ 2024 19:00:55 +0000
+Received: from BYAPR11MB2854.namprd11.prod.outlook.com
+ ([fe80::8a98:4745:7147:ed42]) by BYAPR11MB2854.namprd11.prod.outlook.com
+ ([fe80::8a98:4745:7147:ed42%5]) with mapi id 15.20.7677.024; Fri, 14 Jun 2024
+ 19:00:55 +0000
+Date: Fri, 14 Jun 2024 15:00:48 -0400
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>, Ville
+ =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@intel.com>,
+	<naveen1.kumar@intel.com>, <vandita.kulkarni@intel.com>
+CC: <dri-devel@lists.freedesktop.org>, <amd-gfx@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<nouveau@lists.freedesktop.org>, <intel-gfx@lists.freedesktop.org>,
+	<kernel-dev@igalia.com>, Melissa Wen <mwen@igalia.com>,
+	<alexander.deucher@amd.com>, <christian.koenig@amd.com>, Simon Ser
+	<contact@emersion.fr>, Pekka Paalanen <ppaalanen@gmail.com>,
+	<daniel@ffwll.ch>, Daniel Stone <daniel@fooishbar.org>, 'Marek
+ =?utf-8?B?T2zFocOhayc=?= <maraeo@gmail.com>, Dave Airlie <airlied@gmail.com>,
+	<ville.syrjala@linux.intel.com>, Xaver Hugl <xaver.hugl@gmail.com>, "Joshua
+ Ashton" <joshua@froggi.es>, Michel =?iso-8859-1?Q?D=E4nzer?=
+	<michel.daenzer@mailbox.org>, Sam Ravnborg <sam@ravnborg.org>, "Boris
+ Brezillon" <bbrezillon@kernel.org>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, Nicolas Ferre
+	<nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Jani Nikula <jani.nikula@linux.intel.com>, Karol Herbst <kherbst@redhat.com>,
+	Lyude Paul <lyude@redhat.com>
+Subject: Re: [PATCH v6 5/8] drm/i915: Enable async flips on the primary plane
+Message-ID: <ZmyTYPTVKM2-iaaN@intel.com>
+References: <20240614153535.351689-1-andrealmeid@igalia.com>
+ <20240614153535.351689-6-andrealmeid@igalia.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240614153535.351689-6-andrealmeid@igalia.com>
+X-ClientProxiedBy: SJ0PR05CA0191.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::16) To BYAPR11MB2854.namprd11.prod.outlook.com
+ (2603:10b6:a02:c9::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR11MB2854:EE_|PH8PR11MB6753:EE_
+X-MS-Office365-Filtering-Correlation-Id: 66879827-de10-4ecd-cf14-08dc8ca45170
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|7416011|376011|1800799021;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?q0RukBeeVCS1I0q1RIGHcSuqouo4brfZnSOhk700Jtn+qr8aeIom0gAqQi?=
+ =?iso-8859-1?Q?PQCLeciUUIlssJejEFa2t25S6TTgeFwzZ8fYdyW31N2kxOFC4TxKdrmG6x?=
+ =?iso-8859-1?Q?6oEMa9bt8KmymXfc+2NcIibbrq5Kz4406ud3PO99iaQt67bynNLO4AXVNI?=
+ =?iso-8859-1?Q?1EHxpALfBmpNUkiHrg7IeK6qyEDqFLB3UtwST8jtXWLdoRhnQh++jI4IKt?=
+ =?iso-8859-1?Q?/Z0SjJTD5ESmV7O7Q1jyJTv0rSbopwIKD49GiKZxLeVI55xgjCSpSO127k?=
+ =?iso-8859-1?Q?d90JPzXSu0o6ueYxAkKqrWbsfMvBOBZevhWEh6PNN4R8XkcpdViI+oXSPH?=
+ =?iso-8859-1?Q?T1yRQKNVsRjiUFs8CS6+Gya73pew+CYEjNTcPEACS72lZUCYcS/qWUA9Zn?=
+ =?iso-8859-1?Q?djukBnRpeFtoOjpg+9Cyclytws6f4mJtBMDvaEWnrF6J+yELRUf51Dpiwf?=
+ =?iso-8859-1?Q?g7xZ9A//tATJOo7SeH64iTFmtWCWgxCV5KRbsOo7NCP7+WlOZkzoM7NrZP?=
+ =?iso-8859-1?Q?oPJpwpoGXI7GXnhyDLxTDTXkmH6IrOc/noxR0X7cJ44pROu5XY6Pw4NNSL?=
+ =?iso-8859-1?Q?Xnf3Rju+hSRgIyKarSjBEybEFunEfSTT8B88Q/04kD7XNkSW/yxB7Kk/Fp?=
+ =?iso-8859-1?Q?4JIz1eDoxymthgwrBMncyGyl4AnDV0etf9rhAu0lf4N7uv9noZl/C4/6SD?=
+ =?iso-8859-1?Q?M1wiHMB99lPdUmicprwVogmD8JZzUJE6HYg/wh+yCiujNXX/CHW3PwvjkM?=
+ =?iso-8859-1?Q?iWO/exFWu7tyQW0uIk3lLff3WKg/PvNSrYF7gAHqNBPTDgFs6bmw9z6XAd?=
+ =?iso-8859-1?Q?GmxOilSQiQtdEFUcuSEEXR5ReNsTCe5dfbddKty/PkL+ezmzU5hiCZ9Sl/?=
+ =?iso-8859-1?Q?awQqXRoFjGeZxguvAXx81Z8xl+qyxdYje4EfJhpk7dMPdggss2qV+s2n5s?=
+ =?iso-8859-1?Q?JBYKuv+8veRYf/hgH3rLuWoDF7DPBrUa8AHjHjzoRb8FaJPnrQ4/fFprI/?=
+ =?iso-8859-1?Q?g5ALMk1rkvmoK/mVyt1FKKFjfKFsRbz7msNp8oRSoaZInR7kel4btvb6nB?=
+ =?iso-8859-1?Q?OxFKhQ1cExulj7WtVKRgGdDMl30h90qrU9wpVdiYt6FVJmNdT0aTSPtkm6?=
+ =?iso-8859-1?Q?nPF624ClexjI081OERldHZ/pSzCjaxEdc1dqF38Nqa/F3wlvVMfIkGFFQk?=
+ =?iso-8859-1?Q?xsKXCU8H/AbhAfDy1x8yPK3oikYw9kUndQ38Fk5230TEtgr1ts7iwwcc2H?=
+ =?iso-8859-1?Q?sFX8lwnEyqHrZB3HEyBk4eUm/Shg8Odg0b7rTWH7y3R0sj5IPBPnkVnqqB?=
+ =?iso-8859-1?Q?bnfsbnnqW8I03rjkrZaECOCi2A4imzRA+ubZw4r6fthGt23iJ5pJmyEZWj?=
+ =?iso-8859-1?Q?gW0C7XPQw4?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB2854.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(7416011)(376011)(1800799021);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?U2vPvixsM3jUid6CxzOmPz8k3DELRHgmFh0C7wTACjF1auKxKvtQ6SDrWr?=
+ =?iso-8859-1?Q?hv5JuLGU7I81QzCJBwx7ntbOywxBaEBbXbLABvSntAJarPCGT8aJc9RLTo?=
+ =?iso-8859-1?Q?/zauqM2a4XmWkH/WYynAMilYh3tI2udh73f6X8NTuEguojdy+AQeTKMrAl?=
+ =?iso-8859-1?Q?hXjyUxlyZAh6fWlJhJr4gCykfE8WYgo/XJ94+E9s/noVnIzWinadv/E2wI?=
+ =?iso-8859-1?Q?nlVMOerWm/xhyX5Ij+GNjUo37DAGoH3qvUawKTj5pS+muVXiyJDrcpAW03?=
+ =?iso-8859-1?Q?oCb2WelwWWG41Bh5rnbwSbNDKaZ6ogf/gzXuzRRhcochH17d0Wet917IMw?=
+ =?iso-8859-1?Q?Q61WV1ATVpVw8+f3mZdobvq1CDOYPnwX/YXjjLJaQbGrdL/ZrwPgyasKKn?=
+ =?iso-8859-1?Q?fRNnvgbXaMiD8dUXYxhgYup6bk89QzKAOwCrojLuvZolddrbDOjwWn6Nnw?=
+ =?iso-8859-1?Q?IlBFZE6AxhMyThTJwroBfp2B5Gx2iZ/vSeVWDy1ow7O2URaF7EURBAa4wA?=
+ =?iso-8859-1?Q?Ij93KuxJm4SxgxrLJcrDWZIUqSPTBd8p60Xkes0G7I9n854RgyRSZs5+p2?=
+ =?iso-8859-1?Q?C1OfKoxII0K76F6lOKe5me4P+Th/Jv/MvT1tBPjq2tJ6ka+05082BVGDhv?=
+ =?iso-8859-1?Q?bTNlEA/i/Tjpi381C/qQvBaP9llkUqzOjVj21tcvOZg9AFMMqLCL56w8UY?=
+ =?iso-8859-1?Q?OsKXW6s58yfDBgOx3B4Sy8KNuyd18gj6YkyhAxA5tiNCLJFYP3GbSj8g2d?=
+ =?iso-8859-1?Q?f1A0H37YPCOLRCOi4HBST4jzP2GrHaDYZWCrFni+SgjRYtaboivkveN9Nr?=
+ =?iso-8859-1?Q?BIxzQOZXoRZdSfo6ixrCop5WGLE7AxT1estocP5dFccRhOzwOV3kO91jGu?=
+ =?iso-8859-1?Q?8pU2ga8JFIYt6P1wEWokbUdvHuILzJzTyqDIocRB06FUfs3Dd56F8VkPrY?=
+ =?iso-8859-1?Q?AbNXjYBR0Fgq7Fv0lBNNCC4JpeIK/TG/IcCkklulEnbzVpEbceRjegcwOy?=
+ =?iso-8859-1?Q?sBrC7NFv/wO6qLFuT75EVchGtb6j13v8ZYep7UGk1HW8U9Fz/za3Ej1eYk?=
+ =?iso-8859-1?Q?BEq69AINU1zQ0EQW3z6wGmsX5ZNMWZ+lRTQh94QRNf2fret3Dl6olpiLfI?=
+ =?iso-8859-1?Q?LydA14Ucdv9HWwFcf1Eu7FVhXKgYNir0PRK6JiCUrtempVljspW9a1Aa8X?=
+ =?iso-8859-1?Q?lHH7j+0D8QBHBL8JyGUWFpqD/u1+RHjfSxg+B0joOd4lttARXT3gdq8xcw?=
+ =?iso-8859-1?Q?l5C25KUqNVXXXtrQBScW1EKaX41ZFxbFovziqKKeKZ0HKD9tkJHUfKLt+W?=
+ =?iso-8859-1?Q?4x7PAy6itjXvguGfBmyHn/ubNZerOsGjXZE1YvGy5eeiQozpBiL7AfdzO5?=
+ =?iso-8859-1?Q?FXqNOmmbnRsDhPk5hCvJNVQs1FahexCxEoAWT5+KmTX3Jp0qEU1WPenjdc?=
+ =?iso-8859-1?Q?4yn4obGVsc9PBnobR6U5TaRiyCnhKk4hUSNWZ2yt27ss8Lru9ydd8QnHMC?=
+ =?iso-8859-1?Q?FMQ8Ju3wMs2vXC3QPvkb2sygOpn15eSmgkw5VYME+QQ/PtrZvJHKdzZWpg?=
+ =?iso-8859-1?Q?I1GsU/j3hUrapRtjIQcYvmG1S6O8X89wVXva/y7Dy3Zh4ggz6ohbOt6cVV?=
+ =?iso-8859-1?Q?I/wyoi10RFrBVHD7azQP+bajtmklx4Jf5c0S1TUMk5JAsu9D2Cu7s+zw?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 66879827-de10-4ecd-cf14-08dc8ca45170
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB2854.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2024 19:00:55.1751
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XDeOSjj3qBT7Pz9YOR9rtuEvX9J9Vh/CFhHfdRjn8twBK4p2UqxXYcoN+LTucNSznvpNYTKLWAomZfx2uHwU4A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6753
+X-OriginatorOrg: intel.com
 
-The SPD5118 specification says, in its documentation of the page bits
-in the MR11 register:
+On Fri, Jun 14, 2024 at 12:35:32PM -0300, André Almeida wrote:
+> This driver can perfom async flips on primary planes, so enable it.
+> 
 
-"
-This register only applies to non-volatile memory (1024) Bytes) access of
-SPD5 Hub device.
-For volatile memory access, this register must be programmed to '000'.
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-"
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: Naveen Kumar <naveen1.kumar@intel.com>
+c: Vandita Kulkarni <vandita.kulkarni@intel.com>
 
-Renesas/ITD SPD5118 hub controllers take this literally and disable access
-to volatile memory if the page selected in MR11 is != 0. Since the BIOS or
-ROMMON will access the non-volatile memory and likely select a page != 0,
-this means that the driver will not instantiate since it can not identify
-the chip. Even if the driver instantiates, access to volatile registers
-is blocked after a nvram read operation which selects a page other than 0.
+> Signed-off-by: André Almeida <andrealmeid@igalia.com>
+> ---
+>  drivers/gpu/drm/i915/display/i9xx_plane.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/i915/display/i9xx_plane.c b/drivers/gpu/drm/i915/display/i9xx_plane.c
+> index 0279c8aabdd1..0142beef20dc 100644
+> --- a/drivers/gpu/drm/i915/display/i9xx_plane.c
+> +++ b/drivers/gpu/drm/i915/display/i9xx_plane.c
+> @@ -931,6 +931,9 @@ intel_primary_plane_create(struct drm_i915_private *dev_priv, enum pipe pipe)
+>  
+>  	intel_plane_helper_add(plane);
+>  
+> +	if (plane->async_flip)
+> +		plane->base.async_flip = true;
 
-To solve the problem, add initialization code to select page 0 during
-probe. Before doing that, use basic validation to ensure that this is
-really a SPD5118 device and not some random EEPROM. Explicitly select
-page 0 when accessing the volatile register space, and protect volatile
-register access against nvmem access using the device mutex.
+I believe this is not enough and besides this we would also need to have
+in the:
+skl_universal_plane_create[2447] plane->async_flip = skl_plane_async_flip;
 
-Cc: Sasha Kozachuk <skozachuk@google.com>
-Cc: John Hamrick <johnham@google.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
-This patch depends on the spd5118 patch series submitted earlier.
+at: drivers/gpu/drm/i915/display/skl_universal_plane.c
 
-RFT: I was only able to test this patch with DDR5 using the Montage
-Technology SPD5118 hub controller. It needs testing with the Renesas
-hub controller, and could use some additional testing with other DIMMs.
-
- drivers/hwmon/spd5118.c | 164 +++++++++++++++++++++++++++++-----------
- 1 file changed, 119 insertions(+), 45 deletions(-)
-
-diff --git a/drivers/hwmon/spd5118.c b/drivers/hwmon/spd5118.c
-index ac94a6779360..96052ef4256b 100644
---- a/drivers/hwmon/spd5118.c
-+++ b/drivers/hwmon/spd5118.c
-@@ -74,7 +74,7 @@ static const unsigned short normal_i2c[] = {
- 
- struct spd5118_data {
- 	struct regmap *regmap;
--	struct mutex nvmem_lock;
-+	struct mutex access_lock;
- };
- 
- /* hwmon */
-@@ -92,6 +92,29 @@ static u16 spd5118_temp_to_reg(long temp)
- 	return (DIV_ROUND_CLOSEST(temp, SPD5118_TEMP_UNIT) & 0x7ff) << 2;
- }
- 
-+static int spd5118_set_page(struct regmap *regmap, int page)
-+{
-+	unsigned int old_page;
-+	int err;
-+
-+	err = regmap_read(regmap, SPD5118_REG_I2C_LEGACY_MODE, &old_page);
-+	if (err)
-+		return err;
-+
-+	if (page != (old_page & SPD5118_LEGACY_MODE_MASK)) {
-+		/* Update page and explicitly select 1-byte addressing */
-+		err = regmap_update_bits(regmap, SPD5118_REG_I2C_LEGACY_MODE,
-+					 SPD5118_LEGACY_MODE_MASK, page);
-+		if (err)
-+			return err;
-+
-+		/* Selected new NVMEM page, drop cached data */
-+		regcache_drop_region(regmap, SPD5118_EEPROM_BASE, 0xff);
-+	}
-+
-+	return 0;
-+}
-+
- static int spd5118_read_temp(struct regmap *regmap, u32 attr, long *val)
- {
- 	int reg, err;
-@@ -174,28 +197,44 @@ static int spd5118_read_enable(struct regmap *regmap, long *val)
- static int spd5118_read(struct device *dev, enum hwmon_sensor_types type,
- 			u32 attr, int channel, long *val)
- {
--	struct regmap *regmap = dev_get_drvdata(dev);
-+	struct spd5118_data *data = dev_get_drvdata(dev);
-+	struct regmap *regmap = data->regmap;
-+	int err;
- 
- 	if (type != hwmon_temp)
- 		return -EOPNOTSUPP;
- 
-+	mutex_lock(&data->access_lock);
-+
-+	err = spd5118_set_page(regmap, 0);
-+	if (err)
-+		goto unlock;
-+
- 	switch (attr) {
- 	case hwmon_temp_input:
- 	case hwmon_temp_max:
- 	case hwmon_temp_min:
- 	case hwmon_temp_crit:
- 	case hwmon_temp_lcrit:
--		return spd5118_read_temp(regmap, attr, val);
-+		err = spd5118_read_temp(regmap, attr, val);
-+		break;
- 	case hwmon_temp_max_alarm:
- 	case hwmon_temp_min_alarm:
- 	case hwmon_temp_crit_alarm:
- 	case hwmon_temp_lcrit_alarm:
--		return spd5118_read_alarm(regmap, attr, val);
-+		err = spd5118_read_alarm(regmap, attr, val);
-+		break;
- 	case hwmon_temp_enable:
--		return spd5118_read_enable(regmap, val);
-+		err = spd5118_read_enable(regmap, val);
-+		break;
- 	default:
--		return -EOPNOTSUPP;
-+		err = -EOPNOTSUPP;
-+		break;
- 	}
-+
-+unlock:
-+	mutex_unlock(&data->access_lock);
-+	return err;
- }
- 
- static int spd5118_write_temp(struct regmap *regmap, u32 attr, long val)
-@@ -256,14 +295,28 @@ static int spd5118_temp_write(struct regmap *regmap, u32 attr, long val)
- static int spd5118_write(struct device *dev, enum hwmon_sensor_types type,
- 			 u32 attr, int channel, long val)
- {
--	struct regmap *regmap = dev_get_drvdata(dev);
-+	struct spd5118_data *data = dev_get_drvdata(dev);
-+	struct regmap *regmap = data->regmap;
-+	int err;
-+
-+	mutex_lock(&data->access_lock);
-+
-+	err = spd5118_set_page(regmap, 0);
-+	if (err)
-+		goto unlock;
- 
- 	switch (type) {
- 	case hwmon_temp:
--		return spd5118_temp_write(regmap, attr, val);
-+		err = spd5118_temp_write(regmap, attr, val);
-+		break;
- 	default:
--		return -EOPNOTSUPP;
-+		err = -EOPNOTSUPP;
-+		break;
- 	}
-+
-+unlock:
-+	mutex_unlock(&data->access_lock);
-+	return err;
- }
- 
- static umode_t spd5118_is_visible(const void *_data, enum hwmon_sensor_types type,
-@@ -382,35 +435,12 @@ static const struct hwmon_chip_info spd5118_chip_info = {
- 
- /* nvmem */
- 
--static int spd5118_nvmem_set_page(struct regmap *regmap, int page)
--{
--	unsigned int old_page;
--	int err;
--
--	err = regmap_read(regmap, SPD5118_REG_I2C_LEGACY_MODE, &old_page);
--	if (err)
--		return err;
--
--	if (page != (old_page & SPD5118_LEGACY_MODE_MASK)) {
--		/* Update page and explicitly select 1-byte addressing */
--		err = regmap_update_bits(regmap, SPD5118_REG_I2C_LEGACY_MODE,
--					 SPD5118_LEGACY_MODE_MASK, page);
--		if (err)
--			return err;
--
--		/* Selected new NVMEM page, drop cached data */
--		regcache_drop_region(regmap, SPD5118_EEPROM_BASE, 0xff);
--	}
--
--	return 0;
--}
--
- static ssize_t spd5118_nvmem_read_page(struct regmap *regmap, char *buf,
- 				       unsigned int offset, size_t count)
- {
- 	int err;
- 
--	err = spd5118_nvmem_set_page(regmap, offset >> SPD5118_PAGE_SHIFT);
-+	err = spd5118_set_page(regmap, offset >> SPD5118_PAGE_SHIFT);
- 	if (err)
- 		return err;
- 
-@@ -439,19 +469,19 @@ static int spd5118_nvmem_read(void *priv, unsigned int off, void *val, size_t co
- 	if (off + count > SPD5118_EEPROM_SIZE)
- 		return -EINVAL;
- 
--	mutex_lock(&data->nvmem_lock);
-+	mutex_lock(&data->access_lock);
- 
- 	while (count) {
- 		ret = spd5118_nvmem_read_page(data->regmap, buf, off, count);
- 		if (ret < 0) {
--			mutex_unlock(&data->nvmem_lock);
-+			mutex_unlock(&data->access_lock);
- 			return ret;
- 		}
- 		buf += ret;
- 		off += ret;
- 		count -= ret;
- 	}
--	mutex_unlock(&data->nvmem_lock);
-+	mutex_unlock(&data->access_lock);
- 	return 0;
- }
- 
-@@ -524,15 +554,65 @@ static const struct regmap_config spd5118_regmap_config = {
- 	.cache_type = REGCACHE_MAPLE,
- };
- 
-+static int spd5118_init(struct i2c_client *client)
-+{
-+	struct i2c_adapter *adapter = client->adapter;
-+	int err, regval, mode;
-+
-+	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA |
-+				     I2C_FUNC_SMBUS_WORD_DATA))
-+		return -ENODEV;
-+
-+	regval = i2c_smbus_read_word_swapped(client, SPD5118_REG_TYPE);
-+	if (regval < 0 || (regval && regval != 0x5118))
-+		return -ENODEV;
-+
-+	/*
-+	 * If the type register returns 0, it is possible that the chip has a
-+	 * non-zero page selected and takes the specification literally, i.e.
-+	 * disables access to volatile registers besides the page register if
-+	 * the page is not 0. Try to identify such chips.
-+	 */
-+	if (!regval) {
-+		mode = i2c_smbus_read_byte_data(client, SPD5118_REG_I2C_LEGACY_MODE);
-+		if (mode < 0 || (mode & 0xf0) || !(mode & 0x07))
-+			return -ENODEV;
-+
-+		err = i2c_smbus_write_byte_data(client, SPD5118_REG_I2C_LEGACY_MODE, 0);
-+		if (err)
-+			return -ENODEV;
-+
-+		regval = i2c_smbus_read_word_swapped(client, SPD5118_REG_TYPE);
-+		if (regval != 0x5118) {
-+			i2c_smbus_write_byte_data(client, SPD5118_REG_I2C_LEGACY_MODE, mode);
-+			return -ENODEV;
-+		}
-+	}
-+
-+	regval = i2c_smbus_read_byte_data(client, SPD5118_REG_CAPABILITY);
-+	if (regval < 0)
-+		return -ENODEV;
-+
-+	if (!(regval & SPD5118_CAP_TS_SUPPORT))
-+		return -ENODEV;
-+
-+	/* We are reasonably sure that this is really a SPD5118 hub controller */
-+	return 0;
-+}
-+
- static int spd5118_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
--	unsigned int regval, revision, vendor, bank;
-+	unsigned int revision, vendor, bank;
- 	struct spd5118_data *data;
- 	struct device *hwmon_dev;
- 	struct regmap *regmap;
- 	int err;
- 
-+	err = spd5118_init(client);
-+	if (err)
-+		return err;
-+
- 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
-@@ -541,12 +621,6 @@ static int spd5118_probe(struct i2c_client *client)
- 	if (IS_ERR(regmap))
- 		return dev_err_probe(dev, PTR_ERR(regmap), "regmap init failed\n");
- 
--	err = regmap_read(regmap, SPD5118_REG_CAPABILITY, &regval);
--	if (err)
--		return err;
--	if (!(regval & SPD5118_CAP_TS_SUPPORT))
--		return -ENODEV;
--
- 	err = regmap_read(regmap, SPD5118_REG_REVISION, &revision);
- 	if (err)
- 		return err;
-@@ -561,7 +635,7 @@ static int spd5118_probe(struct i2c_client *client)
- 		return -ENODEV;
- 
- 	data->regmap = regmap;
--	mutex_init(&data->nvmem_lock);
-+	mutex_init(&data->access_lock);
- 	dev_set_drvdata(dev, data);
- 
- 	err = spd5118_nvmem_init(dev, data);
-@@ -572,7 +646,7 @@ static int spd5118_probe(struct i2c_client *client)
- 	}
- 
- 	hwmon_dev = devm_hwmon_device_register_with_info(dev, "spd5118",
--							 regmap, &spd5118_chip_info,
-+							 data, &spd5118_chip_info,
- 							 NULL);
- 	if (IS_ERR(hwmon_dev))
- 		return PTR_ERR(hwmon_dev);
--- 
-2.39.2
-
+> +
+>  	return plane;
+>  
+>  fail:
+> -- 
+> 2.45.2
+> 
 
