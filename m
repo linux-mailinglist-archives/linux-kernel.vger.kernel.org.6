@@ -1,85 +1,106 @@
-Return-Path: <linux-kernel+bounces-215107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AA03908E38
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:09:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 136B0908E3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7C7228D311
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:09:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5A611F254EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C911B012C;
-	Fri, 14 Jun 2024 15:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B621419752F;
+	Fri, 14 Jun 2024 15:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vgW65Jd8"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m+GJT4R1"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4431181D1F
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B851116C438;
+	Fri, 14 Jun 2024 15:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718377400; cv=none; b=jOAmbMwwaffWZAZmW7NWbVQai85WdimIJYDRU7MDWHR9gV/KGGPyyU7qmN5fdAi822ytj9WzpvxcvwwL9AfpDh1NfukdRyMeuGAEM6vzQ58ygS1Z6oKb0IcEQ7yhFoEiFHvjyZL0JT+AkcEQy/00mGOzdGNAWLZdDEu30xD1NQU=
+	t=1718377582; cv=none; b=WyDg/4bfFLcpwsUh+kNuh3cNEkQPymPOJJ/0P/OP5sQsdnz0mk3PuIedBbXz89KtT9AYllnC40lsvPHo2xQp0ENqvTTEg8lrduUhc99jY0hu4Y2yrFjMzfMDl2dIeglIaBfUaJyN9EUIAASviJm8KUShgB/zx1HKm1gn9as/uOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718377400; c=relaxed/simple;
-	bh=tbqO0nM73sxGeOhzCDR3cQjJBLpEqVEwNgHhiBQrnOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J6GOtvWCOLkxRyKTqxCL5tY055v8m7x9oLDbyAaCekcuYDpeYDxHVSK9pjl8FrGpFIkfWGxTqsiaKUU+NaejTIDK5YULG+AKmhjbXLhH1bnl0P7ljeg5BvbzVpvW6gE6ii+zbc2rTk5vOuFa5K6WNlGRySkS5ccJBdnND1+oq0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vgW65Jd8; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: baolin.wang@linux.alibaba.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718377395;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MkGNSxl+h9z5YLWRwO1nvyFUAAj208IaWD4lkOkSdJo=;
-	b=vgW65Jd8yLdKDIVGxsjhfPgWlr30uaqU08jhcoEaAe56TzhobuoV8WAsiGt/N5HG2xLY3m
-	rHe8wDF4dgaRE7t4+LWnFR0jNEeJPPOc0HMu3mJHPLVxbUJGEw/3GGQHaMZ+ztBp1EI/n2
-	skOVz1ufzzPLMezwvXDQeIrr2wwBoLw=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: mhocko@kernel.org
-X-Envelope-To: roman.gushchin@linux.dev
-X-Envelope-To: muchun.song@linux.dev
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Fri, 14 Jun 2024 08:03:09 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
-	muchun.song@linux.dev, hannes@cmpxchg.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: memcontrol: add VM_BUG_ON_FOLIO() to catch lru folio
- in mem_cgroup_migrate()
-Message-ID: <tyduss47imvg725gvm34djfficzvdof6k2r2ump25jejbqwq2l@yv67li65phld>
-References: <66d181c41b7ced35dbd39ffd3f5774a11aef266a.1718327124.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1718377582; c=relaxed/simple;
+	bh=34ohSfG/19qWn2etFbhp9iM+FQgkPY8fkgZFPwCTa0Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sg6NSQzEgGUiAummkXLjxRuwo6FqdsO7Llxrg41vr95nxA6xBYa1vskSTXS4kbpIQrFYAN+gzINRYmvIVR2Fecf0mTj7cRYXwFDKC0fZ00LnOEY4qV7Bb3vgp02y44qPR9YI/PKmyQFX8efIbVNmoL9+Jcv8DrxVcM10r4oTrvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m+GJT4R1; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=TPWeQET4FCKXxDGX1xF4koHOa0ZvF4mNa6FEu8k1Afo=; b=m+GJT4R19N7iFPs+QEnUVDnoI0
+	QHj72LwHtAWCxFgRBHh5R2WW82+URvw6y6pjl4wJbX0yFQm22cJ0E7T7bDP6z6a/lvOwppc2+VNSm
+	w+JaUFORMm0qz65yJb7Oz6Fl2sBeranqE4qXNYEkkEyjlCtgqcx8HS1NyL+xbDNjw+gcf1VzKemNI
+	DxOQXGeSiNbDiCgOsOySVd57JvCi4Zn5P90UxzxH+PfaiL0ZHNjk/Lqjpp5R1ZlQ8qF19Q385AlQK
+	XgtjDh1i44L19MjE/6dYtlJOXtc0uV5Vcps5tiLjMeSLhpqKysqVZ8+dPibjtUF7h/gNDP++aYeY1
+	iLQOJq9g==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sI8VM-000000039lw-476j;
+	Fri, 14 Jun 2024 15:06:17 +0000
+Message-ID: <cb3613ed-210f-4fd2-bca3-28542c1b961c@infradead.org>
+Date: Fri, 14 Jun 2024 08:06:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66d181c41b7ced35dbd39ffd3f5774a11aef266a.1718327124.git.baolin.wang@linux.alibaba.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: Remove "ltpc=" from the
+ kernel-parameters.txt
+To: Thomas Huth <thuth@redhat.com>, linux-doc@vger.kernel.org,
+ netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+References: <20240614084633.560069-1-thuth@redhat.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240614084633.560069-1-thuth@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 14, 2024 at 09:07:42AM GMT, Baolin Wang wrote:
-> The mem_cgroup_migrate() will clear the memcg data of the old folio,
-> therefore, the callers must make sure the old folio is no longer on
-> the LRU list, otherwise the old folio can not get the correct lruvec
-> object without the memcg data, which could lead to potential problems [1].
-> 
-> Thus adding a VM_BUG_ON_FOLIO() to catch this issue.
-> 
-> [1] https://lore.kernel.org/all/5ab860d8ee987955e917748f9d6da525d3b52690.1718326003.git.baolin.wang@linux.alibaba.com/
-> Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
-> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+
+On 6/14/24 1:46 AM, Thomas Huth wrote:
+> The string "ltpc" cannot be found in the source code anymore. This
+> kernel parameter likely belonged to the LocalTalk PC card module
+> which has been removed in commit 03dcb90dbf62 ("net: appletalk:
+> remove Apple/Farallon LocalTalk PC support"), so we should remove
+> it from kernel-parameters.txt now, too.
+> 
+> Signed-off-by: Thomas Huth <thuth@redhat.com>
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 423427bf6e49..a9b905bbc8ca 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -3184,9 +3184,6 @@
+>  			unlikely, in the extreme case this might damage your
+>  			hardware.
+>  
+> -	ltpc=		[NET]
+> -			Format: <io>,<irq>,<dma>
+> -
+>  	lsm.debug	[SECURITY] Enable LSM initialization debugging output.
+>  
+>  	lsm=lsm1,...,lsmN
+
+-- 
+~Randy
 
