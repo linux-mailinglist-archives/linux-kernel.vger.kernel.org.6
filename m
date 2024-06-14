@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-215301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A889090DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:01:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B85349090D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F8EB285908
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6437B1F221D9
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA1E19D061;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589F219CD07;
 	Fri, 14 Jun 2024 17:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZjuNH7Qp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KKs5jGy7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E2CDDDF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E5D26ACC;
 	Fri, 14 Jun 2024 17:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718384435; cv=none; b=tPOXRCUcLxEnKRXyhmiUOtlK+N2ZEKE1uKNbF0uNgJzqc4anE+yLWUhNr7e50C6P3kOO1IFyURXHotqe2gKluhQzg6UAsyuBUa4wDT1utv7fQilxRu7WkzZHx4/0oQvK53b3PCLyCzhl5xQ0+hz0q1X/PpFTg1WlWMdOSDwj5GM=
+	t=1718384435; cv=none; b=BR9bGpNgu0buKw2na9klxEsHW1oabzOHc1FTqkCWZ1QN/Gt5zTgd2HXsnWWIw/qCgSpSGN6pIDB2oveQoqmrbDM/YUXod95f2sxt6X19jl6jSj1Ui70YBEP3ODRtWhzOHtb2ENcRw6pMmKthhuTs/f2syQJedwYOeTc5kMA6Ofo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718384435; c=relaxed/simple;
-	bh=I1pahDc43KhXSDhbubXfPSzmxs7edlK0S8v9NiUrnNI=;
+	bh=a8oOy1+tNkA3Y2PRZ0ckwQkaG3FhkE1hMUVvvLS4IQw=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=dkYImxX9pcqMKgyTDCUZhbzbPKyht3LStyyVFycFmaQyJvRzEO4o3mbbjC46Qzn1vEZ2uXsZjqlzTmGUrFgk8TRu9DVA/ftuasK4mrDoVpeLlujo+q31FJxcb4KyEBKeVo25iWna+oUeHDkcHJq7gDQc7zoQPF6HsP90AOfsGok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZjuNH7Qp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 26C7DC4AF1A;
+	 In-Reply-To:To:Cc; b=YlOEQmmdH9hvutmDP/KcZYrLrh9c2QjOvllZcZRiOt/ITm3wO3CHTq/XBFZjzqJMPcEaD2ALlTyb2IkCnpK8KdyxZib0nk1MnE46M35EhJHAmylcWRmssvTm22uyl+o19uO0Cdt14T//9Ze/cE8NXnKqYwggFeov9FulUIJoJYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KKs5jGy7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2C7F4C4AF1D;
 	Fri, 14 Jun 2024 17:00:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1718384435;
-	bh=I1pahDc43KhXSDhbubXfPSzmxs7edlK0S8v9NiUrnNI=;
+	bh=a8oOy1+tNkA3Y2PRZ0ckwQkaG3FhkE1hMUVvvLS4IQw=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ZjuNH7QpiPpsQ4kezsHwZ006hvXZxFvKREnzdndYduzl3BsMR533JZ3wMtKoVRJYt
-	 2dDczpofhZ3nZII1YFDogIZazt6Yj1hAKCXZNprCkefRqaJIUNXNe/V0SPPf4NDdB0
-	 ubVZ3Km8QviVJ/iwf0HFGq+AJga6zbrazt+WrRpJknduIiqFI/Q0FJ12s8RKC5AFlv
-	 qNyFh313lG6pu26z/qdSYCXeUGtjt/AqrOq6Z90d0s9hYmUijuYvrauP6F/1BIpL29
-	 TDRkcR0NSbrxL1hdRXyAH/DhanN9ipgUaYyQaE85NLj2HOQg+CynvsPEANuM+2l6bI
-	 IpnLCuczHJa4Q==
+	b=KKs5jGy7FgFJFYGvS3tKtPGeo4qwJjPa0JltvJd+aiP1oHanMoXRW4j3dWLKZGw8X
+	 PyfTz/VcB5Zu8B4kXHBAaL0yLRQNs3FE65jiWOMJJwNG8+4U1gJiCHOJasfdHJPqO8
+	 OuEhWgcSqaCws9azUq2H7vH8s/UfP1/cMpO8Rhg286m2vdMsdIKmr3BrGp2XUowSGf
+	 eCJE0guLNCzLCc9vX1mxNbQIxwvrtXUjfpygnDMMnMXQUAkYy/GOrWKYIUWsQAILxw
+	 cq5fhqitb0IQfZXHJ7/+WXfU/JgsJMQ0k19p1FZQcDoSGWXQ2CLyZ+it+BL8YnbGaa
+	 m0IeCkOb+xP4w==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 03360C43616;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 19F03C43612;
 	Fri, 14 Jun 2024 17:00:35 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,42 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4 0/2] Bluetooth: btnxpuart: Update firmware names
+Subject: Re: [PATCH v2] Bluetooth: btnxpuart: Enable Power Save feature on startup
 From: patchwork-bot+bluetooth@kernel.org
 Message-Id: 
- <171838443500.31311.6625085900814188876.git-patchwork-notify@kernel.org>
+ <171838443510.31311.301309196068424307.git-patchwork-notify@kernel.org>
 Date: Fri, 14 Jun 2024 17:00:35 +0000
-References: <20240614084941.6832-1-neeraj.sanjaykale@nxp.com>
-In-Reply-To: <20240614084941.6832-1-neeraj.sanjaykale@nxp.com>
+References: <20240614082039.6465-1-neeraj.sanjaykale@nxp.com>
+In-Reply-To: <20240614082039.6465-1-neeraj.sanjaykale@nxp.com>
 To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-bluetooth@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, amitkumar.karwar@nxp.com, rohit.fule@nxp.com,
- sherry.sun@nxp.com, ziniu.wang_1@nxp.com, haibo.chen@nxp.com,
- LnxRevLi@nxp.com
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ amitkumar.karwar@nxp.com, rohit.fule@nxp.com, sherry.sun@nxp.com,
+ ziniu.wang_1@nxp.com, haibo.chen@nxp.com, LnxRevLi@nxp.com
 
 Hello:
 
-This series was applied to bluetooth/bluetooth-next.git (master)
+This patch was applied to bluetooth/bluetooth-next.git (master)
 by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-On Fri, 14 Jun 2024 14:19:39 +0530 you wrote:
-> This patch series updates the BT firmware file names in BTNXPUART
-> driver, while maintaining backward compatibility by requesting old
-> firmware file name if new firmware file not found.
+On Fri, 14 Jun 2024 13:50:39 +0530 you wrote:
+> This sets the default power save mode setting to enabled.
 > 
-> A new optional firmware-name device tree property has been added to help
-> override the firmware file names hardcoded in the driver.
+> The power save feature is now stable and stress test issues, such as the
+> TX timeout error, have been resolved.
+> commit c7ee0bc8db32 ("Bluetooth: btnxpuart: Resolve TX timeout error in
+> power save stress test")
 > 
 > [...]
 
 Here is the summary with links:
-  - [v4,1/2] dt-bindings: net: bluetooth: nxp: Add firmware-name property
-    https://git.kernel.org/bluetooth/bluetooth-next/c/3a8decfc6350
-  - [v4,2/2] Bluetooth: btnxpuart: Update firmware names
-    https://git.kernel.org/bluetooth/bluetooth-next/c/2c4d9d8e879b
+  - [v2] Bluetooth: btnxpuart: Enable Power Save feature on startup
+    https://git.kernel.org/bluetooth/bluetooth-next/c/1db01d15e2da
 
 You are awesome, thank you!
 -- 
