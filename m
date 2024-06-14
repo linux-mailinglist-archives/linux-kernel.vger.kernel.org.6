@@ -1,110 +1,523 @@
-Return-Path: <linux-kernel+bounces-215001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EAC2908D26
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:17:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10EEF908D2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:17:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD72C1F2512F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:17:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8877328AE02
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522A79463;
-	Fri, 14 Jun 2024 14:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A652BE5A;
+	Fri, 14 Jun 2024 14:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="u3XAwKX/"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Z0RXPnLx";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DhZirnX0";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Z0RXPnLx";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DhZirnX0"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FF5945A
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 14:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEB9125BA
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 14:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718374613; cv=none; b=od5vNURnbkvEgn5z0gFs0FFamQSn8cBU7eZ9UMfoTFXiPYctGcuYSsYvHbRKHgi8B5O8qHDTWztjBWyvY5pv8mQIfXP/OHpar+ggHhYNaKdPTRd1cs0MjCkf4HqU2od98FmHroPin8i5hoP2w+QHsCfWPzGz2LLb/QR6XRcF1yw=
+	t=1718374641; cv=none; b=mdihJzKRICE4AW9clqPjwL1PlmqsARpQOu0F29Xd34eSTbSt16pl9bubgVMg5ANwZx+P0dittql/e1uKMwl8AYhPyK2Ah6kRApoDvQSn+bNkeCH+uWpQ+Mz2tp28byAlvglFONqSSL0W6giFISM3qNxIVQdSsxr16+Py3M991E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718374613; c=relaxed/simple;
-	bh=jpTO11Zs6ARpgn9DdGfpY+ts6ppb84MF/J8UwwtQ6M0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Agc90Lx/J4OudrksdiGz013kkPsOPjSoDxRUMcb99YCyrcLS6ESbZD6cI60Rzh519dEZDGsXFg9N0qFgiF5YI16sUVoQe2SKfD3LDaeesD3odN52FvL0dcgaMVe/NSQr+0fP/WmY4JeXYrm3JS8sqYz4xLnjqJjFNpG0hP+5kHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=u3XAwKX/; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: akpm@linux-foundation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718374607;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=w8jKgK+1dz6W9hZOwl0Mk0auD1tYCqkT+HhvW1YvPYs=;
-	b=u3XAwKX/k1yalv9l/B8981lwLsSxoU4TtJpZgfX2Otb4VYYyX1hxOsRJh/L3oDSXPcZ4TR
-	DZcGeXteZmuoatFYJvHwCHBAZlRUb5lP2bfeGQIQ+HBKDtoPhS1ZCGuRWg+1RMKPRzoPJN
-	tvFUngscgmmwJM1LKcwM8NNXzKcP0/Q=
-X-Envelope-To: andreyknvl@gmail.com
-X-Envelope-To: elver@google.com
-X-Envelope-To: glider@google.com
-X-Envelope-To: dvyukov@google.com
-X-Envelope-To: ryabinin.a.a@gmail.com
-X-Envelope-To: kasan-dev@googlegroups.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: spender@grsecurity.net
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: andrey.konovalov@linux.dev
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>,
-	Marco Elver <elver@google.com>,
-	Alexander Potapenko <glider@google.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	kasan-dev@googlegroups.com,
-	linux-mm@kvack.org,
-	Brad Spengler <spender@grsecurity.net>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] kasan: fix bad call to unpoison_slab_object
-Date: Fri, 14 Jun 2024 16:16:40 +0200
-Message-Id: <20240614141640.59324-1-andrey.konovalov@linux.dev>
+	s=arc-20240116; t=1718374641; c=relaxed/simple;
+	bh=NQV3jZRTjEIMlsJp5aMRtn+1cEcrByXOW1jfW0c01s4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rCCoS3QYV3LYXF08wRqifkhpzvbECCyMkV/LstoM8cNQvJ/Aihec1fB1eOhwrwUzqRWLNKsxAbnpI3Gl+vrENPa/BDmC2kaX077wjpOFl9q1BGesAOpDP6So5XtJOdaYhItnuAEsyLS9gBsqAJ2DY9Zp0B4luJnZ+mjSgLPav5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Z0RXPnLx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DhZirnX0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Z0RXPnLx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DhZirnX0; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BA30D338B4;
+	Fri, 14 Jun 2024 14:17:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718374636; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nCJL1DevtGYJiI4t27twmBQhRm4pTinxyOUt2bmRg6M=;
+	b=Z0RXPnLx55pqALECqbzvnXzuaIVny/BSbx4XVZu2Q6zTR86TzQnt0saZp/Im2EWx4AMlhM
+	/w3ID+xl98i2l8DbJ75AgBNIkUashexu84++vVB0gyI6kvutDDryJt8wsG4HCsXKlRZVyv
+	qoX+yI0uADz7scY718owAgUAVPVmJfE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718374636;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nCJL1DevtGYJiI4t27twmBQhRm4pTinxyOUt2bmRg6M=;
+	b=DhZirnX0l6BhPw/o0U/Ih5BQmae2BBhMs/Xl0EWcfE9GqnTQ0eG/GCzdmBYPQbEwbvOJk1
+	+Pxshs+r2kHiNXDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718374636; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nCJL1DevtGYJiI4t27twmBQhRm4pTinxyOUt2bmRg6M=;
+	b=Z0RXPnLx55pqALECqbzvnXzuaIVny/BSbx4XVZu2Q6zTR86TzQnt0saZp/Im2EWx4AMlhM
+	/w3ID+xl98i2l8DbJ75AgBNIkUashexu84++vVB0gyI6kvutDDryJt8wsG4HCsXKlRZVyv
+	qoX+yI0uADz7scY718owAgUAVPVmJfE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718374636;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nCJL1DevtGYJiI4t27twmBQhRm4pTinxyOUt2bmRg6M=;
+	b=DhZirnX0l6BhPw/o0U/Ih5BQmae2BBhMs/Xl0EWcfE9GqnTQ0eG/GCzdmBYPQbEwbvOJk1
+	+Pxshs+r2kHiNXDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7399B13AAF;
+	Fri, 14 Jun 2024 14:17:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xfHaGuxQbGbZTAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 14 Jun 2024 14:17:16 +0000
+Message-ID: <ec2b6450-2176-494c-a061-b21a08d657a2@suse.de>
+Date: Fri, 14 Jun 2024 16:17:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] drm/fb-helper: Detect when lid is closed during
+ initialization
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>
+Cc: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ open list <linux-kernel@vger.kernel.org>, amd-gfx@lists.freedesktop.org,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Chris Bainbridge <chris.bainbridge@gmail.com>
+References: <20240613051700.1112-1-mario.limonciello@amd.com>
+ <f5485db8-9e1d-4b95-a0ec-25ee8551795d@suse.de>
+ <df7dc942-4e65-4e3a-8b10-6f4f0d1ef602@amd.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <df7dc942-4e65-4e3a-8b10-6f4f0d1ef602@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Spamd-Result: default: False [-2.79 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,amd.com:email,gitlab.freedesktop.org:url]
+X-Spam-Flag: NO
+X-Spam-Score: -2.79
+X-Spam-Level: 
 
-From: Andrey Konovalov <andreyknvl@gmail.com>
+Hi
 
-Commit 29d7355a9d05 ("kasan: save alloc stack traces for mempool") messed
-up one of the calls to unpoison_slab_object: the last two arguments are
-supposed to be GFP flags and whether to init the object memory.
+Am 14.06.24 um 15:47 schrieb Mario Limonciello:
+> On 6/14/2024 03:15, Thomas Zimmermann wrote:
+>> Hi Mario
+>>
+>> Am 13.06.24 um 07:17 schrieb Mario Limonciello:
+>>> If the lid on a laptop is closed when eDP connectors are populated
+>>> then it remains enabled when the initial framebuffer configuration
+>>> is built.
+>>>
+>>> When creating the initial framebuffer configuration detect the
+>>> lid status and if it's closed disable any eDP connectors.
+>>>
+>>> Also set up a workqueue to monitor for any future lid events.
+>>
+>> After reading through this patchset, I think fbdev emulation is not 
+>> the right place for this code, as lid state is global.
+>>
+>> You could put this into drm_client_modeset.c and track lid state per 
+>> client. drm_fb_helper_lid_work() would call the client's hotplug 
+>> callback. But preferable, lid state should be tracked per DRM device 
+>> in struct drm_mode_config and call drm_client_dev_hotplug() on each 
+>> lid-state event. Thoughts? Best regards Thomas
+>
+> This is pretty similar to what I first did when moving from ACPI over 
+> to generic input switch.
+>
+> It works for the initial configuration.  But I don't believe it makes 
+> sense for the lid switch events because not all DRM clients will 
+> "want" to respond to the lid switch events.  By leaving it up to the 
+> client for everything except fbdev emulation they can also track the 
+> lid switch and decide the policy.
 
-Fix the call.
 
-Without this fix, unpoison_slab_object provides the object's size as
-GFP flags to unpoison_slab_object, which can cause LOCKDEP reports
-(and probably other issues).
+All our current clients do fbdev emulation, possibly others would be the 
+panic screen and a boot-up logo. A panic screen doesn't do actual mode 
+setting, but any other client would most likely want enable and disable 
+the display depending on the lid state. Having this code in the DRM 
+client helpers make perfect sense. But as it's global state, it makes no 
+sense to set this up per client. Hence the suggestion to manage this in 
+per DRM device.
 
-Fixes: 29d7355a9d05 ("kasan: save alloc stack traces for mempool")
-Reported-by: Brad Spengler <spender@grsecurity.net>
-Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
----
- mm/kasan/common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It would also make sense to try to integrate this into the probe 
+helpers. When the lid state changes, the probe helpers would invoke the 
+driver's regular hotplugging code.
 
-diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-index e7c9a4dc89f8..85e7c6b4575c 100644
---- a/mm/kasan/common.c
-+++ b/mm/kasan/common.c
-@@ -532,7 +532,7 @@ void __kasan_mempool_unpoison_object(void *ptr, size_t size, unsigned long ip)
- 		return;
- 
- 	/* Unpoison the object and save alloc info for non-kmalloc() allocations. */
--	unpoison_slab_object(slab->slab_cache, ptr, size, flags);
-+	unpoison_slab_object(slab->slab_cache, ptr, flags, false);
- 
- 	/* Poison the redzone and save alloc info for kmalloc() allocations. */
- 	if (is_kmalloc_cache(slab->slab_cache))
+
+>
+> I also worry about what happens if the kernel does a hotplug callback 
+> on lid events as well at the client choosing to do it. Don't we end up 
+> with two modesets?  So then I would think you need a handshake of some 
+> sort to decide whether to do it for a given client where fbdev 
+> emulation would opt in and then all other clients can choose to opt in 
+> or not.
+
+
+What do you mean by the kernel does a hotplug event and the client does 
+one? There should really only be one place to handle all of this. If we 
+end up with two modesets, we'd get an additional flicker when the lid 
+gets opened.
+
+
+Best regards
+Thomas
+
+>
+>>>
+>>> Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>>> Reported-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+>>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3349
+>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>> ---
+>>> v2->v3:
+>>>   * Use input device instead of ACPI device
+>>>   * Detect lid open/close events
+>>> ---
+>>>   drivers/gpu/drm/drm_client_modeset.c |  29 ++++++
+>>>   drivers/gpu/drm/drm_fb_helper.c      | 132 
+>>> +++++++++++++++++++++++++++
+>>>   include/drm/drm_device.h             |   6 ++
+>>>   include/drm/drm_fb_helper.h          |   2 +
+>>>   4 files changed, 169 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/drm_client_modeset.c 
+>>> b/drivers/gpu/drm/drm_client_modeset.c
+>>> index 31af5cf37a09..b8adfe87334b 100644
+>>> --- a/drivers/gpu/drm/drm_client_modeset.c
+>>> +++ b/drivers/gpu/drm/drm_client_modeset.c
+>>> @@ -257,6 +257,34 @@ static void 
+>>> drm_client_connectors_enabled(struct drm_connector **connectors,
+>>>           enabled[i] = drm_connector_enabled(connectors[i], false);
+>>>   }
+>>> +static void drm_client_match_edp_lid(struct drm_device *dev,
+>>> +                     struct drm_connector **connectors,
+>>> +                     unsigned int connector_count,
+>>> +                     bool *enabled)
+>>> +{
+>>> +    int i;
+>>> +
+>>> +    for (i = 0; i < connector_count; i++) {
+>>> +        struct drm_connector *connector = connectors[i];
+>>> +
+>>> +        switch (connector->connector_type) {
+>>> +        case DRM_MODE_CONNECTOR_LVDS:
+>>> +        case DRM_MODE_CONNECTOR_eDP:
+>>> +            if (!enabled[i])
+>>> +                continue;
+>>> +            break;
+>>> +        default:
+>>> +            continue;
+>>> +        }
+>>> +
+>>> +        if (dev->lid_closed) {
+>>> +            drm_dbg_kms(dev, "[CONNECTOR:%d:%s] lid is closed, 
+>>> disabling\n",
+>>> +                    connector->base.id, connector->name);
+>>> +            enabled[i] = false;
+>>> +        }
+>>> +    }
+>>> +}
+>>> +
+>>>   static bool drm_client_target_cloned(struct drm_device *dev,
+>>>                        struct drm_connector **connectors,
+>>>                        unsigned int connector_count,
+>>> @@ -844,6 +872,7 @@ int drm_client_modeset_probe(struct 
+>>> drm_client_dev *client, unsigned int width,
+>>>           memset(crtcs, 0, connector_count * sizeof(*crtcs));
+>>>           memset(offsets, 0, connector_count * sizeof(*offsets));
+>>> +        drm_client_match_edp_lid(dev, connectors, connector_count, 
+>>> enabled);
+>>>           if (!drm_client_target_cloned(dev, connectors, 
+>>> connector_count, modes,
+>>>                             offsets, enabled, width, height) &&
+>>>               !drm_client_target_preferred(dev, connectors, 
+>>> connector_count, modes,
+>>> diff --git a/drivers/gpu/drm/drm_fb_helper.c 
+>>> b/drivers/gpu/drm/drm_fb_helper.c
+>>> index d612133e2cf7..41dd5887599a 100644
+>>> --- a/drivers/gpu/drm/drm_fb_helper.c
+>>> +++ b/drivers/gpu/drm/drm_fb_helper.c
+>>> @@ -30,6 +30,8 @@
+>>>   #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>>>   #include <linux/console.h>
+>>> +#include <linux/input.h>
+>>> +#include <linux/mod_devicetable.h>
+>>>   #include <linux/pci.h>
+>>>   #include <linux/sysrq.h>
+>>>   #include <linux/vga_switcheroo.h>
+>>> @@ -413,6 +415,128 @@ static void drm_fb_helper_damage_work(struct 
+>>> work_struct *work)
+>>>       drm_fb_helper_fb_dirty(helper);
+>>>   }
+>>> +static void drm_fb_helper_lid_event(struct input_handle *handle, 
+>>> unsigned int type,
+>>> +                    unsigned int code, int value)
+>>> +{
+>>> +    if (type == EV_SW && code == SW_LID) {
+>>> +        struct drm_fb_helper *fb_helper = handle->handler->private;
+>>> +
+>>> +        if (value != fb_helper->dev->lid_closed) {
+>>> +            fb_helper->dev->lid_closed = value;
+>>> +            queue_work(fb_helper->input_wq, &fb_helper->lid_work);
+>>> +        }
+>>> +    }
+>>> +}
+>>> +
+>>> +struct drm_fb_lid {
+>>> +    struct input_handle handle;
+>>> +};
+>>> +
+>>> +static int drm_fb_helper_lid_connect(struct input_handler *handler,
+>>> +                     struct input_dev *dev,
+>>> +                     const struct input_device_id *id)
+>>> +{
+>>> +    struct drm_fb_helper *fb_helper = handler->private;
+>>> +    struct drm_fb_lid *lid;
+>>> +    char *name;
+>>> +    int error;
+>>> +
+>>> +    lid = kzalloc(sizeof(*lid), GFP_KERNEL);
+>>> +    if (!lid)
+>>> +        return -ENOMEM;
+>>> +
+>>> +    name = kasprintf(GFP_KERNEL, "drm-fb-helper-lid-%s", 
+>>> dev_name(&dev->dev));
+>>> +    if (!name) {
+>>> +        error = -ENOMEM;
+>>> +        goto err_free_lid;
+>>> +    }
+>>> +
+>>> +    lid->handle.dev = dev;
+>>> +    lid->handle.handler = handler;
+>>> +    lid->handle.name = name;
+>>> +    lid->handle.private = lid;
+>>> +
+>>> +    error = input_register_handle(&lid->handle);
+>>> +    if (error)
+>>> +        goto err_free_name;
+>>> +
+>>> +    error = input_open_device(&lid->handle);
+>>> +    if (error)
+>>> +        goto err_unregister_handle;
+>>> +
+>>> +    fb_helper->dev->lid_closed = dev->sw[SW_LID];
+>>> +    drm_dbg_kms(fb_helper->dev, "initial lid state is set to %d\n", 
+>>> fb_helper->dev->lid_closed);
+>>> +
+>>> +    return 0;
+>>> +
+>>> +err_unregister_handle:
+>>> +    input_unregister_handle(&lid->handle);
+>>> +err_free_name:
+>>> +    kfree(name);
+>>> +err_free_lid:
+>>> +    kfree(lid);
+>>> +    return error;
+>>> +}
+>>> +
+>>> +static void drm_fb_helper_lid_disconnect(struct input_handle *handle)
+>>> +{
+>>> +    struct drm_fb_lid *lid = handle->private;
+>>> +
+>>> +    input_close_device(handle);
+>>> +    input_unregister_handle(handle);
+>>> +
+>>> +    kfree(handle->name);
+>>> +    kfree(lid);
+>>> +}
+>>> +
+>>> +static const struct input_device_id drm_fb_helper_lid_ids[] = {
+>>> +    {
+>>> +        .flags = INPUT_DEVICE_ID_MATCH_EVBIT | 
+>>> INPUT_DEVICE_ID_MATCH_SWBIT,
+>>> +        .evbit = { BIT_MASK(EV_SW) },
+>>> +        .swbit = { [BIT_WORD(SW_LID)] = BIT_MASK(SW_LID) },
+>>> +    },
+>>> +    { },
+>>> +};
+>>> +
+>>> +static struct input_handler drm_fb_helper_lid_handler = {
+>>> +    .event =    drm_fb_helper_lid_event,
+>>> +    .connect =    drm_fb_helper_lid_connect,
+>>> +    .disconnect =    drm_fb_helper_lid_disconnect,
+>>> +    .name =        "drm-fb-helper-lid",
+>>> +    .id_table =    drm_fb_helper_lid_ids,
+>>> +};
+>>> +
+>>> +static void drm_fb_helper_lid_work(struct work_struct *work)
+>>> +{
+>>> +    struct drm_fb_helper *fb_helper = container_of(work, struct 
+>>> drm_fb_helper,
+>>> +                               lid_work);
+>>> +    drm_fb_helper_hotplug_event(fb_helper);
+>>> +}
+>>> +
+>>> +static int drm_fb_helper_create_lid_handler(struct drm_fb_helper 
+>>> *fb_helper)
+>>> +{
+>>> +    int ret = 0;
+>>> +
+>>> +    if (fb_helper->deferred_setup)
+>>> +        return 0;
+>>> +
+>>> +    fb_helper->input_wq = create_singlethread_workqueue("drm-fb-lid");
+>>> +    if (fb_helper->input_wq == NULL)
+>>> +        return -ENOMEM;
+>>> +
+>>> +    drm_fb_helper_lid_handler.private = fb_helper;
+>>> +    ret = input_register_handler(&drm_fb_helper_lid_handler);
+>>> +    if (ret)
+>>> +        goto remove_wq;
+>>> +
+>>> +    return 0;
+>>> +
+>>> +remove_wq:
+>>> +    destroy_workqueue(fb_helper->input_wq);
+>>> +    fb_helper->input_wq = NULL;
+>>> +    return ret;
+>>> +}
+>>> +
+>>>   /**
+>>>    * drm_fb_helper_prepare - setup a drm_fb_helper structure
+>>>    * @dev: DRM device
+>>> @@ -445,6 +569,7 @@ void drm_fb_helper_prepare(struct drm_device 
+>>> *dev, struct drm_fb_helper *helper,
+>>>       spin_lock_init(&helper->damage_lock);
+>>>       INIT_WORK(&helper->resume_work, drm_fb_helper_resume_worker);
+>>>       INIT_WORK(&helper->damage_work, drm_fb_helper_damage_work);
+>>> +    INIT_WORK(&helper->lid_work, drm_fb_helper_lid_work);
+>>>       helper->damage_clip.x1 = helper->damage_clip.y1 = ~0;
+>>>       mutex_init(&helper->lock);
+>>>       helper->funcs = funcs;
+>>> @@ -593,6 +718,9 @@ void drm_fb_helper_fini(struct drm_fb_helper 
+>>> *fb_helper)
+>>>       if (!drm_fbdev_emulation)
+>>>           return;
+>>> +    input_unregister_handler(&drm_fb_helper_lid_handler);
+>>> +    destroy_workqueue(fb_helper->input_wq);
+>>> +
+>>>       cancel_work_sync(&fb_helper->resume_work);
+>>>       cancel_work_sync(&fb_helper->damage_work);
+>>> @@ -1842,6 +1970,10 @@ 
+>>> __drm_fb_helper_initial_config_and_unlock(struct drm_fb_helper 
+>>> *fb_helper)
+>>>       width = dev->mode_config.max_width;
+>>>       height = dev->mode_config.max_height;
+>>> +    ret = drm_fb_helper_create_lid_handler(fb_helper);
+>>> +    if (ret)
+>>> +        return ret;
+>>> +
+>>>       drm_client_modeset_probe(&fb_helper->client, width, height);
+>>>       ret = drm_fb_helper_single_fb_probe(fb_helper);
+>>>       if (ret < 0) {
+>>> diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
+>>> index 63767cf24371..619af597784c 100644
+>>> --- a/include/drm/drm_device.h
+>>> +++ b/include/drm/drm_device.h
+>>> @@ -316,6 +316,12 @@ struct drm_device {
+>>>        * Root directory for debugfs files.
+>>>        */
+>>>       struct dentry *debugfs_root;
+>>> +
+>>> +    /**
+>>> +     * @lid_closed: Flag to tell the lid switch state
+>>> +     */
+>>> +    bool lid_closed;
+>>> +
+>>>   };
+>>>   #endif
+>>> diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
+>>> index 375737fd6c36..7fb36c10299d 100644
+>>> --- a/include/drm/drm_fb_helper.h
+>>> +++ b/include/drm/drm_fb_helper.h
+>>> @@ -143,6 +143,8 @@ struct drm_fb_helper {
+>>>       spinlock_t damage_lock;
+>>>       struct work_struct damage_work;
+>>>       struct work_struct resume_work;
+>>> +    struct work_struct lid_work;
+>>> +    struct workqueue_struct *input_wq;
+>>>       /**
+>>>        * @lock:
+>>
+>
+
 -- 
-2.25.1
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
