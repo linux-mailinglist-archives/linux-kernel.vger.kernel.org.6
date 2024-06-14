@@ -1,151 +1,124 @@
-Return-Path: <linux-kernel+bounces-214591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12EBB9086DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:59:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D5979086E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E0D91C24A57
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:59:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2912B21435
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596521922C2;
-	Fri, 14 Jun 2024 08:59:32 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76ABF1922CC;
+	Fri, 14 Jun 2024 09:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A+7+Mxo2"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6C714884B;
-	Fri, 14 Jun 2024 08:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D96118FC9E
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718355571; cv=none; b=n6iLlQstqLDtBmJLKsmi+fDZl5bRnNofgviiBDs7eGiXVEsGknW3LZhQOPOjLDDl5fFPGTHG+0kGx46q8NWgyzA8uonFofAuhLIXpqG1qz7WGMdCfH+yol3yGiV90PVOCMOqTWjR+DYPPbi7DSEsVX3o65zOzIoGMxsSVsurWKY=
+	t=1718355618; cv=none; b=gQb6Rm9o05hIuUTyt/EiLUuY1Vtf9oq6IlekBRRPLyLh9rx9JcsAbPQDI+uUXd3XUE3ox9yykzmNu1RgLbL761tmQmURbu10JAgznfqhh2QrMqMWE/GMpCDjXMfMk6NqzhbAY+KYRXHqfF7M648qUe86ngzfgaVnaA6VUyfY1xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718355571; c=relaxed/simple;
-	bh=Dn659CpvPrqEBO6oLG7tDarlWSwX43moRi/fdKRv/yM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fBJskLyLnYo47lOsn+LGKNUq7vT+47rgCGSskUuuexI1NqV6bVOdWzQOc8pw2Gpz//ww2KiYmPg0p3kgIxroN7YLyZy6s6L4ByHXB9GMsbW3aoUbQJ4zXGN43VeHMAnbLUEZQmOc7Et1X4zm0MOPnNiNi2Gkfe68d8kQo9+bZdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W0tPt4YXBz6JB6L;
-	Fri, 14 Jun 2024 16:54:42 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1048A140C72;
-	Fri, 14 Jun 2024 16:59:26 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Jun
- 2024 09:59:25 +0100
-Date: Fri, 14 Jun 2024 09:59:24 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Alistair Francis <alistair23@gmail.com>
-CC: <bhelgaas@google.com>, <linux-pci@vger.kernel.org>, <lukas@wunner.de>,
-	<alex.williamson@redhat.com>, <christian.koenig@amd.com>, <kch@nvidia.com>,
-	<gregkh@linuxfoundation.org>, <logang@deltatee.com>,
-	<linux-kernel@vger.kernel.org>, <chaitanyak@nvidia.com>,
-	<rdunlap@infradead.org>, Alistair Francis <alistair.francis@wdc.com>
-Subject: Re: [PATCH v11 3/4] PCI/DOE: Expose the DOE features via sysfs
-Message-ID: <20240614095924.00004eb5@Huawei.com>
-In-Reply-To: <20240614001244.925401-3-alistair.francis@wdc.com>
-References: <20240614001244.925401-1-alistair.francis@wdc.com>
-	<20240614001244.925401-3-alistair.francis@wdc.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1718355618; c=relaxed/simple;
+	bh=vuue96tIfWgsHiuEfmQb0PzqCqBFJ6nsE7tv6QKBDGM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S2slzJUj23GzaOlCfcYFfmLL3sfYIirfA0bFRal2hwQEhrPiu/cn2yR/5SkvxqkqjtKLHp1u4zCr0y5TXs6o2ii4P3F7yxXqD+ZsY8QdKRB9lng2Esxu0+J6pWQctg+y/sRGodArWABvJoaOqTudU4fQ/nWM+KxV/IzjYrHBEYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A+7+Mxo2; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-35f1bc2ab37so1806142f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 02:00:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718355616; x=1718960416; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zkjEfE5W3OSfNWGJdTHQ8Hm/JHwwsjW4jrKA6Avs2YU=;
+        b=A+7+Mxo2p92MjY95gtY/ZscTo6hbEHslQFT5vSyph0Rj/vYOZf5gifSIafewF0Ig5/
+         TaxtxwMjiDT9wbHHXzwTxK/w/GEMnt1rojNWcPR8j3LTTW6v0EuViLB6sYz/C04PIF6Q
+         o0me77UR1cSGTaxHF1pgjPKKAqFBJcs6I28Ca7GGhNRjK1Akz7ALvi/FeFNYst4KJHhO
+         DDE8a249ZIFyWxIpJPfAwm33l9xLNkzglqoSejvHQlYqX7L8tWK78Ib8KR8TqGELIN7r
+         ucW+CqAU7iQ2iB2McAyBFReNdKpOvouH8UubSHFD40s8yiSvx5sQtzbMu/jyfC87hBkc
+         MC1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718355616; x=1718960416;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zkjEfE5W3OSfNWGJdTHQ8Hm/JHwwsjW4jrKA6Avs2YU=;
+        b=alm6JXJjNMlulLglIf2JkxApvYq6E6q1L2ZuF7TQ/GAc4hEMe6XixkDVva0gua887z
+         ZZpOJVbBP+4KQC03Tz8TkHCKczoAQZeZeTeOWn7YvHpUlhYqjEJcYLZT8Wyt6HtNBjMo
+         Kdjh/CnpDkmUUj5B/pZ+Pw7Y5Mym2ffEsLvUIze0OG7nudgBtnUx1icWfSZnkxnw8Jol
+         4t6NAOXsdVMKY0fVw2GT1Trr0jqiv35zGPrkig1cdh0tI1DDa8TtmLewlOEmC3a4rYFK
+         2eTcGikyXDJXsvlfsFZFwpniKPrXegvBUo603E/0dF6+7kDkHCUksYnl6qFoeZD9VzT3
+         bxzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVct1H7EUdsRtsnb0VLo0XYuq5UwKQvy6Eg0o4Hrl1rsrTRkH+o/v0+AF0g+ls4hECCDmdZ306gil/9ls/1Sy1rQNz2jZ2NwXK3aqag
+X-Gm-Message-State: AOJu0Yy5rAtY+DBWXDpt/I5mLG4JH+NvI9GCYsJzLt2N6VHQil+BLdsT
+	oDYSZTsT/BvtE2rwhOL7uYin9UFqOLR9LFDrvsMZ1OfmBulsCB9Ru74zc3Mx5Bd3Xumz/LzWJH+
+	Ld3DHbP01jDhmR76M2zVQ36+eeLiPdZuD0Xt1
+X-Google-Smtp-Source: AGHT+IHIvcZm6t6jTk4ahi6buXLdxcxdUQK9Bj+Nnu9A3LPhEL1/OTB+NBQWXFB5IKzAaEAjsBkW3l+oszXwGLcZ8vw=
+X-Received: by 2002:adf:ce10:0:b0:360:7284:969 with SMTP id
+ ffacd0b85a97d-3607a76be82mr1562172f8f.42.1718355615440; Fri, 14 Jun 2024
+ 02:00:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+References: <20240601004856.206682-1-jhubbard@nvidia.com>
+In-Reply-To: <20240601004856.206682-1-jhubbard@nvidia.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 14 Jun 2024 11:00:02 +0200
+Message-ID: <CAH5fLgiJd3j3siCWteK-bBsnKvVrpS88vyWVV-k37SZyu2Nj8Q@mail.gmail.com>
+Subject: Re: [PATCH] Makefile: rust-analyzer target: better error handling and comments
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 14 Jun 2024 10:12:43 +1000
-Alistair Francis <alistair23@gmail.com> wrote:
+On Sat, Jun 1, 2024 at 2:49=E2=80=AFAM John Hubbard <jhubbard@nvidia.com> w=
+rote:
+>
+> 1) Provide a more self-explanatory error message for the "Rust not
+> available" case. Without this patch, if Rust is not set up properly
+> (which happens a lot, seeing as how one must routinely run "rustup
+> override ..." with each new kernel release), the "make rust-analyzer"
+> invocation generates a somewhat confusing message:
+>
+>     "No rule to make target 'rust-analyzer"
+>
+> This is confusing at first, because there is, in fact, a rust-analyzer
+> build target. It's just not set up to handle errors gracefully.
+>
+> Instead of inflicting that on the developer, just print that Rust is
+> not available, with a blank line above and below, so it doesn't get lost
+> in the noise. Now the error case looks like this:
+>
+>     $ make rust-analyzer
+>
+>     Rust is not available
+>
+>     make[1]: *** [/kernel_work/linux-github/Makefile:1975: rust-analyzer]=
+ Error 1
+>     make: *** [Makefile:240: __sub-make] Error 2
+>
+> 2) As long as I'm there, also add some documentation about what
+> rust-analyzer provides.
+>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-> The PCIe 6 specification added support for the Data Object
-> Exchange (DOE).
-> When DOE is supported the DOE Discovery Feature must be implemented per
-> PCIe r6.1 sec 6.30.1.1. The protocol allows a requester to obtain
-> information about the other DOE features supported by the device.
-> 
-> The kernel is already querying the DOE features supported and cacheing
-> the values. Expose the values in sysfs to allow user space to
-> determine which DOE features are supported by the PCIe device.
-> 
-> By exposing the information to userspace tools like lspci can relay the
-> information to users. By listing all of the supported features we can
-> allow userspace to parse the list, which might include
-> vendor specific features as well as yet to be supported features.
-> 
-> As the DOE Discovery feature must always be supported we treat it as a
-> special named attribute case. This allows the usual PCI attribute_group
-> handling to correctly create the doe_features directory when registering
-> pci_doe_sysfs_group (otherwise it doesn't and sysfs_add_file_to_group()
-> will seg fault).
-> 
-> After this patch is supported you can see something like this when
-> attaching a DOE device
-> 
-> $ ls /sys/devices/pci0000:00/0000:00:02.0//doe*
-> 0001:01        0001:02        doe_discovery
-> 
-> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
-Hi Alistair,
-
-One question inline.  Feels like I'm either missing something or
-the code has evolved in a fashion that left us with a pointless check
-on attr visibility.
-
-Jonathan
-
-> diff --git a/drivers/pci/doe.c b/drivers/pci/doe.c
-> index defc4be81bd4..9858b709c020 100644
-> --- a/drivers/pci/doe.c
-> +++ b/drivers/pci/doe.c
-
-> +static umode_t pci_doe_features_sysfs_attr_visible(struct kobject *kobj,
-> +						   struct attribute *a, int n)
-> +{
-> +	struct pci_dev *pdev = to_pci_dev(kobj_to_dev(kobj));
-> +	struct pci_doe_mb *doe_mb;
-> +	unsigned long index, j;
-> +	unsigned long vid, type;
-> +	void *entry;
-> +
-> +	xa_for_each(&pdev->doe_mbs, index, doe_mb) {
-> +		xa_for_each(&doe_mb->feats, j, entry) {
-
-I'm confused.  What is the intent here?
-
-Given every DOE should have the discovery entry any call of this function
-that actually finds a DOE should return a->mode, so why search the
-actual entries? 
-
-Given absence of the files anyway (due to the directory visible checks)
-if there are no DOEs, why not drop this function completely?
-
-> +			vid = xa_to_value(entry) >> 8;
-> +			type = xa_to_value(entry) & 0xFF;
-> +
-> +			if (vid == 0x01 && type == 0x00) {
-> +				/*
-> +				 * This is the DOE discovery protocol
-> +				 * Every DOE instance must support this, so we
-> +				 * give it a useful name.
-> +				 */
-> +				return a->mode;
-> +			}
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-
-
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Tested-by: Alice Ryhl <aliceryhl@google.com>
 
