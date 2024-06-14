@@ -1,129 +1,91 @@
-Return-Path: <linux-kernel+bounces-215019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01BA2908D51
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:24:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF67908D54
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAE151F22089
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:24:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52B791F21AAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1014964A;
-	Fri, 14 Jun 2024 14:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE166DDAA;
+	Fri, 14 Jun 2024 14:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Sdrp3oKT"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HHAC2UmY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090D949630
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 14:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9EE8F6A;
+	Fri, 14 Jun 2024 14:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718374957; cv=none; b=gP8y4nHFpb2oQiXokSwtDsXhUxQUNKWHKpROJ7tVsPAqFc0nwjksZFK8Q4BLQfSZ7qoFy561ts5S8cQug6B3AiR00U37etwrIeVI3WB+2mefDmDS3t50aWhGlzgGwUuebFkJKjhr7slXcVYNM3TAkunzmKf5IISEeVBXHNMOxx8=
+	t=1718375009; cv=none; b=gZ4siKE/fWkFBLOr7bde2imsgyWKmSEkA45hCKDSfrhiGVZ6Fhzx7UHRPRPp4V6boe0DkWDkuazlKYGtLKhJ5tmDj2OB59/70XvwLibdUrlJEr3jGHaZkfEcVBkM971Ky/3kDDZ7wD2Ao4hy3anP8IJ3zp8QkLkNOGLLyjctSq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718374957; c=relaxed/simple;
-	bh=Q7a++o7eiwUm8M0irLfARJWMrYHyrc7Ai/QKurMYIDk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=k7uoU/xDyx9rCKVmjS9pm2CIMukRqyO9pEWYR7KtdBfTx0QoTpo9U/GveT8u3ce8A24dcnoIzndc7OCCIWTb9V8A5wc+Xp9LL8/MIzN6V3EAeMN7Q6/8BZ8EYvLLJZ+KccVb0U6vDzWhrP8I6h9cdkEyVlH1C56QD4ISs/RT9w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Sdrp3oKT; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f44b594deeso21678105ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 07:22:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1718374955; x=1718979755; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wDCzcwoY+7Urqf0z9zEneV8CU/qabdLYOlq0L2NAoPg=;
-        b=Sdrp3oKT+qzuCM2pbbA7+MtRXJELPBufR3k0gYoVbxidM49WPLQTkiMebW6rlgQfDL
-         zukX8zs+5evigM7FdXJU1k5VE86f4twOq7ZJnkaN5k4Dx9DTu8kX4f5FiNAWiSXUz/Rh
-         sewN47NzCAoVu2tzEmoPKI4BmvPem34v/LnWxq4TrZ59Yd1u3jI52NEqnYvjNGRNRaRJ
-         8PjkVt3ezviUxHfZIgcp1l+AdNPELBfed0oAGkQnupj5144JRiKmT0oWPEZYl8pVohAP
-         rNiUsLMBz9hptK7lFUWb6VqgROAUj0FlWic3fTEONxCcZ93BmvnMIYsIEArAEiI/D6F0
-         9jqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718374955; x=1718979755;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wDCzcwoY+7Urqf0z9zEneV8CU/qabdLYOlq0L2NAoPg=;
-        b=DPXXLtHUbRPTc77hnr+nn7MsexSubm8e+5/7IkQUiVPRCRnG00KCU6xZaIRd/QKYFE
-         9VPkqDqdv86iACGq6sXVmfq6J/wHaAUVWrR5l9ObJr1gNDwjlLZ7Dfy9KhIOz7Z3H4Hw
-         SPyxWsFqCMGKZnNzosvhjIXT2b2hYqL2K900TU+9QuiCtwLs6XBPF49n0z2ED1dnYY3g
-         kh/bQ8ymAWtgTmrzi3TfaleTE9aq2feYjRILqMIGc2YkceaU8KWPZIaQCtwYSEp07L04
-         9a/KQGo4ZHFens1jzsc8KZ4sqDSgXG0wsdZTTATaZ8IO7ABXdtKmSBcYY5rdOcFq3ZKf
-         C+jw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFSszaAa5uvZBLt7q15801bweNfDD70R382iMAug5EaV7caydVjh95lZAqMYCJMrA2itGcNqZH9tiPlJDFr3zlaPPVRe5rsHmBwOBO
-X-Gm-Message-State: AOJu0Yxx/OYVE0cAMc940A1S0LtsEd8sWyWYFL4OgGCnQmnBQ7taGoZV
-	6mlDbmI7NFf/LZrBlghQZhx/C1ircx6P/bofyYhVSfa0kkonZk93b6G1mg0p0FA=
-X-Google-Smtp-Source: AGHT+IFNWiib9Mbp3WUeDaTWc2pLd5fn9/fMVeRdDHjkyMdQAAUYNKmmTVlC+NReoIyOXuSV1VHXpQ==
-X-Received: by 2002:a17:902:f68e:b0:1f7:2849:183f with SMTP id d9443c01a7336-1f8625c243amr33675115ad.1.1718374955357;
-        Fri, 14 Jun 2024 07:22:35 -0700 (PDT)
-Received: from hsinchu26.internal.sifive.com (59-124-168-89.hinet-ip.hinet.net. [59.124.168.89])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e559d9sm32522005ad.35.2024.06.14.07.22.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 07:22:35 -0700 (PDT)
-From: Zong Li <zong.li@sifive.com>
-To: joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com,
-	tjeznach@rivosinc.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	jgg@ziepe.ca,
-	kevin.tian@intel.com,
-	linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-riscv@lists.infradead.org
-Cc: Zong Li <zong.li@sifive.com>
-Subject: [RFC PATCH v2 10/10] iommu:riscv: support nested iommu for get_msi_mapping_domain operation
-Date: Fri, 14 Jun 2024 22:21:56 +0800
-Message-Id: <20240614142156.29420-11-zong.li@sifive.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240614142156.29420-1-zong.li@sifive.com>
-References: <20240614142156.29420-1-zong.li@sifive.com>
+	s=arc-20240116; t=1718375009; c=relaxed/simple;
+	bh=AFnUDwO0gqdy9MNOQgd5uFUXhZnf4abeUlVCfYuqKRM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hB1OtwGhuWlSwN6FVVr+21c1NFNfMtrhOtKdSexcWnan+HR/I14sXJUMB6Cd+OprrhqZxZ9T7z6BHsgGc/1+2AC4AX7qzQwgaPbU+D9oZhSfhpidrigltp5g6NfDqy2fX0mynGK0r9z8Baqzs5xwd7L7Nz+CpILPhV7/dpw4dqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HHAC2UmY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F389C2BD10;
+	Fri, 14 Jun 2024 14:23:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718375008;
+	bh=AFnUDwO0gqdy9MNOQgd5uFUXhZnf4abeUlVCfYuqKRM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HHAC2UmYdJJmbrvwzgR808Zub9i4FaKr+ST0LF/vcBkBesNHOoEtfa446mxMUhzcm
+	 EIV8UQ7ferdvOJJT/jYrzr2qUtu3A92yMCxWFcXuVMLo8z94yETwD/8xlbozsiMnre
+	 kpEhxOoCEmNQ4eBa9aZdeqqB/HUH3AXL5I9hydSw8l1+426Bbek0azx4d1tq+jY5Gg
+	 P1HTBH+UQokUfXWKWB3/zP649bjDdyButQYoxAyH4yQf0WW27CU4AAKJQKl3ESomsu
+	 U0t53Si0tjr7WPskqfP8RXZey86ExuTxBXAIy+r9L+CUxAS+vqB5+H8U5q3LKfBGSU
+	 5P9/j3EJDGG+A==
+Message-ID: <e73ca078-9333-4b8e-92af-1c0d7d017632@kernel.org>
+Date: Fri, 14 Jun 2024 17:23:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: soc: ti: Move
+ ti,j721e-system-controller.yaml to soc/ti
+To: Lee Jones <lee@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>,
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Tero Kristo <kristo@kernel.org>, "Andrew F. Davis" <afd@ti.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240520-for-v6-11-j721e-syscon-v1-1-f57a93e12cad@kernel.org>
+ <20240531135017.GL1005600@google.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240531135017.GL1005600@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Return the iommu_domain that should hold the MSI cookie.
+Hi Vignesh & Nishanth,
 
-Signed-off-by: Zong Li <zong.li@sifive.com>
----
- drivers/iommu/riscv/iommu.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On 31/05/2024 16:50, Lee Jones wrote:
+> On Mon, 20 May 2024, Roger Quadros wrote:
+> 
+>> soc/ti is the more appropriate location for the system controller
+>> device tree binding documentation so move there.
+>>
+>> Update Kishon's email address to a working one.
+>>
+>> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+>> ---
+>>  .../bindings/{mfd => soc/ti}/ti,j721e-system-controller.yaml          | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> Acked-by: Lee Jones <lee@kernel.org>
+> 
 
-diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
-index d08eb0a2939e..969a0ba32c9e 100644
---- a/drivers/iommu/riscv/iommu.c
-+++ b/drivers/iommu/riscv/iommu.c
-@@ -1689,10 +1689,22 @@ static int riscv_iommu_cache_invalidate_user(struct iommu_domain *domain,
- 	return ret;
- }
- 
-+static struct iommu_domain *
-+riscv_iommu_get_msi_mapping_domain(struct iommu_domain *domain)
-+{
-+	struct riscv_iommu_domain *riscv_domain = iommu_domain_to_riscv(domain);
-+
-+	if (riscv_domain->s2)
-+		return &riscv_domain->s2->domain;
-+
-+	return domain;
-+}
-+
- static const struct iommu_domain_ops riscv_iommu_nested_domain_ops = {
- 	.attach_dev	= riscv_iommu_attach_dev_nested,
- 	.free		= riscv_iommu_domain_free_nested,
- 	.cache_invalidate_user = riscv_iommu_cache_invalidate_user,
-+	.get_msi_mapping_domain = riscv_iommu_get_msi_mapping_domain,
- };
- 
- static int
+Would you be picking this up via TI/SoC tree please?
+
 -- 
-2.17.1
-
+cheers,
+-roger
 
