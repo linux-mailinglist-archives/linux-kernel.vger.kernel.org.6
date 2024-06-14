@@ -1,221 +1,313 @@
-Return-Path: <linux-kernel+bounces-214499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9960F9085A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:02:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D799085A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25CC51F25D98
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:02:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 382AC2850EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4D6183071;
-	Fri, 14 Jun 2024 08:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HCr1D3bl"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43727183091;
+	Fri, 14 Jun 2024 08:07:40 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682A61836D3;
-	Fri, 14 Jun 2024 08:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7041714A092;
+	Fri, 14 Jun 2024 08:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718352119; cv=none; b=fqswiTahEcZBDY58/iJNYIMzh9nBeLh2dv7/gsoH7Fy5KuhFb+bhJLoYpHAwnYtU9b3Ksh9dxgTxl6je8/HJBrQddgAZVZhLw2cEoguBBAuy/IdVrUcWQY25iIui5iJXJFS7e2uuglCK2rCYsNzzn84ceufrZXNI/LfFt/NR5Fk=
+	t=1718352459; cv=none; b=TviMQlqnW8CU1Pem8jzM6Aa877n9szwQj6BG6jSY/kmI684UX1tgMAzoDAv8dOOnP16ZVhPDISL1vmR48B3WfTMMtojzk4d1uSnvcxPOJ4pKY9qvmIHfi2eu5v1dpWhrnppI179zpt4AyGpqF+j6PSNxyqumLgTvx53uNTO/6ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718352119; c=relaxed/simple;
-	bh=DNloJkCpugxMgXOsQecfvd48tcZUcJDPFTN7cPrQP6c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=swywsZChJkRZch7muze5C9flZZLfgIwEcLH8grwJs2ktjlqnHh4y7n3tp6DEGi3Ke607izNgUyh/MUj0HN3hm8Jfe9Uqzns6Afht17SaBU7U/9/BVkDAE6hWBw1eI7eNdnJEddQuWdkJFKMHx2Z97ba00GlsVaAFffBFPeODDwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HCr1D3bl; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52c815e8e9eso2017293e87.0;
-        Fri, 14 Jun 2024 01:01:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718352115; x=1718956915; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nRWFYP2PnBSqJKVpviuIt+bkDMabc8LZej0hybvhqgM=;
-        b=HCr1D3blzIZOzlhk/hSdEwNlX9awu1hh9OCk9cLfVpGMDqB+OnC8QjL1VnZSWz5S7G
-         Cf40xXrHtyBCKSpsNXOZBCRzdIcX8pqgTgJ8G2BTsV2V67/znFFNibnFEf+3wtBTHUFX
-         dOWf5or6sE4PwiXVWVtVBCuABoO+aNU690yZZLTy1mHBt73a3iJFxOTSrVdn0ESz+ji9
-         f81dweD1eHeqVBbCq8m3zVpE5JQuYFbcotaV5pAxTwRtJCSsTmyxQ2fdukcnbzMC/sbY
-         aeldG+1b2Qhk0gnAS5rYrQ1OICPzBDh3RLihrMKOXowYpnsgf2AUCPa+PofyQ9J3OEl5
-         AwQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718352115; x=1718956915;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nRWFYP2PnBSqJKVpviuIt+bkDMabc8LZej0hybvhqgM=;
-        b=xHKEKQ/FKDgmOPS3UDxvZ0/uKNepBJ78paw2ZGCYGEC2lfj9Mu/UofT8ThjPpQgUup
-         7nU22B1AVfYxGMn3JRekJnsqHVfxrEA4pok210irWiGYgKPOh/ImpnyO8oasXO11fZa+
-         TvHb9WzOvARJehJtn+vVQQbLKLa1E6KdU4tmMqIJSo5s3+mZ6rGmnAqoO1wxDxg4Zjxc
-         QCFYjP3fQEJFpIbpi5hks8uap53TMUrncM5g4aWP2XtAHukYDjFthqXX1bSuXrLpbuEw
-         PRAoaPX+t2Mwb0UCuXivTbdufXGmI1WD5ffDQid3p/oQWY0GcKHHgMa0AcR7e67WVArL
-         FrGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUH3kmfgPgfECDjOmYcwnKGQ0FeqNgiJh88oMizGkho6LsJwnN6vGKz47YFluQpPTzm3qdu5trdd90uGZ19yNwMDObOdpMsf6YDOIK1qouzp819r2RvYdedRaoKqTY8idD8DqppS02L2k1j/ZA63x4Iye+vHCzJSy7IEEptVU+Ib/Xl0t92jlHU
-X-Gm-Message-State: AOJu0YyTwoakUiUMQ5aPbZ40H1oUwUyyrnz2V5auMoWyx7foZhFVpfx6
-	JRXpdmHXtOBNAp9XM7/0HtmxiKrVlGQaHyuIy+b5/ubINK3YjT56
-X-Google-Smtp-Source: AGHT+IHeEQOR6VcQjY6/3rKRzLVKAle1CSEVGl/XgpzmI8h208I/SEeUoNN5Pd4iU+qdGlaKkbLESA==
-X-Received: by 2002:a05:6512:1319:b0:52c:845e:3194 with SMTP id 2adb3069b0e04-52ca6e6d4b3mr1398030e87.29.1718352114995;
-        Fri, 14 Jun 2024 01:01:54 -0700 (PDT)
-Received: from [172.16.183.82] ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282ee91sm437317e87.105.2024.06.14.01.01.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 01:01:54 -0700 (PDT)
-Message-ID: <b585d817-da4d-45b1-87b5-2cfdc8b8823b@gmail.com>
-Date: Fri, 14 Jun 2024 11:01:52 +0300
+	s=arc-20240116; t=1718352459; c=relaxed/simple;
+	bh=g+C9sTXUjr0qI4UHD+E6QB+63tYPAwnvonLjEzwycgQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fLKrIT6pjvbQEOBVXHaVXNKENZukRtmVESHJLYBPV+zMpRxf3hqvod1D1BdG2xNdoLbpnh1gQm0TnJbhkhNM2kw1e/I912RFJpLgm11kMhdrm6X0sAVRL0xk5UVn7bgScQeA8de0EOMaoRuxGoq3UoSPNJsiE2D9bGoDLpENnkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: a2a97b682a2311ef9305a59a3cc225df-20240614
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:a77a25a7-59f8-44a1-9001-cbf1ed2b1799,IP:20,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:11
+X-CID-INFO: VERSION:1.1.38,REQID:a77a25a7-59f8-44a1-9001-cbf1ed2b1799,IP:20,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:11
+X-CID-META: VersionHash:82c5f88,CLOUDID:f05c5ef6fa1f85c4176edcfbee525c4f,BulkI
+	D:240614144740H35N4DT4,BulkQuantity:1,Recheck:0,SF:64|66|24|72|19|44|102,T
+	C:nil,Content:0,EDM:-3,IP:-2,URL:11|1,File:nil,RT:nil,Bulk:40,QS:nil,BEC:n
+	il,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_ULN
+X-UUID: a2a97b682a2311ef9305a59a3cc225df-20240614
+Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
+	(envelope-from <luoxuanqiang@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 340878819; Fri, 14 Jun 2024 15:56:41 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id 081D3B80758A;
+	Fri, 14 Jun 2024 15:56:41 +0800 (CST)
+X-ns-mid: postfix-666BF7B7-860266110
+Received: from localhost.localdomain (unknown [10.42.12.252])
+	by node2.com.cn (NSMail) with ESMTPA id 79F59B80758A;
+	Fri, 14 Jun 2024 07:56:37 +0000 (UTC)
+From: luoxuanqiang <luoxuanqiang@kylinos.cn>
+To: edumazet@google.com
+Cc: davem@davemloft.net,
+	dsahern@kernel.org,
+	fw@strlen.de,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	luoxuanqiang@kylinos.cn,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com
+Subject: Re: [PATCH v1 1/1] Fix race for duplicate reqsk on identical SYN
+Date: Fri, 14 Jun 2024 15:56:37 +0800
+Message-Id: <CANn89iJBOAg+KCZBvkUxdAfTS1jacBBcrW6M5AZQvr=UPFJ0dA@mail.gmail.com> (raw)
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240614060012.158026-1-luoxuanqiang@kylinos.cn>
+References: <CANn89iJBOAg+KCZBvkUxdAfTS1jacBBcrW6M5AZQvr=UPFJ0dA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/10] mfd: bd96801: Add ERRB IRQ
-To: Lee Jones <lee@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Thomas Gleixner <tglx@linutronix.de>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-watchdog@vger.kernel.org
-References: <cover.1717486682.git.mazziesaccount@gmail.com>
- <332a2d2429e2ba3c96afd28c1ccc18efc38e1fd3.1717486682.git.mazziesaccount@gmail.com>
- <20240613163249.GN2561462@google.com>
- <21a468c2-7d8f-459a-a5a9-53d8694c3f38@gmail.com>
- <20240614075004.GB2561462@google.com>
-Content-Language: en-US, en-GB
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20240614075004.GB2561462@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 6/14/24 10:50, Lee Jones wrote:
-> On Fri, 14 Jun 2024, Matti Vaittinen wrote:
-> 
->> On 6/13/24 19:32, Lee Jones wrote:
->>> On Tue, 04 Jun 2024, Matti Vaittinen wrote:
->>>
->>>> The ROHM BD96801 "scalable PMIC" provides two physical IRQs. The ERRB
->>>> handling can in many cases be omitted because it is used to inform fatal
->>>> IRQs, which usually kill the power from the SOC.
->>>>
->>>> There may however be use-cases where the SOC has a 'back-up' emergency
->>>> power source which allows some very short time of operation to try to
->>>> gracefully shut down sensitive hardware. Furthermore, it is possible the
->>>> processor controlling the PMIC is not powered by the PMIC. In such cases
->>>> handling the ERRB IRQs may be beneficial.
->>>>
->>>> Add support for ERRB IRQs.
->>>>
->>>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->>>> ---
->>>> Revision history:
->>>> v2 =>:
->>>> 	- No changes
->>>> v1 => v2:
->>>> 	- New patch
->>>> ---
->>>>    drivers/mfd/rohm-bd96801.c | 291 ++++++++++++++++++++++++++++++++-----
->>>>    1 file changed, 253 insertions(+), 38 deletions(-)
->>>>
->>>> diff --git a/drivers/mfd/rohm-bd96801.c b/drivers/mfd/rohm-bd96801.c
->>>> index 1c2a9591be7b..b7f073318873 100644
->>>> --- a/drivers/mfd/rohm-bd96801.c
->>>> +++ b/drivers/mfd/rohm-bd96801.c
->>>> @@ -5,13 +5,9 @@
->>>>     * ROHM BD96801 PMIC driver
->>>>     *
->>>>     * This version of the "BD86801 scalable PMIC"'s driver supports only very
->>>> - * basic set of the PMIC features. Most notably, there is no support for
->>>> - * the ERRB interrupt and the configurations which should be done when the
->>>> - * PMIC is in STBY mode.
->>>> - *
->>>> - * Supporting the ERRB interrupt would require dropping the regmap-IRQ
->>>> - * usage or working around (or accepting a presense of) a naming conflict
->>>> - * in debugFS IRQs.
->>>
->>> Why bother adding all that blurb in the first place?
+On Fri, Jun 14, 2024 at 8:01=E2=80=AFAM luoxuanqiang <luoxuanqiang@kylino=
+s.cn> wrote:
 >>
->> Because, I assume there are users who would like to have the ERRB in use.
->> The main purpose of this comment is that any such users could
->> 	a) see this version does not support ERRB.
->> 	b) can find the original RFC with ERRB supportn and a workaround.
->> 	c) know why this version does not work with ERRB and thus fix this
+>> When bonding is configured in BOND_MODE_BROADCAST mode, if two identic=
+al SYN packets
+>> are received at the same time and processed on different CPUs, it can =
+potentially
+>> create the same sk (sock) but two different reqsk (request_sock) in tc=
+p_conn_request().
 >>
->> It seems this ERRB support may be missing from upstream for a while, hence I
->> think having this note is worthy until (if) this ERRB patch lands in
->> upstream.
-> 
-> What I mean is - you're adding all of these extra lines in patch 3 and
-> removing them in patch 9.
-> 
-
-True. This is because I had a feeling the irqdomain changes might not 
-get merged that fast as it seemed like something that is not completely 
-trivial. This comment is useful if patches 7-10 aren't merged together 
-with 1-6 - which I now also hope is the case XD
-
->>>> + * basic set of the PMIC features.
->>>> + * Most notably, there is no support for the configurations which should
->>>> + * be done when the PMIC is in STBY mode.
->>>>     *
->>>>     * Being able to reliably do the configurations like changing the
->>>>     * regulator safety limits (like limits for the over/under -voltages, over
->>>> @@ -23,16 +19,14 @@
->>>>     * be the need to configure these safety limits. Hence it's not simple to
->>>>     * come up with a generic solution.
->>>>     *
->>>> - * Users who require the ERRB handling and STBY state configurations can
->>>> - * have a look at the original RFC:
->>>> + * Users who require the STBY state configurations can  have a look at the
->>>> + * original RFC:
->>>>     * https://lore.kernel.org/all/cover.1712920132.git.mazziesaccount@gmail.com/
->>>> - * which implements a workaround to debugFS naming conflict and some of
->>>> - * the safety limit configurations - but leaves the state change handling
->>>> - * and synchronization to be implemented.
->>>> + * which implements some of the safety limit configurations - but leaves the
->>>> + * state change handling and synchronization to be implemented.
->>>>     *
->>>>     * It would be great to hear (and receive a patch!) if you implement the
->>>> - * STBY configuration support or a proper fix to the debugFS naming
->>>> - * conflict in your downstream driver ;)
->>>> + * STBY configuration support or a proper fix in your downstream driver ;)
->>>>     */
+>> These two different reqsk will respond with two SYNACK packets, and si=
+nce the generation
+>> of the seq (ISN) incorporates a timestamp, the final two SYNACK packet=
+s will have
+>> different seq values.
 >>
->> ...
+>> The consequence is that when the Client receives and replies with an A=
+CK to the earlier
+>> SYNACK packet, we will reset(RST) it.
 >>
->> Thanks for comments Lee. Reworking this will have to wait for the irqdomain
->> name suffix, which I will continue after Hervé has done his part of the
->> irqdomain changes. I will omit this patch from the next re-spin of the
->> series.
-> 
-> I'm in no rush. :)
+>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>
+>> This behavior is consistently reproducible in my local setup, which co=
+mprises:
+>>
+>>                   | NETA1 ------ NETB1 |
+>> PC_A --- bond --- |                    | --- bond --- PC_B
+>>                   | NETA2 ------ NETB2 |
+>>
+>> - PC_A is the Server and has two network cards, NETA1 and NETA2. I hav=
+e bonded these two
+>>   cards using BOND_MODE_BROADCAST mode and configured them to be handl=
+ed by different CPU.
+>>
+>> - PC_B is the Client, also equipped with two network cards, NETB1 and =
+NETB2, which are
+>>   also bonded and configured in BOND_MODE_BROADCAST mode.
+>>
+>> If the client attempts a TCP connection to the server, it might encoun=
+ter a failure.
+>> Capturing packets from the server side reveals:
+>>
+>> 10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [S], seq=
+ 320236027,
+>> 10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [S], seq=
+ 320236027,
+>> localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [S.], se=
+q 2967855116,
+>> localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [S.], se=
+q 2967855123, <=3D=3D
+>> 10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [.], ack=
+ 4294967290,
+>> 10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [.], ack=
+ 4294967290,
+>> localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [R], seq=
+ 2967855117, <=3D=3D
+>> localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [R], seq=
+ 2967855117,
+>>
+>> Two SYNACKs with different seq numbers are sent by localhost, resultin=
+g in an anomaly.
+>>
+>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>
+>> The attempted solution is as follows:
+>> In the tcp_conn_request(), while inserting reqsk into the ehash table,=
+ it also checks
+>> if an entry already exists. If found, it avoids reinsertion and releas=
+es it.
+>>
+>> Simultaneously, In the reqsk_queue_hash_req(), the start of the req->r=
+sk_timer is
+>> adjusted to be after successful insertion.
+>>
+>> Signed-off-by: luoxuanqiang <luoxuanqiang@kylinos.cn>
+>> ---
+>>  include/net/inet_connection_sock.h |  2 +-
+>>  net/dccp/ipv4.c                    |  2 +-
+>>  net/dccp/ipv6.c                    |  2 +-
+>>  net/ipv4/inet_connection_sock.c    | 16 ++++++++++++----
+>>  net/ipv4/tcp_input.c               | 11 ++++++++++-
+>>  5 files changed, 25 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/include/net/inet_connection_sock.h b/include/net/inet_con=
+nection_sock.h
+>> index 7d6b1254c92d..8773d161d184 100644
+>> --- a/include/net/inet_connection_sock.h
+>> +++ b/include/net/inet_connection_sock.h
+>> @@ -264,7 +264,7 @@ struct sock *inet_csk_reqsk_queue_add(struct sock =
+*sk,
+>>                                       struct request_sock *req,
+>>                                       struct sock *child);
+>>  void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_so=
+ck *req,
+>> -                                  unsigned long timeout);
+>> +                                  unsigned long timeout, bool *found_=
+dup_sk);
+>>  struct sock *inet_csk_complete_hashdance(struct sock *sk, struct sock=
+ *child,
+>>                                          struct request_sock *req,
+>>                                          bool own_req);
+>> diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
+>> index ff41bd6f99c3..13aafdeb9205 100644
+>> --- a/net/dccp/ipv4.c
+>> +++ b/net/dccp/ipv4.c
+>> @@ -657,7 +657,7 @@ int dccp_v4_conn_request(struct sock *sk, struct s=
+k_buff *skb)
+>>         if (dccp_v4_send_response(sk, req))
+>>                 goto drop_and_free;
+>>
+>> -       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
+>> +       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT, NULL=
+);
+>>         reqsk_put(req);
+>>         return 0;
+>>
+>> diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
+>> index 85f4b8fdbe5e..493cdb12ce2b 100644
+>> --- a/net/dccp/ipv6.c
+>> +++ b/net/dccp/ipv6.c
+>> @@ -400,7 +400,7 @@ static int dccp_v6_conn_request(struct sock *sk, s=
+truct sk_buff *skb)
+>>         if (dccp_v6_send_response(sk, req))
+>>                 goto drop_and_free;
+>>
+>> -       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
+>> +       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT, NULL=
+);
+>>         reqsk_put(req);
+>>         return 0;
+>>
+>> diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connectio=
+n_sock.c
+>> index d81f74ce0f02..d9394db98a5a 100644
+>> --- a/net/ipv4/inet_connection_sock.c
+>> +++ b/net/ipv4/inet_connection_sock.c
+>> @@ -1123,12 +1123,17 @@ static void reqsk_timer_handler(struct timer_l=
+ist *t)
+>>  }
+>>
+>>  static void reqsk_queue_hash_req(struct request_sock *req,
+>> -                                unsigned long timeout)
+>> +                                unsigned long timeout, bool *found_du=
+p_sk)
+>>  {
+>> +
+>> +       inet_ehash_insert(req_to_sk(req), NULL, found_dup_sk);
+>> +       if(found_dup_sk && *found_dup_sk)
+>> +               return;
+>> +
+>> +       /* The timer needs to be setup after a successful insertion. *=
+/
+>
+>I am pretty sure we had a prior attempt to fix this issue, and the fix
+>was problematic.
+>
+>You are moving the inet_ehash_insert() before the mod_timer(), this
+>will add races.
+Could you kindly explain what "races" refer to here? Thank you!
 
-Well, glad to hear ;) I still usually try to avoid delaying sending the 
-follow-up patches. I am under impression it is easier to review the new 
-revision if the previous revision was not reviewed too long ago... ;)
-
-I feel it is polite to tell the reviewers there will be some delay when 
-I know it.
-
-Yours,
-	-- Matti
-
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
-
+>
+>Hint here is the use of TIMER_PINNED.
+>
+>CCing Florian, because he just removed TIMER_PINNED for TW, he might
+>have the context
+>to properly fix this issue.
+>
+>>         timer_setup(&req->rsk_timer, reqsk_timer_handler, TIMER_PINNED=
+);
+>>         mod_timer(&req->rsk_timer, jiffies + timeout);
+>>
+>> -       inet_ehash_insert(req_to_sk(req), NULL, NULL);
+>>         /* before letting lookups find us, make sure all req fields
+>>          * are committed to memory and refcnt initialized.
+>>          */
+>> @@ -1137,9 +1142,12 @@ static void reqsk_queue_hash_req(struct request=
+_sock *req,
+>>  }
+>>
+>>  void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_so=
+ck *req,
+>> -                                  unsigned long timeout)
+>> +                                  unsigned long timeout, bool *found_=
+dup_sk)
+>>  {
+>> -       reqsk_queue_hash_req(req, timeout);
+>> +       reqsk_queue_hash_req(req, timeout, found_dup_sk);
+>> +       if(found_dup_sk && *found_dup_sk)
+>> +               return;
+>> +
+>>         inet_csk_reqsk_queue_added(sk);
+>>  }
+>>  EXPORT_SYMBOL_GPL(inet_csk_reqsk_queue_hash_add);
+>> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+>> index 9c04a9c8be9d..467f1b7bbd5a 100644
+>> --- a/net/ipv4/tcp_input.c
+>> +++ b/net/ipv4/tcp_input.c
+>> @@ -7255,8 +7255,17 @@ int tcp_conn_request(struct request_sock_ops *r=
+sk_ops,
+>>         } else {
+>>                 tcp_rsk(req)->tfo_listener =3D false;
+>>                 if (!want_cookie) {
+>> +                       bool found_dup_sk =3D false;
+>> +
+>>                         req->timeout =3D tcp_timeout_init((struct sock=
+ *)req);
+>> -                       inet_csk_reqsk_queue_hash_add(sk, req, req->ti=
+meout);
+>> +                       inet_csk_reqsk_queue_hash_add(sk, req, req->ti=
+meout,
+>> +                                                       &found_dup_sk)=
+;
+>> +
+>> +                       if(unlikely(found_dup_sk)){
+>> +                               reqsk_free(req);
+>> +                               return 0;
+>> +                       }
+>> +
+>>                 }
+>>                 af_ops->send_synack(sk, dst, &fl, req, &foc,
+>>                                     !want_cookie ? TCP_SYNACK_NORMAL :
+>> --
+>> 2.25.1
+>>
 
