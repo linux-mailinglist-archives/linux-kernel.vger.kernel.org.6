@@ -1,92 +1,186 @@
-Return-Path: <linux-kernel+bounces-214174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F9E908082
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E65908081
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80DE52842D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:08:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AFAF28258C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E2B158D82;
-	Fri, 14 Jun 2024 01:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F1A158D84;
+	Fri, 14 Jun 2024 01:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LNDgX3iZ"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HB4EC0v9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CA72F25
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE992F25;
+	Fri, 14 Jun 2024 01:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718327283; cv=none; b=C97It4DHaXKu35HiSJ254GuttZ2/bOAi3ha49hAehMnkXdmyyIPFmdSmwolLyynNqM97hYSnOcAJI5fvDAZqiJs7k3ELKin64dFl8jibVigraSK8doOm47JFMybf5t4GoLPBltP56ddpRQbymdfvBCuDmfVLxw9ecTpDDhx6vKQ=
+	t=1718327274; cv=none; b=WzHtMweS3RyFMNjwoIXkwoXgUGaAjbeS9KtqU3jRYM0GkXcu+u++CPPkc+4cFgV5Z6EpU5cUi2KSMeDrqBUViZWvywLi6IXouBZDE25LUVn/Mrje9qTXTBNKnoqqNIEWy3CnsOwmI9iHF3+jDR03AzonKx7phWigR4QWgfZnJgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718327283; c=relaxed/simple;
-	bh=tIbaCIP9xAaKgjIU3FiXTfrp4VG6oaih8IQWZccKNQM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BxobczFqE3aa1OUtdOe4jU8HItzE88xILlGvIy38Fv+ukSNLkapK6mk1DDHYvtloYK0KI5Cbm5EVOtBDAY1/eb5FCzDKAFnkuSxolEq2/XbAOCx8EernsddedPlpP7w0DgK0nyFdSpWLCPkDUAqMVCKV47zbLJtsxIFh0O9fGNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LNDgX3iZ; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718327272; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=BQDb2F0aaOJSuzhQ9lADc/Q15DnIgg4AnXxoddC9IM4=;
-	b=LNDgX3iZD0wpYv8+b6agYJBdfOA27xdC97aGDMvcqHQm86jUi3GhIlX+3YfNpR/L2WE8lYEAHCxN9KhwSJSt8bsSXYIavBUbwW1m+bbOTr5ApsLAZmwzFRsT1oVRllFJCg7lHeJjbGQ166XJp3ITO61ZA9iFDQBkPWYU1+ekAeI=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R291e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0W8PMaPD_1718327271;
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8PMaPD_1718327271)
-          by smtp.aliyun-inc.com;
-          Fri, 14 Jun 2024 09:07:52 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org
-Cc: mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	hannes@cmpxchg.org,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: memcontrol: add VM_BUG_ON_FOLIO() to catch lru folio in mem_cgroup_migrate()
-Date: Fri, 14 Jun 2024 09:07:42 +0800
-Message-Id: <66d181c41b7ced35dbd39ffd3f5774a11aef266a.1718327124.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1718327274; c=relaxed/simple;
+	bh=GwS7Y56Lx+fE/+Y9/JVAXhP3402AVgK8FgY1QgvObb8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ADUjArzAOR/X01c7dN/Pf6DNPd8EVozrxoo9NJ+lMe+p1uiwyePXoxHTqjO9LWFP4rx+WY4PKX8v/RzSn8CcQOcbjXJMtr2o30lsr32qzAPEl4IJnX8yEOiQ257EhFbIwhnembdBGmbMMqqeI/iQPE+9OX3TgFvb1wbmja6kSz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HB4EC0v9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21DCAC2BBFC;
+	Fri, 14 Jun 2024 01:07:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718327273;
+	bh=GwS7Y56Lx+fE/+Y9/JVAXhP3402AVgK8FgY1QgvObb8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HB4EC0v9hTVYXkIe3354UyWHM3bLX7Cu5VMpybrzLJ0EDJVGrNSx7Mumr9qWwoWKZ
+	 QF4jyLQoatMECNM/tb0cRo21UFz93wzZx2H2f9o4WIZW95ITenBozy0Z4SjT24fBX6
+	 Z2hcf9QdyW2KYFhgBvdhy690qSOMfP4+xLVzmH73DpSxgUsOh9WvGz3198OMdR8Yfd
+	 6jxw5Itn1xOYuLsFYsNPhLPJXDdyLfZj/aOcnvUDAWvOkok+b8LOiWN4g1EL0B3Yms
+	 g4d5pvVElCT4LAjDnyFBV25cvudTzX1ST3y6LVt7M5ih64z8o8dE48mxYheLFy3Q1g
+	 60g2NjjFf4nWw==
+Date: Fri, 14 Jun 2024 10:07:48 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Christian Brauner
+ <brauner@kernel.org>, Christian =?UTF-8?B?R8O2dHRzY2hl?=
+ <cgzones@googlemail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, Mark
+ Brown <broonie@kernel.org>
+Subject: Re: linux-next: manual merge of the ftrace tree with the
+ vfs-brauner tree
+Message-Id: <20240614100748.fcaa7efe6debea3801682ba1@kernel.org>
+In-Reply-To: <20240614090523.246f48e4@canb.auug.org.au>
+References: <20240613114243.2a50059b@canb.auug.org.au>
+	<ZmqaytbJ0r0EXO8d@krava>
+	<20240614090523.246f48e4@canb.auug.org.au>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The mem_cgroup_migrate() will clear the memcg data of the old folio,
-therefore, the callers must make sure the old folio is no longer on
-the LRU list, otherwise the old folio can not get the correct lruvec
-object without the memcg data, which could lead to potential problems [1].
+On Fri, 14 Jun 2024 09:05:23 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Thus adding a VM_BUG_ON_FOLIO() to catch this issue.
+> Hi Jiri,
+> 
+> [Cc'd Mark Brown and Michael Ellerman just in case they decide to do
+> linux-next releases whil I am away.]
+> 
+> On Thu, 13 Jun 2024 09:07:54 +0200 Jiri Olsa <olsajiri@gmail.com> wrote:
+> >
+> > On Thu, Jun 13, 2024 at 11:42:43AM +1000, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > Today's linux-next merge of the ftrace tree got conflicts in:
+> > > 
+> > >   arch/x86/entry/syscalls/syscall_64.tbl
+> > >   include/uapi/asm-generic/unistd.h
+> > > 
+> > > between commit:
+> > > 
+> > >   e6873349f700 ("fs/xattr: add *at family syscalls")
+> > > 
+> > > from the vfs-brauner tree and commit:
+> > > 
+> > >   190fec72df4a ("uprobe: Wire up uretprobe system call")
+> > > 
+> > > from the ftrace tree.
+> > > 
+> > > I fixed it up (see below) and can carry the fix as necessary. This
+> > > is now fixed as far as linux-next is concerned, but any non trivial
+> > > conflicts should be mentioned to your upstream maintainer when your tree
+> > > is submitted for merging.  You may also want to consider cooperating
+> > > with the maintainer of the conflicting tree to minimise any particularly
+> > > complex conflicts.
+> > > 
+> > > -- 
+> > > Cheers,
+> > > Stephen Rothwell
+> > > 
+> > > diff --cc arch/x86/entry/syscalls/syscall_64.tbl
+> > > index 26af003921d2,6452c2ec469a..000000000000
+> > > --- a/arch/x86/entry/syscalls/syscall_64.tbl
+> > > +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+> > > @@@ -385,10 -384,7 +385,11 @@@
+> > >   460	common	lsm_set_self_attr	sys_lsm_set_self_attr
+> > >   461	common	lsm_list_modules	sys_lsm_list_modules
+> > >   462 	common  mseal			sys_mseal
+> > >  -463	64	uretprobe		sys_uretprobe
+> > >  +463	common	setxattrat		sys_setxattrat
+> > >  +464	common	getxattrat		sys_getxattrat
+> > >  +465	common	listxattrat		sys_listxattrat
+> > >  +466	common	removexattrat		sys_removexattrat
+> > > ++467	64	uretprobe		sys_uretprobe
+> > >   
+> > >   #
+> > >   # Due to a historical design error, certain syscalls are numbered differently
+> > > diff --cc include/uapi/asm-generic/unistd.h
+> > > index 5b8dab0b934e,2378f88d5ad4..000000000000
+> > > --- a/include/uapi/asm-generic/unistd.h
+> > > +++ b/include/uapi/asm-generic/unistd.h
+> > > @@@ -845,17 -845,11 +845,20 @@@ __SYSCALL(__NR_lsm_list_modules, sys_ls
+> > >   #define __NR_mseal 462
+> > >   __SYSCALL(__NR_mseal, sys_mseal)
+> > >   
+> > >  -#define __NR_uretprobe 463
+> > >  +#define __NR_setxattrat 463
+> > >  +__SYSCALL(__NR_setxattrat, sys_setxattrat)
+> > >  +#define __NR_getxattrat 464
+> > >  +__SYSCALL(__NR_getxattrat, sys_getxattrat)
+> > >  +#define __NR_listxattrat 465
+> > >  +__SYSCALL(__NR_listxattrat, sys_listxattrat)
+> > >  +#define __NR_removexattrat 466
+> > >  +__SYSCALL(__NR_removexattrat, sys_removexattrat)
+> > >  +
+> > > ++#define __NR_uretprobe 467
+> > > + __SYSCALL(__NR_uretprobe, sys_uretprobe)  
+> > 
+> > hi,
+> > we need one more change in tests (below), otherwise lgtm
+> > I can send formal patch for you if needed, plz let me know
+> > 
+> > thanks,
+> > jirka
+> > 
+> > 
+> > ---
+> > diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> > index c8517c8f5313..bd8c75b620c2 100644
+> > --- a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> > +++ b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
+> > @@ -216,7 +216,7 @@ static void test_uretprobe_regs_change(void)
+> >  }
+> >  
+> >  #ifndef __NR_uretprobe
+> > -#define __NR_uretprobe 463
+> > +#define __NR_uretprobe 467
+> >  #endif
+> >  
+> >  __naked unsigned long uretprobe_syscall_call_1(void)
+> 
+> Or you could change __NR_uretprobe in the patch set to 467, then this
+> will become just a conflict and not a renumbering.
 
-[1] https://lore.kernel.org/all/5ab860d8ee987955e917748f9d6da525d3b52690.1718326003.git.baolin.wang@linux.alibaba.com/
-Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- mm/memcontrol.c | 1 +
- 1 file changed, 1 insertion(+)
+OK, Jiri, can you send it to me. I will update probes/for-next.
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 4d9fda1d84a0..62fa3869065c 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -7844,6 +7844,7 @@ void mem_cgroup_migrate(struct folio *old, struct folio *new)
- 	VM_BUG_ON_FOLIO(!folio_test_locked(new), new);
- 	VM_BUG_ON_FOLIO(folio_test_anon(old) != folio_test_anon(new), new);
- 	VM_BUG_ON_FOLIO(folio_nr_pages(old) != folio_nr_pages(new), new);
-+	VM_BUG_ON_FOLIO(folio_test_lru(old), old);
- 
- 	if (mem_cgroup_disabled())
- 		return;
+Thank you,
+
+
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+
+
 -- 
-2.39.3
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
