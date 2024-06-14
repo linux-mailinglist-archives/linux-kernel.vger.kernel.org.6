@@ -1,267 +1,137 @@
-Return-Path: <linux-kernel+bounces-214942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2CA6908C74
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:30:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E3F908C76
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B9FB1F27855
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:30:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BD161C22E5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B590C19AD41;
-	Fri, 14 Jun 2024 13:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0C620E6;
+	Fri, 14 Jun 2024 13:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CHQe+B0L"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="PvWIGrqN"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BAD146D77;
-	Fri, 14 Jun 2024 13:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C36E817
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718371795; cv=none; b=a/mHVRLUJS46O2WCwBUTLG1rDFAtMsiUMEZTYjs5wVawi+owdgejz1QwCzhBLffTzQ2kYOuEraLZ4h0YyoHfeoaG7hVYD1FiTGWL7mybWvbQYHmvNvAmu2ZHSYeNfws3+L8Ch6l4cpU2VhKEPQo/zAOrREcB4EeJ9x3C5NrRO3A=
+	t=1718371839; cv=none; b=rjf+ycFy0+cgScmESCxroEtUWrvkJ1Scr15cUZ+Za5ZH9xrkku7eQU9Zs/RfG+2IfU493PYiiUhM7tBoO/cZRTxPMMQ84RWaJGGjQjQq5eWBD8a2YVPXyQ1oJt7KHQET6Kbk7GlxczEjOPKE0mdxTdZdK2h7EEEktX/5X6Cii9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718371795; c=relaxed/simple;
-	bh=hGhr++85Xsy7/ZFbcrK1+gqoOuZlCN2+fgWiO0Iosh8=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=GH+C7rfBi+RYZOyiL34g1MOBpjQ2Acn0qwZTwnIW/CepWW8fn9MasIBVwwQuJGacKp92IwGeXlESzVn1NkK5Ha4bHWqG1K/qa82R73OXJS8CADesPBHYIRx3k4vl1iVtSSXdU1Cq8aYaZLqHkEWcxy9aM4Igv6rYZPYjI1gPVsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CHQe+B0L; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718371794; x=1749907794;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=hGhr++85Xsy7/ZFbcrK1+gqoOuZlCN2+fgWiO0Iosh8=;
-  b=CHQe+B0LG/VIztLiLODekWnwA8Uv6n0WEZ8fw6Zq8HSLEghDhgwquRSA
-   34vZiYB6w4OqCSorevWDaV3WmPPaLR0735OVU6J4ofrG9bCE1TI1vE0+D
-   KgHxpm37xgOvnSQDyZ2fEY1/jlcUusHH0Q2bgC7ceFgCpkXPy7Ik1+5Pe
-   Lvg7BcuAkFWHO+dXF7/JSBiijFrG2LdGpvdTJVWgbLL+Pkxt9y77OOwjO
-   KMKIJKgld2KpbG7rUQd8WCbvjwZUW08dUDUOP18pcpFXowp4BjY5Lgl2H
-   z2Qs6/5CHZwefenIOq0Grew+COSpKCtUhoWxAamWeTIGrvVdyic9lxyh7
-   Q==;
-X-CSE-ConnectionGUID: DsggmpocTdGo5tXDLs7W1w==
-X-CSE-MsgGUID: guBqT96KS/uZolKTY05i7A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="26652305"
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="scan'208";a="26652305"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 06:29:54 -0700
-X-CSE-ConnectionGUID: PzWo28ocTBKdpxoIE33tFg==
-X-CSE-MsgGUID: TR0IYX1bR3Sorg5VEF4dOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="scan'208";a="71689948"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.222])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 06:29:50 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 14 Jun 2024 16:29:47 +0300 (EEST)
-To: daire.mcnamara@microchip.com
-cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-    conor.dooley@microchip.com, lpieralisi@kernel.org, kw@linux.com, 
-    robh@kernel.org, bhelgaas@google.com, linux-kernel@vger.kernel.org, 
-    linux-riscv@lists.infradead.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH v3 2/3] PCI: microchip: Fix inbound address translation
- tables
-In-Reply-To: <20240612112213.2734748-3-daire.mcnamara@microchip.com>
-Message-ID: <7ba2a37a-6012-a0a1-a74f-e9fc83598453@linux.intel.com>
-References: <20240612112213.2734748-1-daire.mcnamara@microchip.com> <20240612112213.2734748-3-daire.mcnamara@microchip.com>
+	s=arc-20240116; t=1718371839; c=relaxed/simple;
+	bh=IrUqQGQwMsJxdGGWpIHTN9D0+7CLh6RJMSAS0N42slk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WVWrUkUfj+IIp0rSVZOA5JBQz2dfMa+Rn+q5GqfGeV6ADKg7LNgsVVau869wm2Ax7cDUVRCa2Pd820dH/QVX37MGy+xuYIoADm0UKqy/wg9GDTPs9yYjnnfpCM42zqVrb9Yz22AqYq01kCUjLJUcJ2Hx55mtClup3yQDpb5yXJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=PvWIGrqN; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1718371838; x=1749907838;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=W6LtgifkW6+vXdOdWZYDsm/k1XVnlz90Nl+MiPv0cOs=;
+  b=PvWIGrqNnR5FPRUg1T8sBjw3tKdM+3pALM1y1DqkOx3XcvFpJICS2Akj
+   1oqIuVOZQOp0unhDCxmI7aJq1TclwpIBGkflgNw9ylTUn/yC0Qqu2uC4y
+   DwXrGVJaBPqhdccVwrl9KP5fEuY2D/5jR/Ztw8PY1jwH6hZiC2ASQAhuT
+   g=;
+X-IronPort-AV: E=Sophos;i="6.08,237,1712620800"; 
+   d="scan'208";a="96832771"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 13:30:36 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [10.0.43.254:56353]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.22.205:2525] with esmtp (Farcaster)
+ id 2b5aa1d4-dad0-4f2f-93a7-f12dbffe2c77; Fri, 14 Jun 2024 13:30:35 +0000 (UTC)
+X-Farcaster-Flow-ID: 2b5aa1d4-dad0-4f2f-93a7-f12dbffe2c77
+Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 14 Jun 2024 13:30:35 +0000
+Received: from u5d18b891348c5b.ant.amazon.com (10.1.213.23) by
+ EX19D014EUC004.ant.amazon.com (10.252.51.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 14 Jun 2024 13:30:31 +0000
+From: James Gowans <jgowans@amazon.com>
+To: Mike Rapoport <rppt@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+CC: James Gowans <jgowans@amazon.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, Alex Graf <graf@amazon.de>
+Subject: [PATCH] memblocks: Move late alloc warning down to phys alloc
+Date: Fri, 14 Jun 2024 15:30:16 +0200
+Message-ID: <20240614133016.134150-1-jgowans@amazon.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D042UWA003.ant.amazon.com (10.13.139.44) To
+ EX19D014EUC004.ant.amazon.com (10.252.51.182)
 
-On Wed, 12 Jun 2024, daire.mcnamara@microchip.com wrote:
+If a driver/subsystem tries to do an allocation after memblocks have
+been freed and the memory handed to the buddy allocator, it will not
+actually be legal to use that allocation - the buddy allocator owns the
+memory. This is handled by the memblocks function which does allocations
+and returns virtual addresses by printing a warning and doing a kmalloc
+instead. However, the physical allocation function does not to do this
+check - callers of the physical alloc function are unprotected against
+mis-use.
 
-> From: Daire McNamara <daire.mcnamara@microchip.com>
-> 
-> On Microchip PolarFire SoC the PCIe Root Port can be behind one of three
-> general purpose Fabric Interface Controller (FIC) buses that encapsulates
-> an AXI-S bus. Depending on which FIC(s) the Root Port is connected
-> through to CPU space, and what address translation is done by that FIC,
-> the Root Port driver's inbound address translation may vary.
-> 
-> For all current supported designs and all future expected designs,
-> inbound address translation done by a FIC on PolarFire SoC varies
-> depending on whether PolarFire SoC in operating in dma-coherent mode or
-> dma-noncoherent mode.
-> 
-> The setup of the outbound address translation tables in the root port
-> driver only needs to handle these two cases.
-> 
-> Setup the inbound address translation tables to one of two address
-> translations, depending on whether the rootport is marked as dma-coherent or
-> dma-noncoherent.
-> 
-> Fixes: 6f15a9c9f941 ("PCI: microchip: Add Microchip Polarfire PCIe controller driver")
-> 
-> Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
-> ---
->  drivers/pci/controller/pcie-microchip-host.c | 97 +++++++++++++++++++-
->  1 file changed, 92 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-microchip-host.c b/drivers/pci/controller/pcie-microchip-host.c
-> index 853adce24492..d5021333e2aa 100644
-> --- a/drivers/pci/controller/pcie-microchip-host.c
-> +++ b/drivers/pci/controller/pcie-microchip-host.c
-> @@ -30,6 +30,9 @@
->  #define MC_PCIE_BRIDGE_ADDR			(MC_PCIE1_BRIDGE_ADDR)
->  #define MC_PCIE_CTRL_ADDR			(MC_PCIE1_CTRL_ADDR)
->  
-> +#define MC_MAX_NUM_INBOUND_WINDOWS		8
-> +#define MPFS_NC_BOUNCE_ADDR			0x80000000
-> +
->  /* PCIe Bridge Phy Regs */
->  #define PCIE_PCI_IRQ_DW0			0xa8
->  #define  MSIX_CAP_MASK				BIT(31)
-> @@ -105,6 +108,7 @@
->  #define ATR0_AXI4_SLV0_TRSL_PARAM		0x810u
->  #define  PCIE_TX_RX_INTERFACE			0x00000000u
->  #define  PCIE_CONFIG_INTERFACE			0x00000001u
-> +#define  TRSL_ID_AXI4_MASTER_0			0x00000004u
->  
->  #define ATR_ENTRY_SIZE				32
->  
-> @@ -931,6 +935,89 @@ static int mc_pcie_init_irq_domains(struct mc_pcie *port)
->  	return mc_allocate_msi_domains(port);
->  }
->  
-> +static void mc_pcie_setup_inbound_atr(int window_index, u64 axi_addr, u64 pcie_addr, size_t size)
-> +{
-> +	void __iomem *bridge_base_addr = port->axi_base_addr + MC_PCIE_BRIDGE_ADDR;
-> +	u32 table_offset = window_index * ATR_ENTRY_SIZE;
-> +	u32 atr_sz;
-> +	u32 val;
-> +
-> +	atr_sz = ilog2(size) - 1;
-> +	atr_sz &= GENMASK(5, 0);
-> +	val = lower_32_bits(pcie_addr) & GENMASK(31, 12);
+Improve the error catching here by moving the check into the physical
+allocation function which is used by the virtual addr allocation
+function.
 
-ALIGN_DOWN(, SZ_xx) ?
+Signed-off-by: James Gowans <jgowans@amazon.com>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alex Graf <graf@amazon.de>
+---
+ mm/memblock.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-> +	val |= (atr_sz << ATR_SIZE_SHIFT);
-
-This looks like a named define + FIELD_PREP() would be more appropriate 
-here.
-
-> +	val |= ATR_IMPL_ENABLE;
-> +	writel(val, bridge_base_addr + table_offset + ATR0_PCIE_WIN0_SRCADDR_PARAM);
-> +
-> +	writel(upper_32_bits(pcie_addr), bridge_base_addr + table_offset +
-> +	       ATR0_PCIE_WIN0_SRC_ADDR);
-> +
-> +	writel(lower_32_bits(axi_addr), bridge_base_addr + table_offset +
-> +	       ATR0_PCIE_WIN0_TRSL_ADDR_LSB);
-> +	writel(upper_32_bits(axi_addr), bridge_base_addr + table_offset +
-> +	       ATR0_PCIE_WIN0_TRSL_ADDR_UDW);
-> +
-> +	writel(TRSL_ID_AXI4_MASTER_0, bridge_base_addr + table_offset +
-> +	       ATR0_PCIE_WIN0_TRSL_PARAM);
-
-Having a table_addr local variable instead would make these much less 
-repetitive and shorter.
-
-> +}
-> +
-> +static int mc_pcie_setup_inbound_ranges(struct platform_device *pdev, struct mc_pcie *port)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *dn = dev->of_node;
-> +	struct of_range_parser parser;
-> +	struct of_range range;
-> +	int atr_index = 0;
-> +
-> +	/*
-> +	 * MPFS PCIe root port is 32-bit only, behind a Fabric Interface
-> +	 * Controller FPGA logic block which contains the AXI-S interface.
-> +	 *
-> +	 * From the point of view of the PCIe root port, There are only
-> +	 * two supported Root Port configurations
-> +	 *
-> +	 * Configuration 1: for use with fully coherent designs; supports a
-> +	 * window from 0x0 (CPU space) to specified PCIe space.
-> +	 *
-> +	 * Configuration 2: for use with non-coherent designs; supports two
-> +	 * 1 Gb wide windows to CPU space; one mapping cpu space 0 to pcie
-> +	 * space 0x80000000 and mapping cpu space 0x40000000 to pcie
-> +	 * space 0xc0000000. This cfg needs two windows because of how
-> +	 * the MSI space is allocated in the AXI-S range on MPFS.
-> +	 *
-> +	 * The FIC interface outside the PCIe block *must* complete the inbound
-> +	 * address translation as per MCHP MPFS FPGA design guidelines.
-> +	 */
-> +	if (device_property_read_bool(dev, "dma-noncoherent")) {
-> +		/*
-> +		 * Always need same two tables in this case.  Need two tables
-> +		 * due to hardware interactions between address and size.
-> +		 */
-> +		mc_pcie_setup_inbound_atr(0, 0, MPFS_NC_BOUNCE_ADDR, SZ_1G);
-> +		mc_pcie_setup_inbound_atr(1, SZ_1G, MPFS_NC_BOUNCE_ADDR + SZ_1G, SZ_1G);
-> +	} else {
-> +		/* Find any dma-ranges */
-> +		if (of_pci_dma_range_parser_init(&parser, dn)) {
-> +			/* No dma-range property - setup default */
-> +			mc_pcie_setup_inbound_atr(0, 0, 0, SZ_4G);
-> +			return 0;
-> +		}
-> +
-> +		for_each_of_range(&parser, &range) {
-> +			if (atr_index >= MC_MAX_NUM_INBOUND_WINDOWS) {
-> +				dev_err(dev, "too many inbound ranges; %d available tables\n",
-> +					MC_MAX_NUM_INBOUND_WINDOWS);
-> +				return -EINVAL;
-
-You don't need to rollback anything when this error is encountered?
-
-> +			}
-> +			mc_pcie_setup_inbound_atr(atr_index, 0, range.pci_addr, range.size);
-> +			atr_index++;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static void mc_pcie_setup_window(void __iomem *bridge_base_addr, u32 index,
->  				 phys_addr_t axi_addr, phys_addr_t pci_addr,
->  				 u64 size)
-> @@ -962,11 +1049,6 @@ static void mc_pcie_setup_window(void __iomem *bridge_base_addr, u32 index,
->  	val = upper_32_bits(pci_addr);
->  	writel(val, bridge_base_addr + (index * ATR_ENTRY_SIZE) +
->  	       ATR0_AXI4_SLV0_TRSL_ADDR_UDW);
-> -
-> -	val = readl(bridge_base_addr + ATR0_PCIE_WIN0_SRCADDR_PARAM);
-> -	val |= (ATR0_PCIE_ATR_SIZE << ATR0_PCIE_ATR_SIZE_SHIFT);
-> -	writel(val, bridge_base_addr + ATR0_PCIE_WIN0_SRCADDR_PARAM);
-> -	writel(0, bridge_base_addr + ATR0_PCIE_WIN0_SRC_ADDR);
->  }
->  
->  static int mc_pcie_setup_windows(struct platform_device *pdev,
-> @@ -1129,6 +1211,11 @@ static int mc_platform_init(struct pci_config_window *cfg)
->  	if (ret)
->  		return ret;
->  
-> +	/* Configure inbound translation tables */
-
-IMO, this comment adds 0 value over what the code tells all by itself so 
-it would be best to drop it.
-
-> +	ret = mc_pcie_setup_inbound_ranges(pdev, port);
-> +	if (ret)
-> +		return ret;
-> +
->  	/* Address translation is up; safe to enable interrupts */
->  	ret = mc_init_interrupts(pdev, port);
->  	if (ret)
-> 
-
+diff --git a/mm/memblock.c b/mm/memblock.c
+index d09136e040d3..dd4f237dc1fc 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1457,6 +1457,17 @@ phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+ 		align = SMP_CACHE_BYTES;
+ 	}
+ 
++	/*
++	 * Detect any accidental use of these APIs after slab is ready, as at
++	 * this moment memblock may be deinitialized already and its
++	 * internal data may be destroyed (after execution of memblock_free_all)
++	 */
++	if (WARN_ON_ONCE(slab_is_available())) {
++		void *vaddr = kzalloc_node(size, GFP_NOWAIT, nid);
++
++		return vaddr ? virt_to_phys(vaddr) : 0;
++	}
++
+ again:
+ 	found = memblock_find_in_range_node(size, align, start, end, nid,
+ 					    flags);
+@@ -1576,13 +1587,6 @@ static void * __init memblock_alloc_internal(
+ {
+ 	phys_addr_t alloc;
+ 
+-	/*
+-	 * Detect any accidental use of these APIs after slab is ready, as at
+-	 * this moment memblock may be deinitialized already and its
+-	 * internal data may be destroyed (after execution of memblock_free_all)
+-	 */
+-	if (WARN_ON_ONCE(slab_is_available()))
+-		return kzalloc_node(size, GFP_NOWAIT, nid);
+ 
+ 	if (max_addr > memblock.current_limit)
+ 		max_addr = memblock.current_limit;
 -- 
- i.
+2.34.1
 
 
