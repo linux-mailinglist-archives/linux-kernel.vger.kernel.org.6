@@ -1,123 +1,138 @@
-Return-Path: <linux-kernel+bounces-214397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E769083A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:31:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3E0990838E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 202651C21E85
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:31:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FEF9B221A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1A41474C4;
-	Fri, 14 Jun 2024 06:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2051482F1;
+	Fri, 14 Jun 2024 06:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibv-augsburg.net header.i=@ibv-augsburg.net header.b="UNjOHm/x";
-	dkim=permerror (0-bit key) header.d=ibv-augsburg.net header.i=@ibv-augsburg.net header.b="+CX2NAm5"
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.216])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oPG9e+KI"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A5365C;
-	Fri, 14 Jun 2024 06:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.216
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718346657; cv=pass; b=PdQ4WECKXHFDUQGGPFQhPWBYbVfM22gm6sd4q1Nsim8e/Z3kejJJwQbJeVAh9cdp7Nh3u5X5jCB7rBsueKSgWl+IyXUktllozbFTCp2fI85ckkreAEeVmsxbLX6PCNpijHPk9wjQnod4vh3wfljgikzjA7qGC77/YnG0AfwOplo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718346657; c=relaxed/simple;
-	bh=O1Eriz3Qtnea33rJ/dxMlz2HR91ihJ5t6aL/t58H85c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YhvkZm8e9CXVeR1iO1DPSH0YO/EBE4tcR+3G3SacMOhaM1mKd+7fhwhlOVLVIDVV6i+59dZkFLUrAxN/ItGHjovD8w1SPUGfW8zhrzeYOzbofJeSk3izXWj0gtMXigrkAVBRIuIoCEwPiSpns4SknbGse93q/Sse8hVbmc8jBZU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ibv-augsburg.net; spf=none smtp.mailfrom=ibv-augsburg.net; dkim=pass (2048-bit key) header.d=ibv-augsburg.net header.i=@ibv-augsburg.net header.b=UNjOHm/x; dkim=permerror (0-bit key) header.d=ibv-augsburg.net header.i=@ibv-augsburg.net header.b=+CX2NAm5; arc=pass smtp.client-ip=81.169.146.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ibv-augsburg.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ibv-augsburg.net
-ARC-Seal: i=1; a=rsa-sha256; t=1718345570; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=aQJif1Z5sRzbVhT5HahI8CmeGQVKefPS+JjK1VOMHQSa4bv/+pyJm+8R1ik2xlhS4E
-    wgOQ+iQlgHwtim+o4/fksibNd8ZAYXgx9IIzdjJS12QJyAoB4iGXX/GKf9yLjeE1zJxs
-    UYCrJvOi0+p77iAPuu5WHQboaCw4nigoW1qxpulrbeQ1C+2yN6Q2+DZNjoODbbxyXpm/
-    8XLYAvwH32ncQKe8pC+ykSWGblmJiITMGnOLOLZQp2V4o18tzsJL36rawfjLxBxLGzAf
-    esINtaCsUoaM9L2RSiPVM/UZvCrM9e4iKTw48TX0JleiLimPUmlpMbn/ykrFAU10rev8
-    CdcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1718345570;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=HJrnEa2TQHKLptvN9wCOfzygIXZCRpF3mXB1yR4PZcY=;
-    b=SZizUCQ2I7u+U7y1T0vb8XOXwqRZiMIkbdbVlPTSnPgJU+lOvZuCNlefDgQyzQegjk
-    YJeJd8wKpNmNx6cyV03jn/64zfqqFwrV38twVURP9rFTtVhuNml11jaSsY2OvKJuAV2l
-    +159WdPTCEyzvbb8JclyJ1XdA64IFsjWodwEgI+Qx3luMjbhGu3swlFP0MSSoZcIMrRa
-    YdxwreSsh3+gj6LFavubtanGuUrUoRzdCY5kvc+izYCDTN73xxzmY11scnCMyDiWmMv9
-    jRFd4D82O3WuK6h9hID7Uo8bIMMTZLs7mdzx0LGRxr4e6uohlfyWonDlEy60c2AuE6D3
-    W8lg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1718345570;
-    s=strato-dkim-0002; d=ibv-augsburg.net;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=HJrnEa2TQHKLptvN9wCOfzygIXZCRpF3mXB1yR4PZcY=;
-    b=UNjOHm/xyiy0PWuLbXHAOBfhgItkcsqcBwN+gc9WpS+nEQblC3Pg1rDPL1cZ0OxRlJ
-    7seJ0CKIK89vBf1fRpM3yXJpcq1cdHvapWjPpg0EW+p24XsaFjoY5dso/Ghh8T6S2Vil
-    AWTQ2YX216ZWxkHiYT2jlwSfFe8E3d+rmMykMrclRshc76TP5A2OcK9hfa01i/aUx285
-    wQZuEm6GNBdQ3P9lK6i2iIGn+gdbWsBM+ft/sUW408+87iS78+MvVrG3VhCrcMyYBH6n
-    jMUXDPjrX5yYreoLgZO58IppAcAqZifFlJaQqZTBRjTVNmBiRe8lxdUrlwJGcpGRw/tI
-    rq0g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1718345570;
-    s=strato-dkim-0003; d=ibv-augsburg.net;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=HJrnEa2TQHKLptvN9wCOfzygIXZCRpF3mXB1yR4PZcY=;
-    b=+CX2NAm5lDQD2zJg7tvLRUjsX5d5Zpj2O/PcJDrL01sTCzOX6VqoOGwMBFLPkHI3Iu
-    D2bMzZ9KUWVqE9fCn1AQ==
-X-RZG-AUTH: ":KGMJfE6heLGk8b3w7Oa1fDtXwBjeDczIOHPRx8yNRKhFG/cxcP9JMCwOG/8exKYiOUajXIudlAcw8bfa"
-Received: from [192.168.178.123]
-    by smtp.strato.de (RZmta 50.5.0 DYNA|AUTH)
-    with ESMTPSA id N07c8805E6CnVZi
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Fri, 14 Jun 2024 08:12:49 +0200 (CEST)
-Message-ID: <6b45e79b-84a6-4935-adce-cc8b0d0dd7ea@ibv-augsburg.net>
-Date: Fri, 14 Jun 2024 08:12:50 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFBB393;
+	Fri, 14 Jun 2024 06:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718345639; cv=none; b=BOK/hYqCMJYVIipK0QkUIinfGo82+hWn1XLEx043TYQQiWHAv3vb2pM7nAtn699Y0T2P9HwKTu8U2OFOs2XhLoFnNZi2jLbFzWqS1kPMLNTz9SEWzu1Csu0JsRdCCmkkR2y3fhNQRFsI/BZXSidBC0uDw0c/W9U3dpLiOVHXFUk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718345639; c=relaxed/simple;
+	bh=dINWXejZejeNvy4vTa+5QjhOC1IhShPhljwOH1oq2kE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=unY9lpca9K3NTWBGlRo0M5KDyEFcCwV7P6MS9jKrdl19ngAdvfQ4ytXCfUh0KLyJIOfQK9h8zXERhG/yyEkBmhlWMtCSQExhJm6aHyQ5sW8Uw8TzSO6iNbbLf3+CaPd5nCJ2bUmAjzkZFb+1R6pmIVUiLtw8MRpBg9JDll2Na2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oPG9e+KI; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45E6DWOZ027648;
+	Fri, 14 Jun 2024 01:13:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718345612;
+	bh=nwOhQ5GEl1mes6kpUbvK009JH5lDGyw8RkwUP7+kb+U=;
+	h=From:To:CC:Subject:Date;
+	b=oPG9e+KIT8W/VpjXOcin87RH8gqO4PLdcuiaa5xRrxRodtTxI7iaLvGl4LsRwWCac
+	 nqIxdpeDwh/QexbOE0H8ywd64ILOGVK/SArXHeta09qQod1ldUpBH/85X7q9xH+Cq/
+	 pX04AWd6BmV42w7+hlbjiMw1AHtWrO8mIwvgsvys=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45E6DWhs021266
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 14 Jun 2024 01:13:32 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
+ Jun 2024 01:13:32 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 14 Jun 2024 01:13:32 -0500
+Received: from udit-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (udit-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.18])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45E6DSuq026165;
+	Fri, 14 Jun 2024 01:13:29 -0500
+From: Udit Kumar <u-kumar1@ti.com>
+To: <vigneshr@ti.com>, <nm@ti.com>, <tony@atomide.com>
+CC: <gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
+        <u.kleine-koenig@pengutronix.de>, <ronald.wahl@raritan.com>,
+        <thomas.richard@bootlin.com>, <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        Udit Kumar
+	<u-kumar1@ti.com>
+Subject: [PATCH] serial: 8250_omap: Implementation of Errata i2310
+Date: Fri, 14 Jun 2024 11:43:14 +0530
+Message-ID: <20240614061314.290840-1-u-kumar1@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/13] OMAP mailbox FIFO removal
-To: Andrew Davis <afd@ti.com>, Jassi Brar <jassisinghbrar@gmail.com>,
- Hari Nagalla <hnagalla@ti.com>, Nick Saulnier <nsaulnier@ti.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240410135942.61667-1-afd@ti.com>
- <b5c8d134-edcb-4a1a-8940-b26047c9b79d@ibv-augsburg.net>
- <4d7c1525-a3d1-48f3-9e9c-eb61527a1b23@ti.com>
-From: Dominic Rath <dominic.rath@ibv-augsburg.net>
-In-Reply-To: <4d7c1525-a3d1-48f3-9e9c-eb61527a1b23@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 13.06.2024 14:22, Andrew Davis wrote:
->> We looked into this some time ago, and noticed that the IRQ approach 
->> caused problems in the virtio/rpmsg code. I'd like to understand if 
->> your change was for the same reason, or something else we missed before.
->>
-> 
-> It is most likely the same reason. Seems despite its name, 
-> rproc_vq_interrupt() cannot
-> be called from an IRQ/atomic context. As the following backtrace shows, 
-> that function
-> calls down into functions which are not IRQ safe. So we needed to keep 
-> it threaded:
+As per Errata i2310[0], Erroneous timeout can be triggered,
+if this Erroneous interrupt is not cleared then it may leads
+to strom of interrupts, therefore apply Errata i2310 solution.
 
-Thanks for confirming. This is exactly what we've been seeing.
+[0] https://www.ti.com/lit/pdf/sprz536 page 23
 
-Regards,
+Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+---
+ drivers/tty/serial/8250/8250_omap.c | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
-Dominic
+diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+index 170639d12b2a..38eb639f78d3 100644
+--- a/drivers/tty/serial/8250/8250_omap.c
++++ b/drivers/tty/serial/8250/8250_omap.c
+@@ -115,6 +115,10 @@
+ /* RX FIFO occupancy indicator */
+ #define UART_OMAP_RX_LVL		0x19
+ 
++/* Timeout Low and High */
++#define UART_OMAP_TO_L                 0x26
++#define UART_OMAP_TO_H                 0x27
++
+ /*
+  * Copy of the genpd flags for the console.
+  * Only used if console suspend is disabled
+@@ -663,13 +667,24 @@ static irqreturn_t omap8250_irq(int irq, void *dev_id)
+ 
+ 	/*
+ 	 * On K3 SoCs, it is observed that RX TIMEOUT is signalled after
+-	 * FIFO has been drained, in which case a dummy read of RX FIFO
+-	 * is required to clear RX TIMEOUT condition.
++	 * FIFO has been drained or erroneously.
++	 * So apply solution of Errata i2310 as mentioned in
++	 * https://www.ti.com/lit/pdf/sprz536
+ 	 */
+ 	if (priv->habit & UART_RX_TIMEOUT_QUIRK &&
+-	    (iir & UART_IIR_RX_TIMEOUT) == UART_IIR_RX_TIMEOUT &&
+-	    serial_port_in(port, UART_OMAP_RX_LVL) == 0) {
+-		serial_port_in(port, UART_RX);
++		(iir & UART_IIR_RX_TIMEOUT) == UART_IIR_RX_TIMEOUT) {
++		unsigned char efr2, timeout_h, timeout_l;
++
++		efr2 = serial_in(up, UART_OMAP_EFR2);
++		timeout_h = serial_in(up, UART_OMAP_TO_H);
++		timeout_l = serial_in(up, UART_OMAP_TO_L);
++		serial_out(up, UART_OMAP_TO_H, 0xFF);
++		serial_out(up, UART_OMAP_TO_L, 0xFF);
++		serial_out(up, UART_OMAP_EFR2, 0x1);
++		serial_in(up, UART_IIR);
++		serial_out(up, UART_OMAP_EFR2, efr2);
++		serial_out(up, UART_OMAP_TO_H, timeout_h);
++		serial_out(up, UART_OMAP_TO_L, timeout_l);
+ 	}
+ 
+ 	/* Stop processing interrupts on input overrun */
+-- 
+2.34.1
+
 
