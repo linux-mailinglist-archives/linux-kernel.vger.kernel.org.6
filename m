@@ -1,107 +1,132 @@
-Return-Path: <linux-kernel+bounces-215415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C262B909270
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:41:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A70909272
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CDF028D366
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:41:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A68711F21BBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8062119EEBB;
-	Fri, 14 Jun 2024 18:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9FE19EED2;
+	Fri, 14 Jun 2024 18:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iOvWJRXg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BdoRubii"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F091474B1
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 18:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A410A19ADB3;
+	Fri, 14 Jun 2024 18:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718390457; cv=none; b=RORnwGZTi2dta5GgOezCcZXT3gvHPlYYdO9TOkdZLn/v5lvH3dCsDrRcg1tzEaxhmZm8sviZLfOkeLs9xgVY9F72jDoVyMnZOsiQaJMvz+ZEYOBjCMCWNxXKH0TWvc05zEoEZIa4rEzohG2od0kdFbb72tLryQCn3mzwaBpgV6Q=
+	t=1718390482; cv=none; b=Qud8rzLRbJ0DFPMgo4xZPy0ZWvMkItSIhzsrwQaktIMdR2lXUeMOWA7H6P55d6GBrxVAuWva9OEEF3foXlOZFa2TzHuMZybKFXqd9EVTJq4PqNS56YuGj8hE3uvc09Z8DbYVGt+kkpXMm5GHgCdD9HRKtrEzZKodm+FxsX1RovQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718390457; c=relaxed/simple;
-	bh=ULzJwpglCX0QEdR3Y1XsB3aWzDUVENMbvB8wSVJ9pJM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iO+JShzHhkomB3NvH+lMVU0IHfc9kMAWeAnIWSXW75u40IpYZV96Z2E7AJwKLSIOdKaqLRB2uVTZrlF7e86qkqrao6MkC6GeB49T+p+SaCNLaoQl2IckgE6in3elY/uEhiUlbW3i5sqPS7goJSwgrA1c5pUDD79E9TvxhZtwL0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iOvWJRXg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718390455;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vbHnjVCMgPLHGeY6k4yg5XvdLWsbsFGovk2aBHxfGoc=;
-	b=iOvWJRXgg04rAv7qfEW+fIW9+/suApH/vyG2QEF9hs5GxUgFeHqwwjk5Ma5NzXSsKEQhx/
-	jnr1e9No6k9k4qwHat8sCnkyhJOMe+uuZE/h3QXVCzzKw/H5QXKQirbhSLR/QdLRE4pbtD
-	CZfzdZyHn4xfR4lqpk7sGG/JvtWQYEU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-541-nA-l2EvuNieQ2sPCHOqdTg-1; Fri,
- 14 Jun 2024 14:40:50 -0400
-X-MC-Unique: nA-l2EvuNieQ2sPCHOqdTg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6D3861956083;
-	Fri, 14 Jun 2024 18:40:48 +0000 (UTC)
-Received: from thuth-p1g4.redhat.com (unknown [10.39.193.73])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D570F19560AA;
-	Fri, 14 Jun 2024 18:40:42 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: linux-doc@vger.kernel.org,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Olof Johansson <olof@lixom.net>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-mtd@lists.infradead.org
-Subject: [PATCH] Documentation: Remove unused "spia_*" kernel parameters
-Date: Fri, 14 Jun 2024 20:40:41 +0200
-Message-ID: <20240614184041.601056-1-thuth@redhat.com>
+	s=arc-20240116; t=1718390482; c=relaxed/simple;
+	bh=P07/BQZkPkF9FnxI2OX1PtX5RC9VyYSc7T71VMYgMcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=OH2uI5hForYbX9TANndk4asfqnUBDEe3cXGkKpV9MWSQHMSNseAS9AH2FiY2JMQJwr5SDQWJV9w17vbJxwwgUnR1LRFLVDgPgv6SXGaLJbFfFws/c50K+Mx7aw2nUkVk7gwbkg5zj2WnxCd6oTh1l1AbmxTWoWZnzOzjd/3w1CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BdoRubii; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD0A7C2BD10;
+	Fri, 14 Jun 2024 18:41:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718390482;
+	bh=P07/BQZkPkF9FnxI2OX1PtX5RC9VyYSc7T71VMYgMcY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=BdoRubiiBTPh3kWCbiUfJTealstQfX+M3ros81e9pRS4bWcO1u4UH5oJkQoueNjAk
+	 UIZBn+eHPrP1aZwRJiRZc2w986CW3lIE+V8Db9VyIiwKhLR8M8gxpER/TPPsTnq6S+
+	 dlPc//PQq5/SdiwK+UThju0jWRSWv8BWBd6lZ/aOLRkjEJ8D4aRcvfkPXE9gYOCUFl
+	 KmOavAwFesaD6ieQ0QizHInuU417KLSFiAZ9v04aJNHkkrgoNDIv2vKiMZ27RKOUED
+	 ZxoTU+C6/sYNf/fqRZdduQfOEeW31dyF/VBML+xWgifSrmmtcNTOGxIkzxc2/J79F5
+	 bGQ2Em5i8J6pg==
+Date: Fri, 14 Jun 2024 13:41:20 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Bitao Hu <yaoma@linux.alibaba.com>
+Cc: lukas@wunner.de, bhelgaas@google.com, weirongguang@kylinos.cn,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kanie@linux.alibaba.com,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCHv2] PCI: pciehp: Use appropriate conditions to check the
+ hotplug controller status
+Message-ID: <20240614184120.GA1121063@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240528064200.87762-1-yaoma@linux.alibaba.com>
 
-The kernel module parameters "spia_io_base", "spia_fio_base",
-"spia_pedr" and "spia_peddr" have been removed via commit e377ca1e32f6
-("ARM: clps711x: p720t: Special driver for handling NAND memory is removed").
-Time to remove them from the documentation now, too.
+[+cc Ilpo]
 
-Signed-off-by: Thomas Huth <thuth@redhat.com>
----
- Documentation/admin-guide/kernel-parameters.txt | 5 -----
- 1 file changed, 5 deletions(-)
+On Tue, May 28, 2024 at 02:42:00PM +0800, Bitao Hu wrote:
+> "present" and "link_active" can be 1 if the status is ready, and 0 if
+> it is not. Both of them can be -ENODEV if reading the config space
+> of the hotplug port failed. That's typically the case if the hotplug
+> port itself was hot-removed. Therefore, this situation can occur:
+> pciehp_card_present() may return 1 and pciehp_check_link_active()
+> may return -ENODEV because the hotplug port was hot-removed in-between
+> the two function calls. In that case we'll emit both "Card present"
+> *and* "Link Up" since both 1 and -ENODEV are considered "true". This
+> is not the expected behavior. Those messages should be emited when
+> "present" and "link_active" are positive.
+> 
+> Signed-off-by: Bitao Hu <yaoma@linux.alibaba.com>
+> Reviewed-by: Lukas Wunner <lukas@wunner.de>
+> ---
+> v1 -> v2:
+> 1. Explain the rationale of the code change in the commit message
+> more clearly.
+> 2. Add the "Reviewed-by" tag of Lukas.
+> ---
+>  drivers/pci/hotplug/pciehp_ctrl.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
+> index dcdbfcf404dd..6adfdbb70150 100644
+> --- a/drivers/pci/hotplug/pciehp_ctrl.c
+> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
+> @@ -276,10 +276,10 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
+>  	case OFF_STATE:
+>  		ctrl->state = POWERON_STATE;
+>  		mutex_unlock(&ctrl->state_lock);
+> -		if (present)
+> +		if (present > 0)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index ff02e1a02e12..dd8436c98735 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6273,11 +6273,6 @@
- 			Not specifying this option is equivalent to
- 			spec_store_bypass_disable=auto.
- 
--	spia_io_base=	[HW,MTD]
--	spia_fio_base=
--	spia_pedr=
--	spia_peddr=
--
- 	split_lock_detect=
- 			[X86] Enable split lock detection or bus lock detection
- 
--- 
-2.45.2
+I completely agree that this is a problem and this patch addresses it.
+But ...
 
+It seems a little bit weird to me that we even get to this switch
+statement if we got -ENODEV from either pciehp_card_present() or
+pciehp_check_link_active().  If that happens, a config read failed,
+but we're going to go ahead and call pciehp_enable_slot(), which is
+going to do a bunch more config accesses, potentially try to power up
+the slot, etc.
+
+If a config read failed, it seems like we might want to avoid doing
+some of this stuff.
+
+>  			ctrl_info(ctrl, "Slot(%s): Card present\n",
+>  				  slot_name(ctrl));
+> -		if (link_active)
+> +		if (link_active > 0)
+>  			ctrl_info(ctrl, "Slot(%s): Link Up\n",
+>  				  slot_name(ctrl));
+
+These are cases where we misinterpreted -ENODEV as "device is present"
+or "link is active".
+
+pciehp_ignore_dpc_link_change() and pciehp_slot_reset() also call
+pciehp_check_link_active(), and I think they also interpret -ENODEV as
+"link is active".
+
+Do we need similar changes there?
+
+>  		ctrl->request_result = pciehp_enable_slot(ctrl);
+> -- 
+> 2.37.1 (Apple Git-137.1)
+> 
 
