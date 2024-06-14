@@ -1,111 +1,115 @@
-Return-Path: <linux-kernel+bounces-214416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89441908412
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:58:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C119A908422
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:01:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2979428265A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:58:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28932B21E67
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7548D1487EA;
-	Fri, 14 Jun 2024 06:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="J/Ejub4t"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038321487DC;
+	Fri, 14 Jun 2024 07:01:39 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C403142E80;
-	Fri, 14 Jun 2024 06:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F9217C72
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 07:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718348308; cv=none; b=fZzfmF/7v6tO7gmLfZGHZRhUt/iBSasrveIkG+O9VlMNM/AurWmmW7J/U176CqyFhcXgk+oWs5jYxPgT1iENvd/n+yD9Cv5RQ+D5VWgGxILc6fSZH7h32gv79BFZoeiiSXezmgR6XSXaryA3/7gpubakXPDGOrL51XgEns4jaXA=
+	t=1718348498; cv=none; b=Gc0pHbBYyJtrYWppwHCjX3bX/bTtz03wGoGB8ZTdQEdkX9c1OJ/DVwn2nd/tXXyh/3+hDH8JXjx0rPVTCTReRLiUQW3uiYtMtXdHohEGOQBuObXcrtLeF4wSHfZzOSfLdb3M0muz/0I7wuK8SSHcHEv8hneFc4FrsygfzsKDHOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718348308; c=relaxed/simple;
-	bh=f9L8+HOT1POEI+Paq5nOZlp5/3RRH8cDd8FQ8Ps8UvE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ool5F38yDEWUhEPULa1jFAgnZRD249/IYHA2VqhCC0WDguvtfb3VRdXCD5wG8OvXMKsJeoX3b8tbpyyvScNKL0xxI5sbbAwZeTw+0xDWtUfUB2zyXFFOLU0rVWjFfQzljdzMrXLUOVPs+vrzAszowiz0ZrRPDDDh7srsDSSOveE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=J/Ejub4t; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=f8MUtOuGI0H7AJa9ICP7hY51hweem6+bRBdc+smOw7E=;
-	t=1718348306; x=1718780306; b=J/Ejub4tOpQ6JNA4Gzim5xjhcD+Jh56J8NfE69WesEYnTu5
-	htg32CnFFwAXl32grlomFc9ISSM+GPiR16FzUM/Z7ftsECwY0a30JqmPjQspBIkw+JCUUb+V43+BR
-	AOhF+V2ntgeUVFG2/n0nR8KTKZUfXEINDMUeRzZDX9vcSAdc8/PRzTVWmBxpwTPZpn8fnPI9Rq8ve
-	YrDRWwsRJoMmIc77lzZOP/PSdhF2+k770/HrvzBxnsPKw26FrvvnwBMZxj7r1VJ86dqQmt5DhD1qc
-	ag7kWp6ucQUyHjwMMBKLwqf/7k0yLkTZr6jMRR1WcIovWrNSrdwU8X/QtRWY+JPA==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sI0tC-00064y-E5; Fri, 14 Jun 2024 08:58:22 +0200
-Message-ID: <6dcfa590-8d09-4d3a-9c35-0294099489ed@leemhuis.info>
-Date: Fri, 14 Jun 2024 08:58:11 +0200
+	s=arc-20240116; t=1718348498; c=relaxed/simple;
+	bh=f+47wVGcuysOXwCj/07vA1XG0M+Mix+78gdu2z03d+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UsNbz88Oq9Lcchp+70LXfJIUFExQsn/kt05s/1J9nNM9yMFVLIFFIfACI2qnq9PO0Im8yWwZppV9e8MvPtlfLrWId13+ne2p8Ms8j4J/rf9nbpJWE5u8Q/ZnAUDzlXJMU29HkebKSK+Tn7z4CElVBC2dC6voK+WCYJhmk8EwkgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sI0w9-0004Jv-JE; Fri, 14 Jun 2024 09:01:25 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sI0w7-002Cwf-Q0; Fri, 14 Jun 2024 09:01:23 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sI0w7-00ALq4-2I;
+	Fri, 14 Jun 2024 09:01:23 +0200
+Date: Fri, 14 Jun 2024 09:01:23 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	stable@vger.kernel.org, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net v1 2/2] net: phy: dp83tg720: get initial master/slave
+ configuration
+Message-ID: <Zmvqw-GtKsSNFQsr@pengutronix.de>
+References: <20240613183034.2407798-1-o.rempel@pengutronix.de>
+ <20240613183034.2407798-2-o.rempel@pengutronix.de>
+ <f88abfe3-a66c-4e65-b627-7adf7f04580f@lunn.ch>
+ <ZmvTS9YI8LACJOND@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Re: Intel e1000e driver bug on stable (6.9.x)
-To: Greg KH <gregkh@linuxfoundation.org>, Ismael Luceno <ismael@iodev.co.uk>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hui Wang <hui.wang@canonical.com>, Hui Wang <hui.wang@canonical.com>,
- Vitaly Lifshits <vitaly.lifshits@intel.com>,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <ZmfcJsyCB6M3wr84@pirotess>
- <2024061323-unhappily-mauve-b7ea@gregkh>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <2024061323-unhappily-mauve-b7ea@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718348306;93239a48;
-X-HE-SMSGID: 1sI0tC-00064y-E5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZmvTS9YI8LACJOND@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 13.06.24 10:35, Greg KH wrote:
-> On Wed, Jun 12, 2024 at 10:33:19PM +0200, Ismael Luceno wrote:
->>
->> I noticed that the NIC started to fail on a couple of notebooks [0]
->> [1] after upgrading to 6.9.1.
->>
->> I tracked down the problem to commit 861e8086029e ("e1000e: move force
->> SMBUS from enable ulp function to avoid PHY loss issue", 2024-03-03),
->> included in all 6.9.x releases.
->>
->> The fix is in commit bfd546a552e1 ("e1000e: move force SMBUS near
->> the end of enable_ulp function", 2024-05-28) from mainline.
->>
->> The NIC fails right after boot on both systems I tried; I mention
->> because the description is a bit unclear about that on the fix, maybe
->> other systems are affected differently.
+On Fri, Jun 14, 2024 at 07:21:15AM +0200, Oleksij Rempel wrote:
+> On Thu, Jun 13, 2024 at 09:33:01PM +0200, Andrew Lunn wrote:
+> > On Thu, Jun 13, 2024 at 08:30:34PM +0200, Oleksij Rempel wrote:
+> > > Get initial master/slave configuration, otherwise ethtool
+> > > wont be able to provide this information until link is
+> > > established. This makes troubleshooting harder, since wrong
+> > > role configuration would prevent the link start.
+> > 
+> > I looked at how genphy_c45_read_status() works. If we have
+> > phydev->autoneg == AUTONEG_ENABLE then genphy_c45_baset1_read_status()
+> > is called which sets phydev->master_slave_get. If not AUTONEG_ENABLE
+> > it calls genphy_c45_read_pma() which ends up calling
+> > genphy_c45_pma_baset1_read_master_slave().
+> > 
+> > So it seems like the .read_status op should be setting master/slave
+> > each time it is called, and not one time during .config_init.
+> > 
+> > What do you think?
 > 
-> Now queued up, thanks.
+> Yes, you are right. I verified it:
+> In case of this driver, .config_init will be executed every time no link
+> is detected over phy_init_hw() call. If link is detected
+> genphy_c45_pma_baset1_read_master_slave() is called directly.
+> It is not directly visible but read_master_slave() will be executed on
+> every  .read_status.
 
-I see that they are in the latest 6.6.y and 6.9.y stable-rcs. Thing is:
+Hm.. on other hand. Since the configuration state is readed only on
+init and reset, we will see on user space side only default state not updated
+after config_aneg().
 
-bfd546a552e1 causes other regressions, which is why Hui Wang submitted a
-revert for that one:
-
-https://lore.kernel.org/all/20240611062416.16440-1-hui.wang@canonical.com/
-
-Vitaly Lifshits meanwhile submitted a change that afaics is meant to fix
-that regression:
-
-https://lore.kernel.org/all/20240613120134.224585-1-vitaly.lifshits@intel.com/
-
-CCed both so they can comment.
-
-Not sure what's the best way forward here, maybe it is "not picking up
-bfd546a552e1 for now and waiting a few more days till the dust settles".
-
-Ciao, Thorsten
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
