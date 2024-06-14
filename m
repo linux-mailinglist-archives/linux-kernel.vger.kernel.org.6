@@ -1,236 +1,177 @@
-Return-Path: <linux-kernel+bounces-215488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3BA909391
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 23:00:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36CFB909396
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 23:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F9541F231EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:00:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4972F1C21403
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5F91836EF;
-	Fri, 14 Jun 2024 21:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1901494B3;
+	Fri, 14 Jun 2024 21:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VKkGHVxY"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NTeplea4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B681EB25;
-	Fri, 14 Jun 2024 21:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D5E13C671
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 21:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718398824; cv=none; b=bXd7twWq6PAlKS6bkHwjIVE3y350++BGMmby7byu4O5vlF41yCArRmgplPBGtylcK+O9YVKJVCxKBdhVhtZQPVpnaCG+/0Ym3vEd6OCNgtpx6UONjfiq2/ysuE3/7EU/76j1O3cIGD+XPEmDCzExRcddPWT5IbzqRvcCNrA9EEw=
+	t=1718399367; cv=none; b=o+Z7KkQGmvuabNrgCDdQwYDVG7M02VItEH7AZwrke3TQOP+kmQbSFmM0ynpKIDIj7PsQwrfzBcTLx6w1o0tUpRDRahp90YlXdwRWNtCDcBKQ84spwVB/xG+I5hg+L+iobJlhumE+bzv2TUVDyHetKaw7LKdcz9LwDY/aDoeGW/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718398824; c=relaxed/simple;
-	bh=oQ6arAMIY4W8JlFuhCva0WASFpdOy6AaDFmh/dcfYng=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nTvqXLYjzVDi/b5K4tTz1wfyUu54A099KY5OggHRi2/L4O9gNyTTgYl11Qu4ODdmq3Av9DnmAtwYANPUVcmhFgdHMEn5fJ716neVZ5UP3G35BGVGV/O7+rG/JDGFTk11prxIvLjQtVDWzCYW7mrjKOrgzzZ2NHY7JpilZiCdFCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VKkGHVxY; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718398820;
-	bh=oQ6arAMIY4W8JlFuhCva0WASFpdOy6AaDFmh/dcfYng=;
-	h=From:Date:Subject:To:Cc:From;
-	b=VKkGHVxY9SmUApWtxMiW8ZEBIhXb8eOgsRjdZAREYrvedg2cYTfIYkmILJwbKjyLB
-	 CVB0uCFj5pR6xskzzJjI3h2qeng3CMg4+xRrfD5KZOtKlCt6MAY7+SyjyjWPwrOlSq
-	 5lLerL0SDi4nQVKFDnIXEssz/om3YYhM9b4wgVi3OAChLuAsDVMDPBa+xdPlS6qwzX
-	 vhCp3htC5Fb7GzP7GMHnkf9xNauu9tStyXf888EC2Iw5s9FvP3JxX+69jScrJKXzGD
-	 9ywo3pHbpNb6he+j11iq7+AuNixKkIAn1wmZtsvySalgs3M6mi97A3AYKnhtDhNDQ3
-	 pRhTuICunZZBg==
-Received: from [192.168.1.207] (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E00F337804CF;
-	Fri, 14 Jun 2024 21:00:16 +0000 (UTC)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Fri, 14 Jun 2024 16:59:36 -0400
-Subject: [PATCH] arm64: dts: qcom: sc7180-trogdor: Disable pwmleds node
- where unused
+	s=arc-20240116; t=1718399367; c=relaxed/simple;
+	bh=FNq86m2+L/Y8MguLbUnC6HoD3GqL1CauBRcwa9sF4GA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=O83UKltNzQUSQxFyTMyQ59uUtIHV00GAJUvors/7/7IIkfaC31WvrCLlhaGpU5l2PFViXkNXNn1ZCLwO53yOKhAdH17Oh2zPAByz2THKlHzjQ91zOh0yxRrBc3gLeoDIyAVGRYl8l0XxGll4uUGKkjNtrY37znzmz3o7EPQ9DWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NTeplea4; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718399366; x=1749935366;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=FNq86m2+L/Y8MguLbUnC6HoD3GqL1CauBRcwa9sF4GA=;
+  b=NTeplea42uiwz8vJlAiUC1/+6PWWBtGbQFZTcfb8mtCu+4iVVyL2Feff
+   VqckqmjQZr0YVjTYLlhkjPqt362Lx3yk/qWBBs2UO7iNsdkzmo8YJ2EWP
+   mSy/kySl6Q4BmVwg6NhrDsEjLeVo7nGVg3TjZH6e0P8w7D080Mblfc9DR
+   XTib99iKep4EEVzZgzJvmMaOTe25sfksNFQ/dv/AmOxJWRyVsf6FlfilA
+   qbyWyiC2Ij2HarFR2ylGbdOmIsHbZ2lj1iHTi46TC2IlylzbnSq/wajAD
+   KZeEfDXVExZz/HeTKSEguCNWtubi7yy2nhhAvQkrl6cm1TrC8PpUF5XML
+   A==;
+X-CSE-ConnectionGUID: hjk1VbPfSVSWflf/N+Al5g==
+X-CSE-MsgGUID: Dp3HtxdyTOGj60o/4fx2uw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="15141717"
+X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
+   d="scan'208";a="15141717"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 14:09:26 -0700
+X-CSE-ConnectionGUID: FBxTe8TwQ5OCB8N3E2Vs9g==
+X-CSE-MsgGUID: JDLnadtmSGipZJW8EiIzWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
+   d="scan'208";a="78095555"
+Received: from lkp-server01.sh.intel.com (HELO 9e3ee4e9e062) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 14 Jun 2024 14:09:23 -0700
+Received: from kbuild by 9e3ee4e9e062 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sIEAi-0001nZ-2L;
+	Fri, 14 Jun 2024 21:09:20 +0000
+Date: Sat, 15 Jun 2024 05:08:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Kees Cook <keescook@chromium.org>, Vlastimil Babka <vbabka@suse.cz>
+Subject: mm/slub.c:3905:29: error: variable 'obj_exts' set but not used
+Message-ID: <202406150444.F6neSaiy-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240614-sc7180-pwmleds-probe-v1-1-e2c3f1b42a43@collabora.com>
-X-B4-Tracking: v=1; b=H4sIADevbGYC/x3MTQqAIBBA4avErBtQMYuuEi0qxxroRxyoILp70
- vJbvPeAUGISaIsHEp0sfOwZuixgWoZ9JmSfDUYZq5y2KFOtG4Xx2lbygjEdI6FprKsrP4xBWch
- pTBT4/rdd/74fWbRaKWYAAAA=
-To: cros-qcom-dts-watchers@chromium.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Rob Clark <robdclark@chromium.org>, 
- Douglas Anderson <dianders@chromium.org>, 
- Stephen Boyd <swboyd@chromium.org>
-Cc: kernel@collabora.com, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Currently the keyboard backlight is described in the common
-sc7180-trogdor dtsi as an led node below a pwmleds node, and the led
-node is set to disabled. Only the boards that have a keyboard backlight
-enable it.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   c286c21ff94252f778515b21b6bebe749454a852
+commit: 4b8736964640fe160724e7135dc62883bddcdace mm/slab: add allocation accounting into slab allocation and free paths
+date:   7 weeks ago
+config: x86_64-sof-customedconfig-atom-defconfig (https://download.01.org/0day-ci/archive/20240615/202406150444.F6neSaiy-lkp@intel.com/config)
+compiler: gcc-11 (Ubuntu 11.4.0-4ubuntu1) 11.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240615/202406150444.F6neSaiy-lkp@intel.com/reproduce)
 
-However, since the parent pwmleds node is still enabled everywhere, even
-on boards that don't have keyboard backlight it is probed and fails,
-resulting in an error:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406150444.F6neSaiy-lkp@intel.com/
 
-  leds_pwm pwmleds: probe with driver leds_pwm failed with error -22
+All errors (new ones prefixed by >>):
 
-as well as a failure in the DT kselftest:
+   mm/slub.c: In function 'slab_post_alloc_hook':
+>> mm/slub.c:3905:29: error: variable 'obj_exts' set but not used [-Werror=unused-but-set-variable]
+    3905 |         struct slabobj_ext *obj_exts;
+         |                             ^~~~~~~~
+   cc1: all warnings being treated as errors
 
-  not ok 45 /pwmleds
 
-Fix this by controlling the status of the parent pwmleds node instead of
-the child led, based on the presence of keyboard backlight. This is what
-is done on sc7280 already.
+vim +/obj_exts +3905 mm/slub.c
 
-While at it add a missing blank line before the child node to follow the
-coding style.
+  3898	
+  3899	static __fastpath_inline
+  3900	void slab_post_alloc_hook(struct kmem_cache *s,	struct obj_cgroup *objcg,
+  3901				  gfp_t flags, size_t size, void **p, bool init,
+  3902				  unsigned int orig_size)
+  3903	{
+  3904		unsigned int zero_size = s->object_size;
+> 3905		struct slabobj_ext *obj_exts;
+  3906		bool kasan_init = init;
+  3907		size_t i;
+  3908		gfp_t init_flags = flags & gfp_allowed_mask;
+  3909	
+  3910		/*
+  3911		 * For kmalloc object, the allocated memory size(object_size) is likely
+  3912		 * larger than the requested size(orig_size). If redzone check is
+  3913		 * enabled for the extra space, don't zero it, as it will be redzoned
+  3914		 * soon. The redzone operation for this extra space could be seen as a
+  3915		 * replacement of current poisoning under certain debug option, and
+  3916		 * won't break other sanity checks.
+  3917		 */
+  3918		if (kmem_cache_debug_flags(s, SLAB_STORE_USER | SLAB_RED_ZONE) &&
+  3919		    (s->flags & SLAB_KMALLOC))
+  3920			zero_size = orig_size;
+  3921	
+  3922		/*
+  3923		 * When slab_debug is enabled, avoid memory initialization integrated
+  3924		 * into KASAN and instead zero out the memory via the memset below with
+  3925		 * the proper size. Otherwise, KASAN might overwrite SLUB redzones and
+  3926		 * cause false-positive reports. This does not lead to a performance
+  3927		 * penalty on production builds, as slab_debug is not intended to be
+  3928		 * enabled there.
+  3929		 */
+  3930		if (__slub_debug_enabled())
+  3931			kasan_init = false;
+  3932	
+  3933		/*
+  3934		 * As memory initialization might be integrated into KASAN,
+  3935		 * kasan_slab_alloc and initialization memset must be
+  3936		 * kept together to avoid discrepancies in behavior.
+  3937		 *
+  3938		 * As p[i] might get tagged, memset and kmemleak hook come after KASAN.
+  3939		 */
+  3940		for (i = 0; i < size; i++) {
+  3941			p[i] = kasan_slab_alloc(s, p[i], init_flags, kasan_init);
+  3942			if (p[i] && init && (!kasan_init ||
+  3943					     !kasan_has_integrated_init()))
+  3944				memset(p[i], 0, zero_size);
+  3945			kmemleak_alloc_recursive(p[i], s->object_size, 1,
+  3946						 s->flags, init_flags);
+  3947			kmsan_slab_alloc(s, p[i], init_flags);
+  3948			if (need_slab_obj_ext()) {
+  3949				obj_exts = prepare_slab_obj_exts_hook(s, flags, p[i]);
+  3950	#ifdef CONFIG_MEM_ALLOC_PROFILING
+  3951				/*
+  3952				 * Currently obj_exts is used only for allocation profiling.
+  3953				 * If other users appear then mem_alloc_profiling_enabled()
+  3954				 * check should be added before alloc_tag_add().
+  3955				 */
+  3956				if (likely(obj_exts))
+  3957					alloc_tag_add(&obj_exts->ref, current->alloc_tag, s->size);
+  3958	#endif
+  3959			}
+  3960		}
+  3961	
+  3962		memcg_slab_post_alloc_hook(s, objcg, flags, size, p);
+  3963	}
+  3964	
 
-Fixes: 7ec3e67307f8 ("arm64: dts: qcom: sc7180-trogdor: add initial trogdor and lazor dt")
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r1-kb.dts   | 2 +-
- arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r1-lte.dts  | 2 +-
- arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r10-kb.dts  | 2 +-
- arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r10-lte.dts | 2 +-
- arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3-kb.dts   | 2 +-
- arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3-lte.dts  | 2 +-
- arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r9-kb.dts   | 2 +-
- arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r9-lte.dts  | 2 +-
- arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi              | 5 +++--
- 9 files changed, 11 insertions(+), 10 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r1-kb.dts b/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r1-kb.dts
-index 919bfaea6189..340cb119d0a0 100644
---- a/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r1-kb.dts
-+++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r1-kb.dts
-@@ -12,6 +12,6 @@ / {
- 	compatible = "google,lazor-rev1-sku2", "google,lazor-rev2-sku2", "qcom,sc7180";
- };
- 
--&keyboard_backlight {
-+&pwmleds {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r1-lte.dts b/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r1-lte.dts
-index eb20157f6af9..d45e60e3eb9e 100644
---- a/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r1-lte.dts
-+++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r1-lte.dts
-@@ -17,6 +17,6 @@ &ap_sar_sensor_i2c {
- 	status = "okay";
- };
- 
--&keyboard_backlight {
-+&pwmleds {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r10-kb.dts b/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r10-kb.dts
-index 45d34718a1bc..e906ce877b8c 100644
---- a/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r10-kb.dts
-+++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r10-kb.dts
-@@ -18,6 +18,6 @@ / {
- 	compatible = "google,lazor-sku2", "qcom,sc7180";
- };
- 
--&keyboard_backlight {
-+&pwmleds {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r10-lte.dts b/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r10-lte.dts
-index 79028d0dd1b0..4b9ee15b09f6 100644
---- a/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r10-lte.dts
-+++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r10-lte.dts
-@@ -22,6 +22,6 @@ &ap_sar_sensor_i2c {
- 	status = "okay";
- };
- 
--&keyboard_backlight {
-+&pwmleds {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3-kb.dts b/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3-kb.dts
-index 3459b81c5628..a960553f3994 100644
---- a/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3-kb.dts
-+++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3-kb.dts
-@@ -21,6 +21,6 @@ / {
- 		"qcom,sc7180";
- };
- 
--&keyboard_backlight {
-+&pwmleds {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3-lte.dts b/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3-lte.dts
-index ff8f47da109d..82bd9ed7e21a 100644
---- a/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3-lte.dts
-+++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r3-lte.dts
-@@ -25,6 +25,6 @@ &ap_sar_sensor_i2c {
- 	status = "okay";
- };
- 
--&keyboard_backlight {
-+&pwmleds {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r9-kb.dts b/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r9-kb.dts
-index faf527972977..6278c1715d3f 100644
---- a/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r9-kb.dts
-+++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r9-kb.dts
-@@ -18,6 +18,6 @@ / {
- 	compatible = "google,lazor-rev9-sku2", "qcom,sc7180";
- };
- 
--&keyboard_backlight {
-+&pwmleds {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r9-lte.dts b/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r9-lte.dts
-index d737fd0637fb..0ec1697ae2c9 100644
---- a/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r9-lte.dts
-+++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor-r9-lte.dts
-@@ -22,6 +22,6 @@ &ap_sar_sensor_i2c {
- 	status = "okay";
- };
- 
--&keyboard_backlight {
-+&pwmleds {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi b/arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi
-index 4d33c3fbedff..74ab321d3333 100644
---- a/arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi
-@@ -356,10 +356,11 @@ max98360a: audio-codec-0 {
- 		#sound-dai-cells = <0>;
- 	};
- 
--	pwmleds {
-+	pwmleds: pwmleds {
- 		compatible = "pwm-leds";
-+		status = "disabled";
-+
- 		keyboard_backlight: led-0 {
--			status = "disabled";
- 			label = "cros_ec::kbd_backlight";
- 			function = LED_FUNCTION_KBD_BACKLIGHT;
- 			pwms = <&cros_ec_pwm 0>;
-
----
-base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
-change-id: 20240614-sc7180-pwmleds-probe-284675dabf04
-
-Best regards,
 -- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
