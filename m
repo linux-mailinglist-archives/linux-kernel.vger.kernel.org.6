@@ -1,169 +1,150 @@
-Return-Path: <linux-kernel+bounces-215184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2077F908F5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:52:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F88908F56
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C67C7B2BC13
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:50:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E4691F216C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2AC16C691;
-	Fri, 14 Jun 2024 15:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JEFUOk64"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5594E16B73D;
+	Fri, 14 Jun 2024 15:50:23 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11840145B07
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F21615B562
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718380211; cv=none; b=SU4lZy6XecZYE+ymplyacv3CFjU+KhIDP9lPgcZ7zLNS2a9mjPNm6qBEgrajLvTTySjnu0qWYJXKzI3y1ujWlV4DYiH4T1akqkIgS6UM2ia0hENzoUirmRqGt0QCbqoXOYUng4FzqcfUkc7xNiWg+a5weivBWOsNXf2S3A8JC2Q=
+	t=1718380222; cv=none; b=oR4IftRnWLH9x0umSciuHiQftPBQSrIpwtJtxauc0/qu4/hWzDGImF0MfMffGqy4l0JGHvFaubCJcLUYdLQupH1KFuVd1SOlA7dXYKqf7QM++7eAiDYVXYLVHqD1z1p5DzK5c7AUCYbHny5uohHj1RosckqfQQbVIqWWqNhftFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718380211; c=relaxed/simple;
-	bh=Of89akR2CMY7eKqsbXy1fnKj5CKC+LPr7lSvKGw04Bk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nIupm1BwON26jSGKw6nMjxISpKEhyRWQUwbuFSaTVEiIAilzVufAy27pggAOQTX8a3NyI2d7f2gDMUMXhbYbJQW274bmWpjl0xLmOeLi/8Q1cZNyxz1kdC3zLy4/KLXG0OyzdNNctBdiBokEvS2OFmJToeMtPcy6/epCUib5Wvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JEFUOk64; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7eb8889a0baso11500339f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:50:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1718380209; x=1718985009; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=leswT/yscKTO7Z6a2Wo4H81HBTQclZtl7oZCfZGayWM=;
-        b=JEFUOk64Xehez37N8Ti+kOaFFa9DgSD7wBfgcPUjejHu4TsQm/SjvO3cjT5LcSZ1sG
-         uexAbovOukDc2l2/xKJ4npb9p1ufMB5fWGv5vMfqOSQoBDWhfgQeWYtAQWEj8NY1mTHR
-         ENN1fVISWmorYKmRkbCdxlD+h91reH7b+UG6k=
+	s=arc-20240116; t=1718380222; c=relaxed/simple;
+	bh=eEaMUsD2rZrdszBawcdmXrpAkK9gZi0K/sFTkhrTvJw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cIgzqj4cP7k0juElr748HkneUHCnYo2FxwDZjsoF2GOrzXt31CuiY40vSJk9oWEYmGNhp2OUly+8JvgXzkCr3rmZ6oV+ofsXtlyw4YrWSTsyezlCxhb5dRUwURGkCySt+Awn6OyUMEb5MrAb/sw0a+UqNk1eDKDcoeMVsoLf8y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-375e45a4110so8253865ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 08:50:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718380209; x=1718985009;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=leswT/yscKTO7Z6a2Wo4H81HBTQclZtl7oZCfZGayWM=;
-        b=GvyE6eoH5KxAFcw2LdeRAm24jBPiME5orTJo8uQlUg/LEwHziMQCk/kuj/jU42ReGI
-         aVAAxU/MJkEFAkXsvWO6hCM0jsWb5pBvqx6v61CxQw7uQL6FCdAApUVzkuqktqGl8e62
-         fZAjzgTya08Xu+CgetSmRTY2Zr0brLJfkvjNXvXN/jAWXlquVwbFIAGiubCQElcyqquP
-         B8I7rnVWLH+pG9tu1jpFdclQNome/ZMFHY9I7/BDEOXBgcpn53H6L0cuPBvPt2gdEqpq
-         kSjBfzv3YvVTo5w9Qb15gscy4CsN2ovCwHkzZwtF8JcyvX2NCsbQrjeCiI3H5f1teMCP
-         4rbA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOo6rUoHYGabcYBXXr5ZvgYUVil4VgJL8z8EVRF7Sij2shLkHRKRrBOUvggeb3elC111sqfgq9vq3prQSG9f5+6tVlIVIP2h/kJcJA
-X-Gm-Message-State: AOJu0YzbuuBvn/D3LHyNLA2B/7zMjWh4sukWgctxkmLQJYKm0hGpDTqC
-	OmiCa8fP6I6Bfndj3yVOijY8Q/KdteN4fx1a1xghYw6JU4snFmGQv0IdWl8moy0=
-X-Google-Smtp-Source: AGHT+IED3HSMfmB9vnuFFL8MFycsr72SN22gD5z+fwYlkLvh2hJe5W48P0uXhfkKYgekiV4qCO0SEg==
-X-Received: by 2002:a6b:6b16:0:b0:7eb:730b:f0c2 with SMTP id ca18e2360f4ac-7ebeaef9959mr278165839f.0.1718380208121;
-        Fri, 14 Jun 2024 08:50:08 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b956915c17sm979497173.43.2024.06.14.08.50.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 08:50:07 -0700 (PDT)
-Message-ID: <90e61842-e933-4d6f-a3b5-c802382fe96a@linuxfoundation.org>
-Date: Fri, 14 Jun 2024 09:50:05 -0600
+        d=1e100.net; s=20230601; t=1718380220; x=1718985020;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=q2j2pYJL3E7Tl8CHR3yVJ1heQbZR4qqoUVD6Td5o04c=;
+        b=rKnvgplgZEMoXKjI7aPqRhA9I1FZoXMUUvelLacptKMfeBmwnCMYsZ4iYfXqgvu38i
+         bxbwDwjKgq+taofpjyZc0SAnAyP3NrOLU41s4NHppTmNud5mpoX8vu5xSTHxXhJT1T5A
+         5mx8u7khxAfrdyinQ8riLrxnQVfp84EzUZIfN0eYuDKu2t48lH1ueTfxa7uTBnwhOUlc
+         pTcv8X+uzPVUbpZFSegZpvHgWSic51i5Qgwd2qc0XnVSJgcu6qFNBsg9+VrZhx7cEDXo
+         afVSf22GXcSK2kK9wsg5vhGbuoK8Pg3QsUC93pjRH1GuDvsoLVrhlow6KLyL0B+PXoey
+         qaLg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9BdiAgLPaHIMqtufF8GmYLJtq/j8bCwe8CHqdLXmzjcGTVXcck3qojLYN6yilRnUVhdgbskn7J/vs5HVAA0s68Bh2UJQm46Bv2qTV
+X-Gm-Message-State: AOJu0YxfFhrS6ly149VyXQNr/cUYeAk1Thb7H2HxjaVuYtK0ZTlqfE6X
+	7GV2OYFUicJDagvP3oQ5splxIFA+P/chxxUsVo/9rxLtJ67WPbABFDqNpWowQQ4BVrLA8DwRBWn
+	WS8vF534spYtcVR7yw+b8Unvzg0rSle7D+PR0AeXXcI0gpudVN1fv8fU=
+X-Google-Smtp-Source: AGHT+IH1zmV3U3XvSe6YiB+uqVWTuWnQPg4pCFKXeRSuAMpaB6caxUG3TcLORbeaK4pVcuQTukWd2YCPMggg0GFH303blRVbltAo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] usercopy: Convert test_user_copy to KUnit test
-To: Kees Cook <kees@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Vitor Massaru Iha <vitor@massaru.org>,
- Ivan Orlov <ivan.orlov0322@gmail.com>, David Gow <davidgow@google.com>,
- Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
- linux-hardening@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240612195412.make.760-kees@kernel.org>
- <20240612195921.2685842-2-kees@kernel.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240612195921.2685842-2-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1c29:b0:375:a03d:773a with SMTP id
+ e9e14a558f8ab-375e0e27c0fmr1674525ab.1.1718380220552; Fri, 14 Jun 2024
+ 08:50:20 -0700 (PDT)
+Date: Fri, 14 Jun 2024 08:50:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a2aa7a061adb921e@google.com>
+Subject: [syzbot] [wpan?] WARNING in lowpan_xmit
+From: syzbot <syzbot+ba0ca9eb9e8da84dadeb@syzkaller.appspotmail.com>
+To: alex.aring@gmail.com, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wpan@vger.kernel.org, 
+	miquel.raynal@bootlin.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	stefan@datenfreihafen.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/12/24 13:59, Kees Cook wrote:
-> Convert the runtime tests of hardened usercopy to standard KUnit tests.
-> 
-> Additionally disable usercopy_test_invalid() for systems with separate
-> address spaces (or no MMU) since it's not sensible to test for address
-> confusion there (e.g. m68k).
-> 
-> Co-developed-by: Vitor Massaru Iha <vitor@massaru.org>
-> Signed-off-by: Vitor Massaru Iha <vitor@massaru.org>
-> Link: https://lore.kernel.org/r/20200721174654.72132-1-vitor@massaru.org
-> Tested-by: Ivan Orlov <ivan.orlov0322@gmail.com>
-> Reviewed-by: David Gow <davidgow@google.com>
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
->   MAINTAINERS                                |   1 +
->   lib/Kconfig.debug                          |  21 +-
->   lib/Makefile                               |   2 +-
->   lib/{test_user_copy.c => usercopy_kunit.c} | 282 ++++++++++-----------
->   4 files changed, 151 insertions(+), 155 deletions(-)
->   rename lib/{test_user_copy.c => usercopy_kunit.c} (46%)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8754ac2c259d..0cd171ec6010 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11962,6 +11962,7 @@ F:	arch/*/configs/hardening.config
->   F:	include/linux/overflow.h
->   F:	include/linux/randomize_kstack.h
->   F:	kernel/configs/hardening.config
-> +F:	lib/usercopy_kunit.c
->   F:	mm/usercopy.c
->   K:	\b(add|choose)_random_kstack_offset\b
->   K:	\b__check_(object_size|heap_object)\b
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index 59b6765d86b8..561e346f5cb0 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -2505,18 +2505,6 @@ config TEST_VMALLOC
->   
->   	  If unsure, say N.
->   
-> -config TEST_USER_COPY
-> -	tristate "Test user/kernel boundary protections"
-> -	depends on m
-> -	help
-> -	  This builds the "test_user_copy" module that runs sanity checks
-> -	  on the copy_to/from_user infrastructure, making sure basic
-> -	  user/kernel boundary testing is working. If it fails to load,
-> -	  a regression has been detected in the user/kernel memory boundary
-> -	  protections.
-> -
-> -	  If unsure, say N.
-> -
->   config TEST_BPF
->   	tristate "Test BPF filter functionality"
->   	depends on m && NET
-> @@ -2814,6 +2802,15 @@ config SIPHASH_KUNIT_TEST
->   	  This is intended to help people writing architecture-specific
->   	  optimized versions.  If unsure, say N.
->   
-> +config USERCOPY_KUNIT_TEST
-> +	tristate "KUnit Test for user/kernel boundary protections"
-> +	depends on KUNIT
-> +	default KUNIT_ALL_TESTS
-> +	help
-> +	  This builds the "usercopy_kunit" module that runs sanity checks
-> +	  on the copy_to/from_user infrastructure, making sure basic
-> +	  user/kernel boundary testing is working.
-> +
+Hello,
 
-Please carry the following line forward as well to be complete assuming
-it is relevant.
+syzbot found the following issue on:
 
-If unsure, say N.
+HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17789a56980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
+dashboard link: https://syzkaller.appspot.com/bug?extid=ba0ca9eb9e8da84dadeb
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-thanks,
--- Shuah
+Unfortunately, I don't have any reproducer for this issue yet.
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a4edf8b28d7f/disk-2ccbdf43.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5f9b0fd6168d/vmlinux-2ccbdf43.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a2c5f918ca4f/bzImage-2ccbdf43.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ba0ca9eb9e8da84dadeb@syzkaller.appspotmail.com
+
+ieee802154 phy0 wpan0: encryption failed: -22
+ieee802154 phy1 wpan1: encryption failed: -22
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 1237 at include/linux/skbuff.h:3069 skb_network_header_len include/linux/skbuff.h:3069 [inline]
+WARNING: CPU: 1 PID: 1237 at include/linux/skbuff.h:3069 lowpan_header net/ieee802154/6lowpan/tx.c:236 [inline]
+WARNING: CPU: 1 PID: 1237 at include/linux/skbuff.h:3069 lowpan_xmit+0xe38/0x11a0 net/ieee802154/6lowpan/tx.c:282
+Modules linked in:
+CPU: 1 PID: 1237 Comm: aoe_tx0 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:skb_network_header_len include/linux/skbuff.h:3069 [inline]
+RIP: 0010:lowpan_header net/ieee802154/6lowpan/tx.c:236 [inline]
+RIP: 0010:lowpan_xmit+0xe38/0x11a0 net/ieee802154/6lowpan/tx.c:282
+Code: 85 7c fe ff ff 48 01 81 48 02 00 00 e8 91 ea 24 fe e9 59 fc ff ff e8 d7 79 f4 f6 90 0f 0b 90 e9 17 f6 ff ff e8 c9 79 f4 f6 90 <0f> 0b 90 e9 fa f6 ff ff e8 bb 79 f4 f6 0f b7 8d e0 fe ff ff 48 c7
+RSP: 0018:ffffc900049979c0 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff888022284cb0 RCX: ffffffff8a99627f
+RDX: ffff8880232b1e00 RSI: ffffffff8a996b87 RDI: 0000000000000003
+RBP: ffffc90004997b60 R08: 0000000000000003 R09: 000000000000ffff
+R10: 000000000000ffff R11: 0000000000000000 R12: ffff88807cecf836
+R13: 000000000000ffff R14: ffffc90004997a50 R15: ffff88807cecf780
+FS:  0000000000000000(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd216ae56c6 CR3: 0000000061aee000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __netdev_start_xmit include/linux/netdevice.h:4882 [inline]
+ netdev_start_xmit include/linux/netdevice.h:4896 [inline]
+ xmit_one net/core/dev.c:3578 [inline]
+ dev_hard_start_xmit+0x143/0x790 net/core/dev.c:3594
+ __dev_queue_xmit+0x7ba/0x4130 net/core/dev.c:4393
+ dev_queue_xmit include/linux/netdevice.h:3095 [inline]
+ tx+0xcc/0x190 drivers/block/aoe/aoenet.c:62
+ kthread+0x1e7/0x3c0 drivers/block/aoe/aoecmd.c:1229
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
