@@ -1,182 +1,361 @@
-Return-Path: <linux-kernel+bounces-214205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73B5908130
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:58:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E22A908132
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:58:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5602CB227B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:58:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0B4B1F23422
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F20D1822F8;
-	Fri, 14 Jun 2024 01:58:05 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CD119D88A
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718330284; cv=none; b=qZB5QieK0X81VRBe9gcnHiGRPU9x1RaLtrOzzdHRVToJBxXWHzqkoRi6bCLHoQ2k1QWg70dTf5qqnNRdlhGHdZH2ajK7rQ2RuehQYILVG/T//Uudq9wJ4p5AG3qh3VjEETkoPrk2lsSXFy2ssbwx4jWqAfwqDEPmMQA8cIkx6MU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718330284; c=relaxed/simple;
-	bh=pNaP2i0RLq43N9o02Bf3GwmGTBO2FK7tqatydjNoddc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZA9V4F1pGLJfclTqpbBtBhboSmeKs/enAE8YTsmGxIrT0ksQW6Xz5eLuRNpRjUkMCKrbJke+e6Xqmlw3y8eEn+hsJ0lhj3mdVJx+cDC2sCxG9mEllhHxOFJpLkAvDew3AzwWnMbU7PPG6uh57ob9umkw+JbrLWOdzHwpiGmqgTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-de-666ba39e165c
-Date: Fri, 14 Jun 2024 10:57:45 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Byungchul Park <lkml.byungchul.park@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, akpm@linux-foundation.org,
-	ying.huang@intel.com, vernhao@tencent.com,
-	mgorman@techsingularity.net, hughd@google.com, willy@infradead.org,
-	peterz@infradead.org, luto@kernel.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	rjgolo@gmail.com
-Subject: Re: [PATCH v11 09/12] mm: implement LUF(Lazy Unmap Flush) defering
- tlb flush when folios get unmapped
-Message-ID: <20240614015745.GA47085@system.software.com>
-References: <20240531092001.30428-1-byungchul@sk.com>
- <20240531092001.30428-10-byungchul@sk.com>
- <fab1dd64-c652-4160-93b4-7b483a8874da@intel.com>
- <CAHyrMpxETdVewTH3MCS4qPyD6Xf1zRUfWZf-8SCdpCFj2Pj_Wg@mail.gmail.com>
- <f17f33e8-1c1f-460f-8c5a-713476f524a3@intel.com>
- <26dc4594-430b-483c-a26c-7e68bade74b0@redhat.com>
- <20240603093505.GA12549@system.software.com>
- <d650c29b-129f-4fac-9a9d-ea1fbdae2c3a@intel.com>
- <20240604015348.GB26609@system.software.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB1D183064;
+	Fri, 14 Jun 2024 01:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="Yw887OuW"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2061.outbound.protection.outlook.com [40.107.255.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884A81773D;
+	Fri, 14 Jun 2024 01:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718330297; cv=fail; b=rwKCL6bDqIR8IyHYMf0pXPBSiobVsLTFSwntlAe+fr+pHnjDlS9+4bmXGfe/vegoeVq6YhkGRrbFHzRfLTv/aeHbfFyweN/dDiQcnPfEVyRIik1xWLx0+06XOvzK/Isx0WBSPr8hDXsor3ye7xSQS4HI7+lyhwcWHlBpQAXMbmY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718330297; c=relaxed/simple;
+	bh=2y+LzguzN5gx5k9zAf2Jfq/vFD086pnzyK3VPJfZnGs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pML5NQopQikZ/h5ZsJmdLKjVAfccU+SFrsq6xuTdUVrc6x0FexNm0bMnNfOn0ZPzd9JMja7JSKfwdacK36GWkA46RHQWqv8JnhmLP5lM+nmX47AAvXVqaDgHY7fGCg+znR9Aab4nL0JCrgd4GkDxtsmTeKifFmE2RasZ36o9PMU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=Yw887OuW; arc=fail smtp.client-ip=40.107.255.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FImam1eVxlpishY/gOfSuPcQgKk83Dr8qNmhjnwDA+C5F9ReS/tOXa1ZvoJR2TXj4clcd+KY7nTbdJ/RzIDnRQT9PyxpvKC5tJdhYXRecN+PDYpec9WK4KAYNQz2nv0U7S0nH1UpkAKkVlcVFN22oa6/Z2liokFXRkHfAbdhO1MpQGMyNAWXYBNcvciJDWLAH0xuMQKUm5pVpBMBags56tHaL8lsXftfauQcRI23PO3rMr32emQM3rGLN3LNuzko1RopV7xWudl3oehsQPuneELBWC5CrvLvvr7ATDxmxszOWU+JPgaMu5RzSiXJHheWTOxZhXQKsvh6WBcf6+XLsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PNbrBDWFnLzwMlOKJBhdcqYoWq7YU6xX9uU46iFgrAM=;
+ b=h5NeqEpGpuH5oekBAzR7X9FqP6nhWFYpZjWfwxQ6XoKRgjxAS0zVGTzzdVrfMfVLX8esoz8yVwYZN39/AwpATKIf8fskFcgz2uvt+Y3mLhXY8CmdgRlHBPhT7zfCxVlpqRpPvvp3+AZXey1HC+pPakA0GrHzOrsvPEfyzewbLoUS6Mn/nM4hkzYpKnxfDKb8BsueiMnr5VskWTzc3Oi0rParCXXuJ77GtjLbUds28AYM+hSU51+2ru4iKHYQXClMVmL4nPCe0CnarTW7SrzunStfw8U/6Ir6sJlMY+JLutsRKT/aMt2ibG4cqy7mlcORVUSC16QcgEx/yP++yWAGuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 58.252.5.68) smtp.rcpttodomain=unisoc.com smtp.mailfrom=oppo.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PNbrBDWFnLzwMlOKJBhdcqYoWq7YU6xX9uU46iFgrAM=;
+ b=Yw887OuWaV1mrpFWS5sMmUdrsHBGhyG8iSRCx+haWLPEMvdK340wv6A40pm8t1eQ7zSy+GHJWtgeSIaveMXptL/2R8+ZsoduY6xihfhshzuuTmNlvIO/fl0eg6xPji1NzNxYH/buNK+u71NPlVMJfpHql+C4e7dxIVZnULfnTBg=
+Received: from PU1PR01CA0007.apcprd01.prod.exchangelabs.com
+ (2603:1096:803:15::19) by TYZPR02MB6223.apcprd02.prod.outlook.com
+ (2603:1096:400:281::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.25; Fri, 14 Jun
+ 2024 01:58:11 +0000
+Received: from HK2PEPF00006FB2.apcprd02.prod.outlook.com
+ (2603:1096:803:15:cafe::fb) by PU1PR01CA0007.outlook.office365.com
+ (2603:1096:803:15::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.25 via Frontend
+ Transport; Fri, 14 Jun 2024 01:58:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
+ smtp.mailfrom=oppo.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=oppo.com;
+Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
+ 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
+ client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
+Received: from mail.oppo.com (58.252.5.68) by
+ HK2PEPF00006FB2.mail.protection.outlook.com (10.167.8.8) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Fri, 14 Jun 2024 01:58:09 +0000
+Received: from oppo.com (172.16.40.118) by mailappw31.adc.com (172.16.56.198)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 14 Jun
+ 2024 09:58:09 +0800
+Date: Fri, 14 Jun 2024 09:58:08 +0800
+From: hailong liu <hailong.liu@oppo.com>
+To: zhaoyang.huang <zhaoyang.huang@unisoc.com>
+CC: Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki
+	<urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>, Lorenzo Stoakes
+	<lstoakes@gmail.com>, Baoquan He <bhe@redhat.com>, Thomas Gleixner
+	<tglx@linutronix.de>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	Zhaoyang Huang <huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>,
+	<stable@vger.kernel.org>
+Subject: Re: [PATCHv5 1/1] mm: fix incorrect vbq reference in
+ purge_fragmented_block
+Message-ID: <20240614015808.tcezyuloxgxm736l@oppo.com>
+References: <20240614010557.1821327-1-zhaoyang.huang@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20240604015348.GB26609@system.software.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOIsWRmVeSWpSXmKPExsXC9ZZnoe68xdlpBod6zC3mrF/DZvF5wz82
-	i08vHzBavNjQzmjxdf0vZounn/pYLC7vmsNmcW/Nf1aLo52bmC3O71rLarFj6T4mi0sHFjBZ
-	HO89wGQx/95nNovNm6YyWxyfMpXR4vcPoI6TsyazOAh5fG/tY/HYOesuu8eCTaUem1doeSze
-	85LJY9OqTjaPTZ8msXu8O3eO3ePEjN8sHvNOBnq833eVzWPrLzuPxqnX2Dw+b5IL4IvisklJ
-	zcksSy3St0vgyjjTe5Sx4LpMxfuVPxgbGD+LdjFyckgImEicO9HFCmP/WzCHBcRmEVCVWLhm
-	P1icTUBd4saNn8wgtgiQfWrlcvYuRi4OZoHjzBIfPi5iBEkICxRIvJowiR3E5hWwkGh6+p8Z
-	pEhI4AqzxNHJX5khEoISJ2c+AdvALKAlcePfS6YuRg4gW1pi+T8OkDCngKXEy4YvbCC2qICy
-	xIFtx5kgjtvHLvHheiqELSlxcMUNlgmMArOQTJ2FZOoshKkLGJlXMQpl5pXlJmbmmOhlVOZl
-	Vugl5+duYgRG57LaP9E7GD9dCD7EKMDBqMTD6/EsK02INbGsuDL3EKMEB7OSCO+shUAh3pTE
-	yqrUovz4otKc1OJDjNIcLErivEbfylOEBNITS1KzU1MLUotgskwcnFINjJLedltKmNo093Nr
-	aebqbmwzf/hQq7Qzcv/SkvTtgb7uNk+5V9z2lev51GL99/NHliSLT/w7JjcsrLYXffLr4I5r
-	ih1zO600NwoqrzrqwaVWvfl0xqqmeO2bqkYhaTyP/iqsuJ/W4XeeRXB3t53hL72erMwnbZtS
-	f/pwWyUkPWvKCZ6Rd1BTiaU4I9FQi7moOBEAYeRamsoCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPIsWRmVeSWpSXmKPExsXC5WfdrDtvcXaawa6XShZz1q9hs/i84R+b
-	xaeXDxgtXmxoZ7T4uv4Xs8XTT30sFofnnmS1uLxrDpvFvTX/WS2Odm5itji/ay2rxY6l+5gs
-	Lh1YwGRxvPcAk8X8e5/ZLDZvmspscXzKVEaL3z+AOk7OmsziIOzxvbWPxWPnrLvsHgs2lXps
-	XqHlsXjPSyaPTas62Tw2fZrE7vHu3Dl2jxMzfrN4zDsZ6PF+31U2j8UvPjB5bP1l59E49Rqb
-	x+dNcgH8UVw2Kak5mWWpRfp2CVwZZ3qPMhZcl6l4v/IHYwPjZ9EuRk4OCQETiX8L5rCA2CwC
-	qhIL1+xnBbHZBNQlbtz4yQxiiwDZp1YuZ+9i5OJgFjjOLPHh4yJGkISwQIHEqwmT2EFsXgEL
-	iaan/5lBioQErjBLHJ38lRkiIShxcuYTsA3MAloSN/69ZOpi5ACypSWW/+MACXMKWEq8bPjC
-	BmKLCihLHNh2nGkCI+8sJN2zkHTPQuhewMi8ilEkM68sNzEzx1SvODujMi+zQi85P3cTIzDa
-	ltX+mbiD8ctl90OMAhyMSjy8Hs+y0oRYE8uKK3MPMUpwMCuJ8M5aCBTiTUmsrEotyo8vKs1J
-	LT7EKM3BoiTO6xWemiAkkJ5YkpqdmlqQWgSTZeLglGpg5LP9ET7JPF1Pm039TsFNgcC6Xd6m
-	mw60Wj3bePuBk9wejwguqxUqh8+nc7tfuLqyb+M843lrq16deidgdvEvI5ee5P+8n4E8lix6
-	gXeOu0oJiG+bI3JSNffezxoWTg32Ntu2q7P550hKqpqExVxVr1jbfvUvE/N9tyLtaaZfmZWE
-	d9Qq6CxWYinOSDTUYi4qTgQA7zbYpLICAAA=
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240614010557.1821327-1-zhaoyang.huang@unisoc.com>
+X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw31.adc.com
+ (172.16.56.198)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB2:EE_|TYZPR02MB6223:EE_
+X-MS-Office365-Filtering-Correlation-Id: c0283c71-4511-4a4e-c7dd-08dc8c157137
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230035|376009|7416009|36860700008|1800799019|82310400021;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aURacFJSL3FEUUZJVEJLV0VoT0Z3Q2JQcDcxS0JjQVIvRVNHRUxWeEhYdnB3?=
+ =?utf-8?B?cGhrYm5jVWROeWtpTmc4cks4Y0RTaHJTeFFyTklBTll6Y3d3ZDk1Z2h5VUdY?=
+ =?utf-8?B?K0ZLMDJuTFpmSS9QL1NqaFkwWEQyZStSdmpxMzZZbldrbnFjNnZtQ3hxSVVW?=
+ =?utf-8?B?VHc4WmpraFlHYlduQVJEa0hISGVkU2krdXdsYVJwNEx1RFBocjNDdVBqcGxl?=
+ =?utf-8?B?elNXUHdPVHdBbjNjR3VzTmJ6aDduTVNiZjJxWktqRGp2QUFJYXNNSWtSNHBH?=
+ =?utf-8?B?VTFJTGxKbkplbDZ6cldJWUsxSU9jdEt6dnFNN0Q5RGxybEg5Z0RnUGhhbHc5?=
+ =?utf-8?B?Q0pvSWFnYjhVN0tTN2VpNCt4N3pDUm15SmNpbWZZbnJ5OHpTamxaTXhGYVha?=
+ =?utf-8?B?RTNraDBsZWV6UHFhUUo1WTF0QWRHUHJaMkU0a2pLNk01TTFUcVdsUWJDakwz?=
+ =?utf-8?B?Q0lnR0R0ZXBaL3lqZjZSeTJLcWk1WXhoanVZSUNjZytscThETGFOdFIydzAw?=
+ =?utf-8?B?YVpiMGNHSmJBT0ZTYnlqYjBNRy9xTFNSNXJTeVpnY1FKN1BvMjFPSkcvcTZE?=
+ =?utf-8?B?WkhhdWg4NitGWGNreHkyWjNiZGF5c2RYSnF3VjBJNy9pcStwVnNtUnplMmtx?=
+ =?utf-8?B?bjNXMmpndExoZHlLQk1IVzYydmNnaHZ3WVRwNXRMbXJTd0ZlOFhIVkRaM1do?=
+ =?utf-8?B?VU00VFFhdjdMZlhNelNFVUdkNHovVDJFaldzRjRrb1lienBGQ0VIUXdKVzFE?=
+ =?utf-8?B?OXBNYzE2cC9GeEtPT0pTay9wOHBkSExXZW9aQ055dFIzOCtjUVF5VUVyM3o1?=
+ =?utf-8?B?UUdkaXdTNUpOejV1RW9scXFRYWtGSTN1ZEI2ZE5zbmdYVG1DQ0NMbWUzUEI0?=
+ =?utf-8?B?Ymh1LzBvdlZpcmlCaHpLaGIzcHQwRTNHbzJxanpkcFdxQUM4SmZjbytjWW9K?=
+ =?utf-8?B?WXFWaGlQdnI1a290UTZUNEwzbmFhMTZ2UDJiYTRBYXZNdUExUkVnNUp3QnZV?=
+ =?utf-8?B?eHlpMUV3U1U0TC80RnV1dFB2alcrNWdpOXU0YytJam9Qa2wvMk93bVpyOTZh?=
+ =?utf-8?B?Q1doTkZzUGI4eWNVeTlEdnJQcmtlT09JaUtPM2JyV1l1cVBZdU95K1ppOEdo?=
+ =?utf-8?B?T1dITW9laFM1ZkJIejBLL0RlRElvK0tJcS9QZ2RYWmdLT0ZRRmZwTUwwMlpE?=
+ =?utf-8?B?ZW9rM1hNQzhYbUFlQVk5UHRaL0hLbUZobDhLVGpsQ2dkZTRFRDg1ckhCUmcy?=
+ =?utf-8?B?bjYxcEM5UVpmbnNJakF2WkplR1UvNmxGSkNXdFRxVzNweFYwc04wUDMvbXJQ?=
+ =?utf-8?B?WkdFcUx2RHZiR2dVZENRbENiR2NEbDBxL2pwSHgxQVRaQzFpVHlTbkNVcnR2?=
+ =?utf-8?B?NmhjeFB5eWJmQnBpTUd6WHhzbDhYU2hDWGNGb0MwQUlLamR5a3M5RnhRUWpr?=
+ =?utf-8?B?UEdWVVQwTWZNM2ppcTg1b21lR2tZOFNsT3ExdFlscC9QZVgvWXA1NDYyRi9q?=
+ =?utf-8?B?Mm5kMXM2TkxsSmpsZ2VRRVEvWTNJL0JjN3NWQjFhenZPdUJvSmRKVkFadkpY?=
+ =?utf-8?B?RVBuVlBNcEZOekxBQkxQUUVqa3hDbERpd2QvaEZ3by9lZ0Z2dDY0S01HRTF5?=
+ =?utf-8?B?UlA0RDVONktjWWZIK3poUWFEeGpYMGN2K2ZpOERJbTQyc0NyT0h2Q09NTDlp?=
+ =?utf-8?B?YVVvTEdETTNCZlpWZjhTTU00Q1c1YWVtcTllRDVmUlBCTXRqcmptdXFhenJm?=
+ =?utf-8?B?b0NOWGVacmRDVGsyOGxrR3dFdk1iaUFlMGJSakgrM255dFFHY21FMFN1UWgy?=
+ =?utf-8?B?SHlBM3d4SXRBR3JRWnRmak1YRk9DaUdEWmdCb3pkTE1ram81V0NIOUlxOVNv?=
+ =?utf-8?B?WVdZdmM3enBHNmZaQUloeTd2SnU5WU51aTE5K1cvbzJzVlE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230035)(376009)(7416009)(36860700008)(1800799019)(82310400021);DIR:OUT;SFP:1101;
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2024 01:58:09.9888
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0283c71-4511-4a4e-c7dd-08dc8c157137
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	HK2PEPF00006FB2.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR02MB6223
 
-On Tue, Jun 04, 2024 at 10:53:48AM +0900, Byungchul Park wrote:
-> On Mon, Jun 03, 2024 at 06:23:46AM -0700, Dave Hansen wrote:
-> > On 6/3/24 02:35, Byungchul Park wrote:
-> > ...> In luf's point of view, the points where the deferred flush should be
-> > > performed are simply:
-> > > 
-> > > 	1. when changing the vma maps, that might be luf'ed.
-> > > 	2. when updating data of the pages, that might be luf'ed.
-> > 
-> > It's simple, but the devil is in the details as always.
-> 
-> Agree with that.
-> 
-> > > All we need to do is to indentify the points:
-> > > 
-> > > 	1. when changing the vma maps, that might be luf'ed.
-> > > 
-> > > 	   a) mmap and munmap e.i. fault handler or unmap_region().
-> > > 	   b) permission to writable e.i. mprotect or fault handler.
-> > > 	   c) what I'm missing.
-> > 
-> > I'd say it even more generally: anything that installs a PTE which is
-> > inconsistent with the original PTE.  That, of course, includes writes.
-> > But it also includes crazy things that we do like uprobes.  Take a look
-> > at __replace_page().
-> > 
-> > I think the page_vma_mapped_walk() checks plus the ptl keep LUF at bay
-> > there.  But it needs some really thorough review.
-> > 
-> > But the bigger concern is that, if there was a problem, I can't think of
-> > a systematic way to find it.
-> > 
-> > > 	2. when updating data of the pages, that might be luf'ed.
-> > > 
-> > > 	   a) updating files through vfs e.g. file_end_write().
-> > > 	   b) updating files through writable maps e.i. 1-a) or 1-b).
-> > > 	   c) what I'm missing.
-> > 
-> > Filesystems or block devices that change content without a "write" from
-> > the local system.  Network filesystems and block devices come to mind.
-> 
-> AFAIK, every network filesystem eventully "updates" its connected local
-> filesystem.  It could be still handled at the point where updating the
-> local file system.
+On Fri, 14. Jun 09:05, zhaoyang.huang wrote:
+> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+>
+> The function xa_for_each() in _vm_unmap_aliases() loops through all
+> vbs. However, since commit 062eacf57ad9 ("mm: vmalloc: remove a global
+> vmap_blocks xarray") the vb from xarray may not be on the corresponding
+> CPU vmap_block_queue. Consequently, purge_fragmented_block() might
+> use the wrong vbq->lock to protect the free list, leading to vbq->free
+> breakage.
+>
+> Incorrect lock protection can exhaust all vmalloc space as follows:
+> CPU0                                            CPU1
+> +--------------------------------------------+
+> |    +--------------------+     +-----+      |
+> +--> |                    |---->|     |------+
+>      | CPU1:vbq free_list |     | vb1 |
+> +--- |                    |<----|     |<-----+
+> |    +--------------------+     +-----+      |
+> +--------------------------------------------+
+>
+> _vm_unmap_aliases()                             vb_alloc()
+>                                                 new_vmap_block()
+> xa_for_each(&vbq->vmap_blocks, idx, vb)
+> --> vb in CPU1:vbq->freelist
+>
+> purge_fragmented_block(vb)
+> spin_lock(&vbq->lock)                           spin_lock(&vbq->lock)
+> --> use CPU0:vbq->lock                          --> use CPU1:vbq->lock
+>
+> list_del_rcu(&vb->free_list)                    list_add_tail_rcu(&vb->free_list, &vbq->free)
+>     __list_del(vb->prev, vb->next)
+>         next->prev = prev
+>     +--------------------+
+>     |                    |
+>     | CPU1:vbq free_list |
+> +---|                    |<--+
+> |   +--------------------+   |
+> +----------------------------+
+>                                                 __list_add(new, head->prev, head)
+> +--------------------------------------------+
+> |    +--------------------+     +-----+      |
+> +--> |                    |---->|     |------+
+>      | CPU1:vbq free_list |     | vb2 |
+> +--- |                    |<----|     |<-----+
+> |    +--------------------+     +-----+      |
+> +--------------------------------------------+
+>
+>         prev->next = next
+> +--------------------------------------------+
+> |----------------------------+               |
+> |    +--------------------+  |  +-----+      |
+> +--> |                    |--+  |     |------+
+>      | CPU1:vbq free_list |     | vb2 |
+> +--- |                    |<----|     |<-----+
+> |    +--------------------+     +-----+      |
+> +--------------------------------------------+
+> Here’s a list breakdown. All vbs, which were to be added to
+> ‘prev’, cannot be used by list_for_each_entry_rcu(vb, &vbq->free,
+> free_list) in vb_alloc(). Thus, vmalloc space is exhausted.
+>
+> This issue affects both erofs and f2fs, the stacktrace is as follows:
+> erofs:
+> [<ffffffd4ffb93ad4>] __switch_to+0x174
+> [<ffffffd4ffb942f0>] __schedule+0x624
+> [<ffffffd4ffb946f4>] schedule+0x7c
+> [<ffffffd4ffb947cc>] schedule_preempt_disabled+0x24
+> [<ffffffd4ffb962ec>] __mutex_lock+0x374
+> [<ffffffd4ffb95998>] __mutex_lock_slowpath+0x14
+> [<ffffffd4ffb95954>] mutex_lock+0x24
+> [<ffffffd4fef2900c>] reclaim_and_purge_vmap_areas+0x44
+> [<ffffffd4fef25908>] alloc_vmap_area+0x2e0
+> [<ffffffd4fef24ea0>] vm_map_ram+0x1b0
+> [<ffffffd4ff1b46f4>] z_erofs_lz4_decompress+0x278
+> [<ffffffd4ff1b8ac4>] z_erofs_decompress_queue+0x650
+> [<ffffffd4ff1b8328>] z_erofs_runqueue+0x7f4
+> [<ffffffd4ff1b66a8>] z_erofs_read_folio+0x104
+> [<ffffffd4feeb6fec>] filemap_read_folio+0x6c
+> [<ffffffd4feeb68c4>] filemap_fault+0x300
+> [<ffffffd4fef0ecac>] __do_fault+0xc8
+> [<ffffffd4fef0c908>] handle_mm_fault+0xb38
+> [<ffffffd4ffb9f008>] do_page_fault+0x288
+> [<ffffffd4ffb9ed64>] do_translation_fault[jt]+0x40
+> [<ffffffd4fec39c78>] do_mem_abort+0x58
+> [<ffffffd4ffb8c3e4>] el0_ia+0x70
+> [<ffffffd4ffb8c260>] el0t_64_sync_handler[jt]+0xb0
+> [<ffffffd4fec11588>] ret_to_user[jt]+0x0
+>
+> f2fs:
+> [<ffffffd4ffb93ad4>] __switch_to+0x174
+> [<ffffffd4ffb942f0>] __schedule+0x624
+> [<ffffffd4ffb946f4>] schedule+0x7c
+> [<ffffffd4ffb947cc>] schedule_preempt_disabled+0x24
+> [<ffffffd4ffb962ec>] __mutex_lock+0x374
+> [<ffffffd4ffb95998>] __mutex_lock_slowpath+0x14
+> [<ffffffd4ffb95954>] mutex_lock+0x24
+> [<ffffffd4fef2900c>] reclaim_and_purge_vmap_areas+0x44
+> [<ffffffd4fef25908>] alloc_vmap_area+0x2e0
+> [<ffffffd4fef24ea0>] vm_map_ram+0x1b0
+> [<ffffffd4ff1a3b60>] f2fs_prepare_decomp_mem+0x144
+> [<ffffffd4ff1a6c24>] f2fs_alloc_dic+0x264
+> [<ffffffd4ff175468>] f2fs_read_multi_pages+0x428
+> [<ffffffd4ff17b46c>] f2fs_mpage_readpages+0x314
+> [<ffffffd4ff1785c4>] f2fs_readahead+0x50
+> [<ffffffd4feec3384>] read_pages+0x80
+> [<ffffffd4feec32c0>] page_cache_ra_unbounded+0x1a0
+> [<ffffffd4feec39e8>] page_cache_ra_order+0x274
+> [<ffffffd4feeb6cec>] do_sync_mmap_readahead+0x11c
+> [<ffffffd4feeb6764>] filemap_fault+0x1a0
+> [<ffffffd4ff1423bc>] f2fs_filemap_fault+0x28
+> [<ffffffd4fef0ecac>] __do_fault+0xc8
+> [<ffffffd4fef0c908>] handle_mm_fault+0xb38
+> [<ffffffd4ffb9f008>] do_page_fault+0x288
+> [<ffffffd4ffb9ed64>] do_translation_fault[jt]+0x40
+> [<ffffffd4fec39c78>] do_mem_abort+0x58
+> [<ffffffd4ffb8c3e4>] el0_ia+0x70
+> [<ffffffd4ffb8c260>] el0t_64_sync_handler[jt]+0xb0
+> [<ffffffd4fec11588>] ret_to_user[jt]+0x0
+>
+> To fix this, replace xa_for_each() with list_for_each_entry_rcu()
+> which reverts commit fc1e0d980037 ("mm/vmalloc: prevent stale TLBs
+> in fully utilized blocks")
+>
+This needs to be modified to your implementation method, introduce cpu in ...
 
-To cover client of network file systems and any using page cache, struct
-address_space_operations's write_end() call sites seem to be the best
-place to handle that.  At the same time, of course, I should limit the
-target of luf to 'folio_mapping(folio) != NULL' for file pages.
+> Fixes: fc1e0d980037 ("mm/vmalloc: prevent stale TLBs in fully utilized blocks")
+>
+> Cc: stable@vger.kernel.org
+> Suggested-by: Hailong.Liu <hailong.liu@oppo.com>
+> Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+you can add Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com> here.
+Because Uladzislau have comment in your v4 patch.
+> ---
+> v2: introduce cpu in vmap_block to record the right CPU number
+> v3: use get_cpu/put_cpu to prevent schedule between core
+> v4: replace get_cpu/put_cpu by another API to avoid disabling preemption
+> v5: update the commit message by Hailong.Liu
+> ---
+> ---
+>  mm/vmalloc.c | 21 +++++++++++++++------
+>  1 file changed, 15 insertions(+), 6 deletions(-)
+>
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 22aa63f4ef63..89eb034f4ac6 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2458,6 +2458,7 @@ struct vmap_block {
+>  	struct list_head free_list;
+>  	struct rcu_head rcu_head;
+>  	struct list_head purge;
+> +	unsigned int cpu;
+>  };
+>
+>  /* Queue of free and dirty vmap blocks, for allocation and flushing purposes */
+> @@ -2585,8 +2586,15 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
+>  		free_vmap_area(va);
+>  		return ERR_PTR(err);
+>  	}
+> -
+> -	vbq = raw_cpu_ptr(&vmap_block_queue);
+> +	/*
+> +	 * list_add_tail_rcu could happened in another core
+> +	 * rather than vb->cpu due to task migration, which
+> +	 * is safe as list_add_tail_rcu will ensure the list's
+> +	 * integrity together with list_for_each_rcu from read
+> +	 * side.
+> +	 */
+> +	vb->cpu = raw_smp_processor_id();
+> +	vbq = per_cpu_ptr(&vmap_block_queue, vb->cpu);
+>  	spin_lock(&vbq->lock);
+>  	list_add_tail_rcu(&vb->free_list, &vbq->free);
+>  	spin_unlock(&vbq->lock);
+> @@ -2614,9 +2622,10 @@ static void free_vmap_block(struct vmap_block *vb)
+>  }
+>
+>  static bool purge_fragmented_block(struct vmap_block *vb,
+> -		struct vmap_block_queue *vbq, struct list_head *purge_list,
+> -		bool force_purge)
+> +		struct list_head *purge_list, bool force_purge)
+>  {
+> +	struct vmap_block_queue *vbq = &per_cpu(vmap_block_queue, vb->cpu);
+> +
+>  	if (vb->free + vb->dirty != VMAP_BBMAP_BITS ||
+>  	    vb->dirty == VMAP_BBMAP_BITS)
+>  		return false;
+> @@ -2664,7 +2673,7 @@ static void purge_fragmented_blocks(int cpu)
+>  			continue;
+>
+>  		spin_lock(&vb->lock);
+> -		purge_fragmented_block(vb, vbq, &purge, true);
+> +		purge_fragmented_block(vb, &purge, true);
+>  		spin_unlock(&vb->lock);
+>  	}
+>  	rcu_read_unlock();
+> @@ -2801,7 +2810,7 @@ static void _vm_unmap_aliases(unsigned long start, unsigned long end, int flush)
+>  			 * not purgeable, check whether there is dirty
+>  			 * space to be flushed.
+>  			 */
+> -			if (!purge_fragmented_block(vb, vbq, &purge_list, false) &&
+> +			if (!purge_fragmented_block(vb, &purge_list, false) &&
+>  			    vb->dirty_max && vb->dirty != VMAP_BBMAP_BITS) {
+>  				unsigned long va_start = vb->va->va_start;
+>  				unsigned long s, e;
+> --
+> 2.25.1
+>
 
-	Byungchul
-
-> > I honestly don't know what all the rules are around these, but they
-> > could certainly be troublesome.
-> > 
-> > There appear to be some interactions for NFS between file locking and
-> > page cache flushing.
-> > 
-> > But, stepping back ...
-> > 
-> > I'd honestly be a lot more comfortable if there was even a debugging LUF
-> 
-> I'd better provide a method for better debugging.  Lemme know whatever
-> it is we need.
-> 
-> > mode that enforced a rule that said:
-> 
-> Why "debugging mode"?  The following rules should be enforced always.
-> 
-> >   1. A LUF'd PTE can't be rewritten until after a luf_flush() occurs
-> 
-> "luf_flush() should be followed when.." is more correct because
-> "luf_flush() -> another luf -> the pte gets rewritten" can happen.  So
-> it should be "the pte gets rewritten -> another luf by any chance ->
-> luf_flush()", that is still safe.
-> 
-> >   2. A LUF'd page's position in the page cache can't be replaced until
-> >      after a luf_flush()
-> 
-> "luf_flush() should be followed when.." is more correct too.
-> 
-> These two rules are exactly same as what I described but more specific.
-> I like your way to describe the rules.
-> 
-> 	Byungchul
-> 
-> > or *some* other independent set of rules that can tell us when something
-> > goes wrong.  That uprobes code, for instance, seems like it will work.
-> > But I can also imagine writing it ten other ways where it would break
-> > when combined with LUF.
+--
+help you, help me,
+Hailong.
 
