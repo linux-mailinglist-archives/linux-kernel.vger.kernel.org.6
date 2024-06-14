@@ -1,257 +1,127 @@
-Return-Path: <linux-kernel+bounces-215471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4B5909343
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:13:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DEC909345
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 033B92893BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:13:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5D091C20B69
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C322A1AB537;
-	Fri, 14 Jun 2024 20:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F151A3BDC;
+	Fri, 14 Jun 2024 20:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kO54GlQO"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="TeCLKarI"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498D51A3BB5;
-	Fri, 14 Jun 2024 20:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC9C1A2549
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 20:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718395996; cv=none; b=cJHaukqlNakqyR7m94LhIDetxHL4JkmzJKV1Hp+z6W+r++bxLilZwSP8RL85ek7nYdJf0xVYVuqSD4PfYwRJISoYi0H3sdivdsJA1SNd2O6stT8PFaRNbnt1eJyyTBbc+2CPIYvQ01UUkxlCniSxusm+Xuy9mgWykmMH06X6jEc=
+	t=1718396030; cv=none; b=H4WsWIH/nfbCw/ww1CpejtXbLzrcazq1NnXGaciGUE/IryJIjVfkVrLg2veKWeGAev98YGElPCC/eXAH8NYCr8SDudmjXxFLbr+XxXqxaH+GcKZ4XGfNaC/m9/nCqeoEbSlw9R/Lw2ERu4A7fVOU9jBvoq+EnBPSKzOGTizFu60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718395996; c=relaxed/simple;
-	bh=QAkkkToNqaJ54H1Gf/4uegxz1byZkIwNDrgYfIhVFzg=;
+	s=arc-20240116; t=1718396030; c=relaxed/simple;
+	bh=Md8vvcMEZpHAinWIZ5HUKptV3NshGoYH7Q8rDWj7NcE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YG1L4Zvuhd91IW1YTXDJJ2oU0O89m75YewV9KepIBmN1cRpPEzQEXG1FmInBiWtGunqS2oQyu3T2gzXFlgkIKmDrfiE8bus04ats/181xfTRJPiMYWOgOSJIXMyqApM5y7Cr0qMcc/VwDigYWHg9zMZPnYA59PQqW7/TxpxYE5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kO54GlQO; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3d226c5a157so1544973b6e.2;
-        Fri, 14 Jun 2024 13:13:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718395993; x=1719000793; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2bHm/aaPtqr+seGxV2S60l3XmS90OeMKM4QcbWBal74=;
-        b=kO54GlQOkLHQNrJG70Gq4JAoQO5ooTJ4dbIi2gcbrbh9/lBlPusRGbkWyBFLRtqnLj
-         YnoNruHZGxXIwAE6j25QJG3eV5addlga/0lNVimCJ7XqZzZWfV20dsukQbNfWjbBV+Jr
-         vmpkBVAy9g9ckBGnHBgMH/SnvW0daYd5Ckr16n4XbOxZSVeeab9mWfLVEHXQjzgFZSYj
-         Ay2n+SzahflwM4VkuhHXQY1XNR5W6CGWWsemGoes3o2pfzIalF9TnAO4YSVFTQSQWO22
-         bBDBarY68eTkSN4bqHxpAqbdZ2HQaGFKe7TIWvJD2T9bQM3Hu0eAlRX8iFsLMWjmu6L+
-         G/rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718395993; x=1719000793;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2bHm/aaPtqr+seGxV2S60l3XmS90OeMKM4QcbWBal74=;
-        b=GNxiZD+pIM46A2hn8fGlWgXirSn8tz8xSOzPTJJiuX2nlZojMniAUi1b/Uy4XH412B
-         EJO/jws4Z/pFSW063S71PGssBnXmyY9uUr6aXy1LkydhLtcGPfHUPB9LlbHRSPpZGQvm
-         GLU1T0QChMfyNL6PEBGebY2kIZqxrrBJKOe8fcw22jAcFtxZ+vB6HMo7xb3EZzVoh2aH
-         vn+9G80YDGa92+DkngtZXeyngqhIwakJ/Ym/hUIBuV16La8CrwKX+WL74Xk32GAXnsJ5
-         U52n+V2tj+q572+7dZr9XYAO0aZRAteUba3unu+OOSPzawVhVezyA1KoUXfL6lZIG4xN
-         kj1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXzGiBSIeMgZ8o74Jzrmcv+gDRG7DR8LjzMa+MgX2bg7cYR1pjMhW9RFdm7XEtqh41JiyHUBUc+/3KRih813mLIqJr76OBrfH+cKlw0Iq6SUGIUFCZff+9o65MTg+z8bAAfX5M+lUE78qZtsCslPgTGxkNfvXGskUQbTWMGApERTSIUN7U82wY=
-X-Gm-Message-State: AOJu0Yx2rYa3/vTJ+71+jfN9ykEzuJfkMbJwdaF0OplnBkXgFM9osLsh
-	aXIVFOrTgFZ1cyV0B1/RDxmuK+3FEAk00vfj+gPvxyadDIwGS9Mj
-X-Google-Smtp-Source: AGHT+IGQ/7jt+p7Vy+rl8KY42hsPlfY6qspnV6dIbABmXy17cfCC4w/P5jUh7xtu725fkfqJwGMFrQ==
-X-Received: by 2002:a05:6808:e8e:b0:3d2:1ce7:43da with SMTP id 5614622812f47-3d24e9bc08fmr3473362b6e.49.1718395993043;
-        Fri, 14 Jun 2024 13:13:13 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798aacb1e6dsm176551585a.13.2024.06.14.13.13.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 13:13:12 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 5DA3B120006C;
-	Fri, 14 Jun 2024 16:13:11 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 14 Jun 2024 16:13:11 -0400
-X-ME-Sender: <xms:V6RsZjT5NgAWoJYubZWx-Lwxb4FJ9gSKADveBGwK-qXJYeQRozIpuQ>
-    <xme:V6RsZkzvMpf27JRJ3RDeN-g63RvQfkM8PfrNJIwaWTFsgVjcXTMriEdo56-_9eDph
-    9QWeewN60OuzMGCww>
-X-ME-Received: <xmr:V6RsZo2DHp2viMNt4J3Zs6ORsw47sKyJT-N1L1CkczmYFDQpzA13b_KRe1FI7A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeduledgudegiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
-    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
-    grthhtvghrnhepffdtiefhieegtddvueeuffeiteevtdegjeeuhffhgfdugfefgefgfedt
-    ieeghedvnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhht
-    hhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquh
-    hnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:V6RsZjAdDiGhWMrmZv_UZx76-FJd3AbsXWS-0syxZFg5_adnu5Bgwg>
-    <xmx:V6RsZshRv4VnqIAfLJLkox3Y3uJM8HJbR6Z1Eefe3yfo8pyT2tD1BQ>
-    <xmx:V6RsZnoeNisY7HCHMnzVjlC9EjL1yYV8CNU8dzEsI4EsXrURx0daRQ>
-    <xmx:V6RsZngnglzREGg7aunmYGGyKmiJzVK8vrZCyRiLun_lOG6iwycPsg>
-    <xmx:V6RsZvRqMc5ns4tXEa_NKp24JsLLkk93O0HE7aDXHVoCa6cTKkvGcXFZ>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 14 Jun 2024 16:13:09 -0400 (EDT)
-Date: Fri, 14 Jun 2024 13:13:06 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, llvm@lists.linux.dev,
-	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
-	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
- linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
- Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com
-Subject: Re: [RFC 1/2] rust: Introduce atomic API helpers
-Message-ID: <ZmykUtq45z0fGn26@boqun-archlinux>
-References: <20240612223025.1158537-1-boqun.feng@gmail.com>
- <20240612223025.1158537-2-boqun.feng@gmail.com>
- <ZmwcBWjxf7gm89wA@J2N7QTR9R3.cambridge.arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kI++9G0WdsGH05fX3fpCt3DB+MBX56IZdqdZuBclPrQRgifV/r9F0oXhvxs83lqzCbJczfxY3la1pANccNaa3jefvfxvWuINdFg1P9cu0EEHS8Halp41ZA4pfBZwxK60biHQ5bfPs03VMREPsob/EhOIVKakxS4k9BvMYJDDaLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=TeCLKarI; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 847B01C009D; Fri, 14 Jun 2024 22:13:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1718396024;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Z8ZU3Qerhy8BbHEZ0VEi1vZnCyP+NEN+cexQC5goGM=;
+	b=TeCLKarIVylkNJZTOfyxXHpPRwWdxGrp02dM41hB3seAXL0JZuXpPsoxGavoGMz20eNklc
+	GhORYoeUsYJjdMUdl+S3YwhzYU2eEHjMSOPNCaA9D2/C3ly7VJwJ8+hntnzTHtIVxxEwcV
+	hj1GnrpwHcAx2hMsSKLhH7e848e3qUw=
+Date: Fri, 14 Jun 2024 22:13:44 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Airlie <airlied@gmail.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Rafael Wysocki <rafael@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	intel-gfx <intel-gfx@lists.freedesktop.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>
+Subject: Re: Linux 6.10-rc1
+Message-ID: <ZmykeKxwkPEOp9UM@duo.ucw.cz>
+References: <CAHk-=wjQv_CSPzhjOMoOjGO3FmuHe5hzm6Ds69zZSFPa4PeuCA@mail.gmail.com>
+ <ZmrTZozoi0t/tuva@duo.ucw.cz>
+ <CAHk-=wjqHL7KjOWYBVKFewcKPWL7CJxddWfJnvL3AfOqfR8vMg@mail.gmail.com>
+ <ZmwHGviv/6J6FQLf@duo.ucw.cz>
+ <CAHk-=wigB-wVK+4=NuYJxoKLnoUXB52J5WU2hpKj2de6vGuY7g@mail.gmail.com>
+ <CAHk-=wjcdUUip96PnfC+iRjAwPHn3XKsgcohk1ad5VcckCFVKA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9jY3Fdg/BAZtCs3r"
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjcdUUip96PnfC+iRjAwPHn3XKsgcohk1ad5VcckCFVKA@mail.gmail.com>
+
+
+--9jY3Fdg/BAZtCs3r
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZmwcBWjxf7gm89wA@J2N7QTR9R3.cambridge.arm.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 14, 2024 at 11:31:33AM +0100, Mark Rutland wrote:
-> On Wed, Jun 12, 2024 at 03:30:24PM -0700, Boqun Feng wrote:
-> > In order to support LKMM atomics in Rust, add rust_helper_* for atomic
-> > APIs. These helpers ensure the implementation of LKMM atomics in Rust is
-> > the same as in C. This could save the maintenance burden of having two
-> > similar atomic implementations in asm.
-> > 
-> > Originally-by: Mark Rutland <mark.rutland@arm.com>
-> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> 
-> FWIW, I'm happy with the concept; I have a couple of minor comments
+Hi!
 
-;-)
+> > Let's bring in the actual gpu people.. Dave/Jani/others - does any of
+> > this sound familiar? Pavel says things have gotten much slower in
+> > 6.10: "something was very wrong with the performance, likely to do
+> > with graphics"
+>=20
+> Actually, maybe it's not graphics at all. Rafael just sent me a pull
+> request that fixes a "turbo is disabled at boot, but magically enabled
+> at runtime by firmware" issue.
+>=20
+> The 6.10-rc1 kernel would notice that turbo was disabled, and stopped
+> noticing that it magically got re-enabled.
+>=20
+> Pavel, that was with a very different laptop, but who knows... That
+> would match the "laptop is much slower" thing.
+>=20
+> So current -git might be worth checking.
 
-> below.
-> 
-> > ---
-> >  rust/atomic_helpers.h                     | 1035 +++++++++++++++++++++
-> >  rust/helpers.c                            |    2 +
-> >  scripts/atomic/gen-atomics.sh             |    1 +
-> >  scripts/atomic/gen-rust-atomic-helpers.sh |   64 ++
-> >  4 files changed, 1102 insertions(+)
-> >  create mode 100644 rust/atomic_helpers.h
-> >  create mode 100755 scripts/atomic/gen-rust-atomic-helpers.sh
-> 
-> [...]
-> 
-> > +#gen_proto_order_variant(meta, pfx, name, sfx, order, atomic, int, raw, arg...)
-> > +gen_proto_order_variant()
-> > +{
-> > +	local meta="$1"; shift
-> > +	local pfx="$1"; shift
-> > +	local name="$1"; shift
-> > +	local sfx="$1"; shift
-> > +	local order="$1"; shift
-> > +	local atomic="$1"; shift
-> > +	local int="$1"; shift
-> > +	local raw="$1"; shift
-> > +	local attrs="${raw:+noinstr }"
-> 
-> You removed the 'raw_' atomic generation below, so you can drop the
-> 'raw' parameter and the 'attrs' variable (both here and in the
-> template)...
-> 
-> > +	local atomicname="${raw}${atomic}_${pfx}${name}${sfx}${order}"
-> > +
-> > +	local ret="$(gen_ret_type "${meta}" "${int}")"
-> > +	local params="$(gen_params "${int}" "${atomic}" "$@")"
-> > +	local args="$(gen_args "$@")"
-> > +	local retstmt="$(gen_ret_stmt "${meta}")"
-> > +
-> > +cat <<EOF
-> > +__rust_helper ${attrs}${ret}
-> 
-> ... e.g. you can remove '${attrs}' here.
-> 
-> [...]
-> 
-> > +grep '^[a-z]' "$1" | while read name meta args; do
-> > +	gen_proto "${meta}" "${name}" "atomic" "int" "" ${args}
-> > +done
-> > +
-> > +grep '^[a-z]' "$1" | while read name meta args; do
-> > +	gen_proto "${meta}" "${name}" "atomic64" "s64" "" ${args}
-> > +done
-> 
-> With the 'raw' parameter removed above, the '""' argument can be
-> dropped.
-> 
+Ok, let me check. That sounds like something that could make machine
+hotter.
 
-Fix all above locally.
+My problem seems to be that machine seems to run way hotter with 6.10,
+and when it hovers around the 97C limit, it is unusable with all the
+throttling.
 
-> Any reason to not have the atomic_long_*() API? It seems like an odd
-> ommision.
-> 
+It gets unusable with 6.9 at 97C, too, it is just that it is harder to
+make it so hot with 6.9.
 
-See my reply to Peter, but there's also a more technical reason: right
-now, we use core::ffi::c_long for bindgen to translate C's long. But
-instead of `isize` (Rust's version of pointer-sized integer)
-core::ffi::c_long is `i64` on 64bit and `i32` on 32bit. So right now,
-atomic_long_add_return()'s helper signature would be (on 64bit):
+(And yes, I'm running Chromium, and yes, that means websites influence
+this. Media playback also does, 1080p video pushes thermals close to
+the limits even on good kernels.)
 
-	extern "C" {
-	    #[link_name="rust_helper_atomic_long_add_return"]
-	    pub fn atomic_long_add_return(
-		i: i64,
-		v: *mut atomic_long_t,
-	    ) -> i64;
-	}
+Thanks and best regards,
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
 
-and I would need to cast the types in order to put it in an
-`AtomicIsize` method:
+--9jY3Fdg/BAZtCs3r
+Content-Type: application/pgp-signature; name="signature.asc"
 
-	impl AtomicIsize {
-	    pub fn add_return(&self, i: isize) -> isize {
-	        unsafe {
-		    return atomic_long_add_return(i as i64, self.0.get()) as isize
-		}
-	    }
-	}
+-----BEGIN PGP SIGNATURE-----
 
-see these two `as`s. I want to avoid handling them in a bash script ;-)
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZmykeAAKCRAw5/Bqldv6
+8gIcAJ9B4RKjJ+DF3U4YiKKPR2TtRW0KEQCgpTFbTJaqCrmvTB23IRLtTeGI328=
+=ruMg
+-----END PGP SIGNATURE-----
 
-A better solution would be what Gary has:
-
-	https://github.com/nbdd0121/linux/commit/b604a43db56f149a90084fa8aed7988a8066894b	
-
-, which defines kernel's own ffi types and teach bindgen to pick the
-right type for c_long. If we prefer script code generating to Rust macro
-code generating, I will work with Gary on getting that done first and
-then add atomic_long_t support unless we feel atomic_long_t support is
-urgent.
-
-Regards,
-Boqun
-
-> Mark.
+--9jY3Fdg/BAZtCs3r--
 
