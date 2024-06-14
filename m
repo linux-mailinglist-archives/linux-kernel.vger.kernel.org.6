@@ -1,113 +1,97 @@
-Return-Path: <linux-kernel+bounces-214996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6835908D19
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:15:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E58908D1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78001C25C71
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:15:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B52F1C22139
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0075C82;
-	Fri, 14 Jun 2024 14:15:07 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FFE9463;
+	Fri, 14 Jun 2024 14:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qprxGz4h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E078F59
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 14:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE96C152;
+	Fri, 14 Jun 2024 14:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718374506; cv=none; b=Epfg7awkCNGexRybzS5kKgMl/sZGL9tnhh+dFMKShwkCSOLYOAfO/thiTakrM9EZR4esJ+iHQVs3OMf/Py6PuKEbLznnQsL/K9H6wsqZiLqEPjmPwX9s6Wd6H3AlXvZf/EUvPYmUtAt2qGmC0IwJ8vQe7TC+l08RZKsZVWCzyVE=
+	t=1718374548; cv=none; b=QSIJvZNddtSmCYqcRitMhzr/F3XiUZmMXSYf93Yp6vIT+nK1Kigef4JNnyY8oSbmn6MMEJOM1SIUY63BQfMZd+8MBei+QagXlcBw7PN1SC6K9BCTLE4zy5cIJ0IZQbz/xxBtECzPiH4E/NCQrM2oHilFGPfkzGe9OIOFHHd12k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718374506; c=relaxed/simple;
-	bh=LwRD+raK9x1T5XyPzgTcT4RDvNuQlknMTk7JzpIBg74=;
+	s=arc-20240116; t=1718374548; c=relaxed/simple;
+	bh=PFOfSpSLDRx7rYM9hoqorQDF3eIWLsTrs6bo/cIrGzA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dmpa82DHwBM7o14auTh0dxlRsjYcnhLAGxmajEDZVrW87f3UA9aWDtSQywPVResU851LF4b4cVJLRQkeq9V2hrfyCxxx972aZ4NlNpu7NLIyK96/XGf8rtwKCpndZFw0gdLAU9+1H9ZmurgE3FGR8/eDocExeyCqf0mhRSzO3aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5270720599;
-	Fri, 14 Jun 2024 14:15:03 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CBC3213AAF;
-	Fri, 14 Jun 2024 14:15:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7r8vL2ZQbGYhTAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Fri, 14 Jun 2024 14:15:02 +0000
-Date: Fri, 14 Jun 2024 16:14:57 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
-Cc: Peter Xu <peterx@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH v5 02/18] mm: Define __pte_leaf_size() to also take a PMD
- entry
-Message-ID: <ZmxQYTEOqtxuEthT@localhost.localdomain>
-References: <cover.1717955558.git.christophe.leroy@csgroup.eu>
- <172b11c93e0de7a84937af2da9f80bd17c56b8c9.1717955558.git.christophe.leroy@csgroup.eu>
- <ZmgaHyS0izhtKbx6@localhost.localdomain>
- <ZmhcepJrkDpJ7mSC@x1n>
- <ZmhofWIiMC3I0aMF@localhost.localdomain>
- <ZmhrIdh3PLzvZU07@x1n>
- <Zmh282yJjxc7zqbL@localhost.localdomain>
- <e9583aa5-4ad7-4bcf-b3ff-f42b983231f5@cs-soprasteria.com>
- <Zmqdl1aqmU9BgYzo@localhost.localdomain>
- <0b52260d-28b2-4b33-b73e-88c5e5bfce66@cs-soprasteria.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lm5Ppqi9Sl4tvPNFl0R1aod8ffLaOqgG2tA63aawu3VbK5jmUWePeOoWFX/6o+RxIYIUH4NjaYO1hyDnjH5KIiMz9Qp/cgdROGcL+rWZyhjfWcatVTseDDFBLHMGMGr/gYH4ASgHgzpQvatSRZJg9Znk0snigZ1hpx8SO4Bfqno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qprxGz4h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32C39C2BD10;
+	Fri, 14 Jun 2024 14:15:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718374547;
+	bh=PFOfSpSLDRx7rYM9hoqorQDF3eIWLsTrs6bo/cIrGzA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qprxGz4hHQa9jNqFM9iV3afMEpRhCD3zf6fyN+lOQ7FZIEIOwyfZXOmY0QnbsVZ5I
+	 l3t4rMnppKFoDOYadYcKmGNIpH2VqkMrcsubR+ajyaiHg/orC9/exbbQekY7KdFGDH
+	 I6QdsXJqDUyBWnowlfiN4cHtToAxWayrQbYjLlxb+9cvvvLpFce/StJc9uEieLohRh
+	 PmvtByruR34BBo94pzfdO2dUzLbzAc41h0Sq8s3XiW7J8kWm5i2hXybewaCgr4wA/L
+	 sNBtNWu4zj1SghVXP2PU6Bb3xOBF5Sc87jzA+ZogYCNsHsBOixW4xlXQT6BV2DDlh8
+	 nWvXSQEa1pyNQ==
+Date: Fri, 14 Jun 2024 15:15:44 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 5.15 000/402] 5.15.161-rc1 review
+Message-ID: <ZmxQkO6O3QX6gcp4@finisterre.sirena.org.uk>
+References: <20240613113302.116811394@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="PfN2e3JWgo2v2Gv6"
+Content-Disposition: inline
+In-Reply-To: <20240613113302.116811394@linuxfoundation.org>
+X-Cookie: Your love life will be... interesting.
+
+
+--PfN2e3JWgo2v2Gv6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0b52260d-28b2-4b33-b73e-88c5e5bfce66@cs-soprasteria.com>
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Rspamd-Queue-Id: 5270720599
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Spam-Level: 
 
-On Thu, Jun 13, 2024 at 04:43:57PM +0000, LEROY Christophe wrote:
-> I can test whatever you want on my 8xx boards.
-> 
-> I have two types of board:
-> - One with MPC866 microcontroller and 32Mbytes memory
-> - One with MPC885 microcontroller and 128Mbytes memory
+On Thu, Jun 13, 2024 at 01:29:17PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.161 release.
+> There are 402 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-That is great.
-I will code up some tests, and once you have the pmd_* stuff on 8xx we
-can give it a shot.
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Thanks!
+--PfN2e3JWgo2v2Gv6
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Oscar Salvador
-SUSE Labs
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZsUJAACgkQJNaLcl1U
+h9CHbQf/X2dR0nNcURuD+OX5l6WtCMsOosr1rHOV952vVOSr5iEM+/SwytrSUx64
+6k6UijijDjcamJ4mHTfJk3SDULKgBtcda7aaRIAQB52f0L6BAfmWx8mqweGE6yLb
+yH6lbFYjmqYKkWdUZOZSnBlVlRAj9fCV8o9EhK7hcCuRxWZUbB3sKV72+0gJK6ib
+cSvIrQzTgQva1HdMvivwWQskhmN5EbCwcE30V3nCB3p22L3dX3EoTpqRCyrWB0Iw
+0XRXEpvQL/fNTY43zxuanHb8aHUOF2GIpYfzCpQEmae4QRY5J/NrFaBlPoIvQPQT
+EE+WH9fDHfC9T7TtnRS7/JSHSw1PHA==
+=yliv
+-----END PGP SIGNATURE-----
+
+--PfN2e3JWgo2v2Gv6--
 
