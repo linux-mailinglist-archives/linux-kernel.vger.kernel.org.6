@@ -1,146 +1,122 @@
-Return-Path: <linux-kernel+bounces-214562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 390F7908673
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:37:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F5F908690
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3D22B227C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:37:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43ABD1C254D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83984190074;
-	Fri, 14 Jun 2024 08:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="YW2yeP5p"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067FD19007E;
+	Fri, 14 Jun 2024 08:40:26 +0000 (UTC)
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BDC1849;
-	Fri, 14 Jun 2024 08:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777A71836DE;
+	Fri, 14 Jun 2024 08:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718354253; cv=none; b=qVpHxb06o/CNv/e/wjbAAra23FA5c9GHQyuDkZ2S4KGl5Rl3Ly/PfLJa2shkh9MN4DhAiCBSiSe9hR4XEGHdCMfYOKKdOzMYrAgBqQd0vw5btQykblkY/PEb1n1UjjJx9SmbpFHkL+e1hRwKM70NcszWAyDIvNTUaOYlwjoLENo=
+	t=1718354425; cv=none; b=O8+GAzonR097uK+BZ8saqzmKJ4GURYZ6IqfWpWHursY0sEA59pmXVimVsyPEVLOl+dtxIP51mRpWU7vWgsCPeVy5MPpZmkNPag7E8kNn4EVfB3CQXB31cLgXQHxoMgiQoyliDXtdTSBW/PDiApwsC1K96KC7Ojk70j8pid76m44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718354253; c=relaxed/simple;
-	bh=IE56RPoqKyRQy8bsSYTv0dvMwFiHl4QLf2TB7HaBQLQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iu7t63/NqJwZnhLfduzfD0JvGcSlHoRjgwFni/WMEGnBTrsnKC9qhoGb4R5oqGohz4uLAe/Er3bpRPU/g1RL29c1moApE9nsDK+bK+ihJ8P+d3d69hI7O56VRo76IWi9B02WM65dcCzNYkTSadnp4+kd9YJczXaIEC0q1Y5A3XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=YW2yeP5p; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1718354251; x=1749890251;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IE56RPoqKyRQy8bsSYTv0dvMwFiHl4QLf2TB7HaBQLQ=;
-  b=YW2yeP5pZzSts/P3luQ0AgIei6MKe5tpWM8hJQ+kw8c6ATsNU6apzhIu
-   h7DM5EHCLKgPNQz8clwUulwuJRbIc/Qg2yhzHj6O6JaeBebqclx4mODHV
-   32AAQ5nJIUIBzcKhETJO/sB04O2ysehK8Ptb+1J+YBboh6kfrSdncuFuu
-   3H1/fsocS4RyHltLqWbq2lMRhBB2Er6EHPz2kOHtLJ6CF0TkRS6hUca4o
-   7cDFsxnz0JvYE8LldRGeW1eSVoES9iAwC+pIJ8kSiqgrVdn2KAJiw3d6C
-   pp5q8Bv62572VXlW5kj94xxkeYgq86PPKQxJhDOEYEy3xUKSLNHqnHGMA
-   Q==;
-X-CSE-ConnectionGUID: NG7Mft5MRmOGOwVcOw10MA==
-X-CSE-MsgGUID: T/1ZNyhISGCswnvApzi+sQ==
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="asc'?scan'208";a="194925024"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Jun 2024 01:37:28 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 14 Jun 2024 01:37:19 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex04.mchp-main.com (10.10.85.152)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Fri, 14 Jun 2024 01:37:13 -0700
-Date: Fri, 14 Jun 2024 09:36:55 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Jesse Taube <jesse@rivosinc.com>
-CC: <linux-riscv@lists.infradead.org>, Jonathan Corbet <corbet@lwn.net>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>, Evan Green
-	<evan@rivosinc.com>, Andrew Jones <ajones@ventanamicro.com>, Charlie Jenkins
-	<charlie@rivosinc.com>, Xiao Wang <xiao.w.wang@intel.com>, Andy Chiu
-	<andy.chiu@sifive.com>, Eric Biggers <ebiggers@google.com>, Greentime Hu
-	<greentime.hu@sifive.com>, =?iso-8859-1?Q?Bj=F6rn_T=F6pel?=
-	<bjorn@rivosinc.com>, Heiko Stuebner <heiko@sntech.de>, Costa Shulyupin
-	<costa.shul@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Baoquan
- He <bhe@redhat.com>, Anup Patel <apatel@ventanamicro.com>, Zong Li
-	<zong.li@sifive.com>, Sami Tolvanen <samitolvanen@google.com>, Ben Dooks
-	<ben.dooks@codethink.co.uk>, Alexandre Ghiti <alexghiti@rivosinc.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Erick Archer
-	<erick.archer@gmx.com>, Joel Granados <j.granados@samsung.com>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 4/6] RISC-V: Detect unaligned vector accesses
- supported.
-Message-ID: <20240614-viral-dinghy-71d5f6585a55@wendy>
-References: <20240613191616.2101821-1-jesse@rivosinc.com>
- <20240613191616.2101821-5-jesse@rivosinc.com>
+	s=arc-20240116; t=1718354425; c=relaxed/simple;
+	bh=fUz6PrtFBHmdSanceP4rEnElFSeTVqazvmJwnBn6bg8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OxWcqTeG85nviXwhRoja5wS+TJUgYc1lfV+t+08vup9zBJywIpBNW5uw20ZRyUVXs+xNo/kEVNjU5OmbnsZ7C7li22tPRi7GXdrIAEK4BQFEBRzXwiKOiWE0M13TANjlB93E3BYNekp3zFJMQ0MEEdnQsgyPAtTKgKNlc8lO/q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
+X-QQ-mid: bizesmtpsz10t1718354248tjm52n
+X-QQ-Originating-IP: qslyn0oMXcpOJEcFPvUvJm0egT/cIEGM1bOAZQB2Bz0=
+Received: from [192.168.3.231] ( [116.128.244.171])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 14 Jun 2024 16:37:25 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 8925404822079021439
+Message-ID: <93D6D58053EB522F+de1c8896-65e1-442d-99f6-c5b222c0a816@chenxiaosong.com>
+Date: Fri, 14 Jun 2024 16:37:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Ytzm/oHaDkbsSGqU"
-Content-Disposition: inline
-In-Reply-To: <20240613191616.2101821-5-jesse@rivosinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Question about pNFS documentation
+To: Chuck Lever III <chuck.lever@oracle.com>
+Cc: Trond Myklebust <trond.myklebust@hammerspace.com>,
+ Anna Schumaker <anna@kernel.org>, Benjamin Coddington <bcodding@redhat.com>,
+ Olga Kornievskaia <kolga@netapp.com>, Josef Bacik <josef@toxicpanda.com>,
+ Jeff Layton <jlayton@kernel.org>,
+ Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ "liuzhengyuan@kylinos.cn" <liuzhengyuan@kylinos.cn>,
+ "huhai@kylinos.cn" <huhai@kylinos.cn>,
+ "chenxiaosong@kylinos.cn" <chenxiaosong@kylinos.cn>
+References: <BA2DED4720A37AFC+88e58d9e-6117-476d-8e06-1d1a62037d6d@chenxiaosong.com>
+ <08BB98A6-FA14-4551-B977-8BC4029DB0E1@oracle.com>
+Content-Language: en-US
+From: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
+In-Reply-To: <08BB98A6-FA14-4551-B977-8BC4029DB0E1@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
 
---Ytzm/oHaDkbsSGqU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for your reply. By the way, are there any plans for the Linux NFS 
+server to implement the file, flexfile and object layout?
 
-On Thu, Jun 13, 2024 at 03:16:13PM -0400, Jesse Taube wrote:
-> --- a/arch/riscv/kernel/unaligned_access_speed.c
-> +++ b/arch/riscv/kernel/unaligned_access_speed.c
-> @@ -19,7 +19,8 @@
->  #define MISALIGNED_BUFFER_ORDER get_order(MISALIGNED_BUFFER_SIZE)
->  #define MISALIGNED_COPY_SIZE ((MISALIGNED_BUFFER_SIZE / 2) - 0x80)
-> =20
-> -DEFINE_PER_CPU(long, misaligned_access_speed);
-> +DEFINE_PER_CPU(long, misaligned_access_speed) =3D RISCV_HWPROBE_MISALIGN=
-ED_UNKNOWN;
-> +DEFINE_PER_CPU(long, vector_misaligned_access) =3D RISCV_HWPROBE_VEC_MIS=
-ALIGNED_UNSUPPORTED;
-> =20
->  #ifdef CONFIG_RISCV_PROBE_UNALIGNED_ACCESS
->  static cpumask_t fast_misaligned_access;
-> @@ -268,12 +269,18 @@ static int check_unaligned_access_all_cpus(void)
-> =20
->  	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_ZICCLSM)) {
->  		for_each_online_cpu(cpu) {
-> +#ifdef CONFIG_RISCV_VECTOR_MISALIGNED
-> +			per_cpu(vector_misaligned_access, cpu) =3D RISCV_HWPROBE_VEC_MISALIGN=
-ED_FAST;
-> +#endif
-> +#ifdef CONFIG_RISCV_MISALIGNED
->  			per_cpu(misaligned_access_speed, cpu) =3D RISCV_HWPROBE_MISALIGNED_FA=
-ST;
-> +#endif
+Thanks,
+ChenXiaoSong.
 
-Can you IS_ENABLED()-ify these two as well please?
-
---Ytzm/oHaDkbsSGqU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmwBJwAKCRB4tDGHoIJi
-0o83AP4l3yMCtJznhon+dFQUAVsO6wRiQb2NfRzHzaOsUmMyyQEA3rLtvEQrCOU7
-yZz/D4drHvHR3eCHR57Lvgb+yeiQJww=
-=ToT+
------END PGP SIGNATURE-----
-
---Ytzm/oHaDkbsSGqU--
+在 2024/6/13 23:31, Chuck Lever III 写道:
+> Hi-
+> 
+>> On Jun 13, 2024, at 4:35 AM, ChenXiaoSong <chenxiaosong@chenxiaosong.com> wrote:
+>>
+>> Greetings,
+>>
+>> I am very interested in Parallel NFS (pNFS) and want to setup a testing and debugging environment for pNFS. I found some pNFS documentation [1] [2] [3], but I still don't know how to setup Linux environment about file layout, block layout, object layout, and flexible file layout. Some documentation like spNFS(simple pNFS) is unmaintained and was dropped. Can you recommend some other detailed documentation(how to use pNFS in Linux)?
+>>
+>> Thanks,
+>> ChenXiaoSong.
+>>
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/admin-guide/nfs/pnfs-block-server.rst
+>>
+>> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/admin-guide/nfs/pnfs-scsi-server.rst
+>>
+>> [3] https://linux-nfs.org/wiki/index.php/PNFS_Development
+> 
+> I'm not aware of recent documentation other than what you
+> have listed here.
+> 
+> Note that the Linux NFS client implements the file, block,
+> and flexfile layout types, but the Linux NFS server
+> implements only the pNFS block layout type.
+> 
+> I've been building out testing that we can run for each
+> release of NFSD that will exercise pNFS block layout
+> support in the Linux NFS server and client, since pNFS
+> block is the common denominator between our client and
+> server.
+> 
+> Look at the 9 commits at the tip of [1]. These contain
+> changes to kdevops that add the ability for it to set up
+> an iSCSI target and enable pNFS on its local NFS server.
+> If you can read Ansible scripts, these might help you
+> form recipes for you to set up your own environment
+> using the Linux NFS implementation and its iSCSI target
+> and initiator.
+> 
+> Admin documentation (outside of kdevops) is on the to-do
+> list, but hasn't been started.
+> 
+> 
+> --
+> Chuck Lever
+> 
+> [1] https://github.com/chucklever/kdevops/tree/pnfs-block-testing
 
