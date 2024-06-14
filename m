@@ -1,233 +1,255 @@
-Return-Path: <linux-kernel+bounces-214307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAA5690828A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 05:39:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCBCB90828E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 05:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 911D91F23BF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:39:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 539B4284128
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD21146A68;
-	Fri, 14 Jun 2024 03:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gmv7WXQt"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A80146A83;
+	Fri, 14 Jun 2024 03:43:27 +0000 (UTC)
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404A9144D2C;
-	Fri, 14 Jun 2024 03:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104AB262BE;
+	Fri, 14 Jun 2024 03:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718336364; cv=none; b=sypTUbocbto/BdKhb/73kGHV9R4ggcWMcUTqheJz4s6PlgCxw/EcUB9ZXvp3vP0WJnARnAGUEyTExJ63Z6bfNmC97fDTa1ZsKQFzbkxS1g+butJzcW9LJQTljISqexRN2gjm9fl4xBHeAXtLs37Rccn7rBhM9VmhjwwxNTsIs70=
+	t=1718336606; cv=none; b=YvT5Cw1so0r+zD4j10WH2d3oOh14uxzINp1lylJlMJAIl5D+Hy1BNziSdOpRA49f4km7ftlyMHFY75YR8zmRI1TpeYzp+NM0yHkrX9fShO0L41YVL163XqRsIW5CYnUvCvQkPU1Tpux38muRNguxhYte9ULpujVNUr/SCASDixE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718336364; c=relaxed/simple;
-	bh=GNAEDvNKlW8bZj7JdRG8bxyTRhbaj1s3OfFXcZK3Lqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UVpsfjTKEQTHv+Oe9KmJ7Y6wTF5OSz6RI7LkfCqBtGb0fTfnqMJacX860Bur1zhhQEcjwL5Kbyz/SJHTNU3KsO1arqy4GNwDEQwRipratIg8jQLWRcrSSS9YBHn/yGFTxY8Q0mKNs/P8SE7EyBFrEVPpNgpEl2pmMVlqvOviWeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gmv7WXQt; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1718336606; c=relaxed/simple;
+	bh=OtbOM3hKhInP17oGSpKGJOOCrYBnUHT76/Gk6UTiJyo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BEI9mBEL34+EYh+8AJx8FONGn6a2FQNCmfFgzXbTCFZ7/AopOD1xwkDCd4xxfW1enbrSAWJ177LfcZTC+ZCZpoIEn/FZWFOEE//y+8nGZvFw6HoW2vKJEWnfnw2X93Kn/+bMmL/m+BL34lu7O4Gkt52wlvJW4Kytu05EXgZAbxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f480624d0dso14289635ad.1;
-        Thu, 13 Jun 2024 20:39:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718336362; x=1718941162; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0wj31yPYy6tRRBSt9nJyH+0doinj9fP9C2Og2zh8SH8=;
-        b=Gmv7WXQt/NWWBcLvhx6EhVefH+Py8rHcKcX54imwfRJYE3PCtzQFuunj3I6/P9aJOj
-         Hnr83K426Cyd2Hkv5YqAtzN4j6ZCok3nj1u+dqke5kgmb1kqDxmTgtI2f52TOB7tk8xq
-         hBZdkYEpy7BqFBge8W7ThgC4xgn2+4gUWgd0/PPptYNMFsntMyOOOa9BQL6lVzBksZXC
-         cynEWGI9sqyGL/t++9gLnV4lrnrh8i05BUKMV4sMNK9ZmhkZu3TgTwLubmGxnhw3yj01
-         QiK/kZ2vnBRmjR1Wk3+LGz263iq06KR3f+0I5v9rl90IC+Dpcnxhf/dW9K2QTArKlJaf
-         kHZA==
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70599522368so1353365b3a.2;
+        Thu, 13 Jun 2024 20:43:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718336362; x=1718941162;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718336604; x=1718941404;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0wj31yPYy6tRRBSt9nJyH+0doinj9fP9C2Og2zh8SH8=;
-        b=O6JZGBOSr4WhtDPrQ+jne8YHJBLyYjQLyezOHxcM+F/hdpFNWf95ZZB8sVTofZalXK
-         ri3gYCoVt0k0FgS3g6Shkwk2DeJaghJA9xbJdOjCA3CcSnSWr8s0wMQ1jQ/gucLI5YPp
-         afxlVIANS8f7/c8e7fy/lA8ikev+DkU/bw9Wn/EYltRldVbeyPEADGFZPxyWX4vvGeRX
-         ybcSQISGvPhT+RwIkICK8Ebn6XKEBuIwCZamb0gr98zRh+aUd5OTwiO/9JZuvrd8al9O
-         9qCBAmmA1dmSHRlDi1PADaDXNhaI0R1DO8FGfUk3OGw/7WVwrd/9rwW4kAFMCRC2q2IT
-         eU+w==
-X-Forwarded-Encrypted: i=1; AJvYcCV1EdHSuQFOi/9yztBRRgR4GNeHHhgjdNarBDZ7SJi4y+6wngqXP5ZKLVv7/PykdHpoqMhd+XnGQdWFB13BafkW0aVwGW1x9yGzo97nQGpqVtwghq7OA0lfy8R+jJkibJZyR/3jGxRUZ0vlcatpsqGkd9/6y8ym5NaATsHagLcNAqEnTyz2
-X-Gm-Message-State: AOJu0YwO5Cw778uRw96pEAKdr2+NOfH8QOzrzCNqACMzt0wvI7C2WbCX
-	TZAvkZeiXXID/KfqxJ3R32RJcv1AgEDQjYDzLQ9nFpemC2QAtoy2
-X-Google-Smtp-Source: AGHT+IGEvO9MbSiy6fnAEbwKDUg7/14/AfofLJlLjTYA/ri1ZNObseGveHaMKbvtAX0iB9gF0pM02w==
-X-Received: by 2002:a17:903:1250:b0:1f6:9181:47ac with SMTP id d9443c01a7336-1f8625c0427mr22643805ad.1.1718336362331;
-        Thu, 13 Jun 2024 20:39:22 -0700 (PDT)
-Received: from fedora.one.one.one.one ([2405:201:6013:c0b2:ea4b:30e0:4e3a:ab56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f002b0sm21824085ad.192.2024.06.13.20.39.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 20:39:22 -0700 (PDT)
-From: Animesh Agarwal <animeshagarwal28@gmail.com>
-To: 
-Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Animesh Agarwal <animeshagarwal28@nxp.com>
-Subject: [PATCH 2/2] ASoC: dt-bindings: realtek,rt5631: Convert to dtschema
-Date: Fri, 14 Jun 2024 09:08:07 +0530
-Message-ID: <20240614033812.51312-3-animeshagarwal28@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240614033812.51312-1-animeshagarwal28@gmail.com>
-References: <20240614033812.51312-1-animeshagarwal28@gmail.com>
+        bh=vEns122DF4ORxOv+hY+sFqPCmpA0T4JQRa3ZlqqBaYE=;
+        b=dd0N792sQlCHO0z+0QluSqzU0HyCtEXPVo4/PaNTtDvMouOueSrg6A32VeO9uXEpdB
+         VE8d8hiDTRPNq2OIWXF8AIRnsZW+W+CJdZ10wv6GQw1WhLyVhDZpYOCvjgv5lUsEtur4
+         9C8tDGmG6mAYnPXnIuQvBkprwbC+Hegl4c3HcN1zwl6pTZWrhc78a265MJYY3+TQV2eu
+         j0VfZ0zYl7BqXbxpoSTlDVRH9ggN6YG/CI5EmNjzjU24JSEAogda/nI6V/vvx4r4t3gR
+         Dz7ub/jBSBaUktaWgm0IQ/4MLtwo1wApLsSh82/gikRWVwk5CcK9ADvSJbhyl8Y5IYuT
+         6nRA==
+X-Forwarded-Encrypted: i=1; AJvYcCWD4sA8qZkim3mO9gpJR93afaYSAwhiWJpmzcRPtl5o+ejnbVxDqKYAZ41Uu+D7ORwAxxiBMvrPOxm8nwqzA3yCWLCJDanTRjepLjC2GEI8XYDNnFrJUbMDT87nTgFybKRKkI0rOVjxnVi0c1azvw==
+X-Gm-Message-State: AOJu0YypjuXmY1gMRReDvcr7zcybpgBGnN5WAl2HWG1ZLW4+L4yEKTqs
+	oI3dtJfVV92kKVsjUOGbma/FWdhlMeFV+0XdoVKdP8eXl7dmuaeyLO1Xoh2w+5/PNWE4ndyZkTj
+	4yt8gIc+w/rDFQt8LToPmttIywPU=
+X-Google-Smtp-Source: AGHT+IEqujDuJP84z+C0ud5LNON7yidV0VbedNy9wLz4UAkiU5nT0YiO/NqEOhlv30RmBy6lHTMt3ClAYiAnTL57vu8=
+X-Received: by 2002:a05:6a20:430d:b0:1b4:c4c8:bcb7 with SMTP id
+ adf61e73a8af0-1bae7e2271amr2367076637.1.1718336603971; Thu, 13 Jun 2024
+ 20:43:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240608124915.33860-1-vineethr@linux.ibm.com>
+ <ZmeET1yhxU1-D7hy@google.com> <dd2d1e43-8928-4205-9fdb-88208f18c495@linux.ibm.com>
+In-Reply-To: <dd2d1e43-8928-4205-9fdb-88208f18c495@linux.ibm.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Thu, 13 Jun 2024 20:43:10 -0700
+Message-ID: <CAM9d7cjRJUfSPOAdVgcB=UHShPCxY8d3ryEZjzqdiuGhOKd4Lg@mail.gmail.com>
+Subject: Re: [PATCH v2] perf sched map: Add command-name, fuzzy-name options
+ to filter the output map
+To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Chen Yu <yu.c.chen@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com, 
+	linux-perf-users <linux-perf-users@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert the ALC5631/RT5631 audio CODEC bindings to DT Schema.
+Hello,
 
-Signed-off-by: Animesh Agarwal <animeshagarwal28@nxp.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>
----
- .../bindings/sound/realtek,rt5631.yaml        | 63 +++++++++++++++++++
- .../devicetree/bindings/sound/rt5631.txt      | 48 --------------
- 2 files changed, 63 insertions(+), 48 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/realtek,rt5631.yaml
- delete mode 100644 Documentation/devicetree/bindings/sound/rt5631.txt
+On Tue, Jun 11, 2024 at 1:47=E2=80=AFAM Madadi Vineeth Reddy
+<vineethr@linux.ibm.com> wrote:
+>
+> Hi Namhyung,
+>
+> On 11/06/24 04:25, Namhyung Kim wrote:
+> > Hello,
+> >
+> > On Sat, Jun 08, 2024 at 06:18:29PM +0530, Madadi Vineeth Reddy wrote:
+> >> By default, perf sched map prints sched-in events for all the tasks
+> >> which may not be required all the time as it prints lot of symbols
+> >> and rows to the terminal.
+> >>
+> >> With --command-name option, one could specify the specific command(s)
+> >> for which the map has to be shown. This would help in analyzing the
+> >> CPU usage patterns easier for that specific command(s). Since multiple
+> >> PID's might have the same command name, using command-name filter
+> >> would be more useful for debugging.
+> >>
+> >> Multiple command names can be given with a comma separator without
+> >> whitespace.
+> >>
+> >> The --fuzzy-name option can be used if fuzzy name matching is required=
+.
+> >> For example, "taskname" can be matched to any string that contains
+> >> "taskname" as its substring.
+> >>
+> >> For other tasks, instead of printing the symbol, ** is printed and
+> >> the same . is used to represent idle. ** is used instead of symbol
+> >> for other tasks because it helps in clear visualization of command(s)
+> >> of interest and secondly the symbol itself doesn't mean anything
+> >> because the sched-in of that symbol will not be printed(first sched-in
+> >> contains pid and the corresponding symbol).
+> >>
+> >> 6.10.0-rc1
+> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>   *A0                   213864.670142 secs A0 =3D> migration/0:18
+> >>   *.                    213864.670148 secs .  =3D> swapper:0
+> >>    .  *B0               213864.670217 secs B0 =3D> migration/1:21
+> >>    .  *.                213864.670223 secs
+> >>    .   .  *C0           213864.670247 secs C0 =3D> migration/2:26
+> >>    .   .  *.            213864.670252 secs
+> >>
+> >> 6.10.0-rc1 + patch (--command-name =3D schbench)
+> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>    **  .   ** *A0       213864.671055 secs A0 =3D> schbench:104834
+> >>   *B0  .   .   A0       213864.671156 secs B0 =3D> schbench:104835
+> >>   *C0  .   .   A0       213864.671187 secs C0 =3D> schbench:104836
+> >
+> > I still think some people are interested in sched-out time.  For
+> > example, we don't know when B0 was scheduled out in the above.  There
+> > could be other tasks between B0 and C0 on the CPU 0.
+>
+> Yes, you are right. When using the --command-name filter, there can be
+> other tasks in between. This won't be a problem without the --command-nam=
+e
+> filtering, as no task will be missed, and we can be sure that the C0 sche=
+d-in
+> time is the B0 sched-out time.
+>
+> I will add the sched-out time when using the --command-name option in v3.
+>
+> >
+> >
+> >>   *D0  .   .   A0       213864.671219 secs D0 =3D> schbench:104837
+> >>   *E0  .   .   A0       213864.671250 secs E0 =3D> schbench:104838
+> >>    E0  .  *D0  A0
+> >>
+> >> This helps in visualizing how a benchmark like schbench is spread over
+> >> the available cpus while also knowing which cpus are idle(.) and which
+> >> are not(**). This will be more useful as number of CPUs increase.
+> >>
+> >> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+> >> Reviewed-and-tested-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com <ma=
+ilto:atrajeev@linux.vnet.ibm.com>>
+> >>
+> >> ---
+[SNIP]
+> >> @@ -1605,7 +1625,8 @@ static int map_switch_event(struct perf_sched *s=
+ched, struct evsel *evsel,
+> >>                       */
+> >>                      tr->shortname[0] =3D '.';
+> >>                      tr->shortname[1] =3D ' ';
+> >> -            } else {
+> >> +            } else if (!sched->map.command || command_matches(thread_=
+_comm_str(sched_in),
+> >> +                                                    sched->map.comman=
+d, sched->map.fuzzy)) {
+> >
+> > We usually align the indentation using the open parenthesis.
+> > Maybe you can rename the function and pass the sched pointer directly
+> > to reduce the argument.
+>
+> Sure, got it.
+>
+> >
+> >   bool sched_match_task(struct perf_sched *sched, const char *comm_str)
+> >   {
+> >       ...
+> >   }
+> >
+> > Or you could pass thread instead of comm_str and possibly support
+> > matching with TID too.
+>
+> Do you want me to add another command line option to support matching
+> with TID?
 
-diff --git a/Documentation/devicetree/bindings/sound/realtek,rt5631.yaml b/Documentation/devicetree/bindings/sound/realtek,rt5631.yaml
-new file mode 100644
-index 000000000000..05b83d907b38
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/realtek,rt5631.yaml
-@@ -0,0 +1,63 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/realtek,rt5631.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ALC5631/RT5631 audio CODEC
-+
-+description: |
-+  This device supports I2C only.
-+
-+  Pins on the device (for linking into audio routes):
-+      * SPK_OUT_R_P
-+      * SPK_OUT_R_N
-+      * SPK_OUT_L_P
-+      * SPK_OUT_L_N
-+      * HP_OUT_L
-+      * HP_OUT_R
-+      * AUX_OUT2_LP
-+      * AUX_OUT2_RN
-+      * AUX_OUT1_LP
-+      * AUX_OUT1_RN
-+      * AUX_IN_L_JD
-+      * AUX_IN_R_JD
-+      * MONO_IN_P
-+      * MONO_IN_N
-+      * MIC1_P
-+      * MIC1_N
-+      * MIC2_P
-+      * MIC2_N
-+      * MONO_OUT_P
-+      * MONO_OUT_N
-+      * MICBIAS1
-+      * MICBIAS2
-+
-+maintainers:
-+  - Animesh Agarwal <animeshagarwal28@gmail.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - realtek,alc5631
-+      - realtek,rt5631
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        codec@1a {
-+            compatible = "realtek,alc5631";
-+            reg = <0x1a>;
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/sound/rt5631.txt b/Documentation/devicetree/bindings/sound/rt5631.txt
-deleted file mode 100644
-index 56bc85232c49..000000000000
---- a/Documentation/devicetree/bindings/sound/rt5631.txt
-+++ /dev/null
-@@ -1,48 +0,0 @@
--ALC5631/RT5631 audio CODEC
--
--This device supports I2C only.
--
--Required properties:
--
--  - compatible : "realtek,alc5631" or "realtek,rt5631"
--
--  - reg : the I2C address of the device.
--
--Pins on the device (for linking into audio routes):
--
--  * SPK_OUT_R_P
--  * SPK_OUT_R_N
--  * SPK_OUT_L_P
--  * SPK_OUT_L_N
--  * HP_OUT_L
--  * HP_OUT_R
--  * AUX_OUT2_LP
--  * AUX_OUT2_RN
--  * AUX_OUT1_LP
--  * AUX_OUT1_RN
--  * AUX_IN_L_JD
--  * AUX_IN_R_JD
--  * MONO_IN_P
--  * MONO_IN_N
--  * MIC1_P
--  * MIC1_N
--  * MIC2_P
--  * MIC2_N
--  * MONO_OUT_P
--  * MONO_OUT_N
--  * MICBIAS1
--  * MICBIAS2
--
--Example:
--
--alc5631: audio-codec@1a {
--	compatible = "realtek,alc5631";
--	reg = <0x1a>;
--};
--
--or
--
--rt5631: audio-codec@1a {
--	compatible = "realtek,rt5631";
--	reg = <0x1a>;
--};
--- 
-2.45.2
+Maybe later.. if somebody wants. :)
 
+Thanks,
+Namhyung
+
+>
+> Thanks for all the suggestions. Will implement them and send v3.
+>
+> Thanks and Regards
+> Madadi Vineeth Reddy
+>
+> >
+> > Thanks,
+> > Namhyung
+> >
+> >
+> >>                      tr->shortname[0] =3D sched->next_shortname1;
+> >>                      tr->shortname[1] =3D sched->next_shortname2;
+> >>
+> >> @@ -1618,10 +1639,19 @@ static int map_switch_event(struct perf_sched =
+*sched, struct evsel *evsel,
+> >>                              else
+> >>                                      sched->next_shortname2 =3D '0';
+> >>                      }
+> >> +            } else {
+> >> +                    tr->shortname[0] =3D '*';
+> >> +                    tr->shortname[1] =3D '*';
+> >>              }
+> >>              new_shortname =3D 1;
+> >>      }
+> >>
+> >> +    if (sched->map.command && !command_matches(thread__comm_str(sched=
+_in), sched->map.command,
+> >> +                                                                     =
+       sched->map.fuzzy))
+> >> +            goto skip;
+> >> +
+> >> +    printf("  ");
+> >> +
+> >>      for (i =3D 0; i < cpus_nr; i++) {
+> >>              struct perf_cpu cpu =3D {
+> >>                      .cpu =3D sched->map.comp ? sched->map.comp_cpus[i=
+].cpu : i,
+> >> @@ -1678,6 +1708,7 @@ static int map_switch_event(struct perf_sched *s=
+ched, struct evsel *evsel,
+> >>  out:
+> >>      color_fprintf(stdout, color, "\n");
+> >>
+> >> +skip:
+> >>      thread__put(sched_in);
+> >>
+> >>      return 0;
+> >> @@ -3560,6 +3591,10 @@ int cmd_sched(int argc, const char **argv)
+> >>                      "highlight given CPUs in map"),
+> >>      OPT_STRING(0, "cpus", &sched.map.cpus_str, "cpus",
+> >>                      "display given CPUs in map"),
+> >> +    OPT_STRING(0, "command-name", &sched.map.command, "command",
+> >> +            "map output only for the given command name(s)"),
+> >> +    OPT_BOOLEAN(0, "fuzzy-name", &sched.map.fuzzy,
+> >> +            "given command name can be partially matched (fuzzy match=
+ing)"),
+> >>      OPT_PARENT(sched_options)
+> >>      };
+> >>      const struct option timehist_options[] =3D {
+> >> --
+> >> 2.31.1
+> >>
+>
 
