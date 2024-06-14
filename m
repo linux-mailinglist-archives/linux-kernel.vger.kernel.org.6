@@ -1,118 +1,140 @@
-Return-Path: <linux-kernel+bounces-215424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A73790928A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:52:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC66690928C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FE811F2239F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:52:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF62F1C21AE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105351A01D0;
-	Fri, 14 Jun 2024 18:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3461A254F;
+	Fri, 14 Jun 2024 18:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IxQ+XCmd"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="f4+ZqOpx"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF16C49638;
-	Fri, 14 Jun 2024 18:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F53F1A0B1B
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 18:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718391118; cv=none; b=iREeMR9pjnlSYicy/HjajowWs0cA5YKOAtb3gWltbXeliEK+EH8AaXWpqiIQ9CKtgUbwHoa6fA7S9UMzfyO+Pfi23JUTWUz4Xq2xd8mNUEtLXGJJvDkZUNx1mgd1fjk2FrUmG5WM+lKzQkYhIPAA2GwbA3wVOiHky0yQTR8rIkI=
+	t=1718391130; cv=none; b=eji2lrQffxTzWQ6ciLQDBOQz0PVnJRf9ywf9PKEIabeUOkqgQ+2dJtGNuFvhfXlbMGt78VRjuR5CANFnzUXiy7MrDKvtJPfeb414wyHMuU8fRF9IMTzHFVvsLsPgkWWyygmMC9Se1WSp3nbuBj8Z89jX2UNOaOJIHqyo058h42w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718391118; c=relaxed/simple;
-	bh=enWuKqXUz9GyFxoLZijvMKS2fI5yH9PvWddd77Gg2lg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NQ6uKkkcqOAaaBlhWCo6EVyugqEvSTNyC3/B3VQbTtvT9MTVnVzzlGDGsZMNbyq7FnYRjvzACCskNKGOrv+8SXny0bXjwzA/0V6HH6ApSRswgiqaW0aDCsxKeYT5gys90P38PDrjoSfAzv0J91C7wnW3TAGfXouFyH/voSDH1yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IxQ+XCmd; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6ef8e62935so338902466b.3;
-        Fri, 14 Jun 2024 11:51:56 -0700 (PDT)
+	s=arc-20240116; t=1718391130; c=relaxed/simple;
+	bh=Wnop8Qq538e7eVgLq4rlSTIJC3zohtdzZO1W1QS3zjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jk6vy9azXi9wCOyhIQ8yV+Rlf1JOhGS3LLciXLe9AIzmnoI2czvmg+zrZByOufS5sC9DEMKCy7ViT21qqAujOni10geeV/CtVbMH41tXh1I8WUQD2sxk4avSmGU9Iw+zUT6Ih68Ag2jSoGmE7Mg/HfBNQ45kddWZMJ1rAlK6oHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=f4+ZqOpx; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3c9cc681ee7so1071253b6e.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 11:52:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718391115; x=1718995915; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5rprkihQjKE8Wxhdq2UGmvX5wHNUhwtUN5I71Y/SB64=;
-        b=IxQ+XCmdCnjp5J4su+sEK7wsCGD59lNDd/HL5jxxpoePqziA9XJStGHuHzn2sG9rAk
-         Cd9mCzVzE6Zq2I21rEtEk/LJ8KIpEW73k5B0QExASV9glTgtsECygicXjUyhKTpydT7E
-         YTXl4sVbT9mA1P6yj4OzGrF+/H3Z2y5NL/JtsgVX60SuTGgVkdasG0hQ/hN1wqy/8aOS
-         emTjfAiDS2T3FH8Y/YCiKPqaNVriQ3OHDl2UknWmmGur2tAxKstfevPvmH9Gw1Sc7C0A
-         M4/LRbV9//yqab7XFHINx6b1oXr951ROcaSAXwCFC39iloAj2Lf5ISlfwupRCFTt5hBz
-         3KTg==
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1718391127; x=1718995927; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LVDBvdP08HJe2LLNeEFHiRk2XhY0KePdWqVaxMDbvKE=;
+        b=f4+ZqOpxDlaOGx/uXxzo+JBV3c2J+GdTOHq0+3o/5hHOeiEIA3IMlgKm9Hvu7Y+4Pn
+         HKoQYCiCJj7/mPtUf5e1lapZ3Stw453sOUQmF43/uKKN/vqrX+TshpH6rxDd1KQ7zN2x
+         EOGzifnTP+0JdNPUnf5sv5ffBAXf+KbzaJ50jCN1lv55KQLh1VB3OSuyCN2R/iUEZ93O
+         kN87c9B6b1nv3WH2i50U1tVXOQocVi+ftsmta9MD6vSkoz9WLR2+IMxCgtyhL0oFYjuH
+         4IXpXhNh5eLnMGKUUHtWmSji8+VhyIHzRXeUaHP7L6izMP2mjkzQB0iZCBBCyH6gicic
+         y6mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718391115; x=1718995915;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5rprkihQjKE8Wxhdq2UGmvX5wHNUhwtUN5I71Y/SB64=;
-        b=ZFe1c34JfxF/ygh34tGD6nAC49isJmElt4GUuzsji6PvvXLWBR2aYKNkbqLJu/0ANT
-         WBRgNcy03aAgHUSuZfWMJMQW9t0NQXA44wZoI7r5Ocuw2yL/PGPsmk/lIUqx8aFR2D7T
-         0VJmo/yIT/Qa2EwqfFjeO+AzwCkH91NxZjq8xI4r2n8FtcH24HimtPbfndciN+wDnKaj
-         49CJgwtop6euXNWkdgAAMbeowcdTQz3D5IoNPpUvKhoNNQy8PuJm3XcZ3+n+GP9P9U8e
-         AemjXZNITQAjNtUEKpT5s5SreLQoPl9wp0kQTQlcPrgN9rUu1ijxkefBniobzQMK7bPc
-         +l9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXo7H2YAuOOBPP9CkCCOIRhLbDwC1WpVYwWxJvjFYtGxf6BW8FnnVzF5W8h4Tlanvuu0cf8j0mLdKVNx9iR7yM+S03xX8XO12wXlq4vWOfJG/ybiu9Xhxe7xt8e2jdVU0gZKIjVn672Gw==
-X-Gm-Message-State: AOJu0YxYanOJNz+uD2TjC9qp+aus+y0XrF6nGpfKLp4ZHPEqXOWcsv/D
-	NK9UQs+R1KVfUayEh8x6WebK/iRvtENvx7mQ6gsQZSL34A2fttmh
-X-Google-Smtp-Source: AGHT+IEk36S7X2t8cMYmuX/ZpaUrMMUzSoVxsy05fs448iah9EFGdw++b7+nZbY9DlgFWQzzLo5QBg==
-X-Received: by 2002:a17:906:c34b:b0:a6f:14b8:a017 with SMTP id a640c23a62f3a-a6f60de601emr271162166b.74.1718391114401;
-        Fri, 14 Jun 2024 11:51:54 -0700 (PDT)
-Received: from [192.168.0.31] (84-115-213-103.cable.dynamic.surfer.at. [84.115.213.103])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f72e7e9f1sm393366b.147.2024.06.14.11.51.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 11:51:53 -0700 (PDT)
-Message-ID: <ab09447d-45be-4af9-9bf9-1debc9e5943c@gmail.com>
-Date: Fri, 14 Jun 2024 20:51:51 +0200
+        d=1e100.net; s=20230601; t=1718391127; x=1718995927;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LVDBvdP08HJe2LLNeEFHiRk2XhY0KePdWqVaxMDbvKE=;
+        b=snndWa2kYoCtFGQNskYAr/pfC7vB2LcFhRb4nsfxVQihfBkMFzi0X3LFmPFU+fPTQB
+         tG/pNYcTnYK0q/sEiKT/uyCzaVKAyUF1UjY8yyANgDl0Vl/EFzsi3SbK7cY11fdZXOkq
+         r4J0q1fjyROz/7V8kWEpnNEtsqAPNvHP1p9mkmD0u+uDFCi3Mbm3plf/Sbu04CWqUFfw
+         +Ayx3CsdkhT2hhFzuTKS2eYmkUx/xtDeRNaGjTDm+WfG7Kki8jG7caxxUzfFsk9aJ+sS
+         WMKMG2BQzou4NVslXVyuMX5vXDCB2uv+PZSTvDxOJhmHeaJNbbSdJN79I0GW+xyKQOyB
+         yHIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTHwXwEYtXZ0qrYov0i/JhS1EkyVXC0YZgI37AU5X6j922UbYTKOj+J8dUNCGR2K7HzOJxmLHY3/HQ7IUAOGGpI5CYT6bzu9womyCQ
+X-Gm-Message-State: AOJu0Yys2aA0mb9maNSd/kewtf9P4DN+OffVNgOPvEo+dD763yp0P2iG
+	3H5YjHQ1DeD2+7D/2+toWf2nGESj0wrgCELpffNRfywsLwmu/feOL0wRnRgbPJg=
+X-Google-Smtp-Source: AGHT+IH5wsewHDu4BXzms8+/hfuFuKIa/9eeUhy5xDV/FWcrmW7WzNgNCo/H/BIyrLMqqglhgTp+DQ==
+X-Received: by 2002:a05:6808:11d0:b0:3d1:d36b:379e with SMTP id 5614622812f47-3d244f362e9mr3226002b6e.26.1718391127297;
+        Fri, 14 Jun 2024 11:52:07 -0700 (PDT)
+Received: from mail.minyard.net ([2001:470:b8f6:1b:c3a8:c961:e73:5e22])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d2476bb36fsm618151b6e.40.2024.06.14.11.52.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 11:52:06 -0700 (PDT)
+Date: Fri, 14 Jun 2024 13:52:05 -0500
+From: Corey Minyard <corey@minyard.net>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Quan Nguyen <quan@os.amperecomputing.com>,
+	Corey Minyard <minyard@acm.org>,
+	openipmi-developer@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ipmi: ssif_bmc: prevent integer overflow on 32bit systems
+Message-ID: <ZmyRVQzcIbDwgnP9@mail.minyard.net>
+Reply-To: corey@minyard.net
+References: <1431ca2e-4e9c-4520-bfc0-6879313c30e9@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: thermal: convert hisilicon-thermal.txt to
- dt-schema
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>, rafael@kernel.org,
- daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-References: <20240613224204.185844-1-abdulrasaqolawani@gmail.com>
- <afb7551e-404e-440b-92c5-6927c61417ab@kernel.org>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <afb7551e-404e-440b-92c5-6927c61417ab@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1431ca2e-4e9c-4520-bfc0-6879313c30e9@moroto.mountain>
 
-On 14/06/2024 10:49, Krzysztof Kozlowski wrote:
-> On 14/06/2024 00:42, Abdulrasaq Lawani wrote:
->> Convert the hisilicon SoCs tsensor txt bindings to dt-schema
->>
->> Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
->> ---
->> Validated with dtschema and tested against `hi3660-hikey960.dts`
->>
+On Fri, Jun 14, 2024 at 08:30:44PM +0300, Dan Carpenter wrote:
+> There are actually two bugs here.  First, we need to ensure that count
+> is at least sizeof(u32) or msg.len will be uninitialized data.
 > 
->> +     compatible = "hisilicon,tsensor";
->> +     reg = <0x0 0xf7030700 0x0 0x1000>;
+> The "msg.len" variable is a u32 that comes from the user.  On 32bit
+> systems the "sizeof_field(struct ipmi_ssif_msg, len) + msg.len"
+> addition can overflow if "msg.len" is greater than U32_MAX - 4.
 > 
-> Oh man...  get this past your mentors first.
-> 
-> 1. Messed indentation.
-> 2. 0, unit address looks unnecessary.
-> 
+> Valid lengths for "msg.len" are 1-254.  Add a check for that to
+> prevent the integer overflow.
 
-Sorry Krzysztof, it seems that this conversion went "live" without a
-preliminary review by the mentors. We will make sure that the first step
-is not omitted for v2.
+Thanks, this is in my tree.
 
-Best regards,
-Javier Carrasco
+-corey
+
+> 
+> Fixes: dd2bc5cc9e25 ("ipmi: ssif_bmc: Add SSIF BMC driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/char/ipmi/ssif_bmc.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> ---
+>  drivers/char/ipmi/ssif_bmc.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/char/ipmi/ssif_bmc.c b/drivers/char/ipmi/ssif_bmc.c
+> index 56346fb32872..ab4e87a99f08 100644
+> --- a/drivers/char/ipmi/ssif_bmc.c
+> +++ b/drivers/char/ipmi/ssif_bmc.c
+> @@ -177,13 +177,15 @@ static ssize_t ssif_bmc_write(struct file *file, const char __user *buf, size_t
+>  	unsigned long flags;
+>  	ssize_t ret;
+>  
+> -	if (count > sizeof(struct ipmi_ssif_msg))
+> +	if (count < sizeof(msg.len) ||
+> +	    count > sizeof(struct ipmi_ssif_msg))
+>  		return -EINVAL;
+>  
+>  	if (copy_from_user(&msg, buf, count))
+>  		return -EFAULT;
+>  
+> -	if (!msg.len || count < sizeof_field(struct ipmi_ssif_msg, len) + msg.len)
+> +	if (!msg.len || msg.len > IPMI_SSIF_PAYLOAD_MAX ||
+> +	    count < sizeof_field(struct ipmi_ssif_msg, len) + msg.len)
+>  		return -EINVAL;
+>  
+>  	spin_lock_irqsave(&ssif_bmc->lock, flags);
+> -- 
+> 2.43.0
+> 
 
