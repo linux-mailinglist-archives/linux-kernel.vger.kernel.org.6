@@ -1,194 +1,578 @@
-Return-Path: <linux-kernel+bounces-214745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C564908978
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:16:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E026F908981
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3B528A829
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:15:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B9B3B235D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E7B1946A3;
-	Fri, 14 Jun 2024 10:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5573719308A;
+	Fri, 14 Jun 2024 10:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZksE/07p"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iZzvUIy6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22721940AA
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED67D7E574;
+	Fri, 14 Jun 2024 10:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718360145; cv=none; b=bARfAi2LOIJvBKKg5/pqGJuD8mUxZ7EKSoM4hf2+NSX+yZ7n6PLEmbS70iQKp7ZjIjPz1FroKbiq3Jd0eYVAvcI4pujYDufdxymCiwxHaQUwQXZSVJ/9hirr+vfPLPNtIHdPkUOJjIYF0uP59Rb0BHtj7QiBUIgbaKtmObJbfkQ=
+	t=1718360226; cv=none; b=GNRqf08uMDh6GX3wTPnOBUDI1UDOqn9xdNagQLCiKROVmtGzNVTcm3HryKpQO4OZOoKAYVcaKHgsBD5fW2KS1DLAv8oOIt+c/xfQOb9KMLOCYtDBFZnmxioXAmYSOKEOcRtBw1kIF1d9u8zuacTrC86YHCJ+M+tW4EvOziznsFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718360145; c=relaxed/simple;
-	bh=mSLPA1i53EANLvzv7lD+fCQb3/raPzj7PypBQ1WdFno=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=McahFaxO/Z2SaHNZQqW22KA1TvEiOPkKP29k1fvJvHdNzRUVW484RoFNmwUjOaBvVpsDGco+1gMLvO3u+449mHO17CfDiG9Ftia1yPbfY9nPC41oagxJo7p9lfFsqi3pJ/eNOeSFoRNeCWp6IJ5mPEPkB21kQ/stjkITlKP+zWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZksE/07p; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718360142;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8mqWsyKxLBqBkwikgUCvnkt5JK8D0SkaAXbzF+jGVsw=;
-	b=ZksE/07p677DrPD7cSjzX737hTEaaclIzpDRISsvyQrzaIqu+B5VHAFkEbhvty+HfUkXB7
-	Bff0o7fasyxQDh2brTPqL73c/xeUN9Oo8LUHrNXp0kEpPr9RGHr7amelc7H0nAtjBF0AhQ
-	CiQXQ38+qonQQoFoMlmqzT4jRQFHNpU=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-606-iCDdVKMEM62r7x_3r4uyFg-1; Fri, 14 Jun 2024 06:15:41 -0400
-X-MC-Unique: iCDdVKMEM62r7x_3r4uyFg-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ebec421237so3440021fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 03:15:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718360140; x=1718964940;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8mqWsyKxLBqBkwikgUCvnkt5JK8D0SkaAXbzF+jGVsw=;
-        b=Hk4aUdRjTgL2rpT9AX+mS2p3QGagfmpM2fZUh/D20eLc2RRJN505ldsHdCyPxMrXVy
-         5tb/9V0Nvhe2PUX+SHzuwP2JRF3OPEbTcN7iTUKjTglEbI/3w5ZpL0uVOwaZuyuFoc8r
-         sSADWom/V0PKe+CyuUCPDzSxA18xcgouKzX/guz/Ur+pV5LIV4+72mVJdCvBPD51lvM5
-         6W+Vk5yZ1BQuo91EbvDZi/TfqbfxgI9gEZNcpKXg+9YDyxYY4Jq1S7wBUzLz+uooJOvi
-         lZ6xRLe5z5Y8fgtAW4426WAAAgMBe+osQBeMRtlFtCJfbj0TOu3dK9MmqVtOpwrLTzV8
-         JUkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXiLLlXYaiNfCK9eCDeXKQXvLdD06K5yq48NVT59d1wtIKOVGEwVt721F0VYyGTb9vxhIYhqDgRsIHVcoGayJO7q/Wdbus5XNPsCGl0
-X-Gm-Message-State: AOJu0YxU/FILZIj/JERmP8o8IM7Wis6YglFPmv6Oc4DLEaf917vgdJD7
-	95PwjXfP8m+3dpU2BndlkDTRATbG6KhKfqWkyU3vCksU/64S2XVrP3bC22Ha3NVcnkBn1AR9mfv
-	/H/OejicOyHDdqv/na6gB9AAdCPbvIp2zHLhieVNLoZYi2NH+svuvyBMIwAahaw==
-X-Received: by 2002:a2e:bc19:0:b0:2eb:de36:676a with SMTP id 38308e7fff4ca-2ec0e5ae7d3mr17238651fa.3.1718360139802;
-        Fri, 14 Jun 2024 03:15:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFR4mJllrnsgIeA6uqs0Q3wm4lFXvXmOm54/SyDMjr3RtMuhU3cMVwtOIMBjhzW+v6Mkof30g==
-X-Received: by 2002:a2e:bc19:0:b0:2eb:de36:676a with SMTP id 38308e7fff4ca-2ec0e5ae7d3mr17238391fa.3.1718360139374;
-        Fri, 14 Jun 2024 03:15:39 -0700 (PDT)
-Received: from gerbillo.redhat.com ([2a0d:3341:b083:7210:de1e:fd05:fa25:40db])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de5d5sm92329575e9.33.2024.06.14.03.15.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 03:15:38 -0700 (PDT)
-Message-ID: <86109f6c4a8303950ac13811a3f8506ff44a6cfc.camel@redhat.com>
-Subject: Re: [PATCH v4 net-next 1/7] net: add rx_sk to trace_kfree_skb
-From: Paolo Abeni <pabeni@redhat.com>
-To: Jesper Dangaard Brouer <hawk@kernel.org>, Yan Zhai <yan@cloudflare.com>,
-  netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>, Simon Horman
- <horms@kernel.org>, David Ahern <dsahern@kernel.org>, Abhishek Chauhan
- <quic_abchauha@quicinc.com>, Mina Almasry <almasrymina@google.com>, Florian
- Westphal <fw@strlen.de>, Alexander Lobakin <aleksander.lobakin@intel.com>,
- David Howells <dhowells@redhat.com>, Jiri Pirko <jiri@resnulli.us>, Daniel
- Borkmann <daniel@iogearbox.net>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, Pavel
- Begunkov <asml.silence@gmail.com>, linux-kernel@vger.kernel.org, 
- kernel-team@cloudflare.com, Steven Rostedt <rostedt@goodmis.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Neil Horman <nhorman@tuxdriver.com>,
- linux-trace-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>
-Date: Fri, 14 Jun 2024 12:15:36 +0200
-In-Reply-To: <fed7b2ca-5180-417f-a676-fb126157dff3@kernel.org>
-References: <cover.1718136376.git.yan@cloudflare.com>
-	 <dcfa5db9be2d29b68fe7c87b3f017e98e5ec83b4.1718136376.git.yan@cloudflare.com>
-	 <fed7b2ca-5180-417f-a676-fb126157dff3@kernel.org>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1718360226; c=relaxed/simple;
+	bh=Kp2k9QJ5A5Zl+bH/kPckSNE6AbcpyKuVP4WLhM43SMI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HV4X19vwwnzuiWC/fCTEpkowX8Tr4Br6OXcNQTPW0VoX3PgrrR7ayyJv8pPdmd8rd1AXuwdbgybUk7+QuWYe0aRdzlo3YozsiKwEFQP0nDKo/rVqv+2rYyWLXdLKeJxs0ZyYj/OJLpgOGaW1UuQMcEypHBfANuxU1Z/K2RENTcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iZzvUIy6; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718360224; x=1749896224;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Kp2k9QJ5A5Zl+bH/kPckSNE6AbcpyKuVP4WLhM43SMI=;
+  b=iZzvUIy6g1Y/MkuhAbD6Y152aUX6iTKwIpkYP4SZoJbRaPNXszfN8Rmu
+   lHohrLPj7lLzHLG/Acn7CILQEUTxnz110N7h5Og2Op3Wu3waW3pAvjAWG
+   C6qBy7lpKVb3qt/T+jjMhcfSbIbFGvXHo+WXhNZym6YhRdOxHWyCWTjkp
+   bXljQBqt+p+eIpBq1cX2wisQ4amzqtAUzKBLQB4YogiUpC/MlOaCMTRJo
+   QOMidR7OlOWa2tdbhzO58Zw7bKBiTvBBGNN6YeAnKhLxVv6ER+E80m4fH
+   JXP/vIK6TAeAq7DzSfcHpIgmjMGikbnamJ/MeGWx00evqW15acJvOqnGw
+   w==;
+X-CSE-ConnectionGUID: 1knKYmj7R4Ws2zv0XjDDqg==
+X-CSE-MsgGUID: LEoHPQNKSWO9D7IkPE2R1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="25814377"
+X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
+   d="scan'208";a="25814377"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 03:17:03 -0700
+X-CSE-ConnectionGUID: a4pAfqHjSfSpLF/TWTOJZw==
+X-CSE-MsgGUID: PctmzukzQXOyroOXVkz7kw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
+   d="scan'208";a="71228814"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.94.248.10])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 03:16:57 -0700
+Message-ID: <6122ec89-1984-4dd7-8af6-50e2861f04d8@intel.com>
+Date: Fri, 14 Jun 2024 13:16:52 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] mmc: sdhci-of-dwcmshc: adjust positions of helper
+ routines
+To: Chen Wang <unicornxw@gmail.com>, aou@eecs.berkeley.edu,
+ conor+dt@kernel.org, guoren@kernel.org, inochiama@outlook.com,
+ jszhang@kernel.org, krzysztof.kozlowski+dt@linaro.org, palmer@dabbelt.com,
+ paul.walmsley@sifive.com, robh@kernel.org, ulf.hansson@linaro.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ chao.wei@sophgo.com, haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com,
+ tingzhu.wang@sophgo.com
+Cc: Chen Wang <unicorn_wang@outlook.com>
+References: <cover.1718241495.git.unicorn_wang@outlook.com>
+ <dec4798dc2728428e7468515cbf0bc87c6eff4a9.1718241495.git.unicorn_wang@outlook.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <dec4798dc2728428e7468515cbf0bc87c6eff4a9.1718241495.git.unicorn_wang@outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2024-06-12 at 09:59 +0200, Jesper Dangaard Brouer wrote:
->=20
-> On 11/06/2024 22.11, Yan Zhai wrote:
-> > skb does not include enough information to find out receiving
-> > sockets/services and netns/containers on packet drops. In theory
-> > skb->dev tells about netns, but it can get cleared/reused, e.g. by TCP
-> > stack for OOO packet lookup. Similarly, skb->sk often identifies a loca=
-l
-> > sender, and tells nothing about a receiver.
-> >=20
-> > Allow passing an extra receiving socket to the tracepoint to improve
-> > the visibility on receiving drops.
-> >=20
-> > Signed-off-by: Yan Zhai<yan@cloudflare.com>
-> > ---
-> > v3->v4: adjusted the TP_STRUCT field order to be consistent
-> > v2->v3: fixed drop_monitor function prototype
-> > ---
-> >   include/trace/events/skb.h | 11 +++++++----
-> >   net/core/dev.c             |  2 +-
-> >   net/core/drop_monitor.c    |  9 ++++++---
-> >   net/core/skbuff.c          |  2 +-
-> >   4 files changed, 15 insertions(+), 9 deletions(-)
-> >=20
-> > diff --git a/include/trace/events/skb.h b/include/trace/events/skb.h
-> > index 07e0715628ec..3e9ea1cca6f2 100644
-> > --- a/include/trace/events/skb.h
-> > +++ b/include/trace/events/skb.h
-> > @@ -24,13 +24,14 @@ DEFINE_DROP_REASON(FN, FN)
-> >   TRACE_EVENT(kfree_skb,
-> >  =20
-> >   	TP_PROTO(struct sk_buff *skb, void *location,
-> > -		 enum skb_drop_reason reason),
-> > +		 enum skb_drop_reason reason, struct sock *rx_sk),
-> >  =20
-> > -	TP_ARGS(skb, location, reason),
-> > +	TP_ARGS(skb, location, reason, rx_sk),
-> >  =20
-> >   	TP_STRUCT__entry(
-> >   		__field(void *,		skbaddr)
-> >   		__field(void *,		location)
-> > +		__field(void *,		rx_skaddr)
->=20
-> Is there any reason for appending the "addr" part to "rx_sk" ?
-> It makes it harder to read this is the sk (socket).
->=20
-> AFAICR the skbaddr naming is a legacy thing.
+On 13/06/24 04:42, Chen Wang wrote:
+> From: Chen Wang <unicorn_wang@outlook.com>
+> 
+> This patch does not change the logic of the code, but only adjusts
+> the positions of some helper functions in the file according to
+> categories to facilitate future function search and maintenance.
+> 
+> Category: helper functions (except for driver callback functions
+> such as probe/remove/suspend/resume) are divided into two categories:
+> 
+> - dwcmshc level helpers
+> - soc level helpers
+> 
+> After the adjustment, these functions will be put together according
+> to category.
 
-I'm double-minded about the above: I can see your point, but on the
-flip side the 'addr' suffix is consistently used in net-related
-tracepoints.
->=20
-> >   		__field(unsigned short,	protocol)
-> >   		__field(enum skb_drop_reason,	reason)
-> >   	),
-> > @@ -38,12 +39,14 @@ TRACE_EVENT(kfree_skb,
-> >   	TP_fast_assign(
-> >   		__entry->skbaddr =3D skb;
-> >   		__entry->location =3D location;
-> > +		__entry->rx_skaddr =3D rx_sk;
-> >   		__entry->protocol =3D ntohs(skb->protocol);
-> >   		__entry->reason =3D reason;
-> >   	),
-> >  =20
-> > -	TP_printk("skbaddr=3D%p protocol=3D%u location=3D%pS reason: %s",
-> > -		  __entry->skbaddr, __entry->protocol, __entry->location,
-> > +	TP_printk("skbaddr=3D%p rx_skaddr=3D%p protocol=3D%u location=3D%pS r=
-eason: %s",
->                                ^^^^^^^^^
-> I find it hard to visually tell skbaddr and rx_skaddr apart.
-> And especially noticing the "skb" vs "sk" part of the string.
+Please do not move any functions unless it is needed to avoid forward
+declaration.
 
-I agree 'rx_skaddr' is sub-optimal. Either be consistent with all the
-other net tracepoints and use 'skaddr' (which will very likely will
-increase Jesper concerns, but I personally have no problem with such
-format) or prefer readability with something alike 'rx_sk' or (even
-better) 'sk'.
+Unnecessarily churning the code makes backports more difficult and
+complicates the code history, so it should be avoided in general.
 
-Thanks,
-
-Paolo =20
+> 
+> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+> ---
+>  drivers/mmc/host/sdhci-of-dwcmshc.c | 392 +++++++++++++++-------------
+>  1 file changed, 204 insertions(+), 188 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> index e79aa4b3b6c3..a68818f53786 100644
+> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
+> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> @@ -216,6 +216,12 @@ struct dwcmshc_priv {
+>  	u16 flags;
+>  };
+>  
+> +/*******************************************************************************
+> + *
+> + * dwcmshc level helper routines begin
+> + *
+> + ******************************************************************************/
+> +
+>  /*
+>   * If DMA addr spans 128MB boundary, we split the DMA transfer into two
+>   * so that each DMA transfer doesn't exceed the boundary.
+> @@ -249,13 +255,6 @@ static unsigned int dwcmshc_get_max_clock(struct sdhci_host *host)
+>  		return pltfm_host->clock;
+>  }
+>  
+> -static unsigned int rk35xx_get_max_clock(struct sdhci_host *host)
+> -{
+> -	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> -
+> -	return clk_round_rate(pltfm_host->clk, ULONG_MAX);
+> -}
+> -
+>  static void dwcmshc_check_auto_cmd23(struct mmc_host *mmc,
+>  				     struct mmc_request *mrq)
+>  {
+> @@ -377,29 +376,6 @@ static void dwcmshc_phy_3_3v_init(struct sdhci_host *host)
+>  	sdhci_writeb(host, PHY_DLL_CTRL_ENABLE, PHY_DLL_CTRL_R);
+>  }
+>  
+> -static void th1520_sdhci_set_phy(struct sdhci_host *host)
+> -{
+> -	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> -	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
+> -	u32 emmc_caps = MMC_CAP2_NO_SD | MMC_CAP2_NO_SDIO;
+> -	u16 emmc_ctrl;
+> -
+> -	/* Before power on, set PHY configs */
+> -	if (priv->flags & FLAG_IO_FIXED_1V8)
+> -		dwcmshc_phy_1_8v_init(host);
+> -	else
+> -		dwcmshc_phy_3_3v_init(host);
+> -
+> -	if ((host->mmc->caps2 & emmc_caps) == emmc_caps) {
+> -		emmc_ctrl = sdhci_readw(host, priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL);
+> -		emmc_ctrl |= DWCMSHC_CARD_IS_EMMC;
+> -		sdhci_writew(host, emmc_ctrl, priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL);
+> -	}
+> -
+> -	sdhci_writeb(host, FIELD_PREP(PHY_DLL_CNFG1_SLVDLY_MASK, PHY_DLL_CNFG1_SLVDLY) |
+> -		     PHY_DLL_CNFG1_WAITCYCLE, PHY_DLL_CNFG1_R);
+> -}
+> -
+>  static void dwcmshc_set_uhs_signaling(struct sdhci_host *host,
+>  				      unsigned int timing)
+>  {
+> @@ -437,20 +413,6 @@ static void dwcmshc_set_uhs_signaling(struct sdhci_host *host,
+>  	sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
+>  }
+>  
+> -static void th1520_set_uhs_signaling(struct sdhci_host *host,
+> -				     unsigned int timing)
+> -{
+> -	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> -	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
+> -
+> -	dwcmshc_set_uhs_signaling(host, timing);
+> -	if (timing == MMC_TIMING_MMC_HS400)
+> -		priv->delay_line = PHY_SDCLKDL_DC_HS400;
+> -	else
+> -		sdhci_writeb(host, 0, PHY_DLLDL_CNFG_R);
+> -	th1520_sdhci_set_phy(host);
+> -}
+> -
+>  static void dwcmshc_hs400_enhanced_strobe(struct mmc_host *mmc,
+>  					  struct mmc_ios *ios)
+>  {
+> @@ -553,6 +515,112 @@ static void dwcmshc_cqhci_dumpregs(struct mmc_host *mmc)
+>  	sdhci_dumpregs(mmc_priv(mmc));
+>  }
+>  
+> +static const struct cqhci_host_ops dwcmshc_cqhci_ops = {
+> +	.enable		= dwcmshc_sdhci_cqe_enable,
+> +	.disable	= sdhci_cqe_disable,
+> +	.dumpregs	= dwcmshc_cqhci_dumpregs,
+> +	.set_tran_desc	= dwcmshc_set_tran_desc,
+> +};
+> +
+> +static void dwcmshc_cqhci_init(struct sdhci_host *host, struct platform_device *pdev)
+> +{
+> +	struct cqhci_host *cq_host;
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
+> +	bool dma64 = false;
+> +	u16 clk;
+> +	int err;
+> +
+> +	host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
+> +	cq_host = devm_kzalloc(&pdev->dev, sizeof(*cq_host), GFP_KERNEL);
+> +	if (!cq_host) {
+> +		dev_err(mmc_dev(host->mmc), "Unable to setup CQE: not enough memory\n");
+> +		goto dsbl_cqe_caps;
+> +	}
+> +
+> +	/*
+> +	 * For dwcmshc host controller we have to enable internal clock
+> +	 * before access to some registers from Vendor Specific Area 2.
+> +	 */
+> +	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+> +	clk |= SDHCI_CLOCK_INT_EN;
+> +	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+> +	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+> +	if (!(clk & SDHCI_CLOCK_INT_EN)) {
+> +		dev_err(mmc_dev(host->mmc), "Unable to setup CQE: internal clock enable error\n");
+> +		goto free_cq_host;
+> +	}
+> +
+> +	cq_host->mmio = host->ioaddr + priv->vendor_specific_area2;
+> +	cq_host->ops = &dwcmshc_cqhci_ops;
+> +
+> +	/* Enable using of 128-bit task descriptors */
+> +	dma64 = host->flags & SDHCI_USE_64_BIT_DMA;
+> +	if (dma64) {
+> +		dev_dbg(mmc_dev(host->mmc), "128-bit task descriptors\n");
+> +		cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
+> +	}
+> +	err = cqhci_init(cq_host, host->mmc, dma64);
+> +	if (err) {
+> +		dev_err(mmc_dev(host->mmc), "Unable to setup CQE: error %d\n", err);
+> +		goto int_clock_disable;
+> +	}
+> +
+> +	dev_dbg(mmc_dev(host->mmc), "CQE init done\n");
+> +
+> +	return;
+> +
+> +int_clock_disable:
+> +	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+> +	clk &= ~SDHCI_CLOCK_INT_EN;
+> +	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+> +
+> +free_cq_host:
+> +	devm_kfree(&pdev->dev, cq_host);
+> +
+> +dsbl_cqe_caps:
+> +	host->mmc->caps2 &= ~(MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD);
+> +}
+> +
+> +static void dwcmshc_disable_card_clk(struct sdhci_host *host)
+> +{
+> +	u16 ctrl;
+> +
+> +	ctrl = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+> +	if (ctrl & SDHCI_CLOCK_CARD_EN) {
+> +		ctrl &= ~SDHCI_CLOCK_CARD_EN;
+> +		sdhci_writew(host, ctrl, SDHCI_CLOCK_CONTROL);
+> +	}
+> +}
+> +
+> +#ifdef CONFIG_PM
+> +
+> +static void dwcmshc_enable_card_clk(struct sdhci_host *host)
+> +{
+> +	u16 ctrl;
+> +
+> +	ctrl = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+> +	if ((ctrl & SDHCI_CLOCK_INT_EN) && !(ctrl & SDHCI_CLOCK_CARD_EN)) {
+> +		ctrl |= SDHCI_CLOCK_CARD_EN;
+> +		sdhci_writew(host, ctrl, SDHCI_CLOCK_CONTROL);
+> +	}
+> +}
+> +
+> +#endif
+> +
+> +/*******************************************************************************
+> + *
+> + * SoC level helper routines begin
+> + *
+> + ******************************************************************************/
+> +
+> +static unsigned int rk35xx_get_max_clock(struct sdhci_host *host)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +
+> +	return clk_round_rate(pltfm_host->clk, ULONG_MAX);
+> +}
+> +
+>  static void dwcmshc_rk3568_set_clock(struct sdhci_host *host, unsigned int clock)
+>  {
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> @@ -681,6 +749,98 @@ static void rk35xx_sdhci_reset(struct sdhci_host *host, u8 mask)
+>  	sdhci_reset(host, mask);
+>  }
+>  
+> +static int dwcmshc_rk35xx_init(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
+> +{
+> +	int err;
+> +	struct rk35xx_priv *priv = dwc_priv->priv;
+> +
+> +	priv->reset = devm_reset_control_array_get_optional_exclusive(mmc_dev(host->mmc));
+> +	if (IS_ERR(priv->reset)) {
+> +		err = PTR_ERR(priv->reset);
+> +		dev_err(mmc_dev(host->mmc), "failed to get reset control %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	priv->rockchip_clks[0].id = "axi";
+> +	priv->rockchip_clks[1].id = "block";
+> +	priv->rockchip_clks[2].id = "timer";
+> +	err = devm_clk_bulk_get_optional(mmc_dev(host->mmc), RK35xx_MAX_CLKS,
+> +					 priv->rockchip_clks);
+> +	if (err) {
+> +		dev_err(mmc_dev(host->mmc), "failed to get clocks %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	err = clk_bulk_prepare_enable(RK35xx_MAX_CLKS, priv->rockchip_clks);
+> +	if (err) {
+> +		dev_err(mmc_dev(host->mmc), "failed to enable clocks %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	if (of_property_read_u8(mmc_dev(host->mmc)->of_node, "rockchip,txclk-tapnum",
+> +				&priv->txclk_tapnum))
+> +		priv->txclk_tapnum = DLL_TXCLK_TAPNUM_DEFAULT;
+> +
+> +	/* Disable cmd conflict check */
+> +	sdhci_writel(host, 0x0, dwc_priv->vendor_specific_area1 + DWCMSHC_HOST_CTRL3);
+> +	/* Reset previous settings */
+> +	sdhci_writel(host, 0, DWCMSHC_EMMC_DLL_TXCLK);
+> +	sdhci_writel(host, 0, DWCMSHC_EMMC_DLL_STRBIN);
+> +
+> +	return 0;
+> +}
+> +
+> +static void dwcmshc_rk35xx_postinit(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
+> +{
+> +	/*
+> +	 * Don't support highspeed bus mode with low clk speed as we
+> +	 * cannot use DLL for this condition.
+> +	 */
+> +	if (host->mmc->f_max <= 52000000) {
+> +		dev_info(mmc_dev(host->mmc), "Disabling HS200/HS400, frequency too low (%d)\n",
+> +			 host->mmc->f_max);
+> +		host->mmc->caps2 &= ~(MMC_CAP2_HS200 | MMC_CAP2_HS400);
+> +		host->mmc->caps &= ~(MMC_CAP_3_3V_DDR | MMC_CAP_1_8V_DDR);
+> +	}
+> +}
+> +
+> +static void th1520_sdhci_set_phy(struct sdhci_host *host)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
+> +	u32 emmc_caps = MMC_CAP2_NO_SD | MMC_CAP2_NO_SDIO;
+> +	u16 emmc_ctrl;
+> +
+> +	/* Before power on, set PHY configs */
+> +	if (priv->flags & FLAG_IO_FIXED_1V8)
+> +		dwcmshc_phy_1_8v_init(host);
+> +	else
+> +		dwcmshc_phy_3_3v_init(host);
+> +
+> +	if ((host->mmc->caps2 & emmc_caps) == emmc_caps) {
+> +		emmc_ctrl = sdhci_readw(host, priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL);
+> +		emmc_ctrl |= DWCMSHC_CARD_IS_EMMC;
+> +		sdhci_writew(host, emmc_ctrl, priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL);
+> +	}
+> +
+> +	sdhci_writeb(host, FIELD_PREP(PHY_DLL_CNFG1_SLVDLY_MASK, PHY_DLL_CNFG1_SLVDLY) |
+> +		     PHY_DLL_CNFG1_WAITCYCLE, PHY_DLL_CNFG1_R);
+> +}
+> +
+> +static void th1520_set_uhs_signaling(struct sdhci_host *host,
+> +				     unsigned int timing)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
+> +
+> +	dwcmshc_set_uhs_signaling(host, timing);
+> +	if (timing == MMC_TIMING_MMC_HS400)
+> +		priv->delay_line = PHY_SDCLKDL_DC_HS400;
+> +	else
+> +		sdhci_writeb(host, 0, PHY_DLLDL_CNFG_R);
+> +	th1520_sdhci_set_phy(host);
+> +}
+> +
+>  static int th1520_execute_tuning(struct sdhci_host *host, u32 opcode)
+>  {
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> @@ -967,128 +1127,6 @@ static const struct sdhci_pltfm_data sdhci_dwcmshc_cv18xx_pdata = {
+>  	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
+>  };
+>  
+> -static const struct cqhci_host_ops dwcmshc_cqhci_ops = {
+> -	.enable		= dwcmshc_sdhci_cqe_enable,
+> -	.disable	= sdhci_cqe_disable,
+> -	.dumpregs	= dwcmshc_cqhci_dumpregs,
+> -	.set_tran_desc	= dwcmshc_set_tran_desc,
+> -};
+> -
+> -static void dwcmshc_cqhci_init(struct sdhci_host *host, struct platform_device *pdev)
+> -{
+> -	struct cqhci_host *cq_host;
+> -	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> -	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
+> -	bool dma64 = false;
+> -	u16 clk;
+> -	int err;
+> -
+> -	host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
+> -	cq_host = devm_kzalloc(&pdev->dev, sizeof(*cq_host), GFP_KERNEL);
+> -	if (!cq_host) {
+> -		dev_err(mmc_dev(host->mmc), "Unable to setup CQE: not enough memory\n");
+> -		goto dsbl_cqe_caps;
+> -	}
+> -
+> -	/*
+> -	 * For dwcmshc host controller we have to enable internal clock
+> -	 * before access to some registers from Vendor Specific Area 2.
+> -	 */
+> -	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+> -	clk |= SDHCI_CLOCK_INT_EN;
+> -	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+> -	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+> -	if (!(clk & SDHCI_CLOCK_INT_EN)) {
+> -		dev_err(mmc_dev(host->mmc), "Unable to setup CQE: internal clock enable error\n");
+> -		goto free_cq_host;
+> -	}
+> -
+> -	cq_host->mmio = host->ioaddr + priv->vendor_specific_area2;
+> -	cq_host->ops = &dwcmshc_cqhci_ops;
+> -
+> -	/* Enable using of 128-bit task descriptors */
+> -	dma64 = host->flags & SDHCI_USE_64_BIT_DMA;
+> -	if (dma64) {
+> -		dev_dbg(mmc_dev(host->mmc), "128-bit task descriptors\n");
+> -		cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
+> -	}
+> -	err = cqhci_init(cq_host, host->mmc, dma64);
+> -	if (err) {
+> -		dev_err(mmc_dev(host->mmc), "Unable to setup CQE: error %d\n", err);
+> -		goto int_clock_disable;
+> -	}
+> -
+> -	dev_dbg(mmc_dev(host->mmc), "CQE init done\n");
+> -
+> -	return;
+> -
+> -int_clock_disable:
+> -	clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+> -	clk &= ~SDHCI_CLOCK_INT_EN;
+> -	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+> -
+> -free_cq_host:
+> -	devm_kfree(&pdev->dev, cq_host);
+> -
+> -dsbl_cqe_caps:
+> -	host->mmc->caps2 &= ~(MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD);
+> -}
+> -
+> -static int dwcmshc_rk35xx_init(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
+> -{
+> -	int err;
+> -	struct rk35xx_priv *priv = dwc_priv->priv;
+> -
+> -	priv->reset = devm_reset_control_array_get_optional_exclusive(mmc_dev(host->mmc));
+> -	if (IS_ERR(priv->reset)) {
+> -		err = PTR_ERR(priv->reset);
+> -		dev_err(mmc_dev(host->mmc), "failed to get reset control %d\n", err);
+> -		return err;
+> -	}
+> -
+> -	priv->rockchip_clks[0].id = "axi";
+> -	priv->rockchip_clks[1].id = "block";
+> -	priv->rockchip_clks[2].id = "timer";
+> -	err = devm_clk_bulk_get_optional(mmc_dev(host->mmc), RK35xx_MAX_CLKS,
+> -					 priv->rockchip_clks);
+> -	if (err) {
+> -		dev_err(mmc_dev(host->mmc), "failed to get clocks %d\n", err);
+> -		return err;
+> -	}
+> -
+> -	err = clk_bulk_prepare_enable(RK35xx_MAX_CLKS, priv->rockchip_clks);
+> -	if (err) {
+> -		dev_err(mmc_dev(host->mmc), "failed to enable clocks %d\n", err);
+> -		return err;
+> -	}
+> -
+> -	if (of_property_read_u8(mmc_dev(host->mmc)->of_node, "rockchip,txclk-tapnum",
+> -				&priv->txclk_tapnum))
+> -		priv->txclk_tapnum = DLL_TXCLK_TAPNUM_DEFAULT;
+> -
+> -	/* Disable cmd conflict check */
+> -	sdhci_writel(host, 0x0, dwc_priv->vendor_specific_area1 + DWCMSHC_HOST_CTRL3);
+> -	/* Reset previous settings */
+> -	sdhci_writel(host, 0, DWCMSHC_EMMC_DLL_TXCLK);
+> -	sdhci_writel(host, 0, DWCMSHC_EMMC_DLL_STRBIN);
+> -
+> -	return 0;
+> -}
+> -
+> -static void dwcmshc_rk35xx_postinit(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
+> -{
+> -	/*
+> -	 * Don't support highspeed bus mode with low clk speed as we
+> -	 * cannot use DLL for this condition.
+> -	 */
+> -	if (host->mmc->f_max <= 52000000) {
+> -		dev_info(mmc_dev(host->mmc), "Disabling HS200/HS400, frequency too low (%d)\n",
+> -			 host->mmc->f_max);
+> -		host->mmc->caps2 &= ~(MMC_CAP2_HS200 | MMC_CAP2_HS400);
+> -		host->mmc->caps &= ~(MMC_CAP_3_3V_DDR | MMC_CAP_1_8V_DDR);
+> -	}
+> -}
+> -
+>  static const struct of_device_id sdhci_dwcmshc_dt_ids[] = {
+>  	{
+>  		.compatible = "rockchip,rk3588-dwcmshc",
+> @@ -1288,17 +1326,6 @@ static int dwcmshc_probe(struct platform_device *pdev)
+>  	return err;
+>  }
+>  
+> -static void dwcmshc_disable_card_clk(struct sdhci_host *host)
+> -{
+> -	u16 ctrl;
+> -
+> -	ctrl = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+> -	if (ctrl & SDHCI_CLOCK_CARD_EN) {
+> -		ctrl &= ~SDHCI_CLOCK_CARD_EN;
+> -		sdhci_writew(host, ctrl, SDHCI_CLOCK_CONTROL);
+> -	}
+> -}
+> -
+>  static void dwcmshc_remove(struct platform_device *pdev)
+>  {
+>  	struct sdhci_host *host = platform_get_drvdata(pdev);
+> @@ -1406,17 +1433,6 @@ static int dwcmshc_resume(struct device *dev)
+>  
+>  #ifdef CONFIG_PM
+>  
+> -static void dwcmshc_enable_card_clk(struct sdhci_host *host)
+> -{
+> -	u16 ctrl;
+> -
+> -	ctrl = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+> -	if ((ctrl & SDHCI_CLOCK_INT_EN) && !(ctrl & SDHCI_CLOCK_CARD_EN)) {
+> -		ctrl |= SDHCI_CLOCK_CARD_EN;
+> -		sdhci_writew(host, ctrl, SDHCI_CLOCK_CONTROL);
+> -	}
+> -}
+> -
+>  static int dwcmshc_runtime_suspend(struct device *dev)
+>  {
+>  	struct sdhci_host *host = dev_get_drvdata(dev);
 
 
