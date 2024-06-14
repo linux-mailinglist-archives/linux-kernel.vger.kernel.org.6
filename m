@@ -1,185 +1,159 @@
-Return-Path: <linux-kernel+bounces-215139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8365E908EA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:26:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B3A908E95
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AD6AB28588
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:23:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF20E1F23397
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BFF16B73D;
-	Fri, 14 Jun 2024 15:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8D415ECD0;
+	Fri, 14 Jun 2024 15:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="H6sZ+JFk"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE60915CD64;
-	Fri, 14 Jun 2024 15:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BTxB5bG0"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B785E13A88F
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718378584; cv=none; b=NJlQZWVu2sG0X/QTzq3l3PO+nNNXuSqrscEGRNQuzOlu/+6zbhcV8ICQGJKIe7h0x7Ed+buc7h+4f9ZSucVgCIZWNk2LCnF6UzXjlPFenAJ0MwA4jtNARa87nL8mP1FplZdQNNu7k+EcWZofi42phs2trAvjhYHLL6dcA4GVy4o=
+	t=1718378582; cv=none; b=G5zCTnumhgURAXGIyPE4ZYCwv6St2Sb+oizePjkjXA61xNNIxOLkRxT3wWmNH+yrNKBvKx6oTTDO58jaUtVvJ6EicqOc8kxdhMEFZq0kQVUlZptaFCcCLysGRe6U+aYyCsSf2FWFEPH05hT4PSeLi0l8ufiXNiZDv3rUoU+BgMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718378584; c=relaxed/simple;
-	bh=ceHwlhkQOv5Wkvy5F61fCWlYXHLEh5xGfP6+3SG6EDs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C4o71iNwZnPrnMbbnMDeQyYs6CRFXkVKz3qAM5a4SBlaxYPBPYTu97H6J1tjhjCh93KwLumTKWP18wNFuG1k8mTkXdcjtqoiIzvr2m4Uf6yRFISGg5Uhrkh3BbLs48+RVWV8YT3nbr9rSLQI3sQpn//MIj+a6e17u2dQrNXvLHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=H6sZ+JFk; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=yAGhS
-	Ow2NI85cih3XGIkfc/UtZ8P/eczFTAfdvqLy8o=; b=H6sZ+JFkVQTNUzqKHaUah
-	N/CJydLUMiy1B8fj/9SITomrvG2oIcTQqUvOqpbyfYKo0b4Fw1wbGoz4q0ggrmNV
-	raLZVoLLy4Fv3ELXa5C4qFpv2e9FqCUagUsIzscZsTSa35D/w7hfT9Q7+YrbO3vI
-	4CGTNj8l6l5IQcmYARwGKw=
-Received: from ubuntu.localdomain (unknown [120.228.117.74])
-	by gzga-smtp-mta-g1-0 (Coremail) with SMTP id _____wD3n6tCYGxmSah9Cg--.3328S2;
-	Fri, 14 Jun 2024 23:22:42 +0800 (CST)
-From: Chi Zhiling <chizhiling@163.com>
-To: mchehab@kernel.org
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chi Zhiling <chizhiling@kylinos.cn>
-Subject: [PATCH v2] media: xc2028: avoid use-after-free in load_firmware_cb()
-Date: Fri, 14 Jun 2024 08:22:25 -0700
-Message-Id: <20240614152225.3943-1-chizhiling@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240531091026.3094284-1-chizhiling@163.com>
-References: <20240531091026.3094284-1-chizhiling@163.com>
+	s=arc-20240116; t=1718378582; c=relaxed/simple;
+	bh=AUIGtfg4ICjYifW2Qgg9xhGD4jz1jAayOiH3/ZvGna4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IlOTaYCgidxH1w/EpQnpOAAaZhwk1MCkNCYHpsZUQcCS344lyfMp1gFIuc4B0BAdnLS4aiCdHmwhZZDfadCdWInw5Hs+SLIF3TX6RKmB6V7i7IlTuo5mk9khdkBBGkDA0oMhObie638V0JJ5dVmbzkYw6jSvpmlFxaLmnmdBa5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BTxB5bG0; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5A5A240E016A;
+	Fri, 14 Jun 2024 15:22:51 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id mS8hEX2i89bS; Fri, 14 Jun 2024 15:22:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718378564; bh=/L68WT4Ql/gGBaLqKy2yfzhb+B0omWRf8pJB9BKQSyY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BTxB5bG0Pfd9XaXUUI//Zml+RhUNtQX1WXzPp9y+Cr89sqatBdlaZT77Mn2bNZjGz
+	 3ktK21VaG3q6Yc7+xIQRqbj6ILM9HpGQ4x6Oa4kzEicegk2jzZ3uXF/9POBcnj4FOg
+	 2wU14XDUj3YROb9IlW/sAVnxXlQBvYCmg65DUs8LAZ/B36KHM0GUl4T9gu+ypuh98f
+	 UAPRC6Zj0cW0MCm37ph4eeOpozqWIP6wbV0nFiJjPub6gHkC4m0wF4amMhRHSELdcy
+	 eRY6Mklsm3oQOc8VJxuf5yE5cOp1Rh4XDi/GFdBTYeDxRCc+b0Vi2AJCIoXuRpQOy5
+	 TCb9tKik9wJ1GCWpubvdYYlMqdD/Gerqzv+8uNgx9cJO+QqBasZb0v7NRDalmT7iss
+	 GHIYsfqVs4WysqWGERDHxy1NKZMyl91I4FfASIXQyG60aJf0UtUjsDMoD4kzDo5ND+
+	 +KVNnFS8kVJPCgsfY29tH1bbQNsDAxXBdnJkY8AKXV9POh59n/OMuEPYO14Hm2XXhO
+	 VEXAn0ek/h7/Pj86lOE7BNTfXYZ9PeKQO8ekYa3w51c7jjtPoJG0025waQvXFEpH75
+	 BmpBtpikZjS/4Pxlz6qEK9tX0fswQTG1iQKm997yYQ5JUXn8M/0//YOvB3gF0cK/BC
+	 FJnfQ7eZ/VAnXW9Op1w/NAqE=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A107940E0027;
+	Fri, 14 Jun 2024 15:22:37 +0000 (UTC)
+Date: Fri, 14 Jun 2024 17:22:28 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: kernel test robot <lkp@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [tip:x86/alternatives 14/14] arch/x86/kvm/kvm.o: warning:
+ objtool: .altinstr_replacement+0xc5: call without frame pointer save/setup
+Message-ID: <20240614152228.GAZmxgNPmozj7UzRdV@fat_crate.local>
+References: <202406141648.jO9qNGLa-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3n6tCYGxmSah9Cg--.3328S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXF47KrWDJr43Ar1UJr4fKrg_yoWrWw43pF
-	nxZFWfCrW8Jry3Jr47Jr4UJr1FqrW5Aa10kr4xA34agr13WrZ8tryUtFWUXr1UWr45Aa47
-	JF15JrWrtF4qyw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UsFxUUUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbBLwr9nWXAk3F1ZQABsT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202406141648.jO9qNGLa-lkp@intel.com>
 
-From: Chi Zhiling <chizhiling@kylinos.cn>
+On Fri, Jun 14, 2024 at 04:15:14PM +0800, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/alternatives
+> head:   f776e41fdcc4141876ef6f297318ab04c2382eb7
+> commit: f776e41fdcc4141876ef6f297318ab04c2382eb7 [14/14] x86/alternative: Replace the old macros
+> config: x86_64-buildonly-randconfig-r001-20211209 (https://download.01.org/0day-ci/archive/20240614/202406141648.jO9qNGLa-lkp@intel.com/config)
+> compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240614/202406141648.jO9qNGLa-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202406141648.jO9qNGLa-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+> >> arch/x86/kvm/kvm.o: warning: objtool: .altinstr_replacement+0xc5: call without frame pointer save/setup
 
-syzkaller reported use-after-free in load_firmware_cb() [1].
-The reason is because the module allocated a struct tuner in tuner_probe(),
-and then the module initialization failed, the struct tuner was released.
-A worker which created during module initialization accesses this struct
-tuner later, it caused use-after-free.
+That thing comes from:
 
-The process is as follows:
+SYM_FUNC_START(vmx_do_interrupt_irqoff)
+        VMX_DO_EVENT_IRQOFF CALL_NOSPEC _ASM_ARG1
+SYM_FUNC_END(vmx_do_interrupt_irqoff)
 
-task-6504           worker_thread
-tuner_probe                             <= alloc dvb_frontend [2]
-...
-request_firmware_nowait                 <= create a worker
-...
-tuner_remove                            <= free dvb_frontend
-...
-                    request_firmware_work_func  <= the firmware is ready
-                    load_firmware_cb    <= but now the dvb_frontend has been freed
+at the end of arch/x86/kvm/vmx/vmenter.S.
 
-To fix the issue, check the dvd_frontend in load_firmware_cb(), if it is
-null, report a warning and just return.
+I know Sean had a patchset to cleanup that gunk. Sean?
 
-[1]:
-    ==================================================================
-     BUG: KASAN: use-after-free in load_firmware_cb+0x1310/0x17a0
-     Read of size 8 at addr ffff8000d7ca2308 by task kworker/2:3/6504
+From reading objtool docs, those functions (vmx_do_nmi_irqoff() too AFAICT)
+should have FRAME_BEGIN/FRAME_END  but if I do that, objtool bitches
+differently:
 
-     Call trace:
-      load_firmware_cb+0x1310/0x17a0
-      request_firmware_work_func+0x128/0x220
-      process_one_work+0x770/0x1824
-      worker_thread+0x488/0xea0
-      kthread+0x300/0x430
-      ret_from_fork+0x10/0x20
+arch/x86/kvm/kvm-intel.o: warning: objtool: vmx_do_interrupt_irqoff+0xc: undefined stack state
 
-     Allocated by task 6504:
-      kzalloc
-      tuner_probe+0xb0/0x1430
-      i2c_device_probe+0x92c/0xaf0
-      really_probe+0x678/0xcd0
-      driver_probe_device+0x280/0x370
-      __device_attach_driver+0x220/0x330
-      bus_for_each_drv+0x134/0x1c0
-      __device_attach+0x1f4/0x410
-      device_initial_probe+0x20/0x30
-      bus_probe_device+0x184/0x200
-      device_add+0x924/0x12c0
-      device_register+0x24/0x30
-      i2c_new_device+0x4e0/0xc44
-      v4l2_i2c_new_subdev_board+0xbc/0x290
-      v4l2_i2c_new_subdev+0xc8/0x104
-      em28xx_v4l2_init+0x1dd0/0x3770
+Suggestions?
 
-     Freed by task 6504:
-      kfree+0x238/0x4e4
-      tuner_remove+0x144/0x1c0
-      i2c_device_remove+0xc8/0x290
-      __device_release_driver+0x314/0x5fc
-      device_release_driver+0x30/0x44
-      bus_remove_device+0x244/0x490
-      device_del+0x350/0x900
-      device_unregister+0x28/0xd0
-      i2c_unregister_device+0x174/0x1d0
-      v4l2_device_unregister+0x224/0x380
-      em28xx_v4l2_init+0x1d90/0x3770
+The other file it warns about is:
 
-     The buggy address belongs to the object at ffff8000d7ca2000
-      which belongs to the cache kmalloc-2k of size 2048
-     The buggy address is located 776 bytes inside of
-      2048-byte region [ffff8000d7ca2000, ffff8000d7ca2800)
-     The buggy address belongs to the page:
-     page:ffff7fe00035f280 count:1 mapcount:0 mapping:ffff8000c001f000 index:0x0
-     flags: 0x7ff800000000100(slab)
-     raw: 07ff800000000100 ffff7fe00049d880 0000000300000003 ffff8000c001f000
-     raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
-     page dumped because: kasan: bad access detected
+vmlinux.o: warning: objtool: .altinstr_replacement+0x2eb: call without frame pointer save/setup
 
-     Memory state around the buggy address:
-      ffff8000d7ca2200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-      ffff8000d7ca2280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-     >ffff8000d7ca2300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                           ^
-      ffff8000d7ca2380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-      ffff8000d7ca2400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-     ==================================================================
+That is fixed by
 
-[2]
-    Actually, it is allocated for struct tuner, and dvb_frontend is inside.
-
-Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
----
- drivers/media/tuners/xc2028.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/tuners/xc2028.c b/drivers/media/tuners/xc2028.c
-index 5a967edceca9..352b8a3679b7 100644
---- a/drivers/media/tuners/xc2028.c
-+++ b/drivers/media/tuners/xc2028.c
-@@ -1361,9 +1361,16 @@ static void load_firmware_cb(const struct firmware *fw,
- 			     void *context)
- {
- 	struct dvb_frontend *fe = context;
--	struct xc2028_data *priv = fe->tuner_priv;
-+	struct xc2028_data *priv;
- 	int rc;
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index 89fa50d27a08..8cff4626478b 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -248,7 +248,7 @@ static inline int alternatives_text_reserved(void *start, void *end)
+  */
+ #define alternative_call(oldfunc, newfunc, ft_flags, output, input...)	\
+ 	asm_inline volatile(ALTERNATIVE("call %c[old]", "call %c[new]", ft_flags) \
+-		: output : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
++		: output, ASM_CALL_CONSTRAINT : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
  
-+	if (!fe) {
-+		pr_warn("xc2028: No frontend in %s\n", __func__);
-+		return;
-+	}
-+
-+	priv = fe->tuner_priv;
-+
- 	tuner_dbg("request_firmware_nowait(): %s\n", fw ? "OK" : "error");
- 	if (!fw) {
- 		tuner_err("Could not load firmware %s.\n", priv->fname);
--- 
-2.25.1
+ /*
+  * Like alternative_call, but there are two features and respective functions.
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 37596a417094..333b16181357 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -1657,7 +1657,7 @@ static noinline void __init alt_reloc_selftest(void)
+ 	 */
+ 	asm_inline volatile (
+ 		ALTERNATIVE("", "lea %[mem], %%" _ASM_ARG1 "; call __alt_reloc_selftest;", X86_FEATURE_ALWAYS)
+-		: /* output */
++		: ASM_CALL_CONSTRAINT
+ 		: [mem] "m" (__alt_reloc_selftest_addr)
+ 		: _ASM_ARG1
+ 	);
 
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
