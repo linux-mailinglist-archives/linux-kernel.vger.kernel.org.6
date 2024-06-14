@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-214148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F56908037
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:44:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14241908038
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 042FA1F2290C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:44:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17C1B1C21785
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 00:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1CA1C3D;
-	Fri, 14 Jun 2024 00:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243BE1C3D;
+	Fri, 14 Jun 2024 00:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RmeH3smL"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="eGWo8Zva"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5772763D
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 00:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3F236C
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 00:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718325892; cv=none; b=MTPC7IADtnaSu2zL1H9zrC+ngGrin9ZaKPXNq4Rsd7CRDboFgAnhrQNEoKfUrbyBZLKQuhLVStmyio/B/iMhO5k/8rm3/iQTuJqaWl/BYhcUTJGvxRBrfIrX/VLlBMG+OIYwzVHT6miRXKIHSDjncCbX2C2SbPG793Dzb5NyHVo=
+	t=1718325931; cv=none; b=DWZPrQpZnXLNjZlfuZzmk0VUMA8bINttu2pl6qcuVBUs672i1D0FfShX+QPwmEwK4vYqF3IvIn7hEiUMV5mCEH9ZTFkyHI3pNZmHuwMARhUJKxrnOLUR6ExVuG0suBCBjq37GQArYuW33GJVWpa0p6fGFBCt52xI9SgHfeU1yoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718325892; c=relaxed/simple;
-	bh=lBEVDig1ev0I5Vei27NtyEKynDGYtlQucybkHibQQYw=;
+	s=arc-20240116; t=1718325931; c=relaxed/simple;
+	bh=+jMS/xbYOImcqZhfvBmN0HrXors2OJkh7ZVEIcwy8Yc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EsonDlrlDLos49RIedqFG5qI0YLmdlf1lLt9pkZKEKlwOo+px7hGOrWswe2ktO6RfvlZ5gxKs9WHwTJXUCwNn4Q2qdV+An8Jnpq5PCvrtmSXQIIKuV465Xq6Sw6BYr4e8MF89aN9fDlXeOsflUXOMUyVkCWTZv1sLh8+4mzxrhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RmeH3smL; arc=none smtp.client-ip=115.124.30.118
+	 In-Reply-To:Content-Type; b=nYzU99bLcl3uuC88wqQ7CoXvlPVFtCZNPwy4eJWWZR1tkE4+6r0NAWNa3pLkeYO7qj7188Io2OEBDN87iMtzqxDndcQTv+VIr3v73vn/BbrUUBeLIx3gM9seKbcRQ6B37/04w604Czt0iyadypvGdC++u3S6vZSRJvswzzl/SYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=eGWo8Zva; arc=none smtp.client-ip=115.124.30.111
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1718325885; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=kloQcFjYAvJ98yJJXSAgNR+FbPv4lnwNM8DOebShWTY=;
-	b=RmeH3smLQ4Kfz3tW/AS1Kqv9Ofm+oy1ANbEXkmrW6eRqVJGQQiJ1SaaxrCjJHK9dkRAB5rEHVvIojfvO7AwrRKFIFAQGV2GWoNoUAjcVIKVhDvslg52HmPWSH09fPP4q8hjWsvF7P1SV55ALmg0+puRgn9rpaIbkIPqjpvDT/Cs=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W8PHSfz_1718325884;
-Received: from 30.97.56.56(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8PHSfz_1718325884)
+	t=1718325926; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=BSHGNJJW9QoXcHWB3k8CQMWS0eij0PY1paTcRNlGmA0=;
+	b=eGWo8ZvauAbAiOEB42aoHczSD2QWUGLKEI9iCMrc0DlsBFcIs69CKpdlBOoY+au162myxfeI3n+uVV+4s0bKJxWjlMbmZeyOI9Ue4pg9qbYvbsDQnNBccTqWwBSTUybKXhOKYRDRCUfXDYt70ndnrIjNjkHTb54ldhCJdZiVDWI=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R861e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W8PHSgM_1718325885;
+Received: from 30.97.56.56(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8PHSgM_1718325885)
           by smtp.aliyun-inc.com;
-          Fri, 14 Jun 2024 08:44:45 +0800
-Message-ID: <bacd22ac-a6c8-477f-8626-b42832845ee0@linux.alibaba.com>
-Date: Fri, 14 Jun 2024 08:44:43 +0800
+          Fri, 14 Jun 2024 08:45:25 +0800
+Message-ID: <03b1c415-b86b-482c-ae9d-f8d0730fafbe@linux.alibaba.com>
+Date: Fri, 14 Jun 2024 08:45:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,20 +50,22 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] mm: shmem: fix getting incorrect lruvec when replacing a
  shmem folio
-To: Shakeel Butt <shakeel.butt@linux.dev>
+To: Yosry Ahmed <yosryahmed@google.com>
 Cc: akpm@linux-foundation.org, hughd@google.com, hannes@cmpxchg.org,
  nphamcs@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
 References: <3c11000dd6c1df83015a8321a859e9775ebbc23e.1718266112.git.baolin.wang@linux.alibaba.com>
- <mf3nogu57jxgb3mxlunktykpw4a4dsw6d2qrjkdpafoz7uc7jd@rkfd4ypqiyw6>
+ <CAJD7tkYj_+edtqxTWH6Hmakv48Fx0GMUWwvU82L-V8SxmNg2qQ@mail.gmail.com>
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <mf3nogu57jxgb3mxlunktykpw4a4dsw6d2qrjkdpafoz7uc7jd@rkfd4ypqiyw6>
+In-Reply-To: <CAJD7tkYj_+edtqxTWH6Hmakv48Fx0GMUWwvU82L-V8SxmNg2qQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
 
-On 2024/6/14 06:20, Shakeel Butt wrote:
-> On Thu, Jun 13, 2024 at 04:21:19PM GMT, Baolin Wang wrote:
+On 2024/6/14 06:24, Yosry Ahmed wrote:
+> On Thu, Jun 13, 2024 at 1:21 AM Baolin Wang
+> <baolin.wang@linux.alibaba.com> wrote:
+>>
 >> When testing shmem swapin, I encountered the warning below on my machine.
 >> The reason is that replacing an old shmem folio with a new one causes
 >> mem_cgroup_migrate() to clear the old folio's memcg data. As a result,
@@ -116,13 +118,24 @@ On 2024/6/14 06:20, Shakeel Butt wrote:
 >>
 >> Fixes: 85ce2c517ade ("memcontrol: only transfer the memcg data for migration")
 >> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> ---
+>>   mm/shmem.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/mm/shmem.c b/mm/shmem.c
+>> index 99bd3c34f0fb..4acaf02bfe44 100644
+>> --- a/mm/shmem.c
+>> +++ b/mm/shmem.c
+>> @@ -1908,7 +1908,7 @@ static int shmem_replace_folio(struct folio **foliop, gfp_t gfp,
+>>          xa_lock_irq(&swap_mapping->i_pages);
+>>          error = shmem_replace_entry(swap_mapping, swap_index, old, new);
+>>          if (!error) {
+>> -               mem_cgroup_migrate(old, new);
+>> +               mem_cgroup_replace_folio(old, new);
 > 
-> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+> The comment above the definition of mem_cgroup_replace_folio() needs
+> to be updated with this change. It mentions that it is only used in
+> replace_page_cache_folio(), which is no longer true.
 
-Thanks for reviewing.
-
-> One request: please add VM_BUG_ON_FOLIO(folio_test_lru(folio), folio) in
-> mem_cgroup_migrate().
-
-Good suggestion. I will create a separate patch to do this.
+Indeed, will update the related comments in v2. Thanks.
 
