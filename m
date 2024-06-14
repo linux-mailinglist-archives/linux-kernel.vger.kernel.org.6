@@ -1,121 +1,107 @@
-Return-Path: <linux-kernel+bounces-215177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AFC6908F32
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:45:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D25908F44
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:46:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC47281E0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:44:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F1A81F29BB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206BF195FDE;
-	Fri, 14 Jun 2024 15:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A09E16DEB7;
+	Fri, 14 Jun 2024 15:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="rhLNILGX"
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KMP75Ftt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AAB195B04
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9B916C878;
+	Fri, 14 Jun 2024 15:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718379711; cv=none; b=HxbnbSjDboVEd6yA2IYFkvXjnnEGHQoKhBGqpKucPuJAQkYsT8bpjD+1pnF3wl4GpGmz+xOxJWimzAsu6ken51T+CLWyEpqsR8T9WHNihuhxxsiQ7uL9aE6SDUtJfpOn3IwUc8pSdTJGkTzA/ZL/YmEt+qOtdQzwmt5OS/rOGUg=
+	t=1718379974; cv=none; b=LVRveq+Pm4ahFZ2ed2Rr/6gJow6XIPpdWSf1L5kZ+C6ZEKI8QRoU0p5HMbHN0XAdrBsaoO7fo4L1KWlP2bPor2/tjVinqTQOPpBLyKGudLaZVYlCFDohYtP0xSRINCWKbygqfd9wzGMuTJSo1o4IGsoLt3k4J64VXqlUV9WPe28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718379711; c=relaxed/simple;
-	bh=G8B8akW16zGg8zUlOix/RFqn7c0bYnlcLHUwDty6SOo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FR03ng1tHcaXIw2tiJwEmGGf5CKLhUQLCeVy2fmrznnD5tl7nu3l9BygBNRGr+M1ZRNoGywoJCeKs7hUmg7Qe3+Fy6rVzY9nMwWxa6aLe5pBclXHKXU5ldUAVGmuIzHglOaowjrur+RfoIqIlQNw7Z4qra/YPseiDrlYJ66FxSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=rhLNILGX; arc=none smtp.client-ip=80.12.242.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id I93YsIab3c2iUI93Yse5qb; Fri, 14 Jun 2024 17:41:46 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1718379706;
-	bh=fMkYys7M3zvaEsKBAT2YIbRf9BEpH1IjB7DODovtk1w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=rhLNILGXGh6aZy8/ZRpK3rclBOuHKCCxpwcPv0Hhqjvh0e+xj4zkrYdYkzN51+IzO
-	 1A7ebratQJgPPg7UOz4eMBXylChdfGeMEK9rBNIKG7RCRUhtR/jKQTAO9JKgvXdl4y
-	 bLb1dFMa61l7Vixmqo2HriueRmAc0t9RHPN30bpm5zEcKmdnPZYESj557sUlHdpi3c
-	 bMJDrcajhRAij70CcfBXO/l/Yrjd9AnTFu7FepxREKkV6nTd0PAi75hkS7wUPCbsiS
-	 5e4fEamEtnPCSBfswOQtnBg+rpzSc8T+bM54+D+M0sN8j784Pa2pe2GSxbLDsNQaz1
-	 wVMwtr8UiyOYw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 14 Jun 2024 17:41:46 +0200
-X-ME-IP: 86.243.222.230
-Message-ID: <d6428e19-986d-4451-bfcf-17705cc9e53b@wanadoo.fr>
-Date: Fri, 14 Jun 2024 17:41:30 +0200
+	s=arc-20240116; t=1718379974; c=relaxed/simple;
+	bh=Z6g1BYX8L60xI0ndaIE5U6XB1JZQMw7PdN+V+G9CosE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jLIRPF1v8XFwGznYtNzUthvi2Fa922JgVpbYbq/vsPhorkDW+S6Gf1wZB7d+vfoZTZFB3q2P5j2+xqjBFlNjH6pDfUjKgnYL40FL/I1HbwRwM7taXrzPDgq1hfCS4NTGglT2/lubtWIMmOprkVDCdVfpiIuweD+VIJmVeEHCcCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KMP75Ftt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44A2EC4AF1A;
+	Fri, 14 Jun 2024 15:46:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718379974;
+	bh=Z6g1BYX8L60xI0ndaIE5U6XB1JZQMw7PdN+V+G9CosE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KMP75FtteaGZ46C996OXqSGmqE8rWWkj1b09SMD1m7ZkuO+h+D9jFg3FzgpqRMBey
+	 HkpEFBQC4TEBD32vbqGt4lh5UB2RQat0ogmEy+he9JH5tEnOyKub8ZBxNoxRXksbtx
+	 J3we+RxnWNyrzDYh1PmqUZOijLVeGmmvYxwn+ZVIoI5Gdj/dDESavn4EZ7vMgfCn1Z
+	 +NDhG7qOp/3PRGxVS8NEvgmned3x+Ov0As130rdvKUoAXXva/MoiHZlqYwwTY1rl70
+	 mrwEvxQXe+2elBeW2NL/yMjVfW64yXBndY8ex+UpKRTXP3A9qK/hBPknsKf0x3oGu7
+	 6f+tz1lGsi/zw==
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: linux-pwm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Sean Young <sean@mess.org>
+Subject: [PATCH] pwm: Drop pwm_apply_state()
+Date: Fri, 14 Jun 2024 17:46:02 +0200
+Message-ID: <20240614154603.689727-2-ukleinek@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8] ALSA: hda/tas2781: Add tas2781 hda SPI driver
-To: Baojun Xu <baojun.xu@ti.com>, tiwai@suse.de
-Cc: robh+dt@kernel.org, andriy.shevchenko@linux.intel.com,
- lgirdwood@gmail.com, perex@perex.cz, pierre-louis.bossart@linux.intel.com,
- kevin-lu@ti.com, shenghao-ding@ti.com, navada@ti.com, 13916275206@139.com,
- v-hampiholi@ti.com, v-po@ti.com, niranjan.hy@ti.com,
- alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
- liam.r.girdwood@intel.com, yung-chuan.liao@linux.intel.com,
- broonie@kernel.org, soyer@irl.hu
-References: <20240614040554.610-1-baojun.xu@ti.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240614040554.610-1-baojun.xu@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1437; i=ukleinek@kernel.org; h=from:subject; bh=Z6g1BYX8L60xI0ndaIE5U6XB1JZQMw7PdN+V+G9CosE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBmbGW7KFhB2Q7K6dl9fzXu5zx+pBZf8bDUzkSMX OwwDuUdYVCJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZmxluwAKCRCPgPtYfRL+ ThJZB/wPEdpuBE33pkjryetp2yEAreWO2n1W+2RNBdfHjUy91IOZlfClP+FWvYkQCGsby3xdh68 bGItAR4Vgo0Gj4PURZUQHOKN8mqze78WlEaVx3ygvw3YzMkMBVbnkGnYB4pa9MY5YEE7sxQrZJ1 PlLOjyiOoA6sPQsBah6vDaNvGBA+sY8nS8/kZeCejgweh3HNgcQCpWIVMH6T6ZRrKRQhx4n97Uc VbyrI882j9OEGCMnPdjN3tTVedkulQGDRF47b806S3ueK6KjYFYyV90MP0QFX4e01K/DqLOQdtC gsage3RfW/NGkOuOfy9174TanWsmWixWP4rEcYL53TGLMrWK
+X-Developer-Key: i=ukleinek@kernel.org; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-Le 14/06/2024 à 06:05, Baojun Xu a écrit :
-> This patch was used to add TAS2781 devices on SPI support in sound/pci/hda.
-> It use ACPI node descript about parameters of TAS2781 on SPI, it like:
->      Scope (_SB.PC00.SPI0)
->      {
->          Device (GSPK)
->          {
->              Name (_HID, "TXNW2781")  // _HID: Hardware ID
->              Method (_CRS, 0, NotSerialized)
->              {
->                  Name (RBUF, ResourceTemplate ()
->                  {
->                      SpiSerialBusV2 (...)
->                      SpiSerialBusV2 (...)
->                  }
->              }
->          }
->      }
-> 
-> And in platform/x86/serial-multi-instantiate.c, those spi devices will be
-> added into system as a single SPI device, so TAS2781 SPI driver will
-> probe twice for every single SPI device. And driver will also parser
-> mono DSP firmware binary and RCA binary for itself.
-> The code support Realtek as the primary codec.
-> 
-> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
-> 
-> ---
+This function is not supposed to be used any more since commit
+c748a6d77c06 ("pwm: Rename pwm_apply_state() to
+pwm_apply_might_sleep()") that is included in v6.8-rc1. Two kernel
+releases should be enough for everyone to adapt, so drop the old
+function that was introduced as a compatibility stub for the transition.
 
-Hi,
+Signed-off-by: Uwe Kleine-König <ukleinek@kernel.org>
+---
+Hello,
 
-not a must-have but using "checkpatch.pl --strict" could slightly 
-improve readability in some places.
+with Sean patch fixing ts-nbus[1], the last user of pwm_apply_state() is
+gone, so pwm_apply_state() can be dropped now.
 
-Maybe at least,
-    - ./scripts/checkpatch.pl --strict --test-only=Blank
-      --> to save a few LoC
+Thanks for reminding me of this task.
 
-    - ./scripts/checkpatch.pl --strict --test-only=parentheses
-      --> to improve readability and reduce the length of some lines
+Best regards
+Uwe
 
+[1] https://lore.kernel.org/linux-pwm/20240614090829.560605-1-sean@mess.org
+ include/linux/pwm.h | 7 -------
+ 1 file changed, 7 deletions(-)
 
-This is already v8, so feel free to just ignore this mail and the 
---strict option.
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index 75ad0d2fd949..f8c2dc12dbd3 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -563,13 +563,6 @@ static inline void pwm_apply_args(struct pwm_device *pwm)
+ 	pwm_apply_might_sleep(pwm, &state);
+ }
+ 
+-/* only for backwards-compatibility, new code should not use this */
+-static inline int pwm_apply_state(struct pwm_device *pwm,
+-				  const struct pwm_state *state)
+-{
+-	return pwm_apply_might_sleep(pwm, state);
+-}
+-
+ struct pwm_lookup {
+ 	struct list_head list;
+ 	const char *provider;
 
-CJ
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+prerequisite-patch-id: 51738c9613a88df12ce0963aa6bdb92fa15262e1
+-- 
+2.43.0
+
 
