@@ -1,224 +1,208 @@
-Return-Path: <linux-kernel+bounces-214654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566609087BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:43:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86CB39087BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:43:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00D9E2851C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:43:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2E4E284F0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F017C192B6F;
-	Fri, 14 Jun 2024 09:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14C8192B95;
+	Fri, 14 Jun 2024 09:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QbVnHaI9"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fd1852FH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B1518413A;
-	Fri, 14 Jun 2024 09:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BF5192B7D
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718358174; cv=none; b=mxgi9qjE6R9ZJo5n060Dq4exVBmtgkSMSLe7O522+MDBkZUVuPDhO9jzF/S3P+xdJT8al29tIk2DgbvcS7PwVHBiwc85gEYJtHNXZ05ZjcZNGsQfjUhS2DnD5UZ+SqTJP1ceo3srhVWQWXux2PJ9y8SKFIxa/AGWGdgogTn83F0=
+	t=1718358178; cv=none; b=f6Q+72Y9HUmLyhNrGeg1A4OvEOgIZufjXjR5J4WICAjKTBWsloTUH9o+PrOxtdBx4yVBrSfxK6r88QZdPTUHLEG/TAovqu2AIguq+uDidfBETgsnsGt7RaaexGPXGpBM6rLnzUZsmJnmuWuDERKsEXtWlkt3yyTRmMmcLuUSS1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718358174; c=relaxed/simple;
-	bh=czkOTYkZLTIQaApiczrsdIbe9LXXVyIz+FMdRAHJ+Jw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=h7FWGzH9H9amzoeRDi2LMRKSQovXsZPhw0W/AlDJlaSAVUVKifl5TBVJWk998Mxo6CMt8ZdYXBayK4tGXm80jxBKiB8SEtYo2iJUGgmHtJiKZVBIk5zupTXpBu7EbzazxH8tvBZG9s0see9eicE87Z/q5tTvclVaR5KEMQwIDSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QbVnHaI9; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52bc0a9cea4so1745425e87.0;
-        Fri, 14 Jun 2024 02:42:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718358170; x=1718962970; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=t2iOzSAnOwkGstzhGfNY8EkOug1CltGdGxTCzaoAIQ0=;
-        b=QbVnHaI97/ZknHETU5MfyVOwb3rZL3KuqE7UBxkJ5knjJ9JMQwNHi5BQ7Ul1eyrsYa
-         EZlnBCyFvciTbQtcb2N0uv2JvIlmHxbjlSU3zhZDWTuVxJ3KFtRwJYHUng+Yze5CzIV7
-         MGDCMYlu4TksEiQNFWWPjPiPXHo3vIw+XYR4qA6/gBfI02XqF4NX/ZZsHgj/ovofJlCA
-         nZV3i28S8UP31XaYd6Dp2nxxIE7ovqNAh3hYRHHUv1Qm7rct9NLuQ+EI6bm77/fWT5lq
-         9du0WRDoYVAEhaArg4vYOodF7pi1rsmHZI3aU7NiVNfTGXQ01krMhqJaXDbEANws8SdG
-         Pk3Q==
+	s=arc-20240116; t=1718358178; c=relaxed/simple;
+	bh=I1iBGOoWQpj8pNaZCVoh6D0cVztaXLFRZEggNb2CDKo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fAkCewjqTG5jDpz0FZnGdC4imHPGJ0jGnSPTWjy0dDZtj0UGoGirs+aQPF8m6LJAqLSoCpndSZkl132DnwiIn55SE87V0zWgasukntfi/jjH7bzh+OfvSwcADpoo05yLK/EDPxJZ2Ptk6b3UCjdvGzx3V5w225bZWa5Ey2Ldwgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fd1852FH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718358175;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=49kqpfNtEJVAp6h4kYqZK0c4CReSme2XQohBc3CWwNA=;
+	b=Fd1852FHoatB2asgm2u3HrAM0a4rmBY/TL6FSNNe6s4BHaZHvPzpU3JFoLOgH3XtFe+D8B
+	Tjpo1JDwgtNrDpBleCRk4GrVmvcnLNXzET+41+4tyXCVGhrApZf/B5IgxbAbaAoq7CyNJL
+	NF8yGuk3Z+RCREA2QLvSc2xAVpHPllI=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-197-Z8E2f63ZOeKR-ippOZbuUA-1; Fri, 14 Jun 2024 05:42:53 -0400
+X-MC-Unique: Z8E2f63ZOeKR-ippOZbuUA-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-35f291b147dso109542f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 02:42:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718358170; x=1718962970;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1718358172; x=1718962972;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t2iOzSAnOwkGstzhGfNY8EkOug1CltGdGxTCzaoAIQ0=;
-        b=walLIDw+VmD1ofgC54FFALaf7x6BBe5045pNlN5gcOQrRvMaveGMJXxn3mDbb0Wazj
-         YbpnFIT2HGZeszyv9oA3Cubx9R/u44VhkT46PXq0GJoUaN8zQmT23+BwOci/Z/p6Wnnb
-         +h4b26MTvRY1945i0xkVgrBpBPdpzoS7MLCrFjTsWFaZUrAC4pygZKMN2uhlVY27crle
-         vqx5E9HpBBUmPn1tdVNSxhOoUa4VU5YfiQ9e/jvf+Rm6Fp7xbZBM4tLQ/6Um6AtNz/M7
-         VUG/kC8hvwpnhZJedT+vy9s8z9EIenFmkubReRl5rnAbyZQdTI70IIa3UmuVjSuSeO+Y
-         Daeg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNpPxx3Y1I79qpTPpJmcQOEukh1z6ZS8Z8nk/P3ct9grCICIcl3w7iNUGCV7GHE3BRSYdgHuct9D6LTs7Cv+VDO6NTiFtNiNRVxHArculuHLmAka7xkodwXPV4MQ7tFxGi9hJ65d/yNQq3YnTRVAldquf2gvk/OWah+G2B+HALuSOa4uCLXL35
-X-Gm-Message-State: AOJu0YzJWtDxeQHJcCAJmIJnLLTIJEdW5gtQL+8wK70H0EUXPRFCcZVA
-	ozZIMJOT6HPO5F0GdPhm7xOD5ndx+DRwISUWiLtvWBXMYV16hiSL
-X-Google-Smtp-Source: AGHT+IGzfmH4S6WCBjgVdp0NETN5VubedAyIvEhYyV2QfmBM0+tnl6e1Wwf1tSWGIvD2o2CLzJEGMw==
-X-Received: by 2002:a05:6512:2346:b0:52c:939a:d70a with SMTP id 2adb3069b0e04-52ca689051fmr829685e87.0.1718358170109;
-        Fri, 14 Jun 2024 02:42:50 -0700 (PDT)
-Received: from fedora ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca287affcsm455573e87.232.2024.06.14.02.42.48
+        bh=49kqpfNtEJVAp6h4kYqZK0c4CReSme2XQohBc3CWwNA=;
+        b=HD4z6Eerk+/v3nHtc58gnUnX/atDJQ+Ql3UzLGgXvXPMlZRgBHYB3Dm6en3mxc4ho1
+         sRWbkX+ofEcf8jdWC/Nq/qiOh4ynON6XEVreTNAn+g93eJD80zF0vTJr4iV8ldfl2Kwy
+         FOSj+U3mqNgBZtrlc6fiLloXwegCjKAoDeFaf2ZSgAFEU8BXXlJ3aEOsPwMwpVGLlfgq
+         XPTc2inUQ91qpgjwKgJqjS2m5xk/phUoz4lRonrKz0w/puG+7ABjInfT2VN2wgoscvvu
+         9/6CdJy9TkJ3RPSwQY3CcYHpF4LlEYbehjVRuS58ZMiO3LyKZkH3dk9pd3aEmSLhWfz+
+         a8NA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTBD2AXMt2hZMmDNHUAy/gB0pQXgDMWVlwAs7VqrsdeeYtdAoxOmrKUiBXKgPgpJNVEhNNFTUiktfz+nrlW1MJVdmc4Q9UjjxHtyWm
+X-Gm-Message-State: AOJu0Yx969d7sK/KxFl1mFL+CBYDb1uQT2enMHyw38W4HJFn0hJkzlIC
+	JSr1lR6A1u9wHXGQaoqDnw/tUc+/CEy8vfl8hZTQKKiL/KzgzETtUYHPPUfkgafHLFTv9/rPLYX
+	WBKtgvazQp5+DFSEw4DnCMZjopwSPTnbkKjsn/OxqO5Frrb04ZW/CpmBmYa+TKg==
+X-Received: by 2002:a05:600c:3b1d:b0:422:70d4:7e72 with SMTP id 5b1f17b1804b1-4230484ea2emr17133875e9.2.1718358172526;
+        Fri, 14 Jun 2024 02:42:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFH/gW21YE7qXaSCcubY+8W1tCCly0CvUof2CfWLfbaGfA0Re6EqsXO4zQhRBDD7p0BvrkEXQ==
+X-Received: by 2002:a05:600c:3b1d:b0:422:70d4:7e72 with SMTP id 5b1f17b1804b1-4230484ea2emr17133615e9.2.1718358172093;
+        Fri, 14 Jun 2024 02:42:52 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3341:b083:7210:de1e:fd05:fa25:40db])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075104b2esm3857063f8f.101.2024.06.14.02.42.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 02:42:49 -0700 (PDT)
-Date: Fri, 14 Jun 2024 12:42:35 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [PATCH v4 0/6] Support ROHM BD96801 Scalable PMIC
-Message-ID: <cover.1718356964.git.mazziesaccount@gmail.com>
+        Fri, 14 Jun 2024 02:42:51 -0700 (PDT)
+Message-ID: <84281d30907c09a2f15d741088833b0ae6597b89.camel@redhat.com>
+Subject: Re: [PATCH net-next 02/12] net: dsa: vsc73xx: Add vlan filtering
+From: Paolo Abeni <pabeni@redhat.com>
+To: Pawel Dembicki <paweldembicki@gmail.com>, netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, 
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,  Jakub Kicinski
+ <kuba@kernel.org>, Claudiu Manoil <claudiu.manoil@nxp.com>, Alexandre
+ Belloni <alexandre.belloni@bootlin.com>, UNGLinuxDriver@microchip.com,
+ Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org
+Date: Fri, 14 Jun 2024 11:42:50 +0200
+In-Reply-To: <20240611195007.486919-3-paweldembicki@gmail.com>
+References: <20240611195007.486919-1-paweldembicki@gmail.com>
+	 <20240611195007.486919-3-paweldembicki@gmail.com>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="OFgH1s8YHkdjEScU"
-Content-Disposition: inline
 
+Hi,
 
---OFgH1s8YHkdjEScU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2024-06-11 at 21:49 +0200, Pawel Dembicki wrote:
+> +static int vsc73xx_port_vlan_add(struct dsa_switch *ds, int port,
+> +				 const struct switchdev_obj_port_vlan *vlan,
+> +				 struct netlink_ext_ack *extack)
+> +{
+> +	bool untagged =3D vlan->flags & BRIDGE_VLAN_INFO_UNTAGGED;
+> +	bool pvid =3D vlan->flags & BRIDGE_VLAN_INFO_PVID;
+> +	struct dsa_port *dp =3D dsa_to_port(ds, port);
+> +	struct vsc73xx_bridge_vlan *vsc73xx_vlan;
+> +	struct vsc73xx_vlan_summary summary;
+> +	struct vsc73xx_portinfo *portinfo;
+> +	struct vsc73xx *vsc =3D ds->priv;
+> +	bool commit_to_hardware;
+> +	int ret =3D 0;
+> +
+> +	/* Be sure to deny alterations to the configuration done by tag_8021q.
+> +	 */
+> +	if (vid_is_dsa_8021q(vlan->vid)) {
+> +		NL_SET_ERR_MSG_MOD(extack,
+> +				   "Range 3072-4095 reserved for dsa_8021q operation");
+> +		return -EBUSY;
+> +	}
+> +
+> +	/* The processed vlan->vid is excluded from the search because the VLAN
+> +	 * can be re-added with a different set of flags, so it's easiest to
+> +	 * ignore its old flags from the VLAN database software copy.
+> +	 */
+> +	vsc73xx_bridge_vlan_summary(vsc, port, &summary, vlan->vid);
+> +
+> +	/* VSC73XX allow only three untagged states: none, one or all */
+> +	if ((untagged && summary.num_tagged > 0 && summary.num_untagged > 0) ||
+> +	    (!untagged && summary.num_untagged > 1)) {
+> +		NL_SET_ERR_MSG_MOD(extack,
+> +				   "Port can have only none, one or all untagged vlan");
+> +		return -EBUSY;
+> +	}
+> +
+> +	vsc73xx_vlan =3D vsc73xx_bridge_vlan_find(vsc, vlan->vid);
+> +
+> +	if (!vsc73xx_vlan) {
+> +		vsc73xx_vlan =3D kzalloc(sizeof(*vsc73xx_vlan), GFP_KERNEL);
+> +		if (!vsc73xx_vlan)
+> +			return -ENOMEM;
+> +
+> +		vsc73xx_vlan->vid =3D vlan->vid;
+> +		vsc73xx_vlan->portmask =3D 0;
+> +		vsc73xx_vlan->untagged =3D 0;
+> +
+> +		INIT_LIST_HEAD(&vsc73xx_vlan->list);
 
-Support ROHM BD96801 Scalable PMIC
+INIT_LIST_HEAD() is not needed, as the entry will be unconditionally
+added in the statement below.
 
-The ROHM BD96801 is automotive grade PMIC, intended to be usable in
-multiple solutions. The BD96801 can be used as a stand-alone, or together
-with separate 'companion PMICs'. This modular approach aims to make this
-PMIC suitable for various use-cases.
+> +		list_add_tail(&vsc73xx_vlan->list, &vsc->vlans);
+> +	}
+> +
+> +	/* CPU port must be always tagged because port separation is based on
+> +	 * tag_8021q.
+> +	 */
+> +	if (port =3D=3D CPU_PORT)
+> +		goto update_vlan_table;
+> +
+> +	vsc73xx_vlan->portmask |=3D BIT(port);
+> +
+> +	if (untagged)
+> +		vsc73xx_vlan->untagged |=3D BIT(port);
+> +	else
+> +		vsc73xx_vlan->untagged &=3D ~BIT(port);
+> +
+> +	portinfo =3D &vsc->portinfo[port];
+> +
+> +	if (pvid) {
+> +		portinfo->pvid_vlan_filtering_configured =3D true;
+> +		portinfo->pvid_vlan_filtering =3D vlan->vid;
+> +	} else if (portinfo->pvid_vlan_filtering_configured &&
+> +		   portinfo->pvid_vlan_filtering =3D=3D vlan->vid) {
+> +		portinfo->pvid_vlan_filtering_configured =3D false;
+> +	}
+> +
+> +	commit_to_hardware =3D !vsc73xx_tag_8021q_active(dp);
+> +	if (commit_to_hardware) {
+> +		vsc73xx_vlan_commit_pvid(vsc, port);
+> +		vsc73xx_vlan_commit_untagged(vsc, port);
+> +		vsc73xx_vlan_commit_conf(vsc, port);
+> +	}
+> +
+> +update_vlan_table:
+> +	ret =3D vsc73xx_update_vlan_table(vsc, port, vlan->vid, true);
+> +	if (!ret)
+> +		return 0;
+> +
+> +	list_del(&vsc73xx_vlan->list);
+> +	kfree(vsc73xx_vlan);
 
-This series brings only limited support. The more complete set of
-features was sent in the RFC:
-https://lore.kernel.org/lkml/cover.1712058690.git.mazziesaccount@gmail.com/
+This does not look correct. I guess you should clear bit(port) in
+vsc73xx_vlan->portmask and dispose the entry only when portmask becomes
+0. You probably can factor out a common helper to be used here and in
+vsc73xx_port_vlan_del().=20
 
-The v3: implemented also support for ERRB interrupt and setting a name
-suffix to IRQ domains. That work was postponed and will be continued
-after some unrelated changes to irqdomain code are completed as
-discussed here:
-https://lore.kernel.org/all/87plst28yk.ffs@tglx/
+Thanks,
 
-Revision history still tries to summarize changes from the RFC for the
-reviewers.
+Paolo
 
-Revision history:
-v3 =3D> v4:
- - Drop patches 7 to 10 (inclusive) until preparatory irqdomain changes
-   are done.
- - Cleanups as suggested by Lee.
-	- Change the regulator subdevice name. (MFD and regulators).
-	- Minor styling in MFD driver
-
-v2 =3D> v3: Mostly based on feedback from Thomas Gleixner
-	- Added acks from Krzysztof and Mark
-	- Rebased on v6.10-rc2
-	- Drop name suffix support for legacy IRQ domains (both
-	  irqdomain and regmap)
-	- Improve the commit message for patch 7/10
-
-v1 =3D> v2:
-	- Add support for setting a name suffix for fwnode backed IRQ domains.
-	- Add support for setting a domain name suffix for regmap-IRQ.
-	- Add handling of ERRB IRQs.
-	- Small fixes based on feedback.
-
-RFCv2 =3D> v1:
-	- Drop ERRB IRQ from drivers (but not DT bindings).
-	- Drop configuration which requires STBY - state.
-	- Fix the register lock race by moving it from the regulator
-	  driver to the MFD driver.
-
-RFCv1 =3D> RFCv2:
-	- Tidying code based on feedback form Krzysztof Kozlowski and
-	  Lee Jones.
-	- Documented undocumented watchdog related DT properties.
-	- Added usage of the watchdog IRQ.
-	- Use irq_domain_update_bus_token() to work-around debugFS name
-	  collision for IRQ domains.
-
----
-
-
-Matti Vaittinen (6):
-  dt-bindings: ROHM BD96801 PMIC regulators
-  dt-bindings: mfd: bd96801 PMIC core
-  mfd: support ROHM BD96801 PMIC core
-  regulator: bd96801: ROHM BD96801 PMIC regulators
-  watchdog: ROHM BD96801 PMIC WDG driver
-  MAINTAINERS: Add ROHM BD96801 'scalable PMIC' entries
-
- .../bindings/mfd/rohm,bd96801-pmic.yaml       | 173 ++++
- .../regulator/rohm,bd96801-regulator.yaml     |  63 ++
- MAINTAINERS                                   |   4 +
- drivers/mfd/Kconfig                           |  13 +
- drivers/mfd/Makefile                          |   1 +
- drivers/mfd/rohm-bd96801.c                    | 273 ++++++
- drivers/regulator/Kconfig                     |  12 +
- drivers/regulator/Makefile                    |   2 +
- drivers/regulator/bd96801-regulator.c         | 908 ++++++++++++++++++
- drivers/watchdog/Kconfig                      |  13 +
- drivers/watchdog/Makefile                     |   1 +
- drivers/watchdog/bd96801_wdt.c                | 416 ++++++++
- include/linux/mfd/rohm-bd96801.h              | 215 +++++
- include/linux/mfd/rohm-generic.h              |   1 +
- 14 files changed, 2095 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic=
-=2Eyaml
- create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd9680=
-1-regulator.yaml
- create mode 100644 drivers/mfd/rohm-bd96801.c
- create mode 100644 drivers/regulator/bd96801-regulator.c
- create mode 100644 drivers/watchdog/bd96801_wdt.c
- create mode 100644 include/linux/mfd/rohm-bd96801.h
-
-
-base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
---=20
-2.45.1
-
-
---=20
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =3D]=20
-
---OFgH1s8YHkdjEScU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmZsEIYACgkQeFA3/03a
-ocX58Af/e4WoONr6xXqNo5iiqJocjHn5lMOCw3ZvjpGsSrlbhc5HCnkw3wUv+hiO
-7YUrdyoppjodh+tklX7Unk8Y7GrIJbZuxLDweXYh2KB8ac76sSWfFIV38QXSuuqe
-7xlqxBfhYwWTAhXQ409wnk/aoK2pI2u0ppl/MMZsF8TPLyyPDnziV9gKDLXrjlcI
-PMGrpnxNKvn2mfB3SqVnMdViPjXon9ynePBLxpA0JLZCFk+Q27z8pwH+Y6i1prbN
-vLt/WMQuxNaP6sd5UerCZWvG+FDSNSXkkIOrIQ9EgfhT+bqniBFjOQZqMgsBHisD
-rvQWkfbfgt8j1ocCYPR7KY5SEIt6xA==
-=TFGg
------END PGP SIGNATURE-----
-
---OFgH1s8YHkdjEScU--
 
