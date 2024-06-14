@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-214556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 473C7908659
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:32:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C41090865C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2BFA28F967
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:32:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 459FF1C21FA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66445190066;
-	Fri, 14 Jun 2024 08:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE17619006B;
+	Fri, 14 Jun 2024 08:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JpVbjp4w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xcb5f1+U"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BD7184135;
-	Fri, 14 Jun 2024 08:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1143B190044;
+	Fri, 14 Jun 2024 08:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718353939; cv=none; b=M+8+oBW03J7cxHKYURMa1dd7HDUuzuL7xL3FlwPfZB+PCKI24MZ3XNwHNiwWwawTX3HpVCxqKepiKIC443HZ4gJEoEXVTQXJ1lOESmCe6tPEUWkQk7hn6CvFKR8AUD2IcwuRG4O4HfT1tqdG9SdjGCrZzREotc02NKxsh1QznR8=
+	t=1718354079; cv=none; b=YpdM1wjOfMQpJPxzbkGlrMz/Fkt9mplmF0f5lcteqMxTqnd7hSjGiYdHWeyQtso22HuiyIOCaX08kW6RpOP/KCktM8BAkwXWI3VR2nToQ0kzoFwfKMqBKCXWkdeXf2KhD3lSbpKUyUTcXl4+8lNSER/8b/tdJDEd2e3ohKBACvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718353939; c=relaxed/simple;
-	bh=aFrOdW287twDxJ7iDhC3UjtZc7plhBdSGTSUZIOv6lg=;
+	s=arc-20240116; t=1718354079; c=relaxed/simple;
+	bh=4QlKbGDfqRZ70INEQB1z/9HFk9AylG0owXHltCQFcSM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=shK9A+XYN18R4Tm9GH0HNofq/NTkphg2TbL0gYfwEjOHEmxCUimhiL9ap5bRbIG2hCo7dq5CssLqDSpNGtFt5tX8CA0j/Lt1IYt+PDjo8dOTAT6LDM7oNx6Y9xXaI9nv5yrXsKEYmC9poame6g9HZwaEH2DZlC2gPuAfe4l1CKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JpVbjp4w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CDCAC2BD10;
-	Fri, 14 Jun 2024 08:32:16 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=MYrqOUu5uOPwHk/G87zSZaDJDJLHPhwFDvoYLXKMAdRGQtfTGQ1LxMKXorSTLD29xjIxLCPTJHY5nqlsfsP4V6DcGGk4vp2k1yFgYNuGEyMGBd18forhF2DHvAOqdwt6z8WGD44CZ3CkfKcfy2Osgs4bAOdALikWwWlsg5JryFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xcb5f1+U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5A0EC2BD10;
+	Fri, 14 Jun 2024 08:34:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718353939;
-	bh=aFrOdW287twDxJ7iDhC3UjtZc7plhBdSGTSUZIOv6lg=;
+	s=k20201202; t=1718354078;
+	bh=4QlKbGDfqRZ70INEQB1z/9HFk9AylG0owXHltCQFcSM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JpVbjp4wdTv1ELeQN0+9YlfRNPVEB7/ibl+TT35aodUm8jgeNcwPU074yIzU06zjM
-	 HwXJNMeZgxe7CNN8jwxbkDsc4HxeRj56hrYy3uegrsSpI+GoaZ2raQ10ja3tvtgf8X
-	 CNYvLes4UZxeCIaMzLQ+/T+OwFoPJsZPPH48458V2prdUaLS90gWc6ZgkKHeCaTXhr
-	 f/iqAYnxbfJEIKUNcsW/3/qjp1jlmq5Qv/vWChGfwNtlbsxnTPgWSNpHm9m66iJldK
-	 ZCQkVgvs3SCPISamlRTew4nS5Z1IT03Uw5esv1zZRlyUtN6c8q8SOvif7mURUV/7A+
-	 mKZBPh+DJ8KHg==
-Message-ID: <b214c9db-fd82-4d5f-9cc2-96857da1bef5@kernel.org>
-Date: Fri, 14 Jun 2024 10:32:14 +0200
+	b=Xcb5f1+UdYbhJNdNcgv2mrE26fpm/QDql7SorGc+tES1MIlQg5cLWy4iQqfDwY9Ry
+	 OvoLeWo8xjg/9einZoj+jMKjEHyHUDpK2wLkm8M8XDUCJPSA95jevO4WW4REHPFaD9
+	 icNlx4+VYR4+vXmj3ycE/ueJntYPADDU3JzvnjiQn12qQrPLtTo7svnL5nVFhjhEQx
+	 eU83w9GgIb3AVukgXDy0eMzYrypPoCT0EGGazGeLWaYDdcfkp2Nzs5VrWTRi+oufdo
+	 5XqB9/HMF1h0H+AhRAVWkE/ExZnsy2rDnzjaRSsXApyo88qBiKBqyvMgqwXojHfLdW
+	 Q7Cg+F3rqq/5w==
+Message-ID: <7736870d-bb65-4e3d-bfbd-2e544bc56471@kernel.org>
+Date: Fri, 14 Jun 2024 10:34:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] ASoC: dt-bindings: Convert realtek CODEC bindings to
- DT schema
+Subject: Re: [PATCH 2/2] ASoC: dt-bindings: realtek,rt5631: Convert to
+ dtschema
 To: Animesh Agarwal <animeshagarwal28@gmail.com>
 Cc: Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood
  <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Animesh Agarwal <animeshagarwal28@nxp.com>
 References: <20240614033812.51312-1-animeshagarwal28@gmail.com>
+ <20240614033812.51312-3-animeshagarwal28@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,21 +105,80 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240614033812.51312-1-animeshagarwal28@gmail.com>
+In-Reply-To: <20240614033812.51312-3-animeshagarwal28@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 14/06/2024 05:38, Animesh Agarwal wrote:
-> Hey all,
-> This patch series converts two of the thirteen realtek audio codec
-> bindings which are still in txt format to DT schema. I have chosen
-> these bindings as they have in tree DTS files.
+> Convert the ALC5631/RT5631 audio CODEC bindings to DT Schema.
+> 
+> Signed-off-by: Animesh Agarwal <animeshagarwal28@nxp.com>
+> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> ---
+>  .../bindings/sound/realtek,rt5631.yaml        | 63 +++++++++++++++++++
+>  .../devicetree/bindings/sound/rt5631.txt      | 48 --------------
+>  2 files changed, 63 insertions(+), 48 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/sound/realtek,rt5631.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/rt5631.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/realtek,rt5631.yaml b/Documentation/devicetree/bindings/sound/realtek,rt5631.yaml
+> new file mode 100644
+> index 000000000000..05b83d907b38
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/realtek,rt5631.yaml
+> @@ -0,0 +1,63 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/realtek,rt5631.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ALC5631/RT5631 audio CODEC
+> +
+> +description: |
 
-... and the point of DTS is?
+Please keep the order as in example-schema, so first maintainers then
+description. This applies to all your patches.
 
-To validate the DTS against bindings and see if they match.
+> +  This device supports I2C only.
+> +
+> +  Pins on the device (for linking into audio routes):
+> +      * SPK_OUT_R_P
+> +      * SPK_OUT_R_N
+> +      * SPK_OUT_L_P
+> +      * SPK_OUT_L_N
+> +      * HP_OUT_L
+> +      * HP_OUT_R
+> +      * AUX_OUT2_LP
+> +      * AUX_OUT2_RN
+> +      * AUX_OUT1_LP
+> +      * AUX_OUT1_RN
+> +      * AUX_IN_L_JD
+> +      * AUX_IN_R_JD
+> +      * MONO_IN_P
+> +      * MONO_IN_N
+> +      * MIC1_P
+> +      * MIC1_N
+> +      * MIC2_P
+> +      * MIC2_N
+> +      * MONO_OUT_P
+> +      * MONO_OUT_N
+> +      * MICBIAS1
+> +      * MICBIAS2
+> +
+> +maintainers:
+> +  - Animesh Agarwal <animeshagarwal28@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - realtek,alc5631
+> +      - realtek,rt5631
+> +
+> +  reg:
+> +    maxItems: 1
 
-You received such feedback already.
+Just open the DTS and immediately you will see it is incomplete.
 
 Best regards,
 Krzysztof
