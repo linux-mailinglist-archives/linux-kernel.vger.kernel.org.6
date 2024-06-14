@@ -1,106 +1,204 @@
-Return-Path: <linux-kernel+bounces-214598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7AF79086F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:03:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E2E49086FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74CBC1F2386C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:03:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3915B284BF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2125A18C32B;
-	Fri, 14 Jun 2024 09:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B4519149F;
+	Fri, 14 Jun 2024 09:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BU5n25U7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=moxa.com header.i=@moxa.com header.b="aCtzUszt"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2132.outbound.protection.outlook.com [40.107.255.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5068148844
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718355801; cv=none; b=CZHbvAFlJKWbYB8OBR+xDjO82Oc7vTtdfVe2cF/r5fAOc0HuF/Tp41ym2PDovIwoHm1K7mTy5uOxd0bVMMerGIaIWcHkvQnBP+k6fB9rZ00083LeU3b+sRCfV++zEBn8/XaKCYbExcEMC0kJaC7HQtQ6BqHaPVQG9HhC/UyoyQI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718355801; c=relaxed/simple;
-	bh=b7I5Tl0JW4uTtQ7s9QjyAYW5T4OAzZ3xsuUADWTLiiM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r2sCUrwf8FcoZ3geiZQZnbpJFMpp7GIpk1gdmve9QMkEh8VUhHnUuTh/0lccvgshitd5nFHuTBSeagr6RB/wSxthpGqUCi0PjM6S3GI1J/nW+VbFGBEZW5FFyNjxfSQUe1zsx4DZ7ZtzqcNMH0VclfT77RoUAnInV4M92UzQF+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BU5n25U7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718355798;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=a4dxEa+doWbUECdCauPFkZSumhcXdmc3uGpssQtnBUc=;
-	b=BU5n25U7S692DGmKOwfM15gllbVt5BrOF+ZACf0whPkODkZ3ZJUzMn2L4sD4RTtOgmOItP
-	LN8/TaMGM0TngGr/mYetwffGny8cd19lh2VY1nT4WidPghMqZvJTxPm0kUeCb0sOyOfBQq
-	mcJ0RBSlaXi5CzT6UQ6DYxO9dQ5FSgY=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-672-B7-KTaEjNmuUKWuw__1JbQ-1; Fri,
- 14 Jun 2024 05:03:17 -0400
-X-MC-Unique: B7-KTaEjNmuUKWuw__1JbQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E5D5A195608F;
-	Fri, 14 Jun 2024 09:03:14 +0000 (UTC)
-Received: from thuth-p1g4.redhat.com (unknown [10.39.193.73])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id ECA9C1956050;
-	Fri, 14 Jun 2024 09:03:08 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: linux-doc@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909E5192B9D;
+	Fri, 14 Jun 2024 09:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.132
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718355823; cv=fail; b=O22vh3emDLe4z2zJBZMVxPezUYiiLpWZjvJUzSsTvlZY8vxsXEWFwxCwnddnjksMeFHOdV0OmjkyHPe69Mvdu2gY/ZtrmnibVNR3kHN6OAORwv2SEyNuXNlBozVByjvg8/nD35MOFpSpxvJsJcOHGqYsGo8+iEDsztWrh6fenso=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718355823; c=relaxed/simple;
+	bh=u0zAHyAxW0ArytTJpmDP69GWog/xFGwss8Kv0Dz+f8I=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=kLZLkczt7w36N0rSdT8WhxcFzhoJtG5n0h7viVSSu2ZIA66Ic0xf3duKN5VfZT/QGEkziIKODiHqg+O2jSa04rx6OzfYIvMuiJMglJ3CWyeq0Ql5qMN0/HvseNmdrX2QU4P6r4ChOQq41k8WIDCpyxaUkZyzh5oumaScD0fRx8s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=moxa.com; spf=pass smtp.mailfrom=moxa.com; dkim=pass (1024-bit key) header.d=moxa.com header.i=@moxa.com header.b=aCtzUszt; arc=fail smtp.client-ip=40.107.255.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=moxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=moxa.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OhlDZImtZgs43UlWQGoYMvtbx5uvkS7ushLNLZULuqKDqRGVAimd4Z39qeS7oOOblklCDBQr8L5fkHfLp+vfcYdkDRy4qSxGA+xLYIrVtB/PO/Wrs4Z7aiRSChTA/bkSJAOQUGs4llpdudFmNaO0vdbnzWzVK/iBGkqopiZORk2bxYCHm8Y0Zpd0Hrc2rBwtvgNB/UPoCvrlld32NRx0cFbsN0Qw56QxMYmUeHVZF2tm+20laLp8P8sVYDKkm4fvCBEzSOf1D/v/E9Ed9yaHJa7Olt6bOB6lLIc6tOdbFbqG//F/cik6+qlOQMOUIRiMY2H/nDPCKex12oRyMTNhiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zqycyrf5RVtVINt5+f9e/TlA5YTPaEyKoVPmQO0LCOY=;
+ b=dnPmydzLqtXGTIDhCFMOhhERpEtUfGIeOSlWFL5ujzsZ9IFQgXbisxO9TK7PizO+2yf9a15lEfwsFpK2x8u80V6urtBhfARJKSowIDQvaABiqRTsrs6bAjWhJLgX35ncv+NBzpDq1LEDC4GyhfmpA8o10ZwDcz53LgTYYvkzKKrheHT0bDIcgZL3UIF1b5KxIfJMPgeIzxWBF4jVfj6Sycy1YZ3j7rE4ydveJehupRk3LNJ4d31DoHt4FnYPy94qWcIahhCSB4G3lhdCCCQPO9b1nXF38jwvJonxUuB31Ny0McdodzZHP57jjsVSYPDHyjOJiiFzJ0my8k5wlZmrCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=moxa.com; dmarc=pass action=none header.from=moxa.com;
+ dkim=pass header.d=moxa.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=moxa.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zqycyrf5RVtVINt5+f9e/TlA5YTPaEyKoVPmQO0LCOY=;
+ b=aCtzUsztIiWVqKQ8NW+Zy6Pjr9Igimq7J5CW7q0bBLmmFCtmrWHEsD60fBMaKmnZOCjf4+ZtR599UJT7aqOkxZb4LalUu4CZtMuaUK7915D+6gCfvy9HcLRLMApj9w0iMtBHqcNzMoCTVrPZclTDClDEcV0EZAiPExSYhz2PSOk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=moxa.com;
+Received: from PUZPR01MB5405.apcprd01.prod.exchangelabs.com
+ (2603:1096:301:115::14) by TY0PR0101MB4820.apcprd01.prod.exchangelabs.com
+ (2603:1096:400:278::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.24; Fri, 14 Jun
+ 2024 09:03:37 +0000
+Received: from PUZPR01MB5405.apcprd01.prod.exchangelabs.com
+ ([fe80::60ab:8615:ab67:8817]) by PUZPR01MB5405.apcprd01.prod.exchangelabs.com
+ ([fe80::60ab:8615:ab67:8817%5]) with mapi id 15.20.7677.024; Fri, 14 Jun 2024
+ 09:03:36 +0000
+From: Crescent Hsieh <crescentcy.hsieh@moxa.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>
 Cc: linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH] Documentation: Remove "mfgpt_irq=" from the kernel-parameters.txt file
-Date: Fri, 14 Jun 2024 11:03:06 +0200
-Message-ID: <20240614090306.561464-1-thuth@redhat.com>
+	linux-serial@vger.kernel.org,
+	Crescent Hsieh <crescentcy.hsieh@moxa.com>
+Subject: [PATCH] tty: serial: 8250: Fixes: Fix port count mismatch with the device
+Date: Fri, 14 Jun 2024 17:03:22 +0800
+Message-Id: <20240614090322.2303-1-crescentcy.hsieh@moxa.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0282.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c9::9) To PUZPR01MB5405.apcprd01.prod.exchangelabs.com
+ (2603:1096:301:115::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR01MB5405:EE_|TY0PR0101MB4820:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9daa763b-8278-4e6a-a11b-08dc8c50e032
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230035|1800799019|366011|376009|52116009|38350700009;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?TloJjzoGjIU+vF8gKrlvgShfEqlG4L5N//VI6bWhiArBoNTiBznWfALz3+oC?=
+ =?us-ascii?Q?Tcn61NkxSDj/ZkWE6aqZaYfdQO+XV/rn+qYhvnXqzTxheb0ChDWKB3vDYCGl?=
+ =?us-ascii?Q?KladVg2jsQx7dJehzAUL1GynGDZS1mZ0JdnvZahIKMCl20P02fU1VbhCdiHT?=
+ =?us-ascii?Q?VG7ytL2t71NfFfkgmrCFihwIThZ1pm3Y/33+qkmZIM7PABcBS6c2RbZax5ER?=
+ =?us-ascii?Q?d3/xA3gXCOOi0UEx51KPCZBTE7fKtWciJmg4wh1V2AJXD6n1grk1LEp0I6tz?=
+ =?us-ascii?Q?h/MVH5J7IHwuATVIRgE9WPHJa0YDDn0QSWStCu7O6pprQefS710vAX5Z2w5b?=
+ =?us-ascii?Q?/bvWNBvMQTwBiMsHjijzbStXUj0CWaNWz5b9hxlHldauGS95pNfA7OhjlP/J?=
+ =?us-ascii?Q?TfAcFsxcmlNToE6z5SEwVJivS67LiuFRasZhXMXr7B4O018X5iCWN7YRDvuM?=
+ =?us-ascii?Q?QnYKps+4wIrRIxqPNEYzRNavsVX5Qsz6Cu9hvuRqme9209gDCJjfRGvUGVNI?=
+ =?us-ascii?Q?q/N10x4lpFplnzlEmTq6pIC0CzrctyCBY3wCxKmlpAXbF/r96OEKf/H0gKna?=
+ =?us-ascii?Q?eOuav+UUpkGp0NDcrPg27rK0jAkUyToMg/7kIC01dBNByA+M0f2KbPv92UsK?=
+ =?us-ascii?Q?b3rya8hOih09a858ET0e6WEyhOF3/NgqcoFd2IrCYrbBLxteWWs638Ht2xxm?=
+ =?us-ascii?Q?HmbmrZjObvR9oS1a3z4CjPJv/r1BXpwBlerUqvnZ61/UiCHVDLGhs7NYF35q?=
+ =?us-ascii?Q?LaOnY5A6ygfTWMNPeWf9Ke49iy0hmME0uzBxyGFk/f6L/0bZ3elgQZeLKQnv?=
+ =?us-ascii?Q?g4m3xuyPSK3d9KoA9V0ssY7E9GwhKYOyPHFuBIoB33KN5eNwm7BHFfRERDxQ?=
+ =?us-ascii?Q?vFkm76i6mrc3c8bw62e1SB+v/NrjAFzSkpQeHh+SuFfiNeVKLyqQZTucjj8H?=
+ =?us-ascii?Q?yEWtb/A/8ELQPiaWpXrgsO375XnxE6wcATgI/862LEV4gugN8hMF382f/Qot?=
+ =?us-ascii?Q?IxaTQJBKbwsoI3EMuST1/66tzqqium+eoLdSgjg/Qc2Q24/+5t+Df0x+XgmQ?=
+ =?us-ascii?Q?JOuHeocBoW7GN1niBPY/44q8ElIrCL3YAP+dV03h3YiSnpgQtrEfkhBxB2OW?=
+ =?us-ascii?Q?Lk4qGjl3JAEZY1xF3N+WinG5/+5nRd8fe9jjSdKGBSV8zJjeQrchU4QuOfz5?=
+ =?us-ascii?Q?QrfuLPBGrcfYc56aNh7R5q72GGuGuqCmH2fBN6fMSPwlXU/TwPtgQAFPjuMS?=
+ =?us-ascii?Q?UKTCP5HPnhLnAQHhQ36V1qC0xJHOmJZvGwCUZtvwEyu1bN4L1SNbiuowZHht?=
+ =?us-ascii?Q?5jzWuKRKZ6JoQ/kWLT+EBl5WpyvwDFJMWJzJfqItOERA+9KWVF/UpEWlXQg+?=
+ =?us-ascii?Q?1QVXdIo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR01MB5405.apcprd01.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230035)(1800799019)(366011)(376009)(52116009)(38350700009);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?KBGIIaNJGIZV+HwAlW71VnccvNm1zBtqMsjr/4zDR+AGjDe2uDw+YQax3QnQ?=
+ =?us-ascii?Q?zXMRFjHpeQKcXtfYFaI+ciOxhJmBqWng4wqMwbKT2UfyExXoEqIEVS9ZOjjT?=
+ =?us-ascii?Q?8soiJupGSZ8XlRCcVrF6PPmdpwBxh/DYypiIYQa7LKFMfbPUsGdUuTlbSigx?=
+ =?us-ascii?Q?xODEhPwZvGMHCCcxBHJwTS482NBuUPLo5aCumPUcjvw+hW4RIx7AnSY5lvme?=
+ =?us-ascii?Q?+eJMcKt06VXxfrusdJPoFFDZBF4CywE7g0xcz9Bz6gtrglldXpLtll1sZk+A?=
+ =?us-ascii?Q?8GL8SagvQDC7TxrIB67w+mO28N5NNqLgiXtangV1sw3yR94L5bcVlCmm1lQL?=
+ =?us-ascii?Q?t/KnQD5TchKfdHJS0FUfgy/spREdwfaVZfmDOYYblQmFOINTZ5JGL1HPVKMU?=
+ =?us-ascii?Q?fNavDsrBIuJfWROKim2KVIqbZ2FtEcWH9YgZyEj7lG1dGa4GA4tgRciO8Btj?=
+ =?us-ascii?Q?50qWNEYUrePEQw8a9om8NcQfODEOWk8p9/KnKKKklFGxNj3BNdOQ+S9JKNiN?=
+ =?us-ascii?Q?w+K/LyoxZTiSk3fgkU7+zixrZyy3LhiOoPj3wX7fuw1wjH+TDzR3NW42zu5v?=
+ =?us-ascii?Q?+fGqvVkIxLJblxKwxYIiFlAAFgLgQ2FISztN0cs09hJfE4vcgWHXBlQ67B3z?=
+ =?us-ascii?Q?413Yej25KU2AvErMR9sgmp506kDWhN4ml6tfe6FUFNlHeaz8WUMm+1dQvMa+?=
+ =?us-ascii?Q?oLRzQ5V37Jk1bvpmYYciU/qEKIJ7WmjsSWELxeUrQRyfN5McepdnJgE+E8Xs?=
+ =?us-ascii?Q?4o5gdRVpT7pj2nTTzplt5VR+NXpXxDxvD1f8ACFZsxNlwPd2hLmg4IavDMbU?=
+ =?us-ascii?Q?SzTCyF9GHCWybVJJ6wBUdWOTdTV03I1Tivjby1oC/YAstuhJmmyt4CMNtvnI?=
+ =?us-ascii?Q?ciBVm9oAM1XzFXNY5XBJMsDB9H/Jl4CHWEdkZESFALoEEHWbQONxOZxft/Nf?=
+ =?us-ascii?Q?8DTcuJkGciiO9shuuwYhigplrcoAT5GSiA259EECXzW/P3z4mh22M3ul/ZaE?=
+ =?us-ascii?Q?Zgon2han4HCJwsbC5M8hW+/fGvD3Bqp5durCRxoWbqldOXDTBb3fgDHXZf83?=
+ =?us-ascii?Q?3tn/vzDpwlca1OHnT4zUNYWfVZhFKfzglrdmip/pavhiCVveGGscPF4looDS?=
+ =?us-ascii?Q?EHOdVyOkhc7sQA1WsQZbHe82WOEtf0AN0TP3fKaeAMPTAKiJQ2Lm6buXMX9x?=
+ =?us-ascii?Q?twHbPVsSKI4y1zFgJ5dCoOQW2D8zgO83Xo8y+0UUC5a9nxgdqwBwLXKSPg0y?=
+ =?us-ascii?Q?JUQArn9QaczxL30g0l3EadqKNj9gP5XjGJSLcj1rxaD3AQMUOzP+EaqOcJv6?=
+ =?us-ascii?Q?kU5vnJ9NcNc/GOknr4X5W15Pz/it/BGcWR69LLQCxuFoOwDMNiErGIjdO/B2?=
+ =?us-ascii?Q?B7tjku6+6FR0qjiNlIhiURKukKLQM8mOxYM5G7nxKy8oFEcV+jhsS4yA8Jrr?=
+ =?us-ascii?Q?RZ0aRZzeEPdCUUg8yhZjxPaQlshCtcbrl+wU/YIgsWSfmJfkxnrAMFxuY6oo?=
+ =?us-ascii?Q?b44+jF0SzOZY9ftp86phyCNSQ8mNP0IEy8qyKt+SZ+ESyI9Yn/KEMxdtbLSZ?=
+ =?us-ascii?Q?Id803eiXcIi1dbOj6w2CQd5c5R4ud2o+Z6l71C+etxVsbQTH/Tep0pDi3CYO?=
+ =?us-ascii?Q?Xw=3D=3D?=
+X-OriginatorOrg: moxa.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9daa763b-8278-4e6a-a11b-08dc8c50e032
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR01MB5405.apcprd01.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2024 09:03:36.8282
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5571c7d4-286b-47f6-9dd5-0aa688773c8e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gOzkTxPnzQ0+vCSH9njCmckg30pRN3mmTxTfP8LoyAWKoPMMtyVPwkllgCnK9+wkixqaE7NYOtLN16eLhjvvOJJV/WDZ8f8DxGc74FeUwOU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR0101MB4820
 
-The kernel parameter mfgpt_irq has been removed in 2009 already in the
-commit c95d1e53ed89 ("cs5535: drop the Geode-specific MFGPT/GPIO code").
-Time to remove it from the documentation now, too.
+Normally, the number of ports is indicated by the third digit of the
+device ID on Moxa PCI serial boards. For example, `0x1121` indicates a
+device with 2 ports.
 
-Signed-off-by: Thomas Huth <thuth@redhat.com>
+However, `CP116E_A_A` and `CP116E_A_B` are exceptions; they have 8
+ports, but the third digit of the device ID is `6`.
+
+This patch introduces a function to retrieve the number of ports on Moxa
+PCI serial boards, addressing the issue described above.
+
+Signed-off-by: Crescent Hsieh <crescentcy.hsieh@moxa.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/tty/serial/8250/8250_pci.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a9b905bbc8ca..756ac1e22813 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3426,10 +3426,6 @@
- 			deep    - Suspend-To-RAM or equivalent (if supported)
- 			See Documentation/admin-guide/pm/sleep-states.rst.
+diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
+index 40af74b55933..e1d7aa2fa347 100644
+--- a/drivers/tty/serial/8250/8250_pci.c
++++ b/drivers/tty/serial/8250/8250_pci.c
+@@ -1985,6 +1985,17 @@ enum {
+ 	MOXA_SUPP_RS485 = BIT(2),
+ };
  
--	mfgpt_irq=	[IA-32] Specify the IRQ to use for the
--			Multi-Function General Purpose Timers on AMD Geode
--			platforms.
--
- 	mfgptfix	[X86-32] Fix MFGPT timers on AMD Geode platforms when
- 			the BIOS has incorrectly applied a workaround. TinyBIOS
- 			version 0.98 is known to be affected, 0.99 fixes the
++static unsigned short moxa_get_nports(unsigned short device)
++{
++	switch (device) {
++	case PCI_DEVICE_ID_MOXA_CP116E_A_A:
++	case PCI_DEVICE_ID_MOXA_CP116E_A_B:
++		return 8;
++	}
++
++	return FIELD_GET(0x00F0, device);
++}
++
+ static bool pci_moxa_is_mini_pcie(unsigned short device)
+ {
+ 	if (device == PCI_DEVICE_ID_MOXA_CP102N	||
+@@ -2038,7 +2049,7 @@ static int pci_moxa_init(struct pci_dev *dev)
+ {
+ 	unsigned short device = dev->device;
+ 	resource_size_t iobar_addr = pci_resource_start(dev, 2);
+-	unsigned int num_ports = (device & 0x00F0) >> 4, i;
++	unsigned int i, num_ports = moxa_get_nports(device);
+ 	u8 val, init_mode = MOXA_RS232;
+ 
+ 	if (!(pci_moxa_supported_rs(dev) & MOXA_SUPP_RS232)) {
 -- 
-2.45.2
+2.34.1
 
 
