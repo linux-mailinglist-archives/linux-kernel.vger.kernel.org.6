@@ -1,229 +1,134 @@
-Return-Path: <linux-kernel+bounces-214246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3AA39081D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:45:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 460CD9081D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57D4C1F24994
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:45:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2695284211
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741CA145A00;
-	Fri, 14 Jun 2024 02:45:33 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E3E374FE
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 02:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A299018309B;
+	Fri, 14 Jun 2024 02:46:25 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E563201;
+	Fri, 14 Jun 2024 02:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718333132; cv=none; b=Q17+FlDbZpvyQeFYxEPuC1lynngB5eU6VUzKJxp5YVy8Z5HZ1eSbSLGVwF5HhKP2jL92XVZXDjltPekdGs7NDzR4LP9zWfWVJ2Au/4pBckJJug0/P9OfvsdkFpdFuVOZEtb+J0U613jlc4K4Ma59sZed2bJ0ryO7Z/asGHSk4ko=
+	t=1718333185; cv=none; b=fQsbQZFj1oA9gMS17QFf5nN0IS6cA8SGHDvr5jmMOeLQ1Mi1YtUwSgX/okX6E/sKN5GjGY28JECQppj8O0HfcB8IIucI0/veKH9Q5BLMn94qLME80laiIla/8k+BiT28+P2W264ePoqqB14SgSQM3yo5LekjDCpeA6wyp8MqTKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718333132; c=relaxed/simple;
-	bh=Q6drMV6EJgFGpI9rIuu/40gnRhRRxuf/lwLuY6sM5tw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nSPXqDCdgUPH9kmpYKUA6tQ+nWZaJMrStFx79E+h94v7RNQY8R+kijgn7sWzLoI0rI8nXhq19pk8eBYFJpl6USnugqN3/TTZ5jUU9JtAwqx/KRSOiOdrtUYwv1mQH2gwEcnSBIUTHPwV3wOhJCz59HYrjLMLgSAZKipRNexTZJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-18-666baec31553
-Date: Fri, 14 Jun 2024 11:45:18 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Dave Hansen <dave.hansen@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Byungchul Park <lkml.byungchul.park@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, akpm@linux-foundation.org,
-	ying.huang@intel.com, vernhao@tencent.com,
-	mgorman@techsingularity.net, hughd@google.com, peterz@infradead.org,
-	luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, rjgolo@gmail.com
-Subject: Re: [PATCH v11 09/12] mm: implement LUF(Lazy Unmap Flush) defering
- tlb flush when folios get unmapped
-Message-ID: <20240614024518.GB47085@system.software.com>
-References: <26dc4594-430b-483c-a26c-7e68bade74b0@redhat.com>
- <20240603093505.GA12549@system.software.com>
- <d650c29b-129f-4fac-9a9d-ea1fbdae2c3a@intel.com>
- <35866f91-7d96-462a-aa0a-ac8a6b8cbcf8@redhat.com>
- <196481bb-b86d-4959-b69b-21fda4daae77@intel.com>
- <Zl320dWODSYw-PgV@casper.infradead.org>
- <20240604003448.GA26609@system.software.com>
- <Zmb-ZZHbeNNjcs68@tiehlicka>
- <20240611005523.GA4384@system.software.com>
- <Zmg7GXK1SGFJNdge@tiehlicka>
+	s=arc-20240116; t=1718333185; c=relaxed/simple;
+	bh=zPvvfcrWiryVVmbdckHsbGSqcaJy4UzIjFMflqZUQQE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=YzqAGjjgkMkmATEfxfjjk9eZzbOEV43y2el05vu66lp5IbNJ2kmkba6JlwVu5HBHV+5WLs/SsxIHsqaLOXRg0XQJ4VIY2xApf3rFHfVeXjSQcdpQNb51+6wIpiM4astxfcsE6S81vmIFgBH4J9tLmCSfATLOiJG44N8u5XEnkfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8AxW+rnrmtmN8AGAA--.27338S3;
+	Fri, 14 Jun 2024 10:46:00 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8Bx28bkrmtmnKUfAA--.11909S3;
+	Fri, 14 Jun 2024 10:45:59 +0800 (CST)
+Subject: Re: [PATCH] KVM: Remove duplicated zero clear with dirty_bitmap
+ buffer
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240613125407.1126587-1-maobibo@loongson.cn>
+ <115973a9-caa6-4d53-a477-dea2d2291598@wanadoo.fr>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <fb2da53e-791d-aef7-4dbb-dcf054675f9b@loongson.cn>
+Date: Fri, 14 Jun 2024 10:45:56 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zmg7GXK1SGFJNdge@tiehlicka>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsXC9ZZnke7hddlpBtOWWFnMWb+GzeLzhn9s
-	Fp9ePmC0eLGhndHi6/pfzBZPP/WxWFzeNYfN4t6a/6wWRzs3MVuc37WW1WLH0n1MFvf7HCwu
-	HVjAZHG89wCTxfx7n9ksNm+aymxxfMpURovfP4C6Ts6azOIg7PG9tY/FY+esu+weCzaVemxe
-	oeWxeM9LJo9NqzrZPDZ9msTu8e7cOXaPEzN+s3jMOxno8X7fVTaP9Vuusnhs/WXn0Tj1GpvH
-	501yAfxRXDYpqTmZZalF+nYJXBnTj7xnLjilUrH4zEWWBsY7kl2MnBwSAiYSc3r62GDsDx2d
-	LCA2i4CqRNv7CWBxNgF1iRs3fjKD2CICShJdm3cCxbk4mAX+M0v8mHcMrEhYoEDi1YRJ7CA2
-	r4CFxPXW9WCDhAROM0vcf2oIEReUODnzCVicWUBL4sa/l0xdjBxAtrTE8n8cIGFOAU2Jy58/
-	g40RFVCWOLDtOBPILgmBY+wS805PYoY4VFLi4IobLBMYBWYhGTsLydhZCGMXMDKvYhTKzCvL
-	TczMMdHLqMzLrNBLzs/dxAiM12W1f6J3MH66EHyIUYCDUYmH1+NZVpoQa2JZcWXuIUYJDmYl
-	Ed5ZC4FCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeY2+lacICaQnlqRmp6YWpBbBZJk4OKUaGDec
-	UHJfuOXayzvaD5SnxS4+YlmesyF1u/nr2EqxyG/LwlbqfOgO2rORg7NBd+nKn7J3LuVqqTXs
-	+N+6XiWKhefaK1/Ri4fmOPc9ft0f8qz0i5qdEPu7+a561wz+P9x0aSlr+s8mqTz5mUx7E83M
-	nre/3OOocl5A5PDKg9+mXJr1JX7plNWfHvEpsRRnJBpqMRcVJwIAdm4/+9MCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOIsWRmVeSWpSXmKPExsXC5WfdrHt4XXaawY8ZMhZz1q9hs/i84R+b
-	xaeXDxgtXmxoZ7T4uv4Xs8XTT30sFofnnmS1uLxrDpvFvTX/WS2Odm5itji/ay2rxY6l+5gs
-	7vc5WFw6sIDJ4njvASaL+fc+s1ls3jSV2eL4lKmMFr9/AHWdnDWZxUHE43trH4vHzll32T0W
-	bCr12LxCy2PxnpdMHptWdbJ5bPo0id3j3blz7B4nZvxm8Zh3MtDj/b6rbB6LX3xg8li/5SqL
-	x9Zfdh6NU6+xeXzeJBcgEMVlk5Kak1mWWqRvl8CVMf3Ie+aCUyoVi89cZGlgvCPZxcjJISFg
-	IvGho5MFxGYRUJVoez+BDcRmE1CXuHHjJzOILSKgJNG1eSdQnIuDWeA/s8SPecfAioQFCiRe
-	TZjEDmLzClhIXG9dDzZISOA0s8T9p4YQcUGJkzOfgMWZBbQkbvx7ydTFyAFkS0ss/8cBEuYU
-	0JS4/Pkz2BhRAWWJA9uOM01g5J2FpHsWku5ZCN0LGJlXMYpk5pXlJmbmmOoVZ2dU5mVW6CXn
-	525iBEbfsto/E3cwfrnsfohRgINRiYfX41lWmhBrYllxZe4hRgkOZiUR3lkLgUK8KYmVValF
-	+fFFpTmpxYcYpTlYlMR5vcJTE4QE0hNLUrNTUwtSi2CyTBycUg2M+htj9DeExnqxHKh+sc5a
-	53exN8deDsc1V+uYjy8Vj5Baz3GLNfj0s+0HV994E2nceJPPKlrtY9n9ZbW3RDNcQidVTLOf
-	+bub71SHj9PPyzJ9/2/vPfAoXeHx4gQnr51vJzdt1/65LWb77sIFhbr7rpdzJC55cq5CWmHS
-	3MU8O83qNB9zT9jfrcRSnJFoqMVcVJwIAB6WDw66AgAA
-X-CFilter-Loop: Reflected
+In-Reply-To: <115973a9-caa6-4d53-a477-dea2d2291598@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8Bx28bkrmtmnKUfAA--.11909S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxJrW7urWrGr1fGw4furyxXrc_yoW8Zr13pF
+	s3tFWUGrW5Jw18Cw17Cwn8W348t3yDtwn7Gr1UJFyUXr1kJr1vqr4IgF10g3WUZr4Iy3Wr
+	JF4jqFyUuF1UA3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
+	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
+	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
+	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
+	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtw
+	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
+	67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
+	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwmhF
+	DUUUU
 
-On Tue, Jun 11, 2024 at 01:55:05PM +0200, Michal Hocko wrote:
-> On Tue 11-06-24 09:55:23, Byungchul Park wrote:
-> > On Mon, Jun 10, 2024 at 03:23:49PM +0200, Michal Hocko wrote:
-> > > On Tue 04-06-24 09:34:48, Byungchul Park wrote:
-> > > > On Mon, Jun 03, 2024 at 06:01:05PM +0100, Matthew Wilcox wrote:
-> > > > > On Mon, Jun 03, 2024 at 09:37:46AM -0700, Dave Hansen wrote:
-> > > > > > Yeah, we'd need some equivalent of a PTE marker, but for the page cache.
-> > > > > >  Presumably some xa_value() that means a reader has to go do a
-> > > > > > luf_flush() before going any farther.
-> > > > > 
-> > > > > I can allocate one for that.  We've got something like 1000 currently
-> > > > > unused values which can't be mistaken for anything else.
-> > > > > 
-> > > > > > That would actually have a chance at fixing two issues:  One where a new
-> > > > > > page cache insertion is attempted.  The other where someone goes to look
-> > > > > > in the page cache and takes some action _because_ it is empty (I think
-> > > > > > NFS is doing some of this for file locks).
-> > > > > > 
-> > > > > > LUF is also pretty fundamentally built on the idea that files can't
-> > > > > > change without LUF being aware.  That model seems to work decently for
-> > > > > > normal old filesystems on normal old local block devices.  I'm worried
-> > > > > > about NFS, and I don't know how seriously folks take FUSE, but it
-> > > > > > obviously can't work well for FUSE.
-> > > > > 
-> > > > > I'm more concerned with:
-> > > > > 
-> > > > >  - page goes back to buddy
-> > > > >  - page is allocated to slab
-> > > > 
-> > > > At this point, tlb flush needed will be performed in prep_new_page().
-> > > 
-> > > But that does mean that an unaware caller would get an additional
-> > > overhead of the flushing, right? I think it would be just a matter of
-> > 
-> > pcp for locality is already a better source of side channel attack.  FYI,
-> > tlb flush gets barely performed only if pending tlb flush exists.
+
+
+On 2024/6/14 上午3:25, Christophe JAILLET wrote:
+> Le 13/06/2024 à 14:54, Bibo Mao a écrit :
+>> Since dirty_bitmap pointer is allocated with function __vcalloc(),
+>> there is __GFP_ZERO flag set in the implementation about this function
+>> __vcalloc_noprof(). It is not necessary to clear dirty_bitmap buffer
+>> with zero again.
+>>
+>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>> ---
+>>   virt/kvm/kvm_main.c | 3 ---
+>>   1 file changed, 3 deletions(-)
+>>
 > 
-> Right but rare and hard to predict latencies are much worse than
-> consistent once.
-
-No doubt it'd be the best if we keep things consistent as long as
-possible.  How consistent *we require* it would be, matters.  Lemme know
-criteria for that if any.  I will check it.
-
-> > > time before somebody can turn that into a side channel attack, not to
-> > > mention unexpected latencies introduced.
-> > 
-> > Nope.  The pending tlb flush performed in prep_new_page() is the one
-> > that would've done already with the vanilla kernel.  It's not additional
-> > tlb flushes but it's subset of all the skipped ones.
+> Hi,
 > 
-> But those skipped once could have happened in a completely different
-> context (e.g. a different process or even a diffrent security domain),
-> right?
-
-Right.
-
-> > It's worth noting all the existing mm reclaim mechaisms have already
-> > introduced worse unexpected latencies.
+>> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+>> index 14841acb8b95..c7d4a041dcfa 100644
+>> --- a/virt/kvm/kvm_main.c
+>> +++ b/virt/kvm/kvm_main.c
+>> @@ -1669,9 +1669,6 @@ static int kvm_prepare_memory_region(struct kvm 
+>> *kvm,
+>>               r = kvm_alloc_dirty_bitmap(new);
+>>               if (r)
+>>                   return r;
+>> -
+>> -            if (kvm_dirty_log_manual_protect_and_init_set(kvm))
+>> -                bitmap_set(new->dirty_bitmap, 0, new->npages);
 > 
-> Right, but a reclaim, especially direct reclaim, are expected to be
-> slow. It is much different to see spike latencies on system with a lot
-> of memory.
+> unless I miss something obvious, this does not clear anything, but set 
+> all bits to 1.
+> 
+> 0 is not for "write 0" (i.e. clear), but for "start at offset 0".
+> So all bits are set to 1 in this case.
+you are right, I had thought it is to write 0 :(
 
-Talking about rt system?  In rt system, the system should prevent its
-memory from being reclaimed, IMHO, since these will add unexpected
-latencies.
+I do not know whether KVM_DIRTY_LOG_INITIALLY_SET should be enabled on 
+LoongArch. If it is set, write protection for second MMU will start one 
+by one in function kvm_arch_mmu_enable_log_dirty_pt_masked() when dirty 
+log is cleared if it is set, else write protection will start in 
+function kvm_arch_commit_memory_region() when flag of memslot is changed.
 
-Reclaim and migrations alreay introduce unexpected latencies themselves.
-Why does only latencies by luf matter?  I'm asking to understand what
-you mean, in order to fix luf if any.
+I do not see the obvious benefits between these two write protect 
+stages. Can anyone give me any hints?
 
-   vanilla
-   -------
-   alloc_page() {
-      ...
-      preempted by kswapd or direct reclaim {
-         ...
-         reclaim
-            unmap file pages
-   	 tlb shootdown
-         ...
-         migration
-            unmap pages
-   	 tlb shootdown
-         ...
-      }
-      ...
-      interrupted by tlb shootdown from other CPUs {
-         ...
-      }
-      ...
-      prep_new_page() {
-         ...
-      }
-   }
-   
-   with luf
-   --------
-   alloc_page() {
-      ...
-      preempted by kswapd or direct reclaim {
-         ...
-         reclaim
-            unmap file pages
-   	 (skip tlb shootdown)
-         ...
-         migration
-            unmap pages
-   	 (skip tlb shootdown)
-         ...
-      }
-      ...
-      interrupted by tlb shootdown from other CPUs {
-         ...
-      }
-      ...
-      prep_new_page() {
-         ...
-         /*
-          * This can be tlb shootdown skipped in this context or others.
-          */
-         tlb shootdown with much smaller cpumask
-         ...
-      }
-   }
+Regards
+Bibo Mao
 
-I really want to understand why only latentcies introduced in luf
-matter?  Why does not latencies already introduced in vanilla matter?
+> 
+> CJ
+> 
+>>           }
+>>       }
+>>
+>> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
 
-	Byungchul
-
-> -- 
-> Michal Hocko
-> SUSE Labs
 
