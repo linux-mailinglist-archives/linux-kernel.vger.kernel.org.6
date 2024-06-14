@@ -1,129 +1,137 @@
-Return-Path: <linux-kernel+bounces-215267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F026790906E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:36:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D4E9909073
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AC771F22812
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:36:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63E601C24617
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F35D19E7E9;
-	Fri, 14 Jun 2024 16:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D77017E47D;
+	Fri, 14 Jun 2024 16:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="co6gCz47"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dYBtm24e"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0797B19E7D5
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 16:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD471465AA
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 16:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718382824; cv=none; b=a74xEwsQ8agmWLi66smKxkEB2hAZUvi8EC6KU1WeAiTE6ZxKyt/eVgQJnGw8hoirgAN0fkwyNOwRxYz8gRzgqMJDl7Aftfsdj2KHiTzPkbf6O54NfktbYN+jgYwkE6lHckxQI5tfrN7VEOMNUas8l4ExkPtV+CCMJIDOuM6JRZk=
+	t=1718382857; cv=none; b=TYfeKmrms/+cv7u1FTsFiTVmq81YZ9CLzJVTgp1rOaUIY250XP+aAKQRQpCxQZFscIH18Ao2EUlKcGaTn3T3pJvXCljrLgfjdge9lJXKLvDciTkNWPl/xh/XzyNPJCMP8WlYIdNH1TEsRXsHM+9H2gVSz86yzWXDbY9icNzNPLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718382824; c=relaxed/simple;
-	bh=tg7Ug+R2k5P5nu7eDn/tx4zxzuIllL4iILv57t75vAU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g3uesDL0tFJyOn0KRWosz5GVlTQYf0vE/t8909AYfw6fYw4zWH2A0OsuYVKTAvm+reufW1+V9Qe7wr9m8D4Z3TKB8Jt+YE15WUA4Dgj9L+JV+Y0Y3oqoW0EKjqQ0J7PP+TzMRrUaNs/25ALJF7B3+jy2csM1LYYEQYkurHO7fSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=co6gCz47; arc=none smtp.client-ip=209.85.208.175
+	s=arc-20240116; t=1718382857; c=relaxed/simple;
+	bh=0nEb3gSfbpNCQF05a2LHM3iK60Zt11N7GPw8rCKzca0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VZn1AqoB5YKVdJiSNaqh0XpIZqBagU8wCGZszGBp/SWexcTqxm3B69BF3F+U+MlSB0R3ZPRFsVtEojRsToB2g1aR25WWlWxBSMr4V58Yl79KEyQeNzpq+Uu82IyBYVBIKD7xg3EfTfUMXWGEM7wEpklpnN7KIPWnqVdT2G7RLeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dYBtm24e; arc=none smtp.client-ip=209.85.208.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eaae2a6dc1so43662071fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:33:42 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ec0f3b9cfeso12885911fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:34:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718382821; x=1718987621; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2d55ULbnkaBid8TOFZdzcvS/9s8SVhV1X5mA5njwAFo=;
-        b=co6gCz47cjUbGKSvknvGqpM5jqgNgYGTxRyVdLMMgnCqZO+1JU+EtQSTpUALmHC7Yh
-         a0F+b0G4SYyQgvMdJPZY1wAlf9XmWFVDTrpseHQz2kBHMIzBvKLRK6q35EUtrFPH7CVS
-         i4JuA7PkPJSYJrjl2q1F21cR83aj1M9HLEzxubL0iWP7LXF9RHC4dtbkoq1ITIyDwcmd
-         JjoSxkSNKUQ5z0tNTcytP/btdwxg4F9eatSxR/EMJmWCgkmYunllnwl2eu+f5fwkMnmS
-         1kfr+mFDQdYV6cK9iY06hooU00dDdUWOKJy++NjUrqD38fFfHatNDHIG0aeENAW6FEp8
-         YBOg==
+        d=linaro.org; s=google; t=1718382854; x=1718987654; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GsvUggwl2iaq+7ID95/kPZJoKFES9T3PhHRwe3ICtG8=;
+        b=dYBtm24egFiBj0gwws5FWLCaNWd7UtbuWBrunGND0YKQZXWDOOTrym7iqQyckKwjJr
+         Kse4W5zUV9b7VweGY/BQA+vIxNzaeKVnE6V9YHDDYf+vgRS/1t4YakziDHwqNmJF2zwY
+         zDBcHFCTkJksu1+No9el17BfQFkGeEW07QFHR6yPew+Ema2ucWCVocpfY37NZ/wDhx09
+         U9BA+82G4HAEADtVQEbysfgOse3DqAgPJXzZvXx9iQ1kChEuBFJLLvBauSi+mm0T9zWT
+         I4jO8iZeFH71Lc9326yDnRK5QwKudpb9X7xTLlwjOtCEkFUeRIDA/ntm8fDmkdpdBTrl
+         2Reg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718382821; x=1718987621;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2d55ULbnkaBid8TOFZdzcvS/9s8SVhV1X5mA5njwAFo=;
-        b=eX7VMfqtYKOfLG7waoHC4pjEuCMfvOe8pt/plbMkR7PCUUAodK7ZhJGUuOmUynSOb3
-         OEKfu0OrJlRjdMwko8q9iMHMC8W4ubknB7aBSAbh2QhUD/iKf8XKDPg/fCNuJam09LDx
-         dew8ytwi9LIUdS1kY8/wgYtYoiuNBQj9GcJAFY0JIQ2PeDFpD+E3ns4lyeRnSXvDsOYL
-         TbPlVglropL5kug3138PiddKrtMkBkamvdtMBDerape3xQF9cGFQ6809wsygksWxDc5i
-         GVgv//JeznVF3n7U370MtqW+U66yGtn5L7mh+IiZnpGpxRjPHZciw+PhEsX4kyQTHNY8
-         yS5g==
-X-Forwarded-Encrypted: i=1; AJvYcCU5D4dzfltrFNVmC9YL/LcEEhgHYp/oGL+tZqzLc078TW5IQ2coLdITKH5lICJ9F93FOoF5EOhVBqTj2jZ7Xli9/hZ3fI3+3FIqDlSd
-X-Gm-Message-State: AOJu0YwMSYXY7rGDMlSh6508pRjMbLyb5BFixRvtH2bgxjXHzIAY6Fi4
-	OMEvAFQb+p5CHoQNquIdUA6vtfUcziPaNel0hrnphGEtGYmIpqLO+62bZi+2AGc=
-X-Google-Smtp-Source: AGHT+IEnB+fBfP43mYT/p53SnlqGh8oUvLF5M1CtSsLsttHfAwsPZDksfX2T6AKsZ/OOhCIWhq9eBQ==
-X-Received: by 2002:a2e:9f44:0:b0:2ea:edac:4886 with SMTP id 38308e7fff4ca-2ec0e5c9a5fmr24401781fa.45.1718382821099;
-        Fri, 14 Jun 2024 09:33:41 -0700 (PDT)
-Received: from eriador.lan (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c89a99sm5527931fa.107.2024.06.14.09.33.40
+        d=1e100.net; s=20230601; t=1718382854; x=1718987654;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GsvUggwl2iaq+7ID95/kPZJoKFES9T3PhHRwe3ICtG8=;
+        b=pc1omqKY85zucfwTMUnvMlw38Cfo6nJ0A0x3cRADX17cqz8M983xcBoDSOgE7W79sJ
+         EekKWAhscIgjl4vmQgQtWiuUoZ67cTJAUEZAuho7kfSGDEB5EzNQ05MF8Uj1Xh/o4k1u
+         b5esRAYmS4v+BiOlXMXRjLQ/Oqg4mEaCbsC6DfyWVJcA45pRinw7sGgr8lfvgckx8FPV
+         1ZxBhRRKMz6B2hu8AslTODcEZ64g6RiJvDIGo8BcMukk9oIzP3lqRREs81dnLuPRiAK1
+         WUgyjs873iYT+n4DkJLWEvrfjalH/enqocU3B9NFUwcRMxSnarN0cxS+qsS8wSxeEwUL
+         FolA==
+X-Forwarded-Encrypted: i=1; AJvYcCXS8y78kLn/PU+EhpIA6sSBk/w1WUPVfbCZV+g3uNbu4+c3z6O+82Yp2e0gPHPOKuOO/b5dag2Ih/+bOmkNkxcLNG0WjD6j4bszcU/1
+X-Gm-Message-State: AOJu0YzqsaUXBcUEDorFqUv/L5yJ08AzRqlqP6wH3bHIWTdKWb4SrnLW
+	kAYZVL2qwTOfDeTCex97G5Ve2NCvIoHH9PB79tMTK8pYIZgLhgPgb2XcNoq/H2w=
+X-Google-Smtp-Source: AGHT+IGWO/+8GdkVi0zVWi4kRTQ+VAxP+yfG1FPOfEgKx9zHhcN/3noH2wJkYSc+zOPvMmPFAKBvSA==
+X-Received: by 2002:a2e:2281:0:b0:2ec:ff6:3bcc with SMTP id 38308e7fff4ca-2ec0ff64128mr16860701fa.5.1718382854165;
+        Fri, 14 Jun 2024 09:34:14 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c061d3sm5763841fa.50.2024.06.14.09.34.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 09:33:40 -0700 (PDT)
+        Fri, 14 Jun 2024 09:34:13 -0700 (PDT)
+Date: Fri, 14 Jun 2024 19:34:12 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Douglas Anderson <dianders@chromium.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Jeffrey Hugo <quic_jhugo@quicinc.com>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 0/3] drm/panel-edp: remove several legacy compatibles used by the driver
-Date: Fri, 14 Jun 2024 19:33:37 +0300
-Message-ID: <171838280388.2978747.14895279716639954590.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240614-edp-panel-drop-v4-0-4e0a112eec46@linaro.org>
-References: <20240614-edp-panel-drop-v4-0-4e0a112eec46@linaro.org>
+To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
+	benjamin.tissoires@redhat.co, dianders@google.com, hsinyi@google.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] dt-bindings: display: panel: Add compatible for
+ kingdisplay-kd101ne3
+Message-ID: <plucbf66gjhmt7bmtalqiopunqxnfjxljbt5flvjy3ssntx2vr@ou2pnejbvpg2>
+References: <20240614145510.22965-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+ <20240614145510.22965-3-lvzhaoxiong@huaqin.corp-partner.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240614145510.22965-3-lvzhaoxiong@huaqin.corp-partner.google.com>
 
-On Fri, 14 Jun 2024 03:02:19 +0300, Dmitry Baryshkov wrote:
-> There are two ways to describe an eDP panel in device tree. The
-> recommended way is to add a device on the AUX bus, ideally using the
-> edp-panel compatible. The legacy way is to define a top-level platform
-> device for the panel.
+On Fri, Jun 14, 2024 at 10:55:08PM GMT, Zhaoxiong Lv wrote:
+> The kingdisplay-kd101ne3 is a 10.1" WXGA TFT-LCD panel with
+> jadard-jd9365da controller. Hence, we add a new compatible
+> with panel specific config.
 > 
-> Document that adding support for eDP panels in a legacy way is strongly
-> discouraged (if not forbidden at all).
+> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+> ---
+> Chage since V3:
 > 
-> [...]
+> - 1. Abandon the V2 patch and add kingdisplay kd101ne3-40ti binding to 
+> -    jadard,jd9365da-h3.yaml again.
+> 
+> V2:https://lore.kernel.org/all/20240601084528.22502-2-lvzhaoxiong@huaqin.corp-partner.google.com/
+> 
+> Chage since V2:
+> 
+> -  Drop some properties that have already been defined in panel-common.
+> -  The header file 'dt-bindings/gpio/gpio.h' is not used, delete it
+> 
+> V1: https://lore.kernel.org/all/20240418081548.12160-2-lvzhaoxiong@huaqin.corp-partner.google.com/
+> 
+> ---
+>  .../devicetree/bindings/display/panel/jadard,jd9365da-h3.yaml    | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/panel/jadard,jd9365da-h3.yaml b/Documentation/devicetree/bindings/display/panel/jadard,jd9365da-h3.yaml
+> index 41eb7fbf7715..6138d853a15b 100644
+> --- a/Documentation/devicetree/bindings/display/panel/jadard,jd9365da-h3.yaml
+> +++ b/Documentation/devicetree/bindings/display/panel/jadard,jd9365da-h3.yaml
+> @@ -19,6 +19,7 @@ properties:
+>            - chongzhou,cz101b4001
+>            - radxa,display-10hd-ad001
+>            - radxa,display-8hd-ad002
+> +          - kingdisplay,kd101ne3-40ti
 
-Applied to drm-misc-next, thanks!
+I think the list was sorted. Please keep it this way.
 
-[1/3] drm/panel-edp: add fat warning against adding new panel compatibles
-      commit: faeebafe1d273ed6271dfb6555cd90ee730343c1
-[2/3] dt-bindings: display: panel-edp-legacy: drop several eDP panels
-      commit: 73458101e5681a7d766184cb4e16cb7b87571359
-[3/3] drm/panel-edp: drop several legacy panels
-      commit: 51e1fb144f17c277309ed5a1c6f0d921df0064d7
+>        - const: jadard,jd9365da-h3
+>  
+>    reg: true
+> -- 
+> 2.17.1
+> 
 
-Best regards,
 -- 
 With best wishes
 Dmitry
-
 
