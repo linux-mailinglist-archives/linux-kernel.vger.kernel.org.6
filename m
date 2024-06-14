@@ -1,137 +1,104 @@
-Return-Path: <linux-kernel+bounces-215268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4E9909073
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:36:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A52D908FB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63E601C24617
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:36:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D7E1B253BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D77017E47D;
-	Fri, 14 Jun 2024 16:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07689180A76;
+	Fri, 14 Jun 2024 16:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dYBtm24e"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kp0vLtz+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD471465AA
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 16:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CD717FAA4;
+	Fri, 14 Jun 2024 16:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718382857; cv=none; b=TYfeKmrms/+cv7u1FTsFiTVmq81YZ9CLzJVTgp1rOaUIY250XP+aAKQRQpCxQZFscIH18Ao2EUlKcGaTn3T3pJvXCljrLgfjdge9lJXKLvDciTkNWPl/xh/XzyNPJCMP8WlYIdNH1TEsRXsHM+9H2gVSz86yzWXDbY9icNzNPLA=
+	t=1718381333; cv=none; b=TE9kg3rzaz7ebdqj3JJSvQSC4t7XN27kF1AhiscnIwJ+edoSKg3TDNpxNW2Ftdn5yPJ13fqgPR0tKcxoUbUHvKncw9AWARkeytmAQ6q5i9WWkr6gZKyqWyoZJuAWlJwVxyDdeJ4aFZoE70F4u/7xZEhJJ3cZkG5W7Q71JAhO1nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718382857; c=relaxed/simple;
-	bh=0nEb3gSfbpNCQF05a2LHM3iK60Zt11N7GPw8rCKzca0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VZn1AqoB5YKVdJiSNaqh0XpIZqBagU8wCGZszGBp/SWexcTqxm3B69BF3F+U+MlSB0R3ZPRFsVtEojRsToB2g1aR25WWlWxBSMr4V58Yl79KEyQeNzpq+Uu82IyBYVBIKD7xg3EfTfUMXWGEM7wEpklpnN7KIPWnqVdT2G7RLeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dYBtm24e; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ec0f3b9cfeso12885911fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:34:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718382854; x=1718987654; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GsvUggwl2iaq+7ID95/kPZJoKFES9T3PhHRwe3ICtG8=;
-        b=dYBtm24egFiBj0gwws5FWLCaNWd7UtbuWBrunGND0YKQZXWDOOTrym7iqQyckKwjJr
-         Kse4W5zUV9b7VweGY/BQA+vIxNzaeKVnE6V9YHDDYf+vgRS/1t4YakziDHwqNmJF2zwY
-         zDBcHFCTkJksu1+No9el17BfQFkGeEW07QFHR6yPew+Ema2ucWCVocpfY37NZ/wDhx09
-         U9BA+82G4HAEADtVQEbysfgOse3DqAgPJXzZvXx9iQ1kChEuBFJLLvBauSi+mm0T9zWT
-         I4jO8iZeFH71Lc9326yDnRK5QwKudpb9X7xTLlwjOtCEkFUeRIDA/ntm8fDmkdpdBTrl
-         2Reg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718382854; x=1718987654;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GsvUggwl2iaq+7ID95/kPZJoKFES9T3PhHRwe3ICtG8=;
-        b=pc1omqKY85zucfwTMUnvMlw38Cfo6nJ0A0x3cRADX17cqz8M983xcBoDSOgE7W79sJ
-         EekKWAhscIgjl4vmQgQtWiuUoZ67cTJAUEZAuho7kfSGDEB5EzNQ05MF8Uj1Xh/o4k1u
-         b5esRAYmS4v+BiOlXMXRjLQ/Oqg4mEaCbsC6DfyWVJcA45pRinw7sGgr8lfvgckx8FPV
-         1ZxBhRRKMz6B2hu8AslTODcEZ64g6RiJvDIGo8BcMukk9oIzP3lqRREs81dnLuPRiAK1
-         WUgyjs873iYT+n4DkJLWEvrfjalH/enqocU3B9NFUwcRMxSnarN0cxS+qsS8wSxeEwUL
-         FolA==
-X-Forwarded-Encrypted: i=1; AJvYcCXS8y78kLn/PU+EhpIA6sSBk/w1WUPVfbCZV+g3uNbu4+c3z6O+82Yp2e0gPHPOKuOO/b5dag2Ih/+bOmkNkxcLNG0WjD6j4bszcU/1
-X-Gm-Message-State: AOJu0YzqsaUXBcUEDorFqUv/L5yJ08AzRqlqP6wH3bHIWTdKWb4SrnLW
-	kAYZVL2qwTOfDeTCex97G5Ve2NCvIoHH9PB79tMTK8pYIZgLhgPgb2XcNoq/H2w=
-X-Google-Smtp-Source: AGHT+IGWO/+8GdkVi0zVWi4kRTQ+VAxP+yfG1FPOfEgKx9zHhcN/3noH2wJkYSc+zOPvMmPFAKBvSA==
-X-Received: by 2002:a2e:2281:0:b0:2ec:ff6:3bcc with SMTP id 38308e7fff4ca-2ec0ff64128mr16860701fa.5.1718382854165;
-        Fri, 14 Jun 2024 09:34:14 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c061d3sm5763841fa.50.2024.06.14.09.34.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 09:34:13 -0700 (PDT)
-Date: Fri, 14 Jun 2024 19:34:12 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
-	benjamin.tissoires@redhat.co, dianders@google.com, hsinyi@google.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] dt-bindings: display: panel: Add compatible for
- kingdisplay-kd101ne3
-Message-ID: <plucbf66gjhmt7bmtalqiopunqxnfjxljbt5flvjy3ssntx2vr@ou2pnejbvpg2>
-References: <20240614145510.22965-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240614145510.22965-3-lvzhaoxiong@huaqin.corp-partner.google.com>
+	s=arc-20240116; t=1718381333; c=relaxed/simple;
+	bh=sQjq5cGXIM+nx/P/Mig6SyDdYfM1cXqaGAJW8hcFpKI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ITSrx6R77KK6mprZbOWN4l/94KOZo5a8Vur3AlecLBwVfxKqJlRUfjqQJz3kjKJG5bCSNpYqf50bFWqEYJA/HvdCGIN8vgA3iN4IGdT006EaincXmFmGhh/CrUQitT/xhn9RVI3RRc6ieQQYmwVBxxf6i2TXr0TM8EPTcln+sMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kp0vLtz+; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718381332; x=1749917332;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=sQjq5cGXIM+nx/P/Mig6SyDdYfM1cXqaGAJW8hcFpKI=;
+  b=kp0vLtz+Ap3oPbgg7a7YmczDSSmbVADF+D1PDAJlo82rP7maxZzblaxh
+   bvxAf+N0bGwHIL33W+mDjOHPhKon+iI8EkdL5DXJa+MWl9SFAodC2Zi2I
+   0DzGm3CbdLq9ha2QZL6mmPXzjPQAK5VR04B+ywT+3tUnCaKaTyI5OETJs
+   kyaATRy/2o74n4rZ4McVQGbDIP/9oj1UNA+N7rzfCbS7xXRFwT3iJXjDZ
+   yYOWeXl4Hqbrt9xEDTTFsVWBsgydiEZbUswLWg8Q1R0J5UDICQn1IiDq1
+   vI6eXtDJg6BvpsCic7iZVv5tcI9YWK53d0WplorsCF3WIdtyeCbj4GFNk
+   Q==;
+X-CSE-ConnectionGUID: dIWO97gJTJWuGQh36WuJRQ==
+X-CSE-MsgGUID: e0xN0nQJRY2fn9ivid6Azg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="15399364"
+X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
+   d="scan'208";a="15399364"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 09:08:51 -0700
+X-CSE-ConnectionGUID: T1J/wmeNRcmCOJl+EGfp1w==
+X-CSE-MsgGUID: d9hRaR+GSBebOghidcSQJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,238,1712646000"; 
+   d="scan'208";a="71741068"
+Received: from linux-pnp-server-16.sh.intel.com ([10.239.177.152])
+  by fmviesa001.fm.intel.com with ESMTP; 14 Jun 2024 09:08:48 -0700
+From: Yu Ma <yu.ma@intel.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tim.c.chen@linux.intel.com,
+	tim.c.chen@intel.com,
+	pan.deng@intel.com,
+	tianyou.li@intel.com,
+	yu.ma@intel.com
+Subject: [PATCH 0/3] fs/file.c: optimize the critical section of
+Date: Fri, 14 Jun 2024 12:34:13 -0400
+Message-ID: <20240614163416.728752-1-yu.ma@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614145510.22965-3-lvzhaoxiong@huaqin.corp-partner.google.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 14, 2024 at 10:55:08PM GMT, Zhaoxiong Lv wrote:
-> The kingdisplay-kd101ne3 is a 10.1" WXGA TFT-LCD panel with
-> jadard-jd9365da controller. Hence, we add a new compatible
-> with panel specific config.
-> 
-> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-> ---
-> Chage since V3:
-> 
-> - 1. Abandon the V2 patch and add kingdisplay kd101ne3-40ti binding to 
-> -    jadard,jd9365da-h3.yaml again.
-> 
-> V2:https://lore.kernel.org/all/20240601084528.22502-2-lvzhaoxiong@huaqin.corp-partner.google.com/
-> 
-> Chage since V2:
-> 
-> -  Drop some properties that have already been defined in panel-common.
-> -  The header file 'dt-bindings/gpio/gpio.h' is not used, delete it
-> 
-> V1: https://lore.kernel.org/all/20240418081548.12160-2-lvzhaoxiong@huaqin.corp-partner.google.com/
-> 
-> ---
->  .../devicetree/bindings/display/panel/jadard,jd9365da-h3.yaml    | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/panel/jadard,jd9365da-h3.yaml b/Documentation/devicetree/bindings/display/panel/jadard,jd9365da-h3.yaml
-> index 41eb7fbf7715..6138d853a15b 100644
-> --- a/Documentation/devicetree/bindings/display/panel/jadard,jd9365da-h3.yaml
-> +++ b/Documentation/devicetree/bindings/display/panel/jadard,jd9365da-h3.yaml
-> @@ -19,6 +19,7 @@ properties:
->            - chongzhou,cz101b4001
->            - radxa,display-10hd-ad001
->            - radxa,display-8hd-ad002
-> +          - kingdisplay,kd101ne3-40ti
+pts/blogbench-1.1.0 is a benchmark designed to replicate the
+load of a real-world busy file server by multiple threads of
+random reads, writes, and rewrites. When running default configuration
+with multiple parallel threads, hot spin lock contention is observed
+from alloc_fd(), file_closed_fd() and put_unused_fd() around file_lock.
 
-I think the list was sorted. Please keep it this way.
+These 3 patches are created to reduce the critical section of file_lock
+in alloc_fd() and close_fd(). As a result, pts/blogbench-1.1.0 has been
+improved by 32% for read and 15% for write with over 30% kernel cycles
+reduced on ICX 160 cores configuration with v6.8-rc6.
 
->        - const: jadard,jd9365da-h3
->  
->    reg: true
-> -- 
-> 2.17.1
-> 
+Yu Ma (3):
+  fs/file.c: add fast path in alloc_fd()
+  fs/file.c: conditionally clear full_fds
+  fs/file.c: move sanity_check from alloc_fd() to put_unused_fd()
+
+ fs/file.c | 27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.43.0
+
 
