@@ -1,134 +1,170 @@
-Return-Path: <linux-kernel+bounces-214247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 460CD9081D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:46:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26CC29081FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2695284211
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:46:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D441F213EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A299018309B;
-	Fri, 14 Jun 2024 02:46:25 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E563201;
-	Fri, 14 Jun 2024 02:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E46B188CC8;
+	Fri, 14 Jun 2024 02:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="D08jlQ2t"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4D11850A2
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 02:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718333185; cv=none; b=fQsbQZFj1oA9gMS17QFf5nN0IS6cA8SGHDvr5jmMOeLQ1Mi1YtUwSgX/okX6E/sKN5GjGY28JECQppj8O0HfcB8IIucI0/veKH9Q5BLMn94qLME80laiIla/8k+BiT28+P2W264ePoqqB14SgSQM3yo5LekjDCpeA6wyp8MqTKg=
+	t=1718333194; cv=none; b=MgBplvjJQl21pYcUAKXpZ8LqNj/jGiRTRNu97rSvWNn+QrNJPF4Ml+lvbs5PXGmPiOaiEPvDAt7A5rh9y2e3cWqBwoIz4/HFlP7HbHwaZeoI55q8TugiQIueVqP2dmWq/0mKWm0BQfwc807tAjs6g1Z2marAbdrZP4dbW/3OvRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718333185; c=relaxed/simple;
-	bh=zPvvfcrWiryVVmbdckHsbGSqcaJy4UzIjFMflqZUQQE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=YzqAGjjgkMkmATEfxfjjk9eZzbOEV43y2el05vu66lp5IbNJ2kmkba6JlwVu5HBHV+5WLs/SsxIHsqaLOXRg0XQJ4VIY2xApf3rFHfVeXjSQcdpQNb51+6wIpiM4astxfcsE6S81vmIFgBH4J9tLmCSfATLOiJG44N8u5XEnkfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8AxW+rnrmtmN8AGAA--.27338S3;
-	Fri, 14 Jun 2024 10:46:00 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8Bx28bkrmtmnKUfAA--.11909S3;
-	Fri, 14 Jun 2024 10:45:59 +0800 (CST)
-Subject: Re: [PATCH] KVM: Remove duplicated zero clear with dirty_bitmap
- buffer
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240613125407.1126587-1-maobibo@loongson.cn>
- <115973a9-caa6-4d53-a477-dea2d2291598@wanadoo.fr>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <fb2da53e-791d-aef7-4dbb-dcf054675f9b@loongson.cn>
-Date: Fri, 14 Jun 2024 10:45:56 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1718333194; c=relaxed/simple;
+	bh=icNmAID2EvMQTKejkkvoyVXTnXQaUa5EIvyMHjLlbUo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=incD/xtyVbk0K1dJV3oZHdAAMVGM7cIs311QgxADJ8ttmSZiovhTAI3Kg7q7WXH85lsb7RRQ8L59q+8A4mEN0RYq+ZKZ7idAKq6MTa0JqOG2Qu0uf/KyODL+4Q9B8HyYXkxH7cLNXDpDaQSLXZUkZxDqI6AtEk4TFkTqjTTsIQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=D08jlQ2t; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 49665bf029f811efa22eafcdcd04c131-20240614
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=FBOTipKdhwPMUM/fdFD0D1fdazLJkTD6AhWAkm3itOg=;
+	b=D08jlQ2tDnRUdqrPtjpl9gnTl+U/4Jl6pofBxfsaIaoW5QFwvYmQYJMvGuqFDxP1EsnpEQhahE1E9p27/+x5B/D9o7hgLHnTSRrbsHxmrOO8TLSeFXiGZKjSIf67CI6H2kfKcs2qWoQ0HbXR+YU+E5gVXo0qo9wzuhamdS4tPxc=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:26bed175-b0fd-4b89-af8c-5d31ab207883,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:393d96e,CLOUDID:95df9188-8d4f-477b-89d2-1e3bdbef96d1,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 49665bf029f811efa22eafcdcd04c131-20240614
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
+	(envelope-from <shawn.sung@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1415769070; Fri, 14 Jun 2024 10:46:23 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 14 Jun 2024 10:46:21 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 14 Jun 2024 10:46:21 +0800
+From: Shawn Sung <shawn.sung@mediatek.com>
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+CC: Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bibby
+ Hsieh <bibby.hsieh@mediatek.com>, CK Hu <ck.hu@mediatek.com>, "Nancy . Lin"
+	<nancy.lin@mediatek.com>, Sean Paul <sean@poorly.run>, Jason Chen
+	<jason-ch.chen@mediatek.corp-partner.google.com>, Fei Shao
+	<fshao@chromium.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, Hsiao Chien Sung
+	<shawn.sung@mediatek.corp-partner.google.com>
+Subject: [PATCH v9 00/21] Support IGT in display driver
+Date: Fri, 14 Jun 2024 10:45:59 +0800
+Message-ID: <20240614024620.19011-1-shawn.sung@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <115973a9-caa6-4d53-a477-dea2d2291598@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8Bx28bkrmtmnKUfAA--.11909S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxJrW7urWrGr1fGw4furyxXrc_yoW8Zr13pF
-	s3tFWUGrW5Jw18Cw17Cwn8W348t3yDtwn7Gr1UJFyUXr1kJr1vqr4IgF10g3WUZr4Iy3Wr
-	JF4jqFyUuF1UA3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
-	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtw
-	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
-	67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
-	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwmhF
-	DUUUU
+Content-Type: text/plain
+X-MTK: N
 
+From: Hsiao Chien Sung <shawn.sung@mediatek.corp-partner.google.com>
 
+This series adds support for running IGT (Intel GPU Tool) tests with
+MediaTek display driver. The following changes will be applied:
 
-On 2024/6/14 上午3:25, Christophe JAILLET wrote:
-> Le 13/06/2024 à 14:54, Bibo Mao a écrit :
->> Since dirty_bitmap pointer is allocated with function __vcalloc(),
->> there is __GFP_ZERO flag set in the implementation about this function
->> __vcalloc_noprof(). It is not necessary to clear dirty_bitmap buffer
->> with zero again.
->>
->> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->> ---
->>   virt/kvm/kvm_main.c | 3 ---
->>   1 file changed, 3 deletions(-)
->>
-> 
-> Hi,
-> 
->> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
->> index 14841acb8b95..c7d4a041dcfa 100644
->> --- a/virt/kvm/kvm_main.c
->> +++ b/virt/kvm/kvm_main.c
->> @@ -1669,9 +1669,6 @@ static int kvm_prepare_memory_region(struct kvm 
->> *kvm,
->>               r = kvm_alloc_dirty_bitmap(new);
->>               if (r)
->>                   return r;
->> -
->> -            if (kvm_dirty_log_manual_protect_and_init_set(kvm))
->> -                bitmap_set(new->dirty_bitmap, 0, new->npages);
-> 
-> unless I miss something obvious, this does not clear anything, but set 
-> all bits to 1.
-> 
-> 0 is not for "write 0" (i.e. clear), but for "start at offset 0".
-> So all bits are set to 1 in this case.
-you are right, I had thought it is to write 0 :(
+1. Add a new API for creating GCE thread loop to retrieve CRCs
+   from the hardware component
+2. Support hardware CRC calculation in both VDOSYS0 and VDOSYS1
+3. Support alpha blending in both VDOSYS0 and VDOSYS1
 
-I do not know whether KVM_DIRTY_LOG_INITIALLY_SET should be enabled on 
-LoongArch. If it is set, write protection for second MMU will start one 
-by one in function kvm_arch_mmu_enable_log_dirty_pt_masked() when dirty 
-log is cleared if it is set, else write protection will start in 
-function kvm_arch_commit_memory_region() when flag of memslot is changed.
+Changes in v9:
+- Separate the patch into smaller ones
 
-I do not see the obvious benefits between these two write protect 
-stages. Can anyone give me any hints?
+Changes in v8:
+- Start/Stop CRC CMDQ thread on when needed
+- Squash and rearrange the commits
+- Add more information to the commit message and comments
 
-Regards
-Bibo Mao
+Changes in v7:
+- Separate the patch into smaller ones
 
-> 
-> CJ
-> 
->>           }
->>       }
->>
->> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+Changes in v6:
+- Use drm_vblank_work to deffer the CRC work into bottom halves
+- Separate the patches for "Premultiplied" and "None" alpha blending
+
+Changes in v5:
+- Add more descriptions to the codes
+- Add DRM mode configs to the driver data
+- Squash and rearrange the commits
+
+Changes in v4:
+- Separate the patch into smaller ones
+- Change the title of some patches
+- Revert the changes that are not related to the series
+
+Changes in v3:
+- Modify the dt-binding document of Mediatek OVL
+- Set DRM mode configs accroding to the hardware capabilities
+- Replace cmdq_pkt_jump_absolute() with cmdq_pkt_jump()
+
+Changes in v2:
+- Simplify CMDQ by adding commands that are currently used only
+- Integrate CRC related codes into new APIs for Mixer and OVL to reuse
+- Add CPU version CRC retrieval when CMDQ is disabled
+
+Hsiao Chien Sung (21):
+  soc: mediatek: Disable 9-bit alpha in ETHDR
+  drm/mediatek: Add OVL compatible name for MT8195
+  drm/mediatek: Add missing plane settings when async update
+  drm/mediatek: Add DRM_MODE_ROTATE_0 to rotation property
+  drm/mediatek: Set DRM mode configs accordingly
+  drm/mediatek: Turn off the layers with zero width or height
+  drm/mediatek: Support more 10bit formats in OVL
+  drm/mediatek: Support RGBA8888 and RGBX8888 in OVL on MT8195
+  drm/mediatek: Fix XRGB setting error in OVL
+  drm/mediatek: Fix XRGB setting error in Mixer
+  drm/mediatek: Add new color format MACROs in OVL
+  drm/mediatek: Support DRM plane alpha in OVL
+  drm/mediatek: Support DRM plane alpha in Mixer
+  drm/mediatek: Support "None" blending in OVL
+  drm/mediatek: Support "None" blending in Mixer
+  drm/mediatek: Support "Pre-multiplied" blending in OVL
+  drm/mediatek: Support "Pre-multiplied" blending in Mixer
+  drm/mediatek: Support alpha blending in display driver
+  drm/mediatek: Support CRC in display driver
+  drm/mediatek: Support CRC in OVL
+  drm/mediatek: Support CRC in OVL adaptor
+
+ drivers/gpu/drm/mediatek/mtk_crtc.c           | 279 +++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_crtc.h           |  38 ++
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.c       |  10 +
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.h       |  11 +-
+ drivers/gpu/drm/mediatek/mtk_disp_drv.h       |  10 +
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c       | 330 +++++++++++++++---
+ .../gpu/drm/mediatek/mtk_disp_ovl_adaptor.c   |  37 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c        |  24 ++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h        |   4 +
+ drivers/gpu/drm/mediatek/mtk_ethdr.c          | 110 +++++-
+ drivers/gpu/drm/mediatek/mtk_ethdr.h          |   7 +
+ drivers/gpu/drm/mediatek/mtk_plane.c          |  15 +-
+ drivers/soc/mediatek/mtk-mmsys.c              |   1 +
+ 13 files changed, 826 insertions(+), 50 deletions(-)
+
+--
+2.18.0
 
 
