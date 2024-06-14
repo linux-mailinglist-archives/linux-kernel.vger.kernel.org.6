@@ -1,137 +1,111 @@
-Return-Path: <linux-kernel+bounces-214637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86C6908776
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:31:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E89C890877F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDBD3B24A32
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:31:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A867285869
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6327F1922CF;
-	Fri, 14 Jun 2024 09:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3253C1922FF;
+	Fri, 14 Jun 2024 09:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uVyVB1Q1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dowkx4Wl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F612481D0;
-	Fri, 14 Jun 2024 09:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6599A13BAC8;
+	Fri, 14 Jun 2024 09:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718357489; cv=none; b=hAHFsTl4fPz6fMqo9QzLurGzp3dbnjbQGUBN/t377qOdnzorBSl1IcX++JVnCPG1eoBU7thXKb5AtyAef74jpzsHDG5+Il6slISxNp40I3BXLJ8SwprQhEH+M9+SLLKatGTnT76XovAbENNDkVFVTBImU0D6R0NhViXkUi0N+oA=
+	t=1718357522; cv=none; b=WwEL3o9QnuIo1qYFrZOpzPCmmQTMy7JDuyhQ1SmotVUjAq/o6ymf5boInQtyRd9fEKV3Fxd/AtsltGf2MawRcsZYkJHGg7ptq8MZpQsSaRy2mbEgxXKFXWYCvkwanW0EehKQ2q1BQG3m+K3fLWkTvdZaKtPnENi6b05hVxgnm20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718357489; c=relaxed/simple;
-	bh=GHeElqe8VrB34C9wBIcEMogZsFo2aeiU/M3nJbLyXxQ=;
+	s=arc-20240116; t=1718357522; c=relaxed/simple;
+	bh=vq/hKXj8k3TXQ6CBXyolStxtljiu0fDBYD/cq4bFmRs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZlY2xXgyIB57lT8UPM2WeMWWBeVKM6YPU98caTEM6R8+o5caOX7lC9WmynxMkj9Ch3tzeAUDzgVdnnI6bXjuAgQDPjjBa7uL50KYU5vV7gu7pHM9JsNPgiPmUkUrHB1Oguyx3D1MssLvES7qU5C0J4m3V3UQt0UbN1/HieXYcDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uVyVB1Q1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27173C2BD10;
-	Fri, 14 Jun 2024 09:31:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hXhwJlQVPgFdyEx6IqYI98b4OlJaO0IZXRiAG6BdP/5PoPA2blE5AXqsx4SeqwXB5ts0qr/+JGoMx9IttbKfnfjbaFh1nL7iAXDg/nx5lBwF6e2FlgagLMgBwpr8rSnRJwsrk0C/LqMxJwlb6paWk7uTtroHHzs0bP0pWH61PMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dowkx4Wl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75168C2BD10;
+	Fri, 14 Jun 2024 09:32:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718357489;
-	bh=GHeElqe8VrB34C9wBIcEMogZsFo2aeiU/M3nJbLyXxQ=;
+	s=k20201202; t=1718357522;
+	bh=vq/hKXj8k3TXQ6CBXyolStxtljiu0fDBYD/cq4bFmRs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uVyVB1Q13OgHfxDgorVlgcTtPWWke8R6tnuozRHFZqo8a9Jwd3zF/iajHtabIgDSN
-	 fJUC450HjXueTqfpKmdaFk4pP+C4KBHDWlioCDY9YSYiGfcFB+zVJlUQ32lyPuIv8e
-	 76fCrocYx59ivwY2AKivgZ4sRrf5zE1DDrhTAmqu8BcWI9cyHo7+iaQoit+LazNjKb
-	 YMF/Poqeivz7CbcPm3E7T3vqy2luQaTwMisOR5oM6ltsy6SOO8arAfb5zwxClBDPii
-	 skZhlEj4yjnBBPfaXF/cEw445MAyEu3lmkliENODUC/MChs81QWnQdksjcSBDoYOww
-	 w7id1AERN7VGA==
-Date: Fri, 14 Jun 2024 10:31:24 +0100
-From: Lee Jones <lee@kernel.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	William Breathitt Gray <wbg@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] mfd: stm32-timers: Drop TIM_DIER_CC_IE(x) in favour
- of TIM_DIER_CCxIE(x)
-Message-ID: <20240614093124.GD3029315@google.com>
-References: <cover.1718352022.git.u.kleine-koenig@baylibre.com>
- <0735860960b1b38570bffa5b0de81a97f6e3230e.1718352022.git.u.kleine-koenig@baylibre.com>
+	b=dowkx4Wli/K0fxQuXPa9Ov4p8jq4KCLXebXQhTLM5C+aiOubAYAqt6VKGvEfTd+is
+	 u1H5cT2n6PNIyOSwsRfQdqH8u3Ft3fyV9zHmquoyyb8BUFk+PERVN+tIV4ajqw8vsW
+	 7RY/uftugQcGLKrN6adOWRZRq7HYsGiNvsG/NHATdB9mbrBWreXhWtLEtiVV/8DM6O
+	 /vkRXKIZ9h/aVv+Tf83y0fRDuc/X49dFn9IxjzSMYU720OV2uuxRpCpBG/1DNhh+th
+	 z0C+Kh+7fItagFuiZgbzOIl7R01Bac1D8IAu15pqxJKVOASbc5i9MjozYRBusaqX82
+	 AGLEieEUdavxA==
+Date: Fri, 14 Jun 2024 10:31:58 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Alexandre Mergnat <amergnat@baylibre.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Lee Jones <lee@kernel.org>, Flora Fu <flora.fu@mediatek.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Nicolas Belin <nbelin@baylibre.com>
+Subject: Re: [PATCH RESEND v5 00/16] Add audio support for the MediaTek Genio
+ 350-evk board
+Message-ID: <ZmwODkYov79VHznK@finisterre.sirena.org.uk>
+References: <20240226-audio-i350-v5-0-54827318b453@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="SeMD/ZPP93d62FnM"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0735860960b1b38570bffa5b0de81a97f6e3230e.1718352022.git.u.kleine-koenig@baylibre.com>
+In-Reply-To: <20240226-audio-i350-v5-0-54827318b453@baylibre.com>
+X-Cookie: Your love life will be... interesting.
 
-On Fri, 14 Jun 2024, Uwe Kleine-König wrote:
 
-> These two defines have the same purpose and this change doesn't
-> introduce any differences in drivers/counter/stm32-timer-cnt.o.
-> 
-> The only difference between the two is that
-> 
-> 	TIM_DIER_CC_IE(1) == TIM_DIER_CC2IE
-> 
-> while
-> 
-> 	TIM_DIER_CCxIE(1) == TIM_DIER_CC1IE
-> 
-> . That makes it necessary to have an explicit "+ 1" in the user code,
-> but IMHO this is a good thing as this is the code locatation that
-> "knows" that for software channel 1 you have to use TIM_DIER_CC2IE
-> (because software guys start counting at 0, while the relevant hardware
-> designer started at 1).
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
-> ---
->  drivers/counter/stm32-timer-cnt.c | 4 ++--
+--SeMD/ZPP93d62FnM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The subject should be renamed.
+On Fri, Jun 14, 2024 at 09:27:43AM +0200, Alexandre Mergnat wrote:
+> This serie aim to add the following audio support for the Genio 350-evk:
+> - Playback
+>   - 2ch Headset Jack (Earphone)
+>   - 1ch Line-out Jack (Speaker)
+>   - 8ch HDMI Tx
 
->  include/linux/mfd/stm32-timers.h  | 1 -
->  2 files changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/counter/stm32-timer-cnt.c b/drivers/counter/stm32-timer-cnt.c
-> index 0664ef969f79..186e73d6ccb4 100644
-> --- a/drivers/counter/stm32-timer-cnt.c
-> +++ b/drivers/counter/stm32-timer-cnt.c
-> @@ -465,7 +465,7 @@ static int stm32_count_events_configure(struct counter_device *counter)
->  			ret = stm32_count_capture_configure(counter, event_node->channel, true);
->  			if (ret)
->  				return ret;
-> -			dier |= TIM_DIER_CC_IE(event_node->channel);
-> +			dier |= TIM_DIER_CCxIE(event_node->channel + 1);
->  			break;
->  		default:
->  			/* should never reach this path */
-> @@ -478,7 +478,7 @@ static int stm32_count_events_configure(struct counter_device *counter)
->  
->  	/* check for disabled capture events */
->  	for (i = 0 ; i < priv->nchannels; i++) {
-> -		if (!(dier & TIM_DIER_CC_IE(i))) {
-> +		if (!(dier & TIM_DIER_CCxIE(i + 1))) {
->  			ret = stm32_count_capture_configure(counter, i, false);
->  			if (ret)
->  				return ret;
-> diff --git a/include/linux/mfd/stm32-timers.h b/include/linux/mfd/stm32-timers.h
-> index 92b45a559656..f09ba598c97a 100644
-> --- a/include/linux/mfd/stm32-timers.h
-> +++ b/include/linux/mfd/stm32-timers.h
-> @@ -47,7 +47,6 @@
->  #define TIM_DIER_CC2IE		TIM_DIER_CCxIE(2)			/* CC2 Interrupt Enable				*/
->  #define TIM_DIER_CC3IE		TIM_DIER_CCxIE(3)			/* CC3 Interrupt Enable				*/
->  #define TIM_DIER_CC4IE		TIM_DIER_CCxIE(4)			/* CC4 Interrupt Enable				*/
-> -#define TIM_DIER_CC_IE(x)	BIT((x) + 1)				/* CC1, CC2, CC3, CC4 interrupt enable		*/
->  #define TIM_DIER_UDE		BIT(8)					/* Update DMA request Enable			*/
->  #define TIM_DIER_CCxDE(x)	BIT(9 + ((x) - 1))			/* CCx DMA request Enable (x ∈ {1, .. 4})	*/
->  #define TIM_DIER_CC1DE		TIM_DIER_CCxDE(1)			/* CC1 DMA request Enable			*/
-> -- 
-> 2.43.0
-> 
+I seem to remember you had review comments that needed addressing from
+AngeloGioacchino, why resend without addressing those?
 
--- 
-Lee Jones [李琼斯]
+--SeMD/ZPP93d62FnM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZsDg4ACgkQJNaLcl1U
+h9AoDwf9Gw5El3fz0zRFzNFxxe/7UfRa8HACWErrPscsXGk4tslBOE3UwCx3bw4Q
+6VnbJ45siXspBD7/Zjhjhi9lvAZlz6ucKm2glWijqZHLg9xmSBrRyEDb2G98FWlI
+SMczNAxg5QXwBUnID0bua6y5ZOldZEAGl53t5KuXWRe0/Znwns2+gUpSt3MAoDp8
+rPfYqUv2whvlBzGYmg6XlbTskN/c/+qpODFdThrx57aGRjxRoVc82kAmN814Gbc/
+nqKrNhIYzQDYBwKB1cuDXatDavgYFA5FugzeuZ80Va5/ZiuMX7JLgMHeVGQJZrQq
+Jbv+xbpMJ+ow5S6rLO0D2CcOA91DsA==
+=TqJQ
+-----END PGP SIGNATURE-----
+
+--SeMD/ZPP93d62FnM--
 
