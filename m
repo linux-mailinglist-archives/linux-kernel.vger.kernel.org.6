@@ -1,214 +1,121 @@
-Return-Path: <linux-kernel+bounces-215042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53CE9908DAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:41:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4E78908DAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C742A1F242F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:41:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F2D81F244F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0F0125BA;
-	Fri, 14 Jun 2024 14:41:17 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id BD991E572
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 14:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA1310979;
+	Fri, 14 Jun 2024 14:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XhZLySUa"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901E017C96
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 14:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718376077; cv=none; b=IZ7bts3zKGbbtLf1lykfWwkOsD7t64Pk9AUjjr5ngQutiQ6UZcqQbxmsQCOfKQ2MWrqs7ZWKvgRvqRqXh99XgdBZHm7Qmb+hl5vPh2fT5Pnxhb4JbhEoeH3m1saynryL/o7VAl+zR3dHVQv3J8DEZNyG+PeSPM5K5gYYdq3dTIQ=
+	t=1718376105; cv=none; b=UKiIPK/A+zY8RB4O/haV44ZYeRKGi1O5fK54ezrpsy9CO5AYS4osUF3ON1KuGhWH2k6UZqJlLLUQVVaOtqJUZagMTrfpGs1AIrX8IHLoTXKC+yGaF6FLQYe2j7tke7EPJ2Av1AGZE+SylAjRDPeUiKD1S/5TMiO2B3PzbfD5Zu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718376077; c=relaxed/simple;
-	bh=mY4Yyh4yTPkdHtiBDdFQHzK0dIHk8UfCVhI2QOwX0lw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jMQ4lI95cwYHsuzgWq36rZiTSpnFM4SUIY4ffmpXNxG6cxvnJtiFkm0lkWDjinqSeqRHyAdjtcbmjf5uMqgCE00nDfb5m9o0fFTSlDpYEWVBfn/KQR77NX34YVdDsajvupSj1JiC94eD/oHY/3gGhyK7bfpzNb/H7+/dPOdErTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 298543 invoked by uid 1000); 14 Jun 2024 10:41:13 -0400
-Date: Fri, 14 Jun 2024 10:41:13 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-  Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>,
-  Herve Codina <herve.codina@bootlin.com>,
-  Grant Grundler <grundler@chromium.org>, Oliver Neukum <oneukum@suse.com>,
-  Douglas Anderson <dianders@chromium.org>, Yajun Deng <yajun.deng@linux.dev>,
-  Ivan Orlov <ivan.orlov0322@gmail.com>,
-  "Ricardo B. Marliere" <ricardo@marliere.net>
-Subject: Re: [PATCH 4/4] USB: move dynamic ids out of usb driver structures
-Message-ID: <92b4729d-d2a4-4744-887c-744c2145b3c6@rowland.harvard.edu>
-References: <2024061448-manly-universal-00ad@gregkh>
- <2024061452-science-clinking-3b92@gregkh>
+	s=arc-20240116; t=1718376105; c=relaxed/simple;
+	bh=y9OQe3qr0Gx7VmAgMDXRnMq83su/FNL55wFDYVVmHu8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EYDlskrVTHszlhxVCvAFGhqLGML7hdabNpdI2Gye0SLcG9UGh2z5AOxioM3ZniG2fCmWWC0vd/7IOD4a8XKLbIeva5AW7T8EUzbNn3aFt8m38nCzbm/AKJ6Xt2urQr9SvDYz6j3BeVfd2BtM34o8YDMMNSQBYrbvo+Sew7e6gjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XhZLySUa; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57c61165af6so2826531a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 07:41:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718376102; x=1718980902; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=COgeoGHN66/htY8IBJh9awShJLxDqgPRVGYjDpSp0Z8=;
+        b=XhZLySUaFgkMWQE8tOOuW6HyrFbE3oxv5k3s09gf6L+oBqXMfJfj0qu8V2UhrpEAhR
+         pGt1JcQ3PYaL3J+4fsbWxlMJgJ01IpHVntEStS+K0TKKRZepmXNxP52GyrQQygJfPL4J
+         FnDaJoRmQv7kijQdH4BSdEGoNwj98uuVCfAA0hyHoiwkspaszhp0+fn683oMSqciUo8I
+         iJCmJW5N/5wBxZba2SVyiyfOOs2ZBos5PtBd6Rm83+7J9Hd2JBuq4KoGrpweYU1WTlGG
+         qKm2wigoJJFLtHlBaRxxDDAbQY49zSAFNdC1roH3XIdHlulEshz/9lAoL308sNDkrJT5
+         jDFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718376102; x=1718980902;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=COgeoGHN66/htY8IBJh9awShJLxDqgPRVGYjDpSp0Z8=;
+        b=wB/z+6+D+wKeBNWQl4aJ982C1uogHaBaFGCFgLpoxjEM1fTNuP6QLHTfqe54LxxAYZ
+         9cB+FbFU42F8PDr+FCeyrYY+x5R66qz30X28UO/y1RclrIb06NgIQzBRUNo+9whi3R2U
+         xRTDaAGHiEoiynyvtpfLlzXlUqL4wffSyaVt9QXUfiROMMBrL/1i+C+z4DmR9+3a6ez7
+         hwGE/VTSPZ4Yc4ybA4cKxNuW9anA3uPNPgqhO3Fzw/r5aqmHKydRzmCoX98M74niIlNA
+         z8TMEPdUnxhM6P5pctaAVdMmO6tfZ0YqBqMLXkpvyUSxKSysKMDRJb+nVkzRAMwr+dRd
+         EUiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUbwReSudgoLjUNF+UITFqVv4tuSCkkSdRLc524QF6AUzS7chcYrphR7oVuwJQqMuTdRXWUlie8NQXlST+G2SR9wwki+Cf8v3Gzh+k
+X-Gm-Message-State: AOJu0YxCX4WjJZeflkwjsWYlMZ6VlVwrw0rnsM58n4nyniG5emewfQE1
+	faXn9yvSDOgs1uRmoJ8/xxazTOTGxjvoWPcMudnnvTw0sfzmcVkfwItIRjU2sOHSIIZfx16CpzE
+	bQykVkAehrn3nPv9A/oim6mbko0w=
+X-Google-Smtp-Source: AGHT+IHKnx5pwExZmiV5+F1hrfOVQZ5WnJv4drqjDxmRh5En5uNxZYiys302f0rNtLAOKTP99lAsXaV87+xm2u5vNp8=
+X-Received: by 2002:a50:d59e:0:b0:57c:9d54:67d5 with SMTP id
+ 4fb4d7f45d1cf-57cbd8f2946mr1852528a12.29.1718376101681; Fri, 14 Jun 2024
+ 07:41:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024061452-science-clinking-3b92@gregkh>
+References: <20240614015138.31461-1-ioworker0@gmail.com> <20240614015138.31461-3-ioworker0@gmail.com>
+ <222F10CF-99B0-41F5-AB59-5E65F38B4AEF@nvidia.com>
+In-Reply-To: <222F10CF-99B0-41F5-AB59-5E65F38B4AEF@nvidia.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Fri, 14 Jun 2024 22:41:27 +0800
+Message-ID: <CAK1f24m7uHpPa75acP_-hHh5bcStegtQJY_2rDqpKeviUhBdzg@mail.gmail.com>
+Subject: Re: [PATCH v8 2/3] mm/rmap: integrate PMD-mapped folio splitting into
+ pagewalk loop
+To: Zi Yan <ziy@nvidia.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
+	baolin.wang@linux.alibaba.com, maskray@google.com, ryan.roberts@arm.com, 
+	david@redhat.com, 21cnbao@gmail.com, mhocko@suse.com, fengwei.yin@intel.com, 
+	zokeefe@google.com, shy828301@gmail.com, xiehuan09@gmail.com, 
+	libang.li@antgroup.com, wangkefeng.wang@huawei.com, songmuchun@bytedance.com, 
+	peterx@redhat.com, minchan@kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 14, 2024 at 02:11:52PM +0200, Greg Kroah-Hartman wrote:
-> The usb driver structures contain a dynamic id structure that is written
-> to, preventing them from being able to be constant structures.  To help
-> resolve this, move the dynamic id structure out of the driver and into a
-> separate local list, indexed off of the driver * so that all USB
-> subsystems can use it (i.e. usb-serial).
-> 
-> Overall it moves some duplicated code out of the usb-serial core as it's
-> already in the usb core, and now the usb dynamic id structures can be
-> private entirely to the usb core itself.
+On Fri, Jun 14, 2024 at 10:26=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote:
+>
+> On 13 Jun 2024, at 21:51, Lance Yang wrote:
+>
+> > In preparation for supporting try_to_unmap_one() to unmap PMD-mapped
+> > folios, start the pagewalk first, then call split_huge_pmd_address() to
+> > split the folio.
+> >
+> > Suggested-by: David Hildenbrand <david@redhat.com>
+> > Suggested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> > ---
+> >  include/linux/huge_mm.h |  6 ++++++
+> >  include/linux/rmap.h    | 24 +++++++++++++++++++++++
+> >  mm/huge_memory.c        | 42 +++++++++++++++++++++--------------------
+> >  mm/rmap.c               | 21 +++++++++++++++------
+> >  4 files changed, 67 insertions(+), 26 deletions(-)
+>
+> Thanks.
+>
+> Acked-by: Zi Yan <ziy@nvidia.com>
 
-I'm concerned about the locking of the usb_dynid and usb_dynids
-structures.  There doesn't seem to be anything to prevent these things
-from being deallocated while another thread is reading them.
+Thanks for taking time to review!
+Lance
 
-> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-> index 3f69b32222f3..8bba102de39f 100644
-> --- a/drivers/usb/core/driver.c
-> +++ b/drivers/usb/core/driver.c
-> @@ -34,17 +34,76 @@
->  
->  #include "usb.h"
->  
-> +static struct list_head usb_dynids;
-> +static spinlock_t usb_dynids_lock;
-
-Is there any particular reason you decided to make this a spinlock
-instead of a mutex?
-
-Why not use static initialization for these things...
-
-> +
-> +struct usb_dynids {
-> +	struct list_head node;
-> +	const struct device_driver *driver;
-> +	struct list_head list;
-> +};
-> +
-> +struct usb_dynid {
-> +	struct list_head node;
-> +	struct usb_device_id id;
-> +};
-> +
-> +void usb_dynids_init(void)
-> +{
-> +	spin_lock_init(&usb_dynids_lock);
-> +	INIT_LIST_HEAD(&usb_dynids);
-> +}
-
-... instead of this dynamic initialization?  Not that it's a big deal.
-
-> +static struct usb_dynids *usb_find_dynids(const struct device_driver *driver)
-> +{
-> +	struct usb_dynids *u;
-> +
-> +	/* Loop through the list to find if this driver has an id list already */
-> +	guard(spinlock)(&usb_dynids_lock);
-> +	list_for_each_entry(u, &usb_dynids, node) {
-> +		if (u->driver == driver)
-> +			return u;
-> +	}
-
-So here, for instance.  usb_dynids_lock is held while this routine
-iterates through the usb_dynids list.  But when an entry is found, the
-lock is released.  What's to prevent another thread from deallocating
-right now the structure that u points to?
-
-For instance, do we know that this code will always run under the
-protection of some mutex associated with the driver?  Not as far as I
-can see.
-
-> +	return NULL;
-> +}
-> +
-> +static int store_id(const struct device_driver *driver, const struct usb_device_id *id)
-> +{
-> +	struct usb_dynids *u;
-> +	struct usb_dynid *usb_dynid;
-> +
-> +	u = usb_find_dynids(driver);
-> +	if (!u) {
-> +		/* This driver has not stored any ids yet, so make a new entry for it */
-> +		u = kmalloc(sizeof(*u), GFP_KERNEL);
-> +		if (!u)
-> +			return -ENOMEM;
-> +		u->driver = driver;
-> +		INIT_LIST_HEAD(&u->list);
-> +		guard(spinlock)(&usb_dynids_lock);
-> +		list_add_tail(&u->node, &usb_dynids);
-> +	}
-> +
-> +	/* Allocate a new entry and add it to the list of driver ids for this driver */
-> +	usb_dynid = kmalloc(sizeof(*usb_dynid), GFP_KERNEL);
-> +	if (!usb_dynid)
-> +		return -ENOMEM;
-> +
-> +	INIT_LIST_HEAD(&usb_dynid->node);
-> +	memcpy(&usb_dynid->id, id, sizeof(*id));
-> +	list_add_tail(&usb_dynid->node, &u->list);
-
-Here we see that the spinlock is _not_ held while a new usb_dynid
-entry is added to the driver's list.  (Yes, the existing code already
-has the same problem; it's not something you added.)
-
-> -ssize_t usb_show_dynids(struct usb_dynids *dynids, char *buf)
-> +ssize_t usb_show_dynids(const struct device_driver *driver, char *buf)
->  {
-> +	struct usb_dynids *dynids;
->  	struct usb_dynid *dynid;
->  	size_t count = 0;
->  
-> +	dynids = usb_find_dynids(driver);
-> +	if (!dynids)
-> +		return 0;
-> +
->  	list_for_each_entry(dynid, &dynids->list, node)
->  		if (dynid->id.bInterfaceClass != 0)
->  			count += scnprintf(&buf[count], PAGE_SIZE - count, "%04x %04x %02x\n",
-
-And here nothing holds the spinlock while we iterate through the list.
-
-> @@ -160,8 +216,12 @@ static ssize_t remove_id_store(struct device_driver *driver, const char *buf,
->  	if (fields < 2)
->  		return -EINVAL;
->  
-> +	dynids = usb_find_dynids(driver);
-> +	if (!dynids)
-> +		return count;
-> +
->  	guard(spinlock)(&usb_dynids_lock);
-> -	list_for_each_entry_safe(dynid, n, &usb_driver->dynids.list, node) {
-> +	list_for_each_entry_safe(dynid, n, &dynids->list, node) {
->  		struct usb_device_id *id = &dynid->id;
->  
->  		if ((id->idVendor == idVendor) &&
-
-Although here the spinlock is held while an entry is removed.  But
-that doesn't do any good if readers don't also acquire the spinlock.
-
-Overall, I think it would be better to hold the spinlock throughout the
-entire time that the dynamic ids are being accessed: Grab it before
-starting the outer search and don't release it until the desired entry
-has been found, added, or removed.
-
-> @@ -1100,8 +1173,8 @@ void usb_deregister(struct usb_driver *driver)
->  			usbcore_name, driver->name);
->  
->  	usb_remove_newid_files(driver);
-> +	usb_free_dynids(&driver->driver);
->  	driver_unregister(&driver->driver);
-> -	usb_free_dynids(driver);
-
-Here's another potential problem.  You moved the usb_free_dynids()
-call from after driver_unregister() to before it.  This means that the
-driver is still visible when usb_free_dynids() runs, so another thread
-might be iterating through the dynid list while the list is removed.
-In fact, that other thread might go ahead and add a new usb_dynids
-structure right after the function call here removes the old one!
-
-Alan Stern
+>
+> --
+> Best Regards,
+> Yan, Zi
 
