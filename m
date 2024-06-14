@@ -1,123 +1,108 @@
-Return-Path: <linux-kernel+bounces-215238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8300909027
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:25:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4645A90902A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DC511F21F22
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:25:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B41132872D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53841195F2D;
-	Fri, 14 Jun 2024 16:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E6B178CE2;
+	Fri, 14 Jun 2024 16:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KVPHDs/W";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NxWfA11p"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b="VyFdOtOu"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D239181B83;
-	Fri, 14 Jun 2024 16:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2321316F0D1
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 16:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718382289; cv=none; b=XeZqlU33SpPrgrq9haL62dznrXcWN0gk/yZ4gwsXw8cccHvbHZVgXdtdp4sv71GlTgr4adQDxiB/rc9Js/2gSiCmO8fqfeZW81FXym4SEIPOjyIF1JWXp3GaPUPvVjd7E2Pz/7/wDUOvpWsCg8IIE8gLKOIuW4WEwhnbqpLBUlw=
+	t=1718382305; cv=none; b=bb53i4mJB4D8/HoNfbG90csxhw7TKun9UJisduP0PTXKSIPeJpttHLCe3DWmZx9pG0vLaVj9Z1n7qXoPAt0OlAjrj+atSopeHy19RdDFr8mhnfu9s0+PLBDR0a6jCngeScXwVe0rPYyusekHlucJck+JoRTyOElxCSCDt0VjUs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718382289; c=relaxed/simple;
-	bh=EKQrL1WVhOejUZxSOfRUXFQ03K3aLjiBgaiCiz8x1JE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=J5JQ5yxFu7ILCtksT5B1NYcMvS/jcabk7noZTE2E51tsbORKp+3vdpCkHrDBqgbYcCHzVWLxqmUFBqMmlCytZHWc4Iw6fU//fKpvCtX9YAqttxyAN2Y0w3lK4DM8q9LtuBcvC9OyVifch4do5TNNEw2rTb1bfg/3wKScA+Yac5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KVPHDs/W; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NxWfA11p; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 14 Jun 2024 16:24:45 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718382286;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zi3eDCZPt1+laq1+hbEpP2aXW8/aqgek8mV2yMUgYJ4=;
-	b=KVPHDs/WkjYeXbgxOO+lW3QVsPW9vOsR8mfxFfOMRFszKYqj+CPGzL9wsWpg6AlZ7pz/Vx
-	iCrDzNxaQycW4YQekngZZ+3zI5ROWlj5zSOGf01WzxCt8g+rnO/R6WfxBgltE0oAsgBru0
-	6sPloqFtrH2+uINkjWy4gUluj4PMImjm1amu76Z4MIdHyhX6BF4Yol18EnCCfH+BjnlRpv
-	EWdQi3tHFxx7lx4d+Cei+4Z5qM+UF53uK5khd5D2q41mh0bJ7+OYWI+px9PElGoCnY9IRU
-	3aP9xkhJgGs6DxRquw3dwI5V+GzguY8RRSIHjeqM5u2jr4gpXbQdCYAuMJmaZw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718382286;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zi3eDCZPt1+laq1+hbEpP2aXW8/aqgek8mV2yMUgYJ4=;
-	b=NxWfA11pYAWIQ0SfJCe0S+fOMHDIoIAXJJAsFZ/Lus26jMD816WE6H76ivXT3xv4Ms+acI
-	NEGUWv6usyiZk4Bg==
-From: "tip-bot2 for Thomas Huth" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] Documentation: Remove "mfgpt_irq=" from the
- kernel-parameters.txt file
-Cc: Thomas Huth <thuth@redhat.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- Nikolay Borisov <nik.borisov@suse.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240614090306.561464-1-thuth@redhat.com>
-References: <20240614090306.561464-1-thuth@redhat.com>
+	s=arc-20240116; t=1718382305; c=relaxed/simple;
+	bh=QCq79d13E0tz2njJOcLY9mxviKHMKKd7mCV9RIVP2Sg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NAcMtApCB3AAn6rw5aYRCby2+QqbSKCLhKdqeSoDpBQ1k38Bn091WTXikdeH2aHGAuuMfEzej8dvbWXtfD1jQJROraLV+mTI5jIEdXFB4b5Zd69J5LnpMJhmBgLtb8V7FXEJbIeBtAvsuuNrcWWyr9MC61x88q9WRy46d9k5j9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com; spf=pass smtp.mailfrom=timesys.com; dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b=VyFdOtOu; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timesys.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b08857f3b8so12075576d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:25:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=timesys-com.20230601.gappssmtp.com; s=20230601; t=1718382302; x=1718987102; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AJ9BKcjtQxEX9HY4AyHldVS/pYAF0bNjL6ygRqtnenQ=;
+        b=VyFdOtOu7HA7/xZDSbmFbiLFOlmquoiVqCS3U2oG70jkZS43lJ1l+iq66js25wNcBo
+         xX62Y5m+KNFNhILXK2xh0hmANUtaoEdRnMFvEsYEkhlvWFBXdZKTyYRKep79xo8V2hNX
+         cNFDwsBOHFlTm8yFjZrzdu7+IM511w3KIqWi3Ef0+pxJ6i5Iv+ZD6fb2TJzfXbFSK3aF
+         g9XlUeIsVMRGgN0RhumBCZyu+801SL5gj73Kj5n0nyTET/l3hMjuVgT5nfkNePPr1hrs
+         tEU1jXCW2wpzzgnX3wJmZSDgnde2eY5IB/mSOrTzZhIAzkrQH2FIHCOfrm62lV+T5RZ6
+         qhZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718382302; x=1718987102;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AJ9BKcjtQxEX9HY4AyHldVS/pYAF0bNjL6ygRqtnenQ=;
+        b=W5jcd2eSUSg2YUx4Devjct1OB7zyj9VlOgtrRW8qvlJJMOQoYjbWgR9CeeHUB6iTFN
+         FU8k8bK7UxSw2PO0eKxTTLmV9xqZDNdZtpxU4Pr7tNF8EmftHqYNcqEr2HGttb837qFb
+         l7iNijbgSif0wnkV3KLFbjcIVe33yY7fv8sVn2E8iUzrL/Lbddflfs1Oh8ihDBp0yFch
+         Ne6tVz+9EU8BfAE2E9ogBP8Qdj0dRYuxDRhzOm8Bp3CwF6feUWRUY0lxVxaWortwtWru
+         bs8licFOaGbAdd/K704ZwuH90RNlC/Y6DBV3JPefHIy6km/SW2J3NiR7gKPiyJ9eBAga
+         ROSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwWgzHRmtYOp4NIjy7ShMeU6fiS2fOrrdXtWL1HjqjLXF/yUWQpyZOAr1CJTETxDzepvaUC9sSo+iZ/7y4TUUOa0NbotzgV7KChc9e
+X-Gm-Message-State: AOJu0Yx503xmyrrAlAjUHlVZfqjYl2NiriNAl2vti2sxAZ7YCjmwrDDP
+	KxkCbOCHIwSimsuNBsWXRHDG6SH01gFcboKVYXj8iaKh46O9t1a+A9qEqZ78VX0a7C/Qg5MHxGY
+	8jcrFjzHNdUdCeRVPfah3uaKlfmTO6NfWpA6SWQ==
+X-Google-Smtp-Source: AGHT+IFxjsSmHmfjxcdx9LWJjlcnDzbmg6MTEjpCpU1mp7pLjF7m25ZdRpimxrXWgRWc3HiQ8GE0JCG3qf8CO/aq5Sg=
+X-Received: by 2002:ad4:448e:0:b0:6b0:820c:2d50 with SMTP id
+ 6a1803df08f44-6b2afc722c8mr36483566d6.1.1718382302054; Fri, 14 Jun 2024
+ 09:25:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171838228571.10875.9678006095453472995.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20240611094810.27475-1-piotr.wojtaszczyk@timesys.com> <Zmgor8accyAiUkUO@finisterre.sirena.org.uk>
+In-Reply-To: <Zmgor8accyAiUkUO@finisterre.sirena.org.uk>
+From: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+Date: Fri, 14 Jun 2024 18:24:50 +0200
+Message-ID: <CAG+cZ06B+AexqvwZtNP5FX50AmghAFLa=1ebxmKLvMoyVJ529w@mail.gmail.com>
+Subject: Re: [Patch v2 1/2] ASoC: fsl: Add i2s and pcm drivers for LPC32xx CPUs
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vladimir Zapolskiy <vz@mleia.com>, Russell King <linux@armlinux.org.uk>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, Chancel Liu <chancel.liu@nxp.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Michael Ellerman <mpe@ellerman.id.au>, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, 
+	linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/cleanups branch of tip:
+On Tue, Jun 11, 2024 at 12:36=E2=80=AFPM Mark Brown <broonie@kernel.org> wr=
+ote:
+> > +config SND_SOC_FSL_LPC3XXX
+> > +     tristate "SoC Audio for NXP LPC32XX CPUs"
+> > +     depends on ARCH_LPC32XX && SND_SOC
+>
+> On a quick scan I can't see any architecture dependency for build,
+> please add an || COMPILE_TEST for improved coverage.  As for all the
+> other things enabled in this Kconfig file there is no need to explicitly
+> depend on SND_SOC.
+Ok. Later I will add a sound card driver to phytec3250 board which uses
+arch/arm/configs/lpc32xx_defconfig config file so that the COMPILE_TEST
+won't be needed.
 
-Commit-ID:     9b9eec8dc284f33f505cec48d88b42ebad4da9cc
-Gitweb:        https://git.kernel.org/tip/9b9eec8dc284f33f505cec48d88b42ebad4da9cc
-Author:        Thomas Huth <thuth@redhat.com>
-AuthorDate:    Fri, 14 Jun 2024 11:03:06 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Fri, 14 Jun 2024 18:06:57 +02:00
-
-Documentation: Remove "mfgpt_irq=" from the kernel-parameters.txt file
-
-The kernel parameter mfgpt_irq has been removed in 2009 already by
-
-  c95d1e53ed89 ("cs5535: drop the Geode-specific MFGPT/GPIO code")
-
-Time to remove it from the documentation now, too.
-
-Signed-off-by: Thomas Huth <thuth@redhat.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-Link: https://lore.kernel.org/r/20240614090306.561464-1-thuth@redhat.com
----
- Documentation/admin-guide/kernel-parameters.txt | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index b600df8..fa76802 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3429,10 +3429,6 @@
- 			deep    - Suspend-To-RAM or equivalent (if supported)
- 			See Documentation/admin-guide/pm/sleep-states.rst.
- 
--	mfgpt_irq=	[IA-32] Specify the IRQ to use for the
--			Multi-Function General Purpose Timers on AMD Geode
--			platforms.
--
- 	mfgptfix	[X86-32] Fix MFGPT timers on AMD Geode platforms when
- 			the BIOS has incorrectly applied a workaround. TinyBIOS
- 			version 0.98 is known to be affected, 0.99 fixes the
+--
+Piotr Wojtaszczyk
+Timesys
 
