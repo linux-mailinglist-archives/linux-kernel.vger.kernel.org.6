@@ -1,221 +1,173 @@
-Return-Path: <linux-kernel+bounces-214211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31479908160
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:07:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BDF4908163
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 04:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDA53283AB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:07:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE24A1C21A17
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 02:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633CA183071;
-	Fri, 14 Jun 2024 02:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877B7183081;
+	Fri, 14 Jun 2024 02:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="PE4cJs0M"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2041.outbound.protection.outlook.com [40.107.21.41])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uz8YncwJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5494E1EA6E;
-	Fri, 14 Jun 2024 02:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718330811; cv=fail; b=h+vsIZZBvUfbMDIx6Xey9XgUZHaLgEg8SzkNJgz4dXuo148F1Si1GtkGBL/fnMSRKQ5l3bM87BE35JE8wczJoXcVyoYyICTBaQrXseSxqTH1MrOQiEWzMV5bkMe0iMcQXszWgDDy+T/1lgVYvGHNawcrNwZgaOteBEypgUf1uTY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718330811; c=relaxed/simple;
-	bh=aUI+tYCNwFSZoH9WRMNHz9SWHzFDjupaN/CbBPpp6ho=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=CPTiLwtV4sYtH8F7YfEWESxPWabSQLjlalgBeDV6l7UuKycZA8J7sjtFhm+eAYtlM9JVMW6ivK3CfLUpABi2MXN+VyCmpB8MEigxca432hHqPUVbktlpHiOAiHDh/rSio/LRD/sQgxFcgYYg9H/FlRB49F1+NCrogzyKNgj66SU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=PE4cJs0M; arc=fail smtp.client-ip=40.107.21.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FIco2zc2Qq53+jC1mAuzRVNc35E9pibfhtXGMdaO+7x8OjDfmQT4qxcJilitrqMBU8Uv/BEl++z7FMlFly9DsEMo8U9lrbudwcwcnkJmIMrDHLc4SLpkh7ou05Wsqot4RgFZKvx6hJGdHZHTbg91a+2Xw8o714w9hVj8Xj9T6+79KLQS2w8UMXPvWwjQsVnBQqFv53VNOOKU7YnaxEIYDofWsWuXr0yhnb7hii7+Rv2SIKqg5M+AcINgsM3DScvFQi9Dm+6QXyRxl/SENso41NGM14cssWGRGegkFJnm2q5ZtDvGr2iqQxR6UkWmfnY0xVkUs/VCZzHuGTk6TGWeIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=X6jHCXxbZPYeNXcRqTfCBkWy6fhdjffP2QOINSUwDhs=;
- b=TLWDbgFUNnouMoNX4Mdioe4DX0WKC2rOJ49rTxqB8reCZV+9yZYiSYm7YNmScePZGSpMPtj9P8L1Mayw/AsP9UFrlfwiDzFJA+I8j/QZNvve3fk1h1YthBbIFCqXkauAmCVwOm2W6zOW0CuzaWkZTpmZAjBkQ6EzFIUd0QekKv9mWSLimXynQ7tbyF6EBvQ+uGBnjW3tYqPbnbxH/7embU5F8ERBJyJ6N2yzQE0VmlGf7jnqVKFwfhS9LstOUPinYal9AVX/eQgCy948lfkVdT9kvYlAefbfRGf/LguBJmSRK/RGXYOYzcWf3DtcN6Fi80v5tWScf8HeD9uZfMaqnQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X6jHCXxbZPYeNXcRqTfCBkWy6fhdjffP2QOINSUwDhs=;
- b=PE4cJs0MqKoLfTTeqDH2n60ZywWEqwzs7JT1HdAEh1XWPO0gjV3M04txOxEKun3TO745Z/aq7CcOgrUMmGc51f0WwyVSRALQjZdjRP5y+s71bxdvv7hoMyNXhSf7rUFZaxkrb/Keo+oMDxeDy4sSjPRYFLP1ebuSFWFR8nV/ztQ=
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
- by DBBPR04MB7596.eurprd04.prod.outlook.com (2603:10a6:10:201::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.25; Fri, 14 Jun
- 2024 02:06:46 +0000
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257%4]) with mapi id 15.20.7633.037; Fri, 14 Jun 2024
- 02:06:45 +0000
-From: David Lin <yu-hao.lin@nxp.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"briannorris@chromium.org" <briannorris@chromium.org>, "kvalo@kernel.org"
-	<kvalo@kernel.org>, "francesco@dolcini.it" <francesco@dolcini.it>, Pete Hsieh
-	<tsung-hsien.hsieh@nxp.com>, Francesco Dolcini
-	<francesco.dolcini@toradex.com>
-Subject: RE: [EXT] Re: [PATCH v10 2/2] wifi: mwifiex: add host mlme for AP
- mode
-Thread-Topic: [EXT] Re: [PATCH v10 2/2] wifi: mwifiex: add host mlme for AP
- mode
-Thread-Index: AQHakVah/NlfkBV8NUyUKYHJ747D+LHEcWiAgAJqJoA=
-Date: Fri, 14 Jun 2024 02:06:45 +0000
-Message-ID:
- <PA4PR04MB9638C0A141C53CC2F5898DA1D1C22@PA4PR04MB9638.eurprd04.prod.outlook.com>
-References: <20240418060626.431202-1-yu-hao.lin@nxp.com>
- <20240418060626.431202-3-yu-hao.lin@nxp.com>
- <Zmmeg15YQtiChZ70@pengutronix.de>
-In-Reply-To: <Zmmeg15YQtiChZ70@pengutronix.de>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PA4PR04MB9638:EE_|DBBPR04MB7596:EE_
-x-ms-office365-filtering-correlation-id: 14df51b1-9650-4d5a-ea21-08dc8c16a48a
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230035|376009|366011|1800799019|38070700013;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?4RbHAYn0EQBBSqZbt1gvDtoW3p93wtNpfNVTFXC5NfaKBaLgtEsI+i4AKGsc?=
- =?us-ascii?Q?rzRvfP6DVqUBZuXUrj1oFkjcL0ZUObkUf5hM7mK1dLVSjM79PplyfE+uRNi8?=
- =?us-ascii?Q?RGGVXlqhzPOGukq4WfBGvLqs4cv8nTYXSOq8FUEnuCHNvdGCZkSn4dGHcHjX?=
- =?us-ascii?Q?SBtr1bVQKMSLPSOUYwOapXuti53LUN13pkhbRzJOPOcB3BljfzlBBMPtfLg7?=
- =?us-ascii?Q?u3jYTONA9Q6yJ29lThjk5tpCjHfiLvwnjI4SS0ZbkLAueglSHKNN5nqVmlmX?=
- =?us-ascii?Q?D8tZybF4pnGJVZ9T9ysVZ4XmabZyAv9/CL6DTRrbV/JQ8Tj9mqgTtFneGHsY?=
- =?us-ascii?Q?UMrt/jVxcF06g4QDd3gZL2AnALoC5fKrsv7eCArylrjIzgs2HLrJtEV/Ivnm?=
- =?us-ascii?Q?AG0TOopJNl3x6Mq17SSBgmYwypSMATJ8xRhg14io7PwpXJoJGlM4ZgNZUYkR?=
- =?us-ascii?Q?8GowlSMLzNCVEPUnOhKuL5D3wg++bzfsE5yH+eAeQRyaYN9cdKmzzG+pYI/B?=
- =?us-ascii?Q?tuV+z2Uhjv5DRyZllvS3e/4jQfU0wRn8zTpWAiycrXL8F45zZRzA2WMGmwb0?=
- =?us-ascii?Q?MmVwPmQtP8c2XatQ+gAcDo9XuF7/1WMVWf+2n1xNJTjzcO3q9P12nUy/t9vM?=
- =?us-ascii?Q?SL/xF1/vYeZI/5d+p0Jif3zy2vdBFEFyCVYHtGYq/NxfToX3NrQcFr/9AQwb?=
- =?us-ascii?Q?JuXSD6wBekgnO50+9SbL3XRpAp8/ZnItiEC+IK2x1KRhh8DntKNCDEBLNp2N?=
- =?us-ascii?Q?RfMZ6S6F4ZWJYh6kyAOqVdwDZdaqScqKUM7R1AD9uGQx6h0gkv2aUq/KfjQQ?=
- =?us-ascii?Q?M5iC6BV3KhlJFBaBs286NwuPm/r/bbW92hQmDOM6gnbAYQEiWX8Su1vF6uB3?=
- =?us-ascii?Q?bK/UgwHhbs8fPaR1xEK3MN2ROT+hxMX2+Wi9yL+XOZ2uBsFD1vTrT1LTjoTC?=
- =?us-ascii?Q?DBB+yocUCIlbeZp5D8py3NEQXwG01o60VTqkBOnIq4xVESOmmgMvCB7Sht05?=
- =?us-ascii?Q?P7NuS5RLJDlgDK7RW7xiDmRfmbJ1/PyIgI8xui38viy+lyPcjQs9ID9D0rFK?=
- =?us-ascii?Q?3/7yMhaLX3J4Yk2riQ0BV5rZr0x3PLV4Q0p8yvdzwDPmx3T4BlNtW8GaOWd5?=
- =?us-ascii?Q?OBhoPGW2xLLyR37ubwfpVPbov7KnM74LZKoU1GA9mBctZ6qrJCy2GvNZXWVb?=
- =?us-ascii?Q?qtydyoDRDhf4BE/VvV9rQ71nd3js1ZLaNdGAY5gjt8urSDAAWBcWPqjI/Uar?=
- =?us-ascii?Q?aByltk9+QeYW+/TcRCtVqEiaIHi2072l1623fY1rk+Em6nEOoPhHKpmtO7IC?=
- =?us-ascii?Q?UKgbkNsSfO/MPtGco9q+oB8qYSYZKVsicLG2GgXsZZeDj9YI1HbO3c7ooETl?=
- =?us-ascii?Q?LGXvjoA=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230035)(376009)(366011)(1800799019)(38070700013);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Ssk7rpWxtlbDNsf8uGSYSglMdclKKXXTNQNz8uZbcJlHoMtNh/IawpO7yUZT?=
- =?us-ascii?Q?h5MiIUM0hPfGzqtIuqa5zcIdTlP/jg4AWt1+925IypQhvdOPvuo14yFE3sLf?=
- =?us-ascii?Q?4LZDmaHFuQr+fHQAu92gmU7jmF4Hw9VvFcRAlBKOZ/PY0+/9ooLDOlm4qYRG?=
- =?us-ascii?Q?ooZU39Ky+AQ/NIFzww+psroK1Ev8EOewyGGG8PJQLdiKSbfsaItDq/lBOH3N?=
- =?us-ascii?Q?sAuYJGNJY3Zl8oMw72nvTwn43gCALQuUGGNjEWoeXBWR0ma2eDaFjqO/AqNC?=
- =?us-ascii?Q?XuIcEA70OO1a46ouFsdHpGDbo2H9hC2e2Av5Irpce5x4VtGBQuBVqRlMDVWs?=
- =?us-ascii?Q?/e+iRdbRnCl3gyWuNRsv2zukhRxfm/GRVeFN3llmCMIVJwBxT/efNKirDU2w?=
- =?us-ascii?Q?bPKWyJuIVXIFdQv5EkYddlelM6XtKMc5c+FlKPPC/iP7eUeTTHw8X8OgryA7?=
- =?us-ascii?Q?jKs8viZ8tOdx8hRsQ2JvinGIuKuF/r765qhqEKQRtOqrMdhXXsF5iJEZ2vp8?=
- =?us-ascii?Q?Wg2NduMnxh79vWhIuYVmuiBJLzS52QpQ/ZYHz+1qMeBNycPkbB1Yx5l5UErT?=
- =?us-ascii?Q?3vJTKHI8iBlsrALcrEbbqjmfuqsYb1+6BP6homS7txZV098MgwxLAZbc4nB7?=
- =?us-ascii?Q?CIEn0Jjl04xhaEidjTDM0bT2AMIL5xooxOt8MDgjAPTCQaILKx84kvpVMeJ6?=
- =?us-ascii?Q?64V4dcHxsDo/0437Z0X1rySXqMkHe60dBPbAJgkRVxqfI9vTO2GF+avJ9TDX?=
- =?us-ascii?Q?+K4N8uB3gPzovJ3IHb47ntUZiwNjs7k+QE8INSDwo8MUtL1pU2jG2ZO0swAL?=
- =?us-ascii?Q?Qf6mJBGKBVi4Ogi9Bi+q61YyS2uGzCUT37Sq8yB5QYZ1AZkxe6ppYJM+a6XC?=
- =?us-ascii?Q?Gob0vChngGtf6RZrZ/9Xo161Bwoj21RtLJVD9YjrRt964UHLTBXBak4gVbTI?=
- =?us-ascii?Q?sh5vOd7p9UVua5Le6s1x94XviRNKjYLi5nMajoplou90kBElURAhnfLTTYYs?=
- =?us-ascii?Q?BTSbjNNXcjJP6Qgew5KmDkZxQaS+24U2CKbbcbiD14SJ9q80SzuaSduysnEK?=
- =?us-ascii?Q?fZZL1sDCJfg7oO5UboMdigMo7CNQnyyKiv00UQR6ZKPV+aKkSQU0K3+imTIr?=
- =?us-ascii?Q?APSafuCmL8u8QCy+bfC09AfOuTFpa8GlmHK4c0lxsDyVS3aKkZMlkTpeJcCo?=
- =?us-ascii?Q?YyCZQwcxCx2Dt99ndRW0lqm14gFd2KwQZGp2vHPzhJ4YtsW80Vq3WPgUi7Xn?=
- =?us-ascii?Q?OQxOueHRA+qOqQNblHjBrPO2V6R0667Tx0FVsn+I7khbHoAcgP4iocO84fK/?=
- =?us-ascii?Q?yTTYj1BkTiWYl1xtZZLlHLvoKw1Tu2D49csbe5Njzjw7KyFoV4zPIv7UzR9u?=
- =?us-ascii?Q?vPc4r3AthXyS0SWj8ylJpw045s9WQgSCXL9cZwD3tJaLEvrn6uyszyyuzR1B?=
- =?us-ascii?Q?eKQ2RgoaOx+CuVjL4G0MigLV1nYbEcNc0wq02Uk40NzUpJR2g2AnicARxnce?=
- =?us-ascii?Q?CqNwxPzS31EKvftpAQwDig2PViJQ42LtOpZXCZgknOiVEAFLuPJIf54eOQug?=
- =?us-ascii?Q?h258lmvEW51l8sGrTmDPTHJTI/wIuAXn3YZBIPYg?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AD9183064;
+	Fri, 14 Jun 2024 02:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718331102; cv=none; b=P6+1/AX0Fwe2/M50yGWYA2q1QFfwYvYiKk15ScSb9gpingSZntOCtEb352Luv6OjE5Yjg/th/b5B6MHFuUvdhUGm+iyReqvSJtGLHqsW0WYnEqbaGx/scfNqfvUIIMhzWgHQvj6nj239WHoNRjV85VunyU9ztSMM7VRmK68zJv0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718331102; c=relaxed/simple;
+	bh=h1Kq8yqZKDsGduo8N4jU0RFTikCuB7CihDYoCfa9Fbg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iea+ViuZaGoXbfgBgqsx6m1jZDHKSOA9b8Se5oVOEMsmal331kXMubXEozS0jMFmLFVZgK3b3ZztI5ILuEqssgamCqbikx2aIaYXgS5IH/6yNCgZXQJ9a6QPyTe1RMa+S5aGSBoW7b+HAgPan7LqZGlkDkajI64TmKF6Lc7bacs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uz8YncwJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46C5FC4AF1C;
+	Fri, 14 Jun 2024 02:11:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718331102;
+	bh=h1Kq8yqZKDsGduo8N4jU0RFTikCuB7CihDYoCfa9Fbg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Uz8YncwJSJqgsfB9rbUsv2LonbfBWx/ioyamJIu3iwlj3Rhqr3xYj/OLzdt3/F224
+	 uOJHIS0YjRN758xJLRC8vp0S8AJubQY0WsAPwlgsrILeQHRfze3VFJtd1J3A/ZaoPW
+	 I5Gc8VLkHFIdbC10Bbb0EmcQivzyutVL98epa3buF9Y7IaTFepmiAiJI2EBXzaoBRN
+	 VLsScbg4ByU65RCohqZ0gjtPfXTUVJbpKMvXxj/t7+6sgniuWIQ5AW+E7vAJH+D5ys
+	 IogvcSc9eX4KH5IeC61t5Hs1eFL7SvY+CN4tYftZn/KZ7KJL80sTLfPJQjBg1ZBT+1
+	 5+BqpH5BJqFeA==
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57c6994e2f1so859553a12.0;
+        Thu, 13 Jun 2024 19:11:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWBgTxqRI9EVcBW5xyVRpG6+mrqx6eFM9/6WTRlM3eYBgllfJbTjVaiMz3zEeOJO1pttrMbFK445y3KqZUL7UT7wICYMf0XDDNSJdue0txaPrn6VUSSA2thPiUC18N1aOcM58IT
+X-Gm-Message-State: AOJu0YyFfdBc67zwROMMrEMpSZw8KUsr77PVaTryt0hj/7aWs2AHWbsD
+	WDdJTikcK3qIJF+Rj9O31X77YMibCGzvVfAAmInnFiYNqVDQ2FvCcR+kwo9tT+pfECp00gjzmCr
+	BhBYCbIl5Dr5oUDHWzCuxTLNXq7g=
+X-Google-Smtp-Source: AGHT+IFuG29CnHZY4s+w0G1U047qhW5qjhtHtSffpMMPmcNafw0vwjMrL6FQX8doAmYuL1f1SJ8A/PZxUZc4GgWEZhs=
+X-Received: by 2002:a50:c19a:0:b0:57a:79c2:e9d6 with SMTP id
+ 4fb4d7f45d1cf-57cbd6c6fe4mr975557a12.33.1718331100717; Thu, 13 Jun 2024
+ 19:11:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 14df51b1-9650-4d5a-ea21-08dc8c16a48a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jun 2024 02:06:45.7087
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: HOHFzJAuM4Defp7/kHrFoFsBuIoPCA9HIDUuIrUFjQLd6X97cH0e1HiuuI70lD74b5fSgJO7MTqKuSMJjjLZ6g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7596
+References: <20240613-loongarch64-sleep-v1-0-a245232af5e4@flygoat.com> <20240613-loongarch64-sleep-v1-2-a245232af5e4@flygoat.com>
+In-Reply-To: <20240613-loongarch64-sleep-v1-2-a245232af5e4@flygoat.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 14 Jun 2024 10:11:28 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7VKGMAH10S4sOZLkbgkUSMAYzpYt-dL83S0Vg286PsaQ@mail.gmail.com>
+Message-ID: <CAAhV-H7VKGMAH10S4sOZLkbgkUSMAYzpYt-dL83S0Vg286PsaQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] LoongArch: Fix ACPI standard register based S3 support
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Jianmin Lv <lvjianmin@loongson.cn>
+Cc: WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> From: Sascha Hauer <s.hauer@pengutronix.de>
-> Sent: Wednesday, June 12, 2024 9:12 PM
-> To: David Lin <yu-hao.lin@nxp.com>
-> Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it; Pete
-> Hsieh <tsung-hsien.hsieh@nxp.com>; Francesco Dolcini
-> <francesco.dolcini@toradex.com>
-> Subject: [EXT] Re: [PATCH v10 2/2] wifi: mwifiex: add host mlme for AP mo=
-de
->=20
-> Caution: This is an external email. Please take care when clicking links =
-or
-> opening attachments. When in doubt, report the message using the 'Report
-> this email' button
->=20
->=20
-> Hi David,
->=20
-> On Thu, Apr 18, 2024 at 02:06:26PM +0800, David Lin wrote:
-> > Add host based MLME to enable WPA3 functionalities in AP mode.
-> > This feature required a firmware with the corresponding V2 Key API
-> > support. The feature (WPA3) is currently enabled and verified only on
-> > IW416. Also, verified no regression with change when host MLME is
-> > disabled.
-> >
-> > Signed-off-by: David Lin <yu-hao.lin@nxp.com>
-> > Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > ---
-> >
->=20
-> > diff --git a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> > b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> > index 491e36611909..073c665183b3 100644
-> > --- a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> > +++ b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-> > @@ -72,6 +72,10 @@ int mwifiex_set_secure_params(struct
-> mwifiex_private *priv,
-> >                               bss_config->key_mgmt =3D
-> KEY_MGMT_PSK;
-> >                       }
-> >                       break;
-> > +             case WLAN_AKM_SUITE_SAE:
-> > +                     bss_config->protocol =3D PROTOCOL_WPA2;
-> > +                     bss_config->key_mgmt =3D KEY_MGMT_SAE;
-> > +                     break;
->=20
-> Shouldn't this be |=3D PROTOCOL_WPA2 and |=3D KEY_MGMT_SAE?
-> Clearing the other flags when SAE is enabled looks wrong to me.
->=20
-> Sascha
->=20
+Hi, Jiaxun,
 
-These fields are used for the configuration of FW, this is the correct sett=
-ing.
+On Fri, Jun 14, 2024 at 12:41=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flygoat.c=
+om> wrote:
+>
+> Most LoongArch 64 machines are using custom "SADR" ACPI extension
+> to perform ACPI S3 sleep. However the standard ACPI way to perform
+> sleep is to write a value to ACPI PM1/SLEEP_CTL register, and this
+> is never supported properly in kernel.
+Maybe our hardware is insane so we need "SADR", if so, this patch may
+break real hardware. What's your opinion, Jianmin?
 
-David
+Huacai
+
+>
+> Fix standard S3 sleep by providing a fallback DoSuspend function
+> which calls ACPI's acpi_enter_sleep_state routine when SADR is
+> not provided by the firmware.
+>
+> Also fix suspend assembly code so that ra is set properly before
+> go into sleep routine. (Previously linked address of jirl was set
+> to a0, some firmware do require return address in a0 but it's
+> already set with la.pcrel before).
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+>  arch/loongarch/power/platform.c    | 24 ++++++++++++++++++------
+>  arch/loongarch/power/suspend_asm.S |  2 +-
+>  2 files changed, 19 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/loongarch/power/platform.c b/arch/loongarch/power/platf=
+orm.c
+> index 3ea8e07aa225..2aea41f8e3ff 100644
+> --- a/arch/loongarch/power/platform.c
+> +++ b/arch/loongarch/power/platform.c
+> @@ -34,22 +34,34 @@ void enable_pci_wakeup(void)
+>                 acpi_write_bit_register(ACPI_BITREG_PCIEXP_WAKE_DISABLE, =
+0);
+>  }
+>
+> +static void acpi_suspend_register_fallback(void)
+> +{
+> +       acpi_enter_sleep_state(ACPI_STATE_S3);
+> +}
+> +
+>  static int __init loongson3_acpi_suspend_init(void)
+>  {
+>  #ifdef CONFIG_ACPI
+>         acpi_status status;
+>         uint64_t suspend_addr =3D 0;
+>
+> -       if (acpi_disabled || acpi_gbl_reduced_hardware)
+> +       if (acpi_disabled)
+>                 return 0;
+>
+> -       acpi_write_bit_register(ACPI_BITREG_SCI_ENABLE, 1);
+> +       if (!acpi_sleep_state_supported(ACPI_STATE_S3))
+> +               return 0;
+> +
+> +       if (!acpi_gbl_reduced_hardware)
+> +               acpi_write_bit_register(ACPI_BITREG_SCI_ENABLE, 1);
+> +
+>         status =3D acpi_evaluate_integer(NULL, "\\SADR", NULL, &suspend_a=
+ddr);
+> -       if (ACPI_FAILURE(status) || !suspend_addr) {
+> -               pr_err("ACPI S3 is not support!\n");
+> -               return -1;
+> +       if (!ACPI_FAILURE(status) && suspend_addr) {
+> +               loongson_sysconf.suspend_addr =3D (u64)phys_to_virt(PHYSA=
+DDR(suspend_addr));
+> +               return 0;
+>         }
+> -       loongson_sysconf.suspend_addr =3D (u64)phys_to_virt(PHYSADDR(susp=
+end_addr));
+> +
+> +       pr_info("ACPI S3 supported with hw register fallback\n");
+> +       loongson_sysconf.suspend_addr =3D (u64)acpi_suspend_register_fall=
+back;
+>  #endif
+>         return 0;
+>  }
+> diff --git a/arch/loongarch/power/suspend_asm.S b/arch/loongarch/power/su=
+spend_asm.S
+> index 6fdd74eb219b..fe08dbb73c87 100644
+> --- a/arch/loongarch/power/suspend_asm.S
+> +++ b/arch/loongarch/power/suspend_asm.S
+> @@ -66,7 +66,7 @@ SYM_FUNC_START(loongarch_suspend_enter)
+>         la.pcrel        a0, loongarch_wakeup_start
+>         la.pcrel        t0, loongarch_suspend_addr
+>         ld.d            t0, t0, 0
+> -       jirl            a0, t0, 0 /* Call BIOS's STR sleep routine */
+> +       jirl            ra, t0, 0 /* Call BIOS's STR sleep routine */
+>
+>         /*
+>          * This is where we return upon wakeup.
+>
+> --
+> 2.43.0
+>
+>
 
