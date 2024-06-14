@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel+bounces-215254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 475C6909055
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:34:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77680909078
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2520BB21F95
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:32:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D57D6B2707B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CE619EEBD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35AA19FA8B;
 	Fri, 14 Jun 2024 16:30:51 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD49195B04
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A35A1990BE
 	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 16:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718382649; cv=none; b=NQX5BKL/O5eda2XTrcxsCRjUA45H0pG+gXlZw3k3P8jT0ksP0jSylcaeSG2p1tw8NZ8ChmzbWsPLy5yPdmjR3YsuWUng7dkQ6nOsK1U0E6lYndNbwmw9dQFVfdfmlt7+MGXUG48hFdVzvTvxOpt+hs06Wj1ZQEyFwZsYyWB6Tuk=
+	t=1718382649; cv=none; b=GF3o185sGIHhTUWmuugETnErOJjGyR6qx7bnIoZRGn4o+rzZQN55XhRFkJvA9VT9hQAXxvji7GSax6zGu5e+B2ux03ExhiTeEHaBDrlV8FiZfKb2i8VAQ+7eL6ye5Cr/d3Z5u1TrydaZCcGuf8AXZlYhNR450Xru8XCPQBxUS6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718382649; c=relaxed/simple;
-	bh=ffDMNay5V4HCQNkyqfXkxcR32rvFhwWt7bVdmaqOd6M=;
+	bh=Dn4Ux4T+OAUwHCqvI/33LakzR4aBRHi7lR376LsB8DY=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=Ji3/NfSGw0c/AkTnPEqyARFywYqVlgVfKETPTgessXor4CLF764kl+lg8qIn4UIVVLorkpuoXFtsK91LNOPKFpnZ5RGXEC0JS5DRjW8xly++WCH4GdYvA2JOa48I2PX4lI+wwQvFhO/gCoDGhaJ/Uz3uei8hJ6VUww0NcAqnlgE=
+	 Content-Type; b=oZTmvzGdkUVG94Oi+w740QA6tLLXuQiC2l74Q4zDyGrvoFjvJrxu2QVdhPm+Gxt57qoT7yESxWO2iWJfXDxZwGuYbo3X4NIWYGhuYENxhJ61jBuGJieORAcmsmomfiURw6/+SaJfpUIUrulHHm7XrDr9IpvYR8xI6hAz27c6B5I=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6854EC4DDEA;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90094C4AF52;
 	Fri, 14 Jun 2024 16:30:48 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.97)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1sI9pX-00000001rsP-1u2O;
+	id 1sI9pX-00000001rsv-2ZNr;
 	Fri, 14 Jun 2024 12:31:11 -0400
-Message-ID: <20240614163111.310579196@goodmis.org>
+Message-ID: <20240614163111.473960851@goodmis.org>
 User-Agent: quilt/0.68
-Date: Fri, 14 Jun 2024 12:30:22 -0400
+Date: Fri, 14 Jun 2024 12:30:23 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
+ linux-mm@kvack.org,
  Vincent Donnefort <vdonnefort@google.com>,
  Joel Fernandes <joel@joelfernandes.org>,
  Daniel Bristot de Oliveira <bristot@redhat.com>,
@@ -61,7 +62,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Guenter Roeck <linux@roeck-us.net>,
  Ross Zwisler <zwisler@google.com>,
  Kees Cook <keescook@chromium.org>
-Subject: [for-next][PATCH 07/13] ring-buffer: Validate boot range memory events
+Subject: [for-next][PATCH 08/13] tracing: Add option to use memmapped memory for trace boot instance
 References: <20240614163015.456541709@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,20 +74,28 @@ Content-Type: text/plain; charset=UTF-8
 
 From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 
-Make sure all the events in each of the sub-buffers that were mapped in a
-memory region are valid. This moves the code that walks the buffers for
-time-stamp validation out of the CONFIG_RING_BUFFER_VALIDATE_TIME_DELTAS
-ifdef block and is used to validate the content. Only the ring buffer
-event meta data and time stamps are checked and not the data load.
+Add an option to the trace_instance kernel command line parameter that
+allows it to use the reserved memory from memmap boot parameter.
 
-This also has a second purpose. The buffer_page structure that points to
-the data sub-buffers has accounting that keeps track of the number of
-events that are on the sub-buffer. This updates that counter as well. That
-counter is used in reading the buffer and knowing if the ring buffer is
-empty or not.
+  memmap=12M$0x284500000 trace_instance=boot_mapped@0x284500000:12M
 
-Link: https://lkml.kernel.org/r/20240612232026.172503570@goodmis.org
+The above will reserves 12 megs at the physical address 0x284500000.
+The second parameter will create a "boot_mapped" instance and use the
+memory reserved as the memory for the ring buffer.
 
+That will create an instance called "boot_mapped":
+
+  /sys/kernel/tracing/instances/boot_mapped
+
+Note, because the ring buffer is using a defined memory ranged, it will
+act just like a memory mapped ring buffer. It will not have a snapshot
+buffer, as it can't swap out the buffer. The snapshot files as well as any
+tracers that uses a snapshot will not be present in the boot_mapped
+instance.
+
+Link: https://lkml.kernel.org/r/20240612232026.329660169@goodmis.org
+
+Cc: linux-mm@kvack.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
@@ -113,244 +122,137 @@ Cc: Ross Zwisler <zwisler@google.com>
 Cc: Kees Cook <keescook@chromium.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/ring_buffer.c | 190 +++++++++++++++++++++++++++++--------
- 1 file changed, 152 insertions(+), 38 deletions(-)
+ .../admin-guide/kernel-parameters.txt         |  9 +++
+ kernel/trace/trace.c                          | 75 +++++++++++++++++--
+ 2 files changed, 78 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 588bc057bad7..804dfbdeef84 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -1675,10 +1675,152 @@ static bool rb_meta_valid(struct ring_buffer_meta *meta, int cpu,
- 		subbuf = (void *)subbuf + subbuf_size;
- 	}
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b600df82669d..ff26b6094e79 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6754,6 +6754,15 @@
+ 			the same thing would happen if it was left off). The irq_handler_entry
+ 			event, and all events under the "initcall" system.
  
--	pr_info("Ring buffer meta is from previous boot!\n");
- 	return true;
++			If memory has been reserved (see memmap for x86), the instance
++			can use that memory:
++
++				memmap=12M$0x284500000 trace_instance=boot_map@0x284500000:12M
++
++			The above will create a "boot_map" instance that uses the physical
++			memory at 0x284500000 that is 12Megs. The per CPU buffers of that
++			instance will be split up accordingly.
++
+ 	trace_options=[option-list]
+ 			[FTRACE] Enable or disable tracer options at boot.
+ 			The option-list is a comma delimited list of options
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 622fe670949d..dfde26aa3211 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -9504,6 +9504,31 @@ static int instance_mkdir(const char *name)
+ 	return ret;
  }
  
-+static int rb_meta_subbuf_idx(struct ring_buffer_meta *meta, void *subbuf);
-+
-+static int rb_read_data_buffer(struct buffer_data_page *dpage, int tail, int cpu,
-+			       unsigned long long *timestamp, u64 *delta_ptr)
++static u64 map_pages(u64 start, u64 size)
 +{
-+	struct ring_buffer_event *event;
-+	u64 ts, delta;
-+	int events = 0;
-+	int e;
++	struct page **pages;
++	phys_addr_t page_start;
++	unsigned int page_count;
++	unsigned int i;
++	void *vaddr;
 +
-+	*delta_ptr = 0;
-+	*timestamp = 0;
++	page_count = DIV_ROUND_UP(size, PAGE_SIZE);
 +
-+	ts = dpage->time_stamp;
++	page_start = start;
++	pages = kmalloc_array(page_count, sizeof(struct page *), GFP_KERNEL);
++	if (!pages)
++		return 0;
 +
-+	for (e = 0; e < tail; e += rb_event_length(event)) {
++	for (i = 0; i < page_count; i++) {
++		phys_addr_t addr = page_start + i * PAGE_SIZE;
++		pages[i] = pfn_to_page(addr >> PAGE_SHIFT);
++	}
++	vaddr = vmap(pages, page_count, VM_MAP, PAGE_KERNEL);
++	kfree(pages);
 +
-+		event = (struct ring_buffer_event *)(dpage->data + e);
++	return (u64)(unsigned long)vaddr;
++}
 +
-+		switch (event->type_len) {
-+
-+		case RINGBUF_TYPE_TIME_EXTEND:
-+			delta = rb_event_time_stamp(event);
-+			ts += delta;
-+			break;
-+
-+		case RINGBUF_TYPE_TIME_STAMP:
-+			delta = rb_event_time_stamp(event);
-+			delta = rb_fix_abs_ts(delta, ts);
-+			if (delta < ts) {
-+				*delta_ptr = delta;
-+				*timestamp = ts;
-+				return -1;
+ /**
+  * trace_array_get_by_name - Create/Lookup a trace array, given its name.
+  * @name: The name of the trace array to be looked up/created.
+@@ -10350,6 +10375,7 @@ __init static void enable_instances(void)
+ {
+ 	struct trace_array *tr;
+ 	char *curr_str;
++	char *name;
+ 	char *str;
+ 	char *tok;
+ 
+@@ -10358,19 +10384,56 @@ __init static void enable_instances(void)
+ 	str = boot_instance_info;
+ 
+ 	while ((curr_str = strsep(&str, "\t"))) {
++		unsigned long start = 0;
++		unsigned long size = 0;
++		unsigned long addr = 0;
+ 
+ 		tok = strsep(&curr_str, ",");
++		name = strsep(&tok, "@");
++		if (tok) {
++			start = memparse(tok, &tok);
++			if (!start) {
++				pr_warn("Tracing: Invalid boot instance address for %s\n",
++					name);
++				continue;
 +			}
-+			ts = delta;
-+			break;
-+
-+		case RINGBUF_TYPE_PADDING:
-+			if (event->time_delta == 1)
-+				break;
-+			fallthrough;
-+		case RINGBUF_TYPE_DATA:
-+			events++;
-+			ts += event->time_delta;
-+			break;
-+
-+		default:
-+			return -1;
 +		}
-+	}
-+	*timestamp = ts;
-+	return events;
-+}
-+
-+static int rb_validate_buffer(struct buffer_data_page *dpage, int cpu)
-+{
-+	unsigned long long ts;
-+	u64 delta;
-+	int tail;
-+
-+	tail = local_read(&dpage->commit);
-+	return rb_read_data_buffer(dpage, tail, cpu, &ts, &delta);
-+}
-+
-+/* If the meta data has been validated, now validate the events */
-+static void rb_meta_validate_events(struct ring_buffer_per_cpu *cpu_buffer)
-+{
-+	struct ring_buffer_meta *meta = cpu_buffer->ring_meta;
-+	struct buffer_page *head_page;
-+	unsigned long entry_bytes = 0;
-+	unsigned long entries = 0;
-+	int ret;
-+	int i;
-+
-+	if (!meta || !meta->head_buffer)
-+		return;
-+
-+	/* Do the reader page first */
-+	ret = rb_validate_buffer(cpu_buffer->reader_page->page, cpu_buffer->cpu);
-+	if (ret < 0) {
-+		pr_info("Ring buffer reader page is invalid\n");
-+		goto invalid;
-+	}
-+	entries += ret;
-+	entry_bytes += local_read(&cpu_buffer->reader_page->page->commit);
-+	local_set(&cpu_buffer->reader_page->entries, ret);
-+
-+	head_page = cpu_buffer->head_page;
-+
-+	/* If both the head and commit are on the reader_page then we are done. */
-+	if (head_page == cpu_buffer->reader_page &&
-+	    head_page == cpu_buffer->commit_page)
-+		goto done;
-+
-+	/* Iterate until finding the commit page */
-+	for (i = 0; i < meta->nr_subbufs + 1; i++, rb_inc_page(&head_page)) {
-+
-+		/* Reader page has already been done */
-+		if (head_page == cpu_buffer->reader_page)
-+			continue;
-+
-+		ret = rb_validate_buffer(head_page->page, cpu_buffer->cpu);
-+		if (ret < 0) {
-+			pr_info("Ring buffer meta [%d] invalid buffer page\n",
-+				cpu_buffer->cpu);
-+			goto invalid;
+ 
+-		if (IS_ENABLED(CONFIG_TRACER_MAX_TRACE))
+-			do_allocate_snapshot(tok);
++		if (start) {
++			if (*tok != ':') {
++				pr_warn("Tracing: No size specified for instance %s\n", name);
++				continue;
++			}
++			tok++;
++			size = memparse(tok, &tok);
++			if (!size) {
++				pr_warn("Tracing: Invalid boot instance size for %s\n",
++					name);
++				continue;
++			}
++			addr = map_pages(start, size);
++			if (addr) {
++				pr_info("Tracing: mapped boot instance %s at physical memory 0x%lx of size 0x%lx\n",
++					name, start, size);
++			} else {
++				pr_warn("Tracing: Failed to map boot instance %s\n", name);
++				continue;
++			}
++		} else {
++			/* Only non mapped buffers have snapshot buffers */
++			if (IS_ENABLED(CONFIG_TRACER_MAX_TRACE))
++				do_allocate_snapshot(name);
 +		}
-+		entries += ret;
-+		entry_bytes += local_read(&head_page->page->commit);
-+		local_set(&cpu_buffer->head_page->entries, ret);
-+
-+		if (head_page == cpu_buffer->commit_page)
-+			break;
-+	}
-+
-+	if (head_page != cpu_buffer->commit_page) {
-+		pr_info("Ring buffer meta [%d] commit page not found\n",
-+			cpu_buffer->cpu);
-+		goto invalid;
-+	}
-+ done:
-+	local_set(&cpu_buffer->entries, entries);
-+	local_set(&cpu_buffer->entries_bytes, entry_bytes);
-+
-+	pr_info("Ring buffer meta [%d] is from previous boot!\n", cpu_buffer->cpu);
-+	return;
-+
-+ invalid:
-+	/* The content of the buffers are invalid, reset the meta data */
-+	meta->head_buffer = 0;
-+	meta->commit_buffer = 0;
-+
-+	/* Reset the reader page */
-+	local_set(&cpu_buffer->reader_page->entries, 0);
-+	local_set(&cpu_buffer->reader_page->page->commit, 0);
-+
-+	/* Reset all the subbuffers */
-+	for (i = 0; i < meta->nr_subbufs - 1; i++, rb_inc_page(&head_page)) {
-+		local_set(&head_page->entries, 0);
-+		local_set(&head_page->page->commit, 0);
-+	}
-+}
-+
- static void rb_range_meta_init(struct trace_buffer *buffer, int nr_pages)
- {
- 	struct ring_buffer_meta *meta;
-@@ -1757,8 +1899,6 @@ static void *rbm_next(struct seq_file *m, void *v, loff_t *pos)
- 	return rbm_start(m, pos);
- }
  
--static int rb_meta_subbuf_idx(struct ring_buffer_meta *meta, void *subbuf);
--
- static int rbm_show(struct seq_file *m, void *v)
- {
- 	struct ring_buffer_per_cpu *cpu_buffer = m->private;
-@@ -2011,6 +2151,8 @@ rb_allocate_cpu_buffer(struct trace_buffer *buffer, long nr_pages, int cpu)
- 	if (ret < 0)
- 		goto fail_free_reader;
- 
-+	rb_meta_validate_events(cpu_buffer);
-+
- 	/* If the boot meta was valid then this has already been updated */
- 	meta = cpu_buffer->ring_meta;
- 	if (!meta || !meta->head_buffer ||
-@@ -3955,11 +4097,10 @@ static void check_buffer(struct ring_buffer_per_cpu *cpu_buffer,
- 			 struct rb_event_info *info,
- 			 unsigned long tail)
- {
--	struct ring_buffer_event *event;
- 	struct buffer_data_page *bpage;
- 	u64 ts, delta;
- 	bool full = false;
--	int e;
-+	int ret;
- 
- 	bpage = info->tail_page->page;
- 
-@@ -3985,39 +4126,12 @@ static void check_buffer(struct ring_buffer_per_cpu *cpu_buffer,
- 	if (atomic_inc_return(this_cpu_ptr(&checking)) != 1)
- 		goto out;
- 
--	ts = bpage->time_stamp;
--
--	for (e = 0; e < tail; e += rb_event_length(event)) {
--
--		event = (struct ring_buffer_event *)(bpage->data + e);
--
--		switch (event->type_len) {
--
--		case RINGBUF_TYPE_TIME_EXTEND:
--			delta = rb_event_time_stamp(event);
--			ts += delta;
--			break;
--
--		case RINGBUF_TYPE_TIME_STAMP:
--			delta = rb_event_time_stamp(event);
--			delta = rb_fix_abs_ts(delta, ts);
--			if (delta < ts) {
--				buffer_warn_return("[CPU: %d]ABSOLUTE TIME WENT BACKWARDS: last ts: %lld absolute ts: %lld\n",
--						   cpu_buffer->cpu, ts, delta);
--			}
--			ts = delta;
--			break;
--
--		case RINGBUF_TYPE_PADDING:
--			if (event->time_delta == 1)
--				break;
--			fallthrough;
--		case RINGBUF_TYPE_DATA:
--			ts += event->time_delta;
--			break;
--
--		default:
--			RB_WARN_ON(cpu_buffer, 1);
-+	ret = rb_read_data_buffer(bpage, tail, cpu_buffer->cpu, &ts, &delta);
-+	if (ret < 0) {
-+		if (delta < ts) {
-+			buffer_warn_return("[CPU: %d]ABSOLUTE TIME WENT BACKWARDS: last ts: %lld absolute ts: %lld\n",
-+					   cpu_buffer->cpu, ts, delta);
-+			goto out;
+-		tr = trace_array_get_by_name(tok, NULL);
++		tr = trace_array_create_systems(name, NULL, addr, size);
+ 		if (!tr) {
+-			pr_warn("Failed to create instance buffer %s\n", curr_str);
++			pr_warn("Tracing: Failed to create instance buffer %s\n", curr_str);
+ 			continue;
  		}
- 	}
- 	if ((full && ts > info->ts) ||
+-		/* Allow user space to delete it */
+-		trace_array_put(tr);
++
++		/* Only allow non mapped buffers to be deleted */
++		if (!start)
++			trace_array_put(tr);
+ 
+ 		while ((tok = strsep(&curr_str, ","))) {
+ 			early_enable_events(tr, tok, true);
 -- 
 2.43.0
 
