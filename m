@@ -1,273 +1,164 @@
-Return-Path: <linux-kernel+bounces-214864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBBAB908B42
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:08:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09ABB908B40
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48937288223
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:08:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EAFF1F242E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79985195FE5;
-	Fri, 14 Jun 2024 12:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kucfFyQm"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A782195F0D
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6773E196427;
+	Fri, 14 Jun 2024 12:07:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD23811FE;
+	Fri, 14 Jun 2024 12:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718366878; cv=none; b=DfLLELCycn0WQEE1HifwGz020VSC9s/8H2qigZ71F+8zBjs0Uoc6ThRjXBwuHj0qYWZJCh7M5YCqZi9iHTJz/1vnyBOglVS3dAyjM+9NiFmKkGqDVaCzlJoQVGi00jNu4LnvU947R7cmCUP2KGgsCbUDNboExbrMYQJuxtGICUQ=
+	t=1718366859; cv=none; b=bZ4Eh5Oslaj2tftOdNqV+FbFhP5bCN+Bvz1JWOgeQcNhcbSXkqVMeQV6No6zHsGMhyRMakDkqQgunCsGz4cXn12H0tmWt8NjeDsv+ZpvQRze12TpRf+Zmv1SyjJAwjcfWKGWHG0qeKKgNxqqR9TNlmvP12Ldjmr758w+wbJ5QUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718366878; c=relaxed/simple;
-	bh=lcFtH23e9Rt5eW1X9f2TiDWQqZjY+r2KCNmf9AiRlI0=;
+	s=arc-20240116; t=1718366859; c=relaxed/simple;
+	bh=Vq6GkNjm49Si+NAnbQlMEolVQ3XwS1Z66jv5HfAMGuU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qj1XO0UqNW8//66/BeqKQ36JYvdqLMz1SASo6N9J4/dNJVROvJwxLN7SV6zNmG6Ql+arH8M5RPc6SQhswUdlOOzYCFexnyS5hFjqd1ZsQ8r3HX5wc1FpUnwS7/j9v1a0DQbuiBQf/hqfWWm03EFDRhpac+4Fubg5J0jtCVGLXng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kucfFyQm; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: usamaarif642@gmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718366874;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=peu4HYA3Smy92EmNKG1/7ckvk78sjW9rJi3oNPg4ZUo=;
-	b=kucfFyQmn6AtisEDi9oL9J/EEUkUwEDe1iYX6QGTVV4LtG5BwKBsQZiYHUteBMNWJYdbAT
-	AgXU5y2Gefqn8NKIbsluwNMhvBHGy7TXurwbuOnpaochqFRlqZt5meEyu5ObJDxYntchub
-	2Ft5EVjMO50Q7jllRRqnPBVhxnrvK5E=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: shakeel.butt@linux.dev
-X-Envelope-To: david@redhat.com
-X-Envelope-To: ying.huang@intel.com
-X-Envelope-To: hughd@google.com
-X-Envelope-To: willy@infradead.org
-X-Envelope-To: yosryahmed@google.com
-X-Envelope-To: nphamcs@gmail.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: kernel-team@meta.com
-Message-ID: <0e17c634-842b-40f6-b3bd-e4b98ed1dc8f@linux.dev>
-Date: Fri, 14 Jun 2024 20:07:25 +0800
+	 In-Reply-To:Content-Type; b=TcQJU4oqA8B/PivOwt7hp1N87BxsexC+yFO0LKBpspA+MrIzVqVqRLaZ7NL8xJ4kD6AxqKtY6oXH06CQv676nIqMYvXfCUwsLi89mPdN6XmOVEAibgMMD8vxsMvBEfYtz6zo4X4TGQvgNj1ClB+4aeYHEuqBxv64FUWzJvPUXa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E093AFEC;
+	Fri, 14 Jun 2024 05:08:00 -0700 (PDT)
+Received: from [10.57.71.136] (unknown [10.57.71.136])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3DBB43F64C;
+	Fri, 14 Jun 2024 05:07:32 -0700 (PDT)
+Message-ID: <3516994c-7b06-4409-b9a9-975b9f7a60eb@arm.com>
+Date: Fri, 14 Jun 2024 13:07:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v5 2/2] mm: remove code to handle same filled pages
-Content-Language: en-US
-To: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org
-Cc: hannes@cmpxchg.org, shakeel.butt@linux.dev, david@redhat.com,
- ying.huang@intel.com, hughd@google.com, willy@infradead.org,
- yosryahmed@google.com, nphamcs@gmail.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, kernel-team@meta.com
-References: <20240614100902.3469724-1-usamaarif642@gmail.com>
- <20240614100902.3469724-3-usamaarif642@gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <20240614100902.3469724-3-usamaarif642@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/9] iommu/rockchip: Attach multiple power domains
+To: Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>,
+ Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
+ <20240612-6-10-rocket-v1-2-060e48eea250@tomeuvizoso.net>
+ <ffviz6ak6qsn2reg5y35aerzy7wxfx6fzix6xjyminbhfcguus@clszdjakdcjd>
+ <CAAObsKCx+r5UuESnrPem1Rb1-BF4i8FVwu6uozWhABOWoq+M4Q@mail.gmail.com>
+ <CAAObsKChaBZ2C5ezWsiZ_LoN6R2HFhFA9=UNSRYB6cyeo-jreg@mail.gmail.com>
+ <vmgk4wmlxbsb7lphq2ep3xnxx3mbv6e6lecihtftxoyp5lidvy@mectcwirrlek>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <vmgk4wmlxbsb7lphq2ep3xnxx3mbv6e6lecihtftxoyp5lidvy@mectcwirrlek>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2024/6/14 18:07, Usama Arif wrote:
-> With an earlier commit to handle zero-filled pages in swap directly,
-> and with only 1% of the same-filled pages being non-zero, zswap no
-> longer needs to handle same-filled pages and can just work on compressed
-> pages.
+On 2024-06-13 10:38 pm, Sebastian Reichel wrote:
+> Hi,
 > 
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-
-Looks good to me, thanks.
-
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
-
-> ---
->  mm/zswap.c | 86 +++++-------------------------------------------------
->  1 file changed, 8 insertions(+), 78 deletions(-)
+> On Thu, Jun 13, 2024 at 11:34:02AM GMT, Tomeu Vizoso wrote:
+>> On Thu, Jun 13, 2024 at 11:24 AM Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
+>>> On Thu, Jun 13, 2024 at 2:05 AM Sebastian Reichel
+>>> <sebastian.reichel@collabora.com> wrote:
+>>>> On Wed, Jun 12, 2024 at 03:52:55PM GMT, Tomeu Vizoso wrote:
+>>>>> IOMMUs with multiple base addresses can also have multiple power
+>>>>> domains.
+>>>>>
+>>>>> The base framework only takes care of a single power domain, as some
+>>>>> devices will need for these power domains to be powered on in a specific
+>>>>> order.
+>>>>>
+>>>>> Use a helper function to stablish links in the order in which they are
+>>>>> in the DT.
+>>>>>
+>>>>> This is needed by the IOMMU used by the NPU in the RK3588.
+>>>>>
+>>>>> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+>>>>> ---
+>>>>
+>>>> To me it looks like this is multiple IOMMUs, which should each get
+>>>> their own node. I don't see a good reason for merging these
+>>>> together.
+>>>
+>>> I have made quite a few attempts at splitting the IOMMUs and also the
+>>> cores, but I wasn't able to get things working stably. The TRM is
+>>> really scant about how the 4 IOMMU instances relate to each other, and
+>>> what the fourth one is for.
+>>>
+>>> Given that the vendor driver treats them as a single IOMMU with four
+>>> instances and we don't have any information on them, I resigned myself
+>>> to just have them as a single device.
+>>>
+>>> I would love to be proved wrong though and find a way fo getting
+>>> things stably as different devices so they can be powered on and off
+>>> as needed. We could save quite some code as well.
+>>
+>> FWIW, here a few ways how I tried to structure the DT nodes, none of
+>> these worked reliably:
+>>
+>> https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-devices-power/arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=heads#L1163
+>> https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-schema-subnodes//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=heads#L1162
+>> https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-devices//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=heads#L1163
+>> https://gitlab.freedesktop.org/tomeu/linux/-/blob/6.10-rocket-multiple-iommus//arch/arm64/boot/dts/rockchip/rk3588s.dtsi?ref_type=heads#L2669
+>>
+>> I can very well imagine I missed some way of getting this to work, but
+>> for every attempt, the domains, iommus and cores were resumed in
+>> different orders that presumably caused problems during concurrent
+>> execution fo workloads.
+>>
+>> So I fell back to what the vendor driver does, which works reliably
+>> (but all cores have to be powered on at the same time).
 > 
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index a546c01602aa..e25a6808c2ed 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -44,8 +44,6 @@
->  **********************************/
->  /* The number of compressed pages currently stored in zswap */
->  atomic_t zswap_stored_pages = ATOMIC_INIT(0);
-> -/* The number of same-value filled pages currently stored in zswap */
-> -static atomic_t zswap_same_filled_pages = ATOMIC_INIT(0);
->  
->  /*
->   * The statistics below are not protected from concurrent access for
-> @@ -188,11 +186,9 @@ static struct shrinker *zswap_shrinker;
->   *
->   * swpentry - associated swap entry, the offset indexes into the red-black tree
->   * length - the length in bytes of the compressed page data.  Needed during
-> - *          decompression. For a same value filled page length is 0, and both
-> - *          pool and lru are invalid and must be ignored.
-> + *          decompression.
->   * pool - the zswap_pool the entry's data is in
->   * handle - zpool allocation handle that stores the compressed page data
-> - * value - value of the same-value filled pages which have same content
->   * objcg - the obj_cgroup that the compressed memory is charged to
->   * lru - handle to the pool's lru used to evict pages.
->   */
-> @@ -200,10 +196,7 @@ struct zswap_entry {
->  	swp_entry_t swpentry;
->  	unsigned int length;
->  	struct zswap_pool *pool;
-> -	union {
-> -		unsigned long handle;
-> -		unsigned long value;
-> -	};
-> +	unsigned long handle;
->  	struct obj_cgroup *objcg;
->  	struct list_head lru;
->  };
-> @@ -820,13 +813,9 @@ static struct zpool *zswap_find_zpool(struct zswap_entry *entry)
->   */
->  static void zswap_entry_free(struct zswap_entry *entry)
->  {
-> -	if (!entry->length)
-> -		atomic_dec(&zswap_same_filled_pages);
-> -	else {
-> -		zswap_lru_del(&zswap_list_lru, entry);
-> -		zpool_free(zswap_find_zpool(entry), entry->handle);
-> -		zswap_pool_put(entry->pool);
-> -	}
-> +	zswap_lru_del(&zswap_list_lru, entry);
-> +	zpool_free(zswap_find_zpool(entry), entry->handle);
-> +	zswap_pool_put(entry->pool);
->  	if (entry->objcg) {
->  		obj_cgroup_uncharge_zswap(entry->objcg, entry->length);
->  		obj_cgroup_put(entry->objcg);
-> @@ -1268,11 +1257,6 @@ static unsigned long zswap_shrinker_count(struct shrinker *shrinker,
->  	 * This ensures that the better zswap compresses memory, the fewer
->  	 * pages we will evict to swap (as it will otherwise incur IO for
->  	 * relatively small memory saving).
-> -	 *
-> -	 * The memory saving factor calculated here takes same-filled pages into
-> -	 * account, but those are not freeable since they almost occupy no
-> -	 * space. Hence, we may scale nr_freeable down a little bit more than we
-> -	 * should if we have a lot of same-filled pages.
->  	 */
->  	return mult_frac(nr_freeable, nr_backing, nr_stored);
->  }
-> @@ -1376,42 +1360,6 @@ static void shrink_worker(struct work_struct *w)
->  	} while (zswap_total_pages() > thr);
->  }
->  
-> -/*********************************
-> -* same-filled functions
-> -**********************************/
-> -static bool zswap_is_folio_same_filled(struct folio *folio, unsigned long *value)
-> -{
-> -	unsigned long *data;
-> -	unsigned long val;
-> -	unsigned int pos, last_pos = PAGE_SIZE / sizeof(*data) - 1;
-> -	bool ret = false;
-> -
-> -	data = kmap_local_folio(folio, 0);
-> -	val = data[0];
-> -
-> -	if (val != data[last_pos])
-> -		goto out;
-> -
-> -	for (pos = 1; pos < last_pos; pos++) {
-> -		if (val != data[pos])
-> -			goto out;
-> -	}
-> -
-> -	*value = val;
-> -	ret = true;
-> -out:
-> -	kunmap_local(data);
-> -	return ret;
-> -}
-> -
-> -static void zswap_fill_folio(struct folio *folio, unsigned long value)
-> -{
-> -	unsigned long *data = kmap_local_folio(folio, 0);
-> -
-> -	memset_l(data, value, PAGE_SIZE / sizeof(unsigned long));
-> -	kunmap_local(data);
-> -}
-> -
->  /*********************************
->  * main API
->  **********************************/
-> @@ -1423,7 +1371,6 @@ bool zswap_store(struct folio *folio)
->  	struct zswap_entry *entry, *old;
->  	struct obj_cgroup *objcg = NULL;
->  	struct mem_cgroup *memcg = NULL;
-> -	unsigned long value;
->  
->  	VM_WARN_ON_ONCE(!folio_test_locked(folio));
->  	VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
-> @@ -1456,13 +1403,6 @@ bool zswap_store(struct folio *folio)
->  		goto reject;
->  	}
->  
-> -	if (zswap_is_folio_same_filled(folio, &value)) {
-> -		entry->length = 0;
-> -		entry->value = value;
-> -		atomic_inc(&zswap_same_filled_pages);
-> -		goto store_entry;
-> -	}
-> -
->  	/* if entry is successfully added, it keeps the reference */
->  	entry->pool = zswap_pool_current_get();
->  	if (!entry->pool)
-> @@ -1480,7 +1420,6 @@ bool zswap_store(struct folio *folio)
->  	if (!zswap_compress(folio, entry))
->  		goto put_pool;
->  
-> -store_entry:
->  	entry->swpentry = swp;
->  	entry->objcg = objcg;
->  
-> @@ -1528,13 +1467,9 @@ bool zswap_store(struct folio *folio)
->  	return true;
->  
->  store_failed:
-> -	if (!entry->length)
-> -		atomic_dec(&zswap_same_filled_pages);
-> -	else {
-> -		zpool_free(zswap_find_zpool(entry), entry->handle);
-> +	zpool_free(zswap_find_zpool(entry), entry->handle);
->  put_pool:
-> -		zswap_pool_put(entry->pool);
-> -	}
-> +	zswap_pool_put(entry->pool);
->  freepage:
->  	zswap_entry_cache_free(entry);
->  reject:
-> @@ -1597,10 +1532,7 @@ bool zswap_load(struct folio *folio)
->  	if (!entry)
->  		return false;
->  
-> -	if (entry->length)
-> -		zswap_decompress(entry, folio);
-> -	else
-> -		zswap_fill_folio(folio, entry->value);
-> +	zswap_decompress(entry, folio);
->  
->  	count_vm_event(ZSWPIN);
->  	if (entry->objcg)
-> @@ -1703,8 +1635,6 @@ static int zswap_debugfs_init(void)
->  			    zswap_debugfs_root, NULL, &total_size_fops);
->  	debugfs_create_atomic_t("stored_pages", 0444,
->  				zswap_debugfs_root, &zswap_stored_pages);
-> -	debugfs_create_atomic_t("same_filled_pages", 0444,
-> -				zswap_debugfs_root, &zswap_same_filled_pages);
->  
->  	return 0;
->  }
+> Mh. The "6.10-rocket-multiple-iommus" branch seems wrong. There is
+> only one iommu node in that. I would have expected a test with
+> 
+> rknn {
+>      // combined device
+> 
+>      iommus = <&iommu1>, <&iommu2>, ...;
+> };
+> 
+> Otherwise I think I would go with the schema-subnodes variant. The
+> driver can initially walk through the sub-nodes and collect the
+> resources into the main device, so on the driver side nothing would
+> really change. But that has a couple of advantages:
+> 
+> 1. DT and DT binding are easier to read
+> 2. It's similar to e.g. CPU cores each having their own node
+> 3. Easy to extend to more cores in the future
+> 4. The kernel can easily switch to proper per-core device model when
+>     the problem has been identified
+
+It also would seem to permit describing and associating the per-core 
+IOMMUs individually - apart from core 0's apparent coupling to whatever 
+shared "uncore" stuff exists for the whole thing, from the distinct 
+clocks, interrupts, power domains etc. lining up with each core I'd 
+guess those IOMMUs are not interrelated the same way the ISP's 
+read/write IOMMUs are (which was the main justification for adopting the 
+multiple-reg design originally vs. distinct DT nodes like Exynos does). 
+However, practically that would require the driver to at least populate 
+per-core child devices to make DMA API or IOMMU API mappings with, since 
+we couldn't spread the "collect the resources" trick into those 
+subsystems as well.
+
+Thanks,
+Robin.
 
