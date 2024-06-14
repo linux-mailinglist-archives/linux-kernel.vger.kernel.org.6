@@ -1,103 +1,95 @@
-Return-Path: <linux-kernel+bounces-214662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A41BB9087D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:45:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 277409087C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAE5B1C22220
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:45:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DA3B1C21A46
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED633192B9C;
-	Fri, 14 Jun 2024 09:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390C5193095;
+	Fri, 14 Jun 2024 09:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="QjlawHfi";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="bb7X2Jr5"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mEYuxDYT"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDD4194138
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D512D192B79
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718358257; cv=none; b=Re1DU19sur6b0oUcoc3zbEd+RyPHSk+cuC93PDXQu1p3ywT+93G6RTIIb6FTHz2DThJisc8mwNFXCuKrIpzGnidCx/ZqHEWRcBrmw6x1/G94veMpKwK+zRzbNKlE1D6YVUwyxGus9KTspOyvhMmBOqwttjOt74TpD4Hg3LMU3gg=
+	t=1718358194; cv=none; b=T2/mfJn28BwTRpD2B2F9JJW/0Kq96+f9B1/VtR+dEZD7vVgi7S9AfeGJqNaf1AF7T52BneT9yBHFwEyznw4ngIORYAC44e7EZmi5LlH295uLM2/AAbP0UTabgHt4ms0+x7cBhF6kmTvsWBh1BRg3XaxcjDXmbQmb2wpJnM0Zumc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718358257; c=relaxed/simple;
-	bh=twUgCA5lLEEXRaSSd2kdE7h/lkvHV3RfmLbmB60fE/8=;
-	h=Subject:Date:From:To:Cc:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rYHxZ4DMPaMXRT+ShF1xAmlEanxYnI3OpZb7H/AgOppbO4PC1jEZ0T2Ta/BJ43opHsN3/aKyKp3gOab1n9lYnyQ7r6/GezPEmqWgbQ98hGR6RCQDCpF8ttglTdmW5z/bFlGPFDDZ4qVlqzoJPQBzRpP3F5Amh5pJq8L6xRG2cQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=QjlawHfi; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=bb7X2Jr5 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1718358194; c=relaxed/simple;
+	bh=tLQgAiSqIKd8Fr/cSViZ1UALzCWG3iDxmInXrEl5pr8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ilJoUtqtwkL+a/BHFPK+Z9SueWjzMDwpP7fO/5WuCuK6pNt9Q/b8rGLKOwFAxK445nUjGFtiDwuE7aKavUUHxg5KBACH/5wATMyhG30stUEcSNhMaFiI4JWkuxUHtrwxE0fCK5BbZqPsbBXbTigT251NVJSxuYiZFGbVCPhGQl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mEYuxDYT; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57c6cb1a76fso8756a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 02:43:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1718358254; x=1749894254;
-  h=date:from:to:cc:message-id:references:mime-version:
-   content-transfer-encoding:in-reply-to:subject;
-  bh=KqutV/9zmAcolTorfUzfmzB3+gVeK0ZvJ8Jk6Wn19IM=;
-  b=QjlawHfiq3ui8dtTIqUemDD8dXO2QHY2Jl5FkcHtkIY0GzMCxZpyzCfx
-   xdqPt61FUNMggxmSWH3hVPyKMcYrxGz0jQ9J7W89SD9ZkIirebl8cGBT6
-   ucWgm68lMuD4bm3KKhr2S+sH1v+SJ2c5bn/xYa3f3aOLyFdlZcFF065yk
-   +lXSAKmYWMZ/3t3VV+I/diPXNXskfcZJjw4ZVdMTKt8U4Z3P0ogWZMYFK
-   DeTWRVWEucPu2eicOaewkg7EFhWrChZOPuqY3f9qAfWHL7ylmoLgQg23m
-   3xo3cAV2lx5ATiuFdub2NSpoBfKlu+8NjbVGNDt+vzWTZC1PbYLPUoT/v
-   g==;
-X-CSE-ConnectionGUID: bnPp7kDhS5SFayMOY3PHAQ==
-X-CSE-MsgGUID: 6PM2ACNiT424mdxsNDoCCQ==
-X-IronPort-AV: E=Sophos;i="6.08,237,1712613600"; 
-   d="scan'208";a="37396626"
-Subject: Re: Re: [PATCH 4/4] mfd: tqmx86: add I2C IRQ support
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 14 Jun 2024 11:43:02 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 97374160F4C;
-	Fri, 14 Jun 2024 11:42:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1718358178;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=KqutV/9zmAcolTorfUzfmzB3+gVeK0ZvJ8Jk6Wn19IM=;
-	b=bb7X2Jr5A/JkS72R7HFoRrv8eroi/jFrOWiQ0uJOjBk5y6EvWoMcsuMozgX9jxPXhYi5q6
-	O5AmkBaP3w9hD/Al+KWD5ZqlGwFyMuXwLdmJt5rDcevEEEe2o3D6NhkwzcmB0VfCzFa/36
-	aBYEJDzwBovNCwGp8Fyk8gWyPkABniW1IdfOwTmGJwChEydrlIgthO/9TawlVeQiad09zO
-	zfa5984+dncmNDBPmxg8y67gqaUTj89BBIy/sjL3B9FIWhqeNPZO4GHEl8y+Cn6eBATBxP
-	H5GnwgTD3LEMpjKASGKfLAMPPuvB3ioVk2elZqQ+OcJHfcbR8abiKxgw0jV5/A==
-Date: Fri, 14 Jun 2024 11:42:51 +0200
-From: Gregor Herburger <gregor.herburger@ew.tq-group.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-	linux-kernel@vger.kernel.org,
-	Gregor Herburger <gregor.herburger@tq-group.com>,
-	linux@ew.tq-group.com
-Message-ID: <ZmwQkHvCdB3rPGEw@herburgerg-w2>
-References: <cover.1717499766.git.matthias.schiffer@ew.tq-group.com>
- <18d0348f2f7b70329e44f7759bad7e6fe231dba0.1717499766.git.matthias.schiffer@ew.tq-group.com>
- <20240613154234.GJ2561462@google.com>
+        d=google.com; s=20230601; t=1718358191; x=1718962991; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tLQgAiSqIKd8Fr/cSViZ1UALzCWG3iDxmInXrEl5pr8=;
+        b=mEYuxDYTGkcb+LpOwFZdoMmdKeAT0qXZBHdA7gW3HmyuQw1EW4yhXGppW+jtels5AK
+         sUCMTpKZmYgc70c09qQmkMPbr9HtHfwxiMsSKHM2ha1Y6YnVC4lSadtgAL6U9e/k83Bh
+         /nqRbDgxBns1FemuLtBm0ZeokLXTl4Rt8aBqjlNY0I+tOveot12vMaJySH0yPVYzJu1P
+         EWI5nLqADRfWwNOXgAM8aLI23ymDpwzsoFj4EGhONJ9991YSPd4VR0WgUljDC/u1zCGF
+         g8T6mtNo1PTP9b+ldD7DtE4CAjOV6vxqoQ6NSSgHkkxrXVrEgP6RShxSseXbXCoWC3CM
+         n3oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718358191; x=1718962991;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tLQgAiSqIKd8Fr/cSViZ1UALzCWG3iDxmInXrEl5pr8=;
+        b=O6v0I2vhVODd8mV819R0guRuvf78uYCnhl8/DC20gCYhaUuSKcTsxRQYXgGDonYw+v
+         qkxTZK4yTT5UpVcydarA06VIsT8Ry5TK45t9pAN6b9dtcyc8Tomaq5K0oXkF6pj3JhfJ
+         Yd4hisLRTst6PirbBpC8aLzxAvFIqLP2f+iPPcujzu4aQgfUgbgEuXN9Gtar5Rr9fh9+
+         Q39oXrvrV7zRJQ+6JZct706DJrKs9pmuoTd1UbBM/Iupidww2FlgK1rSBDoRcIjrVkB/
+         GdR4wdDqj1JfbUnsr3cBKLwhxsCLJ/a22XYQ0p2J0IwKJ8Yq5QcrvFK+LiMxWQOQNO9V
+         jbkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1jVoppH5bfG4SoOwbQd+W2s/bgwE7rZoNaEQ4ReS3vwA4IOzwJ9tTlW/Tq5vS0zw9GAz+NhnsO+WMgKYQU6+/Syy3g6mmCdptJzuv
+X-Gm-Message-State: AOJu0YzAK1K6F2Erv2p2E9cfiaaQL+VSD+Zmxr8xkFAqYSgYrO/OfM4C
+	pK2oFxzZERGdqHDRpoaI+7dQxnikzUNriYVJIx1MCIWCenTkOPR1fKbP/X+L6Ro9nK13tApxshN
+	szJSqTGiZF8HS/iJSEuQBIFeOlUTTAQSV29Jfc8VMtQ+X3XYQxA==
+X-Google-Smtp-Source: AGHT+IFvDUJj2XIdgBgpDYCy46upILTWlHhD1AvsiHaBR7J8BVYYLQKdVBGYSCjJmIzXS9M7jGMzR7holN3E0CkL1bE=
+X-Received: by 2002:a05:6402:4301:b0:57c:ae72:ff00 with SMTP id
+ 4fb4d7f45d1cf-57cc0a85d52mr107336a12.5.1718358190869; Fri, 14 Jun 2024
+ 02:43:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240613154234.GJ2561462@google.com>
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20240614092134.563082-1-thuth@redhat.com>
+In-Reply-To: <20240614092134.563082-1-thuth@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 14 Jun 2024 11:42:59 +0200
+Message-ID: <CANn89iJafAvVot3_AgGGj8pwc6FTRMkZ2X3ZqsOV5J_XDSWPQg@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: Remove the "rhash_entries=" from kernel-parameters.txt
+To: Thomas Huth <thuth@redhat.com>
+Cc: linux-doc@vger.kernel.org, netdev@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 04:42:34PM +0100, Lee Jones wrote:
-> Just one question; what is (7, 9, 12)?
-> 
-> And why is it the same as the GPIO one?  Copy/paste error?
-> 
-Those are the IRQ numbers of the PLD. Both blocks, GPIO and I2C, can be
-configured to use IRQ12, IRQ9 or IRQ7.
+On Fri, Jun 14, 2024 at 11:21=E2=80=AFAM Thomas Huth <thuth@redhat.com> wro=
+te:
+>
+> "rhash_entries" belonged to the routing cache that has been removed in
+> commit 89aef8921bfb ("ipv4: Delete routing cache.").
+>
+> Signed-off-by: Thomas Huth <thuth@redhat.com>
 
-Gregor
---
-TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht München, HRB 105018
-Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-https://www.tq-group.com/
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
