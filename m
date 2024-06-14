@@ -1,109 +1,109 @@
-Return-Path: <linux-kernel+bounces-214362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA1A8908346
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:21:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38DA990834A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FC991F220A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 05:21:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51A0B1C21C0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 05:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0508146582;
-	Fri, 14 Jun 2024 05:21:44 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9051146D6E;
+	Fri, 14 Jun 2024 05:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xLYm1yjQ"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C775026ADE
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 05:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C63926ADE;
+	Fri, 14 Jun 2024 05:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718342504; cv=none; b=f5gCzHCZ3rjC4rOedkQLqKCYzm8Sd1351RGdAdvBvF4VwhQoejUL74m4Afd5Jbp3qKzmHkrJ8AFDqNiAFAoIdagP4Yi6t7sLm4Q1qIaEEyT3653IWOUfhOq+ed+8jt1+iQW8CJLA/uoTDhK2nQHYBB6xH+mJ8I1CB3j9YZ8/vLQ=
+	t=1718342712; cv=none; b=f6JKJLpY4iT2YS+v9rTx/P/IrTDUM2ByEFiGEAjDFYQa91A8v12MiFmefo3MByA0ZapXhBBim2O0YIoIzXachB+J1QeWwEyz9TkEopcMKj+86y+z6Fk7UMCT03N4jgaK07tqbbJ8bPxZoLjyxXNdSQ5UDWW40YAxEkZdZ8Kf3lM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718342504; c=relaxed/simple;
-	bh=fKO/5zkOVclOdvCQkxPk3POF8YxQHXOsRIKmY0snq5s=;
+	s=arc-20240116; t=1718342712; c=relaxed/simple;
+	bh=OaL/YySuS8Lb2/DNnLJjW1FOsvpqsCMKXFp5iTRhbnI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qUpDRF647KlMwTmnY2BVOWkdfUHswP0NDH1/sIkIGGSSv1suTu8nDBsT8yX6et063Kxp4uPmPAGDq0Es+wM0YeeyTkCMcbyQRuwujP4+yxjeqlmL8+XlKP6XzCJL0hjQiejLDLbiDln1CvKXi6IiL01grblbHdAMaAMx8cLN3SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sHzNF-0007H8-Tv; Fri, 14 Jun 2024 07:21:17 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sHzND-002C5W-ON; Fri, 14 Jun 2024 07:21:15 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sHzND-00AKed-29;
-	Fri, 14 Jun 2024 07:21:15 +0200
-Date: Fri, 14 Jun 2024 07:21:15 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	stable@vger.kernel.org, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net v1 2/2] net: phy: dp83tg720: get initial master/slave
- configuration
-Message-ID: <ZmvTS9YI8LACJOND@pengutronix.de>
-References: <20240613183034.2407798-1-o.rempel@pengutronix.de>
- <20240613183034.2407798-2-o.rempel@pengutronix.de>
- <f88abfe3-a66c-4e65-b627-7adf7f04580f@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ptSe5lpPFiZM0HgZcv9s+qw3lYEC+8RONG7dYC1p+zk1a86UKPi2KAh3J5t6CUtEs6227zTLCy5FuAaY5++QM1X6TxOe6zBnTD2uGSoZBQlvElnZqAJND0mcBVpa9oTWwYZIdsdNyWP50AFSdADAHRQ+MDaGSnir3cOMp506cVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xLYm1yjQ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Opkxi+gfmcpzITD7sqGaypru2LVXW9LGl2bAVRif/+g=; b=xLYm1yjQQK1/oHw/h7HRGquzgi
+	/F2nGUC+s39nUznw+nSZC6jV7EmIfE+NAiUq3+d1fYzPD3enZrddeFMjcgvl6Q0CufOXhZNrcE99w
+	c6EPV5AGPB1VA0JqhLg+LhImYNh0CRTgxGG6PoOtACqYf7Mdj0E/RNKSJY4sqzwEJSL9tFG5Sm/4V
+	n5Ae49BVImmcUkaBMyVCa8D+q6HaTawsIGThI7hG6zBLk7quvkTtAqVd3NxEZzyH+hROEpXnxpb2O
+	2kjE98cL4A0FRGprl93w5LxEzEtVcf8BW6fhm+nOv1ZL1iGs+gRXGQVhbsg6L4f0S5LMS0xl97SQN
+	i5aiC7og==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sHzQu-00000001V77-0Y8g;
+	Fri, 14 Jun 2024 05:25:04 +0000
+Date: Thu, 13 Jun 2024 22:25:04 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jisheng Zhang <jszhang@kernel.org>
+Cc: Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: Re: [PATCH] zram: use copy_page for full page copy
+Message-ID: <ZmvUMPc1eEOwUo7h@infradead.org>
+References: <20240613000422.1918-1-jszhang@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f88abfe3-a66c-4e65-b627-7adf7f04580f@lunn.ch>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20240613000422.1918-1-jszhang@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Jun 13, 2024 at 09:33:01PM +0200, Andrew Lunn wrote:
-> On Thu, Jun 13, 2024 at 08:30:34PM +0200, Oleksij Rempel wrote:
-> > Get initial master/slave configuration, otherwise ethtool
-> > wont be able to provide this information until link is
-> > established. This makes troubleshooting harder, since wrong
-> > role configuration would prevent the link start.
+On Thu, Jun 13, 2024 at 08:04:22AM +0800, Jisheng Zhang wrote:
+> commit 42e99bd975fd ("zram: optimize memory operations with
+> clear_page()/copy_page()") optimize page copy/clean operations, but
+> then commit d72e9a7a93e4 ("zram: do not use copy_page with non-page
+> aligned address") removes the optimization because there's memory
+> corruption at that time, the reason was well explained. But after
+> commit 1f7319c74275 ("zram: partial IO refactoring"), partial IO uses
+> alloc_page() instead of kmalloc to allocate a page, so we can bring
+> back the optimization.
 > 
-> I looked at how genphy_c45_read_status() works. If we have
-> phydev->autoneg == AUTONEG_ENABLE then genphy_c45_baset1_read_status()
-> is called which sets phydev->master_slave_get. If not AUTONEG_ENABLE
-> it calls genphy_c45_read_pma() which ends up calling
-> genphy_c45_pma_baset1_read_master_slave().
+> commit 80ba4caf8ba9 ("zram: use copy_page for full page copy") brings
+> back partial optimization, missed one point in zram_write_page().
+> optimize the full page copying in zram_write_page() with copy_page()
 > 
-> So it seems like the .read_status op should be setting master/slave
-> each time it is called, and not one time during .config_init.
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> ---
+>  drivers/block/zram/zram_drv.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 > 
-> What do you think?
+> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+> index 3acd7006ad2c..4b2b5098062f 100644
+> --- a/drivers/block/zram/zram_drv.c
+> +++ b/drivers/block/zram/zram_drv.c
+> @@ -1478,11 +1478,13 @@ static int zram_write_page(struct zram *zram, struct page *page, u32 index)
+>  	dst = zs_map_object(zram->mem_pool, handle, ZS_MM_WO);
+>  
+>  	src = zstrm->buffer;
+> -	if (comp_len == PAGE_SIZE)
+> +	if (comp_len == PAGE_SIZE) {
+>  		src = kmap_local_page(page);
+> -	memcpy(dst, src, comp_len);
+> -	if (comp_len == PAGE_SIZE)
+> +		copy_page(dst, src);
+>  		kunmap_local(src);
+> +	} else {
+> +		memcpy(dst, src, comp_len);
+> +	}
 
-Yes, you are right. I verified it:
-In case of this driver, .config_init will be executed every time no link
-is detected over phy_init_hw() call. If link is detected
-genphy_c45_pma_baset1_read_master_slave() is called directly.
-It is not directly visible but read_master_slave() will be executed on
-every  .read_status.
+I know this is pre-existing code, but why do we need to kmap
+for comp_len == PAGE_SIZE and not for the other cases?  Something
+feels really obsfucated here.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
