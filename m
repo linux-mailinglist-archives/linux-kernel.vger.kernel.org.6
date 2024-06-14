@@ -1,399 +1,338 @@
-Return-Path: <linux-kernel+bounces-214824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A476908A9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:01:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 443E5908AA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E026A283F43
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:01:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394441C22BB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8D1194A7F;
-	Fri, 14 Jun 2024 11:01:07 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6E5195964;
+	Fri, 14 Jun 2024 11:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ZS0ss3El"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BFA12F5A0
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 11:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19BE1922C6
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 11:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718362866; cv=none; b=fgfbgBfC4B8LtDLdxYmKyNkrkt/jltLdcG+gKPZ8jWJFB2A0geNFMiAIc+1Vg4dTqOCZ86A97Fp1Ewx5oT/d93nu0RTDUX7l5q8AN3djkiXvA+oJa/ofZ0WuWkJb23ElsB1S2cXHXGogDuIfhwSz2CCFROyXkc4/OwEX48wlAb4=
+	t=1718363204; cv=none; b=ld9VrPY80epMHsm3y3BwZG81XQho0ULrgmz4gABlVXY0ncb6lLPkvLGkQbKrj2B4BliDpmK3BEnozjyoQhPKxPcaSTPLeqHJmrTiUzuaUkafjXvtREXVq33aV9CH+rKOh9ftw990lsQ5WHlJabO5xyhH1qRHZpGf0Q4sMh6kmHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718362866; c=relaxed/simple;
-	bh=+YkNxazU1ekQ/qTkQ5KSnUvrRz+BeufbTzuVNrKi0/M=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=r4S+FX2nb+CZ44g+hmkYQ6mrlcOWrypq1UvuefuzmXfo4bkHmUrJv17Z+vmhwtJA8ggk9zB4QnA0UEi+DHNegjXUjJjuUQirQz0OpotkXQOKw2Q1YtcCLF2LtGVWfY1sDG1rcaRljPdyXxlS9REVaeIBciVbbUz0eK8wO55FhYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7eb4c4378c0so208008139f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 04:01:04 -0700 (PDT)
+	s=arc-20240116; t=1718363204; c=relaxed/simple;
+	bh=ITk4Pmw1wElvoJaLQpDB7x++r9MKwh7KfmJ6kjQS1SQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ClJYw2dJ504OLjqyRh+cXPjuUMzfg4qIN/vvP5I2PrNOPt/Bn0ia4OjYAvl0oD2xmeqYsVeniGNoCcrsF9GQBKPcq0Gr/FOKG1/cG06+chG5qqB2B2VPao3rUigra/zj/XKVliCGZqnV2xiFUolvr87gdExZwod64Dtm042hAT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ZS0ss3El; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52c819f6146so2870985e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 04:06:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1718363201; x=1718968001; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r5D80in0TCKF7CT1Ecrry2kBSeVogFVfKvkdHakj/G8=;
+        b=ZS0ss3ElqQML10fu8j8eKaPhMQw1iuTwzguoHoek/Oe8FTuHaFnT4KmHUxH8aAAFUx
+         3vRTiWK6dgDF+yhhras1S1z+/EitG+4GxE9hKx9vmfG2YF8RCDzYHOYqW3Msj19nkJ2+
+         bF7XlyQnH0pxNhP0jibLTkt8fAqpzaNBXTGA/e4hOgDd4UrnIavYp0PlLE+R9cFWWQyG
+         0NRB6aglvZ8hXKBpKxYOn8Uc3tRmHvqpl625gnU3PpaEB60D5ICm65sACbYcRTxKx3Rq
+         8LHzDO9qPDAZNILgX0d4Wd3TfI9a8zqLwUqs6fD5An30HF55Lr+oxSHol+vhmq94R4HH
+         Q3Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718362863; x=1718967663;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SecyFhEVrDGR+DjGTgBZr1QotNudMx/WOoFX9ikMDNw=;
-        b=lODsEexBr/H5FY0apS9IF/7TNzMew/ALJ/8I/iAwMN8es78paIwm0vUXkMGdTFb9K1
-         Qa0Ea76TISzW4FmrnddszG1yfBoiltUXYFflUFlV7XHvPf9elCrWsAoDA5AkvXuBolVx
-         RCMCW2503UOEWBMS2zffNdDM/lBPAY9HB4dUR1USwkw6oYwsxnAlGNO3ffHhv8BhxjJ4
-         nFHzS3ONLZU9Y7btrC6jFdZTBGlWqK3ecR/OSoJ4v1JKpKENxhlmfAGTDYo+Er5+MHf/
-         vyVfkaoCkchJ4tFAYEl+QBtC+Gi+0d+5fyUiKqSKRfK16kCtSEeoAqPKqeglceZoSyKC
-         VN6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVoqSS95O7Him/B4U8PptD03yrkemLbfZJCYR8PmDXjYxcZB6pPoqFkoX43Lp+lm6VktHMUs4CmIC6gm4B6sQcFSk5d02pHqYDvdY0o
-X-Gm-Message-State: AOJu0Ywpv6r5PqEahh3MQ9SU8NFzLknuvwUKUAX98vLBbv8w1TMEODUA
-	5/Yiz+3BRZIizQLIHP3FqDThnlhf/L98/piKXdC5iqyOgTVruY2IKGaEIaNOgQmbeVL8AzDV6Ig
-	d2dJJbFNaPH5sUIVRJcvfijlLa7VdqAOnmVFghBqoP7ZDbdkV95r0VQk=
-X-Google-Smtp-Source: AGHT+IFFWDVqIs2+3hg/VNkqT0qyvJUienJU4BMRRZ0X68V6TIHbW4oixxWQgzPEnEFzNiM+YEmFgwY0pA0ZDFAYJUlrgyby/z9N
+        d=1e100.net; s=20230601; t=1718363201; x=1718968001;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r5D80in0TCKF7CT1Ecrry2kBSeVogFVfKvkdHakj/G8=;
+        b=soi1uVkGH1K99NI/ksGd2/ku+cW3TdfjEskb5OuO20JvsBbzS3ncKeQyvsoAiLJ2EO
+         dC1y0x8fYIWuPWmMmTvfbMbs9EVFt8PMAQJFtgyjckqUpdg1o2xeCs+h0HV85p6VbQAD
+         Y/ML60GDPp3UEseWRnRTUYksJd3K1fzuO9LRre9z8GDlNbLPPsGlPUXhFq6O9nrILZiz
+         wgbMvhWHstQEsxwsBn9prQXw5A2JctaY15uPYyfuTol+IrWtJv4JA8+RIeSyuVR8W/OS
+         Bd4c9bkaiSbdV+PLilY08LapzVUCjC1tYpurjv0BBf1gcLe4pGl9vhBtitmy/QfW2MOG
+         /iVg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8vIZClVGquW9FiIBJ0AEzYA/MaDTv3RBgeNe859vKX1UVt3a8XuYELSDTrjznnzjg5SdAzAkjuZw3IUDu/WF68K2Lk/EvsG47i43b
+X-Gm-Message-State: AOJu0YxtcbTCAjgeybr4EXQeNI5LbW0fVZ5t0aO5EHG2vfPYlvk9AeEP
+	XxTWewsrjQR/BTUTAZ3C4xmKFpxSGL0C6nK1ad7o7VK1U/ZuESKol5d6nmZc7LdxCDlQIYPX8BH
+	I
+X-Google-Smtp-Source: AGHT+IH9JHjPbSmLTT+F7xHZJ81IvkKNjZ+2yhkxhvBPp4AqZfmx5Y0pBQzf79FJO58OFQjWNVtaWg==
+X-Received: by 2002:a05:6512:3ca4:b0:52c:8339:d09b with SMTP id 2adb3069b0e04-52ca6e55096mr1765316e87.1.1718363200927;
+        Fri, 14 Jun 2024 04:06:40 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.189])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075104a1bsm4095242f8f.102.2024.06.14.04.06.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 04:06:40 -0700 (PDT)
+Message-ID: <4a477079-b4a6-4861-ae24-b3b87adb8ecd@tuxon.dev>
+Date: Fri, 14 Jun 2024 14:06:38 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:268c:b0:4b7:c86f:f3cf with SMTP id
- 8926c6da1cb9f-4b9640aeab2mr136499173.3.1718362862233; Fri, 14 Jun 2024
- 04:01:02 -0700 (PDT)
-Date: Fri, 14 Jun 2024 04:01:02 -0700
-In-Reply-To: <20240614104141.537-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ffbfaa061ad78793@google.com>
-Subject: Re: [syzbot] [nilfs?] [mm?] KASAN: slab-use-after-free Read in lru_add_fn
-From: syzbot <syzbot+d79afb004be235636ee8@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/12] rtc: renesas-rtca3: Add driver for RTCA-3 available
+ on Renesas RZ/G3S SoC
+Content-Language: en-US
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
+ magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240614071932.1014067-7-claudiu.beznea.uj@bp.renesas.com>
+ <2024061409215756e6a10c@mail.local>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <2024061409215756e6a10c@mail.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi, Alexandre,
 
-syzbot tried to test the proposed patch but the build/boot failed:
+On 14.06.2024 12:21, Alexandre Belloni wrote:
+> Hello Claudiu,
+> 
+> On 14/06/2024 10:19:26+0300, Claudiu wrote:
+>> +static int rtca3_initial_setup(struct rtca3_priv *priv)
+>> +{
+>> +	unsigned long osc32k_rate;
+>> +	u8 pes, tmp, mask;
+>> +	u32 sleep_us;
+>> +	int ret;
+>> +
+>> +	osc32k_rate = clk_get_rate(priv->clk);
+>> +	if (!osc32k_rate)
+>> +		return -EINVAL;
+>> +
+>> +	sleep_us = DIV_ROUND_UP_ULL(1000000ULL, osc32k_rate) * 6;
+>> +
+>> +	priv->ppb.ten_sec = DIV_ROUND_CLOSEST_ULL(1000000000ULL, (osc32k_rate * 10));
+>> +	priv->ppb.sixty_sec = DIV_ROUND_CLOSEST_ULL(1000000000ULL, (osc32k_rate * 60));
+>> +
+>> +	/*
+>> +	 * According to HW manual (section 22.4.2. Clock and count mode setting procedure)
+>> +	 * we need to wait at least 6 cycles of the 32KHz clock after clock was enabled.
+>> +	 */
+>> +	usleep_range(sleep_us, sleep_us + 10);
+>> +
+>> +	/* Disable alarm and carry interrupts. */
+>> +	mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE;
+>> +	rtca3_byte_update_bits(priv, RTCA3_RCR1, mask, 0);
+>> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR1, tmp, !(tmp & mask),
+>> +				 10, RTCA3_DEFAULT_TIMEOUT_US);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/*
+>> +	 * Stop the RTC and set to 12 hours mode and calendar count mode.
+>> +	 * RCR2.START initial value is undefined so we need to stop here
+>> +	 * all the time.
+>> +	 */
+> 
+> Certainly not, if you stop the RTC on probe, you lose the time
+> information, this must only be done when the RTC has never been
+> initialised. The whole goal of the RTC is the keep time across reboots,
+> its lifecycle is longer than the system.
 
-425207325 203a73250073255f 732500642573255f 7325006425207325
-ZMM25=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 645f6464615f5f6d 6163646165702020 7373622039322065 6900666564007165
-ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 635f645f5f5f5f6d 2063642062202020 203133203932200a 65000a6564006c65
-ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- bfbfbfbfbfbfbfbf bfbfbfbfbfbfbfbf bfbfbfbfbfbfbfbf bfbf2b313423342c
-ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 262821df2e2e33df 3228df3232202b22 df312e232d2435bf 2324353124322431
-ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 4141414141414141 4141414141414141 4141414141414141 4141414141414141
-ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a
-ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 2020202020202020 2020202020202020 2020202020202020 2020202020202020
-info registers vcpu 2
+This was also my first thought when I read the HW manual.
 
-CPU#2
-RAX=3D0000000000031e43 RBX=3D0000000000000002 RCX=3Dffffffff8ae81889 RDX=3D=
-0000000000000000
-RSI=3Dffffffff8b2caf60 RDI=3Dffffffff8b900680 RBP=3Dffffed1002fd9000 RSP=3D=
-ffffc90000197e08
-R8 =3D0000000000000001 R9 =3Dffffed100d646fe5 R10=3Dffff88806b237f2b R11=3D=
-0000000000000001
-R12=3D0000000000000002 R13=3Dffff888017ec8000 R14=3Dffffffff8fe47610 R15=3D=
-0000000000000000
-RIP=3Dffffffff8ae82c7f RFL=3D00000242 [---Z---] CPL=3D0 II=3D0 A20=3D1 SMM=
-=3D0 HLT=3D1
-ES =3D0000 0000000000000000 ffffffff 00c00000
-CS =3D0010 0000000000000000 ffffffff 00a09b00 DPL=3D0 CS64 [-RA]
-SS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
-DS =3D0000 0000000000000000 ffffffff 00c00000
-FS =3D0000 0000000000000000 ffffffff 00c00000
-GS =3D0000 ffff88806b200000 ffffffff 00c00000
-LDT=3D0000 0000000000000000 ffffffff 00c00000
-TR =3D0040 fffffe0000091000 00004087 00008b00 DPL=3D0 TSS64-busy
-GDT=3D     fffffe000008f000 0000007f
-IDT=3D     fffffe0000000000 00000fff
-CR0=3D80050033 CR2=3D00007faa44fa8000 CR3=3D000000000d97a000 CR4=3D00350ef0
-DR0=3D0000000000000000 DR1=3D0000000000000000 DR2=3D0000000000000000 DR3=3D=
-0000000000000000=20
-DR6=3D00000000fffe0ff0 DR7=3D0000000000000400
-EFER=3D0000000000000d01
-FCW=3D037f FSW=3D0000 [ST=3D0] FTW=3D00 MXCSR=3D00001f80
-FPR0=3D0000000000000000 0000 FPR1=3D0000000000000000 0000
-FPR2=3D0000000000000000 0000 FPR3=3D0000000000000000 0000
-FPR4=3D0000000000000000 0000 FPR5=3D0000000000000000 0000
-FPR6=3D0000000000000000 0000 FPR7=3D0000000000000000 0000
-Opmask00=3D0000000080000010 Opmask01=3D0000000000001d1f Opmask02=3D00000000=
-ff001fff Opmask03=3D0000000000000000
-Opmask04=3D0000000000000000 Opmask05=3D0000000000000000 Opmask06=3D00000000=
-00000000 Opmask07=3D0000000000000000
-ZMM00=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000006f20 74276e6163003a23
-ZMM01=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 00002f6e69622f3a 6e776f6474756873
-ZMM02=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 ffff0f0e0d0c0b0a 0908070605040302
-ZMM03=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000006f20 74276e6163003a23
-ZMM04=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 6362696c5f5f0045 5441564952505f43
-ZMM05=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM06=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM07=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM08=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM09=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM10=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM11=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM12=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM13=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM14=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM15=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM16=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM17=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 5f766e6f63675f5f 0000000000000000 000000706d74752f 6e75722f7261762f
-ZMM18=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 706d742f73666d61 7220746f6e207369 206d657473797365 6c696620746f6f72
-ZMM19=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 00656c6966207261 6c75676572206120 746f6e2073692027 7325270074696e69
-ZMM20=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM21=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM22=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM23=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM24=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM25=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-info registers vcpu 3
+It has been done like this to follow the HW manual. According to HW manual
+[1], chapter 22.3.19 RTC Control Register 2 (RCR2), initial value of START
+bit is undefined.
 
-CPU#3
-RAX=3D0000000000000046 RBX=3D1ffff92000865f88 RCX=3Dffffffff816ae5ae RDX=3D=
-0000000000000001
-RSI=3Dffffffff8b2cb260 RDI=3Dffffffff8b900680 RBP=3D0000000000000200 RSP=3D=
-ffffc9000432fc30
-R8 =3D0000000000000000 R9 =3Dfffffbfff284dc5c R10=3Dffffffff9426e2e7 R11=3D=
-0000000000000000
-R12=3D0000000000000001 R13=3D0000000000000000 R14=3Dffff88802fc63d60 R15=3D=
-0000000000000000
-RIP=3Dffffffff816bdc22 RFL=3D00000046 [---Z-P-] CPL=3D0 II=3D0 A20=3D1 SMM=
-=3D0 HLT=3D0
-ES =3D0000 0000000000000000 ffffffff 00c00000
-CS =3D0010 0000000000000000 ffffffff 00a09b00 DPL=3D0 CS64 [-RA]
-SS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
-DS =3D0000 0000000000000000 ffffffff 00c00000
-FS =3D0000 00007f550c57f740 ffffffff 00c00000
-GS =3D0000 ffff88806b300000 ffffffff 00c00000
-LDT=3D0000 0000000000000000 ffffffff 00c00000
-TR =3D0040 fffffe00000d8000 00004087 00008b00 DPL=3D0 TSS64-busy
-GDT=3D     fffffe00000d6000 0000007f
-IDT=3D     fffffe0000000000 00000fff
-CR0=3D80050033 CR2=3D0000557369a0b038 CR3=3D0000000027fb2000 CR4=3D00350ef0
-DR0=3D0000000000000000 DR1=3D0000000000000000 DR2=3D0000000000000000 DR3=3D=
-0000000000000000=20
-DR6=3D00000000fffe0ff0 DR7=3D0000000000000400
-EFER=3D0000000000000d01
-FCW=3D037f FSW=3D0000 [ST=3D0] FTW=3D00 MXCSR=3D00001f80
-FPR0=3D0000000000000000 0000 FPR1=3D0000000000000000 0000
-FPR2=3D0000000000000000 0000 FPR3=3D0000000000000000 0000
-FPR4=3D0000000000000000 0000 FPR5=3D0000000000000000 0000
-FPR6=3D0000000000000000 0000 FPR7=3D0000000000000000 0000
-Opmask00=3D0000000004040003 Opmask01=3D0000000000000001 Opmask02=3D00000000=
-ffff3f01 Opmask03=3D0000000000000000
-Opmask04=3D0000000000000000 Opmask05=3D0000000000000000 Opmask06=3D00000000=
-00000000 Opmask07=3D0000000000000000
-ZMM00=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 00007ffc005273e0 0000003000000010
-ZMM01=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 00007ffc005273e0 0000003000000010
-ZMM02=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 2e2e2e2e2e2e2e2e 2e2e2e2e2e2e2e2e
-ZMM03=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000ff0000
-ZMM04=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM05=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000ff000000ff00 0000000000000000
-ZMM06=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM07=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM08=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM09=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM10=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM11=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM12=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM13=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM14=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM15=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM16=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM17=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 2525252525252525 2525252525252525 2525252525252525 2525252525252525
-ZMM18=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 6f73616572003663 6974617473006575 6575715f6c6f7274 6e6f63203a732500
-ZMM19=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 4a56444057001346 4c51445156004050 4050545f494a5751 4b4a46051f560000
-ZMM20=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000911 0000000000000000 306572673670692f 74656e2f6c617574
-ZMM21=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000041 0000000000000000 00306e6170772f74 656e2f307968702f
-ZMM22=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 504f007a6b45041e 4100185711054316 0f010d19050d0025 1b164a040e155c69
-ZMM23=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 577f5f7f7f773f5f 755f595f7f577f7f 5f573f5f575f4f3f 5f7f5f565e7f5f7f
-ZMM24=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 64252e6425207325 203a73250073255f 732500642573255f 7325006425207325
-ZMM25=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 645f6464615f5f6d 6163646165702020 7373622039322065 6900666564007165
-ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 635f645f5f5f5f6d 2063642062202020 203133203932200a 65000a6564006c65
-ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- bfbfbfbfbfbfbfbf bfbfbfbfbfbfbfbf bfbfbfbfbfbfbfbf bfbf2b313423342c
-ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 262821df2e2e33df 3228df3232202b22 df312e232d2435bf 2324353124322431
-ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 4141414141414141 4141414141414141 4141414141414141 4141414141414141
-ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a
-ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 2020202020202020 2020202020202020 2020202020202020 2020202020202020
+If it's 1 while probing but it has never been initialized, we can falsely
+detect that RTC is started and skip the rest of the initialization steps.
+W/o initialization configuration, the RTC will not be able to work.
 
+Even with this implementation we don't loose the time b/w reboots. Here is
+the output on my board [2]. The steps I did were the following:
+1/ remove the power to the board (I don't have a battery for RTC installed
+   at the moment)
+2/ boot the board and issue hwclock -w
+3/ reboot
+4/ check the systime and rtc time
+5/ poweroff
+6/ poweron
+7/ boot and check systime and RTC time
 
-syzkaller build log:
-go env (err=3D<nil>)
-GO111MODULE=3D'auto'
-GOARCH=3D'amd64'
-GOBIN=3D''
-GOCACHE=3D'/syzkaller/.cache/go-build'
-GOENV=3D'/syzkaller/.config/go/env'
-GOEXE=3D''
-GOEXPERIMENT=3D''
-GOFLAGS=3D''
-GOHOSTARCH=3D'amd64'
-GOHOSTOS=3D'linux'
-GOINSECURE=3D''
-GOMODCACHE=3D'/syzkaller/jobs/linux/gopath/pkg/mod'
-GONOPROXY=3D''
-GONOSUMDB=3D''
-GOOS=3D'linux'
-GOPATH=3D'/syzkaller/jobs/linux/gopath'
-GOPRIVATE=3D''
-GOPROXY=3D'https://proxy.golang.org,direct'
-GOROOT=3D'/usr/local/go'
-GOSUMDB=3D'sum.golang.org'
-GOTMPDIR=3D''
-GOTOOLCHAIN=3D'auto'
-GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
-GOVCS=3D''
-GOVERSION=3D'go1.21.4'
-GCCGO=3D'gccgo'
-GOAMD64=3D'v1'
-AR=3D'ar'
-CC=3D'gcc'
-CXX=3D'g++'
-CGO_ENABLED=3D'1'
-GOMOD=3D'/syzkaller/jobs/linux/gopath/src/github.com/google/syzkaller/go.mo=
-d'
-GOWORK=3D''
-CGO_CFLAGS=3D'-O2 -g'
-CGO_CPPFLAGS=3D''
-CGO_CXXFLAGS=3D'-O2 -g'
-CGO_FFLAGS=3D'-O2 -g'
-CGO_LDFLAGS=3D'-O2 -g'
-PKG_CONFIG=3D'pkg-config'
-GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
- -ffile-prefix-map=3D/tmp/go-build2079012086=3D/tmp/go-build -gno-record-gc=
-c-switches'
+As you can see the time is not lost but continue to increment. I presume
+the hardware takes into account that time needs to increment when initial
+configuration is executed.
 
-git status (err=3D<nil>)
-HEAD detached at c2e072610
-nothing to commit, working tree clean
+[1]
+https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg3s-general-purpose-microprocessors-single-core-arm-cortex-a55-11-ghz-cpu-and-dual-core-cortex-m33-250
+[2] https://p.fr33tux.org/585cd6
+
+> 
+> Also, why do you insist on 12H-mode? The proper thing to do is to support
+> 12H-mode on read but always use 24H-mode when setting the time.
+
+OK, I wasn't aware of this. I think I followed this approach as it looked
+to me the number of operation to update the hardware registers was lower
+for 12h mode.
+
+I'll adjust as proposed.
+
+> 
+>> +	mask = RTCA3_RCR2_START | RTCA3_RCR2_HR24 | RTCA3_RCR2_CNTMD;
+>> +	writeb(0, priv->base + RTCA3_RCR2);
+>> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR2, tmp, !(tmp & mask),
+>> +				 10, RTCA3_DEFAULT_TIMEOUT_US);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Execute reset and wait for reset and calendar count mode to be applied. */
+>> +	mask = RTCA3_RCR2_RESET | RTCA3_RCR2_CNTMD;
+>> +	writeb(RTCA3_RCR2_RESET, priv->base + RTCA3_RCR2);
+>> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR2, tmp, !(tmp & mask),
+>> +				 10, RTCA3_RESET_TIMEOUT_US);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/*
+>> +	 * According to HW manual (section 22.6.3. Notes on writing to and reading
+>> +	 * from registers) after reset we need to wait 6 clock cycles before
+>> +	 * writing to RTC registers.
+>> +	 */
+>> +	usleep_range(sleep_us, sleep_us + 10);
+>> +
+>> +	/* Set no adjustment. */
+>> +	writeb(0, priv->base + RTCA3_RADJ);
+>> +	ret = readb_poll_timeout(priv->base + RTCA3_RADJ, tmp, !tmp, 10,
+>> +				 RTCA3_DEFAULT_TIMEOUT_US);
+>> +
+>> +	/* Start the RTC and enable automatic time error adjustment. */
+>> +	mask = RTCA3_RCR2_START | RTCA3_RCR2_AADJE;
+>> +	writeb(RTCA3_RCR2_START | RTCA3_RCR2_AADJE, priv->base + RTCA3_RCR2);
+>> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR2, tmp, ((tmp & mask) == mask),
+>> +				 10, RTCA3_START_TIMEOUT_US);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/*
+>> +	 * According to HW manual (section 22.6.4. Notes on writing to and reading
+>> +	 * from registers) we need to wait 1/128 seconds while the clock is operating
+>> +	 * (RCR2.START bit = 1) to be able to read the counters after a return from
+>> +	 * reset.
+>> +	 */
+>> +	usleep_range(8000, 9000);
+>> +
+>> +	/* Set period interrupt to 1/64 seconds. It is necessary for alarm setup. */
+>> +	pes = FIELD_PREP(RTCA3_RCR1_PES, RTCA3_RCR1_PES_1_64_SEC);
+>> +	rtca3_byte_update_bits(priv, RTCA3_RCR1, RTCA3_RCR1_PES, pes);
+>> +	return readb_poll_timeout(priv->base + RTCA3_RCR1, tmp, ((tmp & RTCA3_RCR1_PES) == pes),
+>> +				  10, RTCA3_DEFAULT_TIMEOUT_US);
+>> +}
+>> +
+>> +static int rtca3_request_irqs(struct platform_device *pdev, struct rtca3_priv *priv)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	int ret, irq;
+>> +
+>> +	irq = platform_get_irq_byname(pdev, "alarm");
+>> +	if (irq < 0)
+>> +		return dev_err_probe(dev, irq, "Failed to get alarm IRQ!\n");
+>> +
+>> +	ret = devm_request_irq(dev, irq, rtca3_alarm_handler, 0, "rtca3-alarm", priv);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "Failed to request alarm IRQ!\n");
+>> +	priv->wakeup_irq = irq;
+>> +
+>> +	irq = platform_get_irq_byname(pdev, "period");
+>> +	if (irq < 0)
+>> +		return dev_err_probe(dev, irq, "Failed to get period IRQ!\n");
+>> +
+>> +	ret = devm_request_irq(dev, irq, rtca3_periodic_handler, 0, "rtca3-period", priv);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "Failed to request period IRQ!\n");
+>> +
+>> +	/*
+>> +	 * Driver doesn't implement carry handler. Just get the IRQ here
+>> +	 * for backward compatibility, in case carry support will be added later.
+>> +	 */
+>> +	irq = platform_get_irq_byname(pdev, "carry");
+>> +	if (irq < 0)
+>> +		return dev_err_probe(dev, irq, "Failed to get carry IRQ!\n");
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int rtca3_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct rtca3_priv *priv;
+>> +	int ret;
+>> +
+>> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>> +	if (!priv)
+>> +		return -ENOMEM;
+>> +
+>> +	priv->base = devm_platform_ioremap_resource(pdev, 0);
+>> +	if (IS_ERR(priv->base))
+>> +		return PTR_ERR(priv->base);
+>> +
+>> +	priv->clk = devm_clk_get_enabled(dev, "counter");
+>> +	if (IS_ERR(priv->clk))
+>> +		return PTR_ERR(priv->clk);
+>> +
+>> +	platform_set_drvdata(pdev, priv);
+>> +
+>> +	spin_lock_init(&priv->lock);
+>> +	atomic_set(&priv->alrm_sstep, RTCA3_ALRM_SSTEP_DONE);
+>> +	init_completion(&priv->set_alarm_completion);
+>> +
+>> +	ret = rtca3_initial_setup(priv);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "Failed to setup the RTC!\n");
+>> +
+>> +	ret = rtca3_request_irqs(pdev, priv);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	device_init_wakeup(&pdev->dev, 1);
+>> +
+>> +	priv->rtc_dev = devm_rtc_allocate_device(&pdev->dev);
+>> +	if (IS_ERR(priv->rtc_dev))
+>> +		return PTR_ERR(priv->rtc_dev);
+>> +
+>> +	priv->rtc_dev->ops = &rtca3_ops;
+>> +	priv->rtc_dev->max_user_freq = 256;
+>> +	priv->rtc_dev->range_min = mktime64(1999, 1, 1, 0, 0, 0);
+>> +	priv->rtc_dev->range_max = mktime64(2098, 12, 31, 23, 59, 59);
+> 
+> This very much looks like the range should be 2000 to 2099, why do you
+> want to shift it?
+
+2000-2099 was my first option for this but then I saw one of your old
+commits on this topic and, since I'm not very familiar with RTC,
+I took it as example. I'll adjust as you proposed.
+
+commit beee05dfbead
+Author: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Date:   Wed Mar 20 12:30:10 2019 +0100
+
+    rtc: sh: set range
+
+    The SH RTC is a BCD RTC with some version having 4 digits for the year.
+
+    The range for the RTCs with only 2 digits for the year was unfortunately
+    shifted to handle 1999 to 2098.
+
+    Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+    Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
 
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
-s/syz-sysgen
-make .descriptions
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-bin/syz-sysgen
-touch .descriptions
-GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3Dc2e0726105cc811a456d900c62443159acc29c32 -X '=
-github.com/google/syzkaller/prog.gitRevisionDate=3D20240516-163404'" "-tags=
-=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-fuzzer=
- github.com/google/syzkaller/syz-fuzzer
-GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3Dc2e0726105cc811a456d900c62443159acc29c32 -X '=
-github.com/google/syzkaller/prog.gitRevisionDate=3D20240516-163404'" "-tags=
-=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-execpr=
-og github.com/google/syzkaller/tools/syz-execprog
-mkdir -p ./bin/linux_amd64
-gcc -o ./bin/linux_amd64/syz-executor executor/executor.cc \
-	-m64 -std=3Dc++11 -I. -Iexecutor/_include -O2 -pthread -Wall -Werror -Wpar=
-entheses -Wunused-const-variable -Wframe-larger-than=3D16384 -Wno-stringop-=
-overflow -Wno-array-bounds -Wno-format-overflow -Wno-unused-but-set-variabl=
-e -Wno-unused-command-line-argument -static-pie -fpermissive -w -DGOOS_linu=
-x=3D1 -DGOARCH_amd64=3D1 \
-	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"c2e0726105cc811a456d900c62443159ac=
-c29c32\"
+Thank you for your review,
+Claudiu Beznea
 
-
-Error text is too large and was truncated, full error text is at:
-https://syzkaller.appspot.com/x/error.txt?x=3D1691eca6980000
-
-
-Tested on:
-
-commit:         d20f6b3d Merge tag 'net-6.10-rc4' of git://git.kernel...
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/li=
-nux.git master
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3Db8786f381e62940=
-f
-dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd79afb004be235636=
-ee8
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D12672e2e9800=
-00
-
+> 
+> 
 
