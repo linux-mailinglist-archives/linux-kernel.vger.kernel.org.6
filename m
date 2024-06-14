@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-215013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D61F0908D4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:23:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8579B908D4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7746E288680
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:23:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 060EB1F21B71
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DB5D52A;
-	Fri, 14 Jun 2024 14:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944F02837A;
+	Fri, 14 Jun 2024 14:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Lmq6k/xn"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="IJlrisRM"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E0D17C79
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 14:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A68320B20
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 14:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718374942; cv=none; b=pmfLUzfNUOUVBRtcis0VEQvrbxvSnQWbl9eCgfEbjKthAS9w1rJV+WYzZzfwH2VLWuFQt0G06dU14yGk5X6XnML9vB19s/CS8ZgeeYcUid9diXMyWTXTxHREajVeNDCv0YxwGkM1UMTeSPuAcPlVHo2Ilw7ifkIcgaFUX16R6bE=
+	t=1718374944; cv=none; b=TFIGT3qayCTgFOejpBA+sSw3xrVJPTFult33EhovliZ75ZK0XRI0Cs/90v2gH55JMEtIa42Ds8XoZWaNG8XUPspGojc+8pVY1Zutkjk4w0LFcnJLhVdqLm+tC6KzEd3EbR1PvjqF5U8re3P0s90Fym+Z0dEoopth5s+4Ay3r+fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718374942; c=relaxed/simple;
-	bh=skj2/BWRX5MDxu4BMRzPV1cfBbCsNidIjZimfPy4/xk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Cwg1kFSx3/DhNnEIrk+yaqgeEcwxiK5DzmGxnYk9aUnCuuLAjKT+7d4CR0NJ5ZZvebG5LiZyi1k0EZqg3PS/oWCsiJmab0d/FhiVclLDbRBDfRK0FJ6bV6R7qD9O0cjrzhmxrucMiQd170ohtHCU8Mjd1DRltUP+9WC2sPlXUYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Lmq6k/xn; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1718374944; c=relaxed/simple;
+	bh=HQCoIv3Xpbx6DOVWD61lR4O3qkiOmoi7Eje3+sHhmEc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Q9RhrKqwErvxuqSvqrbdRe59mF8/8aE05VpmahX9KH9vDigMnIjfFnHzsMxV54wp4yvZ1/NDx5XRWQa9mTnkaVRO6vcAVSDUaoZHFDJbF1/iY5N5jqFmezTXGtStPlH6k8otflBCyRKDrvf0EzAaApepajtQK7L+zOl+jbMCY0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=IJlrisRM; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f8395a530dso20581175ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 07:22:20 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f862f7c7edso9038015ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 07:22:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1718374940; x=1718979740; darn=vger.kernel.org;
+        d=sifive.com; s=google; t=1718374942; x=1718979742; darn=vger.kernel.org;
         h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=M7iZUV99NQN3RgJM91vO01sfzoKXhBrbq1qPqNaXoaI=;
-        b=Lmq6k/xnHHKEm2EmYx8erFaet3tZe6n31YPknnqKkZ8LOHBcMoM5j4iCRKw4Mg/Eoo
-         57Pn8PCiHIeMObm30+cfxxIHMuCxGzef73j3PV5Qd6inhlDO8dWjf64wcScChcMDIB63
-         T1AK6JjqveqP2K/pk24tABkIJzVKEi6oH/0AOH12YfmgoBvDI+84Q61OLYyWEvwSFztA
-         Rr+Gwd7eDosfp/Y2smxSSapG2wq2OBueNqQVL8YF6ghzT3HprmOssFSVH4Ds9O8qy8EI
-         27FRnqh1d/MFn1lO9l67vJ01HWTZKoc699oEEY1YNGMZlm4PmtRRsp+leuZA5/pS4cSX
-         s7fA==
+        bh=3Daef6kUbuf4+6WFIjDcTl7WQW1O4tQM7jDjBoLtjZ4=;
+        b=IJlrisRMrOQYPG46ITS2iloUP2y9aX83eTnTSVFPolwiQj7g1aDCrOthwl/Jeo2cl0
+         0bxi+MO5uJOG5WsuXCDyxM4Qa+0EjdrihWn/IXjKGWiRWcOkdSaq5zxAyadddixJv0vF
+         yNIuCxb+mzfe6ozvA9dCx/dRGXJTRVM0uRFQXpPK6QfASv2O6xXp9mKR2zy+gmh2PNQz
+         cXWwZfhlHD5COTb0hGNfgj5R/czH00sxVrqqLTxkz8Q1P+Poblih5O7QILGwcy4JohNq
+         AmaSVAUfXr6/ltqSbEV8ti/G2ODZMxGdKD1V5OK79bVSyIKC9K0sqGfI0Pf0os6jxwkM
+         yV/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718374940; x=1718979740;
+        d=1e100.net; s=20230601; t=1718374942; x=1718979742;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M7iZUV99NQN3RgJM91vO01sfzoKXhBrbq1qPqNaXoaI=;
-        b=MWGIERSrDosJKDqe0vbKnT1k1r8qkqFYExNywitlD9bmwwCGVPvQK3E34+ELTyZ7q2
-         szqxtlwese4R9zb86AG5G6wWI6ZYlyj2jfq6oQy4kmbuvFk/wuinJ6pWqxjkk67S+Aa+
-         fORmuFPt/qjSaVzqaSVD4LivwISXfPuYcHrCC+kSCPxnSsO/2KWKoeslT/T5TVzIe+q6
-         CE4Wp1MhMpwNjWOUgm5jzwvL5wqKF48ynVwjiCbolwW3x7Jbqa8WzAIJl8+m/T8zY4Le
-         t0q7TNi90ZTOzXiLEkXxOcU5XRdA1aPmNCBXivHLqBXsbMoP/NE7me3ekgq/sbtZGeIx
-         TAxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZX7Fmm4bJJucs95XRADZMDknLVJAuLkCr1FqN283jgWLrYZDiamqjJPoF4DQ0bp2eg3FQ6F04XbhKXjwsfHpebCnMBwPIVbleWI0E
-X-Gm-Message-State: AOJu0YzThfbUtHWLh9ovSGphcbcOLJdllS/QeeJIo08MbServUtVjH83
-	9/CHeFjtH98OtgTIKSe3XbBQe2X3F/hz1rmBmLqtYVjRmVYOObnSKq2vTXvY/yU=
-X-Google-Smtp-Source: AGHT+IGJERSTIzaOjggWWP0rQrcqidvG0Fn1shO0SdaiGkk+fF3agyv6rp5JLRqhxN5jNm2HLZv71g==
-X-Received: by 2002:a17:902:6906:b0:1f7:21fd:ab83 with SMTP id d9443c01a7336-1f8629feaeemr22250365ad.54.1718374940068;
-        Fri, 14 Jun 2024 07:22:20 -0700 (PDT)
+        bh=3Daef6kUbuf4+6WFIjDcTl7WQW1O4tQM7jDjBoLtjZ4=;
+        b=FanuJCscdbNFHjXx1XDJswqkGBjs9kxdJgsIi+LWULc+fv8VZIydbYn57To9Vsf2Pl
+         nQAKCYlS4HqsAtFJ68Icu8whpTOYvwqQZNFxQIk6rBSHL0c5erTA5m5XsLf9gMP+2rEF
+         B2QHCj9PZgc6edptDPsHVqlO+FOm5g+0cvd/8oKuQQ5NeXD6SXki62eYGI9YOoPWaqE7
+         ZvVCikey90vYFspF9J4M9NQw2Ep2h/JJGPL+ObN7qF9vqrB8sZKZYGITr3W9XVi/ZgBo
+         69RnmeqKFNUs+3rEeaTYF18W2yUsB7irFEhHrdmwcCjh1kj3rUov/JqTuOFF6csi9W/C
+         L6qg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJJ2015xTnE98jig1f0zQOlcxrM2a07YNwchOysLDCCCF8H/CPSKOlRTTSqVQrKuNQHMR8be68mEfX2cVVjjHplENj3zopSGqNo505
+X-Gm-Message-State: AOJu0YznIeYyjN5UqgGoFBk7X1OLjbI59JNGZ06Mzi917sqGNNZVZte+
+	VHYD1XMnq6GoLgJqeWNJkRlAiKynDNepNpNUy07UlayYKZ8yyomUavCyzUz5EYU=
+X-Google-Smtp-Source: AGHT+IFqgOZYvBJ4kxh5nI8iWhYcYwWgqXcjlHpYLYmYilMYTECy6aBNWzRZ7wIFJH/yInxDq6z0lg==
+X-Received: by 2002:a17:903:32ca:b0:1f7:c33:aa92 with SMTP id d9443c01a7336-1f8625c06f1mr32662045ad.9.1718374942583;
+        Fri, 14 Jun 2024 07:22:22 -0700 (PDT)
 Received: from hsinchu26.internal.sifive.com (59-124-168-89.hinet-ip.hinet.net. [59.124.168.89])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e559d9sm32522005ad.35.2024.06.14.07.22.17
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e559d9sm32522005ad.35.2024.06.14.07.22.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 07:22:19 -0700 (PDT)
+        Fri, 14 Jun 2024 07:22:22 -0700 (PDT)
 From: Zong Li <zong.li@sifive.com>
 To: joro@8bytes.org,
 	will@kernel.org,
@@ -77,9 +77,9 @@ To: joro@8bytes.org,
 	iommu@lists.linux.dev,
 	linux-riscv@lists.infradead.org
 Cc: Zong Li <zong.li@sifive.com>
-Subject: [RFC PATCH v2 04/10] iommu/riscv: add iotlb_sync_map operation support
-Date: Fri, 14 Jun 2024 22:21:50 +0800
-Message-Id: <20240614142156.29420-5-zong.li@sifive.com>
+Subject: [RFC PATCH v2 05/10] iommu/riscv: support GSCID and GVMA invalidation command
+Date: Fri, 14 Jun 2024 22:21:51 +0800
+Message-Id: <20240614142156.29420-6-zong.li@sifive.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20240614142156.29420-1-zong.li@sifive.com>
 References: <20240614142156.29420-1-zong.li@sifive.com>
@@ -89,52 +89,141 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-Add iotlb_sync_map operation for flush IOTLB. Software must
-flush the IOTLB after each page table.
+This patch adds a ID Allocator for GSCID and a wrap for setting up
+GSCID in IOTLB invalidation command.
+
+Set up iohgatp to enable second stage table and flush stage-2 table if
+the GSCID is set.
+
+The GSCID of domain should be freed when release domain. GSCID will be
+allocated for parent domain in nested IOMMU process.
 
 Signed-off-by: Zong Li <zong.li@sifive.com>
 ---
- drivers/iommu/riscv/Makefile |  1 +
- drivers/iommu/riscv/iommu.c  | 11 +++++++++++
- 2 files changed, 12 insertions(+)
+ drivers/iommu/riscv/iommu-bits.h |  7 ++++++
+ drivers/iommu/riscv/iommu.c      | 39 ++++++++++++++++++++++++++++----
+ 2 files changed, 41 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/iommu/riscv/Makefile b/drivers/iommu/riscv/Makefile
-index d36625a1fd08..f02ce6ebfbd0 100644
---- a/drivers/iommu/riscv/Makefile
-+++ b/drivers/iommu/riscv/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
- obj-$(CONFIG_RISCV_IOMMU) += iommu.o iommu-platform.o iommu-pmu.o
- obj-$(CONFIG_RISCV_IOMMU_PCI) += iommu-pci.o
-+obj-$(CONFIG_SIFIVE_IOMMU) += iommu-sifive.o
-diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
-index 9aeb4b20c145..df7aeb2571ae 100644
---- a/drivers/iommu/riscv/iommu.c
-+++ b/drivers/iommu/riscv/iommu.c
-@@ -1115,6 +1115,16 @@ static void riscv_iommu_iotlb_sync(struct iommu_domain *iommu_domain,
- 	riscv_iommu_iotlb_inval(domain, gather->start, gather->end);
+diff --git a/drivers/iommu/riscv/iommu-bits.h b/drivers/iommu/riscv/iommu-bits.h
+index 60523449f016..214735a335fd 100644
+--- a/drivers/iommu/riscv/iommu-bits.h
++++ b/drivers/iommu/riscv/iommu-bits.h
+@@ -731,6 +731,13 @@ static inline void riscv_iommu_cmd_inval_vma(struct riscv_iommu_command *cmd)
+ 	cmd->dword1 = 0;
  }
  
-+static int riscv_iommu_iotlb_sync_map(struct iommu_domain *iommu_domain,
-+				      unsigned long iova, size_t size)
++static inline void riscv_iommu_cmd_inval_gvma(struct riscv_iommu_command *cmd)
 +{
-+	struct riscv_iommu_domain *domain = iommu_domain_to_riscv(iommu_domain);
-+
-+	riscv_iommu_iotlb_inval(domain, iova, iova + size - 1);
-+
-+	return 0;
++	cmd->dword0 = FIELD_PREP(RISCV_IOMMU_CMD_OPCODE, RISCV_IOMMU_CMD_IOTINVAL_OPCODE) |
++		      FIELD_PREP(RISCV_IOMMU_CMD_FUNC, RISCV_IOMMU_CMD_IOTINVAL_FUNC_GVMA);
++	cmd->dword1 = 0;
 +}
 +
- static inline size_t get_page_size(size_t size)
+ static inline void riscv_iommu_cmd_inval_set_addr(struct riscv_iommu_command *cmd,
+ 						  u64 addr)
  {
- 	if (size >= IOMMU_PAGE_SIZE_512G)
-@@ -1396,6 +1406,7 @@ static const struct iommu_domain_ops riscv_iommu_paging_domain_ops = {
- 	.unmap_pages = riscv_iommu_unmap_pages,
- 	.iova_to_phys = riscv_iommu_iova_to_phys,
- 	.iotlb_sync = riscv_iommu_iotlb_sync,
-+	.iotlb_sync_map = riscv_iommu_iotlb_sync_map,
- 	.flush_iotlb_all = riscv_iommu_iotlb_flush_all,
- };
+diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
+index df7aeb2571ae..45309bd096e5 100644
+--- a/drivers/iommu/riscv/iommu.c
++++ b/drivers/iommu/riscv/iommu.c
+@@ -45,6 +45,10 @@
+ static DEFINE_IDA(riscv_iommu_pscids);
+ #define RISCV_IOMMU_MAX_PSCID		(BIT(20) - 1)
+ 
++/* IOMMU GSCID allocation namespace. */
++static DEFINE_IDA(riscv_iommu_gscids);
++#define RISCV_IOMMU_MAX_GSCID		(BIT(16) - 1)
++
+ /* Device resource-managed allocations */
+ struct riscv_iommu_devres {
+ 	void *addr;
+@@ -845,6 +849,7 @@ struct riscv_iommu_domain {
+ 	struct list_head bonds;
+ 	spinlock_t lock;		/* protect bonds list updates. */
+ 	int pscid;
++	int gscid;
+ 	int amo_enabled:1;
+ 	int numa_node;
+ 	unsigned int pgd_mode;
+@@ -993,20 +998,33 @@ static void riscv_iommu_iotlb_inval(struct riscv_iommu_domain *domain,
+ 	rcu_read_lock();
+ 
+ 	prev = NULL;
++
+ 	list_for_each_entry_rcu(bond, &domain->bonds, list) {
+ 		iommu = dev_to_iommu(bond->dev);
+ 
+ 		/*
+ 		 * IOTLB invalidation request can be safely omitted if already sent
+-		 * to the IOMMU for the same PSCID, and with domain->bonds list
++		 * to the IOMMU for the same PSCID/GSCID, and with domain->bonds list
+ 		 * arranged based on the device's IOMMU, it's sufficient to check
+ 		 * last device the invalidation was sent to.
+ 		 */
+ 		if (iommu == prev)
+ 			continue;
+ 
+-		riscv_iommu_cmd_inval_vma(&cmd);
+-		riscv_iommu_cmd_inval_set_pscid(&cmd, domain->pscid);
++		/*
++		 * S2 domain needs to flush entries in stage-2 page table, its
++		 * bond list has host devices and pass-through devices, the GVMA
++		 * command is no effect on host devices, because there are no
++		 * mapping of host devices in stage-2 page table.
++		 */
++		if (domain->gscid) {
++			riscv_iommu_cmd_inval_gvma(&cmd);
++			riscv_iommu_cmd_inval_set_gscid(&cmd, domain->gscid);
++		} else {
++			riscv_iommu_cmd_inval_vma(&cmd);
++			riscv_iommu_cmd_inval_set_pscid(&cmd, domain->pscid);
++		}
++
+ 		if (len && len < RISCV_IOMMU_IOTLB_INVAL_LIMIT) {
+ 			for (iova = start; iova < end; iova += PAGE_SIZE) {
+ 				riscv_iommu_cmd_inval_set_addr(&cmd, iova);
+@@ -1015,6 +1033,7 @@ static void riscv_iommu_iotlb_inval(struct riscv_iommu_domain *domain,
+ 		} else {
+ 			riscv_iommu_cmd_send(iommu, &cmd);
+ 		}
++
+ 		prev = iommu;
+ 	}
+ 
+@@ -1083,6 +1102,7 @@ static void riscv_iommu_iodir_update(struct riscv_iommu_device *iommu,
+ 
+ 		WRITE_ONCE(dc->fsc, new_dc->fsc);
+ 		WRITE_ONCE(dc->ta, new_dc->ta & RISCV_IOMMU_PC_TA_PSCID);
++		WRITE_ONCE(dc->iohgatp, new_dc->iohgatp);
+ 		/* Update device context, write TC.V as the last step. */
+ 		dma_wmb();
+ 		WRITE_ONCE(dc->tc, tc);
+@@ -1354,6 +1374,9 @@ static void riscv_iommu_free_paging_domain(struct iommu_domain *iommu_domain)
+ 	if ((int)domain->pscid > 0)
+ 		ida_free(&riscv_iommu_pscids, domain->pscid);
+ 
++	if ((int)domain->gscid > 0)
++		ida_free(&riscv_iommu_gscids, domain->gscid);
++
+ 	riscv_iommu_pte_free(domain, _io_pte_entry(pfn, _PAGE_TABLE), NULL);
+ 	kfree(domain);
+ }
+@@ -1384,8 +1407,14 @@ static int riscv_iommu_attach_paging_domain(struct iommu_domain *iommu_domain,
+ 	if (!riscv_iommu_pt_supported(iommu, domain->pgd_mode))
+ 		return -ENODEV;
+ 
+-	dc.fsc = FIELD_PREP(RISCV_IOMMU_PC_FSC_MODE, domain->pgd_mode) |
+-		 FIELD_PREP(RISCV_IOMMU_PC_FSC_PPN, virt_to_pfn(domain->pgd_root));
++	if (domain->gscid)
++		dc.iohgatp = FIELD_PREP(RISCV_IOMMU_DC_IOHGATP_MODE, domain->pgd_mode) |
++			     FIELD_PREP(RISCV_IOMMU_DC_IOHGATP_GSCID, domain->gscid) |
++			     FIELD_PREP(RISCV_IOMMU_DC_IOHGATP_PPN, virt_to_pfn(domain->pgd_root));
++	else
++		dc.fsc = FIELD_PREP(RISCV_IOMMU_PC_FSC_MODE, domain->pgd_mode) |
++			 FIELD_PREP(RISCV_IOMMU_PC_FSC_PPN, virt_to_pfn(domain->pgd_root));
++
+ 	dc.ta = FIELD_PREP(RISCV_IOMMU_PC_TA_PSCID, domain->pscid) |
+ 			   RISCV_IOMMU_PC_TA_V;
  
 -- 
 2.17.1
