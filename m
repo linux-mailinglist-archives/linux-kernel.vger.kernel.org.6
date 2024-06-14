@@ -1,281 +1,184 @@
-Return-Path: <linux-kernel+bounces-214383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 500F790837B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:00:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55CA290837D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2037284FE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:00:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84CF1F25557
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30C21482E8;
-	Fri, 14 Jun 2024 06:00:34 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D08E147C8B;
+	Fri, 14 Jun 2024 06:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Vc1vAPZ4"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6075A23;
-	Fri, 14 Jun 2024 06:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA3119D894
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 06:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718344834; cv=none; b=iqqLCBVu/LhlMNXNhU9EjSYI/CbgjLWM6j/yepXQZjD3YiU6yEK+8JfN9npCYCglfqbeleY4aed/1oFlv37C/vqu581fFRJ2T7V1i77ZZ1Fh4QqNOYWu7NzQ3vtYrC/A6H9tOaV+6pwP8G08aW6c+qD0HHsqAKk/08fDHIxDs38=
+	t=1718344898; cv=none; b=WFtzP52XU7KnJ6Klue3Jb2r+RcBmlVNiDMffnIwKmYrYunBwU/KMKXBBMcRpv/HzQRggRZLsYQUs+sbn6OLi7j6GOe2Yk83PKDL93BSxKTPpZYErmsG63lWGx6aPKLhlqp77Ukx8FQ/Q76GWVUR2gUgl1+rzdFzNRxWMFHrki1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718344834; c=relaxed/simple;
-	bh=GW4WsGWfmf/VNxcocottY+qzRoW45O4XrJ2pamOF32A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u70RLUVkOt5weGPk5eDSOYq9+hDenn6lax/NId349WlRIJ2PVdyayGE/g1kih30NTxPlV5iYI/KMhSWv+EI88WFe8021IFSMeVhCHcKRsb0j7Ac4EjEp7zmy0SNlnVtv0UvcgeSYIU98c9C9qDKE5ZuQmREgGu9SiGGEbxLG0YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 5fb19b522a1311ef9305a59a3cc225df-20240614
-X-CID-UNFAMILIAR: 1
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:f3965d31-fd7c-4513-86e1-2f56de3473a0,IP:10,
-	URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:8,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:13
-X-CID-INFO: VERSION:1.1.38,REQID:f3965d31-fd7c-4513-86e1-2f56de3473a0,IP:10,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:8,FILE:0,BULK:0,RULE:Release_HamU,ACTION
-	:release,TS:13
-X-CID-META: VersionHash:82c5f88,CLOUDID:a71ca4f081d568f9d50dde9718be5f76,BulkI
-	D:240614140018TO7FIQZY,BulkQuantity:0,Recheck:0,SF:38|24|16|19|44|66|102,T
-	C:nil,Content:0,EDM:-3,IP:-2,URL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:
-	nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_USA,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
-	TF_CID_SPAM_ULN
-X-UUID: 5fb19b522a1311ef9305a59a3cc225df-20240614
-Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
-	(envelope-from <luoxuanqiang@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 884987294; Fri, 14 Jun 2024 14:00:16 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id D319EB80758A;
-	Fri, 14 Jun 2024 14:00:14 +0800 (CST)
-X-ns-mid: postfix-666BDC6E-650757267
-Received: from localhost.localdomain (unknown [10.42.12.252])
-	by node2.com.cn (NSMail) with ESMTPA id 4460DB80758A;
-	Fri, 14 Jun 2024 06:00:13 +0000 (UTC)
-From: luoxuanqiang <luoxuanqiang@kylinos.cn>
-To: edumazet@google.com,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	luoxuanqiang@kylinos.cn
-Subject: [PATCH v1 1/1] Fix race for duplicate reqsk on identical SYN
-Date: Fri, 14 Jun 2024 14:00:12 +0800
-Message-Id: <20240614060012.158026-1-luoxuanqiang@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1718344898; c=relaxed/simple;
+	bh=x1zaNb8/OfqAZqW6xIF++L66xGyrPW35J+McVRQhcDc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KWe+ZXUYSafb3wzTxQQPSkGNwd+vQiHgUrctaiK3jzQCWDC5eQUIiOcBS0snXhbP/WMX0wMpr2+9ZJAkRJ7x13sH0sHlBOcBfsUgdprO8rGS4RzhCHMys/J79jieBBEXbfNk3TxKwRFdUM4bJDosLsrfxEEmca6uGtzDkdsXQOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Vc1vAPZ4; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57c83100cb4so1752015a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 23:01:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1718344895; x=1718949695; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=BR/byF0T5iDKCNBOsyArBXpm3tWlbtbt45AHnweARas=;
+        b=Vc1vAPZ4Zy4/4IKYsqzN+ou18J1TS7BNsKNvVPqRMqRY5LzXz9GDC5wtCo9KawRMLg
+         Ef04up4j2PAmP8B+wmlRJ3RJ/9uA+GIHurg9uy1UF2UpAohF3hiL5nHWVcTkipJbHQ9e
+         yFN0CjG7zeVkt7zQZjgBrPn3YDjsv78Mek9ocbGyf9Z1LI4044r+zDCZnL9WUEG6DuVr
+         rerkEc1yRng8nbcMPLyIGPpbL1YT9WYQN24u3rNZfp78inamXX1w2FVvgKfRfYX11qHy
+         bqDpVpmfvCVQMhXBjUl12DAxpXFQYexW5+EAyVWOg557Z1E1yivc637/GwLBm1bfPFtz
+         ykXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718344895; x=1718949695;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BR/byF0T5iDKCNBOsyArBXpm3tWlbtbt45AHnweARas=;
+        b=DOmtLBtYVO5XcPJo2N4F/Rh/eiaE+c5vtf/VSq/sJM0k3WH4KHBTD71S7c47gb6i/S
+         AcCa6zAL9blJ/m+cAU7k1AhmsaY/kQsEvfoUO3lCJmdNsNY6tMq3MXtNuZzustzj3Rfp
+         w+OBPuolY13jw7WrPgQUp7nJGTr8buLY0T2DxynXy/0vmjGsrtqmhl80xAHkGhQ9eCNS
+         H31T3mQHY+nZfz8CbQOSxfR7Pkjusq3TvwV0EqiSZK7A81P6G4QNGE86VC9xTFqI0R7z
+         SHIxzwBpriz883GdtTlbheDS/BUK0ZjIxtHEgebcdaIe2e9p2yUb1w+CC0vJaGue2qLN
+         vsgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPXFViGJHqpAckUNGfI2qo4JV4lYvr8iXSd/UFCCNu8FtoY3yGk9MjwgEhDI8X35Kjb9sW9W8oTnPqBZgUy4ASvzeXoqyPxVXrJuKk
+X-Gm-Message-State: AOJu0YzRdUDtUbAi2/aAKESVydswXh7ATJuiYjzeEmXmgzYIUSZZyqHF
+	niJLyqTScSYhKfNBSWdIVcUX+vhwAUvbdzoevH5YBaFr9pEt4Fgx4iWZBwWBTg==
+X-Google-Smtp-Source: AGHT+IGi1nuaXOBHTFNEfd8j9olcUmrdZrQ3Kk5EJcl4kPMb4Lp5qx36F3lQSqP0EhlgHeqULoYJCA==
+X-Received: by 2002:a17:906:17d5:b0:a68:c6c1:cd63 with SMTP id a640c23a62f3a-a6f60cee916mr94169466b.13.1718344894795;
+        Thu, 13 Jun 2024 23:01:34 -0700 (PDT)
+Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ed0f2asm147572866b.131.2024.06.13.23.01.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 23:01:34 -0700 (PDT)
+Message-ID: <663e80fc-6785-4ac5-ae74-e5f26d938f49@suse.com>
+Date: Fri, 14 Jun 2024 08:01:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] memblock:fix validation of NUMA coverage
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>, Narasimhan V <Narasimhan.V@amd.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>, stable@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Mike Rapoport <rppt@kernel.org>
+References: <Zmr9oBecxdufMTeP@kernel.org>
+ <CAHk-=wickw1bAqWiMASA2zRiEA_nC3etrndnUqn_6C1tbUjAcQ@mail.gmail.com>
+ <CAHk-=wgOMcScTviziAbL9Z2RDduaEFdZbHsESxqUS2eFfUmUVg@mail.gmail.com>
+Content-Language: en-US
+From: Jan Beulich <jbeulich@suse.com>
+Autocrypt: addr=jbeulich@suse.com; keydata=
+ xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
+ hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
+ 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
+ /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
+ O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
+ MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
+ nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
+ 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
+ Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
+ AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
+ e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
+ hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
+ IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
+ FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
+ t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
+ AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
+ HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
+ mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
+ m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
+ EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
+ wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
+ nAuWpQkjM1ASeQwSHEeAWPgskBQL
+In-Reply-To: <CAHk-=wgOMcScTviziAbL9Z2RDduaEFdZbHsESxqUS2eFfUmUVg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When bonding is configured in BOND_MODE_BROADCAST mode, if two identical =
-SYN packets
-are received at the same time and processed on different CPUs, it can pot=
-entially
-create the same sk (sock) but two different reqsk (request_sock) in tcp_c=
-onn_request().
+On 13.06.2024 19:38, Linus Torvalds wrote:
+> On Thu, 13 Jun 2024 at 10:09, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>>
+>> Is there some broken scripting that people have started using (or have
+>> been using for a while and was recently broken)?
+> 
+> ... and then when I actually pull the code, I note that the problem
+> where it checked _one_ bogus value has just been replaced with
+> checking _another_ bogus value.
+> 
+> Christ.
+> 
+> What if people use a node ID that is simply outside the range
+> entirely, instead of one of those special node IDs?
+> 
+> And now for memblock_set_node() you should apparently use NUMA_NO_NODE
+> to not get a warning, but for memblock_set_region_node() apparently
+> the right random constant to use is MAX_NUMNODES.
+> 
+> Does *any* of this make sense? No.
+> 
+> How about instead of having two random constants - and not having any
+> range checking that I see - just have *one* random constant for "I
+> have no range", call that NUMA_NO_NODE,
 
-These two different reqsk will respond with two SYNACK packets, and since=
- the generation
-of the seq (ISN) incorporates a timestamp, the final two SYNACK packets w=
-ill have
-different seq values.
+Just to mention it - my understanding is that this is an ongoing process
+heading in this very direction. I'm not an mm person at all, so I can't
+tell why the conversion wasn't done / can't be done all in one go.
 
-The consequence is that when the Client receives and replies with an ACK =
-to the earlier
-SYNACK packet, we will reset(RST) it.
+Jan
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-This behavior is consistently reproducible in my local setup, which compr=
-ises:
-
-                  | NETA1 ------ NETB1 |
-PC_A --- bond --- |                    | --- bond --- PC_B
-                  | NETA2 ------ NETB2 |
-
-- PC_A is the Server and has two network cards, NETA1 and NETA2. I have b=
-onded these two
-  cards using BOND_MODE_BROADCAST mode and configured them to be handled =
-by different CPU.
-
-- PC_B is the Client, also equipped with two network cards, NETB1 and NET=
-B2, which are
-  also bonded and configured in BOND_MODE_BROADCAST mode.
-
-If the client attempts a TCP connection to the server, it might encounter=
- a failure.
-Capturing packets from the server side reveals:
-
-10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [S], seq 32=
-0236027,
-10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [S], seq 32=
-0236027,
-localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [S.], seq 2=
-967855116,
-localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [S.], seq 2=
-967855123, <=3D=3D
-10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [.], ack 42=
-94967290,
-10.10.10.10.45182 > localhost.localdomain.search-agent: Flags [.], ack 42=
-94967290,
-localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [R], seq 29=
-67855117, <=3D=3D
-localhost.localdomain.search-agent > 10.10.10.10.45182: Flags [R], seq 29=
-67855117,
-
-Two SYNACKs with different seq numbers are sent by localhost, resulting i=
-n an anomaly.
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-The attempted solution is as follows:
-In the tcp_conn_request(), while inserting reqsk into the ehash table, it=
- also checks
-if an entry already exists. If found, it avoids reinsertion and releases =
-it.
-
-Simultaneously, In the reqsk_queue_hash_req(), the start of the req->rsk_=
-timer is
-adjusted to be after successful insertion.
-
-Signed-off-by: luoxuanqiang <luoxuanqiang@kylinos.cn>
----
- include/net/inet_connection_sock.h |  2 +-
- net/dccp/ipv4.c                    |  2 +-
- net/dccp/ipv6.c                    |  2 +-
- net/ipv4/inet_connection_sock.c    | 16 ++++++++++++----
- net/ipv4/tcp_input.c               | 11 ++++++++++-
- 5 files changed, 25 insertions(+), 8 deletions(-)
-
-diff --git a/include/net/inet_connection_sock.h b/include/net/inet_connec=
-tion_sock.h
-index 7d6b1254c92d..8773d161d184 100644
---- a/include/net/inet_connection_sock.h
-+++ b/include/net/inet_connection_sock.h
-@@ -264,7 +264,7 @@ struct sock *inet_csk_reqsk_queue_add(struct sock *sk=
-,
- 				      struct request_sock *req,
- 				      struct sock *child);
- void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock =
-*req,
--				   unsigned long timeout);
-+				   unsigned long timeout, bool *found_dup_sk);
- struct sock *inet_csk_complete_hashdance(struct sock *sk, struct sock *c=
-hild,
- 					 struct request_sock *req,
- 					 bool own_req);
-diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
-index ff41bd6f99c3..13aafdeb9205 100644
---- a/net/dccp/ipv4.c
-+++ b/net/dccp/ipv4.c
-@@ -657,7 +657,7 @@ int dccp_v4_conn_request(struct sock *sk, struct sk_b=
-uff *skb)
- 	if (dccp_v4_send_response(sk, req))
- 		goto drop_and_free;
-=20
--	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
-+	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT, NULL);
- 	reqsk_put(req);
- 	return 0;
-=20
-diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
-index 85f4b8fdbe5e..493cdb12ce2b 100644
---- a/net/dccp/ipv6.c
-+++ b/net/dccp/ipv6.c
-@@ -400,7 +400,7 @@ static int dccp_v6_conn_request(struct sock *sk, stru=
-ct sk_buff *skb)
- 	if (dccp_v6_send_response(sk, req))
- 		goto drop_and_free;
-=20
--	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
-+	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT, NULL);
- 	reqsk_put(req);
- 	return 0;
-=20
-diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_s=
-ock.c
-index d81f74ce0f02..d9394db98a5a 100644
---- a/net/ipv4/inet_connection_sock.c
-+++ b/net/ipv4/inet_connection_sock.c
-@@ -1123,12 +1123,17 @@ static void reqsk_timer_handler(struct timer_list=
- *t)
- }
-=20
- static void reqsk_queue_hash_req(struct request_sock *req,
--				 unsigned long timeout)
-+				 unsigned long timeout, bool *found_dup_sk)
- {
-+
-+	inet_ehash_insert(req_to_sk(req), NULL, found_dup_sk);
-+	if(found_dup_sk && *found_dup_sk)
-+		return;
-+
-+	/* The timer needs to be setup after a successful insertion. */
- 	timer_setup(&req->rsk_timer, reqsk_timer_handler, TIMER_PINNED);
- 	mod_timer(&req->rsk_timer, jiffies + timeout);
-=20
--	inet_ehash_insert(req_to_sk(req), NULL, NULL);
- 	/* before letting lookups find us, make sure all req fields
- 	 * are committed to memory and refcnt initialized.
- 	 */
-@@ -1137,9 +1142,12 @@ static void reqsk_queue_hash_req(struct request_so=
-ck *req,
- }
-=20
- void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock =
-*req,
--				   unsigned long timeout)
-+				   unsigned long timeout, bool *found_dup_sk)
- {
--	reqsk_queue_hash_req(req, timeout);
-+	reqsk_queue_hash_req(req, timeout, found_dup_sk);
-+	if(found_dup_sk && *found_dup_sk)
-+		return;
-+
- 	inet_csk_reqsk_queue_added(sk);
- }
- EXPORT_SYMBOL_GPL(inet_csk_reqsk_queue_hash_add);
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 9c04a9c8be9d..467f1b7bbd5a 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -7255,8 +7255,17 @@ int tcp_conn_request(struct request_sock_ops *rsk_=
-ops,
- 	} else {
- 		tcp_rsk(req)->tfo_listener =3D false;
- 		if (!want_cookie) {
-+			bool found_dup_sk =3D false;
-+
- 			req->timeout =3D tcp_timeout_init((struct sock *)req);
--			inet_csk_reqsk_queue_hash_add(sk, req, req->timeout);
-+			inet_csk_reqsk_queue_hash_add(sk, req, req->timeout,
-+							&found_dup_sk);
-+
-+			if(unlikely(found_dup_sk)){
-+				reqsk_free(req);
-+				return 0;
-+			}
-+
- 		}
- 		af_ops->send_synack(sk, dst, &fl, req, &foc,
- 				    !want_cookie ? TCP_SYNACK_NORMAL :
---=20
-2.25.1
+> and then have a simple helper
+> for "do I have a valid range", and make that be
+> 
+>    static inline bool numa_valid_node(int nid)
+>    { return (unsigned int)nid < MAX_NUMNODES; }
+> 
+> or something like that? Notice that now *all* of
+> 
+>  - NUMA_NO_NODE (explicitly no node)
+> 
+>  - MAX_NUMNODES (randomly used no node)
+> 
+>  - out of range node (who knows wth firmware tables do?)
+> 
+> will get the same result from that "numa_valid_node()" function.
+> 
+> And at that point you don't need to care, you don't need to warn, and
+> you don't need to have these insane rules where "sometimes you *HAVE*
+> to use NUMA_NO_NODE, or we warn, in other cases MAX_NUMNODES is the
+> thing".
+> 
+> Please? IOW, instead of adding a warning for fragile code, then change
+> some caller to follow the new rules, JUST FIX THE STUPID FRAGILITY!
+> 
+> Or hey, just do
+> 
+>     #define NUMA_NO_NODE MAX_NUMNODES
+> 
+> and have two names for the *same* constant, instead fo having two
+> different constants with strange semantic differences that seem to
+> make no sense and where the memblock code itself seems to go
+> back-and-forth on it in different contexts.
+> 
+>               Linus
 
 
