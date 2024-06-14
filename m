@@ -1,103 +1,156 @@
-Return-Path: <linux-kernel+bounces-214648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B799087A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:38:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0E619087A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 740DB1C226CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:38:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5984B288E57
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B6C1922FE;
-	Fri, 14 Jun 2024 09:38:10 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CB21922FF;
+	Fri, 14 Jun 2024 09:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PFpSLKrJ"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8A21922DD;
-	Fri, 14 Jun 2024 09:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73075146D60;
+	Fri, 14 Jun 2024 09:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718357890; cv=none; b=MOiJq1Slk7AZHu7m6L87vxMbtisaPGVTkfjGBNcO1L1V37Pb9QKEPUiRvMEiQlL+PY2nU0ckj3q9RKi2Ta4PgwPveOuytVazK1E73f/m+/Fg9QT/HRm7LYEXG9M78LUjI+VH1/lqHpMezT4W8BYjhdg2wpLyYHkDRE/zvCcIlkQ=
+	t=1718357930; cv=none; b=CARVsPWt0iXfv7Ux+EY/sonJg6+K+r9OS7MuhKVHuFajCymaf5xmzGYTxYDp+tbdq5g6H8h2THbiEsSLoh8DLSkp2Va1uLYeywv4TSsWtNj2H2ujrszqn1kot4XjISMYRVB72wMPD1Tg1PQ2C3cmRvGIZ3fKyjDiKeysw5GiHiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718357890; c=relaxed/simple;
-	bh=yk3xVCXhUi85+dtex8ea9Edp2bKOvgEo76IknOTQV6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TyzkYW69Rtu9iyiA8/akKtlAGVz55ScwK4VHW4EUQBHMIP6pQD3RgwrTFQCLmf1923zfA0zUZsnvjBMPjPSZPJ80IdIkJH8Swcrvx/WYLCw488PlcVGsd6zkfcmE5ErIV120VCEaXk0QwKyZVAPBCvn3GrUWlb6PLtxSLq3LNNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 1F1C91C0082; Fri, 14 Jun 2024 11:38:07 +0200 (CEST)
-Date: Fri, 14 Jun 2024 11:38:06 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.9 000/157] 6.9.5-rc1 review
-Message-ID: <ZmwPfqvcarQQ/cLx@duo.ucw.cz>
-References: <20240613113227.389465891@linuxfoundation.org>
+	s=arc-20240116; t=1718357930; c=relaxed/simple;
+	bh=kW+SCAQawYl8bZMtdCDZoUjYRzo1vwUwV0SeNPSeCSM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZN5ESiE72h9Iq7jdkXgwLcR/Tohq3EjULAj0992bwU5d0r+xpf6/EMX1r/Guh9FYFNL+DpTv+KjYMeU1fZ5VYea6NaUgGueVNwcX0FpgFbAT15Fmv41fzUja+CKFXk1mLsDQSPoSEPM5gqKUMS4DXzyXgs3uaiICgs/n7fPBjgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PFpSLKrJ; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45E9cGDA028195;
+	Fri, 14 Jun 2024 04:38:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718357896;
+	bh=+NFx58AC1+71lCRJDZfMbX16MlBwFV95gQE5TWMIO4Q=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=PFpSLKrJELc6ngh9c31BMZPkzItAmQU/yGRdFI0BrL9B5R52McQnNTkKvICmf2lTY
+	 NVWFOjRShlhjanbrzF+WWOO37xHRBu7LEzhl/fb2MoSG1td2KqXaIkmT4QixJm8M6S
+	 c4JOQSBztuqwXcupkcaIda2IKNlUZlhiLPGcqyvw=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45E9cGfa019267
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 14 Jun 2024 04:38:16 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
+ Jun 2024 04:38:15 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 14 Jun 2024 04:38:15 -0500
+Received: from [172.24.18.200] (lt5cd2489kgj.dhcp.ti.com [172.24.18.200])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45E9cCJh106972;
+	Fri, 14 Jun 2024 04:38:12 -0500
+Message-ID: <ee080b5d-49eb-4c5e-8076-76b1928dc5e0@ti.com>
+Date: Fri, 14 Jun 2024 15:08:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ln8mXAV6eA/q0+pD"
-Content-Disposition: inline
-In-Reply-To: <20240613113227.389465891@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] serial: 8250_omap: Implementation of Errata i2310
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: <vigneshr@ti.com>, <nm@ti.com>, Tony Lindgren <tony@atomide.com>,
+        Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby
+	<jirislaby@kernel.org>, <ronald.wahl@raritan.com>,
+        <thomas.richard@bootlin.com>, <tglx@linutronix.de>,
+        LKML
+	<linux-kernel@vger.kernel.org>,
+        linux-serial <linux-serial@vger.kernel.org>
+References: <20240614061314.290840-1-u-kumar1@ti.com>
+ <9ed7e96a-c538-aac1-5b52-b7b1d72bb6a0@linux.intel.com>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <9ed7e96a-c538-aac1-5b52-b7b1d72bb6a0@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 
---ln8mXAV6eA/q0+pD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 6/14/2024 1:58 PM, Ilpo Järvinen wrote:
+> On Fri, 14 Jun 2024, Udit Kumar wrote:
+>
+>> As per Errata i2310[0], Erroneous timeout can be triggered,
+>> if this Erroneous interrupt is not cleared then it may leads
+>> to strom of interrupts, therefore apply Errata i2310 solution.
+>>
+>> [0] https://www.ti.com/lit/pdf/sprz536 page 23
+>>
+>> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+>> ---
+>>   drivers/tty/serial/8250/8250_omap.c | 25 ++++++++++++++++++++-----
+>>   1 file changed, 20 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+>> index 170639d12b2a..38eb639f78d3 100644
+>> --- a/drivers/tty/serial/8250/8250_omap.c
+>> +++ b/drivers/tty/serial/8250/8250_omap.c
+>> @@ -115,6 +115,10 @@
+>>   /* RX FIFO occupancy indicator */
+>>   #define UART_OMAP_RX_LVL		0x19
+>>   
+>> +/* Timeout Low and High */
+>> +#define UART_OMAP_TO_L                 0x26
+>> +#define UART_OMAP_TO_H                 0x27
+>> +
+>>   /*
+>>    * Copy of the genpd flags for the console.
+>>    * Only used if console suspend is disabled
+>> @@ -663,13 +667,24 @@ static irqreturn_t omap8250_irq(int irq, void *dev_id)
+>>   
+>>   	/*
+>>   	 * On K3 SoCs, it is observed that RX TIMEOUT is signalled after
+>> -	 * FIFO has been drained, in which case a dummy read of RX FIFO
+>> -	 * is required to clear RX TIMEOUT condition.
+>> +	 * FIFO has been drained or erroneously.
+>> +	 * So apply solution of Errata i2310 as mentioned in
+>> +	 * https://www.ti.com/lit/pdf/sprz536
+>>   	 */
+>>   	if (priv->habit & UART_RX_TIMEOUT_QUIRK &&
+>> -	    (iir & UART_IIR_RX_TIMEOUT) == UART_IIR_RX_TIMEOUT &&
+>> -	    serial_port_in(port, UART_OMAP_RX_LVL) == 0) {
+>> -		serial_port_in(port, UART_RX);
+>> +		(iir & UART_IIR_RX_TIMEOUT) == UART_IIR_RX_TIMEOUT) {
+>> +		unsigned char efr2, timeout_h, timeout_l;
+>> +
+>> +		efr2 = serial_in(up, UART_OMAP_EFR2);
+>> +		timeout_h = serial_in(up, UART_OMAP_TO_H);
+>> +		timeout_l = serial_in(up, UART_OMAP_TO_L);
+>> +		serial_out(up, UART_OMAP_TO_H, 0xFF);
+>> +		serial_out(up, UART_OMAP_TO_L, 0xFF);
+>> +		serial_out(up, UART_OMAP_EFR2, 0x1);
+> Eh, this doesn't match the workaround in the errata???
+>
+> Also, don't use literals but name the bits with defines (for the correct
+> bit there's probably a pre-existing define but it's not named as good as
+> it could be, I'd say it should be named as
+> UART_OMAP_EFR2_TIMEOUT_PERIODIC).
 
-Hi!
 
-> This is the start of the stable review cycle for the 6.9.5 release.
-> There are 157 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Thanks, will address in v2.
 
-CIP testing did not find any problems here:
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.9.y
-
-6.6, 5.15, 5.4 pass our testing, too:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.6.y
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-5.15.y
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-5.4.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---ln8mXAV6eA/q0+pD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZmwPfgAKCRAw5/Bqldv6
-8gqSAJ4oRJOMNzHexwIwalZ8RDexZwxOswCcDNXeiKfRmeRIZA+U/2iP25TYza8=
-=nCwR
------END PGP SIGNATURE-----
-
---ln8mXAV6eA/q0+pD--
+>
+>> +		serial_in(up, UART_IIR);
+>> +		serial_out(up, UART_OMAP_EFR2, efr2);
+>> +		serial_out(up, UART_OMAP_TO_H, timeout_h);
+>> +		serial_out(up, UART_OMAP_TO_L, timeout_l);
 
