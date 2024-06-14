@@ -1,103 +1,117 @@
-Return-Path: <linux-kernel+bounces-215479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63B3590935B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:25:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC87C909366
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 198781F227F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:25:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52C871F22FFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF631487F4;
-	Fri, 14 Jun 2024 20:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A4F1A38E7;
+	Fri, 14 Jun 2024 20:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fUxgS1hl"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="kSPcQwB5"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B6A60DFA
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 20:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5651A3BA4
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 20:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718396718; cv=none; b=QCsi0zFRRwwASEglBgGBHorUFsNxLuO02bc+GCiQ7hJ04U3+aqkUeoJIzw7kPuMVUNBAXtjh5LmGOeqBokA+Vj4VBPPWFovqgPb/L+O+GkHwFzuLto99i8mS3eeDnKLiMOgwKACpCODX8IVp+eMsLSp65K+m6hOwK9zgfpHf70k=
+	t=1718397009; cv=none; b=Xz/SpvjeEKefS6kbNHlDFp5P9ZbvvIeglvf2690EeCRJmZo2cR+BzXMZ/RxUNsMeqIsqqoKvE/S4DlgpgLTAbyvWtjEHztbt/3jb7zRw5gV2Ky8n5XkOPrDoyyDQtBW+wTZVnEqjtTiGqm6PObJW8qgnkUZAk/mQzzMceYg20xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718396718; c=relaxed/simple;
-	bh=axdjSQ1Zu5/EILmUtDEnQjyhEPcv2TO9jZPPXchqyvA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kgauym1Ib0gKlnv3R+BHymp2N5vSe5x/inRddcIom46MtXF63NgoG2wvYq/eRUP84mbKaZYnHYwjqnOuh6DnWlLY/HqPput8dDPd9cR5Y/S/ozeJMdFo0c1rWZ5ofzhnOm8waV9WfPyfloPzkqeTS3Cf8flryJBltXvC4e+ULl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fUxgS1hl; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dff06b3f413so2391981276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:25:16 -0700 (PDT)
+	s=arc-20240116; t=1718397009; c=relaxed/simple;
+	bh=oCiYWKj7fKvXvA09gRXC6Z0ywvUJA/RbhazDFE/5KmM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eNHUvzKlaDFUZV+L0uhWi712wnhg0eM5EOc2GeNAqytgJMSs6TJulYHQg6WHOFOKH2m1zbZgenhNZ+2DAn2xaFOjrQzQFC1fzOSVOMCpq1ahhLgrxKaFv2H0AqPx7036JUgsPcQlx4B8H/+QjGxxoIQkORSGEqnt3QL1Racaq7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=kSPcQwB5; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5bacd59e562so1269551eaf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:30:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718396716; x=1719001516; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=axdjSQ1Zu5/EILmUtDEnQjyhEPcv2TO9jZPPXchqyvA=;
-        b=fUxgS1hlxPNRgG5GTvK3WNMpxGcNHURl0616K48XuWX+CtwtmrjgjhMT9ap2pRgEot
-         jh7kBgyNhf38dDziz6YO1CSkmDOIaEj1GXc6AgD5xfN1NFSnFTX2ZnekTG4g+EVCIG9h
-         OIB8KHFXkPe9ZITJ+lGkUdMXrAVKIzYsedqz9h1q64L9l59N8/6cQerbwRSrQAmHyIRv
-         johNLfFt6ZB5SuUqfj1PwyNCVEun0+k4+zwM9hT0tzc4CD/iuE+OXMBwW39w49kO5RCO
-         e5nAQkwU9dvegBjnxC7D/aU4YzMxSlGVA8NlpspJf7zOwxnvNYwpM/lh10LpeIYoaI82
-         +TZw==
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1718397007; x=1719001807; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xJhJt3J2nxJAuqKZHd0QwEciJsDRhZULynwju7SQhhA=;
+        b=kSPcQwB5kX7mCbmRdxmeIrnwoAahgjP0MsM1DqoXov/MfRJMik0kqSwSKYBCRtsTRs
+         a+YNHQbwTOT+Pw1Hg4FIob860fqyEHva/LTPVJWESwQ6jn5QUIimmHQ9dKzqKiD/4wEm
+         Bo+CQPhLpatLTQQkxHwRtP7XSBmSggGmRD32tpd8+cJ2UjQ4kCu1tCi8a3QwlykSLPGy
+         ZDId1bFhvTMAi6Wg48hvjswrpH9cH8mHnL52c1wN8QRhrAIW9JhhG90QEcHHy1kwhGpY
+         s6aW6Fav/YKMdgo7lIu/0uBkkY1/LIr5nBPsBR1nZv3EDStu5dhOwoNTXCDQpfLKJe0b
+         14lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718396716; x=1719001516;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=axdjSQ1Zu5/EILmUtDEnQjyhEPcv2TO9jZPPXchqyvA=;
-        b=laLMs+mTRz5LYOaDLdDfn5BexNwRbdgTrK5v7m3KM3zFDQQSx96RfBDi6lXPdsHJgM
-         vE3NNsoYmNl8ewnXlIpVunNrh8AGQ0OYDkNk+hNdb6hJ6TQ5LwqhkkSkMI2QBzZHdd6c
-         cS64QMKyeN2ZeE1NOUmbSaxTNsNpqlq0pqCCJuDFXJEGKuDIXbkp/ZJujqplRrxvdr+W
-         LuFI9EUCJ64RWgRi8O9teajYLU9up+YIc/NmxBltSfHhj3GJ/SfWXBG1023Nffc5no8b
-         QrAi2CzYNqO9PuONSvf+4FOG0SYLMrBGZninssS39mea3T4x2tnQvK2Fc6wYPG6QyYKQ
-         pn/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXItd4ixB0ULljvz4RYADsARm5SCZ8Nih4zCRtGzUKEHXpWqjnU9qKjaYeLVwliAetZ+mvjhYdPLxfStYcbGGG4bfQnvcxyg+2QvCs6
-X-Gm-Message-State: AOJu0YyTOC3XnkxZzxAXW1XoFh9UBRg73N4tEsvbH55JfZ4NxGlQlCz5
-	wuIEkH6Ny129Xul9Qi7XZXXpb+e/3TWGIaH/aPVGlp369oHkQitrtxtoWxkPiRCdpD8CqV6YfAP
-	UXA+OziLB4AQMYM+K9d74xmY7BFNQBg==
-X-Google-Smtp-Source: AGHT+IF5bWN9+eY2hIDkgu4ftLzJGI/Ah+wbUOVd528kWaq3VpHpLrmx6VFVBQSGo3TKJ1KBAXAZEMYHaVdbMqVirLM=
-X-Received: by 2002:a25:ce4c:0:b0:dfa:c779:2404 with SMTP id
- 3f1490d57ef6-dff153dbb88mr3765848276.30.1718396716173; Fri, 14 Jun 2024
- 13:25:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718397007; x=1719001807;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xJhJt3J2nxJAuqKZHd0QwEciJsDRhZULynwju7SQhhA=;
+        b=oMmRSviRG9n4TPvXw0/e0cVd9CELJPwnNyRJ9RjvVbXcfVnYInbXR0Llc1jSDnUn2A
+         kIBQmr5bd+k+1Rq1z8+AhsQSt/GC2XveNV7PgSL3COlrEh5b0pk3BMbSMo3BuIDdjkwz
+         qwAwjUKTp9Y93t1jEA5GzawWdaOAnQrALA13BQFxJdSTO+2S1Ulfi3hsCKQfSZU8Esey
+         /RmHGxMiUzT6W09C7jI4jUX+zPqzmMtqDw4OwWd1MFMiFmQll8q2SS58a4nuXwaoZRlY
+         RYSvGs/Wo7XCtVQVeOfO2YOI3o6bmCTfvX0t291nUVpiKmOoNZsELbpw+D86/4ivdtpx
+         +JIA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFC1BV5VU1xO5PPGZ7CbiUX3eIr5Qb2XRL4AuRShQt+gRPlW9EoLyOeHVZyBOw98F/th8MfyOddudcdivi94G0/fvF5WFY3PEvL0NV
+X-Gm-Message-State: AOJu0YzQG2HGK+tQRXs99/QrgI9SNh0/k2JfWVu53v5LXsvsKMW/LGhv
+	u9GXuUXwSHdghEz8j1o3su29pg38oj1YdD8ptJ3yCuDPc8x4AE7M59k1D2PCD68=
+X-Google-Smtp-Source: AGHT+IF4C0ydFkr3IsNAr6Blq5SSboC1En/cdpILPHYan7A2ZMTQYSAcMnFNnwq4qkuN3PHcllTO7w==
+X-Received: by 2002:a05:6358:9103:b0:19f:5317:49a1 with SMTP id e5c5f4694b2df-19fb51658f7mr465229255d.28.1718397007051;
+        Fri, 14 Jun 2024 13:30:07 -0700 (PDT)
+Received: from nicolas-tpx395.mtl.collabora.ca (mtl.collabora.ca. [66.171.169.34])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5efc23asm22245446d6.126.2024.06.14.13.30.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 13:30:06 -0700 (PDT)
+Message-ID: <0faecb255d7e1e67153321d9009f9fc8c0810cd7.camel@ndufresne.ca>
+Subject: Re: [PATCH 6/9] accel/rocket: Add a new driver for Rockchip's NPU
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>, Tomeu Vizoso
+ <tomeu@tomeuvizoso.net>,  Joerg Roedel <joro@8bytes.org>, Will Deacon
+ <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Heiko Stuebner
+ <heiko@sntech.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>, Oded Gabbay
+ <ogabbay@kernel.org>, Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>, David
+ Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>,  Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Sumit Semwal <sumit.semwal@linaro.org>,
+ Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Date: Fri, 14 Jun 2024 16:30:04 -0400
+In-Reply-To: <8f93c724-3c86-c0f4-3a84-8a72817e684c@quicinc.com>
+References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
+	 <20240612-6-10-rocket-v1-6-060e48eea250@tomeuvizoso.net>
+	 <8f93c724-3c86-c0f4-3a84-8a72817e684c@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614100902.3469724-1-usamaarif642@gmail.com> <20240614100902.3469724-3-usamaarif642@gmail.com>
-In-Reply-To: <20240614100902.3469724-3-usamaarif642@gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Fri, 14 Jun 2024 13:25:05 -0700
-Message-ID: <CAKEwX=NG1kj7oaz08OYoM8Xt1K1Jrg4bgYJozQZ1JXbVC-=vWg@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] mm: remove code to handle same filled pages
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, shakeel.butt@linux.dev, 
-	david@redhat.com, ying.huang@intel.com, hughd@google.com, willy@infradead.org, 
-	yosryahmed@google.com, chengming.zhou@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 14, 2024 at 3:09=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
- wrote:
->
-> With an earlier commit to handle zero-filled pages in swap directly,
-> and with only 1% of the same-filled pages being non-zero, zswap no
-> longer needs to handle same-filled pages and can just work on compressed
-> pages.
->
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> ---
+Hi,
 
-Other than my previous comments to re-add the stat counter somehow
-(which will probably helps with testing in the future), this series
-LGTM!
+Le vendredi 14 juin 2024 =C3=A0 10:16 -0600, Jeffrey Hugo a =C3=A9crit=C2=
+=A0:
+> > +	version =3D rocket_read(core, REG_PC_VERSION) + (rocket_read(core, RE=
+G_PC_VERSION_NUM) & 0xffff);
+> > +	dev_info(rdev->dev, "Rockchip NPU core %d version: %d\n", core->index=
+, version);
+>=20
+> A properly working driver should be silent by default.
 
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+This is not universally accepted statement. Most drivers do have a one line
+"probed/detected" kind of report.
+
+Nicolas
 
