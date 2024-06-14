@@ -1,101 +1,159 @@
-Return-Path: <linux-kernel+bounces-215404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 972EA909242
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:26:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6931909252
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 890D81C21023
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:26:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3086D1F24377
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179B419E7D0;
-	Fri, 14 Jun 2024 18:26:25 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A0519EEB7;
+	Fri, 14 Jun 2024 18:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="AaukQLHD"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C1B179BC;
-	Fri, 14 Jun 2024 18:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2BF16A397
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 18:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718389584; cv=none; b=CvD/6LJVtSTOGesu4gIwoBA/We52aGOY4eBfWsMITS/rNM1jvsVmax/bbpoKKLuRvtSr4bjfp2vBQWjLsDmQc3iWxIRcXvlKnwmtZuhghHuvQ6z/DqKKn3Z76zwh9D0LxDVCUUKorlyMzMmFHahWqrgx98yuP86B7AzolJpWrEs=
+	t=1718389946; cv=none; b=VsToKHehqlIkIUHcB09bp7Tm66j0NZvTy+6JLOUkrO87/5GbdYNdcpCTtlNMbCvmE3vynuLE94qC5rqYmHBzcn2LuRXBzNs7+rp5bNUXZr1MyfUHK7818w4Qekz9ZEcDPF4DtGE+0UYr5mcQrzEQKWKulN7nZAnaEt2PsDHwigI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718389584; c=relaxed/simple;
-	bh=jHAGhtBgYIhIH5h0XhykMYsCyNogbFyWVdwTe6RHoOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eJ0Pdg6qW82ISx+U6Co5oO0Y0ipU6xlsZYC6Gomy9LxAwgBXVdcpGeWPXYjJO47HF1x622A7lI/QN7r499RszFmrTrfFh86Ti/4S0Abpj20g3q1QIQj200i05zL2oHjy9HOPjS8SLCpiu1WAw/7xZaeDYtmezUZFrnRQcalu1JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD416C2BD10;
-	Fri, 14 Jun 2024 18:26:22 +0000 (UTC)
-Date: Fri, 14 Jun 2024 14:26:21 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Kris Van Hees <kris.van.hees@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
- linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masahiro
- Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Nick Desaulniers
- <ndesaulniers@google.com>, Jiri Olsa <olsajiri@gmail.com>, Elena Zannoni
- <elena.zannoni@oracle.com>
-Subject: Re: [PATCH v4 1/3] kbuild: add mod(name,file)_flags to assembler
- flags for module objects
-Message-ID: <20240614142621.5ac455c8@rorschach.local.home>
-In-Reply-To: <ZmyHsnXQoWgp7F2X@oracle.com>
-References: <20240614171428.968174-1-kris.van.hees@oracle.com>
-	<20240614171428.968174-2-kris.van.hees@oracle.com>
-	<20240614134651.4ed2091d@rorschach.local.home>
-	<ZmyHsnXQoWgp7F2X@oracle.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718389946; c=relaxed/simple;
+	bh=pQIr6kyiB9T7RTOGhQzU4XxML3cjRb50MpUy3V+mOcQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j3UZpHUT9FGRSaWsynV4428EAiAvDitfrZ3RlFU1zEhd9Vtbg9NU62lECmm6UKSVc6107SEBGxrR/1v9KVMKzgOCvDwcOFVw4lzhqwZruYqgy57emWrSAAnkUHF3a5gglDaLQQ8ALwdHMmtU7xDXeq6d1PHy+w3iVWsWPC9MK8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=AaukQLHD; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b064c4857dso12079606d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 11:32:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1718389944; x=1718994744; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=a+ZJEh6x6Lv8M2AN3cpcyYkfsWGE1WXAQKMbV67aTJY=;
+        b=AaukQLHDUtytaY2h4tQtfQ/DxJVmdXSg2upaveL5r33UIr68Xet8i8w9pUSMR205ee
+         C9sKlaW+RB/vGC8ON9TM2YaqSA3yB2q5VrpQKNhtxCn4/HGEkLhMTmUZyE+qTa9Sczxy
+         dbeiIQ4Y1PpCUJaE0l+PDV7VTpAfFLk+9R/Dk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718389944; x=1718994744;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a+ZJEh6x6Lv8M2AN3cpcyYkfsWGE1WXAQKMbV67aTJY=;
+        b=DHaei7BxOe69u6v4/8kIdE81z47TPqPDpZ3SPX0OtdShmiQu9Rsk20WDujySQHJO8q
+         60ZA/U5FATR3gPna/bcyVjbA6q+o+v633vHvKc8xS9usrwGPkqpI8s7LrN9pVb9NWgbr
+         +KhzSmq8Lih9qNWtWD/+RJxqqhZit99M5KytODqPtRUqI8nZzQVbml4FTMAQG0OsTat8
+         VuJgtZ0n5iSlyNdDOLsQke72RwkaTR1qKTlPYyiFnmsxsCZpSCExu35Za3/IoZvTiSwf
+         mfM/dXbcEzMtMid/extVLyjPvYnyBrruiac8UjpNq5T1fcTKqKyc5jRlk5KZK1A4cOcB
+         dNsg==
+X-Gm-Message-State: AOJu0YwlNQGcBApMZlOZn4H+SNR8agTxd5lYQGZyVd9B+1qoBsBB7uM3
+	CMeZ/Cutyl+/fRBG6awRFETXUHvLu263mB7wJjlUBCTyS8R9zXLLKa61B+6rMQ==
+X-Google-Smtp-Source: AGHT+IGioDtYzmWk+SYhqfm9DebuWAb/mp0AENVr2ydYI4ZP81ROYuzpODtzdxlMQipzCd3UYBAVtw==
+X-Received: by 2002:ad4:55c3:0:b0:6b0:8041:8ae1 with SMTP id 6a1803df08f44-6b2afd94baamr30167806d6.61.1718389944507;
+        Fri, 14 Jun 2024 11:32:24 -0700 (PDT)
+Received: from [10.66.192.68] ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5c10580sm21164366d6.32.2024.06.14.11.32.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 11:32:24 -0700 (PDT)
+Message-ID: <1750e44f-f9a9-4c2a-afb3-f1ae8237ccb0@broadcom.com>
+Date: Fri, 14 Jun 2024 11:32:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 8/8] x86/vmware: Add TDX hypercall support
+To: Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ hpa@zytor.com, dave.hansen@linux.intel.com, mingo@redhat.com,
+ tglx@linutronix.de, x86@kernel.org, netdev@vger.kernel.org,
+ richardcochran@gmail.com, linux-input@vger.kernel.org,
+ dmitry.torokhov@gmail.com, zackr@vmware.com,
+ linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
+ timothym@vmware.com, akaher@vmware.com, dri-devel@lists.freedesktop.org,
+ daniel@ffwll.ch, airlied@gmail.com, tzimmermann@suse.de, mripard@kernel.org,
+ maarten.lankhorst@linux.intel.com, horms@kernel.org,
+ kirill.shutemov@linux.intel.com, Tim Merrifield <tim.merrifield@broadcom.com>
+References: <20240613191650.9913-1-alexey.makhalov@broadcom.com>
+ <20240613191650.9913-9-alexey.makhalov@broadcom.com>
+ <844ef200-aabe-4497-85c9-44fc46c9133a@intel.com>
+ <20240614161404.GCZmxsTNLSoYTqoRoj@fat_crate.local>
+ <74f8300b-3520-4824-81e3-71464e3da3b6@intel.com>
+Content-Language: en-US
+From: Alexey Makhalov <alexey.makhalov@broadcom.com>
+Autocrypt: addr=alexey.makhalov@broadcom.com; keydata=
+ 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 EuY0
+In-Reply-To: <74f8300b-3520-4824-81e3-71464e3da3b6@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Fri, 14 Jun 2024 14:10:58 -0400
-Kris Van Hees <kris.van.hees@oracle.com> wrote:
 
-> On Fri, Jun 14, 2024 at 01:46:51PM -0400, Steven Rostedt wrote:
-> > On Fri, 14 Jun 2024 13:14:26 -0400
-> > Kris Van Hees <kris.van.hees@oracle.com> wrote:
-> >   
-> > > Module objects compiled from C source can be identified by the presence
-> > > of -DKBUILD_MODFILE and -DKBUILD_MODNAME on their compile command lines.
-> > > However, module objects from assembler source do not have this defines.
-> > > 
-> > > Add $(modfile_flags) to modkern_aflags (similar to modkern_cflahs), and
-> > > add $(modname_flags) to a_flags (similar to c_flags).  
-> > 
-> > You explain what this does but not why it does it.  
+
+On 6/14/24 9:19 AM, Dave Hansen wrote:
+> On 6/14/24 09:14, Borislav Petkov wrote:
+>> On Fri, Jun 14, 2024 at 09:03:22AM -0700, Dave Hansen wrote:
+> ...
+>>> You need to zero out all of 'args' somehow.
+>>
+>> You mean like this:
+>>
+>> 	struct tdx_module_args args = {};
+>>
+>> ?
 > 
-> The first paragraph is meant to estabish the "why" (being able to identify
-> what objects are module objects, even if they are compiled from assembler
-> source).
+> Yes, or do all the assignments with the initializer.  We seem to do it
+> both ways, so whatever works.
 
-Perhaps there's a lack of context. Sure, the cover letter can help in
-this regard, but I always look at each commit as a stand alone.
-
-> 
-> As I mention, for objects compiled from C source code, those defines being
-> present identifies those objects as belonging to a module.  For objects
-> compiled from assembler source code, those defines are not present.  Passing
-> them on the compile command line for assembler source code files for objects
-> that are part of one or more modules allows us to identify all objects that
-> are part of modules with a single consistent mechanism.
-
-Sure, but why do we care? Again, if this was the only patch you sent,
-it should explain why it is being done.
-
-Perhaps something like: "In order to be able to identify what code is
-from a module, even if it is built in, ..."
-
-But what you are saying is just "C code has these flags, make
-assembly have them too". Which is meaningless.
-
-The other patches could use some more explanation too.
-
--- Steve
+Thanks Dave for pointing that out. I missed that at v7.
 
