@@ -1,53 +1,60 @@
-Return-Path: <linux-kernel+bounces-214636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9FC908772
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:31:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86C6908776
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A78511C244A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:31:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDBD3B24A32
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB09E1922C2;
-	Fri, 14 Jun 2024 09:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6327F1922CF;
+	Fri, 14 Jun 2024 09:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="J9dp0fEv"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uVyVB1Q1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30EE481D0;
-	Fri, 14 Jun 2024 09:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F612481D0;
+	Fri, 14 Jun 2024 09:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718357477; cv=none; b=QPdfEU4IIP+8i0MVvDv3CkGn2A06m+JzowKS2mWAiXs5gV+QkK4BWMVI7mhgcKgIbr6yS/atHW+rHY9Ul1Z4QR4mmNqmRsTqx3Yzo7W4l14geT8xq+GAJPbIElZkPkB2jb/Y6AAEClxCfMRoySnHbxubm/r4hV+tdb8KqKOyeVI=
+	t=1718357489; cv=none; b=hAHFsTl4fPz6fMqo9QzLurGzp3dbnjbQGUBN/t377qOdnzorBSl1IcX++JVnCPG1eoBU7thXKb5AtyAef74jpzsHDG5+Il6slISxNp40I3BXLJ8SwprQhEH+M9+SLLKatGTnT76XovAbENNDkVFVTBImU0D6R0NhViXkUi0N+oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718357477; c=relaxed/simple;
-	bh=4ceCkLbXRmlPcpC7DXa3ORY5EqwpZcjocMUx6eOdwqE=;
+	s=arc-20240116; t=1718357489; c=relaxed/simple;
+	bh=GHeElqe8VrB34C9wBIcEMogZsFo2aeiU/M3nJbLyXxQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bmu8oC0JPLGgxZB2tAPOfIlmcN7Zef42O/2ygjK2u5Cj56gz9GHruJVFOiDwdPhK3nP8VGbwoSv1so1Sbs2E1wRzKgcQXjiq3MoFeo/f4eJ0TYW4gD8ZD+IL8PV2gd+S6u4N0DnmGlK+tFRw0CRvmyRllNq89FJ+d/frge9rZuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=J9dp0fEv; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1718357471;
-	bh=4ceCkLbXRmlPcpC7DXa3ORY5EqwpZcjocMUx6eOdwqE=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZlY2xXgyIB57lT8UPM2WeMWWBeVKM6YPU98caTEM6R8+o5caOX7lC9WmynxMkj9Ch3tzeAUDzgVdnnI6bXjuAgQDPjjBa7uL50KYU5vV7gu7pHM9JsNPgiPmUkUrHB1Oguyx3D1MssLvES7qU5C0J4m3V3UQt0UbN1/HieXYcDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uVyVB1Q1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27173C2BD10;
+	Fri, 14 Jun 2024 09:31:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718357489;
+	bh=GHeElqe8VrB34C9wBIcEMogZsFo2aeiU/M3nJbLyXxQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J9dp0fEv+bRHXP/2V/m0DI6PsfWRGV6mPr5DFmcLtsGZiZGdmrGk9IcYCejxZ0u5G
-	 zzeKROMeYX7RxmjadVogL9bcPGUHf2EWgzKCN1qPahxksBq601tZIzUhFr0JajqFU4
-	 4PjYvWWCcQiGlCMcB0QiOCwZuiMYtxleVCDmGvtA=
-Date: Fri, 14 Jun 2024 11:31:11 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-leds@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
-	Dustin Howett <dustin@howett.net>, Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v3 0/5] ChromeOS Embedded Controller LED driver
-Message-ID: <047fa978-d0a5-47d3-adb2-4b49e45b7ed4@t-8ch.de>
-References: <20240613-cros_ec-led-v3-0-500b50f41e0f@weissschuh.net>
- <20240614091220.GA3029315@google.com>
+	b=uVyVB1Q13OgHfxDgorVlgcTtPWWke8R6tnuozRHFZqo8a9Jwd3zF/iajHtabIgDSN
+	 fJUC450HjXueTqfpKmdaFk4pP+C4KBHDWlioCDY9YSYiGfcFB+zVJlUQ32lyPuIv8e
+	 76fCrocYx59ivwY2AKivgZ4sRrf5zE1DDrhTAmqu8BcWI9cyHo7+iaQoit+LazNjKb
+	 YMF/Poqeivz7CbcPm3E7T3vqy2luQaTwMisOR5oM6ltsy6SOO8arAfb5zwxClBDPii
+	 skZhlEj4yjnBBPfaXF/cEw445MAyEu3lmkliENODUC/MChs81QWnQdksjcSBDoYOww
+	 w7id1AERN7VGA==
+Date: Fri, 14 Jun 2024 10:31:24 +0100
+From: Lee Jones <lee@kernel.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	William Breathitt Gray <wbg@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] mfd: stm32-timers: Drop TIM_DIER_CC_IE(x) in favour
+ of TIM_DIER_CCxIE(x)
+Message-ID: <20240614093124.GD3029315@google.com>
+References: <cover.1718352022.git.u.kleine-koenig@baylibre.com>
+ <0735860960b1b38570bffa5b0de81a97f6e3230e.1718352022.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,78 +64,74 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240614091220.GA3029315@google.com>
+In-Reply-To: <0735860960b1b38570bffa5b0de81a97f6e3230e.1718352022.git.u.kleine-koenig@baylibre.com>
 
-On 2024-06-14 10:12:20+0000, Lee Jones wrote:
-> On Thu, 13 Jun 2024, Thomas Weißschuh wrote:
+On Fri, 14 Jun 2024, Uwe Kleine-König wrote:
+
+> These two defines have the same purpose and this change doesn't
+> introduce any differences in drivers/counter/stm32-timer-cnt.o.
 > 
-> > Add a LED driver that supports the LED devices exposed by the
-> > ChromeOS Embedded Controller.
-> > 
-> > Patch 1-3 add a utility function to the led subsystem.
-> > Patch 4 introduces the actual driver.
-> > Patch 5 registers the driver through the cros_ec mfd devices.
-> > 
-> > Currently the driver introduces some non-standard LED functions.
-> > (See "cros_ec_led_functions")
-> > 
-> > Tested on a Framework 13 AMD, Firmware 3.05.
-> > 
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> > Changes in v3:
-> > - Set default_trigger explicitly as the LED core doesn't do this anymore
-> > - Only set intensity for first subled by default
-> > - Link to v2: https://lore.kernel.org/r/20240531-cros_ec-led-v2-0-6cc34408b40d@weissschuh.net
-> > 
-> > Changes in v2:
-> > - Cosmetic cleanups (Tzung-Bi)
-> > - Add trailing comma to MFD cell array
-> > - Rename LEDs and trigger to "chromeos" prefix, to align with kbd
-> >   backlight driver
-> > - Don't use type "rgb" anymore, they are only "multicolor"
-> > - Align commit messages and subject to subsystem standards (Lee)
-> > - Rename led_color_name() to led_get_color_name()
-> > - The same for cros_ec_led_color_name()
-> > - Link to v1: https://lore.kernel.org/r/20240520-cros_ec-led-v1-0-4068fc5c051a@weissschuh.net
-> > 
-> > ---
-> > Thomas Weißschuh (5):
-> >       leds: core: Introduce led_get_color_name() function
-> >       leds: multicolor: Use led_get_color_name() function
-> >       leds: core: Unexport led_colors[] array
-> >       leds: Add ChromeOS EC driver
-> >       mfd: cros_ec: Register LED subdevice
-> > 
-> >  MAINTAINERS                         |   5 +
-> >  drivers/leds/Kconfig                |  15 ++
-> >  drivers/leds/Makefile               |   1 +
-> >  drivers/leds/led-class-multicolor.c |   2 +-
-> >  drivers/leds/led-core.c             |  12 +-
-> >  drivers/leds/leds-cros_ec.c         | 299 ++++++++++++++++++++++++++++++++++++
-> >  drivers/leds/leds.h                 |   1 -
-> >  drivers/mfd/cros_ec_dev.c           |   9 ++
-> >  include/linux/leds.h                |  10 ++
-> >  9 files changed, 350 insertions(+), 4 deletions(-)
-> > ---
-> > base-commit: 2ccbdf43d5e758f8493a95252073cf9078a5fea5
-> > change-id: 20240519-cros_ec-led-3efa24e3991e
+> The only difference between the two is that
 > 
-> Applied and submitted for testing.
+> 	TIM_DIER_CC_IE(1) == TIM_DIER_CC2IE
 > 
-> All being well, I'll follow-up with a cross-subsystem pull-request shortly
+> while
+> 
+> 	TIM_DIER_CCxIE(1) == TIM_DIER_CC1IE
+> 
+> . That makes it necessary to have an explicit "+ 1" in the user code,
+> but IMHO this is a good thing as this is the code locatation that
+> "knows" that for software channel 1 you have to use TIM_DIER_CC2IE
+> (because software guys start counting at 0, while the relevant hardware
+> designer started at 1).
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+> ---
+>  drivers/counter/stm32-timer-cnt.c | 4 ++--
 
-Thanks!
+The subject should be renamed.
 
-I'm not sure which effect this application has on the review comments
-you gave to patch 4 (thanks for those, too).
+>  include/linux/mfd/stm32-timers.h  | 1 -
+>  2 files changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/counter/stm32-timer-cnt.c b/drivers/counter/stm32-timer-cnt.c
+> index 0664ef969f79..186e73d6ccb4 100644
+> --- a/drivers/counter/stm32-timer-cnt.c
+> +++ b/drivers/counter/stm32-timer-cnt.c
+> @@ -465,7 +465,7 @@ static int stm32_count_events_configure(struct counter_device *counter)
+>  			ret = stm32_count_capture_configure(counter, event_node->channel, true);
+>  			if (ret)
+>  				return ret;
+> -			dier |= TIM_DIER_CC_IE(event_node->channel);
+> +			dier |= TIM_DIER_CCxIE(event_node->channel + 1);
+>  			break;
+>  		default:
+>  			/* should never reach this path */
+> @@ -478,7 +478,7 @@ static int stm32_count_events_configure(struct counter_device *counter)
+>  
+>  	/* check for disabled capture events */
+>  	for (i = 0 ; i < priv->nchannels; i++) {
+> -		if (!(dier & TIM_DIER_CC_IE(i))) {
+> +		if (!(dier & TIM_DIER_CCxIE(i + 1))) {
+>  			ret = stm32_count_capture_configure(counter, i, false);
+>  			if (ret)
+>  				return ret;
+> diff --git a/include/linux/mfd/stm32-timers.h b/include/linux/mfd/stm32-timers.h
+> index 92b45a559656..f09ba598c97a 100644
+> --- a/include/linux/mfd/stm32-timers.h
+> +++ b/include/linux/mfd/stm32-timers.h
+> @@ -47,7 +47,6 @@
+>  #define TIM_DIER_CC2IE		TIM_DIER_CCxIE(2)			/* CC2 Interrupt Enable				*/
+>  #define TIM_DIER_CC3IE		TIM_DIER_CCxIE(3)			/* CC3 Interrupt Enable				*/
+>  #define TIM_DIER_CC4IE		TIM_DIER_CCxIE(4)			/* CC4 Interrupt Enable				*/
+> -#define TIM_DIER_CC_IE(x)	BIT((x) + 1)				/* CC1, CC2, CC3, CC4 interrupt enable		*/
+>  #define TIM_DIER_UDE		BIT(8)					/* Update DMA request Enable			*/
+>  #define TIM_DIER_CCxDE(x)	BIT(9 + ((x) - 1))			/* CCx DMA request Enable (x ∈ {1, .. 4})	*/
+>  #define TIM_DIER_CC1DE		TIM_DIER_CCxDE(1)			/* CC1 DMA request Enable			*/
+> -- 
+> 2.43.0
+> 
 
-After implementing your requests, should I
-* resubmit the whole series
-* resubmit only patch 4
-* send an incremental patch on top of the series
-?
-
-
-Thomas
+-- 
+Lee Jones [李琼斯]
 
