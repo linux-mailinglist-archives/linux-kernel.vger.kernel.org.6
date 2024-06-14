@@ -1,136 +1,111 @@
-Return-Path: <linux-kernel+bounces-214629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF0CF908751
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:25:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789A9908750
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FB171F22B33
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:25:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7684D1C23140
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79839192B6B;
-	Fri, 14 Jun 2024 09:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7947D1922E1;
+	Fri, 14 Jun 2024 09:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gRHaktSq"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCWTZwRc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B96C1922E2
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48D918C33A;
+	Fri, 14 Jun 2024 09:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718357101; cv=none; b=kgRKSuAWEOWTbQa4E+Wrp26c3Hu4l9WI5BARuqTUDCq3Bb8Z2IZza8xCjzoLwCjf20wqmKhQ+2X/ZNVcIBc6tNwUPAPfNubpPfnmEdd5PaypJ5puKZnzkNGkmPlqYbYooJQLc8ZRpMj+9VHf7twNCBHQD0vUK1F77N57aU15KHU=
+	t=1718357099; cv=none; b=JR52a9FIy2Sv46gZk25eaAeCPRCaQ8IW0+3Wy7O+CWwI93HnX3ZS1dXWp1go4dLvt8jjaG/N0tqJNBSsYmEX1yBUe+7c68j7xR095IBYlRUEXIQtHbVW06crHjiddEaN5uYRQ6S+YNc1qf8Og/Rd3erC0tRKvx9yBxwn4hrEmGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718357101; c=relaxed/simple;
-	bh=rEuUggRIk/XgZhGaxQCvlMpbOVQaaZo2o/x5sic676g=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=TUPFvUyULnfC8VPohpAVnui0mLzAywqsAijJc5yoe4hpaJrL4/leOMCl+513NNRdLHyWuKMfmVtBtrwYxijHqw2/L7jeaVkI2tTONOegMQdQnDjcsTRRVKTTFvujUnFyRvgrARuol+cJ4AuB05NQRALPMOKLcf3xg/XEPZ3FhZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gRHaktSq; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6e3741519d7so1391984a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 02:25:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718357100; x=1718961900; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SGigGFS7JoII0JOouFlQKMXgDZ1z5wjwFvfN+o3HCRQ=;
-        b=gRHaktSqhTRqBla45DAXUG8m4ZtvybH4KKtxEPE8gyV3E6h8zgmgT7m2gs5refWWE7
-         fHpPoh2QecAx/NXF+JlPUlEX/a86iQGpepKOb4uCpmx10L/mfVydKbw361w6DdsSoMML
-         K9vW5AT5xMJR3xvdHiVeia43fAo+uaHxCmaeBNfb8EEo/YKtU83DhfrOacVGAzbqqDb9
-         cWR2gBiFymDVEur2pKe72PFxUmg5rirOi2wwKpH87WHUJLrHOzZbGPUvTlj84U5U6hNK
-         m9uiqxP1IWs7tycOMvVPdqzgnKzoteEwyhgQ87caeY6wwOzKWV9rQ1+2hPP4zGyRSWk3
-         0nXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718357100; x=1718961900;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SGigGFS7JoII0JOouFlQKMXgDZ1z5wjwFvfN+o3HCRQ=;
-        b=c1vtEifjtE2Bk1T1IMo1ls93igOGXy4S6DilY/OZD+NwrP8gVwwON1wQ4R+vvXcGF4
-         B2FCA6vK5KGt+QglJeCv5oaA/YjwxQ3l+W9l1cNHYLWNtjLBRLi3Sx4+VyPmuPomp8Ag
-         9SWTGt9cc5p977kz4ucM4lcTZDDThYeb0lVwx4KSSdrsRdmGF4tg6GoWnYU/4bY+gsie
-         pENb5D2xDkEsSBWtqmYeDrWI6Xd8dgyJY/xfBF6pQ6Wzq8jjzp2uSZHJ0ncdiseALON8
-         FfK53CDDvWs2ZzY2myDNBBPHTfxBfIBCbvwYiCzhWCOtId63T1mJAEDqGDr6PcuTNeIV
-         YKTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmucMXHOnb0IV1hQAuYlEYKo8vazKtpNL2QCVVkKHVc3Qvv/T4EPsGtEUmaW5OYuphRPDzJ1DdX2C1QZbl5QrnY55Fa6QG57wnhT0z
-X-Gm-Message-State: AOJu0Yy5Y/2NZCobN9AeBAnKKnNYs/9dQd3akXlqJGP5L3Xxx+N+I9OA
-	4vL8R+lh+hqgMfqOfXi8K1vCX5DMpgEQCOzbkHPL0cykqR55y2JT
-X-Google-Smtp-Source: AGHT+IFSA4N7tpOYJXsM/k7aczTA2dZZ9nLaQdNsrgXCpb8pkXFDVXfxwgGSfBeZQ27W5YvaMOZK3g==
-X-Received: by 2002:a05:6a20:914b:b0:1b2:a94d:4eca with SMTP id adf61e73a8af0-1bae823dc94mr2526921637.41.1718357099706;
-        Fri, 14 Jun 2024 02:24:59 -0700 (PDT)
-Received: from localhost.localdomain ([180.69.210.41])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2c4a76ab1c8sm5646383a91.52.2024.06.14.02.24.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 02:24:58 -0700 (PDT)
-From: JaeJoon Jung <rgbi3307@gmail.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: JaeJoon Jung <rgbi3307@gmail.com>,
-	maple-tree@lists.infradead.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] maple_tree: modified return type of mas_wr_store_entry()
-Date: Fri, 14 Jun 2024 18:24:28 +0900
-Message-Id: <20240614092428.29491-1-rgbi3307@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1718357099; c=relaxed/simple;
+	bh=O5kc28lbH4t01HLT1wS8PwFPEcZXeuB0ELq0NAIyPjs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ZUYY+5BvgDd7WLwl+Axzhw2oJZHA6oD0w3fA9m9h/SQWFbmR1TLSiZNUT1f6/lenHkXwoeQId9CwrElno2dcVbt00GKxi2w9A5nX+ygN+4VW7PCGrkyAn6d43zqDCUQOoIxZmncXBnJBlIHNvDyF/GEfMJ9PwS7ghIlGVvRhrwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCWTZwRc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7030CC2BD10;
+	Fri, 14 Jun 2024 09:24:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718357099;
+	bh=O5kc28lbH4t01HLT1wS8PwFPEcZXeuB0ELq0NAIyPjs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=iCWTZwRcvVCSP21qA/FLhovAdDIulSJl1VwUJPi9ls2quluhGRv7RFqc8UdqZeGRn
+	 DSE/krIOndKxKSEfiATpH4wdS2VGUNrE5Y8Fp8yfiUeorqjGe9CZCbzgxY/U0JRl3Q
+	 /bYPa7k+WT/L/fF/Oddq/H+UeJWSSw8pNZpIYsW9kwOYtngGdSrfpMSrhFtWHZq3il
+	 xXUTRinbRpnLzXAhSRlJ5DSK2uojz3DwIO4LQumLmn1i65MQRfDRbjh1uZ+oN5ag5i
+	 aQzHlUUzkgUtm/g0DGHWJDBSubvWxIJb5CQi5FYm9QkS3/6sTFMJn+JgAeJfr23KGh
+	 W3CtpUP2/DKiA==
+From: Mark Brown <broonie@kernel.org>
+To: Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Andre Przywara <andre.przywara@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-sunxi@lists.linux.dev, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Ryan Walklin <ryan@testtoast.com>, 
+ Chris Morgan <macroalpha82@gmail.com>
+In-Reply-To: <20240418000736.24338-1-andre.przywara@arm.com>
+References: <20240418000736.24338-1-andre.przywara@arm.com>
+Subject: Re: (subset) [PATCH v2 0/5] regulator: Fix AXP717 PMIC support
+Message-Id: <171835709508.262359.11220442613835711253.b4-ty@kernel.org>
+Date: Fri, 14 Jun 2024 10:24:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-0bd45
 
-Since the return value of mas_wr_store_entry() is not used,
-the return type can be changed to void.
+On Thu, 18 Apr 2024 01:07:31 +0100, Andre Przywara wrote:
+> This is v2 of the fixes to the AXP717 PMIC support series. Lee put the
+> original patches in an immutable branch already, so these here go on top.
+> Patch 1 is new in v2, and adds the IRQ status and acknowledge registers
+> to the writable range. Thanks to Chris for pointing this out.
+> Patch 2 contains fixes to the regulator descriptions: the LDOs had the
+> wrong supply source, and two numbers were wrong. The datasheet describes
+> the voltage ranges and register values differently from what our macros
+> expect, in a way that literally begs for off-by-ones, so here you go.
+> Also there is an actual wrong number in the datasheet, add a comment to
+> document this.
+> I don't know if that's still feasible, but those two patches would be a
+> good candidate to squash into the patches that they fix.
+> 
+> [...]
 
-Signed-off-by: JaeJoon Jung <rgbi3307@gmail.com>
-Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
----
- lib/maple_tree.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+Applied to
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index 2d7d27e6ae3c..aa3a5df15b8e 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -4203,31 +4203,28 @@ static inline void mas_wr_modify(struct ma_wr_state *wr_mas)
-  *
-  * Return: The contents that was stored at the index.
-  */
--static inline void *mas_wr_store_entry(struct ma_wr_state *wr_mas)
-+static inline void mas_wr_store_entry(struct ma_wr_state *wr_mas)
- {
- 	struct ma_state *mas = wr_mas->mas;
- 
- 	wr_mas->content = mas_start(mas);
- 	if (mas_is_none(mas) || mas_is_ptr(mas)) {
- 		mas_store_root(mas, wr_mas->entry);
--		return wr_mas->content;
-+		return;
- 	}
- 
- 	if (unlikely(!mas_wr_walk(wr_mas))) {
- 		mas_wr_spanning_store(wr_mas);
--		return wr_mas->content;
-+		return;
- 	}
- 
- 	/* At this point, we are at the leaf node that needs to be altered. */
- 	mas_wr_end_piv(wr_mas);
- 	/* New root for a single pointer */
--	if (unlikely(!mas->index && mas->last == ULONG_MAX)) {
-+	if (unlikely(!mas->index && mas->last == ULONG_MAX))
- 		mas_new_root(mas, wr_mas->entry);
--		return wr_mas->content;
--	}
--
--	mas_wr_modify(wr_mas);
--	return wr_mas->content;
-+	else
-+		mas_wr_modify(wr_mas);
- }
- 
- /**
--- 
-2.17.1
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[2/5] regulator: axp20x: AXP717: fix LDO supply rails and off-by-ones
+      commit: 0057222c45140830a7bf55e92fb67f84a2814f67
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
