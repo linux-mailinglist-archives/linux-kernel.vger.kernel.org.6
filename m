@@ -1,82 +1,154 @@
-Return-Path: <linux-kernel+bounces-214808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D585D908A57
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:42:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E25908A5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE3921C25E64
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:42:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCF541F226D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7CB194AEA;
-	Fri, 14 Jun 2024 10:42:10 +0000 (UTC)
-Received: from smtp134-24.sina.com.cn (smtp134-24.sina.com.cn [180.149.134.24])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A065D194AEF;
+	Fri, 14 Jun 2024 10:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rHe5tIyF"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDCB194AEE
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33A1146D6A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718361729; cv=none; b=pwnewPooDKBDYOwIHBQWFhVp1bfujlgqJ266beAjWU/z9abZH6kOnomejgzT7Lm0pmw7vueonnSX7OyzGgzd549f+9AB+6fej4aKdb7Mc9ubr7RRnIBwTNlpo3x5EajrfM1Xd024QFpnO0A//81dSiLuT2teOHR81SJ7LPfTHj0=
+	t=1718361793; cv=none; b=aif6yNsR7PVtUCBfTVsQ3KquPmP4EA+StM82dsDJXBd6Nx1HNJjeKiCjT1foMkx2ribXR6z87kjWRkzbFZRw+FIcIdnmu2pCvofDBLmN0+ynTwCeHezs+hgfNNdbREYfehyiQlktG3mTfpvn7A84ErFN80pRd4I8/UV616TLkQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718361729; c=relaxed/simple;
-	bh=PKnXd+/di9YyzsNpFBsAd0Ph6bsexNXvf82Ldz3i33Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VUl3DBt4qKX7BK38NO/yP6eyTnfa7f/tr/tICUiS5cFZF4Na3lYhZGW/rRTolRAynYLQDXKCdd7OpPAnTSosH7U9EsqJ9S7PHDd3V6aST7RUjyIFi11LsdLHbLVqlDUiJ2slYFz589WuzzPZCHYCRLB6pmzIsBDGQIf43TEz88g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.70.97])
-	by sina.com (10.185.250.21) with ESMTP
-	id 666C1E6D000042B0; Fri, 14 Jun 2024 18:41:52 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 2897693408502
-X-SMAIL-UIID: 0206CF7C3B4B45C4A296ADE7437F056E-20240614-184152-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+d79afb004be235636ee8@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [nilfs?] [mm?] KASAN: slab-use-after-free Read in lru_add_fn
-Date: Fri, 14 Jun 2024 18:41:41 +0800
-Message-Id: <20240614104141.537-1-hdanton@sina.com>
-In-Reply-To: <000000000000cae276061aa12d5e@google.com>
-References: 
+	s=arc-20240116; t=1718361793; c=relaxed/simple;
+	bh=FD/DV7O2NKNv4PDTR/vHzvphEUionU4UsD94b6WepTw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fl/rjp6rzKw2Dx7ttXt/QGrfUcbNumjVf1nCQTEQgpTIQx0iKVOUtfBxeJ6zXEOHVK5boYIf/YHuNJsK4P0Bfp3eLmP183V+t/PvVTC+bxsBGwqjw5Pf4el7+KYDHsqAjzEwqUVA/XSkyaDaxJfpmHDbWsRc5qHVxInfS11mOrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rHe5tIyF; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: 0x1207@gmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718361788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SgrqTw+/It1adEehXLmXgK1moXKsGq11xoueSFrMzIE=;
+	b=rHe5tIyFpYY8WnnvPWz/uRNkvY1NX0ZvYBVNgMPpFZoqBS5Er8gvmcjyMkxpNGymbke3VK
+	rrSwU18WcSDFZhwwFjaNC1iU8syEFiPYTXUIA8KVMF6O3Zz8/R6xbj2f3LDVicpL2eid9F
+	rBqWnk88DXauX70HneT4jxMDHcG/uF0=
+X-Envelope-To: linux@armlinux.org.uk
+X-Envelope-To: davem@davemloft.net
+X-Envelope-To: alexandre.torgue@foss.st.com
+X-Envelope-To: joabreu@synopsys.com
+X-Envelope-To: edumazet@google.com
+X-Envelope-To: kuba@kernel.org
+X-Envelope-To: pabeni@redhat.com
+X-Envelope-To: mcoquelin.stm32@gmail.com
+X-Envelope-To: jpinto@synopsys.com
+X-Envelope-To: vinschen@redhat.com
+X-Envelope-To: netdev@vger.kernel.org
+X-Envelope-To: linux-stm32@st-md-mailman.stormreply.com
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: xfr@outlook.com
+X-Envelope-To: rock.xu@nio.com
+Message-ID: <0474a247-e5f2-4a7f-879b-c764591a5f28@linux.dev>
+Date: Fri, 14 Jun 2024 11:43:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2] net: stmmac: Enable TSO on VLANs
+To: Furong Xu <0x1207@gmail.com>,
+ "Russell King (Oracle)" <linux@armlinux.org.uk>,
+ "David S. Miller" <davem@davemloft.net>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, Joao Pinto
+ <jpinto@synopsys.com>, Corinna Vinschen <vinschen@redhat.com>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ xfr@outlook.com, rock.xu@nio.com
+References: <20240614060349.498414-1-0x1207@gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20240614060349.498414-1-0x1207@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 11 Jun 2024 11:10:20 -0700
-> syzbot has found a reproducer for the following issue on:
+On 14/06/2024 07:03, Furong Xu wrote:
+> The TSO engine works well when the frames are not VLAN Tagged.
+> But it will produce broken segments when frames are VLAN Tagged.
 > 
-> HEAD commit:    83a7eefedc9b Linux 6.10-rc3
-> git tree:       upstream
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c645e2980000
+> The first segment is all good, while the second segment to the
+> last segment are broken, they lack of required VLAN tag.
+> 
+> An example here:
+> ========
+> // 1st segment of a VLAN Tagged TSO frame, nothing wrong.
+> MacSrc > MacDst, ethertype 802.1Q (0x8100), length 1518: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [.], seq 1:1449
+> 
+> // 2nd to last segments of a VLAN Tagged TSO frame, VLAN tag is missing.
+> MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 1449:2897
+> MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 2897:4345
+> MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 4345:5793
+> MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [P.], seq 5793:7241
+> 
+> // normal VLAN Tagged non-TSO frame, nothing wrong.
+> MacSrc > MacDst, ethertype 802.1Q (0x8100), length 1022: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [P.], seq 7241:8193
+> MacSrc > MacDst, ethertype 802.1Q (0x8100), length 70: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [F.], seq 8193
+> ========
+> 
+> When transmitting VLAN Tagged TSO frames, never insert VLAN tag by HW,
+> always insert VLAN tag to SKB payload, then TSO works well on VLANs for
+> all MAC cores.
+> 
+> Tested on DWMAC CORE 5.10a, DWMAC CORE 5.20a and DWXGMAC CORE 3.20a
+> 
+> Signed-off-by: Furong Xu <0x1207@gmail.com>
+> ---
+>    Changes in v2:
+>      - Use __vlan_hwaccel_push_inside() to insert vlan tag to the payload.
+> ---
+>   .../net/ethernet/stmicro/stmmac/stmmac_main.c | 27 ++++++++++---------
+>   1 file changed, 14 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index bbedf2a8c60f..e8cbfada63ca 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -4233,18 +4233,27 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+>   {
+>   	struct dma_desc *desc, *first, *mss_desc = NULL;
+>   	struct stmmac_priv *priv = netdev_priv(dev);
+> -	int nfrags = skb_shinfo(skb)->nr_frags;
+> -	u32 queue = skb_get_queue_mapping(skb);
+>   	unsigned int first_entry, tx_packets;
+>   	struct stmmac_txq_stats *txq_stats;
+> -	int tmp_pay_len = 0, first_tx;
+> +	int tmp_pay_len = 0, first_tx, nfrags;
+>   	struct stmmac_tx_queue *tx_q;
+> -	bool has_vlan, set_ic;
+> +	bool set_ic;
+>   	u8 proto_hdr_len, hdr;
+> -	u32 pay_len, mss;
+> +	u32 pay_len, mss, queue;
+>   	dma_addr_t des;
+>   	int i;
+>   
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
+As there will be another iteration, could you please re-arrange
+variables to keep reverse x-mas tree order?
 
---- x/mm/truncate.c
-+++ y/mm/truncate.c
-@@ -418,6 +418,9 @@ void truncate_inode_pages_range(struct a
- 		truncate_folio_batch_exceptionals(mapping, &fbatch, indices);
- 		folio_batch_release(&fbatch);
- 	}
-+
-+	if (mapping_exiting(mapping))
-+		lru_add_drain_all();
- }
- EXPORT_SYMBOL(truncate_inode_pages_range);
- 
---
+
 
