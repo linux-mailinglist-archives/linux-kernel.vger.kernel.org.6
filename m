@@ -1,168 +1,214 @@
-Return-Path: <linux-kernel+bounces-215041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D38908DA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:40:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53CE9908DAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEEEB1F2434D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:39:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C742A1F242F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DD410979;
-	Fri, 14 Jun 2024 14:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WXq4QZfU"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B035EAF0
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 14:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0F0125BA;
+	Fri, 14 Jun 2024 14:41:17 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id BD991E572
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 14:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718375992; cv=none; b=griS2Xv3i/aYx6Xb39lEObT90lREa6xVJ2RYUiRtuB1P2yhbmLN+hQQSuMnkQeExpTSUQytyCMlAbQb95DMsVvSdtlyq+5O4ryYCJEYwMal6R+/YelaD8AYjBrjwCwZpJZPjuJnoLFBAhwVslUheptj3Z0kPeWuysycKcXU/R+8=
+	t=1718376077; cv=none; b=IZ7bts3zKGbbtLf1lykfWwkOsD7t64Pk9AUjjr5ngQutiQ6UZcqQbxmsQCOfKQ2MWrqs7ZWKvgRvqRqXh99XgdBZHm7Qmb+hl5vPh2fT5Pnxhb4JbhEoeH3m1saynryL/o7VAl+zR3dHVQv3J8DEZNyG+PeSPM5K5gYYdq3dTIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718375992; c=relaxed/simple;
-	bh=lUeuZLDhmpyyS4f0MIrdJjz8fD3Df+EhU3vc+pERsg4=;
-	h=Message-ID:Date:MIME-Version:To:References:Subject:From:Cc:
-	 In-Reply-To:Content-Type; b=YY/CHWZySKMmXzgmQdVHU1SFnJIhs9pJtPW+5fha4AHFX1VCfCvszg/pPh7q2AlZDpknogTTkqtEGcneIppgOGzJPXSyN0st8B+b3vX8LPSIWdLJB4xTQJrLI76UVUy5asMl9JzCsW+2RtHDRGaGgbVblHugnenDYYrM/OYDDlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WXq4QZfU; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718375931; x=1718980731; i=markus.elfring@web.de;
-	bh=AEtKBfuc+IL5r/Y6qe+maU6mV02qT4mUdEokeX/0S1I=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:References:
-	 Subject:From:Cc:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=WXq4QZfUW0pZzw3ikX0FiLgUpVB4tMEXJlfI1/7MWZQ3zyN4BX0ahTU+VazGTDzN
-	 Su0tNDWK2PJnAoI8KjeO8AOsJm1ZutQxPMcrZLf3+2xnIbmy5uswSb9A44cGJ2UOW
-	 mCek2PMxKbnNhb18FXF0H9hdqt6rM7hKWr4fxJRR0P0jn6aFZcsSleSV9T0cSOtI6
-	 00M+seW4cVmYbe+yRRfiAnsVubsUCxwE0bwaef4tqEAQ43+85ZgysdIq3x0Z0vJ87
-	 7iB8SZcbY+d9Hs9Jvuh7T4sOMKBz+Y8iKIpg1ptD5rR7PFsHd59E45cAKkGSH3uHq
-	 MYSXUb0pdeqQtmhSrA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Ml46w-1sfP432srE-00ekon; Fri, 14
- Jun 2024 16:38:51 +0200
-Message-ID: <942b8957-03ce-4dc1-9b90-880b2d3b4c8b@web.de>
-Date: Fri, 14 Jun 2024 16:38:42 +0200
+	s=arc-20240116; t=1718376077; c=relaxed/simple;
+	bh=mY4Yyh4yTPkdHtiBDdFQHzK0dIHk8UfCVhI2QOwX0lw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jMQ4lI95cwYHsuzgWq36rZiTSpnFM4SUIY4ffmpXNxG6cxvnJtiFkm0lkWDjinqSeqRHyAdjtcbmjf5uMqgCE00nDfb5m9o0fFTSlDpYEWVBfn/KQR77NX34YVdDsajvupSj1JiC94eD/oHY/3gGhyK7bfpzNb/H7+/dPOdErTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 298543 invoked by uid 1000); 14 Jun 2024 10:41:13 -0400
+Date: Fri, 14 Jun 2024 10:41:13 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+  Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>,
+  Herve Codina <herve.codina@bootlin.com>,
+  Grant Grundler <grundler@chromium.org>, Oliver Neukum <oneukum@suse.com>,
+  Douglas Anderson <dianders@chromium.org>, Yajun Deng <yajun.deng@linux.dev>,
+  Ivan Orlov <ivan.orlov0322@gmail.com>,
+  "Ricardo B. Marliere" <ricardo@marliere.net>
+Subject: Re: [PATCH 4/4] USB: move dynamic ids out of usb driver structures
+Message-ID: <92b4729d-d2a4-4744-887c-744c2145b3c6@rowland.harvard.edu>
+References: <2024061448-manly-universal-00ad@gregkh>
+ <2024061452-science-clinking-3b92@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Baojun Xu <baojun.xu@ti.com>, alsa-devel@alsa-project.org,
- Takashi Iwai <tiwai@suse.de>, Shenghao Ding <shenghao-ding@ti.com>
-References: <20240614040554.610-1-baojun.xu@ti.com>
-Subject: Re: [PATCH v8] ALSA: hda/tas2781: Add tas2781 hda SPI driver
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>, Gergo Koteles <soyer@irl.hu>,
- Jaroslav Kysela <perex@perex.cz>, Kevin Lu <kevin-lu@ti.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Mukund Navada Kanyana <navada@ti.com>, niranjan.hy@ti.com,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- Rob Herring <robh+dt@kernel.org>, Shenghao Ding <13916275206@139.com>,
- v-hampiholi@ti.com, Vijeth P O <v-po@ti.com>
-In-Reply-To: <20240614040554.610-1-baojun.xu@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:CKa+cQQigXWpfS6uENP7iy5YriDsbzCT0EYWzNJFoMUPvF5PVST
- XVCs7Y4rw7PWcdqEoJJSvThIg6m3gXxqii+cWyHTBiiWidfiup/bs+jNAOWXqrsg1sH2BlP
- hT3NzMvyUjSkCU9ZYnMv3OYOULm8i8AgHyfEEoRrCw+dW8wTpZv7WvcLr20SSzMED+IRW7s
- 3mE1daIaH4fUOb8YzsqGA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:dv3qCaZ2USU=;Y+vo+UdQqylJ8iguU6aDWAFQMHl
- DmQNwKlpH1BCu5Fog6niJb7XUuh4vxGt949auuyoEqAcROrhuZWzemab2GlCSa0GqYER52g4R
- Zu7sc/nSdJPS0/wZs4agxFStZZr1UC0Z97+adcRD2XAMtkeJEGzCbmK9x3o+C3kJQMcKUeGm+
- 9ddkqNu1ePbwHfnjSYFu9tn4Wzm4TZpyKSlTw/gc79FrBrMpq1Hii66Zox8+6pv17nZCRpA3N
- +Yj9O5oHf49Iy/0ibq/MpvXMJvo7OEg5Zn+THRqANJfu1AkqBjmf8NpJzIM5gliFbfU0nhFfc
- YeHv1AgxqYVtaGYberBcD/7IBdO+6qT8n8Rz4ns00ymKDw7DDZMo1t6iEYWH6LKZtvs6JUnwQ
- 3D/gcqKqDq2M3MLQMBABAsMTBLCA/9eYmp/UW7Nm9+dIQsbifnV+j7VG1t6vXNmJbMnXcnBIV
- pTOj5FCZlZUxH3NJNEDnthvR+eiHKFO1NvEtnwSM3p/IffwU+VfZ7jKMvTznF3K7IFrBwRfOv
- 7CqKqfhzbGznmFZKyelGA5YXVrHC/M+ZanQwVbBYdTuh6bSBXLXd2dYSVOqged3JMWc2ypj5u
- s5FoOQfcIRJmBzKXo6yk+098txQfIaeKJ+YusVz4vERbfybRpvFHNvT/oLoUiWwkiiGtugCAW
- X6vWnivad/Shd0K1JhDWtjC2azOrxTMHM+I05hVX7b0c3fAZFbHyNeCPmG2fsUxt8VEtKusJX
- IRKFv4yZPJ1M2VSFMxGRQHaksTg82i4fflLlWpuLzJ5n9u0K4GA54CtrmuflQF/QbMbZgk5bc
- IDzFEmqn5OT/sZWq+hVsSiYH1GlpNswLAOuFj2ejqHae0=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024061452-science-clinking-3b92@gregkh>
 
-=E2=80=A6
-> It use ACPI node descript about parameters of TAS2781 on SPI, it like:
-=E2=80=A6
-> probe twice for every single SPI device. And driver will also parser
-> mono DSP firmware binary and RCA binary for itself.
-> The code support Realtek as the primary codec.
+On Fri, Jun 14, 2024 at 02:11:52PM +0200, Greg Kroah-Hartman wrote:
+> The usb driver structures contain a dynamic id structure that is written
+> to, preventing them from being able to be constant structures.  To help
+> resolve this, move the dynamic id structure out of the driver and into a
+> separate local list, indexed off of the driver * so that all USB
+> subsystems can use it (i.e. usb-serial).
+> 
+> Overall it moves some duplicated code out of the usb-serial core as it's
+> already in the usb core, and now the usb dynamic id structures can be
+> private entirely to the usb core itself.
 
-* Would you like to avoid typos in such a change description?
+I'm concerned about the locking of the usb_dynid and usb_dynids
+structures.  There doesn't seem to be anything to prevent these things
+from being deallocated while another thread is reading them.
 
-* Please improve the changelog with imperative wordings.
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.10-rc3#n94
+> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+> index 3f69b32222f3..8bba102de39f 100644
+> --- a/drivers/usb/core/driver.c
+> +++ b/drivers/usb/core/driver.c
+> @@ -34,17 +34,76 @@
+>  
+>  #include "usb.h"
+>  
+> +static struct list_head usb_dynids;
+> +static spinlock_t usb_dynids_lock;
 
+Is there any particular reason you decided to make this a spinlock
+instead of a mutex?
 
-=E2=80=A6
-> +++ b/sound/pci/hda/tas2781_hda_spi.c
-> @@ -0,0 +1,1266 @@
-=E2=80=A6
-> +static int tas2781_hda_spi_probe(struct spi_device *spi)
+Why not use static initialization for these things...
+
+> +
+> +struct usb_dynids {
+> +	struct list_head node;
+> +	const struct device_driver *driver;
+> +	struct list_head list;
+> +};
+> +
+> +struct usb_dynid {
+> +	struct list_head node;
+> +	struct usb_device_id id;
+> +};
+> +
+> +void usb_dynids_init(void)
 > +{
-=E2=80=A6
-> +	ret =3D component_add(tas_priv->dev, &tas2781_hda_comp_ops);
-> +	if (ret) {
-> +		dev_err(tas_priv->dev, "Register component failed: %d\n", ret);
-> +		pm_runtime_disable(tas_priv->dev);
-> +	}
-> +
-> +err:
-> +	if (ret)
-> +		tas2781_hda_remove(&spi->dev);
-> +
-> +	return ret;
+> +	spin_lock_init(&usb_dynids_lock);
+> +	INIT_LIST_HEAD(&usb_dynids);
 > +}
-=E2=80=A6
 
-How do you think about to adjust the control flow another bit for this fun=
-ction implementation?
+... instead of this dynamic initialization?  Not that it's a big deal.
 
-
-=E2=80=A6
-> +++ b/sound/pci/hda/tas2781_spi_fwlib.c
-> @@ -0,0 +1,2101 @@
-=E2=80=A6
-> +static struct tasdevice_config_info *tasdevice_add_config(
-> +	struct tasdevice_priv *tas_priv, unsigned char *config_data,
-> +	unsigned int config_size, int *status)
+> +static struct usb_dynids *usb_find_dynids(const struct device_driver *driver)
 > +{
-=E2=80=A6
-> +	return cfg_info;
-> +out1:
-> +	for (int j =3D 0; j < i; j++)
-> +		kfree(bk_da[j]);
-> +	kfree(bk_da);
-> +out:
-> +	kfree(cfg_info);
+> +	struct usb_dynids *u;
+> +
+> +	/* Loop through the list to find if this driver has an id list already */
+> +	guard(spinlock)(&usb_dynids_lock);
+> +	list_for_each_entry(u, &usb_dynids, node) {
+> +		if (u->driver == driver)
+> +			return u;
+> +	}
+
+So here, for instance.  usb_dynids_lock is held while this routine
+iterates through the usb_dynids list.  But when an entry is found, the
+lock is released.  What's to prevent another thread from deallocating
+right now the structure that u points to?
+
+For instance, do we know that this code will always run under the
+protection of some mutex associated with the driver?  Not as far as I
+can see.
+
 > +	return NULL;
 > +}
+> +
+> +static int store_id(const struct device_driver *driver, const struct usb_device_id *id)
+> +{
+> +	struct usb_dynids *u;
+> +	struct usb_dynid *usb_dynid;
+> +
+> +	u = usb_find_dynids(driver);
+> +	if (!u) {
+> +		/* This driver has not stored any ids yet, so make a new entry for it */
+> +		u = kmalloc(sizeof(*u), GFP_KERNEL);
+> +		if (!u)
+> +			return -ENOMEM;
+> +		u->driver = driver;
+> +		INIT_LIST_HEAD(&u->list);
+> +		guard(spinlock)(&usb_dynids_lock);
+> +		list_add_tail(&u->node, &usb_dynids);
+> +	}
+> +
+> +	/* Allocate a new entry and add it to the list of driver ids for this driver */
+> +	usb_dynid = kmalloc(sizeof(*usb_dynid), GFP_KERNEL);
+> +	if (!usb_dynid)
+> +		return -ENOMEM;
+> +
+> +	INIT_LIST_HEAD(&usb_dynid->node);
+> +	memcpy(&usb_dynid->id, id, sizeof(*id));
+> +	list_add_tail(&usb_dynid->node, &u->list);
 
-* Please improve your label selection.
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/coding-style.rst?h=3Dv6.10-rc3#n536
+Here we see that the spinlock is _not_ held while a new usb_dynid
+entry is added to the driver's list.  (Yes, the existing code already
+has the same problem; it's not something you added.)
 
-* Will development interests grow according to the application of scope-ba=
-sed resource management
-  also for this function implementation?
-  https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/cleanup.=
-h#L8
+> -ssize_t usb_show_dynids(struct usb_dynids *dynids, char *buf)
+> +ssize_t usb_show_dynids(const struct device_driver *driver, char *buf)
+>  {
+> +	struct usb_dynids *dynids;
+>  	struct usb_dynid *dynid;
+>  	size_t count = 0;
+>  
+> +	dynids = usb_find_dynids(driver);
+> +	if (!dynids)
+> +		return 0;
+> +
+>  	list_for_each_entry(dynid, &dynids->list, node)
+>  		if (dynid->id.bInterfaceClass != 0)
+>  			count += scnprintf(&buf[count], PAGE_SIZE - count, "%04x %04x %02x\n",
 
+And here nothing holds the spinlock while we iterate through the list.
 
-Regards,
-Markus
+> @@ -160,8 +216,12 @@ static ssize_t remove_id_store(struct device_driver *driver, const char *buf,
+>  	if (fields < 2)
+>  		return -EINVAL;
+>  
+> +	dynids = usb_find_dynids(driver);
+> +	if (!dynids)
+> +		return count;
+> +
+>  	guard(spinlock)(&usb_dynids_lock);
+> -	list_for_each_entry_safe(dynid, n, &usb_driver->dynids.list, node) {
+> +	list_for_each_entry_safe(dynid, n, &dynids->list, node) {
+>  		struct usb_device_id *id = &dynid->id;
+>  
+>  		if ((id->idVendor == idVendor) &&
+
+Although here the spinlock is held while an entry is removed.  But
+that doesn't do any good if readers don't also acquire the spinlock.
+
+Overall, I think it would be better to hold the spinlock throughout the
+entire time that the dynamic ids are being accessed: Grab it before
+starting the outer search and don't release it until the desired entry
+has been found, added, or removed.
+
+> @@ -1100,8 +1173,8 @@ void usb_deregister(struct usb_driver *driver)
+>  			usbcore_name, driver->name);
+>  
+>  	usb_remove_newid_files(driver);
+> +	usb_free_dynids(&driver->driver);
+>  	driver_unregister(&driver->driver);
+> -	usb_free_dynids(driver);
+
+Here's another potential problem.  You moved the usb_free_dynids()
+call from after driver_unregister() to before it.  This means that the
+driver is still visible when usb_free_dynids() runs, so another thread
+might be iterating through the dynid list while the list is removed.
+In fact, that other thread might go ahead and add a new usb_dynids
+structure right after the function call here removes the old one!
+
+Alan Stern
 
