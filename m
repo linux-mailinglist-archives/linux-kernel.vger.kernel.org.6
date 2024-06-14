@@ -1,62 +1,54 @@
-Return-Path: <linux-kernel+bounces-214599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 139219086F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:03:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A05D19086F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C5B8B23EFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:03:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 188F0B247D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A1E19149D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45451922DF;
 	Fri, 14 Jun 2024 09:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RwYMP21H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YOBbUW2t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5724618C32B;
-	Fri, 14 Jun 2024 09:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9A2183071
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 09:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718355815; cv=none; b=igp5E/6ndiU1rLjplTibsx2wZG9QKoRlqGDMSsjmqjFV8f5KXtSYwRJ/cWUH/p09e18mxfT297lqsNqRZl/X/94MpEmGBDa/8DfOyOvbgaIyMSZWh8NgLkg6bFp1oPETEg1HOZcrFKAQ7oLkEE2OAJgV15A2xis+8WpbT3ZX9YU=
+	t=1718355816; cv=none; b=BVFaNAjFVj5yxJW9vFpLKAFd2Z1oMkD1j+0XKFXgegtJ4d0el2wEgyabUQ8RCYZCn+pugrwA4xLsYtQNawbzirXXUQQHeuyyhNJlWGVLOaq571+t4oUDRAgNIEH3dyL4DFPSJxqp/SyEnnFFALWBP/5V/LzlOeFXfwyUj+iAuGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718355815; c=relaxed/simple;
-	bh=IXf7OaCEeko5i37eEx/0V2OWZm0hqdsVhR6bCTAEggg=;
+	s=arc-20240116; t=1718355816; c=relaxed/simple;
+	bh=KIuJLVsexTxXnGcRm8RD4wpPx5+W0XT3fjOvYvBHztA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=J5h3ULZiF/36wwLP07Kun96L9S3g4mz3HFsbyzs6U4svcxiP/4Zl8pJoach1bjr+yLYNybdJ/Hz5wRO2wdzTyv9H/e98MX23aQelhpJ79AECsgzc5Mkfyo4tL/BtKEC6stxMsxj1ggPkTGYusg9kKVt5NxsIUuSMO+1HZb7LjCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RwYMP21H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8D33C2BD10;
-	Fri, 14 Jun 2024 09:03:32 +0000 (UTC)
+	 MIME-Version:Content-Type; b=vFvGcwZpIr+Bed98fEMqi6641Yw+S5pvcDHydH7kb/rDLOuMiW2D8RR/H0035FFWb4t1PIsajNmZ+yqiCklbhm7iE3JCYOYIQYYu9tBnHtjcxy7g/46bnQ8vyf911ib44roPaWpHMfoBxIKRWibGq21A2jUBuEq93Pl/dvk6/Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YOBbUW2t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56B71C4AF1D;
+	Fri, 14 Jun 2024 09:03:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718355814;
-	bh=IXf7OaCEeko5i37eEx/0V2OWZm0hqdsVhR6bCTAEggg=;
+	s=k20201202; t=1718355815;
+	bh=KIuJLVsexTxXnGcRm8RD4wpPx5+W0XT3fjOvYvBHztA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=RwYMP21HQqQyNsVooWvWJpGf4JNRJhGUkLayh+5ASpySgNQ1Jbi23usndLS4swIVl
-	 uXq5elkO/YlfRQSbHiZD41uUD6U774XVNUUBhipQI4AmAGfsqZlBqG/dU4d4EZQUWg
-	 EsXI0xCDvZpPedP3ufm6bVOwqw7aklqSwQs7XQgbU5xp+Fhbj1TNJZA/K5r27tLksU
-	 rs7dsTmMfeGNZhFp74+RDS++hetdU4FH5lXwoLrGjefK1W4Zach+I+hrHUhGAbdfd9
-	 zyOc7xDwfh/yZisIx+qPJTavPNyT53ew/jUQBRxAz7VWYj74qC1WcYib+Uw2ZDeTT6
-	 3Z6AKOPWtnRXg==
+	b=YOBbUW2taeg3/bgUAxmmDhq6843XipBOHmu/Cb9+TyKuAEYvrdZc8h1KaqPxlD6aN
+	 ikLbib2iUSQU5rAfJQsIYzBjQhLDpIVtbXhw1nAIYtEMB967AmIBWZGVaSdTeQde8C
+	 MpRfeM5uCeDNzeOYJnaTg+UR4eVDDFSlEhWkmzbQfzmM79F/coAWUunf4G6pY/39z/
+	 29MDtkkA4IcbOp3SPYYLkOYeBy1afYNjwrKoE+HP7KzbBlkpYrdeQqD4hZs8Jr5OX7
+	 SKjUoFUGXf4cQ9lZb8n7yuI2X1T3K6VXd5cG2BBN9oNNmTiz5ZPYC4csmGChAFWpoi
+	 T2+EEV7CvWK9Q==
 From: Lee Jones <lee@kernel.org>
-To: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
- Sebastian Reichel <sre@kernel.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, Mario Limonciello <mario.limonciello@amd.com>, 
- Dustin Howett <dustin@howett.net>, 
- Stephen Horvath <s.horvath@outlook.com.au>, 
- Rajas Paranjpe <paranjperajas@gmail.com>
-In-Reply-To: <20240528-cros_ec-charge-control-v2-3-81fb27e1cff4@weissschuh.net>
-References: <20240528-cros_ec-charge-control-v2-0-81fb27e1cff4@weissschuh.net>
- <20240528-cros_ec-charge-control-v2-3-81fb27e1cff4@weissschuh.net>
-Subject: Re: (subset) [PATCH v2 3/3] mfd: cros_ec: Register charge control
- subdevice
-Message-Id: <171835581255.3023088.4972914168728771366.b4-ty@kernel.org>
-Date: Fri, 14 Jun 2024 10:03:32 +0100
+To: Andrew Davis <afd@ti.com>
+Cc: linux-kernel@vger.kernel.org
+In-Reply-To: <20240610153824.218260-1-afd@ti.com>
+References: <20240610153824.218260-1-afd@ti.com>
+Subject: Re: (subset) [PATCH] mfd: tps65912: Use devm helper functions to
+ simplify probe
+Message-Id: <171835581511.3023088.2828224462452626753.b4-ty@kernel.org>
+Date: Fri, 14 Jun 2024 10:03:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,15 +59,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.13.0
 
-On Tue, 28 May 2024 22:04:12 +0200, Thomas Weißschuh wrote:
-> Add ChromeOS EC-based charge control as EC subdevice.
+On Mon, 10 Jun 2024 10:38:24 -0500, Andrew Davis wrote:
+> This simplifies probe and also allows us to remove the remove
+> callbacks from the core and interface drivers. Do that here.
 > 
 > 
 
 Applied, thanks!
 
-[3/3] mfd: cros_ec: Register charge control subdevice
-      commit: c353be492fbfe7d1c77af6e18891183141c36f98
+[1/1] mfd: tps65912: Use devm helper functions to simplify probe
+      commit: fe6ba540b2ce777eb4f59991c3ef20ad8a319a1a
 
 --
 Lee Jones [李琼斯]
