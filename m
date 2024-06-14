@@ -1,121 +1,81 @@
-Return-Path: <linux-kernel+bounces-214175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D53908086
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:09:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B73990808A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CCD11F228D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:09:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E80F2B224FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49571158D90;
-	Fri, 14 Jun 2024 01:09:25 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7794158D8F;
+	Fri, 14 Jun 2024 01:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrulnHbl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD507158D78;
-	Fri, 14 Jun 2024 01:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E3B2F2D;
+	Fri, 14 Jun 2024 01:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718327364; cv=none; b=XitGEEP0YcE5HOoqrsSxVbO9P89nzs69zR58GAoKezohQddOlnnt2lDXx6lij6FTuxLUAIlJ3ksKxDgk8xw+Q/QLze85JUs6ZfcXVbrMgBJaCN3psZ3dMLc3xhoNio/ixb0wnNee0PeDj/RV0uG4cMPXp8sVjRZVzRP9G7iL4Oc=
+	t=1718327608; cv=none; b=RhTrNMTHeqkydaSUoqIAQAX9plK8aTKufThHkjk1nCQbjePcsFQZ9afDad7J7BDPD7rYmZgKmTlcESEQobPEEDLCr0+kdUmQqJgxTtCcFpzz8Fx6Yji7QIJ+55GR2tBdR9xfx/P85jVLM3HDQ899ckEf8kE/zYp+N3DmIrsnLlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718327364; c=relaxed/simple;
-	bh=4glP+BRzjyJ2L01GIVKDRo51xwzrVDNk7jCtas8TXlU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=aIFQT7e9PHXE91Sly0LmUskL5BDh5tc3MpUBZC7+Tkp/xtci21FruicUdhR+ZfM8UReQ7xufvE0AjriIT+1CUF3PN3556vsk+VaXNab5FJXtgT8qlo+hopuWIrnYItmv2AxxxsFJuuSE7d4Ui0z/fGmC5CXQWjGuVSgEYuWRGMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W0h4m2Qpyz4f3jZj;
-	Fri, 14 Jun 2024 09:09:12 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id EF09E1A016E;
-	Fri, 14 Jun 2024 09:09:18 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgBHGBE+mGtmdqCtPQ--.28489S3;
-	Fri, 14 Jun 2024 09:09:18 +0800 (CST)
-Subject: Re: [PATCH -next 2/2] blk-throttle: fix lower control under super low
- iops limit
-To: Tejun Heo <tj@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: josef@toxicpanda.com, axboe@kernel.dk, cgroups@vger.kernel.org,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240513120848.2828797-1-yukuai1@huaweicloud.com>
- <20240513120848.2828797-3-yukuai1@huaweicloud.com>
- <ZmtzZKW1m6JpdfWx@slm.duckdns.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <ff91d94e-8dcb-9722-d470-67e3eef1d219@huaweicloud.com>
-Date: Fri, 14 Jun 2024 09:09:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1718327608; c=relaxed/simple;
+	bh=Jks2OG6bzc2bLod6lfT5SvpLXqyBjbxR7OYwPE96dXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jsXAyN8HwbQCjfbBEP7hZt04vC3eBPQU5W3w2hdgF20QauX9RshXtD3wSMXCcOPodvtnqmIfAr+YCKcgUBTnXz9Kzg2qyRVOCFg8yaM+7cu60Y7csVIn/f2IHaIHNuwbPvuY7hGMMsmtKgfO0hfw9VWi6RE0YxXh4Pl6uHXXeH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WrulnHbl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53290C2BBFC;
+	Fri, 14 Jun 2024 01:13:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718327607;
+	bh=Jks2OG6bzc2bLod6lfT5SvpLXqyBjbxR7OYwPE96dXg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WrulnHblhArEaHO0Np6NBt99Ml03h4HKeVRDldktGWL9z/EwgtDVJAtVQVevZoQsU
+	 CeePLfUN2gjEBDWFIHYSJc4pZC3hpaOVX07mKVr1lWLu1WgUlsNMivOopPV/7sBlfn
+	 icPKxVhHUwQLZ12+RcFqbUk2MdnH9Nb0TW0AUIGpi652NlK4aS7C+KpzhkV6BR2PAE
+	 b8PY1mkyYZwrrifGhI0O8i3k0sJib9591Bl7QJ7RQBCg3wxHiFE1aYA5/fH5/mjvZl
+	 Sg6XC9QQxPNU6d2uACgdX6OZ1UVFTJGXUYwzBOZcKH2QnbRSlFpCz/3lRJBErP7srH
+	 iJjsrYS3ZwwEQ==
+Date: Thu, 13 Jun 2024 18:13:25 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Russell King <linux@armlinux.org.uk>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
+ <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
+ <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
+ <atenart@kernel.org>
+Subject: Re: [PATCH net-next v13 04/13] net: sfp: Add helper to return the
+ SFP bus name
+Message-ID: <20240613181325.75370535@kernel.org>
+In-Reply-To: <20240607071836.911403-5-maxime.chevallier@bootlin.com>
+References: <20240607071836.911403-1-maxime.chevallier@bootlin.com>
+	<20240607071836.911403-5-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZmtzZKW1m6JpdfWx@slm.duckdns.org>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBHGBE+mGtmdqCtPQ--.28489S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gry3ZrW3Cr48try7tFy5urg_yoWDWFb_uF
-	92k3sakw1UXw4DuanxXFs0yrZa9F45X348Jryqqa1DCFyFkF18Xay3Gr9I9FnxZayfJFnx
-	urs0v3yfCrsrujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Zr0_Wr1U
-	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
-	VFxhVjvjDU0xZFpf9x0JUZa9-UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On Fri,  7 Jun 2024 09:18:17 +0200 Maxime Chevallier wrote:
+> +EXPORT_SYMBOL_GPL(sfp_get_name);
 
-ÔÚ 2024/06/14 6:32, Tejun Heo Ð´µÀ:
-> Hello,
-> 
-> On Mon, May 13, 2024 at 08:08:48PM +0800, Yu Kuai wrote:
-> ...
->> However, if limit is quite low, the result can be 0, then
->> allowed IO in the slice is 0, this will cause missing dispatch and
->> control will be lower than limit.
->>
->> For example, set iops_limit to 5 with HD disk, and test will found that
->> iops will be 3.
-> 
-> Hmm... can't this be solved by starting the next slice with the right
-> credit?
-
-Of course, this looks like feasible. I'll look into this.
-> 
->>   static unsigned int tg_throtl_slice(struct throtl_grp *tg, int rw)
->>   {
->> +	if (tg->throtl_slice[rw])
->> +		return tg->throtl_slice[rw];
->>   	return tg->td->throtl_slice;
-> 
-> Because this is a bit nasty. If we want to use difference throttling slices
-> for different cgroups, we might as well do it universally.
-
-I do thought about this, however, because different cgroups have
-different slice start, I convinced myself this is fine to have different
-slice as well.
-
-Thanks,
-Kuai
-
-> 
-> Thanks.
-> 
-
+Russell, there are no in-tree module callers, do you prefer to keep 
+the exports for completeness?
 
