@@ -1,224 +1,97 @@
-Return-Path: <linux-kernel+bounces-214992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D42B0908D01
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:08:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4181908D0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:14:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C51C1F240A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:08:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C3912890D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4C59441;
-	Fri, 14 Jun 2024 14:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8D7BA33;
+	Fri, 14 Jun 2024 14:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JMuw2U32"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GiHhH8vC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02E47464
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 14:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C6619D896;
+	Fri, 14 Jun 2024 14:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718374130; cv=none; b=C0Z7ndkBn47NuewMr8AhSL4UzAts2EqySnFDyRXlBmpUGG3m1nQveomo20QoooCMkJqfLKqbc+i+2ZX66QRjsyoQ+xVzfDfL5IWHYbskknBpeUXkA4q7wHah3YSJyf7EwxU7n9zMM9FJkj8Sm2zRERvfY3LXkJ2jVsxl+B903vw=
+	t=1718374439; cv=none; b=YUPiTDYUg86ZOiNXch6h9xLLxsMsXEFWz5edr/0CENczeTnJ4sWg7Vukz+hVDZn9NeKL0NGRJr9DiaxvMS69nl/Ve9Q1db/D9OjYQ/X/iaLnREC3dZmOTSQ0D/pLVU2ehOzE6QSs1pzz7CMbBry0iakzwKWXj6wzYRmLK32hX34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718374130; c=relaxed/simple;
-	bh=i7fBhkE22YnP4Bqn7Gw6/lRTqCPjsqlYhYf1Rvq+VO4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bxmUBfJUcbn0KhkA+fJFaUL5ABJxcmdxULlW70Bi4I/l88pFrp0kbLw590ZBZ52Dcw96/4/7cwDWWezqx8mDIekuMALGmUq1/lmAjITl02bmHES3o6J2CxJBQ8Ljdzb5fWO1pPQECkhKXR2+kxentk0UWi3OBW3z3NW0o9rUVds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JMuw2U32; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718374127;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sei/AlzPitkzh30oWFQLawwYGSDtixmAw+yG8sdJyPQ=;
-	b=JMuw2U32EETpYwLLxVHfqrsE3cCpCXcoyuSDqu2zl2+wKjninxkp/NrwqgEa783UurNiv6
-	4/h/GWd+OtEKfyMIt8ZOF80m4AZevL8ojhUF1CFWGWY4RPGoY4vvHipgmlKf1VTaqNPK9W
-	J0CtfD8FVRRe1+RtPALk+296Bma3zbA=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-609-kbP8YdzeO6upXoQiga_syw-1; Fri, 14 Jun 2024 10:08:46 -0400
-X-MC-Unique: kbP8YdzeO6upXoQiga_syw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-421920de031so3463335e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 07:08:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718374125; x=1718978925;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sei/AlzPitkzh30oWFQLawwYGSDtixmAw+yG8sdJyPQ=;
-        b=Y67xxlfO643pnjqiskjPxvGu8pJmIHBuG2esauwOe1MPB2q0dJbfZNA/W49CDv1XyX
-         +tnh0vjF+Xu/OrBn6AssUIircrAKl61zBNeCbQco6w2CSKOExtrh4zv1jw8js4mXXSGI
-         Fpt8lsCqIs7yRDKh8dK8Mzv/aoRbVDqYSoJ1Rf5x+tW3nmJWs8U6ZeFVs4XgWS2HAF49
-         fxbTa4JzFib5cs8WXn3U+/aKeyCruLcV5xNnmIpTSXxcOrifL9WvIQM3FjQgwuYch7e7
-         ARuwZaCpcooragbLVW9P06A6lPJnY+i/uuTmAK9rzZMfNA/RHzEJTbcQmxNDi0ysn8oP
-         f5nw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsZGHSmomN/4UdkRZ7CZMKBznH1pF2vrMZAGNO6VnXfVHxhjByJGdTVf2J1i5Z+mm8c0ogzJ4X7R9OWCFYzh295/tZYeiY9lBREINM
-X-Gm-Message-State: AOJu0Yzktgmd8mBPqyJs3wSgoy79bg1Ho48C9SPF/vI/jUpIvVP/3LYO
-	UQ5y1BeigJALKOmrU89AFi8ZJI0jboyReB77h6cgmBTwLT7U70cB2beG6hOo+DGJ6oHVJ0wodH3
-	G05JonP+LGx9dnwDs/23mWluI1XGsY0WuDaFmsvhMeDNxy55qNDgVGSm0FEh+zA==
-X-Received: by 2002:a05:600c:314e:b0:421:de31:76 with SMTP id 5b1f17b1804b1-42304849009mr20570205e9.3.1718374125133;
-        Fri, 14 Jun 2024 07:08:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFSWPYoDukuiUzS+4Z4nzmvxNfQT6o9nqibK4enYXrliymBeNMI/R12YC4i1AGKfmbDzrD1mQ==
-X-Received: by 2002:a05:600c:314e:b0:421:de31:76 with SMTP id 5b1f17b1804b1-42304849009mr20570025e9.3.1718374124719;
-        Fri, 14 Jun 2024 07:08:44 -0700 (PDT)
-Received: from gerbillo.redhat.com ([2a0d:3341:b083:7210::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f8be0c69sm62597875e9.33.2024.06.14.07.08.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 07:08:43 -0700 (PDT)
-Message-ID: <834b61b93df3cbf5053e459f337e622e2c510fbd.camel@redhat.com>
-Subject: Re: [PATCH v6 net-next 08/15] net: softnet_data: Make
- xmit.recursion per task.
-From: Paolo Abeni <pabeni@redhat.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Eric Dumazet
-	 <edumazet@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Daniel
- Bristot de Oliveira <bristot@kernel.org>, Boqun Feng
- <boqun.feng@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>, Frederic
- Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>, Jakub
- Kicinski <kuba@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Waiman Long <longman@redhat.com>, Will
- Deacon <will@kernel.org>, Ben Segall <bsegall@google.com>, Daniel Bristot
- de Oliveira <bristot@redhat.com>,  Dietmar Eggemann
- <dietmar.eggemann@arm.com>, Juri Lelli <juri.lelli@redhat.com>, Mel Gorman
- <mgorman@suse.de>,  Valentin Schneider <vschneid@redhat.com>, Vincent
- Guittot <vincent.guittot@linaro.org>
-Date: Fri, 14 Jun 2024 16:08:42 +0200
-In-Reply-To: <20240614094809.gvOugqZT@linutronix.de>
-References: <20240612170303.3896084-1-bigeasy@linutronix.de>
-	 <20240612170303.3896084-9-bigeasy@linutronix.de>
-	 <20240612131829.2e33ca71@rorschach.local.home>
-	 <20240614082758.6pSMV3aq@linutronix.de>
-	 <CANn89i+YfdmKSMgHni4ogMDq0BpFQtjubA0RxXcfZ8fpgV5_fw@mail.gmail.com>
-	 <20240614094809.gvOugqZT@linutronix.de>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1718374439; c=relaxed/simple;
+	bh=M9p4Rb5NbOm3YqzxvoVDROrlSKzQR/iv/IbVSotVXcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WQAumlzPxeGJg3ghJzfuge9ZvBtS5JW4CCBCNrxlFynRkr4XhmTMqUu0GRpWtqk7kRpUDeLObT+y9NELm0pPJYnBZxQlGp0ZzwlPsJnh21PC7dVQo7/H0fT4P11iTTocH/yqkCfh7GKd3s+CyZrSIcdmDUag/8MkOQ/w3h7n3Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GiHhH8vC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79D62C2BD10;
+	Fri, 14 Jun 2024 14:13:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718374438;
+	bh=M9p4Rb5NbOm3YqzxvoVDROrlSKzQR/iv/IbVSotVXcs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GiHhH8vCGXqffL22JNKaALHRAiYalzgRBefc/RqF1SXYYFUEhIGAZrRaGO5tsxH2k
+	 oQUIuR4BqEuw8f1uPoBmpmctxQer0omTEb9pc9nTU6LsW/6u6FVqOs4KnCR03ZNqPO
+	 4scwBOhW+JDwvQhvMk9WT5dnMQVImWXf5zpOQqyN59wVVA5+qr3Uop0v+VHSvUCHkV
+	 O4pJ6MVZkTbQtWM+O1HxROkoAlbyosHSojPBsb2FUaBxwifg4SIeKDKP3gj2Bgvdnn
+	 2URrNlyZwO+rKZs/frcsphHIi/Q6kqr8LU0HcpiH1mp+vDS63RGp/jOjNvbFCCy7Yf
+	 SaRDf8FSSgbbg==
+Date: Fri, 14 Jun 2024 15:13:53 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.9 000/157] 6.9.5-rc1 review
+Message-ID: <ZmxQIbFFR7yjtpub@finisterre.sirena.org.uk>
+References: <20240613113227.389465891@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="FmHvlFy3Ptj7g0+I"
+Content-Disposition: inline
+In-Reply-To: <20240613113227.389465891@linuxfoundation.org>
+X-Cookie: Your love life will be... interesting.
 
-On Fri, 2024-06-14 at 11:48 +0200, Sebastian Andrzej Siewior wrote:
-> On 2024-06-14 10:38:15 [+0200], Eric Dumazet wrote:
-> > > I think it should work fine. netdev folks, you want me to remove that
-> > > ifdef and use a per-Task counter unconditionally?
-> >=20
-> > It depends if this adds another cache line miss/dirtying or not.
-> >=20
-> > What about other fields from softnet_data.xmit ?
->=20
-> duh. Looking at the `more' member I realise that this needs to move to
-> task_struct on RT, too. Therefore I would move the whole xmit struct.
->=20
-> The xmit cacheline starts within the previous member (xfrm_backlog) and
-> ends before the following member starts. So it kind of has its own
-> cacheline.
-> With defconfig, if we move it to the front of task struct then we go from
->=20
-> > struct task_struct {
-> >         struct thread_info         thread_info;          /*     0    24=
- */
-> >         unsigned int               __state;              /*    24     4=
- */
-> >         unsigned int               saved_state;          /*    28     4=
- */
-> >         void *                     stack;                /*    32     8=
- */
-> >         refcount_t                 usage;                /*    40     4=
- */
-> >         unsigned int               flags;                /*    44     4=
- */
-> >         unsigned int               ptrace;               /*    48     4=
- */
-> >         int                        on_cpu;               /*    52     4=
- */
-> >         struct __call_single_node  wake_entry;           /*    56    16=
- */
-> >         /* --- cacheline 1 boundary (64 bytes) was 8 bytes ago --- */
-> >         unsigned int               wakee_flips;          /*    72     4=
- */
-> >=20
-> >         /* XXX 4 bytes hole, try to pack */
-> >=20
-> >         long unsigned int          wakee_flip_decay_ts;  /*    80     8=
- */
->=20
-> to
->=20
-> > struct task_struct {
-> >         struct thread_info         thread_info;          /*     0    24=
- */
-> >         unsigned int               __state;              /*    24     4=
- */
-> >         unsigned int               saved_state;          /*    28     4=
- */
-> >         void *                     stack;                /*    32     8=
- */
-> >         refcount_t                 usage;                /*    40     4=
- */
-> >         unsigned int               flags;                /*    44     4=
- */
-> >         unsigned int               ptrace;               /*    48     4=
- */
-> >         struct {
-> >                 u16                recursion;            /*    52     2=
- */
-> >                 u8                 more;                 /*    54     1=
- */
-> >                 u8                 skip_txqueue;         /*    55     1=
- */
-> >         } xmit;                                          /*    52     4=
- */
-> >         struct __call_single_node  wake_entry;           /*    56    16=
- */
-> >         /* --- cacheline 1 boundary (64 bytes) was 8 bytes ago --- */
-> >         int                        on_cpu;               /*    72     4=
- */
-> >         unsigned int               wakee_flips;          /*    76     4=
- */
-> >         long unsigned int          wakee_flip_decay_ts;  /*    80     8=
- */
->=20
->=20
-> stuffed a hole due to adding `xmit' and moving `on_cpu'. In the end the
-> total size of task_struct remained the same.
-> The cache line should be hot due to `flags' usage in
->=20
-> > static void handle_softirqs(bool ksirqd)
-> > {
-> >          unsigned long old_flags =3D current->flags;
-> =E2=80=A6
-> >         current->flags &=3D ~PF_MEMALLOC;
->=20
-> Then there is a bit of code before net_XX_action() and the usage of
-> either of the members so not sure if it is gone by then=E2=80=A6
->=20
-> Is this what we want or not?
 
-I personally think (fear mostly) there is still the potential for some
-(performance) regression. I think it would be safer to introduce this
-change under a compiler conditional and eventually follow-up with a
-patch making the code generic.
+--FmHvlFy3Ptj7g0+I
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Should such later change prove to be problematic, we could revert it
-without impacting the series as a whole.=20
+On Thu, Jun 13, 2024 at 01:32:05PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.9.5 release.
+> There are 157 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Thanks!
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Paolo
+--FmHvlFy3Ptj7g0+I
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZsUCEACgkQJNaLcl1U
+h9C4hwf+MgE7nR5nSEqvUIWKa2/Q6aLzIhlWIXZ3X5VOyTN6K+skCvhTBvaQewsJ
+30/U+lqWHbixdg2R5px0nggb97OQ0Stl209GxPbsmRcI20fsvjIgO5NDcFHfCHWT
+0uvH3XtnynwAuVkiSTzJtrPhmbo9CXBLp4mQa+QmHccbUBt8SDLlcDiveCM6P82W
+2vEIbT3iL0+03bstRt0LA+2ze7+fmortNpUJg7nsqhgy+EyrWi6M/iu93APlABL+
+mJTCcQ7GvKpdUmFoYklhmkJLxJphq89SNPvVLxf2PSEg0CtXJRR+V5zkRhn+SlnI
+yJKIaAx2ik/VmG+WllQoGAyLkAETbw==
+=x8R1
+-----END PGP SIGNATURE-----
+
+--FmHvlFy3Ptj7g0+I--
 
