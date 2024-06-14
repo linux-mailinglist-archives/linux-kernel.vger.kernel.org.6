@@ -1,101 +1,120 @@
-Return-Path: <linux-kernel+bounces-214309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1249082A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 05:47:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF94D9082A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 05:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4E09B22438
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:47:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E99028369E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B39146D71;
-	Fri, 14 Jun 2024 03:47:14 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE813146D40;
+	Fri, 14 Jun 2024 03:48:29 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834981459E0
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 03:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3353146582;
+	Fri, 14 Jun 2024 03:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718336833; cv=none; b=GTtPaPUB00LwMeGyLJ4K7wFHIKD1ezCz0/9SF5WsFORmT/Ft1RGQ2cjs+iPE8CGPHjGUguJudP2KTG9tbjm2Zmq6s1K/NWBDTiwBp3scCYjuzlUO4MomGmLKgvGOE6o9WIcH3psVx52k1m6leHf1HVFXHRG69ukx5ZunYjs3tb0=
+	t=1718336909; cv=none; b=XfAGUtWrOCxyn4nsvCcgPXJULywCwS/dBxiXFJ0RPeWKX/4PgLg9tZsvBWUawV8anWD4tJrXLjglGDzG+k9Nerw5mjJ+zV7JhChEzvkFr4YXrLA7IX9eRIAsg14HRXD2+wU+uyCEFS4O2VuRyBk0ii+rZS3sryL+Cmq5MLOB11k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718336833; c=relaxed/simple;
-	bh=4rfaUAidddvblASjtkMKjWyJL/CQTzUgNAb30NvOGhU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=f5HBzAbNoZLwSgG1+hJxZMMQIbugQMxfSI1uXd1sAkQ/0IIwIY8xKevHmuG4l76+2JbiL8h5s4YgoOkTH12Nwa8iuso8wBZk+6bdV0v9tMivUxPFw3lpYJxNVCM1wdb0TSA+QSACkknKJPa/Eu6A5bb2EhRO0I3qgnyx3O+klhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-37492fe22cdso14259355ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 20:47:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718336831; x=1718941631;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4rfaUAidddvblASjtkMKjWyJL/CQTzUgNAb30NvOGhU=;
-        b=TEYTZBFWiqCjNO6Rzc92uP5VSoZOW0aWa1EPRnzscgJXWGXNtyIpXQv2gUX+IGTKnC
-         d9JkS1sgNhaoatDg/94F17DMLwLrxHTCrrmDzFtekXler8pL+8uguZIoIwAGH42JUHwf
-         4uld/tLCiuvYd+IR2Qua+72hPd9WdFXLupKHX9KH5SAEfnyjaG1fC+G5lSxBZEJQr37w
-         8uazyHFoQ9Rg9wOmlbLNv8OLhJkRRi0BQVNpBLsAi4BELq0Ch8QRtaZ89AZONfn0OwPI
-         9+vXQ0lJf+nzKbu3CUvwqfrt7tOrTDG2Ob2LbcnnO9ALzdXon8fc82IMHxvHDkebJteG
-         zGvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOeeIXDUv5zyZq5nRYyZsy+pSTigKd2oK4Jl0juj1rv8u79h+iRA8EtJLOQ/Vg1srmwwZkO6SoPVRziLQwwEwcPd+P7GgHw9IRiRVd
-X-Gm-Message-State: AOJu0Yxav9WzNNyeX4gu0vUloddsE413dyvwm0J2SORLJtI+8L4LsHjm
-	BHiywjajCYLXTFkJH3pS7dMILbRKhtz4woal5Pl+eKbeF9NuCa9h4v0koPtuRNy0aOnxWdhSHcA
-	nUm/KDtoFPdqxvGXR8bbpPEKPMCuJ/Mfa3Njnww0kdN2PJntDr5VaCQ8=
-X-Google-Smtp-Source: AGHT+IEKxi6GNaWi+R9YfJxWIznc2xKYuKXmBGS8WoUzkTSiA5OuyEBc8xGupOmjy3zTJ3UmWO1ib4ELCthvMmcu3bKb+UmfOAZ5
+	s=arc-20240116; t=1718336909; c=relaxed/simple;
+	bh=tOdcNuf2kRMwiFSwcr6k9xuklL/HpB+Iw5uNR7FPc44=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ruJNm9QnpKNWJnK6biH+ETb2QEupoSaqIU7i0bE2btlzzFl23SVZkQAc0aIQNyIcPe2bHnldDpiYeeTBc0qXKozuWu4YKoDgnm/h9T6jzFPZcptZPBCw9PD8aY0HbVkdkgxfBcoJe51jo660i1N+I1gz9FHLfZt3m9P5BW0s6a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W0lVx4w1pzmYsS;
+	Fri, 14 Jun 2024 11:43:37 +0800 (CST)
+Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1BAD318007C;
+	Fri, 14 Jun 2024 11:48:24 +0800 (CST)
+Received: from kwepemd100011.china.huawei.com (7.221.188.204) by
+ kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 14 Jun 2024 11:48:23 +0800
+Received: from kwepemd100011.china.huawei.com ([7.221.188.204]) by
+ kwepemd100011.china.huawei.com ([7.221.188.204]) with mapi id 15.02.1258.034;
+ Fri, 14 Jun 2024 11:48:23 +0800
+From: duchangbin <changbin.du@huawei.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+CC: duchangbin <changbin.du@huawei.com>, Peter Zijlstra
+	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, "Arnaldo Carvalho de
+ Melo" <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Nathan
+ Chancellor <nathan@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+	<jolsa@kernel.org>, "Ian Rogers" <irogers@google.com>, "Liang, Kan"
+	<kan.liang@linux.intel.com>, "Nick Desaulniers" <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>
+Subject: Re: [PATCH 2/2] perf: disasm: prefer symsrc_filename for filename
+Thread-Topic: [PATCH 2/2] perf: disasm: prefer symsrc_filename for filename
+Thread-Index: AQHavVvh9tYwOTcSHEG6bdTlEhoGM7HE0t8AgACesgD//4X1gIABqREA
+Date: Fri, 14 Jun 2024 03:48:23 +0000
+Message-ID: <4b420b265a6d4c298315807725734a31@huawei.com>
+References: <20240613063510.348692-1-changbin.du@huawei.com>
+ <20240613063510.348692-3-changbin.du@huawei.com>
+ <395cfff7-9692-4123-96b6-353752007f46@intel.com>
+ <39be46d6a5194b6390ed31be67689c6c@huawei.com>
+ <6abf540f-5f11-4b2b-b8c1-69783a71277b@intel.com>
+In-Reply-To: <6abf540f-5f11-4b2b-b8c1-69783a71277b@intel.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-imapappendstamp: kwepemd100011.china.huawei.com (15.02.1258.034)
+x-ms-exchange-messagesentrepresentingtype: 1
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <C4B1CA3441B83140B661C4C905215D26@huawei.com>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a48:b0:373:8d04:28b2 with SMTP id
- e9e14a558f8ab-375e00059bemr712485ab.0.1718336831592; Thu, 13 Jun 2024
- 20:47:11 -0700 (PDT)
-Date: Thu, 13 Jun 2024 20:47:11 -0700
-In-Reply-To: <000000000000dfd6a105f71001d7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000073ab6e061ad17840@google.com>
-Subject: Re: [syzbot] kernel BUG in ext4_write_inline_data
-From: syzbot <syzbot+f4582777a19ec422b517@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, eadavis@qq.com, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nogikh@google.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
 
-This bug is marked as fixed by commit:
-ext4: fix race condition between buffer write and page_mkwrite
+On Thu, Jun 13, 2024 at 01:26:39PM +0300, Adrian Hunter wrote:
+> On 13/06/24 12:43, duchangbin wrote:
+> > On Thu, Jun 13, 2024 at 11:15:28AM +0300, Adrian Hunter wrote:
+> >> On 13/06/24 09:35, Changbin Du wrote:
+> >>> If we already found a debugging version when loading symbols for that=
+ dso,
+> >>> then use the same file for disasm instead of looking up in buildid-ca=
+che.
+> >>
+> >> In the past, there have been cases where the debugging version has not
+> >> worked for reading object code.  I don't remember the details, but the
+> >> symbols and debugging information was OK while the object code was not=
+.
+> >>
+> >> In general, using anything other than the file that was actually execu=
+ted
+> >> for reading object code seems like a bad idea.
+> >>
+> > Is this a platform specific issue? AFAIK, the binary code in debugging =
+and
+> > non-debugging version should be identical.=20
+>=20
+> "should be" !=3D "guaranteed to be".  Simpler to avoid the issue and
+> stick with the file that was actually executed.  We already support
+> having separate symbol sources, so there should not really be a
+> problem.
+>
+ok, so for vdso I think we can flow the kernel part in dso__disassemble_fil=
+ename.
+I'll add vdso processing here.
 
-But I can't find it in the tested trees[1] for more than 90 days.
-Is it a correct commit? Please update it by replying:
+>=20
 
-#syz fix: exact-commit-title
-
-Until then the bug is still considered open and new crashes with
-the same signature are ignored.
-
-Kernel: Linux
-Dashboard link: https://syzkaller.appspot.com/bug?extid=f4582777a19ec422b517
-
----
-[1] I expect the commit to be present in:
-
-1. for-kernelci branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
-
-2. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
-
-3. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
-
-4. main branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-
-The full list of 10 trees can be found at
-https://syzkaller.appspot.com/upstream/repos
+--=20
+Cheers,
+Changbin Du
 
