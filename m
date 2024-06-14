@@ -1,296 +1,161 @@
-Return-Path: <linux-kernel+bounces-214928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9172E908C44
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:09:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F5A7908C49
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19BE91F249E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:09:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E34B289B5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2894F19AA41;
-	Fri, 14 Jun 2024 13:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMdkC05s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B93119AA61;
+	Fri, 14 Jun 2024 13:10:32 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CACA26ACA;
-	Fri, 14 Jun 2024 13:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2CE26ACA;
+	Fri, 14 Jun 2024 13:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718370582; cv=none; b=prVjWTB5x6SH27a2GMKLTpLKLKsG2PXmBk/8osjXouWRFyMi7qtfPwpFzjLo/Lx7gA+k/DMo3neLzLKaVKMsq3jBF8uFjv+qpGc6YgojfvlRmtIGiqDngUtrfXn/sbMVucJzSaG7uuHc5As5wtp0kLNYCM+fBK6kw1v+2hgD6lo=
+	t=1718370631; cv=none; b=frmhxxoqsck0gHU8Oek7YTxHzpKTXEHM+QTrQL3WtPm1MS7w2wppVJfKdCN5OB6Dn5racH2FPwY6KAxFIF9TkBm/XxCq+G24nChfxs4mwVuTFfAHeyJfc+8DZSlFlLpXSsqw+ctH0hMu4YBW8C9p4b7Uj/hQ6soc2aamGa/0l10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718370582; c=relaxed/simple;
-	bh=e6kELu63/VjfYReNnjC+nzRVVQndtg244gQ0BkXtEas=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JQTA2k8nWiNhz0rIaQ5U9fMhBIH74UhNLXq1LXPw5UheJyuAzG9wVBVap5VKI4HAH04T54z5cPW9RrEao4Dz7KH9zk8JcFI7aHGNAD+cWOmm1+Q6udFyOlMU/INj3+UrRh1CXWVnWE0yHw8LuSn0rdxukuq27DsfJEMQAeMgrFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GMdkC05s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DA75C2BD10;
-	Fri, 14 Jun 2024 13:09:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718370581;
-	bh=e6kELu63/VjfYReNnjC+nzRVVQndtg244gQ0BkXtEas=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GMdkC05sdOfXAbzWVw0x4cllrfBOw1WbwFkTaZEPbGHlTbCEV8CdBnTOTAfbqtV81
-	 L/dc5s0btl5IxUF5kDlDfPylNBSwg3XrdCLfwSZ6ofWioZqGGKC6LqLU/chSlmVnFc
-	 r07SteGAipSte7fIC4OHHpBFdCdw4rSkyAD++A1aSWu9QgJfJEOIpUUJ0cvVZ/75Gl
-	 iZMq94ZyrhE2eDTbvZpGt+0H/KV7vD9oaz91xb1HLDnV0a0F9GFEMLmV6iSi+3xlJ5
-	 OJLf03OciKF0H67qiS6ng98tIuGQwMLW741PPu1XMIpwgPSaCBk8EJYhktskfGhhMP
-	 VmW6eYg2DXWoQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sI6gV-003vHX-96;
-	Fri, 14 Jun 2024 14:09:39 +0100
-Date: Fri, 14 Jun 2024 14:09:38 +0100
-Message-ID: <86r0czk6wd.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	will@kernel.org,
-	catalin.marinas@arm.com,
-	mark.rutland@arm.com,
-	Mark Brown <broonie@kernel.org>,
-	James Clark <james.clark@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Suzuki Poulose <suzuki.poulose@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH V18 2/9] KVM: arm64: Explicitly handle BRBE traps as UNDEFINED
-In-Reply-To: <86sexfk8ke.wl-maz@kernel.org>
-References: <20240613061731.3109448-1-anshuman.khandual@arm.com>
-	<20240613061731.3109448-3-anshuman.khandual@arm.com>
-	<86sexfk8ke.wl-maz@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1718370631; c=relaxed/simple;
+	bh=t6/aZbBkHavmNxAjU9DaKNPdfyzRr5nCb9srEUp31QI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qRN4MqeoldQ1LtJYW/y8V8BSjAfyyJsW5QpEDUdP8k5M4JFVEnGIfpMJtJYwXgBAcJ4bXpjceHxghsFx1VA4e7rLf8BmlNSfsGKmG3h0xghTANANBtQocsIQiFgFnwdQJFra4kPCo5kl7/CW2/xzSqQYWOO93b15miSKJI2XWuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W10033k6XzwSSq;
+	Fri, 14 Jun 2024 21:06:11 +0800 (CST)
+Received: from canpemm500007.china.huawei.com (unknown [7.192.104.62])
+	by mail.maildlp.com (Postfix) with ESMTPS id 24AF5180081;
+	Fri, 14 Jun 2024 21:10:20 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by canpemm500007.china.huawei.com
+ (7.192.104.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Jun
+ 2024 21:10:19 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <tkhai@ya.ru>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>
+Subject: [PATCH] netns: Make get_net_ns() handle zero refcount net
+Date: Fri, 14 Jun 2024 21:13:02 +0800
+Message-ID: <20240614131302.2698509-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, broonie@kernel.org, james.clark@arm.com, robh@kernel.org, suzuki.poulose@arm.com, peterz@infradead.org, mingo@redhat.com, acme@kernel.org, linux-perf-users@vger.kernel.org, oliver.upton@linux.dev, james.morse@arm.com, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ canpemm500007.china.huawei.com (7.192.104.62)
 
-On Fri, 14 Jun 2024 13:33:37 +0100,
-Marc Zyngier <maz@kernel.org> wrote:
-> 
-> On Thu, 13 Jun 2024 07:17:24 +0100,
-> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> > 
-> > The Branch Record Buffer Extension (BRBE) adds a number of system registers
-> > and instructions, which we don't currently intend to expose to guests. Our
-> > existing logic handles this safely, but this could be improved with some
-> > explicit handling of BRBE.
-> > 
-> > The presence of BRBE is currently hidden from guests as the cpufeature
-> > code's ftr_id_aa64dfr0[] table doesn't have an entry for the BRBE field,
-> > and so this will be zero in the sanitised value of ID_AA64DFR0 exposed to
-> > guests via read_sanitised_id_aa64dfr0_el1(). As the ftr_id_aa64dfr0[] table
-> > may gain an entry for the BRBE field in future, for robustness we should
-> > explicitly mask out the BRBE field in read_sanitised_id_aa64dfr0_el1().
-> > 
-> > The BRBE system registers and instructions are currently trapped by the
-> > existing configuration of the fine-grained traps. As neither the registers
-> > nor the instructions are described in the sys_reg_descs[] table,
-> > emulate_sys_reg() will warn that these are unknown before injecting an
-> > UNDEFINED exception into the guest.
-> > 
-> > Well-behaved guests shouldn't try to use the registers or instructions, but
-> > badly-behaved guests could use these, resulting in unnecessary warnings. To
-> > avoid those warnings, we should explicitly handle the BRBE registers and
-> > instructions as UNDEFINED.
-> > 
-> > Address the above by having read_sanitised_id_aa64dfr0_el1() mask out the
-> > ID_AA64DFR0.BRBE field, and explicitly handling all of the BRBE system
-> > registers and instructions as UNDEFINED.
-> > 
-> > Cc: Marc Zyngier <maz@kernel.org>
-> > Cc: Oliver Upton <oliver.upton@linux.dev>
-> > Cc: James Morse <james.morse@arm.com>
-> > Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: kvmarm@lists.linux.dev
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> > ----
-> > Changes in V18:
-> > 
-> > - Updated the commit message
-> > 
-> >  arch/arm64/kvm/sys_regs.c | 56 +++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 56 insertions(+)
-> > Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-> > ---
-> >  arch/arm64/kvm/sys_regs.c | 56 +++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 56 insertions(+)
-> > 
-> > diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> > index 22b45a15d068..3d4686abe5ee 100644
-> > --- a/arch/arm64/kvm/sys_regs.c
-> > +++ b/arch/arm64/kvm/sys_regs.c
-> > @@ -1304,6 +1304,11 @@ static int set_pmcr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r,
-> >  	return 0;
-> >  }
-> >  
-> > +#define BRB_INF_SRC_TGT_EL1(n)				\
-> > +	{ SYS_DESC(SYS_BRBINF_EL1(n)), undef_access },	\
-> > +	{ SYS_DESC(SYS_BRBSRC_EL1(n)), undef_access },	\
-> > +	{ SYS_DESC(SYS_BRBTGT_EL1(n)), undef_access }	\
-> > +
-> >  /* Silly macro to expand the DBG{BCR,BVR,WVR,WCR}n_EL1 registers in one go */
-> >  #define DBG_BCR_BVR_WCR_WVR_EL1(n)					\
-> >  	{ SYS_DESC(SYS_DBGBVRn_EL1(n)),					\
-> > @@ -1722,6 +1727,9 @@ static u64 read_sanitised_id_aa64dfr0_el1(struct kvm_vcpu *vcpu,
-> >  	/* Hide SPE from guests */
-> >  	val &= ~ID_AA64DFR0_EL1_PMSVer_MASK;
-> >  
-> > +	/* Hide BRBE from guests */
-> > +	val &= ~ID_AA64DFR0_EL1_BRBE_MASK;
-> > +
-> >  	return val;
-> >  }
-> >  
-> > @@ -2240,6 +2248,52 @@ static const struct sys_reg_desc sys_reg_descs[] = {
-> >  	{ SYS_DESC(SYS_DBGCLAIMCLR_EL1), trap_raz_wi },
-> >  	{ SYS_DESC(SYS_DBGAUTHSTATUS_EL1), trap_dbgauthstatus_el1 },
-> >  
-> > +	/*
-> > +	 * BRBE branch record sysreg address space is interleaved between
-> > +	 * corresponding BRBINF<N>_EL1, BRBSRC<N>_EL1, and BRBTGT<N>_EL1.
-> > +	 */
-> > +	BRB_INF_SRC_TGT_EL1(0),
-> > +	BRB_INF_SRC_TGT_EL1(16),
-> > +	BRB_INF_SRC_TGT_EL1(1),
-> > +	BRB_INF_SRC_TGT_EL1(17),
-> > +	BRB_INF_SRC_TGT_EL1(2),
-> > +	BRB_INF_SRC_TGT_EL1(18),
-> > +	BRB_INF_SRC_TGT_EL1(3),
-> > +	BRB_INF_SRC_TGT_EL1(19),
-> > +	BRB_INF_SRC_TGT_EL1(4),
-> > +	BRB_INF_SRC_TGT_EL1(20),
-> > +	BRB_INF_SRC_TGT_EL1(5),
-> > +	BRB_INF_SRC_TGT_EL1(21),
-> > +	BRB_INF_SRC_TGT_EL1(6),
-> > +	BRB_INF_SRC_TGT_EL1(22),
-> > +	BRB_INF_SRC_TGT_EL1(7),
-> > +	BRB_INF_SRC_TGT_EL1(23),
-> > +	BRB_INF_SRC_TGT_EL1(8),
-> > +	BRB_INF_SRC_TGT_EL1(24),
-> > +	BRB_INF_SRC_TGT_EL1(9),
-> > +	BRB_INF_SRC_TGT_EL1(25),
-> > +	BRB_INF_SRC_TGT_EL1(10),
-> > +	BRB_INF_SRC_TGT_EL1(26),
-> > +	BRB_INF_SRC_TGT_EL1(11),
-> > +	BRB_INF_SRC_TGT_EL1(27),
-> > +	BRB_INF_SRC_TGT_EL1(12),
-> > +	BRB_INF_SRC_TGT_EL1(28),
-> > +	BRB_INF_SRC_TGT_EL1(13),
-> > +	BRB_INF_SRC_TGT_EL1(29),
-> > +	BRB_INF_SRC_TGT_EL1(14),
-> > +	BRB_INF_SRC_TGT_EL1(30),
-> > +	BRB_INF_SRC_TGT_EL1(15),
-> > +	BRB_INF_SRC_TGT_EL1(31),
-> > +
-> > +	/* Remaining BRBE sysreg addresses space */
-> > +	{ SYS_DESC(SYS_BRBCR_EL1), undef_access },
-> > +	{ SYS_DESC(SYS_BRBFCR_EL1), undef_access },
-> > +	{ SYS_DESC(SYS_BRBTS_EL1), undef_access },
-> > +	{ SYS_DESC(SYS_BRBINFINJ_EL1), undef_access },
-> > +	{ SYS_DESC(SYS_BRBSRCINJ_EL1), undef_access },
-> > +	{ SYS_DESC(SYS_BRBTGTINJ_EL1), undef_access },
-> > +	{ SYS_DESC(SYS_BRBIDR0_EL1), undef_access },
-> > +
-> >  	{ SYS_DESC(SYS_MDCCSR_EL0), trap_raz_wi },
-> >  	{ SYS_DESC(SYS_DBGDTR_EL0), trap_raz_wi },
-> >  	// DBGDTR[TR]X_EL0 share the same encoding
-> > @@ -2751,6 +2805,8 @@ static struct sys_reg_desc sys_insn_descs[] = {
-> >  	{ SYS_DESC(SYS_DC_CISW), access_dcsw },
-> >  	{ SYS_DESC(SYS_DC_CIGSW), access_dcgsw },
-> >  	{ SYS_DESC(SYS_DC_CIGDSW), access_dcgsw },
-> > +	{ SYS_DESC(OP_BRB_IALL), undef_access },
-> > +	{ SYS_DESC(OP_BRB_INJ), undef_access },
-> >  };
-> >  
-> >  static const struct sys_reg_desc *first_idreg;
-> 
-> I don't think we need any update to the sys_reg table to handle
-> this. Instead, we should make use of the FGU infrastructure that has
-> been in since 6.9 to make this stuff UNDEF unconditionally.
-> 
-> It should be as simple as:
-> 
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index ee33f5467ce5..7cafe3f72c01 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -4964,6 +4964,11 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
->  		kvm->arch.fgu[HAFGRTR_GROUP] |= ~(HAFGRTR_EL2_RES0 |
->  						  HAFGRTR_EL2_RES1);
->  
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, BRBE, IMP))
-> +		kvm->arch.fgu[HDFGRTR_GROUP] |= (HDFGRTR_nBRBDATA |
-> +						 HDFGRTR_nBRBCTL  |
-> +						 HDFGRTR_nBRBIDR);
-> +
->  	set_bit(KVM_ARCH_FLAG_FGU_INITIALIZED, &kvm->arch.flags);
->  out:
->  	mutex_unlock(&kvm->arch.config_lock);
-> 
-> which is of course untested, but that I expect to be correct.
+Syzkaller hit a warning:
+refcount_t: addition on 0; use-after-free.
+WARNING: CPU: 3 PID: 7890 at lib/refcount.c:25 refcount_warn_saturate+0xdf/0x1d0
+Modules linked in:
+CPU: 3 PID: 7890 Comm: tun Not tainted 6.10.0-rc3-00100-gcaa4f9578aba-dirty #310
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+RIP: 0010:refcount_warn_saturate+0xdf/0x1d0
+Code: 41 49 04 31 ff 89 de e8 9f 1e cd fe 84 db 75 9c e8 76 26 cd fe c6 05 b6 41 49 04 01 90 48 c7 c7 b8 8e 25 86 e8 d2 05 b5 fe 90 <0f> 0b 90 90 e9 79 ff ff ff e8 53 26 cd fe 0f b6 1
+RSP: 0018:ffff8881067b7da0 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff811c72ac
+RDX: ffff8881026a2140 RSI: ffffffff811c72b5 RDI: 0000000000000001
+RBP: ffff8881067b7db0 R08: 0000000000000000 R09: 205b5d3730353139
+R10: 0000000000000000 R11: 205d303938375420 R12: ffff8881086500c4
+R13: ffff8881086500c4 R14: ffff8881086500b0 R15: ffff888108650040
+FS:  00007f5b2961a4c0(0000) GS:ffff88823bd00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055d7ed36fd18 CR3: 00000001482f6000 CR4: 00000000000006f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ? show_regs+0xa3/0xc0
+ ? __warn+0xa5/0x1c0
+ ? refcount_warn_saturate+0xdf/0x1d0
+ ? report_bug+0x1fc/0x2d0
+ ? refcount_warn_saturate+0xdf/0x1d0
+ ? handle_bug+0xa1/0x110
+ ? exc_invalid_op+0x3c/0xb0
+ ? asm_exc_invalid_op+0x1f/0x30
+ ? __warn_printk+0xcc/0x140
+ ? __warn_printk+0xd5/0x140
+ ? refcount_warn_saturate+0xdf/0x1d0
+ get_net_ns+0xa4/0xc0
+ ? __pfx_get_net_ns+0x10/0x10
+ open_related_ns+0x5a/0x130
+ __tun_chr_ioctl+0x1616/0x2370
+ ? __sanitizer_cov_trace_switch+0x58/0xa0
+ ? __sanitizer_cov_trace_const_cmp2+0x1c/0x30
+ ? __pfx_tun_chr_ioctl+0x10/0x10
+ tun_chr_ioctl+0x2f/0x40
+ __x64_sys_ioctl+0x11b/0x160
+ x64_sys_call+0x1211/0x20d0
+ do_syscall_64+0x9e/0x1d0
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5b28f165d7
+Code: b3 66 90 48 8b 05 b1 48 2d 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 81 48 2d 00 8
+RSP: 002b:00007ffc2b59c5e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5b28f165d7
+RDX: 0000000000000000 RSI: 00000000000054e3 RDI: 0000000000000003
+RBP: 00007ffc2b59c650 R08: 00007f5b291ed8c0 R09: 00007f5b2961a4c0
+R10: 0000000029690010 R11: 0000000000000246 R12: 0000000000400730
+R13: 00007ffc2b59cf40 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+Kernel panic - not syncing: kernel: panic_on_warn set ...
 
-Actually, to disable the *instructions*, a similar hack must be
-applied to HFGITR_EL2. The resulting patch should be something like:
+This is trigger as below:
+          ns0                                    ns1
+tun_set_iff() //dev is tun0
+   tun->dev = dev
+//ip link set tun0 netns ns1
+                                       put_net() //ref is 0
+__tun_chr_ioctl() //TUNGETDEVNETNS
+   net = dev_net(tun->dev);
+   open_related_ns(&net->ns, get_net_ns); //ns1
+     get_net_ns()
+        get_net() //addition on 0
 
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index ee33f5467ce5..49d86dae8d80 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -4964,6 +4964,15 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
- 		kvm->arch.fgu[HAFGRTR_GROUP] |= ~(HAFGRTR_EL2_RES0 |
- 						  HAFGRTR_EL2_RES1);
+Use maybe_get_net() in get_net_ns in case net's ref is zero to fix this
+
+Fixes: 0c3e0e3bb623 ("tun: Add ioctl() TUNGETDEVNETNS cmd to allow obtaining real net ns of tun device")
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ net/core/net_namespace.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+index 4f7a61688d18..6a823ba906c6 100644
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -693,11 +693,16 @@ EXPORT_SYMBOL_GPL(__put_net);
+  * get_net_ns - increment the refcount of the network namespace
+  * @ns: common namespace (net)
+  *
+- * Returns the net's common namespace.
++ * Returns the net's common namespace or ERR_PTR() if ref is zero.
+  */
+ struct ns_common *get_net_ns(struct ns_common *ns)
+ {
+-	return &get_net(container_of(ns, struct net, ns))->ns;
++	struct net *net;
++
++	net = maybe_get_net(container_of(ns, struct net, ns));
++	if (net)
++		return &net->ns;
++	return ERR_PTR(-EINVAL);
+ }
+ EXPORT_SYMBOL_GPL(get_net_ns);
  
-+	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, BRBE, IMP)) {
-+		kvm->arch.fgu[HDFGRTR_GROUP] |= (HDFGRTR_nBRBDATA  |
-+						 HDFGRTR_nBRBCTL   |
-+						 HDFGRTR_nBRBIDR);
-+		kvm->arch.fgu[HFGITR_GROUP] |= (HFGITR_EL2_nBRBINJ |
-+						HFGITR_EL2_nBRBIALL);
-+	}
-+
-+
- 	set_bit(KVM_ARCH_FLAG_FGU_INITIALIZED, &kvm->arch.flags);
- out:
- 	mutex_unlock(&kvm->arch.config_lock);
-
-The implicit dependency here is that FGT is always present on a system
-that implements BRBE. The architecture supports this assertion:
-
-- BRBE is not available before ARMv9.1
-- FGT is mandatory from ARMv8.6
-
-Given that v9.1 is congruent to v8.6, we have the required overlap.
-
-Thanks,
-
-	M.
-
 -- 
-Without deviation from the norm, progress is not possible.
+2.34.1
+
 
