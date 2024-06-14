@@ -1,122 +1,127 @@
-Return-Path: <linux-kernel+bounces-215448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2986C9092D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:10:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA329092DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECAAC1C22AD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:10:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDD8E2855A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B81E1A38EC;
-	Fri, 14 Jun 2024 19:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97D819E7C1;
+	Fri, 14 Jun 2024 19:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="GMMByZxo"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="hg4RADWB"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8841A01C5;
-	Fri, 14 Jun 2024 19:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F871487C7
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 19:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718392237; cv=none; b=T1gFQ/4GPcz363WmXM23aWE9Pnvd1OkeELjr3j2LY+s29qnrMvzJ8mRkqe8dgA1SncOF2zR0g7401Yi1D9zFGvVtnYESy1iK6IqsfkYnM6stFiOWH8LZj60gcT2DudfFofhegWOA2RbFHc8EGZIubBRvTCJFCRzGeR1TklPQhTs=
+	t=1718392698; cv=none; b=RqWVGr78LtywLkgsovFrQhs+3XsuCtysu7220dzKeVSshgU9cNc2/+xgj/P8UO8Uv2xOb3FBGqHvQS4GzmO1NJmvT6W61w1e3TnrppQ54T9lSBuNh64nzp/D+J+b2DW2bIqrnk/Yf3eBGy8EK202kp6pGuG/dYmxOADPi4kX9Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718392237; c=relaxed/simple;
-	bh=/McNpSiwC81uTiinpfWk+KdIlSVxE/p1HFilAYM2544=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VwxSKIV3S1B9gyTMBSdmUQITl7VcTmKtJ39Vj8+9dAxtClJzeL4AtsrGVwVuAlW2csTYfu+6WzEcnx/CbTi1ugpNqzYTHjBMxyvbavtd621Rf/HfWjoQsWRUawpR41icwG0cd+MYqPxzLSsQHy4l/MKdswFi5lruxm6+zeD5bow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=GMMByZxo; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 48A8B40E019F;
-	Fri, 14 Jun 2024 19:10:33 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id B5wNnYZxtOcc; Fri, 14 Jun 2024 19:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718392229; bh=YHoeX2aqNxFOwawwQ+u5gyShZuN1d3XKK09wgoJEq6M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GMMByZxogyqO6iERv7yE9B7Z+yBq6IlzYQqdEj+amC/+SOkkItb2DuZlWjCQQ1A6s
-	 4j1l3t+xWiBaOYtb1Al3DKaXwLYbfyEbq6vBOtibH3OjF/V7yrzolInVRgYc6AMYy1
-	 BPfOWGzHMmCGjmKpE0fwq2kvxt7ITrQ/CDLbpRlMGaITjvpc+cooDPh4hjbqbMARrc
-	 T4DqEw1jIwN+zP3q3iz6jK8lSCUkBVd4JFPnoznFFEx6V6rgfTNHC1Ya6hHOUYGerP
-	 Q57jaD74y8ePgm4lOTLR9TCHMjDaPmM9uRYgNmLuU2eqAARF8vX616Ujz3wAGfTyLK
-	 E5TZmCp7aCUmazqXGtQAwE+0xxALHZCoDv6pF+a2uN51Q4JxwqAoDfQkYnKnmIFS9l
-	 JbITCJLj6U7tSyrhVqRPatVQdvVLoBchGuxljqYuJp/zNW1N/n4Tyl8JZ69yyB8x6X
-	 y7ExtB5sc/1Hloa/p/JGAzXdGa1U1IPFlhzn+MEU+X3B9NhLEA+LwX3NZkWNOD9Tgx
-	 8jPMEICeHzymu5qZSHKHGkpJgHRXvfor9d6MR4pvbBpgpuLFWoDj0Aug+D84BzZaRp
-	 WveoTopHFukaDU9dgrasYcIpVsvYEHREkHgYfbe7KMFFdmpwiyvBPlihqjieXCpD+g
-	 kAdmvYhHy+8dVwGMXIAmsTHo=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6B90C40E00C9;
-	Fri, 14 Jun 2024 19:10:02 +0000 (UTC)
-Date: Fri, 14 Jun 2024 21:09:56 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Alexey Makhalov <alexey.makhalov@broadcom.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev, hpa@zytor.com,
-	dave.hansen@linux.intel.com, mingo@redhat.com, tglx@linutronix.de,
-	x86@kernel.org, netdev@vger.kernel.org, richardcochran@gmail.com,
-	linux-input@vger.kernel.org, dmitry.torokhov@gmail.com,
-	zackr@vmware.com, linux-graphics-maintainer@vmware.com,
-	pv-drivers@vmware.com, timothym@vmware.com, akaher@vmware.com,
-	dri-devel@lists.freedesktop.org, daniel@ffwll.ch, airlied@gmail.com,
-	tzimmermann@suse.de, mripard@kernel.org,
-	maarten.lankhorst@linux.intel.com, horms@kernel.org,
-	kirill.shutemov@linux.intel.com,
-	Tim Merrifield <tim.merrifield@broadcom.com>
-Subject: Re: [PATCH v11 8/8] x86/vmware: Add TDX hypercall support
-Message-ID: <20240614190956.GFZmyVhLGeyLjwvA6X@fat_crate.local>
-References: <20240613191650.9913-1-alexey.makhalov@broadcom.com>
- <20240613191650.9913-9-alexey.makhalov@broadcom.com>
- <844ef200-aabe-4497-85c9-44fc46c9133a@intel.com>
- <20240614161404.GCZmxsTNLSoYTqoRoj@fat_crate.local>
- <74f8300b-3520-4824-81e3-71464e3da3b6@intel.com>
- <1750e44f-f9a9-4c2a-afb3-f1ae8237ccb0@broadcom.com>
+	s=arc-20240116; t=1718392698; c=relaxed/simple;
+	bh=tdDbH+Puela8GcjBir2w1hVjGJFIMP0Q6vxjuEJvfxg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e/UqzvNZlku0ie0/YVB3l+G19ClkmulboCWf3GrOtRrTXGxGhRNu2nR9RhEBiPWeibbCn/HM1yJ/rD8Aly89gZHf8jlVTi0eyHgmDFVLMUauQ6Ph+NhGjfnrqqcWVJYcf0QSN0fMeVgZ61Eaa8lOm4LC0r5TTgShhamtPLPFc7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=hg4RADWB; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b065d12dc6so12709236d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 12:18:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718392695; x=1718997495; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tdDbH+Puela8GcjBir2w1hVjGJFIMP0Q6vxjuEJvfxg=;
+        b=hg4RADWBkSVtzEatCC7JWekyKE1GVDldNOVPw9YTUm3FLrpH4bEDe8Faj23ojMHpH8
+         bC8krjbBDbpxN39g0YHjAqAyy3xsCAL2bqNV0Y/zJT+I6BX/xu70ZgZwc/JnwHAn+Ndt
+         F42BF6tYMmAnDLK2xijo4ydA6ibh8GcfcE5rKiaIA9ZQ0XEG7jincTOxwBsLPoltzGGf
+         TYdj8fW1qoSP89yaTC7fWlwt7HHONRToq1D0dp/zrr0FY5NGyCux813CwgcDlWmRIusD
+         XHzl38sm8fNFaupFaVtJBUQgXLOc1Nh4dpQyhQpmznhwx3XJPpJqgyrYfLho2R/NheN1
+         9KOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718392695; x=1718997495;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tdDbH+Puela8GcjBir2w1hVjGJFIMP0Q6vxjuEJvfxg=;
+        b=PkC1xr6aCeCt/62My8w1SbY/8wXmdhR9oVq0laPmAbw4w7Ui7cVyhxM8nGUfEM20UJ
+         D3HhSyUH6Y+MFv8BX7lZEn/wq0ODzLB6uyoKoMdRbg0fbUWA4q748x3zk6UwxsqIzUK+
+         gR56KFMPP4hkh7aM7E21UNQvvIPw32O+CeKXP/qFUH4/39zqb4KCOWKLaHAM2ihTPMve
+         ERhJ5Op9V7twkpZNA1SD9g8zvGqGOI0/X/dqLif+k7M7r1PkDOL1e9mJnmBMu46MW6Se
+         IeoUWHxSuplK5KdMeErC14Bac08Hw2NP1DdspHaeNpd8Sqvd9MhAAcmkRe9IyQJkAa8V
+         lXmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIhF6s2ZUvSIHR4zYXazHosnhufqjIL0zdskQDQjFRQqzDUH/0Y5to0buKfjjDEQOTzODZboG2J8UCijEf2TUK8DYLz0FCzihMFl60
+X-Gm-Message-State: AOJu0Yw6YAk4KWDiPg5jhSqMXGGnzvPHfPKaBguMRAAy9/uJ35oU3ipx
+	oCr/GxngCKuaqnWbT8WlbI4e/yCBbgAJrsaaNBdP+n2KnScMRjiVfryv63s/9LI=
+X-Google-Smtp-Source: AGHT+IESVCS+ALD38NVdIUc0A9n3fVnIRuJrt6B5Nfu3A/Str0yGuf4a0V+N4cgl4VIb5bHvl5yXhw==
+X-Received: by 2002:a0c:9cce:0:b0:6b2:b2c4:90f5 with SMTP id 6a1803df08f44-6b2b2c49289mr29705686d6.4.1718392694328;
+        Fri, 14 Jun 2024 12:18:14 -0700 (PDT)
+Received: from [192.168.40.12] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5eb4a23sm21545956d6.75.2024.06.14.12.18.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 12:18:14 -0700 (PDT)
+Message-ID: <964821b3-dcbb-42b8-9062-2366a4d30a76@baylibre.com>
+Date: Fri, 14 Jun 2024 15:18:12 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1750e44f-f9a9-4c2a-afb3-f1ae8237ccb0@broadcom.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: adc: adi-axi-adc: improve probe() error messaging
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240613163407.2147884-1-tgamblin@baylibre.com>
+ <57d4659a5abb63d7c085865059b9d71c40371edd.camel@gmail.com>
+Content-Language: en-US
+From: Trevor Gamblin <tgamblin@baylibre.com>
+In-Reply-To: <57d4659a5abb63d7c085865059b9d71c40371edd.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 14, 2024 at 11:32:16AM -0700, Alexey Makhalov wrote:
-> 
-> 
-> On 6/14/24 9:19 AM, Dave Hansen wrote:
-> > On 6/14/24 09:14, Borislav Petkov wrote:
-> > > On Fri, Jun 14, 2024 at 09:03:22AM -0700, Dave Hansen wrote:
-> > ...
-> > > > You need to zero out all of 'args' somehow.
-> > > 
-> > > You mean like this:
-> > > 
-> > > 	struct tdx_module_args args = {};
-> > > 
-> > > ?
-> > 
-> > Yes, or do all the assignments with the initializer.  We seem to do it
-> > both ways, so whatever works.
-> 
-> Thanks Dave for pointing that out. I missed that at v7.
 
-Ok, I'll fold this struct initialization oneliner into the last patch.
+On 2024-06-14 5:11 a.m., Nuno Sá wrote:
+> On Thu, 2024-06-13 at 12:34 -0400, Trevor Gamblin wrote:
+>> The current error handling for calls such as devm_clk_get_enabled() in
+>> the adi-axi-adc probe() function means that, if a property such as
+>> 'clocks' (for example) is not present in the devicetree when booting a
+>> kernel with the driver enabled, the resulting error message will be
+>> vague, e.g.:
+>>
+>>> adi_axi_adc 44a00000.backend: probe with driver adi_axi_adc failed with error -2
+>> Change the devm_clk_get_enabled(), devm_regmap_init_mmio(), and
+>> devm_iio_backend_register() checks to use dev_err_probe() with some
+>> context for easier debugging.
+>>
+>> After the fix:
+>>
+>>> adi_axi_adc 44a00000.backend: error -ENOENT: failed to get clock
+>>> adi_axi_adc 44a00000.backend: probe with driver adi_axi_adc failed with error -2
+>> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+>> ---
+> Somehow feel that in these cases the error log should come from the functions we're
+> calling but bah... likely not going happen/change:
+>
+> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+>
+> (As a suggestion, you may do similar work in the axi-dac driver)
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks. I'll send that early next week after a quick test on a board.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Trevor
+
+>
+> - Nuno Sá
+>
+>
 
