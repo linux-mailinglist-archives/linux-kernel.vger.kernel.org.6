@@ -1,165 +1,272 @@
-Return-Path: <linux-kernel+bounces-215188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D57A5908F67
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:54:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC599908F6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CECD285768
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:54:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1BC61C2109C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EB516B754;
-	Fri, 14 Jun 2024 15:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D6316B754;
+	Fri, 14 Jun 2024 15:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Goj4LckA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LT6u8QFS"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2072.outbound.protection.outlook.com [40.107.93.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF263364A1
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718380464; cv=none; b=tb426WHTNdfcKq1dLrn9Mnmvd7oocEzQk+fESxhTYfTJuDGnaKCcA6QXKWvMm8REoWTHuoIkCqAKOgsuKuwE5cM/FGbb1XsD72sWV2i5oJaboz10CoYDLnRKjJhKAjOM7niF6fA9YzXDk+O5fhKrPivfMpNBWcqLlDDns66Lrwc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718380464; c=relaxed/simple;
-	bh=re2luL8iC9nwDSyqmpDwVK+KGaKcJDoncjJcQqFPp2I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fa4LvPdSHSZR1VRaQ2j0nAUWFu0Fguzgj87PJTFwflnKYPvilrQpo0/g59sLrxuG3C2mZpL4jqcjQnMq4Y03WpvyjVl4AT4j5TvK9C+hOi09tPEow/dD4iMjCeVLQUcE5umM+XvbOD5AY9vACAi1CDptl28zfLKfkjcFe+KmRy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Goj4LckA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718380461;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XXSISRWdLPH55gILPs1QDZPjGYmbQZf+3emJmLMYoF0=;
-	b=Goj4LckAkAqfVUn6ZogzkgXHISRPKTtBzDpDwPS16rH7/NmXyAMuTxWTVglgQs4Snp2PJQ
-	vx1Iofaahgwg5ow9a1pyRrLaK/krEamQZm3hjaRsLznR8KCg8gyAQR82R0UCC3aX69M//r
-	2XHsiJINPC8xGuu+dAQGbh2IyPkiJiU=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-683-03G28qcNMiCIIHnS0WSTbg-1; Fri,
- 14 Jun 2024 11:54:18 -0400
-X-MC-Unique: 03G28qcNMiCIIHnS0WSTbg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E598119560B9;
-	Fri, 14 Jun 2024 15:54:16 +0000 (UTC)
-Received: from RHTRH0061144 (unknown [10.22.16.41])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D35CA19560BF;
-	Fri, 14 Jun 2024 15:54:13 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: =?utf-8?Q?Adri=C3=A1n?= Moreno <amorenoz@redhat.com>
-Cc: netdev@vger.kernel.org,  Pravin B Shelar <pshelar@ovn.org>,  "David S.
- Miller" <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Shuah Khan
- <shuah@kernel.org>,  dev@openvswitch.org,
-  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] selftests: openvswitch: set value to nla
- flags
-In-Reply-To: <CAG=2xmN+fp5B_b1KQq2T9DKrTQ_+Kqr6WbmrY0Gk1j3zZnY1YA@mail.gmail.com>
-	(=?utf-8?Q?=22Adri=C3=A1n?= Moreno"'s message of "Tue, 11 Jun 2024 15:03:45
- +0000")
-References: <20240603183121.2305013-1-amorenoz@redhat.com>
-	<20240603183121.2305013-2-amorenoz@redhat.com>
-	<f7t5xup26jt.fsf@redhat.com>
-	<CAG=2xmN+fp5B_b1KQq2T9DKrTQ_+Kqr6WbmrY0Gk1j3zZnY1YA@mail.gmail.com>
-Date: Fri, 14 Jun 2024 11:54:11 -0400
-Message-ID: <f7t7cerpljw.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0BA4EB55
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718380564; cv=fail; b=NDeVG2e2JRIYYNFC2EtqVhZg9aOViVgYayG+MmA0c14fKggIAr7k+VkjbXAutdauJRlm+Lv5qnNJ3LdzFJjuZqHscOmCm+YitNGQX+x2bO5CAsUYu0slfn808heKCfNABb0X8dOw22deVLg5C7EHgRG9es5DLxjLCw4F5Iv9iAI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718380564; c=relaxed/simple;
+	bh=VbhHlAwaThUdrOp7MOOLuuh2XVC5IGEMnkQJiHXRcxY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=byNEgFiu1T7r4Gl4qsAXGoAK5V1nX7a6ft0WriD38Oy0sl4dgPqXC4f/6YS/1Zvpizt2rBJGi1+adSR7ZrJLAwUoScLAWQp+j07T+0e5YHOa3a+VrfDWMC9+rZB7+XwjPz9Xh5QVoZUVu/aBxKMMNpJvjI/YQNpRxHKJTZNumM4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LT6u8QFS; arc=fail smtp.client-ip=40.107.93.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AvesrJbfcEQjagUHHx/wrIBT+ZIo0p23JJxJ5/0FkAmNbfTCgIbeOUSkQi/7DLN9q+E/+l0GcQyrGQFDu1ubyZISINZfkk4Pb/KhpFjUE6mUXkVNxPSNWjXuq8gS4jnRvjDODU+9oBDuWyAev6CXC/00LMgST0FYpe3RS/Kz2RS9Q8KH9xHbQZynHGAnBcYQUDu7aelhzPr6i/dzT7ticCNe9f4lZ6as5mVVkldgUQvKarBy3t/oDbJh//+7p7XZiO5rOLjcvs7TMiuGpy0rJ+5xtM3mILBnR5VSO+wLxFFmJ7yQhFGD1XMRbmQ68oQ72n2WXfuu//ovjCMS890XZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mdQknaGDFOMocVoe4+tnoaeHFsAs1eOZOLLCLTBovBQ=;
+ b=ZRHUY8itJQBExmOKiWaRUl+uiS4FaS4xseJJDgESwXAjEM7xLu+mpNZPPYATp6RgVYPnjmweRNA3LnDOak/LAzkRrtGGaXQsDZZOMJDGoYcqyq9PXh3WIZ+PSevbrydlGbVPJpKnOJuMyboGrFa3uVszjie3h2w+lKVpcEYeppina6KgDO5lyJDm+RjjPysmObn7w1Y13D96vInRqCqz1ROMXR5xRdra6bf5u6Vqveez/JgC6h8ElzHyhY7NSQefwDoPWffLIn8EZDbDoWGv1L83LGpBCgYthLS32jLZ/ultLX/r+bh7lveVqzMsUrSIM2ZXMVqBoK/nP1OE5FlIHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mdQknaGDFOMocVoe4+tnoaeHFsAs1eOZOLLCLTBovBQ=;
+ b=LT6u8QFSmJqcK2WMvyvMYHe8oOVs7mTu7Td5iTfEO+QaGhZ+J6FCAF6V0RccSPw/hmbbN6FWC4vdGat9tq7FLA9KdtrdYLF1Yk03eli/3fWBv8q7SPJvBbv3IAsUnvb5BJ6fy0XHNL4f2bsJ3+rtokSlUsGO/Y1PxcThJ1RDjyE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CO6PR12MB5427.namprd12.prod.outlook.com (2603:10b6:5:358::13)
+ by CY8PR12MB7489.namprd12.prod.outlook.com (2603:10b6:930:90::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.26; Fri, 14 Jun
+ 2024 15:56:00 +0000
+Received: from CO6PR12MB5427.namprd12.prod.outlook.com
+ ([fe80::1c2f:5c82:2d9c:6062]) by CO6PR12MB5427.namprd12.prod.outlook.com
+ ([fe80::1c2f:5c82:2d9c:6062%7]) with mapi id 15.20.7677.024; Fri, 14 Jun 2024
+ 15:56:00 +0000
+Message-ID: <c11cc0b7-7504-495b-a5c2-a907666895ea@amd.com>
+Date: Fri, 14 Jun 2024 11:55:56 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/amd/display: Increase frame-larger-than warning limit
+To: Nathan Chancellor <nathan@kernel.org>,
+ Palmer Dabbelt <palmer@rivosinc.com>
+Cc: alexander.deucher@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com,
+ christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
+ daniel@ffwll.ch, Qingqing.Zhuo@amd.com, hamza.mahfooz@amd.com,
+ chenhuacai@kernel.org, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20240603222948.GB1802995@thelio-3990X>
+ <mhng-f1fc5ef0-9e72-4b12-9a28-145bbc8938d8@palmer-ri-x1c9a>
+ <20240613222225.GA1849801@thelio-3990X>
+Content-Language: en-US
+From: Harry Wentland <harry.wentland@amd.com>
+In-Reply-To: <20240613222225.GA1849801@thelio-3990X>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQZPR01CA0017.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:85::13) To CO6PR12MB5427.namprd12.prod.outlook.com
+ (2603:10b6:5:358::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5427:EE_|CY8PR12MB7489:EE_
+X-MS-Office365-Filtering-Correlation-Id: f71cdeeb-e9be-4067-53b7-08dc8c8a7caa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|1800799021|376011;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L2x5QndPaGVMVUlRdG4rL3BGNUozY1JFT0VzeVV5RXdveGZpR1gyNUNnVXlP?=
+ =?utf-8?B?UXhCSGhGR0kxRjNtZW51WENqd00vdzg2VXR4S2VySnlSZFRyQUJOV0Jpb3A5?=
+ =?utf-8?B?V3hsbHRhemtzSGFjZDlrWTNpcFBzeFhWWHg3a3lsYkx0Rm5uYlVvUEk0cVhj?=
+ =?utf-8?B?OGpBYS9VeG1BUEQycUJNZ3B6d3JzS0xLd2xnUUEwbTVWRmhaNmx3aCtmaGRs?=
+ =?utf-8?B?QTVLOGpqRjBaaWRvVUR1b0gySFJseVQ0WlZTUzl6OG5hdys1VHVlc2RxckF1?=
+ =?utf-8?B?MjM0WGVKTHFnTTBjWGR6NExPSTA5WTFEK1RQOTV0Y215MHhDYlh6YkRvaVZW?=
+ =?utf-8?B?YjFQZmJ0SmJmbFV6bVpwbnNUNlQxR3dMbUwwTDdUeHBrZnZBN2p2UUdIRzB0?=
+ =?utf-8?B?Tk5YV3QxT0NxNExMZjhSYzFnamYva3N1UUwyb0NENnRFSmNDWklDV2hqejdG?=
+ =?utf-8?B?dmJza3BPV0tBV0E0R2d2RHZqVGY5VmxEa2dUaDY5RUZxb0ZFV1RhL2dKeWc2?=
+ =?utf-8?B?Tng2eTZKZ3pmTGdWMkhsQ05VWUVTVlA0azl4eXdZN2FlY1ZVUlI1OUt3QzZX?=
+ =?utf-8?B?Z1FtMnZtajF1M1pVOVF0QlFIMnJoNHdxSk9FMDlkQ3MwUWMyNWltYURYQWRq?=
+ =?utf-8?B?aVYwelpFbUN5ME5LYUZoeHVsQkpBMlV1b25HUnNzZXJHd0hwajcrQVo4R0ZC?=
+ =?utf-8?B?WkVVOHNRSUQ0WCtzWHFMU3JMcFhDcjVLaWJhZ2FMQVp5cWUvQmdKK25Md09y?=
+ =?utf-8?B?RUpiU1djOG5ldlVRT2tzSFQ4dWhkNXZDMVVhT1lZS2NSRTJ0enFmcm54WCtp?=
+ =?utf-8?B?c1czRkF6engyMHFNc3ZESnIvcFloOVJHL004N3U4QTA3Vjc1UlhzTWRpc1g4?=
+ =?utf-8?B?dTBjR1M3MnlwRitqVmcrSHZGaDRWMGJaM2FCcFZGeU14emh5dlVGQlZ0c0VR?=
+ =?utf-8?B?VWJ1RUN1SGxjNVRJN084RnR0SDUzbHNDTlZCbWQreFRreldIaGxDY1NpNmN6?=
+ =?utf-8?B?QVBBQTFmd2owY1FwN21rcGtOakdYaDh5TDFJdXBCc09xZmVsbkRmK1lUcjRv?=
+ =?utf-8?B?dnpTeVVPZmx1ZkRFZ0hudWlnc0dWcjlzK2p0bWlZTi9KUnY4R3diLzVnVDRm?=
+ =?utf-8?B?a2NsaUxwYTFzTFRZOGx1dW5qMlVLU0xNWTB4ODBGQVdOUy85ZHd2Vm1TZzN5?=
+ =?utf-8?B?Y3RIR001NnlvMm90N1EyQUxMTmNnbVdLeC9aM1VyZnB1WENnOXkwQk5jOG5y?=
+ =?utf-8?B?UEtTeHZqMEhaODhvamFMQUgyNU1NYVYwTHNHeCtGNi9FbUkrMitCTk4vTGpk?=
+ =?utf-8?B?eG8xZkVvMG5rcXZyaUpKZ3VITjhROTNEdkNMT1F4N1Zyc253dEo5cVYxK0NO?=
+ =?utf-8?B?bWQreFhTUWVkemsyVTNqRE5ZM05PazRvclRUNG9BU1hLUDd3aEJ3M25iVFFE?=
+ =?utf-8?B?SUJMV2EvZHNDMndPdkhjSnF4SFBtOS8raHZPQ3VKVWlIaUNxS3EzenE5dHkx?=
+ =?utf-8?B?T1lObjB6dGJCMkV3d2YwRGNNaWx4SWZDQlFNUk1lWkVybXkyalhUem1ZZXR3?=
+ =?utf-8?B?MHlIREViV0ZkMW1DSEk1aUNOWDJxc3YvbVlwWkNNOUk0NTdNZG9jZXZTZEJy?=
+ =?utf-8?B?NWVvUW11aG41TDREbWRFU0g2Z3YvSTBna1dhdDEwTDF4bUFrT2JFNVNUWURD?=
+ =?utf-8?B?d29XZXo1dmlmQWVudEZuZzd0ZDVRNTVPR1pkVWNMUWcycEo5amxDV2lnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5427.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(1800799021)(376011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?M3dRK3p2YUxpVDFVT29sR1BwSHBVUldJWStnMHZSYlZ4cm1vbFpTWk4xaU9W?=
+ =?utf-8?B?azBCdUtxQzBwNVJIU3dPL3lCbEpKUVdTR3ZTeXQxVjdha3B4ZWg4U0szVGVx?=
+ =?utf-8?B?THNMOGN6b05DdkIyN0IyVUdtamtib1RsMHdvK2lhRWpLenlCeTBzdmFVbk1Z?=
+ =?utf-8?B?c01xWmJJSmFoSlJSTEhNZnhRT1dtK2VTK0hKREZuOXJwenEwOC8rQ1RlVko0?=
+ =?utf-8?B?NGtSS3ZFcXZLSmIzZXBvRmhiRVNsNDJRbFFWa3lETVFWaU9LMk9nUEcxU2F5?=
+ =?utf-8?B?SG4zZUdLK1VBbEVnSjlYcWFBUlVHQmdrd21yR09kM2xNTFBKemYzblZnUDQx?=
+ =?utf-8?B?NDNQK0Z1UGllSTFVTE5JdHVqZytjWVJGdE1RU1cyVWhzcytocklXU0ZIbzRR?=
+ =?utf-8?B?TVo2aFhpU2dOQjdiVW00NXIyQ04rSHJxek02NkEvaTJuR29tQjZJRVpZc0tN?=
+ =?utf-8?B?ajQvT1dJeXlWcDh5a0VvS3hEZFVaY3llVy95OTlmdWxXVHR5R3hGODNEU3Fr?=
+ =?utf-8?B?Z3BBV1hXSGNoWjJsaTIyR0xGQ1JPR25RTU1TK3lkYzZsTldKQUErMHhxTHBy?=
+ =?utf-8?B?em1FZ2JKYjlyWU82ZUJPaVBiUnFvR1BRQXRLMllHN0RobHl4RFJMaHBzWTVM?=
+ =?utf-8?B?ZW54d2RvNVFmSjZtWkZSWGtyczMvN252WlhVWGZIVk5QbGk2NWhoU290bmg2?=
+ =?utf-8?B?MTNHRE95cG1ZandaWWZiSHZQR01abFB2dm10bEQrbkFON0lZM01kbXFGM1hJ?=
+ =?utf-8?B?bUR5aVhncGpna2Y3UjZybDRmNmwxYTFxVSszdjdGcWpQWWV2RFZZYjMrWXZ0?=
+ =?utf-8?B?LzZ6LzhnRVRtVlVTaDE0RUViNThvdjFoYkd0TFFvQWRobG1pbitpWUZKQkVT?=
+ =?utf-8?B?SlpTeUpOeGFYYzg4R0hyZ3lJeFI2VDRKbFgzVDJGOHI3K3hUMm1xM1Bqck1y?=
+ =?utf-8?B?dU5wT1hNRVRlSUpFNmhGU3VlQ1BXa1pwSW1CUUFWbVo4eDlJVUE1Z3h5ZzFw?=
+ =?utf-8?B?RzFhUHMyUkdCMnV1QWdkaUJKbEdCYlM3TGFmTkloMmdIK21zdXNhL3FsZXYr?=
+ =?utf-8?B?czNCRldianYzb0NXdCtvSGYwT0xXdkl3b0ZIU1dBSytkaW5nRUhSQmhMMW1Z?=
+ =?utf-8?B?RElvSk5sSk45UXJkcDhZY08wZVpZTWIrTHRXSHAwNE1ZbE5XYlJRR3d5Zi9l?=
+ =?utf-8?B?eHFmWDJ6TlEycFY5Tnl5WE5IcStvUGlsMHZCalZ5YlhIM1VXZDhFWlVocUlx?=
+ =?utf-8?B?VTFqTVkwbDV1TEFSNFVXVVRyWkxvQVJtdDdoTkJvbE1obUpXNSt3cWVZRlhi?=
+ =?utf-8?B?UDA4MEpaOFFVZTNSYWZBZFVnUDFZUUNmaXBQVW44VFFvcE9SN0ZjQ2JoUmN2?=
+ =?utf-8?B?Ump2TmRwa1c4RUljQWwxSC9iU2hjNklzVE9aNlZpdTY4YUZoWCtraktXSk11?=
+ =?utf-8?B?aDQreE42MFJCL0RGK2JHMTl4MkRwcEV6eE5jWjdUdUdRajJYSHBSajNXVGVJ?=
+ =?utf-8?B?NDJrd3I3cVo4dnAxcXVDY05HK2wwZmkvdTRwM2RjNHhFeitWVkJ0ZUFSK3Zq?=
+ =?utf-8?B?cWpPdlZMWm1SN1REN1BleDVSaEhJL05LNENDVkxrMldWd3dxQW9NaDhzT2Vw?=
+ =?utf-8?B?bkNwbVdiVk5UcmxMelhjWm9zZGI1MWNwWDNJYVFZandHS2pmUllHZmJuMFVs?=
+ =?utf-8?B?cFJWMU0rZUlzMHlla1pGZVZPOXRMNFlVMGlDS0NyUE04alIzV2dCMFpPaE1i?=
+ =?utf-8?B?MGg5S0FWVVBETzdOdlV0VXBMVXEwUmtuYjJVRUhuREtWeUdHL3N2SjltNHBo?=
+ =?utf-8?B?Y3FybFpYbFR4QVpQL1VQMXd4M1dtVnkyWFU4MzYxSWQvTkZOYTRxQUpjUkpX?=
+ =?utf-8?B?d1RqMXo3emhraFdIc3NTTGZWWGZSZC9BMWtyZTRFUlA4UFcweER4OEw0Qklr?=
+ =?utf-8?B?R045ZHJ0UkZ6Y1kxQnd0enVReC85aUlRNzNHbjhlSlNpVlN3ZUlkUGp0MCth?=
+ =?utf-8?B?K1Y4RzllTnpTaWxMcW15K2wrZ2pLSVN0LzVWRDhDUExIV1hWZ1hHN1NwMjE5?=
+ =?utf-8?B?K0pVM2owazRDUVJlTXIvM2RORlFWRXlKaU4xREo3UFlmR2gzcjl5TndtRExL?=
+ =?utf-8?Q?aMQS9syDaMlHtWEhq1XDzUEWL?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f71cdeeb-e9be-4067-53b7-08dc8c8a7caa
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5427.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2024 15:56:00.7065
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1WtEYdh4UtakF4v/RXGr1UyYnjvu8eY3aaGiYy1uCVpzoH5IgWLArifI4k4siHu7wdrIvYlAXjoDIo1VehnW2w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7489
 
-Adri=C3=A1n Moreno <amorenoz@redhat.com> writes:
 
-> On Mon, Jun 03, 2024 at 03:02:46PM GMT, Aaron Conole wrote:
->> Adrian Moreno <amorenoz@redhat.com> writes:
->>
->> > Netlink flags, although they don't have payload at the netlink level,
->> > are represented as having a "True" value in pyroute2.
->> >
->> > Without it, trying to add a flow with a flag-type action (e.g: pop_vla=
-n)
->> > fails with the following traceback:
->> >
->> > Traceback (most recent call last):
->> >   File "[...]/ovs-dpctl.py", line 2498, in <module>
->> >     sys.exit(main(sys.argv))
->> >              ^^^^^^^^^^^^^^
->> >   File "[...]/ovs-dpctl.py", line 2487, in main
->> >     ovsflow.add_flow(rep["dpifindex"], flow)
->> >   File "[...]/ovs-dpctl.py", line 2136, in add_flow
->> >     reply =3D self.nlm_request(
->> >             ^^^^^^^^^^^^^^^^^
->> >   File "[...]/pyroute2/netlink/nlsocket.py", line 822, in nlm_request
->> >     return tuple(self._genlm_request(*argv, **kwarg))
->> >                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->> >   File "[...]/pyroute2/netlink/generic/__init__.py", line 126, in
->> > nlm_request
->> >     return tuple(super().nlm_request(*argv, **kwarg))
->> >            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->> >   File "[...]/pyroute2/netlink/nlsocket.py", line 1124, in nlm_request
->> >     self.put(msg, msg_type, msg_flags, msg_seq=3Dmsg_seq)
->> >   File "[...]/pyroute2/netlink/nlsocket.py", line 389, in put
->> >     self.sendto_gate(msg, addr)
->> >   File "[...]/pyroute2/netlink/nlsocket.py", line 1056, in sendto_gate
->> >     msg.encode()
->> >   File "[...]/pyroute2/netlink/__init__.py", line 1245, in encode
->> >     offset =3D self.encode_nlas(offset)
->> >              ^^^^^^^^^^^^^^^^^^^^^^^^
->> >   File "[...]/pyroute2/netlink/__init__.py", line 1560, in encode_nlas
->> >     nla_instance.setvalue(cell[1])
->> >   File "[...]/pyroute2/netlink/__init__.py", line 1265, in setvalue
->> >     nlv.setvalue(nla_tuple[1])
->> >                  ~~~~~~~~~^^^
->> > IndexError: list index out of range
->> >
->> > Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
->> > ---
->>
->> Acked-by: Aaron Conole <aconole@redhat.com>
->>
->> I don't know which pyroute2 version I had used when I tested this
->> previously, but even on my current system I get this error now.  Thanks
->> for the fix.
->>
->
-> Thanks Aaron. I'll resend as v2 with your ack as a stand-alone patch
-> since the other patch of this series will be fixed by your soon-to-come
-> series.
 
-Thanks!
-
->> >  tools/testing/selftests/net/openvswitch/ovs-dpctl.py | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >
->> > diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/to=
-ols/testing/selftests/net/openvswitch/ovs-dpctl.py
->> > index b76907ac0092..a2395c3f37a1 100644
->> > --- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
->> > +++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
->> > @@ -537,7 +537,7 @@ class ovsactions(nla):
->> >              for flat_act in parse_flat_map:
->> >                  if parse_starts_block(actstr, flat_act[0], False):
->> >                      actstr =3D actstr[len(flat_act[0]):]
->> > -                    self["attrs"].append([flat_act[1]])
->> > +                    self["attrs"].append([flat_act[1], True])
->> >                      actstr =3D actstr[strspn(actstr, ", ") :]
->> >                      parsed =3D True
+On 2024-06-13 18:22, Nathan Chancellor wrote:
+> Hi Palmer (and AMD folks),
+> 
+> On Tue, Jun 04, 2024 at 09:04:23AM -0700, Palmer Dabbelt wrote:
+>> On Mon, 03 Jun 2024 15:29:48 PDT (-0700), nathan@kernel.org wrote:
+>>> On Thu, May 30, 2024 at 07:57:42AM -0700, Palmer Dabbelt wrote:
+>>>> From: Palmer Dabbelt <palmer@rivosinc.com>
+>>>>
+>>>> I get a handful of build errors along the lines of
+>>>>
+>>>>     linux/drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn32/display_mode_vba_32.c:58:13: error: stack frame size (2352) exceeds limit (2048) in 'DISPCLKDPPCLKDCFCLKDeepSleepPrefetchParametersWatermarksAndPerformanceCalculation' [-Werror,-Wframe-larger-than]
+>>>>     static void DISPCLKDPPCLKDCFCLKDeepSleepPrefetchParametersWatermarksAndPerformanceCalculation(
+>>>>                 ^
+>>>>     linux/drivers/gpu/drm/amd/amdgpu/../display/dc/dml/dcn32/display_mode_vba_32.c:1724:6: error: stack frame size (2096) exceeds limit (2048) in 'dml32_ModeSupportAndSystemConfigurationFull' [-Werror,-Wframe-larger-than]
+>>>>     void dml32_ModeSupportAndSystemConfigurationFull(struct display_mode_lib *mode_lib)
+>>>>          ^
+>>>
+>>> Judging from the message, this is clang/LLVM? What version?
 >>
+>> Yes, LLVM.  Looks like I'm on 16.0.6.  Probably time for an update, so I'll
+>> give it a shot.
+> 
+> FWIW, I can reproduce this with tip of tree, I was just curious in case
+> that ended up mattering.
+> 
+>>> I assume
+>>> this showed up in 6.10-rc1 because of commit 77acc6b55ae4 ("riscv: add
+>>> support for kernel-mode FPU"), which allows this driver to be built for
+>>> RISC-V.
+>>
+>> Seems reasonable.  This didn't show up until post-merge, not 100% sure why.
+>> I didn't really dig any farther.
+> 
+> Perhaps you fast forwarded your tree to include that commit?
+> 
+>>> Is this allmodconfig or some other configuration?
+>>
+>> IIRC both "allmodconfig" and "allyesconfig" show it, but I don't have a
+>> build tree sitting around to be 100% sure.
+> 
+> Yeah, allmodconfig triggers it.
+> 
+> I was able to come up with a "trivial" reproducer using cvise (attached
+> to this mail if you are curious) that has worse stack usage by a rough
+> factor of 2:
+> 
+>   $ clang --target=riscv64-linux-gnu -O2 -Wall -Wframe-larger-than=512 -c -o /dev/null display_mode_vba_32.i
+>   display_mode_vba_32.i:598:6: warning: stack frame size (1264) exceeds limit (512) in 'DISPCLKDPPCLKDCFCLKDeepSleepPrefetchParametersWatermarksAndPerformanceCalculation' [-Wframe-larger-than]
+>     598 | void DISPCLKDPPCLKDCFCLKDeepSleepPrefetchParametersWatermarksAndPerformanceCalculation() {
+>         |      ^
+>   1 warning generated.
+> 
+>   $ riscv64-linux-gcc -O2 -Wall -Wframe-larger-than=512 -c -o /dev/null display_mode_vba_32.i
+>   display_mode_vba_32.i: In function 'DISPCLKDPPCLKDCFCLKDeepSleepPrefetchParametersWatermarksAndPerformanceCalculation':
+>   display_mode_vba_32.i:1729:1: warning: the frame size of 528 bytes is larger than 512 bytes [-Wframe-larger-than=]
+>    1729 | }
+>         | ^
+> 
+> I have not done too much further investigation but this is almost
+> certainly the same issue that has come up before [1][2] with the AMD
+> display code using functions with a large number of parameters, such
+> that they have to passed on the stack, coupled with inlining (if I
+> remember correctly, LLVM gives more of an inlining discount the less a
+> function is used in a file).
+> 
+> While clang does poorly with that code, I am not interested in
+> continuing to fix this code new hardware revision after new hardware
+> revision. We could just avoid this code like we do for arm64 for a
+> similar reason:
+> 
+> diff --git a/drivers/gpu/drm/amd/display/Kconfig b/drivers/gpu/drm/amd/display/Kconfig
+> index 5fcd4f778dc3..64df713df878 100644
+> --- a/drivers/gpu/drm/amd/display/Kconfig
+> +++ b/drivers/gpu/drm/amd/display/Kconfig
+> @@ -8,7 +8,7 @@ config DRM_AMD_DC
+>  	depends on BROKEN || !CC_IS_CLANG || ARM64 || RISCV || SPARC64 || X86_64
+>  	select SND_HDA_COMPONENT if SND_HDA_CORE
+>  	# !CC_IS_CLANG: https://github.com/ClangBuiltLinux/linux/issues/1752
+> -	select DRM_AMD_DC_FP if ARCH_HAS_KERNEL_FPU_SUPPORT && (!ARM64 || !CC_IS_CLANG)
+> +	select DRM_AMD_DC_FP if ARCH_HAS_KERNEL_FPU_SUPPORT && (!(ARM64 || RISCV) || !CC_IS_CLANG)
+>  	help
+>  	  Choose this option if you want to use the new display engine
+>  	  support for AMDGPU. This adds required support for Vega and
+> 
+
+This makes sense to me. I'll be happy to provide an RB if you send a patch.
+
+Harry
+
+> [1]: https://lore.kernel.org/20231019205117.GA839902@dev-arch.thelio-3990X/
+> [2]: https://lore.kernel.org/20220830203409.3491379-1-nathan@kernel.org/
+> 
+> Cheers,
+> Nathan
 
 
