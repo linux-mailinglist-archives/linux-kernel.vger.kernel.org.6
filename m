@@ -1,92 +1,131 @@
-Return-Path: <linux-kernel+bounces-215278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B383909090
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:39:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6CC6909097
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 18:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 330681C20EAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:39:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68110282B01
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D451C190072;
-	Fri, 14 Jun 2024 16:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A26A17B511;
+	Fri, 14 Jun 2024 16:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="WJ7vDagc"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZojFhx9R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB96FF503;
-	Fri, 14 Jun 2024 16:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B949919D8B3;
+	Fri, 14 Jun 2024 16:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718383080; cv=none; b=M/CcKBFrIFQuZbrg5yNvBnyFpj5GoDhEqnsDZjhXwtilyZCiy8uhQiWywaKFbQmx7CDbs6Xr8yLVKv4rzZgSzgO0GOvC8+vaJ9DpPSijaPVAITAaFmUp5tu2wzmMoMVpx9nTEcA/8CclD0Ma8pnYAKcWmDHemo/GZ/oyToLdXDw=
+	t=1718383181; cv=none; b=L3kmboe7kAJKM3H31ARjmtBdO3WxTPKw1L7AG5jVdXTjMvoNLW6y3d1yl53wOzc3SeXLnc/fvHc2z2xEsOox6CNGHDLK9NGYTSkRYgwSOnCHLu8dI2vzTJEowLFMBAKT/Yq9YQJda++HIfNkwH3buUiWq9xFezFa+jno5MG2iXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718383080; c=relaxed/simple;
-	bh=rbI461EkY+O82rIdLacESjQh8e+TfXTNTovVptOP7fg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nNStWP6r9ZGpVsqspWCSGju2dY5fa34bXkZjMBh0Jqc4PotWekDSlmFn+MCdiCVbCGtJVZaqsJYxyWYvloiwPlwv8U+cWfTo+lPZ46Hmx/1xXlb83oK+s4ZICglOfxlKi5xz51BluHGks4+JpEZ7QCkg2xRErJzucrK1vWr45d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=WJ7vDagc; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4W14hQ1VNgz6Cnk9T;
-	Fri, 14 Jun 2024 16:37:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1718383075; x=1720975076; bh=rVAOoiL7T4sp9wV/qU37I9CI
-	ad3CMpyP1RegUn37wuI=; b=WJ7vDagcJqVdIx5I/nK9aMkaSyq+Y+huyDTxVgus
-	02/pGiwkSYs0z8f3lnM672oaCU6ma1CgCLv6T+687Dr07ptt+WKv74aF/pj7d/i7
-	SYVtMD9ZXCAOib8zNRoWIlry/rzlRRHnP967/t2lJXjsxUQcuQNyC+a+zauvJGBi
-	YShmbNcxHygeVduysRXQGv94LXR2kOmcDf5O7xJ2+tkfnFt56g5guxXNjY5wOcNY
-	OfoB19+OXjzPHrsrZzrpDl36aBvW+ddFfLvITJgEx51Z6gO+W2+Fdo4yUES5ha4X
-	N4oofHI9zyTLFYxZ5EqHoIgwWLNJPSjmP/XWYHz32Aj3QQ==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 7p7AI90NQFEY; Fri, 14 Jun 2024 16:37:55 +0000 (UTC)
-Received: from [100.96.154.26] (unknown [104.132.0.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4W14hL6KVSz6Cnk9B;
-	Fri, 14 Jun 2024 16:37:54 +0000 (UTC)
-Message-ID: <b628c844-1e3a-4c5f-9636-dad570a70517@acm.org>
-Date: Fri, 14 Jun 2024 09:37:54 -0700
+	s=arc-20240116; t=1718383181; c=relaxed/simple;
+	bh=rQAw4/a1qgbkU6RaCZyZLYHMVr3338QIkfwOfXq06lY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=irbWu8vKcPAJZ9+nktynkkUd6bOBb9q+WP+Oi+vdBM3m1iFi1iBO7bz9Es35BW6uO00B9IungxLnupQ9KjpKxdys+1YugE7xe6HvyoKGPpUwIWnNePuyMbGVcuP0Bza2VzYVmx0vSWAFk9tZs807TQpS96MUkZUryDOojQ98Zak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZojFhx9R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07463C2BD10;
+	Fri, 14 Jun 2024 16:39:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718383181;
+	bh=rQAw4/a1qgbkU6RaCZyZLYHMVr3338QIkfwOfXq06lY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZojFhx9R+LTcgFWvB6D579Bp8pIHrYMdVo1lmf347EF9750RL1fZP5YQ6cP5bx56J
+	 KbS0QP56JtA/VXT8o3Kgf1w9YrMjSpiAf3gudn0XXCuYxa2vI+ha20167AnbL5WU0w
+	 o438zH18o/mVxo5f1uJHdXuytusVP2RdnCx4OxulIN4B+FInAHbHeuxgxCeXgO99iu
+	 ZBWRSgpQg4LbZpsx8VD8afNWprlGFHdxcRIg1L3UguxypEjqku93IHdHAARj0vnT59
+	 LoSLUO5dUfHuxLEgKrCMeoHc8VF00mJFSssnmRQyYAIw2T4sWzw3R49KTJrsC/8U7b
+	 vvi+/hkfl8fvw==
+From: SeongJae Park <sj@kernel.org>
+To: Honggyu Kim <honggyu.kim@sk.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Gregory Price <gregory.price@memverge.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	42.hyeyoo@gmail.com,
+	art.jeongseob@gmail.com,
+	kernel_team@skhynix.com,
+	Hyeongtak Ji <hyeongtak.ji@sk.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	Yunjeong Mun <yunjeong.mun@sk.com>
+Subject: Re: [PATCH v6 0/7] DAMON based tiered memory management for CXL memory
+Date: Fri, 14 Jun 2024 09:39:37 -0700
+Message-Id: <20240614163937.85523-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240614030010.751-1-honggyu.kim@sk.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] block: BFQ: Refactor bfq_exit_icq() to silence sparse
- warning
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
- paolo.valente@unimore.it
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- jiapeng.chong@linux.alibaba.com, hch@lst.de
-References: <20240614090345.655716-1-john.g.garry@oracle.com>
- <20240614090345.655716-4-john.g.garry@oracle.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240614090345.655716-4-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/14/24 2:03 AM, John Garry wrote:
-> Currently building for C=1 generates the following warning:
-> block/bfq-iosched.c:5498:9: warning: context imbalance in 'bfq_exit_icq' - different lock contexts for basic block
+On Fri, 14 Jun 2024 12:00:02 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
+
+> There was an RFC IDEA "DAMOS-based Tiered-Memory Management" previously
+> posted at [1].
 > 
-> Refactor bfq_exit_icq() into a core part which loops for the actuators,
-> and only lock calling this routine when necessary.
+> It says there is no implementation of the demote/promote DAMOS action
+> are made.  This patch series is about its implementation for physical
+> address space so that this scheme can be applied in system wide level.
+> 
+> Changes from v5:
+> https://lore.kernel.org/20240613132056.608-1-honggyu.kim@sk.com
+>   1. Remove new actions in usage document as its for debugfs
 
-I like this patch because it makes the code easier to read.
+Thank you, I confirmed this and gave you my Reviewed-by: tag.
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+>   2. Apply minor fixes on cover letter
 
+But...
+
+[...]
+>   2. YCSB zipfian distribution read only workload (with demotion_enabled true)
+>   memory pressure with cold memory on node0 with 512GB of local DRAM.
+>   ====================+================================================+=========
+>                       |       cold memory occupied by mmap and memset  |
+>                       |   0G  440G  450G  460G  470G  480G  490G  500G |
+>   ====================+================================================+=========
+>   Execution time normalized to DRAM-only values                        | GEOMEAN
+>   --------------------+------------------------------------------------+---------
+>   DAMON tiered        |    -  1.03  1.03  1.03  1.03  1.03  1.07  1.05 | 1.04
+>   DAMON lazy          |    -  1.04  1.03  1.04  1.05  1.06  1.06  1.06 | 1.05
+>   DAMON tiered kswapd |    -  1.03  1.03  1.03  1.03  1.02  1.02  1.03 | 1.03
+>   DAMON lazy kswapd   |    -  1.04  1.04  1.04  1.03  1.05  1.04  1.05 | 1.04
+>   ====================+================================================+=========
+>   CXL usage of redis-server in GB                                      | AVERAGE
+>   --------------------+------------------------------------------------+---------
+>   DAMON tiered        |    -   0.6   0.5   0.4   0.7   0.8   7.1   5.6 |  2.2
+>   DAMON lazy          |    -   0.5   3.0   4.5   5.4   6.4   9.4   9.1 |  5.5
+>   DAMON tiered kswapd |    -   0.0   0.0   0.4   0.5   0.1   0.8   1.0 |  0.4
+>   DAMON lazy kswapd   |    -   4.2   4.6   5.3   1.7   6.8   8.1   5.8 |  5.2
+>   ====================+================================================+=========
+> 
+> Each test result is based on the exeuction environment as follows.
+
+Seems the typo is not fixed?
+
+I don't want to delay this work for such trivial thing, though.  For the patch
+series,
+
+
+Acked-by: SeongJae Park <sj@kernel.org>
+
+
+Thanks,
+SJ
+
+[...]
 
