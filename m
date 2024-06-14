@@ -1,108 +1,148 @@
-Return-Path: <linux-kernel+bounces-214420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25FB2908428
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:03:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED45F908429
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C49BC1F228F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:03:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6986C1F22989
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C672714882F;
-	Fri, 14 Jun 2024 07:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A461487F9;
+	Fri, 14 Jun 2024 07:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="kSnb4UqH"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fH/MV2++"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED8E148849;
-	Fri, 14 Jun 2024 07:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B4313A41A
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 07:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718348563; cv=none; b=KjtTL7k5yxTzqam1lOTss5kqKhbFllh8BogRDpwNJTmG1tS936Ike1N7Xqk+N5Wr4VjqHqnHC0kEv54sNUdone5ARAXH9obJbSu8sDkc1BSARLJ7NZcvp0ao2F0zvpIZVG0nXNRBHLGMvLYx7Tq1+9cBOroh5CWw1QjYC99lDm8=
+	t=1718348638; cv=none; b=UGiVMrNbBR74E4qS1DQsnCeMLc7Zi+VRqjcgAk0le0x2hcko5sbHDrMs9K3hPN/oynIGJAC2BVvFT2F+/DeCfeNkLFDs32kcpoILeP4YOTrO7twu/Vg9x9XZ/kW8ShobqboOKIQ7l2j4t/MVhIYaLh9IA+yskjtWAWCAea0uIX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718348563; c=relaxed/simple;
-	bh=8p2Al/9e1siGHXoHFWJ+KpCoiuz9+nAteekXoz94MzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f9KR6j5EvZJFE2IEIvVdGUM5+fM4IDZWy9DTj2pMfZPt4EbOvzH/UMJd+Yh6fWtTQNw2dRbOT1n23p8jFFPHQvRpfy/MPmqbXMv3HLFxLnDNBgO6Kh15KjvEsUYEwi+SEOVU6FLv2Y4RAUA1Ax0pZrE0Ef3lsGD3uygnFy3IMUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=kSnb4UqH; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1718348551;
-	bh=8p2Al/9e1siGHXoHFWJ+KpCoiuz9+nAteekXoz94MzM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kSnb4UqHpVouIJdpPGuVIdKOTMgrjcS5soC2D6Sa3E3rIKyIQ6Hcp3MA7Q1vsJp+V
-	 3IJ3HIc9Weu9hvk2vIqwKnElogg9g8HbafPMUgUugPM8UAcCIaSQ3OzklM4jmSBFct
-	 5AiF3jG+7e7o54seLecdWVVOgs+JlQMbVsjnCJOE=
-Date: Fri, 14 Jun 2024 09:02:29 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 3/5] power: supply: core: implement extension API
-Message-ID: <3491c641-bee2-4100-8eb6-8e90d63330b0@t-8ch.de>
-References: <20240608-power-supply-extensions-v2-0-2dcd35b012ad@weissschuh.net>
- <20240608-power-supply-extensions-v2-3-2dcd35b012ad@weissschuh.net>
- <76dff03c-08f6-4edc-af57-c0b8dbf55293@gmx.de>
+	s=arc-20240116; t=1718348638; c=relaxed/simple;
+	bh=MNbfEaigD6aPLWW54LgFWKSKSsvzTT7J6aOZ31OO87c=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BiISgTG5diHX/ROKGBuNRyQzQvdRvPqW+7HJlzgxEQKDujhsclKzKPgeBV6JS2XHiKbl+xhnCUWLSTpnCLtx63yq9AvKsQ44N7xmGndaGdaPAezazPGF8s/9TKwAIUElV2T4i3Nftxd4ebcbJwdkB5LedHI+GmrTcvtYdJKU+dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fH/MV2++; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-421757d217aso20692965e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 00:03:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718348635; x=1718953435; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p4TNjSLKkh/gyKR6pHDFcT9hwwp7eBZGwBalltj+b7Q=;
+        b=fH/MV2++fbvhpL2hDr7kUBcXdWAuDhM2zqCa4cDui7BX6PmzRhiXuarPAmQQZnKCfL
+         mkSWPTLd+3SrlFihmp3bTuvsYRYArvHvrHx8bCza2CqdBzbBFQV04J9v0S6J+N8fZgui
+         XwWEP3+nmiI8EmRBrECKadO/Pfm3QKeM5HUTtD09aiSSGxEqe0y5mlAM6+PBTajJ1TZe
+         uC3jyBqWmFrM1ccN79YC31Xk+G7ZhmGkgLWCdcoza2DaYRa7wLZD9Yw0jIc6/Pxsri3S
+         OsEx4TTqfOw6n4/yjj9r7SlUG/PyqXW7Eu37VB3RSgrOYCnmu/bY7rBDfU4MTMFYs/3o
+         e2ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718348635; x=1718953435;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=p4TNjSLKkh/gyKR6pHDFcT9hwwp7eBZGwBalltj+b7Q=;
+        b=FAPA7VmQIqwoloHuoRFr4ESkGGZTnDwxlKbpGBT1uo7lHC797KZ931UlWGakA0c7MR
+         UCDua9JDqBRONe8o9jX5H8vTI8DnIdVfb02OcstCLL9JKsjEl8piZl/9Kp2IJfzam+hN
+         CyO/V9OzJaD21hrA9hHS+NscpD/1/VTZdNwqkl1QJJDjNPCHWGZdweaRp45I0slfuE9D
+         R2DvDPoE8UZSqHROQUzD0JC1Raci8swnClyMDBnIE2He8OszFUbN+746Gz1S3dJqnMD/
+         GfSpa4ltcIIzctvuvb8Y4Hu6bVq+zMHV3dXRcFV7M9auoQrODv3VRookaUJ6GvLDqaOW
+         7dVw==
+X-Forwarded-Encrypted: i=1; AJvYcCWVnCPocwnCBMJBRZjNajpc2OMlW9oFRAed2KOliZ5b+g1j16Cdf4ZvV0xkWCRydzK4/OthVJpJq+kjEwLj+FaUj0wfShAZOD+WSoYs
+X-Gm-Message-State: AOJu0YwrTOzrulECJcGnCvSN4JP2pMZ7Hl+KlsDlJm+UXMZxMDNcN9vv
+	/29L2JUNMPoXNAsoQstT0iwCrETXpfFw5ZL8+1Kc9BPc9Epns7YO+afaL2TGbwk=
+X-Google-Smtp-Source: AGHT+IHAglRk9laq/PIfLee3Z5IGuhgrv0laafxD6GLaZVL31iAoc0E90SWCdrFlPsghFo7Ds38cTA==
+X-Received: by 2002:a05:600c:3c9a:b0:41c:2313:da8d with SMTP id 5b1f17b1804b1-4230483252bmr21763455e9.0.1718348635126;
+        Fri, 14 Jun 2024 00:03:55 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:261a:269e:a3a8:a2cc? ([2a01:e0a:982:cbb0:261a:269e:a3a8:a2cc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de623sm87193705e9.31.2024.06.14.00.03.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 00:03:54 -0700 (PDT)
+Message-ID: <ef7015e9-53b8-414c-802c-a56b98506755@linaro.org>
+Date: Fri, 14 Jun 2024 09:03:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <76dff03c-08f6-4edc-af57-c0b8dbf55293@gmx.de>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] firmware: meson_sm: add missing MODULE_DESCRIPTION()
+ macro
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20240613-md-arm64-drivers-firmware-meson-v1-1-28e4138a8597@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240613-md-arm64-drivers-firmware-meson-v1-1-28e4138a8597@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi!
-
-On 2024-06-14 01:11:29+0000, Armin Wolf wrote:
-> Am 08.06.24 um 21:19 schrieb Thomas Weißschuh:
+On 13/06/2024 23:18, Jeff Johnson wrote:
+> With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/meson/meson_sm.o
 > 
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> >   drivers/power/supply/power_supply.h       |  13 ++-
-> >   drivers/power/supply/power_supply_core.c  | 128 ++++++++++++++++++++++++++++--
-> >   drivers/power/supply/power_supply_hwmon.c |   2 +-
-> >   drivers/power/supply/power_supply_sysfs.c |  37 ++++++++-
-> >   include/linux/power_supply.h              |  26 ++++++
-> >   5 files changed, 192 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/drivers/power/supply/power_supply.h b/drivers/power/supply/power_supply.h
-> > index 622be1f0a180..686b66161900 100644
-> > --- a/drivers/power/supply/power_supply.h
-> > +++ b/drivers/power/supply/power_supply.h
-> > @@ -13,8 +13,17 @@ struct device;
-> >   struct device_type;
-> >   struct power_supply;
-> > 
-> > -extern bool power_supply_has_property(const struct power_supply_desc *psy_desc,
-> > -				      enum power_supply_property psp);
-> > +struct psy_ext_registration {
-> > +	struct list_head list_head;
-> > +	const struct power_supply_ext *ext;
-> > +};
-> > +
-> > +#define psy_for_each_extension(psy, pos) list_for_each_entry(pos, &(psy)->extensions, list_head)
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
 > 
-> sorry for taking so long to respond, the patch looks good to me except one single thing:
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>   drivers/firmware/meson/meson_sm.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> when removing a power supply extension, the driver has to be sure that no one is still using
-> the removed extension. So you might want to add some sort of locking when using a power supply
-> extension.
+> diff --git a/drivers/firmware/meson/meson_sm.c b/drivers/firmware/meson/meson_sm.c
+> index 5d7f62fe1d5f..f25a9746249b 100644
+> --- a/drivers/firmware/meson/meson_sm.c
+> +++ b/drivers/firmware/meson/meson_sm.c
+> @@ -340,4 +340,5 @@ static struct platform_driver meson_sm_driver = {
+>   	},
+>   };
+>   module_platform_driver_probe(meson_sm_driver, meson_sm_probe);
+> +MODULE_DESCRIPTION("Amlogic Secure Monitor driver");
+>   MODULE_LICENSE("GPL v2");
+> 
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240613-md-arm64-drivers-firmware-meson-2ce24a9a9de9
+> 
 
-That was part of the v1 of the series [0].
-I dropped it in v2 to focus on the external API and semantics first.
-IMO now that we have the loop macro anyways that can also take care of
-the locking: psy_for_each_extension_locked()
-
-[0] https://lore.kernel.org/all/20240606-power-supply-extensions-v1-4-b45669290bdc@weissschuh.net/
-
-Thomas
-
-<snip>
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
