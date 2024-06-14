@@ -1,289 +1,340 @@
-Return-Path: <linux-kernel+bounces-214202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FAF3908124
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:53:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F1590811F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 03:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1BF2B232E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:53:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E373F283052
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 01:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36F51836EC;
-	Fri, 14 Jun 2024 01:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D20E1822F8;
+	Fri, 14 Jun 2024 01:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lrVumhDF"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GHiOYs6E"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720261836E2
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 01:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718329951; cv=none; b=DjBxGrSMezCYKuhOxB4HtzIUbEo96rR6mWJzKOYQv6wLvjmXuS7Bcr5Z8CjM1wtkmbB1Ci+NoMTAC5T7F57625qfI/tshLR4TkgY02gKR9/Nt7r/r0qXqH2PSvZGdGN3E8roUlBREATOhLrmIKybp58CoYVEqU0qglLmiAjngLA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718329951; c=relaxed/simple;
-	bh=3a9FeUWHB8TvmQPb495/m7vd26mtQHq+6jEXIAin+D8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iC9/kHgGl5CQwnTtqEDZXAqE4WH8tU92vo/htQ57UuqaEK/i2sEmfpvambO4wjw3mts/dk4bdlT981i4SNPjml73Am7Hz2h2dRXeb6Q7TDiJ6bEznI3jdxv+VMtXuJgyZXvTRCjWIiBBRHR3cuczjYeVngWBgL+sqxYTvssW6ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lrVumhDF; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70413de08c7so1257428b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 18:52:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718329950; x=1718934750; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h/pT6ukJbZTbcHICd4lFILO7tOygQ9w7tdWCnznoYp8=;
-        b=lrVumhDFNg3Fg3fHkxfmOC+kS0sbzQfXGrgHP51A9a/JndpINxlMxPiI8IPFa0kacy
-         tIsSN43JRlsE6zykWx6bRg1hRis6CwQuKRwAhy+cIylvxv0voyeYx0/1rN/eFr5dPsnm
-         868EhFslo9dClRDlymmIHmpCRPjfObmPo0AarS3EF/P2UlHKiwVD2GAsCxsbjOycAYI3
-         eiZ1VQLI6ZFhaO+gelTsiQ6gTPDIkUmPKBerTDUeyApYZXi02TqMC7xeYXDdUtskIodf
-         bNi3ROyPA5cQmT47WyRAgaO9RVrJ2P/yUhTkXvKXI9/FZf7iVTqMJ/UTrlYFiMrVCOHF
-         67tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718329950; x=1718934750;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h/pT6ukJbZTbcHICd4lFILO7tOygQ9w7tdWCnznoYp8=;
-        b=epVqU+Dxa1W5g0WfXJnbGwhCAfEK21//SXuM63z8DMKq8lLvrSdETlf4senw5inhL0
-         j1/xXijU9UALRRuOxRrVDQ8fLIN+MsJTzo2GiUaJ/SWyYOiJo4cWPbudMGan/gYE/JWI
-         TPZ1jUNXzSlEFCoYlRE8elCd01SF1YUcl0r13iCMdy5ZOjXXOe+X2Akdwym59qYkXBuB
-         EudPYviqv+oOOHNYLNXsm9JpaZnAGgDOitEOMNz/bgYIMKOgNSTbNFNHWHuoRnmjmAsg
-         gspWTkOnFbgt4BqnhJFz+MYZtF2sdDFi3XfJTUNbLtkQKzx0g44MtCuqAY7gp1yPlxpQ
-         cZtg==
-X-Forwarded-Encrypted: i=1; AJvYcCVl7E7QZ6VjjPq+HlJTAudYD/5B6X0gu5AqYJ9LeycIhJDfAVAVK4PIZmnINRUBqQhXXQNzk5Bb5+wPyBrNl7B3q4QJIWMavHduZUa/
-X-Gm-Message-State: AOJu0YxAU6z44n5eOu2Pq7TFSdlwnqch2h7YXQLEXmJVYMlYk4eJjhYU
-	ZybEMHQpTHWG+b6O0DLZE3Pai0M0t95svB2qRWi9ZeIJ7aK9iESt
-X-Google-Smtp-Source: AGHT+IHa1l1GAHgQyasvK4lvnN2hIWQ3RAuc8OqBpVBkUd1r2gMswUPTOL3yjTTBw1mSXUjvCm3kSg==
-X-Received: by 2002:a05:6a00:234c:b0:704:147b:d768 with SMTP id d2e1a72fcca58-705d71d0e4cmr1657112b3a.24.1718329949695;
-        Thu, 13 Jun 2024 18:52:29 -0700 (PDT)
-Received: from LancedeMBP.lan.lan ([2403:2c80:6::304f])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc96d4c3sm2000912b3a.59.2024.06.13.18.52.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jun 2024 18:52:29 -0700 (PDT)
-From: Lance Yang <ioworker0@gmail.com>
-To: akpm@linux-foundation.org
-Cc: willy@infradead.org,
-	sj@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	maskray@google.com,
-	ziy@nvidia.com,
-	ryan.roberts@arm.com,
-	david@redhat.com,
-	21cnbao@gmail.com,
-	mhocko@suse.com,
-	fengwei.yin@intel.com,
-	zokeefe@google.com,
-	shy828301@gmail.com,
-	xiehuan09@gmail.com,
-	libang.li@antgroup.com,
-	wangkefeng.wang@huawei.com,
-	songmuchun@bytedance.com,
-	peterx@redhat.com,
-	minchan@kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Lance Yang <ioworker0@gmail.com>
-Subject: [PATCH v8 3/3] mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
-Date: Fri, 14 Jun 2024 09:51:38 +0800
-Message-Id: <20240614015138.31461-4-ioworker0@gmail.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20240614015138.31461-1-ioworker0@gmail.com>
-References: <20240614015138.31461-1-ioworker0@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900F03211;
+	Fri, 14 Jun 2024 01:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718329925; cv=fail; b=pbRP1Ee+QtCrHNJUCZh3KwXWvWLRG6+bgqE6ylFM4tRIFay17LYnCbbKUvol+yg7KKYiqB4h1wOHeZ1AtN9SC46tQo2IpNaC/L4GZTbGOKMgQ9zIOsHlKasAXpNItyt0MHqtVPb2/CibvB3OuZD8YZccgmNFMdM0qkXMP7jYV7I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718329925; c=relaxed/simple;
+	bh=CfMHkOl287WexE22iQ4ATFoUqcofrA98rlQAzWWnImM=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=sYiCSLlmZ0wrBAUfOnwcX5OwMCXKI+EtkJiCH4VyJ6RDvqag2LMU9ZYhUqXp5K/x9CsfxV8OzvTf8Qs+kR/mbJuutYI6OLocvEWJlSTLSQFvTtn1wI3fSBNYC6dUUnStjCoSj2948QdnZBBkRB/gw++4kavJN3XaoTqXh34CA0g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GHiOYs6E; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718329924; x=1749865924;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=CfMHkOl287WexE22iQ4ATFoUqcofrA98rlQAzWWnImM=;
+  b=GHiOYs6EjmmvXnvXq4S3X5QON4V57HSKraARD6A7qMFfGWoY9Ots9PLW
+   hCE78769JUBKL/A4NTk4dDn0beR8LmQ4s7LZpwSR1nis91ieZjWe1t91S
+   Np93JVyX9M68o5Sb0qxQPt5i42JQ9K8sSzZ9aMia0H0LKzAQBdUTu6ckn
+   zsy0lx9ONq5LcKltgjPz0ox6Aes5MWcHW0YxI3Zhh7fH6NbvYbMkR1nSI
+   LZ7/3Rnb09bSSjxGc28iwyf8OMjpFfaoPu2CgQOVUhxehfnXEeGz8g9Nq
+   shWUl9I+r4ASFyjtrVPBLcu5vApokpnV1NHsvkC5mp/kMg5asR9eBT6pV
+   A==;
+X-CSE-ConnectionGUID: FgTGpFEcRgutMug89RnhIQ==
+X-CSE-MsgGUID: JC+Rr71jSLqiXgodpB0AWA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="19023055"
+X-IronPort-AV: E=Sophos;i="6.08,236,1712646000"; 
+   d="scan'208";a="19023055"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2024 18:52:03 -0700
+X-CSE-ConnectionGUID: VwduZPryT9axAyhiAl4aHA==
+X-CSE-MsgGUID: zSf2+90DTECjdN+gRUcijQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,236,1712646000"; 
+   d="scan'208";a="40271497"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Jun 2024 18:52:03 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 13 Jun 2024 18:52:01 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 13 Jun 2024 18:52:01 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.101)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 13 Jun 2024 18:52:01 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Xs0yEMuxfQoWTRLXkLueTGevalxkoCQ9h2K0LZMObD5ZfkbswRL1KWQVSariuoH/OcfMhTEHrtAMU9GluPo/DLiuqiRUeOIoKPoMlfCaTnnXtZg+9hJFIWoCluFDHqEa7SqrQ2KpPbVxsjAJDW35C8Fy3Oc0U+olqEXMyMaEmYxcdcQCirh6g7+7593adYtLxUiYnEi/cLsiaW/8Cj1XzK2vlpDrPZCfZApguiqiE9oRG/CX5pc4sEOV7UeWxC4PBuCx3RhOiN/g+OOkwCl1JwNdhCZrwUJL0KMlodd7v3XC0oOYJPhPec3vCo6IT09rZLKz5O8httxiRpTxAbeq9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y5vgGfasXa12ePB/UhzmZDdpHHHJ4spfmu6wwZ1NF4g=;
+ b=bMDMduISpKj6SgVokqTnwv63dygG2uPFBauUuE9lvuVG9765j90WSGda4KLhSuekvdUuAkeTAz2kCzZzwiqvrxqSwGpsb0QGU3+/V8zglqfXIqVQBy09JLL3E54c02Aqr6acuwPODg04MKJBS0guYpK4hELff0OUCY4vItI11zQ7AmmncQUCXUIL6cHEhokI6gAjoswpd7DnimRi/71JvQt0ceQCnwrqGRCwG3eKTdoiU6vpuokZilBtg2TVFAlPw+EyEkU421tDUvqpuI2sb45N0PkNh9LbSWPW3UZuItuVoH9IJPbXLzUI2u4KOPQblLN0PA9OIQS1le8nZFQvaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by SJ0PR11MB4974.namprd11.prod.outlook.com (2603:10b6:a03:2d6::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.24; Fri, 14 Jun
+ 2024 01:51:54 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7677.019; Fri, 14 Jun 2024
+ 01:51:54 +0000
+Message-ID: <9141ea08-5109-4c61-880b-a5136405878e@intel.com>
+Date: Thu, 13 Jun 2024 18:51:47 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 17/19] x86/resctrl: Introduce the interface switch
+ between ABMC and mbm_legacy
+To: Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <fenghua.yu@intel.com>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>
+CC: <x86@kernel.org>, <hpa@zytor.com>, <paulmck@kernel.org>,
+	<rdunlap@infradead.org>, <tj@kernel.org>, <peterz@infradead.org>,
+	<yanjiewtw@gmail.com>, <kim.phillips@amd.com>, <lukas.bulwahn@gmail.com>,
+	<seanjc@google.com>, <jmattson@google.com>, <leitao@debian.org>,
+	<jpoimboe@kernel.org>, <rick.p.edgecombe@intel.com>,
+	<kirill.shutemov@linux.intel.com>, <jithu.joseph@intel.com>,
+	<kai.huang@intel.com>, <kan.liang@linux.intel.com>,
+	<daniel.sneddon@linux.intel.com>, <pbonzini@redhat.com>,
+	<sandipan.das@amd.com>, <ilpo.jarvinen@linux.intel.com>,
+	<peternewman@google.com>, <maciej.wieczor-retman@intel.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<eranian@google.com>, <james.morse@arm.com>
+References: <cover.1716552602.git.babu.moger@amd.com>
+ <0148e3317b0de3b5d1eaa58af37a2910783a69c9.1716552602.git.babu.moger@amd.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <0148e3317b0de3b5d1eaa58af37a2910783a69c9.1716552602.git.babu.moger@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0328.namprd03.prod.outlook.com
+ (2603:10b6:303:dd::33) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SJ0PR11MB4974:EE_
+X-MS-Office365-Filtering-Correlation-Id: fa943014-75dd-4ecc-d2d4-08dc8c149113
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230035|1800799019|366011|7416009|376009;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?K2k3OVBWZ2lNMENQK2trc092a0pYb0FSUXU3eFA5L0hBNUx2TmNnUVBzaGx1?=
+ =?utf-8?B?VW4vc1RWUms2dk16Nm43cFFENWFUYk9rSGs5bWxCVTZnRUtFOGhUZlNCVFB6?=
+ =?utf-8?B?U2twN0VYeXZOeTdpY1dLMTZIUXdacjNrYnRDTWpIeWJoYndvbXFJaXR0OWxB?=
+ =?utf-8?B?ZlFZWWc4Q09FVStUT2dxVmlUcjhnNHhMS0p1ZS9kMlVwWXlWMnJVaEdpVkZP?=
+ =?utf-8?B?eEFQLzVYbHdNekNGUGc2aVV1RGREMnJrV2xsTkhvakJadUUwamhKSGRHTGdB?=
+ =?utf-8?B?ZzBBVnZTY1Vrb01ZcW05UVFCUEFkdWJlL00ybnR5WjFUdGpUbVQ4YnhGZ0pI?=
+ =?utf-8?B?RnJkUGNxb09GdmRQblhpcVg1U2JIUlE5dElWeDhXajBUcTBTTkFKdDZVZjc0?=
+ =?utf-8?B?K3laU2Z0UHpqVFVUcGx6MTUxcnhvQmRnZVZtVzh6RXl6ZmxtdWNhUnBva2th?=
+ =?utf-8?B?YTBTQXF6MmdGVi9pUmJmTmxJcVBCT28yRjgrd1hWV2pDMTFrSXMwWlVjWWNn?=
+ =?utf-8?B?WkVJTm91RGJwcXFkRzRhMHFVT25KNXlnVGp2KzRVVjN2OHlNNkVUR01NdjZl?=
+ =?utf-8?B?M1NqNzV2cFNPQTNBbFF4dEJGejl4Q3hZc2Y3dTFjbEhsZUdkUGptM21rSEdO?=
+ =?utf-8?B?cmtJeTVJNGkrNG9pQWJncUdiSTUveGJvcXQvVHdhQmZBektQVVc3WTBVWWRa?=
+ =?utf-8?B?TlFoY2M1cWxjUzcxQVh6cjBjeWxKNGE2Q2Z1RThWZHkrQmtUakNHQ0Y1UlZm?=
+ =?utf-8?B?T2w1U25IWVRhM1FLaVhPak00L1lIMjBySGRKcForME4wcVhaQzY2SDlGMUtV?=
+ =?utf-8?B?U1k0ZFAxT3dIdm4xeHNuQ2JsOXRCZWJONHhXSTA2RDc4MXlxRmpHbFNnWGp1?=
+ =?utf-8?B?N3hTZC9xMS9USzg4OGE1MitzcjVQbFl3NnVzTnVHLzZ2Y1RrQjNncDZuWElD?=
+ =?utf-8?B?S2xOdzdOL0s5dGxjQUVsYkt6alRTOS9aN1J2OWJzeVV4R1EyMlIvelBWN3Rv?=
+ =?utf-8?B?T3lwM2tWTzBnS3h0RE96R1gxeHo4WHFvN1ZCZkdrQ1VPbG5LcVdUeEJDOWV6?=
+ =?utf-8?B?QyttTCt6cVhYZEtDaEk5WmN5TDZiQTlIY29JYUZIOTJvYlh1V1lXM3NicDZY?=
+ =?utf-8?B?RThJenpLd2U1dTRlWHhEQXoyb3NYb3BxTzN2eTZjWHdMZ0RZTXlGVkdRa1hs?=
+ =?utf-8?B?NW0rM2hadktzTmtJUzJoMWMvK1JneVJ4cWovc2VzZXZGd1dJQkJRVnNCRThm?=
+ =?utf-8?B?RkJQbFlxOHZlM0tndzFjUFBRQ3laRFhWV1JqZ3RocVpERjhNTG91QXlOMVRw?=
+ =?utf-8?B?N3graDVlT2JXc2M2cnYyS1VlMlFtNVp5Y3VKV2VWYXN6YTV1L0FVUENmZm1v?=
+ =?utf-8?B?OEF1dVBkQmk1UFFGc3JRUmRkd2I2ZnNHRWN5WHV2YnRvQmdCamhzU01tNXlW?=
+ =?utf-8?B?YmthVjM0V2pFRXlTMWY0OCt4MlZTN0VwTm1QZmgzcjdFS1NMdkE5Rjc3ajVQ?=
+ =?utf-8?B?TzQzK1JQOHZyYkd2YzUyemRldTNoYkNsazZSdTVXMXR3dFh4ekR5Mm9jNjVI?=
+ =?utf-8?B?TC9qTVkzQlhWYU94ZTcxbjdCSkk3b0YrOW1LaTZXdE92NlFValFpV0dxZDV6?=
+ =?utf-8?B?K2grYXp0VnlkOTBqZVJhblN4TCtJT3c3RkFobjY3UGxKd0JsNXo5N3dsSmla?=
+ =?utf-8?B?eERDVnEveTZKbGwycHBwQXlDbmZIa0pMSklJZHAvYktNYjJQdHlBeU1HejdQ?=
+ =?utf-8?Q?fBefEyDlJXtsONBbYA+PrSOx+dStrkGm/qPoIAn?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230035)(1800799019)(366011)(7416009)(376009);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?N1JieHVva2FDREpFc1lmcEpkcFpERkRUV01ZbGhBYllMbDlLRmt3cm0vZ3c3?=
+ =?utf-8?B?NXZMcHlxckM0VmNzcTZsWVc4dmUxLzJKZW5hY3lLV2NjZFROb01OT2JzczJI?=
+ =?utf-8?B?enRxL3ZocXZyeEUyajRLWlFNWjkvUVZMRUtadG5LNUFHRW1qakJkR3NieG5D?=
+ =?utf-8?B?QkhxckZhaksrbnYzS1JuSUdwWlo1emhQMzl1OTdFRjdGN3BsQ1BRQlRLbGwx?=
+ =?utf-8?B?ek1UOXBFZHhuVFVpMTJKdFZscVVUN1ZvMkoxWGFuNWJhOXFvNk00aGlJcUFy?=
+ =?utf-8?B?UEJ1ckQ1cXUvT0FZZkI3WCtsYUc0UjVQSFhRbUhvdkQrVE05bWpzRVRjOFBm?=
+ =?utf-8?B?TTVPdFNmWnE1L0tHeTJMZElpZzhLNWFXZTg1QzRxL24rN2dkWGRjNWh6MWZv?=
+ =?utf-8?B?Y2Ewdk5iRkxodTI3dzBNaG9hd2EyYzAyV0N6SUNXUlJrUmVBZGUva0lhZjZT?=
+ =?utf-8?B?bzAwVmNJTzhBTVhNeXdtMkxlc1d4YVVKVk9nRnU0U3BFVzRNSGlEeGV4QnJU?=
+ =?utf-8?B?LzZiRm1HOXBJSTdtTVJRcTdPVndzdlpNUTJDTWdqdGtxZUV6eTFySDVHVy93?=
+ =?utf-8?B?c1RobkZKZU1MVmUwS2RxRkorMzAyNUJyQmRjeStYSVByU2d0UVBIWnVYRUpp?=
+ =?utf-8?B?dUJhbE9BT0g2TTRtc3l1UU5TK2VJekh4K3R5WnlOVlQrOHdsTW5nczVuZkRF?=
+ =?utf-8?B?TkNaMklOTWplcnJlMzJibHFWRDRSY3lSTi8zV3NkMTVDQUswMWRPRE4xZXlU?=
+ =?utf-8?B?U0ZhbUJLdTBQOWlLQnBHNk9Ha1Jpd1hoVHN0Ykl0Njc4alE1ck9GcDNZdTg5?=
+ =?utf-8?B?b29qekJ1M1FWWisrYm15VlltMk0rdUFGVUxqRDMra0s5c2xRMjdZVGNPMUJZ?=
+ =?utf-8?B?bTVLc3FTNGpnSmdicHhGbWMxYllUUnhGZGJaWTlhOVQvZmpwVWdRUlBVWDM1?=
+ =?utf-8?B?OVNwSTVRQUpxK05PRmFXd3k0Zm16ZjE2U3ErSEt4SEIxak1CN2VubW9aTXBq?=
+ =?utf-8?B?VjkrZmMzdCtnTUh0RDVYbWprdFl6aGpvNnNsOXNGZWg3QkVGZGpUcWRJMDM3?=
+ =?utf-8?B?aURjWWlFayttUWpVdS9LcG9Oam5BWkJOd3VLRXY2ajRFSTZBZTlxZG5Bb3li?=
+ =?utf-8?B?V29wVmR0MEk0TDdrb0lMY0NsK1IwWjZIcW1kNHFsViswSVJIbDRweHRaUWR5?=
+ =?utf-8?B?RHQ3VEZ3cFZEVXlLZ01qWVhiQ05NaWVGZmgwVGRaMVpXK0tvSXUvSEtZZWVZ?=
+ =?utf-8?B?UmRVTzkycTR3aE1XQ1Raa3UxV0Q0V3dMY0kzMWhZWmEzaWZBTkFYMG5zV2Jm?=
+ =?utf-8?B?TjM5OFFrN1JwWVdPOWY5VVM3cUprNTFSME9HSi8ySHVRbWUwRlVzRVUyOUk1?=
+ =?utf-8?B?UHV1clRHOEUrSnlBc2NCN1NGSzdHZlBqY3oxQlRnWTg3NTBTdUdLOEhvbDcw?=
+ =?utf-8?B?OGd5ODF0aGdkZ3B2aDJ1eEtjaHBndEppRzV5N0xLakxOc3o3Q3JjeFRaMUMv?=
+ =?utf-8?B?bnlQTVRFOXNEQkx4SjB6WkEzejB2T1BYNkJZeUpxOHhxS3AvYU5OcDFxcmg4?=
+ =?utf-8?B?cDZCOGJRVUIwS0VpVytZWmlLOUY2MWlkbW44c2FFekg2ZWp3TEVVUnkvems0?=
+ =?utf-8?B?ekhBMUxkNXBCVFI2cUx2STJZaWoycGsvMVFlMXRIbmQyNTlZZkJKOUNNSWoy?=
+ =?utf-8?B?YnBtTW9sc1ViV25vT0M4WlJIRHZmUEsxWWpTczhTNGgvUFVvK3dHNzkzd3BU?=
+ =?utf-8?B?RlVkTGFJL1NBUVRvb3Y2N3BSUkRobGxrNzV2SmFranJaMUVVWTB5KzhpSlZF?=
+ =?utf-8?B?eUtWQUNSY0phQSs5VlJEVVNsa0N6ckgwRU5NdmNaZ3lQcEg2YzRJMTRITW9n?=
+ =?utf-8?B?UHJPbi9HLzBIVTg5VVNYV1dNV0kyWFFiektKWlpOOXFoMWZSUmhnQ1pQWHpV?=
+ =?utf-8?B?Y3dySm1iWkZKdjdaemZsMnBrT2ZuQktJaVBSWUVrRVk2cFBkbEZkRnNJVkU4?=
+ =?utf-8?B?U2dmN1J1MlQ5UWl5UlZZSFBrL0pFK2dKQ0xiNVJIUGZIT2lwd0RHczNKUEdO?=
+ =?utf-8?B?OTJRM0FPRTkxOGtFSTZ3YkdGOVAvL05aTElHaUd5c0FaOFdrZXRvRkZSSHRG?=
+ =?utf-8?B?MGt4dGJ5a25yd3JqRkFIQlhyenZrYnVKWmlpRzNhWkhRd3JFNFdNc3hidkFi?=
+ =?utf-8?B?L1E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa943014-75dd-4ecc-d2d4-08dc8c149113
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2024 01:51:54.2204
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QFfnE7dV9FQtHnwgS0qV9/y1Oh4bjjkF90Pld/Pz8igwVoPjKfkHKmK5UndDEckplOVIB6ey8qK6i+fFwMgB+XNqOjGnarW+B9tcsN+R7yM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4974
+X-OriginatorOrg: intel.com
 
-When the user no longer requires the pages, they would use
-madvise(MADV_FREE) to mark the pages as lazy free. Subsequently, they
-typically would not re-write to that memory again.
+Hi Babu,
 
-During memory reclaim, if we detect that the large folio and its PMD are
-both still marked as clean and there are no unexpected references
-(such as GUP), so we can just discard the memory lazily, improving the
-efficiency of memory reclamation in this case.
+On 5/24/24 5:23 AM, Babu Moger wrote:
+> Introduce interface to switch between ABMC and legacy_mbm modes.
 
-On an Intel i5 CPU, reclaiming 1GiB of lazyfree THPs using
-mem_cgroup_force_empty() results in the following runtimes in seconds
-(shorter is better):
+shortlog and first sentence of changelog do not match: mbm_legacy vs legacy_mbm?
 
---------------------------------------------
-|     Old       |      New       |  Change  |
---------------------------------------------
-|   0.683426    |    0.049197    |  -92.80% |
---------------------------------------------
+> 
+> By default ABMC is enabled on resctrl mount if the feature is available.
+> However, user will have the option to go back to legacy_mbm if required.
+> 
+> $ cat /sys/fs/resctrl/info/L3_MON/mbm_assign
+> [abmc]
+> mbm_legacy
+> 
+> To enable the legacy monitoring feature:
+> $ echo  "mbm_legacy" > /sys/fs/resctrl/info/L3_MON/mbm_assign
 
-Suggested-by: Zi Yan <ziy@nvidia.com>
-Suggested-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Lance Yang <ioworker0@gmail.com>
----
- include/linux/huge_mm.h |  9 +++++
- mm/huge_memory.c        | 76 +++++++++++++++++++++++++++++++++++++++++
- mm/rmap.c               | 27 +++++++++------
- 3 files changed, 102 insertions(+), 10 deletions(-)
+Missing information about user visible impact to counters/events
+and any mitigations needed in implementation.
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 9f720b0731c4..212cca384d7e 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -430,6 +430,8 @@ static inline bool thp_migration_supported(void)
- 
- void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long address,
- 			   pmd_t *pmd, bool freeze, struct folio *folio);
-+bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long addr,
-+			   pmd_t *pmdp, struct folio *folio);
- 
- #else /* CONFIG_TRANSPARENT_HUGEPAGE */
- 
-@@ -497,6 +499,13 @@ static inline void split_huge_pmd_locked(struct vm_area_struct *vma,
- 					 unsigned long address, pmd_t *pmd,
- 					 bool freeze, struct folio *folio) {}
- 
-+static inline bool unmap_huge_pmd_locked(struct vm_area_struct *vma,
-+					 unsigned long addr, pmd_t *pmdp,
-+					 struct folio *folio)
-+{
-+	return false;
-+}
-+
- #define split_huge_pud(__vma, __pmd, __address)	\
- 	do { } while (0)
- 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index e766d3f3a302..425374ae06ed 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2688,6 +2688,82 @@ static void unmap_folio(struct folio *folio)
- 	try_to_unmap_flush();
- }
- 
-+static bool __discard_anon_folio_pmd_locked(struct vm_area_struct *vma,
-+					    unsigned long addr, pmd_t *pmdp,
-+					    struct folio *folio)
-+{
-+	VM_WARN_ON_FOLIO(folio_test_swapbacked(folio), folio);
-+	VM_WARN_ON_FOLIO(!folio_test_anon(folio), folio);
-+
-+	struct mm_struct *mm = vma->vm_mm;
-+	int ref_count, map_count;
-+	pmd_t orig_pmd = *pmdp;
-+	struct page *page;
-+
-+	if (unlikely(!pmd_present(orig_pmd) || !pmd_trans_huge(orig_pmd)))
-+		return false;
-+
-+	page = pmd_page(orig_pmd);
-+	if (unlikely(page_folio(page) != folio))
-+		return false;
-+
-+	if (folio_test_dirty(folio) || pmd_dirty(orig_pmd))
-+		return false;
-+
-+	orig_pmd = pmdp_huge_clear_flush(vma, addr, pmdp);
-+
-+	/*
-+	 * Syncing against concurrent GUP-fast:
-+	 * - clear PMD; barrier; read refcount
-+	 * - inc refcount; barrier; read PMD
-+	 */
-+	smp_mb();
-+
-+	ref_count = folio_ref_count(folio);
-+	map_count = folio_mapcount(folio);
-+
-+	/*
-+	 * Order reads for folio refcount and dirty flag
-+	 * (see comments in __remove_mapping()).
-+	 */
-+	smp_rmb();
-+
-+	/*
-+	 * If the folio or its PMD is redirtied at this point, or if there
-+	 * are unexpected references, we will give up to discard this folio
-+	 * and remap it.
-+	 *
-+	 * The only folio refs must be one from isolation plus the rmap(s).
-+	 */
-+	if (folio_test_dirty(folio) || pmd_dirty(orig_pmd) ||
-+	    ref_count != map_count + 1) {
-+		set_pmd_at(mm, addr, pmdp, orig_pmd);
-+		return false;
-+	}
-+
-+	folio_remove_rmap_pmd(folio, page, vma);
-+	zap_deposited_table(mm, pmdp);
-+	add_mm_counter(mm, MM_ANONPAGES, -HPAGE_PMD_NR);
-+	if (vma->vm_flags & VM_LOCKED)
-+		mlock_drain_local();
-+	folio_put(folio);
-+
-+	return true;
-+}
-+
-+bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long addr,
-+			   pmd_t *pmdp, struct folio *folio)
-+{
-+	VM_WARN_ON_FOLIO(!folio_test_pmd_mappable(folio), folio);
-+	VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
-+	VM_WARN_ON_ONCE(!IS_ALIGNED(addr, HPAGE_PMD_SIZE));
-+
-+	if (folio_test_anon(folio) && !folio_test_swapbacked(folio))
-+		return __discard_anon_folio_pmd_locked(vma, addr, pmdp, folio);
-+
-+	return false;
-+}
-+
- static void remap_page(struct folio *folio, unsigned long nr)
- {
- 	int i = 0;
-diff --git a/mm/rmap.c b/mm/rmap.c
-index dacf24bc82f0..7d97806f74cd 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1678,16 +1678,23 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
- 			goto walk_abort;
- 		}
- 
--		if (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)) {
--			/*
--			 * We temporarily have to drop the PTL and start once
--			 * again from that now-PTE-mapped page table.
--			 */
--			split_huge_pmd_locked(vma, pvmw.address, pvmw.pmd,
--					      false, folio);
--			flags &= ~TTU_SPLIT_HUGE_PMD;
--			page_vma_mapped_walk_restart(&pvmw);
--			continue;
-+		if (!pvmw.pte) {
-+			if (unmap_huge_pmd_locked(vma, pvmw.address, pvmw.pmd,
-+						  folio))
-+				goto walk_done;
-+
-+			if (flags & TTU_SPLIT_HUGE_PMD) {
-+				/*
-+				 * We temporarily have to drop the PTL and start
-+				 * once again from that now-PTE-mapped page
-+				 * table.
-+				 */
-+				split_huge_pmd_locked(vma, pvmw.address,
-+						      pvmw.pmd, false, folio);
-+				flags &= ~TTU_SPLIT_HUGE_PMD;
-+				page_vma_mapped_walk_restart(&pvmw);
-+				continue;
-+			}
- 		}
- 
- 		/* Unexpected PMD-mapped THP? */
--- 
-2.33.1
+> 
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> ---
+> v4: Minor commit text changes. Keep the default to ABMC when supported.
+> 
+> v3: New patch to address the review comments from upstream.
+> ---
+>   Documentation/arch/x86/resctrl.rst     | 10 +++++++
+>   arch/x86/kernel/cpu/resctrl/rdtgroup.c | 40 +++++++++++++++++++++++++-
+>   2 files changed, 49 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/arch/x86/resctrl.rst b/Documentation/arch/x86/resctrl.rst
+> index ab3cde61a124..fd050d4d22cd 100644
+> --- a/Documentation/arch/x86/resctrl.rst
+> +++ b/Documentation/arch/x86/resctrl.rst
+> @@ -271,6 +271,16 @@ with the following files:
+>   	  [abmc]
+>   	  mbm_legacy
+>   
+> +	* To enable ABMC feature:
+> +	  ::
+> +
+> +	    # echo  "abmc" > /sys/fs/resctrl/info/L3_MON/mbm_assign
+> +
+> +	* To enable the legacy monitoring feature:
+> +	  ::
+> +
+> +	    # echo  "mbm_legacy" > /sys/fs/resctrl/info/L3_MON/mbm_assign
+> +
 
+No information about what the features are or what will happen on such a switch.
+
+>   "max_threshold_occupancy":
+>   		Read/write file provides the largest value (in
+>   		bytes) at which a previously used LLC_occupancy
+> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> index f452b6d9bb99..d77ff059269a 100644
+> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> @@ -908,6 +908,43 @@ static int rdtgroup_mbm_assign_show(struct kernfs_open_file *of,
+>   	return 0;
+>   }
+>   
+> +/*
+> + * rdtgroup_mode_write - Modify the resource group's mode
+
+Comment does not match function name. Seems like "mode" is the generic term
+to use instead of "assign".
+
+> + */
+> +static ssize_t rdtgroup_mbm_assign_write(struct kernfs_open_file *of,
+> +					 char *buf, size_t nbytes,
+> +					 loff_t off)
+> +{
+> +	struct rdt_resource *r = of->kn->parent->priv;
+> +	int ret = 0;
+> +
+> +	if (!r->abmc_capable)
+> +		return -EINVAL;
+> +
+> +	/* Valid input requires a trailing newline */
+> +	if (nbytes == 0 || buf[nbytes - 1] != '\n')
+> +		return -EINVAL;
+> +
+> +	buf[nbytes - 1] = '\0';
+> +
+> +	cpus_read_lock();
+> +	mutex_lock(&rdtgroup_mutex);
+> +
+> +	rdt_last_cmd_clear();
+> +
+> +	if (!strcmp(buf, "mbm_legacy"))
+> +		resctrl_abmc_disable(RDT_RESOURCE_L3);
+> +	else if (!strcmp(buf, "abmc"))
+> +		ret = resctrl_abmc_enable(RDT_RESOURCE_L3);
+> +	else
+> +		ret = -EINVAL;
+> +
+> +	mutex_unlock(&rdtgroup_mutex);
+> +	cpus_read_unlock();
+> +
+> +	return ret ?: nbytes;
+> +}
+> +
+>   #ifdef CONFIG_PROC_CPU_RESCTRL
+>   
+>   /*
+> @@ -2087,9 +2124,10 @@ static struct rftype res_common_files[] = {
+>   	},
+>   	{
+>   		.name		= "mbm_assign",
+> -		.mode		= 0444,
+> +		.mode		= 0644,
+>   		.kf_ops		= &rdtgroup_kf_single_ops,
+>   		.seq_show	= rdtgroup_mbm_assign_show,
+> +		.write		= rdtgroup_mbm_assign_write,
+>   	},
+>   	{
+>   		.name		= "cpus",
+
+
+Reinette
 
