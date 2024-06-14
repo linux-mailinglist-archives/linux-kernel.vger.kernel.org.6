@@ -1,122 +1,147 @@
-Return-Path: <linux-kernel+bounces-214631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CD99908759
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:25:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 369C5908757
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD731284FD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:25:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E6481C22FD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3101922DC;
-	Fri, 14 Jun 2024 09:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968E61922FC;
+	Fri, 14 Jun 2024 09:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T0Myv6I2"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AiW/ysVs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5776D190071;
-	Fri, 14 Jun 2024 09:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2F9191497;
+	Fri, 14 Jun 2024 09:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718357139; cv=none; b=LEC9qKnEFj9gmUc6WA2A4sdrWblUrMnSi59AlO8KeekBYsX4toYzHUo7ZUWgE/rAISD/Ck+aTYFtI41bFu5apXNlGu4MBzpA90vgK9vaeQDxwk4zUsqY88hTj5MTpMT0ggDiIBaxGVujj8sf3oOGFrFQ3wm5g8JAh0pJdYa5zQo=
+	t=1718357130; cv=none; b=L+0VKz4QJEpjyiQ6UgFXA+K6c+wq/P86PYiStTdqRr4QX3gC3ZkBF2EzaTv7d4u0hysMKHk83MhH7PtTaSVGQzWOb0GsCLHuoXHoE2hXEQFZq/Q9jBDeVfT9N0LuhDv7cinZVIKMPa1LTqcJYgfQAkVisFwaHGB5n7f+B35ASVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718357139; c=relaxed/simple;
-	bh=UWWGN8rwUhoUf3ASge4Yp7b3xfivuopyY+SUJKZCE1A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qb/aqr59DYVY7axhjF6T0eaZOlz8JMtpAOAIvcHJCeA/WdrW3Qu56IH0mvHMkVijQkAEP4BdHb5nzfk54oEdIL0nolB84K4xTxFeiO9Ad8Ld8nd4H/mRhQaANifkq8vfX+/31E12GJYX0P+5zmOCCG1Q9D3Ye57nDDlTwXtoF9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T0Myv6I2; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f6a837e9a3so13420905ad.1;
-        Fri, 14 Jun 2024 02:25:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718357137; x=1718961937; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=14sEE7yn1U0eUXYZByRzOLPuXHbmQOHSDN3TIPlXPVQ=;
-        b=T0Myv6I2BnJVbzZXvWXYaHWfl25aWDGkBD5i+En8peaOCvxc63R5/R1s/26WhF+ZKu
-         LaUaB10jGCWSG3gO/o9AMAf0VEFW72gafj+JfH9ToxSzyZRJsPJsEwO2SGTNUOJtkAcG
-         xU0/h7epuUBDUXsLur/R/py8wZhGNKuI/XPtgDnTLUg6lwZ2u4CklMwfIMzbyZGB5u04
-         lT+IIMl+3n5+xkXHYPKAEXcmBfZOiouLApN7gnhSlRvV4rJ53CtfYfSfMpftlFq3KP0B
-         pSDMUTdtIcwH2P3FM0qa6/jAOIAJh23y8ihbBtgtV5MeRcarAladCWseEJNC3IDp2KIz
-         el/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718357137; x=1718961937;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=14sEE7yn1U0eUXYZByRzOLPuXHbmQOHSDN3TIPlXPVQ=;
-        b=cCpNW5E+49QqJfNkl6RiDxk0e7tsmVCVODD4nW+VDlWNn1JcUGyPvstqxTVKNis8Qd
-         mc05y2cX3HEGPADBovWhXkUb6Pi7g7D+Rt7lxksbGrf0mGSACGi1Ff2ITtjMhvVoUe+u
-         fT6Y9lZCJZOY5jyyxDRkAhV+jirY1weo43rV0hRI8U9oCY1p7qMho798CJ8gYiAi+LhA
-         4dYqqYVShiEcZNj/e4j8DdkJgLTG64lREubDu2SqAIZxCd3NCPyqDPw122t22s7QAc3c
-         2xl6gADp1QmqqRvPZFtI+NQri1Q3MfbJsAe8dS2NIdxNcnDrimjaILPux50FYJtv1Dp+
-         IOSg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1m3/ICls1w+d8n0oH/WemVA6kkPgRd7gbTgt7aODi079r8HJqXq1WLNtWa2wku+iO9lJHDRmxh53Zq/Refhe7P3WdLo8Lm6GG1pQg
-X-Gm-Message-State: AOJu0YyVDFcK6mtDAG+CXjU7f5eBjdfpJtdjYyd+BqyUZitFYGOqP5rO
-	e0n6i2cQXhVfz06LalELbuDw5jjn4REt/fgwF5di+O/tA9hssWqs
-X-Google-Smtp-Source: AGHT+IGXeLZqqIbJyrkcAeI6rs6MxGVpjuOg2DOfz3FZfPTUzzQbVXdgdEp5ZcrINQBEE8kr/RsKmQ==
-X-Received: by 2002:a17:903:1250:b0:1f7:13ac:e80e with SMTP id d9443c01a7336-1f8625c1578mr24880735ad.4.1718357137473;
-        Fri, 14 Jun 2024 02:25:37 -0700 (PDT)
-Received: from localhost.localdomain ([106.13.248.94])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855eff755sm27800365ad.184.2024.06.14.02.25.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 02:25:37 -0700 (PDT)
-From: Yusong Gao <a869920004@gmail.com>
-To: mcgrof@kernel.org
-Cc: linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	a869920004@gmail.com
-Subject: [PATCH] module: Add log information for loading module failures
-Date: Fri, 14 Jun 2024 09:25:19 +0000
-Message-Id: <20240614092519.1611533-1-a869920004@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718357130; c=relaxed/simple;
+	bh=ahmJ4DUtC/KtQwSFizke71LMBIHWUNU2u1aqPfaaGOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B2hXpNcJi+jT5IODBqbSj08joFFAkTk3qXDKqFdC4DiuJq/WPiqeKVHmtcQOOEZ9b/PIqyjDvNcu7aChaI2PpYGtO/wPGWFMUfU8zp1cjWw+4n0jGsxpsLxzdIHQimjwYXyt81hoHLWytXIDDcpFjtMcYZ0FNkSg06XOgE5Bmwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AiW/ysVs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FD51C2BD10;
+	Fri, 14 Jun 2024 09:25:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718357130;
+	bh=ahmJ4DUtC/KtQwSFizke71LMBIHWUNU2u1aqPfaaGOY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AiW/ysVs2zmxbYPWOVfdrHnRbJbMLsZe59HM6uL3X+csssJ0WoJccpNbEECekwzGp
+	 17rmMjNSXHR2QosV38XvjUVo6QY0ryRfi+gWAN/aUbBJgTKqDGHQkXBQ6iIk8/mQCp
+	 ZxUaDAZrN9TKArfRHvfuvbpM47dB4957kPPkKg1r5vy79U1oWwN/zh8DV7lmDCGiDT
+	 ircOzhlpVUe5NVJldmgdsooHiPW2bkFMhshXijdIHZB0ldzhOLJW2X/eGvuf2xKK5i
+	 bJ71F+1NaJcHp8r8kJmiSXrpM4EVlJy5aXwkj9TYthsBqD9vcT2CM054Myjpm16h52
+	 uDVy9MKniQVpw==
+Date: Fri, 14 Jun 2024 11:25:25 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Shuah Khan <shuah@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Alexei Starovoitov <ast@kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	"open list:HID CORE LAYER" <linux-input@vger.kernel.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH HID v3 03/16] HID: bpf: implement HID-BPF through
+ bpf_struct_ops
+Message-ID: <toq56n25r3jkxbnea6g5wxj3oc4zpgqbor5qjzg444uyh3bx3a@zh4sepdjrwob>
+References: <20240608-hid_bpf_struct_ops-v3-0-6ac6ade58329@kernel.org>
+ <20240608-hid_bpf_struct_ops-v3-3-6ac6ade58329@kernel.org>
+ <CAADnVQJDZju=QMiAH=TpYHr6KQh3-TT-jNtJ-O2u7JstY5486Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQJDZju=QMiAH=TpYHr6KQh3-TT-jNtJ-O2u7JstY5486Q@mail.gmail.com>
 
-Add log information in kernel-space when loading module failures.
-Try to load the unsigned module and the module with bad signature
-when set 1 to /sys/module/module/parameters/sig_enforce.
+On Jun 10 2024, Alexei Starovoitov wrote:
+> On Sat, Jun 8, 2024 at 2:01 AM Benjamin Tissoires <bentiss@kernel.org> wrote:
+> >
+> > +
+> > +static int hid_bpf_ops_init_member(const struct btf_type *t,
+> > +                                const struct btf_member *member,
+> > +                                void *kdata, const void *udata)
+> > +{
+> > +       u32 moff = __btf_member_bit_offset(t, member) / 8;
+> > +       u32 flags;
+> > +
+> > +       switch (moff) {
+> > +       case offsetof(struct hid_bpf_ops, hid_id):
+> > +               /* For hid_id and flags fields, this function has to copy it
+> > +                * and return 1 to indicate that the data has been handled by
+> > +                * the struct_ops type, or the verifier will reject the map if
+> > +                * the value of those fields is not zero.
+> > +                */
+> > +               ((struct hid_bpf_ops *)kdata)->hid_id = ((struct hid_bpf_ops *)udata)->hid_id;
+> > +               return 1;
+> > +       case offsetof(struct hid_bpf_ops, flags):
+> > +               flags = ((struct hid_bpf_ops *)udata)->flags;
+> > +               if (flags & ~BPF_F_BEFORE)
+> > +                       return -EINVAL;
+> > +               ((struct hid_bpf_ops *)kdata)->flags = flags;
+> 
+> minor nit: I'd cast kdata/udate in the beginning of
+> the function to make the lines shorter and less verbose.
+> Similar to how bpf_tcp_ca_init_member() does it.
 
-Unsigned module case:
-(linux) insmod unsigned.ko
-[   18.714661] Loading of unsigned module is rejected
-insmod: can't insert 'unsigned.ko': Key was rejected by service
-(linux)
+The change looks like:
 
-Bad signature module case:
-(linux) insmod bad_signature.ko
-insmod: can't insert 'bad_signature.ko': Key was rejected by service
-(linux)
-
-There have different logging behavior the bad signature case only log
-in user-space, add log info for fatal errors in module_sig_check().
-
-Signed-off-by: Yusong Gao <a869920004@gmail.com>
 ---
- kernel/module/signing.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/kernel/module/signing.c b/kernel/module/signing.c
-index a2ff4242e623..6a6493c8f7e4 100644
---- a/kernel/module/signing.c
-+++ b/kernel/module/signing.c
-@@ -113,6 +113,7 @@ int module_sig_check(struct load_info *info, int flags)
- 		 * unparseable signatures, and signature check failures --
- 		 * even if signatures aren't required.
- 		 */
-+		pr_notice("Loading module failed (errno=%d)\n", -err);
- 		return err;
- 	}
+diff --git a/drivers/hid/bpf/hid_bpf_struct_ops.c b/drivers/hid/bpf/hid_bpf_struct_ops.c
+index 9192c66cde20..dde547e734ed 100644
+--- a/drivers/hid/bpf/hid_bpf_struct_ops.c
++++ b/drivers/hid/bpf/hid_bpf_struct_ops.c
+@@ -97,8 +97,14 @@ static int hid_bpf_ops_init_member(const struct btf_type *t,
+                                 const struct btf_member *member,
+                                 void *kdata, const void *udata)
+ {
+-       u32 moff = __btf_member_bit_offset(t, member) / 8;
+-       u32 flags;
++       const struct hid_bpf_ops *uhid_bpf_ops;
++       struct hid_bpf_ops *khid_bpf_ops;
++       u32 moff;
++
++       uhid_bpf_ops = (const struct hid_bpf_ops *)udata;
++       khid_bpf_ops = (struct hid_bpf_ops *)kdata;
++
++       moff = __btf_member_bit_offset(t, member) / 8;
  
--- 
-2.34.1
+        switch (moff) {
+        case offsetof(struct hid_bpf_ops, hid_id):
+@@ -107,13 +113,12 @@ static int hid_bpf_ops_init_member(const struct btf_type *t,
+                 * the struct_ops type, or the verifier will reject the map if
+                 * the value of those fields is not zero.
+                 */
+-               ((struct hid_bpf_ops *)kdata)->hid_id = ((struct hid_bpf_ops *)udata)->hid_id;
++               khid_bpf_ops->hid_id = uhid_bpf_ops->hid_id;
+                return 1;
+        case offsetof(struct hid_bpf_ops, flags):
+-               flags = ((struct hid_bpf_ops *)udata)->flags;
+-               if (flags & ~BPF_F_BEFORE)
++               if (uhid_bpf_ops->flags & ~BPF_F_BEFORE)
+                        return -EINVAL;
+-               ((struct hid_bpf_ops *)kdata)->flags = flags;
++               khid_bpf_ops->flags = uhid_bpf_ops->flags;
+                return 1;
+        }
+        return 0;
+---
 
+> 
+> Acked-by: Alexei Starovoitov <ast@kernel.org>
+
+And I'm going to apply the series now
+
+Cheers,
+Benjamin
 
