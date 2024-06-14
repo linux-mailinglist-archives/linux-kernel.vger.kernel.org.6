@@ -1,110 +1,124 @@
-Return-Path: <linux-kernel+bounces-215458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B8109092FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:34:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 903D5909302
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9CC4B23EA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:34:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF276B22BFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B741AB522;
-	Fri, 14 Jun 2024 19:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Piy7/8cY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECBE1A38E7;
+	Fri, 14 Jun 2024 19:37:08 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC8D26AD7;
-	Fri, 14 Jun 2024 19:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943731F946;
+	Fri, 14 Jun 2024 19:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718393638; cv=none; b=dl+pCGeNQ2hQSLtgfDQar0YVr9tBn9Xoz2YTqbNxPUcjA5EyTrRwu28myy0oAxeTQPeEPS22PYLNrJfmvyLvdkP9gO7iYohkokIA9Pc4bp+o5prIwXozRfeY3lEfzN2eIHPNb4JzWvQH3afgsMAzTOG61BJ7TsQuZkdpAhpevJM=
+	t=1718393828; cv=none; b=G9Qh6Tuoerb2j5BNzksFyjKEUtlyXPzkqh487lzIcy706VGkDgCmGii65pUvD8wEqs0jStPCyZxxPEVUSWIWp+oG4uU4dyCBW+Snl7jPNzogZ5DO6b1uJdjS3dx25tsYtnnWgdj/IXC+KLi5oE6syk82MQxCEY3MnIG8a8t0qsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718393638; c=relaxed/simple;
-	bh=un2DKs68DVerlXBeKlpV6w20TzStZ/MgihGnCdsi2EU=;
+	s=arc-20240116; t=1718393828; c=relaxed/simple;
+	bh=Gc/dYo30ou/yoPeuq9iJSaYcgjGlV7uJIRDgzrfZsxo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A5O4zg/6E5qHVKs3c8INeozn/yCj0lrM3OGaEMV7P0Y+0O6D3bR5gNgd0fArTmglhgLXkhnUt9aaXO5/h15zYzD7wXiR0UN589jbazD6q4dym9gA+Vto8AlS7sSREOCzwnnHCyWpZbIV1PVG7l0ghBlmbsBxDjKYnTtbJPzKCQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Piy7/8cY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF8CBC2BD10;
-	Fri, 14 Jun 2024 19:33:55 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Piy7/8cY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1718393634;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DXA9wvv5IhNhdgqqoog09hrS0W28PIbc3nCXFgq2mxA=;
-	b=Piy7/8cYE5kX8QxCb1ovvf7Oew+mzdXJL4F6If9Frkz4X0RUzqFF12WjwrhUhRlUy+iIKO
-	DoV+j//Avs/4vzAsOjkSD1yxY/bbFo9eXQkn/oEw9txGMiy9XDfptZ5hiqtMHXpzOrUrXv
-	cPfOpW6hB2UusbVHO75CZUsDVUtb8kw=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 6d22401f (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 14 Jun 2024 19:33:52 +0000 (UTC)
-Date: Fri, 14 Jun 2024 21:33:45 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Jakub Kicinski <kuba@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
-	linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <ZmybGZDbXkw7JTjc@zx2c4.com>
-References: <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
- <ZmrfA1p2zSVIaYam@zx2c4.com>
- <80e03b02-7e24-4342-af0b-ba5117b19828@paulmck-laptop>
- <Zmru7hhz8kPDPsyz@pc636>
- <7efde25f-6af5-4a67-abea-b26732a8aca1@paulmck-laptop>
- <Zmsuswo8OPIhY5KJ@pc636>
- <cb51bc57-47b8-456a-9ac0-f8aa0931b144@paulmck-laptop>
- <ZmszOd5idhf2Cb-v@pc636>
- <b03b007f-3afa-4ad4-b76b-dea7b3aa2bc3@paulmck-laptop>
- <Zmw5FTX752g0vtlD@pc638.lan>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O9n9n/Vdq4EZhFC0HJBtyEmLn0mftraOKQ90/A7ktUwMz9RvdBs585v3V8JRgsyVjLBq1/bzZ59z+CRaRMPcXxM0C8XpeAb8eOHE5kDBIPCUJTdNeCkGws1OSS1XoMwVo2ISH9zeHkiaSaAA6s3bfnb1BIC/JZvnfeniz/+fRVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id BD82C3000E431;
+	Fri, 14 Jun 2024 21:36:57 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 9D64219DDD1; Fri, 14 Jun 2024 21:36:57 +0200 (CEST)
+Date: Fri, 14 Jun 2024 21:36:57 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bitao Hu <yaoma@linux.alibaba.com>, bhelgaas@google.com,
+	weirongguang@kylinos.cn, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kanie@linux.alibaba.com,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCHv2] PCI: pciehp: Use appropriate conditions to check the
+ hotplug controller status
+Message-ID: <Zmyb2WMhhNc7zQ2i@wunner.de>
+References: <20240528064200.87762-1-yaoma@linux.alibaba.com>
+ <20240614184120.GA1121063@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zmw5FTX752g0vtlD@pc638.lan>
+In-Reply-To: <20240614184120.GA1121063@bhelgaas>
 
-On Fri, Jun 14, 2024 at 02:35:33PM +0200, Uladzislau Rezki wrote:
-> +	/* Should a destroy process be deferred? */
-> +	if (s->flags & SLAB_DEFER_DESTROY) {
-> +		list_move_tail(&s->list, &slab_caches_defer_destroy);
-> +		schedule_delayed_work(&slab_caches_defer_destroy_work, HZ);
-> +		goto out_unlock;
-> +	}
+On Fri, Jun 14, 2024 at 01:41:20PM -0500, Bjorn Helgaas wrote:
+> On Tue, May 28, 2024 at 02:42:00PM +0800, Bitao Hu wrote:
+> > "present" and "link_active" can be 1 if the status is ready, and 0 if
+> > it is not. Both of them can be -ENODEV if reading the config space
+> > of the hotplug port failed. That's typically the case if the hotplug
+> > port itself was hot-removed. Therefore, this situation can occur:
+> > pciehp_card_present() may return 1 and pciehp_check_link_active()
+> > may return -ENODEV because the hotplug port was hot-removed in-between
+> > the two function calls. In that case we'll emit both "Card present"
+> > *and* "Link Up" since both 1 and -ENODEV are considered "true". This
+> > is not the expected behavior. Those messages should be emited when
+> > "present" and "link_active" are positive.
+[...]
+> > --- a/drivers/pci/hotplug/pciehp_ctrl.c
+> > +++ b/drivers/pci/hotplug/pciehp_ctrl.c
+> > @@ -276,10 +276,10 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
+> >  	case OFF_STATE:
+> >  		ctrl->state = POWERON_STATE;
+> >  		mutex_unlock(&ctrl->state_lock);
+> > -		if (present)
+> > +		if (present > 0)
+> 
+> I completely agree that this is a problem and this patch addresses it.
+> But ...
+> 
+> It seems a little bit weird to me that we even get to this switch
+> statement if we got -ENODEV from either pciehp_card_present() or
+> pciehp_check_link_active().  If that happens, a config read failed,
+> but we're going to go ahead and call pciehp_enable_slot(), which is
+> going to do a bunch more config accesses, potentially try to power up
+> the slot, etc.
+> 
+> If a config read failed, it seems like we might want to avoid doing
+> some of this stuff.
 
-Wouldn't it be smoother to have the actual kmem_cache_free() function
-check to see if it's been marked for destruction and the refcount is
-zero, rather than polling every one second? I mentioned this approach
-in: https://lore.kernel.org/all/Zmo9-YGraiCj5-MI@zx2c4.com/ -
+Hm, good point.  I guess we should change the logical expression instead:
 
-    I wonder if the right fix to this would be adding a `should_destroy`
-    boolean to kmem_cache, which kmem_cache_destroy() sets to true. And
-    then right after it checks `if (number_of_allocations == 0)
-    actually_destroy()`, and likewise on each kmem_cache_free(), it
-    could check `if (should_destroy && number_of_allocations == 0)
-    actually_destroy()`. 
+-	if (present <= 0 && link_active <= 0) {
++	if (present < 0 || link_active < 0 || (!present && !link_active)) {
 
-Jason
+
+> > -		if (link_active)
+> > +		if (link_active > 0)
+> >  			ctrl_info(ctrl, "Slot(%s): Link Up\n",
+> >  				  slot_name(ctrl));
+> 
+> These are cases where we misinterpreted -ENODEV as "device is present"
+> or "link is active".
+> 
+> pciehp_ignore_dpc_link_change() and pciehp_slot_reset() also call
+> pciehp_check_link_active(), and I think they also interpret -ENODEV as
+> "link is active".
+> 
+> Do we need similar changes there?
+
+Another good observation, both need to check for <= 0 instead of == 0.
+Do you want to fix that yourself or would you prefer me (or someone else)
+to submit a patch?
+
+Thanks,
+
+Lukas
 
