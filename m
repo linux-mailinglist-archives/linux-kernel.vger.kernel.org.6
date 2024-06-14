@@ -1,155 +1,140 @@
-Return-Path: <linux-kernel+bounces-215531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019FB909432
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:43:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 780C4909436
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 918F8B22B2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:43:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 117EF1F22230
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680B1186E25;
-	Fri, 14 Jun 2024 22:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87BB1186E2D;
+	Fri, 14 Jun 2024 22:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2n+gqY4"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HBltePky"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689781836DE
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 22:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F6F149C44;
+	Fri, 14 Jun 2024 22:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718404985; cv=none; b=KVG/w0aJbD8DG6E4dJKOJrqUaM4OJtO15jQuPFfhFF8a3XniYlDZPzldFil98/1MCypFLRgU1UCSe1qLSoPmJffoZ0XFWpoRMh7BVYAPTGA5dF9tGmmy34MjAmnQZu0K7Y6LN5TZ9Aa6x2SkCAacfB15tFsRLIEu53Pz8e1obNw=
+	t=1718405084; cv=none; b=PO+cC+woUo2eUDBagH2wZrKzGTBNfPlgwXoeXLdbfQf9IicOYM4ymTC7atr2q/8g84+Ee/7/HUizkn8sXmaoh1cVcWMrREUElfZCEHES18MWkfquzseTHqjaCWn1vtCSnkyIOHsN3fQmT7oqtL4M7JVXP3YNUEScgH1N1knoBDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718404985; c=relaxed/simple;
-	bh=wWdFBUq0TBR/kJG1+KtHv5R1dV46yPZU/UdOMCSFTF8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NjNQty3Jnwvlv50Yp0w8OqcV6E7xZe3pSQSlxN8X56L/kxWClQ44EfT/MVzkG6H0WqR+GDsQfzMZoUgTkxrbg1u05Zi8kXInpIVuIxhRIPoc7029phhcr31XO6ik2sWW28sIRSnmOORWgyg887rUwLoPm87Ydpz3WR8/8UXX6hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R2n+gqY4; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-701b0b0be38so2477464b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:43:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718404984; x=1719009784; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8GcWMEEnmsQAzRTqgdUci961+09Yzh7hz6iGBCWj82U=;
-        b=R2n+gqY4RPJn6a5ktlWM4KcyiSkmS/juk+liwgEfGqEBfymfQax08SjkHwWLvUfyF7
-         Jetyl09wKyNfn6UvJtrflmXnQDruJ6TXa5OBR+OoSAtjMCUij2YoTQW4xQRv/qhp6BrV
-         T6Lt3zPqf2bUzSxqduLkfn8azdTU8UsttKGdESCCutc0yKTv9d60RIVt/6tisDg/Dnai
-         FIas84XDXbkz1vBBaENDbyEYpeQaRiYYM57+EQbpGCj4hGD0gzrNyTOCAX/9415r0h9i
-         PYuZZq/6kB4iD1k4D5NdfbXt+VQhIGe10kLAX/4Mkx6oTxgYRunONz/1lV+gnVKZcnNp
-         cujw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718404984; x=1719009784;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8GcWMEEnmsQAzRTqgdUci961+09Yzh7hz6iGBCWj82U=;
-        b=v6/9zhqa6PznhDzQWgng83BxB2cbk4G/NeLe0TSGtEXMbCkL0nxFmnZykR1dFoFLBm
-         hTY8sZHef0hW0OuGrqY7HxQGfhwYQ1nmMKeomQGP0d6FhwvrRIxIEl6ap7lE50cfoRI8
-         StaV9Uu9B3CTuPRyOlFXz6tO4FJublh0yzrLDxsLgohH1q+lbv7P09ReSwc+rFRs1B0N
-         2tpovMFbKSYRi8j5ImEyUiYI08dK1z633b8Uc4AXxS/nO7NE9uwKNimpF7QfgaesksRs
-         NyNTY9Wpb+BNyW4mjZkT8tBW2yzwBQaEdBNWL2R0Bczx2czt4ldgNm/hsCAPwwuHOp2T
-         Md4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX0YlfPsv7YoSyfvKhBxhwkPFKI/2Es6th1zt67YUuwbvlfn9gjDFLD44r2JlMW5bkAGlzd3KiZkiJwpYeBslfxLf5d4Pp9jIL18y0V
-X-Gm-Message-State: AOJu0YzVJ2rb8LkjRFiDkmIcfOUDX86rcVO/1nkeOY8Bw1aF7jAW3lPn
-	XjPcEI9T4AcUz03kFPHBktTkkYdhj0zPkMm+Vrrl7FifAvis9JS8
-X-Google-Smtp-Source: AGHT+IFM0F0/bOk0DJfja+1mE+6TE/gRUmvfKw4aRn9mm4gX2wZL/rWQeKh15CN9keQfbWwTGZAaUQ==
-X-Received: by 2002:a05:6a20:6a0e:b0:1b8:9d79:7839 with SMTP id adf61e73a8af0-1bae7effc98mr5065056637.29.1718404983654;
-        Fri, 14 Jun 2024 15:43:03 -0700 (PDT)
-Received: from dev0.. ([49.43.162.104])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4a75f0053sm6910600a91.13.2024.06.14.15.43.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 15:43:03 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	jain.abhinav177@gmail.com
-Subject: [PATCH] staging: rtl8723bs: Align address to 4-byte boundary
-Date: Fri, 14 Jun 2024 22:42:56 +0000
-Message-Id: <20240614224256.43131-1-jain.abhinav177@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718405084; c=relaxed/simple;
+	bh=LwLfd7EKwsJ0G7wHBCXbWwKS/g5mW2CBi1ld96rE67I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=no7nevhJtZGH8YA/KZCctZFGnhyl8TUvuyoROg1d9HGT0Jmj+P72XuRPN779/AVrcKhaRnWXIlAT88jBTD1HhwNkq3puUelmSvTe0+iO1935320Zo2WDZ37xYCcaO22qG8i0TrGLRGrSBDXQ98TEgBzCFEm6Z0CrMfJJx9ei5FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HBltePky; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CB01E40E01E1;
+	Fri, 14 Jun 2024 22:44:38 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id OHx-QliiWOsE; Fri, 14 Jun 2024 22:44:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718405074; bh=pZEP9FiO05naVI+EWU0oRywVwkC22GZNUEWLRM/5K2U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HBltePkyk+H4i3SNgF8v3RHoFy7eQtxanZkGnciYSijEncMRJJ2REhwMptp0E7do8
+	 oQ7YiTXs024ZE9blVVJtETyIF0eoSPIRs42Qc8+XpsnwbxbTkG4rpKb0R6zBEpNmj0
+	 caroeWpBn6KSFsISQ+QujYa/WlN3iORRzDVTvCB3Vy/KFgmYZLVOK2D8ugCJBNPnFj
+	 ENAj8Lfe+R3Zes98E49I2TsaKqQym8OgMTKesMSUDmRfHknXyb3iY3zksmX2eKIQNt
+	 mwmcCuMC5nMCgSyDK/DDFoeLwZWlvPUevGfXQi+6iMnU87om3+iJcXCXcZMbDfEXDp
+	 jXK7hdCWkvG5HfuJjBVOA5Oym31sHlJQMh5JmPbTTJVHhIvcxbmdxbNnYpUk1SRaos
+	 iXpkGZ5tIeGf4GikzSysRsgocLrx+EhsDP3VSK02dS7p4EZBgm1Xie0pJ0zNHnyEpk
+	 trGcsEukca7dYB2MNdBzpj2NDhd4ODYZpXy85TRPvUT/S6CSEeoLzkgs8L/4+AOrZP
+	 Y+QcQ5S4Nl8MuVy1tsLTwCiWOfvPtLI3Vwyq1WBsNMEu7PFWog0opTUBtOjOcGpMMD
+	 bW3ikl1/92v6gxJ0uezH8fNgGb4lc/eRc82yA7NAciLvmh2KxenFvS/LDbDMVx1X70
+	 tplMrSnczxFb7eMWKS6YlUsg=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 93B9540E01D6;
+	Fri, 14 Jun 2024 22:44:27 +0000 (UTC)
+Date: Sat, 15 Jun 2024 00:44:20 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
+	john.allen@amd.com
+Subject: Re: [PATCH 3/3] x86/mce: Use mce_prep_record() helpers for
+ apei_smca_report_x86_error()
+Message-ID: <20240614224420.GGZmzHxDEH2D2TLpjN@fat_crate.local>
+References: <20240521125434.1555845-1-yazen.ghannam@amd.com>
+ <20240521125434.1555845-4-yazen.ghannam@amd.com>
+ <20240529172809.GJZldlqSr5km0frQ_o@fat_crate.local>
+ <6d508036-befd-4d5c-b02e-abb228ed9144@amd.com>
+ <20240603165530.GFZl31gtuABwpe1svP@fat_crate.local>
+ <20240614214736.GA726880@yaz-khff2.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240614214736.GA726880@yaz-khff2.amd.com>
 
-Add address alignment in sdio_local_read, _sdio_local_read &
-sdio_local_write functions as per the TODO.
+On Fri, Jun 14, 2024 at 05:47:36PM -0400, Yazen Ghannam wrote:
+> I don't see why it won't work. If there is no break, then the iterator
+> ends by setting the variable past the last valid value.
+> 
+> For example, I ran this on a system with 512 CPUs:
+> 
+>         unsigned int cpu;
+> 
+> 	/* Loops over CPUs 0-511. */
+>         for_each_possible_cpu(cpu)
+>                 pr_info("loop: cpu=%d\n", cpu);
+> 
+> 	/* CPU is now set to 512. */
+>         pr_info("final: cpu=%d\n", cpu);
+> 
+> 	/* CPU 512 is not possible. */
+>         pr_info("CPU %d is %s possible\n", cpu, cpu_possible(cpu) ? "" : "not");
+> 
+> But...I like your suggestion as it is much more explicit. And I might be
+> missing something. :/
 
-Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
----
- drivers/staging/rtl8723bs/hal/sdio_ops.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+I can think of at least three:
 
-diff --git a/drivers/staging/rtl8723bs/hal/sdio_ops.c b/drivers/staging/rtl8723bs/hal/sdio_ops.c
-index 107f427ee4aa..caee2d2043b3 100644
---- a/drivers/staging/rtl8723bs/hal/sdio_ops.c
-+++ b/drivers/staging/rtl8723bs/hal/sdio_ops.c
-@@ -478,9 +478,6 @@ void sdio_set_intf_ops(struct adapter *adapter, struct _io_ops *ops)
- 	ops->_write_port = &sdio_write_port;
- }
- 
--/*
-- * Todo: align address to 4 bytes.
-- */
- static s32 _sdio_local_read(
- 	struct adapter *adapter,
- 	u32 addr,
-@@ -494,6 +491,7 @@ static s32 _sdio_local_read(
- 	u8 *tmpbuf;
- 	u32 n;
- 
-+	addr = addr & ~3;
- 	intfhdl = &adapter->iopriv.intf;
- 
- 	hal_sdio_get_cmd_addr_8723b(adapter, SDIO_LOCAL_DEVICE_ID, addr, &addr);
-@@ -516,9 +514,6 @@ static s32 _sdio_local_read(
- 	return err;
- }
- 
--/*
-- * Todo: align address to 4 bytes.
-- */
- s32 sdio_local_read(
- 	struct adapter *adapter,
- 	u32 addr,
-@@ -532,6 +527,7 @@ s32 sdio_local_read(
- 	u8 *tmpbuf;
- 	u32 n;
- 
-+	addr = addr & ~3;
- 	intfhdl = &adapter->iopriv.intf;
- 
- 	hal_sdio_get_cmd_addr_8723b(adapter, SDIO_LOCAL_DEVICE_ID, addr, &addr);
-@@ -557,9 +553,6 @@ s32 sdio_local_read(
- 	return err;
- }
- 
--/*
-- * Todo: align address to 4 bytes.
-- */
- s32 sdio_local_write(
- 	struct adapter *adapter,
- 	u32 addr,
-@@ -572,6 +565,7 @@ s32 sdio_local_write(
- 	s32 err;
- 	u8 *tmpbuf;
- 
-+	addr = addr & ~3;
- 	intfhdl = &adapter->iopriv.intf;
- 
- 	hal_sdio_get_cmd_addr_8723b(adapter, SDIO_LOCAL_DEVICE_ID, addr, &addr);
+* CPU topology and the initial_apicid sometimes can get programmed wrong by the
+* FW. Nothing new.
+
+* nr_cpus= - you can enable less CPUs than actually physically present so an MCE
+on a CPU which is not enabled by Linux will be -EINVAL
+
+* possible_cpus= - pretty much the same thing
+
+But I haven't actually tried them - am just looking at the code.
+
+And yes, with the apicid_found boolean it is perfectly clear what's going on.
+
+And looking at
+
+  convert_apicid_to_cpu()
+
+which already does that loop, we probably should talk to tglx whether we can
+simply export that helper.
+
+And better yet if he's done some more helpful caching of the reverse mapping:
+apicid to CPU number. As part of the topology rewrite. Because then we don't
+need the loop at all.
+
+Thx. 
+
 -- 
-2.34.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
