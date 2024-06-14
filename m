@@ -1,958 +1,892 @@
-Return-Path: <linux-kernel+bounces-215318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1938B909117
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:09:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3028490911D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CFB41F267AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:09:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A8891C2115C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C69A19ADA2;
-	Fri, 14 Jun 2024 17:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBDF19ADB3;
+	Fri, 14 Jun 2024 17:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VzJQ1DHa"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="YX1hgds0"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BE52B9A5;
-	Fri, 14 Jun 2024 17:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A522B9A5
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 17:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718384981; cv=none; b=eEzMixqGIqM7lknBfKDENpF2PEx5eCj938nRYO2AGoBuPX8y0+h+h4l8lYRicsIaXHLP+hH+Lyx9nLg8UdfwjNxWVurNRo5wXhF1PyE9seVVekASnZvF9KOjzzTHqerqVBFHKS8ya9VfRmvZ97JfyjRCuevkJ5rqP7/Ewn07Ktw=
+	t=1718385061; cv=none; b=shJWWF7MQjyHhf+M/c+FE1d9Mrj6Y7tfuEbXL/IUx/qGy77sjxoiGxbW2z5aM36XHyRXkVyAkHKfojkyqcYPjiaUDQKJhr/tQz7dNugPgxUryx4fzDwNdUNzYKt28eA5VE2dfibk1nBBMKgvGIo3Mw+cbqVhWPKKNJoXvR8l0Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718384981; c=relaxed/simple;
-	bh=Tn/d1isCjdWqAxJYbS1RaHVWp9PYepuqPATjUsKPM9Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N/c+dipQ1MRLwdMnOpovgzymKndxrzRy379GU63kG5yK2RP9/NB6GK/ftOxusi53QVTxEZmoXe9AMnLuKNIgjS81VSzZe0vZFWfKojCiFJqGWANMcaOWnovt5DLHV7NLJAZ6XG7YIjZxp4IHPpZAcuCaffuVuGZil7dMH0v+EG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VzJQ1DHa; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6f0e153eddso328320466b.0;
-        Fri, 14 Jun 2024 10:09:38 -0700 (PDT)
+	s=arc-20240116; t=1718385061; c=relaxed/simple;
+	bh=DongN2WrMnI/UMIh+GSrnUbKlymeox8e6UvvASxRquM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JEjmxTRKlXEZpyk/6QXxn9uYpRSSSk9mPuK3xmlhhjIg4SD0QzPnav9vATHZgsP3dR7fX/FTTJ6E2NhgReGiwJT3Q5st35Qxw0LPrx8ZPKdeSdr8y40kO9PGHFMYgVl37pYiwug1gv2JRHwMw9H8Yqldi1I+XyAGfGZuvIE4Edk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=YX1hgds0; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-35f123bf735so1684383f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:10:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718384976; x=1718989776; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kEnTD5h4NgQuI5mToEEs+mhp8KzmqC68hjRgyGjlaGs=;
-        b=VzJQ1DHaojurKp2EZ2bNmQ+L5DtaeWalljjPQ3CXtSoy1NtxfstCu/RWqtrBn4cjY5
-         unAFTiSoxK7Jtk8BPkk0TtrLMlyvfFfkIPnTauZWUn5hqNghCSN5HbAb35e9IPns12Dw
-         iZYThkq2Zh4n+QwyUUBnbOsRVSkbaXJm5Z0j5x21+ugcffeDYFpG9pH4TrttjIOhE+BE
-         JTTGzrxdhw/pGXySnvuhBOzmr7S7MmQ6goneJRd/elsBvgJ/3FX3rweDLvAcR2cCwtuH
-         0T1tsPt/cx0KTBm9SBd6AN3rymGdOUc0+Jz3LzkuQFv+LGG8eFl1RNjlfKMLcBrdzQrV
-         nxDg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718385056; x=1718989856; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mf6yUku1WsapVglWNtUv6/O+5axMyNpYzJDqapstpgI=;
+        b=YX1hgds0YgpPWh3nUJcdwUb6vn5hyRHzov3MzcjUAl56ulQzqo78Gb7oXqv42tkzZC
+         mMLOLcdCS9mPVuTvXHM4IBAYklet51fgChBHchZBJZjawqxZznqkuZ+8PoxVvlzVU7zU
+         lC3TmRE+2OFG/7c6DhrZakWEzDHS2JHGada6Mdo46smdJKiznWhPNgMhFkKLe8l2P+6t
+         YYJyzIXxbQ2rvxpxQEf+5bJMUG/R3EyAOShdF+OUNRnoWftyWX6WSOBNdLWTa3p5xH6s
+         5WWHhei1XpmDEyRvItoJqMl0wrC2LSuDzZXImn5zQOCDDLJeq72gAwUZJ1H6ZWP+MegZ
+         A+wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718384976; x=1718989776;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kEnTD5h4NgQuI5mToEEs+mhp8KzmqC68hjRgyGjlaGs=;
-        b=iEa9ONvxkUzyRKUDYiZbbri7HBuFa4YZ6RbIPLb5MeCPYxA5zqsbaQWZEsdGfsy8lI
-         3okqB+Uzcd33ol/r/XjHTk+8+ZMt2ybQiJFF60bTmxRQe7anIR0KNiFAWggHRFlf7oMC
-         +b2HFQ4vJ/JEBlCjaQ9WjUvf2uC1hfkLGrkt73Y+K+qzT4DOmcAe7rq6shh+fivdVVRm
-         mVJs+9osZ88ff77c4ASvt9qgLJkwLF3VcepYG1rRJ990mcneoI5Sw+4fUsWWrM7PQg4+
-         27cOJAEd1teoVG28bjhbqXHmgROVGtGq55i95qlW3UcG6vc7c/BUh3UQUSavouZl208f
-         o4Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCVH5Oc9kIbiH4uOV/BGe/SKJT9OC8mq9t9mLawPUcLjj1Znvh7lW/pgIjR75GD22ca5FubGUmUvx1sDA5ccozSDqalm6lxEG9nkcVyJzQT4xS6ClVchrZCGV2J/vk441aQKLdOTZbNhXQ==
-X-Gm-Message-State: AOJu0YwpJ+yVECY0F8QZi72dusq/iLU84RStF2h6+nqQ7mCLr4Ogm+XG
-	lLylTxFrCNnNblS6cjsGZ5IqJVxv2qfiNyVURkywyGNL65rBJwI=
-X-Google-Smtp-Source: AGHT+IEex5CJglFDoSoxHeIaMxf9NisE/+aupc3CmcSK71Jfj+qd6xTWSKhqG8uoozTaDAGMXgM7fA==
-X-Received: by 2002:a17:906:57c2:b0:a6f:eb8:801a with SMTP id a640c23a62f3a-a6f60dc51c7mr203218066b.56.1718384975752;
-        Fri, 14 Jun 2024 10:09:35 -0700 (PDT)
-Received: from ?IPV6:2a02:810b:f40:4600:acea:267f:be5:ea8f? ([2a02:810b:f40:4600:acea:267f:be5:ea8f])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56fa415dsm206216266b.220.2024.06.14.10.09.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 10:09:35 -0700 (PDT)
-Message-ID: <4102bac5-897a-4b2f-b1d3-b2833fe69f4b@gmail.com>
-Date: Fri, 14 Jun 2024 19:09:34 +0200
+        d=1e100.net; s=20230601; t=1718385056; x=1718989856;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mf6yUku1WsapVglWNtUv6/O+5axMyNpYzJDqapstpgI=;
+        b=G2VllXIFJlbklabiFU0D6mY6Uc/514mu49onvsYrKEC85glK1to/594VnIknXOkN3F
+         GvIoY6gpCXAhdoz3dj5MpznsR+C3urR1zCZauTkdll9RrGwU8Vk5qNOyZvvyJqnUrGfk
+         DzdcR311YUFEj5hW1X0Y8G16pzwx36/yUDYjHbSDjwewd7ffI2A5d1G9nGjMmM5rXHSh
+         7wUfi7lF64To6jlNdOlQ3J1cI3MSdbykg7re3Rj9vGNA6tWO782kk4f0+ol97bMmcwyw
+         2vNiijgVE3TqB2XkYBHSxLq+cjxpw5czuBjvYtcvQud4TEuz6wm9/VK4UOAeEdGqsvbg
+         4PLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNAcdwcRcikv3vMAL4wcJwy4A2uu1RXuMDPBrLvaODQQXGwd0wfn+i+vJ75ILRGmudNVNG1prZFOOGBAoITtIwxzGV5MS6a4A6eikh
+X-Gm-Message-State: AOJu0Yz9y6noFPDma2C/wha+4KZvVCVEdI0GL1nCy5WooDfzLYjB2xpe
+	oB9qB/NtQiUlByPczHsgdeRmdHkPLU0N5kzBVNQlU+SeORl/wllczTClWBvXtNQ=
+X-Google-Smtp-Source: AGHT+IFrxIoGCdBaSczBFoKFT3zlG2Ldu6whg4La7ctu0qqi5/8nr/FTGdwS++LqU21fT7BEiFPykw==
+X-Received: by 2002:a05:6000:1d99:b0:360:876e:16b6 with SMTP id ffacd0b85a97d-360876e1863mr176218f8f.70.1718385055640;
+        Fri, 14 Jun 2024 10:10:55 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:5374:7bd2:13de:845])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3607509348esm4916265f8f.17.2024.06.14.10.10.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 10:10:55 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>,
+  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>,  Kevin Hilman <khilman@baylibre.com>,
+  Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+  alsa-devel@alsa-project.org,  linux-sound@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org,  linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH RFC 3/3] arm64: dts: amlogic: add clock and clock-names
+ to sound cards
+In-Reply-To: <20240614-topic-amlogic-upstream-bindings-fixes-audio-snd-card-v1-3-9f57d9e01834@linaro.org>
+	(Neil Armstrong's message of "Fri, 14 Jun 2024 18:24:03 +0200")
+References: <20240614-topic-amlogic-upstream-bindings-fixes-audio-snd-card-v1-0-9f57d9e01834@linaro.org>
+	<20240614-topic-amlogic-upstream-bindings-fixes-audio-snd-card-v1-3-9f57d9e01834@linaro.org>
+Date: Fri, 14 Jun 2024 19:10:54 +0200
+Message-ID: <1j34pfih5t.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] drm/panel: jd9365da: Modify the method of sending
- commands
-To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>,
- dmitry.torokhov@gmail.com, robh@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org,
- benjamin.tissoires@redhat.co, dianders@google.com, hsinyi@google.com
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240614145510.22965-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240614145510.22965-2-lvzhaoxiong@huaqin.corp-partner.google.com>
-Content-Language: en-US
-From: Alex Bee <knaerzche@gmail.com>
-In-Reply-To: <20240614145510.22965-2-lvzhaoxiong@huaqin.corp-partner.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Am 14.06.24 um 16:55 schrieb Zhaoxiong Lv:
-> Currently, the init_code of the jd9365da driver is placed
-> in the enable() function and sent, but this seems to take
-> a long time. It takes 17ms to send each instruction (an init
-> code consists of about 200 instructions), so it takes
-> about 3.5s to send the init_code. So we moved the sending
+On Fri 14 Jun 2024 at 18:24, Neil Armstrong <neil.armstrong@linaro.org> wrote:
 
-That's certainly a dsi host issue (to slow AHB/APB host clock?). With a 
-Synopsis DSI host it takes < 10 ms when called in .enable.
-
-> of the inti_code to the prepare() function, and each
-> instruction seemed to take only 25μs.
-> 
-> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+> Add the missing clocks and clock-names in the sound card nodes
+> according the the AXG and GX sound card bindings changes.
+>
+> It solved the following errors:
+> sound: Unevaluated properties are not allowed ('assigned-clock-parents', 'assigned-clock-rates', 'assigned-clocks' were unexpected)
+>     from schema $id: http://devicetree.org/schemas/sound/amlogic,axg-sound-card.yaml#
+> sound: Unevaluated properties are not allowed ('assigned-clock-parents', 'assigned-clock-rates', 'assigned-clocks' were unexpected)
+>     from schema $id: http://devicetree.org/schemas/sound/amlogic,gx-sound-card.yaml#
+> sound: 'anyOf' conditional failed, one must be fixed:
+>     'clocks' is a required property
+>     '#clock-cells' is a required property
+>     from schema $id: http://devicetree.org/schemas/clock/clock.yaml#
+>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
->   .../gpu/drm/panel/panel-jadard-jd9365da-h3.c  | 781 +++++++++---------
->   1 file changed, 393 insertions(+), 388 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> index 4879835fe101..b39f01d7002e 100644
-> --- a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> +++ b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> @@ -19,17 +19,13 @@
->   #include <linux/of.h>
->   #include <linux/regulator/consumer.h>
->   
-> -#define JD9365DA_INIT_CMD_LEN		2
-> -
-> -struct jadard_init_cmd {
-> -	u8 data[JD9365DA_INIT_CMD_LEN];
-> -};
-> +struct jadard;
->   
->   struct jadard_panel_desc {
->   	const struct drm_display_mode mode;
->   	unsigned int lanes;
->   	enum mipi_dsi_pixel_format format;
-> -	const struct jadard_init_cmd *init_cmds;
-> +	int (*init)(struct jadard *jadard);
->   	u32 num_init_cmds;
->   };
->   
-> @@ -52,21 +48,9 @@ static int jadard_enable(struct drm_panel *panel)
->   {
->   	struct device *dev = panel->dev;
->   	struct jadard *jadard = panel_to_jadard(panel);
-> -	const struct jadard_panel_desc *desc = jadard->desc;
->   	struct mipi_dsi_device *dsi = jadard->dsi;
-> -	unsigned int i;
->   	int err;
->   
-> -	msleep(10);
-> -
-> -	for (i = 0; i < desc->num_init_cmds; i++) {
-> -		const struct jadard_init_cmd *cmd = &desc->init_cmds[i];
-> -
-> -		err = mipi_dsi_dcs_write_buffer(dsi, cmd->data, JD9365DA_INIT_CMD_LEN);
-> -		if (err < 0)
-> -			return err;
-> -	}
-Why did you remove that and instead of just make 
-mipi_dsi_dcs_write_buffer to mipi_dsi_dcs_write_seq_multi and call it in 
-.prepare if you think that improves anything? The code looks rather ugly 
-now, imho.
+>  arch/arm64/boot/dts/amlogic/meson-axg-s400.dts                      | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-g12a-fbx8am.dts                   | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-g12a-radxa-zero.dts               | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts                   | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts                     | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts                  | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-cm4io.dts       | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dts | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-g12b-bananapi.dtsi                | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-g12b-gsking-x.dts                 | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-g12b-gtking-pro.dts               | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-g12b-gtking.dts                   | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-g12b-odroid-go-ultra.dts          | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi               | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2l.dts               | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-g12b-radxa-zero2.dts              | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-g12b-ugoos-am6.dts                | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gx-libretech-pc.dtsi              | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi                 | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxbb-kii-pro.dts                  | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts                | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts              | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts                 | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts                     | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxbb-p201.dts                     | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi                | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-hub.dts                | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts              | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxl-s805x-libretech-ac.dts        | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxl-s805x-p241.dts                | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts          | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc-v2.dts     | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts        | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts                | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts               | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts                 | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts                  | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi                  | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-libretech-cottonwood.dtsi         | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-sm1-a95xf3-air-gbit.dts           | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-sm1-a95xf3-air.dts                | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-sm1-bananapi-m2-pro.dts           | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-sm1-bananapi-m5.dts               | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-sm1-h96-max.dts                   | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi                   | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts                    | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-sm1-x96-air-gbit.dts              | 4 ++++
+>  arch/arm64/boot/dts/amlogic/meson-sm1-x96-air.dts                   | 4 ++++
+>  48 files changed, 192 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
+> index 7ed526f45175..2228ed88b977 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
+> @@ -268,6 +268,10 @@ sound {
+>  				"Speaker1 Right", "SPK1 OUT_D",
+>  				"Linein AINL", "Linein",
+>  				"Linein AINR", "Linein";
+> +		clocks = <&clkc CLKID_HIFI_PLL>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_HIFI_PLL>,
 
-Alex
-> -
->   	msleep(120);
->   
->   	err = mipi_dsi_dcs_exit_sleep_mode(dsi);
-> @@ -117,9 +101,21 @@ static int jadard_prepare(struct drm_panel *panel)
->   	msleep(10);
->   
->   	gpiod_set_value(jadard->reset, 1);
-> -	msleep(120);
-> +	msleep(130);
-> +
-> +	ret = jadard->desc->init(jadard);
-> +	if (ret < 0)
-> +		goto poweroff;
->   
->   	return 0;
-> +
-> +poweroff:
-> +	gpiod_set_value(jadard->reset, 0);
-> +		/* T6: 2ms */
-> +	usleep_range(1000, 2000);
-> +	regulator_disable(jadard->vccio);
-> +
-> +	return ret;
->   }
->   
->   static int jadard_unprepare(struct drm_panel *panel)
-> @@ -167,176 +163,181 @@ static const struct drm_panel_funcs jadard_funcs = {
->   	.get_modes = jadard_get_modes,
->   };
->   
-> -static const struct jadard_init_cmd radxa_display_8hd_ad002_init_cmds[] = {
-> -	{ .data = { 0xE0, 0x00 } },
-> -	{ .data = { 0xE1, 0x93 } },
-> -	{ .data = { 0xE2, 0x65 } },
-> -	{ .data = { 0xE3, 0xF8 } },
-> -	{ .data = { 0x80, 0x03 } },
-> -	{ .data = { 0xE0, 0x01 } },
-> -	{ .data = { 0x00, 0x00 } },
-> -	{ .data = { 0x01, 0x7E } },
-> -	{ .data = { 0x03, 0x00 } },
-> -	{ .data = { 0x04, 0x65 } },
-> -	{ .data = { 0x0C, 0x74 } },
-> -	{ .data = { 0x17, 0x00 } },
-> -	{ .data = { 0x18, 0xB7 } },
-> -	{ .data = { 0x19, 0x00 } },
-> -	{ .data = { 0x1A, 0x00 } },
-> -	{ .data = { 0x1B, 0xB7 } },
-> -	{ .data = { 0x1C, 0x00 } },
-> -	{ .data = { 0x24, 0xFE } },
-> -	{ .data = { 0x37, 0x19 } },
-> -	{ .data = { 0x38, 0x05 } },
-> -	{ .data = { 0x39, 0x00 } },
-> -	{ .data = { 0x3A, 0x01 } },
-> -	{ .data = { 0x3B, 0x01 } },
-> -	{ .data = { 0x3C, 0x70 } },
-> -	{ .data = { 0x3D, 0xFF } },
-> -	{ .data = { 0x3E, 0xFF } },
-> -	{ .data = { 0x3F, 0xFF } },
-> -	{ .data = { 0x40, 0x06 } },
-> -	{ .data = { 0x41, 0xA0 } },
-> -	{ .data = { 0x43, 0x1E } },
-> -	{ .data = { 0x44, 0x0F } },
-> -	{ .data = { 0x45, 0x28 } },
-> -	{ .data = { 0x4B, 0x04 } },
-> -	{ .data = { 0x55, 0x02 } },
-> -	{ .data = { 0x56, 0x01 } },
-> -	{ .data = { 0x57, 0xA9 } },
-> -	{ .data = { 0x58, 0x0A } },
-> -	{ .data = { 0x59, 0x0A } },
-> -	{ .data = { 0x5A, 0x37 } },
-> -	{ .data = { 0x5B, 0x19 } },
-> -	{ .data = { 0x5D, 0x78 } },
-> -	{ .data = { 0x5E, 0x63 } },
-> -	{ .data = { 0x5F, 0x54 } },
-> -	{ .data = { 0x60, 0x49 } },
-> -	{ .data = { 0x61, 0x45 } },
-> -	{ .data = { 0x62, 0x38 } },
-> -	{ .data = { 0x63, 0x3D } },
-> -	{ .data = { 0x64, 0x28 } },
-> -	{ .data = { 0x65, 0x43 } },
-> -	{ .data = { 0x66, 0x41 } },
-> -	{ .data = { 0x67, 0x43 } },
-> -	{ .data = { 0x68, 0x62 } },
-> -	{ .data = { 0x69, 0x50 } },
-> -	{ .data = { 0x6A, 0x57 } },
-> -	{ .data = { 0x6B, 0x49 } },
-> -	{ .data = { 0x6C, 0x44 } },
-> -	{ .data = { 0x6D, 0x37 } },
-> -	{ .data = { 0x6E, 0x23 } },
-> -	{ .data = { 0x6F, 0x10 } },
-> -	{ .data = { 0x70, 0x78 } },
-> -	{ .data = { 0x71, 0x63 } },
-> -	{ .data = { 0x72, 0x54 } },
-> -	{ .data = { 0x73, 0x49 } },
-> -	{ .data = { 0x74, 0x45 } },
-> -	{ .data = { 0x75, 0x38 } },
-> -	{ .data = { 0x76, 0x3D } },
-> -	{ .data = { 0x77, 0x28 } },
-> -	{ .data = { 0x78, 0x43 } },
-> -	{ .data = { 0x79, 0x41 } },
-> -	{ .data = { 0x7A, 0x43 } },
-> -	{ .data = { 0x7B, 0x62 } },
-> -	{ .data = { 0x7C, 0x50 } },
-> -	{ .data = { 0x7D, 0x57 } },
-> -	{ .data = { 0x7E, 0x49 } },
-> -	{ .data = { 0x7F, 0x44 } },
-> -	{ .data = { 0x80, 0x37 } },
-> -	{ .data = { 0x81, 0x23 } },
-> -	{ .data = { 0x82, 0x10 } },
-> -	{ .data = { 0xE0, 0x02 } },
-> -	{ .data = { 0x00, 0x47 } },
-> -	{ .data = { 0x01, 0x47 } },
-> -	{ .data = { 0x02, 0x45 } },
-> -	{ .data = { 0x03, 0x45 } },
-> -	{ .data = { 0x04, 0x4B } },
-> -	{ .data = { 0x05, 0x4B } },
-> -	{ .data = { 0x06, 0x49 } },
-> -	{ .data = { 0x07, 0x49 } },
-> -	{ .data = { 0x08, 0x41 } },
-> -	{ .data = { 0x09, 0x1F } },
-> -	{ .data = { 0x0A, 0x1F } },
-> -	{ .data = { 0x0B, 0x1F } },
-> -	{ .data = { 0x0C, 0x1F } },
-> -	{ .data = { 0x0D, 0x1F } },
-> -	{ .data = { 0x0E, 0x1F } },
-> -	{ .data = { 0x0F, 0x5F } },
-> -	{ .data = { 0x10, 0x5F } },
-> -	{ .data = { 0x11, 0x57 } },
-> -	{ .data = { 0x12, 0x77 } },
-> -	{ .data = { 0x13, 0x35 } },
-> -	{ .data = { 0x14, 0x1F } },
-> -	{ .data = { 0x15, 0x1F } },
-> -	{ .data = { 0x16, 0x46 } },
-> -	{ .data = { 0x17, 0x46 } },
-> -	{ .data = { 0x18, 0x44 } },
-> -	{ .data = { 0x19, 0x44 } },
-> -	{ .data = { 0x1A, 0x4A } },
-> -	{ .data = { 0x1B, 0x4A } },
-> -	{ .data = { 0x1C, 0x48 } },
-> -	{ .data = { 0x1D, 0x48 } },
-> -	{ .data = { 0x1E, 0x40 } },
-> -	{ .data = { 0x1F, 0x1F } },
-> -	{ .data = { 0x20, 0x1F } },
-> -	{ .data = { 0x21, 0x1F } },
-> -	{ .data = { 0x22, 0x1F } },
-> -	{ .data = { 0x23, 0x1F } },
-> -	{ .data = { 0x24, 0x1F } },
-> -	{ .data = { 0x25, 0x5F } },
-> -	{ .data = { 0x26, 0x5F } },
-> -	{ .data = { 0x27, 0x57 } },
-> -	{ .data = { 0x28, 0x77 } },
-> -	{ .data = { 0x29, 0x35 } },
-> -	{ .data = { 0x2A, 0x1F } },
-> -	{ .data = { 0x2B, 0x1F } },
-> -	{ .data = { 0x58, 0x40 } },
-> -	{ .data = { 0x59, 0x00 } },
-> -	{ .data = { 0x5A, 0x00 } },
-> -	{ .data = { 0x5B, 0x10 } },
-> -	{ .data = { 0x5C, 0x06 } },
-> -	{ .data = { 0x5D, 0x40 } },
-> -	{ .data = { 0x5E, 0x01 } },
-> -	{ .data = { 0x5F, 0x02 } },
-> -	{ .data = { 0x60, 0x30 } },
-> -	{ .data = { 0x61, 0x01 } },
-> -	{ .data = { 0x62, 0x02 } },
-> -	{ .data = { 0x63, 0x03 } },
-> -	{ .data = { 0x64, 0x6B } },
-> -	{ .data = { 0x65, 0x05 } },
-> -	{ .data = { 0x66, 0x0C } },
-> -	{ .data = { 0x67, 0x73 } },
-> -	{ .data = { 0x68, 0x09 } },
-> -	{ .data = { 0x69, 0x03 } },
-> -	{ .data = { 0x6A, 0x56 } },
-> -	{ .data = { 0x6B, 0x08 } },
-> -	{ .data = { 0x6C, 0x00 } },
-> -	{ .data = { 0x6D, 0x04 } },
-> -	{ .data = { 0x6E, 0x04 } },
-> -	{ .data = { 0x6F, 0x88 } },
-> -	{ .data = { 0x70, 0x00 } },
-> -	{ .data = { 0x71, 0x00 } },
-> -	{ .data = { 0x72, 0x06 } },
-> -	{ .data = { 0x73, 0x7B } },
-> -	{ .data = { 0x74, 0x00 } },
-> -	{ .data = { 0x75, 0xF8 } },
-> -	{ .data = { 0x76, 0x00 } },
-> -	{ .data = { 0x77, 0xD5 } },
-> -	{ .data = { 0x78, 0x2E } },
-> -	{ .data = { 0x79, 0x12 } },
-> -	{ .data = { 0x7A, 0x03 } },
-> -	{ .data = { 0x7B, 0x00 } },
-> -	{ .data = { 0x7C, 0x00 } },
-> -	{ .data = { 0x7D, 0x03 } },
-> -	{ .data = { 0x7E, 0x7B } },
-> -	{ .data = { 0xE0, 0x04 } },
-> -	{ .data = { 0x00, 0x0E } },
-> -	{ .data = { 0x02, 0xB3 } },
-> -	{ .data = { 0x09, 0x60 } },
-> -	{ .data = { 0x0E, 0x2A } },
-> -	{ .data = { 0x36, 0x59 } },
-> -	{ .data = { 0xE0, 0x00 } },
-> +static int radxa_display_8hd_ad002_init_cmds(struct jadard *jadard)
-> +{
-> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = jadard->dsi };
-> +
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE0, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE1, 0x93);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE2, 0x65);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE3, 0xF8);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x80, 0x03);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE0, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x00, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x01, 0x7E);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x03, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x04, 0x65);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0C, 0x74);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x17, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x18, 0xB7);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x19, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1A, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1B, 0xB7);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1C, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x24, 0xFE);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x37, 0x19);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x38, 0x05);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x39, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3A, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3B, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3C, 0x70);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3D, 0xFF);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3E, 0xFF);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3F, 0xFF);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x40, 0x06);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x41, 0xA0);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x43, 0x1E);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x44, 0x0F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x45, 0x28);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x4B, 0x04);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x55, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x56, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x57, 0xA9);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x58, 0x0A);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x59, 0x0A);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5A, 0x37);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5B, 0x19);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5D, 0x78);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5E, 0x63);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5F, 0x54);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x60, 0x49);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x61, 0x45);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x62, 0x38);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x63, 0x3D);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x64, 0x28);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x65, 0x43);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x66, 0x41);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x67, 0x43);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x68, 0x62);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x69, 0x50);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6A, 0x57);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6B, 0x49);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6C, 0x44);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6D, 0x37);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6E, 0x23);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6F, 0x10);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x70, 0x78);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x71, 0x63);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x72, 0x54);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x73, 0x49);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x74, 0x45);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x75, 0x38);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x76, 0x3D);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x77, 0x28);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x78, 0x43);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x79, 0x41);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7A, 0x43);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7B, 0x62);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7C, 0x50);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7D, 0x57);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7E, 0x49);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7F, 0x44);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x80, 0x37);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x81, 0x23);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x82, 0x10);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE0, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x00, 0x47);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x01, 0x47);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x02, 0x45);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x03, 0x45);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x04, 0x4B);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x05, 0x4B);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x06, 0x49);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x07, 0x49);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x08, 0x41);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x09, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0A, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0B, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0C, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0D, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0E, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0F, 0x5F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x10, 0x5F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x11, 0x57);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x12, 0x77);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x13, 0x35);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x14, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x15, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x16, 0x46);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x17, 0x46);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x18, 0x44);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x19, 0x44);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1A, 0x4A);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1B, 0x4A);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1C, 0x48);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1D, 0x48);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1E, 0x40);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1F, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x20, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x21, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x22, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x23, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x24, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x25, 0x5F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x26, 0x5F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x27, 0x57);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x28, 0x77);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x29, 0x35);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x2A, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x2B, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x58, 0x40);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x59, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5A, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5B, 0x10);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5C, 0x06);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5D, 0x40);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5E, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5F, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x60, 0x30);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x61, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x62, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x63, 0x03);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x64, 0x6B);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x65, 0x05);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x66, 0x0C);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x67, 0x73);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x68, 0x09);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x69, 0x03);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6A, 0x56);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6B, 0x08);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6C, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6D, 0x04);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6E, 0x04);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6F, 0x88);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x70, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x71, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x72, 0x06);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x73, 0x7B);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x74, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x75, 0xF8);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x76, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x77, 0xD5);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x78, 0x2E);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x79, 0x12);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7A, 0x03);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7B, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7C, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7D, 0x03);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7E, 0x7B);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE0, 0x04);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x00, 0x0E);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x02, 0xB3);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x09, 0x60);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0E, 0x2A);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x36, 0x59);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE0, 0x00);
-> +
-> +	return 0;
->   };
->   
->   static const struct jadard_panel_desc radxa_display_8hd_ad002_desc = {
-> @@ -359,205 +360,209 @@ static const struct jadard_panel_desc radxa_display_8hd_ad002_desc = {
->   	},
->   	.lanes = 4,
->   	.format = MIPI_DSI_FMT_RGB888,
-> -	.init_cmds = radxa_display_8hd_ad002_init_cmds,
-> -	.num_init_cmds = ARRAY_SIZE(radxa_display_8hd_ad002_init_cmds),
-> +	.init = radxa_display_8hd_ad002_init_cmds,
->   };
->   
-> -static const struct jadard_init_cmd cz101b4001_init_cmds[] = {
-> -	{ .data = { 0xE0, 0x00 } },
-> -	{ .data = { 0xE1, 0x93 } },
-> -	{ .data = { 0xE2, 0x65 } },
-> -	{ .data = { 0xE3, 0xF8 } },
-> -	{ .data = { 0x80, 0x03 } },
-> -	{ .data = { 0xE0, 0x01 } },
-> -	{ .data = { 0x00, 0x00 } },
-> -	{ .data = { 0x01, 0x3B } },
-> -	{ .data = { 0x0C, 0x74 } },
-> -	{ .data = { 0x17, 0x00 } },
-> -	{ .data = { 0x18, 0xAF } },
-> -	{ .data = { 0x19, 0x00 } },
-> -	{ .data = { 0x1A, 0x00 } },
-> -	{ .data = { 0x1B, 0xAF } },
-> -	{ .data = { 0x1C, 0x00 } },
-> -	{ .data = { 0x35, 0x26 } },
-> -	{ .data = { 0x37, 0x09 } },
-> -	{ .data = { 0x38, 0x04 } },
-> -	{ .data = { 0x39, 0x00 } },
-> -	{ .data = { 0x3A, 0x01 } },
-> -	{ .data = { 0x3C, 0x78 } },
-> -	{ .data = { 0x3D, 0xFF } },
-> -	{ .data = { 0x3E, 0xFF } },
-> -	{ .data = { 0x3F, 0x7F } },
-> -	{ .data = { 0x40, 0x06 } },
-> -	{ .data = { 0x41, 0xA0 } },
-> -	{ .data = { 0x42, 0x81 } },
-> -	{ .data = { 0x43, 0x14 } },
-> -	{ .data = { 0x44, 0x23 } },
-> -	{ .data = { 0x45, 0x28 } },
-> -	{ .data = { 0x55, 0x02 } },
-> -	{ .data = { 0x57, 0x69 } },
-> -	{ .data = { 0x59, 0x0A } },
-> -	{ .data = { 0x5A, 0x2A } },
-> -	{ .data = { 0x5B, 0x17 } },
-> -	{ .data = { 0x5D, 0x7F } },
-> -	{ .data = { 0x5E, 0x6B } },
-> -	{ .data = { 0x5F, 0x5C } },
-> -	{ .data = { 0x60, 0x4F } },
-> -	{ .data = { 0x61, 0x4D } },
-> -	{ .data = { 0x62, 0x3F } },
-> -	{ .data = { 0x63, 0x42 } },
-> -	{ .data = { 0x64, 0x2B } },
-> -	{ .data = { 0x65, 0x44 } },
-> -	{ .data = { 0x66, 0x43 } },
-> -	{ .data = { 0x67, 0x43 } },
-> -	{ .data = { 0x68, 0x63 } },
-> -	{ .data = { 0x69, 0x52 } },
-> -	{ .data = { 0x6A, 0x5A } },
-> -	{ .data = { 0x6B, 0x4F } },
-> -	{ .data = { 0x6C, 0x4E } },
-> -	{ .data = { 0x6D, 0x20 } },
-> -	{ .data = { 0x6E, 0x0F } },
-> -	{ .data = { 0x6F, 0x00 } },
-> -	{ .data = { 0x70, 0x7F } },
-> -	{ .data = { 0x71, 0x6B } },
-> -	{ .data = { 0x72, 0x5C } },
-> -	{ .data = { 0x73, 0x4F } },
-> -	{ .data = { 0x74, 0x4D } },
-> -	{ .data = { 0x75, 0x3F } },
-> -	{ .data = { 0x76, 0x42 } },
-> -	{ .data = { 0x77, 0x2B } },
-> -	{ .data = { 0x78, 0x44 } },
-> -	{ .data = { 0x79, 0x43 } },
-> -	{ .data = { 0x7A, 0x43 } },
-> -	{ .data = { 0x7B, 0x63 } },
-> -	{ .data = { 0x7C, 0x52 } },
-> -	{ .data = { 0x7D, 0x5A } },
-> -	{ .data = { 0x7E, 0x4F } },
-> -	{ .data = { 0x7F, 0x4E } },
-> -	{ .data = { 0x80, 0x20 } },
-> -	{ .data = { 0x81, 0x0F } },
-> -	{ .data = { 0x82, 0x00 } },
-> -	{ .data = { 0xE0, 0x02 } },
-> -	{ .data = { 0x00, 0x02 } },
-> -	{ .data = { 0x01, 0x02 } },
-> -	{ .data = { 0x02, 0x00 } },
-> -	{ .data = { 0x03, 0x00 } },
-> -	{ .data = { 0x04, 0x1E } },
-> -	{ .data = { 0x05, 0x1E } },
-> -	{ .data = { 0x06, 0x1F } },
-> -	{ .data = { 0x07, 0x1F } },
-> -	{ .data = { 0x08, 0x1F } },
-> -	{ .data = { 0x09, 0x17 } },
-> -	{ .data = { 0x0A, 0x17 } },
-> -	{ .data = { 0x0B, 0x37 } },
-> -	{ .data = { 0x0C, 0x37 } },
-> -	{ .data = { 0x0D, 0x47 } },
-> -	{ .data = { 0x0E, 0x47 } },
-> -	{ .data = { 0x0F, 0x45 } },
-> -	{ .data = { 0x10, 0x45 } },
-> -	{ .data = { 0x11, 0x4B } },
-> -	{ .data = { 0x12, 0x4B } },
-> -	{ .data = { 0x13, 0x49 } },
-> -	{ .data = { 0x14, 0x49 } },
-> -	{ .data = { 0x15, 0x1F } },
-> -	{ .data = { 0x16, 0x01 } },
-> -	{ .data = { 0x17, 0x01 } },
-> -	{ .data = { 0x18, 0x00 } },
-> -	{ .data = { 0x19, 0x00 } },
-> -	{ .data = { 0x1A, 0x1E } },
-> -	{ .data = { 0x1B, 0x1E } },
-> -	{ .data = { 0x1C, 0x1F } },
-> -	{ .data = { 0x1D, 0x1F } },
-> -	{ .data = { 0x1E, 0x1F } },
-> -	{ .data = { 0x1F, 0x17 } },
-> -	{ .data = { 0x20, 0x17 } },
-> -	{ .data = { 0x21, 0x37 } },
-> -	{ .data = { 0x22, 0x37 } },
-> -	{ .data = { 0x23, 0x46 } },
-> -	{ .data = { 0x24, 0x46 } },
-> -	{ .data = { 0x25, 0x44 } },
-> -	{ .data = { 0x26, 0x44 } },
-> -	{ .data = { 0x27, 0x4A } },
-> -	{ .data = { 0x28, 0x4A } },
-> -	{ .data = { 0x29, 0x48 } },
-> -	{ .data = { 0x2A, 0x48 } },
-> -	{ .data = { 0x2B, 0x1F } },
-> -	{ .data = { 0x2C, 0x01 } },
-> -	{ .data = { 0x2D, 0x01 } },
-> -	{ .data = { 0x2E, 0x00 } },
-> -	{ .data = { 0x2F, 0x00 } },
-> -	{ .data = { 0x30, 0x1F } },
-> -	{ .data = { 0x31, 0x1F } },
-> -	{ .data = { 0x32, 0x1E } },
-> -	{ .data = { 0x33, 0x1E } },
-> -	{ .data = { 0x34, 0x1F } },
-> -	{ .data = { 0x35, 0x17 } },
-> -	{ .data = { 0x36, 0x17 } },
-> -	{ .data = { 0x37, 0x37 } },
-> -	{ .data = { 0x38, 0x37 } },
-> -	{ .data = { 0x39, 0x08 } },
-> -	{ .data = { 0x3A, 0x08 } },
-> -	{ .data = { 0x3B, 0x0A } },
-> -	{ .data = { 0x3C, 0x0A } },
-> -	{ .data = { 0x3D, 0x04 } },
-> -	{ .data = { 0x3E, 0x04 } },
-> -	{ .data = { 0x3F, 0x06 } },
-> -	{ .data = { 0x40, 0x06 } },
-> -	{ .data = { 0x41, 0x1F } },
-> -	{ .data = { 0x42, 0x02 } },
-> -	{ .data = { 0x43, 0x02 } },
-> -	{ .data = { 0x44, 0x00 } },
-> -	{ .data = { 0x45, 0x00 } },
-> -	{ .data = { 0x46, 0x1F } },
-> -	{ .data = { 0x47, 0x1F } },
-> -	{ .data = { 0x48, 0x1E } },
-> -	{ .data = { 0x49, 0x1E } },
-> -	{ .data = { 0x4A, 0x1F } },
-> -	{ .data = { 0x4B, 0x17 } },
-> -	{ .data = { 0x4C, 0x17 } },
-> -	{ .data = { 0x4D, 0x37 } },
-> -	{ .data = { 0x4E, 0x37 } },
-> -	{ .data = { 0x4F, 0x09 } },
-> -	{ .data = { 0x50, 0x09 } },
-> -	{ .data = { 0x51, 0x0B } },
-> -	{ .data = { 0x52, 0x0B } },
-> -	{ .data = { 0x53, 0x05 } },
-> -	{ .data = { 0x54, 0x05 } },
-> -	{ .data = { 0x55, 0x07 } },
-> -	{ .data = { 0x56, 0x07 } },
-> -	{ .data = { 0x57, 0x1F } },
-> -	{ .data = { 0x58, 0x40 } },
-> -	{ .data = { 0x5B, 0x30 } },
-> -	{ .data = { 0x5C, 0x16 } },
-> -	{ .data = { 0x5D, 0x34 } },
-> -	{ .data = { 0x5E, 0x05 } },
-> -	{ .data = { 0x5F, 0x02 } },
-> -	{ .data = { 0x63, 0x00 } },
-> -	{ .data = { 0x64, 0x6A } },
-> -	{ .data = { 0x67, 0x73 } },
-> -	{ .data = { 0x68, 0x1D } },
-> -	{ .data = { 0x69, 0x08 } },
-> -	{ .data = { 0x6A, 0x6A } },
-> -	{ .data = { 0x6B, 0x08 } },
-> -	{ .data = { 0x6C, 0x00 } },
-> -	{ .data = { 0x6D, 0x00 } },
-> -	{ .data = { 0x6E, 0x00 } },
-> -	{ .data = { 0x6F, 0x88 } },
-> -	{ .data = { 0x75, 0xFF } },
-> -	{ .data = { 0x77, 0xDD } },
-> -	{ .data = { 0x78, 0x3F } },
-> -	{ .data = { 0x79, 0x15 } },
-> -	{ .data = { 0x7A, 0x17 } },
-> -	{ .data = { 0x7D, 0x14 } },
-> -	{ .data = { 0x7E, 0x82 } },
-> -	{ .data = { 0xE0, 0x04 } },
-> -	{ .data = { 0x00, 0x0E } },
-> -	{ .data = { 0x02, 0xB3 } },
-> -	{ .data = { 0x09, 0x61 } },
-> -	{ .data = { 0x0E, 0x48 } },
-> -	{ .data = { 0xE0, 0x00 } },
-> -	{ .data = { 0xE6, 0x02 } },
-> -	{ .data = { 0xE7, 0x0C } },
-> +static int cz101b4001_init_cmds(struct jadard *jadard)
-> +{
-> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = jadard->dsi };
-> +
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE0, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE1, 0x93);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE2, 0x65);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE3, 0xF8);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x80, 0x03);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE0, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x00, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x01, 0x3B);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0C, 0x74);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x17, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x18, 0xAF);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x19, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1A, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1B, 0xAF);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1C, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x35, 0x26);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x37, 0x09);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x38, 0x04);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x39, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3A, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3C, 0x78);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3D, 0xFF);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3E, 0xFF);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3F, 0x7F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x40, 0x06);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x41, 0xA0);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x42, 0x81);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x43, 0x14);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x44, 0x23);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x45, 0x28);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x55, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x57, 0x69);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x59, 0x0A);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5A, 0x2A);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5B, 0x17);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5D, 0x7F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5E, 0x6B);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5F, 0x5C);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x60, 0x4F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x61, 0x4D);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x62, 0x3F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x63, 0x42);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x64, 0x2B);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x65, 0x44);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x66, 0x43);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x67, 0x43);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x68, 0x63);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x69, 0x52);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6A, 0x5A);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6B, 0x4F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6C, 0x4E);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6D, 0x20);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6E, 0x0F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6F, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x70, 0x7F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x71, 0x6B);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x72, 0x5C);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x73, 0x4F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x74, 0x4D);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x75, 0x3F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x76, 0x42);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x77, 0x2B);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x78, 0x44);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x79, 0x43);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7A, 0x43);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7B, 0x63);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7C, 0x52);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7D, 0x5A);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7E, 0x4F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7F, 0x4E);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x80, 0x20);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x81, 0x0F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x82, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE0, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x00, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x01, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x02, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x03, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x04, 0x1E);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x05, 0x1E);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x06, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x07, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x08, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x09, 0x17);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0A, 0x17);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0B, 0x37);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0C, 0x37);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0D, 0x47);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0E, 0x47);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0F, 0x45);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x10, 0x45);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x11, 0x4B);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x12, 0x4B);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x13, 0x49);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x14, 0x49);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x15, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x16, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x17, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x18, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x19, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1A, 0x1E);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1B, 0x1E);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1C, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1D, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1E, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x1F, 0x17);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x20, 0x17);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x21, 0x37);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x22, 0x37);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x23, 0x46);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x24, 0x46);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x25, 0x44);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x26, 0x44);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x27, 0x4A);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x28, 0x4A);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x29, 0x48);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x2A, 0x48);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x2B, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x2C, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x2D, 0x01);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x2E, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x2F, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x30, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x31, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x32, 0x1E);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x33, 0x1E);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x34, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x35, 0x17);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x36, 0x17);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x37, 0x37);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x38, 0x37);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x39, 0x08);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3A, 0x08);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3B, 0x0A);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3C, 0x0A);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3D, 0x04);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3E, 0x04);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x3F, 0x06);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x40, 0x06);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x41, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x42, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x43, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x44, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x45, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x46, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x47, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x48, 0x1E);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x49, 0x1E);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x4A, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x4B, 0x17);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x4C, 0x17);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x4D, 0x37);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x4E, 0x37);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x4F, 0x09);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x50, 0x09);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x51, 0x0B);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x52, 0x0B);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x53, 0x05);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x54, 0x05);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x55, 0x07);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x56, 0x07);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x57, 0x1F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x58, 0x40);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5B, 0x30);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5C, 0x16);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5D, 0x34);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5E, 0x05);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x5F, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x63, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x64, 0x6A);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x67, 0x73);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x68, 0x1D);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x69, 0x08);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6A, 0x6A);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6B, 0x08);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6C, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6D, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6E, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x6F, 0x88);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x75, 0xFF);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x77, 0xDD);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x78, 0x3F);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x79, 0x15);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7A, 0x17);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7D, 0x14);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x7E, 0x82);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE0, 0x04);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x00, 0x0E);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x02, 0xB3);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x09, 0x61);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x0E, 0x48);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE0, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE6, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE7, 0x0C);
-> +
-> +	return 0;
->   };
->   
->   static const struct jadard_panel_desc cz101b4001_desc = {
-> @@ -580,8 +585,8 @@ static const struct jadard_panel_desc cz101b4001_desc = {
->   	},
->   	.lanes = 4,
->   	.format = MIPI_DSI_FMT_RGB888,
-> -	.init_cmds = cz101b4001_init_cmds,
-> -	.num_init_cmds = ARRAY_SIZE(cz101b4001_init_cmds),
-> +	.init = cz101b4001_init_cmds,
-> +
->   };
->   
->   static int jadard_dsi_probe(struct mipi_dsi_device *dsi)
+Here the HiFi PLL shows the naming is kind of odd.
+As explained in the bindings, I don't think is useful. 
 
+For the record, on AXG the HiFi PLL works well and should be used.
+
+On G12/SM1 there is slight instabily with the HiFi - probably similar to
+the one affecting the SYS PLL / DVFS. It can be used with a small hack
+but it is safer to use the MPLL2 instead.
+
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-fbx8am.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-fbx8am.dts
+> index af211d8f3952..0bd298920191 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12a-fbx8am.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12a-fbx8am.dts
+> @@ -176,6 +176,10 @@ sound {
+>  				"SPDIFOUT_A IN 1", "FRDDR_B OUT 3",
+>  				"SPDIFOUT_A IN 2", "FRDDR_C OUT 3";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-radxa-zero.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-radxa-zero.dts
+> index 15b9bc280706..b44c0802d47c 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12a-radxa-zero.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12a-radxa-zero.dts
+> @@ -138,6 +138,10 @@ sound {
+>  				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
+>  				"TDM_B Playback", "TDMOUT_B OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
+> index 61cb8135a392..3ddd0e2c4710 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
+> @@ -201,6 +201,10 @@ sound {
+>  				"TODDR_B IN 1", "TDMIN_B OUT",
+>  				"TODDR_C IN 1", "TDMIN_B OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+> index 0e239939ade6..42ac5dcdb19d 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12a-u200.dts
+> @@ -238,6 +238,10 @@ sound {
+>  				"Lineout", "10U2 OUTL",
+>  				"Lineout", "10U2 OUTR";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
+> index 05c7a1e3f1b7..0ee32d7bceae 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
+> @@ -158,6 +158,10 @@ sound {
+>  				"SPDIFOUT_A IN 1", "FRDDR_B OUT 3",
+>  				"SPDIFOUT_A IN 2", "FRDDR_C OUT 3";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-cm4io.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-cm4io.dts
+> index 13d478f9c891..cdc9d387d9be 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-cm4io.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-cm4io.dts
+> @@ -70,6 +70,10 @@ sound {
+>  				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
+>  				"TDM_B Playback", "TDMOUT_B OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dts
+> index 003efed529ba..0af7ba8ec896 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dts
+> @@ -79,6 +79,10 @@ sound {
+>  				"LINPUT1", "Mic Jack",
+>  				"Mic Jack", "MICB";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  					<&clkc CLKID_MPLL0>,
+>  					<&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi.dtsi
+> index 6a346cb86a53..5136b062e19a 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-bananapi.dtsi
+> @@ -194,6 +194,10 @@ sound {
+>  				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
+>  				"TDM_B Playback", "TDMOUT_B OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-gsking-x.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-gsking-x.dts
+> index bb73e10b5e74..8356b881fb31 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12b-gsking-x.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-gsking-x.dts
+> @@ -48,6 +48,10 @@ sound {
+>  				"TDMOUT_A IN 2", "FRDDR_C OUT 1",
+>  				"TDM_A Playback", "TDMOUT_A OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-gtking-pro.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-gtking-pro.dts
+> index 6eeedd54ab91..cc1156a225c1 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12b-gtking-pro.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-gtking-pro.dts
+> @@ -49,6 +49,10 @@ sound {
+>  				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
+>  				"TDM_B Playback", "TDMOUT_B OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-gtking.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-gtking.dts
+> index 0da386cabe1a..4d1ef4d98391 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12b-gtking.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-gtking.dts
+> @@ -37,6 +37,10 @@ sound {
+>  				"SPDIFOUT_A IN 1", "FRDDR_B OUT 3",
+>  				"SPDIFOUT_A IN 2", "FRDDR_C OUT 3";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-go-ultra.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-go-ultra.dts
+> index eed2a23047ca..c58e551b0e95 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-go-ultra.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-go-ultra.dts
+> @@ -234,6 +234,10 @@ sound {
+>  				"Internal Speakers", "Speaker Amplifier OUTL",
+>  				"Internal Speakers", "Speaker Amplifier OUTR";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+> index d80dd9a3da31..1f4674bbebda 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+> @@ -71,6 +71,10 @@ sound {
+>  				"Lineout", "U19 OUTL",
+>  				"Lineout", "U19 OUTR";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2l.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2l.dts
+> index e26f3e3258e1..058453f547b4 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2l.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2l.dts
+> @@ -39,6 +39,10 @@ sound {
+>  				"TODDR_B IN 6", "TDMIN_LB OUT",
+>  				"TODDR_C IN 6", "TDMIN_LB OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-radxa-zero2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-radxa-zero2.dts
+> index 8445701100d0..bf434fcee31d 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12b-radxa-zero2.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-radxa-zero2.dts
+> @@ -176,6 +176,10 @@ sound {
+>  				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
+>  				"TDM_B Playback", "TDMOUT_B OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-ugoos-am6.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-ugoos-am6.dts
+> index 6396f190d703..0ad35693ccb3 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-g12b-ugoos-am6.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-ugoos-am6.dts
+> @@ -32,6 +32,10 @@ sound {
+>  				"SPDIFOUT_A IN 1", "FRDDR_B OUT 3",
+>  				"SPDIFOUT_A IN 2", "FRDDR_C OUT 3";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gx-libretech-pc.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx-libretech-pc.dtsi
+> index efd662a452e8..db76787386ac 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gx-libretech-pc.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gx-libretech-pc.dtsi
+> @@ -194,6 +194,10 @@ sound {
+>  				"AU2 INR", "ACODEC LORN",
+>  				"7J4-14 LEFT", "AU2 OUTL",
+>  				"7J4-11 RIGHT", "AU2 OUTR";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
+> index 08d6b69ba469..4e2cbd9d60f2 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
+> @@ -129,6 +129,10 @@ sound {
+>  				"AU2 INR", "ACODEC LORN",
+>  				"Lineout", "AU2 OUTL",
+>  				"Lineout", "AU2 OUTR";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-kii-pro.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-kii-pro.dts
+> index f28452b9f00f..01c47d1545b8 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-kii-pro.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-kii-pro.dts
+> @@ -45,6 +45,10 @@ button-reset {
+>  	sound {
+>  		compatible = "amlogic,gx-sound-card";
+>  		model = "KII-PRO";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+> index 1fd2e56e6b08..a7a2767a42a1 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+> @@ -135,6 +135,10 @@ hdmi_connector_in: endpoint {
+>  	sound {
+>  		compatible = "amlogic,gx-sound-card";
+>  		model = "NANOPI-K2";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
+> index cca129ce2c58..8c01a43e4e7a 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
+> @@ -142,6 +142,10 @@ hdmi_connector_in: endpoint {
+>  	sound {
+>  		compatible = "amlogic,gx-sound-card";
+>  		model = "NEXBOX-A95X";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+> index c37cc6b036cd..6a794f72544d 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+> @@ -177,6 +177,10 @@ hdmi_connector_in: endpoint {
+>  	sound {
+>  		compatible = "amlogic,gx-sound-card";
+>  		model = "ODROID-C2";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts
+> index 7f94716876d3..3ba3681fe3ba 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-p200.dts
+> @@ -68,6 +68,10 @@ button-menu {
+>  	sound {
+>  		compatible = "amlogic,gx-sound-card";
+>  		model = "P200";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-p201.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-p201.dts
+> index 6f81eed83bec..32e1c272052e 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-p201.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-p201.dts
+> @@ -17,6 +17,10 @@ / {
+>  	sound {
+>  		compatible = "amlogic,gx-sound-card";
+>  		model = "P201";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+> index 255e93a0b36d..cbb847b8d5fe 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
+> @@ -108,6 +108,10 @@ sdio_pwrseq: sdio-pwrseq {
+>  	sound {
+>  		compatible = "amlogic,gx-sound-card";
+>  		model = "VEGA-S95";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-hub.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-hub.dts
+> index af9ea32a2876..b5b0ced8ecff 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-hub.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-hub.dts
+> @@ -16,6 +16,10 @@ / {
+>  	sound {
+>  		compatible = "amlogic,gx-sound-card";
+>  		model = "WETEK-HUB";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts
+> index 376760d86766..29749b053e1e 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts
+> @@ -48,6 +48,10 @@ button {
+>  	sound {
+>  		compatible = "amlogic,gx-sound-card";
+>  		model = "WETEK-PLAY2";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-libretech-ac.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-libretech-ac.dts
+> index 90ef9c17d80b..6aef181ca2ce 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-libretech-ac.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-libretech-ac.dts
+> @@ -123,6 +123,10 @@ sound {
+>  				"Speaker", "9J5-2 RIGHT";
+>  		audio-routing = "9J5-3 LEFT", "ACODEC LOLN",
+>  				"9J5-2 RIGHT", "ACODEC LORN";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-p241.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-p241.dts
+> index 08a4718219b1..fdc387c9b202 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-p241.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s805x-p241.dts
+> @@ -128,6 +128,10 @@ sound {
+>  				"AU2 INR", "ACODEC LORN",
+>  				"Lineout", "AU2 OUTL",
+>  				"Lineout", "AU2 OUTR";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+> index fea65f20523a..065a7fc9d2fc 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+> @@ -67,6 +67,10 @@ hdmi_connector_in: endpoint {
+>  	sound {
+>  		compatible = "amlogic,gx-sound-card";
+>  		model = "KHADAS-VIM";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc-v2.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc-v2.dts
+> index 63b20860067c..2fe5c6686657 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc-v2.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc-v2.dts
+> @@ -160,6 +160,10 @@ vcc_1v8: regulator-vcc-1v8 {
+>  	sound {
+>  		compatible = "amlogic,gx-sound-card";
+>  		model = "LIBRETECH-CC-V2";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+> index 8b26c9661be1..4b40794721fd 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+> @@ -142,6 +142,10 @@ sound {
+>  				"AU2 INR", "ACODEC LORN",
+>  				"Lineout", "AU2 OUTL",
+>  				"Lineout", "AU2 OUTR";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
+> index 9b4ea6a49398..98c6251142c4 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dts
+> @@ -50,6 +50,10 @@ sound {
+>  				"AU2 INR", "ACODEC LORN",
+>  				"Lineout", "AU2 OUTL",
+>  				"Lineout", "AU2 OUTR";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+> index 07e7c3bedea0..d97fca396e0e 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+> @@ -150,6 +150,10 @@ wifi32k: wifi32k {
+>  	sound {
+>  		compatible = "amlogic,gx-sound-card";
+>  		model = "KHADAS-VIM2";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
+> index ad2dd4ad0a31..71ee228781fe 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
+> @@ -86,6 +86,10 @@ hdmi_connector_in: endpoint {
+>  	sound {
+>  		compatible = "amlogic,gx-sound-card";
+>  		model = "NEXBOX-A1";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
+> index d05dde8da5c5..81387968f51d 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
+> @@ -101,6 +101,10 @@ sdio_pwrseq: sdio-pwrseq {
+>  	sound {
+>  		compatible = "amlogic,gx-sound-card";
+>  		model = "RBOX-PRO";
+> +		clocks = <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>,
+> +			 <&clkc CLKID_MPLL2>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>,
+>  				  <&clkc CLKID_MPLL2>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi b/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
+> index e78cc9b577a0..bd4ffc07e456 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
+> @@ -182,6 +182,10 @@ sound {
+>  				"TODDR_B IN 0", "TDMIN_A OUT",
+>  				"TODDR_C IN 0", "TDMIN_A OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-libretech-cottonwood.dtsi b/arch/arm64/boot/dts/amlogic/meson-libretech-cottonwood.dtsi
+> index 082b72703cdf..746ce70b545b 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-libretech-cottonwood.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-libretech-cottonwood.dtsi
+> @@ -200,6 +200,10 @@ sound {
+>  				 <&tdmin_a>, <&tdmin_b>, <&tdmin_c>,
+>  				 <&dioo2133>;
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-a95xf3-air-gbit.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-a95xf3-air-gbit.dts
+> index 9b2eb6e42651..4cca62ddd04a 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-sm1-a95xf3-air-gbit.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-sm1-a95xf3-air-gbit.dts
+> @@ -22,6 +22,10 @@ sound {
+>  				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
+>  				"TDM_B Playback", "TDMOUT_B OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-a95xf3-air.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-a95xf3-air.dts
+> index 6e34fd80ed71..4a2aef4948ff 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-sm1-a95xf3-air.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-sm1-a95xf3-air.dts
+> @@ -22,6 +22,10 @@ sound {
+>  				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
+>  				"TDM_B Playback", "TDMOUT_B OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-bananapi-m2-pro.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-bananapi-m2-pro.dts
+> index 586034316ec3..3203280bffe7 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-sm1-bananapi-m2-pro.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-sm1-bananapi-m2-pro.dts
+> @@ -22,6 +22,10 @@ sound {
+>  				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
+>  				"TDM_B Playback", "TDMOUT_B OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-bananapi-m5.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-bananapi-m5.dts
+> index f045bf851638..6db7c5ccdbbc 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-sm1-bananapi-m5.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-sm1-bananapi-m5.dts
+> @@ -57,6 +57,10 @@ sound {
+>  				"Lineout", "ACODEC LOLP",
+>  				"Lineout", "ACODEC LORP";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-h96-max.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-h96-max.dts
+> index e6e9410d40cb..918ace039da6 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-sm1-h96-max.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-sm1-h96-max.dts
+> @@ -22,6 +22,10 @@ sound {
+>  				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
+>  				"TDM_B Playback", "TDMOUT_B OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi
+> index 951eb8e3f0c0..44d2346482a5 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-sm1-odroid.dtsi
+> @@ -174,6 +174,10 @@ sound {
+>  				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
+>  				"TDM_B Playback", "TDMOUT_B OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
+> index 3581e14cbf18..19b712e45066 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
+> @@ -239,6 +239,10 @@ sound {
+>  				"TODDR_B IN 1", "TDMIN_B OUT",
+>  				"TODDR_C IN 1", "TDMIN_B OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-x96-air-gbit.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-x96-air-gbit.dts
+> index fc9b961133cd..c913af910208 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-sm1-x96-air-gbit.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-sm1-x96-air-gbit.dts
+> @@ -22,6 +22,10 @@ sound {
+>  				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
+>  				"TDM_B Playback", "TDMOUT_B OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-x96-air.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-x96-air.dts
+> index 9ea969255b4f..49978855c2d9 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-sm1-x96-air.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-sm1-x96-air.dts
+> @@ -22,6 +22,10 @@ sound {
+>  				"TDMOUT_B IN 2", "FRDDR_C OUT 1",
+>  				"TDM_B Playback", "TDMOUT_B OUT";
+>  
+> +		clocks = <&clkc CLKID_MPLL2>,
+> +			 <&clkc CLKID_MPLL0>,
+> +			 <&clkc CLKID_MPLL1>;
+> +		clock-names = "mpll0", "mpll1", "mpll2";
+>  		assigned-clocks = <&clkc CLKID_MPLL2>,
+>  				  <&clkc CLKID_MPLL0>,
+>  				  <&clkc CLKID_MPLL1>;
+
+-- 
+Jerome
 
