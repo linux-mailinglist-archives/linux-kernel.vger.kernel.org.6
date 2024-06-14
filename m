@@ -1,115 +1,210 @@
-Return-Path: <linux-kernel+bounces-214417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C119A908422
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:01:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 136DD908426
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28932B21E67
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:01:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 475051F21AE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038321487DC;
-	Fri, 14 Jun 2024 07:01:39 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6168314884B;
+	Fri, 14 Jun 2024 07:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KHqB0eXj"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F9217C72
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 07:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE1C17C72;
+	Fri, 14 Jun 2024 07:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718348498; cv=none; b=Gc0pHbBYyJtrYWppwHCjX3bX/bTtz03wGoGB8ZTdQEdkX9c1OJ/DVwn2nd/tXXyh/3+hDH8JXjx0rPVTCTReRLiUQW3uiYtMtXdHohEGOQBuObXcrtLeF4wSHfZzOSfLdb3M0muz/0I7wuK8SSHcHEv8hneFc4FrsygfzsKDHOo=
+	t=1718348558; cv=none; b=gTSRNs76ssmeHwotwqe1TMJaKXweguYjhq95k6y9dpmAKdGH8AlNkhq7qMmovoWA4HO1OJdLrWozYQJn2Fzrb7N4rAMTJXEs0I/x+raazA8ejh4ZayMxrNi+q2HrezqAS1Gulgv3EYp7SeJjGy/7e7rdnVmVFduek4/lph2v1sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718348498; c=relaxed/simple;
-	bh=f+47wVGcuysOXwCj/07vA1XG0M+Mix+78gdu2z03d+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UsNbz88Oq9Lcchp+70LXfJIUFExQsn/kt05s/1J9nNM9yMFVLIFFIfACI2qnq9PO0Im8yWwZppV9e8MvPtlfLrWId13+ne2p8Ms8j4J/rf9nbpJWE5u8Q/ZnAUDzlXJMU29HkebKSK+Tn7z4CElVBC2dC6voK+WCYJhmk8EwkgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sI0w9-0004Jv-JE; Fri, 14 Jun 2024 09:01:25 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sI0w7-002Cwf-Q0; Fri, 14 Jun 2024 09:01:23 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sI0w7-00ALq4-2I;
-	Fri, 14 Jun 2024 09:01:23 +0200
-Date: Fri, 14 Jun 2024 09:01:23 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
+	s=arc-20240116; t=1718348558; c=relaxed/simple;
+	bh=jDYNxMYUTSaQU5TQ2+5iBWuMX4NMSKkItAeMuFhk76M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ttr/09L0WNqGyqwo34BVFa3zDz1SlLDTy7TD63EBzP0u23ExbndFcSO04C6rW5UB4/ySXpRh6VGVOkvolk8sXFTuNADdOoY4ye8imILQMlPYvCrOMC+Oh7/+ujd+gDWo+5+lL4LwGZrGRPK8tuzxhWZ0v7efebR23oTl1XGrGYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KHqB0eXj; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3c9cc66c649so842214b6e.1;
+        Fri, 14 Jun 2024 00:02:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718348556; x=1718953356; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=By4P0vcgLroOQCJskwfGLQoINqqC43myu7beQ18KDt0=;
+        b=KHqB0eXjVYi2mGMz004Xhf3TUEsZmN6JR6aLwKYAttLSi3YvMDfMbDsmwAsXJouRYO
+         JSD3InIKYqeiA8o2lAvNGfUjQX+zRJoLeF1a5UJ4Ol6M7YcQ61kuKyGo6iX9c8CHqL3h
+         9ClQrjfDYwx4wivgBpvB3bZrowiwe5geBe5Lgov8m78Zy4SneQIWLXAA//R6zKBEEGBW
+         R/gu9GSZ0j8mqyFH4z8mUGycmBw/8iScT0pEAbE2zPlYDYuOuxKjFHuNCVuat8jv5Ock
+         Y6M/L9zlSEAX6U2mtQ+u1u28KKUVHy6zdl1P1I0tAWJl7xvZdZnhXfXZtde2Kq9oNwsF
+         YCqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718348556; x=1718953356;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=By4P0vcgLroOQCJskwfGLQoINqqC43myu7beQ18KDt0=;
+        b=BM3CR+IgSGvYFVlfuGVX9q4hdHpstp1izlvIf96xPLuVrT78FKE6fVEDCFeQQ9JzN3
+         Qx785RO8BICxXS6iySc5xsDN/7V6NNj4RmCmcmCWZV7BLjyB+GPFkyGu52hiEdgbTD7S
+         S9ebmU/JUuy/UbceSywhsCnl1UFsjrEO6Rc05M4oFxjLqkpN4WW54/oazllj8iun/oPs
+         WvYXSbMaZiG+eAavgrayNhIFISp705yk1/8uPBQYGnTKHEqcoiyUUOEOypqIB+ABVyED
+         VtsFeBCmn3SnQwK6rXgRR+vqhXNzK2dFYqcRaa0aXHxMFh9NT++iXqwXTDxpV65zSsEv
+         c4bw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6W7kRJdc2rl/L46L31FQ+bGqLVIH6wJr/YKPJu+O8PCvB06IuX48dLTm6IXIBvK226A5znrvgY3lBVCHHUqZwqsar4g1e0FZQVdy8
+X-Gm-Message-State: AOJu0YwYrCL73cfV+iQc6F8gGIi3hjqtWJS1BcLAAzcpqQV8T9bexVoO
+	ees2D2VOvk4+fEW3qVt4ux8UlKJNl8NczqD4KzBZnAwMYicuJITE
+X-Google-Smtp-Source: AGHT+IFIcoEGF1ujGsaAknACmdVAzRUo/ikVN155rUrAwKruOrjOfcAV7bcoaC10WeY7S6jOQeHj6w==
+X-Received: by 2002:a05:6358:7184:b0:19f:5631:97cd with SMTP id e5c5f4694b2df-19fa9e5c312mr252970455d.15.1718348555911;
+        Fri, 14 Jun 2024 00:02:35 -0700 (PDT)
+Received: from localhost.localdomain ([129.146.253.192])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-6fede354612sm2072893a12.35.2024.06.14.00.02.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 00:02:35 -0700 (PDT)
+From: Furong Xu <0x1207@gmail.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
 	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	stable@vger.kernel.org, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net v1 2/2] net: phy: dp83tg720: get initial master/slave
- configuration
-Message-ID: <Zmvqw-GtKsSNFQsr@pengutronix.de>
-References: <20240613183034.2407798-1-o.rempel@pengutronix.de>
- <20240613183034.2407798-2-o.rempel@pengutronix.de>
- <f88abfe3-a66c-4e65-b627-7adf7f04580f@lunn.ch>
- <ZmvTS9YI8LACJOND@pengutronix.de>
+	"David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>,
+	Corinna Vinschen <vinschen@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	xfr@outlook.com,
+	rock.xu@nio.com,
+	Furong Xu <0x1207@gmail.com>
+Subject: [PATCH net-next v3] net: stmmac: Enable TSO on VLANs
+Date: Fri, 14 Jun 2024 15:02:06 +0800
+Message-Id: <20240614070206.506999-1-0x1207@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZmvTS9YI8LACJOND@pengutronix.de>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 14, 2024 at 07:21:15AM +0200, Oleksij Rempel wrote:
-> On Thu, Jun 13, 2024 at 09:33:01PM +0200, Andrew Lunn wrote:
-> > On Thu, Jun 13, 2024 at 08:30:34PM +0200, Oleksij Rempel wrote:
-> > > Get initial master/slave configuration, otherwise ethtool
-> > > wont be able to provide this information until link is
-> > > established. This makes troubleshooting harder, since wrong
-> > > role configuration would prevent the link start.
-> > 
-> > I looked at how genphy_c45_read_status() works. If we have
-> > phydev->autoneg == AUTONEG_ENABLE then genphy_c45_baset1_read_status()
-> > is called which sets phydev->master_slave_get. If not AUTONEG_ENABLE
-> > it calls genphy_c45_read_pma() which ends up calling
-> > genphy_c45_pma_baset1_read_master_slave().
-> > 
-> > So it seems like the .read_status op should be setting master/slave
-> > each time it is called, and not one time during .config_init.
-> > 
-> > What do you think?
-> 
-> Yes, you are right. I verified it:
-> In case of this driver, .config_init will be executed every time no link
-> is detected over phy_init_hw() call. If link is detected
-> genphy_c45_pma_baset1_read_master_slave() is called directly.
-> It is not directly visible but read_master_slave() will be executed on
-> every  .read_status.
+The TSO engine works well when the frames are not VLAN Tagged.
+But it will produce broken segments when frames are VLAN Tagged.
 
-Hm.. on other hand. Since the configuration state is readed only on
-init and reset, we will see on user space side only default state not updated
-after config_aneg().
+The first segment is all good, while the second segment to the
+last segment are broken, they lack of required VLAN tag.
 
+An example here:
+========
+// 1st segment of a VLAN Tagged TSO frame, nothing wrong.
+MacSrc > MacDst, ethertype 802.1Q (0x8100), length 1518: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [.], seq 1:1449
+
+// 2nd to last segments of a VLAN Tagged TSO frame, VLAN tag is missing.
+MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 1449:2897
+MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 2897:4345
+MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 4345:5793
+MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [P.], seq 5793:7241
+
+// normal VLAN Tagged non-TSO frame, nothing wrong.
+MacSrc > MacDst, ethertype 802.1Q (0x8100), length 1022: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [P.], seq 7241:8193
+MacSrc > MacDst, ethertype 802.1Q (0x8100), length 70: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [F.], seq 8193
+========
+
+When transmitting VLAN Tagged TSO frames, never insert VLAN tag by HW,
+always insert VLAN tag to SKB payload, then TSO works well on VLANs for
+all MAC cores.
+
+Tested on DWMAC CORE 5.10a, DWMAC CORE 5.20a and DWXGMAC CORE 3.20a
+
+Signed-off-by: Furong Xu <0x1207@gmail.com>
+---
+  Changes in v3:
+    - Drop packet and increase stats counter when vlan tag insert fails.
+
+  Changes in v2:
+    - Use __vlan_hwaccel_push_inside() to insert vlan tag to the payload.
+---
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 32 +++++++++++--------
+ 1 file changed, 19 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index bbedf2a8c60f..87aa3528cc0c 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -4233,18 +4233,32 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+ {
+ 	struct dma_desc *desc, *first, *mss_desc = NULL;
+ 	struct stmmac_priv *priv = netdev_priv(dev);
+-	int nfrags = skb_shinfo(skb)->nr_frags;
+-	u32 queue = skb_get_queue_mapping(skb);
+ 	unsigned int first_entry, tx_packets;
+ 	struct stmmac_txq_stats *txq_stats;
+-	int tmp_pay_len = 0, first_tx;
++	int tmp_pay_len = 0, first_tx, nfrags;
+ 	struct stmmac_tx_queue *tx_q;
+-	bool has_vlan, set_ic;
++	bool set_ic;
+ 	u8 proto_hdr_len, hdr;
+-	u32 pay_len, mss;
++	u32 pay_len, mss, queue;
+ 	dma_addr_t des;
+ 	int i;
+ 
++	/* Always insert VLAN tag to SKB payload for TSO frames.
++	 *
++	 * Never insert VLAN tag by HW, since segments splited by
++	 * TSO engine will be un-tagged by mistake.
++	 */
++	if (skb_vlan_tag_present(skb)) {
++		skb = __vlan_hwaccel_push_inside(skb);
++		if (unlikely(!skb)) {
++			priv->xstats.tx_dropped++;
++			return NETDEV_TX_OK;
++		}
++	}
++
++	nfrags = skb_shinfo(skb)->nr_frags;
++	queue = skb_get_queue_mapping(skb);
++
+ 	tx_q = &priv->dma_conf.tx_queue[queue];
+ 	txq_stats = &priv->xstats.txq_stats[queue];
+ 	first_tx = tx_q->cur_tx;
+@@ -4297,9 +4311,6 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+ 			skb->data_len);
+ 	}
+ 
+-	/* Check if VLAN can be inserted by HW */
+-	has_vlan = stmmac_vlan_insert(priv, skb, tx_q);
+-
+ 	first_entry = tx_q->cur_tx;
+ 	WARN_ON(tx_q->tx_skbuff[first_entry]);
+ 
+@@ -4309,9 +4320,6 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		desc = &tx_q->dma_tx[first_entry];
+ 	first = desc;
+ 
+-	if (has_vlan)
+-		stmmac_set_desc_vlan(priv, first, STMMAC_VLAN_INSERT);
+-
+ 	/* first descriptor: fill Headers on Buf1 */
+ 	des = dma_map_single(priv->device, skb->data, skb_headlen(skb),
+ 			     DMA_TO_DEVICE);
+@@ -7678,8 +7686,6 @@ int stmmac_dvr_probe(struct device *device,
+ 		ndev->features |= NETIF_F_RXHASH;
+ 
+ 	ndev->vlan_features |= ndev->features;
+-	/* TSO doesn't work on VLANs yet */
+-	ndev->vlan_features &= ~NETIF_F_TSO;
+ 
+ 	/* MTU range: 46 - hw-specific max */
+ 	ndev->min_mtu = ETH_ZLEN - ETH_HLEN;
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.34.1
+
 
