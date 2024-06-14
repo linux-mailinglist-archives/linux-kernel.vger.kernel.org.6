@@ -1,322 +1,173 @@
-Return-Path: <linux-kernel+bounces-214800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19A4B908A27
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:37:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B37FB908A2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 12:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96D9E1F23E53
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:37:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7B801C222BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FAFD194132;
-	Fri, 14 Jun 2024 10:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AAE1946A5;
+	Fri, 14 Jun 2024 10:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BLT4kW81"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l12pj760"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C682A194085
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A8819149D
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718361451; cv=none; b=DsTfbe67Our79CxDNy6IKxee+eOphP1xFD8R72n5cZmNRDoS510COFW8mNmy6Wm2sJapFOtHgkoGzrUi0qh6NCXdx7IYsOA23adoC51TNkC8+uBQRy8jO6PqlGllWkuLKjwlDd3w+sZlFOpP/1+TZPLQ7xdc4zzfpaAzKeH7YE8=
+	t=1718361472; cv=none; b=hFtjM0z2kiF2rxegQe88pDSmNyGDzxFkeqVBMlj0VDyR6r+Eh9/NGkBtoncGX/OqmUedKjr7eTVAUf3lLayjHunRzn8HDYtHu4hHlFz/EJezkXU642G7RNN3QYEukklAj04XPraNRI6lXcqedVKWBz5Br90ZZ7ueMAuUB0O6NT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718361451; c=relaxed/simple;
-	bh=zmtM9P8EOqx1FZjRdKTb5n/z6vFq5gDORgSkGrxnYuk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pi3WF9wjYW5MdYa7t58vroLWi18B9+TVM83n4KE4eeE6HxBIfsb2NSySuJKkWJ4P+rXpWXt2/PrY19IAg6woun8gzWQxmS953Lq0SZyZ/u2NGHKneffwTUu8kOfwx/oyl29vRjdR31wQOOJJT5+4EfaLjiiAsJbEo5s2Q1O+ycE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BLT4kW81; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57c75464e77so2366847a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 03:37:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718361447; x=1718966247; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0OriRI7xNCMkxlWs2IiRsExQGF8yht7ObcIi6rihikc=;
-        b=BLT4kW811cw5ReF4z09DjJF9eWr+0mHyEfOhoX3ondfHVjhsyQQcNOX+sTNwwQP3Be
-         MisNvEdYQgcXrghIIdRy0Ksez+JWulkIHfyRGjzLjSamFHaVXOzeKQFFjgz5XCj/Z9oM
-         RdmZ9LBVzRN7IDaSPYMHQHJ/8clbfuFWVboXRBqzjjPUU3ww31I2CGc/DaT2PRcQ9N2L
-         NJrCX2o4dpcgXMTpo9imzt/Tuz7eoRtwCvSxkjKhtmFj0ebWlkigpHGRxW7k04zkkvlc
-         Iv5+GQkw7rXpIyUlpF7JslX5Hi6+bjcj5Uk6hKmGJUIjIuNxNL0x8pcVsbuvPvAOjwoK
-         anDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718361447; x=1718966247;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0OriRI7xNCMkxlWs2IiRsExQGF8yht7ObcIi6rihikc=;
-        b=KivPujR/MEpKbqBOZBCW+lpiSblE4S545BvLMJl/G/UtQyosCpijB1ZxB/hzIw5OM9
-         ntTyDUQrocwdmbIVjIgUKu97BWKw6sqQwOGG8M/wB8iPfWctGiz2D62NWn2xYZ9Bx0wJ
-         CxdlUCEIQjNNY4WQ/83NgpCiybz/BAuNUjT8voQgmR1FiafJG/GFcom7zWbqzmIxJxiB
-         Bs5IKkceAjIxRhZEoaNjBDK0ADRSOFiiTIE9qMlCdyguDacEp3Z2MwDWHTfnFhyk1/8q
-         9b/eZySjHgKuTPzCNSv62QpRJE/YdebkZzuOvi+6E3204DOpRnlBBcP+LmD6AWwAETcH
-         Hhag==
-X-Gm-Message-State: AOJu0Yyo8seEWFr/TTBcVqMF/AZhI1FR83JLLalEQO2sNXraufntOHHo
-	pdEjdRRxWQv+5kZvu90e3DJIZ8U0UOPImwZgkWOb/f7jkWT3YazwtaRgnNpIZwg=
-X-Google-Smtp-Source: AGHT+IGHSLoRi8jypxNAigXEWnfdZMZjy36n3Gkuce88q62zGrV4fmJpD9TsNdDubWdWIkt2IVlp3A==
-X-Received: by 2002:a50:9ea9:0:b0:57a:2327:d2d2 with SMTP id 4fb4d7f45d1cf-57cbd6c6e54mr1653455a12.29.1718361446835;
-        Fri, 14 Jun 2024 03:37:26 -0700 (PDT)
-Received: from localhost (p509153eb.dip0.t-ipconnect.de. [80.145.83.235])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cbb30ba30sm1564062a12.39.2024.06.14.03.37.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 03:37:26 -0700 (PDT)
-Date: Fri, 14 Jun 2024 12:37:25 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: William Qiu <william.qiu@starfivetech.com>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	Hal Feng <hal.feng@starfivetech.com>, Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v12] pwm: opencores: Add PWM driver support
-Message-ID: <6hbj4uua442il6koeaypkqapctlwrhrmsbguyx74hwqzkycepf@7zpqo6mojqvn>
-References: <20240429075140.56867-1-william.qiu@starfivetech.com>
+	s=arc-20240116; t=1718361472; c=relaxed/simple;
+	bh=6d6x9S+xsng22ZM841KrI1KmHKzkb9HeNiE+JCdILgg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O7Gjr6EQr0OZJK99qrzvDLnYdDMu9u31RpAe4rCXEqhs1+YVCbKau6+m+pn/iw5qSfuAzyE7M7L1LELmUBVB0ZXHwLeL8LQd2G/XQ4Tb8vBgo29HaMARc1ljyTORhcdtJXXEnkMM2BgJDfOO4Lc2+yy4HUHjW0Ojj85+L0JW+d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l12pj760; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53119C2BD10;
+	Fri, 14 Jun 2024 10:37:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718361472;
+	bh=6d6x9S+xsng22ZM841KrI1KmHKzkb9HeNiE+JCdILgg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=l12pj760Pi+3KMNUyZna5O1uD0QzM7fxQIXO5+MPTO4S13WhFWEkIXlu/8I76KU9H
+	 kqksDXdTZRa7ITq8vyOCR2AesSw8RxFczHOOzr8flL/4gWMqNzvvdx20NByuZn3Yc6
+	 pXEUg9v6fkDjonw9asnlDxB7ni435mM9/Lau4cCaXNE+mUBxeGQ2urD/dyQGxbBUfN
+	 nOKnQiA2zqP/Hj+8HOZNgINk9njE9F8TtHKfZq7SDgN8Ti1pYy8HMqjYtcPxniVPZG
+	 fQGSXB2OHqIwcOwd8h0/mreFN93MDD6xKTEizFAlkaq4cpsP+BpN+4uVnQ3OvcFRdw
+	 eNV2oWjjyYPQA==
+Received: from ip-185-104-136-29.ptr.icomera.net ([185.104.136.29] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sI4JY-003tLE-Lc;
+	Fri, 14 Jun 2024 11:37:49 +0100
+Date: Fri, 14 Jun 2024 11:37:47 +0100
+Message-ID: <87cyoj3j44.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	mark.rutland@arm.com,
+	ryan.roberts@arm.com,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64/mm: Drop ESR_ELx_FSC_TYPE
+In-Reply-To: <ca66f7ac-97d5-474d-bec4-d0ff79c08eaa@arm.com>
+References: <20240613094538.3263536-1-anshuman.khandual@arm.com>
+	<86y179jdbx.wl-maz@kernel.org>
+	<ca66f7ac-97d5-474d-bec4-d0ff79c08eaa@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pz7cmbt7u7ur6jmg"
-Content-Disposition: inline
-In-Reply-To: <20240429075140.56867-1-william.qiu@starfivetech.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.104.136.29
+X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com, ryan.roberts@arm.com, catalin.marinas@arm.com, will@kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Fri, 14 Jun 2024 03:24:53 +0100,
+Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> On 6/13/24 16:53, Marc Zyngier wrote:
+> > On Thu, 13 Jun 2024 10:45:38 +0100,
+> > Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> >>
+> >> Fault status codes at page table level 0, 1, 2 and 3 for access, permission
+> >> and translation faults are architecturally organized in a way, that masking
+> >> out ESR_ELx_FSC_TYPE, fetches Level 0 status code for the respective fault.
+> >>
+> >> Helpers like esr_fsc_is_[translation|permission|access_flag]_fault() mask
+> >> out ESR_ELx_FSC_TYPE before comparing against corresponding Level 0 status
+> >> code as the kernel does not yet care about the page table level, the fault
+> >> really occurred previously.
+> >>
+> >> This scheme is starting to crumble after FEAT_LPA2 when level -1 got added.
+> >> Fault status code for translation fault at level -1 is 0x2B which does not
+> >> follow ESR_ELx_FSC_TYPE, requiring esr_fsc_is_translation_fault() changes.
+> >>
+> >> This changes above helpers to compare against individual fault status code
+> >> values for each page table level and drop ESR_ELx_FSC_TYPE which is losing
+> >> its value as a common mask.
+> > 
+> > I'd rather we do not drop the existing #defines, for a very
+> > self-serving reason:
+> > 
+> > NV requires an implementation to synthesise fault syndromes, and these
+> > definition are extensively used to compose the syndrome information
+> > (see the NV MMU series at [1]). This is also heavily use to emulate
+> > the AT instructions (fault reporting in PAR_EL1.FST).
+> > 
+> > Having additional helpers is fine. Dropping the base definitions
+> > isn't, and I'd like to avoid reintroducing them.
+> 
+> You would like to just leave behind all the existing level 0 syndrome macro
+> definitions in place ?
 
---pz7cmbt7u7ur6jmg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+They are not level 0. They are values for the type of the fault. They
+are *abused* as level 0, but that's not what they are here for.
 
-Hello William,
+> 
+> #define ESR_ELx_FSC_ACCESS	(0x08)
+> #define ESR_ELx_FSC_FAULT	(0x04)
+> #define ESR_ELx_FSC_PERM	(0x0C)
 
-thanks for your patience and sorry for taking so long until I came
-around to review this.
++ ESR_ELx_FSC_{TYPE,LEVEL}, because they are convenient macros to
+extract the type/level of a fault. NV further adds ESR_ELx_FSC_ADDRSZ
+which has been missing.
 
-On Mon, Apr 29, 2024 at 03:51:40PM +0800, William Qiu wrote:
-> diff --git a/drivers/pwm/pwm-ocores.c b/drivers/pwm/pwm-ocores.c
-> new file mode 100644
-> index 000000000000..039fb3c526a7
-> --- /dev/null
-> +++ b/drivers/pwm/pwm-ocores.c
-> @@ -0,0 +1,240 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * OpenCores PWM Driver
-> + *
-> + * https://opencores.org/projects/ptc
-> + *
-> + * Copyright (C) 2018-2023 StarFive Technology Co., Ltd.
-> + *
-> + * Limitations:
-> + * - The hardware only do inverted polarity.
+> 
+> Or which are rather
+> 
+> #define ESR_ELx_FSC_ACCESS	ESR_ELx_FSC_ACCESS_L0
+> #define ESR_ELx_FSC_FAULT	ESR_ELx_FSC_FAULT_L0
+> #define ESR_ELx_FSC_PERM	ESR_ELx_FSC_PERM_L0
 
-s/do/does/
+I definitely prefer the former.
 
-> + * - The hardware minimum period / duty_cycle is (1 / pwm_apb clock frequency) ns.
-> + * - The hardware maximum period / duty_cycle is (U32_MAX / pwm_apb clock frequency) ns.
+> But just wondering why cannot ESR_ELx_FSC_[ACCESS|FAULT|PERM]_L0 definitions
+> be used directly in new use cases ?
 
-How does the hardware behave on disable? Does it complete the currently
-running period when reconfiguring or disabling? Are glitches expected
-in .apply()? Please answer these questions in the Limitations paragraph.
+Because that is semantically wrong to add/or a level on something that
+*already* describes a level. Specially for the level -1 case.
 
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pwm.h>
-> +#include <linux/reset.h>
-> +#include <linux/slab.h>
-> +
-> +/* OpenCores Register offsets */
-> +#define REG_OCPWM_CNTR    0x0
-> +#define REG_OCPWM_HRC     0x4
-> +#define REG_OCPWM_LRC     0x8
-> +#define REG_OCPWM_CTRL    0xC
-> +
-> +/* OCPWM_CTRL register bits*/
-> +#define REG_OCPWM_EN      BIT(0)
+On top of that, what I dislike the most about this patch is that it
+defines discrete values for something that could be parametric at zero
+cost, just like ESR_ELx_FSC_SEA_TTW(). Yes, there is some additional
+complexity, but nothing that the compiler can't elide.
 
-I would prefer this one to be called REG_OCPWM_CNTR_EN. Ditto for the
-following definitions.
+For example, something like this:
 
-> +#define REG_OCPWM_ECLK    BIT(1)
-> +#define REG_OCPWM_NEC     BIT(2)
-> +#define REG_OCPWM_OE      BIT(3)
-> +#define REG_OCPWM_SIGNLE  BIT(4)
-> +#define REG_OCPWM_INTE    BIT(5)
-> +#define REG_OCPWM_INT     BIT(6)
-> +#define REG_OCPWM_CNTRRST BIT(7)
-> +#define REG_OCPWM_CAPTE   BIT(8)
-> +
-> [...]
-> +static int ocores_pwm_apply(struct pwm_chip *chip,
-> +			    struct pwm_device *pwm,
-> +			    const struct pwm_state *state)
-> +{
-> +	struct ocores_pwm_device *ddata = chip_to_ocores(chip);
-> +	u32 ctrl_data = 0;
-> +	u64 period_data, duty_data;
-> +
-> +	if (state->polarity != PWM_POLARITY_INVERSED)
-> +		return -EINVAL;
-> +
-> +	ctrl_data = ocores_pwm_readl(ddata, pwm->hwpwm, REG_OCPWM_CTRL);
-> +	ocores_pwm_writel(ddata, pwm->hwpwm, REG_OCPWM_CTRL, 0);
-> +
-> +	period_data = mul_u64_u32_div(state->period, ddata->clk_rate, NSEC_PER_SEC);
-> +	if (period_data > U32_MAX)
-> +		period_data = U32_MAX;
+diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
+index 7abf09df7033..c320aeb1bb9a 100644
+--- a/arch/arm64/include/asm/esr.h
++++ b/arch/arm64/include/asm/esr.h
+@@ -121,6 +121,10 @@
+ #define ESR_ELx_FSC_SECC	(0x18)
+ #define ESR_ELx_FSC_SECC_TTW(n)	(0x1c + (n))
+ 
++#define ESR_ELx_FSC_FAULT_nL	(0x2C)
++#define ESR_ELx_FSC_FAULT_L(n)	(((n) < 0 ? ESR_ELx_FSC_FAULT_nL : \
++				  	    ESR_ELx_FSC_FAULT) + (n))
++
+ /* ISS field definitions for Data Aborts */
+ #define ESR_ELx_ISV_SHIFT	(24)
+ #define ESR_ELx_ISV		(UL(1) << ESR_ELx_ISV_SHIFT)
 
-This assignment is useless, the value of period_data isn't used later,
+Importantly, it avoids the ESR_ELx_FSC_FAULT_LN1 horror, and allows
+ESR_ELx_FSC_FAULT_L(-1) to be written.
 
-I think you want:
+	M.
 
-	period_data = ...
-
-	if (!period_data)
-		return -EINVAL
-
-	if (period_data > U32_MAX)
-		period_data = U32_MAX;
-
-	ocores_pwm_writel(ddata, pwm->hwpwm, 0x8, (u32)period_data);
-
-
-> +	else if (period_data > 0)
-> +		ocores_pwm_writel(ddata, pwm->hwpwm, 0x8, (u32)period_data);
-> +	else
-> +		return -EINVAL;
-> +
-> +	duty_data = mul_u64_u32_div(state->duty_cycle, ddata->clk_rate, NSEC_PER_SEC);
-> +	if (duty_data <= U32_MAX)
-> +		ocores_pwm_writel(ddata, pwm->hwpwm, REG_OCPWM_HRC, (u32)duty_data);
-> +	else
-> +		return -EINVAL;
-
-duty_data > U32_MAX should be handled in the same way as period_data >
-U32_MAX.
-
-> +	ocores_pwm_writel(ddata, pwm->hwpwm, REG_OCPWM_CNTR, 0);
-> +
-> +	if (state->enabled) {
-> +		ctrl_data = ocores_pwm_readl(ddata, pwm->hwpwm, REG_OCPWM_CTRL);
-> +		ocores_pwm_writel(ddata, pwm->hwpwm, REG_OCPWM_CTRL,
-> +				  ctrl_data | REG_OCPWM_EN | REG_OCPWM_OE);
-> +	}
-
-Wouldn't it make sense to unset REG_OCPWM_EN | REG_OCPWM_OE if
-(!state->enabled)?
-
-> +	return 0;
-> +}
-> +
-> +static const struct pwm_ops ocores_pwm_ops = {
-> +	.get_state	= ocores_pwm_get_state,
-> +	.apply		= ocores_pwm_apply,
-
-In other structs you're using a single space before =. I'd prefer that
-here, too.
-
-> +};
-> +
-> +static const struct ocores_pwm_data jh7100_pwm_data = {
-> +	.get_ch_base = starfive_jh71x0_get_ch_base,
-> +};
-> +
-> +static const struct ocores_pwm_data jh7110_pwm_data = {
-> +	.get_ch_base = starfive_jh71x0_get_ch_base,
-> +};
-
-These two are identical. Does it make sense to use only one instance of
-these?
-
-> [...]
-> +static int ocores_pwm_probe(struct platform_device *pdev)
-> +{
-> +	const struct of_device_id *id;
-> +	struct device *dev = &pdev->dev;
-> +	struct ocores_pwm_device *ddata;
-> +	struct pwm_chip *chip;
-> +	struct clk *clk;
-> +	struct reset_control *rst;
-> +	int ret;
-> +
-> +	id = of_match_device(ocores_pwm_of_match, dev);
-> +	if (!id)
-> +		return -EINVAL;
-> +
-> +	chip = devm_pwmchip_alloc(&pdev->dev, 8, sizeof(*ddata));
-> +	if (IS_ERR(chip))
-> +		return -ENOMEM;
-> +
-> +	ddata = chip_to_ocores(chip);
-> +	ddata->data = id->data;
-> +	chip->ops = &ocores_pwm_ops;
-> +
-> +	ddata->regs = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(ddata->regs))
-> +		return dev_err_probe(dev, PTR_ERR(ddata->regs),
-> +				     "Unable to map IO resources\n");
-> +
-> +	clk = devm_clk_get_enabled(dev, NULL);
-> +	if (IS_ERR(clk))
-> +		return dev_err_probe(dev, PTR_ERR(clk),
-> +				     "Unable to get pwm's clock\n");
-> +
-> +	ret = devm_clk_rate_exclusive_get(dev, clk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	rst = devm_reset_control_get_optional_exclusive(dev, NULL);
-> +	if (IS_ERR(rst))
-> +		return dev_err_probe(dev, PTR_ERR(rst),
-> +				     "Unable to get pwm's reset\n");
-> +
-> +	reset_control_deassert(rst);
-> +
-> +	ret = devm_add_action_or_reset(dev, ocores_pwm_reset_control_assert, rst);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ddata->clk_rate = clk_get_rate(clk);
-> +	if (ddata->clk_rate <= 0 || ddata->clk_rate > NSEC_PER_SEC)
-
-clk_rate is an u32. So ddata->clk_rate <= 0 will never be true. Also on
-64bit archs clk_get_rate() might return 4294967297 which results in
-ddata->clk_rate being assigned 1 and then passing this test.
-
-> +		return dev_err_probe(dev, ddata->clk_rate,
-> +				     "Unable to get clock's rate\n");
-> +
-> +	ret = devm_pwmchip_add(dev, chip);
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "Could not register PWM chip\n");
-> +
-> +	return 0;
-> +}
-
-Best regards
-Uwe
-
---pz7cmbt7u7ur6jmg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZsHWAACgkQj4D7WH0S
-/k6lKQf+NrcJlhAWZK2lB9x1qKMuEf//I36x7OJfXngdmSPtftOITcdOcDS7lTsA
-IHIwvdbt6lLAVKAIfAH1jj5BMEXYj7JnqggU4HCaGVPFA8/60Tiviwf++x1KMmqS
-wb/Z2gUunjqLkZH74ur/RlNb2wfkr/vE9UAjsMqXSimQvvcwiCpnthOld7/VPwG/
-Ud+mvxizzs/rlXNDHR/wDB8tuTVLjzxGjpdhgOI0huSoA5EUT8HhrdMqcmzmwUHc
-cvcDNIT9BaXRzlEIHvRrBVh8G1OigEOJChdA6Z+ncPf+L7U6sNMATjcReJiCta01
-3pfQy2GISFd9JefXZGMjNkVHn/ti/A==
-=TK0N
------END PGP SIGNATURE-----
-
---pz7cmbt7u7ur6jmg--
+-- 
+Without deviation from the norm, progress is not possible.
 
