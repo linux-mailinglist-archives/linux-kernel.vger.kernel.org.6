@@ -1,80 +1,109 @@
-Return-Path: <linux-kernel+bounces-214348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA41908325
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:03:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1B9D908328
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 487421F22917
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 05:03:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F25EF1C21ABE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 05:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F401474B2;
-	Fri, 14 Jun 2024 05:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655851474B7;
+	Fri, 14 Jun 2024 05:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JlpOopHK"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="frsyOYeN"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD5713CF9E
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 05:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CBD12D760
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 05:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718341422; cv=none; b=pAxfpWdlgRJWMFMpAZkF+wVKjE2er6A4qUO9cSXwsAvEINPDSAIzHesKPz5JwV2JvgZpdaYB/Qw5TXtIH+cUiorMVEMgttJWSX3ZsVo0+9vMnTCIVTO2G13qnCVY+jFyH4c0FX2LlfPUUIUCwUBjZMzh2wpGpa04LFIMQ+4KTGo=
+	t=1718341507; cv=none; b=eEeawMfLoUNxrMWo7PGs4VxXaOpt36zXtzGIeTERmShFp9lnKFRQMM2WPu3K7VsafWVyGedzhoUJ5Om/094boDBKz6VCfDH99KrlJcfmbOuZl65h7+9f+NCsX5Hooc44tHCv/UoUx6R67AVytBVs4k0apW9BUbGW8cMa1tGhxv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718341422; c=relaxed/simple;
-	bh=gzvlcPNZRXxsDB5LT29ch3OrbR0P2jmitQfMhGPzIt8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V4b6n/sfkzqCkM9mYesHXKhokrL1VHkc+62DoR8j97jWgJDZ9ShwoZvQoKk3z7eZj9B5TuNqVG+x46QrJiZb0MHR6D8OTKu11wm6SfxCzx4d6dRYFhOhZ2oC8JTqPXBbe3bAyuidOqCk/k0wq6UyeXXUnDJNtNkCctyMmxMYlwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JlpOopHK; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718341410; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=mQK9TcRk5CAg8ht/5H2KpfQR0Jq0zPNlh/9xoAZV1ak=;
-	b=JlpOopHKZ/RXRTp2lAaH/b+SPjlEkxqtNKi/9AxUTmfrK4me/T6umtPqakrd6cXf5kl3dRR06LOZe6coUCvOFnbHHOnpLB9aS2emNKeIEFiSAwTBpDHqS2HmoHDsAZlMcr4LU/Ajx9MqwXc+w2amb9E7Lnr0ghYtasyAmESmAwU=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0W8Q.rcN_1718341408;
-Received: from 30.97.56.56(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8Q.rcN_1718341408)
-          by smtp.aliyun-inc.com;
-          Fri, 14 Jun 2024 13:03:29 +0800
-Message-ID: <58681eb0-cf36-4aa2-906e-a1a8daa2b969@linux.alibaba.com>
-Date: Fri, 14 Jun 2024 13:03:27 +0800
+	s=arc-20240116; t=1718341507; c=relaxed/simple;
+	bh=IukhxcX3qDkzoO5Zy8Nrlq5s8wAmwy+/c7BkQCbdyC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n4et2EM2DsElqwfHQ4Afi5F8d6H8xvFY+LabR7jyEln9wJ6sjW+wG6RiavDGk6pCiXjGvww4wK6t18sbMaHJsYFflq1k3Rz9pKxubSwDsnU1grsww2RrUaT2LA1rPQri5TiS2T6eHmDMcTHH89FCxMHL+/jyEFijpBB/86YpQaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=frsyOYeN; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4217d808034so17494135e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2024 22:05:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718341504; x=1718946304; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EWNNIgMpJqUN8OKFztHzayuDCT95LOD3ZJqMZeNQQ+c=;
+        b=frsyOYeNNhtC5G+KKj+t9vsEKuI8OGC4BgQ2i8q/RDNlss/jTB0geMP/Ys5pIqNQ9n
+         UzInjbAFKZvUv34qm9GzzhtP8Hz1+gvQ0BuvcIIbdllC61rXfPC7ll9f8W0YdliJGNgn
+         8LhdKVuWOxLPBmtHt+sMD/3QodxEm+uGZwytO+L6iXrG9Bl9995dz5w3bljh0qdAA7Ly
+         0fS0SY/h+mBWIOYzWA8aj4J0vn38BExFPn2lFmganm80tYH/1U/c5hTKOWAVXG0yUThM
+         6kAtYcdyKrlfHRpWLf0fOs4jkLpteubLMfBTntLE+3W+dAHGcIPYsDoQ5IBxoCVi1Cuu
+         RDqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718341504; x=1718946304;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EWNNIgMpJqUN8OKFztHzayuDCT95LOD3ZJqMZeNQQ+c=;
+        b=E0NjC92zuPYopmfgA7MFCYgMdbUrQDLcWVDFK6qy+aAhFb1xIgu2UDSPlOnDITx/iY
+         4/RecFBuI6INY8iMRPND6lH1zTiRhLNHwoDTpRCFlgPePEi8UDH/FrTiBm1aQNAgaRuv
+         dJQLMAGmxyaeWT0tyYmwXRTQ7qzbEm6mmvwjUL6LvgEgd+O2Et3jMJ+WSP++rwrl/10l
+         LYgt3hjzh3J32P1zQSDORMN37/aiID6vIo7Zxcuv8m3Jp7y4mYekfsU22jbEu5/ys33K
+         KSi9PPm/UIWdUjd8v7Ao3VcuHvqV3OMzLnz8dUsAEh/nWJxjMupNZ5U0lZfKURWFKSIB
+         JNyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVF+v7vbEaroNnm6GsLcJR4SN3dCxYc3+g2U+QFteomWI5MMFX0dRLcFjXPL1GLRb+kcNBxx0AvQskGJBpfV+GWuQoSfDSWA2JgmMx7
+X-Gm-Message-State: AOJu0YyoNodyXNsbsRi0fLgUUBF3zODM6cqiBe518QwuzPLxJnkD3Pfz
+	zqfv4n/ZwtgeXkCdm0N+3XqpyADbH7WO6rA1oGW01/qhJ3mOko8A6ClQWZeOALw=
+X-Google-Smtp-Source: AGHT+IHAc0Yh7ji0lwnDCu2Lv4w/FZ4Yx74voqdotxBtp/d5ml1qvOCQlfNZBB82HLxJCmKCwVO2Zg==
+X-Received: by 2002:a05:600c:4ca9:b0:422:52c3:7fe0 with SMTP id 5b1f17b1804b1-4230482c1e9mr16109225e9.22.1718341504275;
+        Thu, 13 Jun 2024 22:05:04 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de5d5sm83206355e9.33.2024.06.13.22.05.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jun 2024 22:05:03 -0700 (PDT)
+Date: Fri, 14 Jun 2024 08:05:00 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ben Walsh <ben@jubnut.com>
+Cc: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Handle zero length
+ read/write
+Message-ID: <590a7d8c-6bfb-45f1-bc26-d99837cff2a2@moroto.mountain>
+References: <20240613212542.403-1-ben@jubnut.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: shmem: fix getting incorrect lruvec when replacing
- a shmem folio
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, hughd@google.com, mhocko@kernel.org,
- roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev,
- hannes@cmpxchg.org, nphamcs@gmail.com, yosryahmed@google.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <5ab860d8ee987955e917748f9d6da525d3b52690.1718326003.git.baolin.wang@linux.alibaba.com>
- <Zmu3YVFfUA6_uToA@casper.infradead.org>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <Zmu3YVFfUA6_uToA@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240613212542.403-1-ben@jubnut.com>
 
-
-
-On 2024/6/14 11:22, Matthew Wilcox wrote:
-> On Fri, Jun 14, 2024 at 08:49:13AM +0800, Baolin Wang wrote:
->>    * Charge @new as a replacement folio for @old. @old will
->> - * be uncharged upon free. This is only used by the page cache
->> - * (in replace_page_cache_folio()).
->> + * be uncharged upon free. This is used by the page cache
->> + * and shmem (in replace_page_cache_folio() and
->> + * shmem_replace_folio()).
+On Thu, Jun 13, 2024 at 10:25:42PM +0100, Ben Walsh wrote:
+> cros_ec_lpc_mec_read_bytes and cros_ec_lpc_mec_write_bytes call
+> cros_ec_lpc_mec_in_range, which checks if addresses are in the MEC
+> address range, and returns -EINVAL if the range given is not sensible.
 > 
-> Please just delete this sentence.  Functions do not keep track of who
-> their callers are.
+> However cros_ec_lpc_mec_in_range was also returning -EINVAL for a zero
+> length range.
+> 
+> A zero length range should not be an error condition.
+> cros_ec_lpc_mec_in_range now returns 1 in this case.
+> cros_ec_lpc_io_bytes_mec checks for zero length, and returns
+> immediately without beginning a transfer.
+> 
+> Signed-off-by: Ben Walsh <ben@jubnut.com>
 
-Sure. This sentence seems less helpful. Will do in v3.
+Ideally this would have a Fixes tag that points to my commit.
+
+regards,
+dan carpenter
+
 
