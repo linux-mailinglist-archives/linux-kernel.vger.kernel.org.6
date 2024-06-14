@@ -1,97 +1,77 @@
-Return-Path: <linux-kernel+bounces-214405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AB879083F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:46:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92EE99083F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B8341C2222C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:46:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A45B1C22232
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 06:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BB71487DC;
-	Fri, 14 Jun 2024 06:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E6F1482F3;
+	Fri, 14 Jun 2024 06:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="CsA+U6BJ"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SWOnLc8z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372D913664A;
-	Fri, 14 Jun 2024 06:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC0D38C;
+	Fri, 14 Jun 2024 06:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718347571; cv=none; b=OyM/r0yQTN7GqSOemiVhoqt2SOACxbtG2C9ksCtyog3LlExHJ8a+OJa93GA1yFOEvIqocFVumel4B31vewlQIR9EgzHekSPc3vAhIu8B2rtfKNVCPK/TZtKOj2UJM9iCjs4LuG7e42cAv4hJPFFWTCCVdf42voepuTP0veRmC2Q=
+	t=1718347615; cv=none; b=Rl7PB4+uDfnBv2Zfq8+Id3Kwh71SSgj95/heI+77ydPt7PAvVZsZf54h7ICFqoQy831sHDz1cFpR6SXwwqn/ug+5qekXm9Z+HqHM80YQj8bfgpL1z9ZwuuB8gCqWWcYFheqTOZDz8LJ+WcnekT/BlXCWzKJSQzNW4Gsfmyu8p84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718347571; c=relaxed/simple;
-	bh=YH7LKrwSFCa+CoKU0LWv/vYqquj8BHHJLekmHbOSkzk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ha8cBCAdEURAldWdOksNcLUpN/QhEzaz0wkvJGVs4g9yXNJdi4ZeCPxwLuGkMOn6MclYes/F7UD4u7IJu2fIRDufqBfZj0kWLcIeXg4PL8njLyJVHK/lXP40R9BXYvsEnG17zTuR2Rh6gFmC3eg7dgGJealCMRMiALTMvhslRZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=CsA+U6BJ; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718347552; x=1718952352; i=markus.elfring@web.de;
-	bh=5zlFpg3ORlkfLRd5irYj/EAogjoqsKYjaMjqGShyL7Y=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=CsA+U6BJOimHdtLSvECgevR/IcYLGzd3Ds5NdwM1xn0odtTgkhkTNq4IANoztDLd
-	 mEvBaz2AZgbS7yFh+e8+q2pCs0yC2jLEh7n2u8A5gBcDZHF2Ow5hp8YGWb1+rtui8
-	 4PlZSyavq2cjEI5UflWckVrQcX7U/GesNM6xdy8q88fYacB8ZhklC0KnvOaSoSu7O
-	 Ls3x8ZEWhuZ96B81LNGOnla7QPoqn1gv69ISQDJBdYYD8zgpEzrsySe6tmB/1Ha4H
-	 IM5jfLfT2JVt3AR011C/2VzSFmqxOdLd7pj19H3ecHvlEEAJFJw/XUHMksz+N97Jv
-	 WwSDJfTcUbYR34kmsg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M1JAm-1sFGbi1CvK-00Du3P; Fri, 14
- Jun 2024 08:45:52 +0200
-Message-ID: <93ec485a-8620-4f24-80b2-0e08107c6287@web.de>
-Date: Fri, 14 Jun 2024 08:45:26 +0200
+	s=arc-20240116; t=1718347615; c=relaxed/simple;
+	bh=zlek80gvbIpOYdPgWm3SBR3CC1OdJL27D05Loa7qJg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ARkD3TSj55lEOgqciXlURiLgohykae2vQhy8dOCGJlWI8IgAktsWP8Hngw/56IdUev+RorJevO+OXAv4Eg31tekWqdRr+FuEhAdGYm4qhjdwIoygqDZeep0QVC3MydCqliiMGcQ9Lw8HVAuVcE+7R+t+BmqCwu5kZd3Nvu8nlLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SWOnLc8z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C308C2BD10;
+	Fri, 14 Jun 2024 06:46:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718347614;
+	bh=zlek80gvbIpOYdPgWm3SBR3CC1OdJL27D05Loa7qJg4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SWOnLc8zBedufKG2+gNaXRm3u8REBNKv1/q9knkRQh8eqMhKZ8EJdKWJeSkwGdDqZ
+	 lcivsbBctunXvlR0WvFUhYWhb8XjH9pwvDGcZlwF9a0TrGrikuk3fRml0Em/XiO6cM
+	 meJT3tLSWhI69nKMalOA8sqsOvzGCQayWI9BTVsw=
+Date: Fri, 14 Jun 2024 08:46:51 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Udit Kumar <u-kumar1@ti.com>
+Cc: vigneshr@ti.com, nm@ti.com, tony@atomide.com, jirislaby@kernel.org,
+	u.kleine-koenig@pengutronix.de, ronald.wahl@raritan.com,
+	thomas.richard@bootlin.com, tglx@linutronix.de,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH] serial: 8250_omap: Implementation of Errata i2310
+Message-ID: <2024061435-reawake-smoking-f639@gregkh>
+References: <20240614061314.290840-1-u-kumar1@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Dan Carpenter <dan.carpenter@linaro.org>, kvm@vger.kernel.org,
- Yi Wang <foxywang@tencent.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- =?UTF-8?Q?Christian_Borntr=C3=A4ger?= <borntraeger@linux.ibm.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
-References: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
-Subject: Re: [PATCH] KVM: fix an error code in kvm_create_vm()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kse9iwq86q4OapouTZFjQRTEBswgWxJ0dRt+ZHSdFA2UOHOq3Ew
- OwT1xgCN0hZnc3qUpN3/1Q1UixgusEBeeTOjXt/Jb9guplTH65wgSCPSrxxU+2/LrZi1QZ2
- wA5DOJXH6360dLOVNmJB/CPMbQEjs19xApq2zy10lFWXLixfwGEIteY/12Vzc25fZhkyGyx
- 4APKh+JKW3jcpjQ3d/5Ag==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:UAoW34K0xjM=;2HaTklojmuEO1RhTtNKZoOu7tjY
- h68lhrk/rGShI+dRDf0yHUwheQ6BTOIH6enIara9fNKlgPo6bM6wwPSCPSneZIrRb+i8xVdKF
- 62vr+fYt/ftcv78pI2bxXXM4Jp1e/kqeBYWO63Aju7W5wz/RRvXyzc30rA21ck788IRSzLvvV
- p/DDbM09MBYVhLGeutpqL38IYf8e+hg+cJd2XaB+cXFKBmzNCiKSJSqTXi2RTg4FfqUxLXELW
- 4n4jbjwkV+Kmg6jBHjh8CLfOPPKRIqs85fkliSpAkni+VS3iOJcSiTazVqJMvqBHZ0D2QpgWM
- J3NPLHqlpqmBO3us68/bvDKbLpDTpvpK9sJWB0Ix26fh0fTt0IgX0yDi4CSfwF2otoeOqX2/A
- NDVAkOO7h9H1t1tYoV6Q9TwVwjjQ7NERtlghVyRC7H3jRpREES0/U3gxBE/iYOXzaHGiIW772
- M839wQqx2bgupubVcXhoD4v2kN1Tn7/pHgmq+3JlXbbnis0zNqxn7oHBg/Demeh7KBwLf3rqe
- dL0Kf53NHBWYYziMpvgXThWJzQxAWtLMVD7zcImI4ALNYqp6jvaz8EdnJDDHEWjv7GO3vcu04
- InTJUctO91cnc99Zkfk7t/QarRPB4aKKTh5s+RwPScc81P1I5o1FxCX+XjhYQ908mgaJD3i0g
- ABYdxAgVmZH/fFcSRcI4YwRr2xpnXjwiVN/Vr6T6p9mS0y009wNTyqzs4lSPBEk7nHCrs/fKZ
- aCSPk+MNFsHudL4BgphN6QQpEAuUlgoNDWb8pWN4hjiAPV7qIidi4TGhUw+dUt/djOvRxJ31x
- OHMOpqpJJ72qquMo9eiHKOOiAeE0UBJD5sSNcy7gpdcVs=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240614061314.290840-1-u-kumar1@ti.com>
 
-> This error path used to return -ENOMEM from the where r is initialized
-=E2=80=A6
-                                                  place where the local va=
-riable =E2=80=9Cr=E2=80=9D =E2=80=A6?
+On Fri, Jun 14, 2024 at 11:43:14AM +0530, Udit Kumar wrote:
+> As per Errata i2310[0], Erroneous timeout can be triggered,
+> if this Erroneous interrupt is not cleared then it may leads
+> to strom of interrupts, therefore apply Errata i2310 solution.
+> 
+> [0] https://www.ti.com/lit/pdf/sprz536 page 23
+> 
+> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+> ---
+>  drivers/tty/serial/8250/8250_omap.c | 25 ++++++++++++++++++++-----
+>  1 file changed, 20 insertions(+), 5 deletions(-)
 
-Regards,
-Markus
+Does this need to go to older/stable kernels?  If so, how far back?
+
+thanks,
+
+greg k-h
 
