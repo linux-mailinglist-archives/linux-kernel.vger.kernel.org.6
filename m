@@ -1,146 +1,204 @@
-Return-Path: <linux-kernel+bounces-215522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A87790941E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD8890941F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C28B6282268
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:25:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03128281AD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3CA1862B9;
-	Fri, 14 Jun 2024 22:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC4A186E5A;
+	Fri, 14 Jun 2024 22:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="jPFf7/Wz"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZ4Ey6+K"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B79782C67;
-	Fri, 14 Jun 2024 22:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE631850B4
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 22:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718403892; cv=none; b=Ow8kB03N6KJiAr9tbzRK9gHDYMO89EthV6MvDAhNOv8jsYbDKQ093AkhG1PovVQKuryz4F2llpmnavqfBnQwNrXVifMOOaGgX8W//A7nrAX96+lS3oka0Y19QD310iyonxqXUBrTQrrraTDFapiFLHQCvy/X2mKPxig1b4broOs=
+	t=1718403894; cv=none; b=RBsbrtVgdO5epspIeuzLLGBB19T5YvZqfI+/j8eUcoZGCMYkoQgR4MUNz5toXvBhZLLX6cR1Jk8Bo3T6kLDSxOFBZeICoAn18kUfMOuRJSeKlJ0DaqgmbzxP2adVck5MJaa2MChuv90/uCEtE5uU4mf5GOTTxhQwSM9VWq7NpyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718403892; c=relaxed/simple;
-	bh=+D3s1E3b7iqirRzTszp4FQo05Wzq00jT40LBJspl2o4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kSi5EJsu2wYmyuvYquYbTc4Cmeca18o/Afui2KPd23C2olGLX6rmWUIIwXxU5V263FXlVa/GQ0aGIWdisqdMOMXPOGv8/KQZ1fRuIZReopM1gYommnl1uJJdbhY9YGD9HaxiYJ5hynAGtK84zl8rZb/smpN3sfvAHG7KKQ1mlcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=jPFf7/Wz; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1718403894; c=relaxed/simple;
+	bh=bVZ1hAMuypYVc+JkugEt/+SkbdD2KDmBlV0rJQlC+4g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=klX9W7N3Koz9e35tQ9MYbH5ZIRT6gY5KdUx7JG+pMaJDB5A2WcNDpOuH945jNyJIgIMOzNSU4JE9yQreez+fXYLs2IuNCbPQxAXJEjRvA1iamsYRjMZWXeBf9WhiQhJm141pe2IomoVmLfwHsuatbC7IUlsxEWmoUVNzOeysVkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZ4Ey6+K; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-4eb3277badcso781982e0c.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 15:24:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1718403891; x=1749939891;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=lrbkSMJHYRvwFfElUgPPy2+Gr7nlFJz0ezq9T68Sy2I=;
-  b=jPFf7/Wz7zIqkGufksejIepUmk5pRTHIb1uDTx6QvK2kqfxQSwROQXMn
-   zuegOt0Jf0Gy1d79+ssjEZBzGPArltdqXD/NcaqBKT79Kpo4+7OjJlb+c
-   JTDo1VuLFrxT3lzulQhd+1KHhP1iu26Mddy/26uUBDDT7RHyfUy93B8ea
-   4=;
-X-IronPort-AV: E=Sophos;i="6.08,238,1712620800"; 
-   d="scan'208";a="413537530"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 22:24:47 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.7.35:6178]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.46.168:2525] with esmtp (Farcaster)
- id 7229e181-4b41-4e7e-a0bd-13f0a6f85223; Fri, 14 Jun 2024 22:24:46 +0000 (UTC)
-X-Farcaster-Flow-ID: 7229e181-4b41-4e7e-a0bd-13f0a6f85223
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 14 Jun 2024 22:24:46 +0000
-Received: from 88665a182662.ant.amazon.com.com (10.106.100.24) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 14 Jun 2024 22:24:42 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <luoxuanqiang@kylinos.cn>
-CC: <davem@davemloft.net>, <dccp@vger.kernel.org>, <dsahern@kernel.org>,
-	<edumazet@google.com>, <fw@strlen.de>, <kuba@kernel.org>,
-	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>
-Subject: Re: [PATCH net v2] Fix race for duplicate reqsk on identical SYN
-Date: Fri, 14 Jun 2024 15:24:33 -0700
-Message-ID: <20240614222433.19580-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <7075bb26-ede9-0dc7-fe93-e18703e5ddaa@kylinos.cn>
-References: <7075bb26-ede9-0dc7-fe93-e18703e5ddaa@kylinos.cn>
+        d=gmail.com; s=20230601; t=1718403892; x=1719008692; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ih2fA5Wax68aj8KVDoPb/EodfFp99EDrYIr3CW+2D0Y=;
+        b=eZ4Ey6+KqABvYkSbfGQokcp3nBSRL5Qny2lcRc/heF51FDi3EGi2IsOfObNlXA2xTq
+         5ItOW0GkzLMBMMFW9wGC9OM23VDIT8BncN5Vkx0ndugDU+II7aA4+CHVnMlh1pseS6MS
+         qC4l4qsMZljlr6OnXaIJSt0TF6yU2WMu6a/vBWOrAymzw9CwxfmJ56MgpahQAdKbG2oH
+         ZlRypUIllnzwKpKqUx11QcuoWqsE5XRFRQYHUBJWP6SGeaXBO4mdTt3v10Ahn8G4rjMc
+         HAj9ZJt9CzT6n/y6nVYVpZUhaYsk1DJuW9dliXpvrHRtqcqa8SnPKW44aBFNBxPQeLJJ
+         XUNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718403892; x=1719008692;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ih2fA5Wax68aj8KVDoPb/EodfFp99EDrYIr3CW+2D0Y=;
+        b=RBfCb0hcN43+GbVS0KpuL6zu2MwM8Mf1V/5TuD4zvxAyDGHBKhcXo4Ouk64UHy6eM3
+         lAukwTlC+TgJoOoWevZGnQzvpTB02+6YNMJRYJFISuLEuI8Isc5qE9TAvksCEXkTW65V
+         YA50QB4BGc/WKAAGss9BSA+wAdw7mTlfo3QVz8rkImVuRRNFje53RrVQfd5IJKA3K+P5
+         SZHV9p8DDAlMPAatltWH5o0VN7jbOTFiuiU089vhUUJgFFqXWtOnFikv+rX1wFHZJ5U7
+         b8p81I67QBYVXtccJ4asBfY7yCJt5IuJ0e4P6vBC+2h5cQawuNLjoQKXlo1Trqd6WGEs
+         Lh5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXy6+qS1v7PHcjH/cYs4C1qrxQGBpiME0YSoG/kKhMs3lfTxrLoiswwvhq2Ouu/1XNa6SV4nx0gA0H0fyr4QMFphTBN25Lw55bmV+Vc
+X-Gm-Message-State: AOJu0YwRUEHpD9FnoXxplngoM+gvqnHb3LOtRCq9X27qKkR5z9IU3UoK
+	6SnCWaI7JdyA3mKnmU/6SIWJ93OuCJXTIcAwQ0PY3Wu7acEAEyKeTBV3ATD0qwiMz9zbEvZ7DXz
+	F3IS6o5Ssm72qnpifKXYfJmX5SXw=
+X-Google-Smtp-Source: AGHT+IF1U1FhPkWf9tA5ZiH6VlXt+AeiUC2VItUL1s0lrAitzST8yLQce2+xj1VLtYOOWix//ETOAq1FR2wQK9igbjU=
+X-Received: by 2002:a05:6122:8d5:b0:4eb:25bb:b56f with SMTP id
+ 71dfb90a1353d-4ee3ff38290mr4490223e0c.13.1718403891617; Fri, 14 Jun 2024
+ 15:24:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240613000721.23093-1-21cnbao@gmail.com> <20240613000721.23093-4-21cnbao@gmail.com>
+ <CAGsJ_4zx3Rp9ye=LFhzEN+JypAq1zb_gLQZgyiRvYJZTMpLCHA@mail.gmail.com>
+ <b0b4a134-1d40-4eef-94f3-5c4593b55e78@redhat.com> <CAGsJ_4zDoevXiNOTbSefU4WfoPEpbkhArc1niTBFRPsMHu5j8w@mail.gmail.com>
+ <cac7d354-bcf3-4d7f-866a-9665568a50a0@redhat.com> <CAGsJ_4xfPPz8oOe79nPxues0PkEem8O2Q+0zo6pU8uDGO1kMkg@mail.gmail.com>
+ <e151cfd9-c0a5-4536-a490-77dc47aa3ed6@redhat.com> <CAGsJ_4wss6++EP8hSyuc3sPqtLgqqjs7DOUfQ5aCK36Bn+VbBg@mail.gmail.com>
+ <CAGsJ_4yiVs48XKTMkijS95MwXfxcRkRv0j0rj7cFjKCi2AcYZg@mail.gmail.com>
+ <aa2d9d4f-8f06-4388-afe3-ed4b626d41e2@redhat.com> <CAGsJ_4wJjp5kTRt=MAQ7umS-uSw9uyUthj1z5urmo5t084aUwQ@mail.gmail.com>
+ <c50287f2-1c83-438b-ba4a-c08ef91b5ba9@redhat.com>
+In-Reply-To: <c50287f2-1c83-438b-ba4a-c08ef91b5ba9@redhat.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Sat, 15 Jun 2024 10:24:40 +1200
+Message-ID: <CAGsJ_4yGPz7oLCzS_tYHkihbjyCfxmxjAfq9t_XYcpReEy674A@mail.gmail.com>
+Subject: Re: [PATCH RFC 3/3] mm: remove folio_test_anon(folio)==false path in __folio_add_anon_rmap()
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, chrisl@kernel.org, 
+	linux-kernel@vger.kernel.org, mhocko@suse.com, ryan.roberts@arm.com, 
+	baolin.wang@linux.alibaba.com, yosryahmed@google.com, shy828301@gmail.com, 
+	surenb@google.com, v-songbaohua@oppo.com, willy@infradead.org, 
+	ying.huang@intel.com, yuzhao@google.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D036UWC003.ant.amazon.com (10.13.139.214) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Transfer-Encoding: quoted-printable
 
-From: luoxuanqiang <luoxuanqiang@kylinos.cn>
-Date: Fri, 14 Jun 2024 20:42:07 +0800
-> 在 2024/6/14 18:54, Florian Westphal 写道:
-> > luoxuanqiang <luoxuanqiang@kylinos.cn> wrote:
-> >>   include/net/inet_connection_sock.h |  2 +-
-> >>   net/dccp/ipv4.c                    |  2 +-
-> >>   net/dccp/ipv6.c                    |  2 +-
-> >>   net/ipv4/inet_connection_sock.c    | 15 +++++++++++----
-> >>   net/ipv4/tcp_input.c               | 11 ++++++++++-
-> >>   5 files changed, 24 insertions(+), 8 deletions(-)
-> >>
-> >> diff --git a/include/net/inet_connection_sock.h b/include/net/inet_connection_sock.h
-> >> index 7d6b1254c92d..8773d161d184 100644
-> >> --- a/include/net/inet_connection_sock.h
-> >> +++ b/include/net/inet_connection_sock.h
-> >> @@ -264,7 +264,7 @@ struct sock *inet_csk_reqsk_queue_add(struct sock *sk,
-> >>   				      struct request_sock *req,
-> >>   				      struct sock *child);
-> >>   void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
-> >> -				   unsigned long timeout);
-> >> +				   unsigned long timeout, bool *found_dup_sk);
-> > Nit:
+On Fri, Jun 14, 2024 at 11:10=E2=80=AFPM David Hildenbrand <david@redhat.co=
+m> wrote:
+>
+> >> I don't think that is required? We are only working with anon folios. =
+Or
+> >> were you able to trigger this? (which would be weird)
 > >
-> > I think it would be preferrable to change retval to bool rather than
-> > bool *found_dup_sk extra arg, so one can do
-
-+1
-
-
+> > I didn't trigger this. but I am not sure if kfifo is always anon based =
+on
+> > the code context.
 > >
-> > bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
-> >    				   unsigned long timeout)
+> > for page,  it is 100% anon(otherwise "goto out"), but I am not quite
+> > sure about kpage
+> > by the code context.
+> >
+> > static int try_to_merge_one_page(struct vm_area_struct *vma,
+> >                                   struct page *page, struct page *kpage=
+)
 > > {
-> > 	if (!reqsk_queue_hash_req(req, timeout))
-> > 		return false;
+> >          pte_t orig_pte =3D __pte(0);
+> >          int err =3D -EFAULT;
 > >
-> > i.e. let retval indicate wheter reqsk was inserted or not.
+> >          if (page =3D=3D kpage)                      /* ksm page forked=
+ */
+> >                  return 0;
 > >
-> > Patch looks good to me otherwise.
-> 
-> Thank you for your confirmation!
-> 
-> Regarding your suggestion, I had considered it before,
-> but besides tcp_conn_request() calling inet_csk_reqsk_queue_hash_add(),
-> dccp_v4(v6)_conn_request() also calls it. However, there is no
-> consideration for a failed insertion within that function, so it's
-> reasonable to let the caller decide whether to check for duplicate
-> reqsk.
+> >          if (!PageAnon(page))
+> >                  goto out;
+> >          ....
+> > }
+> >
+> > Then I saw this
+> >
+> > static int replace_page(struct vm_area_struct *vma, struct page *page,
+> >                          struct page *kpage, pte_t orig_pte)
+> > {
+> >          ...
+> >          VM_BUG_ON_PAGE(PageAnonExclusive(page), page);
+> >          VM_BUG_ON_FOLIO(folio_test_anon(kfolio) && PageAnonExclusive(k=
+page),
+> >                          kfolio);
+> > }
+> >
+> > If kfolio is always anon, we should have used
+> > VM_BUG_ON_FOLIO(PageAnonExclusive(kpage), folio)
+> > just like
+> > VM_BUG_ON_PAGE(PageAnonExclusive(page), page);
+> > without "folio_test_anon(kfolio)".
+> >
+> > So I lost my way.
+>
+> try_to_merge_one_page() is either called with a KSM page (anon) from
+> try_to_merge_with_ksm_page() or with the shared zeropage (!anon and must
+> never become anon) from cmp_and_merge_page().
+>
+> So in replace_page(), we either have an ksm/anon page or the shared
+> zeropage.
+>
+> We never updated the documentation of replace_page() to spell out that
+> "kpage" can also be the shared zeropage.
+>
+> Note how replace_page() calls folio_add_anon_rmap_pte() not for the
+> shared zeropage.
+>
+> If we would have to craft a new anon page things would be going terribly
+> wrong.
+>
+> So not, this (!anon -> anon) must not happen and if it were to happen,
+> it would be a real bug and your check in  folio_add_anon_rmap_pte()
+> would catch it.
 
-I guess you followed 01770a1661657 where found_dup_sk was introduced,
-but note that the commit is specific to TCP SYN Cookie and TCP Fast Open
-and DCCP is not related.
+Thanks very much for the explanation. I wonder if the below can help
+improve the doc. If yes, I may add a separate patch for it in v2.
 
-Then, own_req is common to TCP and DCCP, so found_dup_sk was added as an
-additional argument.
+diff --git a/mm/ksm.c b/mm/ksm.c
+index d2641bc2efc9..56b10265e617 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -1411,14 +1411,13 @@ static int replace_page(struct vm_area_struct
+*vma, struct page *page,
+                goto out_mn;
+        }
+        VM_BUG_ON_PAGE(PageAnonExclusive(page), page);
+-       VM_BUG_ON_FOLIO(folio_test_anon(kfolio) && PageAnonExclusive(kpage)=
+,
+-                       kfolio);
+-
+        /*
+         * No need to check ksm_use_zero_pages here: we can only have a
+         * zero_page here if ksm_use_zero_pages was enabled already.
+         */
+        if (!is_zero_pfn(page_to_pfn(kpage))) {
++               VM_BUG_ON_FOLIO(!folio_test_anon(kfolio) ||
+PageAnonExclusive(kpage),
++                       kfolio);
+                folio_get(kfolio);
+                folio_add_anon_rmap_pte(kfolio, kpage, vma, addr, RMAP_NONE=
+);
+                newpte =3D mk_pte(kpage, vma->vm_page_prot);
 
-However, another similar commit 5e0724d027f05 actually added own_req check
-in DCCP path.
-
-I personally would'nt care if DCCP was not changed to handle such a
-failure because DCCP will be removed next year, but I still prefer
-Florian's suggestion.
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
 Thanks
+Barry
 
