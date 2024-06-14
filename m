@@ -1,210 +1,109 @@
-Return-Path: <linux-kernel+bounces-214419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 136DD908426
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:02:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C4E908423
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 09:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 475051F21AE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:02:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52820B211D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 07:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6168314884B;
-	Fri, 14 Jun 2024 07:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KHqB0eXj"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94EC81487C3;
+	Fri, 14 Jun 2024 07:02:30 +0000 (UTC)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE1C17C72;
-	Fri, 14 Jun 2024 07:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8491B17C72
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 07:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718348558; cv=none; b=gTSRNs76ssmeHwotwqe1TMJaKXweguYjhq95k6y9dpmAKdGH8AlNkhq7qMmovoWA4HO1OJdLrWozYQJn2Fzrb7N4rAMTJXEs0I/x+raazA8ejh4ZayMxrNi+q2HrezqAS1Gulgv3EYp7SeJjGy/7e7rdnVmVFduek4/lph2v1sY=
+	t=1718348550; cv=none; b=a7mKqD+1oZUama8qdYn4N8ODCqZKinUw7hqzba1ATFVDnUwLsL4vGxBkHfeKXF4JPDpWz0YtFiJDK8QBw5SKZLLBGTKXLUjjb9MO7LHjgQbD2j/F4p9whTv1tFRJ10Za/ZT5EMiEyashN/YusgKCRMqaGGvdrCuNEcgdz8DtlCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718348558; c=relaxed/simple;
-	bh=jDYNxMYUTSaQU5TQ2+5iBWuMX4NMSKkItAeMuFhk76M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ttr/09L0WNqGyqwo34BVFa3zDz1SlLDTy7TD63EBzP0u23ExbndFcSO04C6rW5UB4/ySXpRh6VGVOkvolk8sXFTuNADdOoY4ye8imILQMlPYvCrOMC+Oh7/+ujd+gDWo+5+lL4LwGZrGRPK8tuzxhWZ0v7efebR23oTl1XGrGYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KHqB0eXj; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1718348550; c=relaxed/simple;
+	bh=UFvYcOWtqBhQmd0pRfoVeLky4JvY5AEr/8VDTEL9BZY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S+8MbXY/aKz2wUHq5sifbY+ge0/uzxk92uLRMtuEowXgCr4w+Q6AoC+tlSED+Tjud6WC8YpA671ZLiXRnBzDzRSWVzfZkqrv/+Pp23X9pZa4Ls0zF+nZraUslx/TdyLi3kML/YUc5S6jqM+D8K7uSJUvN3XlZmxdGbxfIrg0kL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3c9cc66c649so842214b6e.1;
-        Fri, 14 Jun 2024 00:02:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718348556; x=1718953356; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=By4P0vcgLroOQCJskwfGLQoINqqC43myu7beQ18KDt0=;
-        b=KHqB0eXjVYi2mGMz004Xhf3TUEsZmN6JR6aLwKYAttLSi3YvMDfMbDsmwAsXJouRYO
-         JSD3InIKYqeiA8o2lAvNGfUjQX+zRJoLeF1a5UJ4Ol6M7YcQ61kuKyGo6iX9c8CHqL3h
-         9ClQrjfDYwx4wivgBpvB3bZrowiwe5geBe5Lgov8m78Zy4SneQIWLXAA//R6zKBEEGBW
-         R/gu9GSZ0j8mqyFH4z8mUGycmBw/8iScT0pEAbE2zPlYDYuOuxKjFHuNCVuat8jv5Ock
-         Y6M/L9zlSEAX6U2mtQ+u1u28KKUVHy6zdl1P1I0tAWJl7xvZdZnhXfXZtde2Kq9oNwsF
-         YCqQ==
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-627ebbefd85so21879817b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 00:02:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718348556; x=1718953356;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=By4P0vcgLroOQCJskwfGLQoINqqC43myu7beQ18KDt0=;
-        b=BM3CR+IgSGvYFVlfuGVX9q4hdHpstp1izlvIf96xPLuVrT78FKE6fVEDCFeQQ9JzN3
-         Qx785RO8BICxXS6iySc5xsDN/7V6NNj4RmCmcmCWZV7BLjyB+GPFkyGu52hiEdgbTD7S
-         S9ebmU/JUuy/UbceSywhsCnl1UFsjrEO6Rc05M4oFxjLqkpN4WW54/oazllj8iun/oPs
-         WvYXSbMaZiG+eAavgrayNhIFISp705yk1/8uPBQYGnTKHEqcoiyUUOEOypqIB+ABVyED
-         VtsFeBCmn3SnQwK6rXgRR+vqhXNzK2dFYqcRaa0aXHxMFh9NT++iXqwXTDxpV65zSsEv
-         c4bw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6W7kRJdc2rl/L46L31FQ+bGqLVIH6wJr/YKPJu+O8PCvB06IuX48dLTm6IXIBvK226A5znrvgY3lBVCHHUqZwqsar4g1e0FZQVdy8
-X-Gm-Message-State: AOJu0YwYrCL73cfV+iQc6F8gGIi3hjqtWJS1BcLAAzcpqQV8T9bexVoO
-	ees2D2VOvk4+fEW3qVt4ux8UlKJNl8NczqD4KzBZnAwMYicuJITE
-X-Google-Smtp-Source: AGHT+IFIcoEGF1ujGsaAknACmdVAzRUo/ikVN155rUrAwKruOrjOfcAV7bcoaC10WeY7S6jOQeHj6w==
-X-Received: by 2002:a05:6358:7184:b0:19f:5631:97cd with SMTP id e5c5f4694b2df-19fa9e5c312mr252970455d.15.1718348555911;
-        Fri, 14 Jun 2024 00:02:35 -0700 (PDT)
-Received: from localhost.localdomain ([129.146.253.192])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-6fede354612sm2072893a12.35.2024.06.14.00.02.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 00:02:35 -0700 (PDT)
-From: Furong Xu <0x1207@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>,
-	Corinna Vinschen <vinschen@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	xfr@outlook.com,
-	rock.xu@nio.com,
-	Furong Xu <0x1207@gmail.com>
-Subject: [PATCH net-next v3] net: stmmac: Enable TSO on VLANs
-Date: Fri, 14 Jun 2024 15:02:06 +0800
-Message-Id: <20240614070206.506999-1-0x1207@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1718348546; x=1718953346;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ocVyg2V3e0HzMdfCsFB/9doeEeEqC8oyUzYXLqjfcnA=;
+        b=fk3ItoWSave4XiDtbVn483yIu1MfbdcRzh1BdlZG/wWbj6nwlUGXeiktIjBV+erOCq
+         laGFewiQEyMcQ25WDOIY2f/+Q+R4suHbCKB5g7cNWyKfL+VR1fdq4SfyEoAQqL31SkJw
+         INrOpkImKZYoEi8ZD6t0GHxlVEWc4agvSyOlPD/qPWfKYqcPibIaLQAkLgJbIYFGXf8i
+         vjk8WQA1iIl5FYzDnmPL0RfmwTUvdwHzYi5Lps5r0XBd3QIDSiGmHTIc8ca0uRfLGcwp
+         t9naTxFJ4ymHCofbdfrGgqv5lRp+TGqqjAo3NjzgmOUXw4IFzYNVBQduDC6BtDJaQt+L
+         CbjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHMmOano6ro1ZqxGp7QyYBstUCkgdCN4XRMnuCF0lUCFcWmJMNvwRN36KA/oZhmYoUvkC0C+r7euyksQDUml5017QpBBtRHirj1cVp
+X-Gm-Message-State: AOJu0YzB+nnzQ5GrK4GXTkk8c+DxQGlSIst0XcdrFtR7qpTQ7XdXpZdl
+	goR4DU/v9607kUmVwiBt3354DfFL3V3BVXrcDJa699qGLYgEb3ZOul/1EyEq
+X-Google-Smtp-Source: AGHT+IG8trqBJwK78ay9OFCYodpGygojakhMJXQVIstyraP2stww0Aos/JEcdFnsrcryBsBcvEpD2w==
+X-Received: by 2002:a05:690c:385:b0:62f:aaaa:187a with SMTP id 00721157ae682-63222856cfbmr16349527b3.14.1718348545660;
+        Fri, 14 Jun 2024 00:02:25 -0700 (PDT)
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-631189a783fsm4003947b3.35.2024.06.14.00.02.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 00:02:25 -0700 (PDT)
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6312dc52078so17746577b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 00:02:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXmXhGQlTdLgad89tbgsC7J1UeT0WP95v0wUgaBcoVPi2A9b4LinBmQbocAkBFtOmubitS2YuVyyHdRDfixViI3yry0W1sdtQu8N14U
+X-Received: by 2002:a05:690c:fc5:b0:62c:c660:72af with SMTP id
+ 00721157ae682-63222e599efmr22276357b3.24.1718348544784; Fri, 14 Jun 2024
+ 00:02:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1718311756.git.u.kleine-koenig@baylibre.com> <3d1e308d45cddf67749522ca42d83f5b4f0b9634.1718311756.git.u.kleine-koenig@baylibre.com>
+In-Reply-To: <3d1e308d45cddf67749522ca42d83f5b4f0b9634.1718311756.git.u.kleine-koenig@baylibre.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 14 Jun 2024 09:02:12 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWxM49PiAeoz1R=FnPEEmwMimbkXBuO-N2mF6pRzHummA@mail.gmail.com>
+Message-ID: <CAMuHMdWxM49PiAeoz1R=FnPEEmwMimbkXBuO-N2mF6pRzHummA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] driver core: Make dev_err_probe() silent for -ENOMEM
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Petr Mladek <pmladek@suse.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Xiubo Li <xiubli@redhat.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The TSO engine works well when the frames are not VLAN Tagged.
-But it will produce broken segments when frames are VLAN Tagged.
+On Thu, Jun 13, 2024 at 11:24=E2=80=AFPM Uwe Kleine-K=C3=B6nig <ukleinek@ke=
+rnel.org> wrote:
+> From: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
+>
+> For an out-of-memory error there should be no additional output. Adapt
+> dev_err_probe() to not emit the error message when err is -ENOMEM.
+> This simplifies handling errors that might among others be -ENOMEM.
+>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
 
-The first segment is all good, while the second segment to the
-last segment are broken, they lack of required VLAN tag.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-An example here:
-========
-// 1st segment of a VLAN Tagged TSO frame, nothing wrong.
-MacSrc > MacDst, ethertype 802.1Q (0x8100), length 1518: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [.], seq 1:1449
+Gr{oetje,eeting}s,
 
-// 2nd to last segments of a VLAN Tagged TSO frame, VLAN tag is missing.
-MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 1449:2897
-MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 2897:4345
-MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 4345:5793
-MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [P.], seq 5793:7241
+                        Geert
 
-// normal VLAN Tagged non-TSO frame, nothing wrong.
-MacSrc > MacDst, ethertype 802.1Q (0x8100), length 1022: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [P.], seq 7241:8193
-MacSrc > MacDst, ethertype 802.1Q (0x8100), length 70: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [F.], seq 8193
-========
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-When transmitting VLAN Tagged TSO frames, never insert VLAN tag by HW,
-always insert VLAN tag to SKB payload, then TSO works well on VLANs for
-all MAC cores.
-
-Tested on DWMAC CORE 5.10a, DWMAC CORE 5.20a and DWXGMAC CORE 3.20a
-
-Signed-off-by: Furong Xu <0x1207@gmail.com>
----
-  Changes in v3:
-    - Drop packet and increase stats counter when vlan tag insert fails.
-
-  Changes in v2:
-    - Use __vlan_hwaccel_push_inside() to insert vlan tag to the payload.
----
- .../net/ethernet/stmicro/stmmac/stmmac_main.c | 32 +++++++++++--------
- 1 file changed, 19 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index bbedf2a8c60f..87aa3528cc0c 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4233,18 +4233,32 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct dma_desc *desc, *first, *mss_desc = NULL;
- 	struct stmmac_priv *priv = netdev_priv(dev);
--	int nfrags = skb_shinfo(skb)->nr_frags;
--	u32 queue = skb_get_queue_mapping(skb);
- 	unsigned int first_entry, tx_packets;
- 	struct stmmac_txq_stats *txq_stats;
--	int tmp_pay_len = 0, first_tx;
-+	int tmp_pay_len = 0, first_tx, nfrags;
- 	struct stmmac_tx_queue *tx_q;
--	bool has_vlan, set_ic;
-+	bool set_ic;
- 	u8 proto_hdr_len, hdr;
--	u32 pay_len, mss;
-+	u32 pay_len, mss, queue;
- 	dma_addr_t des;
- 	int i;
- 
-+	/* Always insert VLAN tag to SKB payload for TSO frames.
-+	 *
-+	 * Never insert VLAN tag by HW, since segments splited by
-+	 * TSO engine will be un-tagged by mistake.
-+	 */
-+	if (skb_vlan_tag_present(skb)) {
-+		skb = __vlan_hwaccel_push_inside(skb);
-+		if (unlikely(!skb)) {
-+			priv->xstats.tx_dropped++;
-+			return NETDEV_TX_OK;
-+		}
-+	}
-+
-+	nfrags = skb_shinfo(skb)->nr_frags;
-+	queue = skb_get_queue_mapping(skb);
-+
- 	tx_q = &priv->dma_conf.tx_queue[queue];
- 	txq_stats = &priv->xstats.txq_stats[queue];
- 	first_tx = tx_q->cur_tx;
-@@ -4297,9 +4311,6 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
- 			skb->data_len);
- 	}
- 
--	/* Check if VLAN can be inserted by HW */
--	has_vlan = stmmac_vlan_insert(priv, skb, tx_q);
--
- 	first_entry = tx_q->cur_tx;
- 	WARN_ON(tx_q->tx_skbuff[first_entry]);
- 
-@@ -4309,9 +4320,6 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
- 		desc = &tx_q->dma_tx[first_entry];
- 	first = desc;
- 
--	if (has_vlan)
--		stmmac_set_desc_vlan(priv, first, STMMAC_VLAN_INSERT);
--
- 	/* first descriptor: fill Headers on Buf1 */
- 	des = dma_map_single(priv->device, skb->data, skb_headlen(skb),
- 			     DMA_TO_DEVICE);
-@@ -7678,8 +7686,6 @@ int stmmac_dvr_probe(struct device *device,
- 		ndev->features |= NETIF_F_RXHASH;
- 
- 	ndev->vlan_features |= ndev->features;
--	/* TSO doesn't work on VLANs yet */
--	ndev->vlan_features &= ~NETIF_F_TSO;
- 
- 	/* MTU range: 46 - hw-specific max */
- 	ndev->min_mtu = ETH_ZLEN - ETH_HLEN;
--- 
-2.34.1
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
