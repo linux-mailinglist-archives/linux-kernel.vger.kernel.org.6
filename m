@@ -1,53 +1,73 @@
-Return-Path: <linux-kernel+bounces-215463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5295909315
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 21:52:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18F8B90931D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 22:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 404C11F23833
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:52:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96D45B236CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 20:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65461A38CF;
-	Fri, 14 Jun 2024 19:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6547B1A3BA1;
+	Fri, 14 Jun 2024 20:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="ssAoF0p/"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LhhUXeAn"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BBC136E09;
-	Fri, 14 Jun 2024 19:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B16416D339
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 20:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718394745; cv=none; b=CqHeSMBnCGNG7HKrz0lhB5J71y+pVtISG6+7DTqKAxZrPGmyr7POLycSrp+jTpYimls2QeuQ1wreoaoktDG2hCO/vXrCHVTXBzvBZyinh6ZwEzhhy0aFdCTtvPrRF6pKr723pCWNJsMpSHoZ2p809tDFW4rxTKxP7z9W0LL7qEQ=
+	t=1718395208; cv=none; b=Pjg+FVrhSDxki3UIqerfsx8DKCBsQKUp9DAAW5vTxZ2sppCkwbEeAnDOMuqQJIaqfTNmUJj/hx57TcZEctGHR3cVF7/MQd4CSpBPvr6UfERRJDlO5Ng3YiRlB1nEqElqTh75E0hCKPaXC0NLVXfN4NNW8l0YosKdL5fuB03VGto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718394745; c=relaxed/simple;
-	bh=3ay8Bu7Y0avzOGuBDO9yeqyZBsGvD7EF0UukT/5+kLE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=UZvucvOMJiZYDvzIt3m++rhB6ZPDsYDCNGF6rfZyn4zhxLfOcZNyc9NOHblC+IrNzrTyQYaIkmFazcX8k50wrZatQ+evDNkH8SR8xZdhYyxRnWg0Q6OZWfQE1l8XA9TiAcqiZJAMokmH5YgzYlYEN/q0/GHp6SE8Nyzjuo4C6mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=ssAoF0p/; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1718394739; x=1718999539; i=rwarsow@gmx.de;
-	bh=hIFR4FX61ee6/oi4Gw7rxSf32kMPsrT9yVDVbkAu9RA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ssAoF0p/O8DGZmeQzKn8ULY69mtA6F8FwcWdEa9jvxeFQCXD7ndSq93UryZKAJNy
-	 wsDaRQpFmdIMMMc2l+NaUFAIZ7OgS3FdxutUiY9vIqAVgyLIDhyZ10gIbIlOOKOq2
-	 nIdEDCQFmP8sEy1RLIGQfd2F2B88+tuRTANlZmPODOErjpI9gxTb2IbWyWKJEPXfE
-	 9ZlTAeRiJMWruW+V8FsOzPXe8qLVkEPkGwqAtrl8GleAZS3gjgU2bseI9IrY277w9
-	 dJmavBRyddXd2/yEzbD9PuZq1FHXtJyKQ+7cA7/afu9zArrhBOhSxEPktg9tlXoMh
-	 EpoaPCwrNJ3ExE/4RQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.100.20] ([46.142.34.197]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MxDkm-1sbue31HyK-00w2wa; Fri, 14
- Jun 2024 21:52:19 +0200
-Message-ID: <65626dc2-26e8-4eba-8513-e439098d9252@gmx.de>
-Date: Fri, 14 Jun 2024 21:52:18 +0200
+	s=arc-20240116; t=1718395208; c=relaxed/simple;
+	bh=UecWv9IJeqO0ogDEFKZ30msCBczVQJG5/sT8DUT1gZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hMrr4uyvQErik8Gze8e3gEh+c/kT59qDEZh7KqW1vP0WvPXI1m4ztauWSi3xhQCqfcMW97FcyXiMQxSChnspwKA6uhK1c3O+WP5rJLbE2b/ugu8Y6P5GlR2UHY02lC39zSJU4CzSXmCxb3i3GOBAFxvTZVay/Thi7bVr5Kneals=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LhhUXeAn; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6f2f5ad1d1so23382166b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 13:00:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718395206; x=1719000006; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=1sffmBRRqxvVZKL+gZwYpJ+2d0Xa8nclbjp8aHRZVxo=;
+        b=LhhUXeAn19Lem4aLVuVLFqh60R/NnQnt2pZbNScUCFAapXJxvAqmkZVpQ12Ypr2HIZ
+         d8OogiURlMaX+LGJ/so/VoZ8AT5t3bGD80aqMB1MxanPoqKJLZrlHOevFlEWl8vxcpOd
+         ZZuTeNxDy1QbyUq2vbHLs5zysV3ZVs/SVYewmCLk+C5iSd1g/r28mtS6w4qFQoCv6BSE
+         ct3tVdWQm3tYtwUAHqf1UoCsiEFPUfOMWkZsz7eyQuzV1syX0Kl63rEaCWRtVMb/Uxn/
+         tz5n/jdHMYW8pwGhbk1cG1v+GYlTHoRjAvNd4NxEbwornz+vT8DVSwrCbQnlxR9zDvD6
+         k80Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718395206; x=1719000006;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1sffmBRRqxvVZKL+gZwYpJ+2d0Xa8nclbjp8aHRZVxo=;
+        b=C1EX0lnb81cse6w6+gn6WTZHJI7Q0DHpuOiOO8HffFa3kAR79NK2VF/Qno7ljUEmrg
+         6g03s7S6Q29hyF0444Zb8+STXwSNKxno5dbz2L6asje1DaA4hlsUn7+hRJbGrnfMsoZp
+         rWjMrvpRk9s/Ed4pVGNk3kfGRf1TJTIFpkGLYk676SZ0tlgD8C6xxsC788gOou5ZW8+F
+         JNDTQxOKlldvUHaD2bQ6I+L8tRRL1rDSOR3mKWzfpF45y5n6eyJ09aNt46UjtKb8aqW5
+         CzgLDrNX5k3BkpKmDZQ+3lDX9WCNGei1NLo6MBYhhHymYqg3CIl/XhjMoEAUYzu0b1FG
+         eiIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWRMVI99OLQ/tVeqPRYsjWni3tal+gGxqh9THMGEp1Zx+eKqvcpcIF0yHcYc8sNikHqrPpOdVRUCHnJTiqUdpn9g29B9dgs4HUg/Vu
+X-Gm-Message-State: AOJu0YybOEUDiXZfj+CFGvFzd45EmTDV2ceF8SmCW7eoOWbY3JCOlrUZ
+	hNR3NhTFMRgQYoE3TBTod8JJkZbJwtDifJJMbZxB/5r/fY7MKOMTPgJEIA==
+X-Google-Smtp-Source: AGHT+IHuBi11JQJsVJTkYZSJBQdsXFWebGBbRzzvC/b2FAzj0+X9BAS2A1lf02+zZ0XxgNKvQEv3Qw==
+X-Received: by 2002:a17:906:f5a3:b0:a69:edd:3323 with SMTP id a640c23a62f3a-a6f60d13971mr290842166b.2.1718395205371;
+        Fri, 14 Jun 2024 13:00:05 -0700 (PDT)
+Received: from [192.168.0.104] (p57935a9b.dip0.t-ipconnect.de. [87.147.90.155])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ed359bsm217076966b.137.2024.06.14.13.00.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 13:00:03 -0700 (PDT)
+Message-ID: <4a18cc93-5495-41b1-a40f-7873954200f6@gmail.com>
+Date: Fri, 14 Jun 2024 22:00:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,174 +75,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Ronald Warsow <rwarsow@gmx.de>
-Subject: Re: [PATCH 6.9 000/157] 6.9.5-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Language: de-DE, en-US
+Subject: Re: [PATCH v2 0/5] staging: rtl8192e: Cleanup multiple issues
+To: Teddy Engel <engel.teddy@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <cover.1718309120.git.engel.teddy@gmail.com>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <cover.1718309120.git.engel.teddy@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:bme0tHAHBnF9zmJ8sMRtQRB9tQwtVy86jI2l4hkwQOpiRdU3OXz
- 1Zvm5b6fSCwmdaUlqN3RKu1DAZG1wL6l9QkYtJiTkrG+RN4Wsps9f+T6o1T+dhErIvhBHfB
- /HHjcNKl2IJsA7cBRL4XJtbNjIpfBaDPBflsbGgO8FoJYN4WNwEb/rNnM0mYN6FOd8TvB/R
- W6urI351BwJkKZnA1uLLA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:MWILO5Hvsqs=;xl3JTa68SvUh1zPYGRZBbbeEdI3
- LEpeObmDwceGe8/fwwhhJrqG7DkjL/eMrotAFaLuunGzUHBqXNmTfYnQKp8pQGd0bYlcri/dZ
- ToPNUVNzzyDxna+i2mf0RWfiv4uyZU4EejwGVcuHhai6pHNY2MzijWaQIk1yG/dlYeMhhD8Bq
- JID1tH412D14QGD8WW9csgXJgzUPakFvgldjMRifGzPT6JO87V6f6v8bP6ep3AQaMYDMPSAxg
- UU2zrDZkd1jpcyUd9DelIyaJcqWFfDefpm/K3MTbX1ItW+plxM8wwQj4yctFBVMP1kCyibL7N
- hfJoHSVQLQ/KZl/ofjHr51DUY69Yb9TIQOrt/zKzUHHh9h34A1YZiogQLXy83PhYvwLgloL5+
- ZRoIc6C13g4XDw/BSCYnFtOtbZr22jpFwsAPpGWZnCb0vVLglb1SJ4uutgwg4Rziwxudy2jHZ
- Sw7CB1EU8TsxCCTCROeKBdQXVAyS0QzBaNDgdHupjjMaYavNO+lzhors8ypj76Urd/gL8DFbS
- HMJkcQMmwpBpOixRkCi2JQerqq/o8biD2ESL457W0UrD0K3CNY8Riw82OfOJ4OpYdWzYVvEla
- 0jPMSi6sMNY7yy6pV57VFmWcow/VT41NGuzi6lI+kY+AgqtLs1HSH5UPfj7Xv55KkOoq+B+Z2
- BcThmAgKIL37s5xFusezK0wcLfpX49nan/tX+KyWWKsM34jxzDDPXn/tXiLNttudOP+L0VFBT
- X+bNLDORkKL5/4l+7hHxtNd7C1NK9uTt21JLLEmF3Erju7RGJYW+4PzTAldev5OqenrOSDmSs
- oQ9w4gFZOt696XduCJ2C0DlEzD0XuNgM65uWAVjgxBgsI=
+Content-Transfer-Encoding: 7bit
 
-Hi Greg
-
-+++ Update +++
-
-the below crash seems to only to happen with mesa-24.1.x
-mesa-24.0.9 is fine
-
-filled a bug report:
-
-https://bugzilla.redhat.com/show_bug.cgi?id=3D2292434
+On 6/13/24 22:15, Teddy Engel wrote:
+> Remove some unused constants, macros, and structs.
+> Capitalize a constant.
+> 
+> The patch order matters - please apply in order.
+> 
+> Teddy Engel (5):
+>    staging: rtl8192e: Remove unused constants
+>    staging: rtl8192e: Remove unused struct phy_ofdm_rx_status_rxsc
+>    staging: rtl8192e: Capitalize constant RegC38_TH
+>    staging: rtl8192e: Remove unused macro dm_tx_bb_gain_idx_to_amplify
+>    staging: rtl8192e: Remove unnecessary pre-declaration of struct
+>      net_device
+> 
+>   drivers/staging/rtl8192e/rtl8192e/r8190P_def.h | 9 ---------
+>   drivers/staging/rtl8192e/rtl8192e/rtl_cam.h    | 1 -
+>   drivers/staging/rtl8192e/rtl8192e/rtl_dm.c     | 4 ++--
+>   drivers/staging/rtl8192e/rtl8192e/rtl_dm.h     | 6 +-----
+>   drivers/staging/rtl8192e/rtl8192e/rtl_pci.h    | 1 -
+>   5 files changed, 3 insertions(+), 18 deletions(-)
+> 
 
 
-=3D=3D=3D=3D
-
-Jun 13 18:49:22 obelix.fritz.box kernel: RIP:
-0010:drm_suballoc_free+0x13/0x110 [drm_suballoc_helper]
-Jun 13 18:49:22 obelix.fritz.box kernel: Code: eb ce 0f 1f 44 00 00 90
-90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 48 85 ff 0f 84 e1 00 00 00
-41 54 55 48 89 fd 53 48 89 f3 <4c> 8b 67 20 4c 89 e7 e8 61 53 bd e2 48
-85 db 0f 84 9f 00 00 00 48
-Jun 13 18:49:22 obelix.fritz.box kernel: RSP: 0018:ffff9caa851f7630
-EFLAGS: 00010286
-Jun 13 18:49:22 obelix.fritz.box kernel: RAX: fffffffffffffe00 RBX:
-0000000000000000 RCX: 000000000000890b
-Jun 13 18:49:22 obelix.fritz.box kernel: RDX: 00000000000088fb RSI:
-0000000000000000 RDI: fffffffffffffe00
-Jun 13 18:49:22 obelix.fritz.box kernel: RBP: fffffffffffffe00 R08:
-0000000000000000 R09: 0000000000000001
-Jun 13 18:49:22 obelix.fritz.box kernel: R10: 0000000000000000 R11:
-0000000000000180 R12: ffff8ebf913c1158
-Jun 13 18:49:22 obelix.fritz.box kernel: R13: fffffffffffffe00 R14:
-ffff9caa851f78a8 R15: ffff8ebf913c0000
-Jun 13 18:49:22 obelix.fritz.box kernel: FS:  00007fd4f4640b00(0000)
-GS:ffff8ec2cf980000(0000) knlGS:0000000000000000
-Jun 13 18:49:22 obelix.fritz.box kernel: CS:  0010 DS: 0000 ES: 0000
-CR0: 0000000080050033
-Jun 13 18:49:22 obelix.fritz.box kernel: CR2: fffffffffffffe20 CR3:
-0000000110bc4001 CR4: 0000000000770ef0
-Jun 13 18:49:22 obelix.fritz.box kernel: PKRU: 55555554
-Jun 13 18:49:22 obelix.fritz.box kernel: Call Trace:
-Jun 13 18:49:22 obelix.fritz.box kernel:  <TASK>
-Jun 13 18:49:22 obelix.fritz.box kernel:  ? __die_body.cold+0x19/0x2c
-Jun 13 18:49:22 obelix.fritz.box kernel:  ? page_fault_oops+0x155/0x280
-Jun 13 18:49:22 obelix.fritz.box kernel:  ? search_module_extables+0x10/0x=
-50
-Jun 13 18:49:22 obelix.fritz.box kernel:  ? search_bpf_extables+0x56/0x80
-Jun 13 18:49:22 obelix.fritz.box kernel:  ? exc_page_fault+0x7a/0x80
-Jun 13 18:49:22 obelix.fritz.box kernel:  ? asm_exc_page_fault+0x22/0x30
-Jun 13 18:49:22 obelix.fritz.box kernel:  ? drm_suballoc_free+0x13/0x110
-[drm_suballoc_helper]
-Jun 13 18:49:22 obelix.fritz.box kernel:
-xe_migrate_update_pgtables+0x692/0x9b0 [xe]
-Jun 13 18:49:22 obelix.fritz.box kernel:  ? kmalloc_trace+0x11f/0x2d0
-Jun 13 18:49:22 obelix.fritz.box kernel:  __xe_pt_bind_vma+0x492/0xbe0 [xe=
-]
-Jun 13 18:49:22 obelix.fritz.box kernel:  xe_vm_bind_vma+0xa6/0x2e0 [xe]
-Jun 13 18:49:22 obelix.fritz.box kernel:  xe_vm_bind+0xf3/0x200 [xe]
-Jun 13 18:49:22 obelix.fritz.box kernel: __xe_vma_op_execute+0x278/0x490
-[xe]
-Jun 13 18:49:22 obelix.fritz.box kernel:  xe_vm_bind_ioctl+0x1ce0/0x1f20
-[xe]
-Jun 13 18:49:22 obelix.fritz.box kernel:  ?
-__pfx_xe_vm_bind_ioctl+0x10/0x10 [xe]
-Jun 13 18:49:22 obelix.fritz.box kernel:  drm_ioctl_kernel+0xa7/0x100 [drm=
-]
-Jun 13 18:49:22 obelix.fritz.box kernel:  drm_ioctl+0x312/0x5c0 [drm]
-Jun 13 18:49:22 obelix.fritz.box kernel:  ?
-__pfx_xe_vm_bind_ioctl+0x10/0x10 [xe]
-Jun 13 18:49:22 obelix.fritz.box kernel:  __x64_sys_ioctl+0x40d/0xb70
-Jun 13 18:49:22 obelix.fritz.box kernel:  do_syscall_64+0x7a/0x160
-Jun 13 18:49:22 obelix.fritz.box kernel:  ? __x64_sys_ioctl+0x13e/0xb70
-Jun 13 18:49:22 obelix.fritz.box kernel:  ? __count_memcg_events+0x43/0xb0
-Jun 13 18:49:22 obelix.fritz.box kernel:  ? handle_mm_fault+0x1f9/0x300
-Jun 13 18:49:22 obelix.fritz.box kernel:  ?
-syscall_exit_to_user_mode+0x68/0x1e0
-Jun 13 18:49:22 obelix.fritz.box kernel:  ? do_syscall_64+0x86/0x160
-Jun 13 18:49:22 obelix.fritz.box kernel:  ? clear_bhb_loop+0x45/0xa0
-Jun 13 18:49:22 obelix.fritz.box kernel:  ? clear_bhb_loop+0x45/0xa0
-Jun 13 18:49:22 obelix.fritz.box kernel:  ? clear_bhb_loop+0x45/0xa0
-Jun 13 18:49:22 obelix.fritz.box kernel:
-entry_SYSCALL_64_after_hwframe+0x76/0x7e
-Jun 13 18:49:22 obelix.fritz.box kernel: RIP: 0033:0x7fd4f4d23d2d
-Jun 13 18:49:22 obelix.fritz.box kernel: Code: 04 25 28 00 00 00 48 89
-45 c8 31 c0 48 8d 45 10 c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48
-89 45 c0 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8
-64 48 2b 04 25 28 00 00 00
-Jun 13 18:49:22 obelix.fritz.box kernel: RSP: 002b:00007fff94738650
-EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-Jun 13 18:49:22 obelix.fritz.box kernel: RAX: ffffffffffffffda RBX:
-00007fff94738710 RCX: 00007fd4f4d23d2d
-Jun 13 18:49:22 obelix.fritz.box kernel: RDX: 00007fff94738710 RSI:
-0000000040886445 RDI: 0000000000000010
-Jun 13 18:49:22 obelix.fritz.box kernel: RBP: 00007fff947386a0 R08:
-0000000000001000 R09: 0000000000000000
-Jun 13 18:49:22 obelix.fritz.box kernel: R10: 0000555a7a0fded0 R11:
-0000000000000246 R12: 0000000000000010
-Jun 13 18:49:22 obelix.fritz.box kernel: R13: 0000000000000000 R14:
-0000555a78671160 R15: 0000555a7a234fa0
-Jun 13 18:49:22 obelix.fritz.box kernel:  </TASK>
-Jun 13 18:49:22 obelix.fritz.box kernel: Modules linked in:
-vboxnetadp(OE) vboxnetflt(OE) vboxdrv(OE) rfcomm nft_fib_inet
-nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4
-nf_reject_ipv6 nft_reject nft_ct nft_chain_nat nf_nat nf_conntrack
-nf_defrag_ipv6 nf_defrag_ipv4 ip_set nf_tables bnep iwlmvm mac80211
-libarc4 snd_hda_codec_hdmi intel_rapl_common kvm_intel iwlwifi
-snd_hda_codec_realtek kvm btusb snd_hda_codec_generic btintel
-snd_hda_scodec_component bluetooth snd_hda_intel cfg80211
-snd_intel_dspcfg snd_hda_codec snd_hda_core mei_hdcp mei_pxp rfkill
-nfnetlink xe drm_ttm_helper ttm agpgart i2c_algo_bit gpu_sched drm_buddy
-drm_suballoc_helper drm_gpuvm drm_exec drm_display_helper drm_kms_helper d=
-rm
-Jun 13 18:49:22 obelix.fritz.box kernel: CR2: fffffffffffffe20
-Jun 13 18:49:22 obelix.fritz.box kernel: ---[ end trace 0000000000000000
-]---
-Jun 13 18:49:22 obelix.fritz.box kernel: RIP:
-0010:drm_suballoc_free+0x13/0x110 [drm_suballoc_helper]
-Jun 13 18:49:22 obelix.fritz.box kernel: Code: eb ce 0f 1f 44 00 00 90
-90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 48 85 ff 0f 84 e1 00 00 00
-41 54 55 48 89 fd 53 48 89 f3 <4c> 8b 67 20 4c 89 e7 e8 61 53 bd e2 48
-85 db 0f 84 9f 00 00 00 48
-Jun 13 18:49:22 obelix.fritz.box kernel: RSP: 0018:ffff9caa851f7630
-EFLAGS: 00010286
-Jun 13 18:49:22 obelix.fritz.box kernel: RAX: fffffffffffffe00 RBX:
-0000000000000000 RCX: 000000000000890b
-Jun 13 18:49:22 obelix.fritz.box kernel: RDX: 00000000000088fb RSI:
-0000000000000000 RDI: fffffffffffffe00
-Jun 13 18:49:22 obelix.fritz.box kernel: RBP: fffffffffffffe00 R08:
-0000000000000000 R09: 0000000000000001
-Jun 13 18:49:22 obelix.fritz.box kernel: R10: 0000000000000000 R11:
-0000000000000180 R12: ffff8ebf913c1158
-Jun 13 18:49:22 obelix.fritz.box kernel: R13: fffffffffffffe00 R14:
-ffff9caa851f78a8 R15: ffff8ebf913c0000
-Jun 13 18:49:22 obelix.fritz.box kernel: FS:  00007fd4f4640b00(0000)
-GS:ffff8ec2cf980000(0000) knlGS:0000000000000000
-Jun 13 18:49:22 obelix.fritz.box kernel: CS:  0010 DS: 0000 ES: 0000
-CR0: 0000000080050033
-Jun 13 18:49:22 obelix.fritz.box kernel: CR2: fffffffffffffe20 CR3:
-0000000110bc4001 CR4: 0000000000770ef0
-Jun 13 18:49:22 obelix.fritz.box kernel: PKRU: 55555554
-Jun 13 18:49:22 obelix.fritz.box kernel: note: Xorg[3657] exited with
-irqs disabled
-
-
-
+Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 
