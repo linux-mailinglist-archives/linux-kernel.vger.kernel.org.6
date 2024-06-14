@@ -1,140 +1,209 @@
-Return-Path: <linux-kernel+bounces-215340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA507909169
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:27:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C85890917F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:31:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2A161C2314B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:27:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6F90284C20
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB971A01C2;
-	Fri, 14 Jun 2024 17:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6CD19ADB3;
+	Fri, 14 Jun 2024 17:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ctEn4gJS"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ys8xAZF9"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC49319DF51;
-	Fri, 14 Jun 2024 17:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F2E1974EA;
+	Fri, 14 Jun 2024 17:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718386030; cv=none; b=Pm1Yzq4ns1xp4IPmdA1TML0rJ/f5DtobiBZmz6Y3nki1itqAR1qWo4/Xqkze+e1i23Jb3iFvDpiRUpC2Xf1qqMeQ5fb7+bWHJbZyXxuUWPys10Cx11ATKH9uHk8GnhPdwkmloQkHH/382BhVVxfi80BkZz/58I+MwyUuYuUXJzY=
+	t=1718386081; cv=none; b=ZaFvIZXr7685mymE1ECtK3Y5EgQWHZzmRFnG1evaxHZJgZgkHEK9F8bMGBzMVF669rySBmR0FOdRA1pdxjWjN/9loZ2cubFL0evdMq1xrHgiL+zobssP2oJHtGJn8SFmcmiUtVTRSRRloBE9ZCFL8pwGSQez+547SZ4+Wk4PYX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718386030; c=relaxed/simple;
-	bh=m1lLm+WZC4v+Y35S1XB9lWwlw3k4bRL9Y21+zCpCDBQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Um1D4tgXWZ+RiGGxwS5csYJY3/xlJNIFMuCsmatRkIQKwcZl4sErfT8WwNnnyuq+HtXN5MFqR3SJfdNW0UE4Hv81evHmJQquZyoVB7LQDOkYmtc3UFH5YqbR4ztjsvjf5jsYrKLyc3Dg7cYTXB7uONgUcgfT2lsAokLmSDImxe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ctEn4gJS; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45EHR2TK020312;
-	Fri, 14 Jun 2024 12:27:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718386022;
-	bh=XewSngMq7bNS3KBsgmr6l1N/bnY3ToVln2WUXlo0Z6k=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=ctEn4gJSX5tYMgvzBRYJ6xnk2sDRV91wXRcrNTf5ZQZNAt70ruXZWxlT/miB39qNA
-	 brez0qungSVOWIwhxbd6L5/IBP2y2kr6hinh7sp+RzwgAIc6UvNJrujtORIpzbntgT
-	 WEDzoF35fLrbt7lEQvTPBP41UtqrZzzz79d4UAc0=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45EHR2l5010617
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 14 Jun 2024 12:27:02 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
- Jun 2024 12:27:01 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 14 Jun 2024 12:27:01 -0500
-Received: from localhost (udba0500997.dhcp.ti.com [128.247.81.249])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45EHR1gJ066390;
-	Fri, 14 Jun 2024 12:27:01 -0500
-Date: Fri, 14 Jun 2024 12:27:01 -0500
-From: Brandon Brnich <b-brnich@ti.com>
-To: Devarsh Thakkar <devarsht@ti.com>
-CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <praneeth@ti.com>, <a-bhatia1@ti.com>,
-        <j-luthra@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
-        <vijayp@ti.com>
-Subject: Re: [PATCH 2/3] arm64: dts: ti: k3-am62a7-sk: Reserve 576MiB of
- global CMA
-Message-ID: <20240614172701.3xxs2ydagj3sjrwo@udba0500997>
-References: <20240613150902.2173582-1-devarsht@ti.com>
- <20240613150902.2173582-3-devarsht@ti.com>
+	s=arc-20240116; t=1718386081; c=relaxed/simple;
+	bh=ZVrC8dAFlld6QOtBPCy44tAfoqjF/SAWRNfcYP4u++Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZYO6Hx4JYJZ1DfP4SNNS3zgDHxVq/3YZlqFdJrpeY4iUwh7N80vBS9CXXCM9bVAscRSstd8bfIlEvjXpsyWEDp5xUvfpqVOaDrJtVjlYCpTmmiMK72QTXVeG5xKcxcoZ2HUT/PWlkyj0CvGe8oeT8OF7lj4qhwqGkw07zTxFKOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ys8xAZF9; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45EHRGfq019193;
+	Fri, 14 Jun 2024 17:27:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=V1EQ6RecA7t8Y5/LVEqOqhLJ7j
+	z7INvLl65FW2DIKz8=; b=Ys8xAZF9mM/MXvCG02G6uq9bzzrWD9ZoBadw1gidOG
+	9DNYAT0WZ/Vu2IVLDGDCyShiB3pYMbevU8Hk/Mgo/FJYWZEXUurGlpAlX98QBJ8g
+	6zZQiwVi0T4GsiJAPiwflmZcylIo6VhF1plE7BnFhx1FZ5U+75aWoRraaO5gRU/u
+	na9gocQQTWnPLEwEYcn5W+CcQmc2pNOPTRYDCMlqCFymlMQMLGpsDOzctc/tyzI0
+	upGBcz/gHYfPQDWUGONIK+wqLI9vNZJ3FRshaQfppE112ZhTcLvN6zQaHCvQJX+C
+	ZVeQ19m3yKvrKJP5gBV9RM/s8Za9uBiIf26exOCi8ixg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yrsuv8204-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Jun 2024 17:27:54 +0000 (GMT)
+Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45EHRs1g020280;
+	Fri, 14 Jun 2024 17:27:54 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yrsuv8203-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Jun 2024 17:27:54 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45EGvLet003881;
+	Fri, 14 Jun 2024 17:27:53 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yn2mqkf4x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Jun 2024 17:27:52 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45EHRlJj49480148
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Jun 2024 17:27:49 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5433320043;
+	Fri, 14 Jun 2024 17:27:47 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9EBE920040;
+	Fri, 14 Jun 2024 17:27:44 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.43.82.18])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 14 Jun 2024 17:27:44 +0000 (GMT)
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+To: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+        irogers@google.com, namhyung@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
+        maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
+        disgoel@linux.vnet.ibm.com
+Subject: [PATCH 1/2] tools/perf: Fix the string match for "/tmp/perf-$PID.map" files in dso__load
+Date: Fri, 14 Jun 2024 22:57:41 +0530
+Message-Id: <20240614172742.56976-1-atrajeev@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240613150902.2173582-3-devarsht@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 27fuRxKjMOr40xlvC-Ls6mxsaXWcfAAf
+X-Proofpoint-ORIG-GUID: PLlcIsxh1kgd-uIjFHg_d7LRsf9ad8eU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-14_15,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ priorityscore=1501 clxscore=1015 phishscore=0 adultscore=0
+ lowpriorityscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0
+ malwarescore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406140119
 
-Hi Devarsh,
+Perf test for perf probe of function from different CU fails
+as below:
 
-On 20:39-20240613, Devarsh Thakkar wrote:
-> Reserve 576MiB of CMA as global CMA pool starting after initial 1GiB of
-> DDR.
-> 
-> AM62ax has different multimedia components such as Camera, Display, H.264
-> VPU and JPEG Encoder which use CMA for buffer allocations.
-> 
-> The 12x 720x480 realtime VPU decode use-case requires 544MiB of CMA,
-> additional 32MiB is kept as buffer in case some other peripheral also
-> require it while VPU is running.
-> 
-> The reason to choose latter 1GiB is to not overlap with existing memory map
-> which is utilizing initial 1GiB for remoteproc firmwares as shared here
-> [1].
-> 
-> Also some drivers such as JPEG require 32bit addressing so not allocating
-> from higher DDR address.
-> 
-> Link: https://lore.kernel.org/all/20240605124859.3034-5-hnagalla@ti.com [1]
-> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+	./perf test -vv "test perf probe of function from different CU"
+	116: test perf probe of function from different CU:
+	--- start ---
+	test child forked, pid 2679
+	Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.Msa7iy89bx/testfile
+	  Error: Failed to add events.
+	--- Cleaning up ---
+	"foo" does not hit any event.
+	  Error: Failed to delete events.
+	---- end(-1) ----
+	116: test perf probe of function from different CU                   : FAILED!
 
-I have validated that this patch works with VPU. 
+The test does below to probe function "foo" :
 
-Tested-by: Brandon Brnich <b-brnich@ti.com>
+	# gcc -g -Og -flto -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.c
+	-o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
+	# gcc -g -Og -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.c
+	-o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
+	# gcc -g -Og -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile
+	/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
+	/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
 
-Best,
-Brandon
+	# ./perf probe -x /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile foo
+	Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile
+	   Error: Failed to add events.
 
-> ---
->  arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-> index e026f65738b3..67faf46d7a35 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-> @@ -40,6 +40,15 @@ reserved-memory {
->  		#size-cells = <2>;
->  		ranges;
->  
-> +		/* global cma region */
-> +		linux,cma {
-> +			compatible = "shared-dma-pool";
-> +			reusable;
-> +			size = <0x00 0x24000000>;
-> +			alloc-ranges = <0x00 0xc0000000 0x00 0x24000000>;
-> +			linux,cma-default;
-> +		};
-> +
->  		secure_tfa_ddr: tfa@9e780000 {
->  			reg = <0x00 0x9e780000 0x00 0x80000>;
->  			alignment = <0x1000>;
-> -- 
-> 2.39.1
-> 
+Perf probe fails to find symbol foo in the executable placed in
+/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7
+
+Simple reproduce:
+
+ # mktemp -d /tmp/perf-checkXXXXXXXXXX
+   /tmp/perf-checkcWpuLRQI8j
+
+ # gcc -g -o test test.c
+ # cp test /tmp/perf-checkcWpuLRQI8j/
+ # nm /tmp/perf-checkcWpuLRQI8j/test | grep foo
+   00000000100006bc T foo
+
+ # ./perf probe -x /tmp/perf-checkcWpuLRQI8j/test foo
+   Failed to find symbol foo in /tmp/perf-checkcWpuLRQI8j/test
+      Error: Failed to add events.
+
+But it works with any files like /tmp/perf/test. Only for
+patterns with "/tmp/perf-", this fails.
+
+Further debugging, commit 80d496be89ed ("perf report: Add support
+for profiling JIT generated code") added support for profiling JIT
+generated code. This patch handles dso's of form
+"/tmp/perf-$PID.map" .
+
+The check used "if (strncmp(self->name, "/tmp/perf-", 10) == 0)"
+to match "/tmp/perf-$PID.map". With this commit, any dso in
+/tmp/perf- folder will be considered separately for processing
+(not only JIT created map files ). Fix this by changing the
+string pattern to check for regex of form "/tmp/perf-*.map"
+
+With the fix,
+	# ./perf test "test perf probe of function from different CU"
+	117: test perf probe of function from different CU                   : Ok
+
+Signed-off-by: Athira Rajeev<atrajeev@linux.vnet.ibm.com>
+---
+ tools/perf/util/symbol.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 9e5940b5bc59..bfb88a4b0987 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -41,6 +41,7 @@
+ #include <limits.h>
+ #include <symbol/kallsyms.h>
+ #include <sys/utsname.h>
++#include <regex.h>
+ 
+ static int dso__load_kernel_sym(struct dso *dso, struct map *map);
+ static int dso__load_guest_kernel_sym(struct dso *dso, struct map *map);
+@@ -1797,9 +1798,18 @@ int dso__load(struct dso *dso, struct map *map)
+ 	struct nscookie nsc;
+ 	char newmapname[PATH_MAX];
+ 	const char *map_path = dso__long_name(dso);
++	regex_t    regex;
++	const char *pattern =  "(^/tmp/perf-).*(map)";
+ 
+ 	mutex_lock(dso__lock(dso));
+-	perfmap = strncmp(dso__name(dso), "/tmp/perf-", 10) == 0;
++	if (regcomp(&regex, pattern, REG_EXTENDED)) {
++		pr_debug("regcomp() failed in dso__load\n");
++		ret = -1;
++		goto out;
++	}
++
++	perfmap = !regexec(&regex, dso__name(dso), 0, NULL, 0);
++
+ 	if (perfmap) {
+ 		if (dso__nsinfo(dso) &&
+ 		    (dso__find_perf_map(newmapname, sizeof(newmapname),
+-- 
+2.35.3
+
 
