@@ -1,343 +1,119 @@
-Return-Path: <linux-kernel+bounces-215035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E65A2908D87
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:35:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A75908D88
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 16:35:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 707BD1F2151F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:35:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AC0228D38E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 14:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F234964E;
-	Fri, 14 Jun 2024 14:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D6AEAF0;
+	Fri, 14 Jun 2024 14:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mFXhG048"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uahsnf8I"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE0417BA5;
-	Fri, 14 Jun 2024 14:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEAA61FEA
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 14:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718375614; cv=none; b=igEKH/BnFGc6RYA3gy6lTpQteh+lC2mMyUL5pT2zDfBjkR1hDyWZQfI11UOXfwxo6PlwyhrBKVcWAudyTxKOIJHZkigl98O3C3JDW9H6taph/22eEl2Vjp8rEZd4dulORtyJ0iukFtZzKDU/8WA0alDOAhpukmpFpsk1Uk+eNS8=
+	t=1718375619; cv=none; b=nYpeY5/iNNCUm2PJ0wooaNJInCcyGRfelkyHEu/PpSRCDYXVEzgooelP3MxA1nAqIDGE9uLGJSVo9kasFBm09kwj1FXNmAZ8JEt559VIgvMJR4f6IQy9X70GycEiqPO31S4VG1mWCSOo16zi46v6io/mjKnwUIerkRTzKZHFs+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718375614; c=relaxed/simple;
-	bh=qYsYY3FFl4pk+UooIuikD3J+lst6diPP1HjILq2p8ms=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DCIZUZegZ1M4Vt195Ea1kGvaXqYQnxVA3l8znWHr3WSFdfYxONxx9acZz2U6n+2iQc3iN7Pt0Tx7djfXS05wS2ZOsk59toSYbNN4B9FKG7AMdThRNQR3K2Hoc2bc2tFGcCqZrYQ5roYf674Dd4HrK9ZYCWTS01URIo5UXdyEa9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mFXhG048; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E6CE21C0014;
-	Fri, 14 Jun 2024 14:33:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718375605;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uNx3b0S0lKMJ7dViIniVGHAY4z3JIyx7E7YmxJe1TiU=;
-	b=mFXhG048J2C/yTq+nTyrqRO/7mgsqDBlcaVwwyli7InEtFBqKUZ33Sllc4KiGCsFIURbyo
-	P1aJQ3Yk7tc8GulK7wP05H4tDRME/Q6Uc9lYsRh54Dtza9cfkhmnon7BaggRZvHQ44Y8Y3
-	R7tkZBbfJPPjEH1HfG+Clbbzs0JtE2ubW1YkYRyysqHB/a+N0/ex6hw3F7FrYdJcc8loY1
-	pBAa6Xlb4VfCmC1rKQq4ghcwfqU+Gqs8VST4/vw+g4wGZsqt85OSDF8haKaFBxxpEOKeN+
-	z+OoMLGGXz1xdEuxKTakqLVkcHbvl8FykKzpGqTT65XegjfpgaMxFMKyq5ye6g==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Fri, 14 Jun 2024 16:33:23 +0200
-Subject: [PATCH net-next v3 7/7] net: pse-pd: pd692x0: Enhance with new
- current limit and voltage read callbacks
+	s=arc-20240116; t=1718375619; c=relaxed/simple;
+	bh=B+tN6RHfXKiHus8eyH21GesugJVvgcyhoJB9y21e43Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kw3VgoZ4NxCRFrNUuSpSU6MycGYFe9R5cb/+dW+Redwy08GywV+eW29q/110OiTfFCR4SGqoz/2oIdnMfZgnVlGbgU4isIN4QzqHe0NpkVwpwSE58y+J6cJGLRvboyxReZbfkgLK/yOnVvYsRAhRvayLrGwTthg127xGx7lZRIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uahsnf8I; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3608545debbso392390f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 07:33:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718375616; x=1718980416; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B+tN6RHfXKiHus8eyH21GesugJVvgcyhoJB9y21e43Y=;
+        b=Uahsnf8IhuTYdyrS6q21UMzEPBReSwX+XMzDHGqV/rNjIgu5h0cmlQ1crXypWLMLpH
+         o2bwDBFuTzNrw6Ew6tjYRRTfGM0X7RXAbYOCj57tXdj+xBsjpxndVE052kdBc2gzBgXE
+         tlcPCqMDF4/M/yuTM7IwzcSZgGvtJi38nusQUcIwkbWNrtoq5d8mQ7YnJQoexOF3liS5
+         QwL12ztOFLePWnCU4r7miFD6I+7cRNi+DGP6iMZ5upP2zcoukbTIMIO8AQYUKjKJckvr
+         sLgy57U+kGr6mTqL//XHlQzy/PAH5+XDgbjh6LB4oZrIpK9kxfQOrb3lP2LFzHrQqZr3
+         r/9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718375616; x=1718980416;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B+tN6RHfXKiHus8eyH21GesugJVvgcyhoJB9y21e43Y=;
+        b=Zyy3sJobB15ZvG2SW71mBPhnSRfRcNe4lH6zFgmxmjwFedVQnqTBdG8tf37CeepFCB
+         PIpHa3ogo72HkxKVdwCHWcp1FdTbm8np3FyvG54vblwffPoSt9iO8eqfXcEjTPySv/wi
+         rlYMb2NtXoCMZgSZfQkNxQc+ECdmywd1qwOQbmhsLlSJjkTxEtCGUA41Buk9y0chrOa0
+         X0LZK+lTg2CLmS+PDARGmZkltrNsgbrosH4sRIhwKdXdUq4dwO05xWh71+uq13IULUk5
+         dWstU6SAEnyI2LAu00Htz36wDqAqhmLfWow5sD9+sPxUpk5QnIYyEct7Lvv3Gmu5Vh18
+         wLZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHzifwBVhBQJllfPdtxfAbS16eNbgI3uTAJ3baWGXfmdtBYa07Uv67AgjZ24WM83XpCFYUYSGNdpvqUCfkdS1fWRSAYQoIm4O5Vti7
+X-Gm-Message-State: AOJu0Yywvd6gTk/XPK7bwFrsUxad9yUPXbao7ktGZYyty9g684OFD3c7
+	3B2uV1IIALzRevlX943EwlKRISbCENY5bFoUdnPRwgXsuIZHSv74LY0MO3PYq7dnTG05i1cppZf
+	stjwGarfljrJtO8B5QTSKkv84pQo=
+X-Google-Smtp-Source: AGHT+IHLTfsa1o4oIdSRq796Vw/8PgqjkD8Q4hdj+2BQ10tH3MSeZzdxAB0UATHcSuVlfNsfr0ktHmC0cbX9VZwHtvA=
+X-Received: by 2002:a5d:43c2:0:b0:35f:444:8711 with SMTP id
+ ffacd0b85a97d-3607a75eac1mr2347244f8f.42.1718375616322; Fri, 14 Jun 2024
+ 07:33:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240614-feature_poe_power_cap-v3-7-a26784e78311@bootlin.com>
-References: <20240614-feature_poe_power_cap-v3-0-a26784e78311@bootlin.com>
-In-Reply-To: <20240614-feature_poe_power_cap-v3-0-a26784e78311@bootlin.com>
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, 
- Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, 
- Kory Maincent <kory.maincent@bootlin.com>
-X-Mailer: b4 0.14-dev
-X-GND-Sasl: kory.maincent@bootlin.com
+References: <20240614141640.59324-1-andrey.konovalov@linux.dev> <CANpmjNO0T-sooJYs2ZCAzFUs6NVkV7iacY=hzB0JtGAyKhEmzw@mail.gmail.com>
+In-Reply-To: <CANpmjNO0T-sooJYs2ZCAzFUs6NVkV7iacY=hzB0JtGAyKhEmzw@mail.gmail.com>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Fri, 14 Jun 2024 16:33:25 +0200
+Message-ID: <CA+fCnZfRtGNYw953NMm9s3JTsv6gNQJSbREcnbcUe6Zsgeh_6Q@mail.gmail.com>
+Subject: Re: [PATCH] kasan: fix bad call to unpoison_slab_object
+To: Marco Elver <elver@google.com>
+Cc: andrey.konovalov@linux.dev, Andrew Morton <akpm@linux-foundation.org>, 
+	Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
+	Brad Spengler <spender@grsecurity.net>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+On Fri, Jun 14, 2024 at 4:29=E2=80=AFPM Marco Elver <elver@google.com> wrot=
+e:
+>
+> On Fri, 14 Jun 2024 at 16:16, <andrey.konovalov@linux.dev> wrote:
+> >
+> > From: Andrey Konovalov <andreyknvl@gmail.com>
+> >
+> > Commit 29d7355a9d05 ("kasan: save alloc stack traces for mempool") mess=
+ed
+> > up one of the calls to unpoison_slab_object: the last two arguments are
+> > supposed to be GFP flags and whether to init the object memory.
+> >
+> > Fix the call.
+> >
+> > Without this fix, unpoison_slab_object provides the object's size as
+> > GFP flags to unpoison_slab_object, which can cause LOCKDEP reports
+> > (and probably other issues).
+> >
+> > Fixes: 29d7355a9d05 ("kasan: save alloc stack traces for mempool")
+> > Reported-by: Brad Spengler <spender@grsecurity.net>
+> > Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
+>
+> Oof.
+>
+> Acked-by: Marco Elver <elver@google.com>
+>
+> mm needs explicit Cc: stable, right? If so, we better add Cc: stable as w=
+ell.
 
-This patch expands PSE callbacks with newly introduced
-pi_get/set_current_limit() and pi_get_voltage() callback.
-The only way to set ps692x0 port power limit is by configure the power
-class plus a small power supplement which maximum depends on each class.
+Makes sense, sent v2 with CC stable and a commit message fix.
 
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
-
-Change in v2:
-- Use uA and uV instead of mA and mV to have more precision in the power
-  calculation. Need to use 64bit variables for the calculation.
-- Modify the behavior in case of setting the current out of the available
-  ranges. Report an error now.
----
- drivers/net/pse-pd/pd692x0.c | 193 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 191 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
-index c5e0456e7103..5b7d9fc83af7 100644
---- a/drivers/net/pse-pd/pd692x0.c
-+++ b/drivers/net/pse-pd/pd692x0.c
-@@ -74,6 +74,8 @@ enum {
- 	PD692X0_MSG_GET_PORT_STATUS,
- 	PD692X0_MSG_DOWNLOAD_CMD,
- 	PD692X0_MSG_GET_PORT_CLASS,
-+	PD692X0_MSG_GET_PORT_MEAS,
-+	PD692X0_MSG_GET_PORT_PARAM,
- 
- 	/* add new message above here */
- 	PD692X0_MSG_CNT
-@@ -135,7 +137,7 @@ static const struct pd692x0_msg pd692x0_msg_template_list[PD692X0_MSG_CNT] = {
- 	[PD692X0_MSG_SET_PORT_PARAM] = {
- 		.key = PD692X0_KEY_CMD,
- 		.sub = {0x05, 0xc0},
--		.data = {   0, 0xff, 0xff, 0xff,
-+		.data = { 0xf, 0xff, 0xff, 0xff,
- 			 0x4e, 0x4e, 0x4e, 0x4e},
- 	},
- 	[PD692X0_MSG_GET_PORT_STATUS] = {
-@@ -156,6 +158,18 @@ static const struct pd692x0_msg pd692x0_msg_template_list[PD692X0_MSG_CNT] = {
- 		.data = {0x4e, 0x4e, 0x4e, 0x4e,
- 			 0x4e, 0x4e, 0x4e, 0x4e},
- 	},
-+	[PD692X0_MSG_GET_PORT_MEAS] = {
-+		.key = PD692X0_KEY_REQ,
-+		.sub = {0x05, 0xc5},
-+		.data = {0x4e, 0x4e, 0x4e, 0x4e,
-+			 0x4e, 0x4e, 0x4e, 0x4e},
-+	},
-+	[PD692X0_MSG_GET_PORT_PARAM] = {
-+		.key = PD692X0_KEY_REQ,
-+		.sub = {0x05, 0xc0},
-+		.data = {0x4e, 0x4e, 0x4e, 0x4e,
-+			 0x4e, 0x4e, 0x4e, 0x4e},
-+	},
- };
- 
- static u8 pd692x0_build_msg(struct pd692x0_msg *msg, u8 echo)
-@@ -520,6 +534,85 @@ pd692x0_get_ext_state(struct ethtool_c33_pse_ext_state_info *c33_ext_state_info,
- 	}
- }
- 
-+struct pd692x0_class_pw {
-+	int class;
-+	int class_cfg_value;
-+	int class_pw;
-+	int max_added_class_pw;
-+};
-+
-+/* 4/2 pairs class configuration power table in compliance mode.
-+ * Need to be arranged in ascending order of power support.
-+ */
-+static const struct pd692x0_class_pw pd692x0_class_pw_table[] = {
-+	{.class = 3, .class_cfg_value = 0x3, .class_pw = 15000, .max_added_class_pw = 3100},
-+	{.class = 4, .class_cfg_value = 0x2, .class_pw = 30000, .max_added_class_pw = 8000},
-+	{.class = 6, .class_cfg_value = 0x1, .class_pw = 60000, .max_added_class_pw = 5000},
-+	{.class = 8, .class_cfg_value = 0x0, .class_pw = 90000, .max_added_class_pw = 7500},
-+	{ /* sentinel */ }
-+};
-+
-+static int pd692x0_pi_get_pw_from_table(int op_mode, int added_pw)
-+{
-+	const struct pd692x0_class_pw *pw_table;
-+
-+	pw_table = pd692x0_class_pw_table;
-+	while (pw_table->class) {
-+		if (pw_table->class_cfg_value == op_mode)
-+			return pw_table->class_pw + added_pw * 100;
-+
-+		pw_table++;
-+	}
-+
-+	return -ERANGE;
-+}
-+
-+static int pd692x0_pi_set_pw_from_table(struct device *dev,
-+					struct pd692x0_msg *msg, int pw)
-+{
-+	const struct pd692x0_class_pw *pw_table;
-+
-+	pw_table = pd692x0_class_pw_table;
-+	if (pw < pw_table->class_pw) {
-+		dev_err(dev,
-+			"Power limit %dmW not supported. Ranges minimal available: [%d-%d]\n",
-+			pw,
-+			pw_table->class_pw,
-+			pw_table->class_pw + pw_table->max_added_class_pw);
-+		return -ERANGE;
-+	}
-+
-+	while (pw_table->class) {
-+		if (pw > (pw_table->class_pw + pw_table->max_added_class_pw)) {
-+			pw_table++;
-+			continue;
-+		}
-+
-+		if (pw < pw_table->class_pw) {
-+			dev_err(dev,
-+				"Power limit %dmW not supported. Ranges availables: [%d-%d] or [%d-%d]\n",
-+				pw,
-+				(pw_table - 1)->class_pw,
-+				(pw_table - 1)->class_pw + (pw_table - 1)->max_added_class_pw,
-+				pw_table->class_pw,
-+				pw_table->class_pw + pw_table->max_added_class_pw);
-+			return -ERANGE;
-+		}
-+
-+		msg->data[2] = pw_table->class_cfg_value;
-+		msg->data[3] = (pw - pw_table->class_pw) / 100;
-+		return 0;
-+	}
-+
-+	pw_table--;
-+	dev_warn(dev,
-+		 "Power limit %dmW not supported. Set to highest power limit %dmW\n",
-+		 pw, pw_table->class_pw + pw_table->max_added_class_pw);
-+	msg->data[2] = pw_table->class_cfg_value;
-+	msg->data[3] = pw_table->max_added_class_pw / 100;
-+	return 0;
-+}
-+
- static int pd692x0_ethtool_get_status(struct pse_controller_dev *pcdev,
- 				      unsigned long id,
- 				      struct netlink_ext_ack *extack,
-@@ -558,9 +651,20 @@ static int pd692x0_ethtool_get_status(struct pse_controller_dev *pcdev,
- 	priv->admin_state[id] = status->c33_admin_state;
- 
- 	pd692x0_get_ext_state(&status->c33_ext_state_info, buf.sub[0]);
--
- 	status->c33_actual_pw = (buf.data[0] << 4 | buf.data[1]) * 100;
- 
-+	msg = pd692x0_msg_template_list[PD692X0_MSG_GET_PORT_PARAM];
-+	msg.sub[2] = id;
-+	memset(&buf, 0, sizeof(buf));
-+	ret = pd692x0_sendrecv_msg(priv, &msg, &buf);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = pd692x0_pi_get_pw_from_table(buf.data[0], buf.data[1]);
-+	if (ret < 0)
-+		return ret;
-+	status->c33_pw_limit = ret;
-+
- 	memset(&buf, 0, sizeof(buf));
- 	msg = pd692x0_msg_template_list[PD692X0_MSG_GET_PORT_CLASS];
- 	msg.sub[2] = id;
-@@ -850,12 +954,97 @@ static int pd692x0_setup_pi_matrix(struct pse_controller_dev *pcdev)
- 	return ret;
- }
- 
-+static int pd692x0_pi_get_voltage(struct pse_controller_dev *pcdev, int id)
-+{
-+	struct pd692x0_priv *priv = to_pd692x0_priv(pcdev);
-+	struct pd692x0_msg msg, buf = {0};
-+	int ret;
-+
-+	ret = pd692x0_fw_unavailable(priv);
-+	if (ret)
-+		return ret;
-+
-+	msg = pd692x0_msg_template_list[PD692X0_MSG_GET_PORT_MEAS];
-+	msg.sub[2] = id;
-+	ret = pd692x0_sendrecv_msg(priv, &msg, &buf);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Convert 0.1V unit to uV */
-+	return (buf.sub[0] << 8 | buf.sub[1]) * 100000;
-+}
-+
-+static int pd692x0_pi_get_current_limit(struct pse_controller_dev *pcdev,
-+					int id)
-+{
-+	struct pd692x0_priv *priv = to_pd692x0_priv(pcdev);
-+	struct pd692x0_msg msg, buf = {0};
-+	int mW, uV, uA, ret;
-+	s64 tmp_64;
-+
-+	msg = pd692x0_msg_template_list[PD692X0_MSG_GET_PORT_PARAM];
-+	msg.sub[2] = id;
-+	ret = pd692x0_sendrecv_msg(priv, &msg, &buf);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = pd692x0_pi_get_pw_from_table(buf.data[2], buf.data[3]);
-+	if (ret < 0)
-+		return ret;
-+	mW = ret;
-+
-+	ret = pd692x0_pi_get_voltage(pcdev, id);
-+	if (ret < 0)
-+		return ret;
-+	uV = ret;
-+
-+	tmp_64 = mW;
-+	tmp_64 *= 1000000000ull;
-+	/* uA = mW * 1000000000 / uV */
-+	uA = DIV_ROUND_CLOSEST_ULL(tmp_64, uV);
-+	return uA;
-+}
-+
-+static int pd692x0_pi_set_current_limit(struct pse_controller_dev *pcdev,
-+					int id, int max_uA)
-+{
-+	struct pd692x0_priv *priv = to_pd692x0_priv(pcdev);
-+	struct device *dev = &priv->client->dev;
-+	struct pd692x0_msg msg, buf = {0};
-+	int uV, ret, mW;
-+	s64 tmp_64;
-+
-+	ret = pd692x0_fw_unavailable(priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = pd692x0_pi_get_voltage(pcdev, id);
-+	if (ret < 0)
-+		return ret;
-+	uV = ret;
-+
-+	msg = pd692x0_msg_template_list[PD692X0_MSG_SET_PORT_PARAM];
-+	msg.sub[2] = id;
-+	tmp_64 = uV;
-+	tmp_64 *= max_uA;
-+	/* mW = uV * uA / 1000000000 */
-+	mW = DIV_ROUND_CLOSEST_ULL(tmp_64, 1000000000);
-+	ret = pd692x0_pi_set_pw_from_table(dev, &msg, mW);
-+	if (ret)
-+		return ret;
-+
-+	return pd692x0_sendrecv_msg(priv, &msg, &buf);
-+}
-+
- static const struct pse_controller_ops pd692x0_ops = {
- 	.setup_pi_matrix = pd692x0_setup_pi_matrix,
- 	.ethtool_get_status = pd692x0_ethtool_get_status,
- 	.pi_enable = pd692x0_pi_enable,
- 	.pi_disable = pd692x0_pi_disable,
- 	.pi_is_enabled = pd692x0_pi_is_enabled,
-+	.pi_get_voltage = pd692x0_pi_get_voltage,
-+	.pi_get_current_limit = pd692x0_pi_get_current_limit,
-+	.pi_set_current_limit = pd692x0_pi_set_current_limit,
- };
- 
- #define PD692X0_FW_LINE_MAX_SZ 0xff
-
--- 
-2.34.1
-
+Thanks!
 
