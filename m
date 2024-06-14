@@ -1,163 +1,123 @@
-Return-Path: <linux-kernel+bounces-215392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D094F90920E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:57:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65838909210
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 19:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4279B283802
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:57:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C3F1F23F2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 17:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8681D19DF58;
-	Fri, 14 Jun 2024 17:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5827219DF5A;
+	Fri, 14 Jun 2024 17:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WqIbMLeO"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oXzhxdDB"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B98819B3D2
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 17:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0015017BCC;
+	Fri, 14 Jun 2024 17:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718387830; cv=none; b=TQRcjHPwtiZJTL2V7+K1xY0MeiGNmxSEvZLoRJD11QeIwJyiOK2lu4jEv0ir16WBt9okbPG9tvRxoWJEmczS9qLsLW55lWlZrmtzeNfV2RG42FPyhT04YRyxKr5JkgddNvNkS1ECamwbh15VWkdTkLD74UU61pBuHGem3i92PRg=
+	t=1718387914; cv=none; b=XYZ8Gej2jBL+W9qOYB4Y49BTCI3nlbTJ7aDKch88reUGsUu9Ej7rinsx99GvDtWKygCf7FyXjVtLo8OSC9eCATVxdTeOAmbjHopxAqNL21Q/nI7FFuHTF2lfO1O3hT1kTtmDv9U8bmijqS27xInxIxdXM+Bdqv4h/+4jYicqx2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718387830; c=relaxed/simple;
-	bh=kIlso5lHGmvm66K0GmFxRXFu6AlRnWKn2dqP0Zq1OlY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uik2K8jlSCkzo3e5jPdSsglpGprwrpg3HBbQyNWsmS0McWuekmZYxTZEXPtDy4cxvyc677SMDo3ZCiEfQNYxIGN70jeFDsDM3MzOYtJ6eAklwqWRAUWnzwNd6mN+ngjH8ocRTSLs4IUtjwRbbsBeVLzsiOYDSSP8/5K6vTA+lHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WqIbMLeO; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3737b3c6411so1163885ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 10:57:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1718387828; x=1718992628; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L0xFxAxL3p7rQ/3BamGUAVQZpyAlO5EvKBh8u8KSXhQ=;
-        b=WqIbMLeOjy3BHNsZ+MXEdKmszagwvC+xsMlnVvSaaU4U5CkA9XqMJApFx3sHBiaKJQ
-         v3J0lXABXyKpBK6cWp7FUe5oWYKHe4MTxMXXke7zH5nHrG+eRkP45wD6ip0vgB4CymMt
-         P+UHyVW5pDWlZ8wz8r3qxGfq7tCwkt+gyjwjg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718387828; x=1718992628;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L0xFxAxL3p7rQ/3BamGUAVQZpyAlO5EvKBh8u8KSXhQ=;
-        b=f88CF4q0GHLwOvBRSaLQDRaHbH2CFi/e+gy6GM6YnPJfNpAyJU8e19U2xi7LJEj2ty
-         fDtlxqaFwKtG4yVzB0D/ilLPnfP37rMpdyoO8aProu9ODzB8cWIhrgKswq535drqyj3d
-         zk77vxmjF4+eEuczDjC7+h7DXnsAGiGsLuPUQY2KTZ3Fh7xsS3vADqG+auYgqf0FvQZs
-         vdmbSxJ7+33lnSHDteNG1kOR8ehWC8RPenC58lBdCZwuuVp7UTeoI4io8sqRuI++2mpR
-         BkP0zPQzfwiQOkY3o/gbJ52KGerxMPiDJS73QuMZGQjCJN0w29cu8Jt1Ekg8tDGixy8L
-         EfJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCR23IOZ+dh//WCttYexOaiwJiOT0yPFZ0hH98oFzfANb+NvXxwtzlqy/zi4R22R/1RW3/5h3EiIAtTiimSP5P9sxMUNMNkdk494Ea
-X-Gm-Message-State: AOJu0YymNZFj+7BBXXbvbw6LjStvnZfreGM8wbzW1XXpgenh8lGUyaMv
-	kZkDYY/S31Kd3Nhe3PvfkA2aYhYWZJZpA9mDGbJpLaXX1KJmGg5MioVq5ui5EDY=
-X-Google-Smtp-Source: AGHT+IG0W4aVy8mHW8ktlpRyx7ZBKPfaexCWQ85yNAjRql2bgD6ek+BiCHvc1jnE5/URe8BTMD1IKA==
-X-Received: by 2002:a05:6602:234b:b0:7eb:98cb:d770 with SMTP id ca18e2360f4ac-7ebeb50ede9mr351748139f.1.1718387828087;
-        Fri, 14 Jun 2024 10:57:08 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b958ee4441sm934548173.59.2024.06.14.10.57.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 10:57:07 -0700 (PDT)
-Message-ID: <b3f78091-1931-4e2c-a2a1-2031b09e566d@linuxfoundation.org>
-Date: Fri, 14 Jun 2024 11:57:05 -0600
+	s=arc-20240116; t=1718387914; c=relaxed/simple;
+	bh=hX6/vwcDgDP9auvxBpQzIAeam1ik3AqwsVBLxy+OLi0=;
+	h=MIME-Version:Content-Type:Date:Message-ID:To:CC:Subject:From:
+	 References:In-Reply-To; b=V/MCFXHd5vG5Rvcg0s+gX5wMN46YNMs6e3axFuJlnfJbghFwAm8vt6ZoRqw9i/seqghaiEpr0CpLyyL3ZHZxG/9ilupbll6jXDIN5ZY6GOXmIu2Vfexfw3vN8BAznz1HRuO4mCQp+YcIDmZPbuIqF5htg8v7vh5+Ia4E3oI/fWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oXzhxdDB; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45EHwMTc074684;
+	Fri, 14 Jun 2024 12:58:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718387902;
+	bh=MUF9XJqMkmkQjexFkfnks2orcYMhPl0ETqT57VwcVjo=;
+	h=Date:To:CC:Subject:From:References:In-Reply-To;
+	b=oXzhxdDBBN6Z7mAKkQRbcBdaAdn6UOWQDBkwBt4nVrAf4qa3npVEYqzTSr2sz6EVg
+	 dI8PntyPmFLoiZ+Cir9Ekf8g0I8TCo8FpSHR+NNmbHcBjUDotQ4487NkdDdJIn3b/E
+	 HFKc95i4HWN8j68E2KnqZvxe4aipItW+enuzZQbs=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45EHwMOO024310
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 14 Jun 2024 12:58:22 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 14
+ Jun 2024 12:58:22 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 14 Jun 2024 12:58:22 -0500
+Received: from localhost (rs-desk.dhcp.ti.com [128.247.81.144])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45EHwMHt118346;
+	Fri, 14 Jun 2024 12:58:22 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpupower: Add 'help' target to the main Makefile
-To: Roman Storozhenko <romeusmeister@gmail.com>,
- Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240614-make-help-v1-1-513118646b71@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240614-make-help-v1-1-513118646b71@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Fri, 14 Jun 2024 12:58:22 -0500
+Message-ID: <D1ZXO8F3XN2I.3CTTE245I0TYY@ti.com>
+To: Devarsh Thakkar <devarsht@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <praneeth@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>
+Subject: Re: [PATCH 0/3] Add global CMA reserve area
+From: Randolph Sapp <rs@ti.com>
+X-Mailer: aerc 0.17.0
+References: <20240613150902.2173582-1-devarsht@ti.com>
+In-Reply-To: <20240613150902.2173582-1-devarsht@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 6/14/24 01:56, Roman Storozhenko wrote:
-> Add 'help' target descriding building and cleaning targets
-> to the main Makefile
-> 
-> Signed-off-by: Roman Storozhenko <romeusmeister@gmail.com>
-> ---
-> Make "cpupower" building process more user friendly by adding 'help'
-> target to the main makefile. This target describes various build
-> and cleaning options available to the user.
+On Thu Jun 13, 2024 at 10:08 AM CDT, Devarsh Thakkar wrote:
+> Add global CMA reserve area for AM62x, AM62A and AM62P SoCs.
+> These SoCs do not have MMU and hence require contiguous memory pool to
+> support various multimedia use-cases.
+>
+> Brandon Brnich (1):
+>   arm64: dts: ti: k3-am62p5-sk: Reserve 576 MiB of global CMA
+>
+> Devarsh Thakkar (2):
+>   arm64: dts: ti: k3-am62x-sk-common: Reserve 128MiB of global CMA
+>   arm64: dts: ti: k3-am62a7-sk: Reserve 576MiB of global CMA
+>
+>  arch/arm64/boot/dts/ti/k3-am62a7-sk.dts        | 9 +++++++++
+>  arch/arm64/boot/dts/ti/k3-am62p5-sk.dts        | 7 +++++++
+>  arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 8 ++++++++
+>  3 files changed, 24 insertions(+)
 
-You could include the above in the change log.
+I'm still a little torn about putting this allocation into the device tree
+directly as the actual required allocation size depends on the task.
 
-> ---
->   tools/power/cpupower/Makefile | 37 ++++++++++++++++++++++++++++++++++++-
->   1 file changed, 36 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/power/cpupower/Makefile b/tools/power/cpupower/Makefile
-> index b53753dee02f..cd0225a312b4 100644
-> --- a/tools/power/cpupower/Makefile
-> +++ b/tools/power/cpupower/Makefile
-> @@ -332,4 +332,39 @@ uninstall:
->   		rm -f $(DESTDIR)${localedir}/$$HLANG/LC_MESSAGES/cpupower.mo; \
->   	  done;
->   
-> -.PHONY: all utils libcpupower update-po create-gmo install-lib install-tools install-man install-gmo install uninstall clean
-> +help:
-> +	@echo  'Building targets:'
-> +	@echo  '  all		  - Default target. Could be omitted. Put build artifacts'
-> +	@echo  '                    to "O" cmdline option dir (default: current dir)'
-> +	@echo  '  install	  - Install previously built project files from the output'
-> +	@echo  '                    dir defined by "O" cmdline option (default: current dir)'
-> +	@echo  '                    to the install dir  defined by "DESTDIR" cmdline or'
-> +	@echo  '                    Makefile config block option (default: "")'
-> +	@echo  '  install-lib	  - Install previously built library binary from the output'
-> +	@echo  '                    dir defined by "O" cmdline option (default: current dir)'
-> +	@echo  '                    and library headers from "lib/" for userspace to the install'
-> +	@echo  '                    dir  defined by "DESTDIR" cmdline (default: "")'
-> +	@echo  '  install-tools	  - Install previously built "cpupower" util from the output'
-> +	@echo  '                    dir defined by "O" cmdline option (default: current dir) and'
-> +	@echo  '                    "cpupower-completion.sh" script from the src dir to the'
-> +	@echo  '                    install dir  defined by "DESTDIR" cmdline or Makefile'
-> +	@echo  '                    config block option (default: "")'
-> +	@echo  '  install-man	  - Install man pages from the "man" src subdir to the'
-> +	@echo  '                    install dir  defined by "DESTDIR" cmdline or Makefile'
-> +	@echo  '                    config block option (default: "")'
-> +	@echo  '  install-gmo	  - Install previously built language files from the output'
-> +	@echo  '                    dir defined by "O" cmdline option (default: current dir)'
-> +	@echo  '                    to the install dir defined by "DESTDIR" cmdline or Makefile'
-> +	@echo  '                    config block option (default: "")'
-> +	@echo  '  install-bench	  - Install previously built "cpufreq-bench" util files from the'
-> +	@echo  '                    output dir defined by "O" cmdline option (default: current dir)'
-> +	@echo  '                    to the install dir  defined by "DESTDIR" cmdline or Makefile'
-> +	@echo  '                    config block option (default: "")'
-> +	@echo  ''
-> +	@echo  'Cleaning targets:'
-> +	@echo  '  clean		  - Clean build artifacts from the dir defined by "O" cmdline'
-> +	@echo  '                    option (default: current dir)'
-> +	@echo  '  uninstall	  - Remove previously installed files from the dir defined by "DESTDIR"'
-> +	@echo  '                    cmdline or Makefile config block option (default: "")'
-> +
-> +.PHONY: all utils libcpupower update-po create-gmo install-lib install-tools install-man install-gmo install uninstall clean help
-> 
-> ---
-> base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
-> change-id: 20240613-make-help-14359a943e7b
-> 
-> Best regards,
+If it's allowed though, this series is fine for introducing those changes. =
+This
+uses the long-tested values we've been using on our tree for a bit now. The=
+ only
+thing that's a little worrying is the missing range definitions for devices=
+ with
+more than 32bits of addressable memory as Brandon has pointed out. Once tha=
+t's
+addressed:
 
-Something wrong in your process here. There shouldn't be
-addition text at the end of the patch.
+Reviewed-by: Randolph Sapp <rs@ti.com>
 
-Use git-send email to send patches.
+Specifying these regions using the kernel cmdline parameter via u-boot was
+brought up as a potential workaround. This is fine until you get into distr=
+o
+boot methods which will almost certainly attempt to override those. I don't
+know. Still a little odd. Curious how the community feels about it.
 
-thanks,
--- Shuah
+Technically the user or distro can still override it with the cmdline param=
+eter
+if necessary, so this may be the best way to have a useful default.
 
