@@ -1,102 +1,155 @@
-Return-Path: <linux-kernel+bounces-214933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54BCE908C55
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:13:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A411F908C5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 15:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 758E21C2314B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:13:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21777285824
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76E519AA6A;
-	Fri, 14 Jun 2024 13:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C2E19AA59;
+	Fri, 14 Jun 2024 13:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dA1MVbJU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KIbnr90p"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C14114884B;
-	Fri, 14 Jun 2024 13:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E175519D88D;
+	Fri, 14 Jun 2024 13:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718370828; cv=none; b=puqAOxamSdHQSZzjv9+KcH/tvbSaGrUKSf9FFTyadpr22pqxJEmhrAOpx/8r5FdHP5A73kx+095oqohFWNoY75Ekp89XjJjIYLjXUSi/HslxXy805bmV5tgsF2WBJgIeRRT5/iRtVkrhMokOu9FIHxpxtJRZRt8BEYSrR0xgn4U=
+	t=1718371082; cv=none; b=hEMabb6ueXd74WVkU4HrpkRyvbi5+w/AmgMrlCwp8nrPfjfOW/Iqbh6jBhKbpkHsPUDIZPsO9Wy7fXSJYwaEj657pEcZNZMEB+fJ92mVOeZXcAlmiXTrl3Qkj2ZS/fPJfJrIPkwNJlSeLOEfcs4nWbmvuHr2gZC9c9gJe62DN/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718370828; c=relaxed/simple;
-	bh=EFsyVQ9yc6G9SNkWxJq+v1+LXQUZrrnNQurQM1FlX6s=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=iYE1wcGu2K7U6t4wDXCI6ZpbaAZZTP9FUeuzN4oxFiX3kTY697o9YV8DJUdpeTBlcnEZKOjjLh2m6W4AQ7uUQMqsF7T0uaO8hvYel5w2nUHFZ1HDc73ShkgNPNRraDnWo05p1s1tAf7SMoZGiirekqWs3PeomEvCSBqXgcmjfBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dA1MVbJU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A720C2BD10;
-	Fri, 14 Jun 2024 13:13:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718370827;
-	bh=EFsyVQ9yc6G9SNkWxJq+v1+LXQUZrrnNQurQM1FlX6s=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=dA1MVbJUZltppLTH8LESe54yCtaHVcKLmgwu82ZiNpVu8AggLlMG0K2M0QSeyR0/0
-	 MwLNu6vTnwyIDN08hXJINKisiUbpO5SHnoKqvMYyjOMSw3NnuleWBGii+jqWFFmq0s
-	 S2lAs8wR7XGRikXxpYunjPD7aOMENhDsb/smD3Q0meScwXhCWuzRHsYPODU483ODx4
-	 0qoq+ah2qupbgmBmAKDQF1YM5/bA5VwDGDiGRZmxlG7Xj4z6C0A/u+mKoIPpip78Nc
-	 oOcj8ik2T/T/zxNRl+kIJQbgdzxuyA3tNTfMeTJtVQF2FyOMc8qM4y6k27wkncYZEy
-	 Y8uDK7LFdYj0A==
-Date: Fri, 14 Jun 2024 07:13:46 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1718371082; c=relaxed/simple;
+	bh=B/szTGuEIXbe/8epPrqiJ3Kbj5OfTgwv1AwgTjgi5WY=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ld8kbXmBeZinCWqfum3uV7i/hD1oQxWIddOzHHMPwHLsbzsGIK7UXHNaqWQbRDmP4Rpy1pdtm7wpZvhTI7o3koLKaFCZ0wq1fJA0gnkxrBVGNLVgGcQbbnQCVF2bKTXxlyS9k8vTwu+4QptPxD1p70lb9eAivk78VBQYMam+Qy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KIbnr90p; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718371082; x=1749907082;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=B/szTGuEIXbe/8epPrqiJ3Kbj5OfTgwv1AwgTjgi5WY=;
+  b=KIbnr90pXHH3k63WmBjPLa6N0+MSU+GtFkpqHeHX4TrO0lISO6188GH3
+   3MCVfrVqG6fM4acwFiTKKsfJw5Q1y7PWRXt3b2MGpAhZ1hbvuMhIPLw21
+   pHVKGJeH+Osby2C+YaRzuNTVNEnh8nmtEXZiOYWM9R2GdY8BiX038KkTR
+   wMs/ecJ3vqjqEFYjW0k079LQNX7Lk2cZ3B+1XyKKSRawEV0f5fZB47E2S
+   vxAYDYg2UeN8mqNKYuWqWeH8GW9wfOmQjoQ9J5vf6mbonlzYhBirSel8v
+   /2vhzrSeh+PvooBiNQodGB9pBIH+yenwG+gNeiyEDawUA+pde6sbM4jrl
+   g==;
+X-CSE-ConnectionGUID: lg+bqW4uQr24rC74n29CqQ==
+X-CSE-MsgGUID: cXzSQavTQPKOlXoMTSZ7/Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="15089936"
+X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
+   d="scan'208";a="15089936"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 06:18:01 -0700
+X-CSE-ConnectionGUID: 2MiM/vp9TiOzq8Zrdxi7qQ==
+X-CSE-MsgGUID: R1elhJSqTf6qenCl6V9I7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
+   d="scan'208";a="44911915"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.222])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 06:17:56 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 14 Jun 2024 16:17:53 +0300 (EEST)
+To: daire.mcnamara@microchip.com
+cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+    conor.dooley@microchip.com, lpieralisi@kernel.org, kw@linux.com, 
+    robh@kernel.org, bhelgaas@google.com, LKML <linux-kernel@vger.kernel.org>, 
+    linux-riscv@lists.infradead.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Subject: Re: [PATCH v3 1/3] PCI: microchip: Fix outbound address translation
+ tables
+In-Reply-To: <20240612112213.2734748-2-daire.mcnamara@microchip.com>
+Message-ID: <77415307-f80c-a34b-b84f-a0febe6f2641@linux.intel.com>
+References: <20240612112213.2734748-1-daire.mcnamara@microchip.com> <20240612112213.2734748-2-daire.mcnamara@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Charles Wang <charles.goodix@gmail.com>
-Cc: dan.carpenter@linaro.org, jikos@kernel.org, 
- linux-kernel@vger.kernel.org, krzk+dt@kernel.org, 
- devicetree@vger.kernel.org, linux-input@vger.kernel.org, bentiss@kernel.org, 
- hbarnor@chromium.org, dianders@chromium.org, dmitry.torokhov@gmail.com
-In-Reply-To: <20240614121538.236727-3-charles.goodix@gmail.com>
-References: <20240614121538.236727-1-charles.goodix@gmail.com>
- <20240614121538.236727-3-charles.goodix@gmail.com>
-Message-Id: <171837082626.626508.10284320881127428760.robh@kernel.org>
-Subject: Re: [PATCH v4 2/2] dt-bindings: input: Goodix SPI HID Touchscreen
+Content-Type: text/plain; charset=US-ASCII
 
+On Wed, 12 Jun 2024, daire.mcnamara@microchip.com wrote:
 
-On Fri, 14 Jun 2024 20:15:38 +0800, Charles Wang wrote:
-> The Goodix GT7986U touch controller report touch data according to the
-> HID protocol through the SPI bus. However, it is incompatible with
-> Microsoft's HID-over-SPI protocol.
+> From: Daire McNamara <daire.mcnamara@microchip.com>
 > 
-> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+> On Microchip PolarFire SoC (MPFS) the PCIe Root Port can be behind one of
+> three general-purpose Fabric Interface Controller (FIC) buses that
+> encapsulate an AXI-M interface. That FIC is responsible for managing
+> the translations of the upper 32-bits of the AXI-M address. On MPFS,
+> the Root Port driver needs to take account of that outbound address
+> translation done by the parent FIC bus before setting up its own
+> outbound address translation tables.  In all cases on MPFS,
+> the remaining outbound address translation tables are 32-bit only.
+> 
+> Limit the outbound address translation tables to 32-bit only.
+> 
+> Fixes: 6f15a9c9f941 ("PCI: microchip: Add Microchip Polarfire PCIe controller driver")
+> 
+> Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
+
+Don't leave spaces between tag lines.
+
 > ---
->  .../bindings/input/goodix,gt7986u.yaml        | 65 +++++++++++++++++++
->  1 file changed, 65 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+>  drivers/pci/controller/pcie-microchip-host.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
+> diff --git a/drivers/pci/controller/pcie-microchip-host.c b/drivers/pci/controller/pcie-microchip-host.c
+> index 137fb8570ba2..853adce24492 100644
+> --- a/drivers/pci/controller/pcie-microchip-host.c
+> +++ b/drivers/pci/controller/pcie-microchip-host.c
+> @@ -933,7 +933,7 @@ static int mc_pcie_init_irq_domains(struct mc_pcie *port)
+>  
+>  static void mc_pcie_setup_window(void __iomem *bridge_base_addr, u32 index,
+>  				 phys_addr_t axi_addr, phys_addr_t pci_addr,
+> -				 size_t size)
+> +				 u64 size)
 
-My bot found errors running 'make dt_binding_check' on your patch:
+I don't see how this is related to what is described by the commit 
+message.
 
-yamllint warnings/errors:
+If there's need for this change it should be justified properly and 
+it looks to me that resource_size_t would be more appropriate here given 
+the callers use resource_size() to determine this parameter?
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/input/goodix,gt7986u.example.dtb: touchscreen@0: 'spi-max-frequency' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/input/goodix,gt7986u.yaml#
+>  {
+>  	u32 atr_sz = ilog2(size) - 1;
+>  	u32 val;
+> @@ -983,7 +983,8 @@ static int mc_pcie_setup_windows(struct platform_device *pdev,
+>  		if (resource_type(entry->res) == IORESOURCE_MEM) {
+>  			pci_addr = entry->res->start - entry->offset;
+>  			mc_pcie_setup_window(bridge_base_addr, index,
+> -					     entry->res->start, pci_addr,
+> +					     entry->res->start & 0xffffffff,
+> +					     pci_addr,
+>  					     resource_size(entry->res));
+>  			index++;
+>  		}
+> @@ -1117,9 +1118,8 @@ static int mc_platform_init(struct pci_config_window *cfg)
+>  	int ret;
+>  
+>  	/* Configure address translation table 0 for PCIe config space */
+> -	mc_pcie_setup_window(bridge_base_addr, 0, cfg->res.start,
+> -			     cfg->res.start,
+> -			     resource_size(&cfg->res));
+> +	mc_pcie_setup_window(bridge_base_addr, 0, cfg->res.start & 0xffffffff,
+> +			     0, resource_size(&cfg->res));
 
-doc reference errors (make refcheckdocs):
+Given your commit message, it would be more obvious to the code reader if 
+the literal is replaced with something like RP_OUTBOUND_TRANS_TBL_MASK 
+(that is GENMASK(31, 0)). Feel free to come up better name if I didn't 
+understand all the details right based on your commit message.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240614121538.236727-3-charles.goodix@gmail.com
+-- 
+ i.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
 
 
