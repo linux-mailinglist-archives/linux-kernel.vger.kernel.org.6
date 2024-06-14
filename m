@@ -1,55 +1,75 @@
-Return-Path: <linux-kernel+bounces-214849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F332C908B12
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:53:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FCE7908B16
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F6831F2451F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:53:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFC0A286CB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F16E195F2D;
-	Fri, 14 Jun 2024 11:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115BF195F3D;
+	Fri, 14 Jun 2024 11:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="jSRi3hoV"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sjP0PW25"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425D7195B16;
-	Fri, 14 Jun 2024 11:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF5F14D29B
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 11:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718365987; cv=none; b=qUKxWhsq1bGWYKdNbz2LtIp6yF4Xz/O12ei23fwC1duPsgPw3z4vS1Q86JGJw2loZzX+qDGdWJBwKlet9j8fAWpOnDhYWQjyfIuFY1DQtjcWQiB/NP1/yV+EfRtoSGFg4dKaylaEqxwqZMg5nrCBsRVLbYHJDtfTXKn0Y/Zn5zE=
+	t=1718366098; cv=none; b=RpjdHJnP56QKAko5l/Vd335f2UpxV5gatrr6Bi0sOvQoAMfkyMZ5C6LTsMZcU/2eWiDzp1B8MSyu2ou7j6Skiw63j3jBrxUUjit9wxCMmcXLeCVR1mv7xNrrFPA7251QHbTamtIQiIyqAwtevS87gNgOi+0weQlC6LYry/TQvw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718365987; c=relaxed/simple;
-	bh=yXlthA35cfeR1MyCqMf03r9IKObV2EtyLUo+AVV/Vro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jEdlZLCRUKNhmle0MyL/vWEY5PyzpUooQal/mT8NpycfFAdbXOGP6+9regFAGNdwhs1x6aCaUgNit/WucPsTCvvi102EH7m9r6Eez07GB/sqYsGr3QdhpjMKBQMeNOBlEqi0J3hBUIrA4JKURum9/nwzG/FsVmYNAR1I0ag8iZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=jSRi3hoV; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1718365974; x=1718970774; i=wahrenst@gmx.net;
-	bh=yXlthA35cfeR1MyCqMf03r9IKObV2EtyLUo+AVV/Vro=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=jSRi3hoVb9fpg50ybPceUfzasqRGeUGCQScWAanhuSGs68EP3jDH3DhykHPIepyQ
-	 zUPKpDxbp/J+rvqRCAOSRJQOss9XmxRp8H39dDk0BuE6x2RVIE5viUsOv0ThxQU1b
-	 O4Z9rGijZAttQCijhjMyC1hXa4Cz9buI152d+d2cG6uRchrkQoA+xoLpMCcP6LKhe
-	 oMyMZogjFAdkh7QNXyQqAZb7tUV5h6WcbfuUklPGw5vnGClgcF0f0/17v1M1G+F/S
-	 cVOI9MjymMoqywh8Z/d+cP5Ac0AyJH9d4xN11t6/pp6IGSjtTrii6qbkB/buPBy7R
-	 AmbS+bc+iQil8/wO5A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N3KTo-1sRbjI2CNm-00xcPN; Fri, 14
- Jun 2024 13:52:54 +0200
-Message-ID: <104f23d7-9832-4c06-92c7-d3ea84fbf186@gmx.net>
-Date: Fri, 14 Jun 2024 13:52:53 +0200
+	s=arc-20240116; t=1718366098; c=relaxed/simple;
+	bh=85ieegY4ZRySXS0goOcJsjJNIsLcqdMgFd4zp+TpD28=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=SIfsNJCAVWXQTd63Ktkfsnx7UB/UXON5IzbBHialxPraqMBpaMKNzdoT28YZcA7hZhuupMWi31FgDzaDsQdzOIE18l5WYdlQqHXEIee0prLhaUFMNTpIriov4IjVL+h0/MFDqJ9xz0fmKFEuYD25O6Z+sbwkyT/OjzGd7mkl/eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sjP0PW25; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52c7fbad011so2515981e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 04:54:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718366095; x=1718970895; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o0o/KdZIsDHIfbh/VW3o1QPd/tfO5jx5iqoLGvwOSIE=;
+        b=sjP0PW25cINI5JskhHj1Oq9QktgdF00VWPZes774/G2W5qe19P+6s/clittRu6fh5/
+         7eD6kYjCeXAOsivSLeJ0+Mbj09cql/eQ9QKT28iqKOr0pXhaSVwtPhZkwnV8k7MuWFjr
+         +k4xhdb1Lv0dvSFVFZA0+z16qbA7bdRc9v2MpKO5J14T6NvLk9em/KL4BxPoQTBdziW5
+         wILZBJxhbbEZUWME8IB/JLjrruBfyd/D9E9HBwl7HORiaNvpaPlCeUcismW27EzrNSLd
+         PCgJEk/JFv2AEx5+mCpVZv/4M50XMOdpOAGrt4MZL/rJ8BHa4hlRZtuKp5EoNfYDsKQb
+         We0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718366095; x=1718970895;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=o0o/KdZIsDHIfbh/VW3o1QPd/tfO5jx5iqoLGvwOSIE=;
+        b=qFNrimDThtWdGclVnO1eNnvzwLiAnSpvpmtD58xIFwvIhfmNAa+TY08LqH4ZOO3GKK
+         2/2+w6WnXmXAe6V0xItTna+8hb4k4qS+G8CvX/nAABGQAGY56Kih9DWrSSBJBws0ILkQ
+         2TySGQpBvUgEaREPt1NgLomoFW1ds1JLPitv7hDr7ATg0zP5uhfl8z1s1h1bq3hPAK+X
+         skuEZdcAPDzP7g0fViCYOXMnT0QmT0ei5sbefeNmySpbt/tHkLrKYVAnyGMlIwgVizRq
+         S3oNn9NQXE99hahQK/+0DrK4eVU2ynl+FRU9C3fvTParl4j+Mp1PjNsLLahGJYI/2h9p
+         a6ig==
+X-Forwarded-Encrypted: i=1; AJvYcCUZBGgOcev0kJ5oEAxq/20wa7X9GuLRf/aDLDfq9OX5rWWYYi/4vJzQ+K+LYMuRTuHCFcAqfbGj3nCEjuYyRJE5H06fAUPpbcu7yoxv
+X-Gm-Message-State: AOJu0YxfhT2gVOcSfWnLRYTNKC567AQhCCSgqs/nDn99NCdpYxVWSi1p
+	0ZmtkQfi5kay16mU9XJnTiXXK9SQirSNqlWElOMKgAjddHEz5dcox1xuKwl4umo=
+X-Google-Smtp-Source: AGHT+IHxv1qeMP3257dqiC5avIq5cWjeVODclM9Lx4o6rgMBVqOEsym0s7vCutQ6Cth3qYltkKSn9Q==
+X-Received: by 2002:a19:5f1c:0:b0:52c:1e37:92c7 with SMTP id 2adb3069b0e04-52ca6e99f9dmr1683157e87.59.1718366094477;
+        Fri, 14 Jun 2024 04:54:54 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:261a:269e:a3a8:a2cc? ([2a01:e0a:982:cbb0:261a:269e:a3a8:a2cc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f61280f6sm58530805e9.27.2024.06.14.04.54.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 04:54:54 -0700 (PDT)
+Message-ID: <14712023-8469-4084-9800-1502a7fdc8fd@linaro.org>
+Date: Fri, 14 Jun 2024 13:54:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,83 +77,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: vc04_services: vchiq_arm: Fix initialisation
- check
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Umang Jain <umang.jain@ideasonboard.com>,
- linux-rpi-kernel@lists.infradead.org
-Cc: Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.org>, detule
- <ogjoneski@gmail.com>, Dan Carpenter <dan.carpenter@linaro.org>,
- BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE
- <linux-arm-kernel@lists.infradead.org>,
- STAGING SUBSYSTEM <linux-staging@lists.linux.dev>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240613194150.2915202-1-kieran.bingham@ideasonboard.com>
- <20240613194150.2915202-2-kieran.bingham@ideasonboard.com>
- <082d9df0-0947-4452-a3fc-87eab2019e01@gmx.net>
- <171836496531.2248009.11650291484570726735@ping.linuxembedded.co.uk>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <171836496531.2248009.11650291484570726735@ping.linuxembedded.co.uk>
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v3 3/5] arm64: dts: qcom: sm8450: drop second clock name
+ from clock-output-names
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ devicetree@vger.kernel.org
+References: <20240614-fix-pcie-phy-compat-v3-0-730d1811acf4@linaro.org>
+ <20240614-fix-pcie-phy-compat-v3-3-730d1811acf4@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240614-fix-pcie-phy-compat-v3-3-730d1811acf4@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:IVK4kVk1lkaB2alF6g8ChP2vH4UwkZn8RCqNsu2RrEnfQ0h8pe0
- max8l1w/pnF0r8yIx4wki094uvcbytMdLSXwBH2TegYE/V0Fz+C2YxWw+/vWp/pXHxiSP+/
- QHS0L5YUA8XoL2mG98ZGIb2XMDXFC1Ee5x+36USWU/5GTC2pC5HX62AltQ3iirNaVgwiuPU
- EJx+CE9LbCZotQYhWTJ+A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:IXSy47jmsJA=;XxNo+wybPSb96wXOawF84Ikkh0p
- Rxq85Y5W1LmlQ75ZCF9PeU1SS2wWfKQMNXGf42CYSTlhVWdvOLCJbv2fb3YP3EY4He+OycHuy
- lOM8LIF/YpXDy3WjGtmx03wFUMPeas9OK7kx+g6SUVNlG7tHTRmvrxuXXaMz/HRwgd8NTfGH3
- bOfem205pxAzu7yigz32OckVyvS7B3Trw7pkLoIN/152O6BoqcyQB5dPMyFtwM9Q/gZ0i3Rqo
- yCVBsF87VeBHrFJfzqn+JTncXlbXvHZ1/i7ypDibf6o6kJ+GdLUtbiaW7XbXcqt64RIA//xFC
- y/jJ8nQb0ppv+3qDpy5zwh8RPdQ8nO+ZfGO3Y/15VMBqGJ1sgiWQXImyqcC2UQ9SOfbeKyIUr
- vW3bW5oqXdOe2N+GVd4qzcRAFMqw2OeXiehLmD9ErcWr799OriQsdhpHO9LhN/9laFD2jb1ZI
- bhe1+S5kUUvs3xYOthYFSHw6OTvdHZ9vTHt58hMZ0Vq1OBW/J6baViuL1TcqHo4sTzRrxsS+x
- k9EtI5800/fxANiC1UAi8KocV0oeN54XtoevGFKkriB1nbB0VCikWr88rXeZDbSeu1FJKq+78
- b0KuD4ozxrMz02vqhiXnTjH08kdh1gykQSfLlR/b3IZi3xk955MHI2zqZId2labtlCKK9YEKR
- /nOecab2yKKLHBRj0d9BC65u5BdVU9j+4G8DRoaQG1J6PpsQ4jKx+qdOCB5R4ldMlWQmloLSr
- SRnvqX8rhCzRF3zYQqaEWX/4vWCKE6SMCXpmL4/numP8be0dQwYpdGnpUm0Wwxsb6FJIE58WU
- x45/5ZQVFnDiSFgl4NQmpYGy2gHdmP1iuCfEGQ4A3x8ts=
+Content-Transfer-Encoding: 7bit
 
-Hi Kieran,
+On 14/06/2024 12:18, Dmitry Baryshkov wrote:
+> There is no need to specify exact name for the second (AUX) output
+> clock. It has never been used for the lookups based on the system
+> clock name. The driver generates it on its own, in order to remain
+> compatible with the older DT. Drop the clock name.
+> 
+> Fixes: e76862840660 ("arm64: dts: qcom: sm8450: correct pcie1 phy clocks inputs to gcc")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   arch/arm64/boot/dts/qcom/sm8450.dtsi | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> index 1e762cc8085a..9bafb3b350ff 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> @@ -2087,7 +2087,7 @@ pcie1_phy: phy@1c0e000 {
+>   				      "rchng",
+>   				      "pipe";
+>   
+> -			clock-output-names = "pcie_1_pipe_clk", "pcie_1_phy_aux_clk";
+> +			clock-output-names = "pcie_1_pipe_clk";
+>   			#clock-cells = <1>;
+>   
+>   			#phy-cells = <0>;
+> 
 
-Am 14.06.24 um 13:36 schrieb Kieran Bingham:
-> Hi Stefan,
->
-> Sorry, indeed I completely missed this mail.
->
-> Quoting Stefan Wahren (2024-06-13 21:01:42)
->> Hi Kieran,
->>
->> Am 13.06.24 um 21:41 schrieb Kieran Bingham:
->>> The vchiq_state used to be obtained through an accessor
->>> which would validate that the VCHIQ had been initialised
->>> correctly with the remote.
->>>
->>> In commit 42a2f6664e18 ("staging: vc04_services: Move global g_state t=
-o
->>> vchiq_state") the global state was moved to the vchiq_mgnt structures
->>> stored as a vchiq instance specific context. This conversion removed t=
-he
->>> helpers and instead replaced users of this helper with the assumption
->>> that the state is always available and the remote connected.
->>>
->>> Fix this broken assumption by re-introducing the logic that was lost
->>> during the conversion.
->> thank you for sending this patch. Maybe it's worth to mention that this
->> patch also drop some unnecessary NULL checks of state.
-> I don't understand this comment. Nothing is dropped is it?
->
-> The newly added vchiq_remote_initialised() is itself a null-check too!
-the vchiq_remote_initialised() only checks the member remote, but not
-state itself. From my point of view the null-check for state is
-unnecessary, because most of the code already assumed that state is not
-null like e.g. in vchiq_open().
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
