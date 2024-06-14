@@ -1,169 +1,369 @@
-Return-Path: <linux-kernel+bounces-214848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1D9A908B0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:48:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F703908B1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 13:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E33328A8D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:48:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23CFA1C21D04
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 11:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6635195FEA;
-	Fri, 14 Jun 2024 11:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="E2cu7y74";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hF4PBPoG";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="E2cu7y74";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hF4PBPoG"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F07195F3B;
+	Fri, 14 Jun 2024 11:55:08 +0000 (UTC)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963621957F3;
-	Fri, 14 Jun 2024 11:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549D814D29B;
+	Fri, 14 Jun 2024 11:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718365716; cv=none; b=Dh2RPI2GuUOHPGrdF47QbihUTWwIdD2ekz7Y3rypHyXxVoja5urP796gfOl1XAhcc01ggyE+6KgKh+IszCZrQz0W7kTdDih8PO7g64kyZWncZL6nUgHK/ObJmz6bSkxejTRukeiU+UQ1xNEk7y1CXMeTqYQf7mYD0PwW3qc/v5k=
+	t=1718366107; cv=none; b=TUCbj0mEnj/BQVvsj9U0MkWam7Fc0FA08o+r606I6C32I+3DrR3jY1JbwBkzg2w8CPY2NGYF1z0hPzo8y9uBA5lDTJX5WIytTUEpcXa5UyFbu5B0p4tJzmS0H99dzUqKlRCIDT/i+UIQrRu11zZSIjNdlfiw/GTPNwfV9sLZUFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718365716; c=relaxed/simple;
-	bh=T96qca2RM0tVHe1VlsX3EaZMhWCFQOCkVyM4NNouzZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fWA0soPYUcv+crIjASxlnccQkrO3V8UEfeuZkg9pT5+rYl69iGHbOMtDNBS7XONq887R8GG1PlpPUjc8inDbpU/jm4reu0Xm5i/rXUZ13V3r1B3Mpu8waRNMNUQ4qmBMxysUu4mhBfvpbokyTiY3MREF23yQWgA4KREMmY+O71k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=E2cu7y74; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hF4PBPoG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=E2cu7y74; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hF4PBPoG; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B429320428;
-	Fri, 14 Jun 2024 11:48:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718365712; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7CrLYCz09vrQoCSmw+MIDjSXKU5jzuAlXQ7QADNdyiY=;
-	b=E2cu7y74loxlC4ul3crfB6HNmlw1hEtRE7E9Nzh2S4GqVGHZJOPn4tUQWOpiB5NEW5i4p1
-	7Ds5WICk5okNxY/YaC8Pk7dCoUews3A1jpugEak/HCDLoiDQHkw+AAk/SmlJjj2MWPIMGR
-	4Le4BhBdPJck5piK5ZAOq0c+8yHD+i0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718365712;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7CrLYCz09vrQoCSmw+MIDjSXKU5jzuAlXQ7QADNdyiY=;
-	b=hF4PBPoGl+fsrCdF8GxGDGxbdAN0c79SSeM7/X4daQICMnR0MliyJE1M0mQIs+0Eg7yoxW
-	T4qyukkhShatHvBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718365712; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7CrLYCz09vrQoCSmw+MIDjSXKU5jzuAlXQ7QADNdyiY=;
-	b=E2cu7y74loxlC4ul3crfB6HNmlw1hEtRE7E9Nzh2S4GqVGHZJOPn4tUQWOpiB5NEW5i4p1
-	7Ds5WICk5okNxY/YaC8Pk7dCoUews3A1jpugEak/HCDLoiDQHkw+AAk/SmlJjj2MWPIMGR
-	4Le4BhBdPJck5piK5ZAOq0c+8yHD+i0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718365712;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7CrLYCz09vrQoCSmw+MIDjSXKU5jzuAlXQ7QADNdyiY=;
-	b=hF4PBPoGl+fsrCdF8GxGDGxbdAN0c79SSeM7/X4daQICMnR0MliyJE1M0mQIs+0Eg7yoxW
-	T4qyukkhShatHvBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 48F2E13AAF;
-	Fri, 14 Jun 2024 11:48:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uvhpDhAubGaMHgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Fri, 14 Jun 2024 11:48:32 +0000
-Date: Fri, 14 Jun 2024 13:48:30 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Peter Xu <peterx@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>, Oscar Salvador <OSalvador@suse.com>,
-	cve@kernel.org, linux-kernel@vger.kernel.org,
-	linux-cve-announce@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: CVE-2024-36000: mm/hugetlb: fix missing hugetlb_lock for resv
- uncharge
-Message-ID: <ZmwuDvvTDpCFGTdi@localhost.localdomain>
-References: <2024052023-CVE-2024-36000-cfc4@gregkh>
- <Zkto8rbtAUBql-78@tiehlicka>
- <Zkz4RRgfwUHPbQ5z@x1n>
- <Zk7ws6H0wwuiFAJW@tiehlicka>
- <Zk8bgS8IboS-7jQw@localhost.localdomain>
- <Zk9j5j-VSAOWrmg7@x1n>
+	s=arc-20240116; t=1718366107; c=relaxed/simple;
+	bh=IgYl4TaWzLNfd0vfqkiTp8kN4qlpKAD1hY7bmvXK82s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O5jIXvNbSBcmgmP6YTlMvKat4K9JsVvlc8SKN9DRr8H6pJLcR1TXRWac4o7Awfyulwuwf3BzzrcHmH5Sv5LF8kvIQhTo4I7TsUuA/CPfxaqKZ2dP5bZWtBQvmOijUyGNWui22tE+ePau2VaMa6rPiIhSCHct1VMuGb1MZIdBQA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57c83100c5fso2201633a12.3;
+        Fri, 14 Jun 2024 04:55:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718366104; x=1718970904;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j41Weqp75RphGFqrj1Kspbcz878tK8UuoQ8p5OS9G6Y=;
+        b=iqyiOpq3yf+eRYmBljDDsF6mn27GNzHfr7/ZivtRKSiDRzqfr5j6jJor/AcSRxgWSx
+         46EgzZZ+syLtRfLYzXdp6ARONc//Byx0hnte9URkZjAFk7CI3FsyGJg1n+wIIY5jGTAw
+         Vctczey+QtP776cl05w/SxL4eHtgkZqmks4C8Qi4fB++rSqxWTB4/NhIgc51h0NmCCT5
+         43Zsiv4ecYv2JR9i3feoHVd04gEPTrkxA45XA4/DycFpZgBdQBVttoEbIu0yDw2lmO31
+         AzhbZI+ryCVev3Q3GG5A0zsA/J39Ot1LZwwM15279D/VbJ/2/ztaScxe/SnPP45W79IF
+         3izg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6XO8Ad7Zsb87w5Xs9ZYnfEg2nK6p3KZNNIXQAs5LWygp+6rjcsPmdbre+eXyjz4WtdFkSm3ruDp6lWbfCe+sj5etVdv6QGMFIYUkebezxpTwlTb3GZ05W0wSBKFdCsiwnEy8d25Zr3/QP9Xs=
+X-Gm-Message-State: AOJu0Yy4BiH920AlE4Ta8Oo+fxgggc0zndD21r8NOxwv9VP/0VBQ4Ri3
+	L3o/6hr0r2VWnBIizSjs2Hly0zXlWn7oveqWCpnUg3B9b4alfK1Z
+X-Google-Smtp-Source: AGHT+IGDv+rRVYXWIZxDXGLLU+IncjYEVdIVPKRohIoNGMvyTkPIIyHCi73g3GoJ8mJ678jlzTSVRw==
+X-Received: by 2002:a17:906:6c9a:b0:a6e:57ff:7700 with SMTP id a640c23a62f3a-a6f60d421aamr138247566b.42.1718366103309;
+        Fri, 14 Jun 2024 04:55:03 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56da3fe5sm181083866b.18.2024.06.14.04.55.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 04:55:02 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: kvalo@kernel.org,
+	linux-wireless@vger.kernel.org,
+	Felix Fietkau <nbd@nbd.name>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Shayne Chen <shayne.chen@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: netdev@vger.kernel.org,
+	horms@kernel.org,
+	kees@kernel.org,
+	kuba@kernel.org,
+	Bo Jiao <Bo.Jiao@mediatek.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Alexander Couzens <lynxis@fe80.eu>,
+	Deren Wu <deren.wu@mediatek.com>,
+	Ming Yen Hsieh <mingyen.hsieh@mediatek.com>,
+	Leon Yen <leon.yen@mediatek.com>,
+	Quan Zhou <quan.zhou@mediatek.com>,
+	Ingo Rohloff <lundril@gmx.de>,
+	Sujuan Chen <sujuan.chen@mediatek.com>,
+	StanleyYP Wang <StanleyYP.Wang@mediatek.com>,
+	Benjamin Lin <benjamin-jw.lin@mediatek.com>,
+	Peter Chiu <chui-hao.chiu@mediatek.com>,
+	linux-kernel@vger.kernel.org (open list:ARM/Mediatek SoC support),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
+	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support)
+Subject: [PATCH] wifi: mt76: un-embedd netdev from mt76_dev
+Date: Fri, 14 Jun 2024 04:52:42 -0700
+Message-ID: <20240614115317.657700-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zk9j5j-VSAOWrmg7@x1n>
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 23, 2024 at 11:42:30AM -0400, Peter Xu wrote:
-> I really don't know enough on these areas to tell, perhaps I missed
-> something.  But maybe any of you may have some idea..  In general, I think
-> besides LOCKDEP the lock is definitely needed to at least make sure things
-> like:
-> 
-> 	__set_hugetlb_cgroup(folio, NULL, rsvd);
+Embedding net_device into structures prohibits the usage of flexible
+arrays in the net_device structure. For more details, see the discussion
+at [1].
 
-I do not think this is a problem, you are only setting folio->_hugetlb_cgroup_rsvd
-to the hugetlb cgroup.
-And no one else should fiddle with that folio.
+Un-embed the net_devices from struct mt76_dev by converting them
+into pointers, and allocating them dynamically. Use the leverage
+alloc_netdev_dummy() to allocate the net_device object at
+mt76_dma_init().
 
-> 	page_counter_uncharge(),
+The free of the device occurs at mt76_dma_cleanup().
 
-This on the hand might be another story:
+Link: https://lore.kernel.org/all/20240229225910.79e224cf@kernel.org/ [1]
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
 
- page_counter_uncharge
-  new = atomic_long_sub_return(nr_pages, &counter->usage)
-  propagate_protected_usage
+PS: Due to the lack of hardware, this patch was not tested on a real
+hardware, unfortunately.
 
-The first atomic_long_sub_return is ok because it is an atomic one, so
-whoever comes last will not see e.g: a half-updated value.
-But propagate_protected_usage() is a bit more convoluted as involves a bunch of
-atomic operations and comparasions that in case they are not serialized, the counters
-will not be consistent, which means that any charge/uncharge operation that comes after
-might not reflect reality.
+PS2: this is the last driver that is still using embedded netdevices.
 
-So I guess we could end up with scenarios where cgroups would not get as many pages as
-they should, or maybe more pages than they should.
+ drivers/net/wireless/mediatek/mt76/debugfs.c  |  6 ++--
+ drivers/net/wireless/mediatek/mt76/dma.c      | 31 +++++++++++++++----
+ drivers/net/wireless/mediatek/mt76/dma.h      |  5 +++
+ drivers/net/wireless/mediatek/mt76/mt76.h     |  4 +--
+ .../net/wireless/mediatek/mt76/mt7603/dma.c   |  2 +-
+ .../net/wireless/mediatek/mt76/mt7615/dma.c   |  6 ++--
+ .../net/wireless/mediatek/mt76/mt76x02_mmio.c |  2 +-
+ .../net/wireless/mediatek/mt76/mt7915/dma.c   |  2 +-
+ .../net/wireless/mediatek/mt76/mt7921/pci.c   |  2 +-
+ .../net/wireless/mediatek/mt76/mt7925/pci.c   |  2 +-
+ .../net/wireless/mediatek/mt76/mt792x_dma.c   |  2 +-
+ .../net/wireless/mediatek/mt76/mt7996/dma.c   |  2 +-
+ 12 files changed, 45 insertions(+), 21 deletions(-)
 
-If this reasoning is accurate, I am leaning towards taking this as a security fix.
-
+diff --git a/drivers/net/wireless/mediatek/mt76/debugfs.c b/drivers/net/wireless/mediatek/mt76/debugfs.c
+index ae83be572b94..b6a2746c187d 100644
+--- a/drivers/net/wireless/mediatek/mt76/debugfs.c
++++ b/drivers/net/wireless/mediatek/mt76/debugfs.c
+@@ -33,8 +33,8 @@ mt76_napi_threaded_set(void *data, u64 val)
+ 	if (!mt76_is_mmio(dev))
+ 		return -EOPNOTSUPP;
+ 
+-	if (dev->napi_dev.threaded != val)
+-		return dev_set_threaded(&dev->napi_dev, val);
++	if (dev->napi_dev->threaded != val)
++		return dev_set_threaded(dev->napi_dev, val);
+ 
+ 	return 0;
+ }
+@@ -44,7 +44,7 @@ mt76_napi_threaded_get(void *data, u64 *val)
+ {
+ 	struct mt76_dev *dev = data;
+ 
+-	*val = dev->napi_dev.threaded;
++	*val = dev->napi_dev->threaded;
+ 	return 0;
+ }
+ 
+diff --git a/drivers/net/wireless/mediatek/mt76/dma.c b/drivers/net/wireless/mediatek/mt76/dma.c
+index f4f88c444e21..bf67b1f2348a 100644
+--- a/drivers/net/wireless/mediatek/mt76/dma.c
++++ b/drivers/net/wireless/mediatek/mt76/dma.c
+@@ -916,7 +916,7 @@ int mt76_dma_rx_poll(struct napi_struct *napi, int budget)
+ 	struct mt76_dev *dev;
+ 	int qid, done = 0, cur;
+ 
+-	dev = container_of(napi->dev, struct mt76_dev, napi_dev);
++	dev = mt76_from_netdev(napi->dev);
+ 	qid = napi - dev->napi;
+ 
+ 	rcu_read_lock();
+@@ -940,18 +940,35 @@ static int
+ mt76_dma_init(struct mt76_dev *dev,
+ 	      int (*poll)(struct napi_struct *napi, int budget))
+ {
++	struct mt76_dev **priv;
+ 	int i;
+ 
+-	init_dummy_netdev(&dev->napi_dev);
+-	init_dummy_netdev(&dev->tx_napi_dev);
+-	snprintf(dev->napi_dev.name, sizeof(dev->napi_dev.name), "%s",
++	dev->napi_dev = alloc_netdev_dummy(sizeof(struct mt76_dev *));
++	if (!dev->napi_dev)
++		return -ENOMEM;
++
++	/* napi_dev private data points to mt76_dev parent, so, mt76_dev
++	 * can be retrieved given napi_dev
++	 */
++	priv = netdev_priv(dev->napi_dev);
++	*priv = dev;
++
++	dev->tx_napi_dev = alloc_netdev_dummy(sizeof(struct mt76_dev *));
++	if (!dev->tx_napi_dev) {
++		free_netdev(dev->napi_dev);
++		return -ENOMEM;
++	}
++	priv = netdev_priv(dev->tx_napi_dev);
++	*priv = dev;
++
++	snprintf(dev->napi_dev->name, sizeof(dev->napi_dev->name), "%s",
+ 		 wiphy_name(dev->hw->wiphy));
+-	dev->napi_dev.threaded = 1;
++	dev->napi_dev->threaded = 1;
+ 	init_completion(&dev->mmio.wed_reset);
+ 	init_completion(&dev->mmio.wed_reset_complete);
+ 
+ 	mt76_for_each_q_rx(dev, i) {
+-		netif_napi_add(&dev->napi_dev, &dev->napi[i], poll);
++		netif_napi_add(dev->napi_dev, &dev->napi[i], poll);
+ 		mt76_dma_rx_fill(dev, &dev->q_rx[i], false);
+ 		napi_enable(&dev->napi[i]);
+ 	}
+@@ -1019,5 +1036,7 @@ void mt76_dma_cleanup(struct mt76_dev *dev)
+ 
+ 	mt76_free_pending_txwi(dev);
+ 	mt76_free_pending_rxwi(dev);
++	free_netdev(dev->napi_dev);
++	free_netdev(dev->tx_napi_dev);
+ }
+ EXPORT_SYMBOL_GPL(mt76_dma_cleanup);
+diff --git a/drivers/net/wireless/mediatek/mt76/dma.h b/drivers/net/wireless/mediatek/mt76/dma.h
+index 1de5a2b20f74..6454a5eca13e 100644
+--- a/drivers/net/wireless/mediatek/mt76/dma.h
++++ b/drivers/net/wireless/mediatek/mt76/dma.h
+@@ -116,4 +116,9 @@ mt76_dma_should_drop_buf(bool *drop, u32 ctrl, u32 buf1, u32 info)
+ 	}
+ }
+ 
++static inline struct mt76_dev *mt76_from_netdev(struct net_device *dev)
++{
++	return *(struct mt76_dev **)netdev_priv(dev);
++}
++
+ #endif
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76.h b/drivers/net/wireless/mediatek/mt76/mt76.h
+index 11b9f22ca7f3..15f83b5adac7 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76.h
++++ b/drivers/net/wireless/mediatek/mt76/mt76.h
+@@ -831,8 +831,8 @@ struct mt76_dev {
+ 
+ 	struct mt76_mcu mcu;
+ 
+-	struct net_device napi_dev;
+-	struct net_device tx_napi_dev;
++	struct net_device *napi_dev;
++	struct net_device *tx_napi_dev;
+ 	spinlock_t rx_lock;
+ 	struct napi_struct napi[__MT_RXQ_MAX];
+ 	struct sk_buff_head rx_skb[__MT_RXQ_MAX];
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7603/dma.c b/drivers/net/wireless/mediatek/mt76/mt7603/dma.c
+index 14304b063715..ea017f22fff2 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7603/dma.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7603/dma.c
+@@ -242,7 +242,7 @@ int mt7603_dma_init(struct mt7603_dev *dev)
+ 	if (ret)
+ 		return ret;
+ 
+-	netif_napi_add_tx(&dev->mt76.tx_napi_dev, &dev->mt76.tx_napi,
++	netif_napi_add_tx(dev->mt76.tx_napi_dev, &dev->mt76.tx_napi,
+ 			  mt7603_poll_tx);
+ 	napi_enable(&dev->mt76.tx_napi);
+ 
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/dma.c b/drivers/net/wireless/mediatek/mt76/mt7615/dma.c
+index e7135b2f1742..966e3d2c295f 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/dma.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/dma.c
+@@ -67,7 +67,7 @@ static int mt7615_poll_tx(struct napi_struct *napi, int budget)
+ {
+ 	struct mt7615_dev *dev;
+ 
+-	dev = container_of(napi, struct mt7615_dev, mt76.tx_napi);
++	dev = (struct mt7615_dev *)mt76_from_netdev(napi->dev);
+ 	if (!mt76_connac_pm_ref(&dev->mphy, &dev->pm)) {
+ 		napi_complete(napi);
+ 		queue_work(dev->mt76.wq, &dev->pm.wake_work);
+@@ -89,7 +89,7 @@ static int mt7615_poll_rx(struct napi_struct *napi, int budget)
+ 	struct mt7615_dev *dev;
+ 	int done;
+ 
+-	dev = container_of(napi->dev, struct mt7615_dev, mt76.napi_dev);
++	dev = (struct mt7615_dev *)mt76_from_netdev(napi->dev);
+ 
+ 	if (!mt76_connac_pm_ref(&dev->mphy, &dev->pm)) {
+ 		napi_complete(napi);
+@@ -282,7 +282,7 @@ int mt7615_dma_init(struct mt7615_dev *dev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	netif_napi_add_tx(&dev->mt76.tx_napi_dev, &dev->mt76.tx_napi,
++	netif_napi_add_tx(dev->mt76.tx_napi_dev, &dev->mt76.tx_napi,
+ 			  mt7615_poll_tx);
+ 	napi_enable(&dev->mt76.tx_napi);
+ 
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c b/drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c
+index e5ad635d3c56..35b7ebc2c9c6 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c
+@@ -239,7 +239,7 @@ int mt76x02_dma_init(struct mt76x02_dev *dev)
+ 	if (ret)
+ 		return ret;
+ 
+-	netif_napi_add_tx(&dev->mt76.tx_napi_dev, &dev->mt76.tx_napi,
++	netif_napi_add_tx(dev->mt76.tx_napi_dev, &dev->mt76.tx_napi,
+ 			  mt76x02_poll_tx);
+ 	napi_enable(&dev->mt76.tx_napi);
+ 
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/dma.c b/drivers/net/wireless/mediatek/mt76/mt7915/dma.c
+index 0baa82c8df5a..0c62272fe7d0 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7915/dma.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7915/dma.c
+@@ -578,7 +578,7 @@ int mt7915_dma_init(struct mt7915_dev *dev, struct mt7915_phy *phy2)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	netif_napi_add_tx(&dev->mt76.tx_napi_dev, &dev->mt76.tx_napi,
++	netif_napi_add_tx(dev->mt76.tx_napi_dev, &dev->mt76.tx_napi,
+ 			  mt7915_poll_tx);
+ 	napi_enable(&dev->mt76.tx_napi);
+ 
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7921/pci.c b/drivers/net/wireless/mediatek/mt76/mt7921/pci.c
+index f768e9389ac6..e75e7b6d3aaf 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7921/pci.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7921/pci.c
+@@ -219,7 +219,7 @@ static int mt7921_dma_init(struct mt792x_dev *dev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	netif_napi_add_tx(&dev->mt76.tx_napi_dev, &dev->mt76.tx_napi,
++	netif_napi_add_tx(dev->mt76.tx_napi_dev, &dev->mt76.tx_napi,
+ 			  mt792x_poll_tx);
+ 	napi_enable(&dev->mt76.tx_napi);
+ 
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7925/pci.c b/drivers/net/wireless/mediatek/mt76/mt7925/pci.c
+index 07b74d492ce1..577574fb7a1e 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7925/pci.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7925/pci.c
+@@ -254,7 +254,7 @@ static int mt7925_dma_init(struct mt792x_dev *dev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	netif_napi_add_tx(&dev->mt76.tx_napi_dev, &dev->mt76.tx_napi,
++	netif_napi_add_tx(dev->mt76.tx_napi_dev, &dev->mt76.tx_napi,
+ 			  mt792x_poll_tx);
+ 	napi_enable(&dev->mt76.tx_napi);
+ 
+diff --git a/drivers/net/wireless/mediatek/mt76/mt792x_dma.c b/drivers/net/wireless/mediatek/mt76/mt792x_dma.c
+index 5cc2d59b774a..45aed1e1b1a6 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt792x_dma.c
++++ b/drivers/net/wireless/mediatek/mt76/mt792x_dma.c
+@@ -340,7 +340,7 @@ int mt792x_poll_rx(struct napi_struct *napi, int budget)
+ 	struct mt792x_dev *dev;
+ 	int done;
+ 
+-	dev = container_of(napi->dev, struct mt792x_dev, mt76.napi_dev);
++	dev = (struct mt792x_dev *)mt76_from_netdev(napi->dev);
+ 
+ 	if (!mt76_connac_pm_ref(&dev->mphy, &dev->pm)) {
+ 		napi_complete(napi);
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/dma.c b/drivers/net/wireless/mediatek/mt76/mt7996/dma.c
+index 73e633d0d700..69a7d9b2e38b 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7996/dma.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7996/dma.c
+@@ -641,7 +641,7 @@ int mt7996_dma_init(struct mt7996_dev *dev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	netif_napi_add_tx(&dev->mt76.tx_napi_dev, &dev->mt76.tx_napi,
++	netif_napi_add_tx(dev->mt76.tx_napi_dev, &dev->mt76.tx_napi,
+ 			  mt7996_poll_tx);
+ 	napi_enable(&dev->mt76.tx_napi);
+ 
 -- 
-Oscar Salvador
-SUSE Labs
+2.43.0
+
 
