@@ -1,148 +1,97 @@
-Return-Path: <linux-kernel+bounces-214551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-214552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACC57908649
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:28:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5017B90864C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 10:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48F5428E772
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:28:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0591F1F24E7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2024 08:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629FF18F2FB;
-	Fri, 14 Jun 2024 08:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9631C18F2FE;
+	Fri, 14 Jun 2024 08:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jlXE9xfI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VsY3Mmh+"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CF21836DE;
-	Fri, 14 Jun 2024 08:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B13218508A;
+	Fri, 14 Jun 2024 08:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718353713; cv=none; b=RD+EhWUoj5pDu0vZng+JPruKf8HSno/KYH9nBNrBHo6fsjhXQWm6sSuNfPPvF0ckdmI8MXboEaYzme28BnHOqrfy6Gwdf9j+MHqT3RuHCqdiZESCizE26GsIbTioOr41o9q556ZEcObgbiI2MSbCAa/BpZTHQ3uYaqnFMxXUuOs=
+	t=1718353743; cv=none; b=B4nSPUQKej9AIGXGdqMRHxvsZBsaMo6/pHUUdZS9KDR8E9cp2engjivyfJb34vxEiMZwAB/T/aSzAa75bdVAgXEeiTRfhbj1YX6ms2gqTNAVmAwJgwsxFpEehQ2CE2xaEL9cPEenmS+5S2n+3ONkpb7BicAmiIPQRVhx9Jo0yls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718353713; c=relaxed/simple;
-	bh=3Wg/Po2Loo+reS1EmZmVGQq87fLm9QQsUXRnohnMAbo=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ZXS2K92ynMYmiey/nENXOAQ7i0z9+AkX698sEdqEfSWkcZpzg2b0y1YiuzFMDU0fWZIaQDj9lKAkOpH/8iHvndQzRyjTlqcGBS4BOOugYaxpUTm6JjBVnAU79+w0yEW5vzP04zG/TQup9QM4CpGwQw6rEWcj8Af1UsOldUdk1B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jlXE9xfI; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718353712; x=1749889712;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=3Wg/Po2Loo+reS1EmZmVGQq87fLm9QQsUXRnohnMAbo=;
-  b=jlXE9xfIFYXggu501qbNu34pWBW9nmrLB12eHOLmLu6iE6Ao7Den987P
-   uCKpNqnR0w+CI6EJKW+USZ7zgv70dXULhRDZ52sFLskhVKz77WVRYJNxE
-   T+UYRYEhYkQXJIeNMATmIrFCiqNTwy/C8HV/l5pP8deUUgYzSoU2ZBNho
-   J4aBst3ZTjfYHCL6eZ9MF3wwzxrQr0ZADnDw0fBrOnrDIy2qWR0bR9ELt
-   pXZS41NMdZ9Fepl4AzD8ApLVg8cKJglaJc98NpkQRNapvEHomcrIIOvfa
-   fWOPagzgjwBK1V3JDUuDk7dY6F5l+rVZdhkRXPa5L4T6oISLvERxKxYus
-   g==;
-X-CSE-ConnectionGUID: J+2u2QbuS1SxhHTH0nmkRg==
-X-CSE-MsgGUID: 6750PwdgReOa7FkhwacaxQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11102"; a="15389740"
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="scan'208";a="15389740"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 01:28:31 -0700
-X-CSE-ConnectionGUID: lKJeMOyDStGEerfMw5hvrQ==
-X-CSE-MsgGUID: jcZo1bZjRxak9W8kutW/DA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,237,1712646000"; 
-   d="scan'208";a="40398062"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.222])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 01:28:27 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 14 Jun 2024 11:28:23 +0300 (EEST)
-To: Udit Kumar <u-kumar1@ti.com>
-cc: vigneshr@ti.com, nm@ti.com, Tony Lindgren <tony@atomide.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Jiri Slaby <jirislaby@kernel.org>, u.kleine-koenig@pengutronix.de, 
-    ronald.wahl@raritan.com, thomas.richard@bootlin.com, tglx@linutronix.de, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    linux-serial <linux-serial@vger.kernel.org>
-Subject: Re: [PATCH] serial: 8250_omap: Implementation of Errata i2310
-In-Reply-To: <20240614061314.290840-1-u-kumar1@ti.com>
-Message-ID: <9ed7e96a-c538-aac1-5b52-b7b1d72bb6a0@linux.intel.com>
-References: <20240614061314.290840-1-u-kumar1@ti.com>
+	s=arc-20240116; t=1718353743; c=relaxed/simple;
+	bh=si66A7Bww7MdzXWYVuhn5dggZ9QjSpqjNge2lbjPC+U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ROrjHH3pYyTdJsBOxMicOGx0Ge2X5glXIQiQMtOlc4Kc3YL92tDYQ5+xaNKm6vB8RqbVWr396aj9tt2niY0RduNWya+4IZhw3/7Idzq3tGUU3XqXx9hHJGprHQ0lV9gYXx3B4M+qx7R8twG/OibQGZxaRD2LINbTs3X09F0a/Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VsY3Mmh+; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57c7681ccf3so2093852a12.2;
+        Fri, 14 Jun 2024 01:29:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718353741; x=1718958541; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=si66A7Bww7MdzXWYVuhn5dggZ9QjSpqjNge2lbjPC+U=;
+        b=VsY3Mmh++P4SOYSkAQFUaw6ikBB0SAoIsvji9vc7Px123avUQYY+EcrDDBnNsi0QW3
+         7i/f+UpXDVrOnN/xnSATZj4l6ci/SzmMdAF6ee0QdyTB9Pf6fkzNAMV9WWvzn9PV9bKY
+         9YP9I+pL4pWlKLVftp4ofshvjAkKIPCP5DXZHD8sMyh90uLD6OoxC6VGK7L3TsTjmCqu
+         +GEziByf3zpf3tlw05j7FKK3oWby5dCPJ7z7YHgFtvKYfYlJndNgjMWui0a227OGdmg0
+         MG4iIFzf1Sbkh4wQDIQj/QMOv+JWhO7Jvaj+MeJ8gWIE4XzH95EbFof1kGrzOAntWWTC
+         a+5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718353741; x=1718958541;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=si66A7Bww7MdzXWYVuhn5dggZ9QjSpqjNge2lbjPC+U=;
+        b=g6VSZVWAx3P23o903fggjhj3BrXH20/ZYqt5o9TZN6DUt5azTiA4CWYC+/xC80pciL
+         hR/FaqZcI2sQUnk47aAVZMZeAQkzzlPawneU0vir5XXIoJBXgr+as95z9ytmJnEF43pK
+         u9F0a3bFVXjgV/SUTf/UftOLEBgrqDeHKvH0oPVzzutOAomGeXMg3hx225uIYRtJq3P/
+         vc0o6Ah4aZgxVfBv5+OYaZHvaMkq5fIjrKa0HZAqT69M9cec5DZMZBkMKz6jwPBTpzD4
+         r1jx+n2B8+6VhD93enCXasehiugiz52SXmhD5Wl2z4IJcdbz0zo6Ji52SXmsvvB9MJtf
+         p4Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCWvZ90w53jAOhsNu8HnWf97IYKf72bHZsDRGGTCcLMk5HOYww78SSDyXVmIYeB80pDBcf2aAIC1xmOKGWkBOFPIQdblD0RiBIGfIA==
+X-Gm-Message-State: AOJu0YyYahE2R4Sm3s4l2HdDmz6BRCdbFJaY0cS0sKRuE3PV4nWXdTM2
+	L1zegnZiFbQWN9vhNkrtQPviBv69jD0ossDvpO/qPuq7G7W2xqHb
+X-Google-Smtp-Source: AGHT+IGVwb2EkB9dWSTgBPUqPXbLYxIKnMpLWYR8kRJGNxRo5NbCsRevoKdqLxGS9mSPcY/fALjcRA==
+X-Received: by 2002:a50:d70d:0:b0:57c:7ce3:6cd9 with SMTP id 4fb4d7f45d1cf-57cbd67f5d3mr1197926a12.23.1718353740377;
+        Fri, 14 Jun 2024 01:29:00 -0700 (PDT)
+Received: from [10.176.235.56] ([137.201.254.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb743b026sm1931399a12.97.2024.06.14.01.28.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 01:28:59 -0700 (PDT)
+Message-ID: <81c85dd8bb770d4747a7f18a4607e02309ecb965.camel@gmail.com>
+Subject: Re: [PATCH] scsi: ufs: core: Free memory allocated for model before
+ reinit
+From: Bean Huo <huobean@gmail.com>
+To: Joel Slebodnick <jslebodn@redhat.com>, linux-scsi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
+ avri.altman@wdc.com,  bvanassche@acm.org,
+ James.Bottomley@HansenPartnership.com,  martin.petersen@oracle.com,
+ peter.wang@mediatek.com,  manivannan.sadhasivam@linaro.org,
+ ahalaney@redhat.com, beanhuo@micron.com
+Date: Fri, 14 Jun 2024 10:28:58 +0200
+In-Reply-To: <20240613182728.2521951-1-jslebodn@redhat.com>
+References: <20240613182728.2521951-1-jslebodn@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 
-On Fri, 14 Jun 2024, Udit Kumar wrote:
+On Thu, 2024-06-13 at 14:27 -0400, Joel Slebodnick wrote:
+> Signed-off-by: Joel Slebodnick <jslebodn@redhat.com>
 
-> As per Errata i2310[0], Erroneous timeout can be triggered,
-> if this Erroneous interrupt is not cleared then it may leads
-> to strom of interrupts, therefore apply Errata i2310 solution.
-> 
-> [0] https://www.ti.com/lit/pdf/sprz536 page 23
-> 
-> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
-> ---
->  drivers/tty/serial/8250/8250_omap.c | 25 ++++++++++++++++++++-----
->  1 file changed, 20 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-> index 170639d12b2a..38eb639f78d3 100644
-> --- a/drivers/tty/serial/8250/8250_omap.c
-> +++ b/drivers/tty/serial/8250/8250_omap.c
-> @@ -115,6 +115,10 @@
->  /* RX FIFO occupancy indicator */
->  #define UART_OMAP_RX_LVL		0x19
->  
-> +/* Timeout Low and High */
-> +#define UART_OMAP_TO_L                 0x26
-> +#define UART_OMAP_TO_H                 0x27
-> +
->  /*
->   * Copy of the genpd flags for the console.
->   * Only used if console suspend is disabled
-> @@ -663,13 +667,24 @@ static irqreturn_t omap8250_irq(int irq, void *dev_id)
->  
->  	/*
->  	 * On K3 SoCs, it is observed that RX TIMEOUT is signalled after
-> -	 * FIFO has been drained, in which case a dummy read of RX FIFO
-> -	 * is required to clear RX TIMEOUT condition.
-> +	 * FIFO has been drained or erroneously.
-> +	 * So apply solution of Errata i2310 as mentioned in
-> +	 * https://www.ti.com/lit/pdf/sprz536
->  	 */
->  	if (priv->habit & UART_RX_TIMEOUT_QUIRK &&
-> -	    (iir & UART_IIR_RX_TIMEOUT) == UART_IIR_RX_TIMEOUT &&
-> -	    serial_port_in(port, UART_OMAP_RX_LVL) == 0) {
-> -		serial_port_in(port, UART_RX);
-> +		(iir & UART_IIR_RX_TIMEOUT) == UART_IIR_RX_TIMEOUT) {
-> +		unsigned char efr2, timeout_h, timeout_l;
-> +
-> +		efr2 = serial_in(up, UART_OMAP_EFR2);
-> +		timeout_h = serial_in(up, UART_OMAP_TO_H);
-> +		timeout_l = serial_in(up, UART_OMAP_TO_L);
-> +		serial_out(up, UART_OMAP_TO_H, 0xFF);
-> +		serial_out(up, UART_OMAP_TO_L, 0xFF);
-> +		serial_out(up, UART_OMAP_EFR2, 0x1);
-
-Eh, this doesn't match the workaround in the errata???
-
-Also, don't use literals but name the bits with defines (for the correct 
-bit there's probably a pre-existing define but it's not named as good as 
-it could be, I'd say it should be named as 
-UART_OMAP_EFR2_TIMEOUT_PERIODIC).
-
-> +		serial_in(up, UART_IIR);
-> +		serial_out(up, UART_OMAP_EFR2, efr2);
-> +		serial_out(up, UART_OMAP_TO_H, timeout_h);
-> +		serial_out(up, UART_OMAP_TO_L, timeout_l);
-
--- 
- i.
+Reviewed-by: Bean Huo <beanhuo@micron.com>
 
 
