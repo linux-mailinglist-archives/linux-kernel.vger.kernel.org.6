@@ -1,212 +1,195 @@
-Return-Path: <linux-kernel+bounces-215616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DBFB9094F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 02:06:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 029219094F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 02:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 552981C209AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:06:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 655CBB213BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1A82CA9;
-	Sat, 15 Jun 2024 00:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF3A7E6;
+	Sat, 15 Jun 2024 00:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="0MSXZg8C"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XoxBPTm7"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2082.outbound.protection.outlook.com [40.107.93.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47DC624
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 00:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718409953; cv=none; b=CeY3YtWTyKrslus2aMdYZdruowL3zZFysf/c+CbB/jgC+v1/F3bwTACI3UpcjHhtune1FWgfzx9xhrQQY9YWApdoKOXjjhUOfCC6w8n0poLCFS9AnIz4+7kpU59EaeJx4/2QZkdL2kBYryohh7U4n3f4KA6NykXHqoMW7HfZ9Is=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718409953; c=relaxed/simple;
-	bh=f6AoYhX2XyzT+ZH0EktrmSnDM4D3zhudlPqVu/nrjns=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YtsGowp6eaT9osFh2Qqk7NbZuSS6HUYfQ9rjIrp5vxQP4PuAgPF8I6bXU2gXe/WlhUZs9boo73EXdxeSuRNxPvzByvmpEsTkOfPNOBtTjknoQFIyA+QKKUwXQB3GsieLVJGXGcvf0BVvlBgnbwSINothFHEw1Ix/6j0+EsPmOLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=0MSXZg8C; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-6c4926bf9baso2267551a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 17:05:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1718409951; x=1719014751; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c21Xnr26mF4XhO4v24lG8CYkDryUnaevoVevI7wRSgQ=;
-        b=0MSXZg8CqtR1DAOlvKfLZM5qykyu832wLgqtz53yfABK2/qNcNy6klqSu/6+KihLGe
-         SEF/F1BThMGlrBM8bkr/I5yEYHprNTwNzugD+WoXvVzuFeDMf4NX/CeaIuRajcheefX8
-         MHthXF23rggit3Hgox1mW1VqqIHg5nsW4F4RcOLSY8b3F6JdGtJ5GnkQitlZhuj3AmBD
-         3BcRExcb09vADiQtEQert2rhbC5dPW7o3RequLC3g/3J32QxmHs52WAwB9FATzIuAjLc
-         Sx1cXqpyQ/ICGkpn/jfoC2CbTI76TOgCqupwT7mjZugX8fwJbi55l9NbA4kHtZ2S+AoS
-         3yGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718409951; x=1719014751;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c21Xnr26mF4XhO4v24lG8CYkDryUnaevoVevI7wRSgQ=;
-        b=Hvma+gNRB83KB5iKovtQu3Ga0nrQWhGl7bPYvENXVPUOs6m9xcKk82HYrrfelCpEKj
-         14UxBNoXzqhtgJ3erTzTpTOKFAV81DfYsLJVQ0W7AI2npBlXDsxev0eLMCe5nVs/5lki
-         xzjNwQJMhChSJhyKpLzkjigbOFX+HZRmxe9HfWA609bB8cyjGOhJwwZw5nHYzWOxDt9p
-         50HNalCRaJTjd/NrqAKR0/JSNRXwhwAiZlUy0N8fxeXiAtzWcW2mD9epux69JE06rk/+
-         GzTav2gv0bZTkDE4TqWQFPGoJO0EPVcUI9jN4qdbuiiJcuu7JTpJh+PK8RujB/K5h76L
-         dOqA==
-X-Gm-Message-State: AOJu0YwU35TQvknD/bM791AJlEPXhhjZo8Wz4pYw2Lq+nxvNwUx9GBiW
-	7DkQAFod5XiKzcVXkmFJ8M/JRnvNvphM7Qn0attjYziwlGjkUQ6DgStI49Tk8Vo=
-X-Google-Smtp-Source: AGHT+IHET3q/ZWVI0gCLmEytjo+qe1Q0o8W6KZxsgsqtRPqlyJa6ges0MNDa6YBygs6HHNzj/wFOeQ==
-X-Received: by 2002:a17:903:1250:b0:1f7:2050:9a76 with SMTP id d9443c01a7336-1f8625c0d68mr49770465ad.8.1718409950685;
-        Fri, 14 Jun 2024 17:05:50 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f17f92sm37976575ad.221.2024.06.14.17.05.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 17:05:50 -0700 (PDT)
-Date: Fri, 14 Jun 2024 17:05:48 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Omer Shpigelman <oshpigelman@habana.ai>
-Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
- netdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- ogabbay@kernel.org, zyehudai@habana.ai
-Subject: Re: [PATCH 01/15] net: hbl_cn: add habanalabs Core Network driver
-Message-ID: <20240614170548.188ead0d@hermes.local>
-In-Reply-To: <20240613082208.1439968-2-oshpigelman@habana.ai>
-References: <20240613082208.1439968-1-oshpigelman@habana.ai>
-	<20240613082208.1439968-2-oshpigelman@habana.ai>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91ED3173;
+	Sat, 15 Jun 2024 00:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718410190; cv=fail; b=js56yWzUxXVQNkO3+Y4w7U4gTmayzLPFj3zHVNKCIRJHE1nkYOOBSNh17JFw9v41Yi+75AQLNxgXDq2RUBjnALzi7Y9bzSHXDMiMnQiuSQSzplMMX0HOL20IaFkzYGQrUun6Eupp6IdsCL0nX5QwSvIIaSotRqTYwvHDKjrida0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718410190; c=relaxed/simple;
+	bh=1T8g8FWxH6cP6ZaCZLKFtRbC5cc61aK5eWks9bSi49k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sX1cs5XGeaBpV0782cKLmh9OZFngq0w3VpaQ7U+N5/pP1RZWfrWOvaNnf8uQ7KDewuywO4KYkyIvOD7QS5WR28RQ0idmZygyj5bEtU0RlMoQEJPGs7d7q8Orm20kTcRzJY5rIjX20r6MCFJx84IMxTKtyy3dw9yZhLdht4EHrPA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XoxBPTm7; arc=fail smtp.client-ip=40.107.93.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GuxgQ8c6xnHqjAyOzneQf4EAepGAojLo201DAXaTkCJ4Z9TY8tlHyupaifiyyCGSfXMHRggZCwr3nnnILP5cVUgYjkdyjrNG/JQ3iP/DMQDBK4P/s9b+bBVopqxZYEfA5r3pF55WxVfTKLr+3bE+/uBJWrLr5IISENxq0Ifxm8rkKPj9WoLY1UOUNmRUtVIMWHP632RA6wjtdj13oLvk15xuTbr29bF46n9VRPql2EIjFVcr+d75GU1dnv43pHiSP/4HXlRxHhaaN0Km4RnIoErZsaAbZsVImKRaq6kg5sFm1nAj50dJI7LowDtj+h41Tq+g3RUDWX2rnJRT+VHnEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8tXPJM36LoSbmYU3iIxDDZE51zOTVTPmOvnoKNGIQj0=;
+ b=OWaZV2YPprclVI7YVxuVM6vC4Wl0ROCEOBeJKYyLgkKbMTgGc/B3q6ZQ7vbIqXoinG3/7aPu9MyEl7s6z+6g/gRuYZfMAPnE8xV0IDq7+C4zPgpaytA+zFphzIBW6EyOHla7PLlWbusnmlpFm0eFVnKAze1EDwT2ctnkVg1LbO8VcifCAah6tGuhVjVJHwrfQSnRaB509fFxp5c3h1RkC2OCz1+dSFB1St5BuhBzBSQJ5pSFxyiqHVEKkBmCcyTHSfG2t15rfFkoqDi7eP4bPe9IUV4evsL03kz21L3bsTTsUrvuUYwbMLwB5V6zkV90HyoXtgvvO1CJwqDq9ofKVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8tXPJM36LoSbmYU3iIxDDZE51zOTVTPmOvnoKNGIQj0=;
+ b=XoxBPTm7XuiGlFna1R+r+7/1XDLOyxkJm5iyHOR8XoO3P39vkq8imXbEFaW5AYPzEZk50vOn4lBkM3+3dmlpjjjApNsXJvi/DrbuiHGZT/bb9beS2uQqIIaGubU688cyDyyQvWQ4f7fOwe8D/fxxbtsScj2EgxUTys5EGWDHhMBna17x4S6cYl6Zu8zfJ5nKt19FIjlWsHyPT6qB56zGzWL6StLE0PNCe5GQIjhDiHW9RyscHmgFLC7AB34rKPIvTwLK2sZXmBB93dGaW83oJygjCkaIYzUj90BnTpaTkIbuMLtgr2yTr9avkYZOFb+ycCMOehMRWxp9yVC8BUlw8A==
+Received: from PH8PR22CA0015.namprd22.prod.outlook.com (2603:10b6:510:2d1::23)
+ by SJ0PR12MB6928.namprd12.prod.outlook.com (2603:10b6:a03:47a::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.27; Sat, 15 Jun
+ 2024 00:09:42 +0000
+Received: from MWH0EPF000A6730.namprd04.prod.outlook.com
+ (2603:10b6:510:2d1:cafe::2d) by PH8PR22CA0015.outlook.office365.com
+ (2603:10b6:510:2d1::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.26 via Frontend
+ Transport; Sat, 15 Jun 2024 00:09:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ MWH0EPF000A6730.mail.protection.outlook.com (10.167.249.22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.15 via Frontend Transport; Sat, 15 Jun 2024 00:09:41 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 14 Jun
+ 2024 17:09:28 -0700
+Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 14 Jun
+ 2024 17:09:27 -0700
+Message-ID: <0e239ad4-3608-4ac1-be65-5b61329eba77@nvidia.com>
+Date: Fri, 14 Jun 2024 17:09:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] selftests/mm: kvm, mdwe fixes to avoid requiring
+ "make headers"
+To: David Hildenbrand <david@redhat.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>, Shuah Khan
+	<shuah@kernel.org>
+CC: Andrei Vagin <avagin@google.com>, Axel Rasmussen
+	<axelrasmussen@google.com>, Christian Brauner <brauner@kernel.org>, Kees Cook
+	<kees@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, "Liam R .
+ Howlett" <Liam.Howlett@oracle.com>, Muhammad Usama Anjum
+	<usama.anjum@collabora.com>, Peter Xu <peterx@redhat.com>, Rich Felker
+	<dalias@libc.org>, <linux-mm@kvack.org>, <linux-kselftest@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+References: <20240614023009.221547-1-jhubbard@nvidia.com>
+ <20240614023009.221547-6-jhubbard@nvidia.com>
+ <56effc69-b7c6-4e89-8cd3-e344f673d750@redhat.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <56effc69-b7c6-4e89-8cd3-e344f673d750@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000A6730:EE_|SJ0PR12MB6928:EE_
+X-MS-Office365-Filtering-Correlation-Id: 14568448-e4ed-43f9-6a19-08dc8ccf7466
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|376011|7416011|36860700010|82310400023|1800799021;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NEpkbXdKV0NRRGN0V0IxK0M1UUtCWmlzRVFWejFwT29VWWdxb25xSWxuUDdq?=
+ =?utf-8?B?Z3M2S3pzaGUwdGFCVjRjNzVsR1NKNFJGa3o3aHlIRi8rMFBiZ3oydHRXOHk2?=
+ =?utf-8?B?emRuUkIwbzRIa1U4NXM1NnlzZVhVbFZ2OXlQQkdSOXhvVDZKNlJXbllhYzkx?=
+ =?utf-8?B?YmZRNlFBSGZjUU44NFlZeE0wSDBNTU1tL0JRczg5QmpVRFRWaGxybjN0dTZF?=
+ =?utf-8?B?cVVIcVh6TlVZOWkzNUJyQlZoTnI5YkJSaVJIN29sckUxbTAxWG1pN0I1RlFo?=
+ =?utf-8?B?aElSNEk4YkZZYmpvckhSM2QxdnZXV1lwQy9YbENWRWYrbTJrVjByTEx1ZGtS?=
+ =?utf-8?B?azFmRzJVVWk3Z1lrWGR2RHhZN1pWcU9kRDYxUUlUUXRnRUVsSUsxbllhM0Uz?=
+ =?utf-8?B?bGdhSkd4VTdRbjNra1RwNGM1V3BkWTRTVjBlQnp6Qlk5Q3d0YjhxY0tZOG9a?=
+ =?utf-8?B?cStHcXZWSDFmbUZBTmlVdER2N1p3NXRHNU9pVlNiai9YK3lZTUdlVHdrb3hn?=
+ =?utf-8?B?d1UwMUt2UG96Z3hYenpQNkk2RHlzTDNlTVZpMGxMcjNpYjFUV1NJeUJjc29F?=
+ =?utf-8?B?b3ZiWEl2RzBQSFV4WER0MCtIcC9icWc0MWpRWUpuTEtFTlptbnRSaGV2YlZk?=
+ =?utf-8?B?WnA3UzRxM25zTDMwdVBuN3dqZlVLaHM0S1M0UktBWXY1bElLTVZaK1pQZGNP?=
+ =?utf-8?B?b1Fyb0FqUUNGdFlxQlkweTVwOWQvaVA2S3FCN05TY09UbXJRTTlPZGs4WC9P?=
+ =?utf-8?B?bS9TU2FiSk14UHpSZ094U3MvVFpMdUUzc2dOSmM0UVFrbUVhSlNFekF4Y0NC?=
+ =?utf-8?B?MVloZFdkT1hrZ2pBMXAyZG1YdHZYTnBEa25XeEhqSXNxanFPVkVpL0dWTU5Q?=
+ =?utf-8?B?cXhWemRmTlAyMDNJb1RVeTZheEZqOXlGZTVqdlBxSk9oYUVOT211dm1xTTlP?=
+ =?utf-8?B?c3JnbTlYS0VyWWRlUkFsY0ZpNWwrWlllVXFkaDNXcU1UZEtqNW5tWENvRGxN?=
+ =?utf-8?B?SmlMM0R6TVBuN0VTWkVUcVR1ZDJ6Z3lYVHJDNWxmMzFMdStpcXdMZTJraWtW?=
+ =?utf-8?B?SGJQRjFzNEdIUXRYMU1ETHU1eDd5bWFuaHhRZnZHYWZ4V2NkOCtoSTVKemg4?=
+ =?utf-8?B?bTZBbkJmOVl0Z2IxWWFuaU9GNGlHL0lIa1BZb2tqVnd0ZDZuODZXVERNc3lZ?=
+ =?utf-8?B?QWp1d21lNmh4L3pYTkJYbnQ0MGRjM3lqVVQ2VStab01XWU1lc0RSY215MTNh?=
+ =?utf-8?B?L1E0QTQwWGxVUWg4eG5ZemcyMkVYYXRUYktCMnlpNmUyMXluU0xpbEFTQXEw?=
+ =?utf-8?B?OUdFc09NQmt3a1p0VnNKaGdNQlJBL0pWS2NtQ3ArL1lqNloxbHV6QzhjNnZD?=
+ =?utf-8?B?bXQvbG1OQ1R6RHZyOHcxVWkvb0NMTmRQMk1MbGQ5LzNLanpmVDdUVFNOcnVQ?=
+ =?utf-8?B?L2xidVpWOEZ2N0g4cis5NTc2RERoSHg2enJtR2NlUStNNjh5SDJhVWJSSS9I?=
+ =?utf-8?B?YTJtY2tFbmtEU0pHZmNjV3lSUFl2ZHBNMWdpT2UrMlVGS3hwY2grcVM5ak5v?=
+ =?utf-8?B?OFVtZ2Q1WGZxQ0NiTlJEMmN2Vk5rVUdoUFRmMjBhR0lLOVZmWHVxVlZ2cVRo?=
+ =?utf-8?B?NDdIQ3FuZEk2ampXSHhoY1ZLMCtjTHowYWloVStId2U4U3pwZFh6SGdIVEZQ?=
+ =?utf-8?B?QlFNNjUzNW9sYWYzS1ZtVGpkbnIzNkVsQ2VtY1owMFhqSFZhbWEwb0ZmdUpL?=
+ =?utf-8?B?cWZGMmpJYTFtTE9zWThJRVhlMCtPM3VZL1V0SDFvNWl6YVlGUHhmZ29hN1Rx?=
+ =?utf-8?B?ajhSVjBDdnIva1hQZVRxUGNZY3JkV1FwWkFhbVNIZk5RVzBhY0ZFZmpZYjB2?=
+ =?utf-8?B?ZWx0d1pNMEVtVUFtNFZmT1dNR2tBNEZnNkZkb1MzN0NDOXc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230037)(376011)(7416011)(36860700010)(82310400023)(1800799021);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2024 00:09:41.7193
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14568448-e4ed-43f9-6a19-08dc8ccf7466
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000A6730.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6928
 
+On 6/14/24 5:31 AM, David Hildenbrand wrote:
+> On 14.06.24 04:30, John Hubbard wrote:
+...
+>> +#ifndef PR_SET_MEMORY_MERGE
+>> +#define PR_SET_MEMORY_MERGE        67
+>> +#endif
+>> +
+>> +#ifndef PR_GET_MEMORY_MERGE
+>> +#define PR_GET_MEMORY_MERGE        68
+>> +#endif
+>> +
+>> +#ifndef PR_SET_MDWE
+>> +#define PR_SET_MDWE            65
+>> +#define PR_MDWE_REFUSE_EXEC_GAIN    (1UL << 0)
+>> +#define PR_MDWE_NO_INHERIT        (1UL << 1)
+>> +#define PR_GET_MDWE            66
+>> +#endif
+> 
+> What's the reason we don't target "linux/prctl.h" here? :)
 
-> +#define HBL_AUX2NIC(aux_dev)	\
-> +	({ \
-> +		struct hbl_aux_dev *__aux_dev = (aux_dev); \
-> +		((__aux_dev)->type == HBL_AUX_DEV_ETH) ? \
-> +		container_of(__aux_dev, struct hbl_cn_device, en_aux_dev) : \
-> +		container_of(__aux_dev, struct hbl_cn_device, ib_aux_dev); \
-> +	})
-> +
-> +#define RAND_STAT_CNT(cnt) \
-> +	do { \
-> +		u32 __cnt = get_random_u32(); \
-> +		(cnt) = __cnt; \
-> +		dev_info(hdev->dev, "port %d, %s: %u\n", port, #cnt, __cnt); \
-> +	} while (0)
-> +
-> +struct hbl_cn_stat hbl_cn_mac_fec_stats[] = {
-> +	{"correctable_errors", 0x2, 0x3},
-> +	{"uncorrectable_errors", 0x4, 0x5}
-> +};
-> +
+Very good point. This is the Old Way of fixing these up, and I overlooked
+that even though I'm busy adding the New Way. :)
 
-These tables should be marked const?
+I'll change this to use a new tools/include/uapi/linux/prctl.h and post
+a v3, thanks for pointing this out.
+  
 
-> +struct hbl_cn_stat hbl_cn_mac_stats_rx[] = {
-> +	{"Octets", 0x0},
-> +	{"OctetsReceivedOK", 0x4},
-> +	{"aAlignmentErrors", 0x8},
-> +	{"aPAUSEMACCtrlFramesReceived", 0xC},
-> +	{"aFrameTooLongErrors", 0x10},
-> +	{"aInRangeLengthErrors", 0x14},
-> +	{"aFramesReceivedOK", 0x18},
-> +	{"aFrameCheckSequenceErrors", 0x1C},
-> +	{"VLANReceivedOK", 0x20},
-> +	{"ifInErrors", 0x24},
-> +	{"ifInUcastPkts", 0x28},
-> +	{"ifInMulticastPkts", 0x2C},
-> +	{"ifInBroadcastPkts", 0x30},
-> +	{"DropEvents", 0x34},
-> +	{"Pkts", 0x38},
-> +	{"UndersizePkts", 0x3C},
-> +	{"Pkts64Octets", 0x40},
-> +	{"Pkts65to127Octets", 0x44},
-> +	{"Pkts128to255Octets", 0x48},
-> +	{"Pkts256to511Octets", 0x4C},
-> +	{"Pkts512to1023Octets", 0x50},
-> +	{"Pkts1024to1518Octets", 0x54},
-> +	{"Pkts1519toMaxOctets", 0x58},
-> +	{"OversizePkts", 0x5C},
-> +	{"Jabbers", 0x60},
-> +	{"Fragments", 0x64},
-> +	{"aCBFCPAUSERx0", 0x68},
-> +	{"aCBFCPAUSERx1", 0x6C},
-> +	{"aCBFCPAUSERx2", 0x70},
-> +	{"aCBFCPAUSERx3", 0x74},
-> +	{"aCBFCPAUSERx4", 0x78},
-> +	{"aCBFCPAUSERx5", 0x7C},
-> +	{"aCBFCPAUSERx6", 0x80},
-> +	{"aCBFCPAUSERx7", 0x84},
-> +	{"aMACControlFramesReceived", 0x88}
-> +};
-> +
-> +struct hbl_cn_stat hbl_cn_mac_stats_tx[] = {
-> +	{"Octets", 0x0},
-> +	{"OctetsTransmittedOK", 0x4},
-> +	{"aPAUSEMACCtrlFramesTransmitted", 0x8},
-> +	{"aFramesTransmittedOK", 0xC},
-> +	{"VLANTransmittedOK", 0x10},
-> +	{"ifOutErrors", 0x14},
-> +	{"ifOutUcastPkts", 0x18},
-> +	{"ifOutMulticastPkts", 0x1C},
-> +	{"ifOutBroadcastPkts", 0x20},
-> +	{"Pkts64Octets", 0x24},
-> +	{"Pkts65to127Octets", 0x28},
-> +	{"Pkts128to255Octets", 0x2C},
-> +	{"Pkts256to511Octets", 0x30},
-> +	{"Pkts512to1023Octets", 0x34},
-> +	{"Pkts1024to1518Octets", 0x38},
-> +	{"Pkts1519toMaxOctets", 0x3C},
-> +	{"aCBFCPAUSETx0", 0x40},
-> +	{"aCBFCPAUSETx1", 0x44},
-> +	{"aCBFCPAUSETx2", 0x48},
-> +	{"aCBFCPAUSETx3", 0x4C},
-> +	{"aCBFCPAUSETx4", 0x50},
-> +	{"aCBFCPAUSETx5", 0x54},
-> +	{"aCBFCPAUSETx6", 0x58},
-> +	{"aCBFCPAUSETx7", 0x5C},
-> +	{"aMACControlFramesTx", 0x60},
-> +	{"Pkts", 0x64}
-> +};
-> +
-> +static const char pcs_counters_str[][ETH_GSTRING_LEN] = {
-> +	{"pcs_local_faults"},
-> +	{"pcs_remote_faults"},
-> +	{"pcs_remote_fault_reconfig"},
-> +	{"pcs_link_restores"},
-> +	{"pcs_link_toggles"},
-> +};
-> +
-> +static size_t pcs_counters_str_len = ARRAY_SIZE(pcs_counters_str);
-> +size_t hbl_cn_mac_fec_stats_len = ARRAY_SIZE(hbl_cn_mac_fec_stats);
-> +size_t hbl_cn_mac_stats_rx_len = ARRAY_SIZE(hbl_cn_mac_stats_rx);
-> +size_t hbl_cn_mac_stats_tx_len = ARRAY_SIZE(hbl_cn_mac_stats_tx);
-> +
-> +static void qps_stop(struct hbl_cn_device *hdev);
-> +static void qp_destroy_work(struct work_struct *work);
-> +static int __user_wq_arr_unset(struct hbl_cn_ctx *ctx, struct hbl_cn_port *cn_port, u32 type);
-> +static void user_cq_destroy(struct kref *kref);
-> +static void set_app_params_clear(struct hbl_cn_device *hdev);
-> +static int hbl_cn_ib_cmd_ctrl(struct hbl_aux_dev *aux_dev, void *cn_ib_ctx, u32 op, void *input,
-> +			      void *output);
-> +static int hbl_cn_ib_query_mem_handle(struct hbl_aux_dev *ib_aux_dev, u64 mem_handle,
-> +				      struct hbl_ib_mem_info *info);
-> +
-> +static void hbl_cn_reset_stats_counters_port(struct hbl_cn_device *hdev, u32 port);
-> +static void hbl_cn_late_init(struct hbl_cn_device *hdev);
-> +static void hbl_cn_late_fini(struct hbl_cn_device *hdev);
-> +static int hbl_cn_sw_init(struct hbl_cn_device *hdev);
-> +static void hbl_cn_sw_fini(struct hbl_cn_device *hdev);
-> +static void hbl_cn_spmu_init(struct hbl_cn_port *cn_port, bool full);
-> +static int hbl_cn_cmd_port_check(struct hbl_cn_device *hdev, u32 port, u32 flags);
-> +static void hbl_cn_qps_stop(struct hbl_cn_port *cn_port);
+thanks,
+-- 
+John Hubbard
+NVIDIA
 
-Can you reorder code so forward declarations are not required?
 
