@@ -1,285 +1,160 @@
-Return-Path: <linux-kernel+bounces-215846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 183BA9097D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:00:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2709097D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D4F7B2190E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:00:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAA501C215B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550E93A8CB;
-	Sat, 15 Jun 2024 11:00:06 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FFF3AC36;
+	Sat, 15 Jun 2024 11:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VP6NPZBN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27653A1BA
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 11:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4974C89;
+	Sat, 15 Jun 2024 11:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718449205; cv=none; b=LZfOAVmuAgca9dUwjGGZeoFVg3pMpDEQ+7cPri4aH4UiOZKE3t/J9qghx+PxeXR6Mvfh2iwonZ4ZAlLyJhc3PUtPOFL0egAv7ZjX+JBrcHmhvcJLl05cJIPwjeHENiTZgppA0zhH//GkKb1qeC/pxIRoOjob0rmuz+Zt0+cz5Mk=
+	t=1718449221; cv=none; b=dxS6BmccZqmxCwBXX5eHGD1q9y7XarTOn1aiPsBV+I0mRNQxXFOwwHhPtAUu1+caaAfT+8MDNGvgwDfqOLt9kH8YU8AkgFWOIerwRb8LyrVdn4LX0iD1i2aY7WFuOoMDHLoyRQHyuSu9WyKaVd1d2JBxstQwKdWeL2muCTBgxa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718449205; c=relaxed/simple;
-	bh=xsumvJvuxgihS5R5Mrp/KmnZUYzsd1QNZgPP5crQUrg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i19mzfVZJmHUMZaJriFAAyurCkoldCAg9BLfVccMFt90bOyA8xkt18yUEEI7fJOBcCXR8VsEMAv3VQloZVUSdDHMZ0NITi3M+0NcUe5QhyPlbDOJ5V2McnzTUgfKwTR9wGksnCQ3ZT/MWGbg3xlMzWdM7PL9wJgEYBg+o/UUNz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav112.sakura.ne.jp (fsav112.sakura.ne.jp [27.133.134.239])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 45FAxt3S067998;
-	Sat, 15 Jun 2024 19:59:55 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav112.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav112.sakura.ne.jp);
- Sat, 15 Jun 2024 19:59:55 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav112.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 45FAxtv3067995
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 15 Jun 2024 19:59:55 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <79d32963-de38-49cf-a03f-f6f5f4fbb462@I-love.SAKURA.ne.jp>
-Date: Sat, 15 Jun 2024 19:59:53 +0900
+	s=arc-20240116; t=1718449221; c=relaxed/simple;
+	bh=3HB0saeYYAYpcpbConAzAngu+NHabLUV8Vxt1hPYagw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pgEa4rYqqwyiHALrw1xUZs/t4ISBExdVNGMBMlxfaiLpvUgZVtlwx5y2rdmlvVqtefIoCTzNzYMyc0f+ds4AAw8D5Lcu0rRcec9dch5Ufo1zsursz8CaqSOcYahrt5DuRhvxRqHuZ3CAM6vBw9oRfgaXcnj2TM6ArOYNZzvuGU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VP6NPZBN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA912C116B1;
+	Sat, 15 Jun 2024 11:00:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718449221;
+	bh=3HB0saeYYAYpcpbConAzAngu+NHabLUV8Vxt1hPYagw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VP6NPZBNeZTg14E+XDA1TY7n6JlW6rjALKM3oAudvH3yUfwSvwaRFFG3ukjWK+Cf4
+	 ZnsxRDA8vSZsG3ginB55C9+4WYmIEyUlvoFLKNv8QcvkLnFF3BGW0TuqvRd280UWHB
+	 M5/7S/J88hexKmfBJ6jKCq4Mz7HI2f8ib7tYCqx8=
+Date: Sat, 15 Jun 2024 13:00:18 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Guo Ren <guoren@linux.alibaba.com>, Guo Ren <guoren@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	clang-built-linux <llvm@lists.linux.dev>
+Subject: Re: [PATCH 5.10 000/317] 5.10.219-rc1 review
+Message-ID: <2024061545-cold-fancied-1bd0@gregkh>
+References: <20240613113247.525431100@linuxfoundation.org>
+ <CA+G9fYvnVJi1RFhO5f6ZH2mpagZ6jcEdoQAxnSBxWPHsEVQwYg@mail.gmail.com>
+ <20240613223523.GB1849801@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bpf: don't call mmap_read_trylock() from IRQ context
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Nicolas Saenz Julienne <nsaenz@amazon.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Steven Rostedt (Google)" <rostedt@goodmis.org>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-        Yonghong Song <yonghong.song@linux.dev>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <4b875158-1aa7-402e-8861-860a493c49cd@I-love.SAKURA.ne.jp>
- <3e9b2a54-73d4-48cb-a510-d17984c97a45@I-love.SAKURA.ne.jp>
- <52d3d784-47ad-4190-920b-e5fe4673b11f@I-love.SAKURA.ne.jp>
- <CAADnVQLB6Zt1QjW+BeUmQJnWzGeCr7b2r0KKfygsJPzo0Rq+4A@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAADnVQLB6Zt1QjW+BeUmQJnWzGeCr7b2r0KKfygsJPzo0Rq+4A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240613223523.GB1849801@thelio-3990X>
 
-Hello.
-
-On 2024/06/15 1:40, Alexei Starovoitov wrote:
-> On Fri, Jun 14, 2024 at 8:15 AM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->> "inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage." upon unlock from IRQ work
->> was reported at https://syzkaller.appspot.com/bug?extid=40905bca570ae6784745 .
+On Thu, Jun 13, 2024 at 03:35:23PM -0700, Nathan Chancellor wrote:
+> On Thu, Jun 13, 2024 at 08:43:41PM +0530, Naresh Kamboju wrote:
+> > On Thu, 13 Jun 2024 at 17:43, Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > This is the start of the stable review cycle for the 5.10.219 release.
+> > > There are 317 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > >
+> > > Responses should be made by Sat, 15 Jun 2024 11:31:50 +0000.
+> > > Anything received after that time might be too late.
+> > >
+> > > The whole patch series can be found in one patch at:
+> > >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.219-rc1.gz
+> > > or in the git tree and branch at:
+> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> > > and the diffstat can be found below.
+> > >
+> > > thanks,
+> > >
+> > > greg k-h
+> > 
+> > 
+> > The following build errors are noticed on riscv with clang-18 toolchain
+> > but gcc-12 builds pass.
+> > 
+> > However, compared with older releases this is a build regression on
+> > stable-rc 5.10.
+> > 
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > 
+> > riscv:
+> >  defconfig - gcc-12 - PASS
+> >  defconfig - clang-18 - FAILED
+> > 
+> > Build error:
+> > ------
+> > arch/riscv/kernel/stacktrace.c:75:52: error: incompatible pointer to
+> > integer conversion passing 'void *' to parameter of type 'unsigned
+> > long' [-Wint-conversion]
+> >    75 |                                 if
+> > (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
+> >       |
+> >                 ^~~
+> > include/linux/compiler.h:78:42: note: expanded from macro 'unlikely'
+> >    78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
+> >       |                                             ^
+> > arch/riscv/kernel/stacktrace.c:75:57: error: incompatible integer to
+> > pointer conversion passing 'unsigned long' to parameter of type 'void
+> > *' [-Wint-conversion]
+> >    75 |                                 if
+> > (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
+> >       |
+> >                      ^~
+> > include/linux/compiler.h:78:42: note: expanded from macro 'unlikely'
+> >    78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
+> >       |                                             ^
+> > 2 errors generated.
+> > make[3]: *** [scripts/Makefile.build:286:
+> > arch/riscv/kernel/stacktrace.o] Error 1
 > 
-> imo the issue is elsewhere. syzbot reports:
-> local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
->  __mmap_lock_do_trace_released+0x9c/0x620 mm/mmap_lock.c:243
->  __mmap_lock_trace_released include/linux/mmap_lock.h:42 [inline]
+> It looks like either commit 9dd97064e21f ("riscv: Make stack walk
+> callback consistent with generic code") should be applied with the
+> straight from upstream copy of commit 7ecdadf7f8c6 ("riscv: stacktrace:
+> Make walk_stackframe cross pt_regs frame") or the latter commit's 5.10
+> backport should be modified to match the linux-5.10.y order of the
+> arguments:
 > 
-> it complains about:
-> local_lock(&memcg_paths.lock);
-> in TRACE_MMAP_LOCK_EVENT.
-> which looks like a false positive.
+> diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrace.c
+> index c38b20caad7c..010e4c881c8b 100644
+> --- a/arch/riscv/kernel/stacktrace.c
+> +++ b/arch/riscv/kernel/stacktrace.c
+> @@ -72,7 +72,7 @@ void notrace walk_stackframe(struct task_struct *task, struct pt_regs *regs,
+>  			pc = ftrace_graph_ret_addr(current, NULL, frame->ra,
+>  						   &frame->ra);
+>  			if (pc == (unsigned long)ret_from_exception) {
+> -				if (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
+> +				if (unlikely(!__kernel_text_address(pc) || !fn(pc, arg)))
+>  					break;
+>  
+>  				pc = ((struct pt_regs *)sp)->epc;
 
-Commit 2b5067a8143e ("mm: mmap_lock: add tracepoints around lock
-acquisition") introduced TRACE_MMAP_LOCK_EVENT() macro as below.
+I'll just drop these riscv patches from 5.10.y, as odds are, no one is
+using that arch in that old tree anymore.  And if they are, they can
+send working patches :)
 
-#define TRACE_MMAP_LOCK_EVENT(type, mm, ...)                                   \
-       do {                                                                   \
-               const char *memcg_path;                                        \
-               preempt_disable();                                             \
-               memcg_path = get_mm_memcg_path(mm);                            \
-               trace_mmap_lock_##type(mm,                                     \
-                                      memcg_path != NULL ? memcg_path : "",   \
-                                      ##__VA_ARGS__);                         \
-               if (likely(memcg_path != NULL))                                \
-                       put_memcg_path_buf();                                  \
-               preempt_enable();                                              \
-       } while (0)
+thanks,
 
-Commit d01079f3d0c0 ("mm/mmap_lock: remove dead code for !CONFIG_TRACING
-configurations") moved the location of this macro.
-
-Commit 832b50725373 ("mm: mmap_lock: use local locks instead of disabling
-preemption") replaced preempt_disable() with local_lock(&memcg_paths.lock)
-based on an argument that preempt_disable() has to be avoided because
-get_mm_memcg_path() might sleep if PREEMPT_RT=y.
-
-The local_lock() macro is defined as
-
-  #define local_lock(lock)		__local_lock(lock)
-
-in include/linux/local_lock.h and __local_lock() macro is defined as
-
-  #define __local_lock(lock)					\
-  	do {							\
-  		preempt_disable();				\
-  		local_lock_acquire(this_cpu_ptr(lock));		\
-  	} while (0)
-
-if PREEMPT_RT=n or
-
-  #define __local_lock(__lock)					\
-  	do {							\
-  		migrate_disable();				\
-  		spin_lock(this_cpu_ptr((__lock)));		\
-  	} while (0)
-
-if PREEMPT_RT=y in include/linux/local_lock_internal.h .
-Note that the difference between preempt_disable() and migrate_disable().
-
-Commit d01079f3d0c0 ("mm/mmap_lock: remove dead code for !CONFIG_TRACING
-configurations") by error replaced local_lock() with preempt_disable(),
-and commit e904c2ccf9b5 ("mm: mmap_lock: fix disabling preemption
-directly") replaced preempt_disable() with local_lock().
-
-
-
-Now, syzbot started reporting
-
-  inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage.
-
-and
-
-  inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
-
-messages, for local_lock() does not disable IRQ.
-
-I think we can replace local_lock() with local_lock_irqsave() like
-
-diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
-index 1854850b4b89..1901ad22ccbd 100644
---- a/mm/mmap_lock.c
-+++ b/mm/mmap_lock.c
-@@ -156,14 +156,15 @@ static inline void put_memcg_path_buf(void)
- #define TRACE_MMAP_LOCK_EVENT(type, mm, ...)                                   \
- 	do {                                                                   \
- 		const char *memcg_path;                                        \
--		local_lock(&memcg_paths.lock);                                 \
-+		unsigned long flags;                                           \
-+		local_lock_irqsave(&memcg_paths.lock, flags);                  \
- 		memcg_path = get_mm_memcg_path(mm);                            \
- 		trace_mmap_lock_##type(mm,                                     \
- 				       memcg_path != NULL ? memcg_path : "",   \
- 				       ##__VA_ARGS__);                         \
- 		if (likely(memcg_path != NULL))                                \
- 			put_memcg_path_buf();                                  \
--		local_unlock(&memcg_paths.lock);                               \
-+		local_unlock_irqrestore(&memcg_paths.lock, flags);             \
- 	} while (0)
- 
- #else /* !CONFIG_MEMCG */
-
-because local_lock_irqsave() is defined as
-
-  #define local_lock_irqsave(lock, flags)	__local_lock_irqsave(lock, flags)
-
-in include/linux/local_lock.h and __local_lock_irqsave() macro is defined as
-
-  #define __local_lock_irqsave(lock, flags)			\
-  	do {							\
-  		local_irq_save(flags);				\
-  		local_lock_acquire(this_cpu_ptr(lock));		\
-  	} while (0)
-
-if PREEMPT_RT=n or
-
-  #define __local_lock_irqsave(lock, flags)			\
-  	do {							\
-  		typecheck(unsigned long, flags);		\
-  		flags = 0;					\
-  		__local_lock(lock);				\
-  	} while (0)
-
-if PREEMPT_RT=y in include/linux/local_lock_internal.h .
-
-
-
-But a fundamental question arises here; why do we need to hold
-memcg_paths.lock here, for as of commit 44ef20baed8e ("Merge tag
-'s390-6.10-4' of git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux"),
-"git grep -nF memcg_paths" indicates that memcg_paths.lock is used within
-only TRACE_MMAP_LOCK_EVENT() macro.
-
-  mm/mmap_lock.c:48:static DEFINE_PER_CPU(struct memcg_path, memcg_paths) = {
-  mm/mmap_lock.c:63:              memcg_path = per_cpu_ptr(&memcg_paths, cpu);
-  mm/mmap_lock.c:101:             rcu_assign_pointer(per_cpu_ptr(&memcg_paths, cpu)->buf, new);
-  mm/mmap_lock.c:135:     struct memcg_path *memcg_path = this_cpu_ptr(&memcg_paths);
-  mm/mmap_lock.c:152:     local_sub(MEMCG_PATH_BUF_SIZE, &this_cpu_ptr(&memcg_paths)->buf_idx);
-  mm/mmap_lock.c:159:             local_lock(&memcg_paths.lock);                                 \
-  mm/mmap_lock.c:166:             local_unlock(&memcg_paths.lock);                               \
-
-That is, what is the reason we can't revert commit 832b50725373 and
-make the TRACE_MMAP_LOCK_EVENT() macro to branch directly like below?
-
-diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
-index 1854850b4b89..1e440c7d48e6 100644
---- a/mm/mmap_lock.c
-+++ b/mm/mmap_lock.c
-@@ -153,19 +153,35 @@ static inline void put_memcg_path_buf(void)
- 	rcu_read_unlock();
- }
- 
-+#ifndef CONFIG_PREEMPT_RT
- #define TRACE_MMAP_LOCK_EVENT(type, mm, ...)                                   \
- 	do {                                                                   \
- 		const char *memcg_path;                                        \
--		local_lock(&memcg_paths.lock);                                 \
-+		preempt_disable();                                             \
- 		memcg_path = get_mm_memcg_path(mm);                            \
- 		trace_mmap_lock_##type(mm,                                     \
- 				       memcg_path != NULL ? memcg_path : "",   \
- 				       ##__VA_ARGS__);                         \
- 		if (likely(memcg_path != NULL))                                \
- 			put_memcg_path_buf();                                  \
--		local_unlock(&memcg_paths.lock);                               \
-+		preempt_enable();                                              \
- 	} while (0)
- 
-+#else
-+#define TRACE_MMAP_LOCK_EVENT(type, mm, ...)                                   \
-+	do {                                                                   \
-+		const char *memcg_path;                                        \
-+		migrate_disable();                                             \
-+		memcg_path = get_mm_memcg_path(mm);                            \
-+		trace_mmap_lock_##type(mm,                                     \
-+				       memcg_path != NULL ? memcg_path : "",   \
-+				       ##__VA_ARGS__);                         \
-+		if (likely(memcg_path != NULL))                                \
-+			put_memcg_path_buf();                                  \
-+		migrate_enable();                                              \
-+	} while (0)
-+#endif
-+
- #else /* !CONFIG_MEMCG */
- 
- int trace_mmap_lock_reg(void)
-
-Is the reason because &buf[idx] in get_memcg_path_buf() might become out of
-bounds due to preemption in normal context if PREEMPT_RT=y ? If so, can't we
-add "idx >=0 && idx < CONTEXT_COUNT" check into get_memcg_path_buf() and
-return NULL if preemption (or interrupt or recursion if any) exhausted the per
-cpu buffer?
-
-  /*
-   * How many contexts our trace events might be called in: normal, softirq, irq,
-   * and NMI.
-   */
-  #define CONTEXT_COUNT 4
-
+greg k-h
 
