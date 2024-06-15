@@ -1,198 +1,127 @@
-Return-Path: <linux-kernel+bounces-216060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1641909A9A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 01:36:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F41CF909A9E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 01:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DA3F1F21A65
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 23:36:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52692282A78
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 23:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3251E4964F;
-	Sat, 15 Jun 2024 23:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15515339B;
+	Sat, 15 Jun 2024 23:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e6m8aUDe"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kNrCuU2e"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A884179F0;
-	Sat, 15 Jun 2024 23:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8051C2561D;
+	Sat, 15 Jun 2024 23:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718494587; cv=none; b=pwbua0/lfk56kmOk/965PFXNe8NvvvCpubYAHDc9ozE/ad217uUrNp8AUVLQyEOvKnL76RZbNNwJSe9vwgHZRg6UGotuvzJk7hgbDVAs9XEv8abGI6OXLx//DnFKMLIUWS+YGad7qThOwqTZX7qxhRsGnVhZ7p+LvG+t9ZG58X4=
+	t=1718495223; cv=none; b=V+z8SPW+/aArsUzwtael4mwVEFPRxFtx0SmkWrPNWkIe4aZJQzh61dNCcHzqA1lAhFS7RN5v1mUUjoQ6F4X0L4PeyuCxtLuXr/vNko492p6mi1mCFLTHjamm6tLriyixBB9+lbmT35qM3SRDFWKYKX+fdCvrLmBv12ojXRYzqPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718494587; c=relaxed/simple;
-	bh=gJbZRk1lgDNJFrleCKGYFgtdLlDwR+XD35UcewbioYA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VhLpomjjOFJAbGdaYcnem8yBcC8MIxw0Xj5bjRLbOZL2ydxOzQim6xWolGl0H2huEePf52ZXd4MeNWujnvioDT5k1BUq05ksJI6FMMLer6aa6qSOsf5JkKR8DLcAo20CE0Q/kt8m+GIrICv50EGJNx7SQMMlaoySJyx7YxkwsF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e6m8aUDe; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52c7fbad011so3946529e87.0;
-        Sat, 15 Jun 2024 16:36:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718494584; x=1719099384; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uu2t3jwVs6P+gBa8LNfJO/zndFSGozsr51+807rPpe8=;
-        b=e6m8aUDeDCWregAl0u6FMHRVfcbMQKMKV9Vuwj2YPDCpBzO41hb1BiQnnrWaFc92Vg
-         A7MAPxImofA7id3qRGWoVtHggocagqeMF1TV/doMDOoA+6SThxiGKxq1PlbWo/VdzckL
-         3FiOYo/Lfj96+m3MwyP08B2TWsHWYnefj2aSsGM5QMbeFasKq+YZIsYu+MHaucEBq7RQ
-         v5xoFxsAriTieQOhJ0EC5mXEhpuAQcJj0D66on1RVk7Qk7cNsTK7NIr8GZDPIVVDTNOX
-         TCwT66L4PGxbA7KUmkRbDdfFa4tyz3UwpIcPkcY+oUdEmdyAksu0hq4LdlxFSSMOvORP
-         cRBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718494584; x=1719099384;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uu2t3jwVs6P+gBa8LNfJO/zndFSGozsr51+807rPpe8=;
-        b=wD3rtrpvQZxmMaW9PMpw1mZGHDyY5+vHbElmUYknqc2QX41T601WYO5g1paMrsQBXm
-         FxnnFhacIx2D9xlpcMkdXhgsVvba4l2tyy2/UObYbM0N+5N7hCWy7G5IkqVKWtZCSnJR
-         o/SLHPKx0dnIfWzrWgTVmN/PjkTXAQJUqP0/vD6a9ZuNkvDcACNQ7eI8Spm2bJ1Y/+Ov
-         Hm8wq3c3hxQJcTOMM4hm5sAuXjTHp2+gmeJeJjHizJbl3p/isVle0UXTtcNeTewg1z0J
-         Hu0lJHwVW3zPh/Tvhi7CjoXhyr+VqMULFKfSfvnDyHdBSV2/eTd7v8GRvBU5Abttmtg5
-         ZmRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdpk/GJtmStnD/Z2EC1X6Gwg+MKu0EU0nDyIxbSXA/LyiZ4ympemef5nRlCuKNDEksUs51KubuDbCaflyLVgvAbBpm9fAoHLgNl48=
-X-Gm-Message-State: AOJu0YxQoPcXgXr9cntdHVBmcp5UTQb4UbxplWk8oBPrquFGrkAlnaO8
-	7ZkzxH2SzlO4fndJHWGnvjsPCc3L3Lw7exJzEYhZm/VZz0XcIgWKJvXcnulCImw3oAZLDEyQ52f
-	meenqNctxdDyD+aXPXOxrVJMwu0U=
-X-Google-Smtp-Source: AGHT+IE8gmsrj+Ltun9T1K8NjQTLC6ADr31u8bguhUl+sVg13fEuZGB3jcH3qI8nbnFZdcpvwa4EB8OrLHdRv9Owi3A=
-X-Received: by 2002:a19:e015:0:b0:52c:a483:4cc6 with SMTP id
- 2adb3069b0e04-52ca6e6dd0emr3588833e87.36.1718494583491; Sat, 15 Jun 2024
- 16:36:23 -0700 (PDT)
+	s=arc-20240116; t=1718495223; c=relaxed/simple;
+	bh=N4FN2DClt/Y/uIf72OrDc+dyQD9gXFv5s3nVG1ZLfpQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=HtUd/LEJ0T5nRHtbFFAWga8W82H3h0gQcYTLD3olkceyIZ3vYPjYYsEXx6OnoyAyzMFi0IsiX6DczXR0XEN6cPkwlQF7Afm83Ik0rIiHAnZm5w2ZMov2LO/rORlnW10yYt2HxMXUoIvTiLCa5ApNbsFZQEO2To/G2xVSt2qrBms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kNrCuU2e; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45FNe228011298;
+	Sat, 15 Jun 2024 23:46:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=I7Lc5U98nkYM7nfAMMRFt+
+	f1kBIlp8rfa2dgQU7QCN0=; b=kNrCuU2e3KGJpM+6xE65exzy8ExTgYiBC+5tLF
+	R1KFPN46vx4bKJRJl4BdSoqW1odctlu3nz8DfHrVhJBehf8y9bN/1OpjOiXZYRS+
+	sjx4q/CJ0eJe5c0RkFs7sgK9sHJvt4RuZR3gNv+dGGzXV57SE5APy204pjcd0E8s
+	g9mMoUpUP7uavH8OeK6G3aTHYVPX84lUQh1EfDA9myLIs7k23Aky4vqtcTGC84F/
+	Hxxej2Jf7eot1jOdnVZ3DNrKsWZWdDkWy8AGt5+bBQN96jxKWZ+sxzurCr9aoAW5
+	9ZfLdwbapogMsXk0vpY7g/6es7YBmlSPDzp5cbqv/gw3ztqQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys0an1d74-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Jun 2024 23:46:53 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45FNkqI2003841
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Jun 2024 23:46:52 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Jun
+ 2024 16:46:51 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sat, 15 Jun 2024 16:46:50 -0700
+Subject: [PATCH] s390/crc32: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <000000000000cb6fca061af0462e@google.com>
-In-Reply-To: <000000000000cb6fca061af0462e@google.com>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Sun, 16 Jun 2024 08:36:07 +0900
-Message-ID: <CAKFNMomc2XRRT6u5YB9LxYJTmi7bGzq5dL-_VbsMbXuLa=m-sQ@mail.gmail.com>
-Subject: Re: [syzbot] [nilfs?] kernel BUG in nilfs_btnode_create_block (2)
-To: syzbot <syzbot+89cc4f2324ed37988b60@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240615-md-s390-arch-s390-crypto-v1-1-7120d406e7c7@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAOknbmYC/yXMyw6CQAyF4VchXdtkQC7RVzEsykxxmshAWjQYw
+ rs76u58i/PvYKzCBtdiB+WXmMwpozwV4COlO6OEbKhcVbu2bHAKaOeLQ1If/8vre1ln7Bpmpja
+ Moash3xflUbZf+tZnD2SMg1Ly8Rt8SHpuOJGtrHAcH/9QTBOJAAAA
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
+	<gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        "Christian
+ Borntraeger" <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>
+CC: <linux-crypto@vger.kernel.org>, <linux-s390@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: h_P0oKot1Z1TRdcEgnqXmvPciXnZokLG
+X-Proofpoint-ORIG-GUID: h_P0oKot1Z1TRdcEgnqXmvPciXnZokLG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-15_17,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ bulkscore=0 impostorscore=0 priorityscore=1501 spamscore=0 clxscore=1011
+ suspectscore=0 mlxscore=0 adultscore=0 lowpriorityscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406150181
 
-On Sun, Jun 16, 2024 at 1:32=E2=80=AFAM syzbot  wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    83a7eefedc9b Linux 6.10-rc3
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D13ab3d9698000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc79815c08cc14=
-227
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D89cc4f2324ed379=
-88b60
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/b45273014a8f/dis=
-k-83a7eefe.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/94cd5708292e/vmlinu=
-x-83a7eefe.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/a89698812e8b/b=
-zImage-83a7eefe.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+89cc4f2324ed37988b60@syzkaller.appspotmail.com
->
-> ------------[ cut here ]------------
-> kernel BUG at fs/nilfs2/btnode.c:59!
-> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-> CPU: 1 PID: 7600 Comm: segctord Not tainted 6.10.0-rc3-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 04/02/2024
-> RIP: 0010:nilfs_btnode_create_block+0x3dc/0x400 fs/nilfs2/btnode.c:59
-> Code: 8e 48 89 da e8 85 25 73 01 e9 a7 fd ff ff e8 cb d2 28 fe eb 0c e8 c=
-4 d2 28 fe eb 05 e8 bd d2 28 fe 4c 89 ef e8 35 00 00 00 90 <0f> 0b e8 ad d2=
- 28 fe 4c 89 f7 48 c7 c6 40 f2 06 8c e8 8e c0 6f fe
-> RSP: 0000:ffffc90004f1f270 EFLAGS: 00010202
-> RAX: ffffffff821b2801 RBX: 0000000000000010 RCX: ffffffff821b2819
-> RDX: 0000000000000001 RSI: 0000000000000004 RDI: ffff88807746f5d0
-> RBP: 0000000000001cc3 R08: ffff88807746f5d3 R09: 1ffff1100ee8deba
-> R10: dffffc0000000000 R11: ffffed100ee8debb R12: dffffc0000000000
-> R13: ffff88807746f570 R14: 1ffff1100ee8deae R15: ffff88805e399490
-> FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fdd25186000 CR3: 000000007a728000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  nilfs_btnode_prepare_change_key+0x26d/0x300 fs/nilfs2/btnode.c:219
->  nilfs_btree_prepare_update_v+0x397/0x450 fs/nilfs2/btree.c:1942
->  nilfs_btree_prepare_propagate_v fs/nilfs2/btree.c:2001 [inline]
->  nilfs_btree_propagate_v fs/nilfs2/btree.c:2054 [inline]
->  nilfs_btree_propagate+0x3bf/0xdf0 fs/nilfs2/btree.c:2111
->  nilfs_bmap_propagate+0x75/0x120 fs/nilfs2/bmap.c:345
->  nilfs_segctor_apply_buffers+0x184/0x340 fs/nilfs2/segment.c:1006
->  nilfs_segctor_scan_file+0x810/0xa50 fs/nilfs2/segment.c:1066
->  nilfs_segctor_collect_blocks fs/nilfs2/segment.c:1164 [inline]
->  nilfs_segctor_collect fs/nilfs2/segment.c:1492 [inline]
->  nilfs_segctor_do_construct+0x1c43/0x6b50 fs/nilfs2/segment.c:2040
->  nilfs_segctor_construct+0x181/0x6b0 fs/nilfs2/segment.c:2408
->  nilfs_segctor_thread_construct fs/nilfs2/segment.c:2516 [inline]
->  nilfs_segctor_thread+0x55c/0x11b0 fs/nilfs2/segment.c:2601
->  kthread+0x2f0/0x390 kernel/kthread.c:389
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:nilfs_btnode_create_block+0x3dc/0x400 fs/nilfs2/btnode.c:59
-> Code: 8e 48 89 da e8 85 25 73 01 e9
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+With ARCH=s390, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/s390/crypto/crc32-vx_s390.o
 
-Looking at the call trace, it looks like in
-nilfs_btnode_create_block(), the buffer obtained by
-nilfs_grab_buffer() is in an unexpected state, triggering a BUG() that
-remains there.
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-If the abnormal state is reproducible when given a corrupted
-filesystem image (which I suspect it is), it should be rewritten to
-return an appropriate error, or at least handled with WARN_ON() or
-WARN_ON_ONCE() if it is caused by some other bug.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ arch/s390/crypto/crc32-vx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Once syzbot finds the reproducer, this will become clearer.
+diff --git a/arch/s390/crypto/crc32-vx.c b/arch/s390/crypto/crc32-vx.c
+index 74f17c905d12..89a10337e6ea 100644
+--- a/arch/s390/crypto/crc32-vx.c
++++ b/arch/s390/crypto/crc32-vx.c
+@@ -297,6 +297,7 @@ module_cpu_feature_match(S390_CPU_FEATURE_VXRS, crc_vx_mod_init);
+ module_exit(crc_vx_mod_exit);
+ 
+ MODULE_AUTHOR("Hendrik Brueckner <brueckner@linux.vnet.ibm.com>");
++MODULE_DESCRIPTION("CRC-32 algorithms using z/Architecture Vector Extension Facility");
+ MODULE_LICENSE("GPL");
+ 
+ MODULE_ALIAS_CRYPTO("crc32");
 
-Ryusuke Konishi
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240615-md-s390-arch-s390-crypto-75eeea6dfd74
+
 
