@@ -1,114 +1,64 @@
-Return-Path: <linux-kernel+bounces-215903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B1109098A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 16:27:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D5B9098A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 16:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE6681F215E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:27:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FDA528383B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9235249630;
-	Sat, 15 Jun 2024 14:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E344962E;
+	Sat, 15 Jun 2024 14:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="MX4ei3uI"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VhnKZD7e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69051E511;
-	Sat, 15 Jun 2024 14:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A2A49624;
+	Sat, 15 Jun 2024 14:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718461646; cv=none; b=q3VmaNo+KbIg7aY99Ymw51D6bZjrYMQN/q10ooLGjGr+2NJKP0cQvmIOPc3GchlulFgeYIM+FT3bcszTZRRWHuDs/OXc2B0aTh6MxUg6vEbfVqSNhvQU/XuBfIWIBwqRuzguTcUOcqwQtMmPe9SOLEClRd+yTeg+U1tUZLtUbl8=
+	t=1718461703; cv=none; b=Xzcokv287ys2zKOWeDrTcShxFwuEYtKLak9Oh/fws16sqscfWsGtLkZgrHfC82YGtrjhhpZf840C32/jIdeWzKRZ3DYyXA4CpvYFNIBEdLkXDeYLyBL0ueIumej9QeBk3sDmRLMHUiLjcvKpZdFn/iDoYaHebPg+DMC+TggbIlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718461646; c=relaxed/simple;
-	bh=o/SQd+brB2QkhekD2Nrpw7e1Fn3IUdRHYI44H3HScPI=;
+	s=arc-20240116; t=1718461703; c=relaxed/simple;
+	bh=uapNe6daeUuo6aEAI9k9slBYeR6ie3LDPRu+C4G/1NU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XSVZPOKaC31DOEnrvHMMWoMnrFqgyqs1hyCEvAvaFsd3heT29vtj3WVJF3qy53o2hR9juUcNBxnGIWhGbCS3Ifk5ImVuHtI7GAdgxCoehSN2/F+w3ikCAcPWcxHtv4pU/cC07E6C4f6yhCfEf1rxyndOKk8uYyTtU3oWVPookkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=MX4ei3uI; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=WMV4XdfigA9k42kYaaxbDI3Cm/CZfKkOSa4d9FAnLBU=; b=MX4ei3uInKB1tI7JcTqP72OeAy
-	dAOfULdNDyKssbwffE64lKqDt1qPcRwnmYki7uISHpalFK3Sjz+iistgd0XgbiGLtzs89mevgmISM
-	ImrsPYaQpLvEw5Phh/i3yvlf7inlN3S0pzbU9GojESRqQ8uAeFXUZJUkow9Fm+H/1X8oBu/mLnmRq
-	9KaqOzmhz1xLB1XksP4LJz8QjpGXNQ/awK+/Fm/9fA5aTCEzGfHyVwaUPxr/l/qe+aq/QXFM3w+YG
-	EVkOwrIShH1qhBOmLK+G7AsdGnZ871aaaCCVzH2vqnFOpwV4pDOcfLcGzWTk+QUOVhhlilPvTeTZk
-	szS/VgLg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40990)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sIUMt-0003Oz-1J;
-	Sat, 15 Jun 2024 15:26:59 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sIUMc-00039D-Bw; Sat, 15 Jun 2024 15:26:42 +0100
-Date: Sat, 15 Jun 2024 15:26:42 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: linux-kernel@vger.kernel.org,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>, Guo Ren <guoren@kernel.org>,
-	Michal Simek <monstr@monstr.eu>, Dinh Nguyen <dinguyen@kernel.org>,
-	Jonas Bonn <jonas@southpole.se>,
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-	Stafford Horne <shorne@gmail.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=q1CQiskAkdYErOfbkrRq5WWpcxF/V2RhJJgE8wrSq6vDEqlF0aDTFp5q7nN9oe81VgPKSPfTDR7gS9uWOrUJkpN4et/cEf/pCb18WjwLvT4uRAqDAIv4d2WHGsI0cN9LTVMdt0WhOqHc2ObXK3xkB7Cs2nfNsJFRsb2lyP0CVR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VhnKZD7e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3A83C116B1;
+	Sat, 15 Jun 2024 14:28:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718461702;
+	bh=uapNe6daeUuo6aEAI9k9slBYeR6ie3LDPRu+C4G/1NU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VhnKZD7eaNQtOLKIQsKbOXbEK5Re7tDo7eav4A6VztwGZ0lMNDnyhSSeiFu9ETIYn
+	 v2+swGmpyvzsyrpkBbaf6XJIXS8t2DPm8PuS2NcCRmK2XmYbdyPreBPKRtocyP30VZ
+	 i64RLcXmQSpNY6iAg540YyKldnGd3BFwztl5SmbJgkt4T7rVWhT/LoT7li1pIgUupC
+	 v94AljzRFAb8Yt0ELLmaBGxanZttDE3JLwv9XhHbGplgSlmQgC6EcOC+OHr7quhlWO
+	 huPCqqAOYRHdF95cGbjEu+PyH9c8ePumTDg7T8IRGyfQTFUzT0iFXzTxRB2PpyllAK
+	 BYDkg7icd23Lg==
+Date: Sat, 15 Jun 2024 15:28:17 +0100
+From: Simon Horman <horms@kernel.org>
+To: Shradha Gupta <shradhagupta@linux.microsoft.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	Erick Archer <erick.archer@outlook.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
 	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Andrew Donnellan <ajd@linux.ibm.com>,
-	Benjamin Gray <bgray@linux.ibm.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Xin Li <xin3.li@intel.com>, Kees Cook <keescook@chromium.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Tony Battersby <tonyb@cybernetics.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Brian Gerst <brgerst@gmail.com>, Leonardo Bras <leobras@redhat.com>,
-	Imran Khan <imran.f.khan@oracle.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Rik van Riel <riel@surriel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	David Vernet <void@manifault.com>,
-	Julia Lawall <julia.lawall@inria.fr>, linux-alpha@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-pm@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [PATCH v2 00/14] Introducing TIF_NOTIFY_IPI flag
-Message-ID: <Zm2kouKx/NSSrr6x@shell.armlinux.org.uk>
-References: <20240613181613.4329-1-kprateek.nayak@amd.com>
+	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: Re: [PATCH net-next] net: mana: Use mana_cleanup_port_context() for
+ rxq cleanup
+Message-ID: <20240615142817.GD8447@kernel.org>
+References: <1718349548-28697-1-git-send-email-shradhagupta@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -117,24 +67,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240613181613.4329-1-kprateek.nayak@amd.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <1718349548-28697-1-git-send-email-shradhagupta@linux.microsoft.com>
 
-On Thu, Jun 13, 2024 at 06:15:59PM +0000, K Prateek Nayak wrote:
-> o Dropping the ARM results since I never got my hands on the ARM64
->   system I used in my last testing. If I do manage to get my hands on it
->   again, I'll rerun the experiments and share the results on the thread.
->   To test the case where TIF_NOTIFY_IPI is not enabled for a particular
->   architecture, I applied the series only until Patch 3 and tested the
->   same on my x86 machine with a WARN_ON_ONCE() in do_idle() to check if
->   tif_notify_ipi() ever return true and then repeated the same with
->   Patch 4 applied.
+On Fri, Jun 14, 2024 at 12:19:08AM -0700, Shradha Gupta wrote:
+> 
+> To cleanup rxqs in port context structures, instead of duplicating the
+> code, use existing function mana_cleanup_port_context() which does
+> the exact cleanup that's needed.
+> 
+> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
 
-Confused. ARM (32-bit) or ARM64? You patch 32-bit ARM, but you don't
-touch 64-bit Arm. "ARM" on its own in the context above to me suggests
-32-bit, since you refer to ARM64 later.
+Thanks for following-up with this clean-up, much appreciated.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Reviewed-by: Simon Horman <horms@kernel.org>
 
