@@ -1,117 +1,102 @@
-Return-Path: <linux-kernel+bounces-215649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A335E90957A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:59:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3531390957F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 04:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94BD81C20945
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 01:59:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FADB1C21D58
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 02:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EE56FD0;
-	Sat, 15 Jun 2024 01:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2069879F5;
+	Sat, 15 Jun 2024 02:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="C/0J+Hlf"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="eJ+iZr/r"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12124D26D;
-	Sat, 15 Jun 2024 01:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F4E173;
+	Sat, 15 Jun 2024 02:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718416749; cv=none; b=hwp+e7dDXsco6HSH2Y8Awfa30Avlm4OAmUDm/bD/Gw4HQVG0t9ni/TmcJgkWnObnmUVpDIFBF+Vz0V3cJ81vMyNkXLRQo3vsgi1h7X1X/kWLZvap6572Y/YhRv7K0uOtz8kWAJ+Q82LnVNQm9nW26wsMr5YkTY74uA5BOZz/kEU=
+	t=1718416842; cv=none; b=jvQSIUT58T1r097tRlEEojvYzcWlIhucWce0rBWDHT2m5Gco/2/lByRhgO+A6Ax7mDTTt/L4FTmrF1Y1CLU1ceLZRdp5R9CUvHmrEwtQv9cdZm0lU7ZFmCgC6d/n6/hiflfLuddtJeGGMdYzWMtQHUCevG8bMbXxmejV2i114+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718416749; c=relaxed/simple;
-	bh=ww37zaOiEY4YoIR9AYfLzK6DHmdS62JS+qyuTD4w/uY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LPiiz8H/iEp6kzK4C3iYPSFrcCJBOYV7a/0Hlp7KeW7YvrQpxQcq2tX2FPJBuGRw4ko/s7aDwc8cP8ecmuUYTxlnJtibWaqHHwbpADt+sx13tBozn79vWKxCKPibQDhm4aVSJarHYPbrGLKBURutCp5OXswjRwoE6uKfIp9De0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=C/0J+Hlf; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57c778b5742so3217302a12.2;
-        Fri, 14 Jun 2024 18:59:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1718416746; x=1719021546; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SnBuema51sIsa2QQpd+nX2kLoAJ6QBxAxGuxApnIuVQ=;
-        b=C/0J+Hlf9vLVjkZYqKa0bY4Onw8L1/hJJxz58LH1U2MFnIZX7PKvd17VCgK6sQlGYq
-         0KYY42iO3sGdL7ZU5N3+2RyysrJigUThB+jJIsKR9q1xB+vk9piCOe/aX8AbKaSnioaz
-         5T5/PeoNWLzADEfBQGLW/r1bASsRS2KzOEIS/gtx8HKDDn3pIh8B6b5/Xx3BBNvfID/d
-         ycuHmAijKyVIVxgNS8zjGI1FWLBruyrODoF03E/Rru08uuILWimqa+e9ghyCbRjQUq6V
-         v99cLfSGgKr/uVbPxIr0g6Osj31IrAXg9ruRAwA6EiJXNaAYpZiRg1rlP5U9E0Sm6qSM
-         ScLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718416746; x=1719021546;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SnBuema51sIsa2QQpd+nX2kLoAJ6QBxAxGuxApnIuVQ=;
-        b=DRdVcZa7+A0cW5FJSKxxPwwvCzd8fiA3QCwTJrcK+7csWzNHijJ83syZ9aBizag+GO
-         AQNvTEAZY6U12GH92mTP/GE72/j9BJahKTGZDF/Vmg787d52Ap8xUegYgvfhVH8Psy2W
-         M2Wj6vN+35rbMpld9i2wCIpbSRTcMNWXBmXp1ESQK5t0q3yKEseLQ2VUQXBue/jHaNoM
-         Yrf9njfbZA9n27uOO10t+z300RbyDcZCzLZM2CcP25/e+XNDZW2TRip/oahvFNYcKHHp
-         zWU873+7YgYjR6eM46sxbMv8rXDvaYcRpEP3oqVxVp9Edk/hBCYSvGnSIj53kCArJztj
-         Zkew==
-X-Forwarded-Encrypted: i=1; AJvYcCWVZ/dOJ1uU6kYZYLeH3WtKswWvFDCdOx1YUgHvfmXCBlTJ/ddZfUHOScpIB/DOvqC0Jm7wHpMaLD78kCB/QbfkDRABQqevWvjrrrh4kHaRcb7IMBxcJXU4xN6yiK1lE8UUvSqe
-X-Gm-Message-State: AOJu0YwbdVkRGbJdiSfWWKSdty8hFQWa/m/tRl5nZtcRsfl3gEAEOQz2
-	C6WbBHeHuL3vVlWmOSoTCPz10tkX097zQMdLK6dQsAKHBn4Cmuo61YMA1C0=
-X-Google-Smtp-Source: AGHT+IGqfx4zl8pmHjaMX8jFrVGJShYsFAvAovN1qGxCuTlQKDG9mo2UcglhTiQR7gmxLmyHs31J0w==
-X-Received: by 2002:a50:bb64:0:b0:57a:2ea0:406d with SMTP id 4fb4d7f45d1cf-57cbd652479mr2588820a12.8.1718416746031;
-        Fri, 14 Jun 2024 18:59:06 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b4225.dip0.t-ipconnect.de. [91.43.66.37])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb741e70dsm2924217a12.62.2024.06.14.18.59.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 18:59:05 -0700 (PDT)
-Message-ID: <d8e7a445-5918-4049-ac39-ad222536ca6b@googlemail.com>
-Date: Sat, 15 Jun 2024 03:59:04 +0200
+	s=arc-20240116; t=1718416842; c=relaxed/simple;
+	bh=9ISOyBLtHHQ46y4nFfeB+yVtWI0bgXWueaPVsR6AzWs=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=T3cMapBxCsG4fYdH7uNJg5NnkQmhQkXyu8pwudGe6dS4SbFFyzgWIOTsnNVeRF9bLEPN+KRi8MrWe5mvPfQslYro6NZ70xJJqTOr44ARC/0ShJizaiwLOE61Jjm8pG0CFhmNYCiI55GGMkSbZISQQEPUFLWLPsnAqV/o9ysiwR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=eJ+iZr/r; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1718416824; bh=DJDeMoW5K5uNcfOJ2hT7v2SrNoqRd/4YkoDeJ+9atGg=;
+	h=From:To:Cc:Subject:Date;
+	b=eJ+iZr/rgqwtXgFk/sEqime0C5k4yE25U/jmnPEWAWC/8q2BqQQGkIFqM+trlrh/H
+	 z5pt1UltGnF0s/dWrhlidi16ao47Q/QVBvoX6ivKxUfJPxtxz0hMG4LUSqEa7aXr+U
+	 3lGGRD7MmGdll1d1Px69VDD81OXZlcTCIqn7xkt0=
+Received: from ubuntu.. ([36.129.28.219])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id 169DCBE; Sat, 15 Jun 2024 10:00:22 +0800
+X-QQ-mid: xmsmtpt1718416822tqw4lq6li
+Message-ID: <tencent_3A7366F414667EE52C073850077331ADC709@qq.com>
+X-QQ-XMAILINFO: OZZSS56D9fAjfSY+ydDZN+BXeDP30J0wj4xtvlDZEaDgl4/hAdFzBnXHuaOzt3
+	 UZfpMFDC2otftaIGkqU17cEcwh5z9dupvR5HLjTRs2ifVNov15Y1eBrPSsIqVXOzc7EUDvRt41t7
+	 sGiPEpiN3fqm9mgu0Bgw4AWnuz1Oxfxw5QH5CGa+9iEhYF2gV426OC2D6eLVaQ/5zzFku8YEgU5O
+	 STGfVajBIANG8WDCA46MOmoqw8LasEKQAOfvM8JPmO2jmbjBuFQYCkx9uLIuujtAO4x6e/9sUG4U
+	 QfwsoONDMDVhkNTEWCmJU/RTognfjO/5unSq2khU3LHjaLFoGJy30vldq/sL2eJQkeQHIWTVc5hH
+	 P/mI7TnME8qK9dM/TsoBnPrSu8KbNIUSFKt9Hjy/qeXiIwbC+I9RDW2bZh+RcnsQEMnoldsVFYs+
+	 AL5wxCgLHQkLDAIuctUdFesJsKxgb/JgA31BBhTgGHTTt91LNeEvLnjcNt6/56jAhGkwB93R1Ijv
+	 a1zqwcColL86vdO+bWPL6GIytjAzNMPswsAH3lQ2KV3McgQx/ViG/iwTDe4GvaThs9b905DzHas4
+	 owEXaNsPl5s7OjRy69GZVyXenZdfez7BwdjJfp6fgx5QyOsR5eVH34VkWDSIuzZwNycqqSDkcfTt
+	 3bvn0Rsb1d8AwnYiMX6t+YdHf4nf1TallFrRSKAY6GU15cHXw9CPo2hXsBNZzsubvDrr6UA1uFWK
+	 R65k1VWbTmwnri6MloM/fLi1XrNFOUKZV2uBk3JgwCavCEfuTEXAhaiRPAZKljfmQW9y3824ZsSs
+	 1uamwi4UAgWdjdiMT0N4IfAWe2npvEj+NcdrRwfvvHqjwSd2+y0zonfB6j+p0l2MercIQBMpkE/s
+	 McmFhadDLvBLq2SrHvrOhWNfgMSs6Y83oPrvt5KUt75MObJllPFdRx9IzHrIvTL65stMSI/FYujc
+	 yJp+yTofAiwqr8WbP62Gr/JFHh5w/XG84DWXvoRQuJxWqtUSX/oz6H1ryWXQdthKkXd+OlzyiEEs
+	 iulhXFVRwdcbOuQ+CJ4zw7b+OZoXc=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Congjie Zhou <zcjie0802@qq.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Congjie Zhou <zcjie0802@qq.com>
+Subject: [PATCH] fs: modify the annotation of vfs_mkdir() in fs/namei.c
+Date: Sat, 15 Jun 2024 09:59:13 +0800
+X-OQ-MSGID: <20240615015913.14461-1-zcjie0802@qq.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.9 000/157] 6.9.5-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240613113227.389465891@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20240613113227.389465891@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Am 13.06.2024 um 13:32 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.9.5 release.
-> There are 157 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+modify the annotation of @dir and @dentry
 
-Builds, boots and works fine w/o regressions on 2-socket Ivy Bridge Xeon E5-2697 v2. 
-Everything looking good. Except from simply firing up 12 VMs, I have not done any serious 
-load testing this time though.
+Signed-off-by: Congjie Zhou <zcjie0802@qq.com>
+---
+ fs/namei.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
-
-Beste Grüße,
-Peter Schneider
-
+diff --git a/fs/namei.c b/fs/namei.c
+index 37fb0a8aa..eda889f0c 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -4095,8 +4095,8 @@ SYSCALL_DEFINE3(mknod, const char __user *, filename, umode_t, mode, unsigned, d
+ /**
+  * vfs_mkdir - create directory
+  * @idmap:	idmap of the mount the inode was found from
+- * @dir:	inode of @dentry
+- * @dentry:	pointer to dentry of the base directory
++ * @dir:	inode of parent dentry of @dentry
++ * @dentry:	pointer to dentry of the new directory
+  * @mode:	mode of the new directory
+  *
+  * Create a directory.
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+2.34.1
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
