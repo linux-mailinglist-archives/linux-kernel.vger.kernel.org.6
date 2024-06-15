@@ -1,144 +1,154 @@
-Return-Path: <linux-kernel+bounces-215796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E463909719
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:52:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F5CA90971F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53FC4B22281
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:52:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 732ED1C21D26
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838F12030A;
-	Sat, 15 Jun 2024 08:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="QeDy1YrO"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DAA1CFBC;
+	Sat, 15 Jun 2024 08:52:32 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D082218EB8
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 08:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE322575A;
+	Sat, 15 Jun 2024 08:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718441514; cv=none; b=lJbuF2LyIcRDZylmqpEN7YUDsUoRIqrQ7Zv+/mAHxbvyl7gG1JBTa8TgVeOchwrCFCd+eC3Zl/OwGY26opNP64s96e08DZkrn7kwPjK3VkIY4iRejNcwFTBmeNVjz01gppebyp4u9PAMgb6OMqgSXVQrIOYyboSXU0nyarJ8kSo=
+	t=1718441552; cv=none; b=rjrQkllW1cTboVITBqfCSvp9ZGZijPJsHypYw5i6bFZIEzk+TreSWuRd32z6ZcUce2fiumKqo0jCnKkXjJbOjKmteW7nMeIyN8BJPfixFvwn5Uhvl5YTD0wtuZSYjEEtGyPUAdnMNgN94ruK+GcIQXXjjVoyVFnXDCv6sFN1khg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718441514; c=relaxed/simple;
-	bh=2uhNmFDzmca77n8/NYMgx5PLYKQsfE2F4rpsDHEStzY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fkafxXoLnepCJw3X1HQZx55ws4hzmsQU44gUz9CcqT46erqpbcZ6GI8sUpOz1wajhzxGmSZ6z+Xayg/s2odqJQfNUo4F10u4H1WWuXJMuIk8FUsi5yrXsj410Syius1FE94xZdU/rfNcnkH0Z+8YyZ7q8xrwqzLVVh62ho6eIaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=QeDy1YrO; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1718441510;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FzCprlv9GxaDwbOC21n35gObXPY/amCP46gcmpDxZd4=;
-	b=QeDy1YrOxKKjkHJdePkDCle/LiRFoccvtCuVRnqHasyfAD1jXs8sM0xR/XLODlq+yHXE7J
-	QoodMcP8WCQEbHdDeq1ci6I8HIHG4e9/raQle5ZGipBK2gouPgARL67W26kt8f9tTvNMv6
-	HBuQOQAsk+jD0jB+kXUysP8AqskjdOU+iS7pHsmEjDkdEIR4qMTWc4/rTfbzyJ+wHz+jZS
-	f4jFFiP9JhsRpL/LpvLMPoTkG08Eb4/nmEvvIom1l/797aDmrjBhZKVgQKxedovcIo9yFw
-	ynlOh5JDc9Q9Xpd/JsCJ1Y+RDmZCPyd93WkHdJF6+1AHs6CzRA5n28v3mZgaOw==
-X-Envelope-To: detlev.casanova@collabora.com
-X-Envelope-To: mchehab@kernel.org
-X-Envelope-To: robh@kernel.org
-X-Envelope-To: krzk+dt@kernel.org
-X-Envelope-To: conor+dt@kernel.org
-X-Envelope-To: heiko@sntech.de
-X-Envelope-To: gregkh@linuxfoundation.org
-X-Envelope-To: sebastian.reichel@collabora.com
-X-Envelope-To: dsimic@manjaro.org
-X-Envelope-To: alchark@gmail.com
-X-Envelope-To: cristian.ciocaltea@collabora.com
-X-Envelope-To: andy.yan@rock-chips.com
-X-Envelope-To: linux-media@vger.kernel.org
-X-Envelope-To: devicetree@vger.kernel.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: linux-staging@lists.linux.dev
-X-Envelope-To: detlev.casanova@collabora.com
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Diederik de Haas <didi.debian@cknow.org>
-To: linux-kernel@vger.kernel.org,
- Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Dragan Simic <dsimic@manjaro.org>, Alexey Charkov <alchark@gmail.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Andy Yan <andy.yan@rock-chips.com>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev,
- Detlev Casanova <detlev.casanova@collabora.com>
-Subject: Re: [PATCH 1/3] media: rockchip: Introduce the rkvdec2 driver
-Date: Sat, 15 Jun 2024 10:51:38 +0200
-Message-ID: <3333233.eAoTOS8U2s@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <20240615015734.1612108-2-detlev.casanova@collabora.com>
-References:
- <20240615015734.1612108-1-detlev.casanova@collabora.com>
- <20240615015734.1612108-2-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1718441552; c=relaxed/simple;
+	bh=swQ2Tm1tNIfEE87pE5WaaCMNbRke/wggnc6gseFfg9Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cam8YJMqoYtVbeVctmv8tfrXnao99+nFQDiMA3OU2lNtCkjMe/Lk96QrtKL5qOQrV5jfcj+AMzF38KcPxIaY9EWDJqBByGUsk1/tZ0M9p3qb0Ks/JWQlicC6dDHwsek+ObNlTgsNbxq4/bQaT4jCJ8psE1l6EYxL95zLGniBMmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W1VJZ0X0lz4f3jLL;
+	Sat, 15 Jun 2024 16:52:14 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id BD17D1A08FC;
+	Sat, 15 Jun 2024 16:52:20 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgCXaBFCVm1mxCEqPg--.28885S4;
+	Sat, 15 Jun 2024 16:52:20 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: song@kernel.org,
+	yukuai3@huawei.com
+Cc: linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH -next] md/raid5: fix spares errors about rcu usage
+Date: Sat, 15 Jun 2024 16:51:43 +0800
+Message-Id: <20240615085143.1648223-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart8264659.XZnPd2NMnp";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgCXaBFCVm1mxCEqPg--.28885S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxGw43JF1rur4rJr4UAF15XFb_yoW5XFyDpa
+	n0ya4Uua1Uur45ZFWDJayDC3Wak3WxGayxArWI939YvasYqFZ5Ja18Ja4Fvry5JFyrtay8
+	AFy5Kr4DJF18KFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF04k20xvY0x0EwIxG
+	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
+	xKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
---nextPart8264659.XZnPd2NMnp
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Diederik de Haas <didi.debian@cknow.org>
-Subject: Re: [PATCH 1/3] media: rockchip: Introduce the rkvdec2 driver
-Date: Sat, 15 Jun 2024 10:51:38 +0200
-Message-ID: <3333233.eAoTOS8U2s@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <20240615015734.1612108-2-detlev.casanova@collabora.com>
-MIME-Version: 1.0
+From: Yu Kuai <yukuai3@huawei.com>
 
-On Saturday, 15 June 2024 03:56:27 CEST Detlev Casanova wrote:
-> This driver supports the second generation of the Rockchip Video
-> decoder, also known as vdpu34x.
-> It is currently only used on the RK3588(s) SoC.
-> ...
-> The core supports H264, HEVC, VP9 and AVS2 decoding but this driver
-> currently only supports H264.
-> ...
-> The decision to make a different driver is mainly because rkvdec2 has
-> more features and can work with multiple cores.
+As commit ad8606702f26 ("md/raid5: remove rcu protection to access rdev
+from conf") explains, rcu protection can be removed, however, there are
+three places left, there won't be any real problems.
 
-https://wiki.pine64.org/wiki/Quartz64_Development#Upstreaming_Status uses both 
-the rkvdec2 and vdpu346 words and I *assumed* that meant that the Quartz64 
-Model A and B would use rkvdec2. The Q64-A and -B are rk3566 devices though.
+drivers/md/raid5.c:8071:24: error: incompatible types in comparison expression (different address spaces):
+drivers/md/raid5.c:8071:24:    struct md_rdev [noderef] __rcu *
+drivers/md/raid5.c:8071:24:    struct md_rdev *
+drivers/md/raid5.c:7569:25: error: incompatible types in comparison expression (different address spaces):
+drivers/md/raid5.c:7569:25:    struct md_rdev [noderef] __rcu *
+drivers/md/raid5.c:7569:25:    struct md_rdev *
+drivers/md/raid5.c:7573:25: error: incompatible types in comparison expression (different address spaces):
+drivers/md/raid5.c:7573:25:    struct md_rdev [noderef] __rcu *
+drivers/md/raid5.c:7573:25:    struct md_rdev *
 
-So is this just an (unfortunate) use of the same words or is that wiki page 
-just wrong ... or better yet: does rkvdec2 support RK356x too?
+Fixes: ad8606702f26 ("md/raid5: remove rcu protection to access rdev from conf")
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ drivers/md/raid5.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-Cheers,
-  Diederik
---nextPart8264659.XZnPd2NMnp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZm1WGgAKCRDXblvOeH7b
-brgQAQD+T08UA2/wwhvAFvEN6YbiMOcTnBEhemxyxRye7DTggwD/YEcUSIQQ/RPc
-NSTPgX06r8mCGK7SuZ4YyKRWnCMpWgQ=
-=M6ol
------END PGP SIGNATURE-----
-
---nextPart8264659.XZnPd2NMnp--
-
-
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index 547fd15115cd..3827f7df6b9a 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -155,7 +155,7 @@ static int raid6_idx_to_slot(int idx, struct stripe_head *sh,
+ 	return slot;
+ }
+ 
+-static void print_raid5_conf (struct r5conf *conf);
++static void print_raid5_conf(struct r5conf *conf);
+ 
+ static int stripe_operations_active(struct stripe_head *sh)
+ {
+@@ -7566,11 +7566,11 @@ static struct r5conf *setup_conf(struct mddev *mddev)
+ 		if (test_bit(Replacement, &rdev->flags)) {
+ 			if (disk->replacement)
+ 				goto abort;
+-			RCU_INIT_POINTER(disk->replacement, rdev);
++			disk->replacement = rdev;
+ 		} else {
+ 			if (disk->rdev)
+ 				goto abort;
+-			RCU_INIT_POINTER(disk->rdev, rdev);
++			disk->rdev = rdev;
+ 		}
+ 
+ 		if (test_bit(In_sync, &rdev->flags)) {
+@@ -8052,7 +8052,7 @@ static void raid5_status(struct seq_file *seq, struct mddev *mddev)
+ 	seq_printf (seq, "]");
+ }
+ 
+-static void print_raid5_conf (struct r5conf *conf)
++static void print_raid5_conf(struct r5conf *conf)
+ {
+ 	struct md_rdev *rdev;
+ 	int i;
+@@ -8066,15 +8066,13 @@ static void print_raid5_conf (struct r5conf *conf)
+ 	       conf->raid_disks,
+ 	       conf->raid_disks - conf->mddev->degraded);
+ 
+-	rcu_read_lock();
+ 	for (i = 0; i < conf->raid_disks; i++) {
+-		rdev = rcu_dereference(conf->disks[i].rdev);
++		rdev = conf->disks[i].rdev;
+ 		if (rdev)
+ 			pr_debug(" disk %d, o:%d, dev:%pg\n",
+ 			       i, !test_bit(Faulty, &rdev->flags),
+ 			       rdev->bdev);
+ 	}
+-	rcu_read_unlock();
+ }
+ 
+ static int raid5_spare_active(struct mddev *mddev)
+-- 
+2.39.2
 
 
