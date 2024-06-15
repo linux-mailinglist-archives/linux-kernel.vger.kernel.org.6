@@ -1,190 +1,219 @@
-Return-Path: <linux-kernel+bounces-215701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E27E909602
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 06:42:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB8F0909606
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 06:45:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 042681F230D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 04:42:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95C5628305F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 04:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF731FC12;
-	Sat, 15 Jun 2024 04:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49AA101C5;
+	Sat, 15 Jun 2024 04:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J1sGke49"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IiyUjbxv"
+Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB3D8F70;
-	Sat, 15 Jun 2024 04:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7622A19D8A4
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 04:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718426519; cv=none; b=K4i7e6nPbPmjGsRTGm/ITimdtmt28eSaLVepOpRYtH/FUS2FCsLq12bZao5IPS+N11gM2XKFZasJmXpgrlSEXl6ppvi00mGmcNV2bqHRtYNzQbdt70pz7ToCPP/ou2e4zxfsT2h8PPm+ICBMJKDT9xl2K52Te0QiJNfOO+ISkco=
+	t=1718426744; cv=none; b=mir+vGAnGgjAENj+cn9V4BO2mbhLs75H2fXa+mnju9yQRE6XAVwMrAnfh9lo/8sCLTtR/vlx36JAlRh0MjEPfjLIw9OWc8UFswB8u+T2InnhPc7CJ+vDMRcIepDeOOGb49Cwjt/7KwL0/XQZiBxh8hfMjG3tcbPgEjd/ObQ6kYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718426519; c=relaxed/simple;
-	bh=UsW5f2mRaDwai/bK6ucBq8wXkpvVGTtyzCqYbvt2ku4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gE069Vk3UytyOGED6KJlBND+GQdikrBUWeWcYMVohIMQbCMALZlrEb5lJ+64As4Hrhuiz7nudOGo8yhJWNiM7qMfs7PQc9BPzYCU8DOZIpN//8id9yaIiH1Nc6NaT7bhagi2zFibOHMBiGXCMjgy+ZaRweA66ul6ChH+4IRqYaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J1sGke49; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4217d808034so26962465e9.3;
-        Fri, 14 Jun 2024 21:41:57 -0700 (PDT)
+	s=arc-20240116; t=1718426744; c=relaxed/simple;
+	bh=FSYzqXk5GCVDk0+QYP2MD6C+6aLyvkArzgiSOUKHXe8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=lKmYfxZIDINZ1NURnyMP/n8owZ2Lm0IAQpxyiuAEMC2KIOh38VQBwCTl9aQxeOuTtHr7dEJA7UK8jkwpp11BsHlNCtAbWO13jup2XWyo91XJMOtBLg/8AUfncgU4vrd8xS5w4tXbmt2UZn68ViYKo4ZhwN6X0oUuNTtwD7uQsqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--swine.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IiyUjbxv; arc=none smtp.client-ip=209.85.166.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--swine.bounces.google.com
+Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-7e91ad684e4so300954939f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 21:45:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718426516; x=1719031316; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K2qrQhaKuq5qmeUje0aTpEyuTysZEWpi+WcIcMw+cck=;
-        b=J1sGke49rQ6zn69ORFrg/m2HNWcYXR1ID1FqfJ2e1r8c9oWdZ0Yre8Y0mQv/AxbxRT
-         sWxjjoChzUdohkfbdwMZKmu8xNXT7x6ejiVeamr/gfCaGsQ2IhQbLZ3YzNyTLEJCtpgY
-         u30/09I5icX0wRtHo3x0pJEFmhOmtviYGUKFBTyV364xBnVcxtEClLYH3FB/tmqiAjyX
-         6lDa/4Ts5XRlClOLZMerUW/95w1g6Ytw9RUubtj4G6MYXH/VJQNG72QOC2pS8Gp43egM
-         lYx/l9jjWYtxPDS0zE25w/S1CGGitd+8ySeErwrgnvHH+DhLbxpENTuEtUhuuAYpd6he
-         aj0w==
+        d=google.com; s=20230601; t=1718426742; x=1719031542; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Ux3AuQ+Jiebt7/7pb5tqKqqOopFVDXImGSpGZa//7ic=;
+        b=IiyUjbxvrCsUx0r/zmlyuvWAmkDuQjhjIpTD2tcvIRgISnPXxpeaabaWU9klYvAaq9
+         +I1IdsPzc01BlbQLrWFeb+YZP4Fy6IdPc1N8zebjLX+Sz7rQdfj2FhydlxIvQioMYl7G
+         g4Je5VoupyT8is5A8fjnWZmc6FBBY4788T0vhlungml+tq2g2ylI8Ur3H15cfd8dX677
+         c/e7yEDfZSPuJ4di9xlFnoJpkrMv9DdoHiFo7oIMs7uZ9E4t5Y6H4pFwfAqeyQgmIp1k
+         BoKsxUWm39daWJ0NS2O83/0DW9jt/YGUAS695juyqe8TNmlJmOkUeidHqSY8goQto6lr
+         Jguw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718426516; x=1719031316;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K2qrQhaKuq5qmeUje0aTpEyuTysZEWpi+WcIcMw+cck=;
-        b=ftw7pudM57ovEA80HuYrRAw5zQMkpyWjRCZt8fdr32g3h2FaTZrDqCkSVuhW8j7L0G
-         UbsRZ6JcxHCHPOJI550565h65qeSLW+3vFE36yMqMXTAjiM+CHq8wxaIgDvvKqQMC0TK
-         WJsRakqM9z9O4Xy7RnetEdOdJMBY5ptHKyJmgj7HA3TNNGd5aGZbD47LOa5Vfc7KEL66
-         lfDJDldz5nnbe2ygWIvF0QsjIkDhesbMbm9hIfhtP55wujAEE/REbg9sI5daBsBijUT7
-         QImsPgU/ahyfFe2uBd3ifAodrVHBS2t7qrbHyjk8qstfWjQIDVtu0K1N9I2Sp79Lq9F5
-         BG+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW58Mg0xHgTkCATimI92ViDlubHiuQefGPUfGCiXEmYpTezu+9j2BlN8al3SLOATHu6w9eXZ/ZwmBUU4sD2W58nSWNHdRYHMBqy6/oAdb9Magj36ZYwu+4AxsCI5Ioul2CKs+rOYXN8tIH4hw==
-X-Gm-Message-State: AOJu0Yx+6BV0NvvBoqfUmXOv7BRV9B+Ips7dA5PY2uaPCGh9VtpizADn
-	pB0kUeJhb+X2lFG7wYLfKwrhfqobvaUxCaeJFwv9IADbkTOWPbM4
-X-Google-Smtp-Source: AGHT+IHgajnB5XGD80al+ghVpMqGo0+Es5Vn6cIaMGlf7eeJLe2pwopKZwZdpZfQyrTDpFQuCOnUfw==
-X-Received: by 2002:a05:600c:4ca9:b0:422:52c3:7fe0 with SMTP id 5b1f17b1804b1-4230482c1e9mr41320185e9.22.1718426515401;
-        Fri, 14 Jun 2024 21:41:55 -0700 (PDT)
-Received: from f (cst-prg-88-61.cust.vodafone.cz. [46.135.88.61])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6320c21sm86927655e9.34.2024.06.14.21.41.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 21:41:54 -0700 (PDT)
-Date: Sat, 15 Jun 2024 06:41:45 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Yu Ma <yu.ma@intel.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tim.c.chen@linux.intel.com, 
-	tim.c.chen@intel.com, pan.deng@intel.com, tianyou.li@intel.com
-Subject: Re: [PATCH 3/3] fs/file.c: move sanity_check from alloc_fd() to
- put_unused_fd()
-Message-ID: <fejwlhtbqifb5kvcmilqjqbojf3shfzoiwexc3ucmhhtgyfboy@dm4ddkwmpm5i>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240614163416.728752-4-yu.ma@intel.com>
+        d=1e100.net; s=20230601; t=1718426742; x=1719031542;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ux3AuQ+Jiebt7/7pb5tqKqqOopFVDXImGSpGZa//7ic=;
+        b=BnnNtBKiWTlJpX2/ev9kOwlzSe442eJzZoWCSbxN1E60LWKF5xLvH6CMs8xfqJc8vg
+         wYSSXyWTrOhfXar1nFjMBd1Vlw00yyRPRrJMpWPgpOR4Y8/nUNxRTNmELE+xNIKrhner
+         6BFrGD199MgwQMwvmcIla4nYe7PfOp2GXnydKljVGkYu8yWN/pY20zg5GaTqwabjWSbc
+         +Fyj+zo8cgq520BxCCL8u4OwrcGlfLiFyXE1xA4/1AiA+a6CGQuz9YCxHCZpLKneppoL
+         QhCLC1ZmHpDPyBtWyvmmKY2gr89cTqsqM1/RHWzI3u5NbdGHpN1P8m8XquM5TPIVDv8r
+         QHKA==
+X-Gm-Message-State: AOJu0YwSghwAVmigid4GGKSD/Te7tRTFMhaELnuzAMIbh0ltmRFEevhp
+	jvz29AxY39eZSq2yVyrpTGTz8xbXbfSPF9vx2H2N7/iXSWFLNWzQQ6KbV4AfHo1cUV5ozJ0ikJe
+	3KB96H/aWmCibR6jAPbKncR2hAun4LDIlNoSweou+ZpBl2gkNUmIdXBESuiyldvccumY0KM/GId
+	QfMtpWEBXhUZwHhu2M0Ds1lLOzPpUCnMbeXzA=
+X-Google-Smtp-Source: AGHT+IGUGZT+unoAcFN00GM2EaPP+12UITJqZXBTn9t/M+aCUTabZvkgCsvfjyJo9OXLHSzHG3V2S1czjQ==
+X-Received: from swine2.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:1b8e])
+ (user=swine job=sendgmr) by 2002:a05:6638:2505:b0:4b7:cb85:c0de with SMTP id
+ 8926c6da1cb9f-4b9640b560amr207558173.4.1718426742571; Fri, 14 Jun 2024
+ 21:45:42 -0700 (PDT)
+Date: Fri, 14 Jun 2024 21:42:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240614163416.728752-4-yu.ma@intel.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
+Message-ID: <20240615044307.359980-1-swine@google.com>
+Subject: [PATCH] FIXUP: genirq: defuse spurious-irq timebomb
+From: Pete Swain <swine@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, Pete Swain <swine@google.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jun 14, 2024 at 12:34:16PM -0400, Yu Ma wrote:
-> alloc_fd() has a sanity check inside to make sure the FILE object mapping to the
+The flapping-irq detector still has a timebomb.
 
-Total nitpick: FILE is the libc thing, I would refer to it as 'struct
-file'. See below for the actual point.
+A pathological workload, or test script,
+can arm the spurious-irq timebomb described in
+  4f27c00bf80f ("Improve behaviour of spurious IRQ detect")
 
-> Combined with patch 1 and 2 in series, pts/blogbench-1.1.0 read improved by
-> 32%, write improved by 15% on Intel ICX 160 cores configuration with v6.8-rc6.
-> 
-> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> Signed-off-by: Yu Ma <yu.ma@intel.com>
-> ---
->  fs/file.c | 14 ++++++--------
->  1 file changed, 6 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/file.c b/fs/file.c
-> index a0e94a178c0b..59d62909e2e3 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -548,13 +548,6 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
->  	else
->  		__clear_close_on_exec(fd, fdt);
->  	error = fd;
-> -#if 1
-> -	/* Sanity check */
-> -	if (rcu_access_pointer(fdt->fd[fd]) != NULL) {
-> -		printk(KERN_WARNING "alloc_fd: slot %d not NULL!\n", fd);
-> -		rcu_assign_pointer(fdt->fd[fd], NULL);
-> -	}
-> -#endif
->  
+This leads to irqs being moved the much slower polled mode,
+despite the actual unhandled-irq rate being well under the
+99.9k/100k threshold that the code appears to check.
 
-I was going to ask when was the last time anyone seen this fire and
-suggest getting rid of it if enough time(tm) passed. Turns out it does
-show up sometimes, latest result I found is 2017 vintage:
-https://groups.google.com/g/syzkaller-bugs/c/jfQ7upCDf9s/m/RQjhDrZ7AQAJ
+How?
+  - Queued completion handler, like nvme, servicing events
+    as they appear in the queue, even if the irq corresponding
+    to the event has not yet been seen.
 
-So you are moving this to another locked area, but one which does not
-execute in the benchmark?
+  - queues frequently empty, so seeing "spurious" irqs
+    whenever the last events of a threaded handler's
+      while (events_queued()) process_them();
+    ends with those events' irqs posted while thread was scanning.
+    In this case the while() has consumed last event(s),
+    so next handler says IRQ_NONE.
 
-Patch 2/3 states 28% read and 14% write increase, this commit message
-claims it goes up to 32% and 15% respectively -- pretty big. I presume
-this has to do with bouncing a line containing the fd.
+  - In each run of "unhandled" irqs, exactly one IRQ_NONE response
+    is promoted from IRQ_NONE to IRQ_HANDLED, by note_interrupt()'s
+    SPURIOUS_DEFERRED logic.
 
-I would argue moving this check elsewhere is about as good as removing
-it altogether, but that's for the vfs overlords to decide.
+  - Any 2+ unhandled-irq runs will increment irqs_unhandled.
+    The time_after() check in note_interrupt() resets irqs_unhandled
+    to 1 after an idle period, but if irqs are never spaced more
+    than HZ/10 apart, irqs_unhandled keeps growing.
 
-All that aside, looking at disasm of alloc_fd it is pretty clear there
-is time to save, for example:
+  - During processing of long completion queues, the non-threaded
+    handlers will return IRQ_WAKE_THREAD, for potentially thousands
+    of per-event irqs. These bypass note_interrupt()'s irq_count++ logic,
+    so do not count as handled, and do not invoke the flapping-irq
+    logic.
 
-	if (unlikely(nr >= fdt->max_fds)) {
-		if (fd >= end) {
-			error = -EMFILE;
-			goto out;
-		}
-		error = expand_files(fd, fd);
-		if (error < 0)
-			goto out;
-		if (error)
-			goto repeat;
-	}
+  - When the _counted_ irq_count reaches the 100k threshold,
+    it's possible for irqs_unhandled > 99.9k to force a move
+    to polling mode, even though many millions of _WAKE_THREAD
+    irqs have been handled without being counted.
 
-This elides 2 branches and a func call in the common case. Completely
-untested, maybe has some brainfarts, feel free to take without credit
-and further massage the routine.
+Solution: include IRQ_WAKE_THREAD events in irq_count.
+Only when IRQ_NONE responses outweigh (IRQ_HANDLED + IRQ_WAKE_THREAD)
+by the old 99:1 ratio will an irq be moved to polling mode.
 
-Moreover my disasm shows that even looking for a bit results in
-a func call(!) to _find_next_zero_bit -- someone(tm) should probably
-massage it into another inline.
+Fixes: 4f27c00bf80f ("Improve behaviour of spurious IRQ detect")
+Cc: stable@vger.kernel.org
+Signed-off-by: Pete Swain <swine@google.com>
+---
+ kernel/irq/spurious.c | 68 +++++++++++++++++++++----------------------
+ 1 file changed, 34 insertions(+), 34 deletions(-)
 
-After the above massaging is done and if it turns out the check has to
-stay, you can plausibly damage-control it with prefetch -- issue it
-immediately after finding the fd number, before any other work.
+diff --git a/kernel/irq/spurious.c b/kernel/irq/spurious.c
+index 02b2daf07441..ac596c8dc4b1 100644
+--- a/kernel/irq/spurious.c
++++ b/kernel/irq/spurious.c
+@@ -321,44 +321,44 @@ void note_interrupt(struct irq_desc *desc, irqreturn_t action_ret)
+ 			 */
+ 			if (!(desc->threads_handled_last & SPURIOUS_DEFERRED)) {
+ 				desc->threads_handled_last |= SPURIOUS_DEFERRED;
+-				return;
+-			}
+-			/*
+-			 * Check whether one of the threaded handlers
+-			 * returned IRQ_HANDLED since the last
+-			 * interrupt happened.
+-			 *
+-			 * For simplicity we just set bit 31, as it is
+-			 * set in threads_handled_last as well. So we
+-			 * avoid extra masking. And we really do not
+-			 * care about the high bits of the handled
+-			 * count. We just care about the count being
+-			 * different than the one we saw before.
+-			 */
+-			handled = atomic_read(&desc->threads_handled);
+-			handled |= SPURIOUS_DEFERRED;
+-			if (handled != desc->threads_handled_last) {
+-				action_ret = IRQ_HANDLED;
+-				/*
+-				 * Note: We keep the SPURIOUS_DEFERRED
+-				 * bit set. We are handling the
+-				 * previous invocation right now.
+-				 * Keep it for the current one, so the
+-				 * next hardware interrupt will
+-				 * account for it.
+-				 */
+-				desc->threads_handled_last = handled;
+ 			} else {
+ 				/*
+-				 * None of the threaded handlers felt
+-				 * responsible for the last interrupt
++				 * Check whether one of the threaded handlers
++				 * returned IRQ_HANDLED since the last
++				 * interrupt happened.
+ 				 *
+-				 * We keep the SPURIOUS_DEFERRED bit
+-				 * set in threads_handled_last as we
+-				 * need to account for the current
+-				 * interrupt as well.
++				 * For simplicity we just set bit 31, as it is
++				 * set in threads_handled_last as well. So we
++				 * avoid extra masking. And we really do not
++				 * care about the high bits of the handled
++				 * count. We just care about the count being
++				 * different than the one we saw before.
+ 				 */
+-				action_ret = IRQ_NONE;
++				handled = atomic_read(&desc->threads_handled);
++				handled |= SPURIOUS_DEFERRED;
++				if (handled != desc->threads_handled_last) {
++					action_ret = IRQ_HANDLED;
++					/*
++					 * Note: We keep the SPURIOUS_DEFERRED
++					 * bit set. We are handling the
++					 * previous invocation right now.
++					 * Keep it for the current one, so the
++					 * next hardware interrupt will
++					 * account for it.
++					 */
++					desc->threads_handled_last = handled;
++				} else {
++					/*
++					 * None of the threaded handlers felt
++					 * responsible for the last interrupt
++					 *
++					 * We keep the SPURIOUS_DEFERRED bit
++					 * set in threads_handled_last as we
++					 * need to account for the current
++					 * interrupt as well.
++					 */
++					action_ret = IRQ_NONE;
++				}
+ 			}
+ 		} else {
+ 			/*
+-- 
+2.45.2.627.g7a2c4fd464-goog
 
-All that said, by the above I'm confident there is still *some*
-performance left on the table despite the lock.
-
->  out:
->  	spin_unlock(&files->file_lock);
-> @@ -572,7 +565,7 @@ int get_unused_fd_flags(unsigned flags)
->  }
->  EXPORT_SYMBOL(get_unused_fd_flags);
->  
-> -static void __put_unused_fd(struct files_struct *files, unsigned int fd)
-> +static inline void __put_unused_fd(struct files_struct *files, unsigned int fd)
->  {
->  	struct fdtable *fdt = files_fdtable(files);
->  	__clear_open_fd(fd, fdt);
-> @@ -583,7 +576,12 @@ static void __put_unused_fd(struct files_struct *files, unsigned int fd)
->  void put_unused_fd(unsigned int fd)
->  {
->  	struct files_struct *files = current->files;
-> +	struct fdtable *fdt = files_fdtable(files);
->  	spin_lock(&files->file_lock);
-> +	if (unlikely(rcu_access_pointer(fdt->fd[fd]))) {
-> +		printk(KERN_WARNING "put_unused_fd: slot %d not NULL!\n", fd);
-> +		rcu_assign_pointer(fdt->fd[fd], NULL);
-> +	}
->  	__put_unused_fd(files, fd);
->  	spin_unlock(&files->file_lock);
->  }
 
