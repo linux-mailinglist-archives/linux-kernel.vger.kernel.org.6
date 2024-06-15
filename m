@@ -1,88 +1,98 @@
-Return-Path: <linux-kernel+bounces-215738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9FC909678
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:08:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5318590966A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 445A01C21ACE
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 07:08:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9C5BB215E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 06:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02EF117579;
-	Sat, 15 Jun 2024 07:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6FC168BE;
+	Sat, 15 Jun 2024 06:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="DIpnbk5j"
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhgKAkUv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FB44A1E;
-	Sat, 15 Jun 2024 07:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49B817BA5;
+	Sat, 15 Jun 2024 06:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718435298; cv=none; b=dCntOlCzPdS4S/gr8NRwAfNSbcaSJ1h1tSk+8NAn7X0TyZ2K1Nw8jjMMpVVgqUAmTnIKbQnPf5ys3Ok8KT6BcOvyRSfLCtGkNNEg0t/9FQF9XwHxFN3YWVfo585XaKxINyHXh7QM+U76tyyBli0BgBmQjJ1O0ZL6Tn6q9Hf+kv8=
+	t=1718434231; cv=none; b=Z77ePvI/itohU9FRY1N3IhTI3ewgiXPQIUtMmCOYmh136bVXV6U/UK4o7X4hU/TFLgilQG8yBMm52XWm7ouN8Pqd+PyqJxePh0x3/DsSrQx2+HeR4vbo60q5Po3VpnEe5ZpAyoz8k5J9y6m4p7b5cezeCnQIMpCMy2bOzIqAumY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718435298; c=relaxed/simple;
-	bh=ZwcvdUxc1M3aHoVk5X4ehy4eeQBGFf7+nPhJ9DpI80I=;
-	h=In-Reply-To:References:From:To:Cc:Subject:Mime-Version:
-	 Content-Type:Date:Message-ID; b=fSxwHHSniqbn3QKxKrae/gHOg1XssrZ5S8WuAt+2IW6AmE0Om8adfmMmKXCCs7NMSVplgvYVS2RAqvk8uxG3GR1umhXO8UVTZ+cWXlx+/do/prbXZVhpME0QugBo1wGZg+WknIvym7P6v2qswEC63oVKUSV0/BMnig57ITt8xq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=DIpnbk5j; arc=none smtp.client-ip=162.62.57.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1718434983; bh=ZwcvdUxc1M3aHoVk5X4ehy4eeQBGFf7+nPhJ9DpI80I=;
-	h=In-Reply-To:References:From:To:Cc:Subject:Date;
-	b=DIpnbk5jJoumBOggwKKPf/FBL1DTCHlsTCCS7L8udcZpzhfj84WcUCZM4P9DOeEdM
-	 +fylqSruoeepJfm77Du7euA5eByfcqc9GN6cjZ+ISWhvW1AoPWtKtGf/dVntJRlph3
-	 i/wRPlQKX3Irc20CwF2Af91eq/YlQlAzTX8jRzb4=
-X-QQ-FEAT: +BBVktQ4OjZRGhAMCybSmgbXOah7CjTG
-X-QQ-SSF: 0000000000000040000000000000
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-XMAILINFO: MKXYKvFqLnFrSEzRnk6j4uTDT+iE3Bkprc9glgWCzP882CopSjHdjMRGk6oyVP
-	 xxLQbg3UZVf9/meqPwbrj8S1Rnc4cMeaQxhOIPB/Qc/yQ4puq+ZHJ3MiiO5UaM9j2bDYqw9lzcHTM
-	 Z8BKe6GIzCBmgnsFmROgT/Qlansat5m4bDeVvVzX6QKY4ooP7u5bdkxnDy46GZESNeVoLISM4PaBu
-	 iUjDUqa0c8hKHnc0vo9gC6mekc+4y7Hdlz1i9lppfzwbEgwY807RdaaBvwBMz/VVuxCO4vgw33Izw
-	 0Bj7cTA3T1SVX4TDSQjoXZPbyRv7LdodPDZyQ+nzPwwLoFeKtEZDivcjld51/Tf7A/+YBQc9YK36G
-	 J8+d6dor+ybwrjy3RsS4ZvKqhC72Fhs/52rnvOCDDYMIUb5q5G7rblDkbHj/kxwOCPDNs3pp8twn3
-	 PBJFlQXH8p9IuDoLFI6TkqbR74/eE1RdcGLBEQrXXTe3M1lXB97o7QaPhMM6Dsiphsg/VHUbd2mga
-	 N3+YDwgsPwFWAxuUv30bCfEjMICDXUhsAD5+7VyBwMzWvyxgjo2bKzckVC9mrlFA9GZpRai8p8Scu
-	 ZqEhTR9Yk4oti0QCQPbEe+SwaMQ70IgdyFn20+3NGBPjayTkQ+7X4ElleY0ZBrzJY2U8FV90tAK+6
-	 SVPOs7dAkdeZP4QdCaZf4t13Kif4dWual8UosAqQJD1MaSTPDPjrq/sKUazT1r98gNTnSB21uLXBA
-	 xEC2mrSvrlCBAfLUYIYwKHwDfUKzUzUGOIaAMZX+2WwjlnbXdDE8COK2g2lhA1br5jYEXqQike4JR
-	 8todALKt2dAMhg0cXTw3UgApOEtWLBGQgIr/u/0T9MbEhZDonOpkCuJJCzHEyjNrNfaz7tN1e479r
-	 n1qGn44hFFfbSVxeT0ZHKt9193CH1oiQVSEo6qRMhpTakFqIpxriPvAgOcXCLVDDPMIrjy9dqN2HC
-	 vUZBGpKgVRbRfEchM2
-X-HAS-ATTACH: no
-X-QQ-BUSINESS-ORIGIN: 2
-In-Reply-To: <Zm000qL0N6XY7-4O@infradead.org>
-References: <20240615030056.GO1629371@ZenIV>
- <tencent_63C013752AD7CA1A22E75CEF6166442E6D05@qq.com>
-	<Zm000qL0N6XY7-4O@infradead.org>
-X-QQ-STYLE: 
-X-QQ-mid: webmail648t1718434181t8448596
-From: "=?ISO-8859-1?B?emNqaWUwODAy?=" <zcjie0802@qq.com>
-To: "=?ISO-8859-1?B?Q2hyaXN0b3BoIEhlbGx3aWc=?=" <hch@infradead.org>
-Cc: "=?ISO-8859-1?B?dmlybw==?=" <viro@zeniv.linux.org.uk>, "=?ISO-8859-1?B?YnJhdW5lcg==?=" <brauner@kernel.org>, "=?ISO-8859-1?B?bGludXgtZnNkZXZlbA==?=" <linux-fsdevel@vger.kernel.org>, "=?ISO-8859-1?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] fs: modify the annotation of vfs_mkdir() in fs/namei.c
+	s=arc-20240116; t=1718434231; c=relaxed/simple;
+	bh=w9q4rwux8PEpDu8FkmvSmiQpihIq57Ai67mpNZdkY4E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ue+kMNY9tIE98fQQl+ZZaac4ERESZ2xumscm+Bvhwek6PTlE/i3jxnYKXhc/Mpl1WwPz4QejB4o5ZzQ0vdYZAvO4X0lzzwHFbxfq2vMmI4/L69sl3Vv9rGTW+db35BcZyqBM0PWQfl4QDX007vnBmNcYNnAUY2Qpbu4uxKgxcDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhgKAkUv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C15C6C4AF48;
+	Sat, 15 Jun 2024 06:50:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718434230;
+	bh=w9q4rwux8PEpDu8FkmvSmiQpihIq57Ai67mpNZdkY4E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qhgKAkUvn34QdT1i/JjLp8ZMBSvz2h3t+YJ4dXJeoY1P4ZNoSooW2wzmrH9Ih4XoS
+	 +bjqPbCQXJIBrDZ2Orn/E0cwhxixbjU+8ZWbEoiFnFgOoakohFvZK6847rd5XgVKG7
+	 CDanbZdsHu4r36jNOqYG2FSLbIFWCpFH8ZkWepN3ZORgkKq0Hn9HxLhAortgP1igx3
+	 WSlCCnb+6GUPMHEoPjxszA/PkjfHZntSWrdhzVKAGpSKxYJwtqiwm10d1VWzIqyc7I
+	 +Ud0qXnaRlXBQtKZWEsMBNK3COv8nFN6IsfpV4Jf5wbbwEemWLds6fI6qoKleMNV4M
+	 OWdpGgg1g6s2Q==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso46416681fa.1;
+        Fri, 14 Jun 2024 23:50:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXRp48WuMYkixk5L1OoTRvmSRApWoAUnX+9hEaAt/SI0iU+E38DRBj6YBRorEOqyB6tDjIK5f9By2qv8z259HD5inJtrafhRhhloXbaLHFj6LGyGxQxy2IikXNXwgWtxkZksx8Nb3Yyre2Jlp7VhxGr9xhxqE25vwEJeNw7HEcQjOeDcuqu
+X-Gm-Message-State: AOJu0YyiRXLoHEFQ1Tax1RbDVYk8zGOLmKAbXRBOoRpfpKfmvLaPYU5o
+	pMLgrr4JKsJDgrR+8EjQujvGvb/LJ8IUMDUfmi0OlmizEdjddMWD9j0SJETz+FyU8ay/WPYj11v
+	zC0sHrWyUdcwEasuj6gTGog0Sulo=
+X-Google-Smtp-Source: AGHT+IE2jBzSWlCnzMDvbaAU1tAdAo/962aKov4fx3jwh5Oyi/Rg12iVqSJi65SEdda6X96E/o8cRRLhj3ohFjqRw4g=
+X-Received: by 2002:a2e:a443:0:b0:2ec:1973:2b89 with SMTP id
+ 38308e7fff4ca-2ec19732c1amr25512591fa.30.1718434229513; Fri, 14 Jun 2024
+ 23:50:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="ISO-8859-1"
-Content-Transfer-Encoding: base64
-Date: Sat, 15 Jun 2024 14:49:41 +0800
-X-Priority: 3
-Message-ID: <tencent_5A1C3E3D91192539DE8138D4A6DC72EBD107@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
+MIME-Version: 1.0
+References: <20240614071507.11359-1-mark-pk.tsai@mediatek.com>
+In-Reply-To: <20240614071507.11359-1-mark-pk.tsai@mediatek.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 15 Jun 2024 15:49:53 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ7rWh_=2WVV3CXTyda=6sZacrkYT=qJw3sJOAFpyH70g@mail.gmail.com>
+Message-ID: <CAK7LNAQ7rWh_=2WVV3CXTyda=6sZacrkYT=qJw3sJOAFpyH70g@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: doc: Update default INSTALL_MOD_DIR from extra to updates
+To: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Jonathan Corbet <corbet@lwn.net>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, yj.chiang@mediatek.com, 
+	linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-VGhlIEBkZW50cnkgaXMgYWN0dWFsbHkgdGhlIGRlbnRyeSBvZiBjaGlsZCBkaXJlY3Rvcnks
-IGJ1dCB0aGUgb3JpZ2luIGFubm90YXRpb24gaW5kaWNhdGVzIGl0IGlzIGRlbnRyeSBvZiBw
-YXJlbnQgZGlyZWN0b3J5LgpUaGUgQGRpciBpcyBzaW1pbGFyLg==
+On Fri, Jun 14, 2024 at 4:15=E2=80=AFPM Mark-PK Tsai <mark-pk.tsai@mediatek=
+.com> wrote:
+>
+> The default INSTALL_MOD_DIR was changed from 'extra' to
+> 'updates' in commit b74d7bb7ca24 ("kbuild: Modify default
+> INSTALL_MOD_DIR from extra to updates").
+>
+> This commit updates the documentation to align with the
+> latest kernel.
+>
+> Signed-off-by: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+> ---
 
+Applied to linux-kbuild.
+Thanks!
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
