@@ -1,102 +1,101 @@
-Return-Path: <linux-kernel+bounces-215612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B02A9094E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 02:03:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E671C9094EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 02:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5E33B2136F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:03:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AC5F1F221B7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2552907;
-	Sat, 15 Jun 2024 00:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49BB22564;
+	Sat, 15 Jun 2024 00:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XnwD1lOS"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rd1PJh7W"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2319B621
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 00:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563F88F48
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 00:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718409786; cv=none; b=DnoMq0oN5+kzeEXdwBK/YE2cPqM1kX92CDf3S1SSHBklceL9voD6OZ4/a00n9FVu4PFZbdN33GZWJo5RkVDcoaSybE8oA2tm2TAp3sYFFlWEhcSFHKiCs2wmdKjagAIpuDWqXuZmWkDMwtcxlMyNRvJB5KPuD1QYNonW87gBCAw=
+	t=1718409800; cv=none; b=QKjzwWoIl8sD+9D+lsHeaedAoGtq+u5q0t+FQA/1ebkneDN3OQpzzy8uYuKyw0vNyaGBo6xf0GaiWtZ2u4kX1mjF8Psx0IcnK4XOpyoMedtcgjTN7D3y2uLwiMOpsuutb0oRnCbeUN0c5rTP9uvhV89dy8K4N62rTbas31eXypc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718409786; c=relaxed/simple;
-	bh=ckSubXPnhKnNiVj/54x8Q0EJzPrAh+WV8AbmQVVrhOo=;
+	s=arc-20240116; t=1718409800; c=relaxed/simple;
+	bh=6N2Ip++JmeQyuxUzkw42Rq4cAQ0ea8bNaJo50wQTPxo=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Whozz9I3UAxNvjrJ5VWq0xssxQgbS7cCOEmLxEvSGC3XGLwBTx5FTWs83R6wEUz7dqE+q0nTvfgDYWPKcttuPMHatOjbUIZvR2X2CnIPfS1b8PeN+SfVf6ai1+CZs36rD8ACZbuAgFTNRdhH+IGY7LMIiXK27r5KxDCLYVl62+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XnwD1lOS; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=TGq+4ZZ1Bqhwl2xcdnwEwqIJKViNQq0iI/marzjk8b1kt8aMVsX6V1HbaQpZmKAsFBYclUwnVpXy4Yc6DF59exPe2aNsBe+kBR3pk5L7BdBB6pMYNBTTf9NQeCBHIAYUub7Dvo29wam3Xl4c2WaEzNxYEqYPJk9Un5HasBZulGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rd1PJh7W; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-705e5f5618dso381810b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 17:03:04 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2c2d4ea53c7so2830150a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 17:03:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718409784; x=1719014584; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1718409799; x=1719014599; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mdWG57If2wiUtVgSeqsrLCBP+D2JtONZMYQed/ktHFU=;
-        b=XnwD1lOS4ERdaU/0/CvTLwl/KfQyW5a7FhTR8SJIO9RIvIWxTiWykcHZpZtfnDzjb2
-         PdYB4ndPfWMoA/ixUsOIFL9zXp5vf4bTwvKz1VEiIp+XrazcDZD0Fk2We2Vv3DkhLpi4
-         CYNRKiVexBT7x9zC7oi1XjDa5pYhKAX8OXUG+xWe8GRqFFw4kYjILXVE4pobC9HINdy3
-         Rf45szj5r4c4xzcXHLLBIam7DsSWIfqhqd36gieINxaRivzuGJZRQjDT1sO88n7d5n7I
-         9QnT3917wKwrWi26I//Pf3/6Yqhn5Xavz83kUPM4q/iEDn64yMrxKS+do71i9BgXwx3F
-         135Q==
+        bh=y1eiSTLvtTayEmKQX6ceqE3SYkZvXHsUIxZY7jPfllU=;
+        b=rd1PJh7WZMiNCdNwubJ4zkKiTrrOvWYAsOaOzxnBMFBSzlvKDOvlctwT9xZ3tHce0Z
+         0cJAobQB9SP7YrjtFdpLWYwd5jnfkoU6uazME1rI2T55GyteWm2g/ppYwcOTaTdi2ohL
+         3wpRWjYhh+eMzpZRfPovXh9XbD1qs7HJEr0MiId7h4fZ+yPJcB89P9wN5vlchgx1WVko
+         M//qk9pqpArm6EaftTYL+xV/r9C1tew/mTGY/zQ13ZGpHom8pbMIzI7hcK3V9g/ka46t
+         QTO35M7rOqksBFSSMoeRLo24sMS/wQ7omKHi5Ml9JuwsNYT8rvwTg0RBnAh645JvigbK
+         bHhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718409784; x=1719014584;
+        d=1e100.net; s=20230601; t=1718409799; x=1719014599;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mdWG57If2wiUtVgSeqsrLCBP+D2JtONZMYQed/ktHFU=;
-        b=GLxveEddnPDUMY8cATuxiunNMTv+HSS06V7I5sSO8+/xCYXxnOCJlzwn8R4uLOvtIM
-         onS9mzMmbTpld4CUEwHfSoD6KexF1VP+DvMXvzOQTHXOtjXdwsDgs8I+VZiFwpV1GteM
-         EpDxXd6uiyJxtWz9s2ptTewivCzQIS4QAK9LjopqXLq3gtyiuFFvrct9CWwTAxk0Ldrz
-         wg3AukxdiynM4eZZK0/Z0bPHW002LXBpebl5BKOUqSNLsXmPj5Xg0Jo1a/jgmewAT2I8
-         6iYGLqX4h3vGKQ8f6FyKae7Ny9o7h+A6LTYmZnMlBrdO0JGv5c1R02+pBqJQtUjXfuf4
-         O3eA==
-X-Forwarded-Encrypted: i=1; AJvYcCWA3IFflCpjD40zClhYomaw79pfgz81+JyVTnuh8Df1BkQxLyf67SA+T9+Ml/9Qggi7i1mYMpmfx4nVrVrLlOSoC0eSuTTIKXyoFPT7
-X-Gm-Message-State: AOJu0YybWm/sW9IeTWhV9X7V6fyEurAmtpO0C1IVsmjb/KjkgeA1sY+R
-	OGg95GFtgksabxod6o0vO25CSk1TtETwEjPfHfQXK6HeIsezMgz/n9CsMM7xkUn0RxWwzaeQsue
-	oDw==
-X-Google-Smtp-Source: AGHT+IE75Eg8FJSE4bq9aZ/BYnEr+ouKJwiOKS/K41JZNvFHP5zQ4Tli5g5aeYCspFPmah9r+g6Cdwx3w0Q=
+        bh=y1eiSTLvtTayEmKQX6ceqE3SYkZvXHsUIxZY7jPfllU=;
+        b=eVAcmIJgQq0ssmM61Rbybm977eks9E8Zwum/pfcHZlIDRfICbvo2TeAyqI94W/DRyZ
+         HJEiKvRKrdGegH7Sr69Sf3ywfDon/IJCBMaVpkw4hwGPkmAW/ogwAq7zgncPj2uS/qcW
+         AdA/k4EHvAVmMxNfBXTWN2kB+EUCQkxduuqB5JaLNc+znexPSQdA+5fM9wnz7LWjVTxa
+         T5TDzDYyWXWWVSvwlCw6fs5Po3SfI1P6FXVBvM+RVzyOkZ8P5v23xeFPxMZDB9Ac3lGs
+         BuLO4sBKlO8kZmw7DjRzMYuB/JyOGPxc+nRV37RNLjJYDhpgRxqhoZB3igmIF/tPEi8x
+         PhKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWsnRjtoiAngL2ehOygd9Jph8xLRyrvya9QxcJttk8Ry26vZZkrRefG3jTW5DFiJBwBv8FADUSUQeo0NvUTjdM/gfDPW6PzbGVyMnTw
+X-Gm-Message-State: AOJu0YwO+XbSjE/Wigz1gPnM4I0+DJa3UQvuaj1tDsjd8KGRCPExT5Kk
+	vw5I5Ve42FCI5E/WcqHXPNX5i0MNnmapCMYI91TgpXwBi7JlDDJL02eD3B3Kdjfwccksv3rs+hE
+	ilQ==
+X-Google-Smtp-Source: AGHT+IE+lSHliLC6cY456tUCe1Wd8WsI7CC5wV5huhOhGAOADGmGtWz4S5G0y5CIGTaZi6GKIaz9dzkWNO4=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:300b:b0:704:3ab0:86bb with SMTP id
- d2e1a72fcca58-705d71fa325mr40352b3a.4.1718409784313; Fri, 14 Jun 2024
- 17:03:04 -0700 (PDT)
-Date: Fri, 14 Jun 2024 17:02:51 -0700
-In-Reply-To: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
+ (user=seanjc job=sendgmr) by 2002:a17:90b:903:b0:2c4:b518:10f9 with SMTP id
+ 98e67ed59e1d1-2c4bdb65b00mr126757a91.4.1718409798676; Fri, 14 Jun 2024
+ 17:03:18 -0700 (PDT)
+Date: Fri, 14 Jun 2024 17:02:55 -0700
+In-Reply-To: <20240608001108.3296879-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <02051e0a-09d8-49a2-917f-7c2f278a1ba1@moroto.mountain>
+References: <20240608001108.3296879-1-seanjc@google.com>
 X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
-Message-ID: <171840971654.1410787.550758149243431657.b4-ty@google.com>
-Subject: Re: [PATCH] KVM: fix an error code in kvm_create_vm()
+Message-ID: <171840976799.1411209.2253384085532260534.b4-ty@google.com>
+Subject: Re: [PATCH] KVM: x86/mmu: Rephrase comment about synthetic PFERR
+ flags in #PF handler
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Yi Wang <foxywang@tencent.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Xiaoyao Li <xiaoyao.li@intel.com>
 Content-Type: text/plain; charset="utf-8"
 
-On Thu, 13 Jun 2024 17:33:16 +0300, Dan Carpenter wrote:
-> This error path used to return -ENOMEM from the where r is initialized
-> at the top of the function.  But a new "r = kvm_init_irq_routing(kvm);"
-> was introduced in the middle of the function so now the error code is
-> not set and it eventually leads to a NULL dereference.  Set the error
-> code back to -ENOMEM.
+On Fri, 07 Jun 2024 17:11:08 -0700, Sean Christopherson wrote:
+> Reword the BUILD_BUG_ON() comment in the legacy #PF handler to explicitly
+> describe how asserting that synthetic PFERR flags are limited to bits 31:0
+> protects KVM against inadvertently passing a synthetic flag to the common
+> page fault handler.
 > 
+> No functional change intended.
 > 
 > [...]
 
-Applied to kvm-x86 generic, with the fixup I suggested and a massaged changelog
-to address Markus' feedback.  Thanks again!
+Applied to kvm-x86 mmu, thanks!
 
-[1/1] KVM: fix an error code in kvm_create_vm()
-      https://github.com/kvm-x86/linux/commit/5c1f50ab7fcb
+[1/1] KVM: x86/mmu: Rephrase comment about synthetic PFERR flags in #PF handler
+      https://github.com/kvm-x86/linux/commit/caa727882937
 
 --
 https://github.com/kvm-x86/linux/tree/next
