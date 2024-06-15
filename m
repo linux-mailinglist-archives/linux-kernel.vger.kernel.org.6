@@ -1,148 +1,160 @@
-Return-Path: <linux-kernel+bounces-215900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73152909885
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 15:26:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B4FD90988E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 15:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D8D31F21CE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:26:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 152B01C20DC4
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015C84962C;
-	Sat, 15 Jun 2024 13:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E189C4962F;
+	Sat, 15 Jun 2024 13:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fpfTLhSL"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ai/hAGqb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B24482CA;
-	Sat, 15 Jun 2024 13:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D425944F;
+	Sat, 15 Jun 2024 13:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718457981; cv=none; b=ll/QSpFBOeKeQ+NPv9c7ftRm7N0OKSNXesHCigW2f70y4pJc1dEO2voUPzpgZW2oJOgSqgDl9ifK9VGcWYOeTQa4HweAc3/2rLHgkMuRAiIwhbfLiawa4wCxV/wFbBoCmn8yqhs7h/6CQTGd2BxkxHrP/uqe0KjKHnSWtX4aN9s=
+	t=1718459725; cv=none; b=I59QbSQhJbKbMMs0hvoRz8YFOBWyivRo5kKB38SeVKE5iKO0FfmrJVnrGAySN3Sj93JmLtrqqrQkdFdWLY5K/KToI2byE3cPe6iC4RSY5SBN7JSWFIBbY3WKfgQsB4xY0dWLdLZ+ArBYg3LbsiJu7BYc6FZlRVaHoQoYS3yGXZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718457981; c=relaxed/simple;
-	bh=UgwnpvLn+spljQxkIqmVjYDa0EMETv3loKKjamYYyic=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qx+PKYQkebkBH9xCRQE5pshULuzX3xtk1FgmSd7oDjK2eEGRXdiSZ4DLF+DCil6Iervvm8Eeeqk2D90O5hRAoEAx8AgZbTPg47NTrH/6pv+KobXO/7oCdUn1HQHa6Vhj/VcBVvdT0VUerFTaRkCJL7sZ7BUxaHL53v9T5N4mkpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fpfTLhSL; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57a4d7ba501so3772420a12.2;
-        Sat, 15 Jun 2024 06:26:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718457978; x=1719062778; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LNNyYwbRAxzksK/WDvgi1EfPanfSeg1kfm367EItVAI=;
-        b=fpfTLhSLVHp5L+e+YVqZWzTfQtC+0s7gQYGwKWFDyNED0/Mb+f6jwNhUFlmTEIRt6q
-         4T29WBwfLVqfT6YRm96A2R84EBXNxzhrTPwpm0CbrOWuSHNwXRloSBZ34eKBUrNrL+gr
-         1o32tj6mjEyxgESrUH3iN9BZjFUqQj5sjn50tLmfRnG5yP7xC0NlFsg4GlCwd7iNzXV9
-         ScritQ3pHMLkzDb7HCl4wcvgpIoTYk/Kq9QXRNUMbmvHjKyqZwrkJixlp9c8Oyp2WNc2
-         LyMv5fF793CMqpXVuMe3cwp7BLGvXzPh3NLk7CCvo8c+vreWnCG9zpGQ5RNRUup5MqoD
-         XUMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718457978; x=1719062778;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LNNyYwbRAxzksK/WDvgi1EfPanfSeg1kfm367EItVAI=;
-        b=FxtAUyGMX5nsQRu5zrKDWbWjY5hlYFQSWuTaRvjVsuSMDYIiKsXQ4ge+WShNRztQWP
-         z1QO4L+YTaz3c0ED0sx7kDjjrUodOl/nc5REI8Dw24dEgKjplfrqdQ6EmaVu+dgoZK1/
-         iyI/OtrNuhPgdRYI6wfOYKpn3X0r9dyda7e7nyaGDhkNIz2U/O6xcDYiozS4cYx/j+5O
-         cgEhRwsi6852YlPedJr7Df9eFe43UUKPSPKQwnMZ06jQiR2fQJVOnxYfIVsHINNl/pp4
-         QIZQ2LcS3zNFHTTPa9BcZohdgbSOIq5ot8g0zB86KtPFQ8kc6wU462lGQK6302v6NrHh
-         rsuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfTMED7nKeAoyBVhoqSjQ3Sh7KSog1ozh/5wqy15f1RWuWzB7pR0RzK5a1CH+rsTlGUPSHphfoqL+S07ywkaaXYu/m6It/RUdMGWxEWseeeBby7wR4BAEWZohTsHFIjph8G8pbiVk=
-X-Gm-Message-State: AOJu0YzmwghWvg0+Q8k7zXzXe2GCAu1bB+eN3hlZP3K2VSxsTBg2Frp8
-	IFtrrhey+xkLlkDnjrpfN+v65bABLTtfudIMlbxbnFK6xVRgNoWN
-X-Google-Smtp-Source: AGHT+IGnuy50OAvHsW/aijdGSia7g0PVNE6+3jvWWG3aOrqmnmitqgtx4lNMW1wFPF0/qSxgPlP4gA==
-X-Received: by 2002:a17:906:2288:b0:a6f:1443:1e24 with SMTP id a640c23a62f3a-a6f60d3fd34mr336483366b.34.1718457977660;
-        Sat, 15 Jun 2024 06:26:17 -0700 (PDT)
-Received: from localhost.localdomain (31-179-0-202.dynamic.chello.pl. [31.179.0.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ed3685sm297823066b.126.2024.06.15.06.26.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Jun 2024 06:26:17 -0700 (PDT)
-From: Roman Storozhenko <romeusmeister@gmail.com>
-To: Thomas Renninger <trenn@suse.com>,
-	Shuah Khan <shuah@kernel.org>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Roman Storozhenko <romeusmeister@gmail.com>
-Subject: [PATCH v2] cpupower: Add 'help' target to the main Makefile
-Date: Sat, 15 Jun 2024 15:26:13 +0200
-Message-Id: <20240615132613.182899-1-romeusmeister@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718459725; c=relaxed/simple;
+	bh=o2zni6lmU6brxTe62oPbpr/wNnVyUniYuEMKpQZnOmQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TyThjsJbVeGzzov0u1EcC3EPJJjZtaS1ygsYdAKVOI32eMwj4Zrj4lKz6cqFn7VrKQ+jxrblm0TQZ3aGXjrV78kNqyMp2vNErLTUzKdO7Mv0tgdsWQiS4MoAMXzySxY50eQgxbPvR5Lg5mzoaWu+haCXmylZws2k0awHKdzsTWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ai/hAGqb; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718459723; x=1749995723;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=o2zni6lmU6brxTe62oPbpr/wNnVyUniYuEMKpQZnOmQ=;
+  b=ai/hAGqbww4RcVptOnfayU1o+TDDLZZsSD2kJGDZKhDLB381oDeJrkzX
+   /X+23SO772j7Bhb/uSk5N2TfYq2OZeqUZNCYEf6avaIMDxC5j2yY7khBI
+   TEoguSNFzTUIOSUxHstQqeXAkyvCT3oGYjtMKL27mJ0oVCz3ehHHLOQzQ
+   EpC8ZK7M+9JY+xZTLh2u0QLa+yW676bMXriI/Ic9QdXDY5ZH2sD9uzUR3
+   JwEVBoqveeKeSX1FYlDjEVvakSJhpVsx22UfuxQfpg4mYSJ7NT7kN5agM
+   T2WNla0s0Nb5wYzo7nyHk6FVWW9JuhPJwDnASgQcYOMsHlLt18Krle/FM
+   Q==;
+X-CSE-ConnectionGUID: ebqFZ+r4QYuAPFkovE2KeA==
+X-CSE-MsgGUID: NR3OeXq0TT2okG3fNIxdjg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="40760307"
+X-IronPort-AV: E=Sophos;i="6.08,240,1712646000"; 
+   d="scan'208";a="40760307"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 06:55:22 -0700
+X-CSE-ConnectionGUID: Z1nASWauRT2SWTLC7u9Yow==
+X-CSE-MsgGUID: AAqhFvwAQbO9qsOphaSZhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,240,1712646000"; 
+   d="scan'208";a="40630041"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 15 Jun 2024 06:55:19 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sITsC-00005N-21;
+	Sat, 15 Jun 2024 13:55:16 +0000
+Date: Sat, 15 Jun 2024 21:55:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Alexey Charkov <alchark@gmail.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Andy Yan <andy.yan@rock-chips.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev,
+	Detlev Casanova <detlev.casanova@collabora.com>
+Subject: Re: [PATCH 1/3] media: rockchip: Introduce the rkvdec2 driver
+Message-ID: <202406152129.dV4K8R5k-lkp@intel.com>
+References: <20240615015734.1612108-2-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240615015734.1612108-2-detlev.casanova@collabora.com>
 
-Make "cpupower" building process more user friendly by adding 'help'
-target to the main makefile. This target describes various build
-and cleaning options available to the user.
+Hi Detlev,
 
-Signed-off-by: Roman Storozhenko <romeusmeister@gmail.com>
----
-V1 -> V2:
- - Enchanced patch description
- - Reformat patch
- - Link v1: https://lore.kernel.org/linux-pm/20240614-make-help-v1-1-513118646b71@gmail.com/
----
- tools/power/cpupower/Makefile | 37 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 36 insertions(+), 1 deletion(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/tools/power/cpupower/Makefile b/tools/power/cpupower/Makefile
-index b53753dee02f..cd0225a312b4 100644
---- a/tools/power/cpupower/Makefile
-+++ b/tools/power/cpupower/Makefile
-@@ -332,4 +332,39 @@ uninstall:
- 		rm -f $(DESTDIR)${localedir}/$$HLANG/LC_MESSAGES/cpupower.mo; \
- 	  done;
- 
--.PHONY: all utils libcpupower update-po create-gmo install-lib install-tools install-man install-gmo install uninstall clean
-+help:
-+	@echo  'Building targets:'
-+	@echo  '  all		  - Default target. Could be omitted. Put build artifacts'
-+	@echo  '                    to "O" cmdline option dir (default: current dir)'
-+	@echo  '  install	  - Install previously built project files from the output'
-+	@echo  '                    dir defined by "O" cmdline option (default: current dir)'
-+	@echo  '                    to the install dir  defined by "DESTDIR" cmdline or'
-+	@echo  '                    Makefile config block option (default: "")'
-+	@echo  '  install-lib	  - Install previously built library binary from the output'
-+	@echo  '                    dir defined by "O" cmdline option (default: current dir)'
-+	@echo  '                    and library headers from "lib/" for userspace to the install'
-+	@echo  '                    dir  defined by "DESTDIR" cmdline (default: "")'
-+	@echo  '  install-tools	  - Install previously built "cpupower" util from the output'
-+	@echo  '                    dir defined by "O" cmdline option (default: current dir) and'
-+	@echo  '                    "cpupower-completion.sh" script from the src dir to the'
-+	@echo  '                    install dir  defined by "DESTDIR" cmdline or Makefile'
-+	@echo  '                    config block option (default: "")'
-+	@echo  '  install-man	  - Install man pages from the "man" src subdir to the'
-+	@echo  '                    install dir  defined by "DESTDIR" cmdline or Makefile'
-+	@echo  '                    config block option (default: "")'
-+	@echo  '  install-gmo	  - Install previously built language files from the output'
-+	@echo  '                    dir defined by "O" cmdline option (default: current dir)'
-+	@echo  '                    to the install dir defined by "DESTDIR" cmdline or Makefile'
-+	@echo  '                    config block option (default: "")'
-+	@echo  '  install-bench	  - Install previously built "cpufreq-bench" util files from the'
-+	@echo  '                    output dir defined by "O" cmdline option (default: current dir)'
-+	@echo  '                    to the install dir  defined by "DESTDIR" cmdline or Makefile'
-+	@echo  '                    config block option (default: "")'
-+	@echo  ''
-+	@echo  'Cleaning targets:'
-+	@echo  '  clean		  - Clean build artifacts from the dir defined by "O" cmdline'
-+	@echo  '                    option (default: current dir)'
-+	@echo  '  uninstall	  - Remove previously installed files from the dir defined by "DESTDIR"'
-+	@echo  '                    cmdline or Makefile config block option (default: "")'
-+
-+.PHONY: all utils libcpupower update-po create-gmo install-lib install-tools install-man install-gmo install uninstall clean help
+[auto build test ERROR on rockchip/for-next]
+[also build test ERROR on robh/for-next linus/master v6.10-rc3 next-20240613]
+[cannot apply to media-tree/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Detlev-Casanova/media-rockchip-Introduce-the-rkvdec2-driver/20240615-100124
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git for-next
+patch link:    https://lore.kernel.org/r/20240615015734.1612108-2-detlev.casanova%40collabora.com
+patch subject: [PATCH 1/3] media: rockchip: Introduce the rkvdec2 driver
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240615/202406152129.dV4K8R5k-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240615/202406152129.dV4K8R5k-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406152129.dV4K8R5k-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/staging/media/rkvdec2/rkvdec2-h264.c: In function 'rkvdec2_write_regs':
+>> drivers/staging/media/rkvdec2/rkvdec2-h264.c:563:9: error: implicit declaration of function '__iowrite32_copy_full'; did you mean '__iowrite32_copy'? [-Werror=implicit-function-declaration]
+     563 |         __iowrite32_copy_full(rkvdec->regs + OFFSET_COMMON_REGS,
+         |         ^~~~~~~~~~~~~~~~~~~~~
+         |         __iowrite32_copy
+   cc1: some warnings being treated as errors
+
+
+vim +563 drivers/staging/media/rkvdec2/rkvdec2-h264.c
+
+   557	
+   558	static void rkvdec2_write_regs(struct rkvdec2_ctx *ctx)
+   559	{
+   560		struct rkvdec2_dev *rkvdec = ctx->dev;
+   561		struct rkvdec2_h264_ctx *h264_ctx = ctx->priv;
+   562	
+ > 563		__iowrite32_copy_full(rkvdec->regs + OFFSET_COMMON_REGS,
+   564				      &h264_ctx->regs.common,
+   565				      sizeof(h264_ctx->regs.common));
+   566		__iowrite32_copy_full(rkvdec->regs + OFFSET_CODEC_PARAMS_REGS,
+   567				      &h264_ctx->regs.h264_param,
+   568				      sizeof(h264_ctx->regs.h264_param));
+   569		__iowrite32_copy_full(rkvdec->regs + OFFSET_COMMON_ADDR_REGS,
+   570				      &h264_ctx->regs.common_addr,
+   571				      sizeof(h264_ctx->regs.common_addr));
+   572		__iowrite32_copy_full(rkvdec->regs + OFFSET_CODEC_ADDR_REGS,
+   573				      &h264_ctx->regs.h264_addr,
+   574				      sizeof(h264_ctx->regs.h264_addr));
+   575		__iowrite32_copy_full(rkvdec->regs + OFFSET_POC_HIGHBIT_REGS,
+   576				      &h264_ctx->regs.h264_highpoc,
+   577				      sizeof(h264_ctx->regs.h264_highpoc));
+   578	}
+   579	
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
