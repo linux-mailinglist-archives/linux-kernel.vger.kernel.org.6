@@ -1,107 +1,156 @@
-Return-Path: <linux-kernel+bounces-215897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6251290987E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 15:22:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64793909882
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 15:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DA721F21DF0
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:22:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57C451C20D0B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A387049622;
-	Sat, 15 Jun 2024 13:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399B14962B;
+	Sat, 15 Jun 2024 13:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aCsEYllF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E4iswMTH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F89D3B1BC
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 13:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C1C17BB6;
+	Sat, 15 Jun 2024 13:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718457742; cv=none; b=UjSgF+cIpx8USg4wURF5P8+n2f1PU3OPKF2rpTAOhkLWFB8HGUxzVVgiIrDDggqchU6z6n9Ahl4hJxf2Rn2v7JxVYf8pK9CZIRK9S6ISYbA1SMz3xQzTj1MlJB/obH26BbQarmIxojc6oFsXxWA1FmTB75angYbmOOmMvv6MwOs=
+	t=1718457908; cv=none; b=KfbNGBXJ+Z1oAmrJG1+eE4OOwbonlaBZBosbGX0nL4Z1OI0oi1yghooQZvtF6x6Ffrnl/PlAk0/eleb4v6vBX3NQ3IKsdB1sGNd8FO8zTJHB6egEhdrQPRmc99u98NHH+TGIXwrFpyP9Ysq8P4ts4O5GHuEiNCJ32R42UNTcJyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718457742; c=relaxed/simple;
-	bh=PNSYu5iRNRE25o/6n2QfHZ/h2Qw06F9X3mZkPPP04FI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mEf6LGrnmws5ErZAq8FUQqnw+r4H/aSJBCjpI3i9kPH0IuXFGujJRDZad8o3MGjG7ru1c5TdwaHy6DMDdPr6cgDxJIfcMtSPJHIHe85pCGmdgdSh1JTreMsbaW/LC0Bbw53O/YyPpsakjBKDw6QvhGH7Euua4n27fNyg6AmpHR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aCsEYllF; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718457740; x=1749993740;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=PNSYu5iRNRE25o/6n2QfHZ/h2Qw06F9X3mZkPPP04FI=;
-  b=aCsEYllFmJZjx6FIZJ+zuaVbO/omMF530pXP3pXfeBTBz5L3k3yhCXui
-   F/8WzuoO140QZxcwOlZ1Tyy12L7CpVcTZ2QgrTwrUDASUhM7smZMI9Kk0
-   x0mc7MWCnR/Dm4F20cFIWHfKavgueyGNM8uPOnIWBze94cx6SVEymbLie
-   VBr6twFDSPfcTIQKEETnYs83WtmUubei/CYzzyLjw0C7FFK7sMCuTwQn9
-   rPH4biAJ8v5kWuLrl7aePnwdB0An3liUjnf5miMwNHO0MTEDz3bkrTAEm
-   rvFPg83/kSrrxPk+/YyZkfb4T0jt9fip/6vFHkQwus2s4gul82kffYLzy
-   A==;
-X-CSE-ConnectionGUID: uScK3tweS/Gr8UQAfsE6vA==
-X-CSE-MsgGUID: vKyWaeObTn6dJLykq6m1mg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="15071061"
-X-IronPort-AV: E=Sophos;i="6.08,240,1712646000"; 
-   d="scan'208";a="15071061"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 06:22:19 -0700
-X-CSE-ConnectionGUID: kmM0SGTKRp2A/gETUt3g3w==
-X-CSE-MsgGUID: gmNzsIDHQVial082eRuoUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,240,1712646000"; 
-   d="scan'208";a="40697718"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 15 Jun 2024 06:22:17 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sITMF-00003q-1w;
-	Sat, 15 Jun 2024 13:22:15 +0000
-Date: Sat, 15 Jun 2024 21:22:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexey Makhalov <alexey.makhalov@broadcom.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	"Borislav Petkov (AMD)" <bp@alien8.de>
-Subject: [tip:x86/vmware 4/8] ld.lld: error: undefined symbol:
- vmware_hypercall_slow
-Message-ID: <202406152101.ioasijN1-lkp@intel.com>
+	s=arc-20240116; t=1718457908; c=relaxed/simple;
+	bh=6vSNzjSQjuW10B30p2NRLttVM3hWzQ9U82Rx6xKl34A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gEGDnrSliqmYcba0mW3UjW1TRhBq7pV3nposS25UsevGCDqw0w2M3NnztnpSVWCuZUse3c046wpm0+jaxNoeq8z4L7wP2VYpBVgb8Gj/7yOThUugWi1mgP13I9Mrxf5MoQtUBEsFjrD0ZvXNU1m1wAn0E4XMmIuLZZdDeuiF6hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E4iswMTH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34F32C116B1;
+	Sat, 15 Jun 2024 13:25:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718457907;
+	bh=6vSNzjSQjuW10B30p2NRLttVM3hWzQ9U82Rx6xKl34A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=E4iswMTHhBOLHpSbGeMk8Io1Ja2beMNsnXNIuG2CleO48/xUDPHL8uk2rG0eX2xK0
+	 KSgwdzsY6T8Wdbc5e4SP35jVpTzMjB3mLg9nRzj5LFiGBDBICjBg8g6F1h/uiZ8Mxi
+	 a4NnmqiewQwspdNqR4ICVthsi+jIIexXtYlc+gKmuavFI+fLmkd5y+ncj3TR6UBzwf
+	 dlswHs90qLJtAgzKk8gEOvTbvcQ0VG9aievU46xH4nRHRcyeyjTaVpYqIOGeL6J8K0
+	 eX/nC1+b/EkmZF/cVmc84eLl86HwYkBHP335E6tRwwUtxuBvhp2k3JNcd6XjumrTJd
+	 SZ73nazFNk4GA==
+Date: Sat, 15 Jun 2024 14:24:59 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, "Rob Herring" <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 2/2] iio: frequency: adf4350: add clk provider
+Message-ID: <20240615142459.382ca77d@jic23-huawei>
+In-Reply-To: <20240612130232.7692-2-antoniu.miclaus@analog.com>
+References: <20240612130232.7692-1-antoniu.miclaus@analog.com>
+	<20240612130232.7692-2-antoniu.miclaus@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/vmware
-head:   ef08e7dc21307b226b5280d5e8cfea687bfd2866
-commit: e5ac9008b79c59235c34494e555419665022f5e1 [4/8] drm/vmwgfx: Use VMware hypercall API
-config: i386-buildonly-randconfig-001-20240615 (https://download.01.org/0day-ci/archive/20240615/202406152101.ioasijN1-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240615/202406152101.ioasijN1-lkp@intel.com/reproduce)
+On Wed, 12 Jun 2024 16:02:29 +0300
+Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406152101.ioasijN1-lkp@intel.com/
+> Add clk provider feature for the adf4350.
+> 
+> Even though the driver was sent as an IIO driver in most cases the
+> device is actually seen as a clock provider.
+> 
+> This patch aims to cover actual usecases requested by users in order to
+> completely control the output frequencies from userspace.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 
-All errors (new ones prefixed by >>):
+As Nuno reminded, this needs the clock maintainers in the loop
 
->> ld.lld: error: undefined symbol: vmware_hypercall_slow
-   >>> referenced by vmwgfx_msg.c
-   >>>               drivers/gpu/drm/vmwgfx/vmwgfx_msg.o:(vmw_host_get_guestinfo) in archive vmlinux.a
-   >>> referenced by vmwgfx_msg.c
-   >>>               drivers/gpu/drm/vmwgfx/vmwgfx_msg.o:(vmw_host_get_guestinfo) in archive vmlinux.a
-   >>> referenced by vmwgfx_msg.c
-   >>>               drivers/gpu/drm/vmwgfx/vmwgfx_msg.o:(vmw_send_msg) in archive vmlinux.a
-   >>> referenced 13 more times
+Trivial comments inline.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +static int adf4350_clk_register(struct adf4350_state *st)
+> +{
+> +	struct spi_device *spi = st->spi;
+> +	struct clk_init_data init;
+> +	struct clk *clk;
+> +	const char *parent_name;
+> +	int ret;
+> +
+> +	if (!device_property_present(&spi->dev, "#clock-cells"))
+> +		return 0;
+> +
+> +	init.name = devm_kasprintf(&spi->dev, GFP_KERNEL, "%s-clk",
+> +				   fwnode_get_name(dev_fwnode(&spi->dev)));
+
+Check for failure.
+
+> +	device_property_read_string(&spi->dev, "clock-output-names",
+> +				    &init.name);
+
+Also check for failure.
+
+> +
+> +	parent_name = of_clk_get_parent_name(spi->dev.of_node, 0);
+> +	if (!parent_name)
+> +		return -EINVAL;
+> +
+> +	init.ops = &adf4350_clk_ops;
+> +	init.parent_names = &parent_name;
+> +	init.num_parents = 1;
+> +	init.flags = CLK_SET_RATE_PARENT;
+> +
+> +	st->hw.init = &init;
+> +	clk = devm_clk_register(&spi->dev, &st->hw);
+> +	if (IS_ERR(clk))
+> +		return PTR_ERR(clk);
+> +
+> +	ret = of_clk_add_provider(spi->dev.of_node, of_clk_src_simple_get, clk);
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->clkout = clk;
+> +
+> +	return devm_add_action_or_reset(&spi->dev, adf4350_clk_del_provider, st);
+> +}
+> +
+>  static struct adf4350_platform_data *adf4350_parse_dt(struct device *dev)
+>  {
+>  	struct adf4350_platform_data *pdata;
+> @@ -522,7 +646,6 @@ static int adf4350_probe(struct spi_device *spi)
+>  
+>  	indio_dev->info = &adf4350_info;
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+> -	indio_dev->channels = &adf4350_chan;
+>  	indio_dev->num_channels = 1;
+>  
+>  	mutex_init(&st->lock);
+> @@ -551,6 +674,15 @@ static int adf4350_probe(struct spi_device *spi)
+>  			return ret;
+>  	}
+>  
+> +	ret = adf4350_clk_register(st);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (st->clkout)
+> +		indio_dev->channels = &adf4350_clk_chan;
+> +	else
+> +		indio_dev->channels = &adf4350_chan;
+> +
+>  	ret = devm_add_action_or_reset(&spi->dev, adf4350_power_down, indio_dev);
+>  	if (ret)
+>  		return dev_err_probe(&spi->dev, ret,
+
 
