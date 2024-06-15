@@ -1,216 +1,504 @@
-Return-Path: <linux-kernel+bounces-215752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B7AC9096A2
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:51:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8A939096A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C86692817CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 07:51:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D1CB282C23
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 07:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EE517C6B;
-	Sat, 15 Jun 2024 07:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB9F17BD5;
+	Sat, 15 Jun 2024 07:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LgUgeFhn"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FPF2jJnc"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24F511CB8;
-	Sat, 15 Jun 2024 07:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60252114
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 07:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718437864; cv=none; b=uTXt5uWWpXdj9xjSVmr/1IgsYCAiTluqj4BWFVtvDQJvfxnY9TN6TSMZgWJfVeCZ0TkmDs59g4dcq+fkGavMJRuQJHz+DmAYvGz/to+bjnf4gQIZljKyfQ3UYT7mIcGuJZVXKkvJXncFmdSNzeWWNLT3plXOzazdzKI1p6cA/o8=
+	t=1718438233; cv=none; b=YifRrlXinPWqqvTtxCDzeIVf3sw0ZmP30SSgB4U4WDvYnSFkAxzcwdPuOTPAzZf9NjGoHR1chkaSrbT66DUGxz+H0kVuJF94Sj5SHAw7lHCgFN1EzHkmrG7MAdTxG8h/dLg7G/TG0ZDRqFin15BoCOf9/pnsVs3gYxZpBDXweEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718437864; c=relaxed/simple;
-	bh=sRlc1IxkbpFzLo1wdQj56UWdiL0d9xvss9PSfw73f8g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WenTujCa3z8DlGCv7qMJS8YD98epWe8CaNd4IqVdopmNhcRgmPnb06SanYlQJBZnhoJ996sBvntP0ACdFFMlkQJP+My03dhfewokmz/ptxceIeSjCsK9Y45+boxiryIvQlwudajEh17a4k7xrMl/oRCS85tIRQMwMKJF26JpK9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LgUgeFhn; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=J9zDxgTCMKAH6+JFaK+bMT0Od1Ypcxv1SWT8jf6654Q=; b=LgUgeFhnr3YitfLyD1zL389Mkt
-	XQS2Sp9FhOQwwus4rfNRwNywy1ZdczcgYpT7iQBjS6GqJKZ+M6IYvNNkZd2j3AD/p4uy6BWkMk+UB
-	V0d8vGqtUGAdSvC5JC3+aAGuEUvzfvyXUYkWBSEcWkT5ylf/0eRG4YlVRdu++2w/VHKNHhI5W1/Aw
-	SNKZO0Qz6Z44pspE+OuLaOBO2o+bg1A27Sj1BOlSeFq2bqgWtIu3dM02ApkHxyM1OvdaLmGvOrrqU
-	23GcYKIiNMStUQIHGv10lIC+JjmUQBqgSqBNFSUVVSsEnOwqtU6JzGyqrA1Qk8PkBqhfn/5OYqhMb
-	yhLvDKuQ==;
-Received: from [2001:8b0:10b:5:5157:7793:c27:1b76] (helo=u3832b3a9db3152.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sIOBb-000000006YE-18fZ;
-	Sat, 15 Jun 2024 07:50:55 +0000
-Message-ID: <e410d65754ba6a11ad7f74b27dc28d9a25d8c82e.camel@infradead.org>
-Subject: Re: [RFC PATCH v3 6/7] virtio_rtc: Add Arm Generic Timer
- cross-timestamping
-From: David Woodhouse <dwmw2@infradead.org>
-To: Peter Hilber <peter.hilber@opensynergy.com>,
- linux-kernel@vger.kernel.org,  virtualization@lists.linux.dev,
- virtio-dev@lists.oasis-open.org,  linux-arm-kernel@lists.infradead.org
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-  Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Daniel Lezcano
- <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Date: Sat, 15 Jun 2024 08:50:53 +0100
-In-Reply-To: <20231218073849.35294-7-peter.hilber@opensynergy.com>
-References: <20231218073849.35294-1-peter.hilber@opensynergy.com>
-	 <20231218073849.35294-7-peter.hilber@opensynergy.com>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-Va78wFKtl3D0hDHsROYb"
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1718438233; c=relaxed/simple;
+	bh=c/bOb9NWDptsEULHZ+RqVk523GacMXCf7Q2K9ZJNfxs=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=VZq+ZWyQqsOJoIUfgdVk8WSdjMc3lrwjzZAI4XQXlKGrwk3aFpu783GRYfTluhu+gtXoK3u1UlAOV+OigiX97YNVdutCOE2l980cWXAKw4xWwwIbH2ZV7Pk13aTBdbyLDlv3CB8Zn9z5OcRw7uCKZkE/v6WbUbAwpI59YPssRe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FPF2jJnc; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: dzm91@hust.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718438228;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eVSXAEAYYJ5QMyoR3fNbtOAlxOQo54TXyZi3+aaydQ4=;
+	b=FPF2jJncCwta4T01EGeYfiY17UD3oqcYrkY0qszUYvgdmBM2W8rwa4hFxJytza2w4YEfzR
+	oT4m1ncc5mts+2whQq9g18S7ME5XLtF4EYuqyvuG+uPdE5da/oS5ILtiM0T0256lVMD28S
+	ixwACTRpkqV9bD1WsUXaiHOzC9cgH90=
+X-Envelope-To: corbet@lwn.net
+X-Envelope-To: alexs@kernel.org
+X-Envelope-To: siyanteng@loongson.cn
+X-Envelope-To: linux-doc@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
-
-
---=-Va78wFKtl3D0hDHsROYb
-Content-Type: text/plain; charset="UTF-8"
+Date: Sat, 15 Jun 2024 07:57:05 +0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: si.yanteng@linux.dev
+Message-ID: <4da91d0b2a0dc580ffaa7c67ab1860c310387e10@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH v2 2/2] doc-guide: add help documentation
+ checktransupdate.rst
+To: "Dongliang Mu" <dzm91@hust.edu.cn>, "Jonathan Corbet" <corbet@lwn.net>,
+ "Alex Shi" <alexs@kernel.org>, "Yanteng Si" <siyanteng@loongson.cn>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240615035323.909650-2-dzm91@hust.edu.cn>
+References: <20240615035323.909650-1-dzm91@hust.edu.cn>
+ <20240615035323.909650-2-dzm91@hust.edu.cn>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 2023-12-18 at 08:38 +0100, Peter Hilber wrote:
+2024=E5=B9=B46=E6=9C=8815=E6=97=A5 11:53, "Dongliang Mu" <dzm91@hust.edu.=
+cn> =E5=86=99=E5=88=B0:
+
+
+
 >=20
-> +int viortc_hw_xtstamp_params(u16 *hw_counter, enum clocksource_ids *cs_i=
-d)
-> +{
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0*hw_counter =3D VIRTIO_RTC_COU=
-NTER_ARM_VIRT;
+>=20This commit adds help documents - Documentation/doc-guide/checktransu=
+pdate.rst
+>=20
+>=20and Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+>=20
+>=20for scripts/checktransupdate.py, including English and Chinese versio=
+ns
+>=20
+>=20Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+>=20
+>=20---
+>=20
+>=20v1->v2: fix some issues according to Randy
+>=20
+>=20 Documentation/doc-guide/checktransupdate.rst | 63 ++++++++++++++++++=
++
+>=20
+>=20 Documentation/doc-guide/index.rst | 1 +
+>=20
+>=20 .../zh_CN/doc-guide/checktransupdate.rst | 62 ++++++++++++++++++
+>=20
+>=20 .../translations/zh_CN/doc-guide/index.rst | 1 +
+>=20
+>=20 4 files changed, 127 insertions(+)
+>=20
+>=20 create mode 100644 Documentation/doc-guide/checktransupdate.rst
+>=20
+>=20 create mode 100644 Documentation/translations/zh_CN/doc-guide/checkt=
+ransupdate.rst
+>=20
+>=20diff --git a/Documentation/doc-guide/checktransupdate.rst b/Documenta=
+tion/doc-guide/checktransupdate.rst
+>=20
+>=20new file mode 100644
+>=20
+>=20index 000000000000..4ece330882d6
+>=20
+>=20--- /dev/null
+>=20
+>=20+++ b/Documentation/doc-guide/checktransupdate.rst
+>=20
+>=20@@ -0,0 +1,63 @@
+>=20
+>=20+.. SPDX-License-Identifier: GPL-2.0
+>=20
+>=20+
+>=20
+>=20+Check translation update
+>=20
+>=20+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+Let's get rid of unnecessary symbols.
+>=20
+>=20+
+>=20
+>=20+This script helps track the translation status of the documentation =
+in
+>=20
+>=20+different locales, i.e.,=C2=A0whether the documentation is up-to-dat=
+e with
+>=20
+>=20+the English counterpart.
+>=20
+>=20+
+>=20
+>=20+How it works
+>=20
+>=20+------------
+>=20
+>=20+
+>=20
+>=20+It uses ``git log`` command to track the latest English commit from =
+the
+>=20
+>=20+translation commit (order by author date) and the latest English com=
+mits
+>=20
+>=20+from HEAD. If any differences occur, the file is considered as out-o=
+f-date,
+>=20
+>=20+then commits that need to be updated will be collected and reported.
+>=20
+>=20+
+>=20
+>=20+Features implemented
+>=20
+>=20+--------------------
+>=20
+>=20+
+>=20
+>=20+- check all files in a certain locale
+>=20
+>=20+- check a single file or a set of files
+>=20
+>=20+- provide options to change output format
+>=20
+>=20+
+>=20
+>=20+Usage
+>=20
+>=20+-----
+>=20
+>=20+
+>=20
+>=20+::
+>=20
+>=20+
+>=20
+>=20+ checktransupdate.py [-h] [-l LOCALE] [--print-commits | --no-print-=
+commits] [--print-updated-files | --no-print-updated-files] [--debug | --=
+no-debug] [files ...]
+>=20
+>=20+
+>=20
+>=20+Options
+>=20
+>=20+~~~~~~~
+>=20
+>=20+
+>=20
+>=20+- ``-l``, ``--locale``: locale to check when file is not specified
+>=20
+>=20+- ``--[no-]print-commits``: whether to print commits between origin =
+and
+>=20
+>=20+ translation
+>=20
+>=20+- ``--[no-]print-updated-files``: whether to print files that do no
+>=20
+>=20+ need to be updated
+>=20
+>=20+- ``files``: files to check, if this option is specified, the locale
+>=20
+>=20+ option will be ignored.
+>=20
+>=20+
+>=20
+>=20+Samples
+>=20
+>=20+~~~~~~~
+>=20
+>=20+
+>=20
+>=20+- ``./scripts/checktransupdate.py -l zh_CN``
+>=20
+>=20+ This will print all the files that need to be updated in the zh_CN =
+locale.
+>=20
+>=20+- ``./scripts/checktransupdate.py Documentation/translations/zh_CN/p=
+rocess/coding-style.rst``
+>=20
+>=20+ This will only print the status of the specified file.
+>=20
+>=20+
+>=20
+>=20+Then the output is something like:
+>=20
+>=20+
+>=20
+>=20+::
+>=20
+>=20+
+>=20
+>=20+ Documentation/translations/zh_CN/process/coding-style.rst (2 commit=
+s)
+>=20
+>=20+ commit 6813216bbdba ("Documentation: coding-style: ask function-lik=
+e macros to evaluate parameters")
+>=20
+>=20+ commit 185ea7676ef3 ("Documentation: coding-style: Update syntax hi=
+ghlighting for code-blocks")
+>=20
+>=20+
+>=20
+>=20+Features to be implemented
+>=20
+>=20+----------------------------
+ditto
 
-Hm, but what if it isn't? I think you need to put this in
-drivers/clocksource/arm_arch_timer.c where it can do something like
-kvm_arch_ptp_get_crosststamp() does to decide:
+>=20
+>=20+
+>=20
+>=20+- track the translation status of files that have no translation
+>=20
+>=20+- files can be a folder instead of only a file
+>=20
+>=20diff --git a/Documentation/doc-guide/index.rst b/Documentation/doc-gu=
+ide/index.rst
+>=20
+>=20index 7c7d97784626..24d058faa75c 100644
+>=20
+>=20--- a/Documentation/doc-guide/index.rst
+>=20
+>=20+++ b/Documentation/doc-guide/index.rst
+>=20
+>=20@@ -12,6 +12,7 @@ How to write kernel documentation
+>=20
+>=20 parse-headers
+>=20
+>=20 contributing
+>=20
+>=20 maintainer-profile
+>=20
+>=20+ checktransupdate
+>=20
+>=20=20
+>=20
+>  .. only:: subproject and html
+>=20
+>=20=20
+>=20
+> diff --git a/Documentation/translations/zh_CN/doc-guide/checktransupdat=
+e.rst b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+>=20
+>=20new file mode 100644
+>=20
+>=20index 000000000000..37c0bb518ab8
+>=20
+>=20--- /dev/null
+>=20
+>=20+++ b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+>=20
+>=20@@ -0,0 +1,62 @@
+>=20
+>=20+.. SPDX-License-Identifier: GPL-2.0
+>=20
+>=20+
+>=20
+>=20+.. include:: ../disclaimer-zh_CN.rst
+>=20
+>=20+
+>=20
+>=20+:Original: Documentation/doc-guide/checktransupdate.rst
+>=20
+>=20+
+>=20
+>=20+:=E8=AF=91=E8=80=85: =E6=85=95=E5=86=AC=E4=BA=AE Dongliang Mu <dzm91=
+@hust.edu.cn>
+>=20
+>=20+
+>=20
+>=20+=E6=A3=80=E6=9F=A5=E7=BF=BB=E8=AF=91=E6=9B=B4=E6=96=B0
+>=20
+>=20+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+ditto
+>=20
+>=20+
+>=20
+>=20+=E8=BF=99=E4=B8=AA=E8=84=9A=E6=9C=AC=E5=B8=AE=E5=8A=A9=E8=B7=9F=E8=
+=B8=AA=E4=B8=8D=E5=90=8C=E8=AF=AD=E8=A8=80=E7=9A=84=E6=96=87=E6=A1=A3=E7=
+=BF=BB=E8=AF=91=E7=8A=B6=E6=80=81=EF=BC=8C=E5=8D=B3=E6=96=87=E6=A1=A3=E6=
+=98=AF=E5=90=A6=E4=B8=8E=E5=AF=B9=E5=BA=94=E7=9A=84=E8=8B=B1=E6=96=87=E7=
+=89=88=E6=9C=AC=E4=BF=9D=E6=8C=81=E6=9B=B4=E6=96=B0=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E5=B7=A5=E4=BD=9C=E5=8E=9F=E7=90=86
+>=20
+>=20+------------
+>=20
+>=20+
+>=20
+>=20+=E5=AE=83=E4=BD=BF=E7=94=A8 ``git log`` =E5=91=BD=E4=BB=A4=E6=9D=A5=
+=E8=B7=9F=E8=B8=AA=E7=BF=BB=E8=AF=91=E6=8F=90=E4=BA=A4=E7=9A=84=E6=9C=80=
+=E6=96=B0=E8=8B=B1=E6=96=87=E6=8F=90=E4=BA=A4=EF=BC=88=E6=8C=89=E4=BD=9C=
+=E8=80=85=E6=97=A5=E6=9C=9F=E6=8E=92=E5=BA=8F=EF=BC=89=E5=92=8C=E8=8B=B1=
+=E6=96=87=E6=96=87=E6=A1=A3=E7=9A=84
+>=20
+>=20+=E6=9C=80=E6=96=B0=E6=8F=90=E4=BA=A4=E3=80=82=E5=A6=82=E6=9E=9C=E6=
+=9C=89=E4=BB=BB=E4=BD=95=E5=B7=AE=E5=BC=82=EF=BC=8C=E5=88=99=E8=AF=A5=E6=
+=96=87=E4=BB=B6=E8=A2=AB=E8=AE=A4=E4=B8=BA=E6=98=AF=E8=BF=87=E6=9C=9F=E7=
+=9A=84=EF=BC=8C=E7=84=B6=E5=90=8E=E9=9C=80=E8=A6=81=E6=9B=B4=E6=96=B0=E7=
+=9A=84=E6=8F=90=E4=BA=A4=E5=B0=86=E8=A2=AB=E6=94=B6=E9=9B=86=E5=B9=B6=E6=
+=8A=A5=E5=91=8A=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E5=AE=9E=E7=8E=B0=E7=9A=84=E5=8A=9F=E8=83=BD
+>=20
+>=20+--------------------
+ditto
 
-        if (arch_timer_uses_ppi =3D=3D ARCH_TIMER_VIRT_PPI)
-                ptp_counter =3D KVM_PTP_VIRT_COUNTER;
-        else
-                ptp_counter =3D KVM_PTP_PHYS_COUNTER;
+...
+
+>=20
+>=20+
+>=20
+>=20+- =E6=A3=80=E6=9F=A5=E7=89=B9=E5=AE=9A=E8=AF=AD=E8=A8=80=E4=B8=AD=E7=
+=9A=84=E6=89=80=E6=9C=89=E6=96=87=E4=BB=B6
+>=20
+>=20+- =E6=A3=80=E6=9F=A5=E5=8D=95=E4=B8=AA=E6=96=87=E4=BB=B6=E6=88=96=E4=
+=B8=80=E7=BB=84=E6=96=87=E4=BB=B6
+>=20
+>=20+- =E6=8F=90=E4=BE=9B=E6=9B=B4=E6=94=B9=E8=BE=93=E5=87=BA=E6=A0=BC=E5=
+=BC=8F=E7=9A=84=E9=80=89=E9=A1=B9
+>=20
+>=20+
+>=20
+>=20+=E7=94=A8=E6=B3=95
+>=20
+>=20+-----
+>=20
+>=20+
+>=20
+>=20+::
+>=20
+>=20+
+>=20
+>=20+ checktransupdate.py [-h] [-l LOCALE] [--print-commits | --no-print-=
+commits] [--print-updated-files | --no-print-updated-files] [--debug | --=
+no-debug] [files ...]
+>=20
+>=20+
+>=20
+>=20+=E9=80=89=E9=A1=B9
+>=20
+>=20+~~~~~~~
+>=20
+>=20+
+>=20
+>=20+- ``-l``, ``--locale``: =E6=A3=80=E6=9F=A5=E6=8C=87=E5=AE=9A=E7=9A=
+=84=E6=96=87=E4=BB=B6=E8=AF=AD=E8=A8=80=EF=BC=8C=E5=A6=82=E6=9E=9C=E6=9C=
+=AA=E6=8C=87=E5=AE=9A=E6=96=87=E4=BB=B6
+>=20
+>=20+- ``--[no-]print-commits``: =E6=98=AF=E5=90=A6=E6=89=93=E5=8D=B0=E8=
+=8B=B1=E6=96=87=E5=8E=9F=E5=A7=8B=E7=89=88=E6=9C=AC=E5=92=8C=E7=BF=BB=E8=
+=AF=91=E7=89=88=E6=9C=AC=E4=B9=8B=E9=97=B4=E7=9A=84=E6=8F=90=E4=BA=A4
+>=20
+>=20+- ``--[no-]print-updated-files``: =E6=98=AF=E5=90=A6=E6=89=93=E5=8D=
+=B0=E6=97=A0=E9=9C=80=E6=9B=B4=E6=96=B0=E7=9A=84=E6=96=87=E4=BB=B6
+>=20
+>=20+- ``files``: =E8=A6=81=E6=A3=80=E6=9F=A5=E7=9A=84=E6=96=87=E4=BB=B6=
+=EF=BC=8C=E5=A6=82=E6=9E=9C=E6=8C=87=E5=AE=9A=E4=BA=86=E6=AD=A4=E9=80=89=
+=E9=A1=B9=EF=BC=8C=E5=B0=86=E5=BF=BD=E7=95=A5=E8=AF=AD=E8=A8=80=E9=80=89=
+=E9=A1=B9
+>=20
+>=20+
+>=20
+>=20+=E7=A4=BA=E4=BE=8B
+>=20
+>=20+~~~~~~~
+
+ditto
 
 
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0*cs_id =3D CSID_ARM_ARCH_COUNT=
-ER;
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return 0;
-> +}
-
-
---=-Va78wFKtl3D0hDHsROYb
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
-ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
-EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
-FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
-aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
-VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
-aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
-ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
-QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
-rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
-ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
-U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
-DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
-BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
-dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
-BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
-QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
-CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
-xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
-IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
-kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
-eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
-KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
-1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
-OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
-x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
-5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
-DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
-UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
-MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
-ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
-oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
-SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
-xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
-RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
-bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
-NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
-KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
-5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
-C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
-gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
-VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
-MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
-by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
-b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
-BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
-QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
-c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
-AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
-qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
-v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
-Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
-tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
-Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
-YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
-ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
-IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
-ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
-GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
-h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
-9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
-P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
-2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
-BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
-7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
-lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
-lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
-AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
-Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
-BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
-cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
-aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
-LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
-BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
-cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
-Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
-lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
-WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
-hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
-IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
-dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
-NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
-xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQwNjE1MDc1MDUzWjAvBgkqhkiG9w0BCQQxIgQg7cMk45W2
-miMCX3pM8Kh6nBYKOZC+962JoQjHKP/OHr8wgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
-BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
-A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
-DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
-MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
-Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
-lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgBCbCO5uiph00/t4nuEyZgI+yUFraW3nvIG
-5vYY6QuTEApUZ8pRBTIApQrtMP3QrqEe4JuGIlLWo4wQAswFYNvOTYQFfydELygzBrSh8QkjPU/e
-wvvr7p0WHzqpid74LtLRyJgtLd3KsrALASsRccyP10x119e2vgzIBWh2ntuHZcR0PRRJ8cGpDl8Z
-JxcP1G440OLniXZQWFodooCTxMD3DY4pkMeSLht1B97sV/uX2xhpDV8unMk5RA2dVp4oqZ68F9ZL
-2b3d929giEMTnrfw/qM9jLHETGaxkbNsmGq0u4WCS7dZxj+nctgdkrwkgG5ZcUDISVgVz8ocePgi
-PMfcWPOyVGsmU1IbVPmSegGtegl+l8cdldXKPNzuIjR18v9WnnmgGwneVuZusti7SgOcD3I/hV1g
-yHAFSJ9Cm5N5FmUfS9lp8gW9PNCJmaHjjPlrhyPax2zsAA56cR/p+R5UY8L1eVjQTfYSbWDtypff
-Jl647Ye8JS1QbR/VuMyG+Iefqxzt7yDmjsHuLPmsgykBQkC0RLCIgVbsu70QKAdU+rqAH7njSU/7
-HFEBCVozrEa/BZiwPQkkTkXdNIbj/O6uAPeatcB6y9nYgdv1I0Dd1//NQRIvFtkDR5kfoLvIXfjO
-yLPX6+MdKmasCV3UGGlr+bADRaRhcV3sxDSCLnRP0gAAAAAAAA==
-
-
---=-Va78wFKtl3D0hDHsROYb--
+Thanks,
+Yanteng
+>=20
+>=20+
+>=20
+>=20+- ``./scripts/checktransupdate.py -l zh_CN``
+>=20
+>=20+ =E8=BF=99=E5=B0=86=E6=89=93=E5=8D=B0 zh_CN =E8=AF=AD=E8=A8=80=E4=B8=
+=AD=E9=9C=80=E8=A6=81=E6=9B=B4=E6=96=B0=E7=9A=84=E6=89=80=E6=9C=89=E6=96=
+=87=E4=BB=B6=E3=80=82
+>=20
+>=20+- ``./scripts/checktransupdate.py Documentation/translations/zh_CN/p=
+rocess/coding-style.rst``
+>=20
+>=20+ =E8=BF=99=E5=B0=86=E5=8F=AA=E6=89=93=E5=8D=B0=E6=8C=87=E5=AE=9A=E6=
+=96=87=E4=BB=B6=E7=9A=84=E7=8A=B6=E6=80=81=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E7=84=B6=E5=90=8E=E8=BE=93=E5=87=BA=E7=B1=BB=E4=BC=BC=E5=A6=82=E4=
+=B8=8B=E7=9A=84=E5=86=85=E5=AE=B9=EF=BC=9A
+>=20
+>=20+
+>=20
+>=20+::
+>=20
+>=20+
+>=20
+>=20+ Documentation/translations/zh_CN/process/coding-style.rst (2 commit=
+s)
+>=20
+>=20+ commit 6813216bbdba ("Documentation: coding-style: ask function-lik=
+e macros to evaluate parameters")
+>=20
+>=20+ commit 185ea7676ef3 ("Documentation: coding-style: Update syntax hi=
+ghlighting for code-blocks")
+>=20
+>=20+
+>=20
+>=20+=E5=BE=85=E5=AE=9E=E7=8E=B0=E7=9A=84=E5=8A=9F=E8=83=BD
+>=20
+>=20+-------------
+>=20
+>=20+
+>=20
+>=20+- =E8=B7=9F=E8=B8=AA=E6=B2=A1=E6=9C=89=E7=BF=BB=E8=AF=91=E8=BF=87=E7=
+=9A=84=E6=96=87=E4=BB=B6=E7=9A=84=E7=BF=BB=E8=AF=91=E7=8A=B6=E6=80=81
+>=20
+>=20+- =E6=96=87=E4=BB=B6=E5=8F=82=E6=95=B0=E5=8F=AF=E4=BB=A5=E6=98=AF=E6=
+=96=87=E4=BB=B6=E5=A4=B9=E8=80=8C=E4=B8=8D=E4=BB=85=E4=BB=85=E6=98=AF=E5=
+=8D=95=E4=B8=AA=E6=96=87=E4=BB=B6
+>=20
+>=20diff --git a/Documentation/translations/zh_CN/doc-guide/index.rst b/D=
+ocumentation/translations/zh_CN/doc-guide/index.rst
+>=20
+>=20index 78c2e9a1697f..0ac1fc9315ea 100644
+>=20
+>=20--- a/Documentation/translations/zh_CN/doc-guide/index.rst
+>=20
+>=20+++ b/Documentation/translations/zh_CN/doc-guide/index.rst
+>=20
+>=20@@ -18,6 +18,7 @@
+>=20
+>=20 parse-headers
+>=20
+>=20 contributing
+>=20
+>=20 maintainer-profile
+>=20
+>=20+ checktransupdate
+>=20
+>=20=20
+>=20
+>  .. only:: subproject and html
+>=20
+>=20=20
+>=20
+> --=20
+>=20
+> 2.39.2
+>
 
