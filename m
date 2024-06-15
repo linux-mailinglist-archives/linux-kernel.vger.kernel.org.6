@@ -1,102 +1,84 @@
-Return-Path: <linux-kernel+bounces-215613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E671C9094EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 02:03:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B692B9094EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 02:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AC5F1F221B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:03:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FAFCB211BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49BB22564;
-	Sat, 15 Jun 2024 00:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rd1PJh7W"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2342635;
+	Sat, 15 Jun 2024 00:05:38 +0000 (UTC)
+Received: from mail114-241.sinamail.sina.com.cn (mail114-241.sinamail.sina.com.cn [218.30.114.241])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563F88F48
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 00:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12250624
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 00:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.114.241
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718409800; cv=none; b=QKjzwWoIl8sD+9D+lsHeaedAoGtq+u5q0t+FQA/1ebkneDN3OQpzzy8uYuKyw0vNyaGBo6xf0GaiWtZ2u4kX1mjF8Psx0IcnK4XOpyoMedtcgjTN7D3y2uLwiMOpsuutb0oRnCbeUN0c5rTP9uvhV89dy8K4N62rTbas31eXypc=
+	t=1718409938; cv=none; b=ceXktShEa68lNn2s3OnIM3qKEQ9x3XpCTF6DwD4Ac1jxNbn57XvgSQNC3WN0juq9SvuqpTmbK18cp+/SvsqPPM3p+XUbP1G1FLWe4X1et7B9Sn+5mM2UZO86wwBKbQo5O5QmTVPDrikejut+W/+xdaFkxbd7Mdp+Kz1mE0E35f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718409800; c=relaxed/simple;
-	bh=6N2Ip++JmeQyuxUzkw42Rq4cAQ0ea8bNaJo50wQTPxo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TGq+4ZZ1Bqhwl2xcdnwEwqIJKViNQq0iI/marzjk8b1kt8aMVsX6V1HbaQpZmKAsFBYclUwnVpXy4Yc6DF59exPe2aNsBe+kBR3pk5L7BdBB6pMYNBTTf9NQeCBHIAYUub7Dvo29wam3Xl4c2WaEzNxYEqYPJk9Un5HasBZulGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rd1PJh7W; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2c2d4ea53c7so2830150a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 17:03:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718409799; x=1719014599; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y1eiSTLvtTayEmKQX6ceqE3SYkZvXHsUIxZY7jPfllU=;
-        b=rd1PJh7WZMiNCdNwubJ4zkKiTrrOvWYAsOaOzxnBMFBSzlvKDOvlctwT9xZ3tHce0Z
-         0cJAobQB9SP7YrjtFdpLWYwd5jnfkoU6uazME1rI2T55GyteWm2g/ppYwcOTaTdi2ohL
-         3wpRWjYhh+eMzpZRfPovXh9XbD1qs7HJEr0MiId7h4fZ+yPJcB89P9wN5vlchgx1WVko
-         M//qk9pqpArm6EaftTYL+xV/r9C1tew/mTGY/zQ13ZGpHom8pbMIzI7hcK3V9g/ka46t
-         QTO35M7rOqksBFSSMoeRLo24sMS/wQ7omKHi5Ml9JuwsNYT8rvwTg0RBnAh645JvigbK
-         bHhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718409799; x=1719014599;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y1eiSTLvtTayEmKQX6ceqE3SYkZvXHsUIxZY7jPfllU=;
-        b=eVAcmIJgQq0ssmM61Rbybm977eks9E8Zwum/pfcHZlIDRfICbvo2TeAyqI94W/DRyZ
-         HJEiKvRKrdGegH7Sr69Sf3ywfDon/IJCBMaVpkw4hwGPkmAW/ogwAq7zgncPj2uS/qcW
-         AdA/k4EHvAVmMxNfBXTWN2kB+EUCQkxduuqB5JaLNc+znexPSQdA+5fM9wnz7LWjVTxa
-         T5TDzDYyWXWWVSvwlCw6fs5Po3SfI1P6FXVBvM+RVzyOkZ8P5v23xeFPxMZDB9Ac3lGs
-         BuLO4sBKlO8kZmw7DjRzMYuB/JyOGPxc+nRV37RNLjJYDhpgRxqhoZB3igmIF/tPEi8x
-         PhKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWsnRjtoiAngL2ehOygd9Jph8xLRyrvya9QxcJttk8Ry26vZZkrRefG3jTW5DFiJBwBv8FADUSUQeo0NvUTjdM/gfDPW6PzbGVyMnTw
-X-Gm-Message-State: AOJu0YwO+XbSjE/Wigz1gPnM4I0+DJa3UQvuaj1tDsjd8KGRCPExT5Kk
-	vw5I5Ve42FCI5E/WcqHXPNX5i0MNnmapCMYI91TgpXwBi7JlDDJL02eD3B3Kdjfwccksv3rs+hE
-	ilQ==
-X-Google-Smtp-Source: AGHT+IE+lSHliLC6cY456tUCe1Wd8WsI7CC5wV5huhOhGAOADGmGtWz4S5G0y5CIGTaZi6GKIaz9dzkWNO4=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90b:903:b0:2c4:b518:10f9 with SMTP id
- 98e67ed59e1d1-2c4bdb65b00mr126757a91.4.1718409798676; Fri, 14 Jun 2024
- 17:03:18 -0700 (PDT)
-Date: Fri, 14 Jun 2024 17:02:55 -0700
-In-Reply-To: <20240608001108.3296879-1-seanjc@google.com>
+	s=arc-20240116; t=1718409938; c=relaxed/simple;
+	bh=Txqx05lA5LCNNLfiBhVlh+gJ8bDP80qJQBV6kbq9pbA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=EMpsiFV2GvsVxRGeae/HWLJEuz2Jk3K4CPBLS6618KCUV1Riu3808vQP0IEkY6uiWMJsTtGpcujhEox7K0i0BtrtFu1quH4W/2kBZTV4mBYPrD2SJbNirK7YO6+CIvQVOAUlP4JxabRuIbNeFOyicp5XZNYafN0SN+wfTk7BizM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.114.241
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.71.75])
+	by sina.com (172.16.235.24) with ESMTP
+	id 666CDAA1000029F8; Sat, 15 Jun 2024 08:04:51 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 22004145089287
+X-SMAIL-UIID: D5AD2C2BE59F4C98BAAE19EB3E4F858D-20240615-080451-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
+Date: Sat, 15 Jun 2024 08:04:41 +0800
+Message-Id: <20240615000441.861-1-hdanton@sina.com>
+In-Reply-To: <000000000000f386f90616fea5ef@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240608001108.3296879-1-seanjc@google.com>
-X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
-Message-ID: <171840976799.1411209.2253384085532260534.b4-ty@google.com>
-Subject: Re: [PATCH] KVM: x86/mmu: Rephrase comment about synthetic PFERR
- flags in #PF handler
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Xiaoyao Li <xiaoyao.li@intel.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 07 Jun 2024 17:11:08 -0700, Sean Christopherson wrote:
-> Reword the BUILD_BUG_ON() comment in the legacy #PF handler to explicitly
-> describe how asserting that synthetic PFERR flags are limited to bits 31:0
-> protects KVM against inadvertently passing a synthetic flag to the common
-> page fault handler.
-> 
-> No functional change intended.
-> 
-> [...]
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  83a7eefedc9b
 
-Applied to kvm-x86 mmu, thanks!
-
-[1/1] KVM: x86/mmu: Rephrase comment about synthetic PFERR flags in #PF handler
-      https://github.com/kvm-x86/linux/commit/caa727882937
-
+--- x/fs/open.c
++++ y/fs/open.c
+@@ -952,7 +952,18 @@ static int do_dentry_open(struct file *f
+ 	if (!open)
+ 		open = f->f_op->open;
+ 	if (open) {
++		struct super_block *sb = inode->i_sb;
++
++		error = -EINVAL;
++		for (;;) {
++			int a = atomic_read(&sb->s_active);
++			if (a < 2)
++				goto cleanup_all;
++			if (a == atomic_cmpxchg(&sb->s_active, a, a+1))
++				break;
++		}
+ 		error = open(inode, f);
++		deactivate_super(sb);
+ 		if (error)
+ 			goto cleanup_all;
+ 	}
 --
-https://github.com/kvm-x86/linux/tree/next
 
