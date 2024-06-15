@@ -1,80 +1,76 @@
-Return-Path: <linux-kernel+bounces-215868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E11A90981B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:09:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6295590981F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 527761C212C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:09:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF83A282BDD
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B019C45028;
-	Sat, 15 Jun 2024 12:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCB145028;
+	Sat, 15 Jun 2024 12:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b8QHqyIv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKsIdi8x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9202E400;
-	Sat, 15 Jun 2024 12:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0574A3D;
+	Sat, 15 Jun 2024 12:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718453389; cv=none; b=ViZLE82Mpd9C0YScM51N9OyhSCQqoDt77duTn5E6wRTToB8y9zqetqEm37DOECqJBSVZOUS+ODLK4FV1HTrrQqXzNkcj6xoazzsulxJepSJZIoRcAHal86QBuK5fqSy2Ly2VSRS08fpPd4pO/R+hhpPr4t+SP0X7CfIIjQpTiTk=
+	t=1718453559; cv=none; b=sjCcqvqrhzXCexV7P8lqzSObc2TD5Xb8l4cjxmKlS9DLyd8u940NSK7ZKmUvDzmEc/rvuPn922DosTAek2KavqhNqfj/NusksAfRaTjyo/54XKwR3t3F8JDY6C4f3sn521PTQU/zOPXjz2SVSzkREB7isBYfNAdcJfakd/ZC/6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718453389; c=relaxed/simple;
-	bh=e56elCVsYhzaI2+hNiUznG1iV4hQkayq6NJHiVNEkgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UwA0aBMhwpwtrWjyfenbf4clyt60RzKEf4Xe6aXSx71OvhvdxFhcWkqu9QOsOevilh1NujtwTH7LU16HGaFkpl8m9TVOAAknu0PjAeuvUx+QK+G9lwvSUN88PDv8XWW/lkJy5bbMHmhjxu/8lnp5NRu6Fo35xOGv692IfvPXd7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b8QHqyIv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 060BBC116B1;
-	Sat, 15 Jun 2024 12:09:47 +0000 (UTC)
+	s=arc-20240116; t=1718453559; c=relaxed/simple;
+	bh=kYHcFOpclZmgp3DRDAGdyvE22AM/3tmX1cHzf6GcUV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V0LSj0wdTkxMxEZMF0C0g6GWH6fYHFq/NXl/W+2GrjLcVbJ2/47CQEWkheGLXTaLiQcQqeJcxZOcR8f/mb1ARbwMLP4M3/SlBhk1RUS6q2nJ/jwo+V9fKB5iKzni0R/RRRbZ3Of9vEFE0LtPXNGDKfxTM0weQb6L7sSF2hhQrv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKsIdi8x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1569AC116B1;
+	Sat, 15 Jun 2024 12:12:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718453388;
-	bh=e56elCVsYhzaI2+hNiUznG1iV4hQkayq6NJHiVNEkgk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b8QHqyIv7MXOgxrbk/AJH2SpyB7L40J7K7ndde7X39Cq8n2QYUWRPoIUwYkTmhqTd
-	 1K1KOK2Em+fC9JCQLUPvKDvQTFr866jV+y/D6Sxx8ViLw+e+Pgkn8sfw8/9gljZ68a
-	 uIGxQ5Dao3My7H8NfMRxIu2NAQoCfnIwwjcTZdiwoJhifaTRuFKAlgHJIrDFhmHZVI
-	 1etSEhGwfqceepTDWDENFI6LSGWavfL+qEtKYhUtXZ+0nB3MIbPCCq9hvqgdxIDYep
-	 GXAde5qysJ0se1WzT28N9wNS8S+bq3+maUtAsWXx57qq8tTKhgRrRQmWRVGg1VJufL
-	 f4kj0IPYgdAVg==
-Date: Sat, 15 Jun 2024 17:39:44 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>, Bin Liu <b-liu@ti.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	herve.codina@bootlin.com, christophercordahi@nanometrics.ca
-Subject: Re: [PATCH 1/4] phy: ti: phy-da8xx-usb: Add runtime PM support
-Message-ID: <Zm2EiKTNR_cdLLoP@matsya>
-References: <20240528102026.40136-1-bastien.curutchet@bootlin.com>
- <20240528102026.40136-2-bastien.curutchet@bootlin.com>
+	s=k20201202; t=1718453558;
+	bh=kYHcFOpclZmgp3DRDAGdyvE22AM/3tmX1cHzf6GcUV8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OKsIdi8x4DAVWpfg5kw/pI625KdNMc+dMwN89TFmekREbNjNLPisXWpNNfC9VP2zq
+	 qiKmmSlgyRu6/Z6uS4k8ECUYK73cL3KOLBJ76wOryRTHgSY1vBMMYjCM2cPU5sc0ZD
+	 itlzqIBSFjGw0UqOwkuqmlbTKC1z9hc/3XsvTNMWIkvCP/ZGNJJvFL4M1HStylRsh4
+	 1GJ8j9piBEGQU4UmJSFStt5b6/CwQA3UKBn5l2RVqdWfUWGwXv1HasWywy3iDO0x85
+	 3yHD/3V1FSradcdpgcFxkszwr0pa49rQEiSNxcdiAqoxXu3RQgSTeBTcnzmpUWuy70
+	 3KR4KTjFBvy8g==
+Date: Sat, 15 Jun 2024 13:12:30 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Marcelo Schmitt <marcelo.schmitt1@gmail.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] iio: adc: ad7266: use
+ devm_regulator_get_enable_read_voltage
+Message-ID: <20240615131230.67fd1b6d@jic23-huawei>
+In-Reply-To: <20240612-iio-adc-ref-supply-refactor-v2-2-fa622e7354e9@baylibre.com>
+References: <20240612-iio-adc-ref-supply-refactor-v2-0-fa622e7354e9@baylibre.com>
+	<20240612-iio-adc-ref-supply-refactor-v2-2-fa622e7354e9@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528102026.40136-2-bastien.curutchet@bootlin.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 28-05-24, 12:20, Bastien Curutchet wrote:
-> Runtime PM is not supported while USB PHY can be turned off from
-> register accesses.
+On Wed, 12 Jun 2024 16:03:06 -0500
+David Lechner <dlechner@baylibre.com> wrote:
+
+> This makes use of the new devm_regulator_get_enable_read_voltage()
+> function to reduce boilerplate code.
 > 
-> Add runtime PM for the USB2.0 PHY. The PHY is entirely shut down to save
-> as much power as possible. This means that gadgets will not be discovered
-> once suspend state is entered, and suspend state can not be left without
-> an explicit user intervention (through sysfs). That's why runtime PM is
-> disabled by default.
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Applied.
 
-Acked-by: Vinod Koul <vkoul@kernel.org>
-
--- 
-~Vinod
+Thanks,
 
