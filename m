@@ -1,127 +1,168 @@
-Return-Path: <linux-kernel+bounces-216021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D5C909A05
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 23:34:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE48D909A07
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 23:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E579D1C21391
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 21:34:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2BB31C21235
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 21:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B1C61FF3;
-	Sat, 15 Jun 2024 21:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1FE61FE5;
+	Sat, 15 Jun 2024 21:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aNBk28wX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ce+WR7cI"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A388F48;
-	Sat, 15 Jun 2024 21:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12E61CA94
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 21:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718487254; cv=none; b=Xnj3NaD5rRcLCpb1rkvYOLJ26dyJAocqqIdVj9I3NTtL5UbKySl/0qMAEuhci7sUAqU8IyiouFtHdISvcBO28x7lQSWhkf2sZulWskbGVTtsYaxCZZnW4rSVgCuhF/HG8RN/STeIC00amwTMfPD65aXtRnNj6tK8lBy4X2q1+7c=
+	t=1718487458; cv=none; b=TZNENDWa5qbIyQScWVoust8t8dvSWiw/M0fGQbexx8wF6Drnx9avwzkEQeY53VvEMsDcvdHkr6zt69IFFNf4BcGccw1aNrBs9rG9pMnhKQ02pwhiWR9tctiP7ssis+0wRXAvNr8aawsvmvUfaF0CC0h8FmjIkCRhqaJztB6+G74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718487254; c=relaxed/simple;
-	bh=eRJU09bP0cQH5HaBLi8EHIzusLgsK7lxMJg3wz5/nOQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=kIv0pchgTQ0g+asg4P/yP0+a2OtGi4AfRbSoIFyNGsTS6PICfy2ThaGfqRrF5O5Vbo2FzO9FvbpgqNS3OUosJrzEWDZTHqIDcv7BQOGYMlSBnnrTCaEVZShB3RYJZIK0hXPtQlfTviDRlFwTdtxweXVEskOAjxqnHj4dJpDQvDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aNBk28wX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45FKt1ac010736;
-	Sat, 15 Jun 2024 21:34:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=XL5dreQrlr1cLZe7QnKJxL
-	QFzdVrWYm7b2ULMUIwaTE=; b=aNBk28wXuXW9N3LoOrQ1kls/OoKDIbRdu46RSa
-	rodoQM1SDBVxpwqkU2hk5OOE1UAozlc7sklMv/8dYrzL4a7vHCmpiwTNH/Gm93ga
-	ws9HGC+FkdGwfYDouyLTrUyIcc6OZDvNT5L4LWrnKo7/k0dUWHUVXI5q8BAPJ3ZM
-	lAjiJq8tSwFxl1uX13yoP9zuyBARVRyx6ck9p3mkhXWaq+Dr2j0XZHV5u2Pv3MNk
-	jolh38A3fgVMpqstm1wcyKSyu3zR0mOO7bK2Wj8eImhnMtPSxQRSecjqLcXF9JIl
-	F0dma/ZKFzI1ZsU6XooPsygvm2g2WnTkhCnNdGtR/eJHVd2Q==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys3639331-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 15 Jun 2024 21:34:10 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45FLY9hU002074
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 15 Jun 2024 21:34:09 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Jun
- 2024 14:34:08 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sat, 15 Jun 2024 14:34:06 -0700
-Subject: [PATCH v2] platform/goldfish: goldfish_pipe: add missing
- MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1718487458; c=relaxed/simple;
+	bh=JZcwWOykDIxtFC3B+rDuKisQByVfs3wR1jwX4KkHyVA=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:From:To:
+	 References:In-Reply-To; b=YEWX5gVdcZ0JcQnB2NZEd9KVXpFKCqKqYwiXjYUuJEqt6dR6nOiraaWgvb17PEW2HfZpn4RKCO9flkOIhedQrh5uzUF7nxh9cgrGY9X4GVFmGco9ouueLTFwvUoOKHysgQMtq0yH6hZiOiTGuZJI89F2j9wCfV35omRIRAhFLHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ce+WR7cI; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52bbdb15dd5so3788286e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 14:37:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718487455; x=1719092255; darn=vger.kernel.org;
+        h=in-reply-to:content-language:references:to:from:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1QIrxFLTXK4GDIfDMv/uDfwbH6lgMn34DC8Ib+1ZiY8=;
+        b=ce+WR7cIFbKcSpMZam6EoHorE5LV1q4lwYFi3h4A+Dfd56ImiPeiZAGQgrnY4Th1Us
+         QAvUSWhMGC2DoqngHey6MIAKYw10jtbs9pGhPxJgoPTBl1RJQXlhIb3vVpRkjjMaKujl
+         wza5ciw+dS8gj0Rl9mVeVOrFjfksT/ntAXv9ArWhI5oag4SllR2zvRgRJNmDvbQniP9C
+         Zc8N3Cb+lxtQGrefgZfU6Zc5RsrgcI8ZNC+R4n6LxafwZ5uuwe0oVwKBrYpivMPAX4kk
+         YhZOLDvTerJ+AxNZdRBazNBC+0dIaJJ/mIsPlEyxgC5a1hMwKxt+TONrVCtLdGjqMFHa
+         qIAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718487455; x=1719092255;
+        h=in-reply-to:content-language:references:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1QIrxFLTXK4GDIfDMv/uDfwbH6lgMn34DC8Ib+1ZiY8=;
+        b=JH8GMiI0GVVRUSlHiBNi8oRwBm7uLzHCm6R1RUuXtLfjFOvHDR89/NvnzOndNbqXxv
+         Dfu4x4ML0oF1a6waaU/nmS86K+LjxC+WBTCivopwm41/UN1Ye/uUgcyEL7Qcq8vc3LB6
+         vMlHTdxHz6ER06BQwora3G4FyEUSznsPCzVOxaZVA35VfopfzEvIm6aQYQhzmwAFBSOM
+         Y60FQdIOVW202OWirSholSmn/QxUXjpBKYpyp85Qx+n6ZyD+ubPKQ6zg+jOTZoep5cNk
+         aqZXr2oIqYnDs3pCoMNmmAb9kPl2Ux1ohaAx0NwZAIai5zO8YxUrY+4gCthhuq8udeK5
+         tsjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+caS/d8C17pYKYQGvPgRXdtPd6YMfbmM9lwffl4+hknOp0pnU30bnqI8ah5fJgs4uIwoX9jHJqo8hBrnOG7JisLzz/w1WE96W6M04
+X-Gm-Message-State: AOJu0YzjtPd9VSaAD/AG3asQp863lSLbwCFTyp14MBHYDGue2qR7BKRM
+	xKEWxOLvwYO4VDo7soAKI+VKN8sQjscULQrYdO7W/UwJv71fro5z
+X-Google-Smtp-Source: AGHT+IGywJkcDRHHfPsC6fUVK/T62I/6lU2eMcIwp6QyCtXQ17iEz3HwQhZe1yAgLM1ySIr8eNxfHA==
+X-Received: by 2002:a05:6512:2395:b0:52c:8979:9627 with SMTP id 2adb3069b0e04-52cb3de92d3mr2144414e87.3.1718487454657;
+        Sat, 15 Jun 2024 14:37:34 -0700 (PDT)
+Received: from ?IPV6:2a00:1370:8180:9f8c:610c:ea5a:e832:8757? ([2a00:1370:8180:9f8c:610c:ea5a:e832:8757])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca28723dcsm839982e87.151.2024.06.15.14.37.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 15 Jun 2024 14:37:34 -0700 (PDT)
+Content-Type: multipart/mixed; boundary="------------QpeH4aDJgNhqrF1J3qRQP0ql"
+Message-ID: <31ac448d-2a21-4e93-8a00-5c7090970452@gmail.com>
+Date: Sun, 16 Jun 2024 00:37:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [bluetooth?] WARNING in hci_conn_del
+From: Pavel Skripkin <paskripkin@gmail.com>
+To: syzbot <syzbot+b2545b087a01a7319474@syzkaller.appspotmail.com>,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <000000000000396d68061acddd90@google.com>
+ <0d900a20-0e9a-4b61-844e-df38b10bc4f2@gmail.com>
+Content-Language: en-US
+In-Reply-To: <0d900a20-0e9a-4b61-844e-df38b10bc4f2@gmail.com>
+
+This is a multi-part message in MIME format.
+--------------QpeH4aDJgNhqrF1J3qRQP0ql
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240615-goldfish_pipe-md-v2-1-b4323a969594@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAM0IbmYC/32OQQqDMBREryJZ95ckVotd9R5FSky+5oMmNlGxi
- Hdv9ABdPph5MxuLGAgje2QbC7hQJO8SyEvGtFWuQyCTmEkub7zgFXS+Ny1F+x5pRBgMCINa8sb
- kquIs1caALa2n8lUnblREaIJy2h6inty8wqDihOGIW4qTD9/zwCKO0p+tRYAApZtC5PJeyjJ/f
- mbS5PRV+4HV+77/APxvoaLRAAAA
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 1PftA1sDtwFZ7BMFAeTWA9gKft3__ude
-X-Proofpoint-ORIG-GUID: 1PftA1sDtwFZ7BMFAeTWA9gKft3__ude
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-15_15,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 impostorscore=0 bulkscore=0 malwarescore=0 suspectscore=0
- phishscore=0 adultscore=0 priorityscore=1501 spamscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406150164
 
-With arch=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/goldfish/goldfish_pipe.o
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-Changes in v2:
-- Rebased to v6.10-rc3
-- Updated commit text to use a more recent boilerplate
-- Since there are no matching entries in MAINTAINERS, added Andrew & Greg
-  to see if this can go through one of their misc trees
-- Link to v1: https://lore.kernel.org/r/20240509-goldfish_pipe-md-v1-1-acb513276263@quicinc.com
----
- drivers/platform/goldfish/goldfish_pipe.c | 1 +
- 1 file changed, 1 insertion(+)
+On 6/14/24 11:42 AM, Pavel Skripkin wrote:
+> 
+> 
+> On 6/14/24 2:29 AM, syzbot wrote:
+>> Hello,
+>> 
+>> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+>> SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
+>> 
+>> 2024/06/13 23:28:26 ignoring optional flag "sandboxArg"="0"
+>> 2024/06/13 23:28:27 parsed 1 programs
+>> 2024/06/13 23:28:27 [FATAL] failed to run ["./syz-executor" "setup" "fault" "binfmt_misc" "usb" "802154" "swap"]: exit status 67
+>> mkdir(/syzcgroup) failed: 17
+>> mount(binfmt_misc) failed: 16
+>> SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
+>>   (errno 16: Device or resource busy)
+>> 
+>> 
 
-diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-index 061aa9647c19..c2aab0cfab33 100644
---- a/drivers/platform/goldfish/goldfish_pipe.c
-+++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -946,4 +946,5 @@ static struct platform_driver goldfish_pipe_driver = {
- 
- module_platform_driver(goldfish_pipe_driver);
- MODULE_AUTHOR("David Turner <digit@google.com>");
-+MODULE_DESCRIPTION("Goldfish virtual device for QEMU pipes");
- MODULE_LICENSE("GPL v2");
+#syz test
+git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240509-goldfish_pipe-md-1dec20bd3a90
 
+-- 
+With regards,
+Pavel Skripkin
+--------------QpeH4aDJgNhqrF1J3qRQP0ql
+Content-Type: text/x-patch; charset=UTF-8;
+ name="0001-bluetooth-hci-disallow-setting-handle-bigger-than-HC.patch"
+Content-Disposition: attachment;
+ filename*0="0001-bluetooth-hci-disallow-setting-handle-bigger-than-HC.pa";
+ filename*1="tch"
+Content-Transfer-Encoding: base64
+
+RnJvbSBjZDc1YzQzNzk2NDUxYWYwZTNjNWU2YjQyYWE3Mjc2NjAzYzRiYjFiIE1vbiBTZXAg
+MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBQYXZlbCBTa3JpcGtpbiA8cGFza3JpcGtpbkBnbWFp
+bC5jb20+CkRhdGU6IEZyaSwgMTQgSnVuIDIwMjQgMDA6MDI6NTEgKzAzMDAKU3ViamVjdDog
+W1BBVENIXSBibHVldG9vdGgvaGNpOiBkaXNhbGxvdyBzZXR0aW5nIGhhbmRsZSBiaWdnZXIg
+dGhhbgogSENJX0NPTk5fSEFORExFX01BWAoKU3l6Ym90IGhpdCB3YXJuaW5nIGluIGhjaV9j
+b25uX2RlbCgpIGNhdXNlZCBieSBmcmVlaW5nIGhhbmRsZSB0aGF0IHdhcwpub3QgYWxsb2Nh
+dGVkIHVzaW5nIGlkYSBhbGxvY2F0b3IuCgpUaGlzIGlzIGNhdXNlZCBieSBoYW5kbGUgYmln
+Z2VyIHRoYW4gSENJX0NPTk5fSEFORExFX01BWCBwYXNzZWQgYnkKaGNpX2xlX2JpZ19zeW5j
+X2VzdGFibGlzaGVkX2V2dCgpLCB3aGljaCBtYWtlcyBjb2RlIHRoaW5rIGl0J3MgdW5zZXQK
+Y29ubmVjdGlvbi4KCkFkZCBzYW1lIGNoZWNrIGZvciBoYW5kbGUgdXBwZXIgYm91bmQgYXMg
+aW4gaGNpX2Nvbm5fc2V0X2hhbmRsZSgpIHRvCnByZXZlbnQgd2FybmluZy4KCkZpeGVzOiBo
+dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS9idWc/ZXh0aWQ9YjI1NDViMDg3YTAxYTcz
+MTk0NzQKUmVwb3J0ZWQtYnk6IHN5emJvdCtiMjU0NWIwODdhMDFhNzMxOTQ3NEBzeXprYWxs
+ZXIuYXBwc3BvdG1haWwuY29tCkZpeGVzOiAxODFhNDJlZGRkZjUgKCJCbHVldG9vdGg6IE1h
+a2UgaGFuZGxlIG9mIGhjaV9jb25uIGJlIHVuaXF1ZSIpClNpZ25lZC1vZmYtYnk6IFBhdmVs
+IFNrcmlwa2luIDxwYXNrcmlwa2luQGdtYWlsLmNvbT4KLS0tCiBuZXQvYmx1ZXRvb3RoL2hj
+aV9jb25uLmMgfCAxMyArKysrKysrKysrKy0tCiAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0
+aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9uZXQvYmx1ZXRvb3RoL2hj
+aV9jb25uLmMgYi9uZXQvYmx1ZXRvb3RoL2hjaV9jb25uLmMKaW5kZXggMGM3NmRjZGU1MzYx
+Li5kZDIxZmVlMWQ3YzYgMTAwNjQ0Ci0tLSBhL25ldC9ibHVldG9vdGgvaGNpX2Nvbm4uYwor
+KysgYi9uZXQvYmx1ZXRvb3RoL2hjaV9jb25uLmMKQEAgLTg5OSw4ICs4OTksOCBAQCBzdGF0
+aWMgaW50IGhjaV9jb25uX2hhc2hfYWxsb2NfdW5zZXQoc3RydWN0IGhjaV9kZXYgKmhkZXYp
+CiAJCQkgICAgICAgVTE2X01BWCwgR0ZQX0FUT01JQyk7CiB9CiAKLXN0cnVjdCBoY2lfY29u
+biAqaGNpX2Nvbm5fYWRkKHN0cnVjdCBoY2lfZGV2ICpoZGV2LCBpbnQgdHlwZSwgYmRhZGRy
+X3QgKmRzdCwKLQkJCSAgICAgIHU4IHJvbGUsIHUxNiBoYW5kbGUpCitzdGF0aWMgc3RydWN0
+IGhjaV9jb25uICpfX2hjaV9jb25uX2FkZChzdHJ1Y3QgaGNpX2RldiAqaGRldiwgaW50IHR5
+cGUsIGJkYWRkcl90ICpkc3QsCisJCQkJICAgICAgIHU4IHJvbGUsIHUxNiBoYW5kbGUpCiB7
+CiAJc3RydWN0IGhjaV9jb25uICpjb25uOwogCkBAIC0xMDQ0LDYgKzEwNDQsMTUgQEAgc3Ry
+dWN0IGhjaV9jb25uICpoY2lfY29ubl9hZGRfdW5zZXQoc3RydWN0IGhjaV9kZXYgKmhkZXYs
+IGludCB0eXBlLAogCXJldHVybiBoY2lfY29ubl9hZGQoaGRldiwgdHlwZSwgZHN0LCByb2xl
+LCBoYW5kbGUpOwogfQogCitzdHJ1Y3QgaGNpX2Nvbm4gKmhjaV9jb25uX2FkZChzdHJ1Y3Qg
+aGNpX2RldiAqaGRldiwgaW50IHR5cGUsIGJkYWRkcl90ICpkc3QsCisJCQkgICAgICB1OCBy
+b2xlLCB1MTYgaGFuZGxlKQoreworCWlmIChoYW5kbGUgPiBIQ0lfQ09OTl9IQU5ETEVfTUFY
+KQorCQlyZXR1cm4gRVJSX1BUUigtRUlOVkFMKTsKKworCXJldHVybiBfX2hjaV9jb25uX2Fk
+ZChoZGV2LCB0eXBlLCBkc3QsIHJvbGUsIGhhbmRsZSk7Cit9CisKIHN0YXRpYyB2b2lkIGhj
+aV9jb25uX2NsZWFudXBfY2hpbGQoc3RydWN0IGhjaV9jb25uICpjb25uLCB1OCByZWFzb24p
+CiB7CiAJaWYgKCFyZWFzb24pCi0tIAoyLjQ1LjIKCg==
+
+--------------QpeH4aDJgNhqrF1J3qRQP0ql--
 
