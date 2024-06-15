@@ -1,173 +1,154 @@
-Return-Path: <linux-kernel+bounces-215889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72151909868
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 15:05:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06A0D90986A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 15:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F10691F22543
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:04:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73E8BB21AA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134AD482E4;
-	Sat, 15 Jun 2024 13:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="oY42pflm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cLQmIWBf"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA99482C1;
+	Sat, 15 Jun 2024 13:05:35 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00221182B3;
-	Sat, 15 Jun 2024 13:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0251B285;
+	Sat, 15 Jun 2024 13:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718456685; cv=none; b=d2beeDO6wX4Kd741/FZP5gaMx5bucRpgdfweQDjD0Qsv/q/JmnnWShaX2nuMwRYCJogjTWWZkDr14Ysky1i75yWx81dppu3k4BOgaoNzjQ+a2FydBSL+20LEMAqh0tHnotr2wKW5NmA5uwQcHbL3PgL6DybcHFu6v7nAu1xnOZc=
+	t=1718456735; cv=none; b=jFtJ7a7sEpMqazBLItNP8mVizp7/Q4K7fNnjp6rgqN5ucuyff2c8ak4HakIsZY20B2uVheisSKBhvvZO+ZuhXVGyo+cdgk7QqkiN98eFPymftkO30PxFRTtrFdKrcBqIeEgudZGZ3aSl7ASj9861mOTC6zKmeK/IOnqYZUSvy4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718456685; c=relaxed/simple;
-	bh=R0yXDZVz8Hhosczpe3YGHQJlxNpiPLuGHLPOmhLIxIM=;
+	s=arc-20240116; t=1718456735; c=relaxed/simple;
+	bh=PxvYVUDmSnJy5C0v0jn32DnB33DAEZOJYRfL5ECT/Qk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SBm9OMkjiIOQI949TTxC2PGUSvsIMXILkDC0LDjg9mEb/tmBBY85bJCVFHf/5R936J0VBerQ6MDNDlx6Mx7sjsfqDugbW+RbB/LVTDEwdVi3JI4hZRMcmtJXnMjQsy0jjlXhCqldfQDpxkHR5PiokY6hOcZwyH6Tr553JJJfUlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=oY42pflm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cLQmIWBf; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id D21D7138019D;
-	Sat, 15 Jun 2024 09:04:41 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sat, 15 Jun 2024 09:04:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1718456681;
-	 x=1718543081; bh=fOBOshIYNS+PV6O/E8eNH2Ys3QmEaCSuRs0xX9h3tzg=; b=
-	oY42pflmId2LLSxQuPnhPRFx6I6Z5ur9yXsR3sdtJii5EqkkxunAuaEIeztO7llW
-	E2YVhF30CR6/3gx7dSXqGacs54dZRTIBJIdQBIg+TW5/ztbJn865zyf3J/LsudQY
-	uAi79rTKpR9e7mgGRT5ekpcajQvc/K4iezpGxkVbghr+vMJwRdqFLhzwiperMP+3
-	nUrp0fUm/NRaAt1zV/Fa9UgHOzgRSMld5h4f+reih9xYcsLohI46SJxP7y0/3Qa9
-	qxgjtvuMgaCW7TaIWe59+zZN3K+7uObQpFMvy+yiKQeq4uX1woXekS8wCqyegZfU
-	lswhmfMJ0hhWMcFpGp3N9g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718456681; x=
-	1718543081; bh=fOBOshIYNS+PV6O/E8eNH2Ys3QmEaCSuRs0xX9h3tzg=; b=c
-	LQmIWBfud0r+um+RMVFGwHq2uHrb8RKeB+xWAzHA0qeaNW0BFMFs0qPPoitWDRdU
-	ThsVG/4P6Pzmlt7AscS/YL0Keb3yyPlUpFo+V/enHX5gz++Y7w2nrtSI5fg3f0qM
-	8VrfdbhvjlEWGEwBA3PlXYSQXSfVzILSRVPOc7Yr8V19cFsjxo59GrSfDZPi62oW
-	p1mR9lEp/XttRD/TjSAQgKzfi/y8QVcQJRKaviDUDVfhjR/AyBxBYhyePcIZee8M
-	XC1PlbS7FVMRld71tgLrvPIrGdR4redgzNrj7pso0cQq+H5oLB386897wmtQdDDq
-	dYfRfboPLodaYkp8s4dQQ==
-X-ME-Sender: <xms:aJFtZgo0UIG-C1VsYfcsQ94UijnuE4jjhQzj-7GUQHG_t_YZwvcaWw>
-    <xme:aJFtZmpAFQv0M-L1YJ3dj5MqlKx629PPgC2a-Ijb3T-Use53qKGrIzQVU_TzG6CJR
-    3xrAp93F4xdMLtJDHk>
-X-ME-Received: <xmr:aJFtZlMBBBUWuwaFWRZv9nAqB-suDD_SIoZbSluIeTd8MBAqGQfeL05atqGltYJQVW1BQ62zWLT22o1H9V1agW_4RJBYhk0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvuddgieduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhk
-    lhgrshcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnh
-    gvshgrshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeefhfellefh
-    ffejgfefudfggeejlefhveehieekhfeulefgtdefueehffdtvdelieenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggv
-    rhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgv
-X-ME-Proxy: <xmx:aJFtZn6OTAMYEb8I0mOjby0LWOoJukP99sVcsm1lspW_2l7SUCYKVw>
-    <xmx:aZFtZv6jCQztrsjwO7xrdXdszehRxkZxXg_Ro2lZcpW0vrwiPVPkuw>
-    <xmx:aZFtZnijf7wdx5gZIR2lDk8oNUu107SoUoxaLxLpIe5segMs-oLF2g>
-    <xmx:aZFtZp77cyQQRVDy2P1m6TIbDrrzA8PeorCP0HL-yeFdklSzI8PMQg>
-    <xmx:aZFtZmJLHso00MNCwK-cN4SFA0ErpXwqhvbcuOqinEF-xdlG3Ujdn8DY>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 15 Jun 2024 09:04:40 -0400 (EDT)
-Date: Sat, 15 Jun 2024 15:04:39 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Paul Barker <paul.barker.ct@bp.renesas.com>
-Cc: Sergey Shtylyov <s.shtylyov@omp.ru>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>,
-	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [net-next PATCH 2/2] net: ravb: Fix R-Car RX frame size limit
-Message-ID: <20240615130439.GM382677@ragnatech.se>
-References: <20240615103038.973-1-paul.barker.ct@bp.renesas.com>
- <20240615103038.973-3-paul.barker.ct@bp.renesas.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=epXA1qU8NRftWJBmNNCTT2YoLHQpSPUXtUlBDjbbBmumL+5b/lEqi10psThKXsg2+Rp7wQBzjeAXqDbNv1zsZdbhHuXMgRAc4OOahEcOJ4R2lrETftXCnL1nsweAwzqVE0rGHYtiZZUx5g/oyd8Czn24sBP7c64yQRzDyi48k4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 576F33000D7C9;
+	Sat, 15 Jun 2024 15:05:29 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 3D6E62EE137; Sat, 15 Jun 2024 15:05:29 +0200 (CEST)
+Date: Sat, 15 Jun 2024 15:05:29 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Alistair Francis <alistair23@gmail.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+	Jonathan.Cameron@huawei.com, alex.williamson@redhat.com,
+	christian.koenig@amd.com, kch@nvidia.com,
+	gregkh@linuxfoundation.org, logang@deltatee.com,
+	linux-kernel@vger.kernel.org, chaitanyak@nvidia.com,
+	rdunlap@infradead.org, Alistair Francis <alistair.francis@wdc.com>
+Subject: Re: [PATCH v11 3/4] PCI/DOE: Expose the DOE features via sysfs
+Message-ID: <Zm2RmWnSWEEX8WtV@wunner.de>
+References: <20240614001244.925401-1-alistair.francis@wdc.com>
+ <20240614001244.925401-3-alistair.francis@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240615103038.973-3-paul.barker.ct@bp.renesas.com>
+In-Reply-To: <20240614001244.925401-3-alistair.francis@wdc.com>
 
-Hi Paul,
+On Fri, Jun 14, 2024 at 10:12:43AM +1000, Alistair Francis wrote:
+> --- a/drivers/pci/doe.c
+> +++ b/drivers/pci/doe.c
+[...]
+> +#ifdef CONFIG_SYSFS
+> +static ssize_t doe_discovery_show(struct device *dev,
+> +				  struct device_attribute *attr,
+> +				  char *buf)
+> +{
+> +	return sysfs_emit(buf, "0001:00\n");
+> +}
+> +DEVICE_ATTR_RO(doe_discovery);
 
-Thanks for your work.
+If you want to use "0001:00" as filename but can't because
+"0001:00_show()" would not be a valid function name in C,
+I think there's no harm in manually expanding the macro to:
 
-On 2024-06-15 11:30:38 +0100, Paul Barker wrote:
-> The RX frame size limit should not be based on the current MTU setting.
-> Instead it should be based on the hardware capabilities.
-> 
-> Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
+struct device_attribute dev_attr_doe_discovery = \
+	__ATTR(0001:00, 0444, pci_doe_sysfs_feature_show, NULL);
 
-I agree with the change the RFLR.RFL setting should not be connected to 
-the MTU setting. And this likely comes from the early days of the driver 
-where neither Rx or Tx supported multiple descriptors for each packet.  
-In those days the single descriptor used for each packet was tied to the 
-MTU setting. So likely the fixes tag should point to a later commit?
+That also avoids the need to have an extra doe_discovery_show()
+function.
 
-This is a great find and shows a flaw in the driver. But limiting the 
-size of each descriptor used for Tx is only half the solution right? As 
-the driver now supports multiple descriptors for Tx (on GbEth) the 
-driver allows setting an MTU larger then the maximum size for single 
-descriptor on those devices. But the xmit function of the driver still 
-hardcode the maximum of 2 descriptors for each Tx packet. And it only 
-uses the two descriptors to align the data to hardware constrains.
+Intuitively, when I saw there's a "doe_discovery" attribute,
+my first thought was: "Oh maybe I need to write something there
+to (re-)initiate DOE discovery?"
 
-Is it not incorrect for the driver to accept an MTU larger then the 
-maximum size of a single descriptor with the current Tx implementation?  
-The driver can only support larger MTU settings for Rx, but not Tx ATM.
 
-I think the complete fix is to extend ravb_start_xmit() to fully support 
-split descriptors for packets larger then the maximum single descriptor 
-size. Not just to align the packet between a DT_FSTART and DT_FEND 
-descriptor when needed.
-
-> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-> ---
->  drivers/net/ethernet/renesas/ravb_main.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index 02cbf850bd85..481c854cb305 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -555,8 +555,10 @@ static void ravb_emac_init_gbeth(struct net_device *ndev)
->  
->  static void ravb_emac_init_rcar(struct net_device *ndev)
->  {
-> +	struct ravb_private *priv = netdev_priv(ndev);
+> +static umode_t pci_doe_features_sysfs_attr_visible(struct kobject *kobj,
+> +						   struct attribute *a, int n)
+> +{
+> +	struct pci_dev *pdev = to_pci_dev(kobj_to_dev(kobj));
+> +	struct pci_doe_mb *doe_mb;
+> +	unsigned long index, j;
+> +	unsigned long vid, type;
+> +	void *entry;
 > +
->  	/* Receive frame limit set register */
-> -	ravb_write(ndev, ndev->mtu + ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN, RFLR);
-> +	ravb_write(ndev, priv->info->rx_max_frame_size + ETH_FCS_LEN, RFLR);
->  
->  	/* EMAC Mode: PAUSE prohibition; Duplex; RX Checksum; TX; RX */
->  	ravb_write(ndev, ECMR_ZPF | ECMR_DM |
-> -- 
-> 2.39.2
-> 
+> +	xa_for_each(&pdev->doe_mbs, index, doe_mb) {
+> +		xa_for_each(&doe_mb->feats, j, entry) {
+> +			vid = xa_to_value(entry) >> 8;
+> +			type = xa_to_value(entry) & 0xFF;
+> +
+> +			if (vid == 0x01 && type == 0x00) {
 
--- 
-Kind Regards,
-Niklas Söderlund
+Wherever possible, PCI_VENDOR_ID_PCI_SIG and PCI_DOE_PROTOCOL_DISCOVERY
+macros should be used in lieu of 0x0001 and 0x00.
+
+> +				/*
+> +				 * This is the DOE discovery protocol
+> +				 * Every DOE instance must support this, so we
+> +				 * give it a useful name.
+> +				 */
+> +				return a->mode;
+> +			}
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+
+I agree with Jonathan that at first glance one would assume that
+this function just always returns a->mode.
+
+
+> +static bool pci_doe_features_sysfs_group_visible(struct kobject *kobj)
+> +{
+> +	struct pci_dev *pdev = to_pci_dev(kobj_to_dev(kobj));
+> +	struct pci_doe_mb *doe_mb;
+> +	unsigned long index;
+> +
+> +	xa_for_each(&pdev->doe_mbs, index, doe_mb) {
+> +		if (!xa_empty(&doe_mb->feats))
+> +			return true;
+> +	}
+> +
+> +	return false;
+
+So in principle, doe_mb->feats should never be empty because the
+discovery protocol is always supported, right?  Wouldn't it then
+suffice to just check for:
+
++	if (!xa_empty(&pdev->doe_mbs))
++		return true;
+
+Or alternatively:
+
++	return !xa_empty(&pdev->doe_mbs);
+
+Thanks,
+
+Lukas
 
