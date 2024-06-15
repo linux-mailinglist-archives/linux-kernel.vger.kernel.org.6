@@ -1,115 +1,89 @@
-Return-Path: <linux-kernel+bounces-215840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 623879097BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:50:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D16AC9097BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62E6F1C21124
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:50:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CA50281F95
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B107238FA6;
-	Sat, 15 Jun 2024 10:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C24938FB9;
+	Sat, 15 Jun 2024 10:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGxivWwe"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VIh6s1+t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4AE2E636;
-	Sat, 15 Jun 2024 10:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72FC91B285;
+	Sat, 15 Jun 2024 10:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718448625; cv=none; b=UCEvSGTjjteHa8trAeg3X3ib0s/Ej1xRdRwIyT2busFMrR4gALhq9gWfhIx4Nr8r+x0SNAhNR2mIrpViPsWpWcz2pJG0RnQGmtxJlru+ayOKvR768UEA718YkG0si+k+Vw1qO8bEYzJRhYW1qEX9UrdDf/bVpVh346JxZ+JOJxI=
+	t=1718448803; cv=none; b=PE/fESkMvBnOAWlZbM8ZFeoB6zXMJenQ05HEFTrgi7MnW+DvbHzTfbkJGmKifsbHC2a9tQ+ZK5l9TwroBSN7z2Y1liZeb1RNjoq+jlqEn7/w9v544pH4U/EExl9RBOq0o2S3Qqt9dSbTep+7drHEae5G9c8CL3tyLDrSFRl1F8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718448625; c=relaxed/simple;
-	bh=+3wzKJYFrmmEQ3zH1YhduyYUW+NkzSU9v/arsIC76BA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hcWzuUA3pscF3MkupnW0TlWquxF8ZveJMhL74KdOk/PaJ1w84QaRV+W2SnhJFKLBCnw6OpCZv3GbRxwjl5ZuPSeHNdXKovzBEiA6ZZG+2L62x576UTL9NcNtw/DZZam3Ks46zKVi/FrmVJdvKAl3pW6qH4NQ+Lr2vO22k4x8MXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGxivWwe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43C72C116B1;
-	Sat, 15 Jun 2024 10:50:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718448624;
-	bh=+3wzKJYFrmmEQ3zH1YhduyYUW+NkzSU9v/arsIC76BA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VGxivWwe0bQfL6J1rl1Jziop7/nqJQ+cdzXwhjOYcutq5GSZH8GvMG4DTo4q+/xZP
-	 rjbKrju+3wCbdni6Zo9ZfGS0P06ZUD+9H/PouQKgCc2idnebg19NO0TdwQs6jgv/Tf
-	 Irrtupy8Nyq2oVTaP2ABFXSB+M3HHEK31vnUyuJ2O1ahhlIbWIH+dfXWijR3oDHw0v
-	 SOAnpYhKi16IaPGcIBjRaTPHJZ3lXhPKir+VCWxuJMWv+R/mPTRQX3sKdxeRLzmQTG
-	 /W+5VROMjefkpvMBCmhbYg8hTjD3o9ydtBOmEvFQoyuGwJt5OIkikKTPDE4fqEuDzC
-	 3VquB+1izvFQw==
-Date: Sat, 15 Jun 2024 11:50:18 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29uw6dhbHZlcw==?=
- <jpaulo.silvagoncalves@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, =?UTF-8?B?Sm/Do28=?= Paulo
- =?UTF-8?B?R29uw6dhbHZlcw==?= <joao.goncalves@toradex.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Matti Vaittinen
- <mazziesaccount@gmail.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] iio: trigger: Fix condition for own trigger
-Message-ID: <20240615115018.2b73d6b3@jic23-huawei>
-In-Reply-To: <20240614143658.3531097-1-jpaulo.silvagoncalves@gmail.com>
-References: <20240614143658.3531097-1-jpaulo.silvagoncalves@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718448803; c=relaxed/simple;
+	bh=kfEstT1rbDYivP27kx+VLFlV3ei4+jYeiwimZcp4Hds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pux0ku0KqS747UWWfFpzXowkgcEK0U9wd6IM2vlnOeiQe+Boczj+RRyiybwsCrsfu//YAI1Rj8KpOyFRTqQQ37mRCAAHZ9BM1w4Cdv7814qrUsN5rCE+2jgjQ2iJfs4A3qkR7honRHjBW2QPhAm+IVKz3fyMnn5OfnZN4/AlYks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VIh6s1+t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54B72C116B1;
+	Sat, 15 Jun 2024 10:53:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718448802;
+	bh=kfEstT1rbDYivP27kx+VLFlV3ei4+jYeiwimZcp4Hds=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VIh6s1+tvpju/v2WzfJhtuxPdO8Q1RiQBHOUnMp25WWoOHxFRgvWY/IEUihaCU1fc
+	 8r1Lt8OLLhvxFQzglisu9jdvwoVQSJUvGyDRBmM1gcYCvtEzuqw5RY/H/utPlo7bfA
+	 kDEGFg37B3tyF6C6mNSTXMGOCfHOaXSlvVW+bUXY=
+Date: Sat, 15 Jun 2024 12:53:20 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 4.19 000/213] 4.19.316-rc1 review
+Message-ID: <2024061512-causal-flatterer-4da6@gregkh>
+References: <20240613113227.969123070@linuxfoundation.org>
+ <5adf6fda-7936-4a45-8372-dde37f993afb@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5adf6fda-7936-4a45-8372-dde37f993afb@roeck-us.net>
 
-On Fri, 14 Jun 2024 11:36:58 -0300
-Jo=C3=A3o Paulo Gon=C3=A7alves <jpaulo.silvagoncalves@gmail.com> wrote:
+On Thu, Jun 13, 2024 at 09:24:09AM -0700, Guenter Roeck wrote:
+> On Thu, Jun 13, 2024 at 01:30:48PM +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.19.316 release.
+> > There are 213 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sat, 15 Jun 2024 11:31:50 +0000.
+> > Anything received after that time might be too late.
+> >
+> 
+> $ git grep remove_new
+> drivers/hsi/controllers/omap_ssi_core.c:        .remove_new = ssi_remove,
+> drivers/hsi/controllers/omap_ssi_port.c:        .remove_new = ssi_port_remove,
+> 
+> There is no remove_new callback in v4.19.y, so this results in
+> 
+> drivers/hsi/controllers/omap_ssi_core.c:653:3: error:
+>       field designator 'remove_new' does not refer to any field in type
+>       'struct platform_driver'
+>   653 |         .remove_new = ssi_remove,
 
-> From: Jo=C3=A3o Paulo Gon=C3=A7alves <joao.goncalves@toradex.com>
->=20
-> The condition for checking if triggers belong to the same IIO device to
-> set attached_own_device is currently inverted, causing
-> iio_trigger_using_own() to return an incorrect value. Fix it by testing
-> for the correct return value of iio_validate_own_trigger().
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 517985ebc531 ("iio: trigger: Add simple trigger_validation helper")
-> Signed-off-by: Jo=C3=A3o Paulo Gon=C3=A7alves <joao.goncalves@toradex.com>
+Now dropped, thanks!
 
-Ouch.  Can you give an example of resulting user visible result? That
-will help people decide whether to pick this up for their distro kernels
-etc.  In some cases, looks like we'll get garbage timestamps and in others
-may get stale data (or garbage).
-
-Odd no one has noticed this in the past whilst testing those dependent
-features in particular drivers and I worry a little that we may have bugs
-in the users as a result of iio_trigger_using_own() reporting the inverse
-of the intended. I've take a quick look at the users and 'think' they are
-ok, but would definitely like a few others to confirm.
-
-Also on a practical basis I just sent a fixes pull request so this one
-probably won't go anywhere for a week or so anyway so we have time.
-
-> ---
->  drivers/iio/industrialio-trigger.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/iio/industrialio-trigger.c b/drivers/iio/industriali=
-o-trigger.c
-> index 16de57846bd9..2e84776f4fbd 100644
-> --- a/drivers/iio/industrialio-trigger.c
-> +++ b/drivers/iio/industrialio-trigger.c
-> @@ -315,7 +315,7 @@ int iio_trigger_attach_poll_func(struct iio_trigger *=
-trig,
->  	 * this is the case if the IIO device and the trigger device share the
->  	 * same parent device.
->  	 */
-> -	if (iio_validate_own_trigger(pf->indio_dev, trig))
-> +	if (!iio_validate_own_trigger(pf->indio_dev, trig))
->  		trig->attached_own_device =3D true;
->=20
->  	return ret;
-> --
-> 2.34.1
-
+greg k-h
 
