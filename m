@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-215816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4511909751
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:39:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E231790977D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63E901F21472
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:39:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2C1F1C20E1A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49002E3FE;
-	Sat, 15 Jun 2024 09:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBBF2E3E5;
+	Sat, 15 Jun 2024 09:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="adP+eWpD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uE71K+fA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABC21CF96;
-	Sat, 15 Jun 2024 09:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632CE10A11;
+	Sat, 15 Jun 2024 09:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718444366; cv=none; b=cjUFCciBF98RgT4L/ulXs9lezcKSFPiXh2cO+OYiG9Nt4Gz8C2HDQ0LBK5rzxOE785W8+5ziTLdRfyUcSrrxk97BU/FHbROdKf6rcbew+oPxcyPzELayR02wU/i70n1IbkQHErz6vQ4tm9ZhTieK2YSRqEg/D9tPIveyoc5A9zk=
+	t=1718444907; cv=none; b=G8dAwr1aR2jVqoyfGJWicagbO7XVw0RdzY/2x4E+4GKLLB+MwCO8eVw/B5iNIfNmx0SzdDNkl+KlR5kv1CNE8IzcH9B5OxoJrGZOK9VbH0cS72S5dJ1vb1Xde2VdzjAAndqd//QDt0rjqdJU4Xc4YS0fjihGbXX8cPfd4MZ6lZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718444366; c=relaxed/simple;
-	bh=VnEJAKlueI1gVsR28BDxfyG4IIsWQe276Q/5t4EIwiI=;
+	s=arc-20240116; t=1718444907; c=relaxed/simple;
+	bh=5lgczmI4KHA3a8/JLhs3fR7zSsRky2Mlj8Fi75mmJOA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AN0KM8cuj0A7RVR0IYyALVHz2CSFQa1GEsKc0xdXNBQkMwRUX1T4HLUqGL0o9ckkd0jGfJwmCVZwLU7IoxvLLcZFcMWO1lkY1Cz29yoo2Z6vhJsupYJLvxH7X1L9dD0ylbSd/8YeXEzxm7TaDFwCnu5g35Jy/vVf6Q+CVvn7Opo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=adP+eWpD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD748C116B1;
-	Sat, 15 Jun 2024 09:39:13 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=TZAvlOddY2xlL5R5K4NoZuW5IGxDrorN/kfhZ7zj6iHXtOqpMBdL7BS+eDFcWCN96yoKH0Nux+4gZ4wMtqb30lnVAdKhxMYLTZxzINlJ2qD7JLJB/cCpXd+hXQK6zDJF3OpVv75UvYFLZHRuALQxcE7RsnK5gKkYXrK1b51jItg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uE71K+fA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3142DC3277B;
+	Sat, 15 Jun 2024 09:48:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718444366;
-	bh=VnEJAKlueI1gVsR28BDxfyG4IIsWQe276Q/5t4EIwiI=;
+	s=k20201202; t=1718444906;
+	bh=5lgczmI4KHA3a8/JLhs3fR7zSsRky2Mlj8Fi75mmJOA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=adP+eWpDAo3ogc3xH8HvRct3q4nGLVjHAQ+9XYoAyKbLksW+2M3hkGFxC97c9ABf1
-	 YmMoJtp2km315ipyKHOLATXYYZsYNXv0LBpLXx0CCbQp2pD2sNmjKGiOClSvLMlQxm
-	 3iHgUUw0llAYnMR09VjsZszMwB7dRh/oUrQgKtwqoB7JlvTdozUe8OqvlrJbzdzGpr
-	 jEbeTI+55alP5cIoJnqAMMMR4ZVknYcX9Vab0xQBRtKdksziTmG2fKYQ9cr9Nm0MHb
-	 EBscKmOnnmeNQe0XTINhhBy/c0EvSg205h7v4vgr62ka0KBIIJMbso2EvfR47SJHCb
-	 tidPZob6oHU1Q==
-Message-ID: <003b73f2-3b5d-40b7-a87c-2fc937e81bcd@kernel.org>
-Date: Sat, 15 Jun 2024 11:39:12 +0200
+	b=uE71K+fAudxqLKfjENxfU+kPkSSVjyj4k1cJWYQhLrZgunhJlh8YsX4cRjW7y6Xrm
+	 P+5QqBkuH7B3WsmTRG9x1Y3xi87gdjiRFEmvv8u862kcCrcUrO795yQEkxCAPt+F4N
+	 3mCMeC1sk3Jvto6+2mb5habzrOyNFIGb/+w2iRvFsGfUG7VEigPvOTrbHm/W8C38wf
+	 aW68Y6ntRo8zzTfvxK74DbHB/1RNww8vIWh7KRVEgvZMCC9NiKER0U+Mu3BMsXTYKj
+	 jk5nQdD47fLqWCLFSnQhucsy445wk1eg6IEywapX8Yf6LaaSVKdF4xzzqD9oTAxH6L
+	 kKWOi4KEJIX6Q==
+Message-ID: <7c2d1e2b-6abc-4941-8270-c2b19601fe3e@kernel.org>
+Date: Sat, 15 Jun 2024 11:48:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,54 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/22] dt-bindings: thermal: samsung,exynos: specify cells
-To: Alim Akhtar <alim.akhtar@samsung.com>,
- 'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>,
- 'Daniel Lezcano' <daniel.lezcano@linaro.org>,
- 'Zhang Rui' <rui.zhang@intel.com>, 'Lukasz Luba' <lukasz.luba@arm.com>,
- 'Rob Herring' <robh@kernel.org>, 'Conor Dooley' <conor+dt@kernel.org>,
- 'Guillaume La Roque' <glaroque@baylibre.com>,
- 'Krzysztof Kozlowski' <krzk+dt@kernel.org>,
- 'Vasily Khoruzhick' <anarsoul@gmail.com>, 'Chen-Yu Tsai' <wens@csie.org>,
- 'Jernej Skrabec' <jernej.skrabec@gmail.com>,
- 'Samuel Holland' <samuel@sholland.org>, 'Shawn Guo' <shawnguo@kernel.org>,
- 'Sascha Hauer' <s.hauer@pengutronix.de>,
- 'Pengutronix Kernel Team' <kernel@pengutronix.de>,
- 'Fabio Estevam' <festevam@gmail.com>, 'Anson Huang' <Anson.Huang@nxp.com>,
- 'Thierry Reding' <thierry.reding@gmail.com>,
- 'Jonathan Hunter' <jonathanh@nvidia.com>,
- 'Dmitry Baryshkov' <dmitry.baryshkov@linaro.org>,
- 'Amit Kucheria' <amitk@kernel.org>,
- =?UTF-8?Q?=27Niklas_S=C3=B6derlund=27?= <niklas.soderlund@ragnatech.se>,
- 'Heiko Stuebner' <heiko@sntech.de>, 'Biju Das' <biju.das.jz@bp.renesas.com>,
- 'Orson Zhai' <orsonzhai@gmail.com>,
- 'Baolin Wang' <baolin.wang@linux.alibaba.com>,
- 'Chunyan Zhang' <zhang.lyra@gmail.com>,
- 'Alexandre Torgue' <alexandre.torgue@foss.st.com>,
- 'Pascal Paillet' <p.paillet@foss.st.com>, 'Keerthy' <j-keerthy@ti.com>,
- 'Broadcom internal kernel review list'
- <bcm-kernel-feedback-list@broadcom.com>,
- 'Florian Fainelli' <florian.fainelli@broadcom.com>,
- 'Scott Branden' <sbranden@broadcom.com>,
- 'zhanghongchen' <zhanghongchen@loongson.cn>,
- 'Matthias Brugger' <matthias.bgg@gmail.com>,
- 'AngeloGioacchino Del Regno' <angelogioacchino.delregno@collabora.com>,
- 'Bjorn Andersson' <andersson@kernel.org>,
- 'Geert Uytterhoeven' <geert+renesas@glider.be>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-sunxi@lists.linux.dev, imx@lists.linux.dev,
- linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com,
- 'Florian Fainelli' <f.fainelli@gmail.com>,
- linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- cpgs@samsung.com
-References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org>
- <CGME20240614094638epcas5p115d52130f45e130652b6f1d946358d19@epcas5p1.samsung.com>
- <20240614-dt-bindings-thermal-allof-v1-1-30b25a6ae24e@linaro.org>
- <1891546521.01718433481489.JavaMail.epsvc@epcpadp4>
+Subject: Re: [PATCH 1/1] dt-bindings: gpio: mpc8xxx: Allow only use
+ 'fsl,qoriq-gpio'
+To: Frank Li <Frank.Li@nxp.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "open list:GPIO SUBSYSTEM"
+ <linux-gpio@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: imx@lists.linux.dev
+References: <20240614213839.2532061-1-Frank.Li@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -142,34 +105,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <1891546521.01718433481489.JavaMail.epsvc@epcpadp4>
+In-Reply-To: <20240614213839.2532061-1-Frank.Li@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/06/2024 16:29, Alim Akhtar wrote:
-> Hi Krzysztof,
+On 14/06/2024 23:38, Frank Li wrote:
+> Allow only use compatible string 'fsl,qoriq-gpio' in dts to fix below
+> warning:
 > 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Sent: Friday, June 14, 2024 3:16 PM
->> To: Daniel Lezcano <daniel.lezcano@linaro.org
-> .stormreply.com;
->> Subject: [PATCH 01/22] dt-bindings: thermal: samsung,exynos: specify cells
->>
->> All Samsung Exynos SoCs Thermal Management Units have only one sensor, so
->> make '#thermal-sensor-cells' fixed at 0.
->>
-> This is not entirely true, there are SoCs which have multiple temp sensors.
-> It is true that currently only one sensor support is added though.
-
-All supported by mainline. Others do not exist now :)
-
+> arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dtb: gpio@2300000: compatible: 'oneOf' conditional failed, one must be fixed:
+> 	['fsl,qoriq-gpio'] is too short
+> 	'fsl,qoriq-gpio' is not one of ['fsl,mpc5121-gpio', 'fsl,mpc5125-gpio', 'fsl,mpc8349-gpio', 'fsl,mpc8572-gpio', 'fsl,mpc8610-gpio', 'fsl,pq3-gpio']
+> 	'fsl,qoriq-gpio' is not one of ['fsl,ls1021a-gpio', 'fsl,ls1028a-gpio', 'fsl,ls1043a-gpio', 'fsl,ls1088a-gpio', 'fsl,ls2080a-gpio']
 > 
-> So we can leave this as is or you suggest to make it to support only one sensor
-> (to match the current DT support), and later (in near future) change it again to
-> match what HW actually support?
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
+> index eb046a48a3f59..ef72f569c8387 100644
+> --- a/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
+> @@ -19,6 +19,7 @@ properties:
+>            - fsl,mpc8572-gpio
+>            - fsl,mpc8610-gpio
+>            - fsl,pq3-gpio
+> +          - fsl,qoriq-gpio
 
-Yes, different devices can have different value (and bindings).
+No, this does not look like correct fix. You rather miss specific
+compatibles.
+
 Best regards,
 Krzysztof
 
