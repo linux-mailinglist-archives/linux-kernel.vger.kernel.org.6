@@ -1,140 +1,126 @@
-Return-Path: <linux-kernel+bounces-215858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E59909800
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:44:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 380A3909801
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:46:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E8431C20E9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:44:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB0DF283E81
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C733FB31;
-	Sat, 15 Jun 2024 11:44:36 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BDC374F1;
-	Sat, 15 Jun 2024 11:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353003C482;
+	Sat, 15 Jun 2024 11:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="VcdB1RB+"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967F510A11
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 11:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718451876; cv=none; b=nTkRSe8IX9lwaSu7gdtfqxYsMrC5UWli73P57r6Ln0Km3bZyG0kzpJ5Z1DFKUTr1eU+pj8+Fz9ZQRQ16SEeP8+DqJvqd2V0dheZCw+g/atY6PseB8Tfg/ukdlIJBYMssdP+Jh8WxduvN2NT7XZ3fUScfKFpfV7gt1TcFHvWRZBg=
+	t=1718451968; cv=none; b=re/0PbCtv/1JVIatvRfI3IuhoyQV4HJI9KeanuKLKRLuTGw144xlvM9kxMJOMrxCTfjYbReBIT+ydWXv7hqGE9rEMJAyP3V0nABfRER57KU0OiHOGryVI6TNmzdxJddBedBHMs9ZZ/MbNat/7ljoWh5DLnd8cnNlPWkcVbRW6ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718451876; c=relaxed/simple;
-	bh=68lts4Ju0T7CR+5pmBNYENZcBYUucTr+vBM8YPISqOI=;
+	s=arc-20240116; t=1718451968; c=relaxed/simple;
+	bh=ks2Doz7YndF2QhRssO32VbFhAHzz8SzDih4V99Cbh2Q=;
 	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=YBebKmPcmPLnrzYRNQZQUgiOYjTgjoLB7pMSi71qenblQ6A9shyu6zU3mwwgEPGETp76cFHelOGILsIfRzHKRnEHTGQcrfbdJwsp6cJXH7NEQb80JkYhTPBa3ElwQO6m4KtkWJyt3A6j6Ht5YbR+5SAWEKjmao9Yv2nMrHeUi7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4W1Z713vqfz4f3jdr;
-	Sat, 15 Jun 2024 19:44:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id B7FFB1A0568;
-	Sat, 15 Jun 2024 19:44:23 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP1 (Coremail) with SMTP id cCh0CgBnGw2Vfm1m91gAAA--.148S3;
-	Sat, 15 Jun 2024 19:44:23 +0800 (CST)
-Subject: Re: [PATCH -next v5 7/8] xfs: speed up truncating down a big realtime
- inode
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
- david@fromorbit.com, chandanbabu@kernel.org, jack@suse.cz,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
- John Garry <john.g.garry@oracle.com>
-References: <20240613090033.2246907-1-yi.zhang@huaweicloud.com>
- <20240613090033.2246907-8-yi.zhang@huaweicloud.com>
- <ZmveZolfY0Q0--1k@infradead.org>
- <399680eb-cd60-4c27-ef2b-2704e470d228@huaweicloud.com>
- <ZmwJuiMHQ8qgkJDS@infradead.org>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <ecd7a5cf-4939-947a-edd4-0739dc73870b@huaweicloud.com>
-Date: Sat, 15 Jun 2024 19:44:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	 In-Reply-To:Content-Type; b=ocbAXpMWPe4N9cAfR2+YxyMiOhq91HpiOBkpk9jfG6Ok9dP2RZ1+erHhz9djhAZylmtW1xm9ovHAwQYHkeHtMx4P3GuXBp/rf28Se2f6ul9rldMyZymzOQ3jdYNzf2BdEG9muD7G1IesRCYUv+gWTxFhCe24j0mqErUvGxOhG8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=VcdB1RB+; arc=none smtp.client-ip=117.135.210.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Subject:From:Message-ID:Date:MIME-Version:
+	Content-Type; bh=380/jyhTr/zvSS92chsebtdpaNxw5xeITqxnfl6SZXw=;
+	b=VcdB1RB+xRofJg3xdBwHi2LkOVU9zi+5WYuXKV05YIAiWYrjjcT8Mc7qSyIm0j
+	DtXtK1Fi9Olqsghjeclg/xc6Dvn4VRH4qpn4HpfvNIzX5oC+guL0zXkvuKVhzPcZ
+	d4v8slPwqOV7xDOzdRWiMxt/4Vf0aPU/kf4S4hcX5XId0=
+Received: from [172.21.21.216] (unknown [118.242.3.34])
+	by gzga-smtp-mta-g0-3 (Coremail) with SMTP id _____wD3_8ubfm1msv1qBw--.38847S2;
+	Sat, 15 Jun 2024 19:44:29 +0800 (CST)
+Subject: Re: [PATCH] mm/gup: don't check page lru flag before draining it
+To: David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, liuzixing@hygon.cn
+References: <0d7a4405-9a2e-4bd1-ba89-a31486155233@redhat.com>
+ <dc7a0b61-8d3f-7205-2f6d-c2b12500947a@126.com>
+ <776de760-e817-43b2-bd00-8ce96f4e37a8@redhat.com>
+ <7063920f-963a-4b3e-a3f3-c5cc227bc877@redhat.com>
+ <48150a28-ed48-49ff-9432-9cd30cda4da4@linux.alibaba.com>
+ <11ef3deb-d1e3-46d5-97ed-9ba3c1fbbba9@redhat.com>
+ <697a9bc2-a655-4035-aa5e-7d3acb23e79d@redhat.com>
+ <d6deb928-3466-45ea-939b-cb5aca9bc7b4@linux.alibaba.com>
+ <3a368e38-a4cb-413e-a6d9-41c6b3dbd5ae@redhat.com>
+ <48fb0e58-16d1-7956-cf35-74741826617a@126.com>
+ <ZmR1dVUB5mE2If9t@casper.infradead.org>
+ <617f9e36-9334-4630-a6b9-473f2dd570d4@redhat.com>
+ <8351052a-5c21-c383-544b-3166e883587c@126.com>
+ <a39c8602-3c9c-48fd-9bdb-2089ccccd6bc@redhat.com>
+From: yangge1116 <yangge1116@126.com>
+Message-ID: <26c86ffe-581b-1012-9974-b3d73e56a03d@126.com>
+Date: Sat, 15 Jun 2024 19:44:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZmwJuiMHQ8qgkJDS@infradead.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <a39c8602-3c9c-48fd-9bdb-2089ccccd6bc@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBnGw2Vfm1m91gAAA--.148S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tr15KF1xJr1kJFWxGF4kJFb_yoW8Zr47pr
-	W5ua4DAr9Yq345C3srA3Z7Xa4Fkw1Fka18XF15Zr4UAF9xWFy3CFnaqa15Xa1ku3y8uFW0
-	vF4qqF9xGr17AFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UWE__UUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-CM-TRANSID:_____wD3_8ubfm1msv1qBw--.38847S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Cw17tFW8KF4xXFy3uryDKFg_yoW8Xw17pF
+	1fGF98JFsFkryYyFnrtrn7Arsay3yrJFy5XFy3JFy2kFyqqFy3KrW8ta15ua43Xr4Sgr10
+	ka10q3Z3WF1jvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07b8PEfUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOh3+G2VEwzIv6AAAsV
 
-On 2024/6/14 17:13, Christoph Hellwig wrote:
-> On Fri, Jun 14, 2024 at 03:18:07PM +0800, Zhang Yi wrote:
->> Thanks for your suggestion.
+
+
+在 2024/6/12 下午3:32, David Hildenbrand 写道:
+> On 11.06.24 13:20, yangge1116 wrote:
 >>
->> Yeah, we could fix the realtime inode problem by just drop this part, but
->> for the upcoming forcealign feature and atomic feature by John, IIUC, we
->> couldn't split and convert the tail extent like RT inode does, we should
->> zero out the entire tail force aligned extent, if not, atomic write could
->> be broken by submitting unaligned bios.
+>>
+>> 在 2024/6/9 上午12:03, David Hildenbrand 写道:
+>>> On 08.06.24 17:15, Matthew Wilcox wrote:
+>>>> On Sat, Jun 08, 2024 at 12:38:49PM +0800, yangge1116 wrote:
+>>>>> Can we add a PG_lru_batch flag to determine whether a page is in lru
+>>>>> batch?
+>>>>> If we can, seems this problem will be easier.
+>>>>
+>>>> Page flags are in short supply.  You'd need a really good 
+>>>> justification.
+>>>>
+>>>
+>>> A flag would not be able to handle the "part of multiple LRU batches"
+>>> that should currently possible (when to clear the flag?). Well, if we
+>>> have to keep supporting that. If we only to be part in a single LRU
+>>> batch, a new flag could work and we could still allow isolating a folio
+>>> from LRU while in some LRU batch.
+>>
+>> Yes, before adding a folio to LRU batch, check whether the folio has
+>> been added. Add the folio to LRU batch only if the folio has not been
+>> added.
+>>
+>>>
+>>> If we could handle it using the existing flags, that would of course be
+>>> better (wondering if we could store more information in the existing
+>>> flags by using a different encoding for the different states).
+>>
+>> If a folio contains more than one page, the folio will not be added to
+>> LRU batch. Can we use folio_test_large(folio) to filter?
+>>
+>> if (!folio_test_large(folio) && drain_allow) {
+>>     lru_add_drain_all();
+>>     drain_allow = false;
+>> }
 > 
-> Let's worry about that if/when those actually land.
-
-OK, if we don't consider the upcoming forcealign feature and atomic feature,
-I think only path 6 is needed to fix the issue.
-
-> I also see no
-> rason why those couldn't just use partially convert to unwritten path
-> offhand (but without having looked into the details).
+> I think we should do better than this, and not do arbitrary 
+> lru_add_drain_all() calls.
 > 
 
-The reason why atomic feature can't split and convert the tail extent on truncate
-down now is the dio write iter loop will split an atomic dio which covers the
-whole allocation unit(extsize) since there are two extents in on allocation unit.
-
-Please see this code:
-__iomap_dio_rw()
-{
-	...
-	while ((ret = iomap_iter(&iomi, ops)) > 0) {
-		iomi.processed = iomap_dio_iter(&iomi, dio);
-	...
-}
-
-The first loop find and submit the frist extent and the second loop submit the
-second extent, this breaks the atomic property.
-
-For example, we have a file with only one extszie length，if we truncate down
-and split the extent, the file becomes below,
-
-  |   forced extsize (one atomic IO unit)  |
-  wwwwwwwwwwwwww+uuuuuuuuuuuuuuuuuuuuuuuuuuu
-                ^new size A                ^old size B
-
-Then if we submit a DIO from 0 to B, xfs should submit it in one bio, but it
-will submit to two bios, since there are two extents. So, unless we find
-another way to guarantee submit one bio even we have two extents in one atomic
-write unit (I guess it may complicated), we have to zero out the whole unit
-when truncate down(I'd prefer this solution), we need consider this in the near
-future.
-
-Thanks,
-Yi.
+Thanks, I will prepare the V2.
 
 
