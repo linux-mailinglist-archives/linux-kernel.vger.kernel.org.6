@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-215786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F31909096F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:25:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E4459096F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 716DE1F214EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:25:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242BD1F21123
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49C118EB8;
-	Sat, 15 Jun 2024 08:25:13 +0000 (UTC)
-Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E8DBE68;
-	Sat, 15 Jun 2024 08:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004711B28D;
+	Sat, 15 Jun 2024 08:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="x4pKHQ8x"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FBE17BD6
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 08:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718439913; cv=none; b=QEYuKbQU+WYrUUoZN49NQvj9PyEWWnQc9lm3FtFHG5i219/bAXrILDKEupbej2wQzEy5NDA6ySOkkO3GUeXdITMSb2F32choLuuvhN5dpI24RNjjlSH7uSCiMXzs4Dym96sMrdOR6uC2VJRHexe5wW1Ez0PNzJTm1HuatpC1Lpw=
+	t=1718439955; cv=none; b=Npwe6CNt58xkdaSVfhZScMG3AoEgPJGD+TIHz8KlsxZP27jSzN1F1Ab87O/FiDDqgVVmqlobvfLCV6xY2m8Bzo/3ApViULguKYjhq8ScgfH331RCe7P6IAmjNqE69TF90s32CARf4/mB6ZegJSIp3q2TAodJ0tqTsgk+8rp514I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718439913; c=relaxed/simple;
-	bh=IlnUBEHlUTDilPI8TWHODx0HU1aDoU75blv08V81wVI=;
+	s=arc-20240116; t=1718439955; c=relaxed/simple;
+	bh=RPVnhJfAcbOnu/iAuVsxIQIuS1yChCUbf4uGbhv50aI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MSefItI7UXAFNaJfJ22Gi+VrIVhmu2K48iRsJURAAcCUQRS0osuWSgQ1KXemT+UAo8r0dMCRu/UVQ21YOkiOv9KLQDsSXzcGZ8fDQ3gv9q66ZAmpYzJav9Y339ARYEFdwLYSCIuDSGKodJ1I5sL/3tcpLdHnMqUh2cJqq4/SALE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=206.189.21.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.52])
-	by app1 (Coremail) with SMTP id HgEQrADn74O_T21mNNvrBw--.52314S2;
-	Sat, 15 Jun 2024 16:24:31 +0800 (CST)
-Received: from [10.12.169.238] (unknown [10.12.169.238])
-	by gateway (Coremail) with SMTP id _____wAHZi67T21mDCUdAQ--.56296S2;
-	Sat, 15 Jun 2024 16:24:29 +0800 (CST)
-Message-ID: <5351308d-6fb7-4179-b0a0-32107d8244b7@hust.edu.cn>
-Date: Sat, 15 Jun 2024 16:24:27 +0800
+	 In-Reply-To:Content-Type; b=gTL9EvzVVS2FrIPOf/jEGsllidtSVHYn21Uuz9r/RMIm1qzIBeYuq3VKbOnNwEXAE7yJC+xb5mUJ4iv8XDAWXgXewUvFOigDciKxDSFahkgOXGWIPggxjCHJFVAcAStSB7WoomR3kDGoJC6YV9ijXb+oIS6P8Yf9rxDDT6olwPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=x4pKHQ8x; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1718439934;
+ bh=EW7jvkwNl5KPdKEMQlw7NNrj1stNAcl0D/1kkAtbX9s=;
+ b=x4pKHQ8xY4jG2m4ai/rW5ZXbsDn3QBmtALJi+WiuR4Fz4Weyu0kuskrVNAsce9CQ4pgLgcBmp
+ JnXriXcuP18dwwfs2e51uanLqxEFSxN0U26zVBFTa6tY5BIIu5BhJnU2CbhuRr2HHwIOnFrwR28
+ ZJL3Cm/zmz7mraYUKnVelMcRnC3iJAGPXtfBTasiPYn3ntsqo8CSLDukQ+rw+j0C++dF4NDPV9w
+ eK5t9JKqMkx1P7rw36uqM8YNKgZ6fYadat6ssaWIM4F8bQrsxgnaC/eU4O3M0Rc3GgR6mjmYTnG
+ 1pj/NnJbD5j8U3iCSi/05NhRobCfDSHDfDhe9Zt0knvA==
+Message-ID: <944c4296-8dd2-4ffd-b430-1839ff3a3ed2@kwiboo.se>
+Date: Sat, 15 Jun 2024 10:25:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,413 +49,140 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] doc-guide: add help documentation
- checktransupdate.rst
-To: si.yanteng@linux.dev, Jonathan Corbet <corbet@lwn.net>,
- Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240615035323.909650-1-dzm91@hust.edu.cn>
- <20240615035323.909650-2-dzm91@hust.edu.cn>
- <4da91d0b2a0dc580ffaa7c67ab1860c310387e10@linux.dev>
-From: Dongliang Mu <dzm91@hust.edu.cn>
-In-Reply-To: <4da91d0b2a0dc580ffaa7c67ab1860c310387e10@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HgEQrADn74O_T21mNNvrBw--.52314S2
-Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoW3XFy7Cr1kCw1kCF48Gw48JFb_yoW3CF4Upa
-	43GFWxJan2q345tr1Ig34jvrnIyF1xCa1jgr17Kw1vqrn0yrn7JF43tryFgrWkJryrAayU
-	ZFWjyry7uryrZFDanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmYb7Iv0xC_tr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
-	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
-	1Y6r17M2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
-	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
-	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1U
-	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrwCF04k20x
-	vE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_
-	JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-	AY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-	cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
-	IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIev
-	Ja73UjIFyTuYvjxUV9N3UUUUU
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add rkvdec2 Video Decoder on
+ rk3588(s)
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: linux-kernel@vger.kernel.org, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, Dragan Simic
+ <dsimic@manjaro.org>, Alexey Charkov <alchark@gmail.com>, Cristian
+ Ciocaltea <cristian.ciocaltea@collabora.com>, Diederik de Haas
+ <didi.debian@cknow.org>, Andy Yan <andy.yan@rock-chips.com>,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-staging@lists.linux.dev
+References: <20240615015734.1612108-1-detlev.casanova@collabora.com>
+ <20240615015734.1612108-4-detlev.casanova@collabora.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20240615015734.1612108-4-detlev.casanova@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 666d4ffdb23880544d1f1533
 
+Hi Detlev,
 
-On 2024/6/15 15:57, si.yanteng@linux.dev wrote:
-> 2024年6月15日 11:53, "Dongliang Mu" <dzm91@hust.edu.cn> 写到:
->
->
->
->> This commit adds help documents - Documentation/doc-guide/checktransupdate.rst
->>
->> and Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
->>
->> for scripts/checktransupdate.py, including English and Chinese versions
->>
->> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
->>
->> ---
->>
->> v1->v2: fix some issues according to Randy
->>
->>   Documentation/doc-guide/checktransupdate.rst | 63 +++++++++++++++++++
->>
->>   Documentation/doc-guide/index.rst | 1 +
->>
->>   .../zh_CN/doc-guide/checktransupdate.rst | 62 ++++++++++++++++++
->>
->>   .../translations/zh_CN/doc-guide/index.rst | 1 +
->>
->>   4 files changed, 127 insertions(+)
->>
->>   create mode 100644 Documentation/doc-guide/checktransupdate.rst
->>
->>   create mode 100644 Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
->>
->> diff --git a/Documentation/doc-guide/checktransupdate.rst b/Documentation/doc-guide/checktransupdate.rst
->>
->> new file mode 100644
->>
->> index 000000000000..4ece330882d6
->>
->> --- /dev/null
->>
->> +++ b/Documentation/doc-guide/checktransupdate.rst
->>
->> @@ -0,0 +1,63 @@
->>
->> +.. SPDX-License-Identifier: GPL-2.0
->>
->> +
->>
->> +Check translation update
->>
->> +==========================
-> Let's get rid of unnecessary symbols.
->> +
->>
->> +This script helps track the translation status of the documentation in
->>
->> +different locales, i.e., whether the documentation is up-to-date with
->>
->> +the English counterpart.
->>
->> +
->>
->> +How it works
->>
->> +------------
->>
->> +
->>
->> +It uses ``git log`` command to track the latest English commit from the
->>
->> +translation commit (order by author date) and the latest English commits
->>
->> +from HEAD. If any differences occur, the file is considered as out-of-date,
->>
->> +then commits that need to be updated will be collected and reported.
->>
->> +
->>
->> +Features implemented
->>
->> +--------------------
->>
->> +
->>
->> +- check all files in a certain locale
->>
->> +- check a single file or a set of files
->>
->> +- provide options to change output format
->>
->> +
->>
->> +Usage
->>
->> +-----
->>
->> +
->>
->> +::
->>
->> +
->>
->> + checktransupdate.py [-h] [-l LOCALE] [--print-commits | --no-print-commits] [--print-updated-files | --no-print-updated-files] [--debug | --no-debug] [files ...]
->>
->> +
->>
->> +Options
->>
->> +~~~~~~~
->>
->> +
->>
->> +- ``-l``, ``--locale``: locale to check when file is not specified
->>
->> +- ``--[no-]print-commits``: whether to print commits between origin and
->>
->> + translation
->>
->> +- ``--[no-]print-updated-files``: whether to print files that do no
->>
->> + need to be updated
->>
->> +- ``files``: files to check, if this option is specified, the locale
->>
->> + option will be ignored.
->>
->> +
->>
->> +Samples
->>
->> +~~~~~~~
->>
->> +
->>
->> +- ``./scripts/checktransupdate.py -l zh_CN``
->>
->> + This will print all the files that need to be updated in the zh_CN locale.
->>
->> +- ``./scripts/checktransupdate.py Documentation/translations/zh_CN/process/coding-style.rst``
->>
->> + This will only print the status of the specified file.
->>
->> +
->>
->> +Then the output is something like:
->>
->> +
->>
->> +::
->>
->> +
->>
->> + Documentation/translations/zh_CN/process/coding-style.rst (2 commits)
->>
->> + commit 6813216bbdba ("Documentation: coding-style: ask function-like macros to evaluate parameters")
->>
->> + commit 185ea7676ef3 ("Documentation: coding-style: Update syntax highlighting for code-blocks")
->>
->> +
->>
->> +Features to be implemented
->>
->> +----------------------------
-> ditto
->
->> +
->>
->> +- track the translation status of files that have no translation
->>
->> +- files can be a folder instead of only a file
->>
->> diff --git a/Documentation/doc-guide/index.rst b/Documentation/doc-guide/index.rst
->>
->> index 7c7d97784626..24d058faa75c 100644
->>
->> --- a/Documentation/doc-guide/index.rst
->>
->> +++ b/Documentation/doc-guide/index.rst
->>
->> @@ -12,6 +12,7 @@ How to write kernel documentation
->>
->>   parse-headers
->>
->>   contributing
->>
->>   maintainer-profile
->>
->> + checktransupdate
->>
->>   
->>
->>   .. only:: subproject and html
->>
->>   
->>
->> diff --git a/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
->>
->> new file mode 100644
->>
->> index 000000000000..37c0bb518ab8
->>
->> --- /dev/null
->>
->> +++ b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
->>
->> @@ -0,0 +1,62 @@
->>
->> +.. SPDX-License-Identifier: GPL-2.0
->>
->> +
->>
->> +.. include:: ../disclaimer-zh_CN.rst
->>
->> +
->>
->> +:Original: Documentation/doc-guide/checktransupdate.rst
->>
->> +
->>
->> +:译者: 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
->>
->> +
->>
->> +检查翻译更新
->>
->> +=============
-> ditto
->> +
->>
->> +这个脚本帮助跟踪不同语言的文档翻译状态，即文档是否与对应的英文版本保持更新。
->>
->> +
->>
->> +工作原理
->>
->> +------------
->>
->> +
->>
->> +它使用 ``git log`` 命令来跟踪翻译提交的最新英文提交（按作者日期排序）和英文文档的
->>
->> +最新提交。如果有任何差异，则该文件被认为是过期的，然后需要更新的提交将被收集并报告。
->>
->> +
->>
->> +实现的功能
->>
->> +--------------------
-> ditto
->
-> ...
->
->> +
->>
->> +- 检查特定语言中的所有文件
->>
->> +- 检查单个文件或一组文件
->>
->> +- 提供更改输出格式的选项
->>
->> +
->>
->> +用法
->>
->> +-----
->>
->> +
->>
->> +::
->>
->> +
->>
->> + checktransupdate.py [-h] [-l LOCALE] [--print-commits | --no-print-commits] [--print-updated-files | --no-print-updated-files] [--debug | --no-debug] [files ...]
->>
->> +
->>
->> +选项
->>
->> +~~~~~~~
->>
->> +
->>
->> +- ``-l``, ``--locale``: 检查指定的文件语言，如果未指定文件
->>
->> +- ``--[no-]print-commits``: 是否打印英文原始版本和翻译版本之间的提交
->>
->> +- ``--[no-]print-updated-files``: 是否打印无需更新的文件
->>
->> +- ``files``: 要检查的文件，如果指定了此选项，将忽略语言选项
->>
->> +
->>
->> +示例
->>
->> +~~~~~~~
-> ditto
+On 2024-06-15 03:56, Detlev Casanova wrote:
+> Add the rkvdec2 Video Decoder to the RK3588s devicetree.
+> 
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> ---
+>  .../boot/dts/rockchip/rk3588-rock-5b.dts      |  4 ++++
+>  .../boot/dts/rockchip/rk3588s-orangepi-5.dts  |  4 ++++
+>  arch/arm64/boot/dts/rockchip/rk3588s.dtsi     | 19 +++++++++++++++++++
+>  3 files changed, 27 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> index c551b676860c..965322c24a65 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> @@ -503,6 +503,10 @@ &pwm1 {
+>  	status = "okay";
+>  };
+>  
+> +&rkvdec0 {
+> +	status = "okay";
+> +};
 
+Enable of rkvdec0 should probably be split out from the patch that adds
+the rkvdec0 node to soc dtsi.
 
-Yanteng,
+Also why is rkvdec0 only enabled on rock-5b and orangepi-5?
 
-the requested changes does not match between English and Chinse translation.
+> +
+>  &saradc {
+>  	vref-supply = <&avcc_1v8_s0>;
+>  	status = "okay";
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
+> index feea6b20a6bf..2828fb4c182a 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
+> @@ -321,6 +321,10 @@ typec5v_pwren: typec5v-pwren {
+>  	};
+>  };
+>  
+> +&rkvdec0 {
+> +	status = "okay";
+> +};
+> +
+>  &saradc {
+>  	vref-supply = <&avcc_1v8_s0>;
+>  	status = "okay";
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> index 0fecbf46e127..09672636dcea 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> @@ -3034,6 +3034,9 @@ system_sram2: sram@ff001000 {
+>  		ranges = <0x0 0x0 0xff001000 0xef000>;
+>  		#address-cells = <1>;
+>  		#size-cells = <1>;
 
-Dongliang Mu
+Blank line is missing.
 
+> +		rkvdec0_sram: rkvdec-sram@0 {
+> +			reg = <0x0 0x78000>;
+> +		};
+>  	};
+>  
+>  	pinctrl: pinctrl {
+> @@ -3103,6 +3106,22 @@ gpio4: gpio@fec50000 {
+>  			#interrupt-cells = <2>;
+>  		};
+>  	};
+> +
+> +	rkvdec0: video-decoder@fdc38100 {
+> +		compatible = "rockchip,rk3588-vdec2";
+> +		reg = <0x0 0xfdc38100 0x0 0x500>;
+> +		interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>, <&cru CLK_RKVDEC0_CORE>,
+> +			 <&cru CLK_RKVDEC0_CA>, <&cru CLK_RKVDEC0_HEVC_CA>;
+> +		clock-names = "axi", "ahb", "core",
+> +			      "cabac", "hevc_cabac";
+> +		assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru CLK_RKVDEC0_CORE>,
+> +				  <&cru CLK_RKVDEC0_CA>, <&cru CLK_RKVDEC0_HEVC_CA>;
+> +		assigned-clock-rates = <800000000>, <600000000>,
+> +				       <600000000>, <1000000000>;
+> +		power-domains = <&power RK3588_PD_RKVDEC0>;
 
->
->
-> Thanks,
-> Yanteng
->> +
->>
->> +- ``./scripts/checktransupdate.py -l zh_CN``
->>
->> + 这将打印 zh_CN 语言中需要更新的所有文件。
->>
->> +- ``./scripts/checktransupdate.py Documentation/translations/zh_CN/process/coding-style.rst``
->>
->> + 这将只打印指定文件的状态。
->>
->> +
->>
->> +然后输出类似如下的内容：
->>
->> +
->>
->> +::
->>
->> +
->>
->> + Documentation/translations/zh_CN/process/coding-style.rst (2 commits)
->>
->> + commit 6813216bbdba ("Documentation: coding-style: ask function-like macros to evaluate parameters")
->>
->> + commit 185ea7676ef3 ("Documentation: coding-style: Update syntax highlighting for code-blocks")
->>
->> +
->>
->> +待实现的功能
->>
->> +-------------
->>
->> +
->>
->> +- 跟踪没有翻译过的文件的翻译状态
->>
->> +- 文件参数可以是文件夹而不仅仅是单个文件
->>
->> diff --git a/Documentation/translations/zh_CN/doc-guide/index.rst b/Documentation/translations/zh_CN/doc-guide/index.rst
->>
->> index 78c2e9a1697f..0ac1fc9315ea 100644
->>
->> --- a/Documentation/translations/zh_CN/doc-guide/index.rst
->>
->> +++ b/Documentation/translations/zh_CN/doc-guide/index.rst
->>
->> @@ -18,6 +18,7 @@
->>
->>   parse-headers
->>
->>   contributing
->>
->>   maintainer-profile
->>
->> + checktransupdate
->>
->>   
->>
->>   .. only:: subproject and html
->>
->>   
->>
->> -- 
->>
->> 2.39.2
->>
+iommus and resets should probably be added.
+
+> +		status = "disabled";
+> +	};
+
+The iommu node for rkvdec0_mmu seem to be missing, is it not required to
+be able to use memory >4GiB as decoding buffers?
+
+I would also consider adding the rkvdec1 node(s), if I am understanding
+correctly they can both be used in a cluster or completely independent.
+
+Also on RK3582/RK3583 one (or both) of the decoder cores may be marked
+as bad, yet the remaining one can still be used independently. The idea
+will be that bootloader fixup the DT and disabled/delete-node the bad
+core(s).
+
+Regards,
+Jonas
+
+>  };
+>  
+>  #include "rk3588s-pinctrl.dtsi"
 
 
