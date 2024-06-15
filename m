@@ -1,127 +1,190 @@
-Return-Path: <linux-kernel+bounces-215880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EDE890984A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:21:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54AA790984E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9FBB1F21E75
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:21:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5FC8281D45
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579CE3C062;
-	Sat, 15 Jun 2024 12:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0E04779F;
+	Sat, 15 Jun 2024 12:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="WKqokBrW"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNBwABJ2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E096545945
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 12:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F453C062;
+	Sat, 15 Jun 2024 12:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718454065; cv=none; b=ab7JzSS7tv64SpV8YYDUEDD0PJUuWi0xHsi4upXtlWLeJKzemcb74ni33FwfiVBoX+o85PuiyRZCcrsrQO7gCPqb8FUb05043oXThVW33zRrmA08Unu0IyrxvH/kv8SJXYlgQTJ0GX6eRSZFn/TBIj/kCy0W/WqRvP8JcZ5RZtY=
+	t=1718454320; cv=none; b=LAUUYXQ89XIvEkoYtXxifxR1rzzob40fcHvwiTl/zQLOxv2Qe5qdDAzOGp2IYVa7sEnEgCQpRZyiWvNy/sjl7RlDSvwsBVXmdREuMrii42TVAAp5UxzbnxgFuGFeJtxuq714NaavldYAHXmWb5WcxW27voHcTIYKET+Kg+g8jAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718454065; c=relaxed/simple;
-	bh=zp6HAHqQzS4bpRHupIiKdAIU861FIU+seO8c8aTOcQk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M0uabmmCkzLCPN819n6XqDUk9JLYY/y2hZSEZLKV+bIOJCkE6NRMO591vlJtL8Sq6Z4G6KxiNS1AV4NPi2ucvDh5YyjQRPpxo5ENlqbQiKcNuxi57S0uF4FRks8Va8+QPkqykwLwn+EIQwbZdyLBBWin7Q9000k+bREJyd/FXL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=WKqokBrW; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-6fd8506a0b2so2481425a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 05:21:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1718454061; x=1719058861; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QT0csZvkAyZvRyAkGZAf6VlXj1JNmiQ7p0AcD9y7g2g=;
-        b=WKqokBrW0VHb5KAYu27LiHllgJUyLGLnuuuZZI3gXC27GN5/ghh1ypVZ034x9wegBA
-         CMi9MfqorvoRKGS9+yuhCMtk41BUixN/PBV1tL11uvyhWiSU2MhaLSBuSw5kXx5HHLAe
-         5RKpdWVFWsOMRooWo4CZr+rTGf/doHVlsd8Gi1mZ/03N30d5csW9BLT467Zyru6Uok7I
-         sXKXSGVMsEev6Ge2wyWT7naAzXQlEl8SqEN5nBQndNJdlIwIt5ieK38m2/RbvghDEuHL
-         PqJDK1kadvlwCGm+C5Hc+t3bUH1qDa9DCXm6UsmPJOlfjHfjVx4Zxg4s1aHygLcjIWAT
-         xgZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718454061; x=1719058861;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QT0csZvkAyZvRyAkGZAf6VlXj1JNmiQ7p0AcD9y7g2g=;
-        b=lCsJ0Uc8VHov3q67NQKqk/a7fTSDa3N1dVCToRaQW/7acHY7wb4wqJG2N6fU51ASUv
-         1ynV2EHQRCEaHbIY0N/UkpikqbuVw3IcxadgrPdGzUTwl/rialVewSXkgiNIsRI7RFRH
-         L79ujJXAy1g9S2FDXYGebR36P5wEJ1UF3h+aDQnJ59/+BRU/oOWFZwSV+t88Mi+XWK/B
-         Ri9j1lj/etgCYrcgSWweEOmKHYAQw2tLkxkjC2sRHCnHhvX2wkmBbXidAepwxWUzIQ/K
-         WVJ9b0Z1od5RktGXd8Qoevqh362zcZ6HGZvKnL/nkC0zug5aGA2PwbeiTYdcTAHcbMH9
-         JRkg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7U+ikT2j8eZrYyaSs3uTLI8ba6Y4MY9o8OcJXddJ/joSYHgzn+9ok9w9czlLdSxuEE7vXVsqV2Q8xDh4B+JhszR40XtpJ4hobyAG8
-X-Gm-Message-State: AOJu0Yw1AzWMCoTCTDeMVAkrZ+oBBM5LNLzm9Jyw7LaSQaVybYu+9a5j
-	WrivdsPHbQfgxmTvyFay7G5navaumkVGOvVoK+g0zjqhHiF7g0pIzketLVAULBA=
-X-Google-Smtp-Source: AGHT+IEzu79iKc3+5Cc9cOE0W0brtv3+RnstpaijdqFQTe1Rd1BQ+Wa4C56+pHSK/H9VUqeOFQ1iJg==
-X-Received: by 2002:a17:902:dad0:b0:1f8:6bae:28f with SMTP id d9443c01a7336-1f86bae054cmr36156385ad.9.1718454061117;
-        Sat, 15 Jun 2024 05:21:01 -0700 (PDT)
-Received: from [10.12.168.35] ([143.92.118.29])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855ee8354sm48657745ad.149.2024.06.15.05.20.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Jun 2024 05:21:00 -0700 (PDT)
-Message-ID: <3ce68249-c2f1-4407-8415-f08fc30bdeb8@shopee.com>
-Date: Sat, 15 Jun 2024 20:20:57 +0800
+	s=arc-20240116; t=1718454320; c=relaxed/simple;
+	bh=ISVbu2fxZ1eV2uEqGAczzn9y7Z8gAktw7YuOOBLJ0/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q5eyTMqfOol8AFaBwTC4Q1E/IBjJYKKC5JP2brbJoh1fs+YGJtAInjYeRIKkMOm/eZcimOjGwRNp3EgpkUJPMJTKp4Fbl5XAGv8RezORh9UlWdxc6Fo6SzBs/JLlPf3+nNrPExMjEk2oQR+8lD/wawZn16yzhc++UWMzCwgZ7HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNBwABJ2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 749AAC116B1;
+	Sat, 15 Jun 2024 12:25:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718454320;
+	bh=ISVbu2fxZ1eV2uEqGAczzn9y7Z8gAktw7YuOOBLJ0/E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tNBwABJ2oDk9VHb+Z0px0Kw7I7IDolqlz/RlhNdk5Scfth6uJX/MjndFF5MnzWiv2
+	 7PuMRFdxklKAqxN272F8XBrWQgunsSa5x80VTCr1okVpkjub3Z7immYWPrY2ou4f7W
+	 ueWqgb8tdne8zvFFqTK7zDdjlH7YjGlkX6slkbjhuHiL26Ss9awVaFsQLi+BQi7OIP
+	 oFwD7QYYz/GIfEnQYzpYwRYrXqbMFJbiAvDsx/4FlshZMXO3AwTPMNjKK4KsuWfyTx
+	 ChCaxri55Dx1TdW6I6VYJVYEXYLK+jcJSqwexyYhG0kGJEZRRIREnUeU7X9Fa1Dxh2
+	 wYpGDoMMa5ckw==
+Date: Sat, 15 Jun 2024 13:25:10 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Rob Herring <robh@kernel.org>, Nuno =?UTF-8?B?U8Oh?=
+ <noname.nuno@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michael
+ Hennerich <michael.hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: iio: adc: add AD4695 and similar ADCs
+Message-ID: <20240615132510.2575b65a@jic23-huawei>
+In-Reply-To: <d802086d-5f88-49c3-996c-ada251043187@baylibre.com>
+References: <20240612-iio-adc-ad4695-v1-0-6a4ed251fc86@baylibre.com>
+	<20240612-iio-adc-ad4695-v1-1-6a4ed251fc86@baylibre.com>
+	<94448c2c-e7b2-4191-858c-529b254994f1@kernel.org>
+	<f765ef30-a777-4dfc-8f93-0f15b46f91ae@baylibre.com>
+	<e09fecf4-bde2-4feb-8312-22c530c6a960@kernel.org>
+	<b6b52b1e-847b-44ca-87f9-095a78164771@baylibre.com>
+	<5f0776ba5163578453e26352763ff1b4687bcf87.camel@gmail.com>
+	<20240613194324.GA2352022-robh@kernel.org>
+	<d802086d-5f88-49c3-996c-ada251043187@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] fuse: do not generate interrupt requests for fatal signals
-To: Bernd Schubert <bernd.schubert@fastmail.fm>,
- Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240613040147.329220-1-haifeng.xu@shopee.com>
- <CAJfpegsGOsnqmKT=6_UN=GYPNpVBU2kOjQraTcmD8h4wDr91Ew@mail.gmail.com>
- <bb09caf0-bb8d-4948-97db-9ac503377646@fastmail.fm>
-From: Haifeng Xu <haifeng.xu@shopee.com>
-In-Reply-To: <bb09caf0-bb8d-4948-97db-9ac503377646@fastmail.fm>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, 13 Jun 2024 15:09:40 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
+> On 6/13/24 2:43 PM, Rob Herring wrote:
+> > On Thu, Jun 13, 2024 at 05:11:48PM +0200, Nuno S=C3=A1 wrote: =20
+> >> On Thu, 2024-06-13 at 09:39 -0500, David Lechner wrote: =20
+> >>> On 6/13/24 9:18 AM, Krzysztof Kozlowski wrote: =20
+> >>>> On 13/06/2024 15:57, David Lechner wrote: =20
+> >>>>> =20
+> >>>>>> =20
+> >>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+adi,ad4695
+> >>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - items:
+> >>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+adi,ad4697-wlcsp
+> >>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+adi,ad4697
+> >>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # same chips with higher max samp=
+le rate =20
+> >>>>>
+> >>>>> I suppose one could make the argument that the programming model is
+> >>>>> the same on these too, but the maximum sampling frequency does seem
+> >>>>> like an important bit of information so that you don't try to set
+> >>>>> the conversion trigger rate too high.
+> >>>>> =20
+> >>>>
+> >>>> which property is that? I don't see differences in the driver, so I
+> >>>> don't get how these wlcsp compatibles allow you to control value of
+> >>>> conversion trigger. =20
+> >>>
+> >>> This comment is unrelated to the package type (WLCSP or LFCSP).
+> >>>
+> >>> What I mean is that e.g. AD4695 and AD4696 are virtually identical
+> >>> other than the maximum allowable sample rate (500 kSPS or 1 MSPS).
+> >>>
+> >>> So my thinking was that it would make sense to have:
+> >>>
+> >>> 	compatible =3D "ad4695";
+> >>>
+> >>> for the lower sample rate chip and
+> >>>
+> >>> 	compatible =3D "ad4696", "ad4695";
+> >>>
+> >>> for the higher sample rate chip since ad4696 can do everything
+> >>> that ad4695 does plus a bit more.
+> >>> =20
+> >>
+> >> IMO, that would make sense yes. If the higher sample rate chip fallsba=
+ck, it will
+> >> still work but not at full speed. The other way around is the one that=
+ we can't allow
+> >> naturally.
+> >>
+> >> But possibly dumb question now... since both devices will be supported=
+ at the same
+> >> time, do we actually care about having the fallback compatible? My und=
+erstanding of
+> >> the fallback story is that we may load a DTS in an older kernel where =
+chip A is
+> >> supported but chip B is not and it is ok for chip B to fallback to chi=
+p A. Since
+> >> these devices will be supported at the same time, do we need to care? =
+Unless out of
+> >> tree stuff enters the equation? =20
+> >=20
+> > Yeah, it doesn't really matter much in that case.
+> >  =20
+> >> Or is there another usecase that I'm not aware about (or maybe it just=
+ makes sense to
+> >> document properly...)? =20
+> >=20
+> > Somewhat I guess. Perhaps if there's a 3rd chip with higher rate, then=
+=20
+> > it will be more obvious what to do and we don't have to have this=20
+> > discussion again for it. :)
+> >=20
+> > Rob =20
+>=20
+> It sounds like maybe the best thing to do here then is just keep it simpl=
+e?
+>=20
+> Like this:
+>=20
+>   compatible:
+>     enum:
+>       - adi,ad4695
+>       - adi,ad4696
+>       - adi,ad4697
+>       - adi,ad4698
+>=20
+Quick comments late in discussion.=20
 
-On 2024/6/14 18:31, Bernd Schubert wrote:
-> 
-> 
-> On 6/13/24 09:55, Miklos Szeredi wrote:
->> On Thu, 13 Jun 2024 at 06:02, Haifeng Xu <haifeng.xu@shopee.com> wrote:
->>>
->>> When the child reaper of a pid namespace exits, it invokes
->>> zap_pid_ns_processes() to send SIGKILL to all processes in the
->>> namespace and wait them exit. But one of the child processes get
->>> stuck and its call trace like this:
->>>
->>> [<0>] request_wait_answer+0x132/0x210 [fuse]
->>> [<0>] fuse_simple_request+0x1a8/0x2e0 [fuse]
->>> [<0>] fuse_flush+0x193/0x1d0 [fuse]
->>> [<0>] filp_close+0x34/0x70
->>> [<0>] close_fd+0x38/0x50
->>> [<0>] __x64_sys_close+0x12/0x40
->>> [<0>] do_syscall_64+0x59/0xc0
->>> [<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
->>
->> Which process is this?
->>
->> In my experience such lockups are caused by badly written fuse servers.
-> 
-> 
-> Btw, if libfuse should be used, it now supports disabling interrupts
-> 
-> https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_libfuse_libfuse_commit_cef8c8b249023fb8129ae791e0998cbca771f96a&d=DwICaQ&c=R1GFtfTqKXCFH-lgEPXWwic6stQkW4U7uVq33mt-crw&r=3uoFsejk1jN2oga47MZfph01lLGODc93n4Zqe7b0NRk&m=tF8m9nGSWX4QZ_jfhLnEAE5bia1XekX0a_EojRtTFs2ZqfhKCrhY4cwO6K9UrW8x&s=X5dxXdmPhGVwknoinaLMbPYdHeOnrfVdOXs8HPCLT0A&e= 
-> 
-> 
+Simply compatible list is fine as they are all coming together (though that
+may in theory not be true on some other OS!)
 
-OK, Thank you for your reminding.
-> 
-> Cheers,
-> Bernd
+I'm also fine with the fallback as you discussed so less capable
+chip is the one we fall back to.
+
+Definitely need to differentiate chips with different possible ranges of
+a parameter as that goes straight through to userspace as
+sampling_frequency_available and userspace is going to get confused
+if it gets told it can do things that silently don't work.
+
+This sort of thing is why I always want to see chip IDs listed even
+if we think they'll just work with another one.
+a) Documents hardware right and people expect to see the ID of the chip
+   on the BoM
+b) Lets us deal with cases where we have missed subtle differences
+   in capabilities because the driver didn't support them yet.
+
+So in conclusion either option you proposed is fine (as above, or
+fallback to the part we think is a subset of functionality.)
+
+Jonathan
+ =20
 
