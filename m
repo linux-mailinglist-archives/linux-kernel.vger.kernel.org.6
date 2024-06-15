@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-215677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC2F49095C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 05:01:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF929095CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 05:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 663F2284778
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:01:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 776C7B2256A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385EEDDBE;
-	Sat, 15 Jun 2024 03:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B5F12E4D;
+	Sat, 15 Jun 2024 03:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BrTYbKPy"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DiDoM2EV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113703D60;
-	Sat, 15 Jun 2024 03:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C33DDBE;
+	Sat, 15 Jun 2024 03:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718420462; cv=none; b=m/FlacQaWCVOnRZXtUma16wpJ9nWj2eVnDzENqkG9vVZNCYXorS7LQlT6LaJtn7lUsWMQCnn0ty1TAgFEZuOGd6Z2s6IofeGV8DzvIYsozYOs+UvVXzFC2T0jWwe+1wgjJRwadE5mupEjElAyA2pQ2ga4obFBdpiqTnmH0FcLIM=
+	t=1718420476; cv=none; b=h1T0XAKu26KH1IZwySqTwZH+3LQ/AjTd2O9SxyJ6w58lOpenRA0wxY/DKva2goOYaDXO++JvF6OeJf1Zcgnnp1B98+PFnZwNtPz/17HGjQ19fSPKuDWYuMiWP3/7kMM9k6AbypjAOrWq1hEUM+LkTLaXICJ8RgR9mctHP4wqhK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718420462; c=relaxed/simple;
-	bh=4ujlhz/XYkTJNFgjnsc3JV1jf0DS2Z9t4U5pFdyr3RY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mXoRKJAe01l7FAiDRk7zLHY6mNUs3FZTZXFZAf2CrtFbKmsHwvK/1aJrt1dFMriU3ZFJlO3vgp/2H+RTqPzTQw078nnyvPHrcj71meGdfYZ0Lj0lbzPgFRucOlJHwu1eHSgR7c0RuAD3nr2YLXFF1GOkZenPh/jV7XZMgB0HT3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BrTYbKPy; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ZsJ7xhppQH5+LnYTgIN6HdVAmzBaNnGhRqCh3NGY4oo=; b=BrTYbKPyNAr7Ks3zrM6z8/94BV
-	hr46my+ajqDfsDgMb4Pnzi8o8vwASpKn20/gGSSttzmSQUFp69Lyg38cskOmgsN9gddZjFNwgAtl9
-	+RAnSpNbTa9DYbNuJnbPOprM6e7+q0QbTaurb8oOU5ivB7GAyG4c/ZpmVgGMfEfivgmp1R6lzngIf
-	qm3MEXqE2cKoWFLq9p8BPGeybWZwdD7KfAX9KV3GHLCucilrk/Ixu21R5mgc9JFUeeCuAPCsyEGSS
-	G9tGUVO4jGVIjW3skHPCcGpoDU8V7U9qzCalQa+qZEm+pv5YlAvYPl+wJqHQaxpoC9vmzp71BFLs1
-	1zz7gccQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1sIJey-009A1z-1Q;
-	Sat, 15 Jun 2024 03:00:56 +0000
-Date: Sat, 15 Jun 2024 04:00:56 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Congjie Zhou <zcjie0802@qq.com>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: modify the annotation of vfs_mkdir() in fs/namei.c
-Message-ID: <20240615030056.GO1629371@ZenIV>
-References: <tencent_3A7366F414667EE52C073850077331ADC709@qq.com>
+	s=arc-20240116; t=1718420476; c=relaxed/simple;
+	bh=t3rJks7yJbdEqG8zt9/92RNbWuowzMxt0oIbn0kmN8E=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=jk5tw6k5/JpdlgSKWPhoAcqT0cU2DBfVGOq983moJeRpeh83C9b+0PO0DA7HaO95/ySu44tdlF2D63uT3Eg60IRLSXLl6S5Ij4J8V32gH/0KrlHP93DvjntBqiZ6iOcMtdo3e3woncnrGs4y2QiuHhk5TFm50JYVh95gAfX255c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DiDoM2EV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 38455C2BD10;
+	Sat, 15 Jun 2024 03:01:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718420476;
+	bh=t3rJks7yJbdEqG8zt9/92RNbWuowzMxt0oIbn0kmN8E=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=DiDoM2EVZNVJOBuqjJkwqLNZJ86//EhzXZUCCLvWt+roStgTO1BKOr0Fw0xXeT6/X
+	 utTNvDxgwzpLipHUUYZedeUZ9RWFjmDfsUsQZhkjnGVj9z2qyft5y0AznQjq6EusX6
+	 SSSmtrpwD9pq9C/WLukxGnVAvyEOfZ02ecTDE1vQMiwrYICc4aJAW4WgrL5zuVXm5Q
+	 T/UQHQb1YIa995prHQXH63zvZulzf5rC9CCsuIgOcZOoHHO/3Vb3IOZZPv8o/Di8qT
+	 ShJp633xc1HjUCIj8nhiXONdGSxA/haAk2cBhDrRS9lGgjBbVkJyB08OGRi77Caeix
+	 xeALkQjHl8dmw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2E9A7C4332D;
+	Sat, 15 Jun 2024 03:01:16 +0000 (UTC)
+Subject: Re: [GIT PULL] VFIO fixes for v6.10-rc4
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240614155603.34567eb7.alex.williamson@redhat.com>
+References: <20240614155603.34567eb7.alex.williamson@redhat.com>
+X-PR-Tracked-List-Id: <kvm.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240614155603.34567eb7.alex.williamson@redhat.com>
+X-PR-Tracked-Remote: https://github.com/awilliam/linux-vfio.git tags/vfio-v6.10-rc4
+X-PR-Tracked-Commit-Id: d71a989cf5d961989c273093cdff2550acdde314
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 68132b353622137d25a5c6854b69ea679318d870
+Message-Id: <171842047618.4182.3433178184056125065.pr-tracker-bot@kernel.org>
+Date: Sat, 15 Jun 2024 03:01:16 +0000
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_3A7366F414667EE52C073850077331ADC709@qq.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sat, Jun 15, 2024 at 09:59:13AM +0800, Congjie Zhou wrote:
-> modify the annotation of @dir and @dentry
+The pull request you sent on Fri, 14 Jun 2024 15:56:03 -0600:
 
+> https://github.com/awilliam/linux-vfio.git tags/vfio-v6.10-rc4
 
->   * vfs_mkdir - create directory
->   * @idmap:	idmap of the mount the inode was found from
-> - * @dir:	inode of @dentry
-> - * @dentry:	pointer to dentry of the base directory
-> + * @dir:	inode of parent dentry of @dentry
-> + * @dentry:	pointer to dentry of the new directory
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/68132b353622137d25a5c6854b69ea679318d870
 
-Ugh...  How about 'inode of the parent directory' and 'dentry
-of the child to be' instead?
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
