@@ -1,74 +1,121 @@
-Return-Path: <linux-kernel+bounces-215873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6117B909829
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:16:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8EC190982E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E620DB214AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:15:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F01501C212FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5214502F;
-	Sat, 15 Jun 2024 12:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8317945957;
+	Sat, 15 Jun 2024 12:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kHn4Q1V+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mrB4kDMm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3922D627;
-	Sat, 15 Jun 2024 12:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60BB45020;
+	Sat, 15 Jun 2024 12:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718453751; cv=none; b=ejJM2oGoz39ZEPftv0XzO75uZQE8ysYjuRFiwiO09cxAr5xfEuGCZxB7ze29eDqEpfBWJveJgvt+THgbkMC49XJ9fWHxPX1CiRczrm6tntD1Hf//Xely3nvmMRns0GNeUS0iNuaLlM8Nyk9kp90AgZlwCh0GnLNzAWoMPNcX9O4=
+	t=1718453792; cv=none; b=J5TdKdrRTchUHDLV34f1tOO2tyrv7GfVSQv4huRgVLgm6iey7yqn05EM/Aq6Snxt2HdaGa3gM4zbjmYHb74zdnSKF+vil11qdUKkUEg6nTwzhAmVHpWUUurHhG9NWoz8wNBblMMKJtNTPS2T+8IssllWozHh4sD030Uw1lVELZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718453751; c=relaxed/simple;
-	bh=UDsgeRvgBxufXfEomliv5Zr8Lbey2revpTd9++0U110=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cMQ5+XgRL+baTssgGCynNa4oV0TOn7AmfmeXRDMC9QcfVcVVKCbUJy0DQq+BRMMxRRiaJNtuMlmC1uISMLgU+AAqSJKFwvosI74kr+UogSD3Y8fRMfOrV3o1mwbevPkDzft0qcQZOMpZXVPkjFmc7Mj7I6mZJHJ+zlsplrq7u6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kHn4Q1V+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85422C116B1;
-	Sat, 15 Jun 2024 12:15:47 +0000 (UTC)
+	s=arc-20240116; t=1718453792; c=relaxed/simple;
+	bh=fIa7Fu5rfI4MXQKrG+JnjbyVR+srNml2BpZ8EMMTVxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SYA2245R8iybNI+XqM+zQzD0xplkCqd7lI1k4Hd++QIRzTBZ8gO4Zvsk7K/7y8z67uaNb2vBzgo1181RvXWrwPMxpxYHj8FPhBz6DJNLrLvcQ1kt0xeX22ywNfwu4hk+7cmf5eplM3B1BkvNoos31LnSNMUPRsEJjEtmWYkCj70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mrB4kDMm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7662C116B1;
+	Sat, 15 Jun 2024 12:16:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718453750;
-	bh=UDsgeRvgBxufXfEomliv5Zr8Lbey2revpTd9++0U110=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kHn4Q1V+pmz9gB8ekYSDEEZIBMAY5qirorAg/Ad7F9d+iv48r1aTgtez+Ce2ZBv9J
-	 1XC/8ZFZrxaY9vnlq3f6MY3xX8cP441Mv1kiJG0dQ0BWjwl3FXMRDLdZHXllkoPPmr
-	 373iStFQvkTWgKrnFy4/jJRSyCPBHHmVEosZ4sZQ/Ujf3ytXZtQ9SNuosH1XeKPyHg
-	 3KuZXiG7rCuSNWwBQIWUuSexvOvIUS1wIEdsFpRLbJ6JnYQ8Aj9msjP2U6jOaoVRm0
-	 KSmkMgiBRsaqYwEyNbZF34FEqPOY96rUgYlc+qWpwnqRg9LjuiozPaYALoj+iT+b+7
-	 KiCSV6G4MmaGQ==
-Date: Sat, 15 Jun 2024 13:15:42 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marcelo Schmitt <marcelo.schmitt1@gmail.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
- Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] iio: adc: ad7793: use
- devm_regulator_get_enable_read_voltage
-Message-ID: <20240615131542.130938be@jic23-huawei>
-In-Reply-To: <20240612-iio-adc-ref-supply-refactor-v2-4-fa622e7354e9@baylibre.com>
-References: <20240612-iio-adc-ref-supply-refactor-v2-0-fa622e7354e9@baylibre.com>
-	<20240612-iio-adc-ref-supply-refactor-v2-4-fa622e7354e9@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=k20201202; t=1718453792;
+	bh=fIa7Fu5rfI4MXQKrG+JnjbyVR+srNml2BpZ8EMMTVxQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mrB4kDMmJTeiuyQOOkCj4Q1LDTg4yuNd0/ZYAsOv8J0waSVa1ZXik2Bpm2P4CK4rf
+	 YbcrrqGPDTKuwAvoo0Hes0ybEH1p8RdUfg2WjrdtedCpK9UeFZtOsXjeCuOxK6IDeZ
+	 s7cvjwzbYhS/QTkz614TYaOT4ab00my2nxTtvQ55BZgrLZKOgynNA/3p+BQ5RQvi03
+	 WW4kobYsc/6i0tNLMEnDhQe6k9BUn2JOzdn/CKL3u3ihIzwO+qFJgpH8RLwG4HmpdF
+	 H3p5uK6C6WjN4UFeAC69RiaY9PUL5gYmHJZd6Heef94qATd7ocJGPNLaFQpmsa5fGM
+	 cHVCMxPnoflIA==
+Date: Sat, 15 Jun 2024 13:16:26 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: "Claudiu.Beznea" <claudiu.beznea@tuxon.dev>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"lee@kernel.org" <lee@kernel.org>,
+	"alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+	"magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 05/12] dt-bindings: rtc: renesas,rzg3s-rtc: Document the
+ Renesas RZ/G3S RTC
+Message-ID: <20240615-unwell-hardcover-e95af7c4a43b@spud>
+References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240614071932.1014067-6-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB113464811F43F19115FCF62A786C22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <d6b4e0cc-c16e-4ea7-bbc4-ddbaaadc9a25@tuxon.dev>
+ <TY3PR01MB113468BB7BC53E43F41C6D65386C22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="clAPQ20Y+OV8szeS"
+Content-Disposition: inline
+In-Reply-To: <TY3PR01MB113468BB7BC53E43F41C6D65386C22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
-On Wed, 12 Jun 2024 16:03:08 -0500
-David Lechner <dlechner@baylibre.com> wrote:
 
-> This makes use of the new devm_regulator_get_enable_read_voltage()
-> function to reduce boilerplate code.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-Applied
+--clAPQ20Y+OV8szeS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jun 14, 2024 at 08:22:57AM +0000, Biju Das wrote:
+
+> > >> +$id: http://devicetree.org/schemas/rtc/renesas,rzg3s-rtc.yaml#
+> > >
+> > > Please make it generic renesas,rtca3-rtc.yaml. Future SoCs may use th=
+is IP.
+> > > So use IP name instead.
+> >=20
+> > From what I know the file name should correspond with the compatible th=
+at file was introduced with,
+> > and this one shouldn't be generic but SoC specific.
+>=20
+> I maybe wrong, I was under the impression, we should use "vendor,ipname" =
+for the filename
+> and compatible should use vendor,ipname as generic compatible.
+> If there are differences between SoCs, then use SoC specific compatible.
+>=20
+> Currently there is one device, so not sure??
+
+The usual policy for new files is "filename matching a compatible".
+
+--clAPQ20Y+OV8szeS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZm2GGgAKCRB4tDGHoIJi
+0ihkAP42Coh08F/VL7TmA4JWvrf8daBenjco1rVFZ1mSY5Q7iAD8COSVRjBudGDs
+xPkSHl85M/MiNRb4aFC6H8d+g8qECAY=
+=P/zh
+-----END PGP SIGNATURE-----
+
+--clAPQ20Y+OV8szeS--
 
