@@ -1,283 +1,257 @@
-Return-Path: <linux-kernel+bounces-216037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F84909A53
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 01:05:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 858C9909A55
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 01:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E9012835D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 23:05:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45EF91C2108C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 23:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002F961FE3;
-	Sat, 15 Jun 2024 23:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAEF61FDB;
+	Sat, 15 Jun 2024 23:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Yv1YQCKZ"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="aAMpz1ZU"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593C217557
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 23:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4D5171B0;
+	Sat, 15 Jun 2024 23:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718492745; cv=none; b=ul97w66RE3ryU8eQve+EnAqK8hdetWJvGsvhd55jyjMfmct80q8+68SW4N9nCl3Z1VXlLPHirpoaYe2sqmaZEl6HMjW+PORGWYeds0WG0FCy5JDLPbG6uLGmJshSwAK0Rr5NY1/t42sYcdR2P0s6Wj3bcx3Lifo2kgF+aTQyEdk=
+	t=1718493046; cv=none; b=U9JAAXeaRINtrDU2q/f6Mm+/68bYArO58p4x+9C6JvRSAYMvVfKMG4ZVLs0VnDkrsb5ApV0o3F2Gj3CK5agQ4JzjHxfyRYEZs78mKLOdEXMnVBgDJ64/+nIHEccT6f4iyXbRN8JaHq0JgIwDirEOsFi6mxpvdiz2SHEGK2UJOV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718492745; c=relaxed/simple;
-	bh=QKrZTLS38ZU/BTlcPICCum807Vg+aTf07TYtcmhDAO0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pTu6JTLgfwpOnlvzp3/BNjXPxiYoscuUQ9JT5lXlw90VnRnFjOmGzmW4P4ozbdsGUrk9Ja34u5yRmAK7VvnNC/VSwQbmt8lf6HOb+nIg9JdlOlpRQ2jtVwFkEAY3a4yPX2CzELVJPWr+FCYyafcCR4SE7dO9sJFH4DX3QBQQQno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Yv1YQCKZ; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7eb82f68af9so10345239f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 16:05:42 -0700 (PDT)
+	s=arc-20240116; t=1718493046; c=relaxed/simple;
+	bh=9UCyQZoOJ9zDQjCc2wL1CUbLLfqA0rfziWeE2+5Ta4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ASXWkYTx9gyDZBlcEA8fsAFOf9SQrWlns8X69Y2DNyxVzySPkCorg3QAfMcH7WiQhC5POmuYkasLSu4u4uB9UK/6qLMcdKSZ74NwghvrMl5q6lKpDuWEUcIqWzofaEPzlLi3mS42+IlMgNCL+JvyQlcetX2pIL2tnRTnXwc6jOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=aAMpz1ZU; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f6da06ba24so29074725ad.2;
+        Sat, 15 Jun 2024 16:10:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1718492741; x=1719097541; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2onuRdrViA9m1L4/D6JT6FGROPDNZ8pqtZf6T04znYo=;
-        b=Yv1YQCKZkDD7a2A2PhRi+eHATprX+TZ0gv2TuU+FGW+0FhMXYLI4gvL9wijWy1W6gX
-         Z/JnmJIlzcCpKKKCfmHP7QpOX13c0d7ayEErNhClaCHejTtn8UcucW5bolSGlRm29EDJ
-         /W+Pkchz/wJ1XxiislaVEaLwc8TBEU/W9sOwU=
+        d=googlemail.com; s=20230601; t=1718493044; x=1719097844; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7R40NGjhA4iIhadDR9M6U6xqU98YvFHgUqsKkQpjspQ=;
+        b=aAMpz1ZUdtmvpXlxAwMyEnylrbCARJtuSeVGvXL73z/FPiGrQFeaSxj1WGnQqWv1RT
+         LItWnYtdQp3siPAR1UGcIyBArrjVZZTh+n1l3KZS1QPHTJfr0IDirb4uj38i2kc++I2I
+         kZBGwFbci9YxS9bmOE3YYo+ob0utvcK4Y1S8Dt7pyAljTIr3BzITPVVO4Tg5jL6Ier4/
+         noIH1W1ncV+P9Uvi1c/SCaCuChwT6jbzxB1lOX+kZn1cIVIVwI9mWtXtQLag9zfkyPxo
+         IjJ2893e7kVPl8AZWS99o18TczfKNLHNT3ojetcQZLlNc5l2WbuJ7PX1XCNXUuGaGfEG
+         rnwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718492741; x=1719097541;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2onuRdrViA9m1L4/D6JT6FGROPDNZ8pqtZf6T04znYo=;
-        b=usSmIG1xJIYMYtbHiHcvcLvjjZB6qdF/nKvSQ45XUznmICxgToGvemOni/sqpuezlq
-         RTmGIdxclu6YWf0JG75Woa7G+RGPEdIv9aGiE9PUB4i5ViYqQh99FiKLpQZYpbc0Lmjf
-         ks/I9j+NKogEjy0WwVP/ykjntSjQrBlKLa1qiKYZH+ouigKd3AKNNrXQ7RkvOjuk686s
-         6gpYzsZVqNFr95CbfGqtFM9cxQFo293H527NUN3/p06PP07Yq7beKXgwYTL/iFRrZTjI
-         PMJyLsVejQJk+xEId3+GCKNgoy2vMvTR5EMpKMTaOsACZZ4+J8T8GJjFXouj+hf4QMh0
-         LT2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXd8Jvy8xeG+SiLsI3dD5TF4qG3u7rh+a16FJoJ2DlQ2MSIwv7eXDYW4pQPvi4fFopfLhMkhLli8Nqbq4o8DUZ+lxudKwLBZtciAqQl
-X-Gm-Message-State: AOJu0Yy7p9wuoO7Kh3+EtvxWc1f5moQTdFTzsdVfNzUv+27+WP+YWCmY
-	oi6arYz7t3zMqkk9Z2oHDF3zupZcYDPMJiCHKj1Dv4oo30PKos2GribMj1VAqaGpTcxb/0Z/mav
-	P
-X-Google-Smtp-Source: AGHT+IF0NshMiJmDfeuqJLmRkzSxWF1MaRX4H/SICu5H1olxgSjOYPGnbrg0z8gqGI/3/5Qae7H2SA==
-X-Received: by 2002:a5e:dc48:0:b0:7eb:6a6e:c830 with SMTP id ca18e2360f4ac-7ebeb627c7cmr647710439f.2.1718492741306;
-        Sat, 15 Jun 2024 16:05:41 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b9572e7f1bsm1750432173.126.2024.06.15.16.05.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Jun 2024 16:05:40 -0700 (PDT)
-Message-ID: <2ac9b1a3-fd42-48fc-b1c8-4c1986536ef9@linuxfoundation.org>
-Date: Sat, 15 Jun 2024 17:05:39 -0600
+        d=1e100.net; s=20230601; t=1718493044; x=1719097844;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7R40NGjhA4iIhadDR9M6U6xqU98YvFHgUqsKkQpjspQ=;
+        b=QiSVUOuha/b8lFyECywnokDuRU0N1BQcHwwkga9CoFSW3PLDoLHI087yslJ0H4qynl
+         JZUJ+Cy8zqAgAfqlkariU5ZjTjaKFu1CSK3C/BfOIk1DHpNkI0Do7RJ2wgSslzmbgsgt
+         f6nnwQeivXwMZrF+xoGYREpjt1ckXRpfdo3wBxgqFgVbLMp1BHr4myu70w9xAhadK0Gw
+         SeqyE5lITiHycg6L2qfQ27cLkzzjwKXJXc/CH6RLkYxYvxPm+Ik77/lhfqo3uatSLn/T
+         pvA81evgITyFC+iBn70gJm3s8nKIkGayNSacTzry4QSCnBYucP7Cn0zi8FLbrXXK7BP9
+         NX0g==
+X-Forwarded-Encrypted: i=1; AJvYcCX7oLZz3TX1R3VSFP8Gt+LLB4x90BIMu3LP1bp5/wRHMxxjSQp6h3bM+bX5+4pPAtHxlzCLDGEjkTUI5/72lzsejnFkA31XmUvs6+GFXrc6nCQnx28QvNXIRWfNkSYPCEjtODJpS4Fz
+X-Gm-Message-State: AOJu0YyWrBOfXe86Z/5NKOVcfApfFJVbZdTFUAwTlz+p8Sc9CK5/6xKr
+	lB9SaZG2bMDeIno6Vrp1GZDaUx/wmaxPy7+/f5iARKds5moX7LNxr1Oq+4rIh95IcYP5CcQd6N0
+	6/jbo9A0VT3aSxkNcMg8UjBmeXpZKx9r+
+X-Google-Smtp-Source: AGHT+IG1XQ7zZ3Xnf+DRLcpyZe0j5jFWGskVgTwVRTUDGmlqtnAaQXDSXLo86TUOs1tgU4FSwL6RQXkgb8/CB8widKI=
+X-Received: by 2002:a17:903:1c7:b0:1f7:364f:1162 with SMTP id
+ d9443c01a7336-1f8627cb650mr69288645ad.31.1718493043566; Sat, 15 Jun 2024
+ 16:10:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] cpupower: Improve cpupower build process description
-To: Roman Storozhenko <romeusmeister@gmail.com>,
- Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240615125617.180521-1-romeusmeister@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240615125617.180521-1-romeusmeister@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240610104600.458308-2-u.kleine-koenig@baylibre.com>
+In-Reply-To: <20240610104600.458308-2-u.kleine-koenig@baylibre.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sun, 16 Jun 2024 01:10:32 +0200
+Message-ID: <CAFBinCB+S1wOpD-fCbcTORqXSV00Sd7-1GHUKY+rO859_dkhOA@mail.gmail.com>
+Subject: Re: [RFC PATCH] regulator: pwm-regulator: Make assumptions about
+ disabled PWM consistent
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+Content-Type: multipart/mixed; boundary="000000000000694344061af5d7be"
 
-On 6/15/24 06:56, Roman Storozhenko wrote:
-> Enhance cpupower build process description with the information on
-> building and installing the utility to the user defined directories
-> as well as with the information on the way of running the utility from
-> the custom defined installation directory.
-> 
-> Signed-off-by: Roman Storozhenko <romeusmeister@gmail.com>
-> ---
-> V1 -> V2:
->   - Improved commit description
->   - Make changed line lenghts 75 chars
->   - Refactored the description
->   - Link v1: https://lore.kernel.org/linux-pm/20240613-fix-cpupower-doc-v1-1-9dcdee263af1@gmail.com/
-> ---
->   tools/power/cpupower/README | 160 +++++++++++++++++++++++++++++++++---
->   1 file changed, 150 insertions(+), 10 deletions(-)
-> 
-> diff --git a/tools/power/cpupower/README b/tools/power/cpupower/README
-> index 1c68f47663b2..2678ed81d311 100644
-> --- a/tools/power/cpupower/README
-> +++ b/tools/power/cpupower/README
-> @@ -22,16 +22,156 @@ interfaces [depending on configuration, see below].
->   compilation and installation
->   ----------------------------
->   
-> -make
-> -su
-> -make install
-> -
-> -should suffice on most systems. It builds libcpupower to put in
-> -/usr/lib; cpupower, cpufreq-bench_plot.sh to put in /usr/bin; and
-> -cpufreq-bench to put in /usr/sbin. If you want to set up the paths
-> -differently and/or want to configure the package to your specific
-> -needs, you need to open "Makefile" with an editor of your choice and
-> -edit the block marked CONFIGURATION.
-> +There are 2 output directories - one for the build output and another for
-> +the installation of the build results, that is the utility, library,
-> +man pages, etc...
-> +
-> +default directory
-> +-----------------
-> +
-> +In the case of default directory, build and install process requires no
-> +additional parameters:
-> +
-> +build
-> +-----
-> +
-> +$ make
-> +
-> +The output directory for the 'make' command is the current directory and
-> +its subdirs in the kernel tree:
-> +tools/power/cpupower
-> +
-> +install
-> +-------
-> +
-> +$ sudo make install
-> +
-> +'make install' command puts targets to default system dirs:
-> +
-> +-----------------------------------------------------------------------
-> +| Installing file        |               System dir                   |
-> +-----------------------------------------------------------------------
-> +| libcpupower            | /usr/lib                                   |
-> +-----------------------------------------------------------------------
-> +| cpupower               | /usr/bin                                   |
-> +-----------------------------------------------------------------------
-> +| cpufreq-bench_plot.sh  | /usr/bin                                   |
-> +-----------------------------------------------------------------------
-> +| man pages              | /usr/man                                   |
-> +-----------------------------------------------------------------------
-> +
-> +To put it in other words it makes build results available system-wide,
-> +enabling any user to simply start using it without any additional steps
-> +
-> +custom directory
-> +----------------
-> +
-> +There are 2 make's command-line variables 'O' and 'DESTDIR' that setup
-> +appropriate dirs:
-> +'O' - build directory
-> +'DESTDIR' - installation directory. This variable could also be setup in
-> +the 'CONFIGURATION' block of the "Makefile"
-> +
-> +build
-> +-----
-> +
-> +$ make O=<your_custom_build_catalog>
-> +
-> +Example:
-> +$ make O=/home/hedin/prj/cpupower/build
-> +
-> +install
-> +-------
-> +
-> +$ make O=<your_custom_build_catalog> DESTDIR=<your_custom_install_catalog>
-> +
-> +Example:
-> +$ make O=/home/hedin/prj/cpupower/build DESTDIR=/home/hedin/prj/cpupower \
-> +> install
-> +
-> +Notice that both variables 'O' and 'DESTDIR' have been provided. The reason
-> +is that the build results are saved in the custom output dir defined by 'O'
-> +variable. So, this dir is the source for the installation step. If only
-> +'DESTDIR' were provided then the 'install' target would assume that the
-> +build directory is the current one, build everything there and install
-> +from the current dir.
-> +
-> +The files will be installed to the following dirs:
-> +
-> +-----------------------------------------------------------------------
-> +| Installing file        |               System dir                   |
-> +-----------------------------------------------------------------------
-> +| libcpupower            | ${DESTDIR}/usr/lib                         |
-> +-----------------------------------------------------------------------
-> +| cpupower               | ${DESTDIR}/usr/bin                         |
-> +-----------------------------------------------------------------------
-> +| cpufreq-bench_plot.sh  | ${DESTDIR}/usr/bin                         |
-> +-----------------------------------------------------------------------
-> +| man pages              | ${DESTDIR}/usr/man                         |
-> +-----------------------------------------------------------------------
-> +
-> +If you look at the table for the default 'make' output dirs you will
-> +notice that the only difference with the non-default case is the
-> +${DESTDIR} prefix. So, the structure of the output dirs remains the same
-> +regardles of the root output directory.
-> +
-> +
-> +clean and uninstall
-> +-------------------
-> +
-> +'clean' target is intended for cleanup the build catalog from build results
-> +'uninstall' target is intended for removing installed files from the
-> +installation directory
-> +
-> +default directory
-> +-----------------
-> +
-> +This case is a straightforward one:
-> +$ make clean
-> +$ make uninstall
-> +
-> +custom directory
-> +----------------
-> +
-> +Use 'O' command line variable to remove previously built files from the
-> +build dir:
-> +$ make O=<your_custom_build_catalog> clean
-> +
-> +Example:
-> +$ make O=/home/hedin/prj/cpupower/build clean
-> +
-> +Use 'DESTDIR' command line variable to uninstall previously installed files
-> +from the given dir:
-> +$ make DESTDIR=<your_custom_install_catalog>
-> +
-> +Example:
-> +make DESTDIR=/home/hedin/prj/cpupower uninstall
-> +
-> +
-> +running the tool
-> +----------------
-> +
-> +default directory
-> +-----------------
-> +
-> +$ sudo cpupower
-> +
-> +custom directory
-> +----------------
-> +
-> +When it comes to run the utility from the custom build catalog things
-> +become a little bit complicated as 'just run' approach doesn't work.
-> +Assuming that the current dir is '<your_custom_install_catalog>/usr',
-> +issuing the following command:
-> +
-> +$ sudo ./bin/cpupower
-> +will produce the following error output:
-> +./bin/cpupower: error while loading shared libraries: libcpupower.so.1:
-> +cannot open shared object file: No such file or directory
-> +
-> +The issue is that binary cannot find the 'libcpupower' library. So, we
-> +shall point to the lib dir:
-> +sudo LD_LIBRARY_PATH=lib64/ ./bin/cpupower
->   
->   
->   THANKS
+--000000000000694344061af5d7be
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This "THANKS" doesn't belong in the patch.
+Hello Uwe,
 
-thanks,
--- Shuah
+On Mon, Jun 10, 2024 at 12:46=E2=80=AFPM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@baylibre.com> wrote:
+[...]
+> this is my suggestion to fix the concerns I expressed in
+> https://lore.kernel.org/all/hf24mrplr76xtziztkqiscowkh2f3vmceuarecqcwnr6u=
+dggs6@uiof2rvvqq5v/
+> .
+>
+> It's only compile tested as I don't have a machine with a pwm-regulator.
+> So getting test feedback before applying it would be great.
+Unfortunately this approach breaks my Odroid-C1 board again with the
+same symptoms as before the mentioned commits: random memory
+corruption, preventing the board from booting to userspace.
 
+The cause also seems to be the same as before my commits:
+- period (3666ns) and duty cycle (3333ns) in the hardware registers
+the PWM controller when Linux boots, but the PWM output is disabled
+- with a duty cycle of 0 or PWM output being disabled the output of
+the voltage regulator is 1140mV, which is the only allowed voltage for
+that rail (even though the regulator can achieve other voltages)
+- pwm_regulator_enable() calls pwm_enable() which simply takes the
+period and and duty cycle that was read back from the hardware and
+enables the output, resulting in undervolting of a main voltage rail
+of the SoC
+
+I hope that this (especially the last item) also clarifies the
+question you had in the linked mail on whether updating
+pwm_regulator_init_state() would help/work.
+
+Regarding your alternative and preferred approach from the other mail:
+> Alternatively (and IMHO nicer) just keep the pwm_state around and don't
+> use the (mis) feature of the PWM core that pwm_get_state only returns
+> the last set state.
+I tried this to see if it would work also for my Odroid-C1 board and
+I'm happy to report it does - see the attached diff.
+In case you are happy with this approach I can submit it as a proper patch.
+
+
+Best regards,
+Martin
+
+--000000000000694344061af5d7be
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="pwm-regulator-keep-pwm-state-around.diff"
+Content-Disposition: attachment; 
+	filename="pwm-regulator-keep-pwm-state-around.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lxgqakbn0>
+X-Attachment-Id: f_lxgqakbn0
+
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvcmVndWxhdG9yL3B3bS1yZWd1bGF0b3IuYyBiL2RyaXZlcnMv
+cmVndWxhdG9yL3B3bS1yZWd1bGF0b3IuYwppbmRleCA3NDM0YjZiMjJkMzIuLmFiNmZjOTkwNWJi
+MiAxMDA2NDQKLS0tIGEvZHJpdmVycy9yZWd1bGF0b3IvcHdtLXJlZ3VsYXRvci5jCisrKyBiL2Ry
+aXZlcnMvcmVndWxhdG9yL3B3bS1yZWd1bGF0b3IuYwpAQCAtNDEsNiArNDEsOCBAQCBzdHJ1Y3Qg
+cHdtX3JlZ3VsYXRvcl9kYXRhIHsKIAogCS8qIEVuYWJsZSBHUElPICovCiAJc3RydWN0IGdwaW9f
+ZGVzYyAqZW5iX2dwaW87CisKKwlzdHJ1Y3QgcHdtX3N0YXRlIHB3bV9zdGF0ZTsKIH07CiAKIHN0
+cnVjdCBwd21fdm9sdGFnZXMgewpAQCAtNDgsMTggKzUwLDMzIEBAIHN0cnVjdCBwd21fdm9sdGFn
+ZXMgewogCXVuc2lnbmVkIGludCBkdXR5Y3ljbGU7CiB9OwogCitzdGF0aWMgaW50IHB3bV9yZWd1
+bGF0b3JfYXBwbHlfc3RhdGUoc3RydWN0IHJlZ3VsYXRvcl9kZXYgKnJkZXYsCisJCQkJICAgICBz
+dHJ1Y3QgcHdtX3N0YXRlICpuZXdfc3RhdGUpCit7CisJc3RydWN0IHB3bV9yZWd1bGF0b3JfZGF0
+YSAqZHJ2ZGF0YSA9IHJkZXZfZ2V0X2RydmRhdGEocmRldik7CisJaW50IHJldDsKKworCXJldCA9
+IHB3bV9hcHBseV9taWdodF9zbGVlcChkcnZkYXRhLT5wd20sIG5ld19zdGF0ZSk7CisJaWYgKHJl
+dCkgeworCQlkZXZfZXJyKCZyZGV2LT5kZXYsICJGYWlsZWQgdG8gY29uZmlndXJlIFBXTTogJWRc
+biIsIHJldCk7CisJCXJldHVybiByZXQ7CisJfQorCisJZHJ2ZGF0YS0+cHdtX3N0YXRlID0gKm5l
+d19zdGF0ZTsKKworCXJldHVybiAwOworfQorCiAvKgogICogVm9sdGFnZSB0YWJsZSBjYWxsLWJh
+Y2tzCiAgKi8KIHN0YXRpYyB2b2lkIHB3bV9yZWd1bGF0b3JfaW5pdF9zdGF0ZShzdHJ1Y3QgcmVn
+dWxhdG9yX2RldiAqcmRldikKIHsKIAlzdHJ1Y3QgcHdtX3JlZ3VsYXRvcl9kYXRhICpkcnZkYXRh
+ID0gcmRldl9nZXRfZHJ2ZGF0YShyZGV2KTsKLQlzdHJ1Y3QgcHdtX3N0YXRlIHB3bV9zdGF0ZTsK
+IAl1bnNpZ25lZCBpbnQgZHV0eWN5Y2xlOwogCWludCBpOwogCi0JcHdtX2dldF9zdGF0ZShkcnZk
+YXRhLT5wd20sICZwd21fc3RhdGUpOwotCWR1dHljeWNsZSA9IHB3bV9nZXRfcmVsYXRpdmVfZHV0
+eV9jeWNsZSgmcHdtX3N0YXRlLCAxMDApOworCWR1dHljeWNsZSA9IHB3bV9nZXRfcmVsYXRpdmVf
+ZHV0eV9jeWNsZSgmZHJ2ZGF0YS0+cHdtX3N0YXRlLCAxMDApOwogCiAJZm9yIChpID0gMDsgaSA8
+IHJkZXYtPmRlc2MtPm5fdm9sdGFnZXM7IGkrKykgewogCQlpZiAoZHV0eWN5Y2xlID09IGRydmRh
+dGEtPmR1dHlfY3ljbGVfdGFibGVbaV0uZHV0eWN5Y2xlKSB7CkBAIC04MywxOCArMTAwLDE1IEBA
+IHN0YXRpYyBpbnQgcHdtX3JlZ3VsYXRvcl9zZXRfdm9sdGFnZV9zZWwoc3RydWN0IHJlZ3VsYXRv
+cl9kZXYgKnJkZXYsCiAJCQkJCSB1bnNpZ25lZCBzZWxlY3RvcikKIHsKIAlzdHJ1Y3QgcHdtX3Jl
+Z3VsYXRvcl9kYXRhICpkcnZkYXRhID0gcmRldl9nZXRfZHJ2ZGF0YShyZGV2KTsKLQlzdHJ1Y3Qg
+cHdtX3N0YXRlIHBzdGF0ZTsKKwlzdHJ1Y3QgcHdtX3N0YXRlIHBzdGF0ZSA9IGRydmRhdGEtPnB3
+bV9zdGF0ZTsKIAlpbnQgcmV0OwogCi0JcHdtX2luaXRfc3RhdGUoZHJ2ZGF0YS0+cHdtLCAmcHN0
+YXRlKTsKIAlwd21fc2V0X3JlbGF0aXZlX2R1dHlfY3ljbGUoJnBzdGF0ZSwKIAkJCWRydmRhdGEt
+PmR1dHlfY3ljbGVfdGFibGVbc2VsZWN0b3JdLmR1dHljeWNsZSwgMTAwKTsKIAotCXJldCA9IHB3
+bV9hcHBseV9taWdodF9zbGVlcChkcnZkYXRhLT5wd20sICZwc3RhdGUpOwotCWlmIChyZXQpIHsK
+LQkJZGV2X2VycigmcmRldi0+ZGV2LCAiRmFpbGVkIHRvIGNvbmZpZ3VyZSBQV006ICVkXG4iLCBy
+ZXQpOworCXJldCA9IHB3bV9yZWd1bGF0b3JfYXBwbHlfc3RhdGUocmRldiwgJnBzdGF0ZSk7CisJ
+aWYgKHJldCkKIAkJcmV0dXJuIHJldDsKLQl9CiAKIAlkcnZkYXRhLT5zdGF0ZSA9IHNlbGVjdG9y
+OwogCkBAIC0xMTUsMTcgKzEyOSwyNiBAQCBzdGF0aWMgaW50IHB3bV9yZWd1bGF0b3JfbGlzdF92
+b2x0YWdlKHN0cnVjdCByZWd1bGF0b3JfZGV2ICpyZGV2LAogc3RhdGljIGludCBwd21fcmVndWxh
+dG9yX2VuYWJsZShzdHJ1Y3QgcmVndWxhdG9yX2RldiAqZGV2KQogewogCXN0cnVjdCBwd21fcmVn
+dWxhdG9yX2RhdGEgKmRydmRhdGEgPSByZGV2X2dldF9kcnZkYXRhKGRldik7CisJc3RydWN0IHB3
+bV9zdGF0ZSBwc3RhdGUgPSBkcnZkYXRhLT5wd21fc3RhdGU7CiAKIAlncGlvZF9zZXRfdmFsdWVf
+Y2Fuc2xlZXAoZHJ2ZGF0YS0+ZW5iX2dwaW8sIDEpOwogCi0JcmV0dXJuIHB3bV9lbmFibGUoZHJ2
+ZGF0YS0+cHdtKTsKKwlwc3RhdGUuZW5hYmxlZCA9IHRydWU7CisKKwlyZXR1cm4gcHdtX3JlZ3Vs
+YXRvcl9hcHBseV9zdGF0ZShkZXYsICZwc3RhdGUpOwogfQogCiBzdGF0aWMgaW50IHB3bV9yZWd1
+bGF0b3JfZGlzYWJsZShzdHJ1Y3QgcmVndWxhdG9yX2RldiAqZGV2KQogewogCXN0cnVjdCBwd21f
+cmVndWxhdG9yX2RhdGEgKmRydmRhdGEgPSByZGV2X2dldF9kcnZkYXRhKGRldik7CisJc3RydWN0
+IHB3bV9zdGF0ZSBwc3RhdGUgPSBkcnZkYXRhLT5wd21fc3RhdGU7CisJaW50IHJldDsKKworCXBz
+dGF0ZS5lbmFibGVkID0gZmFsc2U7CiAKLQlwd21fZGlzYWJsZShkcnZkYXRhLT5wd20pOworCXJl
+dCA9IHB3bV9yZWd1bGF0b3JfYXBwbHlfc3RhdGUoZGV2LCAmcHN0YXRlKTsKKwlpZiAocmV0KQor
+CQlyZXR1cm4gcmV0OwogCiAJZ3Bpb2Rfc2V0X3ZhbHVlX2NhbnNsZWVwKGRydmRhdGEtPmVuYl9n
+cGlvLCAwKTsKIApAQCAtMTUxLDIwICsxNzQsMTAgQEAgc3RhdGljIGludCBwd21fcmVndWxhdG9y
+X2dldF92b2x0YWdlKHN0cnVjdCByZWd1bGF0b3JfZGV2ICpyZGV2KQogCWludCBtaW5fdVYgPSBy
+ZGV2LT5jb25zdHJhaW50cy0+bWluX3VWOwogCWludCBtYXhfdVYgPSByZGV2LT5jb25zdHJhaW50
+cy0+bWF4X3VWOwogCWludCBkaWZmX3VWID0gbWF4X3VWIC0gbWluX3VWOwotCXN0cnVjdCBwd21f
+c3RhdGUgcHN0YXRlOwogCXVuc2lnbmVkIGludCBkaWZmX2R1dHk7CiAJdW5zaWduZWQgaW50IHZv
+bHRhZ2U7CiAKLQlwd21fZ2V0X3N0YXRlKGRydmRhdGEtPnB3bSwgJnBzdGF0ZSk7Ci0KLQlpZiAo
+IXBzdGF0ZS5lbmFibGVkKSB7Ci0JCWlmIChwc3RhdGUucG9sYXJpdHkgPT0gUFdNX1BPTEFSSVRZ
+X0lOVkVSU0VEKQotCQkJcHN0YXRlLmR1dHlfY3ljbGUgPSBwc3RhdGUucGVyaW9kOwotCQllbHNl
+Ci0JCQlwc3RhdGUuZHV0eV9jeWNsZSA9IDA7Ci0JfQotCi0Jdm9sdGFnZSA9IHB3bV9nZXRfcmVs
+YXRpdmVfZHV0eV9jeWNsZSgmcHN0YXRlLCBkdXR5X3VuaXQpOworCXZvbHRhZ2UgPSBwd21fZ2V0
+X3JlbGF0aXZlX2R1dHlfY3ljbGUoJmRydmRhdGEtPnB3bV9zdGF0ZSwgZHV0eV91bml0KTsKIAlp
+ZiAodm9sdGFnZSA8IG1pbihtYXhfdVZfZHV0eSwgbWluX3VWX2R1dHkpIHx8CiAJICAgIHZvbHRh
+Z2UgPiBtYXgobWF4X3VWX2R1dHksIG1pbl91Vl9kdXR5KSkKIAkJcmV0dXJuIC1FTk9UUkVDT1ZF
+UkFCTEU7CkBAIC0xOTUsMTUgKzIwOCwxMiBAQCBzdGF0aWMgaW50IHB3bV9yZWd1bGF0b3Jfc2V0
+X3ZvbHRhZ2Uoc3RydWN0IHJlZ3VsYXRvcl9kZXYgKnJkZXYsCiAJdW5zaWduZWQgaW50IG1pbl91
+Vl9kdXR5ID0gZHJ2ZGF0YS0+Y29udGludW91cy5taW5fdVZfZHV0eWN5Y2xlOwogCXVuc2lnbmVk
+IGludCBtYXhfdVZfZHV0eSA9IGRydmRhdGEtPmNvbnRpbnVvdXMubWF4X3VWX2R1dHljeWNsZTsK
+IAl1bnNpZ25lZCBpbnQgZHV0eV91bml0ID0gZHJ2ZGF0YS0+Y29udGludW91cy5kdXR5Y3ljbGVf
+dW5pdDsKKwlzdHJ1Y3QgcHdtX3N0YXRlIHBzdGF0ZSA9IGRydmRhdGEtPnB3bV9zdGF0ZTsKIAlp
+bnQgbWluX3VWID0gcmRldi0+Y29uc3RyYWludHMtPm1pbl91VjsKIAlpbnQgbWF4X3VWID0gcmRl
+di0+Y29uc3RyYWludHMtPm1heF91VjsKIAlpbnQgZGlmZl91ViA9IG1heF91ViAtIG1pbl91VjsK
+LQlzdHJ1Y3QgcHdtX3N0YXRlIHBzdGF0ZTsKIAl1bnNpZ25lZCBpbnQgZGlmZl9kdXR5OwogCXVu
+c2lnbmVkIGludCBkdXR5Y3ljbGU7Ci0JaW50IHJldDsKLQotCXB3bV9pbml0X3N0YXRlKGRydmRh
+dGEtPnB3bSwgJnBzdGF0ZSk7CiAKIAkvKgogCSAqIFRoZSBkdXR5Y3ljbGUgZm9yIG1pbl91ViBt
+aWdodCBiZSBncmVhdGVyIHRoYW4gdGhlIG9uZSBmb3IgbWF4X3VWLgpAQCAtMjI2LDEzICsyMzYs
+NyBAQCBzdGF0aWMgaW50IHB3bV9yZWd1bGF0b3Jfc2V0X3ZvbHRhZ2Uoc3RydWN0IHJlZ3VsYXRv
+cl9kZXYgKnJkZXYsCiAKIAlwd21fc2V0X3JlbGF0aXZlX2R1dHlfY3ljbGUoJnBzdGF0ZSwgZHV0
+eWN5Y2xlLCBkdXR5X3VuaXQpOwogCi0JcmV0ID0gcHdtX2FwcGx5X21pZ2h0X3NsZWVwKGRydmRh
+dGEtPnB3bSwgJnBzdGF0ZSk7Ci0JaWYgKHJldCkgewotCQlkZXZfZXJyKCZyZGV2LT5kZXYsICJG
+YWlsZWQgdG8gY29uZmlndXJlIFBXTTogJWRcbiIsIHJldCk7Ci0JCXJldHVybiByZXQ7Ci0JfQot
+Ci0JcmV0dXJuIDA7CisJcmV0dXJuIHB3bV9yZWd1bGF0b3JfYXBwbHlfc3RhdGUocmRldiwgJnBz
+dGF0ZSk7CiB9CiAKIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcmVndWxhdG9yX29wcyBwd21fcmVndWxh
+dG9yX3ZvbHRhZ2VfdGFibGVfb3BzID0gewpAQCAtMzIxLDMyICszMjUsNiBAQCBzdGF0aWMgaW50
+IHB3bV9yZWd1bGF0b3JfaW5pdF9jb250aW51b3VzKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBk
+ZXYsCiAJcmV0dXJuIDA7CiB9CiAKLXN0YXRpYyBpbnQgcHdtX3JlZ3VsYXRvcl9pbml0X2Jvb3Rf
+b24oc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiwKLQkJCQkgICAgICBzdHJ1Y3QgcHdtX3Jl
+Z3VsYXRvcl9kYXRhICpkcnZkYXRhLAotCQkJCSAgICAgIGNvbnN0IHN0cnVjdCByZWd1bGF0b3Jf
+aW5pdF9kYXRhICppbml0X2RhdGEpCi17Ci0Jc3RydWN0IHB3bV9zdGF0ZSBwc3RhdGU7Ci0KLQlp
+ZiAoIWluaXRfZGF0YS0+Y29uc3RyYWludHMuYm9vdF9vbiB8fCBkcnZkYXRhLT5lbmJfZ3BpbykK
+LQkJcmV0dXJuIDA7Ci0KLQlwd21fZ2V0X3N0YXRlKGRydmRhdGEtPnB3bSwgJnBzdGF0ZSk7Ci0J
+aWYgKHBzdGF0ZS5lbmFibGVkKQotCQlyZXR1cm4gMDsKLQotCS8qCi0JICogVXBkYXRlIHRoZSBk
+dXR5IGN5Y2xlIHNvIHRoZSBvdXRwdXQgZG9lcyBub3QgY2hhbmdlCi0JICogd2hlbiB0aGUgcmVn
+dWxhdG9yIGNvcmUgZW5hYmxlcyB0aGUgcmVndWxhdG9yIChhbmQKLQkgKiB0aHVzIHRoZSBQV00g
+Y2hhbm5lbCkuCi0JICovCi0JaWYgKHBzdGF0ZS5wb2xhcml0eSA9PSBQV01fUE9MQVJJVFlfSU5W
+RVJTRUQpCi0JCXBzdGF0ZS5kdXR5X2N5Y2xlID0gcHN0YXRlLnBlcmlvZDsKLQllbHNlCi0JCXBz
+dGF0ZS5kdXR5X2N5Y2xlID0gMDsKLQotCXJldHVybiBwd21fYXBwbHlfbWlnaHRfc2xlZXAoZHJ2
+ZGF0YS0+cHdtLCAmcHN0YXRlKTsKLX0KLQogc3RhdGljIGludCBwd21fcmVndWxhdG9yX3Byb2Jl
+KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiB7CiAJY29uc3Qgc3RydWN0IHJlZ3VsYXRv
+cl9pbml0X2RhdGEgKmluaXRfZGF0YTsKQEAgLTQwNCwxMCArMzgyLDIzIEBAIHN0YXRpYyBpbnQg
+cHdtX3JlZ3VsYXRvcl9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCWlmIChy
+ZXQpCiAJCXJldHVybiByZXQ7CiAKLQlyZXQgPSBwd21fcmVndWxhdG9yX2luaXRfYm9vdF9vbihw
+ZGV2LCBkcnZkYXRhLCBpbml0X2RhdGEpOwotCWlmIChyZXQpCi0JCXJldHVybiBkZXZfZXJyX3By
+b2JlKCZwZGV2LT5kZXYsIHJldCwKLQkJCQkgICAgICJGYWlsZWQgdG8gYXBwbHkgYm9vdF9vbiBz
+ZXR0aW5nc1xuIik7CisJcHdtX2luaXRfc3RhdGUoZHJ2ZGF0YS0+cHdtLCAmZHJ2ZGF0YS0+cHdt
+X3N0YXRlKTsKKworCWlmIChpbml0X2RhdGEtPmNvbnN0cmFpbnRzLmJvb3Rfb24gJiYgIWRydmRh
+dGEtPmVuYl9ncGlvICYmCisJICAgICFkcnZkYXRhLT5wd21fc3RhdGUuZW5hYmxlZCkKKwkJLyoK
+KwkJKiBJbiBnZW5lcmFsIGl0J3MgdW5rbm93biB3aGF0IHRoZSBvdXRwdXQgb2YgYSBkaXNhYmxl
+ZCBQV00gaXMuCisJCSogVGhlIG9ubHkgc2FuZSBhc3N1bXB0aW9uIGhlcmUgaXMgaXQgZW1pdHMg
+dGhlIGluYWN0aXZlIGxldmVsCisJCSogd2hpY2ggY29ycmVzcG9uZHMgdG8gZHV0eV9jeWNsZSA9
+IDAgKGluZGVwZW5kZW50IG9mIHRoZQorCQkqIHBvbGFyaXR5KS4KKwkJKgorCQkqIFVwZGF0ZSB0
+aGUgZHV0eSBjeWNsZSBzbyB0aGUgb3V0cHV0IGRvZXMgbm90IGNoYW5nZSB3aGVuIHRoZQorCQkq
+IHJlZ3VsYXRvciBjb3JlIGVuYWJsZXMgdGhlIHJlZ3VsYXRvciAoYW5kIHRodXMgdGhlIFBXTQor
+CQkqIGNoYW5uZWwpIGFuZCB0aGVyZSdzIG5vIGNoYW5nZSB0byB0aGUgZHV0eSBjeWNsZSBiZWNh
+dXNlIHRoZQorCQkqIHZvbHRhZ2UgdGhhdCBpcyBhY2hpZXZlZCB3aXRoIGEgZGlzYWJsZWQgUFdN
+IGlzIGFscmVhZHkgdGhlCisJCSogZGVzaXJlZCBvbmUuCisJCSovCisJCWRydmRhdGEtPnB3bV9z
+dGF0ZS5kdXR5X2N5Y2xlID0gMDsKIAogCXJlZ3VsYXRvciA9IGRldm1fcmVndWxhdG9yX3JlZ2lz
+dGVyKCZwZGV2LT5kZXYsCiAJCQkJCSAgICAmZHJ2ZGF0YS0+ZGVzYywgJmNvbmZpZyk7Cg==
+--000000000000694344061af5d7be--
 
