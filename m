@@ -1,164 +1,109 @@
-Return-Path: <linux-kernel+bounces-215641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFD6909561
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:51:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8686A909557
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6A65B21761
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 01:51:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 744291C221E1
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 01:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DEE4683;
-	Sat, 15 Jun 2024 01:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9530D4683;
+	Sat, 15 Jun 2024 01:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="EQxEAqsH"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F/utxQU5"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DB0173;
-	Sat, 15 Jun 2024 01:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAA61FB4;
+	Sat, 15 Jun 2024 01:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718416269; cv=none; b=JV+Hv46eLsdWdPHYLA/hj4K82G8JPPYPUJnzlGj4nhyOuhRvOsH35pIKAi4s9gMi8jT8ChVnyenz3Lfup7U5BVscR+vGM4L/bBNgLPRssosr8YClGyIuoLppHNe3FxyOginTMpv16c5vB9TS93jf4WaGIf5TsLQ+FioMsVP6kUc=
+	t=1718415941; cv=none; b=Y2ppQypT4H5IMw9FsxIvRKysUSA898uj2bOFlORSZG+2GsyONttz0AGv4ZN2yukmM+8iUzkzvLWUxe3Ms/xsJ4z2/r7KRJdXFDuqBgH1SdLbXdFt4rvpY5qmiWLIHmv7QnqJ+T+Zh4X26fed31LwY4SLISkWtOw3Atyw6lf+LLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718416269; c=relaxed/simple;
-	bh=I0OxXa9DgS8CNov9zFCmY334i6ViZ/0pIgrmqKDoC8U=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Q/aKEuC3ixLQMyLPUtGXzu3rPIcspBa1n5gC+RWw0xbqu1TnLbm8tHRwlJYCX7UJr3phrzvrUHrYzFiAtPy4NyjTXedttjDjTMhVdCRPmw/ylLKd8S8+ZWutbp6XjLmznewbxc2imKq4nQL+4SUlAzsSmf19nFzf925AfvrOceA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=EQxEAqsH; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1718415956; bh=BliPspMfZpsfUZHQ6OIFoJYpdtijvhqaem6dtHKkTHo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=EQxEAqsHEWDO7UuMl7QhInY9w6SY2ej5GrRZgrRyCo9O/uyRjjUPSUyt/nKYChfXq
-	 sZdSit6cXe898DPnBhwh/cMVe3pe9X0G/tvhavOy6dMifr9x0NLgAsMlkbQjvVNi5I
-	 DEiBSJeWIALmlMLGP6PIIDX3khTi2lX+vWmem0EU=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id B758D0B6; Sat, 15 Jun 2024 09:45:53 +0800
-X-QQ-mid: xmsmtpt1718415953thiu5vney
-Message-ID: <tencent_8D9918CF808DC6A5FF8DCB12055DECDDF107@qq.com>
-X-QQ-XMAILINFO: Mg/0DM1Zd+nHD5TKWnIAKflqlS7gH06+79ZA7FoSIoEVqm0uA2J5eHDrzeu02z
-	 rYfWTkIWkhNmVlXQnHNR9kqqtCvPzcTK5I8hjyPziqr+Ntcz2sr5GXeQzv+QaotA0l6ZVm8TG2Kv
-	 Qt8gT02EltLJS+nsJEZv6xEzKlungZN0wOef5+ybT8YCMqs8guF68VxWEOyciDsjWc+kNJ9MFexM
-	 K7ceoxcilNTAXzZXxTsdpnNTJX8hSYzzPULx6boHRJQ9M+hWfmQv47yMzD1zzq1y7bekNTCtLiBx
-	 ClxSOESbX97WEiU6yeD1QpKbt/jAg1RzfyJxkeTnqVr7omFBqxcn5gTJUm5Y8ZjFMw+swPSDSAv6
-	 FhkHr/xyqbYG1xOEDo6H+voOr0QpZPdxmVmghdornb/D9B7vO4LJV1LNsH4guTG8JaltSXBIl2hT
-	 xbNAOLnFQFurxsQ81togNoUaulpLujRr3xo0dZUQ5eKR2Y7wMVNwtiWsbitJdn/lshF0bZIYwFJ7
-	 QpgU0afxZScpOanDJK8TdTngMHomKR0AP+itZU4p3/C5Ts6Wb/oTa9qA0TPM0Joa5JCVt3+skguU
-	 4T8+t5AlkmKmvoqFYXV8cdIayU6GK8IRmND4Ddaksz0WCiMxJPHf8U4sJXJczCKa9gyf/G9c5Us1
-	 g+trQnCE0KCQMJZ/hKbxwgQ+QSpN3MFoUDNCaRDSew5sg6jkrU98TS7a8yr/fbt/Y8TMVkbCgY4/
-	 5ghhFCaGRX/Ud/ZM2pSHzoVqDb83NpgORtF8alj5OF0/x38Sf3GnBye83aX88SUiFsU5JOz0i7t1
-	 Sz6C7r2/yAX0FxaE8xJMtLepkVWyIU01xjUu1n/w4yNXDqlNG3SpUyAkJ2+wRIlnmvDhgBAhxCvs
-	 KMhzdqv1DEs/yRzc5GGYmSqPiszynh58J+J+Yd25lU5q1ty5d8c/T2fUcqRtq/U8IdGdo3fYmqDh
-	 01UtpJwNZoGsuLHALCXw==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: luiz.dentz@gmail.com
-Cc: eadavis@qq.com,
-	johan.hedberg@gmail.com,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	marcel@holtmann.org,
-	syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH v2] bluetooth/l2cap: sync sock recv cb and release
-Date: Sat, 15 Jun 2024 09:45:54 +0800
-X-OQ-MSGID: <20240615014553.3405535-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CABBYNZKArASNApkJPvJn8C4HE0y5aZy0X2ZrOjjdrsDhBO+7rQ@mail.gmail.com>
-References: <CABBYNZKArASNApkJPvJn8C4HE0y5aZy0X2ZrOjjdrsDhBO+7rQ@mail.gmail.com>
+	s=arc-20240116; t=1718415941; c=relaxed/simple;
+	bh=UXvOutsOs5dGALzZAcEV8aOGIokDUmCprHYddo97Jps=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QMdhV689dxBWbZFjsU98dw6qnWm+b5GYkUZ9t74NxX2ywLnPvf/s1Dto+hsOpuVScZQPrkZu9AGiAY/rPhUPOSVCCFynhsJ4TySn2QHahUXXdqpfvZW5ojYr3TdFXUd48061tglcvP+fy/6EhssDOU+VDUemucaD+9vdN39uYJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F/utxQU5; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-35f225ac23bso2703247f8f.0;
+        Fri, 14 Jun 2024 18:45:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718415938; x=1719020738; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r/CwDK7R6fOWeBV3TrdST66AhZneTiael/jWeUtcx5Y=;
+        b=F/utxQU55d52p0OaxCo20qJvABHUryzk6CF3y9VnHWqb2oYM2yKfI5M638/mKeScV7
+         /BRrn0eglkqfOIwxJopEjsrUTJwUx0ap5/lePvpoQPOI18le8G4s0hwcbj4tGlKVj5cF
+         5PZu27NT0rU3pCKRdQw2C01sX3uqDBNF617mWj9ON/Wbfg5YAoVhgM1eOf6Yge879TpU
+         96GlyTPOaxnb6OT90cJtRJECwpPuKwYHXw0Smnbl6YJBED8RWGs11NpKm1X1cz2rcz4N
+         nWjluyMpebQtLCSzht5amN1ft0NBoT7iEM/wB1YDiwk108CsaA/NqibzBAQcD4ei9ATD
+         cbDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718415938; x=1719020738;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r/CwDK7R6fOWeBV3TrdST66AhZneTiael/jWeUtcx5Y=;
+        b=Whs+27yugeKgasPK0MQKKxbV36K5UFcOSYNVcZRCToCcQX8G82eYtGcR2kDcPbwIN1
+         kMp6iGklwjDs7fq6UinXrAaDsyW2NyWdUrUDBg0398/2YXBNSS19drmPbrcL7hJV0lfc
+         rGoNdkZgwwjGrO3xxzWyq8sZjhmW4OjC48Ef+d8T5mkqDodXZ2c4yxhSS1mMRIJxrgjN
+         8nBqt9kyCH7b880xoUnrLl5Ar3a0HtYDBqGnLo1C2eRD6w7WAi7HNhDlDOcCoAbTHMeT
+         O+PbYd7+fmFS09yRaVptNV7t8Yg2yeML0P3meCcBdJ7xQgm9ARCiFmZGP5kzzF9qyuho
+         QL8w==
+X-Forwarded-Encrypted: i=1; AJvYcCVOguoccb0GtTY7TRKfkpK6DUaatVJbO3srf65KQ7iSEKAbok4DhBOsCnz5L4dBiPR17wa3U3cKKy5mgoDdAblGqZpfUZecbAZeE2VITmVMXliOepU8SwBBBCrsQXJtPFIEaakX
+X-Gm-Message-State: AOJu0YykEaqhODCtZfUCOtntpD9VYUtw94jiYlOkmuPfNVp9ItNR7+Ef
+	TjMxDMZga+Lmtd7RyeehH+lA3/ihm9gCZYoWxUp4Lcq1EE4rHyoR
+X-Google-Smtp-Source: AGHT+IEC96cSq0PKKjOhRhprtrElloLoEwM6oq12HAwzG/fn44YC9r6A9tIdRQxFxBlZ8rX/vpCJSg==
+X-Received: by 2002:adf:ead1:0:b0:35f:1bd5:1d72 with SMTP id ffacd0b85a97d-3607a7889e5mr3994319f8f.67.1718415938273;
+        Fri, 14 Jun 2024 18:45:38 -0700 (PDT)
+Received: from [192.168.0.5] ([69.6.8.124])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075104a48sm5814400f8f.100.2024.06.14.18.45.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 18:45:37 -0700 (PDT)
+Message-ID: <9f934dc7-bfd6-4f3f-a52c-a33f7a662cae@gmail.com>
+Date: Sat, 15 Jun 2024 04:46:11 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next v1] net: wwan: t7xx: Add debug port
+To: Vanillan Wang <songjinjian@hotmail.com>
+Cc: pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
+ davem@davemloft.net, johannes@sipsolutions.net, loic.poulain@linaro.org,
+ ricardo.martinez@linux.intel.com, m.chetan.kumar@linux.intel.com,
+ chandrashekar.devegowda@intel.com, haijun.liu@mediatek.com,
+ chiranjeevi.rapolu@linux.intel.com, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Jinjian Song <jinjian.song@fibocom.com>
+References: <MEYP282MB269762C5070B97CD769C8CD5BBC22@MEYP282MB2697.AUSP282.PROD.OUTLOOK.COM>
+Content-Language: en-US
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+In-Reply-To: <MEYP282MB269762C5070B97CD769C8CD5BBC22@MEYP282MB2697.AUSP282.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The problem occurs between the system call to close the sock and hci_rx_work,
-where the former releases the sock and the latter accesses it without lock protection.
+On 14.06.2024 12:49, Vanillan Wang wrote:
+> From: Jinjian Song <jinjian.song@fibocom.com>
+> 
+> Add support for userspace to switch on the debug port(ADB,MIPC).
+>   - ADB port: /dev/ccci_sap_adb
+>   - MIPC port: /dev/ttyMIPC0
 
-           CPU0                       CPU1
-           ----                       ----
-           sock_close                 hci_rx_work
-	   l2cap_sock_release         hci_acldata_packet
-	   l2cap_sock_kill            l2cap_recv_frame
-	   sk_free                    l2cap_conless_channel
-	                              l2cap_sock_recv_cb
+NAK
 
-If hci_rx_work processes the data that needs to be received before the sock is
-closed, then everything is normal; Otherwise, the work thread may access the
-released sock when receiving data.
+The WWAN subsystem was purposely introducted to get rid of this mess of 
+char devices and their implementation in drivers. If you want to export 
+a port, which type is not available in the WWAN subsystem, then 
+introduce a new port to the subsystem and then register it from a driver.
 
-Add a chan mutex in the rx callback of the sock to achieve synchronization between
-the sock release and recv cb.
-
-Sock is dead, so set chan data to NULL, avoid others use invalid sock pointer.
-
-Reported-and-tested-by: syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- net/bluetooth/l2cap_sock.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
-
-diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
-index 6db60946c627..f45cdf9bc985 100644
---- a/net/bluetooth/l2cap_sock.c
-+++ b/net/bluetooth/l2cap_sock.c
-@@ -1239,6 +1239,10 @@ static void l2cap_sock_kill(struct sock *sk)
- 
- 	BT_DBG("sk %p state %s", sk, state_to_string(sk->sk_state));
- 
-+	/* Sock is dead, so set chan data to NULL, avoid other task use invalid
-+	 * sock pointer.
-+	 */
-+	l2cap_pi(sk)->chan->data = NULL;
- 	/* Kill poor orphan */
- 
- 	l2cap_chan_put(l2cap_pi(sk)->chan);
-@@ -1481,12 +1485,25 @@ static struct l2cap_chan *l2cap_sock_new_connection_cb(struct l2cap_chan *chan)
- 
- static int l2cap_sock_recv_cb(struct l2cap_chan *chan, struct sk_buff *skb)
- {
--	struct sock *sk = chan->data;
--	struct l2cap_pinfo *pi = l2cap_pi(sk);
-+	struct sock *sk;
-+	struct l2cap_pinfo *pi;
- 	int err;
- 
--	lock_sock(sk);
-+	/* To avoid race with sock_release, a chan lock needs to be added here
-+	 * to synchronize the sock.
-+	 */
-+	l2cap_chan_hold(chan);
-+	l2cap_chan_lock(chan);
-+	sk = chan->data;
- 
-+	if (!sk) {
-+		l2cap_chan_unlock(chan);
-+		l2cap_chan_put(chan);
-+		return -ENXIO;
-+	}
-+
-+	pi = l2cap_pi(sk);
-+	lock_sock(sk);
- 	if (chan->mode == L2CAP_MODE_ERTM && !list_empty(&pi->rx_busy)) {
- 		err = -ENOMEM;
- 		goto done;
-@@ -1535,6 +1552,8 @@ static int l2cap_sock_recv_cb(struct l2cap_chan *chan, struct sk_buff *skb)
- 
- done:
- 	release_sock(sk);
-+	l2cap_chan_unlock(chan);
-+	l2cap_chan_put(chan);
- 
- 	return err;
- }
--- 
-2.43.0
-
+--
+Sergey
 
