@@ -1,251 +1,119 @@
-Return-Path: <linux-kernel+bounces-215766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03ED99096CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:12:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 899249096CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7D0E1C220A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:12:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37D561F22ABF
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879C91C68E;
-	Sat, 15 Jun 2024 08:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649AD18638;
+	Sat, 15 Jun 2024 08:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mBTDLvZl"
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DG1usZIT"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A26720330
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 08:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C6D17C8D
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 08:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718439127; cv=none; b=NuGIkcguvGdaC7QTrvmo5nf29ZTMyMwd+HPD59wSXellxKj6eIcmiTsNFMQ+dR7XaEWVcefTz11BTnDyeZ4feQK2RFiUZZ7w8FNMdOwpIXtSSmFrNnCZNing9bKQsO3p6OvfoQ6h+E0y11+ZbwUrV4oMUC1zJyWmm5fBXdWiUxU=
+	t=1718439193; cv=none; b=C0S5/5In16vT1aegiAMosAAZ/g1+AaQ0BvRx6YKvMGamHWij/Qn+XCDBT9CvoA8nRiVtn4ALpXDQydamw89d83ozgCf4WwOGI87fg534NMl/gN+gJepueWByVv6nORxnWd/j0vMPIS+UhTqFNbsnkqgbiuZ8Ho1ynPYD0HwqfPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718439127; c=relaxed/simple;
-	bh=T/MZPbZQgPKyZqFaOxXEYvsvn2SayXByQqpNuAM55us=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WNt6/hl/dEkTmMVQEX4ncx4qwgpzgrkFd9LnEWNhKCYOIeBhFsgQULHYnyof8vpBwKzFe09sickDmmnONiz84ke1YLUKzsGDNYQqFhrgQ7edP6RwP+gZ26PW8XBJCRSCajd/6+2sMdJ3iKyyQyExbDs0wqus9gQfUlw5WcsJOyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mBTDLvZl; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-4eaf67ad82dso1016445e0c.1
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 01:12:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718439125; x=1719043925; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CX/O9XayHzYV7cWWCWO6mgKk856aZ6rbvTGPWtOjZk8=;
-        b=mBTDLvZlZ6/Y6S4WfugApstxaTJ5lpHSfHZB/24mpgfdftAaiy1iS70pDcgrKNR0MA
-         3VuaiYClRSx/POw5Qtz7vydL1g01HOjbnvjERU6RBq5T9x5ArrrWxUsARrmdUzdWcHis
-         G0+er/csMEN8SGZwfvZs2IBdIvuPhTjGX01xUjnzV38ei2eezZ3HV7lAmqRVBKbIv0CT
-         zz6IekNuUJWKcRleTaEv0jTYs/CXkqjclv+ufMOszNMtufmif3uDsVOCu4u+10GK89r1
-         R91bcn39axeW35284PO8C31AHsiNR1P06x2pe0lZm/KapT83tG+nDcD8IKBzK7Xp1CK2
-         sTLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718439125; x=1719043925;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CX/O9XayHzYV7cWWCWO6mgKk856aZ6rbvTGPWtOjZk8=;
-        b=A6oA9Ene3M6gtZYjexlYP8QjCKxLa0D1VPqoL5Wf26O1n8KNY+wySDI3AtZu8/mWMT
-         Nm5ye3G6jnTL8z9cEJh0NtPGwxQrME9LNkgvHlWJ3/wMK/5ir8xUq+jDLUeh5BNq319I
-         vW74jEA+AV00bjYKb0tEjcDjdBmBRQltsA76ZgE9s/bzNAx0rahZICjVXRErzNmA7JDd
-         84PlcGrEUTW4qMPrnLRZwQx69U/cU53TLtkThzV/lWlIQS/jqRNZ7MOl8PQSzntrFnKB
-         WIy5hEX7dBA732EIyy8ssWyGkDtpXtm3pW5MF9YzzdZkNkAJ58Yzf2YnWVgRiDq47MJG
-         yFdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVIzuqqn+LGV3b/NDEZ1OzdLA1O3bqNtFXEgwlK7j6qJd2I+nOGCdkG0X9xwQdWXZ8dYD2SiWjRqqLlPyPka7kBFQ1Vdq9r2uqjA3h
-X-Gm-Message-State: AOJu0YynnGCg9wLzFM13Y1jc5zO16grlpQx1uLa0H626FI5DTgwS5RkV
-	JFMKO9meREsuzkW5NSTBS3HierG6KDPS8oT1sHs1dyTRUtYw2Zuvw3RVhcAbdyEXHuv4W9t99wL
-	FnQt66m2CEK6AhCUwecJB24WrM8yOb7hzowYY1Q==
-X-Google-Smtp-Source: AGHT+IE+FSgOidj7gD4O5t933BVOdLfDJrzcamX8mcRHcOSsAFXlr1aFntiKrxA2O0EuNqDWwXit7SM0N4ZTpVrmfJo=
-X-Received: by 2002:a05:6122:30a2:b0:4ec:f291:2a45 with SMTP id
- 71dfb90a1353d-4ee3eb78b99mr5746899e0c.5.1718439124819; Sat, 15 Jun 2024
- 01:12:04 -0700 (PDT)
+	s=arc-20240116; t=1718439193; c=relaxed/simple;
+	bh=3ACpS9KjoGNBwd3Y4kjm8V6B0xgL1wsK3QBEDIP40K4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DLN6G3w9cbhHh5721Z951Px8tB+YfS+g67kERFjvw1na4hsNKXw8atgOYHfIPUrgRGbfhP0DTe6PX32Ql6txT2C8NNFQLqRTcTPdhiovcWEgrcBZ/SwOQH4cB3NOZToa6cRFZoXJheDm9lxlZeJ6nfr3c4RXXp/CZNx/XWkZfvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DG1usZIT; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: akpm@linux-foundation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718439189;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jxg5iGIBzjKKqOE5wby7nB9Gf0RymHtTU7fYqI4F+Xs=;
+	b=DG1usZITPymN0SlTEM3Q6jayWvQCADocjZqcuCKEp0kDmOE+15ngQnACof3b5k6yXW+tw7
+	LbnSIxp2RWzO2YDZKRBKn+xplpxnCF6/wE4O7jnQspLRwJpjZn6nV4KioEB2oHCEZ2Vn1l
+	ZUeMQc/spEe22ZuMj5sReeChPnVIgRo=
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: mhocko@suse.com
+X-Envelope-To: roman.gushchin@linux.dev
+X-Envelope-To: yosryahmed@google.com
+X-Envelope-To: hawk@kernel.org
+X-Envelope-To: yuzhao@google.com
+X-Envelope-To: songmuchun@bytedance.com
+X-Envelope-To: kernel-team@meta.com
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@suse.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Yu Zhao <yuzhao@google.com>,
+	Muchun Song <songmuchun@bytedance.com>,
+	Facebook Kernel Team <kernel-team@meta.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] memcg: use ratelimited stats flush in the reclaim
+Date: Sat, 15 Jun 2024 01:12:57 -0700
+Message-ID: <20240615081257.3945587-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613113227.759341286@linuxfoundation.org>
-In-Reply-To: <20240613113227.759341286@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sat, 15 Jun 2024 13:41:53 +0530
-Message-ID: <CA+G9fYuFsA_vw1z8d5cPiMw7GpW0Y6XQHGeJsNj=3_eda_00Qg@mail.gmail.com>
-Subject: Re: [PATCH 5.4 000/202] 5.4.278-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 13 Jun 2024 at 17:26, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.4.278 release.
-> There are 202 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 15 Jun 2024 11:31:50 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.4.278-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+The Meta prod is seeing large amount of stalls in memcg stats flush
+from the memcg reclaim code path. At the moment, this specific callsite
+is doing a synchronous memcg stats flush. The rstat flush is an
+expensive and time consuming operation, so concurrent relaimers will
+busywait on the lock potentially for a long time. Actually this issue is
+not unique to Meta and has been observed by Cloudflare [1] as well. For
+the Cloudflare case, the stalls were due to contention between kswapd
+threads running on their 8 numa node machines which does not make sense
+as rstat flush is global and flush from one kswapd thread should be
+sufficient for all. Simply replace the synchronous flush with the
+ratelimited one.
 
+One may raise a concern on potentially using 2 sec stale (at worst)
+stats for heuristics like desirable inactive:active ratio and preferring
+inactive file pages over anon pages but these specific heuristics do not
+require very precise stats and also are ignored under severe memory
+pressure. This patch has been running on Meta fleet for more than a
+month and we have not observed any issues. Please note that MGLRU is not
+impacted by this issue at all as it avoids rstat flushing completely.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Link: https://lore.kernel.org/all/6ee2518b-81dd-4082-bdf5-322883895ffc@kernel.org [1]
+Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+---
+ mm/vmscan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index c0429fd6c573..bda4f92eba71 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2263,7 +2263,7 @@ static void prepare_scan_control(pg_data_t *pgdat, struct scan_control *sc)
+ 	 * Flush the memory cgroup stats, so that we read accurate per-memcg
+ 	 * lruvec stats for heuristics.
+ 	 */
+-	mem_cgroup_flush_stats(sc->target_mem_cgroup);
++	mem_cgroup_flush_stats_ratelimited(sc->target_mem_cgroup);
+ 
+ 	/*
+ 	 * Determine the scan balance between anon and file LRUs.
+-- 
+2.43.0
 
-## Build
-* kernel: 5.4.278-rc1
-* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
-* git branch: linux-5.4.y
-* git commit: b5a457a9ff04a0bb90149f3bc8033a2a98d04caf
-* git describe: v5.4.277-203-gb5a457a9ff04
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.4.y/build/v5.4.2=
-77-203-gb5a457a9ff04
-
-## Test Regressions (compared to v5.4.277)
-
-## Metric Regressions (compared to v5.4.277)
-
-## Test Fixes (compared to v5.4.277)
-
-## Metric Fixes (compared to v5.4.277)
-
-## Test result summary
-total: 93744, pass: 75189, fail: 2023, skip: 16475, xfail: 57
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 135 total, 135 passed, 0 failed
-* arm64: 35 total, 33 passed, 2 failed
-* i386: 23 total, 17 passed, 6 failed
-* mips: 25 total, 25 passed, 0 failed
-* parisc: 3 total, 0 passed, 3 failed
-* powerpc: 30 total, 30 passed, 0 failed
-* riscv: 9 total, 9 passed, 0 failed
-* s390: 6 total, 6 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 31 total, 31 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-android
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-drivers-dma-buf
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-ir
-* kselftest-kcmp
-* kselftest-kexec
-* kselftest-lib
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-memory-hotplug
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mount
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-forwarding
-* kselftest-net-mptcp
-* kselftest-netfilter
-* kselftest-nsfs
-* kselftest-openat2
-* kselftest-pid_namespace
-* kselftest-pidfd
-* kselftest-proc
-* kselftest-pstore
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-splice
-* kselftest-static_keys
-* kselftest-sync
-* kselftest-sysctl
-* kselftest-tc-testing
-* kselftest-timens
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kselftest-zram
-* kunit
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-smoketest
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
