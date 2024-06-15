@@ -1,78 +1,85 @@
-Return-Path: <linux-kernel+bounces-215679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D729095CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 05:01:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E189095CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 05:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 731AAB20CF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:01:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0A06282853
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973981803E;
-	Sat, 15 Jun 2024 03:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNIXrPp7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84F4C2C6;
+	Sat, 15 Jun 2024 03:06:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1BF1759F;
-	Sat, 15 Jun 2024 03:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208104400
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 03:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718420478; cv=none; b=MdIy99LFdt3CXWD0ui1XNCBwyvaXSwXRGZVldaP/E/YWGiuoDEOYFbx/lZu0w7pudvxjDkV3Elqe4HJFgJEP6b31UUfw67hMPiN4dWNc/7MOezXz+BOPGLhfyrjBZzuDHVqFT1XYt+4abFrTLF7Vk18uIVEUjx5zHOy7EYXcvfw=
+	t=1718420765; cv=none; b=dMi3AdozpK/4Tynr/9LL/7n53B263a9v6CfGlttfEyWeuOYIgYQqGcFA02g1VnxCmxetWCH+5mfEe6YX7vzzOfraopZftfhi5HGQUABsExKifckg5d3EwQHwhK6d2c4ZRQu1sLUibqCEUnY6HXDuqXfOcyGGHEnxjjX/23lJoKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718420478; c=relaxed/simple;
-	bh=pwzQjgwkGVbUQb8TtPz63fJcnGgiG3oBvBAS5otFwWU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=typHSoSeht5uKUB/gDPTYdrw1KzrUfYfjbXObkTBcWfkqnQi+IbW/jgGn4kt5D3huLDzOW7XvYQtVrZz+i+Mu9CjK5OFbBcRfnjMjqcXJ0BEx4PgcM72++D7p1wV0htkG4pSgfhVpLuFhA4rdrrVYnd1P5hIPOqhWNKqD2aIVgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YNIXrPp7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BC402C4AF49;
-	Sat, 15 Jun 2024 03:01:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718420478;
-	bh=pwzQjgwkGVbUQb8TtPz63fJcnGgiG3oBvBAS5otFwWU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=YNIXrPp70N7gw4X5HLtr0N3iX4PCDu1A9MPvJETXfeBFibyLodfjXiEFvlea7CMh4
-	 K0e6pr4KoYYGNbLNrsMncAZrWtc0bNI0lOJGzAEFXKgzZQWenk/Un5xL7jKbjksFNy
-	 kFoI7JE7qXDldF3zsdJm++/xVA/9g/lDFXnGIY7JDUCb66rxb1AQwVERdtLI/mKRH4
-	 4K0i+Wg4wb7MiuQoKV9rTeUAqvaCKIoAYUuVzWBp5wRrKIdW4WyXM56Cb9peGZZg0U
-	 TiaqxS1miWd/2EfTqRkOSCxAXvsPqRlyMrF5FdcWB6i08LAopoFuiC/sMVdS3IaOwr
-	 oup33QM4Mb/BA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B498EC4332D;
-	Sat, 15 Jun 2024 03:01:18 +0000 (UTC)
-Subject: Re: [GIT PULL] s390 updates for 6.10-rc4
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <your-ad-here.call-01718406121-ext-7930@work.hours>
-References: <your-ad-here.call-01718406121-ext-7930@work.hours>
-X-PR-Tracked-List-Id: <linux-s390.vger.kernel.org>
-X-PR-Tracked-Message-Id: <your-ad-here.call-01718406121-ext-7930@work.hours>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.10-4
-X-PR-Tracked-Commit-Id: 693d41f7c938f92d881e6a51525e6c132a186afd
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 44ef20baed8edcb1799bec1e7ad2debbc93eedd8
-Message-Id: <171842047873.4182.13792396294821792386.pr-tracker-bot@kernel.org>
-Date: Sat, 15 Jun 2024 03:01:18 +0000
-To: Vasily Gorbik <gor@linux.ibm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+	s=arc-20240116; t=1718420765; c=relaxed/simple;
+	bh=xVS5WCjnd+8td+V7CdrmihD1Cg7GgF3VsW+B/TqTg0s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=figTitYmmMtrYs2dEhrsqVocsRFRedPGNRY1flKlPs6eCw8ZUETvBzM9QQkIDaexDi7RPARPBivALN4eVbGzZwRut85KhZ9yPc6N1LdEO+P5sHkSEfb/t9Zhy2mhzouUAfR6I2Zc19NjZYC5VTE0OSJ+VYOlaaWc6Ly0B2ZoIe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-37597adfab4so25002065ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 20:06:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718420763; x=1719025563;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nd/kXNETteKn6H/yoXdWVP/RCM9yzNWB/d4YfIQxd/Y=;
+        b=w/URTmAVL2XqxIKx/zRku62TTvgZCQkHzKxplwVeHyjQ/jctI2r8Nz1J49lTAtqSNn
+         DND9+i/1CXRPOtgBJP4SQ44IPJOq9G3bwwVwCJRy1Ovhxw52qoMVlWle0ZVQUDRvFsjN
+         bKSH4lVUxl74keINtQw/Qt1h4SxK4ay9+oOMRreZcPNASH+gSQS/M/wnv4LhQExMuJvm
+         s8t6wsr7NOFZ6h26f4TezD1tONhrwzz8PVf2izSTVKSucke2nX5H4ji3owUAsEAQIYIk
+         qoK0ea+ab5r/Sflt6MfF+9KrSxpnoqPiwQroL1WekMBXx+5U8rbqaGcaGSCXjs1ymKEj
+         hFEQ==
+X-Gm-Message-State: AOJu0YxEl61k8Brm4pnkH1vZPtgI9pbgIadJFf04ekYgbFHrCE99GuoB
+	+wbh1NYV+319Kj2Ug961bHNX2bJWRsQUocn20MZc8+s3W66WbVcBfHs1VPWLp/OO/nQIYu4quT9
+	p6aFI3+au4sU2pO+U+a/D/9+hyRazM31OUSoSDjndTVtjp+VviGbyiUE=
+X-Google-Smtp-Source: AGHT+IHnk9GPeezxgXw+ZaC0rMzHsGwp/dKN7Gk1MfC+FnfE8HdtDksW8z/Kp3+9gnB+ypOlGWy3Q00ja7FpGrwqjqTXRvlTgCgC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1c03:b0:375:a56d:7719 with SMTP id
+ e9e14a558f8ab-375e0e03811mr2457495ab.1.1718420763345; Fri, 14 Jun 2024
+ 20:06:03 -0700 (PDT)
+Date: Fri, 14 Jun 2024 20:06:03 -0700
+In-Reply-To: <PN2PR01MB4891074E7F291A7643F61A84FCC22@PN2PR01MB4891.INDPRD01.PROD.OUTLOOK.COM>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002c90e4061ae503fc@google.com>
+Subject: Re: [syzbot] [bpf?] KMSAN: uninit-value in htab_lru_percpu_map_lookup_percpu_elem
+From: syzbot <syzbot+1971e47e5210c718db3c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	wojciech.gladysz@infogain.com
+Content-Type: text/plain; charset="UTF-8"
 
-The pull request you sent on Sat, 15 Jun 2024 01:02:01 +0200:
+Hello,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.10-4
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/44ef20baed8edcb1799bec1e7ad2debbc93eedd8
+Reported-and-tested-by: syzbot+1971e47e5210c718db3c@syzkaller.appspotmail.com
 
-Thank you!
+Tested on:
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+commit:         e478cf26 Merge branch 'bpf-fix-a-couple-of-test-failur..
+git tree:       https://linux.googlesource.com/linux/kernel/git/torvalds/linux
+console output: https://syzkaller.appspot.com/x/log.txt?x=1345c141980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2ad6a8768920dd4b
+dashboard link: https://syzkaller.appspot.com/bug?extid=1971e47e5210c718db3c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=126193e2980000
+
+Note: testing is done by a robot and is best-effort only.
 
