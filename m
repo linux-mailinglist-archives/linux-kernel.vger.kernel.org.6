@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-215618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33DF9094F8
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 02:10:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A25F9094FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 02:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 278E9B213AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:10:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBA4BB21439
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A241C2E;
-	Sat, 15 Jun 2024 00:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C69442C;
+	Sat, 15 Jun 2024 00:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="p3iX5pcc"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="UTUX4AJr"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC61624
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 00:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFC9623
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 00:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718410245; cv=none; b=KQ/pa2i4gb32E14/vR6vYtNC05Ei2H43gFVLhl5bmZmW8xkx00jbLtqvKkBMjhxYAE+keORIKZQ9vFdSlxypm+t5reGAlmIIc7tCzjMa2tXXOEQPhGFeEi2HUf0PWiF/q7hQvCEH1WxpGK/OGLEtJ+8pWH9JJv5krnEdfScpBWw=
+	t=1718410582; cv=none; b=JBnLhcpm8In5DL+uRIpfCJVzbZH5eZ7o2tQLqohuER34MUSBbP53FsrmSC34sbLaCswTgHrhaANNA8fCwfMPaQ1p6eBbLjXWgNfNS8QyaWhmlA5w4KjJVObcrccfg84gD+7iORUuYqM7lLN2cwVwPlxQ6IOT631HcW/sCcYLBks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718410245; c=relaxed/simple;
-	bh=gNewejaBAdSyW6TmuZ4lHfjXg+C8jYnOyd0Gqj1kBkQ=;
+	s=arc-20240116; t=1718410582; c=relaxed/simple;
+	bh=Ah9XF3VhfC6uL+Y7yxuXm+X0XsWWOB0OHtRfi0aa7Tk=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oyLgIaDSj5W/tQqTM0HTDLhG1rvhZxmEo/KTYP8zUBMBWC0o6w2VSiOKkfsPqpcyZm8Jvt/vkDmvzyu6AOV5ZvRpgMFy+Bly676t555ZNxm6DEYJMvje54IuaHjHjr5u80La2h4vxcJCfOxJJe1GmFvhi2e+2nimqoOpNiNr6vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=p3iX5pcc; arc=none smtp.client-ip=209.85.160.42
+	 MIME-Version:Content-Type; b=KtEBEjXw8QimtfgkMwlqHHNUuAdMfxf8ZcyJp5iB/26IFI5i+qHJNzL7V+HCAeYG+QV+E5jsO2qKo3fSW0rA/juStWRtujDafLz6xfWgI/2/BUlrLbAA9wzDTXUB5nJ9vj9M6XPrzXk2J0dnHTkhU7+pJFwY3j3Rhw6+Oo19UKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=UTUX4AJr; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-25837a78858so1081575fac.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 17:10:44 -0700 (PDT)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70423e8e6c9so2476536b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 17:16:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1718410243; x=1719015043; darn=vger.kernel.org;
+        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1718410580; x=1719015380; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IDFKg2giSlNRp2CWnI6wzIZGjcEuH3CutRdpX5N8j6g=;
-        b=p3iX5pcciietJf8MyQs5x5zoqEMz/q2yy7lid8CdVWiVelJjom+PPTA1MPnxmztpv1
-         LbfXbwtYiiWdN5SWzVqsEe8UrS8JJ3Z6Zh0Pzv+bPEm3hoxkPRWwVMbe8D2runXP3FfG
-         bnfyryj20kXv4yN83Acdt5R+0fM/TCnUhWXX5yGY7pYaXgLhdOGv+NJcL89ljdHFS975
-         AXHLISu+fcUy2RrL6Ci6zga1w/cEPdI8rZTZcLLjrvwBLNfXFfAt188NYJq4aIRxR7BT
-         asHjiiw78MFI8Z5Xynk/uwrZSnUkruXyvR+pu6G+OPU/Rk2LIvp8dldoxc5kj6TQf9Kg
-         55Lg==
+        bh=dbQfy6Bm8n8TNDG5hBa+dXfTA5IW7C1pPdTr7l75iCw=;
+        b=UTUX4AJrJlz2ePVxj+nYvXt1eBakA5iu62o7NvcvIYyuz0Xi72kSsRU/1pAPTwIXGB
+         591lsNDTVTOR6KPj39/hPWN5GrDCF+H7Q7uwctOv2iaLZEno6LJz/s6mfn9QQpOx/X+3
+         9g61QqesRNB++i5VFJTjDMGuWAeSeW1sFRS+tLHyOr+xPGHEPcoXjVM6sE4OQA2DTH1J
+         du52YAW2SP1yCtNpQBX2Cr9EHewQYq4VDR7o2kokOY0cHtzVsEszRieqsaKeb9lUzd6S
+         3lt4mTDtVH7PPqpQmZcsXss6kbjtYX29YvbmuNsbt2WmCp6Gxxo4gurLXYlwMlhOTz8y
+         Tkcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718410243; x=1719015043;
+        d=1e100.net; s=20230601; t=1718410580; x=1719015380;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IDFKg2giSlNRp2CWnI6wzIZGjcEuH3CutRdpX5N8j6g=;
-        b=E0Zq3B9XGZqzvVIyfih3PlKCICe1W1LlvrCC+MThSCxeigCy5bB58lFPimtDERWYds
-         vUPmboWO7DsSXrnVMt2dgT3fjJ1IfkTclwv5yNVrBBldaSNJ+CKIY8UZ7T9Q0GEmxu/1
-         lMDzRLv4IZYnl0GXhmOjKAda2Y1KpZz5BhGCv+PnqZuCyzpun6NC3DP7zzciSzFopZPG
-         ljzIvX/NjA7ixFV9Jd4Enqryuo2uggUB0J5ERFy+U1EEml42s6isrPaC7kDakZcZKzQ9
-         iHiK0UMwLrE+NMDctOtv98ik6KqylhpUXcrL6eFyfTsFR9phJnoLYQITzs41OTxbs/ZB
-         WENQ==
-X-Gm-Message-State: AOJu0YwDJj8FG+TcxpNB8VVIhruQlpapyoW6BuHV9ZaWje5J4gTGvYN8
-	yXTf/BTBJexoSjbvv/tVPDV3GWR1SLj6c7cwBnB8duMpCGIwSp5wHeuNw8hkW1w=
-X-Google-Smtp-Source: AGHT+IETiLeYvMfLS5qJj9lv2YNeygiz2aZ7N7GNkbFdmRrbP/g2iRj/7hvSY6Q5nrBEuc1N17ZyFw==
-X-Received: by 2002:a05:6870:f145:b0:258:37f4:755c with SMTP id 586e51a60fabf-25842b0cfa0mr4379647fac.46.1718410243257;
-        Fri, 14 Jun 2024 17:10:43 -0700 (PDT)
+        bh=dbQfy6Bm8n8TNDG5hBa+dXfTA5IW7C1pPdTr7l75iCw=;
+        b=Ib1FnjmLhu0XEbvKxG4fZL+cZYIoEolJsYfqnp2JpWNTMFY+xaKJ5D4cRpm8MfQUox
+         CcwGphV+A8dl+ASL9Q8gzPGZHXiqW/Im45huFfy7uYsOwC12IHCPWPOqQpzJ7P4pRUJc
+         Ti7bS1PpRz8oPuTPOXRA/nXas2TSGn8kUnNmxHjqh1LKWMx+XPGcSyvzJ0F0AMfIpVK4
+         0WD1Aav2jx2j0sPG9Dk73OqAJ4tXjSK3WETrCKxsev8fASvOv14td9nEHodk8FZkO9le
+         YPWeGfzpRr/OekaHMndOGeebm7aybuqpDHgTEXvCBiJMwxK/83WNarYVHmlw3H+i647J
+         Q42g==
+X-Gm-Message-State: AOJu0YwXG0QWRLEk3I+E0gg75gs55yyv+p4IMiH+LvKVpkL8iloSRNaA
+	x0+p0DSlE0EDiAPYOtGgFPVzDUYGXyhSFHZIPk0EGmJrdXOu6gKloajEOjsrwMc=
+X-Google-Smtp-Source: AGHT+IGnrXmEyH8r24NhyhAqUyF2qFmWVTxhyF32OwfqT86eX9M8aSQDG2YlmH6KZDu1FSFJOoZ/0A==
+X-Received: by 2002:a05:6a20:d80d:b0:1b2:cf6c:d5ae with SMTP id adf61e73a8af0-1bae844443cmr4560825637.59.1718410580416;
+        Fri, 14 Jun 2024 17:16:20 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cd498aeesm3574633b3a.23.2024.06.14.17.10.42
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc967334sm3638921b3a.57.2024.06.14.17.16.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 17:10:42 -0700 (PDT)
-Date: Fri, 14 Jun 2024 17:10:41 -0700
+        Fri, 14 Jun 2024 17:16:20 -0700 (PDT)
+Date: Fri, 14 Jun 2024 17:16:18 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Omer Shpigelman <oshpigelman@habana.ai>
 Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
  netdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
  ogabbay@kernel.org, zyehudai@habana.ai
 Subject: Re: [PATCH 09/15] net: hbl_en: add habanalabs Ethernet driver
-Message-ID: <20240614171041.7b880232@hermes.local>
+Message-ID: <20240614171618.3b65b3c9@hermes.local>
 In-Reply-To: <20240613082208.1439968-10-oshpigelman@habana.ai>
 References: <20240613082208.1439968-1-oshpigelman@habana.ai>
 	<20240613082208.1439968-10-oshpigelman@habana.ai>
@@ -85,36 +85,49 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 13 Jun 2024 11:22:02 +0300
-Omer Shpigelman <oshpigelman@habana.ai> wrote:
-
-> +static int hbl_en_ports_reopen(struct hbl_aux_dev *aux_dev)
+> +
+> +/* get the src IP as it is done in devinet_ioctl() */
+> +static int hbl_en_get_src_ip(struct hbl_aux_dev *aux_dev, u32 port_idx, u32 *src_ip)
 > +{
-> +	struct hbl_en_device *hdev = aux_dev->priv;
-> +	struct hbl_en_port *port;
-> +	int rc = 0, i;
+> +	struct hbl_en_port *port = HBL_EN_PORT(aux_dev, port_idx);
+> +	struct net_device *ndev = port->ndev;
+> +	struct in_device *in_dev;
+> +	struct in_ifaddr *ifa;
+> +	int rc = 0;
 > +
-> +	for (i = 0; i < hdev->max_num_of_ports; i++) {
-> +		if (!(hdev->ports_mask & BIT(i)))
-> +			continue;
+> +	/* for the case where no src IP is configured */
+> +	*src_ip = 0;
 > +
-> +		port = &hdev->ports[i];
+> +	/* rtnl lock should be acquired in relevant flows before taking configuration lock */
+> +	if (!rtnl_is_locked()) {
+> +		netdev_err(port->ndev, "Rtnl lock is not acquired, can't proceed\n");
+> +		rc = -EFAULT;
+> +		goto out;
+> +	}
 > +
-> +		/* It could be that the port was shutdown by 'ip link set down' and there is no need
-> +		 * in reopening it.
-> +		 * Since we mark the ports as in reset even if they are disabled, we clear the flag
-> +		 * here anyway.
-> +		 * See hbl_en_ports_stop_prepare() for more info.
-> +		 */
-> +		if (!netif_running(port->ndev)) {
-> +			atomic_set(&port->in_reset, 0);
-> +			continue;
+> +	in_dev = __in_dev_get_rtnl(ndev);
+> +	if (!in_dev) {
+> +		netdev_err(port->ndev, "Failed to get IPv4 struct\n");
+> +		rc = -EFAULT;
+> +		goto out;
+> +	}
+> +
+> +	ifa = rtnl_dereference(in_dev->ifa_list);
+> +
+> +	while (ifa) {
+> +		if (!strcmp(ndev->name, ifa->ifa_label)) {
+> +			/* convert the BE to native and later on it will be
+> +			 * written to the HW as LE in QPC_SET
+> +			 */
+> +			*src_ip = be32_to_cpu(ifa->ifa_local);
+> +			break;
 > +		}
-> +
+> +		ifa = rtnl_dereference(ifa->ifa_next);
+> +	}
+> +out:
+> +	return rc;
+> +}
 
-Rather than duplicating network device state in your own flags, it would be better to use
-existing infrastructure. Read Documentation/networking/operstates.rst
-
-Then you could also get rid of the kludge timer stuff in hbl_en_close().
-
+Does this device require IPv4? What about users and infrastructures that use IPv6 only?
+IPv4 is legacy at this point.
 
