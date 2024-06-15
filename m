@@ -1,154 +1,106 @@
-Return-Path: <linux-kernel+bounces-215890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06A0D90986A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 15:05:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4358A90986B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 15:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73E8BB21AA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:05:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D0CBB21A74
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA99482C1;
-	Sat, 15 Jun 2024 13:05:35 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F4247F6C;
+	Sat, 15 Jun 2024 13:10:05 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0251B285;
-	Sat, 15 Jun 2024 13:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35EB19D8A2
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 13:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718456735; cv=none; b=jFtJ7a7sEpMqazBLItNP8mVizp7/Q4K7fNnjp6rgqN5ucuyff2c8ak4HakIsZY20B2uVheisSKBhvvZO+ZuhXVGyo+cdgk7QqkiN98eFPymftkO30PxFRTtrFdKrcBqIeEgudZGZ3aSl7ASj9861mOTC6zKmeK/IOnqYZUSvy4k=
+	t=1718457004; cv=none; b=W3L6jgMlmczITvSeZYKOJATQl/WCWABEGKPhihJRIe47TnNbeTGPHUBN5aPeqZQ+JGGQ2VRRe69cxcPh3fggNg62aCkUia2hImh4QSwvpG2TNHfs8uoM1r8iiTxWOb9witsvDteOQEWVr4GMR0LNRTSIOIVdr9QSoQwQ0WQgjsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718456735; c=relaxed/simple;
-	bh=PxvYVUDmSnJy5C0v0jn32DnB33DAEZOJYRfL5ECT/Qk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=epXA1qU8NRftWJBmNNCTT2YoLHQpSPUXtUlBDjbbBmumL+5b/lEqi10psThKXsg2+Rp7wQBzjeAXqDbNv1zsZdbhHuXMgRAc4OOahEcOJ4R2lrETftXCnL1nsweAwzqVE0rGHYtiZZUx5g/oyd8Czn24sBP7c64yQRzDyi48k4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 576F33000D7C9;
-	Sat, 15 Jun 2024 15:05:29 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 3D6E62EE137; Sat, 15 Jun 2024 15:05:29 +0200 (CEST)
-Date: Sat, 15 Jun 2024 15:05:29 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Alistair Francis <alistair23@gmail.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-	Jonathan.Cameron@huawei.com, alex.williamson@redhat.com,
-	christian.koenig@amd.com, kch@nvidia.com,
-	gregkh@linuxfoundation.org, logang@deltatee.com,
-	linux-kernel@vger.kernel.org, chaitanyak@nvidia.com,
-	rdunlap@infradead.org, Alistair Francis <alistair.francis@wdc.com>
-Subject: Re: [PATCH v11 3/4] PCI/DOE: Expose the DOE features via sysfs
-Message-ID: <Zm2RmWnSWEEX8WtV@wunner.de>
-References: <20240614001244.925401-1-alistair.francis@wdc.com>
- <20240614001244.925401-3-alistair.francis@wdc.com>
+	s=arc-20240116; t=1718457004; c=relaxed/simple;
+	bh=VFQIMSguBYuNH6wlWQkCPTuswfrUnQ7eTVKyijRvXmo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RDPdM1K/ncouPFFAlp886+fklZJivKQws6LZRc2oLnu0yJoG9zE1GPFlpY15ESsMR0TFAuGsvF1mtkFUvOBRMlqtUNVsGeSuFP9np/7zRXDHcARdePfN0XT56ykrYUO1ejw4atVrY93D0HCant9mlNwPSgsOyaGJqPh/vIqV+7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53E9FC116B1;
+	Sat, 15 Jun 2024 13:10:03 +0000 (UTC)
+Date: Sat, 15 Jun 2024 09:10:01 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [for-next][PATCH] function_graph: Add READ_ONCE() when accessing
+ fgraph_array[]
+Message-ID: <20240615091001.04a33174@rorschach.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614001244.925401-3-alistair.francis@wdc.com>
-
-On Fri, Jun 14, 2024 at 10:12:43AM +1000, Alistair Francis wrote:
-> --- a/drivers/pci/doe.c
-> +++ b/drivers/pci/doe.c
-[...]
-> +#ifdef CONFIG_SYSFS
-> +static ssize_t doe_discovery_show(struct device *dev,
-> +				  struct device_attribute *attr,
-> +				  char *buf)
-> +{
-> +	return sysfs_emit(buf, "0001:00\n");
-> +}
-> +DEVICE_ATTR_RO(doe_discovery);
-
-If you want to use "0001:00" as filename but can't because
-"0001:00_show()" would not be a valid function name in C,
-I think there's no harm in manually expanding the macro to:
-
-struct device_attribute dev_attr_doe_discovery = \
-	__ATTR(0001:00, 0444, pci_doe_sysfs_feature_show, NULL);
-
-That also avoids the need to have an extra doe_discovery_show()
-function.
-
-Intuitively, when I saw there's a "doe_discovery" attribute,
-my first thought was: "Oh maybe I need to write something there
-to (re-)initiate DOE discovery?"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
 
-> +static umode_t pci_doe_features_sysfs_attr_visible(struct kobject *kobj,
-> +						   struct attribute *a, int n)
-> +{
-> +	struct pci_dev *pdev = to_pci_dev(kobj_to_dev(kobj));
-> +	struct pci_doe_mb *doe_mb;
-> +	unsigned long index, j;
-> +	unsigned long vid, type;
-> +	void *entry;
-> +
-> +	xa_for_each(&pdev->doe_mbs, index, doe_mb) {
-> +		xa_for_each(&doe_mb->feats, j, entry) {
-> +			vid = xa_to_value(entry) >> 8;
-> +			type = xa_to_value(entry) & 0xFF;
-> +
-> +			if (vid == 0x01 && type == 0x00) {
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ftrace/for-next
 
-Wherever possible, PCI_VENDOR_ID_PCI_SIG and PCI_DOE_PROTOCOL_DISCOVERY
-macros should be used in lieu of 0x0001 and 0x00.
-
-> +				/*
-> +				 * This is the DOE discovery protocol
-> +				 * Every DOE instance must support this, so we
-> +				 * give it a useful name.
-> +				 */
-> +				return a->mode;
-> +			}
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-
-I agree with Jonathan that at first glance one would assume that
-this function just always returns a->mode.
+Head SHA1: 63a8dfb889112ab4a065aa60a9a1b590b410d055
 
 
-> +static bool pci_doe_features_sysfs_group_visible(struct kobject *kobj)
-> +{
-> +	struct pci_dev *pdev = to_pci_dev(kobj_to_dev(kobj));
-> +	struct pci_doe_mb *doe_mb;
-> +	unsigned long index;
-> +
-> +	xa_for_each(&pdev->doe_mbs, index, doe_mb) {
-> +		if (!xa_empty(&doe_mb->feats))
-> +			return true;
-> +	}
-> +
-> +	return false;
+Steven Rostedt (Google) (1):
+      function_graph: Add READ_ONCE() when accessing fgraph_array[]
 
-So in principle, doe_mb->feats should never be empty because the
-discovery protocol is always supported, right?  Wouldn't it then
-suffice to just check for:
+----
+ kernel/trace/fgraph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+---------------------------
+commit 63a8dfb889112ab4a065aa60a9a1b590b410d055
+Author: Steven Rostedt (Google) <rostedt@goodmis.org>
+Date:   Thu Jun 13 09:52:23 2024 -0400
 
-+	if (!xa_empty(&pdev->doe_mbs))
-+		return true;
+    function_graph: Add READ_ONCE() when accessing fgraph_array[]
+    
+    In function_graph_enter() there's a loop that looks at fgraph_array[]
+    elements which are fgraph_ops. It first tests if it is a fgraph_stub op,
+    and if so skips it, as that's just there as a place holder. Then it checks
+    the fgraph_ops filters to see if the ops wants to trace the current
+    function.
+    
+    But if the compiler reloads the fgraph_array[] after the check against
+    fgraph_stub, it could race with the fgraph_array[] being updated with the
+    fgraph_stub. That would cause the stub to be processed. But the stub has a
+    null "func_hash" field which will cause a NULL pointer dereference.
+    
+    Add a READ_ONCE() so that the gops that is compared against the
+    fgraph_stub is also the gops that is processed later.
+    
+    Link: https://lore.kernel.org/all/CA+G9fYsSVJQZH=nM=1cjTc94PgSnMF9y65BnOv6XSoCG_b6wmw@mail.gmail.com/
+    Link: https://lore.kernel.org/linux-trace-kernel/20240613095223.1f07e3a4@rorschach.local.home
+    
+    Cc: Mark Rutland <mark.rutland@arm.com>
+    Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+    Fixes: cc60ee813b503 ("function_graph: Use static_call and branch to optimize entry function")
+    Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+    Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Or alternatively:
-
-+	return !xa_empty(&pdev->doe_mbs);
-
-Thanks,
-
-Lukas
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index 8317d1a7f43a..fc205ad167a9 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -641,7 +641,7 @@ int function_graph_enter(unsigned long ret, unsigned long func,
+ 	{
+ 		for_each_set_bit(i, &fgraph_array_bitmask,
+ 					 sizeof(fgraph_array_bitmask) * BITS_PER_BYTE) {
+-			struct fgraph_ops *gops = fgraph_array[i];
++			struct fgraph_ops *gops = READ_ONCE(fgraph_array[i]);
+ 			int save_curr_ret_stack;
+ 
+ 			if (gops == &fgraph_stub)
 
