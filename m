@@ -1,125 +1,85 @@
-Return-Path: <linux-kernel+bounces-215748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2FA5909699
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:40:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBBF290969A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 949C5B2187E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 07:40:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 040BB1C21BC8
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 07:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C4C17C60;
-	Sat, 15 Jun 2024 07:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILeH0ixd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3846C17BCA;
+	Sat, 15 Jun 2024 07:42:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1379118637;
-	Sat, 15 Jun 2024 07:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7849460
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 07:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718437211; cv=none; b=i9shQzjnekdlb9FG98tOvcDkzwewLIM64Xwy941jqfNrWL6NAes2nD/d2O0nP3UlIDLZO/yT0qxaV5wPUkaCs/jTSdZiu+nFXuJ2F8fK6ckH+i1neCgBVG/HcO0ZXhXpjmBxSG2OLpTeoC2ZnZqRJw3wk1nESEGUpKsQS23Dp+k=
+	t=1718437325; cv=none; b=AmIK81E7mn5UOsTgfCKp6i4/2MuLYE/BXDyGv1xdVYfbO8De1WZc7Zs1Ukk3WPqq0sfWHnK8JuokX2BqZFSiErOlHAeg9TcHLH/mFXUhLM60KyHhk6iqHZF6/3EkTgNN5l8A62mNuLSvTlSQuF6XhaOrSss3+MukbuR5y+AqSkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718437211; c=relaxed/simple;
-	bh=5E36F1hoIXadjD9zZM5/pSWRGkOJeeo4SUAJ1PtAlbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dyAIxCpY3cl8AF/s/rDL6jXJTxKTakFqv2ZBAiDSdCzYFbvnB+8JiCTHS30a9z72ozDtvaTHlXrhqxZDY19aLNL5hp+wXI9Apm/aOBqeWQO5RoKNgUKWVTbc9eXlHu+N1AOy/xkMQYOrlZgdqi88qxZbDhvKfw6y/p6lB2dM80M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILeH0ixd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE8E8C116B1;
-	Sat, 15 Jun 2024 07:40:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718437210;
-	bh=5E36F1hoIXadjD9zZM5/pSWRGkOJeeo4SUAJ1PtAlbM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ILeH0ixdjcxDCLWVf+63wI1nFsGK/yl8btuJY9vFg68XHCjSZpbj7xaPIhzOGdJvj
-	 rUhXlhidunG+qU6CpUGgVUp7X9SYhLCyPm5aknRDlZ6VMKXhzgVJ74ayokfQaWqr03
-	 0I0thoV/qZ9N7X8A2wgWntmbDxsnOPr4Z1pQNtykjYqZhae5GOX3QyG92gEA2xQbxV
-	 H+/RvQitzv+guzu5Go0lriN0mT5UCkjqng9Y8aMI0VlBadruaJmEFVGwsa0pcZZAr2
-	 sVcLUJORYEDCdd0IWekj2padDhMvA/Qeo3uxjP5b7HDJ1PDT6C0vxtlJ6Cgxadwee9
-	 /x6FaBcWsgt0Q==
-Date: Sat, 15 Jun 2024 08:40:05 +0100
-From: Simon Horman <horms@kernel.org>
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/6] selftests: net: lib: remove ns from list
- after clean-up
-Message-ID: <20240615074005.GB8447@kernel.org>
-References: <20240607-upstream-net-next-20240607-selftests-mptcp-net-lib-v1-0-e36986faac94@kernel.org>
- <20240607-upstream-net-next-20240607-selftests-mptcp-net-lib-v1-2-e36986faac94@kernel.org>
- <20240614104006.GC8447@kernel.org>
- <54e9c949-da29-4a19-af29-55aac52afbf9@kernel.org>
+	s=arc-20240116; t=1718437325; c=relaxed/simple;
+	bh=vKbR3YmV5HKjnPOzT8z+Bv1zytBUg88OP1fqBO9y4aI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OSEtUaFEUVzUpDI6/CTyD8akXH635unv65rZUzcxodRYRiUFNVSI3qK8qBil4gtGRMivYQxnajS1YIh7rPM+syohuuU9bGp3dOKpezqfhPzcAWE4EdMwSOImhOfVDzhW62ugOhpRSiT4QeOxJL/cm7zD7GNQDHTah1+jSWQvBSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7eb6fd69f7cso321161239f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 00:42:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718437323; x=1719042123;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5GG0pZmANriFts1n0ieKEUFKhMov+dueEB8KSrCui0Y=;
+        b=jKMBUazob823G9s9puAH0AEXzqBpAdRgkDAqQy330reWAZrjwMgMJai5cex/tIfUA5
+         0PA4Wl7JJHkRQyJKFyHPM93UGAeghXenPUtCYk4MD0VQBXGBkkpBkDzMOFji0i4EnxgE
+         6VKQPnXWqGdtlLhQe2rIBMyxiShY6vK813XkoCeZBZNiyDFiEdtMdWpsk7FMDo/LfDQ9
+         0Im4HbtLSi4W3Dj74AVH0/KczFJOtXCzTbgBwtijSDOt3ne+juE6kzeYJfZZSli3m7lg
+         VQGVZ6MDgkLNxzl+g84v2yAhVFBSe5lCtIjStM0j0ec0YMfoHWuuZ93G7pCLw0VLl1+I
+         5s5Q==
+X-Gm-Message-State: AOJu0Yw+K2UhuXarsOMDZPn4iPeC6SI9JwGm6r5XYuKVXenWIielw8dt
+	oE+hRPlp4Sg/oNK4OGPb0PrJfhW5+zSdTVHSl9YSJKi0ORYBgNdvLRfy5XOMDvdcVfpd/tu3/81
+	RiGR9BHHzhoCsx2K5amH0/ndHh5+rQFmEkg6MtmbKODd+9CwK4izdmKQ=
+X-Google-Smtp-Source: AGHT+IEegqMH2DnsRBc96Jd8x3v0QFS1YItrzMKxt3XRgwT/EN8Oa69TJHwZuiWybDlqcD+YNfY91/0aOWrUwKFoXZFsjqTx0KkT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <54e9c949-da29-4a19-af29-55aac52afbf9@kernel.org>
+X-Received: by 2002:a05:6602:1607:b0:7eb:8ba3:2b87 with SMTP id
+ ca18e2360f4ac-7ebeb628d35mr10921439f.2.1718437323634; Sat, 15 Jun 2024
+ 00:42:03 -0700 (PDT)
+Date: Sat, 15 Jun 2024 00:42:03 -0700
+In-Reply-To: <20240614120103.27422-1-wojciech.gladysz@infogain.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003e95b0061ae8ded7@google.com>
+Subject: Re: [syzbot] [net?] [bpf?] KMSAN: uninit-value in sock_hash_delete_elem
+From: syzbot <syzbot+c33bff5d5da1391df027@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	wojciech.gladysz@infogain.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Matthieu,
+Hello,
 
-Likewise, thanks for your response.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Fri, Jun 14, 2024 at 04:42:38PM +0200, Matthieu Baerts wrote:
-> Hi Simon,
-> 
-> Thank you for your reply!
-> 
-> On 14/06/2024 12:40, Simon Horman wrote:
-> > On Fri, Jun 07, 2024 at 06:31:03PM +0200, Matthieu Baerts (NGI0) wrote:
-> >> Instead of only appending items to the list, removing them when the
-> >> netns has been deleted.
-> >>
-> >> By doing that, we can make sure 'cleanup_all_ns()' is not trying to
-> >> remove already deleted netns.
-> > 
-> > I do wonder if we can go a step further and use an associative array for
-> > ns_list (maybe renamed).  I think this would reduce remove_ns_list to
-> > something like:
-> > 
-> > 	unset ns_list["$item"]
-> 
-> I agree that it would ease the removal of one item -- which is not
-> complex to deal with the new helper :) -- but do you see any other benefits?
-> 
-> For the moment, there is no other value to associate with, so we would
-> do something like NS_MAP["$ns"]=1. We could link the name of the global
-> variable, but that's not needed for the tests for the moment.
-> 
-> Also, I don't know if it is important, but when we will iterate over the
-> list of netns, it will not be done following the same order items have
-> been added into the hashmap. So we will change the order in which items
-> are deleted.
+Reported-and-tested-by: syzbot+c33bff5d5da1391df027@syzkaller.appspotmail.com
 
-I agree that it would probably end up being a NS_MAP["$ns"]=1,
-i.e. a dummy value as there is no natural one to use.
+Tested on:
 
-I had not considered the order issue.
+commit:         e478cf26 Merge branch 'bpf-fix-a-couple-of-test-failur..
+git tree:       https://linux.googlesource.com/linux/kernel/git/torvalds/linux
+console output: https://syzkaller.appspot.com/x/log.txt?x=140ab12e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e2599baf258ef795
+dashboard link: https://syzkaller.appspot.com/bug?extid=c33bff5d5da1391df027
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=168670b6980000
 
-And yes, the benefit I see would be limited to removal.
-Which as you point out is not a terrible burden with the helper you added.
-While, OTOH, my idea adds complexity and unknowns elsewhere.
-
-So overall, perhaps it's best left as an idea for later.
-As the code changes for other reasons (who knows what?)
-an associative array may make more sense than it does now.
-
-> > OTOH, perhaps this breaks with older versions of bash that we still
-> > care about.
-> 
-> Good point. I don't have the answer, but associative arrays are starting
-> to be quite old now :)
-
-Yes, I think so too.
-But I also thought it was worth mentioning.
+Note: testing is done by a robot and is best-effort only.
 
