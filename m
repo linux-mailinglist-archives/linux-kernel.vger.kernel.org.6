@@ -1,98 +1,107 @@
-Return-Path: <linux-kernel+bounces-215733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5318590966A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:50:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC26790966C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9C5BB215E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 06:50:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF602836CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 06:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6FC168BE;
-	Sat, 15 Jun 2024 06:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C108317557;
+	Sat, 15 Jun 2024 06:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhgKAkUv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="rDSyu5OC"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49B817BA5;
-	Sat, 15 Jun 2024 06:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299ED79F5;
+	Sat, 15 Jun 2024 06:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718434231; cv=none; b=Z77ePvI/itohU9FRY1N3IhTI3ewgiXPQIUtMmCOYmh136bVXV6U/UK4o7X4hU/TFLgilQG8yBMm52XWm7ouN8Pqd+PyqJxePh0x3/DsSrQx2+HeR4vbo60q5Po3VpnEe5ZpAyoz8k5J9y6m4p7b5cezeCnQIMpCMy2bOzIqAumY=
+	t=1718434545; cv=none; b=i1n+0g3rlfUIBOOD0QiSL1R32ZyhdZ0kslkWW5m4E5a22A/Xu30SbXHmAVnJgrtecQ70T/Z22v6hDKnmVK0NmbPUuOwczH9GZcwDMs8dTGplANPwu0Tkie6+G5c3mZakEUnR74qB5vytO3pkjOSlryircPQ6vN6fHHbaFwh6fMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718434231; c=relaxed/simple;
-	bh=w9q4rwux8PEpDu8FkmvSmiQpihIq57Ai67mpNZdkY4E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ue+kMNY9tIE98fQQl+ZZaac4ERESZ2xumscm+Bvhwek6PTlE/i3jxnYKXhc/Mpl1WwPz4QejB4o5ZzQ0vdYZAvO4X0lzzwHFbxfq2vMmI4/L69sl3Vv9rGTW+db35BcZyqBM0PWQfl4QDX007vnBmNcYNnAUY2Qpbu4uxKgxcDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhgKAkUv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C15C6C4AF48;
-	Sat, 15 Jun 2024 06:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718434230;
-	bh=w9q4rwux8PEpDu8FkmvSmiQpihIq57Ai67mpNZdkY4E=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qhgKAkUvn34QdT1i/JjLp8ZMBSvz2h3t+YJ4dXJeoY1P4ZNoSooW2wzmrH9Ih4XoS
-	 +bjqPbCQXJIBrDZ2Orn/E0cwhxixbjU+8ZWbEoiFnFgOoakohFvZK6847rd5XgVKG7
-	 CDanbZdsHu4r36jNOqYG2FSLbIFWCpFH8ZkWepN3ZORgkKq0Hn9HxLhAortgP1igx3
-	 WSlCCnb+6GUPMHEoPjxszA/PkjfHZntSWrdhzVKAGpSKxYJwtqiwm10d1VWzIqyc7I
-	 +Ud0qXnaRlXBQtKZWEsMBNK3COv8nFN6IsfpV4Jf5wbbwEemWLds6fI6qoKleMNV4M
-	 OWdpGgg1g6s2Q==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso46416681fa.1;
-        Fri, 14 Jun 2024 23:50:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXRp48WuMYkixk5L1OoTRvmSRApWoAUnX+9hEaAt/SI0iU+E38DRBj6YBRorEOqyB6tDjIK5f9By2qv8z259HD5inJtrafhRhhloXbaLHFj6LGyGxQxy2IikXNXwgWtxkZksx8Nb3Yyre2Jlp7VhxGr9xhxqE25vwEJeNw7HEcQjOeDcuqu
-X-Gm-Message-State: AOJu0YyiRXLoHEFQ1Tax1RbDVYk8zGOLmKAbXRBOoRpfpKfmvLaPYU5o
-	pMLgrr4JKsJDgrR+8EjQujvGvb/LJ8IUMDUfmi0OlmizEdjddMWD9j0SJETz+FyU8ay/WPYj11v
-	zC0sHrWyUdcwEasuj6gTGog0Sulo=
-X-Google-Smtp-Source: AGHT+IE2jBzSWlCnzMDvbaAU1tAdAo/962aKov4fx3jwh5Oyi/Rg12iVqSJi65SEdda6X96E/o8cRRLhj3ohFjqRw4g=
-X-Received: by 2002:a2e:a443:0:b0:2ec:1973:2b89 with SMTP id
- 38308e7fff4ca-2ec19732c1amr25512591fa.30.1718434229513; Fri, 14 Jun 2024
- 23:50:29 -0700 (PDT)
+	s=arc-20240116; t=1718434545; c=relaxed/simple;
+	bh=v0MCPzGmDHWaCmXNTaeRXiP4uAHdb48+oNgoKNrIOUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=euGq6GfpOgU5SwFx2KNd0qx7nGu0HybiXPMKhomezAJz6+uQyaP443GhvRKCYtKhn/T1jTGnQTSA870nm3QOo3jyPQe+mebrvz+Q4NNxaRLLL7/sAmpZUGMJN09WIO1qmzcdgqgnVSUowgExYQ0+mENZrVUuQd8C+ELq5+LU1b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=rDSyu5OC; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=92LCsaXkJeoRVpJsDtxyMK6znw0YY1VAEpYw5A4ddpc=; b=rDSyu5OCFt2rJ1qjMvxp0ICybI
+	0pTc7tvz9ZDGbi8VtwA3pG1ZrjPUtwN30w2vc0oDyAZjRLi49wyONs4KPqVtJfp1EKHfRdKfMRL8p
+	SertZn86m2xBe2vVqWGZQCy/hfEJKHymekRsQlrrvhUm/bubHlm9IOAg7OT7CSeCl8LWpSEsEEmM+
+	2YH7cErZdtF1pGJNdIewTFetlcweD5A3qp0vHlVJh8rB85vEXPfU46zZbDv25Q6ebnPtGZkYAw5un
+	8K63EQPNyJD8vK5jSAeHMBSSYtvSIU/RTFZKHwbTqYHpVFhVZG/Kw2tAPzN9+1tOxvZF6fB0N/cXM
+	xLnTX97g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1sINJw-009tiR-1d;
+	Sat, 15 Jun 2024 06:55:28 +0000
+Date: Sat, 15 Jun 2024 07:55:28 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Congjie Zhou <zcjie0802@qq.com>, brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] fs: modify the annotation of vfs_mkdir() in fs/namei.c
+Message-ID: <20240615065528.GP1629371@ZenIV>
+References: <20240615030056.GO1629371@ZenIV>
+ <tencent_63C013752AD7CA1A22E75CEF6166442E6D05@qq.com>
+ <Zm000qL0N6XY7-4O@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614071507.11359-1-mark-pk.tsai@mediatek.com>
-In-Reply-To: <20240614071507.11359-1-mark-pk.tsai@mediatek.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 15 Jun 2024 15:49:53 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ7rWh_=2WVV3CXTyda=6sZacrkYT=qJw3sJOAFpyH70g@mail.gmail.com>
-Message-ID: <CAK7LNAQ7rWh_=2WVV3CXTyda=6sZacrkYT=qJw3sJOAFpyH70g@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: doc: Update default INSTALL_MOD_DIR from extra to updates
-To: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Jonathan Corbet <corbet@lwn.net>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, yj.chiang@mediatek.com, 
-	linux-kbuild@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zm000qL0N6XY7-4O@infradead.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Jun 14, 2024 at 4:15=E2=80=AFPM Mark-PK Tsai <mark-pk.tsai@mediatek=
-.com> wrote:
->
-> The default INSTALL_MOD_DIR was changed from 'extra' to
-> 'updates' in commit b74d7bb7ca24 ("kbuild: Modify default
-> INSTALL_MOD_DIR from extra to updates").
->
-> This commit updates the documentation to align with the
-> latest kernel.
->
-> Signed-off-by: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
-> ---
+On Fri, Jun 14, 2024 at 11:29:38PM -0700, Christoph Hellwig wrote:
+> On Sat, Jun 15, 2024 at 12:38:32PM +0800, Congjie Zhou wrote:
+> > modify the annotation of @dir and @dentry
+> 
+> Well, it is clearly obvious that you modify them from the patch.  But
+> why?
 
-Applied to linux-kbuild.
-Thanks!
+Look at the current comment:
 
+ * @dir:        inode of @dentry
 
+It is an inode of _some_ dentry; it's most definitely not that
+of the argument named 'dentry'.
 
+ * @dentry:     pointer to dentry of the base directory
 
---=20
-Best Regards
-Masahiro Yamada
+No.  The first thing vfs_mkdir() does is
+        int error = may_create(idmap, dir, dentry);
+
+	if (error)
+		return error;
+
+Look at may_create().  Starts with
+static inline int may_create(struct mnt_idmap *idmap,
+                             struct inode *dir, struct dentry *child)
+{
+     audit_inode_child(dir, child, AUDIT_TYPE_CHILD_CREATE);
+     if (child->d_inode)
+	     return -EEXIST;
+
+If the last argument (aka. 'dentry' argument of vfs_mkdir()) is currently
+referring to *ANY* directory, you get -EEXIST.  For a good and simple
+reason: it is the dentry of subdirectory to be created.  Now, the second
+argument of vfs_mkdir() ('dir') is the inode of the parent to be (or base
+directory, if you will).
+
+While we are at it, the rest of comments coming from the same commit
+suffer similar problems.  vfs_create(), vfs_symlink(), et.al.
+vfs_unlink() is fine, vfs_rmdir() should match vfs_unlink() (inode of
+parent + dentry of victim).
 
