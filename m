@@ -1,442 +1,120 @@
-Return-Path: <linux-kernel+bounces-215884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7676390985B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:41:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D5490985E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D622F1F22394
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:41:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E97E1F2229A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1CA4778E;
-	Sat, 15 Jun 2024 12:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505824644E;
+	Sat, 15 Jun 2024 12:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYHgRhxn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dqdb24mX"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E866D10A11;
-	Sat, 15 Jun 2024 12:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE5D10A11;
+	Sat, 15 Jun 2024 12:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718455276; cv=none; b=Ji8J4MZWikiOUoM6eM8CungVMa5NOE630ehUFJ5R7DO5KBGqwbGV1a7aeg+GOvYf4UX79OA9Unc+hsQQBhCAUf3C5WKQkGexLXbjsf8qp3ynwUcmtIYNVqFfm+aNQzaRgRw08QXpquKQuy0jPzy6+O2LdgCqMRvPdycNPjpr8HA=
+	t=1718456103; cv=none; b=Bf2qTCXUEe2Zmeenqn56Ne/A43SbI3lVC7TtzOAGlstZ/vloMeAW7K3/GsNyVfmVwxNiJSExAeudyuUuO6S5QE+tOX2NvM1JI2hvmVcUtrasl/XKKn5ULqmzcc+HtpTvGU5Kw/25qTe0EOW0E7d5+ewXyxzuAvMqMJxfn4CM94Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718455276; c=relaxed/simple;
-	bh=ytTZO/5oUgCiBXsiJTJMB65kjRXhDWV2N1/kQ8qgIwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oQTRkjjazIcSPqsGcRm5O9Wp86mbIYV/2g18f0Nn5M2HsIWREKGqrr9mYme42iIbcb29NcMIWmUgWyvxcbdmFTiCng7HA0twIXW/UQLMndn5WE6goYLFrbYU4lsIv0SpJ2XpNh9vrn00VnYwp3ADnqwUhWuzWtnLoM0LIAQ/nh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYHgRhxn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F57DC116B1;
-	Sat, 15 Jun 2024 12:41:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718455275;
-	bh=ytTZO/5oUgCiBXsiJTJMB65kjRXhDWV2N1/kQ8qgIwI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BYHgRhxnRgajieLPyUgZhNScTlYciCDoRzeXcBcNUuHsEvnBDYiY621tnsmRU29iC
-	 eZCjcKI7VklED2SnlMoUqwuLpy0ydSGxww6SWy03jRfn1Yk4v1uCMXJFonQLibaZXb
-	 wSYIFZ4COXsg2C4+Ud84lyx+Tw4anIfaY12l2ES5moHIA60k+ujl4t2yNpdSycmocp
-	 7C1z4DwSKmyrh38n+NupLKsq+PWzMWykpOaTS6gR6cDroK/jNylkbfD8+EfIbnfSa0
-	 B761yhhbKpZUAdgK2JQRsw4qXygC5/vN/qXEmuqTsiS+f7pvYPw0nn/RJuJzXUX2U2
-	 wMBxwXqolJRSg==
-Date: Sat, 15 Jun 2024 13:41:06 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Michael Hennerich
- <michael.hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: iio: adc: add AD4695 and similar ADCs
-Message-ID: <20240615134106.40e55e16@jic23-huawei>
-In-Reply-To: <20240612-iio-adc-ad4695-v1-1-6a4ed251fc86@baylibre.com>
-References: <20240612-iio-adc-ad4695-v1-0-6a4ed251fc86@baylibre.com>
-	<20240612-iio-adc-ad4695-v1-1-6a4ed251fc86@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718456103; c=relaxed/simple;
+	bh=xqtN5Fn2CfmwZ9Vg/3vEVF2gAzSA/aPI+E9xeV07Zq4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=meeRXgBi1fYZwY+DY160QjG0XldOlgFMjvdKyEF3OPWRABEOudLZQMPfcEtSW7vzyvlB3Gwew8i6jWWVj28UB+HRQ6nQcToCiPyOs9UhGcQM+Pj0AHhr3JpH41Hc+09auU3pc1KOvumWOwzoAzWPbt2kZ4ourDtF9bOe2bqKzc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dqdb24mX; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebe40673d8so30004411fa.3;
+        Sat, 15 Jun 2024 05:55:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718456100; x=1719060900; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PU/plAUB3pXmtvzzj4mwVKHkG90R6S2BTMRSfWbaliQ=;
+        b=Dqdb24mXOO5aOSSUIZw8HmajublcqTP7UPdWwuxkOMKS+EMAnIrFTcMmiHKFmVLUDI
+         uCr4/mi//OkSVtA3n4YxX0n6gyGW5Ocp8CSybZrnbCFR95emUlWEbBsDo6Wx0ipYMlXa
+         CsYGYRTf/ZuuQlmLO64J6fnArJWw++XhHdjWsH/1KS5W+9QNUCZqyJDMpibrAK1Myk6F
+         4gSyRCAfIpr//8bU28+Yg4LripkGCM81LDblf/KKLaYSuaex5o9nMAOkSschfMa+4qs6
+         0hso3MMjkApzfVxjDdxuhCo7a1UQTrL33iLo54fcSPWzuSEiOqtZLXrhY6socG4cZ4xm
+         jBWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718456100; x=1719060900;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PU/plAUB3pXmtvzzj4mwVKHkG90R6S2BTMRSfWbaliQ=;
+        b=OpRclgSIBEiF1uOlpVQzu5PaM9Mvsfvwky5ii+LIdzKXaWXiLR8K7+RCKJ5C2cinnR
+         XeKpVMVI0D9CoURRkkUuEOBNBVeSK9zh0fwBy6XYGRBKeRrMOUDzsTENTC+9KrfZ0QLf
+         nNR4SHhQssKXhyNNIG4N48xoo/dT37dzjV4YQEtDqGP502B5AZETRFJ19CvEM44CHPD6
+         VDlwcjruFo144P8L7aIcIHh7iwv6Ob5+zIi3GqHKfUg9vZn240bv19FgtX9KueGfDVAc
+         Xf8UsCGDprM9ZYQ2EIj8EXnUt3c+A+1lV1dMHNKBE0OyYomPOam55VcjqMo3lRct+4Xn
+         KJ5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWeUa6O340n5U/fH84TbgAOPdyVsOeFW2ghLy32P1UYTy3S208npoEBUAIEkN5SdOu30hpdf7Bwba+pdVD38T4r2gvBJnzPZ3B20PeExFmQovJxmlg0JacXim71PETpx76Xw3fSn5A91BA=
+X-Gm-Message-State: AOJu0YzMJvwrnVg/SzLn/mUlsyYJ9w+zm9dbOALrTLF/bJ7XqqrujZeD
+	qrNRd58RtLao6fDPv79O546ltec6AZVMqcyJdNaDTXKp1YgOAm3a
+X-Google-Smtp-Source: AGHT+IFkUf1iBqBRD+AUYYNqJwcR2OAFlTmC2JSGllwYm+hxVyNvW3hpO7WYM1XPZDO9ieWIGEdr3g==
+X-Received: by 2002:a2e:3304:0:b0:2eb:e312:5af1 with SMTP id 38308e7fff4ca-2ec0e5c6e65mr35517231fa.22.1718456099406;
+        Sat, 15 Jun 2024 05:54:59 -0700 (PDT)
+Received: from ajratkogda.malta.altlinux.ru ([2a0c:88c0:2:805::1f])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c898f7sm7622691fa.101.2024.06.15.05.54.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Jun 2024 05:54:58 -0700 (PDT)
+From: Ajrat Makhmutov <rautyrauty@gmail.com>
+X-Google-Original-From: Ajrat Makhmutov <rauty@altlinux.org>
+To: alsa-devel@alsa-project.org
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	kailang@realtek.com,
+	sbinding@opensource.cirrus.com,
+	luke@ljones.dev,
+	shenghao-ding@ti.com,
+	simont@opensource.cirrus.com,
+	foss@athaariq.my.id,
+	rf@opensource.cirrus.com,
+	wzhd@ustc.edu,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ALSA: hda/realtek: Enable headset mic on IdeaPad 330-17IKB 81DM
+Date: Sat, 15 Jun 2024 15:54:57 +0300
+Message-Id: <20240615125457.167844-1-rauty@altlinux.org>
+X-Mailer: git-send-email 2.33.8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, 12 Jun 2024 14:20:40 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+Headset microphone do not work out of the box with this laptop. This
+quirk fixes it. Zihao Wang specified the wrong subsystem id in his patch.
 
-> Add device tree bindings for AD4695 and similar ADCs.
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
->  .../devicetree/bindings/iio/adc/adi,ad4695.yaml    | 297 +++++++++++++++=
-++++++
->  MAINTAINERS                                        |   9 +
->  2 files changed, 306 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml
-> new file mode 100644
-> index 000000000000..8ff5bbbbef9f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml
-> @@ -0,0 +1,297 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/adi,ad4695.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices Easy Drive Multiplexed SAR Analog to Digital Conve=
-rters
-> +
-> +maintainers:
-> +  - Michael Hennerich <Michael.Hennerich@analog.com>
-> +  - Nuno S=C3=A1 <nuno.sa@analog.com>
-> +
-> +description: |
-> +  A family of similar multi-channel analog to digital converters with SP=
-I bus.
-> +
-> +  * https://www.analog.com/en/products/ad4695.html
-> +  * https://www.analog.com/en/products/ad4696.html
-> +  * https://www.analog.com/en/products/ad4697.html
-> +  * https://www.analog.com/en/products/ad4698.html
-> +
-> +$ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - adi,ad4695
-> +          - adi,ad4697
-> +      # same chips in WLCSP package with more pins
-> +      - items:
-> +          - const: adi,ad4695-wlcsp
-> +          - const: adi,ad4695
-> +      - items:
-> +          - const: adi,ad4697-wlcsp
-> +          - const: adi,ad4697
-> +      # same chips with higher max sample rate
-> +      - items:
-> +          - const: adi,ad4696
-> +          - const: adi,ad4695
-> +      - items:
-> +          - const: adi,ad4698
-> +          - const: adi,ad4697
-> +      # same chips with higher max sample rate in WLCSP package
-> +      - items:
-> +          - const: adi,ad4696-wlcsp
-> +          - const: adi,ad4696
-> +          - const: adi,ad4695-wlcsp
-> +          - const: adi,ad4695
-> +      - items:
-> +          - const: adi,ad4698-wlcsp
-> +          - const: adi,ad4698
-> +          - const: adi,ad4697-wlcsp
-> +          - const: adi,ad4697
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  spi-max-frequency:
-> +    maximum: 80000000
-> +
-> +  spi-cpol: true
-> +  spi-cpha: true
-> +
-> +  spi-rx-bus-width:
-> +    minimum: 1
-> +    maximum: 4
-> +
-> +  avdd-supply:
-> +    description: A 2.7 V to 5.5 V supply that powers the analog circuitr=
-y.
+Link: https://lore.kernel.org/all/20220424084120.74125-1-wzhd@ustc.edu/
+Fixes: 3b79954fd00d ("ALSA: hda/realtek: Add quirk for Yoga Duet 7 13ITL6 speakers")
+Signed-off-by: Ajrat Makhmutov <rauty@altlinux.org>
+---
+ sound/pci/hda/patch_realtek.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'm a cynic.  Do we care about the supported voltages in this binding doc?
-Feels just somewhere we might make a mistake.
-
-> +
-> +  ldo-in-supply:
-> +    description: A 2.4 V to 5.5 V supply connected to the internal LDO i=
-nput.
-> +
-> +  vdd-supply:
-> +    description: A 1.8V supply that powers the core circuitry.
-> +
-> +  vio-supply:
-> +    description: A 1.2V to 1.8V supply for the digital inputs and output=
-s.
-> +
-> +  ref-supply:
-> +    description: A 2.4 V to 5.1 V supply for the external reference volt=
-age.
-> +
-> +  refin-supply:
-> +    description: A 2.4 V to 5.1 V supply for the internal reference buff=
-er input.
-> +
-> +  com-supply:
-> +    description: Common voltage supply for pseudo-differential analog in=
-puts.
-
-These last few have more info in them so definitely good to have the descri=
-ptions
-
-> +
-> +  adi,no-ref-current-limit:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      When this flag is present, the REF Overvoltage Reduced Current pro=
-tection
-> +      is disabled.
-> +
-> +  adi,no-ref-high-z:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      Enable this flag if the ref-supply requires Reference Input High-Z=
- Mode
-> +      to be disabled for proper operation.
-> +
-> +  cnv-gpios:
-> +    description: The Convert Input (CNV). If omitted, CNV is tied to SPI=
- CS.
-> +    maxItems: 1
-> +
-> +  reset-gpios:
-> +    description: The Reset Input (RESET). Should be configured GPIO_ACTI=
-VE_LOW.
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    minItems: 1
-> +    items:
-> +      - description:
-> +          Signal coming from the BSY_ALT_GP0 or GP3 pin that indicates a=
- busy
-> +          condition.
-> +      - description:
-> +          Signal coming from the BSY_ALT_GP0 or GP2 pin that indicates a=
-n alert
-> +          condition.
-> +
-> +  interrupt-names:
-> +    minItems: 1
-> +    items:
-> +      - const: busy
-> +      - const: alert
-> +
-> +  gpio-controller: true
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +    description: |
-> +      The first cell is the GPn number: 0 to 3.
-> +      The second cell takes standard GPIO flags.
-> +
-> +  "#address-cells":
-> +    const: 1
-> +  "#size-cells":
-> +    const: 0
-> +
-> +patternProperties:
-> +  "^channel@[0-9a-f]$":
-> +    type: object
-> +    $ref: adc.yaml
-> +    unevaluatedProperties: false
-> +    description:
-> +      Describes each individual channel. In addition the properties defi=
-ned
-> +      below, bipolar from adc.yaml is also supported.
-> +
-> +    properties:
-> +      reg:
-> +        maximum: 15
-> +        description: Input pin number (INx).
-
-I'd drop this description as the pin pairing makes it messy.
-If you switch to diff-channels etc, just leave it as a index value not
-connected to the pin numbers.
-
-> +
-> +      adi,pin-pairing:
-> +        description: |
-> +          The input pin pairing for the negative input. This can be:
-> +          - REFGND, normally 0V (single-ended)
-> +          - COM, normally V_REF/2, see com-supply (pseudo-differential)
-> +          - For even numbered pins, the next odd numbered pin (different=
-ial)
-> +        $ref: /schemas/types.yaml#/definitions/string
-> +        enum: [refgnd, com, next]
-
-Next is full on differential, just provide both channels via
-diff-channels. You can constrain the particular combinations in the binding.
-
-Refcnd is normal single ended.  Probably want to use the new single-channel
-property for that as we are mixing differential and single ended channels
-so reg is pretty much just an index.
-
-Hmm. For comm we haven't had done a recent binding for a chip with the opti=
-on
-of pseudo differential that is per channel, they've been whole device only.
-That feels like it will be common enough we need to support it cleanly
-with a 'general' scheme.
-
-Problem is I know someone will have a chip with 2 vincom pins and selecting
-between them, so we can't just have pseudo-differential as a boolean and ad=
-c.yaml
-
-There are horrible solutions like a magic channel number that changes the
-meaning of diff-channels but that's ugly.
-Maybe pseudo-differential for now and we have to later we add
-pseudo-differential-comm  =3D <0> etc?
-
-
-> +        default: refgnd
-> +
-> +      adi,no-high-z:
-> +        $ref: /schemas/types.yaml#/definitions/flag
-> +        description: |
-
-Do we need the | given not really formatted?
-
-> +          Enable this flag if the input pin requires the Analog Input Hi=
-gh-Z
-> +          Mode to be disabled for proper operation.
-> +
-> +    required:
-> +      - reg
-> +
-> +    allOf:
-> +      # only even number pins can be paired with the next pin
-> +      - if:
-> +          properties:
-> +            reg:
-> +              not:
-> +                multipleOf: 2
-> +        then:
-> +          properties:
-> +            adi,pin-pairing:
-> +              enum: [refgnd, com]
-> +      # bipolar mode is not supported with REFGND pairing
-> +      - if:
-> +          not:
-> +            required:
-> +              - adi,pin-pairing
-> +        then:
-> +          properties:
-> +            bipolar: false
-> +        else:
-> +          if:
-> +            properties:
-> +              adi,pin-pairing:
-> +                const: refgnd
-> +          then:
-> +            properties:
-> +              bipolar: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - avdd-supply
-> +  - vio-supply
-> +
-> +allOf:
-> +  - oneOf:
-> +      - required:
-> +          - ref-supply
-> +      - required:
-> +          - refin-supply
-> +
-> +  - oneOf:
-> +      - required:
-> +          - ldo-in-supply
-> +      - required:
-> +          - vdd-supply
-> +
-> +  # LFSCP package has fewer pins, so a few things are not valid in that =
-case
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          not:
-> +            contains:
-> +              pattern: -wlcsp$
-> +    then:
-> +      properties:
-> +        refin-supply: false
-> +        spi-rx-bus-width:
-> +          maximum: 2
-> +
-> +  # the internal reference buffer always requires high-z mode
-> +  - if:
-> +      required:
-> +        - refin-supply
-> +    then:
-> +      properties:
-> +        adi,no-ref-high-z: false
-> +
-> +  # limit channels for 8-channel chips
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: adi,ad4697
-> +    then:
-> +      patternProperties:
-> +        "^channel@[0-7]$":
-> +          properties:
-> +            reg:
-> +              maximum: 7
-> +        "^channel@[8-9a-f]$": false
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    spi {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        adc@0 {
-> +            compatible =3D "adi,ad4695";
-> +            reg =3D <0>;
-> +            spi-cpol;
-> +            spi-cpha;
-> +            spi-max-frequency =3D <80000000>;
-> +            avdd-supply =3D <&supply_2_5V>;
-> +            vdd-supply =3D <&supply_1_8V>;
-> +            vio-supply =3D <&supply_1_2V>;
-> +            ref-supply =3D <&supply_5V>;
-> +            reset-gpios =3D <&gpio 1 GPIO_ACTIVE_LOW>;
-> +
-> +            #address-cells =3D <1>;
-> +            #size-cells =3D <0>;
-> +
-> +            /* Differential channel between IN0 and IN1. */
-> +            channel@0 {
-> +                reg =3D <0>;
-> +                adi,pin-pairing =3D "next";
-> +                bipolar;
-> +            };
-> +
-> +            /* Single-ended channel between IN2 and REFGND. */
-> +            channel@2 {
-> +                reg =3D <2>;
-> +            };
-> +
-> +            /* Pseudo-differential channel between IN3 and COM. */
-> +            channel@f {
-> +                reg =3D <3>;
-> +                adi,pin-pairing =3D "com";
-> +                bipolar;
-> +            };
-> +        };
-> +    };
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index aa76d1c88589..5ec95a7903b8 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -10502,7 +10502,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x17aa, 0x3813, "Legion 7i 15IMHG05", ALC287_FIXUP_LEGION_15IMHG05_SPEAKERS),
+ 	SND_PCI_QUIRK(0x17aa, 0x3818, "Lenovo C940 / Yoga Duet 7", ALC298_FIXUP_LENOVO_C940_DUET7),
+ 	SND_PCI_QUIRK(0x17aa, 0x3819, "Lenovo 13s Gen2 ITL", ALC287_FIXUP_13S_GEN2_SPEAKERS),
+-	SND_PCI_QUIRK(0x17aa, 0x3820, "Yoga Duet 7 13ITL6", ALC287_FIXUP_YOGA7_14ITL_SPEAKERS),
++	SND_PCI_QUIRK(0x17aa, 0x3820, "IdeaPad 330-17IKB 81DM", ALC269_FIXUP_ASPIRE_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x17aa, 0x3824, "Legion Y9000X 2020", ALC285_FIXUP_LEGION_Y9000X_SPEAKERS),
+ 	SND_PCI_QUIRK(0x17aa, 0x3827, "Ideapad S740", ALC285_FIXUP_IDEAPAD_S740_COEF),
+ 	SND_PCI_QUIRK(0x17aa, 0x3834, "Lenovo IdeaPad Slim 9i 14ITL5", ALC287_FIXUP_YOGA7_14ITL_SPEAKERS),
+-- 
+2.33.8
 
 
