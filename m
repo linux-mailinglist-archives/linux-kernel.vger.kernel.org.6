@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-215923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B091A9098E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 17:24:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79FD49098E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 17:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29A42B218A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 15:24:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 231011F22237
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 15:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1F74965B;
-	Sat, 15 Jun 2024 15:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988634E1D1;
+	Sat, 15 Jun 2024 15:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dD+ydWGQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PGHhU+eY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870A849649;
-	Sat, 15 Jun 2024 15:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AC94C622;
+	Sat, 15 Jun 2024 15:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718465064; cv=none; b=BKpmlo9jWTJORSn1Hl+GBNhdYQkd7CheaRdB6VfTQPH9eK2kEslg7Vo0VZm1BfmaLBGq8vlac829RsO2wklOtjxU4XIvTSK9St1EJ16AuPPm9hzIuo/kh3K0kCWMiL3Q/td8xHMIA+2wmqgkvfTVlQSaxvvGF7yegmjtwJLKbc4=
+	t=1718465067; cv=none; b=ojkBKTyVI0HhpJ71C/Ji+S0CiRVkwYK3OhLSpn+xCr71uhDZiVckz5WmcSquj9HCpEh97dGU/sH5+bz1TQRJ67Wwx2hCe+sf2wcIaENtdhgTXw4hcQBkXWcDfj6JJTqg6dkafGliffcUsfWA+I+w9pE52vOExDmtoNck2OZwZug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718465064; c=relaxed/simple;
-	bh=oqcpctG30CJsXBNPoWEwkkyn3w8xU4zoLSjprBusP8Y=;
+	s=arc-20240116; t=1718465067; c=relaxed/simple;
+	bh=39IhOv1g0B3rh0LTqn1n/5d4N1bcXOo4D9fjKDG2cLM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=PjfDQkNxRFRbLHAf45DViUDShQe/ID+tUMkF4XejpADnABa+zieqBY5b8MzQ5UMqr6PKJ795b043Yt3D97PEUZG5uqJSRcGokPyXMfhm5Vc/QXslYvilRV29t2zYxTjJNRPZKkMm2aNAH6jbyQtC7vXvNdym0Ihk3a8lXhzxH+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dD+ydWGQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C53B7C116B1;
-	Sat, 15 Jun 2024 15:24:21 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Frhs/FsD243UBgoB9743lwvTPBE+i17UYQwm80dZ0bD9on097JihWf99xgqUUj2Gg2JIkTXwThrdR8txmaCX2oFg2LWibdBkJcjWq5p4LwsFavszQND8qcAzFmeEwVZS2caN0cIA0oSxELxuFoJGzrKdGNpfxLIk7lFsIAgfV6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PGHhU+eY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A255CC4AF1A;
+	Sat, 15 Jun 2024 15:24:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718465064;
-	bh=oqcpctG30CJsXBNPoWEwkkyn3w8xU4zoLSjprBusP8Y=;
+	s=k20201202; t=1718465066;
+	bh=39IhOv1g0B3rh0LTqn1n/5d4N1bcXOo4D9fjKDG2cLM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=dD+ydWGQoAcaGRx91oARHuVGAhXSF3PtrLfxhbrwe1sQcsTdkLXH6GdI+RTwk6u8A
-	 I45WGwUxGHBH3xNRkYL8PoSWq6pNjLZSlKduprJ9jZQsBlZBunit1hfVbOMwUc1ZKT
-	 8T7/Lzj291Me9NWY6Gdh5gqcnvJiDnxlc4pk76FWhh6/UNUtC3aDwrinbNIowZXyCf
-	 qXLZZQJMcceThWTQW2sTrC2z3G7nUNWekPgr1KZDx9tHGWeFYYiHDYK7pQSu0hkazx
-	 3wIKHsmeOc26rGgFUMRQvkBO7KQ5amCBPtjRe4IOVpIJAJGoU4HVGJiry6GHX8O5cX
-	 V57rJBYk98zIA==
+	b=PGHhU+eYEFcZxr6GYro8q2Y5PAJojAY0HY5hpspKzbRLZS47vzVKiKi74EvoFfKSb
+	 MUyaaG40amewSXDzcYqx8XjVeMLCZKF8sILLZkQXWx5N6xtC8dAWp3sZ+qFbFsePhy
+	 Uo0Fml5UMj/sh5m4I5OaovCsb7BEE4zN6BLiVrSiDbZbm8EXHoj/tfqST5Vk3/d6vO
+	 LcrqbhxDnaqqza1BDn0MAmKF6RAgoyYWCV+z5Fh10GPe1uEMeAJDgS7RBZfCc/vsbM
+	 w5zGMq2C79YNbKMQjVNBFcGnxtPfhEZ/ftzILZ9NzPDOs9DelzWzADVJkf76ENJgpL
+	 9Q36Grh30kAnw==
 From: Mark Brown <broonie@kernel.org>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- lgirdwood@gmail.com, Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
-Cc: skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com, 
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240612163730.515819-1-abdulrasaqolawani@gmail.com>
-References: <20240612163730.515819-1-abdulrasaqolawani@gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: sound: Convert max98088 to dtschema
-Message-Id: <171846506352.317831.381850229372621584.b4-ty@kernel.org>
-Date: Sat, 15 Jun 2024 16:24:23 +0100
+In-Reply-To: <20240611-topic-amlogic-upstream-bindings-convert-tas57xx-v2-1-38269edc1d95@linaro.org>
+References: <20240611-topic-amlogic-upstream-bindings-convert-tas57xx-v2-1-38269edc1d95@linaro.org>
+Subject: Re: [PATCH v2] ASoC: dt-bindings: convert tas571x.txt to dt-schema
+Message-Id: <171846506635.317831.8153225167597997134.b4-ty@kernel.org>
+Date: Sat, 15 Jun 2024 16:24:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,8 +62,10 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-0bd45
 
-On Wed, 12 Jun 2024 12:36:50 -0400, Abdulrasaq Lawani wrote:
-> Convert the max98088 audio codec txt bindings to DT schema.
+On Tue, 11 Jun 2024 09:30:04 +0200, Neil Armstrong wrote:
+> Convert the text bindings for the Texas Instruments
+> TAS5711/TAS5717/TAS5719/TAS5721 stereo power amplifiers to
+> dt-schema.
 > 
 > 
 
@@ -72,8 +75,8 @@ Applied to
 
 Thanks!
 
-[1/1] dt-bindings: sound: Convert max98088 to dtschema
-      commit: 7fbc4f5e633cbc23576c32ff9773faa1788afc2d
+[1/1] ASoC: dt-bindings: convert tas571x.txt to dt-schema
+      commit: a9c8ca5d5d8452ca38300c7fb74bf8735d08f43b
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
