@@ -1,81 +1,139 @@
-Return-Path: <linux-kernel+bounces-215760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B57C09096BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:06:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045309096B9
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FEC01F23417
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:06:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06E041C21AB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A54182A0;
-	Sat, 15 Jun 2024 08:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="EoTs6NzW"
-Received: from mail-177132.yeah.net (mail-177132.yeah.net [123.58.177.132])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8532117C6B;
-	Sat, 15 Jun 2024 08:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=123.58.177.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D73718037;
+	Sat, 15 Jun 2024 08:06:17 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E33171B0
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 08:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718438809; cv=none; b=H7l14aQ8yqeTyqs1T9OT22GkbuXQKKgAQNYYP30lnwBXXjuVAphnR1z8428SP6qR01cBpmu3w2X10w+QkMryCZ+IkZwTrXQegMoIXAntvtMlwqq42f4ec0YqDeePWx47aj08fsfRMRpLdMG+tSv8pX3V7GMQTnigTokmcizmecg=
+	t=1718438776; cv=none; b=gYdn5uhA+rb/l1GYMDdJUN5/KI6gj7tTqtguQegEUhJ9HjrgsWWTIQkaTdHnKdz6GJwxgkHoZXF6aIZCHiAo89JQyTul4Sar7MxEueZOyGHGxh25+yWXvaa3fS2Ct7pfVAqpZynmSgMrB7f+s7KcclOSdkjjq0vfOVDoSrBXqrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718438809; c=relaxed/simple;
-	bh=GxAOZy0x9WrDZ/LeK+PwkuiwAQ2MR0JWNopsCLd6u4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1OVuHY3afBpGjrUqaanY1/gofmfF3rBlt8PHxWpYn/CtdBKUVOvgeQSR+dcUVedPlzpnDkDXm4kV18FPXSIutRvMkUDdzf0SczDilVToVfJ0HF4dPqqIxSdU0awP7gI5thMbQb/e04rAUcdF9Mec6S9sRrZkgQe+Z6U/extgXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=EoTs6NzW; arc=none smtp.client-ip=123.58.177.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=nBIxbGV2M/V9F3VVH2qGA1ziJ7K7maeJDL9DDy8Cg9E=;
-	b=EoTs6NzW5+SbMEggtvXAVYbG9U9bsMTyrqb4pLuj6K0WRrjBrVOqaiTRqfKKdx
-	y1iWKsIMSw0jdP2uf9z3eNuhA0ijGibqKT4DwWHSMKc5fm4goRzC00PAk9jbgPbO
-	QtE/WEk0MSPapD/L7TiehVBCeEHZSdRfXQnyaFsb4KFtY=
-Received: from dragon (unknown [114.216.76.201])
-	by smtp2 (Coremail) with SMTP id C1UQrABXH+J0S21m4t60CA--.4800S3;
-	Sat, 15 Jun 2024 16:06:14 +0800 (CST)
-Date: Sat, 15 Jun 2024 16:06:12 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Marek Vasut <marex@denx.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, kernel@dh-electronics.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: imx8mp: Enable HDMI on i.MX8MP DHCOM PDK2
- and PDK3
-Message-ID: <Zm1LdFyxYJ1+UIgY@dragon>
-References: <20240514010706.245874-1-marex@denx.de>
+	s=arc-20240116; t=1718438776; c=relaxed/simple;
+	bh=Sl6y5vSpvo/TDY1A0GnSjLx1TQ3HOsv/EHlKZf9iTdI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EqSfqW4h6N9WR8bauusInt0yanxTj7CHqSzJdQ0THX0uGJ+mt5QTedgLxRfd9U2+N3V4Uvjqw6TAvCOkLrLv1AjzIt7+gnoeBUo/IibT/TJMYlsdbcMODbfWHRiXz2ZbA4ot0CFTusOtlM0bURs9b0NC4mfURl8NJOataDMo2iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W1TBb4mTPzwSS0;
+	Sat, 15 Jun 2024 16:01:59 +0800 (CST)
+Received: from dggpeml500012.china.huawei.com (unknown [7.185.36.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4F40B180064;
+	Sat, 15 Jun 2024 16:06:09 +0800 (CST)
+Received: from localhost.localdomain (10.67.175.61) by
+ dggpeml500012.china.huawei.com (7.185.36.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Sat, 15 Jun 2024 16:06:09 +0800
+From: Zheng Yejian <zhengyejian1@huawei.com>
+To: <kees@kernel.org>, <song@kernel.org>, <ndesaulniers@google.com>,
+	<yonghong.song@linux.dev>, <thunder.leizhen@huawei.com>, <ardb@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <zhengyejian1@huawei.com>
+Subject: [PATCH] kallsyms: Simply clean get_symbol_pos()
+Date: Sat, 15 Jun 2024 16:06:43 +0800
+Message-ID: <20240615080643.3865878-1-zhengyejian1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514010706.245874-1-marex@denx.de>
-X-CM-TRANSID:C1UQrABXH+J0S21m4t60CA--.4800S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUIco7DUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiDw-+ZVnxc0gsowACsF
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500012.china.huawei.com (7.185.36.15)
 
-On Tue, May 14, 2024 at 03:06:42AM +0200, Marek Vasut wrote:
-> Enable HDMI output on i.MX8MP DHCOM PDK2 and PDK3. The I2C5 on PDK2 and
-> I2C mux port 1 on PDK3 respectively are used in regular I2C mode instead
-> of HDMI DDC mode to permit connection of other I2C devices on those buses.
-> The pinctrl_hdmi node is part of the SoM DTSI already.
-> 
-> Signed-off-by: Marek Vasut <marex@denx.de>
+'symbol_end' is just for calculating 'symbolsize', so if 'symbolsize'
+is NULL, there is no need to find 'symbol_end'. Besides, if 'offset'
+is also NULL, there is even no need to assign to 'symbol_start'. So
+just do cleanup.
 
-Applied, thanks!
+Signed-off-by: Zheng Yejian <zhengyejian1@huawei.com>
+---
+ kernel/kallsyms.c | 43 +++++++++++++++++++++++++------------------
+ 1 file changed, 25 insertions(+), 18 deletions(-)
+
+diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+index 22ea19a36e6e..fe6a248d629a 100644
+--- a/kernel/kallsyms.c
++++ b/kernel/kallsyms.c
+@@ -322,8 +322,8 @@ static unsigned long get_symbol_pos(unsigned long addr,
+ 				    unsigned long *symbolsize,
+ 				    unsigned long *offset)
+ {
+-	unsigned long symbol_start = 0, symbol_end = 0;
+-	unsigned long i, low, high, mid;
++	unsigned long symbol_start;
++	unsigned long low, high, mid;
+ 
+ 	/* Do a binary search on the sorted kallsyms_addresses array. */
+ 	low = 0;
+@@ -344,28 +344,35 @@ static unsigned long get_symbol_pos(unsigned long addr,
+ 	while (low && kallsyms_sym_address(low-1) == kallsyms_sym_address(low))
+ 		--low;
+ 
++	if (unlikely(!symbolsize && !offset))
++		return low;
++
+ 	symbol_start = kallsyms_sym_address(low);
+ 
+-	/* Search for next non-aliased symbol. */
+-	for (i = low + 1; i < kallsyms_num_syms; i++) {
+-		if (kallsyms_sym_address(i) > symbol_start) {
+-			symbol_end = kallsyms_sym_address(i);
+-			break;
++	if (symbolsize) {
++		unsigned long symbol_end = 0;
++		unsigned long i;
++
++		/* Search for next non-aliased symbol. */
++		for (i = low + 1; i < kallsyms_num_syms; i++) {
++			if (kallsyms_sym_address(i) > symbol_start) {
++				symbol_end = kallsyms_sym_address(i);
++				break;
++			}
+ 		}
+-	}
+ 
+-	/* If we found no next symbol, we use the end of the section. */
+-	if (!symbol_end) {
+-		if (is_kernel_inittext(addr))
+-			symbol_end = (unsigned long)_einittext;
+-		else if (IS_ENABLED(CONFIG_KALLSYMS_ALL))
+-			symbol_end = (unsigned long)_end;
+-		else
+-			symbol_end = (unsigned long)_etext;
+-	}
++		/* If we found no next symbol, we use the end of the section. */
++		if (!symbol_end) {
++			if (is_kernel_inittext(addr))
++				symbol_end = (unsigned long)_einittext;
++			else if (IS_ENABLED(CONFIG_KALLSYMS_ALL))
++				symbol_end = (unsigned long)_end;
++			else
++				symbol_end = (unsigned long)_etext;
++		}
+ 
+-	if (symbolsize)
+ 		*symbolsize = symbol_end - symbol_start;
++	}
+ 	if (offset)
+ 		*offset = addr - symbol_start;
+ 
+-- 
+2.25.1
 
 
