@@ -1,117 +1,142 @@
-Return-Path: <linux-kernel+bounces-215696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE579095F4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 06:02:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06F179095F5
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 06:07:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B61CF1F23B56
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 04:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C56AA1C212DD
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 04:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0CDEAFA;
-	Sat, 15 Jun 2024 04:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9459EAEB;
+	Sat, 15 Jun 2024 04:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MjJ9h1N+"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eqeHn8xp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40F0C2C6;
-	Sat, 15 Jun 2024 04:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC9FD502
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 04:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718424160; cv=none; b=sSCIg6PPGbf+UNHSL2H7zWfmf7nwmnn1hFHS7biZBNe8o91EU7MUevvqYJrwd0LXzbclHcPhkvwERLcCuhavz6kPyK3xjl/nwsm8bxlzEoFiy9WHscDkCSOjux8VTJ0c/ZipLKrBwToLqI1fgMhu1Bb7m4kxD7vysA48ly/zerI=
+	t=1718424462; cv=none; b=FML10Nst8y7kOWJPhe/GIsmj0UA4996YWZWxowoBf2v29eu57XWgu1nvk2StikS9AItMXdFgpdRKfedwcnHTVuFr66ZKri7ZHalnVilfr1UsC0X4OmOc2tsXV3CdBgD8kliXXCvIzQPpNCT/ZZ2kUhgEGbd7geefPRotKHpmY8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718424160; c=relaxed/simple;
-	bh=LZNx7mxqLg870nPh8j1QNCUMFJMicd84KfTSuzUrz1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ECd6D2zgycRVghh7B3pK9Ifv5QsJ65LS5qfC/vgb5bR/gCJ8V4vG8r8y/cdQPvqF9zuwXUN8mJL32EXutLyqiOHFJvMFZfQiCjKt9r3Y/PE750CBAkOXnoYj29zifE/LUR4xZa7IKcRAMvEmz7EOZuUwieFsAhkPkmF1bvnp1zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MjJ9h1N+; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=NXexhGWDYtYr0oJSzk1NG3eD/CO5/DdYrVVL4DBvufA=; b=MjJ9h1N+6YRmBqezbqDVal17LT
-	nhmk778fNc40LaKkMmKjaKlk33Q084Abzd4oND4RErPAowJYTzK8jXTxntZJuy9ysC3KaV4SyYx/4
-	vNwx9NeEHDv79hI2/RXqytpEcTZvQhq3hK/4XtIkW8aYuyXt+erd5mRmWqmZQHqOl/5zrKr/p/4TZ
-	mbSP0KSi4XfOkFfgP7jgyxNaa5drT/4oVOG15DLFDfrrH2CWqh2LUkyB8aobk/Swd2wPxXI4hzAT0
-	51k9Vtx/un4S37Clhznni0YL/8Dc5KilIQF7AJ3fQt3f0EZp+ul+nn9YbM9bys0lu/XVtxLTu7tzQ
-	o1v+kinw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sIKcb-0000000HZXR-3dUg;
-	Sat, 15 Jun 2024 04:02:33 +0000
-Date: Sat, 15 Jun 2024 05:02:33 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Shivank Garg <shivankg@amd.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, bharata@amd.com,
-	raghavendra.kodsarathimmappa@amd.com, Michael.Day@amd.com,
-	dmaengine@vger.kernel.org, vkoul@kernel.org
-Subject: Re: [RFC PATCH 0/5] Enhancements to Page Migration with Batch
- Offloading via DMA
-Message-ID: <Zm0SWZKcRrngCUUW@casper.infradead.org>
-References: <20240614221525.19170-1-shivankg@amd.com>
+	s=arc-20240116; t=1718424462; c=relaxed/simple;
+	bh=y3c6h2tG9DxcPyjXhmiCjcvub1lzEr/UydsmZvaDtSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=FVT1uZyoUb4vzGlVPd/cFLDvjuK2iHYm/8ldMDrZscU8L2KxRqNQ5IFL1AlIALXestySTqAL4D7ZpEQLiK7W6Nlp6hlnEkoxxo8EVZbeMUGCl9IG048iRDuWbbjSKIp3cj2F9MdAWsHiuEgmPV6QpYfvdmwIz11pTwI2GHqS0Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eqeHn8xp; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718424460; x=1749960460;
+  h=date:from:to:cc:subject:message-id;
+  bh=y3c6h2tG9DxcPyjXhmiCjcvub1lzEr/UydsmZvaDtSQ=;
+  b=eqeHn8xp38/h/+gokSWEzVi5v9esw5ZLsr7WlJGy5No5BLMVjj2V7oNw
+   7A4r9y3UVSGPWuGY1nNwJBH2gKR+iduUCu99HdrRqxwB0bRxWd/Irb0kP
+   KQrLKr6zyxL15RAu2jMhZHQ/calh6KlSkj8Z4He5KUvhi55CS5eqPdxMX
+   MQ1IP8QKjwOLtjYpyMzXwIs2vfRWEkXn5cCjxFfTh5pe5z7nIRkapEMM+
+   b1HWg9D75hZl7+quqZcy6KOqSo/3Cwp9kZsUrd1dkf3J1SHr7/4AuXmw7
+   F0IpeZWOlAA1AsSeRA95ohhaP2ofkt7f6yE2ysv1WwxpWWfRCKEHtqqyp
+   w==;
+X-CSE-ConnectionGUID: 2uO5GiV9TdaMLGTwzhXrtA==
+X-CSE-MsgGUID: XTtuZhoITl2WB6epS5PX2Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="15556446"
+X-IronPort-AV: E=Sophos;i="6.08,239,1712646000"; 
+   d="scan'208";a="15556446"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 21:07:39 -0700
+X-CSE-ConnectionGUID: ARmugajrTT2xrAo5L7SQoQ==
+X-CSE-MsgGUID: GF6Cw/FlQZ65+aWunzJghA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,239,1712646000"; 
+   d="scan'208";a="40794686"
+Received: from lkp-server01.sh.intel.com (HELO 9e3ee4e9e062) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 14 Jun 2024 21:07:39 -0700
+Received: from kbuild by 9e3ee4e9e062 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sIKhU-00026v-2B;
+	Sat, 15 Jun 2024 04:07:36 +0000
+Date: Sat, 15 Jun 2024 12:07:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/urgent] BUILD SUCCESS
+ b2747f108b8034271fd5289bd8f3a7003e0775a3
+Message-ID: <202406151216.krC8YSE0-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240614221525.19170-1-shivankg@amd.com>
 
-On Sat, Jun 15, 2024 at 03:45:20AM +0530, Shivank Garg wrote:
-> We conducted experiments to measure folio copy overheads for page
-> migration from a remote node to a local NUMA node, modeling page
-> promotions for different workload sizes (4KB, 2MB, 256MB and 1GB).
-> 
-> Setup Information: AMD Zen 3 EPYC server (2-sockets, 32 cores, SMT
-> Enabled), 1 NUMA node connected to each socket.
-> Linux Kernel 6.8.0, DVFS set to Performance, and cpuinfo_cur_freq: 2 GHz.
-> THP, compaction, numa_balancing are disabled to reduce interfernce.
-> 
-> migrate_pages() { <- t1
-> 	..
-> 	<- t2
-> 	folio_copy()
-> 	<- t3 
-> 	..
-> } <- t4
-> 
-> overheads Fraction, F= (t3-t2)/(t4-t1)
-> Measurement: Mean ± SD is measured in cpu_cycles/page
-> Generic Kernel
-> 4KB::   migrate_pages:17799.00±4278.25  folio_copy:794±232.87  F:0.0478±0.0199
-> 2MB::   migrate_pages:3478.42±94.93  folio_copy:493.84±28.21  F:0.1418±0.0050
-> 256MB:: migrate_pages:3668.56±158.47  folio_copy:815.40±171.76  F:0.2206±0.0371
-> 1GB::   migrate_pages:3769.98±55.79  folio_copy:804.68±60.07  F:0.2132±0.0134
-> 
-> Results with patched kernel:
-> 1. Offload disabled - folios batch-move using CPU
-> 4KB::   migrate_pages:14941.60±2556.53  folio_copy:799.60±211.66  F:0.0554±0.0190
-> 2MB::   migrate_pages:3448.44±83.74  folio_copy:533.34±37.81  F:0.1545±0.0085
-> 256MB:: migrate_pages:3723.56±132.93  folio_copy:907.64±132.63  F:0.2427±0.0270
-> 1GB::   migrate_pages:3788.20±46.65  folio_copy:888.46±49.50  F:0.2344±0.0107
-> 
-> 2. Offload enabled - folios batch-move using DMAengine
-> 4KB::   migrate_pages:46739.80±4827.15  folio_copy:32222.40±3543.42  F:0.6904±0.0423
-> 2MB::   migrate_pages:13798.10±205.33  folio_copy:10971.60±202.50  F:0.7951±0.0033
-> 256MB:: migrate_pages:13217.20±163.99  folio_copy:10431.20±167.25  F:0.7891±0.0029
-> 1GB::   migrate_pages:13309.70±113.93  folio_copy:10410.00±117.77  F:0.7821±0.0023
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
+branch HEAD: b2747f108b8034271fd5289bd8f3a7003e0775a3  x86/boot: Don't add the EFI stub to targets, again
 
-You haven't measured the important thing though -- what's the cost _to
-userspace_?  When the CPU does the copy, the data is now cache-hot in
-that CPU's cache.  When the DMA engine does the copy, it's not cache-hot
-in any CPU.
+elapsed time: 2587m
 
-Now, this may not be a big problem.  I don't think we do anything to
-ensure that the CPU that is going to access the folio in userspace is
-the one which does the copy.
+configs tested: 50
+configs skipped: 213
 
-But your methodology is wrong.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+i386                             allmodconfig   gcc-13
+i386                              allnoconfig   gcc-13
+i386                             allyesconfig   gcc-13
+i386         buildonly-randconfig-001-20240614   clang-18
+i386         buildonly-randconfig-002-20240614   clang-18
+i386         buildonly-randconfig-003-20240614   gcc-12
+i386         buildonly-randconfig-004-20240614   gcc-8
+i386         buildonly-randconfig-005-20240614   gcc-13
+i386         buildonly-randconfig-006-20240614   gcc-10
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240614   gcc-13
+i386                  randconfig-002-20240614   gcc-8
+i386                  randconfig-003-20240614   gcc-13
+i386                  randconfig-004-20240614   clang-18
+i386                  randconfig-005-20240614   gcc-13
+i386                  randconfig-006-20240614   gcc-10
+i386                  randconfig-011-20240614   gcc-13
+i386                  randconfig-012-20240614   clang-18
+i386                  randconfig-013-20240614   gcc-13
+i386                  randconfig-014-20240614   gcc-13
+i386                  randconfig-015-20240614   clang-18
+i386                  randconfig-016-20240614   clang-18
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64       buildonly-randconfig-001-20240614   clang-18
+x86_64       buildonly-randconfig-002-20240614   gcc-8
+x86_64       buildonly-randconfig-003-20240614   clang-18
+x86_64       buildonly-randconfig-004-20240614   gcc-8
+x86_64       buildonly-randconfig-005-20240614   gcc-10
+x86_64       buildonly-randconfig-006-20240614   clang-18
+x86_64                              defconfig   gcc-13
+x86_64                randconfig-001-20240614   clang-18
+x86_64                randconfig-002-20240614   clang-18
+x86_64                randconfig-003-20240614   clang-18
+x86_64                randconfig-004-20240614   gcc-11
+x86_64                randconfig-005-20240614   clang-18
+x86_64                randconfig-006-20240614   clang-18
+x86_64                randconfig-011-20240614   clang-18
+x86_64                randconfig-012-20240614   clang-18
+x86_64                randconfig-013-20240614   gcc-10
+x86_64                randconfig-014-20240614   gcc-8
+x86_64                randconfig-015-20240614   gcc-13
+x86_64                randconfig-016-20240614   gcc-13
+x86_64                randconfig-071-20240614   gcc-10
+x86_64                randconfig-072-20240614   gcc-13
+x86_64                randconfig-073-20240614   clang-18
+x86_64                randconfig-074-20240614   gcc-10
+x86_64                randconfig-075-20240614   gcc-13
+x86_64                randconfig-076-20240614   gcc-13
+x86_64                          rhel-8.3-rust   clang-18
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
