@@ -1,214 +1,538 @@
-Return-Path: <linux-kernel+bounces-215819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B605909783
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:56:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B00909786
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0EBFB20BA1
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:56:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6431D1C20D86
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9422E62C;
-	Sat, 15 Jun 2024 09:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WoeRlsMv"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45FE2E646;
+	Sat, 15 Jun 2024 09:58:18 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369B110A11;
-	Sat, 15 Jun 2024 09:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF3B28684;
+	Sat, 15 Jun 2024 09:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718445386; cv=none; b=qEvkD0+j24gyoA1bVFXI2KyLm9+AIcM1NU/Uvf5oE5Zysq+Mn6HdKLpIY/h8ZMZ1sxDQfEQvzDwrsecdNThGY8xgyFtARUKxqr0o8Si5kVAx2MB+Pvq4aTHvaDvH3d9pd8Z4M3RJv8A1aMv9+XkCq+Gh3qKnCqo7DCgJe9NMigg=
+	t=1718445497; cv=none; b=FiTbo9FaeoL0PO7Ol0I88wKffxKW1IniQApWTBbJ8fYEBP+lYFohd8AbIjthG9ZIgcVsPan+u4//G00ZjVIcE2CkdM3ru+zOAZApK/LOM6d+GxZKGf+ChgNjpSA67EowTeAeTskC4ha9RtkrQSZ8e1YV9RX803wfOTqsMspvl98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718445386; c=relaxed/simple;
-	bh=N2YEApRjXLgw063ZUXNRkiHZcwFijtkyX5h2sRacRUQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CfrIR5ss5F+zCG6jtZlW4ewp4nw/6IHMOMPTo9jPLrZUWWTKHu+Pv1GsXRPOV/2IlFp6wG3j6pyOGxSOCyD1+PcjSTsQ2/rVgd614sJH+VJa5q9vkLgkN55GY2FI1gtIAWzcYGlBc4Mr2/VyED5c7pUoJRan/VQXEFrq9xG7ioQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WoeRlsMv; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70109d34a16so2632338b3a.2;
-        Sat, 15 Jun 2024 02:56:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718445384; x=1719050184; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tg5u5ShuykptgMBL5I5DS/hZACOm+i1CYfL5BzH1+bY=;
-        b=WoeRlsMvPCt+aaEiGFGuPIMI0I3wVO789dVR9TrT1TUBjAUo6geKoA07YMnNl7JF6J
-         RmkL3RP99qj7C+khwMm8173kgT4VX10gfiuJHjZX1r2WD6Km04tUcAt4eGYK8J0EFCtY
-         +Fm55kolU0K2PLKZAL7YHAmLNw/yoO7DKauM8Umutflr5mla8yl+bPpZEJEB05ItSuDu
-         srFJZGMxk3jyvMHW2qZXbq76gRI6BNGPAky4yTdsLnS9RWfyADlPlwLarYnLl/2MXsgU
-         aE7zEbBxCpoE0Fa4mSXQAPsLz5v7l5QcptlRyf1Zxg7Qu/8hnPr/G7izpbeG4zDBRGn+
-         HhVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718445384; x=1719050184;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tg5u5ShuykptgMBL5I5DS/hZACOm+i1CYfL5BzH1+bY=;
-        b=mKZN1asqdcskE3Z1CLboB3QHsWdBfayjy6PQidP6ySWAZ3ewyD5m+h+zfoTws57R3n
-         /xLgA9V+fmEcL2gNB5R1wLUD8BTb6R5yIQGuogCJqSxK0qKe1UCbdW2pV+5VZ80RJlug
-         6EP+yZdfftByoqzML7bTp5eW7A8OOiXdmP6gomjoD3EPzUBqTOe1UEnvU0h/e04Ng/A8
-         QArYpeYQ0WuWjCKH3HBgrw71Ps6mDEWmfhPlE381DrjbPQYoKHUiqVIvnryiqk7IK9Y6
-         qj0axXOrlWyezYgAAhUh3ZSzVfDAFuPwwq2yDsDwGHzXKP1XU1NDEZTwKCMBOl7MXjtD
-         x5Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCVm6e9EKVUcpB0jCUHAI06dLwGeRLQMdMQOZR3Kfijvdd3YN/7A6rfJD9EEgmi+OVWsRP1j05Hps7HbQ10XZXZfxoziLDcnQyAXH/6g
-X-Gm-Message-State: AOJu0YwB6NQzC4KZpMp7p3C4QN2Csn+Hq9zsf+37Z8JFwON21tYrXwGu
-	bLyVC5D3usyOj8hapLGmhKKm4tQNIzlVPGgw51LskI+zUQ9Yuaad
-X-Google-Smtp-Source: AGHT+IEDUVaqWTyE5K7lkt2gzZ4FztGsgWD9JDp9eG7o9DJF60GqM8BDrnujcRy+GpHK8csEE5ZSVA==
-X-Received: by 2002:aa7:8b94:0:b0:702:65de:19e5 with SMTP id d2e1a72fcca58-705d722b7a3mr5165325b3a.33.1718445384256;
-        Sat, 15 Jun 2024 02:56:24 -0700 (PDT)
-Received: from localhost.localdomain ([129.146.253.192])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-705ccb71715sm4531309b3a.175.2024.06.15.02.56.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Jun 2024 02:56:23 -0700 (PDT)
-From: Furong Xu <0x1207@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Eric Dumazet <edumazet@google.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>,
-	Corinna Vinschen <vinschen@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	xfr@outlook.com,
-	rock.xu@nio.com,
-	Furong Xu <0x1207@gmail.com>
-Subject: [PATCH net-next v4] net: stmmac: Enable TSO on VLANs
-Date: Sat, 15 Jun 2024 17:56:11 +0800
-Message-Id: <20240615095611.517323-1-0x1207@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718445497; c=relaxed/simple;
+	bh=3WGqb4aBPqSR2WSDrDoyHZU60qN7fcJ5nthcO2D9xFQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iRfurwrw+wxg5uzG1tmkGzIkB8nKfWAxEY54xKO+DLN9apWpb/HlQRdZUiTFdqslSY+KMCSZvkv3YHaeibdcIF24iyaM8ckI5boIsOGjCKoelBFT7cfVlwgVlwBGl8acZXkJLnaNGagxjZ7c+ypUD+/qH94sjk69LDLxp7PDwVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E508BC116B1;
+	Sat, 15 Jun 2024 09:58:13 +0000 (UTC)
+Message-ID: <8ba64488-6728-4779-bfee-ecc0303a02cf@xs4all.nl>
+Date: Sat, 15 Jun 2024 11:58:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/4] media: chips-media: wave5: Use helpers to
+ calculate bytesperline and sizeimage.
+To: "jackson.lee" <jackson.lee@chipsnmedia.com>,
+ "mchehab@kernel.org" <mchehab@kernel.org>,
+ "nicolas@ndufresne.ca" <nicolas@ndufresne.ca>,
+ "sebastian.fricke@collabora.com" <sebastian.fricke@collabora.com>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Nas Chung <nas.chung@chipsnmedia.com>,
+ "lafley.kim" <lafley.kim@chipsnmedia.com>, "b-brnich@ti.com"
+ <b-brnich@ti.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>
+References: <20240611071501.80-1-jackson.lee@chipsnmedia.com>
+ <20240611071501.80-4-jackson.lee@chipsnmedia.com>
+ <52b3f0be-6427-40b3-862b-640f378e6b02@xs4all.nl>
+ <SE1P216MB13031440D516B5396672D712EDC22@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <SE1P216MB13031440D516B5396672D712EDC22@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The TSO engine works well when the frames are not VLAN Tagged.
-But it will produce broken segments when frames are VLAN Tagged.
+On 14/06/2024 06:58, jackson.lee wrote:
+> Hi Hans
+> 
+> 
+>> -----Original Message-----
+>> From: Hans Verkuil <hverkuil@xs4all.nl>
+>> Sent: Thursday, June 13, 2024 7:29 PM
+>> To: jackson.lee <jackson.lee@chipsnmedia.com>; mchehab@kernel.org;
+>> nicolas@ndufresne.ca; sebastian.fricke@collabora.com
+>> Cc: linux-media@vger.kernel.org; linux-kernel@vger.kernel.org; Nas Chung
+>> <nas.chung@chipsnmedia.com>; lafley.kim <lafley.kim@chipsnmedia.com>; b-
+>> brnich@ti.com; Nicolas Dufresne <nicolas.dufresne@collabora.com>
+>> Subject: Re: [PATCH v5 3/4] media: chips-media: wave5: Use helpers to
+>> calculate bytesperline and sizeimage.
+>>
+>> On 11/06/2024 09:15, Jackson Lee wrote:
+>>> From: "jackson.lee" <jackson.lee@chipsnmedia.com>
+>>>
+>>> Use v4l2-common helper functions to calculate bytesperline and
+>>> sizeimage, instead of calculating in a wave5 driver directly.
+>>>
+>>> In case of raw(YUV) v4l2_pix_format, the wave5 driver updates
+>>> v4l2_pix_format_mplane struct through v4l2_fill_pixfmt_mp() function.
+>>>
+>>> Encoder and Decoder need same bytesperline and sizeimage values for
+>>> same v4l2_pix_format.
+>>> So, a wave5_update_pix_fmt is refactored to support both together.
+>>>
+>>> Signed-off-by: Jackson.lee <jackson.lee@chipsnmedia.com>
+>>> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+>>> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+>>> ---
+>>>  .../platform/chips-media/wave5/wave5-helper.c |  24 ++
+>>>  .../platform/chips-media/wave5/wave5-helper.h |   5 +
+>>>  .../chips-media/wave5/wave5-vpu-dec.c         | 296 ++++++------------
+>>>  .../chips-media/wave5/wave5-vpu-enc.c         | 197 +++++-------
+>>>  .../platform/chips-media/wave5/wave5-vpu.h    |   5 +-
+>>>  .../chips-media/wave5/wave5-vpuconfig.h       |  27 +-
+>>>  6 files changed, 235 insertions(+), 319 deletions(-)
+>>>
+>>> diff --git a/drivers/media/platform/chips-media/wave5/wave5-helper.c
+>>> b/drivers/media/platform/chips-media/wave5/wave5-helper.c
+>>> index 7e0f34bfa5be..b20ab69cd341 100644
+>>> --- a/drivers/media/platform/chips-media/wave5/wave5-helper.c
+>>> +++ b/drivers/media/platform/chips-media/wave5/wave5-helper.c
+>>> @@ -7,6 +7,8 @@
+>>>
+>>>  #include "wave5-helper.h"
+>>>
+>>> +#define DEFAULT_BS_SIZE(width, height) ((width) * (height) / 8 * 3)
+>>> +
+>>>  const char *state_to_str(enum vpu_instance_state state)  {
+>>>  	switch (state) {
+>>> @@ -224,3 +226,25 @@ void wave5_return_bufs(struct vb2_queue *q, u32 state)
+>>>  		v4l2_m2m_buf_done(vbuf, state);
+>>>  	}
+>>>  }
+>>> +
+>>> +void wave5_update_pix_fmt(struct v4l2_pix_format_mplane *pix_mp,
+>>> +			  int pix_fmt_type,
+>>> +			  unsigned int width,
+>>> +			  unsigned int height,
+>>> +			  const struct v4l2_frmsize_stepwise *frmsize) {
+>>> +	v4l2_apply_frmsize_constraints(&width, &height, frmsize);
+>>> +
+>>> +	if (pix_fmt_type == VPU_FMT_TYPE_CODEC) {
+>>> +		pix_mp->width = width;
+>>> +		pix_mp->height = height;
+>>> +		pix_mp->num_planes = 1;
+>>> +		pix_mp->plane_fmt[0].bytesperline = 0;
+>>> +		pix_mp->plane_fmt[0].sizeimage = max(DEFAULT_BS_SIZE(width,
+>> height),
+>>> +						     pix_mp->plane_fmt[0].sizeimage);
+>>> +	} else {
+>>> +		v4l2_fill_pixfmt_mp(pix_mp, pix_mp->pixelformat, width, height);
+>>> +	}
+>>> +	pix_mp->flags = 0;
+>>> +	pix_mp->field = V4L2_FIELD_NONE;
+>>> +}
+>>> diff --git a/drivers/media/platform/chips-media/wave5/wave5-helper.h
+>>> b/drivers/media/platform/chips-media/wave5/wave5-helper.h
+>>> index 6cee1c14d3ce..9937fce553fc 100644
+>>> --- a/drivers/media/platform/chips-media/wave5/wave5-helper.h
+>>> +++ b/drivers/media/platform/chips-media/wave5/wave5-helper.h
+>>> @@ -28,4 +28,9 @@ const struct vpu_format
+>> *wave5_find_vpu_fmt_by_idx(unsigned int idx,
+>>>  						   const struct vpu_format
+>> fmt_list[MAX_FMTS]);  enum wave_std
+>>> wave5_to_vpu_std(unsigned int v4l2_pix_fmt, enum vpu_instance_type
+>>> type);  void wave5_return_bufs(struct vb2_queue *q, u32 state);
+>>> +void wave5_update_pix_fmt(struct v4l2_pix_format_mplane *pix_mp,
+>>> +			  int pix_fmt_type,
+>>> +			  unsigned int width,
+>>> +			  unsigned int height,
+>>> +			  const struct v4l2_frmsize_stepwise *frmsize);
+>>>  #endif
+>>> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
+>>> b/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
+>>> index 861a0664047c..f246c290ad6a 100644
+>>> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
+>>> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
+>>> @@ -11,111 +11,92 @@
+>>>  #define VPU_DEC_DEV_NAME "C&M Wave5 VPU decoder"
+>>>  #define VPU_DEC_DRV_NAME "wave5-dec"
+>>>
+>>> -#define DEFAULT_SRC_SIZE(width, height) ({			\
+>>> -	(width) * (height) / 8 * 3;					\
+>>> -})
+>>> +static const struct v4l2_frmsize_stepwise dec_hevc_frmsize = {
+>>> +	.min_width = W5_MIN_DEC_PIC_8_WIDTH,
+>>> +	.max_width = W5_MAX_DEC_PIC_WIDTH,
+>>> +	.step_width = W5_DEC_CODEC_STEP_WIDTH,
+>>> +	.min_height = W5_MIN_DEC_PIC_8_HEIGHT,
+>>> +	.max_height = W5_MAX_DEC_PIC_HEIGHT,
+>>> +	.step_height = W5_DEC_CODEC_STEP_HEIGHT, };
+>>> +
+>>> +static const struct v4l2_frmsize_stepwise dec_h264_frmsize = {
+>>> +	.min_width = W5_MIN_DEC_PIC_32_WIDTH,
+>>> +	.max_width = W5_MAX_DEC_PIC_WIDTH,
+>>> +	.step_width = W5_DEC_CODEC_STEP_WIDTH,
+>>> +	.min_height = W5_MIN_DEC_PIC_32_HEIGHT,
+>>> +	.max_height = W5_MAX_DEC_PIC_HEIGHT,
+>>> +	.step_height = W5_DEC_CODEC_STEP_HEIGHT, };
+>>> +
+>>> +static const struct v4l2_frmsize_stepwise dec_raw_frmsize = {
+>>> +	.min_width = W5_MIN_DEC_PIC_8_WIDTH,
+>>> +	.max_width = W5_MAX_DEC_PIC_WIDTH,
+>>> +	.step_width = W5_DEC_RAW_STEP_WIDTH,
+>>> +	.min_height = W5_MIN_DEC_PIC_8_HEIGHT,
+>>> +	.max_height = W5_MAX_DEC_PIC_HEIGHT,
+>>> +	.step_height = W5_DEC_RAW_STEP_HEIGHT, };
+>>>
+>>>  static const struct vpu_format dec_fmt_list[FMT_TYPES][MAX_FMTS] = {
+>>>  	[VPU_FMT_TYPE_CODEC] = {
+>>>  		{
+>>>  			.v4l2_pix_fmt = V4L2_PIX_FMT_HEVC,
+>>> -			.max_width = 8192,
+>>> -			.min_width = 8,
+>>> -			.max_height = 4320,
+>>> -			.min_height = 8,
+>>> +			.v4l2_frmsize = &dec_hevc_frmsize,
+>>>  		},
+>>>  		{
+>>>  			.v4l2_pix_fmt = V4L2_PIX_FMT_H264,
+>>> -			.max_width = 8192,
+>>> -			.min_width = 32,
+>>> -			.max_height = 4320,
+>>> -			.min_height = 32,
+>>> +			.v4l2_frmsize = &dec_h264_frmsize,
+>>>  		},
+>>>  	},
+>>>  	[VPU_FMT_TYPE_RAW] = {
+>>>  		{
+>>>  			.v4l2_pix_fmt = V4L2_PIX_FMT_YUV420,
+>>> -			.max_width = 8192,
+>>> -			.min_width = 8,
+>>> -			.max_height = 4320,
+>>> -			.min_height = 8,
+>>> +			.v4l2_frmsize = &dec_raw_frmsize,
+>>>  		},
+>>>  		{
+>>>  			.v4l2_pix_fmt = V4L2_PIX_FMT_NV12,
+>>> -			.max_width = 8192,
+>>> -			.min_width = 8,
+>>> -			.max_height = 4320,
+>>> -			.min_height = 8,
+>>> +			.v4l2_frmsize = &dec_raw_frmsize,
+>>>  		},
+>>>  		{
+>>>  			.v4l2_pix_fmt = V4L2_PIX_FMT_NV21,
+>>> -			.max_width = 8192,
+>>> -			.min_width = 8,
+>>> -			.max_height = 4320,
+>>> -			.min_height = 8,
+>>> +			.v4l2_frmsize = &dec_raw_frmsize,
+>>>  		},
+>>>  		{
+>>>  			.v4l2_pix_fmt = V4L2_PIX_FMT_YUV422P,
+>>> -			.max_width = 8192,
+>>> -			.min_width = 8,
+>>> -			.max_height = 4320,
+>>> -			.min_height = 8,
+>>> +			.v4l2_frmsize = &dec_raw_frmsize,
+>>>  		},
+>>>  		{
+>>>  			.v4l2_pix_fmt = V4L2_PIX_FMT_NV16,
+>>> -			.max_width = 8192,
+>>> -			.min_width = 8,
+>>> -			.max_height = 4320,
+>>> -			.min_height = 8,
+>>> +			.v4l2_frmsize = &dec_raw_frmsize,
+>>>  		},
+>>>  		{
+>>>  			.v4l2_pix_fmt = V4L2_PIX_FMT_NV61,
+>>> -			.max_width = 8192,
+>>> -			.min_width = 8,
+>>> -			.max_height = 4320,
+>>> -			.min_height = 8,
+>>> +			.v4l2_frmsize = &dec_raw_frmsize,
+>>>  		},
+>>>  		{
+>>>  			.v4l2_pix_fmt = V4L2_PIX_FMT_YUV420M,
+>>> -			.max_width = 8192,
+>>> -			.min_width = 8,
+>>> -			.max_height = 4320,
+>>> -			.min_height = 8,
+>>> +			.v4l2_frmsize = &dec_raw_frmsize,
+>>>  		},
+>>>  		{
+>>>  			.v4l2_pix_fmt = V4L2_PIX_FMT_NV12M,
+>>> -			.max_width = 8192,
+>>> -			.min_width = 8,
+>>> -			.max_height = 4320,
+>>> -			.min_height = 8,
+>>> +			.v4l2_frmsize = &dec_raw_frmsize,
+>>>  		},
+>>>  		{
+>>>  			.v4l2_pix_fmt = V4L2_PIX_FMT_NV21M,
+>>> -			.max_width = 8192,
+>>> -			.min_width = 8,
+>>> -			.max_height = 4320,
+>>> -			.min_height = 8,
+>>> +			.v4l2_frmsize = &dec_raw_frmsize,
+>>>  		},
+>>>  		{
+>>>  			.v4l2_pix_fmt = V4L2_PIX_FMT_YUV422M,
+>>> -			.max_width = 8192,
+>>> -			.min_width = 8,
+>>> -			.max_height = 4320,
+>>> -			.min_height = 8,
+>>> +			.v4l2_frmsize = &dec_raw_frmsize,
+>>>  		},
+>>>  		{
+>>>  			.v4l2_pix_fmt = V4L2_PIX_FMT_NV16M,
+>>> -			.max_width = 8192,
+>>> -			.min_width = 8,
+>>> -			.max_height = 4320,
+>>> -			.min_height = 8,
+>>> +			.v4l2_frmsize = &dec_raw_frmsize,
+>>>  		},
+>>>  		{
+>>>  			.v4l2_pix_fmt = V4L2_PIX_FMT_NV61M,
+>>> -			.max_width = 8192,
+>>> -			.min_width = 8,
+>>> -			.max_height = 4320,
+>>> -			.min_height = 8,
+>>> +			.v4l2_frmsize = &dec_raw_frmsize,
+>>>  		},
+>>>  	}
+>>>  };
+>>> @@ -234,74 +215,6 @@ static void wave5_handle_src_buffer(struct
+>> vpu_instance *inst, dma_addr_t rd_ptr
+>>>  	inst->remaining_consumed_bytes = consumed_bytes;  }
+>>>
+>>> -static void wave5_update_pix_fmt(struct v4l2_pix_format_mplane *pix_mp,
+>> unsigned int width,
+>>> -				 unsigned int height)
+>>> -{
+>>> -	switch (pix_mp->pixelformat) {
+>>> -	case V4L2_PIX_FMT_YUV420:
+>>> -	case V4L2_PIX_FMT_NV12:
+>>> -	case V4L2_PIX_FMT_NV21:
+>>> -		pix_mp->width = round_up(width, 32);
+>>> -		pix_mp->height = round_up(height, 16);
+>>> -		pix_mp->plane_fmt[0].bytesperline = round_up(width, 32);
+>>> -		pix_mp->plane_fmt[0].sizeimage = width * height * 3 / 2;
+>>> -		break;
+>>> -	case V4L2_PIX_FMT_YUV422P:
+>>> -	case V4L2_PIX_FMT_NV16:
+>>> -	case V4L2_PIX_FMT_NV61:
+>>> -		pix_mp->width = round_up(width, 32);
+>>> -		pix_mp->height = round_up(height, 16);
+>>> -		pix_mp->plane_fmt[0].bytesperline = round_up(width, 32);
+>>> -		pix_mp->plane_fmt[0].sizeimage = width * height * 2;
+>>> -		break;
+>>> -	case V4L2_PIX_FMT_YUV420M:
+>>> -		pix_mp->width = round_up(width, 32);
+>>> -		pix_mp->height = round_up(height, 16);
+>>> -		pix_mp->plane_fmt[0].bytesperline = round_up(width, 32);
+>>> -		pix_mp->plane_fmt[0].sizeimage = width * height;
+>>> -		pix_mp->plane_fmt[1].bytesperline = round_up(width, 32) / 2;
+>>> -		pix_mp->plane_fmt[1].sizeimage = width * height / 4;
+>>> -		pix_mp->plane_fmt[2].bytesperline = round_up(width, 32) / 2;
+>>> -		pix_mp->plane_fmt[2].sizeimage = width * height / 4;
+>>> -		break;
+>>> -	case V4L2_PIX_FMT_NV12M:
+>>> -	case V4L2_PIX_FMT_NV21M:
+>>> -		pix_mp->width = round_up(width, 32);
+>>> -		pix_mp->height = round_up(height, 16);
+>>> -		pix_mp->plane_fmt[0].bytesperline = round_up(width, 32);
+>>> -		pix_mp->plane_fmt[0].sizeimage = width * height;
+>>> -		pix_mp->plane_fmt[1].bytesperline = round_up(width, 32);
+>>> -		pix_mp->plane_fmt[1].sizeimage = width * height / 2;
+>>> -		break;
+>>> -	case V4L2_PIX_FMT_YUV422M:
+>>> -		pix_mp->width = round_up(width, 32);
+>>> -		pix_mp->height = round_up(height, 16);
+>>> -		pix_mp->plane_fmt[0].bytesperline = round_up(width, 32);
+>>> -		pix_mp->plane_fmt[0].sizeimage = width * height;
+>>> -		pix_mp->plane_fmt[1].bytesperline = round_up(width, 32) / 2;
+>>> -		pix_mp->plane_fmt[1].sizeimage = width * height / 2;
+>>> -		pix_mp->plane_fmt[2].bytesperline = round_up(width, 32) / 2;
+>>> -		pix_mp->plane_fmt[2].sizeimage = width * height / 2;
+>>> -		break;
+>>> -	case V4L2_PIX_FMT_NV16M:
+>>> -	case V4L2_PIX_FMT_NV61M:
+>>> -		pix_mp->width = round_up(width, 32);
+>>> -		pix_mp->height = round_up(height, 16);
+>>> -		pix_mp->plane_fmt[0].bytesperline = round_up(width, 32);
+>>> -		pix_mp->plane_fmt[0].sizeimage = width * height;
+>>> -		pix_mp->plane_fmt[1].bytesperline = round_up(width, 32);
+>>> -		pix_mp->plane_fmt[1].sizeimage = width * height;
+>>> -		break;
+>>> -	default:
+>>> -		pix_mp->width = width;
+>>> -		pix_mp->height = height;
+>>> -		pix_mp->plane_fmt[0].bytesperline = 0;
+>>> -		pix_mp->plane_fmt[0].sizeimage = max(DEFAULT_SRC_SIZE(width,
+>> height),
+>>> -						     pix_mp->plane_fmt[0].sizeimage);
+>>> -		break;
+>>> -	}
+>>> -}
+>>> -
+>>>  static int start_decode(struct vpu_instance *inst, u32 *fail_res)  {
+>>>  	struct v4l2_m2m_ctx *m2m_ctx = inst->v4l2_fh.m2m_ctx; @@ -389,6
+>>> +302,8 @@ static int handle_dynamic_resolution_change(struct vpu_instance
+>> *inst)
+>>>  	}
+>>>
+>>>  	if (p_dec_info->initial_info_obtained) {
+>>> +		const struct vpu_format *vpu_fmt;
+>>> +
+>>>  		inst->conf_win.left = initial_info->pic_crop_rect.left;
+>>>  		inst->conf_win.top = initial_info->pic_crop_rect.top;
+>>>  		inst->conf_win.width = initial_info->pic_width - @@ -396,10
+>> +311,27
+>>> @@ static int handle_dynamic_resolution_change(struct vpu_instance *inst)
+>>>  		inst->conf_win.height = initial_info->pic_height -
+>>>  			initial_info->pic_crop_rect.top -
+>>> initial_info->pic_crop_rect.bottom;
+>>>
+>>> -		wave5_update_pix_fmt(&inst->src_fmt, initial_info->pic_width,
+>>> -				     initial_info->pic_height);
+>>> -		wave5_update_pix_fmt(&inst->dst_fmt, initial_info->pic_width,
+>>> -				     initial_info->pic_height);
+>>> +		vpu_fmt = wave5_find_vpu_fmt(inst->src_fmt.pixelformat,
+>>> +					     dec_fmt_list[VPU_FMT_TYPE_CODEC]);
+>>> +		if (!vpu_fmt)
+>>> +			return -EINVAL;
+>>> +
+>>> +		wave5_update_pix_fmt(&inst->src_fmt,
+>>> +				     VPU_FMT_TYPE_CODEC,
+>>> +				     initial_info->pic_width,
+>>> +				     initial_info->pic_height,
+>>> +				     vpu_fmt->v4l2_frmsize);
+>>> +
+>>> +		vpu_fmt = wave5_find_vpu_fmt(inst->dst_fmt.pixelformat,
+>>> +					     dec_fmt_list[VPU_FMT_TYPE_RAW]);
+>>> +		if (!vpu_fmt)
+>>> +			return -EINVAL;
+>>> +
+>>> +		wave5_update_pix_fmt(&inst->dst_fmt,
+>>> +				     VPU_FMT_TYPE_RAW,
+>>> +				     initial_info->pic_width,
+>>> +				     initial_info->pic_height,
+>>> +				     vpu_fmt->v4l2_frmsize);
+>>>  	}
+>>>
+>>>  	v4l2_event_queue_fh(fh, &vpu_event_src_ch); @@ -545,15 +477,11 @@
+>>> static int wave5_vpu_dec_enum_framesizes(struct file *f, void *fh, struct
+>> v4l2_f
+>>>  		vpu_fmt = wave5_find_vpu_fmt(fsize->pixel_format,
+>> dec_fmt_list[VPU_FMT_TYPE_RAW]);
+>>>  		if (!vpu_fmt)
+>>>  			return -EINVAL;
+>>> +		return -ENOTTY;
+>>
+>> Huh? Where does this come from? It wasn't part of v4, and it doesn't make
+>> sense either.
+>>
+>> It looks like a spurious test line that you forgot to remove.
+>>
+>> Regards,
+>>
+>> 	Hans
+> 
+> Sorry for the confusion.
+> It should be removed.
+> Due to this code, we have been sharing incorrect v4l2-compliance results in the cover letter.
+> 
+> To pass the v4l2-compliance test correctly, Can we change the following code
+> to v6?
 
-The first segment is all good, while the second segment to the
-last segment are broken, they lack of required VLAN tag.
+I think so, yes.
 
-An example here:
-========
-// 1st segment of a VLAN Tagged TSO frame, nothing wrong.
-MacSrc > MacDst, ethertype 802.1Q (0x8100), length 1518: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [.], seq 1:1449
+Regards,
 
-// 2nd to last segments of a VLAN Tagged TSO frame, VLAN tag is missing.
-MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 1449:2897
-MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 2897:4345
-MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [.], seq 4345:5793
-MacSrc > MacDst, ethertype IPv4 (0x0800), length 1514: HostA:42643 > HostB:5201: Flags [P.], seq 5793:7241
+	Hans
 
-// normal VLAN Tagged non-TSO frame, nothing wrong.
-MacSrc > MacDst, ethertype 802.1Q (0x8100), length 1022: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [P.], seq 7241:8193
-MacSrc > MacDst, ethertype 802.1Q (0x8100), length 70: vlan 100, p 1, ethertype IPv4 (0x0800), HostA:42643 > HostB:5201: Flags [F.], seq 8193
-========
-
-When transmitting VLAN Tagged TSO frames, never insert VLAN tag by HW,
-always insert VLAN tag to SKB payload, then TSO works well on VLANs for
-all MAC cores.
-
-Tested on DWMAC CORE 5.10a, DWMAC CORE 5.20a and DWXGMAC CORE 3.20a
-
-Signed-off-by: Furong Xu <0x1207@gmail.com>
----
-  Changes in v4:
-    - Re-arrange variables to keep reverse x-mas tree order.
-
-  Changes in v3:
-    - Drop packet and increase stats counter when vlan tag insert fails.
-
-  Changes in v2:
-    - Use __vlan_hwaccel_push_inside() to insert vlan tag to the payload.
----
- .../net/ethernet/stmicro/stmmac/stmmac_main.c | 32 +++++++++++--------
- 1 file changed, 19 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 5ddbb0d44373..83b654b7a9fd 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4237,18 +4237,32 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
- {
- 	struct dma_desc *desc, *first, *mss_desc = NULL;
- 	struct stmmac_priv *priv = netdev_priv(dev);
--	int nfrags = skb_shinfo(skb)->nr_frags;
--	u32 queue = skb_get_queue_mapping(skb);
-+	int tmp_pay_len = 0, first_tx, nfrags;
- 	unsigned int first_entry, tx_packets;
- 	struct stmmac_txq_stats *txq_stats;
--	int tmp_pay_len = 0, first_tx;
- 	struct stmmac_tx_queue *tx_q;
--	bool has_vlan, set_ic;
-+	u32 pay_len, mss, queue;
- 	u8 proto_hdr_len, hdr;
--	u32 pay_len, mss;
- 	dma_addr_t des;
-+	bool set_ic;
- 	int i;
- 
-+	/* Always insert VLAN tag to SKB payload for TSO frames.
-+	 *
-+	 * Never insert VLAN tag by HW, since segments splited by
-+	 * TSO engine will be un-tagged by mistake.
-+	 */
-+	if (skb_vlan_tag_present(skb)) {
-+		skb = __vlan_hwaccel_push_inside(skb);
-+		if (unlikely(!skb)) {
-+			priv->xstats.tx_dropped++;
-+			return NETDEV_TX_OK;
-+		}
-+	}
-+
-+	nfrags = skb_shinfo(skb)->nr_frags;
-+	queue = skb_get_queue_mapping(skb);
-+
- 	tx_q = &priv->dma_conf.tx_queue[queue];
- 	txq_stats = &priv->xstats.txq_stats[queue];
- 	first_tx = tx_q->cur_tx;
-@@ -4301,9 +4315,6 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
- 			skb->data_len);
- 	}
- 
--	/* Check if VLAN can be inserted by HW */
--	has_vlan = stmmac_vlan_insert(priv, skb, tx_q);
--
- 	first_entry = tx_q->cur_tx;
- 	WARN_ON(tx_q->tx_skbuff[first_entry]);
- 
-@@ -4313,9 +4324,6 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *skb, struct net_device *dev)
- 		desc = &tx_q->dma_tx[first_entry];
- 	first = desc;
- 
--	if (has_vlan)
--		stmmac_set_desc_vlan(priv, first, STMMAC_VLAN_INSERT);
--
- 	/* first descriptor: fill Headers on Buf1 */
- 	des = dma_map_single(priv->device, skb->data, skb_headlen(skb),
- 			     DMA_TO_DEVICE);
-@@ -7682,8 +7690,6 @@ int stmmac_dvr_probe(struct device *device,
- 		ndev->features |= NETIF_F_RXHASH;
- 
- 	ndev->vlan_features |= ndev->features;
--	/* TSO doesn't work on VLANs yet */
--	ndev->vlan_features &= ~NETIF_F_TSO;
- 
- 	/* MTU range: 46 - hw-specific max */
- 	ndev->min_mtu = ETH_ZLEN - ETH_HLEN;
--- 
-2.34.1
+> 
+> 
+>>
+>>>  	}
+>>>
+>>>  	fsize->type = V4L2_FRMSIZE_TYPE_CONTINUOUS;
+>>> -	fsize->stepwise.min_width = vpu_fmt->min_width;
+>>> -	fsize->stepwise.max_width = vpu_fmt->max_width;
+>>> -	fsize->stepwise.step_width = 1;
+>>> -	fsize->stepwise.min_height = vpu_fmt->min_height;
+>>> -	fsize->stepwise.max_height = vpu_fmt->max_height;
+>>> -	fsize->stepwise.step_height = 1;
+>>> +	fsize->stepwise = *vpu_fmt->v4l2_frmsize;
+> 
+> fsize->stepwise.min_width = vpu_fmt->v4l2_frmsize->min_width;
+> fsize->stepwise.max_width = vpu_fmt->v4l2_frmsize->max_width;
+> fsize->stepwise.step_width = W5_DEC_CODEC_STEP_WIDTH;
+> fsize->stepwise.min_height = vpu_fmt->v4l2_frmsize->min_height;
+> fsize->stepwise.max_height = vpu_fmt->v4l2_frmsize->max_height;
+> fsize->stepwise.step_height = W5_DEC_CODEC_STEP_HEIGHT;
+> 
+> 
+> thanks
+> Jackson
+> 
+>>>
+>>>  	return 0;
+>>>  }
+>>
+>> Regards,
+>>
+>> 	Hans
+> 
 
 
