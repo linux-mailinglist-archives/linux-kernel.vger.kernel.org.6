@@ -1,84 +1,88 @@
-Return-Path: <linux-kernel+bounces-215732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5271A909665
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:48:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E9FC909678
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F4721C218BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 06:48:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 445A01C21ACE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 07:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8470C168BE;
-	Sat, 15 Jun 2024 06:48:47 +0000 (UTC)
-Received: from smtp134-33.sina.com.cn (smtp134-33.sina.com.cn [180.149.134.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02EF117579;
+	Sat, 15 Jun 2024 07:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="DIpnbk5j"
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F8EDDBE
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 06:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FB44A1E;
+	Sat, 15 Jun 2024 07:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718434127; cv=none; b=e1Te5i+DCcTlVK1T7BClxzbPzThFChhjYbrlwQXzDzAaTTriW9I5vCE9cQi3Kmce4YlyWMVT1nD2hAjhrGCMIQHtXaxwSHaCRxAC4NkIfMLr0FqvbAOK5L5M3pVrdOLdOLxXVL4n0WmiBo6nBW1xFi0jkiBPaS57EHm2cvIe9Nw=
+	t=1718435298; cv=none; b=dCntOlCzPdS4S/gr8NRwAfNSbcaSJ1h1tSk+8NAn7X0TyZ2K1Nw8jjMMpVVgqUAmTnIKbQnPf5ys3Ok8KT6BcOvyRSfLCtGkNNEg0t/9FQF9XwHxFN3YWVfo585XaKxINyHXh7QM+U76tyyBli0BgBmQjJ1O0ZL6Tn6q9Hf+kv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718434127; c=relaxed/simple;
-	bh=VCqHrKLRo7upK5Vo2G01ygKx2d1eckndZ0nekF0lCoI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=by7Oirl89065tJZgTTgaucaVq/tpg3UduRpX6gHFD0fUv3t6uKXTKubkhawwNURFzklCHW9C15rt5lwgJF563zUdwn6fPXFTqD7ohywP7VsxfG7h22QiCA6ZYHpxtxewm3mF55C5KEs4FOuRua5g3qsKpdJX12A/bIvBx46rW5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.64.228])
-	by sina.com (10.185.250.21) with ESMTP
-	id 666D3919000012C2; Sat, 15 Jun 2024 14:47:56 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 2166303408544
-X-SMAIL-UIID: DB5260639031462D90B6A8AA36523E06-20240615-144756-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
-Date: Sat, 15 Jun 2024 14:47:46 +0800
-Message-Id: <20240615064746.915-1-hdanton@sina.com>
-In-Reply-To: <000000000000f386f90616fea5ef@google.com>
-References: 
+	s=arc-20240116; t=1718435298; c=relaxed/simple;
+	bh=ZwcvdUxc1M3aHoVk5X4ehy4eeQBGFf7+nPhJ9DpI80I=;
+	h=In-Reply-To:References:From:To:Cc:Subject:Mime-Version:
+	 Content-Type:Date:Message-ID; b=fSxwHHSniqbn3QKxKrae/gHOg1XssrZ5S8WuAt+2IW6AmE0Om8adfmMmKXCCs7NMSVplgvYVS2RAqvk8uxG3GR1umhXO8UVTZ+cWXlx+/do/prbXZVhpME0QugBo1wGZg+WknIvym7P6v2qswEC63oVKUSV0/BMnig57ITt8xq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=DIpnbk5j; arc=none smtp.client-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1718434983; bh=ZwcvdUxc1M3aHoVk5X4ehy4eeQBGFf7+nPhJ9DpI80I=;
+	h=In-Reply-To:References:From:To:Cc:Subject:Date;
+	b=DIpnbk5jJoumBOggwKKPf/FBL1DTCHlsTCCS7L8udcZpzhfj84WcUCZM4P9DOeEdM
+	 +fylqSruoeepJfm77Du7euA5eByfcqc9GN6cjZ+ISWhvW1AoPWtKtGf/dVntJRlph3
+	 i/wRPlQKX3Irc20CwF2Af91eq/YlQlAzTX8jRzb4=
+X-QQ-FEAT: +BBVktQ4OjZRGhAMCybSmgbXOah7CjTG
+X-QQ-SSF: 0000000000000040000000000000
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-XMAILINFO: MKXYKvFqLnFrSEzRnk6j4uTDT+iE3Bkprc9glgWCzP882CopSjHdjMRGk6oyVP
+	 xxLQbg3UZVf9/meqPwbrj8S1Rnc4cMeaQxhOIPB/Qc/yQ4puq+ZHJ3MiiO5UaM9j2bDYqw9lzcHTM
+	 Z8BKe6GIzCBmgnsFmROgT/Qlansat5m4bDeVvVzX6QKY4ooP7u5bdkxnDy46GZESNeVoLISM4PaBu
+	 iUjDUqa0c8hKHnc0vo9gC6mekc+4y7Hdlz1i9lppfzwbEgwY807RdaaBvwBMz/VVuxCO4vgw33Izw
+	 0Bj7cTA3T1SVX4TDSQjoXZPbyRv7LdodPDZyQ+nzPwwLoFeKtEZDivcjld51/Tf7A/+YBQc9YK36G
+	 J8+d6dor+ybwrjy3RsS4ZvKqhC72Fhs/52rnvOCDDYMIUb5q5G7rblDkbHj/kxwOCPDNs3pp8twn3
+	 PBJFlQXH8p9IuDoLFI6TkqbR74/eE1RdcGLBEQrXXTe3M1lXB97o7QaPhMM6Dsiphsg/VHUbd2mga
+	 N3+YDwgsPwFWAxuUv30bCfEjMICDXUhsAD5+7VyBwMzWvyxgjo2bKzckVC9mrlFA9GZpRai8p8Scu
+	 ZqEhTR9Yk4oti0QCQPbEe+SwaMQ70IgdyFn20+3NGBPjayTkQ+7X4ElleY0ZBrzJY2U8FV90tAK+6
+	 SVPOs7dAkdeZP4QdCaZf4t13Kif4dWual8UosAqQJD1MaSTPDPjrq/sKUazT1r98gNTnSB21uLXBA
+	 xEC2mrSvrlCBAfLUYIYwKHwDfUKzUzUGOIaAMZX+2WwjlnbXdDE8COK2g2lhA1br5jYEXqQike4JR
+	 8todALKt2dAMhg0cXTw3UgApOEtWLBGQgIr/u/0T9MbEhZDonOpkCuJJCzHEyjNrNfaz7tN1e479r
+	 n1qGn44hFFfbSVxeT0ZHKt9193CH1oiQVSEo6qRMhpTakFqIpxriPvAgOcXCLVDDPMIrjy9dqN2HC
+	 vUZBGpKgVRbRfEchM2
+X-HAS-ATTACH: no
+X-QQ-BUSINESS-ORIGIN: 2
+In-Reply-To: <Zm000qL0N6XY7-4O@infradead.org>
+References: <20240615030056.GO1629371@ZenIV>
+ <tencent_63C013752AD7CA1A22E75CEF6166442E6D05@qq.com>
+	<Zm000qL0N6XY7-4O@infradead.org>
+X-QQ-STYLE: 
+X-QQ-mid: webmail648t1718434181t8448596
+From: "=?ISO-8859-1?B?emNqaWUwODAy?=" <zcjie0802@qq.com>
+To: "=?ISO-8859-1?B?Q2hyaXN0b3BoIEhlbGx3aWc=?=" <hch@infradead.org>
+Cc: "=?ISO-8859-1?B?dmlybw==?=" <viro@zeniv.linux.org.uk>, "=?ISO-8859-1?B?YnJhdW5lcg==?=" <brauner@kernel.org>, "=?ISO-8859-1?B?bGludXgtZnNkZXZlbA==?=" <linux-fsdevel@vger.kernel.org>, "=?ISO-8859-1?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] fs: modify the annotation of vfs_mkdir() in fs/namei.c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="ISO-8859-1"
+Content-Transfer-Encoding: base64
+Date: Sat, 15 Jun 2024 14:49:41 +0800
+X-Priority: 3
+Message-ID: <tencent_5A1C3E3D91192539DE8138D4A6DC72EBD107@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  83a7eefedc9b
+VGhlIEBkZW50cnkgaXMgYWN0dWFsbHkgdGhlIGRlbnRyeSBvZiBjaGlsZCBkaXJlY3Rvcnks
+IGJ1dCB0aGUgb3JpZ2luIGFubm90YXRpb24gaW5kaWNhdGVzIGl0IGlzIGRlbnRyeSBvZiBw
+YXJlbnQgZGlyZWN0b3J5LgpUaGUgQGRpciBpcyBzaW1pbGFyLg==
 
---- x/fs/open.c
-+++ y/fs/open.c
-@@ -952,7 +952,18 @@ static int do_dentry_open(struct file *f
- 	if (!open)
- 		open = f->f_op->open;
- 	if (open) {
-+		struct super_block *sb = inode->i_sb;
-+
-+		error = -EINVAL;
-+		for (;;) {
-+			int a = atomic_read(&sb->s_active);
-+			if (a < 1)
-+				goto cleanup_all;
-+			if (a == atomic_cmpxchg(&sb->s_active, a, a+1))
-+				break;
-+		}
- 		error = open(inode, f);
-+		deactivate_super(sb);
- 		if (error)
- 			goto cleanup_all;
- 	}
---
 
