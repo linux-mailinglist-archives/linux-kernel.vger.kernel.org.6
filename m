@@ -1,273 +1,453 @@
-Return-Path: <linux-kernel+bounces-215784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F10099096F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:23:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F31909096F5
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:25:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7860E1F23987
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:23:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 716DE1F214EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC19339AE7;
-	Sat, 15 Jun 2024 08:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uJyo/IWO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8c74tBaP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9302208D1;
-	Sat, 15 Jun 2024 08:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49C118EB8;
+	Sat, 15 Jun 2024 08:25:13 +0000 (UTC)
+Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E8DBE68;
+	Sat, 15 Jun 2024 08:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718439712; cv=none; b=Wt0UZ0zlRJlnowoKOMo42nYNVLtKpoqLHRPz3WM1j0WBB7HZK63zl6O3nZWR/toG2EPyZwFzGrG2DTCbcMPXcuuuwSfePNVTa/GOipVVMTIGLynkWhFD4/xlu6NFc8SVdr7tHhRXUNEJdk7DJKZoRUOvRvjUTWrI5mqqPNPAlMs=
+	t=1718439913; cv=none; b=QEYuKbQU+WYrUUoZN49NQvj9PyEWWnQc9lm3FtFHG5i219/bAXrILDKEupbej2wQzEy5NDA6ySOkkO3GUeXdITMSb2F32choLuuvhN5dpI24RNjjlSH7uSCiMXzs4Dym96sMrdOR6uC2VJRHexe5wW1Ez0PNzJTm1HuatpC1Lpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718439712; c=relaxed/simple;
-	bh=mzl5gNugTkTmCVPf5YsIDhBYvpYmunAu2b/pieB11Fc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=OJG0G3vEFTpI7XCGMBD1iP/nqyKYbK9RspcnULkptJ4TttDF9UGOclUzylfYT2/GB0pkvYkLfJ2zVWTEzrfyaZO+3noLq6PFDld4t+X2wW5c8f7GTaXCwJXSwOnAo6hf4xk+wTRVQ3OppgOq6BlBLior+fSEcvuh9gF1HIOwT6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uJyo/IWO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8c74tBaP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 15 Jun 2024 08:21:46 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718439706;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D9ospV/QiWJ0FpmAo7z16Apo/RC3Sbx9WPHk6QKEUbY=;
-	b=uJyo/IWOneF8v0kOJttkJHmB+0kozYCGiNrnc6sk2nc36124B042ijxnjiOQ6r+SNf8Tyj
-	M11/QgeETcpoxWknPUdBbYjvydcoHE4WHT1mMcOulC/1F4WREKq0E39ZXYZFlugeiVudRu
-	pgPdW4eKJ9Kw+kummRZl12IbAxtIiSeSPdTM4FNnlX3/ElIE2+o3un6UPLhh7tqrSO5H9X
-	xPoQGuSlh/e+QDrrphDuVRoAhKBWlYCUVcbXfhq57dqsxasKMDS6n2smV1G7XqNb7/EVdx
-	fttui7M5mZLTQenQTqmwdY4E5bsGpJya1KUU+QCCEZE4c4qJObfSm/HgpA9RCw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718439706;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D9ospV/QiWJ0FpmAo7z16Apo/RC3Sbx9WPHk6QKEUbY=;
-	b=8c74tBaP1F0ON/vxk6zUMs1pty/zR6ZbCIw0tDs61Fq5gyMjS3k34qEV5JRsT7HAE8ucHn
-	fSzihK6CA/3sSWAg==
-From: "tip-bot2 for Alexey Makhalov" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/vmware] input/vmmouse: Use VMware hypercall API
-Cc: Alexey Makhalov <alexey.makhalov@broadcom.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240613191650.9913-4-alexey.makhalov@broadcom.com>
-References: <20240613191650.9913-4-alexey.makhalov@broadcom.com>
+	s=arc-20240116; t=1718439913; c=relaxed/simple;
+	bh=IlnUBEHlUTDilPI8TWHODx0HU1aDoU75blv08V81wVI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MSefItI7UXAFNaJfJ22Gi+VrIVhmu2K48iRsJURAAcCUQRS0osuWSgQ1KXemT+UAo8r0dMCRu/UVQ21YOkiOv9KLQDsSXzcGZ8fDQ3gv9q66ZAmpYzJav9Y339ARYEFdwLYSCIuDSGKodJ1I5sL/3tcpLdHnMqUh2cJqq4/SALE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=206.189.21.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.52])
+	by app1 (Coremail) with SMTP id HgEQrADn74O_T21mNNvrBw--.52314S2;
+	Sat, 15 Jun 2024 16:24:31 +0800 (CST)
+Received: from [10.12.169.238] (unknown [10.12.169.238])
+	by gateway (Coremail) with SMTP id _____wAHZi67T21mDCUdAQ--.56296S2;
+	Sat, 15 Jun 2024 16:24:29 +0800 (CST)
+Message-ID: <5351308d-6fb7-4179-b0a0-32107d8244b7@hust.edu.cn>
+Date: Sat, 15 Jun 2024 16:24:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171843970646.10875.11154402288451406057.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] doc-guide: add help documentation
+ checktransupdate.rst
+To: si.yanteng@linux.dev, Jonathan Corbet <corbet@lwn.net>,
+ Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240615035323.909650-1-dzm91@hust.edu.cn>
+ <20240615035323.909650-2-dzm91@hust.edu.cn>
+ <4da91d0b2a0dc580ffaa7c67ab1860c310387e10@linux.dev>
+From: Dongliang Mu <dzm91@hust.edu.cn>
+In-Reply-To: <4da91d0b2a0dc580ffaa7c67ab1860c310387e10@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HgEQrADn74O_T21mNNvrBw--.52314S2
+Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvJXoW3XFy7Cr1kCw1kCF48Gw48JFb_yoW3CF4Upa
+	43GFWxJan2q345tr1Ig34jvrnIyF1xCa1jgr17Kw1vqrn0yrn7JF43tryFgrWkJryrAayU
+	ZFWjyry7uryrZFDanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUmYb7Iv0xC_tr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
+	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
+	1Y6r17M2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
+	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
+	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1U
+	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrwCF04k20x
+	vE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_
+	JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+	AY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
+	cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
+	IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIev
+	Ja73UjIFyTuYvjxUV9N3UUUUU
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-The following commit has been merged into the x86/vmware branch of tip:
 
-Commit-ID:     2f55c98aae584ee560dedbb5cb498e7ab96a40b2
-Gitweb:        https://git.kernel.org/tip/2f55c98aae584ee560dedbb5cb498e7ab96a40b2
-Author:        Alexey Makhalov <alexey.makhalov@broadcom.com>
-AuthorDate:    Thu, 13 Jun 2024 12:16:45 -07:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Fri, 14 Jun 2024 18:01:21 +02:00
+On 2024/6/15 15:57, si.yanteng@linux.dev wrote:
+> 2024年6月15日 11:53, "Dongliang Mu" <dzm91@hust.edu.cn> 写到:
+>
+>
+>
+>> This commit adds help documents - Documentation/doc-guide/checktransupdate.rst
+>>
+>> and Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+>>
+>> for scripts/checktransupdate.py, including English and Chinese versions
+>>
+>> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+>>
+>> ---
+>>
+>> v1->v2: fix some issues according to Randy
+>>
+>>   Documentation/doc-guide/checktransupdate.rst | 63 +++++++++++++++++++
+>>
+>>   Documentation/doc-guide/index.rst | 1 +
+>>
+>>   .../zh_CN/doc-guide/checktransupdate.rst | 62 ++++++++++++++++++
+>>
+>>   .../translations/zh_CN/doc-guide/index.rst | 1 +
+>>
+>>   4 files changed, 127 insertions(+)
+>>
+>>   create mode 100644 Documentation/doc-guide/checktransupdate.rst
+>>
+>>   create mode 100644 Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+>>
+>> diff --git a/Documentation/doc-guide/checktransupdate.rst b/Documentation/doc-guide/checktransupdate.rst
+>>
+>> new file mode 100644
+>>
+>> index 000000000000..4ece330882d6
+>>
+>> --- /dev/null
+>>
+>> +++ b/Documentation/doc-guide/checktransupdate.rst
+>>
+>> @@ -0,0 +1,63 @@
+>>
+>> +.. SPDX-License-Identifier: GPL-2.0
+>>
+>> +
+>>
+>> +Check translation update
+>>
+>> +==========================
+> Let's get rid of unnecessary symbols.
+>> +
+>>
+>> +This script helps track the translation status of the documentation in
+>>
+>> +different locales, i.e., whether the documentation is up-to-date with
+>>
+>> +the English counterpart.
+>>
+>> +
+>>
+>> +How it works
+>>
+>> +------------
+>>
+>> +
+>>
+>> +It uses ``git log`` command to track the latest English commit from the
+>>
+>> +translation commit (order by author date) and the latest English commits
+>>
+>> +from HEAD. If any differences occur, the file is considered as out-of-date,
+>>
+>> +then commits that need to be updated will be collected and reported.
+>>
+>> +
+>>
+>> +Features implemented
+>>
+>> +--------------------
+>>
+>> +
+>>
+>> +- check all files in a certain locale
+>>
+>> +- check a single file or a set of files
+>>
+>> +- provide options to change output format
+>>
+>> +
+>>
+>> +Usage
+>>
+>> +-----
+>>
+>> +
+>>
+>> +::
+>>
+>> +
+>>
+>> + checktransupdate.py [-h] [-l LOCALE] [--print-commits | --no-print-commits] [--print-updated-files | --no-print-updated-files] [--debug | --no-debug] [files ...]
+>>
+>> +
+>>
+>> +Options
+>>
+>> +~~~~~~~
+>>
+>> +
+>>
+>> +- ``-l``, ``--locale``: locale to check when file is not specified
+>>
+>> +- ``--[no-]print-commits``: whether to print commits between origin and
+>>
+>> + translation
+>>
+>> +- ``--[no-]print-updated-files``: whether to print files that do no
+>>
+>> + need to be updated
+>>
+>> +- ``files``: files to check, if this option is specified, the locale
+>>
+>> + option will be ignored.
+>>
+>> +
+>>
+>> +Samples
+>>
+>> +~~~~~~~
+>>
+>> +
+>>
+>> +- ``./scripts/checktransupdate.py -l zh_CN``
+>>
+>> + This will print all the files that need to be updated in the zh_CN locale.
+>>
+>> +- ``./scripts/checktransupdate.py Documentation/translations/zh_CN/process/coding-style.rst``
+>>
+>> + This will only print the status of the specified file.
+>>
+>> +
+>>
+>> +Then the output is something like:
+>>
+>> +
+>>
+>> +::
+>>
+>> +
+>>
+>> + Documentation/translations/zh_CN/process/coding-style.rst (2 commits)
+>>
+>> + commit 6813216bbdba ("Documentation: coding-style: ask function-like macros to evaluate parameters")
+>>
+>> + commit 185ea7676ef3 ("Documentation: coding-style: Update syntax highlighting for code-blocks")
+>>
+>> +
+>>
+>> +Features to be implemented
+>>
+>> +----------------------------
+> ditto
+>
+>> +
+>>
+>> +- track the translation status of files that have no translation
+>>
+>> +- files can be a folder instead of only a file
+>>
+>> diff --git a/Documentation/doc-guide/index.rst b/Documentation/doc-guide/index.rst
+>>
+>> index 7c7d97784626..24d058faa75c 100644
+>>
+>> --- a/Documentation/doc-guide/index.rst
+>>
+>> +++ b/Documentation/doc-guide/index.rst
+>>
+>> @@ -12,6 +12,7 @@ How to write kernel documentation
+>>
+>>   parse-headers
+>>
+>>   contributing
+>>
+>>   maintainer-profile
+>>
+>> + checktransupdate
+>>
+>>   
+>>
+>>   .. only:: subproject and html
+>>
+>>   
+>>
+>> diff --git a/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+>>
+>> new file mode 100644
+>>
+>> index 000000000000..37c0bb518ab8
+>>
+>> --- /dev/null
+>>
+>> +++ b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+>>
+>> @@ -0,0 +1,62 @@
+>>
+>> +.. SPDX-License-Identifier: GPL-2.0
+>>
+>> +
+>>
+>> +.. include:: ../disclaimer-zh_CN.rst
+>>
+>> +
+>>
+>> +:Original: Documentation/doc-guide/checktransupdate.rst
+>>
+>> +
+>>
+>> +:译者: 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
+>>
+>> +
+>>
+>> +检查翻译更新
+>>
+>> +=============
+> ditto
+>> +
+>>
+>> +这个脚本帮助跟踪不同语言的文档翻译状态，即文档是否与对应的英文版本保持更新。
+>>
+>> +
+>>
+>> +工作原理
+>>
+>> +------------
+>>
+>> +
+>>
+>> +它使用 ``git log`` 命令来跟踪翻译提交的最新英文提交（按作者日期排序）和英文文档的
+>>
+>> +最新提交。如果有任何差异，则该文件被认为是过期的，然后需要更新的提交将被收集并报告。
+>>
+>> +
+>>
+>> +实现的功能
+>>
+>> +--------------------
+> ditto
+>
+> ...
+>
+>> +
+>>
+>> +- 检查特定语言中的所有文件
+>>
+>> +- 检查单个文件或一组文件
+>>
+>> +- 提供更改输出格式的选项
+>>
+>> +
+>>
+>> +用法
+>>
+>> +-----
+>>
+>> +
+>>
+>> +::
+>>
+>> +
+>>
+>> + checktransupdate.py [-h] [-l LOCALE] [--print-commits | --no-print-commits] [--print-updated-files | --no-print-updated-files] [--debug | --no-debug] [files ...]
+>>
+>> +
+>>
+>> +选项
+>>
+>> +~~~~~~~
+>>
+>> +
+>>
+>> +- ``-l``, ``--locale``: 检查指定的文件语言，如果未指定文件
+>>
+>> +- ``--[no-]print-commits``: 是否打印英文原始版本和翻译版本之间的提交
+>>
+>> +- ``--[no-]print-updated-files``: 是否打印无需更新的文件
+>>
+>> +- ``files``: 要检查的文件，如果指定了此选项，将忽略语言选项
+>>
+>> +
+>>
+>> +示例
+>>
+>> +~~~~~~~
+> ditto
 
-input/vmmouse: Use VMware hypercall API
 
-Switch from VMWARE_HYPERCALL macro to vmware_hypercall API.
-Eliminate arch specific code. No functional changes intended.
+Yanteng,
 
-Signed-off-by: Alexey Makhalov <alexey.makhalov@broadcom.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20240613191650.9913-4-alexey.makhalov@broadcom.com
----
- drivers/input/mouse/vmmouse.c | 76 +++++++++-------------------------
- 1 file changed, 22 insertions(+), 54 deletions(-)
+the requested changes does not match between English and Chinse translation.
 
-diff --git a/drivers/input/mouse/vmmouse.c b/drivers/input/mouse/vmmouse.c
-index ea9eff7..fb1d986 100644
---- a/drivers/input/mouse/vmmouse.c
-+++ b/drivers/input/mouse/vmmouse.c
-@@ -21,19 +21,16 @@
- #include "psmouse.h"
- #include "vmmouse.h"
- 
--#define VMMOUSE_PROTO_MAGIC			0x564D5868U
--
- /*
-  * Main commands supported by the vmmouse hypervisor port.
-  */
--#define VMMOUSE_PROTO_CMD_GETVERSION		10
--#define VMMOUSE_PROTO_CMD_ABSPOINTER_DATA	39
--#define VMMOUSE_PROTO_CMD_ABSPOINTER_STATUS	40
--#define VMMOUSE_PROTO_CMD_ABSPOINTER_COMMAND	41
--#define VMMOUSE_PROTO_CMD_ABSPOINTER_RESTRICT   86
-+#define VMWARE_CMD_ABSPOINTER_DATA	39
-+#define VMWARE_CMD_ABSPOINTER_STATUS	40
-+#define VMWARE_CMD_ABSPOINTER_COMMAND	41
-+#define VMWARE_CMD_ABSPOINTER_RESTRICT	86
- 
- /*
-- * Subcommands for VMMOUSE_PROTO_CMD_ABSPOINTER_COMMAND
-+ * Subcommands for VMWARE_CMD_ABSPOINTER_COMMAND
-  */
- #define VMMOUSE_CMD_ENABLE			0x45414552U
- #define VMMOUSE_CMD_DISABLE			0x000000f5U
-@@ -76,28 +73,6 @@ struct vmmouse_data {
- 	char dev_name[128];
- };
- 
--/*
-- * Hypervisor-specific bi-directional communication channel
-- * implementing the vmmouse protocol. Should never execute on
-- * bare metal hardware.
-- */
--#define VMMOUSE_CMD(cmd, in1, out1, out2, out3, out4)	\
--({							\
--	unsigned long __dummy1, __dummy2;		\
--	__asm__ __volatile__ (VMWARE_HYPERCALL :	\
--		"=a"(out1),				\
--		"=b"(out2),				\
--		"=c"(out3),				\
--		"=d"(out4),				\
--		"=S"(__dummy1),				\
--		"=D"(__dummy2) :			\
--		"a"(VMMOUSE_PROTO_MAGIC),		\
--		"b"(in1),				\
--		"c"(VMMOUSE_PROTO_CMD_##cmd),		\
--		"d"(0) :			        \
--		"memory");		                \
--})
--
- /**
-  * vmmouse_report_button - report button state on the correct input device
-  *
-@@ -145,14 +120,12 @@ static psmouse_ret_t vmmouse_report_events(struct psmouse *psmouse)
- 	struct input_dev *abs_dev = priv->abs_dev;
- 	struct input_dev *pref_dev;
- 	u32 status, x, y, z;
--	u32 dummy1, dummy2, dummy3;
- 	unsigned int queue_length;
- 	unsigned int count = 255;
- 
- 	while (count--) {
- 		/* See if we have motion data. */
--		VMMOUSE_CMD(ABSPOINTER_STATUS, 0,
--			    status, dummy1, dummy2, dummy3);
-+		status = vmware_hypercall1(VMWARE_CMD_ABSPOINTER_STATUS, 0);
- 		if ((status & VMMOUSE_ERROR) == VMMOUSE_ERROR) {
- 			psmouse_err(psmouse, "failed to fetch status data\n");
- 			/*
-@@ -172,7 +145,8 @@ static psmouse_ret_t vmmouse_report_events(struct psmouse *psmouse)
- 		}
- 
- 		/* Now get it */
--		VMMOUSE_CMD(ABSPOINTER_DATA, 4, status, x, y, z);
-+		status = vmware_hypercall4(VMWARE_CMD_ABSPOINTER_DATA, 4,
-+					   &x, &y, &z);
- 
- 		/*
- 		 * And report what we've got. Prefer to report button
-@@ -247,14 +221,10 @@ static psmouse_ret_t vmmouse_process_byte(struct psmouse *psmouse)
- static void vmmouse_disable(struct psmouse *psmouse)
- {
- 	u32 status;
--	u32 dummy1, dummy2, dummy3, dummy4;
--
--	VMMOUSE_CMD(ABSPOINTER_COMMAND, VMMOUSE_CMD_DISABLE,
--		    dummy1, dummy2, dummy3, dummy4);
- 
--	VMMOUSE_CMD(ABSPOINTER_STATUS, 0,
--		    status, dummy1, dummy2, dummy3);
-+	vmware_hypercall1(VMWARE_CMD_ABSPOINTER_COMMAND, VMMOUSE_CMD_DISABLE);
- 
-+	status = vmware_hypercall1(VMWARE_CMD_ABSPOINTER_STATUS, 0);
- 	if ((status & VMMOUSE_ERROR) != VMMOUSE_ERROR)
- 		psmouse_warn(psmouse, "failed to disable vmmouse device\n");
- }
-@@ -271,26 +241,24 @@ static void vmmouse_disable(struct psmouse *psmouse)
- static int vmmouse_enable(struct psmouse *psmouse)
- {
- 	u32 status, version;
--	u32 dummy1, dummy2, dummy3, dummy4;
- 
- 	/*
- 	 * Try enabling the device. If successful, we should be able to
- 	 * read valid version ID back from it.
- 	 */
--	VMMOUSE_CMD(ABSPOINTER_COMMAND, VMMOUSE_CMD_ENABLE,
--		    dummy1, dummy2, dummy3, dummy4);
-+	vmware_hypercall1(VMWARE_CMD_ABSPOINTER_COMMAND, VMMOUSE_CMD_ENABLE);
- 
- 	/*
- 	 * See if version ID can be retrieved.
- 	 */
--	VMMOUSE_CMD(ABSPOINTER_STATUS, 0, status, dummy1, dummy2, dummy3);
-+	status = vmware_hypercall1(VMWARE_CMD_ABSPOINTER_STATUS, 0);
- 	if ((status & 0x0000ffff) == 0) {
- 		psmouse_dbg(psmouse, "empty flags - assuming no device\n");
- 		return -ENXIO;
- 	}
- 
--	VMMOUSE_CMD(ABSPOINTER_DATA, 1 /* single item */,
--		    version, dummy1, dummy2, dummy3);
-+	version = vmware_hypercall1(VMWARE_CMD_ABSPOINTER_DATA,
-+				    1 /* single item */);
- 	if (version != VMMOUSE_VERSION_ID) {
- 		psmouse_dbg(psmouse, "Unexpected version value: %u vs %u\n",
- 			    (unsigned) version, VMMOUSE_VERSION_ID);
-@@ -301,11 +269,11 @@ static int vmmouse_enable(struct psmouse *psmouse)
- 	/*
- 	 * Restrict ioport access, if possible.
- 	 */
--	VMMOUSE_CMD(ABSPOINTER_RESTRICT, VMMOUSE_RESTRICT_CPL0,
--		    dummy1, dummy2, dummy3, dummy4);
-+	vmware_hypercall1(VMWARE_CMD_ABSPOINTER_RESTRICT,
-+			  VMMOUSE_RESTRICT_CPL0);
- 
--	VMMOUSE_CMD(ABSPOINTER_COMMAND, VMMOUSE_CMD_REQUEST_ABSOLUTE,
--		    dummy1, dummy2, dummy3, dummy4);
-+	vmware_hypercall1(VMWARE_CMD_ABSPOINTER_COMMAND,
-+			  VMMOUSE_CMD_REQUEST_ABSOLUTE);
- 
- 	return 0;
- }
-@@ -342,7 +310,7 @@ static bool vmmouse_check_hypervisor(void)
-  */
- int vmmouse_detect(struct psmouse *psmouse, bool set_properties)
- {
--	u32 response, version, dummy1, dummy2;
-+	u32 response, version, type;
- 
- 	if (!vmmouse_check_hypervisor()) {
- 		psmouse_dbg(psmouse,
-@@ -351,9 +319,9 @@ int vmmouse_detect(struct psmouse *psmouse, bool set_properties)
- 	}
- 
- 	/* Check if the device is present */
--	response = ~VMMOUSE_PROTO_MAGIC;
--	VMMOUSE_CMD(GETVERSION, 0, version, response, dummy1, dummy2);
--	if (response != VMMOUSE_PROTO_MAGIC || version == 0xffffffffU)
-+	response = ~VMWARE_HYPERVISOR_MAGIC;
-+	version = vmware_hypercall3(VMWARE_CMD_GETVERSION, 0, &response, &type);
-+	if (response != VMWARE_HYPERVISOR_MAGIC || version == 0xffffffffU)
- 		return -ENXIO;
- 
- 	if (set_properties) {
+Dongliang Mu
+
+
+>
+>
+> Thanks,
+> Yanteng
+>> +
+>>
+>> +- ``./scripts/checktransupdate.py -l zh_CN``
+>>
+>> + 这将打印 zh_CN 语言中需要更新的所有文件。
+>>
+>> +- ``./scripts/checktransupdate.py Documentation/translations/zh_CN/process/coding-style.rst``
+>>
+>> + 这将只打印指定文件的状态。
+>>
+>> +
+>>
+>> +然后输出类似如下的内容：
+>>
+>> +
+>>
+>> +::
+>>
+>> +
+>>
+>> + Documentation/translations/zh_CN/process/coding-style.rst (2 commits)
+>>
+>> + commit 6813216bbdba ("Documentation: coding-style: ask function-like macros to evaluate parameters")
+>>
+>> + commit 185ea7676ef3 ("Documentation: coding-style: Update syntax highlighting for code-blocks")
+>>
+>> +
+>>
+>> +待实现的功能
+>>
+>> +-------------
+>>
+>> +
+>>
+>> +- 跟踪没有翻译过的文件的翻译状态
+>>
+>> +- 文件参数可以是文件夹而不仅仅是单个文件
+>>
+>> diff --git a/Documentation/translations/zh_CN/doc-guide/index.rst b/Documentation/translations/zh_CN/doc-guide/index.rst
+>>
+>> index 78c2e9a1697f..0ac1fc9315ea 100644
+>>
+>> --- a/Documentation/translations/zh_CN/doc-guide/index.rst
+>>
+>> +++ b/Documentation/translations/zh_CN/doc-guide/index.rst
+>>
+>> @@ -18,6 +18,7 @@
+>>
+>>   parse-headers
+>>
+>>   contributing
+>>
+>>   maintainer-profile
+>>
+>> + checktransupdate
+>>
+>>   
+>>
+>>   .. only:: subproject and html
+>>
+>>   
+>>
+>> -- 
+>>
+>> 2.39.2
+>>
+
 
