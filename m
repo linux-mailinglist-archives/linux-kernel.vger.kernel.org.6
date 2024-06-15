@@ -1,74 +1,72 @@
-Return-Path: <linux-kernel+bounces-216022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE48D909A07
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 23:37:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B16DC909A08
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 23:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2BB31C21235
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 21:37:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21D1E1F2165A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 21:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1FE61FE5;
-	Sat, 15 Jun 2024 21:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B807A61FEB;
+	Sat, 15 Jun 2024 21:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ce+WR7cI"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="hEvdr7h5"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12E61CA94
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 21:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6D21CA94
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 21:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718487458; cv=none; b=TZNENDWa5qbIyQScWVoust8t8dvSWiw/M0fGQbexx8wF6Drnx9avwzkEQeY53VvEMsDcvdHkr6zt69IFFNf4BcGccw1aNrBs9rG9pMnhKQ02pwhiWR9tctiP7ssis+0wRXAvNr8aawsvmvUfaF0CC0h8FmjIkCRhqaJztB6+G74=
+	t=1718487712; cv=none; b=pIfDTsT/EkFxnb/Zx0EFOkrhu+h2TrfnBnYKsjDP5HCgKcUIgfYr8stgRtKx3n8X28djELYLxsmynB6Lz4OAZSZM65Dx3TCqVpTRPRPfMO3jKOyIbDc9YwVMmRBmECd6XkRZpKuVw8sLGAIPiupO0uOuy79olKVdc9UVsybqyQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718487458; c=relaxed/simple;
-	bh=JZcwWOykDIxtFC3B+rDuKisQByVfs3wR1jwX4KkHyVA=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:From:To:
-	 References:In-Reply-To; b=YEWX5gVdcZ0JcQnB2NZEd9KVXpFKCqKqYwiXjYUuJEqt6dR6nOiraaWgvb17PEW2HfZpn4RKCO9flkOIhedQrh5uzUF7nxh9cgrGY9X4GVFmGco9ouueLTFwvUoOKHysgQMtq0yH6hZiOiTGuZJI89F2j9wCfV35omRIRAhFLHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ce+WR7cI; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52bbdb15dd5so3788286e87.3
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 14:37:36 -0700 (PDT)
+	s=arc-20240116; t=1718487712; c=relaxed/simple;
+	bh=XS1BRZN1SjBQqYx8cKsHHYq7gvoU3NEtzp4uXV72Gsk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eKEa4VxqgBb/TMVwjQedzOi7XBtDVt8WMZ0pqtF6s7T0AdcULN/ADDdbwxkT5tVRrBS+bqBsAxy+IIw7jDUJSTO34FFRGsGetS18pDdn/Bh4yRhLBRCKabZqHWQ+PxsUyjhn0bjZv+yJYpWOuNQFgb4/6TmfAXISM42WzG26sXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=hEvdr7h5; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5b9a5be6668so1709743eaf.1
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 14:41:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718487455; x=1719092255; darn=vger.kernel.org;
-        h=in-reply-to:content-language:references:to:from:subject:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1QIrxFLTXK4GDIfDMv/uDfwbH6lgMn34DC8Ib+1ZiY8=;
-        b=ce+WR7cIFbKcSpMZam6EoHorE5LV1q4lwYFi3h4A+Dfd56ImiPeiZAGQgrnY4Th1Us
-         QAvUSWhMGC2DoqngHey6MIAKYw10jtbs9pGhPxJgoPTBl1RJQXlhIb3vVpRkjjMaKujl
-         wza5ciw+dS8gj0Rl9mVeVOrFjfksT/ntAXv9ArWhI5oag4SllR2zvRgRJNmDvbQniP9C
-         Zc8N3Cb+lxtQGrefgZfU6Zc5RsrgcI8ZNC+R4n6LxafwZ5uuwe0oVwKBrYpivMPAX4kk
-         YhZOLDvTerJ+AxNZdRBazNBC+0dIaJJ/mIsPlEyxgC5a1hMwKxt+TONrVCtLdGjqMFHa
-         qIAw==
+        d=broadcom.com; s=google; t=1718487710; x=1719092510; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=T5ucE0W5TgTryjSxB4HJKh3yQO0XyVzTKVYePiu3SYU=;
+        b=hEvdr7h59dSV2WxkvegcnKSi7lh8OyFROTTYNYYT9ej3ILwpC5f/ByXcmq0IWGlJ+V
+         F+2YkpJi3gRxRhcixEeahfPuTF9X6QqR43hLKBtIIf6X5oFl9CP9ILU/FGMAFl2Oq6Fp
+         0/QXK7o47bn/1tMmxDQ4T3hPrkUh5q3/xHtXI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718487455; x=1719092255;
-        h=in-reply-to:content-language:references:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1QIrxFLTXK4GDIfDMv/uDfwbH6lgMn34DC8Ib+1ZiY8=;
-        b=JH8GMiI0GVVRUSlHiBNi8oRwBm7uLzHCm6R1RUuXtLfjFOvHDR89/NvnzOndNbqXxv
-         Dfu4x4ML0oF1a6waaU/nmS86K+LjxC+WBTCivopwm41/UN1Ye/uUgcyEL7Qcq8vc3LB6
-         vMlHTdxHz6ER06BQwora3G4FyEUSznsPCzVOxaZVA35VfopfzEvIm6aQYQhzmwAFBSOM
-         Y60FQdIOVW202OWirSholSmn/QxUXjpBKYpyp85Qx+n6ZyD+ubPKQ6zg+jOTZoep5cNk
-         aqZXr2oIqYnDs3pCoMNmmAb9kPl2Ux1ohaAx0NwZAIai5zO8YxUrY+4gCthhuq8udeK5
-         tsjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+caS/d8C17pYKYQGvPgRXdtPd6YMfbmM9lwffl4+hknOp0pnU30bnqI8ah5fJgs4uIwoX9jHJqo8hBrnOG7JisLzz/w1WE96W6M04
-X-Gm-Message-State: AOJu0YzjtPd9VSaAD/AG3asQp863lSLbwCFTyp14MBHYDGue2qR7BKRM
-	xKEWxOLvwYO4VDo7soAKI+VKN8sQjscULQrYdO7W/UwJv71fro5z
-X-Google-Smtp-Source: AGHT+IGywJkcDRHHfPsC6fUVK/T62I/6lU2eMcIwp6QyCtXQ17iEz3HwQhZe1yAgLM1ySIr8eNxfHA==
-X-Received: by 2002:a05:6512:2395:b0:52c:8979:9627 with SMTP id 2adb3069b0e04-52cb3de92d3mr2144414e87.3.1718487454657;
-        Sat, 15 Jun 2024 14:37:34 -0700 (PDT)
-Received: from ?IPV6:2a00:1370:8180:9f8c:610c:ea5a:e832:8757? ([2a00:1370:8180:9f8c:610c:ea5a:e832:8757])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca28723dcsm839982e87.151.2024.06.15.14.37.33
+        d=1e100.net; s=20230601; t=1718487710; x=1719092510;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T5ucE0W5TgTryjSxB4HJKh3yQO0XyVzTKVYePiu3SYU=;
+        b=ZkN84RvZD0f4tvRr4s9Hl8Lr/waue/sihi3lI8OKONjqzx2wfivljB0YCx/cqE0INq
+         a/DpZD6BWc4qu3T0J2V0pbC1C3TtYKmg1zqH0bXnB8pSdMSsvrROI/zoo5FYf5/e0s8G
+         c8xaQ8c1LRp+qNL6yzYt07WEh0q4E0pN2gNnesyUpu4PFlQoCgC8IsJ4mM6hsti3HCE3
+         hyxNy3PWgHUDj/WnX9hgRrMeIhTnqiDOApaSCHZ7YGM5SsXLxEM5Qf9XHZiARo8WYRop
+         Hp5KlvPskakoyCq/ndw0ZoXNuxsx5VBpsorq32P7fwBZzXoX1H10dLwZ5W/w7M9DmQ1l
+         6gsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ8/Sa9eyONpSP9NyBMPmM8ebcG33uaEFnmIGXm2prrYOhb1lsXH6V53zPEahozG10ql2Oh6Oxdla8JKerqV1FbbkQzkBT3BljQ+Yf
+X-Gm-Message-State: AOJu0YzjkroZCv74rYsDJ7T0fCqZOmTVDTZtY/ihmCCAjXRyY1oFal7G
+	k2KLj48AKMkjaVf3EQMBIooSVuxwO/7Issj6XAiU3Fm/bjgqog0fSdyRcxagFAoAh7Hz5Vg5ypQ
+	=
+X-Google-Smtp-Source: AGHT+IFoDRGbZRhAmMsNK5qfCiBeSc9/VPI+7uFmZyY6h4XyY+k/1XfZY+EzFO1TxwRhAVkawVWeSA==
+X-Received: by 2002:a05:6358:6f06:b0:197:df0e:f23c with SMTP id e5c5f4694b2df-19fa9de65dcmr819174555d.11.1718487710046;
+        Sat, 15 Jun 2024 14:41:50 -0700 (PDT)
+Received: from [192.168.0.212] ([50.35.46.55])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4c45ac600sm6330432a91.5.2024.06.15.14.41.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Jun 2024 14:37:34 -0700 (PDT)
-Content-Type: multipart/mixed; boundary="------------QpeH4aDJgNhqrF1J3qRQP0ql"
-Message-ID: <31ac448d-2a21-4e93-8a00-5c7090970452@gmail.com>
-Date: Sun, 16 Jun 2024 00:37:32 +0300
+        Sat, 15 Jun 2024 14:41:49 -0700 (PDT)
+Message-ID: <ed6e1387-3d8c-4ebc-b8e0-f8fbfc4d00c3@broadcom.com>
+Date: Sat, 15 Jun 2024 14:41:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,93 +74,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [bluetooth?] WARNING in hci_conn_del
-From: Pavel Skripkin <paskripkin@gmail.com>
-To: syzbot <syzbot+b2545b087a01a7319474@syzkaller.appspotmail.com>,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000396d68061acddd90@google.com>
- <0d900a20-0e9a-4b61-844e-df38b10bc4f2@gmail.com>
+Subject: Re: [tip:x86/vmware 4/8] vmwgfx_msg.c:undefined reference to
+ `vmware_hypercall_slow'
+To: Borislav Petkov <bp@alien8.de>, kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+ x86@kernel.org
+References: <202406152104.FxakP1MB-lkp@intel.com>
+ <20240615143344.GDZm2mSB-qyB0Vt28Q@fat_crate.local>
 Content-Language: en-US
-In-Reply-To: <0d900a20-0e9a-4b61-844e-df38b10bc4f2@gmail.com>
-
-This is a multi-part message in MIME format.
---------------QpeH4aDJgNhqrF1J3qRQP0ql
+From: Alexey Makhalov <alexey.makhalov@broadcom.com>
+Autocrypt: addr=alexey.makhalov@broadcom.com; keydata=
+ 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 EuY0
+In-Reply-To: <20240615143344.GDZm2mSB-qyB0Vt28Q@fat_crate.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+SPI warnings/errors are introduced by commit e77603d5468b90 ("iio: dac: 
+support the ad9739a RF DAC")
 
-
-On 6/14/24 11:42 AM, Pavel Skripkin wrote:
+On 6/15/24 7:33 AM, Borislav Petkov wrote:
+> On Sat, Jun 15, 2024 at 09:22:00PM +0800, kernel test robot wrote:
+>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/vmware
+>> head:   ef08e7dc21307b226b5280d5e8cfea687bfd2866
+>> commit: e5ac9008b79c59235c34494e555419665022f5e1 [4/8] drm/vmwgfx: Use VMware hypercall API
+>> config: i386-buildonly-randconfig-002-20240615 (https://download.01.org/0day-ci/archive/20240615/202406152104.FxakP1MB-lkp@intel.com/config)
+>> compiler: gcc-9 (Ubuntu 9.5.0-4ubuntu2) 9.5.0
+>> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240615/202406152104.FxakP1MB-lkp@intel.com/reproduce)
+>>
+>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>> the same patch/commit), kindly add following tags
+>> | Reported-by: kernel test robot <lkp@intel.com>
+>> | Closes: https://lore.kernel.org/oe-kbuild-all/202406152104.FxakP1MB-lkp@intel.com/
+>>
+>> All errors (new ones prefixed by >>):
+>>
+>>     ld: drivers/gpu/drm/vmwgfx/vmwgfx_msg.o: in function `vmw_open_channel.constprop.0':
+>>>> vmwgfx_msg.c:(.text+0x203): undefined reference to `vmware_hypercall_slow'
+>>     ld: drivers/gpu/drm/vmwgfx/vmwgfx_msg.o: in function `vmw_recv_msg':
+>>     vmwgfx_msg.c:(.text+0x46f): undefined reference to `vmware_hypercall_slow'
+>>>> ld: vmwgfx_msg.c:(.text+0x49c): undefined reference to `vmware_hypercall_slow'
+>>     ld: vmwgfx_msg.c:(.text+0x4c3): undefined reference to `vmware_hypercall_slow'
+>>     ld: drivers/gpu/drm/vmwgfx/vmwgfx_msg.o: in function `vmw_close_channel':
+>>     vmwgfx_msg.c:(.text+0x580): undefined reference to `vmware_hypercall_slow'
+>>     ld: drivers/gpu/drm/vmwgfx/vmwgfx_msg.o:vmwgfx_msg.c:(.text+0x729): more undefined references to `vmware_hypercall_slow' follow
+>>     ld: drivers/base/regmap/regmap-spi.o: in function `regmap_spi_read':
+>>     regmap-spi.c:(.text+0xf): undefined reference to `spi_write_then_read'
+>>     ld: drivers/base/regmap/regmap-spi.o: in function `regmap_spi_gather_write':
+>>     regmap-spi.c:(.text+0x2b4): undefined reference to `spi_sync'
+>>     ld: drivers/base/regmap/regmap-spi.o: in function `spi_sync_transfer.constprop.0':
+>>     regmap-spi.c:(.text+0x337): undefined reference to `spi_sync'
+>>     ld: drivers/base/regmap/regmap-spi.o: in function `regmap_spi_async_write':
+>>     regmap-spi.c:(.text+0x445): undefined reference to `spi_async'
+>>     ld: drivers/iio/dac/ad9739a.o: in function `ad9739a_driver_init':
+>>     ad9739a.c:(.init.text+0x10): undefined reference to `__spi_register_driver'
+>>
+>> Kconfig warnings: (for reference only)
+>>     WARNING: unmet direct dependencies detected for REGMAP_SPI
+>>     Depends on [n]: SPI [=n]
+>>     Selected by [y]:
+>>     - AD9739A [=y] && IIO [=y] && (SPI [=n] || COMPILE_TEST [=y])
+>>
+>> -- 
 > 
+> Zapping tip:x86/vmware from the tip/master lineup for the time being, until this
+> is fixed.
 > 
-> On 6/14/24 2:29 AM, syzbot wrote:
->> Hello,
->> 
->> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
->> SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
->> 
->> 2024/06/13 23:28:26 ignoring optional flag "sandboxArg"="0"
->> 2024/06/13 23:28:27 parsed 1 programs
->> 2024/06/13 23:28:27 [FATAL] failed to run ["./syz-executor" "setup" "fault" "binfmt_misc" "usb" "802154" "swap"]: exit status 67
->> mkdir(/syzcgroup) failed: 17
->> mount(binfmt_misc) failed: 16
->> SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
->>   (errno 16: Device or resource busy)
->> 
->> 
-
-#syz test
-git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-
-
--- 
-With regards,
-Pavel Skripkin
---------------QpeH4aDJgNhqrF1J3qRQP0ql
-Content-Type: text/x-patch; charset=UTF-8;
- name="0001-bluetooth-hci-disallow-setting-handle-bigger-than-HC.patch"
-Content-Disposition: attachment;
- filename*0="0001-bluetooth-hci-disallow-setting-handle-bigger-than-HC.pa";
- filename*1="tch"
-Content-Transfer-Encoding: base64
-
-RnJvbSBjZDc1YzQzNzk2NDUxYWYwZTNjNWU2YjQyYWE3Mjc2NjAzYzRiYjFiIE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBQYXZlbCBTa3JpcGtpbiA8cGFza3JpcGtpbkBnbWFp
-bC5jb20+CkRhdGU6IEZyaSwgMTQgSnVuIDIwMjQgMDA6MDI6NTEgKzAzMDAKU3ViamVjdDog
-W1BBVENIXSBibHVldG9vdGgvaGNpOiBkaXNhbGxvdyBzZXR0aW5nIGhhbmRsZSBiaWdnZXIg
-dGhhbgogSENJX0NPTk5fSEFORExFX01BWAoKU3l6Ym90IGhpdCB3YXJuaW5nIGluIGhjaV9j
-b25uX2RlbCgpIGNhdXNlZCBieSBmcmVlaW5nIGhhbmRsZSB0aGF0IHdhcwpub3QgYWxsb2Nh
-dGVkIHVzaW5nIGlkYSBhbGxvY2F0b3IuCgpUaGlzIGlzIGNhdXNlZCBieSBoYW5kbGUgYmln
-Z2VyIHRoYW4gSENJX0NPTk5fSEFORExFX01BWCBwYXNzZWQgYnkKaGNpX2xlX2JpZ19zeW5j
-X2VzdGFibGlzaGVkX2V2dCgpLCB3aGljaCBtYWtlcyBjb2RlIHRoaW5rIGl0J3MgdW5zZXQK
-Y29ubmVjdGlvbi4KCkFkZCBzYW1lIGNoZWNrIGZvciBoYW5kbGUgdXBwZXIgYm91bmQgYXMg
-aW4gaGNpX2Nvbm5fc2V0X2hhbmRsZSgpIHRvCnByZXZlbnQgd2FybmluZy4KCkZpeGVzOiBo
-dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS9idWc/ZXh0aWQ9YjI1NDViMDg3YTAxYTcz
-MTk0NzQKUmVwb3J0ZWQtYnk6IHN5emJvdCtiMjU0NWIwODdhMDFhNzMxOTQ3NEBzeXprYWxs
-ZXIuYXBwc3BvdG1haWwuY29tCkZpeGVzOiAxODFhNDJlZGRkZjUgKCJCbHVldG9vdGg6IE1h
-a2UgaGFuZGxlIG9mIGhjaV9jb25uIGJlIHVuaXF1ZSIpClNpZ25lZC1vZmYtYnk6IFBhdmVs
-IFNrcmlwa2luIDxwYXNrcmlwa2luQGdtYWlsLmNvbT4KLS0tCiBuZXQvYmx1ZXRvb3RoL2hj
-aV9jb25uLmMgfCAxMyArKysrKysrKysrKy0tCiAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0
-aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9uZXQvYmx1ZXRvb3RoL2hj
-aV9jb25uLmMgYi9uZXQvYmx1ZXRvb3RoL2hjaV9jb25uLmMKaW5kZXggMGM3NmRjZGU1MzYx
-Li5kZDIxZmVlMWQ3YzYgMTAwNjQ0Ci0tLSBhL25ldC9ibHVldG9vdGgvaGNpX2Nvbm4uYwor
-KysgYi9uZXQvYmx1ZXRvb3RoL2hjaV9jb25uLmMKQEAgLTg5OSw4ICs4OTksOCBAQCBzdGF0
-aWMgaW50IGhjaV9jb25uX2hhc2hfYWxsb2NfdW5zZXQoc3RydWN0IGhjaV9kZXYgKmhkZXYp
-CiAJCQkgICAgICAgVTE2X01BWCwgR0ZQX0FUT01JQyk7CiB9CiAKLXN0cnVjdCBoY2lfY29u
-biAqaGNpX2Nvbm5fYWRkKHN0cnVjdCBoY2lfZGV2ICpoZGV2LCBpbnQgdHlwZSwgYmRhZGRy
-X3QgKmRzdCwKLQkJCSAgICAgIHU4IHJvbGUsIHUxNiBoYW5kbGUpCitzdGF0aWMgc3RydWN0
-IGhjaV9jb25uICpfX2hjaV9jb25uX2FkZChzdHJ1Y3QgaGNpX2RldiAqaGRldiwgaW50IHR5
-cGUsIGJkYWRkcl90ICpkc3QsCisJCQkJICAgICAgIHU4IHJvbGUsIHUxNiBoYW5kbGUpCiB7
-CiAJc3RydWN0IGhjaV9jb25uICpjb25uOwogCkBAIC0xMDQ0LDYgKzEwNDQsMTUgQEAgc3Ry
-dWN0IGhjaV9jb25uICpoY2lfY29ubl9hZGRfdW5zZXQoc3RydWN0IGhjaV9kZXYgKmhkZXYs
-IGludCB0eXBlLAogCXJldHVybiBoY2lfY29ubl9hZGQoaGRldiwgdHlwZSwgZHN0LCByb2xl
-LCBoYW5kbGUpOwogfQogCitzdHJ1Y3QgaGNpX2Nvbm4gKmhjaV9jb25uX2FkZChzdHJ1Y3Qg
-aGNpX2RldiAqaGRldiwgaW50IHR5cGUsIGJkYWRkcl90ICpkc3QsCisJCQkgICAgICB1OCBy
-b2xlLCB1MTYgaGFuZGxlKQoreworCWlmIChoYW5kbGUgPiBIQ0lfQ09OTl9IQU5ETEVfTUFY
-KQorCQlyZXR1cm4gRVJSX1BUUigtRUlOVkFMKTsKKworCXJldHVybiBfX2hjaV9jb25uX2Fk
-ZChoZGV2LCB0eXBlLCBkc3QsIHJvbGUsIGhhbmRsZSk7Cit9CisKIHN0YXRpYyB2b2lkIGhj
-aV9jb25uX2NsZWFudXBfY2hpbGQoc3RydWN0IGhjaV9jb25uICpjb25uLCB1OCByZWFzb24p
-CiB7CiAJaWYgKCFyZWFzb24pCi0tIAoyLjQ1LjIKCg==
-
---------------QpeH4aDJgNhqrF1J3qRQP0ql--
+> Thx 0day guys for reporting.
+> 
 
