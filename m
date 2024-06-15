@@ -1,174 +1,221 @@
-Return-Path: <linux-kernel+bounces-215621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5118909504
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 02:21:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF0CD90951B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 02:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30BA928429F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:21:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 219FCB22159
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28F81FB4;
-	Sat, 15 Jun 2024 00:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8511D4683;
+	Sat, 15 Jun 2024 00:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mail.de header.i=@mail.de header.b="aAv9BwjL"
-Received: from shout11.mail.de (shout11.mail.de [62.201.172.57])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tpwoYvSa"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F373B1361;
-	Sat, 15 Jun 2024 00:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.201.172.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A3839B;
+	Sat, 15 Jun 2024 00:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718410859; cv=none; b=I3TaJJrUg4XeREG/mxmCUNgT7Sy/VZr2eVKRJZ79n+RPS+Tsd34pwR/9nxOKvUeqsXwQClZqTvDM2YH0CWOW/B6Sae/IlnOQV1tkisQqw3OI8IWt8NCWNRw04AMpyVdxcjbJbo4C9544Yb+BTpIQ9vx22GrNSnWxDWdd2JZSV+8=
+	t=1718412452; cv=none; b=VKR7t+/EmSYOFdk5uRk25Hfp/oPe6OHIHpM6dQ99EYdkuiOb+JblZbvqdxz4gKUMrP8ctBJQKXuFUqEj+DBIVJsQZmhryKMgFZ9bf0PpCIDySED2c/68/qcDoVW4zN21hdu3Um5CKmfamjxTL3MXSHDBXNOFX0tk/tqvIxtHHz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718410859; c=relaxed/simple;
-	bh=9+3UpvFvUL6e3xI+TeczZuFjYUk6rVLdYYrAycTppY0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WFt1BJgU0MfCu4CmjxQKX5u0N50+42lOnxLGhuBxWHiXkUvgVeZwWFehgesRbzgH0WUE59LHuL5KWeZt0GBoLxnuLSUz9IPX0DDtx0eE/pydXwRB4oEfKK+JlFMG+may7DuKleJ1hsmIM6qCo96fy6/HFotJbgZugkcCDbpkAR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.de; spf=pass smtp.mailfrom=mail.de; dkim=pass (2048-bit key) header.d=mail.de header.i=@mail.de header.b=aAv9BwjL; arc=none smtp.client-ip=62.201.172.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.de
-Received: from shout02.mail.de (unknown [10.0.120.222])
-	by shout11.mail.de (Postfix) with ESMTPS id 75BDB24192D;
-	Sat, 15 Jun 2024 02:20:49 +0200 (CEST)
-Received: from postfix01.mail.de (postfix01.bt.mail.de [10.0.121.125])
-	by shout02.mail.de (Postfix) with ESMTP id 44D23240E5A;
-	Sat, 15 Jun 2024 02:20:49 +0200 (CEST)
-Received: from smtp01.mail.de (smtp03.bt.mail.de [10.0.121.213])
-	by postfix01.mail.de (Postfix) with ESMTP id 20F57801BF;
-	Sat, 15 Jun 2024 02:20:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mail.de;
-	s=mailde202009; t=1718410849;
-	bh=9+3UpvFvUL6e3xI+TeczZuFjYUk6rVLdYYrAycTppY0=;
-	h=Message-ID:Date:Subject:To:Cc:From:From:To:CC:Subject:Reply-To;
-	b=aAv9BwjLc6YnOm03QTpsTkVlUq3BMAOoGgdXP3HKvp1IRLkOcKkwlCTSeWgDbCRuQ
-	 pnWaKo8c6CPf+719BzaBGrWGdeMIPEvnZ8x+94F1EUoNE6QaJouOBdDIR8x+Im1gdJ
-	 WvwefICL+lo9G1xWnHkDahR+4rOAenxZEWxgabjyFAwkQVgFgmoE74nOnSjLy3eqst
-	 PRuwo9E98nGz2xYm74Qi6k6b+u9yp/u+wZR042hBqHD7wkvxxm2NoJd+Ez49ugiQdc
-	 lHnKcoL0M/4VnUCb8phTtoemWuaqFEKwzzoU5pgebQjD8WU+lDSMUmD5Z5eGosszAn
-	 nnmxrvMhNG9rw==
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp01.mail.de (Postfix) with ESMTPSA id D551D240A6F;
-	Sat, 15 Jun 2024 02:20:44 +0200 (CEST)
-Message-ID: <1c702815-3f55-4f62-a743-2463f3141650@mail.de>
-Date: Sat, 15 Jun 2024 02:20:43 +0200
+	s=arc-20240116; t=1718412452; c=relaxed/simple;
+	bh=l2WovBwHTqQxC4PpmcBxNtwWoVXaTmRA9KrR94DqflM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MOjY8JhTsURicS4vuG6DuV0dliERMw5xx8EEP8kS/bTBPcLe9RzfmM/E7KFcZsPE4CBKh8AZrJtmYEgNCb/d1nEPmupUJN+7CoVy3rDZ7d932jz42Lk2d0wnMRjT243coaMu4nbruidikMx3qcnSIXK73fGxGtVgtR1M511qGxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=tpwoYvSa; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D94EB2E3;
+	Sat, 15 Jun 2024 02:47:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718412431;
+	bh=l2WovBwHTqQxC4PpmcBxNtwWoVXaTmRA9KrR94DqflM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tpwoYvSaNG5y7cfKPtXOeK9c/WqWgJi3L8tX9ggrvnFGBO3K6eosuYM6S28IenDax
+	 ykIE86g/okNXN8/GY7mLQ7DyxukkqBLpnwEjkPMpgrqk+dU50DxnO8oXxx+XFl55xe
+	 2PjY/0RWUGvD0kMIJoqCmRAzLH72YH0kCjoIG2DY=
+Date: Sat, 15 Jun 2024 03:47:05 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Louis Kuo <louis.kuo@mediatek.com>,
+	Phi-bang Nguyen <pnguyen@baylibre.com>,
+	Florian Sylvestre <fsylvestre@baylibre.com>,
+	Andy Hsieh <andy.hsieh@mediatek.com>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Paul Elder <paul.elder@ideasonboard.com>,
+	Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v4 3/5] media: platform: mediatek: isp_30: add mediatek
+ ISP3.0 sensor interface
+Message-ID: <20240615004705.GI9171@pendragon.ideasonboard.com>
+References: <20240110141443.364655-1-jstephan@baylibre.com>
+ <20240110141443.364655-4-jstephan@baylibre.com>
+ <3c2bee40-3792-409c-b42f-f8b013ff641c@collabora.com>
+ <CAEHHSvaT_U+HNzWQUoK9EuqGuqEd11+Lu0CLz_rL7uQf0Q5isw@mail.gmail.com>
+ <53838e76-bfa4-41f5-a015-a37472e98991@collabora.com>
+ <CAEHHSvaRqZM9c8oD05WKkhOHdjKLBkR6tXp2Q1b8OMiDxDsDhQ@mail.gmail.com>
+ <20240614123345.GN6019@pendragon.ideasonboard.com>
+ <CAEHHSvaWO7m=n5_f0BM7gwuDMfh_GMX=x3DknG28PnmtZbrGQw@mail.gmail.com>
+ <20240614144248.GA20136@pendragon.ideasonboard.com>
+ <CAEHHSvZPATFV=w451KaaT+e__EK9u3Vc5ORPRQ-Gfa4rJ_o8hA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 2/2] arm64: dts: rockchip: Add FriendlyElec CM3588 NAS
- board
-To: Tim Surber <me@timsurber.de>, Heiko Stuebner <heiko@sntech.de>,
- linux-rockchip@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Jonas Karlman <jonas@kwiboo.se>, Space Meyer <me@the-space.agency>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240609222428.134977-1-seb-dev@mail.de>
- <20240609222428.134977-3-seb-dev@mail.de>
- <bea6657a-62bb-46a3-93be-4b8b4c68aed0@timsurber.de>
-From: Sebastian Kropatsch <seb-dev@mail.de>
-In-Reply-To: <bea6657a-62bb-46a3-93be-4b8b4c68aed0@timsurber.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-purgate: clean
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate-type: clean
-X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate: clean
-X-purgate-size: 3277
-X-purgate-ID: 154282::1718410849-F3E201F9-4086A72E/0/0
+In-Reply-To: <CAEHHSvZPATFV=w451KaaT+e__EK9u3Vc5ORPRQ-Gfa4rJ_o8hA@mail.gmail.com>
 
-Hi Tim,
-
-Am 14.06.2024 um 04:00 schrieb Tim Surber:
-> Hi Sebastian,
+On Fri, Jun 14, 2024 at 04:54:47PM +0200, Julien Stephan wrote:
+> Le ven. 14 juin 2024 à 16:43, Laurent Pinchart a écrit :
+> > On Fri, Jun 14, 2024 at 04:14:52PM +0200, Julien Stephan wrote:
+> > > Le ven. 14 juin 2024 à 14:34, Laurent Pinchart a écrit :
+> > > > On Fri, Jun 14, 2024 at 12:38:15PM +0200, Julien Stephan wrote:
+> > > > > Le mer. 12 juin 2024 à 10:06, AngeloGioacchino Del Regno a écrit :
+> > > > > >
+> > > > > > Il 10/06/24 16:39, Julien Stephan ha scritto:
+> > > > > [...]
+> > > > > > >>
+> > > > > > >>> +     writel(0x10001, input->base + SENINF_TG1_SEN_CK);
+> > > > > > >>
+> > > > > > >> Unroll this one... this is the TG1 sensor clock divider.
+> > > > > > >>
+> > > > > > >> CLKFL GENMASK(5, 0)
+> > > > > > >> CLKRS GENMASK(13, 8)
+> > > > > > >> CLKCNT GENMASK(21,16)
+> > > > > > >>
+> > > > > > >> Like this, I don't get what you're trying to set, because you're using a fixed
+> > > > > > >> sensor clock rate, meaning that only a handful of camera sensors will be usable.
+> > > > > > >>
+> > > > > > >> Is this 8Mhz? 16? 24? what? :-)
+> > > > > > >>
+> > > > > > >> Two hints:
+> > > > > > >>    - sensor_clk = clk_get_rate(isp_clk) / (tg1_sen_ck_clkcnt + 1);
+> > > > > > >>    - int mtk_seninf_set_sensor_clk(u8 rate_mhz);
+> > > > > > >>
+> > > > > > >> Please :-)
+> > > > > > >
+> > > > > > > Hi Angelo,
+> > > > > > >
+> > > > > > > I think I get your point about not hardcoding the sensor rate, but I
+> > > > > > > am not sure how to use
+> > > > > > > a mtk_seninf_set_sensor_clk(u8 rate_mhz); function.
+> > > > > > >
+> > > > > > > Where would it be called? How is it exposed to the user?
+> > > > > > >
+> > > > > >
+> > > > > > As for where: setup, streaming start, resolution change (which may be covered
+> > > > > > by streaming start anyway, as a change should be calling stop->start anyway).
+> > > > > >
+> > > > > > And for the how is it exposed to the user - well, depends what you mean for user,
+> > > > > > but it's all standard V4L2 API :-)
+> > > > > >
+> > > > > > Last but not least, I can give you another hint....
+> > > > > >
+> > > > > > struct media_entity *entity = (something_here);
+> > > > > > struct media_pad *mpad;
+> > > > > > struct v4l2_subdev *cam_subdev;
+> > > > > > struct v4l2_ctrl *ctl;
+> > > > > > s64 link_frequency, pixel_clock;
+> > > > > >
+> > > > > > if (entity->pads[0].flags & MEDIA_PAD_FL_SINK)
+> > > > > >     return -E_NOT_A_CAMERA_SENSOR_WE_IGNORE_THIS_ONE;
+> > > > > >
+> > > > > > pad = media_pad_remote_pad_first(&entity->pads[0]);
+> > > > > > if (!pad)
+> > > > > >    return -ENOENT;
+> > > > > >
+> > > > > > if (!is_media_entity_v4l2_subdev(pad->entity))
+> > > > > >    return -ENOENT;
+> > > > > >
+> > > > > > if (pad->entity->function != MEDIA_ENT_F_CAM_SENSOR)
+> > > > > >    return -ENOENT;
+> > > > > >
+> > > > >
+> > > > > Hi Angelo,
+> > > > >
+> > > > > Thank you for the detailed explanation :)
+> > > > > However, I can't make it work because in my case, seninf is connected
+> > > > > to an external ISP
+> > > > > so pad->entity->function == MEDIA_ENT_F_PROC_VIDEO_ISP.
+> > > > >
+> > > > > How can I get the pad corresponding to the sensor?
+> > > >
+> > > > You don't have to. You can drop that check, and get the link frequency
+> > > > of the source subdev with v4l2_get_link_freq(), whatever it is.
+> > > >
+> > > > > > cam_subdev = media_entity_to_v4l2_subdev(pad->entity);
+> > > > > > ctl = v4l2_ctrl_find(subdev->ctrl_handler, V4L2_CID_PIXEL_RATE);
+> > > > >
+> > > > > Is this mandatory to implement V4L2_CID_PIXEL_RATE ?
+> > > > > Should I return an error if not found?
+> > > >
+> > > > Does SENINF need to know both the pixel rate and link frequency ?
+> > > > V4L2_CID_PIXEL_RATE is very ill-defined, at the moment it only makes
+> > > > sense as a value relative to the sensor pixel array, and doesn't really
+> > > > apply further down in the pipeline. What information do you need to
+> > > > program the SENINF ?
+> > >
+> > > Hi Laurent,
+> > >
+> > > I need to know the clock divider for the sensor
+> >
+> > Could you provide some details on how the SENINF uses that divisor ?
+> > What does it control, and what are the constraints ?
 > 
-> I propose the addition of "pwm-beeper" and "gpio-ir-receiver" to the 
-> device tree, since they are permanently mounted on the baseboard.
+> According to the datasheet,  SENINF_TG1_SEN_CK[21:16] :CLKCNT : Sensor
+> master clock will be ISP_clock/(CLKCNT+1) where CLKCNT >= 1
 
-Can you recommend a good way to test the IR receiver? I tried for
-a while with evtest but could not see any output:
+I'll need more information. My guess so far is that there's a FIFO
+somewhere in the SENINF, with the pixel bus clocked by the CSI-2 clock
+before the FIFO, and by the "Sensor master clock" after the FIFO. Is
+that right ? If so, the simplest approach would be to use the link
+frequency to compute the pixel clock before the FIFO, and make sure that
+the sensor master clock will be larger than or equal to that.
 
-    evtest /dev/input/event2
-    Input driver version is 1.0.1
-    Input device ID: bus 0x19 vendor 0x1 product 0x1 version 0x100
-    Input device name: "gpio_ir_recv"
-    Supported events:
-      Event type 0 (EV_SYN)
-      Event type 1 (EV_KEY)
-        Event code 152 (KEY_SCREENLOCK)
-      Event type 2 (EV_REL)
-        Event code 0 (REL_X)
-        Event code 1 (REL_Y)
-      Event type 4 (EV_MSC)
-        Event code 4 (MSC_SCAN)
-    Key repeat handling:
-      Repeat type 20 (EV_REP)
-        Repeat code 0 (REP_DELAY)
-          Value    500
-        Repeat code 1 (REP_PERIOD)
-          Value    125
-    Properties:
-      Property type 5 (INPUT_PROP_POINTING_STICK)
-    Testing ... (interrupt to exit)
+A better approach from a power consumption point of view would be to
+consider horizontal blanking. The FIFO can fill faster than it gets
+emptied during the active portion of the line and then drain during
+blanking. This allows for a slower clock on the output side. You will
+need to pick an output clock frequency that
 
-I only have one TV remote to test, so I'm not even sure that this
-is compatible, I haven't touched anything IR-related before.
+- on average is larger than the number of active pixels per line divided
+  by the line duration ; and
 
-Cheers,
-Sebastian
+- ensures the FIFO never overflows during the active portion of the line,
+  for cases where the line length is larger than the FIFO size.
 
-> On 10.06.2024 00:20, Sebastian Kropatsch wrote:
->> The CM3588 NAS by FriendlyElec pairs the CM3588 compute module, based on
->> the Rockchip RK3588 SoC, with the CM3588 NAS Kit carrier board.
->> To reflect the hardware setup, add device tree sources for the SoM and
->> the NAS daughter board as separate files.
->>
->> Hardware features:
->>      - Rockchip RK3588 SoC
->>      - 4GB/8GB/16GB LPDDR4x RAM
->>      - 64GB eMMC
->>      - MicroSD card slot
->>      - 1x RTL8125B 2.5G Ethernet
->>      - 4x M.2 M-Key with PCIe 3.0 x1 (via bifurcation) for NVMe SSDs
->>      - 2x USB 3.0 (USB 3.1 Gen1) Type-A, 1x USB 2.0 Type-A
->>      - 1x USB 3.0 Type-C with DP AltMode support
->>      - 2x HDMI 2.1 out, 1x HDMI in
->>      - MIPI-CSI Connector, MIPI-DSI Connector
->>      - 40-pin GPIO header
->>      - 4 buttons: power, reset, recovery, MASK, user button
->>      - 3.5mm Headphone out, 2.0mm PH-2A Mic in
->>      - 5V Fan connector, PWM buzzer, IR receiver, RTC battery connector
->>
->> PCIe bifurcation is used to handle all four M.2 sockets at PCIe 3.0 x1
->> speed. Data lane mapping in the DT is done like described in commit
->> f8020dfb311d ("phy: rockchip-snps-pcie3: fix bifurcation on rk3588").
->>
->> This device tree includes support for eMMC, SD card, ethernet, all USB2
->> and USB3 ports, all four M.2 slots, GPU, RTC, buzzer, UART debugging as
->> well as the buttons and LEDs.
->> The GPIOs are labeled according to the schematics.
->>
->> Signed-off-by: Sebastian Kropatsch <seb-dev@mail.de>
->> ---
->>   arch/arm64/boot/dts/rockchip/Makefile         |   1 +
->>   .../rk3588-friendlyelec-cm3588-nas.dts        | 759 ++++++++++++++++++
->>   .../rockchip/rk3588-friendlyelec-cm3588.dtsi  | 655 +++++++++++++++
->>   3 files changed, 1415 insertions(+)
->>   create mode 100644 
->> arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588-nas.dts
->>   create mode 100644 
->> arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588.dtsi
+> > > > > > /* multiplier is usually bits per pixel, divider is usually num of lanes */
+> > > > > > link_frequency = v4l2_get_link_freq(cam_subdev->ctrl_handler, multiplier, divider);
+> > > > > > pixel_clock = v4l2_ctrl_g_ctrl_int64(ctl);
+> > > > >
+> > > > > How to know the sensor clock given link_frequency and pixel_clock?
+> > > > > Can you point me to drivers doing something similar?
+> > > > >
+> > > > > >
+> > > > > > ....now you know what the sensor wants, set the seninf sensor clock accordingly.
+> > > > > >
+> > > > > > Cheers
+> > > > > > Angelo
+> > > > > >
+> > > > > [...]
 
+-- 
+Regards,
+
+Laurent Pinchart
 
