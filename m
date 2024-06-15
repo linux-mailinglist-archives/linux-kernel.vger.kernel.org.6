@@ -1,104 +1,140 @@
-Return-Path: <linux-kernel+bounces-215861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D45909806
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:49:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E59909800
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C28D11C20E5C
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:49:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E8431C20E9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869243EA71;
-	Sat, 15 Jun 2024 11:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="OCV1qhA2"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C733FB31;
+	Sat, 15 Jun 2024 11:44:36 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7407428DD5;
-	Sat, 15 Jun 2024 11:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BDC374F1;
+	Sat, 15 Jun 2024 11:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718452154; cv=none; b=uLhDbQKtpoyiQ4ZySdiue7h7VRwY5P1AqWJtGUNM4NPKZ+5IjU8iJ3YMJBDLYoWYTZddbINQThpOX2yQOVjA5kvbJT2eL8ffEZyMJXlNIsa1h5grpFhIDUGiQmB4MYYmU6SpQL5FhS4hqhQdgKlQtk+0L2yZvZz1D3+aa6G0r4Q=
+	t=1718451876; cv=none; b=nTkRSe8IX9lwaSu7gdtfqxYsMrC5UWli73P57r6Ln0Km3bZyG0kzpJ5Z1DFKUTr1eU+pj8+Fz9ZQRQ16SEeP8+DqJvqd2V0dheZCw+g/atY6PseB8Tfg/ukdlIJBYMssdP+Jh8WxduvN2NT7XZ3fUScfKFpfV7gt1TcFHvWRZBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718452154; c=relaxed/simple;
-	bh=ruLqlnGQm+f4xdxIVdkx2ifiUgj5LizSyB2S5sU5KH4=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=g/mulT2rFEEjAszXW+yTjDnctZEvR0TlKAaJcMQ0UGC4aQE1PCbOxyHtAdSqdAl5FuMAIv6ey2/xSFLZV5RsjML3yqvI4PCTbOK1puj09F5OfITRk4N9jNuEBqbXSD1/Oh5S+02bykrSY/7g3iPmErjGR1SJjKXCdHmvBg98yA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=OCV1qhA2; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1718451845; bh=eoJFGXM2xF4IOwu+tTtspFwBzWcyjYzOFEGvvryPvyk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=OCV1qhA2CWhipezswYOuYfRaF7yEnC6SJg9UUnCBAungW//PMoTrwP+a/+X8vUnOO
-	 2vyJ2peYbry6xZmsTEaL/Co6MjGOQ8RCQOj+uc4fbewWlPdB5FEffOPurFlF/1xUAz
-	 BgE4AfB1F7prQx9eHSpENXfp48ZKH5VJZ6S1pFlY=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
-	id B0337AFE; Sat, 15 Jun 2024 19:44:03 +0800
-X-QQ-mid: xmsmtpt1718451843tz3r2n3i2
-Message-ID: <tencent_724B611BCF250EBAF7BBE333DF9E271BB208@qq.com>
-X-QQ-XMAILINFO: NyTsQ4JOu2J2zOZ5ZNYHLqT+E8AFNcEs6DXo2yNVb+UXeNPB5diAbUnz9GHwqE
-	 zTDpQC3WqgN/d38mDOsQOuBmMnYYBMUCPXzjfkGvA+afBPf6jTfgHDziyqlPlYapRaXr079ramFJ
-	 xGcNUKrTKTQVs7AkI547MGQTz/ZhyXZmG72AJCkB0dOZdUV6FNiNFDI0SyRhV/N7fjNY4Wvbkkah
-	 R/n+6ZVU5Aufl/chDnioaXHEoIHgN4CS2xIZbxqWjJGXsjna5BzaQLCmUM/gTK4Ad+UCp/AVtXzD
-	 1Pcmp6Ig2haNUNg+lU9k5L0MMdyIsHBcQdkegdSsNvHSHuZ+xeIiTmLSB7x5CW4c+KT8wmXJC89Y
-	 q9LYCneVhWbkxK0MXzVRDayy9rikfaiyG1kSJ8DELQs3TU2YAqeyXYCjS0pdravcPpIRl5W9FHgA
-	 tuJuBeqO45HjINimKpzcU4dnlZJUkMMgjYGxaU2TGn9YyoubNHvrRjl+mEfdgQlBU/IWwqv9zzUL
-	 7/MvQ7ALXhRmt5+hGvodGzIlUwazE1wc/8mGAOg7qzHUO0w9gI/FxEaZdjhJ3YWAAZrBOytrcaMO
-	 aNOYOyQIz07q11A678SQX0eA0pdlDPIk9NDF0LRuGp8dYCQOIrXBIF5U4hdYotzzISCy5ZWQVBH2
-	 IUVmsgJOj0Q2Gvrc8JRxJM4bRg7+2obLOi+gCgtxHKA4lXpB6I/auVjqkquKWt0LtuxZV558xA1c
-	 uGMk5VwjmeZO8m3bX+6z2lHl2zneV0maNJTEyU7kELkKvD39DnAJws+3a3X3sfb2znvuXt13ZI0b
-	 xaeMrRy7E8UzN/pclcRzLlovis5xHZYpXpaGIFoPZcZBWsnVtDyAR5TLrTi6jCuVnxKzZxSXWCb6
-	 6jAE/2vnFAq6jEGAU7aSzi0uNXrw6+m47vBw+GlYuvwR4d8NDCXUBp4cIIOHZU7VR0jDWdnN1+
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+4366624c0b5aac4906cf@syzkaller.appspotmail.com
-Cc: bfoster@redhat.com,
-	kent.overstreet@linux.dev,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] bcachefs: bch2_fs_read_write_early needs to hold write lock
-Date: Sat, 15 Jun 2024 19:44:04 +0800
-X-OQ-MSGID: <20240615114403.3924547-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <00000000000053e574061ad89521@google.com>
-References: <00000000000053e574061ad89521@google.com>
+	s=arc-20240116; t=1718451876; c=relaxed/simple;
+	bh=68lts4Ju0T7CR+5pmBNYENZcBYUucTr+vBM8YPISqOI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=YBebKmPcmPLnrzYRNQZQUgiOYjTgjoLB7pMSi71qenblQ6A9shyu6zU3mwwgEPGETp76cFHelOGILsIfRzHKRnEHTGQcrfbdJwsp6cJXH7NEQb80JkYhTPBa3ElwQO6m4KtkWJyt3A6j6Ht5YbR+5SAWEKjmao9Yv2nMrHeUi7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4W1Z713vqfz4f3jdr;
+	Sat, 15 Jun 2024 19:44:13 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id B7FFB1A0568;
+	Sat, 15 Jun 2024 19:44:23 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP1 (Coremail) with SMTP id cCh0CgBnGw2Vfm1m91gAAA--.148S3;
+	Sat, 15 Jun 2024 19:44:23 +0800 (CST)
+Subject: Re: [PATCH -next v5 7/8] xfs: speed up truncating down a big realtime
+ inode
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
+ david@fromorbit.com, chandanbabu@kernel.org, jack@suse.cz,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
+ John Garry <john.g.garry@oracle.com>
+References: <20240613090033.2246907-1-yi.zhang@huaweicloud.com>
+ <20240613090033.2246907-8-yi.zhang@huaweicloud.com>
+ <ZmveZolfY0Q0--1k@infradead.org>
+ <399680eb-cd60-4c27-ef2b-2704e470d228@huaweicloud.com>
+ <ZmwJuiMHQ8qgkJDS@infradead.org>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <ecd7a5cf-4939-947a-edd4-0739dc73870b@huaweicloud.com>
+Date: Sat, 15 Jun 2024 19:44:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <ZmwJuiMHQ8qgkJDS@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBnGw2Vfm1m91gAAA--.148S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7tr15KF1xJr1kJFWxGF4kJFb_yoW8Zr47pr
+	W5ua4DAr9Yq345C3srA3Z7Xa4Fkw1Fka18XF15Zr4UAF9xWFy3CFnaqa15Xa1ku3y8uFW0
+	vF4qqF9xGr17AFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UWE__UUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-bch2_fs_read_write_early() needs to hold state_lock to pretect and sync data.
+On 2024/6/14 17:13, Christoph Hellwig wrote:
+> On Fri, Jun 14, 2024 at 03:18:07PM +0800, Zhang Yi wrote:
+>> Thanks for your suggestion.
+>>
+>> Yeah, we could fix the realtime inode problem by just drop this part, but
+>> for the upcoming forcealign feature and atomic feature by John, IIUC, we
+>> couldn't split and convert the tail extent like RT inode does, we should
+>> zero out the entire tail force aligned extent, if not, atomic write could
+>> be broken by submitting unaligned bios.
+> 
+> Let's worry about that if/when those actually land.
 
-Reported-by: syzbot+4366624c0b5aac4906cf@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/bcachefs/snapshot.c | 2 ++
- 1 file changed, 2 insertions(+)
+OK, if we don't consider the upcoming forcealign feature and atomic feature,
+I think only path 6 is needed to fix the issue.
 
-diff --git a/fs/bcachefs/snapshot.c b/fs/bcachefs/snapshot.c
-index 51918acfd726..b27a4327274d 100644
---- a/fs/bcachefs/snapshot.c
-+++ b/fs/bcachefs/snapshot.c
-@@ -1566,7 +1566,9 @@ int bch2_delete_dead_snapshots(struct bch_fs *c)
- 		return 0;
- 
- 	if (!test_bit(BCH_FS_started, &c->flags)) {
-+		down_write(&c->state_lock);
- 		ret = bch2_fs_read_write_early(c);
-+		up_write(&c->state_lock);
- 		bch_err_msg(c, ret, "deleting dead snapshots: error going rw");
- 		if (ret)
- 			return ret;
--- 
-2.43.0
+> I also see no
+> rason why those couldn't just use partially convert to unwritten path
+> offhand (but without having looked into the details).
+> 
+
+The reason why atomic feature can't split and convert the tail extent on truncate
+down now is the dio write iter loop will split an atomic dio which covers the
+whole allocation unit(extsize) since there are two extents in on allocation unit.
+
+Please see this code:
+__iomap_dio_rw()
+{
+	...
+	while ((ret = iomap_iter(&iomi, ops)) > 0) {
+		iomi.processed = iomap_dio_iter(&iomi, dio);
+	...
+}
+
+The first loop find and submit the frist extent and the second loop submit the
+second extent, this breaks the atomic property.
+
+For example, we have a file with only one extszie length，if we truncate down
+and split the extent, the file becomes below,
+
+  |   forced extsize (one atomic IO unit)  |
+  wwwwwwwwwwwwww+uuuuuuuuuuuuuuuuuuuuuuuuuuu
+                ^new size A                ^old size B
+
+Then if we submit a DIO from 0 to B, xfs should submit it in one bio, but it
+will submit to two bios, since there are two extents. So, unless we find
+another way to guarantee submit one bio even we have two extents in one atomic
+write unit (I guess it may complicated), we have to zero out the whole unit
+when truncate down(I'd prefer this solution), we need consider this in the near
+future.
+
+Thanks,
+Yi.
 
 
