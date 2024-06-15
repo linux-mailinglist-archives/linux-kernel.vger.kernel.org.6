@@ -1,152 +1,127 @@
-Return-Path: <linux-kernel+bounces-215725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F164909650
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:31:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8755D909651
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:32:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4B4E1F2337A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 06:31:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EFDA1C2187F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 06:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523F0171CD;
-	Sat, 15 Jun 2024 06:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A5E17BCB;
+	Sat, 15 Jun 2024 06:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SyTV69L7"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OQj5mueM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB4D10979;
-	Sat, 15 Jun 2024 06:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB8317BA2
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 06:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718433108; cv=none; b=OVHkRIzwKOBnvA9wmdQDtr6tZovRIgcP4uMrNbyZD/V6Ikxa9ifreOFJ1AL3OYWP1GgplZlGN6VYAJWelQzDA8Lt9Xp67nubUuLZ1IQnL7/p4SKOH6giuD9BiFokaQ36Ao+cmK3UO4l1Yyd16ULkDluRIQkLm8hR+X+8OoNClAk=
+	t=1718433135; cv=none; b=J6KPFDxp+ezFWjsYS4pb2T0rRd6j+mNdR3ocPNcJ3A1tAn9Tr6pTevytxBL5SQDsBSu8cHwWu/rNNEZb5lfwEL9nhvU50x3lNC1MJfsSDamU4CQIz6MocissVRXMYI06a7oD9wL5H4pN43s1IqemjiOtfR2BSwP6I9SosuJ4dQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718433108; c=relaxed/simple;
-	bh=wYMCYrJhD9c0luKvwDfwE90zFmR9p18SOwC9lxLZZf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CNmkKUsJpG+98KJ+uqHl9Vy1r+42Ohft1y82UQzOjEueQ44H7ibuKb8f+vm583zap0QOtuNLE7cvGxQw61c6QtMCl/9Gw7vibIQR1CHpC5gw8oX2bgFB+ZnNFc1KGCoijkDhh81FRmr/zNQATClupW2831KgIV/xGGsKUqIvHUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SyTV69L7; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4230366ad7bso23671115e9.1;
-        Fri, 14 Jun 2024 23:31:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718433105; x=1719037905; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dlc07LrL5tm0890LKo5QUPKD2CZc9L1NnPqHcPAZD1o=;
-        b=SyTV69L7c1gSOAB9amqS3QHvvTh43tNf4QB5peE1tuufLPM+w+vCGlKglOvaezDZtO
-         vdrDpNc4zrBHPeROJInsvkZ3gqZoeNiWD+EWNLId3T9VMouRJoHsi+fhslylO7pX3FiQ
-         7b+gFzI0ITky8uaPSFNOIf17osGDFfvcUQjYYi6eDGiHf08eLuVT6FrbwqJ/bi7lhpsZ
-         AbKzcw9ljcCudxCqVSJWkc/Xf2rxUYjAKDn8TUHQT3r7vJH7RCF6vCdFvOWQ2+4Wo3DD
-         qespwcUAn45kEOquqgRPaReUityu/uSEqs3TrDXqOThJ2LdMtOFa+tXrRXUtPB2+aezc
-         i4XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718433105; x=1719037905;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dlc07LrL5tm0890LKo5QUPKD2CZc9L1NnPqHcPAZD1o=;
-        b=vQzfEPMxP3BpwObuCsqzD42rSCB0k1lhufAwxyx8KoJ6416t89ea52YedYt6BHEzlW
-         S6BcURKLmQ74vCJuuqmCH2W73Ilx0/o1g/o6TlfsqJgBY2t2cVVUiQwf1xVh1ElnqdY0
-         AJCeEAJ3R0zmGrEFRiIk49iFihUX+Lix9jHkHEML3WXd86plEam8INRlTm6Cve/R/cmI
-         pIlJaNuT7SiGStJLugGl2Fd0WUoPKgh5UPMlAyfgBQJs543y4Y5JrJzl4s0NRw+XVjNQ
-         FSuw9fY1GudmeNptyTc8bOhgUhFhPPYnUgguo8FUlBfRa9kZ/WnBqfl1jB5m1YkO8D9i
-         WpVA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8bvuojK8x/47o/Mrwyd1QgQPG9nGfFP4DYFkc5mMX8jmL2bDGDCvas/Cr/ow/uYRP+2oTwLMJVxQJvDPn26O9Zsr2OOI1JDpyXduU4dJ50vak7w82YrcQpx9RhWzKemECkwnxFPAS6w1oCQ==
-X-Gm-Message-State: AOJu0YxJA0SwE8DocPmxEz/E3rLiMIOUE2ehMkvQ1w9G97Km7+FGfum5
-	js4/A7ha48ciOxdmuLwiVOGR4zuVz4nhApmyJeOUa8tMV9RM55oP
-X-Google-Smtp-Source: AGHT+IG1Ozq8tC1gl/GTHyfSORClzfmmuRTPoawNi7aQ51cG1cp2ZD8y1bGbsNrsEU5K4aos8mWozw==
-X-Received: by 2002:a05:600c:4c23:b0:421:756f:b2e8 with SMTP id 5b1f17b1804b1-42304820d66mr48040755e9.11.1718433105084;
-        Fri, 14 Jun 2024 23:31:45 -0700 (PDT)
-Received: from f (cst-prg-88-61.cust.vodafone.cz. [46.135.88.61])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f641a666sm85550745e9.45.2024.06.14.23.31.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 23:31:44 -0700 (PDT)
-Date: Sat, 15 Jun 2024 08:31:34 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Yu Ma <yu.ma@intel.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tim.c.chen@linux.intel.com, 
-	tim.c.chen@intel.com, pan.deng@intel.com, tianyou.li@intel.com
-Subject: Re: [PATCH 1/3] fs/file.c: add fast path in alloc_fd()
-Message-ID: <egcrzi4bkw7lm2q4wml2y7pptpxos4nf5v3il3jmhptcurhxjj@fxtica52olsj>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240614163416.728752-2-yu.ma@intel.com>
+	s=arc-20240116; t=1718433135; c=relaxed/simple;
+	bh=tDuObTQNohrxi3Di5MxkNEgF1UteDJXO8ZGJ0znwqRk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B7eM0eoYJbmlgWZsXEd/xzrX6V3aOkyFTA3yFZESsHEeOAqFNfx6COPYky0dWc451uH3BVna6hye3QbdDIbXW2hcP3hpcPXwdpuwIMjiYVGDUG7t9cP1dbY8raOFmlmhYph2iaIOWzSvG4sq8z60XSuGJ47SV8Phb2I/hmLpiY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OQj5mueM; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718433134; x=1749969134;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=tDuObTQNohrxi3Di5MxkNEgF1UteDJXO8ZGJ0znwqRk=;
+  b=OQj5mueMPYnJLsLg1dHMCg6iNswXTyXKZ3nf4UL4T2gv/BRZYUuv1+tB
+   7ex2jwjp5UJKI4tgP/hendm8ANSFwODT3+BqsFNtNPLGDj+1VlEiSt/q/
+   RwgcMmaByPrNgSi57D2gVvlprdaNSIg+SvDzwLRAQZTQXU5Jx06d5LT3a
+   iYYWsqL9WgGQdOwUKGu5BCI5MsR/0pZrjbzzRq2KA2bnhSX3LAOfmJCek
+   GsMGxiqYKzCjMvFElOOdLEFg2/007kBDwod1JuF9lBG6dkwMAwSpRZE+L
+   89yOL1mBDXV89crW9H+piD3Ka1kGwX3etBYoS06SCSPqTnBdSGDPEXvOR
+   A==;
+X-CSE-ConnectionGUID: YWgRuzchTaq/Z+bGCeKOhg==
+X-CSE-MsgGUID: YgullBehTGujHsckA6hWuA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="18255628"
+X-IronPort-AV: E=Sophos;i="6.08,239,1712646000"; 
+   d="scan'208";a="18255628"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 23:32:13 -0700
+X-CSE-ConnectionGUID: T825KSTvTcCXQOdgWavPfg==
+X-CSE-MsgGUID: Sb4OFn+ZTsaPvQrQeYGOsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,239,1712646000"; 
+   d="scan'208";a="71498047"
+Received: from twinkler-lnx.jer.intel.com ([10.12.231.216])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 23:32:11 -0700
+From: Tomas Winkler <tomas.winkler@intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+	Vitaly Lubart <vitaly.lubart@intel.com>,
+	linux-kernel@vger.kernel.org,
+	Tomas Winkler <tomas.winkler@intel.com>
+Subject: [char-misc-next] mei: bus-fixup: set timeout for MKHI send operations
+Date: Sat, 15 Jun 2024 09:31:59 +0300
+Message-ID: <20240615063159.1460290-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240614163416.728752-2-yu.ma@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 14, 2024 at 12:34:14PM -0400, Yu Ma wrote:
-> There is available fd in the lower 64 bits of open_fds bitmap for most cases
-> when we look for an available fd slot. Skip 2-levels searching via
-> find_next_zero_bit() for this common fast path.
-> 
-> Look directly for an open bit in the lower 64 bits of open_fds bitmap when a
-> free slot is available there, as:
-> (1) The fd allocation algorithm would always allocate fd from small to large.
-> Lower bits in open_fds bitmap would be used much more frequently than higher
-> bits.
-> (2) After fdt is expanded (the bitmap size doubled for each time of expansion),
-> it would never be shrunk. The search size increases but there are few open fds
-> available here.
-> (3) There is fast path inside of find_next_zero_bit() when size<=64 to speed up
-> searching.
-> 
-> With the fast path added in alloc_fd() through one-time bitmap searching,
-> pts/blogbench-1.1.0 read is improved by 20% and write by 10% on Intel ICX 160
-> cores configuration with v6.8-rc6.
-> 
-> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> Signed-off-by: Yu Ma <yu.ma@intel.com>
-> ---
->  fs/file.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/file.c b/fs/file.c
-> index 3b683b9101d8..e8d2f9ef7fd1 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -510,8 +510,13 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
->  	if (fd < files->next_fd)
->  		fd = files->next_fd;
->  
-> -	if (fd < fdt->max_fds)
-> +	if (fd < fdt->max_fds) {
-> +		if (~fdt->open_fds[0]) {
-> +			fd = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, fd);
-> +			goto success;
-> +		}
->  		fd = find_next_fd(fdt, fd);
-> +	}
->  
->  	/*
->  	 * N.B. For clone tasks sharing a files structure, this test
-> @@ -531,7 +536,7 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
->  	 */
->  	if (error)
->  		goto repeat;
-> -
-> +success:
->  	if (start <= files->next_fd)
->  		files->next_fd = fd + 1;
->  
+From: Alexander Usyskin <alexander.usyskin@intel.com>
 
-As indicated in my other e-mail it may be a process can reach a certain
-fd number and then lower its rlimit(NOFILE). In that case the max_fds
-field can happen to be higher and the above patch will fail to check for
-the (fd < end) case.
+Set a timeout for MKHI client send operations in the bus fixup routines
+to prevent potential lock-ups on the cl_bus_lock mutex.
+In rare conditions, such as when the i915 or Xe driver is stopping and
+not routing interrupts or when GSC FW is in unexpectedly reset the fixup
+routines can get stuck.
 
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+ drivers/misc/mei/bus-fixup.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-> -- 
-> 2.43.0
-> 
+diff --git a/drivers/misc/mei/bus-fixup.c b/drivers/misc/mei/bus-fixup.c
+index 2733070acf39eabfd606da38..9eebeffcd8fd0645cecba167 100644
+--- a/drivers/misc/mei/bus-fixup.c
++++ b/drivers/misc/mei/bus-fixup.c
+@@ -80,6 +80,8 @@ static void whitelist(struct mei_cl_device *cldev)
+ 	cldev->do_match = 1;
+ }
+ 
++#define MKHI_SEND_MAX_TIMEOUT_MSEC 4000
++
+ #define OSTYPE_LINUX    2
+ struct mei_os_ver {
+ 	__le16 build;
+@@ -128,7 +130,7 @@ static int mei_osver(struct mei_cl_device *cldev)
+ 	os_ver = (struct mei_os_ver *)fwcaps->data;
+ 	os_ver->os_type = OSTYPE_LINUX;
+ 
+-	return __mei_cl_send(cldev->cl, buf, size, 0, mode);
++	return __mei_cl_send_timeout(cldev->cl, buf, size, 0, mode, MKHI_SEND_MAX_TIMEOUT_MSEC);
+ }
+ 
+ #define MKHI_FWVER_BUF_LEN (sizeof(struct mkhi_msg_hdr) + \
+@@ -148,8 +150,8 @@ static int mei_fwver(struct mei_cl_device *cldev)
+ 	req.hdr.group_id = MKHI_GEN_GROUP_ID;
+ 	req.hdr.command = MKHI_GEN_GET_FW_VERSION_CMD;
+ 
+-	ret = __mei_cl_send(cldev->cl, (u8 *)&req, sizeof(req), 0,
+-			    MEI_CL_IO_TX_BLOCKING);
++	ret = __mei_cl_send_timeout(cldev->cl, (u8 *)&req, sizeof(req), 0,
++				    MEI_CL_IO_TX_BLOCKING, MKHI_SEND_MAX_TIMEOUT_MSEC);
+ 	if (ret < 0) {
+ 		dev_info(&cldev->dev, "Could not send ReqFWVersion cmd ret = %d\n", ret);
+ 		return ret;
+-- 
+2.45.0
+
 
