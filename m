@@ -1,102 +1,194 @@
-Return-Path: <linux-kernel+bounces-215763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C2379096C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:09:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E159096C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8A061F22E04
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:09:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 787F61C22026
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F30182B3;
-	Sat, 15 Jun 2024 08:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FF818EA2;
+	Sat, 15 Jun 2024 08:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hykZg915"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="y0fF29Kl"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [167.172.40.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C887318C05
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 08:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A91717C9B
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 08:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.172.40.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718438964; cv=none; b=WlgX1gyzFdzfYkQOHsmXZ8U/hTURTBqLHy1Hz7AY67uf1DQeXekc2RgomrJY8TRSkwpypVWkLxRLqgvD0wFd8UWaaWJ4vlPbcT8MknFDE+ErZSmtp+dkfeMX/GAbWGZIswfJHV4hYvOD0F95JE6YIkNGADxncJ/cI630l4ozWwk=
+	t=1718439106; cv=none; b=Q0pdX4OQ/rHOZzuX3brwoh24NwnTUrM5aBmGb1QbzG0Qi1G+wWjqt1Oa+8N/pkMPt7+NXfxBZsJuiXjNU1LXMMmbAwCcvvCs4m143gHFQNBK4sRfW0O8KxcvsiTVCUItlj3e1TGx9yhNendyV+ztBgZxEZR7N55DyRWXa24PhA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718438964; c=relaxed/simple;
-	bh=n83mPvWjimvPBHYnbxfFpH0H3iDBwKsj2ER4c+LtfiU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oPU+LP9VABeA630yAzfrj2Bln4ZT2XaccfgN6Eun8p7B+KSiyprx/hDuiV1WTGmSDuM74OAACDe7e2reQoLFCGhlSdqeV/BKcYXVWqDezf36+8f0oHD6VodmBhEmmZoYm72/UJImgVbJ5W6WhfW/TMq7+MWb+UwyrvrvY9nD21Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hykZg915; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3E93140E0218;
-	Sat, 15 Jun 2024 08:09:19 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Wp64XGPxSjvQ; Sat, 15 Jun 2024 08:09:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718438955; bh=OhaztBundoMh26NQ9MzVLPt0712eh6MJFjegOkfhMeg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hykZg915vWAWbeEQLbvUJ79MJlbFiIPpAdX+q03XGICtbXTMe+ZIfw7vXWgpJBy6x
-	 /v2lbQiH60AE8IC4el+G5Xw0V7CUx54NZm0Li+YZ1o5XbhxzQDxNW+fMPPP2zJkaAP
-	 4rfYd2HKhQ1c460ZGMrJAL5G4/4FxBUH6x/LYVYZQqnRz92E8FlCg3KxpAxempgW1S
-	 aD/osz6TBQmiQ0Klint9NCjGRxDQj7J0KrnALst6FxSJGjYdFg8hjJJJoH0Qge1XNI
-	 HQjsmQcM2DTx3rm03ITuBJ0DWcCFgp88KYxyeM2RSfjCFb8yBC0V/TJxRPCDd5B5fo
-	 wLcBM5KrIxTPFVCim1RGrxWnbTkm4xMDraQYiZu6fWNrAy15fCzrde7dmiTCBnmmXY
-	 zSONVMbzSRddYz7qbJMlWyl2eKZBtBGGTAzjFHqdbiwkSeS9157LaON8YmrObXFvip
-	 DRaaMMwsFiB0oyw8YEvBUxTSG2GCepprJ+omUiU53koVvppr0JnNs6bEkmjJcya/MT
-	 bt5HnsMAapiNkTJAK0LtM46JC3e2yf93ZaajRydbqUh1vCKvuDt+ppLYk/HK502bu4
-	 ZNssVc0+XRh7yDVqNRBk3M20t+jk5k9zs6eBm+TboLr5btsIgUpLiE1fa4g0GiZLvh
-	 0/sgRCKHW4UGM3QTG6K036pc=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AB0D740E01D6;
-	Sat, 15 Jun 2024 08:09:08 +0000 (UTC)
-Date: Sat, 15 Jun 2024 10:09:02 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kernel test robot <lkp@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [tip:x86/alternatives 14/14] arch/x86/kvm/kvm.o: warning:
- objtool: .altinstr_replacement+0xc5: call without frame pointer save/setup
-Message-ID: <20240615080902.GAZm1MHvXQ30rm1Nnk@fat_crate.local>
-References: <202406141648.jO9qNGLa-lkp@intel.com>
- <20240614152228.GAZmxgNPmozj7UzRdV@fat_crate.local>
- <ZmxjOxhPy67QOh5Q@google.com>
+	s=arc-20240116; t=1718439106; c=relaxed/simple;
+	bh=VLOfu2sHlSblRVxS7M24YOwUMCWmyAxHORa4eJ1jtGE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hcYJNIyJoQlt7dPXZ1UCbflMvTlw0B2kAc5NuupDmQd6ILmgfbjwwXtHXKglRZXnYVUac/EUcbbWbhdbirhIZRYUN4yRXCASyaDImrRNqcV0I/TEytHpwW9I/38XB5zYFS7+Ac4gMjlIzMWWu06G+wk8aZWE4E3PG1ZrhI8islY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=y0fF29Kl; arc=none smtp.client-ip=167.172.40.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1718439068;
+ bh=KD9XMEsUfvBdMg6V4GnJ0Xmth7fRvLlwhgghB2MFr/I=;
+ b=y0fF29KlmtPU2HFDuFwRWA4MhxHmNZxGVUD/h5xkUSYQC1AHBRVFTqCjt5avCPyhtrAe6BYnG
+ Fxj0B9vKfIC6vnQtvKf4D1BT5tfmbSGwMJnGErYk3xtmM9N2oyCx5BqpKM2LjMg9qeQPPyFJsyj
+ L0zFvwFR95a60P7FEJ0wOYgCsO7XAQ6R1Fs3qHN+MxLZ91tKKrRqvAHagXzRBGRtdJSQUDF0jDV
+ bHpkYl1CZkiLTJeLhCIVOjIaGbemeTWsJHgB+zNgJSz6970n6xlnHlCIww/CwERqJbkOsfwRwcR
+ Yzc1z7cKv018sN4XvgzIPDndgdrLxU4Lrd/doa8FVxeA==
+Message-ID: <442bbb41-40ed-4e6c-b854-02b636f09fc3@kwiboo.se>
+Date: Sat, 15 Jun 2024 10:11:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZmxjOxhPy67QOh5Q@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] media: dt-bindings: rockchip: Document RK3588 Video
+ Decoder 2 bindings
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: linux-kernel@vger.kernel.org, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, Dragan Simic
+ <dsimic@manjaro.org>, Alexey Charkov <alchark@gmail.com>, Cristian
+ Ciocaltea <cristian.ciocaltea@collabora.com>, Diederik de Haas
+ <didi.debian@cknow.org>, Andy Yan <andy.yan@rock-chips.com>,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-staging@lists.linux.dev
+References: <20240615015734.1612108-1-detlev.casanova@collabora.com>
+ <20240615015734.1612108-3-detlev.casanova@collabora.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20240615015734.1612108-3-detlev.casanova@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 167.172.40.54
+X-ForwardEmail-ID: 666d4c9a01f41f7e8a2106cd
 
-On Fri, Jun 14, 2024 at 08:35:23AM -0700, Sean Christopherson wrote:
-> > I know Sean had a patchset to cleanup that gunk. Sean?
+Hi Detlev,
+
+On 2024-06-15 03:56, Detlev Casanova wrote:
+> Document the Rockchip RK3588 Video Decoder 2 bindings.
+
+Why the need for a new schema file and not just extending existing
+rockchip,vdec.yaml with a new compatible and the new clock?
+
 > 
-> That series was just for the actual VM-Enter/VM-Exit path. 
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> ---
+>  .../bindings/media/rockchip,vdec2.yaml        | 80 +++++++++++++++++++
+>  1 file changed, 80 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/rockchip,vdec2.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/media/rockchip,vdec2.yaml b/Documentation/devicetree/bindings/media/rockchip,vdec2.yaml
+> new file mode 100644
+> index 000000000000..e54891b46986
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/rockchip,vdec2.yaml
+> @@ -0,0 +1,80 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/rockchip,vdec2.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Rockchip Video Decoder 2 (VDec2)
+> +
+> +maintainers:
+> +  - Heiko Stuebner <heiko@sntech.de>
+> +
+> +description: |-
+> +  The Rockchip rk3588 has a stateless Video Decoder that can decodes H.264,
+> +  HEVC, VP9 and AVS2 streams.
+> +
+> +properties:
+> +  compatible:
+> +    const: rockchip,rk3588-vdec2
 
-Right, about that. I still see:
+I fail to see the need to call this vdec2 instead of established vdec.
 
-vmlinux.o: warning: objtool: svm_vcpu_enter_exit+0xb0: call to sev_es_host_save_area() leaves .noinstr.text section
-vmlinux.o: warning: objtool: svm_vcpu_enter_exit+0xbf: call to sev_es_host_save_area.isra.0() leaves .noinstr.text section
+Suggest this is changed to rockchip,rk3588-vdec.
 
-in allyesconfig builds....
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: The Video decoder AXI interface clock
+> +      - description: The Video decoder AHB interface clock
+> +      - description: The Video decoder core clock
+> +      - description: The Video decoder CABAC clock
+> +      - description: The Video decoder HEVC CABAC clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: axi
+> +      - const: ahb
+> +      - const: core
+> +      - const: cabac
+> +      - const: hevc_cabac
+> +
+> +  assigned-clocks: true
+> +
+> +  assigned-clock-rates: true
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - power-domains
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
+> +    #include <dt-bindings/power/rk3588-power.h>
+> +
+> +    vdec2: video-codec@fdc38100 {
+> +        compatible = "rockchip,rk3588-vdec2";
+> +        reg = <0x0 0xfdc38100 0x0 0x500>;
+> +        interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
+> +        clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>, <&cru CLK_RKVDEC0_CORE>,
+> +                 <&cru CLK_RKVDEC0_CA>, <&cru CLK_RKVDEC0_HEVC_CA>;
+> +        clock-names = "axi", "ahc", "core",
+> +                      "cabac", "hevc_cabac";
+> +        assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru CLK_RKVDEC0_CORE>,
+> +                          <&cru CLK_RKVDEC0_CA>, <&cru CLK_RKVDEC0_HEVC_CA>;
+> +        assigned-clock-rates = <800000000>, <600000000>,
+> +                               <600000000>, <1000000000>;
+> +        power-domains = <&power RK3588_PD_RKVDEC0>;
 
--- 
-Regards/Gruss,
-    Boris.
+iommus and resets seem to be missing?
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Regards,
+Jonas
+
+> +    };
+> +
+> +...
+
 
