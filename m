@@ -1,127 +1,129 @@
-Return-Path: <linux-kernel+bounces-216061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F41CF909A9E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 01:47:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18DFD909AA1
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 01:53:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52692282A78
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 23:47:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA8B81F21AF2
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 23:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15515339B;
-	Sat, 15 Jun 2024 23:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kNrCuU2e"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECD461FD1;
+	Sat, 15 Jun 2024 23:53:03 +0000 (UTC)
+Received: from mail78-59.sinamail.sina.com.cn (mail78-59.sinamail.sina.com.cn [219.142.78.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8051C2561D;
-	Sat, 15 Jun 2024 23:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558C638DDB
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 23:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718495223; cv=none; b=V+z8SPW+/aArsUzwtael4mwVEFPRxFtx0SmkWrPNWkIe4aZJQzh61dNCcHzqA1lAhFS7RN5v1mUUjoQ6F4X0L4PeyuCxtLuXr/vNko492p6mi1mCFLTHjamm6tLriyixBB9+lbmT35qM3SRDFWKYKX+fdCvrLmBv12ojXRYzqPc=
+	t=1718495583; cv=none; b=H/GgmVG9GxtpaJP9qYFpdz2otgADL0ub8C0Bq644icMR861SA0CFsDhlXuqCMzylP+N7PuL9sPhBwpB30yJR8QI9GByvLnpnQI80Dq1tPrWOoFfhrbmpx5djVCTZKoC4/e3wdyrwkIjdJ2MXnnypHXa0au6ejqwuWKXlekLgUA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718495223; c=relaxed/simple;
-	bh=N4FN2DClt/Y/uIf72OrDc+dyQD9gXFv5s3nVG1ZLfpQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=HtUd/LEJ0T5nRHtbFFAWga8W82H3h0gQcYTLD3olkceyIZ3vYPjYYsEXx6OnoyAyzMFi0IsiX6DczXR0XEN6cPkwlQF7Afm83Ik0rIiHAnZm5w2ZMov2LO/rORlnW10yYt2HxMXUoIvTiLCa5ApNbsFZQEO2To/G2xVSt2qrBms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kNrCuU2e; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45FNe228011298;
-	Sat, 15 Jun 2024 23:46:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=I7Lc5U98nkYM7nfAMMRFt+
-	f1kBIlp8rfa2dgQU7QCN0=; b=kNrCuU2e3KGJpM+6xE65exzy8ExTgYiBC+5tLF
-	R1KFPN46vx4bKJRJl4BdSoqW1odctlu3nz8DfHrVhJBehf8y9bN/1OpjOiXZYRS+
-	sjx4q/CJ0eJe5c0RkFs7sgK9sHJvt4RuZR3gNv+dGGzXV57SE5APy204pjcd0E8s
-	g9mMoUpUP7uavH8OeK6G3aTHYVPX84lUQh1EfDA9myLIs7k23Aky4vqtcTGC84F/
-	Hxxej2Jf7eot1jOdnVZ3DNrKsWZWdDkWy8AGt5+bBQN96jxKWZ+sxzurCr9aoAW5
-	9ZfLdwbapogMsXk0vpY7g/6es7YBmlSPDzp5cbqv/gw3ztqQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys0an1d74-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 15 Jun 2024 23:46:53 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45FNkqI2003841
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 15 Jun 2024 23:46:52 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Jun
- 2024 16:46:51 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sat, 15 Jun 2024 16:46:50 -0700
-Subject: [PATCH] s390/crc32: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1718495583; c=relaxed/simple;
+	bh=vN6PP7hBwU0zBLnBaoXnkxipyRBOgrc17LMmBVxavN8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KOJ3S9+eCuYqkgyDb1aTG6aZzRHXSpG/O6T4ro+H05I55agOGrlMccIZcWN3OK/IlN3EGuY50g+w1xysGml05v11KCEXHPLY4ZIlYsZAyEChvjeFNOAuwNLUh3J8Fwtax5WivkOu7pbXec1SUGFNwZhvPsZs6BMJDP/1PePkXWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.9.2])
+	by sina.com (172.16.235.25) with ESMTP
+	id 666E294D00005E62; Sat, 16 Jun 2024 07:52:47 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 89047434210117
+X-SMAIL-UIID: B5F68BFFE1BC4398B8FF78159B84E9A2-20240616-075247-1
+From: Hillf Danton <hdanton@sina.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org,
+	Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org,
+	syzbot+d79afb004be235636ee8@syzkaller.appspotmail.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-nilfs@vger.kernel.org,
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Subject: Re: [RFC PATCH] mm: truncate: flush lru cache for evicted inode
+Date: Sun, 16 Jun 2024 07:52:38 +0800
+Message-Id: <20240615235238.1079-1-hdanton@sina.com>
+In-Reply-To: <Zm39RkZMjHdui8nh@casper.infradead.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240615-md-s390-arch-s390-crypto-v1-1-7120d406e7c7@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAOknbmYC/yXMyw6CQAyF4VchXdtkQC7RVzEsykxxmshAWjQYw
- rs76u58i/PvYKzCBtdiB+WXmMwpozwV4COlO6OEbKhcVbu2bHAKaOeLQ1If/8vre1ln7Bpmpja
- Moash3xflUbZf+tZnD2SMg1Ly8Rt8SHpuOJGtrHAcH/9QTBOJAAAA
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
-	<gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        "Christian
- Borntraeger" <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>
-CC: <linux-crypto@vger.kernel.org>, <linux-s390@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: h_P0oKot1Z1TRdcEgnqXmvPciXnZokLG
-X-Proofpoint-ORIG-GUID: h_P0oKot1Z1TRdcEgnqXmvPciXnZokLG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-15_17,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- bulkscore=0 impostorscore=0 priorityscore=1501 spamscore=0 clxscore=1011
- suspectscore=0 mlxscore=0 adultscore=0 lowpriorityscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406150181
+Content-Transfer-Encoding: 8bit
 
-With ARCH=s390, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/s390/crypto/crc32-vx_s390.o
+On Sat, 15 Jun 2024 21:44:54 +0100 Matthew Wilcox wrote:
+> On Sat, Jun 15, 2024 at 07:59:53AM +0800, Hillf Danton wrote:
+> > On Fri, 14 Jun 2024 14:42:20 +0100 Matthew Wilcox wrote:
+> > > On Fri, Jun 14, 2024 at 09:18:56PM +0800, Hillf Danton wrote:
+> > > > Flush lru cache to avoid folio->mapping uaf in case of inode teardown.
+> > > 
+> > > What?  inodes are supposed to have all their folios removed before
+> > > being freed.  Part of removing a folio sets the folio->mapping to NULL.
+> > > Where is the report?
+> > >
+> > Subject: Re: [syzbot] [nilfs?] [mm?] KASAN: slab-use-after-free Read in lru_add_fn
+> > https://lore.kernel.org/lkml/000000000000cae276061aa12d5e@google.com/
+> 
+> Thanks.  This fix is wrong.  Of course syzbot says it fixes the problem,
+> but you're just avoiding putting the folios into the situation where we
+> have debug that would detect the problem.
+> 
+> I suspect this would trigger:
+> 
+Happy to test your idea.
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> +++ b/fs/inode.c
+> @@ -282,6 +282,7 @@ static struct inode *alloc_inode(struct super_block *sb)
+>  void __destroy_inode(struct inode *inode)
+>  {
+>         BUG_ON(inode_has_buffers(inode));
+> +       BUG_ON(inode->i_data.nrpages);
+>         inode_detach_wb(inode);
+>         security_inode_free(inode);
+>         fsnotify_inode_delete(inode);
+> 
+> and what a real fix would look like would be calling clear_inode()
+> before calling iput() in nilfs_put_root().  But I'm not an expert
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- arch/s390/crypto/crc32-vx.c | 1 +
- 1 file changed, 1 insertion(+)
+Hm...given I_FREEING checked in clear_inode(), fix like this one could be
+tried in midle 2026.
 
-diff --git a/arch/s390/crypto/crc32-vx.c b/arch/s390/crypto/crc32-vx.c
-index 74f17c905d12..89a10337e6ea 100644
---- a/arch/s390/crypto/crc32-vx.c
-+++ b/arch/s390/crypto/crc32-vx.c
-@@ -297,6 +297,7 @@ module_cpu_feature_match(S390_CPU_FEATURE_VXRS, crc_vx_mod_init);
- module_exit(crc_vx_mod_exit);
+> in this layer of the VFS, so I might well be wrong.
+
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  83a7eefedc9b
+
+--- x/mm/truncate.c
++++ y/mm/truncate.c
+@@ -419,6 +419,9 @@ void truncate_inode_pages_range(struct a
+ 		truncate_folio_batch_exceptionals(mapping, &fbatch, indices);
+ 		folio_batch_release(&fbatch);
+ 	}
++
++	if (mapping_exiting(mapping))
++		lru_add_drain_all();
+ }
+ EXPORT_SYMBOL(truncate_inode_pages_range);
  
- MODULE_AUTHOR("Hendrik Brueckner <brueckner@linux.vnet.ibm.com>");
-+MODULE_DESCRIPTION("CRC-32 algorithms using z/Architecture Vector Extension Facility");
- MODULE_LICENSE("GPL");
- 
- MODULE_ALIAS_CRYPTO("crc32");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240615-md-s390-arch-s390-crypto-75eeea6dfd74
-
+--- x/fs/inode.c
++++ y/fs/inode.c
+@@ -282,6 +282,7 @@ static struct inode *alloc_inode(struct
+ void __destroy_inode(struct inode *inode)
+ {
+ 	BUG_ON(inode_has_buffers(inode));
++	BUG_ON(inode->i_data.nrpages);
+ 	inode_detach_wb(inode);
+ 	security_inode_free(inode);
+ 	fsnotify_inode_delete(inode);
+--
 
