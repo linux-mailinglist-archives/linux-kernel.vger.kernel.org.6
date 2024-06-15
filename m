@@ -1,62 +1,54 @@
-Return-Path: <linux-kernel+bounces-215761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC679096BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:08:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A91799096C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D4901C22060
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:08:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 295D3285763
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F4D18638;
-	Sat, 15 Jun 2024 08:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4561C280;
+	Sat, 15 Jun 2024 08:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="CjYg5+K2"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2F91803E
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 08:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="cSpa9X0I"
+Received: from mail-177132.yeah.net (mail-177132.yeah.net [123.58.177.132])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D332F182B3;
+	Sat, 15 Jun 2024 08:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=123.58.177.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718438887; cv=none; b=HeSFtirQQbt9Nb3aMMJt+DFvO25T8fXg7uFcqCFKhguDTM0idjETm22r30UchWZNu2b5RZlcQ+WPnFqD1JV+IMifkh2uh2VZRJNQY8dFKEVAhBOFVjp+slSENS4WB5Pn+67/xeEx+f1AgBXBUyugrkgg23lRM2juzTOR/CjpyQ8=
+	t=1718438892; cv=none; b=dXwQb90p/M7QKsNanAMGdnhPOCJbU4sv5zjitFDJTGnr4fdAen4CvAnbtQ258EHLDk7iZtRWJw7EjhWCr0+ZO6XNzGdoH4tiM7devostRF8bKpYqzNn2GyU+/V6ScdxsS6/Y89rR0VOcVYRy9KrW9KKGYQU2Uwi7oZ8SMjlQUqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718438887; c=relaxed/simple;
-	bh=zpTDiiwYRHFfQwWxieiObPybAsuSt+nSdOvDRnB85dY=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hSwyis25lVVR6gEA3CMAqMa1dKjAZv44yf1TmHr1HYhj9z9dJxvDQcpE9LZ/pplrdQtpFbNM4ZsuExJ6kwe+pu/UcUa5bNtm+h6T7qLItG5WIyWvdpSE4dLqyLs8bZjSi//XlLfdtM7r45qr8FVld3oAXhk43YSy9joScHUY+MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=CjYg5+K2; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org ([154.16.192.69])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 45F87bPV000998
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 15 Jun 2024 04:07:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1718438860; bh=+/ngTIzUuX7XPploPv7z+d8ZCh/mJEmERdsDc2gEMQs=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=CjYg5+K2+Wt1RLQ4rv/rviuM5Rz8VL+A3E1rEEB4T/+8o2YS/oBowYjanddtdm/0C
-	 4G7N+4tRWRA3fPsh5hq/AIj1G0Pa4hCSMaH6i4rwrLmBScFI2VFgH9qDgGA6d8nrvD
-	 2oQDe1t4ZrBpP5mRxtXccrh2xJ+Qaer0EQcL26vKfcUVwuOqEAIfL0XvDugL04HN1z
-	 ge9vs5n04NZOimsUAZeWuYz9RnBKirMAW2GOKPLtdrvyZWugpczGMTfigg7a67WGNe
-	 KCAMalwB9RtUKWGD88XTRBOVb0oKMdNjo0rL3EvmPVDHZvhQBQ4MSLrb1fNX9erl6P
-	 n0GWoI8nalb+Q==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id 3C980341697; Sat, 15 Jun 2024 10:07:37 +0200 (CEST)
-Date: Sat, 15 Jun 2024 09:07:37 +0100
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
-        linux-block@vger.kernel.org, netdev@vger.kernel.org,
-        linux-mm@kvack.org, ksummit@lists.linux.dev,
-        linux-security-module@vger.kernel.org
-Subject: Re: Maintainers Summit 2024 Call for Topics
-Message-ID: <20240615080737.GG1906022@mit.edu>
-References: <20240531144957.GA301668@mit.edu>
+	s=arc-20240116; t=1718438892; c=relaxed/simple;
+	bh=rPgCc9oeqCVfNZ8wHQbb4DAAw3Bq7+5vbSGwXTvp2p8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gCDeLVDiUjPHgVcwLnToC+NRufherqkmk9lUt6qxOoVPAUOlUQtnWb/beYZVeQy1X65jvMBS/NjCKAEd9rp2Om2g4IM4NwODbldV317DNFw+2wvyUaKL4P6PZ8RDzL6zlrHwmLwUn8xmJj4aR5cTdV5tSbAMsDxrUv31arRcaBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=cSpa9X0I; arc=none smtp.client-ip=123.58.177.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=/iKjibvMsxezGFlPSNPKpOBNVsf+6rthH3pcb2WX1No=;
+	b=cSpa9X0IMbQKAzcN/yz/8EXPeA/EMwh8Ujy3dqSwaVMna++cJGjIHFOptHf+pT
+	4OwVYNQvrDW4ylikwSuEoMdEBaja2yNLBdrQeet2c8KZV3ppNxuzEidY6I1ew8Dq
+	NjL6q5HtOm1NOl+gl86hUdbqGZ/2nmmKXNjvlyMGhOS/Q=
+Received: from dragon (unknown [114.216.76.201])
+	by smtp2 (Coremail) with SMTP id C1UQrACHjxDRS21mwOK0CA--.43334S3;
+	Sat, 15 Jun 2024 16:07:46 +0800 (CST)
+Date: Sat, 15 Jun 2024 16:07:45 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, dmitry.baryshkov@linaro.org
+Subject: Re: [PATCH] arm: dts: imx53-qsb-hdmi: Disable panel instead of
+ deleting node
+Message-ID: <Zm1L0fyKupDFDOUX@dragon>
+References: <20240514030718.533169-1-victor.liu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,88 +57,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240531144957.GA301668@mit.edu>
+In-Reply-To: <20240514030718.533169-1-victor.liu@nxp.com>
+X-CM-TRANSID:C1UQrACHjxDRS21mwOK0CA--.43334S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUswZ2UUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBRL+ZVsVCphcKQAAsl
 
-Many thanks to those who have submitted topics for the Maintainers
-Summit and to the Kernel Summit track at the Linux Plumber's
-Conference.
+On Tue, May 14, 2024 at 11:07:18AM +0800, Liu Ying wrote:
+> We cannot use /delete-node/ directive to delete a node in a DT
+> overlay.  The node won't be deleted effectively.  Instead, set
+> the node's status property to "disabled" to achieve something
+> similar.
+> 
+> Fixes: eeb403df953f ("ARM: dts: imx53-qsb: add support for the HDMI expander")
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
 
-We have extended the deadline for Kernel Summit proposals by a week,
-to June 23.  If you have something that you would like to share with
-the kernel development community as a technical topic, or something
-you'd like to porpose as a Maintainers Summit topic, please submit
-your proposal in the next week!
+Applied, thanks!
 
-Many thanks,
-
-						- Ted
-
-On Fri, May 31, 2024 at 04:49:57PM +0200, Theodore Ts'o wrote:
-> This year, the Maintainers Summit will be held in Vienna, Austria on
-> Tuesday, September 17th, 2024, just before the Linux Plumber's Conference
-> (September 18--20th).
-> 
-> As in previous years, the Maintainers Summit is invite-only, where the
-> primary focus will be process issues around Linux Kernel Development.
-> It will be limited to 30 invitees and a handful of sponsored
-> attendees.
-> 
-> Linus has generated a list of people for the program committee to
-> consider.  People who suggest topics that should be discussed at the
-> Maintainers Summit will also be added to the list for consideration.
-> To make topic suggestions for the Maintainers Summit, please send
-> e-mail to the ksummit@lists.linux.dev with a subject prefix of
-> [MAINTAINERS SUMMIT].
-> 
-> To get the most out of our topic discussions, folks proposing a topic
-> should also suggest relevant people and desired outcomes.
-> 
-> For an examples of past Maintainers Summit topics, please see these
-> LWN articles:
-> 
->  * 2023 https://lwn.net/Articles/951847/
->  * 2022 https://lwn.net/Articles/908320/
->  * 2021 https://lwn.net/Articles/870415/
-> 
-> The Kernel Summit is organized as a track which is run in parallel
-> with the other tracks at the Linux Plumbers Conference (LPC), and is
-> open to all registered attendees of LPC.  The goal of the Kernel
-> Summit track will be to provide a forum to discuss specific technical
-> issues that would be easier to resolve in person than over e-mail.
-> The program committee will also consider "information sharing" topics
-> if they are clearly of interest to the wider development community
-> (i.e., advanced training in topics that would be useful to kernel
-> developers).
-> 
-> To suggest a topic for the Kernel Summit, please do two things. by
-> June 16th, 2024.  First, please tag your e-mail with [TECH TOPIC].  As
-> before, please use a separate e-mail for each topic, and send the
-> topic suggestions to the ksummit discussion list.
-> 
-> Secondly, please create a topic at the Linux Plumbers Conference
-> proposal submission site and target it to the Kernel Summit track:
-> 
-> 	https://lpc.events/event/18/abstracts/
-> 
-> Please do both steps.  I'll try to notice if someone forgets one or
-> the other, but your chances of making sure your proposal gets the
-> necessary attention and consideration are maximized by submitting both
-> to the mailing list and the web site.
-> 
-> 
-> If you were not subscribed on to the kernel mailing list from
-> last year (or if you had removed yourself after the kernel summit),
-> you can subscribe by sending an e-mail to the address:
-> 
->    ksummit+subscribe@lists.linux.dev
-> 
-> The program committee this year is composed of the following people:
-> 
-> Christian Brauner
-> Jon Corbet
-> Greg KH
-> Sasha Levin
-> Ted Ts'o
-> Rafael J. Wysocki
-> 
 
