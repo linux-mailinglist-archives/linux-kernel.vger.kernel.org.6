@@ -1,127 +1,141 @@
-Return-Path: <linux-kernel+bounces-216032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E174909A46
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 00:42:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08708909A48
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 00:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B90F1C20DBA
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 22:42:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 800BD2820A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 22:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4852E6A33D;
-	Sat, 15 Jun 2024 22:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iR21zgFO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD1E61FFE;
+	Sat, 15 Jun 2024 22:48:23 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82158825;
-	Sat, 15 Jun 2024 22:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C9743ADA
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 22:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718491309; cv=none; b=S8YSd2jJhK9ajV0zpm7OyYX+PmrKSAY1fvIuKo1l4qmlhenzNK5qvSLbHCCmkOUX6y8rzdFyjTe4ecsCfz1X90R0LuRkqBsHIFKrSsIlI+iPNROXdP2rjujszSlndYv+rLQjHaoPqpg3HM3/wF1Wzc7E/UMO+lzqbfQHvo1NP70=
+	t=1718491703; cv=none; b=bTsRTUsu4prJE8fpk0v9dWd1xW8a+DXctM4scQMyxvUytPQ3JYMsjX2WGYrUMFjLoZy0ZAsiPgv+L/2PJAY17EJ8kBxOtEwNs9b5W1vED1L3r7w1r/fP3a3UeZTD74ZwPrnANIu/eP6iQ16+SnYLKJ68yFF7CRk76m/ypymq9iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718491309; c=relaxed/simple;
-	bh=zTomvuEXwFeQv6R1wyXc3ygD/xU6T8enKPDdKqX/JOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CXGCFE76db4Hp9N8NvEhO9fyWTBma2nbNCvWtZQ0QoX9AEPhLPwxfmopPBWlj5wpGTtRATe4oquCMCzXcT0l6757hsh/8Gsh6Ro82NdZ9JSlFPjO1mS+wPamKbzCWW4sxXaH7IhnT0NdBuy+dyzF23axrN/JBX3eV8amrm4lOrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iR21zgFO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45FMZqK2010384;
-	Sat, 15 Jun 2024 22:41:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4AtUIj6+jb5pJN+Yhpmk82WIhOJoGk8n1f7dla6Xlm0=; b=iR21zgFOVht0G1Ui
-	XjJS54b5VR0MYNZs30FiK4NRDdgMwxvqkAd9LJtztyJRyuD/0dGEiHN7z4bTtyLM
-	Y0YRf9IuFGfzd6RiPosAdTaleqeXTXoIL9zhy9Tga7Gdl2U7MaELRh+79E51f8AN
-	cBbumSku2iAJWaCOfSIkn+MGpe5F6GUU73xffHwxE7OJd1O63akblDz8KRmQ9SYJ
-	n1dbe+Lx8MSzcIYQQFFcezmOXKGu+DK48so4afTR8r8o80BHqr7R4XER5A535slH
-	jKhlz79puLB7UQH3d3TzDH6YC0hdE5Z8UJFJv82063Ney1ph4EXqAKrRmFUKl6GS
-	u4geGg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys0an1bm9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 15 Jun 2024 22:41:39 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45FMfc4W017091
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 15 Jun 2024 22:41:38 GMT
-Received: from [10.48.243.167] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Jun
- 2024 15:41:37 -0700
-Message-ID: <b26cbfac-b9cd-4682-86a4-4686c3ec15bb@quicinc.com>
-Date: Sat, 15 Jun 2024 15:41:36 -0700
+	s=arc-20240116; t=1718491703; c=relaxed/simple;
+	bh=rhm758PccSnzbkDow89Tq2dRBwoZjlt9c0+MpO5CxGs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=V4rwpzFXprRABoMcaWWncSJS6ktb05eAnzIpV8iKFvzRV8ZQGXEWmpAuW+h9qC6p2H5otn7WdmQ6ikeLh0fLKEcbIpGvj0zogL7HmspTytL1asQw8gyF/Alr/Cwjydjj6KJCDwrRoFqdibEhLFnlewRlkd6S9OMifrrWg0KDZB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3737b3ee909so35105605ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 15:48:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718491701; x=1719096501;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tHwmET3iNuTWW1g+bMh5XKabUJfdx8vXevnRMY8KMvU=;
+        b=dYMyayrssHhYzfrDlhpbYKSRf+prVbOD21BYUk8fS1toHJ/i4o7gQfeBkOs7oxAjAF
+         bLeOFuirtHAHzbS4max/5fEiIKc1tmRoTSqlvYkdg9g1l1ULSQnUbZZ0zVpDXpPD6+zm
+         4DcETZ8TPECtE9If+JgEFcC4Nb0YcfUp7n9J9pD12wLO19BPuxtiB0woEpMZfQQJwzAI
+         YKdPdYmnk49slZifaYXY/dR0vQ9VzTXhvAQZ6QmXgEH8T4BhZKlLlHDtdNQtQ5nUdYbI
+         /YgHfMP3lPAJsCNGmPIXLXBLw8zVkk9VjQ3v+gA8zFmgzgCZoHNGi2PX59sxf1n2XB5P
+         cMtw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9ou0AkvWIHQAWhTsBGlHAHoXoatyKm9ilWmZqrL+aNdPHwGQ4mUhKyXh6QQWsnZot3OA6xS6qztw7BflZ0lYpMhK5b2UujQaa2Moo
+X-Gm-Message-State: AOJu0Yx5ub7qSleWQOLShOrNcWKX1F7UGQW0OcqGGzjjxIHxbXsWzCaw
+	FFKpY1mLT14AA7xEU61jIUgtc+jD0XRUfFb5T8PvPfPxVIzgFkmgWaym5APOHPyO4stTQjMixcX
+	fdhjr7Wy5ti8/cb0ANZBdgQ7iYp98DhiN2QLD5/b7yixLxMuq3+4mrLI=
+X-Google-Smtp-Source: AGHT+IGenEZR7V7Fmb2kOnMl/p2jAghCtQoSEMq4nbTv8RxSqbIuzPjNkKnaZOGF6UYX3g1vX5SPXXx0BD+SUEhLFyC7SrpKm0+Q
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: ath12k: fix potential NULL dereference
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-        Pradeep Kumar Chitrapu
-	<quic_pradeepc@quicinc.com>
-CC: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-        <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <4428a7ab-eb67-4f0e-992f-35577ea2b564@moroto.mountain>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <4428a7ab-eb67-4f0e-992f-35577ea2b564@moroto.mountain>
+X-Received: by 2002:a05:6e02:1d07:b0:375:9cb9:9d04 with SMTP id
+ e9e14a558f8ab-375e0ec60a2mr4444995ab.3.1718491701004; Sat, 15 Jun 2024
+ 15:48:21 -0700 (PDT)
+Date: Sat, 15 Jun 2024 15:48:20 -0700
+In-Reply-To: <0000000000000de83f06191f79ad@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000635dec061af5871b@google.com>
+Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_btree_node_read_done
+From: syzbot <syzbot+e6332ce6aa831184a0eb@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: aC2NQg2k6GFhXZI6RfdtvCdTC5lHxb_t
-X-Proofpoint-ORIG-GUID: aC2NQg2k6GFhXZI6RfdtvCdTC5lHxb_t
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-15_16,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- bulkscore=0 impostorscore=0 priorityscore=1501 spamscore=0 clxscore=1015
- suspectscore=0 mlxscore=0 adultscore=0 lowpriorityscore=0 mlxlogscore=735
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406150173
 
-On 6/14/2024 10:32 AM, Dan Carpenter wrote:
-> In this condition if "sband" is NULL then it leads to a NULL dereference
-> on the next line when it does "idx -= sband->n_channels;".
-> 
-> The condition can just be deleted, because if "sband" is NULL or the
-> "idx" is out of bounds, then the correct thing is to at this point is to
-> return -ENOENT.  There are no additional sbands available to try.
-> 
-> Fixes: 70e3be54bbdd ("wifi: ath12k: fix survey dump collection in 6 GHz")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/net/wireless/ath/ath12k/mac.c | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath12k/mac.c b/drivers/net/wireless/ath/ath12k/mac.c
-> index 509c02bffdae..e5456383dabd 100644
-> --- a/drivers/net/wireless/ath/ath12k/mac.c
-> +++ b/drivers/net/wireless/ath/ath12k/mac.c
-> @@ -8314,11 +8314,6 @@ static int ath12k_mac_op_get_survey(struct ieee80211_hw *hw, int idx,
->  
->  	if (!sband)
->  		sband = hw->wiphy->bands[NL80211_BAND_6GHZ];
-> -	if (!sband || idx >= sband->n_channels) {
-> -		idx -= sband->n_channels;
-> -		sband = NULL;
-> -	}
-> -
->  	if (!sband || idx >= sband->n_channels)
->  		return -ENOENT;
->  
-This duplicates
-https://lore.kernel.org/all/20240611031017.297927-2-quic_aarasahu@quicinc.com/
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17d55446980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
+dashboard link: https://syzkaller.appspot.com/bug?extid=e6332ce6aa831184a0eb
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=176f05de980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13f0cbb1980000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2ccbdf43.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c40c1cd990d2/vmlinux-2ccbdf43.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a2a94050804e/bzImage-2ccbdf43.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/7ea194fe115d/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e6332ce6aa831184a0eb@syzkaller.appspotmail.com
+
+bcachefs (loop0): mounting version 1.7: mi_btree_bitmap opts=metadata_checksum=none,data_checksum=crc64,background_compression=zstd,str_hash=crc32c,nojournal_transaction_names
+bcachefs (loop0): recovering from clean shutdown, journal seq 8
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in fs/bcachefs/btree_types.h:770:13
+shift exponent 114 is too large for 32-bit type 'unsigned int'
+CPU: 3 PID: 5185 Comm: syz-executor270 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:114
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x2a5/0x480 lib/ubsan.c:468
+ btree_node_type_is_extents fs/bcachefs/btree_types.h:770 [inline]
+ bch2_btree_node_read_done.cold+0x7a/0x17e fs/bcachefs/btree_io.c:1093
+ btree_node_read_work+0x567/0x1060 fs/bcachefs/btree_io.c:1345
+ bch2_btree_node_read+0x8b3/0xe40 fs/bcachefs/btree_io.c:1730
+ __bch2_btree_root_read fs/bcachefs/btree_io.c:1769 [inline]
+ bch2_btree_root_read+0x2ca/0x690 fs/bcachefs/btree_io.c:1793
+ read_btree_roots fs/bcachefs/recovery.c:475 [inline]
+ bch2_fs_recovery+0x1ba8/0x3db0 fs/bcachefs/recovery.c:803
+ bch2_fs_start+0x2e9/0x600 fs/bcachefs/super.c:1035
+ bch2_fs_open+0xfa0/0x1110 fs/bcachefs/super.c:2127
+ bch2_mount+0xe2c/0x1230 fs/bcachefs/fs.c:1919
+ legacy_get_tree+0x109/0x220 fs/fs_context.c:662
+ vfs_get_tree+0x8f/0x380 fs/super.c:1780
+ do_new_mount fs/namespace.c:3352 [inline]
+ path_mount+0x14e6/0x1f20 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount fs/namespace.c:3875 [inline]
+ __x64_sys_mount+0x297/0x320 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fac2a06097a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffed16b1868 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffed16b1880 RCX: 00007fac2a06097a
+RDX: 0000000020005b00 RSI: 0000000020000040 RDI: 00007ffed16b1880
+RBP: 0000000000000004 R08: 00007ffed16b18c0 R09: 0000000000005b2d
+R10: 0000000000018080 R11: 0000000000000282 R12: 0000000000018080
+R13: 00007ffed16b18c0 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+---[ end trace ]---
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
