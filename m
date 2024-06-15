@@ -1,134 +1,252 @@
-Return-Path: <linux-kernel+bounces-215693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFFF9095EE
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 05:50:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73E59095EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 05:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C3E0B23288
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:50:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 486A61F23ACA
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514F8DDDC;
-	Sat, 15 Jun 2024 03:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UEF442+r"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31123C8FF
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 03:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D17E573;
+	Sat, 15 Jun 2024 03:54:23 +0000 (UTC)
+Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84ECDDA9
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 03:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718423443; cv=none; b=gagC2EvDFi3PoPF3wc3r648pukJc/3wtHrML4DBFE8nWXtOaD8natyQedkxkkfKw1H7mOgLsHMIinNk9pe9NMcqv373yb6no2TBUq6ZCs63kzY6XXW5kbHjl1zYTfyLCTAyVdBLvtAJz/0RZlfRCvy3KdneQlsCFfP57H20tmtY=
+	t=1718423663; cv=none; b=a4YpLSvnEcjOH/ZQqZDx98c68M5QCLxG80b7rG6bY1tQ5JJljnGomA+Tav/ty+chL+m/Cmy2eoYypKVJUfJ32kIAlpCvw5KMRTmCxJ9zayNVQwWf6C2k3EYwPfX7IgqjjoFXUPph53cVSgBJQoUg28E9EVSXDaNBAAeZBImEInA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718423443; c=relaxed/simple;
-	bh=acgHjqs5bw1TUxLqFNvY0kyYBlZkhQ6Ht3dhbaj+8+A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UKoHvvs+UmcfidPSvZVkDUbFIaEQSOh8W/HXyzKT0iVXoaa/Dy+4uIJd9Bj8me1iAt3DtGBs9dP+BkoijNXTqB/IXe8zIRUEdiulMZRxUqAp/smr8x1KfuD8T+5DVSDfqdM+3Fb51QIByfBIbejUj3cTTs5C2Yvj9VvXuDjLc8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UEF442+r; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dff2df7de4aso137335276.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 20:50:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718423441; x=1719028241; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GMvh4LLu7+iHaH8H77qbd16ndaMtLZL9+Jqv+C5DkQg=;
-        b=UEF442+raKNIaURInlBvsbkvUcjsQ8bY0xLklMevg7nlBhQ+PQ2rnQe+yeHT8xFHwx
-         lHLDOCYzRemtgYyESGWA05R8CHq92cvxZCC6N1g73FNwegUpD8y8jBDAxkTI0DFzkMUC
-         JXxzM/QdLYh+sf2yEtCyUaD2a/OaQG6rFGXdA5JqERW378qAxVG6VP93VPW4uBKEzUGJ
-         e2kWdaHbg0ax9Bk7AndF9s0AaYZ0q0f58dvxaHMB/l925jG8CVUbfj8PiH9oxD8igZ3L
-         acWY1ntYomw3lGTOY0PuACH4/a6GtO6u1y7tJ27zsCtmN3iLrXTGBxHNKLhihShv8E6O
-         A1QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718423441; x=1719028241;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GMvh4LLu7+iHaH8H77qbd16ndaMtLZL9+Jqv+C5DkQg=;
-        b=vSRp1Q2hNk0iLjFw7VJR5mYxYYKzcDFu5k0PG+RALJFwehGrc22ye/UBJcsuOTHGJY
-         3K8/I758BtuIHj6HH14qhNuhsgmqfv7qU2J5p7MLaXW1nEZTuS+poXvjAjmsFNQEU8uz
-         DAXaa6s61OvX/nySuzuTKEobCqBDxzA9ncUzwGbzRcKsIgQdqMazscZ38qXaca4J7+qG
-         SzmapPZwvLE38LqL5MnOCuwo70CO73IEkBRnSr+BpXfxgtWQBrjj1aP/PsXCxgScCQFS
-         hrD27RW0fd4BzWJuLq8z/PIizNzG23bLjumNBTy5H8Ilfmx75QOHYWQ1t5RNRb0oP0Gl
-         9C0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUAorZvbO7+9WmC++jJ6QXnaCcucmkZ0s5D3PWoV7a5lnHjQFAE0nfS11D1xsDqkQmYu6Jaw0ggwIN1LdxopnfYWOUoj3zW1F2AtFR3
-X-Gm-Message-State: AOJu0YxUyJf1y4IzfyKLhBiC2Av0zqBR9oZ8qVuPQ0/v9HDqtq8lBTRf
-	7fInm9XlF4+pOXMUgBAg+8NI7Hx9G0P63inWf7I/8LglsOZsp8iWSfoGpnn+jhdegpLIawmdnEo
-	/8d72IQvVo76rEg3yopU/XcTYph9nZPXR/kk9
-X-Google-Smtp-Source: AGHT+IGLnx1xEu9b8B+6aEjKgrUM0EqAS3CIvalcy4j+YTnXsL71vY+LM+uwuGvau9J41l82mCbnLlylllrH3NHGj8Q=
-X-Received: by 2002:a25:b206:0:b0:de5:4a92:435f with SMTP id
- 3f1490d57ef6-dff1543ff94mr4328265276.46.1718423440846; Fri, 14 Jun 2024
- 20:50:40 -0700 (PDT)
+	s=arc-20240116; t=1718423663; c=relaxed/simple;
+	bh=fVCy6/dkF7HT91z7sabukVEP02eEuNJGU6rMT2irjBo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EH47jzYxP/jXQ+XusM3cBG+w0HFX22m7bFflaUgBZdKowaMgfzrgzYOyf+8lPR/121NahmdD8dNg1wa6OoG7xgn+0Td7v5Q2gUhCgwGJ/w3UyhGFl4s3uwHzjVDv29C+7Fh6Hh+TAyQ2pSBEm6fHwuhSPlKGvimucf0xYWW6awg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=162.243.161.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
+Received: from hust.edu.cn (unknown [172.16.0.50])
+	by app1 (Coremail) with SMTP id HgEQrABXWilFEG1mb33oBw--.32212S2;
+	Sat, 15 Jun 2024 11:53:41 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.12.164.29])
+	by gateway (Coremail) with SMTP id _____wBnYN8_EG1mKgQrAA--.4979S2;
+	Sat, 15 Jun 2024 11:53:40 +0800 (CST)
+From: Dongliang Mu <dzm91@hust.edu.cn>
+To: Dongliang Mu <dzm91@hust.edu.cn>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Cheng Ziqiu <chengziqiu@hust.edu.cn>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Alex Shi <alexs@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] scripts: fix most issues reported by pylint
+Date: Sat, 15 Jun 2024 11:53:16 +0800
+Message-Id: <20240615035323.909650-1-dzm91@hust.edu.cn>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614230504.3849136-1-surenb@google.com> <20240614181950.d5cd06acba24339401c98d6d@linux-foundation.org>
-In-Reply-To: <20240614181950.d5cd06acba24339401c98d6d@linux-foundation.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 14 Jun 2024 20:50:27 -0700
-Message-ID: <CAJuCfpEd4Rnd=5hMk4N_Q9Gg4e3mSfioJAsqufvzOeN01aRpbg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mm: handle profiling for fake memory allocations
- during compaction
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kent.overstreet@linux.dev, vbabka@suse.cz, pasha.tatashin@soleen.com, 
-	souravpanda@google.com, keescook@chromium.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:HgEQrABXWilFEG1mb33oBw--.32212S2
+Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
+X-Coremail-Antispam: 1UD129KBjvJXoW3AF1DAr47tF4kKFWruF4fAFb_yoWxGF15p3
+	45CFWIyrs8JrWUtr1xGw4UZFy3Ar9rJrWjqryqq3s7ArnrK3409FW2y34SvrW7WFyrXa43
+	GFWYyr1jqF1j9aDanT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUQFb7Iv0xC_Kw4lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vE
+	x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AFwI0_Jr
+	v_JF1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF
+	0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26r
+	4UJVWxJr1lYx0E74AGY7Cv6cx26r4fZr1UJr1lYx0Ec7CjxVAajcxG14v26r4j6F4UMcvj
+	eVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04
+	k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07bcsj8UUUUU=
+X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
 
-On Fri, Jun 14, 2024 at 6:19=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Fri, 14 Jun 2024 16:05:04 -0700 Suren Baghdasaryan <surenb@google.com>=
- wrote:
->
-> > During compaction isolated free pages are marked allocated so that they
-> > can be split and/or freed. For that, post_alloc_hook() is used inside
-> > split_map_pages() and release_free_list(). split_map_pages() marks free
-> > pages allocated, splits the pages and then lets alloc_contig_range_nopr=
-of()
-> > free those pages. release_free_list() marks free pages and immediately
-> > frees them. This usage of post_alloc_hook() affect memory allocation
-> > profiling because these functions might not be called from an instrumen=
-ted
-> > allocator, therefore current->alloc_tag is NULL and when debugging is
-> > enabled (CONFIG_MEM_ALLOC_PROFILING_DEBUG=3Dy) that causes warnings.
->
-> It would be helpful to quote the warnings for the changelog.  And a
-> Reported-by:/Closes: if appropriate.
+Pylint reports many coding style issues of scripts/checktransupdate.py
 
-This was not really reported anywhere but if someone hit this
-condition (it requires compaction to be running) then the warning
-would be generated.
+This patch fixes most issues with the following contents:
+- add or revise comments for all functions
+- use format string suggested by python
 
->
-> I'm assuming we want this in 6.10-rcX?
+Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+---
+ scripts/checktransupdate.py | 55 ++++++++++++++++---------------------
+ 1 file changed, 24 insertions(+), 31 deletions(-)
 
-Yes please. Otherwise someone will report that they are getting this
-warning when the system is under memory pressure and
-CONFIG_MEM_ALLOC_PROFILING_DEBUG is enabled.
+diff --git a/scripts/checktransupdate.py b/scripts/checktransupdate.py
+index 5a0fc99e3f93..70a5dab1a17b 100755
+--- a/scripts/checktransupdate.py
++++ b/scripts/checktransupdate.py
+@@ -4,19 +4,9 @@
+ """
+ This script helps track the translation status of the documentation
+ in different locales, e.g., zh_CN. More specially, it uses `git log`
+-commit to find the latest english commit from the translation commit
+-(order by author date) and the latest english commits from HEAD. If
++command to find the latest English commit from the translation commit
++(order by author date) and the latest English commits from HEAD. If
+ differences occur, report the file and commits that need to be updated.
+-
+-The usage is as follows:
+-- ./scripts/checktransupdate.py -l zh_CN
+-This will print all the files that need to be updated in the zh_CN locale.
+-- ./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools/testing-overview.rst
+-This will only print the status of the specified file.
+-
+-The output is something like:
+-Documentation/translations/zh_CN/dev-tools/testing-overview.rst (1 commits)
+-commit 42fb9cfd5b18 ("Documentation: dev-tools: Add link to RV docs")
+ """
+ 
+ import os
+@@ -29,12 +19,14 @@ flag_debug = False
+ 
+ 
+ def dprint(*args, **kwargs):
++    """Print debug information if the debug flag is set"""
+     if flag_debug:
+         print("[DEBUG] ", end="")
+         print(*args, **kwargs)
+ 
+ 
+ def get_origin_path(file_path):
++    """Get the origin path from the translation path"""
+     paths = file_path.split("/")
+     tidx = paths.index("translations")
+     opaths = paths[:tidx]
+@@ -43,9 +35,8 @@ def get_origin_path(file_path):
+ 
+ 
+ def get_latest_commit_from(file_path, commit):
+-    command = "git log --pretty=format:%H%n%aD%n%cD%n%n%B {} -1 -- {}".format(
+-        commit, file_path
+-    )
++    """Get the latest commit from the specified commit for the specified file"""
++    command = f"git log --pretty=format:%H%n%aD%n%cD%n%n%B {commit} -1 -- {file_path}"
+     dprint(command)
+     pipe = os.popen(command)
+     result = pipe.read()
+@@ -53,7 +44,7 @@ def get_latest_commit_from(file_path, commit):
+     if len(result) <= 1:
+         return None
+ 
+-    dprint("Result: {}".format(result[0]))
++    dprint(f"Result: {result[0]}")
+ 
+     return {
+         "hash": result[0],
+@@ -64,16 +55,18 @@ def get_latest_commit_from(file_path, commit):
+ 
+ 
+ def get_origin_from_trans(origin_path, t_from_head):
++    """Get the latest origin commit from the translation commit"""
+     o_from_t = get_latest_commit_from(origin_path, t_from_head["hash"])
+     while o_from_t is not None and o_from_t["author_date"] > t_from_head["author_date"]:
+         o_from_t = get_latest_commit_from(origin_path, o_from_t["hash"] + "^")
+     if o_from_t is not None:
+-        dprint("tracked origin commit id: {}".format(o_from_t["hash"]))
++        dprint(f"tracked origin commit id: {o_from_t['hash']}")
+     return o_from_t
+ 
+ 
+ def get_commits_count_between(opath, commit1, commit2):
+-    command = "git log --pretty=format:%H {}...{} -- {}".format(commit1, commit2, opath)
++    """Get the commits count between two commits for the specified file"""
++    command = f"git log --pretty=format:%H {commit1}...{commit2} -- {opath}"
+     dprint(command)
+     pipe = os.popen(command)
+     result = pipe.read().split("\n")
+@@ -83,50 +76,52 @@ def get_commits_count_between(opath, commit1, commit2):
+ 
+ 
+ def pretty_output(commit):
+-    command = "git log --pretty='format:%h (\"%s\")' -1 {}".format(commit)
++    """Pretty print the commit message"""
++    command = f"git log --pretty='format:%h (\"%s\")' -1 {commit}"
+     dprint(command)
+     pipe = os.popen(command)
+     return pipe.read()
+ 
+ 
+ def check_per_file(file_path):
++    """Check the translation status for the specified file"""
+     opath = get_origin_path(file_path)
+ 
+     if not os.path.isfile(opath):
+-        dprint("Error: Cannot find the origin path for {}".format(file_path))
++        dprint(f"Error: Cannot find the origin path for {file_path}")
+         return
+ 
+     o_from_head = get_latest_commit_from(opath, "HEAD")
+     t_from_head = get_latest_commit_from(file_path, "HEAD")
+ 
+     if o_from_head is None or t_from_head is None:
+-        print("Error: Cannot find the latest commit for {}".format(file_path))
++        print(f"Error: Cannot find the latest commit for {file_path}")
+         return
+ 
+     o_from_t = get_origin_from_trans(opath, t_from_head)
+ 
+     if o_from_t is None:
+-        print("Error: Cannot find the latest origin commit for {}".format(file_path))
++        print(f"Error: Cannot find the latest origin commit for {file_path}")
+         return
+ 
+     if o_from_head["hash"] == o_from_t["hash"]:
+         if flag_p_uf:
+-            print("No update needed for {}".format(file_path))
+-        return
++            print(f"No update needed for {file_path}")
+     else:
+-        print("{}".format(file_path), end="\t")
++        print(f"{file_path}", end="\t")
+         commits = get_commits_count_between(
+             opath, o_from_t["hash"], o_from_head["hash"]
+         )
+-        print("({} commits)".format(len(commits)))
++        print(f"({len(commits)} commits)")
+         if flag_p_c:
+             for commit in commits:
+                 msg = pretty_output(commit)
+                 if "Merge tag" not in msg:
+-                    print("commit", msg)
++                    print(f"commit {msg}")
+ 
+ 
+ def main():
++    """Main function of the script"""
+     script_path = os.path.dirname(os.path.abspath(__file__))
+     linux_path = os.path.join(script_path, "..")
+ 
+@@ -173,9 +168,7 @@ def main():
+         if args.locale is not None:
+             files = (
+                 os.popen(
+-                    "find {}/Documentation/translations/{} -type f".format(
+-                        linux_path, args.locale
+-                    )
++                    f"find {linux_path}/Documentation/translations/{args.locale} -type f"
+                 )
+                 .read()
+                 .split("\n")
+@@ -183,7 +176,7 @@ def main():
+         else:
+             files = (
+                 os.popen(
+-                    "find {}/Documentation/translations -type f".format(linux_path)
++                    f"find {linux_path}/Documentation/translations -type f"
+                 )
+                 .read()
+                 .split("\n")
+-- 
+2.39.2
 
->
-> Please help in identifying the Fixes:, for anyone who might be
-> backporting allocation profiling.
-
-I think we can mark it as
-
-Fixes: b951aaff5035 ("mm: enable page allocation tagging")
-
-but it's really a separate patch which covers a corner case.
-Please let me know if you want me to send a v2 with this tag added.
-Thanks,
-Suren.
-
-
->
 
