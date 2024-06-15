@@ -1,324 +1,270 @@
-Return-Path: <linux-kernel+bounces-215913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 981139098BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 17:00:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46EFD9098BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 17:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A5D328286A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 15:00:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75618B216E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 15:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CA64963C;
-	Sat, 15 Jun 2024 15:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5E349632;
+	Sat, 15 Jun 2024 15:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZVtV0BqD"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FNUWpo2W"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B863383B1;
-	Sat, 15 Jun 2024 15:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8563C482
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 15:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718463634; cv=none; b=dQrtVR8o5WIJ6JRpwk8kKEJ0l37grPKzqQJ3luW1sxOQ6pfucfTHLV5fFyrsSOOcGxMk/2OUhJev6uWZo50n0auB7lh/Kyu/ifya1zJaJC3U6e5eaMBsIUe5Kht9X9fbcV77XqvX/KbbNlqH/kOEPAUJAF5FaZr0N/Lcyfyqn6s=
+	t=1718463926; cv=none; b=GZzFBsmD9fkXpVaJmWMS23gckxBDSK0HnRyUMzYwAh1bAQ+cp/K+c2u8caBlaCwANs0mtDPluEdvhXvLd9B2ZX9/hozhe/DK8+m+cpzjAGsqwH0+36I7Xcy08Jmwbel1Dp5g7XH04oYj09ysVwYrnp/CRGDSLTLhcxZglTrT5iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718463634; c=relaxed/simple;
-	bh=O3iuGl3+px74waJXsghtQUNjK/fdJTb8plYFzY1DvF4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y0505v05vSNwoqB2TnoU3U1aK9Wlyxeujtj0iyDVa0TiZUqPTyuyLFnBQd33ETM61gEt4impPEph9DvjW96xZL62f2cuHLTF6jJhaOke3YBqKVOQ6Ac2MfWv54ew5N1jzsS2rHUTP1PZ2tSCYipvruatlcbnS5yLW+Vs3iHNvoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZVtV0BqD; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6efe62f583so308729366b.3;
-        Sat, 15 Jun 2024 08:00:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718463629; x=1719068429; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bhQP1QnteGRcdexKLdGEI+TBHaXqjwDdr6iuda4pIlo=;
-        b=ZVtV0BqDtqgr6JNCakt14yOLqr+3vNq3DNy2+p5WMTtjaOH7tqwjbS2ioiiq/HgWO8
-         MORJM53vN0oBoAhnp7Ss25kdzbQzlB4/kPNKkUx7QIquMFMEvxn6Fs3bXGINzB7Qidqk
-         Rtm+KpmvuYctq1kz3H9DRfwxXXHQpN0wv3Qrd05HtDtHPr/8VRN73DO0B0hesG41w5uS
-         mtTUZNO6uZPEi1l08eSukWro+wk+f+sWtCE+ob0h9Wt2SNLJ9oHEITbH6oL5TNfNvuBs
-         /kiSAlyAMD7tUsvqT1JXixjb7bPLv9J2uOBgLEExyu76O8T149WMYpRaAUTESoLPnDRM
-         fVmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718463629; x=1719068429;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bhQP1QnteGRcdexKLdGEI+TBHaXqjwDdr6iuda4pIlo=;
-        b=EeQztljVgBh+f79SeTWEKhj0rUmSKMj5zVoRmbeK0cBWVI70G84zplxuPRQU16MTUF
-         MaP4T1x8WNV2gReu/BaP5SafLiZ6ljDVnOym+vdONBX2aa4alAcfYmLmZEh8040DjtJw
-         fOPJ6i8+8uuompSCgLvHQH0hzfXh/km1uD5S8NX/b3rvXr9OcwEhcMaoeb/9eQlybT+G
-         mzHo/0/6afk7cYmkKxEbS//Y+LKbzDDaVaMviTwU4kmTP+/5wGbXueXNZIPQKycF2C1j
-         RT6vthqVSPGvzTIWqRZlNmbwu175NFvzrbh3xRvtdWhlOkCCCYL9CKCFGUOjgI2JiCap
-         DrFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcn8XNpWCN63/TEPYWI+ytJpYt9o/jhTSH7M81wRTlGllEqqCkolzWp484O+KBKZ7zbkUthWs8AoYPQfa7tCG0ZpC7b/uC6XYkpDVQxC5pc/74isw490ZeqdaM0Gq4oCcq
-X-Gm-Message-State: AOJu0YwxoAQJ7pjYGHtjeXYaJ5dFncoGFAMO54E24hkuFq9IITkio6yz
-	oWtlbTIxect0V/3j0yYZiODqu00AD/fNI0j6EO9iU3fXklfMcAuVzEIrFlRVCEJpV0Xxoy1xcua
-	Qmvr5+pfZunjfTMmfskFKWx3yXj0=
-X-Google-Smtp-Source: AGHT+IHvSqLJxwTe+hhiLgHac3QRZ0NOy2f4er6eiOwqnZ37S5XRC4oS9r1O8aJnGbqFMYmvefYgZRpKc0BkrN/y4O8=
-X-Received: by 2002:a17:906:40d7:b0:a6e:fe01:18cf with SMTP id
- a640c23a62f3a-a6f60d298d1mr308337466b.25.1718463629055; Sat, 15 Jun 2024
- 08:00:29 -0700 (PDT)
+	s=arc-20240116; t=1718463926; c=relaxed/simple;
+	bh=t2KYc9Dyrg15SffwbV6Gs79G2B4vlb2whm47yQivLDI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lj2lksWPv5pwgrOSxejMIDO1h/+RPDahR8PD+abSqSkVHGd5JsOGXUWbTTrWaam6qYEuxqoWlnxjz+FChKRsCf7imvm4LViCmDFLcBqcIu0QlUInRPa+xC+eL0IvVSXCHiXyAExJGlhY3f0L9GXX6ITu9WtCF9IleVUbXUjntgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FNUWpo2W; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45FDR8Un030677;
+	Sat, 15 Jun 2024 15:04:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=A
+	03AwZ1BVoMemm7xGptbOTIuV26URNqK0xmX02MVB64=; b=FNUWpo2WyRvMLXtFG
+	IVhiWPYkm1x+anJJMG/bdfMChHsLfN5MDGDlTK6eFYagY9geHwNCZ2ug/SzlzK86
+	Xy4Tahw+xDZrRpMtszu9P+7IAWs0IVKI7gAvVtxqzSyDLiCum6htKDMtTH9nE/o7
+	XKDsE1GyiwqcQmcaKptxMsI8Dd+KmAdWKIXfyKFlIZsGE2I3S0Ng5te2m0i+E/8S
+	Jmu9TgXTtOv/F2hB9BbthtxOjuDCMRSj0JvovQaa5GRuDuAV9maS/drYUjl4YSr9
+	xL4Q9YhfX/6zwkTv79yFtZgym7gWNzPB56qvoKipnyngrsblEYLjnxaUyTPtG+bG
+	jAJ1w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ysaj3g979-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Jun 2024 15:04:53 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45FF4qtV023509;
+	Sat, 15 Jun 2024 15:04:52 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ysaj3g976-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Jun 2024 15:04:52 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45FBMBKd023604;
+	Sat, 15 Jun 2024 15:04:51 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yn3unhdk4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Jun 2024 15:04:51 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45FF4n0225428488
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 15 Jun 2024 15:04:51 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F1DB858056;
+	Sat, 15 Jun 2024 15:04:48 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8E17458052;
+	Sat, 15 Jun 2024 15:04:45 +0000 (GMT)
+Received: from [9.195.47.148] (unknown [9.195.47.148])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Sat, 15 Jun 2024 15:04:45 +0000 (GMT)
+Message-ID: <17555273-a361-48b8-8543-9f63c2b8856b@linux.ibm.com>
+Date: Sat, 15 Jun 2024 20:34:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608140835.965949-1-dolinux.peng@gmail.com>
- <4f551dc5fc792936ca364ce8324c0adea38162f1.camel@gmail.com> <CAErzpmsvvi_dhiJs+Fmyy7R-gKqh3TkiuJCj4U5K6XXJyV6pJA@mail.gmail.com>
-In-Reply-To: <CAErzpmsvvi_dhiJs+Fmyy7R-gKqh3TkiuJCj4U5K6XXJyV6pJA@mail.gmail.com>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Sat, 15 Jun 2024 22:59:56 +0800
-Message-ID: <CAErzpmsBBnGNEgBzUfZyRcSeV1KLuNKvFfhuCap6NFbxG=qoKw@mail.gmail.com>
-Subject: Re: [RFC PATCH v3] bpf: Using binary search to improve the
- performance of btf_find_by_name_kind
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: ast@kernel.org, andrii <andrii@kernel.org>, alan.maguire@oracle.com, 
-	acme@kernel.org, daniel@iogearbox.net, mhiramat@kernel.org, song@kernel.org, 
-	haoluo@google.com, yonghong.song@linux.dev, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/35] PREEMPT_AUTO: support lazy rescheduling
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: tglx@linutronix.de, peterz@infradead.org, torvalds@linux-foundation.org,
+        paulmck@kernel.org, rostedt@goodmis.org, mark.rutland@arm.com,
+        juri.lelli@redhat.com, joel@joelfernandes.org, raghavendra.kt@amd.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
+ <2d6ef6d8-6aef-4703-a9c7-90501537cdc5@linux.ibm.com>
+ <8734pw51he.fsf@oracle.com>
+ <71efae1a-6a27-4e1f-adac-19c1b18e0f0c@linux.ibm.com>
+ <bbeca067-ae70-43ff-afab-6d06648c5481@linux.ibm.com>
+ <87zfrts1l1.fsf@oracle.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <87zfrts1l1.fsf@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 4LLXIFRSWk-dXtx-XCTJBO-JK18g4te1
+X-Proofpoint-GUID: KkAHsARM6YgTZZdL2qOy1tCfMr-umxSf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-15_10,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ adultscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
+ suspectscore=0 spamscore=0 phishscore=0 bulkscore=0 mlxlogscore=999
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406150113
 
-On Sat, Jun 15, 2024 at 7:49=E2=80=AFPM Donglin Peng <dolinux.peng@gmail.co=
-m> wrote:
->
-> On Tue, Jun 11, 2024 at 6:13=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.c=
-om> wrote:
-> >
-> > On Sat, 2024-06-08 at 07:08 -0700, Donglin Peng wrote:
-> >
-> > [...]
-> >
-> > > Changes in RFC v3:
-> > >  - Sort the btf types during the build process in order to reduce mem=
-ory usage
-> > >    and decrease boot time.
-> > >
-> > > RFC v2:
-> > >  - https://lore.kernel.org/all/20230909091646.420163-1-pengdonglin@sa=
-ngfor.com.cn
-> > > ---
-> > >  include/linux/btf.h |   1 +
-> > >  kernel/bpf/btf.c    | 160 +++++++++++++++++++++++++++++++++---
-> >
-> > I think that kernel part is in a good shape,
-> > please split it as a separate commit.
->
-> Okay, thanks.
->
-> >
-> > >  tools/lib/bpf/btf.c | 195 ++++++++++++++++++++++++++++++++++++++++++=
-++
-> > >  3 files changed, 345 insertions(+), 11 deletions(-)
-> >
-> > [...]
-> >
-> > > diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> > > index 2d0840ef599a..93c1ab677bfa 100644
-> >
-> > I'm not sure that libbpf is the best place to put this functionality,
-> > as there might be different kinds of orderings
-> > (e.g. see a fresh commit to bpftool to output stable vmlinux.h:
-> >  94133cf24bb3 "bpftool: Introduce btf c dump sorting").
->
-> Thanks, I think it would be better to put it into the libbpf. However, I =
-would
-> also like to hear the opinions of others.
->
-> >
-> > I'm curious what Andrii, Alan and Arnaldo think on libbpf vs pahole
-> > for this feature.
-> >
-> > Also, I have a selftests build failure with this patch-set
-> > (and I suspect that a bunch of dedup test cases would need an update):
 
-Yes=EF=BC=8Cmany test cases need to be updated as the BTF layout is modifie=
-d
-unconditionally.
 
->
-> I appologize for the bug in my patch that caused the issue. I will fix it=
-.
->
-> >
-> > $ pwd
-> > /home/eddy/work/bpf-next/tools/testing/selftests/bpf
-> > $ make -j14 test_progs
-> > ...
-> >
-> >   GEN-SKEL [test_progs] access_map_in_map.skel.h
-> > Binary files /home/eddy/work/bpf-next/tools/testing/selftests/bpf/acces=
-s_map_in_map.bpf.linked2.o and /home/eddy/work/bpf-next/tools/testing/selft=
-ests/bpf/access_map_in_map.bpf.linked3.o differ
-> > make: *** [Makefile:658: /home/eddy/work/bpf-next/tools/testing/selftes=
-ts/bpf/access_map_in_map.skel.h] Error 1
-> > make: *** Waiting for unfinished jobs....
->
-> Sorry, I neglected to perform an ID remap for the btf_types in the BTF.ex=
-t
-> section. I will fix it.
->
-> >
-> > If this change remains in libbpf, I think it would be great to update
-> > btf_find_by_name_kind() to work the same way as kernel one.
->
-> Sounds good, we might do it later.
->
-> >
-> > > --- a/tools/lib/bpf/btf.c
-> > > +++ b/tools/lib/bpf/btf.c
-> >
-> > [...]
-> >
-> > > +static int btf_sort_type_by_name(struct btf *btf)
-> > > +{
-> > > +     struct btf_type *bt;
-> > > +     __u32 *new_type_offs =3D NULL, *new_type_offs_noname =3D NULL;
-> > > +     __u32 *maps =3D NULL, *found_offs;
-> > > +     void *new_types_data =3D NULL, *loc_data;
-> > > +     int i, j, k, type_cnt, ret =3D 0, type_size;
-> > > +     __u32 data_size;
-> > > +
-> > > +     if (btf_ensure_modifiable(btf))
-> > > +             return libbpf_err(-ENOMEM);
-> > > +
-> > > +     type_cnt =3D btf->nr_types;
-> > > +     data_size =3D btf->type_offs_cap * sizeof(*new_type_offs);
-> > > +
-> > > +     maps =3D (__u32 *)malloc(type_cnt * sizeof(__u32));
-> > > +     if (!maps) {
-> > > +             ret =3D -ENOMEM;
-> > > +             goto err_out;
-> > > +     }
-> > > +
-> > > +     new_type_offs =3D (__u32 *)malloc(data_size);
-> > > +     if (!new_type_offs) {
-> > > +             ret =3D -ENOMEM;
-> > > +             goto err_out;
-> > > +     }
-> > > +
-> > > +     new_type_offs_noname =3D (__u32 *)malloc(data_size);
-> > > +     if (!new_type_offs_noname) {
-> > > +             ret =3D -ENOMEM;
-> > > +             goto err_out;
-> > > +     }
-> >
-> > What is the point of separating offsets in new_type_offs vs
-> > new_type_offs_noname? It should be possible to use a single offsets
-> > array and have a comparison function that puts all named types before
-> > unnamed.
->
-> Great, you are right.
->
-> >
-> > > +
-> > > +     new_types_data =3D malloc(btf->types_data_cap);
-> > > +     if (!new_types_data) {
-> > > +             ret =3D -ENOMEM;
-> > > +             goto err_out;
-> > > +     }
-> > > +
-> > > +     memset(new_type_offs, 0, data_size);
-> > > +
-> > > +     for (i =3D 0, j =3D 0, k =3D 0; i < type_cnt; i++) {
-> > > +             const char *name;
-> > > +
-> > > +             bt =3D (struct btf_type *)(btf->types_data + btf->type_=
-offs[i]);
-> > > +             name =3D btf__str_by_offset(btf, bt->name_off);
-> > > +             if (!name || !name[0])
-> > > +                     new_type_offs_noname[k++] =3D btf->type_offs[i]=
-;
-> > > +             else
-> > > +                     new_type_offs[j++] =3D btf->type_offs[i];
-> > > +     }
-> > > +
-> > > +     memmove(new_type_offs + j, new_type_offs_noname, sizeof(__u32) =
-* k);
-> > > +
-> > > +     qsort_r(new_type_offs, j, sizeof(*new_type_offs),
-> > > +             btf_compare_type_name, btf);
-> > > +
-> > > +     for (i =3D 0; i < type_cnt; i++) {
-> > > +             found_offs =3D bsearch(&new_type_offs[i], btf->type_off=
-s, type_cnt,
-> > > +                                     sizeof(__u32), btf_compare_offs=
-);
-> > > +             if (!found_offs) {
-> > > +                     ret =3D -EINVAL;
-> > > +                     goto err_out;
-> > > +             }
-> > > +             maps[found_offs - btf->type_offs] =3D i;
-> > > +     }
-> > > +
-> > > +     loc_data =3D new_types_data;
-> > > +     for (i =3D 0; i < type_cnt; i++, loc_data +=3D type_size) {
-> > > +             bt =3D (struct btf_type *)(btf->types_data + new_type_o=
-ffs[i]);
-> > > +             type_size =3D btf_type_size(bt);
-> > > +             if (type_size < 0) {
-> > > +                     ret =3D type_size;
-> > > +                     goto err_out;
-> > > +             }
-> > > +
-> > > +             memcpy(loc_data, bt, type_size);
-> > > +
-> > > +             bt =3D (struct btf_type *)loc_data;
-> > > +             switch (btf_kind(bt)) {
-> >
-> > Please take a look at btf_dedup_remap_types(): it uses newly added
-> > iterator interface to enumerate all ID references in the type.
-> > It could be used here to avoid enumerating every BTF kind.
-> > Also, the d->hypot_map could be used instead of `maps`.
-> > And if so, I think that it should be possible to put this pass before
-> > btf_dedup_remap_types() in order for it to do the remapping.
->
-> Thank you. I will revise the code.
->
-> >
-> > Alternatively, it might make sense to merge this pass with
-> > btf_dedup_compact_types() in order to minimize number of operations,
-> > e.g. as in my crude attempt:
-> > https://github.com/eddyz87/bpf/tree/binsort-btf-dedup
+On 6/10/24 12:53 PM, Ankur Arora wrote:
+> 
+_auto.
+>>
+>> 6.10-rc1:
+>> =========
+>> 10:09:50 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>> 09:45:23 AM  all    4.14    0.00   77.57    0.00   16.92    0.00    0.00    0.00    0.00    1.37
+>> 09:45:24 AM  all    4.42    0.00   77.62    0.00   16.76    0.00    0.00    0.00    0.00    1.20
+>> 09:45:25 AM  all    4.43    0.00   77.45    0.00   16.94    0.00    0.00    0.00    0.00    1.18
+>> 09:45:26 AM  all    4.45    0.00   77.87    0.00   16.68    0.00    0.00    0.00    0.00    0.99
+>>
+>> PREEMPT_AUTO:
+>> ===========
+>> 10:09:50 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>> 10:09:56 AM  all    3.11    0.00   72.59    0.00   21.34    0.00    0.00    0.00    0.00    2.96
+>> 10:09:57 AM  all    3.31    0.00   73.10    0.00   20.99    0.00    0.00    0.00    0.00    2.60
+>> 10:09:58 AM  all    3.40    0.00   72.83    0.00   20.85    0.00    0.00    0.00    0.00    2.92
+>> 10:10:00 AM  all    3.21    0.00   72.87    0.00   21.19    0.00    0.00    0.00    0.00    2.73
+>> 10:10:01 AM  all    3.02    0.00   72.18    0.00   21.08    0.00    0.00    0.00    0.00    3.71
+>>
+>> Used bcc tools hardirq and softirq to see if irq are increasing. softirq implied there are more
+>> timer,sched softirq. Numbers vary between different samples, but trend seems to be similar.
+> 
+> Yeah, the %sys is lower and %irq, higher. Can you also see where the
+> increased %irq is? For instance are the resched IPIs numbers greater?
 
-Could you please provide me with the patch?
+Hi Ankur,
 
->
-> Thank you. I would refer to your patch.
->
-> > (fails with similar selftests issue).
->
-> In addition to the bug in my patch, I have also identified a bug in
-> linker_fixup_btf
-> in the libbpf. After resolving the issue, the selftests successfully
-> passed, and I will
-> create a new patch to address the bug.
 
-After fixing the bug, the "make test_progs" command passes
-successfully. However,
-the dedup test cases are still failing.
+Used mpstat -I ALL to capture this info for 20 seconds. 
 
->
-> >
-> > > +             case BTF_KIND_PTR:
-> > > +             case BTF_KIND_CONST:
-> > > +             case BTF_KIND_VOLATILE:
-> > > +             case BTF_KIND_RESTRICT:
-> > > +             case BTF_KIND_TYPEDEF:
-> > > +             case BTF_KIND_TYPE_TAG:
-> > > +             case BTF_KIND_FUNC:
-> > > +             case BTF_KIND_VAR:
-> > > +             case BTF_KIND_DECL_TAG:
-> > > +                     bt->type =3D btf_get_mapped_type(btf, maps, bt-=
->type);
-> > > +                     break;
-> >
-> > [...]
+HARDIRQ per second:
+===================
+6.10:
+===================
+18		19		22		23		48	49	50	51	LOC		BCT	LOC2	SPU	PMI	MCE	NMI	WDG	DBL
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+417956.86	1114642.30	1712683.65	2058664.99	0.00	0.00	18.30	0.39	31978.37	0.00	0.35	351.98	0.00	0.00	0.00	6405.54	329189.45
+
+Preempt_auto:
+===================
+18		19		22		23		48	49	50	51	LOC		BCT	LOC2	SPU	PMI	MCE	NMI	WDG	DBL
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+609509.69	1910413.99	1923503.52	2061876.33	0.00	0.00	19.14	0.30	31916.59	0.00	0.45	497.88	0.00	0.00	0.00	6825.49	88247.85
+
+18,19,22,23 are called XIVE interrupts. These are IPI interrupts. I am not sure which type of IPI are these. will have to see why its increasing. 
+
+
+SOFTIRQ per second:
+===================
+6.10:
+=================== 
+HI	TIMER	NET_TX	NET_RX	BLOCK	IRQ_POLL	TASKLET		SCHED		HRTIMER		RCU	
+0.00	3966.47	0.00	18.25	0.59	0.00		0.34		12811.00	0.00		9693.95
+
+Preempt_auto:
+===================
+HI	TIMER	NET_TX	NET_RX	BLOCK	IRQ_POLL	TASKLET		SCHED		HRTIMER		RCU	
+0.00	4871.67	0.00	18.94	0.40	0.00		0.25		13518.66	0.00		15732.77
+
+Note: RCU softirq seems to increase significantly. Not sure which one triggers. still trying to figure out why. 
+It maybe irq triggering to softirq or softirq causing more IPI. 
+
+
+
+Also, Noticed a below config difference which gets removed in preempt auto. This happens because PREEMPTION make them as N. Made the changes in kernel/Kconfig.locks to get them 
+enabled. I still see the same regression in hackbench. These configs still may need attention?
+		
+					6.10				       | 					preempt auto 
+  CONFIG_INLINE_SPIN_UNLOCK_IRQ=y                                              |  CONFIG_UNINLINE_SPIN_UNLOCK=y                                               
+  CONFIG_INLINE_READ_UNLOCK=y                                                  |  ----------------------------------------------------------------------------
+  CONFIG_INLINE_READ_UNLOCK_IRQ=y                                              |  ----------------------------------------------------------------------------
+  CONFIG_INLINE_WRITE_UNLOCK=y                                                 |  ----------------------------------------------------------------------------
+  CONFIG_INLINE_WRITE_UNLOCK_IRQ=y                                             |  ----------------------------------------------------------------------------
+
+
+> 
+>> 6.10-rc1:
+>> =========
+>> SOFTIRQ          TOTAL_usecs
+>> tasklet                   71
+>> block                    145
+>> net_rx                  7914
+>> rcu                   136988
+>> timer                 304357
+>> sched                1404497
+>>
+>>
+>>
+>> PREEMPT_AUTO:
+>> ===========
+>> SOFTIRQ          TOTAL_usecs
+>> tasklet                   80
+>> block                    139
+>> net_rx                  6907
+>> rcu                   223508
+>> timer                 492767
+>> sched                1794441
+>>
+>>
+>> Would any specific setting of RCU matter for this?
+>> This is what I have in config.
+> 
+> Don't see how it could matter unless the RCU settings are changing
+> between the two tests? In my testing I'm also using TREE_RCU=y,
+> PREEMPT_RCU=n.
+> 
+> Let me see if I can find a test which shows a similar trend to what you
+> are seeing. And, then maybe see if tracing sched-switch might point to
+> an interesting difference between x86 and powerpc.
+> 
+> 
+> Thanks for all the detail.
+> 
+> Ankur
+> 
+>> # RCU Subsystem
+>> #
+>> CONFIG_TREE_RCU=y
+>> # CONFIG_RCU_EXPERT is not set
+>> CONFIG_TREE_SRCU=y
+>> CONFIG_NEED_SRCU_NMI_SAFE=y
+>> CONFIG_TASKS_RCU_GENERIC=y
+>> CONFIG_NEED_TASKS_RCU=y
+>> CONFIG_TASKS_RCU=y
+>> CONFIG_TASKS_RUDE_RCU=y
+>> CONFIG_TASKS_TRACE_RCU=y
+>> CONFIG_RCU_STALL_COMMON=y
+>> CONFIG_RCU_NEED_SEGCBLIST=y
+>> CONFIG_RCU_NOCB_CPU=y
+>> # CONFIG_RCU_NOCB_CPU_DEFAULT_ALL is not set
+>> # CONFIG_RCU_LAZY is not set
+>> # end of RCU Subsystem
+>>
+>>
+>> # Timers subsystem
+>> #
+>> CONFIG_TICK_ONESHOT=y
+>> CONFIG_NO_HZ_COMMON=y
+>> # CONFIG_HZ_PERIODIC is not set
+>> # CONFIG_NO_HZ_IDLE is not set
+>> CONFIG_NO_HZ_FULL=y
+>> CONFIG_CONTEXT_TRACKING_USER=y
+>> # CONFIG_CONTEXT_TRACKING_USER_FORCE is not set
+>> CONFIG_NO_HZ=y
+>> CONFIG_HIGH_RES_TIMERS=y
+>> # end of Timers subsystem
+> 
+> 
+> --
+> ankur
 
