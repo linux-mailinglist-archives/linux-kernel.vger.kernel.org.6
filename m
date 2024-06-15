@@ -1,122 +1,159 @@
-Return-Path: <linux-kernel+bounces-215908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D8769098B1
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 16:44:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E7F9098B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 16:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12557281B12
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:43:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7BC31F2185B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799BB49631;
-	Sat, 15 Jun 2024 14:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA53C49635;
+	Sat, 15 Jun 2024 14:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uoT0Ppcl"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nrMaZFtr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1A01DFD2;
-	Sat, 15 Jun 2024 14:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C5A2E3E5;
+	Sat, 15 Jun 2024 14:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718462630; cv=none; b=McVHNdpAzJFmFcELkyJRE3CneOgS84ReslC4kbr7WWAjF9pDfRTf3x+3TZdSbtdlPgooItBUwTGOvSl9NZCNjlZtlVf1rpvFhki7lqYjpnKJcP/CvgYLNy3AoYZXW96iSR+Xiy4V/0c3FOa2yCj3TzDEE29vWd7JedbRXfGRGJg=
+	t=1718462873; cv=none; b=XVkf07w1O5epo3yV/pFiC87tkCeICG7AIz314mVh5T1u7v3LvzNT5CMVoPy45BAZUwYw3gDWsyMktinvKdusZG/gpOEIuQp7IPt1JgHBd8padJ6+kxqDUsJEinVqPQArPILxR8F5TXhUVYUV2TXrIOcA1FOIktgX7ECCfA6XAMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718462630; c=relaxed/simple;
-	bh=8RJiP7FCS0sZfvR0laSimR4Ji9IM/l5QeRHx0jchhYg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HyiiPKTq2AwDPKqJQRNKQ1ahxZE+ruWxciKdQ3tD3Cl9BtTNPAZcGxPh1Yo9Jr+Z72qfBPIw4PKAo4zVbClIDzvILdDB4HYL/XL7Ip1zS4QWRYDk0psskS9EIRUHRZXmje+oj9I1dehxQQLDIhOO7z+Lr6k5mkm73Vc7b9f5z7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uoT0Ppcl; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45FEhhBR001041;
-	Sat, 15 Jun 2024 09:43:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718462623;
-	bh=ZyID5zbcPnMF1p3meO7TvGheIaJkcI0vPW1j4oZrrTo=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=uoT0PpclgzKfRb3UTM6Iss229Y4eOow6uMDmwMgAYgFj/ILc5wbL1UC3OotfhsII7
-	 K+GBAhqJbfEay9OeNFvdlSQiHfQaq2nsRt7Z4jdF1MuoovWp7K/9MMoevQBpmiDOky
-	 PJUpRMVTqoT+ysyxe9PPHYYuMJNOjKohcomXOgC0=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45FEhheE128645
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 15 Jun 2024 09:43:43 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 15
- Jun 2024 09:43:42 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 15 Jun 2024 09:43:42 -0500
-Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45FEhgaZ022894;
-	Sat, 15 Jun 2024 09:43:42 -0500
-Date: Sat, 15 Jun 2024 09:43:42 -0500
-From: Bryan Brattlof <bb@ti.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar
-	<viresh.kumar@linaro.org>, Lee Jones <lee@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Vibhore Vardhan
-	<vibhore@ti.com>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 3/5] dt-bindings: mfd: syscon: add TI's opp table
- compatible
-Message-ID: <20240615144342.5gjgp3rt3ewfbfu2@bryanbrattlof.com>
-X-PGP-Fingerprint: D3D1 77E4 0A38 DF4D 1853 FEEF 41B9 0D5D 71D5 6CE0
-References: <20240612-ti-opp-updates-v2-0-422b6747a254@ti.com>
- <20240612-ti-opp-updates-v2-3-422b6747a254@ti.com>
- <faf04961-f8ac-446c-a558-42ef6e98b3ac@kernel.org>
+	s=arc-20240116; t=1718462873; c=relaxed/simple;
+	bh=fCXa3vZakqpvWMT0I15XosFZpQRBqFNMEGngNkHbA1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z48VwzeSDOW2+qOGtxlpd6Tq6KTUW29H2OmxDpkuNe2fmxQlF8prhxVL3jSHxAx0Xq33NAWuZlKZOgrLDqO8KNa+kiOuLn3UHvyb0ZHxtR6sdsdvxxzxdEskhPiLQ8/v/2kI+8zmOm0RlpWsCttHwiQfaa9J2qbkWfcAlPpXp8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nrMaZFtr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFDE8C116B1;
+	Sat, 15 Jun 2024 14:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718462872;
+	bh=fCXa3vZakqpvWMT0I15XosFZpQRBqFNMEGngNkHbA1k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nrMaZFtrG0SE+dgMHmeC2txn+fNLcYtVY2pUD2TcZl7TRUjHU0TYb+o3yh6DkJ7pw
+	 zSQV4ur34vd0LzQsuoB/LaTBrIV7v6eHdx/6yo69bIshqm8wBRDUwqhC1fHETNTvKo
+	 szhRaETr+J3CBIc4tgFQ4xRIrhvbLv5jjsSoxwexjA8gMZrMDLkF49ahZSpE+5z2AX
+	 CXMQqe2UveF+wmfpgK6RTYsPxRJI1z1dJ416dtGJJy6tw1vJW8nrAdhPDe2i9ssgy5
+	 w42PwjIcgUd+NvNYwC72ZCy7QcVw1L4DwlVAwo9E6BSdApFBGOmBpJUm9lGRzyAYEQ
+	 h9w7yk7/nNXHg==
+Date: Sat, 15 Jun 2024 15:47:47 +0100
+From: Simon Horman <horms@kernel.org>
+To: Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc: olteanv@gmail.com, linux@armlinux.org.uk, alexandre.torgue@foss.st.com,
+	andrew@lunn.ch, joabreu@synopsys.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com, wojciech.drewek@intel.com,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net PATCH] net: stmmac: No need to calculate speed divider when
+ offload is disabled
+Message-ID: <20240615144747.GE8447@kernel.org>
+References: <20240614081916.764761-1-xiaolei.wang@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <faf04961-f8ac-446c-a558-42ef6e98b3ac@kernel.org>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20240614081916.764761-1-xiaolei.wang@windriver.com>
 
-On June 13, 2024 thus sayeth Krzysztof Kozlowski:
-> On 13/06/2024 01:17, Bryan Brattlof wrote:
-> > The JTAG_USER_ID_USERCODE efuse address, which is located inside the
-> > WKUP_CTRL_MMR0 range holds information to identify the speed grades of
-> > various components on TI's K3 SoCs. Add a compatible to allow the
-> > cpufreq driver to obtain the data to limit the maximum frequency for the
-> > CPUs under Linux control.
-> > 
-> > Signed-off-by: Bryan Brattlof <bb@ti.com>
-> > ---
-> >  Documentation/devicetree/bindings/mfd/syscon.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
-> > index 7ed12a938baa3..ab1fcbe2148f7 100644
-> > --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
-> > +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
-> > @@ -88,6 +88,7 @@ properties:
-> >                - rockchip,rv1126-qos
-> >                - starfive,jh7100-sysmain
-> >                - ti,am62-usb-phy-ctrl
-> > +              - ti,am62-opp-efuse-table
+On Fri, Jun 14, 2024 at 04:19:16PM +0800, Xiaolei Wang wrote:
+> commit be27b8965297 ("net: stmmac: replace priv->speed with
+> the portTransmitRate from the tc-cbs parameters") introduced
+> a problem. When deleting, it prompts "Invalid portTransmitRate
+> 0 (idleSlope - sendSlope)" and exits. Add judgment on cbs.enable.
+> Only when offload is enabled, speed divider needs to be calculated.
 > 
-> These are ordered alphabetically.
+> Fixes: be27b8965297 ("net: stmmac: replace priv->speed with the portTransmitRate from the tc-cbs parameters")
+> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+> ---
+>  .../net/ethernet/stmicro/stmmac/stmmac_tc.c   | 38 ++++++++++---------
+>  1 file changed, 20 insertions(+), 18 deletions(-)
 > 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> index 1562fbdd0a04..b0fd2d6e525e 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> @@ -358,24 +358,26 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
+>  
+>  	port_transmit_rate_kbps = qopt->idleslope - qopt->sendslope;
+>  
+> -	/* Port Transmit Rate and Speed Divider */
+> -	switch (div_s64(port_transmit_rate_kbps, 1000)) {
+> -	case SPEED_10000:
+> -	case SPEED_5000:
+> -		ptr = 32;
+> -		break;
+> -	case SPEED_2500:
+> -	case SPEED_1000:
+> -		ptr = 8;
+> -		break;
+> -	case SPEED_100:
+> -		ptr = 4;
+> -		break;
+> -	default:
+> -		netdev_err(priv->dev,
+> -			   "Invalid portTransmitRate %lld (idleSlope - sendSlope)\n",
+> -			   port_transmit_rate_kbps);
+> -		return -EINVAL;
+> +	if (qopt->enable) {
+> +		/* Port Transmit Rate and Speed Divider */
+> +		switch (div_s64(port_transmit_rate_kbps, 1000)) {
+> +		case SPEED_10000:
+> +		case SPEED_5000:
+> +			ptr = 32;
+> +			break;
+> +		case SPEED_2500:
+> +		case SPEED_1000:
+> +			ptr = 8;
+> +			break;
+> +		case SPEED_100:
+> +			ptr = 4;
+> +			break;
+> +		default:
+> +			netdev_err(priv->dev,
+> +				   "Invalid portTransmitRate %lld (idleSlope - sendSlope)\n",
+> +				   port_transmit_rate_kbps);
+> +			return -EINVAL;
+> +		}
+>  	}
+>  	mode_to_use = priv->plat->tx_queues_cfg[queue].mode_to_use;
 
-Ha! I guess I don't know how to spell after all :)
+Hi Xiaolei Wang,
 
-~Bryan
+The code following this function looks like this:
+
+	if (mode_to_use == MTL_QUEUE_DCB && qopt->enable) {
+		ret = stmmac_dma_qmode(priv, priv->ioaddr, queue, MTL_QUEUE_AVB);
+		if (ret)
+			return ret;
+		priv->plat->tx_queues_cfg[queue].mode_to_use = MTL_QUEUE_AVB;
+	} else if (!qopt->enable) {
+		ret = stmmac_dma_qmode(priv, priv->ioaddr, queue,
+				       MTL_QUEUE_DCB);
+		if (ret)
+			return ret;
+		priv->plat->tx_queues_cfg[queue].mode_to_use = MTL_QUEUE_DCB;
+	}
+
+	/* Final adjustments for HW */
+	value = div_s64(qopt->idleslope * 1024ll * ptr, port_transmit_rate_kbps);
+	priv->plat->tx_queues_cfg[queue].idle_slope = value & GENMASK(31, 0);
+
+	value = div_s64(-qopt->sendslope * 1024ll * ptr, port_transmit_rate_kbps);
+	priv->plat->tx_queues_cfg[queue].send_slope = value & GENMASK(31, 0);
+
+And the div_s64() lines above appear to use
+ptr uninitialised in the !qopt->enable case.
+
+Flagged by Smatch.
+
+-- 
+pw-bot: changes-requested
 
