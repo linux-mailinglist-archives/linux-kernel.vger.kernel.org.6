@@ -1,198 +1,205 @@
-Return-Path: <linux-kernel+bounces-215705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BA8A909618
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 07:08:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23406909620
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 07:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AA91282B2D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 05:08:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1AA31C214F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 05:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1954810A11;
-	Sat, 15 Jun 2024 05:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E55512B71;
+	Sat, 15 Jun 2024 05:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDNSflcp"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="PNUY0Cd5"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811014400;
-	Sat, 15 Jun 2024 05:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FFA101DE
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 05:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718428092; cv=none; b=DnKEZBFH6pq4fEWTnZO8bdbtER5/3Hxkpc4vgaxoISzy98wvggnZDOlFoct68zjeY4SV8+gCMRjP+l5FX4FusFZ9+sHqEH5Dk3qBuNsv+zPxZAkai+zK+OhHfRgbTc03gCnWOdh+TMjHv9n6afuYciaHXFDIzbXiYmcJSnAKIpA=
+	t=1718429271; cv=none; b=G28ypFHyYHp6mBPHhAQajBBhQWNxcVvS8aBkEx+z7+narF1owzxLjKYecbEuIYn7b7xNAi9P+gf7N9rK9OMAXi4fagRssWAx91Zhp1c+NYEge9AOFf0TIDzmgA1ioHBiHa2h7KSWN462RCyU1VgF9qdukq3l11xPE10pE5VnFqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718428092; c=relaxed/simple;
-	bh=4CHdbMYVbdognB1/jW4tT/scq2Xp8Kos8RrmdHBYAGs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y8DOX2SENLedDDsGMhMDvVdWd3KZwxBgxIo8y8VfR0JNZlpM09IA71vLJUXnwbe+T5zsesqm9bwhcxZBrS788QZkWNegD3n9eMcEPy4yY+ucIQBGyKazGwW59aka8CogJtJbP1sWKHI52SJQOtc4a64megs01HO1M6qUbzajSYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dDNSflcp; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e72224c395so26874811fa.3;
-        Fri, 14 Jun 2024 22:08:10 -0700 (PDT)
+	s=arc-20240116; t=1718429271; c=relaxed/simple;
+	bh=mA3Hhmq6fqwvMPCKWI5U2Cg2yOiBjniZrh4w8wHC9P0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hYSj4mrPPelh08K+xAf2ej3XT/KLzNfC5SGkvJg70OBvJ+hOSag155A+nDrk1zfHODdiDTJ7jA26EBT0OewW1fdzLTJnFzchOqZYRoLvX4oqWu1A9LpDODhOza+eMF8IvIHMqCQKswmVbRQGM0nqj8Zz2aBfz5gTWxDHuUvGevQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=PNUY0Cd5; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-6f8d0a00a35so2289221a34.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 22:27:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718428089; x=1719032889; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qMK42kBNAfn/goA4zNg7M+q4KdNhr3DCK7lRsbRs6oA=;
-        b=dDNSflcpkDjrUIxMu+p3pqP5slvFn4UvlETiyQxPauAnvhFuC39OV/n8npXkcHLs4S
-         21iJEWxNZ+VJLar93vSXhAdvAg0x22flpshX99YTpVvTcm3ipbTKkTDqPrikudRzUE/x
-         0/AK4oak1X367bnJPT5+xL2++PIiFOAcqpF4iRhBTNlYFSsIJnmyfsx1GymLlblqUZi5
-         xHxm6sQtR0+3MV0wXhQnbHTcPGIUezck5+XXoanQvrCHTddCoXLzkYIoOY8zfjEbgGmD
-         aklaOACadBerz5X7yakUUawqRom5Gveey4nfqiqGEWJbvJoF0Xk0wiXQUis4rZV1Oz92
-         MRSg==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1718429267; x=1719034067; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4HWY3DwYhS1DC6ssfyK/mGNM91IszoPLT/Xd+boZpqg=;
+        b=PNUY0Cd5UfDzcalS+tgMf32XcyZgLQ0J4EWuBTR4uiyEbwMA5V/k3qmUWx5rc4hC5j
+         aq5tUkU+RM176UuXUEt6JnlTd9Voqlhr+SHWo1b8dp44FjJ3KYSM0i7M3tqW5K02NSgA
+         cjfNewfrR3UXKsvi9MmWmeKLVhPFuTNabcd1TDNADA0Aly9OCUPQoxXJSVjuhB2ciKXb
+         PxFUOosUVpQtbS9HioXipFfrl5bUtaOmm7L0CkzB+t4zrR6SgZtjxKCArvH0tCoctdLG
+         FrvsjMI/eDGPwaTzZiC+Uu0J3wtCs5+YdJltekow+hPnmf1jx4xjI10YBvs3SYh4jpbV
+         A54g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718428089; x=1719032889;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qMK42kBNAfn/goA4zNg7M+q4KdNhr3DCK7lRsbRs6oA=;
-        b=Qz61NlLLp1XnOMe54U0L3L7wjC5tV/WlxbilCsqRlLoMcu2gvp+PCl+27Ex1xm+YF7
-         3SPTczkzROp4PrB4XBI9i68yuc5FsR9r1pHjgKHKBaBtIfeJQ6F8u4XOV8E1njWEmn3o
-         Y5bFMDIweS4PH5vf6C0GzrMY2L0Qqhtp/SBFyX/p7k+hznWvb0Ornam/E0bo6B6PMPbV
-         XzZqDYs+osPo2OntilFPP9J5UOJcV7qUG5z+aCQ0uwSMFxVaFZOCBKVClmCMhAdFHQwS
-         5BNCngnkHIcCp0OS/n4wyhQ1wKDplH3RsWYi/5P2ssm74cqxrYddFqjZ6oGyBTylBgOA
-         U+cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZRKa0mAXHna+LCqwYAhaQs4bRprykzgB8uQdq95fVsWbNAAFwzbJNc8jy7wkgnD4MuXxhMXTijFMWqRjPPDonyv+8f69adFmqgLdWXbYwEeMe2HKirrTgD19zykZSqLqf1CAZiI7eGwNCow==
-X-Gm-Message-State: AOJu0YyuIbLBs0sI2IHJyZPfgjoDUEBR3D95gbbqYa8Kwi1PgE8TBYEg
-	owyXOEMLPOJ806NHqkekQWckfoQrq3LPsx066sA2dZi7jmGZn2lGxSU6mA==
-X-Google-Smtp-Source: AGHT+IF3uR3AIbzNPYPMKlkUKamVCSnkf5R+ELu5AwTrxcdYut8UITRtzJap2kc2uM8GX8wfae+kGw==
-X-Received: by 2002:a2e:8606:0:b0:2ec:22c0:66e6 with SMTP id 38308e7fff4ca-2ec22c0683emr1463661fa.7.1718428087270;
-        Fri, 14 Jun 2024 22:08:07 -0700 (PDT)
-Received: from f (cst-prg-88-61.cust.vodafone.cz. [46.135.88.61])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6320c16sm84407835e9.38.2024.06.14.22.08.03
+        d=1e100.net; s=20230601; t=1718429267; x=1719034067;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4HWY3DwYhS1DC6ssfyK/mGNM91IszoPLT/Xd+boZpqg=;
+        b=ZbiggJO6awiNas0lIgX1v9+uzxkYhKCeqkmZrJRDcT+Rrt7VKwOzTS5ykEIqyC7yBA
+         F53FfqQI/nB6ur54DnhWwyrELK+GajnHYv46mAJVCsz4IJY5x1WuDsf7YDQ+n/w1bLgA
+         zVkFfPocguW4yIDFEFJhecaH5ZbdffeF6w3pfkFlmBSd7Z13e+g5N1Nn8QxOMOtPDY25
+         pbYXzpfx3bnv3Jmpk9Zu7RekPiXOkZplKaRaEyP0nesTE0gKq3oQaTC1rcYtXwRits0Q
+         fLsrBdRpUvbispPvW7LH8NSfpSaxep0qje4Zerhoz14bJc9fQd3tUW0gkmfbUXrzVrhZ
+         5xNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWO8x7jHdycxZK/eP+fFKW1J97Pg4zxeXF2+FYP5ZW46rvdqcb7MBzGF02maX+ooBgDw1izHZLa89dPQc5FP1SxgZYrA8K+ywTH0t2m
+X-Gm-Message-State: AOJu0YzqaiGHdj2GMUIUL64G2XYMIzFXzjUuGBCGEA+sKNS++5ghuAdV
+	sUMPZCQsm5DeXkPmuUq0KgDUGLvBFa9OzAscY77kQi5I0t1TGlerQiQlI5f+vIS8uwYtDpbZEWA
+	W
+X-Google-Smtp-Source: AGHT+IEkw9bzoLUdXSiey6gWd/rfVSdgAg0oVru00fWS+E2CLByqzysRddxec15KuDMJ9oecqX3IyA==
+X-Received: by 2002:a05:6830:3443:b0:6fb:8193:85dc with SMTP id 46e09a7af769-6fb93b07c46mr4566313a34.30.1718429267234;
+        Fri, 14 Jun 2024 22:27:47 -0700 (PDT)
+Received: from tjeznach.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb6b99bsm4081578b3a.143.2024.06.14.22.27.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 22:08:06 -0700 (PDT)
-Date: Sat, 15 Jun 2024 07:07:56 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Yu Ma <yu.ma@intel.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tim.c.chen@linux.intel.com, 
-	tim.c.chen@intel.com, pan.deng@intel.com, tianyou.li@intel.com
-Subject: Re: [PATCH 3/3] fs/file.c: move sanity_check from alloc_fd() to
- put_unused_fd()
-Message-ID: <lzotoc5jwq4o4oij26tnzm5n2sqwqgw6ve2yr3vb4rz2mg4cee@iysfvyt77gkx>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240614163416.728752-4-yu.ma@intel.com>
- <fejwlhtbqifb5kvcmilqjqbojf3shfzoiwexc3ucmhhtgyfboy@dm4ddkwmpm5i>
+        Fri, 14 Jun 2024 22:27:46 -0700 (PDT)
+From: Tomasz Jeznach <tjeznach@rivosinc.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Nick Kossifidis <mick@ics.forth.gr>,
+	Sebastien Boeuf <seb@rivosinc.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux@rivosinc.com,
+	Tomasz Jeznach <tjeznach@rivosinc.com>
+Subject: [PATCH v8 0/7] Linux RISC-V IOMMU Support
+Date: Fri, 14 Jun 2024 22:27:30 -0700
+Message-Id: <cover.1718388908.git.tjeznach@rivosinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <fejwlhtbqifb5kvcmilqjqbojf3shfzoiwexc3ucmhhtgyfboy@dm4ddkwmpm5i>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jun 15, 2024 at 06:41:45AM +0200, Mateusz Guzik wrote:
-> On Fri, Jun 14, 2024 at 12:34:16PM -0400, Yu Ma wrote:
-> > alloc_fd() has a sanity check inside to make sure the FILE object mapping to the
-> 
-> Total nitpick: FILE is the libc thing, I would refer to it as 'struct
-> file'. See below for the actual point.
-> 
-> > Combined with patch 1 and 2 in series, pts/blogbench-1.1.0 read improved by
-> > 32%, write improved by 15% on Intel ICX 160 cores configuration with v6.8-rc6.
-> > 
-> > Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> > Signed-off-by: Yu Ma <yu.ma@intel.com>
-> > ---
-> >  fs/file.c | 14 ++++++--------
-> >  1 file changed, 6 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/fs/file.c b/fs/file.c
-> > index a0e94a178c0b..59d62909e2e3 100644
-> > --- a/fs/file.c
-> > +++ b/fs/file.c
-> > @@ -548,13 +548,6 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
-> >  	else
-> >  		__clear_close_on_exec(fd, fdt);
-> >  	error = fd;
-> > -#if 1
-> > -	/* Sanity check */
-> > -	if (rcu_access_pointer(fdt->fd[fd]) != NULL) {
-> > -		printk(KERN_WARNING "alloc_fd: slot %d not NULL!\n", fd);
-> > -		rcu_assign_pointer(fdt->fd[fd], NULL);
-> > -	}
-> > -#endif
-> >  
-> 
-> I was going to ask when was the last time anyone seen this fire and
-> suggest getting rid of it if enough time(tm) passed. Turns out it does
-> show up sometimes, latest result I found is 2017 vintage:
-> https://groups.google.com/g/syzkaller-bugs/c/jfQ7upCDf9s/m/RQjhDrZ7AQAJ
-> 
-> So you are moving this to another locked area, but one which does not
-> execute in the benchmark?
-> 
-> Patch 2/3 states 28% read and 14% write increase, this commit message
-> claims it goes up to 32% and 15% respectively -- pretty big. I presume
-> this has to do with bouncing a line containing the fd.
-> 
-> I would argue moving this check elsewhere is about as good as removing
-> it altogether, but that's for the vfs overlords to decide.
-> 
-> All that aside, looking at disasm of alloc_fd it is pretty clear there
-> is time to save, for example:
-> 
-> 	if (unlikely(nr >= fdt->max_fds)) {
-> 		if (fd >= end) {
-> 			error = -EMFILE;
-> 			goto out;
-> 		}
-> 		error = expand_files(fd, fd);
-> 		if (error < 0)
-> 			goto out;
-> 		if (error)
-> 			goto repeat;
-> 	}
-> 
+This patch series introduces support for RISC-V IOMMU architected
+hardware into the Linux kernel.
 
-Now that I wrote it I noticed the fd < end check has to be performed
-regardless of max_fds -- someone could have changed rlimit to a lower
-value after using a higher fd. But the main point stands: the call to
-expand_files and associated error handling don't have to be there.
+The RISC-V IOMMU specification, which this series is based on, is
+ratified and available at GitHub/riscv-non-isa [1].
 
-> This elides 2 branches and a func call in the common case. Completely
-> untested, maybe has some brainfarts, feel free to take without credit
-> and further massage the routine.
-> 
-> Moreover my disasm shows that even looking for a bit results in
-> a func call(!) to _find_next_zero_bit -- someone(tm) should probably
-> massage it into another inline.
-> 
-> After the above massaging is done and if it turns out the check has to
-> stay, you can plausibly damage-control it with prefetch -- issue it
-> immediately after finding the fd number, before any other work.
-> 
-> All that said, by the above I'm confident there is still *some*
-> performance left on the table despite the lock.
-> 
-> >  out:
-> >  	spin_unlock(&files->file_lock);
-> > @@ -572,7 +565,7 @@ int get_unused_fd_flags(unsigned flags)
-> >  }
-> >  EXPORT_SYMBOL(get_unused_fd_flags);
-> >  
-> > -static void __put_unused_fd(struct files_struct *files, unsigned int fd)
-> > +static inline void __put_unused_fd(struct files_struct *files, unsigned int fd)
-> >  {
-> >  	struct fdtable *fdt = files_fdtable(files);
-> >  	__clear_open_fd(fd, fdt);
-> > @@ -583,7 +576,12 @@ static void __put_unused_fd(struct files_struct *files, unsigned int fd)
-> >  void put_unused_fd(unsigned int fd)
-> >  {
-> >  	struct files_struct *files = current->files;
-> > +	struct fdtable *fdt = files_fdtable(files);
-> >  	spin_lock(&files->file_lock);
-> > +	if (unlikely(rcu_access_pointer(fdt->fd[fd]))) {
-> > +		printk(KERN_WARNING "put_unused_fd: slot %d not NULL!\n", fd);
-> > +		rcu_assign_pointer(fdt->fd[fd], NULL);
-> > +	}
-> >  	__put_unused_fd(files, fd);
-> >  	spin_unlock(&files->file_lock);
-> >  }
+At a high level, the RISC-V IOMMU specification defines:
+
+1) Data structures:
+  - Device-context: Associates devices with address spaces and holds
+    per-device parameters for address translations.
+  - Process-contexts: Associates different virtual address spaces based
+    on device-provided process identification numbers.
+  - MSI page table configuration used to direct an MSI to a guest
+    interrupt file in an IMSIC.
+2) In-memory queue interface:
+  - Command-queue for issuing commands to the IOMMU.
+  - Fault/event queue for reporting faults and events.
+  - Page-request queue for reporting "Page Request" messages received
+    from PCIe devices.
+  - Message-signaled and wire-signaled interrupt mechanisms.
+3) Memory-mapped programming interface:
+  - Mandatory and optional register layout and description.
+  - Software guidelines for device initialization and capabilities discovery.
+
+
+This series introduces RISC-V IOMMU hardware initialization and complete
+single-stage translation with paging domain support.
+
+The patches are organized as follows:
+
+Patch 1: Introduces minimal required device tree bindings for the driver.
+Patch 2: Defines RISC-V IOMMU data structures, hardware programming interface
+         registers layout, and minimal initialization code for enabling global
+         pass-through for all connected masters.
+Patch 3: Implements the device driver for PCIe implementation of RISC-V IOMMU
+         architected hardware.
+Patch 4: Introduces IOMMU interfaces to the kernel subsystem.
+Patch 5: Implements device directory management with discovery sequences for
+         I/O mapped or in-memory device directory table location, hardware
+         capabilities discovery, and device to domain attach implementation.
+Patch 6: Implements command and fault queue, and introduces directory cache
+         invalidation sequences.
+Patch 7: Implements paging domain, using highest page-table mode advertised
+         by the hardware. This series enables only 4K mappings; complete support
+         for large page mappings will be introduced in follow-up patch series.
+
+Follow-up patch series, providing large page support and updated walk cache
+management based on the revised specification, and complete ATS/PRI/SVA support,
+will be posted to GitHub [2].
+
+Changes from v7:
+- rebase on v6.10-rc3
+- fix address shift (ppn -> pfn) for queue base register read
+- add invalidation after DDTE update
+
+Best regards,
+ Tomasz Jeznach
+
+[1] link: https://github.com/riscv-non-isa/riscv-iommu
+[2] link: https://github.com/tjeznach/linux
+v7 link:  https://lore.kernel.org/linux-iommu/cover.1717612298.git.tjeznach@rivosinc.com/
+v6 link:  https://lore.kernel.org/linux-iommu/cover.1716578450.git.tjeznach@rivosinc.com/
+v5 link:  https://lore.kernel.org/linux-iommu/cover.1715708679.git.tjeznach@rivosinc.com/
+v4 link:  https://lore.kernel.org/linux-iommu/cover.1714752293.git.tjeznach@rivosinc.com/
+v3 link:  https://lore.kernel.org/linux-iommu/cover.1714494653.git.tjeznach@rivosinc.com/
+v2 link:  https://lore.kernel.org/linux-iommu/cover.1713456597.git.tjeznach@rivosinc.com/
+v1 link:  https://lore.kernel.org/linux-iommu/cover.1689792825.git.tjeznach@rivosinc.com/
+
+Tomasz Jeznach (7):
+  dt-bindings: iommu: riscv: Add bindings for RISC-V IOMMU
+  iommu/riscv: Add RISC-V IOMMU platform device driver
+  iommu/riscv: Add RISC-V IOMMU PCIe device driver
+  iommu/riscv: Enable IOMMU registration and device probe.
+  iommu/riscv: Device directory management.
+  iommu/riscv: Command and fault queue support
+  iommu/riscv: Paging domain support
+
+ .../bindings/iommu/riscv,iommu.yaml           |  147 ++
+ MAINTAINERS                                   |    8 +
+ drivers/iommu/Kconfig                         |    1 +
+ drivers/iommu/Makefile                        |    2 +-
+ drivers/iommu/riscv/Kconfig                   |   20 +
+ drivers/iommu/riscv/Makefile                  |    3 +
+ drivers/iommu/riscv/iommu-bits.h              |  784 ++++++++
+ drivers/iommu/riscv/iommu-pci.c               |  119 ++
+ drivers/iommu/riscv/iommu-platform.c          |   92 +
+ drivers/iommu/riscv/iommu.c                   | 1684 +++++++++++++++++
+ drivers/iommu/riscv/iommu.h                   |   88 +
+ 11 files changed, 2947 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/iommu/riscv,iommu.yaml
+ create mode 100644 drivers/iommu/riscv/Kconfig
+ create mode 100644 drivers/iommu/riscv/Makefile
+ create mode 100644 drivers/iommu/riscv/iommu-bits.h
+ create mode 100644 drivers/iommu/riscv/iommu-pci.c
+ create mode 100644 drivers/iommu/riscv/iommu-platform.c
+ create mode 100644 drivers/iommu/riscv/iommu.c
+ create mode 100644 drivers/iommu/riscv/iommu.h
+
+
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+-- 
+2.34.1
+
 
