@@ -1,133 +1,191 @@
-Return-Path: <linux-kernel+bounces-215619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A25F9094FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 02:16:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 462F2909502
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 02:20:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBA4BB21439
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:16:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9537FB20CB1
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C69442C;
-	Sat, 15 Jun 2024 00:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BCD1FB4;
+	Sat, 15 Jun 2024 00:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="UTUX4AJr"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jCo2qrEM"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFC9623
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 00:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E476C10F7
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 00:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718410582; cv=none; b=JBnLhcpm8In5DL+uRIpfCJVzbZH5eZ7o2tQLqohuER34MUSBbP53FsrmSC34sbLaCswTgHrhaANNA8fCwfMPaQ1p6eBbLjXWgNfNS8QyaWhmlA5w4KjJVObcrccfg84gD+7iORUuYqM7lLN2cwVwPlxQ6IOT631HcW/sCcYLBks=
+	t=1718410806; cv=none; b=M3hatZj5rqR01pppG3opSt9X/gDVonLHNC4oQuDgRvL9ZOdMK76hPU76LLNLm49LeljqWfiFOX+jui65bhsu/srxdy++O4SBg8FqvsfufPa+/qqPreG+9O0eA5VWcs048pilyvEAY18k78qZtdH+fEpCuR5zliICyUCzewtgack=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718410582; c=relaxed/simple;
-	bh=Ah9XF3VhfC6uL+Y7yxuXm+X0XsWWOB0OHtRfi0aa7Tk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KtEBEjXw8QimtfgkMwlqHHNUuAdMfxf8ZcyJp5iB/26IFI5i+qHJNzL7V+HCAeYG+QV+E5jsO2qKo3fSW0rA/juStWRtujDafLz6xfWgI/2/BUlrLbAA9wzDTXUB5nJ9vj9M6XPrzXk2J0dnHTkhU7+pJFwY3j3Rhw6+Oo19UKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=UTUX4AJr; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70423e8e6c9so2476536b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 17:16:20 -0700 (PDT)
+	s=arc-20240116; t=1718410806; c=relaxed/simple;
+	bh=RygvKJoxEF8JAtJ3lLlWfUVRrpUQj262assGYwQV07M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ws6anHzcUNmVUU18/K36XK/Ns2wMVcom3btNTlhkmu430ne10g+t2RnKVRqx8/oU/S3S6hcR28lhN1QEkam3YGejOmXlQY7QSJps7NoSOXFyDdXmPenC9Wi7L9K5TXJ/1relziihn4L0Ixids5TUvnGOeIWy7IIwBjAQtQTCeb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jCo2qrEM; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6f1dc06298so341142466b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 17:20:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1718410580; x=1719015380; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1718410803; x=1719015603; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dbQfy6Bm8n8TNDG5hBa+dXfTA5IW7C1pPdTr7l75iCw=;
-        b=UTUX4AJrJlz2ePVxj+nYvXt1eBakA5iu62o7NvcvIYyuz0Xi72kSsRU/1pAPTwIXGB
-         591lsNDTVTOR6KPj39/hPWN5GrDCF+H7Q7uwctOv2iaLZEno6LJz/s6mfn9QQpOx/X+3
-         9g61QqesRNB++i5VFJTjDMGuWAeSeW1sFRS+tLHyOr+xPGHEPcoXjVM6sE4OQA2DTH1J
-         du52YAW2SP1yCtNpQBX2Cr9EHewQYq4VDR7o2kokOY0cHtzVsEszRieqsaKeb9lUzd6S
-         3lt4mTDtVH7PPqpQmZcsXss6kbjtYX29YvbmuNsbt2WmCp6Gxxo4gurLXYlwMlhOTz8y
-         Tkcg==
+        bh=RygvKJoxEF8JAtJ3lLlWfUVRrpUQj262assGYwQV07M=;
+        b=jCo2qrEM8sxbI9/Qf9em6yggCYhxooik1wdp68q2ZBnMi2Mmpo61OYL0MxhWIJ0lo6
+         thiX+AH/6lZaL635KBNKKkPOg71ZshFlAHLJxho4OVDpAAOoqgkximaxPgZe/DYxJU9s
+         b90y7NUjO7yXBuVGYgiGBj3S8VqHjr7QraaR+iwN2u1OHxESZMDMficUrm4QBuZ3YzwA
+         2YrGfFj7Mha9lEQtQD0mvMFXGQ9X6Bwyee2ssaOZwujd05m6GgRsugxKZSKCZ5mI3U3y
+         qUWWYsjGodVTSwdgesKmMkOD3Fw6bLr0BPsJZl85CtSFb5U/0POB+cGZRJb45j+Cv9E6
+         p5gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718410580; x=1719015380;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718410803; x=1719015603;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dbQfy6Bm8n8TNDG5hBa+dXfTA5IW7C1pPdTr7l75iCw=;
-        b=Ib1FnjmLhu0XEbvKxG4fZL+cZYIoEolJsYfqnp2JpWNTMFY+xaKJ5D4cRpm8MfQUox
-         CcwGphV+A8dl+ASL9Q8gzPGZHXiqW/Im45huFfy7uYsOwC12IHCPWPOqQpzJ7P4pRUJc
-         Ti7bS1PpRz8oPuTPOXRA/nXas2TSGn8kUnNmxHjqh1LKWMx+XPGcSyvzJ0F0AMfIpVK4
-         0WD1Aav2jx2j0sPG9Dk73OqAJ4tXjSK3WETrCKxsev8fASvOv14td9nEHodk8FZkO9le
-         YPWeGfzpRr/OekaHMndOGeebm7aybuqpDHgTEXvCBiJMwxK/83WNarYVHmlw3H+i647J
-         Q42g==
-X-Gm-Message-State: AOJu0YwXG0QWRLEk3I+E0gg75gs55yyv+p4IMiH+LvKVpkL8iloSRNaA
-	x0+p0DSlE0EDiAPYOtGgFPVzDUYGXyhSFHZIPk0EGmJrdXOu6gKloajEOjsrwMc=
-X-Google-Smtp-Source: AGHT+IGnrXmEyH8r24NhyhAqUyF2qFmWVTxhyF32OwfqT86eX9M8aSQDG2YlmH6KZDu1FSFJOoZ/0A==
-X-Received: by 2002:a05:6a20:d80d:b0:1b2:cf6c:d5ae with SMTP id adf61e73a8af0-1bae844443cmr4560825637.59.1718410580416;
-        Fri, 14 Jun 2024 17:16:20 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc967334sm3638921b3a.57.2024.06.14.17.16.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 17:16:20 -0700 (PDT)
-Date: Fri, 14 Jun 2024 17:16:18 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Omer Shpigelman <oshpigelman@habana.ai>
-Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
- netdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- ogabbay@kernel.org, zyehudai@habana.ai
-Subject: Re: [PATCH 09/15] net: hbl_en: add habanalabs Ethernet driver
-Message-ID: <20240614171618.3b65b3c9@hermes.local>
-In-Reply-To: <20240613082208.1439968-10-oshpigelman@habana.ai>
-References: <20240613082208.1439968-1-oshpigelman@habana.ai>
-	<20240613082208.1439968-10-oshpigelman@habana.ai>
+        bh=RygvKJoxEF8JAtJ3lLlWfUVRrpUQj262assGYwQV07M=;
+        b=I2soj0ek7e0w5DxKcy/1mB6aE8Os0XDVD3i42vzf6T1yzvPnQqRq2YqursFe/a+JOt
+         9F1Ut7nPn8FplDPeI7mOvT6DQymAsIt+vAipkySAHA3r8X46Sj4S8RqkEMBso1MtpRn/
+         qSrJ0s3mJHIh0aeukoUL2ygqvZi1+gq/v3ZHH2fTNx407hA06WSS+HtSNdWBoiR7mANL
+         R+tOGYwQVV/twZh+Nz+k15O92tkqBWfmLcYXnYU9b7brU6jQMwnD5Zfn8q3gzyqYGusd
+         SZK28OuFPKMx5Vy0oymsw9W9RWBPj25np6DOgLYK5E8llBkYQcI87y91x4vB/tZvsoDy
+         9qog==
+X-Forwarded-Encrypted: i=1; AJvYcCXXsQg8F2bh5yFhENoAR0OYr7TJjcHooF+vo+rjGlKbufvrj/HtRTPUylzRwXAfpF4ltdImcpT49htlvIPVQ/2wnW0cJfb7WxIHQ19x
+X-Gm-Message-State: AOJu0Yy/1Og5VQ8hgq1Oc5T8pLS4fUGsaE/5Nim+oYt/LUe/Grn8g7v8
+	JTuVVp5a1BcgkqqPNMCyqRx/6YkOmcI5y16/MOMP/lPb65RJVVJOujaHT/PRxmcd2hiYwotF6cx
+	c7w5581rYFNvbTOU4p3bHXV4E8h2Q0rQQjI/z
+X-Google-Smtp-Source: AGHT+IGzB5bijriy81AjYjCOAZe0BYsEgAEUKweu6L/T1lvt83MgTMVDacATN9iudJmEjqDpPJSX3NXIKUbXAAiBfAk=
+X-Received: by 2002:a17:906:6a02:b0:a6f:5f5d:e924 with SMTP id
+ a640c23a62f3a-a6f60cef67cmr330348466b.6.1718410802786; Fri, 14 Jun 2024
+ 17:20:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240608155316.451600-1-flintglass@gmail.com> <CAKEwX=PsmuPQUvrsOO7a+JGd=gDmjP5_XDGD+z-0R6dBea+BOg@mail.gmail.com>
+ <CAPpoddcgmZs6=s1MrzLgOAJxoVW5_bLa4CGxHq3KhF3GOi8VBw@mail.gmail.com>
+In-Reply-To: <CAPpoddcgmZs6=s1MrzLgOAJxoVW5_bLa4CGxHq3KhF3GOi8VBw@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Fri, 14 Jun 2024 17:19:24 -0700
+Message-ID: <CAJD7tkYD+y54-KYEotWspRdNL_AC0SxE147tR+dSLvY-=9jJyg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] mm: zswap: global shrinker fix and proactive shrink
+To: Takero Funaki <flintglass@gmail.com>
+Cc: Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> +
-> +/* get the src IP as it is done in devinet_ioctl() */
-> +static int hbl_en_get_src_ip(struct hbl_aux_dev *aux_dev, u32 port_idx, u32 *src_ip)
-> +{
-> +	struct hbl_en_port *port = HBL_EN_PORT(aux_dev, port_idx);
-> +	struct net_device *ndev = port->ndev;
-> +	struct in_device *in_dev;
-> +	struct in_ifaddr *ifa;
-> +	int rc = 0;
-> +
-> +	/* for the case where no src IP is configured */
-> +	*src_ip = 0;
-> +
-> +	/* rtnl lock should be acquired in relevant flows before taking configuration lock */
-> +	if (!rtnl_is_locked()) {
-> +		netdev_err(port->ndev, "Rtnl lock is not acquired, can't proceed\n");
-> +		rc = -EFAULT;
-> +		goto out;
-> +	}
-> +
-> +	in_dev = __in_dev_get_rtnl(ndev);
-> +	if (!in_dev) {
-> +		netdev_err(port->ndev, "Failed to get IPv4 struct\n");
-> +		rc = -EFAULT;
-> +		goto out;
-> +	}
-> +
-> +	ifa = rtnl_dereference(in_dev->ifa_list);
-> +
-> +	while (ifa) {
-> +		if (!strcmp(ndev->name, ifa->ifa_label)) {
-> +			/* convert the BE to native and later on it will be
-> +			 * written to the HW as LE in QPC_SET
-> +			 */
-> +			*src_ip = be32_to_cpu(ifa->ifa_local);
-> +			break;
-> +		}
-> +		ifa = rtnl_dereference(ifa->ifa_next);
-> +	}
-> +out:
-> +	return rc;
-> +}
+On Thu, Jun 13, 2024 at 9:09=E2=80=AFPM Takero Funaki <flintglass@gmail.com=
+> wrote:
+>
+> 2024=E5=B9=B46=E6=9C=8814=E6=97=A5(=E9=87=91) 0:22 Nhat Pham <nphamcs@gma=
+il.com>:
+> >
+> > Taking a step back from the correctness conversation, could you
+> > include in the changelog of the patches and cover letter a realistic
+> > scenario, along with user space-visible metrics that show (ideally all
+> > 4, but at least some of the following):
+> >
+> > 1. A user problem (that affects performance, or usability, etc.) is hap=
+pening.
+> >
+> > 2. The root cause is what we are trying to fix (for e.g in patch 1, we
+> > are skipping over memcgs unnecessarily in the global shrinker loop).
+> >
+> > 3. The fix alleviates the root cause in b)
+> >
+> > 4. The userspace-visible problem goes away or is less serious.
+> >
+>
+> Thank you for your suggestions.
+> For quick response before submitting v2,
 
-Does this device require IPv4? What about users and infrastructures that use IPv6 only?
-IPv4 is legacy at this point.
+Thanks for all the info, this should be in the cover letter or commit
+messages in some shape or form.
+
+>
+> 1.
+> The visible issue is that pageout/in operations from active processes
+> are slow when zswap is near its max pool size. This is particularly
+> significant on small memory systems, where total swap usage exceeds
+> what zswap can store. This means that old pages occupy most of the
+> zswap pool space, and recent pages use swap disk directly.
+
+This should be a transient state though, right? Once the shrinker
+kicks in it should writeback the old pages and make space for the hot
+ones. Which takes us to our next point.
+
+>
+> 2.
+> This issue is caused by zswap keeping the pool size near 100%. Since
+> the shrinker fails to shrink the pool to accept_thr_percent and zswap
+> rejects incoming pages, rejection occurs more frequently than it
+> should. The rejected pages are directly written to disk while zswap
+> protects old pages from eviction, leading to slow pageout/in
+> performance for recent pages on the swap disk.
+
+Why is the shrinker failing? IIUC the first two patches fixes two
+cases where the shrinker stumbles upon offline memcgs, or memcgs with
+no zswapped pages. Are these cases common enough in your use case that
+every single time the shrinker runs it hits MAX_RECLAIM_RETRIES before
+putting the zswap usage below accept_thr_percent?
+
+This would be surprising given that we should be restarting the
+shrinker with every swapout attempt until we can accept pages again.
+
+I guess one could construct a malicious case where there are some
+sticky offline memcgs, and all the memcgs that actually have zswap
+pages come after it in the iteration order.
+
+Could you shed more light about this? What does the setup look like?
+How many memcgs there are, how many of them use zswap, and how many
+offline memcgs are you observing?
+
+I am not saying we shouldn't fix these problems anyway, I am just
+trying to understand how we got into this situation to begin with.
+
+>
+> 3.
+> If the pool size were shrunk proactively, rejection by pool limit hits
+> would be less likely. New incoming pages could be accepted as the pool
+> gains some space in advance, while older pages are written back in the
+> background. zswap would then be filled with recent pages, as expected
+> in the LRU logic.
+
+I suspect if patches 1 and 2 fix your problem, the shrinker invoked
+from reclaim should be doing this sort of "proactive shrinking".
+
+I agree that the current hysteresis around accept_thr_percent is not
+good enough, but I am surprised you are hitting the pool limit if the
+shrinker is being run during reclaim.
+
+>
+> Patch 1 and 2 make the shrinker reduce the pool to accept_thr_percent.
+> Patch 3 makes zswap_store trigger the shrinker before reaching the max
+> pool size. With this series, zswap will prepare some space to reduce
+> the probability of problematic pool_limit_hit situation, thus reducing
+> slow reclaim and the page priority inversion against LRU.
+>
+> 4.
+> Once proactive shrinking reduces the pool size, pageouts complete
+> instantly as long as the space prepared by shrinking can store the
+> direct reclaim. If an admin sees a large pool_limit_hit, lowering
+> accept_threshold_percent will improve active process performance.
+
+I agree that proactive shrinking is preferable to waiting until we hit
+pool limit, then stop taking in pages until the acceptance threshold.
+I am just trying to understand whether such a proactive shrinking
+mechanism will be needed if the reclaim shrinker for zswap is being
+used, how the two would work together.
 
