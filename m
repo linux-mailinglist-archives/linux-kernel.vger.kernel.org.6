@@ -1,267 +1,216 @@
-Return-Path: <linux-kernel+bounces-215750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD41E90969E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:46:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B7AC9096A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 415F5285259
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 07:46:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C86692817CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 07:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D717517BC9;
-	Sat, 15 Jun 2024 07:46:07 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EE517C6B;
+	Sat, 15 Jun 2024 07:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LgUgeFhn"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4EC17580
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 07:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24F511CB8;
+	Sat, 15 Jun 2024 07:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718437567; cv=none; b=Gr07vHgp91cn84cLtct5Hoj/nFTwFVFy110kT6eRFG09hulKk1G6Dd4eEnILdx5zRA8rYhArNxIZi+KzRX7wKb3W6CGEgY8VcqyeZGRJQcgSUCQe8a2ZUriZoCO2/JQZ446MJO7C5UO9Kz8wYkkphU+XBbmDqERyNEgprS2woUk=
+	t=1718437864; cv=none; b=uTXt5uWWpXdj9xjSVmr/1IgsYCAiTluqj4BWFVtvDQJvfxnY9TN6TSMZgWJfVeCZ0TkmDs59g4dcq+fkGavMJRuQJHz+DmAYvGz/to+bjnf4gQIZljKyfQ3UYT7mIcGuJZVXKkvJXncFmdSNzeWWNLT3plXOzazdzKI1p6cA/o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718437567; c=relaxed/simple;
-	bh=qN8ICJ8Su3tTS49NGea8m+Al2o50S/Hy2FxWett1vhA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eStA6Vh1uGoOKcGg5d8HTGoAxqs6prsVodpKewVo1+JobjHTpZitMrFZJht0F1dOWRDJGit3Zrp2LQvporBEwwQ86vFi0xfx7+qIcqNeTrbrxU+DX5Wj9GqAe7fF1gEF1TazzYwx3y2kxrgCQ4Lly2ACifyfnCZfBJFOQKCnH0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7ec0802fd0dso7868439f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 00:46:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718437565; x=1719042365;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I2oNtY4+LOIsxoYFROaeF1Y88BbaVtM9v9Y7ZvnKs84=;
-        b=Kaafbl1FJXM4VZvfJWUb7IcWpyzHxArJmQ1UKk8anjVyRhIMvDV2+4a2JStgXzr6nI
-         JohYI33kFqd3FJhRjcCLQtQOUElPKaJxsw+i4udKvUma6Q2NwkhFHYTSxkD2E2HeJIaV
-         Ox9JTyqI4OkC7lCcFfwJqPWLHC2UHv6dLusrGz0kzZZ+2BrmMk3gnBit91ncqDwhiVis
-         ZiLRd0N8lXhG8MrzVliZzTjtxnaf3mM7TB9TmvepRqSsPWXC1/7Au0tz+qXIs0NIPOVy
-         EenIjKXkbHPwt2DZDVjMMUaNV0EzinsL8TDJTpeJtaJTJZg9thvgnvzmVMlTdX/71LRt
-         rAew==
-X-Forwarded-Encrypted: i=1; AJvYcCXk0eSzNPzQTomlQYDg8TekHt/ZNpK+tOD6Q5A/PFUhFOLcYlwcbCuq+vPT9lC+oh7Xf+Iwhj/BYAQG0Rgmz2hs1Zt+EWoLP5dmNp3R
-X-Gm-Message-State: AOJu0Yyeif067HoCvZjGe5HzNM2LBdhf48rwJNBh2mH+5Y0GH9KbN7Hq
-	TsbJCenu29pjVd3e/Fbo0eZnOHof7dIgZblXw3QQilLUQbce1yfoiwqksEoRyP490uVGBlsJFSc
-	uX5yqJjHoYuQfvdqrZZO8Lkf6qH+O5YnCgQegSNX/3PzeydLmgYIPeFE=
-X-Google-Smtp-Source: AGHT+IEQJJAItLfsG2iLpOkPOP7ymyHftymR7TRKTFbfZ07qG9liV6eih3e9o9nL+ife/QD6JH0RA0yOVZQJDQgfIZc9HM8y4iDZ
+	s=arc-20240116; t=1718437864; c=relaxed/simple;
+	bh=sRlc1IxkbpFzLo1wdQj56UWdiL0d9xvss9PSfw73f8g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WenTujCa3z8DlGCv7qMJS8YD98epWe8CaNd4IqVdopmNhcRgmPnb06SanYlQJBZnhoJ996sBvntP0ACdFFMlkQJP+My03dhfewokmz/ptxceIeSjCsK9Y45+boxiryIvQlwudajEh17a4k7xrMl/oRCS85tIRQMwMKJF26JpK9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LgUgeFhn; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=J9zDxgTCMKAH6+JFaK+bMT0Od1Ypcxv1SWT8jf6654Q=; b=LgUgeFhnr3YitfLyD1zL389Mkt
+	XQS2Sp9FhOQwwus4rfNRwNywy1ZdczcgYpT7iQBjS6GqJKZ+M6IYvNNkZd2j3AD/p4uy6BWkMk+UB
+	V0d8vGqtUGAdSvC5JC3+aAGuEUvzfvyXUYkWBSEcWkT5ylf/0eRG4YlVRdu++2w/VHKNHhI5W1/Aw
+	SNKZO0Qz6Z44pspE+OuLaOBO2o+bg1A27Sj1BOlSeFq2bqgWtIu3dM02ApkHxyM1OvdaLmGvOrrqU
+	23GcYKIiNMStUQIHGv10lIC+JjmUQBqgSqBNFSUVVSsEnOwqtU6JzGyqrA1Qk8PkBqhfn/5OYqhMb
+	yhLvDKuQ==;
+Received: from [2001:8b0:10b:5:5157:7793:c27:1b76] (helo=u3832b3a9db3152.ant.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sIOBb-000000006YE-18fZ;
+	Sat, 15 Jun 2024 07:50:55 +0000
+Message-ID: <e410d65754ba6a11ad7f74b27dc28d9a25d8c82e.camel@infradead.org>
+Subject: Re: [RFC PATCH v3 6/7] virtio_rtc: Add Arm Generic Timer
+ cross-timestamping
+From: David Woodhouse <dwmw2@infradead.org>
+To: Peter Hilber <peter.hilber@opensynergy.com>,
+ linux-kernel@vger.kernel.org,  virtualization@lists.linux.dev,
+ virtio-dev@lists.oasis-open.org,  linux-arm-kernel@lists.infradead.org
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+  Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Daniel Lezcano
+ <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Date: Sat, 15 Jun 2024 08:50:53 +0100
+In-Reply-To: <20231218073849.35294-7-peter.hilber@opensynergy.com>
+References: <20231218073849.35294-1-peter.hilber@opensynergy.com>
+	 <20231218073849.35294-7-peter.hilber@opensynergy.com>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-Va78wFKtl3D0hDHsROYb"
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:268c:b0:4b7:c86f:f3cf with SMTP id
- 8926c6da1cb9f-4b9640aeab2mr293832173.3.1718437564807; Sat, 15 Jun 2024
- 00:46:04 -0700 (PDT)
-Date: Sat, 15 Jun 2024 00:46:04 -0700
-In-Reply-To: <20240615064746.915-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009e8ef5061ae8eccc@google.com>
-Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
-From: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+
+
+--=-Va78wFKtl3D0hDHsROYb
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, 2023-12-18 at 08:38 +0100, Peter Hilber wrote:
+>=20
+> +int viortc_hw_xtstamp_params(u16 *hw_counter, enum clocksource_ids *cs_i=
+d)
+> +{
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0*hw_counter =3D VIRTIO_RTC_COU=
+NTER_ARM_VIRT;
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in chrdev_open
+Hm, but what if it isn't? I think you need to put this in
+drivers/clocksource/arm_arch_timer.c where it can do something like
+kvm_arch_ptp_get_crosststamp() does to decide:
 
-loop0: detected capacity change from 0 to 4096
-==================================================================
-BUG: KASAN: slab-use-after-free in __list_add_valid_or_report+0x4c/0xf0 lib/list_debug.c:29
-Read of size 8 at addr ffff888063a27ca8 by task syz-executor.0/5468
-
-CPU: 0 PID: 5468 Comm: syz-executor.0 Not tainted 6.10.0-rc3-syzkaller-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- __list_add_valid_or_report+0x4c/0xf0 lib/list_debug.c:29
- __list_add_valid include/linux/list.h:88 [inline]
- __list_add include/linux/list.h:150 [inline]
- list_add include/linux/list.h:169 [inline]
- chrdev_open+0x2a9/0x630 fs/char_dev.c:396
- do_dentry_open+0x9f9/0x1760 fs/open.c:965
- do_open fs/namei.c:3650 [inline]
- path_openat+0x289f/0x3280 fs/namei.c:3807
- do_filp_open+0x235/0x490 fs/namei.c:3834
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1416
- do_sys_open fs/open.c:1431 [inline]
- __do_sys_openat fs/open.c:1447 [inline]
- __se_sys_openat fs/open.c:1442 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1442
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8bc307dea9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f8bc2bff0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007f8bc31abf80 RCX: 00007f8bc307dea9
-RDX: 0000000000000000 RSI: 0000000020002140 RDI: ffffffffffffff9c
-RBP: 00007f8bc30ca4a4 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007f8bc31abf80 R15: 00007ffe28199b08
- </TASK>
-
-Allocated by task 5455:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:312 [inline]
- __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3941 [inline]
- slab_alloc_node mm/slub.c:4001 [inline]
- kmem_cache_alloc_lru_noprof+0x139/0x2b0 mm/slub.c:4020
- ntfs_alloc_inode+0x28/0x80 fs/ntfs3/super.c:563
- alloc_inode fs/inode.c:261 [inline]
- new_inode_pseudo+0x69/0x1e0 fs/inode.c:1007
- new_inode+0x22/0x1d0 fs/inode.c:1033
- ntfs_new_inode+0x45/0x100 fs/ntfs3/fsntfs.c:1688
- ntfs_create_inode+0x5f1/0x3680 fs/ntfs3/inode.c:1347
- ntfs_mknod+0x3c/0x50 fs/ntfs3/namei.c:122
- vfs_mknod+0x36d/0x3b0 fs/namei.c:4009
- do_mknodat+0x3ec/0x5b0
- __do_sys_mknodat fs/namei.c:4087 [inline]
- __se_sys_mknodat fs/namei.c:4084 [inline]
- __x64_sys_mknodat+0xa9/0xc0 fs/namei.c:4084
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 0:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
- __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2196 [inline]
- slab_free mm/slub.c:4437 [inline]
- kmem_cache_free+0x145/0x350 mm/slub.c:4512
- rcu_do_batch kernel/rcu/tree.c:2535 [inline]
- rcu_core+0xafd/0x1830 kernel/rcu/tree.c:2809
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-
-Last potentially related work creation:
- kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
- __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
- __call_rcu_common kernel/rcu/tree.c:3072 [inline]
- call_rcu+0x167/0xa70 kernel/rcu/tree.c:3176
- __dentry_kill+0x20d/0x630 fs/dcache.c:603
- shrink_kill+0xa9/0x2c0 fs/dcache.c:1048
- shrink_dentry_list+0x2c0/0x5b0 fs/dcache.c:1075
- shrink_dcache_parent+0xcb/0x3b0
- do_one_tree+0x23/0xe0 fs/dcache.c:1538
- shrink_dcache_for_umount+0x7d/0x130 fs/dcache.c:1555
- generic_shutdown_super+0x6a/0x2d0 fs/super.c:620
- kill_block_super+0x44/0x90 fs/super.c:1676
- ntfs3_kill_sb+0x44/0x1b0 fs/ntfs3/super.c:1798
- deactivate_locked_super+0xc4/0x130 fs/super.c:473
- cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
- task_work_run+0x24f/0x310 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff888063a27600
- which belongs to the cache ntfs_inode_cache of size 1760
-The buggy address is located 1704 bytes inside of
- freed 1760-byte region [ffff888063a27600, ffff888063a27ce0)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x63a20
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-memcg:ffff8880247d1f01
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xffffefff(slab)
-raw: 00fff00000000040 ffff88801aae6500 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000110011 00000001ffffefff ffff8880247d1f01
-head: 00fff00000000040 ffff88801aae6500 dead000000000122 0000000000000000
-head: 0000000000000000 0000000000110011 00000001ffffefff ffff8880247d1f01
-head: 00fff00000000003 ffffea00018e8801 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Reclaimable, gfp_mask 0x1d2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL|__GFP_RECLAIMABLE), pid 5455, tgid 5454 (syz-executor.0), ts 83365626429, free_ts 16584706916
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1468
- prep_new_page mm/page_alloc.c:1476 [inline]
- get_page_from_freelist+0x2e43/0x2f00 mm/page_alloc.c:3420
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4678
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page+0x5f/0x120 mm/slub.c:2265
- allocate_slab+0x5a/0x2f0 mm/slub.c:2428
- new_slab mm/slub.c:2481 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3667
- __slab_alloc+0x58/0xa0 mm/slub.c:3757
- __slab_alloc_node mm/slub.c:3810 [inline]
- slab_alloc_node mm/slub.c:3989 [inline]
- kmem_cache_alloc_lru_noprof+0x1c5/0x2b0 mm/slub.c:4020
- ntfs_alloc_inode+0x28/0x80 fs/ntfs3/super.c:563
- alloc_inode fs/inode.c:261 [inline]
- iget5_locked+0xa4/0x280 fs/inode.c:1235
- ntfs_iget5+0xd5/0x3b10 fs/ntfs3/inode.c:532
- ntfs_fill_super+0x2619/0x4a20 fs/ntfs3/super.c:1212
- get_tree_bdev+0x3f7/0x570 fs/super.c:1615
- vfs_get_tree+0x90/0x2a0 fs/super.c:1780
- do_new_mount+0x2be/0xb40 fs/namespace.c:3352
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
-page last free pid 1 tgid 1 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1088 [inline]
- free_unref_page+0xd19/0xea0 mm/page_alloc.c:2583
- free_contig_range+0x9e/0x160 mm/page_alloc.c:6637
- destroy_args+0x8a/0x890 mm/debug_vm_pgtable.c:1038
- debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1418
- do_one_initcall+0x248/0x880 init/main.c:1267
- do_initcall_level+0x157/0x210 init/main.c:1329
- do_initcalls+0x3f/0x80 init/main.c:1345
- kernel_init_freeable+0x435/0x5d0 init/main.c:1578
- kernel_init+0x1d/0x2b0 init/main.c:1467
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Memory state around the buggy address:
- ffff888063a27b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888063a27c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888063a27c80: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-                                  ^
- ffff888063a27d00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888063a27d80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
+        if (arch_timer_uses_ppi =3D=3D ARCH_TIMER_VIRT_PPI)
+                ptp_counter =3D KVM_PTP_VIRT_COUNTER;
+        else
+                ptp_counter =3D KVM_PTP_PHYS_COUNTER;
 
 
-Tested on:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0*cs_id =3D CSID_ARM_ARCH_COUNT=
+ER;
+> +
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return 0;
+> +}
 
-commit:         83a7eefe Linux 6.10-rc3
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=15f7d146980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c79815c08cc14227
-dashboard link: https://syzkaller.appspot.com/bug?extid=5d34cc6474499a5ff516
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=111dc1de980000
 
+--=-Va78wFKtl3D0hDHsROYb
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
+ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
+EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
+FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
+aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
+VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
+aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
+ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
+QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
+rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
+ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
+U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
+DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
+dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
+BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
+CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
+xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
+IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
+kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
+eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
+KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
+1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
+OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
+x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
+5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
+DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
+UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
+MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
+ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
+oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
+SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
+xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
+RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
+bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
+NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
+KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
+5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
+C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
+gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
+VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
+MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
+b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
+BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
+QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
+c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
+AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
+qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
+v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
+Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
+tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
+Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
+YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
+ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
+IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
+ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
+GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
+h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
+9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
+P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
+2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
+BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
+7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
+lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
+lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
+AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
+Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
+BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
+cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
+aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
+LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
+BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
+cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
+Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
+lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
+WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
+hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
+IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
+dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
+NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
+xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQwNjE1MDc1MDUzWjAvBgkqhkiG9w0BCQQxIgQg7cMk45W2
+miMCX3pM8Kh6nBYKOZC+962JoQjHKP/OHr8wgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
+A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
+DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
+MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
+Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
+lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgBCbCO5uiph00/t4nuEyZgI+yUFraW3nvIG
+5vYY6QuTEApUZ8pRBTIApQrtMP3QrqEe4JuGIlLWo4wQAswFYNvOTYQFfydELygzBrSh8QkjPU/e
+wvvr7p0WHzqpid74LtLRyJgtLd3KsrALASsRccyP10x119e2vgzIBWh2ntuHZcR0PRRJ8cGpDl8Z
+JxcP1G440OLniXZQWFodooCTxMD3DY4pkMeSLht1B97sV/uX2xhpDV8unMk5RA2dVp4oqZ68F9ZL
+2b3d929giEMTnrfw/qM9jLHETGaxkbNsmGq0u4WCS7dZxj+nctgdkrwkgG5ZcUDISVgVz8ocePgi
+PMfcWPOyVGsmU1IbVPmSegGtegl+l8cdldXKPNzuIjR18v9WnnmgGwneVuZusti7SgOcD3I/hV1g
+yHAFSJ9Cm5N5FmUfS9lp8gW9PNCJmaHjjPlrhyPax2zsAA56cR/p+R5UY8L1eVjQTfYSbWDtypff
+Jl647Ye8JS1QbR/VuMyG+Iefqxzt7yDmjsHuLPmsgykBQkC0RLCIgVbsu70QKAdU+rqAH7njSU/7
+HFEBCVozrEa/BZiwPQkkTkXdNIbj/O6uAPeatcB6y9nYgdv1I0Dd1//NQRIvFtkDR5kfoLvIXfjO
+yLPX6+MdKmasCV3UGGlr+bADRaRhcV3sxDSCLnRP0gAAAAAAAA==
+
+
+--=-Va78wFKtl3D0hDHsROYb--
 
