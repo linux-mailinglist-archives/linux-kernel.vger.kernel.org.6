@@ -1,159 +1,212 @@
-Return-Path: <linux-kernel+bounces-215614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905CA9094EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 02:05:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DBFB9094F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 02:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3951B212C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:05:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 552981C209AD
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 00:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9E81373;
-	Sat, 15 Jun 2024 00:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1A82CA9;
+	Sat, 15 Jun 2024 00:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yhdw7Os1"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="0MSXZg8C"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E498539B
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 00:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47DC624
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 00:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718409901; cv=none; b=LjpvhgX+lP1h/O4rJkwh+sZDtUvIk+D9P7CTOAQZ1za0WFw6LieGxYdjFEhLTlH4Rb6GYTHERMNS3qJJmVA6pwEOi1IKXwSqUmk9uZEBb0M88YhEAnNlF4BdCjcfb1zv1X0wLbQDIIyX/rE3ETFiy2/2Hvp9StEBgZ8q3lTOw5o=
+	t=1718409953; cv=none; b=CeY3YtWTyKrslus2aMdYZdruowL3zZFysf/c+CbB/jgC+v1/F3bwTACI3UpcjHhtune1FWgfzx9xhrQQY9YWApdoKOXjjhUOfCC6w8n0poLCFS9AnIz4+7kpU59EaeJx4/2QZkdL2kBYryohh7U4n3f4KA6NykXHqoMW7HfZ9Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718409901; c=relaxed/simple;
-	bh=s9EnDXutqel6yc9aWVQjnkieztpURLhI4fNOsupj9V4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=W3cYPLD6YJvlb2LAxJHXr5ZI1M3gR9uKCzEUF1SWnMnGfM623FszropQ857EDBHzpXO/re7E0TlmpvjP230PFahUFxYcQDluRtcTK6pUD7ecplybCQ/MkQ1Va61lYnjElt6kewbgHpIgFzPf9v7XMeXextTQS+K3+9LK4Y7EEFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Yhdw7Os1; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2c2dfbc48easo2511681a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 17:04:59 -0700 (PDT)
+	s=arc-20240116; t=1718409953; c=relaxed/simple;
+	bh=f6AoYhX2XyzT+ZH0EktrmSnDM4D3zhudlPqVu/nrjns=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YtsGowp6eaT9osFh2Qqk7NbZuSS6HUYfQ9rjIrp5vxQP4PuAgPF8I6bXU2gXe/WlhUZs9boo73EXdxeSuRNxPvzByvmpEsTkOfPNOBtTjknoQFIyA+QKKUwXQB3GsieLVJGXGcvf0BVvlBgnbwSINothFHEw1Ix/6j0+EsPmOLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=0MSXZg8C; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-6c4926bf9baso2267551a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 17:05:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718409899; x=1719014699; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JAbCB4cWM/jBKzkgnqSGqxJw+sHKF8jD1gh3nQqagX0=;
-        b=Yhdw7Os1412zFNyQoOZNJ3CYQjH4Q4SdXO1f+hYJHRsWdkGzGP4n9ARi35M9K6YFru
-         2/OvF9ew4s/19za1q3hPzjkGbkP0sUc3nc1IoIidqP31JHB2AmSpA5CX9ngUuSfq59P7
-         sPPzb0uv6xdtSXzsGwNgTtZCIWW+z3l6sdV/ri/xzVVOTCsqjKUEGXTBAzHbSPUEv4X0
-         kcsYHXvJVoO0CeTLOjR8DSLIvEqFA8ZXzjO4jDbLxTUeXjZRINgoiTl1bDSPCgbnNy6T
-         ySsgdfDrVXOyl/CjZMVkNzVO9MvsrnNqkxPtGCyxpYmzj6VUtGcLdc68E6YyjiBdOHKQ
-         eX2A==
+        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1718409951; x=1719014751; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c21Xnr26mF4XhO4v24lG8CYkDryUnaevoVevI7wRSgQ=;
+        b=0MSXZg8CqtR1DAOlvKfLZM5qykyu832wLgqtz53yfABK2/qNcNy6klqSu/6+KihLGe
+         SEF/F1BThMGlrBM8bkr/I5yEYHprNTwNzugD+WoXvVzuFeDMf4NX/CeaIuRajcheefX8
+         MHthXF23rggit3Hgox1mW1VqqIHg5nsW4F4RcOLSY8b3F6JdGtJ5GnkQitlZhuj3AmBD
+         3BcRExcb09vADiQtEQert2rhbC5dPW7o3RequLC3g/3J32QxmHs52WAwB9FATzIuAjLc
+         Sx1cXqpyQ/ICGkpn/jfoC2CbTI76TOgCqupwT7mjZugX8fwJbi55l9NbA4kHtZ2S+AoS
+         3yGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718409899; x=1719014699;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JAbCB4cWM/jBKzkgnqSGqxJw+sHKF8jD1gh3nQqagX0=;
-        b=tPDXhadkDpTT7KeagohrK5G+NtjCuHlAr9s6Y07JZLZgWsXU/aPIwCMCznitubHjb7
-         UJPT9gS7lLw1hDE3gbZwJWjc2iu3cI839YsE+pqk0LqcGStK36zVnArox72LGx1DE1NN
-         bdCOwr67V7LpVIaHtkQPRpqHH47cslO5/7VO/tCFbWjMywbuMQfbNrqG8dwMUl0BkWK+
-         5vlRb9oImQx9ZOdxbDX4IeX+A3dl1Xru19+aprJ63uXbudmObR1GWNmOMVPZG7whlX98
-         g1lRlDLXT9az2ogslovzasNTEgktJz896sa903DjOYYlVSItJvi7WiUDUWWL0DOJegpc
-         zEDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8p6MXLPOy1S3tnl1PSUp3RUu3zJcWKLfoFk3Q+wMAQq4G4GoTy43HmXzQHEJwq63d3s8fawIHXt/x6q3IPvluGExzpX1XAHedUWIe
-X-Gm-Message-State: AOJu0YxYYwlJjj+RGNxFhuwqcnrZPvn1lkWIEhBkd9ih/5DrgXt/GTBo
-	Sqt+CpZyeT2DcPFOSJVGrv7jLbXt2YB33lepfDk53ebH3IA4XyWiWPde/muxMGeLmTh97LZuMMo
-	Z6A==
-X-Google-Smtp-Source: AGHT+IHoIiorw5XA41KgarAZ6PxcCkxY6qe04nLr0zVITL8iJtzFO30b8vb4BsxMvGmlCF+/2gJ1QML3LEk=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:4889:b0:2c2:4109:6a5f with SMTP id
- 98e67ed59e1d1-2c4dbd31ec4mr134262a91.6.1718409899098; Fri, 14 Jun 2024
- 17:04:59 -0700 (PDT)
-Date: Fri, 14 Jun 2024 17:04:57 -0700
-In-Reply-To: <405dd8997aaaf33419be6b0fc37974370d63fd8c.camel@intel.com>
+        d=1e100.net; s=20230601; t=1718409951; x=1719014751;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c21Xnr26mF4XhO4v24lG8CYkDryUnaevoVevI7wRSgQ=;
+        b=Hvma+gNRB83KB5iKovtQu3Ga0nrQWhGl7bPYvENXVPUOs6m9xcKk82HYrrfelCpEKj
+         14UxBNoXzqhtgJ3erTzTpTOKFAV81DfYsLJVQ0W7AI2npBlXDsxev0eLMCe5nVs/5lki
+         xzjNwQJMhChSJhyKpLzkjigbOFX+HZRmxe9HfWA609bB8cyjGOhJwwZw5nHYzWOxDt9p
+         50HNalCRaJTjd/NrqAKR0/JSNRXwhwAiZlUy0N8fxeXiAtzWcW2mD9epux69JE06rk/+
+         GzTav2gv0bZTkDE4TqWQFPGoJO0EPVcUI9jN4qdbuiiJcuu7JTpJh+PK8RujB/K5h76L
+         dOqA==
+X-Gm-Message-State: AOJu0YwU35TQvknD/bM791AJlEPXhhjZo8Wz4pYw2Lq+nxvNwUx9GBiW
+	7DkQAFod5XiKzcVXkmFJ8M/JRnvNvphM7Qn0attjYziwlGjkUQ6DgStI49Tk8Vo=
+X-Google-Smtp-Source: AGHT+IHET3q/ZWVI0gCLmEytjo+qe1Q0o8W6KZxsgsqtRPqlyJa6ges0MNDa6YBygs6HHNzj/wFOeQ==
+X-Received: by 2002:a17:903:1250:b0:1f7:2050:9a76 with SMTP id d9443c01a7336-1f8625c0d68mr49770465ad.8.1718409950685;
+        Fri, 14 Jun 2024 17:05:50 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f17f92sm37976575ad.221.2024.06.14.17.05.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 17:05:50 -0700 (PDT)
+Date: Fri, 14 Jun 2024 17:05:48 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Omer Shpigelman <oshpigelman@habana.ai>
+Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+ netdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ ogabbay@kernel.org, zyehudai@habana.ai
+Subject: Re: [PATCH 01/15] net: hbl_cn: add habanalabs Core Network driver
+Message-ID: <20240614170548.188ead0d@hermes.local>
+In-Reply-To: <20240613082208.1439968-2-oshpigelman@habana.ai>
+References: <20240613082208.1439968-1-oshpigelman@habana.ai>
+	<20240613082208.1439968-2-oshpigelman@habana.ai>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <Zj1Ty6bqbwst4u_N@google.com> <49b7402c-8895-4d53-ad00-07ce7863894d@intel.com>
- <20240509235522.GA480079@ls.amr.corp.intel.com> <Zj4phpnqYNoNTVeP@google.com>
- <50e09676-4dfc-473f-8b34-7f7a98ab5228@intel.com> <Zle29YsDN5Hff7Lo@google.com>
- <f2952ae37a2bdaf3eb53858e54e6cc4986c62528.camel@intel.com>
- <ZliUecH-I1EhN7Ke@google.com> <38210be0e7cc267a459d97d70f3aff07855b7efd.camel@intel.com>
- <405dd8997aaaf33419be6b0fc37974370d63fd8c.camel@intel.com>
-Message-ID: <ZmzaqRy2zjvlsDfL@google.com>
-Subject: Re: [PATCH v19 037/130] KVM: TDX: Make KVM_CAP_MAX_VCPUS backend specific
-From: Sean Christopherson <seanjc@google.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: Tina Zhang <tina.zhang@intel.com>, Hang Yuan <hang.yuan@intel.com>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, Bo2 Chen <chen.bo@intel.com>, 
-	"sagis@google.com" <sagis@google.com>, 
-	"isaku.yamahata@linux.intel.com" <isaku.yamahata@linux.intel.com>, Erdem Aktas <erdemaktas@google.com>, 
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 14, 2024, Kai Huang wrote:
-> On Tue, 2024-06-04 at 10:48 +0000, Huang, Kai wrote:
-> > On Thu, 2024-05-30 at 16:12 -0700, Sean Christopherson wrote:
-> > > On Thu, May 30, 2024, Kai Huang wrote:
-> > > > On Wed, 2024-05-29 at 16:15 -0700, Sean Christopherson wrote:
-> > > > > In the unlikely event there is a legitimate reason for max_vcpus_per_td being
-> > > > > less than KVM's minimum, then we can update KVM's minimum as needed.  But AFAICT,
-> > > > > that's purely theoretical at this point, i.e. this is all much ado about nothing.
-> > > > 
-> > > > I am afraid we already have a legitimate case: TD partitioning.  Isaku
-> > > > told me the 'max_vcpus_per_td' is lowed to 512 for the modules with TD
-> > > > partitioning supported.  And again this is static, i.e., doesn't require
-> > > > TD partitioning to be opt-in to low to 512.
-> > > 
-> > > So what's Intel's plan for use cases that creates TDs with >512 vCPUs?
-> > 
-> > I checked with TDX module guys.  Turns out the 'max_vcpus_per_td' wasn't
-> > introduced because of TD partitioning, and they are not actually related.
-> > 
-> > They introduced this to support "topology virtualization", which requires
-> > a table to record the X2APIC IDs for all vcpus for each TD.  In practice,
-> > given a TDX module, the 'max_vcpus_per_td', a.k.a, the X2APIC ID table
-> > size reflects the physical logical cpus that *ALL* platforms that the
-> > module supports can possibly have.
-> > 
-> > The reason of this design is TDX guys don't believe there's sense in
-> > supporting the case where the 'max_vcpus' for one single TD needs to
-> > exceed the physical logical cpus.
-> > 
-> > So in short:
-> > 
-> > - The "max_vcpus_per_td" can be different depending on module versions. In
-> > practice it reflects the maximum physical logical cpus that all the
-> > platforms (that the module supports) can possibly have.
-> > 
-> > - Before CSPs deploy/migrate TD on a TDX machine, they must be aware of
-> > the "max_vcpus_per_td" the module supports, and only deploy/migrate TD to
-> > it when it can support.
-> > 
-> > - For TDX 1.5.xx modules, the value is 576 (the previous number 512 isn't
-> > correct); For TDX 2.0.xx modules, the value is larger (>1000).  For future
-> > module versions, it could have a smaller number, depending on what
-> > platforms that module needs to support.  Also, if TDX ever gets supported
-> > on client platforms, we can image the number could be much smaller due to
-> > the "vcpus per td no need to exceed physical logical cpus".
-> > 
-> > We may ask them to support the case where 'max_vcpus' for single TD
-> > exceeds the physical logical cpus, or at least not to low down the value
-> > any further for future modules (> 2.0.xx modules).  We may also ask them
-> > to give promise to not low the number to below some certain value for any
-> > future modules.  But I am not sure there's any concrete reason to do so?
-> > 
-> > What's your thinking?
 
-It's a reasonable restriction, e.g. KVM_CAP_NR_VCPUS is already capped at number
-of online CPUs, although userspace is obviously allowed to create oversubscribed
-VMs.
+> +#define HBL_AUX2NIC(aux_dev)	\
+> +	({ \
+> +		struct hbl_aux_dev *__aux_dev = (aux_dev); \
+> +		((__aux_dev)->type == HBL_AUX_DEV_ETH) ? \
+> +		container_of(__aux_dev, struct hbl_cn_device, en_aux_dev) : \
+> +		container_of(__aux_dev, struct hbl_cn_device, ib_aux_dev); \
+> +	})
+> +
+> +#define RAND_STAT_CNT(cnt) \
+> +	do { \
+> +		u32 __cnt = get_random_u32(); \
+> +		(cnt) = __cnt; \
+> +		dev_info(hdev->dev, "port %d, %s: %u\n", port, #cnt, __cnt); \
+> +	} while (0)
+> +
+> +struct hbl_cn_stat hbl_cn_mac_fec_stats[] = {
+> +	{"correctable_errors", 0x2, 0x3},
+> +	{"uncorrectable_errors", 0x4, 0x5}
+> +};
+> +
 
-I think the sane thing to do is document that TDX VMs are restricted to the number
-of logical CPUs in the system, have KVM_CAP_MAX_VCPUS enumerate exactly that, and
-then sanity check that max_vcpus_per_td is greater than or equal to what KVM
-reports for KVM_CAP_MAX_VCPUS.
+These tables should be marked const?
 
-Stating that the maximum number of vCPUs depends on the whims TDX module doesn't
-provide a predictable ABI for KVM, i.e. I don't want to simply forward TDX's
-max_vcpus_per_td to userspace.
+> +struct hbl_cn_stat hbl_cn_mac_stats_rx[] = {
+> +	{"Octets", 0x0},
+> +	{"OctetsReceivedOK", 0x4},
+> +	{"aAlignmentErrors", 0x8},
+> +	{"aPAUSEMACCtrlFramesReceived", 0xC},
+> +	{"aFrameTooLongErrors", 0x10},
+> +	{"aInRangeLengthErrors", 0x14},
+> +	{"aFramesReceivedOK", 0x18},
+> +	{"aFrameCheckSequenceErrors", 0x1C},
+> +	{"VLANReceivedOK", 0x20},
+> +	{"ifInErrors", 0x24},
+> +	{"ifInUcastPkts", 0x28},
+> +	{"ifInMulticastPkts", 0x2C},
+> +	{"ifInBroadcastPkts", 0x30},
+> +	{"DropEvents", 0x34},
+> +	{"Pkts", 0x38},
+> +	{"UndersizePkts", 0x3C},
+> +	{"Pkts64Octets", 0x40},
+> +	{"Pkts65to127Octets", 0x44},
+> +	{"Pkts128to255Octets", 0x48},
+> +	{"Pkts256to511Octets", 0x4C},
+> +	{"Pkts512to1023Octets", 0x50},
+> +	{"Pkts1024to1518Octets", 0x54},
+> +	{"Pkts1519toMaxOctets", 0x58},
+> +	{"OversizePkts", 0x5C},
+> +	{"Jabbers", 0x60},
+> +	{"Fragments", 0x64},
+> +	{"aCBFCPAUSERx0", 0x68},
+> +	{"aCBFCPAUSERx1", 0x6C},
+> +	{"aCBFCPAUSERx2", 0x70},
+> +	{"aCBFCPAUSERx3", 0x74},
+> +	{"aCBFCPAUSERx4", 0x78},
+> +	{"aCBFCPAUSERx5", 0x7C},
+> +	{"aCBFCPAUSERx6", 0x80},
+> +	{"aCBFCPAUSERx7", 0x84},
+> +	{"aMACControlFramesReceived", 0x88}
+> +};
+> +
+> +struct hbl_cn_stat hbl_cn_mac_stats_tx[] = {
+> +	{"Octets", 0x0},
+> +	{"OctetsTransmittedOK", 0x4},
+> +	{"aPAUSEMACCtrlFramesTransmitted", 0x8},
+> +	{"aFramesTransmittedOK", 0xC},
+> +	{"VLANTransmittedOK", 0x10},
+> +	{"ifOutErrors", 0x14},
+> +	{"ifOutUcastPkts", 0x18},
+> +	{"ifOutMulticastPkts", 0x1C},
+> +	{"ifOutBroadcastPkts", 0x20},
+> +	{"Pkts64Octets", 0x24},
+> +	{"Pkts65to127Octets", 0x28},
+> +	{"Pkts128to255Octets", 0x2C},
+> +	{"Pkts256to511Octets", 0x30},
+> +	{"Pkts512to1023Octets", 0x34},
+> +	{"Pkts1024to1518Octets", 0x38},
+> +	{"Pkts1519toMaxOctets", 0x3C},
+> +	{"aCBFCPAUSETx0", 0x40},
+> +	{"aCBFCPAUSETx1", 0x44},
+> +	{"aCBFCPAUSETx2", 0x48},
+> +	{"aCBFCPAUSETx3", 0x4C},
+> +	{"aCBFCPAUSETx4", 0x50},
+> +	{"aCBFCPAUSETx5", 0x54},
+> +	{"aCBFCPAUSETx6", 0x58},
+> +	{"aCBFCPAUSETx7", 0x5C},
+> +	{"aMACControlFramesTx", 0x60},
+> +	{"Pkts", 0x64}
+> +};
+> +
+> +static const char pcs_counters_str[][ETH_GSTRING_LEN] = {
+> +	{"pcs_local_faults"},
+> +	{"pcs_remote_faults"},
+> +	{"pcs_remote_fault_reconfig"},
+> +	{"pcs_link_restores"},
+> +	{"pcs_link_toggles"},
+> +};
+> +
+> +static size_t pcs_counters_str_len = ARRAY_SIZE(pcs_counters_str);
+> +size_t hbl_cn_mac_fec_stats_len = ARRAY_SIZE(hbl_cn_mac_fec_stats);
+> +size_t hbl_cn_mac_stats_rx_len = ARRAY_SIZE(hbl_cn_mac_stats_rx);
+> +size_t hbl_cn_mac_stats_tx_len = ARRAY_SIZE(hbl_cn_mac_stats_tx);
+> +
+> +static void qps_stop(struct hbl_cn_device *hdev);
+> +static void qp_destroy_work(struct work_struct *work);
+> +static int __user_wq_arr_unset(struct hbl_cn_ctx *ctx, struct hbl_cn_port *cn_port, u32 type);
+> +static void user_cq_destroy(struct kref *kref);
+> +static void set_app_params_clear(struct hbl_cn_device *hdev);
+> +static int hbl_cn_ib_cmd_ctrl(struct hbl_aux_dev *aux_dev, void *cn_ib_ctx, u32 op, void *input,
+> +			      void *output);
+> +static int hbl_cn_ib_query_mem_handle(struct hbl_aux_dev *ib_aux_dev, u64 mem_handle,
+> +				      struct hbl_ib_mem_info *info);
+> +
+> +static void hbl_cn_reset_stats_counters_port(struct hbl_cn_device *hdev, u32 port);
+> +static void hbl_cn_late_init(struct hbl_cn_device *hdev);
+> +static void hbl_cn_late_fini(struct hbl_cn_device *hdev);
+> +static int hbl_cn_sw_init(struct hbl_cn_device *hdev);
+> +static void hbl_cn_sw_fini(struct hbl_cn_device *hdev);
+> +static void hbl_cn_spmu_init(struct hbl_cn_port *cn_port, bool full);
+> +static int hbl_cn_cmd_port_check(struct hbl_cn_device *hdev, u32 port, u32 flags);
+> +static void hbl_cn_qps_stop(struct hbl_cn_port *cn_port);
+
+Can you reorder code so forward declarations are not required?
 
