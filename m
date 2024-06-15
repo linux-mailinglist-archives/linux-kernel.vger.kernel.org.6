@@ -1,294 +1,190 @@
-Return-Path: <linux-kernel+bounces-215629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7611190952E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:22:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C2F6909531
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEDB3282348
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 01:22:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDC7F281E32
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 01:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780DF440C;
-	Sat, 15 Jun 2024 01:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272056FD0;
+	Sat, 15 Jun 2024 01:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nsGAvjxX"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LDK0OPaG"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B0010F7;
-	Sat, 15 Jun 2024 01:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63841C2E;
+	Sat, 15 Jun 2024 01:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718414516; cv=none; b=l49siW+z0Xhe6cNVH0JIilLhmzmzDZNHLHxlSNKL+5m/FellBDGcpFM9g+mfJyg5NXtyv7/TTZgAfIQvyrHsfc/0Qs/vQWMQ6iu3LBEUxoo6NcKXf3yNNKR0xXhK/UDqXgG3q2HXiXE0DkbcMESYrvPEcX6er88i+ZO9zJ2CN7M=
+	t=1718414700; cv=none; b=L/xLGN9K0cb18L7LSWTEYOg0AhvWeW77Y4s0hSAXcaoBKgTfWH9kc+EwvPMgc1VuvfM2NMZM8nzJ4roxln0PnFrjfgh6jb+PEg4m7IrDdXvfweQHO5rZjiTnjOQPHpt3H2UAFegsLmpnoXKUIT0wM0eKfERmWrL1ru/3m9zd9x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718414516; c=relaxed/simple;
-	bh=6hcdQDxYt7wkpqPicpmiKM/5NbLScKPDE7Gr8WLHzZg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aqMiuJFL0DMA5kUQnUjiT5m/LTGP7UR02I/OuNYYgMldRjwFijXsHTQgqEBzq0aoXtGPbvb0oaz5Uhb27P2fOthdlTrqaGPm7bG6jEH0n4oLaCT7t01ijhzMT5uVPpq33I0PGu4oTfUiZosOvqVQDUzNnuG9PH/FmvoSiDnNs14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nsGAvjxX; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45EMGPMX026842;
-	Sat, 15 Jun 2024 01:21:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=corp-2023-11-20; bh=nUEG7nc72Pb4qM
-	FWnH+i7N0SgkgYLubTxhxZ24OeGb0=; b=nsGAvjxX/oqkShstJU356vmShgeaFe
-	waM9Fm/RbTLoV9G8bVNuogcZzBcyEgDA070mItNnilol/vhoniuQN0Kj79qT1Y43
-	3rNKDFJZ0xK7cLltFGiyHtCJNedXiquF0hKBov7n7deVmHcm3EgRzvA8tl03HzsI
-	YYBjVunGngs4G8XHnFP+jR8Ns2RHuMzeFCpLZaJPbH79sf2Lt/qgFxtHRHBnWl4d
-	sUXI1mXEy8m5/hFmjP4gyVVC0Grn8GNMPjc0LxcA2EUn3L4J8KkzD9UgkOrQryld
-	btBQ0mq/Jb7UquI+B902+cDH/FWu4VmVAZeM9r2HNYwjcqd8CuYErfdw==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ymhajctep-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 15 Jun 2024 01:21:40 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45EMdBij036656;
-	Sat, 15 Jun 2024 01:21:39 GMT
-Received: from gms-ol9-loop-1.osdevelopmeniad.oraclevcn.com (gms-ol9-loop-1.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.252.182])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3ynce2dmr0-1;
-	Sat, 15 Jun 2024 01:21:39 +0000
-From: Gulam Mohamed <gulam.mohamed@oracle.com>
-To: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: yukuai1@huaweicloud.com, hch@lst.de, axboe@kernel.dk
-Subject: [PATCH V5 for-6.11/block] loop: Fix a race between loop detach and loop open
-Date: Sat, 15 Jun 2024 01:21:38 +0000
-Message-ID: <20240615012138.120364-1-gulam.mohamed@oracle.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1718414700; c=relaxed/simple;
+	bh=vgpdZy8Zm21I5i7rHfIpJ5Zyoj30Uxr0py2T20VG2tY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q1HfEuapGDjXdHEc9+T5wLv9IFdggOjybq9cJ/nlQGA+DXEK28oTj8rFYGxiEzEBDqWiwjAkdmDCPmOpDwfjXo8V/c/ovR/xfR2B2k322DotHF9Pl0po2/90GwL9VpB+Zogp+lAXad9EdbukqN3WzvvfU3SoptNAFEqrXOEkreg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LDK0OPaG; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7955dfce860so178524685a.2;
+        Fri, 14 Jun 2024 18:24:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718414698; x=1719019498; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=JfOBXszW5OZSQ0w6pPZYZxRPhMPO4vnS5op55SUhlr4=;
+        b=LDK0OPaG8SJ9fxkiltIMCQcLQ5ulLMM5gxJ96pocFRDK5Ww30vcIo/Vs4i5kdXDfR/
+         KvJt2+/Gkaaf+PilmTQkpunUFSPCDrUOHVmo8ZPu6IX2PDnffeXuJOr6kCEeykgmcMqZ
+         Mw+C2BEXHL5vD0EC+xnrQE8mzWafd4tVKh+0vm/5Ekdydbd+u3Ok2Yh8Qy3DtSEkyNdB
+         O0e2OIeFnR6PQklAyyC34Znv8mFclZ7XmbwzrbuQa9rI8IH6e2OKWme25y0naddL2pO6
+         +fPKKVqUaomH1KASOWTTZ/ckU0LZu1LJ0hy3seGjksQxHhcg6izplmT/cpql9U5825YV
+         BzfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718414698; x=1719019498;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JfOBXszW5OZSQ0w6pPZYZxRPhMPO4vnS5op55SUhlr4=;
+        b=OAi3fhIdd1voQ4ZttKpgmCUAGUs8uS+RPhm85CidVGTRKXaNvPCN/neAmiVKYqjyEt
+         g1IShLu7vtDDFnrVda4t0yX9hYk/DoqfYW2EaIJuFEnGXmTVPGOVckTLr13Swsta+JqW
+         3Ptm9IxIdHEq+JoU+hAqAT/rSCgz92a5shtHcplb/OEdAMnwr+7jv/eWh4vUlcz+3gTV
+         bm/DLd6rmK2HjDkwavwBXovX7J56IZFVeMn2cQ5unf1pNh4ERthnIU0fGk4uWlGSpmfR
+         9TAvmVIZmkALaNI4QUO6vsqrsokGItGjCHQ30bQeWVkBk0699fqUv2Wch5PCctehd+Dw
+         V37w==
+X-Forwarded-Encrypted: i=1; AJvYcCXtKxgLEAsYU7o/0keRHjW7CuH6oAo+Up/JglJopzqhijVwbcIUn/AN+vpzYRYtFwb9EC2axXw3JtpasPJeJS3gTooqOSwW5SYNASC7STCA6c04GNJEWlX8CQwzMd4+pikeiChyuru72TPHDehLOsabADB6M0LoWezBBPmFmHMwdmFZRtFyzjHzXrNy3qcb339SL2llhH1N1TkI28oTV3uPTOMJKBnnIQ==
+X-Gm-Message-State: AOJu0YwEhYjVHjFfnrKaN5esOnKrnm9EKHj937fp0nSAgL4BOQuJZBVB
+	vmR8s2NFRAgsYUkrHNU7YaMqqCB66xoyijcjnNTRFA+W43JJbkcc
+X-Google-Smtp-Source: AGHT+IG6n7GPvstdqsh1yw1mNVwR7ev+2XQ3VHwq7FcLWe4FaNEqoQptCk/LJ0Zi1UEWs9hkSViM2A==
+X-Received: by 2002:a05:620a:3955:b0:795:758d:fba4 with SMTP id af79cd13be357-798d243b042mr491526185a.46.1718414697754;
+        Fri, 14 Jun 2024 18:24:57 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-798aaedc360sm198773685a.33.2024.06.14.18.24.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 18:24:57 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 03B3C120006A;
+	Fri, 14 Jun 2024 21:24:55 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Fri, 14 Jun 2024 21:24:56 -0400
+X-ME-Sender: <xms:Z-1sZvOgWv8RCft1zQbaQjImr1wtCuGHt6cKHSVl2_henjEWxpD4Dw>
+    <xme:Z-1sZp_1KoiwJg0IBfbZtygwl7AmihNvLyCmEGwYsx5uAdZc2V2FE_vx91-hw5m-H
+    dpnms_LKml9b1_vXw>
+X-ME-Received: <xmr:Z-1sZuTG69pV3Y6aR8AOhLfbwRPjmBvcxRtJfJqVsYqoyIn6QI_gD0LEFQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvtddggeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhepvefghfeuveekudetgfevudeuudejfeeltdfhgfehgeekkeeigfdukefh
+    gfegleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedt
+    ieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfh
+    higihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:Z-1sZjvzJ2JihPBJtUb3JJwcPUHKcpThYKLdNyrbJZeoe8wRTzVaow>
+    <xmx:Z-1sZndWMVAzg8ILebxL155UR7oM5hFwXZHpcZ6MlWwmHAhxT3ydrg>
+    <xmx:Z-1sZv1WS-HnjqJurM9A1Vci8ZKauC3OEcvWRkwf7QowLBtIqeTVtg>
+    <xmx:Z-1sZj_pFKfsGcG3AfOmu7CvRyYaQhC4OWSp5Ly3J6zDrNBfITCO4g>
+    <xmx:Z-1sZq-2Op7iZ1Fr_mbNrOeeqIDaaagnsZ-5xigHBGNtXw2fKruqywwk>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 14 Jun 2024 21:24:54 -0400 (EDT)
+Date: Fri, 14 Jun 2024 18:24:53 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Gary Guo <gary@garyguo.net>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
+ linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
+ Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com
+Subject: Re: [RFC 2/2] rust: sync: Add atomic support
+Message-ID: <ZmztZd9OJdLnBZs5@Boquns-Mac-mini.home>
+References: <20240612223025.1158537-1-boqun.feng@gmail.com>
+ <20240612223025.1158537-3-boqun.feng@gmail.com>
+ <20240613144432.77711a3a@eugeo>
+ <ZmseosxVQXdsQjNB@boqun-archlinux>
+ <CANiq72myhoCCWs7j0eZuxfoYMbTez7cPa795T57+gz2Dpd+xAw@mail.gmail.com>
+ <ZmtC7h7v1t6XJ6EI@boqun-archlinux>
+ <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com>
+ <79239550-dd6e-4738-acea-e7df50176487@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-14_19,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 adultscore=0
- mlxscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2406150009
-X-Proofpoint-GUID: JPQuSHusPaqr9jnY3bx7XVb60JcCci-J
-X-Proofpoint-ORIG-GUID: JPQuSHusPaqr9jnY3bx7XVb60JcCci-J
+In-Reply-To: <79239550-dd6e-4738-acea-e7df50176487@nvidia.com>
 
-1. Userspace sends the command "losetup -d" which uses the open() call
-   to open the device
-2. Kernel receives the ioctl command "LOOP_CLR_FD" which calls the
-   function loop_clr_fd()
-3. If LOOP_CLR_FD is the first command received at the time, then the
-   AUTOCLEAR flag is not set and deletion of the
-   loop device proceeds ahead and scans the partitions (drop/add
-   partitions)
+On Fri, Jun 14, 2024 at 06:03:37PM -0700, John Hubbard wrote:
+> On 6/14/24 2:59 AM, Miguel Ojeda wrote:
+> > On Thu, Jun 13, 2024 at 9:05 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> > > 
+> > > Does this make sense?
+> > 
+> > Implementation-wise, if you think it is simpler or more clear/elegant
+> > to have the extra lower level layer, then that sounds fine.
+> > 
+> > However, I was mainly talking about what we would eventually expose to
+> > users, i.e. do we want to provide `Atomic<T>` to begin with? If yes,
+> > then we could make the lower layer private already.
+> > 
+> > We can defer that extra layer/work if needed even if we go for
+> > `Atomic<T>`, but it would be nice to understand if we have consensus
+> > for an eventual user-facing API, or if someone has any other opinion
+> > or concerns on one vs. the other.
+> 
+> Well, here's one:
+> 
+> The reason that we have things like atomic64_read() in the C code is
+> because C doesn't have generics.
+> 
+> In Rust, we should simply move directly to Atomic<T>, as there are,
+> after all, associated benefits. And it's very easy to see the connection
 
-        if (disk_openers(lo->lo_disk) > 1) {
-                lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
-                loop_global_unlock(lo, true);
-                return 0;
-        }
+What are the associated benefits you are referring to? Rust std doesn't
+use Atomic<T>, that somewhat proves that we don't need it.
 
- 4. Before scanning partitions, it will check to see if any partition of
-    the loop device is currently opened
- 5. If any partition is opened, then it will return EBUSY:
+Regards,
+Boqun
 
-    if (disk->open_partitions)
-                return -EBUSY;
- 6. So, after receiving the "LOOP_CLR_FD" command and just before the above
-    check for open_partitions, if any other command
-    (like blkid) opens any partition of the loop device, then the partition
-    scan will not proceed and EBUSY is returned as shown in above code
- 7. But in "__loop_clr_fd()", this EBUSY error is not propagated
- 8. We have noticed that this is causing the partitions of the loop to
-    remain stale even after the loop device is detached resulting in the
-    IO errors on the partitions
-
-Fix:
-
-Defer the detach of loop device to release function, which is called when
-the last close happens, by setting the lo_flags to LO_FLAGS_AUTOCLEAR at
-the time of detach i.e in loop_clr_fd() function.
-
-Test case involves the following two scripts:
-
-script1.sh:
-
-while [ 1 ];
-do
-        losetup -P -f /home/opt/looptest/test10.img
-        blkid /dev/loop0p1
-done
-
-script2.sh:
-
-while [ 1 ];
-do
-        losetup -d /dev/loop0
-done
-
-Without fix, the following IO errors have been observed:
-
-kernel: __loop_clr_fd: partition scan of loop0 failed (rc=-16)
-kernel: I/O error, dev loop0, sector 20971392 op 0x0:(READ) flags 0x80700
-        phys_seg 1 prio class 0
-kernel: I/O error, dev loop0, sector 108868 op 0x0:(READ) flags 0x0
-        phys_seg 1 prio class 0
-kernel: Buffer I/O error on dev loop0p1, logical block 27201, async page
-        read
-
-Signed-off-by: Gulam Mohamed <gulam.mohamed@oracle.com>
----
-v5<-v4:
-1. Re-introduced the setting of Lo_rundown flag while loop detach
-2. Re-introduced the lo_open to prevent the new incoming openers when
-   Lo_rundown is set
-
- drivers/block/loop.c | 72 +++++++++++++++++++++-----------------------
- 1 file changed, 34 insertions(+), 38 deletions(-)
-
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 93780f41646b..cba64799811c 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1131,7 +1131,7 @@ static int loop_configure(struct loop_device *lo, blk_mode_t mode,
- 	return error;
- }
- 
--static void __loop_clr_fd(struct loop_device *lo, bool release)
-+static void __loop_clr_fd(struct loop_device *lo)
- {
- 	struct file *filp;
- 	gfp_t gfp = lo->old_gfp_mask;
-@@ -1139,14 +1139,6 @@ static void __loop_clr_fd(struct loop_device *lo, bool release)
- 	if (test_bit(QUEUE_FLAG_WC, &lo->lo_queue->queue_flags))
- 		blk_queue_write_cache(lo->lo_queue, false, false);
- 
--	/*
--	 * Freeze the request queue when unbinding on a live file descriptor and
--	 * thus an open device.  When called from ->release we are guaranteed
--	 * that there is no I/O in progress already.
--	 */
--	if (!release)
--		blk_mq_freeze_queue(lo->lo_queue);
--
- 	spin_lock_irq(&lo->lo_lock);
- 	filp = lo->lo_backing_file;
- 	lo->lo_backing_file = NULL;
-@@ -1164,8 +1156,6 @@ static void __loop_clr_fd(struct loop_device *lo, bool release)
- 	mapping_set_gfp_mask(filp->f_mapping, gfp);
- 	/* This is safe: open() is still holding a reference. */
- 	module_put(THIS_MODULE);
--	if (!release)
--		blk_mq_unfreeze_queue(lo->lo_queue);
- 
- 	disk_force_media_change(lo->lo_disk);
- 
-@@ -1180,11 +1170,7 @@ static void __loop_clr_fd(struct loop_device *lo, bool release)
- 		 * must be at least one and it can only become zero when the
- 		 * current holder is released.
- 		 */
--		if (!release)
--			mutex_lock(&lo->lo_disk->open_mutex);
- 		err = bdev_disk_changed(lo->lo_disk, false);
--		if (!release)
--			mutex_unlock(&lo->lo_disk->open_mutex);
- 		if (err)
- 			pr_warn("%s: partition scan of loop%d failed (rc=%d)\n",
- 				__func__, lo->lo_number, err);
-@@ -1233,24 +1219,15 @@ static int loop_clr_fd(struct loop_device *lo)
- 		return -ENXIO;
- 	}
- 	/*
--	 * If we've explicitly asked to tear down the loop device,
--	 * and it has an elevated reference count, set it for auto-teardown when
--	 * the last reference goes away. This stops $!~#$@ udev from
--	 * preventing teardown because it decided that it needs to run blkid on
--	 * the loopback device whenever they appear. xfstests is notorious for
--	 * failing tests because blkid via udev races with a losetup
--	 * <dev>/do something like mkfs/losetup -d <dev> causing the losetup -d
--	 * command to fail with EBUSY.
-+	 * Mark the device for removing the backing device on last close.
-+	 * If we are the only opener, also switch the state to roundown here to
-+	 * prevent new openers from coming in.
- 	 */
--	if (disk_openers(lo->lo_disk) > 1) {
--		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
--		loop_global_unlock(lo, true);
--		return 0;
--	}
-+
-+	lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
- 	lo->lo_state = Lo_rundown;
- 	loop_global_unlock(lo, true);
- 
--	__loop_clr_fd(lo, false);
- 	return 0;
- }
- 
-@@ -1717,25 +1694,43 @@ static int lo_compat_ioctl(struct block_device *bdev, blk_mode_t mode,
- }
- #endif
- 
-+static int lo_open(struct gendisk *disk, blk_mode_t mode)
-+{
-+	struct loop_device *lo = disk->private_data;
-+	int err;
-+
-+	err = mutex_lock_killable(&lo->lo_mutex);
-+	if (err)
-+		return err;
-+
-+	if (lo->lo_state == Lo_deleting || lo->lo_state == Lo_rundown)
-+		err = -ENXIO;
-+	mutex_unlock(&lo->lo_mutex);
-+	return err;
-+}
-+
- static void lo_release(struct gendisk *disk)
- {
- 	struct loop_device *lo = disk->private_data;
-+	bool need_clear = false;
- 
- 	if (disk_openers(disk) > 0)
- 		return;
-+	/*
-+	 * Clear the backing device information if this is the last close of
-+	 * a device that's been marked for auto clear, or on which LOOP_CLR_FD
-+	 * has been called.
-+	 */
- 
- 	mutex_lock(&lo->lo_mutex);
--	if (lo->lo_state == Lo_bound && (lo->lo_flags & LO_FLAGS_AUTOCLEAR)) {
-+	if (lo->lo_state == Lo_bound && (lo->lo_flags & LO_FLAGS_AUTOCLEAR))
- 		lo->lo_state = Lo_rundown;
--		mutex_unlock(&lo->lo_mutex);
--		/*
--		 * In autoclear mode, stop the loop thread
--		 * and remove configuration after last close.
--		 */
--		__loop_clr_fd(lo, true);
--		return;
--	}
-+
-+	need_clear = (lo->lo_state == Lo_rundown);
- 	mutex_unlock(&lo->lo_mutex);
-+
-+	if (need_clear)
-+		__loop_clr_fd(lo);
- }
- 
- static void lo_free_disk(struct gendisk *disk)
-@@ -1752,6 +1747,7 @@ static void lo_free_disk(struct gendisk *disk)
- 
- static const struct block_device_operations lo_fops = {
- 	.owner =	THIS_MODULE,
-+	.open =         lo_open,
- 	.release =	lo_release,
- 	.ioctl =	lo_ioctl,
- #ifdef CONFIG_COMPAT
--- 
-2.43.0
-
+> between the C types and the Atomic<T> types.
+> 
+> 
+> thanks,
+> -- 
+> John Hubbard
+> NVIDIA
+> 
 
