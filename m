@@ -1,443 +1,294 @@
-Return-Path: <linux-kernel+bounces-215855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC639097EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:23:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBEE89097F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCED2282C9F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:23:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB8A1283A74
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898783C062;
-	Sat, 15 Jun 2024 11:23:08 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468313F9C5;
+	Sat, 15 Jun 2024 11:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fkDsGc62"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA55C3A8D2
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 11:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA153B1BC;
+	Sat, 15 Jun 2024 11:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718450587; cv=none; b=urMOX7mK/RG4p4R6sV5fe5KTgf4QIouaLVLDp6yxm7U/erN6iAZFYcmp8lnki/gJuTl7aL6gnauLkMmymX+UGv3SnR1IF0chSQaI5Z8+bvzuz0wm259yI3sMEg9/woflnAisY/SWIv7GWg0hirpR51YATTuYzWHTc37r6sKLCzI=
+	t=1718450962; cv=none; b=LDk9GppIK0tSVGmAUjQ1g9+UY8chD8psX9Nm58YaH2juuvjtXN2pWQO9jxS7ZSbciKvWpLBL6Nr47aeq004ICMkRDByBZm/8uS5a4LBoTxmF+Qtd7510uaOIRkB1RFG3ls4Y8SdhYsimi4X0+GtU5fuYH7JY5AsVRHUKm7s5lUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718450587; c=relaxed/simple;
-	bh=ZCwDoM5xGqLn+Uvk6dIOfffa7uFUa1Lus1AAU0SsSn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eerBxKnlb705iEkboJ8MnIwhqCIU5LS4surKo0HphnkXD/y/hEtuj2UQ3bFrN8rRX4Hb117tnqBII2noxj6cHc6KR/4VDn4LOTnNXH87bfIpy4q+6YECkv7YyD2cQbL5ZPgTiAY+wWBQj4EyC5xaUUB0J1b0Rl65YV9iSjB2x4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sIRUU-0002hl-DH; Sat, 15 Jun 2024 13:22:38 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sIRUS-002UUt-71; Sat, 15 Jun 2024 13:22:36 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sIRUS-00CK51-0O;
-	Sat, 15 Jun 2024 13:22:36 +0200
-Date: Sat, 15 Jun 2024 13:22:36 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de, UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH net-next v3 1/7] net: ethtool: pse-pd: Expand C33 PSE
- status with class, power and extended state
-Message-ID: <Zm15fP1Sudot33H5@pengutronix.de>
-References: <20240614-feature_poe_power_cap-v3-0-a26784e78311@bootlin.com>
- <20240614-feature_poe_power_cap-v3-1-a26784e78311@bootlin.com>
+	s=arc-20240116; t=1718450962; c=relaxed/simple;
+	bh=OOycP8pGgZo75A9hfA/v9HuIRLG9Sscj8JavorVMaCo=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=HEBnDGZ+Mj2YOhDKPwOiD5ud/7pSlUyMzYbcvjNM88NKlTazkPzC4JOwXoGlzgGJ8bqduCyNnwwVWWfVD3PvzSh0NAzdn7IyWP/6gZeFUfHRyfiXXLU4PE/biBQoiZY77YWX14DD9q4+ww1pIZe5yMvdCtm0fjfKVo0WrAK4kDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fkDsGc62; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2547e1c7bbeso1504058fac.2;
+        Sat, 15 Jun 2024 04:29:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718450960; x=1719055760; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OXx0KpX82zwZVS6MNhXtQouPtEsUc8nuIJPaW3qSTf4=;
+        b=fkDsGc62kTxn9ppRivl9KUy3RSmch6HnYHcrfxMS4t6povpNs/Vh/LfQIRoATmvoiC
+         GuMX7U0wMNfaShRxBj39FpkOlj6oWiSiY8pWbvuogznzB2u6J3GB70WBf9J3K3bFwBlT
+         mGf/Yr1k2rCPEEk76sPiDdtFR5JPhQea6ViJcmi7HOZpY3PXee5+KOMBS8PTU7PKftxo
+         xUvjke0qv4E3VPLC41jj8L1LALX6p5nMYHpv5oapoNuOjTZmHIIaduU2wo51/qfwp/UQ
+         9owl5cJ9781diRbpTShvaR2Kuj+DTrm6+oVso+eJoBf3aQmh5F7/D18EgTvz6qV3xndU
+         Hqvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718450960; x=1719055760;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OXx0KpX82zwZVS6MNhXtQouPtEsUc8nuIJPaW3qSTf4=;
+        b=BB/F/eUmshM1uc9VXbQTkTJ8rJa3u6l66TPoHwr1HmkspkdthgpbgCa3KHvWXnGhyL
+         +bDQY3pmxtwHDYsmjZJIVr02l0jkVvSXE63xVRI/nx3+PtAFCMN3h3l49HcAdodMKVHq
+         IbwPfICe/DdEJ+SoPZbhWSaUfiDy5GG4o/Nx9q/gPEW1azqTN5Xej4XmghCG91oSpJh5
+         vT3unHcEmtS6amJHYKgFXM8ijPXYwufUH3yPg1RlkeRGdnTI9cXLglth/YV5cb3zV10J
+         oxiMy81NEH9DZmiMYpB2GA8OhWKhOaVMyIxGiG/gWCQifoZGQutP/0RzxG7CPKYmlaVj
+         H+eA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkQWMf7/Fx2or8D6U/TeXMi9CYreH/pQcms5K73AAVId8KnpRJGQIxwwFXZoPzXUIH3+rI2JN0aY1mR2ZNrGEn+5lAtP4CnV9sBwfC/BhseCIFDLAzQEbay9IQn0NyyMGR6Z4QrRFvCGC7hwFoyY4wHKangY/+8M0MYwi1
+X-Gm-Message-State: AOJu0YyZxpRtCIazTJsnB+mlJfS4aeOKCAtW32V4nAKjQHYEHgA3Jmyx
+	UZlRQW4ow039EAFau903xTFUgM1PTM9BqEmCQ/hiGlGuvNdgrLm5
+X-Google-Smtp-Source: AGHT+IHX9VUBD/zu9pao1lUpmqKtZ/Oc9LPJpyGp4Tx64OtAhmCP5J/yv5+WvFoW1sfrYex+qaB9pg==
+X-Received: by 2002:a05:6870:a450:b0:254:76c6:bb20 with SMTP id 586e51a60fabf-25842b7b0ebmr5286952fac.51.1718450959582;
+        Sat, 15 Jun 2024 04:29:19 -0700 (PDT)
+Received: from localhost (56.148.86.34.bc.googleusercontent.com. [34.86.148.56])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4421231c74fsm22973171cf.55.2024.06.15.04.29.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Jun 2024 04:29:18 -0700 (PDT)
+Date: Sat, 15 Jun 2024 07:29:18 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Chengen Du <chengen.du@canonical.com>, 
+ willemdebruijn.kernel@gmail.com
+Cc: davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ kaber@trash.net, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Chengen Du <chengen.du@canonical.com>, 
+ stable@vger.kernel.org
+Message-ID: <666d7b0e61a46_1ba35a2944e@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20240614133545.85626-1-chengen.du@canonical.com>
+References: <20240614133545.85626-1-chengen.du@canonical.com>
+Subject: Re: [PATCH v7] af_packet: Handle outgoing VLAN packets without
+ hardware offloading
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240614-feature_poe_power_cap-v3-1-a26784e78311@bootlin.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Hi Köry,
+Chengen Du wrote:
+> The issue initially stems from libpcap. The ethertype will be overwritten
+> as the VLAN TPID if the network interface lacks hardware VLAN offloading.
+> In the outbound packet path, if hardware VLAN offloading is unavailable,
+> the VLAN tag is inserted into the payload but then cleared from the sk_buff
+> struct. Consequently, this can lead to a false negative when checking for
+> the presence of a VLAN tag, causing the packet sniffing outcome to lack
+> VLAN tag information (i.e., TCI-TPID). As a result, the packet capturing
+> tool may be unable to parse packets as expected.
+> 
+> The TCI-TPID is missing because the prb_fill_vlan_info() function does not
+> modify the tp_vlan_tci/tp_vlan_tpid values, as the information is in the
+> payload and not in the sk_buff struct. The skb_vlan_tag_present() function
+> only checks vlan_all in the sk_buff struct. In cooked mode, the L2 header
+> is stripped, preventing the packet capturing tool from determining the
+> correct TCI-TPID value. Additionally, the protocol in SLL is incorrect,
+> which means the packet capturing tool cannot parse the L3 header correctly.
+> 
+> Link: https://github.com/the-tcpdump-group/libpcap/issues/1105
+> Link: https://lore.kernel.org/netdev/20240520070348.26725-1-chengen.du@canonical.com/T/#u
+> Fixes: 393e52e33c6c ("packet: deliver VLAN TCI to userspace")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Chengen Du <chengen.du@canonical.com>
 
-Overall, it looks good. Some fields need clarification, so don't be
-surprised if I critique things I proposed myself. There are still
-aspects I don't fully understand :)
+Thanks for your patience working through these revisions.
 
-On Fri, Jun 14, 2024 at 04:33:17PM +0200, Kory Maincent wrote:
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
-
-> +/**
-> + * enum ethtool_c33_pse_ext_substate_class_num_events - class_num_events states
-> + *      functions. IEEE 802.3-2022 33.2.4.4 Variables
-> + *
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_CLASS_NUM_EVENTS_CLASS_ERROR: Illegal class
-> + *
-> + * class_num_events is variable indicating the number of classification events
-> + * performed by the PSE. A variable that is set in an implementation-dependent
-> + * manner.
-> + */
-> +enum ethtool_c33_pse_ext_substate_class_num_events {
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_CLASS_NUM_EVENTS_CLASS_ERROR = 1,
-> +};
-
-I'm still not 100% sure by this name. class_num_events seems to be more
-PSE side configuration variable. The pd692x0 0x43 value says "Illegal
-class" without providing additional information. If I see it correctly,
-typical classification will end with POWER_NOT_AVAILABLE if we will
-detect not supported class. Something other should fail to detect an
-illegal class.
-
-According to 33.2.4.7
-State diagrams we have CLASSIFICATION_EVAL function which evaluates
-results of classification.
-In case of class_num_events = 1, we have only tpdc_timer. In case of
-error, will we get some timer related error?
-
-In case of class_num_events = 2, if i see it correctly, PSE is doing
-double classification and if results do not match, PSE will go to faul
-state. See CLASS_EV2->(mr_pd_class_detected != temp_var) case.
-
-Is it what we have here?
-
-> +/**
-> + * enum ethtool_c33_pse_ext_substate_error_condition - error_condition states
-> + *      functions. IEEE 802.3-2022 33.2.4.4 Variables
-> + *
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_NON_EXISTING_PORT: Non-existing
-> + *	port number
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_UNDEFINED_PORT: Undefined port
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_INTERNAL_HW_FAULT: Internal
-> + *	hardware fault
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_COMM_ERROR_AFTER_FORCE_ON:
-> + *	Communication error after force on
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_UNKNOWN_PORT_STATUS: Unknown
-> + *	port status
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_HOST_CRASH_TURN_OFF: Host
-> + *	crash turn off
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_HOST_CRASH_FORCE_SHUTDOWN:
-> + *	Host crash force shutdown
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_DETECTED_UNDERLOAD: Underload
-> + *	state
-
-pd692x0 documentation says, underload condition is related to Iport < Imin.
-Sofar, I was not able to find Imin in the final IEEE 802.3 2022 spec.
-
-There are some historical traces:
-https://www.ieee802.org/3/af/public/mar01/darshan_3_0301.pdf
-
-Instead, underload condition seems to be part of Maintain Power Signature (MPS)
-monitoring. See 33.2.9 PSE power removal and 33.2.9.1.2 PSE DC MPS component
-requirements.
-
-Probably, it should go to the ETHTOOL_C33_PSE_EXT_SUBSTATE_MPS
-
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_CONFIG_CHANGE: Configuration
-> + *	change
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_DETECTED_OVER_TEMP: Over
-> + *	temperature detected
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_CONNECTION_OPEN: Port is
-> + *	not connected
-
-This seems to reflect DETECT_EVAL->(signature = open_circuit) case. So,
-it is probably not vendor specific error condition?
-
-The difference between open and underload is probably:
-- open: Iport = 0, detection state
-- underload: Iport < Imin (or Ihold?), Iport can be 0. related to powered/MPS
-  state.
-
-> + *
-> + * error_condition is a variable indicating the status of
-> + * implementation-specific fault conditions or optionally other system faults
-> + * that prevent the PSE from meeting the specifications in Table 33–11 and that
-> + * require the PSE not to source power. These error conditions are different
-> + * from those monitored by the state diagrams in Figure 33–10.
-> + */
-> +enum ethtool_c33_pse_ext_substate_error_condition {
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_NON_EXISTING_PORT = 1,
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_UNDEFINED_PORT,
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_INTERNAL_HW_FAULT,
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_COMM_ERROR_AFTER_FORCE_ON,
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_UNKNOWN_PORT_STATUS,
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_HOST_CRASH_TURN_OFF,
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_HOST_CRASH_FORCE_SHUTDOWN,
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_DETECTED_UNDERLOAD,
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_CONFIG_CHANGE,
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_DETECTED_OVER_TEMP,
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_ERROR_CONDITION_CONNECTION_OPEN,
-> +};
-> +
-> +/**
-> + * enum ethtool_c33_pse_ext_substate_mr_pse_enable - mr_pse_enable states
-> + *      functions. IEEE 802.3-2022 33.2.4.4 Variables
-> + *
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_MR_PSE_ENABLE_DISABLE_PIN_ACTIVE: Disable
-> + *	pin active
-> + *
-> + * mr_pse_enable is control variable that selects PSE operation and test
-> + * functions.
-> + */
-> +enum ethtool_c33_pse_ext_substate_mr_pse_enable {
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_MR_PSE_ENABLE_DISABLE_PIN_ACTIVE = 1,
-> +};
-> +
-> +/**
-> + * enum ethtool_c33_pse_ext_substate_option_detect_ted - option_detect_ted
-> + *	states functions. IEEE 802.3-2022 33.2.4.4 Variables
-> + *
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_DETECT_TED_DET_IN_PROCESS: Detection
-> + *	in process
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_DETECT_TED_IMPROPER_CAP_DET: Improper
-> + *	capacitor Detection
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_DETECT_TED_CONNECTION_CHECK_ERROR:
-> + *	Connection check error
-> + *
-> + * option_detect_ted is a variable indicating if detection can be performed
-> + * by the PSE during the ted_timer interval.
-> + */
-> +enum ethtool_c33_pse_ext_substate_option_detect_ted {
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_DETECT_TED_DET_IN_PROCESS = 1,
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_DETECT_TED_IMPROPER_CAP_DET,
-
-The pd692x0 0x25 may be reported in two cases:
-Fail due to out-of-range capacitor value or
-Fail due to detected short value
-
-On one side, this seems to be related to MONITOR_INRUSH function.
-"33.2.7.5 Output current in POWER_UP mode
-
-The PSE shall limit the maximum current sourced at the PI during
-POWER_UP. The maximum inrush current sourced by the PSE shall not exceed the
-PSE inrush template in Figure 33–13."
-
-On other side, pd692x0 documentation is using 0x1C or 0x25 or 0xA7
-values together with "INVALID SIG" description. In this case, this
-values are related to signature detection stage, not power up or
-tinrush_timer stage. In this case, i assume:
-0x25 and 0xa7 refers to Table 33–6 or Table 145–8 Invalid PD detection signature
-electrical characteristics.
-
-Not sure about 0x1c - Non-802.3AF/AT powered device. Is it something
-between Table 33–5 and Table 33–6? 
-
-CCing UNGLinuxDriver@microchip.com
-
-May be you will need to contact Microchip directly. Usually it helps :)
-
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_DETECT_TED_CONNECTION_CHECK_ERROR,
-> +};
-> +
-> +/**
-> + * enum ethtool_c33_pse_ext_substate_option_vport_lim - option_vport_lim states
-> + *      functions. IEEE 802.3-2022 33.2.4.4 Variables
-> + *
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_VPORT_LIM_HIGH_VOLTAGE: Main supply
-> + *	voltage is high
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_VPORT_LIM_LOW_VOLTAGE: Main supply
-> + *	voltage is low
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_VPORT_LIM_VOLTAGE_INJECTION: Voltage
-> + *	injection into the port
-> + *
-> + * option_vport_lim is an optional variable indicates if VPSE is out of the
-> + * operating range during normal operating state.
-> + */
-> +enum ethtool_c33_pse_ext_substate_option_vport_lim {
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_VPORT_LIM_HIGH_VOLTAGE = 1,
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_VPORT_LIM_LOW_VOLTAGE,
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_OPTION_VPORT_LIM_VOLTAGE_INJECTION,
-> +};
-> +
-> +/**
-> + * enum ethtool_c33_pse_ext_substate_ovld_detected - ovld_detected states
-> + *      functions. IEEE 802.3-2022 33.2.4.4 Variables
-> + *
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_OVLD_DETECTED_OVERLOAD: Overload state
-> + *
-> + * ovld_detected is a variable indicating if the PSE output current has been
-> + * in an overload condition (see 33.2.7.6) for at least TCUT of a one-second
-> + * sliding time.
-> + */
-> +enum ethtool_c33_pse_ext_substate_ovld_detected {
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_OVLD_DETECTED_OVERLOAD = 1,
-> +};
-> +
-> +/**
-> + * enum ethtool_c33_pse_ext_substate_pd_dll_power_type - pd_dll_power_type
-> + *	states functions. IEEE 802.3-2022 33.2.4.4 Variables
-> + *
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_PD_DLL_POWER_TYPE_NON_802_3AF_AT_DEVICE:
-> + *	Non-802.3AF/AT powered device
-> + *
-> + * pd_dll_power_type is a control variable initially output by the PSE power
-> + * control state diagram (Figure 33–27), which can be updated by LLDP
-> + * (see Table 33–26), that indicates the type of PD as advertised through
-> + * Data Link Layer classification.
-> + */
-> +enum ethtool_c33_pse_ext_substate_pd_dll_power_type {
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_PD_DLL_POWER_TYPE_NON_802_3AF_AT_DEVICE = 1,
-> +};
-
-Here i was potentially wrong. LLDP stage is after power up, and this
-values was probably set on early stage of signature detection. How can
-we detect a device which is not conform to the 802.3AF/AT standard? Is
-it something pre-802.3AF/AT, micorosemi specific vendor specific signature?
-
-> +/**
-> + * enum ethtool_c33_pse_ext_substate_power_not_available - power_not_available
-> + *	states functions. IEEE 802.3-2022 33.2.4.4 Variables
-> + *
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_BUDGET_EXCEEDED: Power
-> + *	budget exceeded
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_PM_STATIC: Power
-> + *	Management-Static
-
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_PM_STATIC_OVL: Power
-> + *	Management-Static-ovl
-
-Here we need some comment updates. Here is my understanding, taken out
-of thin air:
-0x20 - We have per controller limit, but no limit per port is configured,
-       in this case, if PD classification request more power then
-       allowed by per controller budget, we will get this error.
-       AllPortsPower + NewPortPower > ControllerMaxPower
-0x3c - We have per port limit configured and it is over the controller
-       budget.
-       AllPortsMaxPower + NewPortMaxPower > ControllerMaxPower
-0x3D - PD Class requesting more power that the Port configured port limit.
-       PDClassPower > PortMaxPower
-
-How about:
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_CONTROLLER_BUDGET_EXCEEDED: Power
- *   budget exceeded for the controller
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_PORT_POWER_LIMIT_EXCEEDS_CONTROLLER_BUDGET: Configured
- *   port power limit exceeded controller power budget
- * @ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_PD_REQUEST_EXCEEDS_PORT_LIMIT: Power
- *   request from PD exceeds port limit
-
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_HW_PW_LIMIT: Power
-> + * denied due to Hardware power limit
-
-Not sure i understand this one correctly. Is it something like - all previous
-errors can be solved by proper configuration, but on this one we can't do
-anything. The HW is the limit. Correct? :)
-
-> + * power_not_available is a variable that is asserted in an
-> + * implementation-dependent manner when the PSE is no longer capable of
-> + * sourcing sufficient power to support the attached PD. Sufficient power
-> + * is defined by classification; see 33.2.6.
-> + */
-> +enum ethtool_c33_pse_ext_substate_power_not_available {
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_BUDGET_EXCEEDED =  1,
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_PM_STATIC,
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_PM_STATIC_OVL,
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_POWER_NOT_AVAILABLE_HW_PW_LIMIT,
-> +};
-> +
-> +/**
-> + * enum ethtool_c33_pse_ext_substate_short_detected - short_detected states
-> + *      functions. IEEE 802.3-2022 33.2.4.4 Variables
-> + *
-> + * @ETHTOOL_C33_PSE_EXT_SUBSTATE_SHORT_DETECTED_SHORT_CONDITION: Short
-> + *	condition was detected
-> + *
-> + * short_detected is a variable indicating if the PSE output current has been
-> + * in a short circuit condition for TLIM within a sliding window (see 33.2.7.7).
-> + */
-> +enum ethtool_c33_pse_ext_substate_short_detected {
-> +	ETHTOOL_C33_PSE_EXT_SUBSTATE_SHORT_DETECTED_SHORT_CONDITION = 1,
-> +};
-> +
->  /**
->   * enum ethtool_pse_types - Types of PSE controller.
->   * @ETHTOOL_PSE_UNKNOWN: Type of PSE controller is unknown
-> diff --git a/include/uapi/linux/ethtool_netlink.h b/include/uapi/linux/ethtool_netlink.h
-> index b49b804b9495..398a0aa8daad 100644
-> --- a/include/uapi/linux/ethtool_netlink.h
-> +++ b/include/uapi/linux/ethtool_netlink.h
-> @@ -915,6 +915,10 @@ enum {
->  	ETHTOOL_A_C33_PSE_ADMIN_STATE,		/* u32 */
->  	ETHTOOL_A_C33_PSE_ADMIN_CONTROL,	/* u32 */
->  	ETHTOOL_A_C33_PSE_PW_D_STATUS,		/* u32 */
-> +	ETHTOOL_A_C33_PSE_PW_CLASS,		/* u32 */
-> +	ETHTOOL_A_C33_PSE_ACTUAL_PW,		/* u32 */
-> +	ETHTOOL_A_C33_PSE_EXT_STATE,		/* u32 */
-> +	ETHTOOL_A_C33_PSE_EXT_SUBSTATE,		/* u32 */
->  
->  	/* add new constants above here */
->  	__ETHTOOL_A_PSE_CNT,
-> diff --git a/net/ethtool/pse-pd.c b/net/ethtool/pse-pd.c
-> index 2c981d443f27..fec56db557d3 100644
-> --- a/net/ethtool/pse-pd.c
-> +++ b/net/ethtool/pse-pd.c
-> @@ -86,7 +86,14 @@ static int pse_reply_size(const struct ethnl_req_info *req_base,
->  		len += nla_total_size(sizeof(u32)); /* _C33_PSE_ADMIN_STATE */
->  	if (st->c33_pw_status > 0)
->  		len += nla_total_size(sizeof(u32)); /* _C33_PSE_PW_D_STATUS */
-> -
-> +	if (st->c33_pw_class > 0)
-> +		len += nla_total_size(sizeof(u32)); /* _C33_PSE_PW_CLASS */
-> +	if (st->c33_actual_pw > 0)
-> +		len += nla_total_size(sizeof(u32)); /* _C33_PSE_ACTUAL_PW */
-> +	if (st->c33_ext_state_info.c33_pse_ext_state > 0)
-> +		len += nla_total_size(sizeof(u32)); /* _C33_PSE_EXT_STATE */
-> +	if (st->c33_ext_state_info.__c33_pse_ext_substate > 0)
-> +		len += nla_total_size(sizeof(u32)); /* _C33_PSE_EXT_SUBSTATE */
-
-Hm, we still may include __c33_pse_ext_substate even if c33_pse_ext_state == 0.
-
->  	return len;
+> ---
+>  net/packet/af_packet.c | 93 +++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 91 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+> index ea3ebc160e25..41d6ebb38774 100644
+> --- a/net/packet/af_packet.c
+> +++ b/net/packet/af_packet.c
+> @@ -538,6 +538,69 @@ static void *packet_current_frame(struct packet_sock *po,
+>  	return packet_lookup_frame(po, rb, rb->head, status);
 >  }
 >  
-> @@ -117,6 +124,26 @@ static int pse_fill_reply(struct sk_buff *skb,
->  			st->c33_pw_status))
->  		return -EMSGSIZE;
+> +static u16 vlan_get_tci(struct sk_buff *skb, struct net_device *dev)
+> +{
+> +	struct vlan_hdr vhdr, *vh;
+> +	u8 *skb_orig_data = skb->data;
+> +	int skb_orig_len = skb->len;
+> +	unsigned int header_len;
+> +
+> +	if (!dev) {
+> +		if (!skb->dev)
+> +			return 0;
+
+Instead, pass pkc->skb->dev in the callers that now pass NULL.
+> +		dev = skb->dev;
+> +	}
+> +
+> +	/* In the SOCK_DGRAM scenario, skb data starts at the network
+> +	 * protocol, which is after the VLAN headers. The outer VLAN
+> +	 * header is at the hard_header_len offset in non-variable
+> +	 * length link layer headers. If it's a VLAN device, the
+> +	 * min_header_len should be used to exclude the VLAN header
+> +	 * size.
+> +	 */
+
+This is a workaround around min_header_len not being correct for vlan
+devices. I agree that this is the right approach.
+
+I'll take a look at how to make min_header_len more reliably useful.
+But separate from this fix, for net-next.
+
+> +	if (dev->min_header_len == dev->hard_header_len)
+> +		header_len = dev->hard_header_len;
+> +	else if (is_vlan_dev(dev))
+> +		header_len = dev->min_header_len;
+> +	else
+> +		return 0;
+> +
+> +	skb_push(skb, skb->data - skb_mac_header(skb));
+> +	vh = skb_header_pointer(skb, header_len, sizeof(vhdr), &vhdr);
+> +	if (skb_orig_data != skb->data) {
+> +		skb->data = skb_orig_data;
+> +		skb->len = skb_orig_len;
+> +	}
+> +	if (unlikely(!vh))
+> +		return 0;
+> +
+> +	return ntohs(vh->h_vlan_TCI);
+> +}
+> +
+> +static __be16 vlan_get_protocol_dgram(struct sk_buff *skb)
+> +{
+> +	__be16 proto = skb->protocol;
+> +
+> +	if (unlikely(eth_type_vlan(proto))) {
+> +		u8 *skb_orig_data = skb->data;
+> +		int skb_orig_len = skb->len;
+> +
+> +		/* In the SOCK_DGRAM scenario, skb data starts at the network
+> +		 * protocol, which is after the VLAN headers. The protocol must
+> +		 * point to the network protocol to accurately reflect the real
+> +		 * scenario.
+> +		 */
+
+I don't understand the second sentence. The code is self explanatory.
+Drop the whole comment?
+
+> +		skb_push(skb, skb->data - skb_mac_header(skb));
+> +		proto = __vlan_get_protocol(skb, proto, NULL);
+> +		if (skb_orig_data != skb->data) {
+> +			skb->data = skb_orig_data;
+> +			skb->len = skb_orig_len;
+> +		}
+> +	}
+> +
+> +	return proto;
+> +}
+> +
+>  static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
+>  {
+>  	del_timer_sync(&pkc->retire_blk_timer);
+> @@ -1007,10 +1070,16 @@ static void prb_clear_rxhash(struct tpacket_kbdq_core *pkc,
+>  static void prb_fill_vlan_info(struct tpacket_kbdq_core *pkc,
+>  			struct tpacket3_hdr *ppd)
+>  {
+> +	struct packet_sock *po = container_of(pkc, struct packet_sock, rx_ring.prb_bdqc);
+> +
+>  	if (skb_vlan_tag_present(pkc->skb)) {
+>  		ppd->hv1.tp_vlan_tci = skb_vlan_tag_get(pkc->skb);
+>  		ppd->hv1.tp_vlan_tpid = ntohs(pkc->skb->vlan_proto);
+>  		ppd->tp_status = TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
+> +	} else if (unlikely(po->sk.sk_type == SOCK_DGRAM && eth_type_vlan(pkc->skb->protocol))) {
+> +		ppd->hv1.tp_vlan_tci = vlan_get_tci(pkc->skb, NULL);
+> +		ppd->hv1.tp_vlan_tpid = ntohs(pkc->skb->protocol);
+> +		ppd->tp_status = TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
+>  	} else {
+>  		ppd->hv1.tp_vlan_tci = 0;
+>  		ppd->hv1.tp_vlan_tpid = 0;
+> @@ -2428,6 +2497,10 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
+>  			h.h2->tp_vlan_tci = skb_vlan_tag_get(skb);
+>  			h.h2->tp_vlan_tpid = ntohs(skb->vlan_proto);
+>  			status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
+> +		} else if (unlikely(sk->sk_type == SOCK_DGRAM && eth_type_vlan(skb->protocol))) {
+> +			h.h2->tp_vlan_tci = vlan_get_tci(skb, NULL);
+> +			h.h2->tp_vlan_tpid = ntohs(skb->protocol);
+> +			status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
+>  		} else {
+>  			h.h2->tp_vlan_tci = 0;
+>  			h.h2->tp_vlan_tpid = 0;
+> @@ -2457,7 +2530,8 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
+>  	sll->sll_halen = dev_parse_header(skb, sll->sll_addr);
+>  	sll->sll_family = AF_PACKET;
+>  	sll->sll_hatype = dev->type;
+> -	sll->sll_protocol = skb->protocol;
+> +	sll->sll_protocol = (sk->sk_type == SOCK_DGRAM) ?
+> +		vlan_get_protocol_dgram(skb) : skb->protocol;
+>  	sll->sll_pkttype = skb->pkt_type;
+>  	if (unlikely(packet_sock_flag(po, PACKET_SOCK_ORIGDEV)))
+>  		sll->sll_ifindex = orig_dev->ifindex;
+> @@ -3482,7 +3556,8 @@ static int packet_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+>  		/* Original length was stored in sockaddr_ll fields */
+>  		origlen = PACKET_SKB_CB(skb)->sa.origlen;
+>  		sll->sll_family = AF_PACKET;
+> -		sll->sll_protocol = skb->protocol;
+> +		sll->sll_protocol = (sock->type == SOCK_DGRAM) ?
+> +			vlan_get_protocol_dgram(skb) : skb->protocol;
+>  	}
 >  
-> +	if (st->c33_pw_class > 0 &&
-> +	    nla_put_u32(skb, ETHTOOL_A_C33_PSE_PW_CLASS,
-> +			st->c33_pw_class))
-> +		return -EMSGSIZE;
+>  	sock_recv_cmsgs(msg, sk, skb);
+> @@ -3539,6 +3614,20 @@ static int packet_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+>  			aux.tp_vlan_tci = skb_vlan_tag_get(skb);
+>  			aux.tp_vlan_tpid = ntohs(skb->vlan_proto);
+>  			aux.tp_status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
+> +		} else if (unlikely(sock->type == SOCK_DGRAM && eth_type_vlan(skb->protocol))) {
+> +			struct sockaddr_ll *sll = &PACKET_SKB_CB(skb)->sa.ll;
+> +			struct net_device *dev;
 > +
-> +	if (st->c33_actual_pw > 0 &&
-> +	    nla_put_u32(skb, ETHTOOL_A_C33_PSE_ACTUAL_PW,
-> +			st->c33_actual_pw))
-> +		return -EMSGSIZE;
-> +
-> +	if (st->c33_ext_state_info.c33_pse_ext_state > 0 &&
-> +	    nla_put_u32(skb, ETHTOOL_A_C33_PSE_EXT_STATE,
-> +			st->c33_ext_state_info.c33_pse_ext_state))
-> +		return -EMSGSIZE;
-> +
-> +	if (st->c33_ext_state_info.__c33_pse_ext_substate > 0 &&
-> +	    nla_put_u32(skb, ETHTOOL_A_C33_PSE_EXT_SUBSTATE,
-> +			st->c33_ext_state_info.__c33_pse_ext_substate))
-> +		return -EMSGSIZE;
-> +
+> +			dev = dev_get_by_index(sock_net(sk), sll->sll_ifindex);
 
-Same here. 
+This complexity is unfortunate. But skb->dev is cleared in packet_rcv.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Use dev_get_by_index_rcu or netdev_get_by_index, per commment at
+dev_get_by_index.
+
+> +			if (dev) {
+> +				aux.tp_vlan_tci = vlan_get_tci(skb, dev);
+> +				aux.tp_vlan_tpid = ntohs(skb->protocol);
+> +				aux.tp_status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
+> +				dev_put(dev);
+> +			} else {
+> +				aux.tp_vlan_tci = 0;
+> +				aux.tp_vlan_tpid = 0;
+> +			}
+>  		} else {
+>  			aux.tp_vlan_tci = 0;
+>  			aux.tp_vlan_tpid = 0;
+> -- 
+> 2.43.0
+> 
+
+
 
