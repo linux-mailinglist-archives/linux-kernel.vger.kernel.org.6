@@ -1,65 +1,60 @@
-Return-Path: <linux-kernel+bounces-215741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59DBD909684
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A80909687
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2129EB21D15
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 07:27:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 344D4B2144A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 07:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB47179A8;
-	Sat, 15 Jun 2024 07:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB3117BA9;
+	Sat, 15 Jun 2024 07:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="pqqmNd8T"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R8Yn75w8"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB37219D893;
-	Sat, 15 Jun 2024 07:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9A82114;
+	Sat, 15 Jun 2024 07:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718436406; cv=none; b=f+ZrmT2Y+MWtFy/zMvpSYWOVysoSsyhvch2thPG2D+JVSriQrQ16lRGbnPSHrsnyV3wZFA8vJUzuvQ11KQjj7ZBkYoYaFjeSxHZ3ko1/+6y976BGBmJbtlY2E38gmp50WLpZP/GzLa7HiQ1dzsIaqZYWtHHvTo+yiVZdPakiPhU=
+	t=1718436714; cv=none; b=C39r1c1qT/bZCMs9lhE0ZvY8SX8mFe3troSpC1m4Y/lzK8+gkpeobGVYsSIXzBMamGvWSUQrOpbsx4p6nBt61LJHAyZrkuNp2EQyzi5FyaEgwz10/xeIDNJMOF7RX1xqNJT5mzv8RBy4hSKyisetiLkq9iuq2YgqGSr35PQTHOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718436406; c=relaxed/simple;
-	bh=nuQ3EIRVnpcdx96lzLS4ou72I26ya7vuVSTtj5iLCgA=;
+	s=arc-20240116; t=1718436714; c=relaxed/simple;
+	bh=XVXwc0l5UPJInr4sZlbCRa0RdxpAPhcE/yISR5ozFZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XnkGVOjHh460oKnI+sMPcsGz43dYNDrAKb/jXp2Fe4/sM8MWxIsPVcVXHfi/PU3cziC+T/LLuvnPiOXX5WvT6gsULoMot2cB9rxYOtYRSP6vJuKRd1mx2+Qw31y7DcvAPSc0ySSk4kk3NhzeHy5W/t6cqmEkyrHo1oyoAtYy6K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=pqqmNd8T; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=SOJexyMsGnWXFMZX1VJBWG90Vs1fBoLufAbc7M7ssHjNGAy57XPMqcYpgLIVZWGpECWHO/tNjqLq+cjlz/huJNGmELPOqwSz702hIosRK8dz/tEKO/U8q2qPBBnWsEbchmeYXAcMAH5GZtHlW98uJlYSkrP9BL4CM8cKokg7GqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=R8Yn75w8; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=DahaO75B/Jf2xXugU4fwjMQkfoKVIJ5rK6a6hxEtSDk=; b=pqqmNd8TKE7SC++dV9c0Pe0nOn
-	IZrXkQDZ6egmLeb7cSR4n95/jhSBNsTh3W219MnI5UzYWPGuysWuo0Sh/jQNXV/n3M0VcjGHFfKVX
-	fxkBBvRK6YJk9SuxjD/a2shrCt3cmerYXfLx2VIBgV5AfIsdgXosKeQa5RHtH9KxrCOu9UgDpMVjg
-	6rhn6xMH6tWjBi3HbCL19/okOWRqvyTPw2LsXsC3dbagqrsV27pasEgRUtx0+o9qjbbmjRX2YeKrt
-	5vlonkp+JMt6BaIFsexmyxWb3wSzu+mJOb3qlRy26f3/ih78etxiB+YG1RhzJ18bz+64TiJzQWY/3
-	4ucgwdTQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48650)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sINnz-0003AN-1J;
-	Sat, 15 Jun 2024 08:26:31 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sINo0-0002uc-Pq; Sat, 15 Jun 2024 08:26:32 +0100
-Date: Sat, 15 Jun 2024 08:26:32 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Johannes Berg <johannes.berg@intel.com>,
-	Michael Nemanov <michael.nemanov@ti.com>,
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH wireless v2] wifi: wlcore: fix wlcore AP mode
-Message-ID: <Zm1CKAKCnuc94oIi@shell.armlinux.org.uk>
-References: <E1sClp4-00Evu7-8v@rmk-PC.armlinux.org.uk>
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=XVXwc0l5UPJInr4sZlbCRa0RdxpAPhcE/yISR5ozFZA=; b=R8Yn75w8zZy+o8HTqOCKrkGKRB
+	SrFn5mFQnmJa7MAP3MZxDmy/km8RQvv+wnKL2nYk7PXT4hk8C5ooZ3LI7R6k2q75yhpa+wgp12XU8
+	YP+HDmDXlXz2n85GY30N45n0ncaTbOHNPBECTlT+q0FSqhVqldr6cXHt12kxPsVSH+Uvw371iofkQ
+	HYkI9conE72TWwu0wfVN3TqhCQKY/QMrG1uW39C8Auc7pFwn68zhhb53CcWc+isjxJdeHhTgs6Xnz
+	bk4JAeHP3nLW27R7uxFsig+HMR83Jkoy2bHs6yWeEILhNdgJHGh1jqMRROMhKVzjFwpTG6/T6SJCd
+	isv6Az/Q==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sINt8-00000004tfl-01bL;
+	Sat, 15 Jun 2024 07:31:50 +0000
+Date: Sat, 15 Jun 2024 00:31:49 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christoph Hellwig <hch@infradead.org>, Congjie Zhou <zcjie0802@qq.com>,
+	brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] fs: modify the annotation of vfs_mkdir() in fs/namei.c
+Message-ID: <Zm1DZaaUF_tspmmQ@infradead.org>
+References: <20240615030056.GO1629371@ZenIV>
+ <tencent_63C013752AD7CA1A22E75CEF6166442E6D05@qq.com>
+ <Zm000qL0N6XY7-4O@infradead.org>
+ <20240615065528.GP1629371@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,185 +63,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <E1sClp4-00Evu7-8v@rmk-PC.armlinux.org.uk>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20240615065528.GP1629371@ZenIV>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi Kale,
+On Sat, Jun 15, 2024 at 07:55:28AM +0100, Al Viro wrote:
+> It is an inode of _some_ dentry; it's most definitely not that
+> of the argument named 'dentry'.
 
-I see all my TI Wilink patches have been marked as "deferred" in the
-wireless patchwork. Please could you explain what the plan is with
-these patches, especially this one which fixes a serious frustrating
-failing that makes AP mode on this hardware very unreliable and thus
-useless.
+No need to explain it here, the point was that this belongs into a
+useful commit message.
 
-Thanks.
-
-On Thu, May 30, 2024 at 08:52:26PM +0100, Russell King (Oracle) wrote:
-> Using wl183x devices in AP mode with various firmwares is not stable.
-> 
-> The driver currently adds a station to firmware with basic rates when it
-> is first known to the stack using the CMD_ADD_PEER command. Once the
-> station has finished authorising, another CMD_ADD_PEER command is issued
-> to update the firmware with the rates the station can use.
-> 
-> However, after a random amount of time, the firmware ignores the power
-> management nullfunc frames from the station, and tries to send packets
-> while the station is asleep, resulting in lots of retries dropping down
-> in rate due to no response. This restricts the available bandwidth.
-> 
-> With this happening with several stations, the user visible effect is
-> the latency of interactive connections increases significantly, packets
-> get dropped, and in general the WiFi connections become unreliable and
-> unstable.
-> 
-> Eventually, the firmware transmit queue appears to get stuck - with
-> packets and blocks allocated that never clear.
-> 
-> TI have a couple of patches that address this, but they touch the
-> mac80211 core to disable NL80211_FEATURE_FULL_AP_CLIENT_STATE for *all*
-> wireless drivers, which has the effect of not adding the station to the
-> stack until later when the rates are known. This is a sledge hammer
-> approach to solving the problem.
-> 
-> The solution implemented here has the same effect, but without
-> impacting all drivers.
-> 
-> We delay adding the station to firmware until it has been authorised
-> in the driver, and correspondingly remove the station when unwinding
-> from authorised state. Adding the station to firmware allocates a hlid,
-> which will now happen later than the driver expects. Therefore, we need
-> to track when this happens so that we transmit using the correct hlid.
-> 
-> This patch is an equivalent fix to these two patches in TI's
-> wilink8-wlan repository:
-> 
-> https://git.ti.com/cgit/wilink8-wlan/build-utilites/tree/patches/kernel_patches/4.19.38/0004-mac80211-patch.patch?h=r8.9&id=a2ee50aa5190ed3b334373d6cd09b1bff56ffcf7
-> https://git.ti.com/cgit/wilink8-wlan/build-utilites/tree/patches/kernel_patches/4.19.38/0005-wlcore-patch.patch?h=r8.9&id=a2ee50aa5190ed3b334373d6cd09b1bff56ffcf7
-> 
-> Reported-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> Co-developed-by: Johannes Berg <johannes.berg@intel.com>
-> Tested-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> ---
-> v2: switch authorship and credits as requested by Johannes.
-> ---
->  drivers/net/wireless/ti/wlcore/cmd.c      |  7 -------
->  drivers/net/wireless/ti/wlcore/main.c     | 17 ++++++++---------
->  drivers/net/wireless/ti/wlcore/tx.c       |  7 ++-----
->  drivers/net/wireless/ti/wlcore/wlcore_i.h |  6 ++++++
->  4 files changed, 16 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ti/wlcore/cmd.c b/drivers/net/wireless/ti/wlcore/cmd.c
-> index a939fd89a7f5..92fc2d456c2c 100644
-> --- a/drivers/net/wireless/ti/wlcore/cmd.c
-> +++ b/drivers/net/wireless/ti/wlcore/cmd.c
-> @@ -1566,13 +1566,6 @@ int wl12xx_cmd_add_peer(struct wl1271 *wl, struct wl12xx_vif *wlvif,
->  		cpu_to_le32(wl1271_tx_enabled_rates_get(wl, sta_rates,
->  							wlvif->band));
->  
-> -	if (!cmd->supported_rates) {
-> -		wl1271_debug(DEBUG_CMD,
-> -			     "peer has no supported rates yet, configuring basic rates: 0x%x",
-> -			     wlvif->basic_rate_set);
-> -		cmd->supported_rates = cpu_to_le32(wlvif->basic_rate_set);
-> -	}
-> -
->  	wl1271_debug(DEBUG_CMD, "new peer rates=0x%x queues=0x%x",
->  		     cmd->supported_rates, sta->uapsd_queues);
->  
-> diff --git a/drivers/net/wireless/ti/wlcore/main.c b/drivers/net/wireless/ti/wlcore/main.c
-> index ef12169f8044..492cd7aef44f 100644
-> --- a/drivers/net/wireless/ti/wlcore/main.c
-> +++ b/drivers/net/wireless/ti/wlcore/main.c
-> @@ -5139,19 +5139,23 @@ static int wl12xx_update_sta_state(struct wl1271 *wl,
->  
->  	/* Add station (AP mode) */
->  	if (is_ap &&
-> -	    old_state == IEEE80211_STA_NOTEXIST &&
-> -	    new_state == IEEE80211_STA_NONE) {
-> +	    old_state == IEEE80211_STA_AUTH &&
-> +	    new_state == IEEE80211_STA_ASSOC) {
->  		ret = wl12xx_sta_add(wl, wlvif, sta);
->  		if (ret)
->  			return ret;
->  
-> +		wl_sta->fw_added = true;
-> +
->  		wlcore_update_inconn_sta(wl, wlvif, wl_sta, true);
->  	}
->  
->  	/* Remove station (AP mode) */
->  	if (is_ap &&
-> -	    old_state == IEEE80211_STA_NONE &&
-> -	    new_state == IEEE80211_STA_NOTEXIST) {
-> +	    old_state == IEEE80211_STA_ASSOC &&
-> +	    new_state == IEEE80211_STA_AUTH) {
-> +		wl_sta->fw_added = false;
-> +
->  		/* must not fail */
->  		wl12xx_sta_remove(wl, wlvif, sta);
->  
-> @@ -5165,11 +5169,6 @@ static int wl12xx_update_sta_state(struct wl1271 *wl,
->  		if (ret < 0)
->  			return ret;
->  
-> -		/* reconfigure rates */
-> -		ret = wl12xx_cmd_add_peer(wl, wlvif, sta, wl_sta->hlid);
-> -		if (ret < 0)
-> -			return ret;
-> -
->  		ret = wl1271_acx_set_ht_capabilities(wl, &sta->deflink.ht_cap,
->  						     true,
->  						     wl_sta->hlid);
-> diff --git a/drivers/net/wireless/ti/wlcore/tx.c b/drivers/net/wireless/ti/wlcore/tx.c
-> index 7bd3ce2f0804..464587d16ab2 100644
-> --- a/drivers/net/wireless/ti/wlcore/tx.c
-> +++ b/drivers/net/wireless/ti/wlcore/tx.c
-> @@ -140,11 +140,8 @@ EXPORT_SYMBOL(wl12xx_is_dummy_packet);
->  static u8 wl12xx_tx_get_hlid_ap(struct wl1271 *wl, struct wl12xx_vif *wlvif,
->  				struct sk_buff *skb, struct ieee80211_sta *sta)
->  {
-> -	if (sta) {
-> -		struct wl1271_station *wl_sta;
-> -
-> -		wl_sta = (struct wl1271_station *)sta->drv_priv;
-> -		return wl_sta->hlid;
-> +	if (sta && wl1271_station(sta)->fw_added) {
-> +		return wl1271_station(sta)->hlid;
->  	} else {
->  		struct ieee80211_hdr *hdr;
->  
-> diff --git a/drivers/net/wireless/ti/wlcore/wlcore_i.h b/drivers/net/wireless/ti/wlcore/wlcore_i.h
-> index eefae3f867b9..817a8a61cac6 100644
-> --- a/drivers/net/wireless/ti/wlcore/wlcore_i.h
-> +++ b/drivers/net/wireless/ti/wlcore/wlcore_i.h
-> @@ -324,6 +324,7 @@ struct wl12xx_rx_filter {
->  
->  struct wl1271_station {
->  	u8 hlid;
-> +	bool fw_added;
->  	bool in_connection;
->  
->  	/*
-> @@ -335,6 +336,11 @@ struct wl1271_station {
->  	u64 total_freed_pkts;
->  };
->  
-> +static inline struct wl1271_station *wl1271_station(struct ieee80211_sta *sta)
-> +{
-> +	return (struct wl1271_station *)sta->drv_priv;
-> +}
-> +
->  struct wl12xx_vif {
->  	struct wl1271 *wl;
->  	struct list_head list;
-> -- 
-> 2.30.2
-> 
-> 
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
