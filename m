@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-215940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 647FA90991C
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 19:05:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94EEA90991E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 19:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2047F1C20A81
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 17:05:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB02A1C20ECE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 17:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D03949653;
-	Sat, 15 Jun 2024 17:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F0C5916B;
+	Sat, 15 Jun 2024 17:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="ZfBioXxC"
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="FWXFcMP4"
 Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625A94F207
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 17:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C38C4D108
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 17:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718471104; cv=none; b=ur/CWi8lPht9DqjCMMUH+KA89/aKhHcTuaHxt/o3Xwa+m16zihK9IPXZAQOwiUvPBVv5YkR5c+KMaTQJSEDmTi0YcPKFERJ7bshVlR7j7xjVCOrOe1FRa7bQQ8E4fYhFqVVaUbff0S3zoI5WFOFpz+8XREXEy/lQ1uBXMRxuBZI=
+	t=1718471110; cv=none; b=MMN7PHiIpxJ8LQ6fyjbVWWFlNMoAqU+xZVaYZfvlLu3HIhYRj4pxm+FUIs6h67H+unyAAtEbBXhmg2uHQC5e57mubcfetRfUbQnKpimuGqZkPW5F7MSd5bz76WKSFkhCKyAM6D1R6RMxhrMTblZ5Mko8oPuYRDOgq9ASEtmpWSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718471104; c=relaxed/simple;
-	bh=BrAyv3tTQ7BWoPKoLKD4BTSjujDCwwYQ30XEWLgPbOk=;
+	s=arc-20240116; t=1718471110; c=relaxed/simple;
+	bh=A7yzI6p8iC7yPkOUr3PSzuBisKN32aaC2Ohaxi/CO+s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b9Cd8KPcGf7O1PCNMIvrwiq3XC7KSbV3NtM+fpdugQKMewDoyQ2fQh1TqTgRmVcs4ibBQnSsVSavN0dS1Rb/RH+6amB+Q0HRVTlv3f238LeXUAaFuN144e1Gc+pFd2edcMlHwbGvwrIFIgHh2GxCGGiwcQQByqLFDY1+atlcEls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=ZfBioXxC; arc=none smtp.client-ip=149.28.215.223
+	 MIME-Version; b=u1deovaUCcGljz1jUqANu0FpZge4JqbdCWf48vnoixJQ1/e3ViUVcfwrIxNaPliIfbGGHqYTNMqMFP+VWnidipbTHjlLjn9wlizXzI2pcIyU2QhWZhS5R8u8sHTCWxp7OjWh0e7B1Cf5D79x8Yn2BS572YgLDj8KgNtY6TuJ9kY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=FWXFcMP4; arc=none smtp.client-ip=149.28.215.223
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
  h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
  Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1718471088; bh=ScLXL7bFS6O80CUAw7XPEvNboE3+OLzOZeGQt7f1YM8=;
- b=ZfBioXxC9wdsuv/hmnLGAyHS8SG5v8V3O90I14kxOVFdM9JNS3sWhXnQa69lmTpsh7uxLE06Y
- pUDefr+5stvFp0SzZOTVnmsF+exPTBti6EZkPTT1BGZk8/rRCBOTatX+vqcGsu2g8Zdlape3DBs
- YVVTNxUgJMyKJw2XvyQnybRE/NgQ1IXUeZj6+q49OuqugdPvDrCmmZKsWzxnm7ogB41EFF+imIk
- xkFOjfgLDSrDwJWRpcQg46DxkMBHfIqjd9mFVWuNJcSFZRKQIg4aT1bxbUUwONkUcvzrYh9YtiB
- 0UqnVpCnxmtZ9owhF2Y6oSEei5zC1kUDe50iziSHUV2Q==
+ t=1718471093; bh=rE9asUiY4ZOTyebep+Vmd5NsRtFQtl4VkUu5CnexPvE=;
+ b=FWXFcMP47lR8H8YxHNYa/fV6AxS1uFcmdCAZimBCRF0xVz31IkkUJckVerEyecHBog7vL1+NV
+ ZiG3dqOJtrA/CGmGMtW8tlF3z9KiSOY/E1UvDY1kZmNPhdBWANgUzrwJKIzAwiN1Kqu7axM4DFS
+ EZ04XIyEwgcYS62O+D7+1Cg69SrZ2JBnht/jp/MV7I0X67L7NN79ZNbJRNChzd5BjJpEtFhbT/N
+ 3Bhdp53pPmL7Nb5plZiF6FcxN1nIbS/Sj0H5IYsdHB5G+eGDx+4aDYqltHoQUAe89jcJ94devY0
+ kX7tnZpOn0ZMaYisgs0zO+ZLwRBy1JjN/oGcIM71wmUw==
 From: Jonas Karlman <jonas@kwiboo.se>
 To: dri-devel@lists.freedesktop.org, Sandy Huang <hjc@rock-chips.com>,
  "=?UTF-8?q?Heiko=20St=C3=BCbner?=" <heiko@sntech.de>, Andy Yan
  <andy.yan@rock-chips.com>, Maarten Lankhorst
  <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
  Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, Zheng Yang
- <zhengyang@rock-chips.com>
+ Daniel Vetter <daniel@ffwll.ch>
 Cc: linux-arm-kernel@lists.infradead.org,
  linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Jonas
  Karlman <jonas@kwiboo.se>
-Subject: [PATCH 04/13] drm/rockchip: dw_hdmi: Fix reading EDID when using a forced mode
-Date: Sat, 15 Jun 2024 17:03:55 +0000
-Message-ID: <20240615170417.3134517-5-jonas@kwiboo.se>
+Subject: [PATCH 05/13] drm/rockchip: dw_hdmi: Allow High TMDS Bit Rates
+Date: Sat, 15 Jun 2024 17:03:56 +0000
+Message-ID: <20240615170417.3134517-6-jonas@kwiboo.se>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240615170417.3134517-1-jonas@kwiboo.se>
 References: <20240615170417.3134517-1-jonas@kwiboo.se>
@@ -69,38 +68,29 @@ X-Complaints-To: abuse@forwardemail.net
 X-ForwardEmail-Version: 0.4.40
 X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
  149.28.215.223
-X-ForwardEmail-ID: 666dc9aa24e0254b3980401b
+X-ForwardEmail-ID: 666dc9af24e0254b3980402d
 
-EDID cannot be read on RK3328 until after read_hpd has been called and
-correct io voltage has been configured based on connection status.
+Call dw_hdmi_set_high_tmds_clock_ratio in phy init ops to allow support
+of High TMDS Bit Rates used by HDMI2.0 display modes.
 
-When a forced mode is used, e.g. video=1920x1080@60e, the connector
-detect ops, that in turn normally calls the read_hpd, never gets called.
-
-This result in reading EDID to fail in connector get_modes ops.
-
-Call dw_hdmi_rk3328_read_hpd at end of dw_hdmi_rk3328_setup_hpd to
-correct io voltage and allow reading EDID after setup_hpd.
-
-Fixes: 1c53ba8f22a1 ("drm/rockchip: dw_hdmi: add dw-hdmi support for the rk3328")
 Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 ---
  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 2 ++
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-index fe33092abbe7..aae48e906af1 100644
+index aae48e906af1..5df9c9a0d369 100644
 --- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
 +++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-@@ -434,6 +434,8 @@ static void dw_hdmi_rk3328_setup_hpd(struct dw_hdmi *dw_hdmi, void *data)
- 		HIWORD_UPDATE(RK3328_HDMI_SDAIN_MSK | RK3328_HDMI_SCLIN_MSK,
- 			      RK3328_HDMI_SDAIN_MSK | RK3328_HDMI_SCLIN_MSK |
- 			      RK3328_HDMI_HPD_IOE));
+@@ -362,6 +362,8 @@ static int dw_hdmi_rockchip_genphy_init(struct dw_hdmi *dw_hdmi, void *data,
+ {
+ 	struct rockchip_hdmi *hdmi = (struct rockchip_hdmi *)data;
+ 
++	dw_hdmi_set_high_tmds_clock_ratio(dw_hdmi, display);
 +
-+	dw_hdmi_rk3328_read_hpd(dw_hdmi, data);
+ 	return phy_power_on(hdmi->phy);
  }
  
- static const struct dw_hdmi_phy_ops rk3228_hdmi_phy_ops = {
 -- 
 2.45.2
 
