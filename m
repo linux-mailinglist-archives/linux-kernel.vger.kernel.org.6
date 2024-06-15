@@ -1,254 +1,84 @@
-Return-Path: <linux-kernel+bounces-215730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D1A5909662
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:47:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5271A909665
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9887282B85
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 06:47:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F4721C218BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 06:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFA3171B0;
-	Sat, 15 Jun 2024 06:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hWgeHRcg"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8470C168BE;
+	Sat, 15 Jun 2024 06:48:47 +0000 (UTC)
+Received: from smtp134-33.sina.com.cn (smtp134-33.sina.com.cn [180.149.134.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6768DDBE
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 06:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F8EDDBE
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 06:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718434032; cv=none; b=NGnCMhq6ZxGIospoyXLklFh+Ij4teGePhzwQp3rds3S/Cckt2O2HMEaHwlqaDugH90tFdc6KfOP5sPH9DQZE1awQjJtEAysptvUIcJiOCNGQaZk/WLWsBC+sh9WTwBFNn15++zIh9VuOYS4V3l5AUnEfCzf4lLuL3mmV1DRoE6M=
+	t=1718434127; cv=none; b=e1Te5i+DCcTlVK1T7BClxzbPzThFChhjYbrlwQXzDzAaTTriW9I5vCE9cQi3Kmce4YlyWMVT1nD2hAjhrGCMIQHtXaxwSHaCRxAC4NkIfMLr0FqvbAOK5L5M3pVrdOLdOLxXVL4n0WmiBo6nBW1xFi0jkiBPaS57EHm2cvIe9Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718434032; c=relaxed/simple;
-	bh=znnbojbn7bV82M7iK5JAhEnZ3lVFFlNFEcHsHJkwCKY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EMJFGWlicgCbPZEUuwmW/aTu6G23O4NDoXvb0j4fTLV9r9zgOrHbuRY199kORpxMGA7SS8my8EIHbCXg8mmCK7uruy52aH1zDDIhDOWGkBdz+K9dD7a15UqLXmHWiagkxDmBpZj+SBOIiIvLlZUirSLjezsqDmzDMxp7GYxOscE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hWgeHRcg; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4e1c721c040so997026e0c.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 23:47:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718434030; x=1719038830; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y4RbldOmyuB3cQWDkIPG/+2f11O33ZLaDT0kxFu1pIc=;
-        b=hWgeHRcgccSVE0c7uNciJnVJUZP3Rv8i5+QlCLVcETxT3DXH1/hpWUdGCFOByLbf9f
-         y+g8iJ1sHETZeasD/u4+TWIF94EHgYE28YHG4Vwfkz7wA2kzSM2n2+N0W0g9klb6N9rG
-         +wH8XUkK6OoBPJB5pBY/HioYlbDxGjb8CF8jz5uVWvmFsz96pih7/hqetn32t9P58Jsh
-         9GhPQmCw9ILj66+rJVJSGYbXHhRTYqL7ll0xz5wJbeXR5Bgp7caOO/ElpIbwyl3WSykE
-         WWAtZJKyygOLjwGRNFSMr4II7NsvGomEeIIVut6nhIaMxQRBRo6ZP2X8HsYVFq3hxZ2E
-         tnCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718434030; x=1719038830;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y4RbldOmyuB3cQWDkIPG/+2f11O33ZLaDT0kxFu1pIc=;
-        b=ssjxeubaMp0e4oOsXSjqjy42R0DIfIRSzfsu9p97KjBa0KT/GclvXdkEbWOIwHzGiA
-         N9KLqvlQ9dmyjf9fEXfWp4I8x5lk6TtKXjcUpEPOp6OpmigjLZJq5bWdw8H84dDM7gpB
-         Jnvtn7PIUwGBhd8f/dBvTuXq/Z9dzQ1EqgcTrGMFcCfp3SE/by2RpHRR5LOn/66x23ZR
-         cRHX+0wqLVqabjV7yuGMzmleh0ELmzePspumayPWVGY2VrbVGmGAX7KTxoOLxzSPxpM3
-         QFL8PFv+VvvOsG/J+oVLZVxAx4M2+nAXyPGY8EiwQR3HERqJe/g2qPt5kjFEqB3tKxjM
-         EAwA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/v1u0K5Jdk1rWtgBjs/oy+F+rJ7y37BvkHq6eGYm95kuxBvsw8lpbhR/h9AX6mwZonAkfAsOJ+nAFsdeCXx0rmkaIA1sOh7Sv2Vyt
-X-Gm-Message-State: AOJu0Yzzlms9jh3deqpzLkkd9Njd7yvMP3mr/M3Plv/a/XX9ZnW+VvVG
-	wjaKRx/ONGnYRP19cNGf3dgdYRu9zMKLacLNDojufv5FNqaO+BLawoN7KyEcRLSmEtpap5rjojO
-	TEbDrkewn0Ehl2f5j11DP0/tBYnXfjmk+ltN2tg==
-X-Google-Smtp-Source: AGHT+IG9UQzi+/x6u3a0CaY7fNyxTDm/VpR28UpB4I3qr8yCgEap85fJlxSVUf2uR9MBxivdeIvjkY1RaWQ/j/8Eb1c=
-X-Received: by 2002:a05:6122:2a0b:b0:4ec:f183:c9a8 with SMTP id
- 71dfb90a1353d-4ee3f757840mr4716374e0c.9.1718434029824; Fri, 14 Jun 2024
- 23:47:09 -0700 (PDT)
+	s=arc-20240116; t=1718434127; c=relaxed/simple;
+	bh=VCqHrKLRo7upK5Vo2G01ygKx2d1eckndZ0nekF0lCoI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=by7Oirl89065tJZgTTgaucaVq/tpg3UduRpX6gHFD0fUv3t6uKXTKubkhawwNURFzklCHW9C15rt5lwgJF563zUdwn6fPXFTqD7ohywP7VsxfG7h22QiCA6ZYHpxtxewm3mF55C5KEs4FOuRua5g3qsKpdJX12A/bIvBx46rW5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.64.228])
+	by sina.com (10.185.250.21) with ESMTP
+	id 666D3919000012C2; Sat, 15 Jun 2024 14:47:56 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 2166303408544
+X-SMAIL-UIID: DB5260639031462D90B6A8AA36523E06-20240615-144756-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
+Date: Sat, 15 Jun 2024 14:47:46 +0800
+Message-Id: <20240615064746.915-1-hdanton@sina.com>
+In-Reply-To: <000000000000f386f90616fea5ef@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613113302.116811394@linuxfoundation.org>
-In-Reply-To: <20240613113302.116811394@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sat, 15 Jun 2024 12:16:58 +0530
-Message-ID: <CA+G9fYvCQ1afo2s66UUDGMKGoTAe9BnONg8LqgzOnY_HC7FFHg@mail.gmail.com>
-Subject: Re: [PATCH 5.15 000/402] 5.15.161-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 13 Jun 2024 at 17:58, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.15.161 release.
-> There are 402 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 15 Jun 2024 11:31:50 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.15.161-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  83a7eefedc9b
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* kernel: 5.15.161-rc1
-* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
-* git branch: linux-5.15.y
-* git commit: 382eb0c7888246aec43f7bbb93ef43abf816ec32
-* git describe: v5.15.160-403-g382eb0c78882
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15=
-.160-403-g382eb0c78882
-
-## Test Regressions (compared to v5.15.160)
-
-## Metric Regressions (compared to v5.15.160)
-
-## Test Fixes (compared to v5.15.160)
-
-## Metric Fixes (compared to v5.15.160)
-
-## Test result summary
-total: 87886, pass: 70665, fail: 2514, skip: 14636, xfail: 71
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 104 total, 104 passed, 0 failed
-* arm64: 31 total, 31 passed, 0 failed
-* i386: 25 total, 25 passed, 0 failed
-* mips: 22 total, 22 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 24 total, 24 passed, 0 failed
-* riscv: 8 total, 8 passed, 0 failed
-* s390: 9 total, 9 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 27 total, 27 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-android
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-drivers-dma-buf
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-ir
-* kselftest-kcmp
-* kselftest-kexec
-* kselftest-kvm
-* kselftest-lib
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-memory-hotplug
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mount
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-forwarding
-* kselftest-net-mptcp
-* kselftest-netfilter
-* kselftest-nsfs
-* kselftest-openat2
-* kselftest-pid_namespace
-* kselftest-pidfd
-* kselftest-proc
-* kselftest-pstore
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-splice
-* kselftest-static_keys
-* kselftest-sync
-* kselftest-sysctl
-* kselftest-tc-testing
-* kselftest-timens
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kselftest-zram
-* kunit
-* kvm-unit-tests
-* libgpiod
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-smoketest
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
+--- x/fs/open.c
++++ y/fs/open.c
+@@ -952,7 +952,18 @@ static int do_dentry_open(struct file *f
+ 	if (!open)
+ 		open = f->f_op->open;
+ 	if (open) {
++		struct super_block *sb = inode->i_sb;
++
++		error = -EINVAL;
++		for (;;) {
++			int a = atomic_read(&sb->s_active);
++			if (a < 1)
++				goto cleanup_all;
++			if (a == atomic_cmpxchg(&sb->s_active, a, a+1))
++				break;
++		}
+ 		error = open(inode, f);
++		deactivate_super(sb);
+ 		if (error)
+ 			goto cleanup_all;
+ 	}
 --
-Linaro LKFT
-https://lkft.linaro.org
 
