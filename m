@@ -1,126 +1,170 @@
-Return-Path: <linux-kernel+bounces-215859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380A3909801
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:46:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB9B6909804
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB0DF283E81
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:46:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F2B21F21C18
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353003C482;
-	Sat, 15 Jun 2024 11:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BAD3F9FC;
+	Sat, 15 Jun 2024 11:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="VcdB1RB+"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967F510A11
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 11:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.6
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="WSY166vp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="R0qc5TkJ"
+Received: from wfout1-smtp.messagingengine.com (wfout1-smtp.messagingengine.com [64.147.123.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427D725774;
+	Sat, 15 Jun 2024 11:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718451968; cv=none; b=re/0PbCtv/1JVIatvRfI3IuhoyQV4HJI9KeanuKLKRLuTGw144xlvM9kxMJOMrxCTfjYbReBIT+ydWXv7hqGE9rEMJAyP3V0nABfRER57KU0OiHOGryVI6TNmzdxJddBedBHMs9ZZ/MbNat/7ljoWh5DLnd8cnNlPWkcVbRW6ok=
+	t=1718452061; cv=none; b=eDwc2Ads1cznf3IDmJ68Ep82HUmWEDO0Zq5kK4ltsIpBvr5oFZw8A8nzl307dk3Z0MFQ0Gsc6il3NcBHPZnBFN4f0HJ8GWRUyCQH3+/dsPqdJ/AOM9lo2p1DjnwYgRvYx2+i326H1pGyj6te3jTZYUvtBHNzUkFmGbQLWm7S3JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718451968; c=relaxed/simple;
-	bh=ks2Doz7YndF2QhRssO32VbFhAHzz8SzDih4V99Cbh2Q=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ocbAXpMWPe4N9cAfR2+YxyMiOhq91HpiOBkpk9jfG6Ok9dP2RZ1+erHhz9djhAZylmtW1xm9ovHAwQYHkeHtMx4P3GuXBp/rf28Se2f6ul9rldMyZymzOQ3jdYNzf2BdEG9muD7G1IesRCYUv+gWTxFhCe24j0mqErUvGxOhG8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=VcdB1RB+; arc=none smtp.client-ip=117.135.210.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Subject:From:Message-ID:Date:MIME-Version:
-	Content-Type; bh=380/jyhTr/zvSS92chsebtdpaNxw5xeITqxnfl6SZXw=;
-	b=VcdB1RB+xRofJg3xdBwHi2LkOVU9zi+5WYuXKV05YIAiWYrjjcT8Mc7qSyIm0j
-	DtXtK1Fi9Olqsghjeclg/xc6Dvn4VRH4qpn4HpfvNIzX5oC+guL0zXkvuKVhzPcZ
-	d4v8slPwqOV7xDOzdRWiMxt/4Vf0aPU/kf4S4hcX5XId0=
-Received: from [172.21.21.216] (unknown [118.242.3.34])
-	by gzga-smtp-mta-g0-3 (Coremail) with SMTP id _____wD3_8ubfm1msv1qBw--.38847S2;
-	Sat, 15 Jun 2024 19:44:29 +0800 (CST)
-Subject: Re: [PATCH] mm/gup: don't check page lru flag before draining it
-To: David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, liuzixing@hygon.cn
-References: <0d7a4405-9a2e-4bd1-ba89-a31486155233@redhat.com>
- <dc7a0b61-8d3f-7205-2f6d-c2b12500947a@126.com>
- <776de760-e817-43b2-bd00-8ce96f4e37a8@redhat.com>
- <7063920f-963a-4b3e-a3f3-c5cc227bc877@redhat.com>
- <48150a28-ed48-49ff-9432-9cd30cda4da4@linux.alibaba.com>
- <11ef3deb-d1e3-46d5-97ed-9ba3c1fbbba9@redhat.com>
- <697a9bc2-a655-4035-aa5e-7d3acb23e79d@redhat.com>
- <d6deb928-3466-45ea-939b-cb5aca9bc7b4@linux.alibaba.com>
- <3a368e38-a4cb-413e-a6d9-41c6b3dbd5ae@redhat.com>
- <48fb0e58-16d1-7956-cf35-74741826617a@126.com>
- <ZmR1dVUB5mE2If9t@casper.infradead.org>
- <617f9e36-9334-4630-a6b9-473f2dd570d4@redhat.com>
- <8351052a-5c21-c383-544b-3166e883587c@126.com>
- <a39c8602-3c9c-48fd-9bdb-2089ccccd6bc@redhat.com>
-From: yangge1116 <yangge1116@126.com>
-Message-ID: <26c86ffe-581b-1012-9974-b3d73e56a03d@126.com>
-Date: Sat, 15 Jun 2024 19:44:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+	s=arc-20240116; t=1718452061; c=relaxed/simple;
+	bh=7WFE1QqjkNWXBo2i/uISfGXGpLvGQFIrguU2M2BpI9c=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=JlL2hbSlc8kkJOPqiod5BKDT6aabk776t5T2J5AIeuIAJEKukSasQVQcw2OBYiz1jYBQ8EQP5rEFaXLVVugIvhx01p/B4ryZgH2OjGYsuQVfOzeD2WUcDcQNPiYqUyh7G/EUO7D7JRBAbMQ41aHbQ1dqyMT+YT4I5efODatc5sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=WSY166vp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=R0qc5TkJ; arc=none smtp.client-ip=64.147.123.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.west.internal (Postfix) with ESMTP id B76E91C00111;
+	Sat, 15 Jun 2024 07:47:37 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Sat, 15 Jun 2024 07:47:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1718452057;
+	 x=1718538457; bh=bnFVDSz3OxRpFnBtZdMfpJNAmQeOJsJhGART8of28Ss=; b=
+	WSY166vpNpojltqzOj7XH+S75QcBVaezUQWiOo19qzkm6jpk1oiPR1QhfMSooslY
+	c4csVweaRlm8moZSjmt842Rvfzsl6h2NaVq9wAagNEZ0E/J1NN5eHpmGfoZQcTRb
+	jJGLMaKo/NM6oq1lBwIR5eEbKePRTEtKqgOOyZWqR+cKqAhZ+bA8j6HAqq9rnSDQ
+	Yj8xynsfLWy4J9DwzV4SytW+leCyaUadbl73VT01/bvG4q1DTQd+Bc6jzYOfsXUp
+	PhQokkd9czwQBy5/vC9uYKZCKSVlZkcZzAENsZm0GREVOkqWo7NKT3WbFIELnHJw
+	U1Z/qsMlOwJGjQGbglcS5Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718452057; x=
+	1718538457; bh=bnFVDSz3OxRpFnBtZdMfpJNAmQeOJsJhGART8of28Ss=; b=R
+	0qc5TkJnd5xpnX0qb4uWYAhfv4ctpPNk2TyKgZqdDogmEmf6iiCXsvQI4n9iuGvH
+	t6PcKhlEoCIB+i6MCmlg/JYP6aXvPK2jdTZdDPyDukCHhqa7EIQdzgLHy9PDDrtY
+	lH6hWbHmV5sQCWjYRDN4K09omQhiuwzE8Q1/1P0Qc2qE2J4Dl+VoIwqg5RuGYYHH
+	npeApyLJb2JlogBGKvowoGadzPJWHLMw9EyEBLjt8gdr2hSxXmF/oyHDdyyIeqf4
+	ACVt+6zJJ7vW14fJUh1+r2jHA+6HwZqi16R+AHykb2QDAP8cq47qvpbGT4zYe0R6
+	XajT+GpUZCdXiwOgf8KOQ==
+X-ME-Sender: <xms:V39tZshhr3tkZMmGqJ_XJhsRivjgFHOPYYgxHR8gB_izTURpAoz-9A>
+    <xme:V39tZlBu3Be0kg8UwyleTnl92r0AadsYkeoH-l4nVPDy95zapF4uw5A_4eP6fj0m2
+    7Un8iokmhffb5ShTAU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvuddggeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
+    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:V39tZkEwFz0vkEMF9MHxoxqDOWBrkboTI7z5uBer5A9fUY6ZvV8HCg>
+    <xmx:V39tZtRdCfeRYJpbkmU82QduPjfRZdTe0gcz3-xaqYGchcV2AVhfEA>
+    <xmx:V39tZpwv_Sym9RUcKjbvPxSU7-om1y4-LD_LZL8uoUNkSe52uyYFyw>
+    <xmx:V39tZr4JSk2jltltPq05jd34jISN-QV6VScvPZAgnwiK31GLAlE4Eg>
+    <xmx:WX9tZv4HjhyT6kxUqbOglzK6qe2IVl3eami4zaHPcIzpPJcwpd4Of2pa>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id BDC87B6008D; Sat, 15 Jun 2024 07:47:35 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-515-g87b2bad5a-fm-20240604.001-g87b2bad5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <a39c8602-3c9c-48fd-9bdb-2089ccccd6bc@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3_8ubfm1msv1qBw--.38847S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Cw17tFW8KF4xXFy3uryDKFg_yoW8Xw17pF
-	1fGF98JFsFkryYyFnrtrn7Arsay3yrJFy5XFy3JFy2kFyqqFy3KrW8ta15ua43Xr4Sgr10
-	ka10q3Z3WF1jvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07b8PEfUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOh3+G2VEwzIv6AAAsV
+Message-Id: <56ace686-d4b4-4b4c-a8a6-af06ec0d48f2@app.fastmail.com>
+In-Reply-To: 
+ <CAAhV-H4R_HJAB0baqUgA8ucbwWNVN4sc9EV91zAk9Ch302_7zg@mail.gmail.com>
+References: <20240511100157.2334539-1-chenhuacai@loongson.cn>
+ <f92e23be-3f3f-4bc6-8711-3bcf6beb7fa2@app.fastmail.com>
+ <CAAhV-H5kn2xPLqgop0iOyg-tc5kAYcuNo3cd+f3yCdkN=cJDug@mail.gmail.com>
+ <fcdeb993-37d6-42e0-8737-3be41413f03d@app.fastmail.com>
+ <CAAhV-H4s_utEOtFDwjPTqxnMWTVjWhmS7bEVRX+t8HK5QDA8Vg@mail.gmail.com>
+ <a21a0878-021e-4990-a59d-b10f204a018b@app.fastmail.com>
+ <CAAhV-H7OR5tkbjj-BPLStneXFr=1DUaFvvh8+a5Bk_jhCAP25Q@mail.gmail.com>
+ <cdef45d36d0e71da5f0534b3783b81c82405bda3.camel@xry111.site>
+ <CAAhV-H4R_HJAB0baqUgA8ucbwWNVN4sc9EV91zAk9Ch302_7zg@mail.gmail.com>
+Date: Sat, 15 Jun 2024 13:47:15 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Huacai Chen" <chenhuacai@kernel.org>, "Xi Ruoyao" <xry111@xry111.site>
+Cc: "Huacai Chen" <chenhuacai@loongson.cn>, loongarch@lists.linux.dev,
+ Linux-Arch <linux-arch@vger.kernel.org>,
+ "Xuefeng Li" <lixuefeng@loongson.cn>, guoren <guoren@kernel.org>,
+ "WANG Xuerui" <kernel@xen0n.name>, "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
+ linux-kernel@vger.kernel.org, loongson-kernel@lists.loongnix.cn,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Jun 15, 2024, at 11:29, Huacai Chen wrote:
+> On Sat, Jun 15, 2024 at 4:55=E2=80=AFPM Xi Ruoyao <xry111@xry111.site>=
+ wrote:
+>>
+>> On Sat, 2024-06-15 at 16:52 +0800, Huacai Chen wrote:
+>> > Hi, Arnd,
+>> >
+>> > On Sun, May 12, 2024 at 3:53=E2=80=AFPM Arnd Bergmann <arnd@arndb.d=
+e> wrote:
+>> > >
+>> > > On Sun, May 12, 2024, at 05:11, Huacai Chen wrote:
+>> > > > On Sat, May 11, 2024 at 11:39=E2=80=AFPM Arnd Bergmann <arnd@ar=
+ndb.de> wrote:
+>> > > > > On Sat, May 11, 2024, at 16:28, Huacai Chen wrote:
+>> > > > > > On Sat, May 11, 2024 at 8:17=E2=80=AFPM Arnd Bergmann <arnd=
+@arndb.de> wrote:
+>> > > > > CONFIG_COMPAT_32BIT_TIME is equally affected here. On riscv32
+>> > > > > this is the only allowed configuration, while on others (arm32
+>> > > > > or x86-32 userland) you can turn off COMPAT_32BIT_TIME on
+>> > > > > both 32-bit kernel and on 64-bit kernels with compat mode.
+>> > > > I don't know too much detail, but I think riscv32 can do someth=
+ing
+>> > > > similar to arm32 and x86-32, or we can wait for Xuerui to impro=
+ve
+>> > > > seccomp. But there is no much time for loongarch because the De=
+bian
+>> > > > loong64 port is coming soon.
+>> > >
+>> > > What I meant is that the other architectures only work by
+>> > > accident if COMPAT_32BIT_TIME is enabled and statx() gets
+>> > > blocked, but then they truncate the timestamps to the tim32
+>> > > range, which is not acceptable behavior. Actually mips64 is
+>> > > in the same situation because it also only supports 32-bit
+>> > > timestamps in newstatat(), despite being a 64-bit
+>> > > architecture with a 64-bit time_t in all other syscalls.
+>> > We can only wait for the seccomp side to be fixed now? Or we can get
+>> > this patch upstream for LoongArch64 at the moment, and wait for
+>> > seccomp to fix RISCV32 (and LoongArch32) in future?
+>>
+>> I'm wondering why not just introduce a new syscall or extend statx wi=
+th
+>> a new flag, as we've discussed many times.  They have their own
+>> disadvantages but better than this, IMO.
+> We should move things forward, in any way. :)
 
+Wouldn't it be sufficient to move the AT_EMPTY_PATH hack
+from vfs_fstatat() to vfs_statx() so we can make them
+behave the same way?
 
-在 2024/6/12 下午3:32, David Hildenbrand 写道:
-> On 11.06.24 13:20, yangge1116 wrote:
->>
->>
->> 在 2024/6/9 上午12:03, David Hildenbrand 写道:
->>> On 08.06.24 17:15, Matthew Wilcox wrote:
->>>> On Sat, Jun 08, 2024 at 12:38:49PM +0800, yangge1116 wrote:
->>>>> Can we add a PG_lru_batch flag to determine whether a page is in lru
->>>>> batch?
->>>>> If we can, seems this problem will be easier.
->>>>
->>>> Page flags are in short supply.  You'd need a really good 
->>>> justification.
->>>>
->>>
->>> A flag would not be able to handle the "part of multiple LRU batches"
->>> that should currently possible (when to clear the flag?). Well, if we
->>> have to keep supporting that. If we only to be part in a single LRU
->>> batch, a new flag could work and we could still allow isolating a folio
->>> from LRU while in some LRU batch.
->>
->> Yes, before adding a folio to LRU batch, check whether the folio has
->> been added. Add the folio to LRU batch only if the folio has not been
->> added.
->>
->>>
->>> If we could handle it using the existing flags, that would of course be
->>> better (wondering if we could store more information in the existing
->>> flags by using a different encoding for the different states).
->>
->> If a folio contains more than one page, the folio will not be added to
->> LRU batch. Can we use folio_test_large(folio) to filter?
->>
->> if (!folio_test_large(folio) && drain_allow) {
->>     lru_add_drain_all();
->>     drain_allow = false;
->> }
-> 
-> I think we should do better than this, and not do arbitrary 
-> lru_add_drain_all() calls.
-> 
+As far as I can tell, the only difference between the two is
+that fstatat64() and similar already has added the check for
+zero-length strings in order to make using vfs_fstatat()
+fast and safe when called from glibc stat().
 
-Thanks, I will prepare the V2.
-
+     Arnd
 
