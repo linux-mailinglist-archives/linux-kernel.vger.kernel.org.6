@@ -1,170 +1,302 @@
-Return-Path: <linux-kernel+bounces-215860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB9B6909804
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:47:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D02909808
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F2B21F21C18
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:47:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4D7F282BC9
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BAD3F9FC;
-	Sat, 15 Jun 2024 11:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AB53D96A;
+	Sat, 15 Jun 2024 11:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="WSY166vp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="R0qc5TkJ"
-Received: from wfout1-smtp.messagingengine.com (wfout1-smtp.messagingengine.com [64.147.123.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FXgqHE/m"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427D725774;
-	Sat, 15 Jun 2024 11:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88E045023;
+	Sat, 15 Jun 2024 11:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718452061; cv=none; b=eDwc2Ads1cznf3IDmJ68Ep82HUmWEDO0Zq5kK4ltsIpBvr5oFZw8A8nzl307dk3Z0MFQ0Gsc6il3NcBHPZnBFN4f0HJ8GWRUyCQH3+/dsPqdJ/AOM9lo2p1DjnwYgRvYx2+i326H1pGyj6te3jTZYUvtBHNzUkFmGbQLWm7S3JI=
+	t=1718452175; cv=none; b=O2kC6PaqzLd21M4oWFXMYjRQVGGOz7BWP+84eNvlhmb0txFbr+cQqQF5Dq+/7BMylocEgddkgEIuiVxKD2betmYrPHXbtn4rKk4RssPY+lVxRlBDNf/b+oXDyvgUlIAjRiZyoYNvRIlyUcDKzeatvhdY5zNvO229iLh40rD7lcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718452061; c=relaxed/simple;
-	bh=7WFE1QqjkNWXBo2i/uISfGXGpLvGQFIrguU2M2BpI9c=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=JlL2hbSlc8kkJOPqiod5BKDT6aabk776t5T2J5AIeuIAJEKukSasQVQcw2OBYiz1jYBQ8EQP5rEFaXLVVugIvhx01p/B4ryZgH2OjGYsuQVfOzeD2WUcDcQNPiYqUyh7G/EUO7D7JRBAbMQ41aHbQ1dqyMT+YT4I5efODatc5sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=WSY166vp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=R0qc5TkJ; arc=none smtp.client-ip=64.147.123.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.west.internal (Postfix) with ESMTP id B76E91C00111;
-	Sat, 15 Jun 2024 07:47:37 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Sat, 15 Jun 2024 07:47:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1718452057;
-	 x=1718538457; bh=bnFVDSz3OxRpFnBtZdMfpJNAmQeOJsJhGART8of28Ss=; b=
-	WSY166vpNpojltqzOj7XH+S75QcBVaezUQWiOo19qzkm6jpk1oiPR1QhfMSooslY
-	c4csVweaRlm8moZSjmt842Rvfzsl6h2NaVq9wAagNEZ0E/J1NN5eHpmGfoZQcTRb
-	jJGLMaKo/NM6oq1lBwIR5eEbKePRTEtKqgOOyZWqR+cKqAhZ+bA8j6HAqq9rnSDQ
-	Yj8xynsfLWy4J9DwzV4SytW+leCyaUadbl73VT01/bvG4q1DTQd+Bc6jzYOfsXUp
-	PhQokkd9czwQBy5/vC9uYKZCKSVlZkcZzAENsZm0GREVOkqWo7NKT3WbFIELnHJw
-	U1Z/qsMlOwJGjQGbglcS5Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718452057; x=
-	1718538457; bh=bnFVDSz3OxRpFnBtZdMfpJNAmQeOJsJhGART8of28Ss=; b=R
-	0qc5TkJnd5xpnX0qb4uWYAhfv4ctpPNk2TyKgZqdDogmEmf6iiCXsvQI4n9iuGvH
-	t6PcKhlEoCIB+i6MCmlg/JYP6aXvPK2jdTZdDPyDukCHhqa7EIQdzgLHy9PDDrtY
-	lH6hWbHmV5sQCWjYRDN4K09omQhiuwzE8Q1/1P0Qc2qE2J4Dl+VoIwqg5RuGYYHH
-	npeApyLJb2JlogBGKvowoGadzPJWHLMw9EyEBLjt8gdr2hSxXmF/oyHDdyyIeqf4
-	ACVt+6zJJ7vW14fJUh1+r2jHA+6HwZqi16R+AHykb2QDAP8cq47qvpbGT4zYe0R6
-	XajT+GpUZCdXiwOgf8KOQ==
-X-ME-Sender: <xms:V39tZshhr3tkZMmGqJ_XJhsRivjgFHOPYYgxHR8gB_izTURpAoz-9A>
-    <xme:V39tZlBu3Be0kg8UwyleTnl92r0AadsYkeoH-l4nVPDy95zapF4uw5A_4eP6fj0m2
-    7Un8iokmhffb5ShTAU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvuddggeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:V39tZkEwFz0vkEMF9MHxoxqDOWBrkboTI7z5uBer5A9fUY6ZvV8HCg>
-    <xmx:V39tZtRdCfeRYJpbkmU82QduPjfRZdTe0gcz3-xaqYGchcV2AVhfEA>
-    <xmx:V39tZpwv_Sym9RUcKjbvPxSU7-om1y4-LD_LZL8uoUNkSe52uyYFyw>
-    <xmx:V39tZr4JSk2jltltPq05jd34jISN-QV6VScvPZAgnwiK31GLAlE4Eg>
-    <xmx:WX9tZv4HjhyT6kxUqbOglzK6qe2IVl3eami4zaHPcIzpPJcwpd4Of2pa>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id BDC87B6008D; Sat, 15 Jun 2024 07:47:35 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-515-g87b2bad5a-fm-20240604.001-g87b2bad5
+	s=arc-20240116; t=1718452175; c=relaxed/simple;
+	bh=OxsDCVvFmZDdn4b0BWUpauwRblw62cawRbkJDq1lF+A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tt/PgUO0HcIqHlWMKBXvwsz6pDiDfmzkd8+oiIwp1Teidjp/XkLfEzA56AszQeqUUPYS0g1RzSn8sux17CJ1tDQQzDUhwpXuUvJcBoHBwupF/+ws4N9ajHr8fttS4L7F/Q0wGtVjGdnHGtrQG7n7TFjKFmz7LLnvDo1NSgrczA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FXgqHE/m; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6ef8bf500dso339515966b.0;
+        Sat, 15 Jun 2024 04:49:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718452172; x=1719056972; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RmwpWJqTuK2KpyOhWn70TPuN3f/5XJxgMHjGCJWbC38=;
+        b=FXgqHE/mvROs8pcPtueW1H80ZQ6p1KZ725fij8k7qepnl8zkV6pazNrxXjEkcom2OO
+         V9+ZB/d7cg8lEgPpuoTSF+KKD0JRtayNtnL9w8Al1bdknXmIieRxT2tf0BxPUgAfEUCW
+         WGRT1VsKUMqqXc6J3ZNwV4Iyo/atyNEwkd5mZwSirsS4CT0OQAC3y6/BNptOqiF1s7I8
+         cUrRvT6hFqmoW/eK6schNiXOfui0IPK31+L7xfU/hXWuHQNVDLPO5LG3LJ6ec18j0SDv
+         K70e8a9CKgHlMinVSrEkmU80FIaNXE5dYbrEJkdncENWXlIZEshRon4ezqoYF5lbP+lx
+         CTDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718452172; x=1719056972;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RmwpWJqTuK2KpyOhWn70TPuN3f/5XJxgMHjGCJWbC38=;
+        b=NSU63cY0/Si20oDvM5RLO90K0v0/F0ODeFomMDChWvdzQLSi726ilVgNJSM29Q5UV3
+         aemucE/bUlNJvNK5SKSYbb5JijReWqHL5N3FCZMzPGQidoolSVNtihOx9OXXXFaEGoGj
+         YRpU//Ha92zW3JHh8q19RiTU5pyGjqTuw/sTClKrZqhfmAzIBoHb+DDhu30Ui6S8DsKf
+         mi/Ly7+nuMc45rRFTKVYGwhC0f63MMXbulNa7saICN80mXYdRTaDykZEx8gZ0d6CnxKE
+         8Nd5umDYFgpmjVSWkWvYT/yFi0wb1xqmBUslpfkVh6La8c+Mjzti54qWkzKzWVOC51+l
+         mpjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnBI3pDEhJmZ1I1SSKr3tiBQFqJdKJ67o1cVnwH5mBjHdV657keJa+WD3/7lIgmT0sXFkZdqOsBYF4YczMOEGAwiCVFEceppxCnQB8ZjAoL7+8x6w5X/AaOP95Wic+ghhz
+X-Gm-Message-State: AOJu0Yw6WI53N1FpcjyNwZ1RjjMHngVIvDOJCE0OU28uPiqhzJrdvoHp
+	+17UOPMgJgmIV8xBe0LHHK+JZTOJwfLwTgSRMiqxrCc1d5A/xcMEzUHUO9Et3QAsfN+PLY0ezBr
+	9Nmr2n0sdYQG41oGVgAO1LV0WahY=
+X-Google-Smtp-Source: AGHT+IFxR+Wzw5GJUuAJyMsGu2IVbRo0bdsH0bHXeCy0tKDMJ2ODk1f+1XyyevV5XalEw6L3dTONayV4wiwT70F2Df8=
+X-Received: by 2002:a17:906:f148:b0:a68:86b9:52e8 with SMTP id
+ a640c23a62f3a-a6f60de6264mr338305266b.68.1718452171866; Sat, 15 Jun 2024
+ 04:49:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <56ace686-d4b4-4b4c-a8a6-af06ec0d48f2@app.fastmail.com>
-In-Reply-To: 
- <CAAhV-H4R_HJAB0baqUgA8ucbwWNVN4sc9EV91zAk9Ch302_7zg@mail.gmail.com>
-References: <20240511100157.2334539-1-chenhuacai@loongson.cn>
- <f92e23be-3f3f-4bc6-8711-3bcf6beb7fa2@app.fastmail.com>
- <CAAhV-H5kn2xPLqgop0iOyg-tc5kAYcuNo3cd+f3yCdkN=cJDug@mail.gmail.com>
- <fcdeb993-37d6-42e0-8737-3be41413f03d@app.fastmail.com>
- <CAAhV-H4s_utEOtFDwjPTqxnMWTVjWhmS7bEVRX+t8HK5QDA8Vg@mail.gmail.com>
- <a21a0878-021e-4990-a59d-b10f204a018b@app.fastmail.com>
- <CAAhV-H7OR5tkbjj-BPLStneXFr=1DUaFvvh8+a5Bk_jhCAP25Q@mail.gmail.com>
- <cdef45d36d0e71da5f0534b3783b81c82405bda3.camel@xry111.site>
- <CAAhV-H4R_HJAB0baqUgA8ucbwWNVN4sc9EV91zAk9Ch302_7zg@mail.gmail.com>
-Date: Sat, 15 Jun 2024 13:47:15 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Huacai Chen" <chenhuacai@kernel.org>, "Xi Ruoyao" <xry111@xry111.site>
-Cc: "Huacai Chen" <chenhuacai@loongson.cn>, loongarch@lists.linux.dev,
- Linux-Arch <linux-arch@vger.kernel.org>,
- "Xuefeng Li" <lixuefeng@loongson.cn>, guoren <guoren@kernel.org>,
- "WANG Xuerui" <kernel@xen0n.name>, "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
- linux-kernel@vger.kernel.org, loongson-kernel@lists.loongnix.cn,
- stable@vger.kernel.org
-Subject: Re: [PATCH] LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h
-Content-Type: text/plain;charset=utf-8
+References: <20240608140835.965949-1-dolinux.peng@gmail.com> <4f551dc5fc792936ca364ce8324c0adea38162f1.camel@gmail.com>
+In-Reply-To: <4f551dc5fc792936ca364ce8324c0adea38162f1.camel@gmail.com>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Sat, 15 Jun 2024 19:49:18 +0800
+Message-ID: <CAErzpmsvvi_dhiJs+Fmyy7R-gKqh3TkiuJCj4U5K6XXJyV6pJA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3] bpf: Using binary search to improve the
+ performance of btf_find_by_name_kind
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: ast@kernel.org, andrii <andrii@kernel.org>, alan.maguire@oracle.com, 
+	acme@kernel.org, daniel@iogearbox.net, mhiramat@kernel.org, song@kernel.org, 
+	haoluo@google.com, yonghong.song@linux.dev, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 15, 2024, at 11:29, Huacai Chen wrote:
-> On Sat, Jun 15, 2024 at 4:55=E2=80=AFPM Xi Ruoyao <xry111@xry111.site>=
- wrote:
->>
->> On Sat, 2024-06-15 at 16:52 +0800, Huacai Chen wrote:
->> > Hi, Arnd,
->> >
->> > On Sun, May 12, 2024 at 3:53=E2=80=AFPM Arnd Bergmann <arnd@arndb.d=
-e> wrote:
->> > >
->> > > On Sun, May 12, 2024, at 05:11, Huacai Chen wrote:
->> > > > On Sat, May 11, 2024 at 11:39=E2=80=AFPM Arnd Bergmann <arnd@ar=
-ndb.de> wrote:
->> > > > > On Sat, May 11, 2024, at 16:28, Huacai Chen wrote:
->> > > > > > On Sat, May 11, 2024 at 8:17=E2=80=AFPM Arnd Bergmann <arnd=
-@arndb.de> wrote:
->> > > > > CONFIG_COMPAT_32BIT_TIME is equally affected here. On riscv32
->> > > > > this is the only allowed configuration, while on others (arm32
->> > > > > or x86-32 userland) you can turn off COMPAT_32BIT_TIME on
->> > > > > both 32-bit kernel and on 64-bit kernels with compat mode.
->> > > > I don't know too much detail, but I think riscv32 can do someth=
-ing
->> > > > similar to arm32 and x86-32, or we can wait for Xuerui to impro=
-ve
->> > > > seccomp. But there is no much time for loongarch because the De=
-bian
->> > > > loong64 port is coming soon.
->> > >
->> > > What I meant is that the other architectures only work by
->> > > accident if COMPAT_32BIT_TIME is enabled and statx() gets
->> > > blocked, but then they truncate the timestamps to the tim32
->> > > range, which is not acceptable behavior. Actually mips64 is
->> > > in the same situation because it also only supports 32-bit
->> > > timestamps in newstatat(), despite being a 64-bit
->> > > architecture with a 64-bit time_t in all other syscalls.
->> > We can only wait for the seccomp side to be fixed now? Or we can get
->> > this patch upstream for LoongArch64 at the moment, and wait for
->> > seccomp to fix RISCV32 (and LoongArch32) in future?
->>
->> I'm wondering why not just introduce a new syscall or extend statx wi=
-th
->> a new flag, as we've discussed many times.  They have their own
->> disadvantages but better than this, IMO.
-> We should move things forward, in any way. :)
+On Tue, Jun 11, 2024 at 6:13=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.com=
+> wrote:
+>
+> On Sat, 2024-06-08 at 07:08 -0700, Donglin Peng wrote:
+>
+> [...]
+>
+> > Changes in RFC v3:
+> >  - Sort the btf types during the build process in order to reduce memor=
+y usage
+> >    and decrease boot time.
+> >
+> > RFC v2:
+> >  - https://lore.kernel.org/all/20230909091646.420163-1-pengdonglin@sang=
+for.com.cn
+> > ---
+> >  include/linux/btf.h |   1 +
+> >  kernel/bpf/btf.c    | 160 +++++++++++++++++++++++++++++++++---
+>
+> I think that kernel part is in a good shape,
+> please split it as a separate commit.
 
-Wouldn't it be sufficient to move the AT_EMPTY_PATH hack
-from vfs_fstatat() to vfs_statx() so we can make them
-behave the same way?
+Okay, thanks.
 
-As far as I can tell, the only difference between the two is
-that fstatat64() and similar already has added the check for
-zero-length strings in order to make using vfs_fstatat()
-fast and safe when called from glibc stat().
+>
+> >  tools/lib/bpf/btf.c | 195 ++++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 345 insertions(+), 11 deletions(-)
+>
+> [...]
+>
+> > diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
+> > index 2d0840ef599a..93c1ab677bfa 100644
+>
+> I'm not sure that libbpf is the best place to put this functionality,
+> as there might be different kinds of orderings
+> (e.g. see a fresh commit to bpftool to output stable vmlinux.h:
+>  94133cf24bb3 "bpftool: Introduce btf c dump sorting").
 
-     Arnd
+Thanks, I think it would be better to put it into the libbpf. However, I wo=
+uld
+also like to hear the opinions of others.
+
+>
+> I'm curious what Andrii, Alan and Arnaldo think on libbpf vs pahole
+> for this feature.
+>
+> Also, I have a selftests build failure with this patch-set
+> (and I suspect that a bunch of dedup test cases would need an update):
+
+I appologize for the bug in my patch that caused the issue. I will fix it.
+
+>
+> $ pwd
+> /home/eddy/work/bpf-next/tools/testing/selftests/bpf
+> $ make -j14 test_progs
+> ...
+>
+>   GEN-SKEL [test_progs] access_map_in_map.skel.h
+> Binary files /home/eddy/work/bpf-next/tools/testing/selftests/bpf/access_=
+map_in_map.bpf.linked2.o and /home/eddy/work/bpf-next/tools/testing/selftes=
+ts/bpf/access_map_in_map.bpf.linked3.o differ
+> make: *** [Makefile:658: /home/eddy/work/bpf-next/tools/testing/selftests=
+/bpf/access_map_in_map.skel.h] Error 1
+> make: *** Waiting for unfinished jobs....
+
+Sorry, I neglected to perform an ID remap for the btf_types in the BTF.ext
+section. I will fix it.
+
+>
+> If this change remains in libbpf, I think it would be great to update
+> btf_find_by_name_kind() to work the same way as kernel one.
+
+Sounds good, we might do it later.
+
+>
+> > --- a/tools/lib/bpf/btf.c
+> > +++ b/tools/lib/bpf/btf.c
+>
+> [...]
+>
+> > +static int btf_sort_type_by_name(struct btf *btf)
+> > +{
+> > +     struct btf_type *bt;
+> > +     __u32 *new_type_offs =3D NULL, *new_type_offs_noname =3D NULL;
+> > +     __u32 *maps =3D NULL, *found_offs;
+> > +     void *new_types_data =3D NULL, *loc_data;
+> > +     int i, j, k, type_cnt, ret =3D 0, type_size;
+> > +     __u32 data_size;
+> > +
+> > +     if (btf_ensure_modifiable(btf))
+> > +             return libbpf_err(-ENOMEM);
+> > +
+> > +     type_cnt =3D btf->nr_types;
+> > +     data_size =3D btf->type_offs_cap * sizeof(*new_type_offs);
+> > +
+> > +     maps =3D (__u32 *)malloc(type_cnt * sizeof(__u32));
+> > +     if (!maps) {
+> > +             ret =3D -ENOMEM;
+> > +             goto err_out;
+> > +     }
+> > +
+> > +     new_type_offs =3D (__u32 *)malloc(data_size);
+> > +     if (!new_type_offs) {
+> > +             ret =3D -ENOMEM;
+> > +             goto err_out;
+> > +     }
+> > +
+> > +     new_type_offs_noname =3D (__u32 *)malloc(data_size);
+> > +     if (!new_type_offs_noname) {
+> > +             ret =3D -ENOMEM;
+> > +             goto err_out;
+> > +     }
+>
+> What is the point of separating offsets in new_type_offs vs
+> new_type_offs_noname? It should be possible to use a single offsets
+> array and have a comparison function that puts all named types before
+> unnamed.
+
+Great, you are right.
+
+>
+> > +
+> > +     new_types_data =3D malloc(btf->types_data_cap);
+> > +     if (!new_types_data) {
+> > +             ret =3D -ENOMEM;
+> > +             goto err_out;
+> > +     }
+> > +
+> > +     memset(new_type_offs, 0, data_size);
+> > +
+> > +     for (i =3D 0, j =3D 0, k =3D 0; i < type_cnt; i++) {
+> > +             const char *name;
+> > +
+> > +             bt =3D (struct btf_type *)(btf->types_data + btf->type_of=
+fs[i]);
+> > +             name =3D btf__str_by_offset(btf, bt->name_off);
+> > +             if (!name || !name[0])
+> > +                     new_type_offs_noname[k++] =3D btf->type_offs[i];
+> > +             else
+> > +                     new_type_offs[j++] =3D btf->type_offs[i];
+> > +     }
+> > +
+> > +     memmove(new_type_offs + j, new_type_offs_noname, sizeof(__u32) * =
+k);
+> > +
+> > +     qsort_r(new_type_offs, j, sizeof(*new_type_offs),
+> > +             btf_compare_type_name, btf);
+> > +
+> > +     for (i =3D 0; i < type_cnt; i++) {
+> > +             found_offs =3D bsearch(&new_type_offs[i], btf->type_offs,=
+ type_cnt,
+> > +                                     sizeof(__u32), btf_compare_offs);
+> > +             if (!found_offs) {
+> > +                     ret =3D -EINVAL;
+> > +                     goto err_out;
+> > +             }
+> > +             maps[found_offs - btf->type_offs] =3D i;
+> > +     }
+> > +
+> > +     loc_data =3D new_types_data;
+> > +     for (i =3D 0; i < type_cnt; i++, loc_data +=3D type_size) {
+> > +             bt =3D (struct btf_type *)(btf->types_data + new_type_off=
+s[i]);
+> > +             type_size =3D btf_type_size(bt);
+> > +             if (type_size < 0) {
+> > +                     ret =3D type_size;
+> > +                     goto err_out;
+> > +             }
+> > +
+> > +             memcpy(loc_data, bt, type_size);
+> > +
+> > +             bt =3D (struct btf_type *)loc_data;
+> > +             switch (btf_kind(bt)) {
+>
+> Please take a look at btf_dedup_remap_types(): it uses newly added
+> iterator interface to enumerate all ID references in the type.
+> It could be used here to avoid enumerating every BTF kind.
+> Also, the d->hypot_map could be used instead of `maps`.
+> And if so, I think that it should be possible to put this pass before
+> btf_dedup_remap_types() in order for it to do the remapping.
+
+Thank you. I will revise the code.
+
+>
+> Alternatively, it might make sense to merge this pass with
+> btf_dedup_compact_types() in order to minimize number of operations,
+> e.g. as in my crude attempt:
+> https://github.com/eddyz87/bpf/tree/binsort-btf-dedup
+
+Thank you. I would refer to your patch.
+
+> (fails with similar selftests issue).
+
+In addition to the bug in my patch, I have also identified a bug in
+linker_fixup_btf
+in the libbpf. After resolving the issue, the selftests successfully
+passed, and I will
+create a new patch to address the bug.
+
+>
+> > +             case BTF_KIND_PTR:
+> > +             case BTF_KIND_CONST:
+> > +             case BTF_KIND_VOLATILE:
+> > +             case BTF_KIND_RESTRICT:
+> > +             case BTF_KIND_TYPEDEF:
+> > +             case BTF_KIND_TYPE_TAG:
+> > +             case BTF_KIND_FUNC:
+> > +             case BTF_KIND_VAR:
+> > +             case BTF_KIND_DECL_TAG:
+> > +                     bt->type =3D btf_get_mapped_type(btf, maps, bt->t=
+ype);
+> > +                     break;
+>
+> [...]
 
