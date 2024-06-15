@@ -1,186 +1,200 @@
-Return-Path: <linux-kernel+bounces-216034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D94909A4C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 00:57:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08B7909A4F
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 00:59:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3E70B219F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 22:57:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1237E1C20C46
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 22:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6922B6A33B;
-	Sat, 15 Jun 2024 22:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J7YhUIiu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C0C6BFB8;
+	Sat, 15 Jun 2024 22:58:52 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DD4182BD;
-	Sat, 15 Jun 2024 22:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC909537F2;
+	Sat, 15 Jun 2024 22:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718492268; cv=none; b=sj/oBEqscqpm+tayA871/59osvQGr3ZqC+j3cgn205xKHoL/s251B6z4ctRS5NtEYQMyFlq5dRwmnXJdaJrZGF3tHixav0s+LDBrnGHLDb1EAGT04zuadj0d95RghqfQq2eXRiP7W9gosRdbM7bezCsRC3rjUElpBNTrKw9uo7U=
+	t=1718492332; cv=none; b=hiU7Zhy1HfItKHPQzZB6F58gaiZFgXYkHvKfmiJ0dSqarpdqh492J1DHNbQOFPq0i+Anxnr9l9te6izUcDeCN3t8j7rxLNlopIS9eVQAa5bJRBIAkWkbSpZMlbg02LArR/MsAPXXUZnnAp54EQzevLkUPJYwgSQQrSNMwPlyFIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718492268; c=relaxed/simple;
-	bh=xGWREnMXr4sgcSPZUNg+qY2W7mkgfv7zvb5EPMvy93M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jyw5kiOXeNOes25L9fJGEzIBH1aucpTPV6SJ/ZiVRZB7a3ehWLb6DAbk5cnvJhff2XcFaZAnM0r6PXWC4TPV9PHhqJ+2L7IEtZ5kUhgQPIJPOnywhXxLlqEhN7629KaOsisb3ss4Rrq8DFaZxgYh0t3d8++2NmZDv+qd9sqoFuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J7YhUIiu; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718492267; x=1750028267;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xGWREnMXr4sgcSPZUNg+qY2W7mkgfv7zvb5EPMvy93M=;
-  b=J7YhUIiubecmGBI8S7GcLBPkscha4wMPZQF9cg2GqRIyHZU6+oeommxU
-   6Xjyo6ggmAMsorQid8/G7rPN3BDK5bKdTKUGSCspjqOHevk3xuDmKrQ0X
-   3/xO1t4X0oyqP2qv16B5jjYyJWtDUrMaFoHEuNTTl5XchNyD87apJ6a1I
-   dqc8uuulgOhovjnRQwdvpyuVfq+qNvyOeZNoz7RBGalND0fLr1BA5YCGQ
-   AroUcFmYehIJ5dmtbulM51WXOVbwapNwgCHS0cexV1cpQ6OHzXRF57x0X
-   z+SwmrOGn/nO3ab0SqufTsJyVP4Z4+JsarItIF9KcdFsG0Uf15tM0mnof
-   A==;
-X-CSE-ConnectionGUID: 0qoMoXqLSN20t0CREOpiUA==
-X-CSE-MsgGUID: lb3MH1vqTFuCSKyCwj55ZQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="18279575"
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="18279575"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 15:57:46 -0700
-X-CSE-ConnectionGUID: tQT5lppYTfmW2X/IqdwLEw==
-X-CSE-MsgGUID: e3r39IKvSLGNMxgXhoTGkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="40697793"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 15 Jun 2024 15:57:42 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sIcL6-0000Zo-1U;
-	Sat, 15 Jun 2024 22:57:40 +0000
-Date: Sun, 16 Jun 2024 06:56:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>, corbet@lwn.net,
-	rostedt@goodmis.org, mhiramat@kernel.org, mark.rutland@arm.com,
-	linux@armlinux.org.uk, ardb@kernel.org, yangtiezhu@loongson.cn,
-	arnd@arndb.de, kees@kernel.org, rmk+kernel@armlinux.org.uk,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH] arm: Add KPROBES_ON_FTRACE supported
-Message-ID: <202406160646.J89U1UKK-lkp@intel.com>
-References: <20240614022318.2600814-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1718492332; c=relaxed/simple;
+	bh=P1YVi7a9KN4Sv0YEIiIcHYvtV+ZKTrEhkKY+YeE5nqM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ec8ZX0vCh08/PC2GjAZ0OOyDqbxA6kr+S06WFqsnObCBRdifooeguu1Ko3IteJkhAyXyh1VLsFlcVXKk7Hj7DOLWAROjKQ83wwvqmtDc2CHw4Yi55FJ2riuNrAtrbwlXMVzqy9/n3idcPfpCigiBjSFY/n3Xpw+wdMxQnoOCKWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from 79-98-74-242.sys-data.com ([79.98.74.242] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sIcLe-00022x-WA; Sun, 16 Jun 2024 00:58:15 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Jonas Karlman <jonas@kwiboo.se>,
+ Detlev Casanova <detlev.casanova@collabora.com>
+Cc: linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Dragan Simic <dsimic@manjaro.org>, Alexey Charkov <alchark@gmail.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Diederik de Haas <didi.debian@cknow.org>, Andy Yan <andy.yan@rock-chips.com>,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-staging@lists.linux.dev
+Subject:
+ Re: [PATCH 2/3] media: dt-bindings: rockchip: Document RK3588 Video Decoder 2
+ bindings
+Date: Sun, 16 Jun 2024 00:58:13 +0200
+Message-ID: <4352466.CQOukoFCf9@phil>
+In-Reply-To: <14930500.uLZWGnKmhe@arisu>
+References:
+ <20240615015734.1612108-1-detlev.casanova@collabora.com>
+ <442bbb41-40ed-4e6c-b854-02b636f09fc3@kwiboo.se> <14930500.uLZWGnKmhe@arisu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614022318.2600814-1-ruanjinjie@huawei.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Jinjie,
+Am Samstag, 15. Juni 2024, 21:49:21 CEST schrieb Detlev Casanova:
+> On Saturday, June 15, 2024 4:11:00 A.M. EDT Jonas Karlman wrote:
+> > Hi Detlev,
+> > 
+> > On 2024-06-15 03:56, Detlev Casanova wrote:
+> > > Document the Rockchip RK3588 Video Decoder 2 bindings.
+> > 
+> > Why the need for a new schema file and not just extending existing
+> > rockchip,vdec.yaml with a new compatible and the new clock?
+> 
+> Yes, that can work as well indeed. I wasn't sure if different drivers could 
+> share a schema file.
+> 
+> > > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> > > ---
+> > > 
+> > >  .../bindings/media/rockchip,vdec2.yaml        | 80 +++++++++++++++++++
+> > >  1 file changed, 80 insertions(+)
+> > >  create mode 100644
+> > >  Documentation/devicetree/bindings/media/rockchip,vdec2.yaml> 
+> > > diff --git a/Documentation/devicetree/bindings/media/rockchip,vdec2.yaml
+> > > b/Documentation/devicetree/bindings/media/rockchip,vdec2.yaml new file
+> > > mode 100644
+> > > index 000000000000..e54891b46986
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/media/rockchip,vdec2.yaml
+> > > @@ -0,0 +1,80 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/media/rockchip,vdec2.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Rockchip Video Decoder 2 (VDec2)
+> > > +
+> > > +maintainers:
+> > > +  - Heiko Stuebner <heiko@sntech.de>
+> > > +
+> > > +description: |-
+> > > +  The Rockchip rk3588 has a stateless Video Decoder that can decodes
+> > > H.264, +  HEVC, VP9 and AVS2 streams.
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: rockchip,rk3588-vdec2
+> > 
+> > I fail to see the need to call this vdec2 instead of established vdec.
+> > 
+> > Suggest this is changed to rockchip,rk3588-vdec.
+> 
+> Wouldn't that be misleading if rockchip,rk3399-vdec and rockchip,rk3588-vdec 
+> use different drivers ?
 
-kernel test robot noticed the following build errors:
+Devicetrees and their binding don't care about how operating system
+implement things in drivers. 
 
-[auto build test ERROR on soc/for-next]
-[also build test ERROR on linus/master v6.10-rc3 next-20240613]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jinjie-Ruan/arm-Add-KPROBES_ON_FTRACE-supported/20240614-102440
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-patch link:    https://lore.kernel.org/r/20240614022318.2600814-1-ruanjinjie%40huawei.com
-patch subject: [PATCH] arm: Add KPROBES_ON_FTRACE supported
-config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20240616/202406160646.J89U1UKK-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240616/202406160646.J89U1UKK-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406160646.J89U1UKK-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
->> drivers/gpu/drm/xe/xe_lrc.c:92: warning: "NOP" redefined
-      92 | #define NOP(x) (BIT(7) | (x))
-         | 
-   In file included from include/linux/ftrace.h:23,
-                    from include/linux/kprobes.h:28,
-                    from include/linux/kgdb.h:19,
-                    from include/drm/drm_util.h:36,
-                    from include/drm/drm_connector.h:32,
-                    from drivers/gpu/drm/i915/display/intel_display_core.h:16,
-                    from drivers/gpu/drm/xe/xe_device_types.h:27,
-                    from drivers/gpu/drm/xe/xe_vm_types.h:16,
-                    from drivers/gpu/drm/xe/xe_bo.h:13,
-                    from drivers/gpu/drm/xe/xe_lrc.c:14:
-   arch/arm/include/asm/ftrace.h:39: note: this is the location of the previous definition
-      39 | #define NOP             0xe28dd004      /* add   sp, sp, #4 */
-         | 
---
->> drivers/gpu/drm/xe/xe_pci.c:80: warning: "NOP" redefined
-      80 | #define NOP(x)  x
-         | 
-   In file included from include/linux/ftrace.h:23,
-                    from include/linux/kprobes.h:28,
-                    from include/linux/kgdb.h:19,
-                    from include/drm/drm_util.h:36,
-                    from drivers/gpu/drm/xe/xe_device.h:12,
-                    from drivers/gpu/drm/xe/display/xe_display.h:9,
-                    from drivers/gpu/drm/xe/xe_pci.c:18:
-   arch/arm/include/asm/ftrace.h:39: note: this is the location of the previous definition
-      39 | #define NOP             0xe28dd004      /* add   sp, sp, #4 */
-         | 
---
-   In file included from include/linux/ftrace.h:23,
-                    from include/linux/perf_event.h:52,
-                    from include/linux/trace_events.h:10,
-                    from include/trace/syscall.h:7,
-                    from include/linux/syscalls.h:93,
-                    from drivers/scsi/aacraid/linit.c:32:
->> arch/arm/include/asm/ftrace.h:39:25: error: expected identifier before numeric constant
-      39 | #define NOP             0xe28dd004      /* add   sp, sp, #4 */
-         |                         ^~~~~~~~~~
-   include/scsi/scsi_status.h:19:9: note: in expansion of macro 'NOP'
-      19 |         NOP                     = 0x08,
-         |         ^~~
-   In file included from drivers/scsi/aacraid/linit.c:38:
-   include/scsi/scsi_cmnd.h: In function 'scsi_msg_to_host_byte':
->> include/scsi/scsi_cmnd.h:372:14: error: 'TARGET_RESET' undeclared (first use in this function)
-     372 |         case TARGET_RESET:
-         |              ^~~~~~~~~~~~
-   include/scsi/scsi_cmnd.h:372:14: note: each undeclared identifier is reported only once for each function it appears in
+While they come with the Linux-kernel most of the time, they are pretty
+much independent from implementation details.
 
 
-vim +39 arch/arm/include/asm/ftrace.h
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  interrupts:
+> > > +    maxItems: 1
+> > > +
+> > > +  clocks:
+> > > +    items:
+> > > +      - description: The Video decoder AXI interface clock
+> > > +      - description: The Video decoder AHB interface clock
+> > > +      - description: The Video decoder core clock
+> > > +      - description: The Video decoder CABAC clock
+> > > +      - description: The Video decoder HEVC CABAC clock
+> > > +
+> > > +  clock-names:
+> > > +    items:
+> > > +      - const: axi
+> > > +      - const: ahb
+> > > +      - const: core
+> > > +      - const: cabac
+> > > +      - const: hevc_cabac
+> > > +
+> > > +  assigned-clocks: true
+> > > +
+> > > +  assigned-clock-rates: true
+> > > +
+> > > +  power-domains:
+> > > +    maxItems: 1
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - interrupts
+> > > +  - clocks
+> > > +  - clock-names
+> > > +  - power-domains
+> > > +
+> > > +additionalProperties: false
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > > +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
+> > > +    #include <dt-bindings/power/rk3588-power.h>
+> > > +
+> > > +    vdec2: video-codec@fdc38100 {
+> > > +        compatible = "rockchip,rk3588-vdec2";
+> > > +        reg = <0x0 0xfdc38100 0x0 0x500>;
+> > > +        interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
+> > > +        clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>, <&cru
+> > > CLK_RKVDEC0_CORE>, +                 <&cru CLK_RKVDEC0_CA>, <&cru
+> > > CLK_RKVDEC0_HEVC_CA>; +        clock-names = "axi", "ahc", "core",
+> > > +                      "cabac", "hevc_cabac";
+> > > +        assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru CLK_RKVDEC0_CORE>,
+> > > +                          <&cru CLK_RKVDEC0_CA>, <&cru
+> > > CLK_RKVDEC0_HEVC_CA>; +        assigned-clock-rates = <800000000>,
+> > > <600000000>,
+> > > +                               <600000000>, <1000000000>;
+> > > +        power-domains = <&power RK3588_PD_RKVDEC0>;
+> > 
+> > iommus and resets seem to be missing?
+> 
+> Indeed, even if their are not used yet, I'd make sens to already have them 
+> here to stabilize the device tree, right ?
 
-    24	
-    25	/*
-    26	 * The compiler emitted profiling hook consists of
-    27	 *
-    28	 *   PUSH    {LR}
-    29	 *   BL	     __gnu_mcount_nc
-    30	 *
-    31	 * To turn this combined sequence into a NOP, we need to restore the value of
-    32	 * SP before the PUSH. Let's use an ADD rather than a POP into LR, as LR is not
-    33	 * modified anyway, and reloading LR from memory is highly likely to be less
-    34	 * efficient.
-    35	 */
-    36	#ifdef CONFIG_THUMB2_KERNEL
-    37	#define	NOP		0xf10d0d04	/* add.w sp, sp, #4 */
-    38	#else
-  > 39	#define	NOP		0xe28dd004	/* add   sp, sp, #4 */
-    40	#endif
-    41	
+correct. DT only ever describes the hardware. And while it is possible
+to extend bindings later, having the obvious things in it from the start
+makes a lot of sense.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+
 
