@@ -1,196 +1,121 @@
-Return-Path: <linux-kernel+bounces-215863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C81E490980B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 13:58:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F2CD909814
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:01:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7372E283DF1
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:58:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E7511C2138D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6D844C7E;
-	Sat, 15 Jun 2024 11:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A4E47F69;
+	Sat, 15 Jun 2024 12:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lsHqUmPu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pZh/myXj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126CB10A1E;
-	Sat, 15 Jun 2024 11:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E895C4779F;
+	Sat, 15 Jun 2024 12:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718452711; cv=none; b=qMCrHCr43Z/lqdhMRO7cmCZloak8a32BkIH7vSFOrS90QWJ/Werb3oOLciNASOOF/gThAkho0V+lebyb//8xf+XRhJf5Vh3hY7dM76nNsgPiSO8TR84cvDQ7xDEOFI4zJK/zJdGL8fSR4pd/Ns+zHitQrsozfhQw7x7Pspblkfs=
+	t=1718452882; cv=none; b=IoVIrpz6cRYHadgKULNS8hM+1gjzM0U/l4AtGhT/+yW4jPc43NCdxNvebqPTruKi/91/UX1j9clDXiRKAM1PEqcFTUgdQjwwaq5otQUcRAOEVIh3nhn1t6CbhEISLXf2Cua4bAuBDUPcczGjXOfUO6ZfygcOmX7NlurAuMpwmrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718452711; c=relaxed/simple;
-	bh=8g8K29UGvZQZHmDBFTXU6XG095tGQcdkWR/9aqXmYHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NaMIhdFTSQ4mrBV0LTktzLHInKn6rhFtwz/2U6DLxzHEWtbIZGz+UMBAoXZb1LhE71C8BwtTWq1d6IDeBACCUrmxxL9iXR5B8/fcP5tWm9ki0iLgNU4h49DOvkBu/VUIeDFYhh075RzR2KkYoiDnKLnsBKqWL8ok5DMPNl+nEDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lsHqUmPu; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718452709; x=1749988709;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8g8K29UGvZQZHmDBFTXU6XG095tGQcdkWR/9aqXmYHE=;
-  b=lsHqUmPut815oKAcbqwEC0RvhNCAFb2HZQ3UG530M1XWEBbbl4Yda35s
-   EDY1j2hTWYqdKTVljOBU8c/8BYZox2sKGajFGQkyZaG9MyehmPCRuhP91
-   mGEgRILSzCmFOxHgaYfm4/Cv2jgrdaETANGCHJ2b/wlmFHOPI/Hs/o6b5
-   lBLKs4dq56EFbAAr5CgS3zSRsrpbmyXlYLpmqE9vnjoGrPqy5mPKgcqIk
-   7NqnKTTRfo7oWDlnskLTp+VQkJFOK4Gc54bPKtDZwuPyRFpkf11uyPaxP
-   ygNEcH0Vp30lQAqB9YYyZm6veM5YFe5I6tesTcVjSsFBpIJyOFS/5LKrO
-   Q==;
-X-CSE-ConnectionGUID: I63yF81RSK2EPeLbT1vPgw==
-X-CSE-MsgGUID: fn5NyWw5TDqQGFSs0BxIVg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="32885222"
-X-IronPort-AV: E=Sophos;i="6.08,240,1712646000"; 
-   d="scan'208";a="32885222"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 04:58:28 -0700
-X-CSE-ConnectionGUID: 5BS+34LDQeKsmKaIhRi90A==
-X-CSE-MsgGUID: Kw1yrEcpS9C0GUXo69gFqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,240,1712646000"; 
-   d="scan'208";a="40859755"
-Received: from lkp-server01.sh.intel.com (HELO 0bcb674f05cd) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 15 Jun 2024 04:58:25 -0700
-Received: from kbuild by 0bcb674f05cd with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sIS35-00008s-0h;
-	Sat, 15 Jun 2024 11:58:23 +0000
-Date: Sat, 15 Jun 2024 19:57:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Charles Wang <charles.goodix@gmail.com>, dmitry.torokhov@gmail.com,
-	dan.carpenter@linaro.org
-Cc: oe-kbuild-all@lists.linux.dev, dianders@chromium.org, robh@kernel.org,
-	krzk+dt@kernel.org, jikos@kernel.org, bentiss@kernel.org,
-	hbarnor@chromium.org, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Charles Wang <charles.goodix@gmail.com>
-Subject: Re: [PATCH v4 1/2] HID: hid-goodix: Add Goodix HID-over-SPI driver
-Message-ID: <202406151920.jSO2jara-lkp@intel.com>
-References: <20240614121538.236727-2-charles.goodix@gmail.com>
+	s=arc-20240116; t=1718452882; c=relaxed/simple;
+	bh=OT/HKUKOCIKwj/yAboIO2XCrsuGuzqCYpdcgZ+8PYjY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Dv98p72v46i3gZh1MHVmWHNVlBSIa21Q6OL7FaR/AvEJVuV+7gN/EwjluC1yVVyRpW2gaJdNqO+o5WhAvLr1GlwCvCTvTvokrvZVaJP2P9oZEhOIRIR1ZRNyGvGbpZyY0y2PEScEaiHkS5UtyfXHDCXVCPpyCuxteKUtid94uto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pZh/myXj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45FBfSBT018819;
+	Sat, 15 Jun 2024 12:00:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=WliGhlPHqj+gEVrbetMvgS
+	lUq+iGOkxMB/rjvW5/fhs=; b=pZh/myXjiblRjLIASajEkdo/hKnDIFJd8eItx+
+	TDCVycsx++9XeE5iQTRn9vi351epD6tNI132Jhkk/z8Vqr39Uuxk9fXGEUEHFcoz
+	2Wzd1YM1f/r9/R0duclbE4G9d11ZIMUZ/O0vfbwOFi+GFxB5ToW8U25uLzqDc1vm
+	WhhPCKwZzp6qM65PbSt9INYB4bejZ873iDg6jo0hvWbMVx3Xr0wiKTppMSW+J4LW
+	OuXqVNZeOCcZyoa62VAX7oOCMgMBirqFvsuvL9K7Q/NXXRbeHCIfh8heyQAZ4zVx
+	icQciiIzxBZFE5SAFYMZ8MUz7jLjBoPlPZabionZYxMtePTg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys31u0hkq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Jun 2024 12:00:45 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45FC0iKl026458
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Jun 2024 12:00:44 GMT
+Received: from luoj-gv.qualcomm.com (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Jun
+ 2024 05:00:40 -0700
+From: Luo Jie <quic_luoj@quicinc.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andrew@lunn.ch>, <hkallweit1@gmail.com>,
+        <linux@armlinux.org.uk>, <corbet@lwn.net>, <vladimir.oltean@nxp.com>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>
+Subject: [PATCH net-next v2 0/2] Introduce PHY mode 10G-QXGMII
+Date: Sat, 15 Jun 2024 20:00:26 +0800
+Message-ID: <20240615120028.2384732-1-quic_luoj@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614121538.236727-2-charles.goodix@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: tUazm06b5owhuoBp9eYVOR8_0qoPyqd8
+X-Proofpoint-ORIG-GUID: tUazm06b5owhuoBp9eYVOR8_0qoPyqd8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-15_08,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 phishscore=0 adultscore=0 priorityscore=1501
+ spamscore=0 mlxscore=0 malwarescore=0 mlxlogscore=802 bulkscore=0
+ suspectscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406150091
 
-Hi Charles,
+This patch series adds 10G-QXGMII mode for PHY driver. The patch
+series is split from the QCA8084 PHY driver patch series below.
+https://lore.kernel.org/all/20231215074005.26976-1-quic_luoj@quicinc.com/
+ 
+Per Andrew Lunn’s advice, submitting this patch series for acceptance
+as they already include the necessary 'Reviewed-by:' tags. This way,
+they need not wait for QCA8084 series patches to conclude review.
 
-kernel test robot noticed the following build warnings:
+Changes in v2:
+	* remove PHY_INTERFACE_MODE_10G_QXGMII from workaround of
+	  validation in the phylink_validate_phy. 10G_QXGMII will
+	  be set into phy->possible_interfaces in its .config_init
+	  method of PHY driver that supports it. 
 
-[auto build test WARNING on hid/for-next]
-[also build test WARNING on dtor-input/next dtor-input/for-linus robh/for-next linus/master v6.10-rc3 next-20240613]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Vladimir Oltean (2):
+  net: phy: introduce core support for phy-mode = "10g-qxgmii"
+  dt-bindings: net: ethernet-controller: add 10g-qxgmii mode
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Charles-Wang/HID-hid-goodix-Add-Goodix-HID-over-SPI-driver/20240614-201949
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
-patch link:    https://lore.kernel.org/r/20240614121538.236727-2-charles.goodix%40gmail.com
-patch subject: [PATCH v4 1/2] HID: hid-goodix: Add Goodix HID-over-SPI driver
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240615/202406151920.jSO2jara-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240615/202406151920.jSO2jara-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406151920.jSO2jara-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/device.h:15,
-                    from include/linux/input.h:19,
-                    from include/linux/hid.h:24,
-                    from drivers/hid/hid-goodix-spi.c:9:
-   drivers/hid/hid-goodix-spi.c: In function 'goodix_spi_read':
->> drivers/hid/hid-goodix-spi.c:147:34: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'unsigned int' [-Wformat=]
-     147 |                 dev_err(ts->dev, "read data len exceed limit %ld",
-         |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ^~~
-   include/linux/dev_printk.h:154:56: note: in expansion of macro 'dev_fmt'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                        ^~~~~~~
-   drivers/hid/hid-goodix-spi.c:147:17: note: in expansion of macro 'dev_err'
-     147 |                 dev_err(ts->dev, "read data len exceed limit %ld",
-         |                 ^~~~~~~
-   drivers/hid/hid-goodix-spi.c:147:64: note: format string is defined here
-     147 |                 dev_err(ts->dev, "read data len exceed limit %ld",
-         |                                                              ~~^
-         |                                                                |
-         |                                                                long int
-         |                                                              %d
-   drivers/hid/hid-goodix-spi.c: In function 'goodix_spi_write':
-   drivers/hid/hid-goodix-spi.c:181:34: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'unsigned int' [-Wformat=]
-     181 |                 dev_err(ts->dev, "write data len exceed limit %ld",
-         |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ^~~
-   include/linux/dev_printk.h:154:56: note: in expansion of macro 'dev_fmt'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                        ^~~~~~~
-   drivers/hid/hid-goodix-spi.c:181:17: note: in expansion of macro 'dev_err'
-     181 |                 dev_err(ts->dev, "write data len exceed limit %ld",
-         |                 ^~~~~~~
-   drivers/hid/hid-goodix-spi.c:181:65: note: format string is defined here
-     181 |                 dev_err(ts->dev, "write data len exceed limit %ld",
-         |                                                               ~~^
-         |                                                                 |
-         |                                                                 long int
-         |                                                               %d
+ .../devicetree/bindings/net/ethernet-controller.yaml     | 1 +
+ Documentation/networking/phy.rst                         | 6 ++++++
+ drivers/net/phy/phy-core.c                               | 1 +
+ drivers/net/phy/phylink.c                                | 9 ++++++++-
+ include/linux/phy.h                                      | 4 ++++
+ include/linux/phylink.h                                  | 1 +
+ 6 files changed, 21 insertions(+), 1 deletion(-)
 
 
-vim +147 drivers/hid/hid-goodix-spi.c
-
-   137	
-   138	static int goodix_spi_read(struct goodix_ts_data *ts, u32 addr,
-   139				   void *data, size_t len)
-   140	{
-   141		struct spi_device *spi = to_spi_device(&ts->spi->dev);
-   142		struct spi_transfer xfers;
-   143		struct spi_message spi_msg;
-   144		int error;
-   145	
-   146		if (GOODIX_SPI_READ_PREFIX_LEN + len > sizeof(ts->xfer_buf)) {
- > 147			dev_err(ts->dev, "read data len exceed limit %ld",
-   148				sizeof(ts->xfer_buf) - GOODIX_SPI_READ_PREFIX_LEN);
-   149			return -EINVAL;
-   150		}
-   151	
-   152		/* buffer format: 0xF1 + addr(4bytes) + dummy(3bytes) + data */
-   153		ts->xfer_buf[0] = GOODIX_SPI_READ_FLAG;
-   154		put_unaligned_be32(addr, ts->xfer_buf + GOODIX_SPI_TRANS_PREFIX_LEN);
-   155	
-   156		spi_message_init(&spi_msg);
-   157		memset(&xfers, 0, sizeof(xfers));
-   158		xfers.tx_buf = ts->xfer_buf;
-   159		xfers.rx_buf = ts->xfer_buf;
-   160		xfers.len = GOODIX_SPI_READ_PREFIX_LEN + len;
-   161		spi_message_add_tail(&xfers, &spi_msg);
-   162	
-   163		error = spi_sync(spi, &spi_msg);
-   164		if (error)
-   165			dev_err(ts->dev, "spi transfer error: %d", error);
-   166		else
-   167			memcpy(data, ts->xfer_buf + GOODIX_SPI_READ_PREFIX_LEN, len);
-   168	
-   169		return error;
-   170	}
-   171	
-
+base-commit: 934c29999b57b835d65442da6f741d5e27f3b584
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
