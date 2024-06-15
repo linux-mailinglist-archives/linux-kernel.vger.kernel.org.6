@@ -1,126 +1,161 @@
-Return-Path: <linux-kernel+bounces-215810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE03909741
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:29:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB8C0909742
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 11:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50FE01F222CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:29:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35401C21885
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C4B28DD5;
-	Sat, 15 Jun 2024 09:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C090241E7;
+	Sat, 15 Jun 2024 09:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aeRqYHqd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfBFLmRb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F10208D1;
-	Sat, 15 Jun 2024 09:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9769F1BC20
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 09:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718443764; cv=none; b=rceUifBqq+4QKLKwU1xIvl6nkWCNFJ2zpcpQct88iydO+2wgorPByCBEO/cqKfXMQ1JXr/0UBqt51RGQnXxTv2Ocb1stZEKwfVqao6KRRnNjcU/9HU7A+RtuCgWR5MwWaXm5y8UsY78CdB6Ry9ORozHuDcTWG8wmrN5/EZoGKng=
+	t=1718443995; cv=none; b=SF3mm+Pqq+/2A76JcnbeWx91FHlITj6rTqdO55RQVD2X5QHnCgDClHQO1TcRsMdBncLouuaIH8I5NrG/7dwdwtSsDD4yilr9j5OVUakSvpQ3SpdJ4FOq2qfMV+ShaMguMA96rZ/10osK6jBzSEgEwkfBmBvc3cdBaK1fUVX+Ntg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718443764; c=relaxed/simple;
-	bh=dODNvqGMI75Evnd4E0dnnJCUYrocpv9kYFTDYSbSQuE=;
+	s=arc-20240116; t=1718443995; c=relaxed/simple;
+	bh=bc/4Tso4iRzwTk7+zSbemISLUV6nGZBGzfAmqNVY59g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qy593LslwoLNe2tIaprs+4d75eqP3f8C36N8rR16kJ0RsFdAnF668Tt0EXGWNm7drExAOlQhByReMi0+xbt65u3bENXss2syBhFgmS77gK4jmDiBwAJdV9qPA6t8IujXUUijKmDKS1k5ai8ZbEITq87osUd7+XK9QmX49Jd7nq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aeRqYHqd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBBD1C4AF48;
-	Sat, 15 Jun 2024 09:29:23 +0000 (UTC)
+	 To:Cc:Content-Type; b=l++u7OdGoZr9Gw7KVQPzQyYDOEKcrq1UjnvpfxJ6WvYLFb2B804Ck14dLk6XgdiFxEfR7Wva1OeOnKf8TOyoASjQqrGCfvxE5y8sCU8cFgG6Uh9hMttFjSyldiGScOeMfgnhxE8/BXD6A9lbY6JvgwVUwOeQ8c5ZrodpLz/bkxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rfBFLmRb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22981C4AF1A
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 09:33:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718443763;
-	bh=dODNvqGMI75Evnd4E0dnnJCUYrocpv9kYFTDYSbSQuE=;
+	s=k20201202; t=1718443995;
+	bh=bc/4Tso4iRzwTk7+zSbemISLUV6nGZBGzfAmqNVY59g=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=aeRqYHqdKMOYYr5uE9gUJ0y7LavT08QSTNDTJpU6iX6fQQqnU23igzVCrIO3uILfX
-	 zSAtsbbMrTlXrnUcizk8XECs2HB6zNkNW07RXgsDch06RVUdeyQ292MJ5O8nA9eofd
-	 gBlMFVavRHTYlKGVcKbi6d5wkwyODhrjXvQCV7KoPw2hrZFNjatrXWb59qAVoXxvHv
-	 +Me5evZZ9XF4ZVMPu9VvWOTv2v5vrIupvfAjdzCvl/J3BxN7oagISdled2N+MQoihZ
-	 F/LKeTxDkHKvy7n3Z7yvf2bFaB6LXOnema1Rj3n4plIFxhGZIx0awl03KaaSfSF+Kj
-	 GvghNaclX4RyQ==
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57a30dbdb7fso4604690a12.3;
-        Sat, 15 Jun 2024 02:29:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWJYUxtTdXp8jnY6OXcaTuxp2SZfHWDaB6rQXF5J8zLbGA8uB7BW5i9EB7PccdA5GzKDzuURQz37ZmI3l+8quCs4ey3xEBrSqHoCam4OKD7iSjr+gHMHxocjGwnqb2yDaBbNGRJMDu+Sqde+5M/O5MHjYehse6KHkuHKm5efpObyw==
-X-Gm-Message-State: AOJu0YwqdmjFW0hlC+A6xC6BdUYBphXZnYW/Do/gkLmsUxpMPFGVYIvi
-	rfMapG/7WwNpzHBDNe0u/i7Ve2zlJS+H6/W2kmHHOPreGTNKM/aReejRACOYj9Bs2pLYnw0FBN4
-	UOQl8Y6nyvKDuaOGSpfyAHEeqrbU=
-X-Google-Smtp-Source: AGHT+IHb3G+qRGiTMYlQImkmM4nIpoBEshVh7kypolNAztY7wSkdQFcVgkGCm+LuUW1yirD4I1SEJrEX2B5QuHcIQY0=
-X-Received: by 2002:a17:906:6a02:b0:a69:67e3:57f6 with SMTP id
- a640c23a62f3a-a6f60cefd5cmr441644266b.5.1718443762325; Sat, 15 Jun 2024
- 02:29:22 -0700 (PDT)
+	b=rfBFLmRbcYnoj+61ZEMp+Z5GwifgAx7DGspwyRk9vBKukG7kOAbVcbXSJma2MzF0Y
+	 vCQqjeIj8QbDMqSWRY7KBBhKAOMgQ75eVZlpoAUS7xa6sOSwZbXwhqfm9Z6keh58DK
+	 UXxK9j4OVXmdswAvARW20YbrSMbyKkTGFGtx0btdBD+1DziLFkmLy1vp13pfYROcb3
+	 V4bUFM6snfO1knltzXJnymxtfc7nrnThbpWgcSx7oA3nbkL+wwqWoIbjKMlw6tMqYL
+	 5eS+u9A/P+JNsKdm6SRvAcWdecTCVrphQ7ldFk0nxBXMdi+Xcr75hcjoGtz36s5jBa
+	 AQ99irCVhkwvQ==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6f09eaf420so349301366b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 02:33:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXeQsXL5BEdMMinhEndLFtxx4JydvuM3Pk906OiPoUSYivVJnULLNMPshAcXJ/mvZDdiHk46lX7W3PkxLE8UilsRe9RnN2U13NbaETg
+X-Gm-Message-State: AOJu0Yxb3szKZD3RVKi27WQ/gGhKE8sgWtrc/z9Z+G5k4jHwaicCLMpt
+	KG+YEALcbaXj68YPGTe5csPcnXGVfcL7u/UlMgkDuZIbiM5KlLrZzFoVGeYf/JpESZWqfnEvdm2
+	vCBrU4csXzOLFk9Bq9ZwSCQ6XzWM=
+X-Google-Smtp-Source: AGHT+IF5m0HmRjk9vt1VeOMxfpLqhSGVZgMyBx4nmfoGhafEDfO8XUD4p5rOnEYmsUvgaoy+e743j4lvpC7/ieTi5zw=
+X-Received: by 2002:a17:907:d303:b0:a6f:6803:57d2 with SMTP id
+ a640c23a62f3a-a6f6803596cmr268616866b.53.1718443993585; Sat, 15 Jun 2024
+ 02:33:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240511100157.2334539-1-chenhuacai@loongson.cn>
- <f92e23be-3f3f-4bc6-8711-3bcf6beb7fa2@app.fastmail.com> <CAAhV-H5kn2xPLqgop0iOyg-tc5kAYcuNo3cd+f3yCdkN=cJDug@mail.gmail.com>
- <fcdeb993-37d6-42e0-8737-3be41413f03d@app.fastmail.com> <CAAhV-H4s_utEOtFDwjPTqxnMWTVjWhmS7bEVRX+t8HK5QDA8Vg@mail.gmail.com>
- <a21a0878-021e-4990-a59d-b10f204a018b@app.fastmail.com> <CAAhV-H7OR5tkbjj-BPLStneXFr=1DUaFvvh8+a5Bk_jhCAP25Q@mail.gmail.com>
- <cdef45d36d0e71da5f0534b3783b81c82405bda3.camel@xry111.site>
-In-Reply-To: <cdef45d36d0e71da5f0534b3783b81c82405bda3.camel@xry111.site>
+References: <20240604150741.30252-1-xry111@xry111.site> <20240605054328.GA279426@thelio-3990X>
+ <b55b8cb2c52f2c3701c83353586130b8dc237ee2.camel@xry111.site>
+ <20240605062548.GF279426@thelio-3990X> <f8ef61773b0119b8573fc0fed9ad0a8b43061efd.camel@xry111.site>
+ <444ec2031ef6ca016cbfa8dfedc51bddc8529ba7.camel@xry111.site>
+ <ada035690e446909c3cdbf9a43a92def96020615.camel@xry111.site>
+ <82b7e6ea-c2cb-6364-ebe9-bff928028408@loongson.cn> <1c132209a612e2e8953f0b458fc01853120db9a9.camel@xry111.site>
+ <2bf11cd2-8449-acda-f5ad-659c38cb018e@loongson.cn> <96a2e8a80c06772b64fcbdba42e1dae2d68a53a7.camel@xry111.site>
+ <2bd6ae20-ec56-c1a2-c5dd-e8c978a376d3@loongson.cn> <329dac82e09dfc75e77ae93ebbeacdec1dc9ff7f.camel@xry111.site>
+ <CAAhV-H5Wz=U4kbX+tXt1qoCr6RaEDkzZXV7B=tgU_8o+X-NtVQ@mail.gmail.com> <a97cd0f2e2cac10253d6b5cdd0ace3db3b220535.camel@xry111.site>
+In-Reply-To: <a97cd0f2e2cac10253d6b5cdd0ace3db3b220535.camel@xry111.site>
 From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sat, 15 Jun 2024 17:29:10 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4R_HJAB0baqUgA8ucbwWNVN4sc9EV91zAk9Ch302_7zg@mail.gmail.com>
-Message-ID: <CAAhV-H4R_HJAB0baqUgA8ucbwWNVN4sc9EV91zAk9Ch302_7zg@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h
+Date: Sat, 15 Jun 2024 17:33:02 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7hhh3Jes0jMrg82+KJCa7GQZW=F9bDtktFh=eazMDX9w@mail.gmail.com>
+Message-ID: <CAAhV-H7hhh3Jes0jMrg82+KJCa7GQZW=F9bDtktFh=eazMDX9w@mail.gmail.com>
+Subject: Re: [PATCH] loongarch: Only select HAVE_OBJTOOL and allow ORC
+ unwinder if the inline assembler supports R_LARCH_{32,64}_PCREL
 To: Xi Ruoyao <xry111@xry111.site>
-Cc: Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@loongson.cn>, loongarch@lists.linux.dev, 
-	Linux-Arch <linux-arch@vger.kernel.org>, Xuefeng Li <lixuefeng@loongson.cn>, 
-	guoren <guoren@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org, 
-	loongson-kernel@lists.loongnix.cn, stable@vger.kernel.org
+Cc: Jinyang He <hejinyang@loongson.cn>, Nathan Chancellor <nathan@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Youling Tang <tangyouling@kylinos.cn>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, mengqinggang@loongson.cn, 
+	cailulu@loongson.cn, wanglei@loongson.cn, luweining@loongson.cn, 
+	Yujie Liu <yujie.liu@intel.com>, Heng Qi <hengqi@linux.alibaba.com>, 
+	Tejun Heo <tj@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 15, 2024 at 4:55=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
+On Sat, Jun 15, 2024 at 4:54=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
 e:
 >
-> On Sat, 2024-06-15 at 16:52 +0800, Huacai Chen wrote:
-> > Hi, Arnd,
+> On Sat, 2024-06-15 at 16:45 +0800, Huacai Chen wrote:
+> > Hi, Ruoyao and Jinyang,
 > >
-> > On Sun, May 12, 2024 at 3:53=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> w=
+> > On Fri, Jun 7, 2024 at 4:29=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> w=
 rote:
 > > >
-> > > On Sun, May 12, 2024, at 05:11, Huacai Chen wrote:
-> > > > On Sat, May 11, 2024 at 11:39=E2=80=AFPM Arnd Bergmann <arnd@arndb.=
-de> wrote:
-> > > > > On Sat, May 11, 2024, at 16:28, Huacai Chen wrote:
-> > > > > > On Sat, May 11, 2024 at 8:17=E2=80=AFPM Arnd Bergmann <arnd@arn=
-db.de> wrote:
-> > > > > CONFIG_COMPAT_32BIT_TIME is equally affected here. On riscv32
-> > > > > this is the only allowed configuration, while on others (arm32
-> > > > > or x86-32 userland) you can turn off COMPAT_32BIT_TIME on
-> > > > > both 32-bit kernel and on 64-bit kernels with compat mode.
-> > > > I don't know too much detail, but I think riscv32 can do something
-> > > > similar to arm32 and x86-32, or we can wait for Xuerui to improve
-> > > > seccomp. But there is no much time for loongarch because the Debian
-> > > > loong64 port is coming soon.
+> > > On Fri, 2024-06-07 at 15:14 +0800, Jinyang He wrote:
+> > > > >      Note: on RISC-V and LoongArch, the stack slot for the previo=
+us frame
+> > > > >      pointer is stored at fp[-2] instead of fp[0]. See [Consider
+> > > > >      standardising which stack slot fp points
+> > > > >      to](https://github.com/riscv-non-isa/riscv-elf-psabi-doc/iss=
+ues/18)
+> > > > >      for the RISC-V discussion.
+> > > >
+> > > > In most cases the $fp is saved at cfa-16. But for va args, somethin=
+g
+> > > > becomes different at LoongArch (I do not know the case of riscv), t=
+he
+> > > > $fp isn't saved at cfa-16. (e.g. printk?)
 > > >
-> > > What I meant is that the other architectures only work by
-> > > accident if COMPAT_32BIT_TIME is enabled and statx() gets
-> > > blocked, but then they truncate the timestamps to the tim32
-> > > range, which is not acceptable behavior. Actually mips64 is
-> > > in the same situation because it also only supports 32-bit
-> > > timestamps in newstatat(), despite being a 64-bit
-> > > architecture with a 64-bit time_t in all other syscalls.
-> > We can only wait for the seccomp side to be fixed now? Or we can get
-> > this patch upstream for LoongArch64 at the moment, and wait for
-> > seccomp to fix RISCV32 (and LoongArch32) in future?
+> > > Oops indeed.  Even with a very simple case:
+> > >
+> > > int sum(int a, int b) {
+> > >         return a + b;
+> > > }
+> > >
+> > > with -fno-omit-frame-pointer we get:
+> > >
+> > > sum:
+> > >         addi.d  $r3,$r3,-16
+> > >         st.d    $r22,$r3,8
+> > >         addi.d  $r22,$r3,16
+> > >         ld.d    $r22,$r3,8
+> > >         add.w   $r4,$r4,$r5
+> > >         addi.d  $r3,$r3,16
+> > >         jr      $r1
+> > >
+> > > So for leaf functions (where we don't save $ra) $fp is saved at cfa-8=
+.
+> > >
+> > > > I feel that the update_cfi_state should be arch specific. I believe
+> > > > that some logic can be reused, but each arch may have its own logic=
+.
+> > >
+> > > I agree it now.
+> > What is the conclusion about the clang part now? And for the original
+> > -mno-thin-add-sub problem, do you have some way to fix it in the root?
+> > I think we needn't rush, there are some weeks before 6.10 released.
 >
-> I'm wondering why not just introduce a new syscall or extend statx with
-> a new flag, as we've discussed many times.  They have their own
-> disadvantages but better than this, IMO.
-We should move things forward, in any way. :)
+> To me for now we should just make OBJTOOL and ORC depend on BROKEN and
+> backport to stable...
+But this patch allows clang to build objtool, which seems broken, too.
+
+>
+> Even if we can fix both the -mno-thin-add-sub problem and the frame
+> pointer problem in these weeks, they'll be some nontrivial large change
+> and improper to backport.  Thus we have to admit objtool doesn't really
+> work for old releases and mark it broken.
+I don't like to disable objtool, unless there is no better solution.
+And it seems there has already been some "large fix" in objtool's
+history.
 
 Huacai
 
 >
+>
 > --
 > Xi Ruoyao <xry111@xry111.site>
 > School of Aerospace Science and Technology, Xidian University
->
 
