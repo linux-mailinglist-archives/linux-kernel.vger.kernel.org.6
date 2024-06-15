@@ -1,100 +1,226 @@
-Return-Path: <linux-kernel+bounces-216013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 453A99099EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 22:49:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F0219099EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 22:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE97D1F224B0
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 20:49:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D57C283683
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 20:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7139061FE3;
-	Sat, 15 Jun 2024 20:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F0461FEE;
+	Sat, 15 Jun 2024 20:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJlkwg3L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dHXyegPX"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE643F9CC;
-	Sat, 15 Jun 2024 20:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8875079F5;
+	Sat, 15 Jun 2024 20:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718484567; cv=none; b=V0KpzgUV7CMsY43SDZ633TCcWexvsxO2C0LNGFh54bhFHcnjuvZf1QdKEtVZ6c397FQN0wISqgTKisiJcWDx3s6Pbu+EfVj6SLgdfw2KY9mG3H2xokgcebkVAg98PycNhKh063j6K0EpiP+2BMnva3mEU5cUnYo1H/xpAWSSwoQ=
+	t=1718484686; cv=none; b=i998Jf1X+ku7kOTVqJywJ5rEdCewF7NU9t7pL+1msnKttilIkKK6vKwtDQeLAH7hSASL6P0f1oPhQ4plA1CNHRUMpwuTlR4OpFFUKpqIGQjhyvZUe3UStUzybz1+f5yUkIrLhgddo/jYCiOOIdZ3oqEZ4A8BoMmNf1uLPE4AjzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718484567; c=relaxed/simple;
-	bh=+lLsRhJQa0csmNsBtDsKvLrgB/ujeFvdmKUbmQmBOcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XY6EKaZLRmqD1Qe1wl90xlz1gjTGGgupDUcbJBzzsbUfIi2CuNzGk4+SKOoEeX+gkGJcArfg7e1px2C8MZoBdJ/hFz2pNYLwFsebKnAp3mq+TOIFz1AIW+XlWm9oIxxmYXuFWjm+RF00jfyEOvhn9+0uR6eqiWh/vEAAQq7BqEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NJlkwg3L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC47C116B1;
-	Sat, 15 Jun 2024 20:49:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718484567;
-	bh=+lLsRhJQa0csmNsBtDsKvLrgB/ujeFvdmKUbmQmBOcA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NJlkwg3LVxgIncwHXXYm4NAMXtUw+aA1yrPGbQPFnFdSI6VIew6zLP1D2N2L5PJ91
-	 V3IL0H/+J/NYomtn88oGx4lGQZ/QuCMciZKd9YSrgVDm4wdLjgieoi6XTsS8P5tOxI
-	 31NsnmZx8yhsia7/Q+saRZU2Csdj0O8In2BMyBVtGgcOmTU4uHDUl1zrP9gQOtlFol
-	 ffLHTbAtjPW3D9QJ8yOV1uLCFNQ11W5XnwrsI+5+SiGrfWiqeg5v53Vsr3zoYgO7+0
-	 UuyFpEC6i3KpIooIQjei2fT4VHS8zJMF2OMHhdB48J6eoTvRZafzbrtSw65N/UeNvq
-	 xnggH8acimv0w==
-Date: Sat, 15 Jun 2024 22:49:23 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, 
-	Easwar Hariharan <eahariha@linux.microsoft.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] docs: i2c: summary: document 'local' and 'remote'
- targets
-Message-ID: <4zxr4rlqnjqbqh3oxmd2ufqi6uk4pxa3tniuya5pgjtqi6tswc@utq4r2zt6z6b>
-References: <20240614081239.7128-8-wsa+renesas@sang-engineering.com>
- <20240614081239.7128-13-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1718484686; c=relaxed/simple;
+	bh=MllfFT4mgPDkM6ZAysKsVRs3TNoxQ1YKm9CiWvzX8IM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A5fZWrbRhpaub/NiE7YHTPxBBpcEkb4RkFIEPSw1Kfa3oA/EuhY8BV/hC1GofXbhv4nRGMDGdofDw8I27rGb5lGUWpPLz4OZODsEPBYgWBXMsdhSgy1vLji5DPfdM3PrI+Mig3XYVc9CxanGlRvaJubdMNXUOUFnt33j6Z9jstI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dHXyegPX; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45FKSxa7011609;
+	Sat, 15 Jun 2024 20:51:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:reply-to:in-reply-to:content-type:content-transfer-encoding; s=
+	pp1; bh=ptuXxLf/BO+7rIpZKYNVU6AcIoSgu4Qlmu4JukdaCTE=; b=dHXyegPX
+	XO9petkoFJ1LJJz/daBI+ert+oNx658BFrNlFTN0KyFqeL78Sw9jSFW4SqRDER5N
+	jkQcOENjVZL0uC1VrJCxsZq358lx+ytfC6pw1QQXDVVrMAi+MfwRrA3CXvpZqPrr
+	yra5ajNS0GFh+yXBpSFpgSyp1YGB19LV5oizm4TLTKWdxzpLPtzU1sdMoVoC59Kg
+	8DFUXrAyEWyjKXguCK+kcRp4XmH87wNuHqiEzl6N7pVg1KAtkfnSja4w7ty/1z/J
+	S4EoNGBx5SQnmZtNuXggNKxWrbvVIS6iWiDl6oLeZoU0OYj2ELQvtYYjyEEtbjy/
+	cuHX0J04KdmrFA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ysj15r13d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Jun 2024 20:51:13 +0000 (GMT)
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45FKpCKQ012339;
+	Sat, 15 Jun 2024 20:51:12 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ysj15r13b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Jun 2024 20:51:12 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45FKB9vW003905;
+	Sat, 15 Jun 2024 20:51:12 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yn2mqu77e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Jun 2024 20:51:12 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45FKp9KF42861042
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 15 Jun 2024 20:51:11 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2688D58054;
+	Sat, 15 Jun 2024 20:51:09 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 17E7C58045;
+	Sat, 15 Jun 2024 20:51:03 +0000 (GMT)
+Received: from [9.43.66.127] (unknown [9.43.66.127])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Sat, 15 Jun 2024 20:51:02 +0000 (GMT)
+Message-ID: <1bb99f6f-532f-47cb-963c-c5c0262e383c@linux.ibm.com>
+Date: Sun, 16 Jun 2024 02:20:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614081239.7128-13-wsa+renesas@sang-engineering.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf: Timehist account sch delay for scheduled out
+ running
+To: Fernand Sieber <sieberf@amazon.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <20240613185906.31082-1-sieberf@amazon.com>
+Content-Language: en-US
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Reply-To: 20240613185906.31082-1-sieberf@amazon.com
+In-Reply-To: <20240613185906.31082-1-sieberf@amazon.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: LrGBZKLrLMXDhACCjYG8xCRUZy_xgdLp
+X-Proofpoint-ORIG-GUID: NhlEEo5okCH63B_qU0OwxUDmaIFvTEDu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-15_14,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 mlxscore=0 impostorscore=0 bulkscore=0 phishscore=0
+ spamscore=0 priorityscore=1501 mlxlogscore=999 adultscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406150155
 
-Hi Wolfram,
+Hi Fernand,
 
-...
-
-> -A **target** chip is a node that responds to communications when addressed
-> -by the controller. In Linux it is called a **client**. Client drivers are kept
-> -in a directory specific to the feature they provide, for example
-> -``drivers/media/gpio/`` for GPIO expanders and ``drivers/media/i2c/`` for
-> +A **target** chip is a node that responds to communications when addressed by a
-> +controller. In the Linux kernel implementation it is called a **client**. While
-
-I am not a big fan of the use of the word client. It's not used
-anywhere in the documentation and it's too generic as a name for
-giving it a specific meaning.
-
-I've seen already some confusion amongst reviewers and
-maintainers when Easwar sent the patch in drm.
-
-If it depends on me, I would stick to the only controller/target
-and render obsolet the use of the word "client" in the i2c
-context.
-
-Andi
-
-> +targets are usually separate external chips, Linux can also act as a target
-> +(needs hardware support) and respond to another controller on the bus. This is
-> +then called a **local target**. In contrast, an external chip is called a
-> +**remote target**.
-> +
-> +Target drivers are kept in a directory specific to the feature they provide,
-> +for example ``drivers/gpio/`` for GPIO expanders and ``drivers/media/i2c/`` for
->  video-related chips.
->  
->  For the example configuration in figure, you will need a driver for your
-> -- 
-> 2.43.0
+On 14/06/24 00:29, Fernand Sieber wrote:
+> When using perf timehist, sch delay is only computed for a waking task,
+> not for a pre empted task. This patches addresses this problem.
 > 
+> Example of `perf timehist` report before the patch for `stress` task
+> competing with each other.
+> 
+> First column is wait time, second column sch delay, third column
+> runtime.
+> ```
+>        1.492060 [0000]  s    stress[81]                          1.999      0.000      2.000      R  next: stress[83]
+>        1.494060 [0000]  s    stress[83]                          2.000      0.000      2.000      R  next: stress[81]
+>        1.496060 [0000]  s    stress[81]                          2.000      0.000      2.000      R  next: stress[83]
+>        1.498060 [0000]  s    stress[83]                          2.000      0.000      1.999      R  next: stress[81]
+> ```
+> 
+> After the patch, it looks like this (note that all wait time is now sch
+> delay instead of zero):
+> ```
+> 1.492060 [0000]  s    stress[81]                          1.999      1.999      2.000      R  next: stress[83]
+> 1.494060 [0000]  s    stress[83]                          2.000      2.000      2.000      R  next: stress[81]
+> 1.496060 [0000]  s    stress[81]                          2.000      2.000      2.000      R  next: stress[83]
+> 1.498060 [0000]  s    stress[83]                          2.000      2.000      1.999      R  next: stress[81]
+> ```
+> 
+> In timehist:
+> * wait time represents the duration waiting for any system resource
+> * sch delay represents the duration waiting for cpu system resources
+
+According to the documentation(perf-sched man page), scheduling delay is defined
+as the "time between wakeup and actually running."
+
+When a task switches out, if its state is 'R' , then the task would switch-in
+again without waking and wakeup in between.Therefore, that duration is not
+currently calculated as scheduling delay, which aligns with the man page
+description.
+
+I agree that the time a task is preempted involuntarily and is waiting to run
+could be considered part of the scheduling delay. The definition is somewhat
+vague in this regard.
+
+If you decide to proceed with this change, please ensure the man page is updated
+accordingly.
+
+Regarding wait time, the man page defines it as the "time between sched-out and
+the next sched-in events for the task." This measurement does not depend on the
+task state and includes time spent on a voluntary switch.
+
+Thanks and Regards
+Madadi Vineeth Reddy
+
+> 
+> This is based on perf comments (dt_wait = wait time, dt_delay = sch
+> delay):
+> ```
+> /*
+>  * Explanation of delta-time stats:
+>  *
+>  *            t = time of current schedule out event
+>  *        tprev = time of previous sched out event
+>  *                also time of schedule-in event for current task
+>  *    last_time = time of last sched change event for current task
+>  *                (i.e, time process was last scheduled out)
+>  * ready_to_run = time of wakeup for current task
+>  *
+>  * -----|------------|------------|------------|------
+>  *    last         ready        tprev          t
+>  *    time         to run
+>  *
+>  *      |-------- dt_wait --------|
+>  *                   |- dt_delay -|-- dt_run --|
+>  *
+>  *   dt_run = run time of current task
+>  *  dt_wait = time between last schedule out event for task and tprev
+>  *            represents time spent off the cpu
+>  * dt_delay = time between wakeup and schedule-in of task
+>  */
+>  ```
+> 
+> The problem with the current logic is that last time is only set when
+> waking a task. Therefore it is not set for a pre empted task. To fix
+> this, we set last time to the current sample time if a scheduled out
+> task (on the switch tracepoint) is in state running.
+> 
+> Signed-off-by: Fernand Sieber <sieberf@amazon.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> ---
+>  tools/perf/builtin-sched.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+> index 5977c49ae2c7..7422c930abaf 100644
+> --- a/tools/perf/builtin-sched.c
+> +++ b/tools/perf/builtin-sched.c
+> @@ -2659,7 +2659,10 @@ static int timehist_sched_change_event(struct perf_tool *tool,
+>  		tr->last_state = state;
+>  
+>  		/* sched out event for task so reset ready to run time */
+> -		tr->ready_to_run = 0;
+> +		if (state == 'R')
+> +			tr->ready_to_run = t;
+> +		else
+> +			tr->ready_to_run = 0;
+>  	}
+>  
+>  	evsel__save_time(evsel, sample->time, sample->cpu);
+
 
