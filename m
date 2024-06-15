@@ -1,111 +1,95 @@
-Return-Path: <linux-kernel+bounces-215684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 135FF9095D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 05:16:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0755A9095D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 05:24:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F62FB228CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:16:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28BD3B23019
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1B4CA6B;
-	Sat, 15 Jun 2024 03:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E264BE65;
+	Sat, 15 Jun 2024 03:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fufHqMUN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V0JoYiM1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B501B10F7;
-	Sat, 15 Jun 2024 03:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF038C1F
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 03:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718421359; cv=none; b=h3juUpVMXVUld23QvBoWzzohg1+NlxmZaszg084lTVzXR1jEZedRC2DsUFHy9L+Jwr/GCfPZUeRwZY/ht0q+wMq2xoEzVj3KZ9mbb7GFlhhy6coqZ/QtA6p+MtjXKDbAne00ZuUIgZdeOnx2TWnT3NQYkSZG6wkiPa3Q1UfYJhQ=
+	t=1718421869; cv=none; b=YjmaP4QWvDjjqWp/JinHYNI1EylY7wbR8AfLxvWNNVY7fGCJy5xZHR6oHbFYKd2BtYzl8TfmskY7d059RF7yAcwfT3OMUZb9++vJMl8gEccukZ6X0Ae/NQuBn7i00Utqn1TcTn97NECSy20VJt8eIMydxwWD9SkLZR02okDedgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718421359; c=relaxed/simple;
-	bh=YLAQKIAnX3QMVP03+hq3W1LYE+KdzSFfVIBax3SmWnw=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=ZjAKPr8y3cEfCZrnRJNKiSadFYh0fe4dowIKNMsyjIo84tmr2r0LcyDovZKWX6nXFlXbtbILTLhpekiqrGvP6QAhg9c6IsfI8wXz+Zit81xWl2rJpRHCELD5uTvUzjJ8fbQR4ngasCBJOv6FH9fDKVLnbKYO9iKc2W8/L94jN5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fufHqMUN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2E22C2BD10;
-	Sat, 15 Jun 2024 03:15:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718421359;
-	bh=YLAQKIAnX3QMVP03+hq3W1LYE+KdzSFfVIBax3SmWnw=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=fufHqMUNUJVqYWeGSnEY3L2GyzfFt9r1rIGoyLTMphbZMcfWeBW2zaOKKF2McoWwt
-	 ic/QLRbSIwkLviUB85ZJyevRAK2RiWI6t3CKPO1EbhcDJYvPPs5JeZOcSlCoVJFGqJ
-	 MCZxZkoFNsc2qrawuTFAKzWafMjcBvB6oy6hFvKDKmKeHNb4DlQtJZTdqZ3JD670LC
-	 EjuIpuRmx+o9j7IdolP7nLbcKyBF4z/OloteTC0yYA7gqTQjw5YfNdNa6vn7jhP6CK
-	 WJoAVn1q5nbwqz/I6T0tz9jaerJVtrOn5+0S46wDGtACdgErB5yYtrvK3qj3r+1JQD
-	 ez6U/NLONQ7BA==
-Date: Fri, 14 Jun 2024 21:15:58 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1718421869; c=relaxed/simple;
+	bh=ZhDyvZjrKNUgqfOnQHg80XwyNyd57tVs1xZ403nIE54=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qrlz8+qEKfpsbOR4Mlq7txW3xED07jdk7VDsXMBAo3lA3UO6WD0XhlYvmH0GwXuAUdcRMNwnDYMAP0Ddk+6u4RQXtbkhy4UJFdorOnuMJNHlgPi/W73yMuDw3S/18+cpnq/RhUX2C3sUuBkoPio0dzcFrCkUAO5gPFUpbopqNaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V0JoYiM1; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718421868; x=1749957868;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ZhDyvZjrKNUgqfOnQHg80XwyNyd57tVs1xZ403nIE54=;
+  b=V0JoYiM1OhG70lcuK646x4a089n1k4laMB4dpPU8YMy/TKhOSt2kdMZT
+   Q+jkDvtK/p5RfSpknn4iqsOOanN9sw0XxZXxEQet1bvvSMZyWk/VRFhwp
+   n+Rrp3UcCL50mHQVhqiqVu6hxsRk+gInPbQPVljjaNGvcj9u+gU/vv7Ye
+   PbWmazOz1MQyjZxM4Qa6aloWIknih13ExbIplEJ36jC+tC3Xa4ISLzQl5
+   iHGxjTXbN8yjEiQ0oOLvPd1gC/OZkjW3x7rFXO8jarlsuGa6fboBJ/f1G
+   UPh3Gj9zysgkSgRWDQpJ81+dTLeYWNzqa+ISNgUssvXyBR5ocsv2nAZro
+   Q==;
+X-CSE-ConnectionGUID: wUqJ0nSmRfqJahjmHYpd9Q==
+X-CSE-MsgGUID: Q+xhtyH8T5aUnzrrmmbmqg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="19184014"
+X-IronPort-AV: E=Sophos;i="6.08,239,1712646000"; 
+   d="scan'208";a="19184014"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 20:24:27 -0700
+X-CSE-ConnectionGUID: 92QNrtsCSg2Uvzp7bb7Aqg==
+X-CSE-MsgGUID: Wykncz7CSsKgxePnXrnqEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,239,1712646000"; 
+   d="scan'208";a="78167097"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by orviesa001.jf.intel.com with ESMTP; 14 Jun 2024 20:24:23 -0700
+Message-ID: <fb252e35-46e1-48ba-b236-a3296922ffdb@linux.intel.com>
+Date: Sat, 15 Jun 2024 11:22:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Andy Yan <andy.yan@rock-chips.com>, 
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
- Diederik de Haas <didi.debian@cknow.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-kernel@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, 
- linux-staging@lists.linux.dev, Alexey Charkov <alchark@gmail.com>, 
- linux-media@vger.kernel.org, Dragan Simic <dsimic@manjaro.org>
-In-Reply-To: <20240615015734.1612108-3-detlev.casanova@collabora.com>
-References: <20240615015734.1612108-1-detlev.casanova@collabora.com>
- <20240615015734.1612108-3-detlev.casanova@collabora.com>
-Message-Id: <171842135800.2249604.16144745633066075384.robh@kernel.org>
-Subject: Re: [PATCH 2/3] media: dt-bindings: rockchip: Document RK3588
- Video Decoder 2 bindings
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com
+Subject: Re: [RFC PATCH v2 08/10] iommu/riscv: support nested iommu for
+ flushing cache
+To: Zong Li <zong.li@sifive.com>, joro@8bytes.org, will@kernel.org,
+ robin.murphy@arm.com, tjeznach@rivosinc.com, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, jgg@ziepe.ca,
+ kevin.tian@intel.com, linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ linux-riscv@lists.infradead.org
+References: <20240614142156.29420-1-zong.li@sifive.com>
+ <20240614142156.29420-9-zong.li@sifive.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240614142156.29420-9-zong.li@sifive.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 6/14/24 10:21 PM, Zong Li wrote:
+> This patch implements cache_invalidate_user operation for the userspace
+> to flush the hardware caches for a nested domain through iommufd.
 
-On Fri, 14 Jun 2024 21:56:28 -0400, Detlev Casanova wrote:
-> Document the Rockchip RK3588 Video Decoder 2 bindings.
-> 
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> ---
->  .../bindings/media/rockchip,vdec2.yaml        | 80 +++++++++++++++++++
->  1 file changed, 80 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/rockchip,vdec2.yaml
-> 
+$ grep "This patch" Documentation/process/submitting-patches.rst
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Same to other commit messages.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/rockchip,vdec2.example.dtb: video-codec@fdc38100: reg: [[0, 4257448192], [0, 1280]] is too long
-	from schema $id: http://devicetree.org/schemas/media/rockchip,vdec2.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/rockchip,vdec2.example.dtb: video-codec@fdc38100: clock-names:1: 'ahb' was expected
-	from schema $id: http://devicetree.org/schemas/media/rockchip,vdec2.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240615015734.1612108-3-detlev.casanova@collabora.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Best regards,
+baolu
 
