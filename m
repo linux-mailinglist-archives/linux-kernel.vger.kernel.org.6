@@ -1,125 +1,111 @@
-Return-Path: <linux-kernel+bounces-215836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C6F09097B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:41:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9948E9097B7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5723D28432A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:41:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AB441F2253B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92945381C2;
-	Sat, 15 Jun 2024 10:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A113A8C0;
+	Sat, 15 Jun 2024 10:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hbaUoTea"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="CKc57iEL"
+Received: from out203-205-251-60.mail.qq.com (out203-205-251-60.mail.qq.com [203.205.251.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C713D3A8D2;
-	Sat, 15 Jun 2024 10:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35C42E636
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 10:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.251.60
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718448057; cv=none; b=REwBjMzAroqZSD+9XmeMhOuu5VUm5EGp1O1F2msqSE6j4erVUcwj8xAhX0WpDg8GCkp1axaGnwngGmxPdcNziKu3YJnepSL1QVlnQ5JzCg1Jsv/x1+/PDNlDCx3J2qqAIkjqkzN0PswxrTbFZLhNdGOSxAxr2FAV7WG9x04FPeQ=
+	t=1718448509; cv=none; b=u1nhbGfcDUFZYkaGMYTcqO5pHvDwlObE1Z7NDhaTKBBLgkDk59JvissmGBj0RuizaJGKBAoNxd/OBNHJtmUUpmZO7+5GhhUh8DwPDIi+ptFvsSom55w6bSgCk+Vly5HxOq2huzsvFwBeArvTK6Cvj9rskLcfM52AX4HLjXf71t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718448057; c=relaxed/simple;
-	bh=5/hYyJIIEoZXTpXMYw2yQWyZ2erfhzbU4WNhDN09KFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KKDjKcSWQjIRJyifQNruQnLfbsKHbwllMAOTzWkRM7foPE3ObhQmM+HqRFCLx09gb1LuN5mdmEt4qS1xSuTY58IoLruu4MKvfZfYrBusHjr5SDf9xPx3FjPUMseKVvdfdExml3pCqUpcrj6au7iKysw+vZJiA8yu11WAwhgO4z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hbaUoTea; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31C61C116B1;
-	Sat, 15 Jun 2024 10:40:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718448057;
-	bh=5/hYyJIIEoZXTpXMYw2yQWyZ2erfhzbU4WNhDN09KFs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hbaUoTeajKyPRJhHUWwdL01CrSb9aL4oZ+w7KoHSQNiqkT8FaJpvRdxLlhdLnmd52
-	 jQl38J5YLPJos+vd8qTq/mrl6+pK6i7a6A13ToDdrseOiZ7s9sLddbGmtcCFjz5tqw
-	 5IGF93OuZk/Y101GWwwjBukafhs3nghzcJ8DGA1OLMJEjjbpuuuODCmSybDeSzPGgm
-	 Lrwsf23rQC5Qwt570mrMz+pxpe+KwDi/KRX/kMpcbqWxmMtX6I1bDqNopSyizGA1zZ
-	 0m7lLg2qp+a9fHLlTiqddrozH1mRByHCHZNTB9kGPncnIeGW7JVJodnv8+u3UaXhsk
-	 4Bt5d1hP1QU0Q==
-Date: Sat, 15 Jun 2024 11:40:50 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Trevor Gamblin <tgamblin@baylibre.com>
-Cc: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: adi-axi-adc: improve probe() error messaging
-Message-ID: <20240615114050.46d2b0a7@jic23-huawei>
-In-Reply-To: <964821b3-dcbb-42b8-9062-2366a4d30a76@baylibre.com>
-References: <20240613163407.2147884-1-tgamblin@baylibre.com>
-	<57d4659a5abb63d7c085865059b9d71c40371edd.camel@gmail.com>
-	<964821b3-dcbb-42b8-9062-2366a4d30a76@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718448509; c=relaxed/simple;
+	bh=VwTrliKTbTH410swrzcifej76Gp95GBHlCMjmz4+YA8=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ENjU5n6MCBB5J9/zikhrg9a0g4K3jQMNGT00JQaZmYfWPsATIJ5mYReFHP6M6Q3GvH9IEObpgoX2Skoh4S1DQvBvrYqDoisXQQWLNR/z+CS7NTziu/i6bJnWlDXcQhfow4bZjEiJRBCoEMZ7PUc95MZR/FlyaYqCvU+Ux03kWNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=CKc57iEL; arc=none smtp.client-ip=203.205.251.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1718448203; bh=BIU2wRIRshkfBMc6apYvjP02EdDFfqfnispnkRn2itA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=CKc57iELuTMjH64aUB2k4plj1eOdJ6QF7hcsMd5n65zQ/bzwWvVHvHUeC/p5DG2bz
+	 URxmStrzeGMb9PWb4SnOjKAABGNwlr5aLPffHXp9WS0hbdwLgoJAFT3SSOUohm+uu9
+	 RGod0JHbt7KK7cBHFkHeO/OgsYH29fOdYfjce1v8=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id AD5B6A39; Sat, 15 Jun 2024 18:43:21 +0800
+X-QQ-mid: xmsmtpt1718448201twuufkfrz
+Message-ID: <tencent_A2AE25998DF812235DBE5DFD99584FD18D07@qq.com>
+X-QQ-XMAILINFO: MmpliBmRb3iCIsCnlOnwJTS0MgY3pV92z1s8rBKkLX3Lsnvb/s90DE9zGRXhvx
+	 Q4r/poZEAM+A9DkGXbtIx2oHyF+BIXJukDqBaABikLj1NgZzmtGTk8cOYJ1TLTh5OdN80EioI8MZ
+	 OnS8g0foqzn18HR+ozRLsEba654ijNRrj40LMwFald8CzgAQadZ4CM9fOQUBKW8Xe3CBJvZeQP4R
+	 3Q/sUeAl/gUBvSQsDcbwsUbVROGPvG9Qyt/2SON5s4FoirBh40w9G7u4mXlxKH7tONv50S5z72NJ
+	 CFSnKebJjMpz1XlsNZpKw6AiFb+uffsD3fjvD8xiRxRf0afWHQTkbk3q8+iZvCu3wtsv/ckkHsNB
+	 BYplWRN4mAjyhbpAMejXnJAknF5sF5y6QDpAjPVo1kyiFlfHnoGWqIpPREiv5H1E2kixMdkJt+go
+	 /CmSjozLjlJTRyMYar2l3L85HIc3Zhb3KHqNSrs5PoOkU5i/0KNeil7UsqlgVJCWxSzfx497wr+V
+	 HAuW4wjahh8cViCpRkRQdcMjJ1XJaAM6m+PgB73IwYigEeGqFvHQRMcfxoh6fjRW578EM557Om14
+	 /GtkkhOgxNlXpI2xqOGk5Lt9pzr15G7O3vGCbRSjYxVK4Z8XXGs9sX8ZaMDUdbWn4Pv7D/u7tsEo
+	 f5qJOpzDCiWut9Womq6IhU19X3yU2yV6uo9Yc9QibxFzIVfQsB66qmDxNX4GQsnUYNNnALsD10aW
+	 wku7wWUZWS1Ir3MoXKmnhVX0pZoZdnX/EYr57RY8RAK9ObUHUspzB/aY85isxDPgRxdWplDluOHc
+	 5tUr+SgQEMByFOjbg/4FCEyA//aVryOVsf180bYQ6xDgkpH43zpnwfeyaLYEXuece9W68ca+Qik6
+	 MjD6Y6ATSKTxE1pWfPOQYILoVHx7ZDax+2XNfrlwupzBYfPwBlxTc0CgNfCcdqCKPDycrqrml6
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+4366624c0b5aac4906cf@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] WARNING in bch2_fs_read_write_early
+Date: Sat, 15 Jun 2024 18:43:22 +0800
+X-OQ-MSGID: <20240615104321.3870023-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <00000000000053e574061ad89521@google.com>
+References: <00000000000053e574061ad89521@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, 14 Jun 2024 15:18:12 -0400
-Trevor Gamblin <tgamblin@baylibre.com> wrote:
+please test no write lock in bch2_fs_read_write_early
 
-> On 2024-06-14 5:11 a.m., Nuno S=C3=A1 wrote:
-> > On Thu, 2024-06-13 at 12:34 -0400, Trevor Gamblin wrote: =20
-> >> The current error handling for calls such as devm_clk_get_enabled() in
-> >> the adi-axi-adc probe() function means that, if a property such as
-> >> 'clocks' (for example) is not present in the devicetree when booting a
-> >> kernel with the driver enabled, the resulting error message will be
-> >> vague, e.g.:
-> >> =20
-> >>> adi_axi_adc 44a00000.backend: probe with driver adi_axi_adc failed wi=
-th error -2 =20
-> >> Change the devm_clk_get_enabled(), devm_regmap_init_mmio(), and
-> >> devm_iio_backend_register() checks to use dev_err_probe() with some
-> >> context for easier debugging.
-> >>
-> >> After the fix:
-> >> =20
-> >>> adi_axi_adc 44a00000.backend: error -ENOENT: failed to get clock
-> >>> adi_axi_adc 44a00000.backend: probe with driver adi_axi_adc failed wi=
-th error -2 =20
-> >> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
-> >> --- =20
-> > Somehow feel that in these cases the error log should come from the fun=
-ctions we're
-> > calling but bah... likely not going happen/change:
-> >
-> > Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-> >
-> > (As a suggestion, you may do similar work in the axi-dac driver) =20
->=20
-> Thanks. I'll send that early next week after a quick test on a board.
-I tweaked the commit text to say
-After the change:
-as I don't want to see this picked up by a bot for stable.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 2ccbdf43d5e7
 
-As a side note, you could have taken the opportunity to add
-struct device *dev =3D pdev->dev;
-which I think would have reduced a few line lengths without loosing
-readability.  Not important though and perhaps not even a good idea :)
-
-Applied to the togreg branch of iio.git and pushed out as testing.
-Note I plan to rebase my tree shortly to avoid some merge conflicts
-that otherwise occur.  I'll probably do that before I push out
-other than as testing.
-
-Thanks,
-
-Jonathan
-
->=20
-> Trevor
->=20
-> >
-> > - Nuno S=C3=A1
-> >
-> > =20
->=20
+diff --git a/fs/bcachefs/snapshot.c b/fs/bcachefs/snapshot.c
+index 51918acfd726..b27a4327274d 100644
+--- a/fs/bcachefs/snapshot.c
++++ b/fs/bcachefs/snapshot.c
+@@ -1566,7 +1566,9 @@ int bch2_delete_dead_snapshots(struct bch_fs *c)
+ 		return 0;
+ 
+ 	if (!test_bit(BCH_FS_started, &c->flags)) {
++		down_write(&c->state_lock);
+ 		ret = bch2_fs_read_write_early(c);
++		up_write(&c->state_lock);
+ 		bch_err_msg(c, ret, "deleting dead snapshots: error going rw");
+ 		if (ret)
+ 			return ret;
+diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
+index bbe9000260d0..cbccc0bbee76 100644
+--- a/kernel/locking/lockdep_internals.h
++++ b/kernel/locking/lockdep_internals.h
+@@ -99,9 +99,9 @@ static const unsigned long LOCKF_USED_IN_IRQ_READ =
+ #define MAX_STACK_TRACE_ENTRIES	262144UL
+ #define STACK_TRACE_HASH_SIZE	8192
+ #else
+-#define MAX_LOCKDEP_ENTRIES	(1UL << CONFIG_LOCKDEP_BITS)
++#define MAX_LOCKDEP_ENTRIES	(1UL << 19)
+ 
+-#define MAX_LOCKDEP_CHAINS_BITS	CONFIG_LOCKDEP_CHAINS_BITS
++#define MAX_LOCKDEP_CHAINS_BITS	20
+ 
+ /*
+  * Stack-trace: tightly packed array of stack backtrace
 
 
