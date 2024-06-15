@@ -1,154 +1,114 @@
-Return-Path: <linux-kernel+bounces-215798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5CA90971F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:52:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B98F90971D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 732ED1C21D26
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:52:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E8271C216AF
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DAA1CFBC;
-	Sat, 15 Jun 2024 08:52:32 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2000720326;
+	Sat, 15 Jun 2024 08:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rm7bGyvC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE322575A;
-	Sat, 15 Jun 2024 08:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574D01BDE6;
+	Sat, 15 Jun 2024 08:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718441552; cv=none; b=rjrQkllW1cTboVITBqfCSvp9ZGZijPJsHypYw5i6bFZIEzk+TreSWuRd32z6ZcUce2fiumKqo0jCnKkXjJbOjKmteW7nMeIyN8BJPfixFvwn5Uhvl5YTD0wtuZSYjEEtGyPUAdnMNgN94ruK+GcIQXXjjVoyVFnXDCv6sFN1khg=
+	t=1718441546; cv=none; b=FBCXOwN2CY9bbyB/8o4lYg/q3bM85UbItJvMT+tOp0LAbtGk8A/Tvpo1czkTfPiqnSet7lmLRNDx2fuEFuXUPGrabA0FFM4JM81oq0TwMjr3GesMhWONECV5c5CYjE2KfXPwSxwNxkhQFcUt4A2QFowJHGeXI8Mw6MmchCwqOyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718441552; c=relaxed/simple;
-	bh=swQ2Tm1tNIfEE87pE5WaaCMNbRke/wggnc6gseFfg9Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cam8YJMqoYtVbeVctmv8tfrXnao99+nFQDiMA3OU2lNtCkjMe/Lk96QrtKL5qOQrV5jfcj+AMzF38KcPxIaY9EWDJqBByGUsk1/tZ0M9p3qb0Ks/JWQlicC6dDHwsek+ObNlTgsNbxq4/bQaT4jCJ8psE1l6EYxL95zLGniBMmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W1VJZ0X0lz4f3jLL;
-	Sat, 15 Jun 2024 16:52:14 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id BD17D1A08FC;
-	Sat, 15 Jun 2024 16:52:20 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgCXaBFCVm1mxCEqPg--.28885S4;
-	Sat, 15 Jun 2024 16:52:20 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: song@kernel.org,
-	yukuai3@huawei.com
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH -next] md/raid5: fix spares errors about rcu usage
-Date: Sat, 15 Jun 2024 16:51:43 +0800
-Message-Id: <20240615085143.1648223-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1718441546; c=relaxed/simple;
+	bh=lYNgS4EOKxJx9qsKYp8TMD8ZnON5/nuFd2Lwtc4Bs38=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GU15e6KRHYL/ut1T0Jhk+Txy5xHQUVZmaFAG7MVGm6/6o6S/TUi+hS3AZvgk0zM9R5egi0qF5SZLUFJ1sym0d8f49+omqQAZsMPkTTx9nkjv6VqaS90cX3qsjGUH5mjCFg6IqECwm443A6MTU7uh53aifcmPRTbpVfLbmE/vOWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rm7bGyvC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8D9CC4AF1D;
+	Sat, 15 Jun 2024 08:52:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718441545;
+	bh=lYNgS4EOKxJx9qsKYp8TMD8ZnON5/nuFd2Lwtc4Bs38=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rm7bGyvCSP4wYWPPHXCJ5jJKdH0VKN96qUprBjDz88UYC8PVqtfg3962oYgA02/1h
+	 GMundvk1CDIq9j+WEsU9gKzSpuW9JO+HuRNnsZGOOAiBedcF+Oq0FZhfow5wmSzR6X
+	 MOLOTy52fW+m7InDGT4CUHBi1xd2xCAfhy5hdb6/cJgN4FojqoVrH84Zj5KHPNVrg8
+	 2q00b8yGw1TgMyEkeqlKgfg2bRd/GD0T1G8CrhXg6IFH0nFVSSOC0t0QCgj8YfdfZp
+	 Utxo1pjGktK0MeuOq5Upym+0kJxwymDNePsqsnxT5Y55lFJREc4PjARJH5Sar6N7j1
+	 sIgibC89Sjk4Q==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57c5c51cb89so3255844a12.2;
+        Sat, 15 Jun 2024 01:52:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUJkVjlHYvBhhg3HL43Stk23qv4CvOPtrX+ieyvJU/fVMQ1JuaBNcI4gL1/Q+0xtrBE1x6HUhpng46QG91Ez5V1Yp2RHDnxmqNBAYb64bN9fMzOKDsKLUE4TBTxhvakSezJiwHIKeeFDEEllxzIEFdqGNvqQIPrbmWXEg8CTVSfvw==
+X-Gm-Message-State: AOJu0Yzolf2jMlpFim4KB07guJX/G2eQY3Xb3gseId6pudnRdVAqtxLU
+	tVwZuM9yU+69K1loMR6xJiSUt+7jtmtNQScM1CI1/DrHdyCxBTMyQR5AAC8dkziuM/n3/c9wI/z
+	5dtSkT8USboezwoNLkbZ2k7iZ7MU=
+X-Google-Smtp-Source: AGHT+IFyPBQJTylosSuf5+MVqWLqEy0/yJ8gB4g4PxtoBOX/oelfetnVysEN8hXKg3y38a5M6OArZggzJ1FoS45HttI=
+X-Received: by 2002:a17:906:756:b0:a6f:1df1:1ef2 with SMTP id
+ a640c23a62f3a-a6f60dc517fmr376288066b.47.1718441544432; Sat, 15 Jun 2024
+ 01:52:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgCXaBFCVm1mxCEqPg--.28885S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxGw43JF1rur4rJr4UAF15XFb_yoW5XFyDpa
-	n0ya4Uua1Uur45ZFWDJayDC3Wak3WxGayxArWI939YvasYqFZ5Ja18Ja4Fvry5JFyrtay8
-	AFy5Kr4DJF18KFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF04k20xvY0x0EwIxG
-	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-	vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IY
-	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
-	xKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <20240511100157.2334539-1-chenhuacai@loongson.cn>
+ <f92e23be-3f3f-4bc6-8711-3bcf6beb7fa2@app.fastmail.com> <CAAhV-H5kn2xPLqgop0iOyg-tc5kAYcuNo3cd+f3yCdkN=cJDug@mail.gmail.com>
+ <fcdeb993-37d6-42e0-8737-3be41413f03d@app.fastmail.com> <CAAhV-H4s_utEOtFDwjPTqxnMWTVjWhmS7bEVRX+t8HK5QDA8Vg@mail.gmail.com>
+ <a21a0878-021e-4990-a59d-b10f204a018b@app.fastmail.com>
+In-Reply-To: <a21a0878-021e-4990-a59d-b10f204a018b@app.fastmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sat, 15 Jun 2024 16:52:13 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7OR5tkbjj-BPLStneXFr=1DUaFvvh8+a5Bk_jhCAP25Q@mail.gmail.com>
+Message-ID: <CAAhV-H7OR5tkbjj-BPLStneXFr=1DUaFvvh8+a5Bk_jhCAP25Q@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, loongarch@lists.linux.dev, 
+	Linux-Arch <linux-arch@vger.kernel.org>, Xuefeng Li <lixuefeng@loongson.cn>, 
+	guoren <guoren@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org, 
+	loongson-kernel@lists.loongnix.cn, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Yu Kuai <yukuai3@huawei.com>
+Hi, Arnd,
 
-As commit ad8606702f26 ("md/raid5: remove rcu protection to access rdev
-from conf") explains, rcu protection can be removed, however, there are
-three places left, there won't be any real problems.
+On Sun, May 12, 2024 at 3:53=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
+:
+>
+> On Sun, May 12, 2024, at 05:11, Huacai Chen wrote:
+> > On Sat, May 11, 2024 at 11:39=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> =
+wrote:
+> >> On Sat, May 11, 2024, at 16:28, Huacai Chen wrote:
+> >> > On Sat, May 11, 2024 at 8:17=E2=80=AFPM Arnd Bergmann <arnd@arndb.de=
+> wrote:
+> >> CONFIG_COMPAT_32BIT_TIME is equally affected here. On riscv32
+> >> this is the only allowed configuration, while on others (arm32
+> >> or x86-32 userland) you can turn off COMPAT_32BIT_TIME on
+> >> both 32-bit kernel and on 64-bit kernels with compat mode.
+> > I don't know too much detail, but I think riscv32 can do something
+> > similar to arm32 and x86-32, or we can wait for Xuerui to improve
+> > seccomp. But there is no much time for loongarch because the Debian
+> > loong64 port is coming soon.
+>
+> What I meant is that the other architectures only work by
+> accident if COMPAT_32BIT_TIME is enabled and statx() gets
+> blocked, but then they truncate the timestamps to the tim32
+> range, which is not acceptable behavior. Actually mips64 is
+> in the same situation because it also only supports 32-bit
+> timestamps in newstatat(), despite being a 64-bit
+> architecture with a 64-bit time_t in all other syscalls.
+We can only wait for the seccomp side to be fixed now? Or we can get
+this patch upstream for LoongArch64 at the moment, and wait for
+seccomp to fix RISCV32 (and LoongArch32) in future?
 
-drivers/md/raid5.c:8071:24: error: incompatible types in comparison expression (different address spaces):
-drivers/md/raid5.c:8071:24:    struct md_rdev [noderef] __rcu *
-drivers/md/raid5.c:8071:24:    struct md_rdev *
-drivers/md/raid5.c:7569:25: error: incompatible types in comparison expression (different address spaces):
-drivers/md/raid5.c:7569:25:    struct md_rdev [noderef] __rcu *
-drivers/md/raid5.c:7569:25:    struct md_rdev *
-drivers/md/raid5.c:7573:25: error: incompatible types in comparison expression (different address spaces):
-drivers/md/raid5.c:7573:25:    struct md_rdev [noderef] __rcu *
-drivers/md/raid5.c:7573:25:    struct md_rdev *
+Huacai
 
-Fixes: ad8606702f26 ("md/raid5: remove rcu protection to access rdev from conf")
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/md/raid5.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index 547fd15115cd..3827f7df6b9a 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -155,7 +155,7 @@ static int raid6_idx_to_slot(int idx, struct stripe_head *sh,
- 	return slot;
- }
- 
--static void print_raid5_conf (struct r5conf *conf);
-+static void print_raid5_conf(struct r5conf *conf);
- 
- static int stripe_operations_active(struct stripe_head *sh)
- {
-@@ -7566,11 +7566,11 @@ static struct r5conf *setup_conf(struct mddev *mddev)
- 		if (test_bit(Replacement, &rdev->flags)) {
- 			if (disk->replacement)
- 				goto abort;
--			RCU_INIT_POINTER(disk->replacement, rdev);
-+			disk->replacement = rdev;
- 		} else {
- 			if (disk->rdev)
- 				goto abort;
--			RCU_INIT_POINTER(disk->rdev, rdev);
-+			disk->rdev = rdev;
- 		}
- 
- 		if (test_bit(In_sync, &rdev->flags)) {
-@@ -8052,7 +8052,7 @@ static void raid5_status(struct seq_file *seq, struct mddev *mddev)
- 	seq_printf (seq, "]");
- }
- 
--static void print_raid5_conf (struct r5conf *conf)
-+static void print_raid5_conf(struct r5conf *conf)
- {
- 	struct md_rdev *rdev;
- 	int i;
-@@ -8066,15 +8066,13 @@ static void print_raid5_conf (struct r5conf *conf)
- 	       conf->raid_disks,
- 	       conf->raid_disks - conf->mddev->degraded);
- 
--	rcu_read_lock();
- 	for (i = 0; i < conf->raid_disks; i++) {
--		rdev = rcu_dereference(conf->disks[i].rdev);
-+		rdev = conf->disks[i].rdev;
- 		if (rdev)
- 			pr_debug(" disk %d, o:%d, dev:%pg\n",
- 			       i, !test_bit(Faulty, &rdev->flags),
- 			       rdev->bdev);
- 	}
--	rcu_read_unlock();
- }
- 
- static int raid5_spare_active(struct mddev *mddev)
--- 
-2.39.2
-
+>
+>       Arnd
+>
 
