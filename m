@@ -1,118 +1,148 @@
-Return-Path: <linux-kernel+bounces-215768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1B239096CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:13:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9465F9096D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AECB1F22616
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:13:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8BC01C21021
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C5418638;
-	Sat, 15 Jun 2024 08:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562A518C38;
+	Sat, 15 Jun 2024 08:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SI4UeK4X"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vb7h88Si"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788C2182B3
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 08:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF94017579;
+	Sat, 15 Jun 2024 08:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718439206; cv=none; b=NjyfbBL0PB9sA7q9sOJKcBxhGgfyPBcoAUVUVjhmZG08Kl90s1uw/hBJgOx1fTkBPpcyahDS7YS/uB6lTtAppMv6ISSYQdTmis+M2JPFV6IYQTw3S9T90c4Hy/74bAR+Vmr5agjsD47/YRwbjKeNO9o2/z+vOU6ykJu7vLGFcKI=
+	t=1718439377; cv=none; b=arzRBuJtME0y9JAZMW26Xik4Fu00l9NWu2k4GR4kjZokuMTUa/AOH63LmV9jxvwgvzYPyhf03tMBYinMrlMneOPROUosn0ZbWOVyayiWhkNH3VXt5alR3+48veOwLiuL1jQ2WuAYPZuLkeMdiu9GuTJ6Glr5N926h5K5tLiD8pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718439206; c=relaxed/simple;
-	bh=GGCaA42EiIwjy3YNfQifHUsKQiQSrZ5gY8S5cI9Q0fk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HljHlkVdHCwfLEoFxI5zoUllgQvzP7T4TjWBY9pOEqCo00bHjHvOc6M4SJLexY/uLnPjzrGY4PZBm0jirFApCCiohct7IFGbCQF10JQJ9+z5BZjPrcHoCQjl9LIkhiB7Z3ikkLQqm3VfWRitS3KSvqiXAIWDWO7WL0UfOi7Dmuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SI4UeK4X; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a63359aaacaso442945666b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 01:13:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718439203; x=1719044003; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=9V3+R/Ia5LFb2+SINpw7/x0qRaxOV/1HB5xxocu0jaw=;
-        b=SI4UeK4XhuPwrS5gq0R7otnEbjx7x3b59BCREJ/s2iQirX7vAR8SxUm4BzRABmnHhK
-         WYJHTza/LBQs8IzKzd4yXdDGPGkx4KYONjmf9NxhqMGC09xFlw1E7yztrpXMlqI18BMh
-         vDNz2MIYpZPTcfOjnLThPp9VDPBzKagfX54PHsurY9e0YJnB/RSwlFed984zhD/6GSmc
-         RTpR23kRRLVB0j72pD50u3OPlFagrPQc7h/G2Qhn5CZONaySXpHSS6EfCP5nNPWH6gbZ
-         S0iocNGQgZoCMRc7dcUEHG1ZOhuoR5eojX7y9OMQVXJERx8ux3mp1TGc2Yfq9/MOuKFy
-         YDKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718439203; x=1719044003;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9V3+R/Ia5LFb2+SINpw7/x0qRaxOV/1HB5xxocu0jaw=;
-        b=YW1WpUv5cVtpa95vUUhyeLSeSZpflC3VpFuijeHZIxgJCholdz3ZcgbelZF4+HGerZ
-         Rb7h3KOizzIF9PXg3nx04pOWLMFd4stV6EeSwPWvnTzUmpGBNj+qyn9MdzDpbIH8zX3y
-         eLh0MGdhaNV87r5uTLr1lkTUmhlDhgeFTJxvPXkd2agHm4CgA/tTn25yhZmyquQvZVFz
-         xPqwjRLgQA2c40te13ZcO9WIXV8IHthkLzhi5SWoyKmT9mIPvoBvWrZhKNM+64fm/olX
-         SUn4S4x0o/Htlf+tYxytzMaKryM+ekVOzywF+RljzGbV1cefpyOhKn+yMEe9JpqBalP+
-         qTrA==
-X-Gm-Message-State: AOJu0YzbtUWbAnHIFldTnPQC0BsFf36AZWwIKVcIZvcVcifTFfLlY0So
-	79PUOmAov0eIVJ+eWWXeyfnqSelh/iAHIjkxnsoYqciCTxt20TqR
-X-Google-Smtp-Source: AGHT+IFVuDfL0BD+8VrP1BenY6h+wVs79NY3IEY1g6vqp810eFkN9pe4cQ9IpFc54TwnF4TrTiGqUA==
-X-Received: by 2002:a17:906:3bd1:b0:a6f:ea6:9534 with SMTP id a640c23a62f3a-a6f60deb626mr305178666b.76.1718439202733;
-        Sat, 15 Jun 2024 01:13:22 -0700 (PDT)
-Received: from gmail.com (1F2EF7F9.nat.pool.telekom.hu. [31.46.247.249])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f42d25sm274821266b.174.2024.06.15.01.13.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Jun 2024 01:13:22 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Sat, 15 Jun 2024 10:13:20 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: [GIT PULL] x86 fixes
-Message-ID: <Zm1NIOnj0NR3U8om@gmail.com>
+	s=arc-20240116; t=1718439377; c=relaxed/simple;
+	bh=rBwMqTRsyloPG8mLh+a90y+z8GzhjQxc/nqlkFvdlNo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XaXn47c3M5g0fJC5yaxYsCFYICsk5oAlCos5RtIPBBUP8tpdDPDlsV/RgJYfGbNCsp1CBsxSNLHRVRPCXU4/MFeu+6wliCNYnLdbJGQmTgEjQbc4ZeRr/16f3nl2HzuyaiytqwCrBJBIF9WN/5cDZzWpaZQMz/g4L79Dsi4PpS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vb7h88Si; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45F8G6s5052806;
+	Sat, 15 Jun 2024 03:16:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718439366;
+	bh=MdFnYk2bAe/egZEobrkLJp0SfNmTXMt7lEYpYKFxDmQ=;
+	h=From:To:CC:Subject:Date;
+	b=vb7h88SiXtFjAjc9HyXcGau1XLiWaKA9Kqa+GIdagtcnQgzSxwMayxWMAvGf1ivM5
+	 Hf3nBEFMLIJIWTDY5NKrsqcJZRI23Oq7fs7iJwnJ+b/TwChaavnZpd60sIuM08yIue
+	 p1bhfiBEPdmKbMsTkQUz0KLb2JMj0LVBd1chQ9kk=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45F8G6dV032173
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 15 Jun 2024 03:16:06 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 15
+ Jun 2024 03:16:05 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 15 Jun 2024 03:16:05 -0500
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45F8G1QU024463;
+	Sat, 15 Jun 2024 03:16:02 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <afd@ti.com>, <kristo@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <rogerq@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>,
+        <danishanwar@ti.com>, <srk@ti.com>, <s-vadapalli@ti.com>
+Subject: [PATCH v7 0/8] Add PCIe, SERDES and USB DT support for J722S
+Date: Sat, 15 Jun 2024 13:45:52 +0530
+Message-ID: <20240615081600.3602462-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Linus,
+Hello,
 
-Please pull the latest x86/urgent Git tree from:
+This series adds the device-tree support for enabling PCIe and USB
+functionality on J722S-EVM.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-2024-06-15
+Since AM62P and J722S SoCs share most of the peripherals, the files have
+been renamed to indicate the same. The main domain peripherals on both
+SoCs that aren't shared are present in the "soc-main.dtsi" files.
+This change has been made based on Roger's feedback at:
+https://lore.kernel.org/r/f52d9569-a399-422f-9cf0-b0bf69b64d18@kernel.org/
 
-   # HEAD: b2747f108b8034271fd5289bd8f3a7003e0775a3 x86/boot: Don't add the EFI stub to targets, again
+This series has been tested on J722S-EVM for PCIe and USB functionality:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/556ff78fb81fbc47fcc205dff8a31745
 
-Misc fixes:
+Sanity testing on AM62P5-SK with this series:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/2fdb4c0e0db5c3f3ba55d37d587a740d
 
- - Fix the 8 bytes get_user() logic on x86-32
+v6:
+https://lore.kernel.org/r/20240612132409.2477888-1-s-vadapalli@ti.com/
+Changes since v6:
+- Rebased series on linux-next tagged next-20240613.
+- Collected Acked-by tags from v6 series.
+- Based on Roger's suggestion at:
+  https://lore.kernel.org/r/d4c33ee4-1e91-40e5-90c8-bd793bcf34ff@kernel.org/
+  in order to avoid overriding device-tree node properties, the
+  properties that are different across AM62P and J722S have been moved
+  from the k3-am62p-j722s-common-main.dtsi file to the respective
+  k3-{soc}-main.dtsi files.
+  PATCH 5/8 from the v6 series with the subject:
+  arm64: dts: ti: k3-j722s: Move MAIN domain overrides to k3-j722s-main.dtsi
+  is replaced by PATCH 8/8 of this series corresponding to the suggestion.
 
- - Fix build bug that creates weird & mistaken target directory under arch/x86/
+Regards,
+Siddharth.
 
- Thanks,
+Siddharth Vadapalli (8):
+  arm64: dts: ti: am62p: Rename am62p-{}.dtsi to
+    am62p-j722s-common-{}.dtsi
+  arm64: dts: ti: k3-am62p-j722s: Move AM62P specific USB1 to
+    am62p-main.dtsi
+  arm64: dts: ti: k3-j722s: Add main domain peripherals specific to
+    J722S
+  arm64: dts: ti: k3-j722s: Switch to k3-am62p-j722s-common-{}.dtsi
+    includes
+  arm64: dts: ti: k3-serdes: Add SERDES0/SERDES1 lane-muxing macros for
+    J722S
+  arm64: dts: ti: k3-j722s-main: Add SERDES and PCIe support
+  arm64: dts: ti: k3-j722s: Enable PCIe and USB support on J722S-EVM
+  arm64: dts: ti: k3-am62p-j722s: Move SoC-specific node properties
 
-	Ingo
+ .../dts/ti/k3-am62p-j722s-common-main.dtsi    | 1064 ++++++++++++++++
+ ...cu.dtsi => k3-am62p-j722s-common-mcu.dtsi} |    3 +-
+ ...tsi => k3-am62p-j722s-common-thermal.dtsi} |    0
+ ...dtsi => k3-am62p-j722s-common-wakeup.dtsi} |    3 +-
+ arch/arm64/boot/dts/ti/k3-am62p-main.dtsi     | 1073 +----------------
+ arch/arm64/boot/dts/ti/k3-am62p.dtsi          |    9 +-
+ arch/arm64/boot/dts/ti/k3-j722s-evm.dts       |   73 ++
+ arch/arm64/boot/dts/ti/k3-j722s-main.dtsi     |  190 +++
+ arch/arm64/boot/dts/ti/k3-j722s.dtsi          |  171 ++-
+ arch/arm64/boot/dts/ti/k3-serdes.h            |    8 +
+ 10 files changed, 1514 insertions(+), 1080 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+ rename arch/arm64/boot/dts/ti/{k3-am62p-mcu.dtsi => k3-am62p-j722s-common-mcu.dtsi} (98%)
+ rename arch/arm64/boot/dts/ti/{k3-am62p-thermal.dtsi => k3-am62p-j722s-common-thermal.dtsi} (100%)
+ rename arch/arm64/boot/dts/ti/{k3-am62p-wakeup.dtsi => k3-am62p-j722s-common-wakeup.dtsi} (97%)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
 
------------------->
-Benjamin Segall (1):
-      x86/boot: Don't add the EFI stub to targets, again
+-- 
+2.40.1
 
-Kees Cook (1):
-      x86/uaccess: Fix missed zeroing of ia32 u64 get_user() range checking
-
-
- arch/x86/boot/compressed/Makefile | 4 ++--
- arch/x86/include/asm/uaccess.h    | 4 ++--
- arch/x86/lib/getuser.S            | 6 +++++-
- 3 files changed, 9 insertions(+), 5 deletions(-)
 
