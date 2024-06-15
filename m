@@ -1,469 +1,200 @@
-Return-Path: <linux-kernel+bounces-216010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C24939099E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 22:34:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F0F59099E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 22:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02F8A283154
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 20:34:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6586F1F21E6A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 20:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9818C6EB5C;
-	Sat, 15 Jun 2024 20:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089C11773A;
+	Sat, 15 Jun 2024 20:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AxOEljVY"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GgV/0WqU"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE856BFCF;
-	Sat, 15 Jun 2024 20:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD492629C
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 20:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718483656; cv=none; b=E3qcgaUETPGt2WP/w5ZzHB1W6ZqekL71w/3nrvFOl7w0139eVZzeQau4zBdMGhL9dmd7192480WuIVaK95PZlWYehBDGHzMUadgPcPx8vIZABIh2kNwQ1NjqVFmSFXrFMu0BWBz5+Gso2Jyj4KpU56FcfEkOXtEJqBQhJkSxi74=
+	t=1718484079; cv=none; b=IHbHDDygAGPqNuyDmt295JjyLnD0UJ//DR7tcN3mlTVX/b2JCCbB1RXP/Uar02P6OGhaNrerR2CtQQ6Dngfkk5Silmn7b8UzR2MvptViREHgwezpuAZcikXAd7N+MLzYmZqQTn+/6IEYqI0r8xWs+pFKbsHg4hq7DzCCd7KzlGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718483656; c=relaxed/simple;
-	bh=KcMOgv/dIplOguA9ngrOIVu5GIkpTVWkay7NNUPkxVw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HC91cUXi8LXSr3Ke8J5RRufWcrZjGyOvOzi50Cnt6kYj6DrJ5i51JWoeSWrOj23BtWjjWFMgGD7JybTA1vwLg5LHR9uKw8+wemNzBwGo3enyULjlKjBr7aJUDYdahDMtPhVNs1uQA3fvFBv4E+zpnrJal91cGKuKN5hjzxJY6Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AxOEljVY; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52bc335e49aso3721291e87.3;
-        Sat, 15 Jun 2024 13:34:14 -0700 (PDT)
+	s=arc-20240116; t=1718484079; c=relaxed/simple;
+	bh=41/OChH0rngz/yclsHybbNmGkPUMEbh5tsSA3lPC0ok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ub7pvWQj2l3QCV3F5B161O7r2ZiPd+c7NAzxkNqze7Vq17zs9qvmGSTWQbsKkhyDZkl947XYCh8lJU8AnTA2A+aiqgE0aNZImp5xPnlEOhOPO1J6+oLqNJrMo8pP48u89jmZtPf6dsrOXmgS6qPlhJu4/Ge5nGkGDsjK3rBE1h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GgV/0WqU; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7042a8ad9f5so2840369b3a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 13:41:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718483652; x=1719088452; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w8lyybA63fpUF2IH5t6yvDvhZmrJbRBk9yE78VM0owg=;
-        b=AxOEljVYlGXIDxXZ7FasR2IYqxOMLuNl/EsM8cD8SIXCK6OF+r51FD5/XzFsKlvFZr
-         LOcpkSAwhrLezjU6SaxneDWvU4dw1qF+4AGnmZXVURFBktw720idwsjrQhEAHtXiQrO7
-         OxPfLbrY92bKd26lUxIX8hwRAPHSlO13Ug1Wms8bUILIgYozmSjpzVL6pNTMyU35a/l8
-         RslaTdRC/1l9OIKq3sDw3qtT35my444UIVrdzRLhLDgeBuGzOveor5B2D2r0DZ5xrthX
-         Zi1dR1Gx2hQLNGNiAXnE4VdH8fsWU9PLtmg7W98k1vPMrr15n4zkuOuahbK1Em2iU1PA
-         hWrw==
+        d=broadcom.com; s=google; t=1718484077; x=1719088877; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=NyfSuUkK9NXU2IrSjh8qgcwbYQ1cIHDSzfqUIvRuMUU=;
+        b=GgV/0WqUPf2ccM3VxiQj3jnYXdVol2/MKvpvn+V0a11JrhcfCx9GKyj40gdPfbYI0i
+         HOAXC+jDQ9Fz3LL4UzcOCLiG/wD2/vg7I/bGsPgS0ddy2g+CgoCdPDLUpjbyA54XmJ/1
+         cZ1N1aZJHuB2X3XfyvP3FlG4VIdtyBdnL/huI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718483652; x=1719088452;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w8lyybA63fpUF2IH5t6yvDvhZmrJbRBk9yE78VM0owg=;
-        b=XYPnkoobcowZR4w4/Dtg1abtgqEcCYRdNADKGMwJOveGw9h4w1q7ry5pJavIY5bYUh
-         iGmmnUDMQVAlx5TvpSHOyBaws5lkU2RN2L7JzllYlKHxr3NoXm5H2fso1Kya8JplVHGP
-         1VhjQ3NVZQ6JiVuGbwYLzJnePCTLhmGwcnZR1sCReKnYlj0Z2O+4YzlojPpxBLBuefAy
-         wTRRIPBvvaC3DMIqbW12iXXY++YqMWkTupv374Dhg23BzTdQqT9kQMjSPMIsmy22wYB9
-         y/cN27oG1mEOCOS4u1nAi7MYxk+1nEEr9scHwROwhJRk/A4cTxfjPo6hbosn0lDV2s66
-         umlA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDCfDo1EwHF7LaZv4bj4kCi8vI0uDS/nRjpnOQtb9LB2SHEXNLT5g4OnyhQsqz3gDxAOjn9rqnc0KtuvgZQehApa7Kb5aHbKl66g0PPXUBnSnGFJoutmppxCLtomRFCjtLP0jScJY=
-X-Gm-Message-State: AOJu0YyQU/T53dKkEHiuQ8aq8dKufgo4N3bJtB7gb5mjAGhCPw7arpEI
-	eqRQByPTHzIieSuq9cj1e/wPkwEbEhG7jAd8aRtw12F7SoTDiLW34WE6eA==
-X-Google-Smtp-Source: AGHT+IEFK2/yAQ3/73wWRvtV6aNwF227dN2TiMkPrg9v3zE+qpBP6h4ZZYsdvk1vwmpH9Xrip9WJtQ==
-X-Received: by 2002:ac2:5dd4:0:b0:52c:8a21:b2a9 with SMTP id 2adb3069b0e04-52ca6e9f297mr3915807e87.58.1718483652118;
-        Sat, 15 Jun 2024 13:34:12 -0700 (PDT)
-Received: from debian.fritz.box ([93.184.186.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750935f8sm7973510f8f.11.2024.06.15.13.34.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Jun 2024 13:34:11 -0700 (PDT)
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: 
-Cc: Dimitri Fedrau <dima.fedrau@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH v3 2/2] power: supply: add support for MAX1720x standalone fuel gauge
-Date: Sat, 15 Jun 2024 22:33:50 +0200
-Message-Id: <20240615203352.164234-3-dima.fedrau@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240615203352.164234-1-dima.fedrau@gmail.com>
-References: <20240615203352.164234-1-dima.fedrau@gmail.com>
+        d=1e100.net; s=20230601; t=1718484077; x=1719088877;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NyfSuUkK9NXU2IrSjh8qgcwbYQ1cIHDSzfqUIvRuMUU=;
+        b=nbJYgQ2WgV3p2CnXnpZS/SB9QpuQfbCaetn03dmV7xtF9MbX/6o4z7XvN/+jcbXNiL
+         eh8vira8spmCt69DWW0sf6yLzWpgriYYGS/xebSFbWUB+vFOSGdwocH7SwOjWCdYDXCm
+         qb7r3p5pOF5q9QrsWRJAAKV6vEnj20PK25zXCUY5yksaRwKynYZwlHxcdjj2Ox6PCN4S
+         JTuvdxGNYQAXPUxbaRP6IOkahdJDp4zYXBXXbxZftxGsxiH7S8Cr92KKc3mV7wM77U+/
+         FoVWjAD4osbGlNZODPL9r0c42iP1aphBbWIdi5R879Dbvib3X+Iv0cbnDp9PtM5mPFty
+         DgkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULjxhYAKJtRrv2TptVAipDYmxELJIxAWLadYHKJmWrOqax1Pmv7IVcTLDOvOhOmny0mgjApscoldEFor/8vYUqFKc6fqSd0CvgOcpz
+X-Gm-Message-State: AOJu0YyjSt3UmvlVXj0fp/8ah6crSJi6MFGsgmsFZML++J76PeRKLOFZ
+	86Op4GF5qBh0jZzYVoDWljoCHgYc3lDjYe6A33yWfGjMyMwN0joaB7DApT4EwO8Ust00lhaZNDg
+	=
+X-Google-Smtp-Source: AGHT+IF+7A+KVLHOiMRbHsDYWc+FMlLvRmcXJ0M26QAAWNC8lbV4d7s/ByARHqsa9Fq4biYYbN8a5w==
+X-Received: by 2002:a05:6a21:19f:b0:1b8:5967:45cd with SMTP id adf61e73a8af0-1bae7e7a23bmr9501831637.13.1718484076743;
+        Sat, 15 Jun 2024 13:41:16 -0700 (PDT)
+Received: from [192.168.0.212] ([50.35.46.55])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc96ce30sm5047610b3a.79.2024.06.15.13.41.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 15 Jun 2024 13:41:16 -0700 (PDT)
+Message-ID: <327b5f58-441a-434e-ac07-615ba9a1e3f2@broadcom.com>
+Date: Sat, 15 Jun 2024 13:41:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [tip:x86/vmware 4/8] vmwgfx_msg.c:undefined reference to
+ `vmware_hypercall_slow'
+To: Borislav Petkov <bp@alien8.de>, kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+ x86@kernel.org
+References: <202406152104.FxakP1MB-lkp@intel.com>
+ <20240615143344.GDZm2mSB-qyB0Vt28Q@fat_crate.local>
+Content-Language: en-US
+From: Alexey Makhalov <alexey.makhalov@broadcom.com>
+Autocrypt: addr=alexey.makhalov@broadcom.com; keydata=
+ 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 EuY0
+In-Reply-To: <20240615143344.GDZm2mSB-qyB0Vt28Q@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The MAX17201 monitor a single cell pack. The MAX17205 monitor and balance
-a 2S or 3S pack or monitor a multiple-series cell pack. Both device use
-I2C interface.
+Thanks for the report and provided .config file.
 
-Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
----
- drivers/power/supply/Kconfig            |  12 +
- drivers/power/supply/Makefile           |   1 +
- drivers/power/supply/max1720x_battery.c | 324 ++++++++++++++++++++++++
- 3 files changed, 337 insertions(+)
- create mode 100644 drivers/power/supply/max1720x_battery.c
+The problem with DRM_VMWGFX=y when HYPERVISOR_GUEST is not set, i.e 
+arch/x86/kernel/cpu/vmware.c is not built.
+It is even a problem today. For VMWARE_HYPERCALL alternative to work, 
+vmware guest code must set cpu capabilities properly.
+The kernel based on the current config file will not work on a SEV-ES 
+enabled machine.
+DRM_VMWGFX must depend on HYPERVISOR_GUEST similarly to VMWARE_BALLOON, 
+MOUSE_PS2_VMMOUSE and
+PTP_1588_CLOCK_VMW.
 
-diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-index 3e31375491d5..e620ae1a9c8b 100644
---- a/drivers/power/supply/Kconfig
-+++ b/drivers/power/supply/Kconfig
-@@ -402,6 +402,18 @@ config BATTERY_MAX17042
- 
- 	  Driver can be build as a module (max17042_battery).
- 
-+config BATTERY_MAX1720X
-+tristate "Maxim MAX17201/MAX17205 Fuel Gauge"
-+	depends on I2C
-+	select REGMAP_I2C
-+	help
-+	  MAX1720x is a family of fuel-gauge systems for lithium-ion (Li+)
-+	  batteries in handheld and portable equipment. MAX17201 are
-+	  configured to operate with a single lithium cell, the MAX17205
-+	  can operate with multiple cells.
-+
-+	  Say Y to include support for the MAX17201/MAX17205 Fuel Gauges.
-+
- config BATTERY_MAX1721X
- 	tristate "MAX17211/MAX17215 standalone gas-gauge"
- 	depends on W1
-diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
-index 58b567278034..6f02d0248826 100644
---- a/drivers/power/supply/Makefile
-+++ b/drivers/power/supply/Makefile
-@@ -52,6 +52,7 @@ obj-$(CONFIG_CHARGER_DA9150)	+= da9150-charger.o
- obj-$(CONFIG_BATTERY_DA9150)	+= da9150-fg.o
- obj-$(CONFIG_BATTERY_MAX17040)	+= max17040_battery.o
- obj-$(CONFIG_BATTERY_MAX17042)	+= max17042_battery.o
-+obj-$(CONFIG_BATTERY_MAX1720X)	+= max1720x_battery.o
- obj-$(CONFIG_BATTERY_MAX1721X)	+= max1721x_battery.o
- obj-$(CONFIG_BATTERY_RT5033)	+= rt5033_battery.o
- obj-$(CONFIG_CHARGER_RT5033)	+= rt5033_charger.o
-diff --git a/drivers/power/supply/max1720x_battery.c b/drivers/power/supply/max1720x_battery.c
-new file mode 100644
-index 000000000000..68d317d01c9d
---- /dev/null
-+++ b/drivers/power/supply/max1720x_battery.c
-@@ -0,0 +1,324 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Fuel gauge driver for Maxim 17201/17205
-+ *
-+ * based on max1721x_battery.c
-+ *
-+ * Copyright (C) 2024 Liebherr-Electronics and Drives GmbH
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/power_supply.h>
-+#include <linux/regmap.h>
-+
-+/* Nonvilatile registers */
-+#define MAX1720_NRSENSE			0xCF	/* RSense in 10^-5 Ohm */
-+
-+/* ModelGauge m5 */
-+#define MAX172XX_STATUS			0x00	/* Status */
-+#define MAX172XX_STATUS_BAT_ABSENT	BIT(3)	/* Battery absent */
-+#define MAX172XX_REPCAP			0x05	/* Average capacity */
-+#define MAX172XX_REPSOC			0x06	/* Percentage of charge */
-+#define MAX172XX_TEMP			0x08	/* Temperature */
-+#define MAX172XX_CURRENT		0x0A	/* Actual current */
-+#define MAX172XX_AVG_CURRENT		0x0B	/* Average current */
-+#define MAX172XX_TTE			0x11	/* Time to empty */
-+#define MAX172XX_AVG_TA			0x16	/* Average temperature */
-+#define MAX172XX_DESIGN_CAP		0x18	/* Design capacity */
-+#define MAX172XX_TTF			0x20	/* Time to full */
-+#define MAX172XX_DEV_NAME		0x21	/* Device name */
-+#define MAX172XX_DEV_NAME_TYPE_MASK	GENMASK(3, 0)
-+#define MAX172XX_DEV_NAME_TYPE_MAX17201	BIT(0)
-+#define MAX172XX_DEV_NAME_TYPE_MAX17205	(BIT(0) | BIT(2))
-+#define MAX172XX_BATT			0xDA	/* Battery voltage */
-+#define MAX172XX_ATAVCAP		0xDF
-+
-+static const char *max1720x_manufacturer = "Maxim Integrated";
-+static const char *max17201_model = "MAX17201";
-+static const char *max17205_model = "MAX17205";
-+
-+struct max1720x_device_info {
-+	struct power_supply *bat;
-+	struct power_supply_desc bat_desc;
-+	struct i2c_client *ancillary;
-+	struct regmap *regmap;
-+	int rsense;
-+};
-+
-+/*
-+ * Model Gauge M5 Algorithm output register
-+ * Volatile data (must not be cached)
-+ */
-+static const struct regmap_range max1720x_volatile_allow[] = {
-+	regmap_reg_range(MAX172XX_STATUS, MAX172XX_ATAVCAP),	/* volatile data */
-+};
-+
-+static const struct regmap_range max1720x_volatile_deny[] = {
-+	/* volatile data unused registers */
-+	regmap_reg_range(0x24, 0x26),
-+	regmap_reg_range(0x30, 0x31),
-+	regmap_reg_range(0x33, 0x34),
-+	regmap_reg_range(0x37, 0x37),
-+	regmap_reg_range(0x3B, 0x3C),
-+	regmap_reg_range(0x40, 0x41),
-+	regmap_reg_range(0x43, 0x44),
-+	regmap_reg_range(0x47, 0x49),
-+	regmap_reg_range(0x4B, 0x4C),
-+	regmap_reg_range(0x4E, 0xAF),
-+	regmap_reg_range(0xB1, 0xB3),
-+	regmap_reg_range(0xB5, 0xB7),
-+	regmap_reg_range(0xBF, 0xD0),
-+	regmap_reg_range(0xDB, 0xDB),
-+	regmap_reg_range(0xE0, 0xFF),
-+};
-+
-+static const struct regmap_access_table max1720x_volatile_regs = {
-+	.yes_ranges	= max1720x_volatile_allow,
-+	.n_yes_ranges	= ARRAY_SIZE(max1720x_volatile_allow),
-+	.no_ranges	= max1720x_volatile_deny,
-+	.n_no_ranges	= ARRAY_SIZE(max1720x_volatile_deny),
-+};
-+
-+static const struct regmap_config max1720x_regmap_cfg = {
-+	.reg_bits = 8,
-+	.val_bits = 16,
-+	.val_format_endian = REGMAP_ENDIAN_LITTLE,
-+	.rd_table = &max1720x_volatile_regs,
-+	.volatile_table = &max1720x_volatile_regs,
-+};
-+
-+static enum power_supply_property max1720x_battery_props[] = {
-+	POWER_SUPPLY_PROP_PRESENT,
-+	POWER_SUPPLY_PROP_CAPACITY,
-+	POWER_SUPPLY_PROP_VOLTAGE_NOW,
-+	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
-+	POWER_SUPPLY_PROP_CHARGE_AVG,
-+	POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG,
-+	POWER_SUPPLY_PROP_TIME_TO_FULL_AVG,
-+	POWER_SUPPLY_PROP_TEMP,
-+	POWER_SUPPLY_PROP_CURRENT_NOW,
-+	POWER_SUPPLY_PROP_CURRENT_AVG,
-+	POWER_SUPPLY_PROP_MODEL_NAME,
-+	POWER_SUPPLY_PROP_MANUFACTURER,
-+};
-+
-+/* Convert regs value to power_supply units */
-+
-+static int max172xx_time_to_ps(unsigned int reg)
-+{
-+	return reg * 5625 / 1000;	/* in sec. */
-+}
-+
-+static int max172xx_percent_to_ps(unsigned int reg)
-+{
-+	return reg / 256;	/* in percent from 0 to 100 */
-+}
-+
-+static int max172xx_voltage_to_ps(unsigned int reg)
-+{
-+	return reg * 1250;	/* in uV */
-+}
-+
-+static int max172xx_capacity_to_ps(unsigned int reg)
-+{
-+	return reg * 500;	/* in uAh */
-+}
-+
-+/*
-+ * Current and temperature is signed values, so unsigned regs
-+ * value must be converted to signed type
-+ */
-+
-+static int max172xx_temperature_to_ps(unsigned int reg)
-+{
-+	int val = (int16_t)(reg);
-+
-+	return val * 10 / 256; /* in tenths of deg. C */
-+}
-+
-+/*
-+ * Calculating current registers resolution:
-+ *
-+ * RSense stored in 10^-5 Ohm, so mesaurment voltage must be
-+ * in 10^-11 Volts for get current in uA.
-+ * 16 bit current reg fullscale +/-51.2mV is 102400 uV.
-+ * So: 102400 / 65535 * 10^5 = 156252
-+ */
-+static int max172xx_current_to_voltage(unsigned int reg)
-+{
-+	int val = (int16_t)(reg);
-+
-+	return val * 156252;
-+}
-+
-+static int max1720x_battery_get_property(struct power_supply *psy,
-+					 enum power_supply_property psp,
-+					 union power_supply_propval *val)
-+{
-+	struct max1720x_device_info *info = power_supply_get_drvdata(psy);
-+	unsigned int reg_val = 0;
-+	int ret = 0;
-+
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_PRESENT:
-+		/*
-+		 * POWER_SUPPLY_PROP_PRESENT will always readable via
-+		 * sysfs interface. Value return 0 if battery not
-+		 * present or unaccesable via I2c.
-+		 */
-+		ret = regmap_read(info->regmap, MAX172XX_STATUS, &reg_val);
-+		if (ret < 0)
-+			return ret;
-+
-+		val->intval = !(FIELD_GET(MAX172XX_STATUS_BAT_ABSENT, reg_val));
-+		break;
-+	case POWER_SUPPLY_PROP_CAPACITY:
-+		ret = regmap_read(info->regmap, MAX172XX_REPSOC, &reg_val);
-+		val->intval = max172xx_percent_to_ps(reg_val);
-+		break;
-+	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-+		ret = regmap_read(info->regmap, MAX172XX_BATT, &reg_val);
-+		val->intval = max172xx_voltage_to_ps(reg_val);
-+		break;
-+	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
-+		ret = regmap_read(info->regmap, MAX172XX_DESIGN_CAP, &reg_val);
-+		val->intval = max172xx_capacity_to_ps(reg_val);
-+		break;
-+	case POWER_SUPPLY_PROP_CHARGE_AVG:
-+		ret = regmap_read(info->regmap, MAX172XX_REPCAP, &reg_val);
-+		val->intval = max172xx_capacity_to_ps(reg_val);
-+		break;
-+	case POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG:
-+		ret = regmap_read(info->regmap, MAX172XX_TTE, &reg_val);
-+		val->intval = max172xx_time_to_ps(reg_val);
-+		break;
-+	case POWER_SUPPLY_PROP_TIME_TO_FULL_AVG:
-+		ret = regmap_read(info->regmap, MAX172XX_TTF, &reg_val);
-+		val->intval = max172xx_time_to_ps(reg_val);
-+		break;
-+	case POWER_SUPPLY_PROP_TEMP:
-+		ret = regmap_read(info->regmap, MAX172XX_TEMP, &reg_val);
-+		val->intval = max172xx_temperature_to_ps(reg_val);
-+		break;
-+	case POWER_SUPPLY_PROP_CURRENT_NOW:
-+		ret = regmap_read(info->regmap, MAX172XX_CURRENT, &reg_val);
-+		val->intval = max172xx_current_to_voltage(reg_val) / info->rsense;
-+		break;
-+	case POWER_SUPPLY_PROP_CURRENT_AVG:
-+		ret = regmap_read(info->regmap, MAX172XX_AVG_CURRENT, &reg_val);
-+		val->intval = max172xx_current_to_voltage(reg_val) / info->rsense;
-+		break;
-+	case POWER_SUPPLY_PROP_MODEL_NAME:
-+		ret = regmap_read(info->regmap, MAX172XX_DEV_NAME, &reg_val);
-+		reg_val = FIELD_GET(MAX172XX_DEV_NAME_TYPE_MASK, reg_val);
-+		if (reg_val == MAX172XX_DEV_NAME_TYPE_MAX17201)
-+			val->strval = max17201_model;
-+		else if (reg_val == MAX172XX_DEV_NAME_TYPE_MAX17205)
-+			val->strval = max17205_model;
-+		else
-+			return -ENODEV;
-+		break;
-+	case POWER_SUPPLY_PROP_MANUFACTURER:
-+		val->strval = max1720x_manufacturer;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
-+static int max1720x_probe_sense_resistor(struct max1720x_device_info *info)
-+{
-+	struct device *dev = &info->ancillary->dev;
-+	int ret;
-+
-+	ret = i2c_smbus_read_word_data(info->ancillary, MAX1720_NRSENSE);
-+	if (ret < 0)
-+		return ret;
-+
-+	info->rsense = ret;
-+	if (!info->rsense) {
-+		dev_warn(dev, "RSense not calibrated, set 10 mOhms!\n");
-+		info->rsense = 1000; /* in regs in 10^-5 */
-+	}
-+
-+	return 0;
-+}
-+
-+static int max1720x_probe(struct i2c_client *client)
-+{
-+	struct power_supply_config psy_cfg = {};
-+	struct device *dev = &client->dev;
-+	struct max1720x_device_info *info;
-+	int ret;
-+
-+	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
-+	if (!info)
-+		return -ENOMEM;
-+
-+	i2c_set_clientdata(client, info);
-+	info->bat_desc.name = "max1720x";
-+	info->bat_desc.no_thermal = true;
-+	info->bat_desc.type = POWER_SUPPLY_TYPE_BATTERY;
-+	info->bat_desc.properties = max1720x_battery_props;
-+	info->bat_desc.num_properties = ARRAY_SIZE(max1720x_battery_props);
-+	info->bat_desc.get_property = max1720x_battery_get_property;
-+	psy_cfg.drv_data = info;
-+
-+	info->regmap = devm_regmap_init_i2c(client, &max1720x_regmap_cfg);
-+	if (IS_ERR(info->regmap))
-+		return dev_err_probe(dev, PTR_ERR(info->regmap),
-+				     "regmap initialization failed\n");
-+
-+	info->ancillary = i2c_new_ancillary_device(client, "nvmem", 0xb);
-+	if (IS_ERR(info->ancillary))
-+		return dev_err_probe(dev, PTR_ERR(info->ancillary),
-+				     "Failed to initialize ancillary i2c device\n");
-+
-+	i2c_set_clientdata(info->ancillary, info);
-+	ret = max1720x_probe_sense_resistor(info);
-+	if (ret) {
-+		i2c_unregister_device(info->ancillary);
-+		return dev_err_probe(dev, PTR_ERR(info->bat),
-+				     "Failed to read sense resistor value\n");
-+	}
-+
-+	info->bat = devm_power_supply_register(dev, &info->bat_desc, &psy_cfg);
-+	if (IS_ERR(info->bat)) {
-+		i2c_unregister_device(info->ancillary);
-+		return dev_err_probe(dev, PTR_ERR(info->bat),
-+				     "Failed to register power supply\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static void max1720x_remove(struct i2c_client *client)
-+{
-+	struct max1720x_device_info *info = i2c_get_clientdata(client);
-+
-+	i2c_unregister_device(info->ancillary);
-+}
-+
-+static const struct of_device_id max1720x_of_match[] = {
-+	{ .compatible = "maxim,max1720x" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, max1720x_of_match);
-+
-+static struct i2c_driver max1720x_i2c_driver = {
-+	.driver = {
-+		   .name = "max1720x",
-+		   .of_match_table = max1720x_of_match,
-+		   },
-+	.probe = max1720x_probe,
-+	.remove = max1720x_remove,
-+};
-+module_i2c_driver(max1720x_i2c_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Dimitri Fedrau <dima.fedrau@gmail.com>");
-+MODULE_DESCRIPTION("Maxim MAX17201/MAX17205 Fuel Gauge IC driver");
--- 
-2.39.2
+Borislav, I'm going to send a fix shortly. It has to be applied before 
+this patchset.
 
+Thanks,
+--Alexey
+
+On 6/15/24 7:33 AM, Borislav Petkov wrote:
+> On Sat, Jun 15, 2024 at 09:22:00PM +0800, kernel test robot wrote:
+>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/vmware
+>> head:   ef08e7dc21307b226b5280d5e8cfea687bfd2866
+>> commit: e5ac9008b79c59235c34494e555419665022f5e1 [4/8] drm/vmwgfx: Use VMware hypercall API
+>> config: i386-buildonly-randconfig-002-20240615 (https://download.01.org/0day-ci/archive/20240615/202406152104.FxakP1MB-lkp@intel.com/config)
+>> compiler: gcc-9 (Ubuntu 9.5.0-4ubuntu2) 9.5.0
+>> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240615/202406152104.FxakP1MB-lkp@intel.com/reproduce)
+>>
+>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>> the same patch/commit), kindly add following tags
+>> | Reported-by: kernel test robot <lkp@intel.com>
+>> | Closes: https://lore.kernel.org/oe-kbuild-all/202406152104.FxakP1MB-lkp@intel.com/
+>>
+>> All errors (new ones prefixed by >>):
+>>
+>>     ld: drivers/gpu/drm/vmwgfx/vmwgfx_msg.o: in function `vmw_open_channel.constprop.0':
+>>>> vmwgfx_msg.c:(.text+0x203): undefined reference to `vmware_hypercall_slow'
+>>     ld: drivers/gpu/drm/vmwgfx/vmwgfx_msg.o: in function `vmw_recv_msg':
+>>     vmwgfx_msg.c:(.text+0x46f): undefined reference to `vmware_hypercall_slow'
+>>>> ld: vmwgfx_msg.c:(.text+0x49c): undefined reference to `vmware_hypercall_slow'
+>>     ld: vmwgfx_msg.c:(.text+0x4c3): undefined reference to `vmware_hypercall_slow'
+>>     ld: drivers/gpu/drm/vmwgfx/vmwgfx_msg.o: in function `vmw_close_channel':
+>>     vmwgfx_msg.c:(.text+0x580): undefined reference to `vmware_hypercall_slow'
+>>     ld: drivers/gpu/drm/vmwgfx/vmwgfx_msg.o:vmwgfx_msg.c:(.text+0x729): more undefined references to `vmware_hypercall_slow' follow
+>>     ld: drivers/base/regmap/regmap-spi.o: in function `regmap_spi_read':
+>>     regmap-spi.c:(.text+0xf): undefined reference to `spi_write_then_read'
+>>     ld: drivers/base/regmap/regmap-spi.o: in function `regmap_spi_gather_write':
+>>     regmap-spi.c:(.text+0x2b4): undefined reference to `spi_sync'
+>>     ld: drivers/base/regmap/regmap-spi.o: in function `spi_sync_transfer.constprop.0':
+>>     regmap-spi.c:(.text+0x337): undefined reference to `spi_sync'
+>>     ld: drivers/base/regmap/regmap-spi.o: in function `regmap_spi_async_write':
+>>     regmap-spi.c:(.text+0x445): undefined reference to `spi_async'
+>>     ld: drivers/iio/dac/ad9739a.o: in function `ad9739a_driver_init':
+>>     ad9739a.c:(.init.text+0x10): undefined reference to `__spi_register_driver'
+>>
+>> Kconfig warnings: (for reference only)
+>>     WARNING: unmet direct dependencies detected for REGMAP_SPI
+>>     Depends on [n]: SPI [=n]
+>>     Selected by [y]:
+>>     - AD9739A [=y] && IIO [=y] && (SPI [=n] || COMPILE_TEST [=y])
+>>
+>> -- 
+> 
+> Zapping tip:x86/vmware from the tip/master lineup for the time being, until this
+> is fixed.
+> 
+> Thx 0day guys for reporting.
+> 
 
