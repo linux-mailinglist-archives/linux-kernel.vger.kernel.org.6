@@ -1,142 +1,109 @@
-Return-Path: <linux-kernel+bounces-215697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06F179095F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 06:07:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF9CB9095F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 06:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C56AA1C212DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 04:07:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9047B22B25
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 04:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9459EAEB;
-	Sat, 15 Jun 2024 04:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A80F9D6;
+	Sat, 15 Jun 2024 04:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eqeHn8xp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MQVWGsEs"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC9FD502
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 04:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD69EAEB
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 04:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718424462; cv=none; b=FML10Nst8y7kOWJPhe/GIsmj0UA4996YWZWxowoBf2v29eu57XWgu1nvk2StikS9AItMXdFgpdRKfedwcnHTVuFr66ZKri7ZHalnVilfr1UsC0X4OmOc2tsXV3CdBgD8kliXXCvIzQPpNCT/ZZ2kUhgEGbd7geefPRotKHpmY8E=
+	t=1718424844; cv=none; b=Zyr2NzEdPJTqhiHsNzysl4URrzmdvTylgvUw/pnS2fUHGybWb+TEJoxykho5uc7z0GVdyCAV4n4H/LgG3X0w6UlFOimIO81fMybhOg3zh2rtwbKdr7ze2gv9m7/2JWLIOMaGeBZgVzGw7XCrZqy7fxxYSZ0GcnMLmgVqkf8NW78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718424462; c=relaxed/simple;
-	bh=y3c6h2tG9DxcPyjXhmiCjcvub1lzEr/UydsmZvaDtSQ=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=FVT1uZyoUb4vzGlVPd/cFLDvjuK2iHYm/8ldMDrZscU8L2KxRqNQ5IFL1AlIALXestySTqAL4D7ZpEQLiK7W6Nlp6hlnEkoxxo8EVZbeMUGCl9IG048iRDuWbbjSKIp3cj2F9MdAWsHiuEgmPV6QpYfvdmwIz11pTwI2GHqS0Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eqeHn8xp; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718424460; x=1749960460;
-  h=date:from:to:cc:subject:message-id;
-  bh=y3c6h2tG9DxcPyjXhmiCjcvub1lzEr/UydsmZvaDtSQ=;
-  b=eqeHn8xp38/h/+gokSWEzVi5v9esw5ZLsr7WlJGy5No5BLMVjj2V7oNw
-   7A4r9y3UVSGPWuGY1nNwJBH2gKR+iduUCu99HdrRqxwB0bRxWd/Irb0kP
-   KQrLKr6zyxL15RAu2jMhZHQ/calh6KlSkj8Z4He5KUvhi55CS5eqPdxMX
-   MQ1IP8QKjwOLtjYpyMzXwIs2vfRWEkXn5cCjxFfTh5pe5z7nIRkapEMM+
-   b1HWg9D75hZl7+quqZcy6KOqSo/3Cwp9kZsUrd1dkf3J1SHr7/4AuXmw7
-   F0IpeZWOlAA1AsSeRA95ohhaP2ofkt7f6yE2ysv1WwxpWWfRCKEHtqqyp
-   w==;
-X-CSE-ConnectionGUID: 2uO5GiV9TdaMLGTwzhXrtA==
-X-CSE-MsgGUID: XTtuZhoITl2WB6epS5PX2Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="15556446"
-X-IronPort-AV: E=Sophos;i="6.08,239,1712646000"; 
-   d="scan'208";a="15556446"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 21:07:39 -0700
-X-CSE-ConnectionGUID: ARmugajrTT2xrAo5L7SQoQ==
-X-CSE-MsgGUID: GF6Cw/FlQZ65+aWunzJghA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,239,1712646000"; 
-   d="scan'208";a="40794686"
-Received: from lkp-server01.sh.intel.com (HELO 9e3ee4e9e062) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 14 Jun 2024 21:07:39 -0700
-Received: from kbuild by 9e3ee4e9e062 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sIKhU-00026v-2B;
-	Sat, 15 Jun 2024 04:07:36 +0000
-Date: Sat, 15 Jun 2024 12:07:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- b2747f108b8034271fd5289bd8f3a7003e0775a3
-Message-ID: <202406151216.krC8YSE0-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1718424844; c=relaxed/simple;
+	bh=4nVFME92XAM0Tti6b7CHXtYIglbBOaeANfecGgoQSk4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=S3kqO+kfKQhMjhiqW8nMWbq61FXx0mmvombQbrpbG91k2UBGC6dMZYj5d0ehsp2OXw5hlP9TtF9RrpKiNTYUv/RuySsT7IxTpH/QqkFdYAebcUX43Tjaun+r5oRD8eWTI7/VcGmtFcdXR8UNTUZT/vZHyJnHUSwy8S27lttuzaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MQVWGsEs; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-631282b19afso42511237b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 21:14:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718424842; x=1719029642; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=a9azksK9xGfpOX43dWN6y+uE0VIvCKdzcELjkRMS5p4=;
+        b=MQVWGsEs4DkDm5J3hEcDeQi37FBmyLm7YQerQkI4YTIHgUY03xy2+H1ACFQGFgIJDy
+         Pt8NvUE+ljIzjTeiiZnIU54jQGr6B1sKAFoFGKdZUABPoTSBEqGPrMmwoIk9B16undTi
+         IrmV5LyzzIDOPi7MVHtfiZIR8z50Sa2+7aQkgVKxbkfn2Q+rc31ArqT9ciKutmuQKuvW
+         9zFOg7txWLBP69C4LKeYrgrqHadP5W0aNHaR+EJCrF4bTD7XsLmfWgOFsbSCoMFYP+v4
+         8IvywBC2ODo/LRs8MBw1DKd824dwwlXzK0QrtIE4d0LhdIQB5rouiamQs5DJOO3WQsPw
+         hWnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718424842; x=1719029642;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a9azksK9xGfpOX43dWN6y+uE0VIvCKdzcELjkRMS5p4=;
+        b=mkLghZoXlOjwxS0iDMOc1n5hAe7SVIgbLQmKhpUjpTRR36pGKIyR0tQYb6khp74Mzt
+         4N6Di07M4OiMOw0BBg5hPUG1VdJv+4ejCai02A6V5ueSjEJWEgVgtXIcSSIgGLmg8q5D
+         yGwgrP3rKnMOQ8TjagMF2uUoYNWJAt6H3bRdBSJXeYzYZNcAkUGcLxHVIIVRf/mB5m8J
+         8ntezPoacu6bHwo0jWCvPx8WRHcOI5EcHXPA0+ceNp8tmx5/9nBO+ktfFUnsTw4+3Db5
+         Aj5y0kg7/L5pGI+JnRjqEQweBxtAI/8hl3oJpb6H1r5fxr9tr7SDCdTYeBFHwlxuUgwb
+         92gw==
+X-Gm-Message-State: AOJu0YyP9kdfCMgDaZiHJhAI2HSRyUfQ4HKoFHeYxH3XL+mwZOeUR2/K
+	fWBFP6glktwbNV+Cy/O4LBI7Z09PoyifbKEc0vYXe72fzcthIZvZNkeR/xEd2gUm0RLmSfadFUe
+	00A==
+X-Google-Smtp-Source: AGHT+IEYUNOVoOSzNb2YCc3a1+OxWOPIX9ICmHFIB7KV8Njt6KL7ktMx/4IcUzQTJQN+7k+I7dEDB5etX2o=
+X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:92f9:5432:a95e:d0e8])
+ (user=surenb job=sendgmr) by 2002:a25:6942:0:b0:dff:2349:bd59 with SMTP id
+ 3f1490d57ef6-dff2349c28emr501332276.1.1718424841890; Fri, 14 Jun 2024
+ 21:14:01 -0700 (PDT)
+Date: Fri, 14 Jun 2024 21:13:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
+Message-ID: <20240615041358.103791-1-surenb@google.com>
+Subject: [PATCH 1/1] lib/dump_stack: report process UID in dump_stack_print_info()
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: b2747f108b8034271fd5289bd8f3a7003e0775a3  x86/boot: Don't add the EFI stub to targets, again
+To make it easier to identify the crashing process, report effective
+UID when dumping the stack.
 
-elapsed time: 2587m
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+---
+ lib/dump_stack.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-configs tested: 50
-configs skipped: 213
+diff --git a/lib/dump_stack.c b/lib/dump_stack.c
+index 222c6d6c8281..ab31f53d23da 100644
+--- a/lib/dump_stack.c
++++ b/lib/dump_stack.c
+@@ -54,8 +54,10 @@ void __init dump_stack_set_arch_desc(const char *fmt, ...)
+  */
+ void dump_stack_print_info(const char *log_lvl)
+ {
+-	printk("%sCPU: %d PID: %d Comm: %.20s %s%s %s %.*s" BUILD_ID_FMT "\n",
+-	       log_lvl, raw_smp_processor_id(), current->pid, current->comm,
++	printk("%sCPU: %d UID: %u PID: %d Comm: %.20s %s%s %s %.*s" BUILD_ID_FMT "\n",
++	       log_lvl, raw_smp_processor_id(),
++	       __kuid_val(current_real_cred()->euid),
++	       current->pid, current->comm,
+ 	       kexec_crash_loaded() ? "Kdump: loaded " : "",
+ 	       print_tainted(),
+ 	       init_utsname()->release,
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-i386                             allmodconfig   gcc-13
-i386                              allnoconfig   gcc-13
-i386                             allyesconfig   gcc-13
-i386         buildonly-randconfig-001-20240614   clang-18
-i386         buildonly-randconfig-002-20240614   clang-18
-i386         buildonly-randconfig-003-20240614   gcc-12
-i386         buildonly-randconfig-004-20240614   gcc-8
-i386         buildonly-randconfig-005-20240614   gcc-13
-i386         buildonly-randconfig-006-20240614   gcc-10
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240614   gcc-13
-i386                  randconfig-002-20240614   gcc-8
-i386                  randconfig-003-20240614   gcc-13
-i386                  randconfig-004-20240614   clang-18
-i386                  randconfig-005-20240614   gcc-13
-i386                  randconfig-006-20240614   gcc-10
-i386                  randconfig-011-20240614   gcc-13
-i386                  randconfig-012-20240614   clang-18
-i386                  randconfig-013-20240614   gcc-13
-i386                  randconfig-014-20240614   gcc-13
-i386                  randconfig-015-20240614   clang-18
-i386                  randconfig-016-20240614   clang-18
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240614   clang-18
-x86_64       buildonly-randconfig-002-20240614   gcc-8
-x86_64       buildonly-randconfig-003-20240614   clang-18
-x86_64       buildonly-randconfig-004-20240614   gcc-8
-x86_64       buildonly-randconfig-005-20240614   gcc-10
-x86_64       buildonly-randconfig-006-20240614   clang-18
-x86_64                              defconfig   gcc-13
-x86_64                randconfig-001-20240614   clang-18
-x86_64                randconfig-002-20240614   clang-18
-x86_64                randconfig-003-20240614   clang-18
-x86_64                randconfig-004-20240614   gcc-11
-x86_64                randconfig-005-20240614   clang-18
-x86_64                randconfig-006-20240614   clang-18
-x86_64                randconfig-011-20240614   clang-18
-x86_64                randconfig-012-20240614   clang-18
-x86_64                randconfig-013-20240614   gcc-10
-x86_64                randconfig-014-20240614   gcc-8
-x86_64                randconfig-015-20240614   gcc-13
-x86_64                randconfig-016-20240614   gcc-13
-x86_64                randconfig-071-20240614   gcc-10
-x86_64                randconfig-072-20240614   gcc-13
-x86_64                randconfig-073-20240614   clang-18
-x86_64                randconfig-074-20240614   gcc-10
-x86_64                randconfig-075-20240614   gcc-13
-x86_64                randconfig-076-20240614   gcc-13
-x86_64                          rhel-8.3-rust   clang-18
-
+base-commit: c286c21ff94252f778515b21b6bebe749454a852
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.45.2.627.g7a2c4fd464-goog
+
 
