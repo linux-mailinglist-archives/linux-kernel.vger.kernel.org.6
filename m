@@ -1,119 +1,118 @@
-Return-Path: <linux-kernel+bounces-215767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899249096CE
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:13:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1B239096CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 10:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37D561F22ABF
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:13:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AECB1F22616
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 08:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649AD18638;
-	Sat, 15 Jun 2024 08:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C5418638;
+	Sat, 15 Jun 2024 08:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DG1usZIT"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SI4UeK4X"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C6D17C8D
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 08:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788C2182B3
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 08:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718439193; cv=none; b=C0S5/5In16vT1aegiAMosAAZ/g1+AaQ0BvRx6YKvMGamHWij/Qn+XCDBT9CvoA8nRiVtn4ALpXDQydamw89d83ozgCf4WwOGI87fg534NMl/gN+gJepueWByVv6nORxnWd/j0vMPIS+UhTqFNbsnkqgbiuZ8Ho1ynPYD0HwqfPw=
+	t=1718439206; cv=none; b=NjyfbBL0PB9sA7q9sOJKcBxhGgfyPBcoAUVUVjhmZG08Kl90s1uw/hBJgOx1fTkBPpcyahDS7YS/uB6lTtAppMv6ISSYQdTmis+M2JPFV6IYQTw3S9T90c4Hy/74bAR+Vmr5agjsD47/YRwbjKeNO9o2/z+vOU6ykJu7vLGFcKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718439193; c=relaxed/simple;
-	bh=3ACpS9KjoGNBwd3Y4kjm8V6B0xgL1wsK3QBEDIP40K4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DLN6G3w9cbhHh5721Z951Px8tB+YfS+g67kERFjvw1na4hsNKXw8atgOYHfIPUrgRGbfhP0DTe6PX32Ql6txT2C8NNFQLqRTcTPdhiovcWEgrcBZ/SwOQH4cB3NOZToa6cRFZoXJheDm9lxlZeJ6nfr3c4RXXp/CZNx/XWkZfvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DG1usZIT; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: akpm@linux-foundation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718439189;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=jxg5iGIBzjKKqOE5wby7nB9Gf0RymHtTU7fYqI4F+Xs=;
-	b=DG1usZITPymN0SlTEM3Q6jayWvQCADocjZqcuCKEp0kDmOE+15ngQnACof3b5k6yXW+tw7
-	LbnSIxp2RWzO2YDZKRBKn+xplpxnCF6/wE4O7jnQspLRwJpjZn6nV4KioEB2oHCEZ2Vn1l
-	ZUeMQc/spEe22ZuMj5sReeChPnVIgRo=
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: mhocko@suse.com
-X-Envelope-To: roman.gushchin@linux.dev
-X-Envelope-To: yosryahmed@google.com
-X-Envelope-To: hawk@kernel.org
-X-Envelope-To: yuzhao@google.com
-X-Envelope-To: songmuchun@bytedance.com
-X-Envelope-To: kernel-team@meta.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@suse.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Yu Zhao <yuzhao@google.com>,
-	Muchun Song <songmuchun@bytedance.com>,
-	Facebook Kernel Team <kernel-team@meta.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] memcg: use ratelimited stats flush in the reclaim
-Date: Sat, 15 Jun 2024 01:12:57 -0700
-Message-ID: <20240615081257.3945587-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1718439206; c=relaxed/simple;
+	bh=GGCaA42EiIwjy3YNfQifHUsKQiQSrZ5gY8S5cI9Q0fk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HljHlkVdHCwfLEoFxI5zoUllgQvzP7T4TjWBY9pOEqCo00bHjHvOc6M4SJLexY/uLnPjzrGY4PZBm0jirFApCCiohct7IFGbCQF10JQJ9+z5BZjPrcHoCQjl9LIkhiB7Z3ikkLQqm3VfWRitS3KSvqiXAIWDWO7WL0UfOi7Dmuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SI4UeK4X; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a63359aaacaso442945666b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 01:13:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718439203; x=1719044003; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=9V3+R/Ia5LFb2+SINpw7/x0qRaxOV/1HB5xxocu0jaw=;
+        b=SI4UeK4XhuPwrS5gq0R7otnEbjx7x3b59BCREJ/s2iQirX7vAR8SxUm4BzRABmnHhK
+         WYJHTza/LBQs8IzKzd4yXdDGPGkx4KYONjmf9NxhqMGC09xFlw1E7yztrpXMlqI18BMh
+         vDNz2MIYpZPTcfOjnLThPp9VDPBzKagfX54PHsurY9e0YJnB/RSwlFed984zhD/6GSmc
+         RTpR23kRRLVB0j72pD50u3OPlFagrPQc7h/G2Qhn5CZONaySXpHSS6EfCP5nNPWH6gbZ
+         S0iocNGQgZoCMRc7dcUEHG1ZOhuoR5eojX7y9OMQVXJERx8ux3mp1TGc2Yfq9/MOuKFy
+         YDKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718439203; x=1719044003;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9V3+R/Ia5LFb2+SINpw7/x0qRaxOV/1HB5xxocu0jaw=;
+        b=YW1WpUv5cVtpa95vUUhyeLSeSZpflC3VpFuijeHZIxgJCholdz3ZcgbelZF4+HGerZ
+         Rb7h3KOizzIF9PXg3nx04pOWLMFd4stV6EeSwPWvnTzUmpGBNj+qyn9MdzDpbIH8zX3y
+         eLh0MGdhaNV87r5uTLr1lkTUmhlDhgeFTJxvPXkd2agHm4CgA/tTn25yhZmyquQvZVFz
+         xPqwjRLgQA2c40te13ZcO9WIXV8IHthkLzhi5SWoyKmT9mIPvoBvWrZhKNM+64fm/olX
+         SUn4S4x0o/Htlf+tYxytzMaKryM+ekVOzywF+RljzGbV1cefpyOhKn+yMEe9JpqBalP+
+         qTrA==
+X-Gm-Message-State: AOJu0YzbtUWbAnHIFldTnPQC0BsFf36AZWwIKVcIZvcVcifTFfLlY0So
+	79PUOmAov0eIVJ+eWWXeyfnqSelh/iAHIjkxnsoYqciCTxt20TqR
+X-Google-Smtp-Source: AGHT+IFVuDfL0BD+8VrP1BenY6h+wVs79NY3IEY1g6vqp810eFkN9pe4cQ9IpFc54TwnF4TrTiGqUA==
+X-Received: by 2002:a17:906:3bd1:b0:a6f:ea6:9534 with SMTP id a640c23a62f3a-a6f60deb626mr305178666b.76.1718439202733;
+        Sat, 15 Jun 2024 01:13:22 -0700 (PDT)
+Received: from gmail.com (1F2EF7F9.nat.pool.telekom.hu. [31.46.247.249])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f42d25sm274821266b.174.2024.06.15.01.13.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Jun 2024 01:13:22 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Sat, 15 Jun 2024 10:13:20 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [GIT PULL] x86 fixes
+Message-ID: <Zm1NIOnj0NR3U8om@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The Meta prod is seeing large amount of stalls in memcg stats flush
-from the memcg reclaim code path. At the moment, this specific callsite
-is doing a synchronous memcg stats flush. The rstat flush is an
-expensive and time consuming operation, so concurrent relaimers will
-busywait on the lock potentially for a long time. Actually this issue is
-not unique to Meta and has been observed by Cloudflare [1] as well. For
-the Cloudflare case, the stalls were due to contention between kswapd
-threads running on their 8 numa node machines which does not make sense
-as rstat flush is global and flush from one kswapd thread should be
-sufficient for all. Simply replace the synchronous flush with the
-ratelimited one.
+Linus,
 
-One may raise a concern on potentially using 2 sec stale (at worst)
-stats for heuristics like desirable inactive:active ratio and preferring
-inactive file pages over anon pages but these specific heuristics do not
-require very precise stats and also are ignored under severe memory
-pressure. This patch has been running on Meta fleet for more than a
-month and we have not observed any issues. Please note that MGLRU is not
-impacted by this issue at all as it avoids rstat flushing completely.
+Please pull the latest x86/urgent Git tree from:
 
-Link: https://lore.kernel.org/all/6ee2518b-81dd-4082-bdf5-322883895ffc@kernel.org [1]
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
----
- mm/vmscan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-2024-06-15
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index c0429fd6c573..bda4f92eba71 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2263,7 +2263,7 @@ static void prepare_scan_control(pg_data_t *pgdat, struct scan_control *sc)
- 	 * Flush the memory cgroup stats, so that we read accurate per-memcg
- 	 * lruvec stats for heuristics.
- 	 */
--	mem_cgroup_flush_stats(sc->target_mem_cgroup);
-+	mem_cgroup_flush_stats_ratelimited(sc->target_mem_cgroup);
- 
- 	/*
- 	 * Determine the scan balance between anon and file LRUs.
--- 
-2.43.0
+   # HEAD: b2747f108b8034271fd5289bd8f3a7003e0775a3 x86/boot: Don't add the EFI stub to targets, again
 
+Misc fixes:
+
+ - Fix the 8 bytes get_user() logic on x86-32
+
+ - Fix build bug that creates weird & mistaken target directory under arch/x86/
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Benjamin Segall (1):
+      x86/boot: Don't add the EFI stub to targets, again
+
+Kees Cook (1):
+      x86/uaccess: Fix missed zeroing of ia32 u64 get_user() range checking
+
+
+ arch/x86/boot/compressed/Makefile | 4 ++--
+ arch/x86/include/asm/uaccess.h    | 4 ++--
+ arch/x86/lib/getuser.S            | 6 +++++-
+ 3 files changed, 9 insertions(+), 5 deletions(-)
 
