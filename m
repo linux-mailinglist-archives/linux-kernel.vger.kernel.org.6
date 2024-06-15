@@ -1,263 +1,209 @@
-Return-Path: <linux-kernel+bounces-215997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D209099C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 21:56:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E6569099D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 22:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4894B21775
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 19:56:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C87011F2208F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 20:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8763B60DEA;
-	Sat, 15 Jun 2024 19:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C9B61FC7;
+	Sat, 15 Jun 2024 20:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RLqKJHwU"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lfpcHWUy"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C1517727;
-	Sat, 15 Jun 2024 19:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F5517727;
+	Sat, 15 Jun 2024 20:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718481388; cv=none; b=UKyC+PSKJ5xxZM5Nb0MfItqWgLDskU6jYhq4WN4m2utkeGMVTD7b9D/tOzcLdkz0ZrB8YY8N75aXyJjK2gSiVTuukeC66O9lM9Wo6FrW0nogLHOCyieFweO/vfoiaLB+wdCt71mQMZG1Lyq7HSe8/2Ch4UYEYauQTQtKkw7f/kk=
+	t=1718482494; cv=none; b=DRsXaGXjwZ922MjVDDad3Fh1WAB0two7td8U8DdQYdpJRv/FA8Xc1LueI9l/0xyTnmsEVFraZI0ZDWFgCwegY2nNnVNgGbbvRcXmJ2WU8Bin6ZclY3cjB7G1pDX4N5tvdkQQi5bTJanMb2/VdydIuA6R8ALO9/qEUwxP//joTns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718481388; c=relaxed/simple;
-	bh=xNO14OMu4RMUHJ88tczXpu5W1FWZU9yDa/2tMm16kug=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TSMJZ9NSWc8XxIlIuIb9yCLzGh/Gew7YPhTlzCx76maRMAsh0YdvTDEQnVP6ezu43zx5kTyKl3KbiAp9TSKkvh3UGDgWImwbMgJprKTSkMlDRLB5RFhE3zAS4l4+KobXsG0Nkxv+1K9Ena8a8ZGvd5H0LaBOTjtXsWJtkPhl3PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RLqKJHwU; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718481385;
-	bh=xNO14OMu4RMUHJ88tczXpu5W1FWZU9yDa/2tMm16kug=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RLqKJHwUFLL717LjcXOauWuhRgH5MXcRgp04zrm1HZ6HYiX0jgelTAID+kQImnQgO
-	 AEpFqLGyoRT1viGo8P1bZLcqZ8vrYebNP/ygvqtS2Cjn74nSFJZ9Fe83KhtRYQCPMk
-	 axxsOU2tR93qbklHAh2TXhl1aPFnyp09sxicnq8ky3foJpafY1DP1CoBhzfYX3NxxQ
-	 +YLbo7oDICq3l0wfoE74oz/TFPluDgnYTtGYbRjdkL4cFiO+HsthCaC9N+1FXn2UOs
-	 9ySU9eOH8Na6TwvpZAESLZkMR52+a8YSoMjcJqnE/I44qsf3G9TJFGH648zoGhnS3X
-	 SO9PPQKZitEyw==
-Received: from arisu.localnet (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: detlev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4796F37810CD;
-	Sat, 15 Jun 2024 19:56:22 +0000 (UTC)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Dragan Simic <dsimic@manjaro.org>, Alexey Charkov <alchark@gmail.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Diederik de Haas <didi.debian@cknow.org>, Andy Yan <andy.yan@rock-chips.com>,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-staging@lists.linux.dev
-Subject:
- Re: [PATCH 3/3] arm64: dts: rockchip: Add rkvdec2 Video Decoder on rk3588(s)
-Date: Sat, 15 Jun 2024 15:55:54 -0400
-Message-ID: <3666279.iZASKD2KPV@arisu>
-Organization: Collabora
-In-Reply-To: <944c4296-8dd2-4ffd-b430-1839ff3a3ed2@kwiboo.se>
-References:
- <20240615015734.1612108-1-detlev.casanova@collabora.com>
- <20240615015734.1612108-4-detlev.casanova@collabora.com>
- <944c4296-8dd2-4ffd-b430-1839ff3a3ed2@kwiboo.se>
+	s=arc-20240116; t=1718482494; c=relaxed/simple;
+	bh=4U9P84lr6t+3JEYEYRzWAkUaJXUJVHIiXOxzeqsj0FA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JOHxHr5c8Ed3G1hISlbmX8nag2lz9hSn6lj8si6xD2S9tID5Amou/T/PVeVweU3HPNrgL165RD0+mkz1kjL1YbMNFdnrBR6x/DAM5pq/WfX2/FaEZjWuWednBW06xnHb7OM2L2pVg+0qzFeuiIceFepksEsh77jhhUP08Nc8/rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lfpcHWUy; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45FK0PBg014533;
+	Sat, 15 Jun 2024 20:14:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=a
+	+9Fyr6TkJfj4Jmc0tD/DI3poB1anyJvVSoeuKpmq5k=; b=lfpcHWUy6y71y8g8f
+	6ei1BxrfSKlwr03XpeYc2GwoiVMAoAeIl3F0NLYF4u20XInuHAC1zEI3TGhJna9y
+	PpbwKQfeZqK1XXpgiGOOC+QkGjmDVDQARTlB4LHJNZ+djru5Ut0wZfHLVuYoa6hV
+	eeRVAwTD7R9MQdBAkNFYO4SjLy1Q/my5qy9m9tKoLiMkDF7LX/Z5c+LOfgbZZZFm
+	+b/zgVsgndHLqGjGE8yjqeWFoLHSrcQ36QIxzm0rBAFW0YfTkLhIi9+giHD6GmN6
+	LmHaySyGOuJ3cxlxAHXQXxmpD1xVNlxb/EXNq/06pNWgcrrQgAFRXe9bp3vNNHzk
+	No51Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yshk5r0k3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Jun 2024 20:14:41 +0000 (GMT)
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45FKEeYg002240;
+	Sat, 15 Jun 2024 20:14:40 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yshk5r0k1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Jun 2024 20:14:40 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45FGhk5r028690;
+	Sat, 15 Jun 2024 19:58:08 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yn1mvb70q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 15 Jun 2024 19:58:08 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45FJw6nA29885008
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 15 Jun 2024 19:58:08 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5410A58056;
+	Sat, 15 Jun 2024 19:58:06 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2EB9258052;
+	Sat, 15 Jun 2024 19:58:01 +0000 (GMT)
+Received: from [9.43.66.127] (unknown [9.43.66.127])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Sat, 15 Jun 2024 19:58:00 +0000 (GMT)
+Message-ID: <c967a861-ff65-4b35-8a45-7e39b9849be5@linux.ibm.com>
+Date: Sun, 16 Jun 2024 01:27:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3365379.PYKUYFuaPT";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf: sched map skips redundant lines with cpu filters
+To: Fernand Sieber <sieberf@amazon.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <20240614073517.94974-1-sieberf@amazon.com>
+Content-Language: en-US
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <20240614073517.94974-1-sieberf@amazon.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ZUV4iNxAwLeMgtslx8Jn_nBviL-QDhr3
+X-Proofpoint-GUID: JK3W7m8-ky4YIzL3GW4M1wWFlNg_Y1CZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-15_14,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 malwarescore=0 bulkscore=0 priorityscore=1501 mlxscore=0
+ phishscore=0 spamscore=0 mlxlogscore=999 adultscore=0 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406150152
 
---nextPart3365379.PYKUYFuaPT
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Jonas Karlman <jonas@kwiboo.se>
-Date: Sat, 15 Jun 2024 15:55:54 -0400
-Message-ID: <3666279.iZASKD2KPV@arisu>
-Organization: Collabora
-In-Reply-To: <944c4296-8dd2-4ffd-b430-1839ff3a3ed2@kwiboo.se>
-MIME-Version: 1.0
+Hi Fernand,
 
-On Saturday, June 15, 2024 4:25:27 A.M. EDT Jonas Karlman wrote:
-> Hi Detlev,
+On 14/06/24 13:05, Fernand Sieber wrote:
+> perf sched map supports cpu filter.
+> However, even with cpu filters active, any context switch currently
+> corresponds to a separate line.
+> As result, context switches on irrelevant cpus result to redundant lines,
+> which makes the output particlularly difficult to read on wide
+> architectures.
 > 
-> On 2024-06-15 03:56, Detlev Casanova wrote:
-> > Add the rkvdec2 Video Decoder to the RK3588s devicetree.
-> > 
-> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> > ---
-> > 
-> >  .../boot/dts/rockchip/rk3588-rock-5b.dts      |  4 ++++
-> >  .../boot/dts/rockchip/rk3588s-orangepi-5.dts  |  4 ++++
-> >  arch/arm64/boot/dts/rockchip/rk3588s.dtsi     | 19 +++++++++++++++++++
-> >  3 files changed, 27 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> > b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts index
-> > c551b676860c..965322c24a65 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> > @@ -503,6 +503,10 @@ &pwm1 {
-> > 
-> >  	status = "okay";
-> >  
-> >  };
-> > 
-> > +&rkvdec0 {
-> > +	status = "okay";
-> > +};
+> Fix it by skipping printing for irrelevant CPUs.
 > 
-> Enable of rkvdec0 should probably be split out from the patch that adds
-> the rkvdec0 node to soc dtsi.
-
-Ack
-
-> Also why is rkvdec0 only enabled on rock-5b and orangepi-5?
-
-I only could test on those two but I can enable it on all rk3588 devices.
-
-> > +
-> > 
-> >  &saradc {
-> >  
-> >  	vref-supply = <&avcc_1v8_s0>;
-> >  	status = "okay";
-> > 
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
-> > b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts index
-> > feea6b20a6bf..2828fb4c182a 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
-> > @@ -321,6 +321,10 @@ typec5v_pwren: typec5v-pwren {
-> > 
-> >  	};
-> >  
-> >  };
-> > 
-> > +&rkvdec0 {
-> > +	status = "okay";
-> > +};
-> > +
-> > 
-> >  &saradc {
-> >  
-> >  	vref-supply = <&avcc_1v8_s0>;
-> >  	status = "okay";
-> > 
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> > b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi index
-> > 0fecbf46e127..09672636dcea 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> > @@ -3034,6 +3034,9 @@ system_sram2: sram@ff001000 {
-> > 
-> >  		ranges = <0x0 0x0 0xff001000 0xef000>;
-> >  		#address-cells = <1>;
-> >  		#size-cells = <1>;
+> Example snippet of output before fix:
 > 
-> Blank line is missing.
+>   *B0       1.461147 secs
+>    B0
+>    B0
+>    B0
+>   *G0       1.517139 secs
 > 
-> > +		rkvdec0_sram: rkvdec-sram@0 {
-> > +			reg = <0x0 0x78000>;
-> > +		};
-> > 
-> >  	};
-> >  	
-> >  	pinctrl: pinctrl {
-> > 
-> > @@ -3103,6 +3106,22 @@ gpio4: gpio@fec50000 {
-> > 
-> >  			#interrupt-cells = <2>;
-> >  		
-> >  		};
-> >  	
-> >  	};
-> > 
-> > +
-> > +	rkvdec0: video-decoder@fdc38100 {
-> > +		compatible = "rockchip,rk3588-vdec2";
-> > +		reg = <0x0 0xfdc38100 0x0 0x500>;
-> > +		interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>, 
-<&cru
-> > CLK_RKVDEC0_CORE>, +			 <&cru 
-CLK_RKVDEC0_CA>, <&cru
-> > CLK_RKVDEC0_HEVC_CA>;
-> > +		clock-names = "axi", "ahb", "core",
-> > +			      "cabac", "hevc_cabac";
-> > +		assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru 
-CLK_RKVDEC0_CORE>,
-> > +				  <&cru CLK_RKVDEC0_CA>, <&cru 
-CLK_RKVDEC0_HEVC_CA>;
-> > +		assigned-clock-rates = <800000000>, <600000000>,
-> > +				       <600000000>, <1000000000>;
-> > +		power-domains = <&power RK3588_PD_RKVDEC0>;
+> After fix:
 > 
-> iommus and resets should probably be added.
+>   *B0       1.461147 secs
+>   *G0       1.517139 secs
+
+Yes, this makes sense. The current implementation doesn't even print timestamp
+for the redundant lines as shown in the example below.
+
+   .  *F0   708529.114889 secs F0 => schbench:278841
+   .   F0 
+   .   F0 
+   .  *.    708529.114919 secs 
+
+It makes sense to remove them entirely since we can still infer the sched-out
+time for the selected CPUs implicitly.
+
+Reviewed-and-tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+
+Thanks and Regards
+Madadi Vineeth Reddy
 > 
-> > +		status = "disabled";
-> > +	};
+> Signed-off-by: Fernand Sieber <sieberf@amazon.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> ---
+>  tools/perf/builtin-sched.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 > 
-> The iommu node for rkvdec0_mmu seem to be missing, is it not required to
-> be able to use memory >4GiB as decoding buffers?
-
-I need to check if the current rockchip iommu driver will work for this 
-decoder. I remember that the iommu code for AV1 was a bit different, not sure 
-about this rkvdec.
-
-> I would also consider adding the rkvdec1 node(s), if I am understanding
-> correctly they can both be used in a cluster or completely independent.
-
-They can be used independently, yes. I'll add rkvdec1 for rk3588 devices 
-(rk3588s only has  1 core)
-
-Regards,
-Detlev.
-
-> Also on RK3582/RK3583 one (or both) of the decoder cores may be marked
-> as bad, yet the remaining one can still be used independently. The idea
-> will be that bootloader fixup the DT and disabled/delete-node the bad
-> core(s).
-> 
-> Regards,
-> Jonas
-> 
-> >  };
-> >  
-> >  #include "rk3588s-pinctrl.dtsi"
-
-
---nextPart3365379.PYKUYFuaPT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEonF9IvGrXNkDg+CX5EFKUk4x7bYFAmZt8coACgkQ5EFKUk4x
-7bYSZAf9HE0Pqz9VRNj22zYuIX9rUQHkPjcoJLaLx88/ISlIfKmejKHlF9i+vcb0
-K5s8aHUn71O4PKsmo+yMDK55zuS995D8vW8K4OIitd2MatVrO2e2HuyKdMaxmprg
-xOLQ4LuW5dnf7IuAmuGxSDmLXraodzc2I5Ful1znOEW1QMxfhobF/z8TIPSLK5Ey
-R2R3RbswD18k2P5yLslBR1ZuXmAj0IrPMzYUiGG5bpY+CA5as1C39XOM7eJdNXri
-Fc85gDG1rC083K9lyY/pjoGXrC5cTgqEFF/boPOWfaPadqfv4KYdVU52+Z0Nb7Hu
-N6bbB22cEiUh1Ye10hwwOjBQMUX3Ag==
-=MgQS
------END PGP SIGNATURE-----
-
---nextPart3365379.PYKUYFuaPT--
-
-
+> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+> index 7422c930abaf..aa59f763ca46 100644
+> --- a/tools/perf/builtin-sched.c
+> +++ b/tools/perf/builtin-sched.c
+> @@ -1594,8 +1594,6 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>  
+>  	sched->curr_thread[this_cpu.cpu] = thread__get(sched_in);
+>  
+> -	printf("  ");
+> -
+>  	new_shortname = 0;
+>  	if (!tr->shortname[0]) {
+>  		if (!strcmp(thread__comm_str(sched_in), "swapper")) {
+> @@ -1622,6 +1620,11 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>  		new_shortname = 1;
+>  	}
+>  
+> +	if (sched->map.cpus && !perf_cpu_map__has(sched->map.cpus, this_cpu))
+> +		goto out;
+> +
+> +	printf("  ");
+> +
+>  	for (i = 0; i < cpus_nr; i++) {
+>  		struct perf_cpu cpu = {
+>  			.cpu = sched->map.comp ? sched->map.comp_cpus[i].cpu : i,
+> @@ -1656,9 +1659,6 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>  			color_fprintf(stdout, color, "   ");
+>  	}
+>  
+> -	if (sched->map.cpus && !perf_cpu_map__has(sched->map.cpus, this_cpu))
+> -		goto out;
+> -
+>  	timestamp__scnprintf_usec(timestamp, stimestamp, sizeof(stimestamp));
+>  	color_fprintf(stdout, color, "  %12s secs ", stimestamp);
+>  	if (new_shortname || tr->comm_changed || (verbose > 0 && thread__tid(sched_in))) {
+> @@ -1675,9 +1675,9 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>  	if (sched->map.comp && new_cpu)
+>  		color_fprintf(stdout, color, " (CPU %d)", this_cpu);
+>  
+> -out:
+>  	color_fprintf(stdout, color, "\n");
+>  
+> +out:
+>  	thread__put(sched_in);
+>  
+>  	return 0;
 
 
