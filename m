@@ -1,60 +1,55 @@
-Return-Path: <linux-kernel+bounces-216012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD3F9099E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 22:45:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 453A99099EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 22:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24AB31F21122
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 20:45:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE97D1F224B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 20:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9E061FF3;
-	Sat, 15 Jun 2024 20:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7139061FE3;
+	Sat, 15 Jun 2024 20:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U/HIHWAW"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJlkwg3L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C6061FCF;
-	Sat, 15 Jun 2024 20:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE643F9CC;
+	Sat, 15 Jun 2024 20:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718484307; cv=none; b=qMmeVzleFIyrNe+1RhAgU5+w1ZKDS5bQYiEQU251pAVl6MtjSvCCVx4/mGojtCkl0+MYJ6lQGHHekKsJbr3T2vK/QQUhuutj8lICqtQoL5j9sHATYMGTGwEXMIfBxOFwXC8/9ysCnHg2pqvWWZYpo0jjjLeNT5LkPWsa8nEYu5o=
+	t=1718484567; cv=none; b=V0KpzgUV7CMsY43SDZ633TCcWexvsxO2C0LNGFh54bhFHcnjuvZf1QdKEtVZ6c397FQN0wISqgTKisiJcWDx3s6Pbu+EfVj6SLgdfw2KY9mG3H2xokgcebkVAg98PycNhKh063j6K0EpiP+2BMnva3mEU5cUnYo1H/xpAWSSwoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718484307; c=relaxed/simple;
-	bh=DEVpenWNdYzHyjqnsFXgj6XBhbqkz9f5UZJs7nNICsM=;
+	s=arc-20240116; t=1718484567; c=relaxed/simple;
+	bh=+lLsRhJQa0csmNsBtDsKvLrgB/ujeFvdmKUbmQmBOcA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I3P2zF59xJFzPwWuZlxdvyt7EQlNPUTmQUpEfNPzUT6SzNhYEnIMJjSaU0DG0KTRB/5tAkZ1W89eTigJWs1aaKK8DNSOQ21DocUSxaQ/t8tcvts6FFry8UPvzPIa5lzQzPTsZK8g2tjcH2ZrJ4d80cg4jRnyaZKk1hny1ced9j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=U/HIHWAW; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=WaPuINruPrEbczAsN4nNbVt86EXEyxm4Imad5SheDtA=; b=U/HIHWAWyhIiTs2klJKtzK3mcU
-	Vx8EvFuExFMnFf7f4N5hLI0y3aIjVEK8U8aDBzzhkRL3SvYTCBaAx0/NiOWzk5jOGjKLPIv133Y0B
-	mwOrFyCUc0KL006bY7/gVHwDSjkD9yuSs5b4f6aUOOeNXwiE89QqUaNlethzFilH3thV6Ll6vDcQe
-	pSLCEwEHUdIDa3dVsBxZ9bOC5nDHkhHvQeCuwyEQ/8bwvWRxcZizRC8/So9KImywubLBQP6jyDWDj
-	KbDiUXJiEBcAkhJX99Ptich0GeGk85jNJIDlKgZZWuwkXwhkC8hn97MEV4mMEhMiFuSX2fraCUW1h
-	/lGV/dzg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sIaGc-00000000Yfr-28Gl;
-	Sat, 15 Jun 2024 20:44:54 +0000
-Date: Sat, 15 Jun 2024 21:44:54 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Hillf Danton <hdanton@sina.com>
-Cc: linux-mm@kvack.org, Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org,
-	syzbot+d79afb004be235636ee8@syzkaller.appspotmail.com,
-	linux-fsdevel@vger.kernel.org, linux-nilfs@vger.kernel.org,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Subject: Re: [RFC PATCH] mm: truncate: flush lru cache for evicted inode
-Message-ID: <Zm39RkZMjHdui8nh@casper.infradead.org>
-References: <ZmxIvIJ3YSZDwbPW@casper.infradead.org>
- <20240614235953.809-1-hdanton@sina.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XY6EKaZLRmqD1Qe1wl90xlz1gjTGGgupDUcbJBzzsbUfIi2CuNzGk4+SKOoEeX+gkGJcArfg7e1px2C8MZoBdJ/hFz2pNYLwFsebKnAp3mq+TOIFz1AIW+XlWm9oIxxmYXuFWjm+RF00jfyEOvhn9+0uR6eqiWh/vEAAQq7BqEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NJlkwg3L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC47C116B1;
+	Sat, 15 Jun 2024 20:49:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718484567;
+	bh=+lLsRhJQa0csmNsBtDsKvLrgB/ujeFvdmKUbmQmBOcA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NJlkwg3LVxgIncwHXXYm4NAMXtUw+aA1yrPGbQPFnFdSI6VIew6zLP1D2N2L5PJ91
+	 V3IL0H/+J/NYomtn88oGx4lGQZ/QuCMciZKd9YSrgVDm4wdLjgieoi6XTsS8P5tOxI
+	 31NsnmZx8yhsia7/Q+saRZU2Csdj0O8In2BMyBVtGgcOmTU4uHDUl1zrP9gQOtlFol
+	 ffLHTbAtjPW3D9QJ8yOV1uLCFNQ11W5XnwrsI+5+SiGrfWiqeg5v53Vsr3zoYgO7+0
+	 UuyFpEC6i3KpIooIQjei2fT4VHS8zJMF2OMHhdB48J6eoTvRZafzbrtSw65N/UeNvq
+	 xnggH8acimv0w==
+Date: Sat, 15 Jun 2024 22:49:23 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, 
+	Easwar Hariharan <eahariha@linux.microsoft.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] docs: i2c: summary: document 'local' and 'remote'
+ targets
+Message-ID: <4zxr4rlqnjqbqh3oxmd2ufqi6uk4pxa3tniuya5pgjtqi6tswc@utq4r2zt6z6b>
+References: <20240614081239.7128-8-wsa+renesas@sang-engineering.com>
+ <20240614081239.7128-13-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,37 +58,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240614235953.809-1-hdanton@sina.com>
+In-Reply-To: <20240614081239.7128-13-wsa+renesas@sang-engineering.com>
 
-On Sat, Jun 15, 2024 at 07:59:53AM +0800, Hillf Danton wrote:
-> On Fri, 14 Jun 2024 14:42:20 +0100 Matthew Wilcox wrote:
-> > On Fri, Jun 14, 2024 at 09:18:56PM +0800, Hillf Danton wrote:
-> > > Flush lru cache to avoid folio->mapping uaf in case of inode teardown.
-> > 
-> > What?  inodes are supposed to have all their folios removed before
-> > being freed.  Part of removing a folio sets the folio->mapping to NULL.
-> > Where is the report?
-> >
-> Subject: Re: [syzbot] [nilfs?] [mm?] KASAN: slab-use-after-free Read in lru_add_fn
-> https://lore.kernel.org/lkml/000000000000cae276061aa12d5e@google.com/
+Hi Wolfram,
 
-Thanks.  This fix is wrong.  Of course syzbot says it fixes the problem,
-but you're just avoiding putting the folios into the situation where we
-have debug that would detect the problem.
+...
 
-I suspect this would trigger:
+> -A **target** chip is a node that responds to communications when addressed
+> -by the controller. In Linux it is called a **client**. Client drivers are kept
+> -in a directory specific to the feature they provide, for example
+> -``drivers/media/gpio/`` for GPIO expanders and ``drivers/media/i2c/`` for
+> +A **target** chip is a node that responds to communications when addressed by a
+> +controller. In the Linux kernel implementation it is called a **client**. While
 
-+++ b/fs/inode.c
-@@ -282,6 +282,7 @@ static struct inode *alloc_inode(struct super_block *sb)
- void __destroy_inode(struct inode *inode)
- {
-        BUG_ON(inode_has_buffers(inode));
-+       BUG_ON(inode->i_data.nrpages);
-        inode_detach_wb(inode);
-        security_inode_free(inode);
-        fsnotify_inode_delete(inode);
+I am not a big fan of the use of the word client. It's not used
+anywhere in the documentation and it's too generic as a name for
+giving it a specific meaning.
 
-and what a real fix would look like would be calling clear_inode()
-before calling iput() in nilfs_put_root().  But I'm not an expert
-in this layer of the VFS, so I might well be wrong.
+I've seen already some confusion amongst reviewers and
+maintainers when Easwar sent the patch in drm.
+
+If it depends on me, I would stick to the only controller/target
+and render obsolet the use of the word "client" in the i2c
+context.
+
+Andi
+
+> +targets are usually separate external chips, Linux can also act as a target
+> +(needs hardware support) and respond to another controller on the bus. This is
+> +then called a **local target**. In contrast, an external chip is called a
+> +**remote target**.
+> +
+> +Target drivers are kept in a directory specific to the feature they provide,
+> +for example ``drivers/gpio/`` for GPIO expanders and ``drivers/media/i2c/`` for
+>  video-related chips.
+>  
+>  For the example configuration in figure, you will need a driver for your
+> -- 
+> 2.43.0
+> 
 
