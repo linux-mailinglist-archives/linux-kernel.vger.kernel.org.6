@@ -1,221 +1,307 @@
-Return-Path: <linux-kernel+bounces-215632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D6C909536
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:28:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0755490953F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 579A8B21236
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 01:28:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 203651C21668
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 01:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E25B6FD0;
-	Sat, 15 Jun 2024 01:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD504C97;
+	Sat, 15 Jun 2024 01:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rVr2WWKJ"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2070.outbound.protection.outlook.com [40.107.94.70])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RLQe84rk"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E62F646;
-	Sat, 15 Jun 2024 01:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718414906; cv=fail; b=KAl2sKYyehg10i5EtCLz5tqzf407MnJMWuW5mv4s+XBRKkNP5qWeuu8Yk57a83tRGfVKLK4BArtC7xF9fh3C4FGJ5nE7uaTwxdFcI9yHKiri+15CF3BeEykQL/n+kLcD0MJqNr4EnHFLQbdFPz70hFhe6m6fj8LELDevSOBhkZ8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718414906; c=relaxed/simple;
-	bh=NWW/aCaCWMWKQp1pLV4X8RbGYCw+aMO6gAIgyhDIyRY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GQvWsnfVblJkwTla4YJ3rM5+WzdU3AyXIrR02s+PaT/fU1NjNEMQjT1lqn4/wnoKonWB+SjH0B8x9KlV+8MT6Z7jTp07pKpe+AaBhDhQbCpzFtXpOTncCge6n7+veu/PV34HmRjgLGpAAdVbQCS5Pz8w027+oPVMJFRqt/oKbsM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rVr2WWKJ; arc=fail smtp.client-ip=40.107.94.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Eqq9eeaOVSx6Bqd0n3SrMSIlVN0NFqENrXqyFNkseALYZOjsa07tX7oMYAf6VztLy/16mZY2MxFN6Oangp28GJJwnA5r7C40OJAiqFWW3Wp+k8qemdziVwpOXAjjyObFt1GX3KAV5Xmc4kEoFPgmknzU0XJRRMpRZes5eMqQXiMwA9f91grALBzJDFOI3O0ahfB15xOyLiXOTc4Pjl7b1Rs702KaxAxETtaLNnY+N+XQ76oBrKK7+TBmauYyRQMDk5daAaL0XWi04g3xBIEHh2yg2fL6m/lBXjGRQy6rvn6C+o9blMGkEVf/apXRxPFd6Mkjpj40U9qV1BIfAVTOJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f2/rjzXXkpwBA6c6BnfO8fV8uGpWRE1kPpeoc687ayQ=;
- b=gsEp55naFHZn0PdmAmJdZlJ/YiXpFv7EK4m25RB9zcKo8+xUC51/osobBOV9+4ZMRC7E3fPSB10xL/bMzBMS9uATzlsgFm7JSUV6+5iFl3S1QrnGUPS69aE/3EE11A5lTEw7+M3ZrRcqMAixuX/+RA5eFqs9ClKlasVd7Ow154SWX1CEmVIo3mnwwW1vz9ud+JFfI5nlArXU+dDhwcxs5iPTCHeWooMNCtq016Hmvx85MCEAJ6ptuO7wOQBPrz+7VgbhxXI5Gehnx8vz0KDpJQYdyVY8u21bHnfKpBMPs0mO7+w2B5OoH5LPS8qv15tEUHQvfq7p6NE/Uan0RUKrAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f2/rjzXXkpwBA6c6BnfO8fV8uGpWRE1kPpeoc687ayQ=;
- b=rVr2WWKJ1e7ogsI0y0+9VmEMkpJggje4zW571DonmrOvC3YBx8GSbJW38p6d4/A8n7m7j8IYur+NVYP/JlgmtvqHdkfW4yvrM1vzGyn4oqQtnWTgXz3RTH88Km0+ZiKShVSWDGkyGj0f47KYIXLAe4LBN4cmBf49sTZeCllHKG55bGm2Rwfjav9rxfZqgcWSvp4+T/bffiau1vbMf/wWuHm/5HJKDhDmKxYjmjZsurICHI0kVkvkdzLlCZfz0YEWUfUladXVGHoKPINOa03f6nkmJ/hipQ4EXRcaua8s6GLp+6/fb5UBBuhaFjI7EIe9jkBbtmnkRQGRpLIsQohM7w==
-Received: from PH7P221CA0029.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:32a::12)
- by DM4PR12MB6423.namprd12.prod.outlook.com (2603:10b6:8:bd::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.36; Sat, 15 Jun 2024 01:28:16 +0000
-Received: from CY4PEPF0000EE33.namprd05.prod.outlook.com
- (2603:10b6:510:32a:cafe::f0) by PH7P221CA0029.outlook.office365.com
- (2603:10b6:510:32a::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.26 via Frontend
- Transport; Sat, 15 Jun 2024 01:28:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000EE33.mail.protection.outlook.com (10.167.242.39) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.15 via Frontend Transport; Sat, 15 Jun 2024 01:28:15 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 14 Jun
- 2024 18:28:02 -0700
-Received: from [10.110.48.28] (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 14 Jun
- 2024 18:28:00 -0700
-Message-ID: <c243bef3-e152-462f-be68-91dbf876092b@nvidia.com>
-Date: Fri, 14 Jun 2024 18:28:00 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D9E635;
+	Sat, 15 Jun 2024 01:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718415187; cv=none; b=t8Xex6hsFjl/YtcUj4YU6DwZY5ybRCaHgljxeTAU07eImwFuIn/OP2BWSpTPItwFXl43C6OmMU5iDFmvJPJejx7hUkV4mYT5tM0E3lS+RqIGjz6U4AggqJjmKrzSboLoAyWaGqBz3W4bua2e9gMhIKiqW+Lilwh2YmKooqP6RK4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718415187; c=relaxed/simple;
+	bh=Xh7AdXgv/aZzKyDmpw0/NDBq3/G/9OvoRMbZ/oWAU9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WCPZ+P0AN8/Jbf2nSf4X5UAQHLxFLzmJ9GdKC3gIHoKGhVrmJear2kNEMESf4H9rNRBNaSVgyl8yzCDBkeMrRNZNMmkgiNXa78PhvrTXHbJOPMg0788B+rEyPCbFFipI55f4tyUHQSvuC+89Yu+2P4kdR6+49ZN/FYgBVjaYf6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RLQe84rk; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Y0phalDzwYFs8lOrqhipjQWwNuUXcfzj94wo5TNk17A=; b=RLQe84rkn970WmvW1CB2vk/p+q
+	LKzvD3FueaTYqaUyoIjHwTLzdZpiQZX0Db5yaDt/7g3R84yvctFj5Y1f3fz3eMUP441qgwpEaKEBy
+	uybAzncGU/4WaApsPGLpfqUSpLwuHG1gEBsYy4Q16EVnqWw7OiVOFVrl0mQJpz4mqdZ+ZMb7c+EP/
+	rKXjz536Xg15bGsrK1Y3SH+oy4TcsoDozh19Oz9pEqnxHczNBZkZS58RCetpBwmr9JhyBcqWYxT2o
+	VtF9t7WsAScSR0FpkYV4ILbgkrcsmKIoBN5eIyVIUTO5Mm7H2/1DvgUefWqNkvTLbx7Z0rCJFxcAj
+	qyJ2FuWg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sIIDc-00000004hKr-0l05;
+	Sat, 15 Jun 2024 01:30:45 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D1279300886; Sat, 15 Jun 2024 03:28:14 +0200 (CEST)
+Date: Sat, 15 Jun 2024 03:28:14 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>, linux-kernel@vger.kernel.org,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
+	Michal Simek <monstr@monstr.eu>, Dinh Nguyen <dinguyen@kernel.org>,
+	Jonas Bonn <jonas@southpole.se>,
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+	Stafford Horne <shorne@gmail.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Andrew Donnellan <ajd@linux.ibm.com>,
+	Benjamin Gray <bgray@linux.ibm.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Xin Li <xin3.li@intel.com>, Kees Cook <keescook@chromium.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Tony Battersby <tonyb@cybernetics.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Brian Gerst <brgerst@gmail.com>, Leonardo Bras <leobras@redhat.com>,
+	Imran Khan <imran.f.khan@oracle.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Rik van Riel <riel@surriel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	David Vernet <void@manifault.com>,
+	Julia Lawall <julia.lawall@inria.fr>, linux-alpha@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-pm@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [PATCH v2 00/14] Introducing TIF_NOTIFY_IPI flag
+Message-ID: <20240615012814.GP8774@noisy.programming.kicks-ass.net>
+References: <20240613181613.4329-1-kprateek.nayak@amd.com>
+ <20240614092801.GL8774@noisy.programming.kicks-ass.net>
+ <CAKfTPtBTxhbmh=605TJ9sRw-nFu6w-KY7QpAxRUh5AjhQWa2ig@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 2/2] rust: sync: Add atomic support
-To: Boqun Feng <boqun.feng@gmail.com>
-CC: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Gary Guo
-	<gary@garyguo.net>, <rust-for-linux@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<llvm@lists.linux.dev>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
-	<alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>,
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin
-	<benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, "Alice
- Ryhl" <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, "Andrea
- Parri" <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, Peter
- Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, David
- Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, Luc
- Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>,
-	"Akira Yokosawa" <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>,
-	"Joel Fernandes" <joel@joelfernandes.org>, Nathan Chancellor
-	<nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
-	<kent.overstreet@gmail.com>, "Greg Kroah-Hartman"
-	<gregkh@linuxfoundation.org>, <elver@google.com>, Mark Rutland
-	<mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
-	<hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>,
-	<torvalds@linux-foundation.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-fsdevel@vger.kernel.org>, Trevor Gross <tmgross@umich.edu>,
-	<dakr@redhat.com>
-References: <20240612223025.1158537-1-boqun.feng@gmail.com>
- <20240612223025.1158537-3-boqun.feng@gmail.com>
- <20240613144432.77711a3a@eugeo> <ZmseosxVQXdsQjNB@boqun-archlinux>
- <CANiq72myhoCCWs7j0eZuxfoYMbTez7cPa795T57+gz2Dpd+xAw@mail.gmail.com>
- <ZmtC7h7v1t6XJ6EI@boqun-archlinux>
- <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com>
- <79239550-dd6e-4738-acea-e7df50176487@nvidia.com>
- <ZmztZd9OJdLnBZs5@Boquns-Mac-mini.home>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <ZmztZd9OJdLnBZs5@Boquns-Mac-mini.home>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE33:EE_|DM4PR12MB6423:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4eb900a9-a36c-451d-aa63-08dc8cda6e0c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|36860700010|376011|7416011|1800799021|82310400023;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YU5hbDhvUEkwak1JS2hKSWxzNXdRVm9wa2tubzZ1djZ6VjIyZTBjL1ZZd2w2?=
- =?utf-8?B?bTNHZk5ENkpqa2wycElIVGhra2lkdzRmb2U2bk13T0E0eE5xMHRpRnFRSUhN?=
- =?utf-8?B?SnZmTVhXcFZkOS9XdGd2ajdrSkV0VTY5OUdKY1dKUFpRdEQzTWk3RlRYZjNu?=
- =?utf-8?B?WU1pK2EzenpCempuS1YrSjJSZTMxUUdnYnBOa3JCVHduWThocDJWcWZReU9T?=
- =?utf-8?B?UGZOcVI3cXZRUlF3cHpEQ2N2NGxxQnlDZUg1ZG5hUVVOMklYRGxtWnN1RHV0?=
- =?utf-8?B?QWIzL1NGdis4WE5mU25NNXZEeWpONnNWWjZWbERsc1RRK1h0QTQveFdQWDBW?=
- =?utf-8?B?clY0RXI2TVlZaHVPMTR4WHd2M0xsUzU4YmtFZUxHdlhRQ213L1VDQWs3YTZ2?=
- =?utf-8?B?T1BtQjVlUkh0cVFWOWswQmZ2Z2NCRmVFTHEwVjhpeFFiakpDZ3pqMCs2WnRQ?=
- =?utf-8?B?M1lwdTdtaWxRZVNWK1BDYVdxWkdvNEdvMlZMK3p3aVRlZHE4Tk04QkJ3TXpI?=
- =?utf-8?B?OVNYZE9vd1ZtdGgxMEFRUVRuS3l0OTc0dXU5QmtxeWo4K3hqSkpPcDl2amVW?=
- =?utf-8?B?am5mLzdNTGFmb2o1dHRjcGdDUTFXc0hjd0xhaEwrTlV5bHVCdkJZMUJmKzk5?=
- =?utf-8?B?a2RPR3lQemI2TStVR3ZKZGlHS2U2aERUTU9QTEpudGZLT0JNSXEzeDJOVFVK?=
- =?utf-8?B?ZHNMQmNEdHVraWw4aGt6QkFLam9QN1dOYTNld0p5bWFPcHdBckwzOUpGU3Nl?=
- =?utf-8?B?M3pSZGEvRFhJd0JneVFIRFFGZDczZ1J4SnNxRGQwc3lEcE9CQUJQdHdaMzlN?=
- =?utf-8?B?SmJTT1kwT2FuUzN3TGx4bFN5Q2IzWjhaUElncFdOc2UxNkN3bmdIU0toTlg1?=
- =?utf-8?B?OTJFZFJJd1BCYU1YTFVWbWJ0YUl3WXZab0VIcGZGTDJaYjQ1TTl3aGd2a3pn?=
- =?utf-8?B?Q1MxOXdZOWNKM04rYkUxNUNaQVo3QzlWS0wvdXgzWGJZM1FJL2FXQkRMV29U?=
- =?utf-8?B?aUdIN2N1RGNmZ3pFNllZWWNXTnI2eGlBQ2pEeWRnK0RsbG9rK2RGNU9kVzFl?=
- =?utf-8?B?R1Q1QmhxOU5QT0drYkVndEhqcm9lU1pFU05adW9TcDBlOTZ4elpCbVkydmd1?=
- =?utf-8?B?M3VEMVFzeVNuTzd6N2VMN2lzWFVMRDUralB6OUNQVnM2Z1F0ZnRYWDRQSldn?=
- =?utf-8?B?aVZ2N3JObklUNkswb0dJZGl6L0ZKZmxQZjRjd0dPOVFaN0o0cGE4MTRENTlp?=
- =?utf-8?B?bUc0V3BZYWIxbzNlNUNJWmtodlBlZnFTTndOV0c5cnZFNkZScWhEcHN0WWw1?=
- =?utf-8?B?OFhQOE5aT3BSczkvcDFETnRreENvZHhtN1poU2pBWkMwWnN2THZwVTBNTS9W?=
- =?utf-8?B?d2ZWMDRLbGxwYWF5d2ZkS0RubjdYcGxsaWxlOGZ3S0NmWnlEcURlc1JvT2tW?=
- =?utf-8?B?WmY3dkJyL0p4OVQwaXRpejQ5NUsvYVhVdURsQU1LbEJqNnhaSzlpaU5sS3lE?=
- =?utf-8?B?WEN5blFhWUx0bWpzdTQ1bnRKa05tb2l6NXYvcnVQNDBWNEJ5Vys3RnMvZ3JJ?=
- =?utf-8?B?aW45bTVlZWdsUFJkZ3Q2ODlFVHMrQ3Z3bUswazFsNDRMUC9RdE5jSjYyNDdS?=
- =?utf-8?B?ZUkwQTJsRHhBVmI0Y1V4MEhDUXJBdTVHOFIwQkdJd2RxN2dvMVpBR2JocXRj?=
- =?utf-8?B?eTZIbTdLYlV2bTM0NlN2SUNwcWlDL1p6RmlERWVMV0lZV2U5SnEwTnA1NHNW?=
- =?utf-8?B?b0hvRjVkMFZHQzBJY3FzYVlXNFp5M3JmbVZMRjJpTXZJdVptdVhxV3JGam8y?=
- =?utf-8?B?cWFGNDdNN0pZTTFPbGJJUnN4bDdtbVNqYkJMTDROcGlzS09CV05SK2J0bWxi?=
- =?utf-8?B?VVl6QWJkSlFTVGdZYXJkVjBKRjAzMnM4ck5XR3lKVDN2YlE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230037)(36860700010)(376011)(7416011)(1800799021)(82310400023);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2024 01:28:15.5600
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4eb900a9-a36c-451d-aa63-08dc8cda6e0c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE33.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6423
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtBTxhbmh=605TJ9sRw-nFu6w-KY7QpAxRUh5AjhQWa2ig@mail.gmail.com>
 
-On 6/14/24 6:24 PM, Boqun Feng wrote:
-> On Fri, Jun 14, 2024 at 06:03:37PM -0700, John Hubbard wrote:
->> On 6/14/24 2:59 AM, Miguel Ojeda wrote:
->>> On Thu, Jun 13, 2024 at 9:05 PM Boqun Feng <boqun.feng@gmail.com> wrote:
->>>>
->>>> Does this make sense?
->>>
->>> Implementation-wise, if you think it is simpler or more clear/elegant
->>> to have the extra lower level layer, then that sounds fine.
->>>
->>> However, I was mainly talking about what we would eventually expose to
->>> users, i.e. do we want to provide `Atomic<T>` to begin with? If yes,
->>> then we could make the lower layer private already.
->>>
->>> We can defer that extra layer/work if needed even if we go for
->>> `Atomic<T>`, but it would be nice to understand if we have consensus
->>> for an eventual user-facing API, or if someone has any other opinion
->>> or concerns on one vs. the other.
->>
->> Well, here's one:
->>
->> The reason that we have things like atomic64_read() in the C code is
->> because C doesn't have generics.
->>
->> In Rust, we should simply move directly to Atomic<T>, as there are,
->> after all, associated benefits. And it's very easy to see the connection
+On Fri, Jun 14, 2024 at 12:48:37PM +0200, Vincent Guittot wrote:
+> On Fri, 14 Jun 2024 at 11:28, Peter Zijlstra <peterz@infradead.org> wrote:
+
+> > > Vincent [5] pointed out a case where the idle load kick will fail to
+> > > run on an idle CPU since the IPI handler launching the ILB will check
+> > > for need_resched(). In such cases, the idle CPU relies on
+> > > newidle_balance() to pull tasks towards itself.
+> >
+> > Is this the need_resched() in _nohz_idle_balance() ? Should we change
+> > this to 'need_resched() && (rq->nr_running || rq->ttwu_pending)' or
+> > something long those lines?
 > 
-> What are the associated benefits you are referring to? Rust std doesn't
-> use Atomic<T>, that somewhat proves that we don't need it.
-  
-Just the stock things that a generic provides: less duplicated code,
-automatic support for future types (although here it's really just
-integer types we care about of course).
+> It's not only this but also in do_idle() as well which exits the loop
+> to look for tasks to schedule
 
+Is that really a problem? Reading the initial email the problem seems to
+be newidle balance, not hitting schedule. Schedule should be fairly
+quick if there's nothing to do, no?
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+> > I mean, it's fairly trivial to figure out if there really is going to be
+> > work there.
+> >
+> > > Using an alternate flag instead of NEED_RESCHED to indicate a pending
+> > > IPI was suggested as the correct approach to solve this problem on the
+> > > same thread.
+> >
+> > So adding per-arch changes for this seems like something we shouldn't
+> > unless there really is no other sane options.
+> >
+> > That is, I really think we should start with something like the below
+> > and then fix any fallout from that.
+> 
+> The main problem is that need_resched becomes somewhat meaningless
+> because it doesn't  only mean "I need to resched a task" and we have
+> to add more tests around even for those not using polling
 
+True, however we already had some of that by having the wakeup list,
+that made nr_running less 'reliable'.
+
+The thing is, most architectures seem to have the TIF_POLLING_NRFLAG
+bit, even if their main idle routine isn't actually using it, much of
+the idle loop until it hits the arch idle will be having it set and will
+thus tickle these cases *sometimes*.
+
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index 0935f9d4bb7b..cfa45338ae97 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -5799,7 +5800,7 @@ static inline struct task_struct *
+> >  __pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+> >  {
+> >         const struct sched_class *class;
+> > -       struct task_struct *p;
+> > +       struct task_struct *p = NULL;
+> >
+> >         /*
+> >          * Optimization: we know that if all tasks are in the fair class we can
+> > @@ -5810,9 +5811,11 @@ __pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+> >         if (likely(!sched_class_above(prev->sched_class, &fair_sched_class) &&
+> >                    rq->nr_running == rq->cfs.h_nr_running)) {
+> >
+> > -               p = pick_next_task_fair(rq, prev, rf);
+> > -               if (unlikely(p == RETRY_TASK))
+> > -                       goto restart;
+> > +               if (rq->nr_running) {
+> 
+> How do you make the diff between a spurious need_resched() because of
+> polling and a cpu becoming idle ? isn't rq->nr_running null in both
+> cases ?
+
+Bah, true. It should also check current being idle, which then makes a
+mess of things again. Still, we shouldn't be calling newidle from idle,
+that's daft.
+
+I should probably not write code at 3am, but the below horror is what
+I came up with.
+
+---
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 0935f9d4bb7b..cfe8d3350819 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6343,19 +6344,12 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+  * Constants for the sched_mode argument of __schedule().
+  *
+  * The mode argument allows RT enabled kernels to differentiate a
+- * preemption from blocking on an 'sleeping' spin/rwlock. Note that
+- * SM_MASK_PREEMPT for !RT has all bits set, which allows the compiler to
+- * optimize the AND operation out and just check for zero.
++ * preemption from blocking on an 'sleeping' spin/rwlock.
+  */
+-#define SM_NONE			0x0
+-#define SM_PREEMPT		0x1
+-#define SM_RTLOCK_WAIT		0x2
+-
+-#ifndef CONFIG_PREEMPT_RT
+-# define SM_MASK_PREEMPT	(~0U)
+-#else
+-# define SM_MASK_PREEMPT	SM_PREEMPT
+-#endif
++#define SM_IDLE			(-1)
++#define SM_NONE			0
++#define SM_PREEMPT		1
++#define SM_RTLOCK_WAIT		2
+ 
+ /*
+  * __schedule() is the main scheduler function.
+@@ -6396,11 +6390,12 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+  *
+  * WARNING: must be called with preemption disabled!
+  */
+-static void __sched notrace __schedule(unsigned int sched_mode)
++static void __sched notrace __schedule(int sched_mode)
+ {
+ 	struct task_struct *prev, *next;
+ 	unsigned long *switch_count;
+ 	unsigned long prev_state;
++	bool preempt = sched_mode > 0;
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+ 	int cpu;
+@@ -6409,13 +6404,13 @@ static void __sched notrace __schedule(unsigned int sched_mode)
+ 	rq = cpu_rq(cpu);
+ 	prev = rq->curr;
+ 
+-	schedule_debug(prev, !!sched_mode);
++	schedule_debug(prev, preempt);
+ 
+ 	if (sched_feat(HRTICK) || sched_feat(HRTICK_DL))
+ 		hrtick_clear(rq);
+ 
+ 	local_irq_disable();
+-	rcu_note_context_switch(!!sched_mode);
++	rcu_note_context_switch(preempt);
+ 
+ 	/*
+ 	 * Make sure that signal_pending_state()->signal_pending() below
+@@ -6449,7 +6444,12 @@ static void __sched notrace __schedule(unsigned int sched_mode)
+ 	 * that we form a control dependency vs deactivate_task() below.
+ 	 */
+ 	prev_state = READ_ONCE(prev->__state);
+-	if (!(sched_mode & SM_MASK_PREEMPT) && prev_state) {
++	if (sched_mode == SM_IDLE) {
++		if (!rq->nr_running) {
++			next = prev;
++			goto picked;
++		}
++	} else if (!preempt && prev_state) {
+ 		if (signal_pending_state(prev_state, prev)) {
+ 			WRITE_ONCE(prev->__state, TASK_RUNNING);
+ 		} else {
+@@ -6483,6 +6483,7 @@ static void __sched notrace __schedule(unsigned int sched_mode)
+ 	}
+ 
+ 	next = pick_next_task(rq, prev, &rf);
++picked:
+ 	clear_tsk_need_resched(prev);
+ 	clear_preempt_need_resched();
+ #ifdef CONFIG_SCHED_DEBUG
+@@ -6521,9 +6522,9 @@ static void __sched notrace __schedule(unsigned int sched_mode)
+ 		++*switch_count;
+ 
+ 		migrate_disable_switch(rq, prev);
+ 		psi_sched_switch(prev, next, !task_on_rq_queued(prev));
+ 
+-		trace_sched_switch(sched_mode & SM_MASK_PREEMPT, prev, next, prev_state);
++		trace_sched_switch(preempt, prev, next, prev_state);
+ 
+ 		/* Also unlocks the rq: */
+ 		rq = context_switch(rq, prev, next, &rf);
+@@ -6599,7 +6601,7 @@ static void sched_update_worker(struct task_struct *tsk)
+ 	}
+ }
+ 
+-static __always_inline void __schedule_loop(unsigned int sched_mode)
++static __always_inline void __schedule_loop(int sched_mode)
+ {
+ 	do {
+ 		preempt_disable();
+@@ -6644,7 +6646,7 @@ void __sched schedule_idle(void)
+ 	 */
+ 	WARN_ON_ONCE(current->__state);
+ 	do {
+-		__schedule(SM_NONE);
++		__schedule(SM_IDLE);
+ 	} while (need_resched());
+ }
+ 
 
