@@ -1,92 +1,78 @@
-Return-Path: <linux-kernel+bounces-215990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86DFC9099A9
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 20:53:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836F29099AE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 21:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A7A32829F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 18:53:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8101D1C21355
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 19:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120D461FCA;
-	Sat, 15 Jun 2024 18:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E60160DFA;
+	Sat, 15 Jun 2024 19:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="di9FlrJk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABLJrL8T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6DA4437;
-	Sat, 15 Jun 2024 18:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7FD5339B;
+	Sat, 15 Jun 2024 19:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718477555; cv=none; b=ruQ85XH8zpVV052EHcUVpsvSVcAoFTMs8uZUNVzsxgDXDe/EAS3x0ENtBv7chncBEA/jTwtEtOZQjeuGBanqDl6nu5DWYn653Adf8IupDC7AMY5yKKuo6VEy48vJOXSDkT6E5hJRA76+5qcIORZX5tF5qHU5ysdqAk+ZEiQfmb4=
+	t=1718478913; cv=none; b=dpK0V0vQAk3TPY8Ls6Pfg2TsWNapsDKsL9HVj1sAUkGuNqzgbh3alIUreViZ3DSfKQ4zXoozUe8O7huzSZ8GcDmKQjpcnIBtd4lRVrzmBz3S0HhZlRdPV16IOXfY8AFY3IPF1uGDEKVU7orTABO6l/THwCW9JmfB9rBvmRKCdrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718477555; c=relaxed/simple;
-	bh=nyGltL8ICDC6yNzr7LgN5jIYezIhu7MymJF2gKvIdTs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QSokFffiZ9xRDHpIGqZUT2QNs53asz1s7V7JKMgEt+o3PopK5kGVvQbx8Go1oYV8lvFzfmjxA3svlZVqCzXZOaaVK2fkkA8ZtPymfwem/0tvUE+MiCtCsvM5tktYMxv2LCmROTAxKjiWZ9LefpsmlixUzs3Fs7OsTiHhpACCp1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=di9FlrJk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72993C116B1;
-	Sat, 15 Jun 2024 18:52:30 +0000 (UTC)
+	s=arc-20240116; t=1718478913; c=relaxed/simple;
+	bh=1MDXDhN6Yyk/5jKBI8p8aPaF8BXDR+lYqCD+8ltTGs4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=IRl7UeLjwcOpG+TWtCjeKp+JZIF+Rhm1lqGDlbJYXrsIJcQApun6aZDmfZbgKpNdoitej0EcW8qsEwCFOklWFrROwSK1+OWzqJUQ818dQH8Kf/YZ3DkIdd/oqL08spP6i25Vgi37nt752rZpxLUBv2FY/ykrOInhOWgkusjiSvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABLJrL8T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 15A62C116B1;
+	Sat, 15 Jun 2024 19:15:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718477554;
-	bh=nyGltL8ICDC6yNzr7LgN5jIYezIhu7MymJF2gKvIdTs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=di9FlrJkf6enPrwrRLzCVdp15Vg/c15nzBD5yNkikm4q+vtua7GROqMrDs98lCB1v
-	 S3G1LZDtTNPw1fp6RdoLCzPO4wdz/D+TUWVQfcCxCmNfmR8wAJsvW2YbKY34vlFqAd
-	 WrYLGIDJo3IgoYKMPj0f2CHcY951iIOWPwvK6grdff2BT54uOVyinA9fSjE9I59QPr
-	 IBzE12jWaiQIg2PHpHaa/UHcz9IdCwiVwDHydjnAhRrYUchx6WnYtkZgQZkwD/hG+9
-	 j/G2OJMSWYaOae4mNPLfHzskx7BzHL6IvyG8I/YXRpDzON4GCG66/mU+yYTm73PTlc
-	 oqtWJ4SkTdk9g==
-From: Vinod Koul <vkoul@kernel.org>
-To: conor@kernel.org, kishon@kernel.org, robh+dt@kernel.org, 
- krzysztof.kozlowski+dt@linaro.org, frank.li@nxp.com, conor+dt@kernel.org, 
- Richard Zhu <hongxing.zhu@nxp.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kernel@pengutronix.de, imx@lists.linux.dev
-In-Reply-To: <1716962565-2084-1-git-send-email-hongxing.zhu@nxp.com>
-References: <1716962565-2084-1-git-send-email-hongxing.zhu@nxp.com>
-Subject: Re: [PATCH v7 0/2] Add i.MX8Q HSIO PHY support
-Message-Id: <171847755003.716119.4761960505484541660.b4-ty@kernel.org>
-Date: Sun, 16 Jun 2024 00:22:30 +0530
+	s=k20201202; t=1718478913;
+	bh=1MDXDhN6Yyk/5jKBI8p8aPaF8BXDR+lYqCD+8ltTGs4=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ABLJrL8TlyLU3NcvlM5zDrZD3Ad+BYxTERT1MW4SfMXKi1sMUNydOrwlCmbsewD4b
+	 FrNN2JE3zCD94ngWNTnYN8f/Dc5dwzknWg4DFtmlFJEeZ9PLRbMHWDrgjyntCsNqbz
+	 O1zkH+Z26/WPWPJszyNJyI5UhbY71NXMZ2VW/A8NfwdIuDQfxUxJfqOkTdwgLW6AWq
+	 YNRA2HgR52VkBSbi6upg7sneWSngc8M7WhVIIbNznSCcpQ2NsvDdtt3yN+036O1uU7
+	 Wi5/rxcL/COmwURofmz7HP7xGocDlAZno/IScXnE0IAFgOiB6QOzK/9Dx++Qx7JzU+
+	 6D5ZGzTchK1ZQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 07133C4332D;
+	Sat, 15 Jun 2024 19:15:13 +0000 (UTC)
+Subject: Re: [GIT PULL] ksmbd server fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAH2r5mtj61t0AH6wDZ=k=rzGjAuYngLZCTYtw7AMT6ZhJcyWXw@mail.gmail.com>
+References: <CAH2r5mtj61t0AH6wDZ=k=rzGjAuYngLZCTYtw7AMT6ZhJcyWXw@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-cifs.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAH2r5mtj61t0AH6wDZ=k=rzGjAuYngLZCTYtw7AMT6ZhJcyWXw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.samba.org/ksmbd.git tags/6.10-rc3-smb3-server-fixes
+X-PR-Tracked-Commit-Id: 2bfc4214c69c62da13a9da8e3c3db5539da2ccd3
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 62e1f3b3fdc026aa244982533ae8e05bd1b9ee77
+Message-Id: <171847891301.12391.11921407115997454069.pr-tracker-bot@kernel.org>
+Date: Sat, 15 Jun 2024 19:15:13 +0000
+To: Steve French <smfrench@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Namjae Jeon <linkinjeon@kernel.org>, CIFS <linux-cifs@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
+The pull request you sent on Sat, 15 Jun 2024 10:45:30 -0500:
 
-On Wed, 29 May 2024 14:02:43 +0800, Richard Zhu wrote:
-> v7 changes:
-> Rebase to 6.10-rc1
-> 
-> dt-binding
-> - To keep the table format, add "|" to description of "fsl,hsio-cfg" property.
-> - Refine the contents of "fsl,hsio-cfg" property.
-> - Add Reviewed-by: Conor Dooley <conor.dooley@microchip.com> tag.
-> PHY driver
-> - Use "imx8qm_hsio_drvdata" as imx_hsio_drvdata struct name of i.MX8QM
-> - Remove redundant memset().
-> - Add Reviewed-by: Frank Li <Frank.Li@nxp.com> tag.
-> 
-> [...]
+> git://git.samba.org/ksmbd.git tags/6.10-rc3-smb3-server-fixes
 
-Applied, thanks!
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/62e1f3b3fdc026aa244982533ae8e05bd1b9ee77
 
-[1/2] dt-bindings: phy: Add i.MX8Q HSIO SerDes PHY binding
-      commit: 7c46101aa631843ded626b823b5a412d57371812
-[2/2] phy: freescale: imx8qm-hsio: Add i.MX8QM HSIO PHY driver support
-      commit: 82c56b6dd24fcdf811f2b47b72e5585c8a79b685
+Thank you!
 
-Best regards,
 -- 
-Vinod Koul <vkoul@kernel.org>
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
