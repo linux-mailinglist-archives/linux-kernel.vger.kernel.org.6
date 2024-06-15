@@ -1,125 +1,95 @@
-Return-Path: <linux-kernel+bounces-215866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E576909818
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:02:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B5690981A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EBAC1C21320
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:02:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 035F21F21FC7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6433649638;
-	Sat, 15 Jun 2024 12:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6F445020;
+	Sat, 15 Jun 2024 12:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aEeMXd21"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MI/Tb/Y/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DD2481AB;
-	Sat, 15 Jun 2024 12:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F0222318;
+	Sat, 15 Jun 2024 12:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718452884; cv=none; b=u26tB2UbzXwpjGHe4amu6XWq73+Ke53wIvHBgSn9c+rUHTbkYWw7UEKIBST1XsbnftdQyXmd0jmjupXPj+DfrPa7f3IkC1tX2TC8VmqIzxIE3GaoA+h2Nn5JccTXqf9ujLUqNtsjz6BAe6dP3LbLqd2EfLUcfsejmqOqE45CX4A=
+	t=1718453347; cv=none; b=LNsfea05nZn2ar9RcZrEd79R6KtYJBDtWjWmm2P9iNkuDPppUW/ia4Cv/o/rdE+ia13KbcoWPKTSZY34x5EQ02nG0q5cIf3itHYC8FkUnK5fx6g4UnKQ5X9Xmk5iIRbc5B2ogihytJIiR3iZeX2HqNqiO2GJl4iAB/H6VgTx3y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718452884; c=relaxed/simple;
-	bh=1KEWyFoCMTmoTcxSTlV4zMfEojOLQmrzSBfJGBmPpLE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uTwsmMIbEaRJAi3FrJiKpGiB3+HTii3TwecSyM/fjIjyJY29n31awovjgc16vtzu2UINFE/MvG3DiXVCVY3RgH8/d4CMnmkh7VXJrFggC3z+ZGYWeO4FG5VpD2p1FEh4mAYNIMyS3+YtKDAmJsNKr/8GogLiVlRyUV6R1ipg9Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aEeMXd21; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45FBUJEW016513;
-	Sat, 15 Jun 2024 12:00:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lBymZgJFy/4Nwqfcncss78bsklXX4SxvhrH9q6SaQZY=; b=aEeMXd21vADXl703
-	Il1kNPWMNF9q+CYl5Q48vjjgg6TZ+WKApvNs2P0mZjrkxCanW+VNOmfUcfp9RHOY
-	ORxH6JRwJ6z1byWgkj2hvYKtY1mlp3KV+ROlXhGtpw8VpgpLlMmDNNf/QtB3ibV9
-	HZf8fOyvXcABUuTWPXNAWRpCOfIHzp5X98jfT0nlPPubzkxTn5Om38WjzRnnm2jz
-	CSGBSj4+SePBW5ZnnTijLoZj3rgstNZr/hK8JTrmCbAndtKQTnBWXbsjOLpOVPNW
-	Yt9QD1+KVCgWV/t6mhf/3Ek7pHUZtcXjUFz3TA1vC7+UnQPl8bscHxtet0UkxOuS
-	1tzXtA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys1y6rmad-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 15 Jun 2024 12:00:57 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45FC0tt1014197
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 15 Jun 2024 12:00:55 GMT
-Received: from luoj-gv.qualcomm.com (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Jun
- 2024 05:00:47 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andrew@lunn.ch>, <hkallweit1@gmail.com>,
-        <linux@armlinux.org.uk>, <corbet@lwn.net>, <vladimir.oltean@nxp.com>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        Conor Dooley
-	<conor.dooley@microchip.com>
-Subject: [PATCH net-next v2 2/2] dt-bindings: net: ethernet-controller: add 10g-qxgmii mode
-Date: Sat, 15 Jun 2024 20:00:28 +0800
-Message-ID: <20240615120028.2384732-3-quic_luoj@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240615120028.2384732-1-quic_luoj@quicinc.com>
-References: <20240615120028.2384732-1-quic_luoj@quicinc.com>
+	s=arc-20240116; t=1718453347; c=relaxed/simple;
+	bh=o9CKb0p04y3vdHKYxcqijUw8AEgxUBS8t9UOrGfPG2s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZxJDgkp4wWeW1u0BnyIAv5lecHqA6uiCJcQNfFwWttlodFXGgqoI+dotUAz8+er2eqN9TpylSf2O2aITPJlSsuTsKPTjzFXLtcvc0iVhgH3SpSc9YrTDsj906dD0XmASZNft3qoDG9BYiLWS8WXvFCyCNRghr+esWAkJMJm1hbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MI/Tb/Y/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 744D1C116B1;
+	Sat, 15 Jun 2024 12:09:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718453347;
+	bh=o9CKb0p04y3vdHKYxcqijUw8AEgxUBS8t9UOrGfPG2s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MI/Tb/Y/EjaM2jZGyACCm0aM6Sza+JV1dNmxrjLLZPP1f7BpaPfps11NuXY6lV26T
+	 +M3/99Rzg4DkQSTRZQWgZigOqqmrwGl1SsRGNtW9EADj/g0Gtq0vBmCCwC2dYfee8G
+	 XQ8NuXLzp1KmPIwsTKp2qqQTgdpvRW7+T3uvmW5I4KFPS1OMWKi7EAw+YFHvDmLJ/O
+	 ax+3Rrd27EoHBQnctd3+JY8GLxgCv67NivkgX+QIKYkvnrQ3ezNxqhWgg58d5S3HNj
+	 uL9eUMVtfSt9dD8hIdoP81AUFy+J6dNyiqNBOkgh/iYZRqj5t7htqTbac4W7W4dL7D
+	 UH3dotCoqhOdA==
+Date: Sat, 15 Jun 2024 13:08:58 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Marcelo Schmitt <marcelo.schmitt1@gmail.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Alisa-Dariana
+ Roman <alisadariana@gmail.com>
+Subject: Re: [PATCH v2 1/5] iio: adc: ad7192: use
+ devm_regulator_get_enable_read_voltage
+Message-ID: <20240615130858.22043725@jic23-huawei>
+In-Reply-To: <20240612-iio-adc-ref-supply-refactor-v2-1-fa622e7354e9@baylibre.com>
+References: <20240612-iio-adc-ref-supply-refactor-v2-0-fa622e7354e9@baylibre.com>
+	<20240612-iio-adc-ref-supply-refactor-v2-1-fa622e7354e9@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: QnXwXMQqWjNSTlHeOntmevy0lgoacB6O
-X-Proofpoint-ORIG-GUID: QnXwXMQqWjNSTlHeOntmevy0lgoacB6O
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-15_08,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 impostorscore=0 mlxscore=0 bulkscore=0 clxscore=1015
- lowpriorityscore=0 spamscore=0 mlxlogscore=999 suspectscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406150092
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
+On Wed, 12 Jun 2024 16:03:05 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-Add the new interface mode 10g-qxgmii, which is similar to
-usxgmii but extend to 4 channels to support maximum of 4
-ports with the link speed 10M/100M/1G/2.5G.
+> This makes use of the new devm_regulator_get_enable_read_voltage()
+> function to reduce boilerplate code.
+> 
+> Error messages have changed slightly since there are now fewer places
+> where we print an error. The rest of the logic of selecting which
+> supply to use as the reference voltage remains the same.
+> 
+> Also 1000 is replaced by MILLI in a few places for consistency.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
 
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
----
- Documentation/devicetree/bindings/net/ethernet-controller.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Complicated bit of code, but seems correct.
+However, it crossed with Alisa-Dariana switching adding a
+struct device *dev = &spi->dev to probe() that I picked up earlier
+today.
 
-diff --git a/Documentation/devicetree/bindings/net/ethernet-controller.yaml b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
-index b2785b03139f..45819b235800 100644
---- a/Documentation/devicetree/bindings/net/ethernet-controller.yaml
-+++ b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
-@@ -103,6 +103,7 @@ properties:
-       - usxgmii
-       - 10gbase-r
-       - 25gbase-r
-+      - 10g-qxgmii
- 
-   phy-mode:
-     $ref: "#/properties/phy-connection-type"
--- 
-2.34.1
+I could unwind that but given Alisa-Dariana has a number of
+other patches on this driver in flight, I'd like the two of you
+to work out the best resolution between you.  Maybe easiest option
+is that Alisa-Dariana sends this a first patch of the next
+series I should pick up.
 
+Thanks,
+
+Jonathan
 
