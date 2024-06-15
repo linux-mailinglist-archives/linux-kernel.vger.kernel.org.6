@@ -1,163 +1,165 @@
-Return-Path: <linux-kernel+bounces-215875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A21A909835
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:17:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F57909837
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 14:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B877628177E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:17:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90F6D281863
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 12:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411D24597F;
-	Sat, 15 Jun 2024 12:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE3845979;
+	Sat, 15 Jun 2024 12:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7A6z8tz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CY9cHTAb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC3B3C062;
-	Sat, 15 Jun 2024 12:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E0E45020;
+	Sat, 15 Jun 2024 12:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718453869; cv=none; b=T6YDR+7KOeTzpfhifVUXNnxAWlZAesuryQG+tGsR75tc9tReZU93J0vg2MQ26780fasFVsKYODa3H7Li8Mr/AHwVDSq85qzqHeQa/uq+YsptsKAB0HveGJbd/BERvlbv9ipIGpsSr+PTYTPRAsrRiGL0z8Y1PHLbDCIAamMF0kQ=
+	t=1718453892; cv=none; b=RUQcWDz3+O1N9fNTWJ5+UZtXrDtY0sHewBzayN+4znX0ZQMvF6sfUqlkofO0TgcT4T/FowqS4XFYl34LZUbzQXiy6ykrGsSIwak5ZC0oVgQUpdjtBCg/nRCH03aoW8eriWGfdUvF4/qe/XpKDXqp+1to3DL0ZibOLJfKP3vFACw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718453869; c=relaxed/simple;
-	bh=jvQAeWCdVaD0BjCP05AvOEcJtz935J6YiPM0ZLxh6iQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RmYc91JbFYQrNdTSXZqFXiVpYozFssE8ira+toYE+hi9JTCB49zfjYmjXikre0cS6wdKB69oflyPa/S7B27xmg7R0OEUanH5nsWyGe05GqdVRjtnVo2+guSaOWQTD6PKcsqVfjO2egPm7ee9g+qCpi65EVvJ1+U9zzDWbC0Yp+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b7A6z8tz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD8E7C116B1;
-	Sat, 15 Jun 2024 12:17:44 +0000 (UTC)
+	s=arc-20240116; t=1718453892; c=relaxed/simple;
+	bh=PAmHyt7Df6oYdQZUf6lZ39aqd5apsf+H+9AsntTxOlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ro5EiTqTlafFC01pM2GtObzoqmyNYKwnYY1gCOGmbyOIqdepUvB6lhzG3UV3fG3tt8MX3zj595H4S6dxlrLXW3cIQcIPlCdZ0eBpo5b4eEywzB6gx/QNkqsglCUfPkIPC/CLwXHUMAYufgtZe71tF6zmlJazVyNpI509cTqRNZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CY9cHTAb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1234C116B1;
+	Sat, 15 Jun 2024 12:18:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718453868;
-	bh=jvQAeWCdVaD0BjCP05AvOEcJtz935J6YiPM0ZLxh6iQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b7A6z8tziamb8sri2a2XV1owVztyaG5/O1VaCMT1FXpTcMWyu4QMhWHzz6ra46Q/b
-	 HBGJ7uWpvp9TH1FtAa3Tbgo2WoGxSltneXHKgwW3EXMvR/mfkR+96Ay9Ne2UCXcj0Z
-	 1TEfrM2YQCtpTCUuxOQJnKLj9FO8wFqEYDLVwdzUrj9uFtOxXfhgDMXsRXnxcswdSZ
-	 w8fXAFDcoM1Qla88Tv4GFJ4yXYOu3/6yC6GH/F1hOguRztqxNSl7+MDejqJFN4dUEW
-	 lO8NXRtI4EiKFsagjfnxJ+NDZ/unNCTjvhi6fanQBhy9lNUnJ0/Xjq7C3tbjqRtOhQ
-	 PKMOkfuzL7AQQ==
-Date: Sat, 15 Jun 2024 13:17:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	lee@kernel.org, alexandre.belloni@bootlin.com,
-	magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 02/12] dt-bindings: clock: renesas,rzg3s-vbattb-clk:
- Document the VBATTB clock driver
-Message-ID: <20240615-angler-occupier-6188a3187655@spud>
-References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
- <20240614071932.1014067-3-claudiu.beznea.uj@bp.renesas.com>
+	s=k20201202; t=1718453892;
+	bh=PAmHyt7Df6oYdQZUf6lZ39aqd5apsf+H+9AsntTxOlE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CY9cHTAbujXGslZop/tmUqibAFS/x88HYKyDVbIt9Pr+fQ5ZUkktCsSYraecu1E3V
+	 GgyAKgudMMZEJE2SPSvYtW+t9Eiy7m17YqRZOvX876O2IzS7hm0aQWrXRwDt/Ul/Kw
+	 j6YCgKJCEaq63yrAg+mLP8hExtuG/6yOQg+U7Pp7PjZT6qNM4XyAnCLP315W+kM/Nb
+	 HwK5rgPmRixG9ue8+zDIzLLAo18SlESm7oCyOIkw3cqIxe2ooHI76jDBtu5J5/ST2y
+	 QEzm2I3WV3Dj+EgPX5azsyjcGodR3lT28tNFdlDxws9G8zL7FN3otGBrfJvPeu5yRR
+	 IuUG18+1lFbKA==
+Date: Sat, 15 Jun 2024 13:18:04 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>, Marcelo Schmitt
+ <marcelo.schmitt1@gmail.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Michael Hennerich <Michael.Hennerich@analog.com>, Mark Brown
+ <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] iio: adc: ad7944: use
+ devm_regulator_get_enable_read_voltage
+Message-ID: <20240615131804.7865d878@jic23-huawei>
+In-Reply-To: <1f02200d-e38f-47f1-a6dd-def7225e5426@baylibre.com>
+References: <20240612-iio-adc-ref-supply-refactor-v2-0-fa622e7354e9@baylibre.com>
+	<20240612-iio-adc-ref-supply-refactor-v2-5-fa622e7354e9@baylibre.com>
+	<6f607e60a781f74b3cde2405c8c6659d0e304c96.camel@gmail.com>
+	<1f02200d-e38f-47f1-a6dd-def7225e5426@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nsLO3LjWINDswJxd"
-Content-Disposition: inline
-In-Reply-To: <20240614071932.1014067-3-claudiu.beznea.uj@bp.renesas.com>
-
-
---nsLO3LjWINDswJxd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 14, 2024 at 10:19:22AM +0300, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Fri, 14 Jun 2024 10:19:43 -0500
+David Lechner <dlechner@baylibre.com> wrote:
+
+> On 6/14/24 10:16 AM, Nuno S=C3=A1 wrote:
+> > On Wed, 2024-06-12 at 16:03 -0500, David Lechner wrote: =20
+> >> This makes use of the new devm_regulator_get_enable_read_voltage()
+> >> function to reduce boilerplate code.
+> >>
+> >> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> >> ---
+> >>
+> >> v2 changes:
+> >> - don't read voltage from refin regulator
+> >> - avoid else in return value checks
+> >> ---
+> >> =C2=A0drivers/iio/adc/ad7944.c | 54 +++++++++++-----------------------=
+--------------
+> >> =C2=A01 file changed, 12 insertions(+), 42 deletions(-)
+> >>
+> >> diff --git a/drivers/iio/adc/ad7944.c b/drivers/iio/adc/ad7944.c
+> >> index e2cb64cef476..f8bf03feba07 100644
+> >> --- a/drivers/iio/adc/ad7944.c
+> >> +++ b/drivers/iio/adc/ad7944.c
+> >> @@ -464,23 +464,17 @@ static const char * const ad7944_power_supplies[=
+] =3D {
+> >> =C2=A0	"avdd",	"dvdd",	"bvdd", "vio"
+> >> =C2=A0};
+> >> =C2=A0
+> >> -static void ad7944_ref_disable(void *ref)
+> >> -{
+> >> -	regulator_disable(ref);
+> >> -}
+> >> -
+> >> =C2=A0static int ad7944_probe(struct spi_device *spi)
+> >> =C2=A0{
+> >> =C2=A0	const struct ad7944_chip_info *chip_info;
+> >> =C2=A0	struct device *dev =3D &spi->dev;
+> >> =C2=A0	struct iio_dev *indio_dev;
+> >> =C2=A0	struct ad7944_adc *adc;
+> >> -	bool have_refin =3D false;
+> >> -	struct regulator *ref;
+> >> +	bool have_refin;
+> >> =C2=A0	struct iio_chan_spec *chain_chan;
+> >> =C2=A0	unsigned long *chain_scan_masks;
+> >> =C2=A0	u32 n_chain_dev;
+> >> -	int ret;
+> >> +	int ret, ref_mv;
+> >> =C2=A0
+> >> =C2=A0	indio_dev =3D devm_iio_device_alloc(dev, sizeof(*adc));
+> >> =C2=A0	if (!indio_dev)
+> >> @@ -531,47 +525,23 @@ static int ad7944_probe(struct spi_device *spi)
+> >> =C2=A0	 * - external reference: REF is connected, REFIN is not connect=
+ed
+> >> =C2=A0	 */
+> >> =C2=A0
+> >> -	ref =3D devm_regulator_get_optional(dev, "ref");
+> >> -	if (IS_ERR(ref)) {
+> >> -		if (PTR_ERR(ref) !=3D -ENODEV)
+> >> -			return dev_err_probe(dev, PTR_ERR(ref),
+> >> -					=C2=A0=C2=A0=C2=A0=C2=A0 "failed to get REF supply\n");
+> >> +	ret =3D devm_regulator_get_enable_read_voltage(dev, "ref");
+> >> +	if (ret < 0 && ret !=3D -ENODEV)
+> >> +		return dev_err_probe(dev, ret, "failed to get REF voltage\n");
+> >> =C2=A0
+> >> -		ref =3D NULL;
+> >> -	}
+> >> +	ref_mv =3D ret =3D=3D -ENODEV ? 0 : ret / 1000;
+> >> =C2=A0
+> >> =C2=A0	ret =3D devm_regulator_get_enable_optional(dev, "refin");
+> >> -	if (ret =3D=3D 0)
+> >> -		have_refin =3D true;
+> >> -	else if (ret !=3D -ENODEV)
+> >> -		return dev_err_probe(dev, ret,
+> >> -				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to get and enable REFIN supply\n=
+");
+> >> +	if (ret < 0 && ret =3D=3D -ENODEV)
+> >> +		return dev_err_probe(dev, ret, "failed to get REFIN voltage\n");
+> >> + =20
+> >=20
+> > ret !=3D -ENODEV right? =20
 >=20
-> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock that feeds
-> the RTC and the tamper detector. Add documentation for the VBATTB clock
-> driver.
+> oof, yeah messed that one too
 >=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->  .../clock/renesas,rzg3s-vbattb-clk.yaml       | 90 +++++++++++++++++++
->  1 file changed, 90 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzg3s=
--vbattb-clk.yaml
+Fixed up as well and applied.
+
+Enough patches bouncing around that I'd rather clear these little things by
+hand than see the patch again :)
+
+Jonathan
+
+> >=20
+> > - Nuno S=C3=A1
+> >=20
+> >  =20
 >=20
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb=
--clk.yaml b/Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb-cl=
-k.yaml
-> new file mode 100644
-> index 000000000000..ef52a0c0f874
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,rzg3s-vbattb-clk.ya=
-ml
-> @@ -0,0 +1,90 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/renesas,rzg3s-vbattb-clk.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas VBATTB clock
-> +
-> +maintainers:
-> +  - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> +
-> +description:
-> +  Renesas VBATTB module is an always on powered module (backed by batter=
-y) which
-> +  generates a clock (VBATTCLK). This clocks feeds the RTC and the tamper=
- detector
-> +  modules.
-> +
-> +properties:
-> +  compatible:
-> +    const: renesas,rzg3s-vbattb-clk
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: VBATTB module clock
-> +      - description: VBATTB input xtal
-> +
-> +  clock-names:
-> +    items:
-> +      - const: bclk
-> +      - const: vbattb_xtal
-> +
-> +  '#clock-cells':
-> +    const: 0
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  renesas,vbattb-load-nanofarads:
-> +    description: load capacitance of the on board xtal
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [ 4000, 7000, 9000, 12500 ]
-> +
-> +  renesas,vbattb-osc-bypass:
-> +    description: set when external clock is connected to RTXOUT pin
-> +    type: boolean
 
-When you say "external clock", is that an input or an output?
-
---nsLO3LjWINDswJxd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZm2GZgAKCRB4tDGHoIJi
-0rtkAQCi6OWcwXo4FHX+1PWlyVi63NIjfF9JgLRdiachrjUaFAEAtuwUzfHaFzsm
-8P+5obAmJteBZtgVJyrjtHfszACu3Ak=
-=BI4B
------END PGP SIGNATURE-----
-
---nsLO3LjWINDswJxd--
 
