@@ -1,109 +1,129 @@
-Return-Path: <linux-kernel+bounces-215698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF9CB9095F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 06:14:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA209095FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 06:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9047B22B25
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 04:14:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA6F9284D89
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 04:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A80F9D6;
-	Sat, 15 Jun 2024 04:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2ADDF6B;
+	Sat, 15 Jun 2024 04:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MQVWGsEs"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l0JAE6Ik"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD69EAEB
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 04:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DA7139D
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 04:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718424844; cv=none; b=Zyr2NzEdPJTqhiHsNzysl4URrzmdvTylgvUw/pnS2fUHGybWb+TEJoxykho5uc7z0GVdyCAV4n4H/LgG3X0w6UlFOimIO81fMybhOg3zh2rtwbKdr7ze2gv9m7/2JWLIOMaGeBZgVzGw7XCrZqy7fxxYSZ0GcnMLmgVqkf8NW78=
+	t=1718425828; cv=none; b=W4NietKAsKf4lupJaExioOg3XH166O00bAfVA/FX+no251pcjwn8Q2Mz+VkkrITHv5t5tLfgJ0XHxZLMPn4zYVf0Sp4hRhPKUaPsauc4LXlHfsX//f4pg16+YbQVkisgOA7Bxd/0kWTMNE5j40tpoIkC9uwqTb6RtN/XidS1alo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718424844; c=relaxed/simple;
-	bh=4nVFME92XAM0Tti6b7CHXtYIglbBOaeANfecGgoQSk4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=S3kqO+kfKQhMjhiqW8nMWbq61FXx0mmvombQbrpbG91k2UBGC6dMZYj5d0ehsp2OXw5hlP9TtF9RrpKiNTYUv/RuySsT7IxTpH/QqkFdYAebcUX43Tjaun+r5oRD8eWTI7/VcGmtFcdXR8UNTUZT/vZHyJnHUSwy8S27lttuzaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MQVWGsEs; arc=none smtp.client-ip=209.85.128.201
+	s=arc-20240116; t=1718425828; c=relaxed/simple;
+	bh=et72wdh02USuUZ9T3Npp/+khcLFvzyihP6fMTFDqalk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gL1q6wD28POfnsH52kRBjOf5FRlrSOZvv7BOsbzKY7AV/GIEob0z91/7JV1HGRrYPKBD52rpsV0H5voL5XtetJ9kJSKttOhCd/b/l1lmJwNfpNOJZbO6h5yiBgHwAf6yuXWN6jXMLM1TuTffs595t/9ogSv+cWiZyjpehSWddfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l0JAE6Ik; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-631282b19afso42511237b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 21:14:02 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-422f7c7af49so32185e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2024 21:30:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718424842; x=1719029642; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=a9azksK9xGfpOX43dWN6y+uE0VIvCKdzcELjkRMS5p4=;
-        b=MQVWGsEs4DkDm5J3hEcDeQi37FBmyLm7YQerQkI4YTIHgUY03xy2+H1ACFQGFgIJDy
-         Pt8NvUE+ljIzjTeiiZnIU54jQGr6B1sKAFoFGKdZUABPoTSBEqGPrMmwoIk9B16undTi
-         IrmV5LyzzIDOPi7MVHtfiZIR8z50Sa2+7aQkgVKxbkfn2Q+rc31ArqT9ciKutmuQKuvW
-         9zFOg7txWLBP69C4LKeYrgrqHadP5W0aNHaR+EJCrF4bTD7XsLmfWgOFsbSCoMFYP+v4
-         8IvywBC2ODo/LRs8MBw1DKd824dwwlXzK0QrtIE4d0LhdIQB5rouiamQs5DJOO3WQsPw
-         hWnQ==
+        d=google.com; s=20230601; t=1718425825; x=1719030625; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=biTC+V9v+0IuoKTuZRK4hT7YvOAuo0qgtjaFOA7jUc0=;
+        b=l0JAE6IknfnvW7FyFuh5sTes7jyDyw+DXXOCV0RrbIySOkt5G4GXL47zVjoW9PoSKU
+         BPokFSP+2W9klA1pZKmsoye/SLZ5ZVhv8u+QBsVorMEvLepuUNRrqFdcCiHQUDLPMrET
+         7oN69VIbRCoJTlVtfky6YzqgOY9d9jKXqSEdz3xMDCeYxMHSCDRGdm8jP/jqBrc2IjOT
+         UWMWgMp+3KjqFoWcdbQBAP+sH07RO9kk38lPKqGeYcgdRcYiTjwMG/Z94SEarXhd2oEP
+         pw0jBAfwYn1Qm5UWWVZyRbXdIIFZkflCrP73U0e5ePJuDCUxCZExusi8p1JJoGTClvxK
+         GoGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718424842; x=1719029642;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a9azksK9xGfpOX43dWN6y+uE0VIvCKdzcELjkRMS5p4=;
-        b=mkLghZoXlOjwxS0iDMOc1n5hAe7SVIgbLQmKhpUjpTRR36pGKIyR0tQYb6khp74Mzt
-         4N6Di07M4OiMOw0BBg5hPUG1VdJv+4ejCai02A6V5ueSjEJWEgVgtXIcSSIgGLmg8q5D
-         yGwgrP3rKnMOQ8TjagMF2uUoYNWJAt6H3bRdBSJXeYzYZNcAkUGcLxHVIIVRf/mB5m8J
-         8ntezPoacu6bHwo0jWCvPx8WRHcOI5EcHXPA0+ceNp8tmx5/9nBO+ktfFUnsTw4+3Db5
-         Aj5y0kg7/L5pGI+JnRjqEQweBxtAI/8hl3oJpb6H1r5fxr9tr7SDCdTYeBFHwlxuUgwb
-         92gw==
-X-Gm-Message-State: AOJu0YyP9kdfCMgDaZiHJhAI2HSRyUfQ4HKoFHeYxH3XL+mwZOeUR2/K
-	fWBFP6glktwbNV+Cy/O4LBI7Z09PoyifbKEc0vYXe72fzcthIZvZNkeR/xEd2gUm0RLmSfadFUe
-	00A==
-X-Google-Smtp-Source: AGHT+IEYUNOVoOSzNb2YCc3a1+OxWOPIX9ICmHFIB7KV8Njt6KL7ktMx/4IcUzQTJQN+7k+I7dEDB5etX2o=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:92f9:5432:a95e:d0e8])
- (user=surenb job=sendgmr) by 2002:a25:6942:0:b0:dff:2349:bd59 with SMTP id
- 3f1490d57ef6-dff2349c28emr501332276.1.1718424841890; Fri, 14 Jun 2024
- 21:14:01 -0700 (PDT)
-Date: Fri, 14 Jun 2024 21:13:58 -0700
+        d=1e100.net; s=20230601; t=1718425825; x=1719030625;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=biTC+V9v+0IuoKTuZRK4hT7YvOAuo0qgtjaFOA7jUc0=;
+        b=u8AtRY9K8/SNNL3bc0MeTSsrPVFQC7WSxAIZf7xuw3+s9DDYDFnRHsKWrdqt7CZQkC
+         J4nv0jwo63f4yLUWvjSpIDq+Qe0cEM23E5Fwx/cLXTjh3Jkh1B4RzUeM21QrYv195+UP
+         zj8EZneMZi0xrtnv+lI7EBMGtZ62h6sgKID6Z6WESFfSNDU6OpgWK9ZT47/2VLkpWtze
+         IALZsWQuwzHyV+ceA1rOv45dbBIGAud5G/QuAJkRsa9UkDjndXw8v/GcQN25e044U6pe
+         6qXip+bjEoJl0eIIW70xKppAVSUdfvn+qt3QTXBVYgkWatv3hFM+j5JI9MvGZKX6FMFk
+         Djxw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRGI57Vrj/u7zosG44Q8luOLLEXk+0iCqE+0frCKqf9fLTQrjW2lW34HeCPvFXS7l4gGee5gBEmgLGxYXbZdeEIiYtb9E1IAwa1RmP
+X-Gm-Message-State: AOJu0YyKMrMzCm5mN8iGeDquSPrQZU1KDJ+f7D9ffT3+4VK4PFDyiXqV
+	WnswC0Y4KA1nCm3SLnYC9kJlV1xQAlbnhZm/bnVBZQY7yMaKvuuSbl2UDra0gEsf1MHOlxAXYCd
+	AzYav90qZbNBMLX/7kynvmvBNOd8Fd2NuPYM=
+X-Google-Smtp-Source: AGHT+IGk+hi/MiIXgzzulLGlm2+RgBP9KqPoDtrjtbvERZ3kT95RHNnFhLGGo1pVu8CDAlgBxU9VF6ezPtrya5ir8iE=
+X-Received: by 2002:a05:600c:500f:b0:421:788b:7f21 with SMTP id
+ 5b1f17b1804b1-423b5f934c1mr886875e9.2.1718425824830; Fri, 14 Jun 2024
+ 21:30:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
-Message-ID: <20240615041358.103791-1-surenb@google.com>
-Subject: [PATCH 1/1] lib/dump_stack: report process UID in dump_stack_print_info()
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>
+MIME-Version: 1.0
+References: <20240613015837.4132703-1-jstultz@google.com> <20240613100441.GC17707@noisy.programming.kicks-ass.net>
+ <20240613115142.kxrmlf3btmwjcprg@airbuntu> <20240614094833.GM8774@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240614094833.GM8774@noisy.programming.kicks-ass.net>
+From: John Stultz <jstultz@google.com>
+Date: Fri, 14 Jun 2024 21:30:13 -0700
+Message-ID: <CANDhNCrVVTtp37BH1zdTBUJqXCFpzSAOpqEvXii2kKTg+k=wBQ@mail.gmail.com>
+Subject: Re: [PATCH] RFC: sched: Rework task_sched_runtime to avoid calling update_rq_clock
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Qais Yousef <qyousef@layalina.io>, LKML <linux-kernel@vger.kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To make it easier to identify the crashing process, report effective
-UID when dumping the stack.
+On Fri, Jun 14, 2024 at 2:48=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+> On Thu, Jun 13, 2024 at 12:51:42PM +0100, Qais Yousef wrote:
+> > On 06/13/24 12:04, Peter Zijlstra wrote:
+> > > @@ -5459,6 +5458,8 @@ void sched_tick(void)
+> > >
+> > >     sched_clock_tick();
+> > >
+> > > +   psi_account_irqtime(curr, &rq->psi_irq_time);
+> > > +
+> >
+> > If wakeup preemption causes a context switch, wouldn't we lose this
+> > information then? I *think* active migration might cause this informati=
+on to be
+> > lost too.
+>
+> I'm not sure what would be lost ?! the accounting is per cpu, not per
+> task afaict. That said,...
+>
+> > pick_next_task() might be a better place to do the accounting?
+>
+> Additionally, when there has been an effective cgroup switch. Only on
+> switch doesn't work for long running tasks, then the PSI information
+> will be artitrarily long out of date.
+>
+> Which then gets me something like the (completely untested) below..
+>
+> Hmm?
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- lib/dump_stack.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+I applied and booted with this. It still takes the accounting out of
+the hotpath for the CLOCK_THREAD_CPUTIME_ID the microbenchmark
+performance is back to 5.10 numbers.
 
-diff --git a/lib/dump_stack.c b/lib/dump_stack.c
-index 222c6d6c8281..ab31f53d23da 100644
---- a/lib/dump_stack.c
-+++ b/lib/dump_stack.c
-@@ -54,8 +54,10 @@ void __init dump_stack_set_arch_desc(const char *fmt, ...)
-  */
- void dump_stack_print_info(const char *log_lvl)
- {
--	printk("%sCPU: %d PID: %d Comm: %.20s %s%s %s %.*s" BUILD_ID_FMT "\n",
--	       log_lvl, raw_smp_processor_id(), current->pid, current->comm,
-+	printk("%sCPU: %d UID: %u PID: %d Comm: %.20s %s%s %s %.*s" BUILD_ID_FMT "\n",
-+	       log_lvl, raw_smp_processor_id(),
-+	       __kuid_val(current_real_cred()->euid),
-+	       current->pid, current->comm,
- 	       kexec_crash_loaded() ? "Kdump: loaded " : "",
- 	       print_tainted(),
- 	       init_utsname()->release,
+I don't have any correctness tests for irqtime measurements, so I'll
+have to try to work something up for that next week.
 
-base-commit: c286c21ff94252f778515b21b6bebe749454a852
--- 
-2.45.2.627.g7a2c4fd464-goog
-
+thanks
+-john
 
