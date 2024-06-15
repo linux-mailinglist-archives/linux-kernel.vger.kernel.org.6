@@ -1,91 +1,75 @@
-Return-Path: <linux-kernel+bounces-215688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4057C9095DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 05:34:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C30A9095E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 05:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32AE21C21AE0
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:34:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ED7C1C21404
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 03:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45146D502;
-	Sat, 15 Jun 2024 03:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A739D53F;
+	Sat, 15 Jun 2024 03:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fr+Myt+m"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GMebyaAc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3235ED517;
-	Sat, 15 Jun 2024 03:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE0CD26D
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 03:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718422428; cv=none; b=aA9xFQRnFXpzTAa2Jcj8BaU1c5owc7DRs2tbAnvBprZz2tm/YWCRISsi9AuEGAROCbrCxyFuE+XBsl2c3FgRDbj11KZC0EeLTEQ2/hBW+AF78O1+XSeHxqlcg2IkTVvjsUwZlTij9q8wfZlOg7jsvqUkHHcOOrO/XOSLJYYosAA=
+	t=1718423022; cv=none; b=F90t58kubG02+yrnqWdmuZ380AtNq0AlWc2TF4x2PXrT4XuC84ZHijHPSYf9jHr4bT56x6ETiPuNhF9PWul9r5FKFUPk5LVrwdrVrn6wE0VSDOZDy9K9kD1NXNNl1wTHP01pFpB9VK92Ib0yTknxsLKZ1jP77kMBMJyyYN5ZxWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718422428; c=relaxed/simple;
-	bh=tQ9LUK1jN643tytOyITrOgayXfeYTKDN6fD3u6FPTGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VI27SEIZnglQWpi99IXTi1xQsa57PepeynjNIvx6SKCjk6ZTWWcBODJc8hWWqvpt5P6eUh/NwXdvDbcyGlJl9K6szsAIB7v/anCezu2oqcIC1prHv4r3k2H6W4cJMeF2aNt/9t5rUmU1LvK7SAgalfeZaW2KDCidduUD1mkLbBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fr+Myt+m; arc=none smtp.client-ip=192.198.163.12
+	s=arc-20240116; t=1718423022; c=relaxed/simple;
+	bh=4qwWHY0F8HePFpzY0iHM4dZ+Cd4rKI83SIhH3tOzouY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GO+FDkzfrT4QgCHf215eLngNElxSAaWWju3VcIBW8Eq5WHsCLBtNorcTWFG2XdkIJl7YU80auW8jRAYPIeLC+JKimUP1mRUowckwOrInjsJ3L1AYQ1FtJYzC7YVU62wn3VkWne98pM3T7HbCizs8dUySFC8nexLMcUIFJ8kZ0PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GMebyaAc; arc=none smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718422425; x=1749958425;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tQ9LUK1jN643tytOyITrOgayXfeYTKDN6fD3u6FPTGY=;
-  b=Fr+Myt+mxCsAPWoHVrD8Zn5VQlkNMXi60zlXgXsybA0DS92ByGNJfj0G
-   pQSlWrzBe3+PTAj4hFTOaovqngkX0WzVWrCpD1iXAKc1/Gy5XRzKguvZW
-   CzgJ/BJ137f8vB/GSFworiGgRepe6y7UJFjGAjt8+SFGT+FC/mfUWObVI
-   vV99oFAKfwUVPB0b6iqldKPGdlO3CxeFKytP4QpxqdND7g7V6Clqm0UBt
-   vMlukAQreZJ4m9UeA0m6xwzhLr224VrfSVBZUk5Sug2I1LRvMEWbEqkW0
-   H4Ybo6VamLnrJ70rQpIRpogWMewpPZ3x7Xr7qbV+ExOU2hqrGJA1JLREq
-   g==;
-X-CSE-ConnectionGUID: lXasxOBxQb2Tu811JsXBdA==
-X-CSE-MsgGUID: EeYJWhrKT0uUUpkz8gGVYg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="19184213"
+  t=1718423021; x=1749959021;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=4qwWHY0F8HePFpzY0iHM4dZ+Cd4rKI83SIhH3tOzouY=;
+  b=GMebyaAc+zWbpFG2hALJAr7SSMbIx5P9PALqowMbyi+8Bo5sasGrYpbY
+   Z7a4VvVNTDCy+Cm7yWmvOUvb9vCitGbmrKxFf/XKS+v1vWwIyE3QsTeyM
+   9oX2HQv9HTmaWlvL0/l/uGXjEYB6JK1fvmrgdOITEm7fd3HsgpItdZdrY
+   SK8QCqisWabeebviRc1uktCe+Wp40Pac9rKY0YRAGzDWUGzdHwtk8Qmig
+   0VX+2dMYIWhcg2JHv8zybkXwQFG5thsjZ4oVuGSqbzbMJaWATReP6K8Js
+   hBSDtAYU6WDRDLP1LFp/H6e4S0Ixi1f4OAT4XB7jO++wzPqfJ79Prv/iG
+   A==;
+X-CSE-ConnectionGUID: tcateytER7eyVsUj6WxT3Q==
+X-CSE-MsgGUID: /AvWSGWlRmaigVtPMZYzEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11103"; a="26725000"
 X-IronPort-AV: E=Sophos;i="6.08,239,1712646000"; 
-   d="scan'208";a="19184213"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 20:33:44 -0700
-X-CSE-ConnectionGUID: pqyj9ua+QNWrBp0wBpeggg==
-X-CSE-MsgGUID: X+Gbxih5Q96A+WGywTRX9Q==
+   d="scan'208";a="26725000"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2024 20:43:40 -0700
+X-CSE-ConnectionGUID: f56gzK3/QzWaJ9fyCxdZMg==
+X-CSE-MsgGUID: H7+om9AkQzqlqft1FGMS7Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,239,1712646000"; 
-   d="scan'208";a="78167877"
+   d="scan'208";a="40836785"
 Received: from lkp-server01.sh.intel.com (HELO 9e3ee4e9e062) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 14 Jun 2024 20:33:37 -0700
+  by orviesa009.jf.intel.com with ESMTP; 14 Jun 2024 20:43:38 -0700
 Received: from kbuild by 9e3ee4e9e062 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sIKAZ-00025R-0z;
-	Sat, 15 Jun 2024 03:33:35 +0000
-Date: Sat, 15 Jun 2024 11:32:49 +0800
+	id 1sIKKF-00025l-1y;
+	Sat, 15 Jun 2024 03:43:35 +0000
+Date: Sat, 15 Jun 2024 11:43:16 +0800
 From: kernel test robot <lkp@intel.com>
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Oded Gabbay <ogabbay@kernel.org>,
-	Tomeu Vizoso <tomeu.vizoso@tomeuvizoso.net>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: oe-kbuild-all@lists.linux.dev, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 4/9] arm64: dts: rockchip: Add nodes for NPU and its MMU
- to rk3588s
-Message-ID: <202406151154.HZ8JttcH-lkp@intel.com>
-References: <20240612-6-10-rocket-v1-4-060e48eea250@tomeuvizoso.net>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: arch/arm64/boot/dts/qcom/pm8994.dtsi:132.9-151.4: Warning
+ (avoid_unnecessary_addr_size): /soc/spmi@fc4cf000/pmic@1: unnecessary
+ #address-cells/#size-cells without "ranges" or child "reg" property
+Message-ID: <202406151145.dKk3FOPc-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,497 +78,146 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240612-6-10-rocket-v1-4-060e48eea250@tomeuvizoso.net>
 
-Hi Tomeu,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 83a7eefedc9b56fe7bfeff13b6c7356688ffa670]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Tomeu-Vizoso/iommu-rockchip-Add-compatible-for-rockchip-rk3588-iommu/20240612-215814
-base:   83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-patch link:    https://lore.kernel.org/r/20240612-6-10-rocket-v1-4-060e48eea250%40tomeuvizoso.net
-patch subject: [PATCH 4/9] arm64: dts: rockchip: Add nodes for NPU and its MMU to rk3588s
-config: arm64-randconfig-051-20240614 (https://download.01.org/0day-ci/archive/20240615/202406151154.HZ8JttcH-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-dtschema version: 2024.6.dev1+g833054f
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240615/202406151154.HZ8JttcH-lkp@intel.com/reproduce)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   c286c21ff94252f778515b21b6bebe749454a852
+commit: 24f0f6a8059c7108d4ee3476c95db1e7ff4feb79 arm64: dts: qcom: msm8994: correct SPMI unit address
+date:   1 year, 1 month ago
+config: arm64-randconfig-r113-20240606 (https://download.01.org/0day-ci/archive/20240615/202406151145.dKk3FOPc-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project d7d2d4f53fc79b4b58e8d8d08151b577c3699d4a)
+reproduce: (https://download.01.org/0day-ci/archive/20240615/202406151145.dKk3FOPc-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406151154.HZ8JttcH-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406151145.dKk3FOPc-lkp@intel.com/
 
 dtcheck warnings: (new ones prefixed by >>)
->> arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
+   arch/arm64/boot/dts/qcom/msm8994.dtsi:343.11-1090.4: Warning (unit_address_vs_reg): /soc: node has a reg or ranges property, but no unit name
+   arch/arm64/boot/dts/qcom/msm8994.dtsi:628.28-644.5: Warning (avoid_unnecessary_addr_size): /soc/i2c@f9928000: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+>> arch/arm64/boot/dts/qcom/pm8994.dtsi:132.9-151.4: Warning (avoid_unnecessary_addr_size): /soc/spmi@fc4cf000/pmic@1: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
 --
->> arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-evb.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-evb.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-evb.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-evb.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-evb.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-evb.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-evb.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-evb.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-evb.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
+   arch/arm64/boot/dts/qcom/msm8994.dtsi:343.11-1090.4: Warning (unit_address_vs_reg): /soc: node has a reg or ranges property, but no unit name
+>> arch/arm64/boot/dts/qcom/pm8994.dtsi:132.9-151.4: Warning (avoid_unnecessary_addr_size): /soc/spmi@fc4cf000/pmic@1: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
 --
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-io.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-io.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-io.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-io.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-io.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-io.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-io.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-io.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6a-io.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
+   arch/arm64/boot/dts/qcom/msm8994.dtsi:343.11-1090.4: Warning (unit_address_vs_reg): /soc: node has a reg or ranges property, but no unit name
+>> arch/arm64/boot/dts/qcom/pm8994.dtsi:132.9-151.4: Warning (avoid_unnecessary_addr_size): /soc/spmi@fc4cf000/pmic@1: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+   arch/arm64/boot/dts/qcom/msm8994.dtsi:232.20-235.5: Warning (unique_unit_address_if_enabled): /reserved-memory/reserved@6c00000: duplicate unit-address (also used in node /reserved-memory/memory@6c00000)
 --
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6b-io.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6b-io.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6b-io.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6b-io.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6b-io.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6b-io.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6b-io.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6b-io.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-edgeble-neu6b-io.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
---
-   arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts:1228.7-1236.4: Warning (graph_child_address): /usb@fc000000/port: graph node has single child node 'endpoint@0', #address-cells/#size-cells are not necessary
->> arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
---
->> arch/arm64/boot/dts/rockchip/rk3588-jaguar.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-jaguar.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-jaguar.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-jaguar.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-jaguar.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-jaguar.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-jaguar.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-jaguar.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-jaguar.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
---
-   arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: regulator@42: Unevaluated properties are not allowed ('rockchip,suspend-voltage-selector' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/regulator/fcs,fan53555.yaml#
-   arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: pmic@0: regulators:dcdc-reg4: Unevaluated properties are not allowed ('regulator-init-microvolt' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk806.yaml#
-   arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: pmic@0: Unevaluated properties are not allowed ('regulators' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk806.yaml#
-   arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: codec@1b: Unevaluated properties are not allowed ('assigned-clock-rates', 'assigned-clocks', 'clock-names', 'clocks', 'port' were unexpected)
-   	from schema $id: http://devicetree.org/schemas/sound/realtek,rt5616.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
-   arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: sound: 'simple-audio-card,hp-pin-name' does not match any of the regexes: '^simple-audio-card,codec(@[0-9a-f]+)?$', '^simple-audio-card,cpu(@[0-9a-f]+)?$', '^simple-audio-card,dai-link(@[0-9a-f]+)?$', '^simple-audio-card,plat(@[0-9a-f]+)?$', 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/sound/simple-card.yaml#
-   arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtb: vcc3v3-sd-s0-regulator: Unevaluated properties are not allowed ('enable-active-low' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/regulator/fixed-regulator.yaml#
---
->> arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
---
-   arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dtb: audio-codec@11: 'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/sound/everest,es8328.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
---
-   arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: audio-codec@11: 'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/sound/everest,es8328.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
---
->> arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
---
->> arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
-   arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dtb: /extcon-usb3: failed to match any schema with compatible: ['linux,extcon-usb-gpio']
---
-   arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dtb: pmic@0: regulators:dcdc-reg4: Unevaluated properties are not allowed ('regulator-init-microvolt' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk806.yaml#
-   arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dtb: pmic@0: Unevaluated properties are not allowed ('regulators' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk806.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-toybrick-x0.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
---
->> arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
---
->> arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
---
-   arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dtb: audio-codec@11: 'clock-names', 'port' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/sound/everest,es8328.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
---
->> arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
---
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
---
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
---
->> arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-rock-5a.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
---
-   arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtb: gpio-func: leds-gpio: {'rockchip,pins': [[0, 2, 0, 232]], 'phandle': [[241]]} is not of type 'array'
-   	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtb: iommu@fdab9000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['rockchip,rk3588-iommu'] is too short
-   	'rockchip,rk3588-iommu' is not one of ['rockchip,iommu', 'rockchip,rk3568-iommu']
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtb: iommu@fdab9000: reg: [[0, 4255879168, 0, 256], [0, 4255883264, 0, 256], [0, 4255948800, 0, 256], [0, 4256014336, 0, 256]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtb: iommu@fdab9000: interrupts: [[0, 110, 4, 0], [0, 111, 4, 0], [0, 112, 4, 0]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtb: iommu@fdab9000: clocks: [[28, 287], [28, 276], [28, 278], [28, 288], [28, 277], [28, 279]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtb: iommu@fdab9000: clock-names:0: 'aclk' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtb: iommu@fdab9000: clock-names:1: 'iface' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtb: iommu@fdab9000: clock-names: ['aclk0', 'aclk1', 'aclk2', 'iface0', 'iface1', 'iface2'] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtb: iommu@fdab9000: power-domains: [[30, 9], [30, 10], [30, 11]] is too long
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
->> arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtb: iommu@fdab9000: 'interrupt-names', 'power-domain-names' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/iommu/rockchip,iommu.yaml#
-   arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtb: vcc-3v3-sd-s0-regulator: Unevaluated properties are not allowed ('enable-active-low' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/regulator/fixed-regulator.yaml#
+   arch/arm64/boot/dts/qcom/msm8994.dtsi:343.11-1090.4: Warning (unit_address_vs_reg): /soc: node has a reg or ranges property, but no unit name
+>> arch/arm64/boot/dts/qcom/pm8994.dtsi:132.9-151.4: Warning (avoid_unnecessary_addr_size): /soc/spmi@fc4cf000/pmic@1: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+   arch/arm64/boot/dts/qcom/msm8994.dtsi:232.20-235.5: Warning (unique_unit_address_if_enabled): /reserved-memory/reserved@6c00000: duplicate unit-address (also used in node /reserved-memory/hole2@6c00000)
+   arch/arm64/boot/dts/qcom/msm8992-xiaomi-libra.dts:112.29-115.5: Warning (unique_unit_address_if_enabled): /reserved-memory/audio@cb400000: duplicate unit-address (also used in node /reserved-memory/qseecom@cb400000)
+
+vim +132 arch/arm64/boot/dts/qcom/pm8994.dtsi
+
+38757eb3ca3436 Stephen Boyd        2015-11-17   32  
+38757eb3ca3436 Stephen Boyd        2015-11-17   33  	pmic@0 {
+38757eb3ca3436 Stephen Boyd        2015-11-17   34  		compatible = "qcom,pm8994", "qcom,spmi-pmic";
+38757eb3ca3436 Stephen Boyd        2015-11-17   35  		reg = <0x0 SPMI_USID>;
+38757eb3ca3436 Stephen Boyd        2015-11-17   36  		#address-cells = <1>;
+38757eb3ca3436 Stephen Boyd        2015-11-17   37  		#size-cells = <0>;
+0804308fdd3cf5 Stephen Boyd        2015-11-17   38  
+27414e41ba5f14 Bjorn Andersson     2017-02-17   39  		rtc@6000 {
+27414e41ba5f14 Bjorn Andersson     2017-02-17   40  			compatible = "qcom,pm8941-rtc";
+27414e41ba5f14 Bjorn Andersson     2017-02-17   41  			reg = <0x6000>, <0x6100>;
+27414e41ba5f14 Bjorn Andersson     2017-02-17   42  			reg-names = "rtc", "alarm";
+27414e41ba5f14 Bjorn Andersson     2017-02-17   43  			interrupts = <0x0 0x61 0x1 IRQ_TYPE_EDGE_RISING>;
+27414e41ba5f14 Bjorn Andersson     2017-02-17   44  		};
+27414e41ba5f14 Bjorn Andersson     2017-02-17   45  
+da3a82e35e4b24 Gustave Monce       2021-01-31   46  		pm8994_pon: pon@800 {
+2f74b3db92bef4 Vinod Koul          2018-09-10   47  			compatible = "qcom,pm8916-pon";
+2f74b3db92bef4 Vinod Koul          2018-09-10   48  			reg = <0x800>;
+2f74b3db92bef4 Vinod Koul          2018-09-10   49  			mode-bootloader = <0x2>;
+2f74b3db92bef4 Vinod Koul          2018-09-10   50  			mode-recovery = <0x1>;
+2f74b3db92bef4 Vinod Koul          2018-09-10   51  
+2f74b3db92bef4 Vinod Koul          2018-09-10   52  			pwrkey {
+2f74b3db92bef4 Vinod Koul          2018-09-10   53  				compatible = "qcom,pm8941-pwrkey";
+2f74b3db92bef4 Vinod Koul          2018-09-10   54  				interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
+2f74b3db92bef4 Vinod Koul          2018-09-10   55  				debounce = <15625>;
+2f74b3db92bef4 Vinod Koul          2018-09-10   56  				bias-pull-up;
+2f74b3db92bef4 Vinod Koul          2018-09-10   57  				linux,code = <KEY_POWER>;
+2f74b3db92bef4 Vinod Koul          2018-09-10   58  			};
+2f74b3db92bef4 Vinod Koul          2018-09-10   59  
+f7342c7d2902b7 Konrad Dybcio       2021-02-28   60  			pm8994_resin: resin {
+f7342c7d2902b7 Konrad Dybcio       2021-02-28   61  				compatible = "qcom,pm8941-resin";
+f7342c7d2902b7 Konrad Dybcio       2021-02-28   62  				interrupts = <0x0 0x8 1 IRQ_TYPE_EDGE_BOTH>;
+f7342c7d2902b7 Konrad Dybcio       2021-02-28   63  				debounce = <15625>;
+f7342c7d2902b7 Konrad Dybcio       2021-02-28   64  				bias-pull-up;
+f7342c7d2902b7 Konrad Dybcio       2021-02-28   65  				status = "disabled";
+f7342c7d2902b7 Konrad Dybcio       2021-02-28   66  			};
+2f74b3db92bef4 Vinod Koul          2018-09-10   67  		};
+2f74b3db92bef4 Vinod Koul          2018-09-10   68  
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   69  		pm8994_temp: temp-alarm@2400 {
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   70  			compatible = "qcom,spmi-temp-alarm";
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   71  			reg = <0x2400>;
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   72  			interrupts = <0x0 0x24 0x0 IRQ_TYPE_EDGE_RISING>;
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   73  			io-channels = <&pm8994_vadc VADC_DIE_TEMP>;
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   74  			io-channel-names = "thermal";
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   75  			#thermal-sensor-cells = <0>;
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   76  		};
+4778b2f1a3f0c9 Konrad Dybcio       2020-10-05   77  
+183d4cafa711ac Konrad Dybcio       2020-10-05   78  		pm8994_vadc: adc@3100 {
+183d4cafa711ac Konrad Dybcio       2020-10-05   79  			compatible = "qcom,spmi-vadc";
+183d4cafa711ac Konrad Dybcio       2020-10-05   80  			reg = <0x3100>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   81  			interrupts = <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   82  			#address-cells = <1>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   83  			#size-cells = <0>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   84  			#io-channel-cells = <1>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   85  
+183d4cafa711ac Konrad Dybcio       2020-10-05   86  			adc-chan@7 {
+183d4cafa711ac Konrad Dybcio       2020-10-05   87  				reg = <VADC_VSYS>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   88  				qcom,pre-scaling = <1 3>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   89  				label = "vph_pwr";
+183d4cafa711ac Konrad Dybcio       2020-10-05   90  			};
+183d4cafa711ac Konrad Dybcio       2020-10-05   91  			adc-chan@8 {
+183d4cafa711ac Konrad Dybcio       2020-10-05   92  				reg = <VADC_DIE_TEMP>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   93  				label = "die_temp";
+183d4cafa711ac Konrad Dybcio       2020-10-05   94  			};
+183d4cafa711ac Konrad Dybcio       2020-10-05   95  			adc-chan@9 {
+183d4cafa711ac Konrad Dybcio       2020-10-05   96  				reg = <VADC_REF_625MV>;
+183d4cafa711ac Konrad Dybcio       2020-10-05   97  				label = "ref_625mv";
+183d4cafa711ac Konrad Dybcio       2020-10-05   98  			};
+183d4cafa711ac Konrad Dybcio       2020-10-05   99  			adc-chan@a {
+183d4cafa711ac Konrad Dybcio       2020-10-05  100  				reg = <VADC_REF_1250MV>;
+183d4cafa711ac Konrad Dybcio       2020-10-05  101  				label = "ref_1250mv";
+183d4cafa711ac Konrad Dybcio       2020-10-05  102  			};
+183d4cafa711ac Konrad Dybcio       2020-10-05  103  			adc-chan@e {
+183d4cafa711ac Konrad Dybcio       2020-10-05  104  				reg = <VADC_GND_REF>;
+183d4cafa711ac Konrad Dybcio       2020-10-05  105  			};
+183d4cafa711ac Konrad Dybcio       2020-10-05  106  			adc-chan@f {
+183d4cafa711ac Konrad Dybcio       2020-10-05  107  				reg = <VADC_VDD_VADC>;
+183d4cafa711ac Konrad Dybcio       2020-10-05  108  			};
+183d4cafa711ac Konrad Dybcio       2020-10-05  109  		};
+183d4cafa711ac Konrad Dybcio       2020-10-05  110  
+c95243eeae587c Krzysztof Kozlowski 2022-09-08  111  		pm8994_gpios: gpio@c000 {
+8939304880dee9 Konrad Dybcio       2020-10-05  112  			compatible = "qcom,pm8994-gpio", "qcom,spmi-gpio";
+0804308fdd3cf5 Stephen Boyd        2015-11-17  113  			reg = <0xc000>;
+0804308fdd3cf5 Stephen Boyd        2015-11-17  114  			gpio-controller;
+8939304880dee9 Konrad Dybcio       2020-10-05  115  			gpio-ranges = <&pm8994_gpios 0 0 22>;
+0804308fdd3cf5 Stephen Boyd        2015-11-17  116  			#gpio-cells = <2>;
+8939304880dee9 Konrad Dybcio       2020-10-05  117  			interrupt-controller;
+8939304880dee9 Konrad Dybcio       2020-10-05  118  			#interrupt-cells = <2>;
+0804308fdd3cf5 Stephen Boyd        2015-11-17  119  		};
+0804308fdd3cf5 Stephen Boyd        2015-11-17  120  
+0804308fdd3cf5 Stephen Boyd        2015-11-17  121  		pm8994_mpps: mpps@a000 {
+58d92e6e73250a Dmitry Baryshkov    2021-10-08  122  			compatible = "qcom,pm8994-mpp", "qcom,spmi-mpp";
+0804308fdd3cf5 Stephen Boyd        2015-11-17  123  			reg = <0xa000>;
+0804308fdd3cf5 Stephen Boyd        2015-11-17  124  			gpio-controller;
+0804308fdd3cf5 Stephen Boyd        2015-11-17  125  			#gpio-cells = <2>;
+58d92e6e73250a Dmitry Baryshkov    2021-10-08  126  			gpio-ranges = <&pm8994_mpps 0 0 8>;
+8f48ceef5db929 Dmitry Baryshkov    2021-10-08  127  			interrupt-controller;
+8f48ceef5db929 Dmitry Baryshkov    2021-10-08  128  			#interrupt-cells = <2>;
+0804308fdd3cf5 Stephen Boyd        2015-11-17  129  		};
+38757eb3ca3436 Stephen Boyd        2015-11-17  130  	};
+38757eb3ca3436 Stephen Boyd        2015-11-17  131  
+38757eb3ca3436 Stephen Boyd        2015-11-17 @132  	pmic@1 {
+
+:::::: The code at line 132 was first introduced by commit
+:::::: 38757eb3ca3436e503a1ab675aad4eb10a65ae0c arm64: dts: qcom: Add pm8994, pmi8994, pm8004 PMIC skeletons
+
+:::::: TO: Stephen Boyd <sboyd@codeaurora.org>
+:::::: CC: Andy Gross <andy.gross@linaro.org>
 
 -- 
 0-DAY CI Kernel Test Service
