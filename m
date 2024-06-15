@@ -1,220 +1,252 @@
-Return-Path: <linux-kernel+bounces-215740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-215741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE81C909680
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:17:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59DBD909684
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 09:27:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74CAA1F2231B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 07:17:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2129EB21D15
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2024 07:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE8217579;
-	Sat, 15 Jun 2024 07:17:28 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB47179A8;
+	Sat, 15 Jun 2024 07:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="pqqmNd8T"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B5819D893
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 07:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB37219D893;
+	Sat, 15 Jun 2024 07:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718435848; cv=none; b=e2QQ4mQe2MIOs8EvrB27LmzH2L2Dg+JjWYGaPOjgsUqHgGUIXG6m4Or/jFZBXt1Hddz7IpvWcHjH6Cynb/ijU1d9YHCc/p6WhB636Bgz65ftex004Dbm8ANrl4y09Vc8exEChEjILdBgAHiDXMZ0BaV96jkbLZGTasLlvzHNE/w=
+	t=1718436406; cv=none; b=f+ZrmT2Y+MWtFy/zMvpSYWOVysoSsyhvch2thPG2D+JVSriQrQ16lRGbnPSHrsnyV3wZFA8vJUzuvQ11KQjj7ZBkYoYaFjeSxHZ3ko1/+6y976BGBmJbtlY2E38gmp50WLpZP/GzLa7HiQ1dzsIaqZYWtHHvTo+yiVZdPakiPhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718435848; c=relaxed/simple;
-	bh=UZwPlevoa47vYTu1LU1Z0nyM9yQuDjVEFg5Bz4Z2+LM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AQSLoJDtOkyzeLyqXhjpCPdLXfr3MDgt65qSH3WusD4l1XHEMBtQgmzela/9F1dE1oVNEJZW+Rv/93kmao2TM1NRK8AQge0Ry69utDp4yKUNyfQOwSdEtum2NRlJO3MLJa4NN6Esy4GrijKS1TywcazcuITEBrhUHfIn3FLnEmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7e92491e750so194995139f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 00:17:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718435845; x=1719040645;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M7HxTcY9HGZ88QORBAPj7iceLv2FXtx63X63Tww9Bvs=;
-        b=Q/LYQeGbApEJ4d6/xnfizoBPPdSgtdDcWL3S2EIP7TWJJeteO0WbhgkdSY3MyMyQit
-         dWnCgwhXsCIr35AbgWx5U4OlPlQdGuHrWMcys9uMXaEQPVZaVbcI440dILmX7XmqwaVA
-         dqJUH50PEnCCklapPfoxoZlvfnodiLh8Rn35WZg7aO4G9YbogbSGk8GFEKQa6t6D+cz/
-         dmnVbQitORddBC9x2TzrK0ieh8arTWjxbnTSmMv5lkzs1crHWwy8MHS7IWedwfiM7CLB
-         MT0AQQC6jo1eZ97mKUWnth41xM5wqekY6d8WjKyb5Lx6LyE944wa7v9Fq8RvCj6o4Twl
-         dDFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdRc9tBZyHG/gEyPVlLn5zJVBboH6SFeAfw9sm1dhjTG0QSaOPozARlb+5ncLzLoQVtPKFkHkv1J8SSiGzOXww2/vTWDosboD8DkfY
-X-Gm-Message-State: AOJu0YzOJGK0KrmOhZBA7HAObyb8J/gZTDsMY6QW0xoBu973BAJfZ4Mf
-	j0s/403KTIs7Xy627qT+02xxUenXsWLVqOuEvavowx1nOLF/pDbafKRUEAUlZNtkgk2R5mssSry
-	J2Fquz3+zrrv9ekpJhVBapF28WKapEan80wQBUk8iQXZljsEhqu6h3DI=
-X-Google-Smtp-Source: AGHT+IEdTY1YAoBscGSHJoQ+v23HFe8H2uuO4khud3RyEUWfqQlt3OdBW2PPBggQLWbWwVXj9VzprAaeD4adbLFcuJsOniiOT7xm
+	s=arc-20240116; t=1718436406; c=relaxed/simple;
+	bh=nuQ3EIRVnpcdx96lzLS4ou72I26ya7vuVSTtj5iLCgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XnkGVOjHh460oKnI+sMPcsGz43dYNDrAKb/jXp2Fe4/sM8MWxIsPVcVXHfi/PU3cziC+T/LLuvnPiOXX5WvT6gsULoMot2cB9rxYOtYRSP6vJuKRd1mx2+Qw31y7DcvAPSc0ySSk4kk3NhzeHy5W/t6cqmEkyrHo1oyoAtYy6K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=pqqmNd8T; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=DahaO75B/Jf2xXugU4fwjMQkfoKVIJ5rK6a6hxEtSDk=; b=pqqmNd8TKE7SC++dV9c0Pe0nOn
+	IZrXkQDZ6egmLeb7cSR4n95/jhSBNsTh3W219MnI5UzYWPGuysWuo0Sh/jQNXV/n3M0VcjGHFfKVX
+	fxkBBvRK6YJk9SuxjD/a2shrCt3cmerYXfLx2VIBgV5AfIsdgXosKeQa5RHtH9KxrCOu9UgDpMVjg
+	6rhn6xMH6tWjBi3HbCL19/okOWRqvyTPw2LsXsC3dbagqrsV27pasEgRUtx0+o9qjbbmjRX2YeKrt
+	5vlonkp+JMt6BaIFsexmyxWb3wSzu+mJOb3qlRy26f3/ih78etxiB+YG1RhzJ18bz+64TiJzQWY/3
+	4ucgwdTQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48650)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sINnz-0003AN-1J;
+	Sat, 15 Jun 2024 08:26:31 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sINo0-0002uc-Pq; Sat, 15 Jun 2024 08:26:32 +0100
+Date: Sat, 15 Jun 2024 08:26:32 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Johannes Berg <johannes.berg@intel.com>,
+	Michael Nemanov <michael.nemanov@ti.com>,
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+Subject: Re: [PATCH wireless v2] wifi: wlcore: fix wlcore AP mode
+Message-ID: <Zm1CKAKCnuc94oIi@shell.armlinux.org.uk>
+References: <E1sClp4-00Evu7-8v@rmk-PC.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c2a:b0:374:9ea3:a2e with SMTP id
- e9e14a558f8ab-375e01adbf1mr2537805ab.1.1718435845533; Sat, 15 Jun 2024
- 00:17:25 -0700 (PDT)
-Date: Sat, 15 Jun 2024 00:17:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002488fc061ae886f8@google.com>
-Subject: [syzbot] [ntfs3?] possible deadlock in ntfs_file_mmap
-From: syzbot <syzbot+c1751b6739d83d70bb75@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <E1sClp4-00Evu7-8v@rmk-PC.armlinux.org.uk>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hello,
+Hi Kale,
 
-syzbot found the following issue on:
+I see all my TI Wilink patches have been marked as "deferred" in the
+wireless patchwork. Please could you explain what the plan is with
+these patches, especially this one which fixes a serious frustrating
+failing that makes AP mode on this hardware very unreliable and thus
+useless.
 
-HEAD commit:    a957267fa7e9 Add linux-next specific files for 20240611
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1139caa2980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9a880e96898e79f8
-dashboard link: https://syzkaller.appspot.com/bug?extid=c1751b6739d83d70bb75
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Thanks.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+On Thu, May 30, 2024 at 08:52:26PM +0100, Russell King (Oracle) wrote:
+> Using wl183x devices in AP mode with various firmwares is not stable.
+> 
+> The driver currently adds a station to firmware with basic rates when it
+> is first known to the stack using the CMD_ADD_PEER command. Once the
+> station has finished authorising, another CMD_ADD_PEER command is issued
+> to update the firmware with the rates the station can use.
+> 
+> However, after a random amount of time, the firmware ignores the power
+> management nullfunc frames from the station, and tries to send packets
+> while the station is asleep, resulting in lots of retries dropping down
+> in rate due to no response. This restricts the available bandwidth.
+> 
+> With this happening with several stations, the user visible effect is
+> the latency of interactive connections increases significantly, packets
+> get dropped, and in general the WiFi connections become unreliable and
+> unstable.
+> 
+> Eventually, the firmware transmit queue appears to get stuck - with
+> packets and blocks allocated that never clear.
+> 
+> TI have a couple of patches that address this, but they touch the
+> mac80211 core to disable NL80211_FEATURE_FULL_AP_CLIENT_STATE for *all*
+> wireless drivers, which has the effect of not adding the station to the
+> stack until later when the rates are known. This is a sledge hammer
+> approach to solving the problem.
+> 
+> The solution implemented here has the same effect, but without
+> impacting all drivers.
+> 
+> We delay adding the station to firmware until it has been authorised
+> in the driver, and correspondingly remove the station when unwinding
+> from authorised state. Adding the station to firmware allocates a hlid,
+> which will now happen later than the driver expects. Therefore, we need
+> to track when this happens so that we transmit using the correct hlid.
+> 
+> This patch is an equivalent fix to these two patches in TI's
+> wilink8-wlan repository:
+> 
+> https://git.ti.com/cgit/wilink8-wlan/build-utilites/tree/patches/kernel_patches/4.19.38/0004-mac80211-patch.patch?h=r8.9&id=a2ee50aa5190ed3b334373d6cd09b1bff56ffcf7
+> https://git.ti.com/cgit/wilink8-wlan/build-utilites/tree/patches/kernel_patches/4.19.38/0005-wlcore-patch.patch?h=r8.9&id=a2ee50aa5190ed3b334373d6cd09b1bff56ffcf7
+> 
+> Reported-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> Co-developed-by: Johannes Berg <johannes.berg@intel.com>
+> Tested-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> ---
+> v2: switch authorship and credits as requested by Johannes.
+> ---
+>  drivers/net/wireless/ti/wlcore/cmd.c      |  7 -------
+>  drivers/net/wireless/ti/wlcore/main.c     | 17 ++++++++---------
+>  drivers/net/wireless/ti/wlcore/tx.c       |  7 ++-----
+>  drivers/net/wireless/ti/wlcore/wlcore_i.h |  6 ++++++
+>  4 files changed, 16 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/ti/wlcore/cmd.c b/drivers/net/wireless/ti/wlcore/cmd.c
+> index a939fd89a7f5..92fc2d456c2c 100644
+> --- a/drivers/net/wireless/ti/wlcore/cmd.c
+> +++ b/drivers/net/wireless/ti/wlcore/cmd.c
+> @@ -1566,13 +1566,6 @@ int wl12xx_cmd_add_peer(struct wl1271 *wl, struct wl12xx_vif *wlvif,
+>  		cpu_to_le32(wl1271_tx_enabled_rates_get(wl, sta_rates,
+>  							wlvif->band));
+>  
+> -	if (!cmd->supported_rates) {
+> -		wl1271_debug(DEBUG_CMD,
+> -			     "peer has no supported rates yet, configuring basic rates: 0x%x",
+> -			     wlvif->basic_rate_set);
+> -		cmd->supported_rates = cpu_to_le32(wlvif->basic_rate_set);
+> -	}
+> -
+>  	wl1271_debug(DEBUG_CMD, "new peer rates=0x%x queues=0x%x",
+>  		     cmd->supported_rates, sta->uapsd_queues);
+>  
+> diff --git a/drivers/net/wireless/ti/wlcore/main.c b/drivers/net/wireless/ti/wlcore/main.c
+> index ef12169f8044..492cd7aef44f 100644
+> --- a/drivers/net/wireless/ti/wlcore/main.c
+> +++ b/drivers/net/wireless/ti/wlcore/main.c
+> @@ -5139,19 +5139,23 @@ static int wl12xx_update_sta_state(struct wl1271 *wl,
+>  
+>  	/* Add station (AP mode) */
+>  	if (is_ap &&
+> -	    old_state == IEEE80211_STA_NOTEXIST &&
+> -	    new_state == IEEE80211_STA_NONE) {
+> +	    old_state == IEEE80211_STA_AUTH &&
+> +	    new_state == IEEE80211_STA_ASSOC) {
+>  		ret = wl12xx_sta_add(wl, wlvif, sta);
+>  		if (ret)
+>  			return ret;
+>  
+> +		wl_sta->fw_added = true;
+> +
+>  		wlcore_update_inconn_sta(wl, wlvif, wl_sta, true);
+>  	}
+>  
+>  	/* Remove station (AP mode) */
+>  	if (is_ap &&
+> -	    old_state == IEEE80211_STA_NONE &&
+> -	    new_state == IEEE80211_STA_NOTEXIST) {
+> +	    old_state == IEEE80211_STA_ASSOC &&
+> +	    new_state == IEEE80211_STA_AUTH) {
+> +		wl_sta->fw_added = false;
+> +
+>  		/* must not fail */
+>  		wl12xx_sta_remove(wl, wlvif, sta);
+>  
+> @@ -5165,11 +5169,6 @@ static int wl12xx_update_sta_state(struct wl1271 *wl,
+>  		if (ret < 0)
+>  			return ret;
+>  
+> -		/* reconfigure rates */
+> -		ret = wl12xx_cmd_add_peer(wl, wlvif, sta, wl_sta->hlid);
+> -		if (ret < 0)
+> -			return ret;
+> -
+>  		ret = wl1271_acx_set_ht_capabilities(wl, &sta->deflink.ht_cap,
+>  						     true,
+>  						     wl_sta->hlid);
+> diff --git a/drivers/net/wireless/ti/wlcore/tx.c b/drivers/net/wireless/ti/wlcore/tx.c
+> index 7bd3ce2f0804..464587d16ab2 100644
+> --- a/drivers/net/wireless/ti/wlcore/tx.c
+> +++ b/drivers/net/wireless/ti/wlcore/tx.c
+> @@ -140,11 +140,8 @@ EXPORT_SYMBOL(wl12xx_is_dummy_packet);
+>  static u8 wl12xx_tx_get_hlid_ap(struct wl1271 *wl, struct wl12xx_vif *wlvif,
+>  				struct sk_buff *skb, struct ieee80211_sta *sta)
+>  {
+> -	if (sta) {
+> -		struct wl1271_station *wl_sta;
+> -
+> -		wl_sta = (struct wl1271_station *)sta->drv_priv;
+> -		return wl_sta->hlid;
+> +	if (sta && wl1271_station(sta)->fw_added) {
+> +		return wl1271_station(sta)->hlid;
+>  	} else {
+>  		struct ieee80211_hdr *hdr;
+>  
+> diff --git a/drivers/net/wireless/ti/wlcore/wlcore_i.h b/drivers/net/wireless/ti/wlcore/wlcore_i.h
+> index eefae3f867b9..817a8a61cac6 100644
+> --- a/drivers/net/wireless/ti/wlcore/wlcore_i.h
+> +++ b/drivers/net/wireless/ti/wlcore/wlcore_i.h
+> @@ -324,6 +324,7 @@ struct wl12xx_rx_filter {
+>  
+>  struct wl1271_station {
+>  	u8 hlid;
+> +	bool fw_added;
+>  	bool in_connection;
+>  
+>  	/*
+> @@ -335,6 +336,11 @@ struct wl1271_station {
+>  	u64 total_freed_pkts;
+>  };
+>  
+> +static inline struct wl1271_station *wl1271_station(struct ieee80211_sta *sta)
+> +{
+> +	return (struct wl1271_station *)sta->drv_priv;
+> +}
+> +
+>  struct wl12xx_vif {
+>  	struct wl1271 *wl;
+>  	struct list_head list;
+> -- 
+> 2.30.2
+> 
+> 
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6451759a606b/disk-a957267f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7f635dbe5b8a/vmlinux-a957267f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/33eafd1b8aec/bzImage-a957267f.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c1751b6739d83d70bb75@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 4096
-ntfs3: loop0: Different NTFS sector size (4096) and media sector size (512).
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc3-next-20240611-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor.0/9000 is trying to acquire lock:
-ffff88805b15dbb8 (&sb->s_type->i_mutex_key#21){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:795 [inline]
-ffff88805b15dbb8 (&sb->s_type->i_mutex_key#21){+.+.}-{3:3}, at: ntfs_file_mmap+0x5d8/0x860 fs/ntfs3/file.c:302
-
-but task is already holding lock:
-ffff88807d087398 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
-ffff88807d087398 (&mm->mmap_lock){++++}-{3:3}, at: vm_mmap_pgoff+0x17c/0x3d0 mm/util.c:571
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&mm->mmap_lock){++++}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5817
-       gup_fast_fallback+0x24c/0x2b40 mm/gup.c:3534
-       pin_user_pages_fast+0xcc/0x160 mm/gup.c:3658
-       iov_iter_extract_user_pages lib/iov_iter.c:1583 [inline]
-       iov_iter_extract_pages+0x3db/0x720 lib/iov_iter.c:1646
-       dio_refill_pages fs/direct-io.c:173 [inline]
-       dio_get_page fs/direct-io.c:214 [inline]
-       do_direct_IO fs/direct-io.c:916 [inline]
-       __blockdev_direct_IO+0x150f/0x49d0 fs/direct-io.c:1249
-       blockdev_direct_IO include/linux/fs.h:3201 [inline]
-       ntfs_direct_IO+0x195/0x370 fs/ntfs3/inode.c:803
-       generic_file_direct_write+0x130/0x350 mm/filemap.c:3941
-       __generic_file_write_iter+0x129/0x230 mm/filemap.c:4097
-       ntfs_file_write_iter+0x68f/0x770 fs/ntfs3/file.c:1126
-       new_sync_write fs/read_write.c:497 [inline]
-       vfs_write+0xa72/0xc90 fs/read_write.c:590
-       ksys_write+0x1a0/0x2c0 fs/read_write.c:643
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&sb->s_type->i_mutex_key#21){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3159 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3278 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3902
-       __lock_acquire+0x1359/0x2000 kernel/locking/lockdep.c:5194
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5817
-       down_write+0x3a/0x50 kernel/locking/rwsem.c:1579
-       inode_lock include/linux/fs.h:795 [inline]
-       ntfs_file_mmap+0x5d8/0x860 fs/ntfs3/file.c:302
-       call_mmap include/linux/fs.h:2123 [inline]
-       mmap_region+0xe8f/0x2090 mm/mmap.c:2927
-       do_mmap+0x8ad/0xfa0 mm/mmap.c:1438
-       vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:573
-       ksys_mmap_pgoff+0x4f1/0x720 mm/mmap.c:1484
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&mm->mmap_lock);
-                               lock(&sb->s_type->i_mutex_key#21);
-                               lock(&mm->mmap_lock);
-  lock(&sb->s_type->i_mutex_key#21);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor.0/9000:
- #0: ffff88807d087398 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
- #0: ffff88807d087398 (&mm->mmap_lock){++++}-{3:3}, at: vm_mmap_pgoff+0x17c/0x3d0 mm/util.c:571
-
-stack backtrace:
-CPU: 0 PID: 9000 Comm: syz-executor.0 Not tainted 6.10.0-rc3-next-20240611-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:91 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:117
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2075
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2204
- check_prev_add kernel/locking/lockdep.c:3159 [inline]
- check_prevs_add kernel/locking/lockdep.c:3278 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3902
- __lock_acquire+0x1359/0x2000 kernel/locking/lockdep.c:5194
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5817
- down_write+0x3a/0x50 kernel/locking/rwsem.c:1579
- inode_lock include/linux/fs.h:795 [inline]
- ntfs_file_mmap+0x5d8/0x860 fs/ntfs3/file.c:302
- call_mmap include/linux/fs.h:2123 [inline]
- mmap_region+0xe8f/0x2090 mm/mmap.c:2927
- do_mmap+0x8ad/0xfa0 mm/mmap.c:1438
- vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:573
- ksys_mmap_pgoff+0x4f1/0x720 mm/mmap.c:1484
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7e2707cea9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7e27de60c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 00007f7e271b3f80 RCX: 00007f7e2707cea9
-RDX: 00000000007fffff RSI: 0000000000003000 RDI: 0000000020000000
-RBP: 00007f7e270ebff4 R08: 0000000000000004 R09: 0000000000000000
-R10: 0000000000000012 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007f7e271b3f80 R15: 00007ffee8137f98
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
