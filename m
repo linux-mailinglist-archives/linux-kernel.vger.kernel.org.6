@@ -1,116 +1,146 @@
-Return-Path: <linux-kernel+bounces-216312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB024909DC7
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:39:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64AE5909DB2
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49882281273
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 13:39:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AA521F21E77
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 13:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C54188CC0;
-	Sun, 16 Jun 2024 13:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EC8188CCF;
+	Sun, 16 Jun 2024 13:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="FL4ZobYk"
-Received: from out203-205-251-84.mail.qq.com (unknown [203.205.251.84])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="WAJ/yBz0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WP5fnlbs"
+Received: from wfhigh1-smtp.messagingengine.com (wfhigh1-smtp.messagingengine.com [64.147.123.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897004431;
-	Sun, 16 Jun 2024 13:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0FB224D7;
+	Sun, 16 Jun 2024 13:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718545142; cv=none; b=RsfjgLcCgW35hDcPYZQOgWAFSKp7jo2lNVVwCSChjsBQeIOaYEqrVahTI5+wkkVukO+jcPe7HuE/heCEItrv97za5zWNfL+BaXfP9XUwO36D9kAofzTAGVmECVdpaW1904UHtJzQpfITG1fawB/5l1XkqatQpZXzHNPID38OlGU=
+	t=1718544340; cv=none; b=BWqW8kUU8REB7y4ErfTLiucdNeu6YwFyVxjHjEdeh2ZiHY+n853EXL+bJSJZMPkMev63BjiX2JUJfQwEKpD5z1eb65vZGGlQ/tvu8Ue/IpUj5TfTg/zUuYRKWDHPd5mgNlbtmDZahrUMS6P0EslJzj045sssrz5R7U1UnzEZ3j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718545142; c=relaxed/simple;
-	bh=3DVpCOO3sUTvTy/SKfszK1530ggxWSe9b8tGGARb2eE=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=rhtdE2LLli9HwDBOlzcHbfF/9JN6j48UBQ4NpO82xkE3Jpl/LjnqMlImeKe/NU+Tf6aYtHryxie6Y8tiWHIbwIcChF0NFFtI+PFT/qIepR7fDHPw4ua8YCKeIZOISE7dwzGKl9tKrcrNM02Lhk36CaDE8BBiGNTQztBJflPtXYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=FL4ZobYk; arc=none smtp.client-ip=203.205.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1718545138; bh=QnGIQhnllw4Z9tBRtiByPGpIGjr4/z5r1mOluJiNIKc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=FL4ZobYkRn3IDg5qCVYaazkTtnxn2ikAxqfSxFBlRxz8gRDtriypVUV+BdOa0eJuh
-	 f7+7UY73w/FxIz9sVoSza12qFld/TJoeTTPUKypuxRWSSV029sNnaewKaEg4ROwZm3
-	 eRNp1Y5H6P9ElamPT8PldrVafR1Y64IIW9/HP1U4=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 5568C83C; Sun, 16 Jun 2024 21:21:22 +0800
-X-QQ-mid: xmsmtpt1718544082t6wi7qken
-Message-ID: <tencent_410DFAA59E0DBA9213DDE8DD9399584FDB07@qq.com>
-X-QQ-XMAILINFO: MQ+wLuVvI2LQAFbobgONXpWjsNwRu9fF9gsTCahQjkKvAw5vuvYvtAbDdCpc1n
-	 752KL98Ykt31N2oK+bYgiHsSO9pdGU6RYuzku6z9bKr0HfaGheffSyElOeErDMrX6qxdboOgAke5
-	 hZBcwFg414xkgBSmup5gPne2s7YqpBzC2+N21G+9hIw+3MaVYbzSST6g0EfPCAsyEZARAGavKWqy
-	 Wqf22pUVhzVusWxc0iJmwbudAnL4SpyJ7EmOM7qqH2ldPxcEssfVtnEPPNndWbIvHUtsFD0TeMKe
-	 aw67mxS+hxdRUp/v5BYRxTW9TuGAdrCEKmoz+gfW5Amv9WS9tMjrOSnCuXS/V+K0b4SDsxpjLMoS
-	 o0nRgUxPglKMQNrlLlfkSn+1Zs8KNLQzZR5hFriZTWB1sY85VdbkSaDAWo0QFY9NP1ewRxOaQDRU
-	 M0HWRCUnLVTk48tU9h9nVbL/g09VLgm3sgTGeZtYqmUak2lysfYDe3yZ10g9+v45igdau5KCmFb1
-	 ovs32GFQ6rf/Aie5xj1GB6eW9VkxNjUycCmYMRnKvfb/32easmNDlH6j9JqQVI74JFCSB4PNR57u
-	 BwGQ/Pnz7CcFevfw5e1JjdyqkY0dynLAeVX28Q1ZCW+DDoiHxlsX/f4g1V5P4qYPPW3NP1Oc00yN
-	 oakO3HWD7M8zBn8r3OEY7wDuS1UNZ1SHbmhpiv6bWfWjF9QL1fgcXIC+up2AHteQJdoCsYnEmdwN
-	 rJyHzOSbAZS1fhAvIeYRCmnAffORv9qnF5Vdt6Vk3D/v52Rz3sFehGTJMhvHhkjN5jnV/pz+aQfv
-	 UM4BHKnSJK9Z1JVhISrIOcbCrZboZShf2A9bbFZEOB4SoHbsU7qjZPa8zdGYnt1D8lCoMzNQbust
-	 XjwyvVVxXW+VXPPCd8jdO1nKzfyWuvHLxQtJSik6u3oua0fdzF9oIqRNmwIytJ9hh10eUNMJVh
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: bluez.test.bot@gmail.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	johan.hedberg@gmail.com,
-	kuba@kernel.org,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	luiz.dentz@gmail.com,
-	luiz.von.dentz@intel.com,
-	marcel@holtmann.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	syzkaller-bugs@googlegroups.com,
-	william.xuanziyang@huawei.com
-Subject: [PATCH] Bluetooth: handle value is too large should not be used in BIG
-Date: Sun, 16 Jun 2024 21:21:23 +0800
-X-OQ-MSGID: <20240616132122.584063-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <666ec579.050a0220.39ff8.d4a2@mx.google.com>
-References: <666ec579.050a0220.39ff8.d4a2@mx.google.com>
+	s=arc-20240116; t=1718544340; c=relaxed/simple;
+	bh=jcvab4qNyZPRJXJUR0OD8iHkVWlo6fHs9gsEoSshqI4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=joX2/rRFHaZnjblRIf9awaClwQvezDk3/sfOYwWcuy53WFljmdZXVk1Y6eFuUur1bjyRxpp9kJqkEeNE/R9/uF+l48w7Z+ikqdTdM/sZOgDbdz57Ectbk0Ke42fkZi38LPzsMV64qb1KTvX3temEjs4O2nJPFaPAQUW5ehN81+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=WAJ/yBz0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WP5fnlbs; arc=none smtp.client-ip=64.147.123.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfhigh.west.internal (Postfix) with ESMTP id D154C1800089;
+	Sun, 16 Jun 2024 09:25:37 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Sun, 16 Jun 2024 09:25:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1718544337; x=1718630737; bh=wz
+	CJ9EN4r8KoXbh13Yn/ghh/ZjBSoqs08fLV+ve6cHo=; b=WAJ/yBz0jXp6NFyOku
+	Wd5JpXEOV7oyOUJ2zMu+suBu8D33YPeXTxopmJwh9JGdlLcw/7UyAb5GaODWWMTm
+	hQE2fUNP9/FZhxrxeHTPQdUVidbHNmyeTKnMB8yOpubmkpf5MY7FRdGy9M8Pa7CV
+	xFg1EWaLQRwbuUeSNGm9N5myaFYxKzZrMDMZn7t+QwFsbR/H13sl/cvcYrF05llY
+	DHXS+kCflzzhz/2Hiet1+SpnzlRZTW5agnZxKJCO0zzpIvfGIg4zel8CMGkCCQoQ
+	ZISw/Rrmw9kPYy3Iip7Mt0YW6EEYZKxUuNCFYysgU/3uPSqAiPRjVybcTCniTj1q
+	jwCQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm1; t=1718544337; x=1718630737; bh=wzCJ9EN4r8KoX
+	bh13Yn/ghh/ZjBSoqs08fLV+ve6cHo=; b=WP5fnlbs/1TSuaunOI9GI1+iWEf7v
+	0GR2z6n7q6cIAmFSXkCHBZuL59sfAxN2F5U8PzQD2mzo2bCbUbiSzYH39ISFSeUq
+	tIktwco1+JLQbzMSA4isqlCqtdplyFNSEJYXp68sgP669bzl0JJz6XpecbebkfMM
+	haa2YyQ4oRvWaXCFFqzqT6AdsCOoEKEEaIG8ldk06mmHIccTPrBTzfYc8G3D2ivL
+	oojcGSfTIQK86Pc51ZRFwCY+0LLYyWPrYsdv0uUD/vQA6r7PhRslj2lCMbv7jrA8
+	OWb/swRHjSu4TOzpcw1cpMJ+UW6Snvu5bn2prem3ZwjR7OBHoHgmoomRg==
+X-ME-Sender: <xms:0eduZm0tRAMChbmbYt6ZlZ4oojaGS9J9Q5ayfbXDpyZB7R2GZDFiOA>
+    <xme:0eduZpFhSVMPufUbCnkJXO-5nvqcpfVIg8ljXbgoNwjwFTtTRIHqaj5FpVN97F-uT
+    -sl3gQebYHXxddfSYc>
+X-ME-Received: <xmr:0eduZu4o8wpUzMMkzmi22XOE7JRlpZpOGbTTOch2jU2EUY-F0d7VGSg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvfedgieehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffufffkgggtgffvvefosehtjeertdertdejnecuhfhrohhmpeflihgrgihu
+    nhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomheqnecugg
+    ftrfgrthhtvghrnhepudffffffhfeuheevhffgleevkeeugeetfeegieeijeehfeekheek
+    veduveeigeeunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+X-ME-Proxy: <xmx:0eduZn2tmYQ_Mm9e80d4y5N35MheSXxGzKnKvD3qBJO0b2iKdzZRCw>
+    <xmx:0eduZpHwzBjAzpqpGsVFs2wlgsmG44yk1dkFOIFbPncrHqHG9I4eVw>
+    <xmx:0eduZg9Q97P3dZ0Sg-X0BKCBA1UuLlCquw9e-aFAZlJR9Q5x2fyOGQ>
+    <xmx:0eduZukhrBQMy5UVJdKZ8KHPCUo0hVCWCZCLIIVMUBbxqLNPOFQlaA>
+    <xmx:0eduZiM2T4MgJPwbojbU7Vm_Egy8lEq6ZSTKrcu0GA7xwjZTkm0dPz7j>
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 16 Jun 2024 09:25:36 -0400 (EDT)
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH fixes 0/4] MIPS: MT ASE fixes
+Date: Sun, 16 Jun 2024 14:25:01 +0100
+Message-Id: <20240616-mips-mt-fixes-v1-0-83913e0e60fc@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK7nbmYC/yWLQQqAIBAAvxJ7bkElhfpKdKjcag+ZuBGB9Pekb
+ jMMk0EoMQl0VYZEFwsfoYiuK5i3MayE7IuDUaZRTjvcOQruJy58k6BVNFnnjbbtDOWJib5Qlh5
+ +Gp7nBaf6BYFmAAAA
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>, stable@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1067;
+ i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
+ bh=jcvab4qNyZPRJXJUR0OD8iHkVWlo6fHs9gsEoSshqI4=;
+ b=owGbwMvMwCXmXMhTe71c8zDjabUkhrS85xc1umoEz2Yaq29JmrNKYv5/r9NWHJxxZwxcBayTX
+ z0JbiroKGVhEONikBVTZAkRUOrb0HhxwfUHWX9g5rAygQxh4OIUgImE9jL8MzOdluV6/CbbnIlq
+ aRkfS64tsL0y+UTz/qqJpWGnPhoZxzH84f6WqeOuxHd3soeLfxT/zbqz12dO2x50qjlJee30/29
+ T2AE=
+X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
+ fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-hci_le_big_sync_established_evt is necessary to filter out cases where the
-handle value is belone to ida id range, otherwise ida will be erroneously
-released in hci_conn_cleanup.
+Hi all,
 
-Fixes: 181a42edddf5 ("Bluetooth: Make handle of hci_conn be unique")
-Reported-by: syzbot+b2545b087a01a7319474@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=b2545b087a01a7319474
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+This series fixed multiple problems for MT ASE handling in current
+kernel code.
+
+PATCH 1 is critical, although it's not causing problems on MT kernel,
+we are risking clobbering register here.
+
+Rest are usual build fixes for adopting toolcahins.
+
+Please apply it to fixes tree.
+
+Thanks.
+- Jiaxun
+
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
 ---
- net/bluetooth/hci_event.c | 3 +++
- 1 file changed, 3 insertions(+)
+Jiaxun Yang (4):
+      MIPS: mipsmtregs: Fix target register for MFTC0
+      MIPS: asmmacro: Fix MT ASE macros
+      MIPS: cps-vec: Replace MT instructions with macros
+      MIPS: Use toolchain MT ASE support whenever possible
 
-diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-index a487f9df8145..eb1d5a2c48ee 100644
---- a/net/bluetooth/hci_event.c
-+++ b/net/bluetooth/hci_event.c
-@@ -6893,6 +6893,9 @@ static void hci_le_big_sync_established_evt(struct hci_dev *hdev, void *data,
- 
- 		bis = hci_conn_hash_lookup_handle(hdev, handle);
- 		if (!bis) {
-+			if (handle > HCI_CONN_HANDLE_MAX)
-+				continue;
-+
- 			bis = hci_conn_add(hdev, ISO_LINK, BDADDR_ANY,
- 					   HCI_ROLE_SLAVE, handle);
- 			if (IS_ERR(bis))
+ arch/mips/Makefile                 |   2 +
+ arch/mips/include/asm/asmmacro.h   | 241 +++++++++++++++++++++++++++++++++----
+ arch/mips/include/asm/mipsmtregs.h |  42 ++++++-
+ arch/mips/kernel/cps-vec.S         |  62 ++++------
+ 4 files changed, 287 insertions(+), 60 deletions(-)
+---
+base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
+change-id: 20240616-mips-mt-fixes-50eb56d2159c
+
+Best regards,
 -- 
-2.43.0
+Jiaxun Yang <jiaxun.yang@flygoat.com>
 
 
