@@ -1,144 +1,127 @@
-Return-Path: <linux-kernel+bounces-216069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE659909AB9
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 02:47:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35A13909ABC
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 02:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A99531C20ED4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 00:47:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74BCC282B16
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 00:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84524C80;
-	Sun, 16 Jun 2024 00:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93538748D;
+	Sun, 16 Jun 2024 00:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="X6p8z9EF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="VtLVoOlx"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70899632;
-	Sun, 16 Jun 2024 00:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F017632;
+	Sun, 16 Jun 2024 00:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718498853; cv=none; b=cUbaJoQ2oSoj2eiFASGZWKn+Q9LrOMtKnnIWi/dy05+SJUsrh+n50N8PoMtmfSRM9aY7IBnqZQbe37J5udLZJhl1BJDVz9YZ8kMHvpphbpVwIfngTeOHmyR1EeH0qO871OOcWxYJWL3cJrjQakZQpec/3MK1WCaUZkIWxAylwJ8=
+	t=1718499091; cv=none; b=S0tSP1t7+J600jLxewA9kIaZN5hfN0v8m+3awxJha6i/Bk3aAyIp6hLEAbSx7Ciq5QoTP0yOaMZbx8Z45iBKz9xn42fqc3PvoLNBqSNCqmobUCFgANh2kfZY9WpvCCuvr9muvTXyMAWY9VAdRx3Qrr08WXwT2KMkfiHSxKXI28E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718498853; c=relaxed/simple;
-	bh=OufLWNUT3SY6JH5wRwvhFIIt2iEpfLM7MnO9DzkH/DY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=nNmhJNPwHuv0jg5sT2p+b8dBzrhPwlG1VUNpkc0cco5SDC2E5QkUobpa9KE58psT+NwSDTS+x/xmCY2T2WHIfXATGFjANkZdJr/KtOiaaB7zVw5iLPSvossHg5AggtCBKNm/kbzCPSTa7HJ3JSztIYTfuVr/n2zr2a0SElszbbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=X6p8z9EF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45G0Tn2m019782;
-	Sun, 16 Jun 2024 00:47:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=r48b80W06AbF4+Cs+ge1K8
-	cav37NNq7obPO6DVOdEws=; b=X6p8z9EFFU9LxBq1uk97TzA6bxMyZyEdtSWo8z
-	8g8j8FmcZAQVjZHpe/YTRs9+KNzvQxiA4N1qDUUPJO8w+NFmzFQ2ELEug16Cs0/Q
-	O0o69PaY9ZWTOTKzJM1Hey2SJ30o34khtW8QKkOdvv5Kwgz+Z3B4otwkhzkWfD+8
-	o7jh771oeYTFeIQ9kb8fONMn6Ahn33NRtp+htz4tLnFDW/8ZrgMG4tXsXJlK8mnO
-	TLVfB+sNVykQVUM6gcqxq41WkMbNQnCkdA52geQS+mSuVscW2rWtldcBtHMYLG06
-	Q6qvq76yPMXdcMRumtaQvaWQX/19LBCz8ISwxhCoyP1vUgVw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys488s5ac-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 16 Jun 2024 00:47:29 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45G0lSIc017716
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 16 Jun 2024 00:47:28 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Jun
- 2024 17:47:27 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sat, 15 Jun 2024 17:47:26 -0700
-Subject: [PATCH] s390/lib: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1718499091; c=relaxed/simple;
+	bh=N+v/YLdQLp1vQdvfmytEeoQSouaucGro69aA2tJTLyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UNIpy/DO0hTobz9IjEpFvzI7092qQreKNIyQdF+tdjPCu+KyKdlcue+aw10R2wryNs/T4oacVGpkVmbNTpv04AvPWBt1aYLSapKxUSYE5gva7jnShpsvafpN9iXN3NeynY3nHvp698D39hhg65A08yywwFdN4FZ8YyZIUbtN2q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=VtLVoOlx; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=NNUTnA9Gyih8/K0vQFv3C8sKwIbjbeGAKUG47PfmPjI=; b=Vt
+	LVoOlxKt/jIxDpOju0bj1BGfg4y9i/+40GOhfVCmfBbgWiMvAFoShBZIZsTewHSyMLPrOAN+e02dK
+	ZYq9ut3t8OBzITmFMRWBOCUi69JV2txvHNVUwDIuTcVq29brvdLHnLLpVqIrs4Kt5eJFqtfGHJjiN
+	r21Zx+G2JvCQdT4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sIe72-0009mY-2p; Sun, 16 Jun 2024 02:51:16 +0200
+Date: Sun, 16 Jun 2024 02:51:16 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, llvm@lists.linux.dev,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>,
+	dakr@redhat.com
+Subject: Re: [RFC 2/2] rust: sync: Add atomic support
+Message-ID: <82b88a19-fd8b-4486-b1a5-7d7a03c12d62@lunn.ch>
+References: <20240612223025.1158537-1-boqun.feng@gmail.com>
+ <20240612223025.1158537-3-boqun.feng@gmail.com>
+ <20240613144432.77711a3a@eugeo>
+ <ZmseosxVQXdsQjNB@boqun-archlinux>
+ <CANiq72myhoCCWs7j0eZuxfoYMbTez7cPa795T57+gz2Dpd+xAw@mail.gmail.com>
+ <ZmtC7h7v1t6XJ6EI@boqun-archlinux>
+ <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240615-md-s390-arch-s390-lib-v1-1-d7424b943973@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAB02bmYC/yXMywrCMBCF4Vcps3YgjUmLvoq4yGU0A22UmSqF0
- nc36u58i/NvoCRMCuduA6E3Kz9qQ3/oIJVQ74Scm8Ea68zQe5wz6vFkMEgq/zVxxMH7mHN24+g
- stO9T6Mbrr3u5NseghFFCTeVbm7i+VpyDLiSw7x/3AvFshgAAAA==
-To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger
-	<borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>
-CC: <linux-s390@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: trEKEZffITh7EG4YJaAY66pDHAtNAKTI
-X-Proofpoint-ORIG-GUID: trEKEZffITh7EG4YJaAY66pDHAtNAKTI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-15_18,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 phishscore=0 mlxlogscore=922 spamscore=0
- impostorscore=0 malwarescore=0 adultscore=0 mlxscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406160004
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com>
 
-With ARCH=s390, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/s390/lib/test_kprobes_s390.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/s390/lib/test_unwind.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/s390/lib/test_modules.o
+On Fri, Jun 14, 2024 at 11:59:58AM +0200, Miguel Ojeda wrote:
+> On Thu, Jun 13, 2024 at 9:05 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > Does this make sense?
+> 
+> Implementation-wise, if you think it is simpler or more clear/elegant
+> to have the extra lower level layer, then that sounds fine.
+> 
+> However, I was mainly talking about what we would eventually expose to
+> users, i.e. do we want to provide `Atomic<T>` to begin with? If yes,
+> then we could make the lower layer private already.
+> 
+> We can defer that extra layer/work if needed even if we go for
+> `Atomic<T>`, but it would be nice to understand if we have consensus
+> for an eventual user-facing API, or if someone has any other opinion
+> or concerns on one vs. the other.
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+Since this is fully compatible to LKMM atomic operations, is there a
+use case for C and Rust operating on the same atomic value? And then
+you will need to specify the size, or odd things are likely to happen
+if they disagree on size. With Atomic<T> can we easily say what type
+the underlying implementation uses?
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- arch/s390/lib/test_kprobes.c | 1 +
- arch/s390/lib/test_modules.c | 1 +
- arch/s390/lib/test_unwind.c  | 1 +
- 3 files changed, 3 insertions(+)
-
-diff --git a/arch/s390/lib/test_kprobes.c b/arch/s390/lib/test_kprobes.c
-index 9e62d62812e5..9021298c3e8a 100644
---- a/arch/s390/lib/test_kprobes.c
-+++ b/arch/s390/lib/test_kprobes.c
-@@ -72,4 +72,5 @@ static struct kunit_suite kprobes_test_suite = {
- 
- kunit_test_suites(&kprobes_test_suite);
- 
-+MODULE_DESCRIPTION("KUnit tests for kprobes");
- MODULE_LICENSE("GPL");
-diff --git a/arch/s390/lib/test_modules.c b/arch/s390/lib/test_modules.c
-index 9894009fc1f2..f96b6a3737e7 100644
---- a/arch/s390/lib/test_modules.c
-+++ b/arch/s390/lib/test_modules.c
-@@ -29,4 +29,5 @@ static struct kunit_suite modules_test_suite = {
- 
- kunit_test_suites(&modules_test_suite);
- 
-+MODULE_DESCRIPTION("KUnit test that modules with many relocations are loaded properly");
- MODULE_LICENSE("GPL");
-diff --git a/arch/s390/lib/test_unwind.c b/arch/s390/lib/test_unwind.c
-index 2848e3fb2ff5..98440f9d01af 100644
---- a/arch/s390/lib/test_unwind.c
-+++ b/arch/s390/lib/test_unwind.c
-@@ -519,4 +519,5 @@ static struct kunit_suite test_unwind_suite = {
- 
- kunit_test_suites(&test_unwind_suite);
- 
-+MODULE_DESCRIPTION("KUnit test for unwind_for_each_frame");
- MODULE_LICENSE("GPL");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240615-md-s390-arch-s390-lib-655bddd47742
-
+     Andrew
 
