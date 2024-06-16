@@ -1,68 +1,77 @@
-Return-Path: <linux-kernel+bounces-216450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75A24909F76
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 21:05:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6B23909F77
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 21:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 690121C21D0F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:05:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE8D01C2176E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F5C4DA1F;
-	Sun, 16 Jun 2024 19:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A927A4CB28;
+	Sun, 16 Jun 2024 19:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xFD/sfvV"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FLmn7tfU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4D3405F8;
-	Sun, 16 Jun 2024 19:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8741C6A0
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 19:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718564654; cv=none; b=YqQtbR98t9bO2lwp33Bv4mD7y6PK0kfCCNSOrF/GiuRk5oGk+x9Qgba+OHVe6RFt29bUFQthiQ0EiIb2ImjSsSU+Vy5aY33C/MvsUCTVeFspsxA4nmuIogTgILic4Yi9J3VXNwrHNE0KnORKz6jqXgpzJPRA6f5JjrvtRNEaOYM=
+	t=1718564917; cv=none; b=MMybThj69wmIBuVukdoY/n12e+PhDuIqmnipCfAPpPe1Meo73U68ykFdSJblWAWKNl6sT5NmXTJOISEzoNfxwWU4MpuAyYQL9LBT9WkFOiMZabZUbWF4UBShkG4RjE2nE9v1caB1FwmaF+BKWzzuIo7U2D/dbg+mPXe5ha/RwqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718564654; c=relaxed/simple;
-	bh=ExtjE4s06fx8QImyhfSC+fvw4uzLe/3aFBnAyqALAvE=;
+	s=arc-20240116; t=1718564917; c=relaxed/simple;
+	bh=jAUV2fkaJUOuqukFImg27JopNhskZOQjkb5WpZ7dnXI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gowA+XzNcE4MOlU8vo9VUP/Vxa/+bvC/Ym0VkpMwwJxRWFMK8cfwWj+K8MI5Diwkhzvkz8UNHHYGt8zpMK8/Ncc3/pde89ma5L7sZNvnrL1FBqAhO47e2zPa1ZGaptXSz/MYYqOI5ViLB06pC87s93VXH7OgiqeYabLBq7KMrSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xFD/sfvV; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=xfz0trPehPu0lxxZ+A55z1auT/PTnlsf3zMBmOrD6tw=; b=xFD/sfvVPw3FDAuzyU/sTQcdCi
-	9DPN24fzn6eofQI81fPN+aeE6uU6afZPzuwe8dpA2Ot/fY1gKvvHgN6LvongJ5f1Ef29qnUh/kf2C
-	3ApX3SJ59+5uqmqQc1rftPYFvLl2PFIyZj5OAx7zoYt6M2oBIvEOqxCAuoJ6BkyPY/34=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sIvAC-000CGh-V2; Sun, 16 Jun 2024 21:03:40 +0200
-Date: Sun, 16 Jun 2024 21:03:40 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yojana Mallik <y-mallik@ti.com>
-Cc: schnelle@linux.ibm.com, wsa+renesas@sang-engineering.com,
-	diogo.ivo@siemens.com, rdunlap@infradead.org, horms@kernel.org,
-	vigneshr@ti.com, rogerq@ti.com, danishanwar@ti.com,
-	pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
-	davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, srk@ti.com, rogerq@kernel.org,
-	Siddharth Vadapalli <s-vadapalli@ti.com>
-Subject: Re: [PATCH net-next v2 2/3] net: ethernet: ti: Register the RPMsg
- driver as network device
-Message-ID: <8781578d-7323-43c2-ad75-35bed142916f@lunn.ch>
-References: <20240531064006.1223417-1-y-mallik@ti.com>
- <20240531064006.1223417-3-y-mallik@ti.com>
- <4416ada7-399b-4ea0-88b0-32ca432d777b@lunn.ch>
- <2d65aa06-cadd-4462-b8b9-50c9127e6a30@ti.com>
- <f14a554c-555f-4830-8be5-13988ddbf0ba@lunn.ch>
- <b07cfdfe-dce4-484b-b8a8-9d0e49985c60@ti.com>
- <8b4dc94a-0d59-499f-8f28-d503e91f2b27@lunn.ch>
- <60bc57a7-732b-4dcb-ae72-158639a635c0@ti.com>
- <efff16aa-33d9-45eb-ac42-86f3411abfc9@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=idcbr/jii0Lm74xFAquUW3vsM+8fWLj60qO8G1VKaTzlEOOZx2YBdHTuhTvcbLnzW2uAFoal2xPZg/D2B0TdSBoWOz3KaxsQ+HkvNviLqxe0wztSpJM/9wSn2FPLHKcQSyVnsG8V50+W5Jc3MSN+wp6s3tA3ibYh5HQO0OxG0QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FLmn7tfU; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718564916; x=1750100916;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jAUV2fkaJUOuqukFImg27JopNhskZOQjkb5WpZ7dnXI=;
+  b=FLmn7tfUe0O3+EBuxj4J9Q6AUPQiOENrc5JiRfOtAJxyDWPFpIOUiaZp
+   BqeOKSpqYrTllt2zLHghgl2qKtLQSC3pnbV8yWX5OL/qo/JmcmpbVpyvt
+   cwQPxnyhjUpvvX2fAteFDxb9d1NxJUxmM2EYOtqy3Q92giBYtzkWnyujX
+   h9kYLSk/FWUFAiE69+JTFEo0buJE2xLAv3sLmnZ1ZjJmthohPq6edtIua
+   n2Yxt9tsKRw+KFYEQmbLyj3Go5IMXBGqFgk4fQwGEXlbKd6EMnMzmugdR
+   IZd2vDFKWgD0SSLwihtguyFJKEQpSZmyhmaUufXYjiMnxaY8tW70S2Wnx
+   A==;
+X-CSE-ConnectionGUID: JduJFg9JRlSlNzryVEKx9w==
+X-CSE-MsgGUID: 7SV3sc2qSIalq5GAtGwK9g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="32866479"
+X-IronPort-AV: E=Sophos;i="6.08,243,1712646000"; 
+   d="scan'208";a="32866479"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 12:08:35 -0700
+X-CSE-ConnectionGUID: s69HtPn/S02F75KT9lBZwA==
+X-CSE-MsgGUID: 3wULYVdJRtiEZ2VnXSxS8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,243,1712646000"; 
+   d="scan'208";a="40937455"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 16 Jun 2024 12:08:33 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sIvEs-0003Ay-1n;
+	Sun, 16 Jun 2024 19:08:30 +0000
+Date: Mon, 17 Jun 2024 03:07:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Amit Vadhavana <av2082000@gmail.com>, srinivas.kandagatla@linaro.org,
+	alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+	rbmarliere@gmail.com, skhan@linuxfoundation.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel-mentees@lists.linuxfoundation.org, av2082000@gmail.com
+Subject: Re: [PATCH] slimbus: Fix struct and documentation alignment in
+ stream.c
+Message-ID: <202406170201.Zh53W56G-lkp@intel.com>
+References: <20240616154531.38232-1-av2082000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,48 +80,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <efff16aa-33d9-45eb-ac42-86f3411abfc9@lunn.ch>
+In-Reply-To: <20240616154531.38232-1-av2082000@gmail.com>
 
-> As i said in my previous message. Forget about the A54->R5. Think
-> about a generic architecture. You have an RPMSG facility using the API
-> described in the documentation. You have a block of shared
-> memory. That memory could be VRAM, it could be a dual port SRAM, a PCI
-> BAR region, or some DDR which both CPU have mapped into their address
-> space. Design a protocol around that. This might mean you need to
-> modify your firmware. It might mean you need to throw away your
-> firmware and start again. But for mainline, we want something generic
-> which any vendor can use with a wide range of hardware, with as few
-> assumptions as possible.
+Hi Amit,
 
-Just adding to my own email. You might want to split the overall
-problem into two. It could be, you have 95% of the code in a generic
-driver framework. You instantiate it by calling something like:
+kernel test robot noticed the following build warnings:
 
-void *cookie rpmsg_ethernet_shared_mem_create(struct rpmsg_endpoint *ept,
-					      void __iomem *shared_memory,
-					      size_t size);
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.10-rc3 next-20240612]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-The cookie is then used with
+url:    https://github.com/intel-lab-lkp/linux/commits/Amit-Vadhavana/slimbus-Fix-struct-and-documentation-alignment-in-stream-c/20240616-234811
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240616154531.38232-1-av2082000%40gmail.com
+patch subject: [PATCH] slimbus: Fix struct and documentation alignment in stream.c
+config: arm-randconfig-002-20240617 (https://download.01.org/0day-ci/archive/20240617/202406170201.Zh53W56G-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 78ee473784e5ef6f0b19ce4cb111fb6e4d23c6b2)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240617/202406170201.Zh53W56G-lkp@intel.com/reproduce)
 
-int rpmsg_ethernet_cb(cookie, void *data, int len);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406170201.Zh53W56G-lkp@intel.com/
 
-which gets called from the rpmsg .callback function.
+All warnings (new ones prefixed by >>):
 
-You then have a vendor specific part which is responsible for creating
-the rpmsg endpoint, finding the shared memory, and mapping it into the
-address space ready for use.
+>> drivers/slimbus/stream.c:22:1: warning: 'static' ignored on this declaration [-Wmissing-declarations]
+      22 | static const struct segdist_code {
+         | ^
+>> drivers/slimbus/stream.c:22:8: warning: 'const' ignored on this declaration [-Wmissing-declarations]
+      22 | static const struct segdist_code {
+         |        ^
+   2 warnings generated.
 
-All data structures inside the shared memory need to be position
-independent, since there is no guaranteed the CPUs have it mapped to
-the same address, or even have the same size addresses. The easy way
-to do that is specify everything as offsets to the base of the memory,
-making it easy to validate the offset is actually within the shared
-memory.
 
-As i said, i've not used rpmsg, so this might in practice need to be
-different. But the basic idea should be O.K, a vendor specific chunk
-of code to do the basic setup, and then hand over the memory and RPMSG
-endpoint to generic code which does all the real work.
+vim +/static +22 drivers/slimbus/stream.c
 
-	 Andrew
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  11  
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  12  /**
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  13   * struct segdist_code - Segment Distributions code from
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  14   *	Table 20 of SLIMbus Specs Version 2.0
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  15   *
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  16   * @ratem: Channel Rate Multipler(Segments per Superframe)
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  17   * @seg_interval: Number of slots between the first Slot of Segment
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  18   *		and the first slot of the next  consecutive Segment.
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  19   * @segdist_code: Segment Distribution Code SD[11:0]
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  20   * @seg_offset_mask: Segment offset mask in SD[11:0]
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  21   */
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05 @22  static const struct segdist_code {
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  23  	int ratem;
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  24  	int seg_interval;
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  25  	int segdist_code;
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  26  	u32 seg_offset_mask;
+abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  27  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
