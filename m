@@ -1,681 +1,189 @@
-Return-Path: <linux-kernel+bounces-216209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A84C5909CB0
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 10:58:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF27909CB2
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 10:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B25A2816EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:58:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 803931C20B42
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1DC1850AC;
-	Sun, 16 Jun 2024 08:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFB5181D03;
+	Sun, 16 Jun 2024 08:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="WYJrnwQC"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U0mWYNTi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54991178CCB;
-	Sun, 16 Jun 2024 08:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72049181330
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 08:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718528299; cv=none; b=ANe/96eiNfn4a2/rhnbw7WDH54HrHmiX+2Tf4/VMLDc38UGKSQzvlVabja7jpCOKGsUh1Mt+Y/XSe1wtQtBe9GqxdDHqAn8Rorq3boU6Bf5/egO5EobYZjBy1t5IGfT4JJQH5DpefGUEM1Nep7tgGOK8lyMNdWb6mPREwDxJzeU=
+	t=1718528348; cv=none; b=s1Jz2f5a2fWGnZUbQQmI//+eUuRPl5zTrWCCtk/jH6bzJhNnC1lwDdHBTpNQOi9Xrx9Kw3X/RckZ7DSbNYjRD+O9lyiNiN0C6UZv2RkZipQUJ/9e6YTGeSeu1CaStVwyTxHe3PsekaDSqIDfbjtgQsWUpkNFXEbEflG9hJYISBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718528299; c=relaxed/simple;
-	bh=M4z2MX0qKLTf/DU5XppWg+eR2zzvS330++7HSI09JY0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RED6ZVp2Ie7zHoZbTBqkJKaxe9/6mmi5pCHY4qiocae+C/Dly1rPDOwiaCsqpwuMKwe98/dSyruhxHl4kZKmvF0V0NGi+tlsn/sQvfj2qOdRrAfktaoaogOOtCwFdgWgOW8EmNVf4yzdNFrNw04m2U5eL2j7EmYFZhr3S/JHkKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=WYJrnwQC; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45G8viDm1100721
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Sun, 16 Jun 2024 01:57:51 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45G8viDm1100721
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024051501; t=1718528271;
-	bh=Yl+CZxxdcz6HTxXZXjF6W8BJaYUAUaQwpgq1aI9eUxs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WYJrnwQCbppi1Efc/anMJI8Rt+isZuIw06tykcXNUHQiajbsgRkra2L+Jzd6Hah4D
-	 npywnIM+Cv7wbWmEcRjh+mumfg+o/KjBRH1ThDNKb08UaSWKzy8+1OFnSAO69BSrw0
-	 nAHSYEH8nvDsKMExlpiCOb48rLzxxOVAWwB31BztZadvdvW7rWi7LFTl3iojvjdF+h
-	 cU2gOi9yTYV4Z0b6hhhoKf5Kl8QrCrv1UO62WcwdB8OZFmSUpkaTdL5gwxwonVkM6f
-	 vQ3Kzt9t1uW4hn1CX1QJKgV93U++PRomC/5SuemnkBxQLpdxZ6IXf3LVD+YiriIH4U
-	 76PaGuJre5n3Q==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        will@kernel.org, peterz@infradead.org, akpm@linux-foundation.org,
-        acme@kernel.org, namhyung@kernel.org
-Subject: [PATCH v2 3/3] x86/cpufeatures: Remove {disabled,required}-features.h
-Date: Sun, 16 Jun 2024 01:57:43 -0700
-Message-ID: <20240616085743.1100704-4-xin@zytor.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240616085743.1100704-1-xin@zytor.com>
-References: <20240616085743.1100704-1-xin@zytor.com>
+	s=arc-20240116; t=1718528348; c=relaxed/simple;
+	bh=UkcGOq3mmcxrWiOFZCmik5zItgVm4hUZxJ0RQxchvLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=B/6oeBPINsOO/B/ErPbwfQkgUItWqBVwUP7rF2dSnFhLOz+WxH4ZYT7BozaeM0Thr8SnlqMTUrJoRIQ5eXlLPVie4kUgma2yZ9ytOehMba0RTsqIYq1ftJdWH2a+zgXrnu2bwDBhBEAogVE+7beWFCSVEauRg/1cBfTnKWsacD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U0mWYNTi; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718528347; x=1750064347;
+  h=date:from:to:cc:subject:message-id;
+  bh=UkcGOq3mmcxrWiOFZCmik5zItgVm4hUZxJ0RQxchvLQ=;
+  b=U0mWYNTihBwMRNtXCF5DmZMYaHcSTGgWpWm4BpFTrTFqXN/WSYiKuBqE
+   ny6paTJDo4R5j5sN3vxWxH4VNi5LI/+z8qzC0yG0DQ2JFzCfpQm+/XUcp
+   ydUaCIABuJx/1ZmnzNYPoXSK9RwTMzQLqFiT1WF2642+ocfq9vb8pYNI2
+   Qa2koSN635mPVq8CGh42jUrPNKeRFF9MYRlSQJyKM0BNkeuRWv0wGUDHm
+   LPt8RY91gvD6GjMI5YDjV5I94E12vxn+bnrOIQ/VGJfFwlxAY2Hah8Yn+
+   G1/SVoYgoLtZlgKo0dZCRAWZD6HEFj3jP7lzXccab+XdTmqzQ9AuwTOmr
+   g==;
+X-CSE-ConnectionGUID: eX+eAn/TRwerZjLjQco/BQ==
+X-CSE-MsgGUID: 4GPWmkEkSpa6rqYfmcOxLQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="19201848"
+X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
+   d="scan'208";a="19201848"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 01:59:07 -0700
+X-CSE-ConnectionGUID: d7m8vJVKQ4eZbRsino1Xrw==
+X-CSE-MsgGUID: cYHuanpOQMuEPTmw5izqPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
+   d="scan'208";a="41616681"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 16 Jun 2024 01:59:05 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sIlj4-0002XK-2h;
+	Sun, 16 Jun 2024 08:59:02 +0000
+Date: Sun, 16 Jun 2024 16:58:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/cleanups] BUILD SUCCESS
+ 71315037cb7d40cdb2f4fbefad31927f6e6caba5
+Message-ID: <202406161616.E1Likza0-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The functionalities of {disabled,required}-features.h are replaced
-with the auto-generated header cpufeature_masks.h. Thus they are no
-longer needed. So delete them.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cleanups
+branch HEAD: 71315037cb7d40cdb2f4fbefad31927f6e6caba5  x86/boot: Remove unused function __fortify_panic()
 
-None of the macros defined in {disabled,required}-features.h is used
-in tools, delete them too.
+elapsed time: 2423m
 
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
----
- arch/x86/include/asm/disabled-features.h      | 161 ------------------
- arch/x86/include/asm/required-features.h      | 105 ------------
- tools/arch/x86/include/asm/cpufeatures.h      |   8 -
- .../arch/x86/include/asm/disabled-features.h  | 161 ------------------
- .../arch/x86/include/asm/required-features.h  | 105 ------------
- tools/perf/check-headers.sh                   |   2 -
- 6 files changed, 542 deletions(-)
- delete mode 100644 arch/x86/include/asm/disabled-features.h
- delete mode 100644 arch/x86/include/asm/required-features.h
- delete mode 100644 tools/arch/x86/include/asm/disabled-features.h
- delete mode 100644 tools/arch/x86/include/asm/required-features.h
+configs tested: 97
+configs skipped: 2
 
-diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-deleted file mode 100644
-index c492bdc97b05..000000000000
---- a/arch/x86/include/asm/disabled-features.h
-+++ /dev/null
-@@ -1,161 +0,0 @@
--#ifndef _ASM_X86_DISABLED_FEATURES_H
--#define _ASM_X86_DISABLED_FEATURES_H
--
--/* These features, although they might be available in a CPU
-- * will not be used because the compile options to support
-- * them are not present.
-- *
-- * This code allows them to be checked and disabled at
-- * compile time without an explicit #ifdef.  Use
-- * cpu_feature_enabled().
-- */
--
--#ifdef CONFIG_X86_UMIP
--# define DISABLE_UMIP	0
--#else
--# define DISABLE_UMIP	(1<<(X86_FEATURE_UMIP & 31))
--#endif
--
--#ifdef CONFIG_X86_64
--# define DISABLE_VME		(1<<(X86_FEATURE_VME & 31))
--# define DISABLE_K6_MTRR	(1<<(X86_FEATURE_K6_MTRR & 31))
--# define DISABLE_CYRIX_ARR	(1<<(X86_FEATURE_CYRIX_ARR & 31))
--# define DISABLE_CENTAUR_MCR	(1<<(X86_FEATURE_CENTAUR_MCR & 31))
--# define DISABLE_PCID		0
--#else
--# define DISABLE_VME		0
--# define DISABLE_K6_MTRR	0
--# define DISABLE_CYRIX_ARR	0
--# define DISABLE_CENTAUR_MCR	0
--# define DISABLE_PCID		(1<<(X86_FEATURE_PCID & 31))
--#endif /* CONFIG_X86_64 */
--
--#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
--# define DISABLE_PKU		0
--# define DISABLE_OSPKE		0
--#else
--# define DISABLE_PKU		(1<<(X86_FEATURE_PKU & 31))
--# define DISABLE_OSPKE		(1<<(X86_FEATURE_OSPKE & 31))
--#endif /* CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS */
--
--#ifdef CONFIG_X86_5LEVEL
--# define DISABLE_LA57	0
--#else
--# define DISABLE_LA57	(1<<(X86_FEATURE_LA57 & 31))
--#endif
--
--#ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
--# define DISABLE_PTI		0
--#else
--# define DISABLE_PTI		(1 << (X86_FEATURE_PTI & 31))
--#endif
--
--#ifdef CONFIG_MITIGATION_RETPOLINE
--# define DISABLE_RETPOLINE	0
--#else
--# define DISABLE_RETPOLINE	((1 << (X86_FEATURE_RETPOLINE & 31)) | \
--				 (1 << (X86_FEATURE_RETPOLINE_LFENCE & 31)))
--#endif
--
--#ifdef CONFIG_MITIGATION_RETHUNK
--# define DISABLE_RETHUNK	0
--#else
--# define DISABLE_RETHUNK	(1 << (X86_FEATURE_RETHUNK & 31))
--#endif
--
--#ifdef CONFIG_MITIGATION_UNRET_ENTRY
--# define DISABLE_UNRET		0
--#else
--# define DISABLE_UNRET		(1 << (X86_FEATURE_UNRET & 31))
--#endif
--
--#ifdef CONFIG_MITIGATION_CALL_DEPTH_TRACKING
--# define DISABLE_CALL_DEPTH_TRACKING	0
--#else
--# define DISABLE_CALL_DEPTH_TRACKING	(1 << (X86_FEATURE_CALL_DEPTH & 31))
--#endif
--
--#ifdef CONFIG_ADDRESS_MASKING
--# define DISABLE_LAM		0
--#else
--# define DISABLE_LAM		(1 << (X86_FEATURE_LAM & 31))
--#endif
--
--#ifdef CONFIG_INTEL_IOMMU_SVM
--# define DISABLE_ENQCMD		0
--#else
--# define DISABLE_ENQCMD		(1 << (X86_FEATURE_ENQCMD & 31))
--#endif
--
--#ifdef CONFIG_X86_SGX
--# define DISABLE_SGX	0
--#else
--# define DISABLE_SGX	(1 << (X86_FEATURE_SGX & 31))
--#endif
--
--#ifdef CONFIG_XEN_PV
--# define DISABLE_XENPV		0
--#else
--# define DISABLE_XENPV		(1 << (X86_FEATURE_XENPV & 31))
--#endif
--
--#ifdef CONFIG_INTEL_TDX_GUEST
--# define DISABLE_TDX_GUEST	0
--#else
--# define DISABLE_TDX_GUEST	(1 << (X86_FEATURE_TDX_GUEST & 31))
--#endif
--
--#ifdef CONFIG_X86_USER_SHADOW_STACK
--#define DISABLE_USER_SHSTK	0
--#else
--#define DISABLE_USER_SHSTK	(1 << (X86_FEATURE_USER_SHSTK & 31))
--#endif
--
--#ifdef CONFIG_X86_KERNEL_IBT
--#define DISABLE_IBT	0
--#else
--#define DISABLE_IBT	(1 << (X86_FEATURE_IBT & 31))
--#endif
--
--#ifdef CONFIG_X86_FRED
--# define DISABLE_FRED	0
--#else
--# define DISABLE_FRED	(1 << (X86_FEATURE_FRED & 31))
--#endif
--
--#ifdef CONFIG_KVM_AMD_SEV
--#define DISABLE_SEV_SNP		0
--#else
--#define DISABLE_SEV_SNP		(1 << (X86_FEATURE_SEV_SNP & 31))
--#endif
--
--/*
-- * Make sure to add features to the correct mask
-- */
--#define DISABLED_MASK0	(DISABLE_VME)
--#define DISABLED_MASK1	0
--#define DISABLED_MASK2	0
--#define DISABLED_MASK3	(DISABLE_CYRIX_ARR|DISABLE_CENTAUR_MCR|DISABLE_K6_MTRR)
--#define DISABLED_MASK4	(DISABLE_PCID)
--#define DISABLED_MASK5	0
--#define DISABLED_MASK6	0
--#define DISABLED_MASK7	(DISABLE_PTI)
--#define DISABLED_MASK8	(DISABLE_XENPV|DISABLE_TDX_GUEST)
--#define DISABLED_MASK9	(DISABLE_SGX)
--#define DISABLED_MASK10	0
--#define DISABLED_MASK11	(DISABLE_RETPOLINE|DISABLE_RETHUNK|DISABLE_UNRET| \
--			 DISABLE_CALL_DEPTH_TRACKING|DISABLE_USER_SHSTK)
--#define DISABLED_MASK12	(DISABLE_FRED|DISABLE_LAM)
--#define DISABLED_MASK13	0
--#define DISABLED_MASK14	0
--#define DISABLED_MASK15	0
--#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP| \
--			 DISABLE_ENQCMD)
--#define DISABLED_MASK17	0
--#define DISABLED_MASK18	(DISABLE_IBT)
--#define DISABLED_MASK19	(DISABLE_SEV_SNP)
--#define DISABLED_MASK20	0
--#define DISABLED_MASK21	0
--#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 22)
--
--#endif /* _ASM_X86_DISABLED_FEATURES_H */
-diff --git a/arch/x86/include/asm/required-features.h b/arch/x86/include/asm/required-features.h
-deleted file mode 100644
-index cef8104c103c..000000000000
---- a/arch/x86/include/asm/required-features.h
-+++ /dev/null
-@@ -1,105 +0,0 @@
--#ifndef _ASM_X86_REQUIRED_FEATURES_H
--#define _ASM_X86_REQUIRED_FEATURES_H
--
--/* Define minimum CPUID feature set for kernel These bits are checked
--   really early to actually display a visible error message before the
--   kernel dies.  Make sure to assign features to the proper mask!
--
--   Some requirements that are not in CPUID yet are also in the
--   CONFIG_X86_MINIMUM_CPU_FAMILY which is checked too.
--
--   The real information is in arch/x86/Kconfig.cpu, this just converts
--   the CONFIGs into a bitmask */
--
--#ifndef CONFIG_MATH_EMULATION
--# define NEED_FPU	(1<<(X86_FEATURE_FPU & 31))
--#else
--# define NEED_FPU	0
--#endif
--
--#if defined(CONFIG_X86_PAE) || defined(CONFIG_X86_64)
--# define NEED_PAE	(1<<(X86_FEATURE_PAE & 31))
--#else
--# define NEED_PAE	0
--#endif
--
--#ifdef CONFIG_X86_REQUIRED_FEATURE_CX8
--# define NEED_CX8	(1<<(X86_FEATURE_CX8 & 31))
--#else
--# define NEED_CX8	0
--#endif
--
--#if defined(CONFIG_X86_REQUIRED_FEATURE_CMOV) || defined(CONFIG_X86_64)
--# define NEED_CMOV	(1<<(X86_FEATURE_CMOV & 31))
--#else
--# define NEED_CMOV	0
--#endif
--
--# define NEED_3DNOW	0
--
--#if defined(CONFIG_X86_P6_NOP) || defined(CONFIG_X86_64)
--# define NEED_NOPL	(1<<(X86_FEATURE_NOPL & 31))
--#else
--# define NEED_NOPL	0
--#endif
--
--#ifdef CONFIG_MATOM
--# define NEED_MOVBE	(1<<(X86_FEATURE_MOVBE & 31))
--#else
--# define NEED_MOVBE	0
--#endif
--
--#ifdef CONFIG_X86_64
--#ifdef CONFIG_PARAVIRT_XXL
--/* Paravirtualized systems may not have PSE or PGE available */
--#define NEED_PSE	0
--#define NEED_PGE	0
--#else
--#define NEED_PSE	(1<<(X86_FEATURE_PSE) & 31)
--#define NEED_PGE	(1<<(X86_FEATURE_PGE) & 31)
--#endif
--#define NEED_MSR	(1<<(X86_FEATURE_MSR & 31))
--#define NEED_FXSR	(1<<(X86_FEATURE_FXSR & 31))
--#define NEED_XMM	(1<<(X86_FEATURE_XMM & 31))
--#define NEED_XMM2	(1<<(X86_FEATURE_XMM2 & 31))
--#define NEED_LM		(1<<(X86_FEATURE_LM & 31))
--#else
--#define NEED_PSE	0
--#define NEED_MSR	0
--#define NEED_PGE	0
--#define NEED_FXSR	0
--#define NEED_XMM	0
--#define NEED_XMM2	0
--#define NEED_LM		0
--#endif
--
--#define REQUIRED_MASK0	(NEED_FPU|NEED_PSE|NEED_MSR|NEED_PAE|\
--			 NEED_CX8|NEED_PGE|NEED_FXSR|NEED_CMOV|\
--			 NEED_XMM|NEED_XMM2)
--#define SSE_MASK	(NEED_XMM|NEED_XMM2)
--
--#define REQUIRED_MASK1	(NEED_LM|NEED_3DNOW)
--
--#define REQUIRED_MASK2	0
--#define REQUIRED_MASK3	(NEED_NOPL)
--#define REQUIRED_MASK4	(NEED_MOVBE)
--#define REQUIRED_MASK5	0
--#define REQUIRED_MASK6	0
--#define REQUIRED_MASK7	0
--#define REQUIRED_MASK8	0
--#define REQUIRED_MASK9	0
--#define REQUIRED_MASK10	0
--#define REQUIRED_MASK11	0
--#define REQUIRED_MASK12	0
--#define REQUIRED_MASK13	0
--#define REQUIRED_MASK14	0
--#define REQUIRED_MASK15	0
--#define REQUIRED_MASK16	0
--#define REQUIRED_MASK17	0
--#define REQUIRED_MASK18	0
--#define REQUIRED_MASK19	0
--#define REQUIRED_MASK20	0
--#define REQUIRED_MASK21	0
--#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 22)
--
--#endif /* _ASM_X86_REQUIRED_FEATURES_H */
-diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
-index 3c7434329661..05503448b94d 100644
---- a/tools/arch/x86/include/asm/cpufeatures.h
-+++ b/tools/arch/x86/include/asm/cpufeatures.h
-@@ -2,14 +2,6 @@
- #ifndef _ASM_X86_CPUFEATURES_H
- #define _ASM_X86_CPUFEATURES_H
- 
--#ifndef _ASM_X86_REQUIRED_FEATURES_H
--#include <asm/required-features.h>
--#endif
--
--#ifndef _ASM_X86_DISABLED_FEATURES_H
--#include <asm/disabled-features.h>
--#endif
--
- /*
-  * Defines x86 CPU feature bits
-  */
-diff --git a/tools/arch/x86/include/asm/disabled-features.h b/tools/arch/x86/include/asm/disabled-features.h
-deleted file mode 100644
-index c492bdc97b05..000000000000
---- a/tools/arch/x86/include/asm/disabled-features.h
-+++ /dev/null
-@@ -1,161 +0,0 @@
--#ifndef _ASM_X86_DISABLED_FEATURES_H
--#define _ASM_X86_DISABLED_FEATURES_H
--
--/* These features, although they might be available in a CPU
-- * will not be used because the compile options to support
-- * them are not present.
-- *
-- * This code allows them to be checked and disabled at
-- * compile time without an explicit #ifdef.  Use
-- * cpu_feature_enabled().
-- */
--
--#ifdef CONFIG_X86_UMIP
--# define DISABLE_UMIP	0
--#else
--# define DISABLE_UMIP	(1<<(X86_FEATURE_UMIP & 31))
--#endif
--
--#ifdef CONFIG_X86_64
--# define DISABLE_VME		(1<<(X86_FEATURE_VME & 31))
--# define DISABLE_K6_MTRR	(1<<(X86_FEATURE_K6_MTRR & 31))
--# define DISABLE_CYRIX_ARR	(1<<(X86_FEATURE_CYRIX_ARR & 31))
--# define DISABLE_CENTAUR_MCR	(1<<(X86_FEATURE_CENTAUR_MCR & 31))
--# define DISABLE_PCID		0
--#else
--# define DISABLE_VME		0
--# define DISABLE_K6_MTRR	0
--# define DISABLE_CYRIX_ARR	0
--# define DISABLE_CENTAUR_MCR	0
--# define DISABLE_PCID		(1<<(X86_FEATURE_PCID & 31))
--#endif /* CONFIG_X86_64 */
--
--#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
--# define DISABLE_PKU		0
--# define DISABLE_OSPKE		0
--#else
--# define DISABLE_PKU		(1<<(X86_FEATURE_PKU & 31))
--# define DISABLE_OSPKE		(1<<(X86_FEATURE_OSPKE & 31))
--#endif /* CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS */
--
--#ifdef CONFIG_X86_5LEVEL
--# define DISABLE_LA57	0
--#else
--# define DISABLE_LA57	(1<<(X86_FEATURE_LA57 & 31))
--#endif
--
--#ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
--# define DISABLE_PTI		0
--#else
--# define DISABLE_PTI		(1 << (X86_FEATURE_PTI & 31))
--#endif
--
--#ifdef CONFIG_MITIGATION_RETPOLINE
--# define DISABLE_RETPOLINE	0
--#else
--# define DISABLE_RETPOLINE	((1 << (X86_FEATURE_RETPOLINE & 31)) | \
--				 (1 << (X86_FEATURE_RETPOLINE_LFENCE & 31)))
--#endif
--
--#ifdef CONFIG_MITIGATION_RETHUNK
--# define DISABLE_RETHUNK	0
--#else
--# define DISABLE_RETHUNK	(1 << (X86_FEATURE_RETHUNK & 31))
--#endif
--
--#ifdef CONFIG_MITIGATION_UNRET_ENTRY
--# define DISABLE_UNRET		0
--#else
--# define DISABLE_UNRET		(1 << (X86_FEATURE_UNRET & 31))
--#endif
--
--#ifdef CONFIG_MITIGATION_CALL_DEPTH_TRACKING
--# define DISABLE_CALL_DEPTH_TRACKING	0
--#else
--# define DISABLE_CALL_DEPTH_TRACKING	(1 << (X86_FEATURE_CALL_DEPTH & 31))
--#endif
--
--#ifdef CONFIG_ADDRESS_MASKING
--# define DISABLE_LAM		0
--#else
--# define DISABLE_LAM		(1 << (X86_FEATURE_LAM & 31))
--#endif
--
--#ifdef CONFIG_INTEL_IOMMU_SVM
--# define DISABLE_ENQCMD		0
--#else
--# define DISABLE_ENQCMD		(1 << (X86_FEATURE_ENQCMD & 31))
--#endif
--
--#ifdef CONFIG_X86_SGX
--# define DISABLE_SGX	0
--#else
--# define DISABLE_SGX	(1 << (X86_FEATURE_SGX & 31))
--#endif
--
--#ifdef CONFIG_XEN_PV
--# define DISABLE_XENPV		0
--#else
--# define DISABLE_XENPV		(1 << (X86_FEATURE_XENPV & 31))
--#endif
--
--#ifdef CONFIG_INTEL_TDX_GUEST
--# define DISABLE_TDX_GUEST	0
--#else
--# define DISABLE_TDX_GUEST	(1 << (X86_FEATURE_TDX_GUEST & 31))
--#endif
--
--#ifdef CONFIG_X86_USER_SHADOW_STACK
--#define DISABLE_USER_SHSTK	0
--#else
--#define DISABLE_USER_SHSTK	(1 << (X86_FEATURE_USER_SHSTK & 31))
--#endif
--
--#ifdef CONFIG_X86_KERNEL_IBT
--#define DISABLE_IBT	0
--#else
--#define DISABLE_IBT	(1 << (X86_FEATURE_IBT & 31))
--#endif
--
--#ifdef CONFIG_X86_FRED
--# define DISABLE_FRED	0
--#else
--# define DISABLE_FRED	(1 << (X86_FEATURE_FRED & 31))
--#endif
--
--#ifdef CONFIG_KVM_AMD_SEV
--#define DISABLE_SEV_SNP		0
--#else
--#define DISABLE_SEV_SNP		(1 << (X86_FEATURE_SEV_SNP & 31))
--#endif
--
--/*
-- * Make sure to add features to the correct mask
-- */
--#define DISABLED_MASK0	(DISABLE_VME)
--#define DISABLED_MASK1	0
--#define DISABLED_MASK2	0
--#define DISABLED_MASK3	(DISABLE_CYRIX_ARR|DISABLE_CENTAUR_MCR|DISABLE_K6_MTRR)
--#define DISABLED_MASK4	(DISABLE_PCID)
--#define DISABLED_MASK5	0
--#define DISABLED_MASK6	0
--#define DISABLED_MASK7	(DISABLE_PTI)
--#define DISABLED_MASK8	(DISABLE_XENPV|DISABLE_TDX_GUEST)
--#define DISABLED_MASK9	(DISABLE_SGX)
--#define DISABLED_MASK10	0
--#define DISABLED_MASK11	(DISABLE_RETPOLINE|DISABLE_RETHUNK|DISABLE_UNRET| \
--			 DISABLE_CALL_DEPTH_TRACKING|DISABLE_USER_SHSTK)
--#define DISABLED_MASK12	(DISABLE_FRED|DISABLE_LAM)
--#define DISABLED_MASK13	0
--#define DISABLED_MASK14	0
--#define DISABLED_MASK15	0
--#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP| \
--			 DISABLE_ENQCMD)
--#define DISABLED_MASK17	0
--#define DISABLED_MASK18	(DISABLE_IBT)
--#define DISABLED_MASK19	(DISABLE_SEV_SNP)
--#define DISABLED_MASK20	0
--#define DISABLED_MASK21	0
--#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 22)
--
--#endif /* _ASM_X86_DISABLED_FEATURES_H */
-diff --git a/tools/arch/x86/include/asm/required-features.h b/tools/arch/x86/include/asm/required-features.h
-deleted file mode 100644
-index cef8104c103c..000000000000
---- a/tools/arch/x86/include/asm/required-features.h
-+++ /dev/null
-@@ -1,105 +0,0 @@
--#ifndef _ASM_X86_REQUIRED_FEATURES_H
--#define _ASM_X86_REQUIRED_FEATURES_H
--
--/* Define minimum CPUID feature set for kernel These bits are checked
--   really early to actually display a visible error message before the
--   kernel dies.  Make sure to assign features to the proper mask!
--
--   Some requirements that are not in CPUID yet are also in the
--   CONFIG_X86_MINIMUM_CPU_FAMILY which is checked too.
--
--   The real information is in arch/x86/Kconfig.cpu, this just converts
--   the CONFIGs into a bitmask */
--
--#ifndef CONFIG_MATH_EMULATION
--# define NEED_FPU	(1<<(X86_FEATURE_FPU & 31))
--#else
--# define NEED_FPU	0
--#endif
--
--#if defined(CONFIG_X86_PAE) || defined(CONFIG_X86_64)
--# define NEED_PAE	(1<<(X86_FEATURE_PAE & 31))
--#else
--# define NEED_PAE	0
--#endif
--
--#ifdef CONFIG_X86_REQUIRED_FEATURE_CX8
--# define NEED_CX8	(1<<(X86_FEATURE_CX8 & 31))
--#else
--# define NEED_CX8	0
--#endif
--
--#if defined(CONFIG_X86_REQUIRED_FEATURE_CMOV) || defined(CONFIG_X86_64)
--# define NEED_CMOV	(1<<(X86_FEATURE_CMOV & 31))
--#else
--# define NEED_CMOV	0
--#endif
--
--# define NEED_3DNOW	0
--
--#if defined(CONFIG_X86_P6_NOP) || defined(CONFIG_X86_64)
--# define NEED_NOPL	(1<<(X86_FEATURE_NOPL & 31))
--#else
--# define NEED_NOPL	0
--#endif
--
--#ifdef CONFIG_MATOM
--# define NEED_MOVBE	(1<<(X86_FEATURE_MOVBE & 31))
--#else
--# define NEED_MOVBE	0
--#endif
--
--#ifdef CONFIG_X86_64
--#ifdef CONFIG_PARAVIRT_XXL
--/* Paravirtualized systems may not have PSE or PGE available */
--#define NEED_PSE	0
--#define NEED_PGE	0
--#else
--#define NEED_PSE	(1<<(X86_FEATURE_PSE) & 31)
--#define NEED_PGE	(1<<(X86_FEATURE_PGE) & 31)
--#endif
--#define NEED_MSR	(1<<(X86_FEATURE_MSR & 31))
--#define NEED_FXSR	(1<<(X86_FEATURE_FXSR & 31))
--#define NEED_XMM	(1<<(X86_FEATURE_XMM & 31))
--#define NEED_XMM2	(1<<(X86_FEATURE_XMM2 & 31))
--#define NEED_LM		(1<<(X86_FEATURE_LM & 31))
--#else
--#define NEED_PSE	0
--#define NEED_MSR	0
--#define NEED_PGE	0
--#define NEED_FXSR	0
--#define NEED_XMM	0
--#define NEED_XMM2	0
--#define NEED_LM		0
--#endif
--
--#define REQUIRED_MASK0	(NEED_FPU|NEED_PSE|NEED_MSR|NEED_PAE|\
--			 NEED_CX8|NEED_PGE|NEED_FXSR|NEED_CMOV|\
--			 NEED_XMM|NEED_XMM2)
--#define SSE_MASK	(NEED_XMM|NEED_XMM2)
--
--#define REQUIRED_MASK1	(NEED_LM|NEED_3DNOW)
--
--#define REQUIRED_MASK2	0
--#define REQUIRED_MASK3	(NEED_NOPL)
--#define REQUIRED_MASK4	(NEED_MOVBE)
--#define REQUIRED_MASK5	0
--#define REQUIRED_MASK6	0
--#define REQUIRED_MASK7	0
--#define REQUIRED_MASK8	0
--#define REQUIRED_MASK9	0
--#define REQUIRED_MASK10	0
--#define REQUIRED_MASK11	0
--#define REQUIRED_MASK12	0
--#define REQUIRED_MASK13	0
--#define REQUIRED_MASK14	0
--#define REQUIRED_MASK15	0
--#define REQUIRED_MASK16	0
--#define REQUIRED_MASK17	0
--#define REQUIRED_MASK18	0
--#define REQUIRED_MASK19	0
--#define REQUIRED_MASK20	0
--#define REQUIRED_MASK21	0
--#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 22)
--
--#endif /* _ASM_X86_REQUIRED_FEATURES_H */
-diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
-index 672421b858ac..3ef2fd511bc1 100755
---- a/tools/perf/check-headers.sh
-+++ b/tools/perf/check-headers.sh
-@@ -25,8 +25,6 @@ FILES=(
-   "include/linux/hash.h"
-   "include/linux/list-sort.h"
-   "include/uapi/linux/hw_breakpoint.h"
--  "arch/x86/include/asm/disabled-features.h"
--  "arch/x86/include/asm/required-features.h"
-   "arch/x86/include/asm/cpufeatures.h"
-   "arch/x86/include/asm/inat_types.h"
-   "arch/x86/include/asm/emulate_prefix.h"
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig   gcc-13.2.0
+alpha                               defconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                                 defconfig   gcc-13.2.0
+arc                   randconfig-001-20240615   gcc-13.2.0
+arc                   randconfig-002-20240615   gcc-13.2.0
+arm                               allnoconfig   clang-19
+arm                                 defconfig   clang-14
+arm                   randconfig-001-20240615   clang-19
+arm                   randconfig-002-20240615   clang-19
+arm                   randconfig-003-20240615   gcc-13.2.0
+arm                   randconfig-004-20240615   gcc-13.2.0
+arm64                             allnoconfig   gcc-13.2.0
+arm64                               defconfig   gcc-13.2.0
+arm64                 randconfig-001-20240615   clang-19
+arm64                 randconfig-002-20240615   gcc-13.2.0
+arm64                 randconfig-003-20240615   clang-17
+arm64                 randconfig-004-20240615   gcc-13.2.0
+csky                              allnoconfig   gcc-13.2.0
+csky                                defconfig   gcc-13.2.0
+csky                  randconfig-001-20240615   gcc-13.2.0
+csky                  randconfig-002-20240615   gcc-13.2.0
+hexagon                           allnoconfig   clang-19
+hexagon                             defconfig   clang-19
+hexagon               randconfig-001-20240615   clang-19
+hexagon               randconfig-002-20240615   clang-19
+i386         buildonly-randconfig-001-20240615   clang-18
+i386         buildonly-randconfig-002-20240615   gcc-9
+i386         buildonly-randconfig-003-20240615   gcc-7
+i386         buildonly-randconfig-004-20240615   clang-18
+i386         buildonly-randconfig-005-20240615   clang-18
+i386         buildonly-randconfig-006-20240615   gcc-13
+i386                  randconfig-001-20240615   clang-18
+i386                  randconfig-002-20240615   gcc-13
+i386                  randconfig-003-20240615   clang-18
+i386                  randconfig-004-20240615   clang-18
+i386                  randconfig-005-20240615   clang-18
+i386                  randconfig-006-20240615   clang-18
+i386                  randconfig-011-20240615   clang-18
+i386                  randconfig-012-20240615   gcc-12
+i386                  randconfig-013-20240615   gcc-13
+i386                  randconfig-014-20240615   clang-18
+i386                  randconfig-015-20240615   clang-18
+i386                  randconfig-016-20240615   gcc-13
+loongarch                         allnoconfig   gcc-13.2.0
+loongarch                           defconfig   gcc-13.2.0
+loongarch             randconfig-001-20240615   gcc-13.2.0
+loongarch             randconfig-002-20240615   gcc-13.2.0
+m68k                              allnoconfig   gcc-13.2.0
+m68k                                defconfig   gcc-13.2.0
+microblaze                        allnoconfig   gcc-13.2.0
+microblaze                          defconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-13.2.0
+nios2                             allnoconfig   gcc-13.2.0
+nios2                               defconfig   gcc-13.2.0
+nios2                 randconfig-001-20240615   gcc-13.2.0
+nios2                 randconfig-002-20240615   gcc-13.2.0
+openrisc                          allnoconfig   gcc-13.2.0
+openrisc                            defconfig   gcc-13.2.0
+parisc                            allnoconfig   gcc-13.2.0
+parisc                              defconfig   gcc-13.2.0
+parisc                randconfig-001-20240615   gcc-13.2.0
+parisc                randconfig-002-20240615   gcc-13.2.0
+parisc64                            defconfig   gcc-13.2.0
+powerpc                           allnoconfig   gcc-13.2.0
+powerpc               randconfig-001-20240615   clang-19
+powerpc               randconfig-002-20240615   clang-19
+powerpc               randconfig-003-20240615   clang-19
+powerpc64             randconfig-001-20240615   clang-19
+powerpc64             randconfig-002-20240615   clang-19
+powerpc64             randconfig-003-20240615   clang-19
+riscv                             allnoconfig   gcc-13.2.0
+riscv                               defconfig   clang-19
+riscv                 randconfig-001-20240615   clang-19
+riscv                 randconfig-002-20240615   gcc-13.2.0
+s390                              allnoconfig   clang-19
+s390                                defconfig   clang-19
+s390                  randconfig-001-20240615   clang-16
+s390                  randconfig-002-20240615   clang-19
+sh                                allnoconfig   gcc-13.2.0
+sh                                  defconfig   gcc-13.2.0
+sh                    randconfig-001-20240615   gcc-13.2.0
+sh                    randconfig-002-20240615   gcc-13.2.0
+sparc                             allnoconfig   gcc-13.2.0
+sparc                               defconfig   gcc-13.2.0
+sparc64                             defconfig   gcc-13.2.0
+sparc64               randconfig-001-20240615   gcc-13.2.0
+sparc64               randconfig-002-20240615   gcc-13.2.0
+um                                allnoconfig   clang-17
+um                                  defconfig   clang-19
+um                             i386_defconfig   gcc-13
+um                    randconfig-001-20240615   gcc-7
+um                    randconfig-002-20240615   gcc-11
+um                           x86_64_defconfig   clang-15
+xtensa                            allnoconfig   gcc-13.2.0
+xtensa                randconfig-001-20240615   gcc-13.2.0
+xtensa                randconfig-002-20240615   gcc-13.2.0
+
 -- 
-2.45.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
