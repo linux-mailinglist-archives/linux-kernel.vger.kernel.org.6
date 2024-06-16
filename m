@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-216391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D214909EC4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:26:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC406909ECA
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6F41F21FF4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:26:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C4B4282A57
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CE838F96;
-	Sun, 16 Jun 2024 17:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AE839AE7;
+	Sun, 16 Jun 2024 17:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="rhv25Wty"
-Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="rpmkZO7Q"
+Received: from qq.com (ec2-54-164-151-162.compute-1.amazonaws.com [54.164.151.162])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6FA345957;
-	Sun, 16 Jun 2024 17:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951D111185;
+	Sun, 16 Jun 2024 17:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.164.151.162
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718558785; cv=none; b=osSXoa5IWOyQtMoIiF3cy7n4OnToN1aUVOv1bWZdQdl2TMdwk2I+aTZHFpeby6jkjGfaq6Cpu45t28XG/XPgbQ+/7TEtH4zTmmqZxWrJUsTfg8e+MM32/sKOax0Iu4npXynCbu8H/BWAOk+2TZtuVNk8g/xKD/mQqoJZgKIh2L8=
+	t=1718558849; cv=none; b=mX3XenxpXnrekO76a1yeVma9W6jebROHMBjxvA0zJrmYHQ5qj/icQXXa3YZjB2VGY+xAKbEQEWNXiB6x+Ci32NzAUBu238p/Y5bo45JuAiijXUZE1nYoslz5UP9XFzCA6F+P73qt3UdOUWYEsicBMXlHOuOMky6mIBbtCQSAbEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718558785; c=relaxed/simple;
-	bh=xLtD3CUJ3A5b3eMpkLHWo+koapJSWAUCDA0EKrtJSLc=;
+	s=arc-20240116; t=1718558849; c=relaxed/simple;
+	bh=apu5GIB2gUHU9BCH1sTX01ka5SffszZCdutR8azCuZY=;
 	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=iipWQg5Co+/cSUk24yZlOng1JvoeETtygp6D4LGILq4I99SfwzO7ifPLvYVmos+udzjI6mjB5ARWJ87b4V6cNIN4AIoHaMgCmz4pI/21xT2MdxUzDgpEgGdK0yzP1bIhyh9T5xxd9ReuLoCMWyyy0Yz0OKYnuZcuK9aUg/Twr3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=rhv25Wty; arc=none smtp.client-ip=203.205.221.209
+	 MIME-Version; b=X/KTLWpdbDeT3ERRDln+3WWItdM5DrLf8GxL3PgKgcJMfdM9iE09zor+miPkJAZn1E4Q49fgYF3CDnz48E8l+shbkrwd+RbMcYwpPF62Ka7p/O+ahxQAigmp2cY4Un30R/5Lq1tb5zfmo3n+S9PbQpuqhSj342r0NQWGanCKe0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=rpmkZO7Q; arc=none smtp.client-ip=54.164.151.162
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1718558480; bh=4TsNRvdG1NQQAdbELi3/OvMmViVBRkNVoBLMMVaWK1Y=;
+	t=1718558842; bh=zeKC3Oe1sKju5vea7yzmfOgsaAN9lHVzkh8ycGLf/vo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=rhv25WtyUpKbhPGwTOvBB68on6EsFbRmExJKlcOAI48LpWILVlBgEzS30ntlHhQpc
-	 ZTsxshFvGQMOLCfO9iR33PUM5G9mMbBRHm4ASB4Xp0wVc70+28TIuqvRTvFv2uJPGL
-	 fegiiSN20VBePGBLXpEmH7lqz32lz32fubcdq73g=
+	b=rpmkZO7Q3lr5poCGwegrdzxpTFnL5moPb4vvhHq8pk5XcfhVt4ttoBDOlSBf8MclR
+	 TLyMm9DrUB3zoJg+/UFDKjRIJERYtSF1I255YuHkvATH45NiOCiAGsttpte/wVdwm7
+	 UnSHXMMAcZfnl58KW2gkOec4Pq5YQ1lYkxlGxaPg=
 Received: from cyy-pc.lan ([240e:379:2260:ed00:cd33:e8cf:d8f9:bed3])
 	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
 	id 5452D659; Mon, 17 Jun 2024 01:21:05 +0800
-X-QQ-mid: xmsmtpt1718558477tyhsnv86d
-Message-ID: <tencent_904B1050FBC0B10A172C263924BD518F8F05@qq.com>
-X-QQ-XMAILINFO: NkHKfw09D6j8RA6sM/aK2Q+9dZcLaP+4NJQa9FQkX6htwVjNCVrAuZ5gfdMI56
-	 0aA8f9z8guNkaFGAs65Z/o2KgVEJYvcd/QY3iuRt0CW9VcRBXEAAKHD1Mvwzj5yv0iGpxDiftMD0
-	 IuxdwCbMTidsy/7axyyLf1wk6W5M9kD2n7R0ar6PU4rRWmTYt8rOWeNoMpKyadSzBmWKHM/JxZbZ
-	 r/cmk61LbXOTBOLXZlE3mZ6m51MVDkj6E/rv+pr55Z+z5vI2DjxZd5L1RzONPQihfDTQCJ9AldWy
-	 wQDXtCb5vs2TrVnpkzJB7kVJ+1ouniZy25DC0uvfNChmXJOqkKr/M8Qdp4auqXO+y6akZbSPnqd1
-	 OgVWlmJkZ/55zS7fUJs+rJPy8VoVzz1r6XQ77b0B9sDFS6ZHTKYapUX/n+k6D4kZDplYcEld51s0
-	 q9X9z6oB54QYdB6icx6bmV46Wl0E+11AnX1cQGSj6bGI3EHORbFd5mTflyggK1DgU8Z1wB243J7d
-	 9B6Sw161M0EYK8KH8t5LaQhpLXshVlx7ENsPz18qiP5wAY8DuOwNkfnkYSfja2qV/1hYKV9zuxC8
-	 3G0iZY9PzFureZxC/qW1m8MbFD5etIwn0P7FPOP7wMYv97Z8TTXuQOx0sFYwWDA9ZfmlvVSDKkTV
-	 8a5782w88sM0HuVlbd1yzKfao7fyNOkBPn37mahwfi7uOtWE8xxM6fGdmjaycoJVm+ZVB9Ty3Wm/
-	 EDzieAYZRfNc6YRFgEX8rUO91O8pvEPjc4YHWZlXTxNxpy1lq7S3npjl/zCHeQldfOjxOA3n+YJ0
-	 9j8w/fVoY8bpy8Cv3qxkyseSLhnBrvkxyUB9fwxnLqraM+BSJcUya9jp9IWJDOW4HxAjteAT7+ph
-	 An+i7qBhyDVcMS3gGnG3kpi7mHyCB13aBs9z2JWb4mbSVdbBxDD+fAC1zshse4wu8CehtiNYIO01
-	 m8Be11gHTz1xXuPndactt3OzVkZycHM6a8Z5WjQ+/0NgUstFIRyCe4KmGXFzUe5IkApHFJK+rTFv
-	 K87rDm4ZWrZVJQYFYilZhF0XqMNGlTpRZSihoK8LZrWjKe+hu75uwD8wNypnUd0dlHcSvxYQ==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-mid: xmsmtpt1718558479t9pmmv511
+Message-ID: <tencent_CD84ADB1874F47D04EBBD51119173CC62405@qq.com>
+X-QQ-XMAILINFO: MziGzrjZeogZ27NrJX86U9jmp3/uR2WhQdNN59aMjNpQON5Q8za+/F7sLh1Hw3
+	 68tTGDI+4ujTQB04ciQCZIDqmk5l0FgIz7LbadCoXNVt4MbdGSzeVw5sw0p7+W9jP/tnOz1ijKX2
+	 yymOGrxBVmW++5Dlp4bpZOOpIboV3Te7DvvSydWKW5hdB+f6O9O7JLb0duDWH9IwUFe1ghXevd+E
+	 2p9dJzWImyecsjCIsgX3kkW14grbuplj7fdgkZuolIIpyKBbwEqG17ZFtSwGLFVkYyPe2QnUcReg
+	 Nhd7VbCnrgu2Q9RCdahd8qcNgj03uFRba26bDP09Olc0sR2eQYSYzytI01/Ns4mlPh5owihYJSL/
+	 G3ULFnShSV6ndFfa1lx74tipKESOiplwjU/ImPfilq2L1aeWFycQuUcio/lU3zz6eJriG9xt3yXd
+	 dvdTisTuLI7XTvONtGY1xY2ExXxplOVEJRs5ODMrsD5MCcbQypY+8eCuyQqs2lUIcVN7D6YuJrdz
+	 Vk0jxsvGtmNKfCmunBl6VSPgYGDPazV6MA80LcJqf/IGxD0PyOoUJeVNaFj3dq/AtpflQg5y47Ui
+	 YEwJpRllMYTo77HXltI7f+RsC4hSlhjzkvGRDATwKCX3WEay91kmQkEqv5QRdj2Eu65334LgXyN/
+	 6KmZP1k8Kc9+fNe4wpjR9XhqldEwx1dn0Fx3hegHJbOheC3UmJf83SIMIxX+PBMr0vp1BErH3RnD
+	 jfz/a9k34ylPB8U3O8eZC8fVssocE6wWsxVCBv91Q7VB3UdxJJnlVcDrbpgGO/rwKpmWUthdmnOc
+	 FUMgRcvOiTsPWQz2Klt9gl3e6Td1kmog0s5XTYzQ2dkTDFi9leD+p26OiKY+bKNqVKkNc7pcowCi
+	 iTqQv/zIAluRWXikuNSH5dLzkqEr1TppMuJ1ISsJWoO16rsZQq4d/o++9ULOQ+JfXcCFb6Cu6hq1
+	 TKXk8tVqLfxXv19rmC5A524t1CeqLW9xchlDewimwA+cK63EmfN3HP98gV7BMzX+MHp/1dKGOs6T
+	 CQmN2bCTO2XrP3ipdtdxmzN8cDo9AljyrAmES/ev8FXRPKSwia
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
 From: Yangyu Chen <cyy@cyyself.name>
 To: linux-riscv@lists.infradead.org
 Cc: Conor Dooley <conor+dt@kernel.org>,
@@ -69,9 +69,9 @@ Cc: Conor Dooley <conor+dt@kernel.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yangyu Chen <cyy@cyyself.name>
-Subject: [PATCH v1 8/9] riscv: dts: spacemit: add Banana Pi BPI-F3 board device tree
-Date: Mon, 17 Jun 2024 01:20:53 +0800
-X-OQ-MSGID: <20240616172054.3074948-8-cyy@cyyself.name>
+Subject: [PATCH v1 9/9] riscv: defconfig: enable SpacemiT SoC
+Date: Mon, 17 Jun 2024 01:20:54 +0800
+X-OQ-MSGID: <20240616172054.3074948-9-cyy@cyyself.name>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
 References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
@@ -83,69 +83,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Banana Pi BPI-F3 [1] is a industrial grade RISC-V development board, it
-design with SpacemiT K1 8 core RISC-V chip [2].
-
-Currently only support booting into console with only uart enabled,
-other features will be added soon later.
-
-[1] https://docs.banana-pi.org/en/BPI-F3/BananaPi_BPI-F3
-[2] https://www.spacemit.com/en/spacemit-key-stone-2/
+Enable SpacemiT SoC config in defconfig to allow the default upstream
+kernel to boot on Banana Pi BPI-F3 board.
 
 Signed-off-by: Yangyu Chen <cyy@cyyself.name>
 ---
- arch/riscv/boot/dts/Makefile                 |  1 +
- arch/riscv/boot/dts/spacemit/Makefile        |  2 ++
- arch/riscv/boot/dts/spacemit/bananapi-f3.dts | 19 +++++++++++++++++++
- 3 files changed, 22 insertions(+)
- create mode 100644 arch/riscv/boot/dts/spacemit/Makefile
- create mode 100644 arch/riscv/boot/dts/spacemit/bananapi-f3.dts
+ arch/riscv/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/riscv/boot/dts/Makefile b/arch/riscv/boot/dts/Makefile
-index fdae05bbf556..bff887d38abe 100644
---- a/arch/riscv/boot/dts/Makefile
-+++ b/arch/riscv/boot/dts/Makefile
-@@ -5,6 +5,7 @@ subdir-y += microchip
- subdir-y += renesas
- subdir-y += sifive
- subdir-y += sophgo
-+subdir-y += spacemit
- subdir-y += starfive
- subdir-y += thead
- 
-diff --git a/arch/riscv/boot/dts/spacemit/Makefile b/arch/riscv/boot/dts/spacemit/Makefile
-new file mode 100644
-index 000000000000..5c512f4e297d
---- /dev/null
-+++ b/arch/riscv/boot/dts/spacemit/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
-+dtb-$(CONFIG_ARCH_SPACEMIT) += bananapi-f3.dtb
-diff --git a/arch/riscv/boot/dts/spacemit/bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/bananapi-f3.dts
-new file mode 100644
-index 000000000000..023274189b49
---- /dev/null
-+++ b/arch/riscv/boot/dts/spacemit/bananapi-f3.dts
-@@ -0,0 +1,19 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
-+ */
-+
-+#include "k1.dtsi"
-+
-+/ {
-+	model = "Banana Pi BPI-F3";
-+	compatible = "bananapi,bpi-f3", "spacemit,k1";
-+
-+	chosen {
-+		stdout-path = "serial0";
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
+diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+index 12dc8c73a8ac..a33e8c463c8a 100644
+--- a/arch/riscv/configs/defconfig
++++ b/arch/riscv/configs/defconfig
+@@ -30,6 +30,7 @@ CONFIG_ARCH_RENESAS=y
+ CONFIG_ARCH_SIFIVE=y
+ CONFIG_ARCH_SOPHGO=y
+ CONFIG_SOC_STARFIVE=y
++CONFIG_SOC_SPACEMIT=y
+ CONFIG_ARCH_SUNXI=y
+ CONFIG_ARCH_THEAD=y
+ CONFIG_ARCH_VIRT=y
 -- 
 2.45.1
 
