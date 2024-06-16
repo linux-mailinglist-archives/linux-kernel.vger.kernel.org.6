@@ -1,123 +1,124 @@
-Return-Path: <linux-kernel+bounces-216216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F5F3909CCD
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:39:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 732AB909CCF
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11651B21240
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:39:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B401C208CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CA01836DC;
-	Sun, 16 Jun 2024 09:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA5F181D03;
+	Sun, 16 Jun 2024 09:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="QGxeGZf7"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mg5PHFol"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB585025E;
-	Sun, 16 Jun 2024 09:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD4E14AB8;
+	Sun, 16 Jun 2024 09:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718530748; cv=none; b=dnGbhLUQPGZ799Y+3M/wAoSo/FltSvDvFpSo46ZoO0oowLxPf3pZTY6jRT63aVNQRksxz8BCYgSjO0005eFIWNRbO0iuivHYxxgCWQ8u7/cvSY5sMu1kKTKjzDO484rse/wDxpkAIVHTokKDHypyPIWxQTmgaDJYRJNqtfaQn7c=
+	t=1718530793; cv=none; b=jfoz2v/X6IuWM/zPzXCFllkS8GYkptXJ8mfrMoYXgdidap1Dls+kjCAW1OHglWOBJId+mUGkSEOxTv0b5JClmbCznQnb+nYT0e3ZXmIFHPowVUQxnL8sskuT6EBeleX3kHa8C2tyj4iXYcDGdh5RGMKIBw5KgPXs1LZ8owStxZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718530748; c=relaxed/simple;
-	bh=6dA7/dibViLlVg0vuBTN+RMz0VQaAmKhfC47NLA+bFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WhJo2iIYo8rfaxOb3KRIwyNpLhZ4WaZPj4cyhBt1dL1TZL6YgByLSSsMo+YBUTwHXAUBT1V78Fohx5tllcueJjt0aLCEKlU0hStL0jDDsBd3IAPfpBUcDgT9b+ikMGh0jAOg6ZgUqeoMQh85mldpJPYToyqP+oe89dQUTBSP0eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=QGxeGZf7; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 1CFB61FA58;
-	Sun, 16 Jun 2024 11:38:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1718530735;
-	bh=kAZnTqax55Wjz2CBuGAYc20MbuOcHgLalijRLo3HDcQ=;
-	h=Received:Received:From:To:Subject;
-	b=QGxeGZf7VFUIyjs7eMpMcP44kq7toXzmdvMApNC6/P9eAphWRKEAyDjfEPKZPSMoS
-	 GwjeVknER1jzSlW786B5EKaZTUlvrjfwSTgT3CzT+ry5AhqAJFs1viKp61YpgxpCgV
-	 q5vHwIRq+aPbrA01yiIlTyvKnWRpDMRSISGjgeO2JTHh3yA8HXrpzGGekrONWYWeeA
-	 s2sHMoRROf/638icUfjIAhIfVNmMcoyr7yNZ/A+mU8VuW0bf6RSZknfKLGTmCslQk3
-	 cxntzqOYIBRanjOUOEOOsNPxIeMFnkrPlmA2ORuJlkIO8843irHR0CgoNAQWnD9CJK
-	 29jpi+ZXF2OWQ==
-Received: from livingston (unknown [192.168.42.11])
-	by gaggiata.pivistrello.it (Postfix) with ESMTP id 89CC57F9AA;
-	Sun, 16 Jun 2024 11:38:54 +0200 (CEST)
-Received: from pivi by livingston with local (Exim 4.96)
-	(envelope-from <francesco@dolcini.it>)
-	id 1sImLe-0000xO-1H;
-	Sun, 16 Jun 2024 11:38:54 +0200
-Date: Sun, 16 Jun 2024 11:38:54 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: =?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <jpaulo.silvagoncalves@gmail.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Matti Vaittinen <mazziesaccount@gmail.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] iio: trigger: Fix condition for own trigger
-Message-ID: <Zm6yrnDwSye85Hl1@livingston.pivistrello.it>
-References: <20240614143658.3531097-1-jpaulo.silvagoncalves@gmail.com>
- <20240615115018.2b73d6b3@jic23-huawei>
+	s=arc-20240116; t=1718530793; c=relaxed/simple;
+	bh=uWXgTRFYGMtbo6aA0cLiFCto7KhwUVK/QLo1YhFqVDw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sMhD6/usGQpY/fm4FDW5JIQkOo3l1hp8rAauZgywDZIZ8XeYrBq1QW468XRKlADK+dqkSvoShSE4yaEXS37eepBjhl0pO/41TtDXjygcVZgMY1VEshXV9ulkOEmU2tEcxVEdLto4UhSzn4ngwC3sZBzACYQ2NdBrz33jZWiG5CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mg5PHFol; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70539C4AF1C;
+	Sun, 16 Jun 2024 09:39:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718530792;
+	bh=uWXgTRFYGMtbo6aA0cLiFCto7KhwUVK/QLo1YhFqVDw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Mg5PHFolQu/RQ11aPODW4CvKyxlmTo0qrAtG9NmeyxdcpIASrGC8pdtlRUzO8tVyD
+	 dJHD2axGKHrcnskYhMtlBdEnQCcXzyQ53Gm5gRK1RwEg5u6C6xhw36xdz7Z/XBbbxi
+	 E7A/BuYDmP2H/3Rv2BAvzWQueaoav+DerOakH6MGaL3ztsySGFl2eiOa9JXJCWFWlU
+	 RlqjcpsaOTtm3mvHZrWS/V0N+m/amlrPkA0zHPnnpqvQ9E9ETlYCjwRcLbv+huSiR4
+	 o2Kr+i4vLMBPiZN+2Ty0Am8Ok6OUgPrBCpyPp5ctmThmZrAOHXz1iGGpqd85BCT016
+	 7SXrIUiy6AKsA==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ebeefb9a7fso46658781fa.0;
+        Sun, 16 Jun 2024 02:39:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVCNgDph/DZR23cxNntPzeIMAt5FjXWLy6zseiRRQZtW7m3sogP8DF/fvvJtL9JHlmZrE9qMu3lQgEirxuZFbV7drMqPjaIQ1cvcXv5
+X-Gm-Message-State: AOJu0YwTkHWXEh+t1RU/Ct3AdMxqY+mY7QWlYm9sozz/kC+Cmk6TYFWw
+	HAi31XPYWtOzMrqUvHfdR9r39oberDiva66y8ASjzK/eT6yaKf9WspHWgNAwnbC2Zcva95TlApl
+	txZtlVSoT2/fhiiE2QkF5BiyCYLI=
+X-Google-Smtp-Source: AGHT+IG6wBxdkDXxiLw+43GSUyefk7fCsnPd3qWG9KRDR7zXhY9l1ymNB/DkCjW3orom3Hi/P0aRVXE5TUanMmXFlXI=
+X-Received: by 2002:a05:6512:4cc:b0:52c:8a1c:74c with SMTP id
+ 2adb3069b0e04-52ca6e9142fmr4582063e87.46.1718530791080; Sun, 16 Jun 2024
+ 02:39:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240615115018.2b73d6b3@jic23-huawei>
+References: <9811ea10d647ff687e140976ec50c5ebbe5ecbe5.camel@mastodonlabs.com>
+In-Reply-To: <9811ea10d647ff687e140976ec50c5ebbe5ecbe5.camel@mastodonlabs.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 16 Jun 2024 18:39:14 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATR8NpxaBoJyPns__=pn8G_-8uOJZuB989R5q=7afO7Dw@mail.gmail.com>
+Message-ID: <CAK7LNATR8NpxaBoJyPns__=pn8G_-8uOJZuB989R5q=7afO7Dw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] kbuild: Fix build target deb-pkg: ln: failed to
+ create hard link
+To: thayne@mastodonlabs.com
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 15, 2024 at 11:50:18AM +0100, Jonathan Cameron wrote:
-> On Fri, 14 Jun 2024 11:36:58 -0300
-> João Paulo Gonçalves <jpaulo.silvagoncalves@gmail.com> wrote:
-> 
-> > From: João Paulo Gonçalves <joao.goncalves@toradex.com>
-> > 
-> > The condition for checking if triggers belong to the same IIO device to
-> > set attached_own_device is currently inverted, causing
-> > iio_trigger_using_own() to return an incorrect value. Fix it by testing
-> > for the correct return value of iio_validate_own_trigger().
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: 517985ebc531 ("iio: trigger: Add simple trigger_validation helper")
-> > Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+On Sun, Jun 16, 2024 at 2:34=E2=80=AFPM Thayne Harbaugh <thayne@mastodonlab=
+s.com> wrote:
+>
+> From: Thayne Harbaugh <thayne@mastodonlabs.com>
+>
+> The make deb-pkg target calls debian-orig which attempts to either
+> hard link the source .tar to the build-output location or copy the
+> source .tar to the build-output location.  The test to determine
+> whether to ln or cp is incorrectly expanded by Make and consequently
+> always attempts to ln the source .tar.  This fix corrects the escaping
+> of '$' so that the test is expanded by the shell rather than by Make
+> and appropriately selects between ln and cp.
+>
+> Signed-off-by: Thayne Harbaugh <thayne@mastodonlabs.com>
 
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-> 
-> Ouch.  Can you give an example of resulting user visible result? That
-> will help people decide whether to pick this up for their distro kernels
-> etc.  In some cases, looks like we'll get garbage timestamps and in others
-> may get stale data (or garbage).
+Applied with
+Fixes: b44aa8c96e9e ("kbuild: deb-pkg: make .orig tarball a hard link
+if possible")
 
-This was noticed while me and Joao were working on the ads1119 driver you
-have been recently reviewing. We wanted to use iio_trigger_using_own()
-and it was not behaving the right way. We looked into it and found the bug.
+Thanks!
 
-Given that I do not know the exact impact on the drivers that are using this
-function.
+> ---
+>  scripts/Makefile.package | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+> index 38653f3e8108..bf016af8bf8a 100644
+> --- a/scripts/Makefile.package
+> +++ b/scripts/Makefile.package
+> @@ -103,7 +103,7 @@ debian-orig: private version =3D $(shell dpkg-parsech=
+angelog -S Version | sed 's/-
+>  debian-orig: private orig-name =3D $(source)_$(version).orig.tar$(debian=
+-orig-suffix)
+>  debian-orig: mkdebian-opts =3D --need-source
+>  debian-orig: linux.tar$(debian-orig-suffix) debian
+> -       $(Q)if [ "$(df  --output=3Dtarget .. 2>/dev/null)" =3D "$(df --ou=
+tput=3Dtarget $< 2>/dev/null)" ]; then \
+> +       $(Q)if [ "$$(df  --output=3Dtarget .. 2>/dev/null)" =3D "$$(df --=
+output=3Dtarget $< 2>/dev/null)" ]; then \
+>                 ln -f $< ../$(orig-name); \
+>         else \
+>                 cp $< ../$(orig-name); \
+> --
+> 2.43.0
+>
+>
 
-> Odd no one has noticed this in the past whilst testing those dependent
-> features in particular drivers and I worry a little that we may have bugs
-> in the users as a result of iio_trigger_using_own() reporting the inverse
-> of the intended. I've take a quick look at the users and 'think' they are
-> ok, but would definitely like a few others to confirm.
 
-All the users of iio_trigger_using_own() are older than the commit that
-introduced the bug, it is safe to assume that they need the fix and
-are expecting the function to behave the same way is documented and it was
-before the bug was introduced.
-
-The broken commit is not that old and less than 10 IIO drivers are using this
-function. Given that I think that is not that odd that it took 1 year to find
-the bug.
-
-Francesco
-
+--=20
+Best Regards
+Masahiro Yamada
 
