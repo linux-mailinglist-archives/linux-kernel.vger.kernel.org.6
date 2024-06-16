@@ -1,202 +1,167 @@
-Return-Path: <linux-kernel+bounces-216065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDFB3909AB0
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 02:29:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C84909AB2
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 02:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B5EF28319E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 00:29:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BEFF1C2109A
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 00:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E6023BF;
-	Sun, 16 Jun 2024 00:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F7C4C80;
+	Sun, 16 Jun 2024 00:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PBLurXzQ"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mm6K2Mwd"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226541843
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 00:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC0223BF;
+	Sun, 16 Jun 2024 00:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718497777; cv=none; b=gplviz1DxGu40eFWKbzUQUxlXyxnKxzN7EnTGNYzMX7mZlvRTKr622FAwvLk1FlIXRSFBC/i93Otu+6dPmMrbYEg+iOyvfRo7NaIkivkmXGdW1oGlgHRYT2nYZz1BxDhfZXn+YJXPOy5rWKT6ZL8aOAJbfYcB5fFHC1SvsezQ1U=
+	t=1718497809; cv=none; b=c1oiSYZREK4gcd28txug6nz2CcTTV4/8M4LQtfL2JfedQhAdexdbSZSoTEmG86CbbwNCfQM7b6xlbon6ObfNyXrwUhmoujD/yElJNowWZWGZ35/2QMM6bKE6LdUzDRAIOA6+MfKUfE6LhjXN3s+LwVEoR5elss26Pn/p2d+xJbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718497777; c=relaxed/simple;
-	bh=qNl5LLgt0vuIiiJ6TMFbmpOkuklVeUyDfb4sXN4a0OM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LBmw3K2XDk3xmRNY7m1Tlcxlxmsb+XC7PtEt/vDOQtIObaoVmXZWOT7EuOghndspX2fLd+XzOY5OQT4V4S60j5YRGjvkonicroyfGXjXBckFHSKu8a6OCse4ejq9EE2r6NmDtjMu+7EHnIoyTjpp2K0n2l+QIKRJ8sQzBwSnfPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PBLurXzQ; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57cb9efd8d1so4849126a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 17:29:34 -0700 (PDT)
+	s=arc-20240116; t=1718497809; c=relaxed/simple;
+	bh=WY60PRAGN65hKOjuRFFy2T6DnCrZjrVj79ITXNKWAAo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DQKyLuqy1QJ5MONexwRBTeoZh/+7nPfI5QyBksw0pB4N3cuVvg1jVXm3R/2r+IPMl9KTZEgdxPO6USp1rAZwDqxtdTNSm6/TiN/vRx/7VXjHK31FzYqPPK2OtklqlDaWRYx8VFZFgv6F5zCuDmjxFQHqD+C4gDCIe5Zs6g9Q854=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mm6K2Mwd; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-6e9f52e99c2so2551397a12.1;
+        Sat, 15 Jun 2024 17:30:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718497773; x=1719102573; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6osgA93aqonamdWRCetYmklZz/MQRCMhpbnjLMTEVVM=;
-        b=PBLurXzQlSKYuGalQaaBU96vFqvPdeESrT7sAsTRe/1fwm9IGNA4ENcWStRtgAGTpj
-         77oe30+NNquVX8RBfAqhVw8HVruhFi8XR71i1dF78/mV/pvxK0l4MrCdmkkO4jPmpxvm
-         tgpb4pyt+DCJmLFSuEB3Y3HjTNHa5s4j+rI3nqzIcfl1ZTFyan6Ds0tqZn1US7NgSnDv
-         71gw7C57xwXhvnUuHqF242/t3NkYIt4/vDuJlEHHiJ5JiS/QzHOxQjvmaYiQyv8qStVW
-         +9SzTaMW2ayNHBgUA0uChh58cotsiCyj2V9x/h+xAzCDkhO/zsKvYnI5vr6e08P3kfGV
-         ylYA==
+        d=gmail.com; s=20230601; t=1718497807; x=1719102607; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BTBbcROF1kvXaM6dZlPyFTcs4OHmLeqwYC/d1IExwvY=;
+        b=mm6K2MwdvYNRnRvjTUqHJ8WJtIu7yYwmSp4a2vAHYLlTnmclyL9VVodFGtlXfu1aVa
+         481yWHZEtw7KN6UnY2YQn+tH8MCYOp0/rSmZRcnoJ9fnofU3Vkf+ISD7diHd7abkUVwk
+         1ZudS38Ww8WyIUuWCNMaII/q+EF++8rGQ8RILJot44A7ghuyWEWR4L0ccUS3elwEJRG2
+         vxVnpRgx9qVTTavLQZgQ8NRoMLYzleiZAcBu2YceTT+1hxcl1PLonBuBdjtJ0NpHmWFp
+         nCJC8x6mNdhoyogP4+JkQuZrQomSSFibbKTka62e0gP0uXzNaH4cVa1cJg0a9r40ah02
+         wS8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718497773; x=1719102573;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6osgA93aqonamdWRCetYmklZz/MQRCMhpbnjLMTEVVM=;
-        b=TLKpqAuiQE1jnVvoDWxDcy1HffYvc2pk7zOFcNYWzEssInaLOBhxPYD9b23nYha9Qw
-         ZY2GHE+KAj5j3i8zhTSPj13tFAkIIP3zy6NaWnnIkdIbqTu9t6+qfppTbkRmWuMrzBww
-         FEuRiNN8sCybzv+KY9kjAyza4DDHQeQk2p/xww08AuItVTj+AmftQeYrDgEdOjtJQM7M
-         ijSB+5N19mVe5usa6ZCS9uo38DrhItEyhRNE3SIypgcpBd8Qyteyj1XNr3psyBmZiyfs
-         8bo/9N3ZgGTar4ddW1Q4XoipUYp3Ui6sQ8m3HtD/L5UdDoePa/jOVBs5ots6L/M+yjeI
-         3mSg==
-X-Forwarded-Encrypted: i=1; AJvYcCX0JY9uvPO0zc3ZYlU9QGLXfy3fUbZGXdgKKOcWgcCQ1lBO+E0R5Uj1u2hteZ06qL2SHAZk4aLOJNaPewl0j3apQSVthIim1Cl4taAo
-X-Gm-Message-State: AOJu0YzeucS8VJC8CLm0zgEbi9g/dWKUVuqhFcmqfHruu+Sd9VUfBm9z
-	fuMTiuxbYclCrSozZCmh2+zET61xrsv3/Nf9spF7wdADDFZG80qCUCecby46YPzF4T8rNHFxCC7
-	2WGwnKinDD343co8m9EimPRuUowSPVXaTUUEh
-X-Google-Smtp-Source: AGHT+IFJkBx3nd5yg5OaSvrh9uB02SksIZKWWRNEuDuxK7lqkOsnjy11XGrHJ8gM7AbgWsB6IRndKfF+kJDUWM3OMAs=
-X-Received: by 2002:a17:907:9406:b0:a6f:1727:cf4b with SMTP id
- a640c23a62f3a-a6f608a7945mr504935266b.23.1718497773009; Sat, 15 Jun 2024
- 17:29:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718497807; x=1719102607;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BTBbcROF1kvXaM6dZlPyFTcs4OHmLeqwYC/d1IExwvY=;
+        b=ipByYQ+KL1YYUrCkYUzdVqVb2KggBqsVWDFp+8mJP/uEbxrUwdwr7LLZqAxw+FNWNe
+         GugtQ1xno/JkOXZrYt0uKdXovLtQ4adPSzyp2ApSF4qrzMJ6QgVcMQPouJJVMxFYSc9H
+         OeESXET52p9/Z5+ojPA6IPRpfpUN9/X/10SjJ8lZnANAMwbXVKghsEV7637654h9q7fs
+         y/lMB475zgw9qH5weMBHyBkzazkq1tZy+WnI8yCOfzCE0tWfNLVCd8nNYptBnw6QrufH
+         r4KGtchu9T92yXeALdnwO0l1pW0dtL74BOxu+aEg525o+nUdNMWDWhBkrr6AfG8gbHiS
+         i0OA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUprphPjXJybtezr3yvEaM8usm8yDGP+l8j8wzKeIs36mR/XEGWZ2B/QDledduQiAUE9t8yjeK1jBDPsH4PlWF3QgUgUnoxOu22Vf7jdGZNIqSIFj5tPbUXd/wL4bhnuYG
+X-Gm-Message-State: AOJu0YykNSKDJ0Fx1GxLTgi6+sOUgozxD6wmwTuBomB352AKf5POGYNY
+	GYa9HLs/jcEx+TVJm8kKe55kABBko3LKPcQKF4QcJeTAJ7nyddv+
+X-Google-Smtp-Source: AGHT+IFjUoU4UWG+6jxvlrzjuNUmhH/5KBsT7DcS/d3T5ZFMnJwu7/MjDSKvyIVJmpcROP/wQ8RuRg==
+X-Received: by 2002:a05:6a20:8427:b0:1b5:d00e:98e3 with SMTP id adf61e73a8af0-1bae7d97c20mr6501499637.11.1718497806983;
+        Sat, 15 Jun 2024 17:30:06 -0700 (PDT)
+Received: from ubuntu.localdomain ([240e:304:7697:ee96:7cea:342b:603a:c6])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4a769be25sm8612448a91.35.2024.06.15.17.30.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Jun 2024 17:30:06 -0700 (PDT)
+From: Donglin Peng <dolinux.peng@gmail.com>
+To: ast@kernel.org
+Cc: daniel@iogearbox.net,
+	song@kernel.org,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	yonghong.song@linux.dev,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Donglin Peng <dolinux.peng@gmail.com>
+Subject: [PATCH] libbpf: checking the btf_type kind when fixing variable offsets
+Date: Sat, 15 Jun 2024 17:29:58 -0700
+Message-Id: <20240616002958.2095829-1-dolinux.peng@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240615081257.3945587-1-shakeel.butt@linux.dev>
-In-Reply-To: <20240615081257.3945587-1-shakeel.butt@linux.dev>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Sat, 15 Jun 2024 17:28:55 -0700
-Message-ID: <CAJD7tkbpFu8z1HaUgkaE6bup_fsD39QLPmgNyOnaTrm+hZ_9hA@mail.gmail.com>
-Subject: Re: [PATCH] memcg: use ratelimited stats flush in the reclaim
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@suse.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, Yu Zhao <yuzhao@google.com>, 
-	Muchun Song <songmuchun@bytedance.com>, Facebook Kernel Team <kernel-team@meta.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jun 15, 2024 at 1:13=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
->
-> The Meta prod is seeing large amount of stalls in memcg stats flush
-> from the memcg reclaim code path. At the moment, this specific callsite
-> is doing a synchronous memcg stats flush. The rstat flush is an
-> expensive and time consuming operation, so concurrent relaimers will
-> busywait on the lock potentially for a long time. Actually this issue is
-> not unique to Meta and has been observed by Cloudflare [1] as well. For
-> the Cloudflare case, the stalls were due to contention between kswapd
-> threads running on their 8 numa node machines which does not make sense
-> as rstat flush is global and flush from one kswapd thread should be
-> sufficient for all. Simply replace the synchronous flush with the
-> ratelimited one.
->
-> One may raise a concern on potentially using 2 sec stale (at worst)
-> stats for heuristics like desirable inactive:active ratio and preferring
-> inactive file pages over anon pages but these specific heuristics do not
-> require very precise stats and also are ignored under severe memory
-> pressure. This patch has been running on Meta fleet for more than a
-> month and we have not observed any issues. Please note that MGLRU is not
-> impacted by this issue at all as it avoids rstat flushing completely.
->
-> Link: https://lore.kernel.org/all/6ee2518b-81dd-4082-bdf5-322883895ffc@ke=
-rnel.org [1]
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> ---
->  mm/vmscan.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index c0429fd6c573..bda4f92eba71 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -2263,7 +2263,7 @@ static void prepare_scan_control(pg_data_t *pgdat, =
-struct scan_control *sc)
->          * Flush the memory cgroup stats, so that we read accurate per-me=
-mcg
->          * lruvec stats for heuristics.
->          */
-> -       mem_cgroup_flush_stats(sc->target_mem_cgroup);
-> +       mem_cgroup_flush_stats_ratelimited(sc->target_mem_cgroup);
+I encountered an issue when building the test_progs using the repository[1]:
 
-I think you already know my opinion about this one :) I don't like it
-at all, and I will explain why below. I know it may be a necessary
-evil, but I would like us to make sure there is no other option before
-going forward with this.
+$ clang --version
+Ubuntu clang version 17.0.6 (++20231208085846+6009708b4367-1~exp1~20231208085949.74)
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/bin
 
-Unfortunately, I am travelling this week, so I probably won't be able
-to follow up on this for a week or so, but I will try to lay down my
-thoughts as much as I can.
+$ pwd
+/work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/
 
-Why don't I like this?
+$ make test_progs V=1
+...
+/work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/tools/sbin/bpftool
+gen object
+/work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/ip_check_defrag.bpf.linked2.o
+/work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/ip_check_defrag.bpf.linked1.o
+libbpf: failed to find symbol for variable 'bpf_dynptr_slice' in section
+'.ksyms'
+Error: failed to link
+'/work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/ip_check_defrag.bpf.linked1.o':
+No such file or directory (2)
+make: *** [Makefile:656:
+/work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/ip_check_defrag.skel.h]
+Error 254
 
-- From a high level, I don't like the approach of replacing
-problematic flushing calls with the ratelimited version. It strikes me
-as a whac-a-mole approach that is mitigating symptoms of a larger
-problem.
+After investigation, I found that the btf_types in the '.ksyms' section have a kind of
+BTF_KIND_FUNC instead of BTF_KIND_VAR:
 
-- With the added thresholding code, a flush is only done if there is a
-significant number of pending updates in the relevant subtree.
-Choosing the ratelimited approach is intentionally ignoring a
-significant change in stats (although arguably it could be irrelevant
-stats).
+$ bpftool btf dump file ./ip_check_defrag.bpf.linked1.o
+...
+[2] DATASEC '.ksyms' size=0 vlen=2
+        type_id=16 offset=0 size=0 (FUNC 'bpf_dynptr_from_skb')
+        type_id=17 offset=0 size=0 (FUNC 'bpf_dynptr_slice')
+...
+[16] FUNC 'bpf_dynptr_from_skb' type_id=82 linkage=extern
+[17] FUNC 'bpf_dynptr_slice' type_id=85 linkage=extern
+...
 
-- Reclaim code is an iterative process, so not updating the stats on
-every retry is very counterintuitive. We are retrying reclaim using
-the same stats and heuristics used by a previous iteration,
-essentially dismissing the effects of those previous iterations.
+To fix this, we can a add check for the kind.
 
-- Indeterministic behavior like this one is very difficult to debug if
-it causes problems. The missing updates in the last 2s (or whatever
-period) could be of any magnitude. We may be ignoring GBs of
-free/allocated memory. What's worse is, if it causes any problems,
-tracing it back to this flush will be extremely difficult.
+[1] https://github.com/eddyz87/bpf/tree/binsort-btf-dedup
+Link: https://lore.kernel.org/all/4f551dc5fc792936ca364ce8324c0adea38162f1.camel@gmail.com/
 
-What can we do?
+Fixes: 8fd27bf69b86 ("libbpf: Add BPF static linker BTF and BTF.ext support")
+Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
+---
+ tools/lib/bpf/linker.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-- Try to make more fundamental improvements to the flushing code (for
-memcgs or cgroups in general). The per-memcg flushing thresholding is
-an example of this. For example, if flushing is taking too long
-because we are flushing all subsystems, it may make sense to have
-separate rstat trees for separate subsystems.
+diff --git a/tools/lib/bpf/linker.c b/tools/lib/bpf/linker.c
+index 0d4be829551b..7f5fc9ac4ad6 100644
+--- a/tools/lib/bpf/linker.c
++++ b/tools/lib/bpf/linker.c
+@@ -2213,10 +2213,17 @@ static int linker_fixup_btf(struct src_obj *obj)
+ 		vi = btf_var_secinfos(t);
+ 		for (j = 0, m = btf_vlen(t); j < m; j++, vi++) {
+ 			const struct btf_type *vt = btf__type_by_id(obj->btf, vi->type);
+-			const char *var_name = btf__str_by_offset(obj->btf, vt->name_off);
+-			int var_linkage = btf_var(vt)->linkage;
++			const char *var_name;
++			int var_linkage;
+ 			Elf64_Sym *sym;
+ 
++			/* should be a variable */
++			if (btf_kind(vt) != BTF_KIND_VAR)
++				continue;
++
++			var_name = btf__str_by_offset(obj->btf, vt->name_off);
++			var_linkage = btf_var(vt)->linkage;
++
+ 			/* no need to patch up static or extern vars */
+ 			if (var_linkage != BTF_VAR_GLOBAL_ALLOCATED)
+ 				continue;
+-- 
+2.25.1
 
-One other thing we can try is add a mutex in the memcg flushing path.
-I had initially had this in my subtree flushing series [1], but I
-dropped it as we thought it's not very useful. Currently in
-mem_cgroup_flush_stats(), we check if there are enough pending updates
-to flush, then we call cgroup_flush_stats() and spin on the lock. It
-is possible that while we spin, those pending updates we observed have
-been flushed. If we add back the mutex like in [1], then once we
-acquire the mutex we check again to make sure there are still enough
-stats to flush.
-
-[1]https://lore.kernel.org/all/20231010032117.1577496-6-yosryahmed@google.c=
-om/
-
-- Try to avoid the need for flushing in this path. I am not sure what
-approach MGLRU uses to avoid the flush, but if we can do something
-similar for classic LRUs that would be preferable. I am guessing MGLRU
-may be maintaining its own stats outside of the rstat framework.
-
-- Try to figure out if one (or a few) update paths are regressing all
-flushers. If one specific stat or stats update path is causing most of
-the updates, we can try to fix that instead. Especially if it's a
-counter that is continuously being increased and decreases (so the net
-change is not as high as we think).
-
-At the end of the day, all of the above may not work, and we may have
-to live with just using the ratelimited approach. But I *really* hope
-we could actually go the other way. Fix things on a more fundamental
-level and eventually drop the ratelimited variants completely.
-
-Just my 2c. Sorry for the long email :)
 
