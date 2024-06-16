@@ -1,306 +1,178 @@
-Return-Path: <linux-kernel+bounces-216472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DBCD909FCB
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 22:55:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F59E909FCD
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 23:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD62F28293A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 20:55:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36ED31C20BD1
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 21:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1ED61FE9;
-	Sun, 16 Jun 2024 20:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA9050284;
+	Sun, 16 Jun 2024 21:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L4uwD6lT"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="aKmP/iHU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qIsFOpvc"
+Received: from wfout5-smtp.messagingengine.com (wfout5-smtp.messagingengine.com [64.147.123.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E32A2BD18;
-	Sun, 16 Jun 2024 20:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1423D8462;
+	Sun, 16 Jun 2024 21:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718571319; cv=none; b=k+iYFDFODkGhWd5byyPQUVQjjDjAHAFNmYDJgZo3kMdYXtxvmDJ3xb0YZIIYZk4+IEWHvrJ9jjD5kmJKyDFZcG1LY5MiRwnTszNK5JmOiQnFfjWiIxnjhl11kcoHJQvl+C0Jewa0GbrVbWjbEr31bf8cg8kMWPsd6roX0f672ws=
+	t=1718571812; cv=none; b=hO3vMh4+mgdaH5IMJsTRUjO7qJGxqT5MA0JRyzQQOjGu9T8UQg3rmsATuN08K851ZsumbdCEDPpy7WVZ6FGlDoaotU3ckGJtQwybLQ/7QVl9LDvb6wZNBs22C8KhUvNDuEpwVFWZ+GEIgYZ1LR54MF57APqRiCtXKGsteinISr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718571319; c=relaxed/simple;
-	bh=WYzuDrXmO6AUW7fbmvjgsYXwIlVa0WM9LgyqmT8vBDE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TEKLYuxMqlI2ErP37E4QQryyP9n/kEhMCyf73HL3LeRB9v/KGKnIihnrpqZFHbc+yBW80JlKqtWJv0GhyrxzJTif7Uh9rK434sxQlQZMpt5JsCJIs+nMwNrBQhjIVUQnXBE6ZFYOLmgEtI0O8Mf4ul4kjqp7opJSI6rXerJ/w48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L4uwD6lT; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57c60b13a56so4397366a12.0;
-        Sun, 16 Jun 2024 13:55:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718571315; x=1719176115; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=APPaSVkkIkLVp2kGB9USVnluHmcgSJhTWRI3mRmHmok=;
-        b=L4uwD6lTSAy2elbCHGJuidEXMF7wCXrvVeXYmqf579YmeqjmcZuasWsb+lUwWnuSFY
-         j8sSBuVdiFo+xDnZs5zlyJO5eRMfbKiuvM7KYoyG5iPJSkpOOjIW1QCNfNH3bwsgZ9f1
-         R9K68oOGvbTDD4dP0AMb/3xc8JV2K3u3NcBVtKmQM0/2Qth/qRPVAoiXGGNVQ28uMNKX
-         4WT1vPKTTPiDvRii+n7O8BjmIuwDktynqJA241BldMfCB5qiA81j5zHUTBKgz/MYpG5p
-         bDpmVzMvV2dZrL1wkzqnxiOJeVEZbpjbX+DZ9ZWU2xVbxIX93nSvnqPH5+ywexYwLJil
-         OTpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718571315; x=1719176115;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=APPaSVkkIkLVp2kGB9USVnluHmcgSJhTWRI3mRmHmok=;
-        b=v+EBDwH7SNfFZTOH/QlfGrUV6DV2OKgKz0PyudbqDZvlnVahD687IF9oaDB9vgmbRw
-         bELi4iLw06fRwrWpPdOin+i0pqYD+7UQU0woOGMJ0Ikgs6zL+N67x+fhq0SmUTLHDFaL
-         Ay12BBVnen7EjGkBSpqbNJ36lfg5ES8RKnYiCH0rj3Ul0RTfwDzjsekjVk9Gi9cXw5bW
-         iMC9GL+kI9pEI4AaxoxWgo8oA9MRIxXhltYGPGMCSaCGkzX49kKd4qbFJFFJZzzyKHUc
-         2qCzB0UwdNPFtICKAwBtrSmhTPo0jMgzxHD/6gTCWmmYFqSoB/ACljXdvPUy5d0tdisI
-         u6tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXTzPU0mSyTIRm2rcVZHX9zStH5P3AtFeu+/0k6QIHYv2bXoTFXefAvl8/aHagG1VrJcMRpgBPYK2fZUmef62LKF5hFT6lhrEhvpbjGbNuNks+2jYGIoEWo0mKvJR8FfyfzXYDYPsz1/pd512//dLW27d0VTpvLwZHdv5CQX4AasPg6BWs6kb5NsA==
-X-Gm-Message-State: AOJu0Yx0x0wwZxEltzJ77p4n4CaEJZbgESw/TVfmkuL1//Ut7DOIzRrJ
-	yG+JbPad3vPNV/Ih7zI24PgKNw1E1yK6HTJNleiA6tCN9qnaG+/O
-X-Google-Smtp-Source: AGHT+IEVHjAFd1evmZPWjVr799mlnu88TZMUwRhtd/dvcsW1b+V2b2+3ux2JS7O63hkgjP1HoUggcA==
-X-Received: by 2002:a17:906:4144:b0:a6f:9a:db48 with SMTP id a640c23a62f3a-a6f60dc5609mr445522366b.61.1718571315054;
-        Sun, 16 Jun 2024 13:55:15 -0700 (PDT)
-Received: from ?IPV6:2a02:a466:68ed:1:b241:3c58:56ab:2e6a? (2a02-a466-68ed-1-b241-3c58-56ab-2e6a.fixed6.kpn.net. [2a02:a466:68ed:1:b241:3c58:56ab:2e6a])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ecd666sm441732066b.135.2024.06.16.13.55.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Jun 2024 13:55:14 -0700 (PDT)
-Message-ID: <45d41a5d-384e-4dc9-8b43-8dd8734b822a@gmail.com>
-Date: Sun, 16 Jun 2024 22:55:13 +0200
+	s=arc-20240116; t=1718571812; c=relaxed/simple;
+	bh=X16cS9a/L7NsDy4taesqayQMqsULzc5GrtFlN2wl2OY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=blxLaY6MBtg0aJQHSLA4BLDUwmsGVj2RH6jeeINEU8lSJBorDrovHvioZ7Uo8euNaKkpkIuyrv1L6eGE82g6wI/msSUcgfhnSkogiEZ1Jzvv1wAmPO6vmaNUeh1h/eL4nbGFRQwFwEE0mGIn2OQQxQR8Np4ZnuvKYsCb4HDegGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=aKmP/iHU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qIsFOpvc; arc=none smtp.client-ip=64.147.123.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.west.internal (Postfix) with ESMTP id 820941C00096;
+	Sun, 16 Jun 2024 17:03:29 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Sun, 16 Jun 2024 17:03:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1718571809; x=1718658209; bh=tH
+	kz+tqADZwei30zueVWO8gMG2ykRjij8iuylzvjBK8=; b=aKmP/iHUQkOi5PnIRp
+	INQujggGUsxaVx6GQ/WQcAxEcPew6v7LHR+1rMwlJz1BbbQxxO78VUeFP1jN279H
+	UM3Z5ALfPJXXhQl98OKl+M/T3syV2esJVa6/LXExdnCB71GHgPqb+mOiwltR15xI
+	fHeB2OjE5qcEFDYCY+BSCMtehNkZ8Bo32ag7QiY83qDFsEBVzxwZUJZHrGAUgHi7
+	MXWeHeP5XBXq9LfGE6yTLqe7xjXB6OgX55IoDk/SVYQ6mzOdEBYTLITuWj6rW+ko
+	8LL+KyCKQCzIgpwR03eGgyniyZguT6w5vthQ9CykFFwT6xxbeU25EuU4YP6KrkAE
+	0HKg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm1; t=1718571809; x=1718658209; bh=tHkz+tqADZwei
+	30zueVWO8gMG2ykRjij8iuylzvjBK8=; b=qIsFOpvcZM7RAxvrdOYgeUsuLvojR
+	H0etkP7AUul4Kf8tZ/5dm+FUsCqxxoVvrjFQAeDKBtzMpqHPuOOfoRPkRQV8NtUy
+	UvcvEacM6V7E5iyqsWhvnPKbJumFZ1M8z02c+tamjIcGqwfEk+jdaLsvZuZHqY1K
+	APxiCGfZRGXBzfxinzfvdO3TJGfTZFoBJpiLbqKZ1R6SfX8IXFnX5QDj7CXoe/TR
+	IlmivQtRMNJ0K7xEOG7kp3rBOV1xGjlwF6YTEBXmMKR8PjL/BXI1gjClL9iybBQL
+	YQRT06tkpye/WdcPA+Eum883B3CmJjEUMJNIgEOJ9wtGfCZ27Dgm/sZHw==
+X-ME-Sender: <xms:IFNvZj2ceebmJXGDPkGnMdWDW59WQ4hG4WsySY8xXWWnxdrVpEI8Cg>
+    <xme:IFNvZiFwWJq-Ge9GL522_ugEA-WT0MXCGdwvpFyiw6wLN8l6KCplGWhjdmne7LcdZ
+    bqhSBs1lXYhdkWuPLo>
+X-ME-Received: <xmr:IFNvZj68MSDLggnfQxbV9KJV8W3ljsB74Wzk4xoroAlN9pfoYuqgN8Y>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvfedgudehjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomheplfhirgig
+    uhhnucgjrghnghcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqeenuc
+    ggtffrrghtthgvrhhnpedufffffffhueehvefhgfelveekueegteefgeeiieejheefkeeh
+    keevudevieegueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:IFNvZo1GWPZTaOrzkrNduNv2ipwk_KX6eH_6MKPLF_Dyn4MtpVUenQ>
+    <xmx:IFNvZmF8OL8iVpRA8fkqNABT4awFSo7q-TJ2pLUBsLJ2r8FVchqjmA>
+    <xmx:IFNvZp-3HnMx72EFb88-unj3LKbZaiGba0GOQQ_1HxvcmSTJcYjzcQ>
+    <xmx:IFNvZjmaPjiY8-SkBd4AgrCt6ie2PZViOvfx6QEO9wa1FLfWjc96yw>
+    <xmx:IVNvZu_oqkremJgmObGg_b0qmHX_UYcXHvrLkBomYeLhQTZXAHPhpoR0>
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 16 Jun 2024 17:03:27 -0400 (EDT)
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH 00/10] MIPS: IPI Improvements
+Date: Sun, 16 Jun 2024 22:03:04 +0100
+Message-Id: <20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/15] tty: serial: switch from circ_buf to kfifo
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Ferry Toth <fntoth@gmail.com>
-Cc: Jiri Slaby <jirislaby@kernel.org>, neil.armstrong@linaro.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-serial <linux-serial@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Al Cooper <alcooperx@gmail.com>,
- Alexander Shiyan <shc_work@mail.ru>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Baruch Siach
- <baruch@tkos.co.il>, Bjorn Andersson <andersson@kernel.org>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- "David S. Miller" <davem@davemloft.net>, Fabio Estevam <festevam@gmail.com>,
- Hammer Hsieh <hammerh0314@gmail.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Chunyan Zhang <zhang.lyra@gmail.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Kevin Hilman <khilman@baylibre.com>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
- Laxman Dewangan <ldewangan@nvidia.com>,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- "Maciej W. Rozycki" <macro@orcam.me.uk>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Simek <michal.simek@amd.com>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Nicholas Piggin <npiggin@gmail.com>, Orson Zhai <orsonzhai@gmail.com>,
- =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
- Patrice Chotard <patrice.chotard@foss.st.com>,
- Peter Korsgaard <jacmet@sunsite.dk>,
- Richard Genoud <richard.genoud@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Sascha Hauer <s.hauer@pengutronix.de>,
- Shawn Guo <shawnguo@kernel.org>, Stefani Seibold <stefani@seibold.net>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- Taichi Sugaya <sugaya.taichi@socionext.com>,
- Takao Orito <orito.takao@socionext.com>,
- Tharun Kumar P <tharunkumar.pasumarthi@microchip.com>,
- Thierry Reding <thierry.reding@gmail.com>, Timur Tabi <timur@kernel.org>,
- Vineet Gupta <vgupta@kernel.org>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Phil Edworthy <phil.edworthy@renesas.com>
-References: <20240405060826.2521-1-jirislaby@kernel.org>
- <daf06969-15fd-470e-88b8-a717066fe312@linaro.org>
- <cebad7f8-3f47-4e6a-93b7-32fcf2367874@kernel.org>
- <f42ef4a3-4bfe-4354-9220-ed742e093c86@gmail.com>
- <364fbb96-006f-4582-a0f8-a0f9edd50f6f@gmail.com>
- <f6dc3a45-7be8-4ce2-c7da-65c6bd9ce8d1@linux.intel.com>
-Content-Language: en-US
-From: Ferry Toth <fntoth@gmail.com>
-In-Reply-To: <f6dc3a45-7be8-4ce2-c7da-65c6bd9ce8d1@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAhTb2YC/x3MQQ5AMBBG4avIrE2iIiWuIhbU4F+0mo6IRNxdY
+ /kt3ntIJUGU+uKhJBcUR8gwZUFun8ImjCWb6qpuKmsszw17RGVEMHxMxyVewqm8dq6zs1mcbVv
+ KeUyy4v7Xw/i+H52FCCZqAAAA
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Huacai Chen <chenhuacai@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Serge Semin <fancer.lancer@gmail.com>, Paul Burton <paulburton@kernel.org>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2546;
+ i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
+ bh=X16cS9a/L7NsDy4taesqayQMqsULzc5GrtFlN2wl2OY=;
+ b=owGbwMvMwCXmXMhTe71c8zDjabUkhrT8YHl9KYOLQjXdrNnbdp9smzjj+d9tDQ+WfX3cJy5xc
+ U3FKSfNjlIWBjEuBlkxRZYQAaW+DY0XF1x/kPUHZg4rE8gQBi5OAZjI8+mMDC+eihTFNafxsLWL
+ VnLdC9/IbqZfXf5hZvLTnjur6oSc2RkZ/nNn/v1co8LrPvuv2N0jjb0cd9w2T+VpaY/n4Lg+t+0
+ 8CwA=
+X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
+ fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-Hi
+Hi all,
 
-adding Phil
+This series improved general handling to MIPS IPI interrupts, made
+IPI numbers scalable, and switch to IPI-MUX for all GERNERIC_IPI
+users on mux.
 
-Op 12-06-2024 om 15:13 schreef Ilpo Järvinen:
-> On Mon, 10 Jun 2024, Ferry Toth wrote:
->> Op 07-06-2024 om 22:32 schreef Ferry Toth:
->>> Op 22-04-2024 om 07:51 schreef Jiri Slaby:
->>>> On 19. 04. 24, 17:12, Neil Armstrong wrote:
->>>>> On 05/04/2024 08:08, Jiri Slaby (SUSE) wrote:
->>>>>> This series switches tty serial layer to use kfifo instead of
->>>>>> circ_buf.
->>>>>>
->>>>>> The reasoning can be found in the switching patch in this series:
->>>>>> """
->>>>>> Switch from struct circ_buf to proper kfifo. kfifo provides much
->>>>>> better
->>>>>> API, esp. when wrap-around of the buffer needs to be taken into
->>>>>> account.
->>>>>> Look at pl011_dma_tx_refill() or cpm_uart_tx_pump() changes for
->>>>>> example.
->>>>>>
->>>>>> Kfifo API can also fill in scatter-gather DMA structures, so it easier
->>>>>> for that use case too. Look at lpuart_dma_tx() for example. Note that
->>>>>> not all drivers can be converted to that (like atmel_serial), they
->>>>>> handle DMA specially.
->>>>>>
->>>>>> Note that usb-serial uses kfifo for TX for ages.
->>>>>> """
->>>> Sadly, everyone had a chance to test the series:
->>>>     https://lore.kernel.org/all/20240319095315.27624-1-jirislaby@kernel.org/
->>>> for more than two weeks before I sent this version for inclusion. And then
->>>> it took another 5 days till this series appeared in -next. But noone with
->>>> this HW apparently cared enough back then. I'd wish they (you) didn't.
->>>> Maybe next time, people will listen more carefully:
->>>> ===
->>>> This is Request for Testing as I cannot test all the changes
->>>> (obviously). So please test your HW's serial properly.
->>>> ===
->>>>
->>>>> and should've been dropped immediately when the first regressions were
->>>>> reported.
->>>> Provided the RFT was mostly ignored (anyone who tested that here, or I
->>>> only wasted my time?), how exactly would dropping help me finding
->>>> potential issues in the series? In the end, noone is running -next in
->>>> production, so glitches are sort of expected, right? And I believe I
->>>> smashed them quickly enough (despite I was sidetracked to handle the n_gsm
->>>> issue). But I might be wrong, as usual.
->>> I arrived at this party a bit late, sorry about that. No good excuses.
->>>
->>>> So no, dropping is not helping moving forward, actions taken by e.g. Marek
->>>> Szyprowski <m.szyprowski@samsung.com> do, IMNSHO.
->>> Good news is I tested on Merrifield (Intel Edison) which is slow (500MHz)
->>> and has a HSU that can transmit up to 3.5Mb/s. It really normally needs DMA
->>> and just a single interrupt at the end of transmit and receive for which I
->>> my own patches locally. The bounce buffer I was using on transmit broke due
->>> to this patch, so I dropped that. Still, with the extra interrupts caused by
->>> the circ buffer wrapping around it seems to work well. Too late to add my
->>> Tested-by.
->>>
->>> One question though: in 8250_dma.c serial8250_tx_dma() you mention "/* kfifo
->>> can do more than one sg, we don't (quite yet) */".
->>>
->>> I see the opportunity to use 2 sg entries to get all the data out in one dma
->>> transfer, but there doesn't seem to be much documentation or examples on how
->>> to do that. It seems just increasing nents to 2 would do the trick?
->> Currently I have this working on mrfld:
+It is a prerequisite for enabling IRQ_WORK for MIPS.
 
-diff --git a/drivers/tty/serial/8250/8250_dma.c 
-b/drivers/tty/serial/8250/8250_dma.c
+It has been tested on MIPS Boston I6500, malta SOC-It, Loongson-2K,
+Cavium CN7130 (EdgeRouter 4), and an unannounced interaptiv UP MT
+platform with EIC.
 
-index 8a353e3cc3dd..d215c494ee24 100644
+I don't really know broadcom platforms and SGI platforms well so
+changes to those platforms are kept minimal (no functional change).
 
---- a/drivers/tty/serial/8250/8250_dma.c
+Please review.
+Thanks
 
-+++ b/drivers/tty/serial/8250/8250_dma.c
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+Jiaxun Yang (10):
+      MIPS: smp: Make IPI interrupts scalable
+      MIPS: smp: Manage IPI interrupts as percpu_devid interrupts
+      MIPS: smp: Provide platform IPI virq & domain hooks
+      MIPS: Move mips_smp_ipi_init call after prepare_cpus
+      MIPS: smp: Implement IPI stats
+      irqchip: irq-mips-gic: Switch to ipi_mux
+      MIPS: Implement get_mips_sw_int hook
+      MIPS: GIC: Implement get_sw_int hook
+      irqchip: irq-mips-cpu: Rework software IRQ handling flow
+      MIPS: smp-mt: Rework IPI functions
 
-@@ -89,7 +89,9 @@ int serial8250_tx_dma(struct uart_8250_port *p)
+ arch/mips/Kconfig                |   2 +
+ arch/mips/cavium-octeon/smp.c    | 109 +++++++-------------
+ arch/mips/generic/irq.c          |  15 +++
+ arch/mips/include/asm/ipi.h      |  71 +++++++++++++
+ arch/mips/include/asm/irq.h      |   1 +
+ arch/mips/include/asm/irq_cpu.h  |   3 +
+ arch/mips/include/asm/mips-gic.h |  10 ++
+ arch/mips/include/asm/smp-ops.h  |   8 +-
+ arch/mips/include/asm/smp.h      |  42 +++-----
+ arch/mips/kernel/irq.c           |  21 ++++
+ arch/mips/kernel/smp-bmips.c     |  43 ++++----
+ arch/mips/kernel/smp-cps.c       |   1 +
+ arch/mips/kernel/smp-mt.c        |  70 +++++++++++++
+ arch/mips/kernel/smp.c           | 216 ++++++++++++++++++++++++---------------
+ arch/mips/loongson64/smp.c       |  51 ++++-----
+ arch/mips/mm/c-octeon.c          |   2 +-
+ arch/mips/sgi-ip27/ip27-smp.c    |  15 +--
+ arch/mips/sgi-ip30/ip30-smp.c    |  15 +--
+ arch/mips/sibyte/bcm1480/smp.c   |  19 ++--
+ arch/mips/sibyte/sb1250/smp.c    |  13 +--
+ drivers/irqchip/Kconfig          |   2 +-
+ drivers/irqchip/irq-mips-cpu.c   | 180 +++++++++-----------------------
+ drivers/irqchip/irq-mips-gic.c   | 213 ++++++++++++++------------------------
+ 23 files changed, 594 insertions(+), 528 deletions(-)
+---
+base-commit: a2a47d53ca1f74f60931487c27eeba3c17fb69c9
+change-id: 20240616-b4-mips-ipi-improvements-f8c86b1dc677
 
-struct tty_port *tport = &p->port.state->port;
+Best regards,
+-- 
+Jiaxun Yang <jiaxun.yang@flygoat.com>
 
-struct dma_async_tx_descriptor *desc;
-
-struct uart_port *up = &p->port;
-
-- struct scatterlist sg;
-
-+ struct scatterlist *sg;
-
-+ struct scatterlist sgl[2];
-
-+ int i;
-
-int ret;
-
-if (dma->tx_running) {
-
-@@ -110,18 +112,17 @@ int serial8250_tx_dma(struct uart_8250_port *p)
-
-serial8250_do_prepare_tx_dma(p);
-
-- sg_init_table(&sg, 1);
-
-- /* kfifo can do more than one sg, we don't (quite yet) */
-
-- ret = kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, &sg, 1,
-
-+ sg_init_table(sgl, ARRAY_SIZE(sgl));
-
-+
-
-+ ret = kfifo_dma_out_prepare_mapped(&tport->xmit_fifo, sgl, 
-ARRAY_SIZE(sgl),
-
-UART_XMIT_SIZE, dma->tx_addr);
-
-- /* we already checked empty fifo above, so there should be something */
-
-- if (WARN_ON_ONCE(ret != 1))
-
-- return 0;
-
-+ dma->tx_size = 0;
-
-- dma->tx_size = sg_dma_len(&sg);
-
-+ for_each_sg(sgl, sg, ret, i)
-
-+ dma->tx_size += sg_dma_len(sg);
-
-- desc = dmaengine_prep_slave_sg(dma->txchan, &sg, 1,
-
-+ desc = dmaengine_prep_slave_sg(dma->txchan, sgl, ret,
-
-DMA_MEM_TO_DEV,
-
-DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
-
-if (!desc) {
-
->> Nevertheless I got this to work. Very nice. Thanks for this series.
->> I am seeing only 2 interrupts (x2 as each interrupt happens twice), one for
->> dma complete. The 2nd, not sure but likely, uart tx done.
->> In any case the whole buffer is transferred without interchar gaps.
->>
->>> So, what was the reason to "don't (quite yet)"?
->> Before considering to send out a patch for this, are there any caveats that
->> I'm overlooking?
-> Not exactly related to that quoted comment, but you should Cc the person
-> who added RNZ1 DMA a year or two back (in 8250_dw.c) because it required
-
-RZN1
-
-I think you are referring to aa63d786cea2 ("serial: 8250: dw: Add 
-support for DMA flow controlling devices") by
-
-Phil Edworthy<phil.edworthy@renesas.com>?
-
-> writing Tx length into some custom register. I don't know the meaning of
-> that HW specific register so it would be good to get confirmation the HW
-I see dw8250_prepare_tx_dma() has RZN1_UART_xDMACR_BLK_SZ(dma->tx_size)
-> is okay if it gets more than 1 sg entry (at worst, a HW-specific limit
-> on nents might need to be imposed).
->
-And is there a way to get the maximum nents supported? I thought 
-kfifo_dma_out_prepare_mapped() would return a safe number.
 
