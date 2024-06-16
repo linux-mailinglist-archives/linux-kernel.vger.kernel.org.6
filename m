@@ -1,197 +1,340 @@
-Return-Path: <linux-kernel+bounces-216219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6E8E909CD3
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:47:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11902909CD4
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65F68281EE8
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:47:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 151F71C20A78
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A021850B3;
-	Sun, 16 Jun 2024 09:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5860118413D;
+	Sun, 16 Jun 2024 09:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="gdcka24V"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gb0w4uow"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C249216D9AA;
-	Sun, 16 Jun 2024 09:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398CB181BAC
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 09:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718531223; cv=none; b=M0Hi38iZ18WmZR61b0CDsv/F1B2MRvJ8HS5OY2FjEbMpo4ZmO7fR5oOSPSZUSbbSMax6e9/yG2DbVIEFbx4CGvqTbL3aeBH7lWbEOlzzIMhq++XZ3Jl6mL6anzCQGDmWt02Wm+D0L0QRn381Aju1saBXhiUkFNMPDLg/v5qPUC0=
+	t=1718531246; cv=none; b=VXCLeYpxw/70kNCr36zUPV0psAL612Tn1XnsECkjoyazsePe8gs7eS5yQ20wONf9d2oRKCf1x1ehtANbU/HA2xzpJYXkrMWl6C7dsKiCjak1KYXk63tbuZSuI+jfwRoMsJ5RY9iHiCQ7sxfmEFYrr9Z/ICJXKPS7lv6ak1Yh26U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718531223; c=relaxed/simple;
-	bh=q26N2GgeVglH9gCbjku86QbUgLOk6W++2mgK2GguLKA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Psp8iExEV0tyzndRMKlcj/5Vl1ad3MlWDXpI4woI/qU7Bn7qtJRZGgdGeb5dgHoFes7qdR1mX2Hub2AFHGcp4EptAC2QZfkVhGg2jI08zYBN+MAwKDdwu3ad7j0BALg7S3awqdthhGC5uWrtxTobr7UzA3xv67dZHa9sE3pTSd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=gdcka24V; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1718531210; x=1718790410;
-	bh=znzItjjdQt5Gx2XVgBVIK96GA/gE2ZHpRn5IIrL3wOI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=gdcka24V73hbb95kA47a+wMdMUp4FbYBulK5vF0HVp5VuuKVIHcdEWJBB3Pr9bu6R
-	 NhlXLdn5BBT81CawX9HbibONV/+vAxt3WSCairMGdKuSRg2n6YWI8G/wJ2DbrPKpf9
-	 HS2i9kWdmrq8qeVqsz85MnkkYJGU468NSjOAVPo/T9VGGCYLfS4Uf4L55f1dZy2R26
-	 9IX33orpEJWw52nEKBg45ayRvmmriRTDobFE4Yw8fZNKBX/SOqToQAtOsvc54DuE62
-	 FvHp1UnFcS7dQGK8DhM/BJHitJbhGgI0o9RkWHNf+XL3ZY7PwFhxxHMnhkctS5siBg
-	 uWVcH/2yjrgLQ==
-Date: Sun, 16 Jun 2024 09:46:45 +0000
-To: Boqun Feng <boqun.feng@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Gary Guo <gary@garyguo.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
-	kent.overstreet@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>, dakr@redhat.com
-Subject: Re: [RFC 2/2] rust: sync: Add atomic support
-Message-ID: <d67aeb8c-3499-4498-aaf9-4ac459c2f747@proton.me>
-In-Reply-To: <Zm4R0XwTpsASpBhx@Boquns-Mac-mini.home>
-References: <20240612223025.1158537-3-boqun.feng@gmail.com> <CANiq72myhoCCWs7j0eZuxfoYMbTez7cPa795T57+gz2Dpd+xAw@mail.gmail.com> <ZmtC7h7v1t6XJ6EI@boqun-archlinux> <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com> <ZmxUxaIwHWnB42h-@Boquns-Mac-mini.home> <c1c45a2e-afdf-40a6-9f44-142752368d5e@proton.me> <ZmzvVr7lYfR6Dpca@Boquns-Mac-mini.home> <b692945b-8fa4-4918-93f6-783fbcde375c@proton.me> <Zm4R0XwTpsASpBhx@Boquns-Mac-mini.home>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: aa019b834b17958b26c96544baf90fc8c32aaadd
+	s=arc-20240116; t=1718531246; c=relaxed/simple;
+	bh=Rol9GgNlsITas4SWbXbLwpkDf5htEtZtG+fTBdMpv0U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jXOGpXJhPvegtmbLi0+tAdiWUpWlsSxugk/Gm0TlFYeyV6v73Yst7ZCTB9Kh9XJZ0hJUophdQMC1NDguho+3aUTVGLet9lx1XICWwWOXFwLDyoMILCvixNOp8BknuZBP/tRh+qsPxg2tf8gbn0dy8aerNQPEHrfjNx6QQHfVpCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gb0w4uow; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718531243;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=srnLF9ysHPMfgdFHSrTBUGTBWZjX5ovwIz2l9bhJ8e8=;
+	b=Gb0w4uow/WTnhq+bKVP7WtP2mmk112RLOe9+rOwc0avapwQ0kbg7s4YeJ0QB6ucthDeBtE
+	mvpxMFr2T8r2t73lZ9ep5NI0lVaaMIcvyFj0XCcHsgzFT2fJRExSWjrlei+O/sMIjpCKsR
+	fME759rZG/0bcCRxaQPeodx8sIwQUBo=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-607-7r4_8zI6OECAYaorInQMzQ-1; Sun, 16 Jun 2024 05:47:21 -0400
+X-MC-Unique: 7r4_8zI6OECAYaorInQMzQ-1
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-57a460247f3so2079527a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 02:47:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718531240; x=1719136040;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=srnLF9ysHPMfgdFHSrTBUGTBWZjX5ovwIz2l9bhJ8e8=;
+        b=VKjJd0eKXfA6vniWVaPGPiSfWVGlCGUOQRxXmWhsez+7DJ10EdtDsJh69tBToRNT2i
+         ZmXXeCoKa4ffly6z9JRjUFAwcaTtDcNy0aMSsmd4dZ05vN5BpsmKNWqJba86MNxYaAoL
+         UL76SBDh9LBUlUUz46XZCU43J2VcdS5bqgmQJTP3Pvis6jndmyGuJUcG7TzjE4IecXaT
+         sorFMDMBptFH+cFMG8gPIgp668t+wO1iM1zaQe0O0ZCLvlKOQF/5iqn3nfvsRo3CEZpD
+         NOvGq1RLdWRaJSC/Q1ofhQeXf4a8iC0FF3vZ4dNzQGwMrTcNyXAfetAqqaiJtgz57SZ7
+         AycA==
+X-Gm-Message-State: AOJu0YwKqSLtIbl5rQwngksqka1PpI8j+hDbVmHG60SfgNaQMTl4crXv
+	5YnnpBleIw2+8LqN5B3Y3qBL4dDWU2fsv0PbejGuFnxO8lkXNzmlqS+oZm480r4V5f3j8SlvZVS
+	InjbDdgyeZ43oqckv8VLQzPJxMKBMahtaxy36xmZV0eQovAfHWhO1hMuBlA9sxHrye74jxtHi
+X-Received: by 2002:a50:9557:0:b0:57c:6afc:d2a9 with SMTP id 4fb4d7f45d1cf-57cbd8f2a3emr4420992a12.26.1718531240383;
+        Sun, 16 Jun 2024 02:47:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGBbeqHFITU6vgc5Vt0CWvDzTYevbhAXkzwpGDS+dC17bkrOy3gfURzd0EjvYaE0u+N9+qASQ==
+X-Received: by 2002:a50:9557:0:b0:57c:6afc:d2a9 with SMTP id 4fb4d7f45d1cf-57cbd8f2a3emr4420973a12.26.1718531239890;
+        Sun, 16 Jun 2024 02:47:19 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cba492acfsm4405008a12.15.2024.06.16.02.47.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Jun 2024 02:47:19 -0700 (PDT)
+Message-ID: <533a5778-3d68-4b61-b4ca-e82c37d65b33@redhat.com>
+Date: Sun, 16 Jun 2024 11:47:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] ACPI: EC: Evaluate orphan _REG under EC device
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ VitaliiT <vitaly.torshyn@gmail.com>, Armin Wolf <w_armin@gmx.de>
+References: <12466682.O9o76ZdvQC@kreacher>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <12466682.O9o76ZdvQC@kreacher>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 16.06.24 00:12, Boqun Feng wrote:
-> On Sat, Jun 15, 2024 at 07:09:30AM +0000, Benno Lossin wrote:
->> On 15.06.24 03:33, Boqun Feng wrote:
->>> On Fri, Jun 14, 2024 at 09:22:24PM +0000, Benno Lossin wrote:
->>>> On 14.06.24 16:33, Boqun Feng wrote:
->>>>> On Fri, Jun 14, 2024 at 11:59:58AM +0200, Miguel Ojeda wrote:
->>>>>> On Thu, Jun 13, 2024 at 9:05=E2=80=AFPM Boqun Feng <boqun.feng@gmail=
-.com> wrote:
->>>>>>>
->>>>>>> Does this make sense?
->>>>>>
->>>>>> Implementation-wise, if you think it is simpler or more clear/elegan=
-t
->>>>>> to have the extra lower level layer, then that sounds fine.
->>>>>>
->>>>>> However, I was mainly talking about what we would eventually expose =
-to
->>>>>> users, i.e. do we want to provide `Atomic<T>` to begin with? If yes,
->>>>>
->>>>> The truth is I don't know ;-) I don't have much data on which one is
->>>>> better. Personally, I think AtomicI32 and AtomicI64 make the users ha=
-ve
->>>>> to think about size, alignment, etc, and I think that's important for
->>>>> atomic users and people who review their code, because before one use=
-s
->>>>> atomics, one should ask themselves: why don't I use a lock? Atomics
->>>>> provide the ablities to do low level stuffs and when doing low level
->>>>> stuffs, you want to be more explicit than ergonomic.
->>>>
->>>> How would this be different with `Atomic<i32>` and `Atomic<i64>`? Just
->>>
->>> The difference is that with Atomic{I32,I64} APIs, one has to choose (an=
-d
->>> think about) the size when using atomics, and cannot leave that option
->>> open. It's somewhere unconvenient, but as I said, atomics variables are
->>> different. For example, if someone is going to implement a reference
->>> counter struct, they can define as follow:
->>>
->>> =09struct Refcount<T> {
->>> =09    refcount: AtomicI32,
->>> =09    data: UnsafeCell<T>
->>> =09}
->>>
->>> but with atomic generic, people can leave that option open and do:
->>>
->>> =09struct Refcount<R, T> {
->>> =09    refcount: Atomic<R>,
->>> =09    data: UnsafeCell<T>
->>> =09}
->>>
->>> while it provides configurable options for experienced users, but it
->>> also provides opportunities for sub-optimal types, e.g. Refcount<u8, T>=
-:
->>> on ll/sc architectures, because `data` and `refcount` can be in the sam=
-e
->>> machine-word, the accesses of `refcount` are affected by the accesses o=
-f
->>> `data`.
->>
->> I think this is a non-issue. We have two options of counteracting this:
->> 1. We can just point this out in reviews and force people to use
->>    `Atomic<T>` with a concrete type. In cases where there really is the
->>    need to be generic, we can have it.
->> 2. We can add a private trait in the bounds for the generic, nobody
->>    outside of the module can access it and thus they need to use a
->>    concrete type:
->>
->>         // needs a better name
->>         trait Integer {}
->>         impl Integer for i32 {}
->>         impl Integer for i64 {}
->>
->>         pub struct Atomic<T: Integer> {
->>             /* ... */
->>         }
->>
->> And then in the other module, you can't do this (with compiler error):
->>
->>         pub struct Refcount<R: Integer, T> {
->>                             // ^^^^^^^ not found in this scope
->>                             // note: trait `crate::atomic::Integer` exis=
-ts but is inaccessible
->>             refcount: Atomic<R>,
->>             data: UnsafeCell<T>,
->>         }
->>
->> I think that we can start with approach 2 and if we find a use-case
->> where generics are really unavoidable, we can either put it in the same
->> module as `Atomic<T>`, or change the access of `Integer`.
->>
->=20
-> What's the issue of having AtomicI32 and AtomicI64 first then? We don't
-> need to do 1 or 2 until the real users show up.
+Hi,
 
-Generics allow you to avoid code duplication (I don't think that you
-want to create the `Atomic{I32,I64}` types via macros...). We would have
-to do a lot of refactoring, when we want to introduce it. I don't see
-the harm of introducing generics from the get-go.
+On 6/12/24 4:15 PM, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> After starting to install the EC address space handler at the ACPI
+> namespace root, if there is an "orphan" _REG method in the EC device's
+> scope, it will not be evaluated any more.  This breaks EC operation
+> regions on some systems, like Asus gu605.
+> 
+> To address this, use a wrapper around an existing ACPICA function to
+> look for an "orphan" _REG method in the EC device scope and evaluate
+> it if present.
+> 
+> Fixes: 60fa6ae6e6d0 ("ACPI: EC: Install address space handler at the namespace root")
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218945
+> Reported-by: VitaliiT <vitaly.torshyn@gmail.com>
+> Tested-by: VitaliiT <vitaly.torshyn@gmail.com>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> Yes, this includes ACPICA changes that are obviously not upstream
+> and I am going to take care of pusing them to upstream, but for
+> now there is a regression to fix and it is relatively late in the
+> cycle.
+> 
+> ---
+>  drivers/acpi/acpica/acevents.h |    4 +++
+>  drivers/acpi/acpica/evregion.c |    6 ----
+>  drivers/acpi/acpica/evxfregn.c |   54 +++++++++++++++++++++++++++++++++++++++++
+>  drivers/acpi/ec.c              |    3 ++
+>  include/acpi/acpixf.h          |    4 +++
+>  5 files changed, 66 insertions(+), 5 deletions(-)
+> 
+> Index: linux-pm/drivers/acpi/acpica/evxfregn.c
+> ===================================================================
+> --- linux-pm.orig/drivers/acpi/acpica/evxfregn.c
+> +++ linux-pm/drivers/acpi/acpica/evxfregn.c
+> @@ -306,3 +306,57 @@ acpi_execute_reg_methods(acpi_handle dev
+>  }
+>  
+>  ACPI_EXPORT_SYMBOL(acpi_execute_reg_methods)
+> +
+> +/*******************************************************************************
+> + *
+> + * FUNCTION:    acpi_execute_orphan_reg_method
+> + *
+> + * PARAMETERS:  device          - Handle for the device
+> + *              space_id        - The address space ID
+> + *
+> + * RETURN:      Status
+> + *
+> + * DESCRIPTION: Execute an "orphan" _REG method that appears under an ACPI
+> + *              device. This is a _REG method that has no corresponding region
+> + *              within the device's scope.
+> + *
+> + ******************************************************************************/
+> +acpi_status
+> +acpi_execute_orphan_reg_method(acpi_handle device, acpi_adr_space_type space_id)
+> +{
+> +	struct acpi_namespace_node *node;
+> +	acpi_status status;
+> +
+> +	ACPI_FUNCTION_TRACE(acpi_execute_orphan_reg_method);
+> +
+> +	/* Parameter validation */
+> +
+> +	if (!device) {
+> +		return_ACPI_STATUS(AE_BAD_PARAMETER);
+> +	}
+> +
+> +	status = acpi_ut_acquire_mutex(ACPI_MTX_NAMESPACE);
+> +	if (ACPI_FAILURE(status)) {
+> +		return_ACPI_STATUS(status);
+> +	}
+> +
+> +	/* Convert and validate the device handle */
+> +
+> +	node = acpi_ns_validate_handle(device);
+> +	if (node) {
+> +
+> +		/*
+> +		 * If an "orphan" _REG method is present in the device's scope
+> +		 * for the given address space ID, run it.
+> +		 */
+> +
+> +		acpi_ev_execute_orphan_reg_method(node, space_id);
+> +	} else {
+> +		status = AE_BAD_PARAMETER;
+> +	}
+> +
+> +	(void)acpi_ut_release_mutex(ACPI_MTX_NAMESPACE);
+> +	return_ACPI_STATUS(status);
+> +}
+> +
+> +ACPI_EXPORT_SYMBOL(acpi_execute_orphan_reg_method)
+> Index: linux-pm/include/acpi/acpixf.h
+> ===================================================================
+> --- linux-pm.orig/include/acpi/acpixf.h
+> +++ linux-pm/include/acpi/acpixf.h
+> @@ -663,6 +663,10 @@ ACPI_EXTERNAL_RETURN_STATUS(acpi_status
+>  						     acpi_adr_space_type
+>  						     space_id))
+>  ACPI_EXTERNAL_RETURN_STATUS(acpi_status
+> +			    acpi_execute_orphan_reg_method(acpi_handle device,
+> +							   acpi_adr_space_type
+> +							   space_id))
+> +ACPI_EXTERNAL_RETURN_STATUS(acpi_status
+>  			    acpi_remove_address_space_handler(acpi_handle
+>  							      device,
+>  							      acpi_adr_space_type
+> Index: linux-pm/drivers/acpi/acpica/acevents.h
+> ===================================================================
+> --- linux-pm.orig/drivers/acpi/acpica/acevents.h
+> +++ linux-pm/drivers/acpi/acpica/acevents.h
+> @@ -191,6 +191,10 @@ void
+>  acpi_ev_execute_reg_methods(struct acpi_namespace_node *node,
+>  			    acpi_adr_space_type space_id, u32 function);
+>  
+> +void
+> +acpi_ev_execute_orphan_reg_method(struct acpi_namespace_node *node,
+> +				  acpi_adr_space_type space_id);
+> +
+>  acpi_status
+>  acpi_ev_execute_reg_method(union acpi_operand_object *region_obj, u32 function);
+>  
+> Index: linux-pm/drivers/acpi/acpica/evregion.c
+> ===================================================================
+> --- linux-pm.orig/drivers/acpi/acpica/evregion.c
+> +++ linux-pm/drivers/acpi/acpica/evregion.c
+> @@ -20,10 +20,6 @@ extern u8 acpi_gbl_default_address_space
+>  
+>  /* Local prototypes */
+>  
+> -static void
+> -acpi_ev_execute_orphan_reg_method(struct acpi_namespace_node *device_node,
+> -				  acpi_adr_space_type space_id);
+> -
+>  static acpi_status
+>  acpi_ev_reg_run(acpi_handle obj_handle,
+>  		u32 level, void *context, void **return_value);
+> @@ -818,7 +814,7 @@ acpi_ev_reg_run(acpi_handle obj_handle,
+>   *
+>   ******************************************************************************/
+>  
+> -static void
+> +void
+>  acpi_ev_execute_orphan_reg_method(struct acpi_namespace_node *device_node,
+>  				  acpi_adr_space_type space_id)
+>  {
+> Index: linux-pm/drivers/acpi/ec.c
+> ===================================================================
+> --- linux-pm.orig/drivers/acpi/ec.c
+> +++ linux-pm/drivers/acpi/ec.c
+> @@ -1507,6 +1507,9 @@ static int ec_install_handlers(struct ac
+>  
+>  	if (call_reg && !test_bit(EC_FLAGS_EC_REG_CALLED, &ec->flags)) {
+>  		acpi_execute_reg_methods(scope_handle, ACPI_ADR_SPACE_EC);
+> +		if (scope_handle != ec->handle)
+> +			acpi_execute_orphan_reg_method(ec->handle, ACPI_ADR_SPACE_EC);
+> +
+>  		set_bit(EC_FLAGS_EC_REG_CALLED, &ec->flags);
+>  	}
+>  
 
-> And I'd like also to point out that there are a few more trait bound
-> designs needed for Atomic<T>, for example, Atomic<u32> and Atomic<i32>
-> have different sets of API (no inc_unless_negative() for u32).
+TL;DR: this change made me wonder about a possible issue, but all is
+fine, except that the code flow leading to "fine" is a bit convoluted.
 
-Sure, just like Gary said, you can just do:
+I noticed this landing in Linus' tree and this got me thinking about
+if the "if (scope_handle != ec->handle)" would not cause the orphan
+_REG method to not get called for the case where the EC is created
+by parsing the ECDT early on, since then we set
+ec->handle = ACPI_ROOT_OBJECT for the ec object.
 
-    impl Atomic<i32> {
-        pub fn inc_unless_negative(&self, ordering: Ordering) -> bool;
-    }
+So I checked and acpi_ec_ecdt_probe() calls acpi_ec_setup(ec, NULL, false)
+with the false making call_reg above false, so the _REG methods do not
+get executed at this point.
 
-Or add a `HasNegative` trait.
+Instead they should get executed when parsing the DSDT finds the EC ACPI
+device by acpi_ec_add() calling acpi_ec_setup(ec, device, true).
 
-> Don't make me wrong, I have no doubt we can handle this in the type
-> system, but given the design work need, won't it make sense that we take
-> baby steps on this? We can first introduce AtomicI32 and AtomicI64 which
-> already have real users, and then if there are some values of generic
-> atomics, we introduce them and have proper discussion on design.
+acpi_ec_add() updated ec->handle away from ACPI_ROOT_OBJECT to the actual
+acpi_device's handle before calling acpi_ec_setup(ec, device, true) so
+all should be well.
 
-I don't understand this point, why can't we put in the effort for a good
-design? AFAIK we normally spend considerable time to get the API right
-and I think in this case it would include making it generic.
+But while checkimg this I noticed a pre-existing issue where if the boot_ec
+object is created from the ECDT, so with ec->handle == NULL, acpi_ec_add()
+does not update ec->handle, which means an orphan _REG method will not get
+executed.
 
-> To me, it's perfectly fine that Atomic{I32,I64} co-exist with Atomic<T>.
-> What's the downside? A bit specific example would help me understand
-> the real concern here.
+Specifically if this if condition evaluated to true, because the !strcmp()
+evaluates to true:
 
-I don't like that, why have two ways of doing the same thing? People
-will be confused whether they should use `AtomicI32` vs `Atomic<i32>`...
+        if (boot_ec && (boot_ec->handle == device->handle ||
+            !strcmp(acpi_device_hid(device), ACPI_ECDT_HID))) {
+                /* Fast path: this device corresponds to the boot EC. */
+                ec = boot_ec;
+        } else {
 
----
-Cheers,
-Benno
+then [boot_]ec->handle does not get set to device->handle .
+
+So at a first glance it looks like we need something like this to make sure
+that any orphan _REG methods are also run in the described scenario:
+
+diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
+index e7793ee9e649..af61b9bb3749 100644
+--- a/drivers/acpi/ec.c
++++ b/drivers/acpi/ec.c
+@@ -1635,6 +1635,7 @@ static int acpi_ec_add(struct acpi_device *device)
+ 	    !strcmp(acpi_device_hid(device), ACPI_ECDT_HID))) {
+ 		/* Fast path: this device corresponds to the boot EC. */
+ 		ec = boot_ec;
++		ec->handle = device->handle;
+ 	} else {
+ 		acpi_status status;
+ 
+
+
+But upon further checking the only place creating an acpi_device
+with an ACPI_ECDT_HID is acpi_ec_ecdt_start() which does:
+
+        status = acpi_get_handle(NULL, ecdt_ptr->id, &handle);
+        if (ACPI_SUCCESS(status)) {
+                boot_ec->handle = handle;
+
+                /* Add a special ACPI device object to represent the boot EC. */
+                acpi_bus_register_early_device(ACPI_BUS_TYPE_ECDT_EC);
+        }
+
+So boot_ec->handle gets updated in this case before acpi_ec_add() runs
+and everything is fine.
+
+...
+
+Still I'm wondering if it would not be better to replace this
+"boot_ec->handle = handle;" in acpi_ec_ecdt_start() with the change
+from my proposed diff above, so that we consistently about the
+[boot_]ec->handle with device->handle for the being added acpi_device
+in both branches of the if ... else ... in acpi_ec_add() ?
+
+Regards,
+
+Hans
 
 
