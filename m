@@ -1,166 +1,237 @@
-Return-Path: <linux-kernel+bounces-216179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC7A0909C59
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:47:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C63F909C60
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2C42B217B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:47:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC478282229
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9B8181CE0;
-	Sun, 16 Jun 2024 07:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CABD184114;
+	Sun, 16 Jun 2024 07:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="k333oxvK"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BUglQNkd"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D04A16D32D
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 07:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB7116D32D;
+	Sun, 16 Jun 2024 07:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718524056; cv=none; b=og0FF/ETzYjAb3hOa8yw1Xl8MA8uShXmLXm+788EYZXu56onqTbWOngzhyG3Ii60z6z4cgRSmtY0ruXe7cU9C44lAGsbrKdaou3M+tFcPD1tgQUWO+Q/gJU4vlxhW+lAKdhSQNFZoFeohOTElFzWcoIdp1HmECxfVWANScL+xag=
+	t=1718524228; cv=none; b=PBp6ikPsCP2f9Ehw2Injnr+JNWMGapkeZtvtGAOud4/nPTmGLvX1NIUTRMI0eW0BabN/dx7qsIyfwymfKT8vtjy3JUDKOKbMHy2BJDecTmCBqwxsGaHG0loUOiw4k7vAiQFOYZEtZ4nFY1rUyL1FGshHW/nU66Sf7njYLZN8cGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718524056; c=relaxed/simple;
-	bh=cbRwOGpTQAw7QyQMXY2e/GRZYittWxawomsr1hSyWCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uzaqkuMkx0KdWlr4OD+IOrNjWZKD8x/1ovY/+MnT6nz/zlHr+rl0QyE111ix0DzxhCsXs0qY9KOh/jBf06Mx//vZhl/PA9WUWk5tEV2wOurLlBmGQHcjE9bkBJ29uCsTlVxqmU2xxJZmShOPN/k/Qn5evuJAiyqUklN7KBYvLas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=k333oxvK; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6f21ff4e6dso491460966b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 00:47:33 -0700 (PDT)
+	s=arc-20240116; t=1718524228; c=relaxed/simple;
+	bh=FKs+l7vr8yUwexuIpXPZinbV1Mp7+jimwLSLCeURhIU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MKH5csCtU3KWBaDy7htzhWPPcQEchcQwTXhdeVMRyKTPYIAimhbI+X2H4+lqHgsyXAVnAWaCE9zyXQfW0QM8eAmZXN955cZFKhi4BpxZdKkXP5qhxoOLfK1Jhg9LmwgKgYp9ZMPdHZfVyRO5oKW/NLwq5uRBQhe5pUsk1Ju0tEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BUglQNkd; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2c2eb5b1917so3015973a91.2;
+        Sun, 16 Jun 2024 00:50:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718524051; x=1719128851; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cbRwOGpTQAw7QyQMXY2e/GRZYittWxawomsr1hSyWCU=;
-        b=k333oxvKYvboe4gURntJ5Jr/2sxUZmkQedMeqZyhJ7xrL2x2dx4CwVeKt4AS8oWOTC
-         PIC/ifwPN7LU5D+32YREPQtcaABAiTKC4rV4qlN2XpnMVteMmXfiKPRRu/D0HoY1wQdT
-         drOayEZiXjKm+3WddaXhgaTMWFGalNsfxZnAZUtTnaln5shmWg8BAylImXrcop+vf/MC
-         zI++Iuq3Tzi6m8YI4RN6aXRgd088yFBZpBdO6Y/brjb+3p+T2+yeOHpSg8xCPhr1EcT2
-         q70C7Vxj3fQT8YK4qslZ/X1sqk4n02fps2UwcwdXkvcCA+USMr3IuzXoI247rgqEFYGG
-         jaPw==
+        d=gmail.com; s=20230601; t=1718524226; x=1719129026; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SHcPhxF8HQUomrEgimOjlC4Pkp/Hf/7nELFDRzTQavQ=;
+        b=BUglQNkdM0nNKLoBjfir5ZuhKrK87+z8kVLg1rLJf1d692RqOOU6mUQnkE4JQhGmHG
+         tEdG8w4hqJOy/+t41DVz/QOD8owCRHHwF7MbGE/mfHnHV2f6UYAe5B4JLR63bQBF4dYl
+         1jZcspXP+Zo+UkIwMOYsljRzBH9IHhbf41hvukb/Tp5whqpOcUbm4yxWKHtz880v9XHE
+         eFw/KH+8DgcUHyNwEZNm3Qu80+rGhAKhsEslt3sGitvYTxQ0LT5ICKcNps7lOd63fUAm
+         mYSEMzLTcf4lCaHHHPS3Z4UMAtU0phAIINjzMsiP4bjkjpM92zzd+vku9gzZKfG4r3Dp
+         TIdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718524051; x=1719128851;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cbRwOGpTQAw7QyQMXY2e/GRZYittWxawomsr1hSyWCU=;
-        b=UvJpqoeTiO5Sk057KcK1L32D//tj93fVf+1gy0ZtiFOn7eVOWKScZLuNb8upiccYn6
-         s6JRSRlCJrrdRwSmWugozIIetn6RyQF0LFx+ishw7kZCitYc2OYMk4bRxoLRs1WSm+m3
-         1BAsdPdqldQxMB1WnCo08wf16qu3x7nDcztuAO93OqmvopU3PrWmj0wYJ2balhrv8np7
-         AYsElmtzlKnngmNtWIS6xoiz+WGJEylwJAmhJMV2iNaCirk0ZHUP82pzayRphvlTEZ1V
-         A40OaulGj+e5AViR9Qt3v3E5gZgU9vsuiVlvXPyxQeCrYPEPU9P7s5AmDIFXjq5ybFES
-         MDcw==
-X-Forwarded-Encrypted: i=1; AJvYcCWVa4+o30xQnZUOV0tO2j9uCOpfZNhPTEMULjkfpyhq/PrOF0FcGq4a2o65UcP8eWfHx5cMfWAsb6sQ/4j5Kth+JwWoTJNg1aYHe9P3
-X-Gm-Message-State: AOJu0YyLrkO3d4ww3X1RFHmtXSkfqWcAq/7fMn5svox8R1IFqt2NyzyI
-	sxGma1pjKFSN1FhKjbj1Gi4GTrlPOHcUZkVlZMfDu2jhemj4m+UVZgQQLJ6qqZI=
-X-Google-Smtp-Source: AGHT+IHa/rf4EI962S3HpLXedVKT5xj1yJxkZ7J2wW4h1OWkMAOVQAbsR1cG8yjaBasIsvn47d0zFw==
-X-Received: by 2002:a17:906:2697:b0:a68:a137:d041 with SMTP id a640c23a62f3a-a6f60cf384bmr406033166b.12.1718524051309;
-        Sun, 16 Jun 2024 00:47:31 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:3886:c8fd:3fff:b697])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56da4136sm383728566b.36.2024.06.16.00.47.30
+        d=1e100.net; s=20230601; t=1718524226; x=1719129026;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SHcPhxF8HQUomrEgimOjlC4Pkp/Hf/7nELFDRzTQavQ=;
+        b=dSpd3FeRd82yHW6MEESOnLSUkO+TmlPcHGG64q0VC8kr/CgPkzekluE/N+JsDhXRUn
+         j2FRj3F0ctjbWe12v0OA3ybYGKOxr21DY89w4u0hJDwk08hXPp1prNfiQ42oWa0b29YK
+         Tj150oDUB6vdqvqMKZIKN2vGEbjYT8nMobuQmZFXp79Ar8fcVFA8ycSKWCR2FlP3grC3
+         ezzcOVGcZxIAhTDosRPraR0fCCDwGsFx/B6paLNnUXuzS2TmonPw675sr5yXha5KR4hy
+         VviqaRK+sd2Y3RXqVhiJKT+yA+WSfKmGqs3CGwGmnR5HfVBjaTZGETCi27JmXoBUXeW7
+         7Baw==
+X-Forwarded-Encrypted: i=1; AJvYcCVPIpVNAxYGqoS10l+SGg9iWBcQSwwoiLywwi7/o5njjQyGpTnEFr4fvRlf8jp35DuNZbvWnumlo5agywe6pio6hduRLeQ2plXudgTdO6/sGqafxlXgklwfCT8u79FjBeKDdhZN7E9AW8lzrPgJCEgBEjWxQ72YR+ZdgZCWpk0mNdhYvr8v
+X-Gm-Message-State: AOJu0YzSSgkn2Q/qiceNIqV3j78VaOVmTpHPMaXJkG6wsl6DmutkIFAI
+	KIwTgWTGO8bz/aQrpy3Koo4vnnUIi790vKZJfXq9kkpEJfCT0dzr
+X-Google-Smtp-Source: AGHT+IEK/RZGQ2b9Y0wWYp4TV1f+E9MTFHnHo/ShqcI0xIy1SDy1oupuP0F4TF4G+1kVikHZwmD8lg==
+X-Received: by 2002:a17:903:2302:b0:1f6:f0ff:47a7 with SMTP id d9443c01a7336-1f8629ff1eemr115315475ad.63.1718524225839;
+        Sun, 16 Jun 2024 00:50:25 -0700 (PDT)
+Received: from fedora.one.one.one.one ([2405:201:6013:c0b2:ea4b:30e0:4e3a:ab56])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f18724sm59798865ad.234.2024.06.16.00.50.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Jun 2024 00:47:30 -0700 (PDT)
-Date: Sun, 16 Jun 2024 09:47:28 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [RFC PATCH] regulator: pwm-regulator: Make assumptions about
- disabled PWM consistent
-Message-ID: <htgmpafra7fehqfbsusiraed7eny5linma3hrvv3nkuqp3bmuw@zisvojdwymee>
-References: <20240610104600.458308-2-u.kleine-koenig@baylibre.com>
- <CAFBinCB+S1wOpD-fCbcTORqXSV00Sd7-1GHUKY+rO859_dkhOA@mail.gmail.com>
+        Sun, 16 Jun 2024 00:50:25 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: animeshagarwal28@gmail.com,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] ASoC: dt-bindings: realtek,rt5631: Convert to dtschema
+Date: Sun, 16 Jun 2024 13:19:30 +0530
+Message-ID: <20240616074936.151267-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ncc5iil27kc3ytrv"
-Content-Disposition: inline
-In-Reply-To: <CAFBinCB+S1wOpD-fCbcTORqXSV00Sd7-1GHUKY+rO859_dkhOA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
+Convert the ALC5631/RT5631 audio CODEC bindings to DT Schema.
 
---ncc5iil27kc3ytrv
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
 
-Hello Martin,
+---
+Changes in v2:
+ - Moved maintainers list above description.
+ - Added missing port property.
+---
+ .../bindings/sound/realtek,rt5631.yaml        | 67 +++++++++++++++++++
+ .../devicetree/bindings/sound/rt5631.txt      | 48 -------------
+ 2 files changed, 67 insertions(+), 48 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/realtek,rt5631.yaml
+ delete mode 100644 Documentation/devicetree/bindings/sound/rt5631.txt
 
-On Sun, Jun 16, 2024 at 01:10:32AM +0200, Martin Blumenstingl wrote:
-> On Mon, Jun 10, 2024 at 12:46=E2=80=AFPM Uwe Kleine-K=C3=B6nig
-> <u.kleine-koenig@baylibre.com> wrote:
-> [...]
-> > this is my suggestion to fix the concerns I expressed in
-> > https://lore.kernel.org/all/hf24mrplr76xtziztkqiscowkh2f3vmceuarecqcwnr=
-6udggs6@uiof2rvvqq5v/
-> > .
-> >
-> > It's only compile tested as I don't have a machine with a pwm-regulator.
-> > So getting test feedback before applying it would be great.
-> Unfortunately this approach breaks my Odroid-C1 board again with the
-> same symptoms as before the mentioned commits: random memory
-> corruption, preventing the board from booting to userspace.
->=20
-> The cause also seems to be the same as before my commits:
-> - period (3666ns) and duty cycle (3333ns) in the hardware registers
-> the PWM controller when Linux boots, but the PWM output is disabled
-> - with a duty cycle of 0 or PWM output being disabled the output of
-> the voltage regulator is 1140mV, which is the only allowed voltage for
-> that rail (even though the regulator can achieve other voltages)
-> - pwm_regulator_enable() calls pwm_enable() which simply takes the
-> period and and duty cycle that was read back from the hardware and
-> enables the output, resulting in undervolting of a main voltage rail
-> of the SoC
+diff --git a/Documentation/devicetree/bindings/sound/realtek,rt5631.yaml b/Documentation/devicetree/bindings/sound/realtek,rt5631.yaml
+new file mode 100644
+index 000000000000..747a731c44c9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/realtek,rt5631.yaml
+@@ -0,0 +1,67 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/realtek,rt5631.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ALC5631/RT5631 audio CODEC
++
++maintainers:
++  - Animesh Agarwal <animeshagarwal28@gmail.com>
++
++description: |
++  This device supports I2C only.
++
++  Pins on the device (for linking into audio routes):
++      * SPK_OUT_R_P
++      * SPK_OUT_R_N
++      * SPK_OUT_L_P
++      * SPK_OUT_L_N
++      * HP_OUT_L
++      * HP_OUT_R
++      * AUX_OUT2_LP
++      * AUX_OUT2_RN
++      * AUX_OUT1_LP
++      * AUX_OUT1_RN
++      * AUX_IN_L_JD
++      * AUX_IN_R_JD
++      * MONO_IN_P
++      * MONO_IN_N
++      * MIC1_P
++      * MIC1_N
++      * MIC2_P
++      * MIC2_N
++      * MONO_OUT_P
++      * MONO_OUT_N
++      * MICBIAS1
++      * MICBIAS2
++
++properties:
++  compatible:
++    enum:
++      - realtek,alc5631
++      - realtek,rt5631
++
++  reg:
++    maxItems: 1
++
++  port:
++    $ref: audio-graph-port.yaml#
++    unevaluatedProperties: false
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++        codec@1a {
++            compatible = "realtek,alc5631";
++            reg = <0x1a>;
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/sound/rt5631.txt b/Documentation/devicetree/bindings/sound/rt5631.txt
+deleted file mode 100644
+index 56bc85232c49..000000000000
+--- a/Documentation/devicetree/bindings/sound/rt5631.txt
++++ /dev/null
+@@ -1,48 +0,0 @@
+-ALC5631/RT5631 audio CODEC
+-
+-This device supports I2C only.
+-
+-Required properties:
+-
+-  - compatible : "realtek,alc5631" or "realtek,rt5631"
+-
+-  - reg : the I2C address of the device.
+-
+-Pins on the device (for linking into audio routes):
+-
+-  * SPK_OUT_R_P
+-  * SPK_OUT_R_N
+-  * SPK_OUT_L_P
+-  * SPK_OUT_L_N
+-  * HP_OUT_L
+-  * HP_OUT_R
+-  * AUX_OUT2_LP
+-  * AUX_OUT2_RN
+-  * AUX_OUT1_LP
+-  * AUX_OUT1_RN
+-  * AUX_IN_L_JD
+-  * AUX_IN_R_JD
+-  * MONO_IN_P
+-  * MONO_IN_N
+-  * MIC1_P
+-  * MIC1_N
+-  * MIC2_P
+-  * MIC2_N
+-  * MONO_OUT_P
+-  * MONO_OUT_N
+-  * MICBIAS1
+-  * MICBIAS2
+-
+-Example:
+-
+-alc5631: audio-codec@1a {
+-	compatible = "realtek,alc5631";
+-	reg = <0x1a>;
+-};
+-
+-or
+-
+-rt5631: audio-codec@1a {
+-	compatible = "realtek,rt5631";
+-	reg = <0x1a>;
+-};
+-- 
+2.45.2
 
-Ah, indeed. pwm_enable() looks so innocent, but in fact the details are
-difficult. One more reason to drop that caching of parameters in the pwm
-core.
-
-> I hope that this (especially the last item) also clarifies the
-> question you had in the linked mail on whether updating
-> pwm_regulator_init_state() would help/work.
->=20
-> Regarding your alternative and preferred approach from the other mail:
-> > Alternatively (and IMHO nicer) just keep the pwm_state around and don't
-> > use the (mis) feature of the PWM core that pwm_get_state only returns
-> > the last set state.
-> I tried this to see if it would work also for my Odroid-C1 board and
-> I'm happy to report it does - see the attached diff.
-> In case you are happy with this approach I can submit it as a proper patc=
-h.
-
-Yes, I like it. From a quick glance, I only wonder about the dropped
-error message in pwm_regulator_set_voltage(). Probably it's right that
-this function is silent, but then this is orthogonal to the patch
-we're discussing and should go in a separate patch.
-
-Thanks for your valuable cooperation.
-
-Best regards
-Uwe
-
---ncc5iil27kc3ytrv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZumI4ACgkQj4D7WH0S
-/k4Txwf/f9Fb540sNFCp2PnXCtk5/OiMtk1Vctv3I6yS+cRb9ifz+NIvu7doQHhe
-BLS+bk2Hayvr24rts1jVJ70ElCM8MwthQE6xMQExMzBJmjuXrQuKoKKnicKTMciz
-bw6ByBnaeaOczYuWQ8aihPTAs4MD6HJ/04hVNX9JiSJ8h7jNd3AnOPMTTI/C6ttS
-HoDVPMCKlY+rMoIkfvgv5rniQJDpLkCN1aqYL91WK0YW3/eu5o3tfgNxMjgYu25K
-EqVzjPmyh+s1VCJbXFOuSMkJFxq1jgHIjQtfzyM84KuvLD6+6nEmlB3sYrOFS+KU
-QZ6L4ciDfY19HFbY+BEN8TOK8vtulw==
-=WQXL
------END PGP SIGNATURE-----
-
---ncc5iil27kc3ytrv--
 
