@@ -1,202 +1,157 @@
-Return-Path: <linux-kernel+bounces-216542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1218D90A0D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:37:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1939390A0D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:38:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC31C1C20FF2
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 23:37:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFB2D1F21CD4
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 23:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AC673466;
-	Sun, 16 Jun 2024 23:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440AC2BD18;
+	Sun, 16 Jun 2024 23:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b73XNBCn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wVdCxIE1"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B97911CB8;
-	Sun, 16 Jun 2024 23:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7CD11CB8;
+	Sun, 16 Jun 2024 23:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718581032; cv=none; b=C+fhtErQPR60XrwdL5LNoeGpxeP4mG9OlhEwwsj02b8lD5uIdYA8V/l15HUzA/L3bH1CstYjfSmqYRgcVhcZNOzO+L6pXIGTlhY3NAb1eTGZGJIF6uiUpwn9iEO4ie/eAJLBJp27t37jdyUO1raPFN6p6ohzvgoxu14SYc5FpdE=
+	t=1718581101; cv=none; b=W+bAuEpT83VmX/WKK9GNg7svEA+GoNJivf/rwGRuvxxkti8PPyv0BfgLP2uOAVXChHg8f+O9pXr7f+FrxQ9KqzvGYk5NMRDOZ3WpLtB+dMA6Er4SJUYuSSBm3oymmUBs2pNE6Ej1cHGPvdCRRDblfCz4jDVDrV5PImhNdtQWgV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718581032; c=relaxed/simple;
-	bh=pRTMT5KMR1XYj0FPvcEM5a56UTjJkcLIq5xWEajd2ZM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YK5/jW/b+cB3nK/OBN+8hAV1OmZzyhtwsT6FKj9J8ebwILL8o73B53/fB+4fwdiY1nKivWZzbk0CKoga+fOO+be1yT41fzjMf0YUSQu60eOpftH+RarUIlabMTiAuOp9FP4/trXEiAZZOIY2OO263M0EX1REsZkQ4OoSYy32rm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b73XNBCn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87241C2BBFC;
-	Sun, 16 Jun 2024 23:37:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718581031;
-	bh=pRTMT5KMR1XYj0FPvcEM5a56UTjJkcLIq5xWEajd2ZM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=b73XNBCnDKSAwGOIRaHgLoNceO/8DD+dtOnmK2S817mkjGPQJta4k5dD/U2/np3Bx
-	 v6vedXeya250Gbm3avbdwuREKU2u5euasrwczTxeObK59cgyPJzD9cOsmQSmm3WlA2
-	 fLl08QSSZua47ZNI5nvDCiDz81rhuTlD3C1uREnOzv0AExbfYQpiym2wb1m/O+Hwkw
-	 bL3LFarm1Tj9wZMBC0QvaAS3FBcZdlIl3BK4OWUwQg+IESSTU8qfqtsaRFu4eFA91n
-	 jVvmwoQjoCr3VrYu5CiZmfC0tZpQwTs4JSOAVHX587etfJu07vc11SX4xVFj36ggsG
-	 5qmpJOcFA6XtA==
-Message-ID: <6ce12728-c9a4-4780-af55-69674e510c12@kernel.org>
-Date: Mon, 17 Jun 2024 08:37:09 +0900
+	s=arc-20240116; t=1718581101; c=relaxed/simple;
+	bh=OPUcVYb7V1caFX1Fw7zHFYbtkajd47D46iTBQlcJIPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CaHAs7o8b2F/wUqLQZhuJqCgbnjwJk0dm/dWPafYJ257B0w5DWNqNSxpSbRgoVVD3Ae4V0TDKdgl6M1tKafdMrXx2/xDrR6Zmu4GSo+PmrNQbzMtPw1ceI8fcv72/wVmvjmxZLIfIHErFXokC8QE1Q84JR5KZ2mlPqJWsgCuSPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wVdCxIE1; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A753D2D5;
+	Mon, 17 Jun 2024 01:38:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718581081;
+	bh=OPUcVYb7V1caFX1Fw7zHFYbtkajd47D46iTBQlcJIPc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wVdCxIE1mcLw75nUa2NHoCOY3HPGAcoCHuKEabkU72pwsgOnysylu2qLGSup+/WbM
+	 JxzjBTktWMHghl3T+Qtb9C4E62j7KtG+bkqQFf9irS9CdQlIPAPVCJrWSGZ3zemyxO
+	 l91Z4gmdB0bqdEyZgmDgsivymV5rSVOjdsejOOf4=
+Date: Mon, 17 Jun 2024 02:37:56 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	"hn.chen" <hn.chen@sunplusit.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH] media/uvcvideo: add quirk for invalid dev_sof in
+ Logitech C920
+Message-ID: <20240616233756.GK4782@pendragon.ideasonboard.com>
+References: <20240325142611.15550-1-oleksandr@natalenko.name>
+ <6046664.lOV4Wx5bFT@natalenko.name>
+ <20240404011120.GH23803@pendragon.ideasonboard.com>
+ <CANiDSCu5-coAyJZeiL5q3cPOdJ9Xaf1oE3VP90Sj_EycGr_QRQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/4] ata: libata-scsi: Fix offsets for the fixed format
- sense data
-To: Igor Pylypiv <ipylypiv@google.com>, Niklas Cassel <cassel@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>, Hannes Reinecke <hare@suse.de>,
- linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
- Akshat Jain <akshatzen@google.com>
-References: <20240614191835.3056153-1-ipylypiv@google.com>
- <20240614191835.3056153-5-ipylypiv@google.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240614191835.3056153-5-ipylypiv@google.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiDSCu5-coAyJZeiL5q3cPOdJ9Xaf1oE3VP90Sj_EycGr_QRQ@mail.gmail.com>
 
-On 6/15/24 04:18, Igor Pylypiv wrote:
-> Correct the ATA PASS-THROUGH fixed format sense data offsets to conform
-> to SPC-6 and SAT-5 specifications. Additionally, set the VALID bit to
-> indicate that the INFORMATION field contains valid information.
+On Thu, Apr 04, 2024 at 08:35:14AM +0200, Ricardo Ribalda wrote:
+> On Thu, 4 Apr 2024 at 03:11, Laurent Pinchart wrote:
+> > On Mon, Apr 01, 2024 at 06:45:16PM +0200, Oleksandr Natalenko wrote:
+> > > On pondělí 25. března 2024 15:26:11, CEST Oleksandr Natalenko wrote:
+> > > > Similarly to Logitech C922, C920 seems to also suffer from a firmware
+> > > > bug that breaks hardware timestamping.
+> > > >
+> > > > Add a quirk for this camera model too.
+> > > >
+> > > > Before applying the quirk:
+> > > >
+> > > > ```
+> > > > 100 (4) [-] none 100 200717 B 212.919114 213.079004 33.727 fps ts mono/SoE
+> > > > 101 (5) [-] none 101 200889 B 213.003703 213.114996 11.822 fps ts mono/SoE
+> > > > 102 (6) [-] none 102 200926 B 213.035571 213.146999 31.379 fps ts mono/SoE
+> > > > 103 (7) [-] none 103 200839 B 213.067424 213.179003 31.394 fps ts mono/SoE
+> > > > 104 (0) [-] none 104 200692 B 213.293180 213.214991 4.430 fps ts mono/SoE
+> > > > 105 (1) [-] none 105 200937 B 213.322374 213.247001 34.254 fps ts mono/SoE
+> > > > 106 (2) [-] none 106 201013 B 213.352228 213.279005 33.496 fps ts mono/SoE
+> > > > …
+> > > > ```
+> > > >
+> > > > After applying the quirk:
+> > > >
+> > > > ```
+> > > > 154 (2) [-] none 154 192417 B 42.199823 42.207788 27.779 fps ts mono/SoE
+> > > > 155 (3) [-] none 155 192040 B 42.231834 42.239791 31.239 fps ts mono/SoE
+> > > > 156 (4) [-] none 156 192213 B 42.263823 42.271822 31.261 fps ts mono/SoE
+> > > > 157 (5) [-] none 157 191981 B 42.299824 42.303827 27.777 fps ts mono/SoE
+> > > > 158 (6) [-] none 158 191953 B 42.331835 42.339811 31.239 fps ts mono/SoE
+> > > > 159 (7) [-] none 159 191904 B 42.363824 42.371813 31.261 fps ts mono/SoE
+> > > > 160 (0) [-] none 160 192210 B 42.399834 42.407801 27.770 fps ts mono/SoE
+> > > > ```
+> > > >
+> > > > Link: https://lore.kernel.org/lkml/5764213.DvuYhMxLoT@natalenko.name/
+> > > > Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > > Signed-off-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+> > > > ---
+> > > >  drivers/media/usb/uvc/uvc_driver.c | 3 ++-
+> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> > > > index 723e6d5680c2e..444d7089885ea 100644
+> > > > --- a/drivers/media/usb/uvc/uvc_driver.c
+> > > > +++ b/drivers/media/usb/uvc/uvc_driver.c
+> > > > @@ -2573,7 +2573,8 @@ static const struct usb_device_id uvc_ids[] = {
+> > > >       .bInterfaceClass      = USB_CLASS_VIDEO,
+> > > >       .bInterfaceSubClass   = 1,
+> > > >       .bInterfaceProtocol   = 0,
+> > > > -     .driver_info          = UVC_INFO_QUIRK(UVC_QUIRK_RESTORE_CTRLS_ON_INIT) },
+> > > > +     .driver_info          = UVC_INFO_QUIRK(UVC_QUIRK_RESTORE_CTRLS_ON_INIT
+> > > > +                                          | UVC_QUIRK_INVALID_DEVICE_SOF) },
+> > > >     /* Logitech HD Pro Webcam C922 */
+> > > >     { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
+> > > >                             | USB_DEVICE_ID_MATCH_INT_INFO,
+> > > >
+> > >
+> > > Gentle ping on this one.
+> >
+> > Ricardo, could you include this in the next version of your hw timestamp
+> > series ?
 > 
-> INFORMATION
-> ===========
+> There are no outstanding comments on the series
+> https://patchwork.linuxtv.org/project/linux-media/list/?series=12485
 > 
-> SAT-5 Table 212 — "Fixed format sense data INFORMATION field for the ATA
-> PASS-THROUGH commands" defines the following format:
-> 
-> +------+------------+
-> | Byte |   Field    |
-> +------+------------+
-> |    0 | ERROR      |
-> |    1 | STATUS     |
-> |    2 | DEVICE     |
-> |    3 | COUNT(7:0) |
-> +------+------------+
-> 
-> SPC-6 Table 48 - "Fixed format sense data" specifies that the INFORMATION
-> field starts at byte 3 in sense buffer resulting in the following offsets
-> for the ATA PASS-THROUGH commands:
-> 
-> +------------+-------------------------+
-> |   Field    |  Offset in sense buffer |
-> +------------+-------------------------+
-> | ERROR      |  3                      |
-> | STATUS     |  4                      |
-> | DEVICE     |  5                      |
-> | COUNT(7:0) |  6                      |
-> +------------+-------------------------+
-> 
-> COMMAND-SPECIFIC INFORMATION
-> ============================
-> 
-> SAT-5 Table 213 - "Fixed format sense data COMMAND-SPECIFIC INFORMATION
-> field for ATA PASS-THROUGH" defines the following format:
-> 
-> +------+-------------------+
-> | Byte |        Field      |
-> +------+-------------------+
-> |    0 | FLAGS | LOG INDEX |
-> |    1 | LBA (7:0)         |
-> |    2 | LBA (15:8)        |
-> |    3 | LBA (23:16)       |
-> +------+-------------------+
-> 
-> SPC-6 Table 48 - "Fixed format sense data" specifies that
-> the COMMAND-SPECIFIC-INFORMATION field starts at byte 8
-> in sense buffer resulting in the following offsets for
-> the ATA PASS-THROUGH commands:
-> 
-> Offsets of these fields in the fixed sense format are as follows:
-> 
-> +-------------------+-------------------------+
-> |       Field       |  Offset in sense buffer |
-> +-------------------+-------------------------+
-> | FLAGS | LOG INDEX |  8                      |
-> | LBA (7:0)         |  9                      |
-> | LBA (15:8)        |  10                     |
-> | LBA (23:16)       |  11                     |
-> +-------------------+-------------------------+
-> 
-> Reported-by: Akshat Jain <akshatzen@google.com>
-> Fixes: 11093cb1ef56 ("libata-scsi: generate correct ATA pass-through sense")
-> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
-> ---
->  drivers/ata/libata-scsi.c | 26 +++++++++++++-------------
->  1 file changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> index 4bfe47e7d266..8588512f5975 100644
-> --- a/drivers/ata/libata-scsi.c
-> +++ b/drivers/ata/libata-scsi.c
-> @@ -855,7 +855,6 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
->  	struct scsi_cmnd *cmd = qc->scsicmd;
->  	struct ata_taskfile *tf = &qc->result_tf;
->  	unsigned char *sb = cmd->sense_buffer;
-> -	unsigned char *desc = sb + 8;
->  	u8 sense_key, asc, ascq;
->  
->  	if (qc->flags & ATA_QCFLAG_SENSE_VALID) {
-> @@ -880,8 +879,9 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
->  		scsi_build_sense(cmd, 1, RECOVERED_ERROR, 0, 0x1D);
->  	}
->  
-> -	if ((cmd->sense_buffer[0] & 0x7f) >= 0x72) {
-> +	if ((sb[0] & 0x7f) >= 0x72) {
->  		u8 len;
-> +		unsigned char *desc;
+> Do you need me to send a v11 with this patch? or you can take that
+> directly from your tree?
 
-Please move this declaration before the "u8 len" one.
-Otherwise, this seems OK but needs a Cc: stable@vger.kernel.org tag added.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
->  
->  		/* descriptor format */
->  		len = sb[7];
-> @@ -919,21 +919,21 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
->  		}
->  	} else {
->  		/* Fixed sense format */
-> -		desc[0] = tf->error;
-> -		desc[1] = tf->status;
-> -		desc[2] = tf->device;
-> -		desc[3] = tf->nsect;
-> -		desc[7] = 0;
-> +		sb[0] |= 0x80;
-> +		sb[3] = tf->error;
-> +		sb[4] = tf->status;
-> +		sb[5] = tf->device;
-> +		sb[6] = tf->nsect;
->  		if (tf->flags & ATA_TFLAG_LBA48)  {
-> -			desc[8] |= 0x80;
-> +			sb[8] |= 0x80;
->  			if (tf->hob_nsect)
-> -				desc[8] |= 0x40;
-> +				sb[8] |= 0x40;>  			if (tf->hob_lbal || tf->hob_lbam || tf->hob_lbah)
-> -				desc[8] |= 0x20;
-> +				sb[8] |= 0x20;
->  		}
-> -		desc[9] = tf->lbal;
-> -		desc[10] = tf->lbam;
-> -		desc[11] = tf->lbah;
-> +		sb[9] = tf->lbal;
-> +		sb[10] = tf->lbam;
-> +		sb[11] = tf->lbah;
->  	}
->  }
->  
+and taken in my tree.
+
+> > > Also, should I have added:
+> > >
+> > > Fixes: 5d0fd3c806b9 ("[media] uvcvideo: Disable hardware timestamps by default")
+> > >
+> > > ?
+> >
+> > I don't think that's needed, no.
+> >
+> > > (it's not that this change re-enables HW timestamping, but
+> > > 5d0fd3c806b9 explicitly mentions C920 as affected)
 
 -- 
-Damien Le Moal
-Western Digital Research
+Regards,
 
+Laurent Pinchart
 
