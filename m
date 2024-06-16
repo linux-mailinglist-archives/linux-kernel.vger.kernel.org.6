@@ -1,142 +1,151 @@
-Return-Path: <linux-kernel+bounces-216107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADD0D909B75
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 05:56:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3C8909B7F
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 06:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87FAD1C20DC0
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 03:56:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 801F81F21422
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 04:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC8F16C858;
-	Sun, 16 Jun 2024 03:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7864E16C6BF;
+	Sun, 16 Jun 2024 04:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HEvHPqJn"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QwXyhJra"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1169323DE;
-	Sun, 16 Jun 2024 03:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD12632;
+	Sun, 16 Jun 2024 04:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718510205; cv=none; b=Urkx1gwPkoULyuMuRiS7qkL77nNFJyRekD5bhQf6Ze+d10fxPQC0juX17qJCWevBvKSZ3PwFb2vesFGCb+fOyqvjgwpXSC0p9ywELvRireggEFrK8e2FmF6ZgHZBp06H38Fk1kn4VKZAhHi2lw9bN2T3N2sPxmrj6Gn7uYp5gJk=
+	t=1718510476; cv=none; b=ZlE/jv2nW4w0UN26cHLVDrJjynpSerbG3/yPgNWMRCagAiK9XtA62b0biygwq/9PNPG07QJ9pVagL9bOWkcUSpWv/d/n/4HAIst3WBWZK4/vQQ9gQrX03zkkBdMcwlMeCEx3jk0GhQ/8f8N0mslVQrJ/ndaDVcDAZlYvLHKcmjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718510205; c=relaxed/simple;
-	bh=zyj28ZdBdLsprALNDulm47FtBs8Z6Fa29+dkGlWI8Uc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Yg49TdWg3EXL1odPH0XggxoUm6ydpHyo/EylRGGYQcqCe4EHxvRfykZxX9fZYpPr8/+uVOK28DlG2lB57bY4Jq/haURAK/RvqpOVyOLP8eRvP6sROZf/6Ui4xej8zy7Orpm6lroYQiwEXTU9KnyBX/ko29TwZ43V0XlHBpHJlUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HEvHPqJn; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45G3iJIa019941;
-	Sun, 16 Jun 2024 03:56:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=znENymMhwszNDOMUoKUBbj
-	CnhU8Sw35VzJoGHQUcfdU=; b=HEvHPqJn4349m86OiNs0tDaqQYTIOR42hVunWr
-	XlTTdWOd1zW1DGfE3ZKI0CyFLTKsrTaACJa6Rp55gl5DDEqoYBZx3J+RbDbYLmAb
-	nZy0Ea5jo8cAknWuLVQlHR57xXAzY2YdIR6sVTpXpo0KPoDt/weIoxDAWJcINUsV
-	S3rD/zz6ZuLkmNDAxN+5JJDbGYFuwPh3Q1CjpRl676seQpR9LasXfxMJ6s9OHUmH
-	s6Q/bF+piNjlH72u8OXp4JThx5h7ruuutb9ah15v9/Ys+DsDqTPenNU3gMXX9QRR
-	VxqXRDCFZ3mILwDU4XaKyvjj3oFHtMsXD5HwM7+h9TrX6tkQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys2hx9dps-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 16 Jun 2024 03:56:40 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45G3ucL6030525
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 16 Jun 2024 03:56:38 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Jun
- 2024 20:56:37 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sat, 15 Jun 2024 20:56:35 -0700
-Subject: [PATCH] s390/cio: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1718510476; c=relaxed/simple;
+	bh=LOBeSDMLvjOcAiROl79GUg1b1Ol44rfsv4ROT9gOiwM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jlcLLCoZObs8dg2mH8DV/RHKYiOdzzazHWuAMAjh5j2EcMK+JQDqEfous06KCfh9o3yg833BZDl2MXAuQNTPHKvlDzfV6OYX4CcPiXHZ21nX6FwzMp7y4YAZ0NZWIKTM+O61mjSRjZBjGz2hqKMn0A2cxD1/+ZmNjtI5CJIO6W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QwXyhJra; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718510475; x=1750046475;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=LOBeSDMLvjOcAiROl79GUg1b1Ol44rfsv4ROT9gOiwM=;
+  b=QwXyhJra17edh9OMySGRiZ7BTqZK8Nere+NQsUKOT8LxDgUd4fzB2oPC
+   mqrvl7uIMrGI/roBHTSKkoedHdpUhYAL1qS2nj6HYTacutn3vYdnMr2vC
+   DI68X5fq1Uqy6sKBaDPGjReq/BMS1FSRNMrYAONWsGro1XXiXdwv+XLUV
+   DPi90QaFNe1GHINqtEd6nIw0hEmzYYPzEdBUBD7KKQPOcd03baYAXuT7A
+   KsPBrEhuvG5zASk3TNjzhYmYdbtIzWmbP9vAk0ycDOJdkkKOEwoFNSV4n
+   0fVfHYbWfvHLFN6YQl/9XJvGW9DRS2GBDc8PA9fmlBczqgqE49T/YyR60
+   w==;
+X-CSE-ConnectionGUID: w+lQzJn7RJCGz6sy68s8BQ==
+X-CSE-MsgGUID: lWc7TzTATCmV5nyWzRuy7A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="15521681"
+X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
+   d="scan'208";a="15521681"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 21:01:14 -0700
+X-CSE-ConnectionGUID: jg446RxPQhqExQiBLcU+1g==
+X-CSE-MsgGUID: SUtQbsIdSLG7yt5XT8M2Qg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
+   d="scan'208";a="41557169"
+Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.232.251]) ([10.124.232.251])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 21:01:13 -0700
+Message-ID: <3fa7c6c4-d9e4-4233-93a7-12e5d34ee4d0@intel.com>
+Date: Sun, 16 Jun 2024 12:01:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] fs/file.c: add fast path in alloc_fd()
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tim.c.chen@linux.intel.com, tim.c.chen@intel.com, pan.deng@intel.com,
+ tianyou.li@intel.com, yu.ma@intel.com
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240614163416.728752-2-yu.ma@intel.com>
+ <egcrzi4bkw7lm2q4wml2y7pptpxos4nf5v3il3jmhptcurhxjj@fxtica52olsj>
+Content-Language: en-US
+From: "Ma, Yu" <yu.ma@intel.com>
+In-Reply-To: <egcrzi4bkw7lm2q4wml2y7pptpxos4nf5v3il3jmhptcurhxjj@fxtica52olsj>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240615-md-s390-drivers-s390-cio-v1-1-8fc9584e8595@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAHJibmYC/yXMwQ6CMAyA4VchPdtkDDDgqxgP3ValiQzTKiEhv
- LtDj9/h/zcwVmGDS7WB8iImcy6oTxXEkfKDUVIxeOdbd647nBJaMzhMKgur/RFlxqYbegqhd54
- SlPylfJf1t77eigMZY1DKcTyGT8mfFSeyNyvs+xc9nQBXiQAAAA==
-To: Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter
-	<oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
-	<gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        "Christian
- Borntraeger" <borntraeger@linux.ibm.com>,
-        Sven Schnelle
-	<svens@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Matthew Rosato
-	<mjrosato@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-CC: <linux-s390@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kvm@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson
-	<quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: CRWY2JA3YqQT6AZpaG3M8O6YCOivrVYg
-X-Proofpoint-ORIG-GUID: CRWY2JA3YqQT6AZpaG3M8O6YCOivrVYg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-16_02,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=870 clxscore=1011 priorityscore=1501 bulkscore=0 phishscore=0
- lowpriorityscore=0 spamscore=0 impostorscore=0 mlxscore=0 malwarescore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406160029
 
-With ARCH=s390, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/cio/ccwgroup.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/cio/vfio_ccw.o
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+On 6/15/2024 2:31 PM, Mateusz Guzik wrote:
+> On Fri, Jun 14, 2024 at 12:34:14PM -0400, Yu Ma wrote:
+>> There is available fd in the lower 64 bits of open_fds bitmap for most cases
+>> when we look for an available fd slot. Skip 2-levels searching via
+>> find_next_zero_bit() for this common fast path.
+>>
+>> Look directly for an open bit in the lower 64 bits of open_fds bitmap when a
+>> free slot is available there, as:
+>> (1) The fd allocation algorithm would always allocate fd from small to large.
+>> Lower bits in open_fds bitmap would be used much more frequently than higher
+>> bits.
+>> (2) After fdt is expanded (the bitmap size doubled for each time of expansion),
+>> it would never be shrunk. The search size increases but there are few open fds
+>> available here.
+>> (3) There is fast path inside of find_next_zero_bit() when size<=64 to speed up
+>> searching.
+>>
+>> With the fast path added in alloc_fd() through one-time bitmap searching,
+>> pts/blogbench-1.1.0 read is improved by 20% and write by 10% on Intel ICX 160
+>> cores configuration with v6.8-rc6.
+>>
+>> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+>> Signed-off-by: Yu Ma <yu.ma@intel.com>
+>> ---
+>>   fs/file.c | 9 +++++++--
+>>   1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/file.c b/fs/file.c
+>> index 3b683b9101d8..e8d2f9ef7fd1 100644
+>> --- a/fs/file.c
+>> +++ b/fs/file.c
+>> @@ -510,8 +510,13 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
+>>   	if (fd < files->next_fd)
+>>   		fd = files->next_fd;
+>>   
+>> -	if (fd < fdt->max_fds)
+>> +	if (fd < fdt->max_fds) {
+>> +		if (~fdt->open_fds[0]) {
+>> +			fd = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, fd);
+>> +			goto success;
+>> +		}
+>>   		fd = find_next_fd(fdt, fd);
+>> +	}
+>>   
+>>   	/*
+>>   	 * N.B. For clone tasks sharing a files structure, this test
+>> @@ -531,7 +536,7 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
+>>   	 */
+>>   	if (error)
+>>   		goto repeat;
+>> -
+>> +success:
+>>   	if (start <= files->next_fd)
+>>   		files->next_fd = fd + 1;
+>>   
+> As indicated in my other e-mail it may be a process can reach a certain
+> fd number and then lower its rlimit(NOFILE). In that case the max_fds
+> field can happen to be higher and the above patch will fail to check for
+> the (fd < end) case.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/s390/cio/ccwgroup.c     | 1 +
- drivers/s390/cio/vfio_ccw_drv.c | 1 +
- 2 files changed, 2 insertions(+)
+Thanks for the good catch, replied in that mail thread for details.
 
-diff --git a/drivers/s390/cio/ccwgroup.c b/drivers/s390/cio/ccwgroup.c
-index b72f672a7720..a741e5012fce 100644
---- a/drivers/s390/cio/ccwgroup.c
-+++ b/drivers/s390/cio/ccwgroup.c
-@@ -550,4 +550,5 @@ void ccwgroup_remove_ccwdev(struct ccw_device *cdev)
- 	put_device(&gdev->dev);
- }
- EXPORT_SYMBOL(ccwgroup_remove_ccwdev);
-+MODULE_DESCRIPTION("CCW group bus driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
-index 8ad49030a7bf..49da348355b4 100644
---- a/drivers/s390/cio/vfio_ccw_drv.c
-+++ b/drivers/s390/cio/vfio_ccw_drv.c
-@@ -488,4 +488,5 @@ static void __exit vfio_ccw_sch_exit(void)
- module_init(vfio_ccw_sch_init);
- module_exit(vfio_ccw_sch_exit);
- 
-+MODULE_DESCRIPTION("VFIO based Physical Subchannel device driver");
- MODULE_LICENSE("GPL v2");
-
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240615-md-s390-drivers-s390-cio-3598abb802ad
-
+>
+>> -- 
+>> 2.43.0
+>>
 
