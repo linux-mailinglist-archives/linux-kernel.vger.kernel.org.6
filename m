@@ -1,222 +1,134 @@
-Return-Path: <linux-kernel+bounces-216203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38C6909C9E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 10:39:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE389909CA1
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 10:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E37F71C20B9D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:39:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 176D9281701
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AEB178CCB;
-	Sun, 16 Jun 2024 08:39:49 +0000 (UTC)
-Received: from orthanc.universe-factory.net (orthanc.universe-factory.net [104.238.176.138])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A3F179950;
+	Sun, 16 Jun 2024 08:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evb2ies3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3E01EB36;
-	Sun, 16 Jun 2024 08:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.238.176.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5564560882;
+	Sun, 16 Jun 2024 08:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718527189; cv=none; b=sxBknyy7Nq7LZ3lUeOh/YW5CghWQlNFi0buAaMsFOQvYj40J9buw4MIWaKG9fM7E4655thUOX8skog1VmEqxKjHU0jkyy9u2qQLfvh6LU7c+BzExsM61ixAESEFd5TOGKDfh1URG2KUN+CLtkoELFrFtudNCKkFoEJZgMwrAfhU=
+	t=1718527210; cv=none; b=QV9D+XwQJx3MH81DhAVQNi7pWkUKFjNKuquyrGap/oK++LEeswe3rq+JwS61mODAMi0azcnTOvqj/oj3B0fuYUwPHKaJnw/BzRC1AfisZe+6gc0fvCg6xjC08l0gPBPJF66LxMqAyX48viIMnZECSk7AVhsVe6ucVuZA9Bj3EnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718527189; c=relaxed/simple;
-	bh=uDBddo1b5H69sGPh5EQvuL2MUMwf3JQFG9tpHZX+bkg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aB4SVQCCn7jHVQzOv8v/B5cH4YAXa0GMR9Gqy6ENuhTHwvdLvYm61pcQhfaDOwaX+9WtQO5gsp+w/FZt88sZvFnxfvOYoPq+lG33skadM/nC9EwJSll4HCL/s7qhPPx1VjI5rRgbRMdy+tfUkrDzPrWPegybGyjS5pck2+rfwRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=universe-factory.net; spf=pass smtp.mailfrom=universe-factory.net; arc=none smtp.client-ip=104.238.176.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=universe-factory.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=universe-factory.net
-Received: from [IPV6:2001:19f0:6c01:100::2] (unknown [IPv6:2001:19f0:6c01:100::2])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by orthanc.universe-factory.net (Postfix) with ESMTPSA id E14321F917;
-	Sun, 16 Jun 2024 10:39:38 +0200 (CEST)
-Message-ID: <8b80f4c7-a6bc-4ac9-bee4-9a36e70a6474@universe-factory.net>
-Date: Sun, 16 Jun 2024 10:39:37 +0200
+	s=arc-20240116; t=1718527210; c=relaxed/simple;
+	bh=EJck7pcx3a7AWGIWc0EJ/f50NGxDWyP4TA3LnCdDUfo=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=k8vmEv3x3Xq6VcIMwSmtw5kLVrFdnBkzEZb2XOcjy2uoOHjBdmmrmkmuQ8psuCRju2nJoViZE9zSnqLU4YkxzX4J3qjX0IcXJ6mINGFvujFWVlhHtscx+xrnsDr6CcqXnzEmW/0fAxGVJKgb5KHWU5/S5/T5rN1afssFeF+plzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evb2ies3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A14EBC2BBFC;
+	Sun, 16 Jun 2024 08:40:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718527209;
+	bh=EJck7pcx3a7AWGIWc0EJ/f50NGxDWyP4TA3LnCdDUfo=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=evb2ies3EJdjn3Sk3UpUyB3jQLlqsotEHAGCzeWSIhYzOOse6CmBMTSnMc32macgp
+	 OqgJKW6ip4XLd9amRgMXHZ0opUUT4tIbF56h7quNCGzT4WfmifxGHO7wZbBBSAMntZ
+	 NjBMiAt86OIxothjigQfy17s9bZGAj4WecOJcLv7QTo8TdAr/M0inCG++RmVsJ3eC7
+	 WjPC5UfBKkpl7AuQadImmOLJaL/shMvV7rvWCjrP42YrrL389E0gtp7/E5lyce/Qiu
+	 sWMnLsjFnF/89RBO4ZbPRHanBXVroJL3vo8qkt6iJMaDl092W6t3O1w47fe4r2jnhG
+	 piPQcRg1QXbYw==
+Date: Sun, 16 Jun 2024 02:40:08 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 2/2] net: dsa: mt7530: add support for bridge
- port isolation
-To: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>,
- Sean Wang <sean.wang@mediatek.com>
-References: <378bc964b49f9e9954336e99009932ac22bfe172.1718400508.git.mschiffer@universe-factory.net>
- <15263cb9bbc63d5cc66428e7438e0b5324306aa4.1718400508.git.mschiffer@universe-factory.net>
- <4eaf2bcb-4fad-4211-a48e-079a5c2a6767@arinc9.com>
-Content-Language: en-US-large
-From: Matthias Schiffer <mschiffer@universe-factory.net>
-Autocrypt: addr=mschiffer@universe-factory.net; keydata=
- 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
- cQqe8eRmcdNdqWSiJQ8VLoI=
-In-Reply-To: <4eaf2bcb-4fad-4211-a48e-079a5c2a6767@arinc9.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------AVukOp7lG0kE9NWz304Hd2BX"
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Yasin Lee <yasin.lee.x@outlook.com>
+Cc: linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Yasin Lee <yasin.lee.x@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>
+In-Reply-To: 
+ <SN7PR12MB810142C58543160AB45D07B3A4CC2@SN7PR12MB8101.namprd12.prod.outlook.com>
+References: <20240616-add-tyhx-hx9023s-sensor-driver-v5-0-ebaf280bbf0e@outlook.com>
+ <SN7PR12MB810142C58543160AB45D07B3A4CC2@SN7PR12MB8101.namprd12.prod.outlook.com>
+Message-Id: <171852720871.881703.5121305765787069941.robh@kernel.org>
+Subject: Re: [PATCH v5 2/3] dt-bindings:iio:proximity: Add hx9023s binding
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------AVukOp7lG0kE9NWz304Hd2BX
-Content-Type: multipart/mixed; boundary="------------IUZXZUCZag6xaUhxoEDI1U9q";
- protected-headers="v1"
-From: Matthias Schiffer <mschiffer@universe-factory.net>
-To: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>,
- Sean Wang <sean.wang@mediatek.com>
-Message-ID: <8b80f4c7-a6bc-4ac9-bee4-9a36e70a6474@universe-factory.net>
-Subject: Re: [PATCH net-next 2/2] net: dsa: mt7530: add support for bridge
- port isolation
-References: <378bc964b49f9e9954336e99009932ac22bfe172.1718400508.git.mschiffer@universe-factory.net>
- <15263cb9bbc63d5cc66428e7438e0b5324306aa4.1718400508.git.mschiffer@universe-factory.net>
- <4eaf2bcb-4fad-4211-a48e-079a5c2a6767@arinc9.com>
-In-Reply-To: <4eaf2bcb-4fad-4211-a48e-079a5c2a6767@arinc9.com>
 
---------------IUZXZUCZag6xaUhxoEDI1U9q
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+On Sun, 16 Jun 2024 15:36:48 +0800, Yasin Lee wrote:
+> From: Yasin Lee <yasin.lee.x@gmail.com>
+> 
+> A capacitive proximity sensor
+> 
+> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
+> ---
+>  .../bindings/iio/proximity/tyhx,hx9023s.yaml       | 98 ++++++++++++++++++++++
+>  1 file changed, 98 insertions(+)
+> 
 
-T24gMTYvMDYvMjAyNCAwODo1MiwgQXLEsW7DpyDDnE5BTCB3cm90ZToNCj4gT24gMTUvMDYv
-MjAyNCAwMToyMSwgTWF0dGhpYXMgU2NoaWZmZXIgd3JvdGU6DQo+PiBSZW1vdmUgYSBwYWly
-IG9mIHBvcnRzIGZyb20gdGhlIHBvcnQgbWF0cml4IHdoZW4gYm90aCBwb3J0cyBoYXZlIHRo
-ZQ0KPj4gaXNvbGF0ZWQgZmxhZyBzZXQuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogTWF0dGhp
-YXMgU2NoaWZmZXIgPG1zY2hpZmZlckB1bml2ZXJzZS1mYWN0b3J5Lm5ldD4NCj4+IC0tLQ0K
-Pj4gwqAgZHJpdmVycy9uZXQvZHNhL210NzUzMC5jIHwgMjEgKysrKysrKysrKysrKysrKysr
-LS0tDQo+PiDCoCBkcml2ZXJzL25ldC9kc2EvbXQ3NTMwLmggfMKgIDEgKw0KPj4gwqAgMiBm
-aWxlcyBjaGFuZ2VkLCAxOSBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPj4NCj4+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9kc2EvbXQ3NTMwLmMgYi9kcml2ZXJzL25ldC9k
-c2EvbXQ3NTMwLmMNCj4+IGluZGV4IGVjYWNhZWZkZDY5NC4uNDQ5MzkzNzlhYmE4IDEwMDY0
-NA0KPj4gLS0tIGEvZHJpdmVycy9uZXQvZHNhL210NzUzMC5jDQo+PiArKysgYi9kcml2ZXJz
-L25ldC9kc2EvbXQ3NTMwLmMNCj4+IEBAIC0xMzAzLDcgKzEzMDMsOCBAQCBtdDc1MzBfc3Rw
-X3N0YXRlX3NldChzdHJ1Y3QgZHNhX3N3aXRjaCAqZHMsIGludCANCj4+IHBvcnQsIHU4IHN0
-YXRlKQ0KPj4gwqAgfQ0KPj4gwqAgc3RhdGljIHZvaWQgbXQ3NTMwX3VwZGF0ZV9wb3J0X21l
-bWJlcihzdHJ1Y3QgbXQ3NTMwX3ByaXYgKnByaXYsIGludCBwb3J0LA0KPj4gLcKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjb25zdCBzdHJ1Y3QgbmV0X2Rl
-dmljZSAqYnJpZGdlX2RldiwgYm9vbCBqb2luKQ0KPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjb25zdCBzdHJ1Y3QgbmV0X2RldmljZSAqYnJpZGdl
-X2RldiwNCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-Ym9vbCBqb2luKQ0KPiANCj4gUnVuIGdpdCBjbGFuZy1mb3JtYXQgb24gdGhpcyBwYXRjaCBh
-cyB3ZWxsIHBsZWFzZS4NCg0KT29wcywgd2lsbCBkby4NCg0KDQo+IA0KPj4gwqDCoMKgwqDC
-oCBfX211c3RfaG9sZCgmcHJpdi0+cmVnX211dGV4KQ0KPj4gwqAgew0KPj4gwqDCoMKgwqDC
-oCBzdHJ1Y3QgZHNhX3BvcnQgKmRwID0gZHNhX3RvX3BvcnQocHJpdi0+ZHMsIHBvcnQpLCAq
-b3RoZXJfZHA7DQo+PiBAQCAtMTMxMSw2ICsxMzEyLDcgQEAgc3RhdGljIHZvaWQgbXQ3NTMw
-X3VwZGF0ZV9wb3J0X21lbWJlcihzdHJ1Y3QgDQo+PiBtdDc1MzBfcHJpdiAqcHJpdiwgaW50
-IHBvcnQsDQo+PiDCoMKgwqDCoMKgIHN0cnVjdCBkc2FfcG9ydCAqY3B1X2RwID0gZHAtPmNw
-dV9kcDsNCj4+IMKgwqDCoMKgwqAgdTMyIHBvcnRfYml0bWFwID0gQklUKGNwdV9kcC0+aW5k
-ZXgpOw0KPj4gwqDCoMKgwqDCoCBpbnQgb3RoZXJfcG9ydDsNCj4+ICvCoMKgwqAgYm9vbCBp
-c29sYXRlZDsNCj4+IMKgwqDCoMKgwqAgZHNhX3N3aXRjaF9mb3JfZWFjaF91c2VyX3BvcnQo
-b3RoZXJfZHAsIHByaXYtPmRzKSB7DQo+PiDCoMKgwqDCoMKgwqDCoMKgwqAgb3RoZXJfcG9y
-dCA9IG90aGVyX2RwLT5pbmRleDsNCj4+IEBAIC0xMzI3LDcgKzEzMjksOSBAQCBzdGF0aWMg
-dm9pZCBtdDc1MzBfdXBkYXRlX3BvcnRfbWVtYmVyKHN0cnVjdCANCj4+IG10NzUzMF9wcml2
-ICpwcml2LCBpbnQgcG9ydCwNCj4+IMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAoIWRzYV9wb3J0
-X29mZmxvYWRzX2JyaWRnZV9kZXYob3RoZXJfZHAsIGJyaWRnZV9kZXYpKQ0KPj4gwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgY29udGludWU7DQo+PiAtwqDCoMKgwqDCoMKgwqAgaWYg
-KGpvaW4pIHsNCj4+ICvCoMKgwqDCoMKgwqDCoCBpc29sYXRlZCA9IHAtPmlzb2xhdGVkICYm
-IG90aGVyX3AtPmlzb2xhdGVkOw0KPj4gKw0KPj4gK8KgwqDCoMKgwqDCoMKgIGlmIChqb2lu
-ICYmICFpc29sYXRlZCkgew0KPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgb3RoZXJf
-cC0+cG0gfD0gUENSX01BVFJJWChCSVQocG9ydCkpOw0KPj4gwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgcG9ydF9iaXRtYXAgfD0gQklUKG90aGVyX3BvcnQpOw0KPj4gwqDCoMKgwqDC
-oMKgwqDCoMKgIH0gZWxzZSB7DQo+IA0KPiBXaHkgbXVzdCBvdGhlcl9wLT5pc29sYXRlZCBi
-ZSB0cnVlIGFzIHdlbGw/IElmIEkgdW5kZXJzdGFuZCBjb3JyZWN0bHksIHdoZW4NCj4gYSB1
-c2VyIHBvcnQgaXMgaXNvbGF0ZWQsIG5vbiBpc29sYXRlZCBwb3J0cyBjYW4ndCBjb21tdW5p
-Y2F0ZSB3aXRoIGl0DQo+IHdoaWxzdCB0aGUgQ1BVIHBvcnQgY2FuLiBJZiBJIHdlcmUgdG8g
-aXNvbGF0ZSBhIHBvcnQgd2hpY2ggaXMgdGhlIG9ubHkNCj4gaXNvbGF0ZWQgb25lIGF0IHRo
-ZSBtb21lbnQsIHRoZSBpc29sYXRlZCBmbGFnIHdvdWxkIG5vdCBiZSB0cnVlLiBUaGVyZWZv
-cmUsDQo+IHRoZSBpc29sYXRlZCBwb3J0IHdvdWxkIG5vdCBiZSByZW1vdmVkIGZyb20gdGhl
-IHBvcnQgbWF0cml4IG9mIG90aGVyIHVzZXINCj4gcG9ydHMuIFdoeSBub3Qgb25seSBjaGVj
-ayBmb3IgcC0+aXNvbGF0ZWQ/DQoNCkFzIGZhciBhcyBJIGNhbiB0ZWxsLCB0aGUgcnVsZXMg
-YXJlOg0KDQotIG5vbi1pc29sYXRlZCBwb3J0cyBjYW4gY29tbXVuaWNhdGUgd2l0aCBldmVy
-eSBwb3J0DQotIGlzb2xhdGVkIHBvcnRzIGNhbid0IGNvbW11bmljYXRlIHdpdGggb3RoZXIg
-aXNvbGF0ZWQgcG9ydHMNCi0gY29tbXVuaWNhdGlvbiBpcyBzeW1tZXRyaWMNCg0KWW91J2xs
-IGZpbmQgdGhhdCB0aGUgbG9naWMgd29ya3MgdGhlIHNhbWUgZm9yIG5vbi1vZmZsb2FkZWQg
-YnJpZGdlIA0KZm9yd2FyZGluZyAoc2VlIHNob3VsZF9kZWxpdmVyKCkgaW4gbmV0L2JyaWRn
-ZS9icl9mb3J3YXJkLmMgYW5kIA0KYnJfc2tiX2lzb2xhdGVkKCkgaW4gbmV0L2JyaWRnZS9i
-cl9wcml2YXRlLmgpLg0KDQpNYXR0aGlhcw0K
+My bot found errors running 'make dt_binding_check' on your patch:
 
---------------IUZXZUCZag6xaUhxoEDI1U9q--
+yamllint warnings/errors:
 
---------------AVukOp7lG0kE9NWz304Hd2BX
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml:
+Error in referenced schema matching $id: http://devicetree.org/schemas/iio/proximity/adc.yaml
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dts:35.15-25: Warning (reg_format): /example-0/i2c/proximity@2a/channel@0:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dts:39.15-25: Warning (reg_format): /example-0/i2c/proximity@2a/channel@1:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dts:43.15-25: Warning (reg_format): /example-0/i2c/proximity@2a/channel@2:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dts:47.15-25: Warning (reg_format): /example-0/i2c/proximity@2a/channel@3:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dts:51.15-25: Warning (reg_format): /example-0/i2c/proximity@2a/channel@4:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dtb: Warning (pci_device_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dtb: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dtb: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dtb: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dtb: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dts:34.23-37.15: Warning (avoid_default_addr_size): /example-0/i2c/proximity@2a/channel@0: Relying on default #address-cells value
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dts:34.23-37.15: Warning (avoid_default_addr_size): /example-0/i2c/proximity@2a/channel@0: Relying on default #size-cells value
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dts:38.23-41.15: Warning (avoid_default_addr_size): /example-0/i2c/proximity@2a/channel@1: Relying on default #address-cells value
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dts:38.23-41.15: Warning (avoid_default_addr_size): /example-0/i2c/proximity@2a/channel@1: Relying on default #size-cells value
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dts:42.23-45.15: Warning (avoid_default_addr_size): /example-0/i2c/proximity@2a/channel@2: Relying on default #address-cells value
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dts:42.23-45.15: Warning (avoid_default_addr_size): /example-0/i2c/proximity@2a/channel@2: Relying on default #size-cells value
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dts:46.23-49.15: Warning (avoid_default_addr_size): /example-0/i2c/proximity@2a/channel@3: Relying on default #address-cells value
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dts:46.23-49.15: Warning (avoid_default_addr_size): /example-0/i2c/proximity@2a/channel@3: Relying on default #size-cells value
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dts:50.23-53.15: Warning (avoid_default_addr_size): /example-0/i2c/proximity@2a/channel@4: Relying on default #address-cells value
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dts:50.23-53.15: Warning (avoid_default_addr_size): /example-0/i2c/proximity@2a/channel@4: Relying on default #size-cells value
+Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dtb: Warning (unique_unit_address_if_enabled): Failed prerequisite 'avoid_default_addr_size'
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dtb: proximity@2a: channel@0: False schema does not allow {'reg': [[0]], 'input-channel': [[0]]}
+	from schema $id: http://devicetree.org/schemas/iio/proximity/tyhx,hx9023s.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dtb: proximity@2a: channel@1: False schema does not allow {'reg': [[1]], 'input-channel': [[1]]}
+	from schema $id: http://devicetree.org/schemas/iio/proximity/tyhx,hx9023s.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dtb: proximity@2a: channel@2: False schema does not allow {'reg': [[2]], 'input-channel': [[2]]}
+	from schema $id: http://devicetree.org/schemas/iio/proximity/tyhx,hx9023s.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dtb: proximity@2a: channel@3: False schema does not allow {'reg': [[3]], 'diff-channels': [[1, 0]]}
+	from schema $id: http://devicetree.org/schemas/iio/proximity/tyhx,hx9023s.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.example.dtb: proximity@2a: channel@4: False schema does not allow {'reg': [[4]], 'diff-channels': [[2, 0]]}
+	from schema $id: http://devicetree.org/schemas/iio/proximity/tyhx,hx9023s.yaml#
 
------BEGIN PGP SIGNATURE-----
+doc reference errors (make refcheckdocs):
 
-wsF5BAABCAAjFiEEZmTnvaa2aYgexS51Fu8/ZMsgHZwFAmZupMkFAwAAAAAACgkQFu8/ZMsgHZwf
-nhAA0fH9TmWt75vG1YqfmakWTNn9ZINoNquYiHqmEXmNpo9YOoI3nfFnj/nNWsLhG5sJfMuHWSFd
-xQuFqrWQKVie5dtNDrdDRolwCihn01DAa/BX1/uV3AlOe47PWVa3x9/nJCpEwAVlOK18rCUOZs/u
-MhZeR+SwTxOPoCARRpAppgOBcKV1brZ9FoxsRQAaPcxDbUxhOe5XPfj8gE7LQ7DQSoGJqeKOUXIb
-zYFmaaHsZKZJGiYGjkvDTIicm+SuqtCOJ2+sTMt6GikOOy3Jxxp57sLdSi9eS2W5b8yI25TtM0/U
-g/+OcbhkjPng9UQkn5Vz+ZbocFxYk28FhR4X66r0iR1Kbq+YkWExnBiO2Qlz/HcyFrw7ebUoT7VM
-XeSSO1gB2liCbchhAXsLDk6mTmDu9y44RMc9merntIYcZBnj56/SEMNDe3UqVvagRAEOwYgyBL3i
-ZJ65qmp9JdVWDzSZqPBiSTGvFi+pSh4TzD4MG9nxFASx29v/bYP7lrAhZGqxGzZOlFSqJdjO30tY
-uJ9ZgPiJzknX60Zk0xKirm5QamkohbC3pC43cIlMFpmtX45IMlxrF335edeQifdllbFiHs1HNO9j
-2efBVDNL3xlh+wat0PjYpnHubwXQTqDLD8D1xGs7fjo/qhSiDcHOFgXw+5Bnd9qi3BL46nvv446b
-Mow=
-=b4Ip
------END PGP SIGNATURE-----
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/SN7PR12MB810142C58543160AB45D07B3A4CC2@SN7PR12MB8101.namprd12.prod.outlook.com
 
---------------AVukOp7lG0kE9NWz304Hd2BX--
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
