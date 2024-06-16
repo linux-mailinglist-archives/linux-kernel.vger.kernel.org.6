@@ -2,50 +2,51 @@ Return-Path: <linux-kernel+bounces-216188-lists+linux-kernel=lfdr.de@vger.kernel
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29628909C89
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C889909C8A
 	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 10:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20E071C215F7
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A11831C2190D
 	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA3C18732D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505AB187349;
 	Sun, 16 Jun 2024 08:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="swlsQLbX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KpS3YKDP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F9E1850BC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FE018628D
 	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 08:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718526555; cv=none; b=OtNLU1FHw2mOh1TVyrR+FUI/IGrxLiWXxmGXrViGoT6LCPxwXVPW0oaeTj0qaOdQ5UGaYiG68Ci9YlshiM9jf63knpWr4WeYVr4iIo5pUaYuQ157pHmvF+JBNQZZhENk81H184pp65if78v6y66JZxjRnMtcxEkPT6Ib/aNpQ4k=
+	t=1718526555; cv=none; b=UhTF2iKqY1PVa7dHirI9b05CVv/OhcRxZPaXKgdJ0xcPBDObO+hzaA0sdBNOgiyQ7TE/89VezKFX3az9EaZf3nhZzRnuTZFhOYoL2sfG7BJPFCHjlP3WABPfLJWDjWptjoPHZBd0B20M/UnJR+QZ/gyPgyuM+moHiSDLCX+/o08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718526555; c=relaxed/simple;
-	bh=w4HhvErl0+9KBEyLNkAXO343a8rNSOMKg9ZlSA5XdCM=;
+	bh=ooFwSoVJ9N3sXdcV4iug2DcGs+ehRHDEPEzbrAfyAEI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MVCYfFrx7E8mAVDyWEWaGndzn9KBr69bdJLm/32NvqCdrdw8WEgqp3p173zHEWVWH5e6eMp0DLxlWS7YAbiGBChmAOADiUrNOl6c8oNchE9u1/+k6ALaCRdVdxP1njChqJEOmI0+Kfi4lMHFwkfUE7soA7AoTDHz6nJv/CZZjCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=swlsQLbX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E73B2C4AF1C;
-	Sun, 16 Jun 2024 08:29:14 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=uVYdphAB23J4IamO58UHQelS8GTsAOpOs+6vLT91YzZ1eJ2jctSYCvZrAdPlQA0k4dPpvPBKUfHZo0/d24H3+APy/gppIji4aihBams6Nh7pAmRxa+tQEpYy+t2N4K/7fG4ZHJ/GJPJANDHAtUft9II8mLtR2+BNUMChlfgFxtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KpS3YKDP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0643DC4AF50;
+	Sun, 16 Jun 2024 08:29:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718526554;
-	bh=w4HhvErl0+9KBEyLNkAXO343a8rNSOMKg9ZlSA5XdCM=;
+	s=k20201202; t=1718526555;
+	bh=ooFwSoVJ9N3sXdcV4iug2DcGs+ehRHDEPEzbrAfyAEI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=swlsQLbXrGn4m+8Wm0zCjzNViBZ2DUpjkfzvI1SSMoPp7nnaMRI0KplUAtIAXBbac
-	 pxXsnyBi7n2Im3KiZr+A0v5XvQiYqrTMBjHsy/rYP1vkQE3P5bFh8c4ngepOx/VskT
-	 Zg/4bjpiAxjNufkklMgFpQT4tkRMhMvL67dSC0ELq9mvsAxvLMjrjLLB2jE29U25c1
-	 XlPT1xtHnymRxtnaGVzy4es3UuzfLL/EOtuc95qwVFq1+x2N8ZivHpMrH3SZvLC9m1
-	 +FLZtCSXHrAfNxAZPxgNDN2w230KnIsgk1vwP3Jg2D2iVZTWTQGeuYYibKxhDv/R2m
-	 EwurrCpaIfDMg==
+	b=KpS3YKDP1ahe//Us3V7N1GqiG1otEZ4R6peB5lsLGldYx9UrZ+ykCyGuGoJ9rDU71
+	 Gg+QXFjoENRLVyc1ckyOdFT52tyvx7YFZjtEQKCyYpj0asi0tSCNk2t4kFJBYbgp+1
+	 13aS5FZ9iRdEUrYU6go5iSRMKrGd+DFTy/wyZr00mHeaFuU3c35cRUik/wQI5IlqgC
+	 1lzr8hWPVuFWHgNK1vG1vPIrV7Vw2XGpt5LFFvFZfXCg+GrvUwkuw23ocDml8qYEpr
+	 GuXR+VrrALUmgOZlUZrR6RuRfdaVAvra24/uaoyN4OkYRnHYFs2qDp92Rh0sfx3IVe
+	 ekDOJCgVlVRFA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5973C2BA16;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BFBC27C77;
 	Sun, 16 Jun 2024 08:29:14 +0000 (UTC)
 From: Hsiao Chien Sung via B4 Relay <devnull+shawn.sung.mediatek.com@kernel.org>
-Date: Sun, 16 Jun 2024 16:29:12 +0800
-Subject: [PATCH 02/13] drm/mediatek: Add OVL compatible name for MT8195
+Date: Sun, 16 Jun 2024 16:29:13 +0800
+Subject: [PATCH 03/13] drm/mediatek: Add missing plane settings when async
+ update
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240616-mediatek-drm-next-v1-2-7e8f9cf785d8@mediatek.com>
+Message-Id: <20240616-mediatek-drm-next-v1-3-7e8f9cf785d8@mediatek.com>
 References: <20240616-mediatek-drm-next-v1-0-7e8f9cf785d8@mediatek.com>
 In-Reply-To: <20240616-mediatek-drm-next-v1-0-7e8f9cf785d8@mediatek.com>
 To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
@@ -68,11 +69,11 @@ Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  Hsiao Chien Sung <shawn.sung@mediatek.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718526553; l=1050;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718526553; l=1082;
  i=shawn.sung@mediatek.com; s=20240616; h=from:subject:message-id;
- bh=BgdlkkD28fU8kVaiXpAjJEsbIm8CSiJsfkQTGRrkbL8=;
- b=EwafnihtQo1NceoMulPvwo+G3mrLHtE3FpAhX/nodSUl+rH3kr3UHBTnd2O4spc5zZHP4HpVh
- nZpiY49XaxJAwmU+24gkfIOA0MU9S0VkvSNAzw0hB3HrI+9gv37T3SC
+ bh=ADiZlSVJT5s2sH18XbsNK2Wsb8sGtAwURKhvCjHjtzc=;
+ b=FVT/WCynaSSn97vJO73+EtVbiFHnpQke6j5kOKH+9CSpaY+pf3TzcrWiqOmEJYs+/GibTLH26
+ PI8uVoDJsH9DfpE3reZyu3mXz7V5UXp64qRrbfhMf+MYlS5Y6DFcOsc
 X-Developer-Key: i=shawn.sung@mediatek.com; a=ed25519;
  pk=lq1w8BuWDINX+4JHjGHhhbAU5ICP+cL9VCj7wn+cEDA=
 X-Endpoint-Received: by B4 Relay for shawn.sung@mediatek.com/20240616 with
@@ -82,29 +83,31 @@ Reply-To: shawn.sung@mediatek.com
 
 From: Hsiao Chien Sung <shawn.sung@mediatek.com>
 
-Add OVL compatible name for MT8195.
-Without this commit, DRM won't work after modifying the device tree.
+Fix an issue that plane coordinate was not saved when
+calling async update.
+
+Fixes: 920fffcc8912 ("drm/mediatek: update cursors by using async atomic update")
 
 Reviewed-by: CK Hu <ck.hu@mediatek.com>
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_drv.c | 2 ++
+ drivers/gpu/drm/mediatek/mtk_plane.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index b5f605751b0a..8e047043202b 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -743,6 +743,8 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
- 	  .data = (void *)MTK_DISP_OVL },
- 	{ .compatible = "mediatek,mt8192-disp-ovl",
- 	  .data = (void *)MTK_DISP_OVL },
-+	{ .compatible = "mediatek,mt8195-disp-ovl",
-+	  .data = (void *)MTK_DISP_OVL },
- 	{ .compatible = "mediatek,mt8183-disp-ovl-2l",
- 	  .data = (void *)MTK_DISP_OVL_2L },
- 	{ .compatible = "mediatek,mt8192-disp-ovl-2l",
+diff --git a/drivers/gpu/drm/mediatek/mtk_plane.c b/drivers/gpu/drm/mediatek/mtk_plane.c
+index 4625deb21d40..a74b26d35985 100644
+--- a/drivers/gpu/drm/mediatek/mtk_plane.c
++++ b/drivers/gpu/drm/mediatek/mtk_plane.c
+@@ -227,6 +227,8 @@ static void mtk_plane_atomic_async_update(struct drm_plane *plane,
+ 	plane->state->src_y = new_state->src_y;
+ 	plane->state->src_h = new_state->src_h;
+ 	plane->state->src_w = new_state->src_w;
++	plane->state->dst.x1 = new_state->dst.x1;
++	plane->state->dst.y1 = new_state->dst.y1;
+ 
+ 	mtk_plane_update_new_state(new_state, new_plane_state);
+ 	swap(plane->state->fb, new_state->fb);
 
 -- 
 Git-146)
