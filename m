@@ -1,117 +1,158 @@
-Return-Path: <linux-kernel+bounces-216539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F347990A0CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:26:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C59590A0CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E180B210D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 23:26:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAAB21C20DF5
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 23:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE97173460;
-	Sun, 16 Jun 2024 23:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FA77347B;
+	Sun, 16 Jun 2024 23:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q36ZnSxo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FkUMzVGN"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2876949658;
-	Sun, 16 Jun 2024 23:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD87049658;
+	Sun, 16 Jun 2024 23:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718580357; cv=none; b=hAruoy+VPpzmeu0n2b7jIXuuey/6F2gPqoV5OgEKlE2L3+fao97ITN3UztoFpquBnYhIlcf5VoDUZyHB5PkTpn+5Qctm7ZsMhXZssDPeo2bkwAgnvd2ypqNxdVPXnmvJs3rRr+7C4nqqwfs2Oi2D+36gg7o90+f2yyYrXJ9bfpM=
+	t=1718580531; cv=none; b=AUn0TJKzl3EXV4Im+irWvjWAMlwYHxckCtWbBHLnXZp2fDF5kRhvGKWEmFxj4mqBGFsA1dSCPp+zxaUxtgRrY+1bEHbi/qTD86ITt1/+C0h9zvXnrv+nYJ+GKbT7MJD7bfv+JNSBG3BdOetWJQ4JLlqURM2Svm0yWFtLmmVqbWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718580357; c=relaxed/simple;
-	bh=a7pkhSX/Pw7+Pms73pM4XNmLMG8g4TIhDylfzJ6SZ+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HwmxjPo3LYXqjoUvBF5pGMDI74lTWRqKF860SUA+cQy+Hf3VJrY9MH4QGpH4v0vwSAwHwBS9F53nBbyfqxVhMzhfbD+KlxMBvLshZKDit5NcWU569Tq2FkKrEBMr6rbxHyyXkItvkf0SanI94LB61IuKkNCijcKvXxmzHRE0uQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q36ZnSxo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6260C2BBFC;
-	Sun, 16 Jun 2024 23:25:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718580356;
-	bh=a7pkhSX/Pw7+Pms73pM4XNmLMG8g4TIhDylfzJ6SZ+M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q36ZnSxo2yP7B4oVqcKCNAAXDmGC8l5sS6cI1gkjp/kYzBrd9blTHDdXwf+7nc3ui
-	 Kpmn2a2cgTWMCVHdewSZZKg2ie39b/rgUfpoId3UFdaC2KSLrTREycinAy4cVdCNiv
-	 Q0ZaCZPt76lrqEQCTIJonYj72hdqCHjDz0I4MmPPClmduDRFsxbdMgrV6utS5FWjrH
-	 CA3o07y6XgzCqxCzizeBHj1hH3oundnHf5nGMjniJzhNPjOK5jQipdBqbY8E+pQ5AL
-	 N0POCkPo+Gt9Pj/k+ojGFfhS+hcOvIKsz2RIzB7mx0GAMCsv+w3/HpsE04kwx8c4Tg
-	 kIwBM8nG5v/Tw==
-Message-ID: <dfb741e5-2fe6-4b36-b1ab-55c3c33032d0@kernel.org>
-Date: Mon, 17 Jun 2024 08:25:54 +0900
+	s=arc-20240116; t=1718580531; c=relaxed/simple;
+	bh=K4SRz8AN8PSNor91S1LWTb8PxQaZfZ2ohDKGnTMyjRU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m0L6kbwsZ7dtewXGcjZHnTF0pwizMC4E8H5REqYERTRXYHlfbvWheU7CZk7Nk550z2dwyRXKPUACHTDGZ7YplWqrgM4MxsSjhMW5lJSA5tEbQ4b/XuV44cfCW1MWMTqTVva+ZHdiDU+1YaCuaLX67sPA30vnrWRJLDtChei3xSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FkUMzVGN; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E2AD1A9A;
+	Mon, 17 Jun 2024 01:28:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718580512;
+	bh=K4SRz8AN8PSNor91S1LWTb8PxQaZfZ2ohDKGnTMyjRU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FkUMzVGNO0BIfOA6u59Vv9KjqBpZytfcGyeWFxEUyFNMFT1irRhPc/KIDsXeJxZ76
+	 PGMeY/u2LV6EM/nn84bST2xJXB/MeAOa25jkFIFaeINU3LtW0CTcvBj5e8wMx+mOa0
+	 MdVfXXhHW6nBhjo+IZ1kwb0wqGctT0sXCwfWCq+o=
+Date: Mon, 17 Jun 2024 02:28:27 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	HungNien Chen <hn.chen@sunplusit.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Tomasz Figa <tfiga@chromium.org>
+Subject: Re: [PATCH 1/2] media: uvcvideo: Fix hw timestamp handling for slow
+ FPS
+Message-ID: <20240616232827.GI4782@pendragon.ideasonboard.com>
+References: <20240610-hwtimestamp-followup-v1-0-f9eaed7be7f0@chromium.org>
+ <20240610-hwtimestamp-followup-v1-1-f9eaed7be7f0@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/4] ata: libata-scsi: Report valid sense data for ATA
- PT if present
-To: Igor Pylypiv <ipylypiv@google.com>, Niklas Cassel <cassel@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>, Hannes Reinecke <hare@suse.de>,
- linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240614191835.3056153-1-ipylypiv@google.com>
- <20240614191835.3056153-4-ipylypiv@google.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240614191835.3056153-4-ipylypiv@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240610-hwtimestamp-followup-v1-1-f9eaed7be7f0@chromium.org>
 
-On 6/15/24 04:18, Igor Pylypiv wrote:
-> Do not generate sense data from ATA status/error registers
-> if valid sense data is already present.
+Hi Ricardo,
 
-This kind of contradicts what you said in patch 2... So I am really confused now.
-Though this patch actually looks good to me, modulo the comment below.
-But shouldn't this be squashed with patch 2 ?
+Thank you for the patch.
 
+On Mon, Jun 10, 2024 at 07:17:48PM +0000, Ricardo Ribalda wrote:
+> In UVC 1.5 we get a single clock value per frame. With the current
+> buffer size of 32, FPS slowers than 32 might roll-over twice.
 > 
-> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> The current code cannot handle two roll-over and provide invalid
+> timestamps.
+> 
+> Revome all the samples from the circular buffer that are more than two
+> rollovers old, so the algorithm always provides good timestamps.
+> 
+> Note that we are removing values that are more than one second old,
+> which means that there is enough distance between the two points that
+> we use for the interpolation to provide good values.
+> 
+> Tested-by: HungNien Chen <hn.chen@sunplusit.com>
+> Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 > ---
->  drivers/ata/libata-scsi.c | 17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
+>  drivers/media/usb/uvc/uvc_video.c | 23 +++++++++++++++++++++++
+>  drivers/media/usb/uvc/uvcvideo.h  |  1 +
+>  2 files changed, 24 insertions(+)
 > 
-> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> index 79e8103ef3a9..4bfe47e7d266 100644
-> --- a/drivers/ata/libata-scsi.c
-> +++ b/drivers/ata/libata-scsi.c
-> @@ -858,12 +858,17 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
->  	unsigned char *desc = sb + 8;
->  	u8 sense_key, asc, ascq;
+> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> index 76a375fe47dc..869876afdcce 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -471,8 +471,30 @@ static void uvc_video_clock_add_sample(struct uvc_clock *clock,
+>  {
+>  	unsigned long flags;
 >  
-> -	/*
-> -	 * Use ata_to_sense_error() to map status register bits
-> -	 * onto sense key, asc & ascq.
-> -	 */
-> -	if (qc->err_mask ||
-> -	    tf->status & (ATA_BUSY | ATA_DF | ATA_ERR | ATA_DRQ)) {
-> +	if (qc->flags & ATA_QCFLAG_SENSE_VALID) {
+> +	/*
+> +	 * If we write new data on the position where we had the last
+> +	 * overflow, remove the overflow pointer. There is no SOF overflow
+> +	 * in the whole circular buffer.
+> +	 */
+> +	if (clock->head == clock->last_sof_overflow)
+> +		clock->last_sof_overflow = -1;
+> +
+>  	spin_lock_irqsave(&clock->lock, flags);
+>  
+> +	/* Handle SOF overflows. */
+> +	if (clock->count > 0 && clock->last_sof > sample->dev_sof) {
 > +		/*
-> +		 * Do not generate sense data from ATA status/error
-> +		 * registers if valid sense data is already present.
+> +		 * Remove data from the circular buffer that is older than the
+> +		 * last SOF overflow. We only support one SOF overflow per
+> +		 * circular buffer.
 > +		 */
-
-The empty "if" here is really horrible. Please revert the condition and add it
-as a "&&" in the below if.
-
-> +	} else if (qc->err_mask ||
-> +		   tf->status & (ATA_BUSY | ATA_DF | ATA_ERR | ATA_DRQ)) {
-> +		/*
-> +		 * Use ata_to_sense_error() to map status register bits
-> +		 * onto sense key, asc & ascq.
-> +		 */
->  		ata_to_sense_error(qc->ap->print_id, tf->status, tf->error,
->  				   &sense_key, &asc, &ascq);
->  		ata_scsi_set_sense(qc->dev, cmd, sense_key, asc, ascq);
+> +		if (clock->last_sof_overflow != -1)
+> +			clock->count = (clock->head - clock->last_sof_overflow
+> +					+ clock->size) % clock->size;
+> +		clock->last_sof_overflow = clock->head;
+> +	}
+> +
+> +	/* Add sample. */
+>  	memcpy(&clock->samples[clock->head], sample, sizeof(*sample));
+>  	clock->head = (clock->head + 1) % clock->size;
+>  	clock->count = min(clock->count + 1, clock->size);
+> @@ -605,6 +627,7 @@ static void uvc_video_clock_reset(struct uvc_clock *clock)
+>  	clock->head = 0;
+>  	clock->count = 0;
+>  	clock->last_sof = -1;
+> +	clock->last_sof_overflow = -1;
+>  	clock->sof_offset = -1;
+>  }
+>  
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index e5b12717016f..f21207debd54 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -501,6 +501,7 @@ struct uvc_streaming {
+>  		unsigned int head;
+>  		unsigned int count;
+>  		unsigned int size;
+> +		unsigned int last_sof_overflow;
+>  
+>  		u16 last_sof;
+>  		u16 sof_offset;
+> 
 
 -- 
-Damien Le Moal
-Western Digital Research
+Regards,
 
+Laurent Pinchart
 
