@@ -1,124 +1,84 @@
-Return-Path: <linux-kernel+bounces-216217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 732AB909CCF
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:40:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32481909CD0
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B401C208CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:40:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEEA11F214DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA5F181D03;
-	Sun, 16 Jun 2024 09:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mg5PHFol"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD4E14AB8;
-	Sun, 16 Jun 2024 09:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8140E181D03;
+	Sun, 16 Jun 2024 09:41:07 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 9D59514AB8
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 09:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718530793; cv=none; b=jfoz2v/X6IuWM/zPzXCFllkS8GYkptXJ8mfrMoYXgdidap1Dls+kjCAW1OHglWOBJId+mUGkSEOxTv0b5JClmbCznQnb+nYT0e3ZXmIFHPowVUQxnL8sskuT6EBeleX3kHa8C2tyj4iXYcDGdh5RGMKIBw5KgPXs1LZ8owStxZ0=
+	t=1718530867; cv=none; b=ObdZnhSBnwZLbs6YPxxXoa5ZGHt4cNn25O/lUajMUD5uwF3AGlGy5pmxrlfNbkOHLN9qcrD4KSGdfib5evL/Yh4DU6IszE/ObZ8aLubgdxaEp7KoPvu989cyPGeUfTOl8tRsu5+TgBS7WsdY0eRHVe/96CPCbV9POHYVPIJulEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718530793; c=relaxed/simple;
-	bh=uWXgTRFYGMtbo6aA0cLiFCto7KhwUVK/QLo1YhFqVDw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sMhD6/usGQpY/fm4FDW5JIQkOo3l1hp8rAauZgywDZIZ8XeYrBq1QW468XRKlADK+dqkSvoShSE4yaEXS37eepBjhl0pO/41TtDXjygcVZgMY1VEshXV9ulkOEmU2tEcxVEdLto4UhSzn4ngwC3sZBzACYQ2NdBrz33jZWiG5CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mg5PHFol; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70539C4AF1C;
-	Sun, 16 Jun 2024 09:39:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718530792;
-	bh=uWXgTRFYGMtbo6aA0cLiFCto7KhwUVK/QLo1YhFqVDw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Mg5PHFolQu/RQ11aPODW4CvKyxlmTo0qrAtG9NmeyxdcpIASrGC8pdtlRUzO8tVyD
-	 dJHD2axGKHrcnskYhMtlBdEnQCcXzyQ53Gm5gRK1RwEg5u6C6xhw36xdz7Z/XBbbxi
-	 E7A/BuYDmP2H/3Rv2BAvzWQueaoav+DerOakH6MGaL3ztsySGFl2eiOa9JXJCWFWlU
-	 RlqjcpsaOTtm3mvHZrWS/V0N+m/amlrPkA0zHPnnpqvQ9E9ETlYCjwRcLbv+huSiR4
-	 o2Kr+i4vLMBPiZN+2Ty0Am8Ok6OUgPrBCpyPp5ctmThmZrAOHXz1iGGpqd85BCT016
-	 7SXrIUiy6AKsA==
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ebeefb9a7fso46658781fa.0;
-        Sun, 16 Jun 2024 02:39:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVCNgDph/DZR23cxNntPzeIMAt5FjXWLy6zseiRRQZtW7m3sogP8DF/fvvJtL9JHlmZrE9qMu3lQgEirxuZFbV7drMqPjaIQ1cvcXv5
-X-Gm-Message-State: AOJu0YwTkHWXEh+t1RU/Ct3AdMxqY+mY7QWlYm9sozz/kC+Cmk6TYFWw
-	HAi31XPYWtOzMrqUvHfdR9r39oberDiva66y8ASjzK/eT6yaKf9WspHWgNAwnbC2Zcva95TlApl
-	txZtlVSoT2/fhiiE2QkF5BiyCYLI=
-X-Google-Smtp-Source: AGHT+IG6wBxdkDXxiLw+43GSUyefk7fCsnPd3qWG9KRDR7zXhY9l1ymNB/DkCjW3orom3Hi/P0aRVXE5TUanMmXFlXI=
-X-Received: by 2002:a05:6512:4cc:b0:52c:8a1c:74c with SMTP id
- 2adb3069b0e04-52ca6e9142fmr4582063e87.46.1718530791080; Sun, 16 Jun 2024
- 02:39:51 -0700 (PDT)
+	s=arc-20240116; t=1718530867; c=relaxed/simple;
+	bh=oCq+SJ4lWxy4rpGjjqT+JfsguC2fKR1voEqDbeeCREs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X4cVZjXHOu7m6FjMB9XwjwKDTC5uw+/3nPfDsFaZzpLvzmmcLeyBqK2+Px69RHukBe8l1IKK3x5lvj12msMFqEbbAbrIbwB0KF2XDlEp267kOxH4lYBPHJVvT5GldcwltqRwH4rjh39tzwaKyfpbaCJZKGR7lS8r6iZjD6fbhTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [103.163.180.2])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPA id 1782360108551;
+	Sun, 16 Jun 2024 17:40:39 +0800 (CST)
+X-MD-Sfrom: youwan@nfschina.com
+X-MD-SrcIP: 103.163.180.2
+From: Youwan Wang <youwan@nfschina.com>
+To: lpieralisi@kernel.org
+Cc: guohanjun@huawei.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	lenb@kernel.org,
+	Youwan Wang <youwan@nfschina.com>
+Subject: [PATCH] ACPI /amba: Fix meaningless code for amba_register_dummy_clk()
+Date: Sun, 16 Jun 2024 17:40:30 +0800
+Message-Id: <20240616094030.239860-1-youwan@nfschina.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <9811ea10d647ff687e140976ec50c5ebbe5ecbe5.camel@mastodonlabs.com>
-In-Reply-To: <9811ea10d647ff687e140976ec50c5ebbe5ecbe5.camel@mastodonlabs.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 16 Jun 2024 18:39:14 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATR8NpxaBoJyPns__=pn8G_-8uOJZuB989R5q=7afO7Dw@mail.gmail.com>
-Message-ID: <CAK7LNATR8NpxaBoJyPns__=pn8G_-8uOJZuB989R5q=7afO7Dw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] kbuild: Fix build target deb-pkg: ln: failed to
- create hard link
-To: thayne@mastodonlabs.com
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jun 16, 2024 at 2:34=E2=80=AFPM Thayne Harbaugh <thayne@mastodonlab=
-s.com> wrote:
->
-> From: Thayne Harbaugh <thayne@mastodonlabs.com>
->
-> The make deb-pkg target calls debian-orig which attempts to either
-> hard link the source .tar to the build-output location or copy the
-> source .tar to the build-output location.  The test to determine
-> whether to ln or cp is incorrectly expanded by Make and consequently
-> always attempts to ln the source .tar.  This fix corrects the escaping
-> of '$' so that the test is expanded by the shell rather than by Make
-> and appropriately selects between ln and cp.
->
-> Signed-off-by: Thayne Harbaugh <thayne@mastodonlabs.com>
+Defining `amba_dummy_clk` as static is meaningless.
 
+Theconditional check `if (amba_dummy_clk)` is intended to
+determine whether the clock has already been registered.
+However,in this function, the variable `amba_dummy_clk`
+will always be NULL.
 
-Applied with
-Fixes: b44aa8c96e9e ("kbuild: deb-pkg: make .orig tarball a hard link
-if possible")
+Signed-off-by: Youwan Wang <youwan@nfschina.com>
+---
+ drivers/acpi/arm64/amba.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Thanks!
+diff --git a/drivers/acpi/arm64/amba.c b/drivers/acpi/arm64/amba.c
+index 60be8ee1dbdc..ef438417cc80 100644
+--- a/drivers/acpi/arm64/amba.c
++++ b/drivers/acpi/arm64/amba.c
+@@ -35,11 +35,7 @@ static const struct acpi_device_id amba_id_list[] = {
+ 
+ static void amba_register_dummy_clk(void)
+ {
+-	static struct clk *amba_dummy_clk;
+-
+-	/* If clock already registered */
+-	if (amba_dummy_clk)
+-		return;
++	struct clk *amba_dummy_clk;
+ 
+ 	amba_dummy_clk = clk_register_fixed_rate(NULL, "apb_pclk", NULL, 0, 0);
+ 	clk_register_clkdev(amba_dummy_clk, "apb_pclk", NULL);
+-- 
+2.25.1
 
-> ---
->  scripts/Makefile.package | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/Makefile.package b/scripts/Makefile.package
-> index 38653f3e8108..bf016af8bf8a 100644
-> --- a/scripts/Makefile.package
-> +++ b/scripts/Makefile.package
-> @@ -103,7 +103,7 @@ debian-orig: private version =3D $(shell dpkg-parsech=
-angelog -S Version | sed 's/-
->  debian-orig: private orig-name =3D $(source)_$(version).orig.tar$(debian=
--orig-suffix)
->  debian-orig: mkdebian-opts =3D --need-source
->  debian-orig: linux.tar$(debian-orig-suffix) debian
-> -       $(Q)if [ "$(df  --output=3Dtarget .. 2>/dev/null)" =3D "$(df --ou=
-tput=3Dtarget $< 2>/dev/null)" ]; then \
-> +       $(Q)if [ "$$(df  --output=3Dtarget .. 2>/dev/null)" =3D "$$(df --=
-output=3Dtarget $< 2>/dev/null)" ]; then \
->                 ln -f $< ../$(orig-name); \
->         else \
->                 cp $< ../$(orig-name); \
-> --
-> 2.43.0
->
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
