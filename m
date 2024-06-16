@@ -1,143 +1,152 @@
-Return-Path: <linux-kernel+bounces-216404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30413909EE6
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:54:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 911D5909EED
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 20:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 426571C2212D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C37A283F0B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD303BBD7;
-	Sun, 16 Jun 2024 17:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA0944C77;
+	Sun, 16 Jun 2024 17:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="xzeNotwa";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jmP069pS"
-Received: from wfout3-smtp.messagingengine.com (wfout3-smtp.messagingengine.com [64.147.123.146])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="waqRj/iO"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BBF17C98;
-	Sun, 16 Jun 2024 17:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604592940D
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 17:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718560475; cv=none; b=C3DXqE4ojy9+h4LXdyNpQSp+ZzsyGL5t2JDNsHTmRq0LWYIZTHCKfhyED01PrLlyth3ZWv+rg8JMFV/TX9flumogfyfK2AqZLx/aQalWDKq/4CGzsCMYduiF0C7qR25znai/wPoXer/Z+xgb3Cw+vCiJzGyjx9gbr7zFMh+K16Q=
+	t=1718560789; cv=none; b=cllhMmbOHjgcb3lqEkt0nyQNGbOkgy8PUf8mc0ihWZYZgkrF2exFRci4tHwaMvfXNU86FhhK1tp3K4TxwJt9d08GoHGifOEEDGkCtz3JTn5MwMANJ8UDQj6fkJfIgv2iijpRmP/V83DnnvbAVECAG4VyLz74Kgi6KrOkDgP0D1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718560475; c=relaxed/simple;
-	bh=E/Cx5Rf8a6UHn1OwmSeZLEn9AOP4WmqErj2Q0myvfb8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LnTix58m6OCdKDTPSw0vUQTB8ytlzJqF8dKhfRO+BI9JZlHiJOquXHS2vmnYJ9Y6ioBoMZEvTz3/s64nazTNgtuwXCfL7/huXtgDQGoWF+cI92aPSjSqTMG/a26o2MBda4HNTCvRzchtM82+I6nQWnNkM8AgOlfEKvlB5/oywEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=xzeNotwa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jmP069pS; arc=none smtp.client-ip=64.147.123.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfout.west.internal (Postfix) with ESMTP id 40D341C0008C;
-	Sun, 16 Jun 2024 13:54:32 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Sun, 16 Jun 2024 13:54:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm2; t=1718560471; x=1718646871; bh=z/
-	31P7zfEbv+0pHgdaZZDTGL+oEAX1p7zwNAKWVmPJM=; b=xzeNotwajivtWE9DHm
-	uh8JTDUJLOzr07mFxBdMTqg6iFqW4XPiB0dgqtyhejlWXeAVNB9i410a+wOcm3xD
-	9gBQFahDrUxrEOkhQG8i896WtMjEWggneAZCG6amxf+vLPUp9078jQeOfVnPGign
-	mYboEkz6qM9Oa6yvLK8hnTM2qjIxLUc2PEgytzdP2c1r7aHnrnM74/eAX3BPi8qC
-	S3fR4u6vY6iSzx+afvT/4X6HqNOTCn+oimJ80w80VlVVSLcxn9pKUfQpWIkaLGJM
-	J0RadYqUOIARfBMG0LHwd7rbNFt4FVLOp34Ed4G9AbUVPm5H8ZTepLJye5krLGUM
-	DnqQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm1; t=1718560471; x=1718646871; bh=z/31P7zfEbv+0
-	pHgdaZZDTGL+oEAX1p7zwNAKWVmPJM=; b=jmP069pSES3RArlYyStGvkM2wZGPx
-	8DlKamUgR14gvvPMR98L89pA2+B75HU6OgFNdX/ht142PtWK22i1e96OroPE1WxF
-	HysbkwQOiiWnFNDlaauolx2qoybAMMZ115TUL4tSonMkoQUOnOhsJWkd0w30Kt8f
-	GH46it8mWyOzwosceEcYdw5r0oalNH0DzvHtLxlqIyVnrSZOHlstpAO967GyJcet
-	2J5X/ZV6vurg0OXbpFiz72+W4Z9t5Ktb6zFEhsPO8jNk9z19bvF0SNxrnSmF16fv
-	igG8NMs41gaWA72cAI7X0v+JcQTx79V5CWVXrj45moJzO8WDkR9BhnKRw==
-X-ME-Sender: <xms:1yZvZhlt7hJUkqUHIjt4tbDLUMEfmNRWh5Q_lSYgPSC5PtTuFIMK9w>
-    <xme:1yZvZs0Fi86UMTgJ0hM9LTRlImi7b9-YD1OrqskpqyplEZ981fguMNjp5IoJeXDHu
-    KfNxwcfW6zeokONnMU>
-X-ME-Received: <xmr:1yZvZnr-w-591EQEBFR5735mJnAhTnrUEP1eY4vRDXS0GaWb016sYrs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvfedguddukecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhfffugggtgffkvfevofesthekredtredtjeenucfhrhhomheplfhirgig
-    uhhnucgjrghnghcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqeenuc
-    ggtffrrghtthgvrhhnpeekhedtteekfeduieehtdejueeiueehgedugeefudekgfeutdev
-    udektdehhfegueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:1yZvZhlicGmiGVTp6jX-sCM4VBEbN829dH7S3U1Zr1xzUIDOcjwrNw>
-    <xmx:1yZvZv3-SzaCQj5VRef-3BQxhxB4ji-TaFbPeV7wRWwCC9cB_hFUIQ>
-    <xmx:1yZvZgt8lV3-kJ08mgg8swnKHN9UHVgACJzqO75KAeO_XD6rEhUOVA>
-    <xmx:1yZvZjVE2XydQJPhKxk2U7FjDP5QUFeDJfNWyTvNH-UHq4zyYrctkg>
-    <xmx:1yZvZv-HRmXtyv86TC8FnxkypKlmbWopktqIQQ4e8tUnyF3hRQzBvN45>
-Feedback-ID: ifd894703:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 16 Jun 2024 13:54:30 -0400 (EDT)
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Date: Sun, 16 Jun 2024 18:54:24 +0100
-Subject: [PATCH fixes] MIPS: ip30: ip30-console: Add missing include
+	s=arc-20240116; t=1718560789; c=relaxed/simple;
+	bh=GNPznmVFlPR3RsVpPl6vOlMLYCC+mkWvMEha016EnDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGDInD9izvi8qilO1qhbCC7NLrV1cak7QnZcTUpT2SWSpQ1+496rOdjX9CM3NkjOEPGmwOv06NR9IYQeQbLK650ZzhU+tMyoCSkq4My4IQurA9cD48bDuMazb6BgehdfUwRuohpw4wK7J7/eYy+1pbkjb/gs+Wqn3NTWlIFuXcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=waqRj/iO; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: boqun.feng@gmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718560784;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GNPznmVFlPR3RsVpPl6vOlMLYCC+mkWvMEha016EnDw=;
+	b=waqRj/iOWdlIknFWuHS+bl2iwJKaGwkmSmoER3qnBi2cU6jyj6pim9RBPZJTsvIFoN+Ii6
+	bfnSzxPd9ZMrsReZBavtTbyBc9AMXcz6bj9lBRNnNmrPub+/3CcLQWi3cLSuriwpl8yCNY
+	JY0b35ukzm8v8Rr5bUIJhdXyFlowHEA=
+X-Envelope-To: miguel.ojeda.sandonis@gmail.com
+X-Envelope-To: benno.lossin@proton.me
+X-Envelope-To: gary@garyguo.net
+X-Envelope-To: rust-for-linux@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-arch@vger.kernel.org
+X-Envelope-To: llvm@lists.linux.dev
+X-Envelope-To: ojeda@kernel.org
+X-Envelope-To: alex.gaynor@gmail.com
+X-Envelope-To: wedsonaf@gmail.com
+X-Envelope-To: bjorn3_gh@protonmail.com
+X-Envelope-To: a.hindborg@samsung.com
+X-Envelope-To: aliceryhl@google.com
+X-Envelope-To: stern@rowland.harvard.edu
+X-Envelope-To: parri.andrea@gmail.com
+X-Envelope-To: will@kernel.org
+X-Envelope-To: peterz@infradead.org
+X-Envelope-To: npiggin@gmail.com
+X-Envelope-To: dhowells@redhat.com
+X-Envelope-To: j.alglave@ucl.ac.uk
+X-Envelope-To: luc.maranget@inria.fr
+X-Envelope-To: paulmck@kernel.org
+X-Envelope-To: akiyks@gmail.com
+X-Envelope-To: dlustig@nvidia.com
+X-Envelope-To: joel@joelfernandes.org
+X-Envelope-To: nathan@kernel.org
+X-Envelope-To: ndesaulniers@google.com
+X-Envelope-To: kent.overstreet@gmail.com
+X-Envelope-To: gregkh@linuxfoundation.org
+X-Envelope-To: elver@google.com
+X-Envelope-To: mark.rutland@arm.com
+X-Envelope-To: tglx@linutronix.de
+X-Envelope-To: mingo@redhat.com
+X-Envelope-To: bp@alien8.de
+X-Envelope-To: dave.hansen@linux.intel.com
+X-Envelope-To: x86@kernel.org
+X-Envelope-To: hpa@zytor.com
+X-Envelope-To: catalin.marinas@arm.com
+X-Envelope-To: torvalds@linux-foundation.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: tmgross@umich.edu
+X-Envelope-To: dakr@redhat.com
+Date: Sun, 16 Jun 2024 13:59:37 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Gary Guo <gary@garyguo.net>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Alan Stern <stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>, 
+	Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>, 
+	Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, 
+	Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	kent.overstreet@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	elver@google.com, Mark Rutland <mark.rutland@arm.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, 
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>, 
+	dakr@redhat.com
+Subject: Re: [RFC 2/2] rust: sync: Add atomic support
+Message-ID: <reazaqddtuh42zpz5abgo6z3er5qre6qpbowqrwmrwsj76z32p@6xgeshmg3hkg>
+References: <c1c45a2e-afdf-40a6-9f44-142752368d5e@proton.me>
+ <ZmzvVr7lYfR6Dpca@Boquns-Mac-mini.home>
+ <b692945b-8fa4-4918-93f6-783fbcde375c@proton.me>
+ <Zm4R0XwTpsASpBhx@Boquns-Mac-mini.home>
+ <5lwylk6fhlvqfgxmt7xdoxdrhtvmplo5kazpdbt3kxpnlltxit@v5xbpiv3dnqq>
+ <Zm7zvt7cNT2YpiIi@Boquns-Mac-mini.home>
+ <CANiq72mz=OzzHJJyOPeWcxEtppP+v0KUq63_u5NB7-R84avaPg@mail.gmail.com>
+ <4pez6kilgykarr5qeutgaw3pvkxf2nmh4lzuftadshmkke7d3q@3jfgvjveqdbz>
+ <Zm8KoUNQ4v7UvVOE@Boquns-Mac-mini.home>
+ <Zm8hG58nuE3HrnyS@Boquns-Mac-mini.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240616-ip30-buildfix-v1-1-0ab2b9aec9f5@flygoat.com>
-X-B4-Tracking: v=1; b=H4sIAM8mb2YC/yWMUQqAIBAFryL7naBbLNFVoo/KrRbCRCmC8O5J/
- c0MvPdA4iicoFMPRL4kyeGL2ErBvI1+ZS2uOKDBxpAlLaE2ejpld4vcGo0jXNCRbQnKJkQu+fv
- r4ach5xehH8KHZgAAAA==
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1005;
- i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
- bh=E/Cx5Rf8a6UHn1OwmSeZLEn9AOP4WmqErj2Q0myvfb8=;
- b=owGbwMvMwCXmXMhTe71c8zDjabUkhrR8tWs65n8f9ST1bFS3f2KUYsrGfe1LpbD7/mN3nZX3f
- PZyZP3XUcrCIMbFICumyBIioNS3ofHigusPsv7AzGFlAhnCwMUpABPZx8rIcOVN6jpL1iiFzmDh
- a0eYbuftZo/aMjv5WoR8nJcfg5v8GkaG9Upp/XpHtq1cFRbYeVV6ysfdG65/94jbsu/K0rRJGrI
- z+AA=
-X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
- fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zm8hG58nuE3HrnyS@Boquns-Mac-mini.home>
+X-Migadu-Flow: FLOW_OUT
 
-Include linux/processor.h to fix build error:
+On Sun, Jun 16, 2024 at 10:30:03AM -0700, Boqun Feng wrote:
+> I think the disagreement here is not non-generic atomic vs generic
+> atomic, it's pure generic atomic vs. AtomicI{32,64} etc + generic
+> atomic. I said multiple times that I'm OK with generic atomics if there
+> are real users, just I'm not sure it's something we want to do right now
+> (or we have enough information to go fully on that direction). And I
+> think it's fine to have non-generic atomic and generic atomic coexist.
 
-arch/mips/sgi-ip30/ip30-console.c: In function ‘prom_putchar’:
-arch/mips/sgi-ip30/ip30-console.c:21:17: error: implicit declaration of function ‘cpu_relax’ [-Werror=implicit-function-declaration]
-   21 |                 cpu_relax();
+Well, having the generic interface from the start does matter, that's
+what we (myself included) want to code to.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
- arch/mips/sgi-ip30/ip30-console.c | 1 +
- 1 file changed, 1 insertion(+)
+No need to overcomplicate it, just
+Atomic<u8>
+Atomic<u16>
 
-diff --git a/arch/mips/sgi-ip30/ip30-console.c b/arch/mips/sgi-ip30/ip30-console.c
-index 7c6dcf6e73f7..a5f10097b985 100644
---- a/arch/mips/sgi-ip30/ip30-console.c
-+++ b/arch/mips/sgi-ip30/ip30-console.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- #include <linux/io.h>
-+#include <linux/processor.h>
- 
- #include <asm/sn/ioc3.h>
- #include <asm/setup.h>
+etc...
 
----
-base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
-change-id: 20240616-ip30-buildfix-20d62f2d6186
-
-Best regards,
--- 
-Jiaxun Yang <jiaxun.yang@flygoat.com>
-
+As long as that's available, the internal implementation shouldn't have
+to change.
 
