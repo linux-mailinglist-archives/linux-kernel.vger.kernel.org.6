@@ -1,340 +1,211 @@
-Return-Path: <linux-kernel+bounces-216220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11902909CD4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:47:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E2D1909CD8
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 151F71C20A78
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:47:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A670B1C20B3C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5860118413D;
-	Sun, 16 Jun 2024 09:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EDB186288;
+	Sun, 16 Jun 2024 09:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gb0w4uow"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="yDLjLqOV"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398CB181BAC
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 09:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E7016D9B5
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 09:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718531246; cv=none; b=VXCLeYpxw/70kNCr36zUPV0psAL612Tn1XnsECkjoyazsePe8gs7eS5yQ20wONf9d2oRKCf1x1ehtANbU/HA2xzpJYXkrMWl6C7dsKiCjak1KYXk63tbuZSuI+jfwRoMsJ5RY9iHiCQ7sxfmEFYrr9Z/ICJXKPS7lv6ak1Yh26U=
+	t=1718531280; cv=none; b=NntfR5wi4PwkwpCnm97/tiNdWRHrYd/HxgCtpHnBS3m3qV0Rnj0lp0LppvwNXV9x0yKa5mke20FvV5dU5J+SivuNCxzg+VsntZWAWoQQG+2DNwFZyCpEMHHZ525etd0uETa0aWQELhoz/MBNB2+IDJsQRkX2DXIvAxHHbQh65zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718531246; c=relaxed/simple;
-	bh=Rol9GgNlsITas4SWbXbLwpkDf5htEtZtG+fTBdMpv0U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jXOGpXJhPvegtmbLi0+tAdiWUpWlsSxugk/Gm0TlFYeyV6v73Yst7ZCTB9Kh9XJZ0hJUophdQMC1NDguho+3aUTVGLet9lx1XICWwWOXFwLDyoMILCvixNOp8BknuZBP/tRh+qsPxg2tf8gbn0dy8aerNQPEHrfjNx6QQHfVpCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gb0w4uow; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718531243;
+	s=arc-20240116; t=1718531280; c=relaxed/simple;
+	bh=U/8NZyO/ejgieYgN7cns+EsSBMKQVOy6mJpLWv03dTo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iw2+KFUPGa0JRPlVJ1kOC0XjCmr8yBXj83Dx+a3UNqRN0fzxOudVzmWDXH699nUlx/wMLj9KbKCgjuyztHAY0LsdPcDzjD1C0buAwxRGaAFSd1NZFsBzth8Pm3+ovLpwNE5iwdQctPzDSp8fsMIfFojxjvNqzM6gKIUchC80g1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=yDLjLqOV; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Envelope-To: ezequiel@vanguardiasur.com.ar
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1718531276;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=srnLF9ysHPMfgdFHSrTBUGTBWZjX5ovwIz2l9bhJ8e8=;
-	b=Gb0w4uow/WTnhq+bKVP7WtP2mmk112RLOe9+rOwc0avapwQ0kbg7s4YeJ0QB6ucthDeBtE
-	mvpxMFr2T8r2t73lZ9ep5NI0lVaaMIcvyFj0XCcHsgzFT2fJRExSWjrlei+O/sMIjpCKsR
-	fME759rZG/0bcCRxaQPeodx8sIwQUBo=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-607-7r4_8zI6OECAYaorInQMzQ-1; Sun, 16 Jun 2024 05:47:21 -0400
-X-MC-Unique: 7r4_8zI6OECAYaorInQMzQ-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-57a460247f3so2079527a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 02:47:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718531240; x=1719136040;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=srnLF9ysHPMfgdFHSrTBUGTBWZjX5ovwIz2l9bhJ8e8=;
-        b=VKjJd0eKXfA6vniWVaPGPiSfWVGlCGUOQRxXmWhsez+7DJ10EdtDsJh69tBToRNT2i
-         ZmXXeCoKa4ffly6z9JRjUFAwcaTtDcNy0aMSsmd4dZ05vN5BpsmKNWqJba86MNxYaAoL
-         UL76SBDh9LBUlUUz46XZCU43J2VcdS5bqgmQJTP3Pvis6jndmyGuJUcG7TzjE4IecXaT
-         sorFMDMBptFH+cFMG8gPIgp668t+wO1iM1zaQe0O0ZCLvlKOQF/5iqn3nfvsRo3CEZpD
-         NOvGq1RLdWRaJSC/Q1ofhQeXf4a8iC0FF3vZ4dNzQGwMrTcNyXAfetAqqaiJtgz57SZ7
-         AycA==
-X-Gm-Message-State: AOJu0YwKqSLtIbl5rQwngksqka1PpI8j+hDbVmHG60SfgNaQMTl4crXv
-	5YnnpBleIw2+8LqN5B3Y3qBL4dDWU2fsv0PbejGuFnxO8lkXNzmlqS+oZm480r4V5f3j8SlvZVS
-	InjbDdgyeZ43oqckv8VLQzPJxMKBMahtaxy36xmZV0eQovAfHWhO1hMuBlA9sxHrye74jxtHi
-X-Received: by 2002:a50:9557:0:b0:57c:6afc:d2a9 with SMTP id 4fb4d7f45d1cf-57cbd8f2a3emr4420992a12.26.1718531240383;
-        Sun, 16 Jun 2024 02:47:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGBbeqHFITU6vgc5Vt0CWvDzTYevbhAXkzwpGDS+dC17bkrOy3gfURzd0EjvYaE0u+N9+qASQ==
-X-Received: by 2002:a50:9557:0:b0:57c:6afc:d2a9 with SMTP id 4fb4d7f45d1cf-57cbd8f2a3emr4420973a12.26.1718531239890;
-        Sun, 16 Jun 2024 02:47:19 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cba492acfsm4405008a12.15.2024.06.16.02.47.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Jun 2024 02:47:19 -0700 (PDT)
-Message-ID: <533a5778-3d68-4b61-b4ca-e82c37d65b33@redhat.com>
-Date: Sun, 16 Jun 2024 11:47:18 +0200
+	bh=YsGDxw7euO03Xurgk7SCoMe6i8m3qHGwgfyQyq8DqHE=;
+	b=yDLjLqOV0BEutjvYcq1hJfA3ZHO0eUrH9kF7nNO3il/VF/h/bMWxWPZkG2RcqEFqPV76Uz
+	qI2qJa18CdVdYxsM6pVcVIAbep4Wly2Wmz7lkgyKuls0/EiRtvJe8AnvF38iprjQoK5Y5H
+	r8sMBQncCQYuLCRVlqW8C4o8qeh2VReRFOnBZqvAZskeZLEnS874LfH1YaO1gNS6kadDYp
+	B4XWXB1Q6VmyGZ8E0i9yDzAyzt6JWEU2/JMnM5tQM2mVJN5Bb8W4Hqjnfi5YRPWsgCOJtg
+	hGCpMuLl/tL0aa34HYB7BRA43KtSFNaqQsbi4AdWJImIha9r/WAPK0RyGTHLag==
+X-Envelope-To: mchehab@kernel.org
+X-Envelope-To: hverkuil-cisco@xs4all.nl
+X-Envelope-To: linux-rockchip@lists.infradead.org
+X-Envelope-To: jonas@kwiboo.se
+X-Envelope-To: andyshrk@163.com
+X-Envelope-To: knaerzche@gmail.com
+X-Envelope-To: nicolas.dufresne@collabora.com
+X-Envelope-To: benjamin.gaignard@collabora.com
+X-Envelope-To: sebastian.fricke@collabora.com
+X-Envelope-To: chris.obbard@collabora.com
+X-Envelope-To: linux-media@vger.kernel.org
+X-Envelope-To: linux-rockchip@lists.infradead.org
+X-Envelope-To: linux-staging@lists.linux.dev
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: jonas@kwiboo.se
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-rockchip@lists.infradead.org,
+ Jonas Karlman <jonas@kwiboo.se>, Andy Yan <andyshrk@163.com>
+Cc: Alex Bee <knaerzche@gmail.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Christopher Obbard <chris.obbard@collabora.com>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>
+Subject:
+ Re: [PATCH v4 00/11] media: rkvdec: Add H.264 High 10 and 4:2:2 profile
+ support
+Date: Sun, 16 Jun 2024 11:47:43 +0200
+Message-ID: <122755518.lCnTqr06ca@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <20231105165521.3592037-1-jonas@kwiboo.se>
+References: <20231105165521.3592037-1-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] ACPI: EC: Evaluate orphan _REG under EC device
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- VitaliiT <vitaly.torshyn@gmail.com>, Armin Wolf <w_armin@gmx.de>
-References: <12466682.O9o76ZdvQC@kreacher>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <12466682.O9o76ZdvQC@kreacher>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="nextPart2306946.yOONvtlcC0";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+--nextPart2306946.yOONvtlcC0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Diederik de Haas <didi.debian@cknow.org>
+Date: Sun, 16 Jun 2024 11:47:43 +0200
+Message-ID: <122755518.lCnTqr06ca@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <20231105165521.3592037-1-jonas@kwiboo.se>
+References: <20231105165521.3592037-1-jonas@kwiboo.se>
+MIME-Version: 1.0
 
-On 6/12/24 4:15 PM, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Sunday, 5 November 2023 17:54:59 CEST Jonas Karlman wrote:
+> This is a revival of a 3 year old series [1] now that NV15/NV20/NV30 support
+> for display driver have landed in mainline tree.
 > 
-> After starting to install the EC address space handler at the ACPI
-> namespace root, if there is an "orphan" _REG method in the EC device's
-> scope, it will not be evaluated any more.  This breaks EC operation
-> regions on some systems, like Asus gu605.
+> This series adds H.264 High 10 and 4:2:2 profile support to the Rockchip
+> Video Decoder driver.
 > 
-> To address this, use a wrapper around an existing ACPICA function to
-> look for an "orphan" _REG method in the EC device scope and evaluate
-> it if present.
+> Patch 1 adds helpers for calculating plane bytesperline and sizeimage.
+> Patch 2 adds two new pixelformats for semi-planer 10-bit 4:2:0/4:2:2 YUV.
 > 
-> Fixes: 60fa6ae6e6d0 ("ACPI: EC: Install address space handler at the namespace root")
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218945
-> Reported-by: VitaliiT <vitaly.torshyn@gmail.com>
-> Tested-by: VitaliiT <vitaly.torshyn@gmail.com>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
+> Patch 3 change to use bytesperline and buffer height to configure strides.
+> Patch 4 change to use values from SPS/PPS control to configure the HW.
+> Patch 5 remove an unnecessary call to validate sps at streaming start.
 > 
-> Yes, this includes ACPICA changes that are obviously not upstream
-> and I am going to take care of pusing them to upstream, but for
-> now there is a regression to fix and it is relatively late in the
-> cycle.
+> Patch 6-10 refactor code to support filtering of CAPUTRE formats based
+> on the image format returned from a get_image_fmt ops.
 > 
-> ---
->  drivers/acpi/acpica/acevents.h |    4 +++
->  drivers/acpi/acpica/evregion.c |    6 ----
->  drivers/acpi/acpica/evxfregn.c |   54 +++++++++++++++++++++++++++++++++++++++++
->  drivers/acpi/ec.c              |    3 ++
->  include/acpi/acpixf.h          |    4 +++
->  5 files changed, 66 insertions(+), 5 deletions(-)
+> Patch 11 adds final bits to support H.264 High 10 and 4:2:2 profiles.
 > 
-> Index: linux-pm/drivers/acpi/acpica/evxfregn.c
-> ===================================================================
-> --- linux-pm.orig/drivers/acpi/acpica/evxfregn.c
-> +++ linux-pm/drivers/acpi/acpica/evxfregn.c
-> @@ -306,3 +306,57 @@ acpi_execute_reg_methods(acpi_handle dev
->  }
->  
->  ACPI_EXPORT_SYMBOL(acpi_execute_reg_methods)
-> +
-> +/*******************************************************************************
-> + *
-> + * FUNCTION:    acpi_execute_orphan_reg_method
-> + *
-> + * PARAMETERS:  device          - Handle for the device
-> + *              space_id        - The address space ID
-> + *
-> + * RETURN:      Status
-> + *
-> + * DESCRIPTION: Execute an "orphan" _REG method that appears under an ACPI
-> + *              device. This is a _REG method that has no corresponding region
-> + *              within the device's scope.
-> + *
-> + ******************************************************************************/
-> +acpi_status
-> +acpi_execute_orphan_reg_method(acpi_handle device, acpi_adr_space_type space_id)
-> +{
-> +	struct acpi_namespace_node *node;
-> +	acpi_status status;
-> +
-> +	ACPI_FUNCTION_TRACE(acpi_execute_orphan_reg_method);
-> +
-> +	/* Parameter validation */
-> +
-> +	if (!device) {
-> +		return_ACPI_STATUS(AE_BAD_PARAMETER);
-> +	}
-> +
-> +	status = acpi_ut_acquire_mutex(ACPI_MTX_NAMESPACE);
-> +	if (ACPI_FAILURE(status)) {
-> +		return_ACPI_STATUS(status);
-> +	}
-> +
-> +	/* Convert and validate the device handle */
-> +
-> +	node = acpi_ns_validate_handle(device);
-> +	if (node) {
-> +
-> +		/*
-> +		 * If an "orphan" _REG method is present in the device's scope
-> +		 * for the given address space ID, run it.
-> +		 */
-> +
-> +		acpi_ev_execute_orphan_reg_method(node, space_id);
-> +	} else {
-> +		status = AE_BAD_PARAMETER;
-> +	}
-> +
-> +	(void)acpi_ut_release_mutex(ACPI_MTX_NAMESPACE);
-> +	return_ACPI_STATUS(status);
-> +}
-> +
-> +ACPI_EXPORT_SYMBOL(acpi_execute_orphan_reg_method)
-> Index: linux-pm/include/acpi/acpixf.h
-> ===================================================================
-> --- linux-pm.orig/include/acpi/acpixf.h
-> +++ linux-pm/include/acpi/acpixf.h
-> @@ -663,6 +663,10 @@ ACPI_EXTERNAL_RETURN_STATUS(acpi_status
->  						     acpi_adr_space_type
->  						     space_id))
->  ACPI_EXTERNAL_RETURN_STATUS(acpi_status
-> +			    acpi_execute_orphan_reg_method(acpi_handle device,
-> +							   acpi_adr_space_type
-> +							   space_id))
-> +ACPI_EXTERNAL_RETURN_STATUS(acpi_status
->  			    acpi_remove_address_space_handler(acpi_handle
->  							      device,
->  							      acpi_adr_space_type
-> Index: linux-pm/drivers/acpi/acpica/acevents.h
-> ===================================================================
-> --- linux-pm.orig/drivers/acpi/acpica/acevents.h
-> +++ linux-pm/drivers/acpi/acpica/acevents.h
-> @@ -191,6 +191,10 @@ void
->  acpi_ev_execute_reg_methods(struct acpi_namespace_node *node,
->  			    acpi_adr_space_type space_id, u32 function);
->  
-> +void
-> +acpi_ev_execute_orphan_reg_method(struct acpi_namespace_node *node,
-> +				  acpi_adr_space_type space_id);
-> +
->  acpi_status
->  acpi_ev_execute_reg_method(union acpi_operand_object *region_obj, u32 function);
->  
-> Index: linux-pm/drivers/acpi/acpica/evregion.c
-> ===================================================================
-> --- linux-pm.orig/drivers/acpi/acpica/evregion.c
-> +++ linux-pm/drivers/acpi/acpica/evregion.c
-> @@ -20,10 +20,6 @@ extern u8 acpi_gbl_default_address_space
->  
->  /* Local prototypes */
->  
-> -static void
-> -acpi_ev_execute_orphan_reg_method(struct acpi_namespace_node *device_node,
-> -				  acpi_adr_space_type space_id);
-> -
->  static acpi_status
->  acpi_ev_reg_run(acpi_handle obj_handle,
->  		u32 level, void *context, void **return_value);
-> @@ -818,7 +814,7 @@ acpi_ev_reg_run(acpi_handle obj_handle,
->   *
->   ******************************************************************************/
->  
-> -static void
-> +void
->  acpi_ev_execute_orphan_reg_method(struct acpi_namespace_node *device_node,
->  				  acpi_adr_space_type space_id)
->  {
-> Index: linux-pm/drivers/acpi/ec.c
-> ===================================================================
-> --- linux-pm.orig/drivers/acpi/ec.c
-> +++ linux-pm/drivers/acpi/ec.c
-> @@ -1507,6 +1507,9 @@ static int ec_install_handlers(struct ac
->  
->  	if (call_reg && !test_bit(EC_FLAGS_EC_REG_CALLED, &ec->flags)) {
->  		acpi_execute_reg_methods(scope_handle, ACPI_ADR_SPACE_EC);
-> +		if (scope_handle != ec->handle)
-> +			acpi_execute_orphan_reg_method(ec->handle, ACPI_ADR_SPACE_EC);
-> +
->  		set_bit(EC_FLAGS_EC_REG_CALLED, &ec->flags);
->  	}
->  
+> Tested on a ROCK Pi 4 (RK3399) and Rock64 (RK3328):
+> 
+>   v4l2-compliance 1.24.1, 64 bits, 64-bit time_t
+>   ...
+>   Total for rkvdec device /dev/video1: 46, Succeeded: 46, Failed: 0,
+> Warnings: 0
+> 
+>   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-V4L2-request
+>   ...
+>   Ran 65/69 tests successfully
+> 
+>   Running test suite JVT-AVC_V1 with decoder FFmpeg-H.264-V4L2-request
+>   ...
+>   Ran 127/135 tests successfully
+> 
+> Before this series:
+> 
+>   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-V4L2-request
+>   ...
+>   Ran 44/69 tests successfully
+> 
+> ...
+> 
+> Following commits adds support for NV15/NV20/NV30 to VOP driver:
+> 728c15b4b5f3 ("drm/fourcc: Add NV20 and NV30 YUV formats")
+> d4b384228562 ("drm/rockchip: vop: Add NV15, NV20 and NV30 support")
+> 
+> To fully runtime test this series you may need above drm commits and ffmpeg
+> patches from [2], this series and drm patches is also available at [3].
+> 
+> [1]
+> https://lore.kernel.org/linux-media/20200706215430.22859-1-jonas@kwiboo.se/
+> [2] https://github.com/Kwiboo/FFmpeg/commits/v4l2-request-n6.1-dev/ [3]
+> https://github.com/Kwiboo/linux-rockchip/commits/linuxtv-rkvdec-high-10-v4/
+> [4] https://gist.github.com/Kwiboo/f4ac15576b2c72887ae2bc5d58b5c865 [5]
+> https://gist.github.com/Kwiboo/459a1c8f1dcb56e45dc7a7a29cc28adf
 
-TL;DR: this change made me wonder about a possible issue, but all is
-fine, except that the code flow leading to "fine" is a bit convoluted.
+Reviving this old thread now that rkvdec2 'stuff' emerged.
+I have (actually) done quite some tests with this (and "media: rkvdec: Add 
+HEVC backend" patch set) and they have been part of my kernel builds ever 
+since.
+I _think_, but don't know, that is relevant for Andy's question:
 
-I noticed this landing in Linus' tree and this got me thinking about
-if the "if (scope_handle != ec->handle)" would not cause the orphan
-_REG method to not get called for the case where the EC is created
-by parsing the ECDT early on, since then we set
-ec->handle = ACPI_ROOT_OBJECT for the ec object.
+On zondag 16 juni 2024 08:58:20 CEST Andy Yan <andyshrk@163.com> wrote:
+> How can I test these patches? Do they require any additional userspace
+> patches?
 
-So I checked and acpi_ec_ecdt_probe() calls acpi_ec_setup(ec, NULL, false)
-with the false making call_reg above false, so the _REG methods do not
-get executed at this point.
+I have the same question and I think you'd need this and the HEVC patch set 
+and then also patch FFmpeg and then it should enable HW acceleration.
+So my question boils down to: with the rkvdec2 patch set, should V4L2-requests 
+now also work with rkvdec, so not just Hantro anymore?
 
-Instead they should get executed when parsing the DSDT finds the EC ACPI
-device by acpi_ec_add() calling acpi_ec_setup(ec, device, true).
+BTW: the libdrm commits have been merged upstream quite some time ago, so if 
+you have a recent version of that, you don't need to patch that.
+If you use FFmpeg 7.0, then Jonas has a branch for that too (haven't tried it 
+yet though).
 
-acpi_ec_add() updated ec->handle away from ACPI_ROOT_OBJECT to the actual
-acpi_device's handle before calling acpi_ec_setup(ec, device, true) so
-all should be well.
+FWIW: my test results were a bit mixed. I didn't post them before as I don't 
+fully/really understand this 'video stuff', and I didn't want you all to suffer 
+from what was likely a PEBKAC issue.
 
-But while checkimg this I noticed a pre-existing issue where if the boot_ec
-object is created from the ECDT, so with ec->handle == NULL, acpi_ec_add()
-does not update ec->handle, which means an orphan _REG method will not get
-executed.
+On my PineTab2 (rk3566) I had some h.264 videos HW accelerated, but not all. 
+My guess is that it's related to the resolution. 1920x1080 worked, while it 
+didn't work with a 1280x640 video. The video still played, just not HW 
+accelerated. IOW: improvements in some and otherwise it was just rendered by 
+the CPU (I think), just like before.
 
-Specifically if this if condition evaluated to true, because the !strcmp()
-evaluates to true:
+On my Rock64 I got a pink tint with all videos, like described here:
+https://github.com/mpv-player/mpv/issues/12968
+IIUC, that's actually a problem in the lima driver?
 
-        if (boot_ec && (boot_ec->handle == device->handle ||
-            !strcmp(acpi_device_hid(device), ACPI_ECDT_HID))) {
-                /* Fast path: this device corresponds to the boot EC. */
-                ec = boot_ec;
-        } else {
+Cheers,
+  Diederik
+--nextPart2306946.yOONvtlcC0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-then [boot_]ec->handle does not get set to device->handle .
+-----BEGIN PGP SIGNATURE-----
 
-So at a first glance it looks like we need something like this to make sure
-that any orphan _REG methods are also run in the described scenario:
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZm60vwAKCRDXblvOeH7b
+bunzAQDtoUoO69YOCfIwQy1BpyubGMFwwb7YvB1mYGizpNzaAwD8Cw1NbPvKRJrd
+AlNeNCuUbZbkJRIj5vHMteqOVa7VhwU=
+=6pBz
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
-index e7793ee9e649..af61b9bb3749 100644
---- a/drivers/acpi/ec.c
-+++ b/drivers/acpi/ec.c
-@@ -1635,6 +1635,7 @@ static int acpi_ec_add(struct acpi_device *device)
- 	    !strcmp(acpi_device_hid(device), ACPI_ECDT_HID))) {
- 		/* Fast path: this device corresponds to the boot EC. */
- 		ec = boot_ec;
-+		ec->handle = device->handle;
- 	} else {
- 		acpi_status status;
- 
+--nextPart2306946.yOONvtlcC0--
 
 
-But upon further checking the only place creating an acpi_device
-with an ACPI_ECDT_HID is acpi_ec_ecdt_start() which does:
-
-        status = acpi_get_handle(NULL, ecdt_ptr->id, &handle);
-        if (ACPI_SUCCESS(status)) {
-                boot_ec->handle = handle;
-
-                /* Add a special ACPI device object to represent the boot EC. */
-                acpi_bus_register_early_device(ACPI_BUS_TYPE_ECDT_EC);
-        }
-
-So boot_ec->handle gets updated in this case before acpi_ec_add() runs
-and everything is fine.
-
-...
-
-Still I'm wondering if it would not be better to replace this
-"boot_ec->handle = handle;" in acpi_ec_ecdt_start() with the change
-from my proposed diff above, so that we consistently about the
-[boot_]ec->handle with device->handle for the being added acpi_device
-in both branches of the if ... else ... in acpi_ec_add() ?
-
-Regards,
-
-Hans
 
 
