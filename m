@@ -1,170 +1,114 @@
-Return-Path: <linux-kernel+bounces-216330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA5A909DFB
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 16:55:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FCD0909DFD
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 16:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB6ECB21323
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 14:55:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2E92B2136E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 14:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEF712E5B;
-	Sun, 16 Jun 2024 14:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8410E12E7E;
+	Sun, 16 Jun 2024 14:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="LgQ5zGo4"
-Received: from msa.smtpout.orange.fr (msa-211.smtpout.orange.fr [193.252.23.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TiCdP8/U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1EE19D8BA;
-	Sun, 16 Jun 2024 14:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30B812B73;
+	Sun, 16 Jun 2024 14:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718549712; cv=none; b=MJL41sJDVIiLhjPKF1Jghr944y0LS/UBDA+eugxC+kyklOoqbQBDxgYmfvYwqtIGbiApGDwK/b2+Mp/LxGh3fUEdheKx62rJEGjm0w+tPuJS1PJlV8plO7GZWfHESfENoF3wGV8ulv9mvHfYxDpewPrXpkfZ5TxuwaRUxdd/vOQ=
+	t=1718549821; cv=none; b=L5N2Uzjko8wGFLnv3QrQ3juDmqzgcSqJgNthf0XkIsVUQBXl4JXsSYkCbCG3ui/8Vvv9qWGeIsEiuZatxm80JPbAKafkh7HdeIuDEMe4ji6FovTpY0s09oUdrBRS7MUdRrmUOJYp23Jp6leG+ylgAN+1MXI8szAYsH2PI824IHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718549712; c=relaxed/simple;
-	bh=O/z/vjCG75DIyxaHpKuZpK8HKPbP/ZzO9wdI9VnFK6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TUEdh7UzLXnlFh3l3bLQlWxIi7/4cjRkK/WYT0e+V7z6CnJZ6gQPoMOfiOY/EtbLCXc7dj3qFWUw3Na1NSSIC7CQYvHasXZHcgtgaDCCc7h3hcrfAEZWj2tZZUgKPynnMJzi/Tv8SddBb0TFQI1VrnwJgOi5RCTb+NNbH15qQl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=LgQ5zGo4; arc=none smtp.client-ip=193.252.23.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id IrHWsSO0wuRA3IrHXsfkBD; Sun, 16 Jun 2024 16:55:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1718549701;
-	bh=OAMsrwU7Q/Q7uwAy9o856/VzFrQmnQenr1H3/1+8Kos=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=LgQ5zGo44dK1XzAx6t987fvlNEHvrWLkZCD71N2kHh41BoEaNCQ/RF8uZVnNXqx0Q
-	 tOMHoLsVMCETSBt50K8b4dlgtQpAKKgmKk5BHrXuT0emLD5LkKOw/cjMGyZtDRmAB9
-	 oFl1gwQZp58BcoeNruu7JUXLy1zqxMNqmONO5MelfMHVVpq3q/pRv49feBNDqmQjGW
-	 fk5QZGCRsBul/9vKSerElZL+zvVflkFJY0hXgXyUW4M6N1Dy0PkM0GXXQFoY5r/RHm
-	 KckU7bgYY1+5/5/qz3JqbHRfYE/PK25Bndo1zV6tyoBkqZ5izV4RuliXandilo7Asc
-	 fmNADNXO8D7OA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 16 Jun 2024 16:55:01 +0200
-X-ME-IP: 86.243.222.230
-Message-ID: <2b92c0f9-2595-4b73-8015-1abb825a61a1@wanadoo.fr>
-Date: Sun, 16 Jun 2024 16:54:58 +0200
+	s=arc-20240116; t=1718549821; c=relaxed/simple;
+	bh=OEK/0Wk/iV7IEcoaqWDTQRqddRJOamy6tc1nYeMGQJU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=c6j0KiZLClRqXqNeRu3w/sXJHQbwUxkImJg3UTmqxjVJF5IZJyu5YP91HREvhK3d+kuqg+HIDYoSkDBNMbEtM0hpO2WcU4VI0YV7VbyndDxAi+pc+H+XCPL1qk6TVhXveRfkgFzHx8uTe97uk6EJR5WPoBT015laAApab3wZ9Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TiCdP8/U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD05BC2BBFC;
+	Sun, 16 Jun 2024 14:56:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718549821;
+	bh=OEK/0Wk/iV7IEcoaqWDTQRqddRJOamy6tc1nYeMGQJU=;
+	h=Date:From:To:Subject:From;
+	b=TiCdP8/UqBSTE4E6gEWu9g5q415/3DC3e5HU8CoslGfDI7V7XRIkKoMsD7/z40MA7
+	 H+5IxK3m1Fk3+zjwYiVEnDGQHSL3KxrvfhRlf7xhe30HH8jJ758gzMwQ3KHQZnXjBn
+	 JbPIcC0JLpFn+AD4erqR5doGhSPqO9i5lENENPmUd1+Y9OrkJ0R3ZPG2raraRtLwLu
+	 PftoVPzjtkdsf/XyRWL0bHqnB4u+c/09FkcBJrUnfrxsN/d2QfV0uSvgLuoJVmeLqO
+	 OKYl4JAa+PEmIEZGDGvooaUdcuuVvaue+gYDkMFvY1O/iW1M7cQtjCO6SEXZrLAMBC
+	 DXAkHX3oAXWhQ==
+Date: Sun, 16 Jun 2024 16:56:57 +0200
+From: Helge Deller <deller@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	John David Anglin <dave.anglin@bell.net>
+Subject: [GIT PULL] parisc architecture fix for v6.10-rc4
+Message-ID: <Zm79OUifsEhG8CMT@p100>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/7] ASoC: codecs: wcd937x: add wcd937x codec driver
-To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com,
- quic_pkumpatl@quicinc.com, Konrad Dybcio <konrad.dybcio@linaro.org>
-References: <20240611074557.604250-1-quic_mohs@quicinc.com>
- <20240611074557.604250-4-quic_mohs@quicinc.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240611074557.604250-4-quic_mohs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Le 11/06/2024 à 09:45, Mohammad Rafi Shaik a écrit :
-> From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-> 
-> This patch adds basic SoundWire codec driver to support for
-> WCD9370/WCD9375 TX and RX devices.
-> 
-> The WCD9370/WCD9375 has Multi Button Headset Control hardware to
-> support Headset insertion, type detection, 8 headset buttons detection,
-> Over Current detection and Impedence measurements.
-> This patch adds support for this using wcd-mbhc apis.
-> 
-> Co-developed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-> Co-developed-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-> ---
+Hi Linus,
 
-Hi,
+Please pull one fix for the parisc architecture for 6.10-rc4.
 
-this pathc has reached -next, but I have a question.
+On parisc we have suffered since years from random segfaults which seem to
+have been triggered due to cache inconsistencies. Those segfaults happened
+more often on machines with PA8800 and PA8900 CPUs, which have much bigger
+caches than the earlier machines.
 
-If I'm correct, I can send a patch, but if the fix can be folded 
-somewhere, this is also fine for me.
+Dave Anglin has worked over the last few weeks to fix this bug.
+His patch has been successfully tested by various people on various machines
+and with various kernels (6.6, 6.8 and 6.9), and the debian buildd servers
+haven't shown a single random segfault with this patch.
 
-...
+Since the cache handling has been reworked, the patch is slightly bigger than
+I would like in this stage, but the greatly improved stability IMHO justifies
+the inclusion now.
 
-> +static int wcd937x_soc_codec_probe(struct snd_soc_component *component)
-> +{
+Please pull.
 
-...
+Thanks!
+Helge
 
-> +	wcd937x->hphr_pdm_wd_int = regmap_irq_get_virq(wcd937x->irq_chip,
-> +						       WCD937X_IRQ_HPHR_PDM_WD_INT);
-> +	wcd937x->hphl_pdm_wd_int = regmap_irq_get_virq(wcd937x->irq_chip,
-> +						       WCD937X_IRQ_HPHL_PDM_WD_INT);
-> +	wcd937x->aux_pdm_wd_int = regmap_irq_get_virq(wcd937x->irq_chip,
-> +						      WCD937X_IRQ_AUX_PDM_WD_INT);
-> +
-> +	/* Request for watchdog interrupt */
-> +	ret = devm_request_threaded_irq(dev, wcd937x->hphr_pdm_wd_int, NULL, wcd937x_wd_handle_irq,
-> +					IRQF_ONESHOT | IRQF_TRIGGER_RISING,
-> +					"HPHR PDM WDOG INT", wcd937x);
-> +	if (ret)
-> +		dev_err(dev, "Failed to request HPHR watchdog interrupt (%d)\n", ret);
-> +
-> +	ret = devm_request_threaded_irq(dev, wcd937x->hphl_pdm_wd_int, NULL, wcd937x_wd_handle_irq,
-> +					IRQF_ONESHOT | IRQF_TRIGGER_RISING,
-> +					"HPHL PDM WDOG INT", wcd937x);
-> +	if (ret)
-> +		dev_err(dev, "Failed to request HPHL watchdog interrupt (%d)\n", ret);
-> +
-> +	ret = devm_request_threaded_irq(dev, wcd937x->aux_pdm_wd_int, NULL, wcd937x_wd_handle_irq,
-> +					IRQF_ONESHOT | IRQF_TRIGGER_RISING,
-> +					"AUX PDM WDOG INT", wcd937x);
-> +	if (ret)
-> +		dev_err(dev, "Failed to request Aux watchdog interrupt (%d)\n", ret);
-> +
-> +	/* Disable watchdog interrupt for HPH and AUX */
-> +	disable_irq_nosync(wcd937x->hphr_pdm_wd_int);
-> +	disable_irq_nosync(wcd937x->hphl_pdm_wd_int);
-> +	disable_irq_nosync(wcd937x->aux_pdm_wd_int);
-> +
-> +	ret = wcd937x_mbhc_init(component);
-> +	if (ret)
-> +		dev_err(component->dev, "mbhc initialization failed\n");
-> +
-> +	return ret;
-> +}
-> +
-> +static void wcd937x_soc_codec_remove(struct snd_soc_component *component)
-> +{
-> +	struct wcd937x_priv *wcd937x = snd_soc_component_get_drvdata(component);
-> +
-> +	wcd937x_mbhc_deinit(component);
-> +	free_irq(wcd937x->aux_pdm_wd_int, wcd937x);
-> +	free_irq(wcd937x->hphl_pdm_wd_int, wcd937x);
-> +	free_irq(wcd937x->hphr_pdm_wd_int, wcd937x);
+----------------------------------------------------------------
+The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
 
-These irq have been requested wth devm_request_threaded_irq(), so either 
-this free_irq should be removed, or devm_free_irq() should be used if 
-the order is important.
+  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
 
-CJ
+are available in the Git repository at:
 
-> +
-> +	wcd_clsh_ctrl_free(wcd937x->clsh_info);
-> +}
+  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git tags/parisc-for-6.10-rc4
 
+for you to fetch changes up to 72d95924ee35c8cd16ef52f912483ee938a34d49:
 
+  parisc: Try to fix random segmentation faults in package builds (2024-06-12 01:57:05 +0200)
 
+----------------------------------------------------------------
+parisc architecture fix for kernel v6.10-rc4:
+
+One patch from John David Anglin which reworks the parisc cache flushing
+routines with the aim to fix the random segmentation faults on machines with
+PA8800 and PA8900 processors. We have faced those segfaults since many years,
+but with this patch no single segfault could be triggered any longer. The
+patch was tested by 3 people on 5 different machines with various stable
+kernels (6.6, 6.8 and 6.9).
+
+----------------------------------------------------------------
+John David Anglin (1):
+      parisc: Try to fix random segmentation faults in package builds
+
+ arch/parisc/include/asm/cacheflush.h |  15 +-
+ arch/parisc/include/asm/pgtable.h    |  27 +--
+ arch/parisc/kernel/cache.c           | 413 ++++++++++++++++++++++-------------
+ 3 files changed, 275 insertions(+), 180 deletions(-)
 
