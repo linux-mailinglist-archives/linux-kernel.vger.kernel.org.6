@@ -1,100 +1,123 @@
-Return-Path: <linux-kernel+bounces-216319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8669F909DD9
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:58:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B63909DDB
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE15E2813EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 13:58:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D91E281465
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 13:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C758831;
-	Sun, 16 Jun 2024 13:58:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8059443;
+	Sun, 16 Jun 2024 13:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6rVutT2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83399748D
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 13:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B13479DC;
+	Sun, 16 Jun 2024 13:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718546284; cv=none; b=NCjGFkt4gKMIijg2/H1PojqJ0wesp4uvsgq5q9oT3ZrQ7GpIPBm9oICTm017zy6W2UUtIzhf82+yUhCGu8Ip1nIpkkkXehB6dA/0d2bgXj+Y3PrmPAZA6e1XzxDVAVSE6NFn5WPodket+llHNU41udaz7mCth5TWQQ6j8J9LGs8=
+	t=1718546322; cv=none; b=nVvnEQV0SFFxjpJEO8ELucwfRyHar9kt/Q5ThCWgItYZIT4t1YZaPGaMkDFkrxLDre15a++MgHa5qO8MyxqEDx03EHLjDfef+EyybRrRv6LIBC2hmFPhMijZ0kJtdoiJKuP0mdqspL3qylHRxmJONaWPZBl9iRnHwYsgnDNXpbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718546284; c=relaxed/simple;
-	bh=R8D1G0qfWWHzcx64E0FlfEyHwSbRESfbtORt/2rhmFA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=b8Z7aeao2CIlfR33UmG3Hx7tgUD/zCLLv7idgn+Zm7g7tOZQYdKFgInEle2DfHllkEmyjHk4icD00mQ8zrkqAwGJ9GGoMIVYxDK3JO+A48Mm9j8sg3jdnZzZsxKI93+jJBohFQl0rpypfaAcdiMIJmK/wIlDxnRlRCmRUuNMW2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-375da994725so35964745ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 06:58:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718546282; x=1719151082;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H5811IuiggWB0+7BglON7P/ruGNAO15FPLwXOim6X9k=;
-        b=jjgy1Xrc/FgaPXdyQ6sCfaxu/PI0sMkKu2olyLexWAs4nYMDaq8F9f2thK1nImdM6i
-         Ofri41IA3PUkPuWUn/H0m0g8vrm6+/owLtSD9UwSOYtfTb0BVQuF3dK+8oBMmkyKfqvx
-         54fvxbse5/u556jliZg780myCCZSm8T6p46sUijvtPSLwofxitJmPNXdl/2STB9SbRhz
-         d8dsVVBMixWPB+kZQltO2CufRc6XzaW0A8AC6J0Z8frwJYg5rVJoKW+k6+yL1tTyVE//
-         lIO3abxusYCHYZ5FTycW/MCcN+1mr6oOBhYL5h2rsIK47t7o0veSPHC4GH32GQwWmKsn
-         UBVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVE6L/ElYFd0YWmAHBMMLpEDeLMq2lbWyA8hO+S6p5QmltMsbvqP8e/ofYc6HkJxklwBJAPRKpiRGER7Y1hnvz7PIGQ8MBbvGQUvq83
-X-Gm-Message-State: AOJu0Yzd2vkm2vrcuHQOW4/nrXFo2dpPa3ZJlLOLXoPtvNflA7hF+1pb
-	dezOoLHLkzq0YKoOUoqTHDyGiiq9Q4dRKg/lkNG7Fo09bnMXVgQ/2qwgpeP3Dg4oja6BHb2bx38
-	s6cXS2asm/Inict9Zz3ivXrQwTJnBcYu/RkPX3EWsS2p/UIIwVMDUFjk=
-X-Google-Smtp-Source: AGHT+IGFhucqrSCq9TEv7yGJ6u12fMOz5B3+YnK6tfWYh0JCygGdWpFlX4LG4Qt8mHnmbUawHdfGJN1+QEiHrN08KkDH7s12kkfj
+	s=arc-20240116; t=1718546322; c=relaxed/simple;
+	bh=bzDMSi+KPj5dWKgND4vnJtkmUJkrU//LHJVmtaQDBjk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HFubdNDtlD2jYbT+1xizqkgr9JIs7q7w01CyiltViHm7+pFsL2j/aEFbwcBj0QKZJZMe/cCeA5X+LsGk2uTcdhhuLOF4o1UtTP4vHgg17bXlojGDimAQCrTnmZHrgngQx6pEmtF9NvupWqsi5RCoh7r57sMev7BxKkGVEmGLU4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r6rVutT2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A9F9C2BBFC;
+	Sun, 16 Jun 2024 13:58:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718546321;
+	bh=bzDMSi+KPj5dWKgND4vnJtkmUJkrU//LHJVmtaQDBjk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=r6rVutT2jxf99d+BT+VgV7RSStW/iRoePcDm5AT1Ezw2HvdFMxs84Bsq8Dz+LXnxY
+	 41w1oFgsNleBuzc0xaObNjMmN3GB7/nckTtSWPajQCEU78Fah5AzuuJuKDZGuuBXzt
+	 folCy6ZAfSoPUXMuR01Shq5SKp/Zg7e4Fd/SmCLvUeR/yLKtffbeF6H7CHywEG1Ytf
+	 rtWRB9h6nlOD8HJ2TjDkxiFRNneRY+xCCpzIjct3cQhfdVt1MOgJIq2kxHotOjXCBV
+	 RPoMA3AkIRllq2PxCvK/rFGX4WddNLXb1BvxAKKx1wyoN+/QDipWAnbgqgmyYePHvC
+	 ShvwisVmV5IrQ==
+Message-ID: <699ab73b-8fc5-4d31-a261-5b6f99609464@kernel.org>
+Date: Sun, 16 Jun 2024 15:58:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164e:b0:375:ae17:a2aa with SMTP id
- e9e14a558f8ab-375e0e9fc29mr5779515ab.3.1718546282638; Sun, 16 Jun 2024
- 06:58:02 -0700 (PDT)
-Date: Sun, 16 Jun 2024 06:58:02 -0700
-In-Reply-To: <20240616111502.1435-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b5018c061b023c99@google.com>
-Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
-From: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] ASoC: dt-bindings: realtek,rt5631: Convert to
+ dtschema
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240616074936.151267-1-animeshagarwal28@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240616074936.151267-1-animeshagarwal28@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
-
-syzbot tried to test the proposed patch but the build/boot failed:
-
-./include/linux/fs_pin.h:4:8: error: redefinition of 'fs_pin'
-./include/linux/fs_pin.h:14:20: error: redefinition of 'init_fs_pin'
-fs/mount.h:8:8: error: redefinition of 'mnt_namespace'
-fs/mount.h:21:8: error: redefinition of 'mnt_pcp'
-fs/mount.h:26:8: error: redefinition of 'mountpoint'
-fs/mount.h:33:8: error: redefinition of 'mount'
-fs/mount.h:82:29: error: redefinition of 'real_mount'
-fs/mount.h:87:19: error: redefinition of 'mnt_has_parent'
-fs/mount.h:92:19: error: redefinition of 'is_mounted'
-fs/mount.h:102:20: error: redefinition of '__path_is_mountpoint'
-fs/mount.h:110:20: error: redefinition of 'detach_mounts'
-fs/mount.h:117:20: error: redefinition of 'get_mnt_ns'
-fs/mount.h:124:8: error: redefinition of 'proc_mounts'
-fs/mount.h:133:20: error: redefinition of 'is_local_mountpoint'
-fs/mount.h:141:20: error: redefinition of 'is_anon_ns'
-fs/mount.h:146:20: error: redefinition of 'move_from_ns'
+On 16/06/2024 09:49, Animesh Agarwal wrote:
+> Convert the ALC5631/RT5631 audio CODEC bindings to DT Schema.
+> 
+> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> 
 
 
-Tested on:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-commit:         83a7eefe Linux 6.10-rc3
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5a05c230e142f2bc
-dashboard link: https://syzkaller.appspot.com/bug?extid=5d34cc6474499a5ff516
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1606492e980000
+Best regards,
+Krzysztof
 
 
