@@ -1,315 +1,143 @@
-Return-Path: <linux-kernel+bounces-216332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 774DC909E05
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 16:57:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F2B909E09
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA019B21345
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 14:57:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE6901C20BA0
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660B314012;
-	Sun, 16 Jun 2024 14:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C64412B8B;
+	Sun, 16 Jun 2024 15:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BTWk6Jr4"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q+Bx6Rr8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFA5107A9
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 14:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DD911CBD;
+	Sun, 16 Jun 2024 15:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718549851; cv=none; b=lZJdIkFZXrHzBYSvOPOwgME6sUnrX064SJyscJb1dzacf0t1kRbVfDdpepnmyCwgUPsjfneZhbAFcBhbuZfpNRiOyrNcZMRFJmvFzR/MCy3GJtXKMtqoAwHYPMsbZ8qZXQOTnBjspfA+vAhdJZiMmKSfqqkDgd0DrrBgxuKGxkw=
+	t=1718550215; cv=none; b=DAfkS4poMdAR3zuBJQ5JKdq/LPjtbQM7NaWCqfpRFXESm6lcggFMDR73DeXRFC8fctu8+TBVkXzl4BV5e71AwWQefp61WzipKrvS8lVVmC/JKCHrZJyVNCzAgRGo8oNJ+H+GW2q2F2BCIy3jaXz+Z/2s/mNCI72ouLQNsm4igb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718549851; c=relaxed/simple;
-	bh=utvuP9IoAszxWoU3ajATZDQZ4+EdgvtsV0c8Mt+Ezag=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N7KQFhE94IWzEXh7ByrUFojsMSSe6uj9q7M+lwa4CtVB7VxAaAYNyNH1dJa4ddSBw7XX8r8IApflux56B0ypyE+N2XtY3eWmf8VffSgka9frQaLY3nLudXD7UoFmKUrNyz5RQVsqNvIUyZh+G6CIb461fFT+mOx/S7dvfh8whrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BTWk6Jr4; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-6e57506bb2dso2718713a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 07:57:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718549849; x=1719154649; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rYjghgjKd1ZembdVlTN5XgkOTmluzZxorMJSTjILbTo=;
-        b=BTWk6Jr43HB5uLdZ1kqYT9v+Uh1yHBmOszId7TEphwKZUSpQgOgtmAQEVRHOHUk5ps
-         dOzp+NiZqGgQJULG+2q5LClsi7eWZphmrcBXSRnji6Nu9zRlX/JWjQ16SJ2IUleL/mqC
-         UtNaafyh3gVavNj4wcp6BKuvf891Yw5VP41YO/PXdcu3iWzwmrw9OqPWNMdIajSdonme
-         +2UUm+3fARTdxu94y9ofOVvzZ5jYKBw3OyYAKedtLu8mC8egQiKtK+QHgZ6PBxbPBTh7
-         BDTzN8M8RXd2dTo62d6smEF6DJRL9lPgRAwzzNKw1sprjApz+yMmWP2kbo02QNJeH6YO
-         C9hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718549849; x=1719154649;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rYjghgjKd1ZembdVlTN5XgkOTmluzZxorMJSTjILbTo=;
-        b=DMd9ecM2QruQtjeuZaMwAe0zvxeB7hZuJIdVC6ci9w1dC0vYRSJGjzJsGoLDWmfa8B
-         n8OcT8eSXpweXH4DSD7Pu9/gnrAAiMbjlUmJ751ejIbbjskzKJvMkFVcmXYpkr5GZ90I
-         TtL+YkAGGSt3t/ALY+d0XqfAuOgZy7mmg+f5xbXVHDo/dz9WJr07l1LYPQdxqrwQp4AE
-         cxDX8M0ORGKh/ixeqLi5BS/pg5nVwnkY2KQ6WEMwsABu7DBYRcYuYrHr/UHRXgQi0Wdo
-         bDODvsTtiY4hgCq92yiXZDn57v/56z0XtXO2s0KHvtUJLK6TrJlDYa1hjmFmkLJ5dDpS
-         GjjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVS3ock2E6hbsAQWgmUUuCgyrgPayzVRCuaMfidr6HPL/5TRLSHWEf92L39F6OdQ2VeVTch9IC3JPVtF/IK1EvGVHkqctF7HOtpwlCk
-X-Gm-Message-State: AOJu0YzOMTdxscJ49sEjPUbzHX/uXRo1QemdYS+mJwkezhGRnBSdjALt
-	PkUiWZ/gquPQxekglWygzBVc6vxyOH9A8HqRmJHg30428z/8vKlk2fOPuigWbwrXZyQk6cxHuqc
-	IQYYNrSbsVd3yylWku7etnHSUVxqcL/OOUhyXaA==
-X-Google-Smtp-Source: AGHT+IHTgpoQyjqHNervCjt0EPZEZ7aZDOr+YosfkhATeXzbUFa46nGvC/JpQ1fK4xIcVu7QUZh21abUsAxqmPSmJcc=
-X-Received: by 2002:a05:6a21:32a5:b0:1b8:a188:53da with SMTP id
- adf61e73a8af0-1bae7f0bb4bmr7762840637.29.1718549848620; Sun, 16 Jun 2024
- 07:57:28 -0700 (PDT)
+	s=arc-20240116; t=1718550215; c=relaxed/simple;
+	bh=RWheu7VAcDlHrib9HA+6p1vteQzNNj1dxDCy688RrHk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ERtYE15+lfIy9wCfvwCTnimHPQKvyAImLze8YfFUMCavb6EXI40kDkUGAc4PSCiwXg4UemrsUvNF4XYJ6dtq4cf8XluvQmLXseViUKxtspM+iwY28UpbqcxQh+B7OIIVBA/d79deHRKhU0KMIjK5AxCHknlzJ3+qMFs6qx9JmCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q+Bx6Rr8; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718550214; x=1750086214;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=RWheu7VAcDlHrib9HA+6p1vteQzNNj1dxDCy688RrHk=;
+  b=Q+Bx6Rr8W0pI3fncQaFRAIcBuSKq05XwSJWjKjCZ5LuJWmMLowV6ylgY
+   LmVvYrRqgbIoSwQ9fV/HDrwIQtbCAiyQKAmK7Cz2iuj9268TtTNdSvE3q
+   tlP2abCv2FcAUG05lqjSZUyEXuUb5OB54cIs1n+PwVkF08ozM+GHrpQPg
+   RYkJCFVZx90RZJiqqYg4y43qj6MYBsyhMZEirwWiVNf7QdCjS2JeVi5pS
+   +mJYL8mLjTtYgTfU9f42fWtOCc80KJb5XxSAD4TOEssLT0nRgH03Pz5Wu
+   9NGFoaz9j10LiiXJIibtEy/XNCHuJRmkApivDwOtwWl+MDIBOnUfMOJDJ
+   w==;
+X-CSE-ConnectionGUID: IfY2iVmtQymU9SfV6JI1Hg==
+X-CSE-MsgGUID: Yhgc4QGgTde9+y/a1Mw5Vw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="26502453"
+X-IronPort-AV: E=Sophos;i="6.08,242,1712646000"; 
+   d="scan'208";a="26502453"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 08:03:33 -0700
+X-CSE-ConnectionGUID: M4u5m4CsTUadu4ql+ZHPdg==
+X-CSE-MsgGUID: VWZ21rksQNyma9+/+fwpIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,242,1712646000"; 
+   d="scan'208";a="46083612"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.94.249.84])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 08:03:30 -0700
+Message-ID: <802a5260-8d74-4a5e-85fc-c9b86460d4c5@intel.com>
+Date: Sun, 16 Jun 2024 18:03:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613181613.4329-1-kprateek.nayak@amd.com> <20240614092801.GL8774@noisy.programming.kicks-ass.net>
- <CAKfTPtBTxhbmh=605TJ9sRw-nFu6w-KY7QpAxRUh5AjhQWa2ig@mail.gmail.com> <20240615012814.GP8774@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240615012814.GP8774@noisy.programming.kicks-ass.net>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Sun, 16 Jun 2024 16:57:17 +0200
-Message-ID: <CAKfTPtD2fUBqw09QDPGgAHyvQRmcvzbq9o3FDsctw=R6HP+=CA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/14] Introducing TIF_NOTIFY_IPI flag
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>, linux-kernel@vger.kernel.org, 
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>, 
-	Michal Simek <monstr@monstr.eu>, Dinh Nguyen <dinguyen@kernel.org>, Jonas Bonn <jonas@southpole.se>, 
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Andrew Donnellan <ajd@linux.ibm.com>, Benjamin Gray <bgray@linux.ibm.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Xin Li <xin3.li@intel.com>, 
-	Kees Cook <keescook@chromium.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Tony Battersby <tonyb@cybernetics.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Brian Gerst <brgerst@gmail.com>, Leonardo Bras <leobras@redhat.com>, 
-	Imran Khan <imran.f.khan@oracle.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Rik van Riel <riel@surriel.com>, Tim Chen <tim.c.chen@linux.intel.com>, 
-	David Vernet <void@manifault.com>, Julia Lawall <julia.lawall@inria.fr>, linux-alpha@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
-	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-pm@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] tools/perf: Fix parallel-perf python script to
+ replace new python syntax ":=" usage
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>, acme@kernel.org,
+ jolsa@kernel.org, irogers@google.com, namhyung@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com, maddy@linux.ibm.com,
+ kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com
+References: <20240614172742.56976-1-atrajeev@linux.vnet.ibm.com>
+ <20240614172742.56976-2-atrajeev@linux.vnet.ibm.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240614172742.56976-2-atrajeev@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, 15 Jun 2024 at 03:28, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Fri, Jun 14, 2024 at 12:48:37PM +0200, Vincent Guittot wrote:
-> > On Fri, 14 Jun 2024 at 11:28, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> > > > Vincent [5] pointed out a case where the idle load kick will fail to
-> > > > run on an idle CPU since the IPI handler launching the ILB will check
-> > > > for need_resched(). In such cases, the idle CPU relies on
-> > > > newidle_balance() to pull tasks towards itself.
-> > >
-> > > Is this the need_resched() in _nohz_idle_balance() ? Should we change
-> > > this to 'need_resched() && (rq->nr_running || rq->ttwu_pending)' or
-> > > something long those lines?
-> >
-> > It's not only this but also in do_idle() as well which exits the loop
-> > to look for tasks to schedule
->
-> Is that really a problem? Reading the initial email the problem seems to
-> be newidle balance, not hitting schedule. Schedule should be fairly
-> quick if there's nothing to do, no?
+On 14/06/24 20:27, Athira Rajeev wrote:
+> perf test "perf script tests" fails as below in systems
+> with python 3.6
+> 
+> 	File "/home/athira/linux/tools/perf/tests/shell/../../scripts/python/parallel-perf.py", line 442
+> 	if line := p.stdout.readline():
+>              ^
+> 	SyntaxError: invalid syntax
+> 	--- Cleaning up ---
+> 	---- end(-1) ----
+> 	92: perf script tests: FAILED!
+> 
+> This happens because ":=" is a new syntax that assigns values
+> to variables as part of a larger expression. This is introduced
+> from python 3.8 and hence fails in setup with python 3.6
 
-There are 2 problems:
-- Because of NEED_RESCHED being set, we go through the full schedule
-path for no reason and we finally do a sched_balance_newidle()
-- Because of need_resched being set o wake up the cpu, we will not
-kick the softirq to run the nohz idle load balance and get a chance to
-pull a task on an idle CPU
+According to below python 3.6 is end-of-life
 
->
-> > > I mean, it's fairly trivial to figure out if there really is going to be
-> > > work there.
-> > >
-> > > > Using an alternate flag instead of NEED_RESCHED to indicate a pending
-> > > > IPI was suggested as the correct approach to solve this problem on the
-> > > > same thread.
-> > >
-> > > So adding per-arch changes for this seems like something we shouldn't
-> > > unless there really is no other sane options.
-> > >
-> > > That is, I really think we should start with something like the below
-> > > and then fix any fallout from that.
-> >
-> > The main problem is that need_resched becomes somewhat meaningless
-> > because it doesn't  only mean "I need to resched a task" and we have
-> > to add more tests around even for those not using polling
->
-> True, however we already had some of that by having the wakeup list,
-> that made nr_running less 'reliable'.
->
-> The thing is, most architectures seem to have the TIF_POLLING_NRFLAG
-> bit, even if their main idle routine isn't actually using it, much of
+	https://devguide.python.org/versions/
 
-Yes, I'm surprised that Arm arch has the TIF_POLLING_NRFLAG whereas it
-has never been supported by the arch
+What was still using python 3.6?
 
-> the idle loop until it hits the arch idle will be having it set and will
-> thus tickle these cases *sometimes*.
->
-> > > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > > index 0935f9d4bb7b..cfa45338ae97 100644
-> > > --- a/kernel/sched/core.c
-> > > +++ b/kernel/sched/core.c
-> > > @@ -5799,7 +5800,7 @@ static inline struct task_struct *
-> > >  __pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-> > >  {
-> > >         const struct sched_class *class;
-> > > -       struct task_struct *p;
-> > > +       struct task_struct *p = NULL;
-> > >
-> > >         /*
-> > >          * Optimization: we know that if all tasks are in the fair class we can
-> > > @@ -5810,9 +5811,11 @@ __pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-> > >         if (likely(!sched_class_above(prev->sched_class, &fair_sched_class) &&
-> > >                    rq->nr_running == rq->cfs.h_nr_running)) {
-> > >
-> > > -               p = pick_next_task_fair(rq, prev, rf);
-> > > -               if (unlikely(p == RETRY_TASK))
-> > > -                       goto restart;
-> > > +               if (rq->nr_running) {
-> >
-> > How do you make the diff between a spurious need_resched() because of
-> > polling and a cpu becoming idle ? isn't rq->nr_running null in both
-> > cases ?
->
-> Bah, true. It should also check current being idle, which then makes a
-> mess of things again. Still, we shouldn't be calling newidle from idle,
-> that's daft.
->
-> I should probably not write code at 3am, but the below horror is what
-> I came up with.
->
+> Address this by splitting the large expression and check the
+> value in two steps:
+> Previous line: if line := p.stdout.readline():
+> Current change:
+> 	line = p.stdout.readline()
+> 	if line:
+> 
+> With patch
+> 
+> 	./perf test "perf script tests"
+> 	 93: perf script tests:  Ok
+> 
+> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
 > ---
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 0935f9d4bb7b..cfe8d3350819 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -6343,19 +6344,12 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
->   * Constants for the sched_mode argument of __schedule().
->   *
->   * The mode argument allows RT enabled kernels to differentiate a
-> - * preemption from blocking on an 'sleeping' spin/rwlock. Note that
-> - * SM_MASK_PREEMPT for !RT has all bits set, which allows the compiler to
-> - * optimize the AND operation out and just check for zero.
-> + * preemption from blocking on an 'sleeping' spin/rwlock.
->   */
-> -#define SM_NONE                        0x0
-> -#define SM_PREEMPT             0x1
-> -#define SM_RTLOCK_WAIT         0x2
-> -
-> -#ifndef CONFIG_PREEMPT_RT
-> -# define SM_MASK_PREEMPT       (~0U)
-> -#else
-> -# define SM_MASK_PREEMPT       SM_PREEMPT
-> -#endif
-> +#define SM_IDLE                        (-1)
-> +#define SM_NONE                        0
-> +#define SM_PREEMPT             1
-> +#define SM_RTLOCK_WAIT         2
->
->  /*
->   * __schedule() is the main scheduler function.
-> @@ -6396,11 +6390,12 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
->   *
->   * WARNING: must be called with preemption disabled!
->   */
-> -static void __sched notrace __schedule(unsigned int sched_mode)
-> +static void __sched notrace __schedule(int sched_mode)
->  {
->         struct task_struct *prev, *next;
->         unsigned long *switch_count;
->         unsigned long prev_state;
-> +       bool preempt = sched_mode > 0;
->         struct rq_flags rf;
->         struct rq *rq;
->         int cpu;
-> @@ -6409,13 +6404,13 @@ static void __sched notrace __schedule(unsigned int sched_mode)
->         rq = cpu_rq(cpu);
->         prev = rq->curr;
->
-> -       schedule_debug(prev, !!sched_mode);
-> +       schedule_debug(prev, preempt);
->
->         if (sched_feat(HRTICK) || sched_feat(HRTICK_DL))
->                 hrtick_clear(rq);
->
->         local_irq_disable();
-> -       rcu_note_context_switch(!!sched_mode);
-> +       rcu_note_context_switch(preempt);
->
->         /*
->          * Make sure that signal_pending_state()->signal_pending() below
-> @@ -6449,7 +6444,12 @@ static void __sched notrace __schedule(unsigned int sched_mode)
->          * that we form a control dependency vs deactivate_task() below.
->          */
->         prev_state = READ_ONCE(prev->__state);
-> -       if (!(sched_mode & SM_MASK_PREEMPT) && prev_state) {
-> +       if (sched_mode == SM_IDLE) {
-> +               if (!rq->nr_running) {
-> +                       next = prev;
-> +                       goto picked;
-> +               }
-> +       } else if (!preempt && prev_state) {
->                 if (signal_pending_state(prev_state, prev)) {
->                         WRITE_ONCE(prev->__state, TASK_RUNNING);
->                 } else {
-> @@ -6483,6 +6483,7 @@ static void __sched notrace __schedule(unsigned int sched_mode)
->         }
->
->         next = pick_next_task(rq, prev, &rf);
-> +picked:
->         clear_tsk_need_resched(prev);
->         clear_preempt_need_resched();
->  #ifdef CONFIG_SCHED_DEBUG
-> @@ -6521,9 +6522,9 @@ static void __sched notrace __schedule(unsigned int sched_mode)
->                 ++*switch_count;
->
->                 migrate_disable_switch(rq, prev);
->                 psi_sched_switch(prev, next, !task_on_rq_queued(prev));
->
-> -               trace_sched_switch(sched_mode & SM_MASK_PREEMPT, prev, next, prev_state);
-> +               trace_sched_switch(preempt, prev, next, prev_state);
->
->                 /* Also unlocks the rq: */
->                 rq = context_switch(rq, prev, next, &rf);
-> @@ -6599,7 +6601,7 @@ static void sched_update_worker(struct task_struct *tsk)
->         }
->  }
->
-> -static __always_inline void __schedule_loop(unsigned int sched_mode)
-> +static __always_inline void __schedule_loop(int sched_mode)
->  {
->         do {
->                 preempt_disable();
-> @@ -6644,7 +6646,7 @@ void __sched schedule_idle(void)
->          */
->         WARN_ON_ONCE(current->__state);
->         do {
-> -               __schedule(SM_NONE);
-> +               __schedule(SM_IDLE);
->         } while (need_resched());
->  }
->
+>  tools/perf/scripts/python/parallel-perf.py | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/scripts/python/parallel-perf.py b/tools/perf/scripts/python/parallel-perf.py
+> index 21f32ec5ed46..be85fd7f6632 100755
+> --- a/tools/perf/scripts/python/parallel-perf.py
+> +++ b/tools/perf/scripts/python/parallel-perf.py
+> @@ -439,7 +439,8 @@ def ProcessCommandOutputLines(cmd, per_cpu, fn, *x):
+>  	pat = re.compile(r"\s*\[[0-9]+\]")
+>  	p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+>  	while True:
+> -		if line := p.stdout.readline():
+> +		line = p.stdout.readline()
+> +		if line:
+>  			line = line.decode("utf-8")
+>  			if pat.match(line):
+>  				line = line.split()
+
 
