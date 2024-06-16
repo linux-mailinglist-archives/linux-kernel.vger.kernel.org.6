@@ -1,193 +1,106 @@
-Return-Path: <linux-kernel+bounces-216435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B79909F46
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 20:42:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A2C0909F48
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 20:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E4571F21C9F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:42:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 129371F21CAC
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F481CA85;
-	Sun, 16 Jun 2024 18:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32883FE4A;
+	Sun, 16 Jun 2024 18:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="p5aU+BXm";
-	dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="m9zuvCI+";
-	dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="J6yFXe9o"
-Received: from e2i411.smtp2go.com (e2i411.smtp2go.com [103.2.141.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nfVi1Spq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061543E478
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 18:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214C11CA85;
+	Sun, 16 Jun 2024 18:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718563305; cv=none; b=lw0spuKfo79Kv+9/kPGR89F7sGMIUQB/nZL+czsWWEu/s1TkHV3ocfhn0OurEh/Hj31BkV7ybMWOAUAa4WeJBUduLTlcoI1ZF0ljmO8c9wJeu+VUwMchXBi+HyH95nOaPohAC9PPtRkbIJaFP4xmai9JN+CDfi4fQ/wNJZ7qJ74=
+	t=1718563322; cv=none; b=d/XIvBSOKH9TJwu/W0QfU4JSS0GQ2b4pf9t4IqVdK4M2biTTS0Eo8e2cbV8H1d5uzThKvMKRXqZj8EIq94g4JtJq0V5pljd/bA3wUUDFXdyAMLUuPTkJE6SftyF4jqtOkg1i2Cu0rswl6ucKVfs6seTSsmb/8Vu2T+WdBqeVAAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718563305; c=relaxed/simple;
-	bh=6ACv2bY6r0zfKilkhSR0qAqUlb4hMLiS2w9z7El4auw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lnc6jzZ+YoLRLbuoarMxBGl86n0eojCvk/VLwdOkr7C2liv2t2ydADHMpAS5v5F44CS+5L52HgplrICgETCXLGiOS1em+oI64JsqaGp9wGdHdFyN5ceQkpJlBTCuzgJ6Xuq6wZEcvJ+AXn4S2fUpPPb4O88cmhbUK+Ww9zssKDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=em1174286.fjasle.eu; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=p5aU+BXm reason="unknown key version"; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=m9zuvCI+; dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=J6yFXe9o; arc=none smtp.client-ip=103.2.141.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1174286.fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=smtpservice.net; s=mp6320.a1-4.dyn; x=1718564199; h=Feedback-ID:
-	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
-	List-Unsubscribe:List-Unsubscribe-Post;
-	bh=6aR9HQaE4Y4lal1GRYEHgr3+/2qU9T5sijRZ4zLk+BE=; b=p5aU+BXm733K58ryDkiZNA2rHk
-	QZdtEUEABGnoghhRkq5+LKXBHuBy4kDiYO50u49jd8Z4eNEHBYVmvIYPcsafdJk7NIOHHjA6f/3XL
-	Rcti712/Y6KuV3yihRrHOGwcl6cQdOcEEnAMvYR21n9st2ytwvqremv5w5rXHqaBu4qNATPBAgFTf
-	hvJC44J19S3kcqq6yFqv1/LITA5sQQrbdYr30iD4w6zpBa+6xUZ8Rp1JMI/8Vr1qfk44S/dEirGk+
-	80GHYVbFpxEbeLUiUnodMH1tiP8QocqNOk23m/4KonCb09beWGkGiVfFWuOULnS83eMTVBvCWbTzI
-	tRD1utew==;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjasle.eu;
- i=@fjasle.eu; q=dns/txt; s=s1174286; t=1718563299; h=from : subject :
- to : message-id : date;
- bh=6aR9HQaE4Y4lal1GRYEHgr3+/2qU9T5sijRZ4zLk+BE=;
- b=m9zuvCI+VnTnYgztLQsmP2nEoXCPGrmv/JVbjt9SZhXe7O/CYm2WBy/A44JdUYXMHYCzc
- Nx2I3sXFZ4PsBxVDrl2U+vwtdEBMOVn5FQa1RVSMWdaxg7z8MslRlDSoqHmghT1FUkmTRqu
- MoLQP7Ui+7HBi/BwV+JJ7WwRfvqEEb8IymuJTDFLj8B/wIgfWuAMSjA0lRX4tDeyR7kXlK2
- fdUS1uG4isPKpm3uBvyRG8nkJbO+JZ6QlYWVEy99p7zyvKQKrvnENrnoM7xPx2f++X9WBrh
- du5UhlKKwY1TbEZqnA+ar+leGkzK3iMpIVNZPVQEAZC5UW3brlCGyZ7ZWilw==
-Received: from [10.139.162.187] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.94.2-S2G) (envelope-from <nicolas@fjasle.eu>)
- id 1sIuoF-TRk2RG-VL; Sun, 16 Jun 2024 18:41:01 +0000
-Received: from [10.85.249.164] (helo=leknes.fjasle.eu)
- by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.97.1-S2G) (envelope-from <nicolas@fjasle.eu>)
- id 1sIuoG-4o5NDgrtfVC-lgmk; Sun, 16 Jun 2024 18:41:00 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fjasle.eu; s=mail;
- t=1718563258; bh=6ACv2bY6r0zfKilkhSR0qAqUlb4hMLiS2w9z7El4auw=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=J6yFXe9o80kwHORoqDUYJUjUXOIB2T0JZU+1hrjlCggInbSSj76zFt0mJYNG8d655
- qes3jWF/ztIRn2i/W0ufP3wom/j2F7nRLK020WWZ9isrywROjKpqI8v/PuR8/DDTuZ
- GfW+rDSKQ47psKzI2BDvlqSaa0FUcPg9/3zD4ZAE=
-Received: by leknes.fjasle.eu (Postfix, from userid 1000)
- id 365EC3E724; Sun, 16 Jun 2024 20:40:57 +0200 (CEST)
-Date: Sun, 16 Jun 2024 20:40:57 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 2/2] kbuild: package: add -e and -u options to shell
- scripts
-Message-ID: <Zm8xuTWFx6SRAAHk@fjasle.eu>
-References: <20240611160938.3511096-1-masahiroy@kernel.org>
- <20240611160938.3511096-2-masahiroy@kernel.org>
- <CAK7LNAQyPRKes7=wNtYXre+nU=5-1oZ-g1uzbjFMFd2e10jFjA@mail.gmail.com>
- <20240616-dandelion-lynx-of-philosophy-6be45f@lindesnes>
- <CAK7LNARPP_OsaOhUHT+5-vi5XJ36hDs0bNsiM7pwuAmj4S+MNg@mail.gmail.com>
+	s=arc-20240116; t=1718563322; c=relaxed/simple;
+	bh=CsM4DGKZqITnSBvF9KRlVOZ+BrnA9Rcyy2NY/zVK/6g=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=REOZZso+jm6qYFDGKgMPmXAmYug0qP2T9Y39OqZYt8YAUKqYLRJgjuiIDa+HIpH1eUKxrFele6o6LmZOx9V3a3csrossD3LEzjn12cVbeQTWxGb4X+nvDbhI9L8TNhYBLqOskHNYWjpWb7cYvhC2EmaGsBwmBPkejleMaT1JlpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nfVi1Spq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86A42C2BBFC;
+	Sun, 16 Jun 2024 18:42:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718563321;
+	bh=CsM4DGKZqITnSBvF9KRlVOZ+BrnA9Rcyy2NY/zVK/6g=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=nfVi1Spq3O8TwowZ+vuXDDMSYKmcpzSwehCL6EsX5rme/5Rs0qC/j207G32eUK6+I
+	 Q5kPW2vCz4AbBp0dC1RE446//AmvLTnAKiw8UeFWUNR2lu/syMupXPeDQyXHztv9uO
+	 lEv7XmArJhFOd9KER6aJ8eVuPJcPKLWE7YPTFTdfro5F+bFwr8dt9GvGyXAc2RLl3H
+	 FYsx8nnS0mfExHNBr2V2uxZQ1ll7kwXBKyjfLku//pZXK7bBff7QR9n8G9k+/XGww6
+	 guhtUxmsX066+TSLbNhm9UEQ3jP4GZAhQfL73bnKxwF0l/Z3/sVB993oZljwrF1sP0
+	 p8EbJM/El1Y2g==
+Date: Sun, 16 Jun 2024 12:42:00 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNARPP_OsaOhUHT+5-vi5XJ36hDs0bNsiM7pwuAmj4S+MNg@mail.gmail.com>
-X-Smtpcorp-Track: 7wBz__Bss3fp.7W5YueSCJYjB.yCHYvARkCnX
-Feedback-ID: 1174286m:1174286a9YXZ7r:1174286sxlsKb0eUo
-X-Report-Abuse: Please forward a copy of this message, including all headers,
- to <abuse-report@smtp2go.com>
-
-On Mon, Jun 17, 2024 at 01:52:23AM +0900 Masahiro Yamada wrote:
-> On Mon, Jun 17, 2024 at 12:56 AM Nicolas Schier <nicolas@fjasle.eu> wrote:
-> >
-> > On Mon, Jun 17, 2024 at 12:21:15AM +0900, Masahiro Yamada wrote:
-> > > On Wed, Jun 12, 2024 at 1:09 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
-> > > >
-> > > > Set -e to make these scripts fail on the first error.
-> > > >
-> > > > Set -u because these scripts are invoked by Makefile, and do not work
-> > > > properly without necessary variables defined.
-> > > >
-> > > > Remove the explicit "test -n ..." from scripts/package/install-extmod-build.
-> > > >
-> > > > Both options are described in POSIX. [1]
-> > > >
-> > > > [1]: https://pubs.opengroup.org/onlinepubs/009604499/utilities/set.html
-> > > >
-> > > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > > > ---
-> > >
-> > >
-> > >
-> > > Setting -u needs more careful review and test.
-> > >
-> > >
-> > > This patch will break 'make deb-pkg'.
-> > >
-> > >
-> > > ./scripts/package/mkdebian: 150: KDEB_PKGVERSION: parameter not set
-> > >
-> > >
-> > >
-> > >
-> > > To set -u, scripts/package/mkdebian needs code refactoring.
-> > >
-> > >
-> > >
-> > > I will keep scripts/package/mkdebian untouched.
-> >
-> > uh, I missed that during the review.  Do you want to refactor mkdebian
-> > in large scale, or is an explicit fallback definition possibly
-> > acceptable for you?
-> >
-> > diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-> > index ecfeb34b99aa..7e3878197041 100755
-> > --- a/scripts/package/mkdebian
-> > +++ b/scripts/package/mkdebian
-> > @@ -7,5 +7,17 @@
-> >  set -eu
-> >
-> > +# Optional user-specified environment variables
-> > +
-> > +# Set target Debian architecture (skip auto-detection)
-> > +: "${KBUILD_DEBARCH:=}"
-> > +
-> > +# Set target Debian distribution (skipping auto-detection)
-> > +: "${KDEB_CHANGELOG_DIST:=}"
-> > +
-> > +# Overwrite the automatically determined package version.
-> > +: ${KDEB_PKGVERSION:=}
-> > +
-> > +
-> >  is_enabled() {
-> >         grep -q "^$1=y" include/config/auto.conf
-> >  }
-> >
-> 
-> 
-> 
-> 
-> It depends on the code.
-> 
-> 
-> 
-> 
-> I would fix
-> 
-> 
->    if [ -n "$KDEB_PKGVERSION" ]; then
-> 
-> 
-> to
-> 
->    if [ "${KDEB_PKGVERSION:+set}" = set ]; then
-> 
-> or
->    if [ "${KDEB_PKGVERSION:+set}" ]; then
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Yangyu Chen <cyy@cyyself.name>
+Cc: devicetree@vger.kernel.org, Samuel Holland <samuel.holland@sifive.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, linux-riscv@lists.infradead.org, 
+ Anup Patel <anup.patel@wdc.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, linux-kernel@vger.kernel.org
+In-Reply-To: <tencent_D3577BC67116D732862BE4A7B187EF4ED005@qq.com>
+References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
+ <tencent_D3577BC67116D732862BE4A7B187EF4ED005@qq.com>
+Message-Id: <171856332052.2487659.8752285245461346812.robh@kernel.org>
+Subject: Re: [PATCH v1 3/9] dt-bindings: riscv: add SpacemiT K1 bindings
 
 
-ah, yes that's probaly better than the default value assigments,  Please ignore
-my patch.
+On Mon, 17 Jun 2024 01:20:48 +0800, Yangyu Chen wrote:
+> Add DT binding documentation for the SpacemiT K1 Soc[1] and the Banana
+> Pi BPi-F3 board[2] which used it.
+> 
+> [1] https://www.spacemit.com/en/spacemit-key-stone-2/
+> [2] https://docs.banana-pi.org/en/BPI-F3/BananaPi_BPI-F3
+> 
+> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+> ---
+>  .../devicetree/bindings/riscv/spacemit.yaml   | 24 +++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/riscv/spacemit.yaml
+> 
 
-Kind regards,
-Nicolas
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/riscv/spacemit.yaml: 'maintainers' is a required property
+	hint: Metaschema for devicetree binding documentation
+	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/tencent_D3577BC67116D732862BE4A7B187EF4ED005@qq.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
