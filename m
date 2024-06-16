@@ -1,302 +1,145 @@
-Return-Path: <linux-kernel+bounces-216141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F05909BDB
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:17:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41402909BE0
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73D9F1C21A4D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 06:17:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA26A1F22CF8
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 06:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84759173322;
-	Sun, 16 Jun 2024 06:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7A51862B8;
+	Sun, 16 Jun 2024 06:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M98Ty3cY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aT2WOcX6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB80185087
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 06:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BB0169ADA;
+	Sun, 16 Jun 2024 06:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718518497; cv=none; b=bY5gNcwkXKLd7k7VVT6uwSBqxWZHhPDcPd5TQYNcwZos9EjBuhb2ddWOVZIWl2QIJKWOlOpPLVROPu4TYnd3HTl6dBlFx1HeVlsSqwQEH3mJYZc4UmpB3UaNu8F7XIJrCw2CDVRNk33R5QC238K1zt+94DbcXjePly8dxe3wzjY=
+	t=1718518506; cv=none; b=T+kNyxyHQ2QESbA/E+wKsVyiaHUN+OJGb8txzxVHieTiuCv+3F5A1720iYyDOIQ1NS8/rbGCXuyKHTMBRgRln5SrTRz1ZE80uld9IIhD6nt5kcznjEmHtq5pWyq0XZ+0ubDSBbKEa20PaoryxeenIThdIZFCyzghN1rC8LQJE48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718518497; c=relaxed/simple;
-	bh=hTJeWRwM3m1FGdGpvsfDbegKG/pCMHiAKZUHBBPLWpE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cCoUYoF6s0BD8brwGhbpBLu4kgFp4BLwYU7cAY5Tr73OaJ5FefmNIERoG4lxVEiQfNyIXkR8dpAq0t2gjdxMrYmb1WOaK4x+k/HK7yaDvkRhjcJM/+5tPA/LTMxSwn6Gg2thUjZLkBcpXg61GM3+FOov6ttV8kIph+Ch6LFN45g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M98Ty3cY; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718518496; x=1750054496;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=hTJeWRwM3m1FGdGpvsfDbegKG/pCMHiAKZUHBBPLWpE=;
-  b=M98Ty3cYqrrxbeT7Vw+hiiDT+K9n/EIdSsnBcjir4J+UXzrBGD65LKve
-   J4MrGgRfFC9jLFV04KkgCKfXW27cRejJvxJWRriYHrpn4xYdCHDKepGzG
-   4bArFBPuH8JgiLhofrHyBc8vMoom9BqfUqwfRnxNQZjlIPWwnEhm/L/+T
-   669gzURSRP8qodu1i4gDsz7Z+wOlQcEz7ZeynmW9sLmolhFyctfJg837f
-   aG8eREjWalZDVCDwf//K6ehzabbcVpGOMOIP8PfJLpdEFJOx5neM4THX0
-   L81C0YwGKRqCbIr8fG8Erds1o/HIl/JeTEGjvSKe93nMzWaC5kGeCytrg
-   w==;
-X-CSE-ConnectionGUID: eCXK9pN4QOCV0HDELQZk+w==
-X-CSE-MsgGUID: tDmUIGssS4uQ8x3u+OQalg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="18290111"
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="18290111"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 23:14:55 -0700
-X-CSE-ConnectionGUID: qo9Vc7uKRSW1yO//BZw60w==
-X-CSE-MsgGUID: JDwYcxPIQbKJwrY3N7AW0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="40748226"
-Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.127])
-  by fmviesa007.fm.intel.com with ESMTP; 15 Jun 2024 23:14:52 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Yi Liu <yi.l.liu@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	Joel Granados <j.granados@samsung.com>
-Cc: iommu@lists.linux.dev,
-	virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH v7 10/10] iommufd/selftest: Add coverage for IOPF test
-Date: Sun, 16 Jun 2024 14:11:55 +0800
-Message-Id: <20240616061155.169343-11-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240616061155.169343-1-baolu.lu@linux.intel.com>
-References: <20240616061155.169343-1-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1718518506; c=relaxed/simple;
+	bh=KXEgR5GnqJoxLrzxenosBEsqW3oYDG4krnM+m4NIOnY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=BfOXNlVlIj+cVX0u01LVycl15k7bVrcgsgbMOL4VrxYYljRwyWiO9eRE9CXc5zMs03TxgApB2R1zbewUV3FAYwBhUvOQ36OOEfAWOQgS8GXshiN4bh534k9WODO4ZUeniMJZEpN8MLKTtbB903vEX+Nl0PMKtVq5Q+fOvLRWs4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aT2WOcX6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45G5QQau025146;
+	Sun, 16 Jun 2024 06:14:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=JJBiIeUtBaLvynT/93cCjI
+	OFgX6CDX3j2TJCH2/qi7E=; b=aT2WOcX64X/Drn+K8+gkK+4JRCVB0mneBZ9X8x
+	xhkRcbTQG3qq/aN5UleWksMXofuxtAa4tUFPiiiTLwPuGjCbAaw81I2qyxd0L20v
+	le14akPIb76k9U3JipzsO5cHnZ5g+Bnxg0BeOdDiEgPGHvFS9lwLDJWFVxZRU9dk
+	7G1SNMC6NuwHjU37l5Y4tmFFc6hSKQOe+dkX6yDbF3omMWSxv9pnaD7jQzZyQIIJ
+	BjQ49lkN+RzkKoxyVG75S06LSTw443nbol6JhzKxL3oTFXstNdVUvh7jK1+oc/Ne
+	0jp/R3JJvKnNpTvC+LXmQLFIW9TodvZkenB6eZGMFgVxWWqA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys3639fmq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 16 Jun 2024 06:14:59 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45G6EwiP016005
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 16 Jun 2024 06:14:58 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Jun
+ 2024 23:14:58 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sat, 15 Jun 2024 23:14:57 -0700
+Subject: [PATCH] crypto: lib - add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240615-md-arm-lib-crypto-v1-1-27b67bf8573c@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAOCCbmYC/x3MwQ6CMAyA4VchPdtkIDPGVzEeuq1KEzZICwZDe
+ Henx+/w/zsYq7DBrdlB+S0mU6loTw3EgcqLUVI1dK7r3aX1mBOSZhwlYNTPvEzYe5/Yn326koP
+ azcpP2f7P+6M6kDEGpRKH32mUsm6YyRZWOI4v32oM5oIAAAA=
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller"
+	<davem@davemloft.net>
+CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: WbBa9OCnvlx8iAt0SIiTe41w_2CtzSEd
+X-Proofpoint-ORIG-GUID: WbBa9OCnvlx8iAt0SIiTe41w_2CtzSEd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-16_05,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 impostorscore=0 bulkscore=0 malwarescore=0 suspectscore=0
+ phishscore=0 adultscore=0 priorityscore=1501 spamscore=0 mlxlogscore=999
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406160047
 
-Extend the selftest tool to add coverage of testing IOPF handling. This
-would include the following tests:
+With ARCH=arm, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libsha256.o
 
-- Allocating and destroying an iommufd fault object.
-- Allocating and destroying an IOPF-capable HWPT.
-- Attaching/detaching/replacing an IOPF-capable HWPT on a device.
-- Triggering an IOPF on the mock device.
-- Retrieving and responding to the IOPF through the file interface.
+Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+files which have a MODULE_LICENSE().
 
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+This includes sha1.c and utils.c which, although they did not produce
+a warning with the arm allmodconfig configuration, may cause this
+warning with other configurations.
+
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
- tools/testing/selftests/iommu/iommufd_utils.h | 80 +++++++++++++++++--
- tools/testing/selftests/iommu/iommufd.c       | 18 +++++
- .../selftests/iommu/iommufd_fail_nth.c        |  2 +-
- 3 files changed, 94 insertions(+), 6 deletions(-)
+ lib/crypto/sha1.c   | 1 +
+ lib/crypto/sha256.c | 1 +
+ lib/crypto/utils.c  | 1 +
+ 3 files changed, 3 insertions(+)
 
-diff --git a/tools/testing/selftests/iommu/iommufd_utils.h b/tools/testing/selftests/iommu/iommufd_utils.h
-index 8d2b46b2114d..35ce4e73024b 100644
---- a/tools/testing/selftests/iommu/iommufd_utils.h
-+++ b/tools/testing/selftests/iommu/iommufd_utils.h
-@@ -153,7 +153,7 @@ static int _test_cmd_mock_domain_replace(int fd, __u32 stdev_id, __u32 pt_id,
- 	EXPECT_ERRNO(_errno, _test_cmd_mock_domain_replace(self->fd, stdev_id, \
- 							   pt_id, NULL))
- 
--static int _test_cmd_hwpt_alloc(int fd, __u32 device_id, __u32 pt_id,
-+static int _test_cmd_hwpt_alloc(int fd, __u32 device_id, __u32 pt_id, __u32 ft_id,
- 				__u32 flags, __u32 *hwpt_id, __u32 data_type,
- 				void *data, size_t data_len)
- {
-@@ -165,6 +165,7 @@ static int _test_cmd_hwpt_alloc(int fd, __u32 device_id, __u32 pt_id,
- 		.data_type = data_type,
- 		.data_len = data_len,
- 		.data_uptr = (uint64_t)data,
-+		.fault_id = ft_id,
- 	};
- 	int ret;
- 
-@@ -177,24 +178,30 @@ static int _test_cmd_hwpt_alloc(int fd, __u32 device_id, __u32 pt_id,
+diff --git a/lib/crypto/sha1.c b/lib/crypto/sha1.c
+index 1aebe7be9401..6d2922747cab 100644
+--- a/lib/crypto/sha1.c
++++ b/lib/crypto/sha1.c
+@@ -137,4 +137,5 @@ void sha1_init(__u32 *buf)
  }
+ EXPORT_SYMBOL(sha1_init);
  
- #define test_cmd_hwpt_alloc(device_id, pt_id, flags, hwpt_id)                  \
--	ASSERT_EQ(0, _test_cmd_hwpt_alloc(self->fd, device_id, pt_id, flags,   \
-+	ASSERT_EQ(0, _test_cmd_hwpt_alloc(self->fd, device_id, pt_id, 0, flags,   \
- 					  hwpt_id, IOMMU_HWPT_DATA_NONE, NULL, \
- 					  0))
- #define test_err_hwpt_alloc(_errno, device_id, pt_id, flags, hwpt_id)   \
- 	EXPECT_ERRNO(_errno, _test_cmd_hwpt_alloc(                      \
--				     self->fd, device_id, pt_id, flags, \
-+				     self->fd, device_id, pt_id, 0, flags, \
- 				     hwpt_id, IOMMU_HWPT_DATA_NONE, NULL, 0))
++MODULE_DESCRIPTION("SHA-1 Algorithm");
+ MODULE_LICENSE("GPL");
+diff --git a/lib/crypto/sha256.c b/lib/crypto/sha256.c
+index 3ac1ef8677db..3f42d203c7bc 100644
+--- a/lib/crypto/sha256.c
++++ b/lib/crypto/sha256.c
+@@ -165,4 +165,5 @@ void sha256(const u8 *data, unsigned int len, u8 *out)
+ }
+ EXPORT_SYMBOL(sha256);
  
- #define test_cmd_hwpt_alloc_nested(device_id, pt_id, flags, hwpt_id,         \
- 				   data_type, data, data_len)                \
--	ASSERT_EQ(0, _test_cmd_hwpt_alloc(self->fd, device_id, pt_id, flags, \
-+	ASSERT_EQ(0, _test_cmd_hwpt_alloc(self->fd, device_id, pt_id, 0, flags, \
- 					  hwpt_id, data_type, data, data_len))
- #define test_err_hwpt_alloc_nested(_errno, device_id, pt_id, flags, hwpt_id, \
- 				   data_type, data, data_len)                \
- 	EXPECT_ERRNO(_errno,                                                 \
--		     _test_cmd_hwpt_alloc(self->fd, device_id, pt_id, flags, \
-+		     _test_cmd_hwpt_alloc(self->fd, device_id, pt_id, 0, flags, \
- 					  hwpt_id, data_type, data, data_len))
++MODULE_DESCRIPTION("SHA-256 Algorithm");
+ MODULE_LICENSE("GPL");
+diff --git a/lib/crypto/utils.c b/lib/crypto/utils.c
+index c852c7151b0a..373364141408 100644
+--- a/lib/crypto/utils.c
++++ b/lib/crypto/utils.c
+@@ -85,4 +85,5 @@ void __crypto_xor(u8 *dst, const u8 *src1, const u8 *src2, unsigned int len)
+ }
+ EXPORT_SYMBOL_GPL(__crypto_xor);
  
-+#define test_cmd_hwpt_alloc_iopf(device_id, pt_id, fault_id, flags, hwpt_id,    \
-+				   data_type, data, data_len)                   \
-+	ASSERT_EQ(0, _test_cmd_hwpt_alloc(self->fd, device_id, pt_id, fault_id, \
-+					  flags, hwpt_id, data_type, data,      \
-+					  data_len))
-+
- #define test_cmd_hwpt_check_iotlb(hwpt_id, iotlb_id, expected)                 \
- 	({                                                                     \
- 		struct iommu_test_cmd test_cmd = {                             \
-@@ -684,3 +691,66 @@ static int _test_cmd_get_hw_info(int fd, __u32 device_id, void *data,
- 
- #define test_cmd_get_hw_capabilities(device_id, caps, mask) \
- 	ASSERT_EQ(0, _test_cmd_get_hw_info(self->fd, device_id, NULL, 0, &caps))
-+
-+static int _test_ioctl_fault_alloc(int fd, __u32 *fault_id, __u32 *fault_fd)
-+{
-+	struct iommu_fault_alloc cmd = {
-+		.size = sizeof(cmd),
-+	};
-+	int ret;
-+
-+	ret = ioctl(fd, IOMMU_FAULT_QUEUE_ALLOC, &cmd);
-+	if (ret)
-+		return ret;
-+	*fault_id = cmd.out_fault_id;
-+	*fault_fd = cmd.out_fault_fd;
-+	return 0;
-+}
-+
-+#define test_ioctl_fault_alloc(fault_id, fault_fd)                       \
-+	({                                                               \
-+		ASSERT_EQ(0, _test_ioctl_fault_alloc(self->fd, fault_id, \
-+						     fault_fd));         \
-+		ASSERT_NE(0, *(fault_id));                               \
-+		ASSERT_NE(0, *(fault_fd));                               \
-+	})
-+
-+static int _test_cmd_trigger_iopf(int fd, __u32 device_id, __u32 fault_fd)
-+{
-+	struct iommu_test_cmd trigger_iopf_cmd = {
-+		.size = sizeof(trigger_iopf_cmd),
-+		.op = IOMMU_TEST_OP_TRIGGER_IOPF,
-+		.trigger_iopf = {
-+			.dev_id = device_id,
-+			.pasid = 0x1,
-+			.grpid = 0x2,
-+			.perm = IOMMU_PGFAULT_PERM_READ | IOMMU_PGFAULT_PERM_WRITE,
-+			.addr = 0xdeadbeaf,
-+		},
-+	};
-+	struct iommu_hwpt_page_response response = {
-+		.code = IOMMUFD_PAGE_RESP_SUCCESS,
-+	};
-+	struct iommu_hwpt_pgfault fault = {};
-+	ssize_t bytes;
-+	int ret;
-+
-+	ret = ioctl(fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_TRIGGER_IOPF), &trigger_iopf_cmd);
-+	if (ret)
-+		return ret;
-+
-+	bytes = read(fault_fd, &fault, sizeof(fault));
-+	if (bytes <= 0)
-+		return -EIO;
-+
-+	response.cookie = fault.cookie;
-+
-+	bytes = write(fault_fd, &response, sizeof(response));
-+	if (bytes <= 0)
-+		return -EIO;
-+
-+	return 0;
-+}
-+
-+#define test_cmd_trigger_iopf(device_id, fault_fd) \
-+	ASSERT_EQ(0, _test_cmd_trigger_iopf(self->fd, device_id, fault_fd))
-diff --git a/tools/testing/selftests/iommu/iommufd.c b/tools/testing/selftests/iommu/iommufd.c
-index edf1c99c9936..5b0169875a4d 100644
---- a/tools/testing/selftests/iommu/iommufd.c
-+++ b/tools/testing/selftests/iommu/iommufd.c
-@@ -279,6 +279,9 @@ TEST_F(iommufd_ioas, alloc_hwpt_nested)
- 	uint32_t parent_hwpt_id = 0;
- 	uint32_t parent_hwpt_id_not_work = 0;
- 	uint32_t test_hwpt_id = 0;
-+	uint32_t iopf_hwpt_id;
-+	uint32_t fault_id;
-+	uint32_t fault_fd;
- 
- 	if (self->device_id) {
- 		/* Negative tests */
-@@ -326,6 +329,7 @@ TEST_F(iommufd_ioas, alloc_hwpt_nested)
- 					   sizeof(data));
- 
- 		/* Allocate two nested hwpts sharing one common parent hwpt */
-+		test_ioctl_fault_alloc(&fault_id, &fault_fd);
- 		test_cmd_hwpt_alloc_nested(self->device_id, parent_hwpt_id, 0,
- 					   &nested_hwpt_id[0],
- 					   IOMMU_HWPT_DATA_SELFTEST, &data,
-@@ -334,6 +338,10 @@ TEST_F(iommufd_ioas, alloc_hwpt_nested)
- 					   &nested_hwpt_id[1],
- 					   IOMMU_HWPT_DATA_SELFTEST, &data,
- 					   sizeof(data));
-+		test_cmd_hwpt_alloc_iopf(self->device_id, parent_hwpt_id, fault_id,
-+					 IOMMU_HWPT_FAULT_ID_VALID, &iopf_hwpt_id,
-+					 IOMMU_HWPT_DATA_SELFTEST, &data,
-+					 sizeof(data));
- 		test_cmd_hwpt_check_iotlb_all(nested_hwpt_id[0],
- 					      IOMMU_TEST_IOTLB_DEFAULT);
- 		test_cmd_hwpt_check_iotlb_all(nested_hwpt_id[1],
-@@ -504,14 +512,24 @@ TEST_F(iommufd_ioas, alloc_hwpt_nested)
- 			     _test_ioctl_destroy(self->fd, nested_hwpt_id[1]));
- 		test_ioctl_destroy(nested_hwpt_id[0]);
- 
-+		/* Switch from nested_hwpt_id[1] to iopf_hwpt_id */
-+		test_cmd_mock_domain_replace(self->stdev_id, iopf_hwpt_id);
-+		EXPECT_ERRNO(EBUSY,
-+			     _test_ioctl_destroy(self->fd, iopf_hwpt_id));
-+		/* Trigger an IOPF on the device */
-+		test_cmd_trigger_iopf(self->device_id, fault_fd);
-+
- 		/* Detach from nested_hwpt_id[1] and destroy it */
- 		test_cmd_mock_domain_replace(self->stdev_id, parent_hwpt_id);
- 		test_ioctl_destroy(nested_hwpt_id[1]);
-+		test_ioctl_destroy(iopf_hwpt_id);
- 
- 		/* Detach from the parent hw_pagetable and destroy it */
- 		test_cmd_mock_domain_replace(self->stdev_id, self->ioas_id);
- 		test_ioctl_destroy(parent_hwpt_id);
- 		test_ioctl_destroy(parent_hwpt_id_not_work);
-+		close(fault_fd);
-+		test_ioctl_destroy(fault_id);
- 	} else {
- 		test_err_hwpt_alloc(ENOENT, self->device_id, self->ioas_id, 0,
- 				    &parent_hwpt_id);
-diff --git a/tools/testing/selftests/iommu/iommufd_fail_nth.c b/tools/testing/selftests/iommu/iommufd_fail_nth.c
-index f590417cd67a..c5d5e69452b0 100644
---- a/tools/testing/selftests/iommu/iommufd_fail_nth.c
-+++ b/tools/testing/selftests/iommu/iommufd_fail_nth.c
-@@ -615,7 +615,7 @@ TEST_FAIL_NTH(basic_fail_nth, device)
- 	if (_test_cmd_get_hw_info(self->fd, idev_id, &info, sizeof(info), NULL))
- 		return -1;
- 
--	if (_test_cmd_hwpt_alloc(self->fd, idev_id, ioas_id, 0, &hwpt_id,
-+	if (_test_cmd_hwpt_alloc(self->fd, idev_id, ioas_id, 0, 0, &hwpt_id,
- 				 IOMMU_HWPT_DATA_NONE, 0, 0))
- 		return -1;
- 
--- 
-2.34.1
++MODULE_DESCRIPTION("Crypto library utility functions");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240615-md-arm-lib-crypto-455de535d8a0
 
 
