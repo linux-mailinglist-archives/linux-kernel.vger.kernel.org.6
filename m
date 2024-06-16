@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-216282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C52F909D80
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 14:31:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E5B909D82
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 14:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCCA21F210F8
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 12:31:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36F14281ABB
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 12:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AF0188CBD;
-	Sun, 16 Jun 2024 12:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A789D1E4B2;
+	Sun, 16 Jun 2024 12:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="c7Fql7r6"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="UbNQpZBf"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F19A187569
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 12:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A559188CB0
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 12:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718541094; cv=none; b=Fae6shPRez4BFlK+0NM5b2L1ZFs8LSR4GyG/p46Sdior0Z+s+hY6CYq5vNxdBLHkPzY9xvvUAifEZvt6k/3KikUXYYiTIEh50S+bhj0Vnfzdp6sOPRzqXxEWX5k6kbZnZmd7RpgHPdbwLERJ2xsjqU2kimJO836fTZrwlMIxJqY=
+	t=1718541107; cv=none; b=Pz+VjYBmVS6o523p24K05cizlYbuWGWM4b5PJbor5vTZvevVFipiMLqaKiPyL8fhoqzxa+Txruu2y6FDVWcWqJluOl4Uin+EZE2GgERp6h/j0lMkcaiYYzZz6iuI7/IXlDTq7lKllnXtC9zssUscg+UdVvGyRdoMvt+hAaEDnz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718541094; c=relaxed/simple;
-	bh=xZi4lKvBPT2bvZ0plngZ02W6vqSpjH4rbadg+eIR/zY=;
+	s=arc-20240116; t=1718541107; c=relaxed/simple;
+	bh=HxAcPKJJ8JPv73Ku8uSC3L+A0tpTJzWvLEAkAEg4CxU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jCi0Yp/JNtoimFeB2iA1bTFgbiyNuaZMUVvUmtWarnw+cU4248ay7L2mcM7LjH7Tf3qQFSLBAh3VP8qgf78pcY6EvlBatwJ77rFrQiGKJeyyb9rl74F3v1m/OO/a7HIzo8b8lPX97tgvXxIdX7rQ+jpvsjEWurIC2nx7TbnVsE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=c7Fql7r6; arc=none smtp.client-ip=209.85.210.43
+	 In-Reply-To:Content-Type; b=rvk7YbaiTbL8O7nTAyFuSLVN+afJCGUECfvqKs7viEf3bTf6cS+eB76qeDnbRB+PQl1dBbEOPqUSUCAVAqfmWzcsk4sM3YnankFvBydDNuTPkQvDYKN4D20Ovgetw6+HF9Z3E4T+XStuhRSm67QWqYKUydKCL5uC7j06sWkhxwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=UbNQpZBf; arc=none smtp.client-ip=209.85.160.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-6fb840d8ffdso1631637a34.1
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 05:31:31 -0700 (PDT)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4435f782553so2376881cf.3
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 05:31:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1718541090; x=1719145890; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1718541105; x=1719145905; darn=vger.kernel.org;
         h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XbxFAR7tHyjE7oGmfxRVckwKiOdfSj6RI1XYzdNWdRI=;
-        b=c7Fql7r6fVIlDz5sjxUGwuHf62sN6w4iCLFXFuo+w8cvzj6+FwWx5aImDEbgdFuR/g
-         XRkPncM/3eHZa5xilir/3hp635seZjsMche4Jz30xRn+nAcirfRaoinPvTcqIlin34Xo
-         kulEEM77vOtEjWYhWNfmu2cMYW8EvAa4Zx1zw=
+        bh=SJQmJK6qdDQAr85cx2mQ79dz4AGUPMBGlK/ruw358YM=;
+        b=UbNQpZBfBtddZBqMK4rcEWg9aDfu8rZ2EvJihNr2kvjXXDsjfR+niozn54Nxl7wPM1
+         kPpEpdOrRlvje3KXUiuM7Axs4hpDXKsXURO3PxVN8sRfwWJ1Rory6VLx/p+JXt8O0Xhf
+         8t7UIzKggWkkJv/GiiS09SajgqJtntW1VREBQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718541090; x=1719145890;
+        d=1e100.net; s=20230601; t=1718541105; x=1719145905;
         h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=XbxFAR7tHyjE7oGmfxRVckwKiOdfSj6RI1XYzdNWdRI=;
-        b=nvJtBfN/uDMddl3YXwQlcD1p+T0jEJPRx4kKrcHqY+DYOZsETthqNEfZ6SYR5B2p3P
-         mOGorNmJwx0d66/OYEnWB9wdUqGJyANABvTox310GtriFPqWt/8LEDWcqsipxzGLsWBr
-         /uawfHE7P2LsiiRXhOzSdaxfVnADGIWL84xlvJzkLB52KJ9IBLvMRYHjXcxV/a98VxDT
-         Co9Ft2uA3jwjz91T2HBOykGCdkdqey/p2hiuxYSAKVBeyqdJUqMG0tf0YKuifUIbPFw9
-         ijmqCUZSnPwS/CBlYinRwSfF+DM8gS+HOYz+ghV5gcDJ4V6Ra/1vXBOBMp2vZQo5NPk3
-         lyyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXP3aYadvFo7XSg0pDxGuWZxxCO226tjvuBeJjGJfeAJ8PSS5W+2yG4puxRVoH59Yy7wgmDkdojQGWuH94c5n5MSLpBndSJHsll3QeZ
-X-Gm-Message-State: AOJu0YzbZ8sTVPWdliA9IyBQkpsHiPcDCie0u+/7673dNRR3+Lxs4781
-	rFpOcdcUu45GVuFm4lvhmmFzOitsZoDExA8+SvrHooARAX6XCqbmpHbM5qAklg==
-X-Google-Smtp-Source: AGHT+IFyV9j0hahBnXT38rr+Ne2TBcbROw/kAQmhSK13Wfm9OWRuDB3iXpHS2Z9zB1NWlhdHe8kVhA==
-X-Received: by 2002:a05:6830:1657:b0:6f9:c6ba:3cc3 with SMTP id 46e09a7af769-6fb9376224amr7977876a34.15.1718541090323;
-        Sun, 16 Jun 2024 05:31:30 -0700 (PDT)
+        bh=SJQmJK6qdDQAr85cx2mQ79dz4AGUPMBGlK/ruw358YM=;
+        b=DAKXAN6GhIcMN2gqBq32hdxkFOhMmjJtl9XDMM/6FjJuiU/f2ehE/r7qE1Cr8fj/cw
+         a+uj/0t2xmKRuQU/Vy9ZSY3wIFieRTNwI4fG3+3lZ1SYJSopee+cp1Vipd+G62e4FvrB
+         NoxpOdcko/+hMWqHoVeJ4mpZoxHmTNj78E20RxUoefLnijnWEyx2UgfeqdcX25GAE5SV
+         4DbfE2XgInqH9bDLKw6iF9kVLh0wj9ryvENu83E8/JktXkhEdj9+/jZ9P/IjpkVjpgd1
+         gJWzx0o09FPx7DMHtMdp3pGjd0my+fyZUGbI9WZqScYi7wGbvfFntAdspdbjYJQ5oRR7
+         fQqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNcjI+4XJE++DyPnZ2FKMjTt6lnAVgD+Pxu0gbwyIru30BglMNbB5kXrdsHI8fKpPuvBL3jdWno4o+hQGRrf0ELZSjEnmbo9tQIztn
+X-Gm-Message-State: AOJu0YxzbEunDnLot+EUyNJjxBiD3bsfahAqvm4I7OuuxvhA1dkudA5w
+	iYlcWFvNWujcJPmtdjyyMYw92zIFnTzj1oQVlK5lWx7X4jaV85I/PsxGePOENw==
+X-Google-Smtp-Source: AGHT+IHGw3dr7+QNHsYzZDqdZrsIuLare7z5YIu8BjhK19vUVaG0/un0F1g14IF6a/NsU1pImYJlHw==
+X-Received: by 2002:a05:622a:10e:b0:440:5275:d431 with SMTP id d75a77b69052e-442168ba4bdmr104299541cf.32.1718541104898;
+        Sun, 16 Jun 2024 05:31:44 -0700 (PDT)
 Received: from [192.168.1.114] ([196.64.245.53])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5ef988csm43509946d6.133.2024.06.16.05.31.27
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-441f2ff8520sm36351721cf.82.2024.06.16.05.31.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Jun 2024 05:31:29 -0700 (PDT)
-Message-ID: <ea84f979-27ed-4162-91ed-fd32e1482d11@broadcom.com>
-Date: Sun, 16 Jun 2024 13:31:25 +0100
+        Sun, 16 Jun 2024 05:31:44 -0700 (PDT)
+Message-ID: <98509dd9-4e74-41fc-a518-2682f233afeb@broadcom.com>
+Date: Sun, 16 Jun 2024 13:31:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,14 +72,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] power: reset: brcmstb: Use
- devm_register_sys_off_handler()
+Subject: Re: [PATCH 1/5] power: reset: brcmstb: Use normal driver register
+ function
 To: Andrew Davis <afd@ti.com>, Sebastian Reichel <sre@kernel.org>
 Cc: Broadcom internal kernel review list
  <bcm-kernel-feedback-list@broadcom.com>, linux-pm@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20240610142836.168603-1-afd@ti.com>
- <20240610142836.168603-4-afd@ti.com>
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
  xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
@@ -113,11 +112,11 @@ Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
  MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
  7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
  95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20240610142836.168603-4-afd@ti.com>
+In-Reply-To: <20240610142836.168603-1-afd@ti.com>
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000401d63061b010788"
+	boundary="0000000000001c8ce2061b0108b5"
 
---000000000000401d63061b010788
+--0000000000001c8ce2061b0108b5
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
@@ -125,8 +124,9 @@ Content-Transfer-Encoding: 7bit
 
 
 On 6/10/2024 3:28 PM, Andrew Davis wrote:
-> Function register_restart_handler() is deprecated. Using this new API
-> removes our need to keep and manage a struct notifier_block.
+> The platform_driver_probe() helper is useful when the probe function
+> is in the _init section, that is not the case here. Use the normal
+> platform_driver_register() function.
 > 
 > Signed-off-by: Andrew Davis <afd@ti.com>
 
@@ -134,7 +134,7 @@ Acked-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
 Florian
 
---000000000000401d63061b010788
+--0000000000001c8ce2061b0108b5
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -205,15 +205,15 @@ kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
 NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
 AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
 LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
-/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIDigyMKqrYvGsfUz
-nkFDjwjfvE3aWd75f5MlyCJ3+IGgMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
-AQkFMQ8XDTI0MDYxNjEyMzEzMFowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
+/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIOsLLEyTpdYjHhDm
++Nuajv8WU0MbrIurdGEJR+iRIHTIMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
+AQkFMQ8XDTI0MDYxNjEyMzE0NVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
 AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
-MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBd6XtXJ587FFx6fZjVWjScKe330BQ7Cedt
-64fo0GQfxsay/Coh4YZ0sTpio9juQL62/0amW57gv+s6r/epCsa5abh+5lVdID75w9lZZYUuvHWE
-hopwFcq5Fb/0IhaPy6YzLlipk7JjB0Pz21dXBTf3pae2ionnL9BFusb2//mE7Ddu3C8xeff22C/u
-2DwMqyz/3WSPZx33r3QDWp+FwTbBQUMNOatF7ppnKyu7luLoPk92jMt++a0d5nAjkC5qfKxyNBil
-bx3nopPHwKAp8Tby0hBcaloys6bew8cgkfp/hz55jk0/DoDVEjng2zqM8DT0Fc9WTTsAEVkHODgd
-jwjB
---000000000000401d63061b010788--
+MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQA/Jq6F/AfpmzxGXc1EFJcYzgY5ItaeUytP
+0pI1iEvli8UMg2DZfVDaWgpjB/QIlomhAokmaRJvQ0tZpZsPCJVux78l2G2lZ7q6ys/fuVWJPZZ1
+zC+suhsuBEjaElw2lmWHjhJkyL+9jFeSPSUmTeWjj8eGVXHLsXj/r/XSdu+uHjRlG7joSS1U3ZvX
+VsxeEGDRHW+YnOmICacLEXt8+O5vbbbXAuzqWM7ABDkZRq6NoXkQAo7infTMtQHKccxwlkeOUKZE
+qKC6OXF8rgW5LuTrkqYnaXEquFrvgEhMzynmp/G0tDEVj7Q/29OGykvEYl0vILluA0DY6lZmFuvx
+aRyE
+--0000000000001c8ce2061b0108b5--
 
