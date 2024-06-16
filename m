@@ -1,224 +1,360 @@
-Return-Path: <linux-kernel+bounces-216100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8542F909B62
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 05:13:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67939909B69
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 05:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94A971C210BB
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 03:13:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E42741F222AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 03:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE8716C845;
-	Sun, 16 Jun 2024 03:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8D616C6AD;
+	Sun, 16 Jun 2024 03:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IdmISVR4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WG/gZt0o"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DE62F26;
-	Sun, 16 Jun 2024 03:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718507578; cv=fail; b=cOKJKnQVmjkKVUnD2OkkEiZMQo4FgkjR3q1C4lqVkQyib5NNQ7LR1BTYHMy9cR6ibW8yTPB/jeZnYcODuwotTYFQEMpgcC831Ei9kUiVXnBzL3KyNh+YJ3xgdGFW8kvNWO4RIbbZXnlGNU4gX8oQxbWX0KSQmPiJtucuGXVeMyc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718507578; c=relaxed/simple;
-	bh=WWIDrcZGabfv6EhPv99ZGNknTXv/jiOAwUPSIDRbc+w=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=t7LYp4l+NEW7XJDO+BQlpDXoGJ7tryG918Beg+0cLaBSNL9lBDvikhUzCjMtuhQv92uiUfzn9jP16DN88mtTTrCxRoeI2wo1CBZM+Sgvn5HTAQJWJBwpfKwd6uCLbTu6kb/I/eCjo1IURvPGnSAK2ANBSeMbUixiMWeF2axtCoA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IdmISVR4; arc=fail smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718507576; x=1750043576;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=WWIDrcZGabfv6EhPv99ZGNknTXv/jiOAwUPSIDRbc+w=;
-  b=IdmISVR4kFWW1MQtn0EE+39Jb5jBC1TzqImSbYTaRGpIcHg/IqR+taQu
-   5HGJuowK7Th5W0rNJd9I4RTtEPPupXmuRTY8atLgnnnAEDgEaELabZlUh
-   8a61Dbis6N/xvlyU87jZs4AsuD4HL/0NnD9geVimj7F2RZpPhl29taPve
-   GDMQ/TsujLblPo5iXk/6GGJ2eccO2AAXoIRK6/ajQrj5L/lHOJc07KXkn
-   zKaVhpXktM6N3F2SyjcN4INh52zOhIOxOM26PHn7J38AfQUFz8Q5a0j4g
-   eWklZ0H685TlpkT27XV959Oz3Vzg4X4tG599p40zgIqxlydAQVsAnToxI
-   g==;
-X-CSE-ConnectionGUID: cZC2DuUST8qiEOuhLrrCIg==
-X-CSE-MsgGUID: fA9b81+RQsiAsr5A3YAnag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="15240374"
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="15240374"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 20:12:55 -0700
-X-CSE-ConnectionGUID: WNVFqCbaSRuEMvtrR8w4fw==
-X-CSE-MsgGUID: t85izYgtQjGsaeTBLEayIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="40727744"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 15 Jun 2024 20:12:56 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sat, 15 Jun 2024 20:12:55 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sat, 15 Jun 2024 20:12:55 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.175)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 15 Jun 2024 20:12:55 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Yw9DqLMW+Anyif5d8OfaPsU6cTOUiEAIWetNAyO7XXJ0PDjyrcGxzo2iJrO+Iv/RsYOC8axvhkqvEGr6TnnRMjzYW+hGM0jj1BEHN9QieLthnMTtqt+Y4OLOxMcnrVo13EbIoKQIgh0a8u2BzlaM0K6jbV7TbC1BS+UCa49eCWzmEBQzGWTWgQ4CBAP4UEsFgsfxd3vQawbhTTr4rbnSJodTa7IgBHqVccMZfOouaoLY8PtCN7wYWwAjqAzD6ztU6laYBQBYDu+JRgisM7Zd5vRAb5qt3Ly0G7D+sp07Q3z3J//B7/m5pAPrN7P5Xf8fGpL4XiBzYwttl+7Hpfj72g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ADaW/ieSqHWtCeWElOVWaUgkM4piiKy2xCjzPvm5awA=;
- b=TkaVxFXs8SRxasRvAQdlZbja3u3r2pmr4Plz/Bnuxr1+9qN8qzDAOd+8h80WkMyyDBvxHfHvIq0kYec7ktSpwjdm9GF15LkoZFwPP/rSjbJzrJq32igle79MKvKTYcbAnNh/ROgobcxq46I3aEiLQlGqwWfmlvAzN4mLBlY1C2ZSSpudC8OFBJdwReNQk0StTffzVEaI65dJUwtevJ/122nbCDNwaitDF7QhNnVg6sYgviWksQ068TziKA9a+nvCe2qYbgPNkPJmjdcM4Tmu8e3ojG9nyw2LAfm91SJ/91LzVa9rfpdzB0Y76opPskpOUxyP7p/YPhFbf+1qTDDZww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA2PR11MB4844.namprd11.prod.outlook.com (2603:10b6:806:f9::6)
- by SJ0PR11MB4799.namprd11.prod.outlook.com (2603:10b6:a03:2ae::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.37; Sun, 16 Jun
- 2024 03:12:53 +0000
-Received: from SA2PR11MB4844.namprd11.prod.outlook.com
- ([fe80::b3b:d200:42be:fe4c]) by SA2PR11MB4844.namprd11.prod.outlook.com
- ([fe80::b3b:d200:42be:fe4c%6]) with mapi id 15.20.7677.026; Sun, 16 Jun 2024
- 03:12:52 +0000
-Date: Sun, 16 Jun 2024 11:13:19 +0800
-From: Pengfei Xu <pengfei.xu@intel.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-CC: Alexei Starovoitov <ast@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	bpf <bpf@vger.kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Barret Rhoden
-	<brho@google.com>, kbuild test robot <lkp@intel.com>, syzkaller-bugs
-	<syzkaller-bugs@googlegroups.com>
-Subject: Re: [Syzkaller & bisect] There is KASAN: slab-use-after-free Read in
- arena_vm_close in v6.10-rc3 kernel
-Message-ID: <Zm5YT8f/zGTIpAvr@xpf.sh.intel.com>
-References: <Zmuw29IhgyPNKnIM@xpf.sh.intel.com>
- <CAADnVQLf1P=qfA7CBxwB_0ecm9edBg=QrN1PS2QnfP7xJhDWNQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQLf1P=qfA7CBxwB_0ecm9edBg=QrN1PS2QnfP7xJhDWNQ@mail.gmail.com>
-X-ClientProxiedBy: SG2PR04CA0153.apcprd04.prod.outlook.com (2603:1096:4::15)
- To SA2PR11MB4844.namprd11.prod.outlook.com (2603:10b6:806:f9::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B31D944F;
+	Sun, 16 Jun 2024 03:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718507999; cv=none; b=FvHouna/nMdXWTjSkuebyiruFrNdKVnWwN+fEQW62lORibFCAjcwW40CptPDrakzSWZyFuRyuYr3FCrCKhl0UOLegJ50bVluOWeosZHfAczzZGHTPqaEIc+MPV7U+q2cCI5xQDbCQpImkYYNoqkbbmND9bxXGtWtiR4IeY0Ve5w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718507999; c=relaxed/simple;
+	bh=8AJiaqZIh9eo2TJ7D7brpc5fNkY+Urv6oQKHntt/c8o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xu1E88bkz+D1ighPAp7IuAHwT7pW49aD/6wqNSl7KrABghWNS33vli7H7I6ByMfEFOB+fbvuvksXfL2Um5cpYEKqedD/PIIiS2vsp/9ElEiQ0QJyBcSZMFH3CgecncHvFQWDszjua7XEdgaphmY6cVHO03gPf+YMq+5vO0CzUE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WG/gZt0o; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57cb9a370ddso3644195a12.1;
+        Sat, 15 Jun 2024 20:19:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718507996; x=1719112796; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VzYum5H73Rwg6QiKYxDU7/ALOjGOuYuf+9NkdG0aSqo=;
+        b=WG/gZt0oAJd7R/93GseU2i0Va1DsG1aE6+S3P8GW+v85KWArrAe/RVYeDbisyFGTST
+         945+9107AP/zrG2K+UN4xsNnorBAq/YutUoMMNv1c81WF7zWA7WtdiAgMMKbhP1yAR+d
+         1XMYL6taOAtZNOqFIN03kMe3DYKiUFN1VsVFDJkU8YnzqePZwE4elSpGMJF1hukA7vcX
+         18RV532Z/QxPlUJie+egz5IY2rX3J58xvuCkyHch4EMMnC3lwWRths2du4TcRFiZChgd
+         N8mg0qvfN0xHn/8cvRq+hEno0B5qKkfQ2t4hDjx+EFxHylaGTBqbskx50eK/vWhXbELX
+         F+zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718507996; x=1719112796;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VzYum5H73Rwg6QiKYxDU7/ALOjGOuYuf+9NkdG0aSqo=;
+        b=rp3a1VsEzdVe3+BiIDbSJKnhDmSfLtQuKpXZJEFtNMGra94uG9B7hi370xkRbPyBGt
+         BVdLXOlA6wNCSNr8srtEi9SKb2grTiNnMQcDTk7kfPrprM7v0R3og4i9+ItqZjcjrJfI
+         v8iqd3sftTVMbQ+Il11dL+btWHwZMUASu+zv/Vn+rLMwblmAjcdb5KH1MJxa2LnFe3ZM
+         7TgMYgNQ4q7bUMAASaV0JY193WN384BGdotJPjSJKEplG+G4RQijNiCorfwYhtugi4ZZ
+         JcrE6uSn3eBe17sDddBEMuRKjjy5DdI7gU8wwpyVF1Ina+DwjvZEL4niVzQ51ZOJCMq5
+         m61g==
+X-Forwarded-Encrypted: i=1; AJvYcCVt8EWiBhtbYiUkj0T22QGTFxeiW2zNYiWoimq+ZM1XuhwksQfeGgXNGS7sdgPsqqBO6xiFmnxVk2dT13JerhcH46YVJ7Op6PzOR1MhxJwxRyfWHJygU0zoNvD868YDAp3g7cRMNoQ=
+X-Gm-Message-State: AOJu0Yz/7qDGFYFhM00Tmm7SbAaQqXGVOe//iCYhheE4F6oFPKNpMo5u
+	RilnKvd8RTLbxIJD3taLBtsANin5Pn2vIx+fl4PhUhUCb3rZ0dD4BAZTHhQgy8II9So+kdlOlhd
+	hExo90o+5JgzjvdIy/jSddk6fT3w=
+X-Google-Smtp-Source: AGHT+IEEf+C3yEAVHJKwNzOgPX92AlCBtVbrVPr2buXSasN5Ksreg5TDBr8oA4dxULwpVRh8jjYWlh2bnWEQ8WRyOpU=
+X-Received: by 2002:a17:906:474b:b0:a6f:5698:ab5b with SMTP id
+ a640c23a62f3a-a6f60cf42c9mr402484566b.8.1718507995773; Sat, 15 Jun 2024
+ 20:19:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PR11MB4844:EE_|SJ0PR11MB4799:EE_
-X-MS-Office365-Filtering-Correlation-Id: 04db6188-7797-4cf3-88bd-08dc8db235ab
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|366013|376011;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?emMyNVRuMmE0T2hrK1JQekU0cW1veGhENklrVDhaME1FdW5md2djZmtDcCty?=
- =?utf-8?B?bGFmQWhLL2VsYmxUUlloY0paV3Z6OXZ5ZXVOOEtnV0RPMUhkNTRLS1o2blZB?=
- =?utf-8?B?Z1lKTStyZlJFdjBST0ZkeHBzRzJCcHYxSm5Jd2hwSlZrZlJlajEzeWFPRGZ0?=
- =?utf-8?B?K2FaL0lXcTZnOVdDeiswemVyRXlwLzQzdnUrcTdpSENWZVhiRzdUOEVQZVZ5?=
- =?utf-8?B?Sm5JMVNZRGk4WEIva0h2ZzJwWlF5dXNuQndHdTlQV0RsQm02aTJ3c0RMMk1C?=
- =?utf-8?B?d2N3YnBjeC8veExOZlZScVpMNU5VeVoxVG9FcTZuRFU5eFZORG80NG5Caksy?=
- =?utf-8?B?WG1UTGRvTTN1MXByVGJLQ1dZZjNicEh2dmR5L0FFbk9KK01lUzVmRnI1MWtP?=
- =?utf-8?B?Y2F6NGNLdXRGc0JDTlZPSTVtTkJMQmNqcE1tU1dISE9tK1ZmaHhQOURQdC90?=
- =?utf-8?B?UWI0OXZvQU91T3pHa25na1JuUFBqWm1kajFaaVRSVytSNlkxdnk5V1cxVmdv?=
- =?utf-8?B?dTMwSTFUWTdSUXREVTVNeitVQ1R2SVNVNDlwMGpJakN1Zk9iUlkvK1JXMzBy?=
- =?utf-8?B?NmVEMytxNjhqVXdYYzI3UGJodHBTSW9rU0dpRFpPR2dQUnBzaHpHMjVObjJv?=
- =?utf-8?B?RngvSkRJME5oU1o5ek9MOS90VlhWTWlqN0xsS25QaEJKdlZFWUtTUWdmN3Ro?=
- =?utf-8?B?SWRYTUliMTB6bmZvMVpXQXZLUGRXWi9BdVRTbDdWMjRsdlNXRkFYRzI3Yzgw?=
- =?utf-8?B?a0l4VzVvOXpYMWVab29pVWFBa3J4eVNwaU01SnZteGEvVFdJUTZxRWNLQVc3?=
- =?utf-8?B?ODFkRnhON3laaGRGTGlNWnlKaE0xWHlONTJzWUYvaFlQOThGRXdXbkJDdFNR?=
- =?utf-8?B?c2ZKWi9DWXIrZFpmakdzb0lobVIyK1V5SnhXTmM2eGZHTnI5bTlkTFlRY3Rz?=
- =?utf-8?B?c0plczFxa2p2T0VVallwQTZNT1pTRjBRQWt2TEtIKzVxejVjM2psRDZ2V0Yy?=
- =?utf-8?B?cjlxN1JxTk1NamZrK1RiV0IzOTMrdnNxUDZ3eFM1eXl6THpHMjdBWDVDeG93?=
- =?utf-8?B?VnpZWHB2RTg0Y0kySGJSZ3hOVXhyeGNma2NnOVRXRWM0VUVLNEkrVjNpQVQ1?=
- =?utf-8?B?MThhN3lFMndPZDAzNGhjSzdMSnFGNTlteGxzQUlPUEM5eXRaSmJHeHFyRkM0?=
- =?utf-8?B?dEl2ZzQ0VFFpc01CRWZmUUh3L1AwZFN1WlMzZEN1QUgyMlFqSWVQdzUrNjUw?=
- =?utf-8?B?VDR4QVZyT1J6ZFJmV21WMWdJZXU1YUZxcjBHL0lncHpWVXplYi9KQlUxWnU0?=
- =?utf-8?B?ZTNDMFFuRGFkS1VQRXRleXQzK1l0MHVVZlhvYUMxbVZJWUV3ekJQSDlVQlh0?=
- =?utf-8?B?QWVnUnZEZ0dZMnc4cjVXd0drbVdjeFo1eTc2N2IvYjROZ0RYcDVHQTVFckpY?=
- =?utf-8?B?L0RxWHRxbEN4bnZuYVFPNE1ZTTQxd2hybU1WNzRlZkhUbWVzaC8wRGd4RVd2?=
- =?utf-8?B?ZnZsRWJyZVhXMDNxYnJjZTRHWlg3Z2RCQ1BpWUl2WHhTdG8wQytIdUVscWln?=
- =?utf-8?B?L1ROMzhiV1lnQXA2WHF6Vm5VUkRoVlNLWVQ4M09RdWpkdzBidkNRUXNRR3BD?=
- =?utf-8?B?ZEdoRSs0VWpnM2dyZlRaRHphVHB3bVQxOHlqdGxHZVpvNkwxR2JVeXJWMkVu?=
- =?utf-8?B?UGQ4QXg2ZXdGKzJPa0hMbGRlaFRFaUx5alU2aDE1NFFvWDZoMVpCa0tEcmRi?=
- =?utf-8?Q?eFp/68HBnH7ximY5hMv2gI2Xk4Btdg3J5kA6VY+?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA2PR11MB4844.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(376011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dktIMmppUDJTaGpFQ2VlZzB4Z1dXMUplVG01bkN5WkpidmdoWHk4V0pxUHJS?=
- =?utf-8?B?YkpwdlF6dkE1QURza2xhNU9wQ2VleDZ0c2p5TlNtdUwzbzV2b1kyVUVuTjlY?=
- =?utf-8?B?L056THJ0MEdQMEdjdzBEMFVma2hMaFhEWE0vdEp0RjhDWDY0TW1yZkZLUHky?=
- =?utf-8?B?N1BwR0hieHlYd2pwYWlFVkVSSnZ1S0UxQml1dFRUQzJ3U1ArVFpDT0FXVjY2?=
- =?utf-8?B?bVNiSHpZTEJvVndVQ0s4ODlVRG1EZHlIRzhGRUF5SXQ4eHd0c3diTjBzQ29O?=
- =?utf-8?B?QWtmUUd4S0lLSWJEVXdGbHlQdXpMQ3pCcitjaG01TXo3aUFmZFZhV29od0VS?=
- =?utf-8?B?bVFnUVZPVG10VkRjOXNscWtnR0tETXZWWFA0bE0rLzFrcERGOE9xQmpTaEdn?=
- =?utf-8?B?MlhVd0JTUHZaZEdVSGwzaXdyaS9wbVJwSEQ4M3Z3KzlLRWR0WFhCUmdjYXBL?=
- =?utf-8?B?dmJ5TFlLc3l3QTRlckI2d0dmdzR0bjVhMnpsdzlmKzE3VXF3Wndwd2lzd0pj?=
- =?utf-8?B?QUo0SEdtSTRhZHdUVG1UMEwvZmNZckEvbERxd1NjMFkyN2VUSWw0MWYvMnQy?=
- =?utf-8?B?bFh2c2p2Q1I5OGN4T1poS01HeGZWQXQ2bU9GZmhGYkJtMjYrS0FONkpIUWo3?=
- =?utf-8?B?ckFtVnlVWlR5Rzg5N1R4L04wTnI5WnN3dnpNT3Q1ek9paHR6cnRiS1VraDBU?=
- =?utf-8?B?NzVIOGE4VTdEd3BWZXVRNWFzVW1IYng3NklIaXg0UTVEMHNGSzl4YkQrdzlx?=
- =?utf-8?B?Q0tvWm1tOTAwbzBpaGlpblNYVGxZN2JzTUp3dFQvTkxaK2xOWXpDUDhwMjhC?=
- =?utf-8?B?Y0d1UnRBVlNRUFFnRzZqRFhpaEl5NkxUcGhHb3g0Y1ZFSVdRUHQxbGZQZkx5?=
- =?utf-8?B?MlVYbUY5Tm4wRlU2QXZaL3B5OHpsU3Y4enE3QnBPMmtvSkJ4aGVJVjVmMmdY?=
- =?utf-8?B?ZHMzZ2xUVE9oRXpSdncvUHNiUWZ2RWtIb3AvcGUxN0RhTUJFNkkzN2F1bS9k?=
- =?utf-8?B?ZEtkZlRuOWY4MElFVXpKb3VGNGVVZUt3WWx6bGM1Vkg2SEc5YzlFTlcxb0hK?=
- =?utf-8?B?TThBT05Cdk50QjgrMUp3WmxjcTJBeGZoUTltejJNUms5VENpeWVFU2FuZzlM?=
- =?utf-8?B?TCtKS1RvNjV3dkpnZG9jWUxnMlZsMkFBZFFlNmc1d1dWL3lzVGt4MHozcnZK?=
- =?utf-8?B?K3g4ZmhOZmlDL0xWZXVJNWRNdHoyd1NaNk96ak4wY0t4Mm1WTUZXSnBCcE5v?=
- =?utf-8?B?bUNTTjh0dVh4R2ZDTFViOUFTZkVER3JqZmlwMnFMSVE4dHlqWTQ5TVVRb01a?=
- =?utf-8?B?dDBZa2NZODZvTVB5Z1NlanBSd1hDdDJWMnQ3MUxVVk1SaEFlaUpWaE9jZ2Vu?=
- =?utf-8?B?WTR0TFgxYityaEo5cXpaZlhWVWxzRWZhS2xnWU5qSE1PbjIrZ0pxSWNLMWhH?=
- =?utf-8?B?MURTNFp2c25xc1VnUGNKcCtUTDdOZisydmg4ZFhxbS93Z25GelBrUW1QeERV?=
- =?utf-8?B?dVp6SVRSOXFzTHNxR2l3emQycFBWOXpRNVUyTWFZSFdJWURqd3JvMUh5OU00?=
- =?utf-8?B?UHlNYkRld0ZNZzM3bWFJOHNtZUlSRkhKVGp3SC9yeXVPQXpwR0x0QzNrL0tz?=
- =?utf-8?B?MlpiMUk3Y2FCbWUvSmRURHpHTmFiSDZXQjJJamp1RDMxTHkvQko2VnU0YlVQ?=
- =?utf-8?B?VXBhbVdDNTY2RGpjclhqNDROcjBOZ29RSFdsRDVmQWxSTXZpS0xyOWpQeEIr?=
- =?utf-8?B?QjgzMWxWdEFQZGJweVBNSWQ2NlY5Z25rVUR3QXBJa2NwUndnSXR2a3FjSDdi?=
- =?utf-8?B?NkJpWmQ4YTVVSnIwSW9rdXFDSExxUmhHN2NJQ2l0UmlhR3Btam0rRGdpMnhN?=
- =?utf-8?B?V1FNTnZ4TXU3aXpWWGFCRk5PREZBMDVkSmFLRFpHOHZtYkdpa0RodW4wUWll?=
- =?utf-8?B?MmZDNzZtWnYxajNlZzFTRjN5Zk4wMEpoNjBoVjF5VkJJVHF6aldha0llVHNW?=
- =?utf-8?B?SzI2Y2VUMEN1Z2tydTNnTHkrTXpBeHA1b21uSVlpZi9rOC9YVTJ6RzJKbHV1?=
- =?utf-8?B?OE50cjhabGxaZ1JBdXpuWVcxU3hWZGZVQllIZWxKYU52Ymh5ak1TWGxTLzY1?=
- =?utf-8?Q?wv+ichWPomDVb1dd0XpOBqJA+?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04db6188-7797-4cf3-88bd-08dc8db235ab
-X-MS-Exchange-CrossTenant-AuthSource: SA2PR11MB4844.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2024 03:12:52.4581
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ygNuyuZQ28uKLNPvUfQezt5gZH/wBfWWwjSBnCQj6rSSk9Yhk18B1Z27kg2KLNlU6gmwrmhmKOEyMXl2324Ong==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4799
-X-OriginatorOrg: intel.com
+References: <20240615125617.180521-1-romeusmeister@gmail.com> <2ac9b1a3-fd42-48fc-b1c8-4c1986536ef9@linuxfoundation.org>
+In-Reply-To: <2ac9b1a3-fd42-48fc-b1c8-4c1986536ef9@linuxfoundation.org>
+From: Roman Storozhenko <romeusmeister@gmail.com>
+Date: Sun, 16 Jun 2024 05:19:44 +0200
+Message-ID: <CALsPMBNSJQXz4zG_s=f1E6UbY-m98ibtnHoUDBPLq+x9wMQ5cg@mail.gmail.com>
+Subject: Re: [PATCH v2] cpupower: Improve cpupower build process description
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Alexei,
-
-On 2024-06-15 at 11:21:05 -0700, Alexei Starovoitov wrote:
-> On Thu, Jun 13, 2024 at 7:54 PM Pengfei Xu <pengfei.xu@intel.com> wrote:
+On Sun, Jun 16, 2024 at 1:05=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.o=
+rg> wrote:
+>
+> On 6/15/24 06:56, Roman Storozhenko wrote:
+> > Enhance cpupower build process description with the information on
+> > building and installing the utility to the user defined directories
+> > as well as with the information on the way of running the utility from
+> > the custom defined installation directory.
 > >
-> > Hi Alexei Starovoitov and bpf expert,
+> > Signed-off-by: Roman Storozhenko <romeusmeister@gmail.com>
+> > ---
+> > V1 -> V2:
+> >   - Improved commit description
+> >   - Make changed line lenghts 75 chars
+> >   - Refactored the description
+> >   - Link v1: https://lore.kernel.org/linux-pm/20240613-fix-cpupower-doc=
+-v1-1-9dcdee263af1@gmail.com/
+> > ---
+> >   tools/power/cpupower/README | 160 +++++++++++++++++++++++++++++++++--=
+-
+> >   1 file changed, 150 insertions(+), 10 deletions(-)
 > >
-> > Greeting!
+> > diff --git a/tools/power/cpupower/README b/tools/power/cpupower/README
+> > index 1c68f47663b2..2678ed81d311 100644
+> > --- a/tools/power/cpupower/README
+> > +++ b/tools/power/cpupower/README
+> > @@ -22,16 +22,156 @@ interfaces [depending on configuration, see below]=
+.
+> >   compilation and installation
+> >   ----------------------------
 > >
-> > There is KASAN: slab-use-after-free Read in arena_vm_close in v6.10-rc3 kernel.
-> 
-> Thanks for the report.
-> Please test the fix:
-> https://lore.kernel.org/bpf/20240615181935.76049-1-alexei.starovoitov@gmail.com/
+> > -make
+> > -su
+> > -make install
+> > -
+> > -should suffice on most systems. It builds libcpupower to put in
+> > -/usr/lib; cpupower, cpufreq-bench_plot.sh to put in /usr/bin; and
+> > -cpufreq-bench to put in /usr/sbin. If you want to set up the paths
+> > -differently and/or want to configure the package to your specific
+> > -needs, you need to open "Makefile" with an editor of your choice and
+> > -edit the block marked CONFIGURATION.
+> > +There are 2 output directories - one for the build output and another =
+for
+> > +the installation of the build results, that is the utility, library,
+> > +man pages, etc...
+> > +
+> > +default directory
+> > +-----------------
+> > +
+> > +In the case of default directory, build and install process requires n=
+o
+> > +additional parameters:
+> > +
+> > +build
+> > +-----
+> > +
+> > +$ make
+> > +
+> > +The output directory for the 'make' command is the current directory a=
+nd
+> > +its subdirs in the kernel tree:
+> > +tools/power/cpupower
+> > +
+> > +install
+> > +-------
+> > +
+> > +$ sudo make install
+> > +
+> > +'make install' command puts targets to default system dirs:
+> > +
+> > +----------------------------------------------------------------------=
+-
+> > +| Installing file        |               System dir                   =
+|
+> > +----------------------------------------------------------------------=
+-
+> > +| libcpupower            | /usr/lib                                   =
+|
+> > +----------------------------------------------------------------------=
+-
+> > +| cpupower               | /usr/bin                                   =
+|
+> > +----------------------------------------------------------------------=
+-
+> > +| cpufreq-bench_plot.sh  | /usr/bin                                   =
+|
+> > +----------------------------------------------------------------------=
+-
+> > +| man pages              | /usr/man                                   =
+|
+> > +----------------------------------------------------------------------=
+-
+> > +
+> > +To put it in other words it makes build results available system-wide,
+> > +enabling any user to simply start using it without any additional step=
+s
+> > +
+> > +custom directory
+> > +----------------
+> > +
+> > +There are 2 make's command-line variables 'O' and 'DESTDIR' that setup
+> > +appropriate dirs:
+> > +'O' - build directory
+> > +'DESTDIR' - installation directory. This variable could also be setup =
+in
+> > +the 'CONFIGURATION' block of the "Makefile"
+> > +
+> > +build
+> > +-----
+> > +
+> > +$ make O=3D<your_custom_build_catalog>
+> > +
+> > +Example:
+> > +$ make O=3D/home/hedin/prj/cpupower/build
+> > +
+> > +install
+> > +-------
+> > +
+> > +$ make O=3D<your_custom_build_catalog> DESTDIR=3D<your_custom_install_=
+catalog>
+> > +
+> > +Example:
+> > +$ make O=3D/home/hedin/prj/cpupower/build DESTDIR=3D/home/hedin/prj/cp=
+upower \
+> > +> install
+> > +
+> > +Notice that both variables 'O' and 'DESTDIR' have been provided. The r=
+eason
+> > +is that the build results are saved in the custom output dir defined b=
+y 'O'
+> > +variable. So, this dir is the source for the installation step. If onl=
+y
+> > +'DESTDIR' were provided then the 'install' target would assume that th=
+e
+> > +build directory is the current one, build everything there and install
+> > +from the current dir.
+> > +
+> > +The files will be installed to the following dirs:
+> > +
+> > +----------------------------------------------------------------------=
+-
+> > +| Installing file        |               System dir                   =
+|
+> > +----------------------------------------------------------------------=
+-
+> > +| libcpupower            | ${DESTDIR}/usr/lib                         =
+|
+> > +----------------------------------------------------------------------=
+-
+> > +| cpupower               | ${DESTDIR}/usr/bin                         =
+|
+> > +----------------------------------------------------------------------=
+-
+> > +| cpufreq-bench_plot.sh  | ${DESTDIR}/usr/bin                         =
+|
+> > +----------------------------------------------------------------------=
+-
+> > +| man pages              | ${DESTDIR}/usr/man                         =
+|
+> > +----------------------------------------------------------------------=
+-
+> > +
+> > +If you look at the table for the default 'make' output dirs you will
+> > +notice that the only difference with the non-default case is the
+> > +${DESTDIR} prefix. So, the structure of the output dirs remains the sa=
+me
+> > +regardles of the root output directory.
+> > +
+> > +
+> > +clean and uninstall
+> > +-------------------
+> > +
+> > +'clean' target is intended for cleanup the build catalog from build re=
+sults
+> > +'uninstall' target is intended for removing installed files from the
+> > +installation directory
+> > +
+> > +default directory
+> > +-----------------
+> > +
+> > +This case is a straightforward one:
+> > +$ make clean
+> > +$ make uninstall
+> > +
+> > +custom directory
+> > +----------------
+> > +
+> > +Use 'O' command line variable to remove previously built files from th=
+e
+> > +build dir:
+> > +$ make O=3D<your_custom_build_catalog> clean
+> > +
+> > +Example:
+> > +$ make O=3D/home/hedin/prj/cpupower/build clean
+> > +
+> > +Use 'DESTDIR' command line variable to uninstall previously installed =
+files
+> > +from the given dir:
+> > +$ make DESTDIR=3D<your_custom_install_catalog>
+> > +
+> > +Example:
+> > +make DESTDIR=3D/home/hedin/prj/cpupower uninstall
+> > +
+> > +
+> > +running the tool
+> > +----------------
+> > +
+> > +default directory
+> > +-----------------
+> > +
+> > +$ sudo cpupower
+> > +
+> > +custom directory
+> > +----------------
+> > +
+> > +When it comes to run the utility from the custom build catalog things
+> > +become a little bit complicated as 'just run' approach doesn't work.
+> > +Assuming that the current dir is '<your_custom_install_catalog>/usr',
+> > +issuing the following command:
+> > +
+> > +$ sudo ./bin/cpupower
+> > +will produce the following error output:
+> > +./bin/cpupower: error while loading shared libraries: libcpupower.so.1=
+:
+> > +cannot open shared object file: No such file or directory
+> > +
+> > +The issue is that binary cannot find the 'libcpupower' library. So, we
+> > +shall point to the lib dir:
+> > +sudo LD_LIBRARY_PATH=3Dlib64/ ./bin/cpupower
+> >
+> >
+> >   THANKS
+>
+> This "THANKS" doesn't belong in the patch.
 
-Thanks for your fixed patch!
-I have tested the patch in above link and the above patch fixed this issue.
-I have replied test result in above link also.
+The 'THANKS' does belong to the patch as well as the 'interfaces
+[depending on configuration, see below]' line at the top.
+Those 2 lines are parts of the original file and show the bottom and
+the top of  the changed text area.
+Just in case, I tried to re-add my changes using 'git add -i' on my
+dev machine and found that it is impossible to get rid of it.
+And it's explainable, git wants to know the area of the text to change.
+Besides, applying the downloaded patch using "git am' doesn't
+introduce the second 'THANKS' word at the bottom of the text.
+That is, the patch applies correctly.
+I decided to experiment further and removed the 'THANKS' line from the
+patch that had been sent and checked it with 'checkpatch':
+hedin@laptop:~/lkmp/patchwork/patches/powertools/cpupower/update_doc_instal=
+l/tmp$
+~/prj/linux/scripts/checkpatch.pl
+0001-cpupower-Improve-cpupower-build-process-description.patch
+                                                       ERROR: patch
+seems to be corrupt (line wrapped?)
+#193: FILE: tools/power/cpupower/README:176:
 
-Best Regards,
-Thank you!
+Returned the 'THANKS':
+hedin@laptop:~/lkmp/patchwork/patches/powertools/cpupower/update_doc_instal=
+l/tmp$
+~/prj/linux/scripts/checkpatch.pl
+0001-cpupower-Improve-cpupower-build-process-description.patch
+total: 0 errors, 0 warnings, 166 lines checked
+0001-cpupower-Improve-cpupower-build-process-description.patch has no
+obvious style problems and is ready for submission.
+
+So, as you can see 'THANKS' is a required part of the patch.
+>
+> thanks,
+> -- Shuah
+>
+
+
+--=20
+Kind regards,
+Roman Storozhenko
 
