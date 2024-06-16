@@ -1,54 +1,41 @@
-Return-Path: <linux-kernel+bounces-216292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 709E9909D96
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:07:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D838909D98
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DD8B281B20
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 13:07:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3F2E1F217EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 13:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F147187320;
-	Sun, 16 Jun 2024 13:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="F3/giR0m"
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C375D188CC6;
+	Sun, 16 Jun 2024 13:11:21 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806698F54
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 13:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C2A19D8BA;
+	Sun, 16 Jun 2024 13:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718543243; cv=none; b=bzvEvzi7ilKsmcfJEf810UV7TK9RXUwpuZPcNJmxnYnmkyxFx6HHdaF5Fsf6+EcOW47+buiruTT2iaHUv5KRdGqsJv8wJOVLYMv5fV/nrNi1eTCFHFLb4u4G+H/tS/e+9dQjN2UANzYoOgxA0eRKam5xmva9crUmlGA6cZ+tW0Y=
+	t=1718543481; cv=none; b=SFDRUaQ0Daleflo+f9u5T4uMmzdIBg3mDuAorRB/hPLk94nHVyyjdV+MlQGN2eERVxir/usoTtWc6dIYXgzWwid+fccm31gAkOeUcZ9SrAE9gWAiwOrpE+DQSdQkMELUI5aOIwNi8ambNkWrEJy8ryLBT56xO/Fp55rhk5JVc/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718543243; c=relaxed/simple;
-	bh=RtK8lkG+CzAVuQbNuO78/UjV/0iLZU1KXkKgIkdC+Do=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xmm5/IHTeYn54bMYbojRkO2PSM4QCWorLbVEkaoBp64tFyg8lesvkrYQ6Y5OgQZHvCdVqj0sKFVfRHq59/W+wNNLUnLk0Oa1vI3GDExZwPdorotg4F5jKH3s2Tv2y++lPRPe2x+Eynfsa7SzqHJCBJg1AcTfy7lflC6d+cixDRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=F3/giR0m; arc=none smtp.client-ip=80.12.242.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id IpZzsNtLZ8F9jIpa0sICVA; Sun, 16 Jun 2024 15:06:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1718543161;
-	bh=36x6lrBsmJp4BzTd1t9QLDw3txpJVclhha0kOPEOjXg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=F3/giR0mGq2GiVT85xhn9y67C6GhOvUa93yWRGlG80DKz6+U2R31EET9pK8eevjH2
-	 /4JDlrB0XyqBMVfixquBQgLKlIMx5o15m5JkWF2y9Ko/y6elhByiEhuv8cT2BnjzMa
-	 53oLXXUx7aAomJo3G/2gI8pyghcZWF9fnzJD/RJU4b2n3MeBPO2dgRZumsvzVsQhf3
-	 hcPUubeV6I0rhs/dO/VepExhGIw3AZRQn1reXiegUGNz2kDM9xdcrOW0rRZWmGt9ch
-	 sW/hpBJ624qB0+Lz/yuA0httSUX3A5IecK4KHs+eMBQCVDCPkSWXYAzRXY/GP2FOIL
-	 3nlDJ7yS8WwGg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 16 Jun 2024 15:06:01 +0200
-X-ME-IP: 86.243.222.230
-Message-ID: <1a6fda13-3a06-420d-a62a-896a7f4866d9@wanadoo.fr>
-Date: Sun, 16 Jun 2024 15:05:53 +0200
+	s=arc-20240116; t=1718543481; c=relaxed/simple;
+	bh=6PvgRI9Yol2o20j2EJGx9Xs1iEwNeR4MJGDT8YlKfF8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=sMuBLLD0PAYtpBJmgsmAtFXl4ZQB1PgkbzTxzjdrHlax9m6wPqJgzJsTpwgFHPnMjxlEZ0UOaQJBTSbpvEwcB/YemWJy1LRQ9N77W8Y9r4yIh94d8evRNfAz1rBl+wO9KvdaqPiOC2KqkfjOYel2atl9Kg0r/sSsDcQbHA5V+ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [172.16.184.163] (i68973E31.versanet.de [104.151.62.49])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 743FC61E5FE01;
+	Sun, 16 Jun 2024 15:10:34 +0200 (CEST)
+Message-ID: <fba24cd3-4a1e-4072-8585-8402272788ff@molgen.mpg.de>
+Date: Sun, 16 Jun 2024 15:10:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,59 +43,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] ACPI /amba: Fix meaningless code for
- amba_register_dummy_clk()
-To: Youwan Wang <youwan@nfschina.com>, lpieralisi@kernel.org
-Cc: guohanjun@huawei.com, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, lenb@kernel.org
-References: <20240616100054.241482-1-youwan@nfschina.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240616100054.241482-1-youwan@nfschina.com>
+Content-Language: en-US
+To: Kalle Valo <kvalo@kernel.org>
+Cc: linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
+ LKML <linux-kernel@vger.kernel.org>
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: invalid vht params rate 1920 100kbps nss 2 mcs 9
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 16/06/2024 à 12:00, Youwan Wang a écrit :
-> Defining `amba_dummy_clk` as static is meaningless.
-> 
-> The conditional check `if (amba_dummy_clk)` is intended to
-> determine whether the clock has already been registered.
-> However,in this function, the variable `amba_dummy_clk`
-> will always be NULL.
+Dear Linux folks,
 
-Hi,
 
-  can you elaborate on this "will always be NULL"?
+Linux 6.10-rc3 (commit a3e18a540541) logged the warning below when 
+connecting to a public WiFi:
 
-I think that it is NULL on the first call of amba_register_dummy_clk(), 
-but if it is called again, it will have the value of 
-clk_register_fixed_rate() just a few lines after, doing exactly what the 
-comment says.
+     ath10k_pci 0000:3a:00.0: invalid vht params rate 1920 100kbps nss 2 
+mcs 9
 
-CJ
 
-> 
-> Signed-off-by: Youwan Wang <youwan@nfschina.com>
-> ---
->   drivers/acpi/arm64/amba.c | 6 +-----
->   1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/drivers/acpi/arm64/amba.c b/drivers/acpi/arm64/amba.c
-> index 60be8ee1dbdc..ef438417cc80 100644
-> --- a/drivers/acpi/arm64/amba.c
-> +++ b/drivers/acpi/arm64/amba.c
-> @@ -35,11 +35,7 @@ static const struct acpi_device_id amba_id_list[] = {
->   
->   static void amba_register_dummy_clk(void)
->   {
-> -	static struct clk *amba_dummy_clk;
-> -
-> -	/* If clock already registered */
-> -	if (amba_dummy_clk)
-> -		return;
-> +	struct clk *amba_dummy_clk;
->   
->   	amba_dummy_clk = clk_register_fixed_rate(NULL, "apb_pclk", NULL, 0, 0);
->   	clk_register_clkdev(amba_dummy_clk, "apb_pclk", NULL);
+Kind regards,
 
+Paul
+
+
+```
+Jun 16 11:38:15 abreu kernel: Linux version 
+6.10.0-rc3-00174-ga3e18a540541 (build@bohemianrhapsody.molgen.mpg.de) 
+(gcc (Debian 13.2.0-25) 13.2.0, GNU ld (GNU Binutils for Debian) 2.42) 
+#196 SMP PREEMPT_DYNAMIC Sun Jun 16 06:02:29 CEST 2024
+[…]
+Jun 16 11:38:15 abreu kernel: DMI: Dell Inc. XPS 13 9360/0596KF, BIOS 
+2.21.0 06/02/2022
+[…]
+Jun 16 11:38:33 abreu kernel: ath10k_pci 0000:3a:00.0: enabling device 
+(0000 -> 0002)
+Jun 16 11:38:33 abreu kernel: ath10k_pci 0000:3a:00.0: pci irq msi 
+oper_irq_mode 2 irq_mode 0 reset_mode 0
+Jun 16 11:38:34 abreu kernel: ath10k_pci 0000:3a:00.0: qca6174 hw3.2 
+target 0x05030000 chip_id 0x00340aff sub 1a56:1535
+Jun 16 11:38:34 abreu kernel: ath10k_pci 0000:3a:00.0: kconfig debug 0 
+debugfs 0 tracing 0 dfs 0 testmode 0
+Jun 16 11:38:34 abreu kernel: ath10k_pci 0000:3a:00.0: firmware ver 
+WLAN.RM.4.4.1-00288- api 6 features wowlan,ignore-otp,mfp crc32 bf907c7c
+Jun 16 11:38:34 abreu kernel: ath10k_pci 0000:3a:00.0: board_file api 2 
+bmi_id N/A crc32 d2863f91
+Jun 16 11:38:34 abreu kernel: ath10k_pci 0000:3a:00.0: htt-ver 3.87 
+wmi-op 4 htt-op 3 cal otp max-sta 32 raw 0 hwcrypto 1
+Jun 16 11:38:34 abreu kernel: ath: EEPROM regdomain: 0x6c
+Jun 16 11:38:34 abreu kernel: ath: EEPROM indicates we should expect a 
+direct regpair map
+Jun 16 11:38:34 abreu kernel: ath: Country alpha2 being used: 00
+Jun 16 11:38:34 abreu kernel: ath: Regpair used: 0x6c
+[…]
+Jun 16 11:39:20 abreu kernel: wlp58s0: authenticate with 
+70:18:a7:0e:f7:cb (local address=9c:b6:d0:d1:6a:b1)
+Jun 16 11:39:20 abreu kernel: wlp58s0: send auth to 70:18:a7:0e:f7:cb 
+(try 1/3)
+Jun 16 11:39:20 abreu kernel: wlp58s0: send auth to 70:18:a7:0e:f7:cb 
+(try 2/3)
+Jun 16 11:39:20 abreu kernel: wlp58s0: send auth to 70:18:a7:0e:f7:cb 
+(try 3/3)
+Jun 16 11:39:20 abreu kernel: wlp58s0: authentication with 
+70:18:a7:0e:f7:cb timed out
+Jun 16 11:39:22 abreu kernel: wlp58s0: authenticate with 
+4c:bc:48:39:16:ab (local address=9c:b6:d0:d1:6a:b1)
+Jun 16 11:39:22 abreu kernel: wlp58s0: send auth to 4c:bc:48:39:16:ab 
+(try 1/3)
+Jun 16 11:39:22 abreu kernel: wlp58s0: send auth to 4c:bc:48:39:16:ab 
+(try 2/3)
+Jun 16 11:39:22 abreu kernel: wlp58s0: send auth to 4c:bc:48:39:16:ab 
+(try 3/3)
+Jun 16 11:39:22 abreu kernel: wlp58s0: authentication with 
+4c:bc:48:39:16:ab timed out
+Jun 16 11:39:24 abreu kernel: wlp58s0: authenticate with 
+4c:bc:48:38:d8:4b (local address=9c:b6:d0:d1:6a:b1)
+Jun 16 11:39:24 abreu kernel: wlp58s0: send auth to 4c:bc:48:38:d8:4b 
+(try 1/3)
+Jun 16 11:39:24 abreu kernel: wlp58s0: authenticated
+Jun 16 11:39:24 abreu kernel: wlp58s0: associate with 4c:bc:48:38:d8:4b 
+(try 1/3)
+Jun 16 11:39:24 abreu kernel: wlp58s0: RX AssocResp from 
+4c:bc:48:38:d8:4b (capab=0x1101 status=0 aid=30)
+Jun 16 11:39:24 abreu kernel: wlp58s0: associated
+Jun 16 11:39:24 abreu kernel: wlp58s0: Limiting TX power to 20 (23 - 3) 
+dBm as advertised by 4c:bc:48:38:d8:4b
+Jun 16 11:39:50 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+params rate 1920 100kbps nss 2 mcs 9
+Jun 16 11:39:56 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+params rate 1920 100kbps nss 2 mcs 9
+Jun 16 11:40:02 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+params rate 1920 100kbps nss 2 mcs 9
+Jun 16 11:40:08 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+params rate 1920 100kbps nss 2 mcs 9
+Jun 16 11:40:20 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+params rate 1920 100kbps nss 2 mcs 9
+Jun 16 11:40:26 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+params rate 1920 100kbps nss 2 mcs 9
+Jun 16 11:40:32 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+params rate 1920 100kbps nss 2 mcs 9
+Jun 16 11:40:38 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+params rate 1920 100kbps nss 2 mcs 9
+Jun 16 11:40:43 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+params rate 1920 100kbps nss 2 mcs 9
+Jun 16 11:40:49 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+params rate 1920 100kbps nss 2 mcs 9
+Jun 16 11:41:01 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+params rate 1920 100kbps nss 2 mcs 9
+Jun 16 11:41:13 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+params rate 1920 100kbps nss 2 mcs 9
+Jun 16 11:41:19 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+params rate 1920 100kbps nss 2 mcs 9
+Jun 16 11:41:21 abreu kernel: wlp58s0: deauthenticating from 
+4c:bc:48:38:d8:4b by local choice (Reason: 3=DEAUTH_LEAVING)
 
