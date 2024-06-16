@@ -1,98 +1,57 @@
-Return-Path: <linux-kernel+bounces-216080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DFB4909B1A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 03:26:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34B1B909B20
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 03:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D26782832E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 01:26:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB0791F22066
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 01:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA7715532D;
-	Sun, 16 Jun 2024 01:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B515163AA7;
+	Sun, 16 Jun 2024 01:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cD4CNg5O"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nqugS4+l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A523115530B
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 01:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C29632;
+	Sun, 16 Jun 2024 01:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718501144; cv=none; b=hTJ1HpQKMVLXFzUpoxzW6+L+EsRS7MXsmrQyFkvFF5v71AvqBisAOZ9DU/weyCh8b3wxz6s4JGSu0xe0GninNHG+G2pad9t4SDKZz1m68vNGEDxI0KLG22Ot7EFxqtWNOVg6JoMoJlc7hAVNVr4zuqGpZJ+7y4t/Ld/bGNrMz44=
+	t=1718501944; cv=none; b=TDgJ7M0gO5M5mm1rlGH6shgCiZT39BLsdgRezQl+FfUEQqlf+hLOLnMBoNyMfyhjSTsa+Z0qWbfmE7R21SfqJjqk9vdolw5iUBL0/NQxHtsm8hR9hCm8q6psShoEtvh0l6MKISf8QUJBz7X62hYuSkwPwnjAnXFU8LW+Z2znyVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718501144; c=relaxed/simple;
-	bh=TNTvvYis8B90+i8p/Z65lN6JmLBeayserglnYMBu3w0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=l8hNyeRLhr1WJ1ujD6GW/jYiqOkMFCx74WslyyU429ULB6FG6YXlM/iL0VS4NYTafGFsQezzA2FAZ4OQvGxloFHUUDxJL7LmBlhSCHP+b9LPKsRKlX9p6DqJwIUxya2DWVaDstDmBuK4zrXYGUaDWPvCgQ4l3MGUGDTOSetskS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=cD4CNg5O; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-797a7f9b552so233802785a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 18:25:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1718501141; x=1719105941; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gCrX2aP7omTOt40mjhlbJGCmLHhusecgyid8m4PMNe0=;
-        b=cD4CNg5OTlFXcaBgZn1Er4CvTrk9Fhp4OZg77EpJJKqSLhgYW1OAqb+eIC00yncMUk
-         n2QuPFS06hnCmCKJFYVBwbyscEW/uytC3DHq47rF0cYKHa8/3JMtSC+dwGVQzq8yvDSc
-         KrKBFI0Ja3AR1MNOL4UqKvmNYlHmvGybblf00=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718501141; x=1719105941;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gCrX2aP7omTOt40mjhlbJGCmLHhusecgyid8m4PMNe0=;
-        b=k9VdIO1GpRPkeyD2YbXy/zo4xncoyxBQg//Nsl0Dff3MQGR8JC8Z7FP6wHq9QtWOHI
-         6bu+t02SZnFD2p899vOdnmuZUOrUdYH659L3jG3McC6HQQYfg9wz8d+NbD/qwZEss3iR
-         kmc3qUEBL2MQCVo+xp2yB1+Tcc0KynghcHTrED7pvdS6jS1XaTFNW6OGln1Cnz9Ua7YL
-         Wc3NgUxn7py/3CiaLqnKuAGSXZrq6UmffnwPRClNATbiGW9YH2GAcy9zikCQFIsgip+R
-         mo4UZ896gm5WXWLJjC81pz66PtiiqupH9Eb3XKas4wfeBWJxEiRT6dwb/kbnnHe3kUIM
-         dZjQ==
-X-Gm-Message-State: AOJu0YzdIPWA0m1ebxaOZZVo7yZo81ZOrmC1ah7XVBEnZPxfWiB3lwbu
-	legj2ZsePKE+2nq8rtFtxl214hO/rEmzmtRg2WGF3ODRptn6/8T0jU5zbg7R2D/4xXU4T5N8fkq
-	z9cT+tpa6ozQ2g1qF8Qn6bznb7WXbtLc1FeObeODuXtZJ8+sxxbD3NNNyaOrREh9d1f0r9cj44A
-	xOIn0HRr92jRmCvDmvJOtCCHxlQpygkHCgcMNzxlc2f2+X4/xpEQnX
-X-Google-Smtp-Source: AGHT+IG29Vm1eX4EMSaDAYflKH0cuDBu7WkYeoXWjmR1hkQVFmvlJrcmLUBw6U+nnvmj44pJx+WVcQ==
-X-Received: by 2002:ac8:5a8c:0:b0:440:60f3:733b with SMTP id d75a77b69052e-4421685caa4mr69850701cf.14.1718501140971;
-        Sat, 15 Jun 2024 18:25:40 -0700 (PDT)
-Received: from amakhalov-build-vm.eng.vmware.com ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-441f310dae0sm32256121cf.97.2024.06.15.18.25.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Jun 2024 18:25:40 -0700 (PDT)
-From: Alexey Makhalov <alexey.makhalov@broadcom.com>
-To: linux-kernel@vger.kernel.org,
-	bp@alien8.de,
-	bcm-kernel-feedback-list@broadcom.com,
-	lkp@intel.com
-Cc: zack.rusin@broadcom.com,
-	dri-devel@lists.freedesktop.org,
-	daniel@ffwll.ch,
-	airlied@gmail.com,
-	tzimmermann@suse.de,
-	mripard@kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	linux-iio@vger.kernel.org,
-	jic23@kernel.org,
-	lars@metafoo.de,
-	nuno.sa@analog.com,
-	dragos.bogdan@analog.com,
-	anshulusr@gmail.com,
-	andrea.collamati@gmail.com,
-	oe-kbuild-all@lists.linux.dev,
-	x86@kernel.org,
-	Alexey Makhalov <alexey.makhalov@broadcom.com>
-Subject: [PATCH 2/2] iio: dac: Fix dependencies of AD9739A
-Date: Sat, 15 Jun 2024 18:25:11 -0700
-Message-Id: <20240616012511.198243-2-alexey.makhalov@broadcom.com>
-X-Mailer: git-send-email 2.39.4
-In-Reply-To: <20240616012511.198243-1-alexey.makhalov@broadcom.com>
-References: <202406152104.FxakP1MB-lkp@intel.com>
- <20240616012511.198243-1-alexey.makhalov@broadcom.com>
+	s=arc-20240116; t=1718501944; c=relaxed/simple;
+	bh=OELwDPSXR+ec8adlrMgSTNJxMzxflVutu+6fmx0M4Lk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gzl2dQfyjIiK4UulfF4NFOanTZdMdRkkS8hGFmaaZweXgfVXvvaBqnQOqwsdo2+kLZ5/hIeEQ0e4sWftGZ1bORMKBGocDM4OTw2siKIS8LttiZRTAg8E/2xxyaIoRUspnibPjXYMH/M8sHIFbhLF5YH6/uM+8r//t5UW2jInbDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nqugS4+l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB24BC116B1;
+	Sun, 16 Jun 2024 01:39:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718501944;
+	bh=OELwDPSXR+ec8adlrMgSTNJxMzxflVutu+6fmx0M4Lk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nqugS4+lZ3JyfLCGkCi+RKcW85hGTHZoGv7vl0gQZ8Qhi9tYkXDht0tM9asmkH9UA
+	 AsRCOL1MLTkEsWM++7CuZjQAlg43t946sFAT+l3emFjHCSL3GvnrL5eSvyVFmeXm57
+	 tL/PjmCOK7o3ZmK3/NPEDxiFAhMtzOLqaOu5ILRICKwdphPF2T5A54erNmkXEplkSJ
+	 /WcbETeEZKt/y+C8M2wx/AjLHfIvJ6ju2H8Y0yRKoG+YiMH1ocD0T90KiX7KFUkgk4
+	 /NOiXJj+t4/gqhvh/+dpXBLVmPeOgKGZuoy8DTOsB2Ve/lfL7y9JSXg1my/k/L7DwG
+	 No0VItp5RxLdw==
+From: Chao Yu <chao@kernel.org>
+To: brauner@kernel.org,
+	viro@zeniv.linux.org.uk,
+	akpm@linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chao@kernel.org,
+	stable@vger.kernel.org,
+	syzbot+3ae6be33a50b5aae4dab@syzkaller.appspotmail.com
+Subject: [PATCH] hfs: fix to initialize fields of hfs_inode_info after hfs_alloc_inode()
+Date: Sun, 16 Jun 2024 09:38:41 +0800
+Message-Id: <20240616013841.2217-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,53 +60,119 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-0-DAY CI Kernel Test automation reported an issue:
+Syzbot reports uninitialized value access issue as below:
 
-   ld: drivers/base/regmap/regmap-spi.o: in function `regmap_spi_read':
-   regmap-spi.c:(.text+0xf): undefined reference to `spi_write_then_read'
-   ld: drivers/base/regmap/regmap-spi.o: in function `regmap_spi_gather_write':
-   regmap-spi.c:(.text+0x2b4): undefined reference to `spi_sync'
-   ld: drivers/base/regmap/regmap-spi.o: in function `spi_sync_transfer.constprop.0':
-   regmap-spi.c:(.text+0x337): undefined reference to `spi_sync'
-   ld: drivers/base/regmap/regmap-spi.o: in function `regmap_spi_async_write':
-   regmap-spi.c:(.text+0x445): undefined reference to `spi_async'
-   ld: drivers/iio/dac/ad9739a.o: in function `ad9739a_driver_init':
-   ad9739a.c:(.init.text+0x10): undefined reference to `__spi_register_driver'
+loop0: detected capacity change from 0 to 64
+=====================================================
+BUG: KMSAN: uninit-value in hfs_revalidate_dentry+0x307/0x3f0 fs/hfs/sysdep.c:30
+ hfs_revalidate_dentry+0x307/0x3f0 fs/hfs/sysdep.c:30
+ d_revalidate fs/namei.c:862 [inline]
+ lookup_fast+0x89e/0x8e0 fs/namei.c:1649
+ walk_component fs/namei.c:2001 [inline]
+ link_path_walk+0x817/0x1480 fs/namei.c:2332
+ path_lookupat+0xd9/0x6f0 fs/namei.c:2485
+ filename_lookup+0x22e/0x740 fs/namei.c:2515
+ user_path_at_empty+0x8b/0x390 fs/namei.c:2924
+ user_path_at include/linux/namei.h:57 [inline]
+ do_mount fs/namespace.c:3689 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount+0x66b/0x810 fs/namespace.c:3875
+ __x64_sys_mount+0xe4/0x140 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for REGMAP_SPI
-   Depends on [n]: SPI [=n]
-   Selected by [y]:
-   - AD9739A [=y] && IIO [=y] && (SPI [=n] || COMPILE_TEST [=y])
+BUG: KMSAN: uninit-value in hfs_ext_read_extent fs/hfs/extent.c:196 [inline]
+BUG: KMSAN: uninit-value in hfs_get_block+0x92d/0x1620 fs/hfs/extent.c:366
+ hfs_ext_read_extent fs/hfs/extent.c:196 [inline]
+ hfs_get_block+0x92d/0x1620 fs/hfs/extent.c:366
+ block_read_full_folio+0x4ff/0x11b0 fs/buffer.c:2271
+ hfs_read_folio+0x55/0x60 fs/hfs/inode.c:39
+ filemap_read_folio+0x148/0x4f0 mm/filemap.c:2426
+ do_read_cache_folio+0x7c8/0xd90 mm/filemap.c:3553
+ do_read_cache_page mm/filemap.c:3595 [inline]
+ read_cache_page+0xfb/0x2f0 mm/filemap.c:3604
+ read_mapping_page include/linux/pagemap.h:755 [inline]
+ hfs_btree_open+0x928/0x1ae0 fs/hfs/btree.c:78
+ hfs_mdb_get+0x260c/0x3000 fs/hfs/mdb.c:204
+ hfs_fill_super+0x1fb1/0x2790 fs/hfs/super.c:406
+ mount_bdev+0x628/0x920 fs/super.c:1359
+ hfs_mount+0xcd/0xe0 fs/hfs/super.c:456
+ legacy_get_tree+0x167/0x2e0 fs/fs_context.c:610
+ vfs_get_tree+0xdc/0x5d0 fs/super.c:1489
+ do_new_mount+0x7a9/0x16f0 fs/namespace.c:3145
+ path_mount+0xf98/0x26a0 fs/namespace.c:3475
+ do_mount fs/namespace.c:3488 [inline]
+ __do_sys_mount fs/namespace.c:3697 [inline]
+ __se_sys_mount+0x919/0x9e0 fs/namespace.c:3674
+ __ia32_sys_mount+0x15b/0x1b0 fs/namespace.c:3674
+ do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+ __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
+ do_fast_syscall_32+0x37/0x80 arch/x86/entry/common.c:203
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:246
+ entry_SYSENTER_compat_after_hwframe+0x70/0x82
 
-The issue is caused by CONFIG_AD9739A=y when CONFIG_SPI is not set.
+Uninit was created at:
+ __alloc_pages+0x9a6/0xe00 mm/page_alloc.c:4590
+ __alloc_pages_node include/linux/gfp.h:238 [inline]
+ alloc_pages_node include/linux/gfp.h:261 [inline]
+ alloc_slab_page mm/slub.c:2190 [inline]
+ allocate_slab mm/slub.c:2354 [inline]
+ new_slab+0x2d7/0x1400 mm/slub.c:2407
+ ___slab_alloc+0x16b5/0x3970 mm/slub.c:3540
+ __slab_alloc mm/slub.c:3625 [inline]
+ __slab_alloc_node mm/slub.c:3678 [inline]
+ slab_alloc_node mm/slub.c:3850 [inline]
+ kmem_cache_alloc_lru+0x64d/0xb30 mm/slub.c:3879
+ alloc_inode_sb include/linux/fs.h:3018 [inline]
+ hfs_alloc_inode+0x5a/0xc0 fs/hfs/super.c:165
+ alloc_inode+0x83/0x440 fs/inode.c:260
+ new_inode_pseudo fs/inode.c:1005 [inline]
+ new_inode+0x38/0x4f0 fs/inode.c:1031
+ hfs_new_inode+0x61/0x1010 fs/hfs/inode.c:186
+ hfs_mkdir+0x54/0x250 fs/hfs/dir.c:228
+ vfs_mkdir+0x49a/0x700 fs/namei.c:4126
+ do_mkdirat+0x529/0x810 fs/namei.c:4149
+ __do_sys_mkdirat fs/namei.c:4164 [inline]
+ __se_sys_mkdirat fs/namei.c:4162 [inline]
+ __x64_sys_mkdirat+0xc8/0x120 fs/namei.c:4162
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-Add explicit dependency on SPI and conditional selection of REGMAP_SPI.
+It missed to initialize .tz_secondswest, .cached_start and .cached_blocks
+fields in struct hfs_inode_info after hfs_alloc_inode(), fix it.
 
-Fixes: e77603d5468b ("iio: dac: support the ad9739a RF DAC")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202406152104.FxakP1MB-lkp@intel.com/
-Signed-off-by: Alexey Makhalov <alexey.makhalov@broadcom.com>
+Cc: stable@vger.kernel.org
+Reported-by: syzbot+3ae6be33a50b5aae4dab@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/linux-fsdevel/0000000000005ad04005ee48897f@google.com
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- drivers/iio/dac/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/hfs/inode.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
-index 3c2bf620f00f..d095f4d26e49 100644
---- a/drivers/iio/dac/Kconfig
-+++ b/drivers/iio/dac/Kconfig
-@@ -133,8 +133,8 @@ config AD5624R_SPI
+diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
+index 8c34798a0715..744e10b46904 100644
+--- a/fs/hfs/inode.c
++++ b/fs/hfs/inode.c
+@@ -200,6 +200,7 @@ struct inode *hfs_new_inode(struct inode *dir, const struct qstr *name, umode_t
+ 	HFS_I(inode)->flags = 0;
+ 	HFS_I(inode)->rsrc_inode = NULL;
+ 	HFS_I(inode)->fs_blocks = 0;
++	HFS_I(inode)->tz_secondswest = sys_tz.tz_minuteswest * 60;
+ 	if (S_ISDIR(mode)) {
+ 		inode->i_size = 2;
+ 		HFS_SB(sb)->folder_count++;
+@@ -275,6 +276,8 @@ void hfs_inode_read_fork(struct inode *inode, struct hfs_extent *ext,
+ 	for (count = 0, i = 0; i < 3; i++)
+ 		count += be16_to_cpu(ext[i].count);
+ 	HFS_I(inode)->first_blocks = count;
++	HFS_I(inode)->cached_start = 0;
++	HFS_I(inode)->cached_blocks = 0;
  
- config AD9739A
- 	tristate "Analog Devices AD9739A RF DAC spi driver"
--	depends on SPI || COMPILE_TEST
--	select REGMAP_SPI
-+	depends on SPI
-+	select REGMAP_SPI if SPI_MASTER
- 	select IIO_BACKEND
- 	help
- 	  Say yes here to build support for Analog Devices AD9739A Digital-to
+ 	inode->i_size = HFS_I(inode)->phys_size = log_size;
+ 	HFS_I(inode)->fs_blocks = (log_size + sb->s_blocksize - 1) >> sb->s_blocksize_bits;
 -- 
-2.39.4
+2.40.1
 
 
