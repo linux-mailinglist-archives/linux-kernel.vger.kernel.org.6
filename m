@@ -1,143 +1,122 @@
-Return-Path: <linux-kernel+bounces-216535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A7D90A0B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:07:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A1890A0BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB969281D05
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 23:07:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AC1A281C79
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 23:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B75E73462;
-	Sun, 16 Jun 2024 23:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F363D7346E;
+	Sun, 16 Jun 2024 23:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CfF210QG"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RN8CBFaR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739CA6CDA1;
-	Sun, 16 Jun 2024 23:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACCF7344E;
+	Sun, 16 Jun 2024 23:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718579221; cv=none; b=SmpBtuYvnB3H+L0uPFrGqBozgAYUDMXCOREUfRbCbs3QfDOfZ3a9kcdTlyofiN/egkY3x3/JMsuTVJ3XKbJG69LPP07Tw5sg+rVV31SaIczSsLnjIm8be1ovQAuDI3nFIZxKif+ggQf8mNkgPUNMmNx/ze40vc8SEuRlB/bYf2k=
+	t=1718579463; cv=none; b=kitfqkrEamcew49FRFS4FjWg0FrUeDP5DJ9hmlzPzgWTFkcuRBVQUGOSnHzCTgcE53HRzhF+jJFsh45E0REGNxndVJTTnaEQxCmVurJXdWCo1cux7WQchIMTvpyRt6SwZzvbpWWpBJ9ftcRssn5P8+Ioxfv2wNRX/LY+Bb1ybVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718579221; c=relaxed/simple;
-	bh=x3iLr4pxiW1iwZt2c4UPNvZuHqSRbqVJimekOnRYvQE=;
+	s=arc-20240116; t=1718579463; c=relaxed/simple;
+	bh=kiJ5EIGClrXHrM1eGznIeYjyxqgXT0POFZivmUkpMXA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r1ajXr1NFopmqK9fXD2EwhEDlRNJ5TlnTkGdu8HQTn2NT39ZUkWhKWNT7Qj4Cs3if4M388YpG1osiPYkKUAlEVhamnpplJADP3BiaZIpxaOf8DsWiqVjlVCr6tXmMz3s3Xgq6diqZIx4t2w0s1v4aXL9BxB7aQbNI/SP+roUDvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CfF210QG; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 485762D5;
-	Mon, 17 Jun 2024 01:06:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1718579202;
-	bh=x3iLr4pxiW1iwZt2c4UPNvZuHqSRbqVJimekOnRYvQE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CfF210QGlM2gyaAff5TugzqxOQZ9MD/O9n7sv6xlHFVuroMRH8l/fBDAhWWvN/k4o
-	 /ei/dM12AofyvRCK4WweoS25WzsE05bjMsNKo63xOivviQtbTS4vyc5Uo9rT8iJQXG
-	 1e9WtPrID5xm9i8RW5c4aPKpziL2oXwI1AD++2VU=
-Date: Mon, 17 Jun 2024 02:06:37 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] media: uvcvideo: Allow custom control mapping
-Message-ID: <20240616230637.GE4782@pendragon.ideasonboard.com>
-References: <20240610-billion-v2-0-38e861475f85@chromium.org>
- <20240610-billion-v2-1-38e861475f85@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A9FxQPuRKD7pY9ETeBlKMiFIEY7+iyaiv4e4HB3LNNUcYD9M1k/YSV9RukVox8ricHDvJaNHWL/rMQWU0/PgZqynO0B1XNIiG+LTYpUCOWfM8aSQXY/JqZWFeXsdSpz6cyxYM0PM3LCvSDL7+fWXAQd1Ce0hom3uuSVbDmiXHC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RN8CBFaR; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718579462; x=1750115462;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kiJ5EIGClrXHrM1eGznIeYjyxqgXT0POFZivmUkpMXA=;
+  b=RN8CBFaR2WF1UVM8IsNk8n2TMuUhHivNWICZYossXaQlY4hFmrIgzE0G
+   U7L+GBFhurQd0QmGHrRfjdxxrJMAUks8IURqQGQo+DV8YyEVqYUn91LYr
+   4gcOaLxSGC1MAOyW3I/bsJGzi4jewwG5KotM+8X2IGZ7PeLSKYj3IZwtO
+   tFx4G3IArfA9ZmSy7f22DtBntksQnYArh1JuDwCzZ/MyRU0jmK7VVuDVI
+   0pYobfCIZ2HAWhp89A3tqg3zs9Nd/tJAkpRtlKoCTJInyAfXY0Vh03nyn
+   ybDniWmlhoHq/a4/lf+KCfdIWY/wWW03FtPjXKy15I4pLFKl0sbPRcX/7
+   A==;
+X-CSE-ConnectionGUID: ie3fQNYuTSucR3Q2C+78TA==
+X-CSE-MsgGUID: G4+XX48JQo2joPLu7WxOVw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="26794709"
+X-IronPort-AV: E=Sophos;i="6.08,243,1712646000"; 
+   d="scan'208";a="26794709"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 16:11:01 -0700
+X-CSE-ConnectionGUID: oXTleuhGQOaPOFVzz3WhRw==
+X-CSE-MsgGUID: rEslq/9nRjmd64uvoExcXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,243,1712646000"; 
+   d="scan'208";a="41747756"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 16 Jun 2024 16:10:58 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sIz1T-0003SX-0v;
+	Sun, 16 Jun 2024 23:10:55 +0000
+Date: Mon, 17 Jun 2024 07:10:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Charles Wang <charles.goodix@gmail.com>, dmitry.torokhov@gmail.com,
+	dan.carpenter@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev, dianders@chromium.org, robh@kernel.org,
+	krzk+dt@kernel.org, jikos@kernel.org, bentiss@kernel.org,
+	hbarnor@chromium.org, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Charles Wang <charles.goodix@gmail.com>
+Subject: Re: [PATCH v4 1/2] HID: hid-goodix: Add Goodix HID-over-SPI driver
+Message-ID: <202406170607.MJX7Ze54-lkp@intel.com>
+References: <20240614121538.236727-2-charles.goodix@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240610-billion-v2-1-38e861475f85@chromium.org>
+In-Reply-To: <20240614121538.236727-2-charles.goodix@gmail.com>
 
-Hi Ricardo,
+Hi Charles,
 
-Thank you for the patch.
+kernel test robot noticed the following build warnings:
 
-On Mon, Jun 10, 2024 at 11:09:52PM +0000, Ricardo Ribalda wrote:
-> Some advanced controls might not be completely implemented by vendors.
-> 
-> If the controls are a enumeration, UVC does not gives a way to probe
-> what is implemented and what is not.
-> 
-> Let's create a new callback function where heuristics can be implemented
-> to detect what is implemented and what not.
-> 
-> Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+[auto build test WARNING on hid/for-next]
+[also build test WARNING on dtor-input/next dtor-input/for-linus robh/for-next linus/master v6.10-rc4 next-20240613]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Charles-Wang/HID-hid-goodix-Add-Goodix-HID-over-SPI-driver/20240614-201949
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
+patch link:    https://lore.kernel.org/r/20240614121538.236727-2-charles.goodix%40gmail.com
+patch subject: [PATCH v4 1/2] HID: hid-goodix: Add Goodix HID-over-SPI driver
+config: i386-randconfig-r122-20240617 (https://download.01.org/0day-ci/archive/20240617/202406170607.MJX7Ze54-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240617/202406170607.MJX7Ze54-lkp@intel.com/reproduce)
 
-> ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 10 +++++++++-
->  drivers/media/usb/uvc/uvcvideo.h |  5 +++++
->  2 files changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index e59a463c2761..44ec185a8c8b 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -2360,7 +2360,7 @@ static int uvc_ctrl_add_info(struct uvc_device *dev, struct uvc_control *ctrl,
->  /*
->   * Add a control mapping to a given control.
->   */
-> -static int __uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
-> +static int __uvc_ctrl_add_mapping_to_list(struct uvc_video_chain *chain,
->  	struct uvc_control *ctrl, const struct uvc_control_mapping *mapping)
->  {
->  	struct uvc_control_mapping *map;
-> @@ -2434,6 +2434,14 @@ static int __uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
->  	return -ENOMEM;
->  }
->  
-> +static int __uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
-> +	struct uvc_control *ctrl, const struct uvc_control_mapping *mapping)
-> +{
-> +	if (mapping && mapping->add_mapping)
-> +		return mapping->add_mapping(chain, ctrl, mapping);
-> +	return __uvc_ctrl_add_mapping_to_list(chain, ctrl, mapping);
-> +}
-> +
->  int uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
->  	const struct uvc_control_mapping *mapping)
->  {
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index 6fb0a78b1b00..fa0396dd5b35 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -84,7 +84,9 @@
->  
->  struct gpio_desc;
->  struct sg_table;
-> +struct uvc_control;
->  struct uvc_device;
-> +struct uvc_video_chain;
->  
->  /*
->   * TODO: Put the most frequently accessed fields at the beginning of
-> @@ -123,6 +125,9 @@ struct uvc_control_mapping {
->  	s32 master_manual;
->  	u32 slave_ids[2];
->  
-> +	int (*add_mapping)(struct uvc_video_chain *chain,
-> +			   struct uvc_control *ctrl,
-> +			   const struct uvc_control_mapping *mapping);
->  	s32 (*get)(struct uvc_control_mapping *mapping, u8 query,
->  		   const u8 *data);
->  	void (*set)(struct uvc_control_mapping *mapping, s32 value,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406170607.MJX7Ze54-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/hid/hid-goodix-spi.c:771:1: sparse: sparse: symbol 'goodix_spi_pm_ops' was not declared. Should it be static?
+
+vim +/goodix_spi_pm_ops +771 drivers/hid/hid-goodix-spi.c
+
+   770	
+ > 771	EXPORT_GPL_SIMPLE_DEV_PM_OPS(goodix_spi_pm_ops,
+   772				     goodix_spi_suspend, goodix_spi_resume);
+   773	
 
 -- 
-Regards,
-
-Laurent Pinchart
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
