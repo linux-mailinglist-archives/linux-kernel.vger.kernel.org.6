@@ -1,78 +1,163 @@
-Return-Path: <linux-kernel+bounces-216443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFA80909F62
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 21:00:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EB44909F71
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 21:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 635A71F229AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:00:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00EFD1F232A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8E94CB36;
-	Sun, 16 Jun 2024 19:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5656EB4D;
+	Sun, 16 Jun 2024 19:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TgIUc03S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="IyQT/LST"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFEB224D7;
-	Sun, 16 Jun 2024 19:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5112B46447;
+	Sun, 16 Jun 2024 19:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718564425; cv=none; b=NYx5lQMIx7rphym8c+nZ9QJaDRpWrfxGKO+eoeMoN/XMbtxCO1VWReSE3qamOprNtXuWUVkG710rt9B64xZJh0k1qOpNl3IIbZnEBlr/D0BJTgQ7OyDidpVEK7J309XHU/k8/ts/cRUZR6sqwn4dqLISUYvk52SeWY1m1vQoYas=
+	t=1718564621; cv=none; b=LgONucL/GxwhCcefjnDGZIxXY7hjeswrw4MwLCs8RfL4Sfj006SF78foC961pdF1A6GLqypIiY0dDUH9FtMWZF6YW4+axWXtzKhBYiHdy/Vz+Ob+9WZk1q9UlLdofm8cjcLdBHNZVdnthN9jQVQI6TgVvsiV7anZz1nVVZPZEZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718564425; c=relaxed/simple;
-	bh=RysHMjjlLfFtsi3nNRkbbG/7wSBlm50JQ8pET6DAOIc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=tmkeUJr7/zFw1QnIka0zcV3V1qFFM3pzzcHwW9obalGZ0mIEZspp5y1oMoPLOyML6wZTa6Hb8YqpPu7CcXP8gUJAXvcm9jUqxSnsuGKP4Wapbjmfb2ANkdAJ0kWHMuk2YRz6fiax2C+I37Q2pa3povvxRoI/ZetZSr3ly/z/ePo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TgIUc03S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C2AE7C4AF48;
-	Sun, 16 Jun 2024 19:00:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718564424;
-	bh=RysHMjjlLfFtsi3nNRkbbG/7wSBlm50JQ8pET6DAOIc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=TgIUc03SHVYyMKht2NcM4IArQoaSx90Xz9T+0+p/adP7X0u6KP8rvgZG+fKIfcWO2
-	 j8ghEZUG7zUB0h+EEV4kf/BbFVSmuWciU68RqHyNJahOj0ESUufSkg4vwvTlpM9o4A
-	 e4Ynw738rtWgXrAP64ihm7U8cKoY0SBrddSef9i+3P0Q4H9L+yJyBPPU4GqMnLdX0F
-	 PPCMPtATajv4wN/pG858h2q9ZtavymwxxLyh8kl/OeRa3fYmDPHv/xDn2IgKNYe06K
-	 n8bmxFZJkrYCAhkAfhGVtDztjIhdcu8DI7My6C9w/oscbB0tNdNxnRRQ0EdZ7oRbdY
-	 DUqm3C9EBVLrQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B8295C43612;
-	Sun, 16 Jun 2024 19:00:24 +0000 (UTC)
-Subject: Re: [PULL REQUEST] i2c-for-6.10-rc4
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Zm7D5wSXVQnhsPpw@shikoro>
-References: <Zm7D5wSXVQnhsPpw@shikoro>
-X-PR-Tracked-List-Id: <linux-i2c.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Zm7D5wSXVQnhsPpw@shikoro>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.10-rc4
-X-PR-Tracked-Commit-Id: 7e9bb0cb50fec5d287749a58de5bb32220881b46
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4301487e6b25276e0270a7547150e0304da2ba78
-Message-Id: <171856442475.18923.17098889280993931387.pr-tracker-bot@kernel.org>
-Date: Sun, 16 Jun 2024 19:00:24 +0000
-To: Wolfram Sang <wsa@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>, Andi Shyti <andi.shyti@kernel.org>
+	s=arc-20240116; t=1718564621; c=relaxed/simple;
+	bh=gXTnhlU5Io5nihYJh0y7c6dEfQuOsKvf+5cInXCGPG0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Yuj4khl0uPEWwHelRubPNs518Ie5Jl+QVwxqPtMQdZYbZUsEcsjmt3HEW3gi5+udCwyKi+3fdn3Q6+ph8j+yc3r/buTLSS8ElDGqM/3CAMoGwYdTO+6ZjMnFO4Rwe3bUxyeLb4wB9jIaIaR13IOXWfxitAzs59a8fVPlIFylhnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=IyQT/LST; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1718564615;
+	bh=gXTnhlU5Io5nihYJh0y7c6dEfQuOsKvf+5cInXCGPG0=;
+	h=From:Subject:Date:To:Cc:From;
+	b=IyQT/LST8fRUGwoKBxx+XicplmeqaPg0s2CknbC264dTxLYMwdm8M72TPIUI7GnMf
+	 8xB2RitTGtqhir6Ekm8ovxJL6n9n5F5JdsPnnARJzqRWKpf3emuYO4Ry+rNuYH7/Sv
+	 ZjtKtlvWtNr82F/KywgiK2NlVHo4qDZgDXj0XGQ4=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH v4 0/5] ChromeOS Embedded Controller charge control driver
+Date: Sun, 16 Jun 2024 21:03:28 +0200
+Message-Id: <20240616-cros_ec-charge-control-v4-0-74d649a9117d@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAE3b2YC/3XNWwrCMBQE0K2UfBvJo3nUL/chIm16YwPSSFKjU
+ rp30yIoaD/nDnPuiCIEBxHtihEFSC463+dQbgpkuro/A3ZtzogRVhJBJDbBxxMYnNuQW+P7Ifg
+ LllpIqkBDqxXK42sA6x4LfDjm3Lk4+PBc/iQ6X98krdbIRDHBTW05Ea1RVaP3d3AxRtPdum0PA
+ 5rdxL4splctli1NbcMUUGNt+dfiH0tSsmrxbFEugCsmGKl+rWmaXm5Z+4tZAQAA
+To: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+ Sebastian Reichel <sre@kernel.org>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+ Robert Moore <robert.moore@intel.com>, Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, Mario Limonciello <mario.limonciello@amd.com>, 
+ Dustin Howett <dustin@howett.net>, 
+ Stephen Horvath <s.horvath@outlook.com.au>, 
+ Rajas Paranjpe <paranjperajas@gmail.com>, linux-acpi@vger.kernel.org, 
+ acpica-devel@lists.linux.dev, Matt Hartley <matt.hartley@gmail.com>, 
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718564614; l=3717;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=gXTnhlU5Io5nihYJh0y7c6dEfQuOsKvf+5cInXCGPG0=;
+ b=KKZQwJDP81bAATQ2cDKcnGCyYlX04gXYA04mWIRKQU1G9Tj+Z3zGQvRo5KsewLklrmGmiaBjl
+ dF5ARBHmYVsDoWvNNPEATdMAGM0EEf1H9snfZxGJCebKFILaZZvAkv6
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-The pull request you sent on Sun, 16 Jun 2024 12:52:23 +0200:
+Note:
+To be useful, this series depends on
+commit 08dbad2c7c32 ("mfd: cros_ec: Register charge control subdevice")
+from the MFD tree [0].
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.10-rc4
+Add a power supply driver that supports charge thresholds and behaviour
+configuration.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4301487e6b25276e0270a7547150e0304da2ba78
+This is a complete rework of
+"platform/chrome: cros_ec_framework_laptop: new driver" [1], which used
+Framework specific EC commands.
 
-Thank you!
+The driver propsed in this series only uses upstream CrOS functionality.
 
+Tested on a Framework 13 AMD, Firmware 3.05.
+
+This driver should go through the chrome-platform tree.
+Otherwise "platform/chrome: cros_ec_proto: Introduce cros_ec_cmd_versions()"
+will conflict with
+commit a14a569a9918 ("platform/chrome: cros_ec_proto: Introduce cros_ec_cmd_readmem()")
+from chrome-platform/for-next.
+
+The patch
+"platform/chrome: cros_ec_proto: Introduce cros_ec_cmd_versions()"
+is also part of my series
+"hwmon: (cros_ec): fan target, fan pwm control and temperature thresholds"[2].
+
+Based on chrome-platform/for-next.
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/commit/?h=for-mfd-next&id=08dbad2c7c3275e0e79190dca139bc65ce775a92
+[1] https://lore.kernel.org/lkml/20240505-cros_ec-framework-v1-0-402662d6276b@weissschuh.net/
+[2] https://lore.kernel.org/lkml/20240608-cros_ec-hwmon-pwm-v1-0-d29dfc26fbc3@weissschuh.net/
+
+Changes in v4:
+- Rename cros_ec_cmd_versions() to cros_ec_get_cmd_versions()
+- Use EC_CMD_GET_CMD_VERSIONS v0 in cros_ec_get_cmd_versions() if possible
+- Drop now unnecessary EOPNOTSUPP check after initial configuration
+- Collect review tags
+- Link to v3: https://lore.kernel.org/r/20240610-cros_ec-charge-control-v3-0-135e37252094@weissschuh.net
+
+Changes in v3:
+- Drop MFD patch that was already applied
+  (therefore drop Lee from series recipients)
+- Introduce and use devm_battery_hook_register()
+- Note that the driver should go through the chrome-platform tree
+- Introduce and use cros_ec_cmd_versions()
+- Drop logging about impossible charge behaviours
+- Use sysfs_attr_init()
+- Disable probing on incompatible Framework devices by default
+- Link to v2: https://lore.kernel.org/r/20240528-cros_ec-charge-control-v2-0-81fb27e1cff4@weissschuh.net
+
+Changes in v2:
+- Accept "0" as charge_start_threshold
+- Don't include linux/kernel.h
+- Only bind to the first found battery
+- Import EC_CMD_CHARGE_CONTROL v3 headers
+- Add support for v1 and v3 commands
+- Sort mfd cell entry alphabetically
+- Link to v1: https://lore.kernel.org/r/20240519-cros_ec-charge-control-v1-0-baf305dc79b8@weissschuh.net
+
+---
+Thomas Weißschuh (5):
+      ACPI: battery: add devm_battery_hook_register()
+      platform/chrome: Update binary interface for EC-based charge control
+      platform/chrome: cros_ec_proto: Introduce cros_ec_get_cmd_versions()
+      power: supply: add ChromeOS EC based charge control driver
+      power: supply: cros_charge-control: don't load if Framework control is present
+
+ MAINTAINERS                                    |   6 +
+ drivers/acpi/battery.c                         |  15 ++
+ drivers/platform/chrome/cros_ec_proto.c        |  35 +++
+ drivers/power/supply/Kconfig                   |  12 +
+ drivers/power/supply/Makefile                  |   1 +
+ drivers/power/supply/cros_charge-control.c     | 357 +++++++++++++++++++++++++
+ include/acpi/battery.h                         |   2 +
+ include/linux/platform_data/cros_ec_commands.h |  49 +++-
+ include/linux/platform_data/cros_ec_proto.h    |   2 +
+ 9 files changed, 477 insertions(+), 2 deletions(-)
+---
+base-commit: b57cd5703a1618e87772094ac12c5ee7d6c35e2f
+change-id: 20240506-cros_ec-charge-control-685617e8ed87
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Thomas Weißschuh <linux@weissschuh.net>
+
 
