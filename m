@@ -1,75 +1,61 @@
-Return-Path: <linux-kernel+bounces-216088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A325909B35
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 03:56:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BBAD909B3B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 04:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ABF51F22672
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 01:56:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 287B11F21700
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 02:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528C7167DB3;
-	Sun, 16 Jun 2024 01:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072F716A393;
+	Sun, 16 Jun 2024 02:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="Q3wRDl0n"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C35jbu7F"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1151E1649DA
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 01:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA7B16A390;
+	Sun, 16 Jun 2024 02:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718502928; cv=none; b=uwa8TuyWEyrWoHFiHuOiiFdz+JcUTs+mSLW9opyZ4ZXJl1D00NMbkKRturai1MBv1ElEuEf4sQ2eHLVE+jSijPQnBSYvGxA5mseTAWNV/qzfIBVy25BkAInk7Mm9kK/iISEv/yRARk+tIJjI58Xp08wk7VUGXnOrlgD3Q4ItbII=
+	t=1718504349; cv=none; b=VXZl41Ukq+8c/CgtoUNmVh5CorC18YOwZfq4P6t6Y1mUqzgoYReJKRjKqHVVqaor9tkpURX2egFIuNi7ltiw1KLW5k2/RRR6YJYdAKYJX3lmgwx+jEcxBKP+CQaU1nHGqwDflFJdM4faA5STT8ZwuZi40iveSf3dDqR+oLYHbPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718502928; c=relaxed/simple;
-	bh=oYf7Uqx8b0p//hcr65UR7khancziau2o1UGrQ2eygEY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=L0nKMQNIkt5mRgr2/qO5r4uRrU7YKdhX5AdZ/pQnVGy7AfJZqcM5dRKML9K7WVlildAFv5KtwtTqYa/1vuu5loWMPnP5ykT0rFrTJzQvXi/5veaWhLhcKrFHMKWQ7QuNnKAY52Casqx52jrj7Pld7c0Q10otcStDFBUlBTP5gyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=Q3wRDl0n; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5bb041514c1so1924839eaf.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 18:55:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1718502926; x=1719107726; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OvxHvrSC0FHKXqgEX5x5EVlmOv1tZU16ijnL4zfpbmE=;
-        b=Q3wRDl0nyyJEkb/7g1BebGn9uTzm9bICid+2VljZjA5lBuNLOyMy1LQGvA9lKHALGN
-         01J7ayaeZ+qQ0DT1nWrKqCdG8jJyKI7fdNwDbUG5qLqhHybs0W0KOflN2ujGqxQmdZBs
-         z4fU1S0QdfQCOE9SulIj0OyRZV5AtXz75yB38+qJemNAJvB24cWRQtaHz6BpwixO7fW1
-         CrPh8j58Nc7tE8enkiiKd7qpYYQUSg9v8fxUZLtCv10jd6fIfLoPDWVT77GVBminN5u0
-         PThpwtBC+aP/+EYWsaZA4Fsi5fVxFI0sHG3LJ/s8Sq7Sb/5runPTcdWLeMzOhsdWotyk
-         ReQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718502926; x=1719107726;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OvxHvrSC0FHKXqgEX5x5EVlmOv1tZU16ijnL4zfpbmE=;
-        b=sardxvh/VLCHW/W3tkJHpjW0NVMI1ByaEo8gUasIiHM/5xWjsmMIYhKiaS/9GYNAsK
-         9Yr/djVRUTAOoGZXdzbZmVrmVRl3uybvJy7dM91kutJ124ZRNZdPQuaKUBIqdPrieuRN
-         30cKDJR2aNgOplEzPZm9CP0dDTezXiT214udNT4RTXYjDiL0pfVkYdGkftdFPcm1jbkh
-         8oRikCYfoX/67/MnvkD5Z/Nrr+2WLYR8BP5YjHhATGETJvvC7DOyulvtYBqvMNcaoghc
-         2L1M0ji9kd6vvTdJPnTqAuEhe84kfJtFN4IXlcRA8aVhwAorJ4d0eDMGIh/Hew75R5v0
-         F27Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX4dng8SlmotzSQWlTZbJs/BDQgSwdaqgD2YyX+giy91F4YfaMOSkuW7nb5Qd16V9CKhrcf7lOjbD4uefQaopkpzZhxrx2jytPxUuB6
-X-Gm-Message-State: AOJu0YzPiEuOy55jP6iq57wO46USVeNYDb0U87ufMNIN3jNFD8z/itET
-	SwNb2QRoMy5rZZ2TI1e1d5q65TkJRYjtQYeEU4bg1Sw9wVLz9cMTkRHuFBKlT30=
-X-Google-Smtp-Source: AGHT+IGwPVntImCAIlnGqqXum8qY2QaHTkpmNlwpEYtklKR72bHHHR3V4NsxX1XO9erjabpXZkNTMQ==
-X-Received: by 2002:a05:6358:280c:b0:19f:3789:7601 with SMTP id e5c5f4694b2df-19fb5134671mr803416455d.27.1718502925936;
-        Sat, 15 Jun 2024 18:55:25 -0700 (PDT)
-Received: from [127.0.1.1] ([2601:1c2:1802:170:1cea:28dd:2ee0:e8e5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4a769aedbsm8751201a91.43.2024.06.15.18.55.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Jun 2024 18:55:25 -0700 (PDT)
-From: Drew Fustini <dfustini@tenstorrent.com>
-Date: Sat, 15 Jun 2024 18:54:35 -0700
-Subject: [PATCH 6/6] riscv: dts: thead: update TH1520 dma and timer nodes
- to use clock controller
+	s=arc-20240116; t=1718504349; c=relaxed/simple;
+	bh=WdCqbRuw9QrBMMbPdkZSVCnZq+2Ido/fc4soz80tya4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=M2lLjGf/NzLWCCn9svmrjWr5da5PrwsxVciRZIrk8S67RpkTmnDy5hyUlcgm+oAjgwoVgs5BarLmlb/LUanrDqx7Ce4+5O36XMbN11jWLoTl/QfN6hxXxPMq/Ezs4zSCZrvXIrA/q9eQuqpcXL0YIcodl+2zqL7KOL9+D9Ti/1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C35jbu7F; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45G1tekg022866;
+	Sun, 16 Jun 2024 02:19:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=V/5Shy/1cvKlOwLzU1pHg8
+	r46t2nwW1p0r4KzazLDQs=; b=C35jbu7F0N/3KrmHtqkm5FEBHk4Tb4qVvtRXcB
+	AKgZA5m5+xG4/ipu6kWXQ7ghMYEP62itiN6JEqqQcO9xsKRTdwFT+ORmCbL5NgPs
+	83Zl+0Jt6YRB9x5uXNrKCxTji877AYNSv9Thcs85rvlWCPoJSssPhasfhcSxqGZX
+	t4prmfoXgPH+Ou0/QNaJVklo6LWECHXvLMXyNXAQ5nPQ0n8YA7rRsko8SiLmDOcs
+	BJJ8oYs4QMxjPMxwR1vBorSyma8GE/VmaH88T7HKJs2LGAwzUHLXFAYH2pXOQx8k
+	f88tZ6ljS8zUTWEqTdyQS6PBn/tNt61bEjEYVz06T81Con1g==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys1wr1dvm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 16 Jun 2024 02:19:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45G2J4GF004706
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 16 Jun 2024 02:19:04 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Jun
+ 2024 19:19:03 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sat, 15 Jun 2024 19:19:02 -0700
+Subject: [PATCH] s390/dasd: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,166 +64,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240615-th1520-clk-v1-6-3ba4978c4d6b@tenstorrent.com>
-References: <20240615-th1520-clk-v1-0-3ba4978c4d6b@tenstorrent.com>
-In-Reply-To: <20240615-th1520-clk-v1-0-3ba4978c4d6b@tenstorrent.com>
-To: Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, 
- Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>, 
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
- Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Drew Fustini <dfustini@tenstorrent.com>
-X-Mailer: b4 0.12.3
+Message-ID: <20240615-md-s390-drivers-s390-block-dasd-v1-1-36b200f14344@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAJVLbmYC/yXNwQ6CMAyA4VchPdtkY0iCr2I8lK1KIwzTIiEhv
+ LtTj9/l/3cwVmGDS7WD8iomcy7wpwriQPnBKKkYalc3rvVnnBJa6BwmlZXV/ujHOT4xkSXsyDc
+ htpFcF6BUXsp32X6H6624J2PslXIcvt1R8nvDiWxhheP4AFo2sP+QAAAA
+To: Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner
+	<hoeppner@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
+	<gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        "Christian
+ Borntraeger" <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>
+CC: <linux-s390@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: NiW6SyUhI8bZA7LAr1syksIDWf90XS5j
+X-Proofpoint-ORIG-GUID: NiW6SyUhI8bZA7LAr1syksIDWf90XS5j
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-16_01,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ lowpriorityscore=0 mlxlogscore=999 adultscore=0 spamscore=0 suspectscore=0
+ priorityscore=1501 malwarescore=0 mlxscore=0 phishscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406160016
 
-Change the dma-controller and timer nodes to use the APB clock provided
-by the AP_SUBSYS clock controller.
+With ARCH=s390, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/block/dasd_diag_mod.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/block/dasd_eckd_mod.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/block/dasd_fba_mod.o
 
-Remove apb_clk reference from BeagleV Ahead and LPI4a dts.
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
- arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts |  4 ----
- .../boot/dts/thead/th1520-lichee-module-4a.dtsi    |  4 ----
- arch/riscv/boot/dts/thead/th1520.dtsi              | 24 ++++++++--------------
- 3 files changed, 9 insertions(+), 23 deletions(-)
+Corrections to these descriptions are welcomed. I'm not an expert in
+this code so in most cases I've taken these descriptions directly from
+code comments, Kconfig descriptions, or git logs.  History has shown
+that in some cases these are originally wrong due to cut-n-paste
+errors, and in other cases the drivers have evolved such that the
+original information is no longer accurate.
+---
+ drivers/s390/block/dasd_diag.c | 1 +
+ drivers/s390/block/dasd_eckd.c | 1 +
+ drivers/s390/block/dasd_fba.c  | 1 +
+ 3 files changed, 3 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-index 55f1ed0cb433..1180e41c7b07 100644
---- a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-@@ -44,10 +44,6 @@ &osc_32k {
- 	clock-frequency = <32768>;
- };
+diff --git a/drivers/s390/block/dasd_diag.c b/drivers/s390/block/dasd_diag.c
+index ea4b1d01bb76..8245b742e4a2 100644
+--- a/drivers/s390/block/dasd_diag.c
++++ b/drivers/s390/block/dasd_diag.c
+@@ -29,6 +29,7 @@
+ #include "dasd_int.h"
+ #include "dasd_diag.h"
  
--&apb_clk {
--	clock-frequency = <62500000>;
--};
--
- &dmac0 {
- 	status = "okay";
- };
-diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-index 762eceb415f8..78977bdbbe3d 100644
---- a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-@@ -25,10 +25,6 @@ &osc_32k {
- 	clock-frequency = <32768>;
- };
++MODULE_DESCRIPTION("S/390 Support for DIAG access to DASD Disks");
+ MODULE_LICENSE("GPL");
  
--&apb_clk {
--	clock-frequency = <62500000>;
--};
--
- &dmac0 {
- 	status = "okay";
- };
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index ce3a0847aa9c..d05002ad7c96 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -135,12 +135,6 @@ osc_32k: 32k-oscillator {
- 		#clock-cells = <0>;
- 	};
+ /* The maximum number of blocks per request (max_blocks) is dependent on the
+diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
+index 2f16f543079b..f8113974cfba 100644
+--- a/drivers/s390/block/dasd_eckd.c
++++ b/drivers/s390/block/dasd_eckd.c
+@@ -44,6 +44,7 @@
+ /* 64k are 128 x 512 byte sectors  */
+ #define DASD_RAW_SECTORS_PER_TRACK 128
  
--	apb_clk: apb-clk-clock {
--		compatible = "fixed-clock";
--		clock-output-names = "apb_clk";
--		#clock-cells = <0>;
--	};
--
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&plic>;
-@@ -325,7 +319,7 @@ dmac0: dma-controller@ffefc00000 {
- 			compatible = "snps,axi-dma-1.01a";
- 			reg = <0xff 0xefc00000 0x0 0x1000>;
- 			interrupts = <27 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&apb_clk>, <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>, <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "core-clk", "cfgr-clk";
- 			#dma-cells = <1>;
- 			dma-channels = <4>;
-@@ -340,7 +334,7 @@ dmac0: dma-controller@ffefc00000 {
- 		timer0: timer@ffefc32000 {
- 			compatible = "snps,dw-apb-timer";
- 			reg = <0xff 0xefc32000 0x0 0x14>;
--			clocks = <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "timer";
- 			interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -349,7 +343,7 @@ timer0: timer@ffefc32000 {
- 		timer1: timer@ffefc32014 {
- 			compatible = "snps,dw-apb-timer";
- 			reg = <0xff 0xefc32014 0x0 0x14>;
--			clocks = <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "timer";
- 			interrupts = <17 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -358,7 +352,7 @@ timer1: timer@ffefc32014 {
- 		timer2: timer@ffefc32028 {
- 			compatible = "snps,dw-apb-timer";
- 			reg = <0xff 0xefc32028 0x0 0x14>;
--			clocks = <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "timer";
- 			interrupts = <18 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -367,7 +361,7 @@ timer2: timer@ffefc32028 {
- 		timer3: timer@ffefc3203c {
- 			compatible = "snps,dw-apb-timer";
- 			reg = <0xff 0xefc3203c 0x0 0x14>;
--			clocks = <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "timer";
- 			interrupts = <19 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -398,7 +392,7 @@ uart5: serial@fff7f0c000 {
- 		timer4: timer@ffffc33000 {
- 			compatible = "snps,dw-apb-timer";
- 			reg = <0xff 0xffc33000 0x0 0x14>;
--			clocks = <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "timer";
- 			interrupts = <20 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -407,7 +401,7 @@ timer4: timer@ffffc33000 {
- 		timer5: timer@ffffc33014 {
- 			compatible = "snps,dw-apb-timer";
- 			reg = <0xff 0xffc33014 0x0 0x14>;
--			clocks = <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "timer";
- 			interrupts = <21 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -416,7 +410,7 @@ timer5: timer@ffffc33014 {
- 		timer6: timer@ffffc33028 {
- 			compatible = "snps,dw-apb-timer";
- 			reg = <0xff 0xffc33028 0x0 0x14>;
--			clocks = <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "timer";
- 			interrupts = <22 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
-@@ -425,7 +419,7 @@ timer6: timer@ffffc33028 {
- 		timer7: timer@ffffc3303c {
- 			compatible = "snps,dw-apb-timer";
- 			reg = <0xff 0xffc3303c 0x0 0x14>;
--			clocks = <&apb_clk>;
-+			clocks = <&clk CLK_PERI_APB_PCLK>;
- 			clock-names = "timer";
- 			interrupts = <23 IRQ_TYPE_LEVEL_HIGH>;
- 			status = "disabled";
++MODULE_DESCRIPTION("S/390 DASD ECKD Disks device driver");
+ MODULE_LICENSE("GPL");
+ 
+ static struct dasd_discipline dasd_eckd_discipline;
+diff --git a/drivers/s390/block/dasd_fba.c b/drivers/s390/block/dasd_fba.c
+index 361e9bd75257..9ef7b168aba8 100644
+--- a/drivers/s390/block/dasd_fba.c
++++ b/drivers/s390/block/dasd_fba.c
+@@ -32,6 +32,7 @@
+ #define DASD_FBA_CCW_LOCATE 0x43
+ #define DASD_FBA_CCW_DEFINE_EXTENT 0x63
+ 
++MODULE_DESCRIPTION("S/390 DASD FBA Disks device driver");
+ MODULE_LICENSE("GPL");
+ 
+ static struct dasd_discipline dasd_fba_discipline;
 
--- 
-2.40.1
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240615-md-s390-drivers-s390-block-dasd-9a143c6ca093
 
 
