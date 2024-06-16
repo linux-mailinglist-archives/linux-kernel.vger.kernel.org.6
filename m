@@ -1,171 +1,148 @@
-Return-Path: <linux-kernel+bounces-216353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA8B909E45
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:56:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B010C909DE1
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 16:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9271C20D79
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:56:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CDF4281739
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 14:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3019814AA0;
-	Sun, 16 Jun 2024 15:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A8BE554;
+	Sun, 16 Jun 2024 14:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="CwvJx6kD"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TvQyiG1m"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8593114A81;
-	Sun, 16 Jun 2024 15:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7486E79F4;
+	Sun, 16 Jun 2024 14:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718553376; cv=none; b=m1XCPTnPZcUllT7NfiCo7IDa/BRPGXRnC63pnKUusul+0/dm4kFghTdOzqRm1Ggoiy/HWIWMbUIRmcN1aQGW88fKNkzwxCHtJlrCrXaCMqgQFdhkdz4cVVMYq3jkNQxkoPDTgDJa2E9uFlH2nbCaZSn3OrDetMxkJ4bfDkY01po=
+	t=1718546633; cv=none; b=Xw8YPoE3L/A911zAWmV61VPm2CqYI73O4fgsISi6jmIxtq8oxqkqYsYcvD9Qi5VJHIVxtMnNEhSzpmPCzBTOC7OSiMZCxADNTUhSWXVYVu8l77WT34c8RTp20Gwh91ILlZis9HCRvUSOVMMNSrCU8DNnmZRGL/oBF5vDOXe6Cc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718553376; c=relaxed/simple;
-	bh=aWlbf4v4BZx1SCQ2pnzqlMa9hnkkve273zFrppp4+/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vpwf9qcPRfyTMQtwVsPP7MZiyDuUjksiQ8FnOTMJznp0sU2rQIfYV6UM7HroSYHHKKboDu6UruyVzPbcJtKBX8z1GosmNnv16HK4Gs0ZPDRWIPOunMe5o7L8ENcOxlw8oLDKZPkOvw0mC75bxYcIItQEFvy2gzKm10IlLBJ000o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=CwvJx6kD; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=epgY0CWZGRWX9cG3rGGhfS4F7GuIuahi+q/0phSIS7c=; b=CwvJx6kDN1zrYDPzW+SU8eA4rc
-	RoXKCSmFfma6bETJLo8LYwLarKyRU6ZX5uRn9DkKFuatHXCk/UfE9goxqnf2GHA5SH8EmQCHboud6
-	cx37QRRF33kdhoXXSwuK/RcEpjJ3sFrVsmkQcb5gxro9y0zshoUznfptqtgbauW6aQR6CRPqoE1Kt
-	fRZHLTNf6MKtF2AtSZioqW/yCyJpM3jH1oL8fySM0Yt7kfch53v8M5VwwNXub48hXVS95eKr36rMs
-	HME89bHDaAeb3xEm4lGnrXciNhXu/t5BNcE3adazaRsHGiYfUC7jMSDMVNhQr7XI2qYuOSwZYEKoI
-	1XYfnbaQ==;
-Received: from [2001:9e8:9e2:3f01:3235:adff:fed0:37e6] (port=33542 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1sIsEY-0091Ez-V6;
-	Sun, 16 Jun 2024 17:55:59 +0200
-Date: Sun, 16 Jun 2024 17:55:56 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 2/2] kbuild: package: add -e and -u options to shell
- scripts
-Message-ID: <20240616-dandelion-lynx-of-philosophy-6be45f@lindesnes>
-References: <20240611160938.3511096-1-masahiroy@kernel.org>
- <20240611160938.3511096-2-masahiroy@kernel.org>
- <CAK7LNAQyPRKes7=wNtYXre+nU=5-1oZ-g1uzbjFMFd2e10jFjA@mail.gmail.com>
+	s=arc-20240116; t=1718546633; c=relaxed/simple;
+	bh=uLni8axn70nTeNSOM9zp1HoSjvEJQ+Je1pnxK6epS54=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nVVBxObPpq8L340lxJDkMIklzg2nGcX0q+my8G5HXFNdWlo/zWRNCPnkapnMN1H3vP2lSe+O47Ckava7OYFB9L/ZFBdypr+F2ZcHG5Oo5Pjy7KCCQsZ0NY9b+d633wg53QjP9ysbOGBONuGg1FRpFJcxYiGIymM1ereIu6cLyLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TvQyiG1m; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A8C0040005;
+	Sun, 16 Jun 2024 14:03:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718546623;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l+UzjARY5QneLdidg3fAtVri5ykcOQxvdQ7I86EceL0=;
+	b=TvQyiG1myWFoEx3lDRhv/zCFqFdKrEOvhBvc0GykO+vhEJo3rORGweBiL8xDodZNL+vNv7
+	vxEubofWrwUW6yLrjmvjLSGadtmrujbw27y8b/V6pk11mkMa3JmObHyz09DWzipi1vQfMn
+	IUYsHPR1oZuOWc/spHYXbdGy7r5EWG3OIw41rNklV7VmOteIrlF4jGCJ/323AHtGwImjPW
+	ZLpvu39+3g733oZNA7M64lHO6xjJkxv5RZ1zRwgNstojulc19JODDXrAw1y5NlbCyIZI3p
+	EM6/h6IbBdvmllgS5uzJpdUKHmc5oZPz0zJMR6wOlIpjt5s5elzL1CtMH2CQ/g==
+Date: Sun, 16 Jun 2024 18:02:31 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
+ <andrew@lunn.ch>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
+ <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
+ <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
+ <atenart@kernel.org>
+Subject: Re: [PATCH net-next v13 05/13] net: ethtool: Allow passing a phy
+ index for some commands
+Message-ID: <20240616180231.338c2e6c@fedora>
+In-Reply-To: <20240613182613.5a11fca5@kernel.org>
+References: <20240607071836.911403-1-maxime.chevallier@bootlin.com>
+	<20240607071836.911403-6-maxime.chevallier@bootlin.com>
+	<20240613182613.5a11fca5@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="96ku8o6c42x5JWqi"
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAQyPRKes7=wNtYXre+nU=5-1oZ-g1uzbjFMFd2e10jFjA@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
+Hello Jakub,
 
---96ku8o6c42x5JWqi
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 13 Jun 2024 18:26:13 -0700
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-On Mon, Jun 17, 2024 at 12:21:15AM +0900, Masahiro Yamada wrote:
-> On Wed, Jun 12, 2024 at 1:09=E2=80=AFAM Masahiro Yamada <masahiroy@kernel=
-=2Eorg> wrote:
-> >
-> > Set -e to make these scripts fail on the first error.
-> >
-> > Set -u because these scripts are invoked by Makefile, and do not work
-> > properly without necessary variables defined.
-> >
-> > Remove the explicit "test -n ..." from scripts/package/install-extmod-b=
-uild.
-> >
-> > Both options are described in POSIX. [1]
-> >
-> > [1]: https://pubs.opengroup.org/onlinepubs/009604499/utilities/set.html
-> >
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > ---
->=20
->=20
->=20
-> Setting -u needs more careful review and test.
->=20
->=20
-> This patch will break 'make deb-pkg'.
->=20
->=20
-> ./scripts/package/mkdebian: 150: KDEB_PKGVERSION: parameter not set
->=20
->=20
->=20
->=20
-> To set -u, scripts/package/mkdebian needs code refactoring.
->=20
->=20
->=20
-> I will keep scripts/package/mkdebian untouched.
+> On Fri,  7 Jun 2024 09:18:18 +0200 Maxime Chevallier wrote:
+> > +		if (tb[ETHTOOL_A_HEADER_PHY_INDEX]) {
+> > +			struct nlattr *phy_id;
+> > +
+> > +			phy_id = tb[ETHTOOL_A_HEADER_PHY_INDEX];
+> > +			phydev = phy_link_topo_get_phy(dev,
+> > +						       nla_get_u32(phy_id));  
+> 
+> Sorry for potentially repeating question (please put the answer in the
+> commit message) - are phys guaranteed not to disappear, even if the
+> netdev gets closed? this has no rtnl protection
 
-uh, I missed that during the review.  Do you want to refactor mkdebian
-in large scale, or is an explicit fallback definition possibly
-acceptable for you?
+I'll answer here so that people can correct me if I'm wrong, but I'll
+also add it in the commit logs as well (and possibly with some fixes
+depending on how this discussion goes)
 
-diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-index ecfeb34b99aa..7e3878197041 100755
---- a/scripts/package/mkdebian
-+++ b/scripts/package/mkdebian
-@@ -7,5 +7,17 @@
- set -eu
-=20
-+# Optional user-specified environment variables
-+
-+# Set target Debian architecture (skip auto-detection)
-+: "${KBUILD_DEBARCH:=3D}"
-+
-+# Set target Debian distribution (skipping auto-detection)
-+: "${KDEB_CHANGELOG_DIST:=3D}"
-+
-+# Overwrite the automatically determined package version.
-+: ${KDEB_PKGVERSION:=3D}
-+
-+
- is_enabled() {
-        grep -q "^$1=3Dy" include/config/auto.conf
- }
+While a PHY can be attached to/detached from a netdevice at open/close,
+the phy_device itself will keep on living, as its lifetime is tied to
+the underlying mdio_device (however phy_attach/detach take a ref on the
+phy_device, preventing it from vanishing while it's attached to a
+netdev)
 
+I think the worst that could happen is that phy_detach() gets
+called (at ndo_close() for example, but that's not the only possible
+call site for that), and right after we manually unbind the PHY, which
+will drop its last refcount, while we hold a pointer to it :
 
+			phydev = phy_link_topo_get_phy()
+ phy_detach(phydev)
+ unbind on phydev
+			/* access phydev */
+			
+PHY device lifetime is, from my understanding, not protected by
+rtnl() so should a lock be added, I don't think rtnl_lock() would be
+the one to use.
 
-Kind regards,
-Nicolas
+Maybe instead we should grab a reference to the phydev when we add it
+to the topology ?
 
---96ku8o6c42x5JWqi
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> > +			if (!phydev) {
+> > +				NL_SET_BAD_ATTR(extack, phy_id);
+> > +				return -ENODEV;
+> > +			}
+> > +		} else {
+> > +			/* If we need a PHY but no phy index is specified, fallback
+> > +			 * to dev->phydev  
+> 
+> please double check the submission for going over 80 chars, this one
+> appears to be particularly pointlessly over 80 chars...
 
------BEGIN PGP SIGNATURE-----
+Arg yes sorry about this one...
+ 
+> > +			 */
+> > +			phydev = dev->phydev;  
 
-iQIzBAABCAAdFiEEh0E3p4c3JKeBvsLGB1IKcBYmEmkFAmZvCwkACgkQB1IKcBYm
-Emm2KA//XwZc5KqS+S05fECn6wHG7SKgN34oQCaRIZp+m1gDy1b0Wq//XRd9RIxB
-0g8SREFV6ej4ZCtWlRZNK56iF+f4Lx6d0PBstbKkBmt0hJwfdG3vY9HoSjUbCjG1
-u5O0kFtHPa1fX5ogBVT1NdgBgKCVRPh9OHKGVG1z4uONcHuMgHUIxAatoob7AZUZ
-tUuT802g1C/51/AGVncQh0E21rKZf8IK4IUKp29CFPWgDQDkiecXCTqxa+9FK/v3
-ABmSovJ5MuDrg5o1V3lk+Amky8rSPaNwTCKgALqADAyntCoogDH3Q5QL6VxIjArC
-FDI6pfD0TAIGk5cAil6H6PXdCPkjKPYaxC5LqB1w0rNpfmdgTQY8akEGTG0xq0sn
-GIuveUle1tP/OgFS5W3xiVzOHSYZ4SvgZs6ZeViaT/eem5xru12L2dTP5P7iRdpI
-AUG3Q/ynoH5p08I0d52jLajgNqmTGT5EXfP39M36S/QRRIutH9JSjtru7zthEKVz
-ZhGaWOKrJdNTCdn5pbd/1pVEDgE9TkfKlIiwhjD56dxQ6sW9PzCD+1BccSd4ZWgD
-o3iSbc0oUikhGMU8lFFXYl+tWg3r17pgkZPjO30eWodDX8ErJSlJzR0MJeGJ2/Rf
-PS1NLty3/AiR/xraq6Vts5TyOcQ37kQiJMw+9yfh51cbKeOYGdc=
-=1OYK
------END PGP SIGNATURE-----
+Thanks,
 
---96ku8o6c42x5JWqi--
+Maxime
 
