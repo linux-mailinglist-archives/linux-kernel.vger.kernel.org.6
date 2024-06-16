@@ -1,127 +1,139 @@
-Return-Path: <linux-kernel+bounces-216453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C4CA909F83
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 21:23:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E45A909F90
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 21:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9F94283172
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:23:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABA66283486
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F7B4CB36;
-	Sun, 16 Jun 2024 19:23:14 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43D54E1CA;
+	Sun, 16 Jun 2024 19:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JQdtDkP3"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2493238396;
-	Sun, 16 Jun 2024 19:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49291B27D;
+	Sun, 16 Jun 2024 19:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718565794; cv=none; b=LXcxKBfLst/jjkhsGwQpzGwPzgTAFh7zJ3vu9sEH0jR6s6Hdyebc0UUQDY1BtdJzXxXOXyV0RyMujSIhKAxFDMU+naA0puIZv5QAyYU8k9zkSKNFYeCfn4X2UhN9skl6dW4If9BQi2qiqciy8ZzLGHtRrF1XqiSIZNQmtlyMLS4=
+	t=1718566833; cv=none; b=kL5M0r/LxTkzahmmKRB01JeplbQFjfG+0pJFSe5ww81S20z2KuOU2dFo5LZBHuqucET81o1TFv7SMfVP7nG0gunkPMUhxDPBb9OEA1tACuglc923lMAoI52/oKDRG0y+G1RpMQZpp9WQQvPV0AQGahXvEgV7PmcyOawsopr5m2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718565794; c=relaxed/simple;
-	bh=fYFfUCifGjntD3+E36odshlq4ZwgFmbkDkSQ3Yxs5IE=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=OsQLxonUbB7Ebf7oKnEIHRYj4C82frI5ED1niOLyH4/zLMhPyNDc1Gd7z/exdJa/dimZfoTw6QeqYRnPUHXzBuhvE67gBtqp+0pibOPSLbRpRI75ynQ67G3pgWtT9q4GPoJbDlWBJKjFEw7/2l9VjesH6ENf/saqbr30Co7Vm7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.105] (31.173.87.179) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Sun, 16 Jun
- 2024 22:22:44 +0300
-Subject: Re: [net-next PATCH 0/2] Fix maximum TX/RX frame sizes in ravb driver
-To: Paul Barker <paul.barker.ct@bp.renesas.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	=?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-CC: Biju Das <biju.das.jz@bp.renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, Lad Prabhakar
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Mitsuhiro Kimura
-	<mitsuhiro.kimura.kc@renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240615103038.973-1-paul.barker.ct@bp.renesas.com>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <3cad5dd7-2663-d0e4-14ba-b62814c6814e@omp.ru>
-Date: Sun, 16 Jun 2024 22:22:43 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1718566833; c=relaxed/simple;
+	bh=uHa5e+oni+iICefqSKjxWNXM0XkjCJyrTpLjB8rULjw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=dnpJ9ghc0zxF7Tw9u3pSn6Ceygflcdry0HvV+IR6XdUVXiEBo8Fk6UiOjqP92JRvfJlvb7fd1kONT/vsMrYSAqwFLzRGYRSiztPYflKQVF+5ketn60os1Va28P4FUcT4BgIxGF+hTBhntI/YTYpNiIKpGOSX7I/F3EbWU/mmtMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JQdtDkP3; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a6f7720e6e8so80593366b.3;
+        Sun, 16 Jun 2024 12:40:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718566830; x=1719171630; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C6L3NCeGT4sGFh8kYG/GxPyDNO15JRCaWpkmIRoOQZw=;
+        b=JQdtDkP3bxBcWnsFXCILwYV9Qi40BvqS5dAAHCQ6ybN93kj2Xu2Zzg3iz+QQ6qO6aV
+         vpAPvnkhrKSq1RkKctaN2tDnBUU9IRCkzrN4mgo6/0tU/2dxJ31Kva1BwktH108fC3zo
+         jE1Q/L+shaMxBYo6ZBRt7dW/VRiKlcgC4so69wi9IDNMvgZsTrql6JLx4wwc/uEdBdBc
+         mM98UMw037O2ZJQw5rFtw3bwIbdAaeNRqfyVCqe/MafwS3l7V/t19gOqqgDSFPkmhdLB
+         ci+qt2lYE+rVdaxG5ay7t0B8Xg0R4E6xacO6uBxZ2+IlcTmcHfVVQxitT6hkmDTXKuAz
+         g8lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718566830; x=1719171630;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C6L3NCeGT4sGFh8kYG/GxPyDNO15JRCaWpkmIRoOQZw=;
+        b=O4lhpJ6kDG1N3bJpF6ENBl3Gj7imKO/NqUqxGjcyzBVj10zYJhvA8dxeduX0MgZgxP
+         SDg7mBB1cMRyLGaDKDuLK/tNqmR97KAZ6DipqKf5mldnxqvLVTM7HE9Ma2DlDkjXZ3bH
+         rlekZgtEglmZPX0NkitdX8GeErMlwDdo9LB8c7APiXrD4xkt8jpGQ/w+k1By4cE7Jk8E
+         SBXQWijLkqSRFL13iVQrlJBPHt0Lec2QBS2kJGCb63jV68D5EWBj9szHf0oO3D/4ZFXU
+         VFUBAGF7+DPFscDgQ5kNM8k0iXxN+wQ4bFastKoC4nb9+webb1nJg4h99CnHWc6iY3iv
+         x98A==
+X-Forwarded-Encrypted: i=1; AJvYcCVzrXJoIyXRr/R/+VwfbwLghJ52YmYsK37jQnJcwYnJubBYLp1omyYFDvAvCdeMgrS6bxqSF5hvjme18VSU7c3/eh5QHW8aFptZ5EVcTUIIuqvelUuhB6nuC5yDXgXZt7ooFWz0r2kwWw==
+X-Gm-Message-State: AOJu0YyavLnVQoh5KPrtae7CirG4ycqiJeeh9kkVk4BaVOFbEACvbBSD
+	JREEjJ5z8CwihSnKCQInw4y+m89rKn/VUwhCy1FVOGu07tinaq/e
+X-Google-Smtp-Source: AGHT+IE46LpZ9yhJLkMRZbMAo1colG/V6YVZKIMF31xeNH4cSnUuv0VMS2ak7aMdSYN2R76SpvECnQ==
+X-Received: by 2002:a17:906:fa15:b0:a6f:48b2:aad4 with SMTP id a640c23a62f3a-a6f60dc89a5mr716461366b.50.1718566829403;
+        Sun, 16 Jun 2024 12:40:29 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f4182fsm441530366b.178.2024.06.16.12.40.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Jun 2024 12:40:29 -0700 (PDT)
+Date: Sun, 16 Jun 2024 21:40:27 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: hwmon: ti,tmp108: document V+ supply, add short
+ description
+Message-ID: <Zm8/qxGc8fvi/tuE@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240615103038.973-1-paul.barker.ct@bp.renesas.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 06/16/2024 19:10:18
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 185947 [Jun 16 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
- 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.87.179 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.87.179
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 06/16/2024 19:14:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 6/16/2024 4:53:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 6/15/24 1:30 PM, Paul Barker wrote:
+TMP108 is powered by its V+ supply, document it.
+While at it, add a short description with a link to its datasheets.
 
-> These patches fix a couple of bugs in the maximum supported TX/RX frame sizes
-> in the ravb driver.
-> 
->   * For the GbEth IP, we were advertising a maximum TX frame size/MTU that was
->     larger that the maximum the hardware can transmit.
-> 
->   * For the R-Car AVB IP, we were unnecessarily setting the maximum RX frame
->     size/MRU based on the MTU, which by default is smaller than the maximum the
->     hardware can receive.
-> 
-> Paul Barker (2):
->   net: ravb: Fix maximum MTU for GbEth devices
->   net: ravb: Set R-Car RX frame size limit correctly
-> 
->  drivers/net/ethernet/renesas/ravb.h      |  1 +
->  drivers/net/ethernet/renesas/ravb_main.c | 10 ++++++++--
->  2 files changed, 9 insertions(+), 2 deletions(-)
-> 
-> 
-> base-commit: 934c29999b57b835d65442da6f741d5e27f3b584
-> 
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+---
+Not entirely sure of the "v+-supply" name, but the datasheet only ever
+refers to it as "V+" or simply as the "supply voltage".
+Only other name I've seen is in the schematic for the msm8226-based
+motorola-falcon smartphone, where it's called "V_POS".
 
-   DaveM & Co, I'm planning to review these patches on Monday evening...
+ .../devicetree/bindings/hwmon/ti,tmp108.yaml          | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-MBR, Sergey
+diff --git a/Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml b/Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml
+index 8b5307c875ff..71d3b51d24d1 100644
+--- a/Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml
++++ b/Documentation/devicetree/bindings/hwmon/ti,tmp108.yaml
+@@ -9,6 +9,14 @@ title: TMP108 temperature sensor
+ maintainers:
+   - Krzysztof Kozlowski <krzk@kernel.org>
+ 
++description: |
++  The TMP108 is a digital-output temperature sensor with a
++  dynamically-programmable limit window, and under- and overtemperature
++  alert functions.
++
++  Datasheets:
++    https://www.ti.com/product/TMP108
++
+ properties:
+   compatible:
+     enum:
+@@ -24,6 +32,8 @@ properties:
+   "#thermal-sensor-cells":
+     const: 0
+ 
++  v+-supply: true
++
+ required:
+   - compatible
+   - reg
+@@ -45,6 +55,7 @@ examples:
+             interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
+             pinctrl-names = "default";
+             pinctrl-0 = <&tmp_alrt>;
++            v+-supply = <&supply>;
+             #thermal-sensor-cells = <0>;
+         };
+     };
+-- 
+2.34.1
+
 
