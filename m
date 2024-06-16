@@ -1,136 +1,93 @@
-Return-Path: <linux-kernel+bounces-216533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA6E90A0B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:06:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0085A90A0B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC61FB2189A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 23:06:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 130901C20F4F
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 23:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0467C7345E;
-	Sun, 16 Jun 2024 23:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wj5sNoCF"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A96273460;
+	Sun, 16 Jun 2024 23:06:47 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53B17344E;
-	Sun, 16 Jun 2024 23:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C817344E;
+	Sun, 16 Jun 2024 23:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718579182; cv=none; b=WmOvaRbg1tcYkrVg65/0ALx7V7nweIbB4reU18XNS+7Nl4I0ZQgg5Yg1yYkNydDzI1ISQdFVsNMp0Vbo2GImjsh1dldsGAJIUfpgPlysXC1lnzCmh84hRkbxF6bvso+xj1pyUj0zA7ssCWpgA2SyIhQ6C6m4nRnvpM7yCj0cpxo=
+	t=1718579206; cv=none; b=iOjo0SMEP0svrQyxA+M6F6yGQAQd+Mnt64Ue4Rv+Eb0SDp4Jn5Cnq40pro/BpJCY3rTZSHUfC377nYO7H5gYYJQmrPnuxyJx/5/UEXhGZQcOHhEkoWgDI0XDsVYrMPuE8MFmv2gyHSzd8/6I05NT2Eol0H3d/i00f+7wvE6kBI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718579182; c=relaxed/simple;
-	bh=Gv5Nes/BJZzWNPBeGWNbo9/xnyioW/kAKCr9stAgfDc=;
+	s=arc-20240116; t=1718579206; c=relaxed/simple;
+	bh=h/o2TvAiUoDg/AJSZIzo+CF9lcdlDpEl0QYRkwVqvQk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eliNA3na9l9Tn6ICK5XLB7MJtRbaFhPHhVr3C0/LOjaU/NS33qgJpPWAWiCBxiVjS+11lyzG9qCHyrD+R/OR2YAQqtyRu0m23avEZAfUEZUr/OBGbmAAmSULroz8szl1nYmb7CLjhU9mVa+sqN+vZHl/XTPgxFnU/45YXX7zglc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wj5sNoCF; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3F0439C1;
-	Mon, 17 Jun 2024 01:06:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1718579162;
-	bh=Gv5Nes/BJZzWNPBeGWNbo9/xnyioW/kAKCr9stAgfDc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wj5sNoCFqtM3UY4ECYDojSFLqr11gciOFt2j11OxV8q4JFERLD5lmfifYTOn7qA4h
-	 S+Mf4Y0nIUX8ebw4UIsI28ezPHDOyRVAx7utQoKV0rjB7KWoijoYrTVahDENVhEvwa
-	 e91dQlorOq4TO8QbQoL2H/H9/0ckg7dG02Zzbd5Q=
-Date: Mon, 17 Jun 2024 02:05:57 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] media: uvcvideo: Remove mappings form
- uvc_device_info
-Message-ID: <20240616230557.GD4782@pendragon.ideasonboard.com>
-References: <20240610-billion-v2-0-38e861475f85@chromium.org>
- <20240610-billion-v2-6-38e861475f85@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OikCoH9TuLHgQAYqFMIYWgBBQPiDipQVfSgVLpj5Chx8c+64dCYtHfGR5PH+ovSRWXRtuxMPVjYp47j3aifACZpCEt1WsvlTr8dv+tGwvzO3JyCWjfCkcCjsWJcpb/LegZ/1/FPUuBheITTczvpcM8ZT3f54p91szq38XLzlzNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Date: Sun, 16 Jun 2024 23:06:33 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Yangyu Chen <cyy@cyyself.name>
+Cc: linux-riscv@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup.patel@wdc.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 6/9] riscv: add SpacemiT SOC family Kconfig support
+Message-ID: <20240616230633.GB3988639@ofsar>
+References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
+ <tencent_D935633C42BE1A7BF8C80553B5571C737009@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240610-billion-v2-6-38e861475f85@chromium.org>
+In-Reply-To: <tencent_D935633C42BE1A7BF8C80553B5571C737009@qq.com>
 
-Hi Ricardo,
+On 01:20 Mon 17 Jun     , Yangyu Chen wrote:
 
-Thank you for the patch.
-
-On Mon, Jun 10, 2024 at 11:09:57PM +0000, Ricardo Ribalda wrote:
-> We do not have any quirk device making us of this. Remove from now. It
-> can be easily reverted later if needed.
+> The first SoC in the SpacemiT series is K1, which contains 8 RISC-V
+> cores with RISC-V Vector v1.0 support.
 > 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
+> Link: https://www.spacemit.com/en/spacemit-key-stone-2/
+> 
+> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
 > ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 27 +--------------------------
->  drivers/media/usb/uvc/uvcvideo.h |  1 -
->  2 files changed, 1 insertion(+), 27 deletions(-)
+>  arch/riscv/Kconfig.socs | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index d74019cb27fe..1c1710e3c486 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -2679,32 +2679,7 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
->  	if (!ctrl->initialized)
->  		return;
+> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+> index f51bb24bc84c..8a5775586845 100644
+> --- a/arch/riscv/Kconfig.socs
+> +++ b/arch/riscv/Kconfig.socs
+> @@ -24,6 +24,11 @@ config ARCH_SOPHGO
+>  	help
+>  	  This enables support for Sophgo SoC platform hardware.
 >  
-> -	/*
-> -	 * First check if the device provides a custom mapping for this control,
-> -	 * used to override standard mappings for non-conformant devices. Don't
-> -	 * process standard mappings if a custom mapping is found. This
-> -	 * mechanism doesn't support combining standard and custom mappings for
-> -	 * a single control.
-> -	 */
-> -	if (chain->dev->info->mappings) {
-> -		bool custom = false;
-> -
-> -		for (i = 0; chain->dev->info->mappings[i]; ++i) {
-> -			const struct uvc_control_mapping *mapping =
-> -				chain->dev->info->mappings[i];
-> -
-> -			if (uvc_entity_match_guid(ctrl->entity, mapping->entity) &&
-> -			    ctrl->info.selector == mapping->selector) {
-> -				__uvc_ctrl_add_mapping(chain, ctrl, mapping);
-> -				custom = true;
-> -			}
-> -		}
-> -
-> -		if (custom)
-> -			return;
-> -	}
-> -
-> -	/* Process common mappings next. */
-> +	/* Process common mappings. */
->  	for (i = 0; i < ARRAY_SIZE(uvc_ctrl_mappings); ++i) {
->  		const struct uvc_control_mapping *mapping = &uvc_ctrl_mappings[i];
+> +config ARCH_SPACEMIT
+
+should this be SOC_SPACEMIT? as it contradict with patch [9/9]
+> +	bool "Sophgo SoCs"
+> +	help
+> +	  This enables support for SpacemiT SoC platform hardware.
+> +
+>  config ARCH_STARFIVE
+>  	def_bool SOC_STARFIVE
 >  
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index 4df02a40c74f..ff9545dcf716 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -527,7 +527,6 @@ struct uvc_device_info {
->  	u32	quirks;
->  	u32	meta_format;
->  	u16	uvc_version;
-> -	const struct uvc_control_mapping **mappings;
->  };
->  
->  struct uvc_status_streaming {
+> -- 
+> 2.45.1
+> 
 
 -- 
-Regards,
-
-Laurent Pinchart
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
