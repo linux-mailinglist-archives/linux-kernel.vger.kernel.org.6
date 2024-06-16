@@ -1,134 +1,144 @@
-Return-Path: <linux-kernel+bounces-216068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C60D8909AB6
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 02:41:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE659909AB9
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 02:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B4B01F219CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 00:41:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A99531C20ED4
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 00:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84CE1849;
-	Sun, 16 Jun 2024 00:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84524C80;
+	Sun, 16 Jun 2024 00:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IY1gDDpp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="X6p8z9EF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D781847;
-	Sun, 16 Jun 2024 00:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70899632;
+	Sun, 16 Jun 2024 00:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718498469; cv=none; b=Tgz8kRdFWtVW3UJ6huDeh4oDK8aOmSXo4dq9NLxh8P5Kdbim5XhQuM0pxjIWk200TMHStwCLGbgjHAxcbKXwBukXu+70/su97lqGO4ON7QzQYD3R4dD4Avj4bsDX8AP+q65ddiJq0eYyFjDdJxa2flY3k5PqOSz6nDrKF/jcNMc=
+	t=1718498853; cv=none; b=cUbaJoQ2oSoj2eiFASGZWKn+Q9LrOMtKnnIWi/dy05+SJUsrh+n50N8PoMtmfSRM9aY7IBnqZQbe37J5udLZJhl1BJDVz9YZ8kMHvpphbpVwIfngTeOHmyR1EeH0qO871OOcWxYJWL3cJrjQakZQpec/3MK1WCaUZkIWxAylwJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718498469; c=relaxed/simple;
-	bh=80XxlEDYtt1XhtOCHEj2fkh3ftEPNrBzkDjxXzMkpG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XBJHJGXv8+t54eIdraI98MQg8WgZCZc8gXD1EaIWbuKui4VhmXcGsk5gaofjX2F20+oZVJ2iORWoGrMK9HzQYMyJNU7mFvKsvWBtx+Z7CVP080fIBgyD5sWjFAGIOBcWxa8lNQDut9gz54Z9pieaZzsRHfe9cdcEJDHbTr/vmLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IY1gDDpp; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718498468; x=1750034468;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=80XxlEDYtt1XhtOCHEj2fkh3ftEPNrBzkDjxXzMkpG8=;
-  b=IY1gDDppdTugANPAWyvCUivGinSkaK5jK0dFh9HsIkftcJM4kIY2Pz0B
-   ZgX9eNsidGM/aVDZ/uHudEwep514fSaK+aCB435vHx5g1oHbMijsg9iHF
-   jiVb7oWvLRClk6GMd/QwZ5qMumTw50RAYCLXQ57KzZmPGdDzOpBGa6JxA
-   F5r/VPyQAE7yWAH387T9YVAoVTqKI1pYIQGndOW9GRJOmVtF1u+KjsMAr
-   BGfk2sgcrTmOEh88mhybV94mJGWh6Lp7K8EDdNBlaywiqYJOL14gt4Xw6
-   XokRVkdkb6AjkypbugtyxB6WtZF1ua0DRPdON3AI9Sv2lqoa95Htkr/yM
-   A==;
-X-CSE-ConnectionGUID: t2bSyMEYROC80n+xVsRe/w==
-X-CSE-MsgGUID: kbeTk6rmQQqHa/iZnsMgsg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="12092979"
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="12092979"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 17:41:08 -0700
-X-CSE-ConnectionGUID: EyIdXvsbQVeCVwFOr2lbTA==
-X-CSE-MsgGUID: YghvtLYNQEGr1d1qUBqQAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="40954586"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 15 Jun 2024 17:41:05 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sIdx8-0000fI-2x;
-	Sun, 16 Jun 2024 00:41:02 +0000
-Date: Sun, 16 Jun 2024 08:40:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Animesh Agarwal <animeshagarwal28@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ASoC: dt-bindings: realtek,rt5631: Convert to
- dtschema
-Message-ID: <202406160820.L8HvSS8W-lkp@intel.com>
-References: <20240614033812.51312-3-animeshagarwal28@gmail.com>
+	s=arc-20240116; t=1718498853; c=relaxed/simple;
+	bh=OufLWNUT3SY6JH5wRwvhFIIt2iEpfLM7MnO9DzkH/DY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=nNmhJNPwHuv0jg5sT2p+b8dBzrhPwlG1VUNpkc0cco5SDC2E5QkUobpa9KE58psT+NwSDTS+x/xmCY2T2WHIfXATGFjANkZdJr/KtOiaaB7zVw5iLPSvossHg5AggtCBKNm/kbzCPSTa7HJ3JSztIYTfuVr/n2zr2a0SElszbbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=X6p8z9EF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45G0Tn2m019782;
+	Sun, 16 Jun 2024 00:47:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=r48b80W06AbF4+Cs+ge1K8
+	cav37NNq7obPO6DVOdEws=; b=X6p8z9EFFU9LxBq1uk97TzA6bxMyZyEdtSWo8z
+	8g8j8FmcZAQVjZHpe/YTRs9+KNzvQxiA4N1qDUUPJO8w+NFmzFQ2ELEug16Cs0/Q
+	O0o69PaY9ZWTOTKzJM1Hey2SJ30o34khtW8QKkOdvv5Kwgz+Z3B4otwkhzkWfD+8
+	o7jh771oeYTFeIQ9kb8fONMn6Ahn33NRtp+htz4tLnFDW/8ZrgMG4tXsXJlK8mnO
+	TLVfB+sNVykQVUM6gcqxq41WkMbNQnCkdA52geQS+mSuVscW2rWtldcBtHMYLG06
+	Q6qvq76yPMXdcMRumtaQvaWQX/19LBCz8ISwxhCoyP1vUgVw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys488s5ac-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 16 Jun 2024 00:47:29 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45G0lSIc017716
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 16 Jun 2024 00:47:28 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Jun
+ 2024 17:47:27 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sat, 15 Jun 2024 17:47:26 -0700
+Subject: [PATCH] s390/lib: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614033812.51312-3-animeshagarwal28@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240615-md-s390-arch-s390-lib-v1-1-d7424b943973@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAB02bmYC/yXMywrCMBCF4Vcps3YgjUmLvoq4yGU0A22UmSqF0
+ nc36u58i/NvoCRMCuduA6E3Kz9qQ3/oIJVQ74Scm8Ea68zQe5wz6vFkMEgq/zVxxMH7mHN24+g
+ stO9T6Mbrr3u5NseghFFCTeVbm7i+VpyDLiSw7x/3AvFshgAAAA==
+To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger
+	<borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>
+CC: <linux-s390@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: trEKEZffITh7EG4YJaAY66pDHAtNAKTI
+X-Proofpoint-ORIG-GUID: trEKEZffITh7EG4YJaAY66pDHAtNAKTI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-15_18,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 bulkscore=0 phishscore=0 mlxlogscore=922 spamscore=0
+ impostorscore=0 malwarescore=0 adultscore=0 mlxscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406160004
 
-Hi Animesh,
+With ARCH=s390, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/s390/lib/test_kprobes_s390.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/s390/lib/test_unwind.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/s390/lib/test_modules.o
 
-kernel test robot noticed the following build warnings:
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-[auto build test WARNING on broonie-sound/for-next]
-[also build test WARNING on linus/master v6.10-rc3 next-20240613]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ arch/s390/lib/test_kprobes.c | 1 +
+ arch/s390/lib/test_modules.c | 1 +
+ arch/s390/lib/test_unwind.c  | 1 +
+ 3 files changed, 3 insertions(+)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Animesh-Agarwal/ASoC-dt-bindings-realtek-rt5514-Convert-to-dtschema/20240614-114128
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-patch link:    https://lore.kernel.org/r/20240614033812.51312-3-animeshagarwal28%40gmail.com
-patch subject: [PATCH 2/2] ASoC: dt-bindings: realtek,rt5631: Convert to dtschema
-config: arm-randconfig-051-20240614 (https://download.01.org/0day-ci/archive/20240616/202406160820.L8HvSS8W-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
-dtschema version: 2024.6.dev1+g833054f
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240616/202406160820.L8HvSS8W-lkp@intel.com/reproduce)
+diff --git a/arch/s390/lib/test_kprobes.c b/arch/s390/lib/test_kprobes.c
+index 9e62d62812e5..9021298c3e8a 100644
+--- a/arch/s390/lib/test_kprobes.c
++++ b/arch/s390/lib/test_kprobes.c
+@@ -72,4 +72,5 @@ static struct kunit_suite kprobes_test_suite = {
+ 
+ kunit_test_suites(&kprobes_test_suite);
+ 
++MODULE_DESCRIPTION("KUnit tests for kprobes");
+ MODULE_LICENSE("GPL");
+diff --git a/arch/s390/lib/test_modules.c b/arch/s390/lib/test_modules.c
+index 9894009fc1f2..f96b6a3737e7 100644
+--- a/arch/s390/lib/test_modules.c
++++ b/arch/s390/lib/test_modules.c
+@@ -29,4 +29,5 @@ static struct kunit_suite modules_test_suite = {
+ 
+ kunit_test_suites(&modules_test_suite);
+ 
++MODULE_DESCRIPTION("KUnit test that modules with many relocations are loaded properly");
+ MODULE_LICENSE("GPL");
+diff --git a/arch/s390/lib/test_unwind.c b/arch/s390/lib/test_unwind.c
+index 2848e3fb2ff5..98440f9d01af 100644
+--- a/arch/s390/lib/test_unwind.c
++++ b/arch/s390/lib/test_unwind.c
+@@ -519,4 +519,5 @@ static struct kunit_suite test_unwind_suite = {
+ 
+ kunit_test_suites(&test_unwind_suite);
+ 
++MODULE_DESCRIPTION("KUnit test for unwind_for_each_frame");
+ MODULE_LICENSE("GPL");
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406160820.L8HvSS8W-lkp@intel.com/
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240615-md-s390-arch-s390-lib-655bddd47742
 
-dtcheck warnings: (new ones prefixed by >>)
-   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: mmc@d4280000: Unevaluated properties are not allowed ('clock-frequency' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mmc/sdhci-pxa.yaml#
-   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: mmc@d4280800: Unevaluated properties are not allowed ('clock-frequency' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mmc/sdhci-pxa.yaml#
-   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: mmc@d4281000: Unevaluated properties are not allowed ('clock-frequency' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mmc/sdhci-pxa.yaml#
-   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: dma-controller@d42a0800: Unevaluated properties are not allowed ('iram' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/dma/marvell,mmp-dma.yaml#
-   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: /soc/axi@d4200000/ap-sp@d4290000: failed to match any schema with compatible: ['olpc,ap-sp']
-   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: /soc/apb@d4000000: failed to match any schema with compatible: ['mrvl,apb-bus', 'simple-bus']
->> arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: audio-codec@1a: 'port' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/sound/realtek,rt5631.yaml#
-   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: /soc/apb@d4000000/i2c@d4034000/accelerometer@1d: failed to match any schema with compatible: ['st,lis331dlh', 'st,lis3lv02d']
-   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: gpio-keys: 'lid', 'tablet_mode' do not match any of the regexes: '^(button|event|key|switch|(button|event|key|switch)-[a-z0-9-]+|[a-z0-9-]+-(button|event|key|switch))$', 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
-   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: /i2c/camera@21: failed to match any schema with compatible: ['ovti,ov7670']
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
