@@ -1,273 +1,143 @@
-Return-Path: <linux-kernel+bounces-216403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA11909EE3
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:50:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30413909EE6
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E4031C220F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:50:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 426571C2212D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3701C29428;
-	Sun, 16 Jun 2024 17:50:21 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD303BBD7;
+	Sun, 16 Jun 2024 17:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="xzeNotwa";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jmP069pS"
+Received: from wfout3-smtp.messagingengine.com (wfout3-smtp.messagingengine.com [64.147.123.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84D33AC36
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 17:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BBF17C98;
+	Sun, 16 Jun 2024 17:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718560220; cv=none; b=AACFKbpktrIXzuIr9B/X60SbDuHjhrtDyDtA2J1Zg3AKi3BgWccAMuU1Iyej5VW1aMZGEC4k7oeQ/a7/lGmEk00XQUXEby2vGI52BTnTaY1uQzwPiGUq8LMd1N9BwEiQh2AlyVuPkehnmT5vq+XEArtifBI7+Pu1YZhERNVrMKU=
+	t=1718560475; cv=none; b=C3DXqE4ojy9+h4LXdyNpQSp+ZzsyGL5t2JDNsHTmRq0LWYIZTHCKfhyED01PrLlyth3ZWv+rg8JMFV/TX9flumogfyfK2AqZLx/aQalWDKq/4CGzsCMYduiF0C7qR25znai/wPoXer/Z+xgb3Cw+vCiJzGyjx9gbr7zFMh+K16Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718560220; c=relaxed/simple;
-	bh=mDFcIigDqb8DaS/nDVhERQSJRcViPXmh8SQPYgHCsdg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=iINI78y1nVcSyb2LLZaB3tzZHBYElVew3YdwjJDCwCRRLR/f7XYGmkH3YghAiw0nqX5FH1Lv6HmqKDOH+KXaMxVYWN2mGC5yZEaxk74kC24Na42dOGTeG5F3N8bWX3pwzBcBfMSLnG4TpvmJHsSf4Dfp2P4Fh3ZhcVnA1txpqBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3737b3ae019so37337965ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 10:50:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718560218; x=1719165018;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w5l6Gk/U6nBX/WXMiUyz63MwqInMsTWLMNNrPIc9rQA=;
-        b=uaNSUxhmjbGz8pcJDkEUXE15GGSxy3iGOzud9A16dUTxZvhsYQ5yVEDw2JJmoM5YqD
-         BFF0d5eQjC6YRik5BVujHuY9M9XqEnHnwUabrh3xSLWHhuJ38M0yoRDz4uGHbvFYE5KW
-         Sb+pOT/hOJY3I+B6HK5YyelUe97aEzkDY4Ge5QnP9b6yw/yfst+WIA37aAgrQwCTAeNt
-         Ifw7xZbfVSa0HpGGll6kwXDAN1Kr9oH1+SePzEDdAwItzweHWggHE6lUKrLFuWLgxHLX
-         lONaBp2+DMy+i8C5kQoxCrUK+XVgmVB+sWduA0SCpUGsDbBms6RRxQCMhc5+ba3mI6TY
-         NzEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXqr7N+g41v7Foy2KUAlkXS9mFX0O7qxd57dnOgTcmtapwGWu3zq3DXroVDEC2tl/TII9roVF+DaaKqmv68I8Ug02NXn1k5nld0DQt
-X-Gm-Message-State: AOJu0YwqLiFsDRnolGsY52lgz4K1mEjddoyQE2LVFYVgmk2Lye/BDS8e
-	llh0+hlOXfXG/CfHVke7QKbe1I1495U+at+RJrZHn6fEiCQcgHneDcIrejyvNTqkrp3SZ8Y8EhN
-	mSUuUnCpNbKiGCCY2TGV+73ka7XYBPvbSk12/jbLXIQkNv9TGtEO0xFM=
-X-Google-Smtp-Source: AGHT+IGSJcCXVT39JtBxfUI9OzJjtZ8mAOCqVyrF5IlzWq6B1RxXereFl8lhTcl/RQeBEuDRWN/8atjFgq+OM+T5s5jQmMEA5rVy
+	s=arc-20240116; t=1718560475; c=relaxed/simple;
+	bh=E/Cx5Rf8a6UHn1OwmSeZLEn9AOP4WmqErj2Q0myvfb8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LnTix58m6OCdKDTPSw0vUQTB8ytlzJqF8dKhfRO+BI9JZlHiJOquXHS2vmnYJ9Y6ioBoMZEvTz3/s64nazTNgtuwXCfL7/huXtgDQGoWF+cI92aPSjSqTMG/a26o2MBda4HNTCvRzchtM82+I6nQWnNkM8AgOlfEKvlB5/oywEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=xzeNotwa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jmP069pS; arc=none smtp.client-ip=64.147.123.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfout.west.internal (Postfix) with ESMTP id 40D341C0008C;
+	Sun, 16 Jun 2024 13:54:32 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Sun, 16 Jun 2024 13:54:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1718560471; x=1718646871; bh=z/
+	31P7zfEbv+0pHgdaZZDTGL+oEAX1p7zwNAKWVmPJM=; b=xzeNotwajivtWE9DHm
+	uh8JTDUJLOzr07mFxBdMTqg6iFqW4XPiB0dgqtyhejlWXeAVNB9i410a+wOcm3xD
+	9gBQFahDrUxrEOkhQG8i896WtMjEWggneAZCG6amxf+vLPUp9078jQeOfVnPGign
+	mYboEkz6qM9Oa6yvLK8hnTM2qjIxLUc2PEgytzdP2c1r7aHnrnM74/eAX3BPi8qC
+	S3fR4u6vY6iSzx+afvT/4X6HqNOTCn+oimJ80w80VlVVSLcxn9pKUfQpWIkaLGJM
+	J0RadYqUOIARfBMG0LHwd7rbNFt4FVLOp34Ed4G9AbUVPm5H8ZTepLJye5krLGUM
+	DnqQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm1; t=1718560471; x=1718646871; bh=z/31P7zfEbv+0
+	pHgdaZZDTGL+oEAX1p7zwNAKWVmPJM=; b=jmP069pSES3RArlYyStGvkM2wZGPx
+	8DlKamUgR14gvvPMR98L89pA2+B75HU6OgFNdX/ht142PtWK22i1e96OroPE1WxF
+	HysbkwQOiiWnFNDlaauolx2qoybAMMZ115TUL4tSonMkoQUOnOhsJWkd0w30Kt8f
+	GH46it8mWyOzwosceEcYdw5r0oalNH0DzvHtLxlqIyVnrSZOHlstpAO967GyJcet
+	2J5X/ZV6vurg0OXbpFiz72+W4Z9t5Ktb6zFEhsPO8jNk9z19bvF0SNxrnSmF16fv
+	igG8NMs41gaWA72cAI7X0v+JcQTx79V5CWVXrj45moJzO8WDkR9BhnKRw==
+X-ME-Sender: <xms:1yZvZhlt7hJUkqUHIjt4tbDLUMEfmNRWh5Q_lSYgPSC5PtTuFIMK9w>
+    <xme:1yZvZs0Fi86UMTgJ0hM9LTRlImi7b9-YD1OrqskpqyplEZ981fguMNjp5IoJeXDHu
+    KfNxwcfW6zeokONnMU>
+X-ME-Received: <xmr:1yZvZnr-w-591EQEBFR5735mJnAhTnrUEP1eY4vRDXS0GaWb016sYrs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvfedguddukecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhfffugggtgffkvfevofesthekredtredtjeenucfhrhhomheplfhirgig
+    uhhnucgjrghnghcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqeenuc
+    ggtffrrghtthgvrhhnpeekhedtteekfeduieehtdejueeiueehgedugeefudekgfeutdev
+    udektdehhfegueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:1yZvZhlicGmiGVTp6jX-sCM4VBEbN829dH7S3U1Zr1xzUIDOcjwrNw>
+    <xmx:1yZvZv3-SzaCQj5VRef-3BQxhxB4ji-TaFbPeV7wRWwCC9cB_hFUIQ>
+    <xmx:1yZvZgt8lV3-kJ08mgg8swnKHN9UHVgACJzqO75KAeO_XD6rEhUOVA>
+    <xmx:1yZvZjVE2XydQJPhKxk2U7FjDP5QUFeDJfNWyTvNH-UHq4zyYrctkg>
+    <xmx:1yZvZv-HRmXtyv86TC8FnxkypKlmbWopktqIQQ4e8tUnyF3hRQzBvN45>
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 16 Jun 2024 13:54:30 -0400 (EDT)
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Date: Sun, 16 Jun 2024 18:54:24 +0100
+Subject: [PATCH fixes] MIPS: ip30: ip30-console: Add missing include
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12ec:b0:374:9a34:a0a with SMTP id
- e9e14a558f8ab-375e10b26a4mr3654025ab.6.1718560217805; Sun, 16 Jun 2024
- 10:50:17 -0700 (PDT)
-Date: Sun, 16 Jun 2024 10:50:17 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004ec486061b057b6a@google.com>
-Subject: [syzbot] [wireless?] possible deadlock in cfg80211_netdev_notifier_call
- (3)
-From: syzbot <syzbot+61f0f147bbf185cfa088@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240616-ip30-buildfix-v1-1-0ab2b9aec9f5@flygoat.com>
+X-B4-Tracking: v=1; b=H4sIAM8mb2YC/yWMUQqAIBAFryL7naBbLNFVoo/KrRbCRCmC8O5J/
+ c0MvPdA4iicoFMPRL4kyeGL2ErBvI1+ZS2uOKDBxpAlLaE2ejpld4vcGo0jXNCRbQnKJkQu+fv
+ r4ach5xehH8KHZgAAAA==
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1005;
+ i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
+ bh=E/Cx5Rf8a6UHn1OwmSeZLEn9AOP4WmqErj2Q0myvfb8=;
+ b=owGbwMvMwCXmXMhTe71c8zDjabUkhrR8tWs65n8f9ST1bFS3f2KUYsrGfe1LpbD7/mN3nZX3f
+ PZyZP3XUcrCIMbFICumyBIioNS3ofHigusPsv7AzGFlAhnCwMUpABPZx8rIcOVN6jpL1iiFzmDh
+ a0eYbuftZo/aMjv5WoR8nJcfg5v8GkaG9Upp/XpHtq1cFRbYeVV6ysfdG65/94jbsu/K0rRJGrI
+ z+AA=
+X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
+ fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-Hello,
+Include linux/processor.h to fix build error:
 
-syzbot found the following issue on:
+arch/mips/sgi-ip30/ip30-console.c: In function ‘prom_putchar’:
+arch/mips/sgi-ip30/ip30-console.c:21:17: error: implicit declaration of function ‘cpu_relax’ [-Werror=implicit-function-declaration]
+   21 |                 cpu_relax();
 
-HEAD commit:    45403b12c29c ip_tunnel: Move stats allocation to core
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15d7ab6a980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ce6b8d38d53fa4e
-dashboard link: https://syzkaller.appspot.com/bug?extid=61f0f147bbf185cfa088
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Cc: stable@vger.kernel.org
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+ arch/mips/sgi-ip30/ip30-console.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/08e0ccb0d0c7/disk-45403b12.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d8c2fb69ea08/vmlinux-45403b12.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f665a6962ffc/bzImage-45403b12.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+61f0f147bbf185cfa088@syzkaller.appspotmail.com
-
-netlink: 'syz-executor.4': attribute type 10 has an invalid length.
-netlink: 55 bytes leftover after parsing attributes in process `syz-executor.4'.
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc2-syzkaller-00724-g45403b12c29c #0 Not tainted
-------------------------------------------------------
-syz-executor.4/22580 is trying to acquire lock:
-ffff888022b62768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: wiphy_lock include/net/cfg80211.h:5966 [inline]
-ffff888022b62768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: cfg80211_netdev_notifier_call+0x308/0x1490 net/wireless/core.c:1529
-
-but task is already holding lock:
-ffff88805dedcd20 (team->team_lock_key#10){+.+.}-{3:3}, at: team_add_slave+0xad/0x2750 drivers/net/team/team_core.c:1975
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (team->team_lock_key#10){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       team_port_change_check+0x51/0x1e0 drivers/net/team/team_core.c:2950
-       team_device_event+0x161/0x5b0 drivers/net/team/team_core.c:2976
-       notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
-       call_netdevice_notifiers_extack net/core/dev.c:2030 [inline]
-       call_netdevice_notifiers net/core/dev.c:2044 [inline]
-       dev_close_many+0x33c/0x4c0 net/core/dev.c:1585
-       unregister_netdevice_many_notify+0x544/0x16b0 net/core/dev.c:11194
-       macvlan_device_event+0x7e0/0x870 drivers/net/macvlan.c:1828
-       notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
-       call_netdevice_notifiers_extack net/core/dev.c:2030 [inline]
-       call_netdevice_notifiers net/core/dev.c:2044 [inline]
-       unregister_netdevice_many_notify+0xd75/0x16b0 net/core/dev.c:11219
-       unregister_netdevice_many net/core/dev.c:11277 [inline]
-       unregister_netdevice_queue+0x303/0x370 net/core/dev.c:11156
-       unregister_netdevice include/linux/netdevice.h:3119 [inline]
-       _cfg80211_unregister_wdev+0x162/0x560 net/wireless/core.c:1211
-       ieee80211_if_remove+0x25d/0x3a0 net/mac80211/iface.c:2249
-       ieee80211_del_iface+0x19/0x30 net/mac80211/cfg.c:202
-       rdev_del_virtual_intf net/wireless/rdev-ops.h:62 [inline]
-       cfg80211_remove_virtual_intf+0x23f/0x410 net/wireless/util.c:2852
-       genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
-       genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
-       genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
-       netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
-       genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
-       netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
-       netlink_unicast+0x7ea/0x980 net/netlink/af_netlink.c:1357
-       netlink_sendmsg+0x8db/0xcb0 net/netlink/af_netlink.c:1901
-       sock_sendmsg_nosec net/socket.c:730 [inline]
-       __sock_sendmsg+0x221/0x270 net/socket.c:745
-       ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
-       ___sys_sendmsg net/socket.c:2639 [inline]
-       __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&rdev->wiphy.mtx){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
-       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       wiphy_lock include/net/cfg80211.h:5966 [inline]
-       cfg80211_netdev_notifier_call+0x308/0x1490 net/wireless/core.c:1529
-       notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
-       call_netdevice_notifiers_extack net/core/dev.c:2030 [inline]
-       call_netdevice_notifiers net/core/dev.c:2044 [inline]
-       dev_open+0x13a/0x1b0 net/core/dev.c:1513
-       team_port_add drivers/net/team/team_core.c:1216 [inline]
-       team_add_slave+0x9b3/0x2750 drivers/net/team/team_core.c:1976
-       do_set_master net/core/rtnetlink.c:2701 [inline]
-       do_setlink+0xe70/0x41f0 net/core/rtnetlink.c:2907
-       __rtnl_newlink net/core/rtnetlink.c:3696 [inline]
-       rtnl_newlink+0x180b/0x20a0 net/core/rtnetlink.c:3743
-       rtnetlink_rcv_msg+0x89b/0x1180 net/core/rtnetlink.c:6641
-       netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
-       netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
-       netlink_unicast+0x7ea/0x980 net/netlink/af_netlink.c:1357
-       netlink_sendmsg+0x8db/0xcb0 net/netlink/af_netlink.c:1901
-       sock_sendmsg_nosec net/socket.c:730 [inline]
-       __sock_sendmsg+0x221/0x270 net/socket.c:745
-       ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
-       ___sys_sendmsg net/socket.c:2639 [inline]
-       __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(team->team_lock_key#10);
-                               lock(&rdev->wiphy.mtx);
-                               lock(team->team_lock_key#10);
-  lock(&rdev->wiphy.mtx);
-
- *** DEADLOCK ***
-
-2 locks held by syz-executor.4/22580:
- #0: ffffffff8f5e74c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
- #0: ffffffff8f5e74c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x842/0x1180 net/core/rtnetlink.c:6638
- #1: ffff88805dedcd20 (team->team_lock_key#10){+.+.}-{3:3}, at: team_add_slave+0xad/0x2750 drivers/net/team/team_core.c:1975
-
-stack backtrace:
-CPU: 0 PID: 22580 Comm: syz-executor.4 Not tainted 6.10.0-rc2-syzkaller-00724-g45403b12c29c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- wiphy_lock include/net/cfg80211.h:5966 [inline]
- cfg80211_netdev_notifier_call+0x308/0x1490 net/wireless/core.c:1529
- notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
- call_netdevice_notifiers_extack net/core/dev.c:2030 [inline]
- call_netdevice_notifiers net/core/dev.c:2044 [inline]
- dev_open+0x13a/0x1b0 net/core/dev.c:1513
- team_port_add drivers/net/team/team_core.c:1216 [inline]
- team_add_slave+0x9b3/0x2750 drivers/net/team/team_core.c:1976
- do_set_master net/core/rtnetlink.c:2701 [inline]
- do_setlink+0xe70/0x41f0 net/core/rtnetlink.c:2907
- __rtnl_newlink net/core/rtnetlink.c:3696 [inline]
- rtnl_newlink+0x180b/0x20a0 net/core/rtnetlink.c:3743
- rtnetlink_rcv_msg+0x89b/0x1180 net/core/rtnetlink.c:6641
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x7ea/0x980 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8db/0xcb0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
- ___sys_sendmsg net/socket.c:2639 [inline]
- __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7bb4c7cea9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7bb5a0e0c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f7bb4db3f80 RCX: 00007f7bb4c7cea9
-RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000005
-RBP: 00007f7bb4cebff4 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000004d R14: 00007f7bb4db3f80 R15: 00007ffec3e770f8
- </TASK>
-team0: Port device virt_wifi0 added
-
+diff --git a/arch/mips/sgi-ip30/ip30-console.c b/arch/mips/sgi-ip30/ip30-console.c
+index 7c6dcf6e73f7..a5f10097b985 100644
+--- a/arch/mips/sgi-ip30/ip30-console.c
++++ b/arch/mips/sgi-ip30/ip30-console.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
+ #include <linux/io.h>
++#include <linux/processor.h>
+ 
+ #include <asm/sn/ioc3.h>
+ #include <asm/setup.h>
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
+change-id: 20240616-ip30-buildfix-20d62f2d6186
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Best regards,
+-- 
+Jiaxun Yang <jiaxun.yang@flygoat.com>
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
