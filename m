@@ -1,132 +1,224 @@
-Return-Path: <linux-kernel+bounces-216349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B9C3909E37
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:46:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63C46909E3B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA03F1F215AE
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:46:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1913B20E36
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942B714A8B;
-	Sun, 16 Jun 2024 15:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE051758C;
+	Sun, 16 Jun 2024 15:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mbBmv3yA"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T4m4X+i/"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857B119D8B5
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 15:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A162F2B;
+	Sun, 16 Jun 2024 15:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718552757; cv=none; b=Oo7x5NzfX2+SCiD/VkdHXwWDq1JWlPUyGxELdha1RHjsiW8oHqzv5KduX/eyVD4wYG8EhByl7RNC7Ku2Jf2WhFf21tQi/S9zV9+eXgF8S8weCVv4IAENBI58erbiymYzQCk3EDYtaHZR4c7qWYHnlSNmteI2wCR7nnAdMWu+fHk=
+	t=1718553045; cv=none; b=SnaL9Vp0D7xx0STDvCwo7TtGxlv9pxj5r2txu0xzY1a25J/sIwIkVcqcC/udvDuYms2DpRMmT3UaT9ka2S4/2wsBPgg3n7beZIJTC5RUgb92gh/eI2B+QRTkE5/SPUQ6z0Hn1tD2SOUlZzs598H9pMGTk4ANqPXb/3onoU2Dj/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718552757; c=relaxed/simple;
-	bh=3156DIFjETCUi5nKVvfuBuAomo8aSmJgHYXpWsdSxO4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lxhs6rgYExYiK0vuwgDcbt+q7ZPU7DKdflvfQAGE/Wc0MGnzoXput5S1HoVVyXSRGqQAJX7B2FaQN5i1Ij3IkMxx8flxNzg40tFrvyrqh2LQOy9Xpkb51s2UM8a/8aXsT32kbrsiY+zqmrlOm7XWYASzJhYnD0MAJ5RghDc35hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mbBmv3yA; arc=none smtp.client-ip=209.85.210.179
+	s=arc-20240116; t=1718553045; c=relaxed/simple;
+	bh=Wg4H7m1DXoMVcfFsc9++uNoYAhYlEgbR9dGVm8CvBvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pCvFQQ7PZtyi8koU1AUq+/C2Wz5Yk04by0fbLmL77Ct85nEoQjRX3QyMKE7VMDwE7BdkLW0iMdbag561slEDQRbbB2BLQ6/YcyfixyxQ9cYXiDkhqawkhJnjT3PJwPPA3fpMlCUO5p3v3OKIMpgminRqEqifvxbUP7hUnDA53L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T4m4X+i/; arc=none smtp.client-ip=209.85.167.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-704189f1225so3267878b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 08:45:56 -0700 (PDT)
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3d21ebe1c3aso2030876b6e.1;
+        Sun, 16 Jun 2024 08:50:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718552756; x=1719157556; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=e7fp8UlyhTZugwgUTVEakWeUaqJf9C1Xu5hu6Y3OppA=;
-        b=mbBmv3yAWkm0lfollc0JE4G4xtqUxFjHhKgKwpTUeiyjOwqojk7qGzkpCvHXY3BEAp
-         PLIp8PMp1k23dsrA3oommP26K7ga6td8rAKbu9gQWuntSkoMr3BvVjw/Uw+zADQah+Rm
-         UWjofRvB1ohOu8EMrGgOIrRgAv8RUtSMx3rrDAHmRaKfo+Z7mCK+Et7BTLeZLaqP8Ahc
-         PtGDr98BATIabE8Vjn0pPP86IMrXL6gspzY+nlTlZ0Qs/txrN8JC22wQY0VSfaCUnEyH
-         E1u01zYSc/G/dJ6DowUl9ohfzS3Z2yaA2UA80B74qpbSml3oFdRG82SdVAWoY8gcSnq9
-         rO3g==
+        d=gmail.com; s=20230601; t=1718553043; x=1719157843; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=j3Fg3WwnJk25meGhg6shxE3UUo613qicSEDB22KFRgc=;
+        b=T4m4X+i/GKcUdUhP8BIszOfjCRVUGRhAa24jXp7sas+ndzM7+3yQVNbJ2wXmQhSTsg
+         463qXkhf0WyjgTPBeUrd1J8Fjlx6KdJPB58ANFu0cnEXBp5Uq/QXsznQ3et7S0H6lEIT
+         ArsE82wDzojftWFZJToqDIdJK8vfh/uH5rsbrED7UpmLj7LbD0wj1nDBfm5RMIwBCyiC
+         OrDe4S0xeNgJfscfWuLAOav/pIOUFyLrVIJX1IzK2JVQuYTAF4qhQjgO4vYuyJAdxFDE
+         bCFg99uJBSDZTzhsf/UfCRH6gHxPE3LVldV/owJwgJTIfYUJdKSe6HkKh2AmcTKA5xpu
+         t02w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718552756; x=1719157556;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1718553043; x=1719157843;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=e7fp8UlyhTZugwgUTVEakWeUaqJf9C1Xu5hu6Y3OppA=;
-        b=hqxxcHSn/3JkmYgCU0Jwndh30SZj1xbLNV/M0oYurIMuufC02Flho+VIuDofoKGjRE
-         6UP+QssJZJpJapyTAmOGQDLLZPJLKqZjVSgn/NVBtZc0oaTZ8KcFTCug0u3/FKz9MVPp
-         hyI5w1vNL/CSK+QnVi5EqIpCk95zINqc1UFHUwuKWvSIURkqBKkTk4ympiPqwgMJWOGi
-         Q6c/DpeslIcz3mrh7jS5MRK2BM33GOJQioGL+SBkGJn9Po+7qsfxztDLiM5UFvTRy7u3
-         qMRCQyF/zTQAQtdRihcyKMVYNDMlfVNP+41jPD8q/o2DQkA0K8rr6fDhk5PqonudYBJf
-         bjGg==
-X-Forwarded-Encrypted: i=1; AJvYcCW76zj34TEnM0GiFsbBua/PtvdPCCVILz0PlMiWpgjBonsiILS+UpoXLnmqdrb3cxa+jkLl6NG1DxOcAZ6SX+8XZmVNq15jvyLYsbZr
-X-Gm-Message-State: AOJu0YwA7IYbCaoD5HUBtjbGKGky9X/mIyEsbaEnyqcypQFiJ0Eiy6i3
-	mwMyVlH1nipHfMqXqzk5biMkDf+yOgf0BxPX/EER6NnAgERNy4OOd/A7SvJa
-X-Google-Smtp-Source: AGHT+IEeNwqXRCUbagaIZHN5sqtN03OgsiynC+a+Fqu36/lStwWRvh4U2rCQN9zhCCob0OV/1fcstw==
-X-Received: by 2002:a05:6a20:7f95:b0:1b7:8d72:d00c with SMTP id adf61e73a8af0-1bae7ea1002mr7842615637.31.1718552755613;
-        Sun, 16 Jun 2024 08:45:55 -0700 (PDT)
-Received: from localhost.localdomain ([2409:40c1:10da:1462:7d9e:737e:f8b0:47ad])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb90a33sm6063560b3a.187.2024.06.16.08.45.52
+        bh=j3Fg3WwnJk25meGhg6shxE3UUo613qicSEDB22KFRgc=;
+        b=ahK8VfJip43UjEjHsjpNr1B5Gk7C+b6cH+AOZ448CYNz3V6JdhcqQF0tvinOJZsZ4s
+         ZMR9jNY9FDrGO7yT1xiXaCBm+LRhs8S7qOPJJIDzmcxr+cJHRepr66aPZBFe1bUQqxhy
+         fC+nsrEzfhcCQt/eoKPpuJrg1Rj/r9CccLoUsV5BFTrU26UQgRVqPnAXb+Nmgiql5d3k
+         4vyb8lCOw3EoxyXERpoyR5zI2gZIV8ndPAX6InrsGFbmUC3VmgmkS5LnzYugxjIu/nIF
+         UDbhP0jYh/rXzMlSmDKTuRBm1d/xqWAY2+qbDxn11UWqxZqA2eNAGxbahvPY7pQ/B+f3
+         Khxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqdWqSfbwZ8lqlBQU/6643o3+NRUHCvLxpqGaG5HHqgeRBcSTuYyuZK+rqziHwzvx/69PhwJnqkyUnjl1pDKgATyWVNzt1S6T+p0NaSzwaZLNUo3gUdE82cmAnsd+irrDPWyotTar83UX9bXmuPPDxafwx9UkEYJRHv2YgFXNhbASbROSaQhqkFyjFuf5LZQfmGLm96WSQQZvlNcCj1NJbJGiuyHabfA==
+X-Gm-Message-State: AOJu0YzHrHW9JSdIRI7gb0ERBew4pEPX6MLQ0kBLv94oJiUWvOIrOcOv
+	5uipP1mlrl5P1HbYvj10/iW48mKZOHyJvGNSKEMWssKtLuJspCVw
+X-Google-Smtp-Source: AGHT+IHsBUccvKKQtIW3gs2Nv/J7ZleyA0w8pwKlkr1m47UIV/KI5EmBms3um2pUeBDU/kGLGiU/3A==
+X-Received: by 2002:a05:6808:2191:b0:3d2:27b2:fde5 with SMTP id 5614622812f47-3d24e98103bmr11343198b6e.45.1718553043181;
+        Sun, 16 Jun 2024 08:50:43 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-798abe279c0sm347743985a.110.2024.06.16.08.50.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Jun 2024 08:45:55 -0700 (PDT)
-From: Amit Vadhavana <av2082000@gmail.com>
-To: srinivas.kandagatla@linaro.org,
-	alsa-devel@alsa-project.org,
-	linux-kernel@vger.kernel.org,
-	rbmarliere@gmail.com,
-	skhan@linuxfoundation.org
-Cc: linux-kernel-mentees@lists.linuxfoundation.org,
-	av2082000@gmail.com
-Subject: [PATCH] slimbus: Fix struct and documentation alignment in stream.c
-Date: Sun, 16 Jun 2024 21:15:31 +0530
-Message-Id: <20240616154531.38232-1-av2082000@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Sun, 16 Jun 2024 08:50:42 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id B84851200043;
+	Sun, 16 Jun 2024 11:50:41 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Sun, 16 Jun 2024 11:50:41 -0400
+X-ME-Sender: <xms:0QlvZtu9ee8eLP2UzP3OGaXFlRPOhNrpQ-oIMRWlJ3IReaquGwx7-g>
+    <xme:0QlvZme0Qo-_7nA4mZ7-KkVw7CFpoEoEHVG-4K6Gz-WAnJV3FIENZuzykX5-TTmCG
+    IOfm3AZ3FvrpgNJFg>
+X-ME-Received: <xmr:0QlvZgyyz4Wm2sxsCzc3ZH06t_4xsDkckZjbvPfOfeTtQvIiQRn-1wqa_w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvfedgleegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhepvefghfeuveekudetgfevudeuudejfeeltdfhgfehgeekkeeigfdukefh
+    gfegleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedt
+    ieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfh
+    higihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:0QlvZkMDWWOMLvlXtS2o1QtXDZ8T2wx26rsHYzL4g030-2oivomvgA>
+    <xmx:0QlvZt9Z3J1UKbhLQsWkyqPOJl_GdrB_jHXrFZB6vn5RdOkQ4LGsjw>
+    <xmx:0QlvZkU6C-zehZXjrB0Y8qtf_McOvO6nV2z-d0gyLns-SoLzpUbMCg>
+    <xmx:0QlvZudeW5dbI5uYQSkxFVZVrwaB1msXsuGhRUNAhnoalgTw0mMubg>
+    <xmx:0QlvZje_z2Dz2SmkEpzfF0t7WYOJLcWeNbLHnWqIPmwWzBSo6URdIEuQ>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 16 Jun 2024 11:50:40 -0400 (EDT)
+Date: Sun, 16 Jun 2024 08:50:40 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Benno Lossin <benno.lossin@proton.me>, Gary Guo <gary@garyguo.net>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, llvm@lists.linux.dev,
+	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
+ linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
+ Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com
+Subject: Re: [RFC 2/2] rust: sync: Add atomic support
+Message-ID: <Zm8J0NKh_XXDzt9X@Boquns-Mac-mini.home>
+References: <ZmtC7h7v1t6XJ6EI@boqun-archlinux>
+ <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com>
+ <ZmxUxaIwHWnB42h-@Boquns-Mac-mini.home>
+ <c1c45a2e-afdf-40a6-9f44-142752368d5e@proton.me>
+ <ZmzvVr7lYfR6Dpca@Boquns-Mac-mini.home>
+ <b692945b-8fa4-4918-93f6-783fbcde375c@proton.me>
+ <Zm4R0XwTpsASpBhx@Boquns-Mac-mini.home>
+ <5lwylk6fhlvqfgxmt7xdoxdrhtvmplo5kazpdbt3kxpnlltxit@v5xbpiv3dnqq>
+ <Zm7zvt7cNT2YpiIi@Boquns-Mac-mini.home>
+ <CANiq72mz=OzzHJJyOPeWcxEtppP+v0KUq63_u5NB7-R84avaPg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72mz=OzzHJJyOPeWcxEtppP+v0KUq63_u5NB7-R84avaPg@mail.gmail.com>
 
-The placement of the `segdist_codes` array documentation was corrected
-to conform with kernel documentation guidelines. The `@segdist_codes`
-was placed incorrectly within the struct `segdist_code` documentation
-block, which led to a potential misinterpretation of the code structure.
+On Sun, Jun 16, 2024 at 05:14:56PM +0200, Miguel Ojeda wrote:
+> On Sun, Jun 16, 2024 at 4:16 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > Hmm? Have you seen the email I replied to John, a broader Rust community
+> > seems doesn't appreciate the idea of generic atomics.
+> 
+> I don't think we can easily draw that conclusion from those download
+> numbers / dependent crates.
+> 
+> portable-atomic may be more popular simply because it provides
+> features for platforms the standard library does not. The interface
+> being generic or not may have nothing to do with it. Or perhaps
+> because it has a 1.x version, while the other doesn't, etc.
+> 
 
-The `segdist_codes` array documentation was moved outside the struct
-block, and a separate comment block was provided for it. This change
-ensures that clarity and proper alignment with kernel documentation
-standards are maintained.
+Totally agreed, but that was the information all I could get at that
+time ;-)
 
-A kernel-doc warning was addressed:
-    ./drivers/slimbus/stream.c:49: warning: Excess struct member 'segdist_codes' description in 'segdist_code'
+> In fact, the atomic crate is essentially about providing `Atomic<T>`,
+> so one could argue that all those downloads are precisely from people
+> that want a generic atomic.
+> 
+> Moreover, I noticed portable-atomic's issue #1 in GitHub is,
+> precisely, adding `Atomic<T>` support. The maintainer has a PR for
+> that updated over time, most recently a few hours ago.
+> 
 
-Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
----
- drivers/slimbus/stream.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Wait! Could it be because of me? Or I'm thinking too much about myself
+;-)
 
-diff --git a/drivers/slimbus/stream.c b/drivers/slimbus/stream.c
-index 1d6b38657917..62661211a409 100644
---- a/drivers/slimbus/stream.c
-+++ b/drivers/slimbus/stream.c
-@@ -18,7 +18,6 @@
-  *		and the first slot of the next  consecutive Segment.
-  * @segdist_code: Segment Distribution Code SD[11:0]
-  * @seg_offset_mask: Segment offset mask in SD[11:0]
-- * @segdist_codes: List of all possible Segmet Distribution codes.
-  */
- static const struct segdist_code {
- 	int ratem;
-@@ -26,7 +25,10 @@ static const struct segdist_code {
- 	int segdist_code;
- 	u32 seg_offset_mask;
- 
--} segdist_codes[] = {
-+};
-+
-+/* segdist_codes - List of all possible Segment Distribution codes. */
-+static const struct segdist_code segdist_codes[] = {
- 	{1,	1536,	0x200,	 0xdff},
- 	{2,	768,	0x100,	 0xcff},
- 	{4,	384,	0x080,	 0xc7f},
--- 
-2.25.1
+> There is also `AtomicCell<T>` from crossbeam, which is the first
+> feature listed in its docs.
+> 
+> Anyway...
+> 
+> The way I see it, both approaches seem similar (i.e. for what we are
+> going to use them for today, at least) and neither apparently has a
+> major downside today for those use cases (apart from needed refactors
+> later to go to another approach).
+> 
+> (By the "generic approach", by the way, I mean just providing
+> `Atomic<{i32,i64}>`, not a complex design)
+> 
+> So it is up to you on what you send for the non-RFC patches, of
+> course, and if nobody has the time / wants to do the work for the
+> "simple" generic approach, then we can just go ahead with this for the
+> moment. But I think it would be nice to at least consider the "simple"
+> generic approach to see how much worse it would be.
+> 
 
+What would work for me is a somewhat concrete design consensus (on what
+sizes we are going to support, the expectation on how many traits we are
+going to introduce, etc.) And then a simple generic approach is not a
+problem. (But I remain my right to say "I told you so" ;-)) As I said,
+we cannot just do generic because of generic, we have to have at least
+some idea abou the things we are generify on (the scope and the cost in
+term of how many more traits people need to understand).
+
+> Other bits to consider, that perhaps give you arguments for one or the
+> other: consequences on the compilation time, on inlining, on the error
+> messages for new users, on the generated documentation, on how easy to
+> grep they are, etc.
+> 
+
+These seem non-issues to me (except the grep part), but I'm relatively
+more familiar with atomics and Rust, so it's good to hear others
+thought, or wait the feedback until we have the patchset to review.
+
+Regards,
+Boqun
+
+> Cheers,
+> Miguel
 
