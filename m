@@ -1,178 +1,188 @@
-Return-Path: <linux-kernel+bounces-216124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84A45909BB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:54:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64B38909BB8
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF125B216B0
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 05:54:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D31DA1F2200F
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 06:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB51F16D9D4;
-	Sun, 16 Jun 2024 05:54:22 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377F316D9CB;
+	Sun, 16 Jun 2024 06:03:43 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B574416D329
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 05:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B201843;
+	Sun, 16 Jun 2024 06:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718517262; cv=none; b=L+GQoV8VBTDWTBKS7xHEDeKgoCI2dzInde6hyslsNgvMwn3eA2N7a6o0dGTfikBfkGNaCdGAK5hGiqFxTotiOgItdcz8RKNgSlWCqv0+pNHsgm0tVjeFDrKjYveLHxWiiZRacJYHl1YQ4MSf1UKIGYAuAacoDuTgDAg0QsaHwB0=
+	t=1718517822; cv=none; b=msVu/ozLAmNx4NnYV7wHgJL/WUuUd1+hYURoru285/Z8R88GbzPQzOj+wyU1oUUg0mMVpmRxFxdCnyWW7AchPgfjEVzodf32yfDmEAw7mpnG7CjwdT1UoVZJHxsutycLUrsnNw5RC95ubvH6T7/j64NvKbHNGKu4x1UMnzounJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718517262; c=relaxed/simple;
-	bh=B1Mi2iB4rh+LdPeBChRnGFShUhSfHM6ihPGxVKoaAwM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fGxnsCHRc+/qBqjZx+5Y+9LrZR/Q1emmrHqdLAZ9DsuTFruOAtUrAamtrLS33kCXI1bsTUX5ds3eJcczvlv55uvCd9ku+otOxqGT2b27A/VZWj2tTzqDEeyhFO1E1IiomSuzArCsHossQxt2MhqACTAkflb1FURzgfAJrpBXU4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3737b3ae019so33025275ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 22:54:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718517260; x=1719122060;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=romJDKF4YYdUcNlHKmmiJoWHinqaoX9oJ6SM72wKzyk=;
-        b=Bt7sIMb52rBLtkg6LRc1X5THZqBQFlXr/cy7iJMjmn7BY5BprhvYWmYwal4P+Q972G
-         Na39hx2HI5dDxKXSbJGecPyBpBM+UcI4VgcUnZuDUGX+2P0p5TO8JNpZUit5lDku7eZB
-         geuoeeWW/1GUsWSGf3H7PkFXS1Nnu4p/TUlhc2o0qBu/OgRwjZ+cEOdm0dqB226Lnrai
-         mgzeQUvdKUCxbTKIVCJk3ua+4WREy3oyzk1DWLKVIqSdpN4ES0mQTGj6R2gXY3GtRS7O
-         FMfx0i99LsRCbj2/WFIYGjZl1IEcGAKbPj8TLoS6eZHtycX5AWN/W1ftXYtPUDzHRR2V
-         M19A==
-X-Forwarded-Encrypted: i=1; AJvYcCWiy+1fbRZJqeyHITnp9ChVrRV3BQ7LT/XR4MkAs0vpPPWTxj4FCXokzLfC0k+GJ5i8ZyAabDXSwGa1E5+MO71aKftmDUk7Pq91U5kX
-X-Gm-Message-State: AOJu0YyiMrHHdgeLrOJ1WdKUvpYdQ5wqBVx058B0R9WAXc61u4/J9vX7
-	lvKDwYtUn2u8EsjjhRfnH56yG9yha13claLdol6SsIcWFK7B4TDggFj9cJ0un+fGdnYFgKNS711
-	uaoBU7+tOOcPBf6B9bSNJX7s1OV3GfhRlXZkraWPYV/RzHIOwbMuwtT4=
-X-Google-Smtp-Source: AGHT+IE2Gd+LOe88pC+S0lKc6d8yttgEK0N/YWyestZ/pdZSMy4wAkxPXqJ47g9Prl9B8V7DJLFuWv6LzPsnTqBeF0wTRpUHU0aJ
+	s=arc-20240116; t=1718517822; c=relaxed/simple;
+	bh=/2YJgEY6S7F3s4XlmpXP0VvwXWYDZ9MlbrwhcewjlzI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kFTS6OOix11epk2E0BhZ/vy4mcIbFWbOOprIUPoPQ3gA/MJzzel4f5OxKcYyrvL6HGQgdlTevBaVwvhRf2A/QlZL1RQRFGYFsCOOD2vIE1WZZTKwzcXDfPi2EccOlR8FSh+hhkQSc287ZQw3d/RJ26c49hSdWbW8MkL+Hb2+SmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sIis7-000aMl-0x;
+	Sun, 16 Jun 2024 13:56:12 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 16 Jun 2024 13:56:11 +0800
+Date: Sun, 16 Jun 2024 13:56:11 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Kim Phillips <kim.phillips@amd.com>
+Cc: Ashish Kalra <ashish.kalra@amd.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	John Allen <john.allen@amd.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Liam Merwick <liam.merwick@oracle.com>
+Subject: Re: [PATCH v2] crypto: ccp - Fix null pointer dereference in
+ __sev_snp_shutdown_locked
+Message-ID: <Zm5-e123tiK_jytS@gondor.apana.org.au>
+References: <20240604174739.175288-1-kim.phillips@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c29:b0:375:9deb:ceb8 with SMTP id
- e9e14a558f8ab-375e1014718mr3864085ab.3.1718517259888; Sat, 15 Jun 2024
- 22:54:19 -0700 (PDT)
-Date: Sat, 15 Jun 2024 22:54:19 -0700
-In-Reply-To: <00000000000041df050616f6ba4e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d0fffc061afb7a2c@google.com>
-Subject: Re: [syzbot] [mm?] possible deadlock in __mmap_lock_do_trace_start_locking
-From: syzbot <syzbot+6ff90931779bcdfc840c@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604174739.175288-1-kim.phillips@amd.com>
 
-syzbot has found a reproducer for the following issue on:
+On Tue, Jun 04, 2024 at 12:47:39PM -0500, Kim Phillips wrote:
+> Fix a null pointer dereference induced by DEBUG_TEST_DRIVER_REMOVE.
+> Return from __sev_snp_shutdown_locked() if the psp_device or the
+> sev_device structs are not initialized. Without the fix, the driver will
+> produce the following splat:
+> 
+>    ccp 0000:55:00.5: enabling device (0000 -> 0002)
+>    ccp 0000:55:00.5: sev enabled
+>    ccp 0000:55:00.5: psp enabled
+>    BUG: kernel NULL pointer dereference, address: 00000000000000f0
+>    #PF: supervisor read access in kernel mode
+>    #PF: error_code(0x0000) - not-present page
+>    PGD 0 P4D 0
+>    Oops: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC NOPTI
+>    CPU: 262 PID: 1 Comm: swapper/0 Not tainted 6.9.0-rc1+ #29
+>    RIP: 0010:__sev_snp_shutdown_locked+0x2e/0x150
+>    Code: 00 55 48 89 e5 41 57 41 56 41 54 53 48 83 ec 10 41 89 f7 49 89 fe 65 48 8b 04 25 28 00 00 00 48 89 45 d8 48 8b 05 6a 5a 7f 06 <4c> 8b a0 f0 00 00 00 41 0f b6 9c 24 a2 00 00 00 48 83 fb 02 0f 83
+>    RSP: 0018:ffffb2ea4014b7b8 EFLAGS: 00010286
+>    RAX: 0000000000000000 RBX: ffff9e4acd2e0a28 RCX: 0000000000000000
+>    RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffb2ea4014b808
+>    RBP: ffffb2ea4014b7e8 R08: 0000000000000106 R09: 000000000003d9c0
+>    R10: 0000000000000001 R11: ffffffffa39ff070 R12: ffff9e49d40590c8
+>    R13: 0000000000000000 R14: ffffb2ea4014b808 R15: 0000000000000000
+>    FS:  0000000000000000(0000) GS:ffff9e58b1e00000(0000) knlGS:0000000000000000
+>    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>    CR2: 00000000000000f0 CR3: 0000000418a3e001 CR4: 0000000000770ef0
+>    PKRU: 55555554
+>    Call Trace:
+>     <TASK>
+>     ? __die_body+0x6f/0xb0
+>     ? __die+0xcc/0xf0
+>     ? page_fault_oops+0x330/0x3a0
+>     ? save_trace+0x2a5/0x360
+>     ? do_user_addr_fault+0x583/0x630
+>     ? exc_page_fault+0x81/0x120
+>     ? asm_exc_page_fault+0x2b/0x30
+>     ? __sev_snp_shutdown_locked+0x2e/0x150
+>     __sev_firmware_shutdown+0x349/0x5b0
+>     ? pm_runtime_barrier+0x66/0xe0
+>     sev_dev_destroy+0x34/0xb0
+>     psp_dev_destroy+0x27/0x60
+>     sp_destroy+0x39/0x90
+>     sp_pci_remove+0x22/0x60
+>     pci_device_remove+0x4e/0x110
+>     really_probe+0x271/0x4e0
+>     __driver_probe_device+0x8f/0x160
+>     driver_probe_device+0x24/0x120
+>     __driver_attach+0xc7/0x280
+>     ? driver_attach+0x30/0x30
+>     bus_for_each_dev+0x10d/0x130
+>     driver_attach+0x22/0x30
+>     bus_add_driver+0x171/0x2b0
+>     ? unaccepted_memory_init_kdump+0x20/0x20
+>     driver_register+0x67/0x100
+>     __pci_register_driver+0x83/0x90
+>     sp_pci_init+0x22/0x30
+>     sp_mod_init+0x13/0x30
+>     do_one_initcall+0xb8/0x290
+>     ? sched_clock_noinstr+0xd/0x10
+>     ? local_clock_noinstr+0x3e/0x100
+>     ? stack_depot_save_flags+0x21e/0x6a0
+>     ? local_clock+0x1c/0x60
+>     ? stack_depot_save_flags+0x21e/0x6a0
+>     ? sched_clock_noinstr+0xd/0x10
+>     ? local_clock_noinstr+0x3e/0x100
+>     ? __lock_acquire+0xd90/0xe30
+>     ? sched_clock_noinstr+0xd/0x10
+>     ? local_clock_noinstr+0x3e/0x100
+>     ? __create_object+0x66/0x100
+>     ? local_clock+0x1c/0x60
+>     ? __create_object+0x66/0x100
+>     ? parameq+0x1b/0x90
+>     ? parse_one+0x6d/0x1d0
+>     ? parse_args+0xd7/0x1f0
+>     ? do_initcall_level+0x180/0x180
+>     do_initcall_level+0xb0/0x180
+>     do_initcalls+0x60/0xa0
+>     ? kernel_init+0x1f/0x1d0
+>     do_basic_setup+0x41/0x50
+>     kernel_init_freeable+0x1ac/0x230
+>     ? rest_init+0x1f0/0x1f0
+>     kernel_init+0x1f/0x1d0
+>     ? rest_init+0x1f0/0x1f0
+>     ret_from_fork+0x3d/0x50
+>     ? rest_init+0x1f0/0x1f0
+>     ret_from_fork_asm+0x11/0x20
+>     </TASK>
+>    Modules linked in:
+>    CR2: 00000000000000f0
+>    ---[ end trace 0000000000000000 ]---
+>    RIP: 0010:__sev_snp_shutdown_locked+0x2e/0x150
+>    Code: 00 55 48 89 e5 41 57 41 56 41 54 53 48 83 ec 10 41 89 f7 49 89 fe 65 48 8b 04 25 28 00 00 00 48 89 45 d8 48 8b 05 6a 5a 7f 06 <4c> 8b a0 f0 00 00 00 41 0f b6 9c 24 a2 00 00 00 48 83 fb 02 0f 83
+>    RSP: 0018:ffffb2ea4014b7b8 EFLAGS: 00010286
+>    RAX: 0000000000000000 RBX: ffff9e4acd2e0a28 RCX: 0000000000000000
+>    RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffb2ea4014b808
+>    RBP: ffffb2ea4014b7e8 R08: 0000000000000106 R09: 000000000003d9c0
+>    R10: 0000000000000001 R11: ffffffffa39ff070 R12: ffff9e49d40590c8
+>    R13: 0000000000000000 R14: ffffb2ea4014b808 R15: 0000000000000000
+>    FS:  0000000000000000(0000) GS:ffff9e58b1e00000(0000) knlGS:0000000000000000
+>    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>    CR2: 00000000000000f0 CR3: 0000000418a3e001 CR4: 0000000000770ef0
+>    PKRU: 55555554
+>    Kernel panic - not syncing: Fatal exception
+>    Kernel Offset: 0x1fc00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+> 
+> Fixes: 1ca5614b84ee ("crypto: ccp: Add support to initialize the AMD-SP for SEV-SNP")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Kim Phillips <kim.phillips@amd.com>
+> Reviewed-by: Liam Merwick <liam.merwick@oracle.com>
+> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+> Reviewed-by: John Allen <john.allen@amd.com>
+> ---
+> v2:
+>  - Correct the Fixes tag (Tom L.)
+>  - Remove log timestamps, elaborate commit text (John Allen)
+>  - Add Reviews-by.
+> 
+> v1:
+>  - https://lore.kernel.org/linux-crypto/20240603151212.18342-1-kim.phillips@amd.com/
+> 
+>  drivers/crypto/ccp/sev-dev.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 
-HEAD commit:    36534d3c5453 tcp: use signed arithmetic in tcp_rtx_probe0_..
-git tree:       bpf
-console output: https://syzkaller.appspot.com/x/log.txt?x=110e9dde980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=333ebe38d43c42e2
-dashboard link: https://syzkaller.appspot.com/bug?extid=6ff90931779bcdfc840c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1585acfa980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17bdb7ee980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4e648f638b5f/disk-36534d3c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/bbe0d41240f1/vmlinux-36534d3c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/17eb17ecd214/bzImage-36534d3c.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6ff90931779bcdfc840c@syzkaller.appspotmail.com
-
-============================================
-WARNING: possible recursive locking detected
-6.10.0-rc2-syzkaller-00242-g36534d3c5453 #0 Not tainted
---------------------------------------------
-syz-executor181/5090 is trying to acquire lock:
-ffff8880b9538828 (lock#9){+.+.}-{2:2}, at: local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
-ffff8880b9538828 (lock#9){+.+.}-{2:2}, at: __mmap_lock_do_trace_start_locking+0x83/0x620 mm/mmap_lock.c:230
-
-but task is already holding lock:
-ffff8880b9538828 (lock#9){+.+.}-{2:2}, at: local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
-ffff8880b9538828 (lock#9){+.+.}-{2:2}, at: __mmap_lock_do_trace_start_locking+0x83/0x620 mm/mmap_lock.c:230
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(lock#9);
-  lock(lock#9);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-3 locks held by syz-executor181/5090:
- #0: ffff8880b9538828 (lock#9){+.+.}-{2:2}, at: local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
- #0: ffff8880b9538828 (lock#9){+.+.}-{2:2}, at: __mmap_lock_do_trace_start_locking+0x83/0x620 mm/mmap_lock.c:230
- #1: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- #1: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
- #1: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: get_mem_cgroup_from_mm+0x38/0x2a0 mm/memcontrol.c:1265
- #2: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: trace_call_bpf+0xbc/0x8a0
-
-stack backtrace:
-CPU: 1 PID: 5090 Comm: syz-executor181 Not tainted 6.10.0-rc2-syzkaller-00242-g36534d3c5453 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_deadlock kernel/locking/lockdep.c:3062 [inline]
- validate_chain+0x15d3/0x5900 kernel/locking/lockdep.c:3856
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
- __mmap_lock_do_trace_start_locking+0x9c/0x620 mm/mmap_lock.c:230
- __mmap_lock_trace_start_locking include/linux/mmap_lock.h:29 [inline]
- mmap_read_trylock include/linux/mmap_lock.h:162 [inline]
- stack_map_get_build_id_offset+0x98a/0x9d0 kernel/bpf/stackmap.c:141
- __bpf_get_stack+0x4ad/0x5a0 kernel/bpf/stackmap.c:449
- bpf_prog_e6cf5f9c69743609+0x42/0x46
- bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
- __bpf_prog_run include/linux/filter.h:691 [inline]
- bpf_prog_run include/linux/filter.h:698 [inline]
- bpf_prog_run_array include/linux/bpf.h:2103 [inline]
- trace_call_bpf+0x369/0x8a0 kernel/trace/bpf_trace.c:147
- perf_trace_run_bpf_submit+0x7c/0x1d0 kernel/events/core.c:10269
- perf_trace_lock+0x388/0x490 include/trace/events/lock.h:50
- trace_lock_release include/trace/events/lock.h:69 [inline]
- lock_release+0x986/0x9f0 kernel/locking/lockdep.c:5765
- rcu_lock_release include/linux/rcupdate.h:339 [inline]
- rcu_read_unlock include/linux/rcupdate.h:812 [inline]
- get_mem_cgroup_from_mm+0x1ad/0x2a0 mm/memcontrol.c:1271
- get_mm_memcg_path+0x1b/0x600 mm/mmap_lock.c:202
- __mmap_lock_do_trace_start_locking+0x134/0x620 mm/mmap_lock.c:230
- __mmap_lock_trace_start_locking include/linux/mmap_lock.h:29 [inline]
- mmap_read_lock include/linux/mmap_lock.h:143 [inline]
- acct_collect+0x7e7/0x830 kernel/acct.c:563
- do_exit+0x936/0x27e0 kernel/exit.c:853
- do_group_exit+0x207/0x2c0 kernel/exit.c:1023
- __do_sys_exit_group kernel/exit.c:1034 [inline]
- __se_sys_exit_group kernel/exit.c:1032 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9c47742279
-Code: 90 49 c7 c0 b8 ff ff ff be e7 00 00 00 ba 3c 00 00 00 eb 12 0f 1f 44 00 00 89 d0 0f 05 48 3d 00 f0 ff ff 77 1c f4 89 f0 0f 05 <48> 3d 00 f0 ff ff 76 e7 f7 d8 64 41 89 00 eb df 0f 1f 80 00 00 00
-RSP: 002b:00007ffd321ae558 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f9c47742279
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007f9c477bd2b0 R08: ffffffffffffffb8 R09: 00000000000000a0
-R10: 00000000000000a0 R11: 0000000000000246 R12: 00007f9c477bd2b0
-R13: 0000000000000000 R14: 00007f9c477bdd20 R15: 00007f9c47713400
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
