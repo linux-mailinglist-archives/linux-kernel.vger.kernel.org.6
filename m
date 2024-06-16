@@ -1,187 +1,164 @@
-Return-Path: <linux-kernel+bounces-216119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 365DB909BA5
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:32:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33824909BA8
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 055871C213A1
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 05:32:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 257471C20E7B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 05:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801B316C861;
-	Sun, 16 Jun 2024 05:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6059E16D4FD;
+	Sun, 16 Jun 2024 05:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dluTYDHl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U6wk1tUF"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F8A23BF
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 05:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC25A2F2A;
+	Sun, 16 Jun 2024 05:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718515942; cv=none; b=GTr7nEsphZUC00KdXG6B9Y0wN7bLbT1lqx5oYXFBdYzzNrL9fikecO2SHlBxcdshXEiXopNjfySBRzlquuKM+L1NfiObs50bVMu1FFhoxZtvS45lJzrwWQ/qj79aJlqIg937B/u9lX+573xpSJpvHHl0z046pS8E08WrFUC/aX0=
+	t=1718515975; cv=none; b=eSwIVq/Y6MH5wEGKghfZYICw+c42w3eNQ3063EWAzknEhKuylgZF/8RfQcyh5i9Blj6HhW+ZocMmKzgQzFKHEgE8cCTARkoEvNuaBuz2kFu1e7ThFUQwcfJ2+/Oh9/UQuxhf17XQYPRtM2lIhV2gaVv8y/So4BAYMECrP9gby0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718515942; c=relaxed/simple;
-	bh=G0Y5swl864YFgyj2L1V1JdxPFcK6UhVAgPd4Ra0JXyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FkerxvkOGeRhbJc+0qEG9HbXM3Ygp2cqGXW3sMgQVwmUPAGfDd5XAtS944s0648nBI3ldoiAigYPlEvMGMJQGT2bBzDcc2pKnIDkF9ugEFSgFup1UZAZOLH+9B+CwuYVC7tIXuaiQzHWJecYSuSQCHs7CKIL46LmHXLJXtoW3IA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dluTYDHl; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718515939; x=1750051939;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=G0Y5swl864YFgyj2L1V1JdxPFcK6UhVAgPd4Ra0JXyw=;
-  b=dluTYDHlvXs4t3+MNyLaucYYkCIArxjdCMI0hqTq1Sn27uaJbHGBashk
-   dWfCdmtJv/7K1i91PbwHIlTieWhJnGyo680Cu7NepAvWrz1DyJdPLV864
-   Q/0jQezZ60Gr9CugV5abeV0JQUQ75UnwwVKUc3JG5Uq4OKkYs0TYf25d8
-   jGmYskxKLGDdc0WwRN+y66niRvMBAb21nxstuYg+NxV6TvR6wTLcU8j8s
-   gEjg3Sh1P8CVfT0pkrW+1MhEdPpyMqpiU/YpPW/KUSNOm4VckWoOf8nhw
-   8sAG2isDUqiH3rlLdc98GasR1ds7wStM4ttqLlbV2BwvEzxZm/Ox7pB5U
-   g==;
-X-CSE-ConnectionGUID: 4FJvqmaURj2ipvAyZU7aWA==
-X-CSE-MsgGUID: 9+bntkOtS+KKpfJ94ZOEeg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="15338838"
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="15338838"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 22:32:19 -0700
-X-CSE-ConnectionGUID: 3VJ2GD20T3G8jwStFEVPWw==
-X-CSE-MsgGUID: Rk9SqLrXS4mRw5RtzRXL6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="78366162"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 15 Jun 2024 22:32:17 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sIiUw-0000uE-2y;
-	Sun, 16 Jun 2024 05:32:14 +0000
-Date: Sun, 16 Jun 2024 13:31:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Li Yang <leoyang.li@nxp.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>, Frank Li <Frank.Li@nxp.com>
-Subject: arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb:
- /memory-controller@ffe1e000/nand@1,0: failed to match any schema with
- compatible: ['fsl,ifc-nand']
-Message-ID: <202406161358.doiL0s2D-lkp@intel.com>
+	s=arc-20240116; t=1718515975; c=relaxed/simple;
+	bh=fEjLMLkd9UF8/WoELO3lTJMGRHiovIM7tCtVYaw88Xw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=PtwghAdUf3JdJznF+xc9d7iXoC/oSESad7rQYRWy2bnaKZ7PGMMJJN0umQtiS2bi3TQ13wjtse6FvJaHvgsJiO0BCSBdpGTrxcn+6bHPl5Tef5BrptRxx0NY7TYqMsPEwYeGBoRQyubIssTWcO1eDKSsLjHoNTkoIlvmQrsgZsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U6wk1tUF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45G5Vg0g019998;
+	Sun, 16 Jun 2024 05:32:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=H6noi8ErVlOkg1/+VhAOxj
+	v7AOAPlIdBK9S1Ro/vRuo=; b=U6wk1tUFcrGs8AiT5zfIezaNETyeDj5r3fLj7W
+	NvXcBvnKW7/+v4qPqamOgQQpYOIJzSO1izvbBqNdyQMb+YCQGeNJHPyoUY+uXYva
+	6YSixsgRbtz38upQ1Q/F8CcliVcnCApQvbr3OE/WiCMHCzjAR0ZkvTS/XitHvK0l
+	RkitA4E5hzKL53BovEJ9w2uIg+26b43D8a5rJ4fiiJramcPnWMmEeR+9qZhS+tmy
+	oKErdYZX0qRdbmotWuCL3ODc+g7yPU0eaDHvz+xnbpSiISRkqEaAra5dtCT9477N
+	qqPrhKXF8q6pMqvp+S9ZqVSn/L2ABMZxjnuqlpHTIMswKDGg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys29gsghh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 16 Jun 2024 05:32:41 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45G5WdFh005140
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 16 Jun 2024 05:32:39 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Jun
+ 2024 22:32:39 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sat, 15 Jun 2024 22:32:37 -0700
+Subject: [PATCH] crypto: arm: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240615-md-arm-arch-arm-crypto-cont-v1-1-f15541b5db02@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAPR4bmYC/x3MQQ6CMBCF4auQWTtJC2jUqxgW7TDYSWwh02owh
+ LtbWbzk/Ztvg8wqnOHebKD8kSxzqmFPDVBw6ckoY21oTdubiz1jHNFprKNwHNLvUmakORU0ZCf
+ q+u5K/gZVWJQnWQ/9MdT2LjN6dYnC33xJeq8YXS6ssO8/0s1+AIwAAAA=
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Russell King <linux@armlinux.org.uk>
+CC: <linux-crypto@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gHcgwPRw3-1QGifa2Xo_xZCktpzRj3u1
+X-Proofpoint-ORIG-GUID: gHcgwPRw3-1QGifa2Xo_xZCktpzRj3u1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-16_04,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ adultscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 phishscore=0 mlxlogscore=944
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406160041
 
-Hi Li,
+With ARCH=arm, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/crypto/aes-arm-bs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/crypto/crc32-arm-ce.o
 
-FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
+Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+files which have a MODULE_LICENSE().
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   a3e18a540541325a8c8848171f71e0d45ad30b2c
-commit: acb354fe97e5aa6d9534b601ce18ef7866f25c4d powerpc: dts: fsl: rename ifc node name to be memory-controller
-date:   6 weeks ago
-config: powerpc-randconfig-051-20240612 (https://download.01.org/0day-ci/archive/20240616/202406161358.doiL0s2D-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 13.2.0
-dtschema version: 2024.6.dev1+g833054f
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240616/202406161358.doiL0s2D-lkp@intel.com/reproduce)
+This includes crct10dif-ce-glue.c and curve25519-glue.c which,
+although they did not produce a warning with the arm allmodconfig
+configuration, may cause this warning with other configurations.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406161358.doiL0s2D-lkp@intel.com/
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ arch/arm/crypto/aes-neonbs-glue.c   | 1 +
+ arch/arm/crypto/crc32-ce-glue.c     | 1 +
+ arch/arm/crypto/crct10dif-ce-glue.c | 1 +
+ arch/arm/crypto/curve25519-glue.c   | 1 +
+ 4 files changed, 4 insertions(+)
 
-dtcheck warnings: (new ones prefixed by >>)
-   arch/powerpc/boot/dts/fsl/p1010rdb.dtsi:212.24-216.4: Warning (simple_bus_reg): /soc@ffe00000/ethernet@b2000: missing or empty reg/ranges property
-   arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: /: memory: 'reg' is a required property
-   	from schema $id: http://devicetree.org/schemas/memory.yaml#
-   arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: /: memory: False schema does not allow {'device_type': ['memory']}
-   	from schema $id: http://devicetree.org/schemas/root-node.yaml#
-   arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: /: failed to match any schema with compatible: ['fsl,P1010RDB']
-   arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: nor@0,0: $nodename:0: 'nor@0,0' does not match '^(flash|.*sram|nand)(@.*)?$'
-   	from schema $id: http://devicetree.org/schemas/mtd/mtd-physmap.yaml#
->> arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: /memory-controller@ffe1e000/nand@1,0: failed to match any schema with compatible: ['fsl,ifc-nand']
->> arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: /memory-controller@ffe1e000/cpld@3,0: failed to match any schema with compatible: ['fsl,p1010rdb-cpld']
-   arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: /soc@ffe00000: failed to match any schema with compatible: ['fsl,p1010-immr', 'simple-bus']
-   arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: i2c@3000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['fsl-i2c'] is too short
-   	'fsl-i2c' is not one of ['mpc5200-i2c', 'fsl,mpc5200-i2c', 'fsl,mpc5121-i2c', 'fsl,mpc8313-i2c', 'fsl,mpc8543-i2c', 'fsl,mpc8544-i2c']
-   	'fsl,mpc5200b-i2c' was expected
-   	from schema $id: http://devicetree.org/schemas/i2c/i2c-mpc.yaml#
-   arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: i2c@3000: Unevaluated properties are not allowed ('cell-index', 'compatible', 'dfsrr' were unexpected)
-   	from schema $id: http://devicetree.org/schemas/i2c/i2c-mpc.yaml#
-   arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: eeprom@50: compatible: ['st,24c256', 'atmel,24c256'] is too long
-   	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
---
-   arch/powerpc/boot/dts/fsl/p1010rdb.dtsi:212.24-216.4: Warning (simple_bus_reg): /soc@fffe00000/ethernet@b2000: missing or empty reg/ranges property
-   arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: /: memory: 'reg' is a required property
-   	from schema $id: http://devicetree.org/schemas/memory.yaml#
-   arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: /: memory: False schema does not allow {'device_type': ['memory']}
-   	from schema $id: http://devicetree.org/schemas/root-node.yaml#
-   arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: /: failed to match any schema with compatible: ['fsl,P1010RDB']
-   arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: nor@0,0: $nodename:0: 'nor@0,0' does not match '^(flash|.*sram|nand)(@.*)?$'
-   	from schema $id: http://devicetree.org/schemas/mtd/mtd-physmap.yaml#
->> arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: /memory-controller@fffe1e000/nand@1,0: failed to match any schema with compatible: ['fsl,ifc-nand']
->> arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: /memory-controller@fffe1e000/cpld@3,0: failed to match any schema with compatible: ['fsl,p1010rdb-cpld']
-   arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: /soc@fffe00000: failed to match any schema with compatible: ['fsl,p1010-immr', 'simple-bus']
-   arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: i2c@3000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['fsl-i2c'] is too short
-   	'fsl-i2c' is not one of ['mpc5200-i2c', 'fsl,mpc5200-i2c', 'fsl,mpc5121-i2c', 'fsl,mpc8313-i2c', 'fsl,mpc8543-i2c', 'fsl,mpc8544-i2c']
-   	'fsl,mpc5200b-i2c' was expected
-   	from schema $id: http://devicetree.org/schemas/i2c/i2c-mpc.yaml#
-   arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: i2c@3000: Unevaluated properties are not allowed ('cell-index', 'compatible', 'dfsrr' were unexpected)
-   	from schema $id: http://devicetree.org/schemas/i2c/i2c-mpc.yaml#
-   arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: eeprom@50: compatible: ['st,24c256', 'atmel,24c256'] is too long
-   	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
---
-   arch/powerpc/boot/dts/fsl/p1010rdb.dtsi:212.24-216.4: Warning (simple_bus_reg): /soc@ffe00000/ethernet@b2000: missing or empty reg/ranges property
-   arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: /: memory: 'reg' is a required property
-   	from schema $id: http://devicetree.org/schemas/memory.yaml#
-   arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: /: memory: False schema does not allow {'device_type': ['memory']}
-   	from schema $id: http://devicetree.org/schemas/root-node.yaml#
-   arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: /: failed to match any schema with compatible: ['fsl,P1010RDB-PB']
-   arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: nor@0,0: $nodename:0: 'nor@0,0' does not match '^(flash|.*sram|nand)(@.*)?$'
-   	from schema $id: http://devicetree.org/schemas/mtd/mtd-physmap.yaml#
->> arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: /memory-controller@ffe1e000/nand@1,0: failed to match any schema with compatible: ['fsl,ifc-nand']
->> arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: /memory-controller@ffe1e000/cpld@3,0: failed to match any schema with compatible: ['fsl,p1010rdb-cpld']
-   arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: /soc@ffe00000: failed to match any schema with compatible: ['fsl,p1010-immr', 'simple-bus']
-   arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: i2c@3000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['fsl-i2c'] is too short
-   	'fsl-i2c' is not one of ['mpc5200-i2c', 'fsl,mpc5200-i2c', 'fsl,mpc5121-i2c', 'fsl,mpc8313-i2c', 'fsl,mpc8543-i2c', 'fsl,mpc8544-i2c']
-   	'fsl,mpc5200b-i2c' was expected
-   	from schema $id: http://devicetree.org/schemas/i2c/i2c-mpc.yaml#
-   arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: i2c@3000: Unevaluated properties are not allowed ('cell-index', 'compatible', 'dfsrr' were unexpected)
-   	from schema $id: http://devicetree.org/schemas/i2c/i2c-mpc.yaml#
-   arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: eeprom@50: compatible: ['st,24c256', 'atmel,24c256'] is too long
-   	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
---
-   arch/powerpc/boot/dts/fsl/p1010rdb.dtsi:212.24-216.4: Warning (simple_bus_reg): /soc@fffe00000/ethernet@b2000: missing or empty reg/ranges property
-   arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: /: memory: 'reg' is a required property
-   	from schema $id: http://devicetree.org/schemas/memory.yaml#
-   arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: /: memory: False schema does not allow {'device_type': ['memory']}
-   	from schema $id: http://devicetree.org/schemas/root-node.yaml#
-   arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: /: failed to match any schema with compatible: ['fsl,P1010RDB-PB']
-   arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: nor@0,0: $nodename:0: 'nor@0,0' does not match '^(flash|.*sram|nand)(@.*)?$'
-   	from schema $id: http://devicetree.org/schemas/mtd/mtd-physmap.yaml#
->> arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: /memory-controller@fffe1e000/nand@1,0: failed to match any schema with compatible: ['fsl,ifc-nand']
->> arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: /memory-controller@fffe1e000/cpld@3,0: failed to match any schema with compatible: ['fsl,p1010rdb-cpld']
-   arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: /soc@fffe00000: failed to match any schema with compatible: ['fsl,p1010-immr', 'simple-bus']
-   arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: i2c@3000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['fsl-i2c'] is too short
-   	'fsl-i2c' is not one of ['mpc5200-i2c', 'fsl,mpc5200-i2c', 'fsl,mpc5121-i2c', 'fsl,mpc8313-i2c', 'fsl,mpc8543-i2c', 'fsl,mpc8544-i2c']
-   	'fsl,mpc5200b-i2c' was expected
-   	from schema $id: http://devicetree.org/schemas/i2c/i2c-mpc.yaml#
-   arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: i2c@3000: Unevaluated properties are not allowed ('cell-index', 'compatible', 'dfsrr' were unexpected)
-   	from schema $id: http://devicetree.org/schemas/i2c/i2c-mpc.yaml#
-   arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: eeprom@50: compatible: ['st,24c256', 'atmel,24c256'] is too long
-   	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
+diff --git a/arch/arm/crypto/aes-neonbs-glue.c b/arch/arm/crypto/aes-neonbs-glue.c
+index f00f042ef357..201eb35dde37 100644
+--- a/arch/arm/crypto/aes-neonbs-glue.c
++++ b/arch/arm/crypto/aes-neonbs-glue.c
+@@ -17,6 +17,7 @@
+ #include <linux/module.h>
+ 
+ MODULE_AUTHOR("Ard Biesheuvel <ard.biesheuvel@linaro.org>");
++MODULE_DESCRIPTION("Bit sliced AES using NEON instructions");
+ MODULE_LICENSE("GPL v2");
+ 
+ MODULE_ALIAS_CRYPTO("ecb(aes)");
+diff --git a/arch/arm/crypto/crc32-ce-glue.c b/arch/arm/crypto/crc32-ce-glue.c
+index 2208445808d7..4ff18044af07 100644
+--- a/arch/arm/crypto/crc32-ce-glue.c
++++ b/arch/arm/crypto/crc32-ce-glue.c
+@@ -241,6 +241,7 @@ module_init(crc32_pmull_mod_init);
+ module_exit(crc32_pmull_mod_exit);
+ 
+ MODULE_AUTHOR("Ard Biesheuvel <ard.biesheuvel@linaro.org>");
++MODULE_DESCRIPTION("Accelerated CRC32(C) using ARM CRC, NEON and Crypto Extensions");
+ MODULE_LICENSE("GPL v2");
+ MODULE_ALIAS_CRYPTO("crc32");
+ MODULE_ALIAS_CRYPTO("crc32c");
+diff --git a/arch/arm/crypto/crct10dif-ce-glue.c b/arch/arm/crypto/crct10dif-ce-glue.c
+index e9191a8c87b9..79f3b204d8c0 100644
+--- a/arch/arm/crypto/crct10dif-ce-glue.c
++++ b/arch/arm/crypto/crct10dif-ce-glue.c
+@@ -84,5 +84,6 @@ module_init(crc_t10dif_mod_init);
+ module_exit(crc_t10dif_mod_exit);
+ 
+ MODULE_AUTHOR("Ard Biesheuvel <ard.biesheuvel@linaro.org>");
++MODULE_DESCRIPTION("Accelerated CRC-T10DIF using ARM NEON and Crypto Extensions");
+ MODULE_LICENSE("GPL v2");
+ MODULE_ALIAS_CRYPTO("crct10dif");
+diff --git a/arch/arm/crypto/curve25519-glue.c b/arch/arm/crypto/curve25519-glue.c
+index 9bdafd57888c..e7b87e09dd99 100644
+--- a/arch/arm/crypto/curve25519-glue.c
++++ b/arch/arm/crypto/curve25519-glue.c
+@@ -133,4 +133,5 @@ module_exit(arm_curve25519_exit);
+ 
+ MODULE_ALIAS_CRYPTO("curve25519");
+ MODULE_ALIAS_CRYPTO("curve25519-neon");
++MODULE_DESCRIPTION("Public key crypto: Curve25519 (NEON-accelerated)");
+ MODULE_LICENSE("GPL v2");
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240615-md-arm-arch-arm-crypto-cont-0c1fc3438cb9
+
 
