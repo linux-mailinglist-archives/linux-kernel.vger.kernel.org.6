@@ -1,75 +1,47 @@
-Return-Path: <linux-kernel+bounces-216180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BE4909C5E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:50:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44738909C4B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEBCB1C209DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:50:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C77BF2815CC
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA20180A96;
-	Sun, 16 Jun 2024 07:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DFE17E91F;
+	Sun, 16 Jun 2024 07:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.de header.i=@yahoo.de header.b="Ri4hkGLe"
-Received: from sonic307-53.consmr.mail.ir2.yahoo.com (sonic307-53.consmr.mail.ir2.yahoo.com [87.248.110.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOvOe7r+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CAA17B41E
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 07:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=87.248.110.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6F91836FB;
+	Sun, 16 Jun 2024 07:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718524208; cv=none; b=mLNOjouHNNT7LWUIcH/6D/WVHHquxkhgbZJnNuS2yqrw+sl0cWo2xTL28O//p0QES6uRUnJPuvu4DDlgI3avtZFSwSxQ2IY+yJBdkhpAVuyrogB/kn+iyTD7uQGbCeipT84ZsCiXnxCt49wJdwf3Thu3p2YlGc2uWpcMw/zy+JY=
+	t=1718523607; cv=none; b=L+Yk3inF/vRkA2hmwlIZf0a+QYIrjqKAmBH447c4lgp0/wS7X7/mrrkva6Gqh3p30vlk2SZ2ADhcsnmTlx9MTzhmoyE8odg857o59G55F/eb7sej/yWGL0QQx6mS6Y7FPhSHBjWGXYi2DhLML+8625o5PqguNf/SOK28rXqLE9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718524208; c=relaxed/simple;
-	bh=lL/3Gk7JOk5hvvh1t0hx9ZCAjxnUHlpLEviBVGFzuKc=;
+	s=arc-20240116; t=1718523607; c=relaxed/simple;
+	bh=9/cAdGYrdwaI/4y1JqtVx9mdosaD9ipTezgsP7O70KI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M1sPT+FWp9o4Pk0UdYyq1rPQ+KvDjdw0cGC5iZJxvk0xQr08tfkpgRziZmmIfXxbl4fpoKbUaHWl7TJHzMtxJfwLk8+Cc+p70++PyT+h5XxD+D2BBu8Vi0PEUAMuLqOX5q+07qHMS0HW+yEOoP+LwjIZ+zxCdiROgbVpiuQplrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.de; spf=pass smtp.mailfrom=yahoo.de; dkim=pass (2048-bit key) header.d=yahoo.de header.i=@yahoo.de header.b=Ri4hkGLe; arc=none smtp.client-ip=87.248.110.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.de; s=s2048; t=1718524198; bh=CgRzjm/nwd78x1rt0gIv5aEFf3uVyoARkr0H9nC1Zzs=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Ri4hkGLePaQ2AVAhMc0pzBdvcOb3kqkG9Y/X/XJ0uYs/FJta6ctMphoY0qxD7Saar6cInZc0/5ZVbO/V4BvNE3PYqWfp25i/ZZJ8TVucvzG8gdryOOwHCpDXnkdnThoNCAm/DNAaK9kYpDPbdtI5AE6B7KpoCCtHuNBIulmZOadZIOSFrpo4iWYH35hsIQ1WYT7rNeb6TdySx7FvzoH6/0LfgzZRGjq0G6vvR7C1aw/3MOKsodBRk2qUyhRk43IrLq1n3igP6MLl8UxdDLe0R48xEKwqSjjMpTzmnp2kUf6dfjVUq+0qPvHO16Tit+cwkRn6JaaaA+X/sCgHwoBR5g==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718524198; bh=LO51PwsuAq1x5hZUPzNalqyAto7YjRjUSC5dmkO/ufs=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Aa8Ye/6DK2BdP01ssOTtug6ppiKi5liWdkHyO/VGAZq8NL49nrmfuWsX+XIlccV71bndF4UHtsIHENV43F3yy6mhvnNTBY1IgZiBbMFPDTusyh8jN80fxx+7xu4/wjZYz95jNj8982uaPlWPDV79N397ANA/w22IP/qE8Mt5Qs9BD/AWdp5komzVhM5HNBliRJUhV0ryHmjl/GFOitSwrPuiq44X9f+zknNpOZHL9V+T2MSEUui2/0N6SWwN0m5kmuUoRagGtYVf/uhRveB4r2+KKXdPzkl22E2X0yHFwpPv6X9Um9RYccmT8S9UXQYhArwMHZnRz39xP/NWzSiQ2A==
-X-YMail-OSG: hTHgnAsVM1kWXiUg3ipkxIWXfnSXIfUM_CORVXUSpGMZh2Q3ArqoLVGhEVHI9zV
- 9n98uH3SKAnnFe.KiknOov.uAz9cZYPIM3SmFh9hIydspVF.5F5BftIUJ.JVMruuKQqX2bHZUXU_
- ZXUs35XJHYfTbwVTgsHYb5ZKPnmSXTCEDRj373TdgejQ4OxjfaUWHzvmhKxn2S1q4MKfMQWVP0jO
- Gps1cetZVZsNQLlorgfD3XhaQDZP8uPQAkrm2NFnhpvaRicobWmesDYC1l4BMtUfktvQ3GYB7W9E
- DTr4wvLuM8T8mECfTUHI7PAuHa7bSMOTqr3iWREB9y04SzW2dBAt.MqDdLLzAb52K.dD7iefeHbK
- qqbGV..7D7LsaqhWtaauR.7Rjv6BYYBHexSpaF3uQHGr8RzSqyKdeSSyVr1vu8Oe8EgcoIwVdvgG
- 0tlbpojdlxMGyeRBWwNjWWKmNDU4u7SEB6kmJEoWW77shL8qhKXTezhY2CNtsQI_sVQs4_SThBVw
- mE2JB9IYm4ewOmwq8sk1ho5jFUJtK2MeMpSZl1MQnT1Kk6Sz0.ywZoA.CbL_dJJTDR79EtOxVr_H
- .at_6gZbU1tY46_D9SX2UY4dOxQhWIx.nH.LJ_lTrS2bYumoA98rBvRz10CNIhx2kwlbKNJhc_X.
- Zzb5bhmzDPUutIx3hq3OihIeAKVYinx3faxGQnUlL22u6brIixJLiRzVb9BZUAGkdz3hlInK4Ue0
- Xdwrsk91HwIA6nRJft3nlV1tKMOaZ3rUakASfPT3ddqrzTwkNF4YE1d1PvriK3JN2La6UvzBc4K6
- zSrMfuiH6sLh3bMlaN5Ws.3f0a9DDIFM_c2p05vRa5Z7RT7CJh0fdE9uF9FLh0oVpuoJAKrrf1ZP
- ym7KsUBy8UvlBo.B30B9ARNLG_932qVde3JtGovZMEMNh4isN11Iv62pLy.oVXSKOEm1DI19iV2n
- bHdCgVHwO7UpE.Pk7WHnLgHZCgsaB2hB.5ly_WZW5bQXlqt4TrbioYMilA.nbXywQdLvfZn48mRj
- ZD6tzrNQcyxikKL_gvn_Ck7ch3jlGGm8JWUlQ5AnclWGW2nTIyHonNdkdlvrQGothU7XhiMaCBxM
- 1UZEskQ368p07f844rbTCv2YMlodV6pkk4HBJgPESD1Mrol0NZpM.Ai0kL81toyXLsSPVK_etvif
- cJRtysIQ3xyN6A7ksp86iO5MHBiU2Ht65NnRmhGmxIL70uZyr7spFJSpHl2oPy8oTOFlRORKkTbC
- YOnhokzM446.7GEzusriUcQqkXLHSyiMjsVN_nDLU5EMcI1cAcX9MtuhmQ8BfG3sPuDUgfwArNj_
- VfSvKwaCtgfjGx1W9hghf2RdlEfl7j4q7tOO8Lx59WcmEHjsLHSWbOCJro6oeMe9iuHzsvoRMF78
- T3QkRnJyd06w89NPo.kyG9ZDuyro469LblwF5MY2uDNuKTtOxDmntZwYWHAIQlJFdqtgZHRl4LB1
- RFu9W4yI1aDQy_mWgHdvgJc_fK1SLuZ.yAGdT2ojs91LE8NfdU252t2FSbv.lC1_2zHp4WOm2RxD
- 980UTLUDKvIHAB0zVQXl_q7Hy0ktjaZO4KiZPjLi44.AUY6feasEeB0_gS5YcR.U0HuamG.uuMYW
- C3EMcunMGi7TSj5UkxNxLAh7QRFQgYqfDtRM8qVF3fMd_TV68vvNnYqTdgY9no8Cxa73QXnGxQTu
- w3UclkL8G9vvHf4Zp8pFq3xuGuQy.FCyaKOAuEG1SFiNxXagzvJF5trFKvzOmb6_ZagzZ3ChB1ru
- UgGamjsiYD3VXNBe5KRujUIOhG01MH8O4jy9809tqoauCd7Xf_kUMDzBpZNoJITOMTYxcI0TX4KA
- F2dypW1cwgPW6wunm.mUTg8gJKYnnJSyireHizOn4FpRTsO6W8PS9hqQExHATuy.qccSacSctRU4
- gXqOlQfvJKvZjDH9d4AwFpKtljOpROrzlOs7GrmXDbklLKR5.vBBRwwqcB4MPwp5t08qJKkMAoF3
- 8.4IA9UrrwDIVqqw_ypxxIpWAo3MFPJNNhtD9deyBQMSBb4Lb5mcEYje1JhbNT8M_s0W5zRH4GeS
- rTMT_VkwP21ImKNtpy6q_t_Ty3gkvlFcPeVTscR9NiT_L5AG53eoRl1YpyCSjDG6SNIDw5xSlV3B
- AgtAeEL79PbXPzKnWTiA66FEFCkqCJweV1rdoX1Lue4G6IEb3_gnG56sN5yX1WEPhJj96r.8SDzt
- j7w4Zsd1R7ZadzgcX7AbOtfV6KETviMeWGCHOMu_5CBRaLF88FOoh8QE9ZVs-
-X-Sonic-MF: <fhortner@yahoo.de>
-X-Sonic-ID: 7e3e7412-d17e-47d8-bf68-24b5f07164a1
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ir2.yahoo.com with HTTP; Sun, 16 Jun 2024 07:49:58 +0000
-Received: by hermes--production-ir2-85cf877599-59p75 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b11e46e9905a001c20392fbd6c3c7e53;
-          Sun, 16 Jun 2024 07:39:49 +0000 (UTC)
-Message-ID: <3f5d01fa-f725-429d-b6a3-7b9617b8b561@yahoo.de>
-Date: Sun, 16 Jun 2024 09:39:36 +0200
+	 In-Reply-To:Content-Type; b=ewzEmVBr3Lrmi/li5gFh5hWysJhCf9ovdrV6KmSqNDcc3YkUMwIWvqBCwkhu2axc5TLB9BQf5kOMpgLiQIg/roCQzgFhsS4Lm0/mA3v7nQlHI06XFLKCvCYuLLoejHvOcGi2s6B65Jv8LA5L0svSTTb5+1zYqued+qioVFSqcJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOvOe7r+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03369C2BBFC;
+	Sun, 16 Jun 2024 07:40:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718523607;
+	bh=9/cAdGYrdwaI/4y1JqtVx9mdosaD9ipTezgsP7O70KI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vOvOe7r+p5KApeZ5sDQE+mNN2B8K8rE1/dYYLfFH6GusifJLh/MThj+IczxwRoi0X
+	 8q4v8mXXHdh2h6N2AaHI5SEvDVuTV0ywPgmgPygnCcYpQEnK9un9MH+6V6/VMBnYBK
+	 S6lpT27lDVF9D5f6nY6DmYOczWKzdW2kC+dpXRs3hEI837S4jJL+8KTMxoAoPmh712
+	 LUwQYF0uTnAH6TWE1DR1TbjH0TZgSRi4wfqtXLb4AYXg5HCp71kITOeWfDw7FFR+20
+	 JM4s3zMNFsmAkad9zGSkQdKPeahY50CA5KSwJkcIbGXwjsCeHuBpH90m0+L+I/vpet
+	 gd0jakcveqI5Q==
+Message-ID: <de1077de-baa4-42aa-84c1-6ab629088a07@kernel.org>
+Date: Sun, 16 Jun 2024 09:40:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,97 +49,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Regression, thermal: core: battery reading wrong after wake from
- S3 [Was: Bug Report according to thermal_core.c]
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux regressions mailing list <regressions@lists.linux.dev>
-References: <1051df4c-067f-455e-8c7f-9dc47dc8ed00@yahoo.de>
- <CAJZ5v0jwvq6W0u7Zx4GzQxJOnrF4KvN1RHtqqDcaMvN6yp0hDg@mail.gmail.com>
- <312649b1-eea9-4346-af93-76a821e88eb7@yahoo.de>
- <CAJZ5v0jfvRWK0M3Xf=36e74cVQ9rN5T1WdZZVnuk1XmZ=xu==g@mail.gmail.com>
- <78549853-1763-40cf-9974-3fc737fad093@yahoo.de>
- <CAJZ5v0h5pQDaA-bEOmcz_TpE87kFqWLFLJC+=OLjg5ZtF3hxpQ@mail.gmail.com>
- <91d94429-fc7e-4828-914d-1a251ee1ba99@yahoo.de>
- <CAJZ5v0gPZHDfuK1FRdTAG8Eqjf0NWUQdf-_GCWsWf6dCBE=1dg@mail.gmail.com>
- <543787c3-db5b-4f63-b5e0-df508300db73@yahoo.de>
- <CAJZ5v0h7jDw3yX689nZdB+YeJbCk0vFoUgVb4Yi0cqDxjL5chQ@mail.gmail.com>
- <40ec1e53-2bc8-48aa-9909-fac9072adb57@yahoo.de>
- <CAJZ5v0jtjXfvr4GXukjyO9XsEO6K2Nfux3otpFPP4vWS_9_qEQ@mail.gmail.com>
- <CAJZ5v0hcX0JAMBA+EVZURDH1BTQ2zL-W_4BjSx0a=1oRaR90ug@mail.gmail.com>
- <CAJZ5v0jGGV=i8Swu=c8f9bwo--AckUfqZrt0zeqDWKBijG+Z3A@mail.gmail.com>
- <bcac5925-fe2b-4570-83b6-182f4a301721@yahoo.de>
- <CAJZ5v0h7WnfQxhobA6B7S3Tvo-AnKTR9kP+5aexa6rixqpyHJg@mail.gmail.com>
+Subject: Re: [PATCH 05/12] dt-bindings: rtc: renesas,rzg3s-rtc: Document the
+ Renesas RZ/G3S RTC
+To: Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
+ alexandre.belloni@bootlin.com, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240614071932.1014067-6-claudiu.beznea.uj@bp.renesas.com>
 Content-Language: en-US
-From: "fhortner@yahoo.de" <fhortner@yahoo.de>
-In-Reply-To: <CAJZ5v0h7WnfQxhobA6B7S3Tvo-AnKTR9kP+5aexa6rixqpyHJg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240614071932.1014067-6-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Currently I am running kernel 6.8.12 with reverted commit.
-But yesterday I had a strange behavior.
-After resuming from S3 the laptop registered a low battery, immediately 
-after resume (notification in KDE Plasme). But as far as I could check, 
-the battery level and stats where fine. Nevertheless, after 1 minute it 
-shut off. I guess the low battery reading directly after after resume 
-triggered it.
+On 14/06/2024 09:19, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Document the RTC IP (RTCA-3) available on the Renesas RZ/G3S SoC.
 
-It is not directly related with the commit, because I have reverted it, 
-but nevertheless, maybe it is helpful to understand the underlying 
-firmware issue.
+> +
+> +  clocks:
+> +    maxItems: 1
+> +    description: RTC counter clock
 
-I' going to test your last patch and let you know.
+Just items: with description instead.
 
+> +
+> +  clock-names:
+> +    maxItems: 1
 
-Am 14.06.24 um 12:18 schrieb Rafael J. Wysocki:
-> On Thu, Jun 13, 2024 at 10:04 PM fhortner@yahoo.de <fhortner@yahoo.de> wrote:
->> Am 13.06.24 um 17:14 schrieb Rafael J. Wysocki:
->>
->> Let's see if the ACPI thermal zone is the real culprit.
->>
->> The attached patch only adds the delay for thermal zone 0 which is the
->> ACPI thermal zone.  It also prints the ID and type for all of the
->> resuming thermal zones.
->>
->> Please test it (removing all of the test changes/patches tried so far)
->> and let me know what happens to the battery readings.
->>
->> Patch
->>
->> thermal-delay-resume.patch
->>
->> does not work. Output according to dmesg.txt
->>
->> Attached is a slightly modified version of the last patch I sent.
->> Please test it and let me know if it addresses the problem you are
->> seeing.
->>
->> If it helps, I think we are done with this at least for now.
->>
->> patch thermal-core-resume-prio.patch with .priority = -1 does work
->>
->> One more thing to try is the attached patch (independent of the
->> previous one) to lower the priority of the thermal PM notifier to make
->> it run always after the ACPI battery one.
->>
->> Please test this one too and let me know if it works for you.
->>
->> patch thermal-core-resume-prio.patch
->>
->> with .priority = INT_MIN does also work.
->>
->> If you need any further tests, please don't hesitate to tell me so.
-> No, thank you, I think you've done enough and it is appreciated.
->
-> I don't see any particular drawbacks of this approach and investing
-> more time in trying to get to the bottom of the issue is probably not
-> worth it.
->
-> I'm going to submit the last patch as the proposed solution.
->
->> Thank you for your help!
-> No problem and thank you!
+Nope, it must be specifc. Or just drop. This applies to all your patches.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-names
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    rtc: rtc@1004ec00 {
+
+Drop label, not used.
+
+> +        compatible = "renesas,rzg3s-rtc";
+> +        reg = <0x1004ec00 0x400>;
+> +        interrupts = <GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>;
+> +        interrupt-names = "alarm", "period", "carry";
+> +        clocks = <&vbattclk>;
+> +        clock-names = "counter";
+> +        status = "disabled";
+
+Why do you paste it eevrywhere? It does no really make sense.
+
+Best regards,
+Krzysztof
 
 
