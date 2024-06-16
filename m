@@ -1,223 +1,187 @@
-Return-Path: <linux-kernel+bounces-216118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E37E3909BA4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:26:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 365DB909BA5
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42369B214D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 05:26:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 055871C213A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 05:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8E916D329;
-	Sun, 16 Jun 2024 05:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801B316C861;
+	Sun, 16 Jun 2024 05:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="LjytOtrz";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Bm/Xh44i"
-Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dluTYDHl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77991849;
-	Sun, 16 Jun 2024 05:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F8A23BF
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 05:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718515572; cv=none; b=q7rX0WI9dDZtomsYoAZ5TE1U2eGS/BejnZ5yIdMeoA6qUgmiifbv2ne8vHbmbqG/k5hTh3bqLSZAv4eZzvY7tO12EdVppkaXk8ue/D9ICVIWkb9SdnF4BieDHgHl+YC6DRT1x6Yj4WqrB+qRvDu33o8FT3/F7slF6WFnaAy8Bh4=
+	t=1718515942; cv=none; b=GTr7nEsphZUC00KdXG6B9Y0wN7bLbT1lqx5oYXFBdYzzNrL9fikecO2SHlBxcdshXEiXopNjfySBRzlquuKM+L1NfiObs50bVMu1FFhoxZtvS45lJzrwWQ/qj79aJlqIg937B/u9lX+573xpSJpvHHl0z046pS8E08WrFUC/aX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718515572; c=relaxed/simple;
-	bh=d1zVEtisKd1xtMgJN8TQAPiTovdMAXswWCOPUjrXPTI=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=tPbuJjNfXPpXVwPt8PKWrlbsx06jhSP7fgQMSYvqKD9G4iEjAwHaozcjywoGZBv2LJnpdjmgS/cwioj9UDcMSg6lmnNEvx88RpNI+Yft0hCWYKtF7eR1D+Y5hBClKQEiEUumuG8Z37atJlpaNCqfIUVtnTVcZjSJK5TyvYmK7H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=LjytOtrz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Bm/Xh44i; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 9A81213801A1;
-	Sun, 16 Jun 2024 01:26:08 -0400 (EDT)
-Received: from imap41 ([10.202.2.91])
-  by compute2.internal (MEProxy); Sun, 16 Jun 2024 01:26:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1718515568; x=1718601968; bh=rUwmRTCgqS
-	XeqVWcrGCH1x5heTSIxOLsk0NzrbrzKa8=; b=LjytOtrzmxhoZ7B48HAa5WFYKu
-	Ocd+ETL1gFbU4rFWZ2PWgYbLtzjmpx5YqZ6QShSlhcVcVtVch95F7ZUF3sIgMLnt
-	FdVT/Sptm2DhjF4YJFT0w0Fw1MXrjtKPeqTy6M1YW0lwuIM0Z93RdF+HolUQCec5
-	YMtFfOycjujto0S8AoWQayPs4BJ3qk3EtOwzt+R2Sfls6jTxVHgx9jU/Q/dzHIqt
-	KFz31Y8RbLB6IfMwy/SN4KHD/CRpVI3aq/vr7tpu6WipnY6I4b2qkfzlaWh8iKEg
-	Ev5L5qh7JrAlL3BB7nbKB6Sa1BL4exkfOeIGUd3M6p68ir+jviWvVKpYrlow==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1718515568; x=1718601968; bh=rUwmRTCgqSXeqVWcrGCH1x5heTSI
-	xOLsk0NzrbrzKa8=; b=Bm/Xh44iQP3ofD3JZD9U4BUGMIcdMmQUREThgTS2hddm
-	oW9MG3MftD4NI/p8F0+Wb2vLk8VTpvPADwpiTHbdoAN5Tnm+OCo4iv9s5TCNVCPM
-	hM7DcEsPIDPUqzxgb8FyjjCzT3YVj31A6/+1mVNzWgUcxCJDhPjqWs/9aSn9f7uF
-	neOq1buDAEffm6asKWkhuKj5TJEyNgeC6DTf9ViO+feH6j0hHZGOwoLA1eqSpjkF
-	GAO4/50UfI18svsDh2MXNOC7uJ+lCFMfbq2sJNWkRpcLhE7AwcPuOeDdvsSLTcsF
-	dHfimWiDEY6fYQ8OUvcX5R6aESEM+LJ6WEYuKV/yOg==
-X-ME-Sender: <xms:cHduZsG3ZFaixye0BVIw6Cps_0O5x8n6clDSPXWncYBCHFuAk5yCtw>
-    <xme:cHduZlW_21EfCZG32J6RxInh5U6HHGyCqPdVRHbF-spcbps2n3pgxdTobCJCfueIu
-    PfFPr6C0MmUsYRY2Pc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvvddgleeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedfnfhu
-    khgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvghvqeenucggtffrrghtth
-    gvrhhnpedutdelgfdvgeekueeuteevffelfedukeeitedugfdvtdeutdetjeduudeuvdeg
-    gfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehluh
-    hkvgeslhhjohhnvghsrdguvghv
-X-ME-Proxy: <xmx:cHduZmItM1hKUPG_1_QWk6akh230UTm9t-CvihUmBgnzYSx6f1HYvw>
-    <xmx:cHduZuHKy58orLyHmm55zFspbYplMPXkQmKOOoFTHdelPhvKCWrxZQ>
-    <xmx:cHduZiVMu4NJnrI5GKfzadPZHr7jR2mnVadUaksh-N64hwvSsWMlIQ>
-    <xmx:cHduZhNGKyaznnAc6xiqn98wlIDDCasb1wuTb913Vm3KvK7cv1vQRA>
-    <xmx:cHduZvjYkwiPvE8KFU_RyK_1TSKeb4fq4ZxPlRtC6vWQWEodO7Rn5yyD>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 4E7762340080; Sun, 16 Jun 2024 01:26:08 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-515-g87b2bad5a-fm-20240604.001-g87b2bad5
+	s=arc-20240116; t=1718515942; c=relaxed/simple;
+	bh=G0Y5swl864YFgyj2L1V1JdxPFcK6UhVAgPd4Ra0JXyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FkerxvkOGeRhbJc+0qEG9HbXM3Ygp2cqGXW3sMgQVwmUPAGfDd5XAtS944s0648nBI3ldoiAigYPlEvMGMJQGT2bBzDcc2pKnIDkF9ugEFSgFup1UZAZOLH+9B+CwuYVC7tIXuaiQzHWJecYSuSQCHs7CKIL46LmHXLJXtoW3IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dluTYDHl; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718515939; x=1750051939;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=G0Y5swl864YFgyj2L1V1JdxPFcK6UhVAgPd4Ra0JXyw=;
+  b=dluTYDHlvXs4t3+MNyLaucYYkCIArxjdCMI0hqTq1Sn27uaJbHGBashk
+   dWfCdmtJv/7K1i91PbwHIlTieWhJnGyo680Cu7NepAvWrz1DyJdPLV864
+   Q/0jQezZ60Gr9CugV5abeV0JQUQ75UnwwVKUc3JG5Uq4OKkYs0TYf25d8
+   jGmYskxKLGDdc0WwRN+y66niRvMBAb21nxstuYg+NxV6TvR6wTLcU8j8s
+   gEjg3Sh1P8CVfT0pkrW+1MhEdPpyMqpiU/YpPW/KUSNOm4VckWoOf8nhw
+   8sAG2isDUqiH3rlLdc98GasR1ds7wStM4ttqLlbV2BwvEzxZm/Ox7pB5U
+   g==;
+X-CSE-ConnectionGUID: 4FJvqmaURj2ipvAyZU7aWA==
+X-CSE-MsgGUID: 9+bntkOtS+KKpfJ94ZOEeg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="15338838"
+X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
+   d="scan'208";a="15338838"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 22:32:19 -0700
+X-CSE-ConnectionGUID: 3VJ2GD20T3G8jwStFEVPWw==
+X-CSE-MsgGUID: Rk9SqLrXS4mRw5RtzRXL6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
+   d="scan'208";a="78366162"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 15 Jun 2024 22:32:17 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sIiUw-0000uE-2y;
+	Sun, 16 Jun 2024 05:32:14 +0000
+Date: Sun, 16 Jun 2024 13:31:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Li Yang <leoyang.li@nxp.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Michael Ellerman <mpe@ellerman.id.au>, Frank Li <Frank.Li@nxp.com>
+Subject: arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb:
+ /memory-controller@ffe1e000/nand@1,0: failed to match any schema with
+ compatible: ['fsl,ifc-nand']
+Message-ID: <202406161358.doiL0s2D-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <9e4ee526-2b94-45f3-9fe9-0f1d0918916b@app.fastmail.com>
-In-Reply-To: <dd0a211a-bef1-4eb2-8d1f-2d63799af94c@app.fastmail.com>
-References: <20240607040532.1074379-1-luke@ljones.dev>
- <20240607040532.1074379-2-luke@ljones.dev>
- <dd0a211a-bef1-4eb2-8d1f-2d63799af94c@app.fastmail.com>
-Date: Sun, 16 Jun 2024 17:25:46 +1200
-From: "Luke Jones" <luke@ljones.dev>
-To: "Jiri Kosina" <jikos@kernel.org>
-Cc: "Benjamin Tissoires" <bentiss@kernel.org>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] hid-asus: use hid for brightness control on keyboard
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sat, 8 Jun 2024, at 11:24 AM, Luke Jones wrote:
-> I thought this was finalised but I'm still getting conflicting reports.
-> Please don't merge until I confirm the fix.
+Hi Li,
 
-This is ready for merge now. I have more confirmation that the single patch with no adjustment to report_id works well.
+FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
 
-> On Fri, 7 Jun 2024, at 4:05 PM, Luke D. Jones wrote:
-> > On almost all ASUS ROG series laptops the MCU used for the USB keyboard
-> > also has a HID packet used for setting the brightness. This is usually
-> > the same as the WMI method. But in some laptops the WMI method either
-> > is missing or doesn't work, so we should default to the HID control.
-> > 
-> > Signed-off-by: Luke D. Jones <luke@ljones.dev>
-> > ---
-> > drivers/hid/hid-asus.c                     |  7 ++++
-> > drivers/platform/x86/asus-wmi.c            |  3 +-
-> > include/linux/platform_data/x86/asus-wmi.h | 45 ++++++++++++++++++++++
-> > 3 files changed, 54 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> > index 02de2bf4f790..0ed3708ef7e2 100644
-> > --- a/drivers/hid/hid-asus.c
-> > +++ b/drivers/hid/hid-asus.c
-> > @@ -492,12 +492,19 @@ static void asus_kbd_backlight_work(struct work_struct *work)
-> >   */
-> > static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
-> > {
-> > + struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
-> > u32 value;
-> > int ret;
-> >  
-> > if (!IS_ENABLED(CONFIG_ASUS_WMI))
-> > return false;
-> >  
-> > + if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD &&
-> > + dmi_check_system(asus_use_hid_led_dmi_ids)) {
-> > + hid_info(hdev, "using HID for asus::kbd_backlight\n");
-> > + return false;
-> > + }
-> > +
-> > ret = asus_wmi_evaluate_method(ASUS_WMI_METHODID_DSTS,
-> >        ASUS_WMI_DEVID_KBD_BACKLIGHT, 0, &value);
-> > hid_dbg(hdev, "WMI backlight check: rc %d value %x", ret, value);
-> > diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> > index 3f9b6285c9a6..799d928c7d3d 100644
-> > --- a/drivers/platform/x86/asus-wmi.c
-> > +++ b/drivers/platform/x86/asus-wmi.c
-> > @@ -1681,7 +1681,8 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
-> > goto error;
-> > }
-> >  
-> > - if (!kbd_led_read(asus, &led_val, NULL)) {
-> > + if (!kbd_led_read(asus, &led_val, NULL) && !dmi_check_system(asus_use_hid_led_dmi_ids)) {
-> > + pr_info("using asus-wmi for asus::kbd_backlight\n");
-> > asus->kbd_led_wk = led_val;
-> > asus->kbd_led.name = "asus::kbd_backlight";
-> > asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
-> > diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
-> > index 3eb5cd6773ad..6ba0015e4386 100644
-> > --- a/include/linux/platform_data/x86/asus-wmi.h
-> > +++ b/include/linux/platform_data/x86/asus-wmi.h
-> > @@ -4,6 +4,7 @@
-> >  
-> > #include <linux/errno.h>
-> > #include <linux/types.h>
-> > +#include <linux/dmi.h>
-> >  
-> > /* WMI Methods */
-> > #define ASUS_WMI_METHODID_SPEC         0x43455053 /* BIOS SPECification */
-> > @@ -160,4 +161,48 @@ static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
-> > }
-> > #endif
-> >  
-> > +/* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
-> > +#if IS_ENABLED(CONFIG_ASUS_WMI)
-> > +bool asus_use_hid_led(void);
-> > +#else
-> > +static inline bool asus_use_hid_led(void)
-> > +{
-> > + return true;
-> > +}
-> > +#endif
-> > +
-> > +static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
-> > + {
-> > + .matches = {
-> > + DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Zephyrus"),
-> > + },
-> > + },
-> > + {
-> > + .matches = {
-> > + DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Strix"),
-> > + },
-> > + },
-> > + {
-> > + .matches = {
-> > + DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Flow"),
-> > + },
-> > + },
-> > + {
-> > + .matches = {
-> > + DMI_MATCH(DMI_BOARD_NAME, "GA403"),
-> > + },
-> > + },
-> > + {
-> > + .matches = {
-> > + DMI_MATCH(DMI_BOARD_NAME, "GU605"),
-> > + },
-> > + },
-> > + {
-> > + .matches = {
-> > + DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
-> > + },
-> > + },
-> > + NULL,
-> > +};
-> > +
-> > #endif /* __PLATFORM_DATA_X86_ASUS_WMI_H */
-> > -- 
-> > 2.45.1
-> > 
-> > 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   a3e18a540541325a8c8848171f71e0d45ad30b2c
+commit: acb354fe97e5aa6d9534b601ce18ef7866f25c4d powerpc: dts: fsl: rename ifc node name to be memory-controller
+date:   6 weeks ago
+config: powerpc-randconfig-051-20240612 (https://download.01.org/0day-ci/archive/20240616/202406161358.doiL0s2D-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 13.2.0
+dtschema version: 2024.6.dev1+g833054f
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240616/202406161358.doiL0s2D-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406161358.doiL0s2D-lkp@intel.com/
+
+dtcheck warnings: (new ones prefixed by >>)
+   arch/powerpc/boot/dts/fsl/p1010rdb.dtsi:212.24-216.4: Warning (simple_bus_reg): /soc@ffe00000/ethernet@b2000: missing or empty reg/ranges property
+   arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: /: memory: 'reg' is a required property
+   	from schema $id: http://devicetree.org/schemas/memory.yaml#
+   arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: /: memory: False schema does not allow {'device_type': ['memory']}
+   	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+   arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: /: failed to match any schema with compatible: ['fsl,P1010RDB']
+   arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: nor@0,0: $nodename:0: 'nor@0,0' does not match '^(flash|.*sram|nand)(@.*)?$'
+   	from schema $id: http://devicetree.org/schemas/mtd/mtd-physmap.yaml#
+>> arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: /memory-controller@ffe1e000/nand@1,0: failed to match any schema with compatible: ['fsl,ifc-nand']
+>> arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: /memory-controller@ffe1e000/cpld@3,0: failed to match any schema with compatible: ['fsl,p1010rdb-cpld']
+   arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: /soc@ffe00000: failed to match any schema with compatible: ['fsl,p1010-immr', 'simple-bus']
+   arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: i2c@3000: compatible: 'oneOf' conditional failed, one must be fixed:
+   	['fsl-i2c'] is too short
+   	'fsl-i2c' is not one of ['mpc5200-i2c', 'fsl,mpc5200-i2c', 'fsl,mpc5121-i2c', 'fsl,mpc8313-i2c', 'fsl,mpc8543-i2c', 'fsl,mpc8544-i2c']
+   	'fsl,mpc5200b-i2c' was expected
+   	from schema $id: http://devicetree.org/schemas/i2c/i2c-mpc.yaml#
+   arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: i2c@3000: Unevaluated properties are not allowed ('cell-index', 'compatible', 'dfsrr' were unexpected)
+   	from schema $id: http://devicetree.org/schemas/i2c/i2c-mpc.yaml#
+   arch/powerpc/boot/dts/fsl/p1010rdb-pa.dtb: eeprom@50: compatible: ['st,24c256', 'atmel,24c256'] is too long
+   	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
+--
+   arch/powerpc/boot/dts/fsl/p1010rdb.dtsi:212.24-216.4: Warning (simple_bus_reg): /soc@fffe00000/ethernet@b2000: missing or empty reg/ranges property
+   arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: /: memory: 'reg' is a required property
+   	from schema $id: http://devicetree.org/schemas/memory.yaml#
+   arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: /: memory: False schema does not allow {'device_type': ['memory']}
+   	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+   arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: /: failed to match any schema with compatible: ['fsl,P1010RDB']
+   arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: nor@0,0: $nodename:0: 'nor@0,0' does not match '^(flash|.*sram|nand)(@.*)?$'
+   	from schema $id: http://devicetree.org/schemas/mtd/mtd-physmap.yaml#
+>> arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: /memory-controller@fffe1e000/nand@1,0: failed to match any schema with compatible: ['fsl,ifc-nand']
+>> arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: /memory-controller@fffe1e000/cpld@3,0: failed to match any schema with compatible: ['fsl,p1010rdb-cpld']
+   arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: /soc@fffe00000: failed to match any schema with compatible: ['fsl,p1010-immr', 'simple-bus']
+   arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: i2c@3000: compatible: 'oneOf' conditional failed, one must be fixed:
+   	['fsl-i2c'] is too short
+   	'fsl-i2c' is not one of ['mpc5200-i2c', 'fsl,mpc5200-i2c', 'fsl,mpc5121-i2c', 'fsl,mpc8313-i2c', 'fsl,mpc8543-i2c', 'fsl,mpc8544-i2c']
+   	'fsl,mpc5200b-i2c' was expected
+   	from schema $id: http://devicetree.org/schemas/i2c/i2c-mpc.yaml#
+   arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: i2c@3000: Unevaluated properties are not allowed ('cell-index', 'compatible', 'dfsrr' were unexpected)
+   	from schema $id: http://devicetree.org/schemas/i2c/i2c-mpc.yaml#
+   arch/powerpc/boot/dts/fsl/p1010rdb-pa_36b.dtb: eeprom@50: compatible: ['st,24c256', 'atmel,24c256'] is too long
+   	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
+--
+   arch/powerpc/boot/dts/fsl/p1010rdb.dtsi:212.24-216.4: Warning (simple_bus_reg): /soc@ffe00000/ethernet@b2000: missing or empty reg/ranges property
+   arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: /: memory: 'reg' is a required property
+   	from schema $id: http://devicetree.org/schemas/memory.yaml#
+   arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: /: memory: False schema does not allow {'device_type': ['memory']}
+   	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+   arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: /: failed to match any schema with compatible: ['fsl,P1010RDB-PB']
+   arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: nor@0,0: $nodename:0: 'nor@0,0' does not match '^(flash|.*sram|nand)(@.*)?$'
+   	from schema $id: http://devicetree.org/schemas/mtd/mtd-physmap.yaml#
+>> arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: /memory-controller@ffe1e000/nand@1,0: failed to match any schema with compatible: ['fsl,ifc-nand']
+>> arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: /memory-controller@ffe1e000/cpld@3,0: failed to match any schema with compatible: ['fsl,p1010rdb-cpld']
+   arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: /soc@ffe00000: failed to match any schema with compatible: ['fsl,p1010-immr', 'simple-bus']
+   arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: i2c@3000: compatible: 'oneOf' conditional failed, one must be fixed:
+   	['fsl-i2c'] is too short
+   	'fsl-i2c' is not one of ['mpc5200-i2c', 'fsl,mpc5200-i2c', 'fsl,mpc5121-i2c', 'fsl,mpc8313-i2c', 'fsl,mpc8543-i2c', 'fsl,mpc8544-i2c']
+   	'fsl,mpc5200b-i2c' was expected
+   	from schema $id: http://devicetree.org/schemas/i2c/i2c-mpc.yaml#
+   arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: i2c@3000: Unevaluated properties are not allowed ('cell-index', 'compatible', 'dfsrr' were unexpected)
+   	from schema $id: http://devicetree.org/schemas/i2c/i2c-mpc.yaml#
+   arch/powerpc/boot/dts/fsl/p1010rdb-pb.dtb: eeprom@50: compatible: ['st,24c256', 'atmel,24c256'] is too long
+   	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
+--
+   arch/powerpc/boot/dts/fsl/p1010rdb.dtsi:212.24-216.4: Warning (simple_bus_reg): /soc@fffe00000/ethernet@b2000: missing or empty reg/ranges property
+   arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: /: memory: 'reg' is a required property
+   	from schema $id: http://devicetree.org/schemas/memory.yaml#
+   arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: /: memory: False schema does not allow {'device_type': ['memory']}
+   	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+   arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: /: failed to match any schema with compatible: ['fsl,P1010RDB-PB']
+   arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: nor@0,0: $nodename:0: 'nor@0,0' does not match '^(flash|.*sram|nand)(@.*)?$'
+   	from schema $id: http://devicetree.org/schemas/mtd/mtd-physmap.yaml#
+>> arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: /memory-controller@fffe1e000/nand@1,0: failed to match any schema with compatible: ['fsl,ifc-nand']
+>> arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: /memory-controller@fffe1e000/cpld@3,0: failed to match any schema with compatible: ['fsl,p1010rdb-cpld']
+   arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: /soc@fffe00000: failed to match any schema with compatible: ['fsl,p1010-immr', 'simple-bus']
+   arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: i2c@3000: compatible: 'oneOf' conditional failed, one must be fixed:
+   	['fsl-i2c'] is too short
+   	'fsl-i2c' is not one of ['mpc5200-i2c', 'fsl,mpc5200-i2c', 'fsl,mpc5121-i2c', 'fsl,mpc8313-i2c', 'fsl,mpc8543-i2c', 'fsl,mpc8544-i2c']
+   	'fsl,mpc5200b-i2c' was expected
+   	from schema $id: http://devicetree.org/schemas/i2c/i2c-mpc.yaml#
+   arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: i2c@3000: Unevaluated properties are not allowed ('cell-index', 'compatible', 'dfsrr' were unexpected)
+   	from schema $id: http://devicetree.org/schemas/i2c/i2c-mpc.yaml#
+   arch/powerpc/boot/dts/fsl/p1010rdb-pb_36b.dtb: eeprom@50: compatible: ['st,24c256', 'atmel,24c256'] is too long
+   	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
