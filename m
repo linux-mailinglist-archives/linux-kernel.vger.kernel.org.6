@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-216174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44738909C4B
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:40:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B78C7909C50
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C77BF2815CC
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:40:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E4B8281FC5
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DFE17E91F;
-	Sun, 16 Jun 2024 07:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612C4181BB7;
+	Sun, 16 Jun 2024 07:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOvOe7r+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z7TTPGb8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6F91836FB;
-	Sun, 16 Jun 2024 07:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADD916C45F;
+	Sun, 16 Jun 2024 07:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718523607; cv=none; b=L+Yk3inF/vRkA2hmwlIZf0a+QYIrjqKAmBH447c4lgp0/wS7X7/mrrkva6Gqh3p30vlk2SZ2ADhcsnmTlx9MTzhmoyE8odg857o59G55F/eb7sej/yWGL0QQx6mS6Y7FPhSHBjWGXYi2DhLML+8625o5PqguNf/SOK28rXqLE9U=
+	t=1718523782; cv=none; b=Lqq7HigFqMvH8iS/ewUyQ2VnsuOiMauXQ8loUH1+kBd616P5BT82eaqa+PYOJxRueuc1aAcvd1g3ZmG8Du/r1nBCheaqtkp8qIzFaFlumgnhsa4Ovs43FuHPfToMaof0H/eO0maqqyRXHMP2wtvhLWBz6v1KdxVpGR2Exw81V9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718523607; c=relaxed/simple;
-	bh=9/cAdGYrdwaI/4y1JqtVx9mdosaD9ipTezgsP7O70KI=;
+	s=arc-20240116; t=1718523782; c=relaxed/simple;
+	bh=UAMESqFI2zBGXsYlTra5YPsi4j0S1Kcs0G6kGPFAidk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ewzEmVBr3Lrmi/li5gFh5hWysJhCf9ovdrV6KmSqNDcc3YkUMwIWvqBCwkhu2axc5TLB9BQf5kOMpgLiQIg/roCQzgFhsS4Lm0/mA3v7nQlHI06XFLKCvCYuLLoejHvOcGi2s6B65Jv8LA5L0svSTTb5+1zYqued+qioVFSqcJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOvOe7r+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03369C2BBFC;
-	Sun, 16 Jun 2024 07:40:02 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=nyhboF49To3hDs0ZXKFMVXG77YzbnS4ZosLLT0tHDQjrKG8lUMOlYC/imXML6zHd9tZFPlerNu/AvFqlJZMvAghx5W73STLcLDboMRGru9ks+Kf+YyQCVmeLNJYDfkHMbhmLtbAmnV613Lwh+6yN2PKVHair3FKZLRRAUtvblCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z7TTPGb8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 779CEC2BBFC;
+	Sun, 16 Jun 2024 07:42:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718523607;
-	bh=9/cAdGYrdwaI/4y1JqtVx9mdosaD9ipTezgsP7O70KI=;
+	s=k20201202; t=1718523782;
+	bh=UAMESqFI2zBGXsYlTra5YPsi4j0S1Kcs0G6kGPFAidk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vOvOe7r+p5KApeZ5sDQE+mNN2B8K8rE1/dYYLfFH6GusifJLh/MThj+IczxwRoi0X
-	 8q4v8mXXHdh2h6N2AaHI5SEvDVuTV0ywPgmgPygnCcYpQEnK9un9MH+6V6/VMBnYBK
-	 S6lpT27lDVF9D5f6nY6DmYOczWKzdW2kC+dpXRs3hEI837S4jJL+8KTMxoAoPmh712
-	 LUwQYF0uTnAH6TWE1DR1TbjH0TZgSRi4wfqtXLb4AYXg5HCp71kITOeWfDw7FFR+20
-	 JM4s3zMNFsmAkad9zGSkQdKPeahY50CA5KSwJkcIbGXwjsCeHuBpH90m0+L+I/vpet
-	 gd0jakcveqI5Q==
-Message-ID: <de1077de-baa4-42aa-84c1-6ab629088a07@kernel.org>
-Date: Sun, 16 Jun 2024 09:40:01 +0200
+	b=Z7TTPGb8e3Jt0wHFx1mbmb/W7ksv2Q6+cmwWHW1J02kZ4n1nsms81Lyo38ABf40zc
+	 uNSNGH8niArobkVCp4t1QsMONciJq1LWmVzqdN21+k0F2dXzpCxkRHgUhbQZDy6Yj7
+	 5Q3hirOih+nxHd9rNQgNMzT3Vq0+FxhYoSwgy/ItAl5pMoTO9stV4U8QhqMwkU/1NB
+	 2Zxlin4lETG+xO7Ps1GLlsCzkqzEGPqdYZCQp4nR1s6/CdHAkOClJqM4p241BgO9/Z
+	 /1qEq0MsSnH912KDQSgrCU/M6dBs+YVl4A7sN/BhhO7Lm5qCQw5rrOM9IoHiBNJ8xR
+	 95hT8ujri93Ow==
+Message-ID: <2146cc14-dd70-4f49-9667-1564fc6a37dc@kernel.org>
+Date: Sun, 16 Jun 2024 09:42:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/12] dt-bindings: rtc: renesas,rzg3s-rtc: Document the
- Renesas RZ/G3S RTC
-To: Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
- alexandre.belloni@bootlin.com, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
- <20240614071932.1014067-6-claudiu.beznea.uj@bp.renesas.com>
-Content-Language: en-US
+Subject: Re: [PATCH v5 2/3] dt-bindings:iio:proximity: Add hx9023s binding
+To: Yasin Lee <yasin.lee.x@outlook.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, Yasin Lee <yasin.lee.x@gmail.com>
+References: <20240616-add-tyhx-hx9023s-sensor-driver-v5-0-ebaf280bbf0e@outlook.com>
+ <SN7PR12MB810142C58543160AB45D07B3A4CC2@SN7PR12MB8101.namprd12.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -106,59 +103,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240614071932.1014067-6-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <SN7PR12MB810142C58543160AB45D07B3A4CC2@SN7PR12MB8101.namprd12.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/06/2024 09:19, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On 16/06/2024 09:36, Yasin Lee wrote:
+> From: Yasin Lee <yasin.lee.x@gmail.com>
 > 
-> Document the RTC IP (RTCA-3) available on the Renesas RZ/G3S SoC.
+> A capacitive proximity sensor
 
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description: RTC counter clock
+Not much improved. No changelog, no responses to previous comments.
 
-Just items: with description instead.
+I already asked TWICE. So this is third time. Respond to each comment
+and acknowledge that you are going to implement it.
 
-> +
-> +  clock-names:
-> +    maxItems: 1
+Then write full changelog in patch changelog (so under ---) or in cover
+letter (not present here) saying what changed.
 
-Nope, it must be specifc. Or just drop. This applies to all your patches.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - interrupt-names
-> +  - clocks
-> +  - clock-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    rtc: rtc@1004ec00 {
-
-Drop label, not used.
-
-> +        compatible = "renesas,rzg3s-rtc";
-> +        reg = <0x1004ec00 0x400>;
-> +        interrupts = <GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>;
-> +        interrupt-names = "alarm", "period", "carry";
-> +        clocks = <&vbattclk>;
-> +        clock-names = "counter";
-> +        status = "disabled";
-
-Why do you paste it eevrywhere? It does no really make sense.
+NAK, because you keep ignoring same comments given over and over.
 
 Best regards,
 Krzysztof
