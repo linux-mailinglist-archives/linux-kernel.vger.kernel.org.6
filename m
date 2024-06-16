@@ -1,128 +1,163 @@
-Return-Path: <linux-kernel+bounces-216147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8CE909BEF
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:43:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE14909BF5
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEC24284056
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 06:43:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CC90B22F15
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 06:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608F716EBFD;
-	Sun, 16 Jun 2024 06:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66D516F0D4;
+	Sun, 16 Jun 2024 06:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IuMXeTsw"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="nPovZ99v"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3683A2F2B;
-	Sun, 16 Jun 2024 06:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4787A16C864;
+	Sun, 16 Jun 2024 06:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718520191; cv=none; b=ifl0gN1tZd5bYzNaroZdiZTWEgCbOWkKsGth0GdrcI4UkfUcBHiLXKRtAHXQXWEmR5ZBQP0u0jPxMLoksR/MFQoIF4PW3ucmuR/LZe6cen6VEfPdFQWVT3/qXO5zN1T6APeIz+hcG7mvbrka+5pbDy+kydS8RMFi+hZQtmlzUTM=
+	t=1718520607; cv=none; b=nIXfqbDHmpYrgaVq43ahMU3KZnoP19ojK4yyzhA6oFM/pEw+JOGATEfbHBsrO0SlEoM6cuF/gEOsZOG+sdNYl0mqfhJRSzTKWXV79z4U+xrbxdMdVyO/1hTvLO0XvPkNQQiOvREYlYcdwe5ys24trPWXkeE2UP+S2OZab1EaKk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718520191; c=relaxed/simple;
-	bh=7nH6l1dJpF8nYglnceufMEyYGkxAU1x3BKrZt5E2VT8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=fgHkeoRFpAhLxavC0pc10Jd6UvBkUPrypRERa8BlhP/5LLTQBmOxxPPzsTvHN7U9wx7WPIvrmN5AB56m7WA5YVmdmb+urIwxpZ5VdsL/NTAF55IVdmPIf7gOk9YlFcqF1ln5M7fgIENw/KyzbrGcDvnHKIrxzIxAqgAEkKfq2EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IuMXeTsw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45G5km92013090;
-	Sun, 16 Jun 2024 06:42:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=aHqtJcmnVaFmtzJFnV7swi
-	03nBkl2huhie0q16+yyww=; b=IuMXeTswH+V12RJaKcDbzkZXIKHtcXs7wDbuUV
-	pIite9kcYG3yeD8G8GZPKPCoEBLXCO7Jzm2YYL6A4VtFlIxBZdzUxmA53D5VZH8h
-	Z3hTRb2BKRPoCeuHrVawxzZ9Vm56vgDXsNlHKstmsJbXL+ITUyvVIQnCuRNrnUBB
-	FRLvpPWZwZXBQ0/5SrzJOmsvfifVzw/fuD8wgUnfLnYZ64eukNhuCXCs8neKyxt0
-	mHIEAArGuboYYvR9+FyySMnBcqSdM2H3SxOG4TQGK8EL1/mJdSnLgTrmN7PbYTzC
-	aVAzZnfZAYpKJLxgx+Aa3bFKQxJYyEbNWG4RGMReOjIDzA8Q==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys1y6sjus-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 16 Jun 2024 06:42:38 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45G6gb8t031882
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 16 Jun 2024 06:42:37 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Jun
- 2024 23:42:36 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sat, 15 Jun 2024 23:42:35 -0700
-Subject: [PATCH] ASoC: fsl: imx-pcm-fiq: add missing MODULE_DESCRIPTION()
- macro
+	s=arc-20240116; t=1718520607; c=relaxed/simple;
+	bh=zvYytH/tkPFqEpQ06iZFxiNfJaS+oXW2wNzfOOiScQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CY0XgQN+hpRio4X1trgFJ9o3e+vrnTqP1P2JsEZLDDvcQGNGC0zuivJrtNf3BrLNc2Zmjq0Sg0ka+USuVNn1Kq4W0pktqqKw58yCZiD5w8ur+dyvWD9ODMZGJPUt2XzRP1W1/nG2/ELz48Wrfu4ng9WA7hBErpvYvUL3vIncnFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=nPovZ99v; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 31BDC240003;
+	Sun, 16 Jun 2024 06:49:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
+	t=1718520596;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oepipccJ4+xfU5ZrXbRCGP8qtlNKoyECJMJmUGJDpJY=;
+	b=nPovZ99vizahHrb9+csaQlYDereOrVESm1iKgeJv+z7U5QelYHYKWGbOhnECUgXNIbta+Y
+	lYDd7pwaEHTudVGST8KuALea8IfEi4UF8pRHEzFLXReUBbZAMpkBtEbXCIS9xrZ+T6nnrG
+	uqXjO+B3exmqcPQqMg6tNLKARyks0mfjcXpe+n3YZun2dhUNh4ct99MI/HcGBturj69PQ7
+	fPx9XqL0AJlLya9RlPE5gkHgD+Xc0d7iU9Hp00eFQav8g1zk9lD9NaDzuV7FVWK77HjaBS
+	AaZP6407I9ukj4gICe4YwX1jihFmZOAfhQxIpGMHo+wmWzMt7dqKms7yBcMA4A==
+Message-ID: <a26d619c-fc63-4b2d-8313-210a37b1661a@arinc9.com>
+Date: Sun, 16 Jun 2024 09:49:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240615-md-arm-sound-soc-fsl-v1-1-8ed731c2f073@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAFqJbmYC/x3MywqDQAyF4VeRrBvw0pHaVyldzCVTA85YEi2C+
- O4d3Rz4FuffQUmYFJ7VDkI/Vp5zQXOrwI82fwg5FENbt/e6bwymgFYS6rzmUNZj1Am9GR7Rdaa
- jfoBy/QpF3q7s613srBI6sdmPZ2zivG6YrC4kcBx/j44L/YUAAAA=
-To: Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Shawn Guo
-	<shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "Pengutronix
- Kernel Team" <kernel@pengutronix.de>
-CC: <alsa-devel@alsa-project.org>, <linuxppc-dev@lists.ozlabs.org>,
-        <linux-sound@vger.kernel.org>, <imx@lists.linux.dev>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: A_jgJAWNvyRo0PHScpD6Yq9C4i5X0yoR
-X-Proofpoint-ORIG-GUID: A_jgJAWNvyRo0PHScpD6Yq9C4i5X0yoR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-16_05,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 impostorscore=0 mlxscore=0 bulkscore=0 clxscore=1011
- lowpriorityscore=0 spamscore=0 mlxlogscore=999 suspectscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406160051
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/2] net: dsa: mt7530: factor out bridge
+ join/leave logic
+To: Matthias Schiffer <mschiffer@universe-factory.net>,
+ Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>,
+ Sean Wang <sean.wang@mediatek.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <378bc964b49f9e9954336e99009932ac22bfe172.1718400508.git.mschiffer@universe-factory.net>
+Content-Language: en-US
+From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+In-Reply-To: <378bc964b49f9e9954336e99009932ac22bfe172.1718400508.git.mschiffer@universe-factory.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: arinc.unal@arinc9.com
 
-With ARCH=arm, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in sound/soc/fsl/imx-pcm-fiq.o
+On 15/06/2024 01:21, Matthias Schiffer wrote:
+> As preparation for implementing bridge port isolation, move the logic to
+> add and remove bits in the port matrix into a new helper
+> mt7530_update_port_member(), which is called from
+> mt7530_port_bridge_join() and mt7530_port_bridge_leave().
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+> ---
+>   drivers/net/dsa/mt7530.c | 103 +++++++++++++++++----------------------
+>   1 file changed, 46 insertions(+), 57 deletions(-)
+> 
+> diff --git a/drivers/net/dsa/mt7530.c b/drivers/net/dsa/mt7530.c
+> index 598434d8d6e4..ecacaefdd694 100644
+> --- a/drivers/net/dsa/mt7530.c
+> +++ b/drivers/net/dsa/mt7530.c
+> @@ -1302,6 +1302,50 @@ mt7530_stp_state_set(struct dsa_switch *ds, int port, u8 state)
+>   		   FID_PST(FID_BRIDGED, stp_state));
+>   }
+>   
+> +static void mt7530_update_port_member(struct mt7530_priv *priv, int port,
+> +				      const struct net_device *bridge_dev, bool join)
+> +	__must_hold(&priv->reg_mutex)
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Please run git clang-format on the patch.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- sound/soc/fsl/imx-pcm-fiq.c | 1 +
- 1 file changed, 1 insertion(+)
+> +{
+> +	struct dsa_port *dp = dsa_to_port(priv->ds, port), *other_dp;
+> +	struct mt7530_port *p = &priv->ports[port], *other_p;
+> +	struct dsa_port *cpu_dp = dp->cpu_dp;
+> +	u32 port_bitmap = BIT(cpu_dp->index);
+> +	int other_port;
+> +
+> +	dsa_switch_for_each_user_port(other_dp, priv->ds) {
+> +		other_port = other_dp->index;
+> +		other_p = &priv->ports[other_port];
+> +
+> +		if (dp == other_dp)
+> +			continue;
+> +
+> +		/* Add/remove this port to/from the port matrix of the other
+> +		 * ports in the same bridge. If the port is disabled, port
+> +		 * matrix is kept and not being setup until the port becomes
+> +		 * enabled.
+> +		 */
+> +		if (!dsa_port_offloads_bridge_dev(other_dp, bridge_dev))
 
-diff --git a/sound/soc/fsl/imx-pcm-fiq.c b/sound/soc/fsl/imx-pcm-fiq.c
-index 0d124002678e..5ea6dd4c89a1 100644
---- a/sound/soc/fsl/imx-pcm-fiq.c
-+++ b/sound/soc/fsl/imx-pcm-fiq.c
-@@ -319,4 +319,5 @@ void imx_pcm_fiq_exit(struct platform_device *pdev)
- }
- EXPORT_SYMBOL_GPL(imx_pcm_fiq_exit);
- 
-+MODULE_DESCRIPTION("Freescle i.MX PCM FIQ handler");
- MODULE_LICENSE("GPL");
+Would be helpful to mention in the patch log that
+dsa_port_offloads_bridge_dev() is now being used instead of
+dsa_port_offloads_bridge().
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240615-md-arm-sound-soc-fsl-c598fb353e69
+> +			continue;
+> +
+> +		if (join) {
+> +			other_p->pm |= PCR_MATRIX(BIT(port));
+> +			port_bitmap |= BIT(other_port);
+> +		} else {
+> +			other_p->pm &= ~PCR_MATRIX(BIT(port));
+> +		}
+> +
+> +		if (other_p->enable)
+> +			mt7530_rmw(priv, MT7530_PCR_P(other_port),
+> +				   PCR_MATRIX_MASK, other_p->pm);
+> +	}
+> +
+> +	/* Add/remove the all other ports to this port matrix. */
 
+I would add to this comment: When removing, only the CPU port will remain
+in the port matrix of this port.
+
+To not omit the original comment:
+
+	/* Set the cpu port to be the only one in the port matrix of
+	 * this port.
+	 */
+
+> +	p->pm = PCR_MATRIX(port_bitmap);
+> +	if (priv->ports[port].enable)
+> +		mt7530_rmw(priv, MT7530_PCR_P(port),
+> +			   PCR_MATRIX_MASK, p->pm);
+
+I see changes to have the code streamlined. Overall, I would appreciate a
+more verbose patch log.
+
+Arınç
 
