@@ -1,189 +1,248 @@
-Return-Path: <linux-kernel+bounces-216211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF27909CB2
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 10:59:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 168C7909CBC
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:13:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 803931C20B42
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:59:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3B681C20A6C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFB5181D03;
-	Sun, 16 Jun 2024 08:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF84181BBC;
+	Sun, 16 Jun 2024 09:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U0mWYNTi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="adVOb+r7"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72049181330
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 08:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE7C16D9AA
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 09:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718528348; cv=none; b=s1Jz2f5a2fWGnZUbQQmI//+eUuRPl5zTrWCCtk/jH6bzJhNnC1lwDdHBTpNQOi9Xrx9Kw3X/RckZ7DSbNYjRD+O9lyiNiN0C6UZv2RkZipQUJ/9e6YTGeSeu1CaStVwyTxHe3PsekaDSqIDfbjtgQsWUpkNFXEbEflG9hJYISBs=
+	t=1718529178; cv=none; b=V2VHIm9ZrX8QINwklCFYUkbCunxbAu6mrcchjFxALGzfgpAbCUVQW87Qb8C/tnHxt4MdQTQ8d0L3L9bOmPF91GJ8O66zhT8Ypfb2HOdqdb4ZWC89a7qAlQ4fDdOBdxaodGr59Mqeh+dHbtWEGXvUSzE5lZAMb/JuxSRmPYAISFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718528348; c=relaxed/simple;
-	bh=UkcGOq3mmcxrWiOFZCmik5zItgVm4hUZxJ0RQxchvLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=B/6oeBPINsOO/B/ErPbwfQkgUItWqBVwUP7rF2dSnFhLOz+WxH4ZYT7BozaeM0Thr8SnlqMTUrJoRIQ5eXlLPVie4kUgma2yZ9ytOehMba0RTsqIYq1ftJdWH2a+zgXrnu2bwDBhBEAogVE+7beWFCSVEauRg/1cBfTnKWsacD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U0mWYNTi; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718528347; x=1750064347;
-  h=date:from:to:cc:subject:message-id;
-  bh=UkcGOq3mmcxrWiOFZCmik5zItgVm4hUZxJ0RQxchvLQ=;
-  b=U0mWYNTihBwMRNtXCF5DmZMYaHcSTGgWpWm4BpFTrTFqXN/WSYiKuBqE
-   ny6paTJDo4R5j5sN3vxWxH4VNi5LI/+z8qzC0yG0DQ2JFzCfpQm+/XUcp
-   ydUaCIABuJx/1ZmnzNYPoXSK9RwTMzQLqFiT1WF2642+ocfq9vb8pYNI2
-   Qa2koSN635mPVq8CGh42jUrPNKeRFF9MYRlSQJyKM0BNkeuRWv0wGUDHm
-   LPt8RY91gvD6GjMI5YDjV5I94E12vxn+bnrOIQ/VGJfFwlxAY2Hah8Yn+
-   G1/SVoYgoLtZlgKo0dZCRAWZD6HEFj3jP7lzXccab+XdTmqzQ9AuwTOmr
-   g==;
-X-CSE-ConnectionGUID: eX+eAn/TRwerZjLjQco/BQ==
-X-CSE-MsgGUID: 4GPWmkEkSpa6rqYfmcOxLQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="19201848"
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="19201848"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 01:59:07 -0700
-X-CSE-ConnectionGUID: d7m8vJVKQ4eZbRsino1Xrw==
-X-CSE-MsgGUID: cYHuanpOQMuEPTmw5izqPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="41616681"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 16 Jun 2024 01:59:05 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sIlj4-0002XK-2h;
-	Sun, 16 Jun 2024 08:59:02 +0000
-Date: Sun, 16 Jun 2024 16:58:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/cleanups] BUILD SUCCESS
- 71315037cb7d40cdb2f4fbefad31927f6e6caba5
-Message-ID: <202406161616.E1Likza0-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1718529178; c=relaxed/simple;
+	bh=soXT6ejv1Jmdiecl/JaLHs9qbKzLrDGNxWPNnQa5keg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=k99zyv1myl1PEwsD9IQJ9mZN+x38/JOZLxeCDmflD5Pejlz3PQm5MmnwOg2cxx/SOY44JOzxdFcMmD+H/nmnjCemtity/vzG6UPtCKZ2eiJq8ZcbtP4dfDC8bKd5zf0wkUT7z61/dyB9lifGpRhOp8MD3/1GUCqWsaXJTiqsj4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=adVOb+r7; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1718529169;
+	bh=soXT6ejv1Jmdiecl/JaLHs9qbKzLrDGNxWPNnQa5keg=;
+	h=From:Date:Subject:To:Cc:From;
+	b=adVOb+r7x6NPCff5svEjqTEheRJqsecwvwA1P+hQcGKHMXwzlK8cs6s+tr+/Zfv+p
+	 yDpBX/2InSLlHIdcpKaLp5KWd+JgqjNb8p3VUf/guEGS3UKAxRy2Y9jDsvVXlYlbKA
+	 VS3fQz915nGIjDUrRgP9jijeBskv3aHF+uTVkMHc=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sun, 16 Jun 2024 11:12:03 +0200
+Subject: [PATCH] drm/amdgpu: convert bios_hardcoded_edid to drm_edid
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240616-amdgpu-edid-bios-v1-1-2874f212b365@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAGKsbmYC/x3MMQqAMAxA0atIZgNNKx28ijhEGzWDVVoUQXp3i
+ +Mb/n8hS1LJ0DcvJLk16xErqG1g3jiughqqwRrbGU8eeQ/reaEEDTjpkZEdMZOfjLMENTuTLPr
+ 8y2Es5QMoxhPDYgAAAA==
+To: Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718529166; l=7172;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=soXT6ejv1Jmdiecl/JaLHs9qbKzLrDGNxWPNnQa5keg=;
+ b=nVYgkUeKEtbsZrsJiINgk727iI4cpBu7q/mFHtx8PvPoOMQyKR9ogrLzw9sk+E7/kAjYhWFzp
+ 1pY1jyMyVolDBSDTK5zm1ya9AzehJtuyZLwdt0cuFIVdFyGoK+NY1ek
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cleanups
-branch HEAD: 71315037cb7d40cdb2f4fbefad31927f6e6caba5  x86/boot: Remove unused function __fortify_panic()
+Instead of manually passing around 'struct edid *' and its size,
+use 'struct drm_edid', which encapsulates a validated combination of
+both.
 
-elapsed time: 2423m
+As the drm_edid_ can handle NULL gracefully, the explicit checks can be
+dropped.
 
-configs tested: 97
-configs skipped: 2
+Also save a few characters by transforming '&array[0]' to the equivalent
+'array' and using 'max_t(int, ...)' instead of manual casts.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+While this patch introduces a new user for drm_edid_raw(),
+if amdgpu proper gets migrated to 'struct drm_edid', that usage will go
+away.
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                               defconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240615   gcc-13.2.0
-arc                   randconfig-002-20240615   gcc-13.2.0
-arm                               allnoconfig   clang-19
-arm                                 defconfig   clang-14
-arm                   randconfig-001-20240615   clang-19
-arm                   randconfig-002-20240615   clang-19
-arm                   randconfig-003-20240615   gcc-13.2.0
-arm                   randconfig-004-20240615   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240615   clang-19
-arm64                 randconfig-002-20240615   gcc-13.2.0
-arm64                 randconfig-003-20240615   clang-17
-arm64                 randconfig-004-20240615   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240615   gcc-13.2.0
-csky                  randconfig-002-20240615   gcc-13.2.0
-hexagon                           allnoconfig   clang-19
-hexagon                             defconfig   clang-19
-hexagon               randconfig-001-20240615   clang-19
-hexagon               randconfig-002-20240615   clang-19
-i386         buildonly-randconfig-001-20240615   clang-18
-i386         buildonly-randconfig-002-20240615   gcc-9
-i386         buildonly-randconfig-003-20240615   gcc-7
-i386         buildonly-randconfig-004-20240615   clang-18
-i386         buildonly-randconfig-005-20240615   clang-18
-i386         buildonly-randconfig-006-20240615   gcc-13
-i386                  randconfig-001-20240615   clang-18
-i386                  randconfig-002-20240615   gcc-13
-i386                  randconfig-003-20240615   clang-18
-i386                  randconfig-004-20240615   clang-18
-i386                  randconfig-005-20240615   clang-18
-i386                  randconfig-006-20240615   clang-18
-i386                  randconfig-011-20240615   clang-18
-i386                  randconfig-012-20240615   gcc-12
-i386                  randconfig-013-20240615   gcc-13
-i386                  randconfig-014-20240615   clang-18
-i386                  randconfig-015-20240615   clang-18
-i386                  randconfig-016-20240615   gcc-13
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240615   gcc-13.2.0
-loongarch             randconfig-002-20240615   gcc-13.2.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                                defconfig   gcc-13.2.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240615   gcc-13.2.0
-nios2                 randconfig-002-20240615   gcc-13.2.0
-openrisc                          allnoconfig   gcc-13.2.0
-openrisc                            defconfig   gcc-13.2.0
-parisc                            allnoconfig   gcc-13.2.0
-parisc                              defconfig   gcc-13.2.0
-parisc                randconfig-001-20240615   gcc-13.2.0
-parisc                randconfig-002-20240615   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                           allnoconfig   gcc-13.2.0
-powerpc               randconfig-001-20240615   clang-19
-powerpc               randconfig-002-20240615   clang-19
-powerpc               randconfig-003-20240615   clang-19
-powerpc64             randconfig-001-20240615   clang-19
-powerpc64             randconfig-002-20240615   clang-19
-powerpc64             randconfig-003-20240615   clang-19
-riscv                             allnoconfig   gcc-13.2.0
-riscv                               defconfig   clang-19
-riscv                 randconfig-001-20240615   clang-19
-riscv                 randconfig-002-20240615   gcc-13.2.0
-s390                              allnoconfig   clang-19
-s390                                defconfig   clang-19
-s390                  randconfig-001-20240615   clang-16
-s390                  randconfig-002-20240615   clang-19
-sh                                allnoconfig   gcc-13.2.0
-sh                                  defconfig   gcc-13.2.0
-sh                    randconfig-001-20240615   gcc-13.2.0
-sh                    randconfig-002-20240615   gcc-13.2.0
-sparc                             allnoconfig   gcc-13.2.0
-sparc                               defconfig   gcc-13.2.0
-sparc64                             defconfig   gcc-13.2.0
-sparc64               randconfig-001-20240615   gcc-13.2.0
-sparc64               randconfig-002-20240615   gcc-13.2.0
-um                                allnoconfig   clang-17
-um                                  defconfig   clang-19
-um                             i386_defconfig   gcc-13
-um                    randconfig-001-20240615   gcc-7
-um                    randconfig-002-20240615   gcc-11
-um                           x86_64_defconfig   clang-15
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                randconfig-001-20240615   gcc-13.2.0
-xtensa                randconfig-002-20240615   gcc-13.2.0
+This is only compile-tested.
 
+I have some more patches for the rest of amdgpu,
+to move to 'struct drm_edid'.
+This patch is a test-balloon for the general idea.
+
+The same can also be done for drm/radeon.
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c |  6 +-----
+ drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h       |  4 ++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c       |  2 +-
+ drivers/gpu/drm/amd/amdgpu/atombios_encoders.c | 21 +++++++--------------
+ drivers/gpu/drm/amd/amdgpu/dce_v10_0.c         |  2 +-
+ drivers/gpu/drm/amd/amdgpu/dce_v11_0.c         |  2 +-
+ drivers/gpu/drm/amd/amdgpu/dce_v6_0.c          |  2 +-
+ drivers/gpu/drm/amd/amdgpu/dce_v8_0.c          |  2 +-
+ 8 files changed, 15 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
+index 9caba10315a8..f1b11b27cce0 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c
+@@ -265,11 +265,7 @@ struct edid *amdgpu_connector_edid(struct drm_connector *connector)
+ static struct edid *
+ amdgpu_connector_get_hardcoded_edid(struct amdgpu_device *adev)
+ {
+-	if (adev->mode_info.bios_hardcoded_edid) {
+-		return kmemdup((unsigned char *)adev->mode_info.bios_hardcoded_edid,
+-			       adev->mode_info.bios_hardcoded_edid_size, GFP_KERNEL);
+-	}
+-	return NULL;
++	return drm_edid_duplicate(drm_edid_raw(adev->mode_info.bios_hardcoded_edid));
+ }
+ 
+ static void amdgpu_connector_get_edid(struct drm_connector *connector)
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
+index 1fe21a70ddd0..928ac3f1e2ba 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
+@@ -51,6 +51,7 @@ struct amdgpu_encoder;
+ struct amdgpu_router;
+ struct amdgpu_hpd;
+ struct edid;
++struct drm_edid;
+ 
+ #define to_amdgpu_crtc(x) container_of(x, struct amdgpu_crtc, base)
+ #define to_amdgpu_connector(x) container_of(x, struct amdgpu_connector, base)
+@@ -325,8 +326,7 @@ struct amdgpu_mode_info {
+ 	/* FMT dithering */
+ 	struct drm_property *dither_property;
+ 	/* hardcoded DFP edid from BIOS */
+-	struct edid *bios_hardcoded_edid;
+-	int bios_hardcoded_edid_size;
++	const struct drm_edid *bios_hardcoded_edid;
+ 
+ 	/* firmware flags */
+ 	u32 firmware_flags;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
+index e30eecd02ae1..543275db8302 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
+@@ -539,7 +539,7 @@ static int amdgpu_vkms_sw_fini(void *handle)
+ 
+ 	adev->mode_info.mode_config_initialized = false;
+ 
+-	kfree(adev->mode_info.bios_hardcoded_edid);
++	drm_edid_free(adev->mode_info.bios_hardcoded_edid);
+ 	kfree(adev->amdgpu_vkms_output);
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c b/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
+index 25feab188dfe..90383094ed1e 100644
+--- a/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
++++ b/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
+@@ -2064,20 +2064,13 @@ amdgpu_atombios_encoder_get_lcd_info(struct amdgpu_encoder *encoder)
+ 				case LCD_FAKE_EDID_PATCH_RECORD_TYPE:
+ 					fake_edid_record = (ATOM_FAKE_EDID_PATCH_RECORD *)record;
+ 					if (fake_edid_record->ucFakeEDIDLength) {
+-						struct edid *edid;
+-						int edid_size =
+-							max((int)EDID_LENGTH, (int)fake_edid_record->ucFakeEDIDLength);
+-						edid = kmalloc(edid_size, GFP_KERNEL);
+-						if (edid) {
+-							memcpy((u8 *)edid, (u8 *)&fake_edid_record->ucFakeEDIDString[0],
+-							       fake_edid_record->ucFakeEDIDLength);
+-
+-							if (drm_edid_is_valid(edid)) {
+-								adev->mode_info.bios_hardcoded_edid = edid;
+-								adev->mode_info.bios_hardcoded_edid_size = edid_size;
+-							} else
+-								kfree(edid);
+-						}
++						const struct drm_edid *edid;
++						edid = drm_edid_alloc(fake_edid_record->ucFakeEDIDString,
++								      max_t(int, EDID_LENGTH, fake_edid_record->ucFakeEDIDLength));
++						if (drm_edid_valid(edid))
++							adev->mode_info.bios_hardcoded_edid = edid;
++						else
++							drm_edid_free(edid);
+ 					}
+ 					record += fake_edid_record->ucFakeEDIDLength ?
+ 						  struct_size(fake_edid_record,
+diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
+index b44fce44c066..11d648e688ce 100644
+--- a/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
+@@ -2846,7 +2846,7 @@ static int dce_v10_0_sw_fini(void *handle)
+ {
+ 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
+ 
+-	kfree(adev->mode_info.bios_hardcoded_edid);
++	drm_edid_free(adev->mode_info.bios_hardcoded_edid);
+ 
+ 	drm_kms_helper_poll_fini(adev_to_drm(adev));
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
+index 80b2e7f79acf..01536f523032 100644
+--- a/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
+@@ -2973,7 +2973,7 @@ static int dce_v11_0_sw_fini(void *handle)
+ {
+ 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
+ 
+-	kfree(adev->mode_info.bios_hardcoded_edid);
++	drm_edid_free(adev->mode_info.bios_hardcoded_edid);
+ 
+ 	drm_kms_helper_poll_fini(adev_to_drm(adev));
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+index db20012600f5..0e5b568a96fc 100644
+--- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+@@ -2745,7 +2745,7 @@ static int dce_v6_0_sw_fini(void *handle)
+ {
+ 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
+ 
+-	kfree(adev->mode_info.bios_hardcoded_edid);
++	drm_edid_free(adev->mode_info.bios_hardcoded_edid);
+ 
+ 	drm_kms_helper_poll_fini(adev_to_drm(adev));
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
+index 5b56100ec902..895f050a3e62 100644
+--- a/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
+@@ -2766,7 +2766,7 @@ static int dce_v8_0_sw_fini(void *handle)
+ {
+ 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
+ 
+-	kfree(adev->mode_info.bios_hardcoded_edid);
++	drm_edid_free(adev->mode_info.bios_hardcoded_edid);
+ 
+ 	drm_kms_helper_poll_fini(adev_to_drm(adev));
+ 
+
+---
+base-commit: a3e18a540541325a8c8848171f71e0d45ad30b2c
+change-id: 20240616-amdgpu-edid-bios-a31aa16b0321
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thomas Weißschuh <linux@weissschuh.net>
+
 
