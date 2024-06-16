@@ -1,211 +1,158 @@
-Return-Path: <linux-kernel+bounces-216221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E2D1909CD8
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:48:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3486909CDC
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A670B1C20B3C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:48:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66863B21166
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EDB186288;
-	Sun, 16 Jun 2024 09:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5F7186291;
+	Sun, 16 Jun 2024 09:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="yDLjLqOV"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iesUFZJX"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E7016D9B5
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 09:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3411A16D9B5
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 09:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718531280; cv=none; b=NntfR5wi4PwkwpCnm97/tiNdWRHrYd/HxgCtpHnBS3m3qV0Rnj0lp0LppvwNXV9x0yKa5mke20FvV5dU5J+SivuNCxzg+VsntZWAWoQQG+2DNwFZyCpEMHHZ525etd0uETa0aWQELhoz/MBNB2+IDJsQRkX2DXIvAxHHbQh65zQ=
+	t=1718531480; cv=none; b=eSzId9koaqy3qCtsBjZSzaCoLjeka6at643HWfLKIH8ip4XphrdX30vnoCBmZBtXxNs3n30UDvlKiSr3qhOse6YKXv3o21ODfSjMRWzby7jTQccfmDEyKEXmBj+K9XxYjseRBLaBwqefuaF1LR+QxKqMaBzYx3/+/MxmUm6JL5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718531280; c=relaxed/simple;
-	bh=U/8NZyO/ejgieYgN7cns+EsSBMKQVOy6mJpLWv03dTo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iw2+KFUPGa0JRPlVJ1kOC0XjCmr8yBXj83Dx+a3UNqRN0fzxOudVzmWDXH699nUlx/wMLj9KbKCgjuyztHAY0LsdPcDzjD1C0buAwxRGaAFSd1NZFsBzth8Pm3+ovLpwNE5iwdQctPzDSp8fsMIfFojxjvNqzM6gKIUchC80g1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=yDLjLqOV; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Envelope-To: ezequiel@vanguardiasur.com.ar
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1718531276;
+	s=arc-20240116; t=1718531480; c=relaxed/simple;
+	bh=n4cx1Z6BJEH5jWA2Zuabkll9jSUK+CtlbukX047kvG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RKyYVlcNZRiPSilqUX7cC47nr9cKFqGUUC6fFrSWiLhuG0lrEFxve0SS9fx4IgpwISVS36KQqwJiEjT2hwIzFWzd38vPBMvWY2ErUVFE9Tsvw82f+qzHbDoYfo2UCc4suBMHH8MO43P81NV5C3MV3u+GmgjFTr7nzRseTvk6v5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iesUFZJX; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: boqun.feng@gmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718531475;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YsGDxw7euO03Xurgk7SCoMe6i8m3qHGwgfyQyq8DqHE=;
-	b=yDLjLqOV0BEutjvYcq1hJfA3ZHO0eUrH9kF7nNO3il/VF/h/bMWxWPZkG2RcqEFqPV76Uz
-	qI2qJa18CdVdYxsM6pVcVIAbep4Wly2Wmz7lkgyKuls0/EiRtvJe8AnvF38iprjQoK5Y5H
-	r8sMBQncCQYuLCRVlqW8C4o8qeh2VReRFOnBZqvAZskeZLEnS874LfH1YaO1gNS6kadDYp
-	B4XWXB1Q6VmyGZ8E0i9yDzAyzt6JWEU2/JMnM5tQM2mVJN5Bb8W4Hqjnfi5YRPWsgCOJtg
-	hGCpMuLl/tL0aa34HYB7BRA43KtSFNaqQsbi4AdWJImIha9r/WAPK0RyGTHLag==
-X-Envelope-To: mchehab@kernel.org
-X-Envelope-To: hverkuil-cisco@xs4all.nl
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: jonas@kwiboo.se
-X-Envelope-To: andyshrk@163.com
-X-Envelope-To: knaerzche@gmail.com
-X-Envelope-To: nicolas.dufresne@collabora.com
-X-Envelope-To: benjamin.gaignard@collabora.com
-X-Envelope-To: sebastian.fricke@collabora.com
-X-Envelope-To: chris.obbard@collabora.com
-X-Envelope-To: linux-media@vger.kernel.org
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: linux-staging@lists.linux.dev
+	bh=Sc0GTYUsIOhy53GbTc5pAmG+S0kUyWsfKR1YRXBUAFE=;
+	b=iesUFZJXhWISzzq/1WrJCPxUjjWPh+mWd0w/rzEVrhEGyJ9Mu71NzjiWpCZw4M545BFaiX
+	6I6iA1L5/DyAIpTb5sGMdC+H5Wfr2HYiyZgVOeNRwTrakO+019XDxBDppjj9IzIEeftDxk
+	ehJ13CJGG4rAG8eVqVxA6fTLZTfcuoY=
+X-Envelope-To: benno.lossin@proton.me
+X-Envelope-To: miguel.ojeda.sandonis@gmail.com
+X-Envelope-To: gary@garyguo.net
+X-Envelope-To: rust-for-linux@vger.kernel.org
 X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: jonas@kwiboo.se
+X-Envelope-To: linux-arch@vger.kernel.org
+X-Envelope-To: llvm@lists.linux.dev
+X-Envelope-To: ojeda@kernel.org
+X-Envelope-To: alex.gaynor@gmail.com
+X-Envelope-To: wedsonaf@gmail.com
+X-Envelope-To: bjorn3_gh@protonmail.com
+X-Envelope-To: a.hindborg@samsung.com
+X-Envelope-To: aliceryhl@google.com
+X-Envelope-To: stern@rowland.harvard.edu
+X-Envelope-To: parri.andrea@gmail.com
+X-Envelope-To: will@kernel.org
+X-Envelope-To: peterz@infradead.org
+X-Envelope-To: npiggin@gmail.com
+X-Envelope-To: dhowells@redhat.com
+X-Envelope-To: j.alglave@ucl.ac.uk
+X-Envelope-To: luc.maranget@inria.fr
+X-Envelope-To: paulmck@kernel.org
+X-Envelope-To: akiyks@gmail.com
+X-Envelope-To: dlustig@nvidia.com
+X-Envelope-To: joel@joelfernandes.org
+X-Envelope-To: nathan@kernel.org
+X-Envelope-To: ndesaulniers@google.com
+X-Envelope-To: kent.overstreet@gmail.com
+X-Envelope-To: gregkh@linuxfoundation.org
+X-Envelope-To: elver@google.com
+X-Envelope-To: mark.rutland@arm.com
+X-Envelope-To: tglx@linutronix.de
+X-Envelope-To: mingo@redhat.com
+X-Envelope-To: bp@alien8.de
+X-Envelope-To: dave.hansen@linux.intel.com
+X-Envelope-To: x86@kernel.org
+X-Envelope-To: hpa@zytor.com
+X-Envelope-To: catalin.marinas@arm.com
+X-Envelope-To: torvalds@linux-foundation.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: tmgross@umich.edu
+X-Envelope-To: dakr@redhat.com
+Date: Sun, 16 Jun 2024 05:51:07 -0400
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Diederik de Haas <didi.debian@cknow.org>
-To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-rockchip@lists.infradead.org,
- Jonas Karlman <jonas@kwiboo.se>, Andy Yan <andyshrk@163.com>
-Cc: Alex Bee <knaerzche@gmail.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Christopher Obbard <chris.obbard@collabora.com>, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>
-Subject:
- Re: [PATCH v4 00/11] media: rkvdec: Add H.264 High 10 and 4:2:2 profile
- support
-Date: Sun, 16 Jun 2024 11:47:43 +0200
-Message-ID: <122755518.lCnTqr06ca@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <20231105165521.3592037-1-jonas@kwiboo.se>
-References: <20231105165521.3592037-1-jonas@kwiboo.se>
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Benno Lossin <benno.lossin@proton.me>, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Gary Guo <gary@garyguo.net>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Alan Stern <stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>, 
+	Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>, 
+	Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, 
+	Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	kent.overstreet@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	elver@google.com, Mark Rutland <mark.rutland@arm.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, 
+	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>, 
+	dakr@redhat.com
+Subject: Re: [RFC 2/2] rust: sync: Add atomic support
+Message-ID: <5lwylk6fhlvqfgxmt7xdoxdrhtvmplo5kazpdbt3kxpnlltxit@v5xbpiv3dnqq>
+References: <20240613144432.77711a3a@eugeo>
+ <ZmseosxVQXdsQjNB@boqun-archlinux>
+ <CANiq72myhoCCWs7j0eZuxfoYMbTez7cPa795T57+gz2Dpd+xAw@mail.gmail.com>
+ <ZmtC7h7v1t6XJ6EI@boqun-archlinux>
+ <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com>
+ <ZmxUxaIwHWnB42h-@Boquns-Mac-mini.home>
+ <c1c45a2e-afdf-40a6-9f44-142752368d5e@proton.me>
+ <ZmzvVr7lYfR6Dpca@Boquns-Mac-mini.home>
+ <b692945b-8fa4-4918-93f6-783fbcde375c@proton.me>
+ <Zm4R0XwTpsASpBhx@Boquns-Mac-mini.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2306946.yOONvtlcC0";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zm4R0XwTpsASpBhx@Boquns-Mac-mini.home>
 X-Migadu-Flow: FLOW_OUT
 
---nextPart2306946.yOONvtlcC0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Diederik de Haas <didi.debian@cknow.org>
-Date: Sun, 16 Jun 2024 11:47:43 +0200
-Message-ID: <122755518.lCnTqr06ca@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <20231105165521.3592037-1-jonas@kwiboo.se>
-References: <20231105165521.3592037-1-jonas@kwiboo.se>
-MIME-Version: 1.0
-
-On Sunday, 5 November 2023 17:54:59 CEST Jonas Karlman wrote:
-> This is a revival of a 3 year old series [1] now that NV15/NV20/NV30 support
-> for display driver have landed in mainline tree.
+On Sat, Jun 15, 2024 at 03:12:33PM -0700, Boqun Feng wrote:
+> What's the issue of having AtomicI32 and AtomicI64 first then? We don't
+> need to do 1 or 2 until the real users show up.
 > 
-> This series adds H.264 High 10 and 4:2:2 profile support to the Rockchip
-> Video Decoder driver.
+> And I'd like also to point out that there are a few more trait bound
+> designs needed for Atomic<T>, for example, Atomic<u32> and Atomic<i32>
+> have different sets of API (no inc_unless_negative() for u32).
 > 
-> Patch 1 adds helpers for calculating plane bytesperline and sizeimage.
-> Patch 2 adds two new pixelformats for semi-planer 10-bit 4:2:0/4:2:2 YUV.
+> Don't make me wrong, I have no doubt we can handle this in the type
+> system, but given the design work need, won't it make sense that we take
+> baby steps on this? We can first introduce AtomicI32 and AtomicI64 which
+> already have real users, and then if there are some values of generic
+> atomics, we introduce them and have proper discussion on design.
 > 
-> Patch 3 change to use bytesperline and buffer height to configure strides.
-> Patch 4 change to use values from SPS/PPS control to configure the HW.
-> Patch 5 remove an unnecessary call to validate sps at streaming start.
-> 
-> Patch 6-10 refactor code to support filtering of CAPUTRE formats based
-> on the image format returned from a get_image_fmt ops.
-> 
-> Patch 11 adds final bits to support H.264 High 10 and 4:2:2 profiles.
-> 
-> Tested on a ROCK Pi 4 (RK3399) and Rock64 (RK3328):
-> 
->   v4l2-compliance 1.24.1, 64 bits, 64-bit time_t
->   ...
->   Total for rkvdec device /dev/video1: 46, Succeeded: 46, Failed: 0,
-> Warnings: 0
-> 
->   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-V4L2-request
->   ...
->   Ran 65/69 tests successfully
-> 
->   Running test suite JVT-AVC_V1 with decoder FFmpeg-H.264-V4L2-request
->   ...
->   Ran 127/135 tests successfully
-> 
-> Before this series:
-> 
->   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-V4L2-request
->   ...
->   Ran 44/69 tests successfully
-> 
-> ...
-> 
-> Following commits adds support for NV15/NV20/NV30 to VOP driver:
-> 728c15b4b5f3 ("drm/fourcc: Add NV20 and NV30 YUV formats")
-> d4b384228562 ("drm/rockchip: vop: Add NV15, NV20 and NV30 support")
-> 
-> To fully runtime test this series you may need above drm commits and ffmpeg
-> patches from [2], this series and drm patches is also available at [3].
-> 
-> [1]
-> https://lore.kernel.org/linux-media/20200706215430.22859-1-jonas@kwiboo.se/
-> [2] https://github.com/Kwiboo/FFmpeg/commits/v4l2-request-n6.1-dev/ [3]
-> https://github.com/Kwiboo/linux-rockchip/commits/linuxtv-rkvdec-high-10-v4/
-> [4] https://gist.github.com/Kwiboo/f4ac15576b2c72887ae2bc5d58b5c865 [5]
-> https://gist.github.com/Kwiboo/459a1c8f1dcb56e45dc7a7a29cc28adf
+> To me, it's perfectly fine that Atomic{I32,I64} co-exist with Atomic<T>.
+> What's the downside? A bit specific example would help me understand
+> the real concern here.
 
-Reviving this old thread now that rkvdec2 'stuff' emerged.
-I have (actually) done quite some tests with this (and "media: rkvdec: Add 
-HEVC backend" patch set) and they have been part of my kernel builds ever 
-since.
-I _think_, but don't know, that is relevant for Andy's question:
+Err, what?
 
-On zondag 16 juni 2024 08:58:20 CEST Andy Yan <andyshrk@163.com> wrote:
-> How can I test these patches? Do they require any additional userspace
-> patches?
+Of course we want generic atomics, and we need that for properly
+supporting cmpxchg.
 
-I have the same question and I think you'd need this and the HEVC patch set 
-and then also patch FFmpeg and then it should enable HW acceleration.
-So my question boils down to: with the rkvdec2 patch set, should V4L2-requests 
-now also work with rkvdec, so not just Hantro anymore?
-
-BTW: the libdrm commits have been merged upstream quite some time ago, so if 
-you have a recent version of that, you don't need to patch that.
-If you use FFmpeg 7.0, then Jonas has a branch for that too (haven't tried it 
-yet though).
-
-FWIW: my test results were a bit mixed. I didn't post them before as I don't 
-fully/really understand this 'video stuff', and I didn't want you all to suffer 
-from what was likely a PEBKAC issue.
-
-On my PineTab2 (rk3566) I had some h.264 videos HW accelerated, but not all. 
-My guess is that it's related to the resolution. 1920x1080 worked, while it 
-didn't work with a 1280x640 video. The video still played, just not HW 
-accelerated. IOW: improvements in some and otherwise it was just rendered by 
-the CPU (I think), just like before.
-
-On my Rock64 I got a pink tint with all videos, like described here:
-https://github.com/mpv-player/mpv/issues/12968
-IIUC, that's actually a problem in the lima driver?
-
-Cheers,
-  Diederik
---nextPart2306946.yOONvtlcC0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZm60vwAKCRDXblvOeH7b
-bunzAQDtoUoO69YOCfIwQy1BpyubGMFwwb7YvB1mYGizpNzaAwD8Cw1NbPvKRJrd
-AlNeNCuUbZbkJRIj5vHMteqOVa7VhwU=
-=6pBz
------END PGP SIGNATURE-----
-
---nextPart2306946.yOONvtlcC0--
-
-
-
+Bogun, you've got all the rust guys pushing for doing this with
+generics, I'm not sure why you're being stubborn here?
 
