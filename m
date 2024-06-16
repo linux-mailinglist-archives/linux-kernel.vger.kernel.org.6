@@ -1,52 +1,51 @@
-Return-Path: <linux-kernel+bounces-216190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B7E0909C8B
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA50909C8C
 	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 10:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05CB81C21746
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFB6E1C20924
 	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5F1186E56;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5896418734E;
 	Sun, 16 Jun 2024 08:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JHhknxq0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oB/nmopM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F471850B3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56034186291
 	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 08:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718526555; cv=none; b=JR+6ziMEK1FVwCZtMNr4MbktKIqyemDNUXBjZnl4saB2WOIN/oXTx6ppvQoBRpyrMISo5yTCUzNHr3jjEe6I+lDrH5Kzf3xKk4/LKZY2iWQVkAL8/uj6lRlSmVkjuAK/1mmuZ8u3rlthuoB/NDgUVJvnnAKJAA41Vd6J506W/Bk=
+	t=1718526555; cv=none; b=LcoozGqG8pY4kzyZ9Xmr7VbuWrVzRzGofwj04DI4SZD4jtN/Th9+7W6fXyO0cS9GYOoZHrIeCYUTJuCTzbanPxb1NExK85riUZFC8N5ltvdH/U3vgEPxuxfBftAGyMJ3snU7d/8YYT5R9v+GcN78vpaNCfKG5ivfd9W8QM3AtZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718526555; c=relaxed/simple;
-	bh=r10waYEMGAymNOh3QIyIV85JK6+0pN1kGYW3MVMVAVg=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Av64aT4DtGhMRGDJbakCz/2we5HfaqvA8ZoMk+B3xMRtmSgvfWsPCfK23qJXIhfw6ZzYnBMBnYUMIYMO8xVaza8+6piwzIxXgEu5BJ4IH/L/htq7xA5y15LB2dheTqZ+jLwnTAlJkeUAnBtQ9Cbrybx+1I8bPZjJTKlw/6rGdIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JHhknxq0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C19DEC2BBFC;
+	bh=Rxn1gnGGokSSuKzKIeIUyeSaIESIT/g/wWVSlGfjLDk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=AE67AmQrU1ws/KG3sNnwNsaW8CQXYETICKfGp80XPDxF9toQFUE9EHKhjcMl+Q8LNuBUZXAkKxqVwdDamnf5dnLfGRSQL7BTvO3hLzjvAc0OVSC5XjrB+RPvJqdRF43XqoMriYNCby7LkdtX50T2DRmrSBXtDEAAWoy2oWGYYiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oB/nmopM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D83F2C4AF1D;
 	Sun, 16 Jun 2024 08:29:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1718526554;
-	bh=r10waYEMGAymNOh3QIyIV85JK6+0pN1kGYW3MVMVAVg=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=JHhknxq0z6n0TCJmxlOa3vL7BhNIBTyulXx/ftmfPiZRB2t9ESD1JFIGqeXwFqRus
-	 d85HzY1IviXo802XZvDksLD+yLAeo/t9NFF3sHkT5aVXdO43OhUsXgPcexfuxgXmNf
-	 2Gy1r8Xrt8gMJTCy7F6lp7sJ4QPqGZ0Q+HM/RtdPItIx5RYuOZ0sW/C/TVUB290Y9J
-	 eibkwV8tx8DVMjDLmXcs3h6VW/yYl+qWVtvq/4Hqcxv/6sy9O1BCFphtsDVqfUo0Uz
-	 9il9Vne3rxX4j396JmfUKg2fy8Kmmpa2WYfKtF4mk1Ifb/ET8ezXaTW7M7A6cBrI5Q
-	 aavpwTuyYGFNQ==
+	bh=Rxn1gnGGokSSuKzKIeIUyeSaIESIT/g/wWVSlGfjLDk=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=oB/nmopMltO0EzxN7IWfWOREtAtuBDPyJoyDW1OHbY3/tPGezT2N39kjs99BtMKkk
+	 /OdZsUi0y6XMzHpcBfWQyD/dBKU7IvUUvylmaC8x+SU4N+CjCKiGg+V6RsZZuSClpn
+	 kqtVL7ODGCLoeiT7dDSR3+gcaWjc1X4Tm+S9WV+CRRYGaOCNlynOs4nmNYjA9Gr2TC
+	 8SzE34f1NHI68o6/PjwpuQoESbDMXqfmHuMW5qkhLjD7ewFz0QvcLGm0E9sk86NwD/
+	 cl5bd2yYFRogWTWDOHB3GUs2vdpE0IMgSwX1wtiQAPH4/WFEwpEHQi7/OXrMd6p41n
+	 79WBVJOaxXbgQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EA9C27C6E;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C512BC2BA15;
 	Sun, 16 Jun 2024 08:29:14 +0000 (UTC)
 From: Hsiao Chien Sung via B4 Relay <devnull+shawn.sung.mediatek.com@kernel.org>
-Subject: [PATCH 00/13] Fix the errors of MediaTek display driver found by
- IGT
-Date: Sun, 16 Jun 2024 16:29:10 +0800
-Message-Id: <20240616-mediatek-drm-next-v1-0-7e8f9cf785d8@mediatek.com>
+Date: Sun, 16 Jun 2024 16:29:11 +0800
+Subject: [PATCH 01/13] soc: mediatek: Disable 9-bit alpha in ETHDR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,9 +54,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFaibmYC/x3MTQqAIBBA4avIrBtQ+4G6SrSwnGoILTQiEO+et
- PwW7yWIFJgiDCJBoIcjn75AVQKW3fiNkG0xaKkb2akWHVk2Nx1og0NP743GdlLNddOvuobSXYF
- Wfv/nOOX8ASDqfQljAAAA
+Message-Id: <20240616-mediatek-drm-next-v1-1-7e8f9cf785d8@mediatek.com>
+References: <20240616-mediatek-drm-next-v1-0-7e8f9cf785d8@mediatek.com>
+In-Reply-To: <20240616-mediatek-drm-next-v1-0-7e8f9cf785d8@mediatek.com>
 To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
  Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
  Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
@@ -69,11 +68,11 @@ Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  Hsiao Chien Sung <shawn.sung@mediatek.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718526553; l=1639;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718526553; l=2103;
  i=shawn.sung@mediatek.com; s=20240616; h=from:subject:message-id;
- bh=r10waYEMGAymNOh3QIyIV85JK6+0pN1kGYW3MVMVAVg=;
- b=tingLMnjsTKtbIyzbXebc3jnQb0ioiL1lqGVFCw4e0VaknTStBGtN+rZoSzvDVFJUrNJ/nvBW
- txWOmGBNVd5AWc8Num1/KDshCYgGD3L1Kwcf8Ys7mnaoMpLEmfUC+Sz
+ bh=AhpL6mafGPf92ATlXUF9GJd5xSZP0P96bzGL4snlDgc=;
+ b=wItu85Eor8vZDTd2CEgLbljnmpGnci2Gj9uQnt0nUPAZYN+tofn1d7wu0+uu4ryK64HWsaHAM
+ 7xOuKPpTiFkCxlEy11K8dLZRwBcUGjA6kbqDe+Fh9CG9L6KWA6cHKaw
 X-Developer-Key: i=shawn.sung@mediatek.com; a=ed25519;
  pk=lq1w8BuWDINX+4JHjGHhhbAU5ICP+cL9VCj7wn+cEDA=
 X-Endpoint-Received: by B4 Relay for shawn.sung@mediatek.com/20240616 with
@@ -81,41 +80,56 @@ X-Endpoint-Received: by B4 Relay for shawn.sung@mediatek.com/20240616 with
 X-Original-From: Hsiao Chien Sung <shawn.sung@mediatek.com>
 Reply-To: shawn.sung@mediatek.com
 
-This series fixes the errors of MediaTek display driver found by IGT.
+From: Hsiao Chien Sung <shawn.sung@mediatek.com>
 
+When 9-bit alpha is enabled, its value will be converted from 0-255 to
+0-256 (255 = not defined). This is designed for special HDR related
+calculation, which should be disabled by default, otherwise, alpha
+blending will not work correctly.
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
 ---
-Hsiao Chien Sung (13):
-      soc: mediatek: Disable 9-bit alpha in ETHDR
-      drm/mediatek: Add OVL compatible name for MT8195
-      drm/mediatek: Add missing plane settings when async update
-      drm/mediatek: Add DRM_MODE_ROTATE_0 to rotation property
-      drm/mediatek: Set DRM mode configs accordingly
-      drm/mediatek: Turn off the layers with zero width or height
-      drm/mediatek: Support more 10bit formats in OVL
-      drm/mediatek: Support RGBA8888 and RGBX8888 in OVL on MT8195
-      drm/mediatek: Fix XRGB setting error in OVL
-      drm/mediatek: Fix XRGB setting error in Mixer
-      drm/mediatek: Add new color format MACROs in OVL
-      drm/mediatek: Support DRM plane alpha in OVL
-      drm/mediatek: Support DRM plane alpha in Mixer
+ drivers/gpu/drm/mediatek/mtk_ethdr.c | 3 +--
+ drivers/soc/mediatek/mtk-mmsys.c     | 1 +
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
- drivers/gpu/drm/mediatek/mtk_ddp_comp.h         |  6 +-
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c         | 85 +++++++++++++++++--------
- drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c |  2 +-
- drivers/gpu/drm/mediatek/mtk_drm_drv.c          | 24 +++++++
- drivers/gpu/drm/mediatek/mtk_drm_drv.h          |  4 ++
- drivers/gpu/drm/mediatek/mtk_ethdr.c            | 26 ++++++--
- drivers/gpu/drm/mediatek/mtk_plane.c            |  4 +-
- drivers/soc/mediatek/mtk-mmsys.c                |  1 +
- 8 files changed, 118 insertions(+), 34 deletions(-)
----
-base-commit: 62fe4b067581d480e863191305f108bebffbc0e9
-change-id: 20240615-mediatek-drm-next-ad601b349f23
+diff --git a/drivers/gpu/drm/mediatek/mtk_ethdr.c b/drivers/gpu/drm/mediatek/mtk_ethdr.c
+index 156c6ff547e8..d7d16482c947 100644
+--- a/drivers/gpu/drm/mediatek/mtk_ethdr.c
++++ b/drivers/gpu/drm/mediatek/mtk_ethdr.c
+@@ -50,7 +50,6 @@
+ 
+ #define MIXER_INX_MODE_BYPASS			0
+ #define MIXER_INX_MODE_EVEN_EXTEND		1
+-#define DEFAULT_9BIT_ALPHA			0x100
+ #define	MIXER_ALPHA_AEN				BIT(8)
+ #define	MIXER_ALPHA				0xff
+ #define ETHDR_CLK_NUM				13
+@@ -169,7 +168,7 @@ void mtk_ethdr_layer_config(struct device *dev, unsigned int idx,
+ 		alpha_con = MIXER_ALPHA_AEN | MIXER_ALPHA;
+ 
+ 	mtk_mmsys_mixer_in_config(priv->mmsys_dev, idx + 1, alpha_con ? false : true,
+-				  DEFAULT_9BIT_ALPHA,
++				  MIXER_ALPHA,
+ 				  pending->x & 1 ? MIXER_INX_MODE_EVEN_EXTEND :
+ 				  MIXER_INX_MODE_BYPASS, align_width / 2 - 1, cmdq_pkt);
+ 
+diff --git a/drivers/soc/mediatek/mtk-mmsys.c b/drivers/soc/mediatek/mtk-mmsys.c
+index f370f4ec4b88..938240714e54 100644
+--- a/drivers/soc/mediatek/mtk-mmsys.c
++++ b/drivers/soc/mediatek/mtk-mmsys.c
+@@ -236,6 +236,7 @@ void mtk_mmsys_mixer_in_config(struct device *dev, int idx, bool alpha_sel, u16
+ 
+ 	mtk_mmsys_update_bits(mmsys, MT8195_VDO1_MIXER_IN1_ALPHA + (idx - 1) * 4, ~0,
+ 			      alpha << 16 | alpha, cmdq_pkt);
++	mtk_mmsys_update_bits(mmsys, MT8195_VDO1_HDR_TOP_CFG, BIT(15 + idx), 0, cmdq_pkt);
+ 	mtk_mmsys_update_bits(mmsys, MT8195_VDO1_HDR_TOP_CFG, BIT(19 + idx),
+ 			      alpha_sel << (19 + idx), cmdq_pkt);
+ 	mtk_mmsys_update_bits(mmsys, MT8195_VDO1_MIXER_IN1_PAD + (idx - 1) * 4,
 
-Best regards,
 -- 
-Hsiao Chien Sung <shawn.sung@mediatek.com>
+Git-146)
 
 
 
