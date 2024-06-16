@@ -1,61 +1,54 @@
-Return-Path: <linux-kernel+bounces-216145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05774909BEB
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:33:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E55F909BEC
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABAA328388D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 06:33:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31F85B22E61
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 06:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F6516EBEB;
-	Sun, 16 Jun 2024 06:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sgMLiiT5"
-Received: from msa.smtpout.orange.fr (out-66.smtpout.orange.fr [193.252.22.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46EE316D9B5;
+	Sun, 16 Jun 2024 06:33:18 +0000 (UTC)
+Received: from mail78-59.sinamail.sina.com.cn (mail78-59.sinamail.sina.com.cn [219.142.78.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C26D3D6B;
-	Sun, 16 Jun 2024 06:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7BD16F0DD
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 06:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718519590; cv=none; b=tDzAwME3DhHQSWx9zwEaP5H3O0L82aANSNeo6f/PcS+R6HuHw7/HLJiaRqPpgmN06mlOrbMiybBrx7n7bVzOaFm47ZDHenZB7Ig1G/ow3fdleixc8BactG10Yp+jJ3ksYC47xKSvAz3+Uk9duzcjNYyHByAkFvYj/VC2lQWy5Ds=
+	t=1718519597; cv=none; b=XJJhIV5vdSzcnkVNleeHRNvOrVmsWlMoGgIfQJ3dCgMkbr8IiJDJ0jjrU/vDSUFdxUY6kTvIZ+deEkJmRfSXJSf1KfQ94u4RH9hidK4Nb8LhCXrp2JFdOzoQYrxcRwLsfi5YHrUa/E3optwwMvCn9qraj0fEybqN2WsDhZ8G8MQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718519590; c=relaxed/simple;
-	bh=yeoIMmYjnCnd/pF+KBMuEywu1kWoSjejTx402xlCfNg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jPg/YmPhBfmjwyEuJEp74lj58CVdclqRO8papcn1Rya8aUHbAhKCKAPnJAPBBcZhXOnJwBOeN8DvL6QDv8UFn1rQZh3ii0uL+B90VKvyPYUY03P5L4xBDS+kT/RFlu0oDJ4KC+kO/8gGns0NF9LzUW3oG4fXmg918mjrlI5cgfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sgMLiiT5; arc=none smtp.client-ip=193.252.22.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id IjRgskqeZcHC1IjRgs1VRU; Sun, 16 Jun 2024 08:32:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1718519579;
-	bh=6NSWUuG4Lk7knZmNrGbInQc1afr3STzYY6T1YDhKlzM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=sgMLiiT5qNRVPo5JY9+6TQ00OTzgWM8xId95Ct6NGIpPBo6eQ9Hp+v6cZWJbY6ycW
-	 8j/XloTOljJBBPAqxkjP0edNKeCHI2id2KUGjgd8tF0Pf+ChTpAHor1iDw9LYGaSN5
-	 zxnX96UH8dvauHcJABiRWoBkxe4iQGEUtWYvEqS4Mq8BaBm2vlpNNRnS2P40gc0Oy2
-	 tXP6WRCxxKxRhFDc8hvxBJx1ibRloNHJD1Vb5Ud+1/TXjUTJqF12tplH5JzPgVOXgJ
-	 orogC+8OFuZBxbM4+o2EOElWh5HX4l3sP/pOMpb8sWkzh9/oT/zcHjhS2cm9gOhIoL
-	 RolGPE2MIeSpQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 16 Jun 2024 08:32:59 +0200
-X-ME-IP: 86.243.222.230
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
+	s=arc-20240116; t=1718519597; c=relaxed/simple;
+	bh=RkDUC72NplqItLpzX1fqE4SV2IKmpl2/vpxNEajZ7dc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hTNkHV8H62v8he0wJyWVfAVPp/Ca27slr54H7lAjSkv1LIfykv9ZrZ3lxQcBC0+/wGrEX6FhuEpZtx9egsfg0P3HLB6IMxDaPUcejs9n/TINMLpNUBCBgx9/kCjlLlmbYg3qwX53Q4M+U0SoBOv0vi8ypXcqNk9PFsrUgBc2FBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.9.2])
+	by sina.com (172.16.235.25) with ESMTP
+	id 666E872200002C1C; Sun, 16 Jun 2024 14:33:08 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 55163934210318
+X-SMAIL-UIID: 36CC5AC86D914D71A4F4F763510731BD-20240616-143308-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
 Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-media@vger.kernel.org
-Subject: [PATCH] media: cx231xx: Constify struct vb2_ops
-Date: Sun, 16 Jun 2024 08:32:53 +0200
-Message-ID: <9813724e0fe5a8a7067bb37475226ff2e0f042ed.1718519562.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
+Date: Sun, 16 Jun 2024 14:32:56 +0800
+Message-Id: <20240616063256.1356-1-hdanton@sina.com>
+In-Reply-To: <000000000000f386f90616fea5ef@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,55 +57,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-"struct vb2_ops" are not modified in this driver.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  83a7eefedc9b
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
-
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  36607	   1156	      0	  37763	   9383	drivers/media/usb/cx231xx/cx231xx-417.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  36735	   1016	      0	  37751	   9377	drivers/media/usb/cx231xx/cx231xx-417.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/media/usb/cx231xx/cx231xx-417.c   | 2 +-
- drivers/media/usb/cx231xx/cx231xx-video.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/usb/cx231xx/cx231xx-417.c b/drivers/media/usb/cx231xx/cx231xx-417.c
-index 343a4433ed24..abb967c8bd35 100644
---- a/drivers/media/usb/cx231xx/cx231xx-417.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-417.c
-@@ -1453,7 +1453,7 @@ static void stop_streaming(struct vb2_queue *vq)
- 	return_all_buffers(dev, VB2_BUF_STATE_ERROR);
- }
- 
--static struct vb2_ops cx231xx_video_qops = {
-+static const struct vb2_ops cx231xx_video_qops = {
- 	.queue_setup		= queue_setup,
- 	.buf_queue		= buffer_queue,
- 	.start_streaming	= start_streaming,
-diff --git a/drivers/media/usb/cx231xx/cx231xx-video.c b/drivers/media/usb/cx231xx/cx231xx-video.c
-index 8f347bbeeb32..435eb0b32cb1 100644
---- a/drivers/media/usb/cx231xx/cx231xx-video.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-video.c
-@@ -795,7 +795,7 @@ static void stop_streaming(struct vb2_queue *vq)
- 	return_all_buffers(dev, VB2_BUF_STATE_ERROR);
- }
- 
--static struct vb2_ops cx231xx_video_qops = {
-+static const struct vb2_ops cx231xx_video_qops = {
- 	.queue_setup		= queue_setup,
- 	.buf_queue		= buffer_queue,
- 	.start_streaming	= start_streaming,
--- 
-2.45.2
-
+--- x/fs/open.c
++++ y/fs/open.c
+@@ -952,6 +952,12 @@ static int do_dentry_open(struct file *f
+ 	if (!open)
+ 		open = f->f_op->open;
+ 	if (open) {
++		struct mount *mnt = real_mount(f->f_path.mnt);
++		error = -ENODEV;
++		if (mnt->mnt.mnt_flags & MNT_DOOMED)
++			goto cleanup_all;
++		if (mnt_get_count(mnt) < 2)
++			goto cleanup_all;
+ 		error = open(inode, f);
+ 		if (error)
+ 			goto cleanup_all;
+--
 
