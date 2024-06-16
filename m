@@ -1,62 +1,63 @@
-Return-Path: <linux-kernel+bounces-216386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 950EE909EB8
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:21:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23C42909EEF
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 20:00:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C22011C20DED
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:21:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9B1A1F23220
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA36286AE;
-	Sun, 16 Jun 2024 17:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B584481DD;
+	Sun, 16 Jun 2024 17:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="fOx9DXUz"
-Received: from out203-205-221-149.mail.qq.com (out203-205-221-149.mail.qq.com [203.205.221.149])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="vFoyp3AL"
+Received: from qq.com (ec2-54-164-151-162.compute-1.amazonaws.com [54.164.151.162])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B6739FFB;
-	Sun, 16 Jun 2024 17:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7442045024;
+	Sun, 16 Jun 2024 17:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.164.151.162
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718558480; cv=none; b=SGcxzuSpb03/KgVRjAZ6ZaEu3pRq85sm82IEFRxvc8gN00Vpvk/8B4U16Cm5RMawzE8uFLyIqY8k6SGiEVK9hdxUVwanw69JAiNgamMo/mJIKrv7S1LwMHjKq/1BX5XhoAbfDHquOVo+myfZQNq1QDBjVWZmEgxWtcSBAJiJ3dk=
+	t=1718560794; cv=none; b=YWmHZn+m1PekLOZeGXKcQsPOt8DUE7VflMOJA+GsKvVoOqDsn9ewbzGpUhO8fL56qLLKE2etoE8ylYzlXk8v06gtXQ+SPLF3zN2QiTM+q/sIwPY1Hy6Zz8yuZDhNhVNYGGtiuE3E75x6aa7mhfytx5risUXsK3d6Rvz4jRefu60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718558480; c=relaxed/simple;
-	bh=XJRpVJ6q+6fZ3iJUTtv6tSoasYa9YGg70qQsdIRLcRA=;
+	s=arc-20240116; t=1718560794; c=relaxed/simple;
+	bh=bXpVnWeSf5VmKroUsye8C62KCLYhk+Diz1lcCWrS+Hk=;
 	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=MYMogLdEZqeOuQgP4D3mszMmujZ5G7SMnmDqs09T1tyHlsmqorS5Ff2AacFnTEQvwVSPw11NGiyRttl+NvfLQm72RnbTv8eejML4Gq741N+VYeqJ3LUWeSAUZAcAPpgPdxqvNQmuG0Zc/uHynUrUDbjttvpzXi0EyBAey1ycqew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=fOx9DXUz; arc=none smtp.client-ip=203.205.221.149
+	 MIME-Version; b=umRggN6B33jOrnaTCxTKj9JbptkrclU/3mBXp3kJwQRPE5oYDMHFLvVmGKG0qQ1j31O99rXV2GPmrgmNQaEab90p+UTZj9V+gkEM1+2o+1qa1AM3Ng6S4hgtylxHgR//Zb0kk0+p5C65olWMG4oaWUuX9kbLneMMYZPdKXYM13E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=vFoyp3AL; arc=none smtp.client-ip=54.164.151.162
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1718558475; bh=JKwEkli64nV+u6UbVuHjl1rryovcclGC4cUSLhcp14k=;
+	t=1718560784; bh=QCxFDA+QkmRBdRZGcgiXjLaq5q8XoSrYlBKMg+3T/tc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=fOx9DXUzRSKFB3VzlEM/jMlO1VRg8rsx13uXibzAGqP9ajpLRg6dE5zHAMGY1ju5a
-	 yMeGSyugu5WgVb0qIo3x/YnyKHd2NNaHh3I/eTDBUEmZJ8Vd0h2eTMRQo+PmrrwIFb
-	 0E/v9NC+ptCefdClylUJDVPlAZ9DMFWZsXzgyahA=
+	b=vFoyp3ALJVUUY5+cNS1WFN5Yh/QHr6Y0RuQEIBFDcbJ0KrQ+Lgblsu9siBOCMuZdI
+	 jx4doK2voHkK83xpeLqrVImoffIrxHjG0YNa3i77irWPmmV0IvzGpySmLanSbWVjvS
+	 dv3ysoCz9dWgMQ+NxtwgJOOhPm1Fc/UhSy0+6FuE=
 Received: from cyy-pc.lan ([240e:379:2260:ed00:cd33:e8cf:d8f9:bed3])
 	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
 	id 5452D659; Mon, 17 Jun 2024 01:21:05 +0800
-X-QQ-mid: xmsmtpt1718558473tzxk4bd50
-Message-ID: <tencent_417C31822BDAD48EF8B84B312521318DBA08@qq.com>
-X-QQ-XMAILINFO: OKkKo7I1HxIe57aA5A2c3PUjTCRk8fYygcDw9FdDkbDlvTVj9MFZs4odlQdLBD
-	 YD/KHRA3SyQc53FC3gTWE7zU4iEZXY2rUPh3czyoAQBojOkU4fNo7/pYeokOCJrBF6xiB7X7o/Yh
-	 lX2OIHvyQ92ujGSwwrXtNQPxtmhGS33EECAbjvL5rRJkaFnJVqpiiCxylBpzZhYVvz0oBIU8QGh1
-	 Qs4ZR+WEH9fUdmBwBNWnJOP73Y8PQdeG2phEQI5UzKSqjPc/bQSgGeYibBLrqR3Qgs8Ft6RY+LxM
-	 8TTNpqhzKE4LUEVLko4rbvNAgNPFAcm+qQ5z8cRDJ1izWhFjcj/ygg081QhhL96fMZG8ccPzX611
-	 T6EYJ8gSVVUYcBl6RVQxv0n6e/TEwiEZcygN4c2nTgZE2wgIyPUa3Y2BFnndHjWU4X8og5C6SStq
-	 6jzyK8b34os81x99rcPcyB/4vBqomvDYU+i1FCpp9AUYeC9Nfn6+7fCRSvQ8X2YDjPYOxDQa1g9y
-	 qAk0sHK1u2231ZmuU1JYZpaQCaSyaokXzs/MgFT55LnKt5ZAr+QuWHVcc66gVWtTIN1y9dKShH2X
-	 fm6drPZRdJu4P2SScVouk6pc5zyzkP1rIcxFMcpvcCl+QeYWxa2iMqYo90lqhMo7ZFC6/H4zwfA+
-	 PWLs45zLuzIdkAxDvMxzPMSmGJ8UDM3chWrzWs0uiPP4eMaj4JIicLHm4Uk3M2VWQNsupzbX14Nm
-	 7SP69SO4y1VmgVZlO4l6L6LjTdcixX7+t5+G2sp9SB8dEEjipjJiHBTbQgEcw70CxZXgprtdkndU
-	 ELgAXBwwcRdLPH4/hIQvD8/kWvqR0BraENdNNjXMtsje4se4bCBafRzRMw5lg1mzph5aQnYtTXnp
-	 EsR5uOtG4hXaJtoCYmXHGHnrOQKm5LRdv99Br2svKakQTCnUADAhZIpwvZJwwwY8ch9Qtao/nQSp
-	 TLLLW1lrIy5IYynnuoC4G9D4O3Cr6DhckL96mS8VsRGzTs6L2mkItZHaUjBmLcsZGSMFvxNgKxVW
-	 O6U4S27vGC2i2Pa3naOQ6Udog83miNQ+eVWp0gOw==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-mid: xmsmtpt1718558474tw3g8141s
+Message-ID: <tencent_D935633C42BE1A7BF8C80553B5571C737009@qq.com>
+X-QQ-XMAILINFO: N7h1OCCDntujUM20gunPaMcd/E5Hoffduj40fBOeInfA6d5A0WXm0tEpRLsn2D
+	 BWt7my34ZTNK8obOUYW+eMtpsNku+daCR5Q8keEw+GHHbSD6rq6niajZKKDfsXgtjVZK44h4ihGD
+	 QMFqH8JpurMvrcGbEkstGyif1jIOkYArFn22QWwmn43BzBeqHKn2AwEIb9Gv/twpmi0KtJt7o/6q
+	 c9rSjZa4Q97WadsSHrrYgTAY63rN2OcEYWfqHPft5GAYInndADaG98GT9hOUUJTLNgkZWbdzOBr2
+	 TlxlVDTx1c4UzME3v+I+WgXYcem3bRfdIbZpYR4jw+PDFnETplOhPcrEUsX4bMK3wXhyjcp1dMY9
+	 sDeHmHBvff+TBJrLtGfWkDlOzNJ6dAJbXd/I32yLYBTa7GMKk1gFsa5dVYg0VTEEhQbIorkPPybV
+	 LeDBJ259SNksnfUm5nXqJ8aFYcFPSvYnlBYkpB5KkALKfzW9kFPi5ajSx3qTXfRxCaumE9k7dwEC
+	 wGh2noUFnhGW+FOZMsB5OUDBQ7e1ZikV6DEKystoTLfnyZqHx5H9zg/njg3m8OPliOPng1bWHMDk
+	 dYsMsouKyWPIJX+CVfir1AYH5P2VekOQZcgH08ib/TnfpxesbsU/far3rZegdqJF4ws1x47Xlz3I
+	 Gav/9GrJSB2EYXhlYcJZf0mFOxrNK6DeVLXg5dKkcl2GByr0njy/ByJ4CxmgYfnjvovPRm+VugcH
+	 1L3GxWaGLK3fkTKgP7JA7mhUHkDa9u7o4m7v8D/2fzIfIAv3eNHIcO3rDrD7x4kqlpWdktMfYBjc
+	 kNmMHC71OPp1WGjHbtU9C3aiDvEM64JhiY4PPfujQ1QpiAqXQ9jm/jJZ6I0ZDlD4HK1HzsNa32F5
+	 98ylvL+itHufcQYJIaRNTPgYA0qa0fnVMnVD3XAk9BffQZr2Pr4s6cIxRNFZQXXvNNK4GsGlBhKz
+	 sds5Q4XsVena05XgLEXXlmKR5PAJbu689nvEhQ3Ie6Ls6bmsPq2ykCcaZv8MGm0yutGFEVan5ors
+	 oMAQsgYA7aHuuiaOQ/iLFNGz21WuVKkTNDgae8NwTj6N+JEtlHppnkF0Z4j8t4asewsAwA7YjaGp
+	 LxriID
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
 From: Yangyu Chen <cyy@cyyself.name>
 To: linux-riscv@lists.infradead.org
 Cc: Conor Dooley <conor+dt@kernel.org>,
@@ -69,9 +70,9 @@ Cc: Conor Dooley <conor+dt@kernel.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yangyu Chen <cyy@cyyself.name>
-Subject: [PATCH v1 5/9] dt-bindings: interrupt-controller: Add SpacemiT K1 PLIC
-Date: Mon, 17 Jun 2024 01:20:50 +0800
-X-OQ-MSGID: <20240616172054.3074948-5-cyy@cyyself.name>
+Subject: [PATCH v1 6/9] riscv: add SpacemiT SOC family Kconfig support
+Date: Mon, 17 Jun 2024 01:20:51 +0800
+X-OQ-MSGID: <20240616172054.3074948-6-cyy@cyyself.name>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
 References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
@@ -83,36 +84,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add compatible string for SpacemiT K1 PLIC.
+The first SoC in the SpacemiT series is K1, which contains 8 RISC-V
+cores with RISC-V Vector v1.0 support.
+
+Link: https://www.spacemit.com/en/spacemit-key-stone-2/
 
 Signed-off-by: Yangyu Chen <cyy@cyyself.name>
 ---
- .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml     | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/riscv/Kconfig.socs | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-index 709b2211276b..3d0426b56904 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-@@ -59,6 +59,7 @@ properties:
-           - enum:
-               - canaan,k210-plic
-               - sifive,fu540-c000-plic
-+              - spacemit,k1-plic
-               - starfive,jh7100-plic
-               - starfive,jh7110-plic
-           - const: sifive,plic-1.0.0
-@@ -71,7 +72,9 @@ properties:
-               - thead,th1520-plic
-           - const: thead,c900-plic
-       - items:
--          - const: sifive,plic-1.0.0
-+          - enum:
-+              - sifive,plic-1.0.0
-+              - spacemit,k1-plic
-           - const: riscv,plic0
-         deprecated: true
-         description: For the QEMU virt machine only
+diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+index f51bb24bc84c..8a5775586845 100644
+--- a/arch/riscv/Kconfig.socs
++++ b/arch/riscv/Kconfig.socs
+@@ -24,6 +24,11 @@ config ARCH_SOPHGO
+ 	help
+ 	  This enables support for Sophgo SoC platform hardware.
+ 
++config ARCH_SPACEMIT
++	bool "Sophgo SoCs"
++	help
++	  This enables support for SpacemiT SoC platform hardware.
++
+ config ARCH_STARFIVE
+ 	def_bool SOC_STARFIVE
+ 
 -- 
 2.45.1
 
