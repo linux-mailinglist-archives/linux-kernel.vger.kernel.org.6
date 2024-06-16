@@ -1,158 +1,231 @@
-Return-Path: <linux-kernel+bounces-216222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3486909CDC
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:51:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87735909CDE
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66863B21166
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:51:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 275002814BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5F7186291;
-	Sun, 16 Jun 2024 09:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236DE1850B3;
+	Sun, 16 Jun 2024 09:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iesUFZJX"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nJAI7oGz"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3411A16D9B5
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 09:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F034E16D9B5;
+	Sun, 16 Jun 2024 09:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718531480; cv=none; b=eSzId9koaqy3qCtsBjZSzaCoLjeka6at643HWfLKIH8ip4XphrdX30vnoCBmZBtXxNs3n30UDvlKiSr3qhOse6YKXv3o21ODfSjMRWzby7jTQccfmDEyKEXmBj+K9XxYjseRBLaBwqefuaF1LR+QxKqMaBzYx3/+/MxmUm6JL5Q=
+	t=1718531559; cv=none; b=kVQz8H2Xvxy/HPQhwDUvkz5IUcT+5+5bYIf2ND/+dBoKsG0/fAy75ckyuJiux+1ibHFhtE+zzduWpHpF2JGxTZCuJhGJ9MKDhEfoItoxmXPvJ/79+xrkz+opIsP7lA907Da7Y5/nF1SWb5+qDrHe9SwysMuN+TahiKpC3aInv5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718531480; c=relaxed/simple;
-	bh=n4cx1Z6BJEH5jWA2Zuabkll9jSUK+CtlbukX047kvG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RKyYVlcNZRiPSilqUX7cC47nr9cKFqGUUC6fFrSWiLhuG0lrEFxve0SS9fx4IgpwISVS36KQqwJiEjT2hwIzFWzd38vPBMvWY2ErUVFE9Tsvw82f+qzHbDoYfo2UCc4suBMHH8MO43P81NV5C3MV3u+GmgjFTr7nzRseTvk6v5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iesUFZJX; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: boqun.feng@gmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718531475;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sc0GTYUsIOhy53GbTc5pAmG+S0kUyWsfKR1YRXBUAFE=;
-	b=iesUFZJXhWISzzq/1WrJCPxUjjWPh+mWd0w/rzEVrhEGyJ9Mu71NzjiWpCZw4M545BFaiX
-	6I6iA1L5/DyAIpTb5sGMdC+H5Wfr2HYiyZgVOeNRwTrakO+019XDxBDppjj9IzIEeftDxk
-	ehJ13CJGG4rAG8eVqVxA6fTLZTfcuoY=
-X-Envelope-To: benno.lossin@proton.me
-X-Envelope-To: miguel.ojeda.sandonis@gmail.com
-X-Envelope-To: gary@garyguo.net
-X-Envelope-To: rust-for-linux@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-arch@vger.kernel.org
-X-Envelope-To: llvm@lists.linux.dev
-X-Envelope-To: ojeda@kernel.org
-X-Envelope-To: alex.gaynor@gmail.com
-X-Envelope-To: wedsonaf@gmail.com
-X-Envelope-To: bjorn3_gh@protonmail.com
-X-Envelope-To: a.hindborg@samsung.com
-X-Envelope-To: aliceryhl@google.com
-X-Envelope-To: stern@rowland.harvard.edu
-X-Envelope-To: parri.andrea@gmail.com
-X-Envelope-To: will@kernel.org
-X-Envelope-To: peterz@infradead.org
-X-Envelope-To: npiggin@gmail.com
-X-Envelope-To: dhowells@redhat.com
-X-Envelope-To: j.alglave@ucl.ac.uk
-X-Envelope-To: luc.maranget@inria.fr
-X-Envelope-To: paulmck@kernel.org
-X-Envelope-To: akiyks@gmail.com
-X-Envelope-To: dlustig@nvidia.com
-X-Envelope-To: joel@joelfernandes.org
-X-Envelope-To: nathan@kernel.org
-X-Envelope-To: ndesaulniers@google.com
-X-Envelope-To: kent.overstreet@gmail.com
-X-Envelope-To: gregkh@linuxfoundation.org
-X-Envelope-To: elver@google.com
-X-Envelope-To: mark.rutland@arm.com
-X-Envelope-To: tglx@linutronix.de
-X-Envelope-To: mingo@redhat.com
-X-Envelope-To: bp@alien8.de
-X-Envelope-To: dave.hansen@linux.intel.com
-X-Envelope-To: x86@kernel.org
-X-Envelope-To: hpa@zytor.com
-X-Envelope-To: catalin.marinas@arm.com
-X-Envelope-To: torvalds@linux-foundation.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: tmgross@umich.edu
-X-Envelope-To: dakr@redhat.com
-Date: Sun, 16 Jun 2024 05:51:07 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Benno Lossin <benno.lossin@proton.me>, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Gary Guo <gary@garyguo.net>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Alan Stern <stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>, 
-	Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>, 
-	Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, 
-	Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	kent.overstreet@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	elver@google.com, Mark Rutland <mark.rutland@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, 
-	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>, 
-	dakr@redhat.com
-Subject: Re: [RFC 2/2] rust: sync: Add atomic support
-Message-ID: <5lwylk6fhlvqfgxmt7xdoxdrhtvmplo5kazpdbt3kxpnlltxit@v5xbpiv3dnqq>
-References: <20240613144432.77711a3a@eugeo>
- <ZmseosxVQXdsQjNB@boqun-archlinux>
- <CANiq72myhoCCWs7j0eZuxfoYMbTez7cPa795T57+gz2Dpd+xAw@mail.gmail.com>
- <ZmtC7h7v1t6XJ6EI@boqun-archlinux>
- <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com>
- <ZmxUxaIwHWnB42h-@Boquns-Mac-mini.home>
- <c1c45a2e-afdf-40a6-9f44-142752368d5e@proton.me>
- <ZmzvVr7lYfR6Dpca@Boquns-Mac-mini.home>
- <b692945b-8fa4-4918-93f6-783fbcde375c@proton.me>
- <Zm4R0XwTpsASpBhx@Boquns-Mac-mini.home>
+	s=arc-20240116; t=1718531559; c=relaxed/simple;
+	bh=YZHKZATojJ2HK+Z+DAwC+6Oa+5yLu6I/Vp6L8JR97K8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t3DuM6f2FKFw2hW5qGZ/2GMbfY/GCYXhZCPjd4XJJ/gwF0OJqgvV2tQhe1mIcqKX9IzwvVdwiwtX5AK1TQkGn2/EtE1meTPdvRD4E5NKsflwOc1Kzfoy4NSw/ONyuYG6Qwbo+mFtFgD5gk3trEnJ0Lq/IWzjqXNymqBxogA9y5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nJAI7oGz; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7042a8ad9f5so2998946b3a.0;
+        Sun, 16 Jun 2024 02:52:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718531557; x=1719136357; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GKTZuZsWgG4U6fxLMx1cgYwrM7Q/BtT3yyk8jGRBk/s=;
+        b=nJAI7oGz+L7oP1RPvFqw2Mnl08cW8DDj1j4FLDeJqFwX3l1VwWxPQw1Q2wbXNVlEPo
+         HNdlSvFLZzPN9YDnlw+F0F3jHyaDVhWj3an23iP01bR8SyFFP5zCUqXdlWPbEdIhm3rv
+         rVfpbbcnYg5RJTs62lh6m0ZOmB163mMRcfYG0fzrU539Tnbi83AwKCqYlS5EFF+WMCFR
+         k82xF3A+o3Yv6+037JYuzmbY7gmsg0QaMCGBPB1pAbnX02lsu9LTTuukT0fh+Lymoak6
+         ylu3sQmyEU4h3v1jyB/FKBDPRPZMqWO6pCitwtE2fcaJtBYAmTP55ffur5B1bqBjFN+M
+         2UpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718531557; x=1719136357;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GKTZuZsWgG4U6fxLMx1cgYwrM7Q/BtT3yyk8jGRBk/s=;
+        b=uQOFCFT62zircLiv6JSv4+Di6jX7gpLbieFylDFfpYJGhn8nZ1ZCllsUF1xfIIoQ1l
+         TO7hJwvMfgnsG900tRIQossNPb73VKLhXemNFHHkTlD9u7Ej2mykVzexL0WZ1GFN0bms
+         mc4M2vHHi6hv859Efho6Ei6tBc7svTo5x0gPmmvDdxvx1/75323woe1nZ8Rq8Oeqfkx7
+         dpKme1bjz66Th3EnObrKcQXizzScmjC3Dm1Eq9gR6wnxMPF6sPrVP4VpJovHc2bSrC+7
+         6rUfNdfm7IT55h42PlboZ8u/qr3updGLnAPKa2emIGEXfeC85LlTENqahL/ndl717CmO
+         XkZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXkoMTB6XtshD9mK1RfXnHYmAfxUaXslHB4MtSc0KLdsMKUShvZAN0Kv8p8/sptZyaw/JRN2K0Qq1zMVyqtJ1rAdZtaeTil8eEigC4+NZdFCKOHKLcOkNdUMSqDmwcuWXVVSw2e6qvOUdaP7GVVuNLGPLr3uxVxIsvHjpMfIQnv0gYF92mv
+X-Gm-Message-State: AOJu0YyWPMaKqSK/Ffa+/IHX3Utb1L+RMSJrgA2DWvRAPwr1HmBVsP5k
+	NBcs1bDuM+3e9RKwKpRvR8z9xfusolC4UUG/0NiuwPc2Jw/Vw2+N
+X-Google-Smtp-Source: AGHT+IG1Q+D08Au94XxXFGiSSXNSz13KorAKbPoqOdVlM3M321xVm8e12/BOIt5uWsNmrVCA/VqVlw==
+X-Received: by 2002:a05:6a21:7887:b0:1b6:a7c5:4fad with SMTP id adf61e73a8af0-1bae800c9d4mr11339816637.26.1718531557033;
+        Sun, 16 Jun 2024 02:52:37 -0700 (PDT)
+Received: from fedora.one.one.one.one ([2405:201:6013:c0b2:ea4b:30e0:4e3a:ab56])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc9891b9sm5891275b3a.95.2024.06.16.02.52.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Jun 2024 02:52:36 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: animeshagarwal28@gmail.com,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] ASoC: dt-bindings: realtek,rt5514: Convert to dtschema
+Date: Sun, 16 Jun 2024 15:22:19 +0530
+Message-ID: <20240616095223.260786-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zm4R0XwTpsASpBhx@Boquns-Mac-mini.home>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jun 15, 2024 at 03:12:33PM -0700, Boqun Feng wrote:
-> What's the issue of having AtomicI32 and AtomicI64 first then? We don't
-> need to do 1 or 2 until the real users show up.
-> 
-> And I'd like also to point out that there are a few more trait bound
-> designs needed for Atomic<T>, for example, Atomic<u32> and Atomic<i32>
-> have different sets of API (no inc_unless_negative() for u32).
-> 
-> Don't make me wrong, I have no doubt we can handle this in the type
-> system, but given the design work need, won't it make sense that we take
-> baby steps on this? We can first introduce AtomicI32 and AtomicI64 which
-> already have real users, and then if there are some values of generic
-> atomics, we introduce them and have proper discussion on design.
-> 
-> To me, it's perfectly fine that Atomic{I32,I64} co-exist with Atomic<T>.
-> What's the downside? A bit specific example would help me understand
-> the real concern here.
+Convert the RT5514 audio CODEC bindings to DT Schema. Make bindings
+complete by adding 'spi-max-frequency', 'wakeup-source' properties.
 
-Err, what?
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
 
-Of course we want generic atomics, and we need that for properly
-supporting cmpxchg.
+---
+Changes in v2:
+  - Added ref to spi-peripheral-props.yaml and dai-common.yaml.
+  - Added missing properties 'spi-max-frequency' and 'wakeup-source'
+  - Moved maintainers list abouve description.
+---
+ .../bindings/sound/realtek,rt5514.yaml        | 70 +++++++++++++++++++
+ .../devicetree/bindings/sound/rt5514.txt      | 37 ----------
+ 2 files changed, 70 insertions(+), 37 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/realtek,rt5514.yaml
+ delete mode 100644 Documentation/devicetree/bindings/sound/rt5514.txt
 
-Bogun, you've got all the rust guys pushing for doing this with
-generics, I'm not sure why you're being stubborn here?
+diff --git a/Documentation/devicetree/bindings/sound/realtek,rt5514.yaml b/Documentation/devicetree/bindings/sound/realtek,rt5514.yaml
+new file mode 100644
+index 000000000000..7fbf7739c371
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/realtek,rt5514.yaml
+@@ -0,0 +1,70 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/realtek,rt5514.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: RT5514 audio CODEC
++
++maintainers:
++  - Animesh Agarwal <animeshagarwal28@gmail.com>
++
++description: |
++  This device supports both I2C and SPI.
++
++  Pins on the device (for linking into audio routes) for I2C:
++    * DMIC1L
++    * DMIC1R
++    * DMIC2L
++    * DMIC2R
++    * AMICL
++    * AMICR
++
++allOf:
++  - $ref: /schemas/spi/spi-peripheral-props.yaml#
++  - $ref: dai-common.yaml#
++
++properties:
++  compatible:
++    const: realtek,rt5514
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Master clock to the CODEC
++
++  clock-names:
++    items:
++      - const: mclk
++
++  interrupts:
++    maxItems: 1
++    description: The interrupt number to the cpu.
++
++  realtek,dmic-init-delay-ms:
++    description: Set the DMIC initial delay (ms) to wait it ready for I2C.
++
++  spi-max-frequency: true
++
++  wakeup-source:
++    type: boolean
++    description: Flag to indicate this device can wake system (suspend/resume).
++
++required:
++  - compatible
++  - reg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++        codec@57 {
++            compatible = "realtek,rt5514";
++            reg = <0x57>;
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/sound/rt5514.txt b/Documentation/devicetree/bindings/sound/rt5514.txt
+deleted file mode 100644
+index d2cc171f22f2..000000000000
+--- a/Documentation/devicetree/bindings/sound/rt5514.txt
++++ /dev/null
+@@ -1,37 +0,0 @@
+-RT5514 audio CODEC
+-
+-This device supports both I2C and SPI.
+-
+-Required properties:
+-
+-- compatible : "realtek,rt5514".
+-
+-- reg : the I2C address of the device for I2C, the chip select
+-        number for SPI.
+-
+-Optional properties:
+-
+-- clocks: The phandle of the master clock to the CODEC
+-- clock-names: Should be "mclk"
+-
+-- interrupts: The interrupt number to the cpu. The interrupt specifier format
+-	      depends on the interrupt controller.
+-
+-- realtek,dmic-init-delay-ms
+-  Set the DMIC initial delay (ms) to wait it ready for I2C.
+-
+-Pins on the device (for linking into audio routes) for I2C:
+-
+-  * DMIC1L
+-  * DMIC1R
+-  * DMIC2L
+-  * DMIC2R
+-  * AMICL
+-  * AMICR
+-
+-Example:
+-
+-rt5514: codec@57 {
+-	compatible = "realtek,rt5514";
+-	reg = <0x57>;
+-};
+-- 
+2.45.2
+
 
