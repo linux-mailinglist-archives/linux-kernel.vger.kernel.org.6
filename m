@@ -1,107 +1,107 @@
-Return-Path: <linux-kernel+bounces-216361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A49909E7B
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:19:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76ECF909E80
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 377D5B20DB5
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 16:19:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EED45B20E5E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 16:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93861AAD7;
-	Sun, 16 Jun 2024 16:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE131B806;
+	Sun, 16 Jun 2024 16:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ReT+8a6L"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bD9LHZb/"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7CB12E47;
-	Sun, 16 Jun 2024 16:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BAE12B87;
+	Sun, 16 Jun 2024 16:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718554783; cv=none; b=kUzNCnddSzSGxXBKnerXWCJIWVBRrmWBZ2z+bfSBngS/tyD5cQpaeo87IZRxikhVl0H9YacbksIMiVkZQEgWLEs+a02PriSR12hgPy2l4+U9SRWhDmiyokBUmtpLq0nBdBh9c0Xk606LISnq/ljvDiEZIQVwDKs06RTHjYead+c=
+	t=1718555079; cv=none; b=eTbQ98+cCefoFymAywluFLxAkLLtib6zuWIo5r0yo+t4TYunETgvcOC9FhA47mEEAksmaJ7Dp7eXomfFrSk9WTCEvb4/+00SH8JL8ugKs+8ntRWRy2Www8PLXSOMmyvkAlb+4Hbqnq9wb8m/m2hg6+R17T+cVHbENOdrj0ZgESo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718554783; c=relaxed/simple;
-	bh=qR+9FEx9x0bJ3F5nqrI0gOfNAfsFaGmwjugmSOv/3oU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OwkehIq1SNPqkPfsbx/tUza5RkYk6REaWll/MNzQ1C4Pm0ybOwv6eZwv+YU5p2w6Bl4T3FhMPt/HJoGBkQjzVylwBSlP+gXBuc4Di6KH8hA7EtKg9LgQDTcI725paY0qt2QWKwX+6lV0KOgp7v/I1FbOs26IN3l2DJyQ5RRCEk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ReT+8a6L; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=GVCvajlkzGyB22Se2ZOzmrs2oP4nXY5Ynx4z1DMOBb0=; b=ReT+8a6LUzQeJGHrfBShmparlj
-	ub5DAmAfIxHXxTxSWn8wbRVzRO8h4bzrhyR4k47VFslXAF/WhnpOXoxQdv4QauE98YPboWjfImQ0z
-	GPADWAoFALpXtfrpwsFONrCWJhxbhGfwHoidwmdic3JNQ1z9ihGwylSP0a2T5qyoHe9o=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sIsb8-000Bu1-So; Sun, 16 Jun 2024 18:19:18 +0200
-Date: Sun, 16 Jun 2024 18:19:18 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yojana Mallik <y-mallik@ti.com>
-Cc: schnelle@linux.ibm.com, wsa+renesas@sang-engineering.com,
-	diogo.ivo@siemens.com, rdunlap@infradead.org, horms@kernel.org,
-	vigneshr@ti.com, rogerq@ti.com, danishanwar@ti.com,
-	pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
-	davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, srk@ti.com, rogerq@kernel.org,
-	Siddharth Vadapalli <s-vadapalli@ti.com>
-Subject: Re: [PATCH net-next v2 2/3] net: ethernet: ti: Register the RPMsg
- driver as network device
-Message-ID: <efff16aa-33d9-45eb-ac42-86f3411abfc9@lunn.ch>
-References: <20240531064006.1223417-1-y-mallik@ti.com>
- <20240531064006.1223417-3-y-mallik@ti.com>
- <4416ada7-399b-4ea0-88b0-32ca432d777b@lunn.ch>
- <2d65aa06-cadd-4462-b8b9-50c9127e6a30@ti.com>
- <f14a554c-555f-4830-8be5-13988ddbf0ba@lunn.ch>
- <b07cfdfe-dce4-484b-b8a8-9d0e49985c60@ti.com>
- <8b4dc94a-0d59-499f-8f28-d503e91f2b27@lunn.ch>
- <60bc57a7-732b-4dcb-ae72-158639a635c0@ti.com>
+	s=arc-20240116; t=1718555079; c=relaxed/simple;
+	bh=+3eKN6rwa93XJe6m7zUD58lUDjbYzISB9+7MIO6PQkI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=WhQskgugJu79bg5v/+aGfYQwB3JsnmIwqFIKiHCf27rdpVfFy8gXb/HyiJu6i/bRVZzmMeQkwK3XtND+d6a6aEwfdN86N2q6l195aUWDnoKpXyolYh9jv5rb29xvZCntHFYtyq6zRL7E7GtnocuF9YpCeS2cnXUxXBNp3VO4Gro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bD9LHZb/; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718555045; x=1719159845; i=markus.elfring@web.de;
+	bh=+3eKN6rwa93XJe6m7zUD58lUDjbYzISB9+7MIO6PQkI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=bD9LHZb/jXzlnbFe1kyTrUHjMGINmgFPq8/NJ7FopDSJLkuBfrx2eah7cLPZgxOI
+	 rsx/XUHI1ZoKlfvpCEXdRPpyf+5ZYf2/TUx6BG3dKelWKsynURwSCAvJRnfsWRd4Q
+	 1PVHg1lofDfZT3NIi/1l8mo6q8WOZ40L/k/udXNvBUNllWzahY7jc0PZkabhp/dem
+	 GDgTkDshbDsB09Fznv40hJf8sMp02ySXHQp2yLqtfK9maruQZqeHHoT/VmBmmg3Em
+	 MDQsSVkKcHa9kfaG4UrYjQlKwE8cdEzNQZVa+j3Gwdltv6arZhkBG0yUP0/4PbtSP
+	 WTUW22ieG1YWrimHZQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MXXND-1rsrEY39pP-00N8Ks; Sun, 16
+ Jun 2024 18:24:05 +0200
+Message-ID: <24260b3c-fb0a-40b7-a88a-e2ff4897d085@web.de>
+Date: Sun, 16 Jun 2024 18:23:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <60bc57a7-732b-4dcb-ae72-158639a635c0@ti.com>
+User-Agent: Mozilla Thunderbird
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
+ Prasad Kumpatla <quic_pkumpatl@quicinc.com>, alsa-devel@alsa-project.org,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, Banajit Goswami <bgoswami@quicinc.com>,
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Takashi Iwai <tiwai@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Rohit kumar <quic_rohkumar@quicinc.com>
+References: <20240611074557.604250-3-quic_mohs@quicinc.com>
+Subject: Re: [PATCH v6 2/7] ASoC: codecs: wcd937x-sdw: add SoundWire driver
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240611074557.604250-3-quic_mohs@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6TBVlJ9i5HBMK36G4jUvHsDGVuWICB2AUlHnyRXxxfNWJWLr4vb
+ 0Rf8fC5cbcaGtmSyKbQ8btm3s+jHAl9V+NBO5UsaUV0BM3+v2/eidWtox0eHbZb46ndck3r
+ LQ/d8O62ag1fLKydU6BtgcIZkDuot9lQl6aVF/qEoU1yJ6DIKNDDswigJAXsrAL2BSjzNun
+ 6bd5U3CgpX43v72WCAjxQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:0JQCIjcD+oc=;AKWulCgs6tJ2+LteSqQxGxIOR/o
+ OThAHDcZlr+HJJLfkYrtjPnAwACVAUeoJrzNP79FzN2yawhvBDhDPn3xKqGNjh0pGzpLk50m2
+ f8XVZTJrLvPoRTUGv++ulKbBqI/wY8eqLzQMBQGDNdTQXat3Axx+k9BNzdESCneNq9MH/Vck0
+ 1BB5uvuUPvoIr3eIRDCN2GN1ZC/NKCCGmoThxDYoLJyeCcFlj6H+VYIKQgoHGzngt0RYAo2EY
+ 1zrvZZ+Vy063YulZKMEZ22ir7xTAcE1clkBnHAZ1GP59a1NHenC6e99ozX+0dTee4qwcjVf1q
+ uW9z6uWh4kPbrHjuCyIP9sYUAM9xAJbzETRISuM533R+jJWAQRE7aJz7OpBwdwBJHpznNywc5
+ /XiJkuZhfZbWspCxR4k7or7VTFwb7mwpgZpoNsxNbwCkFZ8dT8ND5FTybo2EOW3nZpwVIfQFu
+ /MAKwZqZBryk5OcoD8g3brQwTytGO9dLPM1ao1e88YpF0KFM2xe7iW+dm0IKM9cPBQj3JdqH5
+ zL0uOcdLQy6C0J/stdgfqwZJ7YkJfBc3cirt0uttnttjfhoABQmdBC/iW/VaDDJWmamXvOLM1
+ CEAeuuZyfCiw4iJx10wnNnhqi/KoGBWT2MNVS36K2bEaFVuV4cTsPEfkQ69BoT2WqB0+Uhtg3
+ neCSyPf8PxUBrzceyLQIV5IWA62XrUcuRsQYOZzT3HzfvV+Ww9g0nsu4vRFgCX3F4j2ta1NPj
+ DadMTGqC8mDy9Utpseb1W7uWS3uXwP55fcw8+XYgc1NdB1f3sybS/G1Lx208oCVzIZjPCyUuw
+ XgvGFRuS3zKuHk+uUc+U/wByTW+LE0JE3uCbKMpCcfdws=
 
-> The Linux Remoteproc driver which initializes remote processor cores carves out
-> a section from DDR memory as reserved memory for each remote processor on the
-> SOC. This memory region has been reserved in the Linux device tree file as
-> reserved-memory. Out of this reserved memory for R5 core some memory is
-> reserved for shared memory.
+> This patch adds support to SoundWire devices on WCD9370/WCD9375 Codec.
+=E2=80=A6
 
-I don't know much about rpmsg, so i read the documentation:
+Please improve such a change description with an imperative wording.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc3#n94
 
-https://docs.kernel.org/staging/rpmsg.html
-
-There is no mention of carving out a region of DDR memory. It says
-nothing about memory reserved in DT.
-
-The API is pretty much: Please send these bytes to the peer. Call this
-callback when bytes have been received from a peer.
-
-> The shared memory is divided into two distinct regions:
-> one for the A53 -> R5 data path (Tx buffer for Linux), and other for R5 -> A53
-> data path (Rx buffer for Linux).
-
-As i said in my previous message. Forget about the A54->R5. Think
-about a generic architecture. You have an RPMSG facility using the API
-described in the documentation. You have a block of shared
-memory. That memory could be VRAM, it could be a dual port SRAM, a PCI
-BAR region, or some DDR which both CPU have mapped into their address
-space. Design a protocol around that. This might mean you need to
-modify your firmware. It might mean you need to throw away your
-firmware and start again. But for mainline, we want something generic
-which any vendor can use with a wide range of hardware, with as few
-assumptions as possible.
-
-	Andrew
+Regards,
+Markus
 
