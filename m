@@ -1,122 +1,127 @@
-Return-Path: <linux-kernel+bounces-216452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D33909F7C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 21:14:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C4CA909F83
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 21:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63F261C21CFC
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:14:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9F94283172
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74BB1C6A0;
-	Sun, 16 Jun 2024 19:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Tqxi+ACd"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F7B4CB36;
+	Sun, 16 Jun 2024 19:23:14 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249D8224D7
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 19:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2493238396;
+	Sun, 16 Jun 2024 19:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718565289; cv=none; b=F2Wd6p1yiDpHBUwE0RUSbqzPTQT/ejTIMijOnc8JNFYbWnXs2JZbEJGp9ByR/MGHcomM6iO943FnDbp+S9pUS12vTPhojJI+erIeWM3Z+XUpup7/CtQC1aBxbEWeEec6HQ/dP5CnAjZoqgBwF+dK0qCwLZlzxL45OGLfKJghl9w=
+	t=1718565794; cv=none; b=LXcxKBfLst/jjkhsGwQpzGwPzgTAFh7zJ3vu9sEH0jR6s6Hdyebc0UUQDY1BtdJzXxXOXyV0RyMujSIhKAxFDMU+naA0puIZv5QAyYU8k9zkSKNFYeCfn4X2UhN9skl6dW4If9BQi2qiqciy8ZzLGHtRrF1XqiSIZNQmtlyMLS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718565289; c=relaxed/simple;
-	bh=V0RL8eC+fHJJXnwr36ZznnspIogMAQ2bi0BDVYM8uAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UUwnL0MbD9fvLvoOFLYNqlZNSIEYm+WAKwItUTX2lib6tepL8l/e3BWEd1LNM8VpHGERtCx08NisKz32kwKr1RY7FSnQds93PbFbxJj7iLC9NDTjAXFD/rJzi2T8Um5VI7KtnE+V/yyNrgWRPtUmj3iacz+kDeaQS1iY2rkSXxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Tqxi+ACd; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=E3c+
-	rE9O/gHyw3I/AZQMe5HK1HGXZDCGy8v16XB4IEQ=; b=Tqxi+ACdFFAUVfAFuOQf
-	D+ub9dbKuL4GK6dG+wFlo4twbp6Ty6Q/wdA/jZAmohsfDGMuWh6nRmn9DbbrIvvf
-	TCegAOKWyDb3V4FGY/qEX3CGbC3X7TteWJEH3ZB/UAdsIBmttZxAxNRwzqc8plmG
-	a2bGUXYIQ4dllTQQc1IrW6H9S/kHFC5wuO1Qac0x8nILKJnV6WJcU+T3VtYVWwzh
-	LeO1d6gQTEWdYeDImdJrbhsjNolCq65JA3Zq3zW1boJHrZscLz/2rLTYAxilTSb5
-	pzSWCXTeXIwg/JlYWApo4LG1TDDHQcrKJCIHGd7oekK91NbtPPIa19rpTSNa8KjH
-	KQ==
-Received: (qmail 2103200 invoked from network); 16 Jun 2024 21:14:41 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Jun 2024 21:14:41 +0200
-X-UD-Smtp-Session: l3s3148p1@0MMYqQYbdsJehh9j
-Date: Sun, 16 Jun 2024 21:14:40 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org, 
-	Easwar Hariharan <eahariha@linux.microsoft.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] docs: i2c: summary: document 'local' and 'remote'
- targets
-Message-ID: <ed75fyc2xcsnwubq42eposf6ayt5aj2jmqz6mthugk6vm2zpi4@qqwlmuwayoo5>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org, 
-	Easwar Hariharan <eahariha@linux.microsoft.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240614081239.7128-8-wsa+renesas@sang-engineering.com>
- <20240614081239.7128-13-wsa+renesas@sang-engineering.com>
- <4zxr4rlqnjqbqh3oxmd2ufqi6uk4pxa3tniuya5pgjtqi6tswc@utq4r2zt6z6b>
+	s=arc-20240116; t=1718565794; c=relaxed/simple;
+	bh=fYFfUCifGjntD3+E36odshlq4ZwgFmbkDkSQ3Yxs5IE=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=OsQLxonUbB7Ebf7oKnEIHRYj4C82frI5ED1niOLyH4/zLMhPyNDc1Gd7z/exdJa/dimZfoTw6QeqYRnPUHXzBuhvE67gBtqp+0pibOPSLbRpRI75ynQ67G3pgWtT9q4GPoJbDlWBJKjFEw7/2l9VjesH6ENf/saqbr30Co7Vm7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.1.105] (31.173.87.179) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Sun, 16 Jun
+ 2024 22:22:44 +0300
+Subject: Re: [net-next PATCH 0/2] Fix maximum TX/RX frame sizes in ravb driver
+To: Paul Barker <paul.barker.ct@bp.renesas.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	=?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+CC: Biju Das <biju.das.jz@bp.renesas.com>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>, Lad Prabhakar
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Mitsuhiro Kimura
+	<mitsuhiro.kimura.kc@renesas.com>, <netdev@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240615103038.973-1-paul.barker.ct@bp.renesas.com>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <3cad5dd7-2663-d0e4-14ba-b62814c6814e@omp.ru>
+Date: Sun, 16 Jun 2024 22:22:43 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nqgjfqkwqmmuhuwd"
-Content-Disposition: inline
-In-Reply-To: <4zxr4rlqnjqbqh3oxmd2ufqi6uk4pxa3tniuya5pgjtqi6tswc@utq4r2zt6z6b>
+In-Reply-To: <20240615103038.973-1-paul.barker.ct@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 06/16/2024 19:10:18
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 185947 [Jun 16 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
+ 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.87.179 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info:
+	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.87.179
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 06/16/2024 19:14:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 6/16/2024 4:53:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
+On 6/15/24 1:30 PM, Paul Barker wrote:
 
---nqgjfqkwqmmuhuwd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> These patches fix a couple of bugs in the maximum supported TX/RX frame sizes
+> in the ravb driver.
+> 
+>   * For the GbEth IP, we were advertising a maximum TX frame size/MTU that was
+>     larger that the maximum the hardware can transmit.
+> 
+>   * For the R-Car AVB IP, we were unnecessarily setting the maximum RX frame
+>     size/MRU based on the MTU, which by default is smaller than the maximum the
+>     hardware can receive.
+> 
+> Paul Barker (2):
+>   net: ravb: Fix maximum MTU for GbEth devices
+>   net: ravb: Set R-Car RX frame size limit correctly
+> 
+>  drivers/net/ethernet/renesas/ravb.h      |  1 +
+>  drivers/net/ethernet/renesas/ravb_main.c | 10 ++++++++--
+>  2 files changed, 9 insertions(+), 2 deletions(-)
+> 
+> 
+> base-commit: 934c29999b57b835d65442da6f741d5e27f3b584
+> 
 
-Hi Andi,
+   DaveM & Co, I'm planning to review these patches on Monday evening...
 
-> I am not a big fan of the use of the word client. It's not used
-> anywhere in the documentation and it's too generic as a name for
-> giving it a specific meaning.
->=20
-> I've seen already some confusion amongst reviewers and
-> maintainers when Easwar sent the patch in drm.
->=20
-> If it depends on me, I would stick to the only controller/target
-> and render obsolet the use of the word "client" in the i2c
-> context.
-
-Have you read the paragraph "Synonyms" from patch 6? I don't think we
-can obsolete client because:
-
-$ git grep 'struct i2c_client \*client' | wc -l
-6100
-
-All the best,
-
-   Wolfram
-
-
---nqgjfqkwqmmuhuwd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZvOZwACgkQFA3kzBSg
-KbbP/Q/8CBzfCJomMlj1tACYIrqZi7OIqg7HiRw0UD2icgPT56QxIFoItHRzaGao
-zxcIxNN+awz1N54FRAumgZ0N73rBK4lNarM7GeLgSQ2rZ3SkeqaUpV+QpqIClcvT
-s8TZ7t3GU+V/zYTNJxz0Rrp9exdSR7yMquw/yLcD9QAnOxuq6nCTcyIKqVUkjl1p
-AQGkNd13qPaa0na0GD63WzFXJcIcnHeFmpUV0ZoYtsCH1EEgVjcRRXm6s7b2afIy
-83XonLvSNJKtgNXUJ1agXbYyNfx7O5Q+xEYJf9g2rvQCxfs31yRVvOYgpuwg5P52
-AMdzzwvqgHCLxlUOC55KiFsjSsE+tV+pyO3wDLsRrmxZPROShtjD4mQ4oAeFutpK
-YbiGWKpyZNBg7WXPVndn99YT2tSwnsA/1rYDKAJ7pPyh9Ol6bG5AzszdpFqnOJe+
-2+D66v9jIq5ujhIYqsLVE6CKS2068OnIpJ8LNpIxbAy99DgGk97+FIlpJ47A/Gdg
-mbYv8NEBADWv7jxfMpka/kVC+ibdDqbZtg75qzDW4SUCWJfPd+Q7WSxsp8zPotEe
-ypz2gZnEkdL9q5u8ncRUuSOa3jNwQ2oU5k1WOqBCaLeb8cE3yLHi0/Q1djolmXLi
-hd6AcAZRw5EyuLK4+YIUTKwclh+tAyytsbqMEPmTmtKpo7H4il0=
-=YWfB
------END PGP SIGNATURE-----
-
---nqgjfqkwqmmuhuwd--
+MBR, Sergey
 
