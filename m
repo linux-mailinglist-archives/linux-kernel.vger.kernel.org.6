@@ -1,74 +1,125 @@
-Return-Path: <linux-kernel+bounces-216143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E58C909BE4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:23:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7495909BE8
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A49283346
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 06:23:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF7061C218AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 06:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9EA16D30F;
-	Sun, 16 Jun 2024 06:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74EE216EBFD;
+	Sun, 16 Jun 2024 06:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="k9iEiJnw"
-Received: from mail-177132.yeah.net (mail-177132.yeah.net [123.58.177.132])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849C3A48
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 06:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=123.58.177.132
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="rg2EbreW"
+Received: from msa.smtpout.orange.fr (msa-213.smtpout.orange.fr [193.252.23.213])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663D04964B;
+	Sun, 16 Jun 2024 06:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718518985; cv=none; b=N8/7+u83nCHkPYswt00TfroThFkamt9n0aokAoYE/L5PYeGTDsTJ84d6Q5x2y/QuoYAlgFNl7YcTIr24noycSm/XLkYklJEavO8AdjDycOk/CbFabMelSxGPC+GNlVea7SFhr3blYV7EcgnnGgeIa5/skr8QfhdRIpM3YkSzfkM=
+	t=1718519413; cv=none; b=BuS8cXVRR1L3ie69x5QdbbprLqyJiHZ6ANgol7FPjUmn1/r0iLy7cAiADwTsghA348GHqapj/5eXOgNHO1+QJoBhA/0Z3Xd8GaNz78xoCFp+VXLEjTYiOW6NLVreIyWROOQL09y0e0UNftEwxkFxzb46JuU/rTxMUGVTLsoAQ8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718518985; c=relaxed/simple;
-	bh=Mknlk//x2xNtEoqP8k9y55wgH6UtIrOZ6sg4zR/FQyE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RpEAETAFhevAqA8Sud/oC8fuNJOi6ukX1uVldZEfEr1eQ9iCuZQBNsN5+69lLB8XdEl1+LfgSb5IdklApC7d8RFjlZmNKYKgfk6vMNUI5uWA1dEbkoCpWnMUhGzf/00NzMjFqF+1chvVEOvv7tqXJZCRWufbvMyzUF9FrKH7AuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=k9iEiJnw; arc=none smtp.client-ip=123.58.177.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=a31zCvY9cwbcKQGBKnLRpRlPlfGDPY5SQt+DrzR2m0Q=;
-	b=k9iEiJnwKtM6yYKFZ/qYzFsDLAa/wc2/c94N4cJ+/sPJTPxsUAPxuebmrc38xf
-	KULhF4qmeuXMV4M9pC7lchA3mN3354SVCMfA2oM9VoNb7QztOy9NYF1Ycg2bkzBA
-	xR8OycM5dYvYhArGGknjOEsSwYZdyTCl3KFlH6hw9gqqQ=
-Received: from dragon (unknown [114.216.76.201])
-	by smtp2 (Coremail) with SMTP id C1UQrADnL2mghG5mpb_ACA--.10294S3;
-	Sun, 16 Jun 2024 14:22:26 +0800 (CST)
-Date: Sun, 16 Jun 2024 14:22:24 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] ARM: imx_v6_v7_defconfig: Enable drivers for
- TQMa7x/MBa7x
-Message-ID: <Zm6EoB/v4eSTknVU@dragon>
-References: <20240530143722.834264-1-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1718519413; c=relaxed/simple;
+	bh=pxJeMPW3g8ImkUOaHZgYePOc+3YDEu47VuMV7SEKRd0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fYLnQ8COKydQQCm/6L/o00ldI7sCBgpWdm7PD8CWkaoigrIdZz5/ODTqxIgLqTLjV4qxdkpJpsX2PN5q5UCj16OLC4vHXOtNWCpwM4qQu1thYKDfi90239b0kn7aYO0a7og2H6bC9s/TRfE+uU39LEwVCFxKMFMih4zFOSf0eMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=rg2EbreW; arc=none smtp.client-ip=193.252.23.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id IjOnslpBNuDOGIjOosKnZ7; Sun, 16 Jun 2024 08:30:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1718519401;
+	bh=BZdNCJale1sAYar/lNgv7jhcbE0JwVL5zwO6Cn6gmyw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=rg2EbreWAr3rwLbSKWM2aGPQ27F5BU/0+zACNx0m/u13ozGipFNEyUPcfuWV3L4he
+	 Pls145IPvwru3XhizaxUCF6g5yFSPHHQG30mmSLo1goKcyoV4e+Iy9stoHkWEOZLS1
+	 nCdJuZWWH4xF1mOxIutvve7MVUKuFiy4cxamXz3x3yqmm0M28Pru6qIPUG4DItIBlc
+	 TJfC+E/OFDVWOVJEiMVhTMrz+WYSOE9B5K6q/+sF5U/EnYkbLmqdZizL+kyh9GL2p/
+	 QGyakLA48LlJdSXyopgKfcMG+CMT0ZRpKRN/ZwOxHOlgdHCDp4HcLxOjayYE0n7N0d
+	 +qreeYd83Xo/w==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 16 Jun 2024 08:30:01 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Tiffany Lin <tiffany.lin@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] media: mediatek: vcodec: Constify struct vb2_ops
+Date: Sun, 16 Jun 2024 08:29:53 +0200
+Message-ID: <fc20e4271a4c98c6106d01eb1ada3f4da217e56b.1718519365.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530143722.834264-1-alexander.stein@ew.tq-group.com>
-X-CM-TRANSID:C1UQrADnL2mghG5mpb_ACA--.10294S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUxhihUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiGAIAZV6Nn4x5FwAAsR
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 30, 2024 at 04:37:22PM +0200, Alexander Stein wrote:
-> Enable drivers for devices/features used on MBa7x.
-> 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+"struct vb2_ops" are not modified in this driver.
 
-Applied, thanks!
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
+
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  18059	   3096	     16	  21171	   52b3	drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateful.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  18171	   2968	     16	  21155	   52a3	drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateful.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ .../platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateful.c  | 2 +-
+ .../platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateful.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateful.c
+index 11ca2c2fbaad..e62c1c18758b 100644
+--- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateful.c
++++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateful.c
+@@ -595,7 +595,7 @@ static void mtk_init_vdec_params(struct mtk_vcodec_dec_ctx *ctx)
+ 	}
+ }
+ 
+-static struct vb2_ops mtk_vdec_frame_vb2_ops = {
++static const struct vb2_ops mtk_vdec_frame_vb2_ops = {
+ 	.queue_setup = vb2ops_vdec_queue_setup,
+ 	.buf_prepare = vb2ops_vdec_buf_prepare,
+ 	.wait_prepare = vb2_ops_wait_prepare,
+diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c
+index b903e39fee89..3307dc15fc1d 100644
+--- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c
++++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c
+@@ -854,7 +854,7 @@ static int vb2ops_vdec_out_buf_validate(struct vb2_buffer *vb)
+ 	return 0;
+ }
+ 
+-static struct vb2_ops mtk_vdec_request_vb2_ops = {
++static const struct vb2_ops mtk_vdec_request_vb2_ops = {
+ 	.queue_setup	= vb2ops_vdec_queue_setup,
+ 	.wait_prepare	= vb2_ops_wait_prepare,
+ 	.wait_finish	= vb2_ops_wait_finish,
+-- 
+2.45.2
 
 
