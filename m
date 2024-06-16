@@ -1,88 +1,132 @@
-Return-Path: <linux-kernel+bounces-216346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E852909E30
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:38:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31847909E33
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0612328115A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:38:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2405B20D57
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900FC171AA;
-	Sun, 16 Jun 2024 15:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F8C168B7;
+	Sun, 16 Jun 2024 15:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1hYyAqb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DSsyiO92"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A5C11CAB;
-	Sun, 16 Jun 2024 15:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBBA79DC;
+	Sun, 16 Jun 2024 15:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718552306; cv=none; b=HhLreYLZJt6oRng/jZitAWoCD0RB3qKRZ7Q4MYEEu295ufWJFszuuIgqj1sefP5soNmg+oM4HK3k4Me9G7aCoKMDQOR2FB3f5NkGOtmJPgqvraQ2futorwjGj2irKdBM9LbQOr/3aMFDXY3sIJ+N/6delAyw7xpAmpENE60jeRQ=
+	t=1718552651; cv=none; b=MXmjeljk79oMW+1bACqpL9EfWIbEB7iJXwnC5Ngo/ZKFgrWXGTFocGvO6UXAdc8d8u2S18J0EiGfo0EI+Wf67UmQ4KCLbraUu+/RBJ2Muya2b+360UwZhPIFW3Wlkne/C8umq44yoBPgmxd3UPqL1Nf4vQod+6aeVsy6DkqqxFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718552306; c=relaxed/simple;
-	bh=gaiDuH/UwxUBAbTw97a7QxxnL1TjSr3yzzQI0+k68W0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QIsdD7gM2LffiqcYu/U59biLCp29It7K13pqRrh8T1KlaXpyYFp6XDoTTSMAHqL77n/rZ7qPMin2raQuX1yaEOvKZmwW+/5J5+YGIGUhZYMtpGOy0X+Avsd7TbCAyfs01NAfvNh6YGaHt6+ALKhyzdKqHvG+5dKY4TKhc+ANWJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1hYyAqb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C93F4C2BBFC;
-	Sun, 16 Jun 2024 15:38:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718552306;
-	bh=gaiDuH/UwxUBAbTw97a7QxxnL1TjSr3yzzQI0+k68W0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=b1hYyAqb/mYWA1DX6VA/jwYFqDgqTnJ5W17J2FzGzsxeowRnLsyJZPFtnBxNmPtWV
-	 8L/3tnqRqXk92/2rztAvnLVJqpiXS7WiMyWwcQq6Ws3ogPLdHbJ1kWq3GV125XlnCU
-	 sF6go6+uaAP8sY4j0QUvXXPiSEzY9yFFlE7KitOhnGTJI38SWBuQX7FWV/qyROLOJQ
-	 RPSbRtZ2YP7DL+rgA+aKhm5G9OnRD/0TIeQTPCAOffXcqlEWkvwh+6L3IMmw1CvtQ7
-	 cqEj+16b4DgofCYEJgn5NC2F6P9PAFzeuWtJzQWef3pJOr8fzgQ8DE4ITiQ/kKaZuG
-	 N4AnmeOcI/k9g==
-From: Leon Romanovsky <leon@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Jianbo Liu <jianbol@nvidia.com>, linux-kernel@vger.kernel.org, 
- linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
- Paolo Abeni <pabeni@redhat.com>, Saeed Mahameed <saeedm@nvidia.com>, 
- Tariq Toukan <tariqt@nvidia.com>, Leon Romanovsky <leon@kernel.org>
-In-Reply-To: <cover.1717409369.git.leon@kernel.org>
-References: <cover.1717409369.git.leon@kernel.org>
-Subject: Re: (subset) [PATCH rdma-next 0/3] Delay mlx5_ib internal
- resources allocations
-Message-Id: <171855230192.136500.7249427705216716337.b4-ty@kernel.org>
-Date: Sun, 16 Jun 2024 18:38:21 +0300
+	s=arc-20240116; t=1718552651; c=relaxed/simple;
+	bh=5J9509OFTzcHXg0xKY5e9qCb+9NQ/M515MoxHsqYDhs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pobwi0ZbBE43z2ZkcYOn2qH/fuUaj0/im1IMpLkgD0QeabvdX9GM9+8qBL9xhkl6b/95MYOHXklgfVyfdMti6ECnAd/sMQiHyZKjgWM3VCZ9L1jr90OOEpeyhPnZhoHhCEzXRl0lo0/b6LjA7ASFMWgyWpCaDCuwjrJ6nQ7VjV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DSsyiO92; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4132740E01D6;
+	Sun, 16 Jun 2024 15:44:05 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id BQB8rDG1Y4lR; Sun, 16 Jun 2024 15:44:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718552641; bh=cs5k6wCM6WEBXE8GoO5vcyrZNJxaQk9crLc+eqq03Wg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DSsyiO922uLiu8V6vg4kFpQXkH4Yq3KyXfQq7szvqvFQj1/e8H4/Oio/L+KchEt3G
+	 hCA94/WdtNUoOiLYXjC8NHInLqHwAJfhZgN2UW+BqavHbD7oAe79V0OVuJ272zxzFP
+	 EOyzg6RtkJ9ZBiXmZYlsy48f8Xnl7+qlSaD0ZxAJ4xu1EqJ8nagO6vlv4vqXgNHUTQ
+	 lZS5VkwMO++ij1KMxjOXMGvnM322qfIOpGAkY4rvzKUFUSI9Fg5kuYoucdyVoFsTIo
+	 qn7mGSXssSwo82zMxksdalDG7ZquOSUkVSHyaeHmWlfGPIPX4Qs1KzuClpXwp4+caf
+	 37rfKlFIsi5bj+BLGb4Z8MJHdZBukWYQUsLtubbTcLiib3IDLMHEdu2Dp9XSVhg7sT
+	 5ph9d9kz9q8JrsZlNmTei3aO26q8Brgmct8xTGMEXzMUAIeYoAcWT6/uZoVpFfCotT
+	 /kcDCshJpiDxtYDsDXcS6Lkg497pm2Wxad4cZYcgZ2v+T3Q8nMKUXTXGkq4xeYGK7D
+	 CNR55nSaZ1nfKlw5941Iw7aMqn4a3UNrw6aBocH2dOwR3gpIS1ix8gKQaZtQzTy2/1
+	 laIBxr0VGvLGBA+uHZ6KC2Q5vdOM9pHHpyGupzCKZhWJhHkSvIBMIDFfD1xTFvREjq
+	 UlL4X3mdzSgFIwD/OFvBjQz8=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4B82F40E0185;
+	Sun, 16 Jun 2024 15:43:53 +0000 (UTC)
+Date: Sun, 16 Jun 2024 17:43:47 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] EDAC: layerscape: add missing MODULE_DESCRIPTION() macro
+Message-ID: <20240616154347.GCZm8IMxshO8YYTTjB@fat_crate.local>
+References: <20240613-md-arm64-drivers-edac-v1-1-149a4f0f61bb@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240613-md-arm64-drivers-edac-v1-1-149a4f0f61bb@quicinc.com>
 
-
-On Mon, 03 Jun 2024 13:26:36 +0300, Leon Romanovsky wrote:
-> Internal mlx5_ib resources are created during mlx5_ib module load. This
-> behavior is not optimal because it consumes resources that are not
-> needed when SFs are created. This patch series delays the creation of
-> mlx5_ib internal resources to the stage when they actually used.
+On Thu, Jun 13, 2024 at 02:36:21PM -0700, Jeff Johnson wrote:
+> With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/edac/layerscape_edac_mod.o
 > 
-> Thanks
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
 > 
-> [...]
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/edac/layerscape_edac.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/edac/layerscape_edac.c b/drivers/edac/layerscape_edac.c
+> index d2f895033280..b70d5d258fcb 100644
+> --- a/drivers/edac/layerscape_edac.c
+> +++ b/drivers/edac/layerscape_edac.c
+> @@ -69,6 +69,7 @@ static void __exit fsl_ddr_mc_exit(void)
+>  
+>  module_exit(fsl_ddr_mc_exit);
+>  
+> +MODULE_DESCRIPTION("Freescale Layerscape EDAC module");
+>  MODULE_LICENSE("GPL");
+>  MODULE_AUTHOR("NXP Semiconductor");
+>  module_param(edac_op_state, int, 0444);
+> 
+> ---
 
-Applied, thanks!
+$ git grep -E "MODULE_(DESCRIPTION|LICENSE)" drivers/edac/
 
-[2/3] IB/mlx5: Create UMR QP just before first reg_mr occurs
-      https://git.kernel.org/rdma/rdma/c/638420115cc4ad
-[3/3] IB/mlx5: Allocate resources just before first QP/SRQ is created
-      https://git.kernel.org/rdma/rdma/c/5895e70f2e6e8d
+I'd expect to see regular pairs like this:
 
-Best regards,
+drivers/edac/al_mc_edac.c:348:MODULE_LICENSE("GPL v2");
+drivers/edac/al_mc_edac.c:350:MODULE_DESCRIPTION("Amazon's Annapurna Lab's Memory Controller EDAC Driver");
+
+drivers/edac/altera_edac.c:2216:MODULE_DESCRIPTION("EDAC Driver for Altera Memories");
+
+drivers/edac/amd64_edac.c:4238:MODULE_LICENSE("GPL");
+drivers/edac/amd64_edac.c:4240:MODULE_DESCRIPTION("MC support for AMD64 memory controllers");
+...
+
+but there are cases which need fixing.
+
+How about you do them all with one patch?
+
+Thx.
+
 -- 
-Leon Romanovsky <leon@kernel.org>
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
