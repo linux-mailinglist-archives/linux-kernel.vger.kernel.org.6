@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-216320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B63909DDB
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:58:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E83A7909DDD
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D91E281465
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 13:58:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79860B20E89
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 13:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8059443;
-	Sun, 16 Jun 2024 13:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F0C9443;
+	Sun, 16 Jun 2024 13:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6rVutT2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KHrn17qf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B13479DC;
-	Sun, 16 Jun 2024 13:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A162079F0;
+	Sun, 16 Jun 2024 13:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718546322; cv=none; b=nVvnEQV0SFFxjpJEO8ELucwfRyHar9kt/Q5ThCWgItYZIT4t1YZaPGaMkDFkrxLDre15a++MgHa5qO8MyxqEDx03EHLjDfef+EyybRrRv6LIBC2hmFPhMijZ0kJtdoiJKuP0mdqspL3qylHRxmJONaWPZBl9iRnHwYsgnDNXpbQ=
+	t=1718546360; cv=none; b=PF6BN6wl1nLuYwrsC/xkIVPcoLpiCgfK8DfBbpINTfPDCm78Bp8+hxNsCJxFWCviRfLcR6wqVKe3EwIvgwMjG3P2m7oKVCdjgurk5TjlW/AdO8puek6vIi6Bae+nYM3nsVB/aWo0btLoahN1Q7b8nGuuTjmqYMfgJGVbQ/yUJ2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718546322; c=relaxed/simple;
-	bh=bzDMSi+KPj5dWKgND4vnJtkmUJkrU//LHJVmtaQDBjk=;
+	s=arc-20240116; t=1718546360; c=relaxed/simple;
+	bh=jcqLvrcvn4Jpu7Fgm/KN3CKd1xe/oU329rPnBCS92k0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HFubdNDtlD2jYbT+1xizqkgr9JIs7q7w01CyiltViHm7+pFsL2j/aEFbwcBj0QKZJZMe/cCeA5X+LsGk2uTcdhhuLOF4o1UtTP4vHgg17bXlojGDimAQCrTnmZHrgngQx6pEmtF9NvupWqsi5RCoh7r57sMev7BxKkGVEmGLU4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r6rVutT2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A9F9C2BBFC;
-	Sun, 16 Jun 2024 13:58:39 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=SM0zRHrgBny8/+IMwCzLiGmhimgUfWqaaj3dxjudjZrpEX6gl1VPuOrnz9zclS3brYa44tH6WtF2QznaeTIHMcmF6QvfIxFwSJyMAUgrCyxBV/ZpbjWT/BFnrMGAolYy0RzpJbO+yvW3+4uTIBKKOpYihwtWbE5MRK5qFGF6Wq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KHrn17qf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97158C2BBFC;
+	Sun, 16 Jun 2024 13:59:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718546321;
-	bh=bzDMSi+KPj5dWKgND4vnJtkmUJkrU//LHJVmtaQDBjk=;
+	s=k20201202; t=1718546360;
+	bh=jcqLvrcvn4Jpu7Fgm/KN3CKd1xe/oU329rPnBCS92k0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=r6rVutT2jxf99d+BT+VgV7RSStW/iRoePcDm5AT1Ezw2HvdFMxs84Bsq8Dz+LXnxY
-	 41w1oFgsNleBuzc0xaObNjMmN3GB7/nckTtSWPajQCEU78Fah5AzuuJuKDZGuuBXzt
-	 folCy6ZAfSoPUXMuR01Shq5SKp/Zg7e4Fd/SmCLvUeR/yLKtffbeF6H7CHywEG1Ytf
-	 rtWRB9h6nlOD8HJ2TjDkxiFRNneRY+xCCpzIjct3cQhfdVt1MOgJIq2kxHotOjXCBV
-	 RPoMA3AkIRllq2PxCvK/rFGX4WddNLXb1BvxAKKx1wyoN+/QDipWAnbgqgmyYePHvC
-	 ShvwisVmV5IrQ==
-Message-ID: <699ab73b-8fc5-4d31-a261-5b6f99609464@kernel.org>
-Date: Sun, 16 Jun 2024 15:58:37 +0200
+	b=KHrn17qfH8LgO7OI/tFCBlKXmCdY67L2Rrhk4IOTqzFunFuSzRqxJ7d0lKruY77z1
+	 VAsGb3u7UzIZCOJd2Wo8HZNQkm+E23UDHJt44X5W9bpL+VI98dgeI0qsFR2JBElXcG
+	 GrnzAe/kreNDE8EJBcByVjVWMWyWuaKwGpsnK8iKpjuDujSzbL6E4FLxul5j6o2GNg
+	 8N658moqnTQVxoIKQ9iHu2eAXxFWzoTUHv+87abxN361rjPcHU/VGud8Jv1QAXxBYn
+	 WOnD2OvKDNBy8M1x7E19fzdO8upDyWw69JSy3IB1hokilhR2tjuuErXnuC9/vAHoaK
+	 CYxSP9fbJWJNw==
+Message-ID: <130eec5c-5f90-4dd4-9d75-63698835f10c@kernel.org>
+Date: Sun, 16 Jun 2024 15:59:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] ASoC: dt-bindings: realtek,rt5631: Convert to
+Subject: Re: [PATCH v2 1/2] ASoC: dt-bindings: realtek,rt5514: Convert to
  dtschema
 To: Animesh Agarwal <animeshagarwal28@gmail.com>
 Cc: Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood
@@ -57,7 +57,7 @@ Cc: Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240616074936.151267-1-animeshagarwal28@gmail.com>
+References: <20240616095223.260786-1-animeshagarwal28@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,16 +103,16 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240616074936.151267-1-animeshagarwal28@gmail.com>
+In-Reply-To: <20240616095223.260786-1-animeshagarwal28@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/06/2024 09:49, Animesh Agarwal wrote:
-> Convert the ALC5631/RT5631 audio CODEC bindings to DT Schema.
+On 16/06/2024 11:52, Animesh Agarwal wrote:
+> Convert the RT5514 audio CODEC bindings to DT Schema. Make bindings
+> complete by adding 'spi-max-frequency', 'wakeup-source' properties.
 > 
 > Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 > Cc: Daniel Baluta <daniel.baluta@nxp.com>
-> 
 
 
 Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
