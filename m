@@ -1,230 +1,253 @@
-Return-Path: <linux-kernel+bounces-216335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BC54909E10
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:06:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB187909E11
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA6E1F213FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:06:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BFE32815FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7E314292;
-	Sun, 16 Jun 2024 15:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7A114A81;
+	Sun, 16 Jun 2024 15:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="pqUJPRmq"
-Received: from msa.smtpout.orange.fr (msa-215.smtpout.orange.fr [193.252.23.215])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="mSraej69"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0E717993;
-	Sun, 16 Jun 2024 15:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.215
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EBA12B73
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 15:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718550391; cv=none; b=r+nEA54GG1tXO5PDqQ2c/CaRlJ298XNH05FJIbmI/pqzf5IbuY5007X6j/y1hm/9kmQR+fywW+2ktBUEZXJJpwatDQb9HhK/51FS4MZ0YIYguHSQb8fkmuHzpWBJ+ThYxyTiP+Cyre+Ar8SG6KdQasmY13wjL9YRnhBAUnNbRCI=
+	t=1718550411; cv=none; b=e1v1/avXehIcgprZrH8o7mm+fOCvq5TUMyp4GxEQUGvsfDNEZovGuO3LcEuUrQ//ZXRC+Kv8RI8qiAdgHbzsvvR31u8fkOZGXZk7BM5lIrXeiORgp5OctFtJ1md7cEcYnDoMvFFQqD25K7znxwF5C/SetF8kyJ94pgAb9BnqyK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718550391; c=relaxed/simple;
-	bh=MeP63kUoIGOhp+KS92FhAfCnit5QJFnb0n3OM4QPJPo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B//YuXlE8qMumjVklSDbnk5Q8ow0ZjJ//vwWoEzg/i+fylkzHnkjRtkiwhWq1RQ2eGzy96kRExCmeLCv4entleuqOnJtnJ6Lts429Mm/e8gABk98v/AsEyyktilpTm+yxYbVsW6ObkEmXHzIQBymKdud3q8RjPBf1kFBQmM5vBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=pqUJPRmq; arc=none smtp.client-ip=193.252.23.215
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id IrSUsCOuW4rg1IrSUs1Sr1; Sun, 16 Jun 2024 17:06:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1718550380;
-	bh=ujR6qI66k3vQEhgvlbkTIaG+4S4k/x11/VEOuKw3pkE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=pqUJPRmqiowTw3TYYioi9HHW3BS2VQuywKo8nfRiglMFqshCwso3qbgpqRg+INspt
-	 ALq25NbbSfAQJIP9Sc8h2IDHuWDfgS+/KJMbKT1z9UIXjD+nKg73j7FuTyxoolcvk7
-	 DzshJdyXTgWzb2sbbl/G+kxzLxSznuo1saqXxs61oVL0u3MVjbei4unCtfm5syQ5NW
-	 fHw/Al0dJur2vgVgeYjRKq5b7XQoPYlU3hHVE7qoF1G4GYMk24o73VRKSe28NV5ri6
-	 ZdeF/n9TEcdn+MXSQ1pf1QuYbxaz1GVMqywT4geO1np/NopaF3vk7xHFa7O9ZpbGfk
-	 srXGgwjer0yPw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 16 Jun 2024 17:06:20 +0200
-X-ME-IP: 86.243.222.230
-Message-ID: <834d31cc-f4bc-4db7-a25b-f9869e550eb6@wanadoo.fr>
-Date: Sun, 16 Jun 2024 17:06:18 +0200
+	s=arc-20240116; t=1718550411; c=relaxed/simple;
+	bh=p5zJ4+9q8IuUz87Wd9F+o/28kdYtulCro0d2mJm/XEY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=szZxSmgWHKu1/W/rY+wsVm/xp2PXbHn5SEXR5lXAoy2jsJKvnPiOLkYOLQ+SktoYSZPunyyG4yq3c9MkTbCd+vI8puZHB1cZ/zdQdOBcwX1mGaIZY+2Uy0/Fx9og4uEpthw60m6GLQE2xNieqXYX35q2yPZQi5VTEEFk9xEx10M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=mSraej69; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=6oh7yesvyjgnxl3sh6rcesrhj4.protonmail; t=1718550405; x=1718809605;
+	bh=3NPcfb3TcZHCQq/fKC5xCaBEd1Gh0/q4eoxgjTOHKCw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=mSraej692hLKvs7mzHtyoFIACPfk+BbHW1PJdNOssrPuAExdBfaeVAoaHLN9yQ42p
+	 VUV3G2T82Oyc0asvyD7ZX2d1ndVyFPTclvW68QT0U0xyNqjFjozCpGeX/k/9rGH09P
+	 6QfS3FzHuyhv7c3jG1Ee6ymycimn38p1OBCMJJOE7/3n3dgpyjbcUAoOejwyz1o2gA
+	 L/NDRr2Web4yroKi7RlJPc4TpAYFF0QHjnEKI7P1ne+mchcmCu0ZAUw9DANaImMnhz
+	 VtVaj+9AhWL4nyet3pgmlEGK2o9za39WNUTyboboJ4xJCOhXoH9c3PfosFvWIkjHNT
+	 8JEGxsTkIImYQ==
+Date: Sun, 16 Jun 2024 15:06:36 +0000
+To: Boqun Feng <boqun.feng@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Gary Guo <gary@garyguo.net>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
+	kent.overstreet@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>, dakr@redhat.com
+Subject: Re: [RFC 2/2] rust: sync: Add atomic support
+Message-ID: <f29cb2fd-651b-4bc5-8055-e3a412192e29@proton.me>
+In-Reply-To: <Zm7xySzPJcddF-I_@Boquns-Mac-mini.home>
+References: <20240612223025.1158537-3-boqun.feng@gmail.com> <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com> <ZmxUxaIwHWnB42h-@Boquns-Mac-mini.home> <c1c45a2e-afdf-40a6-9f44-142752368d5e@proton.me> <ZmzvVr7lYfR6Dpca@Boquns-Mac-mini.home> <b692945b-8fa4-4918-93f6-783fbcde375c@proton.me> <Zm4R0XwTpsASpBhx@Boquns-Mac-mini.home> <d67aeb8c-3499-4498-aaf9-4ac459c2f747@proton.me> <Zm7xySzPJcddF-I_@Boquns-Mac-mini.home>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 491e33e1981ad9297cbb1951124c18038c7ab95a
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/7] ASoC: codecs: wcd937x: add wcd937x codec driver -
- another comment
-To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com,
- quic_pkumpatl@quicinc.com, Konrad Dybcio <konrad.dybcio@linaro.org>
-References: <20240611074557.604250-1-quic_mohs@quicinc.com>
- <20240611074557.604250-4-quic_mohs@quicinc.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240611074557.604250-4-quic_mohs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Le 11/06/2024 à 09:45, Mohammad Rafi Shaik a écrit :
-> From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-> 
-> This patch adds basic SoundWire codec driver to support for
-> WCD9370/WCD9375 TX and RX devices.
-> 
-> The WCD9370/WCD9375 has Multi Button Headset Control hardware to
-> support Headset insertion, type detection, 8 headset buttons detection,
-> Over Current detection and Impedence measurements.
-> This patch adds support for this using wcd-mbhc apis.
-> 
-> Co-developed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-> Co-developed-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-> ---
+On 16.06.24 16:08, Boqun Feng wrote:
+> On Sun, Jun 16, 2024 at 09:46:45AM +0000, Benno Lossin wrote:
+>> On 16.06.24 00:12, Boqun Feng wrote:
+>>> On Sat, Jun 15, 2024 at 07:09:30AM +0000, Benno Lossin wrote:
+>>>> On 15.06.24 03:33, Boqun Feng wrote:
+>>>>> On Fri, Jun 14, 2024 at 09:22:24PM +0000, Benno Lossin wrote:
+>>>>>> On 14.06.24 16:33, Boqun Feng wrote:
+>>>>>>> On Fri, Jun 14, 2024 at 11:59:58AM +0200, Miguel Ojeda wrote:
+>>>>>>>> On Thu, Jun 13, 2024 at 9:05=E2=80=AFPM Boqun Feng <boqun.feng@gma=
+il.com> wrote:
+>>>>>>>>>
+>>>>>>>>> Does this make sense?
+>>>>>>>>
+>>>>>>>> Implementation-wise, if you think it is simpler or more clear/eleg=
+ant
+>>>>>>>> to have the extra lower level layer, then that sounds fine.
+>>>>>>>>
+>>>>>>>> However, I was mainly talking about what we would eventually expos=
+e to
+>>>>>>>> users, i.e. do we want to provide `Atomic<T>` to begin with? If ye=
+s,
+>>>>>>>
+>>>>>>> The truth is I don't know ;-) I don't have much data on which one i=
+s
+>>>>>>> better. Personally, I think AtomicI32 and AtomicI64 make the users =
+have
+>>>>>>> to think about size, alignment, etc, and I think that's important f=
+or
+>>>>>>> atomic users and people who review their code, because before one u=
+ses
+>>>>>>> atomics, one should ask themselves: why don't I use a lock? Atomics
+>>>>>>> provide the ablities to do low level stuffs and when doing low leve=
+l
+>>>>>>> stuffs, you want to be more explicit than ergonomic.
+>>>>>>
+>>>>>> How would this be different with `Atomic<i32>` and `Atomic<i64>`? Ju=
+st
+>>>>>
+>>>>> The difference is that with Atomic{I32,I64} APIs, one has to choose (=
+and
+>>>>> think about) the size when using atomics, and cannot leave that optio=
+n
+>>>>> open. It's somewhere unconvenient, but as I said, atomics variables a=
+re
+>>>>> different. For example, if someone is going to implement a reference
+>>>>> counter struct, they can define as follow:
+>>>>>
+>>>>> =09struct Refcount<T> {
+>>>>> =09    refcount: AtomicI32,
+>>>>> =09    data: UnsafeCell<T>
+>>>>> =09}
+>>>>>
+>>>>> but with atomic generic, people can leave that option open and do:
+>>>>>
+>>>>> =09struct Refcount<R, T> {
+>>>>> =09    refcount: Atomic<R>,
+>>>>> =09    data: UnsafeCell<T>
+>>>>> =09}
+>>>>>
+>>>>> while it provides configurable options for experienced users, but it
+>>>>> also provides opportunities for sub-optimal types, e.g. Refcount<u8, =
+T>:
+>>>>> on ll/sc architectures, because `data` and `refcount` can be in the s=
+ame
+>>>>> machine-word, the accesses of `refcount` are affected by the accesses=
+ of
+>>>>> `data`.
+>>>>
+>>>> I think this is a non-issue. We have two options of counteracting this=
+:
+>>>> 1. We can just point this out in reviews and force people to use
+>>>>    `Atomic<T>` with a concrete type. In cases where there really is th=
+e
+>>>>    need to be generic, we can have it.
+>>>> 2. We can add a private trait in the bounds for the generic, nobody
+>>>>    outside of the module can access it and thus they need to use a
+>>>>    concrete type:
+>>>>
+>>>>         // needs a better name
+>>>>         trait Integer {}
+>>>>         impl Integer for i32 {}
+>>>>         impl Integer for i64 {}
+>>>>
+>>>>         pub struct Atomic<T: Integer> {
+>>>>             /* ... */
+>>>>         }
+>>>>
+>>>> And then in the other module, you can't do this (with compiler error):
+>>>>
+>>>>         pub struct Refcount<R: Integer, T> {
+>>>>                             // ^^^^^^^ not found in this scope
+>>>>                             // note: trait `crate::atomic::Integer` ex=
+ists but is inaccessible
+>>>>             refcount: Atomic<R>,
+>>>>             data: UnsafeCell<T>,
+>>>>         }
+>>>>
+>>>> I think that we can start with approach 2 and if we find a use-case
+>>>> where generics are really unavoidable, we can either put it in the sam=
+e
+>>>> module as `Atomic<T>`, or change the access of `Integer`.
+>>>>
+>>>
+>>> What's the issue of having AtomicI32 and AtomicI64 first then? We don't
+>>> need to do 1 or 2 until the real users show up.
+>>
+>> Generics allow you to avoid code duplication (I don't think that you
+>> want to create the `Atomic{I32,I64}` types via macros...). We would have
+>> to do a lot of refactoring, when we want to introduce it. I don't see
+>=20
+> You can simply do
+>=20
+> =09type AtomicI32=3DAtomic<i32>;
 
+Eh, I would think that we could just do a text replacement in this case.
+Or if that doesn't work, Coccinelle should be able to do this...
 
-Hi,
+> Plus, we always do refactoring in kernel, because it's impossible to get
+> everything right at the first time. TBH, it's too confident to think one
+> can.
 
-this patch has reached -next, but I have a question.
+I don't think that we're at the "let's just put it in" stage. This is an
+RFC version, so it should be fine to completely change the approach.
+I agree, that we can't get it 100% right the first time, but we should
+at least strive to get a good version.
 
-If I'm correct, I can send a patch, but if the fix can be folded 
-somewhere, this is also fine for me.
+>> the harm of introducing generics from the get-go.
+>>
+>>> And I'd like also to point out that there are a few more trait bound
+>>> designs needed for Atomic<T>, for example, Atomic<u32> and Atomic<i32>
+>>> have different sets of API (no inc_unless_negative() for u32).
+>>
+>> Sure, just like Gary said, you can just do:
+>>
+>>     impl Atomic<i32> {
+>>         pub fn inc_unless_negative(&self, ordering: Ordering) -> bool;
+>>     }
+>>
+>> Or add a `HasNegative` trait.
+>>
+>>> Don't make me wrong, I have no doubt we can handle this in the type
+>>> system, but given the design work need, won't it make sense that we tak=
+e
+>>> baby steps on this? We can first introduce AtomicI32 and AtomicI64 whic=
+h
+>>> already have real users, and then if there are some values of generic
+>>> atomics, we introduce them and have proper discussion on design.
+>>
+>> I don't understand this point, why can't we put in the effort for a good
+>> design? AFAIK we normally spend considerable time to get the API right
+>> and I think in this case it would include making it generic.
+>>
+>=20
+> What's the design you propose here? Well, the conversation between us is
+> only the design bit I saw, elsewhere it's all handwaving that "generics
+> are overall really good". I'm happy to get the API right, and it's easy
+> and simple to do on concrete types. But IIUC, Gary's suggestion is to
+> only have Atomic<i32> and Atomic<i64> first, and do the design later,
+> which I really don't like. It may not be a complete design, but I need
+> to see the design now to understand whether we need to go to that
+> direction. I cannot just introduce a TBD generic.
 
-...
+I don't think that the idea was to "do the design later". I don't even
+know how you would do that, since you need the design to submit a patch.
 
-> +static int wcd937x_probe(struct platform_device *pdev)
-> +{
-> +	struct component_match *match = NULL;
-> +	struct device *dev = &pdev->dev;
-> +	struct wcd937x_priv *wcd937x;
-> +	struct wcd_mbhc_config *cfg;
-> +	int ret;
-> +
-> +	wcd937x = devm_kzalloc(dev, sizeof(*wcd937x), GFP_KERNEL);
-> +	if (!wcd937x)
-> +		return -ENOMEM;
-> +
-> +	dev_set_drvdata(dev, wcd937x);
-> +	mutex_init(&wcd937x->micb_lock);
-> +
-> +	wcd937x->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-> +	if (IS_ERR(wcd937x->reset_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(wcd937x->reset_gpio),
-> +				     "failed to reset wcd gpio\n");
-> +
-> +	wcd937x->us_euro_gpio = devm_gpiod_get_optional(dev, "us-euro", GPIOD_OUT_LOW);
-> +	if (IS_ERR(wcd937x->us_euro_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(wcd937x->us_euro_gpio),
-> +				"us-euro swap Control GPIO not found\n");
-> +
-> +	cfg = &wcd937x->mbhc_cfg;
-> +	cfg->swap_gnd_mic = wcd937x_swap_gnd_mic;
-> +
-> +	wcd937x->supplies[0].supply = "vdd-rxtx";
-> +	wcd937x->supplies[1].supply = "vdd-px";
-> +	wcd937x->supplies[2].supply = "vdd-mic-bias";
-> +
-> +	ret = devm_regulator_bulk_get(dev, WCD937X_MAX_BULK_SUPPLY, wcd937x->supplies);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to get supplies\n");
-> +
-> +	ret = regulator_bulk_enable(WCD937X_MAX_BULK_SUPPLY, wcd937x->supplies);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to enable supplies\n");
-> +
-> +	/* Get the buck separately, as it needs special handling */
-> +	wcd937x->buck_supply = devm_regulator_get(dev, "vdd-buck");
-> +	if (IS_ERR(wcd937x->buck_supply))
+I can't offer you a complete API description, since that would require
+me writing it up myself. But I would recommend trying to get it to work
+with generics. I got a few other comments:
+- I don't think that we should resort to a script to generate the Rust
+  code since it prevents adding good documentation & examples to the
+  various methods. AFAIU you want to generate the functions from
+  `scripts/atomic/atomics.tbl` to keep it in sync with the C side. I
+  looked at the git log of that file and it hasn't been changed
+  significantly since its inception. I don't think that there is any
+  benefit to generating the functions from that file.
+- most of the documented functions say "See `c_function`", I don't like
+  this, can we either copy the C documentation (I imagine it not
+  changing that often, or is that assumption wrong?) or write our own?
+- we should try to use either const generic or normal parameters for the
+  access ordering instead of putting it in the function name.
+- why do we need both non-return and return variants?
 
-regulator_bulk_disable() is missing here...
+I think it is probably a good idea to discuss this in our meeting.
 
-> +		return dev_err_probe(dev, PTR_ERR(wcd937x->buck_supply),
-> +				     "Failed to get buck supply\n");
-> +
-> +	ret = regulator_enable(wcd937x->buck_supply);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to enable buck supply\n");
-
-... and here...
-
-Also, should 'buck_supply' be disabled in the error handling path of the 
-probe and in the remove function? (and maybe even somewhere else related 
-to wcd937x_codec_enable_vdd_buck())
-
-> +
-> +	wcd937x_dt_parse_micbias_info(dev, wcd937x);
-> +
-> +	cfg->mbhc_micbias = MIC_BIAS_2;
-> +	cfg->anc_micbias = MIC_BIAS_2;
-> +	cfg->v_hs_max = WCD_MBHC_HS_V_MAX;
-> +	cfg->num_btn = WCD937X_MBHC_MAX_BUTTONS;
-> +	cfg->micb_mv = wcd937x->micb2_mv;
-> +	cfg->linein_th = 5000;
-> +	cfg->hs_thr = 1700;
-> +	cfg->hph_thr = 50;
-> +
-> +	wcd_dt_parse_mbhc_data(dev, &wcd937x->mbhc_cfg);
-> +
-> +	ret = wcd937x_add_slave_components(wcd937x, dev, &match);
-> +	if (ret)
-> +		return ret;
-
-... and here...
-
-> +
-> +	wcd937x_reset(wcd937x);
-> +
-> +	ret = component_master_add_with_match(dev, &wcd937x_comp_ops, match);
-> +	if (ret)
-> +		return ret;
-
-... and here.
-
-Maybe a devm_add_action_ior_reset() could help?
-
-> +
-> +	pm_runtime_set_autosuspend_delay(dev, 1000);
-> +	pm_runtime_use_autosuspend(dev);
-> +	pm_runtime_mark_last_busy(dev);
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_enable(dev);
-> +	pm_runtime_idle(dev);
-> +
-> +	return ret;
-> +}
-> +
-> +static void wcd937x_remove(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct wcd937x_priv *wcd937x = dev_get_drvdata(dev);
-> +
-> +	component_master_del(&pdev->dev, &wcd937x_comp_ops);
-> +
-> +	pm_runtime_disable(dev);
-> +	pm_runtime_set_suspended(dev);
-> +	pm_runtime_dont_use_autosuspend(dev);
-> +
-> +	regulator_bulk_disable(WCD937X_MAX_BULK_SUPPLY, wcd937x->supplies);
-> +	regulator_bulk_free(WCD937X_MAX_BULK_SUPPLY, wcd937x->supplies);
-
-This has been allocated with devm_regulator_bulk_get(), so this call 
-looks redundant (but harmless).
-
-> +}
-
-...
+---
+Cheers,
+Benno
 
 
