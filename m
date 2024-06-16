@@ -1,89 +1,120 @@
-Return-Path: <linux-kernel+bounces-216092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 608CF909B42
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 04:32:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 849B1909B46
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 04:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1285D1F215E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 02:32:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EBDF1F21244
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 02:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C833616C69B;
-	Sun, 16 Jun 2024 02:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348BF16C6AD;
+	Sun, 16 Jun 2024 02:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="HGcJ6DxT"
-Received: from mail-177132.yeah.net (mail-177132.yeah.net [123.58.177.132])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691212B9AE;
-	Sun, 16 Jun 2024 02:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=123.58.177.132
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ThRojZyX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222F92B9AE;
+	Sun, 16 Jun 2024 02:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718505172; cv=none; b=hba2CELkdKPm4aYqyEYRoBXLQuwizZWOhXKJ5+mmhj6QnyNtgYuyqJHknK2ybBvyh68UmRTv0z8GOIEHM+KvP90XebBV2SfZdDKu0VJCvZ4zvaTOXt70YUfQTpss5DPB95YpNbjwfc6hPiUzF0XjFMf+MIOBSl/wr6OtPwAuyEo=
+	t=1718505303; cv=none; b=rY8HoUIWdX/8s3PqHgEEyEgUt5Rn1Ua4JsP/mKluiWxSPkEsPfCITqQ/nvlTycpssxoevIhACX8+WrxqmxowsnBm89li4z3MEQIQpZ9FisUn3KjqFxlxpplwsOITXAsu+rpzI9r1qDfv0dVOXAGb8Oy/zvr9wBCRmTOH1RM3Na0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718505172; c=relaxed/simple;
-	bh=u3+EI/syrhiTmuQIanrqV5I6MyI8po3RILPAsl4CAyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TmHtK8xhWJsj9qnpUmM0cb+UatgkU1eTGQdB4LjRYOqg7UhbwUS1PxX3QoP97mUxnrQghze03pTeBew8CduLKRAuRn1MaerWnwxJOb7SMSx57aaP7uU9fUSkhc9a/T6lu9Scc1Fep5PbqTZq6skOx01oJwTOj9/jCYm2Pr7IIE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=HGcJ6DxT; arc=none smtp.client-ip=123.58.177.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=XUdtgsTaJbkkEzxuZMU72erEzpZ8Iwy4UurOMsxIWLE=;
-	b=HGcJ6DxTRCowvd8dq0EAEGsFGqGgPGo1v4FiP0mxKDJ+tm+Hx2/YkAJlEr+e5G
-	qjJZ1I8OjfgJ/2eFGejkcyC/O2kFc51sEBcUM7qyjb4aL8vYBTmZgUEEjpZrt7oI
-	sAW6DB9r4Dm6NI8nt8HIBMGytI8oStVD6N46eP2xpib2U=
-Received: from dragon (unknown [114.216.76.201])
-	by smtp2 (Coremail) with SMTP id C1UQrADnr0+7Tm5myI++CA--.26946S3;
-	Sun, 16 Jun 2024 10:32:28 +0800 (CST)
-Date: Sun, 16 Jun 2024 10:32:27 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: max.oss.09@gmail.com
-Cc: Max Krummenacher <max.krummenacher@toradex.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] arm64: dts: freescale: imx8m{m|p}: don't limit
- i2c2 max. clock
-Message-ID: <Zm5Ou/NCnq43FAYR@dragon>
-References: <20240527160359.1965512-1-max.oss.09@gmail.com>
+	s=arc-20240116; t=1718505303; c=relaxed/simple;
+	bh=okBhKRtYZu/XsozCdr595DkZUlyBPurnfjB5fSWy0FA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=mJ+XNIf/9cxgcO0CQTzDoSetP45denMmtYMOgbQ4GY00cr4+p8W7h2iwkx8+UIastWDaIdj3q2KTaTsmRdRa60hK2Yx3HSpVRBRRui91b8BkVPSyWIQDHwhJ8Dh0OiC5P8zUSOsUgk/LquE/6APTWhanf6QhaWl99vdiqUYspKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ThRojZyX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45G2ENwx004550;
+	Sun, 16 Jun 2024 02:34:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=DDNNiasvgAEzG48txbi+of
+	KnXYEK4uF1YjBksZI5ZJE=; b=ThRojZyXBtnY48tHhSnfmR2mT4O1BiFmZfdQw/
+	WCQkLw75otKgu4pWyezB6tonn3ZSW5LzatvFmSsWLq5K0ysQYtk1+v6Qwn2OH3Lg
+	kwf3c24DWPRJ09CdHkrcaNqqP3aWowFnF4DgjEawnoFgkmoGwbm7QD4kdMEfqFPA
+	RYWRSvwxN9FjKNp4ry8ldUiPMirln5rfPXpiyELiII/ZavOW8OSFS7hCBIxbIyBe
+	yN/mR10PwB3qg0HJ/sIzfQKecSDhXzMhb/IBzyop2PxaqwYC+iLmSVdWQh5PgvsE
+	wXYH1LUL7Y5NiTs6qkykuOO9yG56/DDeo839JuMUWEiLcvOA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys44js86j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 16 Jun 2024 02:34:59 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45G2YwAc001631
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 16 Jun 2024 02:34:59 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 15 Jun
+ 2024 19:34:58 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sat, 15 Jun 2024 19:34:50 -0700
+Subject: [PATCH] s390/dcssblk: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240527160359.1965512-1-max.oss.09@gmail.com>
-X-CM-TRANSID:C1UQrADnr0+7Tm5myI++CA--.26946S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUcS_MDUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBRwAZVsVCpobjAAAs1
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240615-md-s390-drivers-s390-block-dcssblk-v1-1-d9d19703abcb@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAElPbmYC/yXNTQ6CQAxA4auQrm0ygwwRr2JYzE+VBhhMq4SEc
+ HdHXX6b93ZQEiaFa7WD0MrKSy6wpwri4PODkFMx1KZuTGsdzgn13BlMwiuJ/hGmJY6YomqYRrx
+ 01rlkok9NCyX0FLrz9pvc+uLglTCIz3H4pifO7w1nry8SOI4PI4giiZMAAAA=
+To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger
+	<borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>
+CC: <linux-s390@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 2B_T49uF1NhQsEZrkVSzx9PTB3Y-Ta5p
+X-Proofpoint-ORIG-GUID: 2B_T49uF1NhQsEZrkVSzx9PTB3Y-Ta5p
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-16_02,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 mlxlogscore=999 spamscore=0 lowpriorityscore=0
+ adultscore=0 phishscore=0 mlxscore=0 clxscore=1015 bulkscore=0
+ malwarescore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406160018
 
-On Mon, May 27, 2024 at 06:03:44PM +0200, max.oss.09@gmail.com wrote:
-> From: Max Krummenacher <max.krummenacher@toradex.com>
-> 
-> 
-> This sets the I2C clock frequency to something people expect it to
-> be by default.
-> 
-> For I2C DDC we do want to lower the I2C clock to have more reliable
-> communication. However that should be done where the I2C bus is
-> assigned to a HDMI DDC, not as the default.
-> 
-> 
-> Max Krummenacher (2):
->   arm64: dts: freescale: imx8mm-verdin: don't limit i2c2 max. clock
->   arm64: dts: freescale: imx8mp-verdin: don't limit i2c2 max. clock
+With ARCH=s390, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/s390/block/dcssblk.o
 
-Applied both, thanks!
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
+
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/s390/block/dcssblk.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/s390/block/dcssblk.c b/drivers/s390/block/dcssblk.c
+index 6d1689a2717e..995d4c84ed5a 100644
+--- a/drivers/s390/block/dcssblk.c
++++ b/drivers/s390/block/dcssblk.c
+@@ -1032,4 +1032,5 @@ MODULE_PARM_DESC(segments, "Name of DCSS segment(s) to be loaded, "
+ 		 "the contiguous segments - \n"
+ 		 "e.g. segments=\"mydcss1,mydcss2:mydcss3,mydcss4(local)\"");
+ 
++MODULE_DESCRIPTION("S/390 block driver for DCSS memory");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240615-md-s390-drivers-s390-block-dcssblk-89155d0cad46
 
 
