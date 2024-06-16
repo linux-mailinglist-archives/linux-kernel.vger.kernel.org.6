@@ -1,185 +1,147 @@
-Return-Path: <linux-kernel+bounces-216411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5503909EFD
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 20:10:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C756909F08
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 20:15:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0BDA1C22819
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:10:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07BAA28482D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051FC44377;
-	Sun, 16 Jun 2024 18:10:23 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259F33D3B3;
+	Sun, 16 Jun 2024 18:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="J1NYbAhT"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F2737165
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 18:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C5F3A1DD
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 18:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718561422; cv=none; b=CYvtQtxasYIMRU/7ZCNcB3E+wMclt0mOqg5Q2Tq7uywSkBhXmKPxZG1YhizTQWph47VDAHBYqejnmx+lYUCXfvHFh5suh924gs7L7rNgGbdkKfRhpc1Ce3Xeuue/x2s2hd1I+nSLr1OENF78jPew+ygi7lB7Lz+zXXJ1J+xZ0WY=
+	t=1718561694; cv=none; b=QVtFheHB9oalUtuQZiLODxNV+MoD9qhtAew+c0MKtKvBLpZGVKYDr6TggJPBdlbIeOeLejkBnkPHlI8VtEVxnDSQKpyvzZJxflfhink8QuLHKxO+OVyWPEct1cbD8U5PF/pbQBzo5DgLW0ZpHAHwTj+UkZwdvcetMlDkhIQ6gL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718561422; c=relaxed/simple;
-	bh=7+7MFyHk11vi9eBTLmKp+v9VUFipyCwofVlIvborQBs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=h1k2QEkzP/HbopukECZLQrEkKW6kJon9deMn7X68owxjQ6oLcmuHQcUYPlAyOb0RO2Peu17j8OL/OA4jM7S9eaM2v/Bv7PykclLAtriAaRh+4alJMGZYoSZ6NR5S6JKAGx0JQGDaLecZMBgkmUFRgPOa0JEKS+hCs9rtpPoDobA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3745fb76682so40471875ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 11:10:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718561420; x=1719166220;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nrYU6JDIwS80CxOKwrt5b61jti47MKIp+Id+1DaGeOU=;
-        b=NFKRuM93KYKAUCCnyiMbM4N6GH6QVBbsLurnG5neQH9RlVnXbEOt8c6Pf+q56jYsJQ
-         oIwlSx6I4K+gGUQJf+wHhw1Es5mA1JW/1pwMPF5SfDYxlcFT80qSbU5/79123oGD0Bds
-         AzyJDKF+jCXPRCcj/LPwIm0asNyxuO5hH+ahCu+cJnMszI2QH7crapl/TAjY6kstXLjm
-         OFhI1sD/J68KYNla5S1JO1kaKxppa0USomRWBoF5EafwNafvB7ixaij9/cWfiRcwq24U
-         kbp9DQljLARCJW2qqF9LwXItEUCTR3eo8uL6qfGzSmqTO3V6Pzqho5JIK/4qKj2fsjQr
-         iCjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBo2vS06tAa5s00t8moLtGbLr11Hht86sQe16Y/g3GINB5mUGiHxkV4beUiQKEWYOo01Rion25RUErOXRQD3GswbJrdTef1E4npArQ
-X-Gm-Message-State: AOJu0YxDGPVB5gKd+uyq4IXmhLoygHWFAmpdOmTsDnRQdZqW+OIfpNKS
-	QdJvD+9gn9Zq2T6TSMGQN3uzqClga94TPhKVwBWonwYJ364ctWZMqOQ9DsIvd64/Zlk/8k6fz/s
-	Rm04s1zbiOapixzDRcqucpFDGitKZIaa4OLj2Tso4vPhMfzyPOVoIPZs=
-X-Google-Smtp-Source: AGHT+IFXjfNVGVhps53tiw/UPSTIudku3JjQrZDRHQK9ATBhtEZuCdMDQrXUsWhZifzibJ/loToODVsUICXE5d90wuB1BkMZ8OXv
+	s=arc-20240116; t=1718561694; c=relaxed/simple;
+	bh=E+iloMvlYwvEHQwfB3DXSeJGJGUJvC05nN+d51Pkqcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HF0xdhpZMMXbLz7lbte6rc7NGi8CFA8S3B+oJaK6QBog1cIvp710BAKDxWxUzomNmAF4s2WERpQI3799alKCuj8OO9VqZpzG7RmKcpLEGKTqLDdw46vcoDQTp4Xro8S8d9vKpyjQ8N/8O8MBcuIqDu7kgLwJJUzmm9ZNss+Bde8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=J1NYbAhT; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1718561686;
+	bh=E+iloMvlYwvEHQwfB3DXSeJGJGUJvC05nN+d51Pkqcc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J1NYbAhTMQfoL5IsH2ikb0aXfry28q/DcfRCNBJ7zve4896a+rzY0PLQcNKpInX/u
+	 +gKrEsA21eYJmnqrRSz2y5lzg2sinfSowt2/0tE+T5M1zU4jXpZRC0Bd/kC7VzXkvy
+	 QEvO5kndxuWEjS36Tv5Ub3M9LZQOsouaWm2DQt/8=
+Date: Sun, 16 Jun 2024 20:14:45 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Alex Deucher <alexander.deucher@amd.com>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/amdgpu: convert bios_hardcoded_edid to drm_edid
+Message-ID: <ad78ada4-4e31-4994-845b-fe756b52a1ae@t-8ch.de>
+References: <20240616-amdgpu-edid-bios-v1-1-2874f212b365@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:35a5:b0:4b9:80a8:3cf3 with SMTP id
- 8926c6da1cb9f-4b980a84230mr152116173.6.1718561420086; Sun, 16 Jun 2024
- 11:10:20 -0700 (PDT)
-Date: Sun, 16 Jun 2024 11:10:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f82ce5061b05c2b4@google.com>
-Subject: [syzbot] [net?] KMSAN: uninit-value in hsr_forward_skb
-From: syzbot <syzbot+b78a03b570e0033aba81@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240616-amdgpu-edid-bios-v1-1-2874f212b365@weissschuh.net>
 
-Hello,
+On 2024-06-16 11:12:03+0000, Thomas Weißschuh wrote:
+> Instead of manually passing around 'struct edid *' and its size,
+> use 'struct drm_edid', which encapsulates a validated combination of
+> both.
+> 
+> As the drm_edid_ can handle NULL gracefully, the explicit checks can be
+> dropped.
+> 
+> Also save a few characters by transforming '&array[0]' to the equivalent
+> 'array' and using 'max_t(int, ...)' instead of manual casts.
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> ---
+> While this patch introduces a new user for drm_edid_raw(),
+> if amdgpu proper gets migrated to 'struct drm_edid', that usage will go
+> away.
+> 
+> This is only compile-tested.
+> 
+> I have some more patches for the rest of amdgpu,
+> to move to 'struct drm_edid'.
+> This patch is a test-balloon for the general idea.
+> 
+> The same can also be done for drm/radeon.
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c |  6 +-----
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h       |  4 ++--
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c       |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/atombios_encoders.c | 21 +++++++--------------
+>  drivers/gpu/drm/amd/amdgpu/dce_v10_0.c         |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/dce_v11_0.c         |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/dce_v6_0.c          |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/dce_v8_0.c          |  2 +-
+>  8 files changed, 15 insertions(+), 26 deletions(-)
 
-syzbot found the following issue on:
+<snip>
+ 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c b/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
+> index 25feab188dfe..90383094ed1e 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
+> @@ -2064,20 +2064,13 @@ amdgpu_atombios_encoder_get_lcd_info(struct amdgpu_encoder *encoder)
+>  				case LCD_FAKE_EDID_PATCH_RECORD_TYPE:
+>  					fake_edid_record = (ATOM_FAKE_EDID_PATCH_RECORD *)record;
+>  					if (fake_edid_record->ucFakeEDIDLength) {
+> -						struct edid *edid;
+> -						int edid_size =
+> -							max((int)EDID_LENGTH, (int)fake_edid_record->ucFakeEDIDLength);
+> -						edid = kmalloc(edid_size, GFP_KERNEL);
+> -						if (edid) {
+> -							memcpy((u8 *)edid, (u8 *)&fake_edid_record->ucFakeEDIDString[0],
+> -							       fake_edid_record->ucFakeEDIDLength);
+> -
+> -							if (drm_edid_is_valid(edid)) {
+> -								adev->mode_info.bios_hardcoded_edid = edid;
+> -								adev->mode_info.bios_hardcoded_edid_size = edid_size;
+> -							} else
+> -								kfree(edid);
+> -						}
+> +						const struct drm_edid *edid;
+> +						edid = drm_edid_alloc(fake_edid_record->ucFakeEDIDString,
+> +								      max_t(int, EDID_LENGTH, fake_edid_record->ucFakeEDIDLength));
+> +						if (drm_edid_valid(edid))
+> +							adev->mode_info.bios_hardcoded_edid = edid;
+> +						else
+> +							drm_edid_free(edid);
 
-HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15b61eee980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
-dashboard link: https://syzkaller.appspot.com/bug?extid=b78a03b570e0033aba81
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+The old code here seems broken in general.
+In drivers/gpu/drm/amd/include/atombios.h the comment for ucFakeEDIDLength says:
+(I expect the same field in the same struct for amdgpu to have the same semantics)
 
-Unfortunately, I don't have any reproducer for this issue yet.
+    UCHAR ucFakeEDIDLength;       // = 128 means EDID length is 128 bytes, otherwise the EDID length = ucFakeEDIDLength*128
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
+So as soon as the EDID from the BIOS has extensions, only the first few
+bytes will be copied into the allocated memory. drm_edid_is_valid() will
+then read the uninitialized memory and if the "extensions" field ends up
+non-zero it will happily "validate" past the allocated buffer.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b78a03b570e0033aba81@syzkaller.appspotmail.com
+The new code won't work either but at least it won't read uninitialized
+memory nor will it read past the buffer bounds.
 
-ip6gretap0: entered promiscuous mode
-syz_tun: entered promiscuous mode
-=====================================================
-BUG: KMSAN: uninit-value in hsr_forward_skb+0x268c/0x30e0 net/hsr/hsr_forward.c:618
- hsr_forward_skb+0x268c/0x30e0 net/hsr/hsr_forward.c:618
- hsr_handle_frame+0xa20/0xb50 net/hsr/hsr_slave.c:69
- __netif_receive_skb_core+0x1cff/0x6190 net/core/dev.c:5438
- __netif_receive_skb_one_core net/core/dev.c:5542 [inline]
- __netif_receive_skb+0xca/0xa00 net/core/dev.c:5658
- netif_receive_skb_internal net/core/dev.c:5744 [inline]
- netif_receive_skb+0x58/0x660 net/core/dev.c:5804
- tun_rx_batched+0x3ee/0x980 drivers/net/tun.c:1549
- tun_get_user+0x5587/0x6a00 drivers/net/tun.c:2002
- tun_chr_write_iter+0x3af/0x5d0 drivers/net/tun.c:2048
- call_write_iter include/linux/fs.h:2120 [inline]
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xb31/0x14d0 fs/read_write.c:590
- ksys_write+0x20f/0x4c0 fs/read_write.c:643
- __do_sys_write fs/read_write.c:655 [inline]
- __se_sys_write fs/read_write.c:652 [inline]
- __x64_sys_write+0x93/0xe0 fs/read_write.c:652
- x64_sys_call+0x3062/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>  					}
+>  					record += fake_edid_record->ucFakeEDIDLength ?
+>  						  struct_size(fake_edid_record,
 
-Uninit was stored to memory at:
- hsr_fill_frame_info+0x538/0x540 net/hsr/hsr_forward.c:533
- fill_frame_info net/hsr/hsr_forward.c:600 [inline]
- hsr_forward_skb+0x6f6/0x30e0 net/hsr/hsr_forward.c:615
- hsr_handle_frame+0xa20/0xb50 net/hsr/hsr_slave.c:69
- __netif_receive_skb_core+0x1cff/0x6190 net/core/dev.c:5438
- __netif_receive_skb_one_core net/core/dev.c:5542 [inline]
- __netif_receive_skb+0xca/0xa00 net/core/dev.c:5658
- netif_receive_skb_internal net/core/dev.c:5744 [inline]
- netif_receive_skb+0x58/0x660 net/core/dev.c:5804
- tun_rx_batched+0x3ee/0x980 drivers/net/tun.c:1549
- tun_get_user+0x5587/0x6a00 drivers/net/tun.c:2002
- tun_chr_write_iter+0x3af/0x5d0 drivers/net/tun.c:2048
- call_write_iter include/linux/fs.h:2120 [inline]
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xb31/0x14d0 fs/read_write.c:590
- ksys_write+0x20f/0x4c0 fs/read_write.c:643
- __do_sys_write fs/read_write.c:655 [inline]
- __se_sys_write fs/read_write.c:652 [inline]
- __x64_sys_write+0x93/0xe0 fs/read_write.c:652
- x64_sys_call+0x3062/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- __alloc_pages+0x9d6/0xe70 mm/page_alloc.c:4598
- alloc_pages_mpol+0x299/0x990 mm/mempolicy.c:2264
- alloc_pages+0x1bf/0x1e0 mm/mempolicy.c:2335
- skb_page_frag_refill+0x2bf/0x7c0 net/core/sock.c:2921
- tun_build_skb drivers/net/tun.c:1679 [inline]
- tun_get_user+0x1258/0x6a00 drivers/net/tun.c:1819
- tun_chr_write_iter+0x3af/0x5d0 drivers/net/tun.c:2048
- call_write_iter include/linux/fs.h:2120 [inline]
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xb31/0x14d0 fs/read_write.c:590
- ksys_write+0x20f/0x4c0 fs/read_write.c:643
- __do_sys_write fs/read_write.c:655 [inline]
- __se_sys_write fs/read_write.c:652 [inline]
- __x64_sys_write+0x93/0xe0 fs/read_write.c:652
- x64_sys_call+0x3062/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 PID: 5890 Comm: syz-executor.3 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+<snip>
 
