@@ -1,117 +1,123 @@
-Return-Path: <linux-kernel+bounces-216215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F5A909CC7
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:26:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F5F3909CCD
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DCF9B21211
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:26:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11651B21240
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47518181BBC;
-	Sun, 16 Jun 2024 09:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CA01836DC;
+	Sun, 16 Jun 2024 09:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Zm9h1ND6"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="QGxeGZf7"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4031233C0;
-	Sun, 16 Jun 2024 09:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB585025E;
+	Sun, 16 Jun 2024 09:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718530008; cv=none; b=K9jYdAyDUbsYRSXWbSgIywtCnvR5Jbe5vWzmmTo2IFo+drpLnp0Zxp1tK1KzJc0bPcbTHosjRFCwExiwwmkwLah3s5k7Z2bAqeecCBV33HydLH2/NfNNDqpBlKIN98uV00EVD2T+SdapVlvqW8e/DYp7wO1fwaitBUSV3rMfXGg=
+	t=1718530748; cv=none; b=dnGbhLUQPGZ799Y+3M/wAoSo/FltSvDvFpSo46ZoO0oowLxPf3pZTY6jRT63aVNQRksxz8BCYgSjO0005eFIWNRbO0iuivHYxxgCWQ8u7/cvSY5sMu1kKTKjzDO484rse/wDxpkAIVHTokKDHypyPIWxQTmgaDJYRJNqtfaQn7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718530008; c=relaxed/simple;
-	bh=j3vOrzweWX1GE41fTl2m6LEe4d+ziKfF15U+bYMV0D4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PYyb1MopNKYyJzLZcBqIhsCILOs641fGpNGiQ4pTqsrm1x0DCcQBT9YPm1dCipTx16IfWYn0as9wXyAKbB5wFdzFMJp2ZsMez9ALld5+V/UzwHPZUaCGIZl5xfcbWl9vAqNPWMZLkIzLsAzlMxbIlN/kAMCN4yktmy5vTqUSf0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Zm9h1ND6; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8EC2B40E021A;
-	Sun, 16 Jun 2024 09:26:35 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 9BjSBD58pyW3; Sun, 16 Jun 2024 09:26:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718529992; bh=v8KnRjWWYrWsg8jYbf/KCGOCjIQw22bsuKrCdsHH1PE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Zm9h1ND6F3c0XzAdHuNUUdBQcyPvx08g7P1k7oNCIRKqmkuRqe4KFicHWYum5afGV
-	 NbeIUhanKpSxHJHHoLCirj6wosKRdl+MMsmU5RR6jiP0KS75DqeUo676zrIUo9XZ0h
-	 /7ZF9mEIKG3JPF09/mFHZOq7gWTT5bSSlduRDWmQn/BQsVjeXGIjPR2AORO3o4ZsBv
-	 hIrL+O+WqLkhuZl6cmTaUJd5nou067u5obX9VZKGe4vxqQ8wrJOCRZb7zH3iVD+BF4
-	 UyJqUJqfDBqEuWW/HBV0biD5KjjckuvR55hGCdNKl7oZwhf5jMaqfKaoTq75ubCuq7
-	 ccCqtiwCuRZ+F6HFIwkvGy8vslzDXFmTgCgS6uouHWjtlC18ypEOu3TcgRQPTODcb9
-	 CzQyurPGsk3aEwA1Osudty+0GDP3Iru4S+ogwE+GNmYmTAcpo0mhMfxmDGL04Q/6iS
-	 wt4uQzM4ADoXoRgaDr6qBWUpJ2TtQxF/F62bbtL3CY0wxLssBlJRlho80cRdjZUfgX
-	 XhQ4BP//lodlCE2DgF9fyS0hWvt6xV/vsCmg/28nS9ESjOPkFl1b3QJvqTn3iluzya
-	 PSaQoWuwZjjCS6bXXSSBE3s46Ud7sQt77HkVtIGe0B/ynw3rV2EpTHW+8D5vm9SiI3
-	 YRUHzzQB/DHdWFnxwCAmC7XM=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 44EA140E01D6;
-	Sun, 16 Jun 2024 09:26:29 +0000 (UTC)
-Date: Sun, 16 Jun 2024 11:26:21 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-edac <linux-edac@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] EDAC urgent for v6.10-rc4
-Message-ID: <20240616092621.GAZm6vvbHCGbc4hKz_@fat_crate.local>
+	s=arc-20240116; t=1718530748; c=relaxed/simple;
+	bh=6dA7/dibViLlVg0vuBTN+RMz0VQaAmKhfC47NLA+bFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WhJo2iIYo8rfaxOb3KRIwyNpLhZ4WaZPj4cyhBt1dL1TZL6YgByLSSsMo+YBUTwHXAUBT1V78Fohx5tllcueJjt0aLCEKlU0hStL0jDDsBd3IAPfpBUcDgT9b+ikMGh0jAOg6ZgUqeoMQh85mldpJPYToyqP+oe89dQUTBSP0eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=QGxeGZf7; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 1CFB61FA58;
+	Sun, 16 Jun 2024 11:38:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1718530735;
+	bh=kAZnTqax55Wjz2CBuGAYc20MbuOcHgLalijRLo3HDcQ=;
+	h=Received:Received:From:To:Subject;
+	b=QGxeGZf7VFUIyjs7eMpMcP44kq7toXzmdvMApNC6/P9eAphWRKEAyDjfEPKZPSMoS
+	 GwjeVknER1jzSlW786B5EKaZTUlvrjfwSTgT3CzT+ry5AhqAJFs1viKp61YpgxpCgV
+	 q5vHwIRq+aPbrA01yiIlTyvKnWRpDMRSISGjgeO2JTHh3yA8HXrpzGGekrONWYWeeA
+	 s2sHMoRROf/638icUfjIAhIfVNmMcoyr7yNZ/A+mU8VuW0bf6RSZknfKLGTmCslQk3
+	 cxntzqOYIBRanjOUOEOOsNPxIeMFnkrPlmA2ORuJlkIO8843irHR0CgoNAQWnD9CJK
+	 29jpi+ZXF2OWQ==
+Received: from livingston (unknown [192.168.42.11])
+	by gaggiata.pivistrello.it (Postfix) with ESMTP id 89CC57F9AA;
+	Sun, 16 Jun 2024 11:38:54 +0200 (CEST)
+Received: from pivi by livingston with local (Exim 4.96)
+	(envelope-from <francesco@dolcini.it>)
+	id 1sImLe-0000xO-1H;
+	Sun, 16 Jun 2024 11:38:54 +0200
+Date: Sun, 16 Jun 2024 11:38:54 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: =?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <jpaulo.silvagoncalves@gmail.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Matti Vaittinen <mazziesaccount@gmail.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] iio: trigger: Fix condition for own trigger
+Message-ID: <Zm6yrnDwSye85Hl1@livingston.pivistrello.it>
+References: <20240614143658.3531097-1-jpaulo.silvagoncalves@gmail.com>
+ <20240615115018.2b73d6b3@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240615115018.2b73d6b3@jic23-huawei>
 
-Hi Linus,
+On Sat, Jun 15, 2024 at 11:50:18AM +0100, Jonathan Cameron wrote:
+> On Fri, 14 Jun 2024 11:36:58 -0300
+> João Paulo Gonçalves <jpaulo.silvagoncalves@gmail.com> wrote:
+> 
+> > From: João Paulo Gonçalves <joao.goncalves@toradex.com>
+> > 
+> > The condition for checking if triggers belong to the same IIO device to
+> > set attached_own_device is currently inverted, causing
+> > iio_trigger_using_own() to return an incorrect value. Fix it by testing
+> > for the correct return value of iio_validate_own_trigger().
+> > 
+> > Cc: stable@vger.kernel.org
+> > Fixes: 517985ebc531 ("iio: trigger: Add simple trigger_validation helper")
+> > Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
 
-please pull two MI300 address translation fixes for v6.10-rc4.
+Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-Thx.
+> 
+> Ouch.  Can you give an example of resulting user visible result? That
+> will help people decide whether to pick this up for their distro kernels
+> etc.  In some cases, looks like we'll get garbage timestamps and in others
+> may get stale data (or garbage).
 
----
+This was noticed while me and Joao were working on the ads1119 driver you
+have been recently reviewing. We wanted to use iio_trigger_using_own()
+and it was not behaving the right way. We looked into it and found the bug.
 
-The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
+Given that I do not know the exact impact on the drivers that are using this
+function.
 
-  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
+> Odd no one has noticed this in the past whilst testing those dependent
+> features in particular drivers and I worry a little that we may have bugs
+> in the users as a result of iio_trigger_using_own() reporting the inverse
+> of the intended. I've take a quick look at the users and 'think' they are
+> ok, but would definitely like a few others to confirm.
 
-are available in the Git repository at:
+All the users of iio_trigger_using_own() are older than the commit that
+introduced the bug, it is safe to assume that they need the fix and
+are expecting the function to behave the same way is documented and it was
+before the bug was introduced.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_urgent_for_v6.10_rc4
+The broken commit is not that old and less than 10 IIO drivers are using this
+function. Given that I think that is not that odd that it took 1 year to find
+the bug.
 
-for you to fetch changes up to ba437905b4fbf0ee1686c175069239a1cc292558:
+Francesco
 
-  RAS/AMD/ATL: Use system settings for MI300 DRAM to normalized address translation (2024-06-16 11:22:57 +0200)
-
-----------------------------------------------------------------
-- Fix two issues with MI300 address translation logic
-
-----------------------------------------------------------------
-Yazen Ghannam (2):
-      RAS/AMD/ATL: Fix MI300 bank hash
-      RAS/AMD/ATL: Use system settings for MI300 DRAM to normalized address translation
-
- drivers/ras/amd/atl/internal.h |   2 +-
- drivers/ras/amd/atl/system.c   |   2 +-
- drivers/ras/amd/atl/umc.c      | 160 +++++++++++++++++++++++++++++------------
- 3 files changed, 116 insertions(+), 48 deletions(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
