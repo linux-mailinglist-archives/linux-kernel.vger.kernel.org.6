@@ -1,195 +1,153 @@
-Return-Path: <linux-kernel+bounces-216416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD5A909F11
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 20:19:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2FB6909F21
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 20:23:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC2901F23925
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:19:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F747B221C0
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104F644C77;
-	Sun, 16 Jun 2024 18:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81EFA4F881;
+	Sun, 16 Jun 2024 18:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iEp+plr5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RWqzTIOy";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iEp+plr5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RWqzTIOy"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLRIXrYv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E16E1C68E;
-	Sun, 16 Jun 2024 18:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8EA107A9;
+	Sun, 16 Jun 2024 18:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718561953; cv=none; b=u9uMl/KqaOYI9mlAODhaG9qp9ivI2yrBdJ3p6Z7vpHqh+BhHflGTqFDDaFJHYkDQkMdgk6M96HKziEvmb4Iq0TFdTjivE0egYAV0QDt8s4RZhthfIddkbE3nLigXmoBWuI0GJhh9fA7Vjf4BBRByfJpEAjmm4h1DDVsB7YOyuIU=
+	t=1718562203; cv=none; b=XTH2TueG7FpawNsWrn4ixeN9D1i3suiHz1ImYiA4hh4lDM6W1QpLu+C2w/9kWYGfTpTLBbHyXiAA7xcDqzhtqX3jrGKvyx/Mk7aQXI2pwW2aVj2oz2iof9V18Bw70pS18rXOV9AfMxCFAyD4HmUKxPqKT3I6V/O1+ul/hy87rLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718561953; c=relaxed/simple;
-	bh=t7PPzXp8kO9lRno4T4TpBEn9E1lbqcDyf7XGltaz7jk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bwF/wWn7Z93CROSwBYF9DutGwsxc8Yq8vzdqAc84XS1nzD60QpRO3/sQra/5n/MvOXk1bEmPcR4zNwKg4jmLc6ce2mSqOZeA56/AFbRT+BCn1zsgzTkOTLFfEJfbreVNvgp+t4D2cWxe4F2D57n8E+F2/0ry3pXNpXRjJ5/QnEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iEp+plr5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RWqzTIOy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iEp+plr5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RWqzTIOy; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7F7A35D555;
-	Sun, 16 Jun 2024 18:19:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718561949;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=utgc9yx0ZBDXDPEB9diVuwP8I1o/um7SJHnQ09SdfKg=;
-	b=iEp+plr5qkw3krsIfCOho0Vpi2qryyRjG/eU3QQAM/u4GGrVOhbhX7QF5ioET4IXQXG2cg
-	KctWIog0iVkGw8GE4VmE4g4zIaeobmgJRcLH/en3Q7F1gFxFLplJ5Pfd22pDMSO6MB98Wp
-	luR61QTleUXQKveoA65J2ANJFBrGNXs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718561949;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=utgc9yx0ZBDXDPEB9diVuwP8I1o/um7SJHnQ09SdfKg=;
-	b=RWqzTIOy95gccufQioICNvXS0Ji9BWY4UX5g6HOD5PtpRv87aW2fz8osfX2wH1C+bhD8YC
-	tAEx8Rm30jm9I8Bg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=iEp+plr5;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=RWqzTIOy
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718561949;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=utgc9yx0ZBDXDPEB9diVuwP8I1o/um7SJHnQ09SdfKg=;
-	b=iEp+plr5qkw3krsIfCOho0Vpi2qryyRjG/eU3QQAM/u4GGrVOhbhX7QF5ioET4IXQXG2cg
-	KctWIog0iVkGw8GE4VmE4g4zIaeobmgJRcLH/en3Q7F1gFxFLplJ5Pfd22pDMSO6MB98Wp
-	luR61QTleUXQKveoA65J2ANJFBrGNXs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718561949;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=utgc9yx0ZBDXDPEB9diVuwP8I1o/um7SJHnQ09SdfKg=;
-	b=RWqzTIOy95gccufQioICNvXS0Ji9BWY4UX5g6HOD5PtpRv87aW2fz8osfX2wH1C+bhD8YC
-	tAEx8Rm30jm9I8Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5923813AA0;
-	Sun, 16 Jun 2024 18:19:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ERSJFZ0sb2aLGgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Sun, 16 Jun 2024 18:19:09 +0000
-Date: Sun, 16 Jun 2024 20:19:08 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc: Johannes Thumshirn <jth@kernel.org>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] btrfs: rst: remove encoding field from stripe_extent
-Message-ID: <20240616181908.GE25756@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20240610-b4-rst-updates-v1-0-179c1eec08f2@kernel.org>
- <20240610-b4-rst-updates-v1-1-179c1eec08f2@kernel.org>
- <20240611143651.GH18508@suse.cz>
- <c7246728-aadb-4699-8fdf-060502c1092a@wdc.com>
- <20240613212347.GB25756@twin.jikos.cz>
- <d6cf3e45-aaf0-4256-92c1-bb8780c76da2@wdc.com>
+	s=arc-20240116; t=1718562203; c=relaxed/simple;
+	bh=+34Fi6O5qk3enPnEGjEgPYKQM4i6AHZtDMRieXM68qU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eyidGdnjOpRXdkgNaqDVdjZPWqznT/OCRJ7uzPGCNIU9ncS7SgvISphrIXstVuTlnK4y1wJ0N7RKaunOxXcuD+tgXtZxA3nhHHmdhH30VpmzAcoVzo5jWWV6szarb1BT2wZ3ssn39G/+RIrbEx9podmfoGy9QL5tupSDqQi/PoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLRIXrYv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2596AC2BBFC;
+	Sun, 16 Jun 2024 18:23:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718562203;
+	bh=+34Fi6O5qk3enPnEGjEgPYKQM4i6AHZtDMRieXM68qU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=QLRIXrYv1/PFIAT3KjLi6qoG2tycisiPhb8fD+QiW3+ewTZMlC+5AVUQgwCtoORxy
+	 CeghWM+UsXt/vXdwdSzxjv0bbP9u8Qsj5bCUrd/NKlHh30rIf7Zw0wOQeiqexyyAvH
+	 hBKiB8OO6ivNJWAbIQP1MyxNkbP/1NBNm/+Kt9eYLIPe7KwdKa/eeVKAN8/ioLxhtF
+	 YuSZ3VTOuNVkTMzotf3VmG3O45BZSglzpkZk9+vSUE1irQRi+feK9t5tzNs5dJWqZm
+	 MnwXXyfymGlkg4KxGqgvZKTNNBXTi38Vq3nm8zBlds5DnGhZsxju45HLTLP43Yt6De
+	 ZrExL3kjumePA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E52CC27C53;
+	Sun, 16 Jun 2024 18:23:23 +0000 (UTC)
+From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
+Subject: [PATCH v4 0/3] Add sy7802 flash led driver
+Date: Sun, 16 Jun 2024 20:22:51 +0200
+Message-Id: <20240616-sy7802-v4-0-789994180e05@apitzsch.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d6cf3e45-aaf0-4256-92c1-bb8780c76da2@wdc.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 7F7A35D555
-X-Spam-Flag: NO
-X-Spam-Score: -4.21
-X-Spam-Level: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAHstb2YC/2XMQQ6DIBCF4asY1qWBAUS66j2aLhChstEGLKk13
+ r1ooqbp8k3m+ycUbfA2oksxoWCTj77v8uCnAplWdw+LfZM3AgKcMBA4jrIigB0nzpROlAIEys/
+ PYJ1/r6HbPe/Wx6EP49pNdLluCbklEsUEN7XkumbgtHZX/fTDJ5r2bF9oiSQ4ICd0h5Ahpayii
+ mjJefUP2QFLCjtkC7TKGGqkqqX6hfM8fwF9snP3EAEAAA==
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+ Trilok Soni <quic_tsoni@quicinc.com>, Kees Cook <kees@kernel.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ phone-devel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718562205; l=2476;
+ i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
+ bh=+34Fi6O5qk3enPnEGjEgPYKQM4i6AHZtDMRieXM68qU=;
+ b=gE1fI6YjZgLtdJqRFeFDUaTlcZ3TQBuQL8js73hCZmIO5piaSqxYpd54j3VGkJAtOjPJOwTOX
+ XaYAb0oFz0pA2aqfbIUzHsP2UBcnhkiLTQHBiyTV4hX4mvOw1ohOBtc
+X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
+ pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
+X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
+ auth_id=142
+X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Reply-To: git@apitzsch.eu
 
-On Fri, Jun 14, 2024 at 09:36:34AM +0000, Johannes Thumshirn wrote:
-> On 13.06.24 23:23, David Sterba wrote:
-> > On Tue, Jun 11, 2024 at 04:33:19PM +0000, Johannes Thumshirn wrote:
-> >> On 11.06.24 16:37, David Sterba wrote:
-> >>> On Mon, Jun 10, 2024 at 10:40:25AM +0200, Johannes Thumshirn wrote:
-> >>>> -#define BTRFS_STRIPE_RAID5	5
-> >>>> -#define BTRFS_STRIPE_RAID6	6
-> >>>> -#define BTRFS_STRIPE_RAID1C3	7
-> >>>> -#define BTRFS_STRIPE_RAID1C4	8
-> >>>> -
-> >>>>    struct btrfs_stripe_extent {
-> >>>> -	__u8 encoding;
-> >>>> -	__u8 reserved[7];
-> >>>>    	/* An array of raid strides this stripe is composed of. */
-> >>>> -	struct btrfs_raid_stride strides[];
-> >>>> +	__DECLARE_FLEX_ARRAY(struct btrfs_raid_stride, strides);
-> >>>
-> >>> Is there a reason to use the __ underscore macro? I see no difference
-> >>> between that and DECLARE_FLEX_ARRAY and underscore usually means that
-> >>> it's special in some way.
-> >>>
-> >>
-> >> Yes, the __ version is for UAPI, like __u8 or __le32 and so on.
-> > 
-> > I see, though I'd rather keep the on-disk definitions free of wrappers
-> > that hide the types. We use the __ int types but that's all and quite
-> > clear what it means.
-> > 
-> > There already are flexible members (btrfs_leaf, btrfs_node,
-> > btrfs_inode_extref), using the empty[] syntax. The macro wraps the
-> > distinction that c++ needs but so far the existing declarations have't
-> > been problematic.  So I'd rather keep the declarations consistent.
-> > 
-> 
-> Yes but all these examples have other members as well. After this patch, 
-> btrfs_stripe_extent is a container for btrfs_raid_stride, and C doesn't 
-> allow a flexmember only struct:
-> 
-> In file included from fs/btrfs/ctree.h:18,
->                   from fs/btrfs/delayed-inode.h:19,
->                   from fs/btrfs/super.c:32:
-> ./include/uapi/linux/btrfs_tree.h:753:34: error: flexible array member 
-> in a struct with no named members
->    753 |         struct btrfs_raid_stride strides[];
->        |                                  ^~~~~~~
+This series introduces a driver for the Silergy SY7802 charge pump used
+in the BQ Aquaris M5 and X5 smartphones.
 
-To fix that __DECLARE_FLEX_ARRAY adds the layer of an anonymous struct
-and an empty other member. We'd have to duplicate that so let's use the
-macro.
+The implementation is based on information extracted from downstream as
+the datasheet provided by a distributor of the hardware didn't include
+any information about the i2c register description.
+
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
+---
+Changes in v4:
+- Use for_each_available_child_of_node_scoped() to simplify code
+- Use dev_err_probe() to be consistent with the other code in
+  sy7802_probe()
+- Split devm_add_action() into 2 devm_add_action_or_reset() to simplify
+  code and balance regulator_enable()
+- Link to v3: https://lore.kernel.org/r/20240612-sy7802-v3-0-1e9cc1c79b79@apitzsch.eu
+
+Changes in v3:
+- Add R-b tag to first patch
+- Extend driver commit message
+- Improve readability of defines by using BIT()
+- Rename some variables/parameters
+  * led_no -> led_id
+  * level -> brightness
+  * curr -> fled_{strobe,torch}_used_tmp
+  * mask -> {flash,torch}_mask
+  * i -> child_num
+- Restructure structs ("Place th big stuff at the top")
+- Declare 'child' on a separate line
+- Move multi-line assignments out of declaration block
+- Update warning/error messages and comments
+- Use gotos to handle error path
+- Use devm API to cleanup module's resources
+- Init mutex before LED class device is registered to avoid race
+  condition
+- Link to v2: https://lore.kernel.org/r/20240401-sy7802-v2-0-1138190a7448@apitzsch.eu
+
+Changes in v2:
+- bindings: remove unneeded allOf
+- bindings: example: move flash-led-controller under i2c node to fix
+  check error
+- Cc to phone-devel
+- Link to v1: https://lore.kernel.org/r/20240327-sy7802-v1-0-db74ab32faaf@apitzsch.eu
+
+---
+André Apitzsch (3):
+      dt-bindings: leds: Add Silergy SY7802 flash LED
+      leds: sy7802: Add support for Silergy SY7802 flash LED controller
+      arm64: dts: qcom: msm8939-longcheer-l9100: Add rear flash
+
+ .../devicetree/bindings/leds/silergy,sy7802.yaml   | 100 ++++
+ .../boot/dts/qcom/msm8939-longcheer-l9100.dts      |  26 +
+ drivers/leds/flash/Kconfig                         |  11 +
+ drivers/leds/flash/Makefile                        |   1 +
+ drivers/leds/flash/leds-sy7802.c                   | 542 +++++++++++++++++++++
+ 5 files changed, 680 insertions(+)
+---
+base-commit: 6a03b35e4395eb2d6e89a38aca00a9fe9cb39ba1
+change-id: 20240325-sy7802-f40fc6f56525
+
+Best regards,
+-- 
+André Apitzsch <git@apitzsch.eu>
+
+
 
