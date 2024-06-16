@@ -1,56 +1,86 @@
-Return-Path: <linux-kernel+bounces-216519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C157F90A07E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 00:18:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E9490A07F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 00:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56F53281AC6
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 22:18:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 313921C20978
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 22:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B5371742;
-	Sun, 16 Jun 2024 22:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8A46F06F;
+	Sun, 16 Jun 2024 22:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Z4vTfOsf"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="UOgpGTVk"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A0761FE2;
-	Sun, 16 Jun 2024 22:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5CE1C2AF
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 22:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718576280; cv=none; b=KIJJvneh/u81miuf+2JJ4NPjo8IWsmI/nYTlgPxFkAUWfXa4mp/jSF9IpzEKxL9I0OSSg6Ew0mQMZscUDZKmHON7K9HodAOob0n9acdmnbQPHlLZJ8RBgUz1YwazUVNh3olGOw492C4CJj1X508H2uiC8aau6E9h210yp7Mtx7U=
+	t=1718576408; cv=none; b=uAgkRsYySaA2J7lLVCU3tp3NU0mIXFW1Y2Wlh4PA8C7/GhVmdPpIJuwYwlk5la2F+Ej5PRI6xekgOMZ6fifYR75p15e0YN8UJbsg3BZNyT/OcdO9Lx0ShHtdj1QB44C2cUCjO+D77wy0w0u8Nq+cWHiXSdRNVHcj92Yl+xYyslo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718576280; c=relaxed/simple;
-	bh=5EYKRxyw3DYvd0M9CgxDJnnoiSC2ajqzDD48TiJhHJA=;
+	s=arc-20240116; t=1718576408; c=relaxed/simple;
+	bh=YUamIrym1mCsYNUdvrncN7Xw/7gDWYv3jn3J7JIMLC0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GQIWzjQfbOg9nPuQoxiZZMFMX26UUc9B6HRAdYk/22WXsgCE8dXid2gsNxakykgBZGNqO4AIicGKA+deIKXXZielEDphZLifDRUSsGXbGqyTQLJtZ6fdY85ilkUY+i8Lek1q7TAUcmDAy7b9OydRx7a5MKnMS6/3R+QZ/kmj8g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Z4vTfOsf; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 982D4593;
-	Mon, 17 Jun 2024 00:17:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1718576258;
-	bh=5EYKRxyw3DYvd0M9CgxDJnnoiSC2ajqzDD48TiJhHJA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z4vTfOsfgbeQwW4MRBwuorcH8Tc7wHWNfsrh/prX2HUGe7X/yhMDHICIYkKvA5jte
-	 a+UrYhqI8lWPHlvodjJJ/dolCoWJRrF2rP5vrvygKEO8RE+3aSqYdfrhqZGvRpdE01
-	 CSzD0V9mpxavvmhPoEnkGQoDQxxDFtjeXiWrJSsY=
-Date: Mon, 17 Jun 2024 01:17:33 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] media: uvcvideo: Replace get_mapping with
- filter_mapping
-Message-ID: <20240616221733.GA28126@pendragon.ideasonboard.com>
-References: <20240610-billion-v2-0-38e861475f85@chromium.org>
- <20240610-billion-v2-7-38e861475f85@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=faGsVJQlrtg0rqetaJdOLkyuPIL289sNMquVCrWCLDxlokBB2aoRhbPrT/ITnaSZmnzbjPkZ/nILFDudj944mFKP9YKQpjHCpKws0LdmX91I5mKjPZUazZNu+BbGFUEcmHoV52R+xGRlJ5DkBnlJxl0MLEq+Xp50blnKcgiSm1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=UOgpGTVk; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-35f236a563cso3109499f8f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 15:20:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1718576405; x=1719181205; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zdKvlJR9sN12F6cVt64hUhXMOC68cH4ScNBqHXrp1s0=;
+        b=UOgpGTVkB5TiOdBcI8b2QYrjSfxnozktnlBGFhxLOBzo3IBnyxOlktvst3x/KQ9rjB
+         WP/prK5FE0w8ZTaNbgLp9oKtH0lD+lPBWzwNCm2moJIt5p2GJUDNT6L9o1zNV62mpm9b
+         /ba36X3KnaQ+xY9+ZbXPVoF7Dx7/Iez2jqgeCNpDdctFSxiVhdZsrE7ajdZLay+BB3zg
+         0B1DBxavPQczLPU6YU6vQf9gx541le1YpZ3lI6K8UYNM4RbKvJ6tcAATOyDHAp5XZv/n
+         AFQYjU3P7+bUuIGovHn5XaHl9o0AAFqbavakVPqhKQOYEq0cFT/4SaVYUPBoOKrSDTb2
+         DjSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718576405; x=1719181205;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zdKvlJR9sN12F6cVt64hUhXMOC68cH4ScNBqHXrp1s0=;
+        b=Bjhr2TFP4uuoXmDe7Z+bHZGvzWn2+dhpmQ1hhDCkcRobPk8Wlabe4YenTn7jabBX0u
+         wfXYukxQxPfFAj22P0tRiQvJXyJbvoRisEOmRBAPqid12zR/vdP2fesVUR/DgJttg4Zf
+         tPMusZ0HQtEY+tJHFkmBzjuWjLuzE+VVSYhn/fcr8YUmhjA3Pf/SCNqhp1cWD/xYvojd
+         tfvLtG6+AIHYsoR7ailc3l5GcPaeVchgQ4CCJyR0IzG8vBajMGK6qZOprlYfxN7U+AQX
+         bC3IeC5dAACb+rDPqfAFAMqpyBLdaiQdVqwQzfab957W8eYTDUtscuxJ4GxymzHxuFXG
+         DmyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmqLBMUoOsrtAqGAZBbN8GOWoBnV0Q6Z6WYWxhLDg9Ue0YyONPC1r6mr+50widdNdT29A0BZcbweEZvg7CNgwHo1MhZqv2W8E/YQzY
+X-Gm-Message-State: AOJu0YwppNbAc6nA+mul0+FtHa+WBogorVx6HOthu8ifqCDEBCpRWdzG
+	mDQjX2y87ofS/QauDFKwrEwhtvDyVclU23skHhnRC7XAr0qY/AWcEi6Y7Fv406Q=
+X-Google-Smtp-Source: AGHT+IFtwWGzKXOQH5pH16LaKT2KEGeHx/OIGWNKtj8yUGdx4lHVcEJgc2c5blPRQd2aPCw3a/VifA==
+X-Received: by 2002:adf:fa8a:0:b0:360:728d:842b with SMTP id ffacd0b85a97d-3607a77fa69mr5754180f8f.52.1718576404986;
+        Sun, 16 Jun 2024 15:20:04 -0700 (PDT)
+Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075093d41sm10550967f8f.16.2024.06.16.15.20.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Jun 2024 15:20:04 -0700 (PDT)
+Date: Sun, 16 Jun 2024 23:20:03 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: Xuewen Yan <xuewen.yan94@gmail.com>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	vincent.donnefort@arm.com, ke.wang@unisoc.com,
+	linux-kernel@vger.kernel.org, christian.loehle@arm.com
+Subject: Re: [PATCH] sched/fair: Prevent cpu_busy_time from exceeding
+ actual_cpu_capacity
+Message-ID: <20240616222003.agcz5osb2nkli75h@airbuntu>
+References: <20240606070645.3295-1-xuewen.yan@unisoc.com>
+ <20240609225520.6gnmx2wjhxghcxfo@airbuntu>
+ <CAB8ipk-9EVgyii3SGH9GOA3Mb5oMQdn1_vLVrCsSn1FmSQieOw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,158 +89,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240610-billion-v2-7-38e861475f85@chromium.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAB8ipk-9EVgyii3SGH9GOA3Mb5oMQdn1_vLVrCsSn1FmSQieOw@mail.gmail.com>
 
-Hi Ricardo,
-
-Thank you for the patch.
-
-On Mon, Jun 10, 2024 at 11:09:58PM +0000, Ricardo Ribalda wrote:
-> If the callback returns a mapping instead of adding it, the codeflow is
-> more clean and we do not need a forward declaration of
-> __uvc_ctrl_add_mapping_to_list().
+On 06/12/24 16:11, Xuewen Yan wrote:
+> Hi Qais
 > 
-> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-
-This should have been squashed in the previous patches as appropriate.
-It's hard to review the new version this way.
-
-The diff with v1 looks good, so I don't expect to have further comments.
-
-> ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 40 ++++++++++++++++++----------------------
->  drivers/media/usb/uvc/uvcvideo.h |  6 +++---
->  2 files changed, 21 insertions(+), 25 deletions(-)
+> On Mon, Jun 10, 2024 at 6:55 AM Qais Yousef <qyousef@layalina.io> wrote:
+> >
+> > On 06/06/24 15:06, Xuewen Yan wrote:
+> > > Because the effective_cpu_util() would return a util which
+> > > maybe bigger than the actual_cpu_capacity, this could cause
+> > > the pd_busy_time calculation errors.
+> > > So clamp the cpu_busy_time with the eenv->cpu_cap, which is
+> > > the actual_cpu_capacity.
+> >
+> > I actually think capping by pd_cap is something we should remove. Saturated
+> > systems aren't calculated properly especially when uclamp_max is used.
+> >
+> > But this might a bigger change and out of scope of what you're proposing..
 > 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index 1c1710e3c486..4a13f2685d9e 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -495,11 +495,8 @@ static const struct uvc_control_mapping uvc_ctrl_power_line_mapping_uvc15 = {
->  				  V4L2_CID_POWER_LINE_FREQUENCY_DISABLED),
->  };
->  
-> -static int __uvc_ctrl_add_mapping_to_list(struct uvc_video_chain *chain,
-> -	struct uvc_control *ctrl, const struct uvc_control_mapping *mapping);
-> -
-> -static int uvc_ctrl_add_plf_mapping(struct uvc_video_chain *chain,
-> -	struct uvc_control *ctrl, const struct uvc_control_mapping *mapping)
-> +static const struct uvc_control_mapping *uvc_ctrl_filter_plf_mapping
-> +		(struct uvc_video_chain *chain, struct uvc_control *ctrl)
->  {
->  	const struct uvc_control_mapping *out_mapping =
->  					&uvc_ctrl_power_line_mapping_uvc11;
-> @@ -509,7 +506,7 @@ static int uvc_ctrl_add_plf_mapping(struct uvc_video_chain *chain,
->  
->  	buf = kmalloc(sizeof(*buf), GFP_KERNEL);
->  	if (!buf)
-> -		return -ENOMEM;
-> +		return NULL;
->  
->  	/* Save the default PLF value, so we can restore it. */
->  	ret = uvc_query_ctrl(chain->dev, UVC_GET_CUR, ctrl->entity->id,
-> @@ -517,7 +514,7 @@ static int uvc_ctrl_add_plf_mapping(struct uvc_video_chain *chain,
->  			     buf, sizeof(*buf));
->  	/* If we cannot read the control skip it. */
->  	if (ret)
-> -		return ret;
-> +		return NULL;
->  	init_val = *buf;
->  
->  	/* If PLF value cannot be set to off, it is limited. */
-> @@ -526,8 +523,7 @@ static int uvc_ctrl_add_plf_mapping(struct uvc_video_chain *chain,
->  			     chain->dev->intfnum, ctrl->info.selector,
->  			     buf, sizeof(*buf));
->  	if (ret)
-> -		return __uvc_ctrl_add_mapping_to_list(chain, ctrl,
-> -					&uvc_ctrl_power_line_mapping_limited);
-> +		return &uvc_ctrl_power_line_mapping_limited;
->  
->  	/* UVC 1.1 does not define auto, we can exit. */
->  	if (chain->dev->uvc_version < 0x150)
-> @@ -548,7 +544,7 @@ static int uvc_ctrl_add_plf_mapping(struct uvc_video_chain *chain,
->  		       chain->dev->intfnum, ctrl->info.selector,
->  		       buf, sizeof(*buf));
->  
-> -	return __uvc_ctrl_add_mapping_to_list(chain, ctrl, out_mapping);
-> +	return out_mapping;
->  }
->  
->  static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
-> @@ -843,7 +839,7 @@ static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
->  	{
->  		.entity		= UVC_GUID_UVC_PROCESSING,
->  		.selector	= UVC_PU_POWER_LINE_FREQUENCY_CONTROL,
-> -		.add_mapping	= uvc_ctrl_add_plf_mapping,
-> +		.filter_mapping	= uvc_ctrl_filter_plf_mapping,
->  	},
->  };
->  
-> @@ -2411,8 +2407,9 @@ static int uvc_ctrl_add_info(struct uvc_device *dev, struct uvc_control *ctrl,
->  /*
->   * Add a control mapping to a given control.
->   */
-> -static int __uvc_ctrl_add_mapping_to_list(struct uvc_video_chain *chain,
-> -	struct uvc_control *ctrl, const struct uvc_control_mapping *mapping)
-> +static int __uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
-> +				  struct uvc_control *ctrl,
-> +				  const struct uvc_control_mapping *mapping)
->  {
->  	struct uvc_control_mapping *map;
->  	unsigned int size;
-> @@ -2485,14 +2482,6 @@ static int __uvc_ctrl_add_mapping_to_list(struct uvc_video_chain *chain,
->  	return -ENOMEM;
->  }
->  
-> -static int __uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
-> -	struct uvc_control *ctrl, const struct uvc_control_mapping *mapping)
-> -{
-> -	if (mapping && mapping->add_mapping)
-> -		return mapping->add_mapping(chain, ctrl, mapping);
-> -	return __uvc_ctrl_add_mapping_to_list(chain, ctrl, mapping);
-> -}
-> -
->  int uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
->  	const struct uvc_control_mapping *mapping)
->  {
-> @@ -2681,7 +2670,14 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
->  
->  	/* Process common mappings. */
->  	for (i = 0; i < ARRAY_SIZE(uvc_ctrl_mappings); ++i) {
-> -		const struct uvc_control_mapping *mapping = &uvc_ctrl_mappings[i];
-> +		const struct uvc_control_mapping *mapping = NULL;
-> +
-> +		/* Try to get a custom mapping from the device. */
-> +		if (uvc_ctrl_mappings[i].filter_mapping)
-> +			mapping = uvc_ctrl_mappings[i].filter_mapping(chain,
-> +								      ctrl);
-> +		if (!mapping)
-> +			mapping = &uvc_ctrl_mappings[i];
->  
->  		if (uvc_entity_match_guid(ctrl->entity, mapping->entity) &&
->  		    ctrl->info.selector == mapping->selector)
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index ff9545dcf716..a9547795fe22 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -125,9 +125,9 @@ struct uvc_control_mapping {
->  	s32 master_manual;
->  	u32 slave_ids[2];
->  
-> -	int (*add_mapping)(struct uvc_video_chain *chain,
-> -			   struct uvc_control *ctrl,
-> -			   const struct uvc_control_mapping *mapping);
-> +	const struct uvc_control_mapping *(*filter_mapping)
-> +				(struct uvc_video_chain *chain,
-> +				struct uvc_control *ctrl);
->  	s32 (*get)(struct uvc_control_mapping *mapping, u8 query,
->  		   const u8 *data);
->  	void (*set)(struct uvc_control_mapping *mapping, s32 value,
+> I agree, there are other things to consider before doing this.
 > 
+> >
+> > Did this 'wrong' calculation cause an actual problem for task placement?
+> > I assume the pd looked 'busier' because some CPUs were too busy.
+> 
+> This will not only affect calculations in scenarios with high temperatures.
+> Sometimes, users will set scalimg_max_freq to actively limit the CPU frequency,
+> so that even if the CPU load is large, the CPU frequency will not be very high.
+> At this time, even if tasks are placed on other CPUs in the same PD,
+> the energy increment may not be too large, thus affecting core selection.
+> 
+> >
+> > Was the system in overutilzied state? Usually if one CPU is that busy
+> > overutilized should be set and we'd skip EAS - unless uclamp_max was used.
+> 
+> As Christian said, This case occurs not only in the overutil scenario,
+> this scenario holds true as long as the actual-cpu-capacity caused by
+> the reduction in max cpu frequency is smaller than the cpu util.
 
--- 
-Regards,
+Hmm. Sorry I might be thick here, but shouldn't fits_capacity() use
+capacity_of() which should return capacity based on get_actual_cpu_capacity()
+to compare if we are overutilized? If we are higher than this value that you
+need to cap, then the CPU must be overutilized and we shouldn't be in feec() in
+the first place, no? Unless the rq is capped with uclamp_max that is.
 
-Laurent Pinchart
+I generally think our current definition of overutilized is wrong and the use
+case you're talking about should hold true if it's just a single CPU that is
+overutilized. But I can't see how you end up in feec() if the util is higher
+than the CPU in our current code base.
+
+What did I miss?
+
+And should effective_cpu_util() return a value higher than
+get_actual_cpu_capacity()?
+
+diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+index 8b1194c39161..91acc0f92ae4 100644
+--- a/kernel/sched/syscalls.c
++++ b/kernel/sched/syscalls.c
+@@ -286,7 +286,7 @@ unsigned long effective_cpu_util(int cpu, unsigned long util_cfs,
+        unsigned long util, irq, scale;
+        struct rq *rq = cpu_rq(cpu);
+
+-       scale = arch_scale_cpu_capacity(cpu);
++       scale = get_actual_cpu_capacity(cpu);
+
+        /*
+         * Early check to see if IRQ/steal time saturates the CPU, can be
 
