@@ -1,156 +1,196 @@
-Return-Path: <linux-kernel+bounces-216063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A4E0909AA7
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 02:10:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE29909AAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 02:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CCA71C20D92
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 00:10:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A343282DF0
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 00:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FABE23BF;
-	Sun, 16 Jun 2024 00:10:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BF0D4431;
+	Sun, 16 Jun 2024 00:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QgBw352i"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE07A632
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 00:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D441847;
+	Sun, 16 Jun 2024 00:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718496604; cv=none; b=Eoxkm0cs9e0c8bGoQ4xRKFC83ZpVsDX11KMWr8xcnUiFZQYfEPkvObOwKjcICtVtO1EKw5U9AljbYBTKN+itRNu4/Bv7SCMmiIV3w7AmZoN3djlAMcTTUg0ai66EUoz8bH1cRg5VOMFv6zXicG5KOuEVYP8lpcoqSyEc6rK4JoQ=
+	t=1718497210; cv=none; b=frphdvIpauAO0x3G47fK94W6mCnqd1IfM8Bo3scWJQdQuk5fbi2O+0Ym+Ha/vGSSP3/g+ZI7XYXfs/PlYc8ATI64uSHpbSjGqqPnEfhysPMcDT5g2oaB7QDfEY7IXLCieYYF78WYx3az4RKHxDMQRaT8nwZkE+oisSo9zJijXL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718496604; c=relaxed/simple;
-	bh=Hf7sfFQ3cSMQ1BvCIvPW2slf2/cNJ6E1fEE/xrn3//Y=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cRss8E0DqblNm/g5+fpHNJCIH5PIiUmXNbPelpoCitTuGaoX4ipnuCpuNIycgGGa7Fz96mq0k9pGeZSUN1aUo2aJ0RY55vbWKB4W9hd8kab0nXKM/piqLq3Sf4e1rE7x60sxK2rlO+pGd/QtwTVYfFTWvvN9GsIbAIP82Ro61Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7eb73f0683cso364005039f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 17:10:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718496602; x=1719101402;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U1ViQOmfPbYo1UQjxR1ujw8trFh3Yo+KDFkFbV6YAoE=;
-        b=TnhVXmJaFkWEOZY54uSkhahVu5IaKU9ehkh9tac3fvHPKQVSD39vakW0UZ5b4N1Feq
-         wEJ+Rx3vPlcKRdA6cuDJYi49njbQXHvmv1zbkZywstcu3FO/O1Gog0Heh9VxlPaBk/q4
-         dJGQ4I9jc69raVXZShxj6mOyUTS41ZrfKBTqXWx9VeVDgtgo75vwypLtn19ODYz6og41
-         mnCc5uda8eOKtf72ufAh9J+a1gNoC4a2CzisI79bNcdoJ3SIXO0jE19L1qXyoJP8XQ5u
-         FacqbgzoAEFjRkhUypySt4KMODIBtgxzYk81uudPleKVgTZR2QfVBND0IOgsvot8ofiQ
-         2gBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgmbZ71qp758tNNNRIVqI9GEyGdu/1atjOP68jZIHOF3bx2Z0AcCVBFk/bMp2amEr7amHfWlFP93/cvsBYShbW+LGMSxT0nKaQDpyE
-X-Gm-Message-State: AOJu0Yw/ozPPgtl8ueVKjbREx83Np9kXtgiPKbbnPrJ8k3ZGYy0x+zT9
-	eVT2aGqs5B8jDDB4hofd7VAlBohhqwe6g7kljqPoN43YcG7Cj/YjeaGZdZWHCxw9Y1ulvfTn6YI
-	dXkD6PjgWmzXTa0oUNrDbdIpoMv0+EFprcngLE3KkrNtwUSwj5WXDQ28=
-X-Google-Smtp-Source: AGHT+IFPHGW8ZEaSdgfbB5UzrzYfKMCNJLV8SIc3JTugWpEoQ9hEclzxOPzSQ2FkEl0lpyQ0zWaDAnZzj9QfqNlJqsSKS6tFnlEJ
+	s=arc-20240116; t=1718497210; c=relaxed/simple;
+	bh=wwA+OqE2v6eOVsJjxE41uJDGwJ6LUdWs0oez7vI8tJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dHCsYaE80ph1JZiJMGvN61BHrGWFYjEtjjlaxKJSMpHWNlwHt6eJWrjWJUFVPPSULSpCGxWx0AqyCYFd0WgTi8I8F7/2fR4AXcPV3vZQv/m7pfwzhgxVSUKbUbqrWJuTzCMy4R78Jgm70nu8xvvsQhB3p4VRg786Wf15iP7Re+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QgBw352i; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718497208; x=1750033208;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wwA+OqE2v6eOVsJjxE41uJDGwJ6LUdWs0oez7vI8tJ0=;
+  b=QgBw352iVT0HwrQRoEottbxGdouw5JMoUF8Pk/fp+exg6Q93X3KYR0GX
+   rVA4Ad2TUcStQTj0MaNxYa95wEPEY5NcVhpM410t/ywwiYHlJI6/htsnW
+   Rq+HQmhEoaseVMKH5MJAXBBISAslLLC3/LtSBiDjksKaN3l4T5gUIhlCR
+   w1wQa2NQLdWS3ANFyK9rQD7ugDWpWtpORVz4MbSH2VF8+C/8yvlyT4x/2
+   E5UeBadZXLxcwrIlele6XZ0Pj8cNvtJcUxBOlos9E8pni6TIo9lDsuFdI
+   Fd5GNVFtLvs8Lv8F8J4WGrIveeZjab+zZaM24uGMQBX9w8V0vykqcD7GU
+   w==;
+X-CSE-ConnectionGUID: tb3RojjaTM6OZ80nMLDBMg==
+X-CSE-MsgGUID: RL2KcAgMQXu0GDuBmibhhQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="19145764"
+X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
+   d="scan'208";a="19145764"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 17:20:08 -0700
+X-CSE-ConnectionGUID: Dsk+HKVsTIOhZ4M66bYGxg==
+X-CSE-MsgGUID: fZPz2K0uQQih11sk8bAk1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
+   d="scan'208";a="41529016"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 15 Jun 2024 17:20:05 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sIdcn-0000dm-2e;
+	Sun, 16 Jun 2024 00:20:01 +0000
+Date: Sun, 16 Jun 2024 08:19:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be,
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
+	alexandre.belloni@bootlin.com, magnus.damm@gmail.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 04/12] clk: renesas: clk-vbattb: Add VBATTB clock driver
+Message-ID: <202406160847.Ns62KOVc-lkp@intel.com>
+References: <20240614071932.1014067-5-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:871b:b0:4b9:685d:7f65 with SMTP id
- 8926c6da1cb9f-4b9685d8b68mr231744173.4.1718496602136; Sat, 15 Jun 2024
- 17:10:02 -0700 (PDT)
-Date: Sat, 15 Jun 2024 17:10:02 -0700
-In-Reply-To: <20240615235238.1079-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000084b401061af6ab80@google.com>
-Subject: Re: [syzbot] [nilfs?] [mm?] KASAN: slab-use-after-free Read in lru_add_fn
-From: syzbot <syzbot+d79afb004be235636ee8@syzkaller.appspotmail.com>
-To: hdanton@sina.com, jack@suse.cz, konishi.ryusuke@gmail.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-nilfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240614071932.1014067-5-claudiu.beznea.uj@bp.renesas.com>
 
-Hello,
+Hi Claudiu,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel BUG in __destroy_inode
+kernel test robot noticed the following build warnings:
 
-NILFS (loop0): I/O error reading meta-data file (ino=3, block-offset=0)
-NILFS (loop0): I/O error reading meta-data file (ino=3, block-offset=0)
-NILFS (loop0): disposed unprocessed dirty file(s) when stopping log writer
-------------[ cut here ]------------
-kernel BUG at fs/inode.c:285!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 2 PID: 5330 Comm: syz-executor Not tainted 6.10.0-rc3-syzkaller-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:__destroy_inode+0x5e4/0x7a0 fs/inode.c:285
-Code: 2a 03 00 00 48 c7 c7 40 78 3d 8b c6 05 aa 6d cc 0d 01 e8 bf d9 69 ff e9 0e fc ff ff e8 a5 8b 8c ff 90 0f 0b e8 9d 8b 8c ff 90 <0f> 0b e8 95 8b 8c ff 90 0f 0b 90 e9 fa fa ff ff e8 87 8b 8c ff 90
-RSP: 0018:ffffc900035afaf0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff8880325ba7c8 RCX: ffffffff82015439
-RDX: ffff8880222ec880 RSI: ffffffff820159b3 RDI: 0000000000000007
-RBP: 0000000000000001 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: ffff8880325ba980
-R13: 0000000000000024 R14: ffffffff8b706c60 R15: ffff8880325ba8a0
-FS:  0000555571e27480(0000) GS:ffff88806b200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f01cb366731 CR3: 0000000034ef4000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- destroy_inode+0x91/0x1b0 fs/inode.c:310
- iput_final fs/inode.c:1742 [inline]
- iput.part.0+0x5a8/0x7f0 fs/inode.c:1768
- iput+0x5c/0x80 fs/inode.c:1758
- nilfs_put_root+0xae/0xe0 fs/nilfs2/the_nilfs.c:925
- nilfs_segctor_destroy fs/nilfs2/segment.c:2788 [inline]
- nilfs_detach_log_writer+0x5ef/0xaa0 fs/nilfs2/segment.c:2850
- nilfs_put_super+0x43/0x1b0 fs/nilfs2/super.c:498
- generic_shutdown_super+0x159/0x3d0 fs/super.c:642
- kill_block_super+0x3b/0x90 fs/super.c:1676
- deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
- deactivate_super+0xde/0x100 fs/super.c:506
- cleanup_mnt+0x222/0x450 fs/namespace.c:1267
- task_work_run+0x14e/0x250 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x278/0x2a0 kernel/entry/common.c:218
- do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc203a7e217
-Code: b0 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b0 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007fffe9265ae8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000064 RCX: 00007fc203a7e217
-RDX: 0000000000000200 RSI: 0000000000000009 RDI: 00007fffe9266c90
-RBP: 00007fc203ac8336 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000100 R11: 0000000000000202 R12: 00007fffe9266c90
-R13: 00007fc203ac8336 R14: 0000555571e27430 R15: 0000000000000005
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__destroy_inode+0x5e4/0x7a0 fs/inode.c:285
-Code: 2a 03 00 00 48 c7 c7 40 78 3d 8b c6 05 aa 6d cc 0d 01 e8 bf d9 69 ff e9 0e fc ff ff e8 a5 8b 8c ff 90 0f 0b e8 9d 8b 8c ff 90 <0f> 0b e8 95 8b 8c ff 90 0f 0b 90 e9 fa fa ff ff e8 87 8b 8c ff 90
-RSP: 0018:ffffc900035afaf0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff8880325ba7c8 RCX: ffffffff82015439
-RDX: ffff8880222ec880 RSI: ffffffff820159b3 RDI: 0000000000000007
-RBP: 0000000000000001 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: ffff8880325ba980
-R13: 0000000000000024 R14: ffffffff8b706c60 R15: ffff8880325ba8a0
-FS:  0000555571e27480(0000) GS:ffff88806b300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c0016fb000 CR3: 0000000034ef4000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[auto build test WARNING on geert-renesas-drivers/renesas-clk]
+[also build test WARNING on geert-renesas-devel/next linus/master v6.10-rc3 next-20240613]
+[cannot apply to abelloni/rtc-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Claudiu/clk-renesas-r9a08g045-Add-clock-reset-and-power-domain-support-for-the-VBATTB-IP/20240614-152418
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk
+patch link:    https://lore.kernel.org/r/20240614071932.1014067-5-claudiu.beznea.uj%40bp.renesas.com
+patch subject: [PATCH 04/12] clk: renesas: clk-vbattb: Add VBATTB clock driver
+config: mips-randconfig-r122-20240616 (https://download.01.org/0day-ci/archive/20240616/202406160847.Ns62KOVc-lkp@intel.com/config)
+compiler: mips-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240616/202406160847.Ns62KOVc-lkp@intel.com/reproduce)
 
-Tested on:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406160847.Ns62KOVc-lkp@intel.com/
 
-commit:         83a7eefe Linux 6.10-rc3
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=11bb8ada980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
-dashboard link: https://syzkaller.appspot.com/bug?extid=d79afb004be235636ee8
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16642012980000
+sparse warnings: (new ones prefixed by >>)
+>> drivers/clk/renesas/clk-vbattb.c:132:35: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected unsigned int [usertype] size @@     got restricted gfp_t @@
+   drivers/clk/renesas/clk-vbattb.c:132:35: sparse:     expected unsigned int [usertype] size
+   drivers/clk/renesas/clk-vbattb.c:132:35: sparse:     got restricted gfp_t
+>> drivers/clk/renesas/clk-vbattb.c:132:47: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected restricted gfp_t [usertype] gfp @@     got unsigned int @@
+   drivers/clk/renesas/clk-vbattb.c:132:47: sparse:     expected restricted gfp_t [usertype] gfp
+   drivers/clk/renesas/clk-vbattb.c:132:47: sparse:     got unsigned int
+   drivers/clk/renesas/clk-vbattb.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
+   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
+   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
 
+vim +132 drivers/clk/renesas/clk-vbattb.c
+
+   119	
+   120	static int vbattb_clk_probe(struct platform_device *pdev)
+   121	{
+   122		struct clk_parent_data parent_data = { .fw_name = "vbattb_xtal" };
+   123		struct device_node *np = pdev->dev.of_node;
+   124		struct device *dev = &pdev->dev;
+   125		struct clk_init_data init = {};
+   126		struct vbattb_clk *vbclk;
+   127		u32 load_capacitance;
+   128		struct clk_hw *hw;
+   129		bool bypass;
+   130		int ret;
+   131	
+ > 132		vbclk = devm_kzalloc(dev, GFP_KERNEL, sizeof(*vbclk));
+   133		if (!vbclk)
+   134			return -ENOMEM;
+   135	
+   136		vbclk->regmap = syscon_node_to_regmap(np->parent);
+   137		if (IS_ERR(vbclk->regmap))
+   138			return PTR_ERR(vbclk->regmap);
+   139	
+   140		bypass = of_property_read_bool(np, "renesas,vbattb-osc-bypass");
+   141		ret = of_property_read_u32(np, "renesas,vbattb-load-nanofarads", &load_capacitance);
+   142		if (ret)
+   143			return ret;
+   144	
+   145		ret = vbattb_clk_validate_load_capacitance(vbclk, load_capacitance);
+   146		if (ret)
+   147			return ret;
+   148	
+   149		ret = devm_pm_runtime_enable(dev);
+   150		if (ret)
+   151			return ret;
+   152	
+   153		ret = pm_runtime_resume_and_get(dev);
+   154		if (ret)
+   155			return ret;
+   156	
+   157		regmap_update_bits(vbclk->regmap, VBATTB_BKSCCR, VBATTB_BKSCCR_SOSEL,
+   158				   bypass ? VBATTB_BKSCCR_SOSEL : 0);
+   159	
+   160		init.name = "vbattclk";
+   161		init.ops = &vbattb_clk_ops;
+   162		init.parent_data = &parent_data;
+   163		init.num_parents = 1;
+   164		init.flags = 0;
+   165	
+   166		vbclk->hw.init = &init;
+   167		hw = &vbclk->hw;
+   168	
+   169		spin_lock_init(&vbclk->lock);
+   170	
+   171		ret = devm_clk_hw_register(dev, hw);
+   172		if (ret)
+   173			goto rpm_put;
+   174	
+   175		ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
+   176		if (ret)
+   177			goto rpm_put;
+   178	
+   179		return 0;
+   180	
+   181	rpm_put:
+   182		pm_runtime_put(dev);
+   183		return ret;
+   184	}
+   185	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
