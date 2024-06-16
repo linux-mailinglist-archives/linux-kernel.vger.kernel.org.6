@@ -1,132 +1,143 @@
-Return-Path: <linux-kernel+bounces-216487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F47909FF8
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 23:31:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E9B909FFA
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 23:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5E721F21679
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 21:31:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69726B211D8
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 21:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1CE6A33F;
-	Sun, 16 Jun 2024 21:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128096A33F;
+	Sun, 16 Jun 2024 21:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="U1bpNWzT"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="A6HLMMjK"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE141849
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 21:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1B36BFA6;
+	Sun, 16 Jun 2024 21:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718573457; cv=none; b=dbuadr0CnKXsICkNzaen9kDwL/vyufWe3U8CbGW3A4UN7+qOHHWfkoVT9pG+yRZib4OWj64NaEhBm3yVIOq080slkcBhul1ExU07qlpXBg5MJSxjaPjFbiHlCnYsViVKfmGVmMM0YDSwNHTkL1f8vuGSnIhmoDcoAGJgz2yi4sY=
+	t=1718573527; cv=none; b=Xs6Gewj+/mmz5Fbd61yh1mH+wh8LLeKgd5OznmRfUjIQDELi8P4IGMPF+tWjlY/UOl0sPapVePvFZgMOfooR0fC7eJ1rt2JB35+nWRRt4VHs7Z+oH7l9sav02Zfa/XSGlOw8LHTYkXyDrVt+czm2cEDHCE3XTKMR2HdVulYWf74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718573457; c=relaxed/simple;
-	bh=FIKoZwBEvvITzeAEwHf9UM0IMTE3gBDTcnLA/ddszps=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hLfkTotKIdWA0Y6rj7F6oPctBBZgP/T3lotXVkeQixI2z6QCz02Ubt6JSURAlEqWdc5hUPFlt4XVgL6LAFbHPCrW6WERBMPOUFebvo/jghi2cLKi6bFAIeRtzEIIsGV28mrcVdcvKKZPvIP5wzfGV7C0ZDA/X3u7iNjdyEoeBfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=U1bpNWzT; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2c036a14583so716181a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 14:30:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718573453; x=1719178253; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yQhrXwUi+OvcUMAXue/hmuLunIoA1lw15kWxV8BcvyU=;
-        b=U1bpNWzTRjLH+7/053HSeTIiTQKgbAxHVFZQP3cZMwxxjMvfSjICqkbVuZfe/aqeeq
-         Q87XFw/gC5a4tWjq69/2budA0hWWTJ7xX+TuGP3u2pNXuF3pB81x8i8tE2LbfkHUjst3
-         EAB4cbUfJn54h4k+qKKFkx9zwKSfG6s6QcS3iPeyqRxTw2ENdzivLjuGWI/6+dxksNM1
-         A+evYltWAdUSayqu6v7Zrp/H/gzgMYeimqxkz+Le+J9bipZt994HZFT2cQ3r7SeqhdKq
-         amWUILORuQtQJAnvc3F2bH3qZiUIZXFRtRM1xkm/5D+TW5iIhn1ZhDa2cHozQwvlnnpj
-         LIug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718573453; x=1719178253;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yQhrXwUi+OvcUMAXue/hmuLunIoA1lw15kWxV8BcvyU=;
-        b=acwMckVK6vvsX6Lf1lNhy/DIkZ2unFQywU/3ZMjAfjp3TU472XYuh/YmMgEuTX6dFM
-         s3sjJz77zX11EL1CvMMeWUx4PxaQbGW6zJJAl3Yf8uNsdmYy++DcnLNy1chDb0CSqZz2
-         OVXcKxGlKIBQEyhMWPnxABdNsVFC1beOuBu8h2wKZwr/p/mxuTYNgq4fC503L3oaigr9
-         EVjF0hANfpu1AjzDJZVtS8KPvwWGjh9HCn3phZL0NOQHxPtwZg8/Zm0aPSquila39Qfg
-         Lpe/o2Inr903Q24OZ6uCcsT0zLsmUW4a3NTr0exltZkGngKnJ3e3vG8X8gc6CAZM/OJW
-         BuEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWliFzfpR8IHNlu4tv84RyX4ZBx91vIQa01Iajs608+XtBokbHUAYtvWYUWwuajZqH41olnXAg+JU0Td1GTIWolgWW7Y4feD6MGbATF
-X-Gm-Message-State: AOJu0YwCi3TXYKd6Rp1/in6VZvpElB3SK9AST4ApmRryV5/HMkGXQQyX
-	xvHeBON+dpVp2VVFS2MUfy62UgIMwOOUMDrHzRaD7BhgUhW3N+yB/QG2X4rfd1s=
-X-Google-Smtp-Source: AGHT+IE4hzpSWBVBfSDYsNo/W5vH/86czlhT5zRgnZoFcPfJy/8xeB1f14SB8dEZkLpYN5NNo/SXEw==
-X-Received: by 2002:a17:902:eccc:b0:1f7:1a37:d0b5 with SMTP id d9443c01a7336-1f862c30f6amr97176705ad.4.1718573453246;
-        Sun, 16 Jun 2024 14:30:53 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e71a15sm68092885ad.83.2024.06.16.14.30.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Jun 2024 14:30:52 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: paolo.valente@unimore.it, John Garry <john.g.garry@oracle.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- jiapeng.chong@linux.alibaba.com, hch@lst.de
-In-Reply-To: <20240614090345.655716-1-john.g.garry@oracle.com>
-References: <20240614090345.655716-1-john.g.garry@oracle.com>
-Subject: Re: [PATCH 0/3] Some block sparse fixes
-Message-Id: <171857345207.18332.15693298636377250623.b4-ty@kernel.dk>
-Date: Sun, 16 Jun 2024 15:30:52 -0600
+	s=arc-20240116; t=1718573527; c=relaxed/simple;
+	bh=e3mPHRNbPAI0RpRaRBYxdYiAyOtMA8BSTjFOQ/dqqno=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VfUnenVX4speILaDPltH4nLp305mZLOV89obsWR3dYoST3T39CaYdb4nrw8G6OfqyjQInVPWPIqnKDmEzPOVWFMR6cy9c8hD4geBxOC6GNckwOmrpEhawRoi1lfBWh99BM34kcj9CLH8BOXXtZnu/llmQWhZeTqnN/K4OO30v34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=A6HLMMjK; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7AC8B40003;
+	Sun, 16 Jun 2024 21:31:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718573522;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vSk/4wckBenK2m2J+umiKHrWAQgsVWf7caDnp2mQsvo=;
+	b=A6HLMMjKnO50sE190j6lsh0HdRCTuV0ZKE4L6bXHg0/AkdKbBNq+SO/fv88fq2M4WJ3lN/
+	Y8JHa3BtHVFPM2u39juvHhaY5d9nfbmEGP8cdM291w2yWxjmYhfO/yKYER40Q1DtIOn6Zi
+	JpSDKWlF6OEgJtwn3VKG8Jw7Q8D3csqJQC+nadTHLewCUy1AntBuTaFw8traq9oZrklljX
+	LU/K/zbg68tMrwIJMm+8+cg4pQ8WGBHBtXVIew/HGOGtu6E2JCq6BWwrsODj4S6V2V1xY8
+	ePPhcBeTW+VRqx5INuYsKUGtmlZH7P2c6mclEorwjTVNGx7KBiVkaU50QTGXvw==
+Date: Sun, 16 Jun 2024 23:31:52 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+ davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, linux-arm-kernel@lists.infradead.org, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
+ <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
+ <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
+ <atenart@kernel.org>
+Subject: Re: [PATCH net-next v13 05/13] net: ethtool: Allow passing a phy
+ index for some commands
+Message-ID: <20240616233152.64f06133@fedora>
+In-Reply-To: <Zm8NrEproHTPzo+O@shell.armlinux.org.uk>
+References: <20240607071836.911403-1-maxime.chevallier@bootlin.com>
+	<20240607071836.911403-6-maxime.chevallier@bootlin.com>
+	<20240613182613.5a11fca5@kernel.org>
+	<20240616180231.338c2e6c@fedora>
+	<9dbd5b23-c59d-4200-ab9c-f8a9d736fea6@lunn.ch>
+	<Zm8NrEproHTPzo+O@shell.armlinux.org.uk>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0-rc0
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
+Hi Russell,
 
-On Fri, 14 Jun 2024 09:03:42 +0000, John Garry wrote:
-> Branches for-6.11/block and block-6.10 both have the following sparse
-> build issues:
+> > It gets interesting with copper SFP. They contain a PHY, and that PHY
+> > can physically disappear at any time. What i don't know is when the
+> > logical representation of the PHY will disappear after the hotunplug
+> > event.
+
+I'm replying to your mail to summarize what the topology code does,
+which I think is correct according to these explanations.
+
 > 
-> block/bdev.c:388:17: warning: symbol 'blockdev_mnt' was not declared.
-> Should it be static?
-> block/blk-settings.c:266:9: warning: context imbalance in
-> 'queue_limits_commit_update' - wrong count at exit
-> block/blk-cgroup.c:834:5: warning: context imbalance in
-> 'blkg_conf_prep' - wrong count at exit
-> block/blk-cgroup.c:965:9: warning: context imbalance in
-> 'blkg_conf_exit' - wrong count at exit
-> block/blk-iocost.c:732:9: warning: context imbalance in 'iocg_lock' -
-> wrong count at exit
-> block/blk-iocost.c:743:28: warning: context imbalance in 'iocg_unlock'
-> - unexpected unlock
-> block/blk-zoned.c:595:30: warning: context imbalance in
-> 'disk_get_and_lock_zone_wplug' - wrong count at exit
-> block/blk-zoned.c: note: in included file (through include/linux/blkdev.h):
-> ./include/linux/bio.h:592:9: warning: context imbalance in
-> 'blk_zone_wplug_handle_write' - unexpected unlock
-> block/blk-zoned.c:1747:31: warning: context imbalance in
-> 'blk_revalidate_seq_zone' - unexpected unlock
-> block/bfq-iosched.c:5498:9: warning: context imbalance in
-> 'bfq_exit_icq' - different lock contexts for basic block
+> On a SFP module unplug, the following upstream device methods will be
+> called in order:
+> 1. link_down
+> 2. module_stop
+> 3. disconnect_phy
+
+Patch 03 adds a phy_sfp_connect_phy() / phy_sfp_disconnect_phy() set of
+helpers that new PHY drivers supporting downstream SFP busses must
+specify in their sfp_upstream_ops, which will add/remove the SFP phy
+to/from the topology. I realize now that I need to add some clear
+documentation so that new drivers get that right.
+
+That is because in this situation, the SFP PHY won't be attached to the
+netdev (as the media-converter PHY already is), so relying on the
+phy_attach / phy_detach paths won't cover these cases.
+
 > 
-> [...]
+> At this point, the PHY device will be removed (phy_device_remove()) and
+> freed (phy_device_free()), and shortly thereafter, the MDIO bus is
+> unregistered and thus destroyed.
+> 
+> In response to the above, phylink will, respectively for each method:
+> 
+> 1. disable the netdev carrier and call mac_link_down()
+> 2. call phy_stop() on the attached PHY
+> 3. remove the PHY from phylink, and then call phy_disconnect(),
+>    disconnecting it from the netdev.
+> 
+> Thus, when a SFP PHY is being removed, phylib will see in order the
+> following calls:
+> 
+> 	phy_disconnect()
+> 	phy_device_remove()
+> 	phy_device_free()
+> 
+> Provided the topology linkage is removed on phy_disconnect() which
+> disassociates the PHY from the netdev, SFP PHYs should be fine.
+> 
 
-Applied, thanks!
+And here in that case, there's a hook in phy_detach() to remove the phy
+from the topology as well, which deals with the case where phylink
+deals with the sfp_upstream_ops. I think this covers all cases :)
 
-[1/3] bdev: make blockdev_mnt static
-      commit: d9c2332199d073c5edd7163d64fbdee6224d8c08
-[2/3] block: Drop locking annotation for limits_lock
-      commit: c3042a5403ef2be622023fcc3b11fc1aa08ba7fa
-[3/3] block: BFQ: Refactor bfq_exit_icq() to silence sparse warning
-      commit: 66088084fdabb6e5075cd19e8ffe15b8bc7e3708
+Thanks,
 
-Best regards,
--- 
-Jens Axboe
-
-
-
+Maxime
 
