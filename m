@@ -1,149 +1,128 @@
-Return-Path: <linux-kernel+bounces-216545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E2E990A0E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:54:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FDFC90A0E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 318B31F21728
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 23:54:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 241AE1C210E6
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 23:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F56D74BE1;
-	Sun, 16 Jun 2024 23:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vt3MdcV1"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311F074BE1;
+	Sun, 16 Jun 2024 23:58:50 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03118225D6;
-	Sun, 16 Jun 2024 23:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8089D225D6;
+	Sun, 16 Jun 2024 23:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718582075; cv=none; b=QGXiCcpssx0fBchyn+uvJQyToqxnI4qEa0ZO/k2mRe14bq7ur41Dq6rIfvmo8Mi3ziRqGxkCcTCGIbjuxuUI2kTviLV4gJzo7E4Yj2M5Fzhi7qFihpAdMhSyMetJxcLRtjIUCEehF2O48FS39qmemOwjPRyJ8JilhtHlU3IzVv0=
+	t=1718582329; cv=none; b=M5KjuBCC2n2d0PoLxhMd3lAIX+YLJSlDD9kFnK3ghxN7Zn+jEHE8bPvd9hKwhjk+NPF8Sfsh/OdcHa9S+gs9NvDJr0ZoCp9U6Xmq1dvVeB0XyK12ekZV/I/biMqqBbrYUTDtUvFNpOZr7MSMgpNImg1as7H1jL0OV3cSfQqT77I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718582075; c=relaxed/simple;
-	bh=Ri2CvSvGdxzAt/3LSCYExptWawOTSqNiyOXzVHotLCM=;
+	s=arc-20240116; t=1718582329; c=relaxed/simple;
+	bh=J786VmLBsIS9hA0rgT6mbCgXRYVRzeIaqzjALSa/MFI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aIVuiJimF2ZS/7b/7iGEubMor+sWZ/1rscC/kx4p+Um+iAusOBm7BvhCIsbQ/G1UciexXDzd/gtPiCOnjSOieqFP/eMswcFgZXepIp+dMtsOQ+1vquC6U4g8Qxvha9egaJoow2/0APPfJ1fDALup0RHGnx5OvGjOfBn3JWg2TAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vt3MdcV1; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DCC412D5;
-	Mon, 17 Jun 2024 01:54:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1718582056;
-	bh=Ri2CvSvGdxzAt/3LSCYExptWawOTSqNiyOXzVHotLCM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vt3MdcV1rkaAu86FddoUKH5fcocyXobZ0CorVlmNQmAEILWuYP+Leah3NU9MVvSDs
-	 Ntj4TiRA86iYqBAsGptIue5kpIhHCmgmrjoqRL7Kz9GLVFX6SnayZRoBkZrJNAUBPa
-	 XNMOGoihnZafieiGrVTYQweeIsdoiFBbS6xAxrT4=
-Date: Mon, 17 Jun 2024 02:54:10 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sean Paul <seanpaul@chromium.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v6 1/4] media: uvcvideo: Stop stream during unregister
-Message-ID: <20240616235410.GN4782@pendragon.ideasonboard.com>
-References: <20240614-guenter-mini-v6-0-7b7fdc3b21b3@chromium.org>
- <20240614-guenter-mini-v6-1-7b7fdc3b21b3@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ors9iZrYX24z3jWrj+y3GK10UFJKYIrCFWYtsqVrHXtvwsZSq4vgmpqsaR5T6Km3oNiLOx5+vklyhXbUsLgstLQ9EDE+AHTS11k3uiamLDmVPwJKtCW7aP3ix7OIJglT8Q0nSz7NwmwIiz5JaMlhFZZuUTW0e7kpO0X37uq68Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Date: Sun, 16 Jun 2024 23:58:29 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Inochi Amaoto <inochiama@outlook.com>
+Cc: Jisheng Zhang <jszhang@kernel.org>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Chao Wei <chao.wei@sophgo.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 1/6] riscv: dts: sophgo: Put sdhci compatible in dt of
+ specific SoC
+Message-ID: <20240616235829.GA4000183@ofsar>
+References: <20240612-sg2002-v2-0-19a585af6846@bootlin.com>
+ <20240612-sg2002-v2-1-19a585af6846@bootlin.com>
+ <IA1PR20MB49534C9E29E86B478205E4B3BBC02@IA1PR20MB4953.namprd20.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240614-guenter-mini-v6-1-7b7fdc3b21b3@chromium.org>
+In-Reply-To: <IA1PR20MB49534C9E29E86B478205E4B3BBC02@IA1PR20MB4953.namprd20.prod.outlook.com>
 
-Hi Ricardo,
+Hi
 
-Thank you for the patch.
+On 18:47 Wed 12 Jun     , Inochi Amaoto wrote:
+> On Wed, Jun 12, 2024 at 10:02:31AM GMT, Thomas Bonnefille wrote:
+> > Remove SDHCI compatible for CV1800b from common dtsi file to put it in
+> > the specific dtsi file of the CV1800b.
+> > This commits aims at following the same guidelines as in the other nodes
+> > of the CV18XX family.
+is there any URL of guideline? or did I miss anything
+couldn't find any discussion about this in v1
 
-On Fri, Jun 14, 2024 at 12:41:27PM +0000, Ricardo Ribalda wrote:
-> uvc_unregister_video() can be called asynchronously from
-> uvc_disconnect(). If the device is still streaming when that happens, a
-> plethora of race conditions can occur.
+> > 
+> > Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+> > ---
+> >  arch/riscv/boot/dts/sophgo/cv1800b.dtsi | 4 ++++
+> >  arch/riscv/boot/dts/sophgo/cv18xx.dtsi  | 1 -
+> >  2 files changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/riscv/boot/dts/sophgo/cv1800b.dtsi b/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
+> > index ec9530972ae2..b9cd51457b4c 100644
+> > --- a/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
+> > +++ b/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
+> > @@ -25,3 +25,7 @@ &clint {
+> >  &clk {
+> >  	compatible = "sophgo,cv1800-clk";
+> >  };
+> > +
+> > +&sdhci0 {
+> > +	compatible = "sophgo,cv1800b-dwcmshc";
+> > +};
+> > diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
+> > index 891932ae470f..7247c7c3013c 100644
+> > --- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
+> > +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
+> > @@ -288,7 +288,6 @@ uart4: serial@41c0000 {
+> >  		};
+> >  
+> >  		sdhci0: mmc@4310000 {
+> > -			compatible = "sophgo,cv1800b-dwcmshc";
+> >  			reg = <0x4310000 0x1000>;
+> >  			interrupts = <36 IRQ_TYPE_LEVEL_HIGH>;
+> >  			clocks = <&clk CLK_AXI4_SD0>,
+> > 
+> > -- 
+> > 2.45.2
+> > 
 > 
-> Make sure that the device has stopped streaming before exiting this
-> function.
+> Hi, Jisheng,
 > 
-> If the user still holds handles to the driver's file descriptors, any
-> ioctl will return -ENODEV from the v4l2 core.
-> 
-> This change makes uvc more consistent with the rest of the v4l2 drivers
-> using the vb2_fop_* and vb2_ioctl_* helpers.
+> Is this change necessary? IIRC, the sdhci is the same across 
+> the whole series.
+I tend to agree with Inochi here, if it's same across all SoC, then no bother to
+split, it will cause more trouble to maintain..
 
-As I've said many times before, this issue needs a fix in the V4L2 core,
-ideally with support in the cdev core. It seems I'll have to do it
-myself ?
-
-> Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/usb/uvc/uvc_driver.c | 32 +++++++++++++++++++++++++++++++-
->  1 file changed, 31 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> index bbd90123a4e7..55132688e363 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -1908,11 +1908,41 @@ static void uvc_unregister_video(struct uvc_device *dev)
->  	struct uvc_streaming *stream;
->  
->  	list_for_each_entry(stream, &dev->streams, list) {
-> +		/* Nothing to do here, continue. */
->  		if (!video_is_registered(&stream->vdev))
->  			continue;
->  
-> +		/*
-> +		 * For stream->vdev we follow the same logic as:
-> +		 * vb2_video_unregister_device().
-> +		 */
-> +
-> +		/* 1. Take a reference to vdev */
-> +		get_device(&stream->vdev.dev);
-> +
-> +		/* 2. Ensure that no new ioctls can be called. */
->  		video_unregister_device(&stream->vdev);
-> -		video_unregister_device(&stream->meta.vdev);
-> +
-> +		/* 3. Wait for old ioctls to finish. */
-> +		mutex_lock(&stream->mutex);
-> +
-> +		/* 4. Stop streaming. */
-> +		uvc_queue_release(&stream->queue);
-> +
-> +		mutex_unlock(&stream->mutex);
-> +
-> +		put_device(&stream->vdev.dev);
-> +
-> +		/*
-> +		 * For stream->meta.vdev we can directly call:
-> +		 * vb2_video_unregister_device().
-> +		 */
-> +		vb2_video_unregister_device(&stream->meta.vdev);
-> +
-> +		/*
-> +		 * Now both vdevs are not streaming and all the ioctls will
-> +		 * return -ENODEV.
-> +		 */
->  
->  		uvc_debugfs_cleanup_stream(stream);
->  	}
+> Regards,
+> Inochi
 
 -- 
-Regards,
-
-Laurent Pinchart
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
