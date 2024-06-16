@@ -1,309 +1,158 @@
-Return-Path: <linux-kernel+bounces-216358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9185909E6E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:10:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD490909E72
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 828BA281718
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 16:10:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AA651F212DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 16:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9DA1B27D;
-	Sun, 16 Jun 2024 16:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AA119BBA;
+	Sun, 16 Jun 2024 16:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="J2BUGppU"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Ibx6coRh"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7728199A2;
-	Sun, 16 Jun 2024 16:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493FADDAB;
+	Sun, 16 Jun 2024 16:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718554200; cv=none; b=S9oMIBl4CIjrDAZhpJsdNanDAeYeUuxU/dnnm5V3ySO982K2CC7SzKVhtFzZvY394vHXNTRczL8am0jbGrGy3Bun5hnUTdxojKdLoPb0wKuIqWfs6GIZcLxOl0XhMYO9Nj83VYMJAOgmE9ynL2+Dt8QJSpQgyhTvks46QRKbEaU=
+	t=1718554556; cv=none; b=BoAklj6TOZzJrGPilw8XynO82WGcW7z0ueDrLZ209mBZYSVKMrWClcZ7URviO0spMh1VgWargpMPIvuo7FufkjQIlef7D2yg5Lsf9+nM0FrTgOTpea0Qc7oWubLJC6SCA4/aIixHKkM8/dm8mAhqbpL7d1zBSs+tqPxsW+yUS/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718554200; c=relaxed/simple;
-	bh=RhJ533r6kgi+8DTVEq0FIqkrDIs38xzZJ3kVgRCG9Ow=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=cUnsmltKfQlz2oW7ktKi+9citiCbJCxPikgAkVSsyI6QWOTN1lrPXrC5g43FosAb8YZ3AlbxD7/fNvhey1KHGlkyfxELZJGdos76DGlBIqGFmDru4W1bWQshhsrVl0vt7zsObBdoJ25taKKDKHQP8Y2cKljc3Ja2WYvAmzEFpqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=J2BUGppU; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+	s=arc-20240116; t=1718554556; c=relaxed/simple;
+	bh=TUsATysmdrlJFnEcVyb09WxWXOukeW5xaFd/AodO77I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H+QvQPq7a9XlWl+FfLp58Uxu1zKsnXxVtMkArZWDOLfHnopSAR3dzN9ylyHyVd011leEus+esYnijEMGXGxIBaMMOLPFPpvkBfqUOpgCzeGWaKr9qdAWNxdPelS70H6ZbFZG84ff2u3VYAmt5YvYN4MihSfxN7AkZ4oUHssZX9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Ibx6coRh; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:MIME-Version:
-	Content-Type:Message-ID:Date:Subject:To:From:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=TDDyDhE1w7vzxPPqh7gNhOtr9tJB0Ni/nLxytuTtMZ8=; t=1718554197; x=1718986197;
-	 b=J2BUGppUMW/qHrwhAOWba2dnXHX432CmoVg+l63eVhKnbnUCr0TMHzxYm2MGWVsGE6aRSn8ZNs
-	43f+2EF6O8+decMIpk7cEDBxhwyTe3VZzDoHttCPxP7cFk/oFVa3lfCvIkKkNVbKI0NhRI9twzsuG
-	Cyu0bJejSDxMuYC+D8cvjn2pWfBM4WdySRxO1NgzTcAs2s10NWiHaaDvimvLe0mBvCjq3h0ciwYFh
-	W41uoNxg9JB5U7SCty/E1IcmcMAFvJ1INLJaZC4s3xuj+DuD/SMl85UMftd5j3/MeTjXOqng1Vf45
-	hqmDXBIy8y2OlGNNxuVet99eyvwkqbTbLkmqQ==;
-Received: from [2a02:8108:8980:2478:5054:ff:feb3:8f48] (helo=regzbot.fritz.box); authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	id 1sIsRx-0004vz-Ol; Sun, 16 Jun 2024 18:09:49 +0200
-From: "Regzbot (on behalf of Thorsten Leemhuis)" <regressions@leemhuis.info>
-To: LKML <linux-kernel@vger.kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Linux regressions report  for mainline [2024-06-16]
-Date: Sun, 16 Jun 2024 16:09:48 +0000
-Message-ID: <171855416884.750783.12465497601688065358@leemhuis.info>
-X-Mailer: git-send-email 2.45.1
-Content-Type: text/plain; charset="utf-8"
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=DI8ao85LkW0rGY8C34vKTHTfc1vvHRa0HNhrgN4f+Qs=; b=Ibx6coRhBdGtgLYoRkBMnNKLGC
+	GbXU88eI/XDtIAVwIcgUb97faEjw0h113h7HrNpY7JgR6yHrS0YMzOxVRy/NDsQLQcjRbYCwcS2vW
+	sqa5ny+e8ipXy8qRTwBteJo11z1h0Z9oqVQbtKyFLMnHffAlXBbQo6LQDHnxnPzuZIEFBrOp6Meuw
+	7d2qG7pvj+3vIcOGglstX2XprraTZPHZcG+0DFc9L3ZoUGZGfhD3F0xWXAwM1LpZdLFbSEpSpSXR6
+	yv2yMXt+flz4K7vKGH+sTF7qvg/M/QXPvl/MB+3ri2ZLmg3Poei/L3xuexFgoAKO0jMMhFcDICvhl
+	GmESJctQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56890)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sIsXf-0004F3-0p;
+	Sun, 16 Jun 2024 17:15:43 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sIsXg-00047j-Vn; Sun, 16 Jun 2024 17:15:45 +0100
+Date: Sun, 16 Jun 2024 17:15:44 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>
+Subject: Re: [PATCH net-next v13 05/13] net: ethtool: Allow passing a phy
+ index for some commands
+Message-ID: <Zm8PsLcoccsezveh@shell.armlinux.org.uk>
+References: <20240607071836.911403-1-maxime.chevallier@bootlin.com>
+ <20240607071836.911403-6-maxime.chevallier@bootlin.com>
+ <20240613182613.5a11fca5@kernel.org>
+ <20240616180231.338c2e6c@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718554197;0875d270;
-X-HE-SMSGID: 1sIsRx-0004vz-Ol
-
-Hi Linus, find below the weekly report for regressions introduced
-during this cycle. Let me quickly mention two things (one from the last
-cycle):
-
-* The issue I wrote to you about earlier today already: the net/led AB-BA deadlock
-that was introduced in the 6.9 cycle that annoys a few people. Hans
-provided a revert (that was ACKed) and would like you to pick it up
-directly:
-https://lore.kernel.org/all/20240607101847.23037-1-hdegoede@redhat.com/
-
-* Still not much progress has been made regarding the regression I
-mentioned last week that is caused by 6.10 commit 868ff5f4944a ("net:
-dsa: mt7530-mdio: read PHY address of switch from device tree") and now
-known for a month. It broke the detection of the mt7531 switch on
-Bananapi-R64. There are two arm64 dts patches around to fix this (one
-part of a patch-set), which is why at least the net maintainers would
-prefer to fix this instead of reverting the culprit -- but we only made
-small progress over the last week. Hopefully soon some solution will
-emerge:
-https://lore.kernel.org/lkml/20240516204847.171029-1-linux@fw-web.de/
-
-Ciao, Thorsten
-
----
-
-Hi, this is regzbot, the Linux kernel regression tracking bot.
-
-Currently I'm aware of 12 regressions in linux-mainline. Find the
-current status below and the latest on the web:
-
-https://linux-regtracking.leemhuis.info/regzbot/mainline/
-
-Bye bye, hope to see you soon for the next report.
-   Regzbot (on behalf of Thorsten Leemhuis)
-
-
-=======================================================
-current cycle (v6.9.. aka v6.10-rc), culprit identified
-=======================================================
-
-
-drm/qxl: VM graphics often malfunction after boot and sometimes shutdowns occur
--------------------------------------------------------------------------------
-https://linux-regtracking.leemhuis.info/regzbot/regression/lore/DS7PR12MB57665F9F4BDF0598D7CC53DD94FF2@DS7PR12MB5766.namprd12.prod.outlook.com/
-https://lore.kernel.org/regressions/DS7PR12MB57665F9F4BDF0598D7CC53DD94FF2@DS7PR12MB5766.namprd12.prod.outlook.com/
-
-By Kaplan, David; 13 days ago; 3 activities, latest 2 days ago.
-Introduced in b33651a5c98d (v6.10-rc1)
-
-Recent activities from: Kaplan, David (1), Thomas Zimmermann (1)
-
-
-mm: cause warning at mm/page_table_check.c:198 __page_table_check_ptes_set+0x306
---------------------------------------------------------------------------------
-https://linux-regtracking.leemhuis.info/regzbot/regression/lore/CABXGCsMB9A8-X+Np_Q+fWLURYL_0t3Y-MdoNabDM-Lzk58-DGA@mail.gmail.com/
-https://lore.kernel.org/lkml/CABXGCsMB9A8-X%2BNp_Q%2BfWLURYL_0t3Y-MdoNabDM-Lzk58-DGA@mail.gmail.com/
-
-By Mikhail Gavrilov; 25 days ago; 33 activities, latest 3 days ago.
-Introduced in 8430557fc584 (v6.10-rc1)
-
-Fix incoming:
-* mm/debug_vm_pgtable: drop RANDOM_ORVALUE trick
-  https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=master&id=539c45c4b4f62143ef7b8d46a98a67bb57558131
-
-
-net: dsa: mt7530-mdio: mt7531 switch on Bananapi-R64 not detected
------------------------------------------------------------------
-https://linux-regtracking.leemhuis.info/regzbot/regression/lore/20240516204847.171029-1-linux@fw-web.de/
-https://lore.kernel.org/lkml/20240516204847.171029-1-linux@fw-web.de/
-
-By Frank Wunderlich; 30 days ago; 20 activities, latest 4 days ago.
-Introduced in 868ff5f4944a (v6.10-rc1)
-
-Recent activities from: Arınç ÜNAL (3), AngeloGioacchino Del Regno (2),
-  Thorsten Leemhuis (1)
-
-One patch associated with this regression:
-* [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
-  https://lore.kernel.org/lkml/20240516204847.171029-1-linux@fw-web.de/
-  30 days ago, by Frank Wunderlich
-
-
-spi: omap2-mcpsi: boot hangs with ocelot_mfd driver
----------------------------------------------------
-https://linux-regtracking.leemhuis.info/regzbot/regression/lore/Zl/V0dU6SjAMkpLG@colin-ia-desktop/
-https://lore.kernel.org/lkml/Zl%2FV0dU6SjAMkpLG@colin-ia-desktop/
-
-By Colin Foster; 11 days ago; 5 activities, latest 5 days ago.
-Introduced in e64d3b6fc9a3 (v6.10-rc1)
-
-Recent activities from: Colin Foster (1)
-
-One patch associated with this regression:
-* omap2-mcspi multi mode
-  https://lore.kernel.org/lkml/Zl%2FV0dU6SjAMkpLG@colin-ia-desktop/
-  11 days ago, by Colin Foster
-
-
-e1000e: s2idle and S3 broken
-----------------------------
-https://linux-regtracking.leemhuis.info/regzbot/regression/bugzilla.kernel.org/218936/
-https://bugzilla.kernel.org/show_bug.cgi?id=218936
-https://bugzilla.kernel.org/show_bug.cgi?id=218940
-
-By Dieter Mummenschanz and Todd Brandt; 11 days ago; 7 activities, latest 5 days ago.
-Introduced in bfd546a552e1 (v6.10-rc2)
-
-Recent activities from: Hui Wang (2)
-
-2 patch postings are associated with this regression, the latest is this:
-* [iwl-net][PATCH v2] Revert "e1000e: move force SMBUS near the end of enable_ulp function" [implicit due to Link/Closes tag]
-  https://lore.kernel.org/netdev/20240611062416.16440-1-hui.wang@canonical.com/
-  5 days ago, by Hui Wang; thread monitored.
-
-Noteworthy links:
-* [iwl-net][PATCH] Revert "e1000e: move force SMBUS near the end of enable_ulp function" [implicit due to Link/Closes tag]
-  https://lore.kernel.org/netdev/20240610013222.12082-1-hui.wang@canonical.com/
-  6 days ago, by Hui Wang; thread monitored.
-
-
-:drm/amd: green flashing bar on top of screen
----------------------------------------------
-https://linux-regtracking.leemhuis.info/regzbot/regression/lore/CABXGCsNptxsQO=5=qi-JYiFX=rX8Ok5inK80Gn0qrUFWbtBGng@mail.gmail.com/
-https://lore.kernel.org/lkml/CABXGCsNptxsQO=5=qi-JYiFX=rX8Ok5inK80Gn0qrUFWbtBGng@mail.gmail.com/
-
-By Mikhail Gavrilov; 21 days ago; 5 activities, latest 5 days ago.
-Introduced in bc87d666c05a (v6.10-rc1)
-
-Recent activities from: Mikhail Gavrilov (2)
-
-One patch associated with this regression:
-* Re: 6.10/bisected/regression - commits bc87d666c05 and 6d4279cb99ac cause appearing green flashing bar on top of screen on Radeon 6900XT and 120Hz
-  https://lore.kernel.org/lkml/CADnq5_PDxJ8O1JUQ9RBYRFB9G1WZJos05ZAM4jUKuPBwPxjNkA@mail.gmail.com/
-  9 days ago, by Alex Deucher
-
-
-[ *NEW* ] drm/bridge: adv7511: Intermittent EDID failures
----------------------------------------------------------
-https://linux-regtracking.leemhuis.info/regzbot/regression/lore/20240601132459.81123-1-aford173@gmail.com/
-https://lore.kernel.org/lkml/20240601132459.81123-1-aford173@gmail.com/
-
-By Adam Ford; 15 days ago; 2 activities, latest 6 days ago.
-Introduced in f3d9683346d6 (v6.10-rc1)
-
-Fix incoming:
-* drm/bridge: adv7511: Fix Intermittent EDID failures
-  https://lore.kernel.org/regressions/1b79fc84-588e-4ff1-8034-8fc99686f831@leemhuis.info/
-
-
-usb: chipidea: USB broken on DragonBoard410c, msm8974-based devices, and sony yuga
-----------------------------------------------------------------------------------
-https://linux-regtracking.leemhuis.info/regzbot/regression/lore/21ea292a-b1d1-43e2-92ab-9f1f63aaf729@samsung.com/
-https://lore.kernel.org/lkml/21ea292a-b1d1-43e2-92ab-9f1f63aaf729@samsung.com/
-https://lore.kernel.org/lkml/ecb8d3e8-d525-4a2d-a868-803202c16296@franken-peeters.be/
-
-By Marek Szyprowski and Wouter Franken; 51 days ago; 3 activities, latest 10 days ago.
-Introduced in 22ffd399e6e7 (v6.10-rc1)
-
-Fix incoming:
-* Revert "usb: chipidea: move ci_ulpi_init after the phy initialization"
-  https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=master&id=718d4a63c0a62d16af1d0425d515d7e76f35681e
-
-
-iio: IIO channel read outs and thereby thermal mitigation on the Lenovo ThinkPad X13s broken
---------------------------------------------------------------------------------------------
-https://linux-regtracking.leemhuis.info/regzbot/regression/lore/20240530074416.13697-1-johan+linaro@kernel.org/
-https://lore.kernel.org/lkml/20240530074416.13697-1-johan%2Blinaro@kernel.org/
-
-By Johan Hovold; 17 days ago; 6 activities, latest 10 days ago.
-Introduced in 3092bde731ca (v6.10-rc1)
-
-Fix incoming:
-* iio: inkern: fix channel read regression
-  https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=master&id=78f0dfa64cbd05f381849377a32e0a2f1afe9215
-
-
-====================================================
-current cycle (v6.9.. aka v6.10-rc), unknown culprit
-====================================================
-
-
-[ *NEW* ] performance problems on Thinkpad X220 (GPU working harder and causing throttling?)
---------------------------------------------------------------------------------------------
-https://linux-regtracking.leemhuis.info/regzbot/regression/lore/ZmrTZozoi0t/tuva@duo.ucw.cz/
-https://lore.kernel.org/lkml/ZmrTZozoi0t%2Ftuva@duo.ucw.cz/
-
-By Pavel Machek; 3 days ago; 7 activities, latest 1 days ago.
-Introduced in v6.9..v6.10-rc3
-
-Recent activities from: Pavel Machek (4), Linus Torvalds (3)
-
-
-mm: WARNING: CPU: 13 PID: 7032 at lib/xarray.c:1024 xas_split_alloc+0xbd/0x110
-------------------------------------------------------------------------------
-https://linux-regtracking.leemhuis.info/regzbot/regression/bugzilla.kernel.org/218861/
-https://bugzilla.kernel.org/show_bug.cgi?id=218861
-
-By sander44; 28 days ago; 5 activities, latest 1 days ago.
-Introduced in v6.9..0450d2083be6 (v6.9..v6.10-rc1)
-
-Recent activities from: Mike Lothian (1), The Linux kernel's regression
-  tracker (Thorsten Leemhuis) (1)
-
-
-drm/amdgpu: crash on playing videos
------------------------------------
-https://linux-regtracking.leemhuis.info/regzbot/regression/lore/ebb3b35e631169041e70eb0a7efd6cecef609833.camel@sjtu.edu.cn/
-https://lore.kernel.org/amd-gfx/ebb3b35e631169041e70eb0a7efd6cecef609833.camel@sjtu.edu.cn/
-https://lore.kernel.org/amd-gfx/CAMOvFfkQscju1spNKHmEC_Rut%2B2=qfhKGZSvGhCk_nd5VhuDkg@mail.gmail.com/
-
-By Wang Yunchen and Winston Ma; 18 days ago; 3 activities, latest 17 days ago.
-Introduced in v6.9..v6.10-rc1
-
-
-=============
-End of report
-=============
-
-All regressions marked '[ *NEW* ]' were added since the previous report,
-which can be found here:
-https://lore.kernel.org/r/171795191306.47744.1188389943277445679@leemhuis.info
-
-Thanks for your attention, have a nice day!
-
-  Regzbot, your hard working Linux kernel regression tracking robot
-
-
-P.S.: Wanna know more about regzbot or how to use it to track regressions
-for your subsystem? Then check out the getting started guide or the
-reference documentation:
-
-https://gitlab.com/knurd42/regzbot/-/blob/main/docs/getting_started.md
-https://gitlab.com/knurd42/regzbot/-/blob/main/docs/reference.md
-
-The short version: if you see a regression report you want to see
-tracked, just send a reply to the report where you Cc
-regressions@lists.linux.dev with a line like this:
-
-#regzbot introduced: v5.13..v5.14-rc1
-
-If you want to fix a tracked regression, just do what is expected
-anyway: add a 'Link:' tag with the url to the report, e.g.:
-
-Link: https://lore.kernel.org/all/30th.anniversary.repost@klaava.Helsinki.FI/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240616180231.338c2e6c@fedora>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+
+On Sun, Jun 16, 2024 at 06:02:31PM +0200, Maxime Chevallier wrote:
+> Hello Jakub,
+> 
+> On Thu, 13 Jun 2024 18:26:13 -0700
+> Jakub Kicinski <kuba@kernel.org> wrote:
+> 
+> > On Fri,  7 Jun 2024 09:18:18 +0200 Maxime Chevallier wrote:
+> > > +		if (tb[ETHTOOL_A_HEADER_PHY_INDEX]) {
+> > > +			struct nlattr *phy_id;
+> > > +
+> > > +			phy_id = tb[ETHTOOL_A_HEADER_PHY_INDEX];
+> > > +			phydev = phy_link_topo_get_phy(dev,
+> > > +						       nla_get_u32(phy_id));  
+> > 
+> > Sorry for potentially repeating question (please put the answer in the
+> > commit message) - are phys guaranteed not to disappear, even if the
+> > netdev gets closed? this has no rtnl protection
+> 
+> I'll answer here so that people can correct me if I'm wrong, but I'll
+> also add it in the commit logs as well (and possibly with some fixes
+> depending on how this discussion goes)
+> 
+> While a PHY can be attached to/detached from a netdevice at open/close,
+> the phy_device itself will keep on living, as its lifetime is tied to
+> the underlying mdio_device (however phy_attach/detach take a ref on the
+> phy_device, preventing it from vanishing while it's attached to a
+> netdev)
+> 
+> I think the worst that could happen is that phy_detach() gets
+> called (at ndo_close() for example, but that's not the only possible
+> call site for that), and right after we manually unbind the PHY, which
+> will drop its last refcount, while we hold a pointer to it :
+> 
+> 			phydev = phy_link_topo_get_phy()
+>  phy_detach(phydev)
+>  unbind on phydev
+> 			/* access phydev */
+> 			
+> PHY device lifetime is, from my understanding, not protected by
+> rtnl() so should a lock be added, I don't think rtnl_lock() would be
+> the one to use.
+
+... and that will cause deadlocks. For example, ethernet drivers can
+call phy_disconnect() from their .ndo_close method, which will be
+called with the RTNL lock held. This calls phy_detach(), so
+phy_detach() also gets called while the RTNL lock is held.
+
+SFP will call all phylib methods while holding the RTNL lock as well
+(because that's the only safe way to add or remove a PHY, as it stops
+other changes to the config that may conflict, and also ensures that
+e.g. paths in phylib will not be in-use when the PHY is being
+destroyed.)
+
+So, rather than thinking that phylib should add RTNL locking, it
+would be much more sensible to do what phylink does, and enforce
+that the RTNL will be held when netdev related methods are called,
+but also require that paths that end up changing phylib's configuration
+(e.g. removing a PHY driver) end up taking the RTNL lock - because
+that is the only way to be sure that none of the phylib methods
+that call into the driver are currently executing in another thread.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
