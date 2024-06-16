@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-216366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ACAE909E8D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:29:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910C2909E90
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:29:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C03B81C20915
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 16:29:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E46A2814F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 16:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645011C2A5;
-	Sun, 16 Jun 2024 16:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4601C2BE;
+	Sun, 16 Jun 2024 16:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bNVtg83X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L6CdWl53"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23BE1B27D;
-	Sun, 16 Jun 2024 16:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09C11B27D;
+	Sun, 16 Jun 2024 16:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718555366; cv=none; b=Be+bZDovxK5Kl7vGknN4AV/vvBkQTlheyuR+toWKV7STGuBBwlaMM3koQ4K6i//ESCcGh5DIs/UMPw93SfAbez45R7zsJ/thlbqKeTkZC7vXdBPmrA75EIWp/QbXu9bqPrK43mw/66zes9rLpwJXSw9t8tw5r656I6PVN4MeZbY=
+	t=1718555391; cv=none; b=G4CSPBPU//SpEE+nZlny0KC6txDvBQlBlkBYYXFWNBCTjP1gruq/si2j+Qks8goRaPbbM97OcDkR8lHHLckh6nk+QAyScIcz4JWTTAb0HHJNLkjUdin6G5Q1ys+RQO3MSszzGKlbK9gDKfZ6vnuBbCfo8PJD+4jACKg29x0m+Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718555366; c=relaxed/simple;
-	bh=REIGcrgW0URtti7TofJ3NAJkkr2O7MnOpHLisa5LZNI=;
+	s=arc-20240116; t=1718555391; c=relaxed/simple;
+	bh=4Y/E6RxkTEYNMIfKk+59HnDcld53CGZNkpQPW+AuQl8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PnRY1HB+oak8DUpN3+QX1kZ7E9rqQrryHlx4BGfWR+y5Pb0qZYe8B9nzdVsmq//bm8ApaTLx9t3cB0OvqN32KZyPnLSTtndsGewUMoJFlDm2hI1NbaCHU6ot/NLy0suOquQ69K/gYFfDFXpwM2e/ak6QZKz1JbTll6xg6RpofQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bNVtg83X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 099FAC2BBFC;
-	Sun, 16 Jun 2024 16:29:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=QTlZyGoAM6JO0ybFa/hpfZxevwpPwmXsA97BUChu3lzxh/C9x051XsmQCzqDtLEB3wZRNjoz6/IwVaPakXj+3u3eF+2yheXpaYlA+7Kv9fcNAfMEK9EZbZKSgPtkcLrcMjusUX0hFzlsn2LrqBtOZfM2SX7S5X2eup/NE98dELA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L6CdWl53; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2964C2BBFC;
+	Sun, 16 Jun 2024 16:29:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718555365;
-	bh=REIGcrgW0URtti7TofJ3NAJkkr2O7MnOpHLisa5LZNI=;
+	s=k20201202; t=1718555390;
+	bh=4Y/E6RxkTEYNMIfKk+59HnDcld53CGZNkpQPW+AuQl8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bNVtg83Xk3USn8IcbSB5Lgel/Nq4JGtcF8ymT1k/bT4royLn7uUwkwF1mTaVQ/T02
-	 bGpS73hDNecUKG4FhgJlBcAxC14J8RDqxGjt6U9Wyt6rg4tzEJyMMWkeZGUj/5UEi0
-	 8FJXrOdftbEoGvhfMd3qNFE5JwZCs8r9oYAB+CUPTN+4xYdT0h5HstrIJN9mE1DDYI
-	 e6QzG+O8NqAt8rwQBzfmQmY9cNxLhJSKtrotLSpTHznWwTBxHpoaP0UbQaY3yzKlI9
-	 dALhXIgtac/aDLAIP/lNAyMZvDJ9lla6hLSJz0OZzXur1MpwkCHY8MOO8tUfqVWCOF
-	 MdvMnrTqhxjDA==
-Date: Sun, 16 Jun 2024 17:29:20 +0100
+	b=L6CdWl53xMpuEU/Oz9BuKVD4umx4vKLNdJA8ebdHXy6GmL7G5BqP6G+4t1fgkX9Bv
+	 kZpocaSNCYEiYvYaExO0esoE5aURDY6mBB9QIHE7UUWSQupf8V4GYfZDTx9AB4HOBr
+	 EAU9t42RQ1IYZG/ut7UPlay1+WWiVoHLfmpjMrdPVYKfHuGyYFoRA7RUM89KfjMRXt
+	 QzOPLiEudZD072NCUyWQKz+Lfefq66KDaAGjfdeai4Zt3BH7NSDhTsYsekg4f3Y6ET
+	 qjI9qNXBjEdf/EVt5Ugai3RroNKn/V2aiRdlJGJO74f1ltjiScZQyuZKKnr1NqhJg1
+	 XyLkGXKywX/IQ==
+Date: Sun, 16 Jun 2024 17:29:45 +0100
 From: Simon Horman <horms@kernel.org>
 To: Aaron Conole <aconole@redhat.com>
 Cc: netdev@vger.kernel.org, dev@openvswitch.org,
@@ -50,11 +50,11 @@ Cc: netdev@vger.kernel.org, dev@openvswitch.org,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
 	Shuah Khan <shuah@kernel.org>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: Re: [ovs-dev] [RFC net-next 2/7] selftests: openvswitch: Refactor
- actions parsing.
-Message-ID: <20240616162920.GL8447@kernel.org>
+Subject: Re: [ovs-dev] [RFC net-next 3/7] selftests: openvswitch: Add set()
+ and set_masked() support.
+Message-ID: <20240616162945.GM8447@kernel.org>
 References: <20240613181333.984810-1-aconole@redhat.com>
- <20240613181333.984810-3-aconole@redhat.com>
+ <20240613181333.984810-4-aconole@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,20 +63,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240613181333.984810-3-aconole@redhat.com>
+In-Reply-To: <20240613181333.984810-4-aconole@redhat.com>
 
-On Thu, Jun 13, 2024 at 02:13:28PM -0400, Aaron Conole wrote:
-> Until recently, the ovs-dpctl utility was used with a limited actions set
-> and didn't need to have support for multiple similar actions.  However,
-> when adding support for tunnels, it will be important to support multiple
-> set() actions in a single flow.  When printing these actions, the existing
-> code will be unable to print all of the sets - it will only print the
-> first.
-> 
-> Refactor this code to be easier to read and support multiple actions of the
-> same type in an action list.
+On Thu, Jun 13, 2024 at 02:13:29PM -0400, Aaron Conole wrote:
+> These will be used in upcoming commits to set specific attributes for
+> interacting with tunnels.  Since set() will use the key parsing routine, we
+> also make sure to prepend it with an open paren, for the action parsing to
+> properly understand it.
 > 
 > Signed-off-by: Aaron Conole <aconole@redhat.com>
+
 
 Reviewed-by: Simon Horman <horms@kernel.org>
 Tested-by: Simon Horman <horms@kernel.org>
