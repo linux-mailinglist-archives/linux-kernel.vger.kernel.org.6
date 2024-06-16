@@ -1,151 +1,128 @@
-Return-Path: <linux-kernel+bounces-216243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85B8F909D06
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 12:52:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8D5C909D08
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 12:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F3E6280ECC
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 10:52:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0906A1C20A30
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 10:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569E118733B;
-	Sun, 16 Jun 2024 10:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8773D187339;
+	Sun, 16 Jun 2024 10:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kGPNfhV0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKiDj/Y9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B59349635;
-	Sun, 16 Jun 2024 10:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B051862BC;
+	Sun, 16 Jun 2024 10:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718535138; cv=none; b=iwTU/pvx3piI3cPYiRETUKYamJhYDYu9XkZWTMFajVDfJy1wLtxnWpKgp5YjTNl7ntndfJ15ZA1N7vB7piSvmZ/txEHS58JV+7zLzr7v6zTh1f9SxGjK0XuI207xEHEIafUk8vhrbpXgjYAHR0/kcpzKYMtNnbS4KOR20daEVx8=
+	t=1718535147; cv=none; b=IYByrj/YjUkYSvCc5pSwIPMMFMVoAkLL7pQcLLbYdpdKppLcJA9Yv0a/uh2lKR06pJDN8z4zZ+uEZSh4I2LAlXBSpuFo92GH+U0tyF6tU9XCwLOFSxckIVSinG6aonyBj0hTkoNSBDpdK6tPiNKv/5Ciy6qT6/7Nd5xodMBXfDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718535138; c=relaxed/simple;
-	bh=aUAPC0HV8LaLH2VVEJdjSNkfPiNhNZMqCIfD7JiVzak=;
+	s=arc-20240116; t=1718535147; c=relaxed/simple;
+	bh=jWF7GSvBklMEPkrDs9FDK/7TyQOR1+RHkcvCeYAc0Oc=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=sXUpEL8W+b/JOAjC5eY/AO30I2EPbZosd9wHfgyjtTfjRUURi8uDvhSv55R2ydQ1dPJsi+aGcNfndNnmAE4pEHsIIcGS03wANS6Rg1jCsXr7J7HzxuovrWQE9ApXI3SN4+3GzMYOn8urvHLKmsAIoOX/aFmUlYqtgcONVkYkfQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kGPNfhV0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18DA5C2BBFC;
-	Sun, 16 Jun 2024 10:52:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718535138;
-	bh=aUAPC0HV8LaLH2VVEJdjSNkfPiNhNZMqCIfD7JiVzak=;
+	 Content-Disposition; b=MvcAaevRCj8VFi+QkOXtOxTXqTz7BU1T9CRI7lNEyHnX0/dEmUB8TkctYD+wvdZdutUUVJwWhzJ7kFysDULBjfuR3DRPiHP9Ax4PcyYQqN1aXa8WwlBo+FJ7HAo0k/kdSEnYxeOYfIZaGsgs77HmoH/jUvWGrp0AVXxbyaMGrRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cKiDj/Y9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8A64C2BBFC;
+	Sun, 16 Jun 2024 10:52:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718535147;
+	bh=jWF7GSvBklMEPkrDs9FDK/7TyQOR1+RHkcvCeYAc0Oc=;
 	h=Date:From:To:Cc:Subject:From;
-	b=kGPNfhV0j2yZB7TfAvEcwDiozz0MglQ88ZIvtPh+SYscjVVNPq0sXl3IlAeZj6mQ0
-	 VeCCQCHxhEv3Uso0H5mVvAM8GL3XmLlcasBuUXkk9Qnm1rNnFYvVaqh9WrLy4R5kss
-	 OSKP8jdJp5iLvZoTNCA94zwLTT/aR+k/5b3DNRXA=
-Date: Sun, 16 Jun 2024 12:52:15 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
+	b=cKiDj/Y9T5iGpFac6GoCTq1yNySl+y1bvoV1Up5OrzX3jcQ+m5XNHtiUUFw3J/w/s
+	 2NR7jbohqncuYyjjgOzl3PgSoXguC9qIreBOYTqVNY019ZPFGgIp4ziY0s1a8atUtS
+	 7C3ZzYVa0Fm4WurL3MANvaYKFSwhQx7XeapfeiK0H3p4cOd9Pq4nCEmUPRe0Wybnl6
+	 TXsU2lomnsG8mbiSIQCuo102cyPix4Qq83HiH9CGSJK0vooAmeYgGLxFGWQghNZx6T
+	 zCpW2mT0tRKX8kfJAjMT3GJyPvEHOKCio7V9Tbo2jcXoMMq3H8LCAWC9m+g/eYlpTN
+	 P04RkTIvNqfTw==
+Date: Sun, 16 Jun 2024 12:52:23 +0200
+From: Wolfram Sang <wsa@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB/Thunderbolt driver fixes for 6.10-rc4
-Message-ID: <Zm7D3-lc4t1sEinN@kroah.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.10-rc4
+Message-ID: <Zm7D5wSXVQnhsPpw@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Y8Pijwrw+gZPYOP1"
+Content-Disposition: inline
+
+
+--Y8Pijwrw+gZPYOP1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-The following changes since commit c3f38fa61af77b49866b006939479069cd451173:
+The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
 
-  Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
+  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
 
 are available in the Git repository at:
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.10-rc4
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.10-rc4
 
-for you to fetch changes up to 22f00812862564b314784167a89f27b444f82a46:
+for you to fetch changes up to 7e9bb0cb50fec5d287749a58de5bb32220881b46:
 
-  USB: class: cdc-wdm: Fix CPU lockup caused by excessive log messages (2024-06-14 08:47:59 +0200)
-
-----------------------------------------------------------------
-USB / Thunderbolt fixes for 6.10-rc4
-
-Here are some small USB and Thunderbolt driver fixes for 6.10-rc4.
-Included in here are:
-  - thunderbolt debugfs bugfix
-  - USB typec bugfixes
-  - kcov usb bugfix
-  - xhci bugfixes
-  - usb-storage bugfix
-  - dt-bindings bugfix
-  - cdc-wdm log message spam bugfix
-
-All of these, except for the last cdc-wdm log level change, have been in
-linux-next for a while with no reported problems.  The cdc-wdm bugfix
-has been tested by syzbot and proved to fix the reported cpu lockup
-issues when the log is constantly spammed by a broken device.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  Merge tag 'i2c-host-fixes-6.10-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2024-06-16 12:48:30 +0200)
 
 ----------------------------------------------------------------
-Aapo Vienamo (1):
-      thunderbolt: debugfs: Fix margin debugfs node creation condition
+Passing through the i2c-host fixes from Andi
 
-Alan Stern (1):
-      USB: class: cdc-wdm: Fix CPU lockup caused by excessive log messages
+----------------------------------------------------------------
+Jean Delvare (2):
+      i2c: at91: Fix the functionality flags of the slave-only interface
+      i2c: designware: Fix the functionality flags of the slave-only interface
 
-Amit Sunil Dhamne (1):
-      usb: typec: tcpm: fix use-after-free case in tcpm_register_source_caps
+Wolfram Sang (1):
+      Merge tag 'i2c-host-fixes-6.10-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
 
-Andrey Konovalov (1):
-      kcov, usb: disable interrupts in kcov_remote_start_usb_softirq
 
-Greg Kroah-Hartman (1):
-      Merge tag 'thunderbolt-for-v6.10-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt into usb-next
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      (Rev.) i2c: designware: Fix the functionality flags of the slave-only interface
 
-Hector Martin (1):
-      xhci: Handle TD clearing for multiple streams case
+Jarkko Nikula (1):
+      (Test) i2c: designware: Fix the functionality flags of the slave-only interface
 
-Heikki Krogerus (1):
-      usb: typec: ucsi: Ack also failed Get Error commands
+ drivers/i2c/busses/i2c-at91-slave.c       | 3 +--
+ drivers/i2c/busses/i2c-designware-slave.c | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-Johan Hovold (1):
-      usb: typec: ucsi: glink: increase max ports for x1e80100
+--Y8Pijwrw+gZPYOP1
+Content-Type: application/pgp-signature; name="signature.asc"
 
-John Ernberg (1):
-      USB: xen-hcd: Traverse host/ when CONFIG_USB_XEN_HCD is selected
+-----BEGIN PGP SIGNATURE-----
 
-Kuangyi Chiang (2):
-      xhci: Apply reset resume quirk to Etron EJ188 xHCI host
-      xhci: Apply broken streams quirk to Etron EJ188 xHCI host
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZuw+cACgkQFA3kzBSg
+KbZpQQ//Uyha0hBwpyuyxuyRBXUcsuWSyome4xyrqbIB5xqSrc1O3oOimAhkcECC
+wmmRJsZQq5+oAShXKTl1nFtcr9MYlx88SwI5htG5Ih2sWKqpzf1wh+5NNXRY9391
+Xdg5ZqGu39k4ZBMOWZhU7pBYIy1be59rrMm7lxvUwpTArkrCWu1WLgwyVoteQSfP
+jwdnyij4pJljY2bTMa8ff6LNupua5Q9vZr7zDoQHTdNFmFWO06Esd8lGYLjER6vK
+jBkBBIZKHCle5NwUEt51Q82v8OZJsKlBwUqbGGm/HxVXeWfKOs3xOAz/V3diDAJU
+RzPHy4/df/lOYeeUa9O34KXP/V+Yhn/eIdK52hpQDoHFw0XgUYZHQMJYqbNv0sOn
+KyrjvJkT1+XPBAs/ogoPLUc3GCrnwIT7r+0tg3AKMuhU3q6rsfA3h+/orS0LDfKR
+tOZOgtdePppYLiTH7XttkO7X/PFfeFI+eipeDEBpQb8NHlSCZtD/6bUrdUGOGmmr
+mwqeJ3N7aZ2D4U4ZzOdh5SKKV1wPTY04b0fjAM3U4wKCXm3g/wMp3hr6Py+vScRD
+4zRDrIdkRwAxHPZ1p/5qnQvXgkcq+gOIbfzeSbnZGGrfrVmmDmXZ0/WWTpNogPng
+H/j9LHM8s0tpj2OqMa8+1XkAk4kWIYpBOjdxndfdkj6qnO0y5hQ=
+=otap
+-----END PGP SIGNATURE-----
 
-Kyle Tso (1):
-      usb: typec: tcpm: Ignore received Hard Reset in TOGGLING state
-
-Mathias Nyman (1):
-      xhci: Set correct transferred length for cancelled bulk transfers
-
-Peter Chen (1):
-      Revert "usb: chipidea: move ci_ulpi_init after the phy initialization"
-
-Rob Herring (Arm) (1):
-      dt-bindings: usb: realtek,rts5411: Add missing "additionalProperties" on child nodes
-
-Shichao Lai (1):
-      usb-storage: alauda: Check whether the media is initialized
-
- .../devicetree/bindings/usb/realtek,rts5411.yaml   |  1 +
- drivers/thunderbolt/debugfs.c                      |  5 +-
- drivers/usb/Makefile                               |  1 +
- drivers/usb/chipidea/core.c                        |  8 +--
- drivers/usb/chipidea/ulpi.c                        |  5 ++
- drivers/usb/class/cdc-wdm.c                        |  4 +-
- drivers/usb/core/hcd.c                             | 12 +++--
- drivers/usb/host/xhci-pci.c                        |  7 +++
- drivers/usb/host/xhci-ring.c                       | 59 +++++++++++++++++-----
- drivers/usb/host/xhci.h                            |  1 +
- drivers/usb/storage/alauda.c                       |  9 ++--
- drivers/usb/typec/tcpm/tcpm.c                      |  5 +-
- drivers/usb/typec/ucsi/ucsi.c                      |  7 ++-
- drivers/usb/typec/ucsi/ucsi_glink.c                |  2 +-
- include/linux/kcov.h                               | 47 +++++++++++++----
- 15 files changed, 131 insertions(+), 42 deletions(-)
+--Y8Pijwrw+gZPYOP1--
 
