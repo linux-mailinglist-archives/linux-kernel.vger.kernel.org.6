@@ -1,123 +1,107 @@
-Return-Path: <linux-kernel+bounces-216360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6FD4909E74
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:16:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A49909E7B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 514DD1F21268
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 16:16:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 377D5B20DB5
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 16:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2299F18B04;
-	Sun, 16 Jun 2024 16:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93861AAD7;
+	Sun, 16 Jun 2024 16:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RF3f/Ald"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ReT+8a6L"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643AD1CA8D;
-	Sun, 16 Jun 2024 16:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7CB12E47;
+	Sun, 16 Jun 2024 16:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718554565; cv=none; b=JtPpY4n2coKKqTzZlSdyZXZhdUkL9hYfDQOI498Rfm36tSvHJL970ymGLD/KHDDc5v/l8/oCEEBVZsmeo7H+J4OmtweXMcgjDA5VF8KoN4vbyPDTgljAM58Bh7xvfSBRa3k0FVQHUwaSv5vo6geL7xJ9kD/98mDI7wT50K3fr68=
+	t=1718554783; cv=none; b=kUzNCnddSzSGxXBKnerXWCJIWVBRrmWBZ2z+bfSBngS/tyD5cQpaeo87IZRxikhVl0H9YacbksIMiVkZQEgWLEs+a02PriSR12hgPy2l4+U9SRWhDmiyokBUmtpLq0nBdBh9c0Xk606LISnq/ljvDiEZIQVwDKs06RTHjYead+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718554565; c=relaxed/simple;
-	bh=/AaohLLZ87QYZSC3kY38NZRdOqHUfIjkxZWocMAI+6Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cCHr5wQuVtEajCT90RepummxOui+VAJqfT/h+WOxRDECyuZXRpx5uRwuP8XYrBFHnzWoCSeUI7FQRYEMIFnMTKTH87YYfgje8cfgF4nLVkn3uxmJmJvPLnZSkmc+JsfkI1Gsm3ib8nEdWhLRwoOYlub9psm4GiGGJDQ8Zm2xDes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RF3f/Ald; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CEC8C4AF1D;
-	Sun, 16 Jun 2024 16:16:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718554564;
-	bh=/AaohLLZ87QYZSC3kY38NZRdOqHUfIjkxZWocMAI+6Q=;
-	h=From:To:Cc:Subject:Date:From;
-	b=RF3f/AldZiGFkepxeQcAjl5LH9UHNK6YiI/aukiXaYHMr2D++dKc7pzauFbzruLCL
-	 ivVlKAxhuI2eNK+LD/b1Xy7osz2xXqGh++80CphcnytlNv++lUHLgjnux0lqzf/MGr
-	 geBz0MbsFdxnwvHYJU98OzcYTax9zTwedoSfb+BIFhluPLoizW4okrkDYV6nisVz9X
-	 +PV4gC3PbMK5zhH2VTm8VYmV3HtOZCui/IfVFaYqy83xuGDeovIGm8abeemj6IdBSE
-	 q0RAf4h6eNkH9SvYyhFKkVjkbXZjXnQfgkgBtrU0XvFevZBp8GaJyUK6e2ERhQo5UL
-	 +Z1oCVPEFDlxA==
-From: Leon Romanovsky <leon@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Leon Romanovsky <leonro@nvidia.com>,
-	Ajay Sharma <sharmaajay@microsoft.com>,
-	Akiva Goldberger <agoldberger@nvidia.com>,
-	Bernard Metzler <bmt@zurich.ibm.com>,
-	Chengchang Tang <tangchengchang@huawei.com>,
-	Cheng Xu <chengyou@linux.alibaba.com>,
-	Junxian Huang <huangjunxian6@hisilicon.com>,
-	Kai Shen <kaishen@linux.alibaba.com>,
-	linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	Long Li <longli@microsoft.com>,
-	Michael Margolin <mrgolin@amazon.com>,
-	Mustafa Ismail <mustafa.ismail@intel.com>,
-	Potnuri Bharat Teja <bharat@chelsio.com>,
-	Selvin Xavier <selvin.xavier@broadcom.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Zhu Yanjun <zyjzyj2000@gmail.com>
-Subject: [PATCH rdma-next 0/2] Extend mlx5 CQ creation with large UAR page index
-Date: Sun, 16 Jun 2024 19:15:56 +0300
-Message-ID: <cover.1718554263.git.leon@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1718554783; c=relaxed/simple;
+	bh=qR+9FEx9x0bJ3F5nqrI0gOfNAfsFaGmwjugmSOv/3oU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OwkehIq1SNPqkPfsbx/tUza5RkYk6REaWll/MNzQ1C4Pm0ybOwv6eZwv+YU5p2w6Bl4T3FhMPt/HJoGBkQjzVylwBSlP+gXBuc4Di6KH8hA7EtKg9LgQDTcI725paY0qt2QWKwX+6lV0KOgp7v/I1FbOs26IN3l2DJyQ5RRCEk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ReT+8a6L; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=GVCvajlkzGyB22Se2ZOzmrs2oP4nXY5Ynx4z1DMOBb0=; b=ReT+8a6LUzQeJGHrfBShmparlj
+	ub5DAmAfIxHXxTxSWn8wbRVzRO8h4bzrhyR4k47VFslXAF/WhnpOXoxQdv4QauE98YPboWjfImQ0z
+	GPADWAoFALpXtfrpwsFONrCWJhxbhGfwHoidwmdic3JNQ1z9ihGwylSP0a2T5qyoHe9o=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sIsb8-000Bu1-So; Sun, 16 Jun 2024 18:19:18 +0200
+Date: Sun, 16 Jun 2024 18:19:18 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Yojana Mallik <y-mallik@ti.com>
+Cc: schnelle@linux.ibm.com, wsa+renesas@sang-engineering.com,
+	diogo.ivo@siemens.com, rdunlap@infradead.org, horms@kernel.org,
+	vigneshr@ti.com, rogerq@ti.com, danishanwar@ti.com,
+	pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
+	davem@davemloft.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, srk@ti.com, rogerq@kernel.org,
+	Siddharth Vadapalli <s-vadapalli@ti.com>
+Subject: Re: [PATCH net-next v2 2/3] net: ethernet: ti: Register the RPMsg
+ driver as network device
+Message-ID: <efff16aa-33d9-45eb-ac42-86f3411abfc9@lunn.ch>
+References: <20240531064006.1223417-1-y-mallik@ti.com>
+ <20240531064006.1223417-3-y-mallik@ti.com>
+ <4416ada7-399b-4ea0-88b0-32ca432d777b@lunn.ch>
+ <2d65aa06-cadd-4462-b8b9-50c9127e6a30@ti.com>
+ <f14a554c-555f-4830-8be5-13988ddbf0ba@lunn.ch>
+ <b07cfdfe-dce4-484b-b8a8-9d0e49985c60@ti.com>
+ <8b4dc94a-0d59-499f-8f28-d503e91f2b27@lunn.ch>
+ <60bc57a7-732b-4dcb-ae72-158639a635c0@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <60bc57a7-732b-4dcb-ae72-158639a635c0@ti.com>
 
-From: Leon Romanovsky <leonro@nvidia.com>
+> The Linux Remoteproc driver which initializes remote processor cores carves out
+> a section from DDR memory as reserved memory for each remote processor on the
+> SOC. This memory region has been reserved in the Linux device tree file as
+> reserved-memory. Out of this reserved memory for R5 core some memory is
+> reserved for shared memory.
 
-Hi,
+I don't know much about rpmsg, so i read the documentation:
 
-This series from Akiva extends the mlx5 private field with the UAR page index
-which is larger than 16 bits as was before.
+https://docs.kernel.org/staging/rpmsg.html
 
-As this is first time, we extend ioctl API with private data field after
-it already has UHW object, we need to change create CQ API signature to
-support it.
+There is no mention of carving out a region of DDR memory. It says
+nothing about memory reserved in DT.
 
-Thanks
+The API is pretty much: Please send these bytes to the peer. Call this
+callback when bytes have been received from a peer.
 
-Akiva Goldberger (2):
-  RDMA: Pass entire uverbs attr bundle to create cq function
-  RDMA/mlx5: Send UAR page index as ioctl attribute
+> The shared memory is divided into two distinct regions:
+> one for the A53 -> R5 data path (Tx buffer for Linux), and other for R5 -> A53
+> data path (Rx buffer for Linux).
 
- drivers/infiniband/core/uverbs_cmd.c          |  2 +-
- drivers/infiniband/core/uverbs_std_types_cq.c |  2 +-
- drivers/infiniband/hw/bnxt_re/ib_verbs.c      |  3 +-
- drivers/infiniband/hw/bnxt_re/ib_verbs.h      |  2 +-
- drivers/infiniband/hw/cxgb4/cq.c              |  3 +-
- drivers/infiniband/hw/cxgb4/iw_cxgb4.h        |  2 +-
- drivers/infiniband/hw/efa/efa.h               |  2 +-
- drivers/infiniband/hw/efa/efa_verbs.c         |  3 +-
- drivers/infiniband/hw/erdma/erdma_verbs.c     |  3 +-
- drivers/infiniband/hw/erdma/erdma_verbs.h     |  2 +-
- drivers/infiniband/hw/hns/hns_roce_cq.c       |  3 +-
- drivers/infiniband/hw/hns/hns_roce_device.h   |  2 +-
- drivers/infiniband/hw/irdma/verbs.c           |  5 +--
- drivers/infiniband/hw/mana/cq.c               |  2 +-
- drivers/infiniband/hw/mana/mana_ib.h          |  2 +-
- drivers/infiniband/hw/mlx4/cq.c               |  3 +-
- drivers/infiniband/hw/mlx4/mlx4_ib.h          |  2 +-
- drivers/infiniband/hw/mlx5/cq.c               | 31 ++++++++++++++++---
- drivers/infiniband/hw/mlx5/main.c             |  1 +
- drivers/infiniband/hw/mlx5/mlx5_ib.h          |  3 +-
- drivers/infiniband/hw/mthca/mthca_provider.c  |  3 +-
- drivers/infiniband/sw/rxe/rxe_verbs.c         |  3 +-
- drivers/infiniband/sw/siw/siw_verbs.c         |  2 +-
- drivers/infiniband/sw/siw/siw_verbs.h         |  2 +-
- include/rdma/ib_verbs.h                       |  2 +-
- include/uapi/rdma/ib_user_ioctl_cmds.h        |  1 +
- include/uapi/rdma/mlx5_user_ioctl_cmds.h      |  4 +++
- 27 files changed, 67 insertions(+), 28 deletions(-)
+As i said in my previous message. Forget about the A54->R5. Think
+about a generic architecture. You have an RPMSG facility using the API
+described in the documentation. You have a block of shared
+memory. That memory could be VRAM, it could be a dual port SRAM, a PCI
+BAR region, or some DDR which both CPU have mapped into their address
+space. Design a protocol around that. This might mean you need to
+modify your firmware. It might mean you need to throw away your
+firmware and start again. But for mainline, we want something generic
+which any vendor can use with a wide range of hardware, with as few
+assumptions as possible.
 
--- 
-2.45.2
-
+	Andrew
 
