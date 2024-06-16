@@ -1,114 +1,133 @@
-Return-Path: <linux-kernel+bounces-216371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2576909E99
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:37:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 891F5909E9D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 557651F21326
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 16:37:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 332BC1F2130E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 16:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABAB1BF54;
-	Sun, 16 Jun 2024 16:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842E61D54F;
+	Sun, 16 Jun 2024 16:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="TSXwG67Q"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LRYU4Ya/"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CAFE19BA6;
-	Sun, 16 Jun 2024 16:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5081217BA0;
+	Sun, 16 Jun 2024 16:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718555849; cv=none; b=cGMBrnF7Wg5HTlxsU450O49yhbG/LhBB5+jAe2WhEqlqlG2UFFb9Okr6Oth6BSRZ1V3X7s4+xNtWne/BziMs4Xe6vJGTR8j0owq8B8BxodHJWfY3IwfSOStiJQCt2WGtVw+L1v+6/Pbvk+C/fUFS31wwP5ZW1FSqKlr0IvyHvsk=
+	t=1718555970; cv=none; b=SWK/hTjJuHpnSE8ZE3hLyUeTPFsI0sM97daRM8FD/7f0Qeyk9/d7hDAgH4ElFtCyTiGivHxB6hllidFBI5LgikPiwMFZIYd1sXXolZ+Iay4rD57JNToc8VdAoT8mPNiMqU1CZVKFgvYkxwgqB0xxnlb8K17/SxNGAwM3xU5kyC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718555849; c=relaxed/simple;
-	bh=AwVkDuQzZRSjmlMS1BoWAGxIs06SAqkrKfj1uZ6bm2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=igIz1LA8B80douTgMjdLR7wZS6iIqcwssOW6QdJMFAIwn92zgXJojAi3b1yLuU4/6x6eW6VviVavRpNk/ccwNatF33recDhCcFquTyiR+W73l59xI1rE92gRXRw9xaOztq8TvIQiFnTdiLnKpGDTkkKKodUemJsH3rsV7Hzpjaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=TSXwG67Q; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=vMpGn0Tpn3IT+pFmW7abtHypd6xW4/5RdZSSzQaz50E=; b=TSXwG67Qn3MbHJBzV7CZto5XwZ
-	yRLKADRfOGBhxfoY48dWqt1yq6cJsoFZGV0Z4ZPiVp+/q5BPTdVdcmF6/Ormb2gqk8zQ8I/ZBJcRj
-	sa3e7U9YDehbu627TDQKNiyd6bIByzGJ0Zk/jz1q7x5AAJnrW59PesfWrpbxBaT7X/WxX6A53ObnX
-	5n7FtNS595TBWPB7vk/aLHEcnjIPdM+MInkfBLQucU98h+gWNym6o0xJ3BnZv1ARz6AaYOmyAq8gB
-	qkmDfT7PHcoJQkHq4CZvZbZAXMAGKYTENWPIYKUbnjm67S/rS9Wu4OlkzqzJ1IyJW46zdnsa118C5
-	n22+hrMg==;
-Received: from [2001:9e8:9e2:3f01:3235:adff:fed0:37e6] (port=40286 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1sIssY-009A4w-Ob;
-	Sun, 16 Jun 2024 18:37:19 +0200
-Date: Sun, 16 Jun 2024 18:37:16 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] kbuild: deb-pkg: Explicitly define optional user-defined
- variables
-Message-ID: <20240616-sensible-celadon-hog-0b0dea@lindesnes>
+	s=arc-20240116; t=1718555970; c=relaxed/simple;
+	bh=Ve8yIU93CqGV39jXDILXAr1Dw2HZhuoVS9gFsFaAPjY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=V8fA+vnXFjuRBVWl5+gIc/+lJMcXHrnb23q1kQgd0Rq4/kQfQVdIErX6b5dSZp4jyPiRcWA1/fN+k1Ht+y+MgVsYu0uCfkiDXuB/hg0rGk4R4pukcX1RF6eShV5LKSsHRjbf7aAYEZq5tpwLVBP1x0lfWIxHXxTmJbiyBP230vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LRYU4Ya/; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718555939; x=1719160739; i=markus.elfring@web.de;
+	bh=wudiCjAOYzPYvYnle3vZvnR9d5fYg6NR06qnTJaJVK0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=LRYU4Ya/NlKd7Ue3BC6ogTAICvgU+RRa9ZKQIFZKyE6ST0eN7mG+GQ1UXVW/5X9f
+	 T2JQvdVjDcBE7uXeG3jpRDpP/kVpgUMz7Ol1bAUnvViSiah5tapnoJesX2WqTq/wU
+	 zKCdtkDq7k19BiLMPyCZj0G97IMITHKS2g330UAos3y2NXzRs0vvS8wrFw0hhqPkY
+	 vHfKBMxboFRt5E0mRkGifg4go1jSLaNfmd8IE9FICzmoJLgU2uuRB1dP2Fg/BBnq9
+	 BcYh2J4oHr6kfmj5HTIK4A72iBe2dJd4NUrE3p6QacJ0KulLMNvekKCcRyTDKB1E1
+	 rWnlWsAwxpy1884N9Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M7Nmq-1sJyJD2UqS-00FC0k; Sun, 16
+ Jun 2024 18:38:59 +0200
+Message-ID: <6e1dd5d1-8c5d-44f5-99e8-f42cfbdeee04@web.de>
+Date: Sun, 16 Jun 2024 18:38:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
+ Prasad Kumpatla <quic_pkumpatl@quicinc.com>, alsa-devel@alsa-project.org,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, Banajit Goswami <bgoswami@quicinc.com>,
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Takashi Iwai <tiwai@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Rohit kumar <quic_rohkumar@quicinc.com>
+References: <20240611074557.604250-4-quic_mohs@quicinc.com>
+Subject: Re: [PATCH v6 3/7] ASoC: codecs: wcd937x: add wcd937x codec driver
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240611074557.604250-4-quic_mohs@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:DxjFdTY6dURt0KEX55cU8ZQXbycMmIZXVImma0+UYHSWLc+e/Fp
+ uofnWVfLZSwRA42OKWA49bvBypqU2bLZmL5Tm4RfVjZqJxGSma6umsikvlaSwdwT8STBOOU
+ bjLAq/o/pt5Onqa0XiaTx8dR9gytaRtyQgPG73b6wYLQqpF8wC6XkfwZzgt2X9xQTxexBAl
+ pzJTx6Xwd/XWG8QcYuBgQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:yMyHnsAA4Lw=;9MPvPvd28adjFquP7iieLl71KLY
+ hT3k0TZ40I8hMXmZBOihrEGMPtQdxP/3gRIeK2aFeBy21jjAqqdFNf4JzUm2K8F9ZZhNMUaw+
+ a1y1ld9aGoEMJTeF5+R9XwoqX4+qaebaxPxH9AdFs5x7rC2MQZryUcBwuMuuqTustPY3Z30Ni
+ Rp9KB1sVGS+fjKUEcU4gmdbKx/3EU4fMQTnUjAGqzXNAepC3L40LXzUIakmKQ4Uvz5vYcM0FV
+ FeFjkbB2urvG7h+9yHN54jFxtYVgYQJPMKQxLM+3AadJ65jeIEw2HfgIp8miRF7UBeqFnWAfw
+ w5k8SVVn7t08yvg+6G0TFeEGnCthuTl3XTOqg8rKO5vg5Jkllo1A4nJqyIhi0QOaTITdw5h/Z
+ HVL7aqyDsK1w5aG3jKzsQ4IDW0pfyl86GmTsbZox3pg6vgwwEKUSuuzxIDI7rC/hYGx018pjT
+ M7TKifdfxCX+PUR33Ms01abxgv9DMewmbQRqZEk/aXmtcWkPpSpwo0m6pXnrZSXHs6FGysld2
+ le2swTUllZ9P4Tq9b2D9eeEurFeabzr72abDmO2hNdVIYzIhA9eZUS5KUabjqgFe9XduGKmkm
+ pDmtUs7SEImSX+Gyb951McPqMj0xa/7Y0wQbr85bmiX55j3f1TXolY0tYkwZaIxdNHUpSd/at
+ gXC4QYo+mA+VRKNitlQzquM2omOtvyeBEmrG8/l3irWT/KToHycR9wrWhF0a8lrhUNxOfsJlP
+ fJDG4406/B50iLFYVDy96tORt3OFSlypS1v9I4MXWMdtGxCMjCnr4dF+Xr8Wo7OnjNIwB45nk
+ 82hlsm102bNohgtfzb/tLtxPo/ZNw1/GAIw5LSktA+tzQ=
 
-mkdebian supports some optional environment variables for controlling
-the Debian package generation.  Declare those variables explicitly to
-allow enabling of 'set -u' (error on unset variables).
+> This patch adds basic SoundWire codec driver to support for
+> WCD9370/WCD9375 TX and RX devices.
+=E2=80=A6
 
-Use of ': "${VAR:=}"' for variable assignment is POSIX compatible [1].
-
-[1]: https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#colon
-
-Signed-off-by: Nicolas Schier <nicolas@fjasle.eu>
----
- scripts/package/mkdebian | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-index 070149c985fe..81e81906ad07 100755
---- a/scripts/package/mkdebian
-+++ b/scripts/package/mkdebian
-@@ -6,6 +6,18 @@
- 
- set -e
- 
-+# Optional user-specified environment variables
-+
-+# Set target Debian architecture (skip auto-detection)
-+: "${KBUILD_DEBARCH:=}"
-+
-+# Set target Debian distribution (skipping auto-detection)
-+: "${KDEB_CHANGELOG_DIST:=}"
-+
-+# Overwrite the automatically determined package version.
-+: "${KDEB_PKGVERSION:=}"
-+
-+
- is_enabled() {
- 	grep -q "^$1=y" include/config/auto.conf
- }
--- 
-2.39.2
+Please improve such a change description with an imperative wording.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc3#n94
 
 
--- 
-epost|xmpp: nicolas@fjasle.eu          irc://oftc.net/nsc
-↳ gpg: 18ed 52db e34f 860e e9fb  c82b 7d97 0932 55a0 ce7f
-     -- frykten for herren er opphav til kunnskap --
+=E2=80=A6
+> +++ b/sound/soc/codecs/wcd937x.c
+> @@ -0,0 +1,1677 @@
+=E2=80=A6
+> +static int wcd937x_mbhc_micb_adjust_voltage(struct snd_soc_component *c=
+omponent,
+> +					    int req_volt, int micb_num)
+> +{
+=E2=80=A6
+> +	mutex_lock(&wcd937x->micb_lock);
+> +	/*
+> +	 * If requested micbias voltage is same as current micbias
+=E2=80=A6
+> +exit:
+> +	mutex_unlock(&wcd937x->micb_lock);
+> +	return ret;
+> +}
+=E2=80=A6
+
+Would you become interested to apply a statement like =E2=80=9Cguard(mutex=
+)(&wcd937x->micb_lock);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/mutex.h#L1=
+96
+
+Regards,
+Markus
 
