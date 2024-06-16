@@ -1,92 +1,104 @@
-Return-Path: <linux-kernel+bounces-216105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 014A7909B6F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 05:52:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E1B909B70
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 05:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C91272819EC
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 03:52:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6E10B21304
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 03:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD58149657;
-	Sun, 16 Jun 2024 03:52:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B58416191A;
+	Sun, 16 Jun 2024 03:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iRhSe/el"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C6D2208E
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 03:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6267223DE
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 03:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718509924; cv=none; b=uPZ8BzXTPudlJU1RC9ygviTk2xacF94NbIyXm3qJqliKVLu9ZdXMKpkOeeZVVL11+C+XUoyz4hAGZky/X4QjgSwhszhhkH0QUY6YM8jhvjpzfev9vVGDzxeGqbWJvY1oqA0tBQ91hNiU5vO2kofmcX7xNDTJzZHqEKgzZQH2aEY=
+	t=1718510116; cv=none; b=cw5cRjUpvgJr+/xicaa16ETI4a441jg4xVwoC4uHnptQB7gtYobpQsQFxbtgwsaMb5Q5CZP1wjtgfaB+9sSgKT9syDQrWXepx7Wg/acmCV87FWAVUzJ8LLZ3Ke/Xv9m6yQB7mqnI4gAOf0eqT735zDqz+UGFgz1OzI4FUPkGVZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718509924; c=relaxed/simple;
-	bh=33MW8ZfAnNsXOmYGMIPBdFN4qlzmPIxURjoaXbwZe+g=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=uNNx72XBI8sHDEGDh/G/3lIoc5spSgj21ikbrd22vb5SAZJv/MrF9ZlgHQndAO+sjj6GXQM5hol1UapUgnqRJCKZuXvCFRq6yXYPgOxkgedZElYXs3NkIOCBdXAKPFq1lZya9Uo2XHFir2WwDlXgwCh7kfPbzLggm2dqEnAfpLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-375a1dbdd4dso35435245ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 20:52:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718509922; x=1719114722;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6a+IhYw48f5ZEKsPkoPMix4porwuiMSK6EgdXXX2BvY=;
-        b=qXWJ1Zru4jKjPLkF3Vn8cjH353MbDKEnTT3l7JHXEYsNAzz9yEYSp8RFoYAi9I34Wp
-         L54x7iMwSF4tRcA8N29ak5aUFm16zOcHEj76osWBNA5yRzciVkphIFitRtNro8y6vk1U
-         tvz/XkQDgIAgMlZm7BP/X2+P11+16vfEkkiF/Chl6bTCHJjwgclcwQ07mtqV4Az4hHY9
-         GjDuXast0wUiXARxvbnrARCcjqpKXznLmHKqZQNnrsSYzsY0yUXgCmVPMYUhx+rr/eGz
-         XTmbkGX7a97Kfx8VGuusAj0eMTc06ZWASvp6+f/zyZnAlOa6SkW6t8pHHf/rT9WGajlC
-         BZcg==
-X-Gm-Message-State: AOJu0YxRG7zEvfbc3pKcD6fDY7cqRwKUVel5jMXV1KFKmQTlzgGeL7d+
-	QoismeNnjnVH1EGYU7ZwQ9HULe7Ap8BCSW2yMjVUJLOSNdOXvPtJvECs7W3Du1iX5y7pSVBJ5CM
-	XLUTcBCuJAmlU+B6GZ02bgcwwob5dg2BBfxMEjjqDOYCSo9CV/wpjdVM=
-X-Google-Smtp-Source: AGHT+IFIj1EUhazCu0aAl1BedCTZYfmv+6w6EN3SSIJt6SbSm1tmVYJz106GGza9OTbB0O7ko+lJktYBabzWT/scI8tYOzJ5+NSG
+	s=arc-20240116; t=1718510116; c=relaxed/simple;
+	bh=hUM2e6oic+4mLX2gpbYtmFKrZG771sLFgevFtnbtBmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KI2wzod0Gfug80RqbE//0Tq4wibGfakqJbkgMaRssL7gmsJrUwKoQc6qoegYM/uK0MiayCAs98t3OUtERnO0pBvdJYsNltLM1JVn4LIFV25Ume5NZjMLdr2Oi6shX36YycLKSAXJJi1GHx0OZSgxSdSXLhJxg0b9RMR+b8kwUtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iRhSe/el; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718510115; x=1750046115;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=hUM2e6oic+4mLX2gpbYtmFKrZG771sLFgevFtnbtBmA=;
+  b=iRhSe/elb3WqS2sIpjf5bwCcT/ruRr3kI/aB/jytQMezU7WDpMIhyBBM
+   KsK9ymayD6VHM2ItJ1QFYkQaxleEcm95yWga5kfyG52pPGHfPpcxnBD+1
+   0aHvu0TkwgdYZyf5wkplDnH7sdcEY0B90+xJb4cP4vkjOtZOxrnud+LUz
+   J7gYcaMjoPBOWU40zWUf6PdMFthPE4yrVeUwL4XjViifspGWgBpBCx586
+   LsCoszpXlGls+sb8SfbNJnEp1blxOhugAbEzJyAiRAff5MDBHihCsQAYK
+   DztpvRcZeDF1SRJa2sDescBlBl/uDaa4+cfYFLXclTOixr4ooUgJrWFkb
+   g==;
+X-CSE-ConnectionGUID: 7QQvuud5Q9iyMeonVcZCSg==
+X-CSE-MsgGUID: pbuW6Nz3REqTqbDGrSpcBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="15201159"
+X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
+   d="scan'208";a="15201159"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 20:55:14 -0700
+X-CSE-ConnectionGUID: LaS5YVJ2SMewhjJcfH5P9Q==
+X-CSE-MsgGUID: F5sd+eRbSgGrPymwTS4hcw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
+   d="scan'208";a="40988869"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 15 Jun 2024 20:55:12 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sIgz0-0000oU-1P;
+	Sun, 16 Jun 2024 03:55:10 +0000
+Date: Sun, 16 Jun 2024 11:54:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Luiz Angelo Daros de Luca <luizluca@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: csky-linux-ld: rtl8366rb.c:undefined reference to
+ `devm_led_classdev_register_ext'
+Message-ID: <202406161120.M2A3cA6J-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1ca4:b0:374:a840:e5be with SMTP id
- e9e14a558f8ab-375e0c4c928mr3704635ab.0.1718509922146; Sat, 15 Jun 2024
- 20:52:02 -0700 (PDT)
-Date: Sat, 15 Jun 2024 20:52:02 -0700
-In-Reply-To: <31ac448d-2a21-4e93-8a00-5c7090970452@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000073ef2c061af9c511@google.com>
-Subject: Re: [syzbot] [bluetooth?] WARNING in hci_conn_del
-From: syzbot <syzbot+b2545b087a01a7319474@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, paskripkin@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   a3e18a540541325a8c8848171f71e0d45ad30b2c
+commit: 32d617005475a71ebcc4ec8b2791e8d1481e9a10 net: dsa: realtek: add LED drivers for rtl8366rb
+date:   7 weeks ago
+config: csky-randconfig-s031-20230329 (https://download.01.org/0day-ci/archive/20240616/202406161120.M2A3cA6J-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240616/202406161120.M2A3cA6J-lkp@intel.com/reproduce)
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406161120.M2A3cA6J-lkp@intel.com/
 
-2024/06/16 03:50:59 ignoring optional flag "sandboxArg"="0"
-2024/06/16 03:50:59 parsed 1 programs
-2024/06/16 03:50:59 [FATAL] failed to run ["./syz-executor" "setup" "fault" "binfmt_misc" "usb" "802154" "swap"]: exit status 67
-mkdir(/syzcgroup) failed: 17
-mount(binfmt_misc) failed: 16
-SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
- (errno 16: Device or resource busy)
+All errors (new ones prefixed by >>):
 
+   csky-linux-ld: drivers/net/dsa/realtek/rtl8366rb.o: in function `rtl8366rb_setup_led':
+   rtl8366rb.c:(.text+0xff8): undefined reference to `led_init_default_state_get'
+>> csky-linux-ld: rtl8366rb.c:(.text+0x10ce): undefined reference to `devm_led_classdev_register_ext'
+>> csky-linux-ld: rtl8366rb.c:(.text+0x10f4): undefined reference to `led_init_default_state_get'
+   csky-linux-ld: rtl8366rb.c:(.text+0x110c): undefined reference to `devm_led_classdev_register_ext'
 
-Tested on:
-
-commit:         a3e18a54 Merge tag 'xfs-6.10-fixes-3' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=145ccbfe980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
-dashboard link: https://syzkaller.appspot.com/bug?extid=b2545b087a01a7319474
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=130eb12e980000
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
