@@ -1,58 +1,77 @@
-Return-Path: <linux-kernel+bounces-216384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778FE909EB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:21:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A22909EAD
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18DB32817C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:21:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69FB61F21379
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC6561FE4;
-	Sun, 16 Jun 2024 17:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795A528DC7;
+	Sun, 16 Jun 2024 17:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMToKE0f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="sW/I5ZkR"
+Received: from out203-205-221-192.mail.qq.com (out203-205-221-192.mail.qq.com [203.205.221.192])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8B660269
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 17:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63F412E7E;
+	Sun, 16 Jun 2024 17:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.192
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718558397; cv=none; b=M/IOfto61JCmiuM4RpDRYpu4aLwnsj3fJeLUqhy11VAFGMkvKqd2/5wxTfE5hCFnSRhD56vPrYnx3S0IVdm8cARHfea3XhbeZpU0b9Ztrl6Q7rMOA91BoQojiNMIUZkjWQJyDa9KInjdLBf2F+yFUHVAMO+tow3l+D1ctVmAHW8=
+	t=1718558350; cv=none; b=KNmTclpzATWi30ejK29wRrRJRN/2OJa/0Zrl2syx7hVy08LdPDiSYYmswQ6VAUhjOPHfYcL6wtzA4NoyUs92NTB+5QDq8AfDwI3XrxCONcAURY/hotgHGhSrssnar0HjUoHZ/uK6vVZkpwjWx7MYbPX7XQfnorFZ/jkF6Tc1nZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718558397; c=relaxed/simple;
-	bh=E3GXEIZD9yn8wjrqGOzrCdvgMio8fL8UM/D6vQXKlWo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ejxeKVa8xlEt9KTy5a2sZKi13Fw5FApMfo2EyvDHJnIyQjIcoINoA9XDl8hzGMn8IJuTWtX2Jnaaj1BBw3vB56mOPN+N/E4Gi5x30VBJ+0Yjk+qqQaXhZeffwX3hLNU23ImlaUzZsWxQ8rUX921xcDC/ek3JHEgnt+u1dqPDDnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qMToKE0f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81587C4AF4D;
-	Sun, 16 Jun 2024 17:19:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718558397;
-	bh=E3GXEIZD9yn8wjrqGOzrCdvgMio8fL8UM/D6vQXKlWo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qMToKE0fdCNS9u9oH3qr8ZrWlxfAlYo0h0NIawg2WKdqHq7P0ptMQCHq4PMX0+qnR
-	 A6hc2daFhj2lvMPafkx6EfsLRX6X4ycBeMofZ0Xyohq4lMTJp9T8yhT6JNN9b2Crlo
-	 0xcn7yW8+ApwXbnC42MxyfrXPbi9KZQ8e5T5sTotRSH9bnI6+8y1Sc4XsJZU9wZVed
-	 qLFJTr+mkMm9B1hYHu/eCZ5yEaS+msrYvc1XR3+TRaofVH7adIPR/+PxOIEO3xt1oL
-	 W3okdmcySYO/JjHSzgiit1EjiVBV5gyUwm711EXhnl040rKgqi26+Zzy9kf2Jf22s1
-	 Xqo0an8m8DQHw==
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
+	s=arc-20240116; t=1718558350; c=relaxed/simple;
+	bh=19G1J8ZnkoXJsDkgERRYUzgb7CPmA8BJJ7qmlahKLmM=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=PALWZymDXm3ftPOen4CuwlqobZdVQY+ES42eHe3yHOUqxJ5nHYqQ0H2Q6IUhD6Pgi0oU9fiSGkbC9Y0b+E9pos8ggywauhz+64r1G6loanIgJBser1muWdsNdX3kvujnB5TDt0s3m6hQFo9/TTtg4qUxMQ4QbOZ5jXciLGl27qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=sW/I5ZkR; arc=none smtp.client-ip=203.205.221.192
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1718558344; bh=jJ9Igh0peCp3hD61YPVPtVN+YWS56XTwc+sXFzKDOKo=;
+	h=From:To:Cc:Subject:Date;
+	b=sW/I5ZkRAhhBdauS/bOYBU0VZFVKKOQ/29trNSJYsKa/Aooko8xc8bGuWA+OzD1qp
+	 lWh/GImpIPZPO3w+m5yEO0W2ruaOzrwdreZ0wnHQtHQgqlvt8CkHgV/0W7YV2baTCr
+	 ZrRXnwne88vm+TQjGaZHqqweVXs8UMLgKVaiHzJo=
+Received: from cyy-pc.lan ([240e:379:2260:ed00:cd33:e8cf:d8f9:bed3])
+	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
+	id 4C03E806; Mon, 17 Jun 2024 01:19:00 +0800
+X-QQ-mid: xmsmtpt1718558340ts5w4gw51
+Message-ID: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
+X-QQ-XMAILINFO: MSPab3JKqisNu/J589iYOw3sGBU5TouEdZaUsX9QtkV5yGQBb/Ox4LxkgOENk6
+	 oIindeAOoyurwVY774zMfvHVHOpgbcGHXtfQ4K5dJwNPaHmhqT2fWTYIn4CxswKGxDrx99dRkgRB
+	 CTXCaN2rwdoFiTMuPlI1jpUSWiZiBMd8g9GPthbS5RMpae8Jp59ghRrBz6LUy0Y9ZlXMq9bFsdnB
+	 nKODH5WP/nrq47fMfMsLx1mPR8lpbTo5QT/8Y4rx2c4n55a2tBk5XTjS1kYUxrPE7DjiM7Iyen4G
+	 BUzXn1IbGfqAP7wyHTcgJ5X8zQq+fCbjz0nOq5Yn4WMps4QEGAlOHtwYigOJio5V+Wa8BH51ZLIT
+	 /07YDz/pt1MhXXVNpjkKAp6lgLY0o/gBhzCDHbHPXm6PEP2pUvVJNs4SorrUEyvVdO9gx1MfXsXf
+	 w+yM0bWefvcZtv+bUSGaF0blDOPaj5i4HDoaQO2zrfjc5RfJMf9DYM41cASOA1UkCYjXKZZPPbhd
+	 8h9FBJ6lap2WjWAIVgJrDuOaeJv5ZEEI9bTxF9DZiPpijEV4Qi82NA7Hs8n1+fcaCq3hEfnKzjk8
+	 NkaMUrnZKl1EdvPwjrDOmjshOdfGdG/frJwH9f1alr3SJn8kPb8O3IY5Jfnc1JpH8L3JuoN4peSZ
+	 9maXCOu+bZ0hv4/XoZxSzYxiBtJ33xgmd2UQqzzRFx2wYZlTpwFEvj2bfSqQXAjI/6OqQezE4eGR
+	 54IFG3vHZqFPHfRz2+R6b0vzFFEKNIA7xd/2jTrEPogfRJlzysLfDZA9DNxH+ATzp23AojaDtmTB
+	 cgHqPX50Jz6UHt4DB9i2t5qy55yZEQOH3ekB+3xZZ5k8EQxEcujX0bl1ZuEGQJmeDZVeERQQ4wK4
+	 /6tuCNkkIhw1zvKR/PadnRcfBJyal+c2mYcV+3OFRQ2Ji3kCF6FlKEj3dxlbe9yCAH9CPTN+ltQu
+	 0g881itcy7jTYZt/m3okons20gmlUvsgBJQNXVOgODk7H3rJ2Cu/pjgmW1Dqx+gejaKGVeG/YyGs
+	 5An/V/eMKQxva58m9+DR+rm+ZNmscM0GPMVU5gMeRcHxI4g/Oa
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Yangyu Chen <cyy@cyyself.name>
+To: linux-riscv@lists.infradead.org
+Cc: Conor Dooley <conor+dt@kernel.org>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Samuel Holland <samuel.holland@sifive.com>
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] riscv: remove asmlinkage from updated functions
-Date: Mon, 17 Jun 2024 01:05:53 +0800
-Message-ID: <20240616170553.2832-7-jszhang@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240616170553.2832-1-jszhang@kernel.org>
-References: <20240616170553.2832-1-jszhang@kernel.org>
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup.patel@wdc.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yangyu Chen <cyy@cyyself.name>
+Subject: [PATCH v1 0/9] riscv: add initial support for SpacemiT K1
+Date: Mon, 17 Jun 2024 01:18:52 +0800
+X-OQ-MSGID: <20240616171852.3074283-1-cyy@cyyself.name>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,116 +80,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that the callers of these functions have moved into C, they no longer
-need the asmlinkage annotation. Remove it
+SpacemiT K1 is an ideal chip for some new extension such as RISC-V Vector
+1.0 and Zicond evaluation now. Add initial support for it to allow more
+people to participate in building drivers to mainline for it.
 
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
----
- arch/riscv/include/asm/asm-prototypes.h |  6 +++---
- arch/riscv/kernel/traps.c               | 16 ++++++++--------
- 2 files changed, 11 insertions(+), 11 deletions(-)
+This kernel has been tested upon Banana Pi BPI-F3 board on vendor U-Boot
+bootflow generated by Armbian SDK[1] and patched OpenSBI[2] to enable
+Zicboz, which does not in the vendor dts on its U-Boot. Then successfully
+booted to busybox on initrd with this log[3].
 
-diff --git a/arch/riscv/include/asm/asm-prototypes.h b/arch/riscv/include/asm/asm-prototypes.h
-index 81a1f27fa54f..70b86a825922 100644
---- a/arch/riscv/include/asm/asm-prototypes.h
-+++ b/arch/riscv/include/asm/asm-prototypes.h
-@@ -37,7 +37,7 @@ asmlinkage void riscv_v_context_nesting_end(struct pt_regs *regs);
- 
- #endif /* CONFIG_RISCV_ISA_V */
- 
--#define DECLARE_DO_ERROR_INFO(name)	asmlinkage void name(struct pt_regs *regs)
-+#define DECLARE_DO_ERROR_INFO(name)	void name(struct pt_regs *regs)
- 
- DECLARE_DO_ERROR_INFO(do_trap_unknown);
- DECLARE_DO_ERROR_INFO(do_trap_insn_misaligned);
-@@ -53,8 +53,8 @@ DECLARE_DO_ERROR_INFO(do_trap_ecall_m);
- DECLARE_DO_ERROR_INFO(do_trap_break);
- 
- asmlinkage void handle_bad_stack(struct pt_regs *regs);
--asmlinkage void do_page_fault(struct pt_regs *regs);
--asmlinkage void do_irq(struct pt_regs *regs);
-+void do_page_fault(struct pt_regs *regs);
-+void do_irq(struct pt_regs *regs);
- asmlinkage void do_traps(struct pt_regs *regs);
- 
- #endif /* _ASM_RISCV_PROTOTYPES_H */
-diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-index b44d4a8d4083..ddca8e74fb72 100644
---- a/arch/riscv/kernel/traps.c
-+++ b/arch/riscv/kernel/traps.c
-@@ -147,7 +147,7 @@ static void do_trap_error(struct pt_regs *regs, int signo, int code,
- #define __trap_section noinstr
- #endif
- #define DO_ERROR_INFO(name, signo, code, str)					\
--asmlinkage __visible __trap_section void name(struct pt_regs *regs)		\
-+__visible __trap_section void name(struct pt_regs *regs)			\
- {										\
- 	if (user_mode(regs)) {							\
- 		irqentry_enter_from_user_mode(regs);				\
-@@ -167,7 +167,7 @@ DO_ERROR_INFO(do_trap_insn_misaligned,
- DO_ERROR_INFO(do_trap_insn_fault,
- 	SIGSEGV, SEGV_ACCERR, "instruction access fault");
- 
--asmlinkage __visible __trap_section void do_trap_insn_illegal(struct pt_regs *regs)
-+__visible __trap_section void do_trap_insn_illegal(struct pt_regs *regs)
- {
- 	bool handled;
- 
-@@ -198,7 +198,7 @@ asmlinkage __visible __trap_section void do_trap_insn_illegal(struct pt_regs *re
- DO_ERROR_INFO(do_trap_load_fault,
- 	SIGSEGV, SEGV_ACCERR, "load access fault");
- 
--asmlinkage __visible __trap_section void do_trap_load_misaligned(struct pt_regs *regs)
-+__visible __trap_section void do_trap_load_misaligned(struct pt_regs *regs)
- {
- 	if (user_mode(regs)) {
- 		irqentry_enter_from_user_mode(regs);
-@@ -219,7 +219,7 @@ asmlinkage __visible __trap_section void do_trap_load_misaligned(struct pt_regs
- 	}
- }
- 
--asmlinkage __visible __trap_section void do_trap_store_misaligned(struct pt_regs *regs)
-+__visible __trap_section void do_trap_store_misaligned(struct pt_regs *regs)
- {
- 	if (user_mode(regs)) {
- 		irqentry_enter_from_user_mode(regs);
-@@ -294,7 +294,7 @@ void handle_break(struct pt_regs *regs)
- 		die(regs, "Kernel BUG");
- }
- 
--asmlinkage __visible __trap_section void do_trap_break(struct pt_regs *regs)
-+__visible __trap_section void do_trap_break(struct pt_regs *regs)
- {
- 	if (user_mode(regs)) {
- 		irqentry_enter_from_user_mode(regs);
-@@ -311,7 +311,7 @@ asmlinkage __visible __trap_section void do_trap_break(struct pt_regs *regs)
- 	}
- }
- 
--asmlinkage __visible __trap_section  __no_stack_protector
-+__visible __trap_section  __no_stack_protector
- void do_trap_ecall_u(struct pt_regs *regs)
- {
- 	if (user_mode(regs)) {
-@@ -355,7 +355,7 @@ void do_trap_ecall_u(struct pt_regs *regs)
- }
- 
- #ifdef CONFIG_MMU
--asmlinkage __visible noinstr void do_page_fault(struct pt_regs *regs)
-+__visible noinstr void do_page_fault(struct pt_regs *regs)
- {
- 	irqentry_state_t state = irqentry_enter(regs);
- 
-@@ -378,7 +378,7 @@ static void noinstr handle_riscv_irq(struct pt_regs *regs)
- 	irq_exit_rcu();
- }
- 
--asmlinkage void noinstr do_irq(struct pt_regs *regs)
-+void noinstr do_irq(struct pt_regs *regs)
- {
- 	irqentry_state_t state = irqentry_enter(regs);
- 
+[1] https://github.com/BPI-SINOVOIP/armbian-build/tree/v24.04.30
+[2] https://gist.github.com/cyyself/a07096e6e99c949ed13f8fa16d884402
+[3] https://gist.github.com/cyyself/a2201c01f5c8955a119641f97b7d0280
+
+Yangyu Chen (9):
+  dt-bindings: vendor-prefixes: add spacemit
+  dt-bindings: riscv: Add SpacemiT X60 compatibles
+  dt-bindings: riscv: add SpacemiT K1 bindings
+  dt-bindings: timer: Add SpacemiT K1 CLINT
+  dt-bindings: interrupt-controller: Add SpacemiT K1 PLIC
+  riscv: add SpacemiT SOC family Kconfig support
+  riscv: dts: add initial SpacemiT K1 SoC device tree
+  riscv: dts: spacemit: add Banana Pi BPI-F3 board device tree
+  riscv: defconfig: enable SpacemiT SoC
+
+ .../sifive,plic-1.0.0.yaml                    |   5 +-
+ .../devicetree/bindings/riscv/cpus.yaml       |   1 +
+ .../devicetree/bindings/riscv/spacemit.yaml   |  24 ++
+ .../bindings/timer/sifive,clint.yaml          |   4 +-
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/riscv/Kconfig.socs                       |   5 +
+ arch/riscv/boot/dts/Makefile                  |   1 +
+ arch/riscv/boot/dts/spacemit/Makefile         |   2 +
+ arch/riscv/boot/dts/spacemit/bananapi-f3.dts  |  19 ++
+ arch/riscv/boot/dts/spacemit/k1.dtsi          | 281 ++++++++++++++++++
+ arch/riscv/configs/defconfig                  |   1 +
+ 11 files changed, 343 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/riscv/spacemit.yaml
+ create mode 100644 arch/riscv/boot/dts/spacemit/Makefile
+ create mode 100644 arch/riscv/boot/dts/spacemit/bananapi-f3.dts
+ create mode 100644 arch/riscv/boot/dts/spacemit/k1.dtsi
+
 -- 
-2.43.0
+2.45.1
 
 
