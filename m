@@ -1,93 +1,140 @@
-Return-Path: <linux-kernel+bounces-216236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4336909CF8
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 12:33:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21C51909CFB
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 12:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB9FDB210FD
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 10:33:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38ABF28135B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 10:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A357186E56;
-	Sun, 16 Jun 2024 10:33:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B8A187339;
+	Sun, 16 Jun 2024 10:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fg3jRpHz"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939D6225CB
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 10:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105B3225CB;
+	Sun, 16 Jun 2024 10:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718533985; cv=none; b=MdUzHgwOFLqNSJ2uf0+PdykbaoCcBtWcHdMEvzBLAnKJ85mKC+o9CZLzMu8wiULsY3B8tNuTJad1J7LUX6FSwXfa3GPFytNLXHLy8cGKrLV9Z/Fp1kqzr2KAF5vFU6uxqM374PLDmwkv7CfIgTmsLeooLj1VAbSZKCIbkH/2JYg=
+	t=1718534243; cv=none; b=NR8WSBi3huvWEkmnzkC2d6eIotBV5yUiQG7BvS7IiNTwxq2b26FnRlUkFM7Ok5AGqdtyqRsaGsgjdZ9zd/GU6sX9CAtn4pTIEur6kWJ0CFYFMPVEvtjJufvMpPySO9XjK14oyQtUFQ2qZ+sOV0iH2kn/XlVP+21MBBBBVX54deo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718533985; c=relaxed/simple;
-	bh=PgYZB52ckl7DBappyE22q+TUI/9bLMoL/8Tc3TlfA5E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=orhc3lc+ceyXMpALnQ3asX2yD2D9qruAp2EjhNd1Pl4WX6SX7vRrj6otvqiio+/2YR4/QIB9w2R7cuQjjM7tTWu31uGgrxXVUmRZ5Jm7PhY6aZafQEoTaT+kodPSm9D6dCvziPqnbI3LBxOatJ5oeVYpK7I8YVOB3nR5XGmourM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7eb50e42c6aso415597039f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 03:33:04 -0700 (PDT)
+	s=arc-20240116; t=1718534243; c=relaxed/simple;
+	bh=ruStX8XwMczPkp2XSSF64ST0aUbVsnqvEzT7+JmVBf0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z8ZaQFTxcgfhxe+HWg2PrkLWSIhF1kGR8YfpI89R7eXDroU0ahtAR3rXeeN73vQgGj42LD2m/H+iXyh8IhbylU+e5e1jTwMthSQIVcTJ9Nrz9pb4umoC3101XXiaV9rkc1JS49Gl5m+lncW+SkHF4zdQVIhiizD6QYGtb9nRxsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fg3jRpHz; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so34095421fa.2;
+        Sun, 16 Jun 2024 03:37:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718534240; x=1719139040; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HnudTXKEVZpw3sPOJDR4teZ8YGThXnDgP8MT5PhMeyI=;
+        b=fg3jRpHzlV3UuGM1G37l2WSRU51pz4gWP6fJiaaMehWg6flRUQ7avByGboXlMGNtkd
+         WtmOrEvM7EGCgTKSXr46NEMDvNnTZxt45S2IdnaXxL9EDxfPddVEaamcoMvgPCCN5rrb
+         W038gN8L4F4H0TsMBBE5NmAPHjdw4IZR3MstFODAervjqNN4fxYU1M6nw+T5Zry4mCZE
+         iOfI2ApGI05h1TBxpNO7oARzKV+EW6QMJj56UQN9ZWWpVEBN/dx2V+JXGFWDfxszQXww
+         pTiXgJFV0ZOgpSqSg8qOD6clDny37v1MnxiTJvo3kAWDMF41GfQ3ugjucjiYHx+85Wne
+         MBgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718533983; x=1719138783;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1718534240; x=1719139040;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9oBixrl3EcdcvB2lxO33QYipV6HPmG4SqyRXozubx2w=;
-        b=tfAL1jSxMBfRIVe7brbZLz4q6Ua/nGSEQpcSmmcAW8f8Z4vhE3AYOg5yImkQtOUicI
-         /gEAmwbdrU28U+VwtjzV7J9uW6nLmoNJ7vangXPdf/TEWYNY37IqzqJcP+Gxakw8EfSH
-         lZoJHLHm1FauTftvTa0D0lAz0Kxg/vWB9q9k9Nb78iXxZJvWgF5rVijJRXctsuLxQ2QI
-         3YUs6Az4Z/vYHVpaYNkPBjdpyatOxXmeiSeiJ0NsiDVfjgiT14dDiFissOK4LZDyX9kW
-         nAoZKMqUtbwLhzFBkPM4A/HJr9G1BYHvW8fJVJqcBJwUStZ11W0NF3CjZB09merImDDY
-         9g2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWuU4cEaVEan31JoWzNmVMAKHkojyv4Y6k/DQ6xvHvzbNm5bKDoZQ+HyKSpniauzvFrSbRep4nTqjXhVsn4P2SqEpghLSg3PqUrtUsf
-X-Gm-Message-State: AOJu0YyWjlv0cNlXD3gvjeTQkNDXwjrUr3jvH8m6QMdJJngIBWwiw9wY
-	9XBsrzvVD2Le9ypwHT53bIjUgFDd/l+faV8NLLbQ4sn++FkByvItq55WKluVopzr/JOv8E1C+Or
-	njwjBI1R5/ttsOMo1k0tdZlnQTBdotWDC7FClyUzW9WG7R91ZDoKXhx8=
-X-Google-Smtp-Source: AGHT+IHFQkhIjRXtWG+SmzOXxSNByReLf5ZU/ccVKCF9Eq6+GWpK9d2qS25Chp6klkWbLPbassWMgIb8K8nYv1IfD6LKMfHbaNs7
+        bh=HnudTXKEVZpw3sPOJDR4teZ8YGThXnDgP8MT5PhMeyI=;
+        b=n1v/NygyBiFeZ5L+aDI6abhqzJuZ5lYBfcyv5yrMwu4iquOK2G8I/vLfpG8towwIMr
+         O/q7nscLUuPbPqpr7V5IDKogBjY8cdicDw8AOdIZicNg9PSMoESHWd57++5nSzrnB9M7
+         lNHpG6VT5wCql7mZ9Iqh5dhPcOEGRlN7COJYcLj6q93+maMi55hS9qyveYXS67EUJTTp
+         q2jNfcdKi46l4STT0Xv35sj+/OGixS7Le6V0sq/MjK99BMZZiD1r2e4OlTGd96PuXHoX
+         QpOOLNwZsfmjqlqM2bf7/pQREXTLbhgUzaend6ojhMh4gwRDD4J7IjOyB7NkZAPW8XBe
+         O0+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVQPY7OH/htClGj5Vley2fmIrCRFXDY+Bd14oobstOadVOCt1zfBnhs+mEB8Hs9FcvgjJqKim8mcP3VH+uAAIoPSO5RUGbGjSCO+yf/rKUizzJ4akc8vQaSD8o63efLAUOktnlCVijVUMSXR891E8q+BXNKpLa1QkGsbm5xa6SeomWrJtqP
+X-Gm-Message-State: AOJu0YxE7tQmy4gPafol9mG75lhZ/iUhTEFhz2spOvMq+BphnHwX/zSa
+	98wuF/7SoxKXonwdpaUl44G8RbgrkD8wG/p30d8dLZOIQrU7TN+G
+X-Google-Smtp-Source: AGHT+IFV3jINcVjUAZCgb1fqaChMrO8isp5D53PoAkpq6Efqxgt70VyeOwYhbXbr4zF4cs5Q1OBbQQ==
+X-Received: by 2002:a05:6512:1107:b0:52c:adc3:ea9f with SMTP id 2adb3069b0e04-52cadc3eadbmr4470035e87.0.1718534239963;
+        Sun, 16 Jun 2024 03:37:19 -0700 (PDT)
+Received: from ?IPV6:2a00:1370:8180:9f8c:610c:ea5a:e832:8757? ([2a00:1370:8180:9f8c:610c:ea5a:e832:8757])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2871f87sm957896e87.123.2024.06.16.03.37.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Jun 2024 03:37:19 -0700 (PDT)
+Message-ID: <fcdde042-6424-46a8-9fa6-e4f4021b0717@gmail.com>
+Date: Sun, 16 Jun 2024 13:37:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:340f:b0:7eb:7e0c:d19f with SMTP id
- ca18e2360f4ac-7ebeb643855mr11303039f.3.1718533983499; Sun, 16 Jun 2024
- 03:33:03 -0700 (PDT)
-Date: Sun, 16 Jun 2024 03:33:03 -0700
-In-Reply-To: <tencent_6816BAF4BB5133319E881BB64B071B662508@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009f0543061aff5f70@google.com>
-Subject: Re: [syzbot] [bluetooth?] WARNING in hci_conn_del
-From: syzbot <syzbot+b2545b087a01a7319474@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
-
-2024/06/16 10:32:05 ignoring optional flag "sandboxArg"="0"
-2024/06/16 10:32:05 parsed 1 programs
-2024/06/16 10:32:05 [FATAL] failed to run ["./syz-executor" "setup" "fault" "binfmt_misc" "usb" "802154" "swap"]: exit status 67
-mkdir(/syzcgroup) failed: 17
-mount(binfmt_misc) failed: 16
-SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
- (errno 16: Device or resource busy)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bluetooth: handle value within the ida range should not
+ be handled in BIG
+To: Edward Adam Davis <eadavis@qq.com>,
+ syzbot+b2545b087a01a7319474@syzkaller.appspotmail.com
+Cc: davem@davemloft.net, edumazet@google.com, johan.hedberg@gmail.com,
+ kuba@kernel.org, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, luiz.dentz@gmail.com,
+ luiz.von.dentz@intel.com, marcel@holtmann.org, netdev@vger.kernel.org,
+ pabeni@redhat.com, syzkaller-bugs@googlegroups.com,
+ william.xuanziyang@huawei.com
+References: <000000000000bf4687061269eb1b@google.com>
+ <tencent_880C74B1776566183DC9363096E037A64A09@qq.com>
+Content-Language: en-US
+From: Pavel Skripkin <paskripkin@gmail.com>
+In-Reply-To: <tencent_880C74B1776566183DC9363096E037A64A09@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-Tested on:
 
-commit:         603c04e2 Merge tag 'parisc-for-6.8-rc6' of git://git.k..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=13254bca980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=686c39ecef854022
-dashboard link: https://syzkaller.appspot.com/bug?extid=b2545b087a01a7319474
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12b26851980000
+On 6/16/24 1:20 PM, 'Edward Adam Davis' via syzkaller-bugs wrote:
+> hci_le_big_sync_established_evt is necessary to filter out cases where the handle
+> value is belone to ida id range, otherwise ida will be erroneously released in
+> hci_conn_cleanup.
+> 
+> Fixes: 181a42edddf5 ("Bluetooth: Make handle of hci_conn be unique")
+> Reported-by: syzbot+b2545b087a01a7319474@syzkaller.appspotmail.com
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> ---
 
+There is one more user of  `hci_conn_add` which may pass too big handle 
+which is `hci_le_cis_req_evt`.
+
+I think, it should be resolved on API level as I tried to test here [0], 
+but syzbot is feeling bad for some reason
+
+
+[0] 
+https://lore.kernel.org/all/31ac448d-2a21-4e93-8a00-5c7090970452@gmail.com/
+
+>   net/bluetooth/hci_event.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+> index a487f9df8145..4130d64d9a80 100644
+> --- a/net/bluetooth/hci_event.c
+> +++ b/net/bluetooth/hci_event.c
+> @@ -6893,6 +6893,9 @@ static void hci_le_big_sync_established_evt(struct hci_dev *hdev, void *data,
+>   
+>   		bis = hci_conn_hash_lookup_handle(hdev, handle);
+>   		if (!bis) {
+> +                        if (handle > HCI_CONN_HANDLE_MAX)
+> +                               continue;
+> +
+>   			bis = hci_conn_add(hdev, ISO_LINK, BDADDR_ANY,
+>   					   HCI_ROLE_SLAVE, handle);
+>   			if (IS_ERR(bis))
+
+
+-- 
+With regards,
+Pavel Skripkin
 
