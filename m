@@ -1,87 +1,125 @@
-Return-Path: <linux-kernel+bounces-216248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD740909D20
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 13:16:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5ECC909D22
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 13:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98317281376
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:16:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60D992814A9
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 11:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2454A186E2F;
-	Sun, 16 Jun 2024 11:16:06 +0000 (UTC)
-Received: from mail78-58.sinamail.sina.com.cn (mail78-58.sinamail.sina.com.cn [219.142.78.58])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A96C1836DC;
+	Sun, 16 Jun 2024 11:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CwvfXfgi"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA0FC152
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 11:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF72F20309;
+	Sun, 16 Jun 2024 11:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718536565; cv=none; b=kP1N871yVULvyq8W2OTLUERJ4rRp224bbSp2zeTLCFUqQvvWXhJQcuYXbRv5yi8E0X8QprP1a8lE81JWVkaNe127tzT07L4e0Lxpltj2RaXWg0EHdr4wlWfegCLzXnd15SyPywwOnjcLE+hL3N8IdCQwjnnVA7rdzueI+c06/Zo=
+	t=1718537481; cv=none; b=KUAzZGyKe3FKU/+1HipBFkfGE/Gy1OVZVp66d3dpxsaMG334X+DtMWTcJDRc46Jti0TcgKt5gvjYMsJuIIdfCnE4yoE30IMUi8PrNbJ1W0Q5F56u2kFbufw1pfn5ThrCirwkAAidPK35gP+IScTER3Pu7jN/wMrmPnzVCIi6MaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718536565; c=relaxed/simple;
-	bh=yRkvWUcyYD85QzvXjqsicOKjXeT9KTNyhEAcAFqT3Y4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=b+3dBwez0eKS5xCG3kQ/aZ0NfkavXge5x52qzeP6TKH3H4VDeXzh19vOfl+EtppEM4spFcczipAA1hZG57unO88QI/S34Ip/h6VmmkIQSuXhpXbmqXab3FmId8VT7ZlB4yYbqNxsptJlgKnzPJasfkMFCEIjjw5OElSaiyoAcCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.9.2])
-	by sina.com (172.16.235.25) with ESMTP
-	id 666EC94100001C09; Sun, 16 Jun 2024 19:15:15 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 31080534210374
-X-SMAIL-UIID: 9F37067A3CB646B48E3E5A2BABADC89A-20240616-191515-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [ntfs3?] KASAN: slab-use-after-free Read in chrdev_open
-Date: Sun, 16 Jun 2024 19:15:02 +0800
-Message-Id: <20240616111502.1435-1-hdanton@sina.com>
-In-Reply-To: <000000000000f386f90616fea5ef@google.com>
-References: 
+	s=arc-20240116; t=1718537481; c=relaxed/simple;
+	bh=JYVDLUuTRisE6xXsI9cLm0lSmf2HQqVruI59IzfON7Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TdTBgJcPlLkPmmO+GS1O303eMZi5uxxzRH9/sC9WzS7mse7v7ZzF2ReQEhSxz36Qr2uu8MoZH0YTh9SAyMo8TgLUFczzqEcKxc9tFJkwezHFG37SZpOnfCjP6XiqM512MPj9nBo4AjYLi4fIqAwvputsZyATx5QMnEBdjepRHlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CwvfXfgi; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45G8vJPm017119;
+	Sun, 16 Jun 2024 11:31:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=LxztBRBbmjpRI281WcE7w7nkUX5fPIocW/xm/+0rMWw=; b=Cw
+	vfXfgipEAbMcFj/u42jX0DcONG/1sdavtI3irk0fg8N246fy8IrruREGrB8Ygr0t
+	CqgyJwao6NYiwXbj8ejHmFqJSaoX/rqChE0efRKW6aw01zGQT8mdt+Miljsj40sd
+	3YfNPOFuhyZBhyfLJAKT/8Gb5WJwMKLMYL/fMLyKrXjsgIK3RWZM8S5V1E9iMgHw
+	A80xgpe77DjLXeK3ob/mRPXOsPA74s1GfP4P/SLZuDmy/IqL75m/IzY8Gzf49kWB
+	A/tEM6zMJSylxLjcHw8TjsA5TXMjs3RzVsXKSsp2dwG5lNEAgZfWXTWTxdqXbG0g
+	SbqCaEbPnlVz+YpYbwDA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys44jsnf9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 16 Jun 2024 11:31:13 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45GBVCEU014434
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 16 Jun 2024 11:31:12 GMT
+Received: from zijuhu-gv.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 16 Jun 2024 04:31:09 -0700
+From: Zijun Hu <quic_zijuhu@quicinc.com>
+To: <gregkh@linuxfoundation.org>, <rafael@kernel.org>
+CC: <andriy.shevchenko@linux.intel.com>, <brgl@bgdev.pl>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        Zijun Hu
+	<quic_zijuhu@quicinc.com>
+Subject: [PATCH v2] devres: Fix devm_krealloc() allocating memory with wrong size
+Date: Sun, 16 Jun 2024 19:30:55 +0800
+Message-ID: <1718537455-20208-1-git-send-email-quic_zijuhu@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 5FaZFxJMzHBPkUl2OX9-bdTIpsBkXJ9O
+X-Proofpoint-ORIG-GUID: 5FaZFxJMzHBPkUl2OX9-bdTIpsBkXJ9O
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-16_10,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 mlxlogscore=737 spamscore=0 lowpriorityscore=0
+ adultscore=0 phishscore=0 mlxscore=0 clxscore=1011 bulkscore=0
+ malwarescore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406160090
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  83a7eefedc9b
+Kernel API devm_krealloc() calls alloc_dr() with wrong argument
+@total_new_size, and it will cause more memory to be allocated
+than required, fixed by using @new_size as alloc_dr()'s argument.
 
---- x/fs/open.c
-+++ y/fs/open.c
-@@ -35,6 +35,8 @@
- #include <linux/filelock.h>
+Fixes: f82485722e5d ("devres: provide devm_krealloc()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+V2: Add inline comments and stable tag
+
+Previous discussion link:
+https://lore.kernel.org/all/1718531655-29761-1-git-send-email-quic_zijuhu@quicinc.com/
+
+ drivers/base/devres.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+index 3df0025d12aa..0d4e5d1b9967 100644
+--- a/drivers/base/devres.c
++++ b/drivers/base/devres.c
+@@ -896,9 +896,12 @@ void *devm_krealloc(struct device *dev, void *ptr, size_t new_size, gfp_t gfp)
+ 	/*
+ 	 * Otherwise: allocate new, larger chunk. We need to allocate before
+ 	 * taking the lock as most probably the caller uses GFP_KERNEL.
++	 * alloc_dr() will call check_dr_size() to reserve extra memory such
++	 * as struct devres_node automatically, so size @new_size user request
++	 * is delivered to it directly as devm_kmalloc() does.
+ 	 */
+ 	new_dr = alloc_dr(devm_kmalloc_release,
+-			  total_new_size, gfp, dev_to_node(dev));
++			  new_size, gfp, dev_to_node(dev));
+ 	if (!new_dr)
+ 		return NULL;
  
- #include "internal.h"
-+#include "mount.h"
-+#include "pnode.h"
- 
- int do_truncate(struct mnt_idmap *idmap, struct dentry *dentry,
- 		loff_t length, unsigned int time_attrs, struct file *filp)
-@@ -952,6 +954,12 @@ static int do_dentry_open(struct file *f
- 	if (!open)
- 		open = f->f_op->open;
- 	if (open) {
-+		struct mount *mnt = real_mount(f->f_path.mnt);
-+		error = -ENODEV;
-+		if (mnt->mnt.mnt_flags & MNT_DOOMED)
-+			goto cleanup_all;
-+		if (mnt_get_count(mnt) < 2)
-+			goto cleanup_all;
- 		error = open(inode, f);
- 		if (error)
- 			goto cleanup_all;
---
+-- 
+2.7.4
+
 
