@@ -1,122 +1,136 @@
-Return-Path: <linux-kernel+bounces-216536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A1890A0BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:11:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4EC590A0BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AC1A281C79
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 23:11:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D031B21469
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 23:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F363D7346E;
-	Sun, 16 Jun 2024 23:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD4773460;
+	Sun, 16 Jun 2024 23:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RN8CBFaR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EhOzvRSW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACCF7344E;
-	Sun, 16 Jun 2024 23:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC98E1C6A8;
+	Sun, 16 Jun 2024 23:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718579463; cv=none; b=kitfqkrEamcew49FRFS4FjWg0FrUeDP5DJ9hmlzPzgWTFkcuRBVQUGOSnHzCTgcE53HRzhF+jJFsh45E0REGNxndVJTTnaEQxCmVurJXdWCo1cux7WQchIMTvpyRt6SwZzvbpWWpBJ9ftcRssn5P8+Ioxfv2wNRX/LY+Bb1ybVo=
+	t=1718579634; cv=none; b=c5vgg5rIb2DKBzsvgD3e0Stbcep4DAxm7DRSvUEAu5fSSUeKs7JiT0MzqsAaa29CjEOjwBbeH6VeKOhJ5WM2PRdn4fmpiDSN0CFZDY5izdX4p47xm7kKKX63IDvsRzuB3KjiXN+Otv/X6WMg8Q9IHHMl04DkkkSBuofF73w5az8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718579463; c=relaxed/simple;
-	bh=kiJ5EIGClrXHrM1eGznIeYjyxqgXT0POFZivmUkpMXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A9FxQPuRKD7pY9ETeBlKMiFIEY7+iyaiv4e4HB3LNNUcYD9M1k/YSV9RukVox8ricHDvJaNHWL/rMQWU0/PgZqynO0B1XNIiG+LTYpUCOWfM8aSQXY/JqZWFeXsdSpz6cyxYM0PM3LCvSDL7+fWXAQd1Ce0hom3uuSVbDmiXHC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RN8CBFaR; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718579462; x=1750115462;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kiJ5EIGClrXHrM1eGznIeYjyxqgXT0POFZivmUkpMXA=;
-  b=RN8CBFaR2WF1UVM8IsNk8n2TMuUhHivNWICZYossXaQlY4hFmrIgzE0G
-   U7L+GBFhurQd0QmGHrRfjdxxrJMAUks8IURqQGQo+DV8YyEVqYUn91LYr
-   4gcOaLxSGC1MAOyW3I/bsJGzi4jewwG5KotM+8X2IGZ7PeLSKYj3IZwtO
-   tFx4G3IArfA9ZmSy7f22DtBntksQnYArh1JuDwCzZ/MyRU0jmK7VVuDVI
-   0pYobfCIZ2HAWhp89A3tqg3zs9Nd/tJAkpRtlKoCTJInyAfXY0Vh03nyn
-   ybDniWmlhoHq/a4/lf+KCfdIWY/wWW03FtPjXKy15I4pLFKl0sbPRcX/7
-   A==;
-X-CSE-ConnectionGUID: ie3fQNYuTSucR3Q2C+78TA==
-X-CSE-MsgGUID: G4+XX48JQo2joPLu7WxOVw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="26794709"
-X-IronPort-AV: E=Sophos;i="6.08,243,1712646000"; 
-   d="scan'208";a="26794709"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 16:11:01 -0700
-X-CSE-ConnectionGUID: oXTleuhGQOaPOFVzz3WhRw==
-X-CSE-MsgGUID: rEslq/9nRjmd64uvoExcXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,243,1712646000"; 
-   d="scan'208";a="41747756"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 16 Jun 2024 16:10:58 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sIz1T-0003SX-0v;
-	Sun, 16 Jun 2024 23:10:55 +0000
-Date: Mon, 17 Jun 2024 07:10:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Charles Wang <charles.goodix@gmail.com>, dmitry.torokhov@gmail.com,
-	dan.carpenter@linaro.org
-Cc: oe-kbuild-all@lists.linux.dev, dianders@chromium.org, robh@kernel.org,
-	krzk+dt@kernel.org, jikos@kernel.org, bentiss@kernel.org,
-	hbarnor@chromium.org, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Charles Wang <charles.goodix@gmail.com>
-Subject: Re: [PATCH v4 1/2] HID: hid-goodix: Add Goodix HID-over-SPI driver
-Message-ID: <202406170607.MJX7Ze54-lkp@intel.com>
-References: <20240614121538.236727-2-charles.goodix@gmail.com>
+	s=arc-20240116; t=1718579634; c=relaxed/simple;
+	bh=ImeGSr5Au9G+JHm74kgUWkXXoP4SyiI8uTK738bqMVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gtTDaBZECgxpMWl714GJ6+QH3MAK3N83Z+2DVMKnO3mDkSzTf0u0aMqPhs/m2p7pjbeQ0vV2O989Ndxb4M5siF0vmpxEETO08ZnOsvfCrDFpyORG07R8tXBTnycbB0WD8V8pGK8nTBEj8wSLpibVYCQsGP8uc43c1FdpxLxGWes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EhOzvRSW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89683C2BBFC;
+	Sun, 16 Jun 2024 23:13:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718579633;
+	bh=ImeGSr5Au9G+JHm74kgUWkXXoP4SyiI8uTK738bqMVE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EhOzvRSWdsxU9jiT7E4B9g/4xi8wO6V/agtahj3dBtMCsGraC+MqHJgOslW1y91HH
+	 82ZAFifmSwnioy7LITS/M5klZv3QXbTpHj3JThxHBi1PoZUMCBHbfMnrMpWmmT36qy
+	 fxsl/UlHUFn+zZ+dkxBBZCBaUJpBRa4U9mC8egzRm/U+b7d42mHyXCkDLgyHCOakWk
+	 fSlu8W3E48A6OgzboP0/aatZzbcXntj0XnuxAq76nqvKNxmC/Hgu0V++6K76tNROii
+	 hGZQENFTWqtOXYIDRTRgd3hvjfPEiPBlTB759nsGcoNhv4r4+aGCY2vESPUdDsjK98
+	 3InzWJNoZArQw==
+Message-ID: <2e89e829-9caa-470a-9ec8-5e8162fb5559@kernel.org>
+Date: Mon, 17 Jun 2024 08:13:51 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614121538.236727-2-charles.goodix@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/4] ata: libata: Remove redundant sense_buffer memsets
+To: Igor Pylypiv <ipylypiv@google.com>, Niklas Cassel <cassel@kernel.org>
+Cc: Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+References: <20240614191835.3056153-1-ipylypiv@google.com>
+ <20240614191835.3056153-2-ipylypiv@google.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20240614191835.3056153-2-ipylypiv@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Charles,
+On 6/15/24 04:18, Igor Pylypiv wrote:
+> scsi_queue_rq() memsets sense_buffer before a command is dispatched.
+> 
+> Libata is not memsetting sense_buffer before setting sense data that
+> was obtained from a disk so there should be no reason to do a memset
+> for ATA PASS-THROUGH / ATAPI.
 
-kernel test robot noticed the following build warnings:
+This sentence is not very clear at all... I assume that the first part of the
+sentence is for non passthrough commands. In this case, libata does not clear
+the sense buffer because the scsi layer did that already, in scsi_queue_rq() as
+noted above.
 
-[auto build test WARNING on hid/for-next]
-[also build test WARNING on dtor-input/next dtor-input/for-linus robh/for-next linus/master v6.10-rc4 next-20240613]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+For passthrough commands, the same should be happening as well since passthrough
+commands are also executed through blk_execute_rq() -> scsi_queue_rq(). So I do
+not really understand (but I do agree that the memset() in libata seem useless).
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Charles-Wang/HID-hid-goodix-Add-Goodix-HID-over-SPI-driver/20240614-201949
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
-patch link:    https://lore.kernel.org/r/20240614121538.236727-2-charles.goodix%40gmail.com
-patch subject: [PATCH v4 1/2] HID: hid-goodix: Add Goodix HID-over-SPI driver
-config: i386-randconfig-r122-20240617 (https://download.01.org/0day-ci/archive/20240617/202406170607.MJX7Ze54-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240617/202406170607.MJX7Ze54-lkp@intel.com/reproduce)
+> Memsetting the sense_buffer in ata_gen_passthru_sense() is erasing valid
+> sense data that was previously obtained from a disk. A follow-up patch
+> will modify ata_gen_passthru_sense() to stop generating sense data based
+> on ATA status register bits if a valid sense data is already present.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406170607.MJX7Ze54-lkp@intel.com/
+This fix should come first in the series, since that commit will likely need to
+go into current rc and cc-stable. And that will simplify this patch as well.
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/hid/hid-goodix-spi.c:771:1: sparse: sparse: symbol 'goodix_spi_pm_ops' was not declared. Should it be static?
-
-vim +/goodix_spi_pm_ops +771 drivers/hid/hid-goodix-spi.c
-
-   770	
- > 771	EXPORT_GPL_SIMPLE_DEV_PM_OPS(goodix_spi_pm_ops,
-   772				     goodix_spi_suspend, goodix_spi_resume);
-   773	
+> 
+> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> ---
+>  drivers/ata/libata-eh.c   | 2 --
+>  drivers/ata/libata-scsi.c | 4 ----
+>  2 files changed, 6 deletions(-)
+> 
+> diff --git a/drivers/ata/libata-eh.c b/drivers/ata/libata-eh.c
+> index 214b935c2ced..b5e05efe73f6 100644
+> --- a/drivers/ata/libata-eh.c
+> +++ b/drivers/ata/libata-eh.c
+> @@ -1479,8 +1479,6 @@ unsigned int atapi_eh_request_sense(struct ata_device *dev,
+>  	struct ata_port *ap = dev->link->ap;
+>  	struct ata_taskfile tf;
+>  
+> -	memset(sense_buf, 0, SCSI_SENSE_BUFFERSIZE);
+> -
+>  	/* initialize sense_buf with the error register,
+>  	 * for the case where they are -not- overwritten
+>  	 */
+> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> index cdf29b178ddc..032cf11d0bcc 100644
+> --- a/drivers/ata/libata-scsi.c
+> +++ b/drivers/ata/libata-scsi.c
+> @@ -858,8 +858,6 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
+>  	unsigned char *desc = sb + 8;
+>  	u8 sense_key, asc, ascq;
+>  
+> -	memset(sb, 0, SCSI_SENSE_BUFFERSIZE);
+> -
+>  	/*
+>  	 * Use ata_to_sense_error() to map status register bits
+>  	 * onto sense key, asc & ascq.
+> @@ -953,8 +951,6 @@ static void ata_gen_ata_sense(struct ata_queued_cmd *qc)
+>  	u64 block;
+>  	u8 sense_key, asc, ascq;
+>  
+> -	memset(sb, 0, SCSI_SENSE_BUFFERSIZE);
+> -
+>  	if (ata_dev_disabled(dev)) {
+>  		/* Device disabled after error recovery */
+>  		/* LOGICAL UNIT NOT READY, HARD RESET REQUIRED */
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Damien Le Moal
+Western Digital Research
+
 
