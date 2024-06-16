@@ -1,138 +1,76 @@
-Return-Path: <linux-kernel+bounces-216153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32AD9909C00
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:02:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41407909C08
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 578E9B22E87
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:02:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C63D01F22A9A
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F170816FF38;
-	Sun, 16 Jun 2024 07:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E2B16EC07;
+	Sun, 16 Jun 2024 07:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="Fxl4nyA4"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F5949637;
-	Sun, 16 Jun 2024 07:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="fSQoL1S7"
+Received: from mail-177131.yeah.net (mail-177131.yeah.net [123.58.177.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58F45025E
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 07:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=123.58.177.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718521344; cv=none; b=h4r7o36CE639ZG/DihtEmg+WXQdQBx1ffG4F10Ie6izluMm00mbPsFbMJo2aDiQ7bLhEdhjdigI0py1945lW7knbW8Y6k/XFM4Y/ZyPZfQF/1c1cE1X9gX6VdbqHbFyHgy4W3lDALEvHGRw5znOiBa0i2Sz/mR4+u4d5ZlW0BH4=
+	t=1718521766; cv=none; b=Axvmw7yGya+G9mkZK9vratoIdhw77qloehYWkILNWwuXx+GLXEZWwECCf2qyrYse4HM7oaE3qyUGE5uC3E+sgeD0/Aqzwq3eJVRdsqshL/eT/BmCPwRYJ+e91ncqsiY0WxtJYN3EbzZ+yFKEBfoATQR3aW5f7U1XFmJQhBli/RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718521344; c=relaxed/simple;
-	bh=LjGJ6rl2oueZLAlynoI5JEGa4MCNl25bPqTugdvjyO8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=YeEY3cSdKOVzAcx55PzaW2k8BNklIJQvA1yo/wuu0US6qCQHcV53A/m3pmf9enmvDd0gfU/CjcUUOavdqcE63rdQelxKmun+GV6CbRXnoH47Y+b79TgFHbJhbiGCKnxx853FdR6e5zmWitzR4PzkvOdAGtibd8Jp3PbtPGP+r5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=Fxl4nyA4; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D6199FF807;
-	Sun, 16 Jun 2024 07:02:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-	t=1718521334;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VHz5wWhoZB1ZJeF9u59vMYelSxXRAN9/WTQXNh1hnWA=;
-	b=Fxl4nyA4ZCgqZk95/mvKKdJtM4ECl69KDa8YCAkBIloYtViECzDT0Qq2V1X7wGxEnyR/DE
-	ex4DX6U1UQVvrYTIPE9R0bCymIZx4EmTJFITn25L+e4Xqpdu+vsDcWzsrBGjaMi7tnNWmO
-	Ybjp2JtqunDz3byfF63exkXFkVjQj9muqhN1qkux+X8PMZED2rVctNRnUIf6CRvjNd0v2M
-	gEfMQhmoqXaoc4wT/sI1zphW+eqmzcopTWYuveFlg4ey00cWIXJ4uvO3/CP/OGUrScfnpK
-	W/wZFygCw77USSld8qXWNC7gWnkkkbHYeUU98CATAEMp76kVNl0JP2bewk+UEA==
-Message-ID: <6f70da58-b68b-4a93-b369-2cc86e9158d4@arinc9.com>
-Date: Sun, 16 Jun 2024 10:02:07 +0300
+	s=arc-20240116; t=1718521766; c=relaxed/simple;
+	bh=vZ0BN+iwJKmD0J8p1QINCDjKP75eZtW2SC1O6NI3ukE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dekoUt4qLdVoTtSPSqYrGcRqzs6nfOql3OGzmrelzE7R7iwrnsCBIDg+v52kuP2oPdKyHrpE+c8982lnir+HyubFw5OunOI9DDBb8hwaaUYajQ37THUKPIwll2Ps/6hNBqhMNTyymfiNDjXI/wYbTy8KHaUNYH6ZbiiYp119B4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=fSQoL1S7; arc=none smtp.client-ip=123.58.177.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=hoopR7IVlqAk31RamLP5caSJX2yo8Er/Hi00JioDoi0=;
+	b=fSQoL1S7o2B0aEjMy7ProFCXlOtQDDoRKFNDrGrnp6aNmbr1v2fCCSKqBLtB/f
+	bhhEFXVxHD3qBb7ychvk/gfDkNo24Raxv7d3OZ3mHrLYy+mHSdT2OkcS4JYK+h7P
+	PfxQ+L/ArlQW9k5QF6NQXVIBjFpMmkk/1zh6WhpsFHSn0=
+Received: from dragon (unknown [114.216.76.201])
+	by smtp1 (Coremail) with SMTP id ClUQrAB33vqHj25mmz__Bw--.39420S3;
+	Sun, 16 Jun 2024 15:08:56 +0800 (CST)
+Date: Sun, 16 Jun 2024 15:08:55 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Chris Healy <cphealy@gmail.com>
+Subject: Re: [PATCH v2] ARM: imx_v6_v7_defconfig: enable DRM_SII902X and
+ DRM_DISPLAY_CONNECTOR
+Message-ID: <Zm6Ph1FGsPYJCcbe@dragon>
+References: <20240603-imx-sii902x-defconfig-v2-1-a39e442011ae@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 2/2] net: dsa: mt7530: add support for bridge
- port isolation
-From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-To: Matthias Schiffer <mschiffer@universe-factory.net>,
- Daniel Golle <daniel@makrotopia.org>, DENG Qingfang <dqfext@gmail.com>,
- Sean Wang <sean.wang@mediatek.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <378bc964b49f9e9954336e99009932ac22bfe172.1718400508.git.mschiffer@universe-factory.net>
- <15263cb9bbc63d5cc66428e7438e0b5324306aa4.1718400508.git.mschiffer@universe-factory.net>
- <4eaf2bcb-4fad-4211-a48e-079a5c2a6767@arinc9.com>
-Content-Language: en-US
-In-Reply-To: <4eaf2bcb-4fad-4211-a48e-079a5c2a6767@arinc9.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: arinc.unal@arinc9.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603-imx-sii902x-defconfig-v2-1-a39e442011ae@linaro.org>
+X-CM-TRANSID:ClUQrAB33vqHj25mmz__Bw--.39420S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU4GQ6DUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiGBsAZV6Nn4yK5AABsJ
 
-On 16/06/2024 09:52, Arınç ÜNAL wrote:
-> On 15/06/2024 01:21, Matthias Schiffer wrote:
->> Remove a pair of ports from the port matrix when both ports have the
->> isolated flag set.
->>
->> Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
->> ---
->>   drivers/net/dsa/mt7530.c | 21 ++++++++++++++++++---
->>   drivers/net/dsa/mt7530.h |  1 +
->>   2 files changed, 19 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/net/dsa/mt7530.c b/drivers/net/dsa/mt7530.c
->> index ecacaefdd694..44939379aba8 100644
->> --- a/drivers/net/dsa/mt7530.c
->> +++ b/drivers/net/dsa/mt7530.c
->> @@ -1303,7 +1303,8 @@ mt7530_stp_state_set(struct dsa_switch *ds, int port, u8 state)
->>   }
->>   static void mt7530_update_port_member(struct mt7530_priv *priv, int port,
->> -                      const struct net_device *bridge_dev, bool join)
->> +                      const struct net_device *bridge_dev,
->> +                      bool join)
+On Mon, Jun 03, 2024 at 12:09:39AM +0300, Dmitry Baryshkov wrote:
+> Enable the LVDS-to-HDMI bridge and the HDMI display connector drivers
+> used on the iMX53 QSB and QSRB boards with the HDMI mezzanine.
 > 
-> Run git clang-format on this patch as well please.
-> 
->>       __must_hold(&priv->reg_mutex)
->>   {
->>       struct dsa_port *dp = dsa_to_port(priv->ds, port), *other_dp;
->> @@ -1311,6 +1312,7 @@ static void mt7530_update_port_member(struct mt7530_priv *priv, int port,
->>       struct dsa_port *cpu_dp = dp->cpu_dp;
->>       u32 port_bitmap = BIT(cpu_dp->index);
->>       int other_port;
->> +    bool isolated;
->>       dsa_switch_for_each_user_port(other_dp, priv->ds) {
->>           other_port = other_dp->index;
->> @@ -1327,7 +1329,9 @@ static void mt7530_update_port_member(struct mt7530_priv *priv, int port,
->>           if (!dsa_port_offloads_bridge_dev(other_dp, bridge_dev))
->>               continue;
->> -        if (join) {
->> +        isolated = p->isolated && other_p->isolated;
->> +
->> +        if (join && !isolated) {
->>               other_p->pm |= PCR_MATRIX(BIT(port));
->>               port_bitmap |= BIT(other_port);
->>           } else {
-> 
-> Why must other_p->isolated be true as well? If I understand correctly, when
-> a user port is isolated, non isolated ports can't communicate with it
-> whilst the CPU port can. If I were to isolate a port which is the only
-> isolated one at the moment, the isolated flag would not be true. Therefore,
-> the isolated port would not be removed from the port matrix of other user
-> ports. Why not only check for p->isolated?
+> Cc: Chris Healy <cphealy@gmail.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-The concept of port isolation is that the isolated port can only
-communicate with non-isolated ports so the current implementation looks ok.
+Applied, thanks!
 
-Which switch models did you test this on; MT7530, MT7531, MT7988 SoC
-switch? I will test it on MT7530 and MT7531 tomorrow evening.
-
-Arınç
 
