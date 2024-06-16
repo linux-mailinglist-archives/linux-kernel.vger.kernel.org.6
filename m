@@ -1,120 +1,129 @@
-Return-Path: <linux-kernel+bounces-216077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A43AA909B11
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 03:23:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D760F909B18
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 03:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86C861C2109C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 01:23:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35819B214D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 01:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D316D154C19;
-	Sun, 16 Jun 2024 01:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922251552E8;
+	Sun, 16 Jun 2024 01:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rjr5Oh8u"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="IpwdFEWc"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A8C2E403;
-	Sun, 16 Jun 2024 01:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E674154C0E
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 01:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718501018; cv=none; b=R6AQOXzGn/klPC9jx8nQB011QV/oxdAnRhazfUNpOSA0iXjvFOXZ7Z1470l35rahba/0ndqBEY7s/G1tDpxAdzhfp6m2N4sPkcY2uXntDHeyt+PvVBjHKLARcSglWMgSMarwxtujF4FsM9lin7m02aIezp/8cuvLcyPNs1lEwGM=
+	t=1718501139; cv=none; b=mhGr7iIBSAP7CaVZH0Xgxl/yeYcB143dO2W6D6KVMbfTKyjkgyB32zLlfzbDyWuih/qFzyDWplhaKvdU2h46GU/++XYva41qgl2BsYfJb7U4t6RHTYHhSZKljsLPD9KcNZcIQB/gXAjOf3AiINEhdlLo+R/qGcJwtrZO/M1bjJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718501018; c=relaxed/simple;
-	bh=ro9Ubtf2VbL1tovMUy5Bxa4PT3UX7Kpu8c/NtRLKO4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EuHzln82alCMmMP66VQl2V3rJHUf+Wsmhq4jdlS0UjL391WkuEHZGMMoNqOsMLKYOUnETOzR4qR5rG35HD6GTK2YR+tKPBc+K2P2IbjUv+XM8yJx9S/gNzEsc1QF4rBCFJgibzeR+qumopFB1u/l+ANjFBcEFpmtMr3KW/VDJcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rjr5Oh8u; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57c6994e2f1so1824633a12.0;
-        Sat, 15 Jun 2024 18:23:36 -0700 (PDT)
+	s=arc-20240116; t=1718501139; c=relaxed/simple;
+	bh=JHe8PmT8CAiOYlGo1cndu3zZ4OloPw3FeLHc2NnF29Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Lxw55NrOMWvaJT3eNQXVYnDDhlEy5B8HPQ0uv7Hhtr5BNZGGjesprM79QZsswpOu88+FeOz+SwKO1BH+fnfdmETE3I5xmatitpZB6u/zieDCs0Xq60sIV+wDe0EgBeRYNy2Em/96t/eW82S9ue1y5nuO2+kMY2F7KwfjCUsszok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=IpwdFEWc; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-796df041d73so236102885a.3
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 18:25:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718501015; x=1719105815; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=broadcom.com; s=google; t=1718501137; x=1719105937; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=J9L818WkrX/e57/2+JLNhNwDE+80PZ6UZB0TCqcvAH0=;
-        b=Rjr5Oh8u8OsHNiub0naUvzYmP+ldVpm8WJ0S/wwRRPAKMO4gfk7SnJc5JPnNEU2h8m
-         7Tmm+pTyPQ0c2DCnggmR3bAzuQM8h9FZXwC4xiFH6rF12cGN2sxhBHkLMogMyChDuYh0
-         LO9p98aG6XGMOStKChdsA9SqZOqUujRiQkLb14ct8ScxGHaIzylc4z5bzq/g4agCfwht
-         lrwDgYfD4bqoqxzBkEn70xloKvTQ4ZWM9SCE/JRk1KG1x8EhAr9ktggKHEZNV2PS+Daf
-         IlBfo5JCTM1FxU530qb4akF5xdbef0ApIb/vytePNW4dfiS7O7qTKWfzzZwDi4UK9rGm
-         /EaQ==
+        bh=vmh7B10VjitCXi5UnMX7IBHWWNFhALchrxl9IDbnSME=;
+        b=IpwdFEWcmhtqCuDAJySqs0o61HabJmdtHdIP50TwjkjLmvdg2V4I1TWgElm/9QCJjV
+         gdiAQSnwlz3g0y5dlFUctsolxw+Dz2G2zVTD5j5urms5iBosxPc9EY4lWFvp/u2tqBXh
+         E38I51S1z2ZsMmy73JSNUjBJh95HDvZ2iyvbY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718501015; x=1719105815;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=J9L818WkrX/e57/2+JLNhNwDE+80PZ6UZB0TCqcvAH0=;
-        b=PlsoPZ3NTOrAd1zB6jtSid9m24w07CxVdbYzJiNHBydsIX+YRdSW14EUub5FxgT98V
-         /mK4T4HCJezirtYVKT+xJRMKS5Bx/GgCGO4aDAuOoseXQm8pa9TesZ8hb1K4N6qfnUog
-         J9pLX3cbmpC4R+i8U0gg+uFrSMJ9whVqvfCMxfNkxLMeBrgGrLxeZKG3iDtmU8Ee46Iz
-         vkqkzSOfvLvjM5KvtrY6wZViTmi4eJcansocFL5R7o7VFrfS/GfE1WLHECMYhfwahdYO
-         +a+LP2nO8fRBdublffXmJRl57o6/VyPmfnX1J3u4PlUiiWXNp7kjTZ1wpve6JVxd4eas
-         khWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXf3O2CjW5tYHmpRWV4BFHgcYuJDvn4ZvQhjcXDMIohUXCkKoFn8RspNi7aJvTbfe0rNT7Azx4NcFFl07fIeCqfbW39xQTOkOalSEjUmilwzE/7b8g8ajgIHxb7x//kNA4i3BWo7oeZO33ZakAZol6VD3rf
-X-Gm-Message-State: AOJu0Yyj/eFPjOvlIXXdI89LggRHNDPZImWW6w/srCY/tf/84z6bh378
-	1P6/orbEeDScbK/lhY4m97tmMqpisMZpx+PcSKPE93NJLK39pE3x
-X-Google-Smtp-Source: AGHT+IFtCyjk6B2n0WL5jZjzknr32ZUP22JOAasG1n2zIMpqR6Bmv50VyYRbU7uqiXLlR1DQ2YBJjw==
-X-Received: by 2002:a50:c30b:0:b0:579:d673:4e67 with SMTP id 4fb4d7f45d1cf-57cbd6c7495mr5098355a12.26.1718501014766;
-        Sat, 15 Jun 2024 18:23:34 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb741e725sm4305462a12.69.2024.06.15.18.23.33
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 15 Jun 2024 18:23:34 -0700 (PDT)
-Date: Sun, 16 Jun 2024 01:23:33 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lstoakes@gmail.com>, linux-mm@kvack.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Kees Cook <keescook@chromium.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	linux-hardening@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-	Ross Zwisler <zwisler@google.com>, wklin@google.com,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Linus Torvalds <torvalds@linuxfoundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Mike Rapoport <rppt@kernel.org>
-Subject: Re: [PATCH v5 0/2] mm/memblock: Add "reserve_mem" to reserved named
- memory at boot up
-Message-ID: <20240616012333.c6ddobbv6aq4jlyn@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20240613003435.401549779@goodmis.org>
+        d=1e100.net; s=20230601; t=1718501137; x=1719105937;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vmh7B10VjitCXi5UnMX7IBHWWNFhALchrxl9IDbnSME=;
+        b=AsrBWd7Mx1OuFbndYb0bw1S/t+2mwGp8dqO3ixg7YXB7k7aPEifAeC0gu8mg7FRqJg
+         ylTtBT4wTjiSw+uQgughpI+S2/Zh3XflP2zhwVGV7ILMUzmt1T5Gkwir9h8HPwDCoqkP
+         b9wXATDl0qIwcZMTN/Di5DkOkZ2rKIhhLxWaFLTOGkddoAg4V5orgMl+2RlkH1L92JDU
+         Q4oSvy74WgChfaGFoDNo4fYzderHbyo3iGOf3pQOdRH0b1+9AMP8yzdLEESPZlz/M2/9
+         4CwgwJIbO2y6CEUEKYZkxGSpz0kFkYBWFRRWnyKZBR1az21asDmtHcQ4qU5sg4lvIPaF
+         xeHw==
+X-Gm-Message-State: AOJu0YwNZN5aR8EeUbnRZuPcYuLMf/naQk4nx8DcofkNu3up2ue7J75i
+	FWUwJHpVg1Ntv2nka3pN3gr5OiVDM2Oq9G7weP2oI8hI7f9KtNnm/GvlJatTGn4eyVXgwrQ0AU7
+	JpQw2FGnU+6yTVJcbqSPRnbX/Q5FNK4wFl2HARHbwNuJi+5vD/wjXQ+QwUXg3sIGEPexqZZ/oc8
+	hamZer/bOQr4uVQfszN8rn7I4XrtyrXw5nqgbtgLc7HA0pglre+wIM
+X-Google-Smtp-Source: AGHT+IF3o2n1vuAWzivHA2bQV4+Plh7YsZ6B36O+Td3GL1zNvsydHY+4muaeP2QpJFgYTbtdwi7YNA==
+X-Received: by 2002:a05:622a:130a:b0:43a:b542:d1dd with SMTP id d75a77b69052e-44216af8850mr64153021cf.36.1718501136510;
+        Sat, 15 Jun 2024 18:25:36 -0700 (PDT)
+Received: from amakhalov-build-vm.eng.vmware.com ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-441f310dae0sm32256121cf.97.2024.06.15.18.25.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Jun 2024 18:25:35 -0700 (PDT)
+From: Alexey Makhalov <alexey.makhalov@broadcom.com>
+To: linux-kernel@vger.kernel.org,
+	bp@alien8.de,
+	bcm-kernel-feedback-list@broadcom.com,
+	lkp@intel.com
+Cc: zack.rusin@broadcom.com,
+	dri-devel@lists.freedesktop.org,
+	daniel@ffwll.ch,
+	airlied@gmail.com,
+	tzimmermann@suse.de,
+	mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	linux-iio@vger.kernel.org,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	nuno.sa@analog.com,
+	dragos.bogdan@analog.com,
+	anshulusr@gmail.com,
+	andrea.collamati@gmail.com,
+	oe-kbuild-all@lists.linux.dev,
+	x86@kernel.org,
+	Alexey Makhalov <alexey.makhalov@broadcom.com>
+Subject: [PATCH 1/2] drm/vmwgfx: Fix missing HYPERVISOR_GUEST dependency
+Date: Sat, 15 Jun 2024 18:25:10 -0700
+Message-Id: <20240616012511.198243-1-alexey.makhalov@broadcom.com>
+X-Mailer: git-send-email 2.39.4
+In-Reply-To: <202406152104.FxakP1MB-lkp@intel.com>
+References: <202406152104.FxakP1MB-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613003435.401549779@goodmis.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 
-Hi, Steven 
+VMWARE_HYPERCALL alternative will not work as intended without
+VMware guest code initialization.
 
-Would you mind cc me in the following version?
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202406152104.FxakP1MB-lkp@intel.com/
+Signed-off-by: Alexey Makhalov <alexey.makhalov@broadcom.com>
+---
+ drivers/gpu/drm/vmwgfx/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
+diff --git a/drivers/gpu/drm/vmwgfx/Kconfig b/drivers/gpu/drm/vmwgfx/Kconfig
+index faddae3d6ac2..6f1ac940cbae 100644
+--- a/drivers/gpu/drm/vmwgfx/Kconfig
++++ b/drivers/gpu/drm/vmwgfx/Kconfig
+@@ -2,7 +2,7 @@
+ config DRM_VMWGFX
+ 	tristate "DRM driver for VMware Virtual GPU"
+ 	depends on DRM && PCI && MMU
+-	depends on X86 || ARM64
++	depends on (X86 && HYPERVISOR_GUEST) || ARM64
+ 	select DRM_TTM
+ 	select DRM_TTM_HELPER
+ 	select MAPPING_DIRTY_HELPERS
 -- 
-Wei Yang
-Help you, Help me
+2.39.4
+
 
