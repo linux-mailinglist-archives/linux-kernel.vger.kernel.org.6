@@ -1,150 +1,134 @@
-Return-Path: <linux-kernel+bounces-216067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E71DE909AB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 02:31:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C60D8909AB6
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 02:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A399B2184A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 00:31:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B4B01F219CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 00:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866BE4C80;
-	Sun, 16 Jun 2024 00:31:25 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84CE1849;
+	Sun, 16 Jun 2024 00:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IY1gDDpp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89AA1849
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 00:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D781847;
+	Sun, 16 Jun 2024 00:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718497885; cv=none; b=aS20y4/zWTejIec2x9BzIci0GvqFFHvpate/m2I5K81yoexvlSc5EJv/3pZjUdIBF9wsIwfeJO6sK8e2S2uobktkdh131K2TR/BDB0TUkJxODcu+6+KUHx1mI0j9HLzt6u/8qHw+yDiI8Rw+L6a7Abs16HoBx2qgjU/1fKCnwIM=
+	t=1718498469; cv=none; b=Tgz8kRdFWtVW3UJ6huDeh4oDK8aOmSXo4dq9NLxh8P5Kdbim5XhQuM0pxjIWk200TMHStwCLGbgjHAxcbKXwBukXu+70/su97lqGO4ON7QzQYD3R4dD4Avj4bsDX8AP+q65ddiJq0eYyFjDdJxa2flY3k5PqOSz6nDrKF/jcNMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718497885; c=relaxed/simple;
-	bh=FkzN0BqVrHSTuDdE0t0nsz9RNvi0s+mZffu17msKZHc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=W24B/q+BG5PAc0UNVzWrzJUsL3QAqD9QjiyM7zdlk4mnMzF0O+EaOLdFQjUDZUrt3vkRcZH+Sk8X39lf0OVD3qVjRJnMRtnOiINMw8QiVoEimee6BItwRdvH0mOKYLwXOSotCSUsqACU05lbMV2w7Xx84AdCtRdjfvEOlqtJoTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7ebcbef22c8so385390639f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2024 17:31:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718497883; x=1719102683;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=le1gjHBXrg1Zm5ieyOK1u+06R6DnR9L8091ao80Sprs=;
-        b=VrUBky08ASZm/TfyrjwPvmAYFLltVrqIGGNJKOAy0GGZLjV3NMP/nJ3B7M2Aox9x/N
-         0qv87tWbhtoXt9sb48wIGQF3Wj9upueLvOB6uMZHB/tH9k8pX0o08wshyr9Ss6AeD7qr
-         sfMIj4NABy5pkaIKsqGZ13YCd+1a+DjzvFgj7CzGlHROQ3e3x1nMGLRSJfLUS6MMs2RG
-         e4jnp2YfTT7wbDgTn/vKjREDfurB78w5ita7tTH0mNUfZ/fsCbMB2K1ldwn5GH+EeCdq
-         Kpbvpd60E1CpvFy7kfa2+K9LFwfgxfVdnBhzWzPL/xYaWK9gFEKnmkwPn/35+PbS59Ip
-         2NJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxdf8fErmHLS9fvJ8CZ8lR6YpaKT0t1SaBWhqV+KYzVaMB4/R9AlMnZJffQ92XTMPgy/wx7lJjImUf1gt5B4FKuZqDoHWRN3IC9aM/
-X-Gm-Message-State: AOJu0Ywj5U0L60QwuqeM7/ps1EBOJ01NWitdZEtKC4cys3UPtM+/JP3I
-	mht7wy+ImjdPxiYCbvohX8p/tXRKAU17JOFdBw/W9tsTzD4r3STfugqKlA//MPFeXKXpN7St5+w
-	G5PbfeSxdJOKkLqrLHGd3UKdawIzgATVcf5Zo0Ioc3IA4U1IrBMBfn/c=
-X-Google-Smtp-Source: AGHT+IEndy9ZipBcZrmVrn7iuNAbyY1XpiXb79kYRn1iMtgKXEGLcp6dIvvfHNN2Rb2R1veuMSLKRxGn4vUbMtky0goHD4c5Rk/A
+	s=arc-20240116; t=1718498469; c=relaxed/simple;
+	bh=80XxlEDYtt1XhtOCHEj2fkh3ftEPNrBzkDjxXzMkpG8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XBJHJGXv8+t54eIdraI98MQg8WgZCZc8gXD1EaIWbuKui4VhmXcGsk5gaofjX2F20+oZVJ2iORWoGrMK9HzQYMyJNU7mFvKsvWBtx+Z7CVP080fIBgyD5sWjFAGIOBcWxa8lNQDut9gz54Z9pieaZzsRHfe9cdcEJDHbTr/vmLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IY1gDDpp; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718498468; x=1750034468;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=80XxlEDYtt1XhtOCHEj2fkh3ftEPNrBzkDjxXzMkpG8=;
+  b=IY1gDDppdTugANPAWyvCUivGinSkaK5jK0dFh9HsIkftcJM4kIY2Pz0B
+   ZgX9eNsidGM/aVDZ/uHudEwep514fSaK+aCB435vHx5g1oHbMijsg9iHF
+   jiVb7oWvLRClk6GMd/QwZ5qMumTw50RAYCLXQ57KzZmPGdDzOpBGa6JxA
+   F5r/VPyQAE7yWAH387T9YVAoVTqKI1pYIQGndOW9GRJOmVtF1u+KjsMAr
+   BGfk2sgcrTmOEh88mhybV94mJGWh6Lp7K8EDdNBlaywiqYJOL14gt4Xw6
+   XokRVkdkb6AjkypbugtyxB6WtZF1ua0DRPdON3AI9Sv2lqoa95Htkr/yM
+   A==;
+X-CSE-ConnectionGUID: t2bSyMEYROC80n+xVsRe/w==
+X-CSE-MsgGUID: kbeTk6rmQQqHa/iZnsMgsg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="12092979"
+X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
+   d="scan'208";a="12092979"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 17:41:08 -0700
+X-CSE-ConnectionGUID: EyIdXvsbQVeCVwFOr2lbTA==
+X-CSE-MsgGUID: YghvtLYNQEGr1d1qUBqQAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
+   d="scan'208";a="40954586"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 15 Jun 2024 17:41:05 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sIdx8-0000fI-2x;
+	Sun, 16 Jun 2024 00:41:02 +0000
+Date: Sun, 16 Jun 2024 08:40:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Animesh Agarwal <animeshagarwal28@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ASoC: dt-bindings: realtek,rt5631: Convert to
+ dtschema
+Message-ID: <202406160820.L8HvSS8W-lkp@intel.com>
+References: <20240614033812.51312-3-animeshagarwal28@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:831e:b0:4b9:7944:1d24 with SMTP id
- 8926c6da1cb9f-4b979441efbmr79190173.1.1718497882752; Sat, 15 Jun 2024
- 17:31:22 -0700 (PDT)
-Date: Sat, 15 Jun 2024 17:31:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d95c65061af6f71c@google.com>
-Subject: [syzbot] [bpf?] KMSAN: uninit-value in trie_lookup_elem (2)
-From: syzbot <syzbot+3ac129054f077c7d7ca2@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@google.com, 
-	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240614033812.51312-3-animeshagarwal28@gmail.com>
 
-Hello,
+Hi Animesh,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build warnings:
 
-HEAD commit:    614da38e2f7a Merge tag 'hid-for-linus-2024051401' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14d2697e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
-dashboard link: https://syzkaller.appspot.com/bug?extid=3ac129054f077c7d7ca2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+[auto build test WARNING on broonie-sound/for-next]
+[also build test WARNING on linus/master v6.10-rc3 next-20240613]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Unfortunately, I don't have any reproducer for this issue yet.
+url:    https://github.com/intel-lab-lkp/linux/commits/Animesh-Agarwal/ASoC-dt-bindings-realtek-rt5514-Convert-to-dtschema/20240614-114128
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+patch link:    https://lore.kernel.org/r/20240614033812.51312-3-animeshagarwal28%40gmail.com
+patch subject: [PATCH 2/2] ASoC: dt-bindings: realtek,rt5631: Convert to dtschema
+config: arm-randconfig-051-20240614 (https://download.01.org/0day-ci/archive/20240616/202406160820.L8HvSS8W-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
+dtschema version: 2024.6.dev1+g833054f
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240616/202406160820.L8HvSS8W-lkp@intel.com/reproduce)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/89eafb874b71/disk-614da38e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/356000512ad9/vmlinux-614da38e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/839c73939115/bzImage-614da38e.xz
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406160820.L8HvSS8W-lkp@intel.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3ac129054f077c7d7ca2@syzkaller.appspotmail.com
+dtcheck warnings: (new ones prefixed by >>)
+   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: mmc@d4280000: Unevaluated properties are not allowed ('clock-frequency' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/mmc/sdhci-pxa.yaml#
+   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: mmc@d4280800: Unevaluated properties are not allowed ('clock-frequency' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/mmc/sdhci-pxa.yaml#
+   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: mmc@d4281000: Unevaluated properties are not allowed ('clock-frequency' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/mmc/sdhci-pxa.yaml#
+   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: dma-controller@d42a0800: Unevaluated properties are not allowed ('iram' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/dma/marvell,mmp-dma.yaml#
+   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: /soc/axi@d4200000/ap-sp@d4290000: failed to match any schema with compatible: ['olpc,ap-sp']
+   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: /soc/apb@d4000000: failed to match any schema with compatible: ['mrvl,apb-bus', 'simple-bus']
+>> arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: audio-codec@1a: 'port' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/sound/realtek,rt5631.yaml#
+   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: /soc/apb@d4000000/i2c@d4034000/accelerometer@1d: failed to match any schema with compatible: ['st,lis331dlh', 'st,lis3lv02d']
+   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: gpio-keys: 'lid', 'tablet_mode' do not match any of the regexes: '^(button|event|key|switch|(button|event|key|switch)-[a-z0-9-]+|[a-z0-9-]+-(button|event|key|switch))$', 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/input/gpio-keys.yaml#
+   arch/arm/boot/dts/marvell/mmp2-olpc-xo-1-75.dtb: /i2c/camera@21: failed to match any schema with compatible: ['ovti,ov7670']
 
-=====================================================
-BUG: KMSAN: uninit-value in trie_lookup_elem+0x4b9/0x510 kernel/bpf/lpm_trie.c:234
- trie_lookup_elem+0x4b9/0x510 kernel/bpf/lpm_trie.c:234
- ____bpf_map_lookup_elem kernel/bpf/helpers.c:42 [inline]
- bpf_map_lookup_elem+0x5c/0x80 kernel/bpf/helpers.c:38
- ___bpf_prog_run+0x13fe/0xe0f0 kernel/bpf/core.c:1997
- __bpf_prog_run128+0xb5/0xe0 kernel/bpf/core.c:2236
- bpf_dispatcher_nop_func include/linux/bpf.h:1234 [inline]
- __bpf_prog_run include/linux/filter.h:657 [inline]
- bpf_prog_run include/linux/filter.h:664 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2381 [inline]
- bpf_trace_run2+0x116/0x300 kernel/trace/bpf_trace.c:2420
- __bpf_trace_kfree+0x29/0x40 include/trace/events/kmem.h:94
- trace_kfree include/trace/events/kmem.h:94 [inline]
- kfree+0x69e/0xa60 mm/slub.c:4450
- prog_array_map_alloc+0x233/0x430 kernel/bpf/arraymap.c:1107
- map_create+0x1185/0x1e10 kernel/bpf/syscall.c:1320
- __sys_bpf+0xa65/0xd90 kernel/bpf/syscall.c:5642
- __do_sys_bpf kernel/bpf/syscall.c:5767 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5765 [inline]
- __x64_sys_bpf+0xa0/0xe0 kernel/bpf/syscall.c:5765
- x64_sys_call+0x96b/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:322
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Local variable stack created at:
- __bpf_prog_run128+0x45/0xe0 kernel/bpf/core.c:2236
- bpf_dispatcher_nop_func include/linux/bpf.h:1234 [inline]
- __bpf_prog_run include/linux/filter.h:657 [inline]
- bpf_prog_run include/linux/filter.h:664 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2381 [inline]
- bpf_trace_run2+0x116/0x300 kernel/trace/bpf_trace.c:2420
-
-CPU: 0 PID: 8814 Comm: syz-executor.0 Not tainted 6.9.0-syzkaller-02707-g614da38e2f7a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
