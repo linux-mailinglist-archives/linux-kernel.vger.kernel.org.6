@@ -1,100 +1,179 @@
-Return-Path: <linux-kernel+bounces-216171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C26909C44
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:39:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31FB4909C38
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7EC8B2110C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:39:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFE751F213E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219B717F4E4;
-	Sun, 16 Jun 2024 07:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10F7181CE3;
+	Sun, 16 Jun 2024 07:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qlogo.org header.i=@qlogo.org header.b="g6hGDl2Z"
-Received: from pv50p00im-ztbu10011701.me.com (pv50p00im-ztbu10011701.me.com [17.58.6.53])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i054XHwT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AEB17E476
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 07:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDFC181335;
+	Sun, 16 Jun 2024 07:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718523576; cv=none; b=qsPRkLSJl58ZHfJTvn32boIhQTVmd8dZSv33BA1LRBrjMFS2HapvqZdKLVLn8JeOxSobxCjAy8JqXvY2OvngSIUpZlMJkIiG4D291LpqpZPkYvb5E9k84JQ2mxds9D/JTqA4EFBIP7o0D7m/DRx0bVCca9wMJsiDq8ag6oaNSx8=
+	t=1718523491; cv=none; b=KGjB183aZ7ag3+gI+dPGKPaipfafVVB38IvvnqaTqsnwmgcjkQ8fG5apVrCKVh/z5+M8okO+Hk9DtU0mkGuaMxGaExTzJ0MeMwfh4cci0a4BlqyZXAXl0BmKkP1Ey1BAPk32/SaT/WJIe0B9V+D5VE/uJ1jvjpGwdO9ERGztlz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718523576; c=relaxed/simple;
-	bh=6ZE6SVx1Ny99HyfSh9kAhRJi6qjVKY2jR+Gk2CKUTsc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GJ8XIxIMnw8nGO+AGN4dCxjQvKO2/xeO//C62dSmkgFeLkV+9ZUUQ9DMK706ubh6zw7JVk/KmRykR4PgtMyZLahXLZ/ps8HMAwr0Ug0Jbt/2xJV0hnigNx3IYDg7ZxeeSClTjIG5c53tsrDTNCbRdohA8z6AZ5oFTvn6AuKJNqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=qlogo.org; spf=pass smtp.mailfrom=qlogo.org; dkim=pass (2048-bit key) header.d=qlogo.org header.i=@qlogo.org header.b=g6hGDl2Z; arc=none smtp.client-ip=17.58.6.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=qlogo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qlogo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qlogo.org; s=sig1;
-	t=1718523571; bh=tsLFH4pWEShc5YjnqUODueUGlPm0CApxPhaUEVDlXSM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=g6hGDl2ZoWLb2IklexnTBp6Tro+IIMC4QhmSJnWIxmXwNLEdsEoK1Uq9IlGGWmJVI
-	 wZzUiL1jCza0NwfUmeoK8ZB7swQnVqQZ4mT+5LSS9XlfmE190+jRdsVl3eNugE2p94
-	 ydIZm2nwCi+TukEV+jV54ju5KrZB8ovrqAcSs7BsOMuUNJZ6ss85FbcF5BygYEkLur
-	 itGFD0FUEsyFLwrqLkcptY1KLxWot6LYoaprpHkKESrZ6LGVS3zsnAFgSUG4kZB6B1
-	 skY8/s1A0UhaWJZa0tsT00RJRWnFfkt+Nq9wq5aPzpajTbA9ZbBRxcdG4ZWDHnN1zh
-	 R27vL4jhhnqKQ==
-Received: from fedora.jas.ddns.me (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztbu10011701.me.com (Postfix) with ESMTPSA id 8B3EE7401C4;
-	Sun, 16 Jun 2024 07:39:28 +0000 (UTC)
-From: Jason Sikes <sikes@qlogo.org>
-To: thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	kkartik@nvidia.com,
-	rdunlap@infradead.org,
-	frank.li@vivo.com
-Cc: Jason Sikes <sikes@qlogo.org>,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Fix warning in tegra_fuse_add_lookups
-Date: Sun, 16 Jun 2024 00:36:57 -0700
-Message-ID: <20240616073721.5696-1-sikes@qlogo.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1718523491; c=relaxed/simple;
+	bh=Wfs1Oi936Q78/s0AH2TiYpj+5LyCrX1AJWUL91zSuGI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ue3GaEzJzVlkcoDZgM3Dam+Y8dBltdlRC0G/fYmgWZI4h5v7fmJoafY9PJorVZPM8Dzg4r5o7+38i59eYLBCN++AdoVd+X/9iPuJOxx798tyQ2m+j56odw6r2ygv5upi/V42oxeiaN8BWNzI/fG3eXL82rQxOZ99lseHBxKa5aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i054XHwT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F690C32786;
+	Sun, 16 Jun 2024 07:38:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718523490;
+	bh=Wfs1Oi936Q78/s0AH2TiYpj+5LyCrX1AJWUL91zSuGI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=i054XHwTSBl2QP79McswBsOEqOdJ6nnbAQNfLHyBxEs422eIRsy20AWufyQxQ44Q8
+	 lZmvHFiJjJrHkYpwBpD2yfF+2PDS7mXedGtQhzHaCmHMjvqR31qifLsltZTUxHzha5
+	 2VCk6dgqmgPE3yE7tq7XQ5RoLo+RncHJv9AurvLZUhTgblkNq89GhkeJJcftKQQNpa
+	 l+8h0rPNw51rYuPPgD09YJ5brQYc/Rp4EfyB2oIuDD6l+4wQq6DnU+9bMDmmle4LUP
+	 axKX2OReE3mDpoKQjeWP0q2jUetszKN70T52UGdixAQ61ySTR8P4n68D+EKQUWLAYh
+	 A/kpye8jxVYjQ==
+Message-ID: <936beb9a-2701-476c-8f5a-4b6b06d4f87d@kernel.org>
+Date: Sun, 16 Jun 2024 09:38:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 3RPpWRiuVpFqz4iuViTEbOlXDhaq0hjt
-X-Proofpoint-ORIG-GUID: 3RPpWRiuVpFqz4iuViTEbOlXDhaq0hjt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-16_06,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0
- mlxlogscore=741 bulkscore=0 mlxscore=0 phishscore=0 clxscore=1030
- adultscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2308100000 definitions=main-2406160059
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/12] dt-bindings: mfd: renesas,rzg3s-vbattb: Document
+ VBATTB
+To: Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
+ alexandre.belloni@bootlin.com, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240614071932.1014067-4-claudiu.beznea.uj@bp.renesas.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240614071932.1014067-4-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-gcc 14.1.1 warns [-Wcalloc-transposed-args] when sizeof() is
-used in the first, but not the second, of two size_t arguments.
+On 14/06/2024 09:19, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Signed-off-by: Jason Sikes <sikes@qlogo.org>
----
- drivers/soc/tegra/fuse/fuse-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> +
+> +maintainers:
+> +  - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: renesas,rzg3s-vbattb
+> +      - const: syscon
+> +      - const: simple-mfd
 
-diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-index b6bfd6729df3..d27667283846 100644
---- a/drivers/soc/tegra/fuse/fuse-tegra.c
-+++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-@@ -127,8 +127,8 @@ static void tegra_fuse_print_sku_info(struct tegra_sku_info *tegra_sku_info)
- 
- static int tegra_fuse_add_lookups(struct tegra_fuse *fuse)
- {
--	fuse->lookups = kmemdup_array(fuse->soc->lookups, sizeof(*fuse->lookups),
--				      fuse->soc->num_lookups, GFP_KERNEL);
-+	fuse->lookups = kmemdup_array(fuse->soc->lookups, fuse->soc->num_lookups,
-+				      sizeof(*fuse->lookups), GFP_KERNEL);
- 	if (!fuse->lookups)
- 		return -ENOMEM;
- 
--- 
-2.45.2
+No, mfd does no look good. That's not a simple device anymore and you
+claim here child does not need vbat bclk, power domains and resets? That
+would be a big surprise, although technically possible.
+
+Please clarify: which of parent resources are needed for children?
+
+...
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/r9a08g045-cpg.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    vbattb: vbattb@1005c000 {
+> +        compatible = "renesas,rzg3s-vbattb", "syscon", "simple-mfd";
+> +        reg = <0x1005c000 0x1000>;
+> +        ranges = <0 0 0x1005c000 0 0x1000>;
+> +        interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+> +        interrupt-names = "tampdi";
+> +        clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>;
+> +        clock-names = "bclk";
+> +        power-domains = <&cpg>;
+> +        resets = <&cpg R9A08G045_VBAT_BRESETN>;
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +        status = "disabled";
+
+Drop
+
+> +
+> +        vbattclk: clock-controller@1c {
+> +            compatible = "renesas,rzg3s-vbattb-clk";
+> +            reg = <0 0x1c 0 0x10>;
+> +            clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattb_xtal>;
+> +            clock-names = "bclk", "vbattb_xtal";
+> +            #clock-cells = <0>;
+> +            power-domains = <&cpg>;
+> +            status = "disabled";
+
+Drop
+
+> +        };
+> +    };
+> +
+> +...
+
+Best regards,
+Krzysztof
 
 
