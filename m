@@ -1,141 +1,116 @@
-Return-Path: <linux-kernel+bounces-216408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759F3909EF0
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 20:00:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84179909F0C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 20:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01A941F233FC
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:00:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96802281B56
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EDF3B7A8;
-	Sun, 16 Jun 2024 18:00:26 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4DF3FE4A;
+	Sun, 16 Jun 2024 18:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="OAS7UInw"
+Received: from out203-205-251-60.mail.qq.com (out203-205-251-60.mail.qq.com [203.205.251.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025AA24B34
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 18:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF63E1C68E;
+	Sun, 16 Jun 2024 18:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.251.60
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718560825; cv=none; b=E6lp5/GEgXmPcfzZhvHdlmd0XRVX+iAMYaO0O0RgMMfAA7U7zolNwPkqHy8NEOs6rQBnZlxijupnT8XmVTgStyaenviOwOnCmUgCqMtkDoKJ5CsT2s8hZjhteRSJ0ZO9X9qq7wxDll+wVuhmS7A3TrFCAgRpThYh2mIZZQU3sO0=
+	t=1718561833; cv=none; b=DVMcB9LJpvYCD2DA6VupkdTjuZ5nsU+mygQmCC7f5IAyXSQEra0wZXPZs/YlPBvm5Mgaq58QA7142smW3djl7Qdei9k9YhIAR8F7QygaieyHlDxKr/zLl10R5zjwKl3GqBZru4aIsbWFBrmODih/+9oxoShD1twYpL+LpFCuAhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718560825; c=relaxed/simple;
-	bh=+fzPigpqqCtdyNBac5peDLXSMz+u8kTHjXJcO2VKKY0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=I/JA106foa4nTUnhv3GEtyRLFVB1VPj91GoEiiSRdXZUiieO9LHxEkQshUwLgVUmJXqxm4Wt9e6BwrBTjN1MpdP9AMi2UfcTBtJC1K4cgAn3yQMNhIzwLxju34gUr50MggfGwdmtKRxaj5MnN1p1djB1mJ0fVaZ6D9GgfEOf/yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7eb5f83ae57so395542839f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 11:00:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718560823; x=1719165623;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x6Vx5rRDiMnr7zNSuIUNeaQO0x6H1lSVNApyoo9r05E=;
-        b=NVnB0WJBHC8X1wuYu8P1D6MUgsH0Y5tG1sqj7Ns67vFvTqxAcPUXhGzA9mR/8CxsxH
-         57e4F/J8pUnQzU+H1elXJnXl+IqnV8mUQhD6Px12veuNBGQNG3loaSYrpncjDsSIRyyS
-         wdD68lj14EQ8X1Y5j9WbntrB2DuVGuzTGYVRul2qby7u2sIznGtea83zhwfSMajwBoug
-         W/FAGFRzhPK/cX6g0VoEyvB9NwyyzOXHAMN3UPvJ8URf/yleo/u390RZ9EbtCTNDnSgA
-         42MYzol6WQ2M7fUxYUBmxyYki6xMAGbiyrIz2mZ5moIazR6H5DEFixjUKoYaEDkVwte+
-         AfxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiGUOdB9ZPurNCQA2ZH5Z1VtMbfeV9fsLMO9VCh2v+vx9H70tsIF2DyUrRqcSgm8BUMsXvYhwXxsRN9Bt3wVE6G6bK3UusXSP9pUU8
-X-Gm-Message-State: AOJu0YwU4AtK+ntlAS5USWIeHUYoXtwgUq3XpkPOE0UgasVevnfNfU8s
-	Qf9s4r/LsuWbE6kwMGHETils++DhSF6JKnBSm9crQ9KpUiwoCCdZSCA4dNM7j7aJPC98oM8KHP7
-	kO+I+VOyzocxIVZKfcJtoDzLV9zD5JSqcACPSJf9+d6JSN6YRia9EIG0=
-X-Google-Smtp-Source: AGHT+IEnNQFapInZa9RWHbA4geAl1SxX21EsCPrsi+Ev7n9EoF/IG+EbV4iVjwcTxa8EjJ9Rg8C0BMpalIeGjRtNysfgJX4vJRk5
+	s=arc-20240116; t=1718561833; c=relaxed/simple;
+	bh=bXpVnWeSf5VmKroUsye8C62KCLYhk+Diz1lcCWrS+Hk=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=SNGUBLZqDlC0pWeHrNWOmk8OQDFQFGXXg+q7XCIL6zHQFottZQBb4ABMuDja4NHyGra19ddvy+wV8mL+uJMKaub4FduNWKk/pUCvAEdX3ZUjU9Xt0Ci09y8jHWkXYIbgK2qVjRL/90lAlb2D3OKkFxE7NC4If8yclxt1ZkOSarc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=OAS7UInw; arc=none smtp.client-ip=203.205.251.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1718561827; bh=QCxFDA+QkmRBdRZGcgiXjLaq5q8XoSrYlBKMg+3T/tc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=OAS7UInwxuJzeu8OSigYyiDfdHxUWjQlhZIkeCKshra4hCcJRVcpBfTEuLlOLMhsl
+	 XPmwHHDgcYxXaNLPv0gcnX/g8bIQPPejYj2RFl7hGRX+dc1/RaxapWQIakBECy6fPQ
+	 mXVmROyzAbrN/ct/+/iuOlCSPG3dwDufzpeNngL8=
+Received: from cyy-pc.lan ([240e:379:2260:ed00:cd33:e8cf:d8f9:bed3])
+	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
+	id 5452D659; Mon, 17 Jun 2024 01:21:05 +0800
+X-QQ-mid: xmsmtpt1718558474tw3g8141s
+Message-ID: <tencent_D935633C42BE1A7BF8C80553B5571C737009@qq.com>
+X-QQ-XMAILINFO: N7h1OCCDntujUM20gunPaMcd/E5Hoffduj40fBOeInfA6d5A0WXm0tEpRLsn2D
+	 BWt7my34ZTNK8obOUYW+eMtpsNku+daCR5Q8keEw+GHHbSD6rq6niajZKKDfsXgtjVZK44h4ihGD
+	 QMFqH8JpurMvrcGbEkstGyif1jIOkYArFn22QWwmn43BzBeqHKn2AwEIb9Gv/twpmi0KtJt7o/6q
+	 c9rSjZa4Q97WadsSHrrYgTAY63rN2OcEYWfqHPft5GAYInndADaG98GT9hOUUJTLNgkZWbdzOBr2
+	 TlxlVDTx1c4UzME3v+I+WgXYcem3bRfdIbZpYR4jw+PDFnETplOhPcrEUsX4bMK3wXhyjcp1dMY9
+	 sDeHmHBvff+TBJrLtGfWkDlOzNJ6dAJbXd/I32yLYBTa7GMKk1gFsa5dVYg0VTEEhQbIorkPPybV
+	 LeDBJ259SNksnfUm5nXqJ8aFYcFPSvYnlBYkpB5KkALKfzW9kFPi5ajSx3qTXfRxCaumE9k7dwEC
+	 wGh2noUFnhGW+FOZMsB5OUDBQ7e1ZikV6DEKystoTLfnyZqHx5H9zg/njg3m8OPliOPng1bWHMDk
+	 dYsMsouKyWPIJX+CVfir1AYH5P2VekOQZcgH08ib/TnfpxesbsU/far3rZegdqJF4ws1x47Xlz3I
+	 Gav/9GrJSB2EYXhlYcJZf0mFOxrNK6DeVLXg5dKkcl2GByr0njy/ByJ4CxmgYfnjvovPRm+VugcH
+	 1L3GxWaGLK3fkTKgP7JA7mhUHkDa9u7o4m7v8D/2fzIfIAv3eNHIcO3rDrD7x4kqlpWdktMfYBjc
+	 kNmMHC71OPp1WGjHbtU9C3aiDvEM64JhiY4PPfujQ1QpiAqXQ9jm/jJZ6I0ZDlD4HK1HzsNa32F5
+	 98ylvL+itHufcQYJIaRNTPgYA0qa0fnVMnVD3XAk9BffQZr2Pr4s6cIxRNFZQXXvNNK4GsGlBhKz
+	 sds5Q4XsVena05XgLEXXlmKR5PAJbu689nvEhQ3Ie6Ls6bmsPq2ykCcaZv8MGm0yutGFEVan5ors
+	 oMAQsgYA7aHuuiaOQ/iLFNGz21WuVKkTNDgae8NwTj6N+JEtlHppnkF0Z4j8t4asewsAwA7YjaGp
+	 LxriID
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Yangyu Chen <cyy@cyyself.name>
+To: linux-riscv@lists.infradead.org
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup.patel@wdc.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yangyu Chen <cyy@cyyself.name>
+Subject: [PATCH v1 6/9] riscv: add SpacemiT SOC family Kconfig support
+Date: Mon, 17 Jun 2024 01:20:51 +0800
+X-OQ-MSGID: <20240616172054.3074948-6-cyy@cyyself.name>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
+References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:40aa:b0:4b4:5040:f29f with SMTP id
- 8926c6da1cb9f-4b962b4b3c4mr362827173.1.1718560823101; Sun, 16 Jun 2024
- 11:00:23 -0700 (PDT)
-Date: Sun, 16 Jun 2024 11:00:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000062d903061b059fb4@google.com>
-Subject: [syzbot] [bluetooth?] WARNING in l2cap_send_disconn_req
-From: syzbot <syzbot+e70cc8721ff61d6bebda@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+The first SoC in the SpacemiT series is K1, which contains 8 RISC-V
+cores with RISC-V Vector v1.0 support.
 
-syzbot found the following issue on:
+Link: https://www.spacemit.com/en/spacemit-key-stone-2/
 
-HEAD commit:    2ef5971ff345 Merge tag 'vfs-6.10-rc4.fixes' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=122b5b6a980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
-dashboard link: https://syzkaller.appspot.com/bug?extid=e70cc8721ff61d6bebda
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/68c14576ffea/disk-2ef5971f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3e404ec95932/vmlinux-2ef5971f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b486b23228a7/bzImage-2ef5971f.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e70cc8721ff61d6bebda@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 9 at kernel/workqueue.c:2281 __queue_work+0xc5e/0xee0 kernel/workqueue.c:2280
-Modules linked in:
-CPU: 0 PID: 9 Comm: kworker/0:1 Not tainted 6.10.0-rc3-syzkaller-00021-g2ef5971ff345 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Workqueue: events l2cap_chan_timeout
-RIP: 0010:__queue_work+0xc5e/0xee0 kernel/workqueue.c:2280
-Code: ff e8 46 83 36 00 90 0f 0b 90 e9 20 fd ff ff e8 38 83 36 00 eb 13 e8 31 83 36 00 eb 0c e8 2a 83 36 00 eb 05 e8 23 83 36 00 90 <0f> 0b 90 48 83 c4 58 5b 41 5c 41 5d 41 5e 41 5f 5d e9 17 9d 50 0a
-RSP: 0018:ffffc900000e7870 EFLAGS: 00010093
-RAX: ffffffff815fa3dd RBX: ffff888015090008 RCX: ffff888016eb8000
-RDX: 0000000000000000 RSI: 0000000000200000 RDI: 0000000000000000
-RBP: 0000000000000020 R08: ffffffff81628b19 R09: ffffc900000e7940
-R10: dffffc0000000000 R11: fffff5200001cf29 R12: ffff8880245d49c0
-R13: dffffc0000000000 R14: ffff8880245d4800 R15: 0000000000000008
-FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020aa3000 CR3: 000000005e458000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- queue_work_on+0x1c2/0x380 kernel/workqueue.c:2410
- l2cap_send_disconn_req+0x28e/0x440 net/bluetooth/l2cap_core.c:1487
- l2cap_chan_close+0x378/0x9f0 net/bluetooth/l2cap_core.c:826
- l2cap_chan_timeout+0x142/0x360 net/bluetooth/l2cap_core.c:435
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2e/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
+Signed-off-by: Yangyu Chen <cyy@cyyself.name>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/riscv/Kconfig.socs | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+index f51bb24bc84c..8a5775586845 100644
+--- a/arch/riscv/Kconfig.socs
++++ b/arch/riscv/Kconfig.socs
+@@ -24,6 +24,11 @@ config ARCH_SOPHGO
+ 	help
+ 	  This enables support for Sophgo SoC platform hardware.
+ 
++config ARCH_SPACEMIT
++	bool "Sophgo SoCs"
++	help
++	  This enables support for SpacemiT SoC platform hardware.
++
+ config ARCH_STARFIVE
+ 	def_bool SOC_STARFIVE
+ 
+-- 
+2.45.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
