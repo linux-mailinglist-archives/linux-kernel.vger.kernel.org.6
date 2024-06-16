@@ -1,142 +1,122 @@
-Return-Path: <linux-kernel+bounces-216451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6B23909F77
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 21:08:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D33909F7C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 21:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE8D01C2176E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:08:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63F261C21CFC
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A927A4CB28;
-	Sun, 16 Jun 2024 19:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74BB1C6A0;
+	Sun, 16 Jun 2024 19:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FLmn7tfU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Tqxi+ACd"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8741C6A0
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 19:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249D8224D7
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 19:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718564917; cv=none; b=MMybThj69wmIBuVukdoY/n12e+PhDuIqmnipCfAPpPe1Meo73U68ykFdSJblWAWKNl6sT5NmXTJOISEzoNfxwWU4MpuAyYQL9LBT9WkFOiMZabZUbWF4UBShkG4RjE2nE9v1caB1FwmaF+BKWzzuIo7U2D/dbg+mPXe5ha/RwqQ=
+	t=1718565289; cv=none; b=F2Wd6p1yiDpHBUwE0RUSbqzPTQT/ejTIMijOnc8JNFYbWnXs2JZbEJGp9ByR/MGHcomM6iO943FnDbp+S9pUS12vTPhojJI+erIeWM3Z+XUpup7/CtQC1aBxbEWeEec6HQ/dP5CnAjZoqgBwF+dK0qCwLZlzxL45OGLfKJghl9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718564917; c=relaxed/simple;
-	bh=jAUV2fkaJUOuqukFImg27JopNhskZOQjkb5WpZ7dnXI=;
+	s=arc-20240116; t=1718565289; c=relaxed/simple;
+	bh=V0RL8eC+fHJJXnwr36ZznnspIogMAQ2bi0BDVYM8uAo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=idcbr/jii0Lm74xFAquUW3vsM+8fWLj60qO8G1VKaTzlEOOZx2YBdHTuhTvcbLnzW2uAFoal2xPZg/D2B0TdSBoWOz3KaxsQ+HkvNviLqxe0wztSpJM/9wSn2FPLHKcQSyVnsG8V50+W5Jc3MSN+wp6s3tA3ibYh5HQO0OxG0QA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FLmn7tfU; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718564916; x=1750100916;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jAUV2fkaJUOuqukFImg27JopNhskZOQjkb5WpZ7dnXI=;
-  b=FLmn7tfUe0O3+EBuxj4J9Q6AUPQiOENrc5JiRfOtAJxyDWPFpIOUiaZp
-   BqeOKSpqYrTllt2zLHghgl2qKtLQSC3pnbV8yWX5OL/qo/JmcmpbVpyvt
-   cwQPxnyhjUpvvX2fAteFDxb9d1NxJUxmM2EYOtqy3Q92giBYtzkWnyujX
-   h9kYLSk/FWUFAiE69+JTFEo0buJE2xLAv3sLmnZ1ZjJmthohPq6edtIua
-   n2Yxt9tsKRw+KFYEQmbLyj3Go5IMXBGqFgk4fQwGEXlbKd6EMnMzmugdR
-   IZd2vDFKWgD0SSLwihtguyFJKEQpSZmyhmaUufXYjiMnxaY8tW70S2Wnx
-   A==;
-X-CSE-ConnectionGUID: JduJFg9JRlSlNzryVEKx9w==
-X-CSE-MsgGUID: 7SV3sc2qSIalq5GAtGwK9g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="32866479"
-X-IronPort-AV: E=Sophos;i="6.08,243,1712646000"; 
-   d="scan'208";a="32866479"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 12:08:35 -0700
-X-CSE-ConnectionGUID: s69HtPn/S02F75KT9lBZwA==
-X-CSE-MsgGUID: 3wULYVdJRtiEZ2VnXSxS8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,243,1712646000"; 
-   d="scan'208";a="40937455"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 16 Jun 2024 12:08:33 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sIvEs-0003Ay-1n;
-	Sun, 16 Jun 2024 19:08:30 +0000
-Date: Mon, 17 Jun 2024 03:07:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Amit Vadhavana <av2082000@gmail.com>, srinivas.kandagatla@linaro.org,
-	alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-	rbmarliere@gmail.com, skhan@linuxfoundation.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel-mentees@lists.linuxfoundation.org, av2082000@gmail.com
-Subject: Re: [PATCH] slimbus: Fix struct and documentation alignment in
- stream.c
-Message-ID: <202406170201.Zh53W56G-lkp@intel.com>
-References: <20240616154531.38232-1-av2082000@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UUwnL0MbD9fvLvoOFLYNqlZNSIEYm+WAKwItUTX2lib6tepL8l/e3BWEd1LNM8VpHGERtCx08NisKz32kwKr1RY7FSnQds93PbFbxJj7iLC9NDTjAXFD/rJzi2T8Um5VI7KtnE+V/yyNrgWRPtUmj3iacz+kDeaQS1iY2rkSXxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Tqxi+ACd; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=E3c+
+	rE9O/gHyw3I/AZQMe5HK1HGXZDCGy8v16XB4IEQ=; b=Tqxi+ACdFFAUVfAFuOQf
+	D+ub9dbKuL4GK6dG+wFlo4twbp6Ty6Q/wdA/jZAmohsfDGMuWh6nRmn9DbbrIvvf
+	TCegAOKWyDb3V4FGY/qEX3CGbC3X7TteWJEH3ZB/UAdsIBmttZxAxNRwzqc8plmG
+	a2bGUXYIQ4dllTQQc1IrW6H9S/kHFC5wuO1Qac0x8nILKJnV6WJcU+T3VtYVWwzh
+	LeO1d6gQTEWdYeDImdJrbhsjNolCq65JA3Zq3zW1boJHrZscLz/2rLTYAxilTSb5
+	pzSWCXTeXIwg/JlYWApo4LG1TDDHQcrKJCIHGd7oekK91NbtPPIa19rpTSNa8KjH
+	KQ==
+Received: (qmail 2103200 invoked from network); 16 Jun 2024 21:14:41 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Jun 2024 21:14:41 +0200
+X-UD-Smtp-Session: l3s3148p1@0MMYqQYbdsJehh9j
+Date: Sun, 16 Jun 2024 21:14:40 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c@vger.kernel.org, 
+	Easwar Hariharan <eahariha@linux.microsoft.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] docs: i2c: summary: document 'local' and 'remote'
+ targets
+Message-ID: <ed75fyc2xcsnwubq42eposf6ayt5aj2jmqz6mthugk6vm2zpi4@qqwlmuwayoo5>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org, 
+	Easwar Hariharan <eahariha@linux.microsoft.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240614081239.7128-8-wsa+renesas@sang-engineering.com>
+ <20240614081239.7128-13-wsa+renesas@sang-engineering.com>
+ <4zxr4rlqnjqbqh3oxmd2ufqi6uk4pxa3tniuya5pgjtqi6tswc@utq4r2zt6z6b>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nqgjfqkwqmmuhuwd"
+Content-Disposition: inline
+In-Reply-To: <4zxr4rlqnjqbqh3oxmd2ufqi6uk4pxa3tniuya5pgjtqi6tswc@utq4r2zt6z6b>
+
+
+--nqgjfqkwqmmuhuwd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240616154531.38232-1-av2082000@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Amit,
+Hi Andi,
 
-kernel test robot noticed the following build warnings:
+> I am not a big fan of the use of the word client. It's not used
+> anywhere in the documentation and it's too generic as a name for
+> giving it a specific meaning.
+>=20
+> I've seen already some confusion amongst reviewers and
+> maintainers when Easwar sent the patch in drm.
+>=20
+> If it depends on me, I would stick to the only controller/target
+> and render obsolet the use of the word "client" in the i2c
+> context.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.10-rc3 next-20240612]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Have you read the paragraph "Synonyms" from patch 6? I don't think we
+can obsolete client because:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Amit-Vadhavana/slimbus-Fix-struct-and-documentation-alignment-in-stream-c/20240616-234811
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240616154531.38232-1-av2082000%40gmail.com
-patch subject: [PATCH] slimbus: Fix struct and documentation alignment in stream.c
-config: arm-randconfig-002-20240617 (https://download.01.org/0day-ci/archive/20240617/202406170201.Zh53W56G-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 78ee473784e5ef6f0b19ce4cb111fb6e4d23c6b2)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240617/202406170201.Zh53W56G-lkp@intel.com/reproduce)
+$ git grep 'struct i2c_client \*client' | wc -l
+6100
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406170201.Zh53W56G-lkp@intel.com/
+All the best,
 
-All warnings (new ones prefixed by >>):
-
->> drivers/slimbus/stream.c:22:1: warning: 'static' ignored on this declaration [-Wmissing-declarations]
-      22 | static const struct segdist_code {
-         | ^
->> drivers/slimbus/stream.c:22:8: warning: 'const' ignored on this declaration [-Wmissing-declarations]
-      22 | static const struct segdist_code {
-         |        ^
-   2 warnings generated.
+   Wolfram
 
 
-vim +/static +22 drivers/slimbus/stream.c
+--nqgjfqkwqmmuhuwd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  11  
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  12  /**
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  13   * struct segdist_code - Segment Distributions code from
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  14   *	Table 20 of SLIMbus Specs Version 2.0
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  15   *
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  16   * @ratem: Channel Rate Multipler(Segments per Superframe)
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  17   * @seg_interval: Number of slots between the first Slot of Segment
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  18   *		and the first slot of the next  consecutive Segment.
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  19   * @segdist_code: Segment Distribution Code SD[11:0]
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  20   * @seg_offset_mask: Segment offset mask in SD[11:0]
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  21   */
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05 @22  static const struct segdist_code {
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  23  	int ratem;
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  24  	int seg_interval;
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  25  	int segdist_code;
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  26  	u32 seg_offset_mask;
-abb9c9b8b51ba5 Srinivas Kandagatla 2018-07-05  27  
+-----BEGIN PGP SIGNATURE-----
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZvOZwACgkQFA3kzBSg
+KbbP/Q/8CBzfCJomMlj1tACYIrqZi7OIqg7HiRw0UD2icgPT56QxIFoItHRzaGao
+zxcIxNN+awz1N54FRAumgZ0N73rBK4lNarM7GeLgSQ2rZ3SkeqaUpV+QpqIClcvT
+s8TZ7t3GU+V/zYTNJxz0Rrp9exdSR7yMquw/yLcD9QAnOxuq6nCTcyIKqVUkjl1p
+AQGkNd13qPaa0na0GD63WzFXJcIcnHeFmpUV0ZoYtsCH1EEgVjcRRXm6s7b2afIy
+83XonLvSNJKtgNXUJ1agXbYyNfx7O5Q+xEYJf9g2rvQCxfs31yRVvOYgpuwg5P52
+AMdzzwvqgHCLxlUOC55KiFsjSsE+tV+pyO3wDLsRrmxZPROShtjD4mQ4oAeFutpK
+YbiGWKpyZNBg7WXPVndn99YT2tSwnsA/1rYDKAJ7pPyh9Ol6bG5AzszdpFqnOJe+
+2+D66v9jIq5ujhIYqsLVE6CKS2068OnIpJ8LNpIxbAy99DgGk97+FIlpJ47A/Gdg
+mbYv8NEBADWv7jxfMpka/kVC+ibdDqbZtg75qzDW4SUCWJfPd+Q7WSxsp8zPotEe
+ypz2gZnEkdL9q5u8ncRUuSOa3jNwQ2oU5k1WOqBCaLeb8cE3yLHi0/Q1djolmXLi
+hd6AcAZRw5EyuLK4+YIUTKwclh+tAyytsbqMEPmTmtKpo7H4il0=
+=YWfB
+-----END PGP SIGNATURE-----
+
+--nqgjfqkwqmmuhuwd--
 
