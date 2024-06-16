@@ -1,136 +1,158 @@
-Return-Path: <linux-kernel+bounces-216468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3035A909FB8
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 22:32:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D280909FC1
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 22:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17C4F1C212D7
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 20:32:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AF571F21F11
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 20:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF53B50285;
-	Sun, 16 Jun 2024 20:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B738560DFA;
+	Sun, 16 Jun 2024 20:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LUDV1HOS"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="So49XRAA"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D474D12E5B
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 20:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA6612E5B;
+	Sun, 16 Jun 2024 20:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718569969; cv=none; b=Wf2oy71KYWtJNdc6cWxFyqsaMborct7JvhY4KB4/BoJm/CWA+r40HNeIvgrf2v6D+QdTLa2qkL9DBbymlJnxN+QrA8lWUHmtfyNn+MOvfd3uGoKh1+H1h8L+8Um+A+92lmPRWxTRGtFexRQYp/XiYbmuDYWKBOeu7pD6X023DtM=
+	t=1718570592; cv=none; b=t1UUo7RKYhwNtrroEHEOiAK6x0UrAKGbBL/1cMYZoZ21gkzQ0RrhN0HsTYU70cDkh4agA5rb8VqEXHHl3zudv3pQbwNXt2Dm0DxQ7afHcqxTh4YUfjcKwecLb7O3f089pR6rxdS1MqYb+Vxt86SpyH9cT/gZCApni4ewcHQ9SVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718569969; c=relaxed/simple;
-	bh=ia4edk8RmfbVzS93m+pKUdA00RtrRqwyHnd3U5dDO60=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jHpUgW+kPDmvQ7a+rtc7x7Y0e9wHLaaY8fz1IxHqWA63hvKRtdhD7ruPEIL4T7okz0D0VLI2SgaXc/nsmZV4HPlwBEB/ZxDHfFSHa/TqoyYyrQ+XTCZQ+asAB1IaCFRi10FVdOVRcLEQHh2mo/ihHlAEOFA6Z/0XcpeKTpVvudw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LUDV1HOS; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1718570592; c=relaxed/simple;
+	bh=gGwjEFazaWXjREXYJOGV0tEx7mfESFqlR/M6Rzv755I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SlNqQYXZ1Upk3XRlAMo0UvoccnO6ZOEQ6CPadnzOEzr5NlXcz3RCYoJx6BamGLkr7NlAvx7Sl/kz8NQihOamRtOWR254KEorXKAP/8ylj4SsDO/lQKsmeLciXTW+7S8uhRa8CxGB+r4jUuVMkZ9pHn9RABTAuV7DX38M7y1NPwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=So49XRAA; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-6e3741519d7so2593845a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 13:32:47 -0700 (PDT)
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-375f6841efdso2820275ab.3;
+        Sun, 16 Jun 2024 13:43:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718569967; x=1719174767; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ruQzJtdDUUq/rH+dZqwFNhNxz0nTDbK3w5CfEy2fEI=;
-        b=LUDV1HOS5gx8/XYtlx/VV1kCvHtVTENF4zC6MBQuudVe6zobo3WkzEyIZXJfP70AdX
-         J2DlVzmvMICHTGNxQVy4X2B3ToZG02GsZJn8PXnWB0rfAIAnyxw/S12oI/3yPuLWhec3
-         avVyB0EyrR8dfFf/tVyE+7kR4m3Ljgqsfpee9bJ5nk7G3dxIyjpJpZUhr6pMuS6TN+2e
-         4eUYG4iTmDO7kmmXjfqFlRBxPgXTKk22GYcFpqLiAQaHg5ad/k1pcjdJVrVMLrGP1ctL
-         ZiV2/E+JLMxt4NHa6IY7Xc0OYTKjZEO6R4iMZpBhIlwcUKPL0AZDKVe4E+lkoCpHzddr
-         UpoQ==
+        d=gmail.com; s=20230601; t=1718570590; x=1719175390; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=eZkHU+YVncyhDTUT+HAuuHG6hrCtQiXps+9v9Zknt/4=;
+        b=So49XRAArTJgGAU0b/e3sWcGn+4oAsGqdrAuMwdGEFt30+SHNl3GpcWaWWwUcQ+wU9
+         yGKLlxSZQjAlJ+2dTf+vXTP0pJMZUaGdj3mYFEbeoTiBveK4FXfRDu51lMuLP73K7HgT
+         w25UnwpCUi42sw1Ssmccvo8VMixz2kOhJXsfIQL9zz9Ni2L2BEBI1TOdJUF/vKEjACjv
+         9ss+nUivGCG0fwQoRPxIm3oWvUCluXwfiUfDtyQed758yFkpRHy7uH+L84+Vtf2lAA7n
+         S1dqNmbOMxyaYgh3ri/dAA+wPkuU22sFf/rTSOqH2JT8G4E/swHWliQWkcmm2mOIy3zg
+         jdbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718569967; x=1719174767;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7ruQzJtdDUUq/rH+dZqwFNhNxz0nTDbK3w5CfEy2fEI=;
-        b=KuxTeprqdLbsd1LQZ3jbnsfh0mMxFvA+ORRopqvRCxf+3O1AujPU59PA1/YYKd5fMT
-         rnVLHjkdnqdDbxHiwzsXWwMiVKI34HNxqvnIRvoCknK0UlYe0iOPAePh7HpO/+1SqrXt
-         zWoc5m3rEYXa4xioNP/K387Yev2ibOt+7PFP+hU0wMatICnag4atOJJHttb34+2LLb9Q
-         xMYY56GHxus23lDyjRQZvwoX47md0OsQlYR6TVDmb3S/vtso4fq5JXaBw81fb6G/5WhA
-         G9apwtpvtBrTYFbmOraZJLgwCuNMGOLlePIym/ZOXfbDbPE7LyrM7XCBznWsXVMCAkcj
-         vsOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEDNqGQjy/6YDw258Mu+j/ljHM5Bkr23Fx5R3EGkAIBhRCL5/TtA4HZsoWIrjWyCTdz5vkSlsoeX9FNrdBCIdpD6EPyWbWEJcF96Xy
-X-Gm-Message-State: AOJu0YwAbQT9e7hynbTgKwtpP+zpaW8jMPWU3yvWhhGmhONoYQq4Cs5Z
-	5coYWAsfDchwI2XpXZkdU1QLMM2aeMpF2hoqeSfsV1H5CXqnEc2F
-X-Google-Smtp-Source: AGHT+IHttRPT+l3u7KhI0+XnNjSbaauE24Xxu5vcXgX8eJpy16mVVB7TSc2rxGcJwba3DyjXRzPUMQ==
-X-Received: by 2002:a17:902:d4c4:b0:1f8:44f8:a364 with SMTP id d9443c01a7336-1f862a167a1mr94641395ad.48.1718569966812;
-        Sun, 16 Jun 2024 13:32:46 -0700 (PDT)
-Received: from localhost.localdomain ([2409:40c1:10da:1462:6c5b:68d6:dcd3:7aed])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855ee807fsm67611455ad.155.2024.06.16.13.32.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Jun 2024 13:32:46 -0700 (PDT)
-From: Amit Vadhavana <av2082000@gmail.com>
-To: srinivas.kandagatla@linaro.org,
-	alsa-devel@alsa-project.org,
-	linux-kernel@vger.kernel.org,
-	rbmarliere@gmail.com,
-	skhan@linuxfoundation.org
-Cc: linux-kernel-mentees@lists.linuxfoundation.org,
-	av2082000@gmail.com
-Subject: [PATCH v2] slimbus: Fix struct and documentation alignment in stream.c
-Date: Mon, 17 Jun 2024 02:02:31 +0530
-Message-Id: <20240616203231.43724-1-av2082000@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1718570590; x=1719175390;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eZkHU+YVncyhDTUT+HAuuHG6hrCtQiXps+9v9Zknt/4=;
+        b=q8mEcU9PTy1Qo9FEKRd5DzX4awb2+H0LzsBTMPpLYKp9UuAghMPH27IYjuJxbnC7V8
+         GQDkS38Ah8fGnlYbGN8TywXmkXAJnMqjLkOnA9PVhATrXLItQrWFHAPaUpufB/g/0g/g
+         e/sSKntInw4wV4mRbSvibct+AE920BVtDzGZhE5XzmbPaoioEY+od+tQumiDEhC1IlXk
+         XuSrUXYZMWZNfOEXd68q2DRV5bY88h9a9MU+hhxpUHNWHFLXqRo8IpKT0GL21XSfo6Qg
+         nmZhOlWlg4NEYGpDNuCo7+9BC3X8epdhnkSsSbiqMEYJlx/YZ7YqvPbGQMhKeHGfGo6T
+         /hNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZb8Xnde4omxiq2v0Q6QKo4LPO2zonQx43+UGTkVssNJilrswrXW7FfbiBs/goWZhU9qZpQwJ7JarSGxGxpEgir/E3E7YlGc1hRfCXm3OGwo2Sb0I7WNEmzYG8UVTYOIaCgm5kSbL5EQ==
+X-Gm-Message-State: AOJu0YwNHyyt3dh01FhYQoWat+iKumITxfi0KmLqbg6MClk326bLojBV
+	OyyuMMuBjYENtn/zWUB1Wax5ga+UNABBUM+X+NDbTIp8yoy5OZr8
+X-Google-Smtp-Source: AGHT+IHIXTAOCDrOh9xc3RjqiiTgt0YMh5JGm9dR2yJL7g+BWp6VH3XauMqWW/OuV9pOlwiwwH4Zpg==
+X-Received: by 2002:a05:6e02:12e2:b0:375:ae6b:9d9c with SMTP id e9e14a558f8ab-375e0e595f2mr106639925ab.26.1718570590214;
+        Sun, 16 Jun 2024 13:43:10 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb3d2e8sm6276031b3a.107.2024.06.16.13.43.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Jun 2024 13:43:09 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <f75635d8-4199-4bbe-9fba-a1d2ed206966@roeck-us.net>
+Date: Sun, 16 Jun 2024 13:43:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: hwmon: ti,tmp108: document V+ supply, add
+ short description
+To: Stanislav Jakubek <stano.jakubek@gmail.com>,
+ Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <Zm8/qxGc8fvi/tuE@standask-GA-A55M-S2HP>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <Zm8/qxGc8fvi/tuE@standask-GA-A55M-S2HP>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The placement of the `segdist_codes` array documentation was corrected
-to conform with kernel documentation guidelines. The `@segdist_codes`
-was placed incorrectly within the struct `segdist_code` documentation
-block, which led to a potential misinterpretation of the code structure.
+On 6/16/24 12:40, Stanislav Jakubek wrote:
+> TMP108 is powered by its V+ supply, document it.
+> While at it, add a short description with a link to its datasheets.
+> 
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> ---
+> Not entirely sure of the "v+-supply" name, but the datasheet only ever
+> refers to it as "V+" or simply as the "supply voltage".
+> Only other name I've seen is in the schematic for the msm8226-based
+> motorola-falcon smartphone, where it's called "V_POS".
+> 
 
-The `segdist_codes` array documentation was moved outside the struct
-block, and a separate comment block was provided for it. This change
-ensures that clarity and proper alignment with kernel documentation
-standards are maintained.
+Guess one has to praise the ability of datasheet writers to come up
+with different names.
 
-A kernel-doc warning was addressed:
-    ./drivers/slimbus/stream.c:49: warning: Excess struct member 'segdist_codes' description in 'segdist_code'
+The datasheet for tmp117 also uses the V+ term, yet the supply name
+is "vcc-supply". I would personally very much prefer to stick with that,
+but that is just my personal opinion.
 
-Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
----
-Changes in v2:
-    - Removed `static const` keyword from `segdist_code` structure declaration.
-
- drivers/slimbus/stream.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/slimbus/stream.c b/drivers/slimbus/stream.c
-index 1d6b38657917..863ab3075d7e 100644
---- a/drivers/slimbus/stream.c
-+++ b/drivers/slimbus/stream.c
-@@ -18,15 +18,17 @@
-  *		and the first slot of the next  consecutive Segment.
-  * @segdist_code: Segment Distribution Code SD[11:0]
-  * @seg_offset_mask: Segment offset mask in SD[11:0]
-- * @segdist_codes: List of all possible Segmet Distribution codes.
-  */
--static const struct segdist_code {
-+struct segdist_code {
- 	int ratem;
- 	int seg_interval;
- 	int segdist_code;
- 	u32 seg_offset_mask;
- 
--} segdist_codes[] = {
-+};
-+
-+/* segdist_codes - List of all possible Segment Distribution codes. */
-+static const struct segdist_code segdist_codes[] = {
- 	{1,	1536,	0x200,	 0xdff},
- 	{2,	768,	0x100,	 0xcff},
- 	{4,	384,	0x080,	 0xc7f},
--- 
-2.25.1
+Guenter
 
 
