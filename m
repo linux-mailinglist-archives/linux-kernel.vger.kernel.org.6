@@ -1,384 +1,334 @@
-Return-Path: <linux-kernel+bounces-216308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 514BC909DBE
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:26:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52AA1909DC3
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9EA7281BCE
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 13:26:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5087A1C2187F
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 13:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A7C18FC76;
-	Sun, 16 Jun 2024 13:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2E3188CB2;
+	Sun, 16 Jun 2024 13:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="L4KSUUsl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AwDYXwfh"
-Received: from wfout1-smtp.messagingengine.com (wfout1-smtp.messagingengine.com [64.147.123.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EkA3pRb3"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBE318F2DE;
-	Sun, 16 Jun 2024 13:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEEF1DDF8
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 13:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718544348; cv=none; b=RWs69unkEf6x1Rbf8dWik8HgsgE7aakqD8C0/jkBwvtf2DdmZdQKVbZVXZ77+CXZNY+tl8RYvcB9rBnm7bTGiesAImwRituHG/hHGXGaFni71oYRrU0z6+rTb5ki6gBYohVkOIX+WQgM4MuwxRdUHfQXWw/Jb4H8NKlEenAcXLQ=
+	t=1718545035; cv=none; b=ui6SsHQzmksFLugJy+dYQUwQfXTMvt4Hsb7EwNSOjSFlaAp8+IB7jfEcFJZXpxhJmLyY20XAlxoDrp+EJDi4QoracDu5E4o5C7TVdIrL1dOm0OA8T01o+3BtabPudJQ86q8wb3819DIkKEdO+u+xDdduCfHAHAloUNgGI0MpA7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718544348; c=relaxed/simple;
-	bh=GtXXopSw9hxQiRf/LvNggLCC3XC0HHzH5OdP5ohyH1o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HVfY7Yk2wF0SH+U3lycxUN5OdDL81ot2SSaTRWBExGaDm1ewG6jTyUBfCicJqzz6sHi0eGs3iEm5rX/32mRrpG6u22HJq4I2bY2CERDdFMtM/M+ZJ+MHb1POT+IMhC6sBd656B5G1oN2QLkXitu4fyubbn0BspXU79XTSKRSqZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=L4KSUUsl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AwDYXwfh; arc=none smtp.client-ip=64.147.123.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfout.west.internal (Postfix) with ESMTP id B8ED11C00099;
-	Sun, 16 Jun 2024 09:25:45 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Sun, 16 Jun 2024 09:25:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1718544345;
-	 x=1718630745; bh=FX2B+78UWiFhpuuYQCfJnH0iQUQy8ppKjXTRK5/qQFA=; b=
-	L4KSUUsldpb/WTSIIW61gEWVr40s/DoeblCMZCWaZPEdJCZVAXHJ1s9EXsrI5G9H
-	a+T+9Dil5NCDAwjyg3X3SoPNIgBvPuwAiGwGUOYh3keUx5ZNrHSsIFKrYDObKHBc
-	40q6icGnxw/C24ec6OsEwogTMzYmktxlTgn25teaafdMZMQV24us/0f5YkSl5Lvk
-	oxv0wMnD8IzDBqm7XUcu+tsiRygP7VJste8fGysrp9cYqQ8HXrLYNX4aUCCPLOp+
-	NpPxG3QO/9nmpRG1O3hxLYG+mHx8erm1Q1rHV7eqQkZhb2pfN0pGWFCE3RSgB2kW
-	Tspq+07s19xlRMeWbo6C2Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718544345; x=
-	1718630745; bh=FX2B+78UWiFhpuuYQCfJnH0iQUQy8ppKjXTRK5/qQFA=; b=A
-	wDYXwfhRIhuygZ0l+rrot8TQYPVXaWOC+s1umMcMUc01nxpYHic77snbQcAOV2Qp
-	PFUz20GDUoB6ucETO8hk7nxrCr34GlNbggmUtkzgeqIRjsSXah7JrUGGJkbFGuDa
-	Z5USzlMZPy+bUBxVBDldmsUtZGkjuSU/tiqFc5GTbhGoNxR+pY4gaBxDiNslZKqP
-	bvbg59NEr0qnKN4WOXACWANObnhUOmez3DVTFEi8bnWMz5xFd5IPJplUCm47QI2W
-	qzAt3qbSWEQL9nEM/5kKBZqlfLVCeBDIJdvxyprS+bcvg+k/gAqLgn4loVRb76sa
-	AqokoPfCD8ODfCopLIBew==
-X-ME-Sender: <xms:2eduZvdpBU3h8jfxZzB8ayGuslLU_5Rr-Hq0mPwY3F0lydJpc8VezQ>
-    <xme:2eduZlMkLNJcPwU0eGGfkad76MfASP6b_HJAK3YSiSU3A53p_jc85psj5n6VqUFop
-    9fBaQy1bb8JxXzwDZw>
-X-ME-Received: <xmr:2eduZohhUpPtma3z3Lbnh4WYPchSdI5e-odLoLV8uAOJ8BTTTrtySW4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvfedgieegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeflihgr
-    gihunhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomheqne
-    cuggftrfgrthhtvghrnhepvdekiefhfeevkeeuveetfeelffekgedugefhtdduudeghfeu
-    veegffegudekjeelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:2eduZg8j99uK7IlJG121gKaTLoCXj-H_9FzLQ5ebL8lbQzI0x6Sc6A>
-    <xmx:2eduZrsr0UFMMT21E6M2uDhO9Q60pwI_oFVkvHI81e99h56dKeeO3g>
-    <xmx:2eduZvE8pO714akFVbInyejAE95jp-lBhLevR7XyY9Xk0OT2HZlCUw>
-    <xmx:2eduZiMKeMlaGbaOMyQB08O8iqwRr5Nj2Kxqkes72iJf_8DBrA9hsQ>
-    <xmx:2eduZhVXqdPnsTa0kfZNVkXOYhE9LmBQAuHP6Emr6JZ8xl515-oVbIdb>
-Feedback-ID: ifd894703:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 16 Jun 2024 09:25:44 -0400 (EDT)
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Date: Sun, 16 Jun 2024 14:25:05 +0100
-Subject: [PATCH fixes 4/4] MIPS: Use toolchain MT ASE support whenever
- possible
+	s=arc-20240116; t=1718545035; c=relaxed/simple;
+	bh=5+SdQnZnG1y9HxR07OjoUs4P3c1JXSE8RHTxsbHXs1k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ucG1+OuCeHDHJ7rcwlJWO4gsOa/S1yOA/IQQI/8ahhX6rNpLf5/M5aPapObGta2Mo2dEZCh7jbvqXkZGnnxOofFcw4wFJWLTyy/W1RD+XwMs/+No3dfo0m076ZLMlDpYPO5634QUC1ob2TRV4UFAHrAj2rQK1d6ty0AzsRM6j+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EkA3pRb3; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f700e4cb92so31143975ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 06:37:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718545033; x=1719149833; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vo6LewisGnKDZPN/HUntq5aJW2gPhK/j1eCzo1GB2/k=;
+        b=EkA3pRb33loxoXz4GnYaYi6g+LZnToVYkEs0BOwaGZNyp6i3CG256VLtlAuu5/tuw/
+         eZx7zFmck9kbklb4+CQWEUZeTeQvblssPe18iszJ+eePZe2PTbVtpPUTFWcxzZ4zGPVK
+         Ady7XV5rB3V/GHC2ZGIoO/PiZ9oXVzdErVfS4CgAcP0EjjjDKY7+EkrqbNCu/5N0AOxn
+         k6T9gJWUpPSduE15vWr7UHTsBBbsl5QjgHeGO88985ycX7IHo75Iz+WRtWTL+me5C+qT
+         4KWbdpZvlN17ZbU7d0IFsXSZiECIVq5CtIaQti5QIHKi9TxdgAWNezLungN7pW0QNkhE
+         MGnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718545033; x=1719149833;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Vo6LewisGnKDZPN/HUntq5aJW2gPhK/j1eCzo1GB2/k=;
+        b=Mr0Rj68Nl/i4a0gPuNrgwySVZy4dwo0MC9pKCYF9R5pp/9Ory7OLSvkIXxJLQMNS+n
+         OPcakdWOKtyQfQ7zc+uDPmZGbJ84zJZ5Zfr/yxTzqDf2soEHg8BlIeNes1a3/JqZChhH
+         /y2oVqtNr3joW4QUrljrIWVUTkZ8V8TYIJC4Kb/skdmFSNFmQyOgFQyCdA++msKpbIXb
+         S5hL9E8Ynw/XjW197+dufy9529PYgdMYdZ4uxdPTXXYZU8xDC2G132yDxta93ooyUWjE
+         bkC8Qgei7ptgNy6DQxh10W66sMThRuLZgYH5EkNEyyUfQQJekbquou0aM2ZaQaCgV8pq
+         092A==
+X-Forwarded-Encrypted: i=1; AJvYcCUG+OPzn13lwxqIjdzDy55YFS5GvXukM50B1uGlLxweX3epZ8VfZuEzlqIAUN5AQ6CBuW8az6lZws5cl8C+Qjl2VDfvbCC9p2bm0K0l
+X-Gm-Message-State: AOJu0Yz8DOXz7D+ThrdW1WMoSRBbTs4hLgeIO4gW4ZUPU1jZA/Sfnlsl
+	AyN3uVsmwnUgMtu8S535zjVEtSEA11U2fCIRDdqZB/p3ZKWxvvTT
+X-Google-Smtp-Source: AGHT+IHyKCYIIMXS1PzF7WjVg/51xGCgdvMjVfp92z+vEuJxUitlc9CwdsLpXLBEUtFpq4zoPA2AMQ==
+X-Received: by 2002:a17:902:e847:b0:1f8:49e0:4d19 with SMTP id d9443c01a7336-1f8629fed6dmr108963735ad.57.1718545033157;
+        Sun, 16 Jun 2024 06:37:13 -0700 (PDT)
+Received: from dev0.. ([49.43.162.104])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855ee6f01sm63756575ad.153.2024.06.16.06.37.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Jun 2024 06:37:12 -0700 (PDT)
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+To: almaz.alexandrovich@paragon-software.com,
+	ntfs3@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: skhan@linuxfoundation.org,
+	javier.carrasco.cruz@gmail.com,
+	jain.abhinav177@gmail.com
+Subject: [PATCH] fs/ntfs3: Remove recursion in indx_insert_into_buffer
+Date: Sun, 16 Jun 2024 13:37:04 +0000
+Message-Id: <20240616133704.45284-1-jain.abhinav177@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240616-mips-mt-fixes-v1-4-83913e0e60fc@flygoat.com>
-References: <20240616-mips-mt-fixes-v1-0-83913e0e60fc@flygoat.com>
-In-Reply-To: <20240616-mips-mt-fixes-v1-0-83913e0e60fc@flygoat.com>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jiaxun Yang <jiaxun.yang@flygoat.com>, stable@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6957;
- i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
- bh=GtXXopSw9hxQiRf/LvNggLCC3XC0HHzH5OdP5ohyH1o=;
- b=owGbwMvMwCXmXMhTe71c8zDjabUkhrS85xcFv/eaLvNa7+QS9u6i+GsF84WCP0Pr3QOezQ8Pl
- vm34dSHjlIWBjEuBlkxRZYQAaW+DY0XF1x/kPUHZg4rE8gQBi5OAZhIVwnDf1fuV0ULMz2WSsdP
- 4Z9UWHC2TUg+xLDJOVDN5snSNs+YFIb/kX+21hc9rGFwulpu3Mqe6+pz4tj/86YX2vy799S2qK9
- mBwA=
-X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
- fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
+Content-Transfer-Encoding: 8bit
 
-Probe toolchain support to MT ASE and use it in code whenever
-possible.
+Remove recursion by using iteration.
+Decrement the level so that parent buffer can be handled in the
+next iteration.
+Update the header of the index buffer to point to the correct buffer.
+Set new_de to up_e so that the promoted entry is inserted into the
+parent buffer.
 
-Fix build on MIPS downstream toolchain that is not really happy
-with our .insn usage.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
 ---
- arch/mips/Makefile                 |  2 +
- arch/mips/include/asm/asmmacro.h   | 75 ++++++++++++++++++++++++++++++++++++--
- arch/mips/include/asm/mipsmtregs.h | 40 ++++++++++++++++++++
- 3 files changed, 114 insertions(+), 3 deletions(-)
+ fs/ntfs3/index.c | 204 ++++++++++++++++++++++++-----------------------
+ 1 file changed, 106 insertions(+), 98 deletions(-)
 
-diff --git a/arch/mips/Makefile b/arch/mips/Makefile
-index 80aecba24892..e3d1c5a0e8e9 100644
---- a/arch/mips/Makefile
-+++ b/arch/mips/Makefile
-@@ -257,6 +257,8 @@ toolchain-dsp				:= $(call cc-option-yn,$(mips-cflags) -Wa$(comma)-mdsp)
- cflags-$(toolchain-dsp)			+= -DTOOLCHAIN_SUPPORTS_DSP
- toolchain-ginv				:= $(call cc-option-yn,$(mips-cflags) -Wa$(comma)-mginv)
- cflags-$(toolchain-ginv)		+= -DTOOLCHAIN_SUPPORTS_GINV
-+toolchain-mt				:= $(call cc-option-yn,$(mips-cflags) -Wa$(comma)-mt)
-+cflags-$(toolchain-mt)			+= -DTOOLCHAIN_SUPPORTS_MT
+diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
+index d0f15bbf78f6..09d5dcbfcc38 100644
+--- a/fs/ntfs3/index.c
++++ b/fs/ntfs3/index.c
+@@ -1802,122 +1802,130 @@ indx_insert_into_buffer(struct ntfs_index *indx, struct ntfs_inode *ni,
+ 	u16 sp_size;
+ 	void *hdr1_saved = NULL;
  
- #
- # Firmware support
-diff --git a/arch/mips/include/asm/asmmacro.h b/arch/mips/include/asm/asmmacro.h
-index 6eadd59f53e9..b60fa51e5fbb 100644
---- a/arch/mips/include/asm/asmmacro.h
-+++ b/arch/mips/include/asm/asmmacro.h
-@@ -318,9 +318,77 @@
- 	.endm
- #endif /* !CONFIG_CPU_MIPSR2 && !CONFIG_CPU_MIPSR5 && !CONFIG_CPU_MIPSR6 */
+-	/* Try the most easy case. */
+-	e = fnd->level - 1 == level ? fnd->de[level] : NULL;
+-	e = hdr_insert_de(indx, hdr1, new_de, e, ctx);
+-	fnd->de[level] = e;
+-	if (e) {
+-		/* Just write updated index into disk. */
+-		indx_write(indx, ni, n1, 0);
+-		return 0;
+-	}
++	while (true) {
++		/* Try the most easy case. */
++		e = fnd->level - 1 == level ? fnd->de[level] : NULL;
++		e = hdr_insert_de(indx, hdr1, new_de, e, ctx);
++		fnd->de[level] = e;
++		if (e) {
++			/* Just write updated index into disk. */
++			indx_write(indx, ni, n1, 0);
++			return 0;
++		}
  
--/*
-- * Temporary until all gas have MT ASE support
-- */
-+#ifdef TOOLCHAIN_SUPPORTS_MT
-+	.macro	_dmt	reg = $0
-+	.set	push
-+	.set	mt
-+	dmt	\reg
-+	.set	pop
-+	.endm
-+
-+	.macro	_emt	reg = $0
-+	.set	push
-+	.set	mt
-+	emt	\reg
-+	.set	pop
-+	.endm
-+
-+	.macro	_dvpe	reg = $0
-+	.set	push
-+	.set	mt
-+	dvpe	\reg
-+	.set	pop
-+	.endm
-+
-+	.macro	_evpe	reg = $0
-+	.set	push
-+	.set	mt
-+	evpe	\reg
-+	.set	pop
-+	.endm
-+
-+	.macro	_mftr	rs, rt, u, sel, h = 0
-+	.set	push
-+	.set	mt
-+	mftr	\rs, \rt, \u, \sel, \h
-+	.set	pop
-+	.endm
-+
-+	.macro	_mttr	rt, rs, u, sel, h = 0
-+	.set	push
-+	.set	mt
-+	mttr	\rt, \rs, \u, \sel, \h
-+	.set	pop
-+	.endm
-+
-+	.macro	_mftc0	rs, rt, sel = 0
-+	.set	push
-+	.set	mt
-+	mftc0	\rs, \rt, \sel
-+	.set	pop
-+	.endm
-+
-+	.macro	_mttc0	rt, rs, sel = 0
-+	.set	push
-+	.set	mt
-+	mttc0	\rt, \rs, \sel
-+	.set	pop
-+	.endm
-+
-+	.macro	_mftgpr	rs, rt
-+	.set	push
-+	.set	mt
-+	mftgpr	\rs, \rt
-+	.set	pop
-+	.endm
-+
-+	.macro	_mttgpr	rs, rt
-+	.set	push
-+	.set	mt
-+	mttgpr	\rs, \rt
-+	.set	pop
-+	.endm
-+#else
- 	.macro	_dmt	reg = $0
- 	parse_r		__reg, \reg
- 	insn_if_mips	0x41600bc1 | (__reg << 16)
-@@ -374,6 +442,7 @@
- 	.macro	_mttgpr	rs, rt
- 	_mttr		\rt, \rs, 1, 0, 0
- 	.endm
-+#endif
+-	/*
+-	 * No space to insert into buffer. Split it.
+-	 * To split we:
+-	 *  - Save split point ('cause index buffers will be changed)
+-	 * - Allocate NewBuffer and copy all entries <= sp into new buffer
+-	 * - Remove all entries (sp including) from TargetBuffer
+-	 * - Insert NewEntry into left or right buffer (depending on sp <=>
+-	 *     NewEntry)
+-	 * - Insert sp into parent buffer (or root)
+-	 * - Make sp a parent for new buffer
+-	 */
+-	sp = hdr_find_split(hdr1);
+-	if (!sp)
+-		return -EINVAL;
++		/*
++		 * No space to insert into buffer. Split it.
++		 * To split we:
++		 * - Save split point because index buffers will be changed
++		 * - Allocate NewBuffer and copy all entries <= sp into new
++		 *   buffer
++		 * - Remove all entries (sp including) from TargetBuffer
++		 * - Insert NewEntry into left or right buffer
++		 *   (depending on sp <=> NewEntry)
++		 * - Insert sp into parent buffer (or root)
++		 * - Make sp a parent for new buffer
++		 */
++		sp = hdr_find_split(hdr1);
++		if (!sp)
++			return -EINVAL;
  
- #ifdef TOOLCHAIN_SUPPORTS_MSA
- 	.macro	_cfcmsa	rd, cs
-diff --git a/arch/mips/include/asm/mipsmtregs.h b/arch/mips/include/asm/mipsmtregs.h
-index b1ee3c48e84b..93b8aa807b82 100644
---- a/arch/mips/include/asm/mipsmtregs.h
-+++ b/arch/mips/include/asm/mipsmtregs.h
-@@ -189,11 +189,16 @@ static inline unsigned core_nvpes(void)
- 	return ((conf0 & MVPCONF0_PVPE) >> MVPCONF0_PVPE_SHIFT) + 1;
- }
+-	sp_size = le16_to_cpu(sp->size);
+-	up_e = kmalloc(sp_size + sizeof(u64), GFP_NOFS);
+-	if (!up_e)
+-		return -ENOMEM;
+-	memcpy(up_e, sp, sp_size);
++		sp_size = le16_to_cpu(sp->size);
++		up_e = kmalloc(sp_size + sizeof(u64), GFP_NOFS);
++		if (!up_e)
++			return -ENOMEM;
++		memcpy(up_e, sp, sp_size);
  
-+#ifndef TOOLCHAIN_SUPPORTS_MT
- #define _ASM_SET_DVPE							\
- 	_ASM_MACRO_1R(dvpe, rt,						\
- 			_ASM_INSN_IF_MIPS(0x41600001 | __rt << 16)	\
- 			_ASM_INSN32_IF_MM(0x0000157C | __rt << 21))
- #define _ASM_UNSET_DVPE ".purgem dvpe\n\t"
-+#else
-+#define _ASM_SET_DVPE ".set\tmt\n\t"
-+#define _ASM_UNSET_DVPE
-+#endif
+-	used1 = le32_to_cpu(hdr1->used);
+-	hdr1_saved = kmemdup(hdr1, used1, GFP_NOFS);
+-	if (!hdr1_saved) {
+-		err = -ENOMEM;
+-		goto out;
+-	}
++		used1 = le32_to_cpu(hdr1->used);
++		hdr1_saved = kmemdup(hdr1, used1, GFP_NOFS);
++		if (!hdr1_saved) {
++			err = -ENOMEM;
++			goto out;
++		}
  
- static inline unsigned int dvpe(void)
- {
-@@ -214,11 +219,16 @@ static inline unsigned int dvpe(void)
- 	return res;
- }
+-	if (!hdr1->flags) {
+-		up_e->flags |= NTFS_IE_HAS_SUBNODES;
+-		up_e->size = cpu_to_le16(sp_size + sizeof(u64));
+-		sub_vbn = NULL;
+-	} else {
+-		t_vbn = de_get_vbn_le(up_e);
+-		sub_vbn = &t_vbn;
+-	}
++		if (!hdr1->flags) {
++			up_e->flags |= NTFS_IE_HAS_SUBNODES;
++			up_e->size = cpu_to_le16(sp_size + sizeof(u64));
++			sub_vbn = NULL;
++		} else {
++			t_vbn = de_get_vbn_le(up_e);
++			sub_vbn = &t_vbn;
++		}
  
-+#ifndef TOOLCHAIN_SUPPORTS_MT
- #define _ASM_SET_EVPE							\
- 	_ASM_MACRO_1R(evpe, rt,					\
- 			_ASM_INSN_IF_MIPS(0x41600021 | __rt << 16)	\
- 			_ASM_INSN32_IF_MM(0x0000357C | __rt << 21))
- #define _ASM_UNSET_EVPE ".purgem evpe\n\t"
-+#else
-+#define _ASM_SET_EVPE ".set\tmt\n\t"
-+#define _ASM_UNSET_EVPE
-+#endif
+-	/* Allocate on disk a new index allocation buffer. */
+-	err = indx_add_allocate(indx, ni, &new_vbn);
+-	if (err)
+-		goto out;
++		/* Allocate on disk a new index allocation buffer. */
++		err = indx_add_allocate(indx, ni, &new_vbn);
++		if (err)
++			goto out;
  
- static inline void __raw_evpe(void)
- {
-@@ -243,11 +253,16 @@ static inline void evpe(int previous)
- 		__raw_evpe();
- }
+-	/* Allocate and format memory a new index buffer. */
+-	n2 = indx_new(indx, ni, new_vbn, sub_vbn);
+-	if (IS_ERR(n2)) {
+-		err = PTR_ERR(n2);
+-		goto out;
+-	}
++		/* Allocate and format memory a new index buffer. */
++		n2 = indx_new(indx, ni, new_vbn, sub_vbn);
++		if (IS_ERR(n2)) {
++			err = PTR_ERR(n2);
++			goto out;
++		}
  
-+#ifndef TOOLCHAIN_SUPPORTS_MT
- #define _ASM_SET_DMT							\
- 	_ASM_MACRO_1R(dmt, rt,						\
- 			_ASM_INSN_IF_MIPS(0x41600bc1 | __rt << 16)	\
- 			_ASM_INSN32_IF_MM(0x0000057C | __rt << 21))
- #define _ASM_UNSET_DMT ".purgem dmt\n\t"
-+#else
-+#define _ASM_SET_DMT ".set\tmt\n\t"
-+#define _ASM_UNSET_DMT
-+#endif
+-	hdr2 = &n2->index->ihdr;
++		hdr2 = &n2->index->ihdr;
  
- static inline unsigned int dmt(void)
- {
-@@ -268,11 +283,16 @@ static inline unsigned int dmt(void)
- 	return res;
- }
+-	/* Make sp a parent for new buffer. */
+-	de_set_vbn(up_e, new_vbn);
++		/* Make sp a parent for new buffer. */
++		de_set_vbn(up_e, new_vbn);
  
-+#ifndef TOOLCHAIN_SUPPORTS_MT
- #define _ASM_SET_EMT							\
- 	_ASM_MACRO_1R(emt, rt,						\
- 			_ASM_INSN_IF_MIPS(0x41600be1 | __rt << 16)	\
- 			_ASM_INSN32_IF_MM(0x0000257C | __rt << 21))
- #define _ASM_UNSET_EMT ".purgem emt\n\t"
-+#else
-+#define _ASM_SET_EMT ".set\tmt\n\t"
-+#define _ASM_UNSET_EMT
-+#endif
+-	/* Copy all the entries <= sp into the new buffer. */
+-	de_t = hdr_first_de(hdr1);
+-	to_copy = PtrOffset(de_t, sp);
+-	hdr_insert_head(hdr2, de_t, to_copy);
++		/* Copy all the entries <= sp into the new buffer. */
++		de_t = hdr_first_de(hdr1);
++		to_copy = PtrOffset(de_t, sp);
++		hdr_insert_head(hdr2, de_t, to_copy);
  
- static inline void __raw_emt(void)
- {
-@@ -306,6 +326,7 @@ static inline void ehb(void)
- 	"	.set	pop				\n");
- }
+-	/* Remove all entries (sp including) from hdr1. */
+-	used = used1 - to_copy - sp_size;
+-	memmove(de_t, Add2Ptr(sp, sp_size), used - le32_to_cpu(hdr1->de_off));
+-	hdr1->used = cpu_to_le32(used);
++		/* Remove all entries (sp including) from hdr1. */
++		used = used1 - to_copy - sp_size;
++		memmove(de_t, Add2Ptr(sp, sp_size),
++				used - le32_to_cpu(hdr1->de_off));
++		hdr1->used = cpu_to_le32(used);
  
-+#ifndef TOOLCHAIN_SUPPORTS_MT
- #define _ASM_SET_MFTC0							\
- 	_ASM_MACRO_2R_1S(mftc0, rs, rt, sel,				\
- 			_ASM_INSN_IF_MIPS(0x41000000 | __rt << 16 |	\
-@@ -313,6 +334,10 @@ static inline void ehb(void)
- 			_ASM_INSN32_IF_MM(0x0000000E | __rt << 21 |	\
- 				__rs << 16 | \\sel << 4))
- #define _ASM_UNSET_MFTC0 ".purgem mftc0\n\t"
-+#else
-+#define _ASM_SET_MFTC0 ".set\tmt\n\t"
-+#define _ASM_UNSET_MFTC0
-+#endif
+-	/*
+-	 * Insert new entry into left or right buffer
+-	 * (depending on sp <=> new_de).
+-	 */
+-	hdr_insert_de(indx,
+-		      (*indx->cmp)(new_de + 1, le16_to_cpu(new_de->key_size),
+-				   up_e + 1, le16_to_cpu(up_e->key_size),
+-				   ctx) < 0 ?
+-			      hdr2 :
+-			      hdr1,
+-		      new_de, NULL, ctx);
++		/*
++		 * Insert new entry into left or right buffer
++		 * (depending on sp <=> new_de).
++		 */
++		hdr_insert_de(indx,
++				(*indx->cmp)(new_de + 1,
++				le16_to_cpu(new_de->key_size),
++				up_e + 1, le16_to_cpu(up_e->key_size),
++				ctx) < 0 ? hdr2 : hdr1,
++				new_de, NULL, ctx);
  
- #define mftc0(rt, sel)							\
- ({									\
-@@ -330,6 +355,7 @@ static inline void ehb(void)
- 	__res;								\
- })
+-	indx_mark_used(indx, ni, new_vbn >> indx->idx2vbn_bits);
++		indx_mark_used(indx, ni, new_vbn >> indx->idx2vbn_bits);
  
-+#ifndef TOOLCHAIN_SUPPORTS_MT
- #define _ASM_SET_MFTGPR							\
- 	_ASM_MACRO_2R(mftgpr, rs, rt,					\
- 			_ASM_INSN_IF_MIPS(0x41000020 | __rt << 16 |	\
-@@ -337,6 +363,10 @@ static inline void ehb(void)
- 			_ASM_INSN32_IF_MM(0x0000040E | __rt << 21 |	\
- 				__rs << 16))
- #define _ASM_UNSET_MFTGPR ".purgem mftgpr\n\t"
-+#else
-+#define _ASM_SET_MFTGPR ".set\tmt\n\t"
-+#define _ASM_UNSET_MFTGPR
-+#endif
+-	indx_write(indx, ni, n1, 0);
+-	indx_write(indx, ni, n2, 0);
++		indx_write(indx, ni, n1, 0);
++		indx_write(indx, ni, n2, 0);
  
- #define mftgpr(rt)							\
- ({									\
-@@ -365,6 +395,7 @@ static inline void ehb(void)
- 	__res;								\
- })
+-	put_indx_node(n2);
++		put_indx_node(n2);
  
-+#ifndef TOOLCHAIN_SUPPORTS_MT
- #define _ASM_SET_MTTGPR							\
- 	_ASM_MACRO_2R(mttgpr, rt, rs,					\
- 			_ASM_INSN_IF_MIPS(0x41800020 | __rt << 16 |	\
-@@ -372,6 +403,10 @@ static inline void ehb(void)
- 			_ASM_INSN32_IF_MM(0x00000406 | __rt << 21 |	\
- 				__rs << 16))
- #define _ASM_UNSET_MTTGPR ".purgem mttgpr\n\t"
-+#else
-+#define _ASM_SET_MTTGPR ".set\tmt\n\t"
-+#define _ASM_UNSET_MTTGPR
-+#endif
+-	/*
+-	 * We've finished splitting everybody, so we are ready to
+-	 * insert the promoted entry into the parent.
+-	 */
+-	if (!level) {
+-		/* Insert in root. */
+-		err = indx_insert_into_root(indx, ni, up_e, NULL, ctx, fnd, 0);
+-	} else {
+ 		/*
+-		 * The target buffer's parent is another index buffer.
+-		 * TODO: Remove recursion.
++		 * We've finished splitting everybody, so we are ready to
++		 * insert the promoted entry into the parent.
+ 		 */
+-		err = indx_insert_into_buffer(indx, ni, root, up_e, ctx,
+-					      level - 1, fnd);
+-	}
++		if (!level) {
++			/* Insert in root. */
++			err = indx_insert_into_root(indx, ni, up_e,
++					NULL, ctx, fnd, 0);
++		} else {
++			/*
++			 * The target buffer's parent is another index
++			 * buffer. Move to the parent buffer for next
++			 * iteration.
++			 */
++			n1 = fnd->nodes[--level];
++			hrd1 = &n1->index->ihdr;
++			new_de = up_e;
++			continue;
++		}
  
- #define mttgpr(rs, v)							\
- do {									\
-@@ -385,6 +420,7 @@ do {									\
- 	: : "r" (v));							\
- } while (0)
+-	if (err) {
+-		/*
+-		 * Undo critical operations.
+-		 */
+-		indx_mark_free(indx, ni, new_vbn >> indx->idx2vbn_bits);
+-		memcpy(hdr1, hdr1_saved, used1);
+-		indx_write(indx, ni, n1, 0);
++		if (err) {
++			/*
++			 * Undo critical operations.
++			 */
++			indx_mark_free(indx, ni,
++					new_vbn >> indx->idx2vbn_bits);
++			memcpy(hdr1, hdr1_saved, used1);
++			indx_write(indx, ni, n1, 0);
++		}
+ 	}
  
-+#ifndef TOOLCHAIN_SUPPORTS_MT
- #define _ASM_SET_MTTC0							\
- 	_ASM_MACRO_2R_1S(mttc0, rt, rs, sel,				\
- 			_ASM_INSN_IF_MIPS(0x41800000 | __rt << 16 |	\
-@@ -392,6 +428,10 @@ do {									\
- 			_ASM_INSN32_IF_MM(0x0000040E | __rt << 21 |	\
- 				__rs << 16 | \\sel << 4))
- #define _ASM_UNSET_MTTC0 ".purgem mttc0\n\t"
-+#else
-+#define _ASM_SET_MTTC0 ".set\tmt\n\t"
-+#define _ASM_UNSET_MTTC0
-+#endif
- 
- #define mttc0(rs, sel, v)							\
- ({									\
-
+ out:
 -- 
-2.43.0
+2.34.1
 
 
