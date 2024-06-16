@@ -1,148 +1,127 @@
-Return-Path: <linux-kernel+bounces-216322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B010C909DE1
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 16:04:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B22909E4D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 18:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CDF4281739
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 14:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EC391F215BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 16:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A8BE554;
-	Sun, 16 Jun 2024 14:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2380D175BF;
+	Sun, 16 Jun 2024 16:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TvQyiG1m"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Ed3boJ8o"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7486E79F4;
-	Sun, 16 Jun 2024 14:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01106168DE
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 16:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718546633; cv=none; b=Xw8YPoE3L/A911zAWmV61VPm2CqYI73O4fgsISi6jmIxtq8oxqkqYsYcvD9Qi5VJHIVxtMnNEhSzpmPCzBTOC7OSiMZCxADNTUhSWXVYVu8l77WT34c8RTp20Gwh91ILlZis9HCRvUSOVMMNSrCU8DNnmZRGL/oBF5vDOXe6Cc4=
+	t=1718553875; cv=none; b=NNhRqlDFv0Bl9BuhBUJAKeOaPX6wxCDe/YBuORkJJfDJHAdmER6juhS6d42+kYD/8M12mR21ZrhNUkt2hNZNzScRIPdkvIA508mMF+CGOhOkdex8LTfH02jZVIPJfBhv/tiH/R9RIa0x5Mt82J0Xbov2lLYf63CyMb5fux+rGU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718546633; c=relaxed/simple;
-	bh=uLni8axn70nTeNSOM9zp1HoSjvEJQ+Je1pnxK6epS54=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nVVBxObPpq8L340lxJDkMIklzg2nGcX0q+my8G5HXFNdWlo/zWRNCPnkapnMN1H3vP2lSe+O47Ckava7OYFB9L/ZFBdypr+F2ZcHG5Oo5Pjy7KCCQsZ0NY9b+d633wg53QjP9ysbOGBONuGg1FRpFJcxYiGIymM1ereIu6cLyLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TvQyiG1m; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A8C0040005;
-	Sun, 16 Jun 2024 14:03:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718546623;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l+UzjARY5QneLdidg3fAtVri5ykcOQxvdQ7I86EceL0=;
-	b=TvQyiG1myWFoEx3lDRhv/zCFqFdKrEOvhBvc0GykO+vhEJo3rORGweBiL8xDodZNL+vNv7
-	vxEubofWrwUW6yLrjmvjLSGadtmrujbw27y8b/V6pk11mkMa3JmObHyz09DWzipi1vQfMn
-	IUYsHPR1oZuOWc/spHYXbdGy7r5EWG3OIw41rNklV7VmOteIrlF4jGCJ/323AHtGwImjPW
-	ZLpvu39+3g733oZNA7M64lHO6xjJkxv5RZ1zRwgNstojulc19JODDXrAw1y5NlbCyIZI3p
-	EM6/h6IbBdvmllgS5uzJpdUKHmc5oZPz0zJMR6wOlIpjt5s5elzL1CtMH2CQ/g==
-Date: Sun, 16 Jun 2024 18:02:31 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
- <andrew@lunn.ch>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
- <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
- <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
- <atenart@kernel.org>
-Subject: Re: [PATCH net-next v13 05/13] net: ethtool: Allow passing a phy
- index for some commands
-Message-ID: <20240616180231.338c2e6c@fedora>
-In-Reply-To: <20240613182613.5a11fca5@kernel.org>
-References: <20240607071836.911403-1-maxime.chevallier@bootlin.com>
-	<20240607071836.911403-6-maxime.chevallier@bootlin.com>
-	<20240613182613.5a11fca5@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1718553875; c=relaxed/simple;
+	bh=KGBMb+hsV6f1/UzEToXa/ESKEIydm1zGzXT27qGRaAU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WYEZ6NlTGCZvvTARAaDXcjetAOpBsk0P6582Wwj/5DCaMkCEMZAAi4guL3M0aTfeCg0SYrJGyBZZFg/fiCeGxd9f//lJC4lEiqFac/EUMd9GjA3RDldQ5V6BMfsPiWO54YaOSUcMwI3ztLQBf5o8cpFGLMzdgkeJlnT+eWKBIAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Ed3boJ8o; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=KGBM
+	b+hsV6f1/UzEToXa/ESKEIydm1zGzXT27qGRaAU=; b=Ed3boJ8oyxjup0H1+s/c
+	64zC+VA1ZLZL5c4dT2r8+7GL7Lj1CTtwS6Pfo61N8kncuvNsOIKLA1HCfSUgwhJ0
+	wPOUGtxi7ya4nftwpvikNwgOAorszAoJjjmClHDDBwAwzzZDQtRy1zbvoDzqjEqF
+	gZ2HO0xGyFNQpBxFuolLpvCulmL+zv94GsitCA1xPVMT2NqzW/D/hibGL+q/JsbH
+	HHkEuiHwrwK5Adj9ZIeTofbNvm6ypi4I5UznCpfTnf9KAJdTZLgcDeCeHBKEJh2U
+	X9SQpq0yqxMFNVtZlU7MPTWy2fJhbLQl3zU1D0iXgvyLH+f23fymJSHATsdBK/Xt
+	oA==
+Received: (qmail 2067608 invoked from network); 16 Jun 2024 18:04:27 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Jun 2024 18:04:27 +0200
+X-UD-Smtp-Session: l3s3148p1@B1bPAAQbhL9ehh9j
+Date: Sun, 16 Jun 2024 18:04:27 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Kent Gibson <warthog618@gmail.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v9 1/1] gpio: add sloppy logic analyzer using polling
+Message-ID: <qnjiwkrqnwyz65nieioq2lt2kaauj2xqvddq5ba7ajrkmk7rky@hik3pexv7er7>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Kent Gibson <warthog618@gmail.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+References: <CAMRc=Mc4__0zzJZG3BPnmbua88SLuEbX=Wk=EZnKH5HQvB+JPg@mail.gmail.com>
+ <CACRpkda==5S75Bw6F3ZLUmf7kwgi_JkByiizR=m-61nrMDWuvQ@mail.gmail.com>
+ <ce1d8150-c595-44d5-b19a-040920481709@app.fastmail.com>
+ <CAMRc=McpRjQO8mUrOA4bU_YqO8Tc9-Ujytfy1fcjGUEgH9NW0A@mail.gmail.com>
+ <CACRpkdYtLDA3518uSYiTpu1PJuqNErHr9YMAKuar0CeFbfECPA@mail.gmail.com>
+ <CAMRc=Mem6HN13FOA_Ru8zC-GqGGLTsQiktLWs5bN4JD1aM3gHQ@mail.gmail.com>
+ <a7463c6e-2801-4d0e-b723-fc1cf77a04ed@app.fastmail.com>
+ <slpwvai5q24qwymh7nktihvykmlhi5j3nhqjxruxb6yacruu47@27b7rhykw2f3>
+ <3bb9b39c-c15f-49e3-987b-26cd47e05f3e@app.fastmail.com>
+ <CACRpkdaC6i54qUfJ5H16m2wQhR89bXq26Pn0rZ-80m3a60-_mw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ogf6eemsskgkbba6"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaC6i54qUfJ5H16m2wQhR89bXq26Pn0rZ-80m3a60-_mw@mail.gmail.com>
 
-Hello Jakub,
 
-On Thu, 13 Jun 2024 18:26:13 -0700
-Jakub Kicinski <kuba@kernel.org> wrote:
+--ogf6eemsskgkbba6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> On Fri,  7 Jun 2024 09:18:18 +0200 Maxime Chevallier wrote:
-> > +		if (tb[ETHTOOL_A_HEADER_PHY_INDEX]) {
-> > +			struct nlattr *phy_id;
-> > +
-> > +			phy_id = tb[ETHTOOL_A_HEADER_PHY_INDEX];
-> > +			phydev = phy_link_topo_get_phy(dev,
-> > +						       nla_get_u32(phy_id));  
-> 
-> Sorry for potentially repeating question (please put the answer in the
-> commit message) - are phys guaranteed not to disappear, even if the
-> netdev gets closed? this has no rtnl protection
 
-I'll answer here so that people can correct me if I'm wrong, but I'll
-also add it in the commit logs as well (and possibly with some fixes
-depending on how this discussion goes)
+> I second this opinion. The logic analyzer does in my mind
+> classify as a GPIO debugging feature. Surely someone
+> debugging anything connected to GPIO, such as a key or
+> MMC card detect or whatever could use this feature to see
+> what is going on on that line.
 
-While a PHY can be attached to/detached from a netdevice at open/close,
-the phy_device itself will keep on living, as its lifetime is tied to
-the underlying mdio_device (however phy_attach/detach take a ref on the
-phy_device, preventing it from vanishing while it's attached to a
-netdev)
+Okay, with that picture I can see where your argument is coming from.
+However, making it a gpiolib debugging feature will surely raise
+expectations. And it is not only the non-equi-distant sampling. The
+script trying to isolate a CPU core tries really hard but is still hacky
+IMO. It has to disable the RCU stall detector and will likely interfere
+with your CPUSET configuration if you have one. As I always said, it is
+last resort debugging.
 
-I think the worst that could happen is that phy_detach() gets
-called (at ndo_close() for example, but that's not the only possible
-call site for that), and right after we manually unbind the PHY, which
-will drop its last refcount, while we hold a pointer to it :
+As I write this, I start to wonder if this should be really upstream or
+if I just keep it as a branch in my repo. Maybe it is just too hackish
+to be supported mainline?
 
-			phydev = phy_link_topo_get_phy()
- phy_detach(phydev)
- unbind on phydev
-			/* access phydev */
-			
-PHY device lifetime is, from my understanding, not protected by
-rtnl() so should a lock be added, I don't think rtnl_lock() would be
-the one to use.
 
-Maybe instead we should grab a reference to the phydev when we add it
-to the topology ?
+--ogf6eemsskgkbba6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> > +			if (!phydev) {
-> > +				NL_SET_BAD_ATTR(extack, phy_id);
-> > +				return -ENODEV;
-> > +			}
-> > +		} else {
-> > +			/* If we need a PHY but no phy index is specified, fallback
-> > +			 * to dev->phydev  
-> 
-> please double check the submission for going over 80 chars, this one
-> appears to be particularly pointlessly over 80 chars...
+-----BEGIN PGP SIGNATURE-----
 
-Arg yes sorry about this one...
- 
-> > +			 */
-> > +			phydev = dev->phydev;  
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZvDQcACgkQFA3kzBSg
+Kbb7hw/8CrBKvnmbXNsocNTdodgY1tjLDiHpCUAlqOUzbYz1kPOVa1DTkE/rdqam
+iRB/uiHUZU1RkwANATrrSo3ZAfN8e/ffWbOcCtInD/fLqQEC6p7dIz0biFHCfyuz
+L9eXjWMlfFtijXnk7aPphKsZL4n21MqCFC0IN6RpIT8npNieSaY745npgGN2OIaQ
+ViI9QdUy964rYRlzEG9ybJjW8Bh43V/aPKYW8x39T8sqPdOfzZ6BoEpPdjKg/7f2
+3HAmS2WW/ZZK0grDrvmUcKSQOPEgaBuzH6b9qjd+dkcL/YOXCoYO0OmCDSUI9yPW
+KERlFoqnRm30Jnsat1eNIpOv084QDB4EmCZwmxnQQfQ16Bwf4rbv+jzbSNMWCSqV
+ge+aoDvreCzoBKNsnQtYiHbiH/RgR+N9gESuTYKr4jZys6NLI4QdVOmOvuQcOEKy
+/c61N46fQd3wfAQbu8BgqypMRdAj9HAv76+veogZpbVY0Z2v8/XzFVwVqDvGYRGe
+VcUi/pBcuo//OiKsJTkBLJR6WvDo07LfOAMFbYYPS8FYtGzC6eWtPEItvMy+6h2D
+AG5Q4Cg9d9utCNsLPVuXNxLLSfwZJDmw7gPE6kW7y7zPOIKsQ0Vo/JExf6HsPvz+
+7YRkDGxMhPmXfBF/cQq9bcHE1EOeS+oyUMmn/SybJyFB0OWPTVQ=
+=nL8s
+-----END PGP SIGNATURE-----
 
-Thanks,
-
-Maxime
+--ogf6eemsskgkbba6--
 
