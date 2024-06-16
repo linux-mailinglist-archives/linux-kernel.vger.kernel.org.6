@@ -1,159 +1,82 @@
-Return-Path: <linux-kernel+bounces-216201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36CD909C9A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 10:35:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC812909C9C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 10:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CF72B2112E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:35:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68321281160
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEBBC16EBEA;
-	Sun, 16 Jun 2024 08:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1451B61FC7;
+	Sun, 16 Jun 2024 08:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKITIvAf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r3zNC5Wf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1698233C0;
-	Sun, 16 Jun 2024 08:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556B543169;
+	Sun, 16 Jun 2024 08:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718526938; cv=none; b=j8dT1qHBD2GNMd/gDe3emHP/i2y+psqVr2Qere0bvmgDgA+n1cje3ipOWFe0R4iMl+HmjtYKU5QlkNyoWa9IrOO0len/886amxg4rSiEcUBkE+Y4mK1PlPG1eUBHoOFKhT/9DWwz8e5yLNnvf3c4Myzh0Vhi11QUBVTRPgnVs+4=
+	t=1718526984; cv=none; b=ojYkEg4ASNjGmkt+1SX0AjqlmlDnmMqJb9X1E9WEeZzROLFmm6cbMdirQpxDo5I8PlLKk9gdSDENl1eai9tnZa3MnRcwU6FVDj5LWORWRmk9NKYK4Wv4rKjebZeJ0N/zc4f9apiafKQxBwfJlgeTqMSVIIOuUvYX/c9yZRc+iH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718526938; c=relaxed/simple;
-	bh=gMHw0zgKhT2FIrKEWVvNVX2awLi4Bqd58VLtETxGG0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DId5aX/M/ePWsBDRK3tQioycrPbJLW5kqCNW+oMiLX3B5xrbbDK6qfsUsFgi3/cxtOxwmeJiKWbT4iqUHE7AzlBEja58xeRR1qQGA4szS5IdzbrXy9MmiYZ2K4Rzccs4ycIz2TMlnRnBevmv/bYPoLkoH/e0zQegvnSOaAp7qUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKITIvAf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53123C2BBFC;
-	Sun, 16 Jun 2024 08:35:32 +0000 (UTC)
+	s=arc-20240116; t=1718526984; c=relaxed/simple;
+	bh=Hqj3a5a9i+YbUSirp7SLHfyN0FVYo+jl8r4IKf+Ssrc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gt/SvaVg1BPXDVj++rWYy5uEyc0kamSVNpqhAyfraZILB12aTxwn6uR8ScJaqpiQFcocxD/Zx4OU8gvTIxkihCRgruLs+yQw3SudLTJMPBvuCbTqn9mTaAJP+IiQdwo8Qphm33D9mVIsS1DXkUztlUU1VdfeXb5DdlEFC5S3olU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r3zNC5Wf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6420EC2BBFC;
+	Sun, 16 Jun 2024 08:36:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718526937;
-	bh=gMHw0zgKhT2FIrKEWVvNVX2awLi4Bqd58VLtETxGG0M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oKITIvAfZUzTfAk4VH+3dgKt1FYvHBwTTDgWvZjE9b4QyI4fiF3jwQe3H1Gm5wTuQ
-	 wP5EF/gxM+BNzy7Nm/FSZEHtQKlvHJhya2+2vUU95C+bMWunrs9RCLPRS6rztYwjtB
-	 FAK7IPVBszykFDvXKjJoMv6unq66JO9et4sXrnrts8I9FZgB8BNQCsf5/BldVITew4
-	 Ci01x0bm3SH3g8ESfXOWgd/1wf2LYuR8Jvs/XMB2FCGsCEj/BTDKtxnG1eODq28tM9
-	 p4GpUn/huIZIoi4Ep+yzqvxjQkIeppSf0YbLZmEca4RwFz4ntP49lpadQVN/40Uywe
-	 SZCRyHmKxjmDg==
-Date: Sun, 16 Jun 2024 09:35:29 +0100
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: kvalo@kernel.org, linux-wireless@vger.kernel.org,
-	Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Shayne Chen <shayne.chen@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	netdev@vger.kernel.org, kees@kernel.org, kuba@kernel.org,
-	Bo Jiao <Bo.Jiao@mediatek.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Alexander Couzens <lynxis@fe80.eu>,
-	Deren Wu <deren.wu@mediatek.com>,
-	Ming Yen Hsieh <mingyen.hsieh@mediatek.com>,
-	Leon Yen <leon.yen@mediatek.com>,
-	Quan Zhou <quan.zhou@mediatek.com>, Ingo Rohloff <lundril@gmx.de>,
-	Sujuan Chen <sujuan.chen@mediatek.com>,
-	StanleyYP Wang <StanleyYP.Wang@mediatek.com>,
-	Benjamin Lin <benjamin-jw.lin@mediatek.com>,
-	Peter Chiu <chui-hao.chiu@mediatek.com>,
-	"open list:ARM/Mediatek SoC support" <linux-kernel@vger.kernel.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH] wifi: mt76: un-embedd netdev from mt76_dev
-Message-ID: <20240616083529.GH8447@kernel.org>
-References: <20240614115317.657700-1-leitao@debian.org>
+	s=k20201202; t=1718526983;
+	bh=Hqj3a5a9i+YbUSirp7SLHfyN0FVYo+jl8r4IKf+Ssrc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=r3zNC5WfiEX5XlH+fGuNW4AGW0yTboVqQFLMHpLfeMhO5xGJ3ItIrVMFYWlMYEWkv
+	 5Kj7pz/OyPObgARx7TaDo2NleOWutQXhAwvOHiPYozne/kbZTsDuPm8xh8ZbI7YQal
+	 pmt71W3lizabqA6Qt6uI1iv0wac/5I5rz430bYDWmtdnbgPGmexqjPoiela09h4sGG
+	 KLf2zxlbeUUHHEyERm7QX1dfNFl8xy62uHSd0nPKYzoE8DiW9tGSHbTO+BV9MEaCh4
+	 MSzOSBhetJpbNHW2li9cZyIw9MCRCR2Af+7BEjvo8F0ZYBQuuSasUUcyL0qFdp2Mph
+	 QxirzOpvgio6Q==
+From: William Breathitt Gray <wbg@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: William Breathitt Gray <wbg@kernel.org>,
+	Judith Mendez <jm@ti.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] counter: ti-eqep: small cleanups
+Date: Sun, 16 Jun 2024 17:36:15 +0900
+Message-ID: <171852695355.2480388.6972474400297991607.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240609-ti-eqep-cleanup-v1-0-9d67939c763a@baylibre.com>
+References: <20240609-ti-eqep-cleanup-v1-0-9d67939c763a@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614115317.657700-1-leitao@debian.org>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=475; i=wbg@kernel.org; h=from:subject:message-id; bh=8Chq+fZNMQ6oGLxSjvj5BDcjd3eGdRR2PY8CTl6darU=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDGl5i7+tsjg/e7LJvYdVX8rLEmYHiSzjM/jz3PWwVTJTu A/XLmnnjlIWBjEuBlkxRZZe87N3H1xS1fjxYv42mDmsTCBDGLg4BWAit1IY/vCLtl85INA8p7Ok /cB/bQdlh+s//fVlzDceOlGawxEgw8jwP6t/xqNb5Vn2VRrshzM3CH37XnH5qFLSmZjtMw1OqU9 VZwIA
+X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 14, 2024 at 04:52:42AM -0700, Breno Leitao wrote:
-> Embedding net_device into structures prohibits the usage of flexible
-> arrays in the net_device structure. For more details, see the discussion
-> at [1].
+
+On Sun, 09 Jun 2024 15:06:14 -0500, David Lechner wrote:
+> Judith got me looking at this driver again, so I noticed a few small
+> things that could be cleaned up.
 > 
-> Un-embed the net_devices from struct mt76_dev by converting them
-> into pointers, and allocating them dynamically. Use the leverage
-> alloc_netdev_dummy() to allocate the net_device object at
-> mt76_dma_init().
-> 
-> The free of the device occurs at mt76_dma_cleanup().
-> 
-> Link: https://lore.kernel.org/all/20240229225910.79e224cf@kernel.org/ [1]
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
-> 
-> PS: Due to the lack of hardware, this patch was not tested on a real
-> hardware, unfortunately.
-> 
-> PS2: this is the last driver that is still using embedded netdevices.
 
-...
+Applied, thanks!
 
-> diff --git a/drivers/net/wireless/mediatek/mt76/dma.h b/drivers/net/wireless/mediatek/mt76/dma.h
-> index 1de5a2b20f74..6454a5eca13e 100644
-> --- a/drivers/net/wireless/mediatek/mt76/dma.h
-> +++ b/drivers/net/wireless/mediatek/mt76/dma.h
-> @@ -116,4 +116,9 @@ mt76_dma_should_drop_buf(bool *drop, u32 ctrl, u32 buf1, u32 info)
->  	}
->  }
->  
-> +static inline struct mt76_dev *mt76_from_netdev(struct net_device *dev)
-> +{
-> +	return *(struct mt76_dev **)netdev_priv(dev);
-> +}
-> +
->  #endif
+[1/2] counter: ti-eqep: remove unused struct member
+      commit: 42c1debf9b68d5f7c6deacda5fa1a8b83722c052
+[2/2] counter: ti-eqep: remove counter_priv() wrapper
+      commit: f045f1e1cc530f34688f9e71b1aeef6fece0f514
 
-Hi Breno,
-
-I agree that the above is correct, but I wonder if somehow it
-is nicer to avoid explicit casts and instead take advantage of
-implicit casting too and from void *.
-
-Maybe something like this:
-
-static inline struct mt76_dev *mt76_from_netdev(struct net_device *dev)
-{
-        struct mt76_dev **priv;
-
-        priv = netdev_priv(dev);
-
-        return *priv;
-}
-
-Further, some of the callers of mt76_from_netdev() cast the return value to
-(struct mt7615_dev *). Which seems a bit awkward seeing as it was very
-recently a void * (i.e. netdev_priv() returns void *).
-
-I wonder if something like this makes sense, which I believe would avoid
-the need for any callers to cast.
-
-static inline void *mt76_priv(struct net_device *dev)
-{
-        struct mt76_dev **priv;
-
-        priv = netdev_priv(dev);
-
-        return *priv;
-}
-
-Ideas above compile tested only.
-
-Other than the above, which is clearly more about style than substance,
-this patch looks good to me.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
-
+Best regards,
+-- 
+William Breathitt Gray <wbg@kernel.org>
 
