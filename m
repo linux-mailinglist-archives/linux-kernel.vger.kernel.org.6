@@ -1,96 +1,123 @@
-Return-Path: <linux-kernel+bounces-216184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C42909C69
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 10:00:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 068DC909C6D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 10:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F170A28295C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:00:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD1C41F2161E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 08:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED1118412B;
-	Sun, 16 Jun 2024 08:00:18 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4DD184129;
+	Sun, 16 Jun 2024 08:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LYhUVOqx"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A8016D33E;
-	Sun, 16 Jun 2024 08:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC3116D4ED
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 08:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718524817; cv=none; b=jyooDlwRF8eR0j81/UZYngWkON1t5hR63is3igmqdJnTPPB1AFTMd7mtGPgYiQY0tcKo3iL0VBMdPIHCqvLt9F5sIQoerlqAsOMcsw0elN40glVMe1gkJGdF3Npm0up01ZUcXtB4ZtR+AK6GIJXoqFmW3drNbpRI+d0KOX5I5+g=
+	t=1718525226; cv=none; b=WaQkVGEmimPPKMz1ErGQniModG9it9+Oxv4tmlC18zFqwT6/kCuN2V6L3J6hDcn5OtxeuGDp5fefJ/oBfpK6XuW9oSmgbRhA9bhyQqtKYl6rEjnZS1/0t/smKFZVr/xOaBI2JEu21tC1rngt0gSbGiZLwejbRJBCZmpaslvDmuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718524817; c=relaxed/simple;
-	bh=Kx9wz1mFls9/uJS/vpae1QpuUfW4zPS3SusOm+sxWXQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AlVi7tXSErSntSTOXazmeMH1UgkQKrjmYN9TeFh4bNosKH7tGpS8lU0+1NsW0qNMaXkgFGMrYaxsWEBJItqbS0T6OP2w+KkAracSDC1+UqGgLm4ifB49dl98/LXTaI1MtAc/fpVjIVbCbUHvgNRwWSoQ4pKHP29bZiseibxHao0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from 79-98-74-242.sys-data.com ([79.98.74.242] helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sIko5-0000Vp-S0; Sun, 16 Jun 2024 10:00:09 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: Re: [PATCH v1 2/4] clk: rockchip: Switch to use kmemdup_array()
-Date: Sun, 16 Jun 2024 10:00:07 +0200
-Message-ID: <6087515.R56niFO833@phil>
-In-Reply-To: <ZmhPBccSC0Uc2fjQ@smile.fi.intel.com>
-References:
- <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
- <8182279.JRmrKFJ9eK@diego> <ZmhPBccSC0Uc2fjQ@smile.fi.intel.com>
+	s=arc-20240116; t=1718525226; c=relaxed/simple;
+	bh=NMqn47xTcZUZtwmPaIuc3UPEQIWpCFeoW4y6K898tQg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZPB6OkTLmKstM/H27fZSdq7BARwYuvb2d4QbF6RQBNyf7U7NlMpKfsIsK9ZH44g3lDI+jHs7i4W52w5OjVmUPljv2gGdotR82gLgj3+arCfvhIQ2JCo6jL2XjKdexrJOoQO3xUQmBXQo8TrVUOngIdjRH5PBli6urtThZvHIAi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LYhUVOqx; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57c68c3f8adso4143793a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 01:07:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718525223; x=1719130023; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=40sPRExwP3s/3ZijtGHfQupkdXxmU+DCpAvlWfd+DeA=;
+        b=LYhUVOqxejydiFfbCdwojhZuV7d36fyWHmqjrwMhAJzK3HIxNttdskTBK+fk+gv25c
+         OyX4IugI09D85Jfum5RZrZxvW+rYFJDl6kZB4EPC0fJ+oZoJTWWMZqfqa9WUHfGDf6lv
+         Fv5Zp+2znXxotWtqZ3b/qbMyhZqQSL/dqpvBkt+iiYlUczIxrOob6VU8dHRxcQtvVoPH
+         vSbo995vW+Ae9D5AIvIG26zbAf0dg9rAxAQlSPQXbvXJS8Zf956sPRxsWq82HaQbm7Pm
+         /RYPc1viDeNAVhtgN5pAX4AFzCckmLxr7qZwAiVyF98YWPZy87FLDgd6ESW7uGvmfVau
+         on1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718525223; x=1719130023;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=40sPRExwP3s/3ZijtGHfQupkdXxmU+DCpAvlWfd+DeA=;
+        b=iUijCSJBPdPmafpaIYg2J9CHRgcA9IcEwsZI3fvwQhA2hfrkureBzxY2CpB5MzNSwe
+         +2c+rjugILFIaMQjEzUp6r37JRtfkjGAbGjaD5xhjt6suBTV3UsTaF0/SpA4yeUzu/iy
+         +csl3a+thXGGHWCdjR8pj/ui0t10Z48dnBovgElbHgw0aq+diF6yTB773TH/eUbgVbFN
+         X/EZckGy7O2YHbGytqtzVOARgBKXBApDNShsZLAoMeCckkVimuN3jbc4fqy39ZaJY1FL
+         jxDiPMyurdJ+B+Xgb3lT0ctrzSFdiEz8y27d6D+RH9RNQZZJLVnDZs1uph3rNufdVp/w
+         bBgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEnSBHSOgr5CZG0cfrzcJhTYMH8kmHURm1YdTUY/tLKZzPZeU4reNc6a6182cf74AlDNW0eDwJMwtGIzJtuDvhbA4eAfQDfTeBLI6V
+X-Gm-Message-State: AOJu0YyCVRIF3HykU30DWnWkOmcBKB60PRNwPgiuufJDRa/Z+qtOwk+i
+	WoaeUDEbbudNVsL68puwvEsx315vly5JdfxU4MoJj8oTrVfK+STut2l+NCrlH+g=
+X-Google-Smtp-Source: AGHT+IEWqzaL4rz2SQto4mPk3yipJY71jqGFV2WhkQttfBqISZrqBKrS2Uxip+JUE2MkM/v/hkOMEA==
+X-Received: by 2002:a17:906:5f9a:b0:a68:b73d:30d0 with SMTP id a640c23a62f3a-a6f60d13d2emr555195466b.6.1718525222766;
+        Sun, 16 Jun 2024 01:07:02 -0700 (PDT)
+Received: from krzk-bin.. ([78.10.207.147])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56db620csm383485566b.71.2024.06.16.01.07.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Jun 2024 01:07:02 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: mfd: Explain lack of child dependency in simple-mfd
+Date: Sun, 16 Jun 2024 10:06:59 +0200
+Message-ID: <20240616080659.8777-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8bit
 
-Am Dienstag, 11. Juni 2024, 15:20:05 CEST schrieb Andy Shevchenko:
-> On Fri, Jun 07, 2024 at 10:13:04AM +0200, Heiko St=FCbner wrote:
-> > Am Donnerstag, 6. Juni 2024, 18:09:32 CEST schrieb Andy Shevchenko:
->=20
-> ...
->=20
-> > > -		cpuclk->rate_table =3D kmemdup(rates,
-> > > -					     sizeof(*rates) * nrates,
-> > > -					     GFP_KERNEL);
-> > > +		cpuclk->rate_table =3D kmemdup_array(rates, nrates, sizeof(*rates),
-> > > +						   GFP_KERNEL);
-> >=20
-> > are you sure the param order is correct?
-> >=20
-> > According to [0], it's (src, element_size, count, gfp), while above
-> > (and below) element_size and count seems switched in the
-> > kmemdup_array calls.
->=20
-> I'm glad you asked. The parameter order is going to be fixed [1].
->=20
-> > [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
-tree/mm/util.c#n149
->=20
-> [1]: 0ee14725471c ("mm/util: Swap kmemdup_array() arguments")
+Common mistake of usage of 'simple-mfd' compatible is a dependency of
+children on resources acquired and managed by the parent, e.g. clocks.
+Extend the simple-mfd documentation to cover this case.
 
-ah that clears it up :-)
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ Documentation/devicetree/bindings/mfd/mfd.txt | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-
-Thanks for the pointer
-Heiko
-
+diff --git a/Documentation/devicetree/bindings/mfd/mfd.txt b/Documentation/devicetree/bindings/mfd/mfd.txt
+index 336c0495c8a3..98b4340b65f3 100644
+--- a/Documentation/devicetree/bindings/mfd/mfd.txt
++++ b/Documentation/devicetree/bindings/mfd/mfd.txt
+@@ -18,12 +18,13 @@ A typical MFD can be:
+ Optional properties:
+ 
+ - compatible : "simple-mfd" - this signifies that the operating system should
+-  consider all subnodes of the MFD device as separate devices akin to how
+-  "simple-bus" indicates when to see subnodes as children for a simple
+-  memory-mapped bus. For more complex devices, when the nexus driver has to
+-  probe registers to figure out what child devices exist etc, this should not
+-  be used. In the latter case the child devices will be determined by the
+-  operating system.
++  consider all subnodes of the MFD device as separate and independent devices
++  akin to how "simple-bus" indicates when to see subnodes as children for a
++  simple memory-mapped bus. "Independent devices" means that children do not
++  need any resources to be provided by the parent device.
++  For more complex devices, when the nexus driver has to probe registers to
++  figure out what child devices exist etc, this should not be used. In the
++  latter case the child devices will be determined by the operating system.
+ 
+ - ranges: Describes the address mapping relationship to the parent. Should set
+   the child's base address to 0, the physical address within parent's address
+-- 
+2.43.0
 
 
