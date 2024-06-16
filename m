@@ -1,193 +1,173 @@
-Return-Path: <linux-kernel+bounces-216172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26499909C45
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:40:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9BE4909C5E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 311CA1C20CFC
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:40:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEBCB1C209DD
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C622517E8ED;
-	Sun, 16 Jun 2024 07:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA20180A96;
+	Sun, 16 Jun 2024 07:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Iafm7KaH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.de header.i=@yahoo.de header.b="Ri4hkGLe"
+Received: from sonic307-53.consmr.mail.ir2.yahoo.com (sonic307-53.consmr.mail.ir2.yahoo.com [87.248.110.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC2C17E441
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 07:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CAA17B41E
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 07:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=87.248.110.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718523602; cv=none; b=UpHLaAzRMYhrpZo/n1wWH1RAlqU9ooz1ssTh5EEXgmkJJW22xkSw7Fv6YojT1BCkMw3bsiinH42ppbzILubzn3eQPiYL9L78p77aXZQQWjjq6MO3vNKb9cj9itAJJ0hEdyX0OOeHERNDFZrjg67EFPe3ttNywxCACnDa9bDmd7M=
+	t=1718524208; cv=none; b=mLNOjouHNNT7LWUIcH/6D/WVHHquxkhgbZJnNuS2yqrw+sl0cWo2xTL28O//p0QES6uRUnJPuvu4DDlgI3avtZFSwSxQ2IY+yJBdkhpAVuyrogB/kn+iyTD7uQGbCeipT84ZsCiXnxCt49wJdwf3Thu3p2YlGc2uWpcMw/zy+JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718523602; c=relaxed/simple;
-	bh=n7nsHbODw79G744u9lPNz87tgo6chnrMn0+HpM08gEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IX8Z1M4XvxcK1/k4ndCYY5UIHUxg1Yruij7thCU8blwYpK5j6R9EFP/CfLj7hwO2wMKFoMWveHt8wUR85/bcjk1ZWFIuCOeio0mIwHMJBqpmH6CTWdcIYG4XUiwN3LZUjZk2icsxuS9b00TXKbofOLHpeq+jsVnNF1DDC9QBTf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Iafm7KaH; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718523600; x=1750059600;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=n7nsHbODw79G744u9lPNz87tgo6chnrMn0+HpM08gEE=;
-  b=Iafm7KaHajTdr4OzJ/K0XxT+igUy/31jybnwAWpEXbi3QlfQmlsESNxQ
-   ixR1VoJlOOvpTL49L3ZCFJZYSSCna7VCIKTisFbKLz4WBPYGCyBCBuOuo
-   8OdnNo705Xn5nsS3HzjszTOmc9mdXSjifnMMFVxdbKUda9H5N8zMA+NAA
-   djJugLkMdMYh7rygAfWH33LuuklLsfk/YYeKfSXjPAE1e1XgboogaLLLx
-   kVmsR6pVYNDJVPy4FFE/t2AL8U/WGZl7gLEAZaYsrpFkJqyjfnddkJkqc
-   O7d7LlDMnxWjbGVaFEPVhLVHW1s0QZCgCOlI++QKvUomoMvIJgP7W4HAj
-   w==;
-X-CSE-ConnectionGUID: nQZqUPwJSYak6lRi67qJRQ==
-X-CSE-MsgGUID: R6r2jB1KSJyFv1JnV9qQqQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="26053457"
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="26053457"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 00:40:00 -0700
-X-CSE-ConnectionGUID: YYTfZPsSQHCb+texU+jZhA==
-X-CSE-MsgGUID: zuf3UF5dROWjILFkeozxhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="40760963"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 16 Jun 2024 00:39:59 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sIkUW-0002NL-2a;
-	Sun, 16 Jun 2024 07:39:56 +0000
-Date: Sun, 16 Jun 2024 15:39:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Luiz Angelo Daros de Luca <luizluca@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: ERROR: modpost: "led_init_default_state_get"
- [drivers/net/dsa/realtek/rtl8366.ko] undefined!
-Message-ID: <202406161531.oSPPFV19-lkp@intel.com>
+	s=arc-20240116; t=1718524208; c=relaxed/simple;
+	bh=lL/3Gk7JOk5hvvh1t0hx9ZCAjxnUHlpLEviBVGFzuKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M1sPT+FWp9o4Pk0UdYyq1rPQ+KvDjdw0cGC5iZJxvk0xQr08tfkpgRziZmmIfXxbl4fpoKbUaHWl7TJHzMtxJfwLk8+Cc+p70++PyT+h5XxD+D2BBu8Vi0PEUAMuLqOX5q+07qHMS0HW+yEOoP+LwjIZ+zxCdiROgbVpiuQplrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.de; spf=pass smtp.mailfrom=yahoo.de; dkim=pass (2048-bit key) header.d=yahoo.de header.i=@yahoo.de header.b=Ri4hkGLe; arc=none smtp.client-ip=87.248.110.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.de; s=s2048; t=1718524198; bh=CgRzjm/nwd78x1rt0gIv5aEFf3uVyoARkr0H9nC1Zzs=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Ri4hkGLePaQ2AVAhMc0pzBdvcOb3kqkG9Y/X/XJ0uYs/FJta6ctMphoY0qxD7Saar6cInZc0/5ZVbO/V4BvNE3PYqWfp25i/ZZJ8TVucvzG8gdryOOwHCpDXnkdnThoNCAm/DNAaK9kYpDPbdtI5AE6B7KpoCCtHuNBIulmZOadZIOSFrpo4iWYH35hsIQ1WYT7rNeb6TdySx7FvzoH6/0LfgzZRGjq0G6vvR7C1aw/3MOKsodBRk2qUyhRk43IrLq1n3igP6MLl8UxdDLe0R48xEKwqSjjMpTzmnp2kUf6dfjVUq+0qPvHO16Tit+cwkRn6JaaaA+X/sCgHwoBR5g==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718524198; bh=LO51PwsuAq1x5hZUPzNalqyAto7YjRjUSC5dmkO/ufs=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Aa8Ye/6DK2BdP01ssOTtug6ppiKi5liWdkHyO/VGAZq8NL49nrmfuWsX+XIlccV71bndF4UHtsIHENV43F3yy6mhvnNTBY1IgZiBbMFPDTusyh8jN80fxx+7xu4/wjZYz95jNj8982uaPlWPDV79N397ANA/w22IP/qE8Mt5Qs9BD/AWdp5komzVhM5HNBliRJUhV0ryHmjl/GFOitSwrPuiq44X9f+zknNpOZHL9V+T2MSEUui2/0N6SWwN0m5kmuUoRagGtYVf/uhRveB4r2+KKXdPzkl22E2X0yHFwpPv6X9Um9RYccmT8S9UXQYhArwMHZnRz39xP/NWzSiQ2A==
+X-YMail-OSG: hTHgnAsVM1kWXiUg3ipkxIWXfnSXIfUM_CORVXUSpGMZh2Q3ArqoLVGhEVHI9zV
+ 9n98uH3SKAnnFe.KiknOov.uAz9cZYPIM3SmFh9hIydspVF.5F5BftIUJ.JVMruuKQqX2bHZUXU_
+ ZXUs35XJHYfTbwVTgsHYb5ZKPnmSXTCEDRj373TdgejQ4OxjfaUWHzvmhKxn2S1q4MKfMQWVP0jO
+ Gps1cetZVZsNQLlorgfD3XhaQDZP8uPQAkrm2NFnhpvaRicobWmesDYC1l4BMtUfktvQ3GYB7W9E
+ DTr4wvLuM8T8mECfTUHI7PAuHa7bSMOTqr3iWREB9y04SzW2dBAt.MqDdLLzAb52K.dD7iefeHbK
+ qqbGV..7D7LsaqhWtaauR.7Rjv6BYYBHexSpaF3uQHGr8RzSqyKdeSSyVr1vu8Oe8EgcoIwVdvgG
+ 0tlbpojdlxMGyeRBWwNjWWKmNDU4u7SEB6kmJEoWW77shL8qhKXTezhY2CNtsQI_sVQs4_SThBVw
+ mE2JB9IYm4ewOmwq8sk1ho5jFUJtK2MeMpSZl1MQnT1Kk6Sz0.ywZoA.CbL_dJJTDR79EtOxVr_H
+ .at_6gZbU1tY46_D9SX2UY4dOxQhWIx.nH.LJ_lTrS2bYumoA98rBvRz10CNIhx2kwlbKNJhc_X.
+ Zzb5bhmzDPUutIx3hq3OihIeAKVYinx3faxGQnUlL22u6brIixJLiRzVb9BZUAGkdz3hlInK4Ue0
+ Xdwrsk91HwIA6nRJft3nlV1tKMOaZ3rUakASfPT3ddqrzTwkNF4YE1d1PvriK3JN2La6UvzBc4K6
+ zSrMfuiH6sLh3bMlaN5Ws.3f0a9DDIFM_c2p05vRa5Z7RT7CJh0fdE9uF9FLh0oVpuoJAKrrf1ZP
+ ym7KsUBy8UvlBo.B30B9ARNLG_932qVde3JtGovZMEMNh4isN11Iv62pLy.oVXSKOEm1DI19iV2n
+ bHdCgVHwO7UpE.Pk7WHnLgHZCgsaB2hB.5ly_WZW5bQXlqt4TrbioYMilA.nbXywQdLvfZn48mRj
+ ZD6tzrNQcyxikKL_gvn_Ck7ch3jlGGm8JWUlQ5AnclWGW2nTIyHonNdkdlvrQGothU7XhiMaCBxM
+ 1UZEskQ368p07f844rbTCv2YMlodV6pkk4HBJgPESD1Mrol0NZpM.Ai0kL81toyXLsSPVK_etvif
+ cJRtysIQ3xyN6A7ksp86iO5MHBiU2Ht65NnRmhGmxIL70uZyr7spFJSpHl2oPy8oTOFlRORKkTbC
+ YOnhokzM446.7GEzusriUcQqkXLHSyiMjsVN_nDLU5EMcI1cAcX9MtuhmQ8BfG3sPuDUgfwArNj_
+ VfSvKwaCtgfjGx1W9hghf2RdlEfl7j4q7tOO8Lx59WcmEHjsLHSWbOCJro6oeMe9iuHzsvoRMF78
+ T3QkRnJyd06w89NPo.kyG9ZDuyro469LblwF5MY2uDNuKTtOxDmntZwYWHAIQlJFdqtgZHRl4LB1
+ RFu9W4yI1aDQy_mWgHdvgJc_fK1SLuZ.yAGdT2ojs91LE8NfdU252t2FSbv.lC1_2zHp4WOm2RxD
+ 980UTLUDKvIHAB0zVQXl_q7Hy0ktjaZO4KiZPjLi44.AUY6feasEeB0_gS5YcR.U0HuamG.uuMYW
+ C3EMcunMGi7TSj5UkxNxLAh7QRFQgYqfDtRM8qVF3fMd_TV68vvNnYqTdgY9no8Cxa73QXnGxQTu
+ w3UclkL8G9vvHf4Zp8pFq3xuGuQy.FCyaKOAuEG1SFiNxXagzvJF5trFKvzOmb6_ZagzZ3ChB1ru
+ UgGamjsiYD3VXNBe5KRujUIOhG01MH8O4jy9809tqoauCd7Xf_kUMDzBpZNoJITOMTYxcI0TX4KA
+ F2dypW1cwgPW6wunm.mUTg8gJKYnnJSyireHizOn4FpRTsO6W8PS9hqQExHATuy.qccSacSctRU4
+ gXqOlQfvJKvZjDH9d4AwFpKtljOpROrzlOs7GrmXDbklLKR5.vBBRwwqcB4MPwp5t08qJKkMAoF3
+ 8.4IA9UrrwDIVqqw_ypxxIpWAo3MFPJNNhtD9deyBQMSBb4Lb5mcEYje1JhbNT8M_s0W5zRH4GeS
+ rTMT_VkwP21ImKNtpy6q_t_Ty3gkvlFcPeVTscR9NiT_L5AG53eoRl1YpyCSjDG6SNIDw5xSlV3B
+ AgtAeEL79PbXPzKnWTiA66FEFCkqCJweV1rdoX1Lue4G6IEb3_gnG56sN5yX1WEPhJj96r.8SDzt
+ j7w4Zsd1R7ZadzgcX7AbOtfV6KETviMeWGCHOMu_5CBRaLF88FOoh8QE9ZVs-
+X-Sonic-MF: <fhortner@yahoo.de>
+X-Sonic-ID: 7e3e7412-d17e-47d8-bf68-24b5f07164a1
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ir2.yahoo.com with HTTP; Sun, 16 Jun 2024 07:49:58 +0000
+Received: by hermes--production-ir2-85cf877599-59p75 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b11e46e9905a001c20392fbd6c3c7e53;
+          Sun, 16 Jun 2024 07:39:49 +0000 (UTC)
+Message-ID: <3f5d01fa-f725-429d-b6a3-7b9617b8b561@yahoo.de>
+Date: Sun, 16 Jun 2024 09:39:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: Regression, thermal: core: battery reading wrong after wake from
+ S3 [Was: Bug Report according to thermal_core.c]
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+References: <1051df4c-067f-455e-8c7f-9dc47dc8ed00@yahoo.de>
+ <CAJZ5v0jwvq6W0u7Zx4GzQxJOnrF4KvN1RHtqqDcaMvN6yp0hDg@mail.gmail.com>
+ <312649b1-eea9-4346-af93-76a821e88eb7@yahoo.de>
+ <CAJZ5v0jfvRWK0M3Xf=36e74cVQ9rN5T1WdZZVnuk1XmZ=xu==g@mail.gmail.com>
+ <78549853-1763-40cf-9974-3fc737fad093@yahoo.de>
+ <CAJZ5v0h5pQDaA-bEOmcz_TpE87kFqWLFLJC+=OLjg5ZtF3hxpQ@mail.gmail.com>
+ <91d94429-fc7e-4828-914d-1a251ee1ba99@yahoo.de>
+ <CAJZ5v0gPZHDfuK1FRdTAG8Eqjf0NWUQdf-_GCWsWf6dCBE=1dg@mail.gmail.com>
+ <543787c3-db5b-4f63-b5e0-df508300db73@yahoo.de>
+ <CAJZ5v0h7jDw3yX689nZdB+YeJbCk0vFoUgVb4Yi0cqDxjL5chQ@mail.gmail.com>
+ <40ec1e53-2bc8-48aa-9909-fac9072adb57@yahoo.de>
+ <CAJZ5v0jtjXfvr4GXukjyO9XsEO6K2Nfux3otpFPP4vWS_9_qEQ@mail.gmail.com>
+ <CAJZ5v0hcX0JAMBA+EVZURDH1BTQ2zL-W_4BjSx0a=1oRaR90ug@mail.gmail.com>
+ <CAJZ5v0jGGV=i8Swu=c8f9bwo--AckUfqZrt0zeqDWKBijG+Z3A@mail.gmail.com>
+ <bcac5925-fe2b-4570-83b6-182f4a301721@yahoo.de>
+ <CAJZ5v0h7WnfQxhobA6B7S3Tvo-AnKTR9kP+5aexa6rixqpyHJg@mail.gmail.com>
+Content-Language: en-US
+From: "fhortner@yahoo.de" <fhortner@yahoo.de>
+In-Reply-To: <CAJZ5v0h7WnfQxhobA6B7S3Tvo-AnKTR9kP+5aexa6rixqpyHJg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   a3e18a540541325a8c8848171f71e0d45ad30b2c
-commit: 32d617005475a71ebcc4ec8b2791e8d1481e9a10 net: dsa: realtek: add LED drivers for rtl8366rb
-date:   7 weeks ago
-config: mips-randconfig-r054-20240505 (https://download.01.org/0day-ci/archive/20240616/202406161531.oSPPFV19-lkp@intel.com/config)
-compiler: mips-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240616/202406161531.oSPPFV19-lkp@intel.com/reproduce)
+Currently I am running kernel 6.8.12 with reverted commit.
+But yesterday I had a strange behavior.
+After resuming from S3 the laptop registered a low battery, immediately 
+after resume (notification in KDE Plasme). But as far as I could check, 
+the battery level and stats where fine. Nevertheless, after 1 minute it 
+shut off. I guess the low battery reading directly after after resume 
+triggered it.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406161531.oSPPFV19-lkp@intel.com/
+It is not directly related with the commit, because I have reverted it, 
+but nevertheless, maybe it is helpful to understand the underlying 
+firmware issue.
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+I' going to test your last patch and let you know.
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/scftorture.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in mm/dmapool_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp437.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp852.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp857.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp864.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp866.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp874.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp950.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_ascii.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-2.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-9.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-celtic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-inuit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8data.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/binfmt_script.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/cramfs/cramfs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/minix/minix.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/sysv/sysv.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ufs/ufs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/qnx6/qnx6.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/adfs/adfs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/encrypted-keys/encrypted-keys.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/algif_skcipher.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_i2c.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_spi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpio/gpio-pcf857x.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/rt4831-backlight.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio_ring.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/da9121-regulator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/max20411-regulator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/tps6286x-regulator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/8250/8250_base.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/8250/serial_cs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/serial_mctrl_gpio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/ttynull.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iommu/iova.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-i2c.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/brd.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/ublk_drv.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/arizona.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/rt4831.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/qcom-pm8008.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/charlcd.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/hd44780_common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/common/usb-common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/core/usbcore.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/mon/usbmon.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/class/usbtmc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/qcaux.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb-serial-simple.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/symbolserial.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/misc/ezusb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/misc/yurex.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/libcomposite.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_acm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_ss_lb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/u_serial.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/u_ether.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_ecm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_eem.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_ecm_subset.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_rndis.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_mass_storage.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_uvc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_hid.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_printer.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_tcm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/legacy/g_zero.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/tuners/tda9887.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/common/uvc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/v4l2-core/v4l2-async.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/v4l2-core/v4l2-fwnode.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/coreboot_table.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/memconsole.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/memconsole-coreboot.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/cbmem.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/vpd-sysfs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vhost/vringh.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_powersave.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/adc/ingenic-adc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwtracing/intel_th/intel_th_msu_sink.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvmem/nvmem_u-boot-env.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/siox/siox-bus-gpio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vdpa/vdpa.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rpmsg/rpmsg_char.o
->> ERROR: modpost: "led_init_default_state_get" [drivers/net/dsa/realtek/rtl8366.ko] undefined!
-ERROR: modpost: "devm_led_classdev_register_ext" [drivers/net/dsa/realtek/rtl8366.ko] undefined!
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Am 14.06.24 um 12:18 schrieb Rafael J. Wysocki:
+> On Thu, Jun 13, 2024 at 10:04 PM fhortner@yahoo.de <fhortner@yahoo.de> wrote:
+>> Am 13.06.24 um 17:14 schrieb Rafael J. Wysocki:
+>>
+>> Let's see if the ACPI thermal zone is the real culprit.
+>>
+>> The attached patch only adds the delay for thermal zone 0 which is the
+>> ACPI thermal zone.  It also prints the ID and type for all of the
+>> resuming thermal zones.
+>>
+>> Please test it (removing all of the test changes/patches tried so far)
+>> and let me know what happens to the battery readings.
+>>
+>> Patch
+>>
+>> thermal-delay-resume.patch
+>>
+>> does not work. Output according to dmesg.txt
+>>
+>> Attached is a slightly modified version of the last patch I sent.
+>> Please test it and let me know if it addresses the problem you are
+>> seeing.
+>>
+>> If it helps, I think we are done with this at least for now.
+>>
+>> patch thermal-core-resume-prio.patch with .priority = -1 does work
+>>
+>> One more thing to try is the attached patch (independent of the
+>> previous one) to lower the priority of the thermal PM notifier to make
+>> it run always after the ACPI battery one.
+>>
+>> Please test this one too and let me know if it works for you.
+>>
+>> patch thermal-core-resume-prio.patch
+>>
+>> with .priority = INT_MIN does also work.
+>>
+>> If you need any further tests, please don't hesitate to tell me so.
+> No, thank you, I think you've done enough and it is appreciated.
+>
+> I don't see any particular drawbacks of this approach and investing
+> more time in trying to get to the bottom of the issue is probably not
+> worth it.
+>
+> I'm going to submit the last patch as the proposed solution.
+>
+>> Thank you for your help!
+> No problem and thank you!
+
 
