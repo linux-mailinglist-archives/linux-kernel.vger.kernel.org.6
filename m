@@ -1,114 +1,144 @@
-Return-Path: <linux-kernel+bounces-216157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0053909C11
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:24:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB04909C16
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A41391F22A6F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:24:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E4F21C21517
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC28A178398;
-	Sun, 16 Jun 2024 07:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39668178CF6;
+	Sun, 16 Jun 2024 07:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AHyQNrr8"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="AtPDByQB"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C42416DEB4
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 07:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4B016DEB4;
+	Sun, 16 Jun 2024 07:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718522655; cv=none; b=sG3HwZ/deqyF6LCEQ4MScvDOJyZCzfC28NliPyxWBx6X1WKBEajV/YDoJb+mSvLSMWudWxIIiBAnDd0XxsPX810fmYi7rWc+Qikzak7cbpPW/+zxVKJ42t4OUiZj+dohFr0cJ3GC/TGZ9Xt9keHgoMLqMQSSvJ8fklmzygTmGLQ=
+	t=1718522867; cv=none; b=lX3XtVoQ2F2iIdORqBIicZtqfDRoyVNnc5xKazK+/FmoWAcWEwkVX2sMTQJYKdJOjq/V4yBQ1LKbzbK8fyAu9txYK1gexCwtvwrzNZdZGkZWvV5wSNvqZe/sNfkKXwDiP1F/STFbA4+b48gv3a4PcatfLt5Olc8wT4DgFkr9UbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718522655; c=relaxed/simple;
-	bh=3v5X7OMLawldb7SFk/J4caXxyFYfI65QW5lRP9eUVkE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hN6EjImx61RDuBxevm7t+jc6biZf8rhJxN6yGDFfH22SeTuc9jYJ27Q/z0Ws1RybWeuRzfOdrEua7THX38OmdXfxPgf7r6/ZZkMiOSMbp3wphWlSmxQkleGRReMIEv7917UHKZVyDPvkXY/nv4li7QFZl4ipmuf8ZePILlINjl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AHyQNrr8; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a6f176c5c10so405390666b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 00:24:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718522651; x=1719127451; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p3+k9sB6bIvCFm1HjBgH8dCg7qh1UZx1fKQ1LomFQ5M=;
-        b=AHyQNrr8yrumRYU2ogrz02u6cpS5bP2nOi3YH+b8HSf8szP67uNY4s63TWlQpeo04E
-         gzhtXyZKW8MxF9Vjod62dSZ9bB+LDo6qIK157ROEDOBu7R61t7PUiUnmKs7AIFI5I5Wo
-         M05ftIBNXi0j8VKaqnf/V+0fWP9dbT47WXcw0RQE4mCOEpJUkp7T+suK+viSzUjSLr2V
-         VXn9Z/BMkn7KAzuDeT8Url61KExRj6CkYO+SznWdDcvuYBuTkBw9wvLjuu5axQlr5a6F
-         GbNzxoL0f0ZEozCHYFB4B57jD49pYAohx0uPK/GESA1il7ezyHOEWuzDarOkfvnRLjVM
-         xlfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718522651; x=1719127451;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p3+k9sB6bIvCFm1HjBgH8dCg7qh1UZx1fKQ1LomFQ5M=;
-        b=JPfzldLzySOYSAE8xmHCB9mqoUEVjL0ExSpp6pyIdFbSMqBzC8paINAuZA0aywvabL
-         bFbMNU83x13Xex05fJHhNMpM8yo6GARFrnbl3pj9oyN45fdIrZuZBmKlkv1LwP0dKpuC
-         EceRtLQ7i5Vs0YqbkloxLa1GsfifykqbLJcT0SYUJiXhaxLrJ9lAheJgnsVkT+yw3vLD
-         fEf5M29tzpnZlDBP1T+rGvLt4SEDGkG+ne00ByxO0aJ6k83lqAWvmJVDbjUIfHje7ZVY
-         ZkUJ4iJCdvtVUL3wjo6VbEDePdP9mkqMW2hUZQqJqKKQnHmlVqJZM39GxP51woGrtkJx
-         1+ww==
-X-Forwarded-Encrypted: i=1; AJvYcCU4F521Q11b9IadM2z6TjUal8JHCAit/BLXW7TEsyfW95KV2RAYuDqKu0Z/NG7E/4TQ7g51ib4GRODJDzuXrjnUyIz/PLVQ0N8jc8wz
-X-Gm-Message-State: AOJu0YzRfHRbkC09AwWlfo6QEKNMJKPTv4TyPOsmaU2f3hGsmApxtTWh
-	u626BGwHI/udmvglBjikZqcJMekboWWl4PcHIaRuepgDyyv5VzLpJdaAPZrGhHmrwnuC/Nzn4QO
-	L
-X-Google-Smtp-Source: AGHT+IG6FwqrVyI5Y84CmiJBAmC7qtLBsb1k75sJ/5JFgxqCs97InBwD6RcdfDPdrerJqC+hG8FgeA==
-X-Received: by 2002:a17:906:25d5:b0:a6f:586b:6c1 with SMTP id a640c23a62f3a-a6f60dc56f0mr429149466b.56.1718522650779;
-        Sun, 16 Jun 2024 00:24:10 -0700 (PDT)
-Received: from [127.0.1.1] ([78.10.207.147])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f5f8f6eb3sm320840066b.143.2024.06.16.00.24.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Jun 2024 00:24:10 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Sam Protsenko <semen.protsenko@linaro.org>, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-In-Reply-To: <20240606161028.2986587-4-andriy.shevchenko@linux.intel.com>
-References: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
- <20240606161028.2986587-4-andriy.shevchenko@linux.intel.com>
-Subject: Re: (subset) [PATCH v1 3/4] clk: samsung: Switch to use
- kmemdup_array()
-Message-Id: <171852264936.6236.3386941184729055865.b4-ty@linaro.org>
-Date: Sun, 16 Jun 2024 09:24:09 +0200
+	s=arc-20240116; t=1718522867; c=relaxed/simple;
+	bh=IJKBx8EngZjCf1UMWwzavgh2/tV9nzo7UHwlFNS36nQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=n0awOyJsvcF/jyp4VvTl4eDsL8DkkbPGYnnwChmIHorZY4dyn3UMiuDdsCLLrbQ9DgmVAaMgPvjIyB7wyTIRAwzaYMHiGWKXSm4OhrQnniZK0xRnuMMGcLAOLG5/3nyqmQ7Mi+oryHSCHiJ78P78QA/UbUkIGXMgjUif0IZ4ml0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=AtPDByQB; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.205] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45G7Qnfg1078062
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sun, 16 Jun 2024 00:26:49 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45G7Qnfg1078062
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024051501; t=1718522810;
+	bh=vcnyciM5IvH6WEzwFFx0NauxBD5rFkkyBqjtfqxYFho=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=AtPDByQBMPrHWCGI+vzy8WZd8eQnzbzM+qXJF88Fb2WB2o+PZTPwNlkkLKmrTUk6a
+	 /nwKfiQrc6wYyXRaN6OA6gbPyymGlSuF1oyKtg540JImmdKhvgid+pRKDF07JtieKB
+	 NlA+yUHTFyuUArFshov6HbYhiR25PIUQJHWNr+dbDyiaN0DzNqG8Qlf2MYLHLsLyG9
+	 3J4g/EJpZBuBi9pumrYn/UbP6yFmGs+Xl7X/nbVEGEg1jPhUdmbrWZVlXkUXCBrk1/
+	 EZ6HOCVUVgIPIyUCzZqJdvMElRaDA3YoyHt+AJbRRYYSEXBbqAVAXVfC0pqegdYl3e
+	 gwkBSyyWTVV1g==
+Message-ID: <99208d95-d3de-44d0-8b08-f508759aabca@zytor.com>
+Date: Sun, 16 Jun 2024 00:26:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND v1 2/3] x86/cpufeatures: Generate a feature mask header
+ based on build config
+From: Xin Li <xin@zytor.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        will@kernel.org, peterz@infradead.org, akpm@linux-foundation.org,
+        acme@kernel.org, namhyung@kernel.org
+References: <20240509205340.275568-1-xin@zytor.com>
+ <20240509205340.275568-3-xin@zytor.com>
+Content-Language: en-US
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <20240509205340.275568-3-xin@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
-
-On Thu, 06 Jun 2024 19:09:33 +0300, Andy Shevchenko wrote:
-> Let the kememdup_array() take care about multiplication and possible
-> overflows.
+On 5/9/2024 1:53 PM, Xin Li (Intel) wrote:
+> From: "H. Peter Anvin (Intel)" <hpa@zytor.com>
 > 
-> 
+> Introduce an AWK script to auto-generate a header with required and
+> disabled feature masks based on <asm/cpufeatures.h> and current build
+> config. Thus for any CPU feature with a build config, e.g., X86_FRED,
+> simply add
 
-Applied, thanks!
+...
 
-[3/4] clk: samsung: Switch to use kmemdup_array()
-      https://git.kernel.org/krzk/linux/c/7666718892f2a8582127f584fdbf5dada59af2d8
+> +
+> +		printf "\n#define %s_MASKS ", s;
+> +		pfx = "{";
+> +		for (i = 0; i < ncapints; i++) {
+> +			printf "%s \\\n\t%s_MASK_%d", pfx, s, i;
+> +			pfx = ",";
+> +		}
+> +		printf " \\\n}\n\n";
+> +
+> +		printf "#define %s_FEATURE(x) \\\n", s;
+> +		printf "\t((( ";
+> +		for (i = 0; i < ncapints; i++) {
+> +			if (masks[i]) {
+> +				printf "\\\n\t\t((x) >> 5) == %2d ? %s_MASK%-3d : ", i, s, i;
+> +			}
+> +		}
+> +		printf "0 \\\n";
+> +		printf "\t) >> ((x) & 31)) & 1)\n\n";
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This code generates macros {REQUIRED,DISABLED}_FEATURE(x) to tell if a
+CPU feature, e.g., X86_FEATURE_FRED, is a required or disabled feature
+for this particular compile-time configuration.
 
+But they are NOT currently used, so I prefer to remove them for now.
+
+Thanks!
+     Xin
 
