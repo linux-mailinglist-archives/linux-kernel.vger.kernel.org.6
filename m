@@ -1,171 +1,140 @@
-Return-Path: <linux-kernel+bounces-216169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71E1C909C3D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:39:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2EEC909C42
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 09:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6477D1C21D2B
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:39:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C5421F214CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 07:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6201184114;
-	Sun, 16 Jun 2024 07:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1D1180A82;
+	Sun, 16 Jun 2024 07:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yOIDwBEW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jtzf6lfq";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yOIDwBEW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jtzf6lfq"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLIBAVWL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337901836D3;
-	Sun, 16 Jun 2024 07:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61D8179641;
+	Sun, 16 Jun 2024 07:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718523496; cv=none; b=CR8UNRjXadE1AHPtSRklr9StN6ezuvkmVLVMJtLBb5JFakdiNJYh5jRw2jBoZgHcFuChNXqEQi3OP8smUYHyjkWCCQ4brsYtv7L98D8Mu/1fesJ2KTN/NQFgqVHJyUeRJb6O8uJP5DwUzIMfY44dzo3bmAA6haYnCjoAkeFhv+0=
+	t=1718523539; cv=none; b=YFp7IH/22Yk/kbEspxRh/3WMcyQiXSmRtDfd5cJY7zSzSIozlF1efOZASXuJqQ3Pq3E10HwmKapWYa9ctDohblR5wqju1I71PFLUYfNXgIkBV4KAMdjU/P5OW2E9qiFM9YS/nWtxV2Awhyk4lDLJOQs2K8OjHj1qNJVLyQWlWJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718523496; c=relaxed/simple;
-	bh=xsJunObOHYvTmkmmNYAdoRsCPO9tBXmwA4HekcNlrJ8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nSdIh7DbWnjP04bfKaEpzq4+NHhYnQQ6+StYRgesaiYE+yYke+WDtbcKGltc5TO73a7Vacv5ibsGUcVH8Ls0HgXEC4CXjQZTzf5NdOnaEXFkFNHvzAUTXf5QFacHG0vlTY4W9wA4aweBzUK5YnRFYejdBa9zjDvOG8ivMZZSs7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yOIDwBEW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jtzf6lfq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yOIDwBEW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jtzf6lfq; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4E5945CCCA;
-	Sun, 16 Jun 2024 07:38:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718523492; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Tap0GsPP7pc1P9FCevbnU7pnjtJrdhQybL5YgnNd38=;
-	b=yOIDwBEWrttlcFBuJ/SIjpO1wS3Z0EN/rF2yP03WdHVi2yrnRqtUUeU6lsJz638pmoCl6m
-	oLH8PWJHohJ3TC/H0578cAT33pQWBdqTlDQyfTL33JcohpQyATz6l48QcdvkKPEqDBm9yi
-	V43VXtuHvdA0fDHfbhlR98ABdqIkwNw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718523492;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Tap0GsPP7pc1P9FCevbnU7pnjtJrdhQybL5YgnNd38=;
-	b=jtzf6lfqRKYP52PhyET904lY0Abh8g75Y4TDbmD/+e3GcWIV6xlceLd3FHtYAfajWhWuXs
-	PkziJ8lhtyTQoGDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=yOIDwBEW;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=jtzf6lfq
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718523492; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Tap0GsPP7pc1P9FCevbnU7pnjtJrdhQybL5YgnNd38=;
-	b=yOIDwBEWrttlcFBuJ/SIjpO1wS3Z0EN/rF2yP03WdHVi2yrnRqtUUeU6lsJz638pmoCl6m
-	oLH8PWJHohJ3TC/H0578cAT33pQWBdqTlDQyfTL33JcohpQyATz6l48QcdvkKPEqDBm9yi
-	V43VXtuHvdA0fDHfbhlR98ABdqIkwNw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718523492;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Tap0GsPP7pc1P9FCevbnU7pnjtJrdhQybL5YgnNd38=;
-	b=jtzf6lfqRKYP52PhyET904lY0Abh8g75Y4TDbmD/+e3GcWIV6xlceLd3FHtYAfajWhWuXs
-	PkziJ8lhtyTQoGDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E75B713AB9;
-	Sun, 16 Jun 2024 07:38:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lylBN2OWbmboCwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sun, 16 Jun 2024 07:38:11 +0000
-Date: Sun, 16 Jun 2024 09:38:36 +0200
-Message-ID: <87a5jl5ocj.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Ajrat Makhmutov <rautyrauty@gmail.com>
-Cc: alsa-devel@alsa-project.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	kailang@realtek.com,
-	sbinding@opensource.cirrus.com,
-	luke@ljones.dev,
-	shenghao-ding@ti.com,
-	simont@opensource.cirrus.com,
-	foss@athaariq.my.id,
-	rf@opensource.cirrus.com,
-	wzhd@ustc.edu,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ALSA: hda/realtek: Enable headset mic on IdeaPad 330-17IKB 81DM
-In-Reply-To: <20240615125457.167844-1-rauty@altlinux.org>
-References: <20240615125457.167844-1-rauty@altlinux.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1718523539; c=relaxed/simple;
+	bh=4mwidQTXwfgeYhLaHI9m5Gn10E9Ua0e5edHki8BtQnA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bhiJsUggfP2em6Q05bH6nZjuaKsjKnEjrMYixQjn+2yDtnOGk16LMR+9qu+5IWnBIC+xPxSUvzXlkV3A4p7Mf1kr3iQU2suVLgzOT8qotTVd56g495infiX/gk+Tq84zE/RiG9Ugkpmx+yIioXsCtw8HgnIYvWjlRIrhqjDwYeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLIBAVWL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3144EC2BBFC;
+	Sun, 16 Jun 2024 07:38:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718523538;
+	bh=4mwidQTXwfgeYhLaHI9m5Gn10E9Ua0e5edHki8BtQnA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VLIBAVWLAI2wLD/LUgvN+WC8EeWAVwKkryNOK3R60B3cLpxl8phG6o+BXALg325dq
+	 H1GlYe8By8dAbUMTVi6WimTq6ZODRcopt7HdUhm0iyj+/hpy4bwwlj8S4sV9CJK4We
+	 SxedlMOhuEhpCL4jy9gX+vYVbZoNnK+7QYgoOLoESskVIdFfp7pP7RYkMLwZKdW/Xr
+	 HyErfjR//HxprIGEbrRd1CFSwIik0MT3kJGtYGr0E17GmurhQuN4aI+Qnpe/lydD/k
+	 scuMDf+f7pj2hFh29AW81fadOOajoDapnjfvN+3U7RHnLeYh+gHAVTmBdXb0ziGrxU
+	 cldZ/nyFXD8Ww==
+Message-ID: <dfb0680e-7592-48dc-b4a3-5aec3a6bb188@kernel.org>
+Date: Sun, 16 Jun 2024 09:38:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-5.23 / 50.00];
-	BAYES_HAM(-2.72)[98.79%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 4E5945CCCA
-X-Spam-Flag: NO
-X-Spam-Score: -5.23
-X-Spam-Level: 
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/12] dt-bindings: clock: renesas,rzg3s-vbattb-clk:
+ Document the VBATTB clock driver
+To: Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
+ alexandre.belloni@bootlin.com, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240614071932.1014067-3-claudiu.beznea.uj@bp.renesas.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240614071932.1014067-3-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, 15 Jun 2024 14:54:57 +0200,
-Ajrat Makhmutov wrote:
-> 
-> Headset microphone do not work out of the box with this laptop. This
-> quirk fixes it. Zihao Wang specified the wrong subsystem id in his patch.
-> 
-> Link: https://lore.kernel.org/all/20220424084120.74125-1-wzhd@ustc.edu/
-> Fixes: 3b79954fd00d ("ALSA: hda/realtek: Add quirk for Yoga Duet 7 13ITL6 speakers")
-> Signed-off-by: Ajrat Makhmutov <rauty@altlinux.org>
+On 14/06/2024 09:19, Claudiu wrote:
+> +    #include <dt-bindings/clock/r9a08g045-cpg.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    vbattb: vbattb@1005c000 {
+> +        compatible = "renesas,rzg3s-vbattb", "syscon", "simple-mfd";
+> +        reg = <0x1005c000 0x1000>;
+> +        ranges = <0 0 0x1005c000 0 0x1000>;
+> +        interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+> +        interrupt-names = "tampdi";
+> +        clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>;
+> +        clock-names = "bclk";
+> +        power-domains = <&cpg>;
+> +        resets = <&cpg R9A08G045_VBAT_BRESETN>;
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +        status = "disabled";
 
-Your From address and Signed-off-by address are different.
-Could you try to align them?
+Drop.
 
-I can take as-is if inevitably necessary, but usually it's a wrong
-sign.
+And keep only one complete example, instead of two. See other complex
+devices as example.
 
 
-thanks,
+Best regards,
+Krzysztof
 
-Takashi
 
