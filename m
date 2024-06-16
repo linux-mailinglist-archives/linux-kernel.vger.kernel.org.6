@@ -1,263 +1,230 @@
-Return-Path: <linux-kernel+bounces-216334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DF2B909E0D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:06:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC54909E10
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92FC2281555
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:06:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA6E1F213FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E48A15ACB;
-	Sun, 16 Jun 2024 15:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7E314292;
+	Sun, 16 Jun 2024 15:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Valy6Z1L"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="pqUJPRmq"
+Received: from msa.smtpout.orange.fr (msa-215.smtpout.orange.fr [193.252.23.215])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E647FBF6;
-	Sun, 16 Jun 2024 15:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0E717993;
+	Sun, 16 Jun 2024 15:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.215
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718550372; cv=none; b=RSJpOrLwuQM4lKpROOKtoojDK1wYNAbUZjj5EuZSncSgj5Sbu1yre/qxQnXZ2c4UXu9nZk/ftOH6xDBhxHpO1d9GICwhVBFRKGD5pr/56Brnmn/WGpk5+yTsWi3N5y3XsCWYEhrrN11DY7TAOH19OvKuCAvrd+7thEmSCeuugHk=
+	t=1718550391; cv=none; b=r+nEA54GG1tXO5PDqQ2c/CaRlJ298XNH05FJIbmI/pqzf5IbuY5007X6j/y1hm/9kmQR+fywW+2ktBUEZXJJpwatDQb9HhK/51FS4MZ0YIYguHSQb8fkmuHzpWBJ+ThYxyTiP+Cyre+Ar8SG6KdQasmY13wjL9YRnhBAUnNbRCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718550372; c=relaxed/simple;
-	bh=eodZ+veoHiLvaS3SWWrwg+RSiia4D2YjRohGE/R66+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=izeO9JhvM/VrWkUfv+ZLHRqt7T5fR5b8voKgh6IVtC3Q4LlUjzUMae1zuwFaMfoDy0aKxLA3vSEpwJqJ7NG1MBy63O6QZBj5Ox6dEa9QK972uuOHsR5+MHCS7vC4wg9e4KMwQ7b7qw83YLpBVFQyhABjNYIYtXfv0rfMunFSbHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Valy6Z1L; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b064841f81so29326496d6.1;
-        Sun, 16 Jun 2024 08:06:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718550369; x=1719155169; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=VqObIqQp+WLPy3VVCqeSeRx29NarkCBbux5QQu76V4Y=;
-        b=Valy6Z1LcuOAYdNLqh5s7edYH5rWeCdAvw1rqRfa62QjQ8JQv0seDl2fLDU4Dgv6CN
-         vnAK3Jnbxm8pBcSlbfx9q5Olgj6P5bqmIBzAb7CKEUbOyQRrDhHiqynUH+yTNmu8fH9+
-         NVimIgAkawEqICLKSwkJL2N6WHpWyrU6E5ptygm01WVwGYf5ePTsTgVyxOcfbzp8+M4C
-         0SXmkeC5z+OSwd8PNvJiT8xqOlL5iyfnHeqqHyy7Dx78MDb5cL/V8hcVFQnv2beOzmCW
-         vmugyYSmfoK3h+taPnrI1ZsMgSTKFXowvfVOAmzGtRJQLP8zFVYzrZC6ZcTCY06Wd2qw
-         PlHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718550369; x=1719155169;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VqObIqQp+WLPy3VVCqeSeRx29NarkCBbux5QQu76V4Y=;
-        b=k80mVug6C5BdtYeJnpchpoW8VMpVCvmFdjItyqaEQLhcnW8HT5ybpOpjXL4LUmADvW
-         XgmTr9BbpPEUKZ3KqtQLb2Wm3AruJUfJiD8xoXv6QFJFY4Sb23qCi+J/17UfWJahYk3d
-         02z9e6VZrDfRtxjvq61BzmIcYNUOhl6LP7/nb7GRJCm0UgjOcMJVCgtEjjL5fa2mF8ZX
-         up1WAiIjIJqDq3woPsFscY5xBMG/HNcYW5lmYgd/RhJ+Dfo9omHMA8Rb+D1vp2/EAXf7
-         6f36wjuWcJJHVtE3XSf5gK/rSqMpM59FaQp77/UkHwTK78PNpsBZV7cZhQ2d4ujvuakD
-         +uhw==
-X-Forwarded-Encrypted: i=1; AJvYcCXK1fzEAXYqINnIvYoqXQnYCw4JSxISebbkcg6uXufEVFCe/FiCko6XfI3C4BN/0ZmI4TuloPs+bDPWji1zieUVcaDoS27e7AnKi3X8tCyNEuQOkziF1WBeKywS1iX4OCKGhhHRLJ7Z6XXNYDXPIR3LbzGHRiWX2ZGHLZ+y5grqk7uRcpvTrfpFvQmtTuU3l0BD45VmdvhHxwnUEiEP6PkJc/WeHNT7RA==
-X-Gm-Message-State: AOJu0YxWAF7wF1NIhPApsVfFPvZULCqo4RWjJ6+hpnCuysTgyJ/315Ii
-	AUa1WpltMVlStgROnRASLkb9W9Uc2GRQJgJHGxSR38HzhqHpSY65
-X-Google-Smtp-Source: AGHT+IGBNIQC6j0BqwcDzH3wRTTRHzh/QPcr+NqgMAY2KJ5ds6X+rg2sPyjML9quC4pDD9ZSVedEYg==
-X-Received: by 2002:ad4:4ea9:0:b0:6b0:8f42:2435 with SMTP id 6a1803df08f44-6b2afd6a451mr116202186d6.51.1718550368805;
-        Sun, 16 Jun 2024 08:06:08 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5bf2879sm44716896d6.21.2024.06.16.08.06.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Jun 2024 08:06:08 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 3E0C61200043;
-	Sun, 16 Jun 2024 11:06:07 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sun, 16 Jun 2024 11:06:07 -0400
-X-ME-Sender: <xms:X_9uZvCCkIhVEDfGa96FmikD-smutPRls8X6T98ysAk3o8mYV0NSEA>
-    <xme:X_9uZlh8YRgX0duI0y2Ie5sn-Jn-72D0ogLmixpPtK7D8IM8JBp9sxggGiclyNTGA
-    XZkNo2M92bSJ9xOiw>
-X-ME-Received: <xmr:X_9uZqlZud_vyJdZgPDo1LlRLeUHA1ZC_X2ILBo2_1CboirpuDTWN8zYcw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedvfedgkeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpeeuohhq
-    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
-    grthhtvghrnhepgffgheejtdfhheehtdejffehgedujeekudfgieejledttedvvdeiuefg
-    fedvffdvnecuffhomhgrihhnpegtrhgrthgvshdrihhonecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhh
-    phgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunh
-    drfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:X_9uZhxvKEM97Ulpcf4GVxbxFnA7E_JZZyvyZz9dedGrt-a4kbWJyA>
-    <xmx:X_9uZkQ7Ht69gXaoQIf43_cdFuyBs6VfZDjIjuKy3uUQbzEFkenwZg>
-    <xmx:X_9uZkbwtNcKXt6VNNVWdwo_nPXrIIQUFO-9iL9Gp-BAppy8gxX2uA>
-    <xmx:X_9uZlTDDg_hBZyPuca8BcznkGuTRWsh_xJwHtIlUASb2--utKbj3Q>
-    <xmx:X_9uZqBv556ZNnyPfitADxfD6mvgWmY6JVws7eQzSbfTxCHhO7UNroo1>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 16 Jun 2024 11:06:06 -0400 (EDT)
-Date: Sun, 16 Jun 2024 08:06:05 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Gary Guo <gary@garyguo.net>
-Cc: John Hubbard <jhubbard@nvidia.com>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, llvm@lists.linux.dev,
-	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
- linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
- Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com
-Subject: Re: [RFC 2/2] rust: sync: Add atomic support
-Message-ID: <Zm7_XWe6ciy1yN-h@Boquns-Mac-mini.home>
-References: <20240613144432.77711a3a@eugeo>
- <ZmseosxVQXdsQjNB@boqun-archlinux>
- <CANiq72myhoCCWs7j0eZuxfoYMbTez7cPa795T57+gz2Dpd+xAw@mail.gmail.com>
- <ZmtC7h7v1t6XJ6EI@boqun-archlinux>
- <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com>
- <79239550-dd6e-4738-acea-e7df50176487@nvidia.com>
- <ZmztZd9OJdLnBZs5@Boquns-Mac-mini.home>
- <c243bef3-e152-462f-be68-91dbf876092b@nvidia.com>
- <Zmz-338Ad6r4vzM-@Boquns-Mac-mini.home>
- <20240616155145.54371240.gary@garyguo.net>
+	s=arc-20240116; t=1718550391; c=relaxed/simple;
+	bh=MeP63kUoIGOhp+KS92FhAfCnit5QJFnb0n3OM4QPJPo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B//YuXlE8qMumjVklSDbnk5Q8ow0ZjJ//vwWoEzg/i+fylkzHnkjRtkiwhWq1RQ2eGzy96kRExCmeLCv4entleuqOnJtnJ6Lts429Mm/e8gABk98v/AsEyyktilpTm+yxYbVsW6ObkEmXHzIQBymKdud3q8RjPBf1kFBQmM5vBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=pqUJPRmq; arc=none smtp.client-ip=193.252.23.215
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id IrSUsCOuW4rg1IrSUs1Sr1; Sun, 16 Jun 2024 17:06:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1718550380;
+	bh=ujR6qI66k3vQEhgvlbkTIaG+4S4k/x11/VEOuKw3pkE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=pqUJPRmqiowTw3TYYioi9HHW3BS2VQuywKo8nfRiglMFqshCwso3qbgpqRg+INspt
+	 ALq25NbbSfAQJIP9Sc8h2IDHuWDfgS+/KJMbKT1z9UIXjD+nKg73j7FuTyxoolcvk7
+	 DzshJdyXTgWzb2sbbl/G+kxzLxSznuo1saqXxs61oVL0u3MVjbei4unCtfm5syQ5NW
+	 fHw/Al0dJur2vgVgeYjRKq5b7XQoPYlU3hHVE7qoF1G4GYMk24o73VRKSe28NV5ri6
+	 ZdeF/n9TEcdn+MXSQ1pf1QuYbxaz1GVMqywT4geO1np/NopaF3vk7xHFa7O9ZpbGfk
+	 srXGgwjer0yPw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 16 Jun 2024 17:06:20 +0200
+X-ME-IP: 86.243.222.230
+Message-ID: <834d31cc-f4bc-4db7-a25b-f9869e550eb6@wanadoo.fr>
+Date: Sun, 16 Jun 2024 17:06:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/7] ASoC: codecs: wcd937x: add wcd937x codec driver -
+ another comment
+To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>
+Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com,
+ quic_pkumpatl@quicinc.com, Konrad Dybcio <konrad.dybcio@linaro.org>
+References: <20240611074557.604250-1-quic_mohs@quicinc.com>
+ <20240611074557.604250-4-quic_mohs@quicinc.com>
+Content-Language: en-MW
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240611074557.604250-4-quic_mohs@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240616155145.54371240.gary@garyguo.net>
 
-On Sun, Jun 16, 2024 at 03:51:45PM +0100, Gary Guo wrote:
-> On Fri, 14 Jun 2024 19:39:27 -0700
-> Boqun Feng <boqun.feng@gmail.com> wrote:
+Le 11/06/2024 à 09:45, Mohammad Rafi Shaik a écrit :
+> From: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
 > 
-> > On Fri, Jun 14, 2024 at 06:28:00PM -0700, John Hubbard wrote:
-> > > On 6/14/24 6:24 PM, Boqun Feng wrote:  
-> > > > On Fri, Jun 14, 2024 at 06:03:37PM -0700, John Hubbard wrote:  
-> > > > > On 6/14/24 2:59 AM, Miguel Ojeda wrote:  
-> > > > > > On Thu, Jun 13, 2024 at 9:05 PM Boqun Feng <boqun.feng@gmail.com> wrote:  
-> > > > > > > 
-> > > > > > > Does this make sense?  
-> > > > > > 
-> > > > > > Implementation-wise, if you think it is simpler or more clear/elegant
-> > > > > > to have the extra lower level layer, then that sounds fine.
-> > > > > > 
-> > > > > > However, I was mainly talking about what we would eventually expose to
-> > > > > > users, i.e. do we want to provide `Atomic<T>` to begin with? If yes,
-> > > > > > then we could make the lower layer private already.
-> > > > > > 
-> > > > > > We can defer that extra layer/work if needed even if we go for
-> > > > > > `Atomic<T>`, but it would be nice to understand if we have consensus
-> > > > > > for an eventual user-facing API, or if someone has any other opinion
-> > > > > > or concerns on one vs. the other.  
-> > > > > 
-> > > > > Well, here's one:
-> > > > > 
-> > > > > The reason that we have things like atomic64_read() in the C code is
-> > > > > because C doesn't have generics.
-> > > > > 
-> > > > > In Rust, we should simply move directly to Atomic<T>, as there are,
-> > > > > after all, associated benefits. And it's very easy to see the connection  
-> > > > 
-> > > > What are the associated benefits you are referring to? Rust std doesn't
-> > > > use Atomic<T>, that somewhat proves that we don't need it.  
-> > > Just the stock things that a generic provides: less duplicated code,  
-> > 
-> > It's still a bit handwavy, sorry.
-> > 
-> > Admittedly, I haven't looked into too much Rust concurrent code, maybe
-> > it's even true for C code ;-) So I took a look at the crate that Gary
-> > mentioned (the one provides generic atomic APIs):
-> > 
-> > 	https://crates.io/crates/atomic
-> > 
-> > there's a "Dependent" tab where you can see the other crates that
-> > depends on it. With a quick look, I haven't found any Rust concurrent
-> > project I'm aware of (no crossbeam, no tokio, no futures). On the other
-> > hand, there is a non-generic based atomic library:
-> > 
-> > 	https://crates.io/crates/portable-atomic
-> > 
-> > which has more projects depend on it, and there are some Rust concurrent
-> > projects that I'm aware of: futures, async-task etc. Note that people
-> > can get the non-generic based atomic API from Rust std library, and
-> > the "portable-atomic" crate is only 2-year old, while "atomic" crate is
-> > 8-year old.
-> > 
-> > More interestingly, the same author of "atomic" crate, who is an expert
-> > in concurrent areas, has another project (there are a lot projects from
-> > the author, but this is the one I'm mostly aware of) "parking_lot",
-> > which "provides implementations of Mutex, RwLock, Condvar and Once that
-> > are smaller, faster and more flexible than those in the Rust standard
-> > library, as well as a ReentrantMutex type which supports recursive
-> > locking.", and it doesn't use the "atomic" crate either.
+> This patch adds basic SoundWire codec driver to support for
+> WCD9370/WCD9375 TX and RX devices.
 > 
-> Note that crossbeam's AtomicCell is also generic, and crossbeam is used
-> by tons of crates. As Miguel mentioned, I think it's very likely that in
-> the future we want be able to do atomics on new types (e.g. for
-> seqlocks perhaps). We probably don't need the non-lock-free fallback of
-
-Good, another design bit, thank you!
-
-What's our overall idea on sub-word types, like Atomic<u8> and
-Atomic<u16>, do we plan to say no to them, or they could have a limited
-APIs? IIUC, some operations on them are relatively sub-optimal on some
-architectures, supporting the same set of API as i32 and i64 is probably
-a bad idea.
-
-Another thing in my mind is making `Atomic<T>`
-
-	pub struct Atomic<T: Send + ...> { ... }
-
-so that `Atomic<T>` will always be `Sync`, because quite frankly, an
-atomic type that cannot `Sync` is pointless.
-
-Regards,
-Boqun
-
-> crossbeam's AtomicCell, but the lock-free subset with newtype support
-> is desirable.
+> The WCD9370/WCD9375 has Multi Button Headset Control hardware to
+> support Headset insertion, type detection, 8 headset buttons detection,
+> Over Current detection and Impedence measurements.
+> This patch adds support for this using wcd-mbhc apis.
 > 
-> People in general don't use the `atomic` crate because it provides no
-> additional feature compared to the standard library. But it doesn't
-> really mean that the standard library's atomic design is good.
-> 
-> People decided to use AtomicT and NonZeroT instead of Atomic<T> or
-> NonZero<T> long time ago, but many now thinks the decision was bad.
-> Introduction of NonZero<T> is a good example of it. NonZeroT are now
-> all type aliases of NonZero<T>.
-> 
-> I also don't see any downside in using generics. We can provide type
-> aliases so people can use `AtomicI32` and `AtomicI64` when they want
-> their code to be compatible with userspace Rust can still do so.
-> 
-> `Atomic<i32>` is also just aesthetically better than `AtomicI32` IMO.
-> When all other types look like `NonZero<i32>`, `Wrapping<i32>`, I don't
-> think we should have `AtomicI32` just because "it's done this way in
-> Rust std". Our alloc already deviates a lot from Rust std.
-> 
-> Best,
-> Gary
+> Co-developed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Signed-off-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+> Co-developed-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+> ---
+
+
+Hi,
+
+this patch has reached -next, but I have a question.
+
+If I'm correct, I can send a patch, but if the fix can be folded 
+somewhere, this is also fine for me.
+
+...
+
+> +static int wcd937x_probe(struct platform_device *pdev)
+> +{
+> +	struct component_match *match = NULL;
+> +	struct device *dev = &pdev->dev;
+> +	struct wcd937x_priv *wcd937x;
+> +	struct wcd_mbhc_config *cfg;
+> +	int ret;
+> +
+> +	wcd937x = devm_kzalloc(dev, sizeof(*wcd937x), GFP_KERNEL);
+> +	if (!wcd937x)
+> +		return -ENOMEM;
+> +
+> +	dev_set_drvdata(dev, wcd937x);
+> +	mutex_init(&wcd937x->micb_lock);
+> +
+> +	wcd937x->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
+> +	if (IS_ERR(wcd937x->reset_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(wcd937x->reset_gpio),
+> +				     "failed to reset wcd gpio\n");
+> +
+> +	wcd937x->us_euro_gpio = devm_gpiod_get_optional(dev, "us-euro", GPIOD_OUT_LOW);
+> +	if (IS_ERR(wcd937x->us_euro_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(wcd937x->us_euro_gpio),
+> +				"us-euro swap Control GPIO not found\n");
+> +
+> +	cfg = &wcd937x->mbhc_cfg;
+> +	cfg->swap_gnd_mic = wcd937x_swap_gnd_mic;
+> +
+> +	wcd937x->supplies[0].supply = "vdd-rxtx";
+> +	wcd937x->supplies[1].supply = "vdd-px";
+> +	wcd937x->supplies[2].supply = "vdd-mic-bias";
+> +
+> +	ret = devm_regulator_bulk_get(dev, WCD937X_MAX_BULK_SUPPLY, wcd937x->supplies);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to get supplies\n");
+> +
+> +	ret = regulator_bulk_enable(WCD937X_MAX_BULK_SUPPLY, wcd937x->supplies);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to enable supplies\n");
+> +
+> +	/* Get the buck separately, as it needs special handling */
+> +	wcd937x->buck_supply = devm_regulator_get(dev, "vdd-buck");
+> +	if (IS_ERR(wcd937x->buck_supply))
+
+regulator_bulk_disable() is missing here...
+
+> +		return dev_err_probe(dev, PTR_ERR(wcd937x->buck_supply),
+> +				     "Failed to get buck supply\n");
+> +
+> +	ret = regulator_enable(wcd937x->buck_supply);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to enable buck supply\n");
+
+... and here...
+
+Also, should 'buck_supply' be disabled in the error handling path of the 
+probe and in the remove function? (and maybe even somewhere else related 
+to wcd937x_codec_enable_vdd_buck())
+
+> +
+> +	wcd937x_dt_parse_micbias_info(dev, wcd937x);
+> +
+> +	cfg->mbhc_micbias = MIC_BIAS_2;
+> +	cfg->anc_micbias = MIC_BIAS_2;
+> +	cfg->v_hs_max = WCD_MBHC_HS_V_MAX;
+> +	cfg->num_btn = WCD937X_MBHC_MAX_BUTTONS;
+> +	cfg->micb_mv = wcd937x->micb2_mv;
+> +	cfg->linein_th = 5000;
+> +	cfg->hs_thr = 1700;
+> +	cfg->hph_thr = 50;
+> +
+> +	wcd_dt_parse_mbhc_data(dev, &wcd937x->mbhc_cfg);
+> +
+> +	ret = wcd937x_add_slave_components(wcd937x, dev, &match);
+> +	if (ret)
+> +		return ret;
+
+... and here...
+
+> +
+> +	wcd937x_reset(wcd937x);
+> +
+> +	ret = component_master_add_with_match(dev, &wcd937x_comp_ops, match);
+> +	if (ret)
+> +		return ret;
+
+... and here.
+
+Maybe a devm_add_action_ior_reset() could help?
+
+> +
+> +	pm_runtime_set_autosuspend_delay(dev, 1000);
+> +	pm_runtime_use_autosuspend(dev);
+> +	pm_runtime_mark_last_busy(dev);
+> +	pm_runtime_set_active(dev);
+> +	pm_runtime_enable(dev);
+> +	pm_runtime_idle(dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static void wcd937x_remove(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct wcd937x_priv *wcd937x = dev_get_drvdata(dev);
+> +
+> +	component_master_del(&pdev->dev, &wcd937x_comp_ops);
+> +
+> +	pm_runtime_disable(dev);
+> +	pm_runtime_set_suspended(dev);
+> +	pm_runtime_dont_use_autosuspend(dev);
+> +
+> +	regulator_bulk_disable(WCD937X_MAX_BULK_SUPPLY, wcd937x->supplies);
+> +	regulator_bulk_free(WCD937X_MAX_BULK_SUPPLY, wcd937x->supplies);
+
+This has been allocated with devm_regulator_bulk_get(), so this call 
+looks redundant (but harmless).
+
+> +}
+
+...
+
 
