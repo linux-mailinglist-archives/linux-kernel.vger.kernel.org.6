@@ -1,117 +1,118 @@
-Return-Path: <linux-kernel+bounces-216340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80E74909E1F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:22:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF7A909E1D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07891B2150F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:22:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2353F1F215B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 15:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0A6134B2;
-	Sun, 16 Jun 2024 15:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3A714A81;
+	Sun, 16 Jun 2024 15:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m0naiLHn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="MthR3XnK"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B58F17C67;
-	Sun, 16 Jun 2024 15:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B656F9461;
+	Sun, 16 Jun 2024 15:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718551313; cv=none; b=Qr0v4KO27Nl5qDNDDq1Cpx3mq0n8fs2wvuszO++bYoCg98UhPV/p/W5y7Ck4OFbtubfQeIGJdPeTV3m7/7mskpBSLmRCLb3V85EO62L6oqmZE25l+OyofL2S+DLK0n867jbIJahtUGMeTLntZy77bnhSzfj1+b4z0B1KicZ88tU=
+	t=1718551294; cv=none; b=NXRdIv6h7nIYI7BNOJz6ga8bn4D8URdDawZWYG4Mwc6Ez+hD9aDYQ3RBzhfD9Sywb0K0f6Fj6OoQZQX67wjeStLfNZuhLEAbh8ueZAjKJMcRNkQmH5fy0htBqS84A/wLu5sBwUtV1tfjW2nmPQYXai9Jpus41iTTtPwl9sIrK/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718551313; c=relaxed/simple;
-	bh=NEs054oRZFcHRWUqwHRu4qow5jK+NtbPN+Hc1m2p2AM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lQ//AowHy2tt86L65PhCtJ8ZD3ceGaaBOVbFcb7V9W0WQlisaQCZce+7EQEOM3tw5YMPgmuGIaNrmKixY7XoPavSRlSsuaVh99leO1+zHsoBWmJk60n1PCXXRChT10IzsE3s+iF6OBOkh4xdiWKKknJwYFXvIGVsgJpMdKl4hVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m0naiLHn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2718AC2BBFC;
-	Sun, 16 Jun 2024 15:21:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718551313;
-	bh=NEs054oRZFcHRWUqwHRu4qow5jK+NtbPN+Hc1m2p2AM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=m0naiLHneG0iYR4B9Z1u8hhnq8ti0hwY1ZNCYyYsxPdhZ9O6ck9P0nfVCVPj3T/EC
-	 WKRp4+UIQ1QUja6tft7sD+5uda52IknmLycppKiimJpgVruLv1CIemq/A0/Mx68TDv
-	 uPJT9ovaDWLw8c+kKzBxW+/t9qjUlLYgYBlb9Abb/hE9lVlVjyP3BeAJ4QWLyzYixi
-	 VwuMLw+koGZhauyHclqpxFb7JHra6p9lXU0M37pzTC/q5yOtPZkQr8pH3KxvAH0RU/
-	 PjCOslxSAnaxK7SZvWqD7hCMQ7u3CuVWKDWa8Ou1qUuX+o0rCKsgTKqedb6aWAPO6j
-	 r1Cyn6mnI6CGQ==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52b7ffd9f6eso3531984e87.3;
-        Sun, 16 Jun 2024 08:21:53 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzZjU9AsEdB1TxJIgCEDuC/5h7gQpTdgtJiNhHfNRbbVivxx/rt
-	K01KCafU9yM2yHeNSmkOgmcNLlfQV+wGfCagMxzH7BtluYQyIlKFaElIKS+DYUb36W+bZYLeGjm
-	NI3iZb0cmiwR4PORGe+P2y2DPvH4=
-X-Google-Smtp-Source: AGHT+IEt1SPxTG4PEweuJf30U7VJWpA6Ulu1R7NovD9z/yJ/5NNQfyc8XhhePP8HY5lJ6wtLvXusHgf2my8JqeVPgQg=
-X-Received: by 2002:ac2:514f:0:b0:52c:7fc7:f40d with SMTP id
- 2adb3069b0e04-52ca6e6585bmr4851652e87.21.1718551311755; Sun, 16 Jun 2024
- 08:21:51 -0700 (PDT)
+	s=arc-20240116; t=1718551294; c=relaxed/simple;
+	bh=gpXR9z4u1IadXyxkjoOHHuiwgYbHsEZ1Qk3vd75QGrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tod5IzPmu61O6qC6G9ezvz9On2Y36qWMZBvIvjMgrBWWVgJKxoixeO4eS4aA/glMg4gBObudSspo8UDX4nUAGNLHFwFh93u5PciH0dq+EbE/Mt3AM0dloEaBNQqiYJpzAZDi7sioJh2TXGHTXkENUA8N364lJ71dguH1jl009DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=MthR3XnK; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Cv+4A+MtSDByPUMzvTt0yBJQrxD+0ofdKxmwf8vdRss=; b=MthR3XnKAFPvoA3e2vljaoUJ+l
+	PM399FWLVN86Ay4DSh/3eHWJeKSMs7FnHOcWRF/XfJrBzhavPtJyHQQf/k3fTu5ktpyJzkeib8sFB
+	YN6k6CxxzsYqbL1BMkK5hEmCtqoEvJH6ob5XTdRVh9afpTREflurqry+JfULPWuZo59A=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sIrh8-000BdR-09; Sun, 16 Jun 2024 17:21:26 +0200
+Date: Sun, 16 Jun 2024 17:21:25 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com, Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>
+Subject: Re: [PATCH net-next v13 05/13] net: ethtool: Allow passing a phy
+ index for some commands
+Message-ID: <9dbd5b23-c59d-4200-ab9c-f8a9d736fea6@lunn.ch>
+References: <20240607071836.911403-1-maxime.chevallier@bootlin.com>
+ <20240607071836.911403-6-maxime.chevallier@bootlin.com>
+ <20240613182613.5a11fca5@kernel.org>
+ <20240616180231.338c2e6c@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611160938.3511096-1-masahiroy@kernel.org> <20240611160938.3511096-2-masahiroy@kernel.org>
-In-Reply-To: <20240611160938.3511096-2-masahiroy@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 17 Jun 2024 00:21:15 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQyPRKes7=wNtYXre+nU=5-1oZ-g1uzbjFMFd2e10jFjA@mail.gmail.com>
-Message-ID: <CAK7LNAQyPRKes7=wNtYXre+nU=5-1oZ-g1uzbjFMFd2e10jFjA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] kbuild: package: add -e and -u options to shell scripts
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240616180231.338c2e6c@fedora>
 
-On Wed, Jun 12, 2024 at 1:09=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> Set -e to make these scripts fail on the first error.
->
-> Set -u because these scripts are invoked by Makefile, and do not work
-> properly without necessary variables defined.
->
-> Remove the explicit "test -n ..." from scripts/package/install-extmod-bui=
-ld.
->
-> Both options are described in POSIX. [1]
->
-> [1]: https://pubs.opengroup.org/onlinepubs/009604499/utilities/set.html
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
+On Sun, Jun 16, 2024 at 06:02:31PM +0200, Maxime Chevallier wrote:
+> Hello Jakub,
+> 
+> On Thu, 13 Jun 2024 18:26:13 -0700
+> Jakub Kicinski <kuba@kernel.org> wrote:
+> 
+> > On Fri,  7 Jun 2024 09:18:18 +0200 Maxime Chevallier wrote:
+> > > +		if (tb[ETHTOOL_A_HEADER_PHY_INDEX]) {
+> > > +			struct nlattr *phy_id;
+> > > +
+> > > +			phy_id = tb[ETHTOOL_A_HEADER_PHY_INDEX];
+> > > +			phydev = phy_link_topo_get_phy(dev,
+> > > +						       nla_get_u32(phy_id));  
+> > 
+> > Sorry for potentially repeating question (please put the answer in the
+> > commit message) - are phys guaranteed not to disappear, even if the
+> > netdev gets closed? this has no rtnl protection
+> 
+> I'll answer here so that people can correct me if I'm wrong, but I'll
+> also add it in the commit logs as well (and possibly with some fixes
+> depending on how this discussion goes)
+> 
+> While a PHY can be attached to/detached from a netdevice at open/close,
+> the phy_device itself will keep on living, as its lifetime is tied to
+> the underlying mdio_device (however phy_attach/detach take a ref on the
+> phy_device, preventing it from vanishing while it's attached to a
+> netdev)
 
+It gets interesting with copper SFP. They contain a PHY, and that PHY
+can physically disappear at any time. What i don't know is when the
+logical representation of the PHY will disappear after the hotunplug
+event.
 
-
-Setting -u needs more careful review and test.
-
-
-This patch will break 'make deb-pkg'.
-
-
-./scripts/package/mkdebian: 150: KDEB_PKGVERSION: parameter not set
-
-
-
-
-To set -u, scripts/package/mkdebian needs code refactoring.
-
-
-
-I will keep scripts/package/mkdebian untouched.
-
-
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+	Andrew
 
