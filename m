@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-216376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39371909EA8
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:05:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0D5909EAE
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 19:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB722281405
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:05:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3FCC2817A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2024 17:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBDB1CA84;
-	Sun, 16 Jun 2024 17:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEE21D54F;
+	Sun, 16 Jun 2024 17:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nwsLoI1f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bpyj3l83"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24A417C6C;
-	Sun, 16 Jun 2024 17:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601A012E7E
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 17:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718557523; cv=none; b=WYE7Tl8hf8pyVk9zHAcQ52cD4JFqDmLrsX/qPbCwbvQASdfWlahbm0Sug+aDr/++64TaqhYq2VQcVYuWp/8e5LaOQFZwJBgDg42HUh8nGwC3jjcwwzZbWHdUhXQTYejpSdWaz1rG/KE0YRyPA+DMwzzbBFDTxIW7r8Hm8x3WllQ=
+	t=1718558388; cv=none; b=P4qV/nhmDLJ0XejUhF9fKasF/OxFN+iS76uzI8h0Dnct09rIxjjsCs/mwZ/7JHy0KTNCDZGHNfIWlfD4k12f33kK3yyXan2LVcCUGawbWYWp+23YM1hj8+8Le88X9SGe9xuNGVbNPZXliEUAcAZy7k0v7N/3is5ndl+G/q2B8R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718557523; c=relaxed/simple;
-	bh=AvVFXBmaRKZ3IkMR6+O46wT55Rea5v5gMREnmMLSW8c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aedJ/BArGzW+19YNM86pJu8EX7yu2sFobpFtFfWNxugi2XKeJhSaLqHu0t8TtVHD2DfYuoFFECmfcvzJgbYdCOi7/ZkcEKlUYES/degxa9/ywe1NIBbx8P0ONaLV3YqXJuhEIuA7UFB2fKARt30hGdQxX44nVOP5mUHsBuIhuZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nwsLoI1f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DBC4C2BBFC;
-	Sun, 16 Jun 2024 17:05:22 +0000 (UTC)
+	s=arc-20240116; t=1718558388; c=relaxed/simple;
+	bh=UYoijwXTiDxnM0ft4XaNfqY/HwhmegABAhD0M3CJA4o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IAF1tiatIXnUAQNgjiN9TLqG2r6gj5uZ5AIJc5p+8L/8YSZposTE+v3ILzwo6QH/ZL/4sH6UUd/Q1qQWsmvbGBDYjHWk4UGAVk/LRmhVLB/Z83ZFEKGKZy689tToQUxpqzDtb35/D8SVQ2Z8W6HGykbLSm/r9g01E4bpNZ6Qc38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bpyj3l83; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FA39C2BBFC;
+	Sun, 16 Jun 2024 17:19:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718557523;
-	bh=AvVFXBmaRKZ3IkMR6+O46wT55Rea5v5gMREnmMLSW8c=;
+	s=k20201202; t=1718558387;
+	bh=UYoijwXTiDxnM0ft4XaNfqY/HwhmegABAhD0M3CJA4o=;
 	h=From:To:Cc:Subject:Date:From;
-	b=nwsLoI1f25BiMZmUstc7WSHWdzuqCqBaTaWxXPLKsURHoNubxYB0PkjpBPIXAz//X
-	 /7gzdHo/W+g7ULlWpcsaEXttmJ49w+rb856oBKOpaZ/dfO+RQvImY7ikSogiTltboD
-	 Mzk+iiOk1pvI3GoivDZSASHk+g2WnV2bCrwBGI3nIH+9stpo8eKds0OEl3O3TNxjWQ
-	 Yq8wV+zt2dYSJudUEpw9PPsgvzElLHyqpyKGpLmGVZnIFLABVk9Un9ZHi2itopJwzu
-	 pAeH9VttWwN/wN4ZBkAxtaT7Nu2c2J8uWb3b2/zWxpD05KqT+vk+rBSci/7Ds4//ew
-	 8Uty1eLYs4Udw==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: [PATCH] kbuild: rpm-pkg: fix build error with CONFIG_MODULES=n
-Date: Mon, 17 Jun 2024 02:05:13 +0900
-Message-ID: <20240616170516.502261-1-masahiroy@kernel.org>
+	b=bpyj3l836yaIF7YuMjTlKCDrRY4jfD37pFIo52sY+o+sig+QVCZ3RepeJ36N+UyXD
+	 qTaVuIOHiPl6wpUR6NB6Bk5l05I6EzQqNEGri5hmSbkyEBd8WFPeIXlLW0n31BfhC6
+	 ghYTZHUEnUOaUNHrsuruzSpuUdd45G0b5wDUvyDe9HH5sgcrSO/ndl8DBEqlvY3zON
+	 kFRgENJx7/KUg7zoz+nG1Xd4OT+oMwCoG7BlTi3gFtez7T73eKWcNe522s1MkrrvXL
+	 FKSAR1NNB9R01lbllkyPkvCZ75PGAypsOqLkdQFJL8sdF/bpzUu2JHmYPxfQuPwkhG
+	 S0mUMx7NnYDgA==
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Samuel Holland <samuel.holland@sifive.com>
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] riscv: convert bottom half of exception handling to C
+Date: Mon, 17 Jun 2024 01:05:47 +0800
+Message-ID: <20240616170553.2832-1-jszhang@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -57,40 +58,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When CONFIG_MODULES is disabled, 'make (bin)rpm-pkg' fails.
+For readability, maintainability and future scalability, convert the
+bottom half of the exception handling to C.
 
-  $ make allnoconfig binrpm-pkg
-    [ snip ]
-  error: File not found: .../linux/rpmbuild/BUILDROOT/kernel-6.10.0_rc3-1.i386/lib/modules/6.10.0-rc3/kernel
-  error: File not found: .../linux/rpmbuild/BUILDROOT/kernel-6.10.0_rc3-1.i386/lib/modules/6.10.0-rc3/modules.order
+During the conversion, I found Anton fixed a performance issue
+and my patches will touch the same exception asm code, so I include
+Anton's patch for completeness. I also cooked a similar patch to avoid
+corrupting the RAS in ret_from_fork() per the inspiration.
 
-Fixes: 615b3a3d2d41 ("kbuild: rpm-pkg: do not include depmod-generated files")
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+Mostly the assembly code is converted to C in a relatively
+straightforward manner.
 
- scripts/package/kernel.spec | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+However, there are two modifications I need to mention:
 
-diff --git a/scripts/package/kernel.spec b/scripts/package/kernel.spec
-index 19e458341f45..f1c7a5ea338f 100644
---- a/scripts/package/kernel.spec
-+++ b/scripts/package/kernel.spec
-@@ -70,13 +70,11 @@ ln -fns /usr/src/kernels/%{KERNELRELEASE} %{buildroot}/lib/modules/%{KERNELRELEA
- %endif
- 
- {
--	for x in System.map config kernel modules.builtin \
--			modules.builtin.modinfo modules.order vmlinuz; do
--		echo "/lib/modules/%{KERNELRELEASE}/${x}"
--	done
-+	echo "/lib/modules/%{KERNELRELEASE}"
- 
- 	for x in alias alias.bin builtin.alias.bin builtin.bin dep dep.bin \
- 					devname softdep symbols symbols.bin; do
-+		rm -f "%{buildroot}/lib/modules/%{KERNELRELEASE}/modules.${x}"
- 		echo "%ghost /lib/modules/%{KERNELRELEASE}/modules.${x}"
- 	done
- 
+1. the CSR_CAUSE reg reading and saving is moved to the C code
+because we need the cause to dispatch the exception handling,
+if we keep the cause reading and saving, we either pass it to
+do_traps() via. 2nd param or get it from pt_regs which an extra
+memory load is needed, I don't like any of the two solutions becase
+the exception handling sits in hot code path, every instruction
+matters.
+
+2.To cope with SIFIVE_CIP_453 errata, it looks like we don't need
+alternative mechanism any more after the asm->c convertion. Just
+replace the excp_vect_table two entries.
+
+
+
+Anton Blanchard (1):
+  riscv: Improve exception and system call latency
+
+Jisheng Zhang (5):
+  riscv: avoid corrupting the RAS
+  riscv: convert bottom half of exception handling to C
+  riscv: errata: remove ALT_INSN_FAULT and ALT_PAGE_FAULT
+  riscv: errata: sifive: remove NOMMU handling
+  riscv: remove asmlinkage from updated functions
+
+ arch/riscv/errata/sifive/errata.c         | 25 +++++++---
+ arch/riscv/errata/sifive/errata_cip_453.S |  4 --
+ arch/riscv/include/asm/asm-prototypes.h   |  7 +--
+ arch/riscv/include/asm/errata_list.h      | 21 ++------
+ arch/riscv/kernel/entry.S                 | 61 ++---------------------
+ arch/riscv/kernel/stacktrace.c            |  4 +-
+ arch/riscv/kernel/traps.c                 | 57 ++++++++++++++++++---
+ 7 files changed, 81 insertions(+), 98 deletions(-)
+
 -- 
 2.43.0
 
