@@ -1,122 +1,124 @@
-Return-Path: <linux-kernel+bounces-217002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C536C90A98E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:30:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D76D90A99B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A447289596
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:29:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36AD31F248BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CF9192B6A;
-	Mon, 17 Jun 2024 09:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931B4193080;
+	Mon, 17 Jun 2024 09:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/mPGHpM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x0OO7ZoJ"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E54288BD;
-	Mon, 17 Jun 2024 09:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FCE161320
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718616589; cv=none; b=PooSObC+4rR/ebvgtjay64wdfEfB8d4xVK/QEYgm3TqiMW9ufN12XbOrBnDtTEHet72fKLxBt8GTuR5ns0Rs+Q6F94CANgAIOGV72iGLSi8Tj44xdVnA4BarAL12OPnUrbcilOzq7oW4Z35g6ApQTjulEldX/Cdgtr7jy7y5Z2Y=
+	t=1718616697; cv=none; b=mEJbBjZy7X1Ug7ExrpkMGrGYUniFDajBvlu74bNvl1lS4wohnhjSYlrNFH0VOnr035hJwUM/A0kT/hwftaeomH8NQ2YNYB4ZKuJe4jRm1rJt1CdaXhdRZ2nJ1V/H4x7l1K1+T1sx4ZpeajabrPUAGGq5fp4ran+78dRha4UbpSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718616589; c=relaxed/simple;
-	bh=at9csQjhwS6i1s/d4XG/8Zpj8DRi4xJ/ag+5eIwgDXc=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=GSJFgkvGeupIyIzEJXIbnsmB8IXKlNlJMaoG9zkUfvA1d9nQRIe5fYDvpxVUxzGcDt9LgTgRA6oZPBk9zOWCO/PMKOR9/AJLxwJW1a/jYUZxpydEFCnn48vSqptRGigrQmkHFIgYjNAFYncGlSzvI6F/CPCfX26vBN7QdoiJY3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/mPGHpM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7837C2BD10;
-	Mon, 17 Jun 2024 09:29:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718616588;
-	bh=at9csQjhwS6i1s/d4XG/8Zpj8DRi4xJ/ag+5eIwgDXc=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=E/mPGHpMeIKgElg+Cpbw7Fc4U13Fmjr/ou+tMopM8OI/rDuDdPcOl4diV6dshwHhQ
-	 3sNv1Ke/lo5tm3ytKne5KNNO2Yd/NG5GnuCLOuBIioWeNHZSFi6d0iSOde+dXx/B6j
-	 3whdRSvwmZH1N2Ue9vGwp3EaecJaqm5pKb/q6LtrvJI6tJpV93fkKvzL9+vkwzp6vx
-	 8L8/gSlYRXdmAFPtQ01t2G0VPY93VsyiGdmB1XI/MsoVst8nV+XnNF86IcCpni81i9
-	 xHSp07ojBZM0bm9x6EbEbQmOcqic7F7aUAtsulWym9myGefvcAHF9vMNFWTPJf/CQK
-	 v1oZos6Ur+BYg==
-From: Kalle Valo <kvalo@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: linux-wireless@vger.kernel.org,  Felix Fietkau <nbd@nbd.name>,  Lorenzo
- Bianconi <lorenzo@kernel.org>,  Ryder Lee <ryder.lee@mediatek.com>,
-  Shayne Chen <shayne.chen@mediatek.com>,  Sean Wang
- <sean.wang@mediatek.com>,  Matthias Brugger <matthias.bgg@gmail.com>,
-  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-  netdev@vger.kernel.org,  horms@kernel.org,  kees@kernel.org,
-  kuba@kernel.org,  Bo Jiao <Bo.Jiao@mediatek.com>,  Daniel Golle
- <daniel@makrotopia.org>,  Alexander Couzens <lynxis@fe80.eu>,  Deren Wu
- <deren.wu@mediatek.com>,  Ming Yen Hsieh <mingyen.hsieh@mediatek.com>,
-  Leon Yen <leon.yen@mediatek.com>,  Quan Zhou <quan.zhou@mediatek.com>,
-  Ingo Rohloff <lundril@gmx.de>,  Sujuan Chen <sujuan.chen@mediatek.com>,
-  StanleyYP Wang <StanleyYP.Wang@mediatek.com>,  Benjamin Lin
- <benjamin-jw.lin@mediatek.com>,  Peter Chiu <chui-hao.chiu@mediatek.com>,
-  "open list:ARM/Mediatek SoC support" <linux-kernel@vger.kernel.org>,
-  "moderated list:ARM/Mediatek SoC support"
- <linux-arm-kernel@lists.infradead.org>,  "moderated list:ARM/Mediatek SoC
- support" <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH] wifi: mt76: un-embedd netdev from mt76_dev
-References: <20240614115317.657700-1-leitao@debian.org>
-	<87cyogkkju.fsf@kernel.org> <ZnAAT/a3DKnTgUoz@gmail.com>
-Date: Mon, 17 Jun 2024 12:29:42 +0300
-In-Reply-To: <ZnAAT/a3DKnTgUoz@gmail.com> (Breno Leitao's message of "Mon, 17
-	Jun 2024 02:22:23 -0700")
-Message-ID: <874j9rlxx5.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1718616697; c=relaxed/simple;
+	bh=fRmLFWtad0MeVfCzJRA49BbTleCC61mmZxAFsL6FegQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mguaJcEtLW6qyf9cK1BUkYY60GQLwrupQyGbzd1qjoMEQim6sYuaZ6vKPrvjnO8sQXvWtrwkNSgJurG9Vn+ngtpno11pZwsh1mKylj26QDVYQhVBxC3hy/FNU648l5sKZy3Jhs/+z/rqG2LN8Mk+FpVs0FJDCNdnv18uturSC5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x0OO7ZoJ; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ead2c6b50bso45895571fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:31:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718616694; x=1719221494; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dIKWXjEnV/JvaI/YdcZiIYzxlyFqw0Iq/qRXLaIf03Q=;
+        b=x0OO7ZoJl49oJhq0ieXzpJJr+3gLU1YvJuDb3UA61aLIlPef09wrEnFtAcAEVEhssv
+         T5aAin03VqfyFkWmBAvbnMTp28Ea8DwukfEuMKhtID/45UdJrZTITMYVD3n+RALPUTpn
+         Uhqziz6kB4AlR9gMYjItAuohJK4+6vj/nROl1we/5iMIPmTlDsFVGjfDMvZa+sh1flPY
+         PVY4cE5dJ4sF3oMKTzwhPK55TEiSxHmiRi1glIxpI+sUoX8YJatxZxp6GsPAik0Kb9sw
+         /1ukV49jpq7HOzzFNhsXjAlhFJaSYChu7GY6UxUtB7NW2Hc4EfNk0J5NBTI8gb7YD0eP
+         bo7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718616694; x=1719221494;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dIKWXjEnV/JvaI/YdcZiIYzxlyFqw0Iq/qRXLaIf03Q=;
+        b=gOifwheW2RjBZF+nNdnH6iOVAV798ebLWst3WmUJGaReaZ04DmHkR+PWfM781pWQME
+         l6D3B4o5+cr+nQ42uDLEJJQ7yoZelSR7z6H20bg286JZxPbHdSRuaDvWmA7V0EPMiz4d
+         f6gw4ldwas4cR+urZBPPIp0OhOXdInVqGeyIuS60MVOplanBLBQBRsc3W9CsGBUXu84g
+         yVmeyfimeGbngS+EWQFLQQx5eUJyui99HPNJ7TlVOC881hZqeOcDpv/ldsIBN99cpH3Z
+         Qveb+TCjRy6+O9r12BWmLWwu/3ZZCcG/WZ4ObyflobyDoRNXmgNA6eHPyd7LQxaCjWSt
+         wkWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXML7SuQE4v80PcR67Pb+yOI0+HkiV/4RdCRvPte9s1MpX1k+V8AuJZjQ/V2r0PPFEzNhm8BAgitDBK1GCinykpCZQ53kv2J3OMoPuw
+X-Gm-Message-State: AOJu0YxI4niDZGZaSKtImnfXBIFrgRMp2O+DzeG3wGAOtA39gpf4l5mR
+	8NXd5EO5NOE7mzvP8DjJ36Tei7OKg72+C71Nvki7Fcs7Vmz4Gzh6xqAzJ6hngEI=
+X-Google-Smtp-Source: AGHT+IEODBDEsxxAci2aBLEEjswUYh1kr6DsZMBMYgj0029fdsBS+kjBKhpqZUVlxzZYUPOZnGGZNw==
+X-Received: by 2002:a2e:9217:0:b0:2ec:2617:ad4 with SMTP id 38308e7fff4ca-2ec26170c7bmr29025681fa.43.1718616694419;
+        Mon, 17 Jun 2024 02:31:34 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4229447eaa5sm186875575e9.48.2024.06.17.02.31.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 02:31:34 -0700 (PDT)
+Date: Mon, 17 Jun 2024 12:31:30 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Alexandre Bailon <abailon@baylibre.com>
+Cc: Bin Liu <b-liu@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] usb: musb: da8xx: fix a resource leak in probe()
+Message-ID: <69af1b1d-d3f4-492b-bcea-359ca5949f30@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Breno Leitao <leitao@debian.org> writes:
+Call usb_phy_generic_unregister() if of_platform_populate() fails.
 
-> Hello Kalle,
->
-> On Mon, Jun 17, 2024 at 12:03:49PM +0300, Kalle Valo wrote:
->> Breno Leitao <leitao@debian.org> writes:
->> 
->> > Embedding net_device into structures prohibits the usage of flexible
->> > arrays in the net_device structure. For more details, see the discussion
->> > at [1].
->> >
->> > Un-embed the net_devices from struct mt76_dev by converting them
->> > into pointers, and allocating them dynamically. Use the leverage
->> > alloc_netdev_dummy() to allocate the net_device object at
->> > mt76_dma_init().
->> >
->> > The free of the device occurs at mt76_dma_cleanup().
->> >
->> > Link: https://lore.kernel.org/all/20240229225910.79e224cf@kernel.org/ [1]
->> > Signed-off-by: Breno Leitao <leitao@debian.org>
->> > ---
->> >
->> > PS: Due to the lack of hardware, this patch was not tested on a real
->> > hardware, unfortunately.
->> >
->> > PS2: this is the last driver that is still using embedded netdevices.
->> 
->> Is this patch a dependency to other patches? I'm asking because it will
->> be _slow_ to get this patch to net-next via wireless trees. If there's
->> urgency then it's much better to take it directly to net-next (of course
->> with acks from Felix and Lorenzo).
->
-> Since this is the last patch for the whole flexible netdev work, I would
-> prefer to have it through net-next then, so, we finish the whole work
-> sooner rather than later.
+Fixes: d6299b6efbf6 ("usb: musb: Add support of CPPI 4.1 DMA controller to DA8xx")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/usb/musb/da8xx.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Ok, even though I hate dealing with conflicts between trees I still
-think it's better to get this directly to net-next. I hate "hurry up!"
-emails even more ;)
-
+diff --git a/drivers/usb/musb/da8xx.c b/drivers/usb/musb/da8xx.c
+index fcf06dcf2d61..953094c1930c 100644
+--- a/drivers/usb/musb/da8xx.c
++++ b/drivers/usb/musb/da8xx.c
+@@ -560,7 +560,7 @@ static int da8xx_probe(struct platform_device *pdev)
+ 	ret = of_platform_populate(pdev->dev.of_node, NULL,
+ 				   da8xx_auxdata_lookup, &pdev->dev);
+ 	if (ret)
+-		return ret;
++		goto err_unregister_phy;
+ 
+ 	pinfo = da8xx_dev_info;
+ 	pinfo.parent = &pdev->dev;
+@@ -575,9 +575,13 @@ static int da8xx_probe(struct platform_device *pdev)
+ 	ret = PTR_ERR_OR_ZERO(glue->musb);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to register musb device: %d\n", ret);
+-		usb_phy_generic_unregister(glue->usb_phy);
++		goto err_unregister_phy;
+ 	}
+ 
++	return 0;
++
++err_unregister_phy:
++	usb_phy_generic_unregister(glue->usb_phy);
+ 	return ret;
+ }
+ 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+2.43.0
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
