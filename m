@@ -1,171 +1,121 @@
-Return-Path: <linux-kernel+bounces-217575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFDF890B1B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:23:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E84990B1BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2EDE1C22E71
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:23:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAE941F2A068
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1D01993B7;
-	Mon, 17 Jun 2024 13:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FEE1A38E0;
+	Mon, 17 Jun 2024 13:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VM4l80fG"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="q8djABTX"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C8A19A2AB;
-	Mon, 17 Jun 2024 13:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A95F1A2FCD
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718631274; cv=none; b=p4S/suiOUZ4H8cBlFxvqN49OiI+7KVzY+XYMfUhgFvYxh9ssDnOKsPMhGwC2LMUl0CWi0Qp+U1i6I2eDccJK5FgNRZfxjgiM38JqALgowqlltWhLqpw9ZwFwmjc7U0WcPgd4m+PaMeIRgINx0MHDojJSVkZAwLO9hSZoImFspA4=
+	t=1718631334; cv=none; b=oyGqYqX77h4wCFwKxgwba792UWkM2BeVg/9yJGRHB/u/dRfRJekHyNh6epcQ99LtTDrL2ZiPj160UC/siyOaWoo4ZnyogIH2dgjts8N/Kqfc0vWyd2lKuhI3snqxTyHAaBVEsudf2yeHBK2iMODe6LM7fJd5kAZkkI57bjMgJ+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718631274; c=relaxed/simple;
-	bh=B1S93Pq7+AlrwtbOQxIsMo+PTww/86FdurCQFQ0V7WI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MHTvVzLf7iKnCN7fXRq/IIfRKPpzrk66IxpH+94p4zEVXkhdNL0ULTzlbVCK8d07tnTDZrH3Ur24n88peR+i4XZm9x0rsZThse4wLnnQPQJaczaQMivd/ejLWLgZz5VhMjYdqZCRjYV7MmZ/km2x4m/6tFwizQj4nYv3Z7fYxf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VM4l80fG; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52cc14815c3so272069e87.0;
-        Mon, 17 Jun 2024 06:34:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718631271; x=1719236071; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xlh1MuJTyolH8Bza5fsBuYqZhmwiMHDDS1wFAKMhcW4=;
-        b=VM4l80fGB9RFdbh+5VV2pwLZwENWZqPeFRsTY9kyrP0jbeyT814MyFksAMOLho2CA9
-         mHF4ENsxe1XkStcKd6vRNYsQI4E1sh1cpr3zdzx1ksjZbDZdRKMkwT5vrSFHs5S0a2SW
-         6HisXGCKFlyp2KzjQlnUyTMkxD+pbCH/VshYyqE/b44OkJ6QX8IXM+rg5o+kMNNBeW+C
-         2tim5PdLCXvOzXDLhEbXrukkX8LNyMU/nYgkF58cMFLsLWM9QpzsJepphorcvoHvNy3/
-         Din6DHbVLKxz0G3dGR7yyFaYrER/6lrWfoB/+kBIsCAVJgZf4j0/YiWuqnCK5X3IheWr
-         WS7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718631271; x=1719236071;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xlh1MuJTyolH8Bza5fsBuYqZhmwiMHDDS1wFAKMhcW4=;
-        b=L/JzjIeE6Irr687QOBeX6QGFxV3klkVtuSjeEgGdmroF+FBWWhpkb69LUqg0jnFLrL
-         pw6x8AdS29+65CZCStbyEchhmQ+DIm/+A4pawkyWRlwfwKzbX7ESdkybdZ/SvZO/HczW
-         EOUWzNN18SiC4J+TOjCyu61PjluGsLVZ3I01ZFA9rmhga2NmLsx2mR470wb5v+LSvJn2
-         wtnjrfF1qZgeeXCmw7xekxhMdooyAp0zkpQOVQjbFqU5UlE3eAvf4VdEwh2S7AZbmQa5
-         V4Qz3OoPzJrLIQN4fpjIiQfi/lZk18gK4pxCUdfq/a7vVB/+4fdXbiX9ykdNqjcysF6Z
-         3dMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCzXVXgvpY+tka1Es2q7rCT6WcfdKWY+vNkVgVPRrsXW0pgcJEtLrkhYx62Uz7lyG67RzI31fJQxTrlvwPnM0yg0q/YUdr1stsDmsWvJ8KlKBrzrxrm4i5pJ4NuRUBPb7PknvkwdIL6w==
-X-Gm-Message-State: AOJu0Yy1aX5QGRmnAzHSeCfF+6sDPxMWyiiRXmaIfU2dDQ+RdwLK6vcH
-	ji3l/+AJUNan3VIfeiohkwlxe4lCMpSD4V4afoxGI8LW6EZ9QzWTwX4SVSV/XdIWHgBp72vmlZW
-	yHV43yhQGqjdGMIBL42ieQ2xlQlw=
-X-Google-Smtp-Source: AGHT+IGxoq/R66V25JVO/HBkhcEl96wxiJMXgGXl/k0tPpvsH4sU61K9F58Kdy+baOZ9nLjumpg95HzDP25Dn6D6uvU=
-X-Received: by 2002:ac2:5551:0:b0:52c:893c:6c2c with SMTP id
- 2adb3069b0e04-52ca6e6e205mr5569411e87.40.1718631270478; Mon, 17 Jun 2024
- 06:34:30 -0700 (PDT)
+	s=arc-20240116; t=1718631334; c=relaxed/simple;
+	bh=gvXWnPNP81RFJbxt9dfPpNSQPXb3YqrDs9qsTrp0k7Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GselQ5PNH0wQHO96iqZJez+uDhafN4HL1zt5Jy6D/CHLgiS1pJZE4MhJm1JMaZTz/+zxkS504q1MGOPOhZ5j8BfxPe6Oo/KIIjTx/IUdC/UhZXo4d7EAMxWTyXJulRhAMdmDDoRVR+mD+huJrFz3iO0YBcPKk0dwO6NPtP0Nn04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=q8djABTX; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 3D810100003;
+	Mon, 17 Jun 2024 16:35:22 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 3D810100003
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1718631322;
+	bh=8FxyRaKeWJqwgkCh0J/SmA262Y/mTap6YRFjgrEtVGQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=q8djABTXUS7lmXQBL3d/t9Su5FRjJ5E/+T7yzdlvPQ4RUGUHTaZEYGl3Y9YuOZGXP
+	 k6WR9F3zUi6QeW+OQtMdMBhMbyCmDWHegizsIR6McU2rg9D9MvaUKgxa7Q8rlJtNd/
+	 XxKSn0skJx3AAKyJSwFDjzDqn75u9fg/1BdfHMe4trOiofr3HoNaPM74H7Fq/+S+x3
+	 fzgdU+gMgCqwHG4HmK/srRenwQkIeGduYXAeeCLLd7rGs5iLrPJMyK45NihfYEq5r5
+	 6a5MblZ4rRlXOQ5AtY+cwEcP8ye4ewiJQi0WgeBszCI7srlLrH4lGOfoYJ9GqUy8NA
+	 ZcKXrVXsEYbAA==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Mon, 17 Jun 2024 16:35:22 +0300 (MSK)
+Received: from CAB-WSD-0004828.sberdevices.ru (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Mon, 17 Jun 2024 16:35:21 +0300
+From: Martin Kurbanov <mmkurbanov@salutedevices.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger
+	<richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Mika Westerberg
+	<mika.westerberg@linux.intel.com>, Michael Walle <michael@walle.cc>, Mark
+ Brown <broonie@kernel.org>, Chia-Lin Kao <acelan.kao@canonical.com>, Md Sadre
+ Alam <quic_mdalam@quicinc.com>, Ezra Buehler
+	<ezra.buehler@husqvarnagroup.com>, Sridharan S N <quic_sridsn@quicinc.com>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>, Alexey Romanov
+	<avromanov@salutedevices.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+	<kernel@salutedevices.com>, Martin Kurbanov <mmkurbanov@salutedevices.com>
+Subject: [PATCH v1 0/5] mtd: spinand: add OTP support
+Date: Mon, 17 Jun 2024 16:34:52 +0300
+Message-ID: <20240617133504.179705-1-mmkurbanov@salutedevices.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1718268003.git.haibo1.xu@intel.com> <f1f96377b8ecd6e3183f28abf5c9ac21cb9855ea.1718268003.git.haibo1.xu@intel.com>
-In-Reply-To: <f1f96377b8ecd6e3183f28abf5c9ac21cb9855ea.1718268003.git.haibo1.xu@intel.com>
-From: Haibo Xu <xiaobo55x@gmail.com>
-Date: Mon, 17 Jun 2024 21:34:18 +0800
-Message-ID: <CAJve8o=8thBhU3NyTaS6sE9rQ1VR_Qf4O8FkAxpmp1q8P-6VaQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] ACPI: NUMA: change the ACPI_NUMA to a hidden option
-To: Haibo Xu <haibo1.xu@intel.com>
-Cc: sunilvl@ventanamicro.com, arnd@arndb.de, ajones@ventanamicro.com, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Conor Dooley <conor.dooley@microchip.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Evan Green <evan@rivosinc.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Zong Li <zong.li@sifive.com>, 
-	=?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Chen Jiahao <chenjiahao16@huawei.com>, James Morse <james.morse@arm.com>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Zhao Ke <ke.zhao@shingroup.cn>, 
-	Andy Chiu <andy.chiu@sifive.com>, Marc Zyngier <maz@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Dan Williams <dan.j.williams@intel.com>, 
-	Alison Schofield <alison.schofield@intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Robert Richter <rrichter@amd.com>, Yuntao Wang <ytcoode@gmail.com>, Dave Jiang <dave.jiang@intel.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185966 [Jun 17 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: mmkurbanov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;100.64.160.123:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/06/17 11:22:00 #25639124
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-@Catalin Marinas @Huacai Chen
+This patchset implements the SPI-NAND OTP functions to allow access to
+the SPI-NAND OTP data.
+Specific support is added for Micron MT29F2G01ABAGD and ESMT F50L1G41LB/
+F50D1G41LB flash chips.
 
-Could you please have a look at this patch for the ACPI_NUMA config on
-ARM64 and LOONGARCH respectively.
+Martin Kurbanov (5):
+  mtd: spinand: make spinand_{read,write}_page global
+  mtd: spinand: add OTP support
+  mtd: spinand: make spinand_wait() global
+  mtd: spinand: micron: OTP access for MT29F2G01ABAGD
+  mtd: spinand: esmt: OTP access for F50{L,D}1G41LB
 
-Thanks!
+ drivers/mtd/nand/spi/Makefile |   3 +-
+ drivers/mtd/nand/spi/core.c   |  45 +++++--
+ drivers/mtd/nand/spi/esmt.c   |  69 ++++++++++-
+ drivers/mtd/nand/spi/micron.c | 117 +++++++++++++++++-
+ drivers/mtd/nand/spi/otp.c    | 219 ++++++++++++++++++++++++++++++++++
+ include/linux/mtd/spinand.h   |  65 ++++++++++
+ 6 files changed, 506 insertions(+), 12 deletions(-)
+ create mode 100644 drivers/mtd/nand/spi/otp.c
 
-On Thu, Jun 13, 2024 at 4:37=E2=80=AFPM Haibo Xu <haibo1.xu@intel.com> wrot=
-e:
->
-> x86/arm64/loongarch would select ACPI_NUMA by default and riscv
-> would do the same thing, so change it to a hidden option and the
-> select statements except for the X86_64_ACPI_NUMA can also go away.
->
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Suggested-by: Sunil V L <sunilvl@ventanamicro.com>
-> Signed-off-by: Haibo Xu <haibo1.xu@intel.com>
-> Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
-> ---
->  arch/arm64/Kconfig        | 1 -
->  arch/loongarch/Kconfig    | 1 -
->  drivers/acpi/numa/Kconfig | 5 +----
->  3 files changed, 1 insertion(+), 6 deletions(-)
->
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 5d91259ee7b5..5079ad4e21a5 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -1484,7 +1484,6 @@ config HOTPLUG_CPU
->  config NUMA
->         bool "NUMA Memory Allocation and Scheduler Support"
->         select GENERIC_ARCH_NUMA
-> -       select ACPI_NUMA if ACPI
->         select OF_NUMA
->         select HAVE_SETUP_PER_CPU_AREA
->         select NEED_PER_CPU_EMBED_FIRST_CHUNK
-> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> index e38139c576ee..8d9e06e4ad84 100644
-> --- a/arch/loongarch/Kconfig
-> +++ b/arch/loongarch/Kconfig
-> @@ -470,7 +470,6 @@ config NR_CPUS
->  config NUMA
->         bool "NUMA Support"
->         select SMP
-> -       select ACPI_NUMA if ACPI
->         help
->           Say Y to compile the kernel with NUMA (Non-Uniform Memory Acces=
-s)
->           support.  This option improves performance on systems with more
-> diff --git a/drivers/acpi/numa/Kconfig b/drivers/acpi/numa/Kconfig
-> index 849c2bd820b9..f33194d1e43f 100644
-> --- a/drivers/acpi/numa/Kconfig
-> +++ b/drivers/acpi/numa/Kconfig
-> @@ -1,9 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  config ACPI_NUMA
-> -       bool "NUMA support"
-> -       depends on NUMA
-> -       depends on (X86 || ARM64 || LOONGARCH)
-> -       default y if ARM64
-> +       def_bool NUMA && !X86
->
->  config ACPI_HMAT
->         bool "ACPI Heterogeneous Memory Attribute Table Support"
-> --
-> 2.34.1
->
+-- 
+2.43.2
+
 
