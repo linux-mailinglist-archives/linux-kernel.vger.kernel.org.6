@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-218019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B48690B810
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:29:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C87990B813
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 628871C22E34
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:29:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3DFB28102D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301C7171E71;
-	Mon, 17 Jun 2024 17:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B0C1849EB;
+	Mon, 17 Jun 2024 17:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WGCUiSVe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VmU1QC3G"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6488E16EB56;
-	Mon, 17 Jun 2024 17:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A648B1849D2
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718645383; cv=none; b=uONDwdYsnEhmbHJeVnwG6gAYItish/PRWQN3UsbAL1a6qMcrm/r8VA49NVWWrHegepGnv6BOo9DHDpYK6oY3AsMpT7b+xWG16qcJlaEaEA7viDKOPaoUizGQFxZP5DMi+Cb7ht+UoGQDk4LsbF2IxLi8r5NAnH0+cyOrZlgtups=
+	t=1718645453; cv=none; b=CypvA+jqXtU7An/40gyUu7DZussf6LyiLMLzK/N/Q0xyaDZdirjvA80VAbTV2LOvZq+fFUiwXdL+FOBEON8YsVOuXeKEQoYQ4VuJz862JOpD3DHB5sbY7BF2HpObmuG66OWcIciSn7xnGsFEZSvV8KrwbcEr6p6XgKV5L8atm7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718645383; c=relaxed/simple;
-	bh=kbW/gR+NRs7jHRgq3FS7wDstTPhoeqGbtN28unwmbg0=;
+	s=arc-20240116; t=1718645453; c=relaxed/simple;
+	bh=PrulDNgCa6CKc++xmkdcf4hN0tWVwEQV7zqz+fqsd7Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mwbmAp+uGPAe17NaR082qtYQX9qe8or+RRKoPPnmUP23sdzRtwg2EuqSq11C6sQ4FDSKjWIB3uneY3aKrpXbDQ5ZrMRqdZ8bcshiZiT1nvNKO2CDD2uMBvxI93NBpN2nssPELySIpwC4Xk0WO6RjB3Z0Zp93bDSwKBBu4JySWqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WGCUiSVe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA4D3C2BD10;
-	Mon, 17 Jun 2024 17:29:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718645382;
-	bh=kbW/gR+NRs7jHRgq3FS7wDstTPhoeqGbtN28unwmbg0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WGCUiSVehiciSz7Ww0nqIsyJsddAw+NFMrcR0rUTInw2TLrVUDQfXowSruEy+Rv0N
-	 phvU/pBbYQJfsKKOg2KDjmSEf3ID0/V8eYNxfquJ08XYOM4WJ4hwd9tTQibYuUTHXh
-	 iSAqVN3Gw/CNnlSBB/ERj/K9aKDzMFVvB2b3QN51MHkRbnVKtcC5cQJUgNw1uA9ueG
-	 6l31PRZp4T4eABb+8ql21aSnJ24bDgy0Oy25/U50fVIiYcPcr+3vlBxhAovn2Stwrp
-	 ksQrzUethG+Isvx4i5Y/z9a7dicg+yjvXzZd8lCRY1mPR6ozpLrzPZECoMjnGwKAji
-	 WGKlrerbS9/jw==
-Message-ID: <c9070805-3432-41f8-af1e-dc5e6f81df5c@kernel.org>
-Date: Mon, 17 Jun 2024 19:29:36 +0200
+	 In-Reply-To:Content-Type; b=AAjGZoPEfTSdhIsUoC0VG6jMMFsLHBooMqI2oPJmywcvU2mLdu87V9n27MOr0Rga+tvRMNvPU9fe/fF2DMgzQ1v0uFz0LLqP784efCDl12LB5HttwEEJ88PyiekLuLP5IaybqB9pipxyKN5NPE8bmssyXWVjGQLgV/J7sufHVv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VmU1QC3G; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eaea28868dso63289501fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:30:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718645450; x=1719250250; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OoBuZAZ+2pfTMn4Ll2JafBA3zVFZwI8Mh8fgrie/hrM=;
+        b=VmU1QC3GTihT2yEVnLKLMMkeZOD7IOEeIwm+iUnDzl67U8J6UWB/xKTfxLgaYqKj2I
+         8cc+yU1ZNSbV1ltEQYV6p6vs4cZdlAKMyV/LbGpqhnt4v9LQaxgJ0rnwKTWy+ffWxmum
+         F3PslqTw7iiAILqjvTzb+Awkk6PXNiI7GLNnIFht4bu4KTWFazIRap7Eo/Jnvj2mNWza
+         nIiV7u37q9efJdVmgJYqCtZXpTPjiKB4YT6fWmu1FCVKp/4oV74xQ29tr5VBI1ClBfE7
+         PpfdjdQQ76nTV4L1o64F/USfXNqySX3hGOREYAfqisr+L4F37ZCKgHXQ2POqJAimII2s
+         GUlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718645450; x=1719250250;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OoBuZAZ+2pfTMn4Ll2JafBA3zVFZwI8Mh8fgrie/hrM=;
+        b=ZTrTg3VorUEzzCeTbh1WC+CS/Ow5ejqzyWEicGJPlYTyLv81gX6qHeU4RpV7sSmPc2
+         A2jJHkLFP8tYZwCPe8ZnU+NRHczbZ+hHpCoqRnwHguPwr7AC3N+NgM7V+Hk2qjoGqb/C
+         529kybiEGntXFXxOuODhg3FkZOEiHZj/uJGjYZtQ3LGbwDZmUhuborMVy/KsLitRt94D
+         M9YkQ9Nl8YySwCKgprARwNIdgCJcYVHPhVSqucYI3V/YrN6vt4dRcWkBVpj6d4xPSFgi
+         JteBORS4Po69U/6dAiZud6qD2EugGef5hcwqZ9+W80euK1yK1mtN0eDCr0JEEJO9mnyL
+         akEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgzu7WLzmw5MNJT67J7cyvjTszaMTeJjRhAb7iBbKtLfo9mVZbTsjYuKBC1T0jYrfevbhID7d5Dw0NM7QYe3rTBYtGktW6Ktr3cNgi
+X-Gm-Message-State: AOJu0Yw+P8gwiHST1vYo4m1eu+N0+PL0MT5Tap6DKenMFoZ1oPr628NZ
+	/feQGcyeFZQW9OhFS6uG7wXDXDBMYH+BqKbKlHU8neoJH0Q3oPaMlvbEyIA8d5U=
+X-Google-Smtp-Source: AGHT+IGl3hd4bc3XW6DzjvhQE1NMXroKSu3kRK6S0j070rGf1oBQVbVimJwJU7/TLJN9JzfF7Tf7Uw==
+X-Received: by 2002:a2e:2410:0:b0:2ec:1779:fd5d with SMTP id 38308e7fff4ca-2ec1779fe9fmr76764921fa.19.1718645449812;
+        Mon, 17 Jun 2024 10:30:49 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:cb2:a9df:20fa:cfbe:9ea6:1fe8? ([2a00:f41:cb2:a9df:20fa:cfbe:9ea6:1fe8])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec31c2f742sm2099951fa.85.2024.06.17.10.30.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 10:30:49 -0700 (PDT)
+Message-ID: <4510290f-f279-4b02-baf2-1db508a326ef@linaro.org>
+Date: Mon, 17 Jun 2024 19:30:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,113 +75,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: power: supply: add support for
- MAX17201/MAX17205 fuel gauge
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240615203352.164234-1-dima.fedrau@gmail.com>
- <20240615203352.164234-2-dima.fedrau@gmail.com>
- <ee0cd414-206c-48c9-aee2-06e24e0b981c@kernel.org>
- <20240617125955.GA292946@debian>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] arm64: dts: qcom: qdu1000: fix usb interrupts properties
+To: Komal Bajaj <quic_kbajaj@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Krishna Kurapati <quic_kriskura@quicinc.com>,
+ kernel test robot <lkp@intel.com>
+References: <20240617115624.29875-1-quic_kbajaj@quicinc.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240617125955.GA292946@debian>
-Content-Type: text/plain; charset=UTF-8
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240617115624.29875-1-quic_kbajaj@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 17/06/2024 14:59, Dimitri Fedrau wrote:
-> Am Sun, Jun 16, 2024 at 09:27:21AM +0200 schrieb Krzysztof Kozlowski:
->> On 15/06/2024 22:33, Dimitri Fedrau wrote:
->>> Adding documentation for MAXIMs MAX17201/MAX17205 fuel gauge.
->>>
->>
->> Three patchsets within 30 minutes. No changelog et all.
->>
-> Sorry, had to fix my mail address in the commit message. Changelog was
-> in the cover letter. Anyway, could have fixed that in a later version.
 
-There was no cover letter attached to this patchset. If you do not send
-cover letter to interested parties, then it does not count.
 
+On 6/17/24 13:56, Komal Bajaj wrote:
+> Update the usb interrupts properties to fix the following
+> bindings check errors:
+> usb@a6f8800: interrupt-names:0: 'pwr_event' was expected
+>          from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+> usb@a6f8800: interrupt-names:1: 'hs_phy_irq' was expected
+> 	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+> usb@a6f8800: interrupt-names: ['hs_phy_irq', 'ss_phy_irq', 'dm_hs_phy_irq', 'dp_hs_phy_irq'] is too short
+>          from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
 > 
->> Slow down (one posting per 24h) to give people chances to review. Then
->> provide changelog under --- and describe what happened.
->>
-> [...]
->>> +maintainers:
->>> +  - Dimitri Fedrau <dima.fedrau@gmail.com>
->>> +
->>> +properties:
->>> +      - description: ModelGauge m5 registers
->>> +      - description: Nonvolatile registers
->>> +
->>> +  reg-names:
->>> +    items:
->>> +      - const: m5
->>> +      - const: nvmem
->>> +
->>> +  interrupts:
->>> +    maxItems: 1
->>
->> This is incomplete. Missing battery and probably more... Look how other
->> bindings are written.
->>
-> Some fuel gauges used monitored-battery and/or power-supplies others none
-> of them(mitsumi,mm8013.yaml). I'm not sure when to use them.
+> Fixes: dd1bd5bf7420 ("arm64: dts: qcom: qdu1000: Add USB3 and PHY support")
+> Cc: Krishna Kurapati <quic_kriskura@quicinc.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202406171241.YKuCm3SC-lkp@intel.com/
+> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
+> ---
 
-Look at your hardware, datasheet if it is available. Then look at
-monitored battery properties. If you see anything in common, then that's
-a sign.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-I did not get your driver changes, so I cannot help here. Kind of your call.
-
-Best regards,
-Krzysztof
-
+Konrad
 
