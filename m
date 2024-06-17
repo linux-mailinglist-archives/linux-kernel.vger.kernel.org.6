@@ -1,138 +1,145 @@
-Return-Path: <linux-kernel+bounces-218229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9598490BB77
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:55:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFBDA90BB7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:56:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8C42857C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:55:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C512284D0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFC118F2CA;
-	Mon, 17 Jun 2024 19:55:44 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B10188CDF;
+	Mon, 17 Jun 2024 19:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ibXnG1Ve"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CC4186287
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 19:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD24D53E;
+	Mon, 17 Jun 2024 19:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718654144; cv=none; b=Fl5YNnPDjp9RW/H/+V8bvs8AkEyNS72fEIpKZ2hsT3vd3HnOPFsVf7dtLUblMMymDyi4i8wNDX9NvEUd8deHCXn9WnFQstGoPaHOwdyhIZ/DECj4yCQyrMYnjqJilKakAFquol2I4X81XN54PK5xrKv731lXJqh3yPtdcY8acEU=
+	t=1718654203; cv=none; b=Ex8tTQ6Oenw8Lun/Otrr+M/zmNE++pWvb/09TwMF8aNzMkQCvJJpo2Fu13WqtvksPtPlxl1jbOp7aKFjeYwLWvCT+BAuzMGrBu8PGGeYaPANQGmmhq4zyeWYscxdWj8iz5MILtuo06hwFvfHWPAcUKfqEeoxschOrL30b1RcDNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718654144; c=relaxed/simple;
-	bh=BKwBZ1Uh+W0EYjv1sS/U5nLLrTEJXKX0KED9wVuMh/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iYt5dewAKIFcQXzoGKoGdHEWYTPyMVfgukf6HJN6C+xQmt/D++mZ1/rC/zFbtF4CmxD3p+keXmeTtdflzJMET99HBVLfHqwyKD7YpRs1ZnOnOsAJGUG/Q6lQTBkiGRGST/biWljZhRRgXv51Cw9PSuHFvU2MTMwaECmvF8az7Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sJIRs-00060n-VJ; Mon, 17 Jun 2024 21:55:28 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sJIRp-0033Sx-PR; Mon, 17 Jun 2024 21:55:25 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sJIRp-00GGJK-2B;
-	Mon, 17 Jun 2024 21:55:25 +0200
-Date: Mon, 17 Jun 2024 21:55:25 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de, UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH net-next v3 1/7] net: ethtool: pse-pd: Expand C33 PSE
- status with class, power and extended state
-Message-ID: <ZnCUrUm69gmbGWQq@pengutronix.de>
-References: <20240614-feature_poe_power_cap-v3-0-a26784e78311@bootlin.com>
- <20240614-feature_poe_power_cap-v3-1-a26784e78311@bootlin.com>
- <Zm15fP1Sudot33H5@pengutronix.de>
- <20240617154712.76fa490a@kmaincent-XPS-13-7390>
+	s=arc-20240116; t=1718654203; c=relaxed/simple;
+	bh=qNJkXv/wkxkDKTwXrq81qhL2hb2PzEuHXPrhbfByun0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CwRaznECjfqV4yxrVJdrrBEqgZLMTeM6+zUKaTPYteE1qIId85PJ7dISCrB5s47VpZrmwB0c1APPbg4HwLaJdPVxOVJdKi59GKhj07YkJ+PxW3JHBf+7D+w25gmDPtIoIBSNJtifLjBvgMAvYSgmXL2b2+ItyyR/qurqaHf1MaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ibXnG1Ve; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HJ01b2024582;
+	Mon, 17 Jun 2024 19:56:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=5
+	gTrKfTGK7nkUx0z1WmZsTK++4OVmR4Dpoli52j9yRw=; b=ibXnG1VeyRbwgtzb9
+	AJPdHgM6gn9rgUXKRMT1AcTKcVbyjtkRQOFOWk46J7gG7pwykeY/5ExqNv/uqiZ3
+	lgVA81hBm2F6JDU0IY2jAEHGy0odTUTT4QqwEil0jPtVpZoftwSqQhaYRFCM6inV
+	AUv7T175gsvVfCu77w3Elsx3us3w/SFwFMrP8f7/QMy3U3GVcZoqCnUasRKU/eMU
+	iPcxfWhWowiK2mz+/z/AGfe3ngkaE3SHJhNtJ5+jN8dwKdXdHqIe0pCMEz0cmeY3
+	mqFlgbKa4FHM2GlcKNwk6tLWLOZiVNlKzOo8hqgxqW8Z+mYOOHr3xGwSUQBPhyK9
+	tOd4Q==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yttwc840t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 19:56:29 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45HIK70b011442;
+	Mon, 17 Jun 2024 19:56:29 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yspsmvtp3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 19:56:29 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45HJuQWT38469990
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Jun 2024 19:56:28 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 87BDA58069;
+	Mon, 17 Jun 2024 19:56:26 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 08CAB5805D;
+	Mon, 17 Jun 2024 19:56:26 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 17 Jun 2024 19:56:25 +0000 (GMT)
+Message-ID: <5bd68636-ece6-4ba5-a4c0-c0535afc33c8@linux.ibm.com>
+Date: Mon, 17 Jun 2024 15:56:25 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240617154712.76fa490a@kmaincent-XPS-13-7390>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
+ session support
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        jarkko@kernel.org
+Cc: linux-kernel@vger.kernel.org, mpe@ellerman.id.au,
+        naveen.n.rao@linux.ibm.com
+References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
+ <dfc4feaef0d63d616bab8cdec5d409369f9dacf1.camel@HansenPartnership.com>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <dfc4feaef0d63d616bab8cdec5d409369f9dacf1.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: R6DyKD6fRPgMFtsS9Tn2awO1IbQ2YzPy
+X-Proofpoint-GUID: R6DyKD6fRPgMFtsS9Tn2awO1IbQ2YzPy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ mlxlogscore=999 mlxscore=0 lowpriorityscore=0 spamscore=0 impostorscore=0
+ phishscore=0 clxscore=1011 bulkscore=0 adultscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406170153
 
-On Mon, Jun 17, 2024 at 03:47:12PM +0200, Kory Maincent wrote:
-> > According to 33.2.4.7
-> > State diagrams we have CLASSIFICATION_EVAL function which evaluates
-> > results of classification.
-> > In case of class_num_events = 1, we have only tpdc_timer. In case of
-> > error, will we get some timer related error?
-> > 
-> > In case of class_num_events = 2, if i see it correctly, PSE is doing
-> > double classification and if results do not match, PSE will go to faul
-> > state. See CLASS_EV2->(mr_pd_class_detected != temp_var) case.
-> > 
-> > Is it what we have here?
+
+
+On 6/17/24 15:42, James Bottomley wrote:
+> On Mon, 2024-06-17 at 15:34 -0400, Stefan Berger wrote:
+>> Fix the following type of error message caused by a missing call to
+>> tpm2_sessions_init() in the IBM vTPM driver:
+>>
+>> [    2.987131] tpm tpm0: tpm2_load_context: failed with a TPM error
+>> 0x01C4
+>> [    2.987140] ima: Error Communicating to TPM chip, result: -14
+>>
+>> Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
+>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>> ---
+>>   drivers/char/tpm/tpm_ibmvtpm.c | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c
+>> b/drivers/char/tpm/tpm_ibmvtpm.c
+>> index d3989b257f42..1e5b107d1f3b 100644
+>> --- a/drivers/char/tpm/tpm_ibmvtpm.c
+>> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
+>> @@ -698,6 +698,10 @@ static int tpm_ibmvtpm_probe(struct vio_dev
+>> *vio_dev,
+>>                  rc = tpm2_get_cc_attrs_tbl(chip);
+>>                  if (rc)
+>>                          goto init_irq_cleanup;
+>> +
+>> +               rc = tpm2_sessions_init(chip);
+>> +               if (rc)
+>> +                       goto init_irq_cleanup;
 > 
-> Mmh not really indeed, maybe we can put it in error_condition substate?
+> This looks wrong: the whole thing is designed to occur in the bootstrap
+> phase from tpm_chip_register() (which tpm_ibmvtpm.c definitely calls),
+> so why isn't it happening?
 
-I'm not sure how this error can help user, if even we do not understand
-what is says. May be map everything what is not clear right not to
-unsupported error value. This give us some time to communicate with
-vendor and prevent us from making pointless UAPi?
-
-> > The difference between open and underload is probably:
-> > - open: Iport = 0, detection state
-> > - underload: Iport < Imin (or Ihold?), Iport can be 0. related to powered/MPS
-> >   state.
+Because flags = TPM_OPS_AUTO_STARTUP has not been set for this driver.
 > 
-> Should I put it under MPS substate then?
-
-If my understand is correct, then yes. Can you test it? Do you have PD
-with adjustable load?
-
-> > May be you will need to contact Microchip directly. Usually it helps :)
+> James
 > 
-> Lets keep it like that for now?
-
-let's map it to unsupported error for now
-
-> > > +enum ethtool_c33_pse_ext_substate_pd_dll_power_type {
-> > > +
-> > > ETHTOOL_C33_PSE_EXT_SUBSTATE_PD_DLL_POWER_TYPE_NON_802_3AF_AT_DEVICE = 1,
-> > > +};  
-> > 
-> > Here i was potentially wrong. LLDP stage is after power up, and this
-> > values was probably set on early stage of signature detection. How can
-> > we detect a device which is not conform to the 802.3AF/AT standard? Is
-> > it something pre-802.3AF/AT, micorosemi specific vendor specific signature?
-> 
-> Don't really know.
-
-Same here, if we do not really know what it is, make it unsupported error value
-
-Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
