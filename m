@@ -1,318 +1,234 @@
-Return-Path: <linux-kernel+bounces-217595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD9F90B388
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:10:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E3A690B2A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91216B2AD60
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:28:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91F92B3438E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1973E1AED59;
-	Mon, 17 Jun 2024 13:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6981AED3B;
+	Mon, 17 Jun 2024 13:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="MhZhQSod"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="S3HkmBr6"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C91C1AED4C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718631822; cv=pass; b=LgowLj/d42TogIA0I+j4llxkxLJ973zj3OH99eHd07f8BT8OxsbGnk/qmwvJij6Vp3YXFHlNjWEenDViQZZJ3YKBm++Enc27hp4MthIWXwwPLI7rQtzsYoQcq3rfY/wAEUqF5EQuRG6sez1kEb6iJUlmrwIkGgPnNpIIw3IJ5FI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718631822; c=relaxed/simple;
-	bh=c1E9WBMtpBHWD0CIJK7m5aHMGnrQFnw/g0UX/IVKAuk=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17C91AED24;
+	Mon, 17 Jun 2024 13:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718631817; cv=none; b=NyF3nKvBeuImKxDxQgdwbI9gCwfTRYxJKazqwxWUs5NasgN0VYlqLlPmRt7LYlVrf3raWcd/MYGQHTRj0xPUjB7fpvJ+MuoBQC/oP1YR/LGqot6DUqadlgBiq2TdOXmPnw81Kr19BRe1nWBJilOiN7mn0myE8bW1pP7vPpQj1h8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718631817; c=relaxed/simple;
+	bh=wPdlMn4BkQJ1i+WvuHCmNwqJAwmoMMcYl971v9DomFs=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Go9/yy22teOzswJqnzibHvandRj1sXZGWb8NtP6Esvm98njAVV6xS/iag11SLAAB1xIP6vyVfDJ7tAGad5xrc9k/DjIa0H6jgHpJ4pM26YEig4AbyHxSEYs+20gjO3WEbhIuExBtAYbMuT/mH12Avi7v5LG6kxlXfQRyYOc4hSk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=MhZhQSod; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1718631796; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Hokgeck+Y8PouhlrlJ4mIrhR0wChdzLv1Tn3iKLa2QeUgeI/3ij+hqsQFiEStPjWqBFsT+LZRD/r5ubZpGFN9WG4OMHnAGWZqLeWcSaJecefvTBgyEHcDdivgMGctiqYCP5j2baOA3hIEau4SPngxRUkgGuztxEzJ6APxDexfG4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1718631796; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=c1E9WBMtpBHWD0CIJK7m5aHMGnrQFnw/g0UX/IVKAuk=; 
-	b=YWPfDz34xWwrGHwqJEkIi8FN4QENpZj8WRDrU9j9O3HaFsVc2liixk8GaZX70QhhMAyQwiZNgPZ4AtgE3acfIRH6EyFLtOKUNrbGxWG+ikq8SPmLwEadiVSeBHehvi3wg4OPi+WsGEgXowxLzNYxZV2J37xDZGFE0LkTAbmu+v0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1718631796;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=c1E9WBMtpBHWD0CIJK7m5aHMGnrQFnw/g0UX/IVKAuk=;
-	b=MhZhQSodKoduTW+7fwvyLqLSoTySqeH1oNRkj2hDaMwXVYxzW1eiPy+wd21sforu
-	CqT5Svuevqs8B0ZqG+D8nemWSjGEsieCLyE7YPXUA0rWDWczBuyl3xriRzIBLzIs5ax
-	MtgiM2uVGrA2qMOVd4/3orR8nw/QExLcGr8FFsoFWNOzRuQrhpbHlYMZD1+TDXPIQux
-	6q3plFohBTVAAlzAWxxHCbYHfboTIt1fv3+LyuQN+Qb0DZbHTq58oMGPNT+0ox/T5vx
-	TlT+23b79pAx+wr1fSebwce4u5hCV2sZHxJQkR9NBXV4gpxCvmFPhC8Ulh+jTG0LQL8
-	O2sufHV9ZA==
-Received: by mx.zohomail.com with SMTPS id 1718631794981796.3743031204694;
-	Mon, 17 Jun 2024 06:43:14 -0700 (PDT)
-Message-ID: <e88d4722fa3bbd7104b140debdd85cb212628944.camel@icenowy.me>
-Subject: Re: [PATCH 1/2] drm/amdgpu: make duplicated EOP packet for GFX7/8
- have real content
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Alex
- Deucher <alexander.deucher@amd.com>, Pan Xinhui <Xinhui.Pan@amd.com>, David
- Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Pierre-Eric
- Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, Huacai Chen
- <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
-Date: Mon, 17 Jun 2024 21:43:08 +0800
-In-Reply-To: <09fbcd1f-c7b1-47e3-9146-17f8189978a8@amd.com>
-References: <20240617105846.1516006-1-uwu@icenowy.me>
-	 <20240617105846.1516006-2-uwu@icenowy.me>
-	 <88337509-3ad7-47aa-b70f-5294f7f1e486@amd.com>
-	 <b4ebdbce2f44c06806a650e72b1b6eb9a16dffe6.camel@icenowy.me>
-	 <09fbcd1f-c7b1-47e3-9146-17f8189978a8@amd.com>
-Organization: Anthon Open-Source Community
+	 Content-Type:MIME-Version; b=qx4zdbnv2Qg8BSc21KFZfBUvdnlFrBtfowTfiQN0y+m4JuWbkv74F9xTwXYB5/q14HFL6RK66EwJPSS5UgdK7VOiM0U2TioNGxcYc+m8N7YGkLWmVrTD6VTIZgbXZehSzpel+IjPPkHcdiU+YdCsACFoD+ykculXWQuS1HIh0o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=S3HkmBr6; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718631814;
+	bh=wPdlMn4BkQJ1i+WvuHCmNwqJAwmoMMcYl971v9DomFs=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=S3HkmBr6agUfW95p6IZ5XRCZ8SXGakexEfxerssqNteb6ERE+9IrPn+eIzXQ3pPwT
+	 QRQcBuxxe/IdVRooZRu4o6xbj88PsaPT0WRD7HzPGgSeFCnVoavP/DQJB7t8eKL9gP
+	 GEClxw+4Gn1LePmGb7jSe7RM4T09+hfsHST1NeqyQDdJOHvOdbpbP0LVG7K7j/DxS+
+	 gc2UJuy5w7VXuaOlPt+5WIvUXr4S97awQsFm5m1SjMBFPkxpnEP0rzHEhR5UPX99je
+	 f417DkkCcpc9mkI4RuDtBywU40yoThKahWTcPehbESaQIyfFwJhaHm4gPpQYvorx3E
+	 jb7T1pIkbGI/Q==
+Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6CB9E3782121;
+	Mon, 17 Jun 2024 13:43:32 +0000 (UTC)
+Message-ID: <ec8e632a80a8d4ded6f692d92dff9f699881773e.camel@collabora.com>
+Subject: Re: [PATCH v4 00/11] media: rkvdec: Add H.264 High 10 and 4:2:2
+ profile support
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Diederik de Haas <didi.debian@cknow.org>, Ezequiel Garcia
+ <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ linux-rockchip@lists.infradead.org, Jonas Karlman <jonas@kwiboo.se>,  Andy
+ Yan <andyshrk@163.com>
+Cc: Alex Bee <knaerzche@gmail.com>, Benjamin Gaignard
+	 <benjamin.gaignard@collabora.com>, Sebastian Fricke
+	 <sebastian.fricke@collabora.com>, Christopher Obbard
+	 <chris.obbard@collabora.com>, linux-media@vger.kernel.org, 
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Date: Mon, 17 Jun 2024 09:43:29 -0400
+In-Reply-To: <122755518.lCnTqr06ca@bagend>
+References: <20231105165521.3592037-1-jonas@kwiboo.se>
+	 <122755518.lCnTqr06ca@bagend>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
 
-=E5=9C=A8 2024-06-17=E6=98=9F=E6=9C=9F=E4=B8=80=E7=9A=84 15:09 +0200=EF=BC=
-=8CChristian K=C3=B6nig=E5=86=99=E9=81=93=EF=BC=9A
-> Am 17.06.24 um 15:03 schrieb Icenowy Zheng:
-> > =E5=9C=A8 2024-06-17=E6=98=9F=E6=9C=9F=E4=B8=80=E7=9A=84 14:35 +0200=EF=
-=BC=8CChristian K=C3=B6nig=E5=86=99=E9=81=93=EF=BC=9A
-> > > Am 17.06.24 um 12:58 schrieb Icenowy Zheng:
-> > > > The duplication of EOP packets for GFX7/8, with the former one
-> > > > have
-> > > > seq-1 written and the latter one have seq written, seems to
-> > > > confuse
-> > > > some
-> > > > hardware platform (e.g. Loongson 7A series PCIe controllers).
-> > > >=20
-> > > > Make the content of the duplicated EOP packet the same with the
-> > > > real
-> > > > one, only masking any possible interrupts.
-> > > Well completely NAK to that, exactly that disables the
-> > > workaround.
-> > >=20
-> > > The CPU needs to see two different values written here.
-> > Why do the CPU need to see two different values here? Only the
-> > second
-> > packet will raise an interrupt before and after applying this
-> > patch,
-> > and the first packet's result should just be overriden on ordinary
-> > platforms. The CPU won't see the first one, until it's polling for
-> > the
-> > address for a very short interval, so short that the GPU CP
-> > couldn't
-> > execute 2 commands.
->=20
-> Yes exactly that. We need to make two writes, one with the old value=20
-> (seq - 1) and a second with the real value (seq).
->=20
-> Otherwise it is possible that a polling CPU would see the sequence=20
-> before the second EOP is issued with results in incoherent view of
-> memory.
+Hi,
 
-In this case shouldn't we write seq-1 before any work, and then write
-seq after work, like what is done in Mesa?
-
-As what I see, Mesa uses another command buffer to emit a
-EVENT_WRITE_EOP writing 0, and commit this command buffer before the
-real command buffer.
-
->=20
-> > Or do you mean the GPU needs to see two different values being
-> > written,
-> > or they will be merged into only one write request?
+Le dimanche 16 juin 2024 =C3=A0 11:47 +0200, Diederik de Haas a =C3=A9crit=
+=C2=A0:
+> On Sunday, 5 November 2023 17:54:59 CEST Jonas Karlman wrote:
+> > This is a revival of a 3 year old series [1] now that NV15/NV20/NV30 su=
+pport
+> > for display driver have landed in mainline tree.
 > >=20
-> > Please give out more information about this workaround, otherwise
-> > the
-> > GPU hang problem on Loongson platforms will persist.
->=20
-> Well if Loongson can't handle two consecutive write operations to the
-> same address with different values then you have a massive platform
-> bug.
-
-I think the issue is triggered when two consecutive write operations
-and one IRQ is present, which is exactly the case of this function.
-
->=20
-> That is something which can happen all the time throughout the
-> operation.
->=20
-> Regards,
-> Christian.
->=20
+> > This series adds H.264 High 10 and 4:2:2 profile support to the Rockchi=
+p
+> > Video Decoder driver.
 > >=20
-> > > Regards,
-> > > Christian.
-> > >=20
-> > > > Fixes: bf26da927a1c ("drm/amdgpu: add cache flush workaround to
-> > > > gfx8 emit_fence")
-> > > > Fixes: a2e73f56fa62 ("drm/amdgpu: Add support for CIK parts")
-> > > > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> > > > ---
-> > > > =C2=A0=C2=A0 drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c | 12 +++++------=
--
-> > > > =C2=A0=C2=A0 drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c | 12 ++++-------=
--
-> > > > =C2=A0=C2=A0 2 files changed, 9 insertions(+), 15 deletions(-)
-> > > >=20
-> > > > diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
-> > > > b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
-> > > > index 541dbd70d8c75..778f27f1a34fe 100644
-> > > > --- a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
-> > > > +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
-> > > > @@ -2117,9 +2117,8 @@ static void
-> > > > gfx_v7_0_ring_emit_fence_gfx(struct amdgpu_ring *ring, u64
-> > > > addr,
-> > > > =C2=A0=C2=A0 {
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0bool write64b=
-it =3D flags & AMDGPU_FENCE_FLAG_64BIT;
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0bool int_sel =
-=3D flags & AMDGPU_FENCE_FLAG_INT;
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Workaround for cache =
-flush problems. First send a
-> > > > dummy
-> > > > EOP
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * event down the pipe w=
-ith seq one below.
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Workaround for cache =
-flush problems, send EOP twice.
-> > > > */
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_w=
-rite(ring,
-> > > > PACKET3(PACKET3_EVENT_WRITE_EOP,
-> > > > 4));
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_w=
-rite(ring, (EOP_TCL1_ACTION_EN |
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EOP_TC_ACTION_EN =
-|
-> > > > @@ -2127,11 +2126,10 @@ static void
-> > > > gfx_v7_0_ring_emit_fence_gfx(struct amdgpu_ring *ring, u64
-> > > > addr,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EVENT_INDEX(5)));
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_w=
-rite(ring, addr & 0xfffffffc);
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_w=
-rite(ring, (upper_32_bits(addr) & 0xffff)
-> > > > |
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0DATA_SEL(1) | INT_SEL(0));
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_write(ring, =
-lower_32_bits(seq - 1));
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_write(ring, =
-upper_32_bits(seq - 1));
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0DATA_SEL(write64bit ? 2 : 1) |
-> > > > INT_SEL(0));
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_write(ring, =
-lower_32_bits(seq));
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_write(ring, =
-upper_32_bits(seq));
-> > > > =C2=A0=C2=A0=20
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Then send the real EO=
-P event down the pipe. */
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_w=
-rite(ring,
-> > > > PACKET3(PACKET3_EVENT_WRITE_EOP,
-> > > > 4));
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_w=
-rite(ring, (EOP_TCL1_ACTION_EN |
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EOP_TC_ACTION_EN =
-|
-> > > > diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-> > > > b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-> > > > index 2f0e72caee1af..39a7d60f1fd69 100644
-> > > > --- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-> > > > +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-> > > > @@ -6153,9 +6153,7 @@ static void
-> > > > gfx_v8_0_ring_emit_fence_gfx(struct amdgpu_ring *ring, u64
-> > > > addr,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0bool write64b=
-it =3D flags & AMDGPU_FENCE_FLAG_64BIT;
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0bool int_sel =
-=3D flags & AMDGPU_FENCE_FLAG_INT;
-> > > > =C2=A0=C2=A0=20
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Workaround for cache =
-flush problems. First send a
-> > > > dummy
-> > > > EOP
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * event down the pipe w=
-ith seq one below.
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Workaround for cache =
-flush problems, send EOP twice.
-> > > > */
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_w=
-rite(ring,
-> > > > PACKET3(PACKET3_EVENT_WRITE_EOP,
-> > > > 4));
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_w=
-rite(ring, (EOP_TCL1_ACTION_EN |
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EOP_TC_ACTION_EN =
-|
-> > > > @@ -6164,12 +6162,10 @@ static void
-> > > > gfx_v8_0_ring_emit_fence_gfx(struct amdgpu_ring *ring, u64
-> > > > addr,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EVENT_INDEX(5)));
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_w=
-rite(ring, addr & 0xfffffffc);
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_w=
-rite(ring, (upper_32_bits(addr) & 0xffff)
-> > > > |
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0DATA_SEL(1) | INT_SEL(0));
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_write(ring, =
-lower_32_bits(seq - 1));
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_write(ring, =
-upper_32_bits(seq - 1));
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 DATA_SEL(write64bit ? 2 : 1) |
-> > > > INT_SEL(0));
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_write(ring, =
-lower_32_bits(seq));
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_write(ring, =
-upper_32_bits(seq));
-> > > > =C2=A0=C2=A0=20
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Then send the real EO=
-P event down the pipe:
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * EVENT_WRITE_EOP - flu=
-sh caches, send int */
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_w=
-rite(ring,
-> > > > PACKET3(PACKET3_EVENT_WRITE_EOP,
-> > > > 4));
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0amdgpu_ring_w=
-rite(ring, (EOP_TCL1_ACTION_EN |
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EOP_TC_ACTION_EN =
-|
+> > Patch 1 adds helpers for calculating plane bytesperline and sizeimage.
+> > Patch 2 adds two new pixelformats for semi-planer 10-bit 4:2:0/4:2:2 YU=
+V.
+> >=20
+> > Patch 3 change to use bytesperline and buffer height to configure strid=
+es.
+> > Patch 4 change to use values from SPS/PPS control to configure the HW.
+> > Patch 5 remove an unnecessary call to validate sps at streaming start.
+> >=20
+> > Patch 6-10 refactor code to support filtering of CAPUTRE formats based
+> > on the image format returned from a get_image_fmt ops.
+> >=20
+> > Patch 11 adds final bits to support H.264 High 10 and 4:2:2 profiles.
+> >=20
+> > Tested on a ROCK Pi 4 (RK3399) and Rock64 (RK3328):
+> >=20
+> >   v4l2-compliance 1.24.1, 64 bits, 64-bit time_t
+> >   ...
+> >   Total for rkvdec device /dev/video1: 46, Succeeded: 46, Failed: 0,
+> > Warnings: 0
+> >=20
+> >   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-V4L2-request
+> >   ...
+> >   Ran 65/69 tests successfully
+> >=20
+> >   Running test suite JVT-AVC_V1 with decoder FFmpeg-H.264-V4L2-request
+> >   ...
+> >   Ran 127/135 tests successfully
+> >=20
+> > Before this series:
+> >=20
+> >   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-V4L2-request
+> >   ...
+> >   Ran 44/69 tests successfully
+> >=20
+> > ...
+> >=20
+> > Following commits adds support for NV15/NV20/NV30 to VOP driver:
+> > 728c15b4b5f3 ("drm/fourcc: Add NV20 and NV30 YUV formats")
+> > d4b384228562 ("drm/rockchip: vop: Add NV15, NV20 and NV30 support")
+> >=20
+> > To fully runtime test this series you may need above drm commits and ff=
+mpeg
+> > patches from [2], this series and drm patches is also available at [3].
+> >=20
+> > [1]
+> > https://lore.kernel.org/linux-media/20200706215430.22859-1-jonas@kwiboo=
+.se/
+> > [2] https://github.com/Kwiboo/FFmpeg/commits/v4l2-request-n6.1-dev/ [3]
+> > https://github.com/Kwiboo/linux-rockchip/commits/linuxtv-rkvdec-high-10=
+-v4/
+> > [4] https://gist.github.com/Kwiboo/f4ac15576b2c72887ae2bc5d58b5c865 [5]
+> > https://gist.github.com/Kwiboo/459a1c8f1dcb56e45dc7a7a29cc28adf
 >=20
+> Reviving this old thread now that rkvdec2 'stuff' emerged.
+> I have (actually) done quite some tests with this (and "media: rkvdec: Ad=
+d=20
+> HEVC backend" patch set) and they have been part of my kernel builds ever=
+=20
+> since.
+> I _think_, but don't know, that is relevant for Andy's question:
+>=20
+> On zondag 16 juni 2024 08:58:20 CEST Andy Yan <andyshrk@163.com> wrote:
+> > How can I test these patches? Do they require any additional userspace
+> > patches?
+>=20
+> I have the same question and I think you'd need this and the HEVC patch s=
+et=20
+> and then also patch FFmpeg and then it should enable HW acceleration.
+> So my question boils down to: with the rkvdec2 patch set, should V4L2-req=
+uests=20
+> now also work with rkvdec, so not just Hantro anymore?
+
+FFmpeg changes are still downstream, and different people (even within
+LibreELEC) seems to have slightly different version or alteration. It would=
+ be
+really nice if this work could move upstream FFMpeg so that we can be more =
+sure
+what what "working with FFmpeg v4l2-requests" means.
+
+Meanwhile, support in upstream GStreamer is stable on Hantro G2 and Mediate=
+k
+VCODEC. In theory, it works fine with RKVDEC, and it will certainly work wi=
+th
+RKVDEC2 when we get to write the HEVC support.
+
+>=20
+> BTW: the libdrm commits have been merged upstream quite some time ago, so=
+ if=20
+> you have a recent version of that, you don't need to patch that.
+> If you use FFmpeg 7.0, then Jonas has a branch for that too (haven't trie=
+d it=20
+> yet though).
+>=20
+> FWIW: my test results were a bit mixed. I didn't post them before as I do=
+n't=20
+> fully/really understand this 'video stuff', and I didn't want you all to =
+suffer=20
+> from what was likely a PEBKAC issue.
+>=20
+> On my PineTab2 (rk3566) I had some h.264 videos HW accelerated, but not a=
+ll.=20
+> My guess is that it's related to the resolution. 1920x1080 worked, while =
+it=20
+> didn't work with a 1280x640 video. The video still played, just not HW=
+=20
+> accelerated. IOW: improvements in some and otherwise it was just rendered=
+ by=20
+> the CPU (I think), just like before.
+
+This is because all rk35XX have two hardware video decoders for H.264. This=
+ is
+not to be be confused with rkvdec which is gone. It has a modified Hantro G=
+1
+core (limited to 1080p60) and rkvdec2 core (driver in progress). I don't th=
+ink
+Rockchip really expected the first one to be ever used, but upstream has be=
+en
+pushy and its now enabled upstream. That has a side effect, which is that
+userspace will have to work harder on these platform to pick the right HW f=
+or
+the task.
+
+>=20
+> On my Rock64 I got a pink tint with all videos, like described here:
+> https://github.com/mpv-player/mpv/issues/12968
+> IIUC, that's actually a problem in the lima driver?
+
+Its not clear from the bug report. This visual artefact has been seen with
+wayland compositors lately (notably weston). Notably, this can happen if yo=
+u try
+and import NV12 with mesa (panfrost and lima included) but forcing a TEXTUR=
+E_2D
+target instead of external target. Normally this should be rejected by mesa=
+, but
+is accidentally not, and cause miss-render.
+
+Nicolas
+
+>=20
+> Cheers,
+>   Diederik
 
 
