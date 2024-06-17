@@ -1,143 +1,128 @@
-Return-Path: <linux-kernel+bounces-217678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57BE490B2DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:50:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFBD90B2DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FFAD1C20A90
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:50:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBBD11F297CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57FA1D788C;
-	Mon, 17 Jun 2024 13:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3051D9528;
+	Mon, 17 Jun 2024 13:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wKsfrooz";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GH5JtHxh"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="lEvV3meb"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D171D542E;
-	Mon, 17 Jun 2024 13:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAF71D951A
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718632282; cv=none; b=AqDnNa1ls5Cn7BJCcd1pq2N/eBYilCAmRyzU/qeodT1x00pYMvVVd1koxXzCPG4hLSo7zxy8GZMBytYTX8WPaihQMfmgeW8sII0rgA2qo+eMGkeaM5gPfVl4tgLfb0xRKTHJCEXPkW6O+d3K0otLkQz4wZT65G1BWhKHnOHN3GM=
+	t=1718632338; cv=none; b=AlU56twC5aGHAboBwl4sdb6iDVA9roIcxTA3WNYElrzJcH4x4WiNqnrC5jkJrwofMUp1SaeavT2rrzM3g/UTEVj8zFQuEGuHo95PkG6O6Ch1nVqIAktWXfy+czG7usMEtxBwtnp151KPYDQDwCWeq3g4E34Rh8rfcIUOX6f0vXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718632282; c=relaxed/simple;
-	bh=4HgadTau/iVzDNAAuXN13V7BbWCUXTtqG5scDOWsxP4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=QyBuP2D5jmtdFt9GzNG9eI+dD0MOxbepvftCeJ10GdwtP4xm3ZjTmUzEIRXGZ2PTOLUHLViXsuz7kab4zfZKxV9c4PQt/wBA9LF4zB/f7B1PchktWg9D6S6hx7pPX3fpRHzSZfMjuoVWepW65Ys8ZghJv85gr+FbDjxlla3GABQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wKsfrooz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GH5JtHxh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Jun 2024 13:51:15 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718632275;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UehL95PsUdhhKI5mdnM9CwmrTADH6kRWf12xLuOu4mU=;
-	b=wKsfroozw+67CQLxgja6C8o4yZombnj0R1J8u+0ud/w0ApbjxQMxoVksVSIsV42BSWW5B7
-	2tkgqQs6nU2fRSHVY3HIBsd6vJWUs0Bt/pOxYG2D0Pf4EP8AgveJzD9DvmptQ3PL4IP+Fv
-	t4kssvWwn4JdSSBF9hUOqM6oiGEUXirXJUit8GC6iTD47XaHonPC9BzPIW9eRjt9Vf//TO
-	FT4LT1qSuKkwWmtn+HEDZFiIKTZ0s1ikCUHOEV1Ad8KFhR9CJapWbnO+Bt1RgFuhsFetLT
-	gAFRnX14AXdGXbI6AZFjXCs9jJNWXVYizJljmKNVJApoHGs68A4zOkWIFZbBwQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718632275;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UehL95PsUdhhKI5mdnM9CwmrTADH6kRWf12xLuOu4mU=;
-	b=GH5JtHxhgUgNr/jeflONOjYvKmiPfiJhKrYlA2rwz5UsD6QZvT4UWVw0wTZFyWqhrdM+pX
-	WhU65vsXX64XKzCA==
-From: "tip-bot2 for Herve Codina" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqdomain: Introduce irq_domain_free()
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Herve Codina <herve.codina@bootlin.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240614173232.1184015-2-herve.codina@bootlin.com>
-References: <20240614173232.1184015-2-herve.codina@bootlin.com>
+	s=arc-20240116; t=1718632338; c=relaxed/simple;
+	bh=S8oKg7qQ4NYsaNZMwjpwaY5Zq6XvOvJgc9CYYY9wH1A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cYM2Y0YDUavDL8fDCmYK1d/NxqOrQgJltCvCnvVbbhEhEczB4P7DjMP7uGuvkfwpnfenZ9V7cKCwR1q+X+7L7od/F0CMXvMTBvKfSPWjPd0a7gnA5hKN3wDj0GmoAS3Jk6v1XRZgjjq4+ZyQfSIm6At3RIdLzgWL/KKvXRCwtfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=lEvV3meb; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-797e2834c4eso366875785a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:52:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1718632335; x=1719237135; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=S8oKg7qQ4NYsaNZMwjpwaY5Zq6XvOvJgc9CYYY9wH1A=;
+        b=lEvV3mebfEO3FD7axeFcfwhTCtIJJZ93CqloY96XiuKPGqh5vcVw2xjnmzhbR5jtIF
+         vl+9ICZfgIi/FHoWFSI9cxAWCLlJYar0Ufy1Yys2Ui9nbaVYjNKpjIZelhziFhlyv/on
+         O3vacTzDAsUFmksTvh4M1zgyAyV9bzjnzdEMJpOVAWEWihYN7Oa0ggvmU7rqsSYct8us
+         P3Jd0LoWKGycHLrR7EulrfS3GDW967APq9Ol16QrVnesDXkRhYHlu9chBZy0wxuuS/4k
+         J1W8NZMFy//qFuUu7Sk9X8ptF+O/xW9Tpu04gSefAKSLFnM+qr0Rq0Pbrcixb8J6VLEk
+         28zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718632335; x=1719237135;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S8oKg7qQ4NYsaNZMwjpwaY5Zq6XvOvJgc9CYYY9wH1A=;
+        b=rt7AOT1DTT+//ehRDLIllofKtJUGRfTDrcrG955OxkWSgRo4iKY/BLylIyVjz+AsOu
+         QBhGXbbqvZc5rxrqIUEsGNb1yB6Z6YKgQW3W0UhvuI7blgEyOjEuVGH54G+fYNKy34vf
+         BIrkQGFby/1ODBuZRRhRnBDXWPUN1Y2oDm4/KIiswQ5XGK9x6GWb9c8rLn8qfWf6475s
+         Q0hkKYG0EByVh2e0gTHLjTLSL5ovOxqaMZZUwkKC3YQxXcL4mTcoXcdasbNz3bCdm7P/
+         MMr2vb5ju3BL4S9m3Klo8La3E2vzrZrS9sNo8P/NH7SaDkHtrJ/1XhLpX43/Lu0dY3BP
+         nHbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAOXoBhqFV2JC8RDSsPPsRm0tS6bDpzB6tx6cXFpunT2JDhmpM+MthiQtgO6Ix8ZZqI6mKXjagltuOZr0N5aiOZwUNyvXWTa6DxMdb
+X-Gm-Message-State: AOJu0Yz0zrzZBzKJuqJrAW4FDjGk/E/2+gnNcgqQEF/nAJkwEee6VjAr
+	ry6difQaYB/Z7FZMcyewcv813FT5hrqKm+EWpK9eN8HyMtpo0JsqgqhtAO/ILYE=
+X-Google-Smtp-Source: AGHT+IGyIko1VGBafHP2QtDzGF8rEqYm+Kn5JkvhSCEhEsxF7IzDWjF9X3Q8Mr2an8LHTllmb6fjkQ==
+X-Received: by 2002:a05:620a:19a6:b0:795:e9cd:f5b8 with SMTP id af79cd13be357-79810103ab8mr2338158885a.23.1718632335615;
+        Mon, 17 Jun 2024 06:52:15 -0700 (PDT)
+Received: from nicolas-tpx395.lan ([2606:6d00:15:57da::7a9])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-798abc02f68sm431571485a.86.2024.06.17.06.52.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 06:52:15 -0700 (PDT)
+Message-ID: <eb36cf0fef6208e2842c41517579066109530b28.camel@ndufresne.ca>
+Subject: Re: [PATCH 1/3] media: rockchip: Introduce the rkvdec2 driver
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Diederik de Haas <didi.debian@cknow.org>, linux-kernel@vger.kernel.org, 
+ Detlev Casanova <detlev.casanova@collabora.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  Sebastian Reichel
+ <sebastian.reichel@collabora.com>, Dragan Simic <dsimic@manjaro.org>,
+ Alexey Charkov <alchark@gmail.com>, Cristian Ciocaltea
+ <cristian.ciocaltea@collabora.com>,  Andy Yan <andy.yan@rock-chips.com>,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-staging@lists.linux.dev
+Date: Mon, 17 Jun 2024 09:52:14 -0400
+In-Reply-To: <5087685.q4sLEYJVHI@bagend>
+References: <20240615015734.1612108-1-detlev.casanova@collabora.com>
+	 <3333233.eAoTOS8U2s@bagend> <5969581.LvFx2qVVIh@arisu>
+	 <5087685.q4sLEYJVHI@bagend>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171863227514.10875.17056658925123094494.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the irq/core branch of tip:
+Hi,
 
-Commit-ID:     89b37541ca38954f8ac01c2ca25405b140cfc8eb
-Gitweb:        https://git.kernel.org/tip/89b37541ca38954f8ac01c2ca25405b140cfc8eb
-Author:        Herve Codina <herve.codina@bootlin.com>
-AuthorDate:    Fri, 14 Jun 2024 19:32:02 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 17 Jun 2024 15:48:12 +02:00
+Le dimanche 16 juin 2024 =C3=A0 10:40 +0200, Diederik de Haas a =C3=A9crit=
+=C2=A0:
+> On Saturday, 15 June 2024 21:44:32 CEST Detlev Casanova wrote:
+> > > So is this just an (unfortunate) use of the same words or is that wik=
+i
+> > > page just wrong ... or better yet: does rkvdec2 support RK356x too?
+> >=20
+> > Yes, the vdpu34x decoder on rk356x socs should be supported by this dri=
+ver
+> > but I don't have boards to test that unfortunately.
+> >=20
+> > This might also be used on future rockchip releases like the rk3576. Bu=
+t
+> > they all have their own adaptations. If you can test it on rk3568 based
+> > hardware, I'll happily add a compatible for it.
+>=20
+> It would be great if you'd add a compatible for it.
+> I don't have rk3568 based HW, but I do have rk3566 based HW and AFAIK tho=
+se=20
+> are the same when it comes to the 'video' stuff.
 
-irqdomain: Introduce irq_domain_free()
+Our usual approach is to require at least a "Test-by:" to include patches
+written without HW. I think it will come soon enough, and we can focus on
+getting the driver in at this moment.
 
-In preparation of the introduction of the irq domain instantiation,
-introduce irq_domain_free() to avoid code duplication on later
-modifications.
+Nicolas
 
-This new function is an extraction of the current operations performed
-to free the irq domain. No functional change intended.
-
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20240614173232.1184015-2-herve.codina@bootlin.com
-
----
- kernel/irq/irqdomain.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index 7b4d580..40b631b 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -238,6 +238,15 @@ static void __irq_domain_publish(struct irq_domain *domain)
- 	pr_debug("Added domain %s\n", domain->name);
- }
- 
-+static void irq_domain_free(struct irq_domain *domain)
-+{
-+	fwnode_dev_initialized(domain->fwnode, false);
-+	fwnode_handle_put(domain->fwnode);
-+	if (domain->flags & IRQ_DOMAIN_NAME_ALLOCATED)
-+		kfree(domain->name);
-+	kfree(domain);
-+}
-+
- /**
-  * __irq_domain_add() - Allocate a new irq_domain data structure
-  * @fwnode: firmware node for the interrupt controller
-@@ -293,12 +302,7 @@ void irq_domain_remove(struct irq_domain *domain)
- 	mutex_unlock(&irq_domain_mutex);
- 
- 	pr_debug("Removed domain %s\n", domain->name);
--
--	fwnode_dev_initialized(domain->fwnode, false);
--	fwnode_handle_put(domain->fwnode);
--	if (domain->flags & IRQ_DOMAIN_NAME_ALLOCATED)
--		kfree(domain->name);
--	kfree(domain);
-+	irq_domain_free(domain);
- }
- EXPORT_SYMBOL_GPL(irq_domain_remove);
- 
 
