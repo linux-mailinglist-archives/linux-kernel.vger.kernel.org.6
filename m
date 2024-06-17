@@ -1,149 +1,169 @@
-Return-Path: <linux-kernel+bounces-216902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE0C90A847
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:21:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 552EA90A851
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1E751F21F2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:21:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79EB81C25152
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD24190463;
-	Mon, 17 Jun 2024 08:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD62190466;
+	Mon, 17 Jun 2024 08:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="heGlY2D8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=lexina.in header.i=@lexina.in header.b="isu0i9O1"
+Received: from mx.adeep.su (mx.adeep.su [185.250.0.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF6318628D
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F10190464;
+	Mon, 17 Jun 2024 08:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.250.0.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718612477; cv=none; b=UPn/QeG2pr20G6tPK3j3Q9pWXapE0fapMS9CYjHiFGG9oGEsQhx8oCHx9dvX7sBertjDs0G6zdxc9Q7c60tJGW/5l4cM04orn45oQ/vEau7Xfz/O+qdr4N2sUmNHgV5OpNASkM/o9RZJNAGi//U3P52l3v0ByFnG6iOIX6SN/z8=
+	t=1718612521; cv=none; b=cgtrzs3CtyrkuclhV0QPGECzLNchF5Jeeu7nk0aH4sGkS68XyD4A5Ot3sgf1vR+mkzlXt2bVecTvfalImlA5rYmDA1Zg/76yzNJ9gS0eTR3cGfRb0798+cN2gOmzq5adik7qgxSL6eHMCV7H/IwAS+2nTaUNYycHF70+49RJRbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718612477; c=relaxed/simple;
-	bh=cTK/nSEc0sr9Zt54gC1HBI5EuJKjOx81XMNMXuBOuZM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PwDXODZMgYsyw4xksuZyXjum68rqUkx2FlQEee8j/Lv1ggccFd2hawS+WqQ/VUPFIrckpMfsZEmBHNGrSjrk3+/TqAGLxpN+CUU1+0nol8aGCN1ezkn8ADmTGZUPOhXDYf5PoAotxA43qjzQQcE5Sgdtq1WD4f74ZQTfEbDo7MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=heGlY2D8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718612474;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cTK/nSEc0sr9Zt54gC1HBI5EuJKjOx81XMNMXuBOuZM=;
-	b=heGlY2D8y+UOBnTrDKk2AX8//JOpy9r/qO4RupDJtI+8RWmiY6LfRWnWj4THfSGbnKXzgx
-	QAjcEmlyXXGTyfk4Xl3rmsjKjtTsYcyfzyBzIbLe7hVmdWEnmFy0yfvaoaYHh3XDEPPBm8
-	8eeMs71b8xb1sgUYLUuCuahIxB/Q7zQ=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-180-ePEETrMdPQuoGTxSRssgig-1; Mon, 17 Jun 2024 04:21:13 -0400
-X-MC-Unique: ePEETrMdPQuoGTxSRssgig-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42180d2a0d6so6443125e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 01:21:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718612472; x=1719217272;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cTK/nSEc0sr9Zt54gC1HBI5EuJKjOx81XMNMXuBOuZM=;
-        b=FjgvkOIwOw3gsh4dl5Vm0nYZECQNfgegI1t1bSiTHw4+dyurwt386PV/lC9NfLbzGa
-         B++wurDIfrvWQakYYQBNyrGLEycFNJXtljGB05+z6sUlTxm3dGkgjTWSkN0B2j1jC1r2
-         1OfelDSLtw8zozM1OcUtV9jbZIhkbOkL1dSxGbWegIuWeE8R1vZRjGdi4i9hdkwwdnRk
-         hKNLtpRvqF+HQZFPARcSQ2VONO4wcsMPRqSrJmL2BedMRVC0j58qNT7NmlCe26+keMWr
-         xDhu8O4jc3OFhnDa3yhnPD25gUBAoGVWxev4ZnoVpxnT+NwRoz1cSZjOPVoRtV5NJwO9
-         eIUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDesFHcbW0jBxGn3yM3ahQlamVpGHorM+/vpNiJgdaAngrjPScrKFqFy9VeHqcDxRahWI2HknXXNeXnjSzSPFOykv76ZDHPTj/ws6I
-X-Gm-Message-State: AOJu0YySxaKLo1LVIU2aMpsYP3VLlTyWFf9lPRQAQ+ONNKXKqj3jAcHr
-	bGnrOo5LPLbCUBG8WwYQJIVaQWmJkMVQVuXlY6KPFjhxqze84Dk3apUR6ugVlgY9uAN0rB8qkE0
-	vb1Uj7sTJFqXcAbSoTtiD/qaNwe5xKohQUKo1L06pWgBq/QJCYq79kSjOwszQxw==
-X-Received: by 2002:a05:600c:3510:b0:421:7dc3:9a1d with SMTP id 5b1f17b1804b1-42304855035mr66204745e9.4.1718612471938;
-        Mon, 17 Jun 2024 01:21:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG5EsN4snPVwwdJpY6BujEFyiznYI79kUxwQuEaA6q+Ugp50bjVUn6XOpisZtSD3pKxm3q1hw==
-X-Received: by 2002:a05:600c:3510:b0:421:7dc3:9a1d with SMTP id 5b1f17b1804b1-42304855035mr66204555e9.4.1718612471570;
-        Mon, 17 Jun 2024 01:21:11 -0700 (PDT)
-Received: from pstanner-thinkpadt14sgen1.remote.csb (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422870e95eesm189677815e9.25.2024.06.17.01.21.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 01:21:11 -0700 (PDT)
-Message-ID: <bdfd5c582e7b858d3f32428000d2268228beef5f.camel@redhat.com>
-Subject: Re: [PATCH v9 10/13] PCI: Give pci_intx() its own devres callback
-From: Philipp Stanner <pstanner@redhat.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Hans de Goede
- <hdegoede@redhat.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Daniel Vetter <daniel@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>, Sam
- Ravnborg <sam@ravnborg.org>,  dakr@redhat.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org
-Date: Mon, 17 Jun 2024 10:21:10 +0200
-In-Reply-To: <20240614161443.GA1115997@bhelgaas>
-References: <20240614161443.GA1115997@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1718612521; c=relaxed/simple;
+	bh=m7ezWA4EapccuJHFsnN/X8zAkfEKsVddEeDHIkp3DSs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=haJxkvyFnt8gci44TNyeKlgh9WBWT1AqXb+wWfZxZC2RfARmxVs/467iuTXqIKA/w9No75i9aLdY8wjCJQVN5lNpU8xbmKHgdTuXi3qto1hgtlUTUAIDeudbfTTwa+0T7q14FBWxTYfTZ9gNF0yD//x2U9qQ1/rZdiHl0DWZSCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lexina.in; spf=pass smtp.mailfrom=lexina.in; dkim=pass (2048-bit key) header.d=lexina.in header.i=@lexina.in header.b=isu0i9O1; arc=none smtp.client-ip=185.250.0.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lexina.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lexina.in
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9A7506A800;
+	Mon, 17 Jun 2024 11:21:30 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lexina.in; s=dkim;
+	t=1718612506; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
+	bh=BwuhUxOR0latqkY8rTzfYsXbbsUhulcTI88pJ+A5+2s=;
+	b=isu0i9O1jaU5xq9RCrKEsKPD1NzFaKbYiNezBKRHU5mUrOpvjpGUI38yeACbwzr3hRQVQ2
+	VTAQlxBYCsX2QBr0JDt3v8nKXd/7JSBDAMGM6UsrXDRi7zOZnufnzHVfCoxGbgh83FvvsQ
+	jEwFynmgv0WVwcqn+4XOjRo3wl9PgE+SUshbjn+Hx3ZGVSYCjscqvCB8A0baN2Eb5mnVBU
+	i5HL0kVHyHNLe3PLGdMAZ0wk91S18aIxdPMDzJgLqP29qrfdkWTDreY5lLaTRu/F0stglH
+	yE+uW8cuhVG/daFy67r7EMx+HiA/pFyf0xSLc65XGEyAPQI5HuITKREkNxyRYQ==
+Message-ID: <c0d18fef-be65-461e-948f-c25e757199a5@lexina.in>
+Date: Mon, 17 Jun 2024 11:21:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Viacheslav <adeep@lexina.in>
+Subject: Re: [PATCH v5 3/4] dt-bindings: arm: amlogic:
+ amlogic,meson-gx-ao-secure: add secure-monitor property
+To: Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
+References: <20240610084032.3096614-1-adeep@lexina.in>
+ <20240610084032.3096614-4-adeep@lexina.in>
+ <20240610-dropout-compress-6d6a9b749524@spud>
+ <4866f6d4-2e3c-40c7-a8cb-ba4e422ffef6@lexina.in>
+ <20240611-undying-earthy-00236ac251aa@spud>
+ <20240613164244.GA1999034-robh@kernel.org>
+Content-Language: ru, en-US
+Autocrypt: addr=adeep@lexina.in; keydata=
+ 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
+In-Reply-To: <20240613164244.GA1999034-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, 2024-06-14 at 11:14 -0500, Bjorn Helgaas wrote:
-> On Fri, Jun 14, 2024 at 10:09:46AM +0200, Philipp Stanner wrote:
-> > On Thu, 2024-06-13 at 16:06 -0500, Bjorn Helgaas wrote:
-> > > On Thu, Jun 13, 2024 at 01:50:23PM +0200, Philipp Stanner wrote:
-> > > > pci_intx() is one of the functions that have "hybrid mode"
-> > > > (i.e.,
-> > > > sometimes managed, sometimes not). Providing a separate
-> > > > pcim_intx()
-> > > > function with its own device resource and cleanup callback
-> > > > allows
-> > > > for
-> > > > removing further large parts of the legacy PCI devres
-> > > > implementation.
-> > > >=20
-> > > > As in the region-request-functions, pci_intx() has to call into
-> > > > its
-> > > > managed counterpart for backwards compatibility.
-> > > >=20
-> > > > As pci_intx() is an outdated function, pcim_intx() shall not be
-> > > > made
-> > > > visible to drivers via a public API.
-> > >=20
-> > > What makes pci_intx() outdated?=C2=A0 If it's outdated, we should
-> > > mention
-> > > why and what the 30+ callers (including a couple in drivers/pci/)
-> > > should use instead.
-> >=20
-> > That is 100% based on Andy Shevchenko's (+CC) statement back from
-> > January 2024 a.D. [1]
-> >=20
-> > Apparently INTx is "old IRQ management" and should be done through
-> > pci_alloc_irq_vectors() nowadays.
->=20
-> Do we have pcim_ support for pci_alloc_irq_vectors()?
+Thanks for review.
 
-Nope.
+13/06/2024 19.42, Rob Herring wrote:
+> On Tue, Jun 11, 2024 at 07:07:28PM +0100, Conor Dooley wrote:
+>> On Tue, Jun 11, 2024 at 01:25:11PM +0300, Viacheslav wrote:
+>>> Hi!
+>>>
+>>> 10/06/2024 19.08, Conor Dooley wrote:
+>>>> On Mon, Jun 10, 2024 at 11:39:49AM +0300, Viacheslav Bocharov wrote:
+>>>>> Add secure-monitor property to schema for meson-gx-socinfo-sm driver.
+>>>>
+>>>> "bindings are for hardware, not drivers". Why purpose does the "secure
+>>>> monitor" serve that the secure firmware needs a reference to it?
+>>>
+>>> This driver is an extension to the meson-gx-socinfo driver: it supplements
+>>> information obtained from the register with information from the
+>>> SM_GET_CHIP_ID secure monitor call. Due to the specifics of the module
+>>> loading order, we cannot do away with meson-gx-socinfo, as it is used for
+>>> platform identification in some drivers. Therefore, the extended information
+>>> is formatted as a separate driver, which is loaded after the secure-monitor
+>>> driver.
+>>
+>> Please stop talking about drivers, this is a binding which is about
+>> hardware. Please provide, in your next version, a commit message that
+>> justifies adding this property without talking about driver probing
+>> order etc, and instead focuses on what service the "secure monitor"
+>> provides etc.
+> 
+> To put it another way, how many secure monitors does 1 system have?
 
-All PCI devres functions that exist are now in pci/devres.c, except for
-the hybrid functions (pci_intx() and everything calling
-__pci_request_region()) in pci.c
+One per system in current device tree.
 
 
-P.
+> 
+> What do you do if the property is not present? You didn't make it
+> required which is good because that would be an ABI break.
 
->=20
-> > [1]
-> > https://lore.kernel.org/all/ZabyY3csP0y-p7lb@surfacebook.localdomain/
->=20
+We need an indication of the ability to use the secure-monitor to obtain 
+additional information within the soc driver. It seemed to me that using 
+an explicit reference to the secure-monitor is the best choice.
 
+> 
+> You only need a link in DT if there are different possible providers or
+> some per consumer information to describe (e.g. an interrupt number or
+> clock ID). You don't have the latter and likely there is only 1 possible
+> provider.
+
+Would replacing the reference to sm with an option, for example, 
+use-secure-monitor = <1>; look more appropriate in this case?
+
+
+> 
+> Rob
+> 
+> 
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+
+-- 
+Viacheslav
 
