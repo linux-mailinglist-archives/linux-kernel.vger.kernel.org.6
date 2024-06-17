@@ -1,190 +1,139 @@
-Return-Path: <linux-kernel+bounces-218361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9767F90BD5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:10:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C7290BD5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15AFD1F226E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:10:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 289322845D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F45E1991CA;
-	Mon, 17 Jun 2024 22:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035BD1991DD;
+	Mon, 17 Jun 2024 22:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="vwFNBclf";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DV8E/Rs4"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XG4SpkF2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D15215ECDB;
-	Mon, 17 Jun 2024 22:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C9B15ECDB;
+	Mon, 17 Jun 2024 22:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718662226; cv=none; b=sQ3LOoGQQh3n37jj5aqsFe2IsczzW4hRAMHmDFjBMs+wYz2ecFwSAYOjxpZJGrzdwL649EiRUzyeIZhWUjXd3Kj4zd3LIpgoGMUNbaTXrSuFZMj9VnumLX87IwBzLi5km0p2rDG6w2HKsSjPDmE+AjiM+/uU4+8iY/R4vZYokB8=
+	t=1718662355; cv=none; b=Xgp5P0a/LE9xYLqsS4m4j0aXDSoKrZh9aMkY4fJ4+IicTME9HYMNeafqXTt0vIxc+xw/CWk0WUMPCH1wXwsEhNTxi1wbBtU21FX5kqYdPgwSpE17iDTE56FcHW5NNXzopJLeACVD6V8T3ZM1TS12UqnM3L1uk46DoHx34nqQIzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718662226; c=relaxed/simple;
-	bh=yu4nQT/8ePrAM3ouivmhW62lENjSum0ac7Wc84vefGM=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=gdFy+bmD6j2DT+Xi8nCirRTdDCQjp33MyfZlEKvmkDCbEpIjmeqaH67vnSHBzITgsdr2Rq4jbge/mmY0b/SmgykjhPOk8uqUIDJuQqb1OFK5e+x+JJ/9XL3zkS2n23XKY3vW28ScbQ3W2vHtSERXlcn0l1Nyv/04U4f3hGujHJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=vwFNBclf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DV8E/Rs4; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 67D6F138006E;
-	Mon, 17 Jun 2024 18:10:23 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Mon, 17 Jun 2024 18:10:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1718662223;
-	 x=1718748623; bh=a4L9Dxh0SmptwLif2QXxvZyXB25G9x6tM9KdZIqsHEI=; b=
-	vwFNBclf+v3i/ee6KF7TKiKh1Sd+qvgNt03fY11AFcvA9P6II738Izvk3g1CHpr4
-	AmxrTMfKwogra09W4VB2ie393HUByj1URtCMoLedXagEf1EfMG841uMWrLnot8SF
-	0PQ7brFQwuCk3eyS8OOYgXldEciHmH4Kuzry9sEwgb2fXX1ZvoLX9GiEYNnhTAhe
-	3hITgv7gNnGBoMaOCG738ZdBXqkO2jiorzte8CgGIzVxgJa7r3KW+4pnk/0X/OeN
-	Kxpgp1Eq7NPVFDJrX0SKFvAEKtg/rYxGJh6V38DSLMK2v1fo9PhyxrTly3UhKnJ6
-	KSLkmUZYMrpxR5CZVOWInw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718662223; x=
-	1718748623; bh=a4L9Dxh0SmptwLif2QXxvZyXB25G9x6tM9KdZIqsHEI=; b=D
-	V8E/Rs4/g+Dykas/NfZTI0+yLFZyu6y84GzOVw4NUpTnASb96I061lzBcX7rUZ81
-	PZFDaTkRM1qEZdOO+JWx+S9YMDFrepRo0G+nwzEEjl14dss4CZXQnmie4nYyT3Kt
-	8+ccaEWbH48sRL31ZVYtQRK7DRghjcdEHCV0BpyxSayNOBu7TnifbuBu9om4Lu7H
-	ICpiHuSUUtdlD8GDHmg7lauyZbA652Zc2BKKjFq6M/fGMX1FKaGDQEFQOSqUqgP4
-	yepe+4xZgWd6ZF7AmgkLeal+sFXeTcVkJNUNCjnwt8vB1dlQq6QAzK8PLwR1JCJ5
-	XoWsvn6fxHpOBGSyAuvcw==
-X-ME-Sender: <xms:TrRwZpxC-nJeEvb4ng-xHDCaARaflkLGw3-frg6k6rLK_nLe9A-EHQ>
-    <xme:TrRwZpSgLMTAZG6i8qyG-WtruQt_6gqrub4tUzcGqT3Hxma8hvdmTyfPQAnmo-cPY
-    ITjkBB4rp-RBcdCVMk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedviedgtdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
-    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
-    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:TrRwZjWvFfdj09K-WNF_hUXZiAOXh3_T5j-bCo-78CgJ6LnzOcXwsw>
-    <xmx:TrRwZrijZG_j2KnuhwagyRgNnJdBUXpjl2Ald3MXO8_0mUk0wCwT3A>
-    <xmx:TrRwZrDJ1JJ-yaSVLJcJeOFI1WimlGMECAMCTaINmLLAC-l2PCLQfg>
-    <xmx:TrRwZkKc9MB6U4sa2HLAM_oocx-wIunCyAr1iR2TLGx5anLxEy7TDQ>
-    <xmx:T7RwZv3OkmNxX2hKKYmlc5mDjPi4rgEc5lYVdE74SKSczt6yuqvcUVRG>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id C512236A0074; Mon, 17 Jun 2024 18:10:22 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1718662355; c=relaxed/simple;
+	bh=uhTdvcbc9s9DbbwTwLPzpKvx4Qy9vX3N1ppLhw8pIkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P9O0BBW1y+OeW5VOf6oPyxSxCtWuI5eN+tIIJgVhIMG88igmezNn+m8LE75LRyGxU6wTRtk5xox+ZxX2eB/e5WOg2eDHbnx7qO5Yh4b5WBQf9S8pgkrUxJFiiLueuHXGE6lmefYMZNkiZ2bGvH1xA8DGXWBCIJYpfzkNQgZZL70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XG4SpkF2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64A89C2BD10;
+	Mon, 17 Jun 2024 22:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718662354;
+	bh=uhTdvcbc9s9DbbwTwLPzpKvx4Qy9vX3N1ppLhw8pIkk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XG4SpkF2Ue34WyMoziqly9VBh+5WSZ9ZZb8Sm7J0GXEX6xLA1XlTjrtz6iSsUiTFB
+	 JKBsILHYMXEaysZzo0Gpi3M9db/hogVJDBJHofYkzNA9cUC0RuZ5rYBQ9ESk2zmkqR
+	 9H+2JvorWxvthKUaDxIOkvTV7t+sQXDp88SHJpLZTQ7YLNH/mwfay+vDP1ZvEaoH9X
+	 hLJDq02veH1at/uuONr2YQFhXs6KKe9alwBjs2HbAqb6rlHpD5nR8YcwXHiAuISpNA
+	 NOl9cUyys8EJU8ieLBPCr5MHqlITZ0MZJ8+dQFklAokshiwdcIq/d1YCCjR9yFhybA
+	 pZe6/nYnDPozg==
+Date: Tue, 18 Jun 2024 00:12:30 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: linux-man@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, libc-alpha@sourceware.org, 
+	andyrtr@archlinux.org, Luna Jernberg <droidbittin@gmail.com>, 
+	"Dr. Tobias Quathamer" <toddy@debian.org>, Marcos Fouces <marcos@debian.org>, Sam James <sam@gentoo.org>, 
+	Jonathan Corbet <corbet@lwn.net>, man-pages-maintainers@fedoraproject.org, 
+	Petr Gajdos <pgajdos@suse.cz>
+Subject: Re: man-pages-6.9.1 released
+Message-ID: <v25al3xd6xkv5iu5u6msz4bdj5gpmqkctsyvexjvs57jgqow44@xycbebp4iqf5>
+References: <cpolays26kcjvekvowwik3di3ut66puls47w3gvdfwep66uaul@ka4omfzltwcs>
+ <dncnuuuqpf4pa3toado6hk3inupa6ntlqxdt4x4y4l63mubuoy@kyam5murveos>
+ <vqexqoi4imi6e4sm3ddz3vicqslxip24shu42ut37ydanfqnlu@2hpc5rue2d6e>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <7cbf218e-d311-4c33-aabb-7208eac231ed@app.fastmail.com>
-In-Reply-To: 
- <CAAhV-H4LsuLYBefKZb5aHx_+fYyWjvO+Bm8h5=NFtSvk6E0Szw@mail.gmail.com>
-References: <20240616-b4-mips-ipi-improvements-v1-0-e332687f1692@flygoat.com>
- <20240616-b4-mips-ipi-improvements-v1-4-e332687f1692@flygoat.com>
- <CAAhV-H4LsuLYBefKZb5aHx_+fYyWjvO+Bm8h5=NFtSvk6E0Szw@mail.gmail.com>
-Date: Mon, 17 Jun 2024 23:10:02 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Huacai Chen" <chenhuacai@kernel.org>
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Florian Fainelli" <florian.fainelli@broadcom.com>,
- "Broadcom internal kernel review list" <bcm-kernel-feedback-list@broadcom.com>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Serge Semin" <fancer.lancer@gmail.com>,
- "paulburton@kernel.org" <paulburton@kernel.org>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/10] MIPS: Move mips_smp_ipi_init call after prepare_cpus
-Content-Type: text/plain;charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oft7z5izhsy2ma26"
+Content-Disposition: inline
+In-Reply-To: <vqexqoi4imi6e4sm3ddz3vicqslxip24shu42ut37ydanfqnlu@2hpc5rue2d6e>
+
+
+--oft7z5izhsy2ma26
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: linux-man@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, libc-alpha@sourceware.org, 
+	andyrtr@archlinux.org, Luna Jernberg <droidbittin@gmail.com>, 
+	"Dr. Tobias Quathamer" <toddy@debian.org>, Marcos Fouces <marcos@debian.org>, Sam James <sam@gentoo.org>, 
+	Jonathan Corbet <corbet@lwn.net>, man-pages-maintainers@fedoraproject.org, 
+	Petr Gajdos <pgajdos@suse.cz>
+Subject: Re: man-pages-6.9.1 released
+References: <cpolays26kcjvekvowwik3di3ut66puls47w3gvdfwep66uaul@ka4omfzltwcs>
+ <dncnuuuqpf4pa3toado6hk3inupa6ntlqxdt4x4y4l63mubuoy@kyam5murveos>
+ <vqexqoi4imi6e4sm3ddz3vicqslxip24shu42ut37ydanfqnlu@2hpc5rue2d6e>
+MIME-Version: 1.0
+In-Reply-To: <vqexqoi4imi6e4sm3ddz3vicqslxip24shu42ut37ydanfqnlu@2hpc5rue2d6e>
 
+On Mon, Jun 17, 2024 at 02:16:01PM GMT, Alejandro Colomar wrote:
+> Hi,
 
+Hi,
 
-=E5=9C=A82024=E5=B9=B46=E6=9C=8817=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=E5=
-=8D=882:53=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
-> Hi, Jiaxun
->
-> On Mon, Jun 17, 2024 at 5:03=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flygo=
-at.com> wrote:
->>
->> This will give platform code a genuine chance to setup
->> IPI IRQ in prepare_cpus.
->>
->> This is the best place for platforms to setup IPI as smp_setup
->> is too early for IRQ subsystem.
-> mips_smp_ipi_init() is an early_initcall() function, why do you say it
-> is in smp_setup()?
+>=20
+> On Mon, Jun 17, 2024 at 01:55:36PM GMT, Alejandro Colomar wrote:
+> > man-pages-6.9 had a broken link page: FICLONERANGE.2 pointed to a
+> > nonexistent page.  Thus, here's:
+> >=20
+> > 	man-pages-6.9.1 - manual pages for GNU/Linux
+> >=20
+> > Tarball download:
+> > <https://www.kernel.org/pub/linux/docs/man-pages/>
+> > Git repository:
+> > <https://git.kernel.org/cgit/docs/man-pages/man-pages.git/>
+> > Online PDF book:
+> > <https://mirrors.edge.kernel.org/pub/linux/docs/man-pages/book/>
+>=20
+> Huh, kup(1) is reporting some problem, and I'm not being able to upload
+> the files.
 
-Sorry, I was trying to say that smp_setup is not a good point so we shou=
-ld
-go prepare_cpus.
+Problem solved.  I was issuing a wrong command.  The tarball and PDF
+book are online.
 
-The intention of this patch is to move mips_smp_ipi_init to a certain po=
-int
-so platform would gain control over it.
+Have a lovely night!
+Alex
 
-Thanks
-- Jiaxun
-
->
->
-> Huacai
->>
->> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->> ---
->>  arch/mips/kernel/smp.c | 11 ++++++++++-
->>  1 file changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
->> index fe053fe52147..ddf96c28e2f0 100644
->> --- a/arch/mips/kernel/smp.c
->> +++ b/arch/mips/kernel/smp.c
->> @@ -375,7 +375,6 @@ static int __init mips_smp_ipi_init(void)
->>
->>         return 0;
->>  }
->> -early_initcall(mips_smp_ipi_init);
->>  #endif
->>
->>  /*
->> @@ -460,12 +459,22 @@ void __init smp_cpus_done(unsigned int max_cpus)
->>  /* called from main before smp_init() */
->>  void __init smp_prepare_cpus(unsigned int max_cpus)
->>  {
->> +       int rc;
->> +
->>         init_new_context(current, &init_mm);
->>         current_thread_info()->cpu =3D 0;
->>         mp_ops->prepare_cpus(max_cpus);
->>         set_cpu_sibling_map(0);
->>         set_cpu_core_map(0);
->>         calculate_cpu_foreign_map();
->> +#ifdef CONFIG_GENERIC_IRQ_IPI
->> +       rc =3D mips_smp_ipi_init();
->> +       if (rc) {
->> +               pr_err("Failed to initialize IPI - disabling SMP");
->> +               init_cpu_present(cpumask_of(0));
->> +               return;
->> +       }
->> +#endif
->>  #ifndef CONFIG_HOTPLUG_CPU
->>         init_cpu_present(cpu_possible_mask);
->>  #endif
->>
->> --
->> 2.43.0
->>
 
 --=20
-- Jiaxun
+<https://www.alejandro-colomar.es/>
+
+--oft7z5izhsy2ma26
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmZwtM0ACgkQnowa+77/
+2zJ9TQ//RqNrnl6AsnnU+Ko8UaV5bbLP+TJst/7Djc1fNP3xBPK6+9f/5VjluvdD
+E/Squ4xjE0btwkRsE/8Z9XAKepHLTHcEeiJsHumlx0257CM35tE+KwagZU+G7ESr
+45mFdKZSStd2xOqXodAxfI9MdA5wVXEeMof0AfGHLmtDsxRp92QUyavPwJd0UYAz
+1RzO2KEcxd7ZctPkjpzfp8GSf7gH30bEGrJr3BZAxzAfCdS9TGp+hGip8OvLpzXO
+Dz3w+jY/X6DfKJ4QioK+8bb4QHPnuP0r4rbMLE46I6mozR+CpzmOR2k8wfWUnqD7
+WpvDzBKHoJG9jDH810soHNDEwZr4z+BBS+84rQ6smGJPNuE6D3d7vCYkKykRiVRJ
+gvwfELeQ0McKzNSr/FS/CkkGdZkZlQ6AEesq2hT/TezsN8mN4Y5GniUrFhOfKQjW
+G/6sgFjSuC3JH88AecCRmePnqhovFb2rwOlk9klasZrsei/RuY4dVOdc5k+ihi8o
+O8vc/DHMaPEjmogPjvDaEYGMLPb7nzZ7XLQTEedyKgD8kBNBSmN5eW3iFlmekdZB
+ytSJYqlHZAfwTJNisoosZp1z8lNP9wy6G9hpNefkvGulVbif/1fmNEF7MlJumSae
+jGiD7c3Q5MuTzbFJ1nKMq/RJJDr9gTE8TDL8lXYofvTk7pDPGcQ=
+=Geql
+-----END PGP SIGNATURE-----
+
+--oft7z5izhsy2ma26--
 
