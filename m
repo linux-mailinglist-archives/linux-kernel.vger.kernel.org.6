@@ -1,148 +1,179 @@
-Return-Path: <linux-kernel+bounces-218175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3555290BA21
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:53:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC5FD90BA23
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1309F2836C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:53:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC30E1C23295
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D91198E74;
-	Mon, 17 Jun 2024 18:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d7JQ83Cd"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFF5198E85;
+	Mon, 17 Jun 2024 18:53:02 +0000 (UTC)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5057B17E900;
-	Mon, 17 Jun 2024 18:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646B21D952E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718650380; cv=none; b=Q5yLoAzzkEsusKV16gE/cZ0Yl4l9OnMjX14iaQa7aKGoamSm7/R5yuffy+TS0oXrbxnA6ADWMTWwgJfgVLWtJ+GdtV5DOjXVfNie43xp+TtM5o9HRsV68MZGRH1/Bw73PpVay9HkJagPtwCsU8i1UxihezXOFriWNpM0sqz5LFE=
+	t=1718650381; cv=none; b=eOsLmot8Ufn9ClsmazuVL5uNs9gihBAtmq22ALFGMyNVX3f9j+f5eEx6v7x9YlweaqKde+q2IfkByRNPzfy10PJD7YzomKLi+6QKXuPEpBmn3tfI6y0P9FDKM9XBwKKlhZejtltJEt+H+a1q3it6hGw3rX/Q6RvZzvWdfOmIrR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718650380; c=relaxed/simple;
-	bh=BF7uZaD7lnxQyh3lTTyTsD3+XLVYTQ9pmJnwOpGPQ8A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EO+hppNHo861hG5UNg2jb1BK85PemIL+vp4oc96mcr3UD8vnc+51z8KoRy2npHAERin6NtwzRDS8qTQXSXoQXfOnFRBKgDjFE2OjXXZHmKcLHk1j9kiyEqbmXN09RdWCkXWZ/4XMEHaoXoPaz1qYBtONbYYCNUTQTDyQHd0ilCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d7JQ83Cd; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4210aa00c94so39137275e9.1;
-        Mon, 17 Jun 2024 11:52:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718650378; x=1719255178; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fWjJjq4VyTBxkY0C45AnzzK9M0qUU4Vb28GUzKrZrOA=;
-        b=d7JQ83Cd6V7hafzuV2kuB7Qx6tZN/rM96Vv7M0LlczqKYSusiyx82AUzp0n1F+81Kz
-         yUzxyjBWcWCFVy9/xIRRgHg99n3D8xwU3X/rD9uwQHb8k3gIfE+FX5+ULkeYq3Nwu7pj
-         Ut7UK2ZJbq1EIBg0t1h8Gizn63owp1zIwHK57L21ODCUJ6zaZMLg2DpCkluGYtroChrR
-         rReUwGN2grRAD0vpt7uE/aGmdwwzQ4G4GPkR+Dnxqvos0R8X5gia9Rnz8JDsqD29aLbO
-         WLJSwM6RTiBIH4nRCvzwCT35YBsNeNysk2ZTaExasSdXbaMwUOQ+UVDd0XT9d6J8jMiE
-         0DRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718650378; x=1719255178;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fWjJjq4VyTBxkY0C45AnzzK9M0qUU4Vb28GUzKrZrOA=;
-        b=p+ZzP1Up4s1a5euAnjKwPrejjy6iaQ3A2/h4BW4CC8sWiuzP9WddcRXGmcXIbdXEiH
-         vqzCD9jh+NnTEEwsrBnxOotJn1CrixRC1vRqHghBEA+9EQzxFc27NzI+aJQQQ3JnhL0j
-         kk7WmJF04fRdwuhLmrUW3vDB/HlqiIQZMcCbXZk93zxTXLUeBO8baq8DQkEGBUbvWbh0
-         tC38zF7jiXlPQMxP3mpRNMhMteRnnykKQxZ8m47nrUfFJd0qiwbBRJ3g4nUSSomRe3hF
-         G8jEXp5PhCKUm05S9GtO9dM3qHSiQomkET2GGsmCpISHlKjxShAKP+ii494htDcZTBjY
-         gmhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVTk6zjL0Jo+WjWDL8xlwcrDzhKsfNniSftnW+ivYlEycZNfEtYcnywLdNzBLOSqtAxo5Jmlzfkp1dggx1jrQR3iTwtC0823KEuDwf9dfZ5NITKt/hPhjL9mNWmWr8GTyIVcyR/tC8itk+x0yHZuZm7JBixmaMuCiXv5C8kfd3wT+L7w==
-X-Gm-Message-State: AOJu0YwT9/T5DS9xfH9FBGX2vbqdKhfSEJ3pVUN/LnXp8NncK9uZoCVI
-	8agH2HEuHBmrLGSHSbnpSoQt3yebWmeIZgxyn2Ez7RpkuBYWz38/yMMSxdXyUrs=
-X-Google-Smtp-Source: AGHT+IEBX8FFSyOXx4+xGG3tRDdpRsim+ngLzm0BcsFL0VXYQ8+dulSMhJRQsFQ8jsYTKklolvx5vA==
-X-Received: by 2002:a05:600c:5492:b0:421:d8d4:75e3 with SMTP id 5b1f17b1804b1-4230485bac2mr69041565e9.40.1718650377596;
-        Mon, 17 Jun 2024 11:52:57 -0700 (PDT)
-Received: from ?IPV6:2a10:d582:37c5:0:ed15:7e1f:11e6:9a9a? ([2a10:d582:37c5:0:ed15:7e1f:11e6:9a9a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075093d58sm12439436f8f.4.2024.06.17.11.52.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 11:52:57 -0700 (PDT)
-Message-ID: <67dca4c3-bb86-4cd4-b80b-733ba93547b9@gmail.com>
-Date: Mon, 17 Jun 2024 19:52:55 +0100
+	s=arc-20240116; t=1718650381; c=relaxed/simple;
+	bh=UY0WXIOBDORhqFoocdXv7q/5wTE5OvwFLc7PMpLK1po=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=m7C+3ZGq/OcoDMARR2YrCQ+QcuFqeJuFgdqJeqafHUrVr6t3IsOiG6H50MATaruEMPXVb+ikHIGgmueWXuZl9HaM+Ai4dmvRyudMo8940XDcYA1jLfTgc1U/rI74cFMITptpCphkjKdWmbvKbdDsBtWMqNgWaRTE8WFFm6maCb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 729576195FC1;
+	Mon, 17 Jun 2024 20:52:56 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id p5T_CLvWV-4B; Mon, 17 Jun 2024 20:52:55 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id B32216195FC9;
+	Mon, 17 Jun 2024 20:52:55 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id IVEfxcUz4X1Q; Mon, 17 Jun 2024 20:52:55 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 8F4166195FC1;
+	Mon, 17 Jun 2024 20:52:55 +0200 (CEST)
+Date: Mon, 17 Jun 2024 20:52:55 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: Gagan Sidhu <broly@mac.com>
+Cc: ZhaoLong Wang <wangzhaolong1@huawei.com>, 
+	chengzhihao1 <chengzhihao1@huawei.com>, 
+	dpervushin <dpervushin@embeddedalley.com>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-mtd <linux-mtd@lists.infradead.org>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, 
+	yangerkun <yangerkun@huawei.com>, yi zhang <yi.zhang@huawei.com>, 
+	daniel@makrotopia.org
+Message-ID: <136290141.252319.1718650375432.JavaMail.zimbra@nod.at>
+In-Reply-To: <3841F21D-CA54-456C-9D9C-F06EEA332A30@mac.com>
+References: <CFAC276E-E652-40CD-B3D8-563B95E679A8@mac.com> <E3E2C13C-1E52-46F2-BE2D-D2592C3369DB@mac.com> <F2DCFCE7-68FA-4C09-AE5B-09F2233575F1@mac.com> <48D8B89B-0402-4D8B-B045-86104C0C797F@mac.com> <303502000.252057.1718647746641.JavaMail.zimbra@nod.at> <90A90DA4-8B68-432D-9577-0D3635AF84BB@mac.com> <296007365.252185.1718649153090.JavaMail.zimbra@nod.at> <3841F21D-CA54-456C-9D9C-F06EEA332A30@mac.com>
+Subject: Re: [PATCH v2] ubi: gluebi: Fix NULL pointer dereference caused by
+ ftl notifier
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] iio: light: ROHM BH1745 colour sensor
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org,
- robh@kernel.org, ivan.orlov0322@gmail.com, javier.carrasco.cruz@gmail.com,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240606162948.83903-1-muditsharma.info@gmail.com>
- <20240606162948.83903-2-muditsharma.info@gmail.com>
- <20240608172227.17996c75@jic23-huawei>
- <CANhJrGM9czj0RL3OLCgRHEKc2QOjG9P0AZTrZxvYUk65TCpHRg@mail.gmail.com>
-Content-Language: en-US
-From: Mudit Sharma <muditsharma.info@gmail.com>
-In-Reply-To: <CANhJrGM9czj0RL3OLCgRHEKc2QOjG9P0AZTrZxvYUk65TCpHRg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
+Thread-Topic: gluebi: Fix NULL pointer dereference caused by ftl notifier
+Thread-Index: rDTq+bzWquJWh3BCcONeC8Jg3XzswQ==
 
-On 10/06/2024 06:58, Matti Vaittinen wrote:
-> la 8. kesäk. 2024 klo 19.22 Jonathan Cameron (jic23@kernel.org) kirjoitti:
->>
->> On Thu,  6 Jun 2024 17:29:42 +0100
->> Mudit Sharma <muditsharma.info@gmail.com> wrote:
->>
->>> Add support for BH1745, which is an I2C colour sensor with red, green,
->>> blue and clear channels. It has a programmable active low interrupt
->>> pin. Interrupt occurs when the signal from the selected interrupt
->>> source channel crosses set interrupt threshold high or low level.
->>>
->>> This driver includes device attributes to configure the following:
->>> - Interrupt pin latch: The interrupt pin can be configured to
->>>    be latched (until interrupt register (0x60) is read or initialized)
->>>    or update after each measurement.
->>> - Interrupt source: The colour channel that will cause the interrupt
->>>    when channel will cross the set threshold high or low level.
->>>
->>> This driver also includes device attributes to present valid
->>> configuration options/values for:
->>> - Integration time
->>> - Interrupt colour source
->>> - Hardware gain
->>>
-> 
->>> +
->>> +#define BH1745_CHANNEL(_colour, _si, _addr)                                   \
->>> +     {                                                                     \
->>> +             .type = IIO_INTENSITY, .modified = 1,                         \
->>> +             .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),                 \
->>> +             .info_mask_shared_by_type = BIT(IIO_CHAN_INFO_HARDWAREGAIN) | \
->>
->> Provide _SCALE instead of HARDWAREGAIN
->> As it's an intensity channel (and units are tricky for color sensors given
->> frequency dependence etc) all you need to do is ensure that if you halve
->> the _scale and measure the same light source, the computed
->> _RAW * _SCALE value remains constant.
-> 
-> ...Which is likely to cause also the integration time setting to
-> impact the SCALE.
-> 
-> You may or may not want to see the GTS-helpers
-> (drivers/iio/industrialio-gts-helper.c) - which have their own tricky
-> corners. I think Jonathan once suggested to me to keep the
+[CC'ing Daniel]
 
-Hi Matti,
+----- Urspr=C3=BCngliche Mail -----
+> Von: "Gagan Sidhu" <broly@mac.com>
+> An: "richard" <richard@nod.at>
+> CC: "ZhaoLong Wang" <wangzhaolong1@huawei.com>, "chengzhihao1" <chengzhih=
+ao1@huawei.com>, "dpervushin"
+> <dpervushin@embeddedalley.com>, "linux-kernel" <linux-kernel@vger.kernel.=
+org>, "linux-mtd"
+> <linux-mtd@lists.infradead.org>, "Miquel Raynal" <miquel.raynal@bootlin.c=
+om>, "Vignesh Raghavendra" <vigneshr@ti.com>,
+> "yangerkun" <yangerkun@huawei.com>, "yi zhang" <yi.zhang@huawei.com>
+> Gesendet: Montag, 17. Juni 2024 20:46:10
+> Betreff: Re: [PATCH v2] ubi: gluebi: Fix NULL pointer dereference caused =
+by ftl notifier
 
-Thank you for the recommendation here.
+>> On Jun 17, 2024, at 12:32 PM, Richard Weinberger <richard@nod.at> wrote:
+>>=20
+>> ----- Urspr=C3=BCngliche Mail -----
+>>> Von: "Gagan Sidhu" <broly@mac.com>
+>>>> AFAICT, this log line is not part of the mainline kernel.
+>>>=20
+>>> this is mainline. it=E2=80=99s just not 6.x. it=E2=80=99s 4.14.
+>>=20
+>> I've double checked and disagree.
+>> This line comes from:
+>> https://git.openwrt.org/?p=3Dopenwrt/openwrt.git;a=3Dblob;f=3Dtarget/lin=
+ux/generic/pending-4.14/480-mtd-set-rootfs-to-be-root-dev.patch;h=3D6cddaf0=
+1b75cb58cfb377f568f2c375af87e2f1b;hb=3Dc3bd1321de1e0d814f5cfc4f494f6b2fb1f5=
+133b
+>=20
+> no i know that, that=E2=80=99s the patch i showed you. i meant the rest o=
+f it is
+> mainline. the patch obviously is not.
+>>=20
+>> In recent OpenWRT kernels I see:
+>> https://git.openwrt.org/?p=3Dopenwrt/openwrt.git;a=3Dblob;f=3Dtarget/lin=
+ux/generic/pending-5.15/493-ubi-set-ROOT_DEV-to-ubiblock-rootfs-if-unset.pa=
+tch;h=3D266a6331c2acc0f7c17d9ac72f54659d31b56249;hb=3DHEAD
+>>=20
+>> Looks like in recent versions the patch in question does *not* cause a
+>> regression.
+>=20
+> that patch is also applied in my version as well, so i don=E2=80=99t see =
+how this avoids
+> the regression.
+>=20
+> https://github.com/torvalds/linux/blob/master/drivers/mtd/mtdcore.c#L774
+>=20
+> mine says "[6.051426] mtd: device 12 (rootfs) set to be root filesystem"
+>=20
+> which is simply the call from drivers/mtd/mtdcore.c
+>=20
+> so the rootfs device is set correctly. it=E2=80=99s just not booting from=
+ it.
+>=20
+> the regression comes from having GLUEBI+BLOCK enabled, it seems, are they
+> fighting for/operating on the same partition?
 
-Looking into GTS-helper for v5.
+I don't know. Let's ask Daniel.
 
-Best regards,
-Mudit Sharma
+>=20
+>>=20
+>>>> (31, 12) would be mtdblock12.
+>>>> How does your kernel know that mtdblock12 shall be the rootfs?
+>>>=20
+>>> this is an openwrt approach: https://openwrt.org/docs/techref/filesyste=
+ms (under
+>>> =E2=80=9Ctechnical details=E2=80=9D, third paragraph)
+>>>=20
+>>> essentially there=E2=80=99s a feature they add to the kernel (via patch=
+) where you can
+>>> enable a feature that sets the root device based on the name of the par=
+tition.
+>>=20
+>> So, this is all not mainline. :-/
+>=20
+> i did say openwrt at the start, and i think that=E2=80=99s pretty close t=
+o mainline as
+> it gets.
+>=20
+> sometimes these patches aren=E2=80=99t appropriate to push upstream. this=
+ one is not the
+> one causing the issue.
+>=20
+> it seems to me that there is a problem with GLUEBI+BLOCK playing together=
+.
+>=20
+> as far as i can see, the setting of the device is being doing by mtdcore.=
+c
+>=20
+> it=E2=80=99s just not working with gluebi and block are enabled, and i ne=
+ed to know
+> whether disabling gluebi will allow it to work.
+>=20
+> in other words, is it possible for gluebi to use the partition created by
+> ubi_block, and add the MTD_UBIVOLUME flag?
+
+No. UBIBlock works on top of UBI volumes and creates a block device.
+
+We'll sort this out. :)
+
+Thanks,
+//richard
 
