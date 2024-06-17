@@ -1,207 +1,137 @@
-Return-Path: <linux-kernel+bounces-217830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 361FD90B4DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:43:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 453BE90B4E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C6E41C22E0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:43:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE0BF1F23290
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FF6155CB9;
-	Mon, 17 Jun 2024 15:13:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B88418C3B;
-	Mon, 17 Jun 2024 15:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693E8156967;
+	Mon, 17 Jun 2024 15:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DK3bqfLX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB818156875;
+	Mon, 17 Jun 2024 15:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718637227; cv=none; b=Ix2Pt36d+Nmtm0UFyK465HSfuadjx7ZJEC0Hzg7D8Fy638dlKugpdO1KI9lwgTZhYOhZdKvm6XVWrq719HoKeT28ac5wtqZwRy4fYzVBZXamXyDOQVO7I6ytzxsaR/5MIC9zQ7I8lruD73t2zKx7b69h0SSbo21BVnW3UBGvLlc=
+	t=1718637232; cv=none; b=mvmuoBpisd9r8LLMWQfAHrNoneC69FJNBQBkg8k8XYG3yyD8Jy1k5+b/bZZ/n+fTP76sCST7k3wLx8ZWqoXcV2wi+EvTVsMIb4dCOqZHpf3cDfE911q8GATZxuWpH3Exz1Xxf52wTeu3QdcBZ+k8JznmM0SNjwAQCDrOaVXsOKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718637227; c=relaxed/simple;
-	bh=UL43jVAhdU+OtHdX5bK5r64Vwn48uow1EiUNHTwDAzw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DiUTWUPcxhIYTu2V/ECrQyAfwUBjSoA2i+R1c5YPEN0ZFEHNKKxFmT0Hg0HdmLP49blynUH3wSh9S2LI6a9G0yZr10dKc6IhG7oKPWilcEnHKJ61pLkBlBWdzid8tqRHExxcXHHlAy+EMD5uIBZ5yABiradNCieK5cXoMAVZjCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D46EDA7;
-	Mon, 17 Jun 2024 08:14:09 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D132E3F6A8;
-	Mon, 17 Jun 2024 08:13:42 -0700 (PDT)
-Message-ID: <85f5250f-0d50-4aa3-93c9-2008c6ccb8fb@arm.com>
-Date: Mon, 17 Jun 2024 16:13:41 +0100
+	s=arc-20240116; t=1718637232; c=relaxed/simple;
+	bh=hIWzbXsh4mRighfIgGhRcgmXvHJgCqDvgPH9Ldm/Ioc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cguCEDKFwqs20KVEjHHrNURFzj+vNVdEtq7F6TWLwQSK1kLbjmWa2GY18rMMYpob3Vce5w9fZrQ+mwBjE88OpSZqgfSvo16V2gwFKM5K48z2n7Z+8JWoLU05U4FEMY/mWxfg0xHAT6EUrz2sWSeHsLSriklcr4dsr68+tFv/g6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DK3bqfLX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F2FC4AF1D;
+	Mon, 17 Jun 2024 15:13:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718637232;
+	bh=hIWzbXsh4mRighfIgGhRcgmXvHJgCqDvgPH9Ldm/Ioc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DK3bqfLX0WxhffXPr5lbsmxoeHwQMsu+flSjBg8PWwwTJKZxnKGEo8YNAd90sgEqP
+	 Zs5j/ab+R7s1TRE+6QDbmCWZSojGojXmTSMNuXzotxzOmEKRlNFHZyBzKhVHxyfCHc
+	 JYQtGxatwp1DlQdbgPNVOHyoyKcM/a9OD5l9lhApRu3oO8El55tVrlsySaA45ZHhF8
+	 +riQ7+R3GZgDqyxqRHcimWsXH6b/8gZBDtV20TcOxAdNFGh2CwRe1tPCJ1lKD/Sd9R
+	 Phwm86BRC/DwPRz8r/HwlYGLkLUcpkYFIudTp9jSSyCspfG5eAjsKHqvT9mlDVLRP7
+	 KGbONMEOjopAg==
+Date: Mon, 17 Jun 2024 16:13:48 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Etienne CARRIERE - foss <etienne.carriere@foss.st.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>, Lee Jones <lee@kernel.org>,
+	Pascal PAILLET-LME <p.paillet@st.com>,
+	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>
+Subject: Re: [PATCH v2] dt-bindings: mfd: dual licensing for st,stpmic1
+ bindings
+Message-ID: <20240617-shaky-amenity-5727816e00e1@spud>
+References: <20240617092016.2958046-1-etienne.carriere@foss.st.com>
+ <15b20cdd8b9148559352fdb2f02e4e53@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] iommu/io-pgtable-arm: Add way to debug pgtable
- walk
-To: Rob Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- Rob Clark <robdclark@chromium.org>, Joerg Roedel <joro@8bytes.org>,
- Jason Gunthorpe <jgg@ziepe.ca>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Kevin Tian <kevin.tian@intel.com>, Joao Martins <joao.m.martins@oracle.com>,
- "moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
- "open list:IOMMU SUBSYSTEM" <iommu@lists.linux.dev>,
- open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
-References: <20240523175227.117984-1-robdclark@gmail.com>
- <20240523175227.117984-2-robdclark@gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240523175227.117984-2-robdclark@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="nDhD1gxr6ZJ9vEJW"
+Content-Disposition: inline
+In-Reply-To: <15b20cdd8b9148559352fdb2f02e4e53@foss.st.com>
 
-On 23/05/2024 6:52 pm, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
-> 
-> Add an io-pgtable method to walk the pgtable returning the raw PTEs that
-> would be traversed for a given iova access.
 
-Have to say I'm a little torn here - with my iommu-dma hat on I'm not 
-super enthusiastic about adding any more overhead to iova_to_phys, but 
-in terms of maintaining io-pgtable I do like the overall shape of the 
-implementation...
+--nDhD1gxr6ZJ9vEJW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Will, how much would you hate a compromise of inlining iova_to_phys as 
-the default walk behaviour if cb is NULL? :)
+On Mon, Jun 17, 2024 at 09:21:13AM +0000, Etienne CARRIERE - foss wrote:
+> Hello Conor,
+>=20
+> >
+> > From: Conor Dooley <conor@kernel.org>
+> > Sent: Saturday, June 15, 2024 2:14 PM
+> >
+> > On Fri, Jun 14, 2024 at 05:33:46PM +0200, Etienne Carriere wrote:
+> > > Change include/dt-bindings/mfd/st,stpmic1.h license model from GPLv2.0
+> > > only to dual GPLv2.0 or BSD-3-Clause. I have every legitimacy to requ=
+est
+> > > this change on behalf of STMicroelectronics. This change clarifies th=
+at
+> > > this DT binding header file can be shared with software components as
+> > > bootloaders and OSes that are not published under GPLv2 terms.
+> > >
+> > > In CC are all the contributors to this header file.
+> > >
+> > > Cc: Pascal Paillet <p.paillet@st.com>
+> > > Cc: Lee Jones <lee.jones@linaro.org>
+> > > Cc: Rob Herring <robh@kernel.org>
+> > > Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
+> > > ---
+> > >  include/dt-bindings/mfd/st,stpmic1.h | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/include/dt-bindings/mfd/st,stpmic1.h b/include/dt-bindin=
+gs/mfd/st,stpmic1.h
+> > > index 321cd08797d9..957c48300cd4 100644
+> > > --- a/include/dt-bindings/mfd/st,stpmic1.h
+> > > +++ b/include/dt-bindings/mfd/st,stpmic1.h
+> > > @@ -1,4 +1,4 @@
+> > > -/* SPDX-License-Identifier: GPL-2.0 */
+> > > +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
+> >
+> > The usual dual license for bindings is BSD-2-Clause, was there a
+> > specific request for the 3 version?
+>=20
+> My mistake. Thanks for spotting that.
+> I have my company agreement for the 2 dual models: "OR BSD-2-Clause" and =
+"OR BSD-3-Clause".
+> We expect to conform to DT bindings preferred licensing model. Indeed the=
+ kernel documentation explicitly mention "GPL-2.0-only OR BSD-2-Clause".
+> We prefer to conform with it. I'll update my patch.
+>=20
+> By the way, I'll fix Lee Jones e-mail address that is deprecated.
 
-That said, looking at the unmap figures for dma_map_benchmark on a 
-Neoverse N1, any difference I think I see is still well within the 
-noise, so maybe a handful of extra indirect calls isn't really enough to 
-worry about?
+I figure this is a send-email mistake cos you have to do something
+god-forsaken to send plaintext mail from the st mail system.
 
-Cheers,
-Robin.
+--nDhD1gxr6ZJ9vEJW
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->   drivers/iommu/io-pgtable-arm.c | 51 ++++++++++++++++++++++++++++------
->   include/linux/io-pgtable.h     |  4 +++
->   2 files changed, 46 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-> index f7828a7aad41..f47a0e64bb35 100644
-> --- a/drivers/iommu/io-pgtable-arm.c
-> +++ b/drivers/iommu/io-pgtable-arm.c
-> @@ -693,17 +693,19 @@ static size_t arm_lpae_unmap_pages(struct io_pgtable_ops *ops, unsigned long iov
->   				data->start_level, ptep);
->   }
->   
-> -static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *ops,
-> -					 unsigned long iova)
-> +static int arm_lpae_pgtable_walk(struct io_pgtable_ops *ops, unsigned long iova,
-> +			int (*cb)(void *cb_data, void *pte, int level),
-> +			void *cb_data)
->   {
->   	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
->   	arm_lpae_iopte pte, *ptep = data->pgd;
->   	int lvl = data->start_level;
-> +	int ret;
->   
->   	do {
->   		/* Valid IOPTE pointer? */
->   		if (!ptep)
-> -			return 0;
-> +			return -EFAULT;
->   
->   		/* Grab the IOPTE we're interested in */
->   		ptep += ARM_LPAE_LVL_IDX(iova, lvl, data);
-> @@ -711,22 +713,52 @@ static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *ops,
->   
->   		/* Valid entry? */
->   		if (!pte)
-> -			return 0;
-> +			return -EFAULT;
-> +
-> +		ret = cb(cb_data, &pte, lvl);
-> +		if (ret)
-> +			return ret;
->   
-> -		/* Leaf entry? */
-> +		/* Leaf entry?  If so, we've found the translation */
->   		if (iopte_leaf(pte, lvl, data->iop.fmt))
-> -			goto found_translation;
-> +			return 0;
->   
->   		/* Take it to the next level */
->   		ptep = iopte_deref(pte, data);
->   	} while (++lvl < ARM_LPAE_MAX_LEVELS);
->   
->   	/* Ran out of page tables to walk */
-> +	return -EFAULT;
-> +}
-> +
-> +struct iova_to_phys_walk_data {
-> +	arm_lpae_iopte pte;
-> +	int level;
-> +};
-> +
-> +static int iova_to_phys_walk_cb(void *cb_data, void *pte, int level)
-> +{
-> +	struct iova_to_phys_walk_data *d = cb_data;
-> +
-> +	d->pte = *(arm_lpae_iopte *)pte;
-> +	d->level = level;
-> +
->   	return 0;
-> +}
-> +
-> +static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *ops,
-> +					 unsigned long iova)
-> +{
-> +	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
-> +	struct iova_to_phys_walk_data d;
-> +	int ret;
-> +
-> +	ret = arm_lpae_pgtable_walk(ops, iova, iova_to_phys_walk_cb, &d);
-> +	if (ret)
-> +		return 0;
->   
-> -found_translation:
-> -	iova &= (ARM_LPAE_BLOCK_SIZE(lvl, data) - 1);
-> -	return iopte_to_paddr(pte, data) | iova;
-> +	iova &= (ARM_LPAE_BLOCK_SIZE(d.level, data) - 1);
-> +	return iopte_to_paddr(d.pte, data) | iova;
->   }
->   
->   static void arm_lpae_restrict_pgsizes(struct io_pgtable_cfg *cfg)
-> @@ -807,6 +839,7 @@ arm_lpae_alloc_pgtable(struct io_pgtable_cfg *cfg)
->   		.map_pages	= arm_lpae_map_pages,
->   		.unmap_pages	= arm_lpae_unmap_pages,
->   		.iova_to_phys	= arm_lpae_iova_to_phys,
-> +		.pgtable_walk	= arm_lpae_pgtable_walk,
->   	};
->   
->   	return data;
-> diff --git a/include/linux/io-pgtable.h b/include/linux/io-pgtable.h
-> index 86cf1f7ae389..261b48af068a 100644
-> --- a/include/linux/io-pgtable.h
-> +++ b/include/linux/io-pgtable.h
-> @@ -177,6 +177,7 @@ struct io_pgtable_cfg {
->    * @map_pages:    Map a physically contiguous range of pages of the same size.
->    * @unmap_pages:  Unmap a range of virtually contiguous pages of the same size.
->    * @iova_to_phys: Translate iova to physical address.
-> + * @pgtable_walk: (optional) Perform a page table walk for a given iova.
->    *
->    * These functions map directly onto the iommu_ops member functions with
->    * the same names.
-> @@ -190,6 +191,9 @@ struct io_pgtable_ops {
->   			      struct iommu_iotlb_gather *gather);
->   	phys_addr_t (*iova_to_phys)(struct io_pgtable_ops *ops,
->   				    unsigned long iova);
-> +	int (*pgtable_walk)(struct io_pgtable_ops *ops, unsigned long iova,
-> +			    int (*cb)(void *cb_data, void *pte, int level),
-> +			    void *cb_data);
->   	int (*read_and_clear_dirty)(struct io_pgtable_ops *ops,
->   				    unsigned long iova, size_t size,
->   				    unsigned long flags,
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnBSrAAKCRB4tDGHoIJi
+0haXAQDscqmPiNOh0Bh+PkIiCfAxILuu6s2z2D2dalTF/DcSyAEA9mSKKJhCsVH1
+gd9VVgFw5ZfTa4bXLVuLmNkIF+8wxwU=
+=Nc3K
+-----END PGP SIGNATURE-----
+
+--nDhD1gxr6ZJ9vEJW--
 
