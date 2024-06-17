@@ -1,115 +1,85 @@
-Return-Path: <linux-kernel+bounces-217149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9740990AC28
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:52:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3771D90AC2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D7661F2919F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:52:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0DFB1F294A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CE771B52;
-	Mon, 17 Jun 2024 10:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFpjbsFp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D141946C6;
+	Mon, 17 Jun 2024 10:50:38 +0000 (UTC)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462D21946C6;
-	Mon, 17 Jun 2024 10:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A651BDCD;
+	Mon, 17 Jun 2024 10:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718621392; cv=none; b=GXrcOAHovYqmQv/z3njS6rA8WQFi97nZA+lrsBxFDZMJV8VfsBnYwgpElAzN/R5A7c1lJobIZJDqNpvOSo1q/bLmD/byl8eKZAwKRSrASTyeTyF7Ex1orU2KtY/d2TR99k5vAS1T6jTMezFLyx5z9FLhHVxh0+toRmTlOdlXIAA=
+	t=1718621437; cv=none; b=vEK3ME4G+pIF39wB6+etVPiyGdiFXl7e8fBYLTdSBOiP8jiNzJEYB71fDZxfVOIX5guD7nGO3nNnE1d2Nml5kX3IrYAVlu/gZu7ZKcxM37SQEcHupjrEz8LNlWOup/eAc/Bc6CucvH+INoSLbD5qQlVf9V2wpGWQqG2sXgjbTp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718621392; c=relaxed/simple;
-	bh=a6YoxnKL1CWw5PUUrVcCqwtW5thmWAEkDVBS1cGdVVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BxDl79gZvGCvxqUE0QokIEcXyMe1FAb5G40xdr72VSEBOWJC1zg5hJ6nt5WU0WjFIwy6djL3TrlS1LCrLmGRiTkSc//5TDGWTk8c/6+SjoiaJjPHdCzN6uaZ9WG262a3L0qMNwjgm4c6EHqVLr3zV61A1pqBmjjLeR6z3JZJuRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFpjbsFp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A8ADC2BD10;
-	Mon, 17 Jun 2024 10:49:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718621391;
-	bh=a6YoxnKL1CWw5PUUrVcCqwtW5thmWAEkDVBS1cGdVVU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dFpjbsFpgGuubiLET71nx7yc5YcY1Q6euKyffum5zOBNSSSwJdWZ0eBNKDv7rgLqq
-	 opnyTHXCdjtGoLof9/OIIdwQfKbSIlM/l3L6VMCdbuyE2jWN8UGJVqU0XoFXx+ErEI
-	 IbJ2ZuHnW7Q4Q7laFZnDO7nFKYlp1oXZ0imkuSw2lAKcw7y4sXULstKazUozJaC/xr
-	 7JIwvzjkIOewfGPqoVA+0leHle8/a4as8iCIUDy47tf6t3mRiKchYmXL7wycMEunBn
-	 wn2U4gLqy9CkPBDPv0qX/XP3GbWddow7xCBaaIz1HaBSWBRF7JeUTy2/ZmMz4u5j2A
-	 2Wb+7M0CAMekQ==
-Date: Mon, 17 Jun 2024 12:49:47 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Igor Pylypiv <ipylypiv@google.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/4] ata: libata-scsi: Report valid sense data for ATA
- PT if present
-Message-ID: <ZnAUy5C-DXEuliSm@ryzen.lan>
-References: <20240614191835.3056153-1-ipylypiv@google.com>
- <20240614191835.3056153-4-ipylypiv@google.com>
+	s=arc-20240116; t=1718621437; c=relaxed/simple;
+	bh=PzIQjdhCtR8TI9yx6a3bY8aIHTsnTDH8hMJJZ8SrSEE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=O4gPNuk2Q4jSMOb5NuLWU1ishwwMLXAyx30NotVX70XkPTuGxwzqHFfr7njDloHEpbPH2jcnm0dup/vHy2ilhTf97Qtkef6rhT25ptS43TClRR+249OYkSvpXw3JbG2mwImitpuSmu+Hy7EZaZgKVaPurKQCdIajAscgbQrSJM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 45HAoPwiD3108931, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 45HAoPwiD3108931
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Jun 2024 18:50:25 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 17 Jun 2024 18:50:25 +0800
+Received: from localhost.localhost (172.21.132.53) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 17 Jun
+ 2024 18:50:24 +0800
+From: Hilda Wu <hildawu@realtek.com>
+To: <marcel@holtmann.org>
+CC: <luiz.dentz@gmail.com>, <linux-bluetooth@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <alex_lu@realsil.com.cn>,
+        <max.chou@realtek.com>, <kidman@realtek.com>
+Subject: [PATCH] Bluetooth: btrtl: Set MSFT_EXT_ADDRESS_FILTER quirk for RTL8852B
+Date: Mon, 17 Jun 2024 18:50:20 +0800
+Message-ID: <20240617105020.3246015-1-hildawu@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614191835.3056153-4-ipylypiv@google.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-On Fri, Jun 14, 2024 at 07:18:34PM +0000, Igor Pylypiv wrote:
-> Do not generate sense data from ATA status/error registers
-> if valid sense data is already present.
-> 
-> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
-> ---
->  drivers/ata/libata-scsi.c | 17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> index 79e8103ef3a9..4bfe47e7d266 100644
-> --- a/drivers/ata/libata-scsi.c
-> +++ b/drivers/ata/libata-scsi.c
-> @@ -858,12 +858,17 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
->  	unsigned char *desc = sb + 8;
->  	u8 sense_key, asc, ascq;
+Set HCI_QUIRK_USE_MSFT_EXT_ADDRESS_FILTER quirk for RTL8852B.
 
-Like I suggested in the earlier patch,
+Signed-off-by: Hilda Wu <hildawu@realtek.com>
+---
+ drivers/bluetooth/btrtl.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-can't you do a:
+diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+index f2f37143c454..baa0c6119b51 100644
+--- a/drivers/bluetooth/btrtl.c
++++ b/drivers/bluetooth/btrtl.c
+@@ -1297,6 +1297,7 @@ void btrtl_set_quirks(struct hci_dev *hdev, struct btrtl_device_info *btrtl_dev)
+ 			btrealtek_set_flag(hdev, REALTEK_ALT6_CONTINUOUS_TX_CHIP);
+ 
+ 		if (btrtl_dev->project_id == CHIP_ID_8852A ||
++		    btrtl_dev->project_id == CHIP_ID_8852B ||
+ 		    btrtl_dev->project_id == CHIP_ID_8852C)
+ 			set_bit(HCI_QUIRK_USE_MSFT_EXT_ADDRESS_FILTER, &hdev->quirks);
+ 
+-- 
+2.34.1
 
-if (qc->flags & ATA_QCFLAG_SENSE_VALID)
-	return;
-
-here instead?
-
-
->  
-> -	/*
-> -	 * Use ata_to_sense_error() to map status register bits
-> -	 * onto sense key, asc & ascq.
-> -	 */
-> -	if (qc->err_mask ||
-> -	    tf->status & (ATA_BUSY | ATA_DF | ATA_ERR | ATA_DRQ)) {
-> +	if (qc->flags & ATA_QCFLAG_SENSE_VALID) {
-> +		/*
-> +		 * Do not generate sense data from ATA status/error
-> +		 * registers if valid sense data is already present.
-> +		 */
-> +	} else if (qc->err_mask ||
-> +		   tf->status & (ATA_BUSY | ATA_DF | ATA_ERR | ATA_DRQ)) {
-> +		/*
-> +		 * Use ata_to_sense_error() to map status register bits
-> +		 * onto sense key, asc & ascq.
-> +		 */
->  		ata_to_sense_error(qc->ap->print_id, tf->status, tf->error,
->  				   &sense_key, &asc, &ascq);
->  		ata_scsi_set_sense(qc->dev, cmd, sense_key, asc, ascq);
-> -- 
-> 2.45.2.627.g7a2c4fd464-goog
-> 
 
