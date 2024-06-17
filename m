@@ -1,130 +1,206 @@
-Return-Path: <linux-kernel+bounces-217805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C9790B47F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:34:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBEF290B4A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3546D1C20F92
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:34:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 645BA283D17
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A371B1428FC;
-	Mon, 17 Jun 2024 15:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801491514C5;
+	Mon, 17 Jun 2024 15:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="bKvQ9GU4"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e0KHB6Ry"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0353C13FD8D;
-	Mon, 17 Jun 2024 15:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2395114E2FF;
+	Mon, 17 Jun 2024 15:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718636920; cv=none; b=NzpLp6aQd/G2kEaRbq1hKdVcEf1ZVBGc4JZC9mALcMYDRT+Fv4N8B00rgUzBLxpTmYGznmJ0PLVEi28K30fWKGvS+dx/i8FFwPqeAbTJ2iFximYXcuBNHBAQO4FIEtT1OQnUSG1ry15GnmVlM0y9J2eKzRQQhFffpjNxsdx1TzA=
+	t=1718636951; cv=none; b=IHO4SkDePpmch+EI8oTGHe1YUc+axh8Z5YQBfS92Rpr8jru/UKN0zCZfm/j5eXxP7TSNVVK4fcdTl6Mzkqr6FZA1BvbP8RWjzIO5XgbU0yNB0XLQ69/hf3JlgUjTWpuyzW6Iqv+fNFLaEfMGoa/Q8OLVrVvchJkTfmNbiJja/Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718636920; c=relaxed/simple;
-	bh=1ZXrRYKtWHtDB6OXL5vleRJGsJqOwCMPVyP1Ec8vH88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oIM+7GQonKtPYjO/ubMayRq7Jt9A5ZfRykDN4EFYTqNNVXME8R5RPSjpBNvtP4wFpYgmOd79ZlROKOEWGgcrsxKOkSTWz+4M6/d3pflB1l8nie6eD5rBqZjiOYiyo3FXLsCZMVBmxQB94Lwgf1MQy8VEMLfBg3GG6s59Rj55dpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=bKvQ9GU4; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4W2tYq1NFmz9sRD;
-	Mon, 17 Jun 2024 17:08:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1718636911;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HZmaK3/av/+pYCO8JH+DfV1hFjKuc0xucbwt8WDUoYk=;
-	b=bKvQ9GU4432FpITPMwykUykx1s6cXFn0dgCan0zb3jRVjd49al+ISqMn3IZ5bqFKIrM9r9
-	oU+wehwV+gD9fmPYL99Aj4P0uTOQPprZ/eD4GvdKiNAgoiNjHwldBAhUza9ZdGrkv2vffB
-	luVCyJ1jYCUGieiM+NCsB4/y/wAAis0f20MkJi86Epbffkc3DgYXRqPllJpyJmqGR93TaA
-	QXbduQ9zVP8VWnyjFHYeD/sWeJx/zlAVQqylhwpnGlo2vbvUWGbNYJ7YnQJ4JlYvtLLaFH
-	zB1lRVAqQxvE8DX05z1qsugqB2uZt1cfk/5eopjdSfHk5Fy+nDMD1zNI34U/rA==
-Date: Mon, 17 Jun 2024 15:08:23 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: david@fromorbit.com, chandan.babu@oracle.com, brauner@kernel.org,
-	akpm@linux-foundation.org, willy@infradead.org, mcgrof@kernel.org,
-	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
-	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
-	linux-fsdevel@vger.kernel.org, hch@lst.de, gost.dev@samsung.com,
-	cl@os.amperecomputing.com, john.g.garry@oracle.com
-Subject: Re: [PATCH v7 07/11] iomap: fix iomap_dio_zero() for fs bs > system
- page size
-Message-ID: <20240617150823.tet4e7y7pco44dw7@quentin>
-References: <20240607145902.1137853-1-kernel@pankajraghav.com>
- <20240607145902.1137853-8-kernel@pankajraghav.com>
- <20240612204025.GI2764752@frogsfrogsfrogs>
+	s=arc-20240116; t=1718636951; c=relaxed/simple;
+	bh=IT162UEg2/PWZivrlpF3xwi1skWmZOYgmUYGn5FNmVg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A3LmYWWisKg7LqsLnL72nvYPRM/QnxhAUNri5cE8DYXtH8LfVPO1ckbS+wPPTDKUC7FIJMbpdAfQk3a3bVuFUFiKnAtZCSRgKj0L1xZmgTktWG71753iMr4R3lZkIVpXYOoUal0HZ3aTMWChIRBOvNd1zi7gvly35xsRC3Y6gF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e0KHB6Ry; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f47f07aceaso36410225ad.0;
+        Mon, 17 Jun 2024 08:09:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718636949; x=1719241749; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WSfIk8K4XME6GZfBy3FFM+3s5/rKYnSusBreIG/t7cA=;
+        b=e0KHB6RyIJlpmBKe3bjozvNuTO5gorhaFaEd+JN3Hnxag2+OUICNQUXq7gRjgbH8YX
+         iFHcFaaJYCeQtcMtDKnsprdLbHFnwGd0M5BrX2mFv+kb3F7sP1fpqFqu0f+B6igtBOFv
+         +Prhhvj5bulfEFSh9lL7FFsiuwaEoACdwQEAGOm1eyPJqRALX2xSXjcZGqu81bqM4EKF
+         vj0FQjmbP+XcpANeaT7br6o1TYRke4MLKbqfUCKKYC2R8wxR8YZ89FQgMBHQq5Z3oStS
+         l7R0LwE8qIfPJM4LIKsQZ3u4MTfa7W0CxgWgejJoqKqt6Inx+EpsqgZ4MJUyDh8t5L2T
+         NDfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718636949; x=1719241749;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WSfIk8K4XME6GZfBy3FFM+3s5/rKYnSusBreIG/t7cA=;
+        b=LtxjCVZwMlI+F9tSeBqhMya16yE96G3ElOi4bh6lGWFRX5dFOissLgbcB1RjuKbfhC
+         EcuO5aJL2gkje2iv6xmfP+VPmtZNmXqm7FbeLEN9CpXeacxLNIL/jdZfz70pnKLJxq6T
+         aWOJm1CcHYVCHL3qIhDFtqnmcMvyAoMHdwzvHxvhIJsGxtG9z8Kk0EKcdjIcFOwYVI0c
+         CytNaKNcruV1yW0ynX1yz4K4P6ZzhGyAoo5ZSp7yt0smtHSCf5ShmACMpbjygZ7IAich
+         VZzQ+d7cR4UV39diPoHUrSxRQU2+k9FuuxwUIYmK9AnU03W03Ajg5nA7redZwKpvGbm5
+         /Mzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNoVocayMHEk1f31bp5osrNLZKTBv0Mou+O1ddaWkJurkaz0Cn0o+Pd7xotk4ISmJ6oPAoD4bge2Rc1x1VGHjHshczavNxzh+alRix
+X-Gm-Message-State: AOJu0YzoNXTeTgGPciTRqtbm9TBnrFE/JCN4nAJYvEHlcqDDB3TOXOQY
+	HsKaT6FJT2vnHv8Q4pdst6q0r8Ruj5D7jclcCGZ1g53Wf3oWA9if
+X-Google-Smtp-Source: AGHT+IHaWapibFdK79vB3fJG4Nz96RSjPehaB6COG+NcELElXjUeNz89MPURVFDFdeqFx+o2JGWVzg==
+X-Received: by 2002:a17:903:22c5:b0:1f7:e32f:f067 with SMTP id d9443c01a7336-1f862a1694emr104999715ad.50.1718636949159;
+        Mon, 17 Jun 2024 08:09:09 -0700 (PDT)
+Received: from [10.102.4.159] ([208.195.13.130])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e56183sm80122435ad.28.2024.06.17.08.09.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 08:09:08 -0700 (PDT)
+Message-ID: <1faa7eee-ed1e-477b-940d-a5cf4478cf73@gmail.com>
+Date: Mon, 17 Jun 2024 08:09:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612204025.GI2764752@frogsfrogsfrogs>
-X-Rspamd-Queue-Id: 4W2tYq1NFmz9sRD
+User-Agent: Mozilla Thunderbird
+Subject: Re: invalid vht params rate 1920 100kbps nss 2 mcs 9
+To: Paul Menzel <pmenzel@molgen.mpg.de>, Kalle Valo <kvalo@kernel.org>
+Cc: linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <fba24cd3-4a1e-4072-8585-8402272788ff@molgen.mpg.de>
+Content-Language: en-US
+From: James Prestwood <prestwoj@gmail.com>
+In-Reply-To: <fba24cd3-4a1e-4072-8585-8402272788ff@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 12, 2024 at 01:40:25PM -0700, Darrick J. Wong wrote:
-> On Fri, Jun 07, 2024 at 02:58:58PM +0000, Pankaj Raghav (Samsung) wrote:
-> > From: Pankaj Raghav <p.raghav@samsung.com>
-> > 
-> > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> > index f3b43d223a46..b95600b254a3 100644
-> > --- a/fs/iomap/direct-io.c
-> > +++ b/fs/iomap/direct-io.c
-> > @@ -27,6 +27,13 @@
-> >  #define IOMAP_DIO_WRITE		(1U << 30)
-> >  #define IOMAP_DIO_DIRTY		(1U << 31)
-> >  
-> > +/*
-> > + * Used for sub block zeroing in iomap_dio_zero()
-> > + */
-> > +#define ZERO_FSB_SIZE (65536)
-> > +#define ZERO_FSB_ORDER (get_order(ZERO_FSB_SIZE))
-> > +static struct page *zero_fs_block;
-> 
-> Er... zero_page_64k ?
-> 
-> Since it's a permanent allocation, can we also mark the memory ro?
+Hi Paul,
 
-Sounds good.
-> 
-> > +
-> >  struct iomap_dio {
-> >  	struct kiocb		*iocb;
-> >  	const struct iomap_dio_ops *dops;
-> > @@ -52,6 +59,16 @@ struct iomap_dio {
-> >  	};
-> >  };
-> >  
-> > +int iomap_dio_init(void)
-> > +{
-> > +	zero_fs_block = alloc_pages(GFP_KERNEL | __GFP_ZERO, ZERO_FSB_ORDER);
-> > +
-> > +	if (!zero_fs_block)
-> > +		return -ENOMEM;
-> > +
-> > +	return 0;
-> > +}
-> 
-> Can't we just turn this into another fs_initcall() instead of exporting
-> it just so we can call it from iomap_init?  And maybe rename the
-> existing iomap_init to iomap_pagecache_init or something, for clarity's
-> sake?
+On 6/16/24 6:10 AM, Paul Menzel wrote:
+> Dear Linux folks,
+>
+>
+> Linux 6.10-rc3 (commit a3e18a540541) logged the warning below when 
+> connecting to a public WiFi:
+>
+>     ath10k_pci 0000:3a:00.0: invalid vht params rate 1920 100kbps nss 
+> 2 mcs 9
 
-Yeah, probably iomap_pagecache_init() in fs/iomap/buffered-io.c and
-iomap_dio_init() in fs/iomap/direct-io.c 
-> 
-> --D
-> 
+This has been reported/discussed [1]. It was hinted that there was a 
+firmware fix for this, but none that I tried got rid of it. I got fed up 
+enough with the logs filling up with this I patched our kernel to remove 
+the warning. AFAICT it appears benign (?). Removing the warning was 
+purely "cosmetic" so other devs stopped complaining about it :)
+
+[1] https://www.mail-archive.com/ath10k@lists.infradead.org/msg13406.html
+
+>
+>
+> Kind regards,
+>
+> Paul
+>
+>
+> ```
+> Jun 16 11:38:15 abreu kernel: Linux version 
+> 6.10.0-rc3-00174-ga3e18a540541 (build@bohemianrhapsody.molgen.mpg.de) 
+> (gcc (Debian 13.2.0-25) 13.2.0, GNU ld (GNU Binutils for Debian) 2.42) 
+> #196 SMP PREEMPT_DYNAMIC Sun Jun 16 06:02:29 CEST 2024
+> […]
+> Jun 16 11:38:15 abreu kernel: DMI: Dell Inc. XPS 13 9360/0596KF, BIOS 
+> 2.21.0 06/02/2022
+> […]
+> Jun 16 11:38:33 abreu kernel: ath10k_pci 0000:3a:00.0: enabling device 
+> (0000 -> 0002)
+> Jun 16 11:38:33 abreu kernel: ath10k_pci 0000:3a:00.0: pci irq msi 
+> oper_irq_mode 2 irq_mode 0 reset_mode 0
+> Jun 16 11:38:34 abreu kernel: ath10k_pci 0000:3a:00.0: qca6174 hw3.2 
+> target 0x05030000 chip_id 0x00340aff sub 1a56:1535
+> Jun 16 11:38:34 abreu kernel: ath10k_pci 0000:3a:00.0: kconfig debug 0 
+> debugfs 0 tracing 0 dfs 0 testmode 0
+> Jun 16 11:38:34 abreu kernel: ath10k_pci 0000:3a:00.0: firmware ver 
+> WLAN.RM.4.4.1-00288- api 6 features wowlan,ignore-otp,mfp crc32 bf907c7c
+> Jun 16 11:38:34 abreu kernel: ath10k_pci 0000:3a:00.0: board_file api 
+> 2 bmi_id N/A crc32 d2863f91
+> Jun 16 11:38:34 abreu kernel: ath10k_pci 0000:3a:00.0: htt-ver 3.87 
+> wmi-op 4 htt-op 3 cal otp max-sta 32 raw 0 hwcrypto 1
+> Jun 16 11:38:34 abreu kernel: ath: EEPROM regdomain: 0x6c
+> Jun 16 11:38:34 abreu kernel: ath: EEPROM indicates we should expect a 
+> direct regpair map
+> Jun 16 11:38:34 abreu kernel: ath: Country alpha2 being used: 00
+> Jun 16 11:38:34 abreu kernel: ath: Regpair used: 0x6c
+> […]
+> Jun 16 11:39:20 abreu kernel: wlp58s0: authenticate with 
+> 70:18:a7:0e:f7:cb (local address=9c:b6:d0:d1:6a:b1)
+> Jun 16 11:39:20 abreu kernel: wlp58s0: send auth to 70:18:a7:0e:f7:cb 
+> (try 1/3)
+> Jun 16 11:39:20 abreu kernel: wlp58s0: send auth to 70:18:a7:0e:f7:cb 
+> (try 2/3)
+> Jun 16 11:39:20 abreu kernel: wlp58s0: send auth to 70:18:a7:0e:f7:cb 
+> (try 3/3)
+> Jun 16 11:39:20 abreu kernel: wlp58s0: authentication with 
+> 70:18:a7:0e:f7:cb timed out
+> Jun 16 11:39:22 abreu kernel: wlp58s0: authenticate with 
+> 4c:bc:48:39:16:ab (local address=9c:b6:d0:d1:6a:b1)
+> Jun 16 11:39:22 abreu kernel: wlp58s0: send auth to 4c:bc:48:39:16:ab 
+> (try 1/3)
+> Jun 16 11:39:22 abreu kernel: wlp58s0: send auth to 4c:bc:48:39:16:ab 
+> (try 2/3)
+> Jun 16 11:39:22 abreu kernel: wlp58s0: send auth to 4c:bc:48:39:16:ab 
+> (try 3/3)
+> Jun 16 11:39:22 abreu kernel: wlp58s0: authentication with 
+> 4c:bc:48:39:16:ab timed out
+> Jun 16 11:39:24 abreu kernel: wlp58s0: authenticate with 
+> 4c:bc:48:38:d8:4b (local address=9c:b6:d0:d1:6a:b1)
+> Jun 16 11:39:24 abreu kernel: wlp58s0: send auth to 4c:bc:48:38:d8:4b 
+> (try 1/3)
+> Jun 16 11:39:24 abreu kernel: wlp58s0: authenticated
+> Jun 16 11:39:24 abreu kernel: wlp58s0: associate with 
+> 4c:bc:48:38:d8:4b (try 1/3)
+> Jun 16 11:39:24 abreu kernel: wlp58s0: RX AssocResp from 
+> 4c:bc:48:38:d8:4b (capab=0x1101 status=0 aid=30)
+> Jun 16 11:39:24 abreu kernel: wlp58s0: associated
+> Jun 16 11:39:24 abreu kernel: wlp58s0: Limiting TX power to 20 (23 - 
+> 3) dBm as advertised by 4c:bc:48:38:d8:4b
+> Jun 16 11:39:50 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+> params rate 1920 100kbps nss 2 mcs 9
+> Jun 16 11:39:56 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+> params rate 1920 100kbps nss 2 mcs 9
+> Jun 16 11:40:02 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+> params rate 1920 100kbps nss 2 mcs 9
+> Jun 16 11:40:08 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+> params rate 1920 100kbps nss 2 mcs 9
+> Jun 16 11:40:20 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+> params rate 1920 100kbps nss 2 mcs 9
+> Jun 16 11:40:26 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+> params rate 1920 100kbps nss 2 mcs 9
+> Jun 16 11:40:32 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+> params rate 1920 100kbps nss 2 mcs 9
+> Jun 16 11:40:38 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+> params rate 1920 100kbps nss 2 mcs 9
+> Jun 16 11:40:43 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+> params rate 1920 100kbps nss 2 mcs 9
+> Jun 16 11:40:49 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+> params rate 1920 100kbps nss 2 mcs 9
+> Jun 16 11:41:01 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+> params rate 1920 100kbps nss 2 mcs 9
+> Jun 16 11:41:13 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+> params rate 1920 100kbps nss 2 mcs 9
+> Jun 16 11:41:19 abreu kernel: ath10k_pci 0000:3a:00.0: invalid vht 
+> params rate 1920 100kbps nss 2 mcs 9
+> Jun 16 11:41:21 abreu kernel: wlp58s0: deauthenticating from 
+> 4c:bc:48:38:d8:4b by local choice (Reason: 3=DEAUTH_LEAVING)
+>
 
