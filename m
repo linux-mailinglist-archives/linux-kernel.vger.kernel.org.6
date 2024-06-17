@@ -1,202 +1,190 @@
-Return-Path: <linux-kernel+bounces-217996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D4890B7CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:22:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABED390B7AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:19:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE56FB23AFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:14:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 416A1284970
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E4016B380;
-	Mon, 17 Jun 2024 17:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B46616D9C2;
+	Mon, 17 Jun 2024 17:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oV1WSX39"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ekY7PxHB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EDA16A954;
-	Mon, 17 Jun 2024 17:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F4C16CD09;
+	Mon, 17 Jun 2024 17:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718644464; cv=none; b=RXS9QMKgGZqLOwmWISMjMqJZxq5BF0LKlGAMRusAYxy2k76N+VTLYmVdrechu1PNjy4lb52wKIxjEEfRCuGKyU14MpWlvBfUNjwiSVF1GVrXYMuW7FK2WIFkoygrvZmYoievNv4Lx2K9rZvg0i2zjMm6ATgPjXS05ea8HHnMaHw=
+	t=1718644732; cv=none; b=dj7IxuBFLzehUENxmKDo+Pu6lL6QBvFaLtIWWsRySuOAXHrQ0LBeJMFljRUyE/2w/iEQhLddepeyicTeHVWq6iKkU9bjREeYnU0ldvvBdFfxkzNBTOILQiVGoxufOOuqr8t53IBx8St/a0yMmssN6q0GU0D41EVbQKxP1W2ZmEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718644464; c=relaxed/simple;
-	bh=MmA+hwtBmtjHSiMtd3wx1Z1tyvk5MSxoK0Na7DKEAQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AERZKxY8VXN6w1eT/eXoLqANI6mOPmB45/srXuut3khLfJa2tzVtqxiCK/Fes5wB/8ITgGpgBBOSsmU+wggaV3BxNRx+Ljw2wA/pisQLjxw03PXKLggZ6o2s6bP0H3o/pfvuQUKjqER84XosMd+kTbvKbXyLHSP20ohsu6ukRjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oV1WSX39; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9538C2BD10;
-	Mon, 17 Jun 2024 17:14:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718644463;
-	bh=MmA+hwtBmtjHSiMtd3wx1Z1tyvk5MSxoK0Na7DKEAQw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oV1WSX39l0oXYDodwVcnNGu6g4yMk+A7cNev9LZ6awpIJ9xMX9gDzkjzVyiiA+9sg
-	 Vet+IFaG3NPnPFjcwM4+83gYFJemwOCgodSuD+cCV4Gtlh1C2lrz2ERg+1GtQJFFm0
-	 T3dacB3gT9y6Ose1tIMAGQ2DZaW6ul4KAem+/dbDAtXFnLFPGR7r+hWL59SPK7yAsn
-	 tqcTBN3yuhpVGuSn0OVOCEYJ/sMnJwZc7nDM/mUCrS3QmfPgXgkJA8/nUB28gCqmol
-	 XouT25EtxDkGVmoYLbZmYVA22YNeBpe+GzWI/aOyCW5l6wdCSBVkqfUjIDukQhrPFg
-	 05YaqubP+3MEg==
-Date: Mon, 17 Jun 2024 18:14:18 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Yangyu Chen <cyy@cyyself.name>
-Cc: Jisheng Zhang <jszhang@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	linux-riscv@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup.patel@wdc.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Jesse Taube <jesse@rivosinc.com>
-Subject: Re: [PATCH v1 0/9] riscv: add initial support for SpacemiT K1
-Message-ID: <20240617-connected-avoid-82f0bdc05cdf@spud>
-References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
- <20240616-exorcism-computing-e11e26084a62@spud>
- <20240616224811.GC3983622@ofsar>
- <ZnBEBQjTQtFs-fXt@xhacker>
- <20240617-synapse-carmaker-0a59c7c6edb7@spud>
- <tencent_26E7381EE1F6C5188428359AF3F908CA680A@qq.com>
+	s=arc-20240116; t=1718644732; c=relaxed/simple;
+	bh=2y9hBWV6rEs7wq0wpQXBhqg0neYDJCWkuRpyIK1s8/Y=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=SAqln1nI5/7Qy8QNfotBuPZ3jakhg/yt2C6pIIJ0fkqRwQh1pRcVTNB6SlQ+CDPmPc2FsvIEmAH9ctl4KuWisFu8Fh3eNP7KCpL5lTMWxQn5P1bDhvLa+bWqyxCnOuVDcKokUjP7NabtuCMK1xNeEEoHxOwSYjw3OxklkDcTjPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ekY7PxHB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HAbg2J013205;
+	Mon, 17 Jun 2024 17:18:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=vtuxO88tnAEVRJbOzp44PX
+	bXQVX+FDnlpBNp649R4ug=; b=ekY7PxHB/hYXev2ypnj4AfRWqRGoIjLKUrP+Zh
+	FdeUq8Cg1cWyS09KbsCekb5Nav2oMdgqTHjqKKYOQjc3DNWPtORAEUWMh0kl+/KG
+	fRdrDXsS2/sifv2i0xJ/qMLxRvvU1awIb1e6DpjM9y6oqo0eNVtto4YWLIbDXP4Z
+	DvXtGium+aDuuqIdXbpAUWYbZq9LKsJR+IQCLdY01q7y1yFxgNlBwJRm6Jn8kF7y
+	emjB2FPdSzZJ9oA+fbNCDS9tyk0Soh5Y2cFLwOLY8C17jtcL9mIVcbx3FaUEkdgM
+	ANr91Ji4tYaC45KvcNjRh7vPTnjFPZK1QzjQCUGhCEcQzccQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ysv5xjt38-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 17:18:30 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45HHIUIK026008
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 17:18:30 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 17 Jun 2024 10:18:29 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+Subject: [PATCH v5 0/4] Implement vendor resets for PSCI SYSTEM_RESET2
+Date: Mon, 17 Jun 2024 10:18:06 -0700
+Message-ID: <20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Jrl5+92C90Kbr+Af"
-Content-Disposition: inline
-In-Reply-To: <tencent_26E7381EE1F6C5188428359AF3F908CA680A@qq.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM5vcGYC/5XQQU7DMBAF0KtUWWM0Y4+dhBX3QAg59oR6kbjYI
+ aKqcnecAqqqskiX34v3//hUZU6Bc/W0O1WJ55BDHEvQD7vK7e34ziL4kisJUiGgETYN4pBdEPm
+ YJx7eEmeepJh59DGJxF2MUxbOKetJGwc1VMU6JO7D17nn5bXkfchTTMdz7Yzr62+DpI0NMwoQY
+ LCrawctEjx/fAYXRvfo4rBW/ngK7vG8894opaX1+K+HWN+1TzkyKFErllfe+gez/LubgHDz3XL
+ daVsLWltDTX/rqourUW91VXHReE9968B2dOvSxTWIW10qbtv0Za2tyXJz7S7L8g1iJqfFhAIAA
+ A==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Andy Yan
+	<andy.yan@rock-chips.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        "Mark
+ Rutland" <mark.rutland@arm.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>
+CC: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        Melody Olvera
+	<quic_molvera@quicinc.com>,
+        Shivendra Pratap <quic_spratap@quicinc.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Florian Fainelli
+	<florian.fainelli@broadcom.com>,
+        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        Elliot Berman <quic_eberman@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: --jaKV-18tmOYn5WvgyKDkF5rf7-6gSS
+X-Proofpoint-ORIG-GUID: --jaKV-18tmOYn5WvgyKDkF5rf7-6gSS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ bulkscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=826
+ suspectscore=0 adultscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406170134
 
+The PSCI SYSTEM_RESET2 call allows vendor firmware to define additional
+reset types which could be mapped to the reboot argument.
 
---Jrl5+92C90Kbr+Af
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Setting up reboot on Qualcomm devices can be inconsistent from chipset
+to chipset. Generally, there is a PMIC register that gets written to
+decide the reboot type. There is also sometimes a cookie that can be
+written to indicate that the bootloader should behave differently than a
+regular boot. These knobs evolve over product generations and require 
+more drivers. Qualcomm firmwares are beginning to expose vendor
+SYSTEM_RESET2 types to simplify driver requirements from Linux.
 
-On Tue, Jun 18, 2024 at 12:39:30AM +0800, Yangyu Chen wrote:
->=20
->=20
-> > On Jun 17, 2024, at 23:32, Conor Dooley <conor@kernel.org> wrote:
-> >=20
-> > On Mon, Jun 17, 2024 at 10:11:17PM +0800, Jisheng Zhang wrote:
-> >> On Sun, Jun 16, 2024 at 10:48:11PM +0000, Yixun Lan wrote:
-> >>> Hi Conor
-> >>> Thanks for bringing this up
-> >>>=20
-> >>> On 19:35 Sun 16 Jun     , Conor Dooley wrote:
-> >>>> On Mon, Jun 17, 2024 at 01:18:52AM +0800, Yangyu Chen wrote:
-> >>>>=20
-> >>>> No MAINTAINERS update, so I figure that means you don't want to main=
-tain
-> >>>> it going forwards? If there's someone out that that does care about =
-the
-> >>>> spacemit k1 (Jesse maybe?), then I'd be more than happy to have them
-> >>>> look after it.
-> >>> Yangyu kind of has limited time, too many stuff for him..
-> >>>=20
-> >>> I'd volunteered to help on this if it can fill the gap
-> >>> Also I'd be more than happy if anyone willing step forward to co-main=
-tain..
-> >>=20
-> >> Does maintainership work like this? Is willing to do enough?
-> >> FWICT, maintainership involves active patch contributing, reviewing and
-> >> maintaining the whole SoC. It is better to take over the maintainership
-> >> after showing enough patch contributions and understanding of the SoC.
-> >=20
-> > I was going to reply to your other patch about providing more complete
-> > "basic" support for the SoC, but I guess I'll reply here and address
-> > both points. After the k230 and th1520, which were both merged with very
-> > basic support and have made very little progress towards being a useful
-> > platform, I'm pretty reluctant to merge another platform in a super
-> > basic state. I was going to make this point before you brought it up,
-> > but it's good to know I am not the only one with that view. To be clear,
-> > I'm not pointing blame for those platforms, I'd just like to avoid a
-> > repeat. If Yangyu doesn't have time to do any development work on the
-> > platform, I'd like to see someone else (and as I mentioned Jesse is
-> > interested) take on getting some of the basic driver patches written and
-> > merge only when those are accepted. Having no in-tree clock and pinctrl
-> > drivers is definitely a hindrance to other people doing parallel
-> > development of drivers and I'd like to avoid that.
-> >=20
->=20
-> That's also my concern for the first time when I submitted initial
-> support for K230. However, for SpacemiT K1, things went differently
-> for its UART, and the vendor patched OpenSBI with their NOC-based
-> HSM. They didn't use CLINT-MSWI as SBI HSM driver.
->=20
-> The vendor uses a special intel pxa uart driver, marked deprecated
-> in the kernel and incompatible with ns16550. If we use ns16550 in
-> the dt, the behavior of uart is like the uart has no interrupt and
-> stops working permanently when fifo overruns, making many developers
-> not know how to start unless they use the SBI HVC console, which
-> needs to turn on CONFIG_NONPORTABLE.
+Add support in PSCI to statically wire reboot mode commands from
+userspace to a vendor reset and cookie value using the device tree. The
+DT bindings are similar to reboot mode framework except that 2
+integers are accepted (the type and cookie). Also, reboot mode framework
+is intended to program the cookies, but not actually reboot the host.
+PSCI SYSTEM_RESET2 does both. I've not added support for reading ACPI
+tables since I don't have any device which provides them + firmware that
+supports vendor SYSTEM_RESET2 types.
 
-This I just do not understand. Why did they use this IP? Is it free?
-Did they use it before for something else? It's a rather strange design
-choice to me.
+Previous discussions around SYSTEM_RESET2:
+- https://lore.kernel.org/lkml/20230724223057.1208122-2-quic_eberman@quicinc.com/T/
+- https://lore.kernel.org/all/4a679542-b48d-7e11-f33a-63535a5c68cb@quicinc.com/
 
-> For the OpenSBI, the vendor does not provide enough ISA string,
-> which their chip might support, such as Zicboz. Thus, the OpenSBI
-> does not correctly set up the corresponding M-Mode CSR, making the
-> kernel panic when the ISA string contains this extension.
->=20
-> These two things takes me about one week to get the initial mainline
-> kernel with full ISA extension and UART to work. Providing this
-> information in the commit message helps attract more developers to
-> start developing quickly.
->=20
-> I don't mind whether this series patch will be merged or not. The
-> meaning of this series is just providing these informations. However,
-> I think some details about bringing up a very basic kernel are
-> essential to attract more developers. If a platform has already
-> attracted some developer's attention. Providing initial support
-> with the commit message to show how to bring it up is not bad.
->=20
+Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+---
+Changes in v5:
+- Drop the nested "items" in prep for future dtschema tools
+- Link to v4: https://lore.kernel.org/r/20240611-arm-psci-system_reset2-vendor-reboots-v4-0-98f55aa74ae8@quicinc.com
 
-> The point is that if a developer like me has already done this but
-> does not have much time to do further development, should the
-> developer become the maintainer? If not, should a developer submit
-> patches like this to the mailing list to provide this information
-> in the commit message and make it easier for other developers to
-> do further development?
+Changes in v4:
+- Change mode- properties from uint32-matrix to uint32-array
+- Restructure the reset-types node so only the restriction is in the
+  if/then schemas and not the entire definition
+- Link to v3: https://lore.kernel.org/r/20240515-arm-psci-system_reset2-vendor-reboots-v3-0-16dd4f9c0ab4@quicinc.com
 
-I think, as you did, sending patches for this state is very valuable.
-I'd just like to see someone expand on it before it gets applied, so
-that the initial platform support in the kernel is in a better state.
+Changes in v3:
+- Limit outer number of items to 1 for mode-* properties
+- Move the reboot-mode for psci under a subnode "reset-types"
+- Fix the DT node in qcm6490-idp so it doesn't overwrite the one from
+  sc7820.dtsi
+- Link to v2: https://lore.kernel.org/r/20240414-arm-psci-system_reset2-vendor-reboots-v2-0-da9a055a648f@quicinc.com
 
-> > Getting back to your point in this mail, whoever gets the platform to
-> > that state is well suited to looking after it going forwards. Some other
-> > interested parties could also join as reviewers. I don't want to see
-> > people joining as maintainers that are not going to have an interest
-> > in the platform going forward, as that'll just end up with me as the
-> > defacto maintainer.
-> >=20
->=20
-> I agree. I also have no confidence in joining as a maintainer.
-> That's why I didn't change the MAINTAINERS for the first time.
+Changes in v2:
+- Fixes to schema as suggested by Rob and Krzysztof
+- Add qcm6490 idp as first Qualcomm device to support
+- Link to v1: https://lore.kernel.org/r/20231117-arm-psci-system_reset2-vendor-reboots-v1-0-03c4612153e2@quicinc.com
 
-Yeah, that's fine. Consider this part of the thread my attempt to
-solicit people to maintain the platform, rather than bashing you. I
-appreciate the work you've done :)
+Changes in v1:
+- Reference reboot-mode bindings as suggeted by Rob.
+- Link to RFC: https://lore.kernel.org/r/20231030-arm-psci-system_reset2-vendor-reboots-v1-0-dcdd63352ad1@quicinc.com
 
-Thanks,
-Conor.
+---
+Elliot Berman (4):
+      dt-bindings: power: reset: Convert mode-.* properties to array
+      dt-bindings: arm: Document reboot mode magic
+      firmware: psci: Read and use vendor reset types
+      arm64: dts: qcom: Add PSCI SYSTEM_RESET2 types for qcm6490-idp
 
---Jrl5+92C90Kbr+Af
-Content-Type: application/pgp-signature; name="signature.asc"
+ Documentation/devicetree/bindings/arm/psci.yaml    | 43 ++++++++++
+ .../bindings/power/reset/nvmem-reboot-mode.yaml    |  4 +
+ .../devicetree/bindings/power/reset/qcom,pon.yaml  |  7 ++
+ .../bindings/power/reset/reboot-mode.yaml          |  4 +-
+ .../bindings/power/reset/syscon-reboot-mode.yaml   |  4 +
+ arch/arm64/boot/dts/qcom/qcm6490-idp.dts           |  7 ++
+ arch/arm64/boot/dts/qcom/sc7280.dtsi               |  2 +-
+ drivers/firmware/psci/psci.c                       | 92 ++++++++++++++++++++++
+ 8 files changed, 160 insertions(+), 3 deletions(-)
+---
+base-commit: e92bee9f861b466c676f0200be3e46af7bc4ac6b
+change-id: 20231016-arm-psci-system_reset2-vendor-reboots-cc3ad456c070
 
------BEGIN PGP SIGNATURE-----
+Best regards,
+-- 
+Elliot Berman <quic_eberman@quicinc.com>
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnBu6gAKCRB4tDGHoIJi
-0uZNAP9ElcW1Moz3oegHyyj66hfSZofUB2/kWuP+yKNFSIUIBQD/SuEPeV1sBsSV
-lRZoUY0kp5uFGyWIOuzqEQgBdKSxLAo=
-=3m3H
------END PGP SIGNATURE-----
-
---Jrl5+92C90Kbr+Af--
 
