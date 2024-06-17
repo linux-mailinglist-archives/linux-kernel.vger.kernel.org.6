@@ -1,127 +1,117 @@
-Return-Path: <linux-kernel+bounces-218045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F29B790B87A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:52:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F2B090B876
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B86F1C23A38
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:52:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B39FC284AFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5D919046E;
-	Mon, 17 Jun 2024 17:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0E918EFF2;
+	Mon, 17 Jun 2024 17:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IUzpdER7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P5m7xFwj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498B018A94C;
-	Mon, 17 Jun 2024 17:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C23310A2B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718646743; cv=none; b=YcuEBcrpCH7umiIr/H+L1IB8eMx2NnSEohAwWdwmu/HLm4XbTFvcqm9NwbQb15XYdcTBzG0oZ0LLsLdNLchx1tz1JDOpNI598iNszCzT4DUB+OAhmbLkKiP8l3/ZTdJUPDt6VrcuGiwBlQCj+xwJd9COWL/6kXkXia0yV2aOSoc=
+	t=1718646693; cv=none; b=B3xXsVojinePmC1tfBJj1gclRTLBvjLlnbue5rwltpDSKnhthKTT9mbHyjQC9Vd69GkD0Wu/+ozLVHtG7Z62STt9W7ds37zrrdxyzblsCJvpLm+YzMOG6MXAwCk1gboRgtsSuJMmX/ea9zkV0wvLKnKKKghn7wm1/QK5obBLDVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718646743; c=relaxed/simple;
-	bh=vk02w9S3tVvpEn7klolVsvvXbuaOMdfrZ5sxrW1smsM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P06P0XFCPvi9RwkbizpiAY+db9dOZOHyc3yBMrAft9dSsmAmc62qvQDULY9ck46tcg/duqx36DlMStXc7aIzwAzSuGI0hT6RfwIZ6OB9SAn3jWDDln1dKAaq2oAWImCd0h0QYW3GVWKWxxBS1RrdqjCR4sMEUW8Bndd2OmwqVcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IUzpdER7; arc=none smtp.client-ip=198.175.65.19
+	s=arc-20240116; t=1718646693; c=relaxed/simple;
+	bh=3EayStFr7ThfnMXMquv7JRy0d3+fefhNzkY77XemP0k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g2og+fcrjy8Vz3+j82nX8alf5SNZMhxVEpX7eOFY+LtUipE7uTxq0ZPald/S+H8fpLVPi2t014f0PeVLCkKP9ltihlxcKHxmheIZltnF/N4CaQi+I++TfMR0r9mBhf1R5VYqnwrVeK4Q6aKnwu/fJetOuVCgh8tfy3r9XNUcDo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P5m7xFwj; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718646742; x=1750182742;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=vk02w9S3tVvpEn7klolVsvvXbuaOMdfrZ5sxrW1smsM=;
-  b=IUzpdER7Yk8D85T/l4qoL4raT40PNT9WfzE3z2bdU4cjKMWb2Ge9RLeD
-   OqZGhfowONo8kjAUiXPmFmlgyUbJ/yFenaFp1aoRCU+W28VtKFixczj4O
-   MJXiR0PolKayN9++9su/rPtFNsKO/OpCo+DgTRC+zLvo4ypT1tpMf1R3H
-   y3laRpYHIaVmIsmE6H+eOEuda0GOqyaoTzeOadRDiN9c/NcLzJdaWuew4
-   PRcWuZ5N4Hr8JGNLVpHpauJheFHrNzZgS/hRKyGznWyqyC1LyNJC0OZOa
-   B5mTm0XzJQF2zJvkA+Y6W5ZP1MljsO+Oo9kVAHKTjhaOXjYYSGv6O9fzU
-   g==;
-X-CSE-ConnectionGUID: E2nYtlNgQKKeZpzZMdlwcw==
-X-CSE-MsgGUID: 1E2IJ7OsTzGllEe+Txzqwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15327119"
+  t=1718646692; x=1750182692;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=3EayStFr7ThfnMXMquv7JRy0d3+fefhNzkY77XemP0k=;
+  b=P5m7xFwjpGtpgPcW5yr57c2j1+JHNZZmUWslovGNpQ3Zbg/xgEPrtR9Y
+   MCdLcJoKIJiMKkyDFqkA2GGFfzzBgH+ut6wBBeCyRhidPR+THmRokSWgy
+   XOaioEVLCDg0UuAGwnqi25xDqolJX3zx4vz1dFSFCkkTLA+M6tzcuAAXp
+   1hioJ6rZ2MIMaYQM1lA3N6tntjGnhVG3PRX8ngrYd3/4OOrIDKxp2f+Ay
+   2c8EZPIlTBdXjwHpS2h9mdzEg+lI9RPnPxKt3D3y8j17HU92LlqXNLd05
+   HniGGVr3FFojv+TN+yoQATNJZZJEvlvK4CtdOVl+7TewPjv9IXlyCYaQn
+   A==;
+X-CSE-ConnectionGUID: kxU2KQHBQBCdAbFQUWdwQg==
+X-CSE-MsgGUID: hEpj6euGR5e4VV1wxHYugg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="15616172"
 X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
-   d="scan'208";a="15327119"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 10:51:29 -0700
-X-CSE-ConnectionGUID: UnOBOO2LTdCE53ENRUeWRg==
-X-CSE-MsgGUID: tXxyaKh7TyqfvgGcwFNxYA==
+   d="scan'208";a="15616172"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 10:51:32 -0700
+X-CSE-ConnectionGUID: ally0yvCRHe9s5HvSIchUw==
+X-CSE-MsgGUID: QUgQJymcScWXccpLHi8xUA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
-   d="scan'208";a="41138954"
-Received: from mshehzad-mobl.amr.corp.intel.com (HELO desk) ([10.209.21.13])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 10:51:28 -0700
-Date: Mon, 17 Jun 2024 10:51:17 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>
-Subject: Re: [PATCH PATCH 1/9] x86/cpu/topology: Add x86_cpu_type to struct
- cpuinfo_topology
-Message-ID: <20240617175117.wdldhu4qdf7gowl7@desk>
-References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
- <20240617-add-cpu-type-v1-1-b88998c01e76@linux.intel.com>
- <f4242edf-6c78-421c-8e21-63627b13c35f@citrix.com>
+   d="scan'208";a="41972252"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 10:51:31 -0700
+Received: from [10.212.91.105] (kliang2-mobl1.ccr.corp.intel.com [10.212.91.105])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id C5B4720B5703;
+	Mon, 17 Jun 2024 10:51:29 -0700 (PDT)
+Message-ID: <996eb980-ae88-4f02-bee3-cca511afcbd8@linux.intel.com>
+Date: Mon, 17 Jun 2024 13:51:28 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f4242edf-6c78-421c-8e21-63627b13c35f@citrix.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 1/8] perf/x86/uncore: Save the unit control address of
+ all units
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, linux-kernel@vger.kernel.org, acme@kernel.org,
+ namhyung@kernel.org, irogers@google.com, eranian@google.com,
+ ak@linux.intel.com, yunying.sun@intel.com, tim.c.chen@linux.intel.com
+References: <20240614134631.1092359-1-kan.liang@linux.intel.com>
+ <20240614134631.1092359-2-kan.liang@linux.intel.com>
+ <20240617155027.GX8774@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240617155027.GX8774@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 17, 2024 at 10:35:15AM +0100, Andrew Cooper wrote:
-> On 17/06/2024 10:11 am, Pawan Gupta wrote:
-> > diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-> > index cb4f6c513c48..f310a7fb4e00 100644
-> > --- a/arch/x86/include/asm/processor.h
-> > +++ b/arch/x86/include/asm/processor.h
-> > @@ -95,6 +95,9 @@ struct cpuinfo_topology {
-> >  	// Core ID relative to the package
-> >  	u32			core_id;
-> >  
-> > +	// CPU-type e.g. performance, efficiency etc.
-> > +	u8			cpu_type;
-> > +
+
+
+On 2024-06-17 11:50 a.m., Peter Zijlstra wrote:
+> On Fri, Jun 14, 2024 at 06:46:24AM -0700, kan.liang@linux.intel.com wrote:
+>> From: Kan Liang <kan.liang@linux.intel.com>
+>>
+>> The unit control address of some CXL units may be wrongly calculated
+>> under some configuration on a EMR machine.
+>>
+>> The current implementation only saves the unit control address of the
+>> units from the first die, and the first unit of the rest of dies. Perf
+>> assumed that the units from the other dies have the same offset as the
+>> first die. So the unit control address of the rest of the units can be
+>> calculated. However, the assumption is wrong, especially for the CXL
+>> units.
 > 
-> End of the structure?  At least that way new additions are less likely
-> to add more padding.
+> Oh gawd, that's terrible. Was this actually specified, or are we hacking
+> around a firmware fail?
 
-Right, I will move it to the end of the structure.
+Not a workaround for a firmware fail. The the CXL discovery units depend
+on the stacks and CXL devices present on each socket. So different
+number of CXL devices on each socket is a valid combination.
+SW cannot calculate the address of the devices on the other sockets via
+the first socket. Full addresses have to be used.
 
-> > diff --git a/arch/x86/kernel/cpu/topology_common.c b/arch/x86/kernel/cpu/topology_common.c
-> > index 9a6069e7133c..be82c8769bb2 100644
-> > --- a/arch/x86/kernel/cpu/topology_common.c
-> > +++ b/arch/x86/kernel/cpu/topology_common.c
-> > @@ -140,6 +140,14 @@ static void parse_topology(struct topo_scan *tscan, bool early)
-> >  	}
-> >  }
-> >  
-> > +static void topo_set_cpu_type(struct cpuinfo_x86 *c)
-> > +{
-> > +	c->topo.cpu_type = X86_CPU_TYPE_UNKNOWN;
-> > +
-> > +	if (c->x86_vendor == X86_VENDOR_INTEL && cpuid_eax(0) >= 0x1a)
-> 
-> c->cpuid_level ?
-
-Will do.
+Thanks,
+Kan
 
