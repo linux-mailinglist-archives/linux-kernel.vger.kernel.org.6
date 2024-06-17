@@ -1,164 +1,245 @@
-Return-Path: <linux-kernel+bounces-216589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9513D90A1E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 03:44:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E10390A1E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 03:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A32D281419
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:44:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D60B0B20990
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A976415666F;
-	Mon, 17 Jun 2024 01:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E00315B12B;
+	Mon, 17 Jun 2024 01:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gqLtV3Dx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1Ntb7Lx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9777819BC6;
-	Mon, 17 Jun 2024 01:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CD615B0F9;
+	Mon, 17 Jun 2024 01:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718588657; cv=none; b=NAOx366KWGtCt93XPfiffrjVnTuEuRXYuhNvC1zOrtFQAml3T+vV5um0IrHtwXsB0ULdfK78zyDqTeNCN9XwjJbfsPADiY9jxrHBXLCtFi/GJdcGj71BrbR2oLAGo5ftgj1Mh0AI32xQiW6Y9iJ9CA1NQ9iAe1zeI+EfTVsW35A=
+	t=1718588795; cv=none; b=aJ3/mw7jo8VkDsRX60Yf4T6WZeUw7cFWTlnLd+PWGBmZqzrrwzEAJbueSZrdIPzmcmPr0iqXN1wmndOAHcv9PS+pd4Mb05Tfm0dPNbtKAksdeRuXIAc8PlG0nswUk46lkZRrum4ov6RbWgGM4gdrPdX7sAchEIUimY8zGGWmgco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718588657; c=relaxed/simple;
-	bh=Ue0EB9ia/yrAN0YyauzTV7SY5oDbw16XaSNxoKWFz4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jobh89szzT06qRh7uvVVP32XnN3xxb4L6C/WUc5gXGu8liV7hoqMMSsuN91+lnC5BCtJsgS5alD368EIE5M9py/eaZGhtGnrOVikoAGuQW32YNPdCUJDzmqxPbYcyD5UCcfnCcIe3XpzfmLu8kcmy8S60bIlDf8qfiCOV5oS+QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gqLtV3Dx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45GNsSEs027697;
-	Mon, 17 Jun 2024 01:44:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/Njs1C3lkrQ5RjLAZ0/KROR0CPFhdqk2ns0RTeOfPXE=; b=gqLtV3Dx9ytiNAaD
-	n5oelLmpSLrwPwDtbD9pieR9n2Fj8ifDqHnfVHxLEdFuVNPJqJvQZ0abBSJxMW5W
-	WHd6aqOQkPmQ0LFmXz8tTpHny4CWZQ4zh/SQQtpPyeYIAVA03fRupj6vmE8gCBbt
-	O2jnU/k+GhmCONsFFP9FbLf5n3A9VFfAj8+96dy6eqtgN78DgI33dQO9N508G1wh
-	0Q+yhqUpBkYsu7GFMq8aOkxYZUKwSsSfYPvt7bR9cQVuE5+2qDzwYS4RCnICI6pq
-	tdGOmB5W+DsaeLUzGHwLsZTyPYuFUfDnxOTZY7QfmUULFe0EPLJG8TeUs/OxNLNP
-	lnUclg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ysv5xgwkx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 01:44:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45H1i0a0015536
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 01:44:00 GMT
-Received: from [10.48.243.231] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 16 Jun
- 2024 18:43:59 -0700
-Message-ID: <28c653ab-af12-4857-8a32-9ea73740959a@quicinc.com>
-Date: Sun, 16 Jun 2024 18:43:58 -0700
+	s=arc-20240116; t=1718588795; c=relaxed/simple;
+	bh=p2qTKDciBqDCbQdurJiAgG1aacdb3BMBdzisI9Q+Zug=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=XEt2qPotO7814vKLXUdJvbCvoelEXyh5L5iL4xI3FEm4ZsoFslgCNbzYEf54b0E8LN87qBSdc4TYckIJxCfamYtzO+f2ocOEpXKhU0jmfQ9vmdMd3JqtK4WMttH2P+U+BskhI+8ym6UR57IXe2ql0nOykEC4yC0x1OwJL2MKSKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1Ntb7Lx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A99E1C2BBFC;
+	Mon, 17 Jun 2024 01:46:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718588794;
+	bh=p2qTKDciBqDCbQdurJiAgG1aacdb3BMBdzisI9Q+Zug=;
+	h=From:To:Cc:Subject:Date:From;
+	b=o1Ntb7LxoTZmAMuLJFGD0EfCSn6GHXe9MOpuXu1XVV1IN+XxhTE2Im4f8+xBnugSB
+	 6ga9CkjIkDdINuTE1rbK9ZPSXXPlcnctQSV3DZckQ6Vp/fIz7+bh8efZstLhGUp3Sf
+	 KRmwjvKKNeKFpatCuEqvmzkPd4Pq9vEmirk0ZO2Ao2ia7lw4YmhnQCJjQJdIJTRgYQ
+	 TPft0GS309+23LKC7iOtjdYnPH4qbaIlaqWifbYAWy51iAaXh0HzvjOhhfcjPV7JrM
+	 NPR2+Nz4YTnxecNaPx3EBvSewzZAo/ufPrfaESYjQe27yeMHCKjmK/EEnntV/GbesF
+	 2WNCzWNfiQcPg==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Florent Revest <revest@chromium.org>
+Cc: linux-trace-kernel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	bpf <bpf@vger.kernel.org>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Guo Ren <guoren@kernel.org>
+Subject: [PATCH v11 00/18] tracing: fprobe: function_graph: Multi-function graph and fprobe on fgraph
+Date: Mon, 17 Jun 2024 10:46:28 +0900
+Message-Id: <171858878797.288820.237119113242007537.stgit@devnote2>
+X-Mailer: git-send-email 2.34.1
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] EDAC: layerscape: add missing MODULE_DESCRIPTION() macro
-Content-Language: en-US
-To: Borislav Petkov <bp@alien8.de>
-CC: Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-        Mauro
- Carvalho Chehab <mchehab@kernel.org>,
-        Robert Richter <rric@kernel.org>, <linux-edac@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240613-md-arm64-drivers-edac-v1-1-149a4f0f61bb@quicinc.com>
- <20240616154347.GCZm8IMxshO8YYTTjB@fat_crate.local>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240616154347.GCZm8IMxshO8YYTTjB@fat_crate.local>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DInqufhmA_jVtANYx6VKQbmISrhM5LUE
-X-Proofpoint-ORIG-GUID: DInqufhmA_jVtANYx6VKQbmISrhM5LUE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_01,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- bulkscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
- suspectscore=0 adultscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405170001 definitions=main-2406170012
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 6/16/2024 8:43 AM, Borislav Petkov wrote:
-> On Thu, Jun 13, 2024 at 02:36:21PM -0700, Jeff Johnson wrote:
->> With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/edac/layerscape_edac_mod.o
->>
->> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->>  drivers/edac/layerscape_edac.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/edac/layerscape_edac.c b/drivers/edac/layerscape_edac.c
->> index d2f895033280..b70d5d258fcb 100644
->> --- a/drivers/edac/layerscape_edac.c
->> +++ b/drivers/edac/layerscape_edac.c
->> @@ -69,6 +69,7 @@ static void __exit fsl_ddr_mc_exit(void)
->>  
->>  module_exit(fsl_ddr_mc_exit);
->>  
->> +MODULE_DESCRIPTION("Freescale Layerscape EDAC module");
->>  MODULE_LICENSE("GPL");
->>  MODULE_AUTHOR("NXP Semiconductor");
->>  module_param(edac_op_state, int, 0444);
->>
->> ---
-> 
-> $ git grep -E "MODULE_(DESCRIPTION|LICENSE)" drivers/edac/
-> 
-> I'd expect to see regular pairs like this:
-> 
-> drivers/edac/al_mc_edac.c:348:MODULE_LICENSE("GPL v2");
-> drivers/edac/al_mc_edac.c:350:MODULE_DESCRIPTION("Amazon's Annapurna Lab's Memory Controller EDAC Driver");
-> 
-> drivers/edac/altera_edac.c:2216:MODULE_DESCRIPTION("EDAC Driver for Altera Memories");
-> 
-> drivers/edac/amd64_edac.c:4238:MODULE_LICENSE("GPL");
-> drivers/edac/amd64_edac.c:4240:MODULE_DESCRIPTION("MC support for AMD64 memory controllers");
-> ...
-> 
-> but there are cases which need fixing.
-> 
-> How about you do them all with one patch?
+Hi,
 
-My process has been, for the most part, to first fix the ones where I actually
-observe the warning, unless there is just one or two others. For drivers/edac
-there are more than a couple more that have a LICENSE but not a DESCRIPTION:
-drivers/edac/mpc85xx_edac.c
-drivers/edac/octeon_edac-l2c.c
-drivers/edac/octeon_edac-lmc.c
-drivers/edac/octeon_edac-pc.c
-drivers/edac/octeon_edac-pci.c
+Here is the 11th version of the series to re-implement the fprobe on
+function-graph tracer. The previous version is;
 
-So my preference is to first fix the one where I actually observed the
-warning, and then later fix the ones which currently don't seem to produce a
-warning. But a can make an exception and fix all of them in drivers/edac.
+https://lore.kernel.org/all/171509088006.162236.7227326999861366050.stgit@devnote2/
 
-Also note I haven't even considered doing anything for the ones that have a
-DESCRIPTION but not a LICENSE such as drivers/edac/altera_edac.c. Note that a
-missing LICENSE would result in a build failure, not just a warning, so the
-appropriate thing to do in that case is probably to remove the DESCRIPTION. It
-has been enough of a job to fix the missing DESCRIPTIONs that actually
-generate warnings (I've been making changes tree-wide for over a month,
-touching almost 800 files). So I prefer to let others worry about removing
-DESCRIPTION/LICENSE found in files that cannot be built as modules.
+Most of the patches in the previous version (for multiple function graph
+trace instance) are already merged via tracing/for-next. This version
+is the remaining part, fprobe implement on fgraph. Basically just moves
+on the updated fgraph implementation, and no major changes.
 
-/jeff
+Overview
+--------
+This series rewrites the fprobe on this function-graph.
+The purposes of this change are;
 
+ 1) Remove dependency of the rethook from fprobe so that we can reduce
+   the return hook code and shadow stack.
+
+ 2) Make 'ftrace_regs' the common trace interface for the function
+   boundary.
+
+1) Currently we have 2(or 3) different function return hook codes,
+ the function-graph tracer and rethook (and legacy kretprobe).
+ But since this  is redundant and needs double maintenance cost,
+ I would like to unify those. From the user's viewpoint, function-
+ graph tracer is very useful to grasp the execution path. For this
+ purpose, it is hard to use the rethook in the function-graph
+ tracer, but the opposite is possible. (Strictly speaking, kretprobe
+ can not use it because it requires 'pt_regs' for historical reasons.)
+
+2) Now the fprobe provides the 'pt_regs' for its handler, but that is
+ wrong for the function entry and exit. Moreover, depending on the
+ architecture, there is no way to accurately reproduce 'pt_regs'
+ outside of interrupt or exception handlers. This means fprobe should
+ not use 'pt_regs' because it does not use such exceptions.
+ (Conversely, kprobe should use 'pt_regs' because it is an abstract
+  interface of the software breakpoint exception.)
+
+This series changes fprobe to use function-graph tracer for tracing
+function entry and exit, instead of mixture of ftrace and rethook.
+Unlike the rethook which is a per-task list of system-wide allocated
+nodes, the function graph's ret_stack is a per-task shadow stack.
+Thus it does not need to set 'nr_maxactive' (which is the number of
+pre-allocated nodes).
+Also the handlers will get the 'ftrace_regs' instead of 'pt_regs'.
+Since eBPF mulit_kprobe/multi_kretprobe events still use 'pt_regs' as
+their register interface, this changes it to convert 'ftrace_regs' to
+'pt_regs'. Of course this conversion makes an incomplete 'pt_regs',
+so users must access only registers for function parameters or
+return value. 
+
+Design
+------
+Instead of using ftrace's function entry hook directly, the new fprobe
+is built on top of the function-graph's entry and return callbacks
+with 'ftrace_regs'.
+
+Since the fprobe requires access to 'ftrace_regs', the architecture
+must support CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS and
+CONFIG_HAVE_FTRACE_GRAPH_FUNC, which enables to call function-graph
+entry callback with 'ftrace_regs', and also
+CONFIG_HAVE_FUNCTION_GRAPH_FREGS, which passes the ftrace_regs to
+return_to_handler.
+
+All fprobes share a single function-graph ops (means shares a common
+ftrace filter) similar to the kprobe-on-ftrace. This needs another
+layer to find corresponding fprobe in the common function-graph
+callbacks, but has much better scalability, since the number of
+registered function-graph ops is limited.
+
+In the entry callback, the fprobe runs its entry_handler and saves the
+address of 'fprobe' on the function-graph's shadow stack as data. The
+return callback decodes the data to get the 'fprobe' address, and runs
+the exit_handler.
+
+The fprobe introduces two hash-tables, one is for entry callback which
+searches fprobes related to the given function address passed by entry
+callback. The other is for a return callback which checks if the given
+'fprobe' data structure pointer is still valid. Note that it is
+possible to unregister fprobe before the return callback runs. Thus
+the address validation must be done before using it in the return
+callback.
+
+Download
+--------
+This series can be applied against the ftrace/for-next branch in
+linux-trace tree.
+
+This series can also be found below branch.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/mhiramat/linux.git/log/?h=topic/fprobe-on-fgraph
+
+Thank you,
+
+---
+
+Masami Hiramatsu (Google) (18):
+      tracing: Add a comment about ftrace_regs definition
+      tracing: Rename ftrace_regs_return_value to ftrace_regs_get_return_value
+      function_graph: Pass ftrace_regs to entryfunc
+      function_graph: Replace fgraph_ret_regs with ftrace_regs
+      function_graph: Pass ftrace_regs to retfunc
+      fprobe: Use ftrace_regs in fprobe entry handler
+      fprobe: Use ftrace_regs in fprobe exit handler
+      tracing: Add ftrace_partial_regs() for converting ftrace_regs to pt_regs
+      tracing: Add ftrace_fill_perf_regs() for perf event
+      tracing/fprobe: Enable fprobe events with CONFIG_DYNAMIC_FTRACE_WITH_ARGS
+      bpf: Enable kprobe_multi feature if CONFIG_FPROBE is enabled
+      ftrace: Add CONFIG_HAVE_FTRACE_GRAPH_FUNC
+      fprobe: Rewrite fprobe on function-graph tracer
+      tracing/fprobe: Remove nr_maxactive from fprobe
+      selftests: ftrace: Remove obsolate maxactive syntax check
+      selftests/ftrace: Add a test case for repeating register/unregister fprobe
+      Documentation: probes: Update fprobe on function-graph tracer
+      fgraph: Skip recording calltime/rettime if it is not nneeded
+
+
+ Documentation/trace/fprobe.rst                     |   42 +
+ arch/arm64/Kconfig                                 |    3 
+ arch/arm64/include/asm/ftrace.h                    |   47 +
+ arch/arm64/kernel/asm-offsets.c                    |   12 
+ arch/arm64/kernel/entry-ftrace.S                   |   32 +
+ arch/arm64/kernel/ftrace.c                         |   20 +
+ arch/loongarch/Kconfig                             |    4 
+ arch/loongarch/include/asm/ftrace.h                |   32 -
+ arch/loongarch/kernel/asm-offsets.c                |   12 
+ arch/loongarch/kernel/ftrace_dyn.c                 |   10 
+ arch/loongarch/kernel/mcount.S                     |   17 -
+ arch/loongarch/kernel/mcount_dyn.S                 |   14 
+ arch/powerpc/Kconfig                               |    1 
+ arch/powerpc/include/asm/ftrace.h                  |   15 
+ arch/powerpc/kernel/trace/ftrace.c                 |    2 
+ arch/powerpc/kernel/trace/ftrace_64_pg.c           |   10 
+ arch/riscv/Kconfig                                 |    3 
+ arch/riscv/include/asm/ftrace.h                    |   26 -
+ arch/riscv/kernel/ftrace.c                         |   17 +
+ arch/riscv/kernel/mcount.S                         |   24 -
+ arch/s390/Kconfig                                  |    3 
+ arch/s390/include/asm/ftrace.h                     |   39 +
+ arch/s390/kernel/asm-offsets.c                     |    6 
+ arch/s390/kernel/mcount.S                          |    9 
+ arch/x86/Kconfig                                   |    4 
+ arch/x86/include/asm/ftrace.h                      |   37 +
+ arch/x86/kernel/ftrace.c                           |   50 +-
+ arch/x86/kernel/ftrace_32.S                        |   15 
+ arch/x86/kernel/ftrace_64.S                        |   17 -
+ include/linux/fprobe.h                             |   57 +-
+ include/linux/ftrace.h                             |  136 ++++
+ kernel/trace/Kconfig                               |   23 +
+ kernel/trace/bpf_trace.c                           |   19 -
+ kernel/trace/fgraph.c                              |   96 ++-
+ kernel/trace/fprobe.c                              |  637 ++++++++++++++------
+ kernel/trace/ftrace.c                              |    6 
+ kernel/trace/trace.h                               |    6 
+ kernel/trace/trace_fprobe.c                        |  147 ++---
+ kernel/trace/trace_functions_graph.c               |   10 
+ kernel/trace/trace_irqsoff.c                       |    6 
+ kernel/trace/trace_probe_tmpl.h                    |    2 
+ kernel/trace/trace_sched_wakeup.c                  |    6 
+ kernel/trace/trace_selftest.c                      |   11 
+ lib/test_fprobe.c                                  |   51 --
+ samples/fprobe/fprobe_example.c                    |    4 
+ .../test.d/dynevent/add_remove_fprobe_repeat.tc    |   19 +
+ .../ftrace/test.d/dynevent/fprobe_syntax_errors.tc |    4 
+ 47 files changed, 1145 insertions(+), 618 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe_repeat.tc
+
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
