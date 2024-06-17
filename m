@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-216881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE01A90A7FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:00:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67AB890A804
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:01:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2C0C1C246EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:00:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0F4728124A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4683190072;
-	Mon, 17 Jun 2024 07:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0894316C854;
+	Mon, 17 Jun 2024 08:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Md/zH0G5"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ttu1Fob0"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3340B18FDBC
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7DFA48
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718611189; cv=none; b=X+WE7SGwesmfWWSjVOkVJHSBqxnP944EK/chlLTo65FFXiqPIUJFn0U2oUOEMJfqpkUo3HzduAiGQOX/VGOckA/j38Q3bjrADHLBZPOgwt5Pk9GsddLUhQSUZmiNb9UkvOeb5E3MiJRJOsZ6kQ29c8bg5TaXR8r9/pEW+zrD5s8=
+	t=1718611278; cv=none; b=i8H0wk7iLAWptBmnbc9JpbkkOrOphOeCwLEyeJvpd3otN4CYg4qGUdClDaJ6aUbErf1kjSByhxOszQbfboN6qcQJ3apA/x5VLSI2ALQQK0Q6kXSrJ3y0CYqMwVi65XmVXgk9rEtwtL+93Q9qBh4FSOzisbUbMbE2Jm5k5qshQRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718611189; c=relaxed/simple;
-	bh=oLDzlSODJljzUKjcR6ta6ivMALGSpYL+FSN5LvaAeCE=;
+	s=arc-20240116; t=1718611278; c=relaxed/simple;
+	bh=vuhA+mIQJ2RSX99AvGZDj+nJCxG/WKXFPdCWspBnQ4o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sV3uO5+KO/B1mjB99VI4Ua4nWv0UDquCxZ4gscXl4yLC5uy/Xn9OxHtWMFoHfoAKWZvDP+cVXOYdweeYseB3L/n+YjvBhSDTyZmf3Nm1eDLZsQxbg8WqkdkNXGTNmvRpBWdnrK3NZMP9+Q6NApzRmOkZGP6Ferr2XcOXuqqfjuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Md/zH0G5; arc=none smtp.client-ip=209.85.167.43
+	 Content-Type:Content-Disposition:In-Reply-To; b=mg3+RCEV8kgsGD4yhtRyYMHJNEY0ZlX+lfKIqR47ZFLyjBDgh0CdAlCo2BwWurpJYm3oeh5C3v2PaImnFw6jy8aNcNQEsvokEdUetfTEMXtbZYViD+XHTjfEIEfkI0vL8/llGnSb2xqOBBkqxFJ4VX8Yd1QnEmOQ1RDOAleTCk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ttu1Fob0; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52c84a21b8cso3752995e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 00:59:46 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52bc335e49aso4664052e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 01:01:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718611185; x=1719215985; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718611275; x=1719216075; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w7rDWn7Lx3IDkThbHypTiJWDbgdPwp60eh3YBpuQo+k=;
-        b=Md/zH0G51BM7gQGnwwvkg/QXvUkCYYrX68mQXZmjT0wO/tHudvwGiNByEgwA7zwVbX
-         VVrF9N5DmWncGgSwqhYONB5vGoggFquXqJM+x1vKkqWKD2JP1EUKOJtwlFfcmLyGQuRm
-         fv8P6rdSFAPPqiqBBjHgN56zOZXPZMySbGijTzKenVE4GPmTleOKf2HG/LiwP+5YlgqQ
-         LZkEkYGmSX+At9kRyRZOdpCegtbsao+MOmaDF4FNQ6oqtw/ev1hbs+FtEcbM7IhmsPb2
-         /1Qi86ar3LbnPJaB+MvKo3ly5chRNB6XimRfF+o4+E7X5oazu+/C9rCM4OXxK3vSrtLW
-         zR2A==
+        bh=IQ/lnoLnxwCnySxytQb9nQ5xYtOeT14sXw+lATiwThw=;
+        b=ttu1Fob0SogLsviZMpJWehzESO7MkINj54O/uV4UrjfKY8zGLixhccbCHK+XR4sTwU
+         rsZajLUcTyLOnAS6tkrpzSF+znIIAiKlaFj1nHSjA8LBsimR97X2UqQuPwx2FYgf3JqC
+         nbTJ4e/dbPS9disTbUOk3S/vLzeYdS3Aby+R5ye1VYw3KorYuLbvnGY7dYhBxyszE6/Z
+         AxuYRvJm0Cm9fLtk50fEG8rElKX64aB6L8lgM9HU+5Iu06r3rGKwnoOPbWMAu+G8k+Ma
+         S7TO+0V1ZsxSwxGSbFYvHrEFrCHsbsdLOXEgjDE5Y38spdDCgYrNhygA7kWij6O3vi7s
+         KZdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718611185; x=1719215985;
+        d=1e100.net; s=20230601; t=1718611275; x=1719216075;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=w7rDWn7Lx3IDkThbHypTiJWDbgdPwp60eh3YBpuQo+k=;
-        b=a83rPQP4r8wRjhsH26GDqVh6luFWbatb20wYmMQa2tki1v1JXYZZONa40YGw5o+BQz
-         a2brRpuuGoj9CU7VFiuJwrfSbpdepsvTLszrYYwNLKnZkuqMtjb5R6YSDHkLVh28KJBW
-         r0FBywwgSbogItRl2xBmjNsU48kkjqI6dQXUehvpjdzanWPwICkT+IhRxDkOlEz+PSM3
-         wtkpUnb4JAyZE7PkEh/8/0BMXR6Pw0+TWVEaSMlyEtjOqJpqOTPC79Qgt4gcdtfW0xTZ
-         625C6/h7kcUl9PyLX//yK4CNuzzqXq9bC1clD6CpwsRS+5jR0jyYuvCBJZk6LtbvjZbp
-         o57A==
-X-Forwarded-Encrypted: i=1; AJvYcCWnH8PTj8X/PkJ/s2uDPoYkllwmjc4EKfzcs2hpuvxTzpDaa4UQ1Rs2AkaoHNqhCbF3/lNxN2VLb4P9aLZrEgaEvywSRnrsdU2ErcIA
-X-Gm-Message-State: AOJu0Yzs7Q9t3yY8QcT8y9C25X6afCs1+jcknarRRJXrc3FQGtZk+GQ9
-	cQI06rQEMBuq2pwxzobKQ76gEh6ACtdn3o7Z1b2+ldx1tJe+gkK/syaabg86JjU=
-X-Google-Smtp-Source: AGHT+IF+CZ8uto5qKLok/n5CxOYFdsmEC2fcv9V6Dp6NxoXRmQwKWeqIjMRdtYCqhKsJHuVgzAV8Kw==
-X-Received: by 2002:a05:6512:ba0:b0:52c:8dea:c56f with SMTP id 2adb3069b0e04-52ca6cc6e6bmr3707383e87.25.1718611185356;
-        Mon, 17 Jun 2024 00:59:45 -0700 (PDT)
+        bh=IQ/lnoLnxwCnySxytQb9nQ5xYtOeT14sXw+lATiwThw=;
+        b=n6WbZN+oXypnWHt/UL6lCjSDt82ZL/hy2P4z0ps+/hLeEOTDglk2Vgqw3nPht8fqWy
+         c5UkOcWjdbKO8x1GVnObvbfOKlzhLXov/zVwguVFmdT+vNtYFpjykC31AcBtsrc4r0fv
+         CtuQJ8I/vty4S0IhmHBqJUFaL7A89zkyx6nmlawUu7Kl8xSC6sVpZXqxS3Hv6kr9gYo2
+         Oi8/EEJ135Ofmzx4QkZl5DC+oXd7ExtfAV/keWLJKR483RDp5DrYdp5jnE3fUCtoXeHq
+         KN9I+MSNuxXqCzo6iuqxfLgUX87ucyvFm8u1F4BER07lPc96/jTt9R3jnOO7k9fTngOY
+         UIGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrjDt9ME+8tdLi/1BDFBjKAItD0hKe9PpsvQhHIVGau/zbSAf8zCw8ahMBt+zn5pPy1wbb57VLB7qIzBPkI72ggsOMgrVJUBGeU9fj
+X-Gm-Message-State: AOJu0YzUy42Y6V8h//3iOo+lBo3hf2FcL82OK7tdGZ618KMHMknBH2Iy
+	7IX6BlBAKeDYO+uiOj8v28BQrp4dwBsA+wT6IX5cA1477TZ1RCEnCOEJZu+mh7E=
+X-Google-Smtp-Source: AGHT+IG71054E0fvJQuGC+hqCqYraV8STNLzGUuueTN+wKbvGZ5vdciJje61F+fQ08XOpku4G9g32Q==
+X-Received: by 2002:a19:f703:0:b0:51b:214c:5239 with SMTP id 2adb3069b0e04-52ca6e9f465mr5226032e87.62.1718611274876;
+        Mon, 17 Jun 2024 01:01:14 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282573esm1177689e87.45.2024.06.17.00.59.44
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2826269sm1169293e87.61.2024.06.17.01.01.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 00:59:44 -0700 (PDT)
-Date: Mon, 17 Jun 2024 10:59:43 +0300
+        Mon, 17 Jun 2024 01:01:14 -0700 (PDT)
+Date: Mon, 17 Jun 2024 11:01:12 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Gaurav Kashyap <quic_gaurkash@quicinc.com>
 Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
@@ -78,11 +78,10 @@ Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
 	martin.petersen@oracle.com, mani@kernel.org, davem@davemloft.net, 
 	herbert@gondor.apana.org.au, psodagud@quicinc.com, quic_apurupa@quicinc.com, 
 	sonalg@quicinc.com
-Subject: Re: [PATCH v5 06/15] soc: qcom: ice: support for generate, import
- and prepare key
-Message-ID: <y3p55nrjrdm3mnz23ljg5odc2oley2k2zqnbjo5g4h7oqk2mue@thqdtm44rouu>
+Subject: Re: [PATCH v5 07/15] ufs: core: support wrapped keys in ufs core
+Message-ID: <dk4y53xrkn3jv46mpr4n62yl5yqbql5gwn3c2syyvai3simcph@s767oanivria>
 References: <20240617005825.1443206-1-quic_gaurkash@quicinc.com>
- <20240617005825.1443206-7-quic_gaurkash@quicinc.com>
+ <20240617005825.1443206-8-quic_gaurkash@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,152 +90,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240617005825.1443206-7-quic_gaurkash@quicinc.com>
+In-Reply-To: <20240617005825.1443206-8-quic_gaurkash@quicinc.com>
 
-On Sun, Jun 16, 2024 at 05:51:01PM GMT, Gaurav Kashyap wrote:
-> Wrapped key creation and management using HWKM is currently
-> supported only through Qualcomm's Trustzone.
-> Three new SCM calls have already been added in the scm layer
-> for this purpose.
-> 
-> This patch adds support for generate, prepare and import key
-> apis in ICE module and hooks it up the scm calls defined for them.
-> This will eventually plug into the new IOCTLS added for this
-> usecase in the block layer.
+On Sun, Jun 16, 2024 at 05:51:02PM GMT, Gaurav Kashyap wrote:
+> Since wrapped keys are not part of the UFS specifications,
+> it needs to be treated as a supported quirk of the UFS
+> controller. This way, based on the quirk set during a host
+> probe, UFS crypto can choose to register either standard or
+> wrapped keys with block crypto profile.
 
-Documentation/process/submitting-patches.rst. "This patch..."
+No. It is the user who must be able to select whether to use HW-wrapped
+keys or not. The hardware / driver can only specify whether HW-wrapped
+keys are supported or not.
 
 > 
 > Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
 > Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
 > ---
->  drivers/soc/qcom/ice.c | 75 ++++++++++++++++++++++++++++++++++++++++++
->  include/soc/qcom/ice.h |  8 +++++
->  2 files changed, 83 insertions(+)
+>  drivers/ufs/core/ufshcd-crypto.c | 24 ++++++++++++++++--------
+>  include/ufs/ufshcd.h             |  6 ++++++
+>  2 files changed, 22 insertions(+), 8 deletions(-)
 > 
-> diff --git a/drivers/soc/qcom/ice.c b/drivers/soc/qcom/ice.c
-> index f0e9e0885732..68062b27f40c 100644
-> --- a/drivers/soc/qcom/ice.c
-> +++ b/drivers/soc/qcom/ice.c
-> @@ -21,6 +21,13 @@
->  
->  #define AES_256_XTS_KEY_SIZE			64
->  
-> +/*
-> + * Wrapped key sizes that HWKM expects and manages is different for different
-> + * versions of the hardware.
-> + */
-> +#define QCOM_ICE_HWKM_WRAPPED_KEY_SIZE(v)	\
-> +	((v) == 1 ? 68 : 100)
-> +
->  /* QCOM ICE registers */
->  #define QCOM_ICE_REG_VERSION			0x0008
->  #define QCOM_ICE_REG_FUSE_SETTING		0x0010
-> @@ -445,6 +452,74 @@ int qcom_ice_derive_sw_secret(struct qcom_ice *ice, const u8 wkey[],
->  }
->  EXPORT_SYMBOL_GPL(qcom_ice_derive_sw_secret);
->  
-> +/**
-> + * qcom_ice_generate_key() - Generate a wrapped key for inline encryption
-> + * @lt_key: longterm wrapped key that is generated, which is
-> + *          BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE in size.
-> + *
-> + * Make a scm call into trustzone to generate a wrapped key for storage
-> + * encryption using hwkm.
-> + *
-> + * Return: lt wrapped key size on success; err on failure.
 
-This is incorrect.
-
-> + */
-> +int qcom_ice_generate_key(struct qcom_ice *ice,
-> +			  u8 lt_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE])
-> +{
-> +	size_t wk_size = QCOM_ICE_HWKM_WRAPPED_KEY_SIZE(ice->hwkm_version);
-> +
-> +	if (!qcom_scm_generate_ice_key(lt_key, wk_size))
-> +		return wk_size;
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_ice_generate_key);
-> +
-> +/**
-> + * qcom_ice_prepare_key() - Prepare a longterm wrapped key for inline encryption
-> + * @lt_key: longterm wrapped key that is generated or imported.
-> + * @lt_key_size: size of the longterm wrapped_key
-> + * @eph_key: wrapped key returned which has been wrapped with a per-boot ephemeral key,
-> + *           size of which is BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE in size.
-> + *
-> + * Make a scm call into trustzone to prepare a wrapped key for storage
-> + * encryption by rewrapping the longterm wrapped key with a per boot ephemeral
-> + * key using hwkm.
-> + *
-> + * Return: eph wrapped key size on success; err on failure.
-
-And this too.
-
-> + */
-> +int qcom_ice_prepare_key(struct qcom_ice *ice, const u8 *lt_key, size_t lt_key_size,
-> +			 u8 eph_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE])
-> +{
-> +	size_t wk_size = QCOM_ICE_HWKM_WRAPPED_KEY_SIZE(ice->hwkm_version);
-> +
-> +	if (!qcom_scm_prepare_ice_key(lt_key, lt_key_size, eph_key, wk_size))
-> +		return wk_size;
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_ice_prepare_key);
-> +
-> +/**
-> + * qcom_ice_import_key() - Import a raw key for inline encryption
-> + * @imp_key: raw key that has to be imported
-> + * @imp_key_size: size of the imported key
-> + * @lt_key: longterm wrapped key that is imported, which is
-> + *          BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE in size.
-> + *
-> + * Make a scm call into trustzone to import a raw key for storage encryption
-> + * and generate a longterm wrapped key using hwkm.
-> + *
-> + * Return: lt wrapped key size on success; err on failure.
-
-Guess, this is incorrect too.
-
-> + */
-> +int qcom_ice_import_key(struct qcom_ice *ice, const u8 *imp_key, size_t imp_key_size,
-> +			u8 lt_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE])
-> +{
-> +	size_t wk_size = QCOM_ICE_HWKM_WRAPPED_KEY_SIZE(ice->hwkm_version);
-> +
-> +	if (!qcom_scm_import_ice_key(imp_key, imp_key_size, lt_key, wk_size))
-> +		return wk_size;
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_ice_import_key);
-> +
->  static struct qcom_ice *qcom_ice_create(struct device *dev,
->  					void __iomem *base)
->  {
-> diff --git a/include/soc/qcom/ice.h b/include/soc/qcom/ice.h
-> index dabe0d3a1fd0..dcf277d196ff 100644
-> --- a/include/soc/qcom/ice.h
-> +++ b/include/soc/qcom/ice.h
-> @@ -39,5 +39,13 @@ bool qcom_ice_hwkm_supported(struct qcom_ice *ice);
->  int qcom_ice_derive_sw_secret(struct qcom_ice *ice, const u8 wkey[],
->  			      unsigned int wkey_size,
->  			      u8 sw_secret[BLK_CRYPTO_SW_SECRET_SIZE]);
-> +int qcom_ice_generate_key(struct qcom_ice *ice,
-> +			  u8 lt_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE]);
-> +int qcom_ice_prepare_key(struct qcom_ice *ice,
-> +			 const u8 *lt_key, size_t lt_key_size,
-> +			 u8 eph_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE]);
-> +int qcom_ice_import_key(struct qcom_ice *ice,
-> +			const u8 *imp_key, size_t imp_key_size,
-> +			u8 lt_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE]);
->  struct qcom_ice *of_qcom_ice_get(struct device *dev);
->  #endif /* __QCOM_ICE_H__ */
-> -- 
-> 2.43.0
-> 
 
 -- 
 With best wishes
