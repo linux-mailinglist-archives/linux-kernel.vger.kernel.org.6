@@ -1,125 +1,188 @@
-Return-Path: <linux-kernel+bounces-216911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A6390A869
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:31:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D5C590A86D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E97CB252CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:31:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C21A2833A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22053190668;
-	Mon, 17 Jun 2024 08:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C96E187544;
+	Mon, 17 Jun 2024 08:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZrPbou6g"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZC1lh2pf"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8BE17F5;
-	Mon, 17 Jun 2024 08:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4BC17F5
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 08:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718613046; cv=none; b=HDxVmjDIDFJxpUJyU/kkqqeebd/n4OlXK8E8doGF/1SpGNtZGWknmin1KmJmUunM75B3quV0mRAWuxGLn2VfGrwa7XT+NwrmYJ7KNPAPTOtBQJBnFWANH7LMhAevRCRmm72yC8Kk59hAINPs/R0ATdFsKUdIAogWLNmFE6imF/M=
+	t=1718613069; cv=none; b=Q1PV55j1ucfUPTXozggxvRpCErdlugOq2GMUbQF3c1w44kNlmGQTDyWUgze09xwY3WYjTM8CgG0doPAKYRQmhcfXVYJtOsuw0LWZ5NkKA/oWvjBzLN20rE4F7NTG21aK3TptIazhZRw6tUoIJsw+VHVw2t8lkufk4A4IaAoDQDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718613046; c=relaxed/simple;
-	bh=yYxw7L+gzDilEI/XWHbKIFjpkH6nrx3hA+WiZNpLLP0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qTKOlwO4OTakvHKmFp/vPqrbcRr9yU3NLSlTHepGYMB01OaxfBSVPipKxfZTA2ryNxVeZm7XwzxkSb0OvHLiEp0+2LFmFF66DTZX/u03z8RKfY0Tub/bDOf6o2XTF7ioZQRuzTrP0eZwSgzxxBJ2+EnixRCJjIHSeZnOV8aZHjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZrPbou6g; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-35f1bc2ab37so3554974f8f.1;
-        Mon, 17 Jun 2024 01:30:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718613043; x=1719217843; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=YVSDet1jU8e9qxWG/OSUjestn/66Ck7NYAywURhS3+I=;
-        b=ZrPbou6gOgZDcOGEH/lITWZ5rRSCmZuSBFEhg1W1hIAUqmbuuthowKjSH6hWMa0u6c
-         xlnJuo1BwgIZ/FahOZtZYQG4n0JvrRvDQLiHQPJsdGBhwmX4pVT7NnkBMId4l9u7izVE
-         V1EAsQZoWfG3Ax3IUctuXWrys7zenqskwCqJte/ySkDlwEdvfQeItAWbFRfDX7kT2BCy
-         L73sItveiGSqAuy6TClWOAODjHU2y7groaWhe9+a9vFjnxCDeiN2NvhZyglfarxtdUhT
-         d5i1GLcvRxng9sNm87iqpcFmPrkpMNczqzwB+ZUk7kbjq8lkKHkdtDVn5UbGecOukzKM
-         7gsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718613043; x=1719217843;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YVSDet1jU8e9qxWG/OSUjestn/66Ck7NYAywURhS3+I=;
-        b=VHVHdQ7C7dOrS8M0a8ONEs5W9lALLVYaK6sSwIXSz1GmSe6f+Ds62ZSfpRpIr3fHaa
-         kha9NiDzM3E1+sTO36cjDp7fjZWut2w7CiOY5wQHMpxMaZlKjdFNYsYNPo21CMGK7ya8
-         7t+a1EUjbC5S/doj5PWXLQOcvmcp5yrcQHCOgu+CP5xyhMqlRKEXRPwrQEwUnAJPSWUd
-         qxtOcpYJ7ceMQxVR7Atl7Eo+TBwFjLgzwU+QhCXmT1w+r/2smoYv6l06G7N9NZPtE16V
-         fwhD1x4fOGSGDU855ZhxfAWHFUu8IKNkUBdUuKJ8LfgULEYkvhbwOz96lt/sF3hhLqpq
-         D27Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVzPJdx6no6P2n0qcDg2L+dq2OPtqNKAmHZmj3Xcq3Z9ETe41Jcc6J+blYNnpWpOxC8/Be+1Q3ZKxtKPhOdC2Jpf0RgCRd2CdDcUjm1Xc8SK1C+Ne/FzTR2YSgEyD9oiM/eExzsXAEKm35ZEls24AqMqFG5+XeFOTbbxWkxwCDH5Q==
-X-Gm-Message-State: AOJu0YxJkK02ADhnmHtB5q3JL65t5txhNCDyULVfTqdBWZ1xNc8dvdM7
-	UCmVVF0cxmZSA8MX+iAwBY8N4jfKVGiCkPivUU+evbkHxtEab69M
-X-Google-Smtp-Source: AGHT+IGbJvNXxttiBMa1KsFPj/tmntA/qNIHNUlo5b9laNDyBmWTRtbokJXpTeLkSl34hyQYAX13sA==
-X-Received: by 2002:a5d:42cb:0:b0:360:82d6:5e98 with SMTP id ffacd0b85a97d-36082d65fa1mr4975741f8f.51.1718613042899;
-        Mon, 17 Jun 2024 01:30:42 -0700 (PDT)
-Received: from [10.158.37.53] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3607509c9a0sm11331771f8f.27.2024.06.17.01.30.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 01:30:42 -0700 (PDT)
-Message-ID: <9ec867ad-6b7b-4ca9-83c6-66e9aa674cae@gmail.com>
-Date: Mon, 17 Jun 2024 11:30:40 +0300
+	s=arc-20240116; t=1718613069; c=relaxed/simple;
+	bh=ZbDI9c0HmPjexoKRl1GQN/dSXPz2UkxaGRrj1fQpjmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qcw9P0QWs8pvPwkCm9HEga8mA/7edZQKlLP9d2veCvZAzmyHeU0CiETxfeO8s09Vi24q91R8RsMyuTwg8g1mAST8+x/0DrdP/ylxVnK8tTu5AVs3oDGLjnKeDbegNRgytlsDMe7Ae4J16ptDvPsh5k1FksrQYWR5PSJCYj4+bu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZC1lh2pf; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=sJgM
+	bxWu9V+TwYJoRKfSyRjs1pVcjqeuejguaECABE8=; b=ZC1lh2pfEulFpMwsIFWX
+	45+u8TZdz4dTG5H7V2BK77Aro1V0Lpuv2Q0qJH2TFKZ510s24oNWfVnOrzqTSEg2
+	XBac43WDfHZF7MjbAVnhOaHWG5zTwVw5X+7veDo/vBmw9TsoJ51aYH7MqLnAknKH
+	BbYsjtFswv2ky1bYws0OyerF+rzu4YKqi06QvpqTAN/vuu7DbjgfH4HTEzlS2Mtk
+	q1mPhzgAO9HVnyHCPJ/+AtWswBH1+kHK6ty6OmBDyqGZ8PKe3n+HxbLOpYV4I06V
+	0n1jGw2ADAkaddXlgic/ykP6pa5+fHHEaRDSFmubkka/fzKYkMg/jfjgBQH+zHiM
+	8Q==
+Received: (qmail 2258176 invoked from network); 17 Jun 2024 10:31:02 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Jun 2024 10:31:02 +0200
+X-UD-Smtp-Session: l3s3148p1@b8YRyREbzJggAwDPXzjQABqqX1QYyOSW
+Date: Mon, 17 Jun 2024 10:31:01 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [RFC PATCH v2 3/3] mmc: renesas_sdhi: Add support for RZ/V2H(P)
+ SoC
+Message-ID: <prdvmtsp35yy2naohivbrya3go6vh5ji2cdjoebw3ovditcujo@bhck6tca6mhj>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Prabhakar <prabhakar.csengg@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240613091721.525266-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240613091721.525266-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next v5 2/2] net/mlx5e: Add per queue netdev-genl stats
-To: Joe Damato <jdamato@fastly.com>, Jakub Kicinski <kuba@kernel.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, nalramli@fastly.com,
- Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>,
- "open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>
-References: <20240612200900.246492-1-jdamato@fastly.com>
- <20240612200900.246492-3-jdamato@fastly.com>
- <0a38f58a-2b1e-4d78-90e1-eb8539f65306@gmail.com>
- <20240613145817.32992753@kernel.org> <ZmtusKxkPzSTkMxo@LQ3V64L9R2>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <ZmtusKxkPzSTkMxo@LQ3V64L9R2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ue4f7wdlmrpwmuit"
+Content-Disposition: inline
+In-Reply-To: <20240613091721.525266-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
 
+--ue4f7wdlmrpwmuit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 14/06/2024 1:12, Joe Damato wrote:
-> On Thu, Jun 13, 2024 at 02:58:17PM -0700, Jakub Kicinski wrote:
->> On Thu, 13 Jun 2024 23:25:12 +0300 Tariq Toukan wrote:
->>>> +		for (i = priv->channels.params.num_channels; i < priv->stats_nch; i++) {
->>>
->>> IIUC, per the current kernel implementation, the lower parts won't be
->>> completed in a loop over [0..real_num_rx_queues-1], as that loop is
->>> conditional, happening only if the queues are active.
->>
->> Could you rephrase this? Is priv->channels.params.num_channels
->> non-zero also when device is closed? I'm just guessing from
->> the code, TBH, I can't parse your reply :(
-> 
-> I don't mean to speak for Tariq (so my apologies Tariq), but I
-> suspect it may not be clear in which cases IFF_UP is checked and in
-> which cases get_base is called.
-> 
+Hi Prabhakar,
 
-Exactly.
+> - Ive modelled the regulator now to control the PWEN aswell.
 
-> I tried to clear it up in my longer response with examples from
-> code.
-> 
-> If you have a moment could you take a look and let me know if I've
-> gotten it wrong in my explanation/walk through?
+Yay, this looks much better. Good work!
 
-Thanks for the detailed explanation.
+> - I have still kept regulator bits in quirks I was wondering if I should
+>   move this to renesas_sdhi_of_data instead?
+
+I think so. An internal regulator is not a quirk.
+
+> - I still need to add checks if the internal regulator used and
+>   only then call regulator_enable/regulator_set_voltage. ATM I am still
+>   unclear on differentiating if internal/external regulator is used.
+
+When it comes to re-enabling the regulator in sdhi_reset, I think this
+can be a sdhi_flag like SDHI_FLAG_ENABLE_REGULATOR_IN_RESET or alike.
+
+When it comes to the regulator, I wonder if it wouldn't be clearer to
+replace renesas_sdhi_internal_dmac_register_regulator() with a proper
+probe function and a dedicated compatible value for it. We could use
+platform_driver_probe() to instantiate the new driver within the SDHI
+probe function. This will ensure that the regulator driver will only be
+started once the main driver got all needed resources (mapped
+registers).
+
+My gut feeling is that it will pay off if the internal regulator will be
+described in DT as any other regulator. Like, we could name the
+regulator in DT as always etc...
+
+More opinions on this idea are welcome, though...
+
+> --- a/drivers/mmc/host/renesas_sdhi.h
+> +++ b/drivers/mmc/host/renesas_sdhi.h
+> @@ -11,6 +11,9 @@
+> =20
+>  #include <linux/dmaengine.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+
+Regmap can luckily go now.
+
+> +#include <linux/regulator/driver.h>
+> +#include <linux/regulator/machine.h>
+>  #include "tmio_mmc.h"
+> =20
+>  struct renesas_sdhi_scc {
+> @@ -49,6 +52,9 @@ struct renesas_sdhi_quirks {
+>  	bool manual_tap_correction;
+>  	bool old_info1_layout;
+>  	u32 hs400_bad_taps;
+> +	bool internal_regulator;
+> +	struct regulator_desc *rdesc;
+> +	struct regulator_init_data *reg_init_data;
+>  	const u8 (*hs400_calib_table)[SDHI_CALIB_TABLE_MAX];
+>  };
+> =20
+> @@ -93,6 +99,8 @@ struct renesas_sdhi {
+>  	unsigned int tap_set;
+> =20
+>  	struct reset_control *rstc;
+> +
+> +	struct regulator_dev *sd_status;
+
+This is a strange name for the regulater. Especially given that you have
+as well the more fitting 'u32 sd_status' in the code later.
+
+=2E..
+
+> +static struct regulator_init_data r9a09g057_regulator_init_data =3D {
+> +	.constraints =3D {
+> +		.valid_ops_mask =3D REGULATOR_CHANGE_STATUS,
+
+Don't we need REGULATOR_CHANGE_VOLTAGE here as well? Or is this implicit
+because of REGULATOR_VOLTAGE? Can't find this, though.
+
+So much for now. Thanks!
+
+   Wolfram
+
+
+--ue4f7wdlmrpwmuit
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZv9EIACgkQFA3kzBSg
+KbYmhRAArX6HJmfEhElIby3cdkoYJ9a6reWiPnb/H+5jI2ai9dNl2W2oVhfvtI2M
+DAsSAmWM2NzRIy6K/dt8XhLqfBdfcG5qmKQyp3GJxK5iD4naYsQOxGs8IBBvvPgT
+ASWBe6S0bSBUte1dR80iMoVkFXV97BBq2JatTu73hBkZvIaBpcU1Ekr1vAHHvAu8
+ZKf72yONTm7jdPRiEl3P9dSAT957uqh1pQ1Y5SC8rMDiXZ+MGOaBZxXK61lpNoao
+NDXfcDHBEanl0skuiQuWVbLEVw47KJZlEzyEFXzeWaI5/zzE8qxFTFUHcMaNeAHe
+ppnuEqGkgzntT+6je+xuRItcsJbmSlhTGf5LMoU29m99VB7jYN+AGHqfkTpma9Yz
+JIzQ4AdnUm+hi/UzNtxqZXthBcw0KnDThfvWuLFuCojOCaoFFbK/D/fRApdClOG0
+dqRU+e0runDmUPcRSdALGbcfFZCql1phHBaYS185ORd1DReRPagOQxNRn2UDMll6
+6SDUq9A5iEjiRL81MN04Fugi3QXpDSeowa/9QTjEqlOXOCaXghVXqFH0y9KKfL4S
+eN3KNa027p48WYLcSzjfzOceMCL0Ixzkj6oUNur1NmXaVs6TEZSpoc2oDHA5/xAV
+ip8W+RQhRHuui/apICpDV5Pjk0GtQTNuAcbGGxE1lm1VDMfiLrM=
+=00e5
+-----END PGP SIGNATURE-----
+
+--ue4f7wdlmrpwmuit--
 
