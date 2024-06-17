@@ -1,117 +1,100 @@
-Return-Path: <linux-kernel+bounces-216943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA4490A8E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BDF590A8F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74A78286B1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:00:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18824286C63
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6918519067E;
-	Mon, 17 Jun 2024 09:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF78190679;
+	Mon, 17 Jun 2024 09:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M3sM4XLl"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cfiY+/ix"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355E660DFA
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD19374D9
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718614813; cv=none; b=P8ANIXOJwzLFE6dzc2+GJd44VqEiDh+KzKlKECLVErHdJa92rIeb3FU7Hy85SmOH6VXppV7WqKYV14rtON1alJoGx5au/d8R2O7FJxQEuf1Uu9Ktg2gesGEsHDkAcXgQ8siTC1RvX4ZmZxYQiXJa3syykBEsaRFBL4/+drDc6qQ=
+	t=1718614949; cv=none; b=V/XQm/+54fh4CXa7IkpfKXsjKsOSTjNbGQNYY/5sNqNupfkyAF2u3cPy7+NvurwQb2n9Lu2PgIT9WiLiyz/jk5TfS9xSJB/OJxFXiGi6i5FqZc85iCiXYf/fo7sjsg/pDQtsoCIRMVRuV/WzCpbOap5HdACeWh857D7oL60jUh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718614813; c=relaxed/simple;
-	bh=V1FSShmentoBvRry0j/39LUajSeLEBqH5nME2N3UuAk=;
+	s=arc-20240116; t=1718614949; c=relaxed/simple;
+	bh=1qnOahOGBH471qmFiN5a9Hm4ejehkHAVCb/42SLIrHw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h9zOlFaIp/1t0R8pyceupk6/BInAHl+vCCXjEozoTWz1GWbdDCkm0mNWjYvyhUUPSMIdt6v7lvHztSfSpNy55ZO9d4ss7sNsfKwxHrVT5rHtZRy8SMhGnmwDIp7sv5u3jSYckeW4CxkasJP0V1w8Jxm0UJNoH0adW0Qmw8nbqgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M3sM4XLl; arc=none smtp.client-ip=209.85.167.48
+	 To:Cc:Content-Type; b=oeWC3iZIz6rPEaeMA8on5Iyl9iny/Pd1+Ey/GsT/VWcBr7ylom9bcGPrzEC9JiHpybaDF7k9xXl7ud+qHdJ2wC1bLYPLqHf6P6gAlLs2bZdQg6eFUnWKtIkTiUobsnfxhrKZwgxD+9hG4FWRnLoE4qi37En/5wvFfHUDN3LLiTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cfiY+/ix; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5295eb47b48so5015397e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:00:10 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52c85a7f834so5342232e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:02:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718614809; x=1719219609; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718614946; x=1719219746; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V1FSShmentoBvRry0j/39LUajSeLEBqH5nME2N3UuAk=;
-        b=M3sM4XLl/5Q0V3CRwkqgQAurW4yprqo50nshziVg/WYZi9JFR+GmPVDaXS1OxKO/Et
-         b1u5qLcDIYPKS34p6cYhDZm3QatFJq4yydOmrydLzwuTgTb93oGc8NYZdnxPCxLpaGDp
-         2kPDQ+EcFk2WQRLAa6GoBFKCKdTWTAsVPemqaxUvCginqfwHRj2AC5eHJZpST3ppZ3br
-         J6HKyAr5ByeqqD4dlnVrGDwHusROlBfL2H23vb2GL11uHVHoUpQ+hVzaVCVogsnXzHEF
-         h5naa9zSVWs8YlxT6YC9X2+hvFKXa97wcSUnlDNr34EDOFI0toWZxfblkLRxWWZCU9KR
-         8gWg==
+        bh=+ZKVXz9zFkYiCdmxjX5crpO8a9wB/5gYIUl8nRld108=;
+        b=cfiY+/ixGJ+iQAdvoVwfqYlZJQlI5kQoCced6EYqKJ5ASiVL60wsk4NsuDg0mAF4pn
+         OINwZ+nqcpjbl/UMpEOareooi9AwSvXDSCO4dUVYXU5KlTieod7LuSXtUbXdFWgDftjx
+         46G1WFCD0g3PgMc2tCCPNlsLJNOqqwnOuiwb1DHX0D2ITV9dTl0onnwe/G8M/QezAHYo
+         Kr4EIgDK5BRadyChTYGSk/snTgEm/SwH/6cRtU4WmjAgNbMdxDz6jAKWprXMvzss7cSo
+         5sHvdczUdDPyuRHqsnyl8JqGM3Uxmr7NKJSfaFJ9mxWD5xt5Vmj8ueUYwlngtXd/7ZZ7
+         JLQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718614809; x=1719219609;
+        d=1e100.net; s=20230601; t=1718614946; x=1719219746;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=V1FSShmentoBvRry0j/39LUajSeLEBqH5nME2N3UuAk=;
-        b=OYgZaDiS8mJYtbe2aNRyKklXzIeoGf8eQ7TL8dCUn9rnkvqTo3FFHC3bEHphFl+2QX
-         bdFW7sIJ+6lZGIgIZKl0K1p/cLYAKYurX9lj+gDUO1GwOVQ46R8VgCGmfJVj2k9jnbRB
-         isxGIJkDfsNtL7t3Ydk/XCWbUcV6iJIGULZv1wOFrcN9pOoUfchVrzKGAhV2EowY6jq/
-         ufmNBGcbspP0WJleRp1+fhquLvkwYcdmzxP6LaZQ+JwnstFmBA1hCb1b6ncxW4LD9Jn9
-         TWYIq2jTOksr+fFx4Db7lE32x9rMKnbDppR+gVIazv550wBfcj42JKjVVhZI3E8/pk7I
-         6dkg==
-X-Forwarded-Encrypted: i=1; AJvYcCX46D69fN+x1w2TSyIqbZBPTyhX2MHDH4Mrkpf44T83EXdr4g4PSyd26TBgJlHo1Gumu+Ci5Uwc8blKDGrmsqfBz+MMUVrHoDI0QtiE
-X-Gm-Message-State: AOJu0YyI49bta0F4FdgjueawUU9ONzb7UwahFF7Zo2B5AlStelA2mHXp
-	KHh4S0faEdlx88ZIEaIrkQL7jzNihtPuJFyAC/PMC5Fb9EdNEX3e5KVnk4WUDLnx5aQl0d96dYr
-	QaJTpumJ3FUEUCDcYFzhIdJd5u8/7846XztO0Lg==
-X-Google-Smtp-Source: AGHT+IG9zighTs6xvh63BukgGULZA+rm8EHxMlcrHikHKdNririru1xtsssJ0ZWvnvp2q2oJd7kXO4xZ0dX+3hN0oTY=
-X-Received: by 2002:ac2:5a4b:0:b0:52c:884f:5a31 with SMTP id
- 2adb3069b0e04-52ca6e6dc0fmr6141428e87.30.1718614809351; Mon, 17 Jun 2024
- 02:00:09 -0700 (PDT)
+        bh=+ZKVXz9zFkYiCdmxjX5crpO8a9wB/5gYIUl8nRld108=;
+        b=ksqiHI9q6nMhb7YnA53jPBjRZTO9VYbdO4oMLM2BFVnfqM2Rlhl+r9hms0XPVrqkiY
+         GesSnA4eSd3ddYNiOxOZfqjh7eHxZPwvz8rwNeSgJ9Kij+ywjGQzxN46NpBogQ98Odvo
+         kuyepRChnRkxRLLk2JwDnK3mBa9Xflb8DHbWJRwZF+1ekDQ9/88AV8IRYTkOKDqdFo2D
+         i4lukEsH19f5fvH4vhVIpeqUP42Xzgrjddk0+HzeW3orbulV4dpM/hnHqIQeS2mC4Rjf
+         sTxc/uaojAlN7Wj4W1My3K4YOcvArnZTFyi3OqphG56Og2TgQbbaoJaxdKyBocMx2Jyi
+         1TPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWOpkCKOR+kMBrwfkWbxLsz4QKzCcMAznTz105y+fEb9FI09swl/iK7Ab/M42WnOCN44g2FYWhjkgTBs29H7tHUZHMEMq6bLw3IC3Zi
+X-Gm-Message-State: AOJu0YyajXiTGR1ZZ2/7lwUXr+gO3CoFiMyukw/lEtdSQ0KPpLKDAr8F
+	BRMoh+vLbWNqXCgGreYSdd/9uZjFTJ8hSvH3xDtIJ/RvliGhQDiZcNNSC07MF5G7ydI7yh5z00/
+	H4SgeYIdZU2mqMy49u1EPEjesAcADcMrbYYR6Zg==
+X-Google-Smtp-Source: AGHT+IEDbmeeJPP/Lzk+VO4Yf74aqIdgheOGoGFca2Xhj3pvQTusqNkXyG4ZYxSQcu+BAqajvjPvlTSvRaLNcm3T7P0=
+X-Received: by 2002:a05:6512:4015:b0:52c:b11a:bfb3 with SMTP id
+ 2adb3069b0e04-52cb11ac093mr4656348e87.57.1718614945752; Mon, 17 Jun 2024
+ 02:02:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610-md-drivers-pinctrl-v1-1-68462e3d960c@quicinc.com>
-In-Reply-To: <20240610-md-drivers-pinctrl-v1-1-68462e3d960c@quicinc.com>
+References: <840152f9-d3bb-410e-8164-4c5043e1983e@moroto.mountain>
+In-Reply-To: <840152f9-d3bb-410e-8164-4c5043e1983e@moroto.mountain>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 17 Jun 2024 10:59:58 +0200
-Message-ID: <CACRpkdY9aRr+OisO3Bs5-p7gtF_PbGh9MbWnyuURXSuMBW34Nw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: add missing MODULE_DESCRIPTION() macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, kernel-janitors@vger.kernel.org
+Date: Mon, 17 Jun 2024 11:02:14 +0200
+Message-ID: <CACRpkdakxbw=A+ri56t=-AF1mr6Y711ouFRfPgPj=qrSfRtZ8w@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: nuvoton: ma35d1: Fix an IS_ERR() vs NULL check
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 6:21=E2=80=AFAM Jeff Johnson <quic_jjohnson@quicinc=
-.com> wrote:
+On Wed, Jun 12, 2024 at 12:43=E2=80=AFPM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
 
-> When ARCH=3Dx86, make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/bcm/pin=
-ctrl-bcm4908.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl=
--mcp23s08_i2c.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl=
--mcp23s08_spi.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl=
--mcp23s08.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/meson/p=
-inctrl-meson.o
+> The fwnode_iomap() function doesn't return error pointers, it returns
+> NULL.  It's the same as of_iomap() in that way.  Update the check
+> accordingly.
 >
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
->
-> This includes many meson drivers which, although they did not produce
-> a warning with the x86 allmodconfig configuration, may cause this
-> warning with ARM or ARM64 configurations.
->
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> Fixes: ecc5bf868673 ("pinctrl: nuvoton: Add ma35d1 pinctrl and GPIO drive=
+r")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Patch applied.
+Patch applied, thanks Dan!
 
 Yours,
 Linus Walleij
