@@ -1,165 +1,118 @@
-Return-Path: <linux-kernel+bounces-218120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F2090B9A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:25:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6BE890B984
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1B01B2EE4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:20:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A46C28A6B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE230199254;
-	Mon, 17 Jun 2024 18:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D70E1993AD;
+	Mon, 17 Jun 2024 18:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BjAmXXD/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ENRDcx9t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BF5197553;
-	Mon, 17 Jun 2024 18:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3D1197553
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718648166; cv=none; b=Iu8UbZB7IpaJHs+Palbep+hr4Q97/xIPKvg/vHWsXLKlPCo4U8NYOEfwWqGEG48K7sANg0XK2FEiwj3+fmruA0xtw7E4K+aMs7ja7eztnGpdbV/sab4Pd70IKhr05RlkC7to0d+AaHn3R+7pnhh1w6zsSOGHX9u0y5pYzhmZoEQ=
+	t=1718648214; cv=none; b=NYYSnyWyi4A8GEzVO7hJiX+00CLtL0v2KcbAMBi2KGeL6/ct75gOru47eKMzhi/qa+HUNJOjP7woRwwAMebIaH5jqwqolP1LBrJ7mmzkXclmuIfV/ApJV+mrX3xsfqYwKrGWYwPVgY1KQ+xw1y66GcwVpqVRdjnJi/8ZY2orLXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718648166; c=relaxed/simple;
-	bh=4U1a6i5Q7+rGsa8vK/Gbq10wKLL6onxJ2NJdNSHWNYI=;
+	s=arc-20240116; t=1718648214; c=relaxed/simple;
+	bh=xdolQoqFnN4ARnR+vGjrqoUqakhWeW/JccYZ+xwmMJs=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=m3b8/EyaTODF8PEgy/Xdn66nqv6aGqr2eIB5v9jnrcsYMTJQUBdAxxv0Ntq3RLL8qg+XMymyYI3rZZ6mB16z5Q3njkye6Cofq1YHRc4aX8AA2CCu3pbzsJUZB8azR5SfK1libSlG+vVFkp0ijV9EvG8sWc26WwWBbo0Lu7K/p8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BjAmXXD/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE6C1C2BD10;
-	Mon, 17 Jun 2024 18:16:02 +0000 (UTC)
+	 Content-Disposition; b=LXdE8t3kWkFx/JduLVeeMDTFB4AaoGZrCstqJF6MevGCibtL7Q0bCrQ/2DK6xHYsiZIc8zIlONlrqrUtfTfECJ6SzKO98eDp4xr+ILKOC9QWnc8TMt6EuMYHaJ1vK5V11KtSNLJbR9Jr0UNmZaT57c0VlFRUPGp6OO+PeZZHgS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ENRDcx9t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45835C2BD10;
+	Mon, 17 Jun 2024 18:16:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718648165;
-	bh=4U1a6i5Q7+rGsa8vK/Gbq10wKLL6onxJ2NJdNSHWNYI=;
+	s=k20201202; t=1718648214;
+	bh=xdolQoqFnN4ARnR+vGjrqoUqakhWeW/JccYZ+xwmMJs=;
 	h=Date:From:To:Cc:Subject:From;
-	b=BjAmXXD/m6pTnx8zCWKKsyaV0BhMKFjEHUBVTVf0VLpIqHCvBxzg/xFh0MOjQmKau
-	 kFo4lt4vzd9h7tsveHUnqv9TI0lcmxizorcauGJtRRKV5V4f45J97eRHZSno/28BFr
-	 lAQOiBU2k0MBoJqVVdIv+m4khfJSQp2ISTJPqsU3jHWkSCvpo1TOvvrLkdzSa/kq8D
-	 QCuil24MI5qDdQy21gq3lJHQc0jfzTiS456NtEVXuhsaquqgyeLY1zajQoJwtWB0Tz
-	 wAfCzQub0QH93gB0K2QlTSnyrsj6PJ6I+0d3Jqs1SVhDylkSkWOnRTEw7GPUM4nYAz
-	 To2eemruUdJPw==
-Date: Mon, 17 Jun 2024 19:15:59 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	Networking <netdev@vger.kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>
-Cc: Kui-Feng Lee <thinker.li@gmail.com>,
-	Martin KaFai Lau <martin.lau@kernel.org>,
-	linux-input@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	bpf@vger.kernel.org
-Subject: linux-next: build failure after merge of the bpf-next tree
-Message-ID: <ZnB9X1Jj6c04ufC0@sirena.org.uk>
+	b=ENRDcx9tIzIoy/fIog7/o0sdMUh7fQZPjj32z9Tze2bFwI5GS+tfWCQI4flaOJVES
+	 oMHO49nijcvwiGdawoO+60vnQ0PuPZbR8gCeKJ/W5sPDXcVR/6xqH1ZQv0Zge2YXvm
+	 kWjRsdJ4Q+vVWhGiFDToyTIcES98BEGVHriE11lw6RJM+xmpUNUgag5rT60PoRKT/S
+	 z4+RbBzYzHzWMrGQRmnfPvuLX9+s9WuDnIVpjrR/7S0G4q3lqqt2oAgsG+6OMfC4gr
+	 ltmjDCw8uil6hlK2gDo5rePOHIowLbtlQ7Lu3CM8dobROUmLmUy98UnhikukcuenOj
+	 wU/yjZ33QLx6w==
+Date: Mon, 17 Jun 2024 11:16:53 -0700
+From: Kees Cook <kees@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
+	Christian Schrefl <chrisi.schrefl@gmail.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+	Paul Moore <paul@paul-moore.com>
+Subject: [GIT PULL] hardening fixes for v6.10-rc5
+Message-ID: <202406171116.7CBA01391@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UnPUywumxpyP5nW/"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+Hi Linus,
 
---UnPUywumxpyP5nW/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please pull these handful of hardening fixes for v6.10-rc5.
 
-Hi all,
+Thanks!
 
-After merging the bpf-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+-Kees
 
-/tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:280:16: error: initial=
-ization of 'int (*)(void *, struct bpf_link *)' from incompatible pointer t=
-ype 'int (*)(void *)' [-Werror=3Dincompatible-pointer-types]
-  280 |         .reg =3D hid_bpf_reg,
-      |                ^~~~~~~~~~~
-/tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:280:16: note: (near in=
-itialization for 'bpf_hid_bpf_ops.reg')
-/tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:281:18: error: initial=
-ization of 'void (*)(void *, struct bpf_link *)' from incompatible pointer =
-type 'void (*)(void *)' [-Werror=3Dincompatible-pointer-types]
-  281 |         .unreg =3D hid_bpf_unreg,
-      |                  ^~~~~~~~~~~~~
-/tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:281:18: note: (near in=
-itialization for 'bpf_hid_bpf_ops.unreg')
+The following changes since commit c3f38fa61af77b49866b006939479069cd451173:
 
-Caused by commit
+  Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
 
-  73287fe228721b ("bpf: pass bpf_struct_ops_link to callbacks in bpf_struct=
-_ops.")
+are available in the Git repository at:
 
-interacting with commit
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/hardening-v6.10-rc5
 
-  ebc0d8093e8c97 ("HID: bpf: implement HID-BPF through bpf_struct_ops")
+for you to fetch changes up to 1ab1a422c0daedbd76f9f25c297eca48986ddea0:
 
-=66rom the HID tree.
+  MAINTAINERS: Update entries for Kees Cook (2024-06-17 11:14:06 -0700)
 
-I've fixed it up as below:
+----------------------------------------------------------------
+hardening fixes for v6.10-rc5
 
-=46rom e8aeaba00440845f9bd8d6183ca5d7383a678cd3 Mon Sep 17 00:00:00 2001
-=46rom: Mark Brown <broonie@kernel.org>
-Date: Mon, 17 Jun 2024 19:02:27 +0100
-Subject: [PATCH] HID: bpf: Fix up build
+- yama: document function parameter (Christian Göttsche_
 
-Fix up build error due to 73287fe228721b ("bpf: pass bpf_struct_ops_link to=
- callbacks in bpf_struct_ops.")
+- mm/util: Swap kmemdup_array() arguments (Jean-Philippe Brucker)
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/hid/bpf/hid_bpf_struct_ops.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+- kunit/overflow: Adjust for __counted_by with DEFINE_RAW_FLEX()
 
-diff --git a/drivers/hid/bpf/hid_bpf_struct_ops.c b/drivers/hid/bpf/hid_bpf=
-_struct_ops.c
-index 5f200557ff12b..744318e7d936b 100644
---- a/drivers/hid/bpf/hid_bpf_struct_ops.c
-+++ b/drivers/hid/bpf/hid_bpf_struct_ops.c
-@@ -175,7 +175,7 @@ static int hid_bpf_ops_init_member(const struct btf_typ=
-e *t,
- 	return 0;
- }
-=20
--static int hid_bpf_reg(void *kdata)
-+static int hid_bpf_reg(void *kdata, struct bpf_link *link)
- {
- 	struct hid_bpf_ops *ops =3D kdata;
- 	struct hid_device *hdev;
-@@ -229,7 +229,7 @@ static int hid_bpf_reg(void *kdata)
- 	return err;
- }
-=20
--static void hid_bpf_unreg(void *kdata)
-+static void hid_bpf_unreg(void *kdata, struct bpf_link *link)
- {
- 	struct hid_bpf_ops *ops =3D kdata;
- 	struct hid_device *hdev;
---=20
-2.39.2
+- MAINTAINERS: Update entries for Kees Cook
 
+----------------------------------------------------------------
+Christian Göttsche (1):
+      yama: document function parameter
 
---UnPUywumxpyP5nW/
-Content-Type: application/pgp-signature; name="signature.asc"
+Jean-Philippe Brucker (1):
+      mm/util: Swap kmemdup_array() arguments
 
------BEGIN PGP SIGNATURE-----
+Kees Cook (2):
+      kunit/overflow: Adjust for __counted_by with DEFINE_RAW_FLEX()
+      MAINTAINERS: Update entries for Kees Cook
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZwfV8ACgkQJNaLcl1U
-h9DdVgf9GB5+FOWKqlMI0mTfGp4N8g1OR9Rc0cCIEAmkgy+UaWFfZE4IS4nXIdjY
-3LvR8zXYUW7ZIGaRhxN4N1F1Vs+qMt6NUu243na1B9sjueQmRzCOxN/p4oVe8Sti
-aU7dE6hzYqABx7qnEmIylObFfR4Tt8lksap1YIwQfXTnf5CCtp/khpI6GlCeXlEi
-vVo10hxVMIHpKC1wjAswnT3x95TkkSiuo3r7HB4Gy1QWnSY56cqs0v6QgJOE6Hh1
-vgnESlo48slqKZTt+YcfEUdRxM5JkYOihuZMIvAPDeLnkooM5feBq+CYX7dgzE+J
-XlfHrGbGhwqvJPM3bncYZw9j7lFurg==
-=BpgP
------END PGP SIGNATURE-----
+ MAINTAINERS                         | 28 ++++++++++++++--------------
+ drivers/soc/tegra/fuse/fuse-tegra.c |  4 ++--
+ include/linux/string.h              |  2 +-
+ lib/fortify_kunit.c                 |  2 +-
+ lib/overflow_kunit.c                | 20 +++++++++++++++++---
+ mm/util.c                           |  4 ++--
+ security/yama/yama_lsm.c            |  1 +
+ 7 files changed, 38 insertions(+), 23 deletions(-)
 
---UnPUywumxpyP5nW/--
+-- 
+Kees Cook
 
