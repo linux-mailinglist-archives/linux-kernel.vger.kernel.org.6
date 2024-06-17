@@ -1,141 +1,220 @@
-Return-Path: <linux-kernel+bounces-217272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5368590ADA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:09:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5A7B90ADAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD617284894
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:09:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38AF8285FC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6C0194C8B;
-	Mon, 17 Jun 2024 12:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8011957E0;
+	Mon, 17 Jun 2024 12:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nKGYSbZr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R9UxqEI0"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F198194AD4;
-	Mon, 17 Jun 2024 12:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED7F195387;
+	Mon, 17 Jun 2024 12:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718626146; cv=none; b=f0SK8ymarUFuwyYzZBlXmrSybivlvF3C6eTMlLo7xr4RYHUpxd9t64Hj6M7aIWofOExcOzcq7/nWMrlumOm1LgEIhPBtt8pPMy2w/5Mdo+1tEgf4MBhDwgISCn6VXIJgqlKfYNpbZuwDcWX0CQQEYT9bO6ZbsbfyO5PC9sIh/RU=
+	t=1718626164; cv=none; b=isRuK01EobrVpkffAITYzBB4Kty9Q7/dWZ2Dmv1IbhhlesGIP6AgqrnMCVooAVHf2V/nAnoz8akrNKKLSa0Fbn+wal6L//4tQsK2sAH5VFimm53nusXbRNYo4oaFtvq8M0DWj2OXIsSAbPHZD9usk63fpelnwP+hocu+3tOMJMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718626146; c=relaxed/simple;
-	bh=LfluWw7DYm39LFePXaV2AcWOiTCAf18yVmNfxU7hQis=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZsZpka8h7ts41802E9K6MKWA64NWu6+oFf4DJuVEtnvbIVvkJohKG5dkBxMGFtbHD2o5HY0v7zgpWUJfnoBIPZ9vmF6Rm0F8vWmh0boypnl1nqBux+QdJjTeJeh8f7RqTnGQsopiBVsDUQRP0cGRWJQu2uRM7hhrjEi+FXmz658=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nKGYSbZr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E301EC2BD10;
-	Mon, 17 Jun 2024 12:09:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718626146;
-	bh=LfluWw7DYm39LFePXaV2AcWOiTCAf18yVmNfxU7hQis=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nKGYSbZrGsaEEzMIHLPTw1SZSXyYotHDxWq5ZEXrPZIv5FmY0aWKvEiZglgAEuTgK
-	 4IFYYi3x8nYoi6TP577n5kjOp8Td9QjKCGYCqA+9J9R+C/6dXKtIw631WZkgue69Zb
-	 ZmwBSoyLGsqnU68sLKG0G/sclshVWaEu12r8E82q7BFdixcojIZbEFL9wk4Nqvqz/N
-	 56I4l2mgIUp/DvvBhl5pJWzL7/Su+dl1df9gvtYJ6Or5Nt+ne0wECCN3A4XhgqmJYr
-	 E2RyTIvBmoAW0QTNpuRf1tVpi+zBX+p7BBHRZQW1KG9sdu8WRu6DsYLEUY9H6rulK/
-	 vQHi7NTQfRgCQ==
-Message-ID: <316c0751-17dd-4fc8-b424-bc8e875aaf83@kernel.org>
-Date: Mon, 17 Jun 2024 14:09:00 +0200
+	s=arc-20240116; t=1718626164; c=relaxed/simple;
+	bh=/gFndJ0TcyXllsSPb7CaJemK93EcIqv5fi1nTc1sBlo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tMpAduE+CEuAOjanY60nN2V1LmUWG9Fdd4G7t4FTT+7jFq+dTwN/NOpFhMqK9A9Zeksv99anFfatoUU4R8kyb0395SDVfzr5zVYWZxnalDBQwEBLC+Br4I9zJg2zr6qjWdHj3wAA9Oti4QvCORR4org/7HYT7VmMrsEXNVCjRN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R9UxqEI0; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7979198531fso320768085a.0;
+        Mon, 17 Jun 2024 05:09:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718626161; x=1719230961; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UjnEoquzo9Lk2KRmH+XQyjN0aGvb5l6weKjYhKoEUUk=;
+        b=R9UxqEI0dcSsAm6oB3LQpl9q/2+IlIpRArP/JPOXBH/AbgNCvTg3lcuN+HoAIBSKU4
+         lCGZ3sDAKNQD0phfgRdrSH9N4tRT3z/hCn6yjT3ace2vWB4I73sZ6eQeCiLkdzx2iTtH
+         LUXgnqq0sczcuqe9pQ67Tsm+Zl8+foYegfQATw2phf9dGsTOg5AhaxDCPjdvNk99yw7H
+         pS5AC10TcoIet3VmDSPlyGM7qAPYA+4GB9cXea2xIe1TBWMLgNEczi03VnsNQfH3QWcK
+         UGXs1r9y+K0UBiY5ION6J0oi7hb42acxW4xbUSbcDdHzs6kp45qh4K3AgA2C4h7gTfE0
+         3CiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718626161; x=1719230961;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UjnEoquzo9Lk2KRmH+XQyjN0aGvb5l6weKjYhKoEUUk=;
+        b=PqLbTUvUDa9Va2cYodmPYtOBsHhiBvnHXQ3ajd/mLQjmmAm/V7xjSjq6JsgDvCX+N2
+         14weMvOz2uMdC737xTsLKWUhoXsHUzkQ4x4HbZl01YnDwM4eheSgQXyc8TBrtBq5uaJw
+         wc9Kb/AY/SQHpUd2yFj3nZKyOpVXRWY+K6onXqkAkZDR21I+2bU9EJ/Fh8VRkh2h8km4
+         XO7UXiQm6ONgcfsszhXzu8krEM8Pgk1APGskbT4Pz8OiihqnYGtqoTr0A7NAJGudAuPg
+         l8ebwyd3KORJaolCHQA+SXQWiLuDsccxtcKosNhMkeQJ+rLdwUeCJqfTaX/NIeD6PzwH
+         q+Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0zgpRBwJSc4AnSz1YFGTi2Xv2GS2BEcK5+hsNzxK0QtHAZ+pCfft2tAkyS6Rc1e8Vs0+BoBHJPuS9tklkQyJ1UhEtfbGWGp3ujuIiTcZkIpGuMJgrAWW8wtrKBhJLpdZJmPpf3DN6fYvp1o2P+9phDJ52u6LpM3D1sKVJYn09++VJ9QiG5g==
+X-Gm-Message-State: AOJu0YzuEUnXDxvw/G/k0YEbvn+6+p2U3Obr7PaBE3fMWA5w1bUofhWU
+	WwqCTrL6QRYEBIaZ9b3vPle33tG1dfTVv/fEmJ167SMyaC8DV5kLTUqM85pOyB3VJjqsJ48Pmgu
+	+5gdEQLs1d/SnUZaWTuPrElFwrt4=
+X-Google-Smtp-Source: AGHT+IGC6gJTPFUpeTBWZHvXEWPldOelBDHsw67xc0ymSDYjHFSPBn6kpD8WkNTjHbWBLj3NLVjUB4bhKcNwPIPO0bU=
+X-Received: by 2002:a05:620a:1927:b0:795:4e07:833 with SMTP id
+ af79cd13be357-798d26b4a6fmr1074839885a.71.1718626161127; Mon, 17 Jun 2024
+ 05:09:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] ASoC: dt-bindings: Convert realtek CODEC bindings to
- DT schema
-To: Daniel Baluta <daniel.baluta@gmail.com>
-Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
- Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240614033812.51312-1-animeshagarwal28@gmail.com>
- <b214c9db-fd82-4d5f-9cc2-96857da1bef5@kernel.org>
- <CAEnQRZBPv+OAmNBHe8fWziw8zJKFkH8vd-oe_G-e3OVSX_sTRQ@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAEnQRZBPv+OAmNBHe8fWziw8zJKFkH8vd-oe_G-e3OVSX_sTRQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
+ <20240615-fahrrad-bauordnung-a349bacd8c82@brauner> <20240617093745.nhnc7e7efdldnjzl@quack3>
+In-Reply-To: <20240617093745.nhnc7e7efdldnjzl@quack3>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 17 Jun 2024 15:09:09 +0300
+Message-ID: <CAOQ4uxiN3JnH-oJTw63rTR_B8oPBfB7hWyun0Hsb3ZX3AORf2g@mail.gmail.com>
+Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
+ ->atomic_open used.
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, NeilBrown <neilb@suse.de>, James Clark <james.clark@arm.com>, 
+	ltp@lists.linux.it, linux-nfs@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17/06/2024 13:18, Daniel Baluta wrote:
-> On Fri, Jun 14, 2024 at 11:32 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 14/06/2024 05:38, Animesh Agarwal wrote:
->>> Hey all,
->>> This patch series converts two of the thirteen realtek audio codec
->>> bindings which are still in txt format to DT schema. I have chosen
->>> these bindings as they have in tree DTS files.
->>
->> ... and the point of DTS is?
->>
->> To validate the DTS against bindings and see if they match.
->>
->> You received such feedback already.
-> 
-> Hi Krzysztof,
-> 
-> I'm afraid I don't understand your comment here.
-> 
-> Animesh is saying that we are now looking only on bindings that are
-> actually used in the dts files.
+On Mon, Jun 17, 2024 at 12:37=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Sat 15-06-24 07:35:42, Christian Brauner wrote:
+> > On Wed, 12 Jun 2024 17:09:55 +1000, NeilBrown wrote:
+> > > When a file is opened and created with open(..., O_CREAT) we get
+> > > both the CREATE and OPEN fsnotify events and would expect them in tha=
+t
+> > > order.   For most filesystems we get them in that order because
+> > > open_last_lookups() calls fsnofify_create() and then do_open() (from
+> > > path_openat()) calls vfs_open()->do_dentry_open() which calls
+> > > fsnotify_open().
+> > >
+> > > [...]
+> >
+> > Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+> > Patches in the vfs.fixes branch should appear in linux-next soon.
+> >
+> > Please report any outstanding bugs that were missed during review in a
+> > new review to the original patch series allowing us to drop it.
+> >
+> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> > patch has now been applied. If possible patch trailers will be updated.
+> >
+> > Note that commit hashes shown below are subject to change due to rebase=
+,
+> > trailer updates or similar. If in doubt, please check the listed branch=
+.
+> >
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> > branch: vfs.fixes
+> >
+> > [1/1] VFS: generate FS_CREATE before FS_OPEN when ->atomic_open used.
+> >       https://git.kernel.org/vfs/vfs/c/7536b2f06724
+>
+> I have reviewed the patch you've committed since I wasn't quite sure whic=
+h
+> changes you're going to apply after your discussion with Amir. And I have
+> two comments:
+>
+> @@ -1085,8 +1080,17 @@ EXPORT_SYMBOL(file_path);
+>   */
+>  int vfs_open(const struct path *path, struct file *file)
+>  {
+> +       int ret;
+> +
+>         file->f_path =3D *path;
+> -       return do_dentry_open(file, NULL);
+> +       ret =3D do_dentry_open(file, NULL);
+> +       if (!ret)
+> +               /*
+> +                * Once we return a file with FMODE_OPENED, __fput() will=
+ call
+> +                * fsnotify_close(), so we need fsnotify_open() here for =
+symmetry.
+> +                */
+> +               fsnotify_open(file);
 
-Yes and then one should compare the DTS with the binding, because old
-bindings are often incomplete.
+Please add { } around multi line indented text.
 
-Best regards,
-Krzysztof
+> +       return ret;
+>  }
+>
+> AFAICT this will have a side-effect that now fsnotify_open() will be
+> generated even for O_PATH open. It is true that fsnotify_close() is getti=
+ng
+> generated for them already and we should strive for symmetry. Conceptuall=
+y
+> it doesn't make sense to me to generate fsnotify events for O_PATH
+> opens/closes but maybe I miss something. Amir, any opinion here?
 
+Good catch!
+
+I agree that we do not need OPEN nor CLOSE events for O_PATH.
+I suggest to solve it with:
+
+@@ -915,7 +929,7 @@ static int do_dentry_open(struct file *f,
+        f->f_sb_err =3D file_sample_sb_err(f);
+
+        if (unlikely(f->f_flags & O_PATH)) {
+-               f->f_mode =3D FMODE_PATH | FMODE_OPENED;
++               f->f_mode =3D FMODE_PATH | FMODE_OPENED | __FMODE_NONOTIFY;
+                f->f_op =3D &empty_fops;
+                return 0;
+        }
+
+>
+> @@ -3612,6 +3612,9 @@ static int do_open(struct nameidata *nd,
+>         int acc_mode;
+>         int error;
+>
+> +       if (file->f_mode & FMODE_OPENED)
+> +               fsnotify_open(file);
+> +
+>         if (!(file->f_mode & (FMODE_OPENED | FMODE_CREATED))) {
+>                 error =3D complete_walk(nd);
+>                 if (error)
+>
+> Frankly, this works but looks as an odd place to put this notification to=
+.
+> Why not just placing it just next to where fsnotify_create() is generated
+> in open_last_lookups()? Like:
+>
+>         if (open_flag & O_CREAT)
+>                 inode_lock(dir->d_inode);
+>         else
+>                 inode_lock_shared(dir->d_inode);
+>         dentry =3D lookup_open(nd, file, op, got_write);
+> -       if (!IS_ERR(dentry) && (file->f_mode & FMODE_CREATED))
+> -               fsnotify_create(dir->d_inode, dentry);
+> +       if (!IS_ERR(dentry)) {
+> +               if (file->f_mode & FMODE_CREATED)
+> +                       fsnotify_create(dir->d_inode, dentry);
+> +               if (file->f_mode & FMODE_OPENED)
+> +                       fsnotify_open(file);
+> +       }
+>         if (open_flag & O_CREAT)
+>                 inode_unlock(dir->d_inode);
+>         else
+>                 inode_unlock_shared(dir->d_inode);
+>
+> That looks like a place where it is much more obvious this is for
+> atomic_open() handling? Now I admit I'm not really closely familiar with
+> the atomic_open() paths so maybe I miss something and do_open() is better=
+.
+
+It looks nice, but I think it is missing the fast lookup case without O_CRE=
+AT
+(i.e. goto finish_lookup).
+
+Thanks,
+Amir.
 
