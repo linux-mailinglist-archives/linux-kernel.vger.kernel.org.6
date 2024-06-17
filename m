@@ -1,177 +1,123 @@
-Return-Path: <linux-kernel+bounces-216895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4165790A830
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:12:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A89FF90A836
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB1FF28648E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:12:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D1A12878FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 08:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B5A190076;
-	Mon, 17 Jun 2024 08:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZiuxC+cZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CAC18FDCB;
-	Mon, 17 Jun 2024 08:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B551B19005D;
+	Mon, 17 Jun 2024 08:13:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A46190041;
+	Mon, 17 Jun 2024 08:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718611960; cv=none; b=bEYsLD5I+Ja3tyjHzWoB9nvu+4mmr+VcWOuZKyAU5fkOnuaaVweXYS4i7f6g4GLihfegLmIw8dwoA0QhbpSk9n2WzofMU055YrBO/h+O3os/I58eHp+n0xx/+SylNINEMHR1cMIR502PmRjU/hoLxR29X2LdOjzB4cmF7CYX1Qw=
+	t=1718611995; cv=none; b=XBZZZd1SBjw4ssVpM2L0thV8orSQejeynh4XG1rWrLEG3NLqXGdydODwac654ntEeexnzEmQaS8x6+K/MA6omLaqI7FfFGSUjsXgfqzJUhgDrIRhiIn5pP4PR1pSdtfIFmxN8xG0ymCr6UI9tAgGTtySSUg2GHPZIdSYM+xixrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718611960; c=relaxed/simple;
-	bh=yhl2RzCdR+x+WW3ayanTXncY6o1XRzG9gKgwudGQbOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GFr3pBMaQTlIbqqBbo7SGEcjcHskYpyDTaAUXhjTIuhFaes0/DKfKDC8enSrm2ti7tohIU+Wh/ZMi6AlNazXnWcy3LobZDJ/3fhyHFWYAtAEvAtCJ+eZIzcM3pLT6Y5Lf97TRqeVI0Iop6HAu1Y5OzOMoI2fOWD5792LcwZEXJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZiuxC+cZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46656C2BD10;
-	Mon, 17 Jun 2024 08:12:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718611959;
-	bh=yhl2RzCdR+x+WW3ayanTXncY6o1XRzG9gKgwudGQbOs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZiuxC+cZmE0/Bx4NyAjIvtDtVVyRzbz9g8HeBBpSQyP7BQ+mY9FCX+Hl/Lv44nbRf
-	 5AHg0aampFUBnNWXeGnzN+vvJIsKhT29R4xTfILvApL+tnvGlD1bfZvRxCtLzv8Rjr
-	 7tTvc4m3dfpzOBDPfs2DGVeLr85bDRBwI1xp3LEesAqgslCmZC7/PBnxMbfAE59NAC
-	 QhAbWkkWOGY4ERqfC/2QJLIZYBus3JyGx7y9JozuPuerzssUbhbK9hNM5e7GmUBg6f
-	 nb8UVlDVDcw9oQ18fNgHlrMzQ7825PbX/FrIT+jt7+YZ0rx9gMksGVOxYl+Ux2Qciw
-	 6sLfYsr+IXPAw==
-Date: Mon, 17 Jun 2024 10:12:33 +0200
-From: Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
-To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-Cc: Paolo Abeni <pabeni@redhat.com>, "andrew@lunn.ch" <andrew@lunn.ch>,
- "hkallweit1@gmail.com" <hkallweit1@gmail.com>, "linux@armlinux.org.uk"
- <linux@armlinux.org.uk>, "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
- <kuba@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "ericwouds@gmail.com" <ericwouds@gmail.com>
-Subject: Re: [PATCH next-next] net: phy: realtek: add support for rtl8224
- 2.5Gbps PHY
-Message-ID: <20240617101233.103eb0a3@dellmb>
-In-Reply-To: <e9a2b30f-71a1-4e3d-9754-a5d505ca6705@alliedtelesis.co.nz>
-References: <20240611053415.2111723-1-chris.packham@alliedtelesis.co.nz>
-	<c3d699a1-2f24-41c5-b0a7-65db025eedbc@alliedtelesis.co.nz>
-	<20240612090707.7da3fc01@dellmb>
-	<fbf2be8d31579d1c9305fd961751fc6f0a4b4556.camel@redhat.com>
-	<20240614102558.32dcba79@dellmb>
-	<e9a2b30f-71a1-4e3d-9754-a5d505ca6705@alliedtelesis.co.nz>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718611995; c=relaxed/simple;
+	bh=9NNsAez8XIcZvCc4dnYvLcPL1Zbkb4WiKeq3E7go5Ds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MtFa4Xbxc9l4ImPPuD2kxNY4XKECvmUPHmEe916tp7EhRB5dw/MJeBZXTHhkhW5OwapvCIJHjZ9cRJjGKPsqP160nH/c/T+/zod0IDVFEra85lKDZL4ttbCFfCPXdt0ULuBdXy6YubOQHIWpM6S7z6fq3CSrlIhEaHV6K5Ke9Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 95C99FEC;
+	Mon, 17 Jun 2024 01:13:36 -0700 (PDT)
+Received: from [10.57.71.231] (unknown [10.57.71.231])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 665493F64C;
+	Mon, 17 Jun 2024 01:13:09 -0700 (PDT)
+Message-ID: <64549818-e643-42fe-a65b-138a07319fde@arm.com>
+Date: Mon, 17 Jun 2024 09:13:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] cpuidle: teo: Introduce util-awareness
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Kajetan Puchalski <kajetan.puchalski@arm.com>, rafael@kernel.org,
+ daniel.lezcano@linaro.org, Dietmar.Eggemann@arm.com, dsmythies@telus.net,
+ yu.chen.surf@gmail.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>, Todd Kjos <tkjos@google.com>,
+ "wvw@google.com" <wvw@google.com>
+References: <20230105145159.1089531-1-kajetan.puchalski@arm.com>
+ <20230105145159.1089531-3-kajetan.puchalski@arm.com>
+ <20230711175814.zfavcn7xn3ia5va4@airbuntu>
+ <ZLZ/btJw5LNVxVy8@e126311.manchester.arm.com>
+ <20230718132432.w5xoxbqm54jmu6n5@airbuntu>
+ <20230917010516.54dgcmms44wyfrvx@airbuntu>
+ <CAKfTPtA6ZzRR-zMN7sodOW+N_P+GqwNv4tGR+aMB5VXRT2b5bg@mail.gmail.com>
+ <20240529101950.bjpmmdqfhjg3aol6@airbuntu>
+ <d539bd2c-89f9-4a04-900c-41d257123163@arm.com>
+ <20240616214812.nxtz2kt3svo44mbe@airbuntu>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <20240616214812.nxtz2kt3svo44mbe@airbuntu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, 16 Jun 2024 21:24:53 +0000
-Chris Packham <Chris.Packham@alliedtelesis.co.nz> wrote:
 
-> On 14/06/24 20:25, Marek Beh=C3=BAn wrote:
-> > On Fri, 14 Jun 2024 10:18:47 +0200
-> > Paolo Abeni <pabeni@redhat.com> wrote:
-> > =20
-> >> On Wed, 2024-06-12 at 09:07 +0200, Marek Beh=C3=BAn wrote: =20
-> >>> On Tue, 11 Jun 2024 20:42:43 +0000
-> >>> Chris Packham <Chris.Packham@alliedtelesis.co.nz> wrote:
-> >>>     =20
-> >>>> +cc Eric W and Marek.
-> >>>>
-> >>>> On 11/06/24 17:34, Chris Packham wrote: =20
-> >>>>> The Realtek RTL8224 PHY is a 2.5Gbps capable PHY. It only uses the
-> >>>>> clause 45 MDIO interface and can leverage the support that has alre=
-ady
-> >>>>> been added for the other 822x PHYs.
-> >>>>>
-> >>>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> >>>>> ---
-> >>>>>
-> >>>>> Notes:
-> >>>>>       I'm currently testing this on an older kernel because the boa=
-rd I'm
-> >>>>>       using has a SOC/DSA switch that has a driver in openwrt for L=
-inux 5.15.
-> >>>>>       I have tried to selectively back port the bits I need from th=
-e other
-> >>>>>       rtl822x work so this should be all that is required for the r=
-tl8224.
-> >>>>>      =20
-> >>>>>       There's quite a lot that would need forward porting get a wor=
-king system
-> >>>>>       against a current kernel so hopefully this is small enough th=
-at it can
-> >>>>>       land while I'm trying to figure out how to untangle all the o=
-ther bits.
-> >>>>>      =20
-> >>>>>       One thing that may appear lacking is the lack of rate_matchin=
-g support.
-> >>>>>       According to the documentation I have know the interface used=
- on the
-> >>>>>       RTL8224 is (q)uxsgmii so no rate matching is required. As I'm=
- still
-> >>>>>       trying to get things completely working that may change if I =
-get new
-> >>>>>       information.
-> >>>>>
-> >>>>>    drivers/net/phy/realtek.c | 8 ++++++++
-> >>>>>    1 file changed, 8 insertions(+)
-> >>>>>
-> >>>>> diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
-> >>>>> index 7ab41f95dae5..2174893c974f 100644
-> >>>>> --- a/drivers/net/phy/realtek.c
-> >>>>> +++ b/drivers/net/phy/realtek.c
-> >>>>> @@ -1317,6 +1317,14 @@ static struct phy_driver realtek_drvs[] =3D {
-> >>>>>    		.resume         =3D rtlgen_resume,
-> >>>>>    		.read_page      =3D rtl821x_read_page,
-> >>>>>    		.write_page     =3D rtl821x_write_page,
-> >>>>> +	}, {
-> >>>>> +		PHY_ID_MATCH_EXACT(0x001ccad0),
-> >>>>> +		.name		=3D "RTL8224 2.5Gbps PHY",
-> >>>>> +		.get_features   =3D rtl822x_c45_get_features,
-> >>>>> +		.config_aneg    =3D rtl822x_c45_config_aneg,
-> >>>>> +		.read_status    =3D rtl822x_c45_read_status,
-> >>>>> +		.suspend        =3D genphy_c45_pma_suspend,
-> >>>>> +		.resume         =3D rtlgen_c45_resume,
-> >>>>>    	}, {
-> >>>>>    		PHY_ID_MATCH_EXACT(0x001cc961),
-> >>>>>    		.name		=3D "RTL8366RB Gigabit Ethernet" =20
-> >>> Don't you need rtl822xb_config_init for serdes configuration? =20
-> >> Marek, I read the above as you would prefer to have such support
-> >> included from the beginning, as such I'm looking forward a new version
-> >> of this patch.
-> >>
-> >> Please raise a hand if I read too much in your reply. =20
-> > I am raising my hand :) I just wanted to point it out.
-> > If this code works for Chris' hardware, it is okay even without the
-> > .config_init. =20
->=20
-> I did look into this. The SERDES configuration seems to be different=20
-> between the RTL8221 and RTL8224. I think that might be because the=20
-> RTL8221 can do a few different host interfaces whereas the RTL8224 is=20
-> really only USXGMII. There are some configurable parameters but they=20
-> appear to be done differently.
->=20
-> Having said that I definitely don't have a system working end to end. I=20
-> know the line side stuff is working well (auto-negotiating speeds from=20
-> 10M to 2.5B) but I'm not getting anything on the host side. I'm not sure=
-=20
-> if that's a problem with the switch driver or with the PHY.
->=20
-> I'd like this to go in as it shouldn't regress anything but I can=20
-> understand if the bar is "needs to be 100% working" I'll just have to=20
-> carry this locally until I can be sure.
 
-If it doesn't work, it can confuse people that it is working if it is
-accepted...
+On 6/16/24 22:48, Qais Yousef wrote:
+> On 06/12/24 08:53, Lukasz Luba wrote:
+> 
+>>> This won't help. We tried different values, unfortunately the logic is flawed.
+>>> Utilization value on its own says nothing about the idleness of the system.
+>>
+>> This is not true. When you up-migrate a task to big CPU, then CPU idle
+>> gov can instantly benefit from utilization information and won't make
+>> mistake based on old local history and won't use deep idle state.
+>> So migrating the utilization from one CPU to another CPU says a lot
+>> about the idleness to that destination CPU.
+> 
+> You can migrate a 1024 tasks to a bigger core, but it could run for 3ms and
+> sleep for 40ms. So unfortunately I have to disagree with you here.
+> Generally a high util value doesn't mean we are not going to be idle long
+> enough to satisfy min_residency of the CPU.
 
-Try to contact Realtek via the contact I sent you in the private
-e-mail, maybe you'll be able to make this work.
+Please don't tell me theoretical workloads. We both know that the
+display pipeline requires vsync every 16ms at least and on >100Hz
+display it will be shorter.
 
-Marek
+> 
+>> When Christian removed the util he got -4.5% lower score in GB5, so
+>> this util has impact [1].
+> 
+> We need the idle governor to help with power saving. We can disable DVFS and
+> all idle states and always get a better performance.
+> 
+> The residency is ~50% worse on some clusters with this change. Overall power
+> impact is 2-4% in many use cases.
+
+As I said, please provide power numbers - otherwise this discussion has
+no value.
+
+Also, please respond question from my previous email by who you mean
+'we' when you claim power regression (also not showing the power
+numbers).
+
+This is really not the way how serious development should be done.
+
+> 
+> GB5 is not really a representative use case to measure the usefulness of the
+> idle governor. Task placement to avoid the cost of idle exit latency is
+> a completely different problem.
+
+GB5 or GB6 are benchmarks that people use when they compare performance
+of the phones or laptops and it's very important. If you follow the
+evolution of modern processors (from different uArch) you will
+notice that a new generation provides sometimes ~10% improvement to that
+GB5 score in single-thread mode (at same freq).
+
+Performance results are important as well as power in other tests.
 
