@@ -1,241 +1,314 @@
-Return-Path: <linux-kernel+bounces-216610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C089890A213
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 03:52:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B56390A219
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 03:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DD121F24B50
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:52:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8BF5280F2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 01:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F58170859;
-	Mon, 17 Jun 2024 01:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4844017DE17;
+	Mon, 17 Jun 2024 01:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JW03Qjkb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A1716131C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 01:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="ZIR0v1lI"
+Received: from mail-177131.yeah.net (mail-177131.yeah.net [123.58.177.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0EB4176ACB;
+	Mon, 17 Jun 2024 01:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=123.58.177.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718589033; cv=none; b=hZ8X11GOBZZiJFKQJT2o3RszGMa8KXKW+X/NzU4nlNSmEJCBkFxbw1skxlhYhUPSNjN8Pfxgz9ZTkSCgdRjOkpK8SdMTTFpg0nJ4QCRDjhIyaDoyeiWPXzTrfZLQEjL8o6nFRfWS6L3gTETaINgsEDqK8wjrBqnHGdQ+7Qk+0yw=
+	t=1718589110; cv=none; b=k2vBesbdf+yTv8NecS7sEMcPz8ZtxON/1+jp5LEK/UaDMlr2TmyXt/6V0352DrZBd95fw9sQVuOUGBn/4GJlUnUEdFOWSPqupXPQ++A3Kxdc3hvjjwhbZtDizTViJF1HsNAV4BuRzBCWV4X8bE95bC8jlO1ZHWM/qc7TAugDYk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718589033; c=relaxed/simple;
-	bh=S/eCGNow7bSLOSxc4Fn8MLZDHmPnq7z++CG3pe6YBm8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dHmbY8HGL9aoL1X2ONxqJGscxLVjGoxmZ/Wrp+aAFPXj6zkGn2MtQxNeTCwzczgdL0zvxEE0TshjloKCU3PSdBTQVtL+0TDYs/oTmDYQIExKtE7musy5pZjSobi1MhzDRQLJi7Z1BAWMYpdKscztv9LYUwOpTvMinXu67N9YQ0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JW03Qjkb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718589030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=enLk9HBzEHTcsjLuiFUFXs3G9hkw9wMVk66unL1i+tU=;
-	b=JW03QjkbJ+OQPzQvJyNZofnbRekOB5XNIPBDfXW/eBZydsLbHIHZSy/OMAoXGYg2Ow8Zg/
-	hCpW72voIaAUpBz8bnICz3O7WiHS85uLH4DaMbs9CVlRNbRjnwpGhuURrn9jh+ADayzIOb
-	ncDxX+4O0ofA7MMABI8/zxFP4W0FXDs=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-347-FdnJuau_MbC8zIgwzDhgMQ-1; Sun, 16 Jun 2024 21:50:29 -0400
-X-MC-Unique: FdnJuau_MbC8zIgwzDhgMQ-1
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2c534edb860so193953a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2024 18:50:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718589028; x=1719193828;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=enLk9HBzEHTcsjLuiFUFXs3G9hkw9wMVk66unL1i+tU=;
-        b=CZnv7PmOs9E9LQx5chdpQ2SlvJkLm1LX467R/ha1ZtcTMG+lQVPlRbJg3MgA34fUNn
-         58bf2/ZY4VBwZsLimZaNE7a632sA5r3Dd8Aol9z1u5PuKK2lu0Seu0JDqCTpWPqhTudT
-         7hGAGX2+rdxBjuMclKfhnDKTFYBBj9LCPqSQiUQ8syyOuFTSJaYw60S2tetENM0ihbtG
-         bn7bA5oYuKtaQWCbp776zUghWmiRtpOV6MtS0XoNPF1bf9synXVYXHQ9RTtVSuDsT4oz
-         D6dj1aA/Oq002IpAW6J97ErAEH/xuomCKBjqQcbXnBuY7sRufyYPRyazYx21r7VCOE8B
-         3QVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHjKCKcrSRTXigdWKq2xxuYsT/upcwT1Nm+r/oe89vH6MFeps9RAYOamb9gwBDeisYy6W+pgWMH7dNf0pu0y2fLZACUuoDB/oXfsE7
-X-Gm-Message-State: AOJu0YxZkLEfhUG4oz0iv+rUnCpqmHyaTPJczMFAaK/G/7kGRnXj9ka7
-	IOpo3AXZOYpQeB+S/ywfMTxqwcwZgGNk2hki7EVCMfw229GL7nPzrdj7LWDlKXU1U6oGijb5A1r
-	q/cXxcgM3/0CtsEp0mW+Qm0ap665O+P9kWEPkucyHfBR1l7JtSOVXJu46fNPXmLy0StLjkHIGGo
-	2SGBqe5hWXmozBSnCe7yUBsWY/KkuqufJg0POC
-X-Received: by 2002:a17:90a:4418:b0:2c2:d6f3:6353 with SMTP id 98e67ed59e1d1-2c4db24e983mr7955932a91.14.1718589028207;
-        Sun, 16 Jun 2024 18:50:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE1MU/JZFpNvhOdjY7TMg2h2pvSTX+Sf4tEigJOVf3BB6dXfR/PJ+oD724nUKpn40pvzjX96XmfBeq9XVIb+1Y=
-X-Received: by 2002:a17:90a:4418:b0:2c2:d6f3:6353 with SMTP id
- 98e67ed59e1d1-2c4db24e983mr7955910a91.14.1718589027418; Sun, 16 Jun 2024
- 18:50:27 -0700 (PDT)
+	s=arc-20240116; t=1718589110; c=relaxed/simple;
+	bh=ngDwTY3j1nXwAIQv0mUkX7nrrF23O7NJyWWHubE4Roc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rrOqUQRtsGd/tkh4PA8cl57PGmbaC0ZjhiEYtAuCt6iSw9KH2ZttwEVEG5krC/AhE0Eh4Sko8Y7dyGlF4X1i0Yyj4HD1uqRDbttAyamGgTtEVh3gmULnvLtdtFjl53TU4dds/G2WKYDXZtwZsJsgH4u6ITKTphLO6ejlB8Veksw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=ZIR0v1lI; arc=none smtp.client-ip=123.58.177.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=yjhnsYCfAeoBAabQvKZBv+okYUIYqBnLVfnV+eVmD54=;
+	b=ZIR0v1lICYJG3iQZmi9ehNMCButpVAOYVX2BJCxyciLhVEcCLlGUH032xYs8+u
+	gQSL8KEfAEvhaTjKqWLppanByLvwe9JnttAJdWBFqXeFnhBNBUsYAODFwJEftq4s
+	LKf/QXGKg0utTFt4oF2QB/4CQjrF92w+WjdhvtBPZtwTs=
+Received: from dragon (unknown [114.216.76.201])
+	by smtp1 (Coremail) with SMTP id ClUQrAD3XfqYlm9mFcsLCA--.41569S3;
+	Mon, 17 Jun 2024 09:51:21 +0800 (CST)
+Date: Mon, 17 Jun 2024 09:51:20 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Michael Walle <mwalle@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>, Li Yang <leoyang.li@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Priit Laes <plaes@plaes.org>,
+	Michael Grzeschik <m.grzeschik@pengutronix.de>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Marco Felsch <m.felsch@pengutronix.de>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 13/13] ARM: dts: imx6qdl-kontron-samx6i: add actual
+ device trees
+Message-ID: <Zm+WmDvhXJsprfar@dragon>
+References: <20240606090206.2021237-1-mwalle@kernel.org>
+ <20240606090206.2021237-14-mwalle@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530032055.8036-1-jasowang@redhat.com> <20240530020531-mutt-send-email-mst@kernel.org>
- <CACGkMEun-77fXbQ93H_GEC4=0_7CLq7iPtXSKe9Qriw-Qh1Tbw@mail.gmail.com>
- <20240530090742-mutt-send-email-mst@kernel.org> <CACGkMEsYRCJ96=sja9pBo_mnPsp75Go6E-wmm=-QX0kaOu4RFQ@mail.gmail.com>
- <CACGkMEu2vb8njbNHExWnDAG_pFjsLkYChgNerH4LAQ7pbYyEcg@mail.gmail.com>
-In-Reply-To: <CACGkMEu2vb8njbNHExWnDAG_pFjsLkYChgNerH4LAQ7pbYyEcg@mail.gmail.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 17 Jun 2024 09:50:16 +0800
-Message-ID: <CACGkMEu2smqH2WxYxpp1bbpp9CZmaQ0PH60V7LOjaN2MqCO6qA@mail.gmail.com>
-Subject: Re: [PATCH net-next V2] virtio-net: synchronize operstate with admin
- state on up/down
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>, 
-	Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240606090206.2021237-14-mwalle@kernel.org>
+X-CM-TRANSID:ClUQrAD3XfqYlm9mFcsLCA--.41569S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW3JF15ZFy8Zw4Utr1fAF18Krg_yoWxGFy7pa
+	s7GFsxWF4xCw1xK34DXryUKF4UAw4DCasI9rn8Ja40yFZ7u3ZrGr9akw15C3W5Jrs5Cw43
+	KF92vr1xtwsrXaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jf6pPUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiDhkBZVszYrt7JgAAsf
 
-On Thu, Jun 6, 2024 at 8:22=E2=80=AFAM Jason Wang <jasowang@redhat.com> wro=
-te:
->
-> On Fri, May 31, 2024 at 8:18=E2=80=AFAM Jason Wang <jasowang@redhat.com> =
-wrote:
-> >
-> > On Thu, May 30, 2024 at 9:09=E2=80=AFPM Michael S. Tsirkin <mst@redhat.=
-com> wrote:
-> > >
-> > > On Thu, May 30, 2024 at 06:29:51PM +0800, Jason Wang wrote:
-> > > > On Thu, May 30, 2024 at 2:10=E2=80=AFPM Michael S. Tsirkin <mst@red=
-hat.com> wrote:
-> > > > >
-> > > > > On Thu, May 30, 2024 at 11:20:55AM +0800, Jason Wang wrote:
-> > > > > > This patch synchronize operstate with admin state per RFC2863.
-> > > > > >
-> > > > > > This is done by trying to toggle the carrier upon open/close an=
-d
-> > > > > > synchronize with the config change work. This allows propagate =
-status
-> > > > > > correctly to stacked devices like:
-> > > > > >
-> > > > > > ip link add link enp0s3 macvlan0 type macvlan
-> > > > > > ip link set link enp0s3 down
-> > > > > > ip link show
-> > > > > >
-> > > > > > Before this patch:
-> > > > > >
-> > > > > > 3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast stat=
-e DOWN mode DEFAULT group default qlen 1000
-> > > > > >     link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
-> > > > > > ......
-> > > > > > 5: macvlan0@enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mt=
-u 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
-> > > > > >     link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
-> > > > > >
-> > > > > > After this patch:
-> > > > > >
-> > > > > > 3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast stat=
-e DOWN mode DEFAULT group default qlen 1000
-> > > > > >     link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
-> > > > > > ...
-> > > > > > 5: macvlan0@enp0s3: <NO-CARRIER,BROADCAST,MULTICAST,UP,M-DOWN> =
-mtu 1500 qdisc noqueue state LOWERLAYERDOWN mode DEFAULT group default qlen=
- 1000
-> > > > > >     link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
-> > > > > >
-> > > > > > Cc: Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>
-> > > > > > Cc: Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
-> > > > > > Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > > > > > Acked-by: Michael S. Tsirkin <mst@redhat.com>
-> > > > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > > > > > ---
-> > > > > > Changes since V1:
-> > > > > > - rebase
-> > > > > > - add ack/review tags
-> > > > >
-> > > > >
-> > > > >
-> > > > >
-> > > > >
-> > > > > > ---
-> > > > > >  drivers/net/virtio_net.c | 94 +++++++++++++++++++++++++++-----=
---------
-> > > > > >  1 file changed, 63 insertions(+), 31 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.=
-c
-> > > > > > index 4a802c0ea2cb..69e4ae353c51 100644
-> > > > > > --- a/drivers/net/virtio_net.c
-> > > > > > +++ b/drivers/net/virtio_net.c
-> > > > > > @@ -433,6 +433,12 @@ struct virtnet_info {
-> > > > > >       /* The lock to synchronize the access to refill_enabled *=
-/
-> > > > > >       spinlock_t refill_lock;
-> > > > > >
-> > > > > > +     /* Is config change enabled? */
-> > > > > > +     bool config_change_enabled;
-> > > > > > +
-> > > > > > +     /* The lock to synchronize the access to config_change_en=
-abled */
-> > > > > > +     spinlock_t config_change_lock;
-> > > > > > +
-> > > > > >       /* Work struct for config space updates */
-> > > > > >       struct work_struct config_work;
-> > > > > >
-> > > > >
-> > > > >
-> > > > > But we already have dev->config_lock and dev->config_enabled.
-> > > > >
-> > > > > And it actually works better - instead of discarding config
-> > > > > change events it defers them until enabled.
-> > > > >
-> > > >
-> > > > Yes but then both virtio-net driver and virtio core can ask to enab=
-le
-> > > > and disable and then we need some kind of synchronization which is
-> > > > non-trivial.
-> > >
-> > > Well for core it happens on bring up path before driver works
-> > > and later on tear down after it is gone.
-> > > So I do not think they ever do it at the same time.
-> >
-> > For example, there could be a suspend/resume when the admin state is do=
-wn.
-> >
-> > >
-> > >
-> > > > And device enabling on the core is different from bringing the devi=
-ce
-> > > > up in the networking subsystem. Here we just delay to deal with the
-> > > > config change interrupt on ndo_open(). (E.g try to ack announce is
-> > > > meaningless when the device is down).
-> > > >
-> > > > Thanks
-> > >
-> > > another thing is that it is better not to re-read all config
-> > > on link up if there was no config interrupt - less vm exits.
-> >
-> > Yes, but it should not matter much as it's done in the ndo_open().
->
-> Michael, any more comments on this?
+On Thu, Jun 06, 2024 at 11:02:06AM +0200, Michael Walle wrote:
+> For now, there wasn't any in-tree users of the dtsi files for the
+> Kontron SMARC-sAMX6i board. Let's add device trees, for this board on a
+> Kontron SMARC Eval 2.0 Carrier.
+> 
+> Signed-off-by: Michael Walle <mwalle@kernel.org>
+> ---
+>  arch/arm/boot/dts/nxp/imx/Makefile            |   2 +
+>  .../nxp/imx/imx6dl-kontron-samx6i-ads2.dts    |  12 ++
+>  .../dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts |  12 ++
+>  .../nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi  | 148 ++++++++++++++++++
+>  4 files changed, 174 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6dl-kontron-samx6i-ads2.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi
+> 
+> diff --git a/arch/arm/boot/dts/nxp/imx/Makefile b/arch/arm/boot/dts/nxp/imx/Makefile
+> index 231c0d73a53e..92e291603ea1 100644
+> --- a/arch/arm/boot/dts/nxp/imx/Makefile
+> +++ b/arch/arm/boot/dts/nxp/imx/Makefile
+> @@ -99,6 +99,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+>  	imx6dl-icore.dtb \
+>  	imx6dl-icore-mipi.dtb \
+>  	imx6dl-icore-rqs.dtb \
+> +	imx6dl-kontron-samx6i-ads2.dtb \
+>  	imx6dl-lanmcu.dtb \
+>  	imx6dl-mamoj.dtb \
+>  	imx6dl-mba6a.dtb \
+> @@ -207,6 +208,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+>  	imx6q-icore-ofcap10.dtb \
+>  	imx6q-icore-ofcap12.dtb \
+>  	imx6q-icore-rqs.dtb \
+> +	imx6q-kontron-samx6i-ads2.dtb \
+>  	imx6q-kp-tpc.dtb \
+>  	imx6q-logicpd.dtb \
+>  	imx6q-marsboard.dtb \
+> diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-kontron-samx6i-ads2.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-kontron-samx6i-ads2.dts
+> new file mode 100644
+> index 000000000000..6a0c53f23a15
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/nxp/imx/imx6dl-kontron-samx6i-ads2.dts
+> @@ -0,0 +1,12 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR X11
+> +
+> +/dts-v1/;
+> +
+> +#include "imx6dl.dtsi"
+> +#include "imx6qdl-kontron-samx6i.dtsi"
+> +#include "imx6qdl-kontron-samx6i-ads2.dtsi"
+> +
+> +/ {
+> +	model = "Kontron SMARC-sAMX6i Dual-Lite/Solo on SMARC Eval 2.0 carrier";
+> +	compatible = "kontron,imx6dl-samx6i-ads2", "kontron,imx6dl-samx6i", "fsl,imx6dl";
+> +};
+> diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts b/arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts
+> new file mode 100644
+> index 000000000000..94c395cc020e
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/nxp/imx/imx6q-kontron-samx6i-ads2.dts
+> @@ -0,0 +1,12 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR X11
+> +
+> +/dts-v1/;
+> +
+> +#include "imx6q.dtsi"
+> +#include "imx6qdl-kontron-samx6i.dtsi"
+> +#include "imx6qdl-kontron-samx6i-ads2.dtsi"
+> +
+> +/ {
+> +	model = "Kontron SMARC-sAMX6i Quad/Dual on SMARC Eval 2.0 carrier";
+> +	compatible = "kontron,imx6q-samx6i-ads2", "kontron,imx6q-samx6i", "fsl,imx6q";
+> +};
+> diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi
+> new file mode 100644
+> index 000000000000..15a87ee4159d
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-kontron-samx6i-ads2.dtsi
+> @@ -0,0 +1,148 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Device Tree include for the Kontron SMARC-sAMX6i board on a SMARC Eval
+> + * 2.0 carrier (ADS2).
+> + *
+> + */
+> +
+> +/ {
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +
+> +	sound {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		compatible = "simple-audio-card";
+> +		simple-audio-card,format = "i2s";
+> +		simple-audio-card,bitclock-master = <&dailink_master>;
+> +		simple-audio-card,frame-master = <&dailink_master>;
+> +		simple-audio-card,widgets =
+> +			"Headphone", "Headphone Jack",
+> +			"Line", "Line Out Jack",
+> +			"Microphone", "Microphone Jack",
+> +			"Line", "Line In Jack";
+> +		simple-audio-card,routing =
+> +			"Line Out Jack", "LINEOUTR",
+> +			"Line Out Jack", "LINEOUTL",
+> +			"Headphone Jack", "HPOUTR",
+> +			"Headphone Jack", "HPOUTL",
+> +			"IN1L", "Line In Jack",
+> +			"IN1R", "Line In Jack",
+> +			"Microphone Jack", "MICBIAS",
+> +			"IN2L", "Microphone Jack",
+> +			"IN2R", "Microphone Jack";
+> +
+> +		simple-audio-card,cpu {
+> +			sound-dai = <&ssi1>;
+> +		};
+> +
+> +		dailink_master: simple-audio-card,codec {
+> +			sound-dai = <&wm8904>;
+> +		};
+> +	};
+> +
+> +	reg_codec_mic: regulator-codec-mic {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "V_3V3_MIC";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +	};
+> +
+> +	reg_codec_1p8v: regulator-codec-1p8v {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "V_1V8_S0_CODEC";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +	};
+> +};
+> +
+> +&audmux {
+> +	status = "okay";
+> +};
+> +
+> +&can1 {
+> +	status = "okay";
+> +};
+> +
+> +&can2 {
+> +	status = "okay";
+> +};
+> +
+> +&ecspi4 {
+> +	flash@1 {
+> +		compatible = "jedec,spi-nor";
+> +		m25p,fast-read;
+> +		spi-max-frequency = <100000000>;
+> +		reg = <1>;
 
-Gentle ping.
+compatible
+reg
+spi-max-frequency (generic properties)
+m25p,fast-read (device or vendor specific ones)
 
-Thanks
+> +	};
+> +};
+> +
+> +&fec {
+> +	status = "okay";
+> +};
+> +
+> +&i2c1 {
+> +	status = "okay";
+> +
+> +	wm8904: audio-codec@1a {
+> +		#sound-dai-cells = <0>;
+> +		compatible = "wlf,wm8904";
+> +		reg = <0x1a>;
 
->
-> Please confirm if this patch is ok or not. If you prefer to reuse the
-> config_disable() I can change it from a boolean to a counter that
-> allows to be nested.
->
-> Thanks
->
-> >
-> > Thanks
-> >
-> > >
-> > > --
-> > > MST
-> > >
+Move #sound-dai-cells here?
+
+Shawn
+
+> +		clocks = <&clks IMX6QDL_CLK_CKO2>;
+> +		clock-names = "mclk";
+> +		AVDD-supply = <&reg_codec_1p8v>;
+> +		CPVDD-supply = <&reg_codec_1p8v>;
+> +		DBVDD-supply = <&reg_codec_1p8v>;
+> +		DCVDD-supply = <&reg_codec_1p8v>;
+> +		MICVDD-supply = <&reg_codec_mic>;
+> +	};
+> +};
+> +
+> +&i2c3 {
+> +	eeprom@57 {
+> +		compatible = "atmel,24c64";
+> +		reg = <0x57>;
+> +		pagesize = <32>;
+> +	};
+> +};
+> +
+> +&pcie {
+> +	status = "okay";
+> +};
+> +
+> +&ssi1 {
+> +	status = "okay";
+> +};
+> +
+> +&uart1 {
+> +	status = "okay";
+> +};
+> +
+> +&uart2 {
+> +	status = "okay";
+> +};
+> +
+> +&uart4 {
+> +	status = "okay";
+> +};
+> +
+> +&uart5 {
+> +	status = "okay";
+> +};
+> +
+> +&usbh1 {
+> +	status = "okay";
+> +};
+> +
+> +&usbotg {
+> +	status = "okay";
+> +};
+> +
+> +&usdhc3 {
+> +	status = "okay";
+> +};
+> -- 
+> 2.39.2
+> 
 
 
