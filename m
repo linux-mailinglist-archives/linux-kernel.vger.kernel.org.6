@@ -1,260 +1,134 @@
-Return-Path: <linux-kernel+bounces-218278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C080490BC0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:22:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED2D90BC10
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 336F7B25FB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:22:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 248811F236A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEB4199386;
-	Mon, 17 Jun 2024 20:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ItABGs4l"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7775C1990AA;
+	Mon, 17 Jun 2024 20:18:52 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBC219DF60;
-	Mon, 17 Jun 2024 20:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795E9198848;
+	Mon, 17 Jun 2024 20:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718655501; cv=none; b=EFWNHF/cFIru4oYrNPNOOWZ8/IVpZwGnQBvxnzaZxBVsCFsw2UTqm7yBhdGkALQzNNYtSeop0ox/wCebbvkSgPpyR1ZXqSSV5XNc51c3mXukG26RTrK+VhRF7k5hgrwHD8hv/ufqoxncl2mIp03hxwsiui815STzZYL/3PdXdSA=
+	t=1718655532; cv=none; b=cEWTGXxsXqcOallRAQzuFep2nBWi+tCYpbj9KoY0BWq5q/nzp23kaNwYD5pj/QBkWpHRDA07Vm6/7iOy2CP0JoAl7Y2DoICrOrLWFpdpfZw0fBAI2xRlD0bBVGO9bNadK4L2dnIvpx3ecQZhqPJ9XRrwxv2o9omcia6uaTqiy98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718655501; c=relaxed/simple;
-	bh=iZFx8jgbSOzGiwB9sK7NYuzZ/oY42Xzy+IE0Fykqwyc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P5Cm3ta3NIhpWT3m2Mv2Czz/Lxt4pT6jEaRQeaROQQ7/B3ahmYGM9J3j8yE31fyK2NPjMYg2DIFM10/pNwAD6jqdicbSpFWoGfhrEjfqY6cSJOStG3LyrWGoE0KcwOH9G7KKOHsx/ol/bDrQK7SMQL5XJb1py8s4resB7QESvqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ItABGs4l; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HJ01c7024582;
-	Mon, 17 Jun 2024 20:18:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=4
-	BfO0A59aeS+EuUXkTmQ/GMv6VbFKK1FWKlArNStJBg=; b=ItABGs4lJF8StiMZq
-	J03TJRm5nzALh24wV6g2ruRK/VxkH6lvOM8sRL19pOIQGPX5MWwbeTkjh+Xlm+eX
-	cYwx7NFUk9JVqNea3PkjYlTYU+OptSjVWN7SCx8ODufVWsyoW9+RH819SWXmRUQ8
-	iN2mLtBMCo5naNq9ZZnHpMMRl8PoZXXX28jv+K/cj3nX/GeL4y/I3QsCzt7pcjJl
-	qH42MfpnqldrLxJ2IROrv6+PnZZbHcc55bfCxH0BdMtdJtzBQ+OYQ86/sN0wOdSt
-	g3mNsnEb2juOPJpWAB+eImChxqhlJ4Th//OYsSLwVzLNv1xsQJcOf/3Y3C0q98GS
-	zFCdA==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yttwc85hs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 20:18:03 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45HHvRLG023889;
-	Mon, 17 Jun 2024 20:18:03 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ysp9pw577-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 20:18:03 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45HKI0YU63832458
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Jun 2024 20:18:02 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 63FBB5805E;
-	Mon, 17 Jun 2024 20:18:00 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EC4FE58055;
-	Mon, 17 Jun 2024 20:17:59 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 17 Jun 2024 20:17:59 +0000 (GMT)
-Message-ID: <5427fe09-199b-4b4b-a451-044e8e352595@linux.ibm.com>
-Date: Mon, 17 Jun 2024 16:17:59 -0400
+	s=arc-20240116; t=1718655532; c=relaxed/simple;
+	bh=7nTZdXlj9pK8ilY2G1QjiWHZ7xNto8ux71yowmGhmRE=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Kys++1Zmh/T7JckdMmDu/5Sri80qp3YgD2u2YdHNFlgQqXhRvhJ396Pj5dJZWwgJ9UByXS0pN8AvPyrUeU8MKSu9UjI8Wq7exvbC5zDhVJ+SAGVMiFnMvCP+2W1zmo3xTVj67UURfDnis6PYo2g1vosp3RSQ6sPB9beRObChjCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.1.105] (178.176.72.187) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 17 Jun
+ 2024 23:18:34 +0300
+Subject: Re: [net-next PATCH 2/2] net: ravb: Fix R-Car RX frame size limit
+To: Paul Barker <paul.barker.ct@bp.renesas.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	=?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+CC: Biju Das <biju.das.jz@bp.renesas.com>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>, Lad Prabhakar
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Mitsuhiro Kimura
+	<mitsuhiro.kimura.kc@renesas.com>, <netdev@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240615103038.973-1-paul.barker.ct@bp.renesas.com>
+ <20240615103038.973-3-paul.barker.ct@bp.renesas.com>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <a2669de0-f432-5f7b-a80e-b5d050e37b6e@omp.ru>
+Date: Mon, 17 Jun 2024 23:18:33 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
- session support
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        jarkko@kernel.org
-Cc: linux-kernel@vger.kernel.org, mpe@ellerman.id.au,
-        naveen.n.rao@linux.ibm.com
-References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
- <dfc4feaef0d63d616bab8cdec5d409369f9dacf1.camel@HansenPartnership.com>
- <5bd68636-ece6-4ba5-a4c0-c0535afc33c8@linux.ibm.com>
- <1302b413a2d7bf3b275133e7fdb04b44bfe2d5e3.camel@HansenPartnership.com>
+In-Reply-To: <20240615103038.973-3-paul.barker.ct@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-From: Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <1302b413a2d7bf3b275133e7fdb04b44bfe2d5e3.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: RQxNUYf2DBrWStycNDpehfHgqmo8xgeN
-X-Proofpoint-GUID: RQxNUYf2DBrWStycNDpehfHgqmo8xgeN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxlogscore=999 mlxscore=0 lowpriorityscore=0 spamscore=0 impostorscore=0
- phishscore=0 clxscore=1015 bulkscore=0 adultscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406170153
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 06/17/2024 19:52:29
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 185970 [Jun 17 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 20 0.3.20
+ 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.72.187 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.72.187
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 06/17/2024 19:56:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 6/17/2024 4:39:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
+On 6/15/24 1:30 PM, Paul Barker wrote:
 
-
-On 6/17/24 16:05, James Bottomley wrote:
-> On Mon, 2024-06-17 at 15:56 -0400, Stefan Berger wrote:
->>
->>
->> On 6/17/24 15:42, James Bottomley wrote:
->>> On Mon, 2024-06-17 at 15:34 -0400, Stefan Berger wrote:
->>>> Fix the following type of error message caused by a missing call
->>>> to
->>>> tpm2_sessions_init() in the IBM vTPM driver:
->>>>
->>>> [    2.987131] tpm tpm0: tpm2_load_context: failed with a TPM
->>>> error
->>>> 0x01C4
->>>> [    2.987140] ima: Error Communicating to TPM chip, result: -14
->>>>
->>>> Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
->>>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
->>>> ---
->>>>    drivers/char/tpm/tpm_ibmvtpm.c | 4 ++++
->>>>    1 file changed, 4 insertions(+)
->>>>
->>>> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c
->>>> b/drivers/char/tpm/tpm_ibmvtpm.c
->>>> index d3989b257f42..1e5b107d1f3b 100644
->>>> --- a/drivers/char/tpm/tpm_ibmvtpm.c
->>>> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
->>>> @@ -698,6 +698,10 @@ static int tpm_ibmvtpm_probe(struct vio_dev
->>>> *vio_dev,
->>>>                   rc = tpm2_get_cc_attrs_tbl(chip);
->>>>                   if (rc)
->>>>                           goto init_irq_cleanup;
->>>> +
->>>> +               rc = tpm2_sessions_init(chip);
->>>> +               if (rc)
->>>> +                       goto init_irq_cleanup;
->>>
->>> This looks wrong: the whole thing is designed to occur in the
->>> bootstrap
->>> phase from tpm_chip_register() (which tpm_ibmvtpm.c definitely
->>> calls),
->>> so why isn't it happening?
->>
->> Because flags = TPM_OPS_AUTO_STARTUP has not been set for this
->> driver.
->>
+> The RX frame size limit should not be based on the current MTU setting.
+> Instead it should be based on the hardware capabilities.
 > 
-> In that case, wouldn't the fix be to move tpm_sessions_init() to
-> somewhere in tpm_chip_register() that would then be called by this
-> driver?  Having to special case it for every driver that doesn't set
-> this flag is going to be a huge pain.
+> Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
+> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 
-I think the 2nd fix is to set TPM_OPS_AUTO_STARTUP also for the ibmvtpm 
-driver like the following patch on top of this one, but after more testing:
+Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 
- From c6bcd3890f1bdc43d9549fbb39fe388adf756358 Mon Sep 17 00:00:00 2001
-From: Stefan Berger <stefanb@linux.ibm.com>
-Date: Mon, 17 Jun 2024 16:05:54 -0400
-Subject: [PATCH] tpm: ibmvtpm: Set TPM_OPS_AUTO_STARTUP flag for
-  initialization
+   Sounds like this is also a fix for net.git tho?
 
-Set the TPM_OPS_AUTO_STARTUP flag for using common initialization code.
-The difference between the old initialization and the new one is that
-for TPM 1.2 tpm1_do_selftest and for TPM 2 tpm2_do_selftest will be called.
+[...]
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
-  drivers/char/tpm/tpm_ibmvtpm.c | 15 +--------------
-  1 file changed, 1 insertion(+), 14 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-index 1e5b107d1f3b..76d048f63d55 100644
---- a/drivers/char/tpm/tpm_ibmvtpm.c
-+++ b/drivers/char/tpm/tpm_ibmvtpm.c
-@@ -450,6 +450,7 @@ static bool tpm_ibmvtpm_req_canceled(struct tpm_chip 
-*chip, u8 status)
-  }
-
-  static const struct tpm_class_ops tpm_ibmvtpm = {
-+       .flags = TPM_OPS_AUTO_STARTUP,
-         .recv = tpm_ibmvtpm_recv,
-         .send = tpm_ibmvtpm_send,
-         .cancel = tpm_ibmvtpm_cancel,
-@@ -690,20 +691,6 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
-         if (!strcmp(id->compat, "IBM,vtpm20"))
-                 chip->flags |= TPM_CHIP_FLAG_TPM2;
-
--       rc = tpm_get_timeouts(chip);
--       if (rc)
--               goto init_irq_cleanup;
--
--       if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--               rc = tpm2_get_cc_attrs_tbl(chip);
--               if (rc)
--                       goto init_irq_cleanup;
--
--               rc = tpm2_sessions_init(chip);
--               if (rc)
--                       goto init_irq_cleanup;
--       }
--
-         return tpm_chip_register(chip);
-  init_irq_cleanup:
-         do {
---
-2.45.2
-
-Regards,
-    Stefan
-
-> 
-> I think the only reason it's down that far is that it should only be
-> called for TPM2 code so it was avoiding doing the check twice, so
-> something like this >
-> James
-> 
-> ---
-> 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 5da134f12c9a..4280cbb0f0b1 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -347,6 +347,12 @@ int tpm_auto_startup(struct tpm_chip *chip)
->   {
->   	int rc;
->   
-> +	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> +		rc = tpm2_sessions_init(chip);
-> +		if (rc)
-> +			return rc;
-> +	}
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index 02cbf850bd85..481c854cb305 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -555,8 +555,10 @@ static void ravb_emac_init_gbeth(struct net_device *ndev)
+>  
+>  static void ravb_emac_init_rcar(struct net_device *ndev)
+>  {
+> +	struct ravb_private *priv = netdev_priv(ndev);
 > +
->   	if (!(chip->ops->flags & TPM_OPS_AUTO_STARTUP))
->   		return 0;
->   
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 1e856259219e..b4f85c8cdbb6 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -773,11 +773,6 @@ int tpm2_auto_startup(struct tpm_chip *chip)
->   		rc = 0;
->   	}
->   
-> -	if (rc)
-> -		goto out;
-> -
-> -	rc = tpm2_sessions_init(chip);
-> -
->   out:
->   	/*
->   	 * Infineon TPM in field upgrade mode will return no data for the number
-> 
+>  	/* Receive frame limit set register */
+> -	ravb_write(ndev, ndev->mtu + ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN, RFLR);
+> +	ravb_write(ndev, priv->info->rx_max_frame_size + ETH_FCS_LEN, RFLR);
+
+   Aha, that's what we're doing in ravb_emac_init_gbeth()...
+
+[...]
+
+MBR, Sergey
 
