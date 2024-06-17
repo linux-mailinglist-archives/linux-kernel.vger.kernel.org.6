@@ -1,151 +1,243 @@
-Return-Path: <linux-kernel+bounces-217828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B241A90B4D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:42:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BDBF90B4D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA2DF1C22C32
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:42:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C87521F22D09
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79AF1553A3;
-	Mon, 17 Jun 2024 15:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DCA179659;
+	Mon, 17 Jun 2024 15:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="MDODHCDt"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cgO7Ec0c";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="d2KMdJCB";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pF233v1e";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1HIVKVPL"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A807269D3C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 15:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9486153593;
+	Mon, 17 Jun 2024 15:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718637125; cv=none; b=jt3OgGu77vu2bcxtbUsgh0sEpKkMQf/i9YWm9dsD8+8rs31yPu9TRHNT8Q+VrUo7fKfTfuCn+ubZ+xHb9vachN50kh8Sk0xMswDd8/kwyLTMFd1mmouOyNDu3o7+bz7qcpgtY7nxR61vaUKKFtNi3CGi6UPhIeYfAva79bjZdPw=
+	t=1718637054; cv=none; b=e8lQ0G7mD/p5f794nbWbWPq1V4JYzQvxXUm7YZYZaGHuHsfLcDARXpVzyQUwY3otbJac5Q3fGs+3fMphka53JhZMyguavM21Klz4ju3IrFoUm9ZmkPXH3Aj2zGX9EXAQxlM2eJCo7grzb3THO3vPJKf6y3VQeVgjZmZBkaS/t+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718637125; c=relaxed/simple;
-	bh=dSpQHrvl4C9nuFdBFR8jTR9+qH/F/pXj/XpXZeaI1Zo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uNmW/fiy45I1d1XxIsdf4YlKNjH9T4KJYgsI2yqxO2+JxPFjzHe5+is+AjNhvtAkecWwNH9/WFF1qr2vnWJO6CmPUsdK4yWMaLs+BnmTxJwBP8ToWtfyh+Xh8IvFDilMns3Mqh/bcUwPM8Pb5OjZJvJVfrz+stIHf0TmzXUUgkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=MDODHCDt; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0134420.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 45HEs4IV017728;
-	Mon, 17 Jun 2024 15:10:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc : content-type : date
- : from : in-reply-to : message-id : mime-version : references : subject :
- to; s=pps0720; bh=6Wt2QKNSGBX4X4tK7ech9zSO0dKYbN7hZGkSbLMy5F8=;
- b=MDODHCDtyzPF+fRIBEYf5p+3WDgle+JN1XwhNq3zEJEyAVf4HQJwpD7g2tuHg3Mn8na+
- rMq/b4NBCPYUzby+slhUxXAM5L9U9RopBbMwU4FDs+AUwNx/HQqT+1s+OjBl1cMROkLV
- q273emyZ25PUX24vaQQ//0J2DZm4aJymdVJS4+/EFBLes9gTYy76uOi56oIweHOR/ekg
- sgxASTKo2nwCB9XBNJQFlknMaRDOZwGXMrm6MmgO6RTKHCq7cxgjGnE/fhRe6kVg0Ty/
- unzOKYmD0FKGfnxuHKg1kE6GIP86eYDvhh70AU16vxtsQgg46G3vI00czeBPhC+sGYiD jA== 
-Received: from p1lg14879.it.hpe.com ([16.230.97.200])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 3ytqaj849d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 15:10:41 +0000
-Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
+	s=arc-20240116; t=1718637054; c=relaxed/simple;
+	bh=/1X7hIfTcTiRc+Fad6/3Qv6AEZTTH5fvcoPL6yNc8lY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cloc1yxbQq0B9fBXx1BUItO3yuisagytYnsb7Pnvh7m8n3wtgMAJ6ZNKUsYkIm4fGbQzbFx1TYGq6DKyIDvQAZeM35efmIVQsda2uYYlaOt6kwso9fSXSCdHZq2/Xkg0IZ6FV7YzV7SXgkACBsrmCXlbsiiqbofipPV749JrcEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cgO7Ec0c; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=d2KMdJCB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pF233v1e; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1HIVKVPL; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by p1lg14879.it.hpe.com (Postfix) with ESMTPS id B525C147AD;
-	Mon, 17 Jun 2024 15:10:40 +0000 (UTC)
-Received: from swahl-home.5wahls.com (unknown [16.231.227.39])
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E94D73836C;
+	Mon, 17 Jun 2024 15:10:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718637051; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=JpCjailk6uzSHmhsPx9E6A+Robg4DOaNP8kYpasrOKc=;
+	b=cgO7Ec0c/8vyt88tmxWawFJwL3HXdWVtygAkZIVAPTJQWmftWk1sjhK6borqKMhPa+QcOk
+	rxq515tyJSaHLP/RFjBRZvxIQR2tThKorJUHJcKQJurlRpZVgYhpmmLal6zpuB3PVD+sYx
+	3SF4JcQI3kBAql7lk4mLxUPlQUtsyP4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718637051;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=JpCjailk6uzSHmhsPx9E6A+Robg4DOaNP8kYpasrOKc=;
+	b=d2KMdJCBaWnFFedrUzNwUM4WeZ4gpuw40Dt/P+4AYcrqhMx4keN8/2xqBcoRnaIXGkgeDZ
+	AogZ7q3LsrYp8KCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718637050; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=JpCjailk6uzSHmhsPx9E6A+Robg4DOaNP8kYpasrOKc=;
+	b=pF233v1e162BLRBguSnBhti1yjCt1VJ2SVPyKRquFev8zbPvWOCxHCJ4fN4AdId7KTn/8o
+	54l3Oft6gVkGQW4xjhWHQJoihEkGIjhQqoHRea7QZESGnelxJ9TBB/L+aMB/5ImeSB9on2
+	1d2ctYoP/n7hzz/ObcH/86kY8VqZQJ8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718637050;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=JpCjailk6uzSHmhsPx9E6A+Robg4DOaNP8kYpasrOKc=;
+	b=1HIVKVPLG/W+0AjeFWOE6nJ+MdMznkv0hiO81SV6BPDStOUNpQ/aVetNB7JTGGE7n3SuC8
+	oHOrrsxvWhAssoAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id 0A38A806B47;
-	Mon, 17 Jun 2024 15:10:34 +0000 (UTC)
-Date: Mon, 17 Jun 2024 10:10:32 -0500
-From: Steve Wahl <steve.wahl@hpe.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Steve Wahl <steve.wahl@hpe.com>, Ashish Kalra <ashish.kalra@amd.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org, Pavin Joseph <me@pavinjoseph.com>,
-        Eric Hagberg <ehagberg@gmail.com>, Simon Horman <horms@verge.net.au>,
-        Eric Biederman <ebiederm@xmission.com>, Dave Young <dyoung@redhat.com>,
-        Sarah Brofeldt <srhb@dbc.dk>, Russ Anderson <rja@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>,
-        Hou Wenlong <houwenlong.hwl@antgroup.com>,
-        Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
-        Yuntao Wang <ytcoode@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        Joerg Roedel <jroedel@suse.de>, Michael Roth <michael.roth@amd.com>
-Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
-Message-ID: <ZnBR6MgS-jzjgA8A@swahl-home.5wahls.com>
-References: <20240520183633.1457687-1-steve.wahl@hpe.com>
- <20240613152826.GKZmsQGnO3OthLH3Vu@fat_crate.local>
- <ZmsbZCF9rFzuB3rO@swahl-home.5wahls.com>
- <20240616202533.GDZm9KPZtpDKw5aXWX@fat_crate.local>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A5EAA13AAA;
+	Mon, 17 Jun 2024 15:10:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LdOJJ/pRcGaIZgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 17 Jun 2024 15:10:50 +0000
+Message-ID: <e926e3c6-05ce-4ba6-9e2e-e5f3b37bcc23@suse.cz>
+Date: Mon, 17 Jun 2024 17:10:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240616202533.GDZm9KPZtpDKw5aXWX@fat_crate.local>
-X-Proofpoint-GUID: iXZ47Dexat143EyDeEs6H_lZNkPb6Hvy
-X-Proofpoint-ORIG-GUID: iXZ47Dexat143EyDeEs6H_lZNkPb6Hvy
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_12,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- spamscore=0 malwarescore=0 clxscore=1015 impostorscore=0 mlxscore=0
- priorityscore=1501 bulkscore=0 suspectscore=0 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2406170117
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Content-Language: en-US
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+ linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ bridge@lists.linux.dev, linux-trace-kernel@vger.kernel.org,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, kvm@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
+ wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
+ ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
+ Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+ linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+References: <20240609082726.32742-1-Julia.Lawall@inria.fr>
+ <20240612143305.451abf58@kernel.org>
+ <baee4d58-17b4-4918-8e45-4d8068a23e8c@paulmck-laptop>
+ <Zmov7ZaL-54T9GiM@zx2c4.com> <Zmo9-YGraiCj5-MI@zx2c4.com>
+ <08ee7eb2-8d08-4f1f-9c46-495a544b8c0e@paulmck-laptop>
+ <Zmrkkel0Fo4_g75a@zx2c4.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <Zmrkkel0Fo4_g75a@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -4.29
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.996];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[zx2c4.com,kernel.org,gmail.com];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[28];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[kernel.org,inria.fr,vger.kernel.org,lists.linux.dev,efficios.com,lists.ozlabs.org,linux.ibm.com,csgroup.eu,gmail.com,lists.zx2c4.com,suse.de,netapp.com,oracle.com,talpey.com,netfilter.org];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLr583pch5u74edj9dsne3chzi)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 
-On Sun, Jun 16, 2024 at 10:25:33PM +0200, Borislav Petkov wrote:
-> On Thu, Jun 13, 2024 at 11:16:36AM -0500, Steve Wahl wrote:
-> > The Atom was the prominent example of a platform that the code
-> > introduced for SEV broke.  Unfortunately, the fix currently
-> > implemented leaves things still broken for actual AMD SEV capable
-> > processors when nogbpages is used,
-> 
-> Ok, how do I reproduce this?
-> 
-> Please give exact step-by-step directions.
+On 6/13/24 2:22 PM, Jason A. Donenfeld wrote:
+> On Wed, Jun 12, 2024 at 08:38:02PM -0700, Paul E. McKenney wrote:
+>> o	Make the current kmem_cache_destroy() asynchronously wait for
+>> 	all memory to be returned, then complete the destruction.
+>> 	(This gets rid of a valuable debugging technique because
+>> 	in normal use, it is a bug to attempt to destroy a kmem_cache
+>> 	that has objects still allocated.)
 
-The first, hardest step is locate a system that is AMD based, SEV
-capable, with a BIOS that chooses to locate the CC_BLOB at addresses
-that do not share a 2M page with other chunks of memory the kernel
-currently adds to the kexec identity map.  I.e. This is a stroke of
-luck, and for all I know could depend on configuration such as memory
-size in addition to motherboard and BIOS version.  However, it does
-not seem to change from boot to boot; as system that has the problem
-seems to be consistent about it.
+This seems like the best option to me. As Jason already said, the debugging
+technique is not affected significantly, if the warning just occurs
+asynchronously later. The module can be already unloaded at that point, as
+the leak is never checked programatically anyway to control further
+execution, it's just a splat in dmesg.
 
-Second, boot linux including the "nogbpages" command line option.
+> Specifically what I mean is that we can still claim a memory leak has
+> occurred if one batched kfree_rcu freeing grace period has elapsed since
+> the last call to kmem_cache_destroy_rcu_wait/barrier() or
+> kmem_cache_destroy_rcu(). In that case, you quit blocking, or you quit
+> asynchronously waiting, and then you splat about a memleak like we have
+> now.
 
-Third, kexec -l <kernel image> --append=<command line options>
---initrd=<initrd>.
+Yes so we'd need the kmem_cache_free_barrier() for a slab kunit test (or the
+pessimistic variant waiting for the 21 seconds), and a polling variant of
+the same thing for the asynchronous destruction. Or we don't need a polling
+variant if it's ok to invoke such a barrier in a schedule_work() workfn.
 
-Fourth, kexec -e.
+We should not need any new kmem_cache flag nor kmem_cache_destroy() flag to
+burden the users of kfree_rcu() with. We have __kmem_cache_shutdown() that
+will try to flush everything immediately and if it doesn't succeed, we can
+assume kfree_rcu() might be in flight and try to wait for it asynchronously,
+without any flags.
 
-Systems that have this problem successfully kexec without the
-"nogbpages" parameter, but fail and do a full reboot with the
-"nogbpages" parameter.  
+SLAB_TYPESAFE_BY_RCU is still handled specially because it has special
+semantics as well.
 
-I wish I could be more exact, filling in <kernel image> and <command
-line options> and <initrd> for you, but they must be tailored to the
-needs of the particular system.
+As for users of call_rcu() with arbitrary callbacks that might be functions
+from the module that is about to unload, these should not return from
+kmem_cache_destroy() with objects in flight. But those should be using
+rcu_barrier() before calling kmem_cache_destroy() already, and probably we
+should not try to handle this automagically? Maybe one potential change with
+the described approach is that today they would get the "cache not empty"
+warning immediately. But that wouldn't stop the module unload so later the
+callbacks would try to execute unmapped code anyway. With the new approach
+the asynchronous handling might delay the "cache not empty" warnings (or
+not, if kmem_cache_free_barrier() would finish before a rcu_barrier() would)
+so the unmapped code execution would come first. I don't think that would be
+a regression.
 
-I do not have direct access to a system with this problem myself. I
-have relied on others who reported the problem to reproduce it and
-test my fix.
-
-Thanks,
-
---> Steve Wahl
-
-
--- 
-Steve Wahl, Hewlett Packard Enterprise
 
