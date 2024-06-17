@@ -1,152 +1,118 @@
-Return-Path: <linux-kernel+bounces-217981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6086190B746
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:02:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE85A90B749
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10BD6281C29
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:02:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B935283891
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C11168490;
-	Mon, 17 Jun 2024 17:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477CD16A926;
+	Mon, 17 Jun 2024 17:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="KM4OWEYX"
-Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OUOvVutw"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD034157A41;
-	Mon, 17 Jun 2024 17:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F20168491
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718643720; cv=none; b=guP0OBykLZ/Ne7maQSwYTjRkxt1jSf6uZRuYrqo46AXW5/zlSFgFqOH14EQguB9vTJ16ZoDoVcYUTHBc1m+UD9MRry8CBzpPakgyU2mljso84iNtM4V//ilNTf0A9aD+4fHFIaJDy8RhARVWrldZQ+ylNnU638xhtXZIBGCVRDA=
+	t=1718643722; cv=none; b=oSTf2kq+MUVWNhJ1znqUmYEMXPmvgFhafV2ER4HpzI2MHeekFwzrnZuNd9BE/rpScRT/EM0JquWK1KzdrnwwbhI6nR2CvpfyABZMCUuv49CxMt/8ZAoJm0OEGbiAqXCuoVrjyUJnNdEnXsyAYxKi0zrciD5O8X9+6PcZX9IjTb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718643720; c=relaxed/simple;
-	bh=wtL6BUiOyxgQMb6ipUZusWcyMpN5m6U1Y2uACLuLyJs=;
-	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
-	 Date:Cc:References:To; b=VKJySc6SVLYNIaMIViI9Qf06huD28Pj/cCBdJs4X1/AYN/avTZFEIas6BJOczw5+x6wJQckst+P2LI3gIPiXv4757BTSIe2m2oDWOb8plYnBesHScs6+H9RK/m51eQlZNQt7lBIxrfPq/s16n/Xmy0O6WbYjiiL65hA9TRoo65M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=KM4OWEYX; arc=none smtp.client-ip=203.205.221.242
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1718643708; bh=ptOjrwdiruXfiPRbkPbyESZEkYeF5JqwOz+w8fsnr24=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=KM4OWEYXz2pBIQ0/Jx6HuePCjow4lZ4OFfv106kYW+ESlxRbiMlsMkaQ/NFnjA4CS
-	 iV2gIx3qJXvdKlQACJu32IHCV5bpZskrDzoASv4zaQ0uB7vsHYYvUqPVVWWdq/s944
-	 licaDwYHex6zsB1bGRw9vpu3KPe8R1iai6JUtg5U=
-Received: from smtpclient.apple ([2408:8207:18a1:9700:9c85:7ae:3ee:45fe])
-	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
-	id 6DA4896; Tue, 18 Jun 2024 01:01:45 +0800
-X-QQ-mid: xmsmtpt1718643705t949zch05
-Message-ID: <tencent_296E424C52C850A3095F8CA0B07698E30D06@qq.com>
-X-QQ-XMAILINFO: MziGzrjZeogZA2yb15PwWH+GJ01zzp4/qBKBYADeYSFB8UC7ogZnJZFUk1XMIj
-	 fih8FkF7TT7M+PokWHjQ+iIhxR/+qoTffjDIEMjMoEzqo7jGzuqdabu0VDlSAPnGqhHExikl/WJm
-	 RHdW9NR2HI89ird6Ekd9TDkVw5zR4OptUmXIG0PJ9lBT2OcVnLKVYRMbapT3rvkR2jhGDCWn7cnf
-	 ooZX4xHSJP9fNRxJ/hE9ya7YZD+U4oz6MR1H1juPcqubzrqfTUMdaWHSuh+nkmShdxmtxDtkDSSw
-	 si5vSgZMtHK/DhN3fbDzD4eG/mj0f53Xq2phMP7KJXTQnXa/rl15fXH/lvPmagjfuqRVXfRwl/Ok
-	 +VDn/ISoVl04oW6uawIujzNLWptS1tIjchCy7d5su8KCUnPAofKUw3AdHfXZMINibQiWSFm7BVjx
-	 qXQj09HHv4FNFcZTRzfce0FWsawWaz7KQEpVrNpESJDk9nLCIVvbMxu7Cl6IutueRxoJls1thVqw
-	 lF9gyHeP6qFZzFzkEACeVDtP4KEu//50fhpDEDrw8Q/BM9C4N/d0tTJTiYCgGSUfasR2zBR/Gm6d
-	 hWAKZpJfSTCc5XqWjTctvYXLwOv18ZUQou2WOEZ99BZhaKEcPtimU67T1B0rW7BJUayuG/tbN/3u
-	 mrz7OZdG94YDFlTbJ8+EQG5zOW/EDwaHlO5u9SIo3d0134R+sZkh3FyhhwCFo1dpBeOYnBXu5ood
-	 G6F3xy4GLIyzFTawgNCm7Rm7axjRGjodn3ZdZyMEuvn7nRGhvQ/ewQnkvPe53rVRs1WVnY20w0NP
-	 oqautRdBiA5t0kxF++fr2XyfLLn6MKdhuyNkMh6W7dLb7lO0+deYAQCqOGWFg9avHVOHCt8d808s
-	 n6bBVtLtTsl6lVuSt+ty/TJ4vXve1BHiMaYWqr3xmWDaacT9od3aNfizhr5koBU7CamalxoMmnwN
-	 aArNIcH6DDhWDYMNzIFu2ZdODtE72Ed8N+7b5sCjpuAm+P3RHwPetpK7WwDqzWqy4Bxs0gPgo=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1718643722; c=relaxed/simple;
+	bh=fARW9+gZvhHbOSflmIMoqI0vm3SGvDePEwnH0DqiVYQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EruWl4ypX53EevwbzpQMNOKvsAKAgr4PN/+75eSEUWMsIu4h3fQbmT4Tm5e2HD+UH9knlge1o0ttrl+zd/73pXxQiJZPCDwMPMxUP/kaOlxtyzMicPmu3FIclkiJ+9/hOIcxdfVZw0QCnTjiuWrVaGvccFO0nUuG73esoKpKYKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OUOvVutw; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6b07e641535so24221986d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:02:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718643720; x=1719248520; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HM60rjRW/Yf93T5zvJfM1oEyl7EPf4eXUJV+KTU9l7o=;
+        b=OUOvVutw+w9UD7rwpBzSM3NkQljYxBkDG/zX6TsLF0HYCPawe0pJw3fJepxIWkxtgp
+         Ekkw44E1mYVdG1eNb8WceTwO+DtcAYVr9d1KdKo3+1nnkXeogkdtmv+vPRwciuYklLcE
+         p4QQsQw4I+6r8hQiuJTpePSOyCCoHr03xh7xqSXXyg+RUILkw3CUOA6hHgLmNMRo5uZI
+         uJGBBpuN5tAcj5ZvIc2TgI6HlWAspKubA1s/ngJDHoGGcldthcNOowQwBu2KOq1kSy7/
+         Bbozux0mnKeONhVCLfJduNeB1966CduRL5ZKVyKklrTUeJ9f3HYASFsg5dsEg8FvPh+x
+         cMSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718643720; x=1719248520;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HM60rjRW/Yf93T5zvJfM1oEyl7EPf4eXUJV+KTU9l7o=;
+        b=mN4VV8AC4OTOVoVCZLXy4bgzdu7Ku5S/Osb5WkZlYtYrWqUmWAnYHsDcFa9sFPwQAU
+         DNncGE/uktIOzq+H+MCfFAIamAxXCZvVOouxkod3dbVL2XmNGhB5dJvjF4BHNnru5NXO
+         8ZjZSH4TBNaR9Dj1iJRe5ZYdeJ9iW3JOJ1murjjrYbwmsDDK2Si7HJRqZCpeOKFj0Esd
+         GE2g4gclhY4o7aBTkhYDZwzMr2fUUY0f6cfjrcXUtuKm7QFqacshSZWPwWQgTyVt5od2
+         nqf3kvZNiR/sdKEo5rlvuNW34DqXgHgkGtljUIZL1mvQY6WuA/yVZlKmYIJ8d4uaW5S6
+         yZeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAf4XsDTzNsnY8W9SGTZr3X5BRBl81WkuD93NvjxGf+eN1A2cyyDPYLuMm/Nnvw2BnCq62KC8Zah0mrQpNXjsrvJCXJB0+XLb3i6hN
+X-Gm-Message-State: AOJu0YwMpIZEczfOZ6sB4v8o+ybrMjAEfCDMPHXTkoFUvA1Eia0LscCt
+	oPVbF4xFfNCaOk5ofT1uwaBYq7XfWTN39k/+0W/NNp62rpoWhD7sVhfvys2vfSm0h+/QdppUKv0
+	9AnwOEYzKGf6wlq/tl4ffBkvTIjE=
+X-Google-Smtp-Source: AGHT+IELEhhMcW+yBw90ppNpYuK8Vh/xr0rN1N/aU8BN1qcmAAFZWf/5fYOzODQNzFeZQk2YLU5HIaKqZY1vJn4o9S0=
+X-Received: by 2002:a05:6214:4e:b0:6b2:cab4:4ccf with SMTP id
+ 6a1803df08f44-6b2cab45019mr59183126d6.26.1718643719979; Mon, 17 Jun 2024
+ 10:01:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH v1 7/9] riscv: dts: add initial SpacemiT K1 SoC device
- tree
-From: Yangyu Chen <cyy@cyyself.name>
-In-Reply-To: <ZnA6pZLkI2StP8Hh@xhacker>
-Date: Tue, 18 Jun 2024 01:01:32 +0800
-Cc: Conor Dooley <conor.dooley@microchip.com>,
- linux-riscv@lists.infradead.org,
- Conor Dooley <conor+dt@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Samuel Holland <samuel.holland@sifive.com>,
- Anup Patel <anup.patel@wdc.com>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- devicetree@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240617-zsmalloc-lock-mm-everything-v1-0-5e5081ea11b3@linux.dev> <20240617-zsmalloc-lock-mm-everything-v1-2-5e5081ea11b3@linux.dev>
+In-Reply-To: <20240617-zsmalloc-lock-mm-everything-v1-2-5e5081ea11b3@linux.dev>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Mon, 17 Jun 2024 10:01:48 -0700
+Message-ID: <CAKEwX=Pfi7XYdZN0O=RPJFcwrXLcho5SWQ62tc3v4+RafsZTkA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mm/zswap: use only one pool in zswap
+To: Chengming Zhou <chengming.zhou@linux.dev>
+Cc: Minchan Kim <minchan@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Yosry Ahmed <yosryahmed@google.com>, Takero Funaki <flintglass@gmail.com>, 
+	Chengming Zhou <zhouchengming@bytedance.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-OQ-MSGID: <BD2E7EB4-6525-4274-88D0-35005AFB32B1@cyyself.name>
-References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
- <tencent_701082E2DAE48E2FB857316321778D737C08@qq.com>
- <ZnAw9QrSD-svYqQ5@xhacker> <20240617-carat-poise-ee63ed6a224e@wendy>
- <ZnA6pZLkI2StP8Hh@xhacker>
-To: Jisheng Zhang <jszhang@kernel.org>
-X-Mailer: Apple Mail (2.3774.600.62)
 
+On Mon, Jun 17, 2024 at 5:58=E2=80=AFAM Chengming Zhou <chengming.zhou@linu=
+x.dev> wrote:
+>
+> Zswap uses 32 pools to workaround the locking scalability problem in
+> zsmalloc, which brings its own problems like memory waste and more
+> memory fragmentation.
+>
+> Testing results show that we can have near performance with only one
+> pool in zswap after changing zsmalloc to use per-size_class lock instead
+> of pool spinlock.
+>
+> Testing kernel build (make bzImage -j32) on tmpfs with memory.max=3D1GB,
+> and zswap shrinker enabled with 10GB swapfile on ext4.
+>
+>                                 real    user    sys
+> 6.10.0-rc3                      138.18  1241.38 1452.73
+> 6.10.0-rc3-onepool              149.45  1240.45 1844.69
+> 6.10.0-rc3-onepool-perclass     138.23  1242.37 1469.71
+>
+> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
 
+Nice! I see minimal difference between one-pool-with-per-class lock
+and current version, and the memory fragmentation should be reduced.
 
-> On Jun 17, 2024, at 21:31, Jisheng Zhang <jszhang@kernel.org> wrote:
->=20
-> On Mon, Jun 17, 2024 at 02:29:46PM +0100, Conor Dooley wrote:
->> On Mon, Jun 17, 2024 at 08:49:57PM +0800, Jisheng Zhang wrote:
->>> On Mon, Jun 17, 2024 at 01:20:52AM +0800, Yangyu Chen wrote:
->>>> Banana Pi BPI-F3 motherboard is powered by SpacemiT K1[1].
->>>>=20
->>>> Key features:
->>>> - 4 cores per cluster, 2 clusters on chip
->>>> - UART IP is Intel XScale UART
->>>>=20
->>>> Some key considerations:
->>>> - ISA string is inferred from vendor documentation[2]
->>>> - Cluster topology is inferred from datasheet[1] and L2 in vendor =
-dts[3]
->>>> - No coherent DMA on this board
->>>>    Inferred by taking vendor ethernet and MMC drivers to the =
-mainline
->>>>    kernel. Without dma-noncoherent in soc node, the driver fails.
->>>> - No cache nodes now
->>>>    The parameters from vendor dts are likely to be wrong. It has =
-512
->>>>    sets for a 32KiB L1 Cache. In this case, each set is 64B in =
-size.
->>>>    When the size of the cache line is 64B, it is a directly mapped
->>>>    cache rather than a set-associative cache, the latter is =
-commonly
->>>>    used. Thus, I didn't use the parameters from vendor dts.
->>>>=20
->>>> Currently only support booting into console with only uart, other
->>>> features will be added soon later.
->>>=20
->>> Hi Yangyu,
->>>=20
->>> Per recent practice of cv1800b and th1520 upstream, I think a =
-complete
->>> initial support would include pinctrl, clk and reset, I have =
-received
->>> the complains from the community. So can you please bring the =
-pinctrl
->>> clk  and reset at the same time?
->>=20
->> What sort of complaints have you got? That the support is too minimal =
-to
->> be useful?
->=20
-> For example =
-https://lore.kernel.org/linux-riscv/95c20c6c-66cd-4f87-920b-5da766317e19@s=
-ifive.com/
->=20
-> Now, I think it's better to "model the clocks/resets/other =
-dependencies"
-> in the initial support. So lacking of pinctrl, clk and reset doesn't
-> fully describe the hardware.
+Anyway, I'll let the zsmalloc maintainers have the final say over
+their side, but if this patch is picked up (and with the assumption
+that the per-class lock is re-introduced), please feel free to
+include:
 
-Sound like a good idea. In this case, we don't need to change the
-dts repeatedly after a new soc driver is supported.=
-
+Reviewed-by: Nhat Pham <nphamcs@gmail.com>
 
