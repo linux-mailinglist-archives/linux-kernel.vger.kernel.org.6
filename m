@@ -1,135 +1,130 @@
-Return-Path: <linux-kernel+bounces-217113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C98690AAEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:21:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9E790ACA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 145191F233C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:21:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E2E1B23E5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AEE194132;
-	Mon, 17 Jun 2024 10:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD381946DB;
+	Mon, 17 Jun 2024 11:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SYyJK7R9"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dmJNxc9E"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B26A1BDCD;
-	Mon, 17 Jun 2024 10:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0022753AD;
+	Mon, 17 Jun 2024 11:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718619663; cv=none; b=nh7Y0GXHva0Y93gjevq8Splf+3HUvh0+e8xBh7lA/hxTt0+iOAdB5wD21AdOO1lrd6pyoBBxVWT+YSTFzHybrAMPqxavN3K7Q/Sy/WYLG399wscVdLVhMc6dsAbfl7ELkktCdRRSS23e9/NEQSaw83ro/pLQuwTQpZmZajrKKrM=
+	t=1718622766; cv=none; b=geD///BmbbA3KsIIswCmBqhdi1/R8TaeZNkwZqHub3vlfxaFgPNTCUF3SqcS2O/tMZixH6hB6DzhKBrhht2XJ991sbGbI4l0Xkac5+kGLAKMVu7HR4hls3Ty9U2to+k+HAbUpQPVsg2j36BRNyQ8OInfx87uZgXw1Y+WiAlycoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718619663; c=relaxed/simple;
-	bh=hma8mMPlNw0XPIyVpQPHEbIDI4S64MWji2iDW3ZuWZU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=puXOUDzCAhuSIfhECtCNJleFZ6h5Xg4VVjcPZwkqgEYFE1yc7pxAPnOIx95LLdHvpLPpt7Bkfn/ESrZuYN9EAwlxiJYXkbu1bkvco/hpfXupxO8N//6WK3vecoLlijvmNf5QCAZonTKIkjf624fH7gzd2JjSLzNFXgIKqldNCww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SYyJK7R9; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a63359aaaa6so633183566b.2;
-        Mon, 17 Jun 2024 03:21:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718619660; x=1719224460; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=uHfz5gEjeGSF+rOMoEalB7WTEbRFmK0VDhLIXxLJjyM=;
-        b=SYyJK7R9hRyNYh0qdOUDmE7QA/WtTQKTwiqR76JshjqM9TV62gzyfA0o2IVbVjytuc
-         rLpCzHgTGioXDcGqdxy/T7lhVE7keYt8MARXGS2tWEGdbeyD64A/28auanksh/uAyqpb
-         KRD4cEypIXM88bsZFUPielXqDvrNWJCyqieEFv6+oPzziUdOICHHzCdguPoUogzlD2bG
-         MNtOX/jmApZf36O0Vpgbk64sGALUFUwbloOyCazs7rto6SUR1353k+YoYr5099ypdqGj
-         n3V2PTpiR9zvAXTSO1f+GgHDMTKMfYz45lq2s3Hx/u4Z/miXzSgV5bUz1MxdgySdlYqF
-         eaLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718619660; x=1719224460;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uHfz5gEjeGSF+rOMoEalB7WTEbRFmK0VDhLIXxLJjyM=;
-        b=mVCqVZ9Ph03QBrEd/zFJUsQDpSY/HMRwRqgkJcsYIAr/bEVasmRb51gQzUxln73KQE
-         6BUxQ3cBN4a4g89JPdTR7l+lwSIzlTfaXHtzDEYHIDdPcn8h+bfB52Sx3Gt/FUgz4XpA
-         0x7On7riCG0dDvxbFazB0p0Dd/6oV9xHR3zjkeXFb8gldfGG/X5Vtg/7mXdt9+KyVmsF
-         qcpLkAJbvSKBbWjO+/6ecgmI33HqrDdiTYOkbH3UlpP7wdvH+x7LSKawoIglrOEhSp7l
-         ck4lexmvtJvYbc9Mz6c35RQd3yRwPXkB4U9n20iAgutx+glixEa0T10kC8UJnsMdZcG3
-         WoZg==
-X-Forwarded-Encrypted: i=1; AJvYcCULGIRNOlkMX4PzQqJ2TxGTO3FIKTeCrEq/CocMeqJvkGaEDvvq8y6KayJyO3tQqDO1CL0hW0v20+fy9BHSfnHyXwfMm4/9+YuUW8byxtIKTEptiT8Dz43E72m70l27pC0LAdg3+E0JEA==
-X-Gm-Message-State: AOJu0YxafKAWKJxbC3JpVSHlMIH69nKt0H25aIqb8/s56aKuQ0t1Jh0p
-	y60gimLpcPmHFlN8jilpgtBUHVxhwaX+37Z5+hTNvwRQmXKwXkZ0
-X-Google-Smtp-Source: AGHT+IHeyhFwbJ02FHOefpxR67mlMUl7SBsrp6KlB/ktW30pRVoaZ2fDCDwgr8eiuKSf7S+gP/BYVQ==
-X-Received: by 2002:a17:906:3e96:b0:a6f:5c1a:c99d with SMTP id a640c23a62f3a-a6f60dc56fbmr551002466b.53.1718619659791;
-        Mon, 17 Jun 2024 03:20:59 -0700 (PDT)
-Received: from ?IPV6:2001:8f8:183b:6864:7071:8881:6a51:3e82? ([2001:8f8:183b:6864:7071:8881:6a51:3e82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56da3344sm508978966b.19.2024.06.17.03.20.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 03:20:59 -0700 (PDT)
-Message-ID: <a25472f5-3e88-408c-a033-5e338dce6340@gmail.com>
-Date: Mon, 17 Jun 2024 14:20:52 +0400
+	s=arc-20240116; t=1718622766; c=relaxed/simple;
+	bh=/q1tmGRlV2b94HWtvWzP/RQIoEDOOCF6WdK86KGM5kw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=dxfBmkfNvHjWjktCFnzi+z+VGZbLTycnxvxAHVwVWVZ495VflKBc13H+yMdCQIeWRLztldbEz6JXhB7wlF9dcvJ4HQByOtfaxGWRfcrVx0ShpEstopiTjx1NCQwQJMH+d2oQa5JGfvoXewg+gfiFOXJlqp89grxZh+4QT1qvoRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dmJNxc9E; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45HAMafd108445;
+	Mon, 17 Jun 2024 05:22:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718619756;
+	bh=BELgjrJN+w9ID7lAyyjagN60DA04mZRsSAuLmcMGPok=;
+	h=From:Date:Subject:To:CC;
+	b=dmJNxc9E2I8a1ykhfp2pyDeZURjntkNiGgDfFidBzN/K6lwB3+BLk+xSDqoCaRdFH
+	 6fBBg0zlHJtUdh1Khno1Idi0nhFYrwSUtaeBDyyG5Qd38Y8eaiW6O3n+1TLA+bkODT
+	 wnNOodVzhTEnJfWMCni1J7rxIDD161twfYxfwbrI=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45HAMaMC014661
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 17 Jun 2024 05:22:36 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 17
+ Jun 2024 05:22:36 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 17 Jun 2024 05:22:35 -0500
+Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45HAMZG7062219;
+	Mon, 17 Jun 2024 05:22:35 -0500
+From: Kamlesh Gurudasani <kamlesh@ti.com>
+Date: Mon, 17 Jun 2024 15:52:10 +0530
+Subject: [PATCH] arm64: dts: ti: k3-am62a-main: Enable crypto accelerator
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Alexey Charkov <alchark@gmail.com>
-Subject: Re: [PATCH v2 2/5] arm64: dts: rockchip: Add bluetooth rfkill to
- Khadas Edge2
-To: Jacobe Zang <jacobe.zang@wesion.com>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "heiko@sntech.de" <heiko@sntech.de>
-Cc: Nick Xie <nick@khadas.com>, "efectn@protonmail.com"
- <efectn@protonmail.com>, "jagan@edgeble.ai" <jagan@edgeble.ai>,
- "dsimic@manjaro.org" <dsimic@manjaro.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240617071112.3133101-1-jacobe.zang@wesion.com>
- <20240617071112.3133101-3-jacobe.zang@wesion.com>
- <f147be11-fc35-44c2-88e8-7421fee47ace@letovo.ru>
- <TYZPR03MB70017A6280F060A6F4A1DD9880CD2@TYZPR03MB7001.apcprd03.prod.outlook.com>
-Content-Language: en-GB
-In-Reply-To: <TYZPR03MB70017A6280F060A6F4A1DD9880CD2@TYZPR03MB7001.apcprd03.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240617-crytpo-am62a-v1-1-ddb719aed71b@ti.com>
+X-B4-Tracking: v=1; b=H4sIAFEOcGYC/x2NQQqDQAwAvyI5N+BuZRf6ldJDsk1rDq6SSLGIf
+ +/a4zAMs4OLqTjcuh1MPuo61wbh0kEZqb4F9dkYYh+HPoWMxb7rMiNNKRIyJ84hDddSMrSEyQX
+ ZqJbxjCbyVewUi8lLt//n/jiOHwN2oBJ3AAAA
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jayesh Choudhary <j-choudhary@ti.com>,
+        Kamlesh Gurudasani <kamlesh@ti.com>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718619754; l=1194;
+ i=kamlesh@ti.com; s=20230614; h=from:subject:message-id;
+ bh=/q1tmGRlV2b94HWtvWzP/RQIoEDOOCF6WdK86KGM5kw=;
+ b=TNVi2y7uh3tYafIIJ1Yi8dgneltwOXnWXnzGfis/4VTTSW2okYU913sE2frv+4N+8DE8Gh0Ho
+ GbkVPJPOvsqBE25wlpzZ+HS2K3j++7x0lFit5KAIfDjUbWm6lIoudGD
+X-Developer-Key: i=kamlesh@ti.com; a=ed25519;
+ pk=db9XKPVWDGJVqj2jDqgnPQd6uQf3GZ3oaQa4bq1odGo=
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-(sorry, the previous one got sent in HTML by accident)
+Add the node for sa3ul crypto accelerator.
 
-On 17/06/2024 12:55, Jacobe Zang wrote:
->> You refer to wlan in the commit message, but there is nothing wlan
->> related in the patch itself. Update the commit message perhaps?
-> At that time, I want to describe that wlan and bluetooth were from the module named BCM43438. But, it's true that wlan do not be metioned in the code. I will update it in next version.
->
->> I thought you'd need to also reference the respective GPIO to be able to trigger its
->> state, not just switch the pinctrl configuration to GPIO.
-> You means the shutdown-gpios? I configure it in the bluetooth node, it can't be configure in rfkill node at the same time.
+Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+Signed-off-by: Kamlesh Gurudasani <kamlesh@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-am62a-main.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-In Documentation/devicetree/bindings/net/rfkill-gpio.yaml shutdown-gpios 
-is listed as a required property, did you try building the sources with 
-CHECK_DTBS=1 in make arguments?
+diff --git a/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
+index ce4a2f105630..298d0c91fc0a 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
+@@ -216,6 +216,18 @@ k3_reset: reset-controller {
+ 		};
+ 	};
+ 
++	crypto: crypto@40900000 {
++		compatible = "ti,am62-sa3ul";
++		reg = <0x00 0x40900000 0x00 0x1200>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges = <0x00 0x40900000 0x00 0x40900000 0x00 0x30000>;
++
++		dmas = <&main_pktdma 0xf501 0>, <&main_pktdma 0x7506 0>,
++		       <&main_pktdma 0x7507 0>;
++		dma-names = "tx", "rx1", "rx2";
++	};
++
+ 	secure_proxy_sa3: mailbox@43600000 {
+ 		compatible = "ti,am654-secure-proxy";
+ 		#mbox-cells = <1>;
 
-If you already control this GPIO from elsewhere (such as from the 
-bluetooth driver), then perhaps you don't need to define a separate 
-rfkill device at all.
-
->> I'm also wondering if bt_reset_pin is the right one to use here. On my
->> Rock 5B I had to trigger bt_wake_pin to get Bluetooth up and running.
-> Yes, I try to configure bt_reset_pin, bt_wake_host_irq and  bt_wake_pin in pinctrl separately. Each of them works well. After I connected a BT device to Edge2, I input rfkill block 1, bluetooth function failed. Then I input rfkill unblock 1, it can rework. So at last I only configure the bt_reset_pin.
-
-That doesn't necessarily mean that the hardware gets an rfkill signal, 
-what you describe above could also come from the software alone. It 
-would be great to somehow check if the physical pin state gets triggered 
-once you switch rfkill state from userspace, and then that the bluetooth 
-device handles it appropriately (e.g. gets into a hardware-disable state 
-somehow).
+---
+base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
+change-id: 20240617-crytpo-am62a-bb6b71643cc7
 
 Best regards,
-Alexey
+-- 
+Kamlesh Gurudasani <kamlesh@ti.com>
 
 
