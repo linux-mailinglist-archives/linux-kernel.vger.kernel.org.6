@@ -1,140 +1,116 @@
-Return-Path: <linux-kernel+bounces-218035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF6C490B85B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:41:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0396690B865
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63CC7287F67
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:41:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D4C2B233D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607D91891CC;
-	Mon, 17 Jun 2024 17:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA5718A933;
+	Mon, 17 Jun 2024 17:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGpG03KP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="YFtRy7uX"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8AB1891A5;
-	Mon, 17 Jun 2024 17:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3134C18A922;
+	Mon, 17 Jun 2024 17:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718646079; cv=none; b=ALEZmkXzxNnkdYVBO4XfGwPTGgLLFmXCw/9vK+PbtE1A2BFOBTDPcKCh2+MNBpgnGj0v+q1ceYxffW2Bm3jBagKwn+Ay/3+JqMh9VigXR86FOMFOE3PxG8na/wXIY0XQywQ6gJtv+FDBFp+FM+UgrNJLRWNbsCJNNKHWTbEqQsM=
+	t=1718646258; cv=none; b=hOeeGCrbdkrERY6Q85q6rlk2zp969ea3KcE1x1L5dlQQuDRHwWVJKy5u3crVkUMOx4ms9lqBC9ry3Q7UH+ZCwGoWqSknMK00twSR0Z1ZHBfSq4RR+wgXCFg0CDweXb1XouwbchowuMCr+Zsw6ytZF6TgiozyqRUo9AEDq0xqf7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718646079; c=relaxed/simple;
-	bh=SyTGqPdHpuy3gJMpwFjM312Sys8XLnxtGOp+tF8HIfM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kEuvdhLAsLyAzaZ7xadAFPSLMQ/dztKWRTu7iZySgJIvaCo/BXaajwPWRBcYiA0LFge70JeQvlEviOtn+Z+j6DtMQjBzyQTyZWccNfah/NDElXR2jDFzTqhxT9GM4a2g1s0wRpMlQoJukhWsOrcwcQVm3KjsZH/DIkvD04Gr60Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uGpG03KP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26CD1C2BD10;
-	Mon, 17 Jun 2024 17:41:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718646079;
-	bh=SyTGqPdHpuy3gJMpwFjM312Sys8XLnxtGOp+tF8HIfM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=uGpG03KPdReyjC1/opQWeFUmIa7rjKz4qdzL3Hsr8+an6ghDa2V8srd0gkZoUKP9R
-	 +eXn5MKn0jYpfdVERyjjKRjlwi1bsgAIgxK73PHYGeg/Pp1dKh4lH2iCBuThx89NQk
-	 99GdpyvBmDe9YgiA5pKjb4uH6OAigy4vZfgbP9ibxuaKDKV/0Xr9rv8xZtnoZD1ZZj
-	 yzUIMi5ez50LW1KmtrQLIWoIaa+wgg/CtGw/fF17npZJaWn/hBzXDyA1HnSlmwwoew
-	 794/yiqgBtyjM/dOxETPIz99qXy/lESnTAbZoMVpaximCgFT4CW6VS53ZRbPAy77qk
-	 /hKIqpqIHV1mQ==
-From: Kees Cook <kees@kernel.org>
-To: Brendan Higgins <brendan.higgins@linux.dev>
-Cc: Kees Cook <kees@kernel.org>,
-	kernel test robot <lkp@intel.com>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com,
-	linux-hardening@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] kunit/usercopy: Disable testing on !CONFIG_MMU
-Date: Mon, 17 Jun 2024 10:41:15 -0700
-Message-Id: <20240617174111.work.408-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718646258; c=relaxed/simple;
+	bh=ZW81xIG74/pws4gnTAm5H30wvlITx6Vaz7+uqpMz3WA=;
+	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
+	 Date:Cc:References:To; b=oyL4gpB34pG6HtPQjJI2CWDstX0+RErgEExNpUxvxVI46QboGV9d/oaHVUXAL0QQW4qdwrDCs1ujpc1UZ9y4bGrzXU5x790cU/LS/95mL6S2Otlo+o8aC+rBgqx16hOPCAj7/kIFQTp+tl806UnzJcAnAoS2kXkMIVimrNtsUq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=YFtRy7uX; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1718646244; bh=lSfFb7+k557rhRi20IR9VIL7t+SDEJaWgmE3dAg5WgI=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=YFtRy7uXqOal+oMCijajPrRyCIdSP3JEBrtHG5sNJB4NBC8jnLQ7DzUE3ZUk+e8td
+	 6+R7eETeMsCj41KPxsAsb3SkE1W4UlgSJYYlsCJ8SYtNtZeV+oTSN04EDzLtKgwjpK
+	 Zki9Yot2tg+RcCSrA04/WxqWGzz+KqhtPYsdEaoI=
+Received: from smtpclient.apple ([2408:8207:18a1:9700:9c85:7ae:3ee:45fe])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id AAE8FC0D; Tue, 18 Jun 2024 01:42:46 +0800
+X-QQ-mid: xmsmtpt1718646166t17e0u07v
+Message-ID: <tencent_53226D39C76ADCAA1883109DC6213E5EC107@qq.com>
+X-QQ-XMAILINFO: OKKHiI6c9SH39YSGtA2DuQ1+IsvjerQWoRzDVzuacvLBMv26KpHergvu9Ti+QK
+	 /xNryMTLRsr8MZTplkDQJXfxq8QGCo8ChBXf9pacuNdnNyVHnUbSNdzDWvHBL7gyO9cDrAf9b3C+
+	 6T6VkSaIN6bsywuMTy/hVi3HP15/6mC6EK7en0iKYX8jD+bTYA1Fgg3aaBUIVqZmAoOj9II/vHHT
+	 4GlKtbgWE+EgBxPMJz6eSXSiTE67eItWvyUqLhmsV5FItVlhZrzP1LYHkR8J4qQCqWxeR6NIekfW
+	 o9gJNfmfeyLY6+qaHchOK9iOsqoTdv3CjeK2a5ibIenncxr/W1xBqas9nUomJ5u3GKe5OsMQK6wB
+	 9Wml9CYCTvUO5b89aVue/R/csfWfS1s5qkgZH9YOskAevqFkKnDrrzlcfFEDaQbdsUIWhKVM9iar
+	 QiQMb/PHK+1mWIRM6WBjQVNR7NunK+y0N5skHnJBKV1dapCuA0ckWctCMuwZAEpvrE6LcBMi3Mfh
+	 +MDl//+Lvazr71vT/Tmshup5BkGPIS//K43W9gG1W6JlfIf0ylof7Pbdr5FDNE++PJCeRGPihUOT
+	 Ak/cZd5ZjcYO3dq37EfkDPce8ANQITJb5UPsEvxJeRWhS1wl/6EeMRdX5v/8WGr9eyM3Ej06MCQO
+	 aw65nIBCfE8JW1Ho+SAmMoK48KG4KNu7zlZqtthvwGKmFTb9b3rvO6AB11LwmcXfbwNzkAYNwoko
+	 5BlHPs+P/Riv8eWtuITwmDDTbNrskgGMHGFzRFplLs+p6QuFOxOsLa4WOo8SoHvPwkRrcWIDyGM/
+	 x2EdqohEPCOf07CDnBGmpEvil6/gwwBj1T/52EFZGI33h9XF/sMHNoNSfR0q0JvP0JOFAAsFF8Hy
+	 gSuy5M3KOyZHWd2d01f659w5pDisw7yvgaVDQ7uqID/Xj70xCwEuQ/AkTloih4Vau0AtzVhGrqcJ
+	 EGV6P6W5HkzVuifQxtKL9+79zXfjAdo+ln+NRBSXbN1MA7kcUqBYipJa+jbAn8svfXwzIhp1U=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2180; i=kees@kernel.org; h=from:subject:message-id; bh=SyTGqPdHpuy3gJMpwFjM312Sys8XLnxtGOp+tF8HIfM=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmcHU71lN3gU2U5/SabG8LFXiX7hR8Kwm6xAE7y fRNHDG70PKJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZnB1OwAKCRCJcvTf3G3A JiWJEACZ5pYWV/fr4xGq+aSoVJGknbuIT4sUIOHFs6bjERXU4LaLDpqPiQ7EXSIbt5ikxK9TD2a PnkHJEECwZSrQr9XZWnMETsHm82Pzy8lgYW0PQZDSg1vyiLJejZAdFNMBfE9y1b0Y/I2zzXhEEm 3umRoPCnNWVER7j/NZ+SDnYETclRNJP5DayslHfYmdd+7ixn0vrjVYWf72kaoJitTor+DKk74In D6+QAfroH2RvrvTAMrG7dgtTGnWahj+xQpqBlZH38pLtPOe1QjA2VrtNAa/RffIHS+vT5IxqqHU 6Fn1Uzlry7ZUxNPK1FySQxTbsBKC4PRLLwP3i1A/Rw4VPwdZWAdqj543xIFivMOIuGX6EpmtUiY al7xYvYqBbriDWeIm+kaNvXJOXri7Qor/jXcGG0XAT3VsDQdZnrYL1PD91OrsUheWQ6oW+TeHrS fotG8J2+PleZj7iGZYXJHqHwpPVTQ9mRckQA5zFJNguxx3GaoVmA+KBFEnhJP9XK7sn/d9MqX0x Y31O1zS7LDzDYlxjxQl6PgoYiAk3NwcEJFd2+LBwV9opREay5cOy2tn1rx17s2RER74jRdJ99ig qF1yxmGx8AVF0zph9SVyTY199DWOaVWlJkPJOi2yMfFCqIrcOzIKo7hQ0C3u8ttQ/1tfmf1Y20c /HOkTB5O3lzQu
- eQ==
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH v1 0/9] riscv: add initial support for SpacemiT K1
+From: Yangyu Chen <cyy@cyyself.name>
+In-Reply-To: <20240617-connected-avoid-82f0bdc05cdf@spud>
+Date: Tue, 18 Jun 2024 01:42:34 +0800
+Cc: Jisheng Zhang <jszhang@kernel.org>,
+ Yixun Lan <dlan@gentoo.org>,
+ linux-riscv@lists.infradead.org,
+ Conor Dooley <conor+dt@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Anup Patel <anup.patel@wdc.com>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ devicetree@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Jesse Taube <jesse@rivosinc.com>
+Content-Transfer-Encoding: 7bit
+X-OQ-MSGID: <99CEE9EB-EEC2-4538-9378-D9AAD8CD240B@cyyself.name>
+References: <tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com>
+ <20240616-exorcism-computing-e11e26084a62@spud>
+ <20240616224811.GC3983622@ofsar> <ZnBEBQjTQtFs-fXt@xhacker>
+ <20240617-synapse-carmaker-0a59c7c6edb7@spud>
+ <tencent_26E7381EE1F6C5188428359AF3F908CA680A@qq.com>
+ <20240617-connected-avoid-82f0bdc05cdf@spud>
+To: Conor Dooley <conor@kernel.org>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-Since arch_pick_mmap_layout() is an inline for non-MMU systems, disable
-this test there.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202406160505.uBge6TMY-lkp@intel.com/
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Brendan Higgins <brendan.higgins@linux.dev>
-Cc: David Gow <davidgow@google.com>
-Cc: Rae Moar <rmoar@google.com>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kselftest@vger.kernel.org
-Cc: kunit-dev@googlegroups.com
-Cc: linux-hardening@vger.kernel.org
-Cc: linux-mm@kvack.org
----
- lib/kunit/user_alloc.c | 4 ++++
- lib/usercopy_kunit.c   | 5 +++++
- mm/util.c              | 2 ++
- 3 files changed, 11 insertions(+)
 
-diff --git a/lib/kunit/user_alloc.c b/lib/kunit/user_alloc.c
-index 76d3d1345ed7..ae935df09a5e 100644
---- a/lib/kunit/user_alloc.c
-+++ b/lib/kunit/user_alloc.c
-@@ -30,6 +30,10 @@ static int kunit_attach_mm(void)
- 	if (current->mm)
- 		return 0;
- 
-+	/* arch_pick_mmap_layout() is only sane with MMU systems. */
-+	if (!IS_ENABLED(CONFIG_MMU))
-+		return -EINVAL;
-+
- 	mm = mm_alloc();
- 	if (!mm)
- 		return -ENOMEM;
-diff --git a/lib/usercopy_kunit.c b/lib/usercopy_kunit.c
-index 45f1e558c464..e819561a540d 100644
---- a/lib/usercopy_kunit.c
-+++ b/lib/usercopy_kunit.c
-@@ -290,6 +290,11 @@ static int usercopy_test_init(struct kunit *test)
- 	struct usercopy_test_priv *priv;
- 	unsigned long user_addr;
- 
-+	if (!IS_ENABLED(CONFIG_MMU)) {
-+		kunit_skip(test, "Userspace allocation testing not available on non-MMU systems");
-+		return 0;
-+	}
-+
- 	priv = kunit_kzalloc(test, sizeof(*priv), GFP_KERNEL);
- 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv);
- 	test->priv = priv;
-diff --git a/mm/util.c b/mm/util.c
-index df37c47d9374..e70e8e439258 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -484,7 +484,9 @@ void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_stack)
- 	clear_bit(MMF_TOPDOWN, &mm->flags);
- }
- #endif
-+#ifdef CONFIG_MMU
- EXPORT_SYMBOL_IF_KUNIT(arch_pick_mmap_layout);
-+#endif
- 
- /**
-  * __account_locked_vm - account locked pages to an mm's locked_vm
--- 
-2.34.1
+> On Jun 18, 2024, at 01:14, Conor Dooley <conor@kernel.org> wrote:
+> 
+> On Tue, Jun 18, 2024 at 12:39:30AM +0800, Yangyu Chen wrote:
+>> 
+>> The vendor uses a special intel pxa uart driver, marked deprecated
+>> in the kernel and incompatible with ns16550. If we use ns16550 in
+>> the dt, the behavior of uart is like the uart has no interrupt and
+>> stops working permanently when fifo overruns, making many developers
+>> not know how to start unless they use the SBI HVC console, which
+>> needs to turn on CONFIG_NONPORTABLE.
+> 
+> This I just do not understand. Why did they use this IP? Is it free?
+> Did they use it before for something else? It's a rather strange design
+> choice to me.
+
+I don't know either. However, PXA is a subfamily of XScale. The
+kernel also probed the UART as an XScale. So, using XScale compatible
+string is OK.
 
 
