@@ -1,143 +1,239 @@
-Return-Path: <linux-kernel+bounces-218125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1E990B98B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:22:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403AC90B98A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21B3D1F25603
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:22:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3A1B28AF19
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB43619AD64;
-	Mon, 17 Jun 2024 18:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D7419AA78;
+	Mon, 17 Jun 2024 18:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="amq+9uNr"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mac.com header.i=@mac.com header.b="N7ux4WrZ"
+Received: from qs51p00im-qukt01072301.me.com (qs51p00im-qukt01072301.me.com [17.57.155.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7938019AD4A
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA71219AA5C
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.155.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718648314; cv=none; b=t43ZE4+StdfrmrYTeExeNuymRMSN0jSYRJ0SMTPKsiMSRXHG6A6ZotMCqi+ZHRp00CSFkmZOzYCwMQUtmUlblFRNtPKZ/Nbrl1t18pnbVrpN08qdv8uxNRoNAd8nCAy3ZZhIIIeCjkoruzaqLF1p3hxyJQ++StFHEx4SE2JBMEY=
+	t=1718648310; cv=none; b=N5vNh0wkShXY5QL3HaCVCEhbeuV7Omg6lgVK1oJNO6JwfTfPweWtY1D155UpPHhZxQpw3CxD9vKIddH9cRYnqdJGe0YWPrdbrqJWIiBK1pqq/06SskXFbXodo2c0NGV0v70KgEnD2RGwDAuWdRbF+JeS6a+i4vYg39chfS2vXsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718648314; c=relaxed/simple;
-	bh=uzUtkaBs1eFh4Kg9PPe9ZguhkJmdxCgTLkwCF9xPsqo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kw5Z+ErwLId/yPDC9DhSt5ohmysRtxMEfbsmDPxjju/h1MfBusXpX0jc9dNC4D+U2nj86O/ewLv6lrAQsUQ1Lq4teoyHApmhggn67MhpZJse9Sp71zFEqjC6GYXqCqPjL9P0/oXF9jbrTx04R7HWEbSOfVHuPCc95kBb8j9Zn5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=amq+9uNr; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52bbdc237f0so5201395e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 11:18:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718648309; x=1719253109; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ceumPs6CQec2Ii8QHoLW6uVvM6OUIg9EFfPHe4qWsWE=;
-        b=amq+9uNrkW+jkpvs8ZvFy3AyRCVHpuv+qhFwAS+xMGN+b7nThHQx7kNMJRWpkPLoWa
-         VReKoabxeS1dklMDZjoRE2sPgT1/xXvbEAKcQUrBtQIRtNmEre91yAfuAAmJhUpvxlai
-         nLTYRUpRtVooqcR6bsvPqwNlHuImagd85esbBFSnB4jHOFyJS4JewjlBnwbJpcil97Vq
-         LAFbjKFq/J5XDgoQPtqKiljvZ5G/Fhmm9Ahcn84ceFemPOQJCWbCIsokkP/md6bD5NSW
-         dVI8Gdqqc4HfvQuYh3GG3smCC7QDHmRvSEXPehTAULWlqjQaJ7h4I1IxvJthlMpFhuIP
-         1cJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718648309; x=1719253109;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ceumPs6CQec2Ii8QHoLW6uVvM6OUIg9EFfPHe4qWsWE=;
-        b=vN7BV975vfwcC7CXLjYezX/UTZA6OEFEr7rRKC1cGby61OUpdqVfZZaGeQasUd59P3
-         yi4AavtmrHMnjtaNJSSrBOjSlhBuykJGQ5NWowMGsTFei4evovcx4GdU1MWE3QMSoYAU
-         s/xEDQRVxHkczksGAF6PIBKAYjzic4MMdOoc2u8iEszKw8VNuYnAjhBd+oIcyKVOv2FD
-         Q9T02N8MyuofUe4NAi6v1NkpJalFBof8Moye+TPWzgEEnUthRhSb/KDc/8+QipoZgwOZ
-         2Te461IAXZVeby7YlovFvXCyJRG0EtFAj4XAb6pdb5jTpCkDBiCVcf3JYGTDLTB2rpl2
-         kIbg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwE5PAmNK5wgUqySrxvmzKf0Xt0OczeGirMK/lBB8K5d1JcOwM4va1LzRho5+Pl+fw+yU0WWSXsA6uvs1/oHWuWNagKLNNTFjYBpZy
-X-Gm-Message-State: AOJu0YxZyLX2X4lPs9KRDbz5fFdqy5nwD08/kABO9PwMpL4iO5+cRo7N
-	sifFs79t6FuDD0afUWyEj8Wqt46jAkeMCEeFi7ndKeyl0tuwyY+aAJ4yLv97wVp69fB6Ap2y7ZM
-	dsPXFGWhTMmW47b22hm5voF7GJhA=
-X-Google-Smtp-Source: AGHT+IEXnCfaKbC9VECLKvXP+gGDAdtlS2kXJD36wyau7KK+j3fKiPUEihIWyil45KdwIUkqEaNkbCk4Vt/mqTiW+z4=
-X-Received: by 2002:a05:6512:3618:b0:52c:a7c8:ec42 with SMTP id
- 2adb3069b0e04-52ca7c8ed39mr6903120e87.0.1718648309268; Mon, 17 Jun 2024
- 11:18:29 -0700 (PDT)
+	s=arc-20240116; t=1718648310; c=relaxed/simple;
+	bh=4Gu1fbPocltXlsofi4VIKRS13wZx09T4hCqNeHvSNKo=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=jDyI6yEETRFh1EYh1tECW8uDG83QDxkrE2oOdAWAkNf6SiY7z7Yjb/rsoxfvOdP7BBgUsTrffclWKj4W0pRhreQF+u8USFTZZ6yM7DMoAYQaw9TeXwwckl6lPsPP3q3apoNVzq68n6n4/cxDn7MRjuKHKs85+gWuTczsqrIxHPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mac.com; spf=pass smtp.mailfrom=mac.com; dkim=pass (2048-bit key) header.d=mac.com header.i=@mac.com header.b=N7ux4WrZ; arc=none smtp.client-ip=17.57.155.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mac.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mac.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mac.com; s=1a1hai;
+	t=1718648307; bh=zl4ADSYUfA5+v6Sbvl/cQPRda8ieZo/JDRv9TvRws+s=;
+	h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
+	b=N7ux4WrZMBpUHSnOXOCqHmxOGr3jGGkN4+sVBWIamX1nj4N+tWqQHd8YECWxnpZXZ
+	 a+ZluKA5mEUDV9V8aoeYzpjWWY/xKNtWTL0HwAauwBPWABfact+3S4VQN/iIaqyjI9
+	 wYYquDvPghNAgI9ifaRaL/sqsjWy+4yOvUyU1JgtUgwcCzObtygho+YnpMlP7VtppD
+	 5+AsaSKZf0d+yzVYZPq+1o0GFBNvCmUbk2rDrO8UGvxR3Q3rgzzEZl/ReMLkKAfSZk
+	 uSc1tOl8WkJrfKZy0rD0ZHh1LFQhAMMDx4GuYr/JtCN7yCXw7q5kpskq/I8wQMDEuw
+	 5f+KINf/HhSSQ==
+Received: from [172.20.144.3] (qs51p00im-dlb-asmtp-mailmevip.me.com [17.57.155.28])
+	by qs51p00im-qukt01072301.me.com (Postfix) with ESMTPSA id 0675E2540152;
+	Mon, 17 Jun 2024 18:18:21 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240614040133.24967-1-jason-jh.lin@mediatek.com> <20240614040133.24967-3-jason-jh.lin@mediatek.com>
-In-Reply-To: <20240614040133.24967-3-jason-jh.lin@mediatek.com>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Mon, 17 Jun 2024 13:18:17 -0500
-Message-ID: <CABb+yY2bwj2BcdJLGe1ZYwCrnXL3LtcePMb=wQPaBKorBSs2yA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mailbox: mtk-cmdq: Move pm_runimte_get and put to
- mbox_chan_ops API
-To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Singo Chang <singo.chang@mediatek.com>, 
-	Nancy Lin <nancy.lin@mediatek.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.21\))
+Subject: Re: [PATCH v2] ubi: gluebi: Fix NULL pointer dereference caused by
+ ftl notifier
+From: Gagan Sidhu <broly@mac.com>
+In-Reply-To: <303502000.252057.1718647746641.JavaMail.zimbra@nod.at>
+Date: Mon, 17 Jun 2024 12:18:18 -0600
+Cc: ZhaoLong Wang <wangzhaolong1@huawei.com>,
+ chengzhihao1 <chengzhihao1@huawei.com>,
+ dpervushin <dpervushin@embeddedalley.com>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ linux-mtd <linux-mtd@lists.infradead.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>,
+ yangerkun <yangerkun@huawei.com>,
+ yi zhang <yi.zhang@huawei.com>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <90A90DA4-8B68-432D-9577-0D3635AF84BB@mac.com>
+References: <CFAC276E-E652-40CD-B3D8-563B95E679A8@mac.com>
+ <14779870-BA54-4ABF-8ABF-FF1D23D172A7@mac.com>
+ <1641029267.251608.1718640023954.JavaMail.zimbra@nod.at>
+ <65E62DA3-EF16-44BD-8E51-E751BD2C496F@mac.com>
+ <1802911356.251780.1718643160760.JavaMail.zimbra@nod.at>
+ <E3E2C13C-1E52-46F2-BE2D-D2592C3369DB@mac.com>
+ <F2DCFCE7-68FA-4C09-AE5B-09F2233575F1@mac.com>
+ <48D8B89B-0402-4D8B-B045-86104C0C797F@mac.com>
+ <303502000.252057.1718647746641.JavaMail.zimbra@nod.at>
+To: Richard Weinberger <richard@nod.at>
+X-Mailer: Apple Mail (2.3445.104.21)
+X-Proofpoint-GUID: qvV_8sI9K2MF_V5cNH9ppsjRRpV4aTwc
+X-Proofpoint-ORIG-GUID: qvV_8sI9K2MF_V5cNH9ppsjRRpV4aTwc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_14,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 mlxscore=0
+ clxscore=1015 mlxlogscore=999 malwarescore=0 phishscore=0 suspectscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2406170142
 
-On Thu, Jun 13, 2024 at 11:01=E2=80=AFPM Jason-JH.Lin <jason-jh.lin@mediate=
-k.com> wrote:
->
-> When we run kernel with lockdebug option, we will get the BUG below:
->   BUG: sleeping function called from invalid context at drivers/base/powe=
-r/runtime.c:1164
->   in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 3616, name: kw=
-orker/u17:3
->     preempt_count: 1, expected: 0
->     RCU nest depth: 0, expected: 0
->     INFO: lockdep is turned off.
->     irq event stamp: 0
->     CPU: 1 PID: 3616 Comm: kworker/u17:3 Not tainted 6.1.87-lockdep-14133=
--g26e933aca785 #1
->     Hardware name: Google Ciri sku0/unprovisioned board (DT)
->     Workqueue: imgsys_runner imgsys_runner_func
->     Call trace:
->      dump_backtrace+0x100/0x120
->      show_stack+0x20/0x2c
->      dump_stack_lvl+0x84/0xb4
->      dump_stack+0x18/0x48
->      __might_resched+0x354/0x4c0
->      __might_sleep+0x98/0xe4
->      __pm_runtime_resume+0x70/0x124
->      cmdq_mbox_send_data+0xe4/0xb1c
->      msg_submit+0x194/0x2dc
->      mbox_send_message+0x190/0x330
->      imgsys_cmdq_sendtask+0x1618/0x2224
->      imgsys_runner_func+0xac/0x11c
->      process_one_work+0x638/0xf84
->      worker_thread+0x808/0xcd0
->      kthread+0x24c/0x324
->      ret_from_fork+0x10/0x20
->
-> We found that there is a spin_lock_irqsave protection in msg_submit()
-> of mailbox.c and it is in the atomic context.
-> So when cmdq driver calls pm_runtime_get_sync() in cmdq_mbox_send_data(),
-> it will get this BUG report.
->
-> To avoid using sleep in atomic context, move pm_runtime_get_sync to
-> mbox_chan_ops->power_get and also move pm_runtime_put_autosuspend to
-> mbox_chan_ops->power_put.
->
-> Fixes: 8afe816b0c99 ("mailbox: mtk-cmdq-mailbox: Implement Runtime PM wit=
-h autosuspend")
 
-Can you please share the pattern of mailbox transfers on your platform?
-As in, how often and long are the "channel idle" periods? And when
-active, how many transfers/sec ?
-I see every TX is acked by one RX packet. How long is the typical gap
-between a TX and its ack?
 
-Thanks
+> On Jun 17, 2024, at 12:09 PM, Richard Weinberger <richard@nod.at> =
+wrote:
+>=20
+> ----- Urspr=C3=BCngliche Mail -----
+>> Von: "Gagan Sidhu" <broly@mac.com>
+>> =
+https://github.com/torvalds/linux/blob/master/drivers/mtd/ubi/gluebi.c#L29=
+7
+>>=20
+>> it seems the GLUEBI is setting the mtd to MTD_UBIVOLUME
+>>=20
+>> https://github.com/torvalds/linux/blob/master/drivers/mtd/ubi/block.c
+>>=20
+>> where this doesn=E2=80=99t even have the text =E2=80=9Cmtd=E2=80=9D =
+anywhere.
+>>=20
+>> but the boot partition is always the ubiblock device.
+>>=20
+>> so is gluebi taking the same volume and adding the MTD_UBIVOLUME =
+label or
+>> something?
+>=20
+> Yes, GLUEBI emulates a MTD on top of an UBI volume.
+> It sets the MTD device type to MTD_UBIVOLUME.
+>=20
+>>>=20
+>>> [    5.462504] auto-attach mtd7
+>>> [    5.462525] ubi0: default fastmap pool size: 15
+>>> [    5.477309] ubi0: default fastmap WL pool size: 7
+>>> [    5.486683] ubi0: attaching mtd7
+>>> [    5.811240] UBI: EOF marker found, PEBs from 273 will be erased
+>>> [    5.811299] ubi0: scanning is finished
+>>> [    5.874546] gluebi (pid 1): gluebi_resized: got update =
+notification for
+>>> unknown UBI device 0 volume 1
+>>> [    5.892927] ubi0: volume 1 ("rootfs_data") re-sized from 9 to 28 =
+LEBs
+>>> [    5.906683] ubi0: attached mtd7 (name "ubi", size 40 MiB)
+>>> [    5.917446] ubi0: PEB size: 131072 bytes (128 KiB), LEB size: =
+126976 bytes
+>>> [    5.931132] ubi0: min./max. I/O unit sizes: 2048/2048, sub-page =
+size 2048
+>>> [    5.944654] ubi0: VID header offset: 2048 (aligned 2048), data =
+offset: 4096
+>>> [    5.958513] ubi0: good PEBs: 320, bad PEBs: 0, corrupted PEBs: 0
+>>> [    5.970472] ubi0: user volume: 2, internal volumes: 1, max. =
+volumes count:
+>>> 128
+>>> [    5.984859] ubi0: max/mean erase counter: 1/0, WL threshold: =
+4096, image
+>>> sequence number: 1613475955
+>>> [    6.003045] ubi0: available PEBs: 0, total reserved PEBs: 320, =
+PEBs reserved
+>>> for bad PEB handling: 15
+>>> [    6.021426] rootfs: parsing partitions cmdlinepart
+>>> [    6.021444] ubi0: background thread "ubi_bgt0d" started, PID 97
+>>> [    6.043694] rootfs: got parser (null)
+>>> [    6.051426] mtd: device 12 (rootfs) set to be root filesystem
+>=20
+> AFAICT, this log line is not part of the mainline kernel.
+
+this is mainline. it=E2=80=99s just not 6.x. it=E2=80=99s 4.14.
+>=20
+>>> [    6.062891] rootfs_data: parsing partitions cmdlinepart
+>>> [    6.073669] rootfs_data: got parser (null)
+>>> [    6.211240] block ubiblock0_0: created from ubi0:0(rootfs)
+>>> [    6.259545] rtc-pcf8563 0-0051: hctosys: unable to read the =
+hardware clock
+>>> [    6.282125] VFS: Cannot open root device "(null)" or =
+unknown-block(31,12):
+>>> error -6
+>>> [    6.297406] Please append a correct "root=3D" boot option; here =
+are the
+>>> available partitions:
+>>> [    6.314054] 1f00             512 mtdblock0
+>>> [    6.314060]  (driver?)
+>>> [    6.327077] 1f01             256 mtdblock1
+>>> [    6.327081]  (driver?)
+>>> [    6.340101] 1f02             256 mtdblock2
+>>> [    6.340105]  (driver?)
+>>> [    6.353124] 1f03             256 mtdblock3
+>>> [    6.353129]  (driver?)
+>>> [    6.366153] 1f04           45056 mtdblock4
+>>> [    6.366158]  (driver?)
+>>> [    6.379175] 1f05           40572 mtdblock5
+>>> [    6.379179]  (driver?)
+>>> [    6.392217] 1f06            4096 mtdblock6
+>>> [    6.392222]  (driver?)
+>>> [    6.405240] 1f07           40960 mtdblock7
+>>> [    6.405244]  (driver?)
+>>> [    6.418272] 1f08           32768 mtdblock8
+>>> [    6.418277]  (driver?)
+>>> [    6.431296] 1f09           40960 mtdblock9
+>>> [    6.431300]  (driver?)
+>>> [    6.444324] 1f0a            6144 mtdblock10
+>>> [    6.444328]  (driver?)
+>>> [    6.457518] 1f0b            4608 mtdblock11
+>>> [    6.457523]  (driver?)
+>>> [    6.470720] fe00           33604 ubiblock0_0
+>>> [    6.470724]  (driver?)
+>>> [    6.484090] Kernel panic - not syncing: VFS: Unable to mount root =
+fs on
+>>> unknown-block(31,12)
+>=20
+> (31, 12) would be mtdblock12.
+> How does your kernel know that mtdblock12 shall be the rootfs?
+
+this is an openwrt approach: =
+https://openwrt.org/docs/techref/filesystems (under =E2=80=9Ctechnical =
+details=E2=80=9D, third paragraph)
+
+essentially there=E2=80=99s a feature they add to the kernel (via patch) =
+where you can enable a feature that sets the root device based on the =
+name of the partition.
+
+in this case as long as the volume within your ubi file contains the =
+name =E2=80=9Crootfs=E2=80=9D, openwrt will follow it as it gets =
+unpacked and set that as the rootdevice for you.
+
+=E2=80=94
+
+>=20
+> I have a hard time understanding your current setup.
+
+i think we are saying the same thing when you say (31,12) is mtdblock12, =
+which is shown as ubiblock0_0, because once i remove the change under =
+discussion here, the boot is fine.=20
+
+is it possible that gluebi is adding properties to the device created by =
+CONFIG_MTD_UBI_BLOCK or something like that?
+
+i wouldn=E2=80=99t worry about how the kernel knows which partition to =
+set as root. openwrt has been doing this for over ten years.=20
+
+the real question is, if we know what partition to set as root =
+(ubiblock0_0 or mtdblock12), why does this change prevent it from =
+finishing the boot?
+
+the only explanation seems to be that gluebi is adding features to the =
+ubiblock0_0 device (MTD_UBIVOLUME)?
+
+
+
+>=20
+> Thanks,
+> //richard
+
 
