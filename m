@@ -1,134 +1,110 @@
-Return-Path: <linux-kernel+bounces-217247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94A390AD62
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:54:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80A2790AD65
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FDB9283FF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:54:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEA282834D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CAB194C77;
-	Mon, 17 Jun 2024 11:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC129194C78;
+	Mon, 17 Jun 2024 11:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="khLP/TUt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r61JJ5HR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D504C19308B;
-	Mon, 17 Jun 2024 11:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C919194AE1;
+	Mon, 17 Jun 2024 11:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718625253; cv=none; b=IyhTPWH8EpQVwLgwfeeB2vHaHJ8Ms82ysok3TyLdYqJSGl/wj8R4Etlug/QVB+vi7m0DCZTxa5lWFcJTHXloT4vrdPDStslI1rviAt9uhkZUisKhLITEaLXNU7fDlmoVnAR9PdN4O2kn1h8dJJi/MYWPHUUSbhStC2/XLLIpDw0=
+	t=1718625308; cv=none; b=lAGvO+Gh9ZvGWrpM+7bTnm+3puRVlh7jS5CF9gjt/UuXxdubwTZLgS/BTWa1C+c/RZ7APPG1LSVcDk0mfcHq60ymAp6WC8zIQb9sD9AkQwhM+kMdjXk0ZeJAwFLgoqL7p+q40bSqi3n3DGeslvLgPfbFQJLO4mgPCwPQwRWe4vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718625253; c=relaxed/simple;
-	bh=nLSa833g+m/0FkCeHBJpkevPf3ESa1dp0aQQiOtYnIQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VwgwRhR3rb3ekxG7SCJkjTJDdu1XnVA00vfJtJsl5509iZoMpInJiLTWTYIS8vm5ce+aFMl3w1IpTFTULZV5dtImZgJPswMhhjI49VY3lz4fBAYLJtTRKA22Dx8GqHS4mmt0nbY8pM0ZmMA+DA3bfXtKNrYJNisjgTlFSL3ciDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=khLP/TUt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78CB4C4AF1D;
-	Mon, 17 Jun 2024 11:54:12 +0000 (UTC)
+	s=arc-20240116; t=1718625308; c=relaxed/simple;
+	bh=jUYkLcHNVMGAKmmAya+2zPkcEa9Bqe1QYQq6BZcZcHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pNOG++tFL2j01S2QfIADUW2miQBMG3M4t/BO31HBzBh3ea82M/vYNHdUJDbELYfHSaL/SWjr0pWwrQlUTD4bjBkBkI7HsmLoz7rsH5gaOx8D98S/OVEjNlKrL+Ll7DNQltVGbzha/CfPTXc3muMXIKwNgIFP+beyBRFvb8t/Y/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r61JJ5HR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99B76C2BD10;
+	Mon, 17 Jun 2024 11:55:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718625253;
-	bh=nLSa833g+m/0FkCeHBJpkevPf3ESa1dp0aQQiOtYnIQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=khLP/TUtmjhbhL9Y5EqX8xXX2mj1IHhOURpSOWDW4Qm94csdO+DXUVyYLhWq9SUvM
-	 h0LGQZz2+8En7B42gqamcHBa2NXTH/VN1F2dXg0nYolGHqFJgmoljKJ8aWNlIpj6Rb
-	 qMG1oz5WmuksI4tez6dAKi4WFL2UnumRrafMmnHYu6huKE4OqRiusUOcMjABPORFc8
-	 qltzAz22worC8una6e9XjhIwzXoTEuvHremTCP5d9L68kEE5kvVpFwzXux4OCV8dSK
-	 2AUe86xy4yN6R9iSdzHbbTJl7FFAONh0U0BTMuIKEgdOeQc/KYF7T7RsoRHJ+Tq6he
-	 fDt4cb3GK0bxA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 17 Jun 2024 07:54:08 -0400
-Subject: [PATCH] nfsd: fix oops when reading pool_stats before server is
- started
+	s=k20201202; t=1718625307;
+	bh=jUYkLcHNVMGAKmmAya+2zPkcEa9Bqe1QYQq6BZcZcHY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r61JJ5HRwAWeK+V5dXT3Trn5Ly+Ls5Xb2ENHZz6MPzH+S6jxyaoH1ZkkSeePRuVA5
+	 62dkADdkS+wL+exFW3KOPtePLeuFMDarSUcdHg0Bh4Q3feTFJfMT9UZvNuiMQDUkjL
+	 Qg1qKTXBKUY/+vBEq6JNrqkianvWPn6D1L7ekEWbN9vRQW6cGu8PmNuGAPPZG4wa7B
+	 E71jkxkXIpefUJhncHzRGZW2E0eJfi9SvIjxf/WRtFS/RbDEloIJKrVOZJU6bAcTS/
+	 k4ikJSYxgo119Nr6vIHuPELJkgyTENDfUBy39P1LE4fhb9yrSkWaQW8oVZaD3tZEXu
+	 F6+sX7+nS8bsg==
+Date: Mon, 17 Jun 2024 12:54:57 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
+	Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Takashi Iwai <tiwai@suse.com>, LKML <linux-kernel@vger.kernel.org>,
+	Rohit kumar <quic_rohkumar@quicinc.com>
+Subject: Re: [PATCH v6 3/7] ASoC: codecs: wcd937x: add wcd937x codec driver
+Message-ID: <a6d17f27-51f4-47a5-8798-37bcdf3b103d@sirena.org.uk>
+References: <20240611074557.604250-4-quic_mohs@quicinc.com>
+ <6e1dd5d1-8c5d-44f5-99e8-f42cfbdeee04@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240617-nfsd-next-v1-1-5833b297015a@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAN8jcGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDM0Nz3by04hTdvNSKEl0LU0vjNHNjUxOTNFMloPqCotS0zAqwWdGxtbU
- ANtGriFsAAAA=
-To: Sourabh Jain <sourabhjain@linux.ibm.com>, 
- Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>, 
- Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1530; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=nLSa833g+m/0FkCeHBJpkevPf3ESa1dp0aQQiOtYnIQ=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmcCPkIhYUTbbqVOCUeZRek5q6N6Iew0Q8VmkYo
- IbwPENw54+JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZnAj5AAKCRAADmhBGVaC
- FYq2D/900e8Er8Rpjm4+KYi/JpFv82lQskupSfshlWR0Ny2OjVRJvacayGEo9L324JksuEuwLzu
- LFGq8hIBt+uXzgKe/EL3ayzPhBrla9v0WRnhEBt8/nItR6KX/28zTeRSAJnmwxa/oAGsTRDsdCf
- M4DV2lgxB1VALcG+OCUciPcMVxsUv+R3iMYVCCvZ5NGm0zNLoCPKgz1xk9dzKvXRX2fQcmIhEB8
- m31oG6b+f3Fs+fvrIFIigYmjM2IGgmIOkJGXI5VE+ObftGsbpjG2xgHzyCPq9UxF92WBhAKVCfH
- NnXHqdgzgecpReQPl5prorhMQG67IoOGH7TtNMuEsvS28l5VcV0qP9z496X6s5aaGsdz87caC0R
- kN9KwcRtaUvOzOmfP3jTHQHQXzCIOUvHGe7Bb5N8qD/vhkCrwm+NPW3lac/5X9KAINEJ6nN3g5q
- faejCz4ZX+o1wyuayvQ56puvGdKtGR+r+1ce8R84C8vhxI+94i9324zCM3RVxVRCVnzYOc1CgwF
- tfI/xWO578WB84RafJMy/tr0KiYj4zzBMoFmHgzN+BM1rpsin72u+qfRKry9VogxjXUT/12CDrk
- 57qPjrlejdOOyBIEYNYWuDvqdYtAWVkAsulDoygyvcpn+5tyYlDeWrAmFBruLACiIblu4/2LKch
- swVl9q+lxwNVJsQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8N8IFlNCqkTciz3E"
+Content-Disposition: inline
+In-Reply-To: <6e1dd5d1-8c5d-44f5-99e8-f42cfbdeee04@web.de>
+X-Cookie: Life is the urge to ecstasy.
 
-Sourbh reported an oops that is triggerable by trying to read the
-pool_stats procfile before nfsd had been started. Move the check for a
-NULL serv in svc_pool_stats_start above the mutex acquisition, and fix
-the stop routine not to unlock the mutex if there is no serv yet.
 
-Fixes: 7b207ccd9833 ("svc: don't hold reference for poolstats, only mutex.")
-Reported-by: Sourabh Jain <sourabhjain@linux.ibm.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- net/sunrpc/svc_xprt.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+--8N8IFlNCqkTciz3E
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
-index d3735ab3e6d1..b757a8891813 100644
---- a/net/sunrpc/svc_xprt.c
-+++ b/net/sunrpc/svc_xprt.c
-@@ -1422,12 +1422,13 @@ static void *svc_pool_stats_start(struct seq_file *m, loff_t *pos)
- 
- 	dprintk("svc_pool_stats_start, *pidx=%u\n", pidx);
- 
-+	if (!si->serv)
-+		return NULL;
-+
- 	mutex_lock(si->mutex);
- 
- 	if (!pidx)
- 		return SEQ_START_TOKEN;
--	if (!si->serv)
--		return NULL;
- 	return pidx > si->serv->sv_nrpools ? NULL
- 		: &si->serv->sv_pools[pidx - 1];
- }
-@@ -1459,7 +1460,8 @@ static void svc_pool_stats_stop(struct seq_file *m, void *p)
- {
- 	struct svc_info *si = m->private;
- 
--	mutex_unlock(si->mutex);
-+	if (si->serv)
-+		mutex_unlock(si->mutex);
- }
- 
- static int svc_pool_stats_show(struct seq_file *m, void *p)
+On Sun, Jun 16, 2024 at 06:38:58PM +0200, Markus Elfring wrote:
+> > This patch adds basic SoundWire codec driver to support for
+> > WCD9370/WCD9375 TX and RX devices.
+> =E2=80=A6
+>=20
+> Please improve such a change description with an imperative wording.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
+ocumentation/process/submitting-patches.rst?h=3Dv6.10-rc3#n94
 
----
-base-commit: 4ddfda417a50309f17aeb85f8d1a9a9efbc7d81c
-change-id: 20240617-nfsd-next-8593f73544f5
+Feel free to ignore Markus, he has a long history of sending
+unhelpful review comments and continues to ignore repeated requests
+to stop.
 
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
+--8N8IFlNCqkTciz3E
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZwJBAACgkQJNaLcl1U
+h9BPYAf/Te6gQtKt94WX0v+W7HqLZ1BnLN1dLZG0bLUDwYe4sJh/EFbwzvyHXx9b
+KO0bBawxSl2HfrCGJ9JyfXGAuJJNkrSWhEqprY0JyUQgsLb0xuanc0eK2USUhb3V
+WtK56o6Yt449MKzhg7GDg1yYCIiMBU6pJKJbE+eN8TEP0zw6M/9gVHsdVxBzHUXr
+dzKJvbaNFklSSh0EuZGEWgSRR+U7oDB7D8PkDlVj6V0IROnqcl+aW4KcdH91xgxx
+rPKiSkei4Kk394a8b+x2iVUfDHDjPg9pMT6aKfWQj0ejf1Vq9aSIf4QDGCq/z7M7
+ZCgh0SEis37Y3kTSnUZqAaxngSlzog==
+=8S2L
+-----END PGP SIGNATURE-----
+
+--8N8IFlNCqkTciz3E--
 
