@@ -1,391 +1,455 @@
-Return-Path: <linux-kernel+bounces-216691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C902F90A322
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 06:52:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E05F590A33D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3434C281A4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 04:52:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 178B4B2108B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 05:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E292A1802A3;
-	Mon, 17 Jun 2024 04:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E9217FAA2;
+	Mon, 17 Jun 2024 05:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KAJiGuIr"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HD+pPBvi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACA4256A
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 04:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B05C136;
+	Mon, 17 Jun 2024 05:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718599968; cv=none; b=V5QJspuma86FIpa9kN96YkTrzwxmxjhGYvYVtnhQMzpBzCs2heS6LRILn80OaR5+WsCG91CE46ZBM7s3zyqzFOR6KfZvbjfXg+Z7kNTyCEiw8XmbWldcN5tboIzSFFo85AW8NjEQUZBbwG0l+mGo9hMXFmglZ0LroLcxW6FXceA=
+	t=1718600696; cv=none; b=XRiCcYz9XczemBvJ26cCaVA7KN2AKLpoMiaGWzRCvYgc1MFR0wAWcdrV7zxIWXS406Pa9hRiCw2vmBxFfYOnaQLaGYFB0sNWWNczzSaCDeBLYd6SpQrYyR6T2y01sGZhyvI86i3tlGT65sK/p/6A60AQGrEKhK4W1ho6KiazmZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718599968; c=relaxed/simple;
-	bh=xbC2R8ZOog+vOaNeZqflWJWV0iGScqgGoAqwYBMG+Io=;
-	h=Mime-Version:Subject:From:To:CC:Message-ID:Date:Content-Type:
-	 References; b=W+ZO1P0xMhHn/Uq8Qhzrt1NADjEJjshZbrSMPkKZhDubGgo1YS8dWjCnmMflA5B1C8P/2AsU3BykRUtFZzrlT5Okf/sTPUPNnVxy2m9w/XOw/MIX4h74LVDyM178OFU3C+9WfwUbL81hGOpDPD/hhELrlmkCza0c0oplflkcI3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KAJiGuIr; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240617045237epoutp028047463b1abaa7b036594f47c03568e5~ZsY40MFHM2016520165epoutp02G
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 04:52:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240617045237epoutp028047463b1abaa7b036594f47c03568e5~ZsY40MFHM2016520165epoutp02G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1718599957;
-	bh=ZpsVt1WRZRBGtoHhMRvoTD6K7/U877T/6RoBzpfvQsg=;
-	h=Subject:Reply-To:From:To:CC:Date:References:From;
-	b=KAJiGuIrL0hqoTEaISamKK6plw6oZIM4xWxmy1j3IZYpjZhwuWgzz5UiYb73Vvano
-	 PYvdvyceb01PTiXJXMXOsVK7zXOZ1IJq6qDF22TvHqdTdeMXjgcPvfDraiERd/bQzb
-	 eo7MW9e9Tq3ok49dgOzSLMePaeXzrj/y/78YpFrE=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20240617045236epcas2p4bca257e2aec561e2a976f20ac053a00b~ZsY34KVqV2126321263epcas2p4c;
-	Mon, 17 Jun 2024 04:52:36 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.68]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4W2cv73wx1z4x9Pw; Mon, 17 Jun
-	2024 04:52:35 +0000 (GMT)
-X-AuditID: b6c32a47-c6bff7000000264e-5a-666fc113b4f3
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	92.7D.09806.311CF666; Mon, 17 Jun 2024 13:52:35 +0900 (KST)
+	s=arc-20240116; t=1718600696; c=relaxed/simple;
+	bh=043SXihIIX6H+AqpbLyxyTgfjUrL448mBFwonFlmR60=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h7kREsbA+Mzn+JUsYRiE+h4YX6ASMlsYm71dFBhY7hckgidY/u7jaf/W4vKnPAifj/ResvimY2hAGvI7sYuoWZScbtlN3uqHvC3NKbCvCSc/v8Xhtt57zmlVcQ/if7iJt+bT5/JzpATzmW4AIvX1E52reOB5HA44g/L8qnTqEeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HD+pPBvi; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718600694; x=1750136694;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=043SXihIIX6H+AqpbLyxyTgfjUrL448mBFwonFlmR60=;
+  b=HD+pPBviSFSLbGTJb1SMjNfJquj1GX2GfZ2l/J/zEgSxEedf2nkBpukx
+   vFY8NGlO4i7E0TaoLz0keg1IQnG+AHExGu37KzUtmAYJGk9P7Vo+VEfpa
+   /f+Fsp13zY702MsZtpvJuRV03kpBvCA+JtmUO4B1ENKTrVucsQNnPyeCE
+   bI4KJ1cpt7C18ve4oASRbQMxGtnUVKex1W8ULfRPnr7oMGj4f4ApNxiiK
+   kuQ1tALFowy6AdxIpMjMB1AKE+psod6UWenNGIghliPH0nTqmp648RUao
+   iaNQHVZa39dgjZLJlteBGAWEt7ADkztuBOWyhTmyDvXE6EHC2r0VkRDvR
+   A==;
+X-CSE-ConnectionGUID: id/nYOiiS468Y9nOQclYnA==
+X-CSE-MsgGUID: 4t7/bEARQI6Cg0gJtLiskg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="15287704"
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="15287704"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 22:04:53 -0700
+X-CSE-ConnectionGUID: TG7t0N6oTtSLTQo8b2MdUg==
+X-CSE-MsgGUID: i1KkS8STR8OTK+dGM7hafQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="46010531"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2024 22:04:50 -0700
+Message-ID: <3020280e-5e00-48f2-ae67-2260129ead9c@intel.com>
+Date: Mon, 17 Jun 2024 08:04:45 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: [PATCH v2] f2fs: add support single node mode
-Reply-To: daejun7.park@samsung.com
-Sender: Daejun Park <daejun7.park@samsung.com>
-From: Daejun Park <daejun7.park@samsung.com>
-To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "chao@kernel.org"
-	<chao@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>,
-	"linux-f2fs-devel@lists.sourceforge.net"
-	<linux-f2fs-devel@lists.sourceforge.net>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: Seokhwan Kim <sukka.kim@samsung.com>, Dongjin Kim
-	<dongjin_.kim@samsung.com>, Yonggil Song <yonggil.song@samsung.com>, Jaeyoon
-	Choi <j_yoon.choi@samsung.com>, Nayeon Kim <nayeoni.kim@samsung.com>, Siwoo
-	Jung <siu.jung@samsung.com>, Daejun Park <daejun7.park@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-X-CPGS-Detection: blocking_info_exchange
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20240617045134epcms2p3f2f82336438f636b3f1ad58fd0c1cd29@epcms2p3>
-Date: Mon, 17 Jun 2024 13:51:34 +0900
-X-CMS-MailID: 20240617045134epcms2p3f2f82336438f636b3f1ad58fd0c1cd29
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-X-CPGSPASS: Y
-X-CPGSPASS: Y
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCJsWRmVeSWpSXmKPExsWy7bCmha7wwfw0gxu7pSxOTz3LZPHkQDuj
-	xctDmharHoRb/DhpYtG/u53F4sn6WcwWC9uWsFhcWuRucXnXHDaLlj9OFucnvmayWNUxl9Fi
-	6vkjTA58HptWdbJ57F7wmcljcd9kVo++LasYPT5vkgtgjcq2yUhNTEktUkjNS85PycxLt1Xy
-	Do53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAE6UkmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCR
-	X1xiq5RakJJTYF6gV5yYW1yal66Xl1piZWhgYGQKVJiQnfFiayNLwY7kiicHnzI2MD526GLk
-	5JAQMJF4+mkRSxcjF4eQwA5Giet7H7N3MXJw8AoISvzdIQxSIyxgJnGlYQ8jiC0koCSx/uIs
-	doi4nsSth2vA4mwCOhLTT9xnB5kjInCKSeLQk4+sIA6zwAwmiXmne9kgtvFKzGh/ygJhS0ts
-	X76VEcLWkPixrJcZwhaVuLn6LTuM/f7YfKgaEYnWe2ehagQlHvzcDRWXlLg9dxNUfb7E/yvL
-	oewaiW0H5kHZ+hLXOjaC7eUV8JU48AmihkVAVeLMw2VQ97hInPq6CexOZgF5ie1v5zCDAoJZ
-	QFNi/S59EFNCQFniyC0WiAo+iY7Df9lhvmrY+Bsre8e8J0wQtprEup/rmSDGyEjcmsc4gVFp
-	FiKgZyFZOwth7QJG5lWMYqkFxbnpqcVGBcbwuE3Oz93ECE6uWu47GGe8/aB3iJGJg/EQowQH
-	s5IIr9O0vDQh3pTEyqrUovz4otKc1OJDjKZAD09klhJNzgem97ySeEMTSwMTMzNDcyNTA3Ml
-	cd57rXNThATSE0tSs1NTC1KLYPqYODilGphCKprCOZP2nODqqijZ/T/BUGP+BsFPqfbMW3KF
-	IiYvm5M86QFf5Td7rVO1wc9SDnCGBv/dZ7puqa7f0l9L/k1aevD02y2fxTpXiUTHFs8Pixa2
-	2mN6tTvTz+TQkZUdjIZTV8teyMzd7NUg36hy6+CiNTsezV+i4DPJayUnw/S/cWmll6fe9Hw7
-	z1nWifWC5M45e7coHfbStNB/UfTj9nnvhf+ehbC4sDHHCcr5bghVPX63cuY7B8arfx8x6NQy
-	3jP7l9X1KUduv7JD/78N9W0ORx2U9snonL23RX/Dnt8P53KueufLyro6mvXto5Of/nP0TD/f
-	zFB0vj/3lMzKf7+P7YjWCCr6xb3oEY9CQc9yJZbijERDLeai4kQAU3eBYjcEAAA=
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240617045134epcms2p3f2f82336438f636b3f1ad58fd0c1cd29
-References: <CGME20240617045134epcms2p3f2f82336438f636b3f1ad58fd0c1cd29@epcms2p3>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V16 08/23] mmc: core: Support UHS-II Auto Command Error
+ Recovery
+To: Victor Shih <victorshihgli@gmail.com>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benchuanggli@gmail.com, HL.Liu@genesyslogic.com.tw,
+ Greg.tu@genesyslogic.com.tw, takahiro.akashi@linaro.org,
+ dlunev@chromium.org, Ben Chuang <ben.chuang@genesyslogic.com.tw>,
+ Victor Shih <victor.shih@genesyslogic.com.tw>, ulf.hansson@linaro.org
+References: <20240522110909.10060-1-victorshihgli@gmail.com>
+ <20240522110909.10060-9-victorshihgli@gmail.com>
+ <4354636c-24dd-4145-a551-75dc5c69910b@intel.com>
+ <CAK00qKCRD1Xdb5DmWud9F=r85aVxtnQ5wS_=yhzQ46LS0Mjqsg@mail.gmail.com>
+ <84c57084-eb9d-4d11-9c2f-2a4ded6290c6@intel.com>
+ <CAK00qKAHuLKGtcUnv=pKyQ4bKe+HqM1rFCQMRxPrGH9Aeat6Qw@mail.gmail.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <CAK00qKAHuLKGtcUnv=pKyQ4bKe+HqM1rFCQMRxPrGH9Aeat6Qw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The amount of node writes is small compared to the amount of user data
-writes in most workloads. Therefore, even if there is enough free space
-in the node section, it cannot be used by another type because the type
-for its section is fixed. When using zoned storage, the free space in
-node section issue can be a problem due to the large section.
+On 9/06/24 21:40, Victor Shih wrote:
+> On Fri, May 31, 2024 at 7:23 PM Adrian Hunter <adrian.hunter@intel.com> wrote:
+>>
+>> On 31/05/24 13:31, Victor Shih wrote:
+>>> On Fri, May 24, 2024 at 2:54 PM Adrian Hunter <adrian.hunter@intel.com> wrote:
+>>>>
+>>>> On 22/05/24 14:08, Victor Shih wrote:
+>>>>> From: Victor Shih <victor.shih@genesyslogic.com.tw>
+>>>>>
+>>>>> Add UHS-II Auto Command Error Recovery functionality
+>>>>> into the MMC request processing flow.
+>>>>
+>>>> Not sure what "auto" means here, but the commit message
+>>>> should outline what the spec. requires for error recovery.
+>>>>
+>>>
+>>> Hi, Adrian
+>>>
+>>>      I will add instructions in the v17 version.
+>>>
+>>> Thanks, Victor Shih
+>>>
+>>>>>
+>>>>> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+>>>>> Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+>>>>> ---
+>>>>>
+>>>>> Updates in V16:
+>>>>>  - Separate the Error Recovery mechanism from patch#7 to patch#8.
+>>>>>
+>>>>> ---
+>>>>>
+>>>>>  drivers/mmc/core/core.c    |  4 ++
+>>>>>  drivers/mmc/core/core.h    |  1 +
+>>>>>  drivers/mmc/core/sd_uhs2.c | 80 ++++++++++++++++++++++++++++++++++++++
+>>>>>  include/linux/mmc/host.h   |  6 +++
+>>>>>  4 files changed, 91 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+>>>>> index 68496c51a521..18642afc405f 100644
+>>>>> --- a/drivers/mmc/core/core.c
+>>>>> +++ b/drivers/mmc/core/core.c
+>>>>> @@ -403,6 +403,10 @@ void mmc_wait_for_req_done(struct mmc_host *host, struct mmc_request *mrq)
+>>>>>       while (1) {
+>>>>>               wait_for_completion(&mrq->completion);
+>>>>>
+>>>>> +             if (host->ops->get_cd(host))
+>>>>> +                     if (mrq->cmd->error || (mrq->data && mrq->data->error))
+>>>>> +                             mmc_sd_uhs2_error_recovery(host, mrq);
+>>>>
+>>>> There are several issues with this:
+>>>>
+>>>> 1. It is not OK to start a request from within the request path
+>>>> because it is recursive:
+>>>>
+>>>>    mmc_wait_for_req_done()                      <--
+>>>>       mmc_sd_uhs2_error_recovery()
+>>>>          sd_uhs2_abort_trans()
+>>>>             mmc_wait_for_cmd()
+>>>>                mmc_wait_for_req()
+>>>>                   mmc_wait_for_req_done()       <--
+>>>>
+>>>> 2. The mmc block driver does not use this path
+>>>>
+>>>> 3. No need to always call ->get_cd() if there is no error
+>>>>
+>>>> It is worth considering whether the host controller could
+>>>> send the abort command as part of the original request, as
+>>>> is done with the stop command.
+>>>>
+>>>
+>>> Hi, Adrian
+>>>
+>>>      1. It looks like just issuing a command in
+>>> mmc_wait_for_req_done() will cause a recursion.
+>>>          I will drop sd_uhs2_abort_trans() and
+>>> sd_uhs2_abort_status_read() in the v17 version.
+>>>      2. I have no idea about this part, could you please give me some advice?
+>>
+>> The mmc block driver sets the ->done() callback and so
+>> mmc_wait_for_req_done() is never called for data transfers.
+>>
+>> That won't matter if the host controller handles doing
+>> the abort command, as was suggested elsewhere.
+>>
+>>>      3. I will try to modify this part in the v17 version.
+>>>
+>>> Thanks, Victor Shih
+>>>
+>>>>> +
+>>>>>               cmd = mrq->cmd;
+>>>>>
+>>>>>               if (!cmd->error || !cmd->retries ||
+>>>>> diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
+>>>>> index 920323faa834..259d47c8bb19 100644
+>>>>> --- a/drivers/mmc/core/core.h
+>>>>> +++ b/drivers/mmc/core/core.h
+>>>>> @@ -82,6 +82,7 @@ int mmc_attach_mmc(struct mmc_host *host);
+>>>>>  int mmc_attach_sd(struct mmc_host *host);
+>>>>>  int mmc_attach_sdio(struct mmc_host *host);
+>>>>>  int mmc_attach_sd_uhs2(struct mmc_host *host);
+>>>>> +void mmc_sd_uhs2_error_recovery(struct mmc_host *mmc, struct mmc_request *mrq);
+>>>>>
+>>>>>  /* Module parameters */
+>>>>>  extern bool use_spi_crc;
+>>>>> diff --git a/drivers/mmc/core/sd_uhs2.c b/drivers/mmc/core/sd_uhs2.c
+>>>>> index 85939a2582dc..d5acb4e6ccac 100644
+>>>>> --- a/drivers/mmc/core/sd_uhs2.c
+>>>>> +++ b/drivers/mmc/core/sd_uhs2.c
+>>>>> @@ -1324,3 +1324,83 @@ int mmc_attach_sd_uhs2(struct mmc_host *host)
+>>>>>
+>>>>>       return err;
+>>>>>  }
+>>>>> +
+>>>>> +static void sd_uhs2_abort_trans(struct mmc_host *mmc)
+>>>>> +{
+>>>>> +     struct mmc_request mrq = {};
+>>>>> +     struct mmc_command cmd = {0};
+>>>>> +     struct uhs2_command uhs2_cmd = {};
+>>>>> +     int err;
+>>>>> +
+>>>>> +     mrq.cmd = &cmd;
+>>>>> +     mmc->ongoing_mrq = &mrq;
+>>>>> +
+>>>>> +     uhs2_cmd.header = UHS2_NATIVE_PACKET | UHS2_PACKET_TYPE_CCMD |
+>>>>> +                       mmc->card->uhs2_config.node_id;
+>>>>> +     uhs2_cmd.arg = ((UHS2_DEV_CMD_TRANS_ABORT & 0xFF) << 8) |
+>>>>> +                     UHS2_NATIVE_CMD_WRITE |
+>>>>> +                     (UHS2_DEV_CMD_TRANS_ABORT >> 8);
+>>>>> +
+>>>>> +     sd_uhs2_cmd_assemble(&cmd, &uhs2_cmd, 0, 0);
+>>>>> +     err = mmc_wait_for_cmd(mmc, &cmd, 0);
+>>>>> +
+>>>>> +     if (err)
+>>>>> +             pr_err("%s: %s: UHS2 CMD send fail, err= 0x%x!\n",
+>>>>> +                    mmc_hostname(mmc), __func__, err);
+>>>>> +}
+>>>>> +
+>>>>> +static void sd_uhs2_abort_status_read(struct mmc_host *mmc)
+>>>>> +{
+>>>>> +     struct mmc_request mrq = {};
+>>>>> +     struct mmc_command cmd = {0};
+>>>>> +     struct uhs2_command uhs2_cmd = {};
+>>>>> +     int err;
+>>>>> +
+>>>>> +     mrq.cmd = &cmd;
+>>>>> +     mmc->ongoing_mrq = &mrq;
+>>>>> +
+>>>>> +     uhs2_cmd.header = UHS2_NATIVE_PACKET |
+>>>>> +                       UHS2_PACKET_TYPE_CCMD |
+>>>>> +                       mmc->card->uhs2_config.node_id;
+>>>>> +     uhs2_cmd.arg = ((UHS2_DEV_STATUS_REG & 0xFF) << 8) |
+>>>>> +                     UHS2_NATIVE_CMD_READ |
+>>>>> +                     UHS2_NATIVE_CMD_PLEN_4B |
+>>>>> +                     (UHS2_DEV_STATUS_REG >> 8);
+>>>>> +
+>>>>> +     sd_uhs2_cmd_assemble(&cmd, &uhs2_cmd, 0, 0);
+>>>>> +     err = mmc_wait_for_cmd(mmc, &cmd, 0);
+>>>>> +
+>>>>> +     if (err)
+>>>>> +             pr_err("%s: %s: UHS2 CMD send fail, err= 0x%x!\n",
+>>>>> +                    mmc_hostname(mmc), __func__, err);
+>>>>> +}
+>>>>> +
+>>>>> +void mmc_sd_uhs2_error_recovery(struct mmc_host *mmc, struct mmc_request *mrq)
+>>>>> +{
+>>>>> +     mmc->ops->uhs2_reset_cmd_data(mmc);
+>>>>
+>>>> The host controller should already have done any resets needed.
+>>>> sdhci already has support for doing that - see host->pending_reset
+>>>>
+>>>
+>>> Hi, Adrian
+>>>
+>>>      I'm not sure what this means. Could you please give me more information?
+>>
+>> sdhci_uhs2_request_done() checks sdhci_needs_reset() and does
+>> sdhci_uhs2_reset().
+>>
+>> sdhci_needs_reset() does not cater for data errors because
+>> the reset for data errors is done directly in what becomes
+>> __sdhci_finish_data_common().
+>>
+>> You may need to:
+>>  1. add a parameter to __sdhci_finish_data_common() to
+>>  skip doing the sdhci reset and instead set
+>>  host->pending_reset
+>>  2. amend sdhci_uhs2_request_done() to check for data error
+>>  also to decide if a reset is needed
+>>
+> 
+> Hi, Adrian
+> 
+> If there is any mistake in my understanding, please help me correct it.
+> My understanding is as follows:
+> 
+> static bool sdhci_uhs2_request_done(struct sdhci_host *host)
+> {
+>       ...
+>       if (sdhci_needs_reset(host, mrq)) {
+>             ...
+>             if (mrq->cmd->error || (mrq->data && mrq->data->error))
+>                   sdhci_uhs2_reset_cmd_data(host->mmc);
+>             ...
+>       }
+>       ...
+> }
 
-This patch can avoid the problem by using a single node section without
-considering the hotness of the node section. For particularly high file
-system usage, two sections can be used as free sections, which makes it
-more efficient.
+Like this:
 
-To use single node section, add the 'single_node_sec' in mount option.
-The single node section mode can be activated when the number of active
-logs is equal to 6.
-
-Signed-off-by: Daejun Park <daejun7.park@samsung.com>
----
- Documentation/filesystems/f2fs.rst |  2 +
- fs/f2fs/f2fs.h                     |  3 ++
- fs/f2fs/recovery.c                 |  3 ++
- fs/f2fs/segment.c                  | 78 ++++++++++++++++++++++++++++++
- fs/f2fs/segment.h                  |  2 +
- fs/f2fs/super.c                    | 12 +++++
- 6 files changed, 100 insertions(+)
-
-diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-index 68a0885fb5e6..ba26b2ce4fa4 100644
---- a/Documentation/filesystems/f2fs.rst
-+++ b/Documentation/filesystems/f2fs.rst
-@@ -134,6 +134,8 @@ noacl                        Disable POSIX Access Control List. Note: acl is enabled
- active_logs=%u          Support configuring the number of active logs. In the
-                         current design, f2fs supports only 2, 4, and 6 logs.
-                         Default number is 6.
-+single_node_sec         Support single node section mode, it enables single active
-+                        log for hot/warm/cold nodes. This is disabled by default.
- disable_ext_identify    Disable the extension list configured by mkfs, so f2fs
-                         is not aware of cold files such as media files.
- inline_xattr            Enable the inline xattrs feature.
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 1974b6aff397..90f13a6b64ce 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -116,6 +116,7 @@ extern const char *f2fs_fault_name[FAULT_MAX];
- #define        F2FS_MOUNT_GC_MERGE             0x02000000
- #define F2FS_MOUNT_COMPRESS_CACHE      0x04000000
- #define F2FS_MOUNT_AGE_EXTENT_CACHE    0x08000000
-+#define F2FS_MOUNT_SINGLE_NODE_SEC     0x10000000
-
- #define F2FS_OPTION(sbi)       ((sbi)->mount_opt)
- #define clear_opt(sbi, option) (F2FS_OPTION(sbi).opt &= ~F2FS_MOUNT_##option)
-@@ -1655,6 +1656,8 @@ struct f2fs_sb_info {
-
-        struct f2fs_mount_info mount_opt;       /* mount options */
-
-+       bool single_node_sec;                   /* single node section */
-+
-        /* for cleaning operations */
-        struct f2fs_rwsem gc_lock;              /*
-                                                 * semaphore for GC, avoid
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 496aee53c38a..b5cdb0845ac7 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -414,6 +414,9 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
-
-        /* get node pages in the current segment */
-        curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
-+       /* check hot node if single node section mode is enabled */
-+       if (sbi->single_node_sec && curseg->segno == NULL_SEGNO)
-+               curseg = CURSEG_I(sbi, CURSEG_HOT_NODE);
-        blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
-        blkaddr_fast = blkaddr;
-
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index a0ce3d080f80..81b4d52b25c0 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -394,6 +394,9 @@ int f2fs_commit_atomic_write(struct inode *inode)
-        return err;
+diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs2.c
+index 47180429448b..3cb5fe1d488c 100644
+--- a/drivers/mmc/host/sdhci-uhs2.c
++++ b/drivers/mmc/host/sdhci-uhs2.c
+@@ -581,7 +581,7 @@ static void sdhci_uhs2_finish_data(struct sdhci_host *host)
+ {
+ 	struct mmc_data *data = host->data;
+ 
+-	__sdhci_finish_data_common(host);
++	__sdhci_finish_data_common(host, true);
+ 
+ 	__sdhci_finish_mrq(host, data->mrq);
  }
-
-+static int new_curseg(struct f2fs_sb_info *sbi, int type, bool new_sec);
-+static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno);
+@@ -932,6 +932,12 @@ static void sdhci_uhs2_request(struct mmc_host *mmc, struct mmc_request *mrq)
+  *                                                                           *
+ \*****************************************************************************/
+ 
++static bool sdhci_uhs2_needs_reset(struct sdhci_host *host, struct mmc_request *mrq)
++{
++	return sdhci_needs_reset(host, mrq) ||
++	       (!(host->flags & SDHCI_DEVICE_DEAD) && mrq->data && mrq->data->error);
++}
 +
- /*
-  * This function balances dirty node and dentry pages.
-  * In addition, it controls garbage collection.
-@@ -420,6 +423,59 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
-        if (has_enough_free_secs(sbi, 0, 0))
-                return;
-
-+       if (test_opt(sbi, SINGLE_NODE_SEC) && !sbi->single_node_sec &&
-+           F2FS_OPTION(sbi).active_logs == 6) {
-+               int type, segno, left_blocks = 0;
-+
-+               for (type = CURSEG_HOT_NODE; type <= CURSEG_COLD_NODE; type++) {
-+                       segno = CURSEG_I(sbi, type)->segno;
-+                       left_blocks += CAP_BLKS_PER_SEC(sbi) -
-+                                       get_ckpt_valid_blocks(sbi, segno, true);
-+               }
-+
-+               /* enable single node section mode if we get 2 free sections */
-+               if (left_blocks < CAP_BLKS_PER_SEC(sbi) * 2)
-+                       goto do_gc;
-+
-+               f2fs_down_read(&SM_I(sbi)->curseg_lock);
-+               down_write(&SIT_I(sbi)->sentry_lock);
-+
-+               /* it can be enabled by others */
-+               if (sbi->single_node_sec)
-+                       goto unlock;
-+
-+               /* leave current zone by allocating new section */
-+               for (type = CURSEG_WARM_NODE; type <= CURSEG_COLD_NODE; type++) {
-+                       struct curseg_info *curseg = CURSEG_I(sbi, type);
-+
-+                       mutex_lock(&curseg->curseg_mutex);
-+                       segno = curseg->segno;
-+                       if (new_curseg(sbi, type, true)) {
-+                               mutex_unlock(&curseg->curseg_mutex);
-+                               goto unlock;
-+                       }
-+                       locate_dirty_segment(sbi, segno);
-+                       mutex_unlock(&curseg->curseg_mutex);
-+               }
-+
-+               /* clear warm node, cold node information */
-+               for (type = CURSEG_WARM_NODE; type <= CURSEG_COLD_NODE; type++) {
-+                       struct curseg_info *curseg = CURSEG_I(sbi, type);
-+
-+                       mutex_lock(&curseg->curseg_mutex);
-+                       segno = curseg->segno;
-+                       curseg->segno = NULL_SEGNO;
-+                       curseg->inited = false;
-+                       __set_test_and_free(sbi, segno, false);
-+                       mutex_unlock(&curseg->curseg_mutex);
-+               }
-+               f2fs_notice(sbi, "single node section mode enabled");
-+               sbi->single_node_sec = true;
-+unlock:
-+               up_write(&SIT_I(sbi)->sentry_lock);
-+               f2fs_up_read(&SM_I(sbi)->curseg_lock);
-+       }
-+do_gc:
-        if (test_opt(sbi, GC_MERGE) && sbi->gc_thread &&
-                                sbi->gc_thread->f2fs_gc_task) {
-                DEFINE_WAIT(wait);
-@@ -3502,6 +3558,9 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
-                return f2fs_rw_hint_to_seg_type(F2FS_I_SB(inode),
-                                                inode->i_write_hint);
-        } else {
-+               if (fio->sbi->single_node_sec)
-+                       return CURSEG_HOT_NODE;
-+
-                if (IS_DNODE(fio->page))
-                        return is_cold_node(fio->page) ? CURSEG_WARM_NODE :
-                                                CURSEG_HOT_NODE;
-@@ -4116,6 +4175,15 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
-                                                        CURSEG_HOT_NODE]);
-                blk_off = le16_to_cpu(ckpt->cur_node_blkoff[type -
-                                                        CURSEG_HOT_NODE]);
-+               if (segno == NULL_SEGNO && type != CURSEG_HOT_NODE) {
-+                       if (!test_opt(sbi, SINGLE_NODE_SEC)) {
-+                               f2fs_err(sbi, "single_node_sec option required");
-+                               return -EFAULT;
-+                       }
-+                       sbi->single_node_sec = true;
-+                       return 0;
-+               }
-+
-                if (__exist_node_summaries(sbi))
-                        blk_addr = sum_blk_addr(sbi, NR_CURSEG_NODE_TYPE,
-                                                        type - CURSEG_HOT_NODE);
-@@ -4884,6 +4952,8 @@ static void init_free_segmap(struct f2fs_sb_info *sbi)
-                struct curseg_info *curseg_t = CURSEG_I(sbi, type);
-
-                __set_test_and_inuse(sbi, curseg_t->segno);
-+               if (sbi->single_node_sec && type == CURSEG_HOT_NODE)
-+                       break;
-        }
+ static bool sdhci_uhs2_request_done(struct sdhci_host *host)
+ {
+ 	unsigned long flags;
+@@ -963,7 +969,7 @@ static bool sdhci_uhs2_request_done(struct sdhci_host *host)
+ 	 * The controller needs a reset of internal state machines
+ 	 * upon error conditions.
+ 	 */
+-	if (sdhci_needs_reset(host, mrq)) {
++	if (sdhci_uhs2_needs_reset(host, mrq)) {
+ 		/*
+ 		 * Do not finish until command and data lines are available for
+ 		 * reset. Note there can only be one other mrq, so it cannot
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index ed55aab24f92..55f0db0fc007 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1563,7 +1563,7 @@ void sdhci_finish_mrq(struct sdhci_host *host, struct mmc_request *mrq)
  }
+ EXPORT_SYMBOL_GPL(sdhci_finish_mrq);
+ 
+-void __sdhci_finish_data_common(struct sdhci_host *host)
++void __sdhci_finish_data_common(struct sdhci_host *host, bool defer_reset)
+ {
+ 	struct mmc_command *data_cmd = host->data_cmd;
+ 	struct mmc_data *data = host->data;
+@@ -1576,7 +1576,9 @@ void __sdhci_finish_data_common(struct sdhci_host *host)
+ 	 * conditions.
+ 	 */
+ 	if (data->error) {
+-		if (!host->cmd || host->cmd == data_cmd)
++		if (defer_reset)
++			host->pending_reset = true;
++		else if (!host->cmd || host->cmd == data_cmd)
+ 			sdhci_reset_for(host, REQUEST_ERROR);
+ 		else
+ 			sdhci_reset_for(host, REQUEST_ERROR_DATA_ONLY);
+@@ -1604,7 +1606,7 @@ static void __sdhci_finish_data(struct sdhci_host *host, bool sw_data_timeout)
+ {
+ 	struct mmc_data *data = host->data;
+ 
+-	__sdhci_finish_data_common(host);
++	__sdhci_finish_data_common(host, false);
+ 
+ 	/*
+ 	 * Need to send CMD12 if -
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index 576b8de2c04e..5ac5234fecf0 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -840,7 +840,7 @@ void sdhci_prepare_dma(struct sdhci_host *host, struct mmc_data *data);
+ bool sdhci_needs_reset(struct sdhci_host *host, struct mmc_request *mrq);
+ void __sdhci_finish_mrq(struct sdhci_host *host, struct mmc_request *mrq);
+ void sdhci_finish_mrq(struct sdhci_host *host, struct mmc_request *mrq);
+-void __sdhci_finish_data_common(struct sdhci_host *host);
++void __sdhci_finish_data_common(struct sdhci_host *host, bool defer_reset);
+ bool sdhci_present_error(struct sdhci_host *host, struct mmc_command *cmd, bool present);
+ u16 sdhci_calc_clk(struct sdhci_host *host, unsigned int clock,
+ 		   unsigned int *actual_clock);
 
-@@ -5027,6 +5097,10 @@ static int sanity_check_curseg(struct f2fs_sb_info *sbi)
-                        f2fs_handle_error(sbi, ERROR_INVALID_CURSEG);
-                        return -EFSCORRUPTED;
-                }
-+
-+               /* in single node section mode, WARM/COLD NODE are invalid */
-+               if (sbi->single_node_sec && i == CURSEG_HOT_NODE)
-+                       break;
-        }
-        return 0;
- }
-@@ -5153,6 +5227,10 @@ static int fix_curseg_write_pointer(struct f2fs_sb_info *sbi, int type)
-        if (!zbd)
-                return 0;
 
-+       /* in single node section mode, WARM/COLD node are not valid */
-+       if (sbi->single_node_sec && type > CURSEG_HOT_NODE)
-+               return 0;
-+
-        /* report zone for the sector the curseg points to */
-        zone_sector = (sector_t)(cs_zone_block - zbd->start_blk)
-                << log_sectors_per_block;
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index e1c0f418aa11..152a07e61b5f 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -570,6 +570,8 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
-                                get_ckpt_valid_blocks(sbi, segno, true);
-                if (node_blocks > left_blocks)
-                        return false;
-+               if (sbi->single_node_sec) /* check only hot node */
-+                       break;
-        }
+> 
+> I have another question. the sdhci_uhs2_request_done() belongs to the patch#18.
+> Can the above content be modified directly in the patch#18?
+> Or does it need to be separated into another patch?
 
-        /* check current data section for dentry blocks. */
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1f1b3647a998..7e1e80fe58dd 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -129,6 +129,7 @@ enum {
-        Opt_acl,
-        Opt_noacl,
-        Opt_active_logs,
-+       Opt_single_node_sec,
-        Opt_disable_ext_identify,
-        Opt_inline_xattr,
-        Opt_noinline_xattr,
-@@ -207,6 +208,7 @@ static match_table_t f2fs_tokens = {
-        {Opt_acl, "acl"},
-        {Opt_noacl, "noacl"},
-        {Opt_active_logs, "active_logs=%u"},
-+       {Opt_single_node_sec, "single_node_sec"},
-        {Opt_disable_ext_identify, "disable_ext_identify"},
-        {Opt_inline_xattr, "inline_xattr"},
-        {Opt_noinline_xattr, "noinline_xattr"},
-@@ -803,6 +805,9 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
-                                return -EINVAL;
-                        F2FS_OPTION(sbi).active_logs = arg;
-                        break;
-+               case Opt_single_node_sec:
-+                       set_opt(sbi, SINGLE_NODE_SEC);
-+                       break;
-                case Opt_disable_ext_identify:
-                        set_opt(sbi, DISABLE_EXT_IDENTIFY);
-                        break;
-@@ -2039,6 +2044,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
-                                        F2FS_OPTION(sbi).s_resuid),
-                                from_kgid_munged(&init_user_ns,
-                                        F2FS_OPTION(sbi).s_resgid));
-+       if (test_opt(sbi, SINGLE_NODE_SEC))
-+               seq_puts(seq, ",single_node_sec");
- #ifdef CONFIG_F2FS_FAULT_INJECTION
-        if (test_opt(sbi, FAULT_INJECTION)) {
-                seq_printf(seq, ",fault_injection=%u",
-@@ -3675,6 +3682,9 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
-        blocks_per_seg = BLKS_PER_SEG(sbi);
+Please update the existing patches.
 
-        for (i = 0; i < NR_CURSEG_NODE_TYPE; i++) {
-+               /* bypass single node section mode */
-+               if (le32_to_cpu(ckpt->cur_node_segno[i]) == NULL_SEGNO)
-+                       goto check_data;
-                if (le32_to_cpu(ckpt->cur_node_segno[i]) >= main_segs ||
-                        le16_to_cpu(ckpt->cur_node_blkoff[i]) >= blocks_per_seg)
-                        return 1;
-@@ -3823,6 +3833,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
-        init_f2fs_rwsem(&sbi->io_order_lock);
-        spin_lock_init(&sbi->cp_lock);
+> 
+> Thanks, Victor Shih
+> 
+>>>
+>>> Thanks, Victor Shih
+>>>
+>>>>> +
+>>>>> +     if (mrq->data) {
+>>>>> +             if (mrq->data->error && mmc_card_uhs2(mmc)) {
+>>>>> +                     if (mrq->cmd) {
+>>>>> +                             switch (mrq->cmd->error) {
+>>>>> +                             case ETIMEDOUT:
+>>>>> +                             case EILSEQ:
+>>>>> +                             case EIO:
+>>>>> +                                     sd_uhs2_abort_trans(mmc);
+>>>>> +                                     sd_uhs2_abort_status_read(mmc);
+>>>>
+>>>> What is the purpose of sd_uhs2_abort_status_read() here?
+>>>> It is not obvious it does anything.
+>>>>
+>>>
+>>> Hi, Adrian
+>>>
+>>>      sd_uhs2_abort_status_read() seems to only have read status,
+>>>      I will drop this in the v17 version.
+>>>
+>>> Thanks, Victor Shih
+>>>
+>>>>> +                                     break;
+>>>>> +                             default:
+>>>>> +                                     break;
+>>>>> +                             }
+>>>>> +                     }
+>>>>> +             }
+>>>>> +     } else {
+>>>>> +             if (mrq->cmd) {
+>>>>> +                     switch (mrq->cmd->error) {
+>>>>> +                     case ETIMEDOUT:
+>>>>> +                             sd_uhs2_abort_trans(mmc);
+>>>>> +                             break;
+>>>>> +                     }
+>>>>> +             }
+>>>>> +     }
+>>>>> +}
+>>>>> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+>>>>> index fc9520b3bfa4..c914a58f7e1e 100644
+>>>>> --- a/include/linux/mmc/host.h
+>>>>> +++ b/include/linux/mmc/host.h
+>>>>> @@ -271,6 +271,12 @@ struct mmc_host_ops {
+>>>>>        * negative errno in case of a failure or zero for success.
+>>>>>        */
+>>>>>       int     (*uhs2_control)(struct mmc_host *host, enum sd_uhs2_operation op);
+>>>>> +
+>>>>> +     /*
+>>>>> +      * The uhs2_reset_cmd_data callback is used to excute reset
+>>>>> +      * when a auto command error occurs.
+>>>>> +      */
+>>>>> +     void    (*uhs2_reset_cmd_data)(struct mmc_host *host);
+>>>>>  };
+>>>>>
+>>>>>  struct mmc_cqe_ops {
+>>>>
+>>
 
-+       sbi->single_node_sec = false;
-+
-        sbi->dirty_device = 0;
-        spin_lock_init(&sbi->dev_lock);
-
---
-2.25.1
 
