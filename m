@@ -1,65 +1,79 @@
-Return-Path: <linux-kernel+bounces-217753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5619990B67E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:34:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDD9790B640
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9F41B3E4E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:18:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 140AEB31C8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F7315B0F0;
-	Mon, 17 Jun 2024 14:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940D115DBA3;
+	Mon, 17 Jun 2024 14:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HbOYp3un"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VdWzRUVJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F7D15AD86;
-	Mon, 17 Jun 2024 14:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A57915D5B2
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 14:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718635158; cv=none; b=Bs88AWQjfiJOMotd0yHw8FkCCUeVW24R44bTy/e9uccSzUYT4ksXT29aPmqyeFXuqd1gTPGzHL4RdiIlZTIDhWtMRowPE5Xgbxd1pbU4G2RnqgO7o8EIOu39XNa043GRHnRbgml9MLCVQAvBzDEnjpT03ifFkN7iUbvtmLQr2gI=
+	t=1718635284; cv=none; b=TzYeFcsQwZ7gU2TIzBZRRm74y8VnmMK9rkbCqBJYXTTe24DXZ2oi3KldfWoIGSOPuVqUtokRsTb6T5wd5s+v+Yf+2fbRP7RkrvIy7BSTnf/xpuRrBTXSTHTOhVZQP/d99M6UYzop8qMKSLKOErGbvrnyxUYceJNaBrL2KD2RenY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718635158; c=relaxed/simple;
-	bh=fNEcNyx2J3ltaqVb/40esraFs0i+Fi+TRItBm4S/zws=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kHOmUXZXDyk3PXWDmisRKkjPBjEVZIB7PiWHrglwh2XcRPuZ5EK+e9HbWc6tRqLSnQVq7WIwVtA3j7uJkbjslt8rC3whu0mHrn6J5Vk1s6hjhe2jry5ckljn1meznnjZPq0OYSV/FNMDYfkwtD3QUT2M/Gvo4O+Ad94pyR8RhHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HbOYp3un; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id A3F811BF207;
-	Mon, 17 Jun 2024 14:39:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718635155;
+	s=arc-20240116; t=1718635284; c=relaxed/simple;
+	bh=dobE8kihQV9T60XVIDbBgNU5uvQG3tjGens1jhgmrrc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Tx7iVxgvWLf8K5i1Adw3JJ0aT9WUFLCg2sKqH32nlyGEyymnBIlpBhQ7eYy+DvYhfsz/ABexmOvm/OvNoEQUqsBA/m3zaqKVFCh6qVMoHy54SKY4Elzvgi7WbBJH1A0j3i7xB/pqBzLKSrDeI6hMkLqoJRBN6a7XOGnImSGq25k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VdWzRUVJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718635282;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HOc1KiNHDMlfberoe2a1L+3nunCrn9fY9dBs4yJhsG8=;
-	b=HbOYp3unUKRaylSWxNla3PiSkRMtTYD1q1hbyN68+jbn/E6uMM++OGwfZpUUXULIhb27GN
-	MGzbttMnu2qPZ5zzbtelaUCzjQwZcoBYvQqf00jIlphswiqnFQtn44XPLKJ2zci4PTX4bj
-	kBC0noqrYuAoXe0ZE2U0rMwIbx+0MYyJAArOLWJCnzbul40nWUjBa01fWFaeqFx1JgIDLz
-	WM+1BLUC7CpXOokj7Cu9C5GExk43XFQXg71VgAqO2OV88YXVbND24Fo2JzMxtMk58Uq927
-	IcBxceVrxkJ4Tk2B0VEW+TBmGOEGmlbDd6dmqA9O19lAmjUmYNYDQnushiLjaQ==
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-To: Riku Voipio <riku.voipio@iki.fi>,
-	Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>
-Cc: linux-leds@vger.kernel.org,
+	bh=POuuOTSCgQ9YWI6IghxXxhiMXh2n0u6EcFeF16mkX7I=;
+	b=VdWzRUVJFJXtNxKC+Y/VkpUpJUMLI5lnW360SZUqR2Fzez4nm8FQw8vlsYPRIPxcYyyl2r
+	5IbpF4V2kAgI/0bxHB2QXBkh1W6+J8S+6Ru1wbfp/CF/xUHD0HCpI78ZT6jJk007d4d+KK
+	Wed7i/0S4u0wMzfHRgH8hj8nYKwVRuY=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-292-dCeivIGBPLq1QD-7fHt1Aw-1; Mon,
+ 17 Jun 2024 10:41:18 -0400
+X-MC-Unique: dCeivIGBPLq1QD-7fHt1Aw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8C09C1956096;
+	Mon, 17 Jun 2024 14:41:16 +0000 (UTC)
+Received: from llong.com (unknown [10.22.32.57])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9CC1B1956048;
+	Mon, 17 Jun 2024 14:41:13 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Tejun Heo <tj@kernel.org>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <shuah@kernel.org>
+Cc: cgroups@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Christopher Cordahi <christophercordahi@nanometrics.ca>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>
-Subject: [PATCH v2 2/4] leds: pca9532: Use PWM1 for hardware blinking
-Date: Mon, 17 Jun 2024 16:39:08 +0200
-Message-ID: <20240617143910.154546-3-bastien.curutchet@bootlin.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240617143910.154546-1-bastien.curutchet@bootlin.com>
-References: <20240617143910.154546-1-bastien.curutchet@bootlin.com>
+	linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Xavier <ghostxavier@sina.com>,
+	Peter Hunt <pehunt@redhat.com>,
+	Petr Malat <oss@malat.biz>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH-cgroup v2 3/5] cgroup/cpuset: Delay setting of CS_CPU_EXCLUSIVE until valid partition
+Date: Mon, 17 Jun 2024 10:39:43 -0400
+Message-Id: <20240617143945.454888-4-longman@redhat.com>
+In-Reply-To: <20240617143945.454888-1-longman@redhat.com>
+References: <20240617143945.454888-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,106 +81,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: bastien.curutchet@bootlin.com
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-PSC0/PWM0 are used by all LEDs for brightness and blinking. This causes
-conflicts when you set a brightness of a new LED while an other one is
-already using PWM0 for blinking.
+The CS_CPU_EXCLUSIVE flag is currently set whenever cpuset.cpus.exclusive
+is set to make sure that the exclusivity test will be run to ensure its
+exclusiveness. At the same time, this flag can be changed whenever the
+partition root state is changed. For example, the CS_CPU_EXCLUSIVE flag
+will be reset whenever a partition root becomes invalid. This makes
+using CS_CPU_EXCLUSIVE to ensure exclusiveness a bit fragile.
 
-Use PSC1/PWM1 for blinking.
-Check that no other LED is already blinking with a different PSC1/PWM1
-configuration to avoid conflict.
+The current scheme also makes setting up a cpuset.cpus.exclusive
+hierarchy to enable remote partition harder as cpuset.cpus.exclusive
+cannot overlap with any cpuset.cpus of sibling cpusets if their
+cpuset.cpus.exclusive aren't set.
 
-Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Solve these issues by deferring the setting of CS_CPU_EXCLUSIVE flag
+until the cpuset become a valid partition root while adding new checks
+in validate_change() to ensure that cpuset.cpus.exclusive of sibling
+cpusets cannot overlap.
+
+An additional check is also added to validate_change() to make sure that
+cpuset.cpus of one cpuset cannot be a subset of cpuset.cpus.exclusive
+of a sibling cpuset to avoid the problem that none of those CPUs will
+be available when these exclusive CPUs are extracted out to a newly
+enabled partition root. The Documentation/admin-guide/cgroup-v2.rst
+file is updated to document the new constraints.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- drivers/leds/leds-pca9532.c | 53 ++++++++++++++++++++++++++++++-------
- 1 file changed, 43 insertions(+), 10 deletions(-)
+ Documentation/admin-guide/cgroup-v2.rst |  8 ++++--
+ kernel/cgroup/cpuset.c                  | 36 ++++++++++++++++++++-----
+ 2 files changed, 35 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-index b6e5f48bffe7..244ae3ff79b5 100644
---- a/drivers/leds/leds-pca9532.c
-+++ b/drivers/leds/leds-pca9532.c
-@@ -29,6 +29,9 @@
- #define LED_SHIFT(led)		(LED_NUM(led) * 2)
- #define LED_MASK(led)		(0x3 << LED_SHIFT(led))
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index f886c6ad704e..722e4762c4e0 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -2359,8 +2359,12 @@ Cpuset Interface Files
+ 	is always a subset of it.
  
-+#define PCA9532_PWM_PERIOD_DIV	152
-+#define PCA9532_PWM_DUTY_DIV	256
-+
- #define ldev_to_led(c)       container_of(c, struct pca9532_led, ldev)
+ 	Users can manually set it to a value that is different from
+-	"cpuset.cpus".	The only constraint in setting it is that the
+-	list of CPUs must be exclusive with respect to its sibling.
++	"cpuset.cpus".	One constraint in setting it is that the list of
++	CPUs must be exclusive with respect to "cpuset.cpus.exclusive"
++	of its sibling.  If "cpuset.cpus.exclusive" of a sibling cgroup
++	isn't set, its "cpuset.cpus" value, if set, cannot be a subset
++	of it to leave at least one CPU available when the exclusive
++	CPUs are taken away.
  
- struct pca9532_chip_info {
-@@ -194,29 +197,59 @@ static int pca9532_set_brightness(struct led_classdev *led_cdev,
- 	return err;
- }
+ 	For a parent cgroup, any one of its exclusive CPUs can only
+ 	be distributed to at most one of its child cgroups.  Having an
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index fb71d710a603..144bfc319809 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -825,17 +825,41 @@ static int validate_change(struct cpuset *cur, struct cpuset *trial)
  
-+static int pca9532_update_hw_blink(struct pca9532_led *led,
-+				   unsigned long delay_on, unsigned long delay_off)
-+{
-+	struct pca9532_data *data = i2c_get_clientdata(led->client);
-+	unsigned int psc;
-+	int i;
+ 	/*
+ 	 * If either I or some sibling (!= me) is exclusive, we can't
+-	 * overlap
++	 * overlap. exclusive_cpus cannot overlap with each other if set.
+ 	 */
+ 	ret = -EINVAL;
+ 	cpuset_for_each_child(c, css, par) {
+-		if ((is_cpu_exclusive(trial) || is_cpu_exclusive(c)) &&
+-		    c != cur) {
++		bool txset, cxset;	/* Are exclusive_cpus set? */
 +
-+	/* Look for others LEDs that already use PWM1 */
-+	for (i = 0; i < data->chip_info->num_leds; i++) {
-+		struct pca9532_led *other = &data->leds[i];
-+
-+		if (other == led)
++		if (c == cur)
 +			continue;
 +
-+		if (other->state == PCA9532_PWM1) {
-+			if (other->ldev.blink_delay_on != delay_on ||
-+			    other->ldev.blink_delay_off != delay_off) {
-+				dev_err(&led->client->dev,
-+					"HW can handle only one blink configuration at a time\n");
-+				return -EINVAL;
++		txset = !cpumask_empty(trial->exclusive_cpus);
++		cxset = !cpumask_empty(c->exclusive_cpus);
++		if (is_cpu_exclusive(trial) || is_cpu_exclusive(c) ||
++		    (txset && cxset)) {
+ 			if (!cpusets_are_exclusive(trial, c))
+ 				goto out;
++		} else if (txset || cxset) {
++			struct cpumask *xcpus, *acpus;
++
++			/*
++			 * When just one of the exclusive_cpus's is set,
++			 * cpus_allowed of the other cpuset, if set, cannot be
++			 * a subset of it or none of those CPUs will be
++			 * available if these exclusive CPUs are activated.
++			 */
++			if (txset) {
++				xcpus = trial->exclusive_cpus;
++				acpus = c->cpus_allowed;
++			} else {
++				xcpus = c->exclusive_cpus;
++				acpus = trial->cpus_allowed;
 +			}
-+		}
-+	}
-+
-+	psc = ((delay_on + delay_off) * PCA9532_PWM_PERIOD_DIV - 1) / 1000;
-+	if (psc > U8_MAX) {
-+		dev_err(&led->client->dev, "Blink period too long to be handled by hardware\n");
-+		return -EINVAL;
-+	}
-+
-+	led->state = PCA9532_PWM1;
-+	data->psc[PCA9532_PWM_ID_1] = psc;
-+	data->pwm[PCA9532_PWM_ID_1] = (delay_on * PCA9532_PWM_DUTY_DIV) / (delay_on + delay_off);
-+
-+	return pca9532_setpwm(data->client, PCA9532_PWM_ID_1);
-+}
-+
- static int pca9532_set_blink(struct led_classdev *led_cdev,
- 	unsigned long *delay_on, unsigned long *delay_off)
- {
- 	struct pca9532_led *led = ldev_to_led(led_cdev);
--	struct i2c_client *client = led->client;
--	int psc;
--	int err = 0;
-+	int err;
- 
- 	if (*delay_on == 0 && *delay_off == 0) {
- 		/* led subsystem ask us for a blink rate */
- 		*delay_on = 1000;
- 		*delay_off = 1000;
++			if (!cpumask_empty(acpus) && cpumask_subset(acpus, xcpus))
++				goto out;
+ 		}
+ 		if ((is_mem_exclusive(trial) || is_mem_exclusive(c)) &&
+-		    c != cur &&
+ 		    nodes_intersects(trial->mems_allowed, c->mems_allowed))
+ 			goto out;
  	}
--	if (*delay_on != *delay_off || *delay_on > 1690 || *delay_on < 6)
--		return -EINVAL;
+@@ -1375,7 +1399,7 @@ static void update_sibling_cpumasks(struct cpuset *parent, struct cpuset *cs,
+  */
+ static int update_partition_exclusive(struct cpuset *cs, int new_prs)
+ {
+-	bool exclusive = (new_prs > 0);
++	bool exclusive = (new_prs > PRS_MEMBER);
  
--	/* Thecus specific: only use PSC/PWM 0 */
--	psc = (*delay_on * 152-1)/1000;
--	err = pca9532_calcpwm(client, PCA9532_PWM_ID_0, psc, led_cdev->brightness);
-+	err = pca9532_update_hw_blink(led, *delay_on, *delay_off);
- 	if (err)
- 		return err;
--	if (led->state == PCA9532_PWM0)
--		pca9532_setpwm(led->client, PCA9532_PWM_ID_0);
-+
- 	pca9532_setled(led);
+ 	if (exclusive && !is_cpu_exclusive(cs)) {
+ 		if (update_flag(CS_CPU_EXCLUSIVE, cs, 1))
+@@ -2620,8 +2644,6 @@ static int update_exclusive_cpumask(struct cpuset *cs, struct cpuset *trialcs,
+ 		retval = cpulist_parse(buf, trialcs->exclusive_cpus);
+ 		if (retval < 0)
+ 			return retval;
+-		if (!is_cpu_exclusive(cs))
+-			set_bit(CS_CPU_EXCLUSIVE, &trialcs->flags);
+ 	}
  
- 	return 0;
+ 	/* Nothing to do if the CPUs didn't change */
 -- 
-2.45.0
+2.39.3
 
 
