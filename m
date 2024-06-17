@@ -1,117 +1,130 @@
-Return-Path: <linux-kernel+bounces-217077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2A2190AA47
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:54:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7120990AA4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3938D282198
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:54:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0365128AC09
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45254195FF5;
-	Mon, 17 Jun 2024 09:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC085196D9A;
+	Mon, 17 Jun 2024 09:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="HVEE4c63"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KxCFO+Mu"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74631195F09;
-	Mon, 17 Jun 2024 09:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B761190686;
+	Mon, 17 Jun 2024 09:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718617500; cv=none; b=cm0A5URTCWFH5UBcwtkQSYnTHVKh8215TXBzkHIQfk0kULHvqpgJ0Uj+4iDtAsxcyHXG/2HVTy5De8rVLWry3xFrG7nv4DmJRRzHzwS+yqyIhflZnasQaBTX7+ovuOeGcZhhloFD/tNwT5kWim5cgmRiOM7xPyWVV3MbkIVMIuU=
+	t=1718617665; cv=none; b=CNv2nQwNO8kr7Y+HPrklVmdmJ/B9aA8XS44BJwKru4nOhWv7FpV41sFUzH26JGjfq1sGl/9POdnAhHuS/3JkD1vtGZ/QWxxSRw1uimecYYglby9DW/BowRAwcsQOe/aTxuGIt+HLe/83VfIDyP44Or3TsJ8sKbm3BoufjbiYmXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718617500; c=relaxed/simple;
-	bh=Zl0H127CyeqOXk7mpS1eDFYTetGfKPwapBTVMhQmSlo=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=Dh8wo/AegKSQQMo+Tvk42PYJpERHZ35ks4mJ29MUWFw/FIClfrDMzmTvr+/J/cSmFHCTIMAjHcz+PqY19KLNr91PcbfWw5WIp/GkquA2SENTa9GYxXv9/HuQbgY9Yc9u2DLQNyE4/PaBnAnAAYX4jblFxO5f7uwGv5gCdIvnluE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=HVEE4c63; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:Subject
-	:Reply-To:Cc:To:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:
-	Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=y5NFcSqhUTL6fruZ1xgcLxOYcmeMsMeCG+Q/p9D+Di4=; t=1718617498;
-	x=1719049498; b=HVEE4c63RYE7DoCjiOu7ODPQkqgcoMnXqCC/QIcV/iVPX1buMchXKwrAVGDa5
-	Ua7G6mG/5FzNEMikmsnR2Fv8/svixUhgxXchZy1qcRFju5jkCoB1fxlP0r7EUNnQjAEn/YT/2KNty
-	6+AVp9Actax9Cqo9MGztGf2Tp5VtcHfHZnyKyJkpkaCkz864kvKtveEn9bRIlTBPcZtekJKPmcseP
-	uXbZrgcR68bjjszNEODeX5apNUVaUGKSepdkUZ6xQ+IT2GIrM1uI7QGbYFqMC2iDeV2p9JRO+FVAS
-	ggIncKhRXwcqf2pUGI7ztr0XmVoagXI00KpAU09fzxWCBEz2GQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sJ8v1-0005bs-TO; Mon, 17 Jun 2024 11:44:56 +0200
-Message-ID: <f16d49f6-01a4-45c7-aabf-ab6a1b8bfe6e@leemhuis.info>
-Date: Mon, 17 Jun 2024 11:44:55 +0200
+	s=arc-20240116; t=1718617665; c=relaxed/simple;
+	bh=8RBdNog9v6i7Y12AFGORLNl5FaRMz/KfSoh+ctsLO0s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JTQ188wSLnlbiH/MBAmjRwBXyRUo0FwL+VsCs/i5BDcgQv+CDsuwDRPHB22duts6zbYRwE1WOTEWIWOz4UorSvvW78XeiAJCusV6J/iyUTSBoIfm+UZh1Ibe9V4uEmxxCUQ7QKFeLCCS3Pr7VprDN8Za59JDL9GQl86wSJEvWt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KxCFO+Mu; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-6e41550ae5bso2949795a12.3;
+        Mon, 17 Jun 2024 02:47:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718617663; x=1719222463; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=usGpbKfnBPC6WUjY1RuxzYU4ZgAbIRTvzZTlT0vlyVY=;
+        b=KxCFO+MuRjXB39G79ciTJyojqXlgoFQNLxKaDQPv1qmT1ydBNKzoNG+7jOIHvRVfGB
+         YgXUryZHl8E+tsvmJyHG79xLL/gLmy/LUmXd72iYaL48Mj2o/3FgyEpIeeSPgpAWigOw
+         PfhzlZhVi+2m1Zkjwdt18Ia2yAWeNaSMJc5Q1lORe16DGsvzzLe6kXjTGKQ43ahhuwpk
+         kL6wA6jVQWGswD+IYYA3sWGWfpO+hKL2DO1e70H8HvZueEbhvox0hqF6FLnZhF4xh/2a
+         r7hFkmFblgSZum/R00mPZHoU7f7dA4YPlXzQL+WTsT7gfWyrxFB9wfS91pNevZpOU+va
+         r8HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718617663; x=1719222463;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=usGpbKfnBPC6WUjY1RuxzYU4ZgAbIRTvzZTlT0vlyVY=;
+        b=AoUUxi4CwIRQ10B2sabqgn+ol86e/u9fQHbyr70J3QQ9Ny59zA/VGb3620eXr/3VjV
+         vyFs2WgHG2LA8QxH6YBjJs+rfjsbCqKGR58kGI8jw0wjgDdcZFsowprkTRrs6BmPJgs3
+         U94GyuM9Lb7ZyLW25bhC1MDG0NzjumX/cNL5jxfNHXhNUQKvyB3eAcrxO5hLfRIkJAHH
+         L/SZRGNeWsQ1LHZbNalefWmmgw/v0ylRLdKD4LyD6NiH/YeOnEZAWO3WFx/T83uxpCbf
+         rAEw+YbRSHq355o7FdH3IWQYUrbk//BRF+foMxKZPUYDhr4cfb5zbZnefgqFDIxSYRhq
+         hBMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDyCcAgEYOKuaamd6pB9LTqzQ0DmdFjxzOva4LddHMmlDE2PTBkGjp1L1WdgcuzJgmDhKaldA1eYUQeeSFydnf/4HKnKZhqTQvnVJP3cIStWT67ZzQTV04aNqad8CJJ4QWfXpXI0rRpoV/ygtkDJ771e1TyPKFbD9NCwjB5BTtfYLVhOde
+X-Gm-Message-State: AOJu0Yw2rzjnpMi0cuNpKxlzOdLHngbGEQZ4ekDh1CWbwvRKYmfdaF1J
+	zQ+GqoL/YAsoiqY4AiFxxQM/lOrAZw+I4OCVtOKqmUi99tAnnU5V
+X-Google-Smtp-Source: AGHT+IFyxj6DeLjbzNAUMQS9A9wQr543YPl1rLY7vjP9jo76xxnmD/MsXV8euv4MDQM0ooApWPY5Kw==
+X-Received: by 2002:a05:6a20:da92:b0:1b5:b214:efcc with SMTP id adf61e73a8af0-1bae82fd317mr10638457637.53.1718617662752;
+        Mon, 17 Jun 2024 02:47:42 -0700 (PDT)
+Received: from localhost.localdomain ([221.220.133.99])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4c46701absm8576488a91.40.2024.06.17.02.47.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 02:47:42 -0700 (PDT)
+From: Jianfeng Liu <liujianfeng1994@gmail.com>
+To: detlev.casanova@collabora.com
+Cc: alchark@gmail.com,
+	andy.yan@rock-chips.com,
+	conor+dt@kernel.org,
+	cristian.ciocaltea@collabora.com,
+	devicetree@vger.kernel.org,
+	didi.debian@cknow.org,
+	dsimic@manjaro.org,
+	gregkh@linuxfoundation.org,
+	heiko@sntech.de,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-staging@lists.linux.dev,
+	mchehab@kernel.org,
+	robh@kernel.org,
+	sebastian.reichel@collabora.com
+Subject: Re: [PATCH 1/3] media: rockchip: Introduce the rkvdec2 driver
+Date: Mon, 17 Jun 2024 17:47:34 +0800
+Message-Id: <20240617094735.27928-1-liujianfeng1994@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240615015734.1612108-2-detlev.casanova@collabora.com>
+References: <20240615015734.1612108-2-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-To: Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
- Kalle Valo <kvalo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Linux kernel regressions list <regressions@lists.linux.dev>
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: [regression] iwlwifi 0000:02:00.0: Microcode SW error detected.
- Restarting 0x82000000.
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718617498;0748ce8c;
-X-HE-SMSGID: 1sJ8v1-0005bs-TO
+Content-Transfer-Encoding: 8bit
 
-Hi, Thorsten here, the Linux kernel's regression tracker.
+Hi Detlev,
 
-Miri, I noticed a report about a regression in bugzilla.kernel.org for
-some code you maintain. As many (most?) kernel developers don't keep an
-eye on the bug tracker, I decided to write this mail. To quote from
-https://bugzilla.kernel.org/show_bug.cgi?id=218946 :
+Thanks a lot for your work! I try to use rkvdec2 with chromium but it
+can't play h264 video. Here is the log of chromium:
 
-> The linux Kernel 6.10.0-rc3
-> [   17.124384] iwlwifi 0000:02:00.0: Microcode SW error detected.  Restarting 0x82000000.
-> [   17.124405] iwlwifi 0000:02:00.0: Loaded firmware version: 18.168.6.1 6000g2b-6.ucode
-> [   17.124588] iwlwifi 0000:02:00.0: Start IWL Error Log Dump:
-> [   17.124590] iwlwifi 0000:02:00.0: Status: 0x000002CC, count: 6
-> [   17.124592] iwlwifi 0000:02:00.0: 0x0000198A | ADVANCED_SYSASSERT          
-> [   17.124594] iwlwifi 0000:02:00.0: 0x00015920 | uPc
-> [   17.124596] iwlwifi 0000:02:00.0: 0x00015910 | branchlink1
-> [   17.124597] iwlwifi 0000:02:00.0: 0x00015910 | branchlink2
-> [   17.124599] iwlwifi 0000:02:00.0: 0x0000DBEA | interruptlink1
-> [   17.124600] iwlwifi 0000:02:00.0: 0x00000000 | interruptlink2
-> [   17.124602] iwlwifi 0000:02:00.0: 0x0000005C | data1
-> [   17.124603] iwlwifi 0000:02:00.0: 0x00000008 | data2
-> [   17.124605] iwlwifi 0000:02:00.0: 0x000001DC | line
-> [   17.124606] iwlwifi 0000:02:00.0: 0x11C0C9B1 | beacon time
-> [   17.124608] iwlwifi 0000:02:00.0: 0x006FB64F | tsf low
-> [...]
+[5799:5873:0617/171224.850061:VERBOSE2:video_decoder_pipeline.cc(473)] Initialize(): config: codec: h264, profile: h264 high, level: not available, alpha_mode: is_opaque, coded size: [1920,1080], visible rect: [0,0,1920,1080], natural size: [1920,1080], has extra data: true, encryption scheme: Unencrypted, rotation: 0°, flipped: 0, color space: {primaries:BT709, transfer:BT709, matrix:BT709, range:LIMITED}
+[5799:5886:0617/171224.850915:VERBOSE2:v4l2_video_decoder.cc(182)] V4L2VideoDecoder():
+[5799:5886:0617/171224.851218:VERBOSE1:v4l2_device.cc(128)] Open(): No devices supporting H264 for type: 0
+[5799:5886:0617/171224.851346:VERBOSE4:v4l2_queue.cc(1069)] This queue does  support requests.: No such file or directory (2)
+[5799:5886:0617/171224.851426:VERBOSE1:v4l2_video_decoder.cc(476)] InitializeBackend(): Using a stateless API for profile: h264 high and fourcc: S264
+[5799:5886:0617/171224.851687:VERBOSE1:v4l2_video_decoder.cc(598)] SetupInputFormat(): Input (OUTPUT queue) Fourcc: S264
+[5799:5886:0617/171224.851797:VERBOSE1:v4l2_video_decoder.cc(636)] AllocateInputBuffers(): Requesting: 17 OUTPUT buffers of type V4L2_MEMORY_MMAP
+[5799:5886:0617/171224.867687:VERBOSE1:v4l2_queue.cc(1511)] Streamon(): (OUTPUT_MPLANE) VIDIOC_STREAMON failed: Invalid argument (22)
+[5799:5886:0617/171224.867902:VERBOSE1:v4l2_video_decoder.cc(937)] StartStreamV4L2Queue(): Failed to streamon V4L2 queue.
+[5799:5886:0617/171224.868009:VERBOSE1:v4l2_video_decoder.cc(1377)] SetState(): Error occurred, stopping queues.
+[5799:5886:0617/171224.868105:ERROR:v4l2_video_decoder.cc(120)] StartStreamV4L2Queue failed at Decode@media/gpu/v4l2/v4l2_video_decoder.cc:915
+[5799:5886:0617/171224.871898:WARNING:v4l2_video_decoder_backend_stateless.cc(126)] There is/are 0 pending CAPTURE queue buffers pending dequeuing. This might be fine or a problem depending on the destruction semantics (of theclient code.
 
-The reporter later confirmed that 6.9 is working fine.
+Here is the chromium code failed when calling VIDIOC_STREAMON:
+https://github.com/chromium/chromium/blob/125.0.6422.60/media/gpu/v4l2/v4l2_queue.cc#L1508
 
-See the ticket for more details. Note, you have to use bugzilla to reach
-the reporter, as I sadly[1] can not CCed them in mails like this.
+I'm running chromium v125.0.6422.60 and I can decode 1080p h264 with
+hantro g1 decoder on rk3588.
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
-
-[1] because bugzilla.kernel.org tells users upon registration their
-"email address will never be displayed to logged out users"
-
-P.S.: let me use this mail to also add the report to the list of tracked
-regressions to ensure it's doesn't fall through the cracks:
-
-#regzbot introduced: v6.9..v6.10-rc3
-#regzbot title: wifi: iwlwifi: Microcode SW error detected
-#regzbot from: doru iorgulescu
-#regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=218946
-#regzbot ignore-activity
+Best regards,
+Jianfeng
 
