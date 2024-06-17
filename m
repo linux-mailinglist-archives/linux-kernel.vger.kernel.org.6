@@ -1,81 +1,69 @@
-Return-Path: <linux-kernel+bounces-217092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C20690AA70
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:59:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C136B90AA77
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C143C28D86C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:59:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AE0D1F211EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1C7194094;
-	Mon, 17 Jun 2024 09:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45611194A48;
+	Mon, 17 Jun 2024 09:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x0Zwaq66"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="umgAJ6Pd"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5AA188CD0
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBB6192B7B;
+	Mon, 17 Jun 2024 09:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718618246; cv=none; b=D0S1D7vyZx5VFWXAGR9C7/q5RxCXb+ky1KaTfzgGUasuwn3sq/BVmDKAcuAruO+oA9W08i3Lj6JaMGyqDlsz6V5gv+3ZQIq4gbVrot7Okdc+6EENuVv6V+Bthk+zOm0B6zf8SOk0n446DALm1PLVNkkTudeg6ugFWClq+3lIsf8=
+	t=1718618335; cv=none; b=J42plPLkFeVGW0WlR6tM6oBb8G0slN8hYtatQqhEyof4dIJtek76ZWgmrOtfBOcUdoJP8CAEfQQWk5UzeF2rbk6TqPtEGkwEK2KAJgO6uNG5+z0qoMCcPomBXBcLHbTuqmknqrJxhd4E0Nti0H3YA4UgPLFLxGTVWi5X5srHThU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718618246; c=relaxed/simple;
-	bh=NaMgEtEXjnyBoZGtC0yFboDbzlMwOw8XnvW1azukAsU=;
+	s=arc-20240116; t=1718618335; c=relaxed/simple;
+	bh=HvhKIusqhv0QYOohu6wIC1VtGHOpgCgrv0aENa/RRGs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uyZTVMIVChfLQDE2IO2oi+uRkbu0146iQre56BsV718pwCQ3JI2Lm1seQEibnHIIv8kMQxA4wdCKyB0HIjXgW1KPO1s1E6m0z5PbdHzVW4ccxjUYEmF02B2XIzp/JqjygJD0V63GCdSec0BVanh/NHAYIaZsA0GeuSuBsnODg30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x0Zwaq66; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52c819f6146so5764588e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:57:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718618243; x=1719223043; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GAu3yut6C33w0f3QgUUkKHsVifCYw6coodnkymy99jw=;
-        b=x0Zwaq66Nto5FusLFCPMi7VnGybz9WPc5uoJ0MWlsSLiXXpUGdfBbsJgmqo7VHd3dt
-         LOxYnhACnSs3iTcAZfTJ40Tmd2WyOWHZyqGkbRBAkZBHAiuo33sC1UdHSkkj01i+18d7
-         s1CWU/gf+A/q3Vsp4L1IBz5QpgqSr3q3cvT82owmBvTMmchMln3AYCpFirWB0e8J7psy
-         8OUkF1ZAOQ9FmyzsY0hR/EHEdpLQ0Fm/W/zs/2yo85DQgLyM22g2PhNq9STMuoopihIv
-         bf4KeIzKWZye05pQ475EarLUlgukCromltRenbri+RlFLonOkhJNPytdMzKBRFgsFhYk
-         hNdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718618243; x=1719223043;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GAu3yut6C33w0f3QgUUkKHsVifCYw6coodnkymy99jw=;
-        b=c4K898t+ZOBRfT55AfCh2Qf2fC+ElDOAXOhFK2lDhhdSrxpSuF7i4f4TyGzuVo45XS
-         MhCOjuQQY+gcjfabk3qAA2eqQ6qvDet+XLZ882VtqykF3dOeOCr/jgvooMjHzC5yEgnu
-         rSzZAQpt1TWyILGtatXnFDjQtuHZgT5e/YW68ZcnyrC6GGCT+8Ioxyxz5kNqRE3HEqa+
-         JnFRjpei+iWe+NT/N2w2Sj16jLRmlWomvJrzOjUDTX24ceLG4NDRWSeNIBKrnUkFXSNa
-         rKU69YSKMqWVIrTDT65QJJ75EWPvNUah83+5K56AfWuGHGXHIHRHrwGBB0p52Lk1hBI8
-         BpqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWM7rL61UJY97cMeil6v0hHVJ1NjoKKHYphENqYyJq+V8v29XUIgcHHFvQ+dEmgS6291FKWGG9y9A4jYiAY/UIfJC8t/1b1Esuzr0Nh
-X-Gm-Message-State: AOJu0Ywils+IqlsqZL0ff7AMtEWAhsxPQ1SjFQhC57F+bjp71bRi9kBv
-	fo2DFLsssfViu+aDy/XJjTO8DdtZjiAcJ2CiN9/u9VYxSxLUEk83cfwh2YnLRtg=
-X-Google-Smtp-Source: AGHT+IGd0lubX4e/KngoOZFs4XUo7XaV0srvqIlzUax7XiFNyo+YBY3jricMn+yHE/eYu10R++2NAQ==
-X-Received: by 2002:a05:6512:2350:b0:52c:a1ad:18bd with SMTP id 2adb3069b0e04-52ca6e54ceamr8567114e87.6.1718618241899;
-        Mon, 17 Jun 2024 02:57:21 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2887effsm1197140e87.257.2024.06.17.02.57.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 02:57:21 -0700 (PDT)
-Date: Mon, 17 Jun 2024 12:57:19 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jean Delvare <jdelvare@suse.de>
-Cc: dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH RESEND] drm/display: Drop obsolete dependency on
- COMPILE_TEST
-Message-ID: <xd2yybtxvzte7gwqwg2vudzvhoekqao2dle6zsuduzjzi3rsay@xhahwof2prph>
-References: <20240617103018.515f0bf1@endymion.delvare>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hoNUd1wowjMqP2A7Olv8IZnWXwaj4GvOXT4SmUzZTzMTmR5rsWOPaud3uGTWaFXuOcv5qkvMQcmU1IWZV4FKM8f4OWpkETuB//mwohslEre2hKjnSlFz8b3sXx3pMM0dRVZlWig+RBfJQcMuJ5pif8rbr6g9zK7nXIkcqZAReno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=umgAJ6Pd; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4W2lhN23x4z9spd;
+	Mon, 17 Jun 2024 11:58:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1718618324;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SRAO++uIw1OUPfCgvfEWhKZYeaVhnnf0jX/BR+wX6Vs=;
+	b=umgAJ6PdVIvo1wrvo40xC9EWOxHYypeWr0lw6BtV9NA/2Me5+5OvAtUc1A/Nnk9QDeWBj/
+	zW2B9Y7M6R+mc40tNnuCFKX5VK7/51W50WOtQK2diJavDG9ddfhPZwv/Pt22DKvS9eda9U
+	TNQFQ+xejRkMez8YcZe65whPPPBpNlvGvLnoclr5yT0rJNrO4XXwTBt62Y2XgIoa6mZ+42
+	zKFgtPvP0zFDKKv/kuv2xANddBq3awOf+OHay7/HAFWtKW1MWMu7GnIHGwa2tujZ9j5c90
+	X0wWDh6Z7bxCpIak+bkdqfPusHr62lqpAnjaxqj+eonmTPYwVoZxK9KNh49oKA==
+Date: Mon, 17 Jun 2024 09:58:37 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: david@fromorbit.com, djwong@kernel.org, chandan.babu@oracle.com,
+	brauner@kernel.org, akpm@linux-foundation.org, willy@infradead.org,
+	mcgrof@kernel.org, linux-mm@kvack.org, hare@suse.de,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	Zi Yan <zi.yan@sent.com>, linux-xfs@vger.kernel.org,
+	p.raghav@samsung.com, linux-fsdevel@vger.kernel.org,
+	gost.dev@samsung.com, cl@os.amperecomputing.com,
+	john.g.garry@oracle.com
+Subject: Re: [PATCH v7 03/11] filemap: allocate mapping_min_order folios in
+ the page cache
+Message-ID: <20240617095837.bzf4xiv2jxv6j7vt@quentin>
+References: <20240607145902.1137853-1-kernel@pankajraghav.com>
+ <20240607145902.1137853-4-kernel@pankajraghav.com>
+ <20240613084409.GA23371@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,53 +72,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240617103018.515f0bf1@endymion.delvare>
+In-Reply-To: <20240613084409.GA23371@lst.de>
+X-Rspamd-Queue-Id: 4W2lhN23x4z9spd
 
-On Mon, Jun 17, 2024 at 10:30:30AM GMT, Jean Delvare wrote:
-> Since commit 0166dc11be91 ("of: make CONFIG_OF user selectable"), it
-> is possible to test-build any driver which depends on OF on any
-> architecture by explicitly selecting OF. Therefore depending on
-> COMPILE_TEST as an alternative is no longer needed.
+On Thu, Jun 13, 2024 at 10:44:10AM +0200, Christoph Hellwig wrote:
+> On Fri, Jun 07, 2024 at 02:58:54PM +0000, Pankaj Raghav (Samsung) wrote:
+> > +static inline unsigned long mapping_min_folio_nrpages(struct address_space *mapping)
+> > +{
+> > +	return 1UL << mapping_min_folio_order(mapping);
+> > +}
+> 
+> Overly long line here, just line break after the return type.
+> 
+> Then again it only has a single user just below and no documentation
+> so maybe just fold it into the caller?
 
-The goal of this clause is to allow build-testing the driver with OF
-being disabled (meaning that some of OF functions are stubbed and some
-might disappear). I don't see how user-selectable OF provides the same
-result.
+I do use it in later patches. I will adjust the long line here :)
 
 > 
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> ---
-> Already sent on: 2022-11-21, 2023-01-27, 2023-12-02
+> >  no_page:
+> >  	if (!folio && (fgp_flags & FGP_CREAT)) {
+> > -		unsigned order = FGF_GET_ORDER(fgp_flags);
+> > +		unsigned int min_order = mapping_min_folio_order(mapping);
+> > +		unsigned int order = max(min_order, FGF_GET_ORDER(fgp_flags));
+> >  		int err;
+> > +		index = mapping_align_start_index(mapping, index);
 > 
-> This is one of the only 3 remaining occurrences of this deprecated
-> construct.
+> I wonder if at some point splitting this block that actually allocates
+> a new folio into a separate helper would be nice.  It just keep growing
+> in size and complexity.
 > 
-> Who can pick this patch and get it upstream?
-> 
->  drivers/gpu/drm/display/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- linux-6.6.orig/drivers/gpu/drm/display/Kconfig
-> +++ linux-6.6/drivers/gpu/drm/display/Kconfig
-> @@ -3,7 +3,7 @@
->  config DRM_DP_AUX_BUS
->  	tristate
->  	depends on DRM
-> -	depends on OF || COMPILE_TEST
-> +	depends on OF
->  
->  config DRM_DISPLAY_HELPER
->  	tristate
-> 
-> 
-> -- 
-> Jean Delvare
-> SUSE L3 Support
 
--- 
-With best wishes
-Dmitry
+I agree with that. I will put it in my future todo backlog.
+
+> > -	folio = filemap_alloc_folio(mapping_gfp_mask(mapping), 0);
+> > +	folio = filemap_alloc_folio(mapping_gfp_mask(mapping),
+> > +				    min_order);
+> 
+> Nit: no need to split this into multiple lines.
+
+Ok.
+> 
+> >  	if (!folio)
+> >  		return -ENOMEM;
+> >  
+> > @@ -2471,6 +2478,8 @@ static int filemap_create_folio(struct file *file,
+> >  	 * well to keep locking rules simple.
+> >  	 */
+> >  	filemap_invalidate_lock_shared(mapping);
+> > +	/* index in PAGE units but aligned to min_order number of pages. */
+> 
+> in PAGE_SIZE units?  Maybe also make this a complete sentence?
+Yes, will do.
+> 
 
