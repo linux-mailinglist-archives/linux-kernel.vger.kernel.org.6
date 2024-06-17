@@ -1,225 +1,136 @@
-Return-Path: <linux-kernel+bounces-217065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A4090AA23
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:48:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB9BB90AA2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB131F23CDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:48:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47DFB1F21026
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A03B19A28D;
-	Mon, 17 Jun 2024 09:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7921946D9;
+	Mon, 17 Jun 2024 09:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="a0Aki5Rj"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="Ar4BAu0e"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCCD196C96
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E041219408D
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718617118; cv=none; b=MnfUyU+pE+qwlzgYo3lRE1DYFg9F131IrzSPCHJCIVwf/DwpquUXQlXkyOYnviTs2O5sFMPB8j3PRIictvlUeUdSV8x6tXXnrLjyo+BzkbJi9hk6rdMgSqtM0hjBoAj4g5+79bzaoD7sEThmiLxe+IGTIwU1/5JafqsQn7dYaCg=
+	t=1718617172; cv=none; b=VAt3Q/muj7vo3U57VIIFJrop6/h4W5gFcrcIZBYsL03x7hRw9iHQO2SICreTP3vhxb1vd17qmtC4iZkkZcYRjPokmT3qYK76fd0XdD2ZhQ/xdYysh8cj8csQ4xR1RCHHi3wc7xVdXnI/tamgIFnl7eA/x+2klPVWCFnUJdXPQ1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718617118; c=relaxed/simple;
-	bh=sr/HExMB2KmpIxEyu/qgU81RvDcP2SyCdvUAXFbeUzg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p4jApdPIkhGtSFpKZWKhG8dLNuPkzQ8U6ymtAh9HMG2jLwpwtIfz3TyHI3pQdtt/kIP6+JQtQ3/rVNsLRv2GR+lXdkvCmdTFoaKLNRzWTHoRr0BFSu5bKorZ23n3mQGtIu9q07fI/qeHBasBgXXDFqtGLaIzElzm5cEZ/S7Tago=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=a0Aki5Rj; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-63267c30eaaso24107247b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:38:36 -0700 (PDT)
+	s=arc-20240116; t=1718617172; c=relaxed/simple;
+	bh=w6euua8DdAndSBqtwxLw75oNhUUVr0fLiGLrdXsOKIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tVISotYbvJ3BQQeLznM0SqVDUJS7DIfLVfl8T/OvFJyub+izPzO7m7HuTkzYbMVZyOoNW2AvoGpk/NrNdVZBMvMoFr0eViqK14+HCbRP0hqPs+ujt9fuUvSmLKpnGDW0dEjPJFOQyd36X6tDaEHoIug4jdje2qE2mX6g3X0v4so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=Ar4BAu0e; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57c73a3b3d7so4663674a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:39:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1718617115; x=1719221915; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ygiGn4cC18Me/bv30acpykkQziugaNdxLwcBfmb6qSw=;
-        b=a0Aki5Rj6OlgAkauKimMCNxX0mj5jezy75a2YcvDNOEbOj3tNAHyIVC6wusgAmR8vk
-         3oX7QM5QWlPjoMA5nxVyuuDV6Z+PKIh5QbM83K2FDhfmH2oMof1gZk+vH+HkRSom6l1C
-         wX5JDHG+Z4cDy1IdLUC7EwTYbdjP2EK4uLaV0=
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1718617169; x=1719221969; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jWyeWccl/2aEbivUkA2fQdZreCyT8NBDVsWDIMF7kK0=;
+        b=Ar4BAu0e3HBjgt8WTbvI3pAaMMjA8Xcg5BJ71MQiIZuYnJkrjvwhF7ke98kMrCmdFx
+         7mTfjn7u3dWyKjkUuQ7kDkdGF0Q1aU3EU0DV73rNNIdeAnlvMAmWX93nQcShb/6aCLr3
+         XnZQbwbQphyzZvAy3FlTdo1I0jBkl7VF8oZGvMW2nrUHQm0S0IIQvZ9HNMSs3273x7r3
+         z6XGk7M42oo+o1yGCHFXiRn1+rofZm08QoaDt2M23sdiAx8r/gG6Dp4dKqC5YedMQ+kq
+         WOe1/gXXMdNp0pJjCDZ9EYwPcTnAgAjBEXecSxI1g652zQeTDZjSrpwFmBk8azyqVVBM
+         1UeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718617115; x=1719221915;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ygiGn4cC18Me/bv30acpykkQziugaNdxLwcBfmb6qSw=;
-        b=UHP1OqMvWPk5tRegUHB8rhodVfge178TPnONSp5z+t4iA4yxSYIPS5ELBuFK5njw/u
-         5uCQFLTtByWWWLRPd65FsnMph6cKgZM3aGlcDeTQsfkHTuoX3viCsW7ucxav+M7t0DtN
-         VMka+Njz38nu9V1I/NayV+V7iZD/vuF5jlBCLxTnayrX7RByiS6Y0HlHueyJO6xoWxVr
-         PV20eBJRjzBG/U+fIEBUBTKFnnNplHohqPD19y++tlpS4Q4zuUkukVO/imbhxH2LEcMA
-         jpAbwNR2PHrJiHe7JGfpM/TfBFvALS91C4UPbuvUpy8JNNKk3gXkQT10cKW+jugeGDzs
-         j9nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtbK0d+pUuGf6/LLYoXYumHRHOp0INQpenwIP7e9qyNhEHUuDVhDXgMJ4mbQEnn52hEU5rrPvHvT4CFNaA0IGByYNgO/BKSdl19nRV
-X-Gm-Message-State: AOJu0YxSYOcsMUn98jkLox5RSpKD7JWA1TPLhrhvtspp/OfLVrrYKTgX
-	SYN6b7QxTv2/dirXlG1nqLNJiX8jhbb0ciXcnLLBrOEmADbYfRVGHzOMHG89fjD5oEtdO0z+nfr
-	tcyQ=
-X-Google-Smtp-Source: AGHT+IFC+D8ny/Dw5rvJfiAdV//IJGVVyL9jjkV7lcw389qZjtEYyNdxSITDCmMdMGELAiOGjGLRug==
-X-Received: by 2002:a0d:e612:0:b0:632:ca12:8af with SMTP id 00721157ae682-6355f1a8952mr23183507b3.32.1718617115585;
-        Mon, 17 Jun 2024 02:38:35 -0700 (PDT)
-Received: from [10.125.226.166] ([160.101.139.1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5c32428sm52942136d6.64.2024.06.17.02.38.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 02:38:35 -0700 (PDT)
-Message-ID: <14d5ed1b-db72-4676-bce2-1ff3637a7e56@citrix.com>
-Date: Mon, 17 Jun 2024 10:38:32 +0100
+        d=1e100.net; s=20230601; t=1718617169; x=1719221969;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jWyeWccl/2aEbivUkA2fQdZreCyT8NBDVsWDIMF7kK0=;
+        b=H63n5lGFkP8MDHdGIgVjSD5Q5ZBpfnbgss1Lyh5UhOumcil9qi1EwtkPsQc64INZI9
+         167sq84sxm4R7vi883CYDjv531sya+YQUNJLVkL4Nb2iLWNl/9Sfe2FX2lwOB5887gLL
+         HHY6rsi0KJWa/H36WBmnzCz45TGPjhcpFDwdOC5gnO7j+FJIeDBGtrmgXTX5rdH40V3H
+         v2rXJTYjDw7l5rdudjBUvDWZYJwnNGIvsy69FcFh3dR4FZXHamkDoyQwJZyqtxcA1caL
+         xv2p2RTZudw229TBlFQpF5w5BsztlUu7d1qnrO0SqiRL2bqM5SqiVV83uz3t5nC/VBn2
+         i/6A==
+X-Forwarded-Encrypted: i=1; AJvYcCViyJx9Yl8obFa3MYJXuhlbERudiqeORaF8n8VcPuq/rsN5lAgGU5UAAQVI8TWtxvdGaRMON9NULN0gvxxwbU/owPK1Ax8iW3dL/sg2
+X-Gm-Message-State: AOJu0YySTU/GjVOnbFpZHq887xiKFNPmY7ilqwC2L/fufaLC/zcTXNuC
+	+WrsmceyDEZzOnx3bCz4IN12gvD3uh9e6o73ZX4dghkD9HJvYoy+kxHHQ9YTMbU=
+X-Google-Smtp-Source: AGHT+IGp6uk6Ht7TdfIqqo0ajPFbRj2WbXpaBM2/Fev0ZqRwXqgcuvLouIHuUc2CjEsT4jUPUz2Q/Q==
+X-Received: by 2002:a50:a458:0:b0:57a:322c:b1a5 with SMTP id 4fb4d7f45d1cf-57cbd6a6d1dmr5264380a12.38.1718617169052;
+        Mon, 17 Jun 2024 02:39:29 -0700 (PDT)
+Received: from localhost ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72ce12fsm6169015a12.7.2024.06.17.02.39.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 02:39:28 -0700 (PDT)
+Date: Mon, 17 Jun 2024 11:39:25 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Parav Pandit <parav@nvidia.com>
+Cc: Jason Wang <jasowang@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Cindy Lu <lulu@redhat.com>, Dragos Tatulea <dtatulea@nvidia.com>,
+	"mst@redhat.com" <mst@redhat.com>,
+	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH 1/2] vdpa: support set mac address from vdpa tool
+Message-ID: <ZnAETXPWG2BvyqSc@nanopsycho.orion>
+References: <20240611053239.516996-1-lulu@redhat.com>
+ <20240611185810.14b63d7d@kernel.org>
+ <ZmlAYcRHMqCgYBJD@nanopsycho.orion>
+ <CACGkMEtKFZwPpzjNBv2j6Y5L=jYTrW4B8FnSLRMWb_AtqqSSDQ@mail.gmail.com>
+ <PH0PR12MB5481BAABF5C43F9500D2852CDCCD2@PH0PR12MB5481.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH PATCH 8/9] x86/bugs: Declutter vulnerable CPU list
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org
-Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>
-References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
- <20240617-add-cpu-type-v1-8-b88998c01e76@linux.intel.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <20240617-add-cpu-type-v1-8-b88998c01e76@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PH0PR12MB5481BAABF5C43F9500D2852CDCCD2@PH0PR12MB5481.namprd12.prod.outlook.com>
 
-On 17/06/2024 10:12 am, Pawan Gupta wrote:
-> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-> index d4e539d4e158..7e3b09b0f82c 100644
-> --- a/arch/x86/kernel/cpu/common.c
-> +++ b/arch/x86/kernel/cpu/common.c
-> @@ -1229,43 +1232,45 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
->  #define RFDS		BIT(7)
->  
->  static const struct x86_cpu_id cpu_vuln_blacklist[] __initconst = {
-> -	VULNBL_INTEL_STEPPINGS(INTEL_IVYBRIDGE,		X86_STEPPING_ANY,		SRBDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_HASWELL,		X86_STEPPING_ANY,		SRBDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_HASWELL_L,		X86_STEPPING_ANY,		SRBDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_HASWELL_G,		X86_STEPPING_ANY,		SRBDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_HASWELL_X,		X86_STEPPING_ANY,		MMIO),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_BROADWELL_D,	X86_STEPPING_ANY,		MMIO),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_BROADWELL_G,	X86_STEPPING_ANY,		SRBDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_BROADWELL_X,	X86_STEPPING_ANY,		MMIO),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_BROADWELL,		X86_STEPPING_ANY,		SRBDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_SKYLAKE_X,		X86_STEPPING_ANY,		MMIO | RETBLEED | GDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_SKYLAKE_L,		X86_STEPPING_ANY,		MMIO | RETBLEED | GDS | SRBDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_SKYLAKE,		X86_STEPPING_ANY,		MMIO | RETBLEED | GDS | SRBDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_KABYLAKE_L,	X86_STEPPING_ANY,		MMIO | RETBLEED | GDS | SRBDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_KABYLAKE,		X86_STEPPING_ANY,		MMIO | RETBLEED | GDS | SRBDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_CANNONLAKE_L,	X86_STEPPING_ANY,		RETBLEED),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_ICELAKE_L,		X86_STEPPING_ANY,		MMIO | MMIO_SBDS | RETBLEED | GDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_ICELAKE_D,		X86_STEPPING_ANY,		MMIO | GDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_ICELAKE_X,		X86_STEPPING_ANY,		MMIO | GDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_COMETLAKE,		X86_STEPPING_ANY,		MMIO | MMIO_SBDS | RETBLEED | GDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_COMETLAKE_L,	X86_STEPPINGS(0x0, 0x0),	MMIO | RETBLEED),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_COMETLAKE_L,	X86_STEPPING_ANY,		MMIO | MMIO_SBDS | RETBLEED | GDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_TIGERLAKE_L,	X86_STEPPING_ANY,		GDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_TIGERLAKE,		X86_STEPPING_ANY,		GDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_LAKEFIELD,		X86_STEPPING_ANY,		MMIO | MMIO_SBDS | RETBLEED),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_ROCKETLAKE,	X86_STEPPING_ANY,		MMIO | RETBLEED | GDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_ALDERLAKE,		X86_STEPPING_ANY,		RFDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_ALDERLAKE_L,	X86_STEPPING_ANY,		RFDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_RAPTORLAKE,	X86_STEPPING_ANY,		RFDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_RAPTORLAKE_P,	X86_STEPPING_ANY,		RFDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_RAPTORLAKE_S,	X86_STEPPING_ANY,		RFDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_ATOM_GRACEMONT,	X86_STEPPING_ANY,		RFDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_ATOM_TREMONT,	X86_STEPPING_ANY,		MMIO | MMIO_SBDS | RFDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_ATOM_TREMONT_D,	X86_STEPPING_ANY,		MMIO | RFDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_ATOM_TREMONT_L,	X86_STEPPING_ANY,		MMIO | MMIO_SBDS | RFDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_ATOM_GOLDMONT,	X86_STEPPING_ANY,		RFDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_ATOM_GOLDMONT_D,	X86_STEPPING_ANY,		RFDS),
-> -	VULNBL_INTEL_STEPPINGS(INTEL_ATOM_GOLDMONT_PLUS, X86_STEPPING_ANY,		RFDS),
-> +	VULNBL_INTEL(IVYBRIDGE,		SRBDS),
-> +	VULNBL_INTEL(HASWELL,		SRBDS),
-> +	VULNBL_INTEL(HASWELL_L,		SRBDS),
-> +	VULNBL_INTEL(HASWELL_G,		SRBDS),
-> +	VULNBL_INTEL(HASWELL_X,		MMIO),
-> +	VULNBL_INTEL(BROADWELL_D,	MMIO),
-> +	VULNBL_INTEL(BROADWELL_G,	SRBDS),
-> +	VULNBL_INTEL(BROADWELL_X,	MMIO),
-> +	VULNBL_INTEL(BROADWELL,		SRBDS),
-> +	VULNBL_INTEL(SKYLAKE_X,		MMIO | RETBLEED | GDS),
-> +	VULNBL_INTEL(SKYLAKE_L,		MMIO | RETBLEED | GDS | SRBDS),
-> +	VULNBL_INTEL(SKYLAKE,		MMIO | RETBLEED | GDS | SRBDS),
-> +	VULNBL_INTEL(KABYLAKE_L,	MMIO | RETBLEED | GDS | SRBDS),
-> +	VULNBL_INTEL(KABYLAKE,		MMIO | RETBLEED | GDS | SRBDS),
-> +	VULNBL_INTEL(CANNONLAKE_L,	RETBLEED),
-> +	VULNBL_INTEL(ICELAKE_L,		MMIO | MMIO_SBDS | RETBLEED | GDS),
-> +	VULNBL_INTEL(ICELAKE_D,		MMIO | GDS),
-> +	VULNBL_INTEL(ICELAKE_X,		MMIO | GDS),
-> +	VULNBL_INTEL(COMETLAKE,		MMIO | MMIO_SBDS | RETBLEED | GDS),
-> +	VULNBL_INTEL(TIGERLAKE_L,	GDS),
-> +	VULNBL_INTEL(TIGERLAKE,		GDS),
-> +	VULNBL_INTEL(LAKEFIELD,		MMIO | MMIO_SBDS | RETBLEED),
-> +	VULNBL_INTEL(ROCKETLAKE,	MMIO | RETBLEED | GDS),
-> +	VULNBL_INTEL(ALDERLAKE,		RFDS),
-> +	VULNBL_INTEL(ALDERLAKE_L,	RFDS),
-> +	VULNBL_INTEL(RAPTORLAKE,	RFDS),
-> +	VULNBL_INTEL(RAPTORLAKE_P,	RFDS),
-> +	VULNBL_INTEL(RAPTORLAKE_S,	RFDS),
-> +	VULNBL_INTEL(ATOM_GRACEMONT,	RFDS),
-> +	VULNBL_INTEL(ATOM_TREMONT,	MMIO | MMIO_SBDS | RFDS),
-> +	VULNBL_INTEL(ATOM_TREMONT_D,	MMIO | RFDS),
-> +	VULNBL_INTEL(ATOM_TREMONT_L,	MMIO | MMIO_SBDS | RFDS),
-> +	VULNBL_INTEL(ATOM_GOLDMONT,	RFDS),
-> +	VULNBL_INTEL(ATOM_GOLDMONT_D,	RFDS),
-> +	VULNBL_INTEL(ATOM_GOLDMONT_PLUS, RFDS),
+Mon, Jun 17, 2024 at 04:57:23AM CEST, parav@nvidia.com wrote:
+>
+>
+>> From: Jason Wang <jasowang@redhat.com>
+>> Sent: Monday, June 17, 2024 7:18 AM
+>> 
+>> On Wed, Jun 12, 2024 at 2:30 PM Jiri Pirko <jiri@resnulli.us> wrote:
+>> >
+>> > Wed, Jun 12, 2024 at 03:58:10AM CEST, kuba@kernel.org wrote:
+>> > >On Tue, 11 Jun 2024 13:32:32 +0800 Cindy Lu wrote:
+>> > >> Add new UAPI to support the mac address from vdpa tool Function
+>> > >> vdpa_nl_cmd_dev_config_set_doit() will get the MAC address from the
+>> > >> vdpa tool and then set it to the device.
+>> > >>
+>> > >> The usage is: vdpa dev set name vdpa_name mac **:**:**:**:**:**
+>> > >
+>> > >Why don't you use devlink?
+>> >
+>> > Fair question. Why does vdpa-specific uapi even exist? To have
+>> > driver-specific uapi Does not make any sense to me :/
+>> 
+>> It came with devlink first actually, but switched to a dedicated uAPI.
+>> 
+>> Parav(cced) may explain more here.
+>> 
+>Devlink configures function level mac that applies to all protocol devices (vdpa, rdma, netdev) etc.
+>Additionally, vdpa device level mac can be different (an additional one) to apply to only vdpa traffic.
+>Hence dedicated uAPI was added.
 
-Take the opportunity to realign and fix this ?
+There is 1:1 relation between vdpa instance and devlink port, isn't it?
+Then we have:
+       devlink port function set DEV/PORT_INDEX hw_addr ADDR
 
-~Andrew
+Which does exactly what you need, configure function hw address (mac).
+
+When you say VDPA traffic, do you suggest there might be VDPA instance
+and netdev running on the same VF in parallel. If yes, do we have 2
+eswitch port representors to be separately used to steer the traffic?
+If no, how is that supposed to be working?
 
