@@ -1,141 +1,289 @@
-Return-Path: <linux-kernel+bounces-217086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F91E90AA60
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:57:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7A390AA69
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 11:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 621171C20EDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:57:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A701C22FAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E20F194C9B;
-	Mon, 17 Jun 2024 09:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0DB195979;
+	Mon, 17 Jun 2024 09:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="wp1ZL5bJ"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WsnOHV36"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380ED194C85
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 09:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB17194096;
+	Mon, 17 Jun 2024 09:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718618022; cv=none; b=deVAPKZY5VhvOIE/mSeWnujcYpjF1IECYId5oNvE2VoLWnmUPONvwpTYoqAJlLfuttFG6nNpZiFEMzimh1guxfxFGkFuMy7WVlJTN+1ynCY+Xh6qnyWA6PaOoiSe5i5O+Wd7WQysEx3P/0rpFNCWMQoB/lG1cKauo9ZJ6pYd/G4=
+	t=1718618080; cv=none; b=pgoLIaZ5JoGbq39GZ3+i5gcsjB53uk7geExJj664/rMf5m9mzcvFehUN4DNt0/203YTYfitKHDXtRB1ELhCwotcapP6vHCw6H3N5Nh40mGD/eMs0Gqya4ykGkoOaDIjneHn8TCYtdfubvY0ZYLm4QTH1e53SX2WYfvWpMtyy87Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718618022; c=relaxed/simple;
-	bh=EwVLuVeHp2g3G1fblt/MpM+4+1Yf8xjMAvh3KYBPdkA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iDM6SqSls9H872QbdxEoJJVeowL/dw3nLuFNFF0r4TJhEtaZfL94O6pdVnJPtHFCjI1JNCyM4BG2G9Nfq9NcRCySxtFQ917e5kd3M1DXBRUEzTO1xnmevx5RgHmqKXbBXHlpmMPUO2dHV7ZoEfScQas0GndWuqLDtZ+5BBq4X4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=wp1ZL5bJ; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52c82101407so6983593e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 02:53:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718618018; x=1719222818; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ow/bdqViiq77vsNYuMh0FoiQ44/aFS2ozFtxuSsTOHw=;
-        b=wp1ZL5bJrsLei/Pnp2GfaICtok3bK8z9Tqn+GodXcLOIV4oHwV8IYVhB7Du47oPYXI
-         E2WCWdC+E+ttcPdSwjpeSgzqEHiiiw5nWWn2qRt5OIt/EjCdFJTR0lzVYFj2w8QKfNF/
-         2LgT9rdP37eUZo6GhmLgQTtzz8FPeeLXli5iwa+52ert/0vNLkMK9pSaCmiRYHnVQd/G
-         kvTHfnL9KbTm9azu+AjCM0Lsi8sQ5JVy8DcS2mWD1r9JORL7iY21DQHmrkQt2U1Ms7kY
-         ZZXBGA1aiS5n4mmmh365Y64XwK8YD/xt0Ep6zK8kRNihUEo8D/tpnAbHVvuCdZ2h5a+b
-         hvCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718618018; x=1719222818;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ow/bdqViiq77vsNYuMh0FoiQ44/aFS2ozFtxuSsTOHw=;
-        b=lztdcDjcBHtVzcF0B29pFkWs9Du0RFcSRN4liNxl8f2GYFg/itxKpIdQV4bbk5XUIV
-         3ycwnMa9yasI0nEHiiqS9HUCogm98/C9CF2x+43lKLsW8q5j0+PWrIhgP8I+LUAw3CeP
-         PZA7AgBhKkHzU0OJ5rdjS2a68GCsn7BC5/RIg+ZXFnHfqWVYe4aLTu+fptB2XH4njHwa
-         AQr/2hAcgF1IUNDoNMKkfGrDH7saUjBL1sY/CdX94DbFovzsN43qgtnLEQZj3jT4+Mlm
-         /3x1RhJ3446h/eWdYSGNgvu4sXkRjglTRKttpgA7xSE5xs/jtUh9E92y7FFxbVDoTnLw
-         Rbjg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9+pm9kMDj2bUfOICYebArrUhVhRwEVG9ZLeQv4CSEYyvOv6C34NR4ohTl9eXJIaPoJBPzOXCBgvLeS9zrK3QMrRqc0kUpOeBbstNm
-X-Gm-Message-State: AOJu0Yze8fklX3ORqRgooaZcC+5H7NOZ/ahRRqaRoVD0BEF2Sd7jm57i
-	8xsFagSV/ZYPI6dhSJvwSOnTZDRmZseImvCBFaTpcj3TOfMk+Qc1ZjN/4a0URqgs47lNheF0eKp
-	nKVjtIj9JacHKp0rh9T0PyfZ5wsl8oisYuP7BLg==
-X-Google-Smtp-Source: AGHT+IFTgY07RrDts8kCSgZpcdeNkbbio2oxZYTF1W4ol0ipTL0MLFFayU3iO9ZhdfbwSWYFxpptD8C1Ao9fcwSlw5k=
-X-Received: by 2002:ac2:420a:0:b0:52b:bf92:bcd with SMTP id
- 2adb3069b0e04-52ca6e67674mr6832479e87.22.1718618018212; Mon, 17 Jun 2024
- 02:53:38 -0700 (PDT)
+	s=arc-20240116; t=1718618080; c=relaxed/simple;
+	bh=xBfj/K3M+SedkAwUcxBhbpFskjJE7BDhG4PBaIjvd/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M/hWkablxu2e2OjWDxkjsxoRjAFAZVwZ1d4k3rQUH2soMHYtJ/IwGGkn68FimFItGyxrdigsnBx7DqEQz1/9oWRb9ddcfAOuX/AEpzev7kwL2jo+dpejYClQFte9KhOWvwRLGR60uKTlmC2oimgXFWxtiV5GPEiCbYDYoubYdUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WsnOHV36; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718618079; x=1750154079;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=xBfj/K3M+SedkAwUcxBhbpFskjJE7BDhG4PBaIjvd/M=;
+  b=WsnOHV365NKSKFS919Ndih2hnLUBQzBeWoEsLfcIGtI4KomsoPCNl377
+   PakFvvHPXZg0tWFL7yQMa1CgwlPQ6VSSRMMVcPMzGMw8X2U3KB7SC1uoZ
+   p94NsmD3z9vw3InzPmjRnQ9iFnfaM7UgXNgM4WdA3C8dL9hxmQCdX5bH5
+   t1Gc6AN//qBM5g32LOJDJr+LNjzOiro4ESi4LJdYbow58+TJpVyLBjA8m
+   I8DYl0nz/orfZRZHKVPK82CO8WBLIpWfx38pInHO1mQ7aIJb/ln2iEw7i
+   JxJnEDkTBxX+SvG/K3X0cV8Mj2YkYGToyH+Fg8B1XaBxqPBoXRsR9qtLw
+   w==;
+X-CSE-ConnectionGUID: kfgdLyAtTuqr1lI2X4Acmg==
+X-CSE-MsgGUID: n3hnBKq0Qx2FZ6AbdDsxoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="15590064"
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="15590064"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 02:54:38 -0700
+X-CSE-ConnectionGUID: 6wrX0QQhSgWvIRrrUveZ8w==
+X-CSE-MsgGUID: X2H9n8KxQEeEOu7u05ixyw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="45514313"
+Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 02:54:36 -0700
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: alex.williamson@redhat.com,
+	kevin.tian@intel.com,
+	jgg@nvidia.com,
+	peterx@redhat.com,
+	ajones@ventanamicro.com,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH] vfio: Reuse file f_inode as vfio device inode
+Date: Mon, 17 Jun 2024 17:53:32 +0800
+Message-ID: <20240617095332.30543-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605122729.24283-1-brgl@bgdev.pl> <20240605122729.24283-2-brgl@bgdev.pl>
- <m2ocalmjfiitgr2ziqtegll4gzs5l5hykgx57fzz2n7u45szje@faa2xxfmksm4>
-In-Reply-To: <m2ocalmjfiitgr2ziqtegll4gzs5l5hykgx57fzz2n7u45szje@faa2xxfmksm4>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 17 Jun 2024 11:53:27 +0200
-Message-ID: <CAMRc=MchOAwNR0i-_x13Y60gXGJHtnmVvmCet17u+TKUgrZ33A@mail.gmail.com>
-Subject: Re: [PATCH v9 1/4] arm64: dts: qcom: sm8550-qrd: add the Wifi node
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Amit Pundir <amit.pundir@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 17, 2024 at 11:32=E2=80=AFAM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Wed, Jun 05, 2024 at 02:27:26PM GMT, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Describe the ath12k WLAN on-board the WCN7850 module present on the
-> > board.
-> >
-> > [Neil: authored the initial version of the change]
-> >
-> > Co-developed-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > Tested-by: Amit Pundir <amit.pundir@linaro.org>
-> > Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/sm8550-qrd.dts | 97 +++++++++++++++++++++++++
-> >  arch/arm64/boot/dts/qcom/sm8550.dtsi    |  2 +-
-> >  2 files changed, 98 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts=
-/qcom/sm8550.dtsi
-> > index c55a818af935..c9d3c0549ab5 100644
-> > --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-> > @@ -1784,7 +1784,7 @@ pcie0: pcie@1c00000 {
-> >
-> >                       status =3D "disabled";
-> >
-> > -                     pcie@0 {
-> > +                     pcieport0: pcie@0 {
->
-> Ideally this should come as a separate commit, with proper Fixes tag,
-> changing all pcie ports at once.
->
+Reuse file f_inode as vfio device inode and associate pseudo path file
+directly to inode allocated in vfio fs.
 
-Why? this is not a bug, we didn't need this label until now.
+Currently, vfio device is opened via 2 ways:
+1) via cdev open
+   vfio device is opened with a cdev device with file f_inode and address
+   space associated with a cdev inode;
+2) via VFIO_GROUP_GET_DEVICE_FD ioctl
+   vfio device is opened via a pseudo path file with file f_inode and
+   address space associated with an inode in anon_inode_fs.
 
-Bart
+In commit b7c5e64fecfa ("vfio: Create vfio_fs_type with inode per device"),
+an inode in vfio fs is allocated for each vfio device. However, this inode
+in vfio fs is only used to assign its address space to that of a file
+associated with another cdev inode or an inode in anon_inode_fs.
 
-> >                               device_type =3D "pci";
-> >                               reg =3D <0x0 0x0 0x0 0x0 0x0>;
-> >                               bus-range =3D <0x01 0xff>;
-> > --
-> > 2.40.1
-> >
->
-> --
-> With best wishes
-> Dmitry
+This patch
+- reuses cdev device inode as the vfio device inode when it's opened via
+  cdev way;
+- allocates an inode in vfio fs, associate it to the pseudo path file,
+  and save it as the vfio device inode when the vfio device is opened via
+  VFIO_GROUP_GET_DEVICE_FD ioctl.
+
+File address space will then point automatically to the address space of
+the vfio device inode. Tools like unmap_mapping_range() can then zap all
+vmas associated with the vfio device.
+
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+---
+ drivers/vfio/device_cdev.c |  9 ++++---
+ drivers/vfio/group.c       | 21 ++--------------
+ drivers/vfio/vfio.h        |  2 ++
+ drivers/vfio/vfio_main.c   | 49 +++++++++++++++++++++++++++-----------
+ 4 files changed, 43 insertions(+), 38 deletions(-)
+
+diff --git a/drivers/vfio/device_cdev.c b/drivers/vfio/device_cdev.c
+index bb1817bd4ff3..a4eec8e88f5c 100644
+--- a/drivers/vfio/device_cdev.c
++++ b/drivers/vfio/device_cdev.c
+@@ -40,12 +40,11 @@ int vfio_device_fops_cdev_open(struct inode *inode, struct file *filep)
+ 	filep->private_data = df;
+ 
+ 	/*
+-	 * Use the pseudo fs inode on the device to link all mmaps
+-	 * to the same address space, allowing us to unmap all vmas
+-	 * associated to this device using unmap_mapping_range().
++	 * mmaps are linked to the address space of the inode of device cdev.
++	 * Save the inode of device cdev in device->inode to allow
++	 * unmap_mapping_range() to unmap all vmas.
+ 	 */
+-	filep->f_mapping = device->inode->i_mapping;
+-
++	device->inode = inode;
+ 	return 0;
+ 
+ err_put_registration:
+diff --git a/drivers/vfio/group.c b/drivers/vfio/group.c
+index ded364588d29..aaef188003b6 100644
+--- a/drivers/vfio/group.c
++++ b/drivers/vfio/group.c
+@@ -268,31 +268,14 @@ static struct file *vfio_device_open_file(struct vfio_device *device)
+ 	if (ret)
+ 		goto err_free;
+ 
+-	/*
+-	 * We can't use anon_inode_getfd() because we need to modify
+-	 * the f_mode flags directly to allow more than just ioctls
+-	 */
+-	filep = anon_inode_getfile("[vfio-device]", &vfio_device_fops,
+-				   df, O_RDWR);
++	filep = vfio_device_get_pseudo_file(device);
+ 	if (IS_ERR(filep)) {
+ 		ret = PTR_ERR(filep);
+ 		goto err_close_device;
+ 	}
+-
+-	/*
+-	 * TODO: add an anon_inode interface to do this.
+-	 * Appears to be missing by lack of need rather than
+-	 * explicitly prevented.  Now there's need.
+-	 */
++	filep->private_data = df;
+ 	filep->f_mode |= (FMODE_PREAD | FMODE_PWRITE);
+ 
+-	/*
+-	 * Use the pseudo fs inode on the device to link all mmaps
+-	 * to the same address space, allowing us to unmap all vmas
+-	 * associated to this device using unmap_mapping_range().
+-	 */
+-	filep->f_mapping = device->inode->i_mapping;
+-
+ 	if (device->group->type == VFIO_NO_IOMMU)
+ 		dev_warn(device->dev, "vfio-noiommu device opened by user "
+ 			 "(%s:%d)\n", current->comm, task_pid_nr(current));
+diff --git a/drivers/vfio/vfio.h b/drivers/vfio/vfio.h
+index 50128da18bca..1f8915f79fbb 100644
+--- a/drivers/vfio/vfio.h
++++ b/drivers/vfio/vfio.h
+@@ -35,6 +35,7 @@ struct vfio_device_file *
+ vfio_allocate_device_file(struct vfio_device *device);
+ 
+ extern const struct file_operations vfio_device_fops;
++struct file *vfio_device_get_pseudo_file(struct vfio_device *device);
+ 
+ #ifdef CONFIG_VFIO_NOIOMMU
+ extern bool vfio_noiommu __read_mostly;
+@@ -420,6 +421,7 @@ static inline void vfio_cdev_cleanup(void)
+ {
+ }
+ #endif /* CONFIG_VFIO_DEVICE_CDEV */
++struct file *vfio_device_get_pseduo_file(struct vfio_device *device);
+ 
+ #if IS_ENABLED(CONFIG_VFIO_VIRQFD)
+ int __init vfio_virqfd_init(void);
+diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
+index a5a62d9d963f..e81d0f910c70 100644
+--- a/drivers/vfio/vfio_main.c
++++ b/drivers/vfio/vfio_main.c
+@@ -192,7 +192,6 @@ static void vfio_device_release(struct device *dev)
+ 	if (device->ops->release)
+ 		device->ops->release(device);
+ 
+-	iput(device->inode);
+ 	simple_release_fs(&vfio.vfs_mount, &vfio.fs_count);
+ 	kvfree(device);
+ }
+@@ -248,20 +247,50 @@ static struct file_system_type vfio_fs_type = {
+ 	.kill_sb = kill_anon_super,
+ };
+ 
+-static struct inode *vfio_fs_inode_new(void)
++/*
++ * Alloc pseudo file from inode associated of vfio.vfs_mount.
++ * This is called when vfio device is opened via pseudo file.
++ * mmaps are linked to the address space of the inode of the pseudo file.
++ * Save the inode in device->inode for unmap_mapping_range() to unmap all vmas.
++ */
++struct file *vfio_device_get_pseudo_file(struct vfio_device *device)
+ {
++	const struct file_operations *fops = &vfio_device_fops;
+ 	struct inode *inode;
++	struct file *filep;
+ 	int ret;
+ 
++	if (!fops_get(fops))
++		return ERR_PTR(-ENODEV);
++
+ 	ret = simple_pin_fs(&vfio_fs_type, &vfio.vfs_mount, &vfio.fs_count);
+ 	if (ret)
+-		return ERR_PTR(ret);
++		goto err_pin_fs;
+ 
+ 	inode = alloc_anon_inode(vfio.vfs_mount->mnt_sb);
+-	if (IS_ERR(inode))
+-		simple_release_fs(&vfio.vfs_mount, &vfio.fs_count);
++	if (IS_ERR(inode)) {
++		ret = PTR_ERR(inode);
++		goto err_inode;
++	}
++
++	filep = alloc_file_pseudo(inode, vfio.vfs_mount, "[vfio-device]",
++				  O_RDWR, fops);
++
++	if (IS_ERR(filep)) {
++		ret = PTR_ERR(filep);
++		goto err_file;
++	}
++	device->inode = inode;
++	return filep;
++
++err_file:
++	iput(inode);
++err_inode:
++	simple_release_fs(&vfio.vfs_mount, &vfio.fs_count);
++err_pin_fs:
++	fops_put(fops);
+ 
+-	return inode;
++	return ERR_PTR(ret);
+ }
+ 
+ /*
+@@ -282,11 +311,6 @@ static int vfio_init_device(struct vfio_device *device, struct device *dev,
+ 	init_completion(&device->comp);
+ 	device->dev = dev;
+ 	device->ops = ops;
+-	device->inode = vfio_fs_inode_new();
+-	if (IS_ERR(device->inode)) {
+-		ret = PTR_ERR(device->inode);
+-		goto out_inode;
+-	}
+ 
+ 	if (ops->init) {
+ 		ret = ops->init(device);
+@@ -301,9 +325,6 @@ static int vfio_init_device(struct vfio_device *device, struct device *dev,
+ 	return 0;
+ 
+ out_uninit:
+-	iput(device->inode);
+-	simple_release_fs(&vfio.vfs_mount, &vfio.fs_count);
+-out_inode:
+ 	vfio_release_device_set(device);
+ 	ida_free(&vfio.device_ida, device->index);
+ 	return ret;
+
+base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
+-- 
+2.43.2
+
 
