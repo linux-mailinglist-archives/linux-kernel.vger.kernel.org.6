@@ -1,234 +1,238 @@
-Return-Path: <linux-kernel+bounces-218184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C8390BA45
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:57:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB5590BA47
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF521284013
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:57:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D3801C23762
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD796198E7E;
-	Mon, 17 Jun 2024 18:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB874198A35;
+	Mon, 17 Jun 2024 18:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="s/KNjjMI"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="i2ymImXh"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2050.outbound.protection.outlook.com [40.107.102.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192D816A95C;
-	Mon, 17 Jun 2024 18:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718650645; cv=none; b=bAGsdW7qoD3KwLauCz04rDRCpJoxcwzfwRsMP2igYNpmPLk9iUByTpKccPVO1YcyXyM6QHgx7e49QTXWHeIcAn5XRvgQCEQDv8wXgGX3MSwxM4spHAsTK8VVG4ieui87fhybsnF0sl/xtYi5wVwkHnbPNfjIAEyoJ1ZsIzzcMng=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718650645; c=relaxed/simple;
-	bh=5pv/xUugx1g0LQObPHQuHsZ/wg3alIZMiZM149zEcXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JJYYa8BYCg75hk0hNqjoyE6l8SMDBx26OGyoiTZJUbHtBPKpJL4s0bpAX8Kd2FNP4LlK457iqrG+WUN7uuz9h/Fo8n8qdztNdGzij4VZw2vFMdGJ/7YaFR3juB9+5rVB35ynWaa8JqlxU4t4KkAtqqaVRLZkQagURazAsthLHOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=s/KNjjMI; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1718650633;
-	bh=5pv/xUugx1g0LQObPHQuHsZ/wg3alIZMiZM149zEcXA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s/KNjjMIIP1DSQoyCQd+3YxICvkEyX/KeX2ELz/6C2k3XsliHzwVKSGqGtdhss5Fy
-	 8npYjzlG27luZ0ttPTeDWxlWrZQpqNAyQVZMpGsU0NSzKtmmxCNxMQnkA3gw1cG6Md
-	 ReBNizpNmbdENEoLbCFe+ylf9AJWeXp+nKWmNlSQ=
-Date: Mon, 17 Jun 2024 20:57:10 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev
-Subject: Re: [PATCH 1/5] ACPI: sysfs: convert utf-16 from _STR to utf-8 only
- once
-Message-ID: <7c0d3358-eb1f-4c71-8a09-52b5e7668e36@t-8ch.de>
-References: <20240613-acpi-sysfs-groups-v1-0-665e0deb052a@weissschuh.net>
- <20240613-acpi-sysfs-groups-v1-1-665e0deb052a@weissschuh.net>
- <CAJZ5v0iHB1X7WM6Lg_-vr3Kzwp65yqjvHG9CA_X8vqFBFV_F_A@mail.gmail.com>
- <CAJZ5v0gmHPBS3LE+Eo8yJkvpuavBvip-1AEEEf9nxAp2gi_adQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9815C198A19
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718650664; cv=fail; b=exCxaD1DPF9tGndFUA/OvCB7RsZ5Nzm8IpFGFyToZb9zfSjaAkCUFeWrw3naSLe7XWojcw5vgdLYvYC1cNxBMWGvdYN+rozLdRteeK+RNTzQ/acQAaChT5XK939/EhdEPg7NOm+kS3n+Epc21z+XO5yc3OP1KE62LMeckb+Y99s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718650664; c=relaxed/simple;
+	bh=CA7iF8z+MRapD1aWiG0FjhwBWFMGY62YE8D+WKdI200=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=LLhg5ujc4syivv337cGLMjaRNxEZvPdKthC9BWrvorI7N1MrPEE63/H6D8WdkhD+42Oygpq8jh5wyJqNzjT9isWVDx/b8NqAzcEOA1bqwe+56OcB0hv8SgUhqIO0bdgNY4d9slPZEBPxUBdLXdcn5xjy4BXFhn3hr7jinAas6OI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=i2ymImXh; arc=fail smtp.client-ip=40.107.102.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ja5s+E2k6UwMVc59f/1wKuuhAw2m5j+N2YQGndRgbzxjJpxPCH+/sralLDYwqdmtckz/Tq2QKn3E4D9anI+w9hiCn+04qb/gZ0rbH/MHe9Qm3hq9tlXNx1S7an9T6/0Nj+TkolOon5/EzoDC3Zuitwk/6ntv+QM9eCt04H4O6/91W/LjYiyizPSY6JQnfs63N/i9SG2Ly0F4hcPKFyW8hfe5kip0Ju0VJcJOS3gFvaeedQfL/vNQW7l0ZXPudHTgY0WdLJSdVZHUCz1vVgxY9yOhEEytk9iWU7hvWc99yOQzxiUHcxOhrajbdnCqM6m6w1ns+pWg8OuEjzIRUN+ofA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CA7iF8z+MRapD1aWiG0FjhwBWFMGY62YE8D+WKdI200=;
+ b=KyapS+M6Mlze3D+u0fQC4QDCJib/+wfWK1aq0xo8pStRi1ZXkOHowXiOO94sSk5vBWMfie6ibQJl550P3A5ULY0KGO9QOuYMhVziuPCbN2xAnDSg6/x5rhpF9tqt97XK+YAT+FU2vlZUw2Lavk3jpFLb16N2m002I7DXq4o0utyvD6ikqGl7j4ZqXpIvXPYubs6gFDPIR5bNamTGF1L0SBHqV810T/qll7hGgNUl4swOF+0n4odaorBDBy1CwXj9CwSJHI+IQz4CS2YFpRLy8uCyrgvuvkBGz46m+1+26YuvGHpAIcaQLVi/yzbP0zhKSBcSx5XfwsZvJEdKCKPqLw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CA7iF8z+MRapD1aWiG0FjhwBWFMGY62YE8D+WKdI200=;
+ b=i2ymImXhoe/UljymX+QQvAQYWtewBQNnPEvM0ytjtJg9DQ1dR8gGkUcXDnR7Pi2fjo/4DKRmpIX5G+4k+T3JWgmI24gAdvIUndPkkgoufxBtn+vOAerZ22Uxgrh+14Quvlw/8iRko96mKgIDJutQC/7X+qhqVVb0Uu05quTh4XM=
+Received: from MW4PR12MB7165.namprd12.prod.outlook.com (2603:10b6:303:21b::14)
+ by MN2PR12MB4223.namprd12.prod.outlook.com (2603:10b6:208:1d3::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.22; Mon, 17 Jun
+ 2024 18:57:39 +0000
+Received: from MW4PR12MB7165.namprd12.prod.outlook.com
+ ([fe80::a32f:9b78:fc2e:6076]) by MW4PR12MB7165.namprd12.prod.outlook.com
+ ([fe80::a32f:9b78:fc2e:6076%4]) with mapi id 15.20.7677.030; Mon, 17 Jun 2024
+ 18:57:39 +0000
+From: "Klymenko, Anatoliy" <Anatoliy.Klymenko@amd.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>, "Simek, Michal" <michal.simek@amd.com>
+CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] drm: xlnx: zynqmp_dpsub: Enable plane in atomic update
+Thread-Topic: [PATCH v2] drm: xlnx: zynqmp_dpsub: Enable plane in atomic
+ update
+Thread-Index: AQHarWvgyJc4v+8fzUa/XVkIlqYvJbHLuXIAgAC8DkA=
+Date: Mon, 17 Jun 2024 18:57:39 +0000
+Message-ID:
+ <MW4PR12MB7165963B11E07DCC4C2E5B34E6CD2@MW4PR12MB7165.namprd12.prod.outlook.com>
+References: <20240523-dp-layer-enable-v2-1-d799020098fc@amd.com>
+ <d8880923-6555-4713-bd9e-bea056b08f59@ideasonboard.com>
+In-Reply-To: <d8880923-6555-4713-bd9e-bea056b08f59@ideasonboard.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MW4PR12MB7165:EE_|MN2PR12MB4223:EE_
+x-ms-office365-filtering-correlation-id: 790db1d6-4a55-4b8a-d11a-08dc8eff5c68
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230037|376011|366013|7416011|1800799021|38070700015;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?VHJTdStiQUpEd1pHblUxRzlkTDVyRDB1SGpUeWRzL2dOeEQ2VFVyTDNhbEJh?=
+ =?utf-8?B?cEY2b3lBMlUrMjJVYzdnZXA0Z3RKWmg2OXhkNTRXUFdLTDA1QmlJZFJXb0dm?=
+ =?utf-8?B?cDVqa1ZpMXVVZUZhaDRCanZTMEtwS3hDWWlNSmwySHNKTHRrZzVNMjJJUzNj?=
+ =?utf-8?B?V2w3TmY3eThJWmVpMVBQNEdrdlM5OFBVaDVUZll5V0pNb01IVHBXd1BoaHpJ?=
+ =?utf-8?B?bDRBZGUxemE3YUlaRjM1OW5wT3o0M2c0L2NBUkUwV0wxb1F6VjJmSVVWYmtQ?=
+ =?utf-8?B?MkF5MDJuS3JJbjZzV3RSMjBGaWYwZnJ3ZERWTTlyQ2lBUGppd0ZTWU42R1Vq?=
+ =?utf-8?B?eWd6bCtEcnZHNHkzNC9kYVVxYjgzSHNHYXR3N3YxaUVPTFhERmxsbkM1U09C?=
+ =?utf-8?B?eFZyRVVHTFhQcVgyanZyVk9QZXM0Q0JUcWtldmNHbVhnMkd3YVFiNzc2WjM3?=
+ =?utf-8?B?RUhleGxTTHNvU1RTT2VpRHU5aHU1Q3lPaytrQzBUclJUeFZNeW44YTg2YnNJ?=
+ =?utf-8?B?a0RZMFkxQXZ2R3ROTDJNbG83eHRDNFd1UTFZaU9xYkRvKzF2MFNWSHJleStp?=
+ =?utf-8?B?Y1RlaXRlOWJJRVpUb1crRmF3TzVSejRCM0hENFNTUHZCMTQxMUxlcDZiemF6?=
+ =?utf-8?B?clh3WU9vczRTU1pXNUhpTnBXWi85SGQybEJuaEk1UktuaW9iNkd0SjhlMWtO?=
+ =?utf-8?B?ek01cy9wL1lUbWlEZFFtbisveVdYTlhvTUM5eU00andtREM5VXpTQU93bDky?=
+ =?utf-8?B?SGpGMmpTK3ozWXpNZ1BHeXduRDc0bmFuZkFkdW9PYUR5ZFIxaVhOYVA2czJp?=
+ =?utf-8?B?WWJuQk9sdXlTQkd2NTg5aXB2K1hCdmRQWnp1MkFIYkxXWHdMV011OG1Fbk0y?=
+ =?utf-8?B?aC9JUzgxUFdhWDgxei9yaFhBYTNEalpMc2JhbXB1UnFXdXhPRG5IYktxTzB5?=
+ =?utf-8?B?bkRxL2dWdFlYbWZqTXcrYngrOEZsbzdkTVZyZ3owNy9ZVzQralM1Qm1UZXlp?=
+ =?utf-8?B?cGQxeEVlRDhDNDFPUUNQMksyajlpNjJoNjNseXRtbERwQnJWSW5sQ21NMy9C?=
+ =?utf-8?B?VXFrTVZtTDhIWHlualZoanZNdVBFejM4REhFZ0tmUE1zamZncC9EaWloMHpN?=
+ =?utf-8?B?a0FpYnVJajdvYW5zMHZRK1I1T2ZJTDdwQzFyUFNqdlBqNXA5VjNPNHcwZEVa?=
+ =?utf-8?B?SzN2elRQeVRYdTFxZFBuRGVKdUk3RjlBbnR5SXZDOWNGRk91R0lOcFdrTU9L?=
+ =?utf-8?B?eTBFRXBXWEc2Yk5xeUV3MW4wMW9XcWlka1Ivc3dVNXpKS1JRZHZmbWFHWUw0?=
+ =?utf-8?B?RWJVSmUySjE2WkhJUXk3M281VHhaNmtNL1ZYaFVlcVEzMm9acnU1RVJFWk9x?=
+ =?utf-8?B?YkloZXE1K1NOMllqWGJ5bkN4dlNyV05NWkJlMkltdys4Z2ZTcWNHL2VmT3lF?=
+ =?utf-8?B?Z1gzMHE4cEgyaUNWcEZZQkVmaDBNOXpjTHZ3aWQwUkhMZ3lzSUpnTkE4dkR6?=
+ =?utf-8?B?ZXJ1K3l6ZW0rUU5mcTlZWm00ZC91SEMwWmc1NUxkTDFDVTh5dU5sNVpPTTI5?=
+ =?utf-8?B?ZUJQVGU4UEpzNzNkMG44N2VQZUd4eWw4Q0RXU0c3TnNHK2VtVGFNbjBxWlhI?=
+ =?utf-8?B?L2Yybmh1QXE4eHJhOXhxYS9jVXhGMzVBNXRGWGdTUkx4RGRQSlRRTjR5OER6?=
+ =?utf-8?B?ZFdUVlFieWdKaDlUZWRhckdpbkJYcU4yc0JYM2x2U0QxdTV3WjBCZTN5dUFr?=
+ =?utf-8?B?aHRLbERsWGgxYUxHSDlLUmNuYm1VMHpucy9YVEJ3dXkvQitWNXdXOVdVcjZk?=
+ =?utf-8?Q?E51sP0B7v8F7bBlDJaj8QMk7G7bVUNphGC65I=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR12MB7165.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(366013)(7416011)(1800799021)(38070700015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?MUpKUGJ3a2dneGZRamlEZUJ6cWtTbU9Xb1lVK3k4MkEyRzVwaG94bTNuSXVz?=
+ =?utf-8?B?Q1ovT1cxdW5CNjMxSzd0YXlkSnI2NGI5bHRzbE02cDZDZld3cWxRTlpKMklF?=
+ =?utf-8?B?M1o1SWxyMUR2aSs1Qkkrc1E3ak12Q1BVaDdGbTRxMmVpK1ZSUDRXYlpOMG5y?=
+ =?utf-8?B?T2IwanJwUTVNaVdlT005cmI2ZmFVbkxxVHVBSTNVamNJbmtaMWxTbkZxeWZ2?=
+ =?utf-8?B?V2dyZXk4bytlMUY4ak9lL0xwWGRaVGFEV3ptMmtCTm50MExueGliaWJlN3F0?=
+ =?utf-8?B?VTQwUmxoMWo1RkxySnFQYzhOQ1kxSWxGUVY3MDlxaDJNWWNOeWdRbXVLc2xP?=
+ =?utf-8?B?bjlySXhWRlRJN1hWaVY4S2lCTkV3TUxIaUF2U3pFM2I4YXVGcGFDM2JEV1ln?=
+ =?utf-8?B?T2ExdXZ5VHp0R1RuSjZJNmd1VmFVcVZURENvUG1qSEVNbllrQTdEUnVHS2NS?=
+ =?utf-8?B?S0JRbHpHTzdXZUdPOEFNN3FXZE85R1RhQjZud3R3ZUZLRTVNWW9wdTVWK1dx?=
+ =?utf-8?B?T1hCY3RLblo5N25BSU44SEpSMGhaNy9YYk01aWJnTE5VRVBOUktMeWtWc2tV?=
+ =?utf-8?B?cnN0cGhjMmppNlg3ZHFHTldPaEVEWHVHdmQyOXhaZi9sSlZUZTc0bmovN2ll?=
+ =?utf-8?B?UlhMVThISExqbzBxd20zL0hVMFpXMURoVXVoMis0RC90TXMwTXhzcE9pemp1?=
+ =?utf-8?B?bmVlOEE2NEROMGxzMHoxVGFCaDdYREF4V0lkOVpLdTRCbHlvbFNsUk1zcnBt?=
+ =?utf-8?B?K1BiNm54N2YxTFVUNFFtZG5SQnNlOWNyY3V4QWxXSVBldXMxQ1BqL29ReWhB?=
+ =?utf-8?B?ck91WEpRNEh3VkU0KzNyMkp0QXBTNXZTdzJYTEJLdGhFKzdWbDBlcWFCaHcv?=
+ =?utf-8?B?VnNmT1ROOHpLWkVoNnpRV1M4QlBZNWk1cHd5ZHpDNDh0M1FHK0pSQ1pLR2hC?=
+ =?utf-8?B?N3RWZk9CMzBBVHd3dllMZ3NHSDJaWHJkemZsWktJYTNDSUVOeitHWG15N3lh?=
+ =?utf-8?B?WFRtT3ZveVVaTkdaemdiNU5RcTBUOFdTWis3MllqbTMrUWY1bExxWi9MY3FU?=
+ =?utf-8?B?YittM0Iwd2l3WHBsNlo2bWFQMTRZUlJXSXRETGNNRVVlanBVazN3WkZKb3ZU?=
+ =?utf-8?B?aVkxeWl2MUtzcEFncWhNcGVkcEx0YkRsaTRzdUlKZFd0dmZnSkdsbnNKU2hy?=
+ =?utf-8?B?dHVQZzdJa0JaMndLVm5jZjRSSUZQRithQ1lVNHFET0pDcVU2UE1xY3VRRi8z?=
+ =?utf-8?B?ZmdKZ1NSeEllUDF2VThCUmpEQmlQRGVaZDNFOVF1QVlwWWYzR2xzWDJocmVP?=
+ =?utf-8?B?a2JBejhQSlZ6U1N2Z0tWTmc3eEtEUERBWHhUclRXa1J0T3gxNVBLUDhDNS9Q?=
+ =?utf-8?B?RUlJM0lkbjFRY2kvR0doUzVic3lFT0RreXAwd1BlUUxZWWZQVURUMEg1Mnc3?=
+ =?utf-8?B?bzhVQTlqZ2x3dXpaajI3Mk1lVGJMazAxcnJPQmxHZ1NRd2xsT2cxSTB4d1Jl?=
+ =?utf-8?B?dTBUemQra1Y0TldVb3F6WnBrVTFyYVlpRVFQRkpMZkE5ejV1UVhMVjZLMXFk?=
+ =?utf-8?B?YlNDTTBUSnU5VlFOZEVKUWhGOVoxODYrWFZ6WU9WZE1NVnZnQ1Vxd1orSkE1?=
+ =?utf-8?B?YTF0cW10dmlwR3J1OTFKeDNiRGU1M0REd2pJNHUrbjd0S24rVlU1K2dLNG1I?=
+ =?utf-8?B?Ukl4N3RIOHNIVkpqL0xlakhZeURVMzhBSjRua1ZJM2llVjV4ekFzbHBKemxB?=
+ =?utf-8?B?MllXK1N1alozdjJkZFQ1SENXZXc1dklab0t5UTgvN2g5bW43WnZpc0dmWGJw?=
+ =?utf-8?B?YTFpZzQ5dFc0WXJ0djBmaDdCd2JOaGJFV3Y1WDN6N3ZGeXF4QmhYMzkwSzJL?=
+ =?utf-8?B?RHRnNFkyMGRkNzl6amRrQWpqdjRJemNJUzdqWldmRVJjajRuY0lXaERDY25j?=
+ =?utf-8?B?a0pxZjhoOFBJMGQvZHN0M0xldytnYkIvUkRvYnRXUGxicStCNkdVYWFtTWFZ?=
+ =?utf-8?B?NlFISUFEcG1iUjBwblB0Z3NrY0FlTHpaaGlSU1RIVk5uTnNDeUFua2dFdHhK?=
+ =?utf-8?B?bVRiTWhRUHpQQ2Z3ZjNlWkNKTW9KU1hrcXNGL01GekR3WXZ5RVZ1bHhYSkw5?=
+ =?utf-8?Q?3TUA=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0gmHPBS3LE+Eo8yJkvpuavBvip-1AEEEf9nxAp2gi_adQ@mail.gmail.com>
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB7165.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 790db1d6-4a55-4b8a-d11a-08dc8eff5c68
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2024 18:57:39.7663
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 1Jf1o143sTqgyqQ5lRzeRzUBZ/fhfz1XEQb96IiX9tTHSEuorSVQM/icuy5VW33oJNy4JFCIdc1lrlyKz4Kd8A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4223
 
-On 2024-06-17 20:43:03+0000, Rafael J. Wysocki wrote:
-> On Mon, Jun 17, 2024 at 8:37 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> >
-> > On Thu, Jun 13, 2024 at 10:15 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > >
-> > > The ACPI _STR method returns an UTF-16 string that is converted to utf-8
-> > > before printing it in sysfs.
-> > > Currently this conversion is performed every time the "description"
-> > > sysfs attribute is read, which is not necessary.
-> >
-> > Why is it a problem, though?
-
-It's not a real problem, mostly it made the following changes simpler.
-
-> > How many devices have _STR and how much of the time is it used?
-> >
-> > Hint: On the system I'm sitting in front of, the answer is 0 and never.
-> 
-> This was actually factually incorrect, sorry.
-> 
-> The correct answer is 12 out of 247 and very rarely (if at all).
-> Which doesn't really change the point IMO.
-> 
-> > So Is it really worth adding an _STR string pointer to every struct acpi_device?
-
-The string pointer replaces a 'union acpi_object *str_obj', so no new
-space is used.
-Also in case the device _STR is present the new code uses less memory, as
-it doesn't need the full union and stores utf-8 instead of utf-16.
-(Plus a few more cycles for the preemptive conversion)
-
-In case no _STR is present both CPU and memory costs are identical.
-
-Anyways, I don't really care about this and can also try to drop this
-patch if you prefer.
-Or drop the 'union acpi_device *' from the struct completely at your
-preference.
-
-> > > Only perform the conversion once and cache the result.
-> > >
-> > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > > ---
-> > >  drivers/acpi/device_sysfs.c | 63 ++++++++++++++++++++++++++++-----------------
-> > >  include/acpi/acpi_bus.h     |  2 +-
-> > >  2 files changed, 40 insertions(+), 25 deletions(-)
-> >
-> > And it's more lines of code even.
-> >
-> > >
-> > > diff --git a/drivers/acpi/device_sysfs.c b/drivers/acpi/device_sysfs.c
-> > > index 23373faa35ec..4bedbe8f57ed 100644
-> > > --- a/drivers/acpi/device_sysfs.c
-> > > +++ b/drivers/acpi/device_sysfs.c
-> > > @@ -439,24 +439,11 @@ static ssize_t description_show(struct device *dev,
-> > >                                 char *buf)
-> > >  {
-> > >         struct acpi_device *acpi_dev = to_acpi_device(dev);
-> > > -       int result;
-> > >
-> > > -       if (acpi_dev->pnp.str_obj == NULL)
-> > > +       if (acpi_dev->pnp.str == NULL)
-> > >                 return 0;
-> > >
-> > > -       /*
-> > > -        * The _STR object contains a Unicode identifier for a device.
-> > > -        * We need to convert to utf-8 so it can be displayed.
-> > > -        */
-> > > -       result = utf16s_to_utf8s(
-> > > -               (wchar_t *)acpi_dev->pnp.str_obj->buffer.pointer,
-> > > -               acpi_dev->pnp.str_obj->buffer.length,
-> > > -               UTF16_LITTLE_ENDIAN, buf,
-> > > -               PAGE_SIZE - 1);
-> > > -
-> > > -       buf[result++] = '\n';
-> > > -
-> > > -       return result;
-> > > +       return sysfs_emit("%s\n", acpi_dev->pnp.str);
-> > >  }
-> > >  static DEVICE_ATTR_RO(description);
-> > >
-> > > @@ -507,14 +494,46 @@ static ssize_t status_show(struct device *dev, struct device_attribute *attr,
-> > >  }
-> > >  static DEVICE_ATTR_RO(status);
-> > >
-> > > +static const char *acpi_device_str(struct acpi_device *dev)
-> > > +{
-> > > +       struct acpi_buffer buffer = {ACPI_ALLOCATE_BUFFER, NULL};
-> > > +       union acpi_object *str_obj;
-> > > +       acpi_status status;
-> > > +       const char *ret;
-> > > +       char buf[512];
-> > > +       int result;
-> > > +
-> > > +       if (!acpi_has_method(dev->handle, "_STR"))
-> > > +               return NULL;
-> > > +
-> > > +       status = acpi_evaluate_object(dev->handle, "_STR",
-> > > +                                     NULL, &buffer);
-> > > +       if (ACPI_FAILURE(status))
-> > > +               return NULL;
-> > > +
-> > > +       str_obj = buffer.pointer;
-> > > +       /*
-> > > +        * The _STR object contains a Unicode identifier for a device.
-> > > +        * We need to convert to utf-8 so it can be displayed.
-> > > +        */
-> > > +       result = utf16s_to_utf8s((wchar_t *)str_obj->buffer.pointer,
-> > > +                                str_obj->buffer.length,
-> > > +                                UTF16_LITTLE_ENDIAN,
-> > > +                                buf, sizeof(buf) - 1);
-> > > +       buf[result++] = '\0';
-> > > +
-> > > +       ret = kstrdup(buf, GFP_KERNEL);
-> > > +       kfree(buffer.pointer);
-> > > +
-> > > +       return ret;
-> > > +}
-> > > +
-> > >  /**
-> > >   * acpi_device_setup_files - Create sysfs attributes of an ACPI device.
-> > >   * @dev: ACPI device object.
-> > >   */
-> > >  int acpi_device_setup_files(struct acpi_device *dev)
-> > >  {
-> > > -       struct acpi_buffer buffer = {ACPI_ALLOCATE_BUFFER, NULL};
-> > > -       acpi_status status;
-> > >         int result = 0;
-> > >
-> > >         /*
-> > > @@ -539,12 +558,8 @@ int acpi_device_setup_files(struct acpi_device *dev)
-> > >         /*
-> > >          * If device has _STR, 'description' file is created
-> > >          */
-> > > -       if (acpi_has_method(dev->handle, "_STR")) {
-> > > -               status = acpi_evaluate_object(dev->handle, "_STR",
-> > > -                                       NULL, &buffer);
-> > > -               if (ACPI_FAILURE(status))
-> > > -                       buffer.pointer = NULL;
-> > > -               dev->pnp.str_obj = buffer.pointer;
-> > > +       dev->pnp.str = acpi_device_str(dev);
-> > > +       if (dev->pnp.str) {
-> > >                 result = device_create_file(&dev->dev, &dev_attr_description);
-> > >                 if (result)
-> > >                         goto end;
-> > > @@ -618,7 +633,7 @@ void acpi_device_remove_files(struct acpi_device *dev)
-> > >          * If device has _STR, remove 'description' file
-> > >          */
-> > >         if (acpi_has_method(dev->handle, "_STR")) {
-> > > -               kfree(dev->pnp.str_obj);
-> > > +               kfree(dev->pnp.str);
-> > >                 device_remove_file(&dev->dev, &dev_attr_description);
-> > >         }
-> > >         /*
-> > > diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
-> > > index 1a4dfd7a1c4a..32e3105c9ece 100644
-> > > --- a/include/acpi/acpi_bus.h
-> > > +++ b/include/acpi/acpi_bus.h
-> > > @@ -254,7 +254,7 @@ struct acpi_device_pnp {
-> > >         struct list_head ids;           /* _HID and _CIDs */
-> > >         acpi_device_name device_name;   /* Driver-determined */
-> > >         acpi_device_class device_class; /*        "          */
-> > > -       union acpi_object *str_obj;     /* unicode string for _STR method */
-> > > +       const char *str;                /* _STR */
-> > >  };
-> > >
-> > >  #define acpi_device_bid(d)     ((d)->pnp.bus_id)
-> > >
-> > > --
-> > > 2.45.2
-> > >
-> > >
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogVG9taSBWYWxrZWluZW4g
+PHRvbWkudmFsa2VpbmVuQGlkZWFzb25ib2FyZC5jb20+DQo+IFNlbnQ6IE1vbmRheSwgSnVuZSAx
+NywgMjAyNCAxMjo0NCBBTQ0KPiBUbzogS2x5bWVua28sIEFuYXRvbGl5IDxBbmF0b2xpeS5LbHlt
+ZW5rb0BhbWQuY29tPjsgTGF1cmVudCBQaW5jaGFydA0KPiA8bGF1cmVudC5waW5jaGFydEBpZGVh
+c29uYm9hcmQuY29tPjsgTWFhcnRlbiBMYW5raG9yc3QNCj4gPG1hYXJ0ZW4ubGFua2hvcnN0QGxp
+bnV4LmludGVsLmNvbT47IE1heGltZSBSaXBhcmQNCj4gPG1yaXBhcmRAa2VybmVsLm9yZz47IFRo
+b21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPjsNCj4gRGF2aWQgQWlybGllIDxh
+aXJsaWVkQGdtYWlsLmNvbT47IERhbmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD47DQo+IFNp
+bWVrLCBNaWNoYWwgPG1pY2hhbC5zaW1la0BhbWQuY29tPg0KPiBDYzogZHJpLWRldmVsQGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOw0K
+PiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjJd
+IGRybTogeGxueDogenlucW1wX2Rwc3ViOiBFbmFibGUgcGxhbmUgaW4gYXRvbWljDQo+IHVwZGF0
+ZQ0KPiANCj4gQ2F1dGlvbjogVGhpcyBtZXNzYWdlIG9yaWdpbmF0ZWQgZnJvbSBhbiBFeHRlcm5h
+bCBTb3VyY2UuIFVzZSBwcm9wZXINCj4gY2F1dGlvbiB3aGVuIG9wZW5pbmcgYXR0YWNobWVudHMs
+IGNsaWNraW5nIGxpbmtzLCBvciByZXNwb25kaW5nLg0KPiANCj4gDQo+IEhpLA0KPiANCj4gT24g
+MjQvMDUvMjAyNCAwMjo0OSwgQW5hdG9saXkgS2x5bWVua28gd3JvdGU6DQo+ID4gVW5jb25kaXRp
+b25hbGx5IGVuYWJsZSB0aGUgRFBTVUIgbGF5ZXIgaW4gdGhlIGNvcnJlc3BvbmRpbmcgYXRvbWlj
+DQo+IHBsYW5lDQo+ID4gdXBkYXRlIGNhbGxiYWNrLiBTZXR0aW5nIHRoZSBuZXcgZGlzcGxheSBt
+b2RlIG1heSByZXF1aXJlIGRpc2FibGluZw0KPiBhbmQNCj4gPiByZS1lbmFibGluZyB0aGUgQ1JU
+Qy4gVGhpcyBlZmZlY3RpdmVseSByZXNldHMgRFBTVUIgdG8gdGhlIGRlZmF1bHQgc3RhdGUNCj4g
+PiB3aXRoIGFsbCBsYXllcnMgZGlzYWJsZWQuIFRoZSBvcmlnaW5hbCBpbXBsZW1lbnRhdGlvbiBv
+ZiB0aGUgcGxhbmUNCj4gYXRvbWljDQo+ID4gdXBkYXRlIGVuYWJsZXMgdGhlIGNvcnJlc3BvbmRp
+bmcgRFBTVUIgbGF5ZXIgb25seSBpZiB0aGUgZnJhbWVidWZmZXINCj4gPiBmb3JtYXQgaGFzIGNo
+YW5nZWQuIFRoaXMgd291bGQgbGVhdmUgdGhlIGxheWVyIGRpc2FibGVkIGFmdGVyIHN3aXRjaGlu
+Zw0KPiB0bw0KPiA+IGEgZGlmZmVyZW50IGRpc3BsYXkgbW9kZSB3aXRoIHRoZSBzYW1lIGZyYW1l
+YnVmZmVyIGZvcm1hdC4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEFuYXRvbGl5IEtseW1lbmtv
+IDxhbmF0b2xpeS5rbHltZW5rb0BhbWQuY29tPg0KPiA+IC0tLQ0KPiA+IENoYW5nZXMgaW4gdjI6
+DQo+ID4gLSBBZGRlZCBjb21tZW50IGFyb3VuZCBEUFNVQiBsYXllciBlbmFibGVtZW50IGV4cGxh
+aW5pbmcgd2h5IGl0DQo+IHNob3VsZCBiZQ0KPiA+ICAgIGRvbmUgdW5jb25kaXRpb25hbGx5Lg0K
+PiA+IC0gTGluayB0byB2MTogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvci8yMDI0MDUyMC1kcC1s
+YXllci1lbmFibGUtdjEtMS0NCj4gYzliNDgxMjA5MTE1QGFtZC5jb20NCj4gPiAtLS0NCj4gPiAg
+IGRyaXZlcnMvZ3B1L2RybS94bG54L3p5bnFtcF9rbXMuYyB8IDEwICsrKysrKystLS0NCj4gPiAg
+IDEgZmlsZSBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+ID4NCj4g
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3hsbngvenlucW1wX2ttcy5jDQo+IGIvZHJp
+dmVycy9ncHUvZHJtL3hsbngvenlucW1wX2ttcy5jDQo+ID4gaW5kZXggNDNiZjQxNmIzM2Q1Li4w
+YjU3YWI1NDUxYTkgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3hsbngvenlucW1w
+X2ttcy5jDQo+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3hsbngvenlucW1wX2ttcy5jDQo+ID4g
+QEAgLTEyMCw5ICsxMjAsMTMgQEAgc3RhdGljIHZvaWQNCj4genlucW1wX2Rwc3ViX3BsYW5lX2F0
+b21pY191cGRhdGUoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsDQo+ID4gICAgICAgICAgICAgICB6
+eW5xbXBfZGlzcF9ibGVuZF9zZXRfZ2xvYmFsX2FscGhhKGRwc3ViLT5kaXNwLCB0cnVlLA0KPiA+
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwbGFuZS0+
+c3RhdGUtPmFscGhhID4+IDgpOw0KPiA+DQo+ID4gLSAgICAgLyogRW5hYmxlIG9yIHJlLWVuYWJs
+ZSB0aGUgcGxhbmUgaWYgdGhlIGZvcm1hdCBoYXMgY2hhbmdlZC4gKi8NCj4gPiAtICAgICBpZiAo
+Zm9ybWF0X2NoYW5nZWQpDQo+ID4gLSAgICAgICAgICAgICB6eW5xbXBfZGlzcF9sYXllcl9lbmFi
+bGUobGF5ZXIpOw0KPiA+ICsgICAgIC8qDQo+ID4gKyAgICAgICogVW5jb25kaXRpb25hbGx5IGVu
+YWJsZSB0aGUgbGF5ZXIsIGFzIGl0IG1heSBoYXZlIGJlZW4gZGlzYWJsZWQNCj4gPiArICAgICAg
+KiBwcmV2aW91c2x5IGVpdGhlciBleHBsaWNpdGx5IHRvIHJlY29uZmlndXJlIGxheWVyIGZvcm1h
+dCwgb3INCj4gPiArICAgICAgKiBpbXBsaWNpdGx5IGFmdGVyIERQU1VCIHJlc2V0IGR1cmluZyBk
+aXNwbGF5IG1vZGUgY2hhbmdlLiBEUk0NCj4gPiArICAgICAgKiBmcmFtZXdvcmsgY2FsbHMgdGhp
+cyBjYWxsYmFjayBmb3IgZW5hYmxlZCBwbGFuZXMgb25seS4NCj4gPiArICAgICAgKi8NCj4gPiAr
+ICAgICB6eW5xbXBfZGlzcF9sYXllcl9lbmFibGUobGF5ZXIpOw0KPiA+ICAgfQ0KPiA+DQo+ID4g
+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9wbGFuZV9oZWxwZXJfZnVuY3MNCj4genlucW1wX2Rw
+c3ViX3BsYW5lX2hlbHBlcl9mdW5jcyA9IHsNCj4gPg0KPiA+IC0tLQ0KPiA+IGJhc2UtY29tbWl0
+OiA2NzMwODdkOGIwMjNmYWYzNGI4NGU4ZmFmNjNiYmVlYTNkYTg3YmFiDQo+ID4gY2hhbmdlLWlk
+OiAyMDI0MDUyMC1kcC1sYXllci1lbmFibGUtN2I1NjFhZjI5Y2E4DQo+ID4NCj4gPiBCZXN0IHJl
+Z2FyZHMsDQo+IA0KPiBUaGFua3MsIEkgaGF2ZSBwdXNoZWQgdGhpcyB0byBkcm0tbWlzYy1uZXh0
+Lg0KPiANCj4gICBUb21pDQoNClRoYW5rIHlvdSwNCkFuYXRvbGl5DQoNCg==
 
