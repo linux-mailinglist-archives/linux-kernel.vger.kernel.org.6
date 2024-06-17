@@ -1,170 +1,204 @@
-Return-Path: <linux-kernel+bounces-217591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19CA90B1DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:27:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3977790B289
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 120331C22DD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:27:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB78AB22937
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E761AC25D;
-	Mon, 17 Jun 2024 13:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E441AD9EA;
+	Mon, 17 Jun 2024 13:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FWxiEHO3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VpAyeIw3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F192F1AC247
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B351AC247;
+	Mon, 17 Jun 2024 13:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718631704; cv=none; b=XJcDYNo02P/Ep3d7pSr7PagpZRotkxoX9BDlSHnzbQCtvIVSWh4cA5J2OTNIIdRsfg0fk0TZKYBzx4Dg6nmIgZXM2MLYHZEq0ftsCqqafb002bmxnsaQLEsG3Savfv5jOKeYVAZnm3u+O4pafnw/mFXkRxT9+DkrTfoZtHJ5M4c=
+	t=1718631760; cv=none; b=DGfJq+d0guYjm7qhz4oO9EHQQddLuj1qNHuBvXgJ9TORuMBMp0LyDe+WH+3bkgbzzQDW98wYr00gFPwSXoip/mQykqPl1ilae+VIeeMfmIkusOt4+n61+G4QBa8e2xVWBpclGao12Zya+fQsstPwyypwkYZU0sKYCfrrYShkl5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718631704; c=relaxed/simple;
-	bh=m3M5WHjlP+HN1VMQC3VBTAlmTLeffcj6WZ3BmqinNnc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kDSUEl8dNzb7qusgyhyAesCStx64ENHZ5NXHuRL5GSJvEw+7Ur7G6YtVyaw0xeLfxKQQ+u3jHJZwTXWu8tzrGWBMU/+U2FIIW7011mIdblLl2V9hiscIkjNI5B8RRdjeQUMpprHiZhfwhVHkkY3nUH6RvOvEk/Pn3BaHPvIC5Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FWxiEHO3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45HAhwSI000466;
-	Mon, 17 Jun 2024 13:41:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=PnMnhUv17hGThiVtLIi1GmYfdDXVZD6mEkENnjqDw08=; b=FW
-	xiEHO3xXlpK88ax0PNelo8twt1KFU5dSdxGShbCnknjuJb2wMf1ny2ZwOx9nBI14
-	dbwIBfZgPbak7IuQNn8pkpvlgMNm98hWqhNZbjRSvEz4A1dGBecjaBg0ptQjJuLt
-	dZXmnnsrg/O+voU3yEDbf3TeFxA5dpTJE1WOlICQacwkAJPZnt5XJizbbO3OekYq
-	nHqJDRf55+R47e5PM/L6GGABlCildHuZXKintdnEm1PYT+bBoERQ3WdTBkw9vKbC
-	RnkmvA640mvD4XcmzZM+EaScIdcyHbffBWHTxVwh6TTajnhQleANzj2AJF6UB9xs
-	dpmF71Zh76gKCkZtKlaA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys29gutsu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 13:41:35 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45HDfYaq029848
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 13:41:34 GMT
-Received: from zijuhu-gv.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 17 Jun 2024 06:41:33 -0700
-From: Zijun Hu <quic_zijuhu@quicinc.com>
-To: <gregkh@linuxfoundation.org>, <rafael@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: [PATCH v1] devres: Correct code style for functions that return a pointer type
-Date: Mon, 17 Jun 2024 21:41:29 +0800
-Message-ID: <1718631689-11929-1-git-send-email-quic_zijuhu@quicinc.com>
-X-Mailer: git-send-email 2.7.4
+	s=arc-20240116; t=1718631760; c=relaxed/simple;
+	bh=jAzokita4ObBVuqP6v9/pCm7QzuPOXyw106mBV/23Ck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vEgBr0GvM21ptWZYwY28+L4heCZBmnryBUo6ID+8Tl/XkT+Y2KneyWCrAQrP1ZGJUVHtge3y6rNtnmCpdOD/7UgjlqPqLvRwVtDNVZqlskaZS7w1WZu8vsiR+SxGMkTodtXqeHiLijy7B4XcF0+W/SSYT1itD22Ftk+EnHMfm2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VpAyeIw3; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718631758; x=1750167758;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=jAzokita4ObBVuqP6v9/pCm7QzuPOXyw106mBV/23Ck=;
+  b=VpAyeIw3OdpLPXod5M+S96OkWityDjNtJVoQiMev3Pck472tNeqn2zQb
+   zgAyV7rIRdBf6384tGiwX3PJRKPg2EHeNpGWv7JvFzFzg7urTZ0MF5a/3
+   R9tpo6b8PTpH7G+ovu9u+blhRiSqnTi3zowcG6kFKh7GP1agLemCdmHZe
+   y8MTdD3RmfEe8i9QQoAt9MtYaSzO3ndZ+eAtpYqMALtXQQ7c8C5KFZSwO
+   97FsqRYw7hwag6ITSElDnA7/EY7UOtjEa0uLBhOdQ5CqNgYtURq4C6hlQ
+   8Qk/7m38VM6PUM7rDPaKeO4aZq/fYJYkj/YleNYyGjEOCIOzVDXdzMNgi
+   w==;
+X-CSE-ConnectionGUID: bwpA3hfTRaSL+O0+WqlJ+Q==
+X-CSE-MsgGUID: vY5bH/9vQJSOg6c74npNvw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11105"; a="26140411"
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="26140411"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 06:42:24 -0700
+X-CSE-ConnectionGUID: cyDZ2+c4Q5yMw2iNvTNnbw==
+X-CSE-MsgGUID: MEU7Mh7STxq2kwapeOkp4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,244,1712646000"; 
+   d="scan'208";a="41131257"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 06:42:21 -0700
+Message-ID: <7c667516-b5a2-48e1-afd8-e45906e69053@intel.com>
+Date: Mon, 17 Jun 2024 16:42:13 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SAf1SyhLZHZiRP5YaF5sUNTH8yFhaBpA
-X-Proofpoint-ORIG-GUID: SAf1SyhLZHZiRP5YaF5sUNTH8yFhaBpA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_12,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- adultscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 bulkscore=0 phishscore=0 mlxlogscore=891
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406170104
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v2 2/2] perf/core: Fix incorrected time diff in
+ tick adjust period
+To: Luo Gengkun <luogengkun@huaweicloud.com>, peterz@infradead.org
+Cc: mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, namhyung@kernel.org,
+ irogers@google.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240417115446.2908769-1-luogengkun@huaweicloud.com>
+ <20240417115446.2908769-3-luogengkun@huaweicloud.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240417115446.2908769-3-luogengkun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Correct code style for several functions that return a pointer type.
+On 17/04/24 14:54, Luo Gengkun wrote:
+> Adrian found that there is a probability that the number of samples
+> is small, which is caused by the unreasonable large sampling period.
+> 
+>  # taskset --cpu 0 perf record -F 1000 -e cs -- taskset --cpu 1 ./test
+>  [ perf record: Woken up 1 times to write data ]
+>  [ perf record: Captured and wrote 0.010 MB perf.data (204 samples) ]
+>  # perf script
+>  ...
+>  test   865   265.377846:         16 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.378900:         15 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.379845:         14 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.380770:         14 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.381647:         15 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.382638:         16 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.383647:         16 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.384704:         15 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.385649:         14 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.386578:        152 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.396383:        154 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.406183:        154 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.415839:        154 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.425445:        154 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.435052:        154 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.444708:        154 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.454314:        154 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.463970:        154 cs:  ffffffff832e927b schedule+0x2b
+>  test   865   265.473577:        154 cs:  ffffffff832e927b schedule+0x2b
+>  ...
+> 
+> It seems that the Timer Interrupts is not coming every TICK_NSEC when
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/base/devres.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+No, the period is not adjusted unless the event is active i.e. scheduled in.
+So an event in a task context where the task sleeps a lot will
+likely not be adjusted every tick.
 
-diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-index 3df0025d12aa..564c114079b5 100644
---- a/drivers/base/devres.c
-+++ b/drivers/base/devres.c
-@@ -85,7 +85,7 @@ static void group_close_release(struct device *dev, void *res)
- 	/* noop */
- }
- 
--static struct devres_group * node_to_group(struct devres_node *node)
-+static struct devres_group *node_to_group(struct devres_node *node)
- {
- 	if (node->release == &group_open_release)
- 		return container_of(node, struct devres_group, node[0]);
-@@ -107,8 +107,8 @@ static bool check_dr_size(size_t size, size_t *tot_size)
- 	return true;
- }
- 
--static __always_inline struct devres * alloc_dr(dr_release_t release,
--						size_t size, gfp_t gfp, int nid)
-+static __always_inline struct devres *alloc_dr(dr_release_t release,
-+					       size_t size, gfp_t gfp, int nid)
- {
- 	size_t tot_size;
- 	struct devres *dr;
-@@ -283,8 +283,8 @@ static struct devres *find_dr(struct device *dev, dr_release_t release,
-  * RETURNS:
-  * Pointer to found devres, NULL if not found.
-  */
--void * devres_find(struct device *dev, dr_release_t release,
--		   dr_match_t match, void *match_data)
-+void *devres_find(struct device *dev, dr_release_t release,
-+		  dr_match_t match, void *match_data)
- {
- 	struct devres *dr;
- 	unsigned long flags;
-@@ -313,8 +313,8 @@ EXPORT_SYMBOL_GPL(devres_find);
-  * RETURNS:
-  * Pointer to found or added devres.
-  */
--void * devres_get(struct device *dev, void *new_res,
--		  dr_match_t match, void *match_data)
-+void *devres_get(struct device *dev, void *new_res,
-+		 dr_match_t match, void *match_data)
- {
- 	struct devres *new_dr = container_of(new_res, struct devres, data);
- 	struct devres *dr;
-@@ -349,8 +349,8 @@ EXPORT_SYMBOL_GPL(devres_get);
-  * RETURNS:
-  * Pointer to removed devres on success, NULL if not found.
-  */
--void * devres_remove(struct device *dev, dr_release_t release,
--		     dr_match_t match, void *match_data)
-+void *devres_remove(struct device *dev, dr_release_t release,
-+		    dr_match_t match, void *match_data)
- {
- 	struct devres *dr;
- 	unsigned long flags;
-@@ -549,7 +549,7 @@ int devres_release_all(struct device *dev)
-  * RETURNS:
-  * ID of the new group, NULL on failure.
-  */
--void * devres_open_group(struct device *dev, void *id, gfp_t gfp)
-+void *devres_open_group(struct device *dev, void *id, gfp_t gfp)
- {
- 	struct devres_group *grp;
- 	unsigned long flags;
-@@ -576,7 +576,7 @@ void * devres_open_group(struct device *dev, void *id, gfp_t gfp)
- EXPORT_SYMBOL_GPL(devres_open_group);
- 
- /* Find devres group with ID @id.  If @id is NULL, look for the latest. */
--static struct devres_group * find_group(struct device *dev, void *id)
-+static struct devres_group *find_group(struct device *dev, void *id)
- {
- 	struct devres_node *node;
- 
--- 
-2.7.4
+> system is idle. For example, counter increase n during 2 * TICK_NSEC,
+> and it call perf_adjust_period using n and TICK_NSEC, so the final period
+> we calculated will be bigger than expected one. What's more, if the
+> the overflow time is larger than 2 * TICK_NSEC we cannot tune the period
+> using __perf_event_account_interrupt. To fix this problem, perf can
+> calculate the tick interval by itself.
+
+Yes, the period can get stuck being too big:
+
+	perf_adjust_freq_unthr_events() calculates a value that is
+	too big because it incorrectly assumes the count has
+	accumulated only since the last tick, whereas it can have
+	been much longer.
+
+	__perf_event_account_interrupt() has an unexplained limit
+	(2*TICK_NSEC) on the count delta, and won't adjust the
+	period if that is exceeded.
+
+> 
+> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+> ---
+>  include/linux/perf_event.h |  1 +
+>  kernel/events/core.c       | 15 ++++++++++++---
+>  2 files changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index afb028c54f33..2708f1d0692c 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -265,6 +265,7 @@ struct hw_perf_event {
+>  	 * State for freq target events, see __perf_event_overflow() and
+>  	 * perf_adjust_freq_unthr_context().
+>  	 */
+> +	u64				freq_tick_stamp;
+>  	u64				freq_time_stamp;
+>  	u64				freq_count_stamp;
+>  #endif
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index cad50d3439f1..0f2025d631aa 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -4112,7 +4112,7 @@ perf_adjust_freq_unthr_context(struct perf_event_context *ctx, bool unthrottle)
+>  {
+>  	struct perf_event *event;
+>  	struct hw_perf_event *hwc;
+> -	u64 now, period = TICK_NSEC;
+> +	u64 now, period, tick_stamp;
+>  	s64 delta;
+>  
+>  	/*
+> @@ -4151,6 +4151,10 @@ perf_adjust_freq_unthr_context(struct perf_event_context *ctx, bool unthrottle)
+>  		 */
+>  		event->pmu->stop(event, PERF_EF_UPDATE);
+>  
+> +		tick_stamp = perf_clock();
+
+Perhaps jiffies would work just as well, but be
+more efficient.
+
+> +		period = tick_stamp - hwc->freq_tick_stamp;
+> +		hwc->freq_tick_stamp = tick_stamp;
+> +
+>  		now = local64_read(&event->count);
+>  		delta = now - hwc->freq_count_stamp;
+>  		hwc->freq_count_stamp = now;
+> @@ -4162,8 +4166,13 @@ perf_adjust_freq_unthr_context(struct perf_event_context *ctx, bool unthrottle)
+>  		 * to perf_adjust_period() to avoid stopping it
+>  		 * twice.
+>  		 */
+> -		if (delta > 0)
+> -			perf_adjust_period(event, period, delta, false);
+> +		if (delta > 0) {
+> +			/*
+> +			 * we skip first tick adjust period
+> +			 */
+> +			if (likely(period != tick_stamp))
+> +				perf_adjust_period(event, period, delta, false);
+> +		}
+>  
+>  		event->pmu->start(event, delta > 0 ? PERF_EF_RELOAD : 0);
+>  	next:
 
 
