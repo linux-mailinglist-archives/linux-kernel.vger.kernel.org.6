@@ -1,45 +1,64 @@
-Return-Path: <linux-kernel+bounces-218133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3FA290B9A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:26:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35B190B986
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E84E28B8B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:26:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD6F11C24193
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0CB194A7C;
-	Mon, 17 Jun 2024 18:25:17 +0000 (UTC)
-Received: from domac.alu.hr (domac.alu.hr [161.53.235.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9055E199EB7;
+	Mon, 17 Jun 2024 18:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lciu3V+c"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1E1198E84
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.53.235.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2665519755F;
+	Mon, 17 Jun 2024 18:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718648716; cv=none; b=XAx5fno2q69G38mRGHN/KS/SxLreE81xwbGXYbxV5v2CfVmBgbGuggtd632So2z6BWMoISAEH30vbEJov/zNLg0MSUZtHX1I6cs3p6RpWgcPGAwh0eCzHdL4bokGdSO8GLLofIqEaiH4b30Wzhk88WPeCaP382VVyeYe7hHRkQ8=
+	t=1718648258; cv=none; b=nqUbLX6721UQtEFalePKnC+5aOvmVELim+/deSd4Nab3bQfUciPpOEyOcn/cpVWjx494h57xgFG9ddP3dyKQtfurSFhY0JiLzantdjTpritLu2XNBDP/jZyWdwZgxl0sTV0jMXHFjwEm87ng/MMiDHk7Ew+YZ3yHAEyAurKloPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718648716; c=relaxed/simple;
-	bh=ZujwxhU0fzmG232AYTsvdM9y++5f47AvLo4FCkYzn9M=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RjM3XX5i5Xd0Lt1rm0DtuYmBuGwXCK6VPx2k2X8+PGhESLaFRs037/TE7G2ktMLEIYUf9jyjbacS5Osud3M0mg9z+N4+Y0fsZcpzsHeTXqo8YS7GLMQ+WV5JXtGePgBrdvm6VlHps8tM4IhomCHMhNLZgFDIug6XyuOUTkpE4aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=161.53.235.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (localhost [127.0.0.1])
-	by domac.alu.hr (Postfix) with ESMTP id C8F01601A1;
-	Mon, 17 Jun 2024 20:17:06 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at domac.alu.hr
-Received: from domac.alu.hr ([127.0.0.1])
-	by localhost (domac.alu.hr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id n6JXneNXu9Ca; Mon, 17 Jun 2024 20:17:04 +0200 (CEST)
-Received: from [192.168.178.20] (dh207-41-66.xnet.hr [88.207.41.66])
-	by domac.alu.hr (Postfix) with ESMTPSA id 293E86018F;
-	Mon, 17 Jun 2024 20:17:01 +0200 (CEST)
-Message-ID: <fbcbe79b-5447-4ff7-af6b-a0398d944155@gmail.com>
-Date: Mon, 17 Jun 2024 20:16:56 +0200
+	s=arc-20240116; t=1718648258; c=relaxed/simple;
+	bh=DQjO2/4VHsSmWhWXSoOM/SFF/7S410YiAqwEr+Entsg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZvlDD4uBD5llJR+bSl60dOhCfgDQLoVy+pRyDk7aAYcJeI/5z1CH930qCcBNVkkL4HKf4ASbyCsD3CTG6A2lOY+ETf5QkyXQEOmrviOT5Ai7JjmhNHdWmzfKA4jhyN4WfYpyJ8kHMoR+EZX/rBWJ1iCqrI1Im2kGXVq16xH5AcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lciu3V+c; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718648257; x=1750184257;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=DQjO2/4VHsSmWhWXSoOM/SFF/7S410YiAqwEr+Entsg=;
+  b=Lciu3V+cpGcxjwxG4g3FqXcbHVDO/zhTAE/GMAsqf+pGUDL7ZWUwuMfu
+   SzjurkJ4MzT6DRq3RvWKHOHqfro+iX48sJlJAuYpDnO9HEOfoqiC3UEgG
+   +wMd/DcFDmi5ky3O/O92Prd/qlG8x5IX4/Gx++QUQ2GZV4TJpQxQb4Vx1
+   K6XQ2tyP7sEfQs0V35vluv53RiGNi59d4500OETvkLdnX0Qwd72LnyALK
+   pxppZ0UZ5I8RJIgYXqS+je+tdktMnDx9Ky0ts2vQOIUDKoutZcF+XH5E/
+   Q/ZLWr12HY+ctz36F0PymBOSfLN8kilplOamveg3ZWTIB+h+5mW2mok0K
+   Q==;
+X-CSE-ConnectionGUID: qhAWbunxS6uhWEGQZb02xw==
+X-CSE-MsgGUID: dDjv8nU6SjO9KtHgSHXZ5Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11106"; a="33026178"
+X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
+   d="scan'208";a="33026178"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 11:17:36 -0700
+X-CSE-ConnectionGUID: zGa3m6zeR3uK2Y5gRqVpNw==
+X-CSE-MsgGUID: Hgu8S1VmSoedJSSz5F7KdA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,245,1712646000"; 
+   d="scan'208";a="45812244"
+Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.111.154]) ([10.125.111.154])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 11:17:35 -0700
+Message-ID: <513abce9-48f5-4dab-9e8c-7023077ea589@intel.com>
+Date: Mon, 17 Jun 2024 11:17:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,66 +66,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-Subject: Re: [BUG linux-next] Hang in boot on Ubuntu 22.04 LTS
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>, Sam Ravnborg <sam@ravnborg.org>,
- Vineet Gupta <vgupta@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>, Geert Uytterhoeven <geert@linux-m68k.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>,
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>
-References: <4b7cad0c-0c8d-4341-a822-6b249cd74565@gmail.com>
+Subject: Re: [PATCH PATCH 3/9] perf/x86/intel: Use topology_cpu_type() to get
+ cpu-type
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>
+References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
+ <20240617-add-cpu-type-v1-3-b88998c01e76@linux.intel.com>
+ <7c4978b4-ac69-480e-b8cf-a473b64ed917@intel.com>
+ <20240617180905.7ao623w6eyu64hs2@desk>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-In-Reply-To: <4b7cad0c-0c8d-4341-a822-6b249cd74565@gmail.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240617180905.7ao623w6eyu64hs2@desk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 5/18/24 00:51, Mirsad Todorovac wrote:
-> Hi, all,
-> 
-> Between next-20240503 and next-20240506 there was a problem that prevented booting in
-> Ubuntu 22.04 LTS on an AMD Ryzen 9 box.
-> 
-> The symptom is stuck boot with blank screen and an underscore blinking. After CTRL+ALT+DEL,
-> the kernel shuts down and reboots back into grub.
-> 
-> After next-20240503, the boot never succeeded on this configuration, but I am unable to
-> see what went wrong.
-> 
-> Please find attached the config and lshw.txt.
-> 
-> I thought it would be
-> 
-> # good: [f25eae2c405cbe810f8c52d743ea2b507c3fc301] arch: Select fbdev helpers with CONFIG_VIDEO
-> git bisect good f25eae2c405cbe810f8c52d743ea2b507c3fc301
-> # bad: [2fd001cd36005846caa6456fff1008c6f5bae9d4] arch: Rename fbdev header and source files
-> git bisect bad 2fd001cd36005846caa6456fff1008c6f5bae9d4
-> # good: [f178e96de7f0868e1b4d6df687794961f30125f2] arch: Remove struct fb_info from video helpers
-> git bisect good f178e96de7f0868e1b4d6df687794961f30125f2
-> # first bad commit: [2fd001cd36005846caa6456fff1008c6f5bae9d4] arch: Rename fbdev header and source files
-> 
-> Best regards,
-> Mirsad Todorovac
+On 6/17/24 11:09, Pawan Gupta wrote:
+>> Is this trying to make the case that get_this_hybrid_cpu_type() and
+>> topology_cpu_type() are equivalent or pointing out a difference?
+> Pointing out a difference. get_this_hybrid_cpu_type() misses a case when
+> cpu-type is enumerated regardless of X86_FEATURE_HYBRID_CPU. I don't think
+> checking for the hybrid feature is necessary here, because there is an
+> existing fixup for this case:
 
-Hi all,
-
-FYI: Now, after building 6.10.0-rc3-next-20240612, the issue with the hang in Ubuntu 22.04 LTS
-appears to be fixed.
-
-In case of the requirement, I could try to bisect to the exact commit which fixed the problem.
-
-Hope this helps.
-
-Best regards,
-Mirsad Todorovac
+OK, that makes sense.  Could you include that in the changelog, please?
 
