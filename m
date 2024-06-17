@@ -1,132 +1,116 @@
-Return-Path: <linux-kernel+bounces-218221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C924B90BB4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:42:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943E090BB52
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54E7FB24A1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:42:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE0BAB24C78
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCDE18757E;
-	Mon, 17 Jun 2024 19:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664E518757C;
+	Mon, 17 Jun 2024 19:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhCYstuj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="mnZWjMMH";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="JxNXz4hM"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFCA11CAB;
-	Mon, 17 Jun 2024 19:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB8511CAB;
+	Mon, 17 Jun 2024 19:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718653324; cv=none; b=kRrP0za8oQ+qiZR70Q7wjkE6Wu5g9PqOjmaIsKUufQBgygquFA3oGJOyr+iX7xycZUDFAai4JzgtoSnS4uLhuVhkpVRHzXN5xDk7PEXrDl2esgdFmPnZv7HVMWoldoS0kJSFJcuHLx/C91MqRZXNrZH5ceaoufB1vppXbJG37ok=
+	t=1718653357; cv=none; b=klx5RFcPAUtCwC7SWRH79s5W/SC0wjovpfXUDxHnv5s2AI6GVq5vKspYViwKocuhtKM6YqK5SBva6u4g+6t9jaJCHxNearSIhLle6TAHYdLaQp44H/uI5TU6C4b552rhZtQFsUfhIB72GS7d+CZ7e0DeP7GaMrqigxYoABfv1YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718653324; c=relaxed/simple;
-	bh=flflYDi4mhe3CZNIZCARjMkhFJCeJvc1dZgvuC7Pj1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nqrTXDwkTTJ4WTXf5V1sUockXALUacV2KPJAOv+7VLrGRSDh46XZMv3BzJ4SgJf3RqSwscxJsdymzqnXza7Xdf6kvcaeroldoYWIErvsCtZwO4Wlqzki82AozrMajBtb1pRZFQ9hMmBG+jLMxEgA0mv0Wn0reS/OSG9HHZIpjX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhCYstuj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F04CC2BD10;
-	Mon, 17 Jun 2024 19:41:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718653323;
-	bh=flflYDi4mhe3CZNIZCARjMkhFJCeJvc1dZgvuC7Pj1A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qhCYstujFRLjohjiyRebQEPtMDUm8tjeIWAy30zkQ74q8zpr6KR5/fyEj9UXywzr6
-	 fCG91kGssxAvp8g9upCE+4d7NABtkaZBHiQjPq3UHaT6r3RMUJ3Fx9il+kPP7LzxJR
-	 mdsRNnS2pNQRyU5te/QbLqpvbNR2wScJXmAXvOFICWzB3BaAbPcQtEbQyfBcc2gBoe
-	 YEUPTz8B7gQtcErI0kmSZ87kN1oBo/apeLWTfOfWSWQZ3MkB9sY9lax3mendcwMLt5
-	 LZJnzGzFd65S3S5qzuT5IyYQR/epPUXD5Z0aEVkSHndobL70p4x0Ye7q+NHcRgqmin
-	 Rld0z7ym23/4g==
-Date: Mon, 17 Jun 2024 20:41:53 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno Sa <nuno.sa@analog.com>
-Cc: Petr Mladek <pmladek@suse.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Olivier Moysan <olivier.moysan@foss.st.com>, Jyoti Bhayana
- <jbhayana@google.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Chris Down <chris@chrisdown.name>, John Ogness <john.ogness@linutronix.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andi Shyti
- <andi.shyti@kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-iio@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Andrzej Hajda <a.hajda@samsung.com>, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 1/4] dev_printk: add new dev_err_probe() helpers
-Message-ID: <20240617204153.7e36b157@jic23-huawei>
-In-Reply-To: <20240608190748.2577b8a5@jic23-huawei>
-References: <20240606-dev-add_dev_errp_probe-v3-0-51bb229edd79@analog.com>
-	<20240606-dev-add_dev_errp_probe-v3-1-51bb229edd79@analog.com>
-	<20240608190748.2577b8a5@jic23-huawei>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718653357; c=relaxed/simple;
+	bh=1vcmeQncdRyeP1TvaAAoOSNuO5Z2zRz6JdZWHlyc5wU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aTrTiUx5dqJHM0/8zQn5tyD166qJZnOTSbjKmWx8r62RpDhtjCtzu/YIC4T0gXlHzk789IloMlEqcBtk1ybBsAYlGLqMYuvZk5glmL8amZQnR/HEdK20zm7tQBa9VuOxLwyxLRPZVfyqLEE2fAVNbL2UVds78Tzb0j2KbJMYw+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=mnZWjMMH; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=JxNXz4hM; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1718653355;
+	bh=1vcmeQncdRyeP1TvaAAoOSNuO5Z2zRz6JdZWHlyc5wU=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=mnZWjMMH2Pf/d/viFToDHlEEbQ8HapspA6ZtZT+kGzj2dfKsXkB+8bEXLYrITguK+
+	 NhnGQoYWNqSqgNEmKjM8VNJzH1iRqRhtR5gprRK1Wzl90YRWaic93Er+4w4p4KtU1W
+	 kqGa+OmkXJDMWZtsWDI83weBETvlGLVnmvHpVieo=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 23FA71287250;
+	Mon, 17 Jun 2024 15:42:35 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id 6AnscMlQ7NK4; Mon, 17 Jun 2024 15:42:35 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1718653354;
+	bh=1vcmeQncdRyeP1TvaAAoOSNuO5Z2zRz6JdZWHlyc5wU=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=JxNXz4hMIJNuIaS2NAP/VmIBIqhBMsY90IEZCeCGJOh67Z+KbLhKYCyMbh5iyytP9
+	 fn7ydQPacHeEFBG6cB+WnQaQitcP3DESIbyxtYuw5Hz5w948hQI8qpy4KM8souBzmc
+	 NDgDGVPY1QydIfxAFzf/3sTMQuIUtrGMorgI1SWI=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 510EE12870A6;
+	Mon, 17 Jun 2024 15:42:34 -0400 (EDT)
+Message-ID: <dfc4feaef0d63d616bab8cdec5d409369f9dacf1.camel@HansenPartnership.com>
+Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
+ session support
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Stefan Berger <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, jarkko@kernel.org
+Cc: linux-kernel@vger.kernel.org, mpe@ellerman.id.au, 
+	naveen.n.rao@linux.ibm.com
+Date: Mon, 17 Jun 2024 15:42:32 -0400
+In-Reply-To: <20240617193408.1234365-1-stefanb@linux.ibm.com>
+References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Sat, 8 Jun 2024 19:07:48 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
-
-> On Thu, 6 Jun 2024 09:22:37 +0200
-> Nuno Sa <nuno.sa@analog.com> wrote:
+On Mon, 2024-06-17 at 15:34 -0400, Stefan Berger wrote:
+> Fix the following type of error message caused by a missing call to
+> tpm2_sessions_init() in the IBM vTPM driver:
 > 
-> > This is similar to dev_err_probe() but for cases where an ERR_PTR() or
-> > ERR_CAST() is to be returned simplifying patterns like:
-> > 
-> > 	dev_err_probe(dev, ret, ...);
-> > 	return ERR_PTR(ret)
-> > or
-> > 	dev_err_probe(dev, PTR_ERR(ptr), ...);
-> > 	return ERR_CAST(ptr)
-> > 
-> > Signed-off-by: Nuno Sa <nuno.sa@analog.com>  
+> [    2.987131] tpm tpm0: tpm2_load_context: failed with a TPM error
+> 0x01C4
+> [    2.987140] ima: Error Communicating to TPM chip, result: -14
 > 
-> I'm convinced this is worth doing but would like inputs from others
-> before I pick this series up.
-
-Andi and Andy,
-
-You both commented on earlier versions.  Do you think this is a good
-change set?
-
-I've +CC a few more based on a quick look at the original
-dev_err_probe() series. Whilst this isn't adding a bunch of new stuff
-around deferred probing (like that series did), maybe some of those
-reviewers will give opinions here?
-
-Jonathan
-
-
-
+> Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>  drivers/char/tpm/tpm_ibmvtpm.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> Jonathan
-> 
-> > ---
-> >  include/linux/dev_printk.h | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> > 
-> > diff --git a/include/linux/dev_printk.h b/include/linux/dev_printk.h
-> > index ae80a303c216..ca32b5bb28eb 100644
-> > --- a/include/linux/dev_printk.h
-> > +++ b/include/linux/dev_printk.h
-> > @@ -277,4 +277,12 @@ do {									\
-> >  
-> >  __printf(3, 4) int dev_err_probe(const struct device *dev, int err, const char *fmt, ...);
-> >  
-> > +/* Simple helper for dev_err_probe() when ERR_PTR() is to be returned. */
-> > +#define dev_err_ptr_probe(dev, ___err, fmt, ...) \
-> > +	ERR_PTR(dev_err_probe(dev, ___err, fmt, ##__VA_ARGS__))
-> > +
-> > +/* Simple helper for dev_err_probe() when ERR_CAST() is to be returned. */
-> > +#define dev_err_cast_probe(dev, ___err_ptr, fmt, ...) \
-> > +	ERR_PTR(dev_err_probe(dev, PTR_ERR(___err_ptr), fmt, ##__VA_ARGS__))
-> > +
-> >  #endif /* _DEVICE_PRINTK_H_ */
-> >   
-> 
-> 
+> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c
+> b/drivers/char/tpm/tpm_ibmvtpm.c
+> index d3989b257f42..1e5b107d1f3b 100644
+> --- a/drivers/char/tpm/tpm_ibmvtpm.c
+> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
+> @@ -698,6 +698,10 @@ static int tpm_ibmvtpm_probe(struct vio_dev
+> *vio_dev,
+>                 rc = tpm2_get_cc_attrs_tbl(chip);
+>                 if (rc)
+>                         goto init_irq_cleanup;
+> +
+> +               rc = tpm2_sessions_init(chip);
+> +               if (rc)
+> +                       goto init_irq_cleanup;
+
+This looks wrong: the whole thing is designed to occur in the bootstrap
+phase from tpm_chip_register() (which tpm_ibmvtpm.c definitely calls),
+so why isn't it happening?
+
+James
 
 
