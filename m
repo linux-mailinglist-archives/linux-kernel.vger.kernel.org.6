@@ -1,128 +1,132 @@
-Return-Path: <linux-kernel+bounces-217679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AFBD90B2DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:52:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F41290B2E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBBD11F297CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:52:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390371F29963
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3051D9528;
-	Mon, 17 Jun 2024 13:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE481D952F;
+	Mon, 17 Jun 2024 13:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="lEvV3meb"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="alxVZG1o"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAF71D951A
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF57D1D953A
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718632338; cv=none; b=AlU56twC5aGHAboBwl4sdb6iDVA9roIcxTA3WNYElrzJcH4x4WiNqnrC5jkJrwofMUp1SaeavT2rrzM3g/UTEVj8zFQuEGuHo95PkG6O6Ch1nVqIAktWXfy+czG7usMEtxBwtnp151KPYDQDwCWeq3g4E34Rh8rfcIUOX6f0vXQ=
+	t=1718632348; cv=none; b=rYN+LdjPjVnoEXDpHzmOYCiDJ4w15trNTNrIptlM6Ew/TsaXbE6pBFAPE3NSHf1cVC+4M2q2xnmsq57Ni6OEC/r3hPXSTtuCk5btJcFQa6tC6geAl8LNToop2MLGxyJe/8clhWuWzU2K6P3bndPRKESIUUjknuRTSbQs7pXkeoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718632338; c=relaxed/simple;
-	bh=S8oKg7qQ4NYsaNZMwjpwaY5Zq6XvOvJgc9CYYY9wH1A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cYM2Y0YDUavDL8fDCmYK1d/NxqOrQgJltCvCnvVbbhEhEczB4P7DjMP7uGuvkfwpnfenZ9V7cKCwR1q+X+7L7od/F0CMXvMTBvKfSPWjPd0a7gnA5hKN3wDj0GmoAS3Jk6v1XRZgjjq4+ZyQfSIm6At3RIdLzgWL/KKvXRCwtfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=lEvV3meb; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-797e2834c4eso366875785a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 06:52:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1718632335; x=1719237135; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=S8oKg7qQ4NYsaNZMwjpwaY5Zq6XvOvJgc9CYYY9wH1A=;
-        b=lEvV3mebfEO3FD7axeFcfwhTCtIJJZ93CqloY96XiuKPGqh5vcVw2xjnmzhbR5jtIF
-         vl+9ICZfgIi/FHoWFSI9cxAWCLlJYar0Ufy1Yys2Ui9nbaVYjNKpjIZelhziFhlyv/on
-         O3vacTzDAsUFmksTvh4M1zgyAyV9bzjnzdEMJpOVAWEWihYN7Oa0ggvmU7rqsSYct8us
-         P3Jd0LoWKGycHLrR7EulrfS3GDW967APq9Ol16QrVnesDXkRhYHlu9chBZy0wxuuS/4k
-         J1W8NZMFy//qFuUu7Sk9X8ptF+O/xW9Tpu04gSefAKSLFnM+qr0Rq0Pbrcixb8J6VLEk
-         28zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718632335; x=1719237135;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S8oKg7qQ4NYsaNZMwjpwaY5Zq6XvOvJgc9CYYY9wH1A=;
-        b=rt7AOT1DTT+//ehRDLIllofKtJUGRfTDrcrG955OxkWSgRo4iKY/BLylIyVjz+AsOu
-         QBhGXbbqvZc5rxrqIUEsGNb1yB6Z6YKgQW3W0UhvuI7blgEyOjEuVGH54G+fYNKy34vf
-         BIrkQGFby/1ODBuZRRhRnBDXWPUN1Y2oDm4/KIiswQ5XGK9x6GWb9c8rLn8qfWf6475s
-         Q0hkKYG0EByVh2e0gTHLjTLSL5ovOxqaMZZUwkKC3YQxXcL4mTcoXcdasbNz3bCdm7P/
-         MMr2vb5ju3BL4S9m3Klo8La3E2vzrZrS9sNo8P/NH7SaDkHtrJ/1XhLpX43/Lu0dY3BP
-         nHbg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAOXoBhqFV2JC8RDSsPPsRm0tS6bDpzB6tx6cXFpunT2JDhmpM+MthiQtgO6Ix8ZZqI6mKXjagltuOZr0N5aiOZwUNyvXWTa6DxMdb
-X-Gm-Message-State: AOJu0Yz0zrzZBzKJuqJrAW4FDjGk/E/2+gnNcgqQEF/nAJkwEee6VjAr
-	ry6difQaYB/Z7FZMcyewcv813FT5hrqKm+EWpK9eN8HyMtpo0JsqgqhtAO/ILYE=
-X-Google-Smtp-Source: AGHT+IGyIko1VGBafHP2QtDzGF8rEqYm+Kn5JkvhSCEhEsxF7IzDWjF9X3Q8Mr2an8LHTllmb6fjkQ==
-X-Received: by 2002:a05:620a:19a6:b0:795:e9cd:f5b8 with SMTP id af79cd13be357-79810103ab8mr2338158885a.23.1718632335615;
-        Mon, 17 Jun 2024 06:52:15 -0700 (PDT)
-Received: from nicolas-tpx395.lan ([2606:6d00:15:57da::7a9])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798abc02f68sm431571485a.86.2024.06.17.06.52.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 06:52:15 -0700 (PDT)
-Message-ID: <eb36cf0fef6208e2842c41517579066109530b28.camel@ndufresne.ca>
-Subject: Re: [PATCH 1/3] media: rockchip: Introduce the rkvdec2 driver
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Diederik de Haas <didi.debian@cknow.org>, linux-kernel@vger.kernel.org, 
- Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,  Sebastian Reichel
- <sebastian.reichel@collabora.com>, Dragan Simic <dsimic@manjaro.org>,
- Alexey Charkov <alchark@gmail.com>, Cristian Ciocaltea
- <cristian.ciocaltea@collabora.com>,  Andy Yan <andy.yan@rock-chips.com>,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-staging@lists.linux.dev
-Date: Mon, 17 Jun 2024 09:52:14 -0400
-In-Reply-To: <5087685.q4sLEYJVHI@bagend>
-References: <20240615015734.1612108-1-detlev.casanova@collabora.com>
-	 <3333233.eAoTOS8U2s@bagend> <5969581.LvFx2qVVIh@arisu>
-	 <5087685.q4sLEYJVHI@bagend>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1718632348; c=relaxed/simple;
+	bh=D5NFlVKvsla0CFXHFhlYZw7O0GmQQMdgyUVVhv0MRmQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XnztQpbZJUrNxOZEmwJIjqZoLeX47ksJsXStLCQCa5XJA5XGqy7cA7EYxgZQocsCHRfQkILgOQJRJRc+0Uvar8n3kohRBa4vA+AEQDCNeFw7RJjqEVrDyNa5FYvhiqvX3sGlOuQe7Ldu+XH+/OD5by8c6i++NpKPlyAg9lZM55c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=alxVZG1o; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: syzbot+4366624c0b5aac4906cf@syzkaller.appspotmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718632344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3k/usp52ePqKVYe9MgAAGG7ZoIU/7jmDZL73Z+Os58E=;
+	b=alxVZG1oxUVWK8F6CnSUKoSqrtMQ25rd1nOvYVJDAZXdxXbJerIRgvTT3JTd4RQFXiWAaV
+	szi+uP8pfo6rFTvH9UtHGopiwPmm3d/ObJM/rMeYcFnRd1zcbXyG1J1hOYiImby53AS1Bo
+	e23J/UK84fldiQTIBnk4SB3iSVdGBx8=
+X-Envelope-To: bfoster@redhat.com
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: syzkaller-bugs@googlegroups.com
+Date: Mon, 17 Jun 2024 09:52:22 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: syzbot <syzbot+4366624c0b5aac4906cf@syzkaller.appspotmail.com>
+Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] WARNING in bch2_fs_read_write_early
+Message-ID: <ffslrsipnjz2ta2i2lm3wnnrnxtjryvjqce6mlxntnqy7ieg2n@nhbpnfxzwar2>
+References: <00000000000053e574061ad89521@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000053e574061ad89521@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
-
-Le dimanche 16 juin 2024 =C3=A0 10:40 +0200, Diederik de Haas a =C3=A9crit=
-=C2=A0:
-> On Saturday, 15 June 2024 21:44:32 CEST Detlev Casanova wrote:
-> > > So is this just an (unfortunate) use of the same words or is that wik=
-i
-> > > page just wrong ... or better yet: does rkvdec2 support RK356x too?
-> >=20
-> > Yes, the vdpu34x decoder on rk356x socs should be supported by this dri=
-ver
-> > but I don't have boards to test that unfortunately.
-> >=20
-> > This might also be used on future rockchip releases like the rk3576. Bu=
-t
-> > they all have their own adaptations. If you can test it on rk3568 based
-> > hardware, I'll happily add a compatible for it.
->=20
-> It would be great if you'd add a compatible for it.
-> I don't have rk3568 based HW, but I do have rk3566 based HW and AFAIK tho=
-se=20
-> are the same when it comes to the 'video' stuff.
-
-Our usual approach is to require at least a "Test-by:" to include patches
-written without HW. I think it will come soon enough, and we can focus on
-getting the driver in at this moment.
-
-Nicolas
-
+On Fri, Jun 14, 2024 at 05:16:20AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1689a256980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=4366624c0b5aac4906cf
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=110cda0e980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164f91fe980000
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2ccbdf43.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/c40c1cd990d2/vmlinux-2ccbdf43.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/a2a94050804e/bzImage-2ccbdf43.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/a79f654b4644/mount_0.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+4366624c0b5aac4906cf@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 10 at fs/bcachefs/super.c:525 bch2_fs_read_write_early+0x8a/0xa0 fs/bcachefs/super.c:525
+> Modules linked in:
+> CPU: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> Workqueue: bcachefs_write_ref bch2_delete_dead_snapshots_work
+> RIP: 0010:bch2_fs_read_write_early+0x8a/0xa0 fs/bcachefs/super.c:525
+> Code: ac b8 76 fd 48 8d bb 78 02 00 00 be ff ff ff ff e8 0b cd d0 06 31 ff 89 c5 89 c6 e8 90 b3 76 fd 85 ed 75 c7 e8 87 b8 76 fd 90 <0f> 0b 90 eb bc 48 c7 c7 58 a2 e4 8f e8 c5 8b d2 fd eb 9b 0f 1f 00
+> RSP: 0018:ffffc900000d7910 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: ffff888041080000 RCX: ffffffff84172cc0
+> RDX: ffff888017e90000 RSI: ffffffff84172cc9 RDI: 0000000000000005
+> RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000000
+> R10: 0000000000000000 R11: 1ffffffff272c7ee R12: ffff8880410801a8
+> R13: ffff888041080ae0 R14: 0000000000000001 R15: ffff88801f971800
+> FS:  0000000000000000(0000) GS:ffff88806b000000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000555581085788 CR3: 0000000025a9e000 CR4: 0000000000350ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  bch2_delete_dead_snapshots+0xfdc/0x4e50 fs/bcachefs/snapshot.c:1569
+>  bch2_delete_dead_snapshots_work+0x20/0x160 fs/bcachefs/snapshot.c:1690
+>  process_one_work+0x9fb/0x1b60 kernel/workqueue.c:3231
+>  process_scheduled_works kernel/workqueue.c:3312 [inline]
+>  worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
+>  kthread+0x2c1/0x3a0 kernel/kthread.c:389
+>  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+#syz fix: bcachefs: delete_dead_snapshots() doesn't need to go RW
 
