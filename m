@@ -1,136 +1,121 @@
-Return-Path: <linux-kernel+bounces-218008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1377790B7D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:23:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B579B90B7E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CB15B234DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:23:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4500F28281F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 17:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8798016DC08;
-	Mon, 17 Jun 2024 17:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139D016D9D4;
+	Mon, 17 Jun 2024 17:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ikqqk0Ap"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cyS44mDH"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0EA16CD29;
-	Mon, 17 Jun 2024 17:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB6915F41B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 17:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718644963; cv=none; b=U5Z/NtIBMnl9BNs/tQgbnVM3Nhm3K75f/TJ6aviODPFwsSpB2mI0zMgQqKKgF1iobqbwsk9Slx+QDjmo64tYapg731ic/y776yRDC7LceO13CrvNCjx5kjOdcjNCjQTb6W2Xi/cbrmVz9iUrh98JH9fduAZckrDauDYN1L9WZ/E=
+	t=1718645035; cv=none; b=tDXsKx31XvDP6xGy0OfLajzY5+5E2xYPyDWyNXOb8hYvLc7sIcTQSSIxfHXP717e2aX6ATdeDEN1wVtFvQPFPdM+EjDpDQxqLsMbjSbrrC05yOtdQNqXrMTd0vNkYqI5rsq3zQ+YOF+hBG17hn6zpuzRvFOSSM9Zj3N64bJEdY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718644963; c=relaxed/simple;
-	bh=RhcWC8Rp8qIRElpRJW6lfTPluwKHaTBVKBkoTRLSNBE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OEfN7dN9bst4o9yoepAY+0icrOSh8tQOnSkV9u8VAbeEyXw9G4XWu37kLEPjz9d3K2X5Ty7yT0sJzBlKFInFZGknCqKlkwCW/dlT0xzKj2jyux9YDV2ioqXhmT1WXkSYEl2KjLBe83o8sGqZKpl4rRLxMxFtKUfG1Z6CZRydMxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ikqqk0Ap; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f21ff4e6dso629382666b.3;
-        Mon, 17 Jun 2024 10:22:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718644960; x=1719249760; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hb+O+cmwbTR68wWYVOzyym9228SgymLFKXuelmNx6q0=;
-        b=ikqqk0ApnccGCgcR8mcQ7u3ZUzNhy/nqO8Xi0BIGu7FJZKuCZanySAVjoRXwv0kSIf
-         eqKt13KqB2iOWorCx5yvMK+s1hVuzfl1tUln0o1VNvTj5D9blc+ioh55v+11L1dkNaNz
-         0UezB0615k+Firjg1vAKrK4ImVSJUoXDRkv4kHgikYLU6vg0wcBAjWYYiOyOZWUpm2ao
-         o6VTRxnpzeVIUFyNfkVad6zFOlbeObkMHEVeL5J8vVCVD8GqiDrgBQA2RjAp0iApA/L3
-         +PEyDZ+u+xZcd27OYLnV38hE5Md0rwO5ZlnRkZmZaaxHytjiZIXuwaFKtL/Qu1e9vyco
-         LSEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718644960; x=1719249760;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hb+O+cmwbTR68wWYVOzyym9228SgymLFKXuelmNx6q0=;
-        b=uroBsMPenKo+T6VHSxtp4l+fgBEv9YLxYOfXjuXZ39b8uhAFDHacnVviZpKKVYCGhy
-         sGTlYHuLVaY3D0s8YOzf2O366GwCQKeMEGUI6FmP54b7KMGIE2XS6bf3VwbdO/xPFGZ6
-         rK/pShaSDKBLdq9qsqttqLAkvjjn4WBztQVRiob9X7AzWLgnFXfcmiu2XeH9tMlSpRlN
-         JRwUZMbpQU6NHvdGgCbvGLgthX7yXDUFL/a+aYI+459wDgO2xP+i38lfsrSF/nFaho7i
-         rRwCtOYbo/A5bin4Yechr0TpXX5hNzdVfIz6zGFWH4befu6bdf69cxSTbYL7J8aLPkem
-         osqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXXVmUXfWK/0gnTS6JIwQOhXUCAq/cRXAZEi1ujpPRbO8ZMTT80tfTsJizDyQbYYpR9GLCIQvon4bADEuDECAQBXfSgtrinD9TLL3epYBaqswL3+zOCazUSitZG1l3jRkOm2bSDtMG6vudU+6ui7nuE6ujFX6Yq2pA7kqN0jcue
-X-Gm-Message-State: AOJu0YyfLic3+VuPjootXzoOSmta94RDZ3GQYL60E0W1g0URi+i3Ijw/
-	RpZiFwi9HzvdtTPIQJvPrzwH9QiDB85EzspMhl6xLWC1WPkA9uMWP2Kokh8HN5sm+e/201TI0+l
-	I5yqwqK7z1k+sgmdP/1majC3Arn/LONyn
-X-Google-Smtp-Source: AGHT+IGnUeHwYXqk7NzEsZfA4FseFP2/mMs3rIBad0z44NEgcX1zYFY156NjbYIoC/3fW1+aZn7fmyhRi0w47SRuCDc=
-X-Received: by 2002:a17:907:969e:b0:a6f:5723:fb12 with SMTP id
- a640c23a62f3a-a6f60cefc7amr714824566b.1.1718644960188; Mon, 17 Jun 2024
- 10:22:40 -0700 (PDT)
+	s=arc-20240116; t=1718645035; c=relaxed/simple;
+	bh=SORfSBgW6ZNQE27ov5D4d31BQf1zHhybBDaPHzgrccY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DhNyU9S/lTTrr3lJVenfAf4Cmbw2iEkuVm7wc4s9th39VTnqf/Y/7/pGwZ4rGueIB4lTPnz86E+4blU3JKwmW0slsdlVXschhXxFwZm3DIW1S37fWR5wnhRFkhdVnSnbKmdb8lB2q2FyyBu/+4GzUmD66Ixxyrh0c8UcMowmEoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cyS44mDH; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: yuzenghui@huawei.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718645031;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FEFi/yoqejFoClh2rXR7uK+aXn+cjM9Xf9AFA2KklUQ=;
+	b=cyS44mDHJBZKZLv64A6EL60ZewAtRCa6uFIIIK0PO0SUQIAZ5yD2c/0bP0RG84NAr3ss0j
+	y3A519QGwMx3WbJZbDoxVoLmNCXZqXxYV319nhh1TRfiS6l49pvUQLPyr2PyXxf53I7Bgd
+	ExIoditWqIXW8g5aHAqPUP87GYVnj70=
+X-Envelope-To: sebastianene@google.com
+X-Envelope-To: tabba@google.com
+X-Envelope-To: jean-philippe@linaro.org
+X-Envelope-To: qwandor@google.com
+X-Envelope-To: sudeep.holla@arm.com
+X-Envelope-To: james.morse@arm.com
+X-Envelope-To: qperret@google.com
+X-Envelope-To: catalin.marinas@arm.com
+X-Envelope-To: lpieralisi@kernel.org
+X-Envelope-To: maz@kernel.org
+X-Envelope-To: suzuki.poulose@arm.com
+X-Envelope-To: will@kernel.org
+X-Envelope-To: oliver.upton@linux.dev
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: kernel-team@android.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: kvmarm@lists.linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: yuzenghui@huawei.com,
+	Sebastian Ene <sebastianene@google.com>,
+	tabba@google.com,
+	jean-philippe@linaro.org,
+	qwandor@google.com,
+	sudeep.holla@arm.com,
+	james.morse@arm.com,
+	qperret@google.com,
+	catalin.marinas@arm.com,
+	lpieralisi@kernel.org,
+	maz@kernel.org,
+	suzuki.poulose@arm.com,
+	will@kernel.org
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	linux-arm-kernel@lists.infradead.org,
+	kernel-team@android.com,
+	linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v3 0/4] KVM: arm64: pKVM host proxy FF-A fixes
+Date: Mon, 17 Jun 2024 17:23:26 +0000
+Message-ID: <171864500009.1981502.6509421097479161739.b4-ty@linux.dev>
+In-Reply-To: <20240613132035.1070360-1-sebastianene@google.com>
+References: <20240613132035.1070360-1-sebastianene@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240520153932.116731-1-grygorii.tertychnyi@leica-geosystems.com>
-In-Reply-To: <20240520153932.116731-1-grygorii.tertychnyi@leica-geosystems.com>
-From: grygorii tertychnyi <grembeter@gmail.com>
-Date: Mon, 17 Jun 2024 19:22:44 +0200
-Message-ID: <CAGFuAux+x17M4XK6jCHknYecvq97GxKTHz6ZLh8iTmL6Wmz-Jw@mail.gmail.com>
-Subject: Re: [PATCH v2] i2c: ocores: set IACK bit after core is enabled
-To: Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>
-Cc: Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.com>, 
-	bsp-development.geo@leica-geosystems.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+On Thu, 13 Jun 2024 13:20:31 +0000, Sebastian Ene wrote:
+> This series contains some small fixes for the host pKVM proxy code. I included
+> some of the patches that I already sent on the list as part of this series
+> to make it easier to keep track of them.
+> 
+> I verified the functionality with OPTEE as a TEE-OS.
+> 
+> Changelog:
+> 
+> [...]
 
-just another gentle ping...  Not sure if I need to rebase it on the
-latest master?
+Applied to kvmarm/next, thanks!
 
-regards
+[1/4] KVM: arm64: Trap FFA_VERSION host call in pKVM
+      https://git.kernel.org/kvmarm/kvmarm/c/c9c012625e12
+[2/4] KVM: arm64: Add support for FFA_PARTITION_INFO_GET
+      https://git.kernel.org/kvmarm/kvmarm/c/894376385a2d
+[3/4] KVM: arm64: Update the identification range for the FF-A smcs
+      https://git.kernel.org/kvmarm/kvmarm/c/0dd60c4632a1
+[4/4] KVM: arm64: Use FF-A 1.1 with pKVM
+      https://git.kernel.org/kvmarm/kvmarm/c/42fb33dde42b
 
-On Mon, May 20, 2024 at 5:40=E2=80=AFPM Grygorii Tertychnyi <grembeter@gmai=
-l.com> wrote:
->
-> Setting IACK bit when core is disabled does not clear the "Interrupt Flag=
-"
-> bit in the status register, and the interrupt remains pending.
->
-> Sometimes it causes failure for the very first message transfer, that is
-> usually a device probe.
->
-> Hence, set IACK bit after core is enabled to clear pending interrupt.
->
-> Fixes: 18f98b1e3147 ("[PATCH] i2c: New bus driver for the OpenCores I2C c=
-ontroller")
-> Signed-off-by: Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.=
-com>
-> Acked-by: Peter Korsgaard <peter@korsgaard.com>
-> Cc: stable@vger.kernel.org
-> ---
-> V1 -> V2: Added "Acked-by:", "Fixes:" and "Cc:" tags
->
->  drivers/i2c/busses/i2c-ocores.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-oco=
-res.c
-> index e106af83cef4..350ccfbe8634 100644
-> --- a/drivers/i2c/busses/i2c-ocores.c
-> +++ b/drivers/i2c/busses/i2c-ocores.c
-> @@ -442,8 +442,8 @@ static int ocores_init(struct device *dev, struct oco=
-res_i2c *i2c)
->         oc_setreg(i2c, OCI2C_PREHIGH, prescale >> 8);
->
->         /* Init the device */
-> -       oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_IACK);
->         oc_setreg(i2c, OCI2C_CONTROL, ctrl | OCI2C_CTRL_EN);
-> +       oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_IACK);
->
->         return 0;
->  }
-> --
-> 2.43.0
->
+--
+Best,
+Oliver
 
