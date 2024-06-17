@@ -1,132 +1,154 @@
-Return-Path: <linux-kernel+bounces-218095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C386C90B939
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:13:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BBE890B93B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47274285AC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:13:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B42931F2577A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CB417839B;
-	Mon, 17 Jun 2024 18:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6AB197A96;
+	Mon, 17 Jun 2024 18:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aJTjXudC"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHXf6PAV"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2725D16EB68
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 18:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4657197A82;
+	Mon, 17 Jun 2024 18:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718647940; cv=none; b=oYf5VSgZ7d+Rj+tUyKVfPDGIUN8cRdgHs6yhIP86EPPIX4rMoooHLsuIDsug1hAADqb06MFVGMSYbtvUN+F/12nfNsjpqu8wxzGXxr+HTb8TpAfZwwa1KLMZ9eEXBtBYdH0RwQb9RUtblpV+g7Syed7MxCSCtbb45t+ZOCmzIfE=
+	t=1718647972; cv=none; b=EWKEGAe7R0i+JJ6PpYTXD9gZVPJTsWCsnSW7nw5tCOTaN95tPv4M2nYs+K8R1QF+hH0UZQ39TdiuUzQSHO5PukOPgZgggRyXZHPLkrzkI6QJ6Dpno0oBo7I2UhH0lHe6BF1jHjphW4aOxrLus18Ha3pvdwtu6uvvWoGORGE8YyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718647940; c=relaxed/simple;
-	bh=85mzD/rXPumjZYGVDHMmhtm3+FReSyOvrXdVouQnc5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aj5TtKQjMzOeZRvOh3Silln/BRKrKxfd7S/C/rRPasKH/AHjI4jBruUFZH2KMxXZ8egqcRLzpATHPrDrP5wJ6RJvI1UihBsAJWkq1oIswl7b3x+xiR7RDaIfGrQRyuP+vo3zf9dM1jFAchPL0TXw+QZvvzAOhWZ4xJgTM5kndPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aJTjXudC; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: yuzhao@google.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718647932;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZyPGVUBymB+/dAn/SDVvysy+ZYXiJ+churruGuGt89w=;
-	b=aJTjXudCImxKiLB8FD+NmjoJnnfFghCAgJu+35izCvXsQzxLtmKnOG85hHMCmUXdY4HCkb
-	6B1QD4R4It4nCCx1dThpdNLqulhb4IQ6/Qd1q8KbKWaJfMURr56fqwjWW5J7d2JFkNvogZ
-	1CZWObta0v7hdTA7H+kVlFG78Bn7Jm4=
-X-Envelope-To: syzbot+12f0383f30f497b7f266@syzkaller.appspotmail.com
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: syzkaller-bugs@googlegroups.com
-Date: Mon, 17 Jun 2024 11:12:06 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Yu Zhao <yuzhao@google.com>
-Cc: syzbot <syzbot+12f0383f30f497b7f266@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] KASAN: slab-use-after-free Read in
- folio_evictable (2)
-Message-ID: <jm44auneoeak3bwnqupyspmzc3u4kqbomrlzkdoetjt45ivogj@bcvh2633zioi>
-References: <000000000000c89573061af04607@google.com>
- <CAOUHufa=0MW2Esc3eW8BnDF84GPh5T3A75ngJKMbvacSiv_5tw@mail.gmail.com>
+	s=arc-20240116; t=1718647972; c=relaxed/simple;
+	bh=z89m5L8BkCQNCX6Mp7ZeLOcjqhDyZ14R0EcGuO9k1t4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bj/+d/DnMarQnc3yufCuiBrLZfmfJN7NrnFWdmD/HDzaLNLdJZk0CUqvIoHF77chXjYNaTx6KYX1n/Cc6E2AAmuOsJR3opG4rTkQ44+HAwnl2+kYXNJHuh2MFoj6POR3WskdgRJNIXoCLPCKS1cwSaE/LF8ZJBvs+iZUCFxFoSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fHXf6PAV; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f700e4cb92so39916715ad.2;
+        Mon, 17 Jun 2024 11:12:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718647970; x=1719252770; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iBOhF51JaKc1Fvw8WfRcyeNBVWLdpct6iiMQh0qswW4=;
+        b=fHXf6PAVg+Bt/wkaDUJ01I8KA49ouy08dzZokX91M/ibUzqFTW0D4cs/9VdmyI3qog
+         28Xo+3NnPLX/VRT6a1pTpEyVMJfl1Oj8IFUPR35ttjrsblkun/HfQkhC1Y3ZLvPHEpwm
+         qT1B1mZ4z4KfdgVGAWSkcH/sPRIyS1EQCq6eS6Dsi97Jvr3E/AoVzTF5lBkYE0ovCukF
+         n9rIGcp0iUGYlxAGnp1ww5DF8PWn76ntslytAw1sv2DzC0Z36owbbjoH+x/hgmVCVfo3
+         I9jfGzqqyxraVnyUX5//j4oB0zberaHBj23H4Ox0kSWo4mn3MP3HZkL7dvrp8CGN+dES
+         GjMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718647970; x=1719252770;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iBOhF51JaKc1Fvw8WfRcyeNBVWLdpct6iiMQh0qswW4=;
+        b=uM7NS+6QH4mB/8WML5xZsuToN1LdNmmDJsCEY97UuiYO95Q3CS3ywjsMonsBzT7R5j
+         YI11bfaGgCrDlJedWS4d2iXbDCNfrkY7gVbo5dKkwEr4hzEe1YA7B04DPQKnY9Ojjhq1
+         +Usa3I+xcVf85RNU4xAfFNhwIcW4wwp/Vn0A9lj6Lw/7BFpOUUUcW/o9iew5l16/fsXj
+         jCVlCqZxqwL5wq7bjMeUtQ+15XZUJakddjVKo6ArmRGr+IG11EJAUA+RdJHd3j9uWc1/
+         rKeYn7C2aV/RkkxGmtTLgv6V2gYRH773ZKpHU/W6yoJSYivPuj6TjwDpF8BWVDnuyk2q
+         /F+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXFIjLwDitglGABsMOHMBJZthSO/0lqe0bPXBTKvSLe4mwYd4fCFhe6ckCs2NK/R9eyychl1X7+sLliUcMMMEyNyq9R5SwFCAVQi1OL9YksiNrRW6/uMNuYdYhbsx6tNd2c
+X-Gm-Message-State: AOJu0Yw4bl2eDou5HCsjKA09kWEEcgI4aHmpvb7cgRZ4rXFufoZ5qcDv
+	XtANVPtjgjGuvm+D8bxpq20GYMw1BRKzfi+t0MYU7XG2IhOZd5Um
+X-Google-Smtp-Source: AGHT+IEMwdnfjlFWJdTDbL76rTSVZtVYE9oKBytXu6zHhpGRpLnwxUoClTfBz666j0leeghre60lGA==
+X-Received: by 2002:a17:903:24f:b0:1f7:c52:1cc4 with SMTP id d9443c01a7336-1f8625c063emr145009225ad.5.1718647970031;
+        Mon, 17 Jun 2024 11:12:50 -0700 (PDT)
+Received: from [192.168.0.31] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855eeebb1sm81975605ad.127.2024.06.17.11.12.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 11:12:49 -0700 (PDT)
+Message-ID: <f4f51280bd0e83e04e7765e90081658e3ae975fd.camel@gmail.com>
+Subject: Re: [PATCH] libbpf: checking the btf_type kind when fixing variable
+ offsets
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Donglin Peng <dolinux.peng@gmail.com>, ast@kernel.org
+Cc: daniel@iogearbox.net, song@kernel.org, andrii@kernel.org,
+ haoluo@google.com,  yonghong.song@linux.dev, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Mon, 17 Jun 2024 11:12:44 -0700
+In-Reply-To: <20240616002958.2095829-1-dolinux.peng@gmail.com>
+References: <20240616002958.2095829-1-dolinux.peng@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOUHufa=0MW2Esc3eW8BnDF84GPh5T3A75ngJKMbvacSiv_5tw@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Sun, Jun 16, 2024 at 08:19:59PM GMT, Yu Zhao wrote:
-> On Sat, Jun 15, 2024 at 11:42 AM syzbot
-> <syzbot+12f0383f30f497b7f266@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    2ef5971ff345 Merge tag 'vfs-6.10-rc4.fixes' of git://git.k..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=12873d96980000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=81c0d76ceef02b39
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=12f0383f30f497b7f266
-> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> > userspace arch: i386
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> >
-> > Downloadable assets:
-> > disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2ef5971f.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/85722ebc781d/vmlinux-2ef5971f.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/27fd8bd02a1e/bzImage-2ef5971f.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+12f0383f30f497b7f266@syzkaller.appspotmail.com
-> >
-> > ==================================================================
-> > BUG: KASAN: slab-use-after-free in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-> > BUG: KASAN: slab-use-after-free in _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
-> > BUG: KASAN: slab-use-after-free in mapping_unevictable include/linux/pagemap.h:259 [inline]
-> > BUG: KASAN: slab-use-after-free in folio_evictable+0x7b/0x270 mm/internal.h:353
-> > Read of size 8 at addr ffff88804b68ab18 by task kswapd0/111
-> >
-> > CPU: 3 PID: 111 Comm: kswapd0 Not tainted 6.10.0-rc3-syzkaller-00021-g2ef5971ff345 #0
-> > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> > Call Trace:
-> >  <TASK>
-> >  __dump_stack lib/dump_stack.c:88 [inline]
-> >  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
-> >  print_address_description mm/kasan/report.c:377 [inline]
-> >  print_report+0xc3/0x620 mm/kasan/report.c:488
-> >  kasan_report+0xd9/0x110 mm/kasan/report.c:601
-> >  check_region_inline mm/kasan/generic.c:183 [inline]
-> >  kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
-> >  instrument_atomic_read include/linux/instrumented.h:68 [inline]
-> >  _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
-> >  mapping_unevictable include/linux/pagemap.h:259 [inline]
-> 
-> The memory folio->mapping pointed to was RCU freed and
-> mapping_unevictable() was under the RCU read lock.
-> 
-> So probably the owner of that folio forgot to clear the mapping?
-> 
+On Sat, 2024-06-15 at 17:29 -0700, Donglin Peng wrote:
+> I encountered an issue when building the test_progs using the repository[=
+1]:
+>=20
+> $ clang --version
+> Ubuntu clang version 17.0.6 (++20231208085846+6009708b4367-1~exp1~2023120=
+8085949.74)
+> Target: x86_64-pc-linux-gnu
+> Thread model: posix
+> InstalledDir: /usr/bin
+>=20
+> $ pwd
+> /work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/
+>=20
+> $ make test_progs V=3D1
+> ...
+> /work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/tools/sbin/b=
+pftool
+> gen object
+> /work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/ip_check_def=
+rag.bpf.linked2.o
+> /work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/ip_check_def=
+rag.bpf.linked1.o
+> libbpf: failed to find symbol for variable 'bpf_dynptr_slice' in section
+> '.ksyms'
+> Error: failed to link
+> '/work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/ip_check_de=
+frag.bpf.linked1.o':
+> No such file or directory (2)
+> make: *** [Makefile:656:
+> /work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/ip_check_def=
+rag.skel.h]
+> Error 254
+>=20
+> After investigation, I found that the btf_types in the '.ksyms' section h=
+ave a kind of
+> BTF_KIND_FUNC instead of BTF_KIND_VAR:
+>=20
+> $ bpftool btf dump file ./ip_check_defrag.bpf.linked1.o
+> ...
+> [2] DATASEC '.ksyms' size=3D0 vlen=3D2
+>         type_id=3D16 offset=3D0 size=3D0 (FUNC 'bpf_dynptr_from_skb')
+>         type_id=3D17 offset=3D0 size=3D0 (FUNC 'bpf_dynptr_slice')
+> ...
+> [16] FUNC 'bpf_dynptr_from_skb' type_id=3D82 linkage=3Dextern
+> [17] FUNC 'bpf_dynptr_slice' type_id=3D85 linkage=3Dextern
+> ...
+>=20
+> To fix this, we can a add check for the kind.
+>=20
+> [1] https://github.com/eddyz87/bpf/tree/binsort-btf-dedup
+> Link: https://lore.kernel.org/all/4f551dc5fc792936ca364ce8324c0adea38162f=
+1.camel@gmail.com/
+>=20
+> Fixes: 8fd27bf69b86 ("libbpf: Add BPF static linker BTF and BTF.ext suppo=
+rt")
+> Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
+> ---
 
-This seems like duplicate of another syzbot report at
-https://lore.kernel.org/all/0000000000008874480617ff1bad@google.com/T/
-and https://lore.kernel.org/all/20240614131856.754-1-hdanton@sina.com/T/
+Good catch, thank you for narrowing this down.
 
-#syz dup: [syzbot] [mm?] KASAN: slab-use-after-free Read in lru_add_fn
+Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+
+(Although, I agree with notes from Alan, having a comment would be good).
 
