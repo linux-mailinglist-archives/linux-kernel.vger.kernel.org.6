@@ -1,164 +1,204 @@
-Return-Path: <linux-kernel+bounces-217576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C9C90B1B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:24:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D33C90B1C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 16:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BC591C23740
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:24:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FEA71C20A75
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0F21A2FB4;
-	Mon, 17 Jun 2024 13:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="rO7XoE+r"
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01olkn2011.outbound.protection.outlook.com [40.92.98.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34901AB8F8;
+	Mon, 17 Jun 2024 13:36:29 +0000 (UTC)
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B9F19A2B2;
-	Mon, 17 Jun 2024 13:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.98.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718631326; cv=fail; b=NZX4wcmAaFijjJyAYEAKLeXKRj6TPgir+xih4xnrHPmd7oeCwPE/HJPi2nCVYD/a/5GHtTL950TwzJiHy/l5Lb7eyNbQRUjODh2FlUB5yT0ljATXajRLivioPB7z8K5EN6N4cpt20VA2tHZQKAia8l4VIQlHCJxPzFOgSk0sz/c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718631326; c=relaxed/simple;
-	bh=rkY+kycCt5vLHgNj3R00RsDg6Wk4nMA86/ceXrnYifg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iQmUMPSfGHkyz6FZhgVZB4QhonqpR6reZ91UWS92sdwIrQsjCecxNND6gbFSO9qzTtDZMCNmMfjrewkQglT78FUJjW6wLYV6U7Mx82aZIt3TpqHIFbbgZn0ov3EMjmKrOwTipDjJ/R9ONMwPJjgHjs6zurN7oBxJRmjW9W8XqU8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=rO7XoE+r; arc=fail smtp.client-ip=40.92.98.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LIBOwuw8HY43bTGXbxwIQ9HqPBu/FtUeFh7bHpAPhW1E/iOFj8Yv03Tj0R/YTtlnlwY/fPg/dggofPNHnKBgjF8j0TiZpWvPIZaFRC08igzl3b37AEBkKg5EQIZHwlJVlL5maIIS1r78S8Yh0WskopMe8lhmQC5G5/HnqGEfWCXL2CSHNQO6m5cgK/ShSucup9nrLPpop+mgv4ZY9sJEL0lXwmhKJzrx3qmEk1/kF2ysC+Cs+T4l7k8DcEsvLj1vAqrVLoUv/uCM/xrUqqpuGzNCWk4ji4nS3eXMF083915fGewnDG9YQuWfDtTYRyU8eS5f3kRzWomDQPyaNCQh4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7jun4NponcZtNhYbkqhxBGPVAQQAhT88zHoteLjDN08=;
- b=PKX5q2r9tYzYy/lpgSF9n7+iqwAEz1T2eRRDibKZYvMNi0J07jhu/fbLIJ50O4Doorz5ykxoEpLOOM/bYIHkPEvRiCgzJ6sFI1iVqAJ7dJRUwhMWuWZPaKyaVOX9AGQ6BLkpfLcxK111MFBaKqtSxZ68JIFD/FCXzOW0jFaVW1dF6s6VMMkLUFwzfsppAjkPZ+c8KyC5jJum6Anasxv28GP4/F0T9GJ+QDmGe99/GXoWL7/mGi+F/5kNOI5msBhwksJSYUVM+zRWAMp3vEMGCpCdU3rnYGZ6f5giFE271cJVWm3X/793Zxz5ETkmb7rKry48BmPRXG9SBAtcW9Thpg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7jun4NponcZtNhYbkqhxBGPVAQQAhT88zHoteLjDN08=;
- b=rO7XoE+rfJOyZwH8DIeFeg2FX8dg8GgXGiuuaCDpawESRL/noodTm2EesGyYeCMXchNsmwfk8l75wSeRFNdgjLeMhNRcJi8KPQA/xabN6xsGTEy4VR0Q0QcaRkmHeGtzc75S8SBZ/vkabZpvtwcFg460u8v5PYv+Q0Jce9khcTdmrnb0IEbjsWSn67UV/sSa3JfDgz5XUUBp0jWsHsZLAJpTZytKERICpTMozCucLnesh9OWhUbTZCophlUpY/sBhvHypBgaWWNPdmtpmyB1A1IpVN8G7yNYshgrHDO5gj/JwZQ9HEfJCHeNFGMPwWNq+iORRWtX35JUylzqYO21Hw==
-Received: from TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:256::8)
- by OSOP286MB4001.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:2f3::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Mon, 17 Jun
- 2024 13:35:22 +0000
-Received: from TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM
- ([fe80::670b:45a6:4c30:d899]) by TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM
- ([fe80::670b:45a6:4c30:d899%4]) with mapi id 15.20.7677.030; Mon, 17 Jun 2024
- 13:35:22 +0000
-From: Songyang Li <leesongyang@outlook.com>
-To: helgaas@kernel.org
-Cc: bhelgaas@google.com,
-	leesongyang@outlook.com,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: Cancel compilation restrictions on function pcie_clear_device_status
-Date: Mon, 17 Jun 2024 21:35:20 +0800
-Message-ID:
- <TY3P286MB2754F489000B7FA6F9CF19D8B4CD2@TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240615212603.GA1157372@bhelgaas>
-References: <20240615212603.GA1157372@bhelgaas>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [2nef6F6a5KUuqYB3EYVbFVCiymH645im]
-X-ClientProxiedBy: OS3P301CA0044.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:604:21e::16) To TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:256::8)
-X-Microsoft-Original-Message-ID:
- <20240617133520.10450-1-leesongyang@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A31D1AB52F;
+	Mon, 17 Jun 2024 13:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718631389; cv=none; b=V2Iy/GxELzTrpnn1SL+YBnTSkmEgbMDk/DQUfNqoWHlw9kooiqTmeP69fGUOaCKgSm9Yy2s0WapAeLmcwatvEano0OEeDR5rbIbEk0xAIlpaHh5eEr841kWYXUiQQG2K9fWIbl2BnFcmhi4xPuPmq7jDDrGxpB1KVCaSSf0Nbts=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718631389; c=relaxed/simple;
+	bh=w2U5pZAt/84qA8S9DUJyXOujch5rtf8ctaEYUOJ+FZE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CfAF76ljm3IVrBROOfGVQi9g4noDulDN8pkFFLF+5pAX/e+APNY0iSRL0oeDO2OZ4HsMr3vJRqSXru8hG7OX4WG2aCg2ABaAvvhJLjASKYaSWpg3jUTH/10uj8kuuDARirPmOTZJkV0yoO0E0t1Ht0lC1UrGacDyMOXHcj+OgN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-627e3368394so44818407b3.2;
+        Mon, 17 Jun 2024 06:36:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718631385; x=1719236185;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eL05cXLA28sNYHpBmwXcBiu29znRtT0jenJjusxIxa8=;
+        b=YkJ/3XtkrymD7AAgwQKzRsU+r/gYQDDCOAV/oihO3z78YrRsT1wUQKKIPQ+E3M12z5
+         J67hh67EKesEb9ViV5uCBvFOXCPwjW00j6Z01mBp7RSfjYncZyNy3iTowEm8r39tqFoc
+         Zmak49+yg6rZaAbyX2hDxAqn9SORDkG0Mzx+Be8xpHyHm+h5dz0LgncXO13Gj5iF6yQi
+         Kco8GiJ1HF64eZpzRNZm1vGdYRKK0uxgzzCdJqVWHc/loY9pnBjMzv/YddQg2qs1wh0n
+         isERVXTrEjiB6Jeq4jN+qJSAIoGzjm+/qet3gefWxU96wF8V33aUbydmc2Q6gFbxEtiq
+         qPLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCwLv7SA3u03S0pDHSOSHV4zliWIa0EmSpNOIIjx2fKSgdGb8EXCx38KH9lVIn02L1SV1CSvzyRlgwUJnr4iQHijPDdgecLi/uVhMY0/e/RIEvpihPDrkovXOY6cvnGDxc3zSB5pq0dd2ZhOMOC2mw/yDi8mvrqJ8aNC37V+aVdT6tMUK2DgG0cV4j
+X-Gm-Message-State: AOJu0YxUjNRCTxDaZvGP8yYJZNznWORUAv92PyamlGxUdLM3U2AAhgaD
+	mwXMfJ2j0gQaPzKsvf0gPMB30hmwzAb0ATA26V7ZTKo8t5R+oZOvqnBmpWGl
+X-Google-Smtp-Source: AGHT+IGMSQjnNkuWJmtMrGtNAkNAZFvqVgJJQ7j8gYXtGuw3GNFVUT6Sg4bNQ23KeUR+jYdMaa2GAg==
+X-Received: by 2002:a81:7cd5:0:b0:632:b827:a1ba with SMTP id 00721157ae682-6333082fb6bmr70717947b3.7.1718631384796;
+        Mon, 17 Jun 2024 06:36:24 -0700 (PDT)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-631189a7d28sm14116197b3.40.2024.06.17.06.36.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 06:36:24 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso2987246276.0;
+        Mon, 17 Jun 2024 06:36:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVvGbtZ+94Ybijwe1JZNAMDUkTWCBvOYD8bOTsfHOtHmRg2grcZJWp1hNwdzXt1QVMEiKCG7WtC387G6G2Nov+AJLNxnp6PIFoQGS238S3x4sr1pxL88GIh8k08cUt5PCTNGf8h4Vpeoj+QVuSxTPcEqYFLosYo3zkHeWTEPrdrbWPqbRT402Lm8079
+X-Received: by 2002:a25:df01:0:b0:dfb:1b5:6e6a with SMTP id
+ 3f1490d57ef6-dff1549049fmr8747190276.43.1718631384061; Mon, 17 Jun 2024
+ 06:36:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY3P286MB2754:EE_|OSOP286MB4001:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2035cf15-ad52-46c6-2d5f-08dc8ed2560d
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199025|440099025|3412199022|1710799023;
-X-Microsoft-Antispam-Message-Info:
-	SEW2lyPlVMx04GOQJwu1pA9VnpvH/JC+XVhIAF+47DTYvf4ImmAHXViLEG0iFRJai2oK97bSz3Km30qb2iB0K3WfoFHy3miCv7upYzMDVpfUeUqPFw1mZ7cIcas56/erEmkKUyAUYDKmEdic3yH52gWVhhKv9UsZe0DBm/B4g3O8v/cDdwpjqP8OJ1XDGZf1uaUbF3ctV7mE1VtYgmGrqpFoka9zf5GMExQZaH3/v+DyY1IoRbjFFzRF5D1gO8XR+rqUR2+BE+o5cphmWZHk3uj5AZnSmoPc8F8s1VJwA/Xx/NN83wV1WuhGHXK6bQVnx/OXMIkwQEJoGldn4xodmTvT1bLeSItbQvcTi0L16noj9cx0Hdd7CTzjlg1nov1FOo8mpqBs33IhB5BUeREB3wu/fuMNYqLDh/ERaMwibnX4uWXiQTtoFkwb1QDWvdcEimhWJOGz+UgLDOJquzPADud6ekqTDkC/6Di7G9843FVDVIPUp2AwlRx0Gj5Sc1FUA8u3enP1ES5zvlZAd4x3USjrQTiy8U5nWMWsKO7eCZoCqYWPfFVFY9qz2Jb1Lyq+ue33ya6rd0hF+doxjooQx8ajSbK52F0RBWOQjd6+l1fCAdvWW4vHwyzin++ByFKy
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?B9AwaeoUz830kkAHTg5wO+N+PczDbv/mDK2Lk3GW9gRua7Ik8sUibhhNcvlM?=
- =?us-ascii?Q?M4YhxqfVQmzC3GcnQZuOHofZO8E/U6O+vxoHMM6QQ43EQ3MWPzCTK70ZuO8i?=
- =?us-ascii?Q?p3ZHr1m3poo7Gy33gaoDztTCPAdTFYXP3hiCwBF4zxLxnN4DAMnZt/AwYBBs?=
- =?us-ascii?Q?N3HCNTOYzlXVdbZFfMMkhw7BGt7ltb1Ock+goa3ApYZzNFOqHndJzTj1VRFp?=
- =?us-ascii?Q?mkJY/YN1eKKv9CYUyoSSkkEwhJoYekJ0EUhtp+IU3xosRTSIT0wbelvhaOiw?=
- =?us-ascii?Q?UnY6j+KKC8g+afRAiArrwG+v1N5WsdmSwq0NDYvEnzPfyG64Y4S2vsMgDOAQ?=
- =?us-ascii?Q?cw9+LNZQX537/J+FlRhSL/q0CvXiXnR3stPgjEgZ6W2NVQUr6kuS4HVMljbI?=
- =?us-ascii?Q?oU5o0t86Rzd+cGP7/AayQJdatei3FQ90FalIZ768TvMjkQdcwiJItzHbGhhD?=
- =?us-ascii?Q?oPL0mqILuI+T5k4zTMkkmX3bSuKb9cfc3X2/O+7xoP9KMseNm62rCwXMrB42?=
- =?us-ascii?Q?Vxo/FpFw+osGvGBx8yJpYu+qApyCPtvbwMMz9aU5iwpVsqTN772unZah8aRG?=
- =?us-ascii?Q?emv5so1mmsR9hvz7kt7Femeenz9N81aLipHBz7iYvvl0KsOAMJ/NoLHF94ab?=
- =?us-ascii?Q?E7+OUVl2HxiJhTF5RF2waeacxEjTwRyGlGxvfY7R8j7xhNFB5DWDyAcR9toN?=
- =?us-ascii?Q?NH9L2ItdFRX5mcC9W2KQ9xRS+9aQAwEWVZSkyIK/frZWPqwJs6afbykM012W?=
- =?us-ascii?Q?4QfZ+GIDPC8FgV6/huadvOINFru+JpK7MJ+nkwlYnLDXy8gNQyXvhS7gL5zH?=
- =?us-ascii?Q?1tXcgS1p87rrnJGmFlYT2fYKtAR4hdX+lhnZ6ksW7sT/t/kmbpcG4LjIHW1L?=
- =?us-ascii?Q?BVZQ1FkjedBmfriFSJQcUpSAu7hoQIjir0TD8rba0i1CTHDDF1jp9lP/NEvG?=
- =?us-ascii?Q?OvL7+aQNrSsQIcWlwNQIxxec9YzlL+nTaq8dYIIizOHwt7WqzQxTPw3vUqeE?=
- =?us-ascii?Q?CCi8m057bO9k9Ckq8Cp56RQNtFMDkE/4dHZXvlrhf2NHm1IS851cNqTmrM7u?=
- =?us-ascii?Q?MtSIbXDwQmm6MIEKb1oG7DMiGnoAZ5N7FY5RLd79CH+UeL+1q41es0o1g8di?=
- =?us-ascii?Q?5bhVvUYSCMk66YjvqDzYpZmbTIHPEdqfMVlfayHm5h688vymb8SR07HqjyS8?=
- =?us-ascii?Q?44/HhTQZah0s6O2EUoiKleQSiwBNP6RnhMRqdbRlPjm4JgOqC0bx5Wpm7Rgd?=
- =?us-ascii?Q?OiMXKtwKeB8LXmEnwHof?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2035cf15-ad52-46c6-2d5f-08dc8ed2560d
-X-MS-Exchange-CrossTenant-AuthSource: TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2024 13:35:21.9490
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSOP286MB4001
+References: <20240617131511.160877-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240617131511.160877-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Jun 2024 15:36:12 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUDDfOeQUwmuYKPvAXaXBJCB17ecH8sfpC4=7dTVKthhw@mail.gmail.com>
+Message-ID: <CAMuHMdUDDfOeQUwmuYKPvAXaXBJCB17ecH8sfpC4=7dTVKthhw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Use BIT_ULL for PIN_CFG_* macros
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 15 Jun 2024 16:26:03 -0500, Bjorn Helgaas wrote:
-> > On Wed, 12 Jun 2024 15:14:32 -0500, Bjorn Helgaas wrote:
-> > > I think all current any callers of pcie_clear_device_status() are also
-> > > under CONFIG_PCIEAER, so I don't think this fixes a current problem.
-> > > 
-> > > As you point out, it might make sense to use
-> > > pcie_clear_device_status() even without AER, but I think we should
-> > > include this change at the time when we add such a use.
-> > > 
-> > > If I'm missing a use with the current kernel, let me know.
-> > 
-> > As far as I know, some PCIe device drivers, for example,
-> > [net/ethernet/broadcom/tg3.c],[net/ethernet/atheros/atl1c/atl1c_main.c],
-> > which use the following code to clear the device status register,
-> > pcie_capability_write_word(tp->pdev, PCI_EXP_DEVSTA,
-> >                 PCI_EXP_DEVSTA_CED |
-> >                 PCI_EXP_DEVSTA_NFED |
-> >                 PCI_EXP_DEVSTA_FED |
-> >                 PCI_EXP_DEVSTA_URD);
-> > I think it may be more suitable to export the pcie_clear_device_status()
-> > for use in the driver code.
-> 
-> If we want to use this from drivers, it would make sense to do
-> something like this patch, and this patch could be part of a series to
-> call it from the drivers.
-> 
-> But at the same time, we should ask whether drivers should be clearing
-> this status themselves, or whether it should be done by the PCI core.
+Hi Prabhakar,
 
-After careful consideration, I agree with your point of view.
-I hold a viewpoint that it should be done by the PCI core,
-rather than pcie drivers. I give up this patch, and then I have
-gained a profound understanding of PCIe Core from this communication.
-Thanks,
+On Mon, Jun 17, 2024 at 3:15=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Commit 13a8cae6e561 ("pinctrl: renesas: rzg2l: Drop struct
+> rzg2l_variable_pin_cfg") introduced a Smatch static checker warning:
+>
+>     drivers/pinctrl/renesas/pinctrl-rzg2l.c:374 rzg2l_pinctrl_get_variabl=
+e_pin_cfg()
+>     warn: was expecting a 64 bit value instead of '~((((1))) << (16))'
+>
+> The function `rzg2l_pinctrl_get_variable_pin_cfg` attempts to mask out
+> `PIN_CFG_VARIABLE` using `BIT(16)`. However, since `pincfg` is a `u64`,
+> this inadvertently masks the high 32 bits as well, which is unintended
+> (on non 64-bit platforms). To correct this, `PIN_CFG_VARIABLE` should
+> be defined using `BIT_ULL(16)`, ensuring proper 64-bit masking.
+>
+> To avoid such issues, update `PIN_CFG_*` macros to use `BIT_ULL()`.
+>
+> Fixes: 13a8cae6e561 ("pinctrl: renesas: rzg2l: Drop struct rzg2l_variable=
+_pin_cfg")
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/all/5c1bf20b-7e94-4b06-95e5-da9f99750203@=
+moroto.mountain/
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Songyang Li
+Thanks for your patch!
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+I would like to brainstorm a bit about this, though. See below...
+
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -41,28 +41,28 @@
+>  #define MUX_FUNC_MASK          GENMASK(31, 16)
+>
+>  /* PIN capabilities */
+> -#define PIN_CFG_IOLH_A                 BIT(0)
+> -#define PIN_CFG_IOLH_B                 BIT(1)
+> -#define PIN_CFG_SR                     BIT(2)
+> -#define PIN_CFG_IEN                    BIT(3)
+> -#define PIN_CFG_PUPD                   BIT(4)
+> -#define PIN_CFG_IO_VMC_SD0             BIT(5)
+> -#define PIN_CFG_IO_VMC_SD1             BIT(6)
+> -#define PIN_CFG_IO_VMC_QSPI            BIT(7)
+> -#define PIN_CFG_IO_VMC_ETH0            BIT(8)
+> -#define PIN_CFG_IO_VMC_ETH1            BIT(9)
+> -#define PIN_CFG_FILONOFF               BIT(10)
+> -#define PIN_CFG_FILNUM                 BIT(11)
+> -#define PIN_CFG_FILCLKSEL              BIT(12)
+> -#define PIN_CFG_IOLH_C                 BIT(13)
+> -#define PIN_CFG_SOFT_PS                        BIT(14)
+> -#define PIN_CFG_OEN                    BIT(15)
+> -#define PIN_CFG_VARIABLE               BIT(16)
+> -#define PIN_CFG_NOGPIO_INT             BIT(17)
+> -#define PIN_CFG_NOD                    BIT(18) /* N-ch Open Drain */
+> -#define PIN_CFG_SMT                    BIT(19) /* Schmitt-trigger input =
+control */
+> -#define PIN_CFG_ELC                    BIT(20)
+> -#define PIN_CFG_IOLH_RZV2H             BIT(21)
+> +#define PIN_CFG_IOLH_A                 BIT_ULL(0)
+> +#define PIN_CFG_IOLH_B                 BIT_ULL(1)
+> +#define PIN_CFG_SR                     BIT_ULL(2)
+> +#define PIN_CFG_IEN                    BIT_ULL(3)
+> +#define PIN_CFG_PUPD                   BIT_ULL(4)
+> +#define PIN_CFG_IO_VMC_SD0             BIT_ULL(5)
+> +#define PIN_CFG_IO_VMC_SD1             BIT_ULL(6)
+> +#define PIN_CFG_IO_VMC_QSPI            BIT_ULL(7)
+> +#define PIN_CFG_IO_VMC_ETH0            BIT_ULL(8)
+> +#define PIN_CFG_IO_VMC_ETH1            BIT_ULL(9)
+> +#define PIN_CFG_FILONOFF               BIT_ULL(10)
+> +#define PIN_CFG_FILNUM                 BIT_ULL(11)
+> +#define PIN_CFG_FILCLKSEL              BIT_ULL(12)
+> +#define PIN_CFG_IOLH_C                 BIT_ULL(13)
+> +#define PIN_CFG_SOFT_PS                        BIT_ULL(14)
+> +#define PIN_CFG_OEN                    BIT_ULL(15)
+> +#define PIN_CFG_VARIABLE               BIT_ULL(16)
+
+PIN_CFG_VARIABLE looks a bit misplaced here, in between all the flags
+indicating actual capabilities of a pin.
+
+What about relocating it to the "high" half, and moving it next to
+RZG2L_SINGLE_PIN? Perhaps even renaming it to RZG2L_CFG_VARIABLE?
+
+> +#define PIN_CFG_NOGPIO_INT             BIT_ULL(17)
+> +#define PIN_CFG_NOD                    BIT_ULL(18)     /* N-ch Open Drai=
+n */
+> +#define PIN_CFG_SMT                    BIT_ULL(19)     /* Schmitt-trigge=
+r input control */
+> +#define PIN_CFG_ELC                    BIT_ULL(20)
+> +#define PIN_CFG_IOLH_RZV2H             BIT_ULL(21)
+>
+>  #define RZG2L_MPXED_COMMON_PIN_FUNCS(group) \
+>                                         (PIN_CFG_IOLH_##group | \
+
+Then the other PIN_CFG_* definitions can keep on using BIT().
+To make that safer, PIN_CFG_MASK should be restricted to 32-bit:
+
+    -#define PIN_CFG_MASK                    GENMASK_ULL(46, 0)
+    +#define PIN_CFG_MASK                    GENMASK_ULL(31, 0)
+
+and several u64 variables can be changed to u32 again.
+
+What do you think?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
