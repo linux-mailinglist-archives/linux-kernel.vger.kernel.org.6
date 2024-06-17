@@ -1,220 +1,284 @@
-Return-Path: <linux-kernel+bounces-217142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF4090AC16
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:50:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A98090AC19
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20AE82862C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:50:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D42222867C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 10:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB2B194A50;
-	Mon, 17 Jun 2024 10:48:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2542C194120
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 10:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718621285; cv=none; b=nVd6OFmnWMqhlPWpqo9B62/OJ3Fne1f1VNYuKBPTMCLchqb6khP8Iw0Vzt37VeugP2uC4wlAqWnKPcQnFGvUxqaN40ENLJwnLnX4tANlmuGztcfMoFCYlUOSeXQUzY86Q1EeOP6yOzaLfdIZnAqLHOcgxfHKeBZWz94Zj9XHB3I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718621285; c=relaxed/simple;
-	bh=VC+pQjFEtsjPc+y2aFrxzn+w9bQgonRAHT1HFLZ357s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kIpiPkYo69V5oOO2tPdZxG/UlpT8rj5yfuOIMAUjoH9V3FBKegZVkmldv6zSz2WwxD26uXc0XCSIgmLKIsp36XuwCqlQ+0Im98dvHE+uZnds42ebKrbj9ds+ItVFYB254BC86Rcl60gm6NDU73Ylh9hLMI0HoUT32v5Nrp/jVL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1855EDA7;
-	Mon, 17 Jun 2024 03:48:27 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BE3A43F6A8;
-	Mon, 17 Jun 2024 03:48:01 -0700 (PDT)
-Date: Mon, 17 Jun 2024 11:47:59 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: linux-kernel@vger.kernel.org, keescook@chromium.org
-Cc: paulmck@kernel.org
-Subject: Re: [PATCH v2] lkdtm/bugs: add test for hung
- smp_call_function_single()
-Message-ID: <ZnAUX37Jdo8OyZGf@J2N7QTR9R3>
-References: <20240515120828.375585-1-mark.rutland@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDA6194AD7;
+	Mon, 17 Jun 2024 10:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b="h/WRgR2M"
+Received: from SLXP216CU001.outbound.protection.outlook.com (mail-koreacentralazon11020003.outbound.protection.outlook.com [52.101.154.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73721194092;
+	Mon, 17 Jun 2024 10:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.154.3
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718621310; cv=fail; b=fQl1jA+vHsKMXZdp2lMbHoz94KHLPAYKyjghHOpyaQ/bRpXEB48AcpijHdEuqh/Qc4tQUHh5UDP1l4XuBb/MgDB9gWazS4eLfGGLJaY9F03ZjWUm8VBA4zL4CmAJ6/EuMZeBYav26smMoF3CekiPcrmY2gLthNFikRbpXK7Nfuo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718621310; c=relaxed/simple;
+	bh=/APWr31pLoZLZrTfwsg30q+Zp3D0WRfGR/n0cRr363E=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=jN/lQ7u8EgH6J6ShD6R7K9Ew3f+hAqcyZvwJtv69UFwsKZ49IfmB9UZARLQ3MKwHQRP3IXyEoE0HE6sgf4+bu4J9pbS2qeQ/ThVMky94EA+gQXavjzHLm5ToPYa6UURzWdCQ+vbB2L+v3QY0JDqa7rtDFlgrWIgmcXVwaQlIye0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com; spf=pass smtp.mailfrom=chipsnmedia.com; dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b=h/WRgR2M; arc=fail smtp.client-ip=52.101.154.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chipsnmedia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cuZLggDMbcIzPCh9Uk1irKCmHyX/7X7q2u3aKVmAzx1gEwO2zcmYREAM83dlJ60Zo5ttw5Yv/31l+OgAPICZAdXHsvq5z9cJzziExxb5S8KstmCAFuLeExXQq8TZ4aDL7PcNB2Zup275kJAFBwSBIr1i4ncevfWHsgPYy0Ew1kbVXX6V/DU8aI+U/2ya1YSlbp+/SIBPQ2+aIWEZktGhbSigHKfrOgcwDQqwSGb1WRXfnFKcR+y0KHpBD3plkSV5VQNy83M5qNjmrk2KRaf1nu9EUNwwnN7oJbqPCnkwb1RLLihyAFJIXzre5S9X4UjPeD/Le1oF4GEvMhTltudCaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/P3M1kco5QOdXGxb/cODRr4hDyHLouCHnD2YgGA9JWM=;
+ b=ELQgDk6Wq1mIFbFgQD4vxfH317e+3EdG6eDL+H+Xgo6Yu26EtROV2BKB/+BZkzS3jAR1eOWU51o+JO4b3mCt/30wiXZMI56o8XHDF3pmK8uqNO2flhtaJ/ksYSvJpwTTd0LmPqgMGIBsqdAnL+dXDUiJGDipXoHP19u42H/ZYSJzdP2So00GTo1QZJVv92S+PyylaCDLhxlG5zgTaDMixzD80KNLcGKcWCDzQ10E1PirKZcmHULZzDyb3OZ1ZhvHd7v+5q+PQVldO4M+YxjV43xXCGE8IkD4bsSG5f6cJiUzWwlkNXotgC1MJGocoDi/dVRt05kZe41Y36g6Gv+Tsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=chipsnmedia.com; dmarc=pass action=none
+ header.from=chipsnmedia.com; dkim=pass header.d=chipsnmedia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chipsnmedia.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/P3M1kco5QOdXGxb/cODRr4hDyHLouCHnD2YgGA9JWM=;
+ b=h/WRgR2MhZF8aLSeXm0W3wOWff1hPyJH5U+mOS821rf3PNSLd9bYgpiTbqK/LI5ovs3XIHFr4qnKq492PMJqnwsymXwSfuJqnljXvL40IwYuA0yx7VinyyksnHMbg3Vz6t4kqInlAcgEDosYGe7NRm9atvqfbl25MOdZjiqY/ZM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=chipsnmedia.com;
+Received: from SE1P216MB1303.KORP216.PROD.OUTLOOK.COM (2603:1096:101:15::5) by
+ SL2P216MB3099.KORP216.PROD.OUTLOOK.COM (2603:1096:101:282::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.30; Mon, 17 Jun 2024 10:48:26 +0000
+Received: from SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
+ ([fe80::b711:5ab1:b5a4:d01b]) by SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
+ ([fe80::b711:5ab1:b5a4:d01b%4]) with mapi id 15.20.7677.030; Mon, 17 Jun 2024
+ 10:48:26 +0000
+From: "Jackson.lee" <jackson.lee@chipsnmedia.com>
+To: mchehab@kernel.org,
+	nicolas@ndufresne.ca,
+	sebastian.fricke@collabora.com
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	hverkuil@xs4all.nl,
+	nas.chung@chipsnmedia.com,
+	lafley.kim@chipsnmedia.com,
+	b-brnich@ti.com,
+	jackson.lee@chipsnmedia.com
+Subject: [RESEND PATCH v6 0/4] Add features to an existing driver
+Date: Mon, 17 Jun 2024 19:48:14 +0900
+Message-Id: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SL2PR01CA0004.apcprd01.prod.exchangelabs.com
+ (2603:1096:100:41::16) To SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:15::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240515120828.375585-1-mark.rutland@arm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SE1P216MB1303:EE_|SL2P216MB3099:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6d27a8b1-c85d-45a4-0097-08dc8ebb0425
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|52116011|376011|1800799021|366013|38350700011;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?zakaVvYfiVgr6spyABoSqi59bkh564PKn0BstWO0qcYtKec1Fjuj9+FE2U3j?=
+ =?us-ascii?Q?h7yFLZ/JgLo2/6/am1SAwuaYhrdf2VH/Ups/8mwPcyMCcyBK/ENjSvTQ5mrg?=
+ =?us-ascii?Q?R0tMmvP+6SBdVF1dLGXddal5Cglb27G439KwXYx+GwfGPxL/1aaxuyFDogrv?=
+ =?us-ascii?Q?haRvz19L7GxAF+KcXxIIgQPpdOi3CSQdqOCuUnr27fLKxKBq8RfVqUgApFdW?=
+ =?us-ascii?Q?Z6kqfQN5/y3VxHyly7UBvQWFoH5jdO4pO4K98D3dOESQw6iKPibMj1X1x/G1?=
+ =?us-ascii?Q?u5kb4gBHkE5dp8oe7N4w6UAZ/eQN+5EFpAcSrtIa6X+E/jjQEPo2F464qIYQ?=
+ =?us-ascii?Q?Cx198I2yCcOYRjzLQIsswWfYQD1nl/oZXVysDJ9dKRpcGlV///xXglaFX5Ay?=
+ =?us-ascii?Q?mPvIEQViERPVkchGmKB/0fWw+5DkuXL05w3WjP+puASTXU59uVxD0Gy55kUz?=
+ =?us-ascii?Q?VHz9ujAyLBoPbrDXspz1S9109HJoMmCX2CAKiFo/nLn+quFfOF09C+mZiOWp?=
+ =?us-ascii?Q?tIPS96jsfxfJTs7zUiGc8AH75V50QwHRSyqXEVFFYsprW4CJhQVQvXPQPt6X?=
+ =?us-ascii?Q?hVYzELwz0ReETfz7Iae6q2VfGNwqpdYygJKtPMs+praL10G3bDNdqNjEZMEz?=
+ =?us-ascii?Q?7k8IAreToxL4ZnX6OYf0i9zt3K7RmITyFiUpGHvJb3UfBkzDkP2RW5wvca2t?=
+ =?us-ascii?Q?7Dfnp6jCBsFCHZgoB5ye9cVCgA4hmaUCrwZ4qdbKjtLnhK4B0OC2DyG7kynm?=
+ =?us-ascii?Q?i3R4xE3SVIORgNMre/JPlQ0VaYbC3RSM/0Qg8fjOmeyZdSgES8fVEK4ivdcf?=
+ =?us-ascii?Q?Ti6KHn5CMqfBl5an+Vd0RrR9hbRHLG/JiD+B6bwRhWnFNnNnacDWyQoyQFUg?=
+ =?us-ascii?Q?FPCsgVN4Pmb6deHqwzzrt8BowIfm6NEmoeFF2A3ED+k+Gz7AmEVWAps2CtWK?=
+ =?us-ascii?Q?J/6o3rP68crPPeCWk6Y63WI7XUUUS7yBJIMLnmpQ2rJ7LP4fLGdxw7+caaC4?=
+ =?us-ascii?Q?+l0GM6yBSshv5IOOGX40CN0lKpmsVOdia3dJNXbVeAHM4po6WhttwpRn6HrL?=
+ =?us-ascii?Q?cIzwedDb5Ve2JFnFNPDWAsGgsZAKyP33Ag5uTBN2EB2Ol4OPGj3J01NDDyD4?=
+ =?us-ascii?Q?kJjjMQPWq2a+TRtxPebXd3Bzzy0uMuPnxq3vO7LwsrrWIBiADrFFHVwKrgCo?=
+ =?us-ascii?Q?pu2B43YO0Ucpdu/79GfYzUXtyoeyDG2gBvmNIYRQKm4b4pWWPeacing9Tgzq?=
+ =?us-ascii?Q?1j3jj7E9/AImMrDJpXxzpXJKVZ/dJwxx05n1Ej5rtQWTvS3Hin691pkVJZF2?=
+ =?us-ascii?Q?8THeQlQed0HhcVIhD3koBqI35XTqLRGslOTVj96ltidQrjefG7lBiKh4u4my?=
+ =?us-ascii?Q?a8ugs7g=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SE1P216MB1303.KORP216.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230037)(52116011)(376011)(1800799021)(366013)(38350700011);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?rvmgJFCp4DKsSC8ld232e8OrzMnwtWJv5blyDeHsGV/kPHZy4IE1pn/BMwCV?=
+ =?us-ascii?Q?+HGTH5cyGynhHY13ceyQn/Ms13Y+/SXt552Cvaka65UUYyKkLv3zR8mNRCDL?=
+ =?us-ascii?Q?tlmyLidAA3IH6LYHvKz9iXJY7w5Nyq30G2snG1GsfYqF0AvUvVfZwLWkfsVf?=
+ =?us-ascii?Q?BmOvNG5dEPLLPhsKHi2ivR37t8rql26FAogf7zE17lwjIR3oKx2Vzu/Xz3pJ?=
+ =?us-ascii?Q?WWm3DFxXaWkrYMq44P+Qos4tWwyQBgvExX3FY2KHUukJLN/oXo2MWqHW0cl3?=
+ =?us-ascii?Q?MsbrVHr4Tgx2WJuDovItsxkq7EA+m2EIUDM+qmrpnq70kvrKe+BlegXccWxo?=
+ =?us-ascii?Q?F4XhxOTzAIBQ25jJhyg7dcOIku3a8mwJKXNc7E3SrM0m/Fr7ghDpH1FfLv0N?=
+ =?us-ascii?Q?jJZODxgvLp42buGoTjTSwfT9dFyvh2DyiQoPyj2d/1oL84DryED0aJrhU2gH?=
+ =?us-ascii?Q?e/SxR2oTpajQZX0wfx3P7Z7zmTvw1wwfsBDxriMFK+5a4WXXL19H2di6Lrlc?=
+ =?us-ascii?Q?JXVJgqrnUs8pQF/ly5UiesVp9+XcYlaj8USDSyqYc1dn4RSZQW5pf21Cn49v?=
+ =?us-ascii?Q?jxJF2bntKURWX1X7cx2BjzjBGZgo7upiygVSu3tAO9s8LvHciQTU/Uad/Qu8?=
+ =?us-ascii?Q?qkXx7J440ogcpDadDlYVL/zl7XsydYVxPcjX6hz1nlbamFR3CrylJw3g19Y0?=
+ =?us-ascii?Q?N2bhxXzYCvcC/w6Ps2F9lCj+ko00pYNOEU743pZny34aZGeWBnskLu0k6Mnx?=
+ =?us-ascii?Q?jIJ34GBZuBEhjnOhdCVcv5SyNBPfjhZsIAwXoftM2r1HyEDNmutrkPyi89ha?=
+ =?us-ascii?Q?Dyd6bhgCC5LTE2tcJgsOoz0ft5dQ1CycWidaWWZpXzZ4mIUHUe7uq/r6akyv?=
+ =?us-ascii?Q?dRuqMM00bI+I4L16E9Zn0J8NouY4jsTakfVUrk2MVNSnUDFs2J/4GlMPYWGo?=
+ =?us-ascii?Q?uyze9k6XB6PL6AMCcpTEkEUVPDsxJqmTtaZFGw3+nayuLjECCiFNoK/QLfam?=
+ =?us-ascii?Q?H3VY132L0q1reERjt9YvRG9KQhNpbp/Mx70KB1cHdk+UB+W7ASQsGGS80/Xv?=
+ =?us-ascii?Q?NJ/tSVgqee3w45lKuS7yGw26erNZ/zCkm5mhgcjKj4r9WZOENbop6hsGbY0y?=
+ =?us-ascii?Q?QBcrrxgjOuqnDRfv2ah9IeYANamKvYwkWCpAlNw5bQW/9vtNsmVJXUVV6S43?=
+ =?us-ascii?Q?rxqnPF6eJQhSfuZbC5TsDW389NPIG88DdvKf+dMJRcPXyUOOOjhI3oJLFxS6?=
+ =?us-ascii?Q?jUpAtddjiWcAu50vQaHdS66ZnO5PaVV7krPur6xptYdVciBSDZ3kWII4xKvP?=
+ =?us-ascii?Q?0JmhaEgdSo9N4WeH1xDTOJMrKHALLyUrhwUwSrC1Z7y77Q6OWw12Mt6xph9a?=
+ =?us-ascii?Q?kjQStbKGJyT2bbsYKGK6LQAAr+K65YflTN/X3K8LOJei9H9bVeATy8kEyKkx?=
+ =?us-ascii?Q?iM+PlBzDSjcts3yKqEDC46ZH95iwLIhDUtRRtYAUm7nF9TmL4u4OJ+Go00vf?=
+ =?us-ascii?Q?RYCrhaY7iYZcmMP4iIVLM7JIEqdwgrnlAPQXz7wNjwn2VJKCeDOFqftJMFuw?=
+ =?us-ascii?Q?wRbqg46tUJMJwkeQVXXcLXwlqJmP79YXQDT1V6xIwSDhLi1viBMD6lmbjV70?=
+ =?us-ascii?Q?og=3D=3D?=
+X-OriginatorOrg: chipsnmedia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d27a8b1-c85d-45a4-0097-08dc8ebb0425
+X-MS-Exchange-CrossTenant-AuthSource: SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2024 10:48:25.9955
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4d70c8e9-142b-4389-b7f2-fa8a3c68c467
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9ylPY8Z1JA9oL5T+5wR31Z0I6exnpVOc/Hdj+jWfbQfBSVg3dPwLsZYJTVKQYxXnFSW1HjOC7+D0HsWiNmZY1GTdzEEfUWfDMpp9DiCyDk0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SL2P216MB3099
 
-Hi Kees,
+The wave5 codec driver is a stateful encoder/decoder.
+The following patches is for supporting yuv422 inpuy format, supporting runtime suspend/resume feature and extra things.
 
-Are you happy to pick this up?
+v4l2-compliance results:
+========================
 
-Mark.
+v4l2-compliance 1.24.1, 64 bits, 64-bit time_t
 
-On Wed, May 15, 2024 at 01:08:28PM +0100, Mark Rutland wrote:
-> The CONFIG_CSD_LOCK_WAIT_DEBUG option enables debugging of hung
-> smp_call_function*() calls (e.g. when the target CPU gets stuck within
-> the callback function). Testing this option requires triggering such
-> hangs.
-> 
-> This patch adds an lkdtm test with a hung smp_call_function_single()
-> callback, which can be used to test CONFIG_CSD_LOCK_WAIT_DEBUG and NMI
-> backtraces (as CONFIG_CSD_LOCK_WAIT_DEBUG will attempt an NMI backtrace
-> of the hung target CPU).
-> 
-> On arm64 using pseudo-NMI, this looks like:
-> 
-> | # mount -t debugfs none /sys/kernel/debug/
-> | # echo SMP_CALL_LOCKUP > /sys/kernel/debug/provoke-crash/DIRECT
-> | lkdtm: Performing direct entry SMP_CALL_LOCKUP
-> | smp: csd: Detected non-responsive CSD lock (#1) on CPU#1, waiting 5000000176 ns for CPU#00 __lkdtm_SMP_CALL_LOCKUP+0x0/0x8(0x0).
-> | smp:     csd: CSD lock (#1) handling this request.
-> | Sending NMI from CPU 1 to CPUs 0:
-> | NMI backtrace for cpu 0
-> | CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.9.0-rc4-00001-gfdfd281212ec #1
-> | Hardware name: linux,dummy-virt (DT)
-> | pstate: 60401005 (nZCv daif +PAN -UAO -TCO -DIT +SSBS BTYPE=--)
-> | pc : __lkdtm_SMP_CALL_LOCKUP+0x0/0x8
-> | lr : __flush_smp_call_function_queue+0x1b0/0x290
-> | sp : ffff800080003f30
-> | pmr_save: 00000060
-> | x29: ffff800080003f30 x28: ffffa4ce961a4900 x27: 0000000000000000
-> | x26: fff000003fcfa0c0 x25: ffffa4ce961a4900 x24: ffffa4ce959aa140
-> | x23: ffffa4ce959aa140 x22: 0000000000000000 x21: ffff800080523c40
-> | x20: 0000000000000000 x19: 0000000000000000 x18: fff05b31aa323000
-> | x17: fff05b31aa323000 x16: ffff800080000000 x15: 0000330fc3fe6b2c
-> | x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000279
-> | x11: 0000000000000040 x10: fff000000302d0a8 x9 : fff000000302d0a0
-> | x8 : fff0000003400270 x7 : 0000000000000000 x6 : ffffa4ce9451b810
-> | x5 : 0000000000000000 x4 : fff05b31aa323000 x3 : ffff800080003f30
-> | x2 : fff05b31aa323000 x1 : ffffa4ce959aa140 x0 : 0000000000000000
-> | Call trace:
-> |  __lkdtm_SMP_CALL_LOCKUP+0x0/0x8
-> |  generic_smp_call_function_single_interrupt+0x14/0x20
-> |  ipi_handler+0xb8/0x178
-> |  handle_percpu_devid_irq+0x84/0x130
-> |  generic_handle_domain_irq+0x2c/0x44
-> |  gic_handle_irq+0x118/0x240
-> |  call_on_irq_stack+0x24/0x4c
-> |  do_interrupt_handler+0x80/0x84
-> |  el1_interrupt+0x44/0xc0
-> |  el1h_64_irq_handler+0x18/0x24
-> |  el1h_64_irq+0x78/0x7c
-> |  default_idle_call+0x40/0x60
-> |  do_idle+0x23c/0x2d0
-> |  cpu_startup_entry+0x38/0x3c
-> |  kernel_init+0x0/0x1d8
-> |  start_kernel+0x51c/0x608
-> |  __primary_switched+0x80/0x88
-> | CPU: 1 PID: 128 Comm: sh Not tainted 6.9.0-rc4-00001-gfdfd281212ec #1
-> | Hardware name: linux,dummy-virt (DT)
-> | Call trace:
-> |  dump_backtrace+0x90/0xe8
-> |  show_stack+0x18/0x24
-> |  dump_stack_lvl+0xac/0xe8
-> |  dump_stack+0x18/0x24
-> |  csd_lock_wait_toolong+0x268/0x338
-> |  smp_call_function_single+0x1dc/0x2f0
-> |  lkdtm_SMP_CALL_LOCKUP+0xcc/0xfc
-> |  lkdtm_do_action+0x1c/0x38
-> |  direct_entry+0xbc/0x14c
-> |  full_proxy_write+0x60/0xb4
-> |  vfs_write+0xd0/0x35c
-> |  ksys_write+0x70/0x104
-> |  __arm64_sys_write+0x1c/0x28
-> |  invoke_syscall+0x48/0x114
-> |  el0_svc_common.constprop.0+0x40/0xe0
-> |  do_el0_svc+0x1c/0x28
-> |  el0_svc+0x38/0x108
-> |  el0t_64_sync_handler+0x120/0x12c
-> |  el0t_64_sync+0x1a4/0x1a8
-> | smp: csd: Continued non-responsive CSD lock (#1) on CPU#1, waiting 10000064272 ns for CPU#00 __lkdtm_SMP_CALL_LOCKUP+0x0/0x8(0x0).
-> | smp:     csd: CSD lock (#1) handling this request.
-> | smp: csd: Continued non-responsive CSD lock (#1) on CPU#1, waiting 15000064384 ns for CPU#00 __lkdtm_SMP_CALL_LOCKUP+0x0/0x8(0x0).
-> | smp:     csd: CSD lock (#1) handling this request.
-> 
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Acked-by: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> ---
->  drivers/misc/lkdtm/bugs.c               | 30 +++++++++++++++++++++++++
->  tools/testing/selftests/lkdtm/tests.txt |  1 +
->  2 files changed, 31 insertions(+)
-> 
-> Since v1 [1]:
-> * Rename option CSDLOCKUP -> SMP_CALL_LOCKUP
-> * Add entry to tests.txt
-> * Fix typo in commit message
-> * Add Paul's Acked-by tag
-> 
-> [1] https://lore.kernel.org/lkml/20240419103452.3530155-1-mark.rutland@arm.com/
-> 
-> diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
-> index 5178c02b21eba..62ba015254797 100644
-> --- a/drivers/misc/lkdtm/bugs.c
-> +++ b/drivers/misc/lkdtm/bugs.c
-> @@ -286,6 +286,35 @@ static void lkdtm_HARDLOCKUP(void)
->  		cpu_relax();
->  }
->  
-> +static void __lkdtm_SMP_CALL_LOCKUP(void *unused)
-> +{
-> +	for (;;)
-> +		cpu_relax();
-> +}
-> +
-> +static void lkdtm_SMP_CALL_LOCKUP(void)
-> +{
-> +	unsigned int cpu, target;
-> +
-> +	cpus_read_lock();
-> +
-> +	cpu = get_cpu();
-> +	target = cpumask_any_but(cpu_online_mask, cpu);
-> +
-> +	if (target >= nr_cpu_ids) {
-> +		pr_err("FAIL: no other online CPUs\n");
-> +		goto out_put_cpus;
-> +	}
-> +
-> +	smp_call_function_single(target, __lkdtm_SMP_CALL_LOCKUP, NULL, 1);
-> +
-> +	pr_err("FAIL: did not hang\n");
-> +
-> +out_put_cpus:
-> +	put_cpu();
-> +	cpus_read_unlock();
-> +}
-> +
->  static void lkdtm_SPINLOCKUP(void)
->  {
->  	/* Must be called twice to trigger. */
-> @@ -680,6 +709,7 @@ static struct crashtype crashtypes[] = {
->  	CRASHTYPE(UNALIGNED_LOAD_STORE_WRITE),
->  	CRASHTYPE(SOFTLOCKUP),
->  	CRASHTYPE(HARDLOCKUP),
-> +	CRASHTYPE(SMP_CALL_LOCKUP),
->  	CRASHTYPE(SPINLOCKUP),
->  	CRASHTYPE(HUNG_TASK),
->  	CRASHTYPE(OVERFLOW_SIGNED),
-> diff --git a/tools/testing/selftests/lkdtm/tests.txt b/tools/testing/selftests/lkdtm/tests.txt
-> index 368973f05250f..cff124c1eddd3 100644
-> --- a/tools/testing/selftests/lkdtm/tests.txt
-> +++ b/tools/testing/selftests/lkdtm/tests.txt
-> @@ -31,6 +31,7 @@ SLAB_FREE_CROSS
->  SLAB_FREE_PAGE
->  #SOFTLOCKUP Hangs the system
->  #HARDLOCKUP Hangs the system
-> +#SMP_CALL_LOCKUP Hangs the system
->  #SPINLOCKUP Hangs the system
->  #HUNG_TASK Hangs the system
->  EXEC_DATA
-> -- 
-> 2.30.2
-> 
+Buffer ioctls:
+       warn: v4l2-test-buffers.cpp(693): VIDIOC_CREATE_BUFS not supported
+       warn: v4l2-test-buffers.cpp(693): VIDIOC_CREATE_BUFS not supported
+    test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+    test VIDIOC_EXPBUF: OK
+    test Requests: OK (Not Supported)
+
+Total for wave5-dec device /dev/video0: 45, Succeeded: 45, Failed: 0, Warnings: 2 Total for wave5-enc device /dev/video1: 45, Succeeded: 45, Failed: 0, Warnings: 0
+
+Fluster test results:
+=====================
+
+Running test suite JCT-VC-HEVC_V1 with decoder GStreamer-H.265-V4L2-Gst1.0 Using 1 parallel job(s)
+Ran 132/147 tests successfully               in 88.745 secs
+
+(1 test fails because of not supporting to parse multi frames, 1 test fails because of a missing frame and slight corruption,
+ 2 tests fail because of sizes which are incompatible with the IP, 11 tests fail because of unsupported 10 bit format)
+
+Running test suite JVT-AVC_V1 with decoder GStreamer-H.264-V4L2-Gst1.0 Using 1 parallel job(s)
+Ran 77/135 tests successfully               in 32.044 secs
+
+(58 fail because the hardware is unable to decode  MBAFF / FMO / Field / Extended profile streams.)
+
+Change since v5:
+================
+* For [PATCH v4 3/4] media: chips-media: wave5: Use helpers to calculate bytesperline and sizeimage.
+ - Fix v4l2-compliance error for the vidioc_enum_framesizes
+
+* For [PATCH v4 1/4] media: chips-media: wave5: Support SPS/PPS generation for each IDR
+ - Remove warning messages for the checkpatch.pl script
+
+Change since v4:
+================
+* For [PATCH v4 2/4] media: chips-media: wave5: Support runtime suspend/resume
+ - Fix warning message
+
+* For [PATCH v4 3/4] media: chips-media: wave5: Use helpers to calculate bytesperline and sizeimage.
+ - Fix warning message
+ - add Reviewed-By tag
+
+* For [PATCH v4 4/4] media: chips-media: wave5: Support YUV422 raw pixel-formats on the encoder
+ - add Reviewed-By tag
+
+Change since v3:
+=================
+
+* For [PATCH v4 1/4] media: chips-media: wave5: Support SPS/PPS generation for each IDR
+ - add Reviewed-By tag
+
+* For [PATCH v4 2/4] media: chips-media: wave5: Support runtime suspend/resume
+ - add Reviewed-By tag
+
+* For [PATCH v4 3/4] media: chips-media: wave5: Use helpers to calculate bytesperline and sizeimage.
+ - modify the commit message
+ - define three framesize structures for decoder
+
+* For [PATCH v4 4/4] media: chips-media: wave5: Support YUV422 raw pixel-formats on the encoder
+ - modify the commit message
+ - use the v4l2_format_info to calculate luma, chroma size
+
+Change since v2:
+=================
+
+* For [PATCH v3 0/4] media: chips-media: wave5: Support SPS/PPS generation for each IDR
+ - add the suggested _SHIFT suffix
+
+* For [PATCH v3 1/4] media: chips-media: wave5: Support runtime suspend/resume
+ - change a commit message
+
+* For [PATCH v3 2/4] media: chips-media: wave5: Use helpers to calculate bytesperline and sizeimage
+ - add pix_fmt_type parameter into wave5_update_pix_fmt function
+ - add min/max width/height values into dec_fmt_list 
+
+Change since v1:
+=================
+
+* For [PATCH v2 0/4] media: chips-media: wave5: Support SPS/PPS generation for each IDR
+ - define a macro for register addresses
+
+* For [PATCH v2 1/4] media: chips-media: wave5: Support runtime suspend/resume
+ - add auto suspend/resume
+
+* For [PATCH v2 2/4] media: chips-media: wave5: Use helpers to calculate bytesperline and sizeimage
+ - use helper functions to calculate bytesperline and sizeimage
+
+* For [PATCH v2 3/4] media: chips-media: wave5: Support YUV422 raw pixel-formats on the encoder
+ - remove unnecessary codes
+
+Change since v0:
+=================
+The DEFAULT_SRC_SIZE macro was defined using multiple lines, To make a simple define, tab and multiple lines has been removed, The macro is defined using one line.
+
+
+jackson.lee (4):
+  media: chips-media: wave5: Support SPS/PPS generation for each IDR
+  media: chips-media: wave5: Support runtime suspend/resume
+  media: chips-media: wave5: Use helpers to calculate bytesperline and
+    sizeimage.
+  media: chips-media: wave5: Support YUV422 raw pixel-formats on the
+    encoder.
+
+ .../platform/chips-media/wave5/wave5-helper.c |  24 ++
+ .../platform/chips-media/wave5/wave5-helper.h |   5 +
+ .../platform/chips-media/wave5/wave5-hw.c     |  30 +-
+ .../chips-media/wave5/wave5-vpu-dec.c         | 316 +++++++-----------
+ .../chips-media/wave5/wave5-vpu-enc.c         | 308 +++++++++--------
+ .../platform/chips-media/wave5/wave5-vpu.c    |  43 +++
+ .../platform/chips-media/wave5/wave5-vpu.h    |   5 +-
+ .../platform/chips-media/wave5/wave5-vpuapi.c |  14 +-
+ .../platform/chips-media/wave5/wave5-vpuapi.h |   1 +
+ .../chips-media/wave5/wave5-vpuconfig.h       |  27 +-
+ .../media/platform/chips-media/wave5/wave5.h  |   3 +
+ 11 files changed, 430 insertions(+), 346 deletions(-)
+
+-- 
+2.43.0
+
 
