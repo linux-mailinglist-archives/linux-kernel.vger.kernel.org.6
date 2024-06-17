@@ -1,246 +1,133 @@
-Return-Path: <linux-kernel+bounces-217343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B633690AE88
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:01:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 116AB90AE89
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 15:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AEFF28AE2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:01:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 110B01C2031B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 13:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16056197A7D;
-	Mon, 17 Jun 2024 13:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB62196D98;
+	Mon, 17 Jun 2024 13:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="z2oEswWT"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="LMj1Cu6y"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE24197A60
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 13:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE4519BC6;
+	Mon, 17 Jun 2024 13:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718629236; cv=none; b=jACQAvORxBzZp0ZzvsoZZzQmvbgjpcAA2bMiDRqz9CAYjvxMGBk+EtsQ0lyPBjF4z17Mrz2g1XOk6tWLaJMZc+cdUdHv6PrghyEp1AAAzhZJu0jDNUEdcpSjoaDM/6z4EUYPNYWJRfl+PkMhgQddo0T8rfIkJioxZUU03/L0kB8=
+	t=1718629337; cv=none; b=t+4cPm+NdpVGSAVTtMe0UEcKzFKAPQswGAwIbYX91BgbqBlk2hIqRUtXoFm6zbQZFrpfGcLNrZCmtLzyofQNFW91Mgkxtz7p9J78HMaVs0mof5RKDQHL8MU54tVDtI0r0t3aSdwdQo6muOk+n7Q1C0Ut/OVhBmFXiUEROH4g93U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718629236; c=relaxed/simple;
-	bh=fGp/0IRJrNeY2oxPakw039rkeaAfW6K9ePQbj9RP0PM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hDvlEQmYLGm17ETi+yu6MC+ozvfimsH47NeVmdZXZGcbgESZandYTUwVRxVeuttTZSuqeakvCKFzdLOO3M8ylrcF/q4nLPHgCtO/+4ej9L/HrZ8ZV6xQPv0cetxh/CKReG3ITZ+RGhmi/cdbyp0kTB7/aMYQqNMTSf8909BdDzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=z2oEswWT; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=hh18nwxNAXXkVXOW3Y5Ih2WBgf6uP2NmlEPwcE7Vfxk=;
-	t=1718629233; x=1719061233; b=z2oEswWTIzsko0iGJ6BtWQYzIzvgxCPQKZGCxLXfMkyTMzr
-	CNqXfzGru0cHSlpY3bnZlv7Dbg2Jc2fw6lcJLpXk6XAO4rm/AOXPBVdeJkM1qJgJyUDRgQGkyE+QH
-	WSRFrkOKzyB4GUZKHEwRPN5cbEq7haF98NG87sIvSBMfhAjyqwA0bMaehbBmjlGOd+L42PFpJH3W0
-	ICL7BenzBtMlDTFUdTcwsXRU6YL3DoxJ+6DSuHDMZXnn/UCQFuZPT0EbRKeYjxZQO8cujtYuWYCtv
-	4WVZuM3wCaajgvGgV7X4RhUY5br1ARtDVH/sQ/4JCr5bBfhxmYa8pA8iuzFEKUPw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sJBy8-0002p2-1C; Mon, 17 Jun 2024 15:00:20 +0200
-Message-ID: <7015c544-14c3-40af-aa10-e3088eea5633@leemhuis.info>
-Date: Mon, 17 Jun 2024 15:00:18 +0200
+	s=arc-20240116; t=1718629337; c=relaxed/simple;
+	bh=Ed/BCsHrDz5+WndRGDHv9HtTk1vun74wilp9/pFH9KY=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=QJvqJB4vjEhHCYosvLYfWN85FTkW1FwczbP+qySQRA0AhmjtiDiQE9Bs3RBhr2Jk8uCqFtDiuR609rs8YZQ9Fhu0x/4bVVmyHfyhlmygEscUXWGXvr7sI5IJ5dF9HCWspbHhcWlReoDl7KoFjGmmFZrYGJ4oltJzHW/kKFnedcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=LMj1Cu6y; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1718629327; bh=ANRIr3s3kc4DpGfYvUCYv8Lu7oilgq7gw5/sKgrkr7I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=LMj1Cu6ypczeGh7SIq1WPxnQ9drh5TMKHru1mu8Ya9dD/b4HZ5ToSWtSZ2fL76ko/
+	 2yuKpFJly77zhDKSeoIl5JAKS5qa3CnVo8n0SRL7BwyVj3hnBnWK2BnMgA/kjVpZRd
+	 40lndCPKoNeTgBxaJOz8n1VkS0KnrKjJzISTLpFQ=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
+	id 84A360B; Mon, 17 Jun 2024 21:02:04 +0800
+X-QQ-mid: xmsmtpt1718629324tqm16qhiu
+Message-ID: <tencent_98E8BEEC66CC4879526C742CA16C80956C0A@qq.com>
+X-QQ-XMAILINFO: M0PjjqbLT90wtS5jLRiqO6J/f+DARIN0qQ6d4bLvoglJpP6s2t8QlyOyOZxUWl
+	 ce4lie/579ulsUeXGIOYh1Pb8esf8MgGaY+FzB1PcpJFWnOBnx2Ojv5+G7Qm0HV5xcCeUfjJ+wZD
+	 fpyQZwu77KXWC1LDPgISJZuFdUq8vKv/kNntqbp/5TkZ25LJEarGQrhZLtcVd9EWuSfFQcfkwQ8O
+	 7LWtGi0m7q15yq0n0HBWhmeCp4IwZrnHfEbe3cmGPTUdJaLVc+bpEKqpfs9nMzQj1/H9xwovRJ++
+	 0mlVIg3X5ooDaJAb9sDz5BfphiCaq5mESjVdIMIClID5oQrafDqunmSLcIyqISMfi9Q1ZMAfVAzb
+	 N8zn0Jv+yy8uUVogsfa/IdR/CF8v96nCupI2P403IlLgONmItd15duabk3Q3ddAkdSyjJwKtOEVM
+	 9DUzasdF7vYOk6L8X9Ha5ChTfcTINye2QuANh3ZP9KtMQ6aGeprCeyapylR/KOls6JbCb/GMtsAF
+	 N3CFp5V+kYvMJ0n28ogCVmU2c1QOkUH8vyMOij4JdwGhKrCCUlg7UHsop/UBZQR0rlBfvob/QX4v
+	 +nmFQDxHUXe8KpRCD3lo3uNAWegTkDlIJ3XTnCZ2iCClMkezlALbYmmN0ec7jkAV2+aHwPQ2iwO0
+	 IBonmQ+GkSlgjqT8O7jBaGe6WNYZkuEI+iBozfbByz0yARH4KUWOT9SDnxwuZifOSzUGYXh8Nm6z
+	 tltc7chxR2CA0cPW8yW92LzA5HYg6z30LQ4ncVuKQXRXDH9SIpF+CXEodMQTUqJTatQYaAd8Sskq
+	 OusjtQzYSUcb09z4zFe6/ijPB92W+vRXEi2KO1l4/1j6yZJivgs2xh181+7qKOWTZ1LjLvuXBGhF
+	 g7VtPM3icze3PbycneR2UWxVGTLfK+7cbOqS7dMP8AVi4yi6htJmDpqfTAuIYa4hp1cER7NNWN8T
+	 yjmMjwkWw=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+6d3e28b33490b3085412@syzkaller.appspotmail.com
+Cc: bfoster@redhat.com,
+	kent.overstreet@linux.dev,
+	linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] bcachefs: Check and reset ro_ref in bch2_fsck_thread_exit
+Date: Mon, 17 Jun 2024 21:02:05 +0800
+X-OQ-MSGID: <20240617130204.773068-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000009a83e9061aeac50d@google.com>
+References: <0000000000009a83e9061aeac50d@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Re: [PATCH V2] drm/bridge: adv7511: Fix Intermittent EDID failures
-To: dmitry.baryshkov@linaro.org, Adam Ford <aford173@gmail.com>
-Cc: victor.liu@nxp.com, sui.jingfeng@linux.dev, aford@beaconembedded.com,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20240601132459.81123-1-aford173@gmail.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <20240601132459.81123-1-aford173@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718629233;70b407f5;
-X-HE-SMSGID: 1sJBy8-0002p2-1C
+Content-Transfer-Encoding: 8bit
 
-[CCing the regression list, as it should be in the loop for regressions:
-https://docs.kernel.org/admin-guide/reporting-regressions.html]
+The following is the normal execution situation:
 
-Hi! Top-posting for once, to make this easily accessible to everyone.
+CPU1                     CPU2                       CPU3
+======================   =========================  =====
+                         bch2_run_thread_with_file
+                         bch2_ioctl_fsck_online
+			                            bch2_fsck_online_thread_fn
 
-Hmm, seem nobody took a look at below fix for a regression that seems to
-be caused by f3d9683346d6b1 ("drm/bridge: adv7511: Allow IRQ to share
-GPIO pins") [which went into v6.10-rc1].
+                         bch2_fsck_thread_exit
+cleanup_mnt
+deactivate_super
+deactivate_locked_super
+bch2_kill_sb
+generic_shutdown_super
+bch2_put_super
+__bch2_fs_stop
 
-Adam and Dimitry, what are your stances on this patch from Adam? I'm
-asking, as you authored respectively committed the culprit?
+If the execution of bch2_fsck_online_thread_fn is later than that of
+bch2_fsck_thread_exit, it will result in the ro_ref value being greater
+than 1, when executing __bch2_fs_stop, the wait_event wait timeout will
+occur due to the fact that the ro_ref value can never be 0.
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
+The solution is to check the ro_ref value when exiting the fsck thread,
+and if it is greater than 1, set it to 1 to avoid timeouts in __bch2_fs
+_stop due to the ro_ref value never being able to be 0.
 
-#regzbot poke
+Fixes: 267b801fda10 ("bcachefs: BCH_IOCTL_FSCK_ONLINE")
+Reported-by: syzbot+6d3e28b33490b3085412@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=6d3e28b33490b3085412
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/bcachefs/chardev.c | 5 ++++
+ 1 file changed, 5 insertions(+)
 
-On 01.06.24 15:24, Adam Ford wrote:
-> In the process of adding support for shared IRQ pins, a scenario
-> was accidentally created where adv7511_irq_process returned
-> prematurely causing the EDID to fail randomly.
-> 
-> Since the interrupt handler is broken up into two main helper functions,
-> update both of them to treat the helper functions as IRQ handlers. These
-> IRQ routines process their respective tasks as before, but if they
-> determine that actual work was done, mark the respective IRQ status
-> accordingly, and delay the check until everything has been processed.
-> 
-> This should guarantee the helper functions don't return prematurely
-> while still returning proper values of either IRQ_HANDLED or IRQ_NONE.
-> 
-> Reported-by: Liu Ying <victor.liu@nxp.com>
-> Fixes: f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> Tested-by: Liu Ying <victor.liu@nxp.com> # i.MX8MP EVK ADV7535 EDID retrieval w/o IRQ
-> ---
-> V2:  Fix uninitialized cec_status
->      Cut back a little on error handling to return either IRQ_NONE or
->      IRQ_HANDLED.
-> 
-> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511.h b/drivers/gpu/drm/bridge/adv7511/adv7511.h
-> index ea271f62b214..ec0b7f3d889c 100644
-> --- a/drivers/gpu/drm/bridge/adv7511/adv7511.h
-> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511.h
-> @@ -401,7 +401,7 @@ struct adv7511 {
->  
->  #ifdef CONFIG_DRM_I2C_ADV7511_CEC
->  int adv7511_cec_init(struct device *dev, struct adv7511 *adv7511);
-> -void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1);
-> +int adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1);
->  #else
->  static inline int adv7511_cec_init(struct device *dev, struct adv7511 *adv7511)
->  {
-> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c b/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
-> index 44451a9658a3..651fb1dde780 100644
-> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
-> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
-> @@ -119,7 +119,7 @@ static void adv7511_cec_rx(struct adv7511 *adv7511, int rx_buf)
->  	cec_received_msg(adv7511->cec_adap, &msg);
->  }
->  
-> -void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
-> +int adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
->  {
->  	unsigned int offset = adv7511->info->reg_cec_offset;
->  	const u32 irq_tx_mask = ADV7511_INT1_CEC_TX_READY |
-> @@ -130,17 +130,21 @@ void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
->  				ADV7511_INT1_CEC_RX_READY3;
->  	unsigned int rx_status;
->  	int rx_order[3] = { -1, -1, -1 };
-> -	int i;
-> +	int i, ret = 0;
-> +	int irq_status = IRQ_NONE;
->  
-> -	if (irq1 & irq_tx_mask)
-> +	if (irq1 & irq_tx_mask) {
->  		adv_cec_tx_raw_status(adv7511, irq1);
-> +		irq_status = IRQ_HANDLED;
-> +	}
->  
->  	if (!(irq1 & irq_rx_mask))
-> -		return;
-> +		return irq_status;
->  
-> -	if (regmap_read(adv7511->regmap_cec,
-> -			ADV7511_REG_CEC_RX_STATUS + offset, &rx_status))
-> -		return;
-> +	ret = regmap_read(adv7511->regmap_cec,
-> +			ADV7511_REG_CEC_RX_STATUS + offset, &rx_status);
-> +	if (ret < 0)
-> +		return irq_status;
->  
->  	/*
->  	 * ADV7511_REG_CEC_RX_STATUS[5:0] contains the reception order of RX
-> @@ -172,6 +176,8 @@ void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
->  
->  		adv7511_cec_rx(adv7511, rx_buf);
->  	}
-> +
-> +	return IRQ_HANDLED;
->  }
->  
->  static int adv7511_cec_adap_enable(struct cec_adapter *adap, bool enable)
-> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-> index 66ccb61e2a66..c8d2c4a157b2 100644
-> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-> @@ -469,6 +469,8 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
->  {
->  	unsigned int irq0, irq1;
->  	int ret;
-> +	int cec_status = IRQ_NONE;
-> +	int irq_status = IRQ_NONE;
->  
->  	ret = regmap_read(adv7511->regmap, ADV7511_REG_INT(0), &irq0);
->  	if (ret < 0)
-> @@ -478,29 +480,31 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
->  	if (ret < 0)
->  		return ret;
->  
-> -	/* If there is no IRQ to handle, exit indicating no IRQ data */
-> -	if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
-> -	    !(irq1 & ADV7511_INT1_DDC_ERROR))
-> -		return -ENODATA;
-> -
->  	regmap_write(adv7511->regmap, ADV7511_REG_INT(0), irq0);
->  	regmap_write(adv7511->regmap, ADV7511_REG_INT(1), irq1);
->  
-> -	if (process_hpd && irq0 & ADV7511_INT0_HPD && adv7511->bridge.encoder)
-> +	if (process_hpd && irq0 & ADV7511_INT0_HPD && adv7511->bridge.encoder) {
->  		schedule_work(&adv7511->hpd_work);
-> +		irq_status = IRQ_HANDLED;
-> +	}
->  
->  	if (irq0 & ADV7511_INT0_EDID_READY || irq1 & ADV7511_INT1_DDC_ERROR) {
->  		adv7511->edid_read = true;
->  
->  		if (adv7511->i2c_main->irq)
->  			wake_up_all(&adv7511->wq);
-> +		irq_status = IRQ_HANDLED;
->  	}
->  
->  #ifdef CONFIG_DRM_I2C_ADV7511_CEC
-> -	adv7511_cec_irq_process(adv7511, irq1);
-> +	cec_status = adv7511_cec_irq_process(adv7511, irq1);
->  #endif
->  
-> -	return 0;
-> +	/* If there is no IRQ to handle, exit indicating no IRQ data */
-> +	if (irq_status == IRQ_HANDLED || cec_status == IRQ_HANDLED)
-> +		return IRQ_HANDLED;
-> +
-> +	return IRQ_NONE;
->  }
->  
->  static irqreturn_t adv7511_irq_handler(int irq, void *devid)
-> @@ -509,7 +513,7 @@ static irqreturn_t adv7511_irq_handler(int irq, void *devid)
->  	int ret;
->  
->  	ret = adv7511_irq_process(adv7511, true);
-> -	return ret < 0 ? IRQ_NONE : IRQ_HANDLED;
-> +	return ret < 0 ? IRQ_NONE : ret;
->  }
->  
->  /* -----------------------------------------------------------------------------
+diff --git a/fs/bcachefs/chardev.c b/fs/bcachefs/chardev.c
+index 9e54323f0f5f..487a01db2b72 100644
+--- a/fs/bcachefs/chardev.c
++++ b/fs/bcachefs/chardev.c
+@@ -135,6 +135,11 @@ struct fsck_thread {
+ static void bch2_fsck_thread_exit(struct thread_with_stdio *_thr)
+ {
+ 	struct fsck_thread *thr = container_of(_thr, struct fsck_thread, thr);
++	struct bch_fs *c = thr->c;
++
++	if (refcount_read(&c->ro_ref) > 1)
++		refcount_set(&c->ro_ref, 1);
++
+ 	kfree(thr);
+ }
+ 
+-- 
+2.43.0
+
 
