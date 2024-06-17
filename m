@@ -1,196 +1,174 @@
-Return-Path: <linux-kernel+bounces-218429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A987290BFB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:15:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F402B90BFBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 01:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69AD11C20C27
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:15:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7851E1F22058
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 23:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394C5199248;
-	Mon, 17 Jun 2024 23:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CA2199E9C;
+	Mon, 17 Jun 2024 23:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XK6UbVK3"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="HUmW2Ahe"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B193A18F2EF
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 23:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF04A1993A9
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 23:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718666138; cv=none; b=jov7EkII6x5i8D8AxpqBMi/nNkxAL4DyQlrf1W8vxo4+sP4KwIIIUQBzaLPr6JzET3jkhoys1jxjE6ICo1+fh9V80IRhygensDfuVRtwQhAdYFPUKD6WJizKKEp0nRjzAl0GxFTYhhiOsWe35sKgM0POhJX9zaDrvpjqzoR4Nc4=
+	t=1718666294; cv=none; b=nWFhHnoBDOmIywcRwUNvYTIBYivfks7+sYtUXHFeSqm8QteeceOctpEhzbsXjTASB4EVaKK0ZzAnUH5PONI9m0B4GG024K5J3sjiecWOIOJgl5ZLH1y769SCleZ8NxUVqquatvpYkAIi/2uvb9lrRQ05f1k9Fl6bgKYoaDS6Wgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718666138; c=relaxed/simple;
-	bh=mrGr+jfPgxylV03HLSIrXjXxXgwjYyM4ZcbNZomXQJ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p9xx6J0KiMcx21/yZgOrkgbEypjhalVhQyoS+X87/NVsKlePFA35DCnCEepqAEclP6msx+RF/9NAFYojVSFNYEc/aKtzuSyr1ZxZQRTxqG+H0ncYE3LEdsDWcWojTtaLUaFMyrpNDrT9ihTVdXK0C/Vp/IVR+OYCsLx4OhPoxz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XK6UbVK3; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f992388bbbso1531545ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 16:15:36 -0700 (PDT)
+	s=arc-20240116; t=1718666294; c=relaxed/simple;
+	bh=pcP3BpdjhmmxqdiTKi9niOwSo5grD2DrIFHASx9xk2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lw9c10v8rR+FFoibBdHOuWD9PsV3JDTQ/J1c4XB8RHiU3UnjL9WgPehpRAs7FCI/em5n6iuY1l+6NwAe+1JIjwDJ8Vd0OOw2lgw4VHUkw5QVD6fxg/Q86IB+Hqq7WurYaAb5XNUImhs+lYjAqSywoIuLxsolkXC6k2AH55mv7h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=HUmW2Ahe; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-6c53a315c6eso3380132a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 16:18:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718666136; x=1719270936; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=k4AtK2TaCd2yS/HExYpuzuNz6kVGHHqcRp/1PNeJkUo=;
-        b=XK6UbVK3BpEBS8vRZ7N6XvsMp9XlnUPo9/3AQlx0erIifzFmxXjdOfvi1WkrSsXBWM
-         h1/ptSMv4fwOjI4YcxDvrcJvhStCZ44jDL6Ww+fRly7Az6Ijd6mIAEZb5OtfxafK9PuJ
-         5qHrbal3e0o/TfcBGmT8Lz4PixZRFbOsWX49QYk0Dl0Mi+xlWxnU+rZtfoXvsJEsLbk0
-         GCP5ydsk4SIj7hCRZhunA2/Cx7g9YoMulkAxB/IoZrC+g0jWrJ0THw7ZCJ4TwIPJSFPJ
-         Pn0JAr7o64oj54FXE9WMxjdjoKo+zbA6kESIOgAQLu6SYjAGT0KBm/AWddAumEhNbf+d
-         Rd8g==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1718666292; x=1719271092; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gaehIoCCMbdtbvnUIS3Bk9WXrmvq/8zVNdJb/nDEkms=;
+        b=HUmW2Ahe5S9AqqF9UkjtWiUxOZ5XU6dJrGR9QYkgI5zbvU8Nh/5E233mJrmm+y8rdJ
+         c8WSrYtvZglsPa1LijMe2LebKJHB8LI9uJuDn9hq9DfpzUnMRyRSYHvZsDN+yX+Psr1a
+         j/W0XNtuVTILAotGboEMI1uTFEPPGsNXzj3JG3mnZawFJSUiFwgdUaPHvVFxwQXVg8o1
+         vPx/m6STqHf479xeKEM5Gwu3br7XdeFRW9uoqhyPz/t0c5dZJheM1GgV9ScsLRTfAIxc
+         IyH/Dzx4PprmMciSZJ4CiCA7oQxmYo5+L06wv2SBFG+750l+h28XOIPeJoSI54xgY90B
+         DpCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718666136; x=1719270936;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1718666292; x=1719271092;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=k4AtK2TaCd2yS/HExYpuzuNz6kVGHHqcRp/1PNeJkUo=;
-        b=F+Ww7s/wzD415YQ5DAf1nvA8UgBX0fvgeNFntGMFu+trqO4296kNqbsLC02UXQRPP5
-         rcBAb3lP8BtFyorKmqXN5N3mKvOxBO5c1H7xoraY56tYpjez2QNUsDjFaVwiZuA/ExNx
-         Y5uGLEstgUO/NfVZSXqfyvuotXsZi+qF6O3fzeTyh2448oOGSuNZPvWA56zgxVPhPtgj
-         XNx04h000GZgQNDYg7nJyUTWjEZMAVvDqUU79CHohk8U7nccu9JfLMeigg5bqydmxmiL
-         g4eC/WrB9jNpoxaK7zs4qbN17kzqDmr3hQR6uUxwjaAJ1MxcMurFPeihRu1qiks7q3TL
-         h9Og==
-X-Forwarded-Encrypted: i=1; AJvYcCXk+P5NV94GZyfGI3eHGffHUZCx/h6MC5Yr3/+vBZ5hvccCX08w/WU6hIOsaS0LpZd8EPi+B98Re+QrGP06iFlWy6Q0tN9Ayi5VmzmN
-X-Gm-Message-State: AOJu0Yw1Ql2HtSbGBcSPUN0c8JZ/U/NK8mS8jmBn8rsIHFRRXbljNwsT
-	FmD1nK2vgNTMJcSBZWPxAy5V3vrvIsdcn+db1HSE7bW61ml1M3S7
-X-Google-Smtp-Source: AGHT+IEEw6+nFjPNOmnXUwAqn8UsG6ecJSNvNMmEAcUqCdeLzsLy/zQ7wumgzJgRKkwyU57TVvYhZQ==
-X-Received: by 2002:a17:902:ced1:b0:1f6:f047:d37d with SMTP id d9443c01a7336-1f8627d6520mr134842775ad.36.1718666135856;
-        Mon, 17 Jun 2024 16:15:35 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f40947sm84028825ad.276.2024.06.17.16.15.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 16:15:35 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <e6733f56-014e-4ea0-aaf8-059334f2b27f@roeck-us.net>
-Date: Mon, 17 Jun 2024 16:15:33 -0700
+        bh=gaehIoCCMbdtbvnUIS3Bk9WXrmvq/8zVNdJb/nDEkms=;
+        b=UB9kU1FHC2FIrMcpUaUdW0BhnrRWJitrCC/TNDfckbuctzn/nFb1D4PpC+Y5hlJyas
+         75H8he8ZblcrKS7jRuh15a6LOkQI2+uzpRObDjCvD/j3yX03uBiA+OSnVLj5tUVWc+0U
+         FbqXOlZUt1alQzMB2f5y57yGKwiCt7Or1Ds5HhRuig2fFbHSR6/SNZ5SMRNSnJ3Kvxzi
+         pn1jX7mZuWSNEiy0gYpeqmOmInA2tVV7B3F+oTQC9kkBge/T7CZtt10RcPHE0cvJ0l6/
+         n1wyBF+6bwEEyYE6roCLVcLp+PFKMdSTpZQv4ZOb+UycsLzxWChiLVwKs74m4EqBI7Dk
+         Fyfw==
+X-Forwarded-Encrypted: i=1; AJvYcCXse6GZhF7O1nQmwCYJbtty6icRrr+W1LQ4PR4UhELU0F65SCzOMYaG/aV2TyMypvFOya18BiL3jTWA65xtFZEZO3yvx2nBYKxQ7y6b
+X-Gm-Message-State: AOJu0YyEZBuw95L24jNd6IknJGXo3ie+7kLJzlyYtv3sovbmtX0VS/u1
+	Yv3LM+EjlAgLswKGEF9hSfRSOyxJCdpXrfB1xctC9qQo5543L+BTgns6j2DD/D0=
+X-Google-Smtp-Source: AGHT+IFZ5VaDbnJgrc4upZ8ziIxaNBi9yUsEpjQiocgmkB3SKh6FhcEhl90ontDwiZTKwkEGHbQzuw==
+X-Received: by 2002:a05:6a20:321b:b0:1b8:5967:45bc with SMTP id adf61e73a8af0-1bae83a39fdmr9164501637.61.1718666291634;
+        Mon, 17 Jun 2024 16:18:11 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fee2d3673dsm7103023a12.69.2024.06.17.16.18.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 16:18:11 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sJLc0-0025gT-1w;
+	Tue, 18 Jun 2024 09:18:08 +1000
+Date: Tue, 18 Jun 2024 09:18:08 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, djwong@kernel.org,
+	chandan.babu@oracle.com, brauner@kernel.org,
+	akpm@linux-foundation.org, willy@infradead.org, mcgrof@kernel.org,
+	linux-mm@kvack.org, hare@suse.de, linux-kernel@vger.kernel.org,
+	yang@os.amperecomputing.com, Zi Yan <zi.yan@sent.com>,
+	linux-xfs@vger.kernel.org, p.raghav@samsung.com,
+	linux-fsdevel@vger.kernel.org, gost.dev@samsung.com,
+	cl@os.amperecomputing.com, john.g.garry@oracle.com
+Subject: Re: [PATCH v7 11/11] xfs: enable block size larger than page size
+ support
+Message-ID: <ZnDEME/qMAzqli8l@dread.disaster.area>
+References: <20240607145902.1137853-1-kernel@pankajraghav.com>
+ <20240607145902.1137853-12-kernel@pankajraghav.com>
+ <20240613084725.GC23371@lst.de>
+ <Zm+RhjG6DUoat7lO@dread.disaster.area>
+ <20240617065104.GA18547@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Page select register restrictions in regmap core
-To: Mark Brown <broonie@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, Armin Wolf <W_Armin@gmx.de>
-References: <e3e11724-794d-423e-9326-ffe8eed5119c@roeck-us.net>
- <4b22e04f-3142-4a5a-a8d1-366c4b8bbb73@sirena.org.uk>
- <78c93d6b-af0e-4d96-b213-e1e402524361@roeck-us.net>
- <adcd5997-84ee-4c72-aa37-2940afdc83bd@sirena.org.uk>
- <c4a5fb5c-90b4-488b-8875-a0b819e24bcd@roeck-us.net>
- <19893519-20a6-47cf-bb3b-c61dada627bc@sirena.org.uk>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <19893519-20a6-47cf-bb3b-c61dada627bc@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240617065104.GA18547@lst.de>
 
-On 6/17/24 15:47, Mark Brown wrote:
-> On Mon, Jun 17, 2024 at 02:55:09PM -0700, Guenter Roeck wrote:
->> On 6/17/24 10:22, Mark Brown wrote:
+On Mon, Jun 17, 2024 at 08:51:04AM +0200, Christoph Hellwig wrote:
+> On Mon, Jun 17, 2024 at 11:29:42AM +1000, Dave Chinner wrote:
+> > > > +	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
+> > > > +		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
+> > > > +	else
+> > > > +		igeo->min_folio_order = 0;
+> > > >  }
+> > > 
+> > > The minimum folio order isn't really part of the inode (allocation)
+> > > geometry, is it?
+> > 
+> > I suggested it last time around instead of calculating the same
+> > constant on every inode allocation. We're already storing in-memory
+> > strunct xfs_inode allocation init values in this structure. e.g. in
+> > xfs_inode_alloc() we see things like this:
 > 
->>> The range is *entirely* defined within the driver, it is 100% a software
->>> construct, the hardware only influences our choice of range in that we
->>> can't place it on top of hardware registers.
-> 
->> I _think_ what you are saying is that I'd have to model all registers
->> which are to be addressed through regmap as virtual registers with an offset
->> outside the range of real registers. Something like adding 0x100 to the
-> 
-> No, only registers that are accessed through a window need to be
-> mapped into a range.  Any other registers can just be accessed.
-> 
-See below.
+> While new_diflags2 isn't exactly inode geometry, it at least is part
+> of the inode allocation.  Folio min order for file data has nothing
+> to do with this at all.
 
->> each register address and then accessing, say, the revision register
->> not as register 0x02 but as register 0x102. I would then define the matching
->> range from 0x100 .. 0x17f and the window from 0x00..0x7f.
+Yet ip->i_diflags2 is *not* initialised in xfs_init_new_inode()
+when we physically allocate and initialise a new inode. It is set
+for all inodes when they are allocated in memory, regardless of
+their use.
+
+Whether that is the right thing to do or not is a separate issue -
+xfs_inode_from_disk() will overwrite it in every inode read case
+that isn't a create.
+
+Indeed, We could do the folio order initialisation in
+xfs_setup_inode() where we set up the mapping gfp mask, but that
+doesn't change the fact we set it up for every inode that is
+instantiated in memory or that we want it pre-calculated...
+
+> > The only other place we might store it is the struct xfs_mount, but
+> > given all the inode allocation constants are already in the embedded
+> > mp->m_ino_geo structure, it just seems like a much better idea to
+> > put it will all the other inode allocation constants than dump it
+> > randomly into the struct xfs_mount....
 > 
-> That would make the range exactly the same size as the window so there'd
-> be no paging going on and the registers could be accessed directly?  I
-> guess that's another check that should be added...
-> 
+> Well, it is very closely elated to say the m_blockmask field in
+> struct xfs_mount.
 
-I tried to explain this before. The registers in address range 00..0x7f
-are physical, but they are only accessible from page 0 with the exception
-of the page select register. So, sure, the registers are not actually paged,
-but page 0 must be selected to access them. That is the one and only reason
-for specifying that first range and window. It ensures that page 0 is
-selected when accessing the registers. If that wasn't the case, I could
-define a single range for the actually paged addresses in the 0x80..0xff
-window and be done with it.
+Not really. The block mask is a property of the and used primarily
+for manipulating lengths in units of FSB to/from byte counts and
+vice versa. It is used all over the place, and the only guaranteed
+common structure that all those callers have access to is the
+xfs_mount.
 
->> Hmm, yes, I see that this should work. I don't think it is worth doing though
->> since I need to be able to access some registers outside regmap, and I'd have
->> to define two sets of addresses for all those registers. That would simplify
->> the code a bit but one would have to remember that register addresses through
->> regmap are different than register addresses when calling smbus functions
->> directly. I think we'll just stick with the current code and keep the paging
->> implementation in the driver.
-> 
-> Mixing regmap and non-regmap access to the same registers seems like a
-> bad idea in general, you will have locking issues (especially around the
-> paging).
+OTOH, the folio order is only used for regular files to tell the
+page cache how to behave. The scope of the folio order setup is the
+same as mapping_set_gfp_mask() - is it only used in one place and
+used for inode configuration. I may have called the structure "inode
+geometry" because that described what it contained when I first
+implemented it, but that doesn't mean that is all that is can
+contain. It contains static, precalculated inode configuration
+values, and that what we are adding here...
 
-The non-regmap access all happens in the probe function before regmap is
-initialized. It is needed for basic chip identification, to prevent someone
-from instantiating the driver on a random nvram/eeprom and messing it up
-with attempts to write the page select register. I would not want to be
-held responsible for someone with, say, DDR4 DIMMs force-instantiating
-the spd5118 driver and then complaining about bricked DIMMs.
+> The again modern CPUs tend to get a you simple
+> subtraction for free in most pipelines doing other things, so I'm
+> not really sure it's worth caching for use in inode allocation to
+> start with, but I don't care strongly about that.
 
-Thanks,
-Guenter
+It's not the cost of a subtraction that is the problem -
+precalculation is about avoiding a potential branch misprediction in
+a hot path that would stall the CPU. If there were no branches, it
+wouldn't be an issue, but this value cannot be calculated without at
+least one branch in the logic.
 
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
