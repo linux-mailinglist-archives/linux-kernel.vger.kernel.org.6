@@ -1,124 +1,155 @@
-Return-Path: <linux-kernel+bounces-218225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B21A390BB69
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:52:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03AFC90BB83
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 21:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C42EB1C224E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:52:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 000B8B22AB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 19:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14640188CAB;
-	Mon, 17 Jun 2024 19:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777E718F2EF;
+	Mon, 17 Jun 2024 19:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L0nXugsC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GxTWFREL"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A59D53E;
-	Mon, 17 Jun 2024 19:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70F2188CAB
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 19:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718653971; cv=none; b=ItkmiZD0+pqfg4WkC5Fk/akJ/MLn7GxFm7B1efhBeNz9zvgHfgH+qvofJE+B73LgJxjOFLQb8hBiy5WI6GXpZRxmvwZ/IrnWqhtbS7+hGYyqaT1HVGUPDrTlgudIrBWgwx5BP9WtKdVGBfJKEKlbWbFYfVH2UQY5KJwA5qrdHAQ=
+	t=1718654227; cv=none; b=CbzMqcIGjGaMJ8/pZ2Eq9WSQoF0ni7NE2iujPP9Ii/taR+iJxk8HYQAQOApWOB2VXEsA9BdMoIyvO5sDJZe4bm1wMrobjUd69ujIJyNuOYbtbQYAGDfsgr6HFO8Rn52eAIX0fJH6u+DLvJFTOHAC0XDTGE1GcuSM+KfY3XiBCH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718653971; c=relaxed/simple;
-	bh=8tk93bqRF+37KbOLQkTuGDjKahwCGQIXkCnA/etAVYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Egov9nlPUHuGUyh88tyueeyCzlmbuIpsTuVmNxKXxh0sVfHNRcKJD8pEa+pniX5ZRpGkignwhWJOezZpGkcOe5u3OPPzy/8N5Yo0wG6ex8K4DtWRYoACzt8oLxYJeN6yYqGVS1j+aN37jgvT2SXFAnIBUyJplT0o/fHZv/8NgoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L0nXugsC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C2F3C2BD10;
-	Mon, 17 Jun 2024 19:52:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718653971;
-	bh=8tk93bqRF+37KbOLQkTuGDjKahwCGQIXkCnA/etAVYw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=L0nXugsCZWVdZQAqkRGlJ2rKMo4flDvC8YPtjOyvcSbMM5sx2sbwn5v1R+nN+U8yy
-	 2vO7G199sfBI7ZLfGgK7K3GsP6j7ACmnvblbbG4lsvaDHjQN6wPRc+BE6GVNfwATW3
-	 4oZ6Vj0NFIgnrZLoPvC4vaQ6r3fOtY5ERMnJc4AgtjFb9LyCrAbU9nFgs+SPKxTvc7
-	 055/3QfQSyZO3HucxjUhqTkIPWkLqqS/ICl33PNl5OsVKHxPdFaYywaJMOCkYGbNR5
-	 3TMpZJgMoCvOPbgWK55lt2MR7G+/H93UC3f54FYJAiAA9PTmGqICXSryZL0OLZqEfh
-	 9m+UiEFXInRLg==
-Date: Mon, 17 Jun 2024 20:52:45 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Gustavo Silva <gustavograzs@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Sumit Garg <sumit.garg@linaro.org>
-Subject: linux-next: manual merge of the char-misc tree with the qcom tree
-Message-ID: <ZnCUDSypSIPCTfJ8@sirena.org.uk>
+	s=arc-20240116; t=1718654227; c=relaxed/simple;
+	bh=s9reazg6TBFKFG2f9Ng//E/D00yIl1rxKSsErYw3Eew=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V00Fv1J14PupyoBbkjnxBY9ZuHi+uiKS94BuiPxJLjqaJD1OHwelo/pOAHpv8veyj9kux1dEaaNrXuWE7H6SmF1ey2LOJZ1QLguZLkKPUg9px9qAlggrslT+z7yClUcT2WYruKI8OJXTTVA82EGZEMQmxBnx8XsdEWscwUoE+Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GxTWFREL; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d21e00d9cfso2835068b6e.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:57:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718654224; x=1719259024; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RjDdICWQ2oaGVdfAV4oGUq0PgukKKOkUbuScnyybVlc=;
+        b=GxTWFRELaLLKTzFFr6cZ8EaHu+b2QDierAOHBraqqbQERWnB/IRBNU/vUAHlBXTGHe
+         dqyz8GJIqpxqKk0LtxGt85+uyxnDUNCwcEWP/UXNNORLCtuLoy6PPMMDmOvhVjup1veM
+         JvCwzQ4GCxaz90SPxMyY+GAwPZ9J2H03ymQrFUiDA/HK9oR/SRF9H4nnElHN8AmiJz09
+         iDPOG5O5TQ66YerKfPX/1INMkkwsyhUe3X3VROd+ML+38vKFn7i87wIduxAlvSbxCrBT
+         EDlRfKLew1SsidJ1PP8N7sl3YIAf2aX87dtjuTizSkXZ656Z/8oCb5IanX5CuSGRu5Wg
+         FycQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718654224; x=1719259024;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RjDdICWQ2oaGVdfAV4oGUq0PgukKKOkUbuScnyybVlc=;
+        b=f1OPBJ7agFQKNnEby7SbZ+MSksQAkwsAM+mQ4gLmvklDwtZ/lil4t4zh8lGph9KFMP
+         7/oSr+bdLe9SJEu93YiHku+DRC3/XZ7Oq6EaLoV3BGzTB/HQf5KbvTPn0crj6Cp2i+1o
+         Aa4zFplRRMlJe2cmWUsWLktgmb+WRiysQih+aW1pD7/15zriS4/tv+E2HAg28Jfu2wTL
+         18p/JmhmIIAI1NGC2iLuHDou1rFiTWXbUd5AUdySR4Kq0F5PLe4SLUiTq7nVdP1cFNVo
+         4GwolAuCIcwklX8lUr38+QY0Jl7FRlDJ6O6hNJ6L8zddHHN+04p3to2VU/1e1hgc2KHa
+         8idg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMtCKtqaJZdwEr1Cd7UtNX2vsQ3OGLOqyj+AbUMkVk73UZdgQGI0wBArI+YdeQIBLQP1XNRFkMMwAxw4ZPDdTJxYeiyN3KpS6fqG85
+X-Gm-Message-State: AOJu0Yxky/+2wY+x4pk5sSBu6wLamYjrO5aKF+QpRBaL+UFnp3L7Iwz+
+	cdMgBMTgLLy+cYNTXavg5ceY53rGICuKewSvP5UUoF73qZPO8iMrvDkEu+mbs+A=
+X-Google-Smtp-Source: AGHT+IHhWGIOP5vCe5YhBqVWIz/2hVBesFqWs+uyjC79F4jfNKd28VX0z9aWhmbMQu5bKKCy8t8clw==
+X-Received: by 2002:a05:6808:1910:b0:3d2:20e2:368e with SMTP id 5614622812f47-3d24e987574mr16129788b6e.40.1718654222424;
+        Mon, 17 Jun 2024 12:57:02 -0700 (PDT)
+Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d2476e2fa4sm1579492b6e.52.2024.06.17.12.57.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 12:57:01 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Ramona Gradinariu <ramona.gradinariu@analog.com>
+Subject: [PATCH v2 0/4] iio: adc: ad4695: new driver for AD4695 and similar ADCs
+Date: Mon, 17 Jun 2024 14:53:11 -0500
+Message-ID: <20240617-iio-adc-ad4695-v2-0-63ef6583f25d@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZKnrXZL2gijoXAbb"
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.12.4
+Content-Transfer-Encoding: 8bit
 
+This is adding DT bindings and a new driver for the AD4695 and similar
+devices. The plan is to implement quite a few more features, but this
+is a complex chip so we're spreading out the work. To start with, we
+have a reasonably complete DT binding and a very basic driver.
 
---ZKnrXZL2gijoXAbb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This work is being done in collaboration with Analog Devices Inc.,
+hence they listed as maintainers rather than me. The code has been
+tested on a Zedboard with an EVAL-AD4696FMCZ using the internal LDO,
+an external reference and a variety of input channel configurations.
 
-Hi all,
+---
+Changes in v2:
 
-Today's linux-next merge of the char-misc tree got a conflict in:
+[PATCH 1/1]
+* New patch
+* Depends on recently applied patch
+  https://lore.kernel.org/linux-iio/20240607-ad4111-v7-1-97e3855900a0@analog.com/
 
-  Documentation/devicetree/bindings/vendor-prefixes.yaml
+[PATCH 1/2]
+* Drop *-wlcsp compatible strings
+* Don't use fallback compatible strings
+* Reword supply descriptions
+* Use standard channel properties instead of adi,pin-pairing
+* Fix unnecessary | character
+* Fix missing blank line
+* Add header file with common mode channel macros
 
-between commit:
+[PATCH 1/3]
+* rework register definition macros
+* remove code structure comments at top level
+* remove simple wrapper functions around regmap functions
+* rework channel fwnode parsing for DT changes
+* fix missing return value check
 
-  1fabbb0888c3d ("dt-bindings: vendor-prefixes: Add Schneider Electric")
+[PATCH 1/4]
+* Rework DT examples for DT bindings changes
+* Add file to MAINTAINERS
 
-=66rom the qcom tree and commit:
+* Link to v1: https://lore.kernel.org/r/20240612-iio-adc-ad4695-v1-0-6a4ed251fc86@baylibre.com
 
-  202ce3eaa6912 ("dt-bindings: vendor-prefixes: add ScioSense")
+---
+David Lechner (4):
+      dt-bindings: iio: adc: add common-mode-channel dependency
+      dt-bindings: iio: adc: add AD4695 and similar ADCs
+      iio: adc: ad4695: Add driver for AD4695 and similar ADCs
+      Documentation: iio: Document ad4695 driver
 
-=66rom the char-misc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 56ad56d7733e9,044e2001f4e3a..0000000000000
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@@ -1264,8 -1254,8 +1264,10 @@@ patternProperties
-      description: Smart Battery System
-    "^schindler,.*":
-      description: Schindler
- +  "^schneider,.*":
- +    description: Schneider Electric
-+   "^sciosense,.*":
-+     description: ScioSense B.V.
-    "^seagate,.*":
-      description: Seagate Technology PLC
-    "^seeed,.*":
-
---ZKnrXZL2gijoXAbb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZwlAwACgkQJNaLcl1U
-h9By0Af/cvkpxd9DH2Ao3qfPDM4R8D06Va1JBCPQ4o3PPpLMmO58lDAtnLyS8+Z/
-gLj/dx/B/J28/FwazqKoV9hY9PJCva7VHbkxjdcXSxkVfHwU4c/ddssdt52pYO/j
-UB9CRlkmYleSi3Qt+l1PnzY5M6Js7zg9h7bRBVUwWRkegDLz2BSj97Q4jTAGELtG
-nPJX5S6IvT838rKs1tDui1+TD9BDBLZ3agrfywGIrfRBcqiDozcSrbaEryfVkUzV
-SAFy1gH8CJ2jW9B8XfQfUzwyQv0444vSJXxa1eFrva6RUVXBQgcbe4Sh2aj5VZUc
-1WBeIyJjAGMPVLmdJvz4AchxmqXaIw==
-=e9ru
------END PGP SIGNATURE-----
-
---ZKnrXZL2gijoXAbb--
+ Documentation/devicetree/bindings/iio/adc/adc.yaml |   3 +
+ .../devicetree/bindings/iio/adc/adi,ad4695.yaml    | 290 ++++++++
+ Documentation/iio/ad4695.rst                       | 153 +++++
+ Documentation/iio/index.rst                        |   1 +
+ MAINTAINERS                                        |  12 +
+ drivers/iio/adc/Kconfig                            |  11 +
+ drivers/iio/adc/Makefile                           |   1 +
+ drivers/iio/adc/ad4695.c                           | 753 +++++++++++++++++++++
+ include/dt-bindings/iio/adi,ad4695.h               |   9 +
+ 9 files changed, 1233 insertions(+)
+---
+base-commit: 9ab0746278aff96c1a36fcaad22bee9e9d3b3bf6
+change-id: 20240517-iio-adc-ad4695-ef72b2a2cf88
 
