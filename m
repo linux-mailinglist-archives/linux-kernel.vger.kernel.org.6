@@ -1,75 +1,79 @@
-Return-Path: <linux-kernel+bounces-217289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-217290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 344C590ADDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:24:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81C8490ADDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 14:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5FE3284F6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:24:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A61F1F2175F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 12:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88EC195975;
-	Mon, 17 Jun 2024 12:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B2D19599E;
+	Mon, 17 Jun 2024 12:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ZWusv5Bq";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="eY95p1T+"
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="g3HvrRNd";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="hOvUdusV"
 Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBB76F06E
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C9719581C
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 12:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718627048; cv=none; b=hHFEYVTPvUI1/f7K2DZHSOX8wpDDMSvqRHkilj9qF2fYz03ld43FKEunCu5WXRiGnbOnyVsaVBTPLESfbAtLs4Lkh24uBVtV+YwYeLAcPaCyBrQO8cWsqlCPF9spmNvBbeH+wek8sYJZDVI/1HcEj2d/rS6Nrimtt/un3ovJikk=
+	t=1718627051; cv=none; b=W4dUywbqI9f7601qYF2lBIev+JSN4fNKf9991bPxhcaw2KwzJof93niXIel48t/rgYRUcW+ik7agXBWLPWCN4JxfyLmK0w6qsDL/VIpd0+ZgV+FfK/WehAQ4hFCnX6rsdGKXe5F28qaYrYCuKFq+SURwXLGX0H+8QXK4QG+lb64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718627048; c=relaxed/simple;
-	bh=f6mUuW5V0+nUe6WiIsHPLIVNrPCv/YBwWG2prgdq6MI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OxOf2DkUU2cTgJU1Qnm8PGmuGcTlyqpk6l5B9uGYcx8CGG9NjPNkeEJ8ae1TnFUg8dlehbTdURF7MqCBJZvfzf/3rru/6TI/Vm2bnAtGdS/dhMG6DVWB0sXLPBGwGhwUNelGZmJ6HHitg1CkUaPD6n0glGRPyUEzv+xCKmdq6kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ZWusv5Bq; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=eY95p1T+ reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+	s=arc-20240116; t=1718627051; c=relaxed/simple;
+	bh=bGyfMBRWHIMuYpLEVA4rP7LUnv0E80+EIAhqX2dEOS0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tpX//b3fQTykb7GJLIEVZCSm2H/mKMeggwFhfZsM2jFOszIEcShtPNpe2MWvEQL0ApHu4v6bgJtcnj2dmLFl3DopDpIZrsN1TCz2LZolfF0VqGXc+QxrMKA7fV93hXPvYLuF0SBfbK8+Y/hjdk0+Hbga4+RCP6ZmwJSSqTLPjkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=g3HvrRNd; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=hOvUdusV reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1718627044; x=1750163044;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=BsRvgrK//WxMzwVtEgbuej3Ablp8Xs0HlqHrf1unNxE=;
-  b=ZWusv5Bq0+yH77ldv/kpiNANwHY8JTz31xFej++cUIalXKDYtTh5O1OP
-   xuJHuybtKlVr8AVsgkZ1h8+aRcElH9SVmBufjNqrTlzVc35gBdPNev8J6
-   86BxYNAuLGDdX1tKWV8pXV6Blozc8jXiFRo+GxEuPk62QGw7hWfCzwd6R
-   SFT8Hf82AqiTLHv2zG9V60xxSiYbAoJvJ+DuuGs0FwM6eJ+B5jnc49wGN
-   RNj4xHc1WmW9Zt5Gi9VJjPGvSdMkUpJUgch8pqjBTFADFNJA0N/0fB1Vw
-   eVI/pPxOr4JQP9yYmsuuW/0HqmjkPGCzPltGsCX7Ig02/z2lBAcHa7aYe
+  t=1718627049; x=1750163049;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=NeMmzD8p32EauX3z8zpfDQahrWuR3SyZ6Ku1PrYCcxo=;
+  b=g3HvrRNdqAwx+3m2M5cAVjJqRcXYM9APzccoszg3u+kVFhD8XU37SQe2
+   UpXNc2az4YxWk9zsdvRfv9waLmupIjHaoup7DeBNCJIYLFLf07cp4g4ZD
+   jB0TrVktqH9Bz99oj6BkH1IhhbS6WZubAQeqIGGC3ST4GZRwoSXGo0OWI
+   um0a8nDe7uIQiMvpe+6Na1aI6WeWeHZL+/h88UJWPp4e6RL8J6uTChp5T
+   ZxlJ+LpTS5El0Q6jtoxvKoKlUjCQs7OxAENzF8tBstQZMpMOrIN+nf+kJ
+   D1hKNjOfqy37CTMkQUSt+WMt4sV/GTBtgkg3vpMTygoyRBiQLBwAYv8Pl
    A==;
-X-CSE-ConnectionGUID: h/vS4stERiGJds/CUXx6tQ==
-X-CSE-MsgGUID: Nynav7+MQnCWGkG1N0HQ1A==
+X-CSE-ConnectionGUID: WgmGXJWQQX2Rfr7LMo4qLg==
+X-CSE-MsgGUID: LORBgubMSYWtfRMUo4kj1w==
 X-IronPort-AV: E=Sophos;i="6.08,244,1712613600"; 
-   d="scan'208";a="37427048"
+   d="scan'208";a="37427049"
 Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 17 Jun 2024 14:24:02 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7DAF41654C3;
-	Mon, 17 Jun 2024 14:23:57 +0200 (CEST)
+  by mx1.tq-group.com with ESMTP; 17 Jun 2024 14:24:06 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DD24616595E;
+	Mon, 17 Jun 2024 14:24:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1718627037;
+	s=dkim; t=1718627042;
 	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=BsRvgrK//WxMzwVtEgbuej3Ablp8Xs0HlqHrf1unNxE=;
-	b=eY95p1T+jJ2mWMKILCio8Jy4Fef+64pWJvlXN/eRG5aB5b4ZEDIOg87gy7OfVsd2CAGgDG
-	JDRDqBZExRZH/9YAlFcmezNbKlziLQN35IcEP7KbFnX+RoQIPeJr4QtGHwTN9R5jnCvR4v
-	iRtXhpGQnrY5X+8WKve62CwfzpxLznaVW68H/RC67saoksSXIBgUVweIgDK0tmv9CAbfJc
-	fzGKPnqXy8M9AGF5/L69qplDCQSLKucwX1+IL1Olfj0qqPy9vT+yy6AgZ4xW7kaowT9ZV2
-	O3iQj86tvcYfg3noNXOEMeg29quP/pQ27xNL9B+M/rmhxfrwD9HFRMH2X46krw==
+	 content-transfer-encoding:in-reply-to:references;
+	bh=NeMmzD8p32EauX3z8zpfDQahrWuR3SyZ6Ku1PrYCcxo=;
+	b=hOvUdusVLKevXAkT5xHibBT1QGHDyzpE2Re84r5lv84rY62+rdUilcGsw3qIKKKq9TmSYs
+	PkfcfPUf12BoAwGj2Y9AGaLj4NT0er/oUBgcF3R4NhKoUtF9NvkRvUB23IrGWORBX9iosZ
+	daYLQyco+zAGnwAIjghrSb45oyQX5q8p3yAUqK7JwZnlM77/F9GnaEZIp8nvZhzmIESqrT
+	xcpXaSVpCW+c83r6xFN4Btmobkvdiavj5J6dT6QE20C3rNamWTYL1+mM4CsX/w7HkBrvu3
+	bYpJe9valnAbJT82zDUGeRo5aNi98u4X14IqC0gisOf+aTPtbvh0eCMLFZFr1A==
 From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
 To: Lee Jones <lee@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	Gregor Herburger <gregor.herburger@tq-group.com>,
 	linux@ew.tq-group.com,
 	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH v2 0/5] mfd: tqmx86: new hardware and GPIO/I2C IRQ improvements/additions
-Date: Mon, 17 Jun 2024 14:22:57 +0200
-Message-ID: <cover.1718626665.git.matthias.schiffer@ew.tq-group.com>
+Subject: [PATCH v2 1/5] mfd: tqmx86: add board definitions for TQMx120UC, TQMx130UC and TQMxE41S
+Date: Mon, 17 Jun 2024 14:22:58 +0200
+Message-ID: <d07b38efc0a2920c05a0fe2b91478b58ceb6a230.1718626665.git.matthias.schiffer@ew.tq-group.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <cover.1718626665.git.matthias.schiffer@ew.tq-group.com>
+References: <cover.1718626665.git.matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,34 +84,78 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Patch 1 adds support for 3 new TQMx86 COMs. GPIO support on SMARC
-modules is currently limited (not all GPIOs can be controlled, pins use
-incorrect default directions, IRQ configuration is handled incorrectly),
-however this is a preexisting issue also effecting the TQMxE39S and
-TQMxE40S, not only the new TQMxE41S. This will be addressed by a future
-patch series involving both the TQMx86 MFD and GPIO drivers.
+This adds support for 3 new TQMx86 COMs:
 
-Patches 2-5 improve module parameter description and error handling of
-GPIO IRQ configuration and add support for configuring an IRQ for the
-TQMx86's OpenCores I2C controller in the same way.
+- TQMx120UC/TQMx130UC: COM Express Compact Type 6 modules with 12th and
+  13th Generation Intel Core CPUs ([1, 2])
+- TQMxE41S: SMARC 2.1 module with Intel Atom x7000E and compatible CPUs [3]
 
-Changelog:
+[1] https://www.tq-group.com/en/products/tq-embedded/x86-architecture/tqmx120uc/
+[2] https://www.tq-group.com/en/products/tq-embedded/x86-architecture/tqmx130uc/
+[3] https://www.tq-group.com/en/products/tq-embedded/x86-architecture/tqmxe41s/
 
-v2: improve module parameter description (new patch 2, adjusted patch 5)
+Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+---
 
-Gregor Herburger (1):
-  mfd: tqmx86: add I2C IRQ support
+v2: no changes
 
-Matthias Schiffer (4):
-  mfd: tqmx86: add board definitions for TQMx120UC, TQMx130UC and
-    TQMxE41S
-  mfd: tqmx86: improve gpio_irq module parameter description
-  mfd: tqmx86: refactor GPIO IRQ setup
-  mfd: tqmx86: make IRQ setup errors non-fatal
+ drivers/mfd/tqmx86.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
- drivers/mfd/tqmx86.c | 111 +++++++++++++++++++++++++++++++------------
- 1 file changed, 80 insertions(+), 31 deletions(-)
-
+diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
+index fac02875fe7d9..e15b9be98c2db 100644
+--- a/drivers/mfd/tqmx86.c
++++ b/drivers/mfd/tqmx86.c
+@@ -35,11 +35,14 @@
+ #define TQMX86_REG_BOARD_ID_E39C2	7
+ #define TQMX86_REG_BOARD_ID_70EB	8
+ #define TQMX86_REG_BOARD_ID_80UC	9
++#define TQMX86_REG_BOARD_ID_120UC	10
+ #define TQMX86_REG_BOARD_ID_110EB	11
+ #define TQMX86_REG_BOARD_ID_E40M	12
+ #define TQMX86_REG_BOARD_ID_E40S	13
+ #define TQMX86_REG_BOARD_ID_E40C1	14
+ #define TQMX86_REG_BOARD_ID_E40C2	15
++#define TQMX86_REG_BOARD_ID_130UC	16
++#define TQMX86_REG_BOARD_ID_E41S	19
+ #define TQMX86_REG_BOARD_REV	0x01
+ #define TQMX86_REG_IO_EXT_INT	0x06
+ #define TQMX86_REG_IO_EXT_INT_NONE		0
+@@ -132,6 +135,8 @@ static const char *tqmx86_board_id_to_name(u8 board_id, u8 sauc)
+ 		return "TQMx70EB";
+ 	case TQMX86_REG_BOARD_ID_80UC:
+ 		return "TQMx80UC";
++	case TQMX86_REG_BOARD_ID_120UC:
++		return "TQMx120UC";
+ 	case TQMX86_REG_BOARD_ID_110EB:
+ 		return "TQMx110EB";
+ 	case TQMX86_REG_BOARD_ID_E40M:
+@@ -142,6 +147,10 @@ static const char *tqmx86_board_id_to_name(u8 board_id, u8 sauc)
+ 		return "TQMxE40C1";
+ 	case TQMX86_REG_BOARD_ID_E40C2:
+ 		return "TQMxE40C2";
++	case TQMX86_REG_BOARD_ID_130UC:
++		return "TQMx130UC";
++	case TQMX86_REG_BOARD_ID_E41S:
++		return "TQMxE41S";
+ 	default:
+ 		return "Unknown";
+ 	}
+@@ -154,11 +163,14 @@ static int tqmx86_board_id_to_clk_rate(struct device *dev, u8 board_id)
+ 	case TQMX86_REG_BOARD_ID_60EB:
+ 	case TQMX86_REG_BOARD_ID_70EB:
+ 	case TQMX86_REG_BOARD_ID_80UC:
++	case TQMX86_REG_BOARD_ID_120UC:
+ 	case TQMX86_REG_BOARD_ID_110EB:
+ 	case TQMX86_REG_BOARD_ID_E40M:
+ 	case TQMX86_REG_BOARD_ID_E40S:
+ 	case TQMX86_REG_BOARD_ID_E40C1:
+ 	case TQMX86_REG_BOARD_ID_E40C2:
++	case TQMX86_REG_BOARD_ID_130UC:
++	case TQMX86_REG_BOARD_ID_E41S:
+ 		return 24000;
+ 	case TQMX86_REG_BOARD_ID_E39MS:
+ 	case TQMX86_REG_BOARD_ID_E39C1:
 -- 
 TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
 Amtsgericht München, HRB 105018
