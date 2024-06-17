@@ -1,62 +1,65 @@
-Return-Path: <linux-kernel+bounces-218396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C6F890BF2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:45:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEEBA90BF2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2024 00:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE2BF1F22A5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:45:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C75C41C213DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 22:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974E819938D;
-	Mon, 17 Jun 2024 22:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CFC19923F;
+	Mon, 17 Jun 2024 22:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="B0mxxXZv"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="ZaRijN4i"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC0228FC;
-	Mon, 17 Jun 2024 22:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7558480;
+	Mon, 17 Jun 2024 22:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718664337; cv=none; b=Ijut+1oeUf1Bsp4glj8TveLqs+p3lxoley+VR3OFPuliJApukKuJHITaDpIwjcth6Uw+L0jTvtCLG/Eo1Lg7sOUbpRu7Jml3OdU1lAm7yIfEKi1PUdUS/Wte1JfvB0Y01LvfJJuRrb9HoB8wGxyETYQu4o0Z78A7pOFC7yY8h9c=
+	t=1718664420; cv=none; b=b7Ku2DlhaEp5pL+1DOtil6CpURq5s/W3weJXQ66syOPUmZhxvxoqejWHxoH8TQ8c2gWauq5V4O3IDJ0+p5+HKWLRPXk5ZSWPYn314N0Z0A7AYfjMKXFFDIYMsIdKLgRkUO5Naf46QyyqDUdMmQTxkXaPqO1ji9N41ASNhpzYjCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718664337; c=relaxed/simple;
-	bh=XXPh+b+++dVhoTHxaF7sRY419KZ6Oam8yn4/Xi2EX+A=;
+	s=arc-20240116; t=1718664420; c=relaxed/simple;
+	bh=BDg20nXsZgzxnllRRS/wM/GeHBhb/lCv+24XuceDeT8=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oTQq6nFLA0oZCCuvc3vmIBzbYcJZFr2TpcZmWo9UiEzbfJ6Uzag0JH6sjfeJ5LQMYqqlQkEcoW+kO/6ilbhM0CFYYr8Syo6/epEygKgXeYY+w8KkH1xb84bhrE9WLnI2WnzZTJBFsWmj2SbrFwpkMGrLClarrFF6f7DaUBRyUqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=B0mxxXZv; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version:Content-Type; b=dZVMjzdYmBcX97LYOM6sFuIKQnMkwSvT0hj8fh9GCH5GeYEUJOrjZBX1MgnVzEszQG9V0AuhiXQMXePy8LLwL2D+o/Tkh2Ol1B/BFtPbv7+RMX/f8KcgXD7WBwQYATj+ZFVmiEA8U8YII+IcdCvILE/L7pyZsdrX4OJ7p/T91cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=ZaRijN4i; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net D9C7347C44
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net F22EE45E1A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1718664336; bh=2v0i7aCz/JSP5fydA9TY+AwYLB7we72e/vB/TZTljrA=;
+	t=1718664418; bh=qfoIGw5lnHrK1nWyh6BxV91vxJtrN+BH1xtk1FojI3Q=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=B0mxxXZvAwjlqjiaSAhWmdMlrvZZu3y3rEepkozx5BATCzc9ynJCFEhWFa6p1Pjbi
-	 UJEpg9SXWBd8lnaJBJXvn7KyCqY83Ef8bvK2SleAa4WftS89ZiQjrEPuZBK2pl0aqO
-	 wRIjbQbatnzUNaZl4GT+8cAxOxDzkUzIBvC0lTutRPMbshUxSKiYjhN7B9FM9Y4FZc
-	 p2d8XClkCKDhDeEh4GcD8JIMucEJaCSGAHByECXsX2pIzSCYk7lNCXdROnUiRfdkv+
-	 79z6y4w4KcuqHssNHttPGIAhXRkFQ+/6fbNJFO3YtYEC6C4VEBIO7BghZ9SyirZC06
-	 Ixj5jJ//r97Lg==
+	b=ZaRijN4ikAhxBr9fgn1C780ueCgKgJRcvPq06m2YWyZqnoneqTZSntNnFDmAHqxWA
+	 JAp/MUzzRZB68Rwx53l+HT9FV1N3PqT3yUoJDQImGRtoAjqRpoViuC0D0WE/lNMrIg
+	 MU1eH3iBO29Bpt4o5WVM+ryvGnVQnT7+Cgbwbl/lK3nRjJDFkHvEfUT8jZro9mFBh9
+	 NLQsBVBb7B/zwLYp6S8vlshXE6Asp0w540Spo24So6ikOi2q1BzcJl6pW+hxlxILD0
+	 kmw9fpkamCQh7wgeAjCC0rfVAUpUESQ8FcD0Gd4pTaeoLBBd3C5W7FT8VqMhPEnjOa
+	 vCCnJW/gki7ng==
 Received: from localhost (c-24-9-249-71.hsd1.co.comcast.net [24.9.249.71])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id D9C7347C44;
-	Mon, 17 Jun 2024 22:45:35 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPSA id F22EE45E1A;
+	Mon, 17 Jun 2024 22:46:57 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
-To: Thomas Huth <thuth@redhat.com>, linux-doc@vger.kernel.org, Jens Axboe
- <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, Adrian Bunk <bunk@kernel.org>, Andrew
- Morton <akpm@linux-foundation.org>, linux-block@vger.kernel.org
-Subject: Re: [PATCH] Documentation: Remove the unused "tp720" from
- kernel-parameters.txt
-In-Reply-To: <20240617073322.40679-1-thuth@redhat.com>
-References: <20240617073322.40679-1-thuth@redhat.com>
-Date: Mon, 17 Jun 2024 16:45:35 -0600
-Message-ID: <87v827fasw.fsf@trenco.lwn.net>
+To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>, Yanteng
+ Si <siyanteng@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, Andrey
+ Konovalov <andreyknvl@gmail.com>, Dongliang Mu <dzm91@hust.edu.cn>, Qing
+ Zhang <zhangqing@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>
+Cc: Marco Elver <elver@google.com>, Andrew Morton
+ <akpm@linux-foundation.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs/zh_CN: add back the missing part in the English
+ version
+In-Reply-To: <20240614140326.3028384-1-dzm91@hust.edu.cn>
+References: <20240614140326.3028384-1-dzm91@hust.edu.cn>
+Date: Mon, 17 Jun 2024 16:46:57 -0600
+Message-ID: <87r0cvfaqm.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,28 +68,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-Thomas Huth <thuth@redhat.com> writes:
+Dongliang Mu <dzm91@hust.edu.cn> writes:
 
-> The "tp720" switch once belonged to the ps2esdi driver, but this
-> driver has been removed a long time ago in 2008 in the commit
-> 2af3e6017e53 ("The ps2esdi driver was marked as BROKEN more than two years ago due to being no longer working for some time.")
-> already, so let's remove it from the documentation now, too.
+> The zh_CN kasan document misses the code change in commit eefe68280c94
+> ("kasan: Add documentation for CONFIG_KASAN_EXTRA_INFO").
 >
-> Signed-off-by: Thomas Huth <thuth@redhat.com>
+> Fix this by adding the translation of the missing part.
+>
+> Note that this missing commit is found by checktransupdate.py
+>
+> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
 > ---
->  Documentation/admin-guide/kernel-parameters.txt | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index b75852f1a789..89b784ec5ab1 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6619,8 +6619,6 @@
->  	torture.verbose_sleep_duration= [KNL]
->  			Duration of each verbose-printk() sleep in jiffies.
->  
-> -	tp720=		[HW,PS2]
-> -
+>  .../translations/zh_CN/dev-tools/kasan.rst     | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
 
 Applied, thanks.
 
