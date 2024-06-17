@@ -1,234 +1,259 @@
-Return-Path: <linux-kernel+bounces-218065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 807DA90B8DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:03:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D3490B8DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F358D286913
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:03:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4544C1C23CA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C71197A72;
-	Mon, 17 Jun 2024 17:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33EF19AD6A;
+	Mon, 17 Jun 2024 17:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OjAircoT"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="JCzkD8PA"
+Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0493195985;
-	Mon, 17 Jun 2024 17:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1C7198822;
+	Mon, 17 Jun 2024 17:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718647164; cv=none; b=mOT4c/Cceka9lD9iuVAYkRnS8gClN4uFA2I0FjM8jTFdczQicdBk5vwGnTYGsbZu9BFIh0dzLa25c0CJlR/6p2FfeXq6DvkvDGVlxOIoiqvmjcPKLSru50LCbOh29/Y30ER58TecqaXzln/7nG7XbzlnFsuawnPxvpotJSbsQMo=
+	t=1718647169; cv=none; b=ZJD+yEQpfbUeNwLGl1h0RJxkhou+cIMKmiDnd9bf4CtCY+hDOFbK7hY9AQkGy4xsHD73MIXmhI/kHqtUAGF9NEo4yiNdga5WKbgtMa2y0E0aWJVVfu2qjQ70Jy1NNy4ZSlVwHpX7s80EX+VilsJx9RMaQOsBH0tjhQlTxEoGQe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718647164; c=relaxed/simple;
-	bh=lUHEdtcqE3uD/1h85n902b3EsrRrxk5Zx5OBaQ+EZPw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OZUo5g4GzdCHGQt/8U1CilXTYFKThzCZhTlVbWzQyr2mqZemI4Q4HsFyA6Bd4HsWzy9TfTmLvcLZjv9Oq/QQ4zkVzBLagngW0BdBRoFyajs/6bDhVRQwoHJ7GJfZR19eY1Lr4ITJAykAe8emcfQYYlnvfXTMTPiWL3g13iaXFwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OjAircoT; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57c61165af6so6025084a12.2;
-        Mon, 17 Jun 2024 10:59:22 -0700 (PDT)
+	s=arc-20240116; t=1718647169; c=relaxed/simple;
+	bh=uGyPNIMlpr25ZmedrDnTmh5uTwrDeVJvbccUSHxxb/0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UfwWcEjWD0ge0+HPtapZoCOUZe7Msg5Ie+y3YV8eXHGB7nceUi2uhEEmgODvyv0a3xuPRQPsI3ODgTAGq2ijsL9haskxGErweT/MLsd1EKXlCZ3vN+2HCUtHUElnVTg/7A0Luh/QesASYE3uaOOYYeTtJwpbqdJKylbufZBxXJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=JCzkD8PA; arc=none smtp.client-ip=207.171.190.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718647161; x=1719251961; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YbncuH76lbQhDfoV73q+vcfEohVXoRM4jKTBgQWFIW4=;
-        b=OjAircoT0ZokNBZqIN1PBOnAD+5v1rG1DOalbyVHqAL4QvoJ9f/CChpYI901TngLKb
-         eri5cVGjwBxxSiHcOdfdADjRgUCnqD/4FnpKcTCNBYuktGeKSIAfxjQNqiKC0JSv1Kqz
-         j0HJrVsVPl64TgC385yZKCDl3Pg4bRk11b1vtxd7M0EBCMdNwXhxiZaXGCgWboeoajTf
-         Rpml3xvtPu2oigpEm5v038vN1N3lYbGRmO00/DSYuu6fyBIgLGTMBwAY5Cn6EWkKylCq
-         NvY23ZmMxDwO+d00q0liMwkHKHhnQ1ctn6h/E3dhQ7S+3cTfjq8xE/xCnydLv2XHGf06
-         QirA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718647161; x=1719251961;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YbncuH76lbQhDfoV73q+vcfEohVXoRM4jKTBgQWFIW4=;
-        b=mTKk9r3RIlpUrb3JISXQ9Iwl3Odz2VEPnUV2v4jj2tVILe60Ky7Jwl+O7d18RpDIFr
-         VYox9k8e6zaZydVYjWBcQEiRCqo8ZshM24Qirb7Jx2zg/62gotYmu/Dm+KqxS1wGkl2B
-         cW/4KmV+9jEkn5qD+8i/sJHs1NorjFMIecY4LSG4f/4R45sgql8WfSckvjzWYoXuBp7y
-         rqwUkOXvdfkkYqBJJdU01RiWBMu0XgDQPgY/IUtEJzfwvW5XqafUPx3wUnGB702+TYSu
-         aBQX9tVm4DnqANFPmPzrh9fhse7fcqZTiti6mdIqbBeTVKX7nBc2rgSGvpYJgB60PAp5
-         FavQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5egSEG9QjDcDNptTKVU6fLS5ztVfcWaODy1oY5KX3d3OivRq6CnipYjlIPZiAtE7oFR5Q/2H4uSM9NGfm/qMyNoV4nOqbLq0hlnEMkiuSXJzhfJrSntuB6h+iJmKiE3iPGjv+NYv3lrJ4Og==
-X-Gm-Message-State: AOJu0YzRLqLl5x/tQuScCIi2Vj6McQDjiXiy/ESpyKDXQ2ed/xmqXrHt
-	JW1Bo3yNebSQ5/+jOmFPZnyl9RIi7Xh6sQ3xbvRXj9jBvPLUbfRRORwL3IM7TX5x+92HApxS2Pi
-	QwAVk+Jh2eBqzPv+DBaxvZKQpne8=
-X-Google-Smtp-Source: AGHT+IFZB44u72zR6xM1vDhBJ5c8bL87xGKYaKNA3BHHvG3K+sXNDBZJt70QxqPCFR6hte8YCDyAI/6DuK1/RUq982A=
-X-Received: by 2002:a50:c346:0:b0:578:f472:d9d5 with SMTP id
- 4fb4d7f45d1cf-57cbd906889mr6210379a12.37.1718647160664; Mon, 17 Jun 2024
- 10:59:20 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1718647167; x=1750183167;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=cyr40ZYKbs+9RQg+CBiTJjuDFxvMBR/t/WbaK149Hso=;
+  b=JCzkD8PAvcIU07keM0nA8yjDK7KieDGUTpd8S1iQVnGbmucKOsHEOjQ3
+   owLGVT8oxD2Y1lS24hZMXHxc0LkpeaU/A4s/QcJBLcNQWFpa1LsxSXXcX
+   t9daHhpMLf8NdESO3IFoDwavpILMnuBp2MuaiPbZv9xVKszEUJK1AUUvT
+   c=;
+X-IronPort-AV: E=Sophos;i="6.08,245,1712620800"; 
+   d="scan'208";a="350790092"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2024 17:59:20 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:40873]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.22.54:2525] with esmtp (Farcaster)
+ id 4d10abfa-6a97-40fd-9836-5ca99ad9f469; Mon, 17 Jun 2024 17:59:19 +0000 (UTC)
+X-Farcaster-Flow-ID: 4d10abfa-6a97-40fd-9836-5ca99ad9f469
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 17 Jun 2024 17:59:18 +0000
+Received: from 88665a182662.ant.amazon.com (10.187.171.38) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 17 Jun 2024 17:59:15 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <luoxuanqiang@kylinos.cn>
+CC: <alexandre.ferrieux@orange.com>, <davem@davemloft.net>,
+	<dccp@vger.kernel.org>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<fw@strlen.de>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, <pabeni@redhat.com>
+Subject: Re: [PATCH net v3] Fix race for duplicate reqsk on identical SYN
+Date: Mon, 17 Jun 2024 10:59:07 -0700
+Message-ID: <20240617175907.60655-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20240617075640.207570-1-luoxuanqiang@kylinos.cn>
+References: <20240617075640.207570-1-luoxuanqiang@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614163416.728752-1-yu.ma@intel.com> <20240614163416.728752-4-yu.ma@intel.com>
- <fejwlhtbqifb5kvcmilqjqbojf3shfzoiwexc3ucmhhtgyfboy@dm4ddkwmpm5i>
- <lzotoc5jwq4o4oij26tnzm5n2sqwqgw6ve2yr3vb4rz2mg4cee@iysfvyt77gkx> <fd4eb382a87baed4b49e3cf2cd25e7047f9aede2.camel@linux.intel.com>
-In-Reply-To: <fd4eb382a87baed4b49e3cf2cd25e7047f9aede2.camel@linux.intel.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 17 Jun 2024 19:59:07 +0200
-Message-ID: <CAGudoHGhJF3OPw9S=gNb7wLeci=r7jFzDWmh2G7rcvL2Dev4fQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] fs/file.c: move sanity_check from alloc_fd() to put_unused_fd()
-To: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Yu Ma <yu.ma@intel.com>, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	tim.c.chen@intel.com, pan.deng@intel.com, tianyou.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D041UWB004.ant.amazon.com (10.13.139.143) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Mon, Jun 17, 2024 at 7:55=E2=80=AFPM Tim Chen <tim.c.chen@linux.intel.co=
-m> wrote:
->
-> On Sat, 2024-06-15 at 07:07 +0200, Mateusz Guzik wrote:
-> > On Sat, Jun 15, 2024 at 06:41:45AM +0200, Mateusz Guzik wrote:
-> > > On Fri, Jun 14, 2024 at 12:34:16PM -0400, Yu Ma wrote:
-> > > > alloc_fd() has a sanity check inside to make sure the FILE object m=
-apping to the
-> > >
-> > > Total nitpick: FILE is the libc thing, I would refer to it as 'struct
-> > > file'. See below for the actual point.
-> > >
-> > > > Combined with patch 1 and 2 in series, pts/blogbench-1.1.0 read imp=
-roved by
-> > > > 32%, write improved by 15% on Intel ICX 160 cores configuration wit=
-h v6.8-rc6.
-> > > >
-> > > > Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> > > > Signed-off-by: Yu Ma <yu.ma@intel.com>
-> > > > ---
-> > > >  fs/file.c | 14 ++++++--------
-> > > >  1 file changed, 6 insertions(+), 8 deletions(-)
-> > > >
-> > > > diff --git a/fs/file.c b/fs/file.c
-> > > > index a0e94a178c0b..59d62909e2e3 100644
-> > > > --- a/fs/file.c
-> > > > +++ b/fs/file.c
-> > > > @@ -548,13 +548,6 @@ static int alloc_fd(unsigned start, unsigned e=
-nd, unsigned flags)
-> > > >   else
-> > > >           __clear_close_on_exec(fd, fdt);
-> > > >   error =3D fd;
-> > > > -#if 1
-> > > > - /* Sanity check */
-> > > > - if (rcu_access_pointer(fdt->fd[fd]) !=3D NULL) {
-> > > > -         printk(KERN_WARNING "alloc_fd: slot %d not NULL!\n", fd);
-> > > > -         rcu_assign_pointer(fdt->fd[fd], NULL);
-> > > > - }
-> > > > -#endif
-> > > >
-> > >
-> > > I was going to ask when was the last time anyone seen this fire and
-> > > suggest getting rid of it if enough time(tm) passed. Turns out it doe=
-s
-> > > show up sometimes, latest result I found is 2017 vintage:
-> > > https://groups.google.com/g/syzkaller-bugs/c/jfQ7upCDf9s/m/RQjhDrZ7AQ=
-AJ
-> > >
-> > > So you are moving this to another locked area, but one which does not
-> > > execute in the benchmark?
-> > >
-> > > Patch 2/3 states 28% read and 14% write increase, this commit message
-> > > claims it goes up to 32% and 15% respectively -- pretty big. I presum=
-e
-> > > this has to do with bouncing a line containing the fd.
-> > >
-> > > I would argue moving this check elsewhere is about as good as removin=
-g
-> > > it altogether, but that's for the vfs overlords to decide.
-> > >
-> > > All that aside, looking at disasm of alloc_fd it is pretty clear ther=
-e
-> > > is time to save, for example:
-> > >
-> > >     if (unlikely(nr >=3D fdt->max_fds)) {
-> > >             if (fd >=3D end) {
-> > >                     error =3D -EMFILE;
-> > >                     goto out;
-> > >             }
-> > >             error =3D expand_files(fd, fd);
-> > >             if (error < 0)
-> > >                     goto out;
-> > >             if (error)
-> > >                     goto repeat;
-> > >     }
-> > >
-> >
-> > Now that I wrote it I noticed the fd < end check has to be performed
-> > regardless of max_fds -- someone could have changed rlimit to a lower
-> > value after using a higher fd. But the main point stands: the call to
-> > expand_files and associated error handling don't have to be there.
->
-> To really prevent someone from mucking with rlimit, we should probably
-> take the task_lock to prevent do_prlimit() racing with this function.
->
-> task_lock(current->group_leader);
->
+From: luoxuanqiang <luoxuanqiang@kylinos.cn>
+Date: Mon, 17 Jun 2024 15:56:40 +0800
+> When bonding is configured in BOND_MODE_BROADCAST mode, if two identical
+> SYN packets are received at the same time and processed on different CPUs,
+> it can potentially create the same sk (sock) but two different reqsk
+> (request_sock) in tcp_conn_request().
+> 
+> These two different reqsk will respond with two SYNACK packets, and since
+> the generation of the seq (ISN) incorporates a timestamp, the final two
+> SYNACK packets will have different seq values.
+> 
+> The consequence is that when the Client receives and replies with an ACK
+> to the earlier SYNACK packet, we will reset(RST) it.
+> 
+> ========================================================================
+> 
+> This behavior is consistently reproducible in my local setup,
+> which comprises:
+> 
+>                   | NETA1 ------ NETB1 |
+> PC_A --- bond --- |                    | --- bond --- PC_B
+>                   | NETA2 ------ NETB2 |
+> 
+> - PC_A is the Server and has two network cards, NETA1 and NETA2. I have
+>   bonded these two cards using BOND_MODE_BROADCAST mode and configured
+>   them to be handled by different CPU.
+> 
+> - PC_B is the Client, also equipped with two network cards, NETB1 and
+>   NETB2, which are also bonded and configured in BOND_MODE_BROADCAST mode.
+> 
+> If the client attempts a TCP connection to the server, it might encounter
+> a failure. Capturing packets from the server side reveals:
+> 
+> 10.10.10.10.45182 > localhost: Flags [S], seq 320236027,
+> 10.10.10.10.45182 > localhost: Flags [S], seq 320236027,
+> localhost > 10.10.10.10.45182: Flags [S.], seq 2967855116,
+> localhost > 10.10.10.10.45182: Flags [S.], seq 2967855123, <==
+> 10.10.10.10.45182 > localhost: Flags [.], ack 4294967290,
+> 10.10.10.10.45182 > localhost: Flags [.], ack 4294967290,
+> localhost > 10.10.10.10.45182: Flags [R], seq 2967855117, <==
+> localhost > 10.10.10.10.45182: Flags [R], seq 2967855117,
+> 
+> Two SYNACKs with different seq numbers are sent by localhost,
+> resulting in an anomaly.
+> 
+> ========================================================================
+> 
+> The attempted solution is as follows:
+> In the tcp_conn_request(), while inserting reqsk into the ehash table,
+> it also checks if an entry already exists. If found, it avoids
+> reinsertion and releases it.
+> 
+> Simultaneously, In the reqsk_queue_hash_req(), the start of the
+> req->rsk_timer is adjusted to be after successful insertion.
+> 
+> Signed-off-by: luoxuanqiang <luoxuanqiang@kylinos.cn>
+> ---
+>  include/net/inet_connection_sock.h |  4 ++--
+>  net/dccp/ipv4.c                    |  2 +-
+>  net/dccp/ipv6.c                    |  2 +-
+>  net/ipv4/inet_connection_sock.c    | 19 +++++++++++++------
+>  net/ipv4/tcp_input.c               |  9 ++++++++-
+>  5 files changed, 25 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/net/inet_connection_sock.h b/include/net/inet_connection_sock.h
+> index 7d6b1254c92d..8ebab6220dbc 100644
+> --- a/include/net/inet_connection_sock.h
+> +++ b/include/net/inet_connection_sock.h
+> @@ -263,8 +263,8 @@ struct dst_entry *inet_csk_route_child_sock(const struct sock *sk,
+>  struct sock *inet_csk_reqsk_queue_add(struct sock *sk,
+>  				      struct request_sock *req,
+>  				      struct sock *child);
+> -void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
+> -				   unsigned long timeout);
+> +bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
+> +				   unsigned long timeout, bool *found_dup_sk);
+>  struct sock *inet_csk_complete_hashdance(struct sock *sk, struct sock *child,
+>  					 struct request_sock *req,
+>  					 bool own_req);
+> diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
+> index ff41bd6f99c3..13aafdeb9205 100644
+> --- a/net/dccp/ipv4.c
+> +++ b/net/dccp/ipv4.c
+> @@ -657,7 +657,7 @@ int dccp_v4_conn_request(struct sock *sk, struct sk_buff *skb)
+>  	if (dccp_v4_send_response(sk, req))
+>  		goto drop_and_free;
+>  
+> -	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
+> +	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT, NULL);
+>  	reqsk_put(req);
+>  	return 0;
+>  
+> diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
+> index 85f4b8fdbe5e..493cdb12ce2b 100644
+> --- a/net/dccp/ipv6.c
+> +++ b/net/dccp/ipv6.c
+> @@ -400,7 +400,7 @@ static int dccp_v6_conn_request(struct sock *sk, struct sk_buff *skb)
+>  	if (dccp_v6_send_response(sk, req))
+>  		goto drop_and_free;
+>  
+> -	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
+> +	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT, NULL);
+>  	reqsk_put(req);
+>  	return 0;
+>  
+> diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
+> index d81f74ce0f02..2fa9b33ae26a 100644
+> --- a/net/ipv4/inet_connection_sock.c
+> +++ b/net/ipv4/inet_connection_sock.c
+> @@ -1122,25 +1122,32 @@ static void reqsk_timer_handler(struct timer_list *t)
+>  	inet_csk_reqsk_queue_drop_and_put(oreq->rsk_listener, oreq);
+>  }
+>  
+> -static void reqsk_queue_hash_req(struct request_sock *req,
+> -				 unsigned long timeout)
+> +static bool reqsk_queue_hash_req(struct request_sock *req,
+> +				 unsigned long timeout, bool *found_dup_sk)
+>  {
 
-It's fine to race against rlimit adjustments.
-
-The problem here is that both in my toy refactoring above and the
-posted patch the thread can use a high fd, lower the rlimit on its own
-and not have it respected on calls made later.
-
->
-> >
-> > > This elides 2 branches and a func call in the common case. Completely
-> > > untested, maybe has some brainfarts, feel free to take without credit
-> > > and further massage the routine.
-> > >
-> > > Moreover my disasm shows that even looking for a bit results in
-> > > a func call(!) to _find_next_zero_bit -- someone(tm) should probably
-> > > massage it into another inline.
-> > >
-> > > After the above massaging is done and if it turns out the check has t=
-o
-> > > stay, you can plausibly damage-control it with prefetch -- issue it
-> > > immediately after finding the fd number, before any other work.
-> > >
-> > > All that said, by the above I'm confident there is still *some*
-> > > performance left on the table despite the lock.
-> > >
-> > > >  out:
-> > > >   spin_unlock(&files->file_lock);
-> > > > @@ -572,7 +565,7 @@ int get_unused_fd_flags(unsigned flags)
-> > > >  }
-> > > >  EXPORT_SYMBOL(get_unused_fd_flags);
-> > > >
-> > > > -static void __put_unused_fd(struct files_struct *files, unsigned i=
-nt fd)
-> > > > +static inline void __put_unused_fd(struct files_struct *files, uns=
-igned int fd)
-> > > >  {
-> > > >   struct fdtable *fdt =3D files_fdtable(files);
-> > > >   __clear_open_fd(fd, fdt);
-> > > > @@ -583,7 +576,12 @@ static void __put_unused_fd(struct files_struc=
-t *files, unsigned int fd)
-> > > >  void put_unused_fd(unsigned int fd)
-> > > >  {
-> > > >   struct files_struct *files =3D current->files;
-> > > > + struct fdtable *fdt =3D files_fdtable(files);
-> > > >   spin_lock(&files->file_lock);
-> > > > + if (unlikely(rcu_access_pointer(fdt->fd[fd]))) {
-> > > > +         printk(KERN_WARNING "put_unused_fd: slot %d not NULL!\n",=
- fd);
-> > > > +         rcu_assign_pointer(fdt->fd[fd], NULL);
-> > > > + }
-> > > >   __put_unused_fd(files, fd);
-> > > >   spin_unlock(&files->file_lock);
-> > > >  }
-> >
->
+Given any changes here in reqsk_queue_hash_req() conflicts with 4.19
+(oldest stable) and DCCP does not check found_dup_sk, you can define
+found_dup_sk here, then you need not touch DCCP at all.
 
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+> +	if (!inet_ehash_insert(req_to_sk(req), NULL, found_dup_sk))
+> +		return false;
+> +
+> +	/* The timer needs to be setup after a successful insertion. */
+>  	timer_setup(&req->rsk_timer, reqsk_timer_handler, TIMER_PINNED);
+>  	mod_timer(&req->rsk_timer, jiffies + timeout);
+>  
+> -	inet_ehash_insert(req_to_sk(req), NULL, NULL);
+>  	/* before letting lookups find us, make sure all req fields
+>  	 * are committed to memory and refcnt initialized.
+>  	 */
+>  	smp_wmb();
+>  	refcount_set(&req->rsk_refcnt, 2 + 1);
+> +	return true;
+>  }
+>  
+> -void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
+> -				   unsigned long timeout)
+> +bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
+> +				   unsigned long timeout, bool *found_dup_sk)
+>  {
+> -	reqsk_queue_hash_req(req, timeout);
+> +	if (!reqsk_queue_hash_req(req, timeout, found_dup_sk))
+> +		return false;
+> +
+>  	inet_csk_reqsk_queue_added(sk);
+> +	return true;
+>  }
+>  EXPORT_SYMBOL_GPL(inet_csk_reqsk_queue_hash_add);
+>  
+> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+> index 9c04a9c8be9d..e006c374f781 100644
+> --- a/net/ipv4/tcp_input.c
+> +++ b/net/ipv4/tcp_input.c
+> @@ -7255,8 +7255,15 @@ int tcp_conn_request(struct request_sock_ops *rsk_ops,
+>  	} else {
+>  		tcp_rsk(req)->tfo_listener = false;
+>  		if (!want_cookie) {
+> +			bool found_dup_sk = false;
+> +
+>  			req->timeout = tcp_timeout_init((struct sock *)req);
+> -			inet_csk_reqsk_queue_hash_add(sk, req, req->timeout);
+> +			if (unlikely(!inet_csk_reqsk_queue_hash_add(sk, req, req->timeout,
+> +								    &found_dup_sk))) {
+> +				reqsk_free(req);
+> +				return 0;
+> +			}
+> +
+>  		}
+>  		af_ops->send_synack(sk, dst, &fl, req, &foc,
+>  				    !want_cookie ? TCP_SYNACK_NORMAL :
+> -- 
+> 2.25.1
 
