@@ -1,154 +1,131 @@
-Return-Path: <linux-kernel+bounces-218096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-218103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BBE890B93B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:13:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8044A90B946
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 20:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B42931F2577A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:13:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABAB2283C0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 18:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6AB197A96;
-	Mon, 17 Jun 2024 18:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D36B19924B;
+	Mon, 17 Jun 2024 18:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHXf6PAV"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="LOjM8/m9"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4657197A82;
-	Mon, 17 Jun 2024 18:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568AB198E9A;
+	Mon, 17 Jun 2024 18:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718647972; cv=none; b=EWKEGAe7R0i+JJ6PpYTXD9gZVPJTsWCsnSW7nw5tCOTaN95tPv4M2nYs+K8R1QF+hH0UZQ39TdiuUzQSHO5PukOPgZgggRyXZHPLkrzkI6QJ6Dpno0oBo7I2UhH0lHe6BF1jHjphW4aOxrLus18Ha3pvdwtu6uvvWoGORGE8YyQ=
+	t=1718647996; cv=none; b=cmFhF0eXe7Udjtwv53udsudz5AhaFuHjXe8ihpcKJgErml/cnkVxDd3jGszad9PeWfgPMFbvqzI7bD68sFOFxTeu4Mkhdb5/SVpn6ni5fAMliqI3+Pnd5XySZ+g3+fUWbLhTk7NlnzO7yySXPbr+9QIQZca3BxPlv9L/nJ9DH/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718647972; c=relaxed/simple;
-	bh=z89m5L8BkCQNCX6Mp7ZeLOcjqhDyZ14R0EcGuO9k1t4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bj/+d/DnMarQnc3yufCuiBrLZfmfJN7NrnFWdmD/HDzaLNLdJZk0CUqvIoHF77chXjYNaTx6KYX1n/Cc6E2AAmuOsJR3opG4rTkQ44+HAwnl2+kYXNJHuh2MFoj6POR3WskdgRJNIXoCLPCKS1cwSaE/LF8ZJBvs+iZUCFxFoSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fHXf6PAV; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f700e4cb92so39916715ad.2;
-        Mon, 17 Jun 2024 11:12:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718647970; x=1719252770; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iBOhF51JaKc1Fvw8WfRcyeNBVWLdpct6iiMQh0qswW4=;
-        b=fHXf6PAVg+Bt/wkaDUJ01I8KA49ouy08dzZokX91M/ibUzqFTW0D4cs/9VdmyI3qog
-         28Xo+3NnPLX/VRT6a1pTpEyVMJfl1Oj8IFUPR35ttjrsblkun/HfQkhC1Y3ZLvPHEpwm
-         qT1B1mZ4z4KfdgVGAWSkcH/sPRIyS1EQCq6eS6Dsi97Jvr3E/AoVzTF5lBkYE0ovCukF
-         n9rIGcp0iUGYlxAGnp1ww5DF8PWn76ntslytAw1sv2DzC0Z36owbbjoH+x/hgmVCVfo3
-         I9jfGzqqyxraVnyUX5//j4oB0zberaHBj23H4Ox0kSWo4mn3MP3HZkL7dvrp8CGN+dES
-         GjMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718647970; x=1719252770;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iBOhF51JaKc1Fvw8WfRcyeNBVWLdpct6iiMQh0qswW4=;
-        b=uM7NS+6QH4mB/8WML5xZsuToN1LdNmmDJsCEY97UuiYO95Q3CS3ywjsMonsBzT7R5j
-         YI11bfaGgCrDlJedWS4d2iXbDCNfrkY7gVbo5dKkwEr4hzEe1YA7B04DPQKnY9Ojjhq1
-         +Usa3I+xcVf85RNU4xAfFNhwIcW4wwp/Vn0A9lj6Lw/7BFpOUUUcW/o9iew5l16/fsXj
-         jCVlCqZxqwL5wq7bjMeUtQ+15XZUJakddjVKo6ArmRGr+IG11EJAUA+RdJHd3j9uWc1/
-         rKeYn7C2aV/RkkxGmtTLgv6V2gYRH773ZKpHU/W6yoJSYivPuj6TjwDpF8BWVDnuyk2q
-         /F+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXFIjLwDitglGABsMOHMBJZthSO/0lqe0bPXBTKvSLe4mwYd4fCFhe6ckCs2NK/R9eyychl1X7+sLliUcMMMEyNyq9R5SwFCAVQi1OL9YksiNrRW6/uMNuYdYhbsx6tNd2c
-X-Gm-Message-State: AOJu0Yw4bl2eDou5HCsjKA09kWEEcgI4aHmpvb7cgRZ4rXFufoZ5qcDv
-	XtANVPtjgjGuvm+D8bxpq20GYMw1BRKzfi+t0MYU7XG2IhOZd5Um
-X-Google-Smtp-Source: AGHT+IEMwdnfjlFWJdTDbL76rTSVZtVYE9oKBytXu6zHhpGRpLnwxUoClTfBz666j0leeghre60lGA==
-X-Received: by 2002:a17:903:24f:b0:1f7:c52:1cc4 with SMTP id d9443c01a7336-1f8625c063emr145009225ad.5.1718647970031;
-        Mon, 17 Jun 2024 11:12:50 -0700 (PDT)
-Received: from [192.168.0.31] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855eeebb1sm81975605ad.127.2024.06.17.11.12.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jun 2024 11:12:49 -0700 (PDT)
-Message-ID: <f4f51280bd0e83e04e7765e90081658e3ae975fd.camel@gmail.com>
-Subject: Re: [PATCH] libbpf: checking the btf_type kind when fixing variable
- offsets
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Donglin Peng <dolinux.peng@gmail.com>, ast@kernel.org
-Cc: daniel@iogearbox.net, song@kernel.org, andrii@kernel.org,
- haoluo@google.com,  yonghong.song@linux.dev, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Mon, 17 Jun 2024 11:12:44 -0700
-In-Reply-To: <20240616002958.2095829-1-dolinux.peng@gmail.com>
-References: <20240616002958.2095829-1-dolinux.peng@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1718647996; c=relaxed/simple;
+	bh=t3L9pZlb1ef35gxwiB6BgoFgkgtd/qn6lkvONqjIbpo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MKvt649rVT7QZfAfALfUcPUyX2p/RvaT9Drfl62e5MBeK/lXPJFsuY/8H5E4PNAzmS0lrae+J9SYt4JvHmNHQnltjL8alcR5g0AGHRsnlVqFqCZgCQ55gk54rLN9Y4WyIAkJNAoGc3U9pehMiNOwigfWxHJJwkR8GU5Ylelbsw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=LOjM8/m9; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 5d05b64116b05cc2; Mon, 17 Jun 2024 20:13:05 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 77D3516606FD;
+	Mon, 17 Jun 2024 20:13:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1718647985;
+	bh=t3L9pZlb1ef35gxwiB6BgoFgkgtd/qn6lkvONqjIbpo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=LOjM8/m9DD9PABgboSa26GQeQXU5Bj1Bgg10zdBAQQ47FictLxjfZ3Ity6e8ihs8B
+	 pgIUEe06gd0HlAQopzMxMljNKTJo/Pv8Z7pT7zpjnUVs3J3Nnp65l2TE5EU/mYdHMv
+	 zLoXZbMJCDC3Du4jwisaqj0VxYtxjus7cxAWWWzLEc9ezdU3iYdeB9qx2IBq9tUPXh
+	 hquQnZR6r+Q/dynpAHdlTE72NAPpJqihnp7viPgo3TtKPrv95uHGNaaNu2sOjOjc+t
+	 nNoBEh/94NVVN387CTS/Iqu1FhxXWIJwNZDwWZTK5/DBGIOAmM9EqDWHDUokxdeca6
+	 pZoVntxKyDPvQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH v1 14/14] thermal: trip: Drop thermal_zone_get_trip()
+Date: Mon, 17 Jun 2024 20:12:50 +0200
+Message-ID: <6713673.4vTCxPXJkl@kreacher>
+In-Reply-To: <8409966.T7Z3S40VBb@kreacher>
+References: <8409966.T7Z3S40VBb@kreacher>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrfedvhedguddvvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepuggrnhhivghlrdhlvgii
+ tggrnhhosehlihhnrghrohdrohhrgh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
 
-On Sat, 2024-06-15 at 17:29 -0700, Donglin Peng wrote:
-> I encountered an issue when building the test_progs using the repository[=
-1]:
->=20
-> $ clang --version
-> Ubuntu clang version 17.0.6 (++20231208085846+6009708b4367-1~exp1~2023120=
-8085949.74)
-> Target: x86_64-pc-linux-gnu
-> Thread model: posix
-> InstalledDir: /usr/bin
->=20
-> $ pwd
-> /work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/
->=20
-> $ make test_progs V=3D1
-> ...
-> /work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/tools/sbin/b=
-pftool
-> gen object
-> /work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/ip_check_def=
-rag.bpf.linked2.o
-> /work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/ip_check_def=
-rag.bpf.linked1.o
-> libbpf: failed to find symbol for variable 'bpf_dynptr_slice' in section
-> '.ksyms'
-> Error: failed to link
-> '/work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/ip_check_de=
-frag.bpf.linked1.o':
-> No such file or directory (2)
-> make: *** [Makefile:656:
-> /work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/ip_check_def=
-rag.skel.h]
-> Error 254
->=20
-> After investigation, I found that the btf_types in the '.ksyms' section h=
-ave a kind of
-> BTF_KIND_FUNC instead of BTF_KIND_VAR:
->=20
-> $ bpftool btf dump file ./ip_check_defrag.bpf.linked1.o
-> ...
-> [2] DATASEC '.ksyms' size=3D0 vlen=3D2
->         type_id=3D16 offset=3D0 size=3D0 (FUNC 'bpf_dynptr_from_skb')
->         type_id=3D17 offset=3D0 size=3D0 (FUNC 'bpf_dynptr_slice')
-> ...
-> [16] FUNC 'bpf_dynptr_from_skb' type_id=3D82 linkage=3Dextern
-> [17] FUNC 'bpf_dynptr_slice' type_id=3D85 linkage=3Dextern
-> ...
->=20
-> To fix this, we can a add check for the kind.
->=20
-> [1] https://github.com/eddyz87/bpf/tree/binsort-btf-dedup
-> Link: https://lore.kernel.org/all/4f551dc5fc792936ca364ce8324c0adea38162f=
-1.camel@gmail.com/
->=20
-> Fixes: 8fd27bf69b86 ("libbpf: Add BPF static linker BTF and BTF.ext suppo=
-rt")
-> Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
-> ---
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Good catch, thank you for narrowing this down.
+There are no more callers of thermal_zone_get_trip() in the tree, so
+drop it.
 
-Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+No functional impact.
 
-(Although, I agree with notes from Alan, having a comment would be good).
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/thermal_trip.c |   14 --------------
+ include/linux/thermal.h        |    2 --
+ 2 files changed, 16 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_trip.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_trip.c
++++ linux-pm/drivers/thermal/thermal_trip.c
+@@ -114,20 +114,6 @@ void thermal_zone_set_trips(struct therm
+ 		dev_err(&tz->device, "Failed to set trips: %d\n", ret);
+ }
+ 
+-int thermal_zone_get_trip(struct thermal_zone_device *tz, int trip_id,
+-			  struct thermal_trip *trip)
+-{
+-	if (!tz || !trip || trip_id < 0 || trip_id >= tz->num_trips)
+-		return -EINVAL;
+-
+-	mutex_lock(&tz->lock);
+-	*trip = tz->trips[trip_id].trip;
+-	mutex_unlock(&tz->lock);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(thermal_zone_get_trip);
+-
+ int thermal_zone_trip_id(const struct thermal_zone_device *tz,
+ 			 const struct thermal_trip *trip)
+ {
+Index: linux-pm/include/linux/thermal.h
+===================================================================
+--- linux-pm.orig/include/linux/thermal.h
++++ linux-pm/include/linux/thermal.h
+@@ -202,8 +202,6 @@ static inline void devm_thermal_of_zone_
+ }
+ #endif
+ 
+-int thermal_zone_get_trip(struct thermal_zone_device *tz, int trip_id,
+-			  struct thermal_trip *trip);
+ int for_each_thermal_trip(struct thermal_zone_device *tz,
+ 			  int (*cb)(struct thermal_trip *, void *),
+ 			  void *data);
+
+
+
 
