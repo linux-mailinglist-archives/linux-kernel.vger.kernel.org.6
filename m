@@ -1,117 +1,194 @@
-Return-Path: <linux-kernel+bounces-216782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-216783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FCEC90A668
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:05:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4948B90A66B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 09:05:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5BAB289D83
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:05:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3B4E1F2471C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2024 07:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E680718F2E9;
-	Mon, 17 Jun 2024 07:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA1B18FC8D;
+	Mon, 17 Jun 2024 07:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="dPkeukVi"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CriPB39C"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2064.outbound.protection.outlook.com [40.107.93.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B521F187349
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 07:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718607852; cv=none; b=i4Q67ty9e1YurLKrkUGqi/JfdPbUUY4nZF/muyQzAZ62o1w0W7Yh/NbTjLkgX7GG9+NpRf6JumOFS3o4khcSUrGTSqjfv+sQ+IDl6UclWVQGTkYj/anWUimQecoE9vx7WC6S5WaX/m43n4XAJMpI9Vx28jBv4Q3BH4m4iPWjY2k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718607852; c=relaxed/simple;
-	bh=AktLrWFN6uYaEHm2eLlbIr/ITVmWIbhY3r7zRb7at9U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XWaaeCneW6Us70pQJMf10YNAhDAnf21gfcuMc3LZnydRhf0Gkj1tG2xzuUGnk8LLVlgxxntpzl1ZOa8xM4Cxv0yakj44YGNNFWXsO0cdCCA/7q1Mcfw6rPPchDzUrS3VWOA63IJX85P0t8J2Dswt2iccWTYg5iaK1zDI3Aa33TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=dPkeukVi; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57cc1c00b97so2751329a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2024 00:04:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1718607849; x=1719212649; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S4op8rIzHP8JvuTAHfHPAy9Ox6rzEQd4/RfOVSiZ2sE=;
-        b=dPkeukVimU+Z7QiP8FmUrrJiarxq0ve1JePcKqUhJGQaMpGOHXSRpzbkveFLiTCFdL
-         bA8YcAP0vmaH0lgsOtY77R0dbqEuvUYrJIw+xUU7MM7SMxBHgOFMn208adM+mqW1aCLe
-         PvEyyXRTlb7X9enYKIJdAIAdyslgOzFd8cjYJMO47U/yCf3Yu7KOfNEYtOOKnWSn458q
-         B4SA/sbJy6AdQ2PTYo/m4Imf0NmCq4U0tch/r9IGu/ETrM+LPkWbPRXeHMxIYLB4x1O+
-         rKBDPgClJtPh6V5svWDJJFhGyMOGfOuiA3Vh1Se4u6O/EnLjIP2lwr++6yFHWoMolw6t
-         ifkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718607849; x=1719212649;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S4op8rIzHP8JvuTAHfHPAy9Ox6rzEQd4/RfOVSiZ2sE=;
-        b=ZshCsj9uDsL5uh1yHvfvU+nP+bi4jJnuVozu934xH4FQJhKbFdZJym52ATsDK4SGDq
-         3QBhxUFZEH5LOZP7UpaNc+6mGxOCCQcDJaXOfbGoNLhrfWnn+YXXDPUnSaGw9K6zFDZo
-         vdEQwVTKQ8FxmeNC9FGi/B0d3KPtgxBS2SglOx4PSzjWG8ePPLBCQibqXZmnIyZP1eCD
-         MdM8s3qt50FHGK3QiszRZ08zzMcOr/3SEfrsMhbZSBeQikMHwB8Z6RaPlBdH5djQLGKF
-         4GvgGaitIlxPqtJLdjvVXVNfZg1/1H1zXrpeDZKTaVTGLgQ0aY8WvE6ETystiozDF9Yy
-         Crlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUt2ChKdPgmuRABsZglSZvxkBi/Svk42r7f42RdCo07sB4FdfP1Vi2eI/4FBXnrCEi9VmdeA9ElEh1LfRY2MwuCfEY9YsFtw2BlFJvI
-X-Gm-Message-State: AOJu0YyDWmJ0257BkSwOI/fIR77IKu7uA93c2B3T2GjlCmXzT8siPp8Y
-	C7EualzqZczRedb42d/bJsdH0BrRfg1simfma1gMNw4xEcdjzqDbvhieWAOnH9o=
-X-Google-Smtp-Source: AGHT+IF26jBL/MXFko48RwAldivf6KnMYn+dkXyzG1gTNio9sEd7J10HUGxCIpDzL8VV6MHgzlHGig==
-X-Received: by 2002:a05:6402:40c5:b0:57c:de6e:75d9 with SMTP id 4fb4d7f45d1cf-57cde6e766dmr2014654a12.32.1718607848890;
-        Mon, 17 Jun 2024 00:04:08 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.189])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72da785sm5972959a12.28.2024.06.17.00.04.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jun 2024 00:04:08 -0700 (PDT)
-Message-ID: <4141ee7f-3f05-48b8-8ea5-97160bb0750d@tuxon.dev>
-Date: Mon, 17 Jun 2024 10:04:05 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7404E188CB2;
+	Mon, 17 Jun 2024 07:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718607867; cv=fail; b=RosUuFjRBUrV6IjnMVbt+WoczKcNfBxERFtK02N4BWg5/tRk4YT8U1kFUYt5J86Bn6LEUzszLlqbi72UbX+sF0uO3VpubI7je6ULeleEBYJjaEDUbEpVShx9pS+huJSDWrtxEEdTMIh9aMJpnFIzNheBKvjvoCxiqCXaIfmoE1I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718607867; c=relaxed/simple;
+	bh=8T2sIu1A5qyyxLktjUk/3hkTDPit6l/IHgYrOcAXxBk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ox3G1IhVir/oNYj7G5vOaGgfpUFMiBQ6566w6RjNE81TZDRm3AFhLEZvdWEx/2hI54V73t031GPk0nYMWWfB+X5XudLTBg9ycYuel8vNxmAvhII89vtE/VFHVz24Y73iDKjR7XYt0dMcYrg9iGPGswabG0rrmB0uZHFIwudnjjA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CriPB39C; arc=fail smtp.client-ip=40.107.93.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FdURIFsbA7NZM8ZO+iMYNSlFCxvte9ksYOOn3NrkJbrKsKRHgcF9N+k94Fr+gBUmzZMxvXa3dR+cKfKAmM/lHsEPWiLsHmU+Rz628KhF+m8Ocus/E2WrL1imKC02FsWIfUiVVUmhIYIZyrDaxVxn9Wyq8e5UZvjijIW9B6OgY5G8vpvW4ri3qQPorCmQm9k2GwQGbnnDdl9r13J1lV2bvEii3ORgzU1qr2Y2gdmtMMhss3jCAMyMNr2CiQMEXQlFkxaO/uNyCIdI/Q1SEgj5QbxqWuAwbbPYp2zdY+IA1O+AxNG2mH+oZd6r1GlSQ8X9HucGCtpE+D9sFOTw7/N4zQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3qGkJj32BdmFJ2a+GWtSjwf23HkckDu0wh5c9SBC5r4=;
+ b=IFMIxuZpkHpvm6aymqiIQSAzgZUYYk7+ekOm/l8+P8RMX9dbP9KmEsyS6bv04/A7n8rSIW4cnABfDLwzGkRwLKXeNJFnRgfTpf/Rem/c69QkasqQCsytN7v69S9yrHFyyGYSEloNdwuWjdY816mJfN1GoLzgragMKfG3vD4Za8rYGdtTablBbhCxecjX/XmFCF7wf0CCGHy75IUVT+IIAp4/sMRaY7BIMHRoXHgswDLmBJ/q43+GHASHnhIhJiyPYgn0htjY8rNWXWlU3901z+YQcLiYhwCLflGlbBvkvbobKQr0ypXmnfbXDsHVP/3SEkEEzh0tivNQiX+awsbPSA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=microchip.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3qGkJj32BdmFJ2a+GWtSjwf23HkckDu0wh5c9SBC5r4=;
+ b=CriPB39CxYzN2HWPUvgp5Bp8Za5hXUaA25Efu5Sm0BsVBf648cKEYIlZHqXI6X1z+gcF+ikLz3E3ltKLA0qqqHvbf0Ize45F+zfEBYg8G/Fg16KtDcBxPaf277TjhTPmnZ8Hozdl1uKuWoqHTHPa3x1UJEroEI2kYnHaiPXvY4k=
+Received: from DS7PR03CA0269.namprd03.prod.outlook.com (2603:10b6:5:3b3::34)
+ by CYYPR12MB8853.namprd12.prod.outlook.com (2603:10b6:930:cb::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Mon, 17 Jun
+ 2024 07:04:24 +0000
+Received: from DS3PEPF0000C37C.namprd04.prod.outlook.com
+ (2603:10b6:5:3b3:cafe::35) by DS7PR03CA0269.outlook.office365.com
+ (2603:10b6:5:3b3::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31 via Frontend
+ Transport; Mon, 17 Jun 2024 07:04:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ DS3PEPF0000C37C.mail.protection.outlook.com (10.167.23.6) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Mon, 17 Jun 2024 07:04:24 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 17 Jun
+ 2024 02:04:18 -0500
+Received: from xhdvineethc40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 17 Jun 2024 02:04:14 -0500
+From: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
+To: <nicolas.ferre@microchip.com>, <claudiu.beznea@tuxon.dev>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+	<linux@armlinux.org.uk>, <vadim.fedorenko@linux.dev>, <andrew@lunn.ch>
+CC: <vineeth.karumanchi@amd.com>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <git@amd.com>
+Subject: [PATCH net-next v6 0/4] net: macb: WOL enhancements 
+Date: Mon, 17 Jun 2024 12:34:09 +0530
+Message-ID: <20240617070413.2291511-1-vineeth.karumanchi@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/12] dt-bindings: mfd: renesas,rzg3s-vbattb: Document
- VBATTB
-Content-Language: en-US
-To: Conor Dooley <conor@kernel.org>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
- alexandre.belloni@bootlin.com, magnus.damm@gmail.com,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
- <20240614071932.1014067-4-claudiu.beznea.uj@bp.renesas.com>
- <20240615-unhitched-slain-446130658f87@spud>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240615-unhitched-slain-446130658f87@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB03.amd.com: vineeth.karumanchi@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37C:EE_|CYYPR12MB8853:EE_
+X-MS-Office365-Filtering-Correlation-Id: f21642e8-a138-4e91-f76e-08dc8e9bb836
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|1800799021|7416011|376011|82310400023|36860700010|921017;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NmJMOVprwsiqWY8+hJWsvGXV8luzaYHEkPfRD7dyCtLZYUhhAd1B7IkZ0J7A?=
+ =?us-ascii?Q?CcTkQxBjXgsCEmynO4c0VfB8dexEPJe4wUIpMRGDbgtoZb/45AiByCIVvg3d?=
+ =?us-ascii?Q?xqhYvE/QZa8eYpYBVo7SPe6iRV5CCmI1PGx2bDeRRC65+zwwFWfUyxRCqs5h?=
+ =?us-ascii?Q?jIwKyN8bGXtw3RNBt9E2/T3BvKF7adyHrYbkZNAMygyZSnCkyB/h1QdBuELz?=
+ =?us-ascii?Q?QhbuSeveo0R2FfIh0t07p5O9QKx1oNABUOcLsODxQvx+T5EcYK9NFD8eJybN?=
+ =?us-ascii?Q?L8LaxDCfKyU1j5gk4/EuzBfK7xjz4QOTPkGzcFPO6utu3wnvgT7o06I9P7EX?=
+ =?us-ascii?Q?zWN93qLBNU3OiBjJske6g/Swn/+E77jUjHVhfOOGTwRAybczlcaXhRqHG7gi?=
+ =?us-ascii?Q?F/ZW5pwsfIjdx3Njt2W4pFixrQFzexnHsqFfPwD4DtrEwBBbOguJGth/CCmg?=
+ =?us-ascii?Q?2IUA5WbtsUDRKSycI/5TNE5yaeQGW1Scmvl3yO5v8cvrCaxsOWz2TqvouYQM?=
+ =?us-ascii?Q?OaGJw/iwC0FILDJB+Bu8oy8Wi3D7QZWVu/nEDkhzckU31W3BK0OPJVAUgBzU?=
+ =?us-ascii?Q?bv3YVsMm8346czSBOYJ/52tOY2U9lpAxBCm487M96F68mBRf0g75W9Ir+pI/?=
+ =?us-ascii?Q?q4xSbj0wH5LEe3gaQjlUc7s/eo1IIsw7wYLvUN4WeVABAvqcLdhaM6Um6Uih?=
+ =?us-ascii?Q?KDGcB3TUNs/mCNZwp8SV8KiVDQCwn+X533X93eFd8yavD/ybu0XpcWlcfqSJ?=
+ =?us-ascii?Q?OX0DEFXTLfEVScQzILldspErzN+iEANq7TxZrAN9788QnPhRLFgNfffssvDa?=
+ =?us-ascii?Q?1yRAXhVm0yKVEs1WuWGaljZzuLlWaA5TEMJvNytSeJ03VWP0hJhwbYh5iONp?=
+ =?us-ascii?Q?mv4Uoo7uMFzQ//n/4lf+nOf0gb5Sh/hpLM1FQTn1uxmgSTmxR9IqrooAhkji?=
+ =?us-ascii?Q?C/2lx+02AwQNKqI/WJZhwYH1+FJva40MrVYcVQi/BEzJDmi8k5HdLFF5xwjx?=
+ =?us-ascii?Q?mEPtZsB1Sv8qUZHEzEXHmCvIE/D/Tx/ujd28PZz313B/fxGwxNE6RY0lZcur?=
+ =?us-ascii?Q?scJEGv58jiPve6irt9sfzWNprUkZaSNc9T+20uaI1p81Ikk/FWuES8gkZpNF?=
+ =?us-ascii?Q?ftNhBfDja8dF7GofBSvyYx/N6EC7yt0LqazlmgH6IhhegLv/GHKICr6bNAtU?=
+ =?us-ascii?Q?EHY80cMavUWBHA7fIjfqg5/1qgGGzRMYnJZHSfpb4Kj+l5572+DiXg7aIiRt?=
+ =?us-ascii?Q?GTqXO0XoTatvRezsoU7Lus0j1dQN8y5u7Sk/YUHm3+oLOhcDMKC5rhEiwFPI?=
+ =?us-ascii?Q?JH3e29UrMpu1pzakcKBrsgxk6r3fBskMIrZ7CHEseUfM3kVSmZUoNuoaSIsE?=
+ =?us-ascii?Q?KGOKn1kDsb0MlHgwPRmMGtj8oboh?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(1800799021)(7416011)(376011)(82310400023)(36860700010)(921017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2024 07:04:24.0359
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f21642e8-a138-4e91-f76e-08dc8e9bb836
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF0000C37C.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8853
+
+- Add provisioning for queue tie-off and queue disable during suspend.
+- Add support for ARP packet types to WoL.
+- Advertise WoL attributes by default.
+- Extend MACB supported WoL modes to the PHY supported WoL modes.
+- Deprecate magic-packet property.
+
+Changes in V6:
+- Use rcu_access_pointer() instead of rcu_dereference()
+- Add conditional check on __in_dev_get_rcu() return pointer
+
+Changes in V5:
+- Update comment and error message.
+v5 link : https://lore.kernel.org/netdev/20240611162827.887162-1-vineeth.karumanchi@amd.com/
+
+Changes in V4:
+- Extend MACB supported wol modes to the PHY supported modes.
+- Drop previous ACK from v2 series on 4/4 patch for further review.
+v4 link : https://lore.kernel.org/lkml/20240610053936.622237-1-vineeth.karumanchi@amd.com/
+
+Changes in V3:
+- Advertise WOL by default.
+- Drop previous ACK for further review.
+v3 link : https://lore.kernel.org/netdev/20240605102457.4050539-1-vineeth.karumanchi@amd.com/
+
+Changes in v2:
+- Re-implement WOL using CAPS instead of device-tree attribute.
+- Deprecate device-tree "magic-packet" property.
+- Sorted CAPS values.
+- New Bit fields inline with existing implementation.
+- Optimize code.
+- Fix sparse warnings.
+- Addressed minor review comments.
+v2 link : https://lore.kernel.org/netdev/20240222153848.2374782-1-vineeth.karumanchi@amd.com/
+
+v1 link : https://lore.kernel.org/lkml/20240130104845.3995341-1-vineeth.karumanchi@amd.com/#t
 
 
+Vineeth Karumanchi (4):
+  net: macb: queue tie-off or disable during WOL suspend
+  net: macb: Enable queue disable
+  net: macb: Add ARP support to WOL
+  dt-bindings: net: cdns,macb: Deprecate magic-packet property
 
-On 15.06.2024 15:19, Conor Dooley wrote:
-> On Fri, Jun 14, 2024 at 10:19:23AM +0300, Claudiu wrote:
->> +patternProperties:
->> +  "^clock-controller@[0-9a-f]+$":
->> +    $ref: /schemas/clock/renesas,rzg3s-vbattb-clk.yaml#
->> +    description: VBATTCLK clock
-> 
-> Being a bit of a pedant here, but isn't the address known? 
+ .../devicetree/bindings/net/cdns,macb.yaml    |   1 +
+ drivers/net/ethernet/cadence/macb.h           |   8 ++
+ drivers/net/ethernet/cadence/macb_main.c      | 122 +++++++++++++-----
+ 3 files changed, 101 insertions(+), 30 deletions(-)
 
-It is.
+-- 
+2.34.1
 
-> You leaving
-> room for future devices with it at a different offset?
-
-Ok, I'll keep it 1c instead.
-
-Thank you for your review,
-Claudiu Beznea
 
